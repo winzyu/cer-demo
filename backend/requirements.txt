@@ -1,0 +1,11 @@
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+psycopg[binary]==3.2.3
+pgvector==0.3.6
+openai==1.57.0
+pypdf==5.1.0
+pdf2image==1.17.0
+pytesseract==0.3.13
+python-dotenv==1.0.1
+pytest==8.3.4
+httpx==0.28.1

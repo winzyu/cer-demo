@@ -1,0 +1,17 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+backend/.venv/
+backend/.wvenv/
+.pytest_cache/
+.ocr_cache/
+
+# Sensor data — treat as confidential per CLAUDE.md privacy posture
+data/*
+!data/.gitkeep
+
+# Source documents — public EPA/USGS but bulky; URLs are in docs/README.md
+docs/*
+!docs/README.md
+!docs/.gitkeep
