@@ -6,6 +6,42 @@ This README is the build spec. It is intentionally narrow. Anything not listed h
 
 ---
 
+## 0. Setup
+
+Run these from the repo root.
+
+1. **Configure environment.** Copy the template and fill in your Fireworks key:
+   ```bash
+   cp .env.example .env
+   # then edit .env and set FIREWORKS_API_KEY=...
+   ```
+2. **Provide source data.** Drop the seed PDFs listed in section 5 into `docs/`, and the sensor CSV at `data/water-data.csv`.
+3. **Start Postgres + pgvector** (docker-compose, exposes 5432):
+   ```bash
+   docker compose up -d
+   ```
+4. **Apply the schema** (one-time; creates `documents`, `chunks`, `sensor_data` and the `vector` extension):
+   ```bash
+   docker exec -i cer_rag_db psql -U postgres -d cleanearth < backend/schema.sql
+   ```
+5. **Install Python deps** (use a venv):
+   ```bash
+   python -m venv .venv && source .venv/bin/activate
+   pip install -r backend/requirements.txt
+   ```
+6. **Seed documents + sensor data** (idempotent; embeds via Fireworks):
+   ```bash
+   python -m backend.seed
+   ```
+7. **Run the backend** (FastAPI on :8000):
+   ```bash
+   uvicorn backend.main:app --reload --port 8000
+   ```
+   Sanity check: `curl http://localhost:8000/health` should report `db_ok: true` and `fireworks_configured: true`.
+8. **Open the frontend.** Open `frontend/index.html` directly in a browser. It calls `http://localhost:8000` by default; override with `?backend=http://host:port` if needed.
+
+---
+
 ## 1. What we're building
 
 **Scope:**
