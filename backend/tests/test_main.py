@@ -73,6 +73,16 @@ def test_conductivity_range_freshwater_vs_saltwater():
     assert conductivity_range_text("saltwater") == "40,000 to 50,000"
 
 
+def test_system_prompt_includes_in_scope_refusal_contract():
+    """The model must be told (a) what counts as in-scope, and (b) the exact
+    refusal line to emit when a question is out of scope or tools return
+    nothing useful. Regression guard for README §13 acceptance test #6."""
+    p = build_system_prompt()
+    assert "IN-SCOPE" in p
+    assert "I can only answer questions grounded in this sensor's readings" in p
+    assert "Never use general world knowledge to fill gaps" in p
+
+
 # ---------- orchestration loop ----------
 
 @pytest.fixture

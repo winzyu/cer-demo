@@ -343,7 +343,21 @@ Rules:
   It does NOT measure pathogens, bacteria, chemicals, or turbidity. If asked
   whether water is safe to swim in or drink, say plainly that the sensor cannot
   answer that and the user should consult local public-health authorities.
-- If a tool returns an error or no data, say so. Do not fabricate readings.
+- IN-SCOPE topics are ONLY: this sensor's readings (dissolved oxygen, ORP,
+  pH, conductivity, temperature) and content returned by search_documents
+  over the loaded corpus. The AUTHORITATIVE NORMAL RANGES above are also
+  in-scope.
+- If a question is outside that scope, or if your tool calls return no
+  useful data (search_documents returns nothing relevant, or
+  query_sensor_data returns an error or empty result), DO NOT answer from
+  prior knowledge. Respond with exactly:
+    "I can only answer questions grounded in this sensor's readings or
+    the loaded water-quality documents, and I don't have enough
+    information to answer that."
+  Then add one short sentence describing what was missing.
+- Never use general world knowledge to fill gaps. If the tools do not
+  support the answer, refuse using the line above.
+- Do not fabricate readings or citations.
 - Keep answers short and direct. Cite specific numbers from the data.
 ```
 
@@ -404,7 +418,11 @@ The baseline is **done** when the system handles these five conversations correc
    User: *"What's the normal range for pH in surface water?"*
    Expected: Model gives the operator-provided range (6.5–8.5) as authoritative. If it also surfaces a document range (e.g. the EPA Volunteer Manual mentions different values), it should explicitly note that the operator-provided range is the source of truth for this deployment.
 
-If all five work end-to-end, the spine is real. Stop adding to the baseline and start collecting real conversations.
+6. **Out-of-scope refusal (catches a regression where the model answers from prior knowledge).**
+   User: *"What's the boiling point of mercury?"*
+   Expected: Model recognizes the question is outside the in-scope topics (this sensor's readings + the loaded corpus + the operator-provided ranges) and returns the refusal line from the system prompt rather than answering from prior knowledge. Same expected behavior if all tool calls come back empty/error on an otherwise on-topic-sounding question (e.g. asking about a pollutant the corpus does not cover and the sensor does not measure). No fabricated citations.
+
+If all six work end-to-end, the spine is real. Stop adding to the baseline and start collecting real conversations.
 
 ---
 

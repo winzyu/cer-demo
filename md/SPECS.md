@@ -156,7 +156,7 @@ For each `/chat` request:
 3. Citations are accumulated from any `search_documents` tool result. Each chunk becomes a `Citation(document_title, filename, chunk_excerpt[:300])`.
 4. Tool traces (`name`, `arguments`, `result`) are also returned for observability.
 
-System prompt is built per request from `WATER_TYPE` env var, which selects the conductivity range (`0-1500` freshwater vs `40000-50000` saltwater). Rest of the prompt is `README.md` §10 verbatim, with the precedence rule: operator ranges > document ranges.
+System prompt is built per request from `WATER_TYPE` env var, which selects the conductivity range (`0-1500` freshwater vs `40000-50000` saltwater). Rest of the prompt is `README.md` §10 verbatim, with two load-bearing rules: (a) operator ranges > document ranges (precedence), and (b) a hard in-scope/refusal contract — if a question falls outside this sensor's readings + the loaded corpus + the operator ranges, or if tool calls return nothing useful, the model must emit a fixed refusal line rather than answer from prior knowledge. See `README.md` §13 acceptance tests #5 and #6.
 
 ---
 
@@ -200,13 +200,13 @@ WATER_TYPE=freshwater
 
 ## 12. Testing
 
-`backend/tests/`, 46 tests total. Run with `backend/.venv/bin/python -m pytest backend/tests/`.
+`backend/tests/`, 47 tests total. Run with `backend/.venv/bin/python -m pytest backend/tests/`.
 
 | File | Count | Coverage |
 |---|---|---|
 | `test_seed.py` | 15 | recursive splitter, date parser, unit detector, OCR-scanned heuristic, quality-chunk filter |
 | `test_tools.py` | 17 | time-range parser (8 cases), error paths, all 6 aggregations against real DB, dense-arm retrieval, BM25-arm retrieval ("ORP" → tm9a6.x) |
-| `test_main.py` | 9 | system prompt builder, conductivity-range branch, orchestration loop with mocked LLM (no-tool, sensor, search-with-citations, round cap, bad-JSON args), `/health`, empty-message 400 |
+| `test_main.py` | 10 | system prompt builder (incl. in-scope/refusal contract), conductivity-range branch, orchestration loop with mocked LLM (no-tool, sensor, search-with-citations, round cap, bad-JSON args), `/health`, empty-message 400 |
 
 Per `CLAUDE.md`: tests mock the OpenAI client (chat + embeddings) but hit the real Postgres.
 
