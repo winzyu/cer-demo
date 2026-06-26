@@ -135,6 +135,46 @@ No automated way to detect retrieval/answer-quality regressions. Acceptance test
 
 ---
 
+## Project-planning additions (2026-06-26 — Gilligan replacement scope)
+
+Net-new scope from the Gilligan-chatbot planning round and the meeting notes. These expand the file's original charter (which deliberately excluded README §15 deferred features) because several of those deferrals have been pulled forward. Sequencing and decision gates for all of these live in `timeline.md`; this section is the itemized queue. Items that overlap an existing backlog entry are cross-referenced rather than duplicated.
+
+### Decision gates (resolve before downstream build)
+- **G1 — Target stack & data store.** Undecided. Three candidates: (A) RAG standalone, (B) hybrid — keep FastAPI + pgvector brain, adapt sensor data layer, (C) full migration to the Node/Express + Firestore stack. Blocks the data, real-data, and frontend work. See `timeline.md` Phase 0.
+- **G2 — Report scope.** Mostly resolved by the report template (`report/datapod-water-quality-report-template.md (1).pdf`): fixed six-section structure, tables + prose, **no visualizations in v1**. Two sub-gates remain: G2a site-baseline definition, G2b event-detection context source (below).
+- **G3 — Site-baseline definition.** Is §2's "Site Baseline" the operator-provided normal range, or a value computed from historical per-site data? Gates the §2 flag logic.
+- **G4 — Event-detection context.** Does §4 run on sensor signals alone, or are rainfall / tidal / vessel-activity context fed in manually? Open-internet sourcing is closed. Gates §4.
+- **G5 — Frontend responsiveness** (mobile/tablet y/n) and **G6 — redesign vs. match existing site style.** Gate the Next.js chatbot page.
+
+### New features
+- **Turbidity metric (NTU).** Add end-to-end: `schema.sql` column, `seed.py` unit detection, `tools.py` metric enum, operator range, system prompt. **0 is a valid reading for turbidity and ORP — do not flag 0 as erroneous for these two.** Report §2 depends on this.
+- **Report generation (template-based).** Build to the six-section template. **Design principle: compute vs. narrate.** Every number/flag/status is produced deterministically in code (no LLM); the LLM only narrates pre-computed facts. This eliminates numeric hallucination and makes the numeric layer unit-testable.
+  - Programmatic (no LLM): header/metadata, §2 parameter table (Min/Max/Mean/Median reuse `query_sensor_data` aggregations; Flag = deterministic baseline comparison), §5 data-quality metrics.
+  - LLM-narrated over computed inputs: §1 Summary, §3 Parameter Analysis prose, §4 Event-Detection interpretation, §6 Recommendations.
+  - Build order: §2+header → §3 → §5 → §6 → §4 (event detection last; its own spike).
+- **Site baseline + flag logic.** Per-site, per-parameter baseline (min–max) and computed Flag (Normal / Elevated / Low / Exceedance). New data requirement; see G3.
+- **Site/device metadata store.** Coordinates, water-body type, client/contract, per-sensor calibration dates — none exist in `sensor_data` today. Needed for the report header and §5.
+- **Event detection (§4).** Classify correlated multi-parameter movements into the template taxonomy (Sewage / Algal bloom / Stormwater / Industrial / Thermal / Saltwater intrusion / Acidic input / Hypoxia / Inconclusive) with window, severity, movements. Detection is deterministic; interpretation is LLM. Riskiest report piece; see G4.
+- **Faulty / erroneous sensor data handling + recalibration guidance.** Detect/flag bad readings, surface "device error / needs recalibration," ground guidance in a sensor manual (source-of-truth only). **Consolidate with report §5 Data Quality — same workstream.** Requires the sensor datasheet (= existing #8).
+- **Document management UI + auto-seed.** Upload + delete source-of-truth docs, auto-seed on upload. Pulls forward README §15's deferred ingestion UI.
+
+### Behavioral / quality changes
+- **Raise or remove `MAX_TOOL_ROUNDS`** in `main.py`. One report = all 6 metrics × multiple aggregations + retrieval in a single answer, well past the current 5-round cap. Hard dependency for report generation.
+- **System-prompt personality** — friendly, steers users toward water-quality questions.
+- **No public links to source-of-truth documents** in responses (privacy/security; net-new, not previously tracked).
+- Markdown rendering (= **#1**, bundle XSS **#15**); inline quote citations + show retrieved chunks (relates to **#3**).
+
+### Migrations & integration
+- **Frontend → Next.js** dedicated chatbot page; re-point dashboard `services/gilligan.js` from `/gilligan/*` to the new `/chat`. See G5/G6.
+- **Backend migration** to target stack — gated on G1.
+- **Real-data integration (backend-mediated).** Abstract `query_sensor_data` behind a data-source interface with swappable adapters: CSV/Postgres now, device-API adapter later (forwards the user's JWT, decodes the production API's numeric-keyed metrics — pH=99, DO=97, ORP=98, conductivity=100, temp=102, **turbidity code TBD**). First real-data step is an access-discovery task: the production `/water/*` + `/devices` backend is not in the available repos and its URL is injected at deploy via `NEXT_PUBLIC_API_BASE_URL`. Pivot options: production endpoint (read-only, scoped test token) vs. a QA/dev mirror.
+
+### Demo / docs
+- **Mock conversation set** for testing + demo; optionally LLM-generated from data + context (adjacent to **#22** eval harness).
+- **Reconcile README model note** — README says Qwen3; deployment is `gpt-oss-20b`.
+
+---
+
 ## Won't-fix unless triggered
 
 These are flagged so they're not forgotten, but they should not be worked on at baseline:
