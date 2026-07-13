@@ -6,6 +6,7 @@ backend/.venv/
 backend/.wvenv/
 .pytest_cache/
 .ocr_cache/
+.claude/
 
 # Sensor data — treat as confidential per CLAUDE.md privacy posture
 data/*
