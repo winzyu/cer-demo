@@ -1,18 +1,42 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# env & secrets
 .env
-__pycache__/
-*.pyc
-*.pyo
-backend/.venv/
-backend/.wvenv/
-.pytest_cache/
-.ocr_cache/
+.env.local
+.env.*.local
+serviceAccountKey.json
+
+# logs
+*.log
+npm-debug.log*
+
+# test coverage
+coverage/
+
+# editor / OS
+.DS_Store
+.vscode/
+
+# claude worktrees / local agent state
 .claude/
 
-# Sensor data — treat as confidential per CLAUDE.md privacy posture
+# legacy python pipeline artifacts
+__pycache__/
+*.pyc
+.pytest_cache/
+.ocr_cache/
+
+# Sensor data — confidential per CLAUDE.md privacy posture
 data/*
 !data/.gitkeep
 
-# Source documents — public EPA/USGS but bulky; URLs are in docs/README.md
-docs/*
-!docs/README.md
-!docs/.gitkeep
+# Source documents — public EPA/USGS but bulky
+documents/*
+!documents/.gitkeep
+
+# Migration planning artifacts are tracked deliverables (see CLAUDE.md)
+!docs/migration/
