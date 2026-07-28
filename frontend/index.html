@@ -154,9 +154,8 @@
         const r = await fetch(BACKEND + API_PATH, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          // NOTE: history is displayed locally but not sent — the endpoint accepts
-          // { query, retrieval?, stream? } only. Multi-turn is a known gap (SPECS §10.1).
-          body: JSON.stringify({ query: msg, stream: true }),
+          // history excludes the turn just pushed — that one is sent as `query`.
+          body: JSON.stringify({ query: msg, history: history.slice(0, -1), stream: true }),
         });
 
         if (!r.ok) {

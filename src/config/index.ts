@@ -47,6 +47,15 @@ export interface DeviceApiConfig {
   timeoutMs: number;
 }
 
+export interface ChatConfig {
+  /**
+   * Hard cap on prior messages accepted from a caller. History is unbounded input the client
+   * controls, so without a cap one conversation can grow the prompt — and the bill — without
+   * limit. Oldest messages are dropped first.
+   */
+  maxHistoryMessages: number;
+}
+
 export interface RetrievalConfig {
   /** Registry key for the adapter selected by default (validated by the registry, later phase). */
   defaultMode: string;
@@ -62,6 +71,7 @@ export interface Config {
   firestore: FirestoreConfig;
   fireworks: FireworksConfig;
   deviceApi: DeviceApiConfig;
+  chat: ChatConfig;
   retrieval: RetrievalConfig;
   waterType: WaterType;
 }
@@ -146,6 +156,9 @@ const load = (): Config => {
       baseUrl: readString("DEVICE_API_BASE_URL"),
       devToken: readString("DEVICE_API_TOKEN"),
       timeoutMs: readInt("DEVICE_API_TIMEOUT_MS", 10000),
+    },
+    chat: {
+      maxHistoryMessages: readInt("MAX_HISTORY_MESSAGES", 20),
     },
     retrieval: {
       defaultMode: readString("DEFAULT_RETRIEVAL", "stub") as string,
