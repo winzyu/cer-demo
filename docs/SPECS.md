@@ -7,6 +7,9 @@ implementation reference for the current codebase.
   [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md).
 - The **conventions** this code follows are in [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md).
 - The **roadmap / next steps** are in [`timeline.md`](timeline.md).
+- The **direct-feed vs RAG experiment** that decides how document context is retrieved — on cost —
+  is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). Deferred: it runs on its own branch after
+  Phase N1, and produces `RETRIEVAL_COMPARISON.md`.
 
 > **Status: skeleton.** Service bootstrap only. No business logic yet — retrieval, `POST /chat`,
 > sensor queries, and ingestion are **not implemented** (see §11).
@@ -188,7 +191,7 @@ Run with `npm test`. Layout mirrors the conventions: `test/integration/` with `*
 | Retrieval interface + adapters | `MIGRATION_SPEC.md` §7 | `Chunk`/`getContext()`, adapter registry, **stub adapter** first |
 | `POST /chat` orchestration | `MIGRATION_SPEC.md` §3 | config-selected adapter, prompt assembly, **streaming** |
 | LLM / embedding calls | `MIGRATION_SPEC.md` §4 | Fireworks (OpenAI-compatible SDK), model id from config |
-| Document retrieval store | `MIGRATION_SPEC.md` §6–7 (pgvector) | **open gate** — Firestore vector search vs external store |
+| Document context strategy | `MIGRATION_SPEC.md` §6–7 (pgvector) | **open gate ◆G7** — decided by the [direct-feed vs RAG bake-off](RETRIEVAL_BAKEOFF.md): `firestore-direct` vs `pgvector-rag` vs `firestore-vector` |
 | `query_sensor_data` | `MIGRATION_SPEC.md` §8 | Firestore-backed or device-API adapter |
 | Ingestion (docs + CSV) | `MIGRATION_SPEC.md` §5 | re-home to Firestore |
 | Chat frontend wiring | `frontend/index.html` | point at `POST /chat` |

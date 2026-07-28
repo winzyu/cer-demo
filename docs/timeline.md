@@ -9,7 +9,8 @@ gate (◆G1) is now **resolved** — see below — which re-anchors every phase 
 
 Companion docs: [`SPECS.md`](SPECS.md) (what's built today), [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md)
 (coding conventions), [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md) (legacy FastAPI
-behavior being ported), `report/…report-template.pdf` (the report template a later phase builds toward).
+behavior being ported), [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) (the Phase N2 direct-feed vs
+RAG experiment design), `report/…report-template.pdf` (the report template a later phase builds toward).
 
 > The previous planning docs `BACKLOG.md` and `data-access-findings.md` were retired during the
 > stack conversion. Their still-relevant items are folded into the phases below; the legacy system's
@@ -25,6 +26,22 @@ The original timeline held three options: (A) run the FastAPI/pgvector demo as-i
 the Python RAG core, swap only the sensor source, (C) full port to Node/Express + Firestore. **C was
 chosen and is underway.** This closes the largest gate and unblocks the phases below; it also means
 retrieval must be re-implemented off pgvector (new gate ◆G7).
+
+**New track: the retrieval strategy is now an experiment, not an assumption — and the driver is
+cost.** The two strategies have structurally different cost shapes (direct-feed: large flat
+per-request input, zero fixed cost; RAG: small per-request input, but corpus embedding + index
+storage + re-embedding on every corpus change), and which is cheaper at our query volume can't be
+reasoned out — it has to be measured. So Phase N2 measures a **direct-feeding brain** (put the source
+text in the prompt) against a **RAG brain** (embed → search → inject top matches), prices both, and
+lets the numbers close ◆G7. Full design in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md).
+
+Two things to keep straight about this track:
+
+- It deliberately restores a **dev-only** pgvector sidecar as the legacy-parity baseline — a measuring
+  stick, not a reversal of ◆G1. It never enters the deployed path and is deleted once ◆G7 closes.
+- **It is deferred, and not on this branch.** `migration` stays scoped to the skeleton + docs. The
+  bake-off runs on its own branch (e.g. `feat/retrieval-bakeoff`) *after* `migration` merges and
+  *after* Phase N1 provides the adapter seam. Nothing in it should be implemented now.
 
 ### Completed (migration groundwork)
 
@@ -80,33 +97,83 @@ the seam everything downstream plugs into.*
 *Exit: the service answers `/chat` end to end against the stub adapter, streaming, with adapter
 selection and the debug-override rule enforced. No real corpus required.*
 
+> The registry + `DEBUG_RETRIEVAL` override are also the **bake-off harness**: N2 compares strategies
+> by swapping one request field on the same running server. Build the seam cleanly here and N2 costs
+> no rework.
+
 ---
 
-## Phase N2 — Real retrieval on Firestore
-*Goal: replace the stub with real document retrieval. This is where the pgvector loss is felt.*
+## Phase N2 — Retrieval bake-off: direct-feed vs RAG
+*Goal: replace the stub with real document context — and decide **how** by measuring **what each
+method costs**, not by arguing. Full experiment design:
+[`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md).*
 
-**◆ G7 — Retrieval store & method (new; the pgvector replacement gate). Blocks this phase.** Spike to decide:
+> **Deferred — do not start on the `migration` branch.** Runs on its own branch
+> (e.g. `feat/retrieval-bakeoff`) after `migration` merges and after N1 delivers the adapter seam.
+> Also needs two inputs from outside the code: **projected requests/month** and **current Fireworks
+> pricing incl. the cached-input rate** — the break-even math is meaningless without both.
 
-| Option | What it means | Watch-outs |
+**◆ G7 — Retrieval store & method (the pgvector replacement gate). Resolved *by* this phase**, not
+before it. Each candidate becomes an adapter behind the N1 interface and is graded on the same eval
+set; the winner closes the gate.
+
+| arm | what it does | infra |
 |---|---|---|
-| **Firestore native vector search** | Store chunk embeddings in Firestore, use its KNN/`findNearest` vector query | Confirm dimension/þindex limits and cost; single store, consistent with the stack |
-| **External vector store** | Firestore for metadata, a dedicated vector DB for embeddings | Adds a system the conventions deliberately avoided; more infra |
-| **Keep stub / defer** | Ship N1 features that don't need the corpus first | Only viable if early demos are sensor-focused |
+| `firestore-direct` | **Direct feed** — read the corpus slice from Firestore, put it in the prompt whole. No embedding, no ranking, no top-k, structurally no retrieval miss. | none |
+| `pgvector-rag` | **Legacy-parity RAG** — hybrid dense + Postgres full-text fused with RRF, exactly `MIGRATION_SPEC.md` §7. | Postgres+pgvector sidecar, **dev-only**, deleted after G7 |
+| `firestore-vector` | RAG on Firestore native `findNearest`, dense-only unless a lexical path is built | Firestore vector index |
 
-**Lexical arm is a distinct sub-problem:** the legacy retrieval was **hybrid dense + Postgres
-full-text (BM25) fused with RRF** (`MIGRATION_SPEC.md` §7). **Firestore has no full-text search.** So
-either (a) go dense-only and accept the acronym/exact-token weakness the hybrid was built to fix, or
-(b) add a lexical path (e.g. a keyword-token field + array-contains, or an external text-search
-service). Decide explicitly — a pure-vector rebuild changes results.
+**The corpus does not fit in context.** ~1.357M chars ≈ **339K tokens** across 9 docs
+(`MIGRATION_SPEC.md` §10.1), so "direct feed" means a *defined slice*, not everything — see ◆G9. The
+small authoritative tier (criteria table + USGS DO + factsheet) is ~21K tokens and is the recommended
+starting slice. Confirm the configured model's real context limit first; the serverless catalogue rotates.
 
-- Build a **Fireworks embedding adapter** (`getContext` implementation) behind the N1 interface,
-  preserving the nomic `search_query:` / `search_document:` task prefixes (dropping them degrades quality).
-- **Ingestion → Firestore** (port of `MIGRATION_SPEC.md` §5): documents → chunks → embeddings written
-  to Firestore; preserve chunking (3200 chars / 400 overlap), the quality filter, and OCR for the one
-  scanned PDF. Idempotent by filename.
+**Lexical arm is a distinct sub-problem** for the Firestore RAG arm: the legacy retrieval was hybrid
+dense + BM25 fused with RRF, and **Firestore has no full-text search**. Either go dense-only and
+accept the acronym/exact-token weakness the hybrid was built to fix, or add a lexical path (keyword-token
+field + array-contains, or an external text-search service). A pure-vector rebuild changes results —
+and the eval set includes acronym queries precisely to expose that.
 
-*Exit: a real retrieval adapter selectable via config returns grounded chunks from the corpus in
-Firestore; ingestion is idempotent; retrieval quality validated against a few known queries.*
+Build work in this phase:
+
+- **`firestore-direct` adapter** — corpus slice → prompt, in stable document order, behind the N1
+  `getContext` interface. Cheapest arm to stand up; build it first.
+- **Fireworks embedding adapter** for the RAG arms, preserving the nomic `search_query:` /
+  `search_document:` task prefixes (dropping them degrades quality).
+- **Ingestion → Firestore** (port of `MIGRATION_SPEC.md` §5): documents → chunks → embeddings;
+  preserve chunking (3200 chars / 400 overlap), the quality filter, and OCR for the one scanned PDF.
+  Idempotent by filename. Direct-feed needs the document text but not the embeddings.
+- **`pgvector-rag` sidecar** — `docker-compose.bakeoff.yml`, never in the deployed image.
+- **Eval harness (programmatic)** — a runner replays ~25–30 fixed **multi-turn conversations** over
+  HTTP against each arm in a set order, and saves full transcripts: responses, **the exact context
+  supplied to the model** (without it groundedness can't be graded), tool calls, cached/uncached token
+  split, TTFT and wall time, plus arm/model/temperature/git-SHA. Temperature pinned to 0; cold and
+  warm passes kept separate.
+- **Grading is a separate offline pass** over the saved transcripts, arms stripped and shuffled —
+  human, LLM judge, or judge calibrated against a human sample. If a judge grades: different model
+  than the one under test, one dimension per call, and the human-agreement rate reported.
+- **Cost accounting covers upkeep, not just tokens** — idle/standing cost per arm (direct-feed: $0;
+  deployed `pgvector-rag`: an always-on DB instance that likely dominates at our volume), Firestore
+  free-tier headroom, index storage, re-embedding on corpus change, and the legacy FastAPI+pgvector
+  cost floor as a reference point.
+- **Latency and cost ceilings written down before results** — a quality win that blows the budget
+  isn't a win, and setting the bar afterward isn't a test.
+- **Deliverable: `docs/RETRIEVAL_COMPARISON.md`** — a committed comparison of every retrieval method
+  and its output: headline table (cost/answer cold + warm, cache hit rate, **idle $/mo, 12-month
+  TCO**, quality, p95), the upkeep breakdown, break-even chart against projected volume, dated prices
+  **and quotas**, side-by-side sample conversations (including a case each arm loses), how quality was
+  graded and the judge/human agreement rate, and the decision plus what would reverse it. *This report
+  is the point of the phase*, and it's re-runnable when prices, the model, the corpus, or traffic change.
+
+**Decision rule: quality gates, cost decides.** Arms below the correctness/groundedness floor are out
+regardless of price; among those that clear it, total cost of ownership at our volume wins; latency is
+a veto, not a tiebreaker.
+
+*Exit: every selected arm selectable via config and verified; eval set, rubrics, and raw per-question
+results committed; **`RETRIEVAL_COMPARISON.md` written**; ◆G7 resolved with the numbers that resolved
+it; ◆G9/◆G10 closed; pgvector sidecar removed. A **split outcome is a legitimate result** —
+direct-feed the small authoritative tier, RAG the long manuals — and the adapter registry composes
+that without a rewrite.*
 
 ---
 
@@ -237,7 +304,9 @@ answers complete.*
 | Gate | Decision | Status | Blocks |
 |---|---|---|---|
 | ◆ G1 | Target stack (A/B/C) | **Resolved → C (Node/Express + Firestore)** | — (unblocked all) |
-| ◆ G7 | Retrieval store on Firestore (vector method + lexical arm) | Open | Phase N2 |
+| ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open — **resolved by the N2 bake-off**, by measurement, on its own branch later | Phases N2→N6 depend on the answer; N2 itself is the experiment |
+| ◆ G9 | Direct-feed corpus slice (small tier / whole-doc selection / distilled) — the corpus is ~339K tokens and does **not** fit in context | Open — recommend starting with the ~21K-token small tier | `firestore-direct` arm |
+| ◆ G10 | Does `firestore-vector` run as a third arm, or is the bake-off just direct-feed vs `pgvector-rag`? | Open | N2 scope/duration |
 | ◆ G8 | Sensor-data store (Firestore port vs device-API) | Open | Phase N3 |
 | ◆ G3 | Site-baseline definition (operator range vs. computed) | Open | Phase N4 flag logic |
 | ◆ G4 | Event-detection context source | Open | Phase N6 §4 |

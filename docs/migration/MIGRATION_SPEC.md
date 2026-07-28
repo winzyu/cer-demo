@@ -263,6 +263,12 @@ Index: `idx_sensor_measured_at` — B-tree on `measured_at`.
 
 ## 7. Retrieval pipeline (`search_documents`)
 
+> **This section is the parity target for the `pgvector-rag` arm of the Phase N2 bake-off**
+> ([`../RETRIEVAL_BAKEOFF.md`](../RETRIEVAL_BAKEOFF.md)). That arm reproduces the behavior below
+> exactly — same fetch depth, same `RRF_K`, same top-k — as the legacy baseline the direct-feed and
+> Firestore-vector arms are measured against. Reimplementing it "close enough" would invalidate the
+> comparison.
+
 Hybrid retrieval fusing dense vector search and Postgres full-text search.
 
 1. **Guard:** empty query or `top_k <= 0` → return `[]`.

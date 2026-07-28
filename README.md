@@ -74,6 +74,12 @@ The service will call Fireworks' OpenAI-compatible API for chat completion and e
    This stores credentials the Firestore client picks up automatically — no key file needed.
 4. Set `FIRESTORE_PROJECT_ID` (your project id) and `FIRESTORE_DATABASE_ID` in `.env`.
 
+   > **Cost note:** Firestore has an "Always Free" daily quota that a demo may sit entirely inside,
+   > but the quota has historically applied to the **`(default)`** database — a *named* database can
+   > bill from the first read. Keep `FIRESTORE_DATABASE_ID=(default)` unless you have a reason not to,
+   > and confirm the current quota terms before relying on them. Firestore itself has no idle charge;
+   > see [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) §1 for the full cost picture.
+
    *Alternative (service account):* download a service-account JSON key, save it as
    `serviceAccountKey.json` in the repo root (it is git-ignored), and export
    `GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json`. Use this for CI or deployment where
@@ -157,6 +163,11 @@ The skeleton is a working HTTP service. You can exercise:
 **Not built yet (see [`docs/timeline.md`](docs/timeline.md)):** `POST /chat`, document retrieval,
 `query_sensor_data`, document/CSV ingestion, and the wired-up chat frontend.
 
+`DEFAULT_RETRIEVAL` / `DEBUG_RETRIEVAL` are already read by the config loader but have no adapters
+behind them yet. They land in Phase N1 and become the switch for the **direct-feed vs RAG cost
+bake-off** in Phase N2 — see [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md). That bake-off
+is deliberately deferred to a later, separate branch; nothing here builds it.
+
 ---
 
 ## 5. Scripts
@@ -200,7 +211,7 @@ frontend/
   index.html            # static chat UI (chat wiring lands with POST /chat)
 data/                   # sensor CSV (git-ignored; confidential per CLAUDE.md)
 documents/              # source corpus PDFs (git-ignored; bulky)
-docs/                   # SPECS.md, timeline.md, migration/
+docs/                   # SPECS.md, timeline.md, RETRIEVAL_BAKEOFF.md, migration/
 ```
 
 ---
