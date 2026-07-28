@@ -31,6 +31,22 @@ export interface FireworksConfig {
   user: string;
 }
 
+export interface DeviceApiConfig {
+  /**
+   * Base URL of the Clean Earth backend, **including** the `/api/v1` suffix. The dashboard
+   * builds this from `NEXT_PUBLIC_API_BASE_URL` + "/api/v1"; this service takes the whole
+   * thing so there is one value to get right.
+   */
+  baseUrl?: string;
+  /**
+   * Dev-only bearer token. Production forwards the *caller's* JWT instead — a shared
+   * service token would let any chat user read every device. Kept separate so the
+   * distinction stays explicit rather than accidental.
+   */
+  devToken?: string;
+  timeoutMs: number;
+}
+
 export interface RetrievalConfig {
   /** Registry key for the adapter selected by default (validated by the registry, later phase). */
   defaultMode: string;
@@ -45,6 +61,7 @@ export interface Config {
   logLevel: string;
   firestore: FirestoreConfig;
   fireworks: FireworksConfig;
+  deviceApi: DeviceApiConfig;
   retrieval: RetrievalConfig;
   waterType: WaterType;
 }
@@ -124,6 +141,11 @@ const load = (): Config => {
       embeddingModel: readString("EMBEDDING_MODEL", "nomic-ai/nomic-embed-text-v1.5") as string,
       maxTokens: readInt("LLM_MAX_TOKENS", 4096),
       user: readString("FIREWORKS_USER", "clean-earth-rag") as string,
+    },
+    deviceApi: {
+      baseUrl: readString("DEVICE_API_BASE_URL"),
+      devToken: readString("DEVICE_API_TOKEN"),
+      timeoutMs: readInt("DEVICE_API_TIMEOUT_MS", 10000),
     },
     retrieval: {
       defaultMode: readString("DEFAULT_RETRIEVAL", "stub") as string,
