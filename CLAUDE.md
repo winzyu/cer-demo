@@ -25,6 +25,19 @@ Do not hand me a git plan for unverified work. If something is untested or
 failing, say so plainly instead — including pre-existing failures you did not
 introduce.
 
+**Every git plan covers only what is uncommitted right now — nothing else.**
+
+- Run `git status --short`, `git log --oneline -3`, and `git status -sb`
+  immediately before writing the plan. Derive it from that output, never from
+  what you remember proposing earlier in the session.
+- I may have already run an earlier plan. Assume I did. Never re-list commits
+  that already landed, and never re-create a branch that already exists.
+- One checkpoint, one plan. Do not accumulate a session-long list of commits.
+- Name the actual paths from `git status`, not the ones you expected to see. If
+  a file you wrote is missing from the output, say so — it likely means I already
+  committed it, or it did not get written.
+- If nothing is uncommitted, say exactly that instead of producing a plan.
+
 # Commit messages
 
 Keep them short: a one-line subject, and at most a few lines of body. The subject
