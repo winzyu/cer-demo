@@ -1,7 +1,7 @@
 {
   "name": "clean-earth-rag",
   "version": "0.1.0",
-  "description": "Water-quality RAG assistant — Node/Express + Firestore service",
+  "description": "Water-quality RAG assistant \u2014 Node/Express + Firestore service",
   "main": "dist/index.js",
   "private": true,
   "scripts": {
@@ -12,18 +12,21 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "ingest": "ts-node scripts/ingest.ts"
   },
   "license": "MIT",
   "dependencies": {
     "@google-cloud/firestore": "^7.11.0",
+    "@types/pdf-parse": "^1.1.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^7.2.0",
     "http-errors": "^2.0.0",
     "morgan": "^1.10.0",
-    "openai": "^7.0.0"
+    "openai": "^7.0.0",
+    "pdf-parse": "^2.4.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
