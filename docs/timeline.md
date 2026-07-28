@@ -345,8 +345,8 @@ answers complete.*
 |---|---|---|---|
 | ◆ G1 | Target stack (A/B/C) | **Resolved → C (Node/Express + Firestore)** | — (unblocked all) |
 | ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open — **resolved by the N2 bake-off**, by measurement, on its own branch later | Phases N2→N6 depend on the answer; N2 itself is the experiment |
-| ◆ G9 | Direct-feed corpus slice (small tier / whole-doc selection / distilled) — the corpus is ~339K tokens and does **not** fit in context | Open — recommend starting with the ~21K-token small tier | `firestore-direct` arm |
-| ◆ G10 | Does `firestore-vector` run as a third arm, or is the bake-off just direct-feed vs `pgvector-rag`? | Open | N2 scope/duration |
+| ◆ G9 | Direct-feed corpus slice | **Resolved → small tier (~21K tokens)**: aquatic-life criteria table + USGS DO + factsheet. Long manuals are out of reach for this arm — itself a measurable result | — |
+| ◆ G10 | Third bake-off arm | **Resolved → yes, three arms**: `firestore-direct`, `pgvector-rag`, `firestore-vector`. Also answers whether Firestore's own vector search is good enough if RAG wins | — |
 | ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open | N3 loop scope; multi-part answer quality |
 | ◆ G8 | Sensor-data store (Firestore port vs device-API) | **Resolved → device API** (most direct path to the real codebase) | — |
 | ◆ G3 | Site-baseline definition (operator range vs. computed) | Open | Phase N4 flag logic |

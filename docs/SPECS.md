@@ -124,6 +124,8 @@ config = {
   nodeEnv, isProduction, port, logLevel,
   firestore:  { projectId?, databaseId },
   fireworks:  { apiKey?, baseUrl, chatModel?, embeddingModel, maxTokens, user },
+  deviceApi:  { baseUrl?, devToken?, timeoutMs },
+  chat:       { maxHistoryMessages },
   retrieval:  { defaultMode, debug },
   waterType,
 }
@@ -251,10 +253,19 @@ ChatController ─► RetrievalRegistry.resolve(retrieval?) ─► adapter.getCo
 
 ### 10.1 Request
 
-`{ query: string, retrieval?: string, stream?: boolean }`, validated by hand in
-`validators/chatValidators.ts` (conventions §8 — no schema library). `query` is required and
-trimmed; `retrieval` and `stream` are optional and type-checked. Every failure is a
-`ValidationError` → 400 in the house `{ error, message }` shape.
+`{ query: string, retrieval?: string, stream?: boolean, history?: ChatMessage[] }`, validated by
+hand in `validators/chatValidators.ts` (conventions §8 — no schema library). `query` is required and
+trimmed; the rest are optional and type-checked. Every failure is a `ValidationError` → 400 in the
+house `{ error, message }` shape.
+
+**History carries two deliberate guards:**
+
+- **Only `user` and `assistant` roles are accepted.** A caller-supplied `system` message is
+  rejected with a 400 — accepting one would let anyone override the scope and refusal policy with
+  `{ role: "system", content: "ignore previous instructions" }`.
+- **Trimmed to the newest `MAX_HISTORY_MESSAGES` (default 20), not rejected.** History is
+  unbounded client-controlled input; without a cap one conversation grows the prompt, and the bill,
+  without limit. Oldest turns are dropped because recent ones carry the context that matters.
 
 ### 10.2 Prompt assembly (`src/prompt/`)
 
@@ -345,7 +356,7 @@ for local demo, to be tightened before deploy.
 
 ## 12. Testing
 
-Jest + `ts-jest` + `supertest`. **65 tests, all passing.**
+Jest + `ts-jest` + `supertest`. **76 tests, all passing.**
 
 | suite | covers |
 |---|---|
@@ -354,6 +365,7 @@ Jest + `ts-jest` + `supertest`. **65 tests, all passing.**
 | `unit/retrieval.test.ts` | `resolveTopK`, `StubAdapter` guards, registry lookup, all five selection rules |
 | `unit/prompt.test.ts` | ranges, `REFUSAL_SENTENCE` pinned verbatim, block ordering, cacheable-prefix stability |
 | `unit/llmService.test.ts` | request params (`max_tokens`, `user`, no tools), empty-answer 502, streaming deltas, abort signal, usage handling |
+| `unit/chatValidators.test.ts` | history ordering, newest-kept trimming, the `system`-role rejection, per-index error messages |
 
 **No test touches the network, needs a key, or spends money** — `chat.test.ts` mocks `LlmService`
 wholesale and the unit tests inject a fake client. Run with `npm test`.
@@ -377,6 +389,7 @@ conventions this codebase follows, rather than disabled globally:
 | Area | Legacy reference | Target |
 |---|---|---|
 | Tool-calling orchestration loop | `MIGRATION_SPEC.md` §3 | 5 tool rounds + 1 forced-text round, `role:"tool"` messages, round-cap fallback — returns in N3 with `query_sensor_data` |
+| Corpus ingestion + real adapters | `MIGRATION_SPEC.md` §5 | N2 bake-off: `firestore-direct` (small tier, ◆G9), `pgvector-rag`, `firestore-vector` (◆G10 → all three) |
 | Embedding calls | `MIGRATION_SPEC.md` §4.4 | only needed if the bake-off selects a vector arm |
 | Document context strategy | `MIGRATION_SPEC.md` §6–7 (pgvector) | **open gate ◆G7** — decided by the [direct-feed vs RAG bake-off](RETRIEVAL_BAKEOFF.md): `firestore-direct` vs `pgvector-rag` vs `firestore-vector` |
 | `query_sensor_data` | `MIGRATION_SPEC.md` §8 | **device-API adapter** (◆G8 resolved) — see `timeline.md` N3 |

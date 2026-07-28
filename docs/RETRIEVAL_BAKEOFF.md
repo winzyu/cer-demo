@@ -181,9 +181,9 @@ reimplementation-from-memory proves nothing. Constraints:
   whether to port its *technique* (hybrid + RRF) onto the production store — not to move back.
 - Delete the sidecar once ◆G7 is resolved.
 
-### On the `firestore-vector` arm — ◆G10
+### On the `firestore-vector` arm — ◆G10 **RESOLVED → included**
 
-Whether this third arm runs at all is open. Including it answers "is Firestore's vector search good
+All three arms run. Including it answers "is Firestore's vector search good
 enough?" directly; excluding it keeps the experiment to two arms and one week. Note that
 **Firestore has no full-text search**, so this arm is dense-only unless a lexical path is built
 (keyword-token field + `array-contains`, or an external text-search service) — which is exactly the
@@ -208,7 +208,11 @@ the limit as a config-time fact to verify, not a constant.
 
 So "direct feeding" is not "feed everything." It needs a defined slice — ◆G9.
 
-### ◆ G9 — direct-feed corpus slice
+### ◆ G9 — direct-feed corpus slice — **RESOLVED → small tier (~21K tokens)**
+
+Selected: `aquatic-life-criteria-table.md` + `Dissolved Oxygen and Water _ U.S. Geological Survey.pdf`
++ `nutrient-lakes-reservoirs-factsheet-final.pdf`. The long manuals are out of reach for this arm;
+questions that need them are expected to fail here, and that gap is part of what the eval measures.
 
 | option | tokens/request | trade-off |
 |---|---:|---|

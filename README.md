@@ -6,10 +6,11 @@ readings and a corpus of authoritative water-quality documents.
 This repository is being migrated from the original FastAPI + Postgres/pgvector implementation
 to a **Node/Express + Firestore** stack.
 
-> **Status: skeleton.** The service bootstrap is complete — config loading + validation,
-> Firestore initialization, Express + middleware, error handling, logging, and a health
-> endpoint. The **`POST /chat` endpoint, retrieval, and sensor queries are not built yet** —
-> see [`docs/timeline.md`](docs/timeline.md) for what's next and
+> **Status: Phase N1 complete.** `POST /api/v1/chat` works end to end — retrieval adapter
+> selection, prompt assembly, a Fireworks answer, multi-turn history, and optional streaming.
+> Retrieval is still the **stub adapter**, so answers are grounded in placeholder text; real
+> retrieval is chosen by the Phase N2 bake-off. **Sensor queries and ingestion are not built
+> yet** — see [`docs/timeline.md`](docs/timeline.md) for what's next and
 > [`docs/SPECS.md`](docs/SPECS.md) for exactly what exists today.
 
 Companion docs:
@@ -17,6 +18,7 @@ Companion docs:
 - [`docs/timeline.md`](docs/timeline.md) — phased plan and next steps.
 - [`docs/migration/CONVENTIONS.md`](docs/migration/CONVENTIONS.md) — the conventions this code follows.
 - [`docs/migration/MIGRATION_SPEC.md`](docs/migration/MIGRATION_SPEC.md) — behavioral spec of the legacy FastAPI system.
+- [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) — the Phase N2 direct-feed vs RAG cost experiment.
 
 ---
 
@@ -25,6 +27,7 @@ Companion docs:
 - **Runtime:** Node.js 18+, TypeScript (CommonJS output, strict).
 - **HTTP:** Express 4, with `helmet`, `cors`, `morgan`.
 - **Datastore:** Firestore (`@google-cloud/firestore`).
+- **LLM:** Fireworks via the `openai` SDK (OpenAI-compatible endpoint).
 - **Errors:** `http-errors` + a central error handler.
 - **Tests:** Jest + `ts-jest` + `supertest`.
 
@@ -137,7 +140,13 @@ cp .env.example .env
 | `FIREWORKS_API_KEY` | *(unset)* | Fireworks API key. Required before chat works; a warning is logged if missing. |
 | `FIREWORKS_BASE_URL` | `https://api.fireworks.ai/inference/v1` | OpenAI-compatible endpoint. |
 | `LLM_MODEL` | *(unset)* | Chat model id (e.g. `accounts/fireworks/models/gpt-oss-20b`). |
+| `LLM_MAX_TOKENS` | `4096` | Keep generous — gpt-oss emits reasoning tokens and returns an empty answer if starved. |
+| `FIREWORKS_USER` | `clean-earth-rag` | Sent as the OpenAI `user` field; drives serverless prompt-cache affinity. |
 | `EMBEDDING_MODEL` | `nomic-ai/nomic-embed-text-v1.5` | Embedding model id (768-dim). |
+| `MAX_HISTORY_MESSAGES` | `20` | Cap on prior turns accepted per request. Oldest are dropped, not rejected. |
+| `DEVICE_API_BASE_URL` | *(unset)* | Clean Earth backend base URL, **including `/api/v1`** (§2c). Phase N3. |
+| `DEVICE_API_TOKEN` | *(unset)* | Dev-only bearer JWT (§2c). Production forwards the caller's token. |
+| `DEVICE_API_TIMEOUT_MS` | `10000` | Device API request timeout. |
 | `DEFAULT_RETRIEVAL` | `stub` | Which retrieval adapter to use by default. |
 | `DEBUG_RETRIEVAL` | `false` | When `true`, a request may override the retrieval mode. |
 | `WATER_TYPE` | `freshwater` | `freshwater` \| `saltwater` — selects the conductivity normal range. |
@@ -206,8 +215,8 @@ shows service status and whether the API key is configured. **This is a manual t
 product** — the real UI is the Next.js page in Phase N7.
 
 **Not built yet (see [`docs/timeline.md`](docs/timeline.md)):** real document retrieval (the `stub`
-adapter is what answers today), `query_sensor_data`, document/CSV ingestion, multi-turn history on
-the API, and the tool-calling loop.
+adapter is what answers today), `query_sensor_data`, document/CSV ingestion, and the tool-calling
+loop.
 
 `DEFAULT_RETRIEVAL` / `DEBUG_RETRIEVAL` select the retrieval adapter and are the switch for the
 **direct-feed vs RAG cost bake-off** in Phase N2 — see
