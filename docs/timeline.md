@@ -101,6 +101,21 @@ selection and the debug-override rule enforced. No real corpus required.*
 > by swapping one request field on the same running server. Build the seam cleanly here and N2 costs
 > no rework.
 
+**Retrieval runs up front, not as a tool — and `search_documents` is gone.** The legacy service
+exposed retrieval as a tool and let the model decide whether and when to search
+(`MIGRATION_SPEC.md` §3–4.3). Here retrieval runs before the LLM call and the text arrives as
+context. Two reasons:
+
+- **It is what makes N2 measurable.** If the model chose when to retrieve, each arm would get a
+  different number of retrievals per question depending on how the model behaved that run — you would
+  be measuring tool-calling behavior, not the retrieval strategy.
+- **Direct-feed has no tool-shaped equivalent.** "Put the corpus in the prompt" cannot be expressed
+  as a function the model calls.
+
+The cost is real and is **not** a free win: the model gets one shot at the query as asked and cannot
+search, read, then search again the way the legacy loop could. Multi-part questions are the likely
+casualty. That trade-off is ◆G11.
+
 ---
 
 ## Phase N2 — Retrieval bake-off: direct-feed vs RAG
@@ -193,8 +208,15 @@ data-source abstraction still applies: one tool, swappable adapters.
   test token or QA mirror. The API returns **numeric-keyed metrics** (pH=99, DO=97, ORP=98,
   conductivity=100, temp=102; **turbidity code TBD**) — build the decode mapping into the adapter.
 
-*Exit: `query_sensor_data` works against the synthetic Firestore adapter; a documented device-API
-adapter stub + access-discovery checklist are ready to execute when real data is granted.*
+**Also lands here: the tool-calling orchestration loop** (`MIGRATION_SPEC.md` §3), deferred from N1.
+N1 makes a single LLM call with no tools; the legacy loop — up to `MAX_TOOL_ROUNDS = 5` tool-enabled
+rounds plus one forced text-only round, tool dispatch, `role:"tool"` messages keyed by
+`tool_call_id`, and the round-cap fallback — has to come back before any tool is usable. N5's
+"raise the tool-round cap" item depends on this existing first.
+
+*Exit: `query_sensor_data` works against the synthetic Firestore adapter; the orchestration loop is
+restored; a documented device-API adapter stub + access-discovery checklist are ready to execute when
+real data is granted.*
 
 ---
 
@@ -307,6 +329,7 @@ answers complete.*
 | ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open — **resolved by the N2 bake-off**, by measurement, on its own branch later | Phases N2→N6 depend on the answer; N2 itself is the experiment |
 | ◆ G9 | Direct-feed corpus slice (small tier / whole-doc selection / distilled) — the corpus is ~339K tokens and does **not** fit in context | Open — recommend starting with the ~21K-token small tier | `firestore-direct` arm |
 | ◆ G10 | Does `firestore-vector` run as a third arm, or is the bake-off just direct-feed vs `pgvector-rag`? | Open | N2 scope/duration |
+| ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open | N3 loop scope; multi-part answer quality |
 | ◆ G8 | Sensor-data store (Firestore port vs device-API) | Open | Phase N3 |
 | ◆ G3 | Site-baseline definition (operator range vs. computed) | Open | Phase N4 flag logic |
 | ◆ G4 | Event-detection context source | Open | Phase N6 §4 |
