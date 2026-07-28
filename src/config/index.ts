@@ -17,6 +17,18 @@ export interface FireworksConfig {
   baseUrl: string;
   chatModel?: string;
   embeddingModel: string;
+  /**
+   * Deliberately generous. gpt-oss models emit reasoning tokens before visible output and
+   * truncate to an empty answer if starved — a low cap fails as silence, not as an error.
+   */
+  maxTokens: number;
+  /**
+   * Sent as the OpenAI `user` field. On Fireworks serverless this drives cache affinity:
+   * requests sharing a value tend to land on the same worker, which is what makes prompt
+   * caching actually hit. A constant is correct for a single-tenant demo; revisit when
+   * requests carry real user identity.
+   */
+  user: string;
 }
 
 export interface RetrievalConfig {
@@ -110,6 +122,8 @@ const load = (): Config => {
       baseUrl: readString("FIREWORKS_BASE_URL", "https://api.fireworks.ai/inference/v1") as string,
       chatModel: readString("LLM_MODEL"),
       embeddingModel: readString("EMBEDDING_MODEL", "nomic-ai/nomic-embed-text-v1.5") as string,
+      maxTokens: readInt("LLM_MAX_TOKENS", 4096),
+      user: readString("FIREWORKS_USER", "clean-earth-rag") as string,
     },
     retrieval: {
       defaultMode: readString("DEFAULT_RETRIEVAL", "stub") as string,

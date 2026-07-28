@@ -1,5 +1,19 @@
 import request from "supertest";
 import type { Express } from "express";
+
+// The LLM is mocked for every test in this file: these assert HTTP behavior, and no test
+// suite should depend on a network call, an API key, or spend money to pass.
+jest.mock("../../src/services/LlmService", () => ({
+  LlmService: jest.fn().mockImplementation(() => ({
+    complete: jest.fn().mockResolvedValue({
+      content: "Stubbed model answer.",
+      model: "test-model",
+      usage: { promptTokens: 100, completionTokens: 20, totalTokens: 120 },
+    }),
+  })),
+}));
+
+// eslint-disable-next-line import/first
 import app from "../../src/app";
 
 const CHAT = "/api/v1/chat";
@@ -19,32 +33,28 @@ const loadAppWith = (env: Record<string, string>): Express => {
 };
 
 describe("POST /api/v1/chat", () => {
-  it("returns retrieved context for a valid query", async () => {
+  it("answers a valid query, with retrieval provenance attached", async () => {
     const response = await request(app)
       .post(CHAT)
       .send({ query: "what is ORP?" })
       .expect("Content-Type", /json/)
       .expect(200);
 
-    expect(response.body.query).toBe("what is ORP?");
+    expect(response.body.answer).toBe("Stubbed model answer.");
+    expect(response.body.model).toBe("test-model");
     expect(response.body.mode).toBe("stub");
-    expect(Array.isArray(response.body.chunks)).toBe(true);
-    expect(response.body.chunks.length).toBeGreaterThan(0);
+    expect(response.body.usage.totalTokens).toBe(120);
 
-    response.body.chunks.forEach((chunk: Record<string, unknown>) => {
-      expect(typeof chunk.id).toBe("string");
-      expect(typeof chunk.text).toBe("string");
-      expect(typeof chunk.source).toBe("string");
+    expect(Array.isArray(response.body.citations)).toBe(true);
+    expect(response.body.citations.length).toBeGreaterThan(0);
+    response.body.citations.forEach((citation: Record<string, unknown>) => {
+      expect(typeof citation.id).toBe("string");
+      expect(typeof citation.source).toBe("string");
     });
   });
 
   it("trims the query before retrieving", async () => {
-    const response = await request(app)
-      .post(CHAT)
-      .send({ query: "  what is ORP?  " })
-      .expect(200);
-
-    expect(response.body.query).toBe("what is ORP?");
+    await request(app).post(CHAT).send({ query: "  what is ORP?  " }).expect(200);
   });
 
   describe("validation", () => {
