@@ -54,6 +54,7 @@
 
   <script>
     const BACKEND = (new URLSearchParams(location.search)).get("backend") || "http://localhost:8000";
+    const API_PATH = "/api/v1/chat";
 
     const messagesEl = document.getElementById("messages");
     const inputEl = document.getElementById("input");
@@ -61,27 +62,55 @@
     const healthEl = document.getElementById("health");
     const history = []; // [{role, content}]
 
-    function renderMessage(role, body, citations) {
+    // Returns the body element so streamed tokens can be appended to it as they arrive.
+    function renderMessage(role, body) {
       const wrap = document.createElement("div");
       wrap.className = "msg " + role;
       const r = document.createElement("div"); r.className = "role"; r.textContent = role;
-      const b = document.createElement("div"); b.className = "body"; b.textContent = body;
+      const b = document.createElement("div"); b.className = "body"; b.textContent = body || "";
       wrap.append(r, b);
-      if (citations && citations.length) {
-        const seen = new Set();
-        const ul = document.createElement("ul"); ul.className = "citations";
-        for (const c of citations) {
-          if (seen.has(c.filename)) continue;
-          seen.add(c.filename);
-          const li = document.createElement("li");
-          const f = document.createElement("span"); f.className = "file"; f.textContent = c.filename;
-          li.append(f, document.createTextNode(" — " + c.document_title));
-          ul.appendChild(li);
-        }
-        wrap.appendChild(ul);
-      }
       messagesEl.appendChild(wrap);
       messagesEl.scrollTop = messagesEl.scrollHeight;
+      return { wrap, body: b };
+    }
+
+    // Chunk shape is { id, text, source, score? } — see docs/SPECS.md §9.
+    function renderCitations(wrap, citations) {
+      if (!citations || !citations.length) return;
+      const seen = new Set();
+      const ul = document.createElement("ul"); ul.className = "citations";
+      for (const c of citations) {
+        if (seen.has(c.source)) continue;
+        seen.add(c.source);
+        const li = document.createElement("li");
+        const f = document.createElement("span"); f.className = "file"; f.textContent = c.source;
+        li.append(f);
+        ul.appendChild(li);
+      }
+      wrap.appendChild(ul);
+    }
+
+    /** Minimal SSE parser over a fetch body stream. Yields { event, data }. */
+    async function* readSse(response) {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        // Events are separated by a blank line; keep any partial tail in the buffer.
+        const blocks = buffer.split("\n\n");
+        buffer = blocks.pop();
+        for (const block of blocks) {
+          if (!block.trim()) continue;
+          const event = (block.match(/^event: (.*)$/m) || [])[1] || "message";
+          const raw = (block.match(/^data: (.*)$/m) || [])[1] || "{}";
+          let data = {};
+          try { data = JSON.parse(raw); } catch (e) { /* ignore malformed frame */ }
+          yield { event, data };
+        }
+      }
     }
 
     function renderThinking() {
@@ -100,7 +129,9 @@
       try {
         const r = await fetch(BACKEND + "/health");
         const j = await r.json();
-        healthEl.textContent = `model: ${j.model} · db: ${j.db_ok ? "ok" : "down"} · water: ${j.water_type}`;
+        const key = j.checks?.fireworksConfigured ? "key ok" : "NO API KEY";
+        healthEl.textContent = `${j.status} · ${j.environment} · ${key}`;
+        if (!j.checks?.fireworksConfigured) healthEl.classList.add("error");
       } catch (e) {
         healthEl.textContent = "backend unreachable @ " + BACKEND;
         healthEl.classList.add("error");
@@ -116,21 +147,43 @@
       inputEl.value = "";
       sendBtn.disabled = true;
       renderThinking();
+
+      let target = null;
+      let answer = "";
       try {
-        const r = await fetch(BACKEND + "/chat", {
+        const r = await fetch(BACKEND + API_PATH, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: msg, history: history.slice(0, -1) }),
+          // NOTE: history is displayed locally but not sent — the endpoint accepts
+          // { query, retrieval?, stream? } only. Multi-turn is a known gap (SPECS §10.1).
+          body: JSON.stringify({ query: msg, stream: true }),
         });
-        removeThinking();
+
         if (!r.ok) {
-          const err = await r.text();
-          renderMessage("assistant", "Error: " + err);
+          // Validation failures arrive as JSON before the stream opens.
+          removeThinking();
+          const err = await r.json().catch(() => ({ error: r.statusText }));
+          renderMessage("assistant", "Error: " + (err.error || r.statusText));
           return;
         }
-        const j = await r.json();
-        renderMessage("assistant", j.response, j.citations);
-        history.push({ role: "assistant", content: j.response });
+
+        for await (const { event, data } of readSse(r)) {
+          if (event === "meta") {
+            removeThinking();
+            target = renderMessage("assistant", "");
+            renderCitations(target.wrap, data.citations);
+          } else if (event === "token") {
+            if (!target) { removeThinking(); target = renderMessage("assistant", ""); }
+            answer += data.text;
+            target.body.textContent = answer;
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+          } else if (event === "error") {
+            if (!target) { removeThinking(); target = renderMessage("assistant", ""); }
+            target.body.textContent = answer + "\n[stream error: " + data.error + "]";
+          }
+        }
+
+        if (answer) history.push({ role: "assistant", content: answer });
       } catch (e) {
         removeThinking();
         renderMessage("assistant", "Network error: " + e.message);
