@@ -36,6 +36,29 @@ module.exports = {
     // router (conventions §12). A handler with no injected dependencies legitimately
     // never touches `this`; still enforced for ordinary methods.
     "class-methods-use-this": ["error", { enforceForClassFields: false }],
+    // airbnb bans for-of outright. `for await...of` is the only way to consume an async
+    // iterable, which streaming requires, so the await form is allowed and the rest of
+    // airbnb's restrictions are kept verbatim.
+    "no-restricted-syntax": [
+      "error",
+      {
+        selector: "ForInStatement",
+        message:
+          "for..in iterates the prototype chain. Use Object.{keys,values,entries} and iterate the result.",
+      },
+      {
+        selector: "ForOfStatement[await=false]",
+        message: "Prefer array iteration methods over for..of. (for await..of is allowed.)",
+      },
+      {
+        selector: "LabeledStatement",
+        message: "Labels are a form of GOTO; use functions instead.",
+      },
+      {
+        selector: "WithStatement",
+        message: "`with` is disallowed in strict mode.",
+      },
+    ],
   },
   overrides: [
     {

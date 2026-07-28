@@ -96,3 +96,96 @@ describe("LlmService.complete", () => {
     );
   });
 });
+
+/** Mimics the SDK's streamed chunk shape. */
+const streamOf = async function* streamOf(
+  parts: unknown[],
+): AsyncGenerator<unknown> {
+  for (const part of parts) {
+    yield part;
+  }
+};
+
+const delta = (content: string) => ({
+  choices: [{ delta: { content } }],
+  model: "test-model",
+});
+
+describe("LlmService.completeStream", () => {
+  const originalModel = config.fireworks.chatModel;
+
+  beforeAll(() => {
+    (config.fireworks as { chatModel?: string }).chatModel = "test-model";
+  });
+
+  afterAll(() => {
+    (config.fireworks as { chatModel?: string }).chatModel = originalModel;
+  });
+
+  const collect = async (parts: unknown[]) => {
+    const create = jest.fn().mockResolvedValue(streamOf(parts));
+    const service = new LlmService(fakeClient(create));
+    const events = [];
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const event of service.completeStream(messages)) {
+      events.push(event);
+    }
+    return { events, create };
+  };
+
+  it("yields text deltas in order", async () => {
+    const { events } = await collect([delta("ORP "), delta("is "), delta("mV.")]);
+
+    expect(events.map((e) => e.text).join("")).toBe("ORP is mV.");
+  });
+
+  it("requests a stream and asks for usage", async () => {
+    const { create } = await collect([delta("hi")]);
+    const params = create.mock.calls[0][0];
+
+    expect(params.stream).toBe(true);
+    expect(params.stream_options).toEqual({ include_usage: true });
+    // Cache affinity must be set on the streaming path too.
+    expect(params.user).toBe(config.fireworks.user);
+  });
+
+  it("passes an abort signal through so a disconnect stops generation", async () => {
+    const create = jest.fn().mockResolvedValue(streamOf([delta("hi")]));
+    const controller = new AbortController();
+    const service = new LlmService(fakeClient(create));
+
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const _ of service.completeStream(messages, controller.signal)) {
+      // drain
+    }
+
+    expect(create.mock.calls[0][1]).toEqual({ signal: controller.signal });
+  });
+
+  it("emits usage when the provider sends it", async () => {
+    const { events } = await collect([
+      delta("hi"),
+      { choices: [], model: "test-model", usage: { prompt_tokens: 10, completion_tokens: 2, total_tokens: 12 } },
+    ]);
+
+    expect(events[events.length - 1].usage?.totalTokens).toBe(12);
+  });
+
+  it("tolerates a provider that never sends usage", async () => {
+    const { events } = await collect([delta("hi")]);
+
+    expect(events.every((e) => e.usage === undefined)).toBe(true);
+  });
+
+  it("throws a 502 when the stream produces no visible text", async () => {
+    const create = jest.fn().mockResolvedValue(streamOf([{ choices: [{ delta: {} }] }]));
+    const service = new LlmService(fakeClient(create));
+
+    await expect(async () => {
+      // eslint-disable-next-line no-restricted-syntax
+      for await (const _ of service.completeStream(messages)) {
+        // drain
+      }
+    }).rejects.toMatchObject({ statusCode: 502 });
+  });
+});
