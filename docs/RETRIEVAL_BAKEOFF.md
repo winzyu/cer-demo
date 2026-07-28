@@ -237,6 +237,27 @@ The arms differ in one thing: how document text reaches the prompt. Everything e
 - Same `user` field per request for serverless cache affinity.
 - Same sensor tool path, same corpus source files, same chunking where chunking applies
   (3200 chars / 400 overlap, quality filter, OCR for the scanned PDF).
+- **One parse, one artifact.** `npm run ingest` parses `documents/` once into
+  `data/corpus/corpus.json`, and every arm loads from it. If each arm parsed the PDFs itself,
+  extraction differences would surface as answer-quality differences and be misread as one
+  strategy beating another.
+
+> **Deliberate deviation from legacy parity — the alpha-ratio filter.** The legacy quality filter
+> (`MIGRATION_SPEC.md` §5.1 step 4) drops chunks whose alphabetic-character ratio is below 0.5. That
+> rule cannot distinguish OCR noise from a **table**: markdown tables in this corpus score 0.07–0.14,
+> so the legacy filter discarded **15 of 23 chunks** of `aquatic-life-criteria-table.md` — the
+> corpus's most authoritative source of numeric thresholds.
+>
+> Left alone this would have **invalidated the experiment**, not merely lost data. Direct-feed
+> consumes whole documents and keeps the table; the vector arms embed chunks and would lose most of
+> it. Threshold-lookup questions — already in the eval set — would be won by direct-feed because of a
+> filter bug rather than because feeding beats retrieving, and nothing in the final numbers would
+> reveal it.
+>
+> The ratio test is therefore **skipped for `.md`/`.txt`**, where a low ratio means structure, and
+> **kept for extracted and OCR'd PDF text**, which is what it was built for. Length and boilerplate
+> filters are unchanged for all sources. This means `pgvector-rag` is a faithful reproduction of the
+> legacy system *except* here — state that in the report.
 - Same eval set, run in the same order, against a fixed model snapshot. Re-run all arms if
   `LLM_MODEL` changes mid-experiment — cross-model comparisons are void.
 

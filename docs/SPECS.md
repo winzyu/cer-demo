@@ -14,7 +14,7 @@ current codebase.
 > **Status: Phase N1 complete.** Service bootstrap, the retrieval seam (§9), and a working
 > `POST /api/v1/chat` answering via Fireworks with optional streaming (§10). Retrieval is still the
 > **stub adapter** — real retrieval is decided by the N2 bake-off. Sensor queries and ingestion are
-> **not implemented** (see §13).
+> **not implemented** (see §14).
 
 ---
 
@@ -335,7 +335,38 @@ indistinguishable from streaming being broken.
 
 ---
 
-## 11. API
+## 11. Ingestion (`src/ingestion/`, `scripts/ingest.ts`)
+
+`npm run ingest` parses `documents/` once into **`data/corpus/corpus.json`** — a deterministic
+artifact every Phase N2 arm loads from. Parsing once is what makes "same corpus" a guarantee rather
+than an intention; if each arm parsed the PDFs itself, extraction differences could masquerade as
+retrieval-strategy differences.
+
+| step | behavior |
+|---|---|
+| Discover | `.pdf`/`.md`/`.txt` in `documents/`, sorted, excluding the `README.md` manifest |
+| Extract | `.md`/`.txt` read as UTF-8; PDFs via `pdf-parse` (v2 class API, not the v1 function form) |
+| OCR | If a PDF averages < 50 chars/page it is scanned. **OCR is not performed** — the legacy cache at `.ocr_cache/<filename>.txt` is reused, which keeps an OCR toolchain out of the service and guarantees byte-identical text across arms. Missing cache ⇒ hard error, never silent partial text. |
+| Chunk | 3200 chars / 400 overlap, recursive splitter over `["\n\n", "\n", ". ", " ", ""]` |
+| Filter | length ≥ 100, no PDF boilerplate, and an alphabetic-ratio ≥ 0.5 test **skipped for `.md`/`.txt`** — see below |
+| Output | per document: full `text` (direct-feed) and filtered `chunks` (vector arms), plus the ◆G9 slice flag |
+
+Current run: **9 documents, 1,359,960 chars (~340K tokens), 594 chunks**; direct-feed slice
+**79,938 chars (~20K tokens)**. The OCR cache reproduces `MIGRATION_SPEC.md` §10.1's 133,416 chars
+exactly.
+
+**The alpha-ratio exemption is a deliberate break from legacy parity.** The 0.5 threshold cannot tell
+OCR noise from a table — markdown tables here score 0.07–0.14, so the legacy rule discarded 15 of 23
+chunks of the aquatic-life criteria table, the corpus's authoritative threshold source. Because
+direct-feed uses whole documents and the vector arms use chunks, leaving it alone would have handed
+direct-feed the threshold questions for reasons unrelated to retrieval. Full reasoning in
+[`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §4.
+
+`data/` is git-ignored, so the artifact is rebuilt locally rather than committed.
+
+---
+
+## 12. API
 
 | method | path | response |
 |---|---|---|
@@ -354,9 +385,9 @@ for local demo, to be tightened before deploy.
 
 ---
 
-## 12. Testing
+## 13. Testing
 
-Jest + `ts-jest` + `supertest`. **76 tests, all passing.**
+Jest + `ts-jest` + `supertest`. **93 tests, all passing.**
 
 | suite | covers |
 |---|---|
@@ -365,6 +396,7 @@ Jest + `ts-jest` + `supertest`. **76 tests, all passing.**
 | `unit/retrieval.test.ts` | `resolveTopK`, `StubAdapter` guards, registry lookup, all five selection rules |
 | `unit/prompt.test.ts` | ranges, `REFUSAL_SENTENCE` pinned verbatim, block ordering, cacheable-prefix stability |
 | `unit/llmService.test.ts` | request params (`max_tokens`, `user`, no tools), empty-answer 502, streaming deltas, abort signal, usage handling |
+| `unit/ingestion.test.ts` | chunk sizing and overlap, the quality filter, the alpha-ratio exemption, corpus metadata |
 | `unit/chatValidators.test.ts` | history ordering, newest-kept trimming, the `system`-role rejection, per-index error messages |
 
 **No test touches the network, needs a key, or spends money** — `chat.test.ts` mocks `LlmService`
@@ -384,7 +416,7 @@ conventions this codebase follows, rather than disabled globally:
 
 ---
 
-## 13. Not yet built (tracked in `timeline.md`)
+## 14. Not yet built (tracked in `timeline.md`)
 
 | Area | Legacy reference | Target |
 |---|---|---|
@@ -398,7 +430,7 @@ conventions this codebase follows, rather than disabled globally:
 
 ---
 
-## 14. Privacy posture (carried forward)
+## 15. Privacy posture (carried forward)
 
 Unchanged in intent from the legacy build: once chat lands, all prompts (system + history +
 retrieved chunks + user message) are sent to Fireworks AI, and confidentiality rests on a
