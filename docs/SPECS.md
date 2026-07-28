@@ -1,7 +1,7 @@
 # Clean Earth RAG — Current Specs
 
-What is built and how it works **as of the Node/Express + Firestore skeleton**. This is the
-implementation reference for the current codebase.
+What is built and how it works **as of Phase N1**. This is the implementation reference for the
+current codebase.
 
 - The **legacy** FastAPI + Postgres/pgvector behavior being ported lives in
   [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md).
@@ -11,9 +11,10 @@ implementation reference for the current codebase.
   is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). Deferred: it runs on its own branch after
   Phase N1, and produces `RETRIEVAL_COMPARISON.md`.
 
-> **Status: skeleton + retrieval seam.** Service bootstrap, plus the retrieval interface, registry,
-> and stub adapter (§9). `POST /chat`, real retrieval, sensor queries, and ingestion are **not
-> implemented** (see §12).
+> **Status: Phase N1 complete.** Service bootstrap, the retrieval seam (§9), and a working
+> `POST /api/v1/chat` answering via Fireworks with optional streaming (§10). Retrieval is still the
+> **stub adapter** — real retrieval is decided by the N2 bake-off. Sensor queries and ingestion are
+> **not implemented** (see §13).
 
 ---
 
@@ -25,10 +26,12 @@ implementation reference for the current codebase.
   routers.
 - The **retrieval seam**: the `Chunk`/`getContext` contract, an adapter registry with the
   config-driven selection rules, and a stub adapter (§9).
-- Tests covering the health endpoint, the error-response shape, and the retrieval seam.
+- A **working chat endpoint** (§10): validation, adapter selection, prompt assembly, a Fireworks
+  chat completion, and opt-in SSE streaming.
+- Tests covering all of the above, with the LLM mocked — no test spends money or needs a key.
 
-Deliberately **out of scope at this stage:** the chat orchestration loop, LLM/embedding calls, any
-*real* document retrieval, sensor-data queries, corpus/CSV ingestion, and any authentication.
+Deliberately **out of scope at this stage:** the tool-calling orchestration loop, embedding calls,
+any *real* document retrieval, sensor-data queries, corpus/CSV ingestion, and any authentication.
 
 ---
 
@@ -40,6 +43,7 @@ Deliberately **out of scope at this stage:** the chat orchestration loop, LLM/em
 | HTTP | Express 4 |
 | Middleware | `morgan` (dev logging), `helmet`, `cors`, `express.json` |
 | Datastore | Firestore via `@google-cloud/firestore` (client constructed, not yet queried) |
+| LLM | Fireworks via the official `openai` SDK pointed at its compatible endpoint |
 | Errors | `http-errors` + thin subclasses + one terminal handler |
 | Config | hand-rolled loader + validation (no config-schema library, per conventions §8) |
 | Logging | `morgan` + a tagged `console` logger (no logging library) |
@@ -63,9 +67,11 @@ clean-earth-rag/
 │   │   └── database.ts       memoized Firestore client factory
 │   ├── routes/
 │   │   ├── index.ts          /api/v1 aggregator
-│   │   └── healthRoutes.ts   GET /health
+│   │   ├── healthRoutes.ts   GET /health
+│   │   └── chatRoutes.ts     POST /api/v1/chat
 │   ├── controllers/
-│   │   └── HealthController.ts
+│   │   ├── HealthController.ts
+│   │   └── ChatController.ts   retrieve → assemble → answer (JSON or SSE)
 │   ├── middleware/
 │   │   ├── errorHandler.ts   terminal error handler
 │   │   └── notFound.ts       404 → http-errors NotFound
@@ -75,15 +81,24 @@ clean-earth-rag/
 │   │   ├── options.ts        top-k bounds + resolveTopK()
 │   │   └── adapters/
 │   │       └── StubAdapter.ts
+│   ├── prompt/
+│   │   ├── systemPrompt.ts   ported legacy prompt + REFUSAL_SENTENCE
+│   │   └── promptBuilder.ts  static-first message assembly
+│   ├── services/
+│   │   └── LlmService.ts     Fireworks chat completion + streaming
+│   ├── validators/
+│   │   └── chatValidators.ts parseChatRequest
 │   ├── types/
-│   │   └── retrieval.types.ts  Chunk / GetContextOptions / RetrievalAdapter
+│   │   ├── retrieval.types.ts  Chunk / GetContextOptions / RetrievalAdapter
+│   │   └── chat.types.ts       ChatMessage / ChatRole
 │   └── utils/
 │       ├── errors.ts         NotFound/Validation/Unauthorized/Forbidden/Conflict
-│       └── logger.ts         createLogger(tag)
+│       ├── logger.ts         createLogger(tag)
+│       └── sse.ts            Server-Sent Events helpers
 ├── test/
-│   ├── integration/health.test.ts
-│   └── unit/retrieval.test.ts
-├── frontend/index.html       static chat UI (not yet wired to a chat endpoint)
+│   ├── integration/  health.test.ts, chat.test.ts
+│   └── unit/         retrieval.test.ts, prompt.test.ts, llmService.test.ts
+├── frontend/index.html       static chat UI, wired to POST /api/v1/chat (streaming)
 ├── data/                     sensor CSV (git-ignored)
 ├── documents/                corpus PDFs (git-ignored)
 └── docs/                     SPECS.md, timeline.md, migration/
@@ -108,7 +123,7 @@ Shape:
 config = {
   nodeEnv, isProduction, port, logLevel,
   firestore:  { projectId?, databaseId },
-  fireworks:  { apiKey?, baseUrl, chatModel?, embeddingModel },
+  fireworks:  { apiKey?, baseUrl, chatModel?, embeddingModel, maxTokens, user },
   retrieval:  { defaultMode, debug },
   waterType,
 }
@@ -223,35 +238,125 @@ migration.
 
 ---
 
-## 10. API
+## 10. Chat pipeline (`POST /api/v1/chat`)
+
+Phase N1, complete. One request flows: **validate → select adapter → retrieve → assemble prompt →
+call Fireworks → respond**.
+
+```
+ChatController ─► RetrievalRegistry.resolve(retrieval?) ─► adapter.getContext(query) ─► Chunk[]
+               ─► buildMessages({ query, chunks })       ─► ChatMessage[]
+               ─► LlmService.complete | completeStream    ─► answer
+```
+
+### 10.1 Request
+
+`{ query: string, retrieval?: string, stream?: boolean }`, validated by hand in
+`validators/chatValidators.ts` (conventions §8 — no schema library). `query` is required and
+trimmed; `retrieval` and `stream` are optional and type-checked. Every failure is a
+`ValidationError` → 400 in the house `{ error, message }` shape.
+
+### 10.2 Prompt assembly (`src/prompt/`)
+
+`buildSystemPrompt()` is ported from the legacy `backend/main.py::build_system_prompt`, recovered
+from git history at `7e2b09e^` — `MIGRATION_SPEC.md` §4.2 described its structure but never recorded
+its text. Two blocks are **verbatim** because behavior depends on their exact wording: the
+authoritative normal ranges, and `REFUSAL_SENTENCE` (pinned by a test; `MIGRATION_SPEC.md` §11 calls
+it out specifically).
+
+The legacy **tool inventory and routing rules were deliberately not ported.** The legacy model
+fetched documents itself via a `search_documents` tool; here retrieval runs before the call and
+arrives as context, so advertising tools that do not exist would invite the model to announce lookups
+it cannot perform. See ◆G11.
+
+`buildMessages()` orders blocks **most static first, most dynamic last**:
+
+| # | block | varies |
+|---|---|---|
+| 1 | system prompt | never, for a given deployment |
+| 2 | document context | per corpus slice (direct-feed) or per query (RAG) |
+| 3 | history | per conversation |
+| 4 | the user question | every request |
+
+**This ordering is load-bearing, not stylistic.** Fireworks prompt caching matches on a *prefix*, so
+a cache hit extends only to the first differing byte. Anything dynamic placed earlier truncates the
+cacheable prefix to nothing — silently, with no error. The direct-feed arm's entire cost case rests
+on this (`RETRIEVAL_BAKEOFF.md` §1); a test asserts two different questions produce identical
+prefixes. The context block is omitted entirely when there are no chunks, because an empty
+`CONTEXT:` heading reads to the model as "the corpus had nothing" — a different claim from "no
+corpus was consulted".
+
+### 10.3 LLM call (`src/services/LlmService.ts`)
+
+The official OpenAI SDK pointed at Fireworks' compatible endpoint (`MIGRATION_SPEC.md` §4). The
+client is **lazy and memoized**, like the Firestore client, so the service boots and passes `/health`
+without credentials; a missing key is a 503 only when a chat request arrives.
+
+- `max_tokens` from `LLM_MAX_TOKENS` (default **4096**, up from the legacy 800).
+- `user` sent on every request — Fireworks serverless cache affinity. Dropping it does not error, it
+  just silently stops cache hits, which would distort the N2 bake-off. Asserted by a test.
+- **No tools offered** — retrieval already ran. The legacy tool-round loop returns in N3.
+- **An empty answer throws a 502 naming `LLM_MAX_TOKENS`.** This is the documented gpt-oss failure:
+  reasoning tokens exhaust the budget, the API call *succeeds*, and the answer is blank. Without an
+  explicit check that is indistinguishable from a valid empty response.
+
+### 10.4 Responses
+
+**Default (JSON):** `{ answer, model, mode, citations, usage }`.
+
+**Streaming (`stream: true`)** — Server-Sent Events, opt-in rather than default. The JSON path stays
+the simple one because the N2 harness captures whole answers plus token counts, and non-browser
+callers should not have to parse SSE. N7's chat UI will likely flip the default for browsers.
+
+| event | payload | notes |
+|---|---|---|
+| `meta` | `{ mode, citations }` | **Always first.** After the first byte the status code cannot change, so provenance must lead. |
+| `token` | `{ text }` | one per delta |
+| `done` | `{ model, usage }` | only when the provider reports usage |
+| `end` | `{}` | terminator |
+| `error` | `{ error, message }` | in-band; headers are already sent, so the central error handler cannot render it |
+
+Validation runs **before** the stream opens, so a bad request is still a JSON 400 rather than an SSE
+error event. A client disconnect aborts the upstream call via `AbortController` — otherwise a closed
+tab keeps generating billable tokens. `X-Accel-Buffering: no` is set because a buffering proxy in
+front of Cloud Run would otherwise hold the whole stream and release it at once, which is
+indistinguishable from streaming being broken.
+
+---
+
+## 11. API
 
 | method | path | response |
 |---|---|---|
 | `GET` | `/` | `{ "message": "Clean Earth RAG service" }` |
 | `GET` | `/health` | `{ status, service, environment, timestamp, uptime, checks: { fireworksConfigured, firestoreProjectConfigured } }` |
 | `GET` | `/api/v1` | `{ "message": "Clean Earth RAG API v1" }` |
+| `POST` | `/api/v1/chat` | `{ answer, model, mode, citations, usage }`, or SSE when `stream: true` (§10) |
 
 `/health` does **no** network I/O (no Firestore/Fireworks calls), so it always succeeds while the
 process is up and never blocks on external services. CORS is currently wide open (`cors()`) — fine
 for local demo, to be tightened before deploy.
 
+> **Pre-prod:** error responses include a `stack` field outside production (`errorHandler.ts`). The
+> gate is `NODE_ENV=production`, so if `NODE_ENV` is unset in a deployed environment, stack traces
+> ship to clients. Add to the N9 hardening list alongside the CORS lockdown.
+
 ---
 
-## 11. Testing
+## 12. Testing
 
-Jest + `ts-jest` + `supertest`. 24 tests, all passing.
+Jest + `ts-jest` + `supertest`. **65 tests, all passing.**
 
-**Integration** (`test/integration/health.test.ts`) — against the exported `app`:
-1. `GET /health` returns `200` with `status: "ok"` and the diagnostic fields.
-2. An unknown route returns `404` with the `{ error, message }` shape and **no** `status` field.
+| suite | covers |
+|---|---|
+| `integration/health.test.ts` | `/health` shape; unknown route → 404 `{ error, message }`, no `status` |
+| `integration/chat.test.ts` | `POST /chat` happy path, validation, the `DEBUG_RETRIEVAL` override rule end to end, and the SSE wire format (event order, headers, terminator) |
+| `unit/retrieval.test.ts` | `resolveTopK`, `StubAdapter` guards, registry lookup, all five selection rules |
+| `unit/prompt.test.ts` | ranges, `REFUSAL_SENTENCE` pinned verbatim, block ordering, cacheable-prefix stability |
+| `unit/llmService.test.ts` | request params (`max_tokens`, `user`, no tools), empty-answer 502, streaming deltas, abort signal, usage handling |
 
-**Unit** (`test/unit/retrieval.test.ts`) — 22 tests over the retrieval seam: `resolveTopK` bounds,
-`StubAdapter` behavior and guards, registry registration/lookup, and all five selection rules from
-§9 — including that an override *is ignored* when `DEBUG_RETRIEVAL` is false. No credentials,
-network, or Firestore required.
-
-Run with `npm test`. Layout mirrors the conventions: `test/integration/` and `test/unit/` with
-`*.test.ts`.
+**No test touches the network, needs a key, or spends money** — `chat.test.ts` mocks `LlmService`
+wholesale and the unit tests inject a fake client. Run with `npm test`.
 
 `npm run lint` is clean. Two airbnb rules are narrowed in `.eslintrc.js` where they conflict with the
 conventions this codebase follows, rather than disabled globally:
@@ -261,23 +366,26 @@ conventions this codebase follows, rather than disabled globally:
   dependencies never touches `this`. Still enforced for ordinary methods.
 - `max-classes-per-file` → off **for `src/utils/errors.ts` only**. Five thin error subclasses in one
   file is the point of that module; one class per file would be five three-line files.
+- `no-restricted-syntax` → airbnb's other restrictions kept verbatim, but `ForOfStatement` is banned
+  only in its non-`await` form. `for await...of` is the only way to consume an async iterable, which
+  streaming requires.
 
 ---
 
-## 12. Not yet built (tracked in `timeline.md`)
+## 13. Not yet built (tracked in `timeline.md`)
 
 | Area | Legacy reference | Target |
 |---|---|---|
-| `POST /chat` orchestration | `MIGRATION_SPEC.md` §3 | config-selected adapter, prompt assembly, **streaming** |
-| LLM / embedding calls | `MIGRATION_SPEC.md` §4 | Fireworks (OpenAI-compatible SDK), model id from config |
+| Tool-calling orchestration loop | `MIGRATION_SPEC.md` §3 | 5 tool rounds + 1 forced-text round, `role:"tool"` messages, round-cap fallback — returns in N3 with `query_sensor_data` |
+| Embedding calls | `MIGRATION_SPEC.md` §4.4 | only needed if the bake-off selects a vector arm |
 | Document context strategy | `MIGRATION_SPEC.md` §6–7 (pgvector) | **open gate ◆G7** — decided by the [direct-feed vs RAG bake-off](RETRIEVAL_BAKEOFF.md): `firestore-direct` vs `pgvector-rag` vs `firestore-vector` |
-| `query_sensor_data` | `MIGRATION_SPEC.md` §8 | Firestore-backed or device-API adapter |
+| `query_sensor_data` | `MIGRATION_SPEC.md` §8 | **device-API adapter** (◆G8 resolved) — see `timeline.md` N3 |
 | Ingestion (docs + CSV) | `MIGRATION_SPEC.md` §5 | re-home to Firestore |
-| Chat frontend wiring | `frontend/index.html` | point at `POST /chat` |
+
 
 ---
 
-## 13. Privacy posture (carried forward)
+## 14. Privacy posture (carried forward)
 
 Unchanged in intent from the legacy build: once chat lands, all prompts (system + history +
 retrieved chunks + user message) are sent to Fireworks AI, and confidentiality rests on a

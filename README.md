@@ -85,6 +85,34 @@ The service will call Fireworks' OpenAI-compatible API for chat completion and e
    `GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json`. Use this for CI or deployment where
    interactive login isn't available.
 
+### 2c. Clean Earth device API (sensor data) — Phase N3
+
+Not needed for chat; required once `query_sensor_data` lands. **Both values go in `.env`**, which is
+git-ignored — never in `.env.example`, never in code.
+
+| variable | what to put there |
+|---|---|
+| `DEVICE_API_BASE_URL` | The backend's base URL **including `/api/v1`**. The dashboard builds this from `NEXT_PUBLIC_API_BASE_URL`; its local default is `http://localhost:5001`, so locally that means `http://localhost:5001/api/v1`. |
+| `DEVICE_API_TOKEN` | **Dev only.** A bearer JWT for manual testing. |
+
+Two ways to get a token:
+
+1. **From the dashboard** (fastest): log into the Clean Earth dashboard, then DevTools →
+   Application → Local Storage → copy the `token` value.
+2. **Directly:** `POST {DEVICE_API_BASE_URL}/users/login` with your credentials; the token comes back
+   as `accessToken`, `access_token`, or `token` depending on the deployment.
+
+```bash
+curl -s -X POST "$DEVICE_API_BASE_URL/users/login" \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"you@example.com","password":"…"}'
+```
+
+> **`DEVICE_API_TOKEN` is a development shortcut, not the production design.** In production this
+> service forwards the *caller's* JWT, so the bot only ever sees that user's devices. A shared service
+> token would let any chat user read every device. Tokens also expire — a 401 means re-authenticate,
+> not retry.
+
 ---
 
 ## 3. Set up and run
@@ -159,14 +187,32 @@ The skeleton is a working HTTP service. You can exercise:
 | `npm test` | Jest suite (health + 404-shape) passes. |
 | `npm run typecheck` / `npm run lint` | Clean type-check and lint. |
 | Start with a bad var, e.g. `PORT=abc npm run dev` | Fails immediately with a clear config-validation error. |
+| `curl -X POST localhost:8000/api/v1/chat -H 'Content-Type: application/json' -d '{"query":"What is ORP?"}'` | `200` with `{ answer, model, mode, citations, usage }` — a real Fireworks answer. Needs `FIREWORKS_API_KEY` + `LLM_MODEL`. |
+| Same, with `"stream":true` (add `curl -N`) | Server-Sent Events: `meta` → `token`… → `done` → `end`. |
+| `curl -X POST … -d '{"query":"Who won the 2022 World Cup?"}'` | The fixed refusal sentence — out-of-scope questions are declined, not answered. |
 
-**Not built yet (see [`docs/timeline.md`](docs/timeline.md)):** `POST /chat`, document retrieval,
-`query_sensor_data`, document/CSV ingestion, and the wired-up chat frontend.
+### Try it in a browser
 
-`DEFAULT_RETRIEVAL` / `DEBUG_RETRIEVAL` are already read by the config loader but have no adapters
-behind them yet. They land in Phase N1 and become the switch for the **direct-feed vs RAG cost
-bake-off** in Phase N2 — see [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md). That bake-off
-is deliberately deferred to a later, separate branch; nothing here builds it.
+`frontend/index.html` is a single-file chat UI wired to the streaming endpoint. Start the server,
+then open the file directly — no build step:
+
+```bash
+npm run dev                 # terminal 1
+xdg-open frontend/index.html    # or just open it in your browser
+```
+
+It defaults to `http://localhost:8000`; override with `?backend=http://localhost:8123`. The header
+shows service status and whether the API key is configured. **This is a manual test surface, not the
+product** — the real UI is the Next.js page in Phase N7.
+
+**Not built yet (see [`docs/timeline.md`](docs/timeline.md)):** real document retrieval (the `stub`
+adapter is what answers today), `query_sensor_data`, document/CSV ingestion, multi-turn history on
+the API, and the tool-calling loop.
+
+`DEFAULT_RETRIEVAL` / `DEBUG_RETRIEVAL` select the retrieval adapter and are the switch for the
+**direct-feed vs RAG cost bake-off** in Phase N2 — see
+[`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md). That bake-off is deliberately deferred to a
+later, separate branch; nothing here builds it.
 
 ---
 

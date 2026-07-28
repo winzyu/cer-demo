@@ -74,6 +74,45 @@ this experiment produces** — more so than any individual quality score.
 
 ---
 
+### Planning inputs (supplied 2026-07)
+
+| input | value | status |
+|---|---|---|
+| Projected volume | **100,000 requests/month**, as a soft capacity ceiling. Realistic expectation is "tens of thousands." | Given |
+| Fireworks cost | Assumed to fall inside free/trial credits unless our usage exceeds them | **Assumption — must be verified against the volumes below** |
+| Firestore | Assumed inside the Always Free daily quota | Assumption — verify, incl. the `(default)`-database caveat |
+
+**Run the arithmetic before trusting the free-tier assumption.** At the ceiling:
+
+| | context tokens/request | **input tokens/month @ 100k** |
+|---|---:|---:|
+| direct-feed (21K slice + ~0.7K system) | ~21,700 | **~2.17 billion** |
+| RAG (5 chunks ≈ 4K + ~0.7K system) | ~4,700 | **~0.47 billion** |
+| difference | ~17,000 | **~1.7 billion** |
+
+Plus completion tokens. Measured live at C4/C5: **258–349 completion tokens for one-sentence
+answers**, because gpt-oss emits reasoning tokens before visible output. At 100k requests that is
+~30M completion tokens/month, and it means **cost per answer cannot be estimated from answer
+length** — a four-word reply is not a cheap reply.
+
+Two consequences worth stating plainly:
+
+1. **A ~2.17-billion-token month is very unlikely to sit inside any free tier.** Free/trial credits
+   are the right assumption for *development and the bake-off itself* — a few thousand requests — but
+   not for the projected ceiling. Price it before committing to direct-feed.
+2. **This volume may invert the break-even conclusion.** Earlier reasoning in this doc leaned on
+   direct-feed's zero fixed cost winning at low traffic. At 100k requests/month the extra ~1.7B input
+   tokens plausibly dwarf an always-on database instance, which would favor RAG. Whether prompt
+   caching closes that gap is exactly what the experiment must measure — cached input is typically
+   discounted steeply, and the slice is byte-identical every request, so the potential is large. But
+   "potential" is not a number.
+
+At realistic traffic (say 10k/month), the same figures are ~217M vs ~47M input tokens — a materially
+different conversation. **Report the break-even curve across the range 1k → 100k rather than a single
+figure**, so the decision survives the traffic estimate being wrong.
+
+---
+
 ### Standing / upkeep costs — count these, not just tokens
 
 Token cost is the visible half. The other half is **what each option costs to keep alive at zero
@@ -436,8 +475,10 @@ adapters, standing up a pgvector sidecar, and running a paid eval sweep all belo
   There is nothing to compare until there is a seam to compare across, and no arm can be built before
   the interface is fixed.
 - **Also needed before starting**, none of it code:
-  - **Projected requests/month** — the break-even curve is meaningless without it.
-  - **Current Fireworks pricing**, including the **cached-input** rate.
+  - ~~Projected requests/month~~ — **supplied: 100,000/month soft ceiling** (§1).
+  - **Current Fireworks pricing**, including the **cached-input** rate, checked against the ~2.17B
+    tokens/month the ceiling implies (§1). The free-tier assumption is unverified and probably does
+    not hold at that volume.
   - **Current Firestore free-tier quotas + GCP pricing**, and confirmation of whether the free quota
     applies to our `(default)` database.
   - **A Cloud SQL (or equivalent) quote** for the smallest instance that would host pgvector — the

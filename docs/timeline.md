@@ -75,7 +75,7 @@ Two things to keep straight about this track:
 
 ---
 
-## Phase N1 — Retrieval interface + chat spine (stub-backed) `⟵ immediate next`
+## Phase N1 — Retrieval interface + chat spine (stub-backed) `✅ COMPLETE`
 *Goal: a working `POST /chat` end to end on the new stack, before any real retrieval exists. Defines
 the seam everything downstream plugs into.*
 
@@ -94,8 +94,14 @@ the seam everything downstream plugs into.*
   (gpt-oss emits reasoning tokens before visible output and truncates to empty if starved).
 - **Streaming response.**
 
-*Exit: the service answers `/chat` end to end against the stub adapter, streaming, with adapter
-selection and the debug-override rule enforced. No real corpus required.*
+*Exit: **met.** The service answers `POST /api/v1/chat` end to end against the stub adapter, with
+adapter selection and the debug-override rule enforced, in both JSON and SSE. 65 tests, none of which
+touch the network. Verified live against Fireworks — including the ported refusal behavior. See
+[`SPECS.md`](SPECS.md) §10.*
+
+> **Delivered in five checkpoints** (C1–C5, the working shorthand for testable slices within a phase):
+> C1 retrieval interface + registry + stub adapter · C2 `POST /api/v1/chat` · C3 system prompt +
+> static-first assembly · C4 Fireworks call · C5 SSE streaming.
 
 > The registry + `DEBUG_RETRIEVAL` override are also the **bake-off harness**: N2 compares strategies
 > by swapping one request field on the same running server. Build the seam cleanly here and N2 costs
@@ -195,18 +201,30 @@ that without a rewrite.*
 ## Phase N3 — Sensor data on the new stack
 *Goal: restore `query_sensor_data` and the backend-mediated real-data path.*
 
-**◆ G8 — Sensor-data store (new). Blocks the sensor tool.** Port the CSV/SQL implementation to a
-Firestore-backed store, **or** go straight to the device-API adapter (below). The old timeline's
-data-source abstraction still applies: one tool, swappable adapters.
+**◆ G8 — RESOLVED → go straight to the device API.** No Firestore port of the CSV. Rationale: it is
+the most direct path to wiring this service into the real system, and a synthetic Firestore store
+would be work thrown away the moment real data arrives. The data-source abstraction still applies —
+one tool, swappable adapters — so a synthetic adapter can still be added later for offline testing if
+it proves necessary.
 
-- **Synthetic adapter:** load the 766-row CSV into Firestore (or read-through), reproduce the
-  aggregations (min/max/mean/median/latest/raw), natural-language time-range parsing, and the
-  **reference-time = latest reading** rule (`MIGRATION_SPEC.md` §8).
-- **Device-API adapter (real data):** call the production `/water/*` + `/devices` endpoints,
-  forwarding the user's bearer JWT. **Access-discovery task first:** that backend is *not* in the repos
-  on hand — locate its URL (injected via `NEXT_PUBLIC_API_BASE_URL`), confirm the response shape, get a
-  test token or QA mirror. The API returns **numeric-keyed metrics** (pH=99, DO=97, ORP=98,
-  conductivity=100, temp=102; **turbidity code TBD**) — build the decode mapping into the adapter.
+**Contract, confirmed by reading `../user-dashboard` (read-only):**
+
+| item | value | source |
+|---|---|---|
+| Base URL | `NEXT_PUBLIC_API_BASE_URL` + **`/api/v1`**; dev default `http://localhost:5001` | `services/axios.config.js` |
+| Auth | `Authorization: Bearer <jwt>`; the dashboard reads it from `localStorage.token` | `axios.config.js` interceptor |
+| Token source | `POST /users/login` → `accessToken` \| `access_token` \| `token` | `services/auth.ts` |
+| Endpoints | `/devices`, `/water/last/{device}`, `/water/average/{duration}/{unit}`, `/water/period/{duration}/{unit}`, `/water/chart/{duration}/{unit}/{metric}/{tz}`, `/water/tides/{device}/{start}/{end}`, `/water/export/csv/{device}` | `services/device-data.js` |
+| Metric codes | pH **99**, ORP **98**, DO **97**, conductivity **100**, temperature **102**, **turbidity 72** | `MetricsDictionary` |
+| 401 handling | dashboard clears the token and redirects to login — this service must surface expiry, not retry blindly | `axios.config.js` |
+
+- **Device-API adapter:** call `/water/*` + `/devices`, forwarding the caller's bearer JWT. Decode the
+  numeric metric keys via the mapping above.
+- Reproduce the aggregations (min/max/mean/median/latest/raw), natural-language time-range parsing,
+  and the **reference-time = latest reading** rule (`MIGRATION_SPEC.md` §8) on top of whatever the API
+  returns — the endpoints are period/average shaped, so some aggregation stays local.
+- **Still unknown:** the deployed base URL, a working test token or QA mirror, and the exact response
+  body of each `/water/*` endpoint. These need a person, not code.
 
 **Also lands here: the tool-calling orchestration loop** (`MIGRATION_SPEC.md` §3), deferred from N1.
 N1 makes a single LLM call with no tools; the legacy loop — up to `MAX_TOOL_ROUNDS = 5` tool-enabled
@@ -330,9 +348,10 @@ answers complete.*
 | ◆ G9 | Direct-feed corpus slice (small tier / whole-doc selection / distilled) — the corpus is ~339K tokens and does **not** fit in context | Open — recommend starting with the ~21K-token small tier | `firestore-direct` arm |
 | ◆ G10 | Does `firestore-vector` run as a third arm, or is the bake-off just direct-feed vs `pgvector-rag`? | Open | N2 scope/duration |
 | ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open | N3 loop scope; multi-part answer quality |
-| ◆ G8 | Sensor-data store (Firestore port vs device-API) | Open | Phase N3 |
+| ◆ G8 | Sensor-data store (Firestore port vs device-API) | **Resolved → device API** (most direct path to the real codebase) | — |
 | ◆ G3 | Site-baseline definition (operator range vs. computed) | Open | Phase N4 flag logic |
 | ◆ G4 | Event-detection context source | Open | Phase N6 §4 |
 | ◆ G5 | Frontend responsiveness (mobile/tablet) | Open | Phase N7 UI |
 | ◆ G6 | Redesign vs. match existing style | Open | Phase N7 UI |
-| — | Turbidity metric code + unit confirmation | Open | resolve during N3 discovery |
+| — | Turbidity metric **code** | **Resolved → `72`** (from `user-dashboard` `MetricsDictionary`) | — |
+| — | Turbidity **unit** (NTU vs FNU) | Open | before any answer quotes a turbidity value as fact |
