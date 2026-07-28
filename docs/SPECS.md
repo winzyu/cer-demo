@@ -11,8 +11,9 @@ implementation reference for the current codebase.
   is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). Deferred: it runs on its own branch after
   Phase N1, and produces `RETRIEVAL_COMPARISON.md`.
 
-> **Status: skeleton.** Service bootstrap only. No business logic yet — retrieval, `POST /chat`,
-> sensor queries, and ingestion are **not implemented** (see §11).
+> **Status: skeleton + retrieval seam.** Service bootstrap, plus the retrieval interface, registry,
+> and stub adapter (§9). `POST /chat`, real retrieval, sensor queries, and ingestion are **not
+> implemented** (see §12).
 
 ---
 
@@ -22,10 +23,12 @@ implementation reference for the current codebase.
   Firestore client (lazily), and serves a health endpoint.
 - Central error handling, request logging, and a versioned API mount point ready for resource
   routers.
-- An integration test proving the health endpoint and the error-response shape.
+- The **retrieval seam**: the `Chunk`/`getContext` contract, an adapter registry with the
+  config-driven selection rules, and a stub adapter (§9).
+- Tests covering the health endpoint, the error-response shape, and the retrieval seam.
 
-Deliberately **out of scope at this stage:** the chat orchestration loop, LLM/embedding calls,
-document retrieval, sensor-data queries, corpus/CSV ingestion, and any authentication.
+Deliberately **out of scope at this stage:** the chat orchestration loop, LLM/embedding calls, any
+*real* document retrieval, sensor-data queries, corpus/CSV ingestion, and any authentication.
 
 ---
 
@@ -66,10 +69,20 @@ clean-earth-rag/
 │   ├── middleware/
 │   │   ├── errorHandler.ts   terminal error handler
 │   │   └── notFound.ts       404 → http-errors NotFound
+│   ├── retrieval/
+│   │   ├── index.ts          shared registry, built-in adapters registered here
+│   │   ├── RetrievalRegistry.ts  mode → adapter + selection rules
+│   │   ├── options.ts        top-k bounds + resolveTopK()
+│   │   └── adapters/
+│   │       └── StubAdapter.ts
+│   ├── types/
+│   │   └── retrieval.types.ts  Chunk / GetContextOptions / RetrievalAdapter
 │   └── utils/
 │       ├── errors.ts         NotFound/Validation/Unauthorized/Forbidden/Conflict
 │       └── logger.ts         createLogger(tag)
-├── test/integration/health.test.ts
+├── test/
+│   ├── integration/health.test.ts
+│   └── unit/retrieval.test.ts
 ├── frontend/index.html       static chat UI (not yet wired to a chat endpoint)
 ├── data/                     sensor CSV (git-ignored)
 ├── documents/                corpus PDFs (git-ignored)
@@ -160,7 +173,57 @@ structured logging library — consistent with both reference repos.
 
 ---
 
-## 9. API
+## 9. Retrieval seam (`src/retrieval/`, `src/types/retrieval.types.ts`)
+
+The contract every retrieval strategy implements. Built in Phase N1 checkpoint C1, **before** any
+real retrieval exists, so the Phase N2 bake-off ([`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md)) can
+compare strategies by swapping implementations behind one interface.
+
+```ts
+Chunk           = { id, text, source, score? }
+RetrievalAdapter = { mode, getContext(query, opts?) => Promise<Chunk[]> }
+```
+
+**The interface carries no strategy-specific fields.** There is no `embedding`, `vector`, or
+`distance` — a direct-feed adapter has none of those, and `score` is optional for the same reason. A
+contract that assumed ranking would make the bake-off's direct-feed arm impossible to implement
+honestly.
+
+### Adapter selection (`RetrievalRegistry`)
+
+| rule | behavior |
+|---|---|
+| No override requested | Use `config.retrieval.defaultMode` (`DEFAULT_RETRIEVAL`) |
+| Override requested, `DEBUG_RETRIEVAL=false` | **Ignored, not rejected** — falls back to the default, logs a warning |
+| Override requested, `DEBUG_RETRIEVAL=true` | Honored (trimmed); unknown mode → `ValidationError` (400) |
+| `DEFAULT_RETRIEVAL` names an unregistered mode | Throws — misconfiguration, not bad input |
+| Same mode registered twice | Throws — silent replacement would make retrieval depend on import order |
+
+**Why the rule lives in the registry, not the chat controller:** it is the fiddliest rule in N1, and
+here it is unit-testable without HTTP. **Why ignore rather than reject an override in production:**
+letting a caller choose the retrieval strategy means letting them choose its cost.
+
+The registry is a class with constructor DI (conventions §12) rather than a module singleton, so
+tests construct isolated instances instead of depending on import order.
+
+### Adapters
+
+- **`stub`** (`StubAdapter`) — fixed placeholder chunks; no corpus, credentials, or network. Text is
+  prefixed `[STUB CONTEXT]` so a stub answer can never be mistaken for a grounded one in a demo or a
+  bake-off transcript. Accepts injected chunks for test scenarios.
+- Registration happens in one place (`src/retrieval/index.ts`), so adding a bake-off arm is a single
+  line rather than an import side effect.
+
+### Shared guards (`options.ts`)
+
+`resolveTopK()` centralizes the legacy bounds — default 5, max 10, non-positive → 0 — and an empty
+query returns `[]`. Carried over from `MIGRATION_SPEC.md` §7 so every adapter degrades identically
+instead of each inventing its own edge-case behavior, and so retrieval stays comparable across the
+migration.
+
+---
+
+## 10. API
 
 | method | path | response |
 |---|---|---|
@@ -174,21 +237,37 @@ for local demo, to be tightened before deploy.
 
 ---
 
-## 10. Testing (`test/integration/health.test.ts`)
+## 11. Testing
 
-Jest + `ts-jest` + `supertest` against the exported `app`. Two tests:
+Jest + `ts-jest` + `supertest`. 24 tests, all passing.
+
+**Integration** (`test/integration/health.test.ts`) — against the exported `app`:
 1. `GET /health` returns `200` with `status: "ok"` and the diagnostic fields.
 2. An unknown route returns `404` with the `{ error, message }` shape and **no** `status` field.
 
-Run with `npm test`. Layout mirrors the conventions: `test/integration/` with `*.test.ts`.
+**Unit** (`test/unit/retrieval.test.ts`) — 22 tests over the retrieval seam: `resolveTopK` bounds,
+`StubAdapter` behavior and guards, registry registration/lookup, and all five selection rules from
+§9 — including that an override *is ignored* when `DEBUG_RETRIEVAL` is false. No credentials,
+network, or Firestore required.
+
+Run with `npm test`. Layout mirrors the conventions: `test/integration/` and `test/unit/` with
+`*.test.ts`.
+
+`npm run lint` is clean. Two airbnb rules are narrowed in `.eslintrc.js` where they conflict with the
+conventions this codebase follows, rather than disabled globally:
+
+- `class-methods-use-this` → `enforceForClassFields: false`. Handlers are class-property arrow
+  functions so `this` binds when passed to a router (conventions §12); a handler with no injected
+  dependencies never touches `this`. Still enforced for ordinary methods.
+- `max-classes-per-file` → off **for `src/utils/errors.ts` only**. Five thin error subclasses in one
+  file is the point of that module; one class per file would be five three-line files.
 
 ---
 
-## 11. Not yet built (tracked in `timeline.md`)
+## 12. Not yet built (tracked in `timeline.md`)
 
 | Area | Legacy reference | Target |
 |---|---|---|
-| Retrieval interface + adapters | `MIGRATION_SPEC.md` §7 | `Chunk`/`getContext()`, adapter registry, **stub adapter** first |
 | `POST /chat` orchestration | `MIGRATION_SPEC.md` §3 | config-selected adapter, prompt assembly, **streaming** |
 | LLM / embedding calls | `MIGRATION_SPEC.md` §4 | Fireworks (OpenAI-compatible SDK), model id from config |
 | Document context strategy | `MIGRATION_SPEC.md` §6–7 (pgvector) | **open gate ◆G7** — decided by the [direct-feed vs RAG bake-off](RETRIEVAL_BAKEOFF.md): `firestore-direct` vs `pgvector-rag` vs `firestore-vector` |
@@ -198,7 +277,7 @@ Run with `npm test`. Layout mirrors the conventions: `test/integration/` with `*
 
 ---
 
-## 12. Privacy posture (carried forward)
+## 13. Privacy posture (carried forward)
 
 Unchanged in intent from the legacy build: once chat lands, all prompts (system + history +
 retrieved chunks + user message) are sent to Fireworks AI, and confidentiality rests on a
