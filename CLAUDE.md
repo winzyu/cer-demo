@@ -38,6 +38,22 @@ introduce.
   committed it, or it did not get written.
 - If nothing is uncommitted, say exactly that instead of producing a plan.
 
+Open every git plan with a short state header, so I know where I am before I run
+anything:
+
+- **Branch** I am on now, and whether it has an upstream / is ahead or behind.
+- **Target** — the branch this work is meant to land on, and whether a new branch
+  is needed or the current one is already correct.
+- **Verification** — the result of the checks you ran (tests, lint, typecheck),
+  including anything failing or pre-existing.
+- **Uncommitted paths**, and a flag on anything in the working tree that is *not*
+  part of this checkpoint.
+- Anything genuinely relevant and out of the ordinary: a secret at risk, a
+  generated or large file, a deletion, a dependency or lockfile change, a
+  migration that must land with its code.
+
+Keep the header to a few lines. It is orientation, not a report.
+
 # Commit messages
 
 Keep them short: a one-line subject, and at most a few lines of body. The subject
