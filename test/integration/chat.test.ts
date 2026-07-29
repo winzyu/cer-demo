@@ -23,6 +23,9 @@ import app from "../../src/app";
 
 const CHAT = "/api/v1/chat";
 
+/** These tests reset the module registry and re-import the app, which recompiles the tree. */
+const RELOAD_TIMEOUT_MS = 60_000;
+
 /**
  * Loads a fresh app with the given env, so the config-driven retrieval rules can be
  * exercised end to end. `config` is frozen at import, so the module cache must be reset
@@ -233,7 +236,7 @@ describe("retrieval mode selection over HTTP", () => {
       .expect(200);
 
     expect(response.body.mode).toBe("stub");
-  });
+  }, RELOAD_TIMEOUT_MS);
 
   it("HONORS a requested mode when DEBUG_RETRIEVAL is true", async () => {
     const scopedApp = loadAppWith({ DEBUG_RETRIEVAL: "true" });
@@ -244,7 +247,7 @@ describe("retrieval mode selection over HTTP", () => {
       .expect(200);
 
     expect(response.body.mode).toBe("stub");
-  });
+  }, RELOAD_TIMEOUT_MS);
 
   it("rejects an unknown mode with a 400 when DEBUG_RETRIEVAL is true", async () => {
     const scopedApp = loadAppWith({ DEBUG_RETRIEVAL: "true" });
@@ -255,5 +258,5 @@ describe("retrieval mode selection over HTTP", () => {
       .expect(400);
 
     expect(response.body.error).toMatch(/Unknown retrieval mode/);
-  });
+  }, RELOAD_TIMEOUT_MS);
 });

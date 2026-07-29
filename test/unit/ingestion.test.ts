@@ -92,7 +92,8 @@ describe("filterChunks", () => {
 
 describe("corpus metadata", () => {
   it("resolves known documents to their titles", () => {
-    expect(metaFor("aquatic-life-criteria-table.md").title).toMatch(/Aquatic Life Criteria/);
+    expect(metaFor("water-quality-metrics-source-of-truth.pdf").title).toMatch(/Source of Truth/);
+    expect(metaFor("IORP_probe.pdf").title).toMatch(/ORP Probe/);
   });
 
   it("falls back to the filename for unknown documents", () => {
@@ -103,9 +104,12 @@ describe("corpus metadata", () => {
     expect(EXCLUDED_FILES).toContain("README.md");
   });
 
-  it("defines the direct-feed slice as the three small-tier documents", () => {
-    expect(DIRECT_FEED_SLICE).toHaveLength(3);
-    expect(DIRECT_FEED_SLICE).toContain("aquatic-life-criteria-table.md");
+  it("scopes the direct-feed slice to the operator reference and the probe datasheets", () => {
+    // Every entry must be about a parameter the DataPod actually measures — the previous
+    // slice was 83% a mangled table covering pollutants this sensor cannot detect.
+    expect(DIRECT_FEED_SLICE).toHaveLength(5);
+    expect(DIRECT_FEED_SLICE).toContain("water-quality-metrics-source-of-truth.pdf");
+    expect(DIRECT_FEED_SLICE.filter((f) => f.includes("probe") || f.includes("probe"))).toHaveLength(4);
   });
 });
 

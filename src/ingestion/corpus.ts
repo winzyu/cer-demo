@@ -1,8 +1,12 @@
 /**
  * Corpus metadata and the ◆G9 direct-feed slice.
  *
- * Titles and source URLs are the legacy `DOC_META` map (`MIGRATION_SPEC.md` §5.1 step 5).
- * Unknown filenames fall back to `title = filename`, `sourceUrl = undefined`.
+ * **The corpus is scoped to what the DataPod actually measures** — temperature, DO, ORP,
+ * conductivity, pH, turbidity. Documents about pollutants the sensor cannot detect were removed
+ * (see `documents/_excluded/`): EPA aquatic-life criteria (metals/pesticides), recreational water
+ * criteria (pathogens), and nutrient criteria (N/P). They were not merely useless — the system
+ * prompt already declares those topics out of scope, so retrieving them can only pull an answer
+ * toward material the bot is supposed to refuse.
  */
 
 export interface DocMeta {
@@ -11,43 +15,55 @@ export interface DocMeta {
 }
 
 export const DOC_META: Record<string, DocMeta> = {
-  "aquatic-life-criteria-table.md": {
-    title: "National Recommended Aquatic Life Criteria Table",
-    sourceUrl: "https://www.epa.gov/wqc/national-recommended-water-quality-criteria-aquatic-life-criteria-table",
+  // --- Operator source of truth: the six measured parameters, their ranges, and how they move
+  // together. Written for this deployment, so it outranks any general reference. ---
+  "water-quality-metrics-source-of-truth.pdf": {
+    title: "Water Quality Metrics — Source of Truth (DataPod)",
   },
-  "Dissolved Oxygen and Water _ U.S. Geological Survey.pdf": {
-    title: "Dissolved Oxygen and Water (USGS)",
-    sourceUrl: "https://www.usgs.gov/special-topics/water-science-school/science/dissolved-oxygen-and-water",
+
+  // --- Probe datasheets: specs, operating principle, calibration and fouling behavior.
+  // These are what "does this reading mean the sensor is broken?" gets answered from. ---
+  "EC_K_1.0_probe.pdf": {
+    title: "Atlas Scientific Conductivity Probe K 1.0 — Datasheet",
   },
-  "nutrient-lakes-reservoirs-factsheet-final.pdf": {
-    title: "Nutrient Criteria for Lakes and Reservoirs — Factsheet",
+  "IORP_probe.pdf": {
+    title: "Atlas Scientific Industrial ORP Probe — Datasheet",
   },
-  "nutrient-lakes-reservoirs-report-final.pdf": {
-    title: "Nutrient Criteria for Lakes and Reservoirs — Report",
+  "IpH_probe.pdf": {
+    title: "Atlas Scientific Industrial pH Probe — Datasheet",
   },
-  "ambient-wqc-dissolved-oxygen-1986.pdf": {
-    title: "Ambient Water Quality Criteria for Dissolved Oxygen (1986)",
+  "Industrial-DO-probe.pdf": {
+    title: "Atlas Scientific Industrial Dissolved Oxygen Probe — Datasheet",
   },
-  "rwqc2012.pdf": { title: "Recreational Water Quality Criteria (2012)" },
-  "tm9a6.2.pdf": { title: "USGS TM 9-A6.2 — Dissolved Oxygen" },
-  "tm9a6.8.pdf": { title: "USGS TM 9-A6.8 — Turbidity" },
+
+  // --- Field-methods references, retained for depth on measured metrics. ---
+  "tm9a6.2.pdf": {
+    title: "USGS TM 9-A6.2 — Dissolved Oxygen (field methods)",
+  },
+  "tm9a6.8.pdf": {
+    title: "USGS TM 9-A6.8 — Turbidity (field methods)",
+  },
   "volunteer_stream_monitoring_a_methods_manual.pdf": {
-    title: "Volunteer Stream Monitoring: A Methods Manual",
+    title: "Volunteer Stream Monitoring: A Methods Manual (EPA)",
   },
 };
 
 /**
- * ◆G9 — the direct-feed slice: the small tier, ~21K tokens total.
+ * ◆G9 — the direct-feed slice.
  *
- * These three carry the authoritative thresholds most questions actually need, and together fit
- * comfortably in context with room for an answer. The long manuals are deliberately excluded —
- * questions that need them are expected to fail on the direct-feed arm, and measuring that gap
- * is part of the experiment (docs/RETRIEVAL_BAKEOFF.md ◆G9).
+ * Revised after the original slice proved unusable: it was 83% a pandoc grid table whose cells
+ * were shredded across 8-character columns, covering pollutants this sensor cannot measure.
+ *
+ * The replacement is the operator's source-of-truth reference plus the four probe datasheets —
+ * ~9.4K tokens, every one of them about a parameter the DataPod actually reads. Smaller than the
+ * document it replaced, and it covers all six metrics rather than none of them.
  */
 export const DIRECT_FEED_SLICE = [
-  "aquatic-life-criteria-table.md",
-  "Dissolved Oxygen and Water _ U.S. Geological Survey.pdf",
-  "nutrient-lakes-reservoirs-factsheet-final.pdf",
+  "water-quality-metrics-source-of-truth.pdf",
+  "EC_K_1.0_probe.pdf",
+  "IORP_probe.pdf",
+  "IpH_probe.pdf",
+  "Industrial-DO-probe.pdf",
 ];
 
 /** `documents/README.md` is a manifest, not source material (MIGRATION_SPEC.md §10.1). */
