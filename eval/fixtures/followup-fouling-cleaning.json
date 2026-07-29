@@ -1,0 +1,70 @@
+{
+  "id": "followup-fouling-cleaning",
+  "class": "follow-up",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf",
+    "IpH_probe.pdf",
+    "IORP_probe.pdf",
+    "EC_K_1.0_probe.pdf"
+  ],
+  "requires": [],
+  "notes": "Three turns with no restated nouns — \"that\", then \"them\". Turn 3 also needs three datasheets at once and contains a hard safety line: no abrasives on pH or ORP.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "We've had the pod in the water for eight months and every parameter is drifting a little.",
+      "rubric": {
+        "must_contain": [
+          "acknowledges the pattern — a gradual multi-parameter drift after a long deployment",
+          "does not yet declare an environmental cause"
+        ],
+        "must_not": [
+          "names a pollution event on this information alone"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Is that the water or the pod?",
+      "rubric": {
+        "must_contain": [
+          "resolves \"that\" to the multi-parameter drift",
+          "states that a gradual multi-parameter drift after a long deployment is a fouling/maintenance flag first and an environmental signal second",
+          "recommends checking calibration history and servicing before treating it as an event"
+        ],
+        "must_not": [
+          "attributes the drift to water chemistry without raising fouling"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "What do I clean them with?",
+      "rubric": {
+        "must_contain": [
+          "resolves \"them\" to the probes",
+          "pH: soft coatings removed by vigorous stirring or a squirt bottle, organic or hard coatings chemically with a light bleach solution",
+          "ORP: same soft/hard split, with a light bleach solution or a 5–10% HCl soak for hard coatings",
+          "conductivity: soft coatings lightly brushed around the conducting area, hard coatings removed chemically",
+          "states that abrasives and brushes must not be used on the pH or ORP probes"
+        ],
+        "must_not": [
+          "recommends brushing or abrasive cleaning of the pH or ORP probe",
+          "gives one cleaning method for all probes"
+        ],
+        "cite": [
+          "IpH_probe.pdf",
+          "IORP_probe.pdf",
+          "EC_K_1.0_probe.pdf"
+        ]
+      }
+    }
+  ]
+}

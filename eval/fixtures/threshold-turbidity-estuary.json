@@ -1,0 +1,50 @@
+{
+  "id": "threshold-turbidity-estuary",
+  "class": "threshold-lookup",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [
+    "turbidity-in-scope"
+  ],
+  "notes": "Turbidity has no operator normal range — only document guidance. Tests whether an arm invents an authoritative range to fill the gap.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "What's a normal turbidity for an estuary compared with a freshwater river?",
+      "rubric": {
+        "must_contain": [
+          "gives brackish/estuarine 5–100+ NTU",
+          "gives healthy freshwater <5–25 NTU",
+          "notes rivers and estuaries are naturally more turbid and event-driven than open coastal water"
+        ],
+        "must_not": [
+          "gives a single range for all water types",
+          "invents a numeric range"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "We're at 60 — should I be worried?",
+      "rubric": {
+        "must_contain": [
+          "places 60 NTU inside the 5–100+ estuarine band",
+          "states the ranges are general guidance and a site-specific baseline is needed before treating a deviation as an event",
+          "notes turbidity is event-driven — storms, dredging, tidal resuspension"
+        ],
+        "must_not": [
+          "cites an operator-provided turbidity normal range, which does not exist",
+          "declares an exceedance"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

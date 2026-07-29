@@ -1,0 +1,47 @@
+{
+  "id": "sensor-doc-event-check",
+  "class": "sensor-combined",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [
+    "sensor-tool",
+    "turbidity-in-scope"
+  ],
+  "notes": "The heaviest conversation in the set: a multi-parameter fetch plus the signature matrix plus the natural-cycle rule-out. Needs the tool-round cap raised (N5) as well as the tool itself.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Pull the last 24 hours for all six parameters.",
+      "rubric": {
+        "must_contain": [
+          "calls query_sensor_data",
+          "reports all six parameters with units"
+        ],
+        "must_not": [
+          "fabricates readings",
+          "silently drops parameters it did not retrieve"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Does that match any pollution signature?",
+      "rubric": {
+        "must_contain": [
+          "describes the direction of change per parameter from the returned data rather than from assumption",
+          "compares the pattern against the signature matrix",
+          "rules out the diel and tidal explanations before naming an event, or states the data are consistent with normal cycling"
+        ],
+        "must_not": [
+          "names an event without addressing the diel or tidal explanation",
+          "asserts a direction of change not supported by the returned data"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

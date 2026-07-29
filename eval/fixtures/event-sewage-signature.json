@@ -1,0 +1,49 @@
+{
+  "id": "event-sewage-signature",
+  "class": "event-signature",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [
+    "turbidity-in-scope"
+  ],
+  "notes": "The signature matrix is a table. Direct-feed reads it whole; the chunked arms must land on the right rows. Turn 2 forces a discrimination between two signatures rather than a single lookup.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "DO and ORP are both crashing, EC has risen and turbidity is up. What is this?",
+      "rubric": {
+        "must_contain": [
+          "matches the sewage/sanitary-discharge signature: DO down strongly, ORP down strongly, EC up, turbidity up, pH down",
+          "notes the discriminator that it is not tied to time of day",
+          "states that no single parameter diagnoses an event — the combination does"
+        ],
+        "must_not": [
+          "names an event whose signature contradicts the given directions, such as thermal discharge or saltwater intrusion",
+          "invents a signature"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Could it be an algal bloom instead?",
+      "rubric": {
+        "must_contain": [
+          "distinguishes the bloom signature: large in-phase daily DO and pH oscillations, midday supersaturation and a pre-dawn crash",
+          "notes the described pattern is a sustained non-diel crash, which does not fit a bloom",
+          "notes the pre-dawn DO minimum is the bloom danger window"
+        ],
+        "must_not": [
+          "accepts algal bloom as an equally good fit without addressing the diel pattern"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

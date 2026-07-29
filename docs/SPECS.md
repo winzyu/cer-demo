@@ -10,11 +10,13 @@ current codebase.
 - The **direct-feed vs RAG experiment** that decides how document context is retrieved — on cost —
   is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). Deferred: it runs on its own branch after
   Phase N1, and produces `RETRIEVAL_COMPARISON.md`.
+- The **question set every arm is graded against** is in [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md)
+  (§12), committed before any arm runs.
 
 > **Status: Phase N1 complete.** Service bootstrap, the retrieval seam (§9), and a working
 > `POST /api/v1/chat` answering via Fireworks with optional streaming (§10). Retrieval is still the
 > **stub adapter** — real retrieval is decided by the N2 bake-off. Sensor queries and ingestion are
-> **not implemented** (see §14).
+> **not implemented** (see §15).
 
 ---
 
@@ -86,6 +88,12 @@ clean-earth-rag/
 │   │       ├── corpusSource.ts        CorpusSource contract
 │   │       ├── ArtifactCorpusSource.ts
 │   │       └── FirestoreCorpusSource.ts
+│   ├── ingestion/
+│   │   ├── corpus.ts         DOC_META + the ◆G9 direct-feed slice
+│   │   ├── extract.ts / chunk.ts / ingest.ts
+│   ├── eval/
+│   │   ├── types.ts          EvalFixture / EvalTurn / EvalRubric
+│   │   └── fixtures.ts       loader + strict validation of eval/fixtures/
 │   ├── prompt/
 │   │   ├── systemPrompt.ts   ported legacy prompt + REFUSAL_SENTENCE
 │   │   └── promptBuilder.ts  static-first message assembly
@@ -100,13 +108,17 @@ clean-earth-rag/
 │       ├── errors.ts         NotFound/Validation/Unauthorized/Forbidden/Conflict
 │       ├── logger.ts         createLogger(tag)
 │       └── sse.ts            Server-Sent Events helpers
+├── scripts/                  ingest.ts, seedFirestore.ts
 ├── test/
 │   ├── integration/  health.test.ts, chat.test.ts
-│   └── unit/         retrieval.test.ts, prompt.test.ts, llmService.test.ts
+│   └── unit/         retrieval.test.ts, prompt.test.ts, llmService.test.ts,
+│                     directFeed.test.ts, ingestion.test.ts, chatValidators.test.ts,
+│                     evalFixtures.test.ts
+├── eval/fixtures/            30 committed bake-off conversations (§12)
 ├── frontend/index.html       static chat UI, wired to POST /api/v1/chat (streaming)
-├── data/                     sensor CSV (git-ignored)
+├── data/                     sensor CSV + corpus artifact (git-ignored)
 ├── documents/                corpus PDFs (git-ignored)
-└── docs/                     SPECS.md, timeline.md, migration/
+└── docs/                     SPECS.md, timeline.md, EVAL_FIXTURES.md, migration/
 ```
 
 ---
@@ -383,7 +395,33 @@ direct-feed the threshold questions for reasons unrelated to retrieval. Full rea
 
 ---
 
-## 12. API
+## 12. Eval fixtures (`eval/fixtures/`, `src/eval/`)
+
+The Phase N2 bake-off's question set: **30 conversations, 62 turns**, one JSON file per
+conversation, committed **before any arm runs** (`RETRIEVAL_BAKEOFF.md` §5). Full design —
+classes, grading scales, per-fixture predictions, and the two blockers — in
+[`EVAL_FIXTURES.md`](EVAL_FIXTURES.md).
+
+```ts
+EvalFixture = { id, class, expected_to_favor, answerable_from, requires, notes, turns }
+EvalTurn    = { role: "user", content, rubric: { must_contain, must_not, cite?, notes? } }
+```
+
+- **Fixtures are data, not code.** `src/eval/fixtures.ts` loads and validates them; a typo in a
+  filename or class fails at load rather than after three arms have been replayed and paid for.
+- **Every turn carries its own rubric**, because every turn produces a graded answer and a
+  conversation-level rubric would hide *which* turn failed — usually the follow-up, which is what
+  the multi-turn format exists to test.
+- **`sliceCoverage` and `runnable` are derived at load time, never stored**, so they cannot drift
+  from `DIRECT_FEED_SLICE` or from what the service can actually do.
+- **`requires` marks fixtures that depend on capabilities that don't exist yet** — `sensor-tool`
+  (N3) and `turbidity-in-scope` (the system prompt still declares turbidity unmeasured). 22 of 30
+  fixtures are runnable today. Without the flag those fixtures would produce clean-looking
+  transcripts that grade a missing feature identically across all three arms.
+
+---
+
+## 13. API
 
 | method | path | response |
 |---|---|---|
@@ -402,9 +440,9 @@ for local demo, to be tightened before deploy.
 
 ---
 
-## 13. Testing
+## 14. Testing
 
-Jest + `ts-jest` + `supertest`. **104 tests, all passing.**
+Jest + `ts-jest` + `supertest`. **124 tests, all passing.**
 
 | suite | covers |
 |---|---|
@@ -416,6 +454,7 @@ Jest + `ts-jest` + `supertest`. **104 tests, all passing.**
 | `unit/directFeed.test.ts` | slice loading, once-per-process memoization, topK ignored, failure not cached, Firestore query shape |
 | `unit/ingestion.test.ts` | chunk sizing and overlap, the quality filter, the alpha-ratio exemption, corpus metadata |
 | `unit/chatValidators.test.ts` | history ordering, newest-kept trimming, the `system`-role rejection, per-index error messages |
+| `unit/evalFixtures.test.ts` | the committed eval set (ids, class coverage, multi-turn, slice consistency) and every rule the fixture loader claims to enforce |
 
 **No test touches the network, needs a key, or spends money** — `chat.test.ts` mocks `LlmService`
 wholesale and the unit tests inject a fake client. Run with `npm test`.
@@ -434,7 +473,7 @@ conventions this codebase follows, rather than disabled globally:
 
 ---
 
-## 14. Not yet built (tracked in `timeline.md`)
+## 15. Not yet built (tracked in `timeline.md`)
 
 | Area | Legacy reference | Target |
 |---|---|---|
@@ -448,7 +487,7 @@ conventions this codebase follows, rather than disabled globally:
 
 ---
 
-## 15. Privacy posture (carried forward)
+## 16. Privacy posture (carried forward)
 
 Unchanged in intent from the legacy build: once chat lands, all prompts (system + history +
 retrieved chunks + user message) are sent to Fireworks AI, and confidentiality rests on a

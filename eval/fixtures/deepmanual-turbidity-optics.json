@@ -1,0 +1,51 @@
+{
+  "id": "deepmanual-turbidity-optics",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "tm9a6.8.pdf",
+    "volunteer_stream_monitoring_a_methods_manual.pdf",
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [
+    "turbidity-in-scope"
+  ],
+  "notes": "Turn 1 is manual-only; turn 2 needs the in-slice reference. A split conversation, which is exactly the hybrid outcome the bake-off treats as a legitimate result — watch whether any single arm handles both turns.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "How does a turbidity sensor physically take its reading?",
+      "rubric": {
+        "must_contain": [
+          "a light source illuminates the sample and a detector measures the light scattered at a 90-degree angle",
+          "multiparameter sondes typically use a near-infrared source (about 780–900 nm), usually an LED, with one detector at 90 degrees",
+          "the result is reported in nephelometric turbidity units (NTU)"
+        ],
+        "must_not": [
+          "describes an optical arrangement absent from the corpus",
+          "confuses the turbidity sensor with the optical DO sensor"
+        ],
+        "cite": [
+          "tm9a6.8.pdf",
+          "volunteer_stream_monitoring_a_methods_manual.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Does that explain why NTU and FNU differ?",
+      "rubric": {
+        "must_contain": [
+          "links the light source to the unit — white light corresponds to NTU, infrared to FNU",
+          "restates that the two units are not interchangeable"
+        ],
+        "must_not": [
+          "supplies a conversion between the units"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

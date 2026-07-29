@@ -1,0 +1,49 @@
+{
+  "id": "event-stormwater-vs-intrusion",
+  "class": "event-signature",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [
+    "turbidity-in-scope"
+  ],
+  "notes": "Two candidate signatures separated by the direction of EC. Turn 2 tests the natural-cycle rule-out, which is a different section of the same document.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Turbidity spiked hard and EC dropped. Storm runoff or saltwater intrusion?",
+      "rubric": {
+        "must_contain": [
+          "gives the stormwater/urban-runoff signature: a sharp turbidity spike coincident with rainfall, with EC dropping in marine settings and possibly spiking in freshwater from road salt",
+          "gives the saltwater-intrusion signature: EC rising strongly with little turbidity change, correlated with tidal phase, drought or sea-level conditions",
+          "concludes the described pattern fits stormwater runoff rather than intrusion"
+        ],
+        "must_not": [
+          "concludes saltwater intrusion",
+          "invents a signature"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "How do I rule out the tide?",
+      "rubric": {
+        "must_contain": [
+          "states an EC change that repeats on the tidal clock is mixing, not a discharge",
+          "notes turbidity often peaks at maximum tidal current from resuspension",
+          "states a real event appears as a step-change or sustained excursion that breaks the expected diel or tidal rhythm"
+        ],
+        "must_not": [
+          "treats a repeating tidal oscillation as evidence of an event"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "id": "probecal-conductivity-interval",
+  "class": "probe-calibration",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "EC_K_1.0_probe.pdf",
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [],
+  "notes": "The conductivity answer contradicts the pattern of the other three datasheets, so an arm that retrieves the wrong datasheet answers \"~1 year\" fluently and wrongly. One of the strongest discriminators in the set for the RAG arms.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "How often does the conductivity probe need recalibrating?",
+      "rubric": {
+        "must_contain": [
+          "states recalibration is effectively unnecessary — the graphite plates do not change or go bad, and after the first calibration the probe is good to go",
+          "may cite the datasheet's ~10 years time-before-recalibration figure"
+        ],
+        "must_not": [
+          "gives a ~1 year interval",
+          "applies the pH or ORP recalibration guidance to the conductivity probe"
+        ],
+        "cite": [
+          "EC_K_1.0_probe.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Then why do our EC numbers wander?",
+      "rubric": {
+        "must_contain": [
+          "deposits and dirt change the probe's electrical properties and cause inaccurate readings — soft coatings brushed off, hard coatings removed chemically",
+          "air bubbles trapped between the graphite plates throw off results; the probe should be tapped to dislodge them",
+          "temperature: raw EC rises ~2% per °C, so specific conductance must be reported"
+        ],
+        "must_not": [
+          "attributes the wandering to calibration drift, which this probe does not have"
+        ],
+        "cite": [
+          "EC_K_1.0_probe.pdf",
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

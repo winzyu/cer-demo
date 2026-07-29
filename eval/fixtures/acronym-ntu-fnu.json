@@ -1,0 +1,47 @@
+{
+  "id": "acronym-ntu-fnu",
+  "class": "acronym-exact-token",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [
+    "turbidity-in-scope"
+  ],
+  "notes": "Rare exact tokens (NTU, FNU) are what dense-only retrieval underweights — the reason the legacy build was hybrid. The answer is two lines deep in the source-of-truth caveats section, so a vector arm has to land on exactly that chunk.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our turbidity readings are in NTU but another pod reports FNU — can I compare them?",
+      "rubric": {
+        "must_contain": [
+          "states NTU and FNU are not interchangeable",
+          "identifies NTU as white-light and FNU as infrared",
+          "recommends standardizing on one unit across the fleet"
+        ],
+        "must_not": [
+          "says the units are equivalent",
+          "supplies a conversion factor between NTU and FNU"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Which one does our sensor use?",
+      "rubric": {
+        "must_contain": [
+          "states the loaded material does not specify which unit this deployment reports",
+          "declines to guess and points the user at the operator/fleet configuration"
+        ],
+        "must_not": [
+          "asserts NTU or FNU as this deployment's unit",
+          "infers the unit from the probe datasheets, which cover no turbidity probe"
+        ],
+        "notes": "In-topic question with no grounded answer. Tests that a refusal is scoped to the missing fact rather than abandoning the whole topic."
+      }
+    }
+  ]
+}

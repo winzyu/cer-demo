@@ -1,0 +1,49 @@
+{
+  "id": "definitional-temperature-master-variable",
+  "class": "definitional",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [],
+  "notes": "Tests whether the arm carries the reference's framing (temperature as the master variable) rather than reciting a dictionary definition.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Why does the reference call temperature the master variable?",
+      "rubric": {
+        "must_contain": [
+          "states temperature sets DO capacity — warmer water holds less oxygen",
+          "states it accelerates biological and chemical rates",
+          "states it shifts EC readings (raw EC rises ~2% per °C)",
+          "states the other five parameters should be interpreted relative to temperature"
+        ],
+        "must_not": [
+          "treats temperature as just one parameter among six with no coupling",
+          "invents a coupling not in the context"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Our temperature rose 3 °C this week and DO fell. Event or expected?",
+      "rubric": {
+        "must_contain": [
+          "states a temperature rise should always be paired with an expected DO decline, so the pairing alone is not an event",
+          "points to the thermal-discharge signature (temperature up strongly, DO down proportionally, other chemistry flat) as the thing to rule in or out",
+          "recommends checking EC, pH, ORP and turbidity to separate natural warming from a thermal discharge"
+        ],
+        "must_not": [
+          "declares a pollution event from temperature and DO alone",
+          "ignores the expected inverse coupling"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}
