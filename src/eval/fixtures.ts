@@ -29,10 +29,12 @@ const FIXTURE_DIR = path.resolve(__dirname, "../../eval/fixtures");
 /**
  * Capabilities the service has today. Fixtures requiring anything absent from this list are
  * committed but not runnable — see `EVAL_REQUIREMENTS`. Add `"sensor-tool"` when N3 restores
- * `query_sensor_data`, and `"turbidity-in-scope"` when the system prompt stops declaring
- * turbidity unmeasured.
+ * `query_sensor_data`.
+ *
+ * `turbidity-in-scope` landed 2026-07-29: the system prompt now lists turbidity as measured and
+ * carries an operator range for it (`src/prompt/systemPrompt.ts`).
  */
-export const AVAILABLE_CAPABILITIES: readonly EvalRequirement[] = [];
+export const AVAILABLE_CAPABILITIES: readonly EvalRequirement[] = ["turbidity-in-scope"];
 
 const isStringArray = (value: unknown): value is string[] => Array.isArray(value)
   && value.every((entry) => typeof entry === "string" && entry.trim() !== "");

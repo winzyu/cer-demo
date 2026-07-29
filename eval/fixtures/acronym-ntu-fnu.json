@@ -33,14 +33,14 @@
       "content": "Which one does our sensor use?",
       "rubric": {
         "must_contain": [
-          "states the loaded material does not specify which unit this deployment reports",
-          "declines to guess and points the user at the operator/fleet configuration"
+          "states this deployment reports NTU",
+          "notes NTU is the white-light unit, so the other pod's FNU values are not directly comparable to ours"
         ],
         "must_not": [
-          "asserts NTU or FNU as this deployment's unit",
-          "infers the unit from the probe datasheets, which cover no turbidity probe"
+          "says the deployment's unit is unspecified",
+          "supplies a conversion factor between the units"
         ],
-        "notes": "In-topic question with no grounded answer. Tests that a refusal is scoped to the missing fact rather than abandoning the whole topic."
+        "notes": "The unit comes from the operator block in the system prompt, not from the corpus, so no citation is expected. Before 2026-07-29 this turn had no grounded answer."
       }
     }
   ]

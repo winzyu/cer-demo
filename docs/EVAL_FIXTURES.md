@@ -101,11 +101,11 @@ calibration and fouling became answerable, and pollutant-criteria lookups stoppe
 |---|--:|---|---|
 | `definitional` | 3 | baseline competence — an arm that fails here is broken, not worse | tie |
 | `acronym-exact-token` | 3 | NTU/FNU, EC vs specific conductance, "KCl creep" — rare tokens that dense retrieval underweights, the reason the legacy build was hybrid | direct-feed |
-| `threshold-lookup` | 3 | numeric bands read verbatim, plus the caveats attached to them | direct-feed |
+| `threshold-lookup` | 2 | numeric bands read verbatim, plus the caveats attached to them | direct-feed |
 | `cross-document` | 3 | 2–4 documents needed in one answer; top-k 5 has to spend its slots correctly | direct-feed |
 | `deep-in-manual` | 3 | material only in the long manuals, which the ◆G9 slice excludes | RAG |
 | `follow-up` | 2 | pronoun chains across three turns with no restated nouns | tie |
-| `precedence` | 2 | operator ranges outrank documents, including when the user pushes back with the document | tie |
+| `precedence` | 3 | operator ranges outrank documents, including when the user pushes back with the document | tie |
 | `refusal` | 3 | refusing cleanly instead of confabulating — and not over-refusing afterwards | direct-feed |
 | `probe-calibration` | 2 | per-probe intervals that differ from each other | direct-feed |
 | `fouling-drift` | 2 | instrument failure modes vs. water chemistry | direct-feed |
@@ -160,52 +160,50 @@ it counts for less than a result contradicting it.
 
 ---
 
-## 5. Two blockers: what cannot run today
+## 5. One blocker left: what cannot run today
 
-Both are recorded in `requires` on the affected fixtures, and both make an arm's score reflect
-something other than retrieval if ignored. `AVAILABLE_CAPABILITIES` in `src/eval/fixtures.ts` is
-empty, so **22 of 30 fixtures (46 of 62 turns) are runnable today.**
+Blockers are recorded in each fixture's `requires` field and reflected in `AVAILABLE_CAPABILITIES`
+(`src/eval/fixtures.ts`). **28 of 30 fixtures (58 of 62 turns) are runnable today.**
 
-### `turbidity-in-scope` — 7 fixtures, 14 turns
-
-The system prompt (`src/prompt/systemPrompt.ts`) still says:
-
-> The sensor measures dissolved oxygen, ORP, pH, conductivity, and temperature. It does NOT
-> measure pathogens, bacteria, chemicals, or turbidity.
-
-That is stale. Turbidity is one of the six measured parameters, the corpus was rescoped around it,
-and ◆G9's slice covers it. As written, **every turbidity question is refused before retrieval is
-consulted** — all three arms score identically, and the eval measures the system prompt.
-
-The fix is Phase N4's "system-prompt range block" item, pulled forward: move turbidity out of the
-NOT-measured list, add it to the in-scope list, and add an operator normal range for it. The range
-is the blocking part — it needs a person, not code, and the corpus gives only general guidance
-(freshwater <5–25 NTU, estuarine 5–100+ NTU). `threshold-turbidity-estuary` deliberately checks
-that no arm invents one.
-
-Because §4 pins the system prompt as a control, this has to be settled **before** the first arm
-runs. Changing it mid-experiment voids every completed arm.
-
-### `sensor-tool` — 2 fixtures, 4 turns
+### `sensor-tool` — 2 fixtures, 4 turns · still blocked
 
 `query_sensor_data` and the tool-round orchestration loop land in N3. Until then the two
 `sensor-combined` conversations are committed but unrunnable. They discriminate little between
-arms by design, so the headline comparison does not wait on them.
+arms by design — the sensor path is held constant across arms — so the headline comparison does
+not wait for them.
 
----
+### `turbidity-in-scope` — 7 fixtures · **resolved 2026-07-29**
+
+The system prompt used to declare turbidity unmeasured, which meant every turbidity question was
+refused before retrieval was consulted: all three arms would have scored identically and the eval
+would have measured the prompt. Turbidity is now listed as measured, in NTU, with an operator
+range in the authoritative block — `0-25 NTU` freshwater, `0-10 NTU` saltwater, derived from §2 of
+the operator's own source-of-truth reference. The low end is 0, not 5, because **0 is a valid
+turbidity reading** and must never be flagged as erroneous (same rule as ORP).
+
+Two fixtures changed as a direct result, and both got *better* rather than merely unblocked:
+
+- **`threshold-turbidity-estuary`** moved from `threshold-lookup` to `precedence`. With an operator
+  range in play, 60 NTU is simultaneously normal for an estuary by the document and above the
+  operator range for this freshwater deployment — a real conflict rather than a lookup.
+- **`acronym-ntu-fnu`** turn 2 ("which one does our sensor use?") previously had no grounded
+  answer and tested a scoped refusal. It now has one: NTU, from the operator block.
+
+Because §4 pins the system prompt as a control, this had to land **before** the first arm runs.
+Changing it later voids every completed arm.
 
 ## 6. Sizing the sweep
 
 | | turns | × 3 arms × 2 passes |
 |---|--:|--:|
 | Full set | 62 | 372 LLM calls |
-| Runnable today | 46 | **276 LLM calls** |
+| Runnable today | 58 | **348 LLM calls** |
 
 Against the measured direct-feed prompt size (~10,900 tokens for a first turn, growing with
 history) and measured completions of 235–4,060 tokens, the runnable sweep is on the order of
 2–3M tokens total across all three arms — a few dollars, not a budget item. **The judge is the
-part people forget:** grading one pass, one dimension per call, is 138 answers × 3 dimensions =
-**414 judge calls**, plus the human calibration sample (~20%, ~28 answers).
+part people forget:** grading one pass, one dimension per call, is 174 answers × 3 dimensions =
+**522 judge calls**, plus the human calibration sample (~20%, ~35 answers).
 
 Price both before running, per `RETRIEVAL_BAKEOFF.md` §1. Note that this is the *experiment* cost
 and says nothing about the steady-state cost the decision is actually about.
@@ -220,7 +218,8 @@ Re-derive the fixtures, don't reinterpret old results, if any of these change:
   a removed document fails the test suite rather than silently mis-grading.
 - **The ◆G9 slice changes.** `sliceCoverage` and both prediction invariants are computed from
   `DIRECT_FEED_SLICE`. A slice change can turn a `deep-in-manual` fixture into an in-slice one.
-- **The system prompt changes** — including the turbidity fix above. It is a pinned control.
+- **The system prompt changes.** It is a pinned control — the turbidity fix in §5 was the last
+  change it is allowed to receive before the sweep.
 - **`LLM_MODEL` changes.** Cross-model comparisons are void (§4).
 - **A rubric turns out to be wrong.** Fix it and re-grade from the saved transcripts; that is why
   transcripts are committed separately from scores. Do not quietly re-run a paid sweep.

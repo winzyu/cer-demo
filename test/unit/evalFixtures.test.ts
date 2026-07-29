@@ -106,13 +106,22 @@ describe("committed eval fixtures", () => {
   });
 
   it("marks fixtures that depend on capabilities the service lacks", () => {
+    // Stated as an equivalence rather than a hard-coded list, so landing a capability
+    // (turbidity in N4, the sensor tool in N3) flips the fixtures without editing this test.
+    fixtures.forEach((fixture) => {
+      const satisfied = fixture.requires.every((req) => AVAILABLE_CAPABILITIES.includes(req));
+      expect(fixture.runnable).toBe(satisfied);
+    });
+    expect(runnableFixtures(fixtures).every((fixture) => fixture.runnable)).toBe(true);
+  });
+
+  it("still has fixtures waiting on the sensor tool", () => {
+    // If this ever passes vacuously, N3 landed and `sensor-tool` should be in
+    // AVAILABLE_CAPABILITIES — the two sensor fixtures are not meant to be quietly dropped.
     const blocked = fixtures.filter((fixture) => !fixture.runnable);
     blocked.forEach((fixture) => {
-      expect(fixture.requires.length).toBeGreaterThan(0);
+      expect(fixture.requires).toContain("sensor-tool");
     });
-    // Nothing has landed yet, so a fixture with no requirements must be runnable.
-    expect(AVAILABLE_CAPABILITIES).toEqual([]);
-    expect(runnableFixtures(fixtures).every((fixture) => fixture.requires.length === 0)).toBe(true);
   });
 
   it("counts turns for sweep costing", () => {

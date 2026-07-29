@@ -297,9 +297,16 @@ house `{ error, message }` shape.
 
 `buildSystemPrompt()` is ported from the legacy `backend/main.py::build_system_prompt`, recovered
 from git history at `7e2b09e^` — `MIGRATION_SPEC.md` §4.2 described its structure but never recorded
-its text. Two blocks are **verbatim** because behavior depends on their exact wording: the
-authoritative normal ranges, and `REFUSAL_SENTENCE` (pinned by a test; `MIGRATION_SPEC.md` §11 calls
-it out specifically).
+its text. `REFUSAL_SENTENCE` is **verbatim** because behavior depends on its exact wording (pinned
+by a test; `MIGRATION_SPEC.md` §11 calls it out specifically).
+
+**The authoritative ranges are no longer verbatim.** Turbidity was added 2026-07-29 — `0-25 NTU`
+freshwater, `0-10 NTU` saltwater, derived from §2 of the operator source-of-truth reference — and
+the scope lines were corrected to stop declaring turbidity unmeasured. It is one of the six
+parameters the DataPod reads and it is in the ◆G9 slice, so the legacy wording refused every
+turbidity question before retrieval ran. The low end is 0, not 5: **0 is a valid turbidity reading**
+and must never be flagged as erroneous (same rule as ORP). This block is a pinned control for the
+N2 bake-off (`RETRIEVAL_BAKEOFF.md` §4) — changing it once arms have run voids their results.
 
 The legacy **tool inventory and routing rules were deliberately not ported.** The legacy model
 fetched documents itself via a `search_documents` tool; here retrieval runs before the call and
@@ -415,9 +422,10 @@ EvalTurn    = { role: "user", content, rubric: { must_contain, must_not, cite?, 
 - **`sliceCoverage` and `runnable` are derived at load time, never stored**, so they cannot drift
   from `DIRECT_FEED_SLICE` or from what the service can actually do.
 - **`requires` marks fixtures that depend on capabilities that don't exist yet** — `sensor-tool`
-  (N3) and `turbidity-in-scope` (the system prompt still declares turbidity unmeasured). 22 of 30
-  fixtures are runnable today. Without the flag those fixtures would produce clean-looking
-  transcripts that grade a missing feature identically across all three arms.
+  (N3). `turbidity-in-scope` was resolved 2026-07-29 by the prompt change in §10.2, taking the
+  runnable set from 22 to **28 of 30 fixtures (58 of 62 turns)**. Without the flag those fixtures
+  would produce clean-looking transcripts that grade a missing feature identically across all
+  three arms.
 
 ---
 
@@ -442,7 +450,7 @@ for local demo, to be tightened before deploy.
 
 ## 14. Testing
 
-Jest + `ts-jest` + `supertest`. **124 tests, all passing.**
+Jest + `ts-jest` + `supertest`. **127 tests, all passing.**
 
 | suite | covers |
 |---|---|

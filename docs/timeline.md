@@ -262,9 +262,12 @@ real data is granted.*
 ## Phase N4 — Data layer & schema evolution `⟵ was Phase 1`
 *Goal: get the data model to where features need it.*
 
-- **Add `turbidity` (NTU) end-to-end** — ingestion unit detection, metric enum, operator normal-range,
-  system-prompt range block.
-- **Encode the "0 is valid" rule** for turbidity *and* ORP into the faulty-data foundation.
+- **Add `turbidity` (NTU) end-to-end** — ingestion unit detection and the metric enum. The
+  **operator normal-range and system-prompt range block landed early (2026-07-29)** — `0-25 NTU`
+  freshwater / `0-10 NTU` saltwater — because the N2 eval could not measure retrieval while the
+  prompt still declared turbidity unmeasured. See the session handoff.
+- **Encode the "0 is valid" rule** for turbidity *and* ORP into the faulty-data foundation. The
+  system-prompt range already starts at 0 for turbidity.
 - **Site/device metadata store** — coordinates, water-body type, client/contract, per-sensor
   calibration dates (needed for the report header + §5).
 - **◆ G3 — Site-baseline definition** (carried forward): is the report's "Site Baseline" the
@@ -375,7 +378,7 @@ answers complete.*
 | ◆ G5 | Frontend responsiveness (mobile/tablet) | Open | Phase N7 UI |
 | ◆ G6 | Redesign vs. match existing style | Open | Phase N7 UI |
 | — | Turbidity metric **code** | **Resolved → `72`** (from `user-dashboard` `MetricsDictionary`) | — |
-| — | Turbidity **unit** (NTU vs FNU) | **Resolved → not interchangeable; standardize one across the fleet** (NTU = white-light, FNU = infrared). Source: operator source-of-truth §6 | — |
+| — | Turbidity **unit** (NTU vs FNU) | **Resolved → the fleet reports NTU** (white-light). NTU and FNU are not interchangeable (FNU = infrared), so a pod reporting FNU is not comparable without re-deriving the range. Source: operator source-of-truth §6; unit confirmed by operator 2026-07-29 | — |
 
 ---
 
@@ -386,24 +389,24 @@ ingestion, the `firestore-direct` arm, and the **eval fixtures** are built; two 
 
 **What runs today:** `POST /api/v1/chat` answers via Fireworks with multi-turn history, citations,
 and optional SSE streaming. Two retrieval adapters are registered — `stub` and `firestore-direct`.
-124 tests, none touching the network. `npm run ingest` rebuilds the corpus artifact.
+127 tests, none touching the network. `npm run ingest` rebuilds the corpus artifact.
 
 **Eval fixtures — done.** 30 conversations / 62 turns in `eval/fixtures/`, per-turn rubrics, loaded
 and strictly validated by `src/eval/fixtures.ts`. Design, grading scales and per-fixture predictions
-in [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md). **Two blockers are recorded in each fixture's `requires`
-field, and both must be settled before the first arm runs**, because both make an arm's score
-reflect something other than retrieval:
+in [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md). **28 of 30 fixtures (58 of 62 turns) are runnable today.**
 
-- **`turbidity-in-scope` (7 fixtures).** The system prompt still says the sensor "does NOT measure
-  … turbidity". Every turbidity question is therefore refused before retrieval is consulted, so all
-  three arms score identically. Fix = pull N4's system-prompt item forward: move turbidity into the
-  in-scope list and add an operator normal range for it. **The range needs a person** — the corpus
-  gives only general guidance (freshwater <5–25 NTU, estuarine 5–100+ NTU).
-- **`sensor-tool` (2 fixtures).** `query_sensor_data` lands in N3. These discriminate little
-  between arms by design, so the headline comparison need not wait for them.
+**Turbidity is now in scope (2026-07-29).** The system prompt listed turbidity as *not* measured,
+which refused every turbidity question before retrieval ran — all three arms would have scored
+identically and the eval would have measured the prompt. It is now a measured parameter reported in
+**NTU**, with an operator range in the authoritative block: `0-25 NTU` freshwater, `0-10 NTU`
+saltwater, derived from §2 of the operator source-of-truth reference. Low end is 0, not 5, per the
+"0 is valid for turbidity and ORP" rule. Two fixtures improved as a result —
+`threshold-turbidity-estuary` became a genuine precedence case (60 NTU is normal for an estuary by
+the document, above the operator range for this deployment), and `acronym-ntu-fnu` turn 2 gained a
+grounded answer. This block is a **pinned control**: changing it after an arm runs voids that arm.
 
-22 of 30 fixtures (46 of 62 turns) are runnable today → a 276-call sweep across three arms and two
-passes, plus ~414 judge calls if an LLM grades.
+**Still blocked — `sensor-tool` (2 fixtures).** `query_sensor_data` and the tool-round loop land in
+N3. They discriminate little between arms by design, so the headline comparison need not wait.
 
 **Also fixed here:** `tm9a6.8.pdf` was titled "Turbidity (field methods)" in `DOC_META`. It is
 actually *Use of Multiparameter Instruments for Routine Field Measurements* (the turbidity chapter
