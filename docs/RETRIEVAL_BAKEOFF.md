@@ -208,11 +208,20 @@ the limit as a config-time fact to verify, not a constant.
 
 So "direct feeding" is not "feed everything." It needs a defined slice — ◆G9.
 
-### ◆ G9 — direct-feed corpus slice — **RESOLVED → small tier (~21K tokens)**
+### ◆ G9 — direct-feed corpus slice — **RESOLVED → operator reference + probe datasheets (~9.4K tokens)**
 
-Selected: `aquatic-life-criteria-table.md` + `Dissolved Oxygen and Water _ U.S. Geological Survey.pdf`
-+ `nutrient-lakes-reservoirs-factsheet-final.pdf`. The long manuals are out of reach for this arm;
-questions that need them are expected to fail here, and that gap is part of what the eval measures.
+Selected: `water-quality-metrics-source-of-truth.pdf` + the four Atlas Scientific probe datasheets
+(EC, ORP, pH, DO). Every entry is about a parameter the DataPod actually reads.
+
+> **Revised 2026-07-29.** The original selection (criteria table + USGS DO + nutrient factsheet,
+> ~20K tokens) was tested live and failed: **83% of the budget was the aquatic-life criteria table**,
+> a pandoc grid table whose cells are shredded across 8-character columns — "Pollutant" split over
+> four lines, data values likewise. It was unreadable by *any* arm, and it covered metals and
+> pesticides this sensor cannot detect. A threshold-lookup probe returned a refusal. The replacement
+> is less than half the size and answers the same class of question correctly, with citations.
+
+The long field manuals remain out of reach for this arm; questions needing them are expected to fail
+here, and that gap is part of what the eval measures.
 
 | option | tokens/request | trade-off |
 |---|---:|---|

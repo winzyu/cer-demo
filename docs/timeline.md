@@ -43,6 +43,25 @@ Two things to keep straight about this track:
   bake-off runs on its own branch (e.g. `feat/retrieval-bakeoff`) *after* `migration` merges and
   *after* Phase N1 provides the adapter seam. Nothing in it should be implemented now.
 
+### Corpus scoped to what the DataPod measures (2026-07-29)
+
+The sensor reads six parameters: temperature, DO, ORP, conductivity, pH, turbidity. Six documents
+covering analytes it **cannot** detect were moved to `documents/_excluded/` — EPA aquatic-life
+criteria (metals/pesticides, and structurally shredded by its own table markup), recreational water
+criteria (pathogens), nutrient criteria (N/P), plus two superseded DO references. Two of those were
+worse than useless: the system prompt already refuses pathogen and non-measured-pollutant questions,
+so retrieving them can only pull an answer toward material the bot must decline.
+
+Added in their place, from the operator: `water-quality-metrics-source-of-truth.pdf` (all six
+parameters, per-water-type baseline ranges, a pollution-event signature matrix, and sensor
+data-quality caveats) and four Atlas Scientific probe datasheets (EC, ORP, pH, DO). These close the
+turbidity-unit question, give **ORP its only coverage** in the corpus, and supply the grounding N6's
+faulty-data/recalibration feature needed.
+
+Corpus: 9 documents / ~340K tokens → **8 documents / ~179K tokens**. Still far larger than any
+context window, so the N2 comparison remains meaningful — had it fit, direct-feed would win by
+default and RAG would be moot.
+
 ### Completed (migration groundwork)
 
 - **Conventions reverse-engineered** from the sibling repos (`clean-earth-rovers-server`,
@@ -345,7 +364,7 @@ answers complete.*
 |---|---|---|---|
 | ◆ G1 | Target stack (A/B/C) | **Resolved → C (Node/Express + Firestore)** | — (unblocked all) |
 | ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open — **resolved by the N2 bake-off**, by measurement, on its own branch later | Phases N2→N6 depend on the answer; N2 itself is the experiment |
-| ◆ G9 | Direct-feed corpus slice | **Resolved → small tier (~21K tokens)**: aquatic-life criteria table + USGS DO + factsheet. Long manuals are out of reach for this arm — itself a measurable result | — |
+| ◆ G9 | Direct-feed corpus slice | **Resolved → operator source-of-truth + 4 probe datasheets (~9.4K tokens)**. Revised 2026-07-29: the original small tier was 83% a structurally shredded criteria table covering pollutants this sensor cannot measure | — |
 | ◆ G10 | Third bake-off arm | **Resolved → yes, three arms**: `firestore-direct`, `pgvector-rag`, `firestore-vector`. Also answers whether Firestore's own vector search is good enough if RAG wins | — |
 | ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open | N3 loop scope; multi-part answer quality |
 | ◆ G8 | Sensor-data store (Firestore port vs device-API) | **Resolved → device API** (most direct path to the real codebase) | — |
@@ -354,4 +373,44 @@ answers complete.*
 | ◆ G5 | Frontend responsiveness (mobile/tablet) | Open | Phase N7 UI |
 | ◆ G6 | Redesign vs. match existing style | Open | Phase N7 UI |
 | — | Turbidity metric **code** | **Resolved → `72`** (from `user-dashboard` `MetricsDictionary`) | — |
-| — | Turbidity **unit** (NTU vs FNU) | Open | before any answer quotes a turbidity value as fact |
+| — | Turbidity **unit** (NTU vs FNU) | **Resolved → not interchangeable; standardize one across the fleet** (NTU = white-light, FNU = infrared). Source: operator source-of-truth §6 | — |
+
+---
+
+## Session handoff — 2026-07-29
+
+**Where the code is:** Phase N1 complete and merged to `demo`. Phase N2 in progress: corpus
+ingestion and the `firestore-direct` arm are built and working; two of three arms remain.
+
+**What runs today:** `POST /api/v1/chat` answers via Fireworks with multi-turn history, citations,
+and optional SSE streaming. Two retrieval adapters are registered — `stub` and `firestore-direct`.
+104 tests, none touching the network. `npm run ingest` rebuilds the corpus artifact.
+
+**Immediate next step:** the **eval fixtures** (`RETRIEVAL_BAKEOFF.md` §5) — ~25–30 multi-turn
+conversations with rubrics, committed before any arm runs. Every arm is graded against them, so a
+vague set wastes all three arms' work. Note the rescoped corpus changes what is answerable:
+pollutant-criteria questions are out; probe drift and fouling questions are now in.
+
+**Then:** the `pgvector-rag` arm (needs Docker; costs one-time embedding of ~179K tokens).
+
+**Blocked:** `firestore-vector` and `npm run seed:firestore` both need Firestore credentials.
+`FIRESTORE_PROJECT_ID` is unset and local gcloud points at unrelated projects, so
+`CORPUS_SOURCE=firestore` has **never been exercised** — the direct-feed arm has only run against
+the local artifact. `FirestoreCorpusSource` is unit-tested against a fake, not against Firestore.
+
+**Also outstanding:**
+- Fireworks pricing has not been checked against the ~2.17B tokens/month the 100k-request ceiling
+  implies (§1 of the bake-off doc). The free-tier assumption is unverified and probably does not hold.
+- Branching drifted: N2 work is sitting on `feat/chat-history` rather than its own branch. The
+  pgvector sidecar must not land on a branch headed for deploy.
+- `ts-node` cold start is now ~83s. `npm run dev` looks hung but is not.
+
+**Measurements so far** (live, single runs — indicative, not the eval):
+
+| slice | prompt tokens | wall time |
+|---|---:|---:|
+| old ◆G9 slice (~20K) | 21,055 | ~41s |
+| new ◆G9 slice (~9.4K) | 10,863 | ~8s |
+
+Completion tokens ran 235–4,060 for one-to-two-sentence answers — gpt-oss emits reasoning tokens, so
+cost per answer cannot be inferred from answer length.

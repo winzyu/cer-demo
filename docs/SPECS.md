@@ -79,8 +79,13 @@ clean-earth-rag/
 │   │   ├── index.ts          shared registry, built-in adapters registered here
 │   │   ├── RetrievalRegistry.ts  mode → adapter + selection rules
 │   │   ├── options.ts        top-k bounds + resolveTopK()
-│   │   └── adapters/
-│   │       └── StubAdapter.ts
+│   │   ├── adapters/
+│   │   │   ├── StubAdapter.ts
+│   │   │   └── DirectFeedAdapter.ts
+│   │   └── sources/
+│   │       ├── corpusSource.ts        CorpusSource contract
+│   │       ├── ArtifactCorpusSource.ts
+│   │       └── FirestoreCorpusSource.ts
 │   ├── prompt/
 │   │   ├── systemPrompt.ts   ported legacy prompt + REFUSAL_SENTENCE
 │   │   └── promptBuilder.ts  static-first message assembly
@@ -126,7 +131,7 @@ config = {
   fireworks:  { apiKey?, baseUrl, chatModel?, embeddingModel, maxTokens, user },
   deviceApi:  { baseUrl?, devToken?, timeoutMs },
   chat:       { maxHistoryMessages },
-  retrieval:  { defaultMode, debug },
+  retrieval:  { defaultMode, debug, corpusSource },
   waterType,
 }
 ```
@@ -228,6 +233,15 @@ tests construct isolated instances instead of depending on import order.
 - **`stub`** (`StubAdapter`) — fixed placeholder chunks; no corpus, credentials, or network. Text is
   prefixed `[STUB CONTEXT]` so a stub answer can never be mistaken for a grounded one in a demo or a
   bake-off transcript. Accepts injected chunks for test scenarios.
+- **`firestore-direct`** (`DirectFeedAdapter`) — the ◆G9 slice returned whole, one `Chunk` per
+  document, unranked and **ignoring `topK`** (truncating an unranked slice would drop documents
+  arbitrarily). The slice is identical every request, so it is **loaded once per process**;
+  re-reading would add cost and latency for the same bytes, and on Firestore would burn read quota.
+  A load failure is not cached, so a transient datastore error cannot disable the arm for the
+  process lifetime. Text comes from a `CorpusSource`: `ArtifactCorpusSource` (local ingestion
+  output, no credentials — the dev default) or `FirestoreCorpusSource` (required for a measured
+  bake-off run so Firestore reads are counted), selected by `CORPUS_SOURCE`. **Explicit config, never
+  an automatic fallback** — a silent switch could have a run measured against the wrong source.
 - Registration happens in one place (`src/retrieval/index.ts`), so adding a bake-off arm is a single
   line rather than an import side effect.
 
@@ -351,9 +365,12 @@ retrieval-strategy differences.
 | Filter | length ≥ 100, no PDF boilerplate, and an alphabetic-ratio ≥ 0.5 test **skipped for `.md`/`.txt`** — see below |
 | Output | per document: full `text` (direct-feed) and filtered `chunks` (vector arms), plus the ◆G9 slice flag |
 
-Current run: **9 documents, 1,359,960 chars (~340K tokens), 594 chunks**; direct-feed slice
-**79,938 chars (~20K tokens)**. The OCR cache reproduces `MIGRATION_SPEC.md` §10.1's 133,416 chars
-exactly.
+Current run: **8 documents, 716,603 chars (~179K tokens), 305 chunks**; direct-feed slice
+**37,660 chars (~9.4K tokens)**.
+
+The corpus is scoped to the six parameters the DataPod measures. Documents about undetectable
+analytes live in `documents/_excluded/` — see `timeline.md`. Active set: the operator
+source-of-truth, four Atlas Scientific probe datasheets, and three USGS/EPA field-methods manuals.
 
 **The alpha-ratio exemption is a deliberate break from legacy parity.** The 0.5 threshold cannot tell
 OCR noise from a table — markdown tables here score 0.07–0.14, so the legacy rule discarded 15 of 23
@@ -387,7 +404,7 @@ for local demo, to be tightened before deploy.
 
 ## 13. Testing
 
-Jest + `ts-jest` + `supertest`. **93 tests, all passing.**
+Jest + `ts-jest` + `supertest`. **104 tests, all passing.**
 
 | suite | covers |
 |---|---|
@@ -396,6 +413,7 @@ Jest + `ts-jest` + `supertest`. **93 tests, all passing.**
 | `unit/retrieval.test.ts` | `resolveTopK`, `StubAdapter` guards, registry lookup, all five selection rules |
 | `unit/prompt.test.ts` | ranges, `REFUSAL_SENTENCE` pinned verbatim, block ordering, cacheable-prefix stability |
 | `unit/llmService.test.ts` | request params (`max_tokens`, `user`, no tools), empty-answer 502, streaming deltas, abort signal, usage handling |
+| `unit/directFeed.test.ts` | slice loading, once-per-process memoization, topK ignored, failure not cached, Firestore query shape |
 | `unit/ingestion.test.ts` | chunk sizing and overlap, the quality filter, the alpha-ratio exemption, corpus metadata |
 | `unit/chatValidators.test.ts` | history ordering, newest-kept trimming, the `system`-role rejection, per-index error messages |
 
