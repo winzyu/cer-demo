@@ -13,7 +13,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "ingest": "ts-node scripts/ingest.ts"
+    "ingest": "ts-node scripts/ingest.ts",
+    "seed:firestore": "ts-node scripts/seedFirestore.ts"
   },
   "license": "MIT",
   "dependencies": {

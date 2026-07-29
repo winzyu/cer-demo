@@ -56,11 +56,20 @@ export interface ChatConfig {
   maxHistoryMessages: number;
 }
 
+export type CorpusSourceName = "artifact" | "firestore";
+
 export interface RetrievalConfig {
   /** Registry key for the adapter selected by default (validated by the registry, later phase). */
   defaultMode: string;
   /** When true, a request may override the retrieval mode; otherwise the override is ignored. */
   debug: boolean;
+  /**
+   * Where corpus text is read from. `artifact` (the local ingestion output) needs no credentials
+   * and is the development default; `firestore` is required for a measured bake-off run so that
+   * datastore's read costs are counted. Explicit rather than auto-detected — a silent fallback
+   * could have a run measured against the wrong source and misreport the arm's cost.
+   */
+  corpusSource: CorpusSourceName;
 }
 
 export interface Config {
@@ -163,6 +172,11 @@ const load = (): Config => {
     retrieval: {
       defaultMode: readString("DEFAULT_RETRIEVAL", "stub") as string,
       debug: readBool("DEBUG_RETRIEVAL", false),
+      corpusSource: readEnum<CorpusSourceName>(
+        "CORPUS_SOURCE",
+        ["artifact", "firestore"],
+        "artifact",
+      ),
     },
     waterType: readEnum<WaterType>("WATER_TYPE", ["freshwater", "saltwater"], "freshwater"),
   };
