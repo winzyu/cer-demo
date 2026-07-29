@@ -40,8 +40,11 @@ export const DOC_META: Record<string, DocMeta> = {
   "tm9a6.2.pdf": {
     title: "USGS TM 9-A6.2 — Dissolved Oxygen (field methods)",
   },
+  // Not a turbidity chapter — A6.8 covers multiparameter sondes. (The turbidity chapter is
+  // A6.7, which is not in this corpus.) The title is what the model cites, so a wrong one
+  // makes citation-validity ungradeable in the N2 eval.
   "tm9a6.8.pdf": {
-    title: "USGS TM 9-A6.8 — Turbidity (field methods)",
+    title: "USGS TM 9-A6.8 — Use of Multiparameter Instruments for Routine Field Measurements",
   },
   "volunteer_stream_monitoring_a_methods_manual.pdf": {
     title: "Volunteer Stream Monitoring: A Methods Manual (EPA)",
