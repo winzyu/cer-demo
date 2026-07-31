@@ -15,7 +15,8 @@
     "test:coverage": "jest --coverage",
     "ingest": "ts-node scripts/ingest.ts",
     "bakeoff": "ts-node scripts/bakeoff.ts",
-    "seed:firestore": "ts-node scripts/seedFirestore.ts"
+    "seed:firestore": "ts-node scripts/seedFirestore.ts",
+    "seed:pgvector": "ts-node scripts/seedPgvector.ts"
   },
   "license": "MIT",
   "dependencies": {
@@ -28,7 +29,8 @@
     "http-errors": "^2.0.0",
     "morgan": "^1.10.0",
     "openai": "^7.0.0",
-    "pdf-parse": "^2.4.5"
+    "pdf-parse": "^2.4.5",
+    "pg": "^8.22.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -37,6 +39,7 @@
     "@types/jest": "^29.5.14",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.30",
+    "@types/pg": "^8.20.0",
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.65.0",
     "@typescript-eslint/parser": "^8.65.0",
