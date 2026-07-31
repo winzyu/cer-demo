@@ -472,6 +472,49 @@ cost decides:**
    off the break-even curve (§1).
 3. **Latency ceiling is a veto**, not a tiebreaker.
 
+### 8a. The actual numbers — fixed 2026-07-30, before any arm ran
+
+Thresholds set after the numbers exist are not a test. These are committed now, while the only
+measurement in hand is a direct-feed spot-check (disclosed rather than pretended away: TTFT
+7.8-9.3s, wall 9.5-11.6s, warm cache hit 99.4-99.9%, one fixture failing its turn-1 rubric).
+
+**Servable set.** An arm is judged on the fixtures it can reach. `firestore-direct` cannot reach
+material outside the ◆G9 slice, so the three `deep-in-manual` fixtures are **excluded from its
+correctness floor** and counted instead as *coverage*. The RAG arms index the whole corpus, so
+every class is servable and they get no such exemption. Coverage (% of the 28 runnable fixtures in
+an arm's servable set) is a headline-table column and a direct input to the split-outcome decision.
+
+**Quality floor — hard gates, applied to all 28 fixtures regardless of servable set:**
+
+| gate | threshold | why absolute |
+|---|---|---|
+| **Fabricated figures** | **Zero.** No invented numeric value, threshold, range or sensor reading stated as fact | Refusing is always available, so the slice is never an excuse. A made-up threshold in a water-quality tool is the failure mode that matters |
+| **Other ungrounded claims** | ≤2% of turns (≈1 of 58) | Tolerates a loose paraphrase; does not tolerate a pattern |
+| **Refusal integrity** | **100%** — every turn whose rubric requires a refusal must refuse | An arm that answers "what is the E. coli level" is out at any price |
+| **Citation validity** | ≥95% of citations | The cited document must actually contain the claim |
+
+**Quality floor — correctness (0/1/2 per turn), on the servable set:**
+
+- **Mean ≥1.0 / 2 in every servable class.** Per-class, not global, so an arm cannot pass by being
+  excellent at eight classes and useless at one.
+- **Mean ≥1.3 / 2 overall.**
+
+**Latency — two numbers doing different jobs:**
+
+- **Veto (retrieval-attributable):** no arm may add **more than 1.5s p95 TTFT** over the fastest
+  arm, judged **separately cold and warm**. This is the only latency difference this experiment can
+  legitimately attribute to retrieval — an embedding round-trip and vector query for RAG, prompt
+  processing on ~11K mostly-cached tokens for direct-feed.
+- **Flag (absolute, not a veto):** **p95 total wall ≤10s**. Today's measurements sit at the edge of
+  this, and the cause is gpt-oss emitting 400-1,300 reasoning tokens before the first visible word —
+  a model and `max_tokens` finding for N5. **If every arm breaches it, that is reported, not used to
+  choose a retrieval strategy**, because an absolute ceiling here would veto all three arms for a
+  reason unrelated to what is being compared.
+
+**If every arm fails the quality floor: ◆G7 stays open.** Record that nothing cleared the bar, fix
+the system — prompt, slice, `max_tokens`, or model — and re-run. **The floor does not move.**
+Pre-committing to this is what makes it a test rather than a formality.
+
 Applied:
 
 - **Direct-feed wins** if it clears the quality floor and sits on the cheap side of break-even at our
@@ -514,11 +557,14 @@ Required contents:
 
 1. **The headline table** — one row per retrieval method:
 
-   | method | cost/answer (cold) | cost/answer (warm) | cache hit rate | **idle $/mo** | **12-mo TCO @ projected volume** | correctness | groundedness | p95 latency |
-   |---|---|---|---|---|---|---|---|---|
-   | `firestore-direct` | | | | **$0** | | | | |
-   | `pgvector-rag` | | | | (DB instance, 24/7) | | | | |
-   | `firestore-vector` | | | | (index storage) | | | | |
+   | method | cost/answer (cold) | cost/answer (warm) | cache hit rate | **idle $/mo** | **12-mo TCO @ projected volume** | coverage | correctness | groundedness | p95 TTFT (cold / warm) |
+   |---|---|---|---|---|---|---|---|---|---|
+   | `firestore-direct` | | | | **$0** | | | | | |
+   | `pgvector-rag` | | | | (DB instance, 24/7) | | | | | |
+   | `firestore-vector` | | | | (index storage) | | | | | |
+
+   **Coverage** is the share of the 28 runnable fixtures in that arm's servable set (§8a) — the
+   column that stops direct-feed's slice exemption from being invisible.
 
 2. **The upkeep breakdown** — the §1 standing-cost table filled in with real figures: datastore idle
    charge, whether we land inside or outside Firestore's free-tier quota, compute, embeddings, index

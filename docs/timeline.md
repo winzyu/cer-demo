@@ -448,6 +448,21 @@ cause with certainty and omitting the instrument explanation, which is an explic
 Turn 2 passed, correctly catching that the reference's optical-sensor caveat does not apply to a
 galvanic probe. A real weakness, found by a rubric written before any arm ran.
 
+**Quality floor and latency ceiling — fixed 2026-07-30, before any arm ran**
+([`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8a):
+
+- **Hard gates (all 28 fixtures):** zero fabricated figures stated as fact; ≤2% of turns with any
+  other ungrounded claim; 100% refusal where a rubric requires one; citation validity ≥95%.
+- **Correctness (0/1/2 per turn, servable set):** mean ≥1.0 in every servable class, ≥1.3 overall.
+  `firestore-direct` is exempt from the three `deep-in-manual` fixtures — they are outside the ◆G9
+  slice by decision — and those count as **coverage**, a headline-table column, not as failures.
+  The RAG arms index the whole corpus and get no exemption.
+- **Latency veto:** ≤1.5s p95 TTFT added over the fastest arm, cold and warm judged separately.
+- **Latency flag (not a veto):** p95 wall ≤10s. Today's runs sit at the edge because gpt-oss emits
+  400–1,300 reasoning tokens first; if all arms breach it, that is an N5 model finding, not a
+  reason to pick a retrieval strategy.
+- **If every arm fails the floor, ◆G7 stays open and the floor does not move.**
+
 **Then:** the `pgvector-rag` arm (needs Docker; costs one-time embedding of ~179K tokens).
 
 **Blocked:** `firestore-vector` and `npm run seed:firestore` both need Firestore credentials.
