@@ -186,7 +186,7 @@ Build work in this phase:
 - **`pgvector-rag` sidecar** — `docker-compose.bakeoff.yml`, never in the deployed image.
 - **Eval fixtures** — ✅ **done**: 30 conversations / 62 turns in `eval/fixtures/`, with per-turn
   rubrics, committed before any arm runs. See [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md).
-- **Eval harness (programmatic)** — a runner replays the fixed **multi-turn conversations** over
+- **Eval harness (programmatic)** — ✅ **done**: `npm run bakeoff`. Replays the fixed **multi-turn conversations** over
   HTTP against each arm in a set order, and saves full transcripts: responses, **the exact context
   supplied to the model** (without it groundedness can't be graded), tool calls, cached/uncached token
   split, TTFT and wall time, plus arm/model/temperature/git-SHA. Temperature pinned to 0; cold and
@@ -397,7 +397,7 @@ ingestion, the `firestore-direct` arm, and the **eval fixtures** are built; two 
 
 **What runs today:** `POST /api/v1/chat` answers via Fireworks with multi-turn history, citations,
 and optional SSE streaming. Two retrieval adapters are registered — `stub` and `firestore-direct`.
-127 tests, none touching the network. `npm run ingest` rebuilds the corpus artifact.
+151 tests, none touching the network. `npm run ingest` rebuilds the corpus artifact.
 
 **Eval fixtures — done.** 30 conversations / 62 turns in `eval/fixtures/`, per-turn rubrics, loaded
 and strictly validated by `src/eval/fixtures.ts`. Design, grading scales and per-fixture predictions
@@ -420,6 +420,33 @@ N3. They discriminate little between arms by design, so the headline comparison 
 actually *Use of Multiparameter Instruments for Routine Field Measurements* (the turbidity chapter
 is A6.7, which is not in this corpus). The title is what the model cites, so the wrong one would
 have made citation-validity ungradeable. Re-run `npm run ingest` to pick it up.
+
+**Capture runner — done (2026-07-30).** `npm run bakeoff -- --arm=<mode> --pass=<cold|warm>`,
+plus `--spot-check`, `--only`, `--dry-run`. Drives the real service over HTTP and writes
+`eval/transcripts/<pass>/<arm>/<fixture>.json` with the full conversation, **the exact context
+supplied to the model**, the cached/uncached token split, TTFT and wall time, and run metadata
+(git SHA, model, temperature). See [`SPECS.md`](SPECS.md) §13.
+
+Two service-level gaps had to be closed first, because the runner cannot record what the service
+never exposed:
+
+- **`LLM_TEMPERATURE`, default 0.** Temperature was never sent, so the provider default applied and
+  answers were not reproducible — which would have made the whole sweep measure the sampler.
+- **`cachedPromptTokens`** on the usage object. Only the prompt-token total was captured, and the
+  split is the number the bake-off actually turns on.
+
+**Live result worth acting on: prompt caching works, and it is close to total.** Verified against
+`firestore-direct` on 2026-07-30 — Fireworks does report `cached_tokens`, and a warm prefix hit
+**~99.4-99.9%** (e.g. 21,783 of 21,918 prompt tokens across a two-turn conversation). Direct-feed's
+entire cost case rested on this being true and it is. It does not settle ◆G7 — the cached *rate*
+still has to be priced, and RAG's fixed costs still have to be counted — but the failure mode that
+would have killed direct-feed outright is not present.
+
+**The eval is already discriminating.** The first live fixture run, `crossdoc-do-drift-vs-hypoxia`,
+**failed its turn-1 rubric**: it answered "Yes… the river is currently hypoxic" — asserting one
+cause with certainty and omitting the instrument explanation, which is an explicit `must_not`.
+Turn 2 passed, correctly catching that the reference's optical-sensor caveat does not apply to a
+galvanic probe. A real weakness, found by a rubric written before any arm ran.
 
 **Then:** the `pgvector-rag` arm (needs Docker; costs one-time embedding of ~179K tokens).
 

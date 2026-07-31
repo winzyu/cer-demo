@@ -14,6 +14,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "ingest": "ts-node scripts/ingest.ts",
+    "bakeoff": "ts-node scripts/bakeoff.ts",
     "seed:firestore": "ts-node scripts/seedFirestore.ts"
   },
   "license": "MIT",

@@ -16,7 +16,7 @@ current codebase.
 > **Status: Phase N1 complete.** Service bootstrap, the retrieval seam (§9), and a working
 > `POST /api/v1/chat` answering via Fireworks with optional streaming (§10). Retrieval is still the
 > **stub adapter** — real retrieval is decided by the N2 bake-off. Sensor queries and ingestion are
-> **not implemented** (see §15).
+> **not implemented** (see §16).
 
 ---
 
@@ -93,7 +93,11 @@ clean-earth-rag/
 │   │   ├── extract.ts / chunk.ts / ingest.ts
 │   ├── eval/
 │   │   ├── types.ts          EvalFixture / EvalTurn / EvalRubric
-│   │   └── fixtures.ts       loader + strict validation of eval/fixtures/
+│   │   ├── fixtures.ts       loader + strict validation of eval/fixtures/
+│   │   ├── cli.ts            bakeoff argument parsing
+│   │   ├── transport.ts      SSE + JSON HTTP transports
+│   │   ├── runner.ts         replay engine + sweep summary
+│   │   └── transcript.ts     transcript shape and totals
 │   ├── prompt/
 │   │   ├── systemPrompt.ts   ported legacy prompt + REFUSAL_SENTENCE
 │   │   └── promptBuilder.ts  static-first message assembly
@@ -108,13 +112,14 @@ clean-earth-rag/
 │       ├── errors.ts         NotFound/Validation/Unauthorized/Forbidden/Conflict
 │       ├── logger.ts         createLogger(tag)
 │       └── sse.ts            Server-Sent Events helpers
-├── scripts/                  ingest.ts, seedFirestore.ts
+├── scripts/                  ingest.ts, seedFirestore.ts, bakeoff.ts
 ├── test/
 │   ├── integration/  health.test.ts, chat.test.ts
 │   └── unit/         retrieval.test.ts, prompt.test.ts, llmService.test.ts,
 │                     directFeed.test.ts, ingestion.test.ts, chatValidators.test.ts,
 │                     evalFixtures.test.ts
 ├── eval/fixtures/            30 committed bake-off conversations (§12)
+├── eval/transcripts/         captured sweeps, <pass>/<arm>/<fixture>.json (§13)
 ├── frontend/index.html       static chat UI, wired to POST /api/v1/chat (streaming)
 ├── data/                     sensor CSV + corpus artifact (git-ignored)
 ├── documents/                corpus PDFs (git-ignored)
@@ -337,6 +342,13 @@ client is **lazy and memoized**, like the Firestore client, so the service boots
 without credentials; a missing key is a 503 only when a chat request arrives.
 
 - `max_tokens` from `LLM_MAX_TOKENS` (default **4096**, up from the legacy 800).
+- `temperature` from `LLM_TEMPERATURE`, **default 0**. Previously unsent, so the provider default
+  applied and answers were not reproducible. The N2 bake-off requires it pinned — sampling variance
+  across arms would measure the sampler rather than the retrieval strategy.
+- **Usage carries a cached/uncached prompt-token split** (`cachedPromptTokens`, from
+  `prompt_tokens_details.cached_tokens`). Direct-feed's entire cost case rests on this number, and
+  reporting only the total would make the arm look uniformly expensive and quietly decide ◆G7.
+  `undefined` means the provider said nothing, which is **not** the same as a 0% hit rate.
 - `user` sent on every request — Fireworks serverless cache affinity. Dropping it does not error, it
   just silently stops cache hits, which would distort the N2 bake-off. Asserted by a test.
 - **No tools offered** — retrieval already ran. The legacy tool-round loop returns in N3.
@@ -429,7 +441,54 @@ EvalTurn    = { role: "user", content, rubric: { must_contain, must_not, cite?, 
 
 ---
 
-## 13. API
+## 13. Bake-off capture runner (`scripts/bakeoff.ts`, `src/eval/`)
+
+```
+npm run bakeoff -- --arm=firestore-direct --pass=cold
+npm run bakeoff -- --arm=firestore-direct --spot-check
+```
+
+Replays the runnable fixtures against a **running service over HTTP** — not the controller
+in-process — so the latency and token counts recorded are the ones production would see
+(`RETRIEVAL_BAKEOFF.md` §7a). Capture only; grading is a separate offline pass.
+
+| piece | role |
+|---|---|
+| `src/eval/cli.ts` | argument parsing; collects every problem before throwing |
+| `src/eval/transport.ts` | SSE (default) and JSON transports over `fetch` |
+| `src/eval/runner.ts` | replay, history assembly, the arm guard, sweep summary |
+| `src/eval/transcript.ts` | transcript shape and totals |
+| `scripts/bakeoff.ts` | wiring, spot-check mode, transcript writing |
+
+Transcripts land at `eval/transcripts/<pass>/<arm>/<fixture-id>.json` — the path separates passes
+and arms so cold and warm can never be blended by accident.
+
+**Four things it is built to prevent**, each of which otherwise produces a dataset that *looks*
+fine:
+
+- **Silent arm substitution.** The registry *ignores* a retrieval override when `DEBUG_RETRIEVAL`
+  is false rather than rejecting it (§9). A sweep run against such a server would record all three
+  arms as the default and compare one strategy against itself. The runner compares the arm it
+  requested against the `mode` the service reports **on every turn** and aborts on mismatch.
+- **Cache data mistaken for a cache miss.** An unreported `cachedPromptTokens` stays `undefined`
+  through totals and summary rather than summing as zero, and the summary says so loudly.
+- **Mislabelled passes.** `--pass=cold` is a label, not a guarantee. The summary warns when a
+  "cold" pass was in fact served from cache; the measured split is the ground truth.
+- **Empty context.** A misconfigured adapter returning nothing yields fluent, ungradeable answers.
+  `--spot-check` probes the arm with three queries (in-slice, out-of-slice, must-refuse) and prints
+  the context before any sweep runs.
+
+The **streaming transport is the default** because it is the only one that yields TTFT; `--transport=json`
+is the fallback if a provider ever stops emitting usage over the stream.
+
+**Verified live** against `firestore-direct` on 2026-07-30: transcripts captured with full context,
+per-turn TTFT/wall time, and the cached/uncached split. Fireworks reports `cached_tokens`, and the
+observed hit rate on a warm prefix was **~99.4-99.9%** — the static-first prompt ordering (§10.2)
+holding up exactly as the cost case requires.
+
+---
+
+## 14. API
 
 | method | path | response |
 |---|---|---|
@@ -448,9 +507,9 @@ for local demo, to be tightened before deploy.
 
 ---
 
-## 14. Testing
+## 15. Testing
 
-Jest + `ts-jest` + `supertest`. **127 tests, all passing.**
+Jest + `ts-jest` + `supertest`. **151 tests, all passing.**
 
 | suite | covers |
 |---|---|
@@ -463,6 +522,7 @@ Jest + `ts-jest` + `supertest`. **127 tests, all passing.**
 | `unit/ingestion.test.ts` | chunk sizing and overlap, the quality filter, the alpha-ratio exemption, corpus metadata |
 | `unit/chatValidators.test.ts` | history ordering, newest-kept trimming, the `system`-role rejection, per-index error messages |
 | `unit/evalFixtures.test.ts` | the committed eval set (ids, class coverage, multi-turn, slice consistency) and every rule the fixture loader claims to enforce |
+| `unit/bakeoffRunner.test.ts` | history assembly across turns, the arm-mismatch abort, failed-turn handling, cached-token accounting, the sweep warnings, SSE frame buffering, and CLI parsing |
 
 **No test touches the network, needs a key, or spends money** — `chat.test.ts` mocks `LlmService`
 wholesale and the unit tests inject a fake client. Run with `npm test`.
@@ -481,7 +541,7 @@ conventions this codebase follows, rather than disabled globally:
 
 ---
 
-## 15. Not yet built (tracked in `timeline.md`)
+## 16. Not yet built (tracked in `timeline.md`)
 
 | Area | Legacy reference | Target |
 |---|---|---|
@@ -495,7 +555,7 @@ conventions this codebase follows, rather than disabled globally:
 
 ---
 
-## 16. Privacy posture (carried forward)
+## 17. Privacy posture (carried forward)
 
 Unchanged in intent from the legacy build: once chat lands, all prompts (system + history +
 retrieved chunks + user message) are sent to Fireworks AI, and confidentiality rests on a
