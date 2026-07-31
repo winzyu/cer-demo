@@ -16,7 +16,7 @@ current codebase.
 > **Status: Phase N1 complete.** Service bootstrap, the retrieval seam (§9), and a working
 > `POST /api/v1/chat` answering via Fireworks with optional streaming (§10). Retrieval is still the
 > **stub adapter** — real retrieval is decided by the N2 bake-off. Sensor queries and ingestion are
-> **not implemented** (see §16).
+> **not implemented** (see §17).
 
 ---
 
@@ -488,7 +488,55 @@ holding up exactly as the cost case requires.
 
 ---
 
-## 14. API
+## 14. `pgvector-rag` arm (`docker-compose.bakeoff.yml`, `src/retrieval/adapters/PgVectorRagAdapter.ts`)
+
+⚠️ **Dev/experiment only.** Deliberately re-introduces the stack ◆G1 resolved away from, as the
+only honest baseline for "what we had before". **Deleted — adapter, seeder, schema, compose file,
+`src/config/pgvector.ts` and the `pg` dependency — once ◆G7 resolves** (`RETRIEVAL_BAKEOFF.md` §9).
+
+```
+docker-compose -f docker-compose.bakeoff.yml up -d
+npm run seed:pgvector
+PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff npm run dev
+```
+
+A faithful port of `MIGRATION_SPEC.md` §7. Every constant is pinned to the legacy value rather than
+tuned — a tuned reimplementation would be a different system and would not answer the question:
+
+| element | value | source |
+|---|---|---|
+| Dense branch | cosine `<=>`, fetch 20 | §7 step 3 |
+| Lexical branch | `websearch_to_tsquery('english')` + `ts_rank_cd`, fetch 20 | §7 step 4 |
+| Fusion | RRF, `RRF_K = 60`, score `1/(k + rank + 1)` | §7 step 5 |
+| top-k | 5, capped 1–10 (shared `resolveTopK`) | §7 |
+| Embeddings | `nomic-embed-text-v1.5`, 768-dim, batch 32 | §4.4 |
+| Schema | PostgreSQL 16 + pgvector, GIN on `content_tsv`, IVFFlat `lists = clamp(√n, 10, 100)` built post-load | §6 |
+
+`fuseRrf` is a pure function in `src/retrieval/rrf.ts`, separate from the adapter, because it is the
+one piece whose correctness can be established without a database — and a subtly wrong fusion
+returns plausible-but-worse chunks, which would read as "RAG loses" rather than as a bug.
+
+The seeder reads **`data/corpus/corpus.json`**, the same artifact every other arm loads, never the
+PDFs — the one-parse rule (§11). It is idempotent by filename and embeds inside a per-document
+transaction, so a mid-run failure cannot leave a half-seeded document that the idempotency check
+would later skip as complete. `sensor_data` is deliberately **not** ported: the sensor path is held
+constant across arms.
+
+> **Provider bug found while standing this up (2026-07-30).** Calling Fireworks' embeddings endpoint
+> **without** `encoding_format` returns a corrupt **192-element all-zero vector** instead of the
+> 768-dim embedding — no error, no warning. Dense retrieval built on zero vectors ranks arbitrarily,
+> so the RAG arms would have lost the bake-off to a bug rather than to retrieval. `EmbeddingService`
+> now always sends `encoding_format: "float"` and rejects both wrong dimensions **and** all-zero
+> vectors, since a degenerate vector of the right shape would otherwise pass every check.
+
+**Verified live** on 2026-07-30 against the seeded sidecar (8 documents, 305 chunks, IVFFlat
+lists=17): answers ORP correctly on ~4,400 prompt tokens against direct-feed's ~10,900, **answers
+the deep-in-manual stabilization-criteria question that direct-feed refuses**, and still refuses the
+fecal-coliform probe despite retrieving the volunteer manual's bacteria chapter.
+
+---
+
+## 15. API
 
 | method | path | response |
 |---|---|---|
@@ -507,9 +555,9 @@ for local demo, to be tightened before deploy.
 
 ---
 
-## 15. Testing
+## 16. Testing
 
-Jest + `ts-jest` + `supertest`. **151 tests, all passing.**
+Jest + `ts-jest` + `supertest`. **179 tests, all passing.**
 
 | suite | covers |
 |---|---|
@@ -523,6 +571,7 @@ Jest + `ts-jest` + `supertest`. **151 tests, all passing.**
 | `unit/chatValidators.test.ts` | history ordering, newest-kept trimming, the `system`-role rejection, per-index error messages |
 | `unit/evalFixtures.test.ts` | the committed eval set (ids, class coverage, multi-turn, slice consistency) and every rule the fixture loader claims to enforce |
 | `unit/bakeoffRunner.test.ts` | history assembly across turns, the arm-mismatch abort, failed-turn handling, cached-token accounting, the sweep warnings, SSE frame buffering, and CLI parsing |
+| `unit/pgvectorRag.test.ts` | RRF scoring and tie-breaking against the legacy formula, the nomic task prefixes, embedding batching and dimension/all-zero guards, both query branches, and top-k handling — all without a database |
 
 **No test touches the network, needs a key, or spends money** — `chat.test.ts` mocks `LlmService`
 wholesale and the unit tests inject a fake client. Run with `npm test`.
@@ -541,7 +590,7 @@ conventions this codebase follows, rather than disabled globally:
 
 ---
 
-## 16. Not yet built (tracked in `timeline.md`)
+## 17. Not yet built (tracked in `timeline.md`)
 
 | Area | Legacy reference | Target |
 |---|---|---|
@@ -555,7 +604,7 @@ conventions this codebase follows, rather than disabled globally:
 
 ---
 
-## 17. Privacy posture (carried forward)
+## 18. Privacy posture (carried forward)
 
 Unchanged in intent from the legacy build: once chat lands, all prompts (system + history +
 retrieved chunks + user message) are sent to Fireworks AI, and confidentiality rests on a

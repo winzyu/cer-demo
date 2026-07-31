@@ -159,8 +159,8 @@ set; the winner closes the gate.
 
 | arm | what it does | infra |
 |---|---|---|
-| `firestore-direct` | **Direct feed** — read the corpus slice from Firestore, put it in the prompt whole. No embedding, no ranking, no top-k, structurally no retrieval miss. | none |
-| `pgvector-rag` | **Legacy-parity RAG** — hybrid dense + Postgres full-text fused with RRF, exactly `MIGRATION_SPEC.md` §7. | Postgres+pgvector sidecar, **dev-only**, deleted after G7 |
+| `firestore-direct` ✅ built | **Direct feed** — read the corpus slice from Firestore, put it in the prompt whole. No embedding, no ranking, no top-k, structurally no retrieval miss. | none |
+| `pgvector-rag` ✅ built | **Legacy-parity RAG** — hybrid dense + Postgres full-text fused with RRF, exactly `MIGRATION_SPEC.md` §7. | Postgres+pgvector sidecar, **dev-only**, deleted after G7 |
 | `firestore-vector` | RAG on Firestore native `findNearest`, dense-only unless a lexical path is built | Firestore vector index |
 
 **The corpus does not fit in context.** ~1.357M chars ≈ **339K tokens** across 9 docs
@@ -397,7 +397,7 @@ ingestion, the `firestore-direct` arm, and the **eval fixtures** are built; two 
 
 **What runs today:** `POST /api/v1/chat` answers via Fireworks with multi-turn history, citations,
 and optional SSE streaming. Two retrieval adapters are registered — `stub` and `firestore-direct`.
-151 tests, none touching the network. `npm run ingest` rebuilds the corpus artifact.
+179 tests, none touching the network. `npm run ingest` rebuilds the corpus artifact.
 
 **Eval fixtures — done.** 30 conversations / 62 turns in `eval/fixtures/`, per-turn rubrics, loaded
 and strictly validated by `src/eval/fixtures.ts`. Design, grading scales and per-fixture predictions
@@ -463,7 +463,38 @@ galvanic probe. A real weakness, found by a rubric written before any arm ran.
   reason to pick a retrieval strategy.
 - **If every arm fails the floor, ◆G7 stays open and the floor does not move.**
 
-**Then:** the `pgvector-rag` arm (needs Docker; costs one-time embedding of ~179K tokens).
+**`pgvector-rag` arm — done (2026-07-30).** Sidecar up, corpus seeded (8 documents, 305 chunks,
+IVFFlat lists=17), arm verified live. Faithful port of `MIGRATION_SPEC.md` §7: dense cosine + a
+`websearch_to_tsquery` lexical branch, 20 candidates each, fused with RRF at `RRF_K = 60`, top-k 5.
+See [`SPECS.md`](SPECS.md) §14.
+
+**A provider bug nearly invalidated this arm.** Calling Fireworks' embeddings endpoint *without*
+`encoding_format` returns a corrupt **192-element all-zero vector** instead of the 768-dim
+embedding — silently, no error. Dense search over zero vectors ranks arbitrarily, so RAG would have
+lost the bake-off to a bug rather than to retrieval, and nothing in the results would have shown
+why. `EmbeddingService` now sends `encoding_format: "float"` and rejects wrong dimensions *and*
+all-zero vectors — the dimension check alone would not have caught a degenerate vector of the
+right shape.
+
+**First head-to-head, on three spot-check probes** (indicative, not the eval):
+
+| probe | `firestore-direct` | `pgvector-rag` |
+|---|---|---|
+| "What is ORP?" (in slice) | correct, 10,893 prompt tokens | correct, **4,446** prompt tokens |
+| Sonde stabilization criteria (deep in manual) | **refused** | **answered, with the table** |
+| Fecal coliform count | refused | refused — *despite retrieving the bacteria chapter* |
+
+The ◆G9 slice trade-off is now measured rather than predicted, and the `refusal-pathogens` trap
+fired exactly as designed without the arm falling into it.
+
+**Cache behaviour differs structurally, and it may invert the naive cost story.** Direct-feed's
+prefix is byte-identical every request, so it bills ~10,900 prompt tokens of which ~99% are cached
+(≈14 uncached). RAG's context changes per query, so its prefix diverges early: ~2,700–4,400 prompt
+tokens of which only ~570 cached. **RAG sends fewer tokens but pays full price for most of them.**
+Which is cheaper depends entirely on the cached-input discount — still unpriced, and now clearly
+the single most decision-relevant unknown left.
+
+**Then:** `firestore-vector` (blocked on credentials), then the sweep.
 
 **Blocked:** `firestore-vector` and `npm run seed:firestore` both need Firestore credentials.
 `FIRESTORE_PROJECT_ID` is unset and local gcloud points at unrelated projects, so
