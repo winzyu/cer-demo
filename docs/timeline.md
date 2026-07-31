@@ -191,6 +191,14 @@ Build work in this phase:
   supplied to the model** (without it groundedness can't be graded), tool calls, cached/uncached token
   split, TTFT and wall time, plus arm/model/temperature/git-SHA. Temperature pinned to 0; cold and
   warm passes kept separate.
+- **Human testing harness (frontend)** — an arm selector in the existing `frontend/index.html`, so
+  non-technical testers can exercise the arms in a browser. **Blind by default** (arms shown as
+  A/B/C, shuffled per session) because a visible arm name destroys blind grading; a labeled mode
+  exists for debugging and its transcripts are tagged as non-eval. Sessions capture to the same
+  transcript shape as the runner. Needs `GET /api/v1/retrieval/modes`, gated on `DEBUG_RETRIEVAL`.
+  Seeded sessions (tester asks fixture questions) feed the human calibration sample; roaming
+  sessions are for discovering missing question classes, which become new fixtures for the *next*
+  sweep, never scores in this one. **Not** the N7 Next.js page — this is the throwaway demo UI.
 - **Grading is a separate offline pass** over the saved transcripts, arms stripped and shuffled —
   human, LLM judge, or judge calibrated against a human sample. If a judge grades: different model
   than the one under test, one dimension per call, and the human-agreement rate reported.

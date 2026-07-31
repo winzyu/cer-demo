@@ -407,6 +407,54 @@ Runs over the saved transcripts, arms stripped.
 - **Disagreements and edge cases go in the report**, not just the mean. A single catastrophic
   ungrounded answer matters more than a small average difference.
 
+### 7c. Human testing through the frontend
+
+Alongside the scripted sweep, **non-technical testers exercise the arms through the chat UI**. This
+is not a replacement for §7a — it is how the human calibration sample (§7b) gets collected without
+anyone hand-driving `curl`, and how failure modes the fixtures never imagined get found.
+
+The seam already exists: the per-request `retrieval` field, honored when `DEBUG_RETRIEVAL=true`.
+What's missing is a way to reach it from a browser.
+
+**Two modes, and the distinction is load-bearing:**
+
+| mode | arm shown as | output is |
+|---|---|---|
+| **Blind** (default) | opaque `A` / `B` / `C`, **shuffled per session** | eval data — gradeable, usable for judge calibration |
+| **Labeled** | real mode names | exploration only — never mixed into scores |
+
+A tester who can see `pgvector-rag` on the label is no longer grading blind, and §7b's whole point
+is that neither a human nor a judge model can tell which strategy produced an answer. Labeled mode
+exists for debugging; its transcripts are tagged so they cannot be counted as eval data by mistake.
+
+**Free-form questions do not replace the fixture set.** Different testers ask different questions,
+so arms stop being comparable and you end up measuring question difficulty. Two distinct uses:
+
+- **Seeded** — the tester is handed fixture questions to ask. Gradeable against the committed
+  rubrics, comparable across arms, and the cheapest route to the ~20% human calibration sample.
+- **Roaming** — the tester asks whatever they like. Qualitative only, and genuinely valuable: it
+  is how you discover the question class nobody thought to write a fixture for. Anything it turns
+  up becomes a *new fixture*, added before the next sweep — never a score in this one.
+
+**Build items:**
+
+- `GET /api/v1/retrieval/modes` — lists registered arms. **Gated on `DEBUG_RETRIEVAL`**, 404
+  otherwise, so a real deployment cannot enumerate or select strategies.
+- Arm selector in `frontend/index.html`, blind by default, with the session's shuffle held
+  server-side so the mapping isn't sitting in the page source where a curious tester will find it.
+- **Session capture** writing the same transcript shape as the runner — including the exact context
+  supplied to the model — into `eval/transcripts/human/`. A human session that captures only the
+  answer is ungradeable for groundedness, exactly as a scripted one would be.
+- A per-session cost cap. Direct-feed bills ~11K input tokens per turn, and testers are not
+  rate-limited by a script.
+
+**This does not change the arms' fate.** They are still deleted once ◆G7 closes (§2); the selector
+goes with them, and the frontend keeps calling `POST /chat` and getting whatever `DEFAULT_RETRIEVAL`
+resolves to. Nothing here reverses the rule that a caller does not get to choose the cost of their
+own request.
+
+---
+
 Transcripts and scores are both committed, so any conclusion can be re-checked — and re-graded with a
 better rubric — without re-running a paid sweep.
 
@@ -517,6 +565,8 @@ adapters, standing up a pgvector sidecar, and running a paid eval sweep all belo
     applies to our `(default)` database.
   - **A Cloud SQL (or equivalent) quote** for the smallest instance that would host pgvector — the
     deployed counterfactual's dominant cost line.
-  - **A decision on who grades**: human, LLM judge, or judge-with-human-calibration (§7b).
+  - ~~A decision on who grades~~ — **resolved 2026-07-29: LLM judge calibrated against a human
+    sample** (§7b). The judge model must differ from the model under test; the human sample is
+    collected through the blind frontend harness (§7c) rather than by hand-driving the API.
 
 Until then this document is a plan of record. Nothing here should be implemented on `migration`.
