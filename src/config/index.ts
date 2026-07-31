@@ -23,6 +23,14 @@ export interface FireworksConfig {
    */
   maxTokens: number;
   /**
+   * Sampling temperature. **Defaults to 0**, which is both the sane default for a grounded
+   * water-quality assistant and a hard requirement of the N2 bake-off: sampling variance across
+   * arms would measure the sampler rather than the retrieval strategy
+   * (`RETRIEVAL_BAKEOFF.md` §7a). Previously unset, which meant the provider default applied and
+   * answers were not reproducible.
+   */
+  temperature: number;
+  /**
    * Sent as the OpenAI `user` field. On Fireworks serverless this drives cache affinity:
    * requests sharing a value tend to land on the same worker, which is what makes prompt
    * caching actually hit. A constant is correct for a single-tenant demo; revisit when
@@ -109,6 +117,20 @@ const readInt = (name: string, fallback: number): number => {
   return value;
 };
 
+/** Like `readInt` but accepts decimals — temperature is the only such value so far. */
+const readFloat = (name: string, fallback: number): number => {
+  const raw = process.env[name];
+  if (raw === undefined || raw.trim() === "") {
+    return fallback;
+  }
+  const value = Number(raw);
+  if (!Number.isFinite(value)) {
+    errors.push(`${name} must be a number (got "${raw}")`);
+    return fallback;
+  }
+  return value;
+};
+
 const readBool = (name: string, fallback: boolean): boolean => {
   const raw = process.env[name];
   if (raw === undefined || raw.trim() === "") {
@@ -159,6 +181,7 @@ const load = (): Config => {
       chatModel: readString("LLM_MODEL"),
       embeddingModel: readString("EMBEDDING_MODEL", "nomic-ai/nomic-embed-text-v1.5") as string,
       maxTokens: readInt("LLM_MAX_TOKENS", 4096),
+      temperature: readFloat("LLM_TEMPERATURE", 0),
       user: readString("FIREWORKS_USER", "clean-earth-rag") as string,
     },
     deviceApi: {

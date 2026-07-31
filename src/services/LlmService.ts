@@ -10,7 +10,32 @@ export interface LlmUsage {
   promptTokens?: number;
   completionTokens?: number;
   totalTokens?: number;
+  /**
+   * Prompt tokens served from the provider's cache, out of `promptTokens`.
+   *
+   * **This is the number the whole bake-off turns on.** Direct-feed sends a large, byte-identical
+   * document slice on every request; whether that is affordable depends entirely on how much of it
+   * bills at the cached rate (`RETRIEVAL_BAKEOFF.md` §6 — "the split, not the total"). Reporting
+   * only `promptTokens` would make direct-feed look uniformly expensive and quietly decide ◆G7.
+   *
+   * `undefined` means the provider did not report it — which is **not** the same as zero, and the
+   * bake-off runner must surface it rather than average it in as a cache miss.
+   */
+  cachedPromptTokens?: number;
 }
+
+/**
+ * Pulls the cached-token count out of an OpenAI-shaped usage object.
+ *
+ * Not part of the SDK's typed surface on every provider, so it is read defensively: a provider
+ * that omits `prompt_tokens_details` yields `undefined`, never 0.
+ */
+const readCachedTokens = (usage: unknown): number | undefined => {
+  const details = (usage as { prompt_tokens_details?: { cached_tokens?: unknown } } | undefined)
+    ?.prompt_tokens_details;
+  const cached = details?.cached_tokens;
+  return typeof cached === "number" ? cached : undefined;
+};
 
 export interface LlmAnswer {
   content: string;
@@ -78,6 +103,8 @@ export class LlmService {
       model,
       messages,
       max_tokens: config.fireworks.maxTokens,
+      // Pinned so answers are reproducible; the N2 bake-off requires it (RETRIEVAL_BAKEOFF §7a).
+      temperature: config.fireworks.temperature,
       // Cache affinity on serverless — see FireworksConfig.user.
       user: config.fireworks.user,
       stream: false,
@@ -102,6 +129,7 @@ export class LlmService {
         promptTokens: response.usage?.prompt_tokens,
         completionTokens: response.usage?.completion_tokens,
         totalTokens: response.usage?.total_tokens,
+        cachedPromptTokens: readCachedTokens(response.usage),
       },
     };
   }
@@ -132,6 +160,7 @@ export class LlmService {
         model,
         messages,
         max_tokens: config.fireworks.maxTokens,
+        temperature: config.fireworks.temperature,
         user: config.fireworks.user,
         stream: true,
         stream_options: { include_usage: true },
@@ -154,6 +183,7 @@ export class LlmService {
             promptTokens: part.usage.prompt_tokens,
             completionTokens: part.usage.completion_tokens,
             totalTokens: part.usage.total_tokens,
+            cachedPromptTokens: readCachedTokens(part.usage),
           },
         };
       }
