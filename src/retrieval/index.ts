@@ -4,6 +4,7 @@ import { RetrievalRegistry } from "./RetrievalRegistry";
 import { StubAdapter } from "./adapters/StubAdapter";
 import { DirectFeedAdapter } from "./adapters/DirectFeedAdapter";
 import { PgVectorRagAdapter } from "./adapters/PgVectorRagAdapter";
+import { FirestoreVectorAdapter } from "./adapters/FirestoreVectorAdapter";
 import { ArtifactCorpusSource } from "./sources/ArtifactCorpusSource";
 import { FirestoreCorpusSource } from "./sources/FirestoreCorpusSource";
 import type { CorpusSource } from "./sources/corpusSource";
@@ -35,10 +36,29 @@ retrievalRegistry.register(new DirectFeedAdapter(createCorpusSource()));
  */
 retrievalRegistry.register(new PgVectorRagAdapter(pgVectorQueryClient));
 
+/**
+ * Bake-off arm ◆G10. Unlike the pgvector arm this one survives ◆G7: it runs on the store the
+ * service already uses, so keeping it costs no infrastructure even if direct-feed wins.
+ *
+ * The Firestore client is constructed lazily and holds no connection, so registering this needs
+ * no credentials — same reason the direct-feed arm can be registered with a Firestore source in a
+ * process that never reads from it.
+ */
+retrievalRegistry.register(new FirestoreVectorAdapter());
+
 export { RetrievalRegistry } from "./RetrievalRegistry";
 export { StubAdapter } from "./adapters/StubAdapter";
 export { DirectFeedAdapter } from "./adapters/DirectFeedAdapter";
 export { PgVectorRagAdapter } from "./adapters/PgVectorRagAdapter";
+export {
+  CHUNK_COLLECTION,
+  DISTANCE_FIELD,
+  DISTANCE_MEASURE,
+  FirestoreVectorAdapter,
+  VECTOR_FIELD,
+  chunkDocumentFields,
+  chunkDocumentId,
+} from "./adapters/FirestoreVectorAdapter";
 export { ArtifactCorpusSource } from "./sources/ArtifactCorpusSource";
 export { FirestoreCorpusSource, CORPUS_COLLECTION } from "./sources/FirestoreCorpusSource";
 export type { CorpusDocument, CorpusSource } from "./sources/corpusSource";
