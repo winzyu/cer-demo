@@ -1,7 +1,7 @@
 {
   "name": "clean-earth-rag",
   "version": "0.1.0",
-  "description": "Water-quality RAG assistant \u2014 Node/Express + Firestore service",
+  "description": "Water-quality RAG assistant — Node/Express + Firestore service",
   "main": "dist/index.js",
   "private": true,
   "scripts": {
@@ -16,7 +16,9 @@
     "ingest": "ts-node scripts/ingest.ts",
     "bakeoff": "ts-node scripts/bakeoff.ts",
     "seed:firestore": "ts-node scripts/seedFirestore.ts",
-    "seed:pgvector": "ts-node scripts/seedPgvector.ts"
+    "seed:firestore-chunks": "ts-node scripts/seedFirestoreChunks.ts",
+    "seed:pgvector": "ts-node scripts/seedPgvector.ts",
+    "cost": "ts-node scripts/cost.ts"
   },
   "license": "MIT",
   "dependencies": {
