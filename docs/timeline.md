@@ -390,130 +390,106 @@ answers complete.*
 
 ---
 
-## Session handoff — 2026-07-29
+## Session handoff — 2026-07-31
 
-**Where the code is:** Phase N1 complete and merged to `demo`. Phase N2 in progress: corpus
-ingestion, the `firestore-direct` arm, and the **eval fixtures** are built; two of three arms remain.
+**Phase N1 complete and merged to `demo`. Phase N2 (the retrieval bake-off) is most of the way
+built.** Everything below is committed and pushed on `feat/retrieval-bakeoff` (8 commits, working
+tree clean, in sync with origin). **179 tests, none touching the network.**
 
-**What runs today:** `POST /api/v1/chat` answers via Fireworks with multi-turn history, citations,
-and optional SSE streaming. Two retrieval adapters are registered — `stub` and `firestore-direct`.
-179 tests, none touching the network. `npm run ingest` rebuilds the corpus artifact.
+### The three arms
 
-**Eval fixtures — done.** 30 conversations / 62 turns in `eval/fixtures/`, per-turn rubrics, loaded
-and strictly validated by `src/eval/fixtures.ts`. Design, grading scales and per-fixture predictions
-in [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md). **28 of 30 fixtures (58 of 62 turns) are runnable today.**
+| arm | status |
+|---|---|
+| `firestore-direct` | ✅ built, verified live — **but only against the local artifact.** `CORPUS_SOURCE=firestore` has still never run. |
+| `pgvector-rag` | ✅ built, seeded, verified live. Sidecar is `docker-compose.bakeoff.yml`; **it is not running — restart it before use.** |
+| `firestore-vector` | ❌ not started. Blocked on Firestore credentials. |
 
-**Turbidity is now in scope (2026-07-29).** The system prompt listed turbidity as *not* measured,
-which refused every turbidity question before retrieval ran — all three arms would have scored
-identically and the eval would have measured the prompt. It is now a measured parameter reported in
-**NTU**, with an operator range in the authoritative block: `0-25 NTU` freshwater, `0-10 NTU`
-saltwater, derived from §2 of the operator source-of-truth reference. Low end is 0, not 5, per the
-"0 is valid for turbidity and ORP" rule. Two fixtures improved as a result —
-`threshold-turbidity-estuary` became a genuine precedence case (60 NTU is normal for an estuary by
-the document, above the operator range for this deployment), and `acronym-ntu-fnu` turn 2 gained a
-grounded answer. This block is a **pinned control**: changing it after an arm runs voids that arm.
+Also built: the **eval fixtures** (30 conversations / 62 turns, `eval/fixtures/`, see
+[`EVAL_FIXTURES.md`](EVAL_FIXTURES.md)) and the **capture runner**
+(`npm run bakeoff -- --arm=<mode> --pass=<cold|warm>`, plus `--spot-check`, `--only`, `--dry-run`).
+**28 of 30 fixtures (58 of 62 turns) are runnable**; the 2 held back need `query_sensor_data` (N3).
 
-**Still blocked — `sensor-tool` (2 fixtures).** `query_sensor_data` and the tool-round loop land in
-N3. They discriminate little between arms by design, so the headline comparison need not wait.
+### Decisions already fixed — do not reopen without a reason
 
-**Also fixed here:** `tm9a6.8.pdf` was titled "Turbidity (field methods)" in `DOC_META`. It is
-actually *Use of Multiparameter Instruments for Routine Field Measurements* (the turbidity chapter
-is A6.7, which is not in this corpus). The title is what the model cites, so the wrong one would
-have made citation-validity ungradeable. Re-run `npm run ingest` to pick it up.
+- **Quality floor and latency ceiling**, written before any arm ran:
+  [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8a. Hard gates on grounding (zero fabricated
+  figures, 100% refusal where required, citations ≥95%); correctness mean ≥1.0 per servable class
+  and ≥1.3 overall; latency veto = ≤1.5s p95 TTFT over the fastest arm; p95 wall ≤10s is a flag,
+  not a veto. **If every arm fails, ◆G7 stays open and the floor does not move.**
+- **Grading:** LLM judge calibrated against a ~20% human sample, collected through the blind
+  frontend harness (§7c). Judge model must differ from the model under test.
+- **Turbidity is in scope**, reported in **NTU**, operator range `0-25 NTU` freshwater /
+  `0-10 NTU` saltwater. The system prompt is a **pinned control** — changing it after an arm runs
+  voids that arm.
+- **Temperature pinned to 0** (`LLM_TEMPERATURE`), recorded in every transcript.
 
-**Capture runner — done (2026-07-30).** `npm run bakeoff -- --arm=<mode> --pass=<cold|warm>`,
-plus `--spot-check`, `--only`, `--dry-run`. Drives the real service over HTTP and writes
-`eval/transcripts/<pass>/<arm>/<fixture>.json` with the full conversation, **the exact context
-supplied to the model**, the cached/uncached token split, TTFT and wall time, and run metadata
-(git SHA, model, temperature). See [`SPECS.md`](SPECS.md) §13.
+### The two findings that matter most
 
-Two service-level gaps had to be closed first, because the runner cannot record what the service
-never exposed:
+**1. Prompt caching works, and it may invert the naive cost story.** Direct-feed's prefix is
+byte-identical every request, so ~99.4-99.9% of its ~10,900 prompt tokens are cached — roughly
+**14 uncached tokens per warm request**. RAG sends far fewer tokens (~2,700-4,400) but its context
+changes per query, so the prefix diverges early and only ~570 cache. **RAG sends fewer tokens and
+pays near-full price for most of them.** Which is cheaper depends entirely on the cached-input
+discount, which is still unpriced. This is now the single most decision-relevant unknown in the
+phase — more than any quality score.
 
-- **`LLM_TEMPERATURE`, default 0.** Temperature was never sent, so the provider default applied and
-  answers were not reproducible — which would have made the whole sweep measure the sampler.
-- **`cachedPromptTokens`** on the usage object. Only the prompt-token total was captured, and the
-  split is the number the bake-off actually turns on.
+**2. A provider bug nearly invalidated the RAG arms.** Calling Fireworks' embeddings endpoint
+*without* `encoding_format` returns a corrupt **192-element all-zero vector** instead of the
+768-dim embedding, silently. Dense search over zero vectors ranks arbitrarily, so RAG would have
+lost the bake-off to a bug. `EmbeddingService` now always sends `encoding_format: "float"` and
+rejects wrong dimensions **and** all-zero vectors. Do not remove either guard.
 
-**Live result worth acting on: prompt caching works, and it is close to total.** Verified against
-`firestore-direct` on 2026-07-30 — Fireworks does report `cached_tokens`, and a warm prefix hit
-**~99.4-99.9%** (e.g. 21,783 of 21,918 prompt tokens across a two-turn conversation). Direct-feed's
-entire cost case rested on this being true and it is. It does not settle ◆G7 — the cached *rate*
-still has to be priced, and RAG's fixed costs still have to be counted — but the failure mode that
-would have killed direct-feed outright is not present.
+### Blocked, and on whom
 
-**The eval is already discriminating.** The first live fixture run, `crossdoc-do-drift-vs-hypoxia`,
-**failed its turn-1 rubric**: it answered "Yes… the river is currently hypoxic" — asserting one
-cause with certainty and omitting the instrument explanation, which is an explicit `must_not`.
-Turn 2 passed, correctly catching that the reference's optical-sensor caveat does not apply to a
-galvanic probe. A real weakness, found by a rubric written before any arm ran.
+- **Firestore credentials (user).** Blocks `firestore-vector` entirely, and blocks the measured
+  `CORPUS_SOURCE=firestore` run the direct-feed arm needs for its Firestore reads to be counted.
+  Until then the bake-off is **two arms, not three**, and ◆G10 reopens as deferred.
+- **Fireworks pricing incl. the cached-input rate (user).** See finding 1 — the comparison cannot
+  conclude without it.
+- **`query_sensor_data` / tool loop (N3).** Holds back 2 fixtures. Low priority: they discriminate
+  little between arms by design.
 
-**Quality floor and latency ceiling — fixed 2026-07-30, before any arm ran**
-([`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8a):
+### Firestore shape decisions pending (needed before `firestore-vector`)
 
-- **Hard gates (all 28 fixtures):** zero fabricated figures stated as fact; ≤2% of turns with any
-  other ungrounded claim; 100% refusal where a rubric requires one; citation validity ≥95%.
-- **Correctness (0/1/2 per turn, servable set):** mean ≥1.0 in every servable class, ≥1.3 overall.
-  `firestore-direct` is exempt from the three `deep-in-manual` fixtures — they are outside the ◆G9
-  slice by decision — and those count as **coverage**, a headline-table column, not as failures.
-  The RAG arms index the whole corpus and get no exemption.
-- **Latency veto:** ≤1.5s p95 TTFT added over the fastest arm, cold and warm judged separately.
-- **Latency flag (not a veto):** p95 wall ≤10s. Today's runs sit at the edge because gpt-oss emits
-  400–1,300 reasoning tokens first; if all arms breach it, that is an N5 model finding, not a
-  reason to pick a retrieval strategy.
-- **If every arm fails the floor, ◆G7 stays open and the floor does not move.**
+The existing `corpus_documents` collection stores **one document per file** with `chunks` as an
+array field. Vector search cannot index a vector inside an array element, so the vector arm needs a
+separate per-chunk collection (~305 docs), proposed `corpus_chunks` with a `Vector(768)` `embedding`
+field. Two indexes will be needed: a composite (`inDirectFeedSlice` ASC, `filename` ASC) for the
+existing direct-feed query, and a vector index on `corpus_chunks.embedding`.
 
-**`pgvector-rag` arm — done (2026-07-30).** Sidecar up, corpus seeded (8 documents, 305 chunks,
-IVFFlat lists=17), arm verified live. Faithful port of `MIGRATION_SPEC.md` §7: dense cosine + a
-`websearch_to_tsquery` lexical branch, 20 candidates each, fused with RRF at `RRF_K = 60`, top-k 5.
-See [`SPECS.md`](SPECS.md) §14.
+**Two traps found while planning this:**
 
-**A provider bug nearly invalidated this arm.** Calling Fireworks' embeddings endpoint *without*
-`encoding_format` returns a corrupt **192-element all-zero vector** instead of the 768-dim
-embedding — silently, no error. Dense search over zero vectors ranks arbitrarily, so RAG would have
-lost the bake-off to a bug rather than to retrieval, and nothing in the results would have shown
-why. `EmbeddingService` now sends `encoding_format: "float"` and rejects wrong dimensions *and*
-all-zero vectors — the dimension check alone would not have caught a degenerate vector of the
-right shape.
+- The embedding must be written with `FieldValue.vector([...])`. A plain `number[]` writes as an
+  array, the index never matches, and `findNearest` returns nothing **with no error**.
+- `volunteer_stream_monitoring_a_methods_manual.pdf` serialises to **~1,005,018 bytes against
+  Firestore's 1,048,576 limit** — 96% full, ~43 KB headroom. It should fit, but one more chunk
+  breaks `seed:firestore`. **Recommended fix: stop storing the `chunks` array alongside `text` in
+  `corpus_documents`.** Nothing reads it — the direct-feed source only reads `text`, and the vector
+  arm gets its own collection. That drops the document to ~468 KB. Not yet done.
 
-**First head-to-head, on three spot-check probes** (indicative, not the eval):
+### Immediate next steps
 
-| probe | `firestore-direct` | `pgvector-rag` |
-|---|---|---|
-| "What is ORP?" (in slice) | correct, 10,893 prompt tokens | correct, **4,446** prompt tokens |
-| Sonde stabilization criteria (deep in manual) | **refused** | **answered, with the table** |
-| Fecal coliform count | refused | refused — *despite retrieving the bacteria chapter* |
+1. Land Firestore credentials → build `firestore-vector`, exercise `CORPUS_SOURCE=firestore`.
+2. Get Fireworks pricing → the cost model, which is what actually resolves ◆G7.
+3. Optionally drop the redundant `chunks` field from `corpus_documents` (see above).
+4. Then: spot-check every arm, run the sweep (cold + warm), grade blind, write
+   `RETRIEVAL_COMPARISON.md`, close ◆G7, delete the pgvector sidecar.
 
-The ◆G9 slice trade-off is now measured rather than predicted, and the `refusal-pathogens` trap
-fired exactly as designed without the arm falling into it.
+### Environment notes
 
-**Cache behaviour differs structurally, and it may invert the naive cost story.** Direct-feed's
-prefix is byte-identical every request, so it bills ~10,900 prompt tokens of which ~99% are cached
-(≈14 uncached). RAG's context changes per query, so its prefix diverges early: ~2,700–4,400 prompt
-tokens of which only ~570 cached. **RAG sends fewer tokens but pays full price for most of them.**
-Which is cheaper depends entirely on the cached-input discount — still unpriced, and now clearly
-the single most decision-relevant unknown left.
-
-**Then:** `firestore-vector` (blocked on credentials), then the sweep.
-
-**Blocked:** `firestore-vector` and `npm run seed:firestore` both need Firestore credentials.
-`FIRESTORE_PROJECT_ID` is unset and local gcloud points at unrelated projects, so
-`CORPUS_SOURCE=firestore` has **never been exercised** — the direct-feed arm has only run against
-the local artifact. `FirestoreCorpusSource` is unit-tested against a fake, not against Firestore.
-
-**Also outstanding:**
-- Fireworks pricing has not been checked against the ~2.17B tokens/month the 100k-request ceiling
-  implies (§1 of the bake-off doc). The free-tier assumption is unverified and probably does not hold.
-- Branching drifted: N2 work is sitting on `feat/chat-history` rather than its own branch. The
-  pgvector sidecar must not land on a branch headed for deploy.
-- `ts-node` cold start is now ~83s. `npm run dev` looks hung but is not.
+- `ts-node` cold start is ~80s. `npm run dev` looks hung but is not.
+- `docker compose` (plugin) is not installed; use **`docker-compose`** (standalone v5.0.1).
+- A dev server may already be on **:8000**; use another port (e.g. `PORT=8099`) for test runs.
+- Sidecar: `docker-compose -f docker-compose.bakeoff.yml up -d`, then
+  `PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff`. Re-seeding is idempotent and
+  costs no embedding calls.
 
 **Measurements so far** (live, single runs — indicative, not the eval):
 
-| slice | prompt tokens | wall time |
-|---|---:|---:|
-| old ◆G9 slice (~20K) | 21,055 | ~41s |
-| new ◆G9 slice (~9.4K) | 10,863 | ~8s |
+| | prompt tokens | cached | TTFT | wall |
+|---|---:|---:|---:|---:|
+| `firestore-direct`, warm | ~10,900 | ~99.4-99.9% | 7.8-9.3s | 9.5-11.6s |
+| `pgvector-rag` | 2,722-4,446 | 0-569 | — | — |
 
-Completion tokens ran 235–4,060 for one-to-two-sentence answers — gpt-oss emits reasoning tokens, so
+Completion tokens ran 158-1,299 (earlier runs up to 4,060) — gpt-oss emits reasoning tokens, so
 cost per answer cannot be inferred from answer length.
