@@ -390,19 +390,26 @@ answers complete.*
 
 ---
 
-## Session handoff — 2026-07-31
+## Session handoff — 2026-07-31, updated 2026-08-04
 
 **Phase N1 complete and merged to `demo`. Phase N2 (the retrieval bake-off) is most of the way
-built.** Everything below is committed and pushed on `feat/retrieval-bakeoff` (8 commits, working
-tree clean, in sync with origin). **179 tests, none touching the network.**
+built.** Everything below is committed and pushed on `feat/retrieval-bakeoff`. **228 tests, none
+touching the network.**
+
+> **Update 2026-08-04. Both blockers are closed and all three arms now exist.** Fireworks pricing
+> is measured and modelled (`npm run cost`); Firestore credentials turned out to be already
+> configured; the redundant `chunks` field is gone; and `firestore-vector` is built, seeded and
+> verified end-to-end through the chat pipeline. **What remains is running the experiment, not
+> building it.** Struck-through items below are kept rather than deleted so the sequence stays
+> readable.
 
 ### The three arms
 
 | arm | status |
 |---|---|
-| `firestore-direct` | ✅ built, verified live — **but only against the local artifact.** `CORPUS_SOURCE=firestore` has still never run. |
+| `firestore-direct` | ✅ built, verified live. Firestore is now seeded and the slice reads back from it, so `CORPUS_SOURCE=firestore` is ready — the *measured* run under it still has not happened. |
 | `pgvector-rag` | ✅ built, seeded, verified live. Sidecar is `docker-compose.bakeoff.yml`; **it is not running — restart it before use.** |
-| `firestore-vector` | ❌ not started. Blocked on Firestore credentials. |
+| `firestore-vector` | ✅ built, seeded (305 chunks, both indexes present) and **verified end-to-end through `POST /api/v1/chat`** on 2026-08-04 — including the two discriminating fixtures: it answers the deep-in-manual question direct-feed refuses, and it refuses the fecal-coliform probe *despite retrieving the coliform chapter*. **The capture runner has not been run against it yet.** |
 
 Also built: the **eval fixtures** (30 conversations / 62 turns, `eval/fixtures/`, see
 [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md)) and the **capture runner**
@@ -425,13 +432,18 @@ Also built: the **eval fixtures** (30 conversations / 62 turns, `eval/fixtures/`
 
 ### The two findings that matter most
 
-**1. Prompt caching works, and it may invert the naive cost story.** Direct-feed's prefix is
-byte-identical every request, so ~99.4-99.9% of its ~10,900 prompt tokens are cached — roughly
-**14 uncached tokens per warm request**. RAG sends far fewer tokens (~2,700-4,400) but its context
-changes per query, so the prefix diverges early and only ~570 cache. **RAG sends fewer tokens and
-pays near-full price for most of them.** Which is cheaper depends entirely on the cached-input
-discount, which is still unpriced. This is now the single most decision-relevant unknown in the
-phase — more than any quality score.
+**1. Prompt caching works — and the discount was priced on 2026-08-03. It does *not* invert the
+story on our model.** Direct-feed's prefix is byte-identical every request, so ~99.4-99.9% of its
+~10,900 prompt tokens are cached — roughly **14 uncached tokens per warm request**. RAG sends far
+fewer tokens (~2,700-4,400) but its context changes per query, so the prefix diverges early and
+only ~570 cache. **RAG sends fewer tokens and pays near-full price for most of them.**
+
+`gpt-oss-20b` caches at **50% off** ($0.07 → $0.035/1M), which is not enough: direct-feed's warm
+input is still ~1.3× RAG's. But `gpt-oss-120b` caches at **90.7% off** ($0.15 → $0.014/1M), which
+inverts it completely — direct-feed becomes ~3.7× cheaper on input, and cheaper than direct-feed on
+*20b*. Full price sheet, arithmetic, and the two consequences (including that completion tokens now
+cost more than the retrieval choice does) in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §1b.
+Reproduce with `npm run cost`.
 
 **2. A provider bug nearly invalidated the RAG arms.** Calling Fireworks' embeddings endpoint
 *without* `encoding_format` returns a corrupt **192-element all-zero vector** instead of the
@@ -441,11 +453,18 @@ rejects wrong dimensions **and** all-zero vectors. Do not remove either guard.
 
 ### Blocked, and on whom
 
-- **Firestore credentials (user).** Blocks `firestore-vector` entirely, and blocks the measured
-  `CORPUS_SOURCE=firestore` run the direct-feed arm needs for its Firestore reads to be counted.
-  Until then the bake-off is **two arms, not three**, and ◆G10 reopens as deferred.
-- **Fireworks pricing incl. the cached-input rate (user).** See finding 1 — the comparison cannot
-  conclude without it.
+- ~~**Firestore credentials (user).**~~ **RESOLVED — they were already in place.** Application
+  Default Credentials were written 2026-07-31 (`~/.config/gcloud/application_default_credentials.json`,
+  account `winsyu475@gmail.com`, project **`cer-demo-2026`**, database `(default)`), i.e. after
+  this handoff was drafted. Verified live 2026-08-03: `npm run seed:firestore` committed all 8
+  documents, and `FirestoreCorpusSource.loadSlice()` read the 5-document slice back in stable
+  filename order. **The `where(inDirectFeedSlice) + orderBy(filename)` query served without
+  raising `FAILED_PRECONDITION`**, so the composite index the shape notes below anticipated is
+  either already present or unnecessary — check the console before creating one. `firestore-vector`
+  and the measured `CORPUS_SOURCE=firestore` run are both unblocked.
+- ~~**Fireworks pricing incl. the cached-input rate.**~~ **RESOLVED 2026-08-03.** Prices recorded
+  in `src/eval/prices.ts`, cost model in `src/eval/cost.ts`, CLI `npm run cost`, findings in
+  `RETRIEVAL_BAKEOFF.md` §1b. Re-read the sources before publishing the comparison — rates rotate.
 - **`query_sensor_data` / tool loop (N3).** Holds back 2 fixtures. Low priority: they discriminate
   little between arms by design.
 
@@ -461,18 +480,27 @@ existing direct-feed query, and a vector index on `corpus_chunks.embedding`.
 
 - The embedding must be written with `FieldValue.vector([...])`. A plain `number[]` writes as an
   array, the index never matches, and `findNearest` returns nothing **with no error**.
-- `volunteer_stream_monitoring_a_methods_manual.pdf` serialises to **~1,005,018 bytes against
-  Firestore's 1,048,576 limit** — 96% full, ~43 KB headroom. It should fit, but one more chunk
-  breaks `seed:firestore`. **Recommended fix: stop storing the `chunks` array alongside `text` in
-  `corpus_documents`.** Nothing reads it — the direct-feed source only reads `text`, and the vector
-  arm gets its own collection. That drops the document to ~468 KB. Not yet done.
+- ~~`volunteer_stream_monitoring_a_methods_manual.pdf` serialises to ~1,005,018 bytes…~~
+  **DONE 2026-08-03.** `chunks` is no longer written to `corpus_documents`. Measured: that
+  document went **1,005,018 → 478,584 bytes (96% → 45.6% of the limit)**, headroom 43 KB → 570 KB,
+  and every other document is now under 17%. `seed:firestore` also **size-checks every document
+  before committing anything**, so an oversized document names itself instead of failing an opaque
+  batch commit. `corpus.json` still carries `chunks` — the pgvector seeder and the future vector
+  seeder both read it from there.
 
 ### Immediate next steps
 
-1. Land Firestore credentials → build `firestore-vector`, exercise `CORPUS_SOURCE=firestore`.
-2. Get Fireworks pricing → the cost model, which is what actually resolves ◆G7.
-3. Optionally drop the redundant `chunks` field from `corpus_documents` (see above).
-4. Then: spot-check every arm, run the sweep (cold + warm), grade blind, write
+**No external blockers remain.** All three of the items this handoff was waiting on are closed.
+
+1. ~~Land Firestore credentials.~~ Done — already present, verified live.
+2. ~~Get Fireworks pricing.~~ Done — `npm run cost`. Feed it real sweep numbers once captured:
+   replace the spot-check constants in `src/eval/costScenarios.ts` and flip `TOKEN_PROVENANCE`
+   to `measured`.
+3. ~~Drop the redundant `chunks` field from `corpus_documents`.~~ Done.
+4. ~~Build `firestore-vector`.~~ Done — `corpus_chunks` seeded with 305 chunks, both indexes
+   present, `findNearest` returning ranked results, and the arm answered end-to-end through the
+   chat pipeline on both discriminating fixtures. See `SPECS.md` §14b.
+5. Then: spot-check every arm, run the sweep (cold + warm), grade blind, write
    `RETRIEVAL_COMPARISON.md`, close ◆G7, delete the pgvector sidecar.
 
 ### Environment notes
@@ -490,6 +518,12 @@ existing direct-feed query, and a vector index on `corpus_chunks.embedding`.
 |---|---:|---:|---:|---:|
 | `firestore-direct`, warm | ~10,900 | ~99.4-99.9% | 7.8-9.3s | 9.5-11.6s |
 | `pgvector-rag` | 2,722-4,446 | 0-569 | — | — |
+| `firestore-vector` | 2,738-3,969 | 0 | — | — |
+
+`firestore-direct` read from Firestore (`CORPUS_SOURCE=firestore`) at **10,889** prompt tokens —
+within noise of the artifact-backed figure, which is what confirms Firestore returns the slice in a
+stable `filename` order. An unstable order would destroy the prompt-cache hit rate the arm's whole
+cost case rests on, silently.
 
 Completion tokens ran 158-1,299 (earlier runs up to 4,060) — gpt-oss emits reasoning tokens, so
 cost per answer cannot be inferred from answer length.

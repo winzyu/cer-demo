@@ -81,9 +81,12 @@ clean-earth-rag/
 │   │   ├── index.ts          shared registry, built-in adapters registered here
 │   │   ├── RetrievalRegistry.ts  mode → adapter + selection rules
 │   │   ├── options.ts        top-k bounds + resolveTopK()
+│   │   ├── rrf.ts            reciprocal rank fusion (pgvector arm)
 │   │   ├── adapters/
 │   │   │   ├── StubAdapter.ts
-│   │   │   └── DirectFeedAdapter.ts
+│   │   │   ├── DirectFeedAdapter.ts
+│   │   │   ├── PgVectorRagAdapter.ts       ⚠️ bake-off only, deleted at ◆G7
+│   │   │   └── FirestoreVectorAdapter.ts
 │   │   └── sources/
 │   │       ├── corpusSource.ts        CorpusSource contract
 │   │       ├── ArtifactCorpusSource.ts
@@ -97,7 +100,10 @@ clean-earth-rag/
 │   │   ├── cli.ts            bakeoff argument parsing
 │   │   ├── transport.ts      SSE + JSON HTTP transports
 │   │   ├── runner.ts         replay engine + sweep summary
-│   │   └── transcript.ts     transcript shape and totals
+│   │   ├── transcript.ts     transcript shape and totals
+│   │   ├── prices.ts         dated price sheet + sources
+│   │   ├── costScenarios.ts  measured token counts + fixed costs
+│   │   └── cost.ts           per-request / monthly / break-even math
 │   ├── prompt/
 │   │   ├── systemPrompt.ts   ported legacy prompt + REFUSAL_SENTENCE
 │   │   └── promptBuilder.ts  static-first message assembly
@@ -112,7 +118,8 @@ clean-earth-rag/
 │       ├── errors.ts         NotFound/Validation/Unauthorized/Forbidden/Conflict
 │       ├── logger.ts         createLogger(tag)
 │       └── sse.ts            Server-Sent Events helpers
-├── scripts/                  ingest.ts, seedFirestore.ts, bakeoff.ts
+├── scripts/                  ingest.ts, seedFirestore.ts, seedFirestoreChunks.ts,
+│                             seedPgvector.ts, bakeoff.ts, cost.ts
 ├── test/
 │   ├── integration/  health.test.ts, chat.test.ts
 │   └── unit/         retrieval.test.ts, prompt.test.ts, llmService.test.ts,
@@ -412,6 +419,33 @@ direct-feed the threshold questions for reasons unrelated to retrieval. Full rea
 
 `data/` is git-ignored, so the artifact is rebuilt locally rather than committed.
 
+### Seeding Firestore (`scripts/seedFirestore.ts`)
+
+```
+npm run ingest && npm run seed:firestore
+```
+
+Uploads the artifact to the **`corpus_documents`** collection, one document per file, id derived
+from the filename so re-running overwrites rather than duplicating. Writes are batched, so a
+partial failure cannot leave the slice half-populated.
+
+**`chunks` is not stored** (removed 2026-08-03). Nothing read it — the direct-feed source reads
+`text`, the pgvector seeder reads `corpus.json` directly, and the vector arm needs a separate
+per-chunk collection because Firestore cannot index a vector inside an array element. Storing it
+put `volunteer_stream_monitoring_a_methods_manual.pdf` at **1,005,018 of 1,048,576 bytes — 96%
+full, ~43 KB of headroom**, where one more chunk would have broken seeding. Without it that
+document is **478,584 bytes (45.6%)** and the rest are under 17%.
+
+The write shape (`corpusDocumentFields`) lives beside the reader in `FirestoreCorpusSource.ts` on
+purpose: a field written but never read is dead weight paid for on every seed, and a field read
+but never written is a runtime `undefined`. The seeder **size-checks every document before
+committing any of them**, because Firestore rejects an oversized document with an error that names
+the batch rather than the file.
+
+**Verified live 2026-08-03** against project `cer-demo-2026`, database `(default)`, via
+Application Default Credentials: 8 documents written, largest 478,584 bytes, 5-document slice read
+back in stable filename order.
+
 ---
 
 ## 12. Eval fixtures (`eval/fixtures/`, `src/eval/`)
@@ -536,6 +570,111 @@ fecal-coliform probe despite retrieving the volunteer manual's bacteria chapter.
 
 ---
 
+## 14a. Cost model (`src/eval/prices.ts`, `src/eval/cost.ts`, `scripts/cost.ts`)
+
+```
+npm run cost
+npm run cost -- --model=accounts/fireworks/models/gpt-oss-120b
+npm run cost -- --cache-rate=0
+```
+
+The arithmetic that resolves ◆G7 once quality has gated the arms (`RETRIEVAL_BAKEOFF.md` §1, §1b).
+Calls no network and no provider — it is pure arithmetic over a recorded price sheet, so anyone
+auditing the decision can re-run it for free.
+
+| piece | role |
+|---|---|
+| `src/eval/prices.ts` | the price sheet, **with the date and source URL it was read from** |
+| `src/eval/costScenarios.ts` | the measured token counts per arm, and the fixed-cost figures |
+| `src/eval/cost.ts` | pure functions: `perRequestCost`, `monthlyCost`, `breakEven`, `costCurve` |
+| `scripts/cost.ts` | the CLI — per-answer table, monthly curve over 1k-100k, pairwise break-evens |
+
+Four things it is built to prevent:
+
+- **An undated price sheet.** Rates rotate; a cost conclusion whose inputs cannot be dated cannot
+  be re-checked. `PRICES_READ_ON` and `PRICE_SOURCES` travel with the numbers.
+- **A guessed cache split.** `RequestTokens.cachedPromptTokens` is **required**, and a split larger
+  than the prompt throws. Defaulting it to zero prices direct-feed at its worst case; defaulting it
+  to the full prompt prices it at its best — both silently.
+- **A negative break-even reported as a threshold.** When the lower-marginal arm also has the lower
+  fixed cost the lines cross at a negative request count; `breakEven` returns `dominated` instead.
+- **A projection passed off as a measurement.** `firestore-vector` is priced from `pgvector-rag`'s
+  token profile because the arm does not exist yet; it is marked `*` in the output, and the whole
+  table is labelled `INDICATIVE` until sweep transcripts replace the spot-check figures.
+
+Prices, findings, and what they do to the decision: `RETRIEVAL_BAKEOFF.md` §1b. The headline is
+that a **50% cached-input discount on `gpt-oss-20b` does not invert the naive cost story, but the
+90.7% discount on `gpt-oss-120b` does** — and that at realistic volume every arm lands within a few
+dollars a month of the others.
+
+---
+
+## 14b. `firestore-vector` arm (`src/retrieval/adapters/FirestoreVectorAdapter.ts`)
+
+```
+npm run ingest && npm run seed:firestore-chunks
+DEBUG_RETRIEVAL=true npm run dev        # then send retrieval=firestore-vector
+```
+
+Dense RAG on Firestore's own vector search — ◆G10. Unlike `pgvector-rag` this arm **survives ◆G7**:
+it runs on the store the service already uses, so keeping it costs no infrastructure even if
+direct-feed wins.
+
+It is deliberately **not a better RAG**. It is `pgvector-rag` with the store swapped and the
+lexical branch removed, because **Firestore has no full-text search**: same chunks, same embedding
+model, same nomic prefixes, same top-k. The missing lexical branch is a finding, not a shortcut —
+it is the weakness the legacy hybrid existed to cover, and the eval's exact-token class
+(`acronym-*`: "ORP", "NTU", "KCl creep") is aimed straight at it.
+
+| element | value | why |
+|---|---|---|
+| Collection | `corpus_chunks`, ~305 docs, id `<filename>__<0000-padded index>` | **Separate from `corpus_documents` by necessity** — Firestore will not index a vector inside an array element |
+| Vector field | `embedding`, `Vector(768)` via `FieldValue.vector()` | must match the index |
+| Distance | `COSINE`, to match pgvector's `<=>` | a different measure would mean the two RAG arms no longer compare the same similarity |
+| Fetch depth | `limit = topK` (5), not the pgvector arm's fetch-20 | depth 20 exists to give RRF something to fuse; with one branch it would only pay for discarded reads |
+| Score | `1 − distance` | Firestore returns *distance* (0 = identical), pgvector's fused RRF score is higher-is-better; reporting distance verbatim would invert the ranking signal between arms |
+
+**Two silent-failure modes, both guarded:**
+
+- **`FieldValue.vector()` is load-bearing.** A plain `number[]` writes an array, the index never
+  matches it, and `findNearest` returns **nothing, with no error** — the same shape as the
+  `encoding_format` bug that nearly decided this bake-off. An arm retrieving nothing still answers
+  fluently and ungrounded, so it would have read as "Firestore vector search is bad." The write
+  shape lives beside the reader and `unit/firestoreVector.test.ts` asserts the wrapper directly.
+- **Zero results are logged loudly**, naming the three causes that produce them (unseeded
+  collection, missing vector index, embeddings written as arrays).
+
+The seeder is idempotent **checked before embedding**, so a re-run costs nothing rather than
+re-paying for identical vectors, and commits one batch per document so an interruption cannot leave
+a half-seeded document the idempotency check would later skip as complete.
+
+**Verified live 2026-08-04** against `cer-demo-2026`: 305 chunks seeded — the same count the
+pgvector arm holds, which is what "same chunks" requires — embeddings stored as `VectorValue`
+(768-dim, non-zero), both indexes present, and `findNearest` returning 5 ranked chunks per query.
+Re-running the seeder skipped all 8 documents and made zero embedding calls.
+
+**Exercised end-to-end through `POST /api/v1/chat`**, on the two fixtures that discriminate between
+arms:
+
+| probe | result |
+|---|---|
+| Turbidity normal range | **3,532** prompt tokens against direct-feed's **10,889**, cosine scores descending 0.735 → 0.718 |
+| `deepmanual-stabilization-criteria` | **Answers what direct-feed refuses** — all five rubric figures, top chunks from `tm9a6.8.pdf`, no probe-datasheet specs substituted |
+| `refusal-pathogens` | Retrieved the volunteer manual's fecal-bacteria chapter (chunks 175–177) and **still refused**, using the exact refusal sentence |
+
+The refusal result is the one worth recording: it is the case that fixture exists to catch, where a
+RAG arm retrieves on-topic-looking text and gets pulled off a refusal the service must make.
+Direct-feed passes it structurally, by never seeing the chapter; this arm saw it and refused anyway.
+
+All three arms were selectable per-request on one server (`DEBUG_RETRIEVAL=true`), with
+`firestore-direct` reproducing 10,889 prompt tokens exactly — the switch the sweep runs on.
+
+**The bake-off capture runner has not yet been run against this arm**
+(`npm run bakeoff -- --arm=firestore-vector --spot-check`, then the cold/warm sweep). That is the
+next step, and it spends LLM tokens across all 58 runnable turns.
+
+---
+
 ## 15. API
 
 | method | path | response |
@@ -557,7 +696,7 @@ for local demo, to be tightened before deploy.
 
 ## 16. Testing
 
-Jest + `ts-jest` + `supertest`. **179 tests, all passing.**
+Jest + `ts-jest` + `supertest`. **228 tests, all passing.**
 
 | suite | covers |
 |---|---|
@@ -572,6 +711,8 @@ Jest + `ts-jest` + `supertest`. **179 tests, all passing.**
 | `unit/evalFixtures.test.ts` | the committed eval set (ids, class coverage, multi-turn, slice consistency) and every rule the fixture loader claims to enforce |
 | `unit/bakeoffRunner.test.ts` | history assembly across turns, the arm-mismatch abort, failed-turn handling, cached-token accounting, the sweep warnings, SSE frame buffering, and CLI parsing |
 | `unit/pgvectorRag.test.ts` | RRF scoring and tie-breaking against the legacy formula, the nomic task prefixes, embedding batching and dimension/all-zero guards, both query branches, and top-k handling — all without a database |
+| `unit/cost.test.ts` | per-request billing with cached/uncached split, the cache-split guard, monthly totals, break-even including the negative-crossover and parallel-line cases, and the ◆G7 conclusions pinned to the recorded prices |
+| `unit/firestoreCorpus.test.ts` | the written field set matches what `loadSlice` reads, `chunks` stays out, and the document size guard |
 
 **No test touches the network, needs a key, or spends money** — `chat.test.ts` mocks `LlmService`
 wholesale and the unit tests inject a fake client. Run with `npm test`.

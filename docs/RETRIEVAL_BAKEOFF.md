@@ -74,6 +74,79 @@ this experiment produces** — more so than any individual quality score.
 
 ---
 
+### 1b. The prices — read 2026-08-03, and the cached-input rate resolved
+
+The unknown this whole section was written around is now filled in. Recorded as data in
+`src/eval/prices.ts` with the date and source URL attached, because the serverless catalogue
+rotates and an undated price sheet makes a cost conclusion unauditable.
+
+**Fireworks serverless, USD per 1M tokens** ([docs](https://docs.fireworks.ai/serverless/pricing)):
+
+| model | input | cached input | output | cache discount |
+|---|---:|---:|---:|---:|
+| `gpt-oss-20b` (**ours**) | $0.07 | **$0.035** | $0.30 | **50%** |
+| `gpt-oss-120b` | $0.15 | **$0.014** | $0.60 | **90.7%** |
+| `nomic-embed-text-v1.5` (137M → ≤150M tier) | $0.008 | — | — | — |
+
+Fireworks documents 50% only as a *default*; per-model rates are authoritative, and the two models
+we might plausibly run differ by a factor of 2.5 on this one line.
+
+**Firestore Standard, us-central1**: reads $0.03/100k, writes $0.09/100k, deletes $0.01/100k.
+Always Free is **50,000 reads/day**, and — the caveat flagged below, now confirmed —
+**exactly one database per project gets it**. Our `FIRESTORE_DATABASE_ID` default of `(default)`
+is the right side of that. A kNN query bills **one read per 100 vector-index entries scanned plus
+one per document returned**, so ~305 chunks at top-k 5 costs 9 reads, not 5.
+
+**Cloud SQL** has no free tier and no scale-to-zero. `db-f1-micro` is ~$7.67/month **compute only**.
+
+#### The answer: the discount is real but it is not enough — on this model
+
+Run `npm run cost` to reproduce any figure below. At 400 completion tokens and the measured 99.6%
+warm cache rate:
+
+| arm | per answer | @10k/mo | @100k/mo |
+|---|---:|---:|---:|
+| `firestore-direct` | $0.000503 | $5.03 | $50.30 |
+| `pgvector-rag` (deployed) | $0.000411 | $11.78 | $48.82 |
+| `firestore-vector` (projected) | $0.000414 | $4.14 | $41.42 |
+
+Three findings, in order of how much they change the decision:
+
+1. **A 50% discount does not collapse the 5× gap.** Direct-feed's warm input costs $0.000383
+   against RAG's $0.000291 — it is still **~1.3× dearer per answer**, not cheaper. The handoff's
+   hypothesis that caching might invert the naive story is **false at `gpt-oss-20b`**. Direct-feed
+   wins below ~84k requests/month anyway, but it wins on RAG's *fixed* cost, not on tokens.
+2. **The discount inverts the story at `gpt-oss-120b`, decisively.** At 90.7% off, direct-feed's
+   warm input drops to $0.000159 while RAG's rises to $0.000590 — direct-feed becomes **~3.7×
+   cheaper on input and cheaper at every volume in the range**. Note what this means: for *this*
+   workload the larger model is **cheaper on input than the smaller one** ($0.000159 vs $0.000383),
+   because its cache discount is steeper. That is a model-selection finding for N5 that the phase
+   was not looking for, and it should not be allowed to quietly decide ◆G7 — the arms are pinned to
+   `gpt-oss-20b` (§4), and re-running them on 120b is a separate, deliberate experiment.
+3. **Completion tokens cost more than the retrieval strategy does.** At 1,300 completion tokens the
+   output line is $0.000390 — larger than direct-feed's entire input cost. The spread between the
+   cheapest and dearest arm at 100k/month is ~$9; moving average completion tokens from 1,300 to
+   400 saves ~$27/month on *every* arm. **`max_tokens` and reasoning effort are worth more than
+   this experiment's outcome**, which is a genuine, slightly deflating result and belongs in the
+   report.
+
+#### What this does to the decision
+
+The absolute numbers are small enough to be worth saying plainly: **at the realistic 10k/month,
+every arm costs between $4 and $12 per month.** The cost axis that this entire phase was built to
+measure resolves to a spread of a few dollars.
+
+That does not make the phase wasted — it converts its own conclusion. Cost was the tiebreaker
+because it was assumed to be large; measured, it is small, so **quality and the operational tail
+should carry more weight than §8's ordering implies**. The one cost fact that still bites is
+structural rather than marginal: `pgvector-rag` deployed costs ~$8/month at zero traffic, which at
+10k/month is **more than doubling** the bill for a strategy that saves $0.90/month in tokens.
+
+§8's decision rule is **not amended here** — it was fixed before the data and stays fixed. This is
+recorded as an input to it, and the read-out belongs in `RETRIEVAL_COMPARISON.md`.
+
+---
+
 ### Planning inputs (supplied 2026-07)
 
 | input | value | status |
