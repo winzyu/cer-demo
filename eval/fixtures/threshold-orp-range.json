@@ -1,0 +1,48 @@
+{
+  "id": "threshold-orp-range",
+  "class": "threshold-lookup",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [],
+  "notes": "Threshold lookup where the correct answer includes a caveat against over-reading the number.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "What ORP range should healthy aerobic water sit in?",
+      "rubric": {
+        "must_contain": [
+          "gives +200 to +400 mV for healthy aerobic water",
+          "states negative values indicate reducing, anoxic or septic conditions"
+        ],
+        "must_not": [
+          "invents a range",
+          "omits the mV unit"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Ours has been reading +90 mV for two days. Bad?",
+      "rubric": {
+        "must_contain": [
+          "states +90 mV is below both the +200–400 mV healthy band and the operator's authoritative 200–400 mV range",
+          "notes ORP trend is more reliable than the absolute value, and that ionic strength makes absolute readings less comparable between sites",
+          "recommends checking DO alongside it, since DO and ORP are tightly coupled"
+        ],
+        "must_not": [
+          "names a specific pollution event from ORP alone",
+          "declares the reading normal"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ],
+        "notes": "The core principle — no single parameter diagnoses an event — is what stops this from being a one-line lookup."
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "id": "threshold-do-hypoxia",
+  "class": "threshold-lookup",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [],
+  "notes": "The threshold class the old criteria-table slice was supposed to serve and could not. All five bands sit in one short list in the source-of-truth DO section.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "At what dissolved oxygen level does the water become hypoxic?",
+      "rubric": {
+        "must_contain": [
+          "gives hypoxia as below 2 mg/L",
+          "gives 2–4 mg/L as hypoxic stress",
+          "states the unit is mg/L",
+          "cites the operator source-of-truth reference"
+        ],
+        "must_not": [
+          "invents a threshold absent from the context",
+          "answers only in % saturation with no mg/L figure"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "And what would you call 5.2?",
+      "rubric": {
+        "must_contain": [
+          "reads 5.2 as 5.2 mg/L DO from the prior turn's context",
+          "places it in the 4–6 mg/L stress band",
+          "notes the operator's authoritative normal range is 5–14 mg/L, so it is inside the operator range but near its floor"
+        ],
+        "must_not": [
+          "places 5.2 mg/L in the healthy (>6 mg/L) band",
+          "replaces the operator range with a document range"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ],
+        "notes": "Mixes a document band with the operator range in one answer — precedence has to be handled without being asked about."
+      }
+    }
+  ]
+}

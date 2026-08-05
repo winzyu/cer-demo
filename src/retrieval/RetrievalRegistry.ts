@@ -7,6 +7,13 @@ import { createLogger } from "../utils/logger";
 const log = createLogger("Retrieval");
 
 /**
+ * The slice of retrieval config the registry actually reads. Narrower than `RetrievalConfig` on
+ * purpose: unrelated additions to that interface should not force every caller and test to supply
+ * fields the registry ignores.
+ */
+export type RegistrySettings = Pick<RetrievalConfig, "defaultMode" | "debug">;
+
+/**
  * Maps a mode name to a retrieval implementation and applies the selection rules.
  *
  * A class with constructor DI (docs/migration/CONVENTIONS.md §12) rather than a module-level
@@ -16,9 +23,10 @@ const log = createLogger("Retrieval");
 export class RetrievalRegistry {
   private readonly adapters = new Map<string, RetrievalAdapter>();
 
-  private readonly settings: RetrievalConfig;
+  /** Only the selection settings — the registry has no interest in where corpora come from. */
+  private readonly settings: RegistrySettings;
 
-  constructor(settings: RetrievalConfig = config.retrieval) {
+  constructor(settings: RegistrySettings = config.retrieval) {
     this.settings = settings;
   }
 

@@ -74,6 +74,79 @@ this experiment produces** — more so than any individual quality score.
 
 ---
 
+### 1b. The prices — read 2026-08-03, and the cached-input rate resolved
+
+The unknown this whole section was written around is now filled in. Recorded as data in
+`src/eval/prices.ts` with the date and source URL attached, because the serverless catalogue
+rotates and an undated price sheet makes a cost conclusion unauditable.
+
+**Fireworks serverless, USD per 1M tokens** ([docs](https://docs.fireworks.ai/serverless/pricing)):
+
+| model | input | cached input | output | cache discount |
+|---|---:|---:|---:|---:|
+| `gpt-oss-20b` (**ours**) | $0.07 | **$0.035** | $0.30 | **50%** |
+| `gpt-oss-120b` | $0.15 | **$0.014** | $0.60 | **90.7%** |
+| `nomic-embed-text-v1.5` (137M → ≤150M tier) | $0.008 | — | — | — |
+
+Fireworks documents 50% only as a *default*; per-model rates are authoritative, and the two models
+we might plausibly run differ by a factor of 2.5 on this one line.
+
+**Firestore Standard, us-central1**: reads $0.03/100k, writes $0.09/100k, deletes $0.01/100k.
+Always Free is **50,000 reads/day**, and — the caveat flagged below, now confirmed —
+**exactly one database per project gets it**. Our `FIRESTORE_DATABASE_ID` default of `(default)`
+is the right side of that. A kNN query bills **one read per 100 vector-index entries scanned plus
+one per document returned**, so ~305 chunks at top-k 5 costs 9 reads, not 5.
+
+**Cloud SQL** has no free tier and no scale-to-zero. `db-f1-micro` is ~$7.67/month **compute only**.
+
+#### The answer: the discount is real but it is not enough — on this model
+
+Run `npm run cost` to reproduce any figure below. At 400 completion tokens and the measured 99.6%
+warm cache rate:
+
+| arm | per answer | @10k/mo | @100k/mo |
+|---|---:|---:|---:|
+| `firestore-direct` | $0.000503 | $5.03 | $50.30 |
+| `pgvector-rag` (deployed) | $0.000411 | $11.78 | $48.82 |
+| `firestore-vector` (projected) | $0.000414 | $4.14 | $41.42 |
+
+Three findings, in order of how much they change the decision:
+
+1. **A 50% discount does not collapse the 5× gap.** Direct-feed's warm input costs $0.000383
+   against RAG's $0.000291 — it is still **~1.3× dearer per answer**, not cheaper. The handoff's
+   hypothesis that caching might invert the naive story is **false at `gpt-oss-20b`**. Direct-feed
+   wins below ~84k requests/month anyway, but it wins on RAG's *fixed* cost, not on tokens.
+2. **The discount inverts the story at `gpt-oss-120b`, decisively.** At 90.7% off, direct-feed's
+   warm input drops to $0.000159 while RAG's rises to $0.000590 — direct-feed becomes **~3.7×
+   cheaper on input and cheaper at every volume in the range**. Note what this means: for *this*
+   workload the larger model is **cheaper on input than the smaller one** ($0.000159 vs $0.000383),
+   because its cache discount is steeper. That is a model-selection finding for N5 that the phase
+   was not looking for, and it should not be allowed to quietly decide ◆G7 — the arms are pinned to
+   `gpt-oss-20b` (§4), and re-running them on 120b is a separate, deliberate experiment.
+3. **Completion tokens cost more than the retrieval strategy does.** At 1,300 completion tokens the
+   output line is $0.000390 — larger than direct-feed's entire input cost. The spread between the
+   cheapest and dearest arm at 100k/month is ~$9; moving average completion tokens from 1,300 to
+   400 saves ~$27/month on *every* arm. **`max_tokens` and reasoning effort are worth more than
+   this experiment's outcome**, which is a genuine, slightly deflating result and belongs in the
+   report.
+
+#### What this does to the decision
+
+The absolute numbers are small enough to be worth saying plainly: **at the realistic 10k/month,
+every arm costs between $4 and $12 per month.** The cost axis that this entire phase was built to
+measure resolves to a spread of a few dollars.
+
+That does not make the phase wasted — it converts its own conclusion. Cost was the tiebreaker
+because it was assumed to be large; measured, it is small, so **quality and the operational tail
+should carry more weight than §8's ordering implies**. The one cost fact that still bites is
+structural rather than marginal: `pgvector-rag` deployed costs ~$8/month at zero traffic, which at
+10k/month is **more than doubling** the bill for a strategy that saves $0.90/month in tokens.
+
+§8's decision rule is **not amended here** — it was fixed before the data and stays fixed. This is
+recorded as an input to it, and the read-out belongs in `RETRIEVAL_COMPARISON.md`.
+
+---
+
 ### Planning inputs (supplied 2026-07)
 
 | input | value | status |
@@ -181,9 +254,9 @@ reimplementation-from-memory proves nothing. Constraints:
   whether to port its *technique* (hybrid + RRF) onto the production store — not to move back.
 - Delete the sidecar once ◆G7 is resolved.
 
-### On the `firestore-vector` arm — ◆G10
+### On the `firestore-vector` arm — ◆G10 **RESOLVED → included**
 
-Whether this third arm runs at all is open. Including it answers "is Firestore's vector search good
+All three arms run. Including it answers "is Firestore's vector search good
 enough?" directly; excluding it keeps the experiment to two arms and one week. Note that
 **Firestore has no full-text search**, so this arm is dense-only unless a lexical path is built
 (keyword-token field + `array-contains`, or an external text-search service) — which is exactly the
@@ -208,7 +281,20 @@ the limit as a config-time fact to verify, not a constant.
 
 So "direct feeding" is not "feed everything." It needs a defined slice — ◆G9.
 
-### ◆ G9 — direct-feed corpus slice
+### ◆ G9 — direct-feed corpus slice — **RESOLVED → operator reference + probe datasheets (~9.4K tokens)**
+
+Selected: `water-quality-metrics-source-of-truth.pdf` + the four Atlas Scientific probe datasheets
+(EC, ORP, pH, DO). Every entry is about a parameter the DataPod actually reads.
+
+> **Revised 2026-07-29.** The original selection (criteria table + USGS DO + nutrient factsheet,
+> ~20K tokens) was tested live and failed: **83% of the budget was the aquatic-life criteria table**,
+> a pandoc grid table whose cells are shredded across 8-character columns — "Pollutant" split over
+> four lines, data values likewise. It was unreadable by *any* arm, and it covered metals and
+> pesticides this sensor cannot detect. A threshold-lookup probe returned a refusal. The replacement
+> is less than half the size and answers the same class of question correctly, with citations.
+
+The long field manuals remain out of reach for this arm; questions needing them are expected to fail
+here, and that gap is part of what the eval measures.
 
 | option | tokens/request | trade-off |
 |---|---:|---|
@@ -233,6 +319,27 @@ The arms differ in one thing: how document text reaches the prompt. Everything e
 - Same `user` field per request for serverless cache affinity.
 - Same sensor tool path, same corpus source files, same chunking where chunking applies
   (3200 chars / 400 overlap, quality filter, OCR for the scanned PDF).
+- **One parse, one artifact.** `npm run ingest` parses `documents/` once into
+  `data/corpus/corpus.json`, and every arm loads from it. If each arm parsed the PDFs itself,
+  extraction differences would surface as answer-quality differences and be misread as one
+  strategy beating another.
+
+> **Deliberate deviation from legacy parity — the alpha-ratio filter.** The legacy quality filter
+> (`MIGRATION_SPEC.md` §5.1 step 4) drops chunks whose alphabetic-character ratio is below 0.5. That
+> rule cannot distinguish OCR noise from a **table**: markdown tables in this corpus score 0.07–0.14,
+> so the legacy filter discarded **15 of 23 chunks** of `aquatic-life-criteria-table.md` — the
+> corpus's most authoritative source of numeric thresholds.
+>
+> Left alone this would have **invalidated the experiment**, not merely lost data. Direct-feed
+> consumes whole documents and keeps the table; the vector arms embed chunks and would lose most of
+> it. Threshold-lookup questions — already in the eval set — would be won by direct-feed because of a
+> filter bug rather than because feeding beats retrieving, and nothing in the final numbers would
+> reveal it.
+>
+> The ratio test is therefore **skipped for `.md`/`.txt`**, where a low ratio means structure, and
+> **kept for extracted and OCR'd PDF text**, which is what it was built for. Length and boilerplate
+> filters are unchanged for all sources. This means `pgvector-rag` is a faithful reproduction of the
+> legacy system *except* here — state that in the report.
 - Same eval set, run in the same order, against a fixed model snapshot. Re-run all arms if
   `LLM_MODEL` changes mid-experiment — cross-model comparisons are void.
 
@@ -373,6 +480,54 @@ Runs over the saved transcripts, arms stripped.
 - **Disagreements and edge cases go in the report**, not just the mean. A single catastrophic
   ungrounded answer matters more than a small average difference.
 
+### 7c. Human testing through the frontend
+
+Alongside the scripted sweep, **non-technical testers exercise the arms through the chat UI**. This
+is not a replacement for §7a — it is how the human calibration sample (§7b) gets collected without
+anyone hand-driving `curl`, and how failure modes the fixtures never imagined get found.
+
+The seam already exists: the per-request `retrieval` field, honored when `DEBUG_RETRIEVAL=true`.
+What's missing is a way to reach it from a browser.
+
+**Two modes, and the distinction is load-bearing:**
+
+| mode | arm shown as | output is |
+|---|---|---|
+| **Blind** (default) | opaque `A` / `B` / `C`, **shuffled per session** | eval data — gradeable, usable for judge calibration |
+| **Labeled** | real mode names | exploration only — never mixed into scores |
+
+A tester who can see `pgvector-rag` on the label is no longer grading blind, and §7b's whole point
+is that neither a human nor a judge model can tell which strategy produced an answer. Labeled mode
+exists for debugging; its transcripts are tagged so they cannot be counted as eval data by mistake.
+
+**Free-form questions do not replace the fixture set.** Different testers ask different questions,
+so arms stop being comparable and you end up measuring question difficulty. Two distinct uses:
+
+- **Seeded** — the tester is handed fixture questions to ask. Gradeable against the committed
+  rubrics, comparable across arms, and the cheapest route to the ~20% human calibration sample.
+- **Roaming** — the tester asks whatever they like. Qualitative only, and genuinely valuable: it
+  is how you discover the question class nobody thought to write a fixture for. Anything it turns
+  up becomes a *new fixture*, added before the next sweep — never a score in this one.
+
+**Build items:**
+
+- `GET /api/v1/retrieval/modes` — lists registered arms. **Gated on `DEBUG_RETRIEVAL`**, 404
+  otherwise, so a real deployment cannot enumerate or select strategies.
+- Arm selector in `frontend/index.html`, blind by default, with the session's shuffle held
+  server-side so the mapping isn't sitting in the page source where a curious tester will find it.
+- **Session capture** writing the same transcript shape as the runner — including the exact context
+  supplied to the model — into `eval/transcripts/human/`. A human session that captures only the
+  answer is ungradeable for groundedness, exactly as a scripted one would be.
+- A per-session cost cap. Direct-feed bills ~11K input tokens per turn, and testers are not
+  rate-limited by a script.
+
+**This does not change the arms' fate.** They are still deleted once ◆G7 closes (§2); the selector
+goes with them, and the frontend keeps calling `POST /chat` and getting whatever `DEFAULT_RETRIEVAL`
+resolves to. Nothing here reverses the rule that a caller does not get to choose the cost of their
+own request.
+
+---
+
 Transcripts and scores are both committed, so any conclusion can be re-checked — and re-graded with a
 better rubric — without re-running a paid sweep.
 
@@ -389,6 +544,49 @@ cost decides:**
    per-answer cost at realistic cache hit rates, *plus* RAG's fixed infra and re-embedding costs, read
    off the break-even curve (§1).
 3. **Latency ceiling is a veto**, not a tiebreaker.
+
+### 8a. The actual numbers — fixed 2026-07-30, before any arm ran
+
+Thresholds set after the numbers exist are not a test. These are committed now, while the only
+measurement in hand is a direct-feed spot-check (disclosed rather than pretended away: TTFT
+7.8-9.3s, wall 9.5-11.6s, warm cache hit 99.4-99.9%, one fixture failing its turn-1 rubric).
+
+**Servable set.** An arm is judged on the fixtures it can reach. `firestore-direct` cannot reach
+material outside the ◆G9 slice, so the three `deep-in-manual` fixtures are **excluded from its
+correctness floor** and counted instead as *coverage*. The RAG arms index the whole corpus, so
+every class is servable and they get no such exemption. Coverage (% of the 28 runnable fixtures in
+an arm's servable set) is a headline-table column and a direct input to the split-outcome decision.
+
+**Quality floor — hard gates, applied to all 28 fixtures regardless of servable set:**
+
+| gate | threshold | why absolute |
+|---|---|---|
+| **Fabricated figures** | **Zero.** No invented numeric value, threshold, range or sensor reading stated as fact | Refusing is always available, so the slice is never an excuse. A made-up threshold in a water-quality tool is the failure mode that matters |
+| **Other ungrounded claims** | ≤2% of turns (≈1 of 58) | Tolerates a loose paraphrase; does not tolerate a pattern |
+| **Refusal integrity** | **100%** — every turn whose rubric requires a refusal must refuse | An arm that answers "what is the E. coli level" is out at any price |
+| **Citation validity** | ≥95% of citations | The cited document must actually contain the claim |
+
+**Quality floor — correctness (0/1/2 per turn), on the servable set:**
+
+- **Mean ≥1.0 / 2 in every servable class.** Per-class, not global, so an arm cannot pass by being
+  excellent at eight classes and useless at one.
+- **Mean ≥1.3 / 2 overall.**
+
+**Latency — two numbers doing different jobs:**
+
+- **Veto (retrieval-attributable):** no arm may add **more than 1.5s p95 TTFT** over the fastest
+  arm, judged **separately cold and warm**. This is the only latency difference this experiment can
+  legitimately attribute to retrieval — an embedding round-trip and vector query for RAG, prompt
+  processing on ~11K mostly-cached tokens for direct-feed.
+- **Flag (absolute, not a veto):** **p95 total wall ≤10s**. Today's measurements sit at the edge of
+  this, and the cause is gpt-oss emitting 400-1,300 reasoning tokens before the first visible word —
+  a model and `max_tokens` finding for N5. **If every arm breaches it, that is reported, not used to
+  choose a retrieval strategy**, because an absolute ceiling here would veto all three arms for a
+  reason unrelated to what is being compared.
+
+**If every arm fails the quality floor: ◆G7 stays open.** Record that nothing cleared the bar, fix
+the system — prompt, slice, `max_tokens`, or model — and re-run. **The floor does not move.**
+Pre-committing to this is what makes it a test rather than a formality.
 
 Applied:
 
@@ -432,11 +630,14 @@ Required contents:
 
 1. **The headline table** — one row per retrieval method:
 
-   | method | cost/answer (cold) | cost/answer (warm) | cache hit rate | **idle $/mo** | **12-mo TCO @ projected volume** | correctness | groundedness | p95 latency |
-   |---|---|---|---|---|---|---|---|---|
-   | `firestore-direct` | | | | **$0** | | | | |
-   | `pgvector-rag` | | | | (DB instance, 24/7) | | | | |
-   | `firestore-vector` | | | | (index storage) | | | | |
+   | method | cost/answer (cold) | cost/answer (warm) | cache hit rate | **idle $/mo** | **12-mo TCO @ projected volume** | coverage | correctness | groundedness | p95 TTFT (cold / warm) |
+   |---|---|---|---|---|---|---|---|---|---|
+   | `firestore-direct` | | | | **$0** | | | | | |
+   | `pgvector-rag` | | | | (DB instance, 24/7) | | | | | |
+   | `firestore-vector` | | | | (index storage) | | | | | |
+
+   **Coverage** is the share of the 28 runnable fixtures in that arm's servable set (§8a) — the
+   column that stops direct-feed's slice exemption from being invisible.
 
 2. **The upkeep breakdown** — the §1 standing-cost table filled in with real figures: datastore idle
    charge, whether we land inside or outside Firestore's free-tier quota, compute, embeddings, index
@@ -483,6 +684,8 @@ adapters, standing up a pgvector sidecar, and running a paid eval sweep all belo
     applies to our `(default)` database.
   - **A Cloud SQL (or equivalent) quote** for the smallest instance that would host pgvector — the
     deployed counterfactual's dominant cost line.
-  - **A decision on who grades**: human, LLM judge, or judge-with-human-calibration (§7b).
+  - ~~A decision on who grades~~ — **resolved 2026-07-29: LLM judge calibrated against a human
+    sample** (§7b). The judge model must differ from the model under test; the human sample is
+    collected through the blind frontend harness (§7c) rather than by hand-driving the API.
 
 Until then this document is a plan of record. Nothing here should be implemented on `migration`.

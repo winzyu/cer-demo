@@ -1,0 +1,49 @@
+{
+  "id": "acronym-kcl-creep",
+  "class": "acronym-exact-token",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "IpH_probe.pdf",
+    "IORP_probe.pdf"
+  ],
+  "requires": [],
+  "notes": "\"KCl creep\" appears on one page of two datasheets and nowhere else. It is the sharpest exact-token probe in the set: semantically it looks like nothing else in the corpus.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "A tech says our pH probe has \"KCl creep\" — what is that, and is the probe ruined?",
+      "rubric": {
+        "must_contain": [
+          "explains KCl creep as dried KCl residue from the storage solution forming a salt channel that wicks water out of the soaker bottle",
+          "states plainly that the probe is not damaged",
+          "gives the remedy: rinse the probe with water and carry on"
+        ],
+        "must_not": [
+          "recommends replacing the probe",
+          "states the probe is damaged or its calibration is permanently lost"
+        ],
+        "cite": [
+          "IpH_probe.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "It was dry for about two weeks — same answer?",
+      "rubric": {
+        "must_contain": [
+          "states this pH probe can be left dry for up to 3 weeks without damage",
+          "notes repeated wetting and drying cycles will eventually damage it and it should be kept wet",
+          "gives the rehydration steps: tap water for 3–5 minutes, add a scoop of KCl (or NaCl), soak 15–20 minutes"
+        ],
+        "must_not": [
+          "declares the probe dead after two weeks dry",
+          "invents a different rehydration procedure"
+        ],
+        "cite": [
+          "IpH_probe.pdf"
+        ]
+      }
+    }
+  ]
+}

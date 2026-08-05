@@ -30,7 +30,9 @@ export class ChatController {
 
   postChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { query, retrieval, stream } = parseChatRequest(req.body);
+      const {
+        query, retrieval, stream, history,
+      } = parseChatRequest(req.body);
 
       // Selection rules (including the DEBUG_RETRIEVAL override rule) live in the
       // registry, so this controller stays a thin HTTP wrapper.
@@ -38,7 +40,7 @@ export class ChatController {
       const chunks = await adapter.getContext(query);
 
       // Ordering is load-bearing for prompt caching — see promptBuilder.
-      const messages = buildMessages({ query, chunks });
+      const messages = buildMessages({ query, chunks, history });
 
       if (stream) {
         await this.streamAnswer(req, res, messages, adapter.mode, chunks);

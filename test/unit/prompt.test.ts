@@ -16,11 +16,23 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("ORP: 200 to 400 mV");
     expect(prompt).toContain("Dissolved oxygen: 5 to 14 mg/L");
     expect(prompt).toContain("Temperature: 32 to 95 °F");
+    expect(prompt).toContain("Turbidity: 0 to 25 NTU");
   });
 
   it("interpolates the conductivity range from water type", () => {
     expect(buildSystemPrompt("freshwater")).toContain("0 to 1,500");
     expect(buildSystemPrompt("saltwater")).toContain("40,000 to 50,000");
+  });
+
+  it("interpolates the turbidity range from water type", () => {
+    expect(buildSystemPrompt("freshwater")).toContain("Turbidity: 0 to 25 NTU");
+    expect(buildSystemPrompt("saltwater")).toContain("Turbidity: 0 to 10 NTU");
+  });
+
+  it("keeps 0 inside the turbidity range", () => {
+    // 0 is a valid turbidity reading and must never be flagged as erroneous
+    // (same rule as ORP — see timeline.md).
+    expect(buildSystemPrompt("freshwater")).toContain("Turbidity: 0 to");
   });
 
   it("embeds the refusal sentence verbatim", () => {
@@ -35,10 +47,15 @@ describe("buildSystemPrompt", () => {
     );
   });
 
-  it("states that the sensor does not measure turbidity or pathogens", () => {
+  it("puts turbidity in scope and keeps pathogens and nutrients out", () => {
+    // Corrected 2026-07-29: the legacy prompt declared turbidity unmeasured. It is one of the
+    // six parameters the DataPod reads, so leaving it out refused every turbidity question
+    // before retrieval ran — see systemPrompt.ts.
     const prompt = buildSystemPrompt("freshwater");
 
-    expect(prompt).toContain("does NOT measure pathogens, bacteria, chemicals, or turbidity");
+    expect(prompt).toContain("does NOT measure pathogens, bacteria, nutrients, or");
+    expect(prompt).not.toContain("or turbidity.");
+    expect(prompt).toContain("temperature, and\n  turbidity (in NTU)");
     expect(prompt).toContain("public-health authorities");
   });
 

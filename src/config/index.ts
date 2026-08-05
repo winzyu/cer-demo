@@ -23,6 +23,14 @@ export interface FireworksConfig {
    */
   maxTokens: number;
   /**
+   * Sampling temperature. **Defaults to 0**, which is both the sane default for a grounded
+   * water-quality assistant and a hard requirement of the N2 bake-off: sampling variance across
+   * arms would measure the sampler rather than the retrieval strategy
+   * (`RETRIEVAL_BAKEOFF.md` §7a). Previously unset, which meant the provider default applied and
+   * answers were not reproducible.
+   */
+  temperature: number;
+  /**
    * Sent as the OpenAI `user` field. On Fireworks serverless this drives cache affinity:
    * requests sharing a value tend to land on the same worker, which is what makes prompt
    * caching actually hit. A constant is correct for a single-tenant demo; revisit when
@@ -47,11 +55,40 @@ export interface DeviceApiConfig {
   timeoutMs: number;
 }
 
+export interface ChatConfig {
+  /**
+   * Hard cap on prior messages accepted from a caller. History is unbounded input the client
+   * controls, so without a cap one conversation can grow the prompt — and the bill — without
+   * limit. Oldest messages are dropped first.
+   */
+  maxHistoryMessages: number;
+}
+
+export type CorpusSourceName = "artifact" | "firestore";
+
 export interface RetrievalConfig {
   /** Registry key for the adapter selected by default (validated by the registry, later phase). */
   defaultMode: string;
   /** When true, a request may override the retrieval mode; otherwise the override is ignored. */
   debug: boolean;
+  /**
+   * Where corpus text is read from. `artifact` (the local ingestion output) needs no credentials
+   * and is the development default; `firestore` is required for a measured bake-off run so that
+   * datastore's read costs are counted. Explicit rather than auto-detected — a silent fallback
+   * could have a run measured against the wrong source and misreport the arm's cost.
+   */
+  corpusSource: CorpusSourceName;
+}
+
+/**
+ * Postgres + pgvector sidecar for the Phase N2 `pgvector-rag` arm.
+ *
+ * ⚠️ Dev/experiment only — removed with the arm once ◆G7 resolves. Unset in every normal
+ * deployment; the adapter fails with a clear message rather than the process refusing to boot,
+ * matching how a missing Fireworks key is handled.
+ */
+export interface PgVectorConfig {
+  url?: string;
 }
 
 export interface Config {
@@ -62,7 +99,9 @@ export interface Config {
   firestore: FirestoreConfig;
   fireworks: FireworksConfig;
   deviceApi: DeviceApiConfig;
+  chat: ChatConfig;
   retrieval: RetrievalConfig;
+  pgvector: PgVectorConfig;
   waterType: WaterType;
 }
 
@@ -85,6 +124,20 @@ const readInt = (name: string, fallback: number): number => {
   const value = Number(raw);
   if (!Number.isInteger(value)) {
     errors.push(`${name} must be an integer (got "${raw}")`);
+    return fallback;
+  }
+  return value;
+};
+
+/** Like `readInt` but accepts decimals — temperature is the only such value so far. */
+const readFloat = (name: string, fallback: number): number => {
+  const raw = process.env[name];
+  if (raw === undefined || raw.trim() === "") {
+    return fallback;
+  }
+  const value = Number(raw);
+  if (!Number.isFinite(value)) {
+    errors.push(`${name} must be a number (got "${raw}")`);
     return fallback;
   }
   return value;
@@ -140,6 +193,7 @@ const load = (): Config => {
       chatModel: readString("LLM_MODEL"),
       embeddingModel: readString("EMBEDDING_MODEL", "nomic-ai/nomic-embed-text-v1.5") as string,
       maxTokens: readInt("LLM_MAX_TOKENS", 4096),
+      temperature: readFloat("LLM_TEMPERATURE", 0),
       user: readString("FIREWORKS_USER", "clean-earth-rag") as string,
     },
     deviceApi: {
@@ -147,9 +201,20 @@ const load = (): Config => {
       devToken: readString("DEVICE_API_TOKEN"),
       timeoutMs: readInt("DEVICE_API_TIMEOUT_MS", 10000),
     },
+    chat: {
+      maxHistoryMessages: readInt("MAX_HISTORY_MESSAGES", 20),
+    },
     retrieval: {
       defaultMode: readString("DEFAULT_RETRIEVAL", "stub") as string,
       debug: readBool("DEBUG_RETRIEVAL", false),
+      corpusSource: readEnum<CorpusSourceName>(
+        "CORPUS_SOURCE",
+        ["artifact", "firestore"],
+        "artifact",
+      ),
+    },
+    pgvector: {
+      url: readString("PGVECTOR_URL"),
     },
     waterType: readEnum<WaterType>("WATER_TYPE", ["freshwater", "saltwater"], "freshwater"),
   };

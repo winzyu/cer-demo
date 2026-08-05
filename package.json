@@ -12,18 +12,27 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "ingest": "ts-node scripts/ingest.ts",
+    "bakeoff": "ts-node scripts/bakeoff.ts",
+    "seed:firestore": "ts-node scripts/seedFirestore.ts",
+    "seed:firestore-chunks": "ts-node scripts/seedFirestoreChunks.ts",
+    "seed:pgvector": "ts-node scripts/seedPgvector.ts",
+    "cost": "ts-node scripts/cost.ts"
   },
   "license": "MIT",
   "dependencies": {
     "@google-cloud/firestore": "^7.11.0",
+    "@types/pdf-parse": "^1.1.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^7.2.0",
     "http-errors": "^2.0.0",
     "morgan": "^1.10.0",
-    "openai": "^7.0.0"
+    "openai": "^7.0.0",
+    "pdf-parse": "^2.4.5",
+    "pg": "^8.22.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -32,6 +41,7 @@
     "@types/jest": "^29.5.14",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.30",
+    "@types/pg": "^8.20.0",
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.65.0",
     "@typescript-eslint/parser": "^8.65.0",
