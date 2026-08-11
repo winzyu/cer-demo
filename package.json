@@ -15,6 +15,7 @@
     "test:coverage": "jest --coverage",
     "ingest": "ts-node scripts/ingest.ts",
     "bakeoff": "ts-node scripts/bakeoff.ts",
+    "explore:devices": "ts-node scripts/exploreDeviceApi.ts",
     "seed:firestore": "ts-node scripts/seedFirestore.ts",
     "seed:firestore-chunks": "ts-node scripts/seedFirestoreChunks.ts",
     "seed:pgvector": "ts-node scripts/seedPgvector.ts",
