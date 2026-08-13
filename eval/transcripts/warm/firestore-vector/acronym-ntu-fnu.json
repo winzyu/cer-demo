@@ -1,0 +1,121 @@
+{
+  "fixtureId": "acronym-ntu-fnu",
+  "fixtureClass": "acronym-exact-token",
+  "arm": "firestore-vector",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-08-11T23:32:23.664Z",
+    "gitSha": "3a94f6d8d5c409c382651100fe6f0d10a98440af",
+    "model": "accounts/fireworks/models/gpt-oss-20b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "corpusSource": "firestore",
+    "baseUrl": "http://localhost:8000/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "Our turbidity readings are in NTU but another pod reports FNU — can I compare them?",
+      "answer": "No. NTU (nephelometric turbidity units) and FNU (field nephelometric units) are different measurement scales. A turbidity meter that reports NTU (see [1]) uses a light‑scattering method calibrated to the NTU scale, while USGS multiparameter instruments report turbidity in FNU (see [2] and [3]). Because the two units are not directly equivalent, you can’t compare the numbers without first converting one to the other or using a calibration curve.",
+      "context": [
+        {
+          "id": "volunteer_stream_monitoring_a_methods_manual.pdf__0143",
+          "text": "Secchi Disk or Tranparency Tube).\nFigure 5.10\nUsing a Secchi disk to measure transparency\nA turbidity\nmeter consists\nof a light\nsource that\nilluminates a\nwater sample\nand a\nphotoelectric\ncell that\nmeasures the\nintensity of\nlight scattered\nat a 90 angle\nby the\nparticles in the\nsample. It\nmeasures\nturbidity in\nnephelometric\nturbidity units\nor NTUs.\nMeters can\nmeasure\nturbidity over\n\n-- 155 of 227 --The disk is lowered until it is no longer visible.\nThat point is the Secchi disk depth.\nFigure 5.11\nUsing a transparency tube\n(A) Prepare the tranparency tube to take a reading. Place the tube on a\nwhite surface and look vertically down the tube to see the wave pattern at\nthe bottom.\n(B) Slowly pour water sample into the tube stopping intermittently to see if\nthe wave pattern has disappeared.\na wide range\nfrom 0 to 1000\nNTUs. A clear\nmountain\nstream might\nhave a\nturbidity of\naround 1\nNTU, whereas\na large river\nlike the\nMississippi\nmight have a\ndry-weather\nturbidity of\naround 10\nNTUs. These\nvalues can\njump into\nhundreds of\nNTU during\nrunoff events.\nTherefore, the\nturbidity meter\nto be used should be reliable over the range in which you will be working. Meters of this\nquality cost about $800. Many meters in this price range are designed for field or lab use.\nAlthough turbidity meters can be used in the field, volunteers might want to collect\nsamples and take them to a central point for turbidity measurements. This is because of\nthe expense of the meter (most programs can afford only one and would have to pass it\nalong from site to site, complicating logistics and increasing the risk of damage to the\nmeter) and because the meter includes glass cells that must remain optically clear and\nfree of scratches.\nVolunteers can also take turbidity samples to a lab for meter analysis at a reasonable cost.\nHow to sample\nThe procedures for collecting samples and analyzing turbidity consist of the following\ntasks:\nTASK 1 Prepare the sample containers\nIf factory-sealed, disposable Whirl-pak® bags are used to sample, no preparation is\nneeded. Reused sample containers (and all glassware used in this procedure) must be\n\n-- 156 of 227 --",
+          "source": "volunteer_stream_monitoring_a_methods_manual.pdf",
+          "score": 0.7242020552884546
+        },
+        {
+          "id": "tm9a6.8.pdf__0029",
+          "text": "s when reporting rounded values.\n2Most multiparameter instruments used for USGS turbidity measurement contain single-beam infrared wavelength turbidity sensors and are reported in FNU.\nCheck the Excel spreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls to determine the appropriate turbidity unit of measure and NFM A6.7 for detailed\ninformation on turbidity measurement and instrumentation.-- 18 of 24 --\n\nSelected References \t11\nBooth, A., Fleck, J., Pellerin, B.A., Hansen, A., Etheridge, A.,\nFoster, G.M., Graham, J.L., Bergamaschi, B.A., Carpenter,\nK.D., Downing, B.D., Rounds, S.A., and Saraceno, J., 2023,\nField techniques for fluorescence measurements targeting\ndissolved organic matter, hydrocarbons, and wastewater\nin environmental waters: Principles and guidelines for\ninstrument selection, operation and maintenance, quality\nassurance, and data reporting: U.S. Geological Survey Tech-\nniques and Methods, book 1, chap. D11, 41 p., accessed\nNovember 2, 2023, at https://doi.org/10.3133/tm1D11.\nHach, 2022, User manual for HACH LDO sensor, ed. 4, 16\np., accessed November 2, 2023, at https://www.hach.com/\nasset-get.download.jsa?id=11728589903.\nHydrolab, 2017, User manual for Hydrolab HL Series\nSonde, ed. 2, 24 p., accessed November 2, 2023, at\nhttps://www.ott.com/download/hl-series-sonde-bedienung-\nsanleitung-user-manual-manuel-dutilisation-manual-de-\nusuario-1/.]\nHydrolab, 2019, User manual for Hydrolab HL Series\nSensors, ed. 4, 43 p., accessed November 2, 2023, at\nhttps://www.ott.com/download/hl-series-sensors-bedien-\nungsanleitung-user-manual-manuel-dutilisation-manual-de-\nusuario/.\nIn-Situ, Inc., 2023, Aqua TROLL 600—Operator's manual\n(revised August, 4, 2023): In-Situ, Inc., 83 p., accessed\nNovember 2, 2023, at https://in-situ.com/pub/media/\nsupport/documents/Aqua-TROLL-600-Manual.pdf.\nU.S. Geological Survey, [variously dated], National field\nmanual for the collection of water quality data: U.S. Geo-\nlogical Survey Techniques and Methods, book 9, chapters\nA0–A10, accessed November 2, 2023, at https://www.usgs.\ngov/mission-areas/water-resources/science/national-field-\nmanual-collection-water-quality-data-nfm.\nWagner, R.J., Boulger, R.W., Jr., Oblinger, C.J., and Smith,\nB.A., 2006, Guidelines and standard procedures for con-\ntinuous water-quality monitors—Station operation, record\ncomputation, and data reporting, ver. 1.0: U.S. Geological\nSurvey Techniques and Methods, book 1, chap. D3, 96 p.,\naccessed November 2, 2023, at https://doi.org/10.3133/\ntm1D3.\nXylem, Inc., 2020, EXO user manual—Advanced water qual-\nity monitoring platform, user manual item #603789REF,\nRevision K: Yellow Springs, Ohio, YSI, Inc., 243 p.,\naccessed November 2, 2023, at https://www.ysi.com/\nFile%20Library/Documents/Manuals/EXO-User-Manual-\nWeb.pdf.\n\n-- 19 of 24 --\n\n12 \tChapter A6.8. Use of Multiparameter Instruments for Routine Field Measurements\nAppendix 6.8–1. \tExample of a U.S. Geological Survey Field Form for Recording\nSensor Calibrations and Field Measurements\nNOTE: U.S. Geological Survey personnel are advised to use the most recent available version of the form shown in\nfigure 6.8–01.01 and other field forms.\n\n-- 20 of 24 --",
+          "source": "tm9a6.8.pdf",
+          "score": 0.7179018684049908
+        },
+        {
+          "id": "tm9a6.8.pdf__0028",
+          "text": "ractical salinity units calculated from specific electrical conductance at 25 degrees\nCelsius]\nParameter \tUSGS reporting convention for NWIS1 \tUnit\nTemperature \tNearest 0.01 depending on instrument precision \t°C\nSC \tThree significant figures for SC ≥100, two significant figures for SC <100 \tμS/cm at 25 °C\nDO \tNearest 0.01 \tmg/L\npH \tNearest 0.01, depending on instrument precision \tpH standard unitsORP \tTwo significant figures, calculated relative to the SHE (do not report raw data). Record the\ntemperature of the sample at the time of measurement.\nmV\nTurbidity \t0 to <1, nearest 0.05\n1 to <10, nearest 0.1\n10 to <100, nearest 1\n100 to <1,000, nearest 10\n≥1,000, nearest 50\nFNU2\nSalinity \t<1 to <10, nearest 0.1\n≥10, nearest 1\nppt or psu\n1It is USGS practice to enter values into NWIS that have more significant figures than are standard for reporting. The NWIS database has rounding built in for\nreporting. This practice eliminates user errors when reporting rounded values.\n2Most multiparameter instruments used for USGS turbidity measurement contain single-beam infrared wavelength turbidity sensors and are reported in FNU.\nCheck the Excel spreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls to determine the appropriate turbidity unit of measure and NFM A6.7 for detailed\ninformation on turbidity measurement and instrumentation.",
+          "source": "tm9a6.8.pdf",
+          "score": 0.6906946830225403
+        },
+        {
+          "id": "water-quality-metrics-source-of-truth.pdf__0002",
+          "text": "ically 6.5–8.5) is poorly buffered and naturally variable.\nSeawater (~8.0–8.2) is strongly carbonate-buffered — so any meaningful pH excursion in\nmarine water is significant and worth investigating.\nPollution relevance: Acidic inputs (acid mine drainage, certain industrial effluent) crash pH;\nalkaline inputs (concrete/construction washwater, some industrial discharge) raise it. Large\n\n-- 2 of 7 --daily pH swings indicate biological productivity, not a discharge.\nTurbidity\nMeasures: Water clarity — light scattered by suspended particles (sediment, plankton, organic\nmatter). Units: NTU or FNU.\nWhat drives it: Sediment runoff, shoreline erosion, bottom resuspension by\ncurrents/waves/dredging, and algal cells.\nFresh vs. salt: Rivers and estuaries are naturally more turbid and event-driven (storms,\ndredging). Open coastal water is clearer; resuspension peaks at maximum tidal current.\nPollution relevance: A turbidity spike flags storm runoff, construction/erosion, or dredging.\nCritically, particles carry adsorbed pollutants — phosphorus, metals, hydrocarbons,\npathogens — so a turbidity spike is also a proxy for contaminant loading. High turbidity also\nsuppresses photosynthesis by blocking light.\n2. Baseline Reference Ranges\nParameter \tHealthy Freshwater \tBrackish / Estuarine \tHealthy Seawater\nTemperature Climate/season-\ndependent\nClimate/season-\ndependent Climate/season-dependent\nDissolved\nOxygen 6–11 mg/L (>80% sat.) \t5–9 mg/L 5–8 mg/L (~7–8 at 100%\nsat.)\nORP \t+200 to +400 mV \t+150 to +350 mV \t+200 to +400 mV\nConductivity\n(EC) 50–1,500 μS/cm \t~1,000–35,000 μS/cm ~45,000–55,000 μS/cm (~35\nPSU)\npH \t6.5–8.5 \t7.0–8.3 \t7.8–8.3\nTurbidity \t<5–25 NTU \t5–100+ NTU \t<5–10 NTU\nRanges are general guidance. Establish a site-specific baseline before treating deviations as events\n— local geology, season, and tidal stage shift “normal” substantially.\n3. How the Parameters Interrelate\nUnderstanding these couplings is what turns six independent readings into a diagnostic system.\nTemperature → DO (inverse, two ways): Warmer water physically holds less oxygen and\n\n-- 3 of 7 --",
+          "source": "water-quality-metrics-source-of-truth.pdf",
+          "score": 0.6887375722581812
+        },
+        {
+          "id": "volunteer_stream_monitoring_a_methods_manual.pdf__0142",
+          "text": " of runoff from construction,\nagricultural practices, logging activity, discharges, and other sources. Turbidity often\nincreases sharply during a rainfall, especially in developed watersheds, which typically\nhave relatively high proportions of impervious surfaces. The flow of stormwater runoff\nfrom impervious surfaces rapidly increases stream velocity, which increases the erosion\n\n-- 154 of 227 --rates of streambanks and channels. Turbidity can also rise sharply during dry weather if\nearth-disturbing activities are occurring in or near a stream without erosion control\npractices in place.\nRegular monitoring of turbidity can help detect trends that might indicate increasing\nerosion in developing watersheds. However, turbidity is closely related to stream flow\nand velocity and should be correlated with these factors. Comparisons of the change in\nturbidity over time, therefore, should be made at the same point at the same flow.\nTurbidity is not a measurement of the amount of suspended solids present or the rate of\nsedimentation of a steam since it measures only the amount of light that is scattered by\nsuspended particles. Measurement of total solids is a more direct measure of the amount\nof material suspended and dissolved in water (see section 5.9 - Conductivity).\nTurbidity is generally measured by using a turbidity meter. Volunteer programs may also\ntake samples to a lab for analysis. Another approach is to measure transparency (an\nintegrated measure of light scattering and absorption) instead of turbidity. Water\nclarity/transparency can be measured using a Secchi disk or transparency tube. The\nSecchi disk can only be used in deep, slow moving rivers; the transparency tube, a\ncomparatively new development, is gaining acceptance in programs around the country\nbut is not yet in wide use (see Using a Secchi Disk or Tranparency Tube).\nFigure 5.10\nUsing a Secchi disk to measure transparency\nA turbidity\nmeter consists\nof a light\nsource that\nilluminates a\nwater sample\nand a\nphotoelectric\ncell that\nmeasures the\nintensity of\nlight scattered\nat a 90 angle\nby the\nparticles in the\nsample. It\nmeasures\nturbidity in\nnephelometric\nturbidity units\nor NTUs.\nMeters can\nmeasure\nturbidity over\n\n-- 155 of 227 --",
+          "source": "volunteer_stream_monitoring_a_methods_manual.pdf",
+          "score": 0.678583618989578
+        }
+      ],
+      "mode": "firestore-vector",
+      "usage": {
+        "promptTokens": 3603,
+        "completionTokens": 383,
+        "totalTokens": 3986,
+        "cachedPromptTokens": 578
+      },
+      "timing": {
+        "ttftMs": 2352,
+        "wallMs": 3919
+      }
+    },
+    {
+      "index": 1,
+      "question": "Which one does our sensor use?",
+      "answer": "Your sensor reports turbidity in **NTU** (nephelometric turbidity units).",
+      "context": [
+        {
+          "id": "tm9a6.8.pdf__0014",
+          "text": "m USGS\nOne-Stop Shopping. Most sensor manufacturers recommend either formazin-based or SDVB-\npolymer standards for calibration. Do not use gel or solid verification standards for calibrating\ninstruments. See NFM A6.7.\n• Turbidity-free water which is DIW filtered through a ≤0.2-μm membrane filter.\n• Formazin stock suspension can be obtained commercially.\n1Stablcal is a registered trademark of Hach.-- 12 of 24 --",
+          "source": "tm9a6.8.pdf",
+          "score": 0.7251914336405065
+        },
+        {
+          "id": "tm9a6.2.pdf__0023",
+          "text": "is recommended.\nEquipment: Check or calibration with a wet towel\n1 \tTowel, sized so that it will wrap around the sensor at least\ntwo full wraps\n1 \tTrash bag, clear or white plastic\n1. \tSoak the towel either (1) in the water for DO measure-\nment, or (2) with tap or deionized water. Wring it out,\nand then wrap the wet towel completely around the\nsensor guard or chamber two full wraps or more. As you-- 16 of 44 --",
+          "source": "tm9a6.2.pdf",
+          "score": 0.7223472824253784
+        },
+        {
+          "id": "tm9a6.8.pdf__0007",
+          "text": " in wells, but may have more limited\nwiper and sensor capability than the larger diameter sondes\n(because fewer ports are available for sensors). Depending on\nthe manufacturer, some instruments can store measurements\nto internal or removeable memory in a format compatible with\na hand-held display, laptop computer, tablet, database input\nfile, or typical cell phone. Many instruments are operated byapplications run on tablets or cell phones and communicate by\nusing wireless communication protocols. Instruments may be\npowered by their own internal batteries or through cables con-\nnected to external devices, such as wireless communicators,\nhand-held displays, or laptop computers.\nThe use of multiparameter instruments for field mea-\nsurements has become routine. Advances in technology and\ndesign are expanding the sensor capabilities of multiparameter\ninstruments and are improving the utility of the instruments.\nThe procedures required for the maintenance, calibration, and\nuse of these instruments can change over time as a result of\ntechnological changes. Users must stay current with respect\nto how their instrument operates and is maintained. Sensors\nTable 6.8–1. \tAdvantages and limitations of multiparameter instruments for field use.\nAdvantages \tLimitations\nThe time needed to measure and record multiple field parameters at\none time is reduced.\nOne system (inside the sonde) is responsible for recording all\nparameters, which would cause the loss of all parameter values\nupon failure.\nMeasurements can be made in situ instead of in samples removed\nfrom the source water.\nBackup field instruments (single parameter or multiparameter) are\nrecommended to prevent data loss.\nMeasurements made in situ are likely more representative than\nmeasurements made in samples removed from their source.\nPurchase costs for multiparameter instruments are higher than those\nfor single-parameter instruments.\nInstruments can store data, either in a display device or to internal\nmemory.\nCalibration may require use of a greater volume of standards for\nrinsing than that needed for single-parameter instruments.",
+          "source": "tm9a6.8.pdf",
+          "score": 0.7151568414884516
+        },
+        {
+          "id": "tm9a6.8.pdf__0009",
+          "text": "-- 10 of 24 --2.0 Equipment and Supplies \t3\nfor the determination of water temperature, specific electrical\nconductance (SC), pH, dissolved-oxygen (DO) concentration\nand turbidity are commonly bundled in sondes used for USGS\nwater-quality studies. Permanent sensors for measuring baro-\nmetric pressure (for use with a DO sensor), water depth (either\nvented or unvented), and location (global positioning systems)\neither are standard equipment with many multiparameter\ninstruments or can be added at extra cost. Nonpermanent\nsensors for measuring oxidation-reduction potential (Eh), fluo-\nrescence1, velocity, and concentrations of nitrate, ammonia,\nammonium, chloride, and chlorophyll can be added to many\nsondes through use of sensor ports. The types and number of\nsensors that can be bundled in a given sonde depend on the\nnumber of ports available in an instrument model, typically\nfour to seven. When selecting a sensor, consult the manufac-\nturer’s recommendations and specifications for the instrument,\ntaking into consideration the environmental conditions to be\nencountered, the data-quality objectives of the study, and the\nspecific benefit of a particular sensor technology that could be\napplicable to the anticipated field conditions.\nTable 6.8–2 lists the equipment specifications required\nwhen making field measurements with a multiparameter\ninstrument. Table 6.8–3 lists the specifications for calibration\n1Fluorescence sensors indicate different algal pigment concentrations; see\nNFM chapter A7.4 and Booth and others (2023) for additional information.\nsolutions required when using multiparameter instruments.\nThe requirements in tables 6.8–2 and 6.8–3 may be modified\nto fit specific project needs. Ancillary supplies and equipment\nneeded to measure field properties with multiparameter instru-\nments (table 6.8–4) are the same as or similar to those required\nfor the calibration and maintenance of single-parameter\ninstruments, and are discussed in detail in the individual field-\nmeasurement chapters (NFM chapters A6.1 through A6.7).\n2.1 Equipment Transport\nMultiparameter instruments have become more robust\nwith time, but the sensors can easily be damaged if handled\nimproperly. Some sensors require storage and transporta-\ntion in a wet/moist environment, whereas others do not,\ncheck the manufacturer’s recommendations. Sondes should\nnot be exposed to extreme heat or cold. Transport in a case\nthat is designed to protect the equipment following the\nmanufacturer’s recommendations is best. For transportation\nand storage, use a padded case that protects the sonde from\nshock. The padding should be of a type that will not absorb\nwater. Hard-sided cases should be equipped with a vent so\nthat internal pressure can equalize with that of the atmosphere.\nDo not expose the case to direct sunlight in order to avoid\nsolar heating of the equipment inside.\nTable 6.8–2. \tSpecifications for multiparameter instruments.\n[±, plus or minus; mV, millivolt; −, minus; +, plus; °C, degrees Celsius; SC, specific electrical conductance; μS/cm, microsiemens per centimeter at 25 °C; DO,",
+          "source": "tm9a6.8.pdf",
+          "score": 0.7123223122248779
+        },
+        {
+          "id": "tm9a6.8.pdf__0020",
+          "text": "the expected measurement or deployment\nrange of measurements.\n• Check sensor ports to ensure that sensors are prop-\nerly installed or that empty ports are sealed. Sensors\nfrom which data are not being collected routinely\ncan be removed from the sonde for safe storage. The\ntemperature sensor should not be removed. All electri-\ncal connections must be clean, dry, waterproof, and\nprotected from dust.-- 14 of 24 --",
+          "source": "tm9a6.8.pdf",
+          "score": 0.7110756788903649
+        }
+      ],
+      "mode": "firestore-vector",
+      "usage": {
+        "promptTokens": 2233,
+        "completionTokens": 104,
+        "totalTokens": 2337,
+        "cachedPromptTokens": 577
+      },
+      "timing": {
+        "ttftMs": 2691,
+        "wallMs": 2707
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 5836,
+    "cachedPromptTokens": 1155,
+    "completionTokens": 487,
+    "wallMs": 6626
+  }
+}

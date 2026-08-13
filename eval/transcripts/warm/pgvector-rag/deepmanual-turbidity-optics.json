@@ -1,0 +1,121 @@
+{
+  "fixtureId": "deepmanual-turbidity-optics",
+  "fixtureClass": "deep-in-manual",
+  "arm": "pgvector-rag",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-08-11T23:19:13.412Z",
+    "gitSha": "3a94f6d8d5c409c382651100fe6f0d10a98440af",
+    "model": "accounts/fireworks/models/gpt-oss-20b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "corpusSource": "firestore",
+    "baseUrl": "http://localhost:8000/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "How does a turbidity sensor physically take its reading?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The provided context does not explain the physical measurement principle of turbidity sensors.",
+      "context": [
+        {
+          "id": "90",
+          "text": "riteria\n(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)\nTemperature \t± 0.2 °C\nSpecific electrical conductance (SC) \t± 5 μS/cm for SC ≤100 μS/cm, or ± 3% for SC >100 μS/cm\nDO \t± 0.2 mg/L\npH \t± 0.1 pH units\nTurbidity \t± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or\n10% of the measured value for turbidity >100 TU-- 15 of 24 --",
+          "source": "tm9a6.8.pdf",
+          "score": 0.01639344262295082
+        },
+        {
+          "id": "26",
+          "text": ".)\n• Immerse the sensor into the zero-DO solution,\nwait for reading to stabilize (usually within\n5–10 minutes), record reading.\n• If the instrument reading exceeds 0.2 mg/L in the\nzero-DO solution, check DO again with a freshly\nprepared zero-DO solution; if a reading greater than\n0.2 mg/L persists, contact the instrument manufac-\nturer and inquire whether the luminophore module\nshould be replaced.-- 13 of 44 --",
+          "source": "tm9a6.2.pdf",
+          "score": 0.016129032258064516
+        },
+        {
+          "id": "95",
+          "text": "ractical salinity units calculated from specific electrical conductance at 25 degrees\nCelsius]\nParameter \tUSGS reporting convention for NWIS1 \tUnit\nTemperature \tNearest 0.01 depending on instrument precision \t°C\nSC \tThree significant figures for SC ≥100, two significant figures for SC <100 \tμS/cm at 25 °C\nDO \tNearest 0.01 \tmg/L\npH \tNearest 0.01, depending on instrument precision \tpH standard unitsORP \tTwo significant figures, calculated relative to the SHE (do not report raw data). Record the\ntemperature of the sample at the time of measurement.\nmV\nTurbidity \t0 to <1, nearest 0.05\n1 to <10, nearest 0.1\n10 to <100, nearest 1\n100 to <1,000, nearest 10\n≥1,000, nearest 50\nFNU2\nSalinity \t<1 to <10, nearest 0.1\n≥10, nearest 1\nppt or psu\n1It is USGS practice to enter values into NWIS that have more significant figures than are standard for reporting. The NWIS database has rounding built in for\nreporting. This practice eliminates user errors when reporting rounded values.\n2Most multiparameter instruments used for USGS turbidity measurement contain single-beam infrared wavelength turbidity sensors and are reported in FNU.\nCheck the Excel spreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls to determine the appropriate turbidity unit of measure and NFM A6.7 for detailed\ninformation on turbidity measurement and instrumentation.",
+          "source": "tm9a6.8.pdf",
+          "score": 0.015873015873015872
+        },
+        {
+          "id": "38",
+          "text": " place the DO sensor (or\nmultiparameter sonde) in the bucket and allow 5 to\n10 minutes for the sensor to come to thermal equi-\nlibrium with the aerated water. Take care not to place\nthe sensor over or in the bubbles from the air stone.\nb. \tFor field calibration verification of a DO sensor, use\nthe wet-towel method.\n5. \tRead and record the temperature of the calibration water\nto the nearest 0.1 °C.-- 17 of 44 --",
+          "source": "tm9a6.2.pdf",
+          "score": 0.015625
+        },
+        {
+          "id": "46",
+          "text": "rameter sensor (and other single-parameter sensors),\nor (2) a multiparameter sonde instrumented with an optical\nDO sensor.\nThe sample is transferred by using a positive-displacement\nsubmersible pump fitted with high-density plastic or fluorocar-\nbon-polymer tubing that is relatively gas impermeable.\n• Use of transparent materials for the tubing and\nchamber is recommended to permit checking for airbubbles in the water stream or adhering to the sides\nof the tubing and flow-through cell or chamber (that\nhave been introduced as an artifact of the sampling\nprocedure, as distinguished from gas bubbles that are\nnative to the formation water). Air bubbles intro-\nduced through leaking fittings can add substantial\nerror to low-level DO measurements and should be\nexcluded.\n• Protect exposed sample tubing and the flow-through\ncell or chamber from direct sunlight.\nDo not measure groundwater DO concentration\nin a sample extracted from a bailer or other\nsampling device that results in sample exposure to\nthe atmosphere.\nFollow the steps below to measure DO in groundwater:\n1. \tCalibration checks:\n• Check that the thermistor is accurate and that\nits calibration has been certified according to\nNFM 6.1, Temperature.\n• Check the performance of the DO sensor at satura-\ntion and zero DO (refer to sections 2.1 and 2.2).\n• If a calibration adjustment is necessary or if it is\nrequired to address program protocols, data-quality\nrequirements, or site-specific conditions, calibrate\nthe DO sensor onsite, in accordance with the proce-\ndures described in section 2.2.\n2. \tInstall the DO equipment:\n• Downhole system—Lower the DO and temperature\nsensors to the measuring point, followed by the\npump, to monitor DO variation during purging.\n• Inline flow-through system—Refer to NFM 6.0,\nField Measurements, for installation guidelines.\nFor a system that includes a multiparameter instru-\nment sonde, install the sonde in the flow-through\ncell provided by the manufacturer and in accordance\nwith manufacturer instructions. Be sure to:\n• Install the DO sensor through an air-tight grom-\nmet if the chamber is instrumented with single-\nparameter sensors. Check that the seal around\nthe DO sensor is intact and that the sensors are\nproperly immersed.",
+          "source": "tm9a6.2.pdf",
+          "score": 0.015384615384615385
+        }
+      ],
+      "mode": "pgvector-rag",
+      "usage": {
+        "promptTokens": 1894,
+        "completionTokens": 554,
+        "totalTokens": 2448,
+        "cachedPromptTokens": 727
+      },
+      "timing": {
+        "ttftMs": 4058,
+        "wallMs": 4473
+      }
+    },
+    {
+      "index": 1,
+      "question": "Does that explain why NTU and FNU differ?",
+      "answer": "Yes. The context notes that turbidity can be expressed in **NTU (white‑light)** or **FNU (infrared)**, and that the two units are **not interchangeable** because the sensors use different wavelengths of light to gauge scattering. White‑light (NTU) sensors measure the amount of light scattered by suspended particles at visible wavelengths, while infrared (FNU) sensors use infrared light, which interacts differently with particles. This difference in measurement principle is why NTU and FNU values can differ and why the operator recommends standardizing on one unit across the fleet【1】.",
+      "context": [
+        {
+          "id": "305",
+          "text": "rature\nrise with\nproportional\nDO decline;\nother\nchemistry flat\nSaltwater\nintrusion → \t→ \t→ \t↑↑ \t→/↑ \t→\nEC rise\ncorrelated\nwith tidal\nphase,\ndrought, or\nsea-level\nconditions\nAcidic input\n(acid mine\ndrainage /\nspill)\n→ \t↑ \t↑ \t↓↓ \t↑\npH crash\npaired with EC\nrise (dissolved\nmetals/sulfate)\nHypoxia / fish-\nkill conditions\noften\n↑ →0 ↓↓\n(negative) → \t↓\nDO and ORP\nboth\nbottoming out\ntogether\n\n-- 5 of 7 --Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm\nweather. DO and ORP falling together while EC and turbidity rise is a far more specific signal\npointing to an organic/sewage source.\n5. Separating Natural Cycles from Pollution Events\nRule out the water body’s normal rhythms before declaring an event.\nDiel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,\nbottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.\nA smooth, repeating daily oscillation is biology, not pollution.\nTidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity\noften peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is\nmixing, not a discharge.\nSeasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.\nCompare any reading to the same season’s baseline.\nThe test for a real event: A pollution event typically appears as a step-change or sustained\nexcursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it\nshows up as a correlated shift across multiple parameters consistent with one of the signatures\nabove.\n6. Sensor & Data-Quality Caveats\nA trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an\nevent.\nCalibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across\nweeks may be drift, not water chemistry — cross-check against calibration history and class-\nbalanced expectations.\nORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.\nstandard hydrogen electrode). Record which reference is used so values are comparable across\nDataPods and over time. Treat ORP trend as more reliable than absolute value.\nEC temperature compensation: Always report specific conductance (25°C-corrected).\nUncorrected EC will track temperature and produce false signals.\nTurbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on\none across the fleet.\nDO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the\nantifouling/cleaning schedule.\n\n-- 6 of 7 --\n\nBiofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long\ndeployment is a fouling/maintenance flag first, an environmental signal second.\nMaintain this as a living document. As DataPod deployments build site-specific baselines, append\nlocal “normal” ranges and any site-specific event signatures observed in the field.\n\n-- 7 of 7 --\n\n",
+          "source": "water-quality-metrics-source-of-truth.pdf",
+          "score": 0.01639344262295082
+        },
+        {
+          "id": "304",
+          "text": "U\nRanges are general guidance. Establish a site-specific baseline before treating deviations as events\n— local geology, season, and tidal stage shift “normal” substantially.\n3. How the Parameters Interrelate\nUnderstanding these couplings is what turns six independent readings into a diagnostic system.\nTemperature → DO (inverse, two ways): Warmer water physically holds less oxygen and\n\n-- 3 of 7 --speeds the respiration/decomposition that consumes it. A temperature rise should always be\npaired with an expected DO decline.\nTemperature → EC: Ion mobility rises with temperature; raw EC increases ~2% per °C. Always\nreport temperature-corrected specific conductance so EC changes reflect chemistry, not\nwarming.\nDO ↔ ORP (tightly coupled): Oxygen is the dominant electron acceptor — abundant DO drives\nORP strongly positive. As DO is consumed, ORP declines; once oxygen is exhausted, ORP goes\nnegative. ORP often moves before DO hits bottom, giving lead time.\npH ↔ DO (the photosynthesis/respiration couple): Photosynthesis removes CO₂ (raises pH)\nand releases O₂; respiration adds CO₂ (lowers pH) and consumes O₂. pH and DO therefore rise\nand fall together on the daily cycle. In-phase daily swings of pH and DO are the fingerprint\nof biological productivity.\nTurbidity → DO/pH: Suspended particles block light, suppressing photosynthesis and\ndampening daytime DO/pH gains. Organic-rich turbidity also adds direct oxygen demand.\nTurbidity as a contaminant carrier: Sediment transports adsorbed nutrients, metals, and\npathogens — a turbidity spike can stand in for a loading event even when chemistry looks\nstable.\nEC as a source fingerprint: Because fresh and salt water differ ~1,000× in EC, the direction of\nan EC change tells you whether freshwater (rain, runoff, groundwater) or saline/ionic input (tide,\nintrusion, discharge) is driving the event.\n4. Pollution Event Signature Matrix\nArrows show the expected direction of change relative to baseline. ↑↑ / ↓↓ = strong, ↑ / ↓ =\nmoderate, \t= large swing or variable, → = little change.\nEvent \tTemp \tDO \tORP \tEC \tpH \tTurbidity Primary\nSignature\nSewage /\nsanitary\ndischarge\n→/↑ \t↓↓ \t↓↓ \t↑ \t↓ \t↑\nDO crash +\nORP crash +\nEC rise +\nturbidity rise,\nnot tied to\ntime of day\nAlgal bloom /\n(super-\nsat.\nmidday, \t(high\nLarge in-\nphase daily\nDO + pH\noscillations;\n\n-- 4 of 7 --\n\neutrophication \t↑ \tcrash\npre-\ndawn)\n→ \tmidday) \t↑ \tpre-dawn DO\nminimum is\nthe danger\nwindow\nStormwater /\nurban runoff ↓ \t↓\n↓\n(marine)\n/\n(fresh)\n↑↑\nSharp\nturbidity spike\ncoincident\nwith rainfall;\nEC shifts\n(drops in\nmarine, may\nspike in fresh\nfrom road salt)\nIndustrial /\nchemical\ndischarge\n↑↑\nAbrupt step-\nchanges in EC\nand/or pH\nand/or ORP\nwith no diel or\ntidal\nexplanation\nThermal\ndischarge ↑↑ \t↓ \t→ \t→ \t→ \t→\nTemperature\nrise with\nproportional\nDO decline;\nother\nchemistry flat\nSaltwater\nintrusion → \t→ \t→ \t↑↑ \t→/↑ \t→\nEC rise\ncorrelated\nwith tidal\nphase,\ndrought, or\nsea-level\nconditions\nAcidic input\n(acid mine\ndrainage /\nspill)\n→ \t↑ \t↑ \t↓↓ \t↑\npH crash\npaired with EC\nrise (dissolved\nmetals/sulfate)\nHypoxia / fish-\nkill conditions\noften\n↑ →0 ↓↓\n(negative) → \t↓\nDO and ORP\nboth\nbottoming out\ntogether\n\n-- 5 of 7 --",
+          "source": "water-quality-metrics-source-of-truth.pdf",
+          "score": 0.016129032258064516
+        },
+        {
+          "id": "257",
+          "text": "eported as P, this manual\nrecommends that results always be reported as P.\nReferences\nAPHA. 1992. Standard methods for the examination of water and wastewater. 18th ed. American Public Health\nAssociation, Washington, DC.\nBlack, J.A. 1977. Water pollution technology. Reston Publishing Co., Reston, VA.\nCaduto, M.J. 1990. Pond and brook. University Press of New England, Hanover, NH.\n\n-- 166 of 227 --Dates, Geoff. 1994. Monitoring for phosphorus or how come they don't tell you this stuff in the manual?\nVolunteer Monitor, Vol. 6(1), spring 1994.\nHach Company. 1992. Hach water analysis handbook. 2nd ed. Loveland, CO.\nRiver Watch Network. 1991. Total phosphorus test (adapted from Standard Methods). July 17.\nRiver Watch Network. 1992. Total phosphorus (persulfate digestion followed by ascorbic acid procedure, Hach\nadaptation of Standard Methods). July 1.\nUSEPA. 1983. Methods for chemical analysis of water and wastes. 2nd ed. Method 365.2. U.S. Environmental\nProtection Agency, Washington, DC.\n< Previous · Table of Contents · Next >\nOffice of Wetlands, Oceans & Watersheds Home\nWatershed Protection Home | Monitoring Water Quality Home\nEPA Home | Office of Water | Search | Comments\n\n-- 167 of 227 --\n\n5.7\nNitrates\nWhat are nitrates and why are they important?\nNitrates are a form of nitrogen, which is found in several different forms in terrestrial and\naquatic ecosystems. These forms of nitrogen include ammonia (NH3), nitrates (NO3),\nand nitrites (NO2). Nitrates are essential plant nutrients, but in excess amounts they can\ncause significant water quality problems. Together with phosphorus, nitrates in excess\namounts can accelerate eutrophication, causing dramatic increases in aquatic plant\ngrowth and changes in the types of plants and animals that live in the stream. This, in\nturn, affects dissolved oxygen, temperature, and other indicators. Excess nitrates can\ncause hypoxia (low levels of dissolved oxygen) and can become toxic to warm-blooded\nanimals at higher concentrations (10 mg/L) or higher) under certain conditions. The\nnatural level of ammonia or nitrate in surface water is typically low (less than 1 mg/L); in\nthe effluent of wastewater treatment plants, it can range up to 30 mg/L.\nSources of nitrates include wastewater treatment plants, runoff from fertilized lawns and\ncropland, failing on-site septic systems, runoff from animal manure storage areas, and\nindustrial discharges that contain corrosion inhibitors.\nSampling and equipment considerations\nNitrates from land sources end up in rivers and streams more quickly than other nutrients\nlike phosphorus. This is because they dissolve in water more readily than phosphates,\nwhich have an attraction for soil particles. As a result, nitrates serve as a better indicator\nof the possibility of a source of sewage or manure pollution during dry weather.\nWater that is polluted with nitrogen-rich organic matter might show low nitrates.\nDecomposition of the organic matter lowers the dissolved oxygen level, which in turn\nslows the rate at which ammonia is oxidized to nitrite (NO2) and then to nitrate (NO3).\nUnder such circumstances, it might be necessary to also monitor for nitrites or ammonia,\nwhich are considerably more toxic to aquatic life than nitrate. (See Standard Methods\nsection 4500-NH3 and 4500-NO2 for appropriate nitrite methods; APHA, 1992)\nWater samples to be tested for nitrate should be collected in glass or polyethylene\n\n-- 168 of 227 --",
+          "source": "volunteer_stream_monitoring_a_methods_manual.pdf",
+          "score": 0.015873015873015872
+        },
+        {
+          "id": "234",
+          "text": "ttle\n- DO (mg/L) of second bottle\n= BOD (mg/L)\nReferences\nAPHA. 1992. Standard methods for the examination of water and wastewater. 18th ed. American Public Health\nAssociation, Washington, DC.\n< Previous · Table of Contents · Next >\nOffice of Wetlands, Oceans & Watersheds Home\nWatershed Protection Home | Monitoring Water Quality Home\nEPA Home | Office of Water | Search | Comments\n\n-- 146 of 227 --5.3\nTemperature\nWhy is temperature important?\nThe rates of biological and chemical processes depend on temperature. Aquatic\norganisms from microbes to fish are dependent on certain temperature ranges for their\noptimal health. Optimal temperatures for fish depend on the species: some survive best in\ncolder water, whereas others prefer warmer water. Benthic macroinvertebrates are also\nsensitive to temperature and will move in the stream to find their optimal temperature. If\ntemperatures are outside this optimal range for a prolonged period of time, organisms are\nstressed and can die. Temperature is measured in de-grees Fahrenheit (F) or degrees\nCelsius (C).\nFor fish, there are two kinds of limiting temperatures the maximum temperature for short\nexposures and a weekly average temperature that varies according to the time of year and\nthe life cycle stage of the fish species. Reproductive stages (spawning and embryo\ndevelopment) are the most sensitive stages. Table 5.5 provides temperature criteria for\nsome species.\nSpecies\nMax.\nweekly\naverage\ntemp. for\ngrowth\n(juveniles)\nMax.\ntemp. for\nsurvival\nof short\nexposure\n(juveniles)\nMax.\nweekly\naverage\ntemp. for\nspawning\na\nMax.\ntemp. for\nembryo\nspawning\nb\nTable 5.5\nMaximum\naverage\ntemperatures\nfor growth\nand\nshort-term\nmaximum\ntemperatures\nfor selected\nfish (°C and\n° F)\nAtlantic\nsalmon\n20 °C (68\n°F)\n23 °C (73\n°F)\n5 °C (41\n°F)\n11 °C\n(52 °F)\nBluegill 32 °C (90\n°F)\n35 °C (95\n°F)\n25 °C\n(77 °F)\n34 °C\n(93 °F)\nBrook trout 19 °C (66\n°F)\n24 °C (75\n°F)\n9 °C (48\n°F)\n13 °C\n(55 °F)\nCommon\ncarp --- \t--- 21 °C\n(70 °F)\n33 °C\n(91 °F)\nTemperature\naffects the\noxygen content\nof the water\n(oxygen levels\nbecome lower as\ntemperature\nincreases); the\nrate of\nphotosynthesis\nby aquatic\nplants; the\nmetabolic rates\nof aquatic\norganisms; and\nthe sensitivity of\n\n-- 147 of 227 --",
+          "source": "volunteer_stream_monitoring_a_methods_manual.pdf",
+          "score": 0.015625
+        },
+        {
+          "id": "301",
+          "text": "Water Quality Metrics — Source of Truth\nScope: Reference for the six core parameters measured by the DataPod — Temperature, ORP,\nDissolved Oxygen (DO), Electrical Conductivity (EC), pH, and Turbidity — across both freshwater\nand saltwater systems, and how they move together to fingerprint pollution events.\nCore principle: No single parameter diagnoses a pollution event. Diagnosis comes from the\npattern of correlated change across multiple parameters, and from separating that pattern from the\nwater body’s normal daily, tidal, and seasonal rhythms.\n1. Parameter Reference\nTemperature\nMeasures: Thermal energy of the water. Units: °C.\nWhat drives it: Solar input, air temperature, depth/stratification, tidal and current mixing,\nfreshwater inflow, discharges.\nFresh vs. salt: Freshwater bodies are smaller and respond faster to air temperature and runoff.\nCoastal/marine water is more thermally buffered but driven by tidal exchange and upwelling.\nPollution relevance: Temperature is the master variable — it sets DO capacity, accelerates\nbiological and chemical rates, and shifts EC readings. Thermal pollution (power-plant cooling\nwater, hot-pavement stormwater) is itself an event type. Always interpret the other five\nparameters relative to temperature.\nDissolved Oxygen (DO)\nMeasures: Oxygen dissolved in the water, available to aquatic life. Units: mg/L (concentration)\nand % saturation.\nWhat drives it: Temperature and salinity (set the saturation ceiling), photosynthesis (adds O₂\nby day), respiration/decomposition (removes O₂), atmospheric exchange, turbulence.\nFresh vs. salt: Saltwater holds roughly 20% less DO than freshwater at the same temperature\n— marine systems sit closer to the hypoxia threshold by default.\nPollution relevance: The single most important indicator of aquatic health. Organic pollution\nconsumes oxygen (biochemical oxygen demand). Watch both the absolute value and the shape\nof the daily curve — large swings signal eutrophication; a sustained sag signals an oxygen-\ndemanding discharge.\n\n-- 1 of 7 --",
+          "source": "water-quality-metrics-source-of-truth.pdf",
+          "score": 0.015384615384615385
+        }
+      ],
+      "mode": "pgvector-rag",
+      "usage": {
+        "promptTokens": 4251,
+        "completionTokens": 294,
+        "totalTokens": 4545,
+        "cachedPromptTokens": 2234
+      },
+      "timing": {
+        "ttftMs": 1988,
+        "wallMs": 3130
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 6145,
+    "cachedPromptTokens": 2961,
+    "completionTokens": 848,
+    "wallMs": 7603
+  }
+}
