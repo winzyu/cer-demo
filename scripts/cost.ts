@@ -138,7 +138,11 @@ const main = (): void => {
   });
 
   log.info("");
-  log.info("* projected — arm not yet built; token profile borrowed from pgvector-rag.");
+  // Only printed when something is actually marked. Leaving the legend unconditional would keep
+  // telling the reader an arm is projected after the sweep had measured every one of them.
+  if (PROJECTED_ARMS.length > 0) {
+    log.info("* projected — arm not yet built; token profile borrowed from pgvector-rag.");
+  }
 
   if (TOKEN_PROVENANCE !== "measured") {
     log.warn("Token counts are spot-check figures, not sweep means. Do not publish these as final.");

@@ -1,11 +1,15 @@
 /**
  * The measured inputs the cost model runs on, with their provenance attached.
  *
- * **Every token count here is a live measurement, not an estimate** — but they come from
- * single-run spot-checks (`timeline.md`, 2026-07-30/31), not from the graded sweep. They are
- * labelled `indicative` for exactly that reason, and `npm run cost` prints the label rather than
- * quietly presenting them as final. Once `eval/transcripts/` holds a sweep, replace these with
- * the transcript means and flip the label to `measured`.
+ * **These are sweep means, taken from `eval/transcripts/warm/`** — 58 turns per arm, 348 turns
+ * total, zero failed, captured 2026-08-11 (`RETRIEVAL_COMPARISON.md`). They replace the
+ * single-run spot-checks this file previously carried.
+ *
+ * The **warm** pass is the source because it is the steady state a deployment actually pays.
+ * The cold pass is *not* usable: a 20-minute idle failed to expire the Fireworks prompt cache,
+ * so "cold" still measured 95.5% cached on direct-feed. That is recorded as a finding rather
+ * than smoothed over — a genuinely cold price for direct-feed remains **unmeasured**, and
+ * `--cache-rate=0` is the way to price that worst case.
  *
  * They live apart from `cost.ts` so the arithmetic can be tested against fixed numbers while the
  * numbers themselves change as the experiment progresses.
@@ -16,8 +20,8 @@ import { CHAT_PRICES, EMBEDDING_PRICES, FIRESTORE_PRICES } from "./prices";
 export type Provenance = "indicative" | "measured";
 
 /** Where the token counts below came from, printed alongside every result. */
-export const TOKEN_PROVENANCE: Provenance = "indicative";
-export const TOKEN_SOURCE = "single-run spot-checks, 2026-07-30/31 (timeline.md); not the graded sweep";
+export const TOKEN_PROVENANCE: Provenance = "measured";
+export const TOKEN_SOURCE = "warm-pass sweep means, 2026-08-11: 3 arms x 58 turns, 0 failed (eval/transcripts/warm/)";
 
 const CHAT_MODEL = "accounts/fireworks/models/gpt-oss-20b";
 const EMBEDDING_MODEL = "nomic-ai/nomic-embed-text-v1.5";
@@ -30,7 +34,17 @@ const EMBEDDING_MODEL = "nomic-ai/nomic-embed-text-v1.5";
  * figures would swamp the retrieval difference the experiment is trying to isolate — it is a
  * model/`max_tokens` finding for N5, not a retrieval finding.
  */
-export const COMPLETION_TOKEN_CASES = [400, 1300] as const;
+export const COMPLETION_TOKEN_CASES = [400, 760, 1300] as const;
+
+/**
+ * The sweep's actual mean completion length, added as the middle case above.
+ *
+ * Measured across all six passes: 740-866 tokens/turn, mean ~760, and — the point worth
+ * noting — **the spread between arms (740 vs 866) is smaller than the spread between passes of
+ * the same arm.** Completion length is not an arm property, which is what makes holding it
+ * constant across arms the right call rather than a simplification.
+ */
+export const MEASURED_COMPLETION_TOKENS = 760;
 
 /**
  * One kNN query bills `ceil(chunks / 100)` index reads plus one read per document returned.
@@ -88,7 +102,8 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
   }
 
   const embeddingPricePerMillion = EMBEDDING_PRICES[EMBEDDING_MODEL];
-  const directFeedPromptTokens = 10_900;
+  // Sweep mean, warm pass: 11,023 prompt tokens/turn across 58 turns.
+  const directFeedPromptTokens = 11_023;
   const cachedPromptTokens = Math.round(directFeedPromptTokens * options.directFeedCacheRate);
 
   return [
@@ -108,10 +123,11 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
     {
       arm: "pgvector-rag",
       tokens: {
-        // The observed range was 2,722-4,446 prompt tokens; the upper end is used so the arm is
-        // not flattered by its best case.
-        promptTokens: 4446,
-        cachedPromptTokens: 569,
+        // Sweep means, warm pass: 3,584 prompt tokens/turn at a 38.4% cache rate. The earlier
+        // spot-check used 4,446 (the top of an observed range) to avoid flattering the arm;
+        // the sweep mean replaces that guardrail with the actual distribution over 58 turns.
+        promptTokens: 3584,
+        cachedPromptTokens: 1376,
         completionTokens: options.completionTokens,
         embeddingTokens: 20,
       },
@@ -122,12 +138,12 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
     {
       arm: "firestore-vector",
       tokens: {
-        // Not yet built (blocked on credentials). Priced on `pgvector-rag`'s token profile, which
-        // is the honest placeholder: both send top-k 5 chunks of the same corpus to the same
-        // model. Only the datastore and fixed-cost lines differ, and those are the lines that
-        // decide between them.
-        promptTokens: 4446,
-        cachedPromptTokens: 569,
+        // Now measured, not projected: sweep means, warm pass, 3,498 prompt tokens/turn at a
+        // 34.5% cache rate. Very close to `pgvector-rag`, which is the expected result — both
+        // send top-k 5 chunks of the same corpus to the same model, so the datastore and
+        // fixed-cost lines are what actually separate them.
+        promptTokens: 3498,
+        cachedPromptTokens: 1207,
         completionTokens: options.completionTokens,
         embeddingTokens: 20,
       },
@@ -140,10 +156,13 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
 };
 
 /**
- * `firestore-vector` is priced from a projection, not a measurement, because the arm does not
- * exist yet. Anything printed for it is a forecast and must be labelled as one.
+ * Arms priced from a projection rather than a measurement, printed with a marker so a forecast
+ * is never mistaken for a measurement.
+ *
+ * **Empty since 2026-08-11**: `firestore-vector` was the only entry, and the sweep measured it
+ * directly. Every arm in the table is now a sweep mean.
  */
-export const PROJECTED_ARMS = ["firestore-vector"] as const;
+export const PROJECTED_ARMS: readonly string[] = [];
 
 /** The volume range §1 asks the break-even curve to span. */
 export const CURVE_VOLUMES = [1_000, 5_000, 10_000, 25_000, 50_000, 100_000];

@@ -162,14 +162,25 @@ describe("the ◆G7 cost conclusion", () => {
     expect(direct).toBeLessThan(rag);
   });
 
-  it("direct-feed beats a deployed pgvector arm across most of the 1k-100k range", () => {
+  it("direct-feed beats a deployed pgvector arm across the low end of the 1k-100k range", () => {
     const arms = armsFor("accounts/fireworks/models/gpt-oss-20b");
     const result = breakEven(byName(arms, "firestore-direct"), byName(arms, "pgvector-rag"));
 
     expect(result.kind).toBe("crossover");
     if (result.kind !== "crossover") { throw new Error("expected a crossover"); }
     expect(result.cheaperBelow).toBe("firestore-direct");
-    expect(result.requestsPerMonth).toBeGreaterThan(50_000);
+
+    // **This bound moved when the sweep replaced the spot-check inputs (2026-08-11).** It was
+    // `> 50_000` — a conclusion drawn from an estimated pgvector profile of 4,446 prompt tokens
+    // at a 12.8% cache rate. The 58-turn sweep measured 3,584 tokens at 38.4%: RAG is cheaper
+    // per request than the estimate assumed, so the crossover fell from ~84k to ~41.6k and
+    // direct-feed's cheaper-than-pgvector window roughly halved.
+    //
+    // The direction matters for the report: measurement made the RAG arm look *better*, not
+    // worse. Direct-feed still wins at the realistic 10k/month, but no longer across "most" of
+    // the range — it loses above ~42k, which sits inside the 100k ceiling rather than beyond it.
+    expect(result.requestsPerMonth).toBeGreaterThan(35_000);
+    expect(result.requestsPerMonth).toBeLessThan(50_000);
   });
 
   it("firestore-vector beats pgvector-rag everywhere inside the modelled range", () => {
