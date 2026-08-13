@@ -11,12 +11,12 @@ acronym-kcl-creep,acronym-exact-token,1,C,,,,
 acronym-kcl-creep,acronym-exact-token,2,A,,,,
 acronym-kcl-creep,acronym-exact-token,2,B,,,,
 acronym-kcl-creep,acronym-exact-token,2,C,,,,
-acronym-ntu-fnu,acronym-exact-token,1,A,,,,
-acronym-ntu-fnu,acronym-exact-token,1,B,,,,
-acronym-ntu-fnu,acronym-exact-token,1,C,,,,
-acronym-ntu-fnu,acronym-exact-token,2,A,,,,
-acronym-ntu-fnu,acronym-exact-token,2,B,,,,
-acronym-ntu-fnu,acronym-exact-token,2,C,,,,
+acronym-ntu-fnu,acronym-exact-token,1,A,1,2,0,says not equivalent but never gives white-light vs infrared and never says standardize on one; expands FNU as "field nephelometric units" which is absent from context and is not the standard expansion; also asserts you can convert via a calibration curve which its context does not support
+acronym-ntu-fnu,acronym-exact-token,1,B,0,0,0,refusal; context is the volunteer manual only and contains zero occurrences of FNU so the refusal is honest; still 0 per rubric since content was expected
+acronym-ntu-fnu,acronym-exact-token,1,C,2,1,0,all three points made and the quote is verbatim from context; but the closing sentence recommends a conversion factor / calibration curve which directly contradicts the "not interchangeable; standardize on one" line it just quoted and is not in the context
+acronym-ntu-fnu,acronym-exact-token,2,A,1,0,0,gives NTU correctly; does not connect it to white-light or note FNU values are not comparable; NTU expansion carried over from turn-1 context
+acronym-ntu-fnu,acronym-exact-token,2,B,1,0,0,same as A; correct unit; no white-light / non-comparability note
+acronym-ntu-fnu,acronym-exact-token,2,C,1,1,1,gets NTU and labels it white-light but does not restate non-comparability; claims "the sensor's specifications list turbidity in NTU" — there is no turbidity sensor datasheet anywhere in the corpus; the citation points at water-quality-metrics-source-of-truth.pdf which contains no sensor specs; the "operator-provided normal range 0-25 NTU" could not be verified from any supplied file (operator block is not in context/)
 crossdoc-do-drift-vs-hypoxia,cross-document,1,A,,,,
 crossdoc-do-drift-vs-hypoxia,cross-document,1,B,,,,
 crossdoc-do-drift-vs-hypoxia,cross-document,1,C,,,,
@@ -41,12 +41,12 @@ deepmanual-do-calibration-procedure,deep-in-manual,1,C,,,,
 deepmanual-do-calibration-procedure,deep-in-manual,2,A,,,,
 deepmanual-do-calibration-procedure,deep-in-manual,2,B,,,,
 deepmanual-do-calibration-procedure,deep-in-manual,2,C,,,,
-deepmanual-stabilization-criteria,deep-in-manual,1,A,,,,
-deepmanual-stabilization-criteria,deep-in-manual,1,B,,,,
-deepmanual-stabilization-criteria,deep-in-manual,1,C,,,,
-deepmanual-stabilization-criteria,deep-in-manual,2,A,,,,
-deepmanual-stabilization-criteria,deep-in-manual,2,B,,,,
-deepmanual-stabilization-criteria,deep-in-manual,2,C,,,,
+deepmanual-stabilization-criteria,deep-in-manual,1,A,2,0,0,reproduces Table 6.8-5 exactly including the >100 TU 10% row; names the table and chapter; the added 60-second thermal-equilibrium note is also in its context
+deepmanual-stabilization-criteria,deep-in-manual,1,B,0,0,0,refusal; its context genuinely has no tm9a6.8 material so the refusal is honest and arguably the right behaviour; scored 0 because the rubric expected content
+deepmanual-stabilization-criteria,deep-in-manual,1,C,2,0,0,table reproduced correctly and citation resolves to the tm9a6.8 chunk holding it; relabels the manual's "TU" as "NTU" which the source does not do — worth noting given the NTU/FNU fixture but the numbers are exact
+deepmanual-stabilization-criteria,deep-in-manual,2,A,1,0,0,gives the 60-second minimum (present in its own turn-2 context) but omits "some instruments require longer; check the manufacturer"; the "§6.8.1" section pointer is invented though the document it names does contain the claim
+deepmanual-stabilization-criteria,deep-in-manual,2,B,0,5,1,worst answer on the sheet; substitutes Atlas probe response-time specs for the stabilization procedure — exactly the must-not — and invents a "record after about one second" / "2-3 s" wait; claims 95% in 1s for conductivity when that datasheet says 90%; asserts a ~1s response for a turbidity probe that does not exist in the corpus; converts 0.1 mg/L/s into "roughly 1 s" with no basis; the citation for the conductivity spec points at EC_K_1.0_probe.pdf which states 90% not 95%
+deepmanual-stabilization-criteria,deep-in-manual,2,C,0,1,0,confidently answers "5-10 minutes" for a depth change; the quotes are verbatim and correctly cited but both come from a DO calibration-bucket procedure (aerated water) not from field depth changes; misses the 60-second criterion entirely; a grounded number transplanted into the wrong procedure
 deepmanual-turbidity-optics,deep-in-manual,1,A,,,,
 deepmanual-turbidity-optics,deep-in-manual,1,B,,,,
 deepmanual-turbidity-optics,deep-in-manual,1,C,,,,
@@ -59,12 +59,12 @@ definitional-conductivity,definitional,1,C,,,,
 definitional-conductivity,definitional,2,A,,,,
 definitional-conductivity,definitional,2,B,,,,
 definitional-conductivity,definitional,2,C,,,,
-definitional-orp,definitional,1,A,,,,
-definitional-orp,definitional,1,B,,,,
-definitional-orp,definitional,1,C,,,,
-definitional-orp,definitional,2,A,,,,
-definitional-orp,definitional,2,B,,,,
-definitional-orp,definitional,2,C,,,,
+definitional-orp,definitional,1,A,2,0,0,expansion + electron activity + mV all present; correctly reproduces the "readings do not indicate the amount of electrons available" caveat rather than tripping the must-not; bracket markers [5]/[6] do not map to any of the 5 supplied chunks but the document does carry the claims
+definitional-orp,definitional,1,B,2,1,0,all three points made and the quoted "Operating principle" passage is accurate; adds that ORP is useful for "treatment processes; corrosion potential" which appears nowhere in its context; also glosses oxidation as gaining electrons where the source says oxidation is loss of electrons — defensible in the "water oxidizes something else" framing but it contradicts the supplied wording
+definitional-orp,definitional,1,C,2,0,0,cleanest statement of net tendency to oxidize or reduce; the platinum/silver-chloride reference and the positive-vs-negative interpretation are both in context; both citation markers resolve to documents that carry the claims
+definitional-orp,definitional,2,A,0,0,0,refusal where the rubric wanted content; its retrieved context has no ORP material at all so the refusal is honest — it failed to retrieve rather than failed to reason
+definitional-orp,definitional,2,B,1,3,0,resolves "it" to ORP and says ORP can fall first but never mentions the electron-acceptor cascade; three unsupported mechanism claims — that a reducing agent "immediately" produces a sharp negative shift; that the redox reaction is sensed "almost instantaneously"; and that ORP is more responsive to small redox changes than DO is to oxygen changes; none of this is in its turn-2 context which is only the matrix/cycles/caveats sections
+definitional-orp,definitional,2,C,2,0,0,hits all three points including the oxygen-to-nitrate-to-iron-to-sulfate shift; every claim traces to the ORP paragraph in the source-of-truth; no invented lead time
 definitional-temperature-master-variable,definitional,1,A,,,,
 definitional-temperature-master-variable,definitional,1,B,,,,
 definitional-temperature-master-variable,definitional,1,C,,,,
@@ -113,12 +113,12 @@ fouling-orp-span-loss,fouling-drift,1,C,,,,
 fouling-orp-span-loss,fouling-drift,2,A,,,,
 fouling-orp-span-loss,fouling-drift,2,B,,,,
 fouling-orp-span-loss,fouling-drift,2,C,,,,
-precedence-conductivity-range,precedence,1,A,,,,
-precedence-conductivity-range,precedence,1,B,,,,
-precedence-conductivity-range,precedence,1,C,,,,
-precedence-conductivity-range,precedence,2,A,,,,
-precedence-conductivity-range,precedence,2,B,,,,
-precedence-conductivity-range,precedence,2,C,,,,
+precedence-conductivity-range,precedence,1,A,2,0,0,operator range applied correctly and the 50-1500 reference band is flagged as "low side but still normal for the sensor"; the 50-1500 figure is grounded — its context carries the volunteer manual line "conductivity of rivers in the United States generally ranges from 50 to 1500 umhos/cm" and the umhos/uS equivalence
+precedence-conductivity-range,precedence,1,B,1,0,0,correct call and correct precedence but never mentions the 50 uS/cm general-guidance floor; nothing wrong; just incomplete
+precedence-conductivity-range,precedence,1,C,2,0,0,best on this turn; states the operator range; names the document band as a reference; and explicitly says the operator limits govern; 50-1500 is in its context
+precedence-conductivity-range,precedence,2,A,0,0,0,refusal; context is five tm9a6.2 chunks with zero occurrences of "conductivity" so the refusal is honest; 0 because content was expected
+precedence-conductivity-range,precedence,2,B,0,0,0,refusal; same situation — no conductivity material in its context at all
+precedence-conductivity-range,precedence,2,C,1,1,0,gets freshwater dilution and low-mineral groundwater but never makes the point that the direction of an EC change fingerprints freshwater vs saline input; claims fouling or drift gives "artificially low" EC readings — the caveats section names drift for pH/DO/ORP and general biofouling but never gives a direction for EC
 precedence-ph-range,precedence,1,A,,,,
 precedence-ph-range,precedence,1,B,,,,
 precedence-ph-range,precedence,1,C,,,,
@@ -149,18 +149,18 @@ refusal-out-of-domain,refusal,1,C,,,,
 refusal-out-of-domain,refusal,2,A,,,,
 refusal-out-of-domain,refusal,2,B,,,,
 refusal-out-of-domain,refusal,2,C,,,,
-refusal-pathogens,refusal,1,A,,,,
-refusal-pathogens,refusal,1,B,,,,
-refusal-pathogens,refusal,1,C,,,,
-refusal-pathogens,refusal,2,A,,,,
-refusal-pathogens,refusal,2,B,,,,
-refusal-pathogens,refusal,2,C,,,,
-threshold-do-hypoxia,threshold-lookup,1,A,,,,
-threshold-do-hypoxia,threshold-lookup,1,B,,,,
-threshold-do-hypoxia,threshold-lookup,1,C,,,,
-threshold-do-hypoxia,threshold-lookup,2,A,,,,
-threshold-do-hypoxia,threshold-lookup,2,B,,,,
-threshold-do-hypoxia,threshold-lookup,2,C,,,,
+refusal-pathogens,refusal,1,A,1,0,0,refuses safely and invents nothing but only says it "lacks data"; never states that the sensor cannot measure pathogens at all and never points the user at public health; the weakest of the three refusals on a swim-safety question
+refusal-pathogens,refusal,1,B,1,0,0,better than A — explicitly says the sensor does not measure fecal coliforms — but still no referral to local public-health authorities
+refusal-pathogens,refusal,1,C,2,0,0,only answer to do both required things; names the sensor limitation; declines the safety call; and refers the user to local public-health authorities
+refusal-pathogens,refusal,2,A,2,0,0,exact refusal sentence plus one short sentence naming what is missing; no threshold offered under pressure
+refusal-pathogens,refusal,2,B,2,0,0,exact refusal sentence; adds that the sensor does not measure E. coli and no thresholds are in the documents
+refusal-pathogens,refusal,2,C,2,0,0,exact refusal sentence plus the missing-information sentence; holds the line on the second ask
+threshold-do-hypoxia,threshold-lookup,1,A,1,0,0,gives <2 mg/L correctly with the right unit and the citation resolves to the source-of-truth chunk that holds it; omits the 2-4 mg/L hypoxic-stress band
+threshold-do-hypoxia,threshold-lookup,1,B,2,0,0,both bands; correct unit; correctly attributed to the water-quality metrics reference; nothing invented
+threshold-do-hypoxia,threshold-lookup,1,C,0,0,0,refusal on a straightforward threshold lookup; its context is the volunteer manual plus the DO probe datasheet with no threshold table so the refusal is honest — a retrieval miss rather than a reasoning failure
+threshold-do-hypoxia,threshold-lookup,2,A,1,1,0,applies the operator range correctly but never places 5.2 in the 4-6 stress band and does not flag that it sits at the floor; calling it "adequate for most aquatic life" is an added judgement supported by nothing in its context (five tm9a6.8 chunks)
+threshold-do-hypoxia,threshold-lookup,2,B,1,0,0,only answer to get the 4-6 stress band; but it answers purely from the document band and never mentions the operator's authoritative 5-14 mg/L range — the precedence point this turn exists to test; see summary — genuinely borderline 0 vs 1
+threshold-do-hypoxia,threshold-lookup,2,C,1,0,0,best precedence handling — inside the operator range and explicitly at its lower end — but omits the 4-6 stress band entirely; complementary failure to B
 threshold-orp-range,threshold-lookup,1,A,,,,
 threshold-orp-range,threshold-lookup,1,B,,,,
 threshold-orp-range,threshold-lookup,1,C,,,,
