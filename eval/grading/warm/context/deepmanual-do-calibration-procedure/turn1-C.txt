@@ -1,0 +1,321 @@
+### tm9a6.2.pdf (chunk 31, score 0.03252247488101534)
+
+ield setting so long as the temperature of the air
+calibration chamber is stable.
+The air calibration or check with a wet-towel method
+(variation of Procedure 1) is the recommended method to
+be performed at the field site. This method is well suited to
+checking an instrument after transportation to a field site fol-
+lowed by calibration if the instrument fails the check with a
+wet-towel procedure.The air-saturated water method (Procedure 2) is the pre-
+ferred method specified by some manufacturers. Temperature
+stability of the bubbled solution and equilibration of the DO-
+sensor temperature with the solution is important and easily
+accomplished. This procedure is generally favored for labora-
+tory calibrations because of the equipment required.
+The DO-meter calibration check is required at each
+field site.
+2.2.3 Optical (Luminescence) DO Sensors—
+Calibration Procedures
+The luminescence technology used in optical DO field
+instruments has improved and simplified the data-collection
+process for field determination of DO concentration. Optical
+DO sensors generally have accuracy specifications of ±0.1
+mg/L or 1 percent after calibration. This level of accuracy is
+best achieved by calibrating under controlled conditions in a
+laboratory or simulated laboratory environment.
+TECHNICAL NOTE 3.
+Optical DO sensors contain internal calibration information
+from the manufacturer. Although some manufacturers advise
+that no further calibration is needed, the accuracy of factory
+calibrations does not necessarily satisfy the data-quality objec-
+tives required for USGS applications. Because the validity of
+a calibration can substantially affect the overall accuracy and
+precision of DO measurements, users are required to check the
+calibration at every field site or as often as is necessary to meet
+specific data-quality objectives.
+Optical DO sensors are subject to very little drift after a
+successful calibration. A laboratory-performed calibration is
+likely to remain stable after transport to the field. Neverthe-
+less, calibrations are required to be verified at the field site.
+Laboratory calibrations are generally preferred because of the
+stability of the laboratory environment compared to a typical
+field site.
+The Rhodazine DTM 2 spectrophotometric method for
+DO measurement described in section 3.0 has been used to
+check the calibration of these instruments. USGS field scien-
+tists have corroborated the accuracy of the optical sensor to
+0.03 mg/L DO by using repeated comparisons of results with
+the Rhodazine D spectrophotometric method described in
+2Rhodazine D is a proprietary product of CHEMetrics, Inc. (White and
+others, 1990).
+
+---
+
+### tm9a6.2.pdf (chunk 27, score 0.03252247488101534)
+
+-- 13 of 44 --6 	Chapter A6.2. Dissolved Oxygen
+One-point calibration: The main goal of the one-point
+DO calibration procedure is to create a 100-percent saturated
+oxygen environment in which the DO sensor and its thermistor
+are at the same temperature. There are two procedures that can
+be used for a one-point calibration:
+• Procedure 1—Calibration in air (can be accom-
+plished with air-calibration chamber or wet-towel
+method)
+• Procedure 2—Calibration in air-saturated water
+(water bubbled with air)
+Two-point calibration: The two-point calibration typically
+involves calibration of the sensor at 100-percent saturation,
+and at zero DO. The two-point calibration adds complexity to
+the calibration process and is not recommended by all manu-
+facturers of optical sensors. Conduct a zero-DO check before
+committing to a two-point calibration. Be sure to understand
+the instrument capabilities and then determine the best course
+of action. For routine applications, it is advisable to rely on a
+zero-DO performance check rather than a zero-DO calibration,
+which would risk corrupting the manufacturer’s zero-DO
+calibration.
+• Use of a two-point calibration should be considered if
+(1) the calibration is needed to satisfy the data-quality
+objectives of the project, (2) oxygen concentrations
+less than 2 mg/L are likely to be encountered and
+zero-DO performance checks fail, or (3) the calibration
+is deemed necessary by experienced field personnel
+familiar with site conditions.
+• Before starting or planning for a two-point calibration,
+consult the manufacturer’s instructions or technical
+support for the specific optical DO sensor being used.
+• If a two-point DO calibration is used, calibrate the
+DO sensor only after calibrating other field-measure-
+ment sensors to prevent possible interference of the
+sodium sulfite (zero-DO) solution with the calibration
+of the other sensors. Unless the equipment manu-
+facturer’s manual specifies otherwise, complete the
+DO calibration at 100-percent saturation before the
+zero calibration.
+Sensor-performance checks—Verifying sensor perfor-
+mance before field use (calibration check) is a required
+standard procedure in USGS field operations (see section 2.1).
+• All DO sensors have the capability to undergo a per-
+formance check at zero DO. Most DO sensors have the
+capability to undergo a zero-DO calibration.1
+• Verifying instrument performance at zero DO and
+using the two-point calibration can be particularly
+important for data accuracy when the instrument
+1Manufacturers caution against routine zero recalibration of sensors but
+allow for zero-DO checks, stipulating the need to thoroughly rinse the zero
+solution from the sensor after the check procedure.
+will be used to measure low DO concentrations (less
+than 2 mg/L).
+• The result of a DO instrument performance check
+should be within +/- 0.2 mg/L of the 100-percent
+saturated concentration determined from the DO
+solubility tables found at https://water.usgs.gov/
+software/DOTABLES or, if checking at the zero
+point, the sensor should read within 0.2 mg/L of zero.
+Project objectives may dictate a deviation of less than
+0.2 mg/L from the calculated 100-percent saturation
+
+---
+
+### tm9a6.2.pdf (chunk 33, score 0.02967032967032967)
+
+-- 15 of 44 --8 	Chapter A6.2. Dissolved Oxygen
+section 3.0 of this field manual chapter. Results from optical
+sensor and spectrophotometric methods can be entered into the
+USGS National Water Information System (NWIS) database.
+Procedure 1—Calibration in Air
+This procedure is commonly used to calibrate optical
+DO instruments. The calibration chamber used is typically the
+calibration cup supplied with the instrument or is built into the
+instrument case. Use the calibration chamber that is provided
+or recommended by the manufacturer. For field check and
+calibration, the wet-towel variation of Procedure 1 described
+in the next section is recommended.
+1. 	Wet the inside of the calibration chamber with water
+and then pour out the water, leaving a few drops or a
+layer of water in the bottom of the calibration cup. Some
+manufacturers may provide a sponge to wet and place
+in the calibration chamber. Consult and follow specific
+manufacturer instructions. Remove any water droplets
+that remain on the temperature and optical DO sensors.
+Insert the sensor into the chamber per manufacturer’s
+instructions to ensure 100-percent humidity.
+• If using a screw-on calibration chamber, make sure
+it is loose and does not make an airtight seal in order
+to maintain ambient barometric pressure. Do not
+tighten the chamber to cause a seal that isolates the
+DO sensor from the ambient barometric pressure.
+• Keep the calibration assembly in a stable tempera-
+ture environment and out of direct sunlight.
+2. 	Allow 5 to 10 minutes for the air to saturate with water
+vapor and for the DO sensor and the air inside the
+calibration chamber to equilibrate. If appropriate for
+the instrument being used, run the instrument during
+the equilibration period to monitor stability. Achieving
+stability in temperature and DO concentration before the
+calibration begins is essential.
+3. 	Using a calibration-checked barometer, read the ambient
+atmospheric pressure to the nearest 1 mm of mercury.
+4. 	Monitor the temperature and DO readings in the
+calibration chamber, observing readings until
+they stabilize. Read the temperature to the nearest
+0.1 degree Celsius (°C).
+5. 	If calibrating to a given DO concentration rather than
+to a condition of 100-percent saturation, use table 6.2–2
+(at end of chapter) or the online software DOTABLES
+(https://water.usgs.gov/software/DOTABLES/) to deter-
+mine DO saturation at the calibration temperature and
+atmospheric pressure.
+6. 	Follow the manufacturer’s instructions for the calibra-
+tion. When the instrument readings are stable, adjust the
+instrument to the DO-saturation value determined from
+the oxygen-solubility table.
+• If an instrument that allows calibration simply to a
+100-percent saturation condition is used, all that may
+be needed is to provide the ambient atmospheric
+pressure for the instrument to determine (with
+internal software) the resulting DO concentration. If
+the instrument has an internal barometer, it may only
+be necessary to put the instrument into calibration
+mode and check the calibration once it has been
+completed.
+7. 	Verify that the instrument reading is within ±0.2 mg/L or
+2 percent of the computed saturation value, or use more
+
+---
+
+### tm9a6.2.pdf (chunk 30, score 0.02964426877470356)
+
+-- 14 of 44 --2.0 Optical (Luminescence) Sensor Method 	7
+barometric pressure reading not measured at the DO calibra-
+tion altitude for use during a DO calibration is no longer
+recommended. It is required that the barometric pressure be
+measured at the altitude of the DO calibration or check.
+For DO calibrations, the ambient atmospheric pressure
+must be determined to the nearest 1 millimeter (mm) of
+mercury. A calibrated pocket altimeter-barometer typically has
+been used to determine atmospheric pressure; however, many
+multiparameter water-quality instruments and DO meters in
+common use include an internal barometer.
+Check the accuracy of all field barometers (including
+barometers built into instrument systems) before each field trip
+or at least annually, and record readings and adjustments in the
+instrument log book. Check field barometers against a NIST-
+traceable barometer kept at the USGS Water Science Center,
+office, or laboratory, or check barometer accuracy while at an
+official weather station where ambient atmospheric pressure
+can be obtained.
+Most modern multiparameter instruments (see NFM 6.8)
+incorporate a pressure-temperature and salinity compensa-
+tion algorithm in their firmware for DO measurements; the
+instruments have a built-in conductivity sensor that is used
+to correct the DO-concentration data for salinity automatically.
+For instruments that are not equipped with a conductivity
+sensor, manual correction of the DO data for salinity
+is required.
+If a user-specified salinity correction is needed, the
+preferred USGS method is to apply salinity-correction factors
+after calibrating and measuring the DO concentration of the
+environmental water body (see section 5.0). Interactive tables
+for user-specified temperature, pressure, and salinity are avail-
+able at https://water.usgs.gov/software/DOTABLES/.
+When a manual salinity correction is made by the user
+during calibration, the instrument requires recalibration for
+each measured field variation in salinity (see section 5.0).
+If a multiparameter instrument that includes
+a calibrated conductivity sensor is used, salin-
+ity correction to the DO concentration reading is
+performed automatically.
+2.2.2 Selection of Calibration Method
+Manufacturers uniformly recommend a 100-percent satu-
+rated oxygen calibration of DO sensors regardless of whether
+calibration in air (Procedure 1) or calibration in air-saturated
+water (Procedure 2) is used. It is important to refer to the
+manufacturer-provided guidance, as each of the procedures
+has inherent advantages and disadvantages and may include
+instrument-specific sources of error.
+Calibration or checking of an instrument in air
+(Procedure 1) is the preferred method specified by some
+manufacturers. The process is easily accomplished in the
+laboratory or field setting so long as the temperature of the air
+calibration chamber is stable.
+The air calibration or check with a wet-towel method
+(variation of Procedure 1) is the recommended method to
+be performed at the field site. This method is well suited to
+checking an instrument after transportation to a field site fol-
+lowed by calibration if the instrument fails the check with a
+wet-towel procedure.
+
+---
+
+### tm9a6.2.pdf (chunk 24, score 0.0293236301369863)
+
+he manufacturer’s guidance for your sensor. Some manufacturers supply the zero-DO solution required or document the specific
+instructions for preparing the zero-DO solution recommended for their sensors, including an alternative by which nitrogen gas is forced into tap or deionized
+water to produce a zero-DO solution. (Consult with the manufacturer’s division of technical support.)
+
+-- 12 of 44 --2.0 Optical (Luminescence) Sensor Method 	5
+• If the instrument reading is negative, consult the
+manufacturer's manual; a zero-DO calibration may
+be necessary.
+• Rinse the sensor and wiper thoroughly and then
+reinstall the wiper elements. Multiple, thorough
+rinses with deionized water are necessary to remove
+the sodium sulfite and restore the sensor to proper
+operating condition and prevent subsequent mea-
+surements from being biased.
+5. 	Review the care and maintenance guidance provided
+by the manufacturer for the specific sensor being used;
+instructions can differ appreciably depending on the
+make and model of the instrument.
+• Check the condition and (or) deployment history of
+the luminophore-containing sensor module, referring
+to the manufacturer’s guidance for replacement of
+the luminophore module.
+• Depending on the instrument, sensor modules are
+replaced annually or at least every 2 years, even if
+the sensor is idle.
+6. 	Remember to document field preparations and all instru-
+ment tests and adjustments in the meter log book. Do not
+use an instrument that fails calibration checks.
+CAUTION:
+Before handling sodium sulfite (or any other chemicals)
+refer to safety precautions for that chemical on the
+Safety Data Sheet (SDS).
+2.2 Calibration of Optical Sensors
+Sensor-based instrument systems used to determine DO
+in water must be calibrated properly before being used. Proper
+calibration procedures are necessary to ensure the overall
+accuracy and precision of DO measurements. It is recom-
+mended to calibrate instruments in the controlled atmosphere
+of the laboratory before going to the field. A calibration
+check is required at each field site, followed by recalibration
+as needed to meet the specific data-quality requirements of
+the project.
+The accuracy required by the project for sites at which
+DO will be determined and the capabilities of the selected
+instrument will govern whether a one-point calibration will be
+sufficient or whether a two-point calibration should be used.
+In addition, some manufacturers of the DO instruments com-
+monly used for USGS data-collection activities recommend
+testing in a laboratory setting to determine the accuracy of
+room-temperature calibrations compared with measurements
+made under the anticipated warmer or cooler field conditions.
+Project personnel are advised to be familiar with recommenda-
+tions made by the manufacturer of their equipment.
+Become familiar with the specific manufacturer’s recom-
+mendations for short-term (field) and long-term (office or labo-
+ratory) storage. Storage guidance for optical sensors (some
+specify the need for storage in a humid environment) and
+procedures for removing sensors from storage differ among
+manufacturers; consult the manual provided for the sensor.
+2.1.2 Field-Trip Preparations
+The service performed on all equipment, whether a full
+calibration, calibration check, or replacement or repair of
+parts for the instrument, and whether performed in the office,
+laboratory, or field, must be accurately recorded and dated in
+the instrument or sensor log book.
+Field-measurement instruments are required to be main-
+tained on a regular schedule and performance tested before

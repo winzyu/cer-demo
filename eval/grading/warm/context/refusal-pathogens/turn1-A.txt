@@ -1,0 +1,285 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 276, score 0.03278688524590164)
+
+ the human body. Thus, the
+usefulness of total coliforms as an indicator of fecal contamination depends on the extent
+to which the bacteria species found are fecal and human in origin. For recreational
+waters, total coliforms are no longer recommended as an indicator. For drinking water,
+total coliforms are still the standard test because their presence indicates contamination of
+
+-- 189 of 227 --a water supply by an outside source.
+Fecal coliforms, a subset of total coliform bacteria, are more fecal-specific in origin.
+However, even this group contains a genus, Klebsiella, with species that are not
+necessarily fecal in origin. Klebsiella are commonly associated with textile and pulp and
+paper mill wastes. Therefore, if these sources discharge to your stream, you might wish to
+consider monitoring more fecal and human-specific bacteria. For recreational waters, this
+group was the primary bacteria indicator until relatively recently, when EPA began
+recommending E. coli and enterococci as better indicators of health risk from water
+contact. Fecal coliforms are still being used in many states as the indicator bacteria.
+E. coli is a species of fecal coliform bacteria that is specific to fecal material from
+humans and other warm-blooded animals. EPA recommends E. coli as the best indicator
+of health risk from water contact in recreational waters; some states have changed their
+water quality standards and are monitoring accordingly.
+Fecal streptococci generally occur in the digestive systems of humans and other
+warm-blooded animals. In the past, fecal streptococci were monitored together with fecal
+coliforms and a ratio of fecal coliforms to streptococci was calculated. This ratio was
+used to determine whether the contamination was of human or nonhuman origin.
+However, this is no longer recommended as a reliable test.
+Enterococci are a subgroup within the fecal streptococcus group. Enterococci are
+distinguished by their ability to survive in salt water, and in this respect they more closely
+mimic many pathogens than do the other indicators. Enterococci are typically more
+human-specific than the larger fecal streptococcus group. EPA recommends enterococci
+as the best indicator of health risk in salt water used for recreation and as a useful
+indicator in fresh water as well.
+Which Bacteria Should You Monitor?
+Which bacteria you test for depends on what you want to know. Do you want to know
+whether swimming in your stream poses a health risk? Do you want to know whether
+your stream is meeting state water quality standards?
+Studies conducted by EPA to determine the correlation between different bacterial
+indicators and the occurrence of digestive system illness at swimming beaches suggest
+that the best indicators of health risk from recreational water contact in fresh water are E.
+coli and enterococci. For salt water, enterococci are the best. Interestingly, fecal
+coliforms as a group were determined to be a poor indicator of the risk of digestive
+system illness. However, many states continue to use fecal coliforms as their primary
+health risk indicator.
+If your state is still using total or fecal coliforms as the indicator bacteria and you want to
+know whether the water meets state water quality standards, you should monitor fecal
+coliforms. However, if you want to know the health risk from recreational water contact,
+the results of EPA studies suggest that you should consider switching to the E. coli or
+enterococci method for testing fresh water. In any case, it is best to consult with the water
+
+-- 190 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 275, score 0.03225806451612903)
+
+ Amherst, MA.
+River Watch Network. 1992. Total alkalinity and pH field and laboratory procedures
+(based on University of Massachusetts Acid Rain Monitoring Project). July 1.
+< Previous · Table of Contents · Next >
+
+-- 187 of 227 --
+
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 188 of 227 --5.11
+Fecal Bacteria
+What are fecal bacteria and why are they important?
+Members of two bacteria groups, coliforms and fecal streptococci, are used as indicators
+of possible sewage contamination because they are commonly found in human and
+animal feces. Although they are generally not harmful themselves, they indicate the
+possible presence of pathogenic (disease-causing) bacteria, viruses, and protozoans that
+also live in human and animal digestive systems. Therefore, their presence in streams
+suggests that pathogenic microorganisms might also be present and that swimming and
+eating shellfish might be a health risk. Since it is difficult, time-consuming, and
+expensive to test directly for the presence of a large variety of pathogens, water is usually
+tested for coliforms and fecal streptococci instead. Sources of fecal contamination to
+surface waters include wastewater treatment plants, on-site septic systems, domestic and
+wild animal manure, and storm runoff.
+In addition to the possible health risk associated with the presence of elevated levels of
+fecal bacteria, they can also cause cloudy water, unpleasant odors, and an increased
+oxygen demand. (Refer to the section on dissolved oxygen.)
+Indicator bacteria types and what they can tell you
+The most commonly tested fecal bacteria indicators are total coliforms, fecal coliforms,
+Escherichia coli, fecal streptococci, and enterococci. All but E. coli are composed of a
+number of species of bacteria that share common characteristics such as shape, habitat, or
+behavior; E. coli is a single species in the fecal coliform group.
+Total coliforms are a group of bacteria that are widespread in nature. All members of the
+total coliform group can occur in human feces, but some can also be present in animal
+manure, soil, and submerged wood and in other places outside the human body. Thus, the
+usefulness of total coliforms as an indicator of fecal contamination depends on the extent
+to which the bacteria species found are fecal and human in origin. For recreational
+waters, total coliforms are no longer recommended as an indicator. For drinking water,
+total coliforms are still the standard test because their presence indicates contamination of
+
+-- 189 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 299, score 0.029236022193768675)
+
+ Box 329
+Chestertown, MD 21620
+(800) 3443100
+Water sampling kits, field and lab water testing equipment, Secchi disks, water samplers,
+armored thermometers, calibrated lines, plankton nets, kicknets, educational materials.
+Lawrence Enterprises
+P.O. Box 344
+Seal Harbor, ME 04675
+(207) 276-5746
+Transparency tubes, view scopes, Secchi disks, water samplers, kick nets, sieve buckets.
+
+-- 223 of 227 --Millipore Corporation
+397 Williams Street
+Marlborough, MA 01752
+(800) 645-5476
+Fecal coliform testing supplies (complete sterile water filtration system), membrane
+filters, sterile pipette, petri dishes, sterile media, other water sampling equipment and lab
+supplies, incubators, Whirl Paks ®.
+Nalge Company
+P.O. Box 20365
+Rochester, NY 14602
+Fecal coliform testing supplies, disposal fecal coliform filtration systems, membrane
+filters, sterile pipettes, petri dishes, incubators, Whirl Paks ®.
+Nichols Net and Twine, Inc.
+200 Highway 111
+Granite City, IL 62040
+(618) 797-0211
+Kick nets.
+Ohmicron
+375 Pheasant Run
+Newtown, PA 18940
+(800) 544-8881
+Immunoassay kits for pesticides, other contaminants.
+Thomas Scientific Company
+99 High Hill Road at I295
+P.O. Box 99
+Swedesboro, NJ 080850099
+(609) 345-2100
+Lab equipment, sample bottles, sieves, reagents, incubators, water test equipment, Whirl
+Paks ®.
+VWR Scientific
+1230 Kennestone Circle
+Marietta, GA 30066
+(800) 932-5000
+Glassware, labeling tape, sample vials, lab equipment, incubators, reagents, Whirl Paks
+®.
+Wards Biological and Lab Supplies
+P.O. Box 92912
+Rochester, NY 14692-9012
+(800) 635-8439
+Alcohol lamps, balances, microscopes, sample trays, goggles, rubber stoppers,
+autoclaves, spectrophotometers, incubators, petri dishes, sterile pipettes, glassware,
+
+-- 224 of 227 --
+
+educational materials, live and mounted specimens for instruction.
+Wildco Wildlife Supply Company
+301 Cass Street
+Saginaw, MI 48602
+(517) 7998100
+Kick nets, wash buckets, field biological sampling equipment.
+YSI Incorporated
+1725 Brannum Lane
+Yellow Springs, Ohio 45387
+(513) 7677241
+Water quality monitoring equipment supplies.
+< Previous · Table of Contents · Next >
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 225 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 213, score 0.02668564312399929)
+
+more accurate, but they are also more expensive, less flexible (e.g., meters generally have to be read in the field),
+and require periodic calibration. This chapter discusses specific equipment and sampling considerations for each-- 126 of 227 --
+
+parameter, and usually describes several approaches to monitor them. Table 5.2 lists methods available for
+monitoring key parameters, including the preferred testing site (lab or field).
+General preparation and sampling considerations
+The sections that follow will detail specific sampling and equipment considerations and analytical procedures for
+each of the most common water quality parameters. There are, however, two general tasks that are accomplished
+anytime water samples are taken. These are discussed below.
+Task 1 Preparation of Sampling Containers
+Reused sample containers and glassware must be cleaned and rinsed before the first sampling run and after each
+run by following either Method A or Method B described below. The most suitable method depends on the
+parameter being measured.
+Method A: General Preparation of Sampling Containers
+The following method should be used when preparing all sample containers and glassware for monitoring
+conductivity, total solids, turbidity, pH, and total alkalinity. Wear latex gloves!
+Wash each sample bottle or piece of glassware with a brush and phosphate-free detergent.	1.
+Rinse three times with cold tap water.	2.
+Rinse three times with distilled or deionized water.	3.
+Method B: Acid Wash Procedure for Preparing Sampling Containers This method should be used when
+preparing all sample containers and glassware for monitoring nitrates and phosphorus. Wear latex gloves!
+Wash each sample bottle or piece of glassware with a brush and phosphate-free detergent.	1.
+Rinse three times with cold tap water.	2.
+Rinse with 10 percent hydrochloric acid.	3.
+Rinse three times with deionized water.	4.
+Task 2 Collecting Samples
+In general, sample away from the streambank in the main current. Never sample stagnant water. The outside
+curve of the stream is often a good place to sample, since the main current tends to hug this bank. In shallow
+stretches, carefully wade into the center current to collect the sample.
+A boat will be required for deep sites. Try to maneuver the boat into the center of the main current to collect the
+water sample.
+When collecting a water sample for analysis in the field or at the lab, follow the steps below. For Whirl-pak®
+Bags
+Label the bag with the site number, date, and time.	1.
+Tear off the top of the bag along the perforation
+above the wire tab just prior to sampling (Fig.
+5.1). Avoid touching the inside of the bag. If you
+accidentally touch the inside of the bag, use
+another one.
+2.
+Wading. Try to disturb as little bottom sediment
+as possible. In any case, be careful not to collect
+water that contains bottom sediment. Stand
+facing upstream. Collect the water sample in
+front of you.
+Boat. Carefully reach over the side and collect
+the water sample on the upstream side of the
+boat.
+3.
+
+-- 127 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 277, score 0.015873015873015872)
+
+r bacteria and you want to
+know whether the water meets state water quality standards, you should monitor fecal
+coliforms. However, if you want to know the health risk from recreational water contact,
+the results of EPA studies suggest that you should consider switching to the E. coli or
+enterococci method for testing fresh water. In any case, it is best to consult with the water
+
+-- 190 of 227 --quality division of your state's environmental agency, especially if you expect them to
+use your data.
+Sampling and equipment considerations
+Bacteria can be difficult to sample and analyze, for many reasons. Natural bacteria levels
+in streams can vary significantly; bacteria conditions are strongly correlated with rainfall,
+and thus comparing wet and dry weather bacteria data can be a problem; many analytical
+methods have a low level of precision yet can be quite complex; and absolutely sterile
+conditions are required to collect and handle samples.
+The primary equipment decision to make when sampling for bacteria is what type and
+size of sample container you will use. Once you have made that decision, the same,
+straightforward collection procedure is used regardless of the type of bacteria being
+monitored. Collection procedures are described under "How to Collect Samples" below.
+It is critical when monitoring bacteria that all containers and surfaces with which the
+sample will come into contact be sterile. Containers made of either some form of plastic
+or Pyrex glass are acceptable to EPA. However, if the containers are to be reused, they
+must be sterilized using heat and pressure. The containers can be sterilized by using an
+autoclave, which is a machine that sterilizes containers with pressurized steam. If using
+an autoclave, the container material must be able to withstand high temperatures and
+pressure. Plastic containers either high-density polyethylene or polypropylene might be
+preferable to glass from a practical standpoint because they will better withstand
+breakage. In any case, be sure to check the manufacturer's specifications to see whether
+the container can withstand 15 minutes in an autoclave at a temperature of 121°C without
+melting. (Extreme caution is advised when working with an autoclave.) Disposable,
+sterile, plastic Whirl-pak® bags are used by a number of programs. The size of the
+container will depend on the sample amount needed for the bacteria analysis method you
+choose and the amount needed for other analyses.
+There are two basic methods for analyzing water samples for bacteria:
+The membrane filtration method involves filtering several different-sized portions
+of the sample using filters with a standard diameter and pore size, placing each
+filter on a selective nutrient medium in a petri plate, incubating the plates at a
+specified temperature for a specified time period, and then counting the colonies
+that have grown on the filter. This method varies for different bacteria types
+(variations might include, for example, the nutrient medium type, the number and
+types of incubations, etc.).
+1.
+The multiple-tube fermentation method involves adding specified quantities of the
+sample to tubes containing a nutrient broth, incubating the tubes at a specified
+temperature for a specified time period, and then looking for the development of
+gas and/or turbidity that the bacteria produce. The presence or absence of gas in
+each tube is used to calculate an index known as the Most Probable Number
+(MPN).
+2.
+
+-- 191 of 227 --

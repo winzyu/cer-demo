@@ -1,0 +1,257 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 275, score 0.01639344262295082)
+
+ Amherst, MA.
+River Watch Network. 1992. Total alkalinity and pH field and laboratory procedures
+(based on University of Massachusetts Acid Rain Monitoring Project). July 1.
+< Previous · Table of Contents · Next >
+
+-- 187 of 227 --
+
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 188 of 227 --5.11
+Fecal Bacteria
+What are fecal bacteria and why are they important?
+Members of two bacteria groups, coliforms and fecal streptococci, are used as indicators
+of possible sewage contamination because they are commonly found in human and
+animal feces. Although they are generally not harmful themselves, they indicate the
+possible presence of pathogenic (disease-causing) bacteria, viruses, and protozoans that
+also live in human and animal digestive systems. Therefore, their presence in streams
+suggests that pathogenic microorganisms might also be present and that swimming and
+eating shellfish might be a health risk. Since it is difficult, time-consuming, and
+expensive to test directly for the presence of a large variety of pathogens, water is usually
+tested for coliforms and fecal streptococci instead. Sources of fecal contamination to
+surface waters include wastewater treatment plants, on-site septic systems, domestic and
+wild animal manure, and storm runoff.
+In addition to the possible health risk associated with the presence of elevated levels of
+fecal bacteria, they can also cause cloudy water, unpleasant odors, and an increased
+oxygen demand. (Refer to the section on dissolved oxygen.)
+Indicator bacteria types and what they can tell you
+The most commonly tested fecal bacteria indicators are total coliforms, fecal coliforms,
+Escherichia coli, fecal streptococci, and enterococci. All but E. coli are composed of a
+number of species of bacteria that share common characteristics such as shape, habitat, or
+behavior; E. coli is a single species in the fecal coliform group.
+Total coliforms are a group of bacteria that are widespread in nature. All members of the
+total coliform group can occur in human feces, but some can also be present in animal
+manure, soil, and submerged wood and in other places outside the human body. Thus, the
+usefulness of total coliforms as an indicator of fecal contamination depends on the extent
+to which the bacteria species found are fecal and human in origin. For recreational
+waters, total coliforms are no longer recommended as an indicator. For drinking water,
+total coliforms are still the standard test because their presence indicates contamination of
+
+-- 189 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 276, score 0.016129032258064516)
+
+ the human body. Thus, the
+usefulness of total coliforms as an indicator of fecal contamination depends on the extent
+to which the bacteria species found are fecal and human in origin. For recreational
+waters, total coliforms are no longer recommended as an indicator. For drinking water,
+total coliforms are still the standard test because their presence indicates contamination of
+
+-- 189 of 227 --a water supply by an outside source.
+Fecal coliforms, a subset of total coliform bacteria, are more fecal-specific in origin.
+However, even this group contains a genus, Klebsiella, with species that are not
+necessarily fecal in origin. Klebsiella are commonly associated with textile and pulp and
+paper mill wastes. Therefore, if these sources discharge to your stream, you might wish to
+consider monitoring more fecal and human-specific bacteria. For recreational waters, this
+group was the primary bacteria indicator until relatively recently, when EPA began
+recommending E. coli and enterococci as better indicators of health risk from water
+contact. Fecal coliforms are still being used in many states as the indicator bacteria.
+E. coli is a species of fecal coliform bacteria that is specific to fecal material from
+humans and other warm-blooded animals. EPA recommends E. coli as the best indicator
+of health risk from water contact in recreational waters; some states have changed their
+water quality standards and are monitoring accordingly.
+Fecal streptococci generally occur in the digestive systems of humans and other
+warm-blooded animals. In the past, fecal streptococci were monitored together with fecal
+coliforms and a ratio of fecal coliforms to streptococci was calculated. This ratio was
+used to determine whether the contamination was of human or nonhuman origin.
+However, this is no longer recommended as a reliable test.
+Enterococci are a subgroup within the fecal streptococcus group. Enterococci are
+distinguished by their ability to survive in salt water, and in this respect they more closely
+mimic many pathogens than do the other indicators. Enterococci are typically more
+human-specific than the larger fecal streptococcus group. EPA recommends enterococci
+as the best indicator of health risk in salt water used for recreation and as a useful
+indicator in fresh water as well.
+Which Bacteria Should You Monitor?
+Which bacteria you test for depends on what you want to know. Do you want to know
+whether swimming in your stream poses a health risk? Do you want to know whether
+your stream is meeting state water quality standards?
+Studies conducted by EPA to determine the correlation between different bacterial
+indicators and the occurrence of digestive system illness at swimming beaches suggest
+that the best indicators of health risk from recreational water contact in fresh water are E.
+coli and enterococci. For salt water, enterococci are the best. Interestingly, fecal
+coliforms as a group were determined to be a poor indicator of the risk of digestive
+system illness. However, many states continue to use fecal coliforms as their primary
+health risk indicator.
+If your state is still using total or fecal coliforms as the indicator bacteria and you want to
+know whether the water meets state water quality standards, you should monitor fecal
+coliforms. However, if you want to know the health risk from recreational water contact,
+the results of EPA studies suggest that you should consider switching to the E. coli or
+enterococci method for testing fresh water. In any case, it is best to consult with the water
+
+-- 190 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 277, score 0.015873015873015872)
+
+r bacteria and you want to
+know whether the water meets state water quality standards, you should monitor fecal
+coliforms. However, if you want to know the health risk from recreational water contact,
+the results of EPA studies suggest that you should consider switching to the E. coli or
+enterococci method for testing fresh water. In any case, it is best to consult with the water
+
+-- 190 of 227 --quality division of your state's environmental agency, especially if you expect them to
+use your data.
+Sampling and equipment considerations
+Bacteria can be difficult to sample and analyze, for many reasons. Natural bacteria levels
+in streams can vary significantly; bacteria conditions are strongly correlated with rainfall,
+and thus comparing wet and dry weather bacteria data can be a problem; many analytical
+methods have a low level of precision yet can be quite complex; and absolutely sterile
+conditions are required to collect and handle samples.
+The primary equipment decision to make when sampling for bacteria is what type and
+size of sample container you will use. Once you have made that decision, the same,
+straightforward collection procedure is used regardless of the type of bacteria being
+monitored. Collection procedures are described under "How to Collect Samples" below.
+It is critical when monitoring bacteria that all containers and surfaces with which the
+sample will come into contact be sterile. Containers made of either some form of plastic
+or Pyrex glass are acceptable to EPA. However, if the containers are to be reused, they
+must be sterilized using heat and pressure. The containers can be sterilized by using an
+autoclave, which is a machine that sterilizes containers with pressurized steam. If using
+an autoclave, the container material must be able to withstand high temperatures and
+pressure. Plastic containers either high-density polyethylene or polypropylene might be
+preferable to glass from a practical standpoint because they will better withstand
+breakage. In any case, be sure to check the manufacturer's specifications to see whether
+the container can withstand 15 minutes in an autoclave at a temperature of 121°C without
+melting. (Extreme caution is advised when working with an autoclave.) Disposable,
+sterile, plastic Whirl-pak® bags are used by a number of programs. The size of the
+container will depend on the sample amount needed for the bacteria analysis method you
+choose and the amount needed for other analyses.
+There are two basic methods for analyzing water samples for bacteria:
+The membrane filtration method involves filtering several different-sized portions
+of the sample using filters with a standard diameter and pore size, placing each
+filter on a selective nutrient medium in a petri plate, incubating the plates at a
+specified temperature for a specified time period, and then counting the colonies
+that have grown on the filter. This method varies for different bacteria types
+(variations might include, for example, the nutrient medium type, the number and
+types of incubations, etc.).
+1.
+The multiple-tube fermentation method involves adding specified quantities of the
+sample to tubes containing a nutrient broth, incubating the tubes at a specified
+temperature for a specified time period, and then looking for the development of
+gas and/or turbidity that the bacteria produce. The presence or absence of gas in
+each tube is used to calculate an index known as the Most Probable Number
+(MPN).
+2.
+
+-- 191 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 280, score 0.015625)
+
+tion.
+Turbidity
+Meter 	Either
+If lab, measured
+ASAP within 24
+hours of
+collection.
+Total Orthophosphate
+Ascorbic Acid w/ color
+comparator Either
+If lab, measured
+within 48 hours
+of collection.
+Ascorbic acid w/
+spectophotometer Either
+If lab, measured
+within 48 hours
+of collection.
+Nitrate
+Cadmium reduction w/
+color comparator Either
+If lab, measured
+within 48 hours
+of collection.
+
+-- 198 of 227 --Cadmium reduction w/
+spectrophotometer Either
+If lab, measured
+within 48 hours
+of collection.
+Total Solids
+Oven drying/weighing 	Lab
+Must be
+measured within
+7 days of
+collection.
+Conductivity
+Meter 	Either
+If lab, measured
+ASAP within 28
+days of
+collection.
+Total Alkalinity
+Titration 	Either
+If lab, measured
+within 24 hours
+of collection.
+Fecal Bacteria
+Membrane filtration 	Lab
+Must be
+measured within
+6 hours of
+collection.
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 199 of 227 --
+
+Chapter 6
+Managing and Presenting Monitoring Data
+6.1 - Managing Volunteer Data
+6.2 - Presenting the Data
+6.3 - Producing Reports
+It is hard to overemphasize the importance of having established methods of handling
+volunteer data, analyzing that data, and presenting results effectively to volunteers, the
+public, and water resource decision-makers. Without these tools and processes, the data
+that volunteers and program managers have labored hard to collect are virtually useless,
+and the program will surely fail to meet its goals.
+This chapter addresses data management and data presentation. Members of the program
+planning committee will need to make many decisions on these issues before the first
+field data sheet is filled out by the program's first volunteer. In particular, they should
+consult any potential data users such as state water quality agencies or county planning
+boards regarding their own data needs. Data users will be particularly concerned about:
+Procedures used to verify and check the raw volunteer data.	l
+Databases and software used to manage the data.	l
+Analytical procedures used to convert the raw data into findings and conclusions.	l
+Reporting formats.	l
+Data users may, for example, be able to offer concrete suggestions about databases and
+presentation formats that will make the data more accessible to them. To ensure that all
+questions about the validity of the data can be answered, the program planning committee
+should develop and implement a quality assurance/quality control plan designed to
+minimize data collection errors, weed out data that fail to meet the program's standards,
+and effectively analyze and present the results. This plan should identify key personnel
+with responsibilities for data management and data analysis and clearly indicate all the
+steps the program will take to handle the data.
+Unfortunately, volunteers and program coordinators seldom recognize the importance of
+this aspect of a volunteer monitoring program. It tends to be considered "drudge" work
+
+-- 200 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 212, score 0.015384615384615385)
+
+onductivity, total alkalinity, and fecal bacteria. Of these, the first five are the most basic and
+should form the foundation of almost any volunteer water quality monitoring program.
+Relatively inexpensive and simple-to-use kits are available from scientific supply houses to monitor these
+pollutants. Many volunteer programs use these kits effectively. Meters and sophisticated lab equipment may bemore accurate, but they are also more expensive, less flexible (e.g., meters generally have to be read in the field),
+and require periodic calibration. This chapter discusses specific equipment and sampling considerations for each

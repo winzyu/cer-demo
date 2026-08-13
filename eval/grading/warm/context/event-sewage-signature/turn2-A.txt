@@ -1,0 +1,334 @@
+### water-quality-metrics-source-of-truth.pdf (chunk 305, score 0.030886196246139225)
+
+rature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm
+weather. DO and ORP falling together while EC and turbidity rise is a far more specific signal
+pointing to an organic/sewage source.
+5. Separating Natural Cycles from Pollution Events
+Rule out the water body’s normal rhythms before declaring an event.
+Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,
+bottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.
+A smooth, repeating daily oscillation is biology, not pollution.
+Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity
+often peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is
+mixing, not a discharge.
+Seasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.
+Compare any reading to the same season’s baseline.
+The test for a real event: A pollution event typically appears as a step-change or sustained
+excursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it
+shows up as a correlated shift across multiple parameters consistent with one of the signatures
+above.
+6. Sensor & Data-Quality Caveats
+A trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an
+event.
+Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across
+weeks may be drift, not water chemistry — cross-check against calibration history and class-
+balanced expectations.
+ORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.
+standard hydrogen electrode). Record which reference is used so values are comparable across
+DataPods and over time. Treat ORP trend as more reliable than absolute value.
+EC temperature compensation: Always report specific conductance (25°C-corrected).
+Uncorrected EC will track temperature and produce false signals.
+Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on
+one across the fleet.
+DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the
+antifouling/cleaning schedule.
+
+-- 6 of 7 --
+
+Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long
+deployment is a fouling/maintenance flag first, an environmental signal second.
+Maintain this as a living document. As DataPod deployments build site-specific baselines, append
+local “normal” ranges and any site-specific event signatures observed in the field.
+
+-- 7 of 7 --
+
+
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk 304, score 0.03021353930031804)
+
+U
+Ranges are general guidance. Establish a site-specific baseline before treating deviations as events
+— local geology, season, and tidal stage shift “normal” substantially.
+3. How the Parameters Interrelate
+Understanding these couplings is what turns six independent readings into a diagnostic system.
+Temperature → DO (inverse, two ways): Warmer water physically holds less oxygen and
+
+-- 3 of 7 --speeds the respiration/decomposition that consumes it. A temperature rise should always be
+paired with an expected DO decline.
+Temperature → EC: Ion mobility rises with temperature; raw EC increases ~2% per °C. Always
+report temperature-corrected specific conductance so EC changes reflect chemistry, not
+warming.
+DO ↔ ORP (tightly coupled): Oxygen is the dominant electron acceptor — abundant DO drives
+ORP strongly positive. As DO is consumed, ORP declines; once oxygen is exhausted, ORP goes
+negative. ORP often moves before DO hits bottom, giving lead time.
+pH ↔ DO (the photosynthesis/respiration couple): Photosynthesis removes CO₂ (raises pH)
+and releases O₂; respiration adds CO₂ (lowers pH) and consumes O₂. pH and DO therefore rise
+and fall together on the daily cycle. In-phase daily swings of pH and DO are the fingerprint
+of biological productivity.
+Turbidity → DO/pH: Suspended particles block light, suppressing photosynthesis and
+dampening daytime DO/pH gains. Organic-rich turbidity also adds direct oxygen demand.
+Turbidity as a contaminant carrier: Sediment transports adsorbed nutrients, metals, and
+pathogens — a turbidity spike can stand in for a loading event even when chemistry looks
+stable.
+EC as a source fingerprint: Because fresh and salt water differ ~1,000× in EC, the direction of
+an EC change tells you whether freshwater (rain, runoff, groundwater) or saline/ionic input (tide,
+intrusion, discharge) is driving the event.
+4. Pollution Event Signature Matrix
+Arrows show the expected direction of change relative to baseline. ↑↑ / ↓↓ = strong, ↑ / ↓ =
+moderate, 	= large swing or variable, → = little change.
+Event 	Temp 	DO 	ORP 	EC 	pH 	Turbidity Primary
+Signature
+Sewage /
+sanitary
+discharge
+→/↑ 	↓↓ 	↓↓ 	↑ 	↓ 	↑
+DO crash +
+ORP crash +
+EC rise +
+turbidity rise,
+not tied to
+time of day
+Algal bloom /
+(super-
+sat.
+midday, 	(high
+Large in-
+phase daily
+DO + pH
+oscillations;
+
+-- 4 of 7 --
+
+eutrophication 	↑ 	crash
+pre-
+dawn)
+→ 	midday) 	↑ 	pre-dawn DO
+minimum is
+the danger
+window
+Stormwater /
+urban runoff ↓ 	↓
+↓
+(marine)
+/
+(fresh)
+↑↑
+Sharp
+turbidity spike
+coincident
+with rainfall;
+EC shifts
+(drops in
+marine, may
+spike in fresh
+from road salt)
+Industrial /
+chemical
+discharge
+↑↑
+Abrupt step-
+changes in EC
+and/or pH
+and/or ORP
+with no diel or
+tidal
+explanation
+Thermal
+discharge ↑↑ 	↓ 	→ 	→ 	→ 	→
+Temperature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 268, score 0.028125)
+
+rivers in the United States generally ranges from 50 to 1500 μmhos/cm.
+Studies of inland fresh waters indicate that streams supporting good mixed fisheries have
+a range between 150 and 500 μhos/cm. Conductivity outside this range could indicate
+that the water is not suitable for certain species of fish or macroinvertebrates. Industrial
+waters can range as high as 10,000 μmhos/cm.
+
+-- 179 of 227 --Sampling and equipment Considerations
+Conductivity is useful as a general measure of stream water quality. Each stream tends to
+have a relatively constant range of conductivity that, once established, can be used as a
+baseline for comparison with regular conductivity measurements. Significant changes in
+conductivity could then be an indicator that a discharge or some other source of pollution
+has entered a stream.
+Conductivity is measured with a probe and a meter. Voltage is applied between two
+electrodes in a probe immersed in the sample water. The drop in voltage caused by the
+resistance of the water is used to calculate the conductivity per centimeter. The meter
+converts the probe measurement to micromhos per centimeter and displays the result for
+the user. NOTE: Some conductivity meters can also be used to test for total dissolved
+solids and salinity. The total dissolved solids concentration in milligrams per liter (mg/L)
+can also be calculated by multiplying the conductivity result by a factor between 0.55 and
+0.9, which is empirically determined (see Standard Methods #2510, APHA 1992).
+Suitable conductivity meters cost about $350. Meters in this price range should also
+measure temperature and automatically compensate for temperature in the conductivity
+reading. Conductivity can be measured in the field or the lab. In most cases, it is probably
+better if the samples are collected in the field and taken to a lab for testing. In this way
+several teams of volunteers can collect samples simultaneously. If it is important to test in
+the field, meters designed for field use can be obtained for around the same cost
+mentioned above.
+If samples will be collected in the field for later measurement, the sample bottle should
+be a glass or polyethylene bottle that has been washed in phosphate-free detergent and
+rinsed thoroughly with both tap and distilled water. Factory-prepared Whirl-pak® bags
+may be used.
+How to sample
+The procedures for collecting samples and analyzing conductivity consist of the
+following tasks:
+TASK 1 Prepare the sample containers
+If factory-sealed, disposable Whirl-pak® bags are used for sampling, no preparation is
+needed. Reused sample containers (and all glassware used in this procedure) must be
+cleaned before the first run and after each sampling run by following Method A as
+described in MEthod A in Table 1 in Chapter 5 - Water Quality Conditions.
+
+-- 180 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 178, score 0.01639344262295082)
+
+ quarter of a mile. Enter a "1" if a land use is present and a "2" if it is clearly having a negative impact on
+the stream.
+17.
+Visual biological survey
+Are fish present in the stream? Fish can indicate that the stream is of sufficient quality for other organisms.	18.
+Barriers to the movement of fish in the stream are obstructions that would keep fish from moving freely upstream
+or downstream.
+19.Aquatic plants provide food and cover for aquatic organisms. Plants also might provide very general indications
+of stream quality. For example, streams that are overgrown with plants could be over enriched by nutrients.
+Streams devoid of plants could be affected by extreme acidity or toxic pollutants. Aquatic plants may also be an
+indicator of stream velocity because plants cannot take root in fast-flowing streams.
+20.
+Algae are simple plants that do not grow true roots, stems, or leaves and that mainly live in water, providing food
+for the food chain. Algae may grow on rocks, twigs, or other submerged materials, or float on the surface of the
+water. It naturally occurs in green and brown colors. Excessive algal growth may indicate excessive nutrients
+(organic matter or a pollutant such as fertilizer) in the stream.
+21.
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 112, score 0.016129032258064516)
+
+ stream or
+watershed
+l
+Determining the impact of a municipal sewage treatment facility, industrial facility,
+or land use activity such as forestry or farming
+l
+Educating the local community or stream users to encourage pollution prevention
+and environmental stewardship
+l
+Showing public officials that local citizens care about the condition and management
+of their water resources
+l
+
+-- 16 of 227 --Of course, an individual program might be monitoring for a number of reasons. However,
+it is important to identify one or two top reasons and develop the program based on those
+objectives.
+2. Who will use the monitoring data?
+Knowing your data users is essential to the program development process. Potential data
+users might include:
+State, county, or local water quality analysts	l
+The volunteers themselves	l
+Fisheries biologists	l
+Universities	l
+Schoolteachers	l
+Environmental organizations	l
+Parks and recreation staff	l
+Local planning and zoning agencies	l
+State environmental agencies	l
+State and local health departments	l
+Soil and water conservation districts	l
+Federal agencies such as the U.S. Geological Survey or U.S. Environmental
+Protection Agency
+l
+Each of these users will have different data requirements. Some users, such as government
+analysts and planning/zoning agencies, will have more stringent requirements than others
+and will require higher levels of quality assurance. As the volunteer monitoring project is
+being designed, program coordinators should contact as many potential information users
+as possible to determine their data needs. It is important to have at least one user
+committed to receiving and using the data. In some cases that user might be the monitoring
+group itself.
+3. How will the data be used?
+The range of uses of volunteer data is limited only by the imagination. Volunteer data
+could be used, for example, to influence local planning decisions about where to site a
+sewage treatment facility or to publicize a water quality problem and seek community
+solutions. Collected data could also be used to educate primary school children about the
+importance of water resources. Other data uses include the support of:
+Local zoning requirements	l
+A stream protection study	l
+State preparation of water quality assessments	l
+Screening waters for potential problems	l
+The setting of statewide priorities for pollution control	l
+
+-- 17 of 227 --

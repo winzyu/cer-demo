@@ -1,0 +1,169 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0124, score 0.6798962413857861)
+
+equal
+intervals along the string
+with the twist ties. The
+intervals can be
+one-fourth, one-half, and
+three-fourths of the
+distance across the
+stream. Measure the
+water's depth at each
+interval point (Fig. 5.5).
+To calculate average
+depth for each transect,
+divide the total of the
+three depth measurements
+by 4. (You divide by 4
+instead of 3 because you
+need to account for the 0
+1.
+
+-- 136 of 227 --depths that occur at the
+shores.) In the example
+shown in Figure 5.6, the
+average depth of Transect
+#1 is 0.575 feet and the
+average depth of Transect
+#2 is 0.625 feet.
+Determine the width of each transect by measuring the distance from shoreline to
+shoreline. Simply add together all the interval widths for each transect to determine
+its width. In the Figure 5.6 example, the width of Transect #1 is 8 feet and the
+width of Transect #2 is 10 feet.
+2.
+Calculate the cross-sectional area of each transect by multiplying width times
+average depth. The example given in Figure 5.6 shows that the average
+cross-sectional area of Transect #1 is 4.60 square feet and the average
+cross-sectional area of Transect #2 is 6.25 square feet.
+3.
+To determine the average cross-sectional area of the entire stream reach (A in the
+formula), add together the average cross-sectional area of each transect and then
+divide by 2. The average cross-sectional area for the stream reach in Figure 5.6 is
+5.42 square feet.
+4.
+Task 4 Measure travel time
+Volunteers should time with a stopwatch how long it takes for an orange (or some other
+object) to float from the upstream to the downstream transect. An orange is a good object
+to use because it has enough buoyancy to float just below the water surface. It is at this
+position that maximum velocity typically occurs.
+The volunteer who lets the orange go at the upstream transect should position it so it
+flows into the fastest current. The clock stops when the orange passes fully under the
+downstream transect line. Once under the transect line, the orange can be scooped out of
+the water with the fishing net. This "time of travel" measurement should be conducted at
+least three times and the results averaged--the more trials you do, the more accurate your
+results will be. The averaged results are equal to T in the formula. It is a good idea to
+float the orange at different distances from the bank to get various velocity estimates.
+You should discard any float trials if the object gets hung up in the stream (by cobbles,
+roots, debris, etc.)
+Task 5 Calculate flow
+Recall that flow can be calculated using the equation:
+Flow = ALC / T
+Continuing the example in Fig. 5.6. say the average time of travel for the orange between
+Transect #1 and #2 is 15 seconds and the stream had a rocky bottom. The calculation of
+
+-- 137 of 227 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0014, score 0.6430865476168989)
+
+.)
+• Immerse the sensor into the zero-DO solution,
+wait for reading to stabilize (usually within
+5–10 minutes), record reading.
+• If the instrument reading exceeds 0.2 mg/L in the
+zero-DO solution, check DO again with a freshly
+prepared zero-DO solution; if a reading greater than
+0.2 mg/L persists, contact the instrument manufac-
+turer and inquire whether the luminophore module
+should be replaced.-- 13 of 44 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0123, score 0.629949939591338)
+
+scharge should be straight (no
+bends), at least 6 inches deep, and should not contain an area of slow water such as a
+pool. Unobstructed riffles or runs are ideal. The length that you select will be equal to L
+in solving the flow equation. Twenty feet is a standard length used by many programs.
+Measure your length and mark the upper and lower end by running a transect line across
+
+-- 135 of 227 --Figure 5.4
+A diagram of a 20-foot transect
+the stream perpendicular to the
+shore using the string and stakes
+(Fig. 5.4). The string should be
+taut and near the water surface.
+The upstream transect is
+Transect #1 and the downstream
+one is Transect #2.
+Task 3 Calculate the
+average
+cross-sectional area
+Cross-sectional area (A in the
+formula) is the product of
+stream width multiplied by
+average water depth. To
+calculate the average
+cross-sectional area for the
+study stream reach, volunteers
+should determine the
+cross-sectional area for each
+transect, add the results together, and then divide by 2 to determine the average
+cross-sectional area for the stream reach.
+To measure cross-sectional area:
+Figure 5.5
+A cross section view to measure stream width and depth
+Determine the average
+depth along the transect
+by marking off equal
+intervals along the string
+with the twist ties. The
+intervals can be
+one-fourth, one-half, and
+three-fourths of the
+distance across the
+stream. Measure the
+water's depth at each
+interval point (Fig. 5.5).
+To calculate average
+depth for each transect,
+divide the total of the
+three depth measurements
+by 4. (You divide by 4
+instead of 3 because you
+need to account for the 0
+1.
+
+-- 136 of 227 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0026, score 0.6259526747551792)
+
+ place the DO sensor (or
+multiparameter sonde) in the bucket and allow 5 to
+10 minutes for the sensor to come to thermal equi-
+librium with the aerated water. Take care not to place
+the sensor over or in the bubbles from the air stone.
+b. 	For field calibration verification of a DO sensor, use
+the wet-towel method.
+5. 	Read and record the temperature of the calibration water
+to the nearest 0.1 °C.-- 17 of 44 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0132, score 0.611295083059225)
+
+ in the dark at 20 C for 5 days and then tested for the amount of dissolved oxygen
+remaining. The difference in oxygen levels between the first test and the second test, in milligrams per liter
+(mg/L), is the amount of BOD. This represents the amount of oxygen consumed by microorganisms to break
+down the organic matter present in the sample bottle during the incubation period. Because of the 5-dayincubation, the tests should be conducted in a laboratory.
+Sometimes by the end of the 5-day incubation period the dissolved oxygen level is zero. This is especially true for
+rivers and streams with a lot of organic pollution. Since it is not known when the zero point was reached, it is not
+possible to tell what the BOD level is. In this case it is necessary to dilute the original sample by a factor that
+results in a final dissolved oxygen level of at least 2 mg/L. Special dilution water should be used for the dilutions.
+(See APHA, 1992.)
+It takes some experimentation to determine the appropriate dilution factor for a particular sampling site. The final
+result is the difference in dissolved oxygen between the first measurement and the second after multiplying the
+second result by the dilution factor. More details are provided in the following section.

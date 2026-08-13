@@ -1,0 +1,277 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0143, score 0.7242020552884546)
+
+Secchi Disk or Tranparency Tube).
+Figure 5.10
+Using a Secchi disk to measure transparency
+A turbidity
+meter consists
+of a light
+source that
+illuminates a
+water sample
+and a
+photoelectric
+cell that
+measures the
+intensity of
+light scattered
+at a 90 angle
+by the
+particles in the
+sample. It
+measures
+turbidity in
+nephelometric
+turbidity units
+or NTUs.
+Meters can
+measure
+turbidity over
+
+-- 155 of 227 --The disk is lowered until it is no longer visible.
+That point is the Secchi disk depth.
+Figure 5.11
+Using a transparency tube
+(A) Prepare the tranparency tube to take a reading. Place the tube on a
+white surface and look vertically down the tube to see the wave pattern at
+the bottom.
+(B) Slowly pour water sample into the tube stopping intermittently to see if
+the wave pattern has disappeared.
+a wide range
+from 0 to 1000
+NTUs. A clear
+mountain
+stream might
+have a
+turbidity of
+around 1
+NTU, whereas
+a large river
+like the
+Mississippi
+might have a
+dry-weather
+turbidity of
+around 10
+NTUs. These
+values can
+jump into
+hundreds of
+NTU during
+runoff events.
+Therefore, the
+turbidity meter
+to be used should be reliable over the range in which you will be working. Meters of this
+quality cost about $800. Many meters in this price range are designed for field or lab use.
+Although turbidity meters can be used in the field, volunteers might want to collect
+samples and take them to a central point for turbidity measurements. This is because of
+the expense of the meter (most programs can afford only one and would have to pass it
+along from site to site, complicating logistics and increasing the risk of damage to the
+meter) and because the meter includes glass cells that must remain optically clear and
+free of scratches.
+Volunteers can also take turbidity samples to a lab for meter analysis at a reasonable cost.
+How to sample
+The procedures for collecting samples and analyzing turbidity consist of the following
+tasks:
+TASK 1 Prepare the sample containers
+If factory-sealed, disposable Whirl-pak® bags are used to sample, no preparation is
+needed. Reused sample containers (and all glassware used in this procedure) must be
+
+-- 156 of 227 --
+
+---
+
+### tm9a6.8.pdf (chunk tm9a6.8.pdf__0029, score 0.7179018684049908)
+
+s when reporting rounded values.
+2Most multiparameter instruments used for USGS turbidity measurement contain single-beam infrared wavelength turbidity sensors and are reported in FNU.
+Check the Excel spreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls to determine the appropriate turbidity unit of measure and NFM A6.7 for detailed
+information on turbidity measurement and instrumentation.-- 18 of 24 --
+
+Selected References 	11
+Booth, A., Fleck, J., Pellerin, B.A., Hansen, A., Etheridge, A.,
+Foster, G.M., Graham, J.L., Bergamaschi, B.A., Carpenter,
+K.D., Downing, B.D., Rounds, S.A., and Saraceno, J., 2023,
+Field techniques for fluorescence measurements targeting
+dissolved organic matter, hydrocarbons, and wastewater
+in environmental waters: Principles and guidelines for
+instrument selection, operation and maintenance, quality
+assurance, and data reporting: U.S. Geological Survey Tech-
+niques and Methods, book 1, chap. D11, 41 p., accessed
+November 2, 2023, at https://doi.org/10.3133/tm1D11.
+Hach, 2022, User manual for HACH LDO sensor, ed. 4, 16
+p., accessed November 2, 2023, at https://www.hach.com/
+asset-get.download.jsa?id=11728589903.
+Hydrolab, 2017, User manual for Hydrolab HL Series
+Sonde, ed. 2, 24 p., accessed November 2, 2023, at
+https://www.ott.com/download/hl-series-sonde-bedienung-
+sanleitung-user-manual-manuel-dutilisation-manual-de-
+usuario-1/.]
+Hydrolab, 2019, User manual for Hydrolab HL Series
+Sensors, ed. 4, 43 p., accessed November 2, 2023, at
+https://www.ott.com/download/hl-series-sensors-bedien-
+ungsanleitung-user-manual-manuel-dutilisation-manual-de-
+usuario/.
+In-Situ, Inc., 2023, Aqua TROLL 600—Operator's manual
+(revised August, 4, 2023): In-Situ, Inc., 83 p., accessed
+November 2, 2023, at https://in-situ.com/pub/media/
+support/documents/Aqua-TROLL-600-Manual.pdf.
+U.S. Geological Survey, [variously dated], National field
+manual for the collection of water quality data: U.S. Geo-
+logical Survey Techniques and Methods, book 9, chapters
+A0–A10, accessed November 2, 2023, at https://www.usgs.
+gov/mission-areas/water-resources/science/national-field-
+manual-collection-water-quality-data-nfm.
+Wagner, R.J., Boulger, R.W., Jr., Oblinger, C.J., and Smith,
+B.A., 2006, Guidelines and standard procedures for con-
+tinuous water-quality monitors—Station operation, record
+computation, and data reporting, ver. 1.0: U.S. Geological
+Survey Techniques and Methods, book 1, chap. D3, 96 p.,
+accessed November 2, 2023, at https://doi.org/10.3133/
+tm1D3.
+Xylem, Inc., 2020, EXO user manual—Advanced water qual-
+ity monitoring platform, user manual item #603789REF,
+Revision K: Yellow Springs, Ohio, YSI, Inc., 243 p.,
+accessed November 2, 2023, at https://www.ysi.com/
+File%20Library/Documents/Manuals/EXO-User-Manual-
+Web.pdf.
+
+-- 19 of 24 --
+
+12 	Chapter A6.8. Use of Multiparameter Instruments for Routine Field Measurements
+Appendix 6.8–1. 	Example of a U.S. Geological Survey Field Form for Recording
+Sensor Calibrations and Field Measurements
+NOTE: U.S. Geological Survey personnel are advised to use the most recent available version of the form shown in
+figure 6.8–01.01 and other field forms.
+
+-- 20 of 24 --
+
+---
+
+### tm9a6.8.pdf (chunk tm9a6.8.pdf__0028, score 0.6906946830225403)
+
+ractical salinity units calculated from specific electrical conductance at 25 degrees
+Celsius]
+Parameter 	USGS reporting convention for NWIS1 	Unit
+Temperature 	Nearest 0.01 depending on instrument precision 	°C
+SC 	Three significant figures for SC ≥100, two significant figures for SC <100 	μS/cm at 25 °C
+DO 	Nearest 0.01 	mg/L
+pH 	Nearest 0.01, depending on instrument precision 	pH standard unitsORP 	Two significant figures, calculated relative to the SHE (do not report raw data). Record the
+temperature of the sample at the time of measurement.
+mV
+Turbidity 	0 to <1, nearest 0.05
+1 to <10, nearest 0.1
+10 to <100, nearest 1
+100 to <1,000, nearest 10
+≥1,000, nearest 50
+FNU2
+Salinity 	<1 to <10, nearest 0.1
+≥10, nearest 1
+ppt or psu
+1It is USGS practice to enter values into NWIS that have more significant figures than are standard for reporting. The NWIS database has rounding built in for
+reporting. This practice eliminates user errors when reporting rounded values.
+2Most multiparameter instruments used for USGS turbidity measurement contain single-beam infrared wavelength turbidity sensors and are reported in FNU.
+Check the Excel spreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls to determine the appropriate turbidity unit of measure and NFM A6.7 for detailed
+information on turbidity measurement and instrumentation.
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0002, score 0.6887375722581812)
+
+ically 6.5–8.5) is poorly buffered and naturally variable.
+Seawater (~8.0–8.2) is strongly carbonate-buffered — so any meaningful pH excursion in
+marine water is significant and worth investigating.
+Pollution relevance: Acidic inputs (acid mine drainage, certain industrial effluent) crash pH;
+alkaline inputs (concrete/construction washwater, some industrial discharge) raise it. Large
+
+-- 2 of 7 --daily pH swings indicate biological productivity, not a discharge.
+Turbidity
+Measures: Water clarity — light scattered by suspended particles (sediment, plankton, organic
+matter). Units: NTU or FNU.
+What drives it: Sediment runoff, shoreline erosion, bottom resuspension by
+currents/waves/dredging, and algal cells.
+Fresh vs. salt: Rivers and estuaries are naturally more turbid and event-driven (storms,
+dredging). Open coastal water is clearer; resuspension peaks at maximum tidal current.
+Pollution relevance: A turbidity spike flags storm runoff, construction/erosion, or dredging.
+Critically, particles carry adsorbed pollutants — phosphorus, metals, hydrocarbons,
+pathogens — so a turbidity spike is also a proxy for contaminant loading. High turbidity also
+suppresses photosynthesis by blocking light.
+2. Baseline Reference Ranges
+Parameter 	Healthy Freshwater 	Brackish / Estuarine 	Healthy Seawater
+Temperature Climate/season-
+dependent
+Climate/season-
+dependent Climate/season-dependent
+Dissolved
+Oxygen 6–11 mg/L (>80% sat.) 	5–9 mg/L 5–8 mg/L (~7–8 at 100%
+sat.)
+ORP 	+200 to +400 mV 	+150 to +350 mV 	+200 to +400 mV
+Conductivity
+(EC) 50–1,500 μS/cm 	~1,000–35,000 μS/cm ~45,000–55,000 μS/cm (~35
+PSU)
+pH 	6.5–8.5 	7.0–8.3 	7.8–8.3
+Turbidity 	<5–25 NTU 	5–100+ NTU 	<5–10 NTU
+Ranges are general guidance. Establish a site-specific baseline before treating deviations as events
+— local geology, season, and tidal stage shift “normal” substantially.
+3. How the Parameters Interrelate
+Understanding these couplings is what turns six independent readings into a diagnostic system.
+Temperature → DO (inverse, two ways): Warmer water physically holds less oxygen and
+
+-- 3 of 7 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0142, score 0.678583618989578)
+
+ of runoff from construction,
+agricultural practices, logging activity, discharges, and other sources. Turbidity often
+increases sharply during a rainfall, especially in developed watersheds, which typically
+have relatively high proportions of impervious surfaces. The flow of stormwater runoff
+from impervious surfaces rapidly increases stream velocity, which increases the erosion
+
+-- 154 of 227 --rates of streambanks and channels. Turbidity can also rise sharply during dry weather if
+earth-disturbing activities are occurring in or near a stream without erosion control
+practices in place.
+Regular monitoring of turbidity can help detect trends that might indicate increasing
+erosion in developing watersheds. However, turbidity is closely related to stream flow
+and velocity and should be correlated with these factors. Comparisons of the change in
+turbidity over time, therefore, should be made at the same point at the same flow.
+Turbidity is not a measurement of the amount of suspended solids present or the rate of
+sedimentation of a steam since it measures only the amount of light that is scattered by
+suspended particles. Measurement of total solids is a more direct measure of the amount
+of material suspended and dissolved in water (see section 5.9 - Conductivity).
+Turbidity is generally measured by using a turbidity meter. Volunteer programs may also
+take samples to a lab for analysis. Another approach is to measure transparency (an
+integrated measure of light scattering and absorption) instead of turbidity. Water
+clarity/transparency can be measured using a Secchi disk or transparency tube. The
+Secchi disk can only be used in deep, slow moving rivers; the transparency tube, a
+comparatively new development, is gaining acceptance in programs around the country
+but is not yet in wide use (see Using a Secchi Disk or Tranparency Tube).
+Figure 5.10
+Using a Secchi disk to measure transparency
+A turbidity
+meter consists
+of a light
+source that
+illuminates a
+water sample
+and a
+photoelectric
+cell that
+measures the
+intensity of
+light scattered
+at a 90 angle
+by the
+particles in the
+sample. It
+measures
+turbidity in
+nephelometric
+turbidity units
+or NTUs.
+Meters can
+measure
+turbidity over
+
+-- 155 of 227 --

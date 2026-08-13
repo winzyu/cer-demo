@@ -1,0 +1,204 @@
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0004, score 0.6455579858910149)
+
+rature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm
+weather. DO and ORP falling together while EC and turbidity rise is a far more specific signal
+pointing to an organic/sewage source.
+5. Separating Natural Cycles from Pollution Events
+Rule out the water body’s normal rhythms before declaring an event.
+Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,
+bottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.
+A smooth, repeating daily oscillation is biology, not pollution.
+Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity
+often peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is
+mixing, not a discharge.
+Seasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.
+Compare any reading to the same season’s baseline.
+The test for a real event: A pollution event typically appears as a step-change or sustained
+excursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it
+shows up as a correlated shift across multiple parameters consistent with one of the signatures
+above.
+6. Sensor & Data-Quality Caveats
+A trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an
+event.
+Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across
+weeks may be drift, not water chemistry — cross-check against calibration history and class-
+balanced expectations.
+ORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.
+standard hydrogen electrode). Record which reference is used so values are comparable across
+DataPods and over time. Treat ORP trend as more reliable than absolute value.
+EC temperature compensation: Always report specific conductance (25°C-corrected).
+Uncorrected EC will track temperature and produce false signals.
+Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on
+one across the fleet.
+DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the
+antifouling/cleaning schedule.
+
+-- 6 of 7 --
+
+Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long
+deployment is a fouling/maintenance flag first, an environmental signal second.
+Maintain this as a living document. As DataPod deployments build site-specific baselines, append
+local “normal” ranges and any site-specific event signatures observed in the field.
+
+-- 7 of 7 --
+
+
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0010, score 0.6172118214455533)
+
+he fluorescence response
+of the dye. Higher DO concentrations result in greater quench-
+ing and a decreased fluorescence response. The signal to the
+fluorescence detector is greatest at lowest DO concentrations.
+More importantly, the timescale, or lifetime, of the fluores-
+cence reaction is also dependent on the DO concentration and
+is not dependent on the light intensity of excitation or fluores-cence, thereby allowing more reliable determination of the DO
+concentration. Temperature stability during calibration and
+measurement is extremely important, as temperature controls
+the solubility of oxygen in water.
+2.1 Equipment and Field Preparations
+DO instruments (meters and sensors) are available from a
+number of commercial vendors. Because of differences among
+manufacturers in the instrument design and instructions for
+use, calibration, and maintenance, it is important that the user
+be thoroughly familiar with the instructional manual for the
+specific instrument system to be used in addition to the guid-
+ance given here.
+2.1.1 Equipment Description and Maintenance
+Meters, sondes, and the DO sensors used in these instru-
+ments are sophisticated electronic equipment that require care
+in handling and operation. Information about the equipment
+and supplies required for the optical method of determining
+aqueous DO concentrations is summarized in table 6.2–1.
+Guidance on when to replace the luminophore-containing
+cap or module varies among manufacturers and can be based
+on the specific design and materials used, the environmental
+conditions to which the sensor is exposed, the age of the sen-
+sor, and (or) the amount of time it is deployed. For example—
+• Hach specifies a 2-year life of the sensor cap of its
+LDO (Luminescent Dissolved Oxygen) sensor.
+• YSI Environmental (EXO) specifies annual replace-
+ment of the sensor cap for its optical DO sensor.
+• In-Situ, Inc., advises that the RDO (Rugged Dissolved
+Oxygen) sensor cap has a 2-year life.
+• Thermo Scientific specifies a 365-day lifespan for the
+RDO cap once it is installed on the RDO sensor.
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0125, score 0.6152938333527035)
+
+
+behind the dam, immediately below the spillway, and
+upstream of the dam. Since DO levels are critical to fish,
+a good place to sample is in the pools that fish tend to
+favor or in the spawning areas they use.
+An hourly time profile of DO levels at a sampling site is
+a valuable set of data because it shows the change in DO
+levels from the low point just before sunrise to the high
+
+-- 139 of 227 --16 	9.85 	39 	6.51
+17 	9.65 	40 	6.41
+18 	9.45 	41 	6.41
+19 	9.26 	42 	6.22
+20 	9.07 	43 	6.13
+21 	8.90 	44 	6.04
+22 	8.72 	45 	5.95
+point sometime in the midday. However, this might not
+be practical for a volunteer monitoring program. It is
+important to note the time of your DO sampling to help
+judge when in the daily cycle the data were collected.
+DO is measured either in milligrams per liter (mg/L) or
+"percent saturation." Milligrams per liter is the amount of
+oxygen in a liter of water. Percent saturation is the
+amount of oxygen in a liter of water relative to the total
+amount of oxygen that the water can hold at that temperature.
+DO samples are collected using a special BOD bottle: a glass bottle with a "turtleneck" and a ground glass
+stopper. You can fill the bottle directly in the stream if the stream is wadable or boatable, or you can use a
+sampler that is dropped from a bridge or boat into water deep enough to submerse the sampler. Samplers can be
+made or purchased. Dissolved oxygen is measured primarily either by using some variation of the Winkler
+method or by using a meter and probe. Winkler Method The Winkler method involves filling a sample bottle
+completely with water (no air is left to bias the test). The dissolved oxygen is then "fixed" using a series of
+reagents that form an acid compound that is titrated. Titration involves the drop-by-drop addition of a reagent that
+neutralizes the acid compound and causes a change in the color of the solution. The point at which the color
+changes is the "endpoint" and is equivalent to the amount of oxygen dissolved in the sample. The sample is
+usually fixed and titrated in the field at the sample site. It is possible, however, to prepare the sample in the field
+and deliver it to a lab for titration.
+Dissolved oxygen field kits using the Winkler method are relatively inexpensive, especially compared to a meter
+and probe. Field kits run between $35 and $200, and each kit comes with enough reagents to run 50 to 100 DO
+tests. Replacement reagents are inexpensive, and you can buy them already measured out for each test in plastic
+pillows.
+You can also buy the reagents in larger quantities, in bottles, and measure them out with a volumetric scoop. The
+advantage of the pillows is that they have a longer shelf life and are much less prone to contamination or spillage.
+The advantage of buying larger quantities in bottles is that the cost per test is considerably less.
+The major factor in the expense of the kits is the method of titration they use eyedropper, syringe-type titrator, or
+digital titrator. Eyedropper and syringe-type titration is less precise than digital titration because a larger drop of
+titrant is allowed to pass through the dropper opening and, on a micro-scale, the drop size (and thus the volume of
+titrant) can vary from drop to drop. A digital titrator or a buret (which is a long glass tube with a tapered tip like a
+pipet) permits much more precision and uniformity in the amount of titrant that is allowed to pass.
+If your program requires a high degree of accuracy and precision in DO results, use a digital titrator. A kit that
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0014, score 0.6100216842486434)
+
+.)
+• Immerse the sensor into the zero-DO solution,
+wait for reading to stabilize (usually within
+5–10 minutes), record reading.
+• If the instrument reading exceeds 0.2 mg/L in the
+zero-DO solution, check DO again with a freshly
+prepared zero-DO solution; if a reading greater than
+0.2 mg/L persists, contact the instrument manufac-
+turer and inquire whether the luminophore module
+should be replaced.-- 13 of 44 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0041, score 0.5912383232697691)
+
+omium,
+resulting in high-biased DO readings (White and others,
+1990).4
+• The presence of cupric copper and ferric iron at a
+concentration less than 50 micrograms per liter (μg/L)
+may cause a bias of less than 1 μg/L; at a concentration
+4See also CHEMetrics, Inc., Simplicity in water analysis, accessed Sep-
+tember 4, 2019, at https://www.chemetrics.com/product-category/test-kits/
+oxygen-dissolved/.-- 22 of 44 --

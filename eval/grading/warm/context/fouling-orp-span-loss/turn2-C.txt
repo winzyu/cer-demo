@@ -1,0 +1,229 @@
+### tm9a6.8.pdf (chunk tm9a6.8.pdf__0017, score 0.6243284958889764)
+
+n be used
+to clean wiper-brush bristles. Rinse with DIW.
+• Replace or recondition the wiper brush when it
+shows excessive splaying.
+General storage recommendations for multiparameter
+instruments and instrument cases:
+• For short-term storage, some sensors need a small
+amount of the storage solution added to the protec-
+tive (transport) cap or calibration cup; check the
+manufacturer’s instructions.-- 13 of 24 --
+
+---
+
+### tm9a6.8.pdf (chunk tm9a6.8.pdf__0016, score 0.6060793648331199)
+
+ltiparameter instrument (hand-
+held display and sensors-containing sonde only, not
+the sensors) is particularly dirty or will be stored,
+clean it with a mild, nonphosphate detergent solution
+by using a small, nonabrasive brush or cotton swab
+or cloth, and follow with a thorough water rinse.
+• Avoid using organic solvents or other corrosive solu-
+tions to clean the sensors unless indicated in guid-ance given by the manufacturer.
+• Do not coat the sonde or sensors with protective or
+anti-fouling paint, except as specifically instructed
+by the manufacturer.
+• Manufacturers may have instructions specific to their
+sensors—check the manufacturer’s operating manual
+for each instrument that will be in use.
+Wiper and wiper-brush maintenance:
+• Inspect the wiper pad and (or) wiper brush for dirt,
+deterioration, and damage after each use of the
+instrument. (Not all instruments have a wiper or
+wiper-brush mechanism.)
+• Check wiper pads for wear, excessive discoloration,
+and particle accumulation, and change the pads
+as needed. Check that the wiper arm is parking
+properly. Follow the manufacturer’s guidance for
+conditions requiring changing the pads and for wiper
+maintenance.
+• Warm soapy water and a soft toothbrush can be used
+to clean wiper-brush bristles. Rinse with DIW.
+• Replace or recondition the wiper brush when it
+shows excessive splaying.
+General storage recommendations for multiparameter
+instruments and instrument cases:
+• For short-term storage, some sensors need a small
+amount of the storage solution added to the protec-
+tive (transport) cap or calibration cup; check the
+manufacturer’s instructions.
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0004, score 0.6034314817379198)
+
+rature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm
+weather. DO and ORP falling together while EC and turbidity rise is a far more specific signal
+pointing to an organic/sewage source.
+5. Separating Natural Cycles from Pollution Events
+Rule out the water body’s normal rhythms before declaring an event.
+Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,
+bottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.
+A smooth, repeating daily oscillation is biology, not pollution.
+Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity
+often peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is
+mixing, not a discharge.
+Seasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.
+Compare any reading to the same season’s baseline.
+The test for a real event: A pollution event typically appears as a step-change or sustained
+excursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it
+shows up as a correlated shift across multiple parameters consistent with one of the signatures
+above.
+6. Sensor & Data-Quality Caveats
+A trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an
+event.
+Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across
+weeks may be drift, not water chemistry — cross-check against calibration history and class-
+balanced expectations.
+ORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.
+standard hydrogen electrode). Record which reference is used so values are comparable across
+DataPods and over time. Treat ORP trend as more reliable than absolute value.
+EC temperature compensation: Always report specific conductance (25°C-corrected).
+Uncorrected EC will track temperature and produce false signals.
+Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on
+one across the fleet.
+DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the
+antifouling/cleaning schedule.
+
+-- 6 of 7 --
+
+Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long
+deployment is a fouling/maintenance flag first, an environmental signal second.
+Maintain this as a living document. As DataPod deployments build site-specific baselines, append
+local “normal” ranges and any site-specific event signatures observed in the field.
+
+-- 7 of 7 --
+
+
+
+---
+
+### IORP_probe.pdf (chunk IORP_probe.pdf__0002, score 0.5887429032611217)
+
+
+Long term storage
+When you are finished using the Industrial ORP probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has ORP probe storage
+solution within it. If not, just add some from the ORP probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 11 --Probe cleaning
+Coating of the platinum tip can lead to erroneous readings including shortened span
+(slope). The type of coating will determine the cleaning technique. Soft coatings can
+be removed by vigorous stirring or by the use of a squirt bottle. Organic chemical, or
+hard coatings, should be chemically removed. A light bleach solution or even a 5 – 10%
+hydrochloric acid (HCl) soak for a few minutes, often removes many coatings. Do not use
+abrasive materials on the ORP probe.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 11 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 11 --
+
+
+
+---
+
+### Industrial-DO-probe.pdf (chunk Industrial-DO-probe.pdf__0002, score 0.5871894855949451)
+
+t file the cathode, as this will damage the probe.
+Once the corrosion has been removed, rinse the off the anode.
+Using the supplied syringe, inject solution into the membrane cap until it's filled half
+way. Screw the membrane cap back onto probe. Once the probe is reassembled, rinse
+of the probe.
+1 	2
+anode
+cathode
+3 	4
+RIGHT SIDE UP 	UPSIDE DOWN
+10	Copyright © Atlas Scientific LLC
+
+-- 10 of 13 --Over time, the membrane can wear out, this will lead to irregular readings from
+the probe. To correct this issue, the probes membrane cap must be replaced.
+To replace membrane cap: Carefully unscrew the probes membrane cap, drain
+any remaining electrolyte solution; Then discard the damaged membrane cap.
+With a new membrane cap ready, fill the new membrane cap half way with electrolyte
+solution and screw back on to probe body.
+How to replace the membrane cap
+1 	2 	3
+RIGHT SIDE UP 	UPSIDE DOWN
+Fill half way
+5	4 	6
+OLD &
+DAMAGED
+NEW
+11	Copyright © Atlas Scientific LLC
+
+-- 11 of 13 --
+
+Over time dissolved oxygen probes can become dirty and covered in chemical deposits.
+Soft coatings can be removed by lightly brushing around the sides of the probe and
+membrane cap. If the probes membrane is in need of cleaning, use a mild bleach mixture
+to gently wash away any deposits.
+DO NOT USE A BRUSH TO CLEAN THE MEMBRANE
+If the probes membrane is ripped it must be replaced, as it will cause irregular readings.
+Probe cleaning
+12	Copyright © Atlas Scientific LLC
+
+-- 12 of 13 --
+
+Dried KCl residue
+from Electrolyte
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+13	Copyright © Atlas Scientific LLC
+
+-- 13 of 13 --
+

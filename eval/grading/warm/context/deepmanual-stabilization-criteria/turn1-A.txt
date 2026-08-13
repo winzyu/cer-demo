@@ -1,0 +1,294 @@
+### tm9a6.8.pdf (chunk 93, score 0.030886196246139225)
+
+other laboratories to which samples will be submitted. Record
+the method (where applicable) that was used to make field
+measurements. Quality-control checks of the data should be
+made by a second party and compared for accuracy and con-
+sistency. Field-parameter values are required to be entered into
+NWIS. Recording and storage guidelines for field measure-
+ments are summarized in table 6.8–7.-- 16 of 24 --
+
+6.0 Reporting 	9
+Table 6.8–6. 	Troubleshooting tips for typical problems with multiparameter instruments.
+[NIST, National Institute of Standards and Technology; NFM, USGS National Field Manual for the Collection of Water-Quality Data; DO, dissolved oxygen;
+SC, specific electrical conductance; ORP, oxidation-reduction (redox) potential]
+Problem 	Possible cause(s), corrective actions, and tips
+Unstable readings 	• Check for loose connections, low battery, or unstable wireless connection.
+• Unstable wireless connection; move sonde and handheld device closer together to stabilize
+connection or reset connection.
+Display does not turn on 	• Check that the batteries are installed properly and are fully charged.
+• Battery performance decreases with decreasing temperature. Carry spare batteries.
+Display does not show readings; the
+readings seem to be wrong or are
+scrambled
+• Check that the correct units are selected.
+• Inspect all connectors for moisture, dirt, damage, and loose connections.
+• Unstable wireless connection; move sonde and handheld device closer together to stabilize
+connection or reset connection.
+Initial drifting of the readings 	• Sensors not equilibrated to the water temperature.
+• Check that the sensors are appropriately submerged and at the required angle (if necessary).
+• Dislodge air bubbles from sensor surfaces.
+Temperature reading is unstable or
+inaccurate
+• Check for water in the port connector if present.
+• Check the temperature reading with a NIST-certified or NIST-traceable digital thermometer and
+replace the sensor if it does not meet accuracy standards. In some cases, only the manufacturer
+can replace a faulty temperature sensor.
+Reading is unstable or inaccurate.
+For individual parameters see
+the appropriate NFM chapters:
+DO (see also NFM A6.2), SC
+(see also NFM A6.3), pH (see
+also NFM A6.4), ORP (see also
+NFM A6.5), turbidity (see also
+NFM A6.7)
+• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s
+instructions. Replace damaged sensors and recalibrate.
+• Check the sensor connector for water; dry the connector and reinstall the sensor.
+• Allow sufficient time for the temperature sensor to equilibrate to the water temperature.
+• Check that the calibration solutions used were appropriate and not expired or subject to
+contamination.
+• Calibrations may have been rushed with inadequate rinsing of sensors. Check sensors and
+recalibrate if necessary.
+• Check pH reference junction; follow manufacturer’s instructions for cleaning. If possible,
+replace the junction which may be part of a replaceable cap.
+• If the ZoBell solution check fails, was temperature dependence of the ZoBell solution accounted
+for?
+• The SC sensor must be fully immersed for proper calibration and sample measurement. There
+must be no bubbles in the cell compartment if present.
+• The turbidity sensor wiper must be clean, activated, and rotating properly.
+• Check the age and condition of the DO sensor cap and replace according to manufacturer’s
+instructions if necessary.
+
+-- 17 of 24 --
+
+---
+
+### tm9a6.8.pdf (chunk 89, score 0.029513888888888888)
+
+assurance protocols allow, adjust the locations of the
+measurements along the cross section or transect to
+avoid areas that will require stopping and cleaning
+plant growth, sediment, or debris from the sensors.
+4.2 Groundwater
+The stability of field-parameter values is monitored
+toward the end of well purging to help indicate when the water
+being withdrawn represents fresh formation water and whensample collection should begin (see NFM A6.0, NFM A4).
+The final field-parameter values typically are recorded after
+three or more well volumes have been purged and stability
+criteria have been met.
+If the purpose of sampling is to obtain field measure-
+ments only, these data can be obtained in situ by deploying a
+multiparameter sonde into the well, followed by a submersible
+pump to draw water upward. If water-quality samples will be
+collected, pumping the water from the well to and through
+a flow-through cell that contains the instrument’s sensors is
+another efficient method for collecting field-parameter data
+without having to remove and redeploy sampling equipment.
+Flow-through cells are typically supplied by the manufacturers
+Table 6.8–5. 	Stabilization criteria for common field parameters.
+[±, plus or minus; °C, degrees Celsius; SC, specific electrical conductance; ≤, less than or equal to; %, percent; μS/cm, microsiemens per centimeter at 25
+degrees Celsius; >, greater than; DO, dissolved oxygen; mg/L, milligram per liter; TU, turbidity unit]
+Sensor
+Standard sensor stabilization criteria
+(Note that the actual accuracy of the sensor varies, depending on sensor model
+and manufacturer.)
+Temperature 	± 0.2 °C
+Specific electrical conductance (SC) 	± 5 μS/cm for SC ≤100 μS/cm, or ± 3% for SC >100 μS/cm
+DO 	± 0.2 mg/L
+pH 	± 0.1 pH units
+Turbidity 	± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or
+10% of the measured value for turbidity >100 TU
+
+---
+
+### tm9a6.8.pdf (chunk 88, score 0.028958333333333336)
+
+-- 14 of 24 --4.0 Measurement 	7
+4.0 Measurement
+The field-measurement procedures implemented depend
+on the type of water body being studied, onsite characteristics
+and conditions at the time of measurement, and the objectives
+and data-quality requirements of the study. The following
+guidelines apply generally to multiparameter instruments.
+Consult NFM chapters A6.0 through A6.7 for detailed instruc-
+tions on measuring individual parameters. The information in
+chapters A6.0 through A6.7 is the definitive information for
+making measurements and is not replaced by either the general
+guidance here or the guidance in previous versions of this
+chapter. Allow time for the readings on the display to stabilize
+within the criteria shown in table 6.8–5. Record all required
+field measurements on the appropriate paper or electronic field
+forms, laboratory analytical request forms, logbooks, chain-of-
+custody logs, and other documentation that might be required
+for the study (see appendix 6.8–1 for an example of a field
+form). Note on the appropriate form(s) any onsite conditions
+that could have affected the quality of the data.
+4.1 Surface Water
+Field parameters are commonly measured within a cross
+section of a surface-water body to (1) help determine how well
+mixed the stream or river is, and consequently the sampling
+method to be used; and (2) determine the field-parameter
+values of the water body at the selected site. In situ use of
+a multiparameter instrument is a highly efficient means of
+obtaining surface-water field-parameter data. Considerations
+when using multiparameter instruments in surface water are
+listed in the following bullet points. For additional information
+on field measurements and sampling methods, see NFM A6.0
+and NFM A4. For more information on measuring specific
+individual field parameters, see NFM A6.1 through NFM
+A6.7.
+• Many instruments include a pressure transducer that
+produces a value for the depth of the sonde or the water
+level. For instruments without pressure transducers, the
+approximate depth of the sonde as it is lowered through
+the water column can be noted by placing incremental
+marks along the instrument cable, or the sonde can
+be connected to a pressure transducer. Depending on
+site conditions, the sonde might need to be weighted.
+Consult the manufacturer’s instructions for proper
+weighting procedures.
+• Wait a minimum of 60 seconds for the sensors and
+sonde body to reach thermal equilibrium with the water
+at each new measurement location. Some instruments
+require a longer equilibration time; check the manufac-
+turer’s recommendations.
+• Plants or debris in the water can interfere with sensors
+or the guard around sensors, which can adversely
+affect sensor readings. If field conditions and quality-
+assurance protocols allow, adjust the locations of the
+measurements along the cross section or transect to
+avoid areas that will require stopping and cleaning
+plant growth, sediment, or debris from the sensors.
+4.2 Groundwater
+The stability of field-parameter values is monitored
+toward the end of well purging to help indicate when the water
+being withdrawn represents fresh formation water and when
+
+---
+
+### tm9a6.8.pdf (chunk 91, score 0.02702702702702703)
+
+-- 15 of 24 --8 	Chapter A6.8. Use of Multiparameter Instruments for Routine Field Measurements
+of multiparameter instruments. Considerations when using
+multiparameter instruments in groundwater are listed in the
+following bullet points. For information on field measurements
+and sampling methods, see NFM A6.0 and NFM A4. For
+information on measuring specific individual field parameters,
+see NFM A6.1 through NFM A6.7.
+• Connect all sampling-pump discharge-tubing fittings
+securely so that air does not enter the flow-through
+cell, as air can affect the accuracy and stability of the
+measurements.
+• Shield the flow-through cell from direct sunlight
+to minimize changes in the temperature of the
+groundwater as it is withdrawn. Changes in tempera-
+ture can affect the accuracy of other field-parameter
+measurements that rely on temperature corrections
+conducted within the sonde.
+• Wait a minimum of 60 seconds for the sensors and
+sonde body to reach thermal equilibrium with the water
+before monitoring field-parameter values. Some instru-
+ments require a longer equilibration time; check the
+manufacturer’s recommendations.
+• Sediment accumulated in the flow-through cell can
+adversely affect the sensors of multiparameter instru-
+ments. Check to make sure that fittings and flows
+are oriented to minimize the build-up of sediment
+(if present) in the flow-through cell.
+Field-measurement sensors must first be allowed to
+reach thermal equilibrium with the water body being
+sampled or monitored. This process can take from 60
+seconds to several minutes or more, depending on the
+instrument and the initial and final temperature range.
+5.0 Troubleshooting
+Multiparameter instruments that perform poorly can be
+tested to determine the cause of the issue. The complexity of
+problems and tests may increase with the number of sensors
+installed on the sonde. Troubleshooting tests should be per-
+formed in a prescribed order depending on the types of sensors
+in use and the potential for sensor contamination. General
+troubleshooting tips are provided in table 6.8–6. Detailed guid-
+ance is available from the instrument’s manufacturer. Consult
+the manufacturer’s user manual for the specific instrument
+being used.
+• If the display shows a warning message, do not use the
+instrument system until the error has been identified,
+understood, and corrected.
+• Unless otherwise specified, sensor ports on the sonde
+body should be dry before sensors are replaced. Use
+compressed air or isopropyl alcohol to dry the ports.
+Before using solvents, such as isopropyl alcohol, be
+sure they are compatible with the sonde. When using
+isopropyl alcohol, gently shake the excess liquid from
+the port and allow sufficient time for the liquid to
+evaporate before installing the sensor.
+WARNING: Alcohol and other solvents can damage
+certain types of plastics and o-rings and can destroy
+the sensing surface of the optical DO sensor.
+6.0 Reporting
+USGS personnel are instructed to record all field-param-
+eter values on electronic or paper field forms, and to complete
+and submit information on Analytical Services Request forms
+of the USGS National Water Quality Laboratory (NWQL) or
+
+---
+
+### tm9a6.8.pdf (chunk 73, score 0.025657894736842105)
+
+-- 9 of 24 --2 	Chapter A6.8. Use of Multiparameter Instruments for Routine Field Measurements
+NFM. More information is in the general introduction to the
+NFM (USGS Techniques and Methods, book 9, chapter A0)
+at https://doi.org/10.3133/tm9A0. The authoritative current
+versions of NFM chapters are available in the USGS Publi-
+cations Warehouse at https://pubs.er.usgs.gov/. Comments,
+questions, and suggestions related to the NFM can be
+addressed to nfm@usgs.gov.
+1.1 Overview of Multiparameter Instruments
+The miniaturization of sensors and other technological
+advances in electronics have resulted in water-quality
+instruments that house multiple sensors capable of making
+simultaneous readings of various field measurements in
+environmental waters. With the use of these multiparameter
+instruments, field measurements can be determined in
+considerably less time than that generally required when using
+multiple single-parameter instruments (table 6.8–1). This
+chapter, NFM A6.8, addresses the short-term or discrete-mea-
+surement use of portable multiparameter instruments. Refer to
+Wagner and others (2006) for information about long-term or
+continuous-monitor deployment.
+MULTIPARAMETER INSTRUMENT: An electronic
+instrument that contains sensors (each specific to the
+measurement of a given physical, chemical, or biological
+property) that are bundled in a single housing (a sonde).
+NFM chapter A6.8 describes requirements and recom-
+mendations that have been developed for routine U.S. Geo-
+logical Survey (USGS) field studies. The instrument manufac-
+turer is, however, the primary source of information about the
+maintenance and use of a specific instrument. The protocols
+and recommendations described in this chapter are meant
+to complement and enhance the manufacturer’s guidelines,
+providing the level of quality assurance for which USGS data
+are held accountable. USGS personnel should identify any
+discrepancies between the requirements and recommendations
+described in the NFM and the instructions provided by the
+instrument manufacturer. The more stringent procedures typi-
+cally should be used. Personnel should discuss discrepancies
+with their water-quality specialist and may send any questions
+to nfm@usgs.gov.
+2.0 Equipment and Supplies
+Multiparameter instruments are available for discrete
+measurements made during a site visit or for deployment at a
+stream, lake, reservoir, well, or other environmental setting,
+and their sondes or bodies are suitable for use in water that is
+fresh, brackish, saline, or contaminated. Housings (the sonde)
+of multiparameter instruments are available in a range of
+diameters from about 4 inches (in.) (10 centimeters [cm]) to
+less than 2 in. (5.1 cm). Small-diameter sondes can be used for
+downhole measurements in wells, but may have more limited
+wiper and sensor capability than the larger diameter sondes
+(because fewer ports are available for sensors). Depending on
+the manufacturer, some instruments can store measurements
+to internal or removeable memory in a format compatible with
+a hand-held display, laptop computer, tablet, database input
+file, or typical cell phone. Many instruments are operated by

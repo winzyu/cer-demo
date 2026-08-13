@@ -1,0 +1,311 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0132, score 0.638176193922734)
+
+ in the dark at 20 C for 5 days and then tested for the amount of dissolved oxygen
+remaining. The difference in oxygen levels between the first test and the second test, in milligrams per liter
+(mg/L), is the amount of BOD. This represents the amount of oxygen consumed by microorganisms to break
+down the organic matter present in the sample bottle during the incubation period. Because of the 5-dayincubation, the tests should be conducted in a laboratory.
+Sometimes by the end of the 5-day incubation period the dissolved oxygen level is zero. This is especially true for
+rivers and streams with a lot of organic pollution. Since it is not known when the zero point was reached, it is not
+possible to tell what the BOD level is. In this case it is necessary to dilute the original sample by a factor that
+results in a final dissolved oxygen level of at least 2 mg/L. Special dilution water should be used for the dilutions.
+(See APHA, 1992.)
+It takes some experimentation to determine the appropriate dilution factor for a particular sampling site. The final
+result is the difference in dissolved oxygen between the first measurement and the second after multiplying the
+second result by the dilution factor. More details are provided in the following section.
+
+---
+
+### IpH_probe.pdf (chunk IpH_probe.pdf__0002, score 0.6292079521598264)
+
+erm storage
+When you are finished using the Industrial pH probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has pH probe storage
+solution within it. If not, just add some from the pH probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+Ready to use
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 12 --Unlike most pH probes, this probe can dry out. It can be left dry for up to 3 weeks without
+damaging the probe. However, repeated wetting and drying cycles will eventually damage
+the probe. For best results, keep the probe wet at all times. But if the probe is left out to
+dry, it should not be considered damaged. It just needs to be rehydrated.
+If a pH probe is kept in a hot environment during shipping, KCl creep may cause the soaker
+bottle to dry out. KCl will form a salt channel that wicks the water out of the probe's soaker
+bottle.
+Follow these instructions to rehydrate your industrial pH probe:
+1. Place the probe into a beaker of tap water.
+2. Let the probe sit in the water for 3 – 5 mins.
+3. Add a scoop of KCL (best) or NaCl (good) to the beaker.
+(a scoop = so much salt that no human could drink the water)
+4. Let the probe sit in the salt water for 15 – 20 mins.
+5. Done.
+The probe is now ready to use.
+Probe can dry out
+
+-- 9 of 12 --
+
+Probe cleaning
+Coating of the pH bulb can lead to erroneous readings including shortened span (slope).
+The type of coating will determine the cleaning technique. Soft coatings can be removed
+by vigorous stirring or by the use of a squirt bottle. Organic chemical, or hard coatings,
+should be chemically removed using a light bleach solution. If cleaning does not restore
+performance, reconditioning may be tried. Do not use a brush or abrasive materials
+on the pH probe.
+How often do you need
+to recalibrate a pH probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that
+has generally weak levels of acids and bases you will only need to recalibrate your probe
+once per year for the first two years. After that every ~six months.
+If you are using the pH probe in batch chemical manufacturing, industrial process,
+or in a solution that is known to have strong acids and bases, then calibration should be
+done monthly or in extreme cases after each batch.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 12 --
+
+Probe reconditioning
+When reconditioning your pH probe is required due to aging, we recommend you use
+the Atlas Scientific pH probe reconditioning kit.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 12 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+12 Copyright © Atlas Scientific LLC
+
+-- 12 of 12 --
+
+
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0004, score 0.6262476964734407)
+
+rature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm
+weather. DO and ORP falling together while EC and turbidity rise is a far more specific signal
+pointing to an organic/sewage source.
+5. Separating Natural Cycles from Pollution Events
+Rule out the water body’s normal rhythms before declaring an event.
+Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,
+bottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.
+A smooth, repeating daily oscillation is biology, not pollution.
+Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity
+often peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is
+mixing, not a discharge.
+Seasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.
+Compare any reading to the same season’s baseline.
+The test for a real event: A pollution event typically appears as a step-change or sustained
+excursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it
+shows up as a correlated shift across multiple parameters consistent with one of the signatures
+above.
+6. Sensor & Data-Quality Caveats
+A trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an
+event.
+Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across
+weeks may be drift, not water chemistry — cross-check against calibration history and class-
+balanced expectations.
+ORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.
+standard hydrogen electrode). Record which reference is used so values are comparable across
+DataPods and over time. Treat ORP trend as more reliable than absolute value.
+EC temperature compensation: Always report specific conductance (25°C-corrected).
+Uncorrected EC will track temperature and produce false signals.
+Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on
+one across the fleet.
+DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the
+antifouling/cleaning schedule.
+
+-- 6 of 7 --
+
+Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long
+deployment is a fouling/maintenance flag first, an environmental signal second.
+Maintain this as a living document. As DataPod deployments build site-specific baselines, append
+local “normal” ranges and any site-specific event signatures observed in the field.
+
+-- 7 of 7 --
+
+
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0165, score 0.6219354539235082)
+
+iciency of wastewater treatment
+plants, as well as the operation of industrial processes that use raw water.
+Total solids also affect water clarity. Higher solids decrease the passage of light through
+water, thereby slowing photosynthesis by aquatic plants. Water will heat up more rapidly
+and hold more heat; this, in turn, might adversely affect aquatic life that has adapted to a
+
+-- 176 of 227 --lower temperature regime.
+Sources of total solids include industrial discharges, sewage, fertilizers, road runoff, and
+soil erosion. Total solids are measured in milligrams per liter (mg/L).
+Sampling and equipment considerations
+Total solids are important to measure in areas where there are discharges from sewage
+treatment plants, industrial plants, or extensive crop irrigation. In particular, streams and
+rivers in arid regions where water is scarce and evaporation is high tend to have higher
+concentrations of solids and are more readily affected by human introduction of solids
+from land use activities.
+Total solids measurements can be useful as an indicator of the effects of runoff from
+construction, agricultural practices, logging activities, sewage treatment plant discharges,
+and other sources. As with turbidity, concentrations often increase sharply during rainfall,
+especially in developed watersheds. They can also rise sharply during dry weather if
+earth-disturbing activities are occurring in or near the stream without erosion control
+practices in place. Regular monitoring of total solids can help detect trends that might
+indicate increasing erosion in developing watersheds. Total solids are related closely to
+stream flow and velocity and should be correlated with these factors. Any change in total
+solids over time should be measured at the same site at the same flow.
+Total solids are measured by weighing the amount of solids present in a known volume
+of sample. This is done by weighing a beaker, filling it with a known volume,
+evaporating the water in an oven and completely drying the residue, and then weighing
+the beaker with the residue. The total solids concentration is equal to the difference
+between the weight of the beaker with the residue and the weight of the beaker without it.
+Since the residue is so light in weight, the lab will need a balance that is sensitive to
+weights in the range of 0.0001 gram. Balances of this type are called analytical or Mettler
+balances, and they are expensive (around $3,000). The technique requires that the beakers
+be kept in a desiccator, which is a sealed glass container that contains material that
+absorbs moisture and ensures that the weighing is not biased by water condensing on the
+beaker. Some desiccants change color to indicate moisture content.
+The measurement of total solids cannot be done in the field. Samples must be collected
+using clean glass or plastic bottles or Whirl-pak® bags and taken to a laboratory where
+the test can be run.
+How to collect and analyze samples
+The procedures for collecting and analyzing samples for total solids consist of the
+following tasks:
+
+-- 177 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0180, score 0.6207624889342834)
+
+tion.
+Turbidity
+Meter 	Either
+If lab, measured
+ASAP within 24
+hours of
+collection.
+Total Orthophosphate
+Ascorbic Acid w/ color
+comparator Either
+If lab, measured
+within 48 hours
+of collection.
+Ascorbic acid w/
+spectophotometer Either
+If lab, measured
+within 48 hours
+of collection.
+Nitrate
+Cadmium reduction w/
+color comparator Either
+If lab, measured
+within 48 hours
+of collection.
+
+-- 198 of 227 --Cadmium reduction w/
+spectrophotometer Either
+If lab, measured
+within 48 hours
+of collection.
+Total Solids
+Oven drying/weighing 	Lab
+Must be
+measured within
+7 days of
+collection.
+Conductivity
+Meter 	Either
+If lab, measured
+ASAP within 28
+days of
+collection.
+Total Alkalinity
+Titration 	Either
+If lab, measured
+within 24 hours
+of collection.
+Fecal Bacteria
+Membrane filtration 	Lab
+Must be
+measured within
+6 hours of
+collection.
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 199 of 227 --
+
+Chapter 6
+Managing and Presenting Monitoring Data
+6.1 - Managing Volunteer Data
+6.2 - Presenting the Data
+6.3 - Producing Reports
+It is hard to overemphasize the importance of having established methods of handling
+volunteer data, analyzing that data, and presenting results effectively to volunteers, the
+public, and water resource decision-makers. Without these tools and processes, the data
+that volunteers and program managers have labored hard to collect are virtually useless,
+and the program will surely fail to meet its goals.
+This chapter addresses data management and data presentation. Members of the program
+planning committee will need to make many decisions on these issues before the first
+field data sheet is filled out by the program's first volunteer. In particular, they should
+consult any potential data users such as state water quality agencies or county planning
+boards regarding their own data needs. Data users will be particularly concerned about:
+Procedures used to verify and check the raw volunteer data.	l
+Databases and software used to manage the data.	l
+Analytical procedures used to convert the raw data into findings and conclusions.	l
+Reporting formats.	l
+Data users may, for example, be able to offer concrete suggestions about databases and
+presentation formats that will make the data more accessible to them. To ensure that all
+questions about the validity of the data can be answered, the program planning committee
+should develop and implement a quality assurance/quality control plan designed to
+minimize data collection errors, weed out data that fail to meet the program's standards,
+and effectively analyze and present the results. This plan should identify key personnel
+with responsibilities for data management and data analysis and clearly indicate all the
+steps the program will take to handle the data.
+Unfortunately, volunteers and program coordinators seldom recognize the importance of
+this aspect of a volunteer monitoring program. It tends to be considered "drudge" work
+
+-- 200 of 227 --

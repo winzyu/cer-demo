@@ -1,0 +1,365 @@
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0004, score 0.7161203465414472)
+
+rature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm
+weather. DO and ORP falling together while EC and turbidity rise is a far more specific signal
+pointing to an organic/sewage source.
+5. Separating Natural Cycles from Pollution Events
+Rule out the water body’s normal rhythms before declaring an event.
+Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,
+bottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.
+A smooth, repeating daily oscillation is biology, not pollution.
+Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity
+often peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is
+mixing, not a discharge.
+Seasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.
+Compare any reading to the same season’s baseline.
+The test for a real event: A pollution event typically appears as a step-change or sustained
+excursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it
+shows up as a correlated shift across multiple parameters consistent with one of the signatures
+above.
+6. Sensor & Data-Quality Caveats
+A trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an
+event.
+Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across
+weeks may be drift, not water chemistry — cross-check against calibration history and class-
+balanced expectations.
+ORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.
+standard hydrogen electrode). Record which reference is used so values are comparable across
+DataPods and over time. Treat ORP trend as more reliable than absolute value.
+EC temperature compensation: Always report specific conductance (25°C-corrected).
+Uncorrected EC will track temperature and produce false signals.
+Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on
+one across the fleet.
+DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the
+antifouling/cleaning schedule.
+
+-- 6 of 7 --
+
+Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long
+deployment is a fouling/maintenance flag first, an environmental signal second.
+Maintain this as a living document. As DataPod deployments build site-specific baselines, append
+local “normal” ranges and any site-specific event signatures observed in the field.
+
+-- 7 of 7 --
+
+
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0002, score 0.7076424889013058)
+
+ically 6.5–8.5) is poorly buffered and naturally variable.
+Seawater (~8.0–8.2) is strongly carbonate-buffered — so any meaningful pH excursion in
+marine water is significant and worth investigating.
+Pollution relevance: Acidic inputs (acid mine drainage, certain industrial effluent) crash pH;
+alkaline inputs (concrete/construction washwater, some industrial discharge) raise it. Large
+
+-- 2 of 7 --daily pH swings indicate biological productivity, not a discharge.
+Turbidity
+Measures: Water clarity — light scattered by suspended particles (sediment, plankton, organic
+matter). Units: NTU or FNU.
+What drives it: Sediment runoff, shoreline erosion, bottom resuspension by
+currents/waves/dredging, and algal cells.
+Fresh vs. salt: Rivers and estuaries are naturally more turbid and event-driven (storms,
+dredging). Open coastal water is clearer; resuspension peaks at maximum tidal current.
+Pollution relevance: A turbidity spike flags storm runoff, construction/erosion, or dredging.
+Critically, particles carry adsorbed pollutants — phosphorus, metals, hydrocarbons,
+pathogens — so a turbidity spike is also a proxy for contaminant loading. High turbidity also
+suppresses photosynthesis by blocking light.
+2. Baseline Reference Ranges
+Parameter 	Healthy Freshwater 	Brackish / Estuarine 	Healthy Seawater
+Temperature Climate/season-
+dependent
+Climate/season-
+dependent Climate/season-dependent
+Dissolved
+Oxygen 6–11 mg/L (>80% sat.) 	5–9 mg/L 5–8 mg/L (~7–8 at 100%
+sat.)
+ORP 	+200 to +400 mV 	+150 to +350 mV 	+200 to +400 mV
+Conductivity
+(EC) 50–1,500 μS/cm 	~1,000–35,000 μS/cm ~45,000–55,000 μS/cm (~35
+PSU)
+pH 	6.5–8.5 	7.0–8.3 	7.8–8.3
+Turbidity 	<5–25 NTU 	5–100+ NTU 	<5–10 NTU
+Ranges are general guidance. Establish a site-specific baseline before treating deviations as events
+— local geology, season, and tidal stage shift “normal” substantially.
+3. How the Parameters Interrelate
+Understanding these couplings is what turns six independent readings into a diagnostic system.
+Temperature → DO (inverse, two ways): Warmer water physically holds less oxygen and
+
+-- 3 of 7 --
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0003, score 0.7057337400835018)
+
+U
+Ranges are general guidance. Establish a site-specific baseline before treating deviations as events
+— local geology, season, and tidal stage shift “normal” substantially.
+3. How the Parameters Interrelate
+Understanding these couplings is what turns six independent readings into a diagnostic system.
+Temperature → DO (inverse, two ways): Warmer water physically holds less oxygen and
+
+-- 3 of 7 --speeds the respiration/decomposition that consumes it. A temperature rise should always be
+paired with an expected DO decline.
+Temperature → EC: Ion mobility rises with temperature; raw EC increases ~2% per °C. Always
+report temperature-corrected specific conductance so EC changes reflect chemistry, not
+warming.
+DO ↔ ORP (tightly coupled): Oxygen is the dominant electron acceptor — abundant DO drives
+ORP strongly positive. As DO is consumed, ORP declines; once oxygen is exhausted, ORP goes
+negative. ORP often moves before DO hits bottom, giving lead time.
+pH ↔ DO (the photosynthesis/respiration couple): Photosynthesis removes CO₂ (raises pH)
+and releases O₂; respiration adds CO₂ (lowers pH) and consumes O₂. pH and DO therefore rise
+and fall together on the daily cycle. In-phase daily swings of pH and DO are the fingerprint
+of biological productivity.
+Turbidity → DO/pH: Suspended particles block light, suppressing photosynthesis and
+dampening daytime DO/pH gains. Organic-rich turbidity also adds direct oxygen demand.
+Turbidity as a contaminant carrier: Sediment transports adsorbed nutrients, metals, and
+pathogens — a turbidity spike can stand in for a loading event even when chemistry looks
+stable.
+EC as a source fingerprint: Because fresh and salt water differ ~1,000× in EC, the direction of
+an EC change tells you whether freshwater (rain, runoff, groundwater) or saline/ionic input (tide,
+intrusion, discharge) is driving the event.
+4. Pollution Event Signature Matrix
+Arrows show the expected direction of change relative to baseline. ↑↑ / ↓↓ = strong, ↑ / ↓ =
+moderate, 	= large swing or variable, → = little change.
+Event 	Temp 	DO 	ORP 	EC 	pH 	Turbidity Primary
+Signature
+Sewage /
+sanitary
+discharge
+→/↑ 	↓↓ 	↓↓ 	↑ 	↓ 	↑
+DO crash +
+ORP crash +
+EC rise +
+turbidity rise,
+not tied to
+time of day
+Algal bloom /
+(super-
+sat.
+midday, 	(high
+Large in-
+phase daily
+DO + pH
+oscillations;
+
+-- 4 of 7 --
+
+eutrophication 	↑ 	crash
+pre-
+dawn)
+→ 	midday) 	↑ 	pre-dawn DO
+minimum is
+the danger
+window
+Stormwater /
+urban runoff ↓ 	↓
+↓
+(marine)
+/
+(fresh)
+↑↑
+Sharp
+turbidity spike
+coincident
+with rainfall;
+EC shifts
+(drops in
+marine, may
+spike in fresh
+from road salt)
+Industrial /
+chemical
+discharge
+↑↑
+Abrupt step-
+changes in EC
+and/or pH
+and/or ORP
+with no diel or
+tidal
+explanation
+Thermal
+discharge ↑↑ 	↓ 	→ 	→ 	→ 	→
+Temperature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0018, score 0.6900749998325132)
+
+-- 14 of 44 --2.0 Optical (Luminescence) Sensor Method 	7
+barometric pressure reading not measured at the DO calibra-
+tion altitude for use during a DO calibration is no longer
+recommended. It is required that the barometric pressure be
+measured at the altitude of the DO calibration or check.
+For DO calibrations, the ambient atmospheric pressure
+must be determined to the nearest 1 millimeter (mm) of
+mercury. A calibrated pocket altimeter-barometer typically has
+been used to determine atmospheric pressure; however, many
+multiparameter water-quality instruments and DO meters in
+common use include an internal barometer.
+Check the accuracy of all field barometers (including
+barometers built into instrument systems) before each field trip
+or at least annually, and record readings and adjustments in the
+instrument log book. Check field barometers against a NIST-
+traceable barometer kept at the USGS Water Science Center,
+office, or laboratory, or check barometer accuracy while at an
+official weather station where ambient atmospheric pressure
+can be obtained.
+Most modern multiparameter instruments (see NFM 6.8)
+incorporate a pressure-temperature and salinity compensa-
+tion algorithm in their firmware for DO measurements; the
+instruments have a built-in conductivity sensor that is used
+to correct the DO-concentration data for salinity automatically.
+For instruments that are not equipped with a conductivity
+sensor, manual correction of the DO data for salinity
+is required.
+If a user-specified salinity correction is needed, the
+preferred USGS method is to apply salinity-correction factors
+after calibrating and measuring the DO concentration of the
+environmental water body (see section 5.0). Interactive tables
+for user-specified temperature, pressure, and salinity are avail-
+able at https://water.usgs.gov/software/DOTABLES/.
+When a manual salinity correction is made by the user
+during calibration, the instrument requires recalibration for
+each measured field variation in salinity (see section 5.0).
+If a multiparameter instrument that includes
+a calibrated conductivity sensor is used, salin-
+ity correction to the DO concentration reading is
+performed automatically.
+2.2.2 Selection of Calibration Method
+Manufacturers uniformly recommend a 100-percent satu-
+rated oxygen calibration of DO sensors regardless of whether
+calibration in air (Procedure 1) or calibration in air-saturated
+water (Procedure 2) is used. It is important to refer to the
+manufacturer-provided guidance, as each of the procedures
+has inherent advantages and disadvantages and may include
+instrument-specific sources of error.
+Calibration or checking of an instrument in air
+(Procedure 1) is the preferred method specified by some
+manufacturers. The process is easily accomplished in the
+laboratory or field setting so long as the temperature of the air
+calibration chamber is stable.
+The air calibration or check with a wet-towel method
+(variation of Procedure 1) is the recommended method to
+be performed at the field site. This method is well suited to
+checking an instrument after transportation to a field site fol-
+lowed by calibration if the instrument fails the check with a
+wet-towel procedure.
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0001, score 0.689512938353341)
+
+r at the same temperature
+— marine systems sit closer to the hypoxia threshold by default.
+Pollution relevance: The single most important indicator of aquatic health. Organic pollution
+consumes oxygen (biochemical oxygen demand). Watch both the absolute value and the shape
+of the daily curve — large swings signal eutrophication; a sustained sag signals an oxygen-
+demanding discharge.
+
+-- 1 of 7 --Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L
+hypoxia · ~0 anoxia.
+ORP (Oxidation-Reduction Potential)
+Measures: The water’s net tendency to oxidize or reduce — effectively, the “electron pressure.”
+Units: mV.
+What drives it: The dominant electron acceptor present. Oxygen-rich water reads strongly
+positive; as oxygen is consumed, the system shifts to nitrate, then manganese/iron, then
+sulfate, driving ORP downward and eventually negative.
+Fresh vs. salt: Healthy aerobic water typically reads +200 to +400 mV. Negative values
+indicate reducing, anoxic, or septic conditions. Seawater’s high ionic strength makes absolute
+readings less comparable between sites — trend matters more than the raw number.
+Pollution relevance: ORP is the early-warning twin of DO. Because it responds to the chemical
+environment, it often begins falling before DO bottoms out. A drop toward or below zero is a
+strong signal of organic loading, sewage, or decomposition.
+Electrical Conductivity (EC)
+Measures: The water’s ability to carry current — a proxy for total dissolved ions/salts. Units:
+μS/cm (report temperature-corrected “specific conductance” at 25°C).
+What drives it: Dissolved ion content. Salinity dominates in marine water; in freshwater, EC
+reflects geology, runoff, road salt, and discharges.
+Fresh vs. salt: Freshwater and seawater differ by roughly 1,000× in EC. This makes EC the
+primary tool for identifying the source of a change — freshwater input vs. saline input vs. an
+ionic discharge.
+Pollution relevance: Sudden EC shifts flag saltwater intrusion, road-salt runoff,
+industrial/chemical discharge, or sewage. In estuaries, EC normally tracks the tide — separate
+that rhythm from genuine events.
+pH
+Measures: Acidity/alkalinity on a logarithmic scale of hydrogen-ion activity. Units: pH (unitless).
+What drives it: The CO₂–carbonate balance. Photosynthesis removes CO₂ and raises pH;
+respiration/decomposition adds CO₂ and lowers pH. Also affected by acidic/alkaline inputs.
+Fresh vs. salt: Freshwater (typically 6.5–8.5) is poorly buffered and naturally variable.
+Seawater (~8.0–8.2) is strongly carbonate-buffered — so any meaningful pH excursion in
+marine water is significant and worth investigating.
+Pollution relevance: Acidic inputs (acid mine drainage, certain industrial effluent) crash pH;
+alkaline inputs (concrete/construction washwater, some industrial discharge) raise it. Large
+
+-- 2 of 7 --
