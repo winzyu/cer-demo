@@ -46,17 +46,41 @@ const DENSE_SQL = `
 `;
 
 /**
- * Lexical branch. `websearch_to_tsquery` rather than `plainto_tsquery` because it tolerates
- * arbitrary user text — quotes, OR, `-negation` — without throwing, and real questions contain
- * all three. This branch is what catches acronyms and exact tokens ("ORP", "NTU", "KCl creep")
- * that dense retrieval underweights, and the eval has a whole class aimed at it.
+ * Lexical branch. Catches acronyms and exact tokens ("ORP", "NTU", "KCl creep") that dense
+ * retrieval underweights — the eval has a whole class aimed at it.
+ *
+ * **Repaired 2026-08-12; this is a deliberate deviation from legacy parity.** The port originally
+ * used `websearch_to_tsquery('english', $1)`, exactly as `MIGRATION_SPEC.md` §7 step 4 specifies.
+ * The SQL was faithful; the *input* was not. `websearch_to_tsquery` **ANDs** every content word,
+ * and the legacy service fed it short model-composed search terms from its `search_documents`
+ * tool. Here retrieval runs up front on the raw user question (◆G11), so the query became a whole
+ * sentence and the AND matched nothing:
+ *
+ *     websearch_to_tsquery('english', 'What is ORP and what does it actually measure?') -> 0 rows
+ *     websearch_to_tsquery('english', 'ORP')                                           -> 16 rows
+ *
+ * Measured across the eval: **36 of 46 questions (78%) returned zero lexical rows**, so the hybrid
+ * arm was silently running dense-only and its bake-off result was not measuring hybrid retrieval
+ * at all (`RETRIEVAL_BAKEOFF.md` §4a).
+ *
+ * The repair ORs the lexemes instead of ANDing them, deriving them with `to_tsvector` so Postgres'
+ * own stemming and stopword list still do the work — no hand-rolled word list to drift from the
+ * index's own analysis. `ts_rank_cd` then ranks by coverage density, so a chunk matching more of
+ * the query still outranks one matching a single common term, which is what makes OR usable rather
+ * than a firehose. An all-stopword query yields a NULL tsquery and the guard returns no rows
+ * instead of throwing.
  */
 const LEXICAL_SQL = `
+  WITH q AS (
+    SELECT to_tsquery('english', string_agg(lexeme, ' | ')) AS tsq
+    FROM unnest(to_tsvector('english', $1))
+  )
   SELECT c.id AS chunk_id, d.filename, d.title, d.source_url, c.content
   FROM chunks c
   JOIN documents d ON d.id = c.document_id
-  WHERE c.content_tsv @@ websearch_to_tsquery('english', $1)
-  ORDER BY ts_rank_cd(c.content_tsv, websearch_to_tsquery('english', $1)) DESC
+  CROSS JOIN q
+  WHERE q.tsq IS NOT NULL AND c.content_tsv @@ q.tsq
+  ORDER BY ts_rank_cd(c.content_tsv, q.tsq) DESC
   LIMIT $2
 `;
 

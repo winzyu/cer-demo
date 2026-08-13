@@ -258,17 +258,45 @@ describe("PgVectorRagAdapter", () => {
 
     await new PgVectorRagAdapter(client, embeddings).getContext("ORP");
 
-    const lexical = calls.find((call) => call.text.includes("websearch_to_tsquery"));
+    const lexical = calls.find((call) => call.text.includes("to_tsquery"));
     expect(lexical?.values[0]).toBe("ORP");
   });
 
-  it("uses websearch_to_tsquery so free text cannot throw", async () => {
-    // plainto_tsquery would reject quotes and negation; real questions contain both.
+  it("ORs the query lexemes instead of ANDing them", async () => {
+    // **The regression this exists for.** The original port used
+    // `websearch_to_tsquery('english', $1)`, which ANDs every content word. Fed a whole user
+    // question (retrieval runs up front here, not as a model-composed tool call), it matched
+    // nothing on 36 of the eval's 46 questions — so the hybrid arm ran dense-only through an
+    // entire sweep while looking healthy. See RETRIEVAL_BAKEOFF.md §4a.
     const { client, calls } = clientReturning([], []);
 
-    await new PgVectorRagAdapter(client, embeddings).getContext('"KCl creep" -damaged');
+    await new PgVectorRagAdapter(client, embeddings).getContext("What is ORP and what does it measure?");
 
-    expect(calls.some((call) => call.text.includes("websearch_to_tsquery"))).toBe(true);
+    const lexical = calls.find((call) => call.text.includes("to_tsquery"));
+    expect(lexical?.text).toContain("' | '");
+    expect(lexical?.text).not.toContain("websearch_to_tsquery");
+  });
+
+  it("derives lexemes with to_tsvector rather than a hand-rolled word list", async () => {
+    // Postgres' own stemming and stopword list must do the splitting, or the query analysis
+    // drifts from the index analysis and matches degrade silently.
+    const { client, calls } = clientReturning([], []);
+
+    await new PgVectorRagAdapter(client, embeddings).getContext("ORP drift");
+
+    const lexical = calls.find((call) => call.text.includes("to_tsquery"));
+    expect(lexical?.text).toContain("to_tsvector('english', $1)");
+  });
+
+  it("guards against a NULL tsquery from an all-stopword question", async () => {
+    // "is it the a of" produces an empty tsvector, so string_agg returns NULL. Without the
+    // guard the branch would throw rather than simply contributing nothing to the fusion.
+    const { client, calls } = clientReturning([], []);
+
+    await new PgVectorRagAdapter(client, embeddings).getContext("is it the a of");
+
+    const lexical = calls.find((call) => call.text.includes("to_tsquery"));
+    expect(lexical?.text).toContain("IS NOT NULL");
   });
 
   it("caps results at the resolved topK", async () => {
