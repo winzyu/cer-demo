@@ -345,6 +345,127 @@ The arms differ in one thing: how document text reaches the prompt. Everything e
 
 ---
 
+### 4a. Validity threat found in the captured sweep — the lexical branch is dead (2026-08-12)
+
+**`pgvector-rag`'s lexical branch returns nothing for 78% of the eval's questions** (36 of 46
+distinct turns), measured directly against the seeded sidecar. The arm is therefore running as
+**dense-only** for most of the sweep — which means it is not the legacy-parity hybrid it exists to
+represent, and its results cannot be read as "hybrid RAG performs like this".
+
+Cause: `websearch_to_tsquery('english', …)` **ANDs** every non-stopword term. §7 step 4 of
+`MIGRATION_SPEC.md` specifies exactly that function, so the SQL is a faithful port — the input is
+not. The legacy service exposed retrieval as a `search_documents` **tool**, so the model supplied
+short search terms ("ORP definition"). Here retrieval runs **up front on the raw user question**
+(the ◆G11 decision recorded in `timeline.md` N1), so the query becomes the whole sentence and the
+AND finds no chunk containing every content word:
+
+```
+websearch_to_tsquery('english', 'What is ORP and what does it actually measure?')  -> 0 chunks
+websearch_to_tsquery('english', 'ORP')                                            -> 16 chunks
+```
+
+Corroborating evidence in the transcripts: fused RRF scores run `1/61, 1/62, 1/63, 1/64, 1/65` —
+a single branch's consecutive ranks. Genuine fusion of two non-overlapping branches produces
+**paired** scores (`1/61, 1/61, 1/62, 1/62, …`), which appears on only a minority of turns. The arm
+also averages **1.74 source documents per turn** against `firestore-vector`'s 2.48, and draws all
+five chunks from a single document on 23 of 58 turns.
+
+**This is the failure this document warned about in §14 of `SPECS.md`** — "a subtly wrong fusion
+returns plausible-but-worse chunks, which would read as 'RAG loses' rather than as a bug." It is
+not a coding error; it is an **interaction between the up-front-retrieval architecture and the
+legacy lexical query**, and it was invisible until the sweep was analysed.
+
+Consequences, and none of them are optional:
+
+- **`pgvector-rag`'s quality numbers do not measure hybrid retrieval** and must not be reported as
+  if they do. Its 58.9% retrieval-miss rate and 13 over-refusals are substantially artefacts of the
+  dead branch.
+- **The `acronym-exact-token` class is void for this arm.** That class exists precisely to expose
+  dense retrieval's weakness on rare tokens, and the hybrid was the arm expected to win it. It
+  cannot win it with no lexical branch.
+- **`firestore-direct` and `firestore-vector` are unaffected.** Neither uses a lexical path —
+  Firestore has none — so the comparison between those two is clean and remains gradeable.
+- **This is a real ◆G11 finding, not only a bug report.** It quantifies a cost of up-front
+  retrieval that §11 of `timeline.md` anticipated qualitatively: keyword-shaped retrieval degrades
+  when the model no longer composes the query. Any future hybrid arm must either receive
+  model-generated search terms or OR/keyword-extract the user's question.
+
+### 4b. Repaired and re-run — and the arm still loses (2026-08-12)
+
+**Resolution chosen: repair the lexical query and re-run `pgvector-rag` alone.** The other two arms
+touch no lexical path, so their transcripts stayed valid and were not re-captured.
+
+The repair ORs the query's lexemes instead of ANDing them, deriving them with `to_tsvector` so
+Postgres' own stemming and stopword list still do the splitting, and ranking with `ts_rank_cd` so a
+chunk matching more of the query still outranks one matching a single common term:
+
+```sql
+WITH q AS (
+  SELECT to_tsquery('english', string_agg(lexeme, ' | ')) AS tsq
+  FROM unnest(to_tsvector('english', $1))
+)
+... WHERE q.tsq IS NOT NULL AND c.content_tsv @@ q.tsq
+    ORDER BY ts_rank_cd(c.content_tsv, q.tsq) DESC
+```
+
+**State this in the report: the arm is no longer a strict legacy port.** `MIGRATION_SPEC.md` §7
+step 4 specifies `websearch_to_tsquery`, and this is not that. It is also **not BM25** — Postgres'
+`ts_rank_cd` is a weaker ranker, so "the legacy hybrid" is approximated, not restored.
+
+The lexical branch is now alive on every question that has content words. The arm's numbers moved,
+and **not by enough to change its standing**:
+
+| | before (dense-only) | after repair | firestore-vector |
+|---|---:|---:|---:|
+| Retrieval miss rate | 58.9% | **53.6%** | 33.9% |
+| Over-refusals (of 58 turns) | 13 | **11** | 1 |
+| Source documents per turn | 1.74 | **1.95** | 2.48 |
+| Turns drawing from one document | 23 | **14** | 6 |
+| Prompt tokens per turn | 3,584 | **3,976** | 3,498 |
+| Cost per answer | $0.000431 | **$0.000447** | $0.000433 |
+
+Three conclusions, now on valid data:
+
+1. **The arm genuinely underperforms — it was not merely broken.** A working lexical branch bought
+   ~5 points of retrieval hit rate and left it far behind a dense-only Firestore arm. The bug was
+   real and worth fixing, but it was not the explanation.
+2. **Repair moved cost the way the bug predicted it would: up.** A live branch contributes
+   candidates the dense branch did not, so fusion returns more text. `firestore-vector` is now
+   cheaper at **every** volume in the range, where before the two crossed at ~2.96M requests/month.
+   The dead branch had been flattering this arm on price.
+3. **The `acronym-exact-token` class is gradeable again**, which was the point of repairing rather
+   than caveating — that class exists to expose dense retrieval's weakness on rare tokens. The arm
+   now hits 50% on it against `firestore-vector`'s 67% and direct-feed's 100%.
+
+Per-class retrieval hit rate, all three arms, warm pass:
+
+| class | firestore-direct | pgvector-rag | firestore-vector |
+|---|---:|---:|---:|
+| acronym-exact-token | 100% | 50% | 67% |
+| cross-document | 100% | 50% | 33% |
+| **deep-in-manual** | **33%** | 67% | **83%** |
+| definitional | 100% | 17% | 100% |
+| event-signature | 100% | 100% | 100% |
+| follow-up | 100% | 17% | 50% |
+| fouling-drift | 100% | 25% | 50% |
+| precedence | 100% | 33% | 33% |
+| probe-calibration | 100% | 50% | 75% |
+| refusal | 100% | 75% | 75% |
+| threshold-lookup | 100% | 50% | 75% |
+
+`deep-in-manual` is the row that matters most: it is the only class where direct-feed loses, and it
+loses structurally — the ◆G9 slice excludes the long manuals by design. **That single row is the
+entire case for keeping a RAG arm**, and it is what makes the split outcome §8 anticipated
+(direct-feed the authoritative tier, RAG the manuals) the most likely honest reading of this
+experiment.
+
+Caveat that still stands: retrieval hit rate is **not** answer quality. It measures whether the
+document the fixture nominates reached the prompt, not whether the answer was right. An arm can
+retrieve the right document and still answer badly, or answer well from a document the fixture did
+not nominate. Grading is still required.
+
+---
+
 ## 5. Eval set — fixed conversations, not loose questions
 
 ~25–30 **conversations**, fixed and version-controlled, each replayed turn-by-turn in a set order

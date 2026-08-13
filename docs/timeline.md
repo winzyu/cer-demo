@@ -7,6 +7,9 @@ the work downstream of them starts.
 This is the successor to the original migration timeline. The single biggest change: the target-stack
 gate (◆G1) is now **resolved** — see below — which re-anchors every phase that depended on it.
 
+> **Current state and how to resume: [`HANDOFF.md`](HANDOFF.md) (2026-08-12).** The N2 sweep is
+> captured and valid; what remains is grading. Read that first if you are picking this up cold.
+
 Companion docs: [`SPECS.md`](SPECS.md) (what's built today), [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md)
 (coding conventions), [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md) (legacy FastAPI
 behavior being ported), [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) (the Phase N2 direct-feed vs
