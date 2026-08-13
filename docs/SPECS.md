@@ -13,10 +13,19 @@ current codebase.
 - The **question set every arm is graded against** is in [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md)
   (§12), committed before any arm runs.
 
-> **Status: Phase N1 complete.** Service bootstrap, the retrieval seam (§9), and a working
-> `POST /api/v1/chat` answering via Fireworks with optional streaming (§10). Retrieval is still the
-> **stub adapter** — real retrieval is decided by the N2 bake-off. Sensor queries and ingestion are
-> **not implemented** (see §17).
+> **Status (2026-08-13): Phase N1 complete; Phase N2 captured but ungraded.** Service bootstrap,
+> the retrieval seam (§9), and a working `POST /api/v1/chat` (§10). **All three retrieval arms are
+> built, seeded and swept** — `firestore-direct`, `pgvector-rag`, `firestore-vector` (§14, §14b) —
+> with 168 transcripts under `eval/transcripts/` and the cost model running on measured numbers
+> (§14a). `DEFAULT_RETRIEVAL` still ships as `stub`, so a fresh checkout needs no credentials.
+>
+> **What remains in N2 is grading, not building.** ◆G7 is open until the blind packet
+> (`eval/grading/`, [`GRADING_GUIDE.md`](GRADING_GUIDE.md)) is scored and
+> `RETRIEVAL_COMPARISON.md` is written. Sensor queries and the tool-calling loop are **not
+> implemented** on this branch (see §17); a read-only device-API client exists on
+> `feat/device-api` — see [`migration/DEVICE_API.md`](migration/DEVICE_API.md).
+>
+> **Current state and how to resume: [`HANDOFF.md`](HANDOFF.md).**
 
 ---
 
@@ -66,7 +75,8 @@ clean-earth-rag/
 │   ├── app.ts                express assembly (exported for tests, no listen)
 │   ├── config/
 │   │   ├── index.ts          env loading + validation → frozen `config`
-│   │   └── database.ts       memoized Firestore client factory
+│   │   ├── database.ts       memoized Firestore client factory
+│   │   └── pgvector.ts       ⚠️ bake-off only, deleted at ◆G7
 │   ├── routes/
 │   │   ├── index.ts          /api/v1 aggregator
 │   │   ├── healthRoutes.ts   GET /health
@@ -108,7 +118,8 @@ clean-earth-rag/
 │   │   ├── systemPrompt.ts   ported legacy prompt + REFUSAL_SENTENCE
 │   │   └── promptBuilder.ts  static-first message assembly
 │   ├── services/
-│   │   └── LlmService.ts     Fireworks chat completion + streaming
+│   │   ├── LlmService.ts     Fireworks chat completion + streaming
+│   │   └── EmbeddingService.ts  nomic embeddings + dimension/all-zero guards
 │   ├── validators/
 │   │   └── chatValidators.ts parseChatRequest
 │   ├── types/
@@ -119,14 +130,17 @@ clean-earth-rag/
 │       ├── logger.ts         createLogger(tag)
 │       └── sse.ts            Server-Sent Events helpers
 ├── scripts/                  ingest.ts, seedFirestore.ts, seedFirestoreChunks.ts,
-│                             seedPgvector.ts, bakeoff.ts, cost.ts
+│                             seedPgvector.ts, bakeoff.ts, cost.ts, gradePacket.ts
 ├── test/
 │   ├── integration/  health.test.ts, chat.test.ts
 │   └── unit/         retrieval.test.ts, prompt.test.ts, llmService.test.ts,
 │                     directFeed.test.ts, ingestion.test.ts, chatValidators.test.ts,
-│                     evalFixtures.test.ts
+│                     evalFixtures.test.ts, bakeoffRunner.test.ts, pgvectorRag.test.ts,
+│                     cost.test.ts, firestoreCorpus.test.ts, firestoreVector.test.ts,
+│                     gradePacket.test.ts
 ├── eval/fixtures/            30 committed bake-off conversations (§12)
 ├── eval/transcripts/         captured sweeps, <pass>/<arm>/<fixture>.json (§13)
+├── eval/grading/             blind grading packet, <pass>/{packet,context,scores.csv,KEY.json}
 ├── frontend/index.html       static chat UI, wired to POST /api/v1/chat (streaming)
 ├── data/                     sensor CSV + corpus artifact (git-ignored)
 ├── documents/                corpus PDFs (git-ignored)
@@ -598,9 +612,10 @@ Four things it is built to prevent:
   to the full prompt prices it at its best — both silently.
 - **A negative break-even reported as a threshold.** When the lower-marginal arm also has the lower
   fixed cost the lines cross at a negative request count; `breakEven` returns `dominated` instead.
-- **A projection passed off as a measurement.** `firestore-vector` is priced from `pgvector-rag`'s
-  token profile because the arm does not exist yet; it is marked `*` in the output, and the whole
-  table is labelled `INDICATIVE` until sweep transcripts replace the spot-check figures.
+- **A projection passed off as a measurement.** Projected arms are marked `*` and the table is
+  labelled by `TOKEN_PROVENANCE`. **Since 2026-08-12 every arm is a sweep mean** — provenance is
+  `measured`, `PROJECTED_ARMS` is empty, and the `*` legend only prints when something is actually
+  projected.
 
 Prices, findings, and what they do to the decision: `RETRIEVAL_BAKEOFF.md` §1b. The headline is
 that a **50% cached-input discount on `gpt-oss-20b` does not invert the naive cost story, but the
@@ -669,9 +684,12 @@ Direct-feed passes it structurally, by never seeing the chapter; this arm saw it
 All three arms were selectable per-request on one server (`DEBUG_RETRIEVAL=true`), with
 `firestore-direct` reproducing 10,889 prompt tokens exactly — the switch the sweep runs on.
 
-**The bake-off capture runner has not yet been run against this arm**
-(`npm run bakeoff -- --arm=firestore-vector --spot-check`, then the cold/warm sweep). That is the
-next step, and it spends LLM tokens across all 58 runnable turns.
+**Swept 2026-08-11**: spot-checked, then captured cold and warm across all 58 runnable turns with
+zero failures. It is the **best-retrieving RAG arm** — 33.9% miss rate against `pgvector-rag`'s
+53.6% — the **cheapest arm at every volume** in the 1k-100k range, and it over-refused exactly one
+turn (against 11 for `pgvector-rag`). It also wins `deep-in-manual` outright at 83%, the one class
+`firestore-direct` cannot serve. Full per-class numbers in
+[`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §4b.
 
 ---
 
@@ -696,7 +714,8 @@ for local demo, to be tightened before deploy.
 
 ## 16. Testing
 
-Jest + `ts-jest` + `supertest`. **228 tests, all passing.**
+Jest + `ts-jest` + `supertest`. **234 tests, all passing** (on `feat/device-api`, which adds the
+device-API suite, 279).
 
 | suite | covers |
 |---|---|
@@ -713,6 +732,8 @@ Jest + `ts-jest` + `supertest`. **228 tests, all passing.**
 | `unit/pgvectorRag.test.ts` | RRF scoring and tie-breaking against the legacy formula, the nomic task prefixes, embedding batching and dimension/all-zero guards, both query branches, and top-k handling — all without a database |
 | `unit/cost.test.ts` | per-request billing with cached/uncached split, the cache-split guard, monthly totals, break-even including the negative-crossover and parallel-line cases, and the ◆G7 conclusions pinned to the recorded prices |
 | `unit/firestoreCorpus.test.ts` | the written field set matches what `loadSlice` reads, `chunks` stays out, and the document size guard |
+| `unit/firestoreVector.test.ts` | the `FieldValue.vector()` wrapper, the distance→score inversion, and the zero-result guard |
+| `unit/gradePacket.test.ts` | the blind packet's label shuffle: every arm once per fixture, deterministic across rebuilds, and **balanced across the set** — a shuffle can look right per sheet while the set leaks the mapping |
 
 **No test touches the network, needs a key, or spends money** — `chat.test.ts` mocks `LlmService`
 wholesale and the unit tests inject a fake client. Run with `npm test`.

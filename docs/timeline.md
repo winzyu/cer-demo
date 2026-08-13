@@ -393,7 +393,14 @@ answers complete.*
 
 ---
 
-## Session handoff — 2026-07-31, updated 2026-08-04
+## Session handoff — 2026-07-31, updated 2026-08-04 — **SUPERSEDED**
+
+> **Superseded by [`HANDOFF.md`](HANDOFF.md) (2026-08-13).** Everything this section describes as
+> pending has since happened: all three arms were swept (168 transcripts, zero failed turns), the
+> cost model runs on measured means, and a blind grading packet is built. **The one open item is
+> grading.** Kept below rather than deleted because its findings — prompt caching, the embeddings
+> `encoding_format` bug, the fixed quality floor — are still in force and still explain why the
+> code looks the way it does.
 
 **Phase N1 complete and merged to `demo`. Phase N2 (the retrieval bake-off) is most of the way
 built.** Everything below is committed and pushed on `feat/retrieval-bakeoff`. **228 tests, none
@@ -412,7 +419,7 @@ touching the network.**
 |---|---|
 | `firestore-direct` | ✅ built, verified live. Firestore is now seeded and the slice reads back from it, so `CORPUS_SOURCE=firestore` is ready — the *measured* run under it still has not happened. |
 | `pgvector-rag` | ✅ built, seeded, verified live. Sidecar is `docker-compose.bakeoff.yml`; **it is not running — restart it before use.** |
-| `firestore-vector` | ✅ built, seeded (305 chunks, both indexes present) and **verified end-to-end through `POST /api/v1/chat`** on 2026-08-04 — including the two discriminating fixtures: it answers the deep-in-manual question direct-feed refuses, and it refuses the fecal-coliform probe *despite retrieving the coliform chapter*. **The capture runner has not been run against it yet.** |
+| `firestore-vector` | ✅ built, seeded (305 chunks, both indexes present) and **verified end-to-end through `POST /api/v1/chat`** on 2026-08-04 — including the two discriminating fixtures: it answers the deep-in-manual question direct-feed refuses, and it refuses the fecal-coliform probe *despite retrieving the coliform chapter*. **Swept 2026-08-11 (cold + warm, 58/58 turns, zero failures).** |
 
 Also built: the **eval fixtures** (30 conversations / 62 turns, `eval/fixtures/`, see
 [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md)) and the **capture runner**

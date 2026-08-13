@@ -392,6 +392,7 @@ running the experiment and resolving ◆G7.
 | `npm run seed:pgvector` | embed and load the dev-only pgvector sidecar |
 | `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a bake-off run; `--spot-check`, `--only`, `--dry-run` |
 | `npm run cost` | price the arms and compute the break-even curve |
+| `npm run grade:packet` | build the blind grading packet from captured transcripts (`--pass=`, `--sample=`) |
 
 ---
 
@@ -432,9 +433,13 @@ test/
 frontend/
   index.html            # single-file chat UI (manual test surface, not the product)
 data/                   # corpus artifact + sensor CSV (git-ignored)
-documents/              # source corpus PDFs (git-ignored; bulky)
-docs/                   # SPECS.md, timeline.md, RETRIEVAL_BAKEOFF.md,
-                        #   EVAL_FIXTURES.md, migration/
+documents/              # source corpus (see documents/README.md). `.gitignore` has a
+                        #   documents/* rule, but several PDFs predate it and ARE tracked —
+                        #   check `git status` before assuming a deleted one is gone.
+eval/                   # fixtures/ (committed question set), transcripts/ (captured sweep),
+                        #   grading/ (blind packet) — see eval/README.md
+docs/                   # HANDOFF.md (start here), SPECS.md, timeline.md,
+                        #   RETRIEVAL_BAKEOFF.md, EVAL_FIXTURES.md, GRADING_GUIDE.md, migration/
 ```
 
 ---
