@@ -1,7 +1,10 @@
+import crypto from "crypto";
 import { buildMessages, formatContext } from "../../src/prompt/promptBuilder";
-import { REFUSAL_SENTENCE, buildSystemPrompt } from "../../src/prompt/systemPrompt";
+import { REFUSAL_SENTENCE, TOOL_BLOCK, buildSystemPrompt } from "../../src/prompt/systemPrompt";
 import type { Chunk } from "../../src/types/retrieval.types";
 import type { ChatMessage } from "../../src/types/chat.types";
+
+const sha256 = (value: string): string => crypto.createHash("sha256").update(value, "utf8").digest("hex");
 
 const chunks: Chunk[] = [
   { id: "c1", text: "DO below 5 mg/L stresses aquatic life.", source: "doc://epa-do" },
@@ -62,6 +65,85 @@ describe("buildSystemPrompt", () => {
   it("is identical across calls for the same water type", () => {
     // The cacheability precondition: nothing per-request may leak into this block.
     expect(buildSystemPrompt("freshwater")).toBe(buildSystemPrompt("freshwater"));
+  });
+});
+
+describe("the pinned bake-off prompt (SENSOR_TOOL off)", () => {
+  /**
+   * The system prompt is a **pinned control** for the Phase N2 bake-off (`RETRIEVAL_BAKEOFF.md`
+   * §4), and ◆G7 is still open on ungraded quality. Three arms were swept against the exact
+   * bytes below; changing them voids all three and forces a paid re-run.
+   *
+   * Hashed rather than eyeballed because the failure this guards is invisible in review — a
+   * trailing space or a swapped newline reads as identical on screen and produces a different
+   * cache prefix and a different prompt. These digests were taken from the prompt as it stood
+   * at the merge commit `fa299ef`, immediately before the N3 tool block was added, and verified
+   * equal to the pre-change function's output for both water types.
+   *
+   * **If this fails, do not update the hash to make it pass.** Either the change is unintended
+   * and belongs reverted, or ◆G7 has closed and the arms are being deliberately re-run — in
+   * which case update the digest *and* say so in `RETRIEVAL_BAKEOFF.md`.
+   */
+  it("is byte-identical to the prompt the captured arms ran against", () => {
+    expect(sha256(buildSystemPrompt("freshwater", false)))
+      .toBe("5c00189b647d59b552027d2bc16835de02ba63a9e6ddcbfea6c3ef12b87eb39a");
+    expect(sha256(buildSystemPrompt("saltwater", false)))
+      .toBe("01eb2effc857d3a26ec2b972c86d501be657dd83201a5cb0ede52acb103d3503");
+  });
+
+  it("says nothing about tools when the flag is off", () => {
+    const prompt = buildSystemPrompt("freshwater", false);
+
+    expect(prompt).not.toContain("query_sensor_data");
+    expect(prompt).not.toContain("TOOLS:");
+  });
+
+  it("appends the tool block, and only the tool block, when the flag is on", () => {
+    // The flag must be purely additive: an arm's prompt is a prefix of the tool-enabled one,
+    // so nothing above the appended block can have shifted.
+    const off = buildSystemPrompt("freshwater", false);
+    const on = buildSystemPrompt("freshwater", true);
+
+    expect(on.startsWith(off)).toBe(true);
+    expect(on.slice(off.length)).toBe(`\n\n${TOOL_BLOCK}`);
+  });
+
+  it("keeps the authoritative ranges above the tool block", () => {
+    // Ordering is the reason the flag-off prompt stays a prefix: ranges are static content and
+    // must not move below anything added later.
+    const on = buildSystemPrompt("freshwater", true);
+
+    expect(on.indexOf("AUTHORITATIVE NORMAL RANGES")).toBeLessThan(on.indexOf("TOOLS:"));
+  });
+});
+
+describe("TOOL_BLOCK", () => {
+  it("tells the model that a null value is not a zero reading", () => {
+    // DEVICE_API.md §12b: an empty window comes back from the API as zeros for all six
+    // metrics. The tool converts that to null; this line is what stops the model reporting
+    // it as a measurement anyway.
+    expect(TOOL_BLOCK).toContain('"value": null');
+    expect(TOOL_BLOCK).toContain("Never\n  report a missing reading as 0");
+  });
+
+  it("states that 0 is a real reading", () => {
+    expect(TOOL_BLOCK).toContain("0 is a real measurement for ORP and turbidity");
+  });
+
+  it("anchors relative ranges to the last reading, not the wall clock", () => {
+    // MIGRATION_SPEC.md §8 rule 2. Load-bearing for the stale pod: without it, "the last day"
+    // on a pod silent since 2026-08-07 is an empty window rather than its last day of data.
+    expect(TOOL_BLOCK).toContain("not to the\n  current wall-clock time");
+  });
+
+  it("marks turbidity as a provisional index rather than a measurement", () => {
+    expect(TOOL_BLOCK).toContain("PROVISIONAL, uncalibrated");
+  });
+
+  it("does not promise a document-search tool", () => {
+    // ◆G11 is open. Retrieval still runs before the call and arrives as CONTEXT; naming a
+    // search tool here would invite the model to announce lookups it cannot perform.
+    expect(TOOL_BLOCK).not.toContain("search_documents");
   });
 });
 

@@ -53,6 +53,46 @@ export interface DeviceApiConfig {
    */
   devToken?: string;
   timeoutMs: number;
+  /**
+   * Device the sensor tool answers about when the caller names none.
+   *
+   * Optional on purpose: unset means "the model must name a device, and an ambiguous
+   * question gets an error listing the choices". A wrong default is worse than no default
+   * here — the two cleared test pods are in different water bodies on opposite coasts, so
+   * silently answering about the wrong one produces a confident, well-formatted, wrong answer.
+   */
+  defaultDeviceLabel?: string;
+}
+
+/**
+ * The tool-calling layer restored in Phase N3 (`MIGRATION_SPEC.md` §3).
+ *
+ * ⚠️ `sensorTool` gates a change to the **system prompt**, which is a pinned control for the
+ * Phase N2 retrieval bake-off (`RETRIEVAL_BAKEOFF.md` §4). It defaults to **false** so the
+ * default prompt stays byte-identical to the one all three captured arms ran against, and so
+ * no `tools` array is attached to a chat request. ◆G7 is still open on ungraded quality; turning
+ * this on during a capture run makes that run incomparable to the captured three.
+ */
+export interface ToolsConfig {
+  /** Master switch for `query_sensor_data` — the prompt block, the tools array, and the loop. */
+  sensorTool: boolean;
+  /**
+   * Tool-enabled rounds before the loop forces a text-only answer. Legacy was 5
+   * (`MIGRATION_SPEC.md` §9, hard-coded); raised here because the six-parameter eval fixture
+   * needs one call per metric plus room for follow-ups, which 5 cannot fit. This is N5's
+   * "raise the tool-round cap" item landing early — see `timeline.md`.
+   *
+   * The cost of a high cap is the failure mode, not the happy path: a model that loops burns
+   * one paid LLM call per round. `ChatOrchestrator` short-circuits repeated identical calls so
+   * a stuck model cannot spend the whole budget re-asking one question.
+   */
+  maxToolRounds: number;
+  /**
+   * Rows `aggregation: "raw"` may return (legacy `RAW_LIMIT`). A cap, not a page size — raw
+   * output goes straight into the next prompt, so an uncapped window would push the real
+   * question out of the model's attention and bill for the privilege.
+   */
+  rawLimit: number;
 }
 
 export interface ChatConfig {
@@ -99,6 +139,7 @@ export interface Config {
   firestore: FirestoreConfig;
   fireworks: FireworksConfig;
   deviceApi: DeviceApiConfig;
+  tools: ToolsConfig;
   chat: ChatConfig;
   retrieval: RetrievalConfig;
   pgvector: PgVectorConfig;
@@ -200,6 +241,12 @@ const load = (): Config => {
       baseUrl: readString("DEVICE_API_BASE_URL"),
       devToken: readString("DEVICE_API_TOKEN"),
       timeoutMs: readInt("DEVICE_API_TIMEOUT_MS", 10000),
+      defaultDeviceLabel: readString("SENSOR_DEVICE_LABEL"),
+    },
+    tools: {
+      sensorTool: readBool("SENSOR_TOOL", false),
+      maxToolRounds: readInt("MAX_TOOL_ROUNDS", 16),
+      rawLimit: readInt("RAW_LIMIT", 200),
     },
     chat: {
       maxHistoryMessages: readInt("MAX_HISTORY_MESSAGES", 20),
@@ -219,6 +266,15 @@ const load = (): Config => {
     waterType: readEnum<WaterType>("WATER_TYPE", ["freshwater", "saltwater"], "freshwater"),
   };
 
+  // A cap of 0 would offer tools and then never let the model use a result, which reads as
+  // "the tool is broken" rather than as a misconfiguration.
+  if (config.tools.maxToolRounds < 1) {
+    errors.push(`MAX_TOOL_ROUNDS must be at least 1 (got ${config.tools.maxToolRounds})`);
+  }
+  if (config.tools.rawLimit < 1) {
+    errors.push(`RAW_LIMIT must be at least 1 (got ${config.tools.rawLimit})`);
+  }
+
   if (errors.length > 0) {
     throw new Error(`Invalid configuration:\n  - ${errors.join("\n  - ")}`);
   }
@@ -230,6 +286,18 @@ const load = (): Config => {
   }
   if (!config.fireworks.chatModel) {
     log.warn("LLM_MODEL is not set — set it before enabling the chat endpoint.");
+  }
+  if (config.tools.sensorTool) {
+    // Loud on purpose. This is the switch that un-pins the N2 bake-off's system prompt, and a
+    // capture run made with it on is not comparable to the three already captured
+    // (RETRIEVAL_BAKEOFF.md §4). Better a line in every startup log than a silently voided sweep.
+    log.warn(
+      `SENSOR_TOOL is ON — the system prompt carries a tool block and ${config.tools.maxToolRounds} tool rounds are enabled. `
+      + "Bake-off arms captured with it OFF are not comparable to runs made with it ON.",
+    );
+    if (!config.deviceApi.baseUrl) {
+      log.warn("SENSOR_TOOL is on but DEVICE_API_BASE_URL is not set — query_sensor_data will fail at call time.");
+    }
   }
   if (config.isProduction && !config.firestore.projectId) {
     log.warn("FIRESTORE_PROJECT_ID is not set in production — relying on Application Default Credentials.");

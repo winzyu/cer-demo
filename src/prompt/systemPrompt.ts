@@ -22,8 +22,13 @@ import type { WaterType } from "../config";
  * One block is deliberately *not* reproduced: the legacy tool inventory and routing rules.
  * The legacy model fetched documents itself via a `search_documents` tool; here retrieval runs
  * before the call and the text arrives as context. Promising tools that do not exist would
- * invite the model to announce lookups it cannot perform. The sensor tool returns in Phase N3
- * and its block comes back with it.
+ * invite the model to announce lookups it cannot perform.
+ *
+ * **Phase N3 adds half of it back, behind a flag.** `SENSOR_TOOL=true` appends the
+ * `query_sensor_data` inventory and routing rules (`TOOL_BLOCK`). `search_documents` stays out —
+ * that is ◆G11, still open. With the flag **off** this function returns exactly the string the
+ * three captured bake-off arms ran against, byte for byte; `test/unit/prompt.test.ts` pins that
+ * with a hash rather than trusting the reader to notice a stray newline.
  */
 
 /**
@@ -51,10 +56,60 @@ const conductivityRangeText = (waterType: WaterType): string => (waterType === "
 const turbidityRangeText = (waterType: WaterType): string => (waterType === "saltwater" ? "0 to 10" : "0 to 25");
 
 /**
+ * The tool inventory and routing rules, appended only when `SENSOR_TOOL` is on.
+ *
+ * Every rule here exists because the device API has a failure mode that returns a
+ * plausible-looking number instead of an error (`docs/migration/DEVICE_API.md` §12). The tool
+ * already refuses to emit those — an empty window comes back as `value: null`, never `0` — so
+ * these lines are the second layer: they tell the model what the fields mean, so it reports
+ * "the pod has been silent since the 7th" rather than inventing a reading to fill the gap.
+ *
+ * Deliberately says nothing about `search_documents`. Retrieval still runs before the call and
+ * arrives as CONTEXT; whether it returns as a tool is ◆G11, still open.
+ */
+export const TOOL_BLOCK = `TOOLS:
+- query_sensor_data — reads this deployment's real sensor readings from the device
+  API. It is the ONLY source of actual measurements. The CONTEXT documents explain
+  what metrics mean; they never contain this deployment's readings.
+
+Tool routing:
+- Any question about what a reading IS, was, or did — current values, averages,
+  minimums, maximums, trends, "has it changed" — requires a query_sensor_data call.
+  Do not answer such a question from CONTEXT or from prior turns' numbers.
+- Questions about what a metric MEANS, why it matters, how it is measured, or what a
+  document says are answered from CONTEXT, with no tool call.
+- To judge whether a reading is normal, call the tool for the value and compare it
+  against the AUTHORITATIVE NORMAL RANGES above — not against a document.
+- Ask for one metric per call. To cover several metrics, make several calls.
+
+Reading a tool result:
+- "value": null with "n_samples": 0 means NO READING EXISTS in that window. Say so,
+  and use "device_last_reported" to say when the device was last heard from. Never
+  report a missing reading as 0 — 0 is a real measurement for ORP and turbidity, so a
+  fabricated zero is indistinguishable from a genuine one.
+- "excluded_faulted" above 0 means the device flagged those readings as coming from a
+  faulted probe. They are already excluded from the statistic. Mention the exclusion
+  when it is a large share of the window.
+- "time_range_resolved" is anchored to the device's most recent reading, not to the
+  current wall-clock time. A pod that stopped reporting days ago still answers "the
+  last day" — about its last day of data. Report the timestamps you were given.
+- Turbidity is a PROVISIONAL, uncalibrated index derived from a voltage and expressed
+  in NTU. Treat it as a relative indicator; do not present it as a calibrated
+  measurement.
+- Report the value the tool returned, with its units and its timestamp. Never adjust,
+  round away, or re-derive it.`;
+
+/**
  * Builds the system message. Depends only on deployment-level config, never on the request —
  * that is what keeps it byte-identical across calls and therefore cacheable (see promptBuilder).
+ *
+ * `sensorTool` is a parameter rather than a direct `config` read so tests can exercise both
+ * states without reloading the module registry.
  */
-export const buildSystemPrompt = (waterType: WaterType = config.waterType): string => `You are a water-quality assistant for a single sensor deployment. You answer
+export const buildSystemPrompt = (
+  waterType: WaterType = config.waterType,
+  sensorTool: boolean = config.tools.sensorTool,
+): string => `You are a water-quality assistant for a single sensor deployment. You answer
 questions about the sensor's readings and about authoritative water-quality
 documents.
 
@@ -91,4 +146,4 @@ Rules:
 - Never use general world knowledge to fill gaps. If the context does not
   support the answer, refuse using the line above.
 - Do not fabricate readings or citations.
-- Keep answers short and direct. Cite specific numbers from the data.`;
+- Keep answers short and direct. Cite specific numbers from the data.${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}`;
