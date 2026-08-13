@@ -3,6 +3,7 @@ import os from "os";
 import path from "path";
 import {
   AVAILABLE_CAPABILITIES,
+  availableCapabilities,
   countTurns,
   loadFixtures,
   runnableFixtures,
@@ -115,12 +116,41 @@ describe("committed eval fixtures", () => {
     expect(runnableFixtures(fixtures).every((fixture) => fixture.runnable)).toBe(true);
   });
 
-  it("still has fixtures waiting on the sensor tool", () => {
-    // If this ever passes vacuously, N3 landed and `sensor-tool` should be in
-    // AVAILABLE_CAPABILITIES — the two sensor fixtures are not meant to be quietly dropped.
+  it("blocks only sensor-tool fixtures, and only while the flag is off", () => {
+    // N3 built `query_sensor_data`, but it is gated on SENSOR_TOOL so the bake-off's pinned
+    // prompt stays byte-identical while ◆G7 is open. Anything blocked must therefore be
+    // blocked on that one capability and nothing else.
     const blocked = fixtures.filter((fixture) => !fixture.runnable);
     blocked.forEach((fixture) => {
       expect(fixture.requires).toContain("sensor-tool");
+    });
+  });
+
+  describe("the sensor-tool gate", () => {
+    it("holds the two sensor fixtures back when the tool is off", () => {
+      // With the flag off a sweep must replay exactly the 28 fixtures the captured arms ran —
+      // otherwise the new run is not comparable to them.
+      const off = loadFixtures(undefined, availableCapabilities(false));
+
+      expect(off.filter((fixture) => fixture.runnable)).toHaveLength(28);
+      expect(off.filter((fixture) => !fixture.runnable).map((fixture) => fixture.id).sort())
+        .toEqual(["sensor-doc-do-normal", "sensor-doc-event-check"]);
+    });
+
+    it("makes all 30 runnable when the tool is on", () => {
+      // The N3 definition of done. `sensor-doc-event-check` additionally needs a raised tool
+      // cap, which is why MAX_TOOL_ROUNDS defaults to 16 rather than the legacy 5.
+      const on = loadFixtures(undefined, availableCapabilities(true));
+
+      expect(on).toHaveLength(30);
+      expect(on.every((fixture) => fixture.runnable)).toBe(true);
+    });
+
+    it("reports the capability set from the flag, not from a hard-coded list", () => {
+      expect(availableCapabilities(false)).not.toContain("sensor-tool");
+      expect(availableCapabilities(true)).toContain("sensor-tool");
+      // turbidity-in-scope landed for real in N4 and is not conditional.
+      expect(availableCapabilities(false)).toContain("turbidity-in-scope");
     });
   });
 

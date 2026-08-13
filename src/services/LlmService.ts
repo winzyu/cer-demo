@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import createError from "http-errors";
 import { config } from "../config";
 import type { ChatMessage } from "../types/chat.types";
+import type { ToolCall, ToolDefinition } from "../types/tool.types";
 import { createLogger } from "../utils/logger";
 
 const log = createLogger("LLM");
@@ -41,7 +42,42 @@ export interface LlmAnswer {
   content: string;
   model: string;
   usage?: LlmUsage;
+  /**
+   * Tools the model asked for this round. Empty means it answered in text, which is what ends
+   * the orchestration loop (`MIGRATION_SPEC.md` §3 step 3).
+   */
+  toolCalls: ToolCall[];
 }
+
+/**
+ * Reads tool calls off a completion.
+ *
+ * Defensive rather than trusting: a provider may omit `tool_calls` entirely, send a call with no
+ * function name, or send `arguments` as something other than a string. Each of those becomes a
+ * dropped or repaired call here, because the alternative is a `TypeError` thrown from inside the
+ * loop after tokens have already been paid for.
+ */
+const readToolCalls = (message: unknown): ToolCall[] => {
+  const raw = (message as { tool_calls?: unknown } | undefined)?.tool_calls;
+  if (!Array.isArray(raw)) {
+    return [];
+  }
+  return raw.flatMap((entry): ToolCall[] => {
+    const call = entry as { id?: unknown; function?: { name?: unknown; arguments?: unknown } };
+    const name = call.function?.name;
+    if (typeof name !== "string" || name === "") {
+      return [];
+    }
+    return [{
+      id: typeof call.id === "string" && call.id !== "" ? call.id : `call_${name}`,
+      type: "function",
+      function: {
+        name,
+        arguments: typeof call.function?.arguments === "string" ? call.function.arguments : "{}",
+      },
+    }];
+  });
+};
 
 /**
  * One piece of a streamed answer. `usage` arrives on the final event, when the
@@ -80,9 +116,10 @@ export const resetClient = (): void => {
  * Wraps the Fireworks chat-completions call. Fireworks speaks the OpenAI API, so the
  * official SDK is pointed at its base URL (`MIGRATION_SPEC.md` §4).
  *
- * No tools are offered: retrieval runs before this call and arrives as prompt context, so
- * there is nothing for the model to call. The legacy tool-round loop returns in Phase N3
- * with `query_sensor_data` (see timeline ◆G11).
+ * Retrieval still runs before this call and arrives as prompt context. Since Phase N3 a caller
+ * may additionally offer `tools`; `ChatOrchestrator` owns the round loop that does so, and
+ * omits them on the final round to force a text answer (§3). Whether `search_documents` also
+ * returns as a tool is ◆G11 and still open.
  */
 export class LlmService {
   private readonly openai?: OpenAI;
@@ -91,7 +128,7 @@ export class LlmService {
     this.openai = openai;
   }
 
-  async complete(messages: ChatMessage[]): Promise<LlmAnswer> {
+  async complete(messages: ChatMessage[], tools?: ToolDefinition[]): Promise<LlmAnswer> {
     const model = config.fireworks.chatModel;
     if (!model) {
       throw createError(503, "LLM_MODEL is not configured.");
@@ -101,16 +138,40 @@ export class LlmService {
 
     const response = await openai.chat.completions.create({
       model,
-      messages,
+      // The SDK's message union does not model a `tool` role carrying our optional fields;
+      // the wire shape is correct and is what the provider validates.
+      messages: messages as never,
       max_tokens: config.fireworks.maxTokens,
       // Pinned so answers are reproducible; the N2 bake-off requires it (RETRIEVAL_BAKEOFF §7a).
       temperature: config.fireworks.temperature,
       // Cache affinity on serverless — see FireworksConfig.user.
       user: config.fireworks.user,
+      // Omitted entirely when absent. Sending `tools: []` is not the same as sending nothing —
+      // it still perturbs the cacheable prefix, which is exactly what the SENSOR_TOOL flag
+      // exists to avoid while the bake-off arms are unresolved.
+      ...(tools && tools.length > 0 ? { tools } : {}),
       stream: false,
     });
 
     const content = response.choices[0]?.message?.content ?? "";
+    const toolCalls = readToolCalls(response.choices[0]?.message);
+
+    // An assistant turn that asks for tools legitimately has empty content — the answer is the
+    // call, not the text. Without this guard the empty-answer check below would turn every
+    // successful tool round into a 502.
+    if (toolCalls.length > 0) {
+      return {
+        content,
+        model: response.model ?? model,
+        toolCalls,
+        usage: {
+          promptTokens: response.usage?.prompt_tokens,
+          completionTokens: response.usage?.completion_tokens,
+          totalTokens: response.usage?.total_tokens,
+          cachedPromptTokens: readCachedTokens(response.usage),
+        },
+      };
+    }
 
     if (content.trim() === "") {
       // The documented gpt-oss failure mode: reasoning tokens consume the budget and the
@@ -125,6 +186,7 @@ export class LlmService {
     return {
       content,
       model: response.model ?? model,
+      toolCalls: [],
       usage: {
         promptTokens: response.usage?.prompt_tokens,
         completionTokens: response.usage?.completion_tokens,
@@ -158,7 +220,7 @@ export class LlmService {
     const stream = await openai.chat.completions.create(
       {
         model,
-        messages,
+        messages: messages as never,
         max_tokens: config.fireworks.maxTokens,
         temperature: config.fireworks.temperature,
         user: config.fireworks.user,

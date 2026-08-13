@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { config } from "../config";
 import { DIRECT_FEED_SLICE, DOC_META } from "../ingestion/corpus";
 import {
   EVAL_CLASSES,
@@ -28,13 +29,27 @@ const FIXTURE_DIR = path.resolve(__dirname, "../../eval/fixtures");
 
 /**
  * Capabilities the service has today. Fixtures requiring anything absent from this list are
- * committed but not runnable — see `EVAL_REQUIREMENTS`. Add `"sensor-tool"` when N3 restores
- * `query_sensor_data`.
+ * committed but not runnable — see `EVAL_REQUIREMENTS`.
  *
  * `turbidity-in-scope` landed 2026-07-29: the system prompt now lists turbidity as measured and
  * carries an operator range for it (`src/prompt/systemPrompt.ts`).
+ *
+ * **`sensor-tool` is conditional, not permanent.** `query_sensor_data` and the tool loop are
+ * built (Phase N3) but gated on `SENSOR_TOOL`, which defaults off so the bake-off's pinned
+ * system prompt stays byte-identical while ◆G7 is open. Deriving the capability from that same
+ * flag keeps the eval honest in both directions: with the flag off the two sensor fixtures stay
+ * unrunnable and a sweep is reproducibly the same 28 the captured arms ran, and with it on all
+ * 30 are runnable. Hard-coding `sensor-tool` here would let a default-configured sweep "run"
+ * two fixtures against a tool the model was never offered, and grade the refusals as answers.
  */
-export const AVAILABLE_CAPABILITIES: readonly EvalRequirement[] = ["turbidity-in-scope"];
+export const availableCapabilities = (
+  sensorTool: boolean = config.tools.sensorTool,
+): readonly EvalRequirement[] => (
+  sensorTool ? ["turbidity-in-scope", "sensor-tool"] : ["turbidity-in-scope"]
+);
+
+/** What this deployment can do right now. */
+export const AVAILABLE_CAPABILITIES: readonly EvalRequirement[] = availableCapabilities();
 
 const isStringArray = (value: unknown): value is string[] => Array.isArray(value)
   && value.every((entry) => typeof entry === "string" && entry.trim() !== "");
@@ -166,7 +181,10 @@ const validateFixture = (raw: unknown, filename: string, errors: string[]): void
  * Derived fields (`sliceCoverage`, `runnable`) are computed here rather than stored, so they
  * cannot drift from `DIRECT_FEED_SLICE` or from what the service can actually do.
  */
-export const loadFixtures = (dir: string = FIXTURE_DIR): LoadedFixture[] => {
+export const loadFixtures = (
+  dir: string = FIXTURE_DIR,
+  capabilities: readonly EvalRequirement[] = AVAILABLE_CAPABILITIES,
+): LoadedFixture[] => {
   const filenames = fs.readdirSync(dir).filter((name) => name.endsWith(".json")).sort();
   const errors: string[] = [];
 
@@ -187,7 +205,7 @@ export const loadFixtures = (dir: string = FIXTURE_DIR): LoadedFixture[] => {
   return fixtures.map((fixture) => ({
     ...fixture,
     sliceCoverage: sliceCoverageOf(fixture.answerable_from),
-    runnable: fixture.requires.every((req) => AVAILABLE_CAPABILITIES.includes(req)),
+    runnable: fixture.requires.every((req) => capabilities.includes(req)),
   }));
 };
 

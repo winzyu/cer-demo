@@ -8,6 +8,9 @@ jest.mock("../../src/services/LlmService", () => ({
     complete: jest.fn().mockResolvedValue({
       content: "Stubbed model answer.",
       model: "test-model",
+      // No tool calls: these tests cover the default SENSOR_TOOL=off path, where the
+      // orchestrator makes exactly one tool-free call.
+      toolCalls: [],
       usage: { promptTokens: 100, completionTokens: 20, totalTokens: 120 },
     }),
     completeStream: jest.fn().mockImplementation(async function* completeStream() {

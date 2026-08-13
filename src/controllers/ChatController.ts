@@ -4,6 +4,8 @@ import type { RetrievalRegistry } from "../retrieval/RetrievalRegistry";
 import type { Chunk } from "../types/retrieval.types";
 import { buildMessages } from "../prompt/promptBuilder";
 import { LlmService } from "../services/LlmService";
+import { ChatOrchestrator } from "../services/ChatOrchestrator";
+import { buildToolRegistry } from "../tools";
 import { parseChatRequest } from "../validators/chatValidators";
 import { createLogger } from "../utils/logger";
 import { openSseStream, writeSseEvent } from "../utils/sse";
@@ -23,9 +25,19 @@ export class ChatController {
 
   private readonly llm: LlmService;
 
-  constructor(registry: RetrievalRegistry = retrievalRegistry, llm: LlmService = new LlmService()) {
+  private readonly orchestrator: ChatOrchestrator;
+
+  constructor(
+    registry: RetrievalRegistry = retrievalRegistry,
+    llm: LlmService = new LlmService(),
+    // With SENSOR_TOOL off the registry is empty, the orchestrator offers nothing, and its
+    // first round is a single tool-free call — byte-identical to the pre-N3 request the
+    // bake-off arms were captured against.
+    orchestrator: ChatOrchestrator = new ChatOrchestrator(llm, buildToolRegistry()),
+  ) {
     this.registry = registry;
     this.llm = llm;
+    this.orchestrator = orchestrator;
   }
 
   postChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -47,7 +59,7 @@ export class ChatController {
         return;
       }
 
-      const answer = await this.llm.complete(messages);
+      const answer = await this.orchestrator.run(messages);
 
       res.status(200).json({
         answer: answer.content,
@@ -57,6 +69,11 @@ export class ChatController {
         // into inline quote citations.
         citations: chunks,
         usage: answer.usage,
+        // Tool results are traced, never cited (MIGRATION_SPEC §3 rule 4) — a sensor reading is
+        // this deployment's own measurement, not a claim attributable to a corpus document.
+        // Omitted entirely when no tool ran, so the pre-N3 response shape is unchanged.
+        ...(answer.invocations.length > 0 ? { tool_calls: answer.invocations } : {}),
+        ...(answer.capped ? { tool_round_cap_reached: true } : {}),
       });
     } catch (error) {
       // Express 4 does not forward async rejections — without this, a failing
@@ -86,6 +103,25 @@ export class ChatController {
     writeSseEvent(res, "meta", { mode, citations: chunks });
 
     try {
+      if (this.orchestrator.hasTools) {
+        // **Known limitation.** With tools enabled the answer is not token-streamed: the loop
+        // cannot know a round is the last one until it comes back without tool calls, by which
+        // point the text already exists. Re-issuing that round as a stream would double the
+        // cost of every answer, so the finished text is emitted as a single token event and the
+        // SSE contract holds. Real streaming needs incremental `delta.tool_calls` assembly —
+        // N7's chat UI is the phase that will want it.
+        const answer = await this.orchestrator.run(messages);
+        writeSseEvent(res, "token", { text: answer.content });
+        writeSseEvent(res, "done", {
+          model: answer.model,
+          usage: answer.usage,
+          ...(answer.invocations.length > 0 ? { tool_calls: answer.invocations } : {}),
+          ...(answer.capped ? { tool_round_cap_reached: true } : {}),
+        });
+        writeSseEvent(res, "end", {});
+        return;
+      }
+
       for await (const event of this.llm.completeStream(messages, controller.signal)) {
         if (event.text) {
           writeSseEvent(res, "token", { text: event.text });
