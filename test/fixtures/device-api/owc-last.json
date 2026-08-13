@@ -1,0 +1,27 @@
+{
+  "id": "OkGXKHrVeperC2pClyBw",
+  "data": {
+    "device": "dev:351077454567580",
+    "timestamp": 1786113529,
+    "date": "2026-08-07T14:38:49.000Z",
+    "best_lat": 0,
+    "best_lon": 0,
+    "best_location": "Location Scrubbed",
+    "water_data": {
+      "72": 0,
+      "97": 4.260000228881836,
+      "98": 392.4500122070313,
+      "99": 9.119500160217285,
+      "100": 163.6000061035156,
+      "102": 71.40739936828614,
+      "doError": 0,
+      "ecError": 0,
+      "orpError": 0,
+      "phError": 0,
+      "rtdError": 0,
+      "turbError": 0,
+      "lat": 0,
+      "lon": 0
+    }
+  }
+}
