@@ -189,14 +189,23 @@ describe("the ◆G7 cost conclusion", () => {
     const pg = byName(arms, "pgvector-rag");
     const result = breakEven(vector, pg);
 
-    // They do cross: firestore-vector pays per-query reads that pgvector-rag does not, so its
-    // marginal is fractionally higher. But Cloud SQL's idle bill pushes the crossing far past the
-    // 100k ceiling — the difference is a rounding error against an always-on database.
-    expect(result.kind).toBe("crossover");
-    if (result.kind !== "crossover") { throw new Error("expected a crossover"); }
-    expect(result.cheaperBelow).toBe("firestore-vector");
-    expect(result.requestsPerMonth).toBeGreaterThan(1_000_000);
+    // **This flipped from `crossover` to `dominated` on 2026-08-12**, when pgvector-rag's dead
+    // lexical branch was repaired (RETRIEVAL_BAKEOFF.md §4b).
+    //
+    // Before: firestore-vector paid per-query Firestore reads that pgvector-rag did not, so its
+    // marginal was fractionally higher and the two crossed — at ~2.96M requests/month, far past
+    // the ceiling, but they did cross. Repairing the lexical branch raised pgvector-rag's prompt
+    // tokens (3,584 -> 3,976), pushing its marginal above firestore-vector's. It now has both the
+    // higher marginal AND the higher fixed cost, so no crossover exists at any positive volume.
+    //
+    // `dominated` rather than a negative crossover is the whole point of that branch in
+    // `breakEven`: reporting "they cross at -180,000 requests/month" would be arithmetically
+    // true and operationally meaningless.
+    expect(result.kind).toBe("dominated");
+    if (result.kind !== "dominated") { throw new Error("expected domination"); }
+    expect(result.cheaper).toBe("firestore-vector");
 
+    expect(monthlyCost(vector, 1_000)).toBeLessThan(monthlyCost(pg, 1_000));
     expect(monthlyCost(vector, 100_000)).toBeLessThan(monthlyCost(pg, 100_000));
   });
 

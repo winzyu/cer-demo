@@ -123,11 +123,14 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
     {
       arm: "pgvector-rag",
       tokens: {
-        // Sweep means, warm pass: 3,584 prompt tokens/turn at a 38.4% cache rate. The earlier
-        // spot-check used 4,446 (the top of an observed range) to avoid flattering the arm;
-        // the sweep mean replaces that guardrail with the actual distribution over 58 turns.
-        promptTokens: 3584,
-        cachedPromptTokens: 1376,
+        // Sweep means, warm pass, **after the lexical-branch repair** (2026-08-12): 3,976 prompt
+        // tokens/turn at a 42.6% cache rate. The pre-repair sweep measured 3,584 at 38.4%, but
+        // that arm was running dense-only (`RETRIEVAL_BAKEOFF.md` §4a) and its token profile
+        // understated a working hybrid. Repairing it moved cost **up**, as expected: a live
+        // lexical branch contributes candidates the dense branch did not, so fusion returns more
+        // text. The direction matters — the bug was flattering this arm on cost.
+        promptTokens: 3976,
+        cachedPromptTokens: 1694,
         completionTokens: options.completionTokens,
         embeddingTokens: 20,
       },
