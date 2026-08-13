@@ -1,70 +1,71 @@
-# Session Handoff — 2026-08-12
+# Session Handoff — 2026-08-13
 
-Everything a new session or agent needs to resume this work cold. Written at the end of the
-session that captured the Phase N2 bake-off sweep and built the Phase N3 device-API data layer.
+Everything needed to resume this work cold. Written at the end of the session that captured the
+Phase N2 bake-off, repaired a validity threat in it, built the grading packet, and added the
+Phase N3 device-API read layer.
 
-**Read first:** [`timeline.md`](timeline.md) (phases + gates) · [`SPECS.md`](SPECS.md) (what's built)
-· [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) (the experiment, §4a/§4b are new)
+**Read order for a cold start:** this file → [`timeline.md`](timeline.md) (phases + gates) →
+[`SPECS.md`](SPECS.md) (what's built) → [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) (the
+experiment; §4a and §4b are the newest and most important).
 
 ---
 
 ## 1. State in one paragraph
 
-Phase N1 is complete. **Phase N2's bake-off is captured and valid but ungraded** — three retrieval
-arms have been swept over 28 conversations (58 turns each, 2 passes, zero failures), the cost model
-runs on measured numbers, and a blind grading packet is built and waiting for a human. ◆G7 cannot
-close until that grading happens. Separately, a **detour built the Phase N3 device-API read layer**
-(client, metric decoding, live exploration) on its own branch; the tool-calling loop was
-deliberately not built because it would void the bake-off's pinned prompt.
+Phase N1 is complete. **Phase N2's bake-off is captured, valid, and ungraded.** Three retrieval
+arms were swept over 28 conversations × 58 turns × 2 passes with zero failures; the cost model runs
+on measured numbers; a blind grading packet is built and waiting for a human. **◆G7 cannot close
+until that grading happens** — quality gates the decision and quality is the one thing unmeasured.
+Separately, a detour built the Phase N3 **device-API read layer** on its own branch, verified live
+against production. The tool-calling loop was deliberately not built, because it would void the
+bake-off's pinned prompt.
 
-## 2. Branches — important, the work is split
+## 2. The single most useful thing to know
+
+**The work is split across two branches that do not contain each other.**
 
 | branch | contains | state |
 |---|---|---|
-| `feat/bakeoff-sweep` | N2: sweep transcripts, measured cost model, lexical-branch repair, grading packet | **current branch**, has uncommitted work (§7) |
-| `feat/device-api` | N3: `DeviceApiClient`, metric decoding, `explore:devices`, `DEVICE_API.md` | committed and pushed, 2 commits |
-| `demo` | both branches' common ancestor | `f0131b2` |
+| `feat/bakeoff-sweep` | N2: sweep transcripts, measured cost model, lexical repair, grading packet, doc refresh | **current**, 5 uncommitted doc files (§7) |
+| `feat/device-api` | N3: `DeviceApiClient`, metric decoding, `explore:devices`, `DEVICE_API.md` | committed + pushed, 2 commits |
+| `demo` | common ancestor of both | `f0131b2` |
 
-The two branches do **not** contain each other's work. `npm test` reports different totals
-depending on which you are on: 234 on `feat/bakeoff-sweep`, 273 on `feat/device-api`.
+`npm test` therefore reports **234** on `feat/bakeoff-sweep` and **279** on `feat/device-api`.
+Neither number is wrong. Merging them is an open task (§8).
 
-## 3. What happened this session
+## 3. Where the retrieval decision actually stands
 
-### Phase N2 — the sweep
+**A provisional working choice was made: `firestore-direct`.** ◆G7 is **not** formally closed —
+this was a call to unblock testing, made on cost and retrieval evidence with quality still
+ungraded. Do not record it in the gate table until the packet is scored.
 
-- **Ran the bake-off twice.** The first run was **discarded**: `LLM_MAX_TOKENS=4096` was exhausted
-  by gpt-oss reasoning tokens on 16 turns, unevenly (direct-feed lost 2, pgvector 11), which would
-  have graded arms on different subsets. Raised to **16384** — uniform across arms, so
-  comparability holds — and re-ran. Second run: **58/58 turns per arm, zero failures.**
-- **Cold passes are not cold and could not be made cold.** A 20-minute idle failed to expire the
-  Fireworks prompt cache; direct-feed's "cold" still measured 95.5% cached. **All analysis uses
-  warm-pass means.** A genuinely cold direct-feed price is unmeasured — use
-  `npm run cost -- --cache-rate=0` for that worst case rather than quoting the cold column.
-- **Fed measured tokens into the cost model.** `TOKEN_PROVENANCE` is now `"measured"`,
-  `PROJECTED_ARMS` is empty. Two pinned tests failed when the real numbers landed and were updated
-  with reasons recorded — that is the tests working, not breaking.
-- **Found and repaired a validity threat**: `pgvector-rag`'s lexical branch was dead on 78% of
-  questions (§4a/§4b of `RETRIEVAL_BAKEOFF.md`). Repaired, re-ran that arm alone, re-analysed.
-- **Built the blind grading packet** and `GRADING_GUIDE.md` for a human judge.
+Reasoning, so it can be revisited rather than re-derived:
 
-### Phase N3 — the device API detour (on `feat/device-api`)
+- The cost spread is noise. $6.15 vs $4.33/month at 10k requests. Two dollars should not decide.
+- Retrieval reliability is not noise: **7.1% miss vs 33.9%**. Direct-feed had the right material
+  in 100% of turns in 10 of 11 question classes. Going into N3–N6 you want retrieval to stop being
+  a variable while sensor tools and reports are debugged.
+- It deletes a subsystem — no embeddings, no vector index, no chunk seeding, no re-embedding on
+  corpus change.
 
-Read-only client for the real Clean Earth backend, verified live against production. Full contract,
-credentials, and findings in [`migration/DEVICE_API.md`](migration/DEVICE_API.md). Headlines:
+What it costs: direct-feed cannot reach the long manuals (`deep-in-manual`, 33% vs 67%/83%). Three
+fixtures. **That single class is the entire case for keeping a RAG arm**, and it makes the split
+outcome §8 of `RETRIEVAL_BAKEOFF.md` anticipated — direct-feed the authoritative tier, RAG the
+manuals — the most likely honest final answer.
 
-- **Test pods confirmed**: `Algalita Pod` = `dev:351077454569099` (salt-water, reporting) and
-  **`Old Woman Creek 2026`** = `dev:351077454567580` (fresh-water, stale since 2026-08-07). The
-  string "OWC" appears nowhere — the acronym matches nothing.
-- **Temperature's unit varies by endpoint** (°F from `/water/last` and `/water/average`, raw °C
-  from `/water/period`). Normalized in the decoder.
-- **An empty window returns zeros for all six metrics**, not an error — indistinguishable from
-  anoxic water at pH 0 without a guard. Guarded via `DeviceAverages.empty`.
-- **The two test pods are different water types**, so the global `WATER_TYPE` env var cannot serve
-  both. Must become per-device metadata — Phase N4, and an input to ◆G3.
+**Two things that would flip this**, both worth re-checking before committing for real:
 
-## 4. The bake-off results as they stand
+1. **N6's document upload/delete feature.** Direct-feed's slice grows unbounded as documents are
+   added; that is precisely what vector search exists to handle.
+2. **A model change to `gpt-oss-120b`.** Its 90.7% cached-input discount makes direct-feed ~3.7×
+   cheaper on input and inverts the ranking. Re-run `npm run cost` if `LLM_MODEL` ever moves.
 
-Warm pass, 58 turns per arm, `gpt-oss-20b`, temperature 0, `CORPUS_SOURCE=firestore`.
+`firestore-vector` stays registered and costs nothing to keep — it runs on the datastore the
+service already uses, so switching is one env var.
+
+## 4. The measured results
+
+Warm pass, 58 turns/arm, `gpt-oss-20b`, temperature 0, `CORPUS_SOURCE=firestore`.
 
 | | firestore-direct | pgvector-rag | firestore-vector |
 |---|---:|---:|---:|
@@ -77,129 +78,143 @@ Warm pass, 58 turns per arm, `gpt-oss-20b`, temperature 0, `CORPUS_SOURCE=firest
 | Over-refusals (of 58) | 2 | 11 | **1** |
 | p50 TTFT | 2.08s | 2.76s | 2.58s |
 
-- `firestore-vector` is **cheaper than both others at every volume** in the 1k–100k range.
-- `firestore-direct` overtakes `pgvector-rag` on cost above **45,613 requests/month**.
-- **All three pass the refusal-integrity hard gate** (the 2 turns demanding the exact refusal
-  sentence refuse; neither of the 2 turns that must be answered was over-refused).
-- Latency: **p50 is tight (2.08–2.76s); p95 is noise-dominated and non-monotonic** (an arm's warm
-  p95 sometimes exceeds its cold). §8a's 1.5s p95 TTFT veto **cannot be applied** to this data —
-  report p50 and say so.
-- **`deep-in-manual` is the only class direct-feed loses** (33% vs 67%/83%), and it loses
-  structurally because ◆G9's slice excludes the long manuals. That single row is the whole case for
-  keeping a RAG arm, and makes §8's anticipated **split outcome** the most likely honest reading.
+Per-class retrieval hit rate is in `RETRIEVAL_BAKEOFF.md` §4b. The row that matters:
+`deep-in-manual` — direct 33%, pgvector 67%, vector 83%.
 
-**None of this is answer quality.** Retrieval hit rate measures whether the nominated document
-reached the prompt, not whether the answer was right.
+Facts that constrain how these may be reported:
 
-## 5. The immediate next task
+- **All three pass the refusal-integrity hard gate.** Both turns demanding the exact refusal
+  sentence refuse; neither turn that must be answered was over-refused.
+- **Cold passes are not cold and could not be made cold.** A 20-minute idle failed to expire the
+  Fireworks prompt cache (direct-feed's "cold" still measured 95.5% cached). **All analysis uses
+  warm means.** A genuinely cold direct-feed price is unmeasured — use
+  `npm run cost -- --cache-rate=0` for that worst case; never quote the cold column.
+- **The p95 latency veto cannot be applied.** p50 is tight (2.08–2.76s) but p95 is
+  noise-dominated and non-monotonic (an arm's warm p95 sometimes exceeds its cold). Report p50 and
+  say why.
+- **`pgvector-rag` is no longer a strict legacy port** (§4b). Label it an approximation wherever
+  it appears.
+- **Retrieval hit rate is not answer quality.** It measures whether the nominated document reached
+  the prompt, nothing more.
 
-**Grade the packet.** Everything else in N2 is done.
+## 5. The next task
+
+**Grade the blind packet.** Everything else in N2 is done.
 
 ```bash
-npm run grade:packet          # already built; safe to re-run, labels are stable
+npm run grade:packet                 # already built; safe to re-run, labels are stable
+npm run grade:packet -- --sample=6   # 6-sheet calibration subset
 ```
 
-- Packet: `eval/grading/warm/packet/` (28 sheets), context in `context/`, score sheet `scores.csv`,
-  and `KEY.json` which the judge opens **only when scoring is complete**.
-- Instructions: [`GRADING_GUIDE.md`](GRADING_GUIDE.md) — written for a non-technical reader.
-- Protocol (`RETRIEVAL_BAKEOFF.md` §7b): blind, arms shuffled. If an **LLM judge** does the bulk,
-  it must be a **different model than `gpt-oss-20b`**, judge one dimension per call, and be
-  calibrated against a ~20% human sample with the agreement rate reported.
-- The human calibration sample is meant to come from the blind frontend harness (§7c:
-  `GET /api/v1/retrieval/modes` + an arm selector in `frontend/index.html`). **That is not built.**
-  Either build it, or collect the human sample directly from the packet — the packet works
-  standalone and is the cheaper path.
+- Packet: `eval/grading/warm/packet/` (28 sheets) · context in `context/` · score sheet
+  `scores.csv` · `KEY.json` **opened only when scoring is complete**.
+- Instructions: [`GRADING_GUIDE.md`](GRADING_GUIDE.md), written for a non-technical reader.
+- Protocol (`RETRIEVAL_BAKEOFF.md` §7b): blind, arms shuffled. An LLM judge must be a **different
+  model than `gpt-oss-20b`**, judge one dimension per call, and be calibrated against a ~20% human
+  sample with the agreement rate reported.
+- **Recommended:** do the 6-sheet subset first. ~45 minutes, and it tells you whether direct-feed's
+  answers hold up before anyone spends 3–4 hours on the full set.
+- The human sample was designed to come from a blind frontend harness (§7c:
+  `GET /api/v1/retrieval/modes` + an arm selector). **That is not built.** The packet works
+  standalone and is the cheaper path — build the harness only if you want non-technical testers
+  exercising the bot in a browser.
 
-Then: write `docs/RETRIEVAL_COMPARISON.md` (§10 lists required contents), close ◆G7 in
-`timeline.md`'s gate table, and delete the pgvector sidecar per §9.
+Then: write `docs/RETRIEVAL_COMPARISON.md` (§10 lists required contents; most inputs already
+exist), close ◆G7 in `timeline.md`'s gate table, delete the pgvector sidecar per §9.
 
-## 6. Runbook — how to actually run things
+## 6. Runbook
 
 ```bash
-# pgvector sidecar (dev-only; NOT `docker compose`, the plugin isn't installed)
+# pgvector sidecar (dev-only; NOT `docker compose` — the plugin is not installed)
 docker-compose -f docker-compose.bakeoff.yml up -d
 docker-compose -f docker-compose.bakeoff.yml down
 
-# service, with every bake-off setting (do NOT rely on .env — it lacks these)
+# service with every bake-off setting (do NOT rely on .env — it lacks these)
 DEBUG_RETRIEVAL=true CORPUS_SOURCE=firestore \
 PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff \
 LLM_MAX_TOKENS=16384 LLM_TEMPERATURE=0 PORT=8000 npm run dev
 
-# capture
 npm run bakeoff -- --arm=<mode> --spot-check
 npm run bakeoff -- --arm=<mode> --pass=<cold|warm>
-
-npm run cost                  # cost table; pure arithmetic, no network, free
-npm run grade:packet          # blind grading packet
+npm run cost                  # pure arithmetic, no network, free
+npm run grade:packet
 ```
 
-**Environment gotchas, all of which cost time this session:**
+**Environment gotchas, every one of which cost time:**
 
-- **`.env` does not contain the bake-off settings.** `DEBUG_RETRIEVAL` is `false` and
-  `CORPUS_SOURCE=artifact` there. Pass them on the command line. If `DEBUG_RETRIEVAL` is false the
-  registry **ignores** the arm override and silently serves the default — the runner aborts on
-  mismatch, but only after wasting the run.
-- **The runner records `corpusSource` from its OWN process config** (`scripts/bakeoff.ts:112`), not
-  the server's. Pass the same env to the `npm run bakeoff` process or transcripts are mislabelled.
-  This is an unfixed papercut worth fixing properly.
+- **`.env` does not contain the bake-off settings.** `DEBUG_RETRIEVAL=false` and
+  `CORPUS_SOURCE=artifact` there. Pass them on the command line. With `DEBUG_RETRIEVAL=false` the
+  registry **silently ignores** the arm override and serves the default.
+- **The runner records `corpusSource` from its own process config** (`scripts/bakeoff.ts:112`), not
+  the server's. Pass the same env to `npm run bakeoff` or transcripts are mislabelled. Unfixed
+  papercut; worth fixing properly.
 - **`ts-node` cold start is ~80s.** `npm run dev` looks hung and is not.
-- **Don't `pkill -f "src/index.ts"`** — the pattern matches your own shell and kills it. Use
+- **Never `pkill -f "src/index.ts"`** — it matches your own shell and kills it. Use
   `pkill -f "[t]s-node-dev"`.
-- **Verify env took effect** by reading `/proc/<pid>/environ`, not by sending a request — a request
-  warms the prompt cache and destroys a cold pass.
+- **Verify env with `/proc/<pid>/environ`, not a test request** — a request warms the prompt cache
+  and destroys a cold pass.
 - Firestore uses ADC (`~/.config/gcloud/application_default_credentials.json`, project
-  `cer-demo-2026`). Already configured and verified.
+  `cer-demo-2026`). Configured and verified.
+- **`documents/*.pdf` are tracked in git despite the `.gitignore` rule** — they were committed
+  before it was added. A deleted PDF is recoverable with `git checkout --`; check `git status`
+  before assuming otherwise. (This came up for real: two USGS manuals were deleted and restored.)
 
-## 7. Uncommitted work on this branch
+## 7. Uncommitted right now
 
 ```
- M docs/RETRIEVAL_BAKEOFF.md              §4a/§4b: the dead lexical branch and its repair
- M src/retrieval/adapters/PgVectorRagAdapter.ts   the repair
- M test/unit/pgvectorRag.test.ts          4 tests pinning OR-not-AND
- M src/eval/costScenarios.ts              repaired pgvector token profile
- M test/unit/cost.test.ts                 two conclusions moved, reasons recorded
- M package.json                           grade:packet script
- M eval/transcripts/{cold,warm}/pgvector-rag/*.json   56 files, re-captured after repair
-?? docs/GRADING_GUIDE.md
-?? scripts/gradePacket.ts
-?? test/unit/gradePacket.test.ts
-?? eval/grading/                          4.1 MB, regenerable via npm run grade:packet
+ M README.md            grade:packet script; corrected project layout
+ M docs/SPECS.md        status header, file tree, test count, §14a/§14b corrections
+ M docs/timeline.md     old handoff marked SUPERSEDED; arm-table correction
+ M documents/README.md  full rewrite (it referenced the deleted Python stack)
+ M eval/README.md       transcripts/ and grading/ documented
 ```
 
-`npm test` 234/234, `npm run typecheck` clean, `npm run lint` clean.
+Docs only, no code. `npm test` 234/234, typecheck clean, lint clean.
+
+```bash
+git add README.md docs/SPECS.md docs/timeline.md documents/README.md eval/README.md
+git commit -m "docs: refresh stale corpus, eval, and status documentation"
+```
 
 ## 8. Open decisions for a human
 
-1. **Who grades, and does the frontend harness get built?** (§5.) Biggest open item.
-2. **Does `pgvector-rag` stay in the comparison?** It is now a *working* hybrid but **no longer a
-   strict legacy port** — the repair replaced `websearch_to_tsquery` with OR'd lexemes, and
-   `ts_rank_cd` is not BM25. It must be labelled as an approximation wherever it is reported.
-3. **Commit the 4.1 MB `eval/grading/`, or git-ignore it?** It regenerates from transcripts. Argument
-   for committing: the packet a human graded against should be recoverable exactly.
-4. **◆G11** — does `search_documents` return as a tool? The dead lexical branch quantified a real
-   cost of up-front retrieval; that evidence belongs in this decision.
-5. **Three operator questions** from the device-API work (`DEVICE_API.md` §12): Algalita reads
-   54,100–60,200 µS/cm against a stated saltwater range of 40,000–50,000; does the `0–25 NTU` range
-   apply to the derived/uncalibrated turbidity index; is Old Woman Creek's 5-day silence expected.
+1. **Who grades, and is the frontend harness built?** (§5.) The one thing blocking ◆G7.
+2. **Merge `feat/device-api` into `feat/bakeoff-sweep` (or both to `demo`)?** They can't currently
+   be tested together.
+3. **Does `pgvector-rag` stay in the comparison?** It works now but is no longer a strict legacy
+   port, so its role as "what we had before" is compromised.
+4. **Commit or git-ignore `eval/grading/`?** 4.1 MB, regenerable. Currently committed, on the
+   argument that the packet a human graded against should be recoverable exactly.
+5. **◆G11** — does `search_documents` return as a tool? The dead-lexical-branch finding (§4a)
+   quantified a real cost of up-front retrieval and belongs in that decision.
+6. **Three operator questions** from the device-API work (`migration/DEVICE_API.md` §12): Algalita
+   reads 54,100–60,200 µS/cm against a stated saltwater range of 40,000–50,000; does the
+   `0–25 NTU` range apply to the derived/uncalibrated turbidity index; is Old Woman Creek's silence
+   since 2026-08-07 expected.
 
-## 9. Things that will bite you
+## 9. Traps — things that fail silently
 
-- **`max_tokens` at 4096 silently truncates answers to empty.** The API call *succeeds*. Keep
-  16384 for any sweep.
-- **`LLM_TEMPERATURE` must stay 0** and the **system prompt is a pinned control** — changing it
-  after an arm has run voids that arm's results. Re-run every arm instead.
-- **Do not build the tool-calling loop before N2 closes.** It requires a tool block in the system
+- **`max_tokens` at 4096 truncates answers to empty.** The API call *succeeds*. This invalidated an
+  entire first sweep. Keep **16384** for any capture run.
+- **`LLM_TEMPERATURE` must stay 0**, and the **system prompt is a pinned control** — changing it
+  after an arm has run voids that arm. Re-run every arm instead.
+- **Do not build the tool-calling loop before N2 closes.** It needs a tool block in the system
   prompt, which voids the arms.
 - **0 is a valid reading** for ORP and turbidity. Never falsy-check a metric value.
 - **Fireworks' embeddings endpoint silently returns a 192-element all-zero vector** without
-  `encoding_format: "float"`. `EmbeddingService` guards both the dimension and the all-zero case.
-  Do not remove either guard.
+  `encoding_format: "float"`. Guards for dimension *and* all-zero are in `EmbeddingService`. Do not
+  remove either.
 - **Firestore vector writes must use `FieldValue.vector()`.** A plain `number[]` writes an array,
   the index never matches, and `findNearest` returns nothing **with no error**.
+- **A blind shuffle can look right per-sheet while the set leaks the mapping.** The first grading
+  packet put one arm at label A in 22 of 28 sheets. `unit/gradePacket.test.ts` guards the balance.
+- **Device-API temperature units differ per endpoint** (°F from `/water/last` and `/water/average`,
+  raw °C from `/water/period`) and **an empty window returns zeros for all six metrics**, not an
+  error. Both are guarded in `src/devices/` on `feat/device-api`; see `DEVICE_API.md` §12.
 
 ## 10. Cleanup
 
-The dev server and pgvector sidecar may still be running from this session:
+A dev server and the pgvector sidecar may still be running:
 
 ```bash
 pkill -f "[t]s-node-dev"
