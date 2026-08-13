@@ -239,6 +239,36 @@ would be work thrown away the moment real data arrives. The data-source abstract
 one tool, swappable adapters — so a synthetic adapter can still be added later for offline testing if
 it proves necessary.
 
+**Full contract, credentials, and the exploration/recording plan:
+[`migration/DEVICE_API.md`](migration/DEVICE_API.md)** — written 2026-08-11 from a read-only sweep
+of **both** reference repos. It supersedes the dashboard-only table below on three points: the
+production base URL (the dashboard proxies server-side, so its own env var is empty in prod),
+turbidity's provenance (derived from a raw voltage by a **provisional, uncalibrated** conversion —
+see §8, it qualifies a pinned N2 control), and a shifted metric-code table in the backend's
+alerting service that must not be ported. **The pod names are in neither repo** — the device list
+is runtime-only, so `npm run explore:devices` against the live API is the only way to confirm
+"Algalita pod" / "OWC 2026".
+
+The **read-only data layer is built and verified live 2026-08-11** (client, metric decoding,
+exploration/recording script, 45 offline tests). The **tool loop and the prompt's tool block are
+deliberately not built yet** — both would void the N2 arms; see `DEVICE_API.md` §10.
+
+**Test pods confirmed:** `Algalita Pod` = `dev:351077454569099` (salt-water, reporting) and
+**`Old Woman Creek 2026`** = `dev:351077454567580` (fresh-water, stale since 2026-08-07). Note the
+second is *not* named "OWC" anywhere — the acronym matches nothing.
+
+Three findings from the live run that bear on later phases (`DEVICE_API.md` §12):
+
+- **Temperature's unit varies by endpoint** — °F from `/water/last` and `/water/average`, raw °C
+  from `/water/period`, with nothing in the payload to say which. Normalized in the decoder.
+- **An empty window returns zeros for all six metrics**, not an error — "no data for the last day"
+  is otherwise indistinguishable from anoxic water at pH 0. Guarded; this is a hard requirement
+  for `query_sensor_data`, since reporting it would be a fabricated figure.
+- **The two test pods are different water types**, so `WATER_TYPE` as a global env var cannot serve
+  both. Water type must move to per-device metadata — **Phase N4, and an input to ◆G3**.
+  Separately, Algalita reads **54,100-60,200 µS/cm against a stated saltwater range of
+  40,000-50,000** — an operator question, not a code fix.
+
 **Contract, confirmed by reading `../user-dashboard` (read-only):**
 
 | item | value | source |
@@ -255,8 +285,12 @@ it proves necessary.
 - Reproduce the aggregations (min/max/mean/median/latest/raw), natural-language time-range parsing,
   and the **reference-time = latest reading** rule (`MIGRATION_SPEC.md` §8) on top of whatever the API
   returns — the endpoints are period/average shaped, so some aggregation stays local.
-- **Still unknown:** the deployed base URL, a working test token or QA mirror, and the exact response
-  body of each `/water/*` endpoint. These need a person, not code.
+- **Still unknown, revised 2026-08-11:** ~~the deployed base URL~~ — **resolved**,
+  `https://cer-api-98242557946.us-central1.run.app/api/v1`. ~~a QA mirror~~ — **there is none**;
+  "qa" selects a different Firestore database on the same deployment, so any live call reads
+  production. What remains: **a working token** — the one item that still needs a person, see
+  [`migration/DEVICE_API.md`](migration/DEVICE_API.md) §5 — and the **exact response body of each
+  `/water/*` endpoint**, which `npm run explore:devices` records the moment a token exists.
 
 **Also lands here: the tool-calling orchestration loop** (`MIGRATION_SPEC.md` §3), deferred from N1.
 N1 makes a single LLM call with no tools; the legacy loop — up to `MAX_TOOL_ROUNDS = 5` tool-enabled
