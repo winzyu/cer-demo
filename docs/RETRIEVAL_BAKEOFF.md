@@ -319,6 +319,23 @@ The arms differ in one thing: how document text reaches the prompt. Everything e
 - Same `user` field per request for serverless cache affinity.
 - Same sensor tool path, same corpus source files, same chunking where chunking applies
   (3200 chars / 400 overlap, quality filter, OCR for the scanned PDF).
+
+> **How the N3 tool layer preserves both of those (2026-08-13).** `query_sensor_data` and the
+> tool-round loop are built, but gated on **`SENSOR_TOOL`, default off**. With the flag off the
+> system prompt is byte-identical to the one all three arms ran against, and **no `tools` array is
+> attached to the request at all** — `tools: []` is not sent either, since an empty array still
+> perturbs the cacheable prefix. So both pinned controls hold and the captured arms remain valid
+> and comparable while ◆G7 is open.
+>
+> Three things enforce this rather than leaving it to discipline. `test/unit/prompt.test.ts` pins
+> the flag-off prompt by **SHA-256** for both water types — a stray newline reads as identical in
+> review and produces a different cache prefix. The eval's `sensor-tool` capability is **derived
+> from the same flag**, so a default-configured sweep replays exactly the 28 fixtures the arms ran
+> rather than "running" two more against a tool the model was never offered. And turning the flag
+> on **logs a warning at every startup**, because a capture run made with it on is not comparable
+> to the captured three.
+>
+> **If an arm is ever re-run with `SENSOR_TOOL=on`, re-run all three** — and say so here.
 - **One parse, one artifact.** `npm run ingest` parses `documents/` once into
   `data/corpus/corpus.json`, and every arm loads from it. If each arm parsed the PDFs itself,
   extraction differences would surface as answer-quality differences and be misread as one

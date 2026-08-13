@@ -115,29 +115,44 @@ clean-earth-rag/
 │   │   ├── costScenarios.ts  measured token counts + fixed costs
 │   │   └── cost.ts           per-request / monthly / break-even math
 │   ├── prompt/
-│   │   ├── systemPrompt.ts   ported legacy prompt + REFUSAL_SENTENCE
+│   │   ├── systemPrompt.ts   ported legacy prompt + REFUSAL_SENTENCE + TOOL_BLOCK (flagged)
 │   │   └── promptBuilder.ts  static-first message assembly
+│   ├── devices/
+│   │   ├── DeviceApiClient.ts  read-only client for the Clean Earth backend
+│   │   └── metrics.ts        metric codes, error flags, reading/average decoding
+│   ├── tools/
+│   │   ├── index.ts          tool registry, gated on SENSOR_TOOL
+│   │   ├── querySensorData.ts  the tool: device match, fetch, caveats (§10.3a)
+│   │   ├── timeRange.ts      NL range parsing + reference-time anchoring
+│   │   └── aggregate.ts      min/max/mean/median/latest/raw, null-never-zero
 │   ├── services/
-│   │   ├── LlmService.ts     Fireworks chat completion + streaming
+│   │   ├── LlmService.ts     Fireworks chat completion + streaming + tool calls
+│   │   ├── ChatOrchestrator.ts  the tool-round loop, dispatch, cap fallback
 │   │   └── EmbeddingService.ts  nomic embeddings + dimension/all-zero guards
 │   ├── validators/
 │   │   └── chatValidators.ts parseChatRequest
 │   ├── types/
 │   │   ├── retrieval.types.ts  Chunk / GetContextOptions / RetrievalAdapter
-│   │   └── chat.types.ts       ChatMessage / ChatRole
+│   │   ├── device.types.ts     device, reading, metric, averages shapes
+│   │   ├── tool.types.ts       ToolDefinition / ToolCall / ToolHandler / ToolInvocation
+│   │   └── chat.types.ts       ChatMessage / ChatRole (incl. the tool role)
 │   └── utils/
 │       ├── errors.ts         NotFound/Validation/Unauthorized/Forbidden/Conflict
 │       ├── logger.ts         createLogger(tag)
 │       └── sse.ts            Server-Sent Events helpers
 ├── scripts/                  ingest.ts, seedFirestore.ts, seedFirestoreChunks.ts,
-│                             seedPgvector.ts, bakeoff.ts, cost.ts, gradePacket.ts
+│                             seedPgvector.ts, bakeoff.ts, cost.ts, gradePacket.ts,
+│                             exploreDeviceApi.ts
 ├── test/
-│   ├── integration/  health.test.ts, chat.test.ts
+│   ├── integration/  health.test.ts, chat.test.ts, sensorChat.test.ts
+│   ├── fixtures/device-api/  recorded production bodies + provenance README (§16)
 │   └── unit/         retrieval.test.ts, prompt.test.ts, llmService.test.ts,
 │                     directFeed.test.ts, ingestion.test.ts, chatValidators.test.ts,
 │                     evalFixtures.test.ts, bakeoffRunner.test.ts, pgvectorRag.test.ts,
 │                     cost.test.ts, firestoreCorpus.test.ts, firestoreVector.test.ts,
-│                     gradePacket.test.ts
+│                     gradePacket.test.ts, deviceApi.test.ts, timeRange.test.ts,
+│                     aggregate.test.ts, querySensorData.test.ts,
+│                     chatOrchestrator.test.ts
 ├── eval/fixtures/            30 committed bake-off conversations (§12)
 ├── eval/transcripts/         captured sweeps, <pass>/<arm>/<fixture>.json (§13)
 ├── eval/grading/             blind grading packet, <pass>/{packet,context,scores.csv,KEY.json}
@@ -167,12 +182,18 @@ config = {
   nodeEnv, isProduction, port, logLevel,
   firestore:  { projectId?, databaseId },
   fireworks:  { apiKey?, baseUrl, chatModel?, embeddingModel, maxTokens, user },
-  deviceApi:  { baseUrl?, devToken?, timeoutMs },
+  deviceApi:  { baseUrl?, devToken?, timeoutMs, defaultDeviceLabel? },
+  tools:      { sensorTool, maxToolRounds, rawLimit },
   chat:       { maxHistoryMessages },
   retrieval:  { defaultMode, debug, corpusSource },
   waterType,
 }
 ```
+
+`tools.sensorTool` (`SENSOR_TOOL`, default `false`) is the Phase N3 gate — see §10.3a. Turning it
+on **logs a warning at startup**, deliberately: it un-pins the bake-off's system prompt, and a
+capture run made with it on is not comparable to the three already captured. Better a line in every
+startup log than a silently voided sweep.
 
 Environment variables and defaults are documented in `README.md` §3 and `.env.example`.
 
@@ -372,14 +393,75 @@ without credentials; a missing key is a 503 only when a chat request arrives.
   `undefined` means the provider said nothing, which is **not** the same as a 0% hit rate.
 - `user` sent on every request — Fireworks serverless cache affinity. Dropping it does not error, it
   just silently stops cache hits, which would distort the N2 bake-off. Asserted by a test.
-- **No tools offered** — retrieval already ran. The legacy tool-round loop returns in N3.
+- **Tools are offered only when `SENSOR_TOOL` is on** (Phase N3, default **off**). `complete()`
+  takes an optional `tools` array and returns `toolCalls`; when absent the `tools` key is omitted
+  from the request entirely, because sending `tools: []` still perturbs the cacheable prefix. An
+  assistant turn that asks for tools legitimately has empty content, so the empty-answer guard
+  below is skipped when tool calls are present — otherwise every successful tool round would 502.
 - **An empty answer throws a 502 naming `LLM_MAX_TOKENS`.** This is the documented gpt-oss failure:
   reasoning tokens exhaust the budget, the API call *succeeds*, and the answer is blank. Without an
   explicit check that is indistinguishable from a valid empty response.
 
+### 10.3a Tool-round loop (`src/services/ChatOrchestrator.ts`, `src/tools/`)
+
+Phase N3, **gated on `SENSOR_TOOL` (default off)**. Restores `MIGRATION_SPEC.md` §3: up to
+`MAX_TOOL_ROUNDS` tool-enabled rounds, then one final round with tools omitted to force a text
+answer. A round with no tool calls ends the loop and its content is the answer.
+
+**Why it is behind a flag.** The tool block changes the system prompt, and the prompt is a pinned
+control for the N2 bake-off (`RETRIEVAL_BAKEOFF.md` §4) while ◆G7 is open on ungraded quality. With
+the flag off the prompt is byte-identical to the one all three captured arms ran against — pinned by
+a SHA-256 in `test/unit/prompt.test.ts`, because a stray newline is invisible in review and produces
+a different cache prefix. Three things move together on that flag and must never move apart: the
+prompt block, the `tools` array, and the tool registry.
+
+- **`MAX_TOOL_ROUNDS` defaults to 16**, not the legacy 5. `sensor-doc-event-check` asks for six
+  parameters and then reasons over them. N5's "raise the cap" item, landed early.
+- **Repeated identical calls are served from a per-request cache** (`deduped: true`) rather than
+  re-run. That is what makes a 16-round cap affordable: the common stuck pattern is a model
+  re-asking the question it just asked, and each round is a paid LLM call.
+- **Usage is summed across every round**, so an expensive conversation is visible in the response
+  rather than only on the invoice. An unreported `cachedPromptTokens` stays `undefined` rather than
+  summing to 0 — that number decides ◆G7.
+- **Tool calls on the forced final round are ignored**, not dispatched: their results could never
+  reach the model, so running them would hit the device API for nothing.
+- **Errors are fed back, never thrown** — unknown tool name, malformed JSON arguments, device-API
+  failure. Each becomes a tool result the model can recover from mid-loop.
+- **Round-cap fallback:** the last prose the model produced, or `ROUND_CAP_PLACEHOLDER` if it never
+  produced any.
+
+`query_sensor_data` (`src/tools/querySensorData.ts`) is the only registered tool. `search_documents`
+is **not** a tool — ◆G11 is open, and retrieval still runs before the call as CONTEXT.
+
+Behavior worth knowing, each guarding a documented silent-failure mode in `DEVICE_API.md` §12:
+
+| rule | why |
+|---|---|
+| `/water/average` is never called; everything is computed from the raw period series | that endpoint returns zeros on an empty window and drops whole rows when any one probe faults |
+| empty window ⇒ `value: null`, `n_samples: 0`, plus `device_last_reported` | a fabricated `0` is anoxic water at pH 0, and the eval's automatic disqualification |
+| ranges anchor to the device's newest reading, not the wall clock | one cleared pod is stale; a wall-clock "last day" is empty on a pod with a good last day of data |
+| the reference instant comes from one `/water/last` call, then **one** period window sized to reach back to the range's start | the API's window ends at the *server's* now while the range is anchored to the device's newest reading; sizing from the phrase alone fetches short on a stale pod and reports a real statistic over a fraction of the window it claims |
+| if `/water/last` gives nothing, a widening probe (day → week → month, at most twice) looks for data the GPS filter hid | `/water/last` drops readings with no GPS fix, so an empty response there is not proof of silence; `/water/period` does not filter |
+| faulted samples are excluded per metric, and the count is reported | a faulted probe still reports a plausible number |
+| `0` is never falsy-checked | it is a real reading for ORP and turbidity |
+| a device must be named when several are visible | the two cleared pods are different water bodies on opposite coasts |
+| turbidity results carry a provisional/uncalibrated note | it is a derived voltage index expressed in NTU, not a measurement |
+| a device whose `operatingEnvironment` disagrees with `WATER_TYPE` is flagged in the result | one global env var cannot serve both pods — N4 work, an input to ◆G3 |
+
 ### 10.4 Responses
 
-**Default (JSON):** `{ answer, model, mode, citations, usage }`.
+**Default (JSON):** `{ answer, model, mode, citations, usage }`, plus `tool_calls` when any tool ran
+and `tool_round_cap_reached` when the loop hit the cap. Both are **omitted** when no tool ran, so
+the flag-off response shape is unchanged from N1. Tool results are traced there, never turned into
+citations (§3 rule 4) — a sensor reading is this deployment's own measurement, not a claim
+attributable to a corpus document.
+
+> **Streaming limitation with tools on.** The answer is not token-streamed: the loop cannot know a
+> round is the last until it returns without tool calls, by which point the text exists. Re-issuing
+> that round as a stream would double the cost of every answer, so the finished text is emitted as a
+> single `token` event and the SSE contract holds. Real streaming needs incremental
+> `delta.tool_calls` assembly — N7's chat UI is the phase that will want it. With `SENSOR_TOOL` off,
+> streaming is unchanged.
 
 **Streaming (`stream: true`)** — Server-Sent Events, opt-in rather than default. The JSON path stays
 the simple one because the N2 harness captures whole answers plus token counts, and non-browser
@@ -714,8 +796,8 @@ for local demo, to be tightened before deploy.
 
 ## 16. Testing
 
-Jest + `ts-jest` + `supertest`. **234 tests, all passing** (on `feat/device-api`, which adds the
-device-API suite, 279).
+Jest + `ts-jest` + `supertest`. **All passing.** The device-API branch merged into the bake-off
+branch at `fa299ef` (279), and Phase N3's tool layer added the suites marked N3 below.
 
 | suite | covers |
 |---|---|
@@ -734,9 +816,17 @@ device-API suite, 279).
 | `unit/firestoreCorpus.test.ts` | the written field set matches what `loadSlice` reads, `chunks` stays out, and the document size guard |
 | `unit/firestoreVector.test.ts` | the `FieldValue.vector()` wrapper, the distance→score inversion, and the zero-result guard |
 | `unit/gradePacket.test.ts` | the blind packet's label shuffle: every arm once per fixture, deterministic across rebuilds, and **balanced across the set** — a shuffle can look right per sheet while the set leaks the mapping |
+| `unit/deviceApi.test.ts` | the metric-code table pinned against the backend's shifted third mapping, epoch-seconds decoding, the per-endpoint temperature unit, the all-zero empty-average flag, 401 and timeout handling |
+| **N3** `unit/timeRange.test.ts` | every accepted phrase, the rejections (unparseable, `2026-02-30`, backwards spans), reference-time anchoring, the fetch-window ladder, and whether the endpoint belongs to the range |
+| **N3** `unit/aggregate.test.ts` | the six aggregations, `null`-never-`0` on an empty window, `0` kept as a real reading, faulted-sample exclusion and its count, the raw cap keeping the newest rows |
+| **N3** `unit/querySensorData.test.ts` | the tool against recorded production bodies: Celsius→Fahrenheit on `/water/period`, the OWC acronym match, duplicate-row dedupe, empty-window escalation, `/water/average` never called, the caveat notes, and every error path |
+| **N3** `unit/chatOrchestrator.test.ts` | the round loop: tool dispatch and `tool_call_id` replay, multi-call rounds, summed usage, unknown-tool and malformed-argument recovery, the forced final round, the cap fallback, and call dedupe |
+| **N3** `integration/sensorChat.test.ts` | `query_sensor_data` end to end through `POST /chat` — scripted model, recorded device bodies, real loop/client/decoder in between — and the flag-off path making one tool-free call that never touches the device API |
 
-**No test touches the network, needs a key, or spends money** — `chat.test.ts` mocks `LlmService`
-wholesale and the unit tests inject a fake client. Run with `npm test`.
+**No test touches the network, needs a key, or spends money** — `chat.test.ts` and
+`sensorChat.test.ts` mock `LlmService` wholesale, and the device-API suites serve recorded bodies
+through a stubbed `fetch` into the real client (`test/fixtures/device-api/README.md` records their
+provenance and what was scrubbed). Run with `npm test`.
 
 `npm run lint` is clean. Two airbnb rules are narrowed in `.eslintrc.js` where they conflict with the
 conventions this codebase follows, rather than disabled globally:
@@ -756,11 +846,11 @@ conventions this codebase follows, rather than disabled globally:
 
 | Area | Legacy reference | Target |
 |---|---|---|
-| Tool-calling orchestration loop | `MIGRATION_SPEC.md` §3 | 5 tool rounds + 1 forced-text round, `role:"tool"` messages, round-cap fallback — returns in N3 with `query_sensor_data` |
+| ~~Tool-calling orchestration loop~~ | `MIGRATION_SPEC.md` §3 | **Built (N3, §10.3a).** 16 tool rounds + 1 forced-text round, `role:"tool"` messages, round-cap fallback. Gated on `SENSOR_TOOL`, default off |
 | Corpus ingestion + real adapters | `MIGRATION_SPEC.md` §5 | N2 bake-off: `firestore-direct` (small tier, ◆G9), `pgvector-rag`, `firestore-vector` (◆G10 → all three) |
 | Embedding calls | `MIGRATION_SPEC.md` §4.4 | only needed if the bake-off selects a vector arm |
 | Document context strategy | `MIGRATION_SPEC.md` §6–7 (pgvector) | **open gate ◆G7** — decided by the [direct-feed vs RAG bake-off](RETRIEVAL_BAKEOFF.md): `firestore-direct` vs `pgvector-rag` vs `firestore-vector` |
-| `query_sensor_data` | `MIGRATION_SPEC.md` §8 | **device-API adapter** (◆G8 resolved) — see `timeline.md` N3 |
+| ~~`query_sensor_data`~~ | `MIGRATION_SPEC.md` §8 | **Built (N3, §10.3a)** on the device API (◆G8 resolved). Remaining: per-device water type (N4/◆G3) and token streaming with tools on (N7) |
 | Ingestion (docs + CSV) | `MIGRATION_SPEC.md` §5 | re-home to Firestore |
 
 

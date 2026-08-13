@@ -25,7 +25,7 @@ behavior being restored).
 | Metric decoding (codes, units, error flags) | ✅ built |
 | `npm run explore:devices` (discover + record) | ✅ built |
 | **Live verification against production** | ✅ **2026-08-11 — 21 devices listed, both cleared pods sampled and recorded** |
-| `query_sensor_data` tool + orchestration loop | not started — deliberately, see §10 |
+| `query_sensor_data` tool + orchestration loop | ✅ **built 2026-08-13, behind `SENSOR_TOOL` (default off) — see §10** |
 
 **Verified live 2026-08-11** against `https://cer-api-98242557946.us-central1.run.app/api/v1`.
 The run answered the pod-name question (§2), confirmed the metric codes and error flags (§7), and
@@ -319,7 +319,30 @@ if that is a concern), and build `query_sensor_data` against it. Only then re-ve
 
 ---
 
-## 10. Why the tool loop is not in this detour
+## 10. The tool loop — deferred here, built 2026-08-13 behind a flag
+
+> **Resolved.** The section below is the original reasoning for deferring it, kept because the
+> constraint it describes is still live. What changed is the answer: rather than wait for ◆G7 or
+> re-run the arms, the tool block and the loop landed behind **`SENSOR_TOOL`, default off**, so the
+> default prompt stays byte-identical to the one the three captured arms ran against (pinned by a
+> SHA-256 in `test/unit/prompt.test.ts`) and no `tools` array is attached to a request. The
+> recommended sequence below still holds for *turning it on* in a measured run.
+>
+> Built: `src/tools/querySensorData.ts`, `src/tools/timeRange.ts`, `src/tools/aggregate.ts`,
+> `src/services/ChatOrchestrator.ts`, `TOOL_BLOCK` in `src/prompt/systemPrompt.ts`. Offline
+> fixtures in `test/fixtures/device-api/`. See `timeline.md` Phase N3 and `SPECS.md` §10.3a.
+>
+> Two contract notes this document should carry forward:
+>
+> - **`/water/average` is not used by the tool.** Every statistic is computed locally from
+>   `/water/period` rows, which sidesteps §12b's all-zero empty window and §6's whole-row exclusion
+>   on a single faulted probe, and makes validity per-metric. A test asserts the endpoint stays
+>   unused.
+> - **An empty window escalates** one rung at a time (day → week → month, at most twice) rather than
+>   reporting no data immediately — the reference instant that anchors a relative range lives inside
+>   the data, and Old Woman Creek needs a week-wide look-back to find it.
+
+### The original reasoning, for the record
 
 `query_sensor_data` needs two things that N2 has pinned:
 

@@ -179,8 +179,9 @@ git commit -m "docs: refresh stale corpus, eval, and status documentation"
 ## 8. Open decisions for a human
 
 1. **Who grades, and is the frontend harness built?** (§5.) The one thing blocking ◆G7.
-2. **Merge `feat/device-api` into `feat/bakeoff-sweep` (or both to `demo`)?** They can't currently
-   be tested together.
+2. ~~**Merge `feat/device-api` into `feat/bakeoff-sweep`?**~~ **Done 2026-08-13** — merged at
+   `fa299ef`, conflict-free. Phase N3's tool layer was then built on top. §2's branch table and §7's
+   uncommitted list are both stale from that point on.
 3. **Does `pgvector-rag` stay in the comparison?** It works now but is no longer a strict legacy
    port, so its role as "what we had before" is compromised.
 4. **Commit or git-ignore `eval/grading/`?** 4.1 MB, regenerable. Currently committed, on the
@@ -198,8 +199,11 @@ git commit -m "docs: refresh stale corpus, eval, and status documentation"
   entire first sweep. Keep **16384** for any capture run.
 - **`LLM_TEMPERATURE` must stay 0**, and the **system prompt is a pinned control** — changing it
   after an arm has run voids that arm. Re-run every arm instead.
-- **Do not build the tool-calling loop before N2 closes.** It needs a tool block in the system
-  prompt, which voids the arms.
+- ~~**Do not build the tool-calling loop before N2 closes.**~~ **Resolved 2026-08-13.** It is built,
+  gated on **`SENSOR_TOOL` (default off)**, so the default prompt stays byte-identical to the one
+  the arms ran against — pinned by a SHA-256 in `test/unit/prompt.test.ts`, and no `tools` array is
+  sent when the flag is off. The trap that remains: **do not capture bake-off arms with the flag
+  on**; turning it on logs a startup warning for that reason.
 - **0 is a valid reading** for ORP and turbidity. Never falsy-check a metric value.
 - **Fireworks' embeddings endpoint silently returns a 192-element all-zero vector** without
   `encoding_format: "float"`. Guards for dimension *and* all-zero are in `EmbeddingService`. Do not

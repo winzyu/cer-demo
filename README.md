@@ -191,6 +191,10 @@ cp .env.example .env
 | `DEVICE_API_BASE_URL` | *(unset)* | Clean Earth backend base URL, **including `/api/v1`** (§2c). Phase N3. |
 | `DEVICE_API_TOKEN` | *(unset)* | Dev-only bearer JWT (§2c). Production forwards the caller's token. |
 | `DEVICE_API_TIMEOUT_MS` | `10000` | Device API request timeout. |
+| `SENSOR_DEVICE_LABEL` | *(unset)* | Pod `query_sensor_data` answers about when the model names none. **Leave unset unless the deployment really has one pod** — the token sees 21 devices and the two cleared test pods are on opposite coasts, so a wrong default answers confidently about the wrong site. Unset means the tool asks. |
+| `SENSOR_TOOL` | `false` | **Phase N3 gate.** Enables `query_sensor_data`, the tool-round loop, and the tool block in the system prompt. ⚠️ The prompt is a pinned control for the N2 bake-off and ◆G7 is open — with this off the prompt is byte-identical to the one all three captured arms ran against. Do not capture bake-off arms with it on. |
+| `MAX_TOOL_ROUNDS` | `16` | Tool-enabled rounds before the loop forces a text-only answer. Legacy was 5, which cannot fit the six-parameter eval fixture. |
+| `RAW_LIMIT` | `200` | Rows an `aggregation: "raw"` call may return. A cap, not a page size — raw output goes into the next prompt. |
 | `DEFAULT_RETRIEVAL` | `stub` | Retrieval adapter used by default: `stub`, `firestore-direct`, `pgvector-rag`, `firestore-vector` (§3b). |
 | `DEBUG_RETRIEVAL` | `false` | When `true`, a request may override the retrieval mode via a `"retrieval"` field. Required by the bake-off runner. |
 | `CORPUS_SOURCE` | `artifact` | Where `firestore-direct` reads corpus text: `artifact` (local `data/corpus/corpus.json`, no credentials) or `firestore`. Explicit rather than auto-detected — a silent fallback would measure the wrong source. |

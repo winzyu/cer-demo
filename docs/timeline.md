@@ -298,9 +298,58 @@ rounds plus one forced text-only round, tool dispatch, `role:"tool"` messages ke
 `tool_call_id`, and the round-cap fallback — has to come back before any tool is usable. N5's
 "raise the tool-round cap" item depends on this existing first.
 
-*Exit: `query_sensor_data` works against the synthetic Firestore adapter; the orchestration loop is
-restored; a documented device-API adapter stub + access-discovery checklist are ready to execute when
-real data is granted.*
+**Status 2026-08-13 — built, behind a flag.** `query_sensor_data` and the tool-round loop are
+implemented and tested offline against recorded production responses. They are gated on
+**`SENSOR_TOOL`, which defaults off**, because the tool block changes the system prompt and the
+prompt is a pinned control for the N2 bake-off while ◆G7 is open (`RETRIEVAL_BAKEOFF.md` §4). With
+the flag off the prompt is byte-identical to the one all three captured arms ran against — pinned by
+a hash in `test/unit/prompt.test.ts` — and no `tools` array is attached to a request.
+
+What landed:
+
+| piece | where |
+|---|---|
+| Tool definition + implementation | `src/tools/querySensorData.ts` |
+| NL time-range parsing, reference-time rule | `src/tools/timeRange.ts` |
+| min/max/mean/median/latest/raw | `src/tools/aggregate.ts` |
+| Tool-round loop, dispatch, round-cap fallback | `src/services/ChatOrchestrator.ts` |
+| Prompt tool block (flag-gated) | `src/prompt/systemPrompt.ts` (`TOOL_BLOCK`) |
+| Offline fixtures | `test/fixtures/device-api/` |
+
+Three decisions worth keeping, because they are not obvious from the code:
+
+- **`/water/average` is never called.** Every statistic is computed locally from the raw period
+  series. The endpoint returns zeros for all six metrics on an empty window and drops whole rows
+  when any single probe faults (`DEVICE_API.md` §12b, §6); computing locally avoids both and makes
+  validity per-metric. A test asserts the endpoint stays unused.
+- **An empty window returns `value: null`, never `0`**, with `device_last_reported` so the answer
+  can be "silent since the 7th" rather than "no data". A fabricated zero is the eval's automatic
+  disqualification.
+- **Ranges anchor to the device's newest reading, not the wall clock** (`MIGRATION_SPEC.md` §8).
+  Old Woman Creek has been silent since 2026-08-07, so a wall-clock "last day" is empty on a pod
+  that has a perfectly good last day of data. The anchor is read from one `/water/last` call and
+  the period window is then sized once to reach back to the range's start — sizing it from the
+  phrase alone fetches short on a stale pod and reports a real statistic over a fraction of the
+  window it claims. When `/water/last` gives nothing (it drops readings with no GPS fix), a
+  widening probe looks for data the filter hid.
+
+**◆ G11 is still open** and untouched by this: `search_documents` did **not** return as a tool.
+Retrieval still runs before the call and arrives as CONTEXT.
+
+**N5's "raise the tool-round cap" landed here, early.** `MAX_TOOL_ROUNDS` defaults to **16** (plus
+the forced text-only round), not the legacy 5 — `sensor-doc-event-check` asks for six parameters and
+then reasons over them, which five rounds cannot fit. The loop serves repeated identical calls from
+cache so a stuck model cannot spend the larger budget re-asking one question.
+
+**Still open, deliberately not fixed here:** `WATER_TYPE` is a single global env var, and the two
+cleared pods are different water types — one deployment cannot serve both (`DEVICE_API.md` §12c).
+The tool *flags* the disagreement in its result rather than silently comparing a saltwater pod
+against freshwater limits. Making water type per-device is Phase N4's site/device metadata store and
+an input to **◆G3**.
+
+*Exit: `query_sensor_data` answers questions about both cleared pods end to end through
+`POST /api/v1/chat`; the orchestration loop handles multi-round calls and the round cap; the two
+`sensor-tool` fixtures are runnable with the flag on (30/30). Reached 2026-08-13.*
 
 ---
 
@@ -327,8 +376,10 @@ real data is granted.*
 ## Phase N5 — Core behavior & UX quality `⟵ was Phase 2`
 *Goal: cheap, high-visibility correctness/polish.*
 
-- Raise/remove the tool-round cap (need 6+ for a table + sensor data in one answer; **hard dependency
-  for reports**).
+- ~~Raise/remove the tool-round cap~~ **— done early in N3 (2026-08-13).** `MAX_TOOL_ROUNDS`
+  defaults to 16 plus the forced text-only round; it was raised with the loop rather than after it,
+  because the six-parameter eval fixture cannot run at 5. Still a **hard dependency for reports**;
+  re-check the number once a report actually exercises it.
 - System-prompt personality (friendly; steers toward water-quality topics).
 - **Markdown rendering + XSS hardening** in the UI.
 - **Show retrieved chunks + inline quote citations**; **no public links** to source-of-truth docs.
@@ -416,7 +467,7 @@ answers complete.*
 | ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open — **resolved by the N2 bake-off**, by measurement, on its own branch later | Phases N2→N6 depend on the answer; N2 itself is the experiment |
 | ◆ G9 | Direct-feed corpus slice | **Resolved → operator source-of-truth + 4 probe datasheets (~9.4K tokens)**. Revised 2026-07-29: the original small tier was 83% a structurally shredded criteria table covering pollutants this sensor cannot measure | — |
 | ◆ G10 | Third bake-off arm | **Resolved → yes, three arms**: `firestore-direct`, `pgvector-rag`, `firestore-vector`. Also answers whether Firestore's own vector search is good enough if RAG wins | — |
-| ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open | N3 loop scope; multi-part answer quality |
+| ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open — **cheaper now**: N3 built the loop, so adding it is one entry in `buildToolRegistry` plus a prompt line, not new machinery | multi-part answer quality |
 | ◆ G8 | Sensor-data store (Firestore port vs device-API) | **Resolved → device API** (most direct path to the real codebase) | — |
 | ◆ G3 | Site-baseline definition (operator range vs. computed) | Open | Phase N4 flag logic |
 | ◆ G4 | Event-detection context source | Open | Phase N6 §4 |
