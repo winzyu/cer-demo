@@ -1,4 +1,6 @@
-import { aggregate, isAggregation } from "../../src/tools/aggregate";
+import {
+  aggregate, autoBucketMs, bucketize, isAggregation,
+} from "../../src/tools/aggregate";
 import type { Sample } from "../../src/tools/aggregate";
 
 const at = (iso: string): { atMs: number; at: string } => ({ atMs: Date.parse(iso), at: iso });
@@ -14,8 +16,8 @@ const series: Sample[] = [
 ];
 
 describe("isAggregation", () => {
-  it("accepts the six legacy aggregations and nothing else", () => {
-    ["min", "max", "mean", "median", "latest", "raw"].forEach((name) => {
+  it("accepts the six legacy aggregations plus the two added in N3", () => {
+    ["min", "max", "mean", "median", "latest", "raw", "earliest", "series"].forEach((name) => {
       expect(isAggregation(name)).toBe(true);
     });
     ["avg", "sum", "count", "", "MEAN", null, 3].forEach((name) => {
@@ -68,13 +70,14 @@ describe("aggregate", () => {
       // window with zeros for all six metrics (DEVICE_API.md §12b); a 0 here would be
       // indistinguishable from a real anoxic reading and the eval's quality floor treats a
       // fabricated figure as automatic disqualification.
-      (["min", "max", "mean", "median", "latest", "raw"] as const).forEach((aggregation) => {
-        const result = aggregate([], aggregation, 200);
+      (["min", "max", "mean", "median", "latest", "earliest", "raw", "series"] as const)
+        .forEach((aggregation) => {
+          const result = aggregate([], aggregation, 200);
 
-        expect(result.value).toBeNull();
-        expect(result.value).not.toBe(0);
-        expect(result.nSamples).toBe(0);
-      });
+          expect(result.value).toBeNull();
+          expect(result.value).not.toBe(0);
+          expect(result.nSamples).toBe(0);
+        });
     });
 
     it("returns null when every sample in the window is faulted", () => {
@@ -175,5 +178,166 @@ describe("aggregate", () => {
     it("still reports the true sample count behind the cap", () => {
       expect(aggregate(long, "raw", 200).nSamples).toBe(250);
     });
+  });
+});
+
+describe("earliest", () => {
+  it("reads the oldest reading by timestamp, not by array position", () => {
+    const result = aggregate(series, "earliest", 200);
+
+    expect(result.value).toBe(6.0);
+    expect(result.observedAt).toBe("2026-08-11T06:00:00.000Z");
+  });
+
+  it("is the exact mirror of latest", () => {
+    expect(aggregate(series, "earliest", 200).observedAt)
+      .not.toBe(aggregate(series, "latest", 200).observedAt);
+  });
+
+  it("is unaffected by the raw cap", () => {
+    // The regression this aggregation exists for. Asked for the earliest reading, the model
+    // reached for `raw`, which keeps the NEWEST 200 rows — so the oldest row it saw was the
+    // 200th-from-last and it reported that as the pod's first reading. Live, that was
+    // 2026-08-12 against a true first reading of 2026-06-13.
+    const long: Sample[] = Array.from({ length: 500 }, (_, index) => sample(
+      new Date(Date.parse("2026-06-13T00:00:00.000Z") + index * 60_000).toISOString(),
+      index,
+    ));
+
+    const raw = aggregate(long, "raw", 200);
+    const earliest = aggregate(long, "earliest", 200);
+
+    expect(raw.samples?.[0].value).toBe(300);
+    expect(raw.truncated).toBe(true);
+    expect(earliest.value).toBe(0);
+    expect(earliest.observedAt).toBe("2026-06-13T00:00:00.000Z");
+  });
+
+  it("skips faulted readings when finding the oldest", () => {
+    const leadingFault = [
+      sample("2026-08-11T06:00:00.000Z", 99.9, false),
+      sample("2026-08-11T09:00:00.000Z", 8.0),
+    ];
+    const result = aggregate(leadingFault, "earliest", 200);
+
+    expect(result.value).toBe(8.0);
+    expect(result.observedAt).toBe("2026-08-11T09:00:00.000Z");
+  });
+});
+
+describe("raw truncation reporting", () => {
+  const long: Sample[] = Array.from({ length: 250 }, (_, index) => sample(
+    new Date(Date.parse("2026-08-01T00:00:00.000Z") + index * 60_000).toISOString(),
+    index,
+  ));
+
+  it("says which end of the window survived", () => {
+    // "truncated" alone does not tell a reader that the OLDEST rows are the missing ones,
+    // which is exactly what made the earliest-reading question unanswerable from this field.
+    const result = aggregate(long, "raw", 200);
+
+    expect(result.truncated).toBe(true);
+    expect(result.truncatedKept).toBe("newest");
+  });
+
+  it("reports neither field when nothing was dropped", () => {
+    const result = aggregate(long.slice(0, 10), "raw", 200);
+
+    expect(result.truncated).toBeUndefined();
+    expect(result.truncatedKept).toBeUndefined();
+  });
+});
+
+describe("series", () => {
+  /** Six hours of readings, one every ten minutes. */
+  const sixHours: Sample[] = Array.from({ length: 36 }, (_, index) => sample(
+    new Date(Date.parse("2026-08-11T00:00:00.000Z") + index * 10 * 60_000).toISOString(),
+    index,
+  ));
+
+  it("buckets the window and summarizes each bucket", () => {
+    const result = aggregate(sixHours, "series", 200, { bucketMs: 60 * 60_000 });
+
+    expect(result.series).toHaveLength(6);
+    expect(result.series?.[0]).toMatchObject({ n: 6, min: 0, max: 5 });
+    expect(result.series?.[0].mean).toBeCloseTo(2.5, 10);
+  });
+
+  it("carries no scalar value", () => {
+    expect(aggregate(sixHours, "series", 200).value).toBeNull();
+  });
+
+  it("echoes the bucket width so an auto choice is visible", () => {
+    expect(aggregate(sixHours, "series", 200, { bucketMs: 60 * 60_000 }).bucketMs)
+      .toBe(60 * 60_000);
+    expect(aggregate(sixHours, "series", 200).bucketMs).toBeGreaterThan(0);
+  });
+
+  it("aligns buckets to the epoch, not to the first reading", () => {
+    // Two calls over near-identical windows must put the same clock hour in the same bucket,
+    // or the series they return are not comparable — which defeats asking for one.
+    const offset = sixHours.slice(2);
+    const a = aggregate(sixHours, "series", 200, { bucketMs: 60 * 60_000 });
+    const b = aggregate(offset, "series", 200, { bucketMs: 60 * 60_000 });
+
+    expect(b.series?.[0].start).toBe(a.series?.[0].start);
+  });
+
+  it("omits empty buckets rather than zero-filling them", () => {
+    // A gap in reporting is not a reading of zero. Zero-filling would reintroduce the exact
+    // fabrication the empty-window guard exists to prevent, at bucket granularity.
+    const gapped = [
+      sample("2026-08-11T00:00:00.000Z", 5),
+      sample("2026-08-11T05:00:00.000Z", 7),
+    ];
+    const result = aggregate(gapped, "series", 200, { bucketMs: 60 * 60_000 });
+
+    expect(result.series).toHaveLength(2);
+    expect(result.series?.every((bucket) => bucket.n > 0)).toBe(true);
+    expect(result.series?.some((bucket) => bucket.mean === 0)).toBe(false);
+  });
+
+  it("excludes faulted readings from its buckets", () => {
+    const withFault = [
+      sample("2026-08-11T00:00:00.000Z", 5),
+      sample("2026-08-11T00:30:00.000Z", 99.9, false),
+    ];
+    const result = aggregate(withFault, "series", 200, { bucketMs: 60 * 60_000 });
+
+    expect(result.series?.[0]).toMatchObject({ n: 1, mean: 5 });
+    expect(result.excludedFaulted).toBe(1);
+  });
+});
+
+describe("autoBucketMs", () => {
+  const spanning = (hours: number): Sample[] => [
+    sample("2026-08-11T00:00:00.000Z", 1),
+    sample(new Date(Date.parse("2026-08-11T00:00:00.000Z") + hours * 3_600_000).toISOString(), 2),
+  ];
+
+  it("keeps the bucket count human-sized whatever the window", () => {
+    // The work worth taking off a 20B model: asked for "the last week" it would pick hourly
+    // and get 168 buckets, which is no better than raw rows.
+    [6, 24, 24 * 7, 24 * 30].forEach((hours) => {
+      const bucketMs = autoBucketMs(spanning(hours), 60);
+      expect(hours * 3_600_000 / bucketMs).toBeLessThanOrEqual(60);
+    });
+  });
+
+  it("never returns a zero or negative width for a single instant", () => {
+    expect(autoBucketMs([sample("2026-08-11T00:00:00.000Z", 1)])).toBeGreaterThan(0);
+  });
+});
+
+describe("bucketize", () => {
+  it("caps the number of buckets, keeping the most recent", () => {
+    const many: Sample[] = Array.from({ length: 100 }, (_, index) => sample(
+      new Date(Date.parse("2026-08-11T00:00:00.000Z") + index * 3_600_000).toISOString(),
+      index,
+    ));
+    const buckets = bucketize(many, 3_600_000, 10);
+
+    expect(buckets).toHaveLength(10);
+    expect(buckets[buckets.length - 1].max).toBe(99);
   });
 });
