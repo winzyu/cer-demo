@@ -16,6 +16,7 @@
     "ingest": "ts-node scripts/ingest.ts",
     "bakeoff": "ts-node scripts/bakeoff.ts",
     "explore:devices": "ts-node scripts/exploreDeviceApi.ts",
+    "verify:sensor": "ts-node scripts/verifySensorTool.ts",
     "seed:firestore": "ts-node scripts/seedFirestore.ts",
     "seed:firestore-chunks": "ts-node scripts/seedFirestoreChunks.ts",
     "seed:pgvector": "ts-node scripts/seedPgvector.ts",

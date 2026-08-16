@@ -48,6 +48,17 @@ superadmin-scoped — worth knowing, since a narrower account will see fewer).
 | **Algalita Pod** | `dev:351077454569099` | salt-water | reporting — 47 readings in the last day, latest Seal Beach CA |
 | **Old Woman Creek 2026** | `dev:351077454567580` | **fresh-water** | **stale — last reading 2026-08-07, nothing in 4 days**, latest Huron OH |
 
+> **Update 2026-08-13 (`npm run verify:sensor`).** **Old Woman Creek 2026 is reporting again** —
+> latest reading `2026-08-13T22:17:11Z`, 48 readings in the last day. Its four-day silence
+> (operator question 3 in §12) resolved on its own; whether that gap was expected is still worth
+> asking, because an unexplained gap that closes itself is a monitoring question, not a
+> non-event. **The device count also moved, 21 → 17**, so the registry is not stable and nothing
+> should hard-code it.
+>
+> The recorded fixtures in `test/fixtures/device-api/` still capture the stale state, which is
+> what makes them useful: the empty-window path has no other reproducible source now that the pod
+> is healthy. Do not re-record over them expecting the same behaviour.
+
 Two traps in that table, both of which produce a wrong answer that looks right:
 
 - **"OWC 2026" is registered as "Old Woman Creek 2026".** The acronym appears nowhere in the
@@ -457,3 +468,41 @@ Two more readings sit outside the prompt's ranges: Old Woman Creek at **pH 9.12�
 6.5–8.5) and **DO 4.26 mg/L** (range 5–14). And its 1-week average turbidity was **817 NTU**
 against a stated range of 0–25 — 33× the maximum, which is hard to read as anything but further
 confirmation that the derived turbidity index (§8) is not a calibrated NTU measurement.
+
+---
+
+## 13. Second live run, 2026-08-13 (`npm run verify:sensor`)
+
+Read-only, no LLM. Run through `query_sensor_data` itself rather than the client, so it checks the
+whole data path — credentials, device matching, decoding, aggregation — with the model removed as
+a variable. Both cleared pods answered.
+
+| | Algalita Pod | Old Woman Creek 2026 |
+|---|---:|---:|
+| latest DO | 10.02 mg/L | 5.885 mg/L |
+| latest temperature | 80.32 °F | 84.14 °F |
+| mean pH, last day | 7.186 | 8.199 |
+| mean conductivity, last day | 58,114 µS/cm | 138.2 µS/cm |
+| mean turbidity, last day | 1,384.7 NTU | 2,041.7 NTU |
+| min DO, last week | 4.11 mg/L | **0 mg/L** |
+| readings in a day window | 48 | 48 |
+
+**What this confirms.** Temperature normalizes to °F on the period route (a raw Celsius value
+would have read 26–29). Ranges anchor to each pod's own last reading. The water-type note fires on
+Algalita against `WATER_TYPE=freshwater`. Turbidity carries its provisional-index caveat. Faulted
+rows are detected and excluded — OWC's week window dropped 2.
+
+**Three things that are theirs to answer, not ours to fix:**
+
+1. **OWC's minimum dissolved oxygen over the week is exactly `0` mg/L**, and it is *not* an empty
+   window — 71 samples, 2 separate rows already excluded as faulted, so this zero passed the error
+   flags. `timeline.md`'s "0 is a valid reading" rule covers **ORP and turbidity only**; 0 mg/L DO
+   is either a real anoxic event worth an alert or an unflagged bad reading. Either way something
+   should be said about it, and a bot asked "what was the lowest DO last week" will report it
+   flatly. **The most useful next question for the operator.**
+2. **Algalita's conductivity is still above the stated saltwater range** — 58,114 µS/cm against
+   40,000–50,000. Consistent with the 54,100–60,200 seen on 2026-08-11, so this is a standing
+   condition rather than a spike. Still operator question 1 from §12.
+3. **Turbidity is now 1,385 and 2,042 NTU** against a prompt range of 0–25 / 0–10 — far past the
+   817 recorded on 2026-08-11. Three independent samples now say the derived index is not
+   comparable to that range at all (§8).
