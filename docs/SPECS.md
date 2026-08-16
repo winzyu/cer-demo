@@ -433,12 +433,48 @@ prompt block, the `tools` array, and the tool registry.
 `query_sensor_data` (`src/tools/querySensorData.ts`) is the only registered tool. `search_documents`
 is **not** a tool — ◆G11 is open, and retrieval still runs before the call as CONTEXT.
 
+**Arguments:** `metric` (six names, or `all`), `time_range`, `aggregation`, optional `device`, and
+optional `bucket` for `series`.
+
+| aggregation | notes |
+|---|---|
+| `min` `max` `mean` `median` | over the resolved window |
+| `latest` / `earliest` | one reading each, with its `observed_at`. Exact — **not** subject to the raw cap |
+| `raw` | up to `RAW_LIMIT` rows, keeping the **newest**; sets `truncated` and `truncated_kept` |
+| `series` | epoch-aligned buckets, each with `mean`/`min`/`max`/`n`. Width auto-derived from the span unless `bucket` says otherwise; empty buckets are omitted, never zero-filled |
+
+`metric: "all"` reads every parameter out of **one** fetched window — one API call, not six, and
+six fewer chances for the model to drop a parameter while reassembling them. The result nests
+per-metric objects under `metrics`; a single metric keeps the original flat shape.
+
+**Two fields exist because a model got them wrong on live data**, both added 2026-08-16:
+
+- `window_actually_searched` — `time_range_resolved` is what the *phrase* asked for; this is what
+  the API's fixed unit ladder could actually reach (it tops out at one year). Asked for "last 10
+  years", a model read the resolved start (2016) as the pod's first reading. `complete: false`
+  now says the search never went there.
+- a top-level `observed_at` on multi-metric `latest`/`earliest` reads, since every metric comes off
+  the same row. Without it the model substituted a window boundary for a reading's timestamp.
+
+### 10.3b Programmatic access (`QuerySensorData.query`)
+
+`run()` is the LLM path: loose args in, `{ error }` out. **`query()` is the code path**: typed
+`SensorQueryParams` in, `SensorQueryError` thrown on failure.
+
+It exists for Phase N6. `timeline.md` requires the report's header, §2 and §5 to be **computed
+deterministically** and only narrated — so a report must not obtain its numbers by asking a
+language model to call a tool. Both entry points share one implementation, so there is one copy of
+the traps rather than two. "No readings" stays a *result* (`value: null`, `n_samples: 0`) rather
+than an exception: a report needs to state that a pod was silent.
+
 Behavior worth knowing, each guarding a documented silent-failure mode in `DEVICE_API.md` §12:
 
 | rule | why |
 |---|---|
 | `/water/average` is never called; everything is computed from the raw period series | that endpoint returns zeros on an empty window and drops whole rows when any one probe faults |
 | empty window ⇒ `value: null`, `n_samples: 0`, plus `device_last_reported` | a fabricated `0` is anoxic water at pH 0, and the eval's automatic disqualification |
+| `earliest` is its own aggregation, not the first row of `raw` | `raw` drops the **oldest** rows first, so its first row is not the earliest reading — this produced a confidently wrong date on live data |
+| `series` buckets server-side rather than handing over raw rows | a week is ~336 rows; trend-reading from those is arithmetic a 20B model is bad at, over a window `raw` may have truncated |
 | ranges anchor to the device's newest reading, not the wall clock | one cleared pod is stale; a wall-clock "last day" is empty on a pod with a good last day of data |
 | the reference instant comes from one `/water/last` call, then **one** period window sized to reach back to the range's start | the API's window ends at the *server's* now while the range is anchored to the device's newest reading; sizing from the phrase alone fetches short on a stale pod and reports a real statistic over a fraction of the window it claims |
 | if `/water/last` gives nothing, a widening probe (day → week → month, at most twice) looks for data the GPS filter hid | `/water/last` drops readings with no GPS fix, so an empty response there is not proof of silence; `/water/period` does not filter |

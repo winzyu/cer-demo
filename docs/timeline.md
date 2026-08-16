@@ -310,6 +310,7 @@ What landed:
 | piece | where |
 |---|---|
 | Tool definition + implementation | `src/tools/querySensorData.ts` |
+| Typed programmatic surface for N6 reports | `QuerySensorData.query()` |
 | NL time-range parsing, reference-time rule | `src/tools/timeRange.ts` |
 | min/max/mean/median/latest/raw | `src/tools/aggregate.ts` |
 | Tool-round loop, dispatch, round-cap fallback | `src/services/ChatOrchestrator.ts` |
@@ -335,6 +336,41 @@ Three decisions worth keeping, because they are not obvious from the code:
 
 **◆ G11 is still open** and untouched by this: `search_documents` did **not** return as a tool.
 Retrieval still runs before the call and arrives as CONTEXT.
+
+### N3 follow-up, 2026-08-16 — capability round two
+
+Live testing found the tool could not express a question a user actually asked. "What is the
+earliest reading from the Algalita Pod?" has no `earliest` aggregation, so the model reached for
+`raw` — which caps at `RAW_LIMIT` **keeping the newest rows** — and reported the 200th-from-last
+row's date, 2026-08-12, as the pod's first reading. The true first reading is 2026-06-13. A real
+value, a real timestamp, the wrong question answered.
+
+Added, all inside the `SENSOR_TOOL` gate so the pinned prompt is untouched:
+
+- **`earliest`** — the mirror of `latest`, exact and never truncated.
+- **`series`** — epoch-aligned buckets with per-bucket mean/min/max/n, width auto-derived from the
+  window's span. Trends stop being arithmetic the model does over possibly-truncated raw rows.
+- **`metric: "all"`** — every parameter from one fetched window. One API call instead of six.
+- **`truncated_kept`** on `raw`, and **`window_actually_searched`** alongside `time_range_resolved`
+  — both because "truncated" and "resolved range" alone let a reader mistake a window boundary for
+  a reading.
+- **`QuerySensorData.query()`**, the typed path for N6's report generation.
+
+**The sequencing note that was wrong:** an earlier draft said this work should wait for ◆G7. It
+should not have. ◆G7 pins the **flag-off** prompt; everything here lives in `TOOL_BLOCK` and the
+tool schema, both of which only reach the model when `SENSOR_TOOL=true`. Building behind the flag
+was always safe — only *capturing arms* with it on is not.
+
+**Two data-quality findings for the operator, not for us to fix:**
+
+1. **The pod's first-ever reading is a boot artifact** — 2026-06-13T16:17:56Z reports pH 13.578,
+   temperature −1809 °F, conductivity 0, DO 34.91 mg/L. **Its error flags are not set**, so it
+   survives the fault filter and `earliest` over a full history returns it faithfully. This is
+   N6's faulty-data work (a plausibility floor per metric, distinct from the hardware flags).
+2. Across a year, 11–17 rows per metric *are* flagged faulted and correctly excluded — so the
+   flags work, they just do not catch this.
+
+*Exit: unchanged and still met.*
 
 **N5's "raise the tool-round cap" landed here, early.** `MAX_TOOL_ROUNDS` defaults to **16** (plus
 the forced text-only round), not the legacy 5 — `sensor-doc-event-check` asks for six parameters and
