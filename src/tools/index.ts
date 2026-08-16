@@ -1,6 +1,6 @@
 import { config } from "../config";
 import type { ToolHandler } from "../types/tool.types";
-import { QuerySensorData, querySensorDataDefinition } from "./querySensorData";
+import { QuerySensorData, SensorQueryError, querySensorDataDefinition } from "./querySensorData";
 
 /**
  * The tool inventory offered to the model.
@@ -25,4 +25,5 @@ export const buildToolRegistry = (sensorTool: boolean = config.tools.sensorTool)
   }];
 };
 
-export { QuerySensorData, querySensorDataDefinition };
+export { QuerySensorData, SensorQueryError, querySensorDataDefinition };
+export type { SensorQueryParams } from "./querySensorData";

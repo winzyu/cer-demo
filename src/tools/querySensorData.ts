@@ -1,3 +1,6 @@
+/* eslint-disable max-classes-per-file -- SensorQueryError is a one-line subclass that belongs
+   with the module whose contract it is part of, not in utils/errors.ts, which holds the
+   HTTP-shaped errors. Same exemption .eslintrc.js already grants that file. */
 import { config } from "../config";
 import { DeviceApiClient } from "../devices/DeviceApiClient";
 import { METRIC_BY_KEY, METRICS } from "../devices/metrics";
@@ -5,9 +8,9 @@ import type { DeviceReading, DeviceSummary, MetricKey } from "../types/device.ty
 import { createLogger } from "../utils/logger";
 import type { ToolDefinition } from "../types/tool.types";
 import {
-  aggregate, isAggregation,
+  AGGREGATIONS, aggregate, isAggregation,
 } from "./aggregate";
-import type { Aggregation, Sample } from "./aggregate";
+import type { AggregateResult, Aggregation, Sample } from "./aggregate";
 import {
   TimeRangeError,
   fetchWindowFor,
@@ -64,6 +67,9 @@ const METRIC_KEY_BY_NAME = new Map(METRIC_ALIASES);
 const NAME_BY_METRIC_KEY = new Map<MetricKey, string>(
   METRIC_NAMES.map((name) => [METRIC_KEY_BY_NAME.get(name) as MetricKey, name]),
 );
+
+/** Every metric the tool can serve, in table order. */
+export const SUPPORTED_METRICS: readonly MetricKey[] = METRICS.map((metric) => metric.key);
 
 /** §8 step 5 reports pH as "unitless" rather than omitting the field. */
 const unitFor = (key: MetricKey): string => METRIC_BY_KEY.get(key)?.unit ?? "unitless";
@@ -133,6 +139,27 @@ export const dedupeByLabel = (devices: DeviceSummary[]): DeviceSummary[] => {
   return [...seen.values()];
 };
 
+/**
+ * Thrown by `query()`. The tool path returns these as `{ error }` instead.
+ *
+ * Lives here rather than in `utils/errors.ts` because it is part of this module's contract: a
+ * caller catching it is catching "the sensor query failed", not a generic HTTP-shaped error.
+ */
+export class SensorQueryError extends Error {}
+
+/** Typed arguments for the programmatic path. */
+export interface SensorQueryParams {
+  /** A metric wire name, or `"all"` for every metric from one fetched window. */
+  metric: (typeof METRIC_NAMES)[number] | "all";
+  /** Natural-language window, same grammar the tool advertises. */
+  timeRange: string;
+  aggregation: Aggregation;
+  /** Name or `dev:` label. Required whenever more than one device is visible. */
+  device?: string;
+  /** `series` only. Omit for an auto width derived from the window's span. */
+  bucket?: "auto" | "hour" | "day" | "week";
+}
+
 export interface QuerySensorDataOptions {
   client?: DeviceApiClient;
   /** Injectable for deterministic tests; defaults to the wall clock. */
@@ -154,6 +181,19 @@ const MAX_ESCALATIONS = 2;
  * in the future, either of which would otherwise compute a zero or negative look-back.
  */
 const MIN_LOOKBACK_MS = 60 * 60_000;
+
+/**
+ * Bucket widths a caller may name for `series`.
+ *
+ * `auto` is the default and the recommended one: the width is derived from the window's own span
+ * so the answer stays human-sized, which is work the model would otherwise have to get right.
+ */
+const BUCKET_MS: Record<string, number | undefined> = {
+  auto: undefined,
+  hour: 60 * 60_000,
+  day: 24 * 60 * 60_000,
+  week: 7 * 24 * 60 * 60_000,
+};
 
 export class QuerySensorData {
   private readonly clientOverride?: DeviceApiClient;
@@ -290,6 +330,9 @@ export class QuerySensorData {
   /**
    * Runs the tool. **Never throws** — every failure becomes `{ error }` so the model can
    * recover inside the tool loop rather than the whole chat request 500ing (§3, §8).
+   *
+   * This is the **LLM-facing** entry point: loose arguments in, errors as data out. Code that is
+   * not a language model should call `query()` instead.
    */
   async run(args: Record<string, unknown>): Promise<SensorToolResult> {
     try {
@@ -301,22 +344,61 @@ export class QuerySensorData {
     }
   }
 
+  /**
+   * The **programmatic** entry point: typed arguments in, `SensorQueryError` on failure.
+   *
+   * Exists for Phase N6's report generation. `timeline.md` requires the report's header, §2 and
+   * §5 to be **computed deterministically** and only narrated by the model — so the report must
+   * not obtain its numbers by asking an LLM to call a tool. It needs the same computation
+   * reached directly, and it needs failures to be exceptions rather than an `{ error }` object
+   * that a caller can forget to check and then render into a customer-facing document.
+   *
+   * Same code path as `run()` underneath, so there is one implementation of the traps, not two.
+   */
+  async query(params: SensorQueryParams): Promise<SensorToolResult> {
+    const result = await this.execute({
+      metric: params.metric,
+      time_range: params.timeRange,
+      aggregation: params.aggregation,
+      ...(params.device !== undefined ? { device: params.device } : {}),
+      ...(params.bucket !== undefined ? { bucket: params.bucket } : {}),
+    });
+
+    if (typeof result.error === "string") {
+      throw new SensorQueryError(result.error);
+    }
+    return result;
+  }
+
   private async execute(args: Record<string, unknown>): Promise<SensorToolResult> {
     const metricName = typeof args.metric === "string" ? normalize(args.metric) : "";
-    const metricKey = METRIC_KEY_BY_NAME.get(metricName);
-    if (!metricKey) {
+    // "all" fetches one window and reads every metric out of it — one API call, not six, and
+    // six fewer chances for the model to drop a parameter while reassembling them.
+    const metricKeys: MetricKey[] = metricName === "all"
+      ? [...SUPPORTED_METRICS]
+      : [METRIC_KEY_BY_NAME.get(metricName)].filter((key): key is MetricKey => key !== undefined);
+
+    if (metricKeys.length === 0) {
       return failure(
-        `Unknown metric "${String(args.metric)}". Valid metrics: ${METRIC_NAMES.join(", ")}.`,
+        `Unknown metric "${String(args.metric)}". Valid metrics: ${METRIC_NAMES.join(", ")}, all.`,
       );
     }
 
     const aggregationName = typeof args.aggregation === "string" ? normalize(args.aggregation) : "";
     if (!isAggregation(aggregationName)) {
       return failure(
-        `Unknown aggregation "${String(args.aggregation)}". Valid aggregations: min, max, mean, median, latest, raw.`,
+        `Unknown aggregation "${String(args.aggregation)}". Valid aggregations: ${AGGREGATIONS.join(", ")}.`,
       );
     }
     const aggregation: Aggregation = aggregationName;
+
+    const bucket = typeof args.bucket === "string" ? normalize(args.bucket) : undefined;
+    if (bucket !== undefined && !(bucket in BUCKET_MS)) {
+      return failure(
+        `Unknown bucket "${String(args.bucket)}". Valid buckets: ${Object.keys(BUCKET_MS).join(", ")}.`,
+      );
+    }
+    const bucketMs = bucket === undefined || bucket === "auto" ? undefined : BUCKET_MS[bucket];
 
     const timeRangeInput = typeof args.time_range === "string" ? args.time_range : "";
     let parsed;
@@ -347,14 +429,15 @@ export class QuerySensorData {
       );
     }
 
+    const single = metricKeys.length === 1 ? metricKeys[0] : undefined;
     const identity = {
       device: {
         name: device.name ?? label,
         label,
         operating_environment: device.operatingEnvironment ?? null,
       },
-      metric: NAME_BY_METRIC_KEY.get(metricKey) ?? metricName,
-      unit: unitFor(metricKey),
+      metric: single ? NAME_BY_METRIC_KEY.get(single) : "all",
+      ...(single ? { unit: unitFor(single) } : {}),
       aggregation,
     };
 
@@ -422,21 +505,78 @@ export class QuerySensorData {
       };
     }
 
-    const samples = QuerySensorData.samplesInRange(readings, metricKey, range);
-    const result = aggregate(samples, aggregation, this.rawLimit);
+    // One fetched window, read once per requested metric. The device API is not touched again.
+    const computed = metricKeys.map((key) => ({
+      key,
+      result: aggregate(
+        QuerySensorData.samplesInRange(readings, key, range),
+        aggregation,
+        this.rawLimit,
+        { bucketMs },
+      ),
+    }));
 
-    return {
-      ...identity,
-      time_range_requested: timeRangeInput,
-      time_range_resolved: { start: range.start, end: range.end, label: range.label },
+    const shape = (key: MetricKey, result: AggregateResult): Record<string, unknown> => ({
+      unit: unitFor(key),
       value: result.value,
       n_samples: result.nSamples,
       excluded_faulted: result.excludedFaulted,
-      device_last_reported: new Date(referenceMs).toISOString(),
       ...(result.observedAt ? { observed_at: result.observedAt } : {}),
       ...(result.samples ? { samples: result.samples } : {}),
-      ...(result.truncated ? { truncated: true, truncated_to: this.rawLimit } : {}),
-      ...this.notes(metricKey, device, result.nSamples, referenceMs, range.start),
+      ...(result.series ? { series: result.series, bucket_ms: result.bucketMs } : {}),
+      ...(result.truncated
+        ? { truncated: true, truncated_to: this.rawLimit, truncated_kept: result.truncatedKept }
+        : {}),
+    });
+
+    // The resolved range is what the phrase asked for; the fetched window is what the API's
+    // fixed unit ladder could actually reach (it tops out at one year). When the phrase reaches
+    // further back than the ladder, saying only "2016 to 2026" invites the reader to treat the
+    // window start as the first reading — which is exactly what a model did with "last 10 years".
+    const coveredFromMs = Math.max(range.startMs, this.now() - window.spanMs);
+    const partial = coveredFromMs > range.startMs;
+
+    const common = {
+      ...identity,
+      time_range_requested: timeRangeInput,
+      time_range_resolved: { start: range.start, end: range.end, label: range.label },
+      window_actually_searched: {
+        start: new Date(coveredFromMs).toISOString(),
+        end: range.end,
+        ...(partial
+          ? { complete: false, reason: "The device API's longest window is one year." }
+          : { complete: true }),
+      },
+      device_last_reported: new Date(referenceMs).toISOString(),
+    };
+
+    const totalSamples = computed.reduce((sum, entry) => sum + entry.result.nSamples, 0);
+    const notes = this.notes(metricKeys, device, totalSamples, referenceMs, range.start);
+
+    if (single) {
+      // Flat shape for a single metric — unchanged from before multi-metric existed, so nothing
+      // reading `result.value` had to learn a new shape.
+      return { ...common, ...shape(single, computed[0].result), ...notes };
+    }
+
+    // Every metric comes off the same rows, so for `latest`/`earliest` they all share one
+    // instant. Surfacing it at the top level as well as per-metric matters: without it a model
+    // asked "when was the earliest reading" reached for `time_range_resolved.start` — the window
+    // boundary — and reported 2016 for a pod whose first reading is 2026-06-13.
+    const observedAts = new Set(
+      computed
+        .map((entry) => entry.result.observedAt)
+        .filter((at): at is string => at !== undefined),
+    );
+
+    return {
+      ...common,
+      ...(observedAts.size === 1 ? { observed_at: [...observedAts][0] } : {}),
+      metrics: Object.fromEntries(computed.map((entry) => [
+        NAME_BY_METRIC_KEY.get(entry.key) as string,
+        shape(entry.key, entry.result),
+      ])),
+      ...notes,
     };
   }
 
@@ -505,7 +645,7 @@ export class QuerySensorData {
    * stops the model comparing a saltwater pod against freshwater limits in silence.
    */
   private notes(
-    metricKey: MetricKey,
+    metricKeys: MetricKey[],
     device: DeviceSummary,
     nSamples: number,
     referenceMs: number,
@@ -520,7 +660,7 @@ export class QuerySensorData {
       );
     }
 
-    if (metricKey === "turbidity") {
+    if (metricKeys.includes("turbidity")) {
       notes.push(
         "Turbidity is derived from a raw voltage by a provisional, uncalibrated conversion. "
         + "It is a relative index expressed in NTU, not a calibrated measurement.",
@@ -563,8 +703,10 @@ export const querySensorDataDefinition: ToolDefinition = {
       properties: {
         metric: {
           type: "string",
-          enum: [...METRIC_NAMES],
-          description: "Which parameter to read. One metric per call.",
+          enum: [...METRIC_NAMES, "all"],
+          description:
+            "Which parameter to read. Use \"all\" to get every parameter from one call — prefer "
+            + "that over six separate calls when the question covers the whole pod.",
         },
         time_range: {
           type: "string",
@@ -576,10 +718,19 @@ export const querySensorDataDefinition: ToolDefinition = {
         },
         aggregation: {
           type: "string",
-          enum: [...(["min", "max", "mean", "median", "latest", "raw"] as const)],
+          enum: [...AGGREGATIONS],
           description:
-            "How to reduce the window. Use \"latest\" for the current value, \"mean\" for a typical "
-            + "value, \"raw\" for the individual readings behind a trend.",
+            "How to reduce the window. \"latest\" for the current value, \"earliest\" for the first "
+            + "reading in the window, \"mean\" for a typical value, \"series\" for a bucketed summary "
+            + "over time (use this for trends — it is exact, unlike \"raw\", which is capped and "
+            + "drops the OLDEST rows first).",
+        },
+        bucket: {
+          type: "string",
+          enum: ["auto", "hour", "day", "week"],
+          description:
+            "Bucket width for aggregation \"series\". Omit it — the default derives a sensible "
+            + "width from the window, which is almost always what you want.",
         },
         device: {
           type: "string",
@@ -593,6 +744,3 @@ export const querySensorDataDefinition: ToolDefinition = {
     },
   },
 };
-
-/** Every metric the tool can serve, for tests and diagnostics. */
-export const SUPPORTED_METRICS = METRICS.map((metric) => metric.key);

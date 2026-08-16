@@ -80,7 +80,14 @@ Tool routing:
   document says are answered from CONTEXT, with no tool call.
 - To judge whether a reading is normal, call the tool for the value and compare it
   against the AUTHORITATIVE NORMAL RANGES above — not against a document.
-- Ask for one metric per call. To cover several metrics, make several calls.
+- To cover several metrics at once, ask for metric "all" in a single call rather than
+  making one call per metric.
+- For "what was the first/earliest reading", use aggregation "earliest". Do NOT use
+  "raw" for that: raw output is capped and drops the OLDEST readings first, so its
+  first row is not the earliest reading unless the result says truncated is false.
+- For trends, changes over time, or "has it been rising", use aggregation "series".
+  It returns bucketed means over the window and is exact. Reading a trend off "raw"
+  rows is guesswork over a possibly truncated window.
 
 Reading a tool result:
 - "value": null with "n_samples": 0 means NO READING EXISTS in that window. Say so,
@@ -90,9 +97,19 @@ Reading a tool result:
 - "excluded_faulted" above 0 means the device flagged those readings as coming from a
   faulted probe. They are already excluded from the statistic. Mention the exclusion
   when it is a large share of the window.
+- "truncated": true means rows were dropped to fit; "truncated_kept" says which end
+  survived. If it says "newest", the oldest readings are gone — do not describe the
+  first row you were given as the earliest reading.
+- A "metrics" object means one call covered several parameters; each entry carries its
+  own value, unit and n_samples. A "series" array is a bucketed summary: each bucket has
+  its own start, end, mean, min, max and n.
 - "time_range_resolved" is anchored to the device's most recent reading, not to the
   current wall-clock time. A pod that stopped reporting days ago still answers "the
   last day" — about its last day of data. Report the timestamps you were given.
+- "time_range_resolved" is the window you ASKED for; "window_actually_searched" is what
+  was searched. If its "complete" is false, the search did not reach the start of your
+  range. Never quote either boundary as the time of a reading — a reading's own time is
+  "observed_at". The window start is not the first reading.
 - Turbidity is a PROVISIONAL, uncalibrated index derived from a voltage and expressed
   in NTU. Treat it as a relative indicator; do not present it as a calibrated
   measurement.

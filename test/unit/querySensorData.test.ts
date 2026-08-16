@@ -3,6 +3,7 @@ import path from "path";
 import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import {
   QuerySensorData,
+  SensorQueryError,
   dedupeByLabel,
   matchDevices,
   querySensorDataDefinition,
@@ -197,16 +198,30 @@ describe("dedupeByLabel", () => {
 });
 
 describe("query_sensor_data — the tool definition", () => {
-  it("offers the six metrics and the six legacy aggregations", () => {
+  it("offers the six metrics plus \"all\", and the eight aggregations", () => {
     const { properties, required } = querySensorDataDefinition.function.parameters;
     const metric = properties.metric as { enum: string[] };
     const aggregation = properties.aggregation as { enum: string[] };
 
     expect(metric.enum).toEqual([
-      "dissolved_oxygen", "orp", "ph", "conductivity", "temperature", "turbidity",
+      "dissolved_oxygen", "orp", "ph", "conductivity", "temperature", "turbidity", "all",
     ]);
-    expect(aggregation.enum).toEqual(["min", "max", "mean", "median", "latest", "raw"]);
+    expect(aggregation.enum).toEqual([
+      "min", "max", "mean", "median", "latest", "earliest", "raw", "series",
+    ]);
+    // `bucket` stays optional — it only applies to "series", and every required argument is
+    // one more thing a small model must get right on every call.
     expect(required).toEqual(["metric", "time_range", "aggregation"]);
+  });
+
+  it("steers the model off raw for earliest-reading questions", () => {
+    // The description is where the live wrong answer gets prevented: the model picked `raw`
+    // because nothing told it raw drops the oldest rows first.
+    const description = (querySensorDataDefinition.function.parameters
+      .properties.aggregation as { description: string }).description;
+
+    expect(description).toContain("earliest");
+    expect(description).toContain("OLDEST");
   });
 
   it("tells the model that null is not zero", () => {
@@ -500,5 +515,231 @@ describe("query_sensor_data — errors are returned, not thrown", () => {
     // Not thrown: a 500 on the chat request denies the model the chance to say it could not
     // reach the sensors (MIGRATION_SPEC §3, §8).
     expect(result.error).toContain("Could not read sensor data");
+  });
+});
+
+describe("query_sensor_data — earliest", () => {
+  it("returns the oldest reading in the window, exactly", async () => {
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "dissolved_oxygen", time_range: "last day", aggregation: "earliest", device: "Algalita",
+    });
+
+    const oldest = [...ALGALITA_PERIOD]
+      .sort((a, b) => Number(a.timestamp) - Number(b.timestamp))[0];
+
+    expect(result.observed_at).toBe(new Date(Number(oldest.timestamp) * 1000).toISOString());
+    expect(result.value)
+      .toBeCloseTo((oldest.water_data as Record<string, number>)[97], 6);
+  });
+
+  it("is not subject to the raw cap", async () => {
+    // The live regression: asked for the earliest reading the model used `raw`, which keeps the
+    // NEWEST rows, and reported 2026-08-12 as the pod's first reading against a true first
+    // reading of 2026-06-13.
+    const { tool } = makeTool();
+    const earliest = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "earliest", device: "Algalita",
+    });
+    const raw = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "raw", device: "Algalita",
+    });
+
+    expect(earliest.truncated).toBeUndefined();
+    expect(earliest.value).not.toBeNull();
+    expect(raw.value).toBeNull();
+  });
+
+  it("says which end a truncated raw series kept", async () => {
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "raw", device: "Algalita", 
+    });
+
+    // The recorded window is 47 rows, under any sane cap, so nothing is dropped here.
+    expect(result.truncated).toBeUndefined();
+    expect(result.truncated_kept).toBeUndefined();
+  });
+});
+
+describe("query_sensor_data — all metrics in one call", () => {
+  it("returns every metric from a single fetched window", async () => {
+    const { tool, calls } = makeTool();
+    const result = await tool.run({
+      metric: "all", time_range: "last day", aggregation: "mean", device: "Algalita",
+    });
+
+    const metrics = result.metrics as Record<string, { value: number; unit: string }>;
+    expect(Object.keys(metrics).sort()).toEqual([
+      "conductivity", "dissolved_oxygen", "orp", "ph", "temperature", "turbidity",
+    ]);
+    expect(metrics.temperature.unit).toBe("°F");
+    expect(metrics.ph.unit).toBe("unitless");
+
+    // One period call, not six — the whole point of the option.
+    expect(calls.filter((call) => call.url.includes("/water/period/"))).toHaveLength(1);
+  });
+
+  it("agrees with the equivalent single-metric calls", async () => {
+    const { tool } = makeTool();
+    const all = await tool.run({
+      metric: "all", time_range: "last day", aggregation: "mean", device: "Algalita",
+    });
+    const one = await tool.run({
+      metric: "dissolved_oxygen", time_range: "last day", aggregation: "mean", device: "Algalita",
+    });
+
+    const metrics = all.metrics as Record<string, { value: number }>;
+    expect(metrics.dissolved_oxygen.value).toBeCloseTo(one.value as number, 10);
+  });
+
+  it("keeps the flat shape for a single metric", async () => {
+    // Nothing that already read `result.value` should have to learn a new shape.
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "mean", device: "Algalita",
+    });
+
+    expect(result.metrics).toBeUndefined();
+    expect(typeof result.value).toBe("number");
+    expect(result.metric).toBe("ph");
+  });
+
+  it("carries the turbidity caveat when turbidity is among them", async () => {
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "all", time_range: "last day", aggregation: "mean", device: "Algalita",
+    });
+
+    expect(result.note).toContain("provisional, uncalibrated");
+  });
+});
+
+describe("query_sensor_data — series", () => {
+  it("returns bucketed summaries instead of raw rows", async () => {
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "series", device: "Algalita", bucket: "hour",
+    });
+
+    const series = result.series as Array<{ start: string; mean: number; n: number }>;
+    expect(series.length).toBeGreaterThan(1);
+    expect(series.every((bucket) => bucket.n > 0)).toBe(true);
+    expect(result.value).toBeNull();
+    expect(result.bucket_ms).toBe(60 * 60 * 1000);
+  });
+
+  it("picks a bucket width itself when none is given", async () => {
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "series", device: "Algalita",
+    });
+
+    expect(result.bucket_ms).toBeGreaterThan(0);
+    expect((result.series as unknown[]).length).toBeLessThanOrEqual(60);
+  });
+
+  it("rejects an unknown bucket rather than silently using auto", async () => {
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "series", device: "Algalita", bucket: "fortnight",
+    });
+
+    expect(result.error).toContain("fortnight");
+  });
+});
+
+describe("query_sensor_data — the programmatic surface", () => {
+  it("returns the same numbers as the tool path", async () => {
+    // One implementation of the traps, two entry points — N6's report must not obtain its
+    // figures by asking a language model to call a tool.
+    const { tool } = makeTool();
+    const viaTool = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "mean", device: "Algalita",
+    });
+    const viaCode = await tool.query({
+      metric: "ph", timeRange: "last day", aggregation: "mean", device: "Algalita",
+    });
+
+    expect(viaCode.value).toBe(viaTool.value);
+    expect(viaCode.n_samples).toBe(viaTool.n_samples);
+  });
+
+  it("throws instead of returning an error object", async () => {
+    // A report generator that forgets to check `{ error }` would otherwise render the failure
+    // into a customer-facing document.
+    const { tool } = makeTool();
+
+    await expect(tool.query({
+      metric: "ph", timeRange: "since the storm", aggregation: "mean", device: "Algalita",
+    })).rejects.toThrow(SensorQueryError);
+  });
+
+  it("throws on an unresolvable device", async () => {
+    const { tool } = makeTool();
+
+    await expect(tool.query({
+      metric: "ph", timeRange: "last day", aggregation: "mean", device: "harbour buoy",
+    })).rejects.toThrow(/harbour buoy/);
+  });
+
+  it("still returns a no-data result rather than throwing", async () => {
+    // "No readings" is an answer, not a failure — a report needs to say the pod was silent.
+    const { tool } = makeTool({ periodDay: [], periodWeek: [], periodMonth: [], last: [] });
+    const result = await tool.query({
+      metric: "ph", timeRange: "last day", aggregation: "mean", device: "OWC",
+    });
+
+    expect(result.value).toBeNull();
+    expect(result.n_samples).toBe(0);
+  });
+});
+
+describe("query_sensor_data — window honesty", () => {
+  it("reports the window it actually searched alongside the one requested", async () => {
+    // Live, a model asked for "last 10 years" was told the resolved range began in 2016 and
+    // reported that as the pod's first reading. The API's ladder tops out at one year, so the
+    // search never went near 2016.
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "ph", time_range: "last 10 years", aggregation: "earliest", device: "Algalita",
+    });
+
+    const searched = result.window_actually_searched as { start: string; complete: boolean };
+    const requested = result.time_range_resolved as { start: string };
+
+    expect(searched.complete).toBe(false);
+    expect(Date.parse(searched.start)).toBeGreaterThan(Date.parse(requested.start));
+  });
+
+  it("marks the window complete when the range fits inside it", async () => {
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "mean", device: "Algalita",
+    });
+
+    expect((result.window_actually_searched as { complete: boolean }).complete).toBe(true);
+  });
+
+  it("surfaces a shared observed_at at the top level for multi-metric reads", async () => {
+    // Every metric comes off the same row, so they share one instant. Without it at the top
+    // level the model substituted the window boundary.
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "all", time_range: "last day", aggregation: "earliest", device: "Algalita",
+    });
+
+    const metrics = result.metrics as Record<string, { observed_at: string }>;
+    expect(typeof result.observed_at).toBe("string");
+    expect(result.observed_at).toBe(metrics.ph.observed_at);
+  });
+
+  it("omits a shared observed_at when the aggregation has no single instant", async () => {
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "all", time_range: "last day", aggregation: "mean", device: "Algalita",
+    });
+
+    expect(result.observed_at).toBeUndefined();
   });
 });
