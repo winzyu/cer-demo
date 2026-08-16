@@ -21,9 +21,6 @@ jest.mock("../../src/services/LlmService", () => ({
   })),
 }));
 
-// eslint-disable-next-line import/first
-import app from "../../src/app";
-
 const CHAT = "/api/v1/chat";
 
 /** These tests reset the module registry and re-import the app, which recompiles the tree. */
@@ -42,6 +39,22 @@ const loadAppWith = (env: Record<string, string>): Express => {
   // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
   return require("../../src/app").default as Express;
 };
+
+/**
+ * The baseline app these tests assert against.
+ *
+ * **Every setting it depends on is pinned here rather than inherited from `.env`.** It used to
+ * be a plain top-level import, which silently made the suite a function of whatever the
+ * developer had configured: setting `DEFAULT_RETRIEVAL=firestore-direct` locally turned four
+ * passing tests red with a `mode` mismatch that looked like a product bug. `SENSOR_TOOL` is
+ * pinned off for the same reason — this file covers the default, tool-free chat path;
+ * `sensorChat.test.ts` covers the other one.
+ */
+const app = loadAppWith({
+  DEFAULT_RETRIEVAL: "stub",
+  DEBUG_RETRIEVAL: "false",
+  SENSOR_TOOL: "false",
+});
 
 describe("POST /api/v1/chat", () => {
   it("answers a valid query, with retrieval provenance attached", async () => {
