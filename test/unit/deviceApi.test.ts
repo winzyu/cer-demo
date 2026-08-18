@@ -1,3 +1,4 @@
+import createError from "http-errors";
 import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import {
   METRICS,
@@ -6,7 +7,10 @@ import {
   decodeMetric,
   decodeReading,
 } from "../../src/devices/metrics";
+import { errorHandler } from "../../src/middleware/errorHandler";
+import { ERROR_CODES, codedError, resolveErrorCode } from "../../src/utils/errors";
 import type { FetchLike } from "../../src/devices/DeviceApiClient";
+import type { NextFunction, Request, Response } from "express";
 
 const BASE = "https://example.test/api/v1";
 
@@ -306,6 +310,14 @@ describe("DeviceApiClient", () => {
     await expect(client(fetchImpl).listDevices()).rejects.toThrow(/rejected the token/i);
   });
 
+  it("issues exactly one request for a 401 — expiry is surfaced, never retried", async () => {
+    // There is no refresh path in this service. A retry loop here would burn the rate
+    // limit against a token that cannot come back to life.
+    const { fetchImpl, calls } = stubFetch(null, { status: 401 });
+    await expect(client(fetchImpl).listDevices()).rejects.toThrow();
+    expect(calls).toHaveLength(1);
+  });
+
   it("refuses to call an authenticated route with no token", async () => {
     const { fetchImpl, calls } = stubFetch([]);
     const noToken = new DeviceApiClient({ baseUrl: BASE, token: "", fetchImpl });
@@ -358,5 +370,163 @@ describe("DeviceApiClient", () => {
       baseUrl: BASE, token: "t", timeoutMs: 5, fetchImpl: hang,
     });
     await expect(impatient.listDevices()).rejects.toThrow(/timed out after 5ms/);
+  });
+});
+
+/** Aborts on the first request, the way an unresponsive upstream does. */
+const hangingFetch: FetchLike = (_url, init) => new Promise((_resolve, reject) => {
+  init?.signal?.addEventListener("abort", () => {
+    const error = new Error("aborted");
+    error.name = "AbortError";
+    reject(error);
+  });
+});
+
+/** The code the client attaches when a call fails for the given reason. */
+const codeFromClient = async (
+  fetchImpl: FetchLike,
+  options: Partial<{ token: string; timeoutMs: number }> = {},
+): Promise<string | undefined> => {
+  const api = new DeviceApiClient({
+    baseUrl: BASE, token: "t", fetchImpl, ...options,
+  });
+  try {
+    await api.listDevices();
+    return undefined;
+  } catch (error) {
+    return resolveErrorCode(error);
+  }
+};
+
+describe("error taxonomy", () => {
+  it("keeps the code set closed", () => {
+    expect([...ERROR_CODES]).toEqual([
+      "llm_not_configured",
+      "device_auth_expired",
+      "device_timeout",
+      "device_unavailable",
+    ]);
+  });
+
+  it("codes a device 401 as expired auth", async () => {
+    const { fetchImpl } = stubFetch(null, { status: 401 });
+    expect(await codeFromClient(fetchImpl)).toBe("device_auth_expired");
+  });
+
+  it("codes a timeout distinctly from an outage", async () => {
+    expect(await codeFromClient(hangingFetch, { timeoutMs: 5 })).toBe("device_timeout");
+  });
+
+  it("codes an upstream 5xx as unavailable", async () => {
+    const { fetchImpl } = stubFetch(null, { status: 503, text: "gateway down" });
+    expect(await codeFromClient(fetchImpl)).toBe("device_unavailable");
+  });
+
+  it("codes an unreachable host as unavailable", async () => {
+    const refused: FetchLike = () => Promise.reject(new Error("ECONNREFUSED"));
+    expect(await codeFromClient(refused)).toBe("device_unavailable");
+  });
+
+  it("codes a missing token as unavailable, not as expired auth", async () => {
+    // Nothing was ever issued, so there is no session to renew.
+    const { fetchImpl } = stubFetch([]);
+    expect(await codeFromClient(fetchImpl, { token: "" })).toBe("device_unavailable");
+  });
+
+  it("codes a missing base URL as unavailable", () => {
+    try {
+      // eslint-disable-next-line no-new
+      new DeviceApiClient({ baseUrl: "" });
+      throw new Error("expected a throw");
+    } catch (error) {
+      expect(resolveErrorCode(error)).toBe("device_unavailable");
+    }
+  });
+
+  it("leaves an upstream 4xx uncoded, so no retry is implied", async () => {
+    // A 404 for one device is a specific answer, not an outage.
+    const { fetchImpl } = stubFetch(null, { status: 404, text: "not found" });
+    expect(await codeFromClient(fetchImpl)).toBeUndefined();
+  });
+
+  it("codes a missing FIREWORKS_API_KEY, which is thrown outside this module", () => {
+    expect(resolveErrorCode(createError(503, "FIREWORKS_API_KEY is not configured.")))
+      .toBe("llm_not_configured");
+  });
+
+  it("does not mislabel another 503 as a missing key", () => {
+    expect(resolveErrorCode(createError(503, "LLM_MODEL is not configured."))).toBeUndefined();
+  });
+
+  it("never publishes a foreign code such as a Node errno", () => {
+    // `http-errors` has an index signature and Node stamps `code` on system errors, so an
+    // unfiltered pass-through would leak ECONNREFUSED into the public contract.
+    const errno = Object.assign(new Error("connect ECONNREFUSED"), { code: "ECONNREFUSED" });
+    expect(resolveErrorCode(errno)).toBeUndefined();
+  });
+
+  it("returns no code for an ordinary error", () => {
+    expect(resolveErrorCode(new Error("boom"))).toBeUndefined();
+    expect(resolveErrorCode(undefined)).toBeUndefined();
+  });
+
+  it("does not treat an empty window as an error at all", async () => {
+    // Old Woman Creek's silent-window payload (DEVICE_API.md §12b). It must resolve as a
+    // result — value null / n_samples 0 downstream — never reject with a code. Reporting
+    // these zeros as measurements is the eval's automatic disqualification.
+    const { fetchImpl } = stubFetch({ 72: 0, 97: 0, 98: 0, 99: 0, 100: 0, 102: 0 });
+    const averages = await client(fetchImpl).getAverages(1, "day", "dev:1");
+    expect(averages.empty).toBe(true);
+    expect(resolveErrorCode(averages)).toBeUndefined();
+  });
+});
+
+describe("errorHandler body", () => {
+  /** Runs the terminal handler against a minimal `res` and returns what it wrote. */
+  const render = (err: Error): { status: number; body: Record<string, unknown> } => {
+    let status = 0;
+    let body: Record<string, unknown> = {};
+    const res = {
+      headersSent: false,
+      status(code: number) { status = code; return this; },
+      json(payload: Record<string, unknown>) { body = payload; return this; },
+    };
+    errorHandler(
+      err,
+      {} as Request,
+      res as unknown as Response,
+      (() => undefined) as NextFunction,
+    );
+    return { status, body };
+  };
+
+  beforeEach(() => {
+    jest.spyOn(console, "error").mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("adds code alongside the existing fields without introducing status", () => {
+    const { status, body } = render(
+      codedError(401, "Device API rejected the token (401).", "device_auth_expired"),
+    );
+    expect(status).toBe(401);
+    expect(body.error).toBe("Device API rejected the token (401).");
+    expect(body.message).toBe(body.error);
+    expect(body.code).toBe("device_auth_expired");
+    // The HTTP status line carries the status; the body must not (health.test.ts pins it).
+    expect(body).not.toHaveProperty("status");
+  });
+
+  it("omits code entirely for an error outside the taxonomy", () => {
+    const { body } = render(createError(400, "Validation error"));
+    expect(body).not.toHaveProperty("code");
+    expect(body.error).toBe("Validation error");
+  });
+
+  it("still exposes the stack outside production", () => {
+    expect(render(new Error("boom")).body).toHaveProperty("stack");
   });
 });
