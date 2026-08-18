@@ -21,7 +21,8 @@
     "seed:firestore-chunks": "ts-node scripts/seedFirestoreChunks.ts",
     "seed:pgvector": "ts-node scripts/seedPgvector.ts",
     "cost": "ts-node scripts/cost.ts",
-    "grade:packet": "ts-node scripts/gradePacket.ts"
+    "grade:packet": "ts-node scripts/gradePacket.ts",
+    "starter:prompts": "ts-node scripts/starterPrompts.ts"
   },
   "license": "MIT",
   "dependencies": {
