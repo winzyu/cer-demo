@@ -273,7 +273,11 @@ DEFAULT_RETRIEVAL=firestore-direct SENSOR_TOOL=true  PORT=8000 npm run dev   # t
 DEFAULT_RETRIEVAL=stub            SENSOR_TOOL=false PORT=8001 npm run dev   # terminal 2
 ```
 
-The frontend takes a `?backend=` override: `frontend/index.html?backend=http://localhost:8001`.
+The frontend takes a `?backend=` override: `http://localhost:5173?backend=http://localhost:8001`.
+
+> **Serve the frontend, don't double-click it.** It is now ES modules, and module scripts are
+> blocked over `file://` (opaque origin, CORS). From `frontend/`, run
+> `python3 -m http.server 5173`.
 
 ### 4e. Stopping it
 
@@ -608,7 +612,8 @@ test/
   integration/          # health, chat, sensorChat
   unit/                 # per-module suites
   fixtures/device-api/  # recorded production bodies + provenance README
-frontend/index.html     # single-file chat UI (manual test surface, not the product)
+frontend/               # chat UI (manual test surface, not the product). Served, not file://
+  index.html            #   markup + mount points; app.css; js/ modules; vendor/ for third-party
 data/                   # corpus artifact + device recordings (git-ignored)
 documents/              # source corpus. NOTE: `.gitignore` has a documents/* rule, but several
                         #   PDFs predate it and ARE tracked — check `git status` before assuming

@@ -4,39 +4,7 @@
   <meta charset="utf-8">
   <title>Clean Earth RAG</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    :root { color-scheme: light dark; --border:#d6d6d6; --muted:#666; }
-    html, body { height: 100%; margin: 0; }
-    body {
-      font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      display: flex; flex-direction: column;
-    }
-    header {
-      padding: 10px 16px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: baseline; gap: 12px;
-    }
-    header h1 { font-size: 16px; margin: 0; font-weight: 600; }
-    header .meta { color: var(--muted); font-size: 12px; }
-    #messages {
-      flex: 1; overflow-y: auto; padding: 16px;
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    .msg { max-width: 720px; }
-    .msg.user { align-self: flex-end; }
-    .msg.assistant { align-self: flex-start; }
-    .msg .role { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
-    .msg .body { white-space: pre-wrap; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
-    .msg.user .body { background: rgba(0,80,200,0.06); }
-    .citations { font-size: 12px; color: var(--muted); margin-top: 6px; padding-left: 0; list-style: none; }
-    .citations li { margin: 2px 0; }
-    .citations .file { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .thinking { font-size: 12px; color: var(--muted); padding: 4px 8px; }
-    form { display: flex; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--border); }
-    input[type=text] { flex: 1; padding: 8px 10px; font: inherit; border: 1px solid var(--border); border-radius: 6px; }
-    button { padding: 8px 14px; font: inherit; border: 1px solid var(--border); border-radius: 6px; background: rgba(0,0,0,0.04); cursor: pointer; }
-    button:disabled { opacity: 0.5; cursor: progress; }
-    .error { color: #b00020; }
-  </style>
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
   <header>
@@ -45,154 +13,41 @@
     <span class="meta" id="health"></span>
   </header>
 
+  <!--
+    Message list. Every message element is built by js/render.js, which gives each one
+    these named slots so Wave 1 streams can mount into a message without editing this file:
+
+      <div class="msg {user|assistant}">
+        <div class="role">…</div>
+        <div class="body"        data-slot="body">…</div>        WS-1 markdown target
+        <div class="provenance"  data-slot="provenance"></div>   WS-2, assistant only
+        <div class="chart"       data-slot="chart"></div>        WS-4, assistant only
+        …citations appended here by renderCitations()
+      </div>
+
+    The provenance and chart slots start empty and are absent from user messages.
+  -->
   <div id="messages" aria-live="polite"></div>
 
-  <form id="composer">
-    <input type="text" id="input" placeholder="Ask about your water…" autocomplete="off" autofocus required>
-    <button type="submit" id="send">Send</button>
-  </form>
+  <!-- Input / controls region. WS-3 owns everything inside it except the composer form. -->
+  <div id="input-region">
+    <!-- Starter prompts (WS-3, fed by frontend/starter-prompts.json). Empty today. -->
+    <div id="starter-prompts"></div>
 
-  <script>
-    const BACKEND = (new URLSearchParams(location.search)).get("backend") || "http://localhost:8000";
-    const API_PATH = "/api/v1/chat";
+    <form id="composer">
+      <input type="text" id="input" placeholder="Ask about your water…" autocomplete="off" autofocus required>
+      <button type="submit" id="send">Send</button>
+    </form>
 
-    const messagesEl = document.getElementById("messages");
-    const inputEl = document.getElementById("input");
-    const sendBtn = document.getElementById("send");
-    const healthEl = document.getElementById("health");
-    const history = []; // [{role, content}]
+    <!-- Response controls: stop / copy / regenerate (WS-3). Empty today. -->
+    <div id="response-controls"></div>
+  </div>
 
-    // Returns the body element so streamed tokens can be appended to it as they arrive.
-    function renderMessage(role, body) {
-      const wrap = document.createElement("div");
-      wrap.className = "msg " + role;
-      const r = document.createElement("div"); r.className = "role"; r.textContent = role;
-      const b = document.createElement("div"); b.className = "body"; b.textContent = body || "";
-      wrap.append(r, b);
-      messagesEl.appendChild(wrap);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-      return { wrap, body: b };
-    }
-
-    // Chunk shape is { id, text, source, score? } — see docs/SPECS.md §9.
-    function renderCitations(wrap, citations) {
-      if (!citations || !citations.length) return;
-      const seen = new Set();
-      const ul = document.createElement("ul"); ul.className = "citations";
-      for (const c of citations) {
-        if (seen.has(c.source)) continue;
-        seen.add(c.source);
-        const li = document.createElement("li");
-        const f = document.createElement("span"); f.className = "file"; f.textContent = c.source;
-        li.append(f);
-        ul.appendChild(li);
-      }
-      wrap.appendChild(ul);
-    }
-
-    /** Minimal SSE parser over a fetch body stream. Yields { event, data }. */
-    async function* readSse(response) {
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        // Events are separated by a blank line; keep any partial tail in the buffer.
-        const blocks = buffer.split("\n\n");
-        buffer = blocks.pop();
-        for (const block of blocks) {
-          if (!block.trim()) continue;
-          const event = (block.match(/^event: (.*)$/m) || [])[1] || "message";
-          const raw = (block.match(/^data: (.*)$/m) || [])[1] || "{}";
-          let data = {};
-          try { data = JSON.parse(raw); } catch (e) { /* ignore malformed frame */ }
-          yield { event, data };
-        }
-      }
-    }
-
-    function renderThinking() {
-      const t = document.createElement("div");
-      t.className = "thinking"; t.id = "thinking-indicator";
-      t.textContent = "thinking…";
-      messagesEl.appendChild(t);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-    function removeThinking() {
-      const t = document.getElementById("thinking-indicator");
-      if (t) t.remove();
-    }
-
-    async function refreshHealth() {
-      try {
-        const r = await fetch(BACKEND + "/health");
-        const j = await r.json();
-        const key = j.checks?.fireworksConfigured ? "key ok" : "NO API KEY";
-        healthEl.textContent = `${j.status} · ${j.environment} · ${key}`;
-        if (!j.checks?.fireworksConfigured) healthEl.classList.add("error");
-      } catch (e) {
-        healthEl.textContent = "backend unreachable @ " + BACKEND;
-        healthEl.classList.add("error");
-      }
-    }
-
-    document.getElementById("composer").addEventListener("submit", async (ev) => {
-      ev.preventDefault();
-      const msg = inputEl.value.trim();
-      if (!msg) return;
-      renderMessage("user", msg);
-      history.push({ role: "user", content: msg });
-      inputEl.value = "";
-      sendBtn.disabled = true;
-      renderThinking();
-
-      let target = null;
-      let answer = "";
-      try {
-        const r = await fetch(BACKEND + API_PATH, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          // history excludes the turn just pushed — that one is sent as `query`.
-          body: JSON.stringify({ query: msg, history: history.slice(0, -1), stream: true }),
-        });
-
-        if (!r.ok) {
-          // Validation failures arrive as JSON before the stream opens.
-          removeThinking();
-          const err = await r.json().catch(() => ({ error: r.statusText }));
-          renderMessage("assistant", "Error: " + (err.error || r.statusText));
-          return;
-        }
-
-        for await (const { event, data } of readSse(r)) {
-          if (event === "meta") {
-            removeThinking();
-            target = renderMessage("assistant", "");
-            renderCitations(target.wrap, data.citations);
-          } else if (event === "token") {
-            if (!target) { removeThinking(); target = renderMessage("assistant", ""); }
-            answer += data.text;
-            target.body.textContent = answer;
-            messagesEl.scrollTop = messagesEl.scrollHeight;
-          } else if (event === "error") {
-            if (!target) { removeThinking(); target = renderMessage("assistant", ""); }
-            target.body.textContent = answer + "\n[stream error: " + data.error + "]";
-          }
-        }
-
-        if (answer) history.push({ role: "assistant", content: answer });
-      } catch (e) {
-        removeThinking();
-        renderMessage("assistant", "Network error: " + e.message);
-      } finally {
-        sendBtn.disabled = false;
-        inputEl.focus();
-      }
-    });
-
-    refreshHealth();
-  </script>
+  <!--
+    ES modules. NOTE: module scripts are fetched with CORS, and a file:// page has an
+    opaque origin, so browsers block them. Serve this directory over HTTP to open it,
+    e.g. `python3 -m http.server 5173` from frontend/ then http://localhost:5173/.
+  -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
