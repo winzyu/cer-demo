@@ -3,6 +3,7 @@ import type { ChatMessage } from "../types/chat.types";
 import type {
   ToolCall, ToolDefinition, ToolHandler, ToolInvocation,
 } from "../types/tool.types";
+import { stripCommentaryMarkers } from "../utils/answerFormat";
 import { createLogger } from "../utils/logger";
 import type { LlmService, LlmUsage } from "./LlmService";
 
@@ -119,11 +120,20 @@ export class ChatOrchestrator {
         offerTools ? this.definitions : undefined,
       );
 
+      // The one place `gpt-oss-20b`'s leaked `【commentary…】` markers are stripped (WS-5).
+      // Every way out of this loop reads `content`, so both the JSON and SSE paths and the
+      // round-cap fallback get the cleaned text from a single call. The raw `answer.content`
+      // is kept for the assistant turn replayed to the provider below — that has to go back
+      // verbatim, and rewriting it would perturb the cacheable prefix the bake-off measures.
+      const content = stripCommentaryMarkers(answer.content);
+
       rounds = round;
       usage = sumUsage(usage, answer.usage);
       model = answer.model;
-      if (answer.content.trim() !== "") {
-        lastContent = answer.content;
+      // A round that was nothing but markers is not prose, so it must not become the fallback
+      // answer below — the placeholder is honest where a stripped-empty string is not.
+      if (content.trim() !== "") {
+        lastContent = content;
       }
 
       // `?? []` rather than trusting the type: `LlmService` always sets this, but a test double
@@ -132,8 +142,10 @@ export class ChatOrchestrator {
       const toolCalls = answer.toolCalls ?? [];
 
       if (toolCalls.length === 0) {
+        // An answer that was entirely markers leaves here as `""` rather than as the marker's
+        // contents dressed up as prose. Empty is reportable; invented is not.
         return {
-          content: answer.content, model, usage, invocations, rounds, capped: false,
+          content, model, usage, invocations, rounds, capped: false,
         };
       }
 
