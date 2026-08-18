@@ -32,7 +32,10 @@ function makeSlot(name) {
 export function renderMessage(role, body) {
   const wrap = document.createElement("div");
   wrap.className = "msg " + role;
+  wrap.dataset.role = role;
   const r = document.createElement("div"); r.className = "role"; r.textContent = role;
+  // textContent, never innerHTML: this is the only place a *user* turn is written, and a
+  // user must not be able to inject markup into their own transcript (WS-1).
   const b = makeSlot("body"); b.textContent = body || "";
   wrap.append(r, b);
 
@@ -47,22 +50,37 @@ export function renderMessage(role, body) {
 
   messagesEl.appendChild(wrap);
   scrollToBottom();
-  return { wrap, body: b, slots: { body: b, provenance, chart } };
+  return { wrap, role, body: b, slots: { body: b, provenance, chart } };
+}
+
+/** A user turn is always plain text — markdown is an assistant-only affordance (WS-1). */
+function isUserTarget(target) {
+  if (target.role) return target.role === "user";
+  const wrap = target.wrap;
+  return !!(wrap && wrap.classList && wrap.classList.contains("user"));
 }
 
 /**
  * Writes answer text into a message body.
  *
  * `markdownRenderer` is WS-1's seam: it receives the raw text and returns sanitized HTML,
- * or null/undefined to decline. Today's stub declines, so this is the plain-text path that
+ * or null/undefined to decline, in which case this falls back to the plain-text path that
  * has always run.
+ *
+ * The `body--md` class is the other half of the seam. app.css keeps `white-space: pre-wrap`
+ * on a plain-text body so streamed newlines survive, and switches it to `normal` under
+ * `.body--md` — without the class every block element the renderer emits would inherit
+ * pre-wrap and the spacing would come out doubled.
  */
 export function updateMessageBody(target, text, markdownRenderer) {
-  const html = markdownRenderer ? markdownRenderer(text) : null;
+  // Never route a user turn through the markdown renderer, whatever the caller passes.
+  const html = markdownRenderer && !isUserTarget(target) ? markdownRenderer(text) : null;
   if (html === null || html === undefined) {
+    target.body.classList.remove("body--md");
     target.body.textContent = text;
     return;
   }
+  target.body.classList.add("body--md");
   target.body.innerHTML = html;
 }
 
