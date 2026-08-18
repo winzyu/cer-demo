@@ -2,15 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Clean Earth RAG</title>
+  <title>Gilligan — water quality assistant</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+
+  <!--
+    Theme must be stamped BEFORE first paint. js/theme.js is an ES module and therefore
+    deferred, so doing it there would flash the wrong palette on every load.
+  -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("gilligan.theme");
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch (e) { /* storage disabled: fall through to prefers-color-scheme */ }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="theme.css">
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <header>
-    <h1>Clean Earth RAG</h1>
-    <span class="meta">single-sensor water-quality assistant</span>
-    <span class="meta" id="health"></span>
+  <header class="appbar">
+    <img class="appbar__logo" src="assets/cer-logo.png" alt="Clean Earth Rovers">
+    <span class="appbar__title">Gilligan</span>
+    <span class="appbar__meta">water quality assistant</span>
+
+    <span class="appbar__spacer"></span>
+
+    <!-- Health text from api.js. WS-2 may add a pod/freshness badge alongside it. -->
+    <div class="appbar__status">
+      <span class="appbar__meta" id="health"></span>
+    </div>
+
+    <button type="button" class="theme-toggle" id="theme-toggle"
+            aria-label="Switch to dark theme" aria-pressed="false" title="Toggle light / dark">
+      <svg class="icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+      </svg>
+      <svg class="icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"/>
+        <path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+      </svg>
+    </button>
   </header>
 
   <!--
@@ -18,25 +52,31 @@
     these named slots so Wave 1 streams can mount into a message without editing this file:
 
       <div class="msg {user|assistant}">
-        <div class="role">…</div>
-        <div class="body"        data-slot="body">…</div>        WS-1 markdown target
-        <div class="provenance"  data-slot="provenance"></div>   WS-2, assistant only
-        <div class="chart"       data-slot="chart"></div>        WS-4, assistant only
+        <div class="role">…</div>                                 (hidden by CSS)
+        <div class="body"        data-slot="body">…</div>          WS-1 markdown target
+        <div class="provenance"  data-slot="provenance"></div>     WS-2, assistant only
+        <div class="chart"       data-slot="chart"></div>          WS-4, assistant only
         …citations appended here by renderCitations()
       </div>
 
     The provenance and chart slots start empty and are absent from user messages.
+    Empty slots are display:none, so they cost no space until something mounts.
+
+    Class vocabulary lives in app.css — .chip / .chip--tool / .chip--deduped /
+    .badge--ok / .badge--warn / .notice--error / .chart__* / .btn--ghost. Use those
+    names rather than new ones, and never a literal colour: it will not invert.
   -->
   <div id="messages" aria-live="polite"></div>
 
   <!-- Input / controls region. WS-3 owns everything inside it except the composer form. -->
   <div id="input-region">
-    <!-- Starter prompts (WS-3, fed by frontend/starter-prompts.json). Empty today. -->
+    <!-- Starter prompts (WS-3). Read frontend/starter-prompts.json → .prompts[].text -->
     <div id="starter-prompts"></div>
 
     <form id="composer">
-      <input type="text" id="input" placeholder="Ask about your water…" autocomplete="off" autofocus required>
-      <button type="submit" id="send">Send</button>
+      <input type="text" id="input" placeholder="Ask about a reading, a threshold, or a site…" autocomplete="off" autofocus required>
+      <span class="composer__hint">Shift + Enter for a new line</span>
+      <button type="submit" id="send" aria-label="Send">Send</button>
     </form>
 
     <!-- Response controls: stop / copy / regenerate (WS-3). Empty today. -->
