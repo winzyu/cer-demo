@@ -22,19 +22,39 @@ Phase 0 creates the seam first.
 4. **The response shape is a contract.** `tool_calls` and `tool_round_cap_reached` are *omitted* when
    no tool ran; the error body is `{ error, message }` with **no `status` field**. Adding fields is
    fine; changing or removing these is not.
-5. **No CDN, no remote assets in the frontend.** It is opened over `file://` with no build step and
-   no bundler. Third-party code is vendored into `frontend/vendor/` with its license header intact.
-6. **Do not touch** `eval/transcripts/**` (captured evidence), `eval/grading/**` (a live blind packet
+5. **No CDN, no remote assets in the frontend.** There is no build step and no bundler. Third-party
+   code is vendored into `frontend/vendor/` with its license header intact.
+6. **The demo UI is served, not double-clicked** (decided 2026-08-17, during Phase 0). ES module
+   scripts are fetched with CORS and a `file://` page has an opaque origin, so every browser blocks
+   `<script type="module">` there — and `fetch("starter-prompts.json")` fails for the same reason.
+   An earlier draft of this plan asked for both ES modules *and* `file://`, which cannot both hold.
+   Run it as:
+
+   ```bash
+   cd frontend && python3 -m http.server 5173
+   # then http://localhost:5173?backend=http://localhost:8000
+   ```
+
+   N7's Next.js page is served anyway, so this is the direction of travel rather than a detour.
+7. **Do not touch** `eval/transcripts/**` (captured evidence), `eval/grading/**` (a live blind packet
    — `KEY.json` un-blinds it and must not be read), or `test/fixtures/device-api/**` (frozen
    recordings; the trap-preserving duplicates and mixed temperature units are deliberate).
-7. **Write only inside this repo.** `../user-dashboard` and `../backend` are read-only references.
-8. **Run no git commands.** The user drives all commits. Leave work in the working tree and report
+8. **Write only inside this repo.** `../user-dashboard` and `../backend` are read-only references —
+   and the real brand assets and tokens live there: `public/cer-light-transparent.png`,
+   `public/gilligan-icon.png`, `src/app/globals.css` (`#12182b`, Work Sans 300 / Poppins 600),
+   `#2D77A6` bubble, `#a89748` gold, `#f5cd19` nav active. Match them; do not invent new ones.
+9. **Run no git commands.** The user drives all commits. Leave work in the working tree and report
    what you changed.
 
 **Verification every stream runs before reporting done:**
 
+> **In a fresh worktree, link the corpus artifact first** — `data/` is git-ignored, so
+> `data/corpus/corpus.json` is not checked out and `test/unit/directFeed.test.ts` fails on an
+> environmental miss that looks like a regression:
+> `ln -s <main-checkout>/data/corpus data/corpus`.
+
 ```bash
-npm test                      # 429 passing, 21 suites
+npm test                      # 429 passing, 21 suites at the Phase 0 base
 npm run typecheck             # tsc --noEmit, silent
 npx eslint src --ext .ts      # NOT `npm run lint` — that runs --fix and writes files
 ```
@@ -71,8 +91,13 @@ modules and DOM mount points Wave 1 will fill, so no Wave 1 agent ever needs to 
   waiting on WS-7.
 
 **Acceptance:** the page looks and behaves exactly as before. This is a pure move — if the diff
-contains a behavior change, it is out of scope. Use ES modules (`<script type="module">`); confirm it
-still loads over `file://`, which is how the runbook tells people to open it.
+contains a behavior change, it is out of scope. Use ES modules (`<script type="module">`) and confirm
+the page loads from a served directory (guardrail 6), not `file://`.
+
+**Status: complete** on `feat/frontend-modules`. `index.html` went 198 → 54 lines; the seam is
+`data-slot="body"` on every message plus `.provenance` and `.chart` slots on assistant messages, and
+static `#input-region` / `#starter-prompts` / `#response-controls` regions. `#response-controls` is a
+sibling of the form, not a flex child of it, so it cannot steal width from the input.
 
 ---
 
@@ -165,6 +190,17 @@ single call site in `src/services/ChatOrchestrator.ts`
 **Acceptance:** unit tests over recorded marker shapes, including the marker-only case and a marker
 mid-sentence.
 
+**Status: complete** on `feat/strip-commentary`, with two findings that outlast the task:
+
+- **The brackets are load-bearing for grading.** There are *zero* recorded `commentary` markers in
+  the repo, but the same `【】` brackets carry ~160 **citations** across the captured transcripts
+  (`【1】` alone 62×), which `GRADING_GUIDE.md` scores as `invalid_citations`. A naive strip-anything
+  -in-brackets would have silently deleted graded evidence in 168 transcripts. The matcher is
+  anchored to the channel name; everything else passes through byte-for-byte.
+- **Follow-up (Wave 2):** the non-tool SSE branch at `ChatController.ts:125` — the default path with
+  `SENSOR_TOOL=false` — bypasses the orchestrator and emits raw provider deltas, so it is **not**
+  stripped. Fixing it needs stream buffering, because a marker can straddle chunk boundaries.
+
 ### WS-6 · Error taxonomy *(server)*
 
 **Owns:** `src/utils/errors.ts`, `src/middleware/errorHandler.ts`, `src/devices/DeviceApiClient.ts`,
@@ -189,6 +225,22 @@ legitimate result and must not be reclassified as an error.
 **Acceptance:** existing device-API tests still pass; new tests assert each code; `health.test.ts`
 still confirms no `status` field in the body.
 
+**Status: complete** on `feat/error-taxonomy`. `code` is **omitted** outside the taxonomy, so every
+existing body is byte-identical apart from the four coded conditions. Three calls worth knowing:
+
+- **Upstream 4xx other than 401 stays uncoded** — a 403/404 is a specific answer to a specific
+  request, and coding it `device_unavailable` would invite a retry guaranteed to fail identically.
+- **The "not configured" 503s** map to `device_unavailable`, not `device_auth_expired`: no token was
+  ever issued, so there is no session to renew and a login prompt would not help.
+- **`llm_not_configured` is inferred**, matching status 503 *plus* the key name, because it is raised
+  in `LlmService.ts:102` / `EmbeddingService.ts:39` — outside this stream's ownership.
+  **Follow-up:** swap those two `createError(503, …)` calls for `codedError(…, "llm_not_configured")`
+  and delete the inference branch.
+
+`resolveErrorCode` filters through `isErrorCode` so Node's own `code` (`ECONNREFUSED`, `ENOTFOUND`)
+can never leak into a public body — `http-errors` has an index signature, so an unfiltered
+pass-through would have published errnos.
+
 ### WS-7 · Starter prompts from the eval set *(server/tooling)*
 
 **Owns:** `scripts/starterPrompts.ts` *(new)*, `test/unit/starterPrompts.test.ts` *(new)*, the
@@ -206,6 +258,17 @@ already curated, and generated prompts stay in sync for free.
 
 **Acceptance:** `npm run starter:prompts` regenerates the file; the test asserts determinism and the
 two exclusions.
+
+**Status: complete** on `feat/starter-prompts` — 10 prompts from 10 fixtures, one per eligible class
+(30 in, 3 `refusal` and 2 `sensor-tool` dropped). **The output shape is an object wrapper, and it
+wins over Phase 0's placeholder** at merge:
+
+```json
+{ "prompts": [ { "id": "definitional-conductivity", "class": "definitional", "text": "…" } ] }
+```
+
+Phase 0 wrote `{ "prompts": [string] }`, so WS-3's loader must read `.prompts[].text`, not
+`.prompts[]`. A test in this branch fails loudly if the placeholder file survives the merge.
 
 ---
 
