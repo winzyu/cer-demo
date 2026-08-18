@@ -1,5 +1,6 @@
 import createError from "http-errors";
 import { config } from "../config";
+import { codedError } from "../utils/errors";
 import { createLogger } from "../utils/logger";
 import { decodeAverages, decodeReading } from "./metrics";
 import type {
@@ -53,7 +54,10 @@ export class DeviceApiClient {
   constructor(options: DeviceApiClientOptions = {}) {
     const baseUrl = options.baseUrl ?? config.deviceApi.baseUrl;
     if (!baseUrl) {
-      throw createError(503, "DEVICE_API_BASE_URL is not configured.");
+      // `device_unavailable` rather than a config-specific code: from a caller's side an
+      // unconfigured client and an unreachable host are the same fact — no device data is
+      // obtainable — and the message already says which one it is.
+      throw codedError(503, "DEVICE_API_BASE_URL is not configured.", "device_unavailable");
     }
     // A trailing slash would produce `//water/last/...`, which some proxies 404 rather than
     // normalize. Cheaper to strip once here than to debug against a live deployment.
@@ -76,9 +80,13 @@ export class DeviceApiClient {
     { authenticated = true }: { authenticated?: boolean } = {},
   ): Promise<T> {
     if (authenticated && !this.token) {
-      throw createError(
+      // Not `device_auth_expired`: no token was ever issued, so there is nothing to
+      // re-authenticate. Telling a user their session expired when the deployment simply
+      // has no credential would send them to a login flow that cannot fix it.
+      throw codedError(
         503,
         "No device-API token available. Set DEVICE_API_TOKEN, or pass a caller token to DeviceApiClient.",
+        "device_unavailable",
       );
     }
 
@@ -100,9 +108,18 @@ export class DeviceApiClient {
       });
     } catch (error) {
       if ((error as Error).name === "AbortError") {
-        throw createError(504, `Device API timed out after ${this.timeoutMs}ms (${path}).`);
+        throw codedError(
+          504,
+          `Device API timed out after ${this.timeoutMs}ms (${path}).`,
+          "device_timeout",
+        );
       }
-      throw createError(502, `Device API request failed (${path}): ${(error as Error).message}`);
+      // DNS failure, refused connection, TLS error: the host did not answer at all.
+      throw codedError(
+        502,
+        `Device API request failed (${path}): ${(error as Error).message}`,
+        "device_unavailable",
+      );
     } finally {
       clearTimeout(timer);
     }
@@ -112,18 +129,23 @@ export class DeviceApiClient {
       // service has no login page and must not retry blindly, so expiry is surfaced as an
       // actionable error instead — the token is minted without an `expiresIn`, so a 401 here
       // means revoked or wrong-secret, not simply stale.
-      throw createError(
+      throw codedError(
         401,
         "Device API rejected the token (401). Obtain a fresh JWT from POST /users/login.",
+        "device_auth_expired",
       );
     }
 
     if (!response.ok) {
       const body = await response.text().catch(() => "");
-      throw createError(
-        response.status >= 500 ? 502 : response.status,
-        `Device API ${response.status} on ${path}${body ? `: ${body.slice(0, 300)}` : ""}`,
-      );
+      const message = `Device API ${response.status} on ${path}${body ? `: ${body.slice(0, 300)}` : ""}`;
+      // Only upstream 5xx is "unavailable". A 403 or 404 is a specific answer about a
+      // specific request — coding it as an outage would tell the UI to offer a retry that
+      // is guaranteed to fail the same way.
+      if (response.status >= 500) {
+        throw codedError(502, message, "device_unavailable");
+      }
+      throw createError(response.status, message);
     }
 
     return await response.json() as T;
