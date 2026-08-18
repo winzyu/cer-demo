@@ -7,13 +7,15 @@ the work downstream of them starts.
 This is the successor to the original migration timeline. The single biggest change: the target-stack
 gate (◆G1) is now **resolved** — see below — which re-anchors every phase that depended on it.
 
-> **Current state and how to resume: [`HANDOFF.md`](HANDOFF.md) (2026-08-12).** The N2 sweep is
+> **Current state and how to resume: [`HANDOFF.md`](HANDOFF.md) (2026-08-13).** The N2 sweep is
 > captured and valid; what remains is grading. Read that first if you are picking this up cold.
 
 Companion docs: [`SPECS.md`](SPECS.md) (what's built today), [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md)
 (coding conventions), [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md) (legacy FastAPI
 behavior being ported), [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) (the Phase N2 direct-feed vs
-RAG experiment design), [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md) (the committed bake-off question set), `report/…report-template.pdf` (the report template a later phase builds toward).
+RAG experiment design), [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md) (the committed bake-off question set),
+[`CHAT_UX_WORKPLAN.md`](CHAT_UX_WORKPLAN.md) (N5's startable work, cut into parallel workstreams),
+`report/…report-template.pdf` (the report template a later phase builds toward).
 
 > The previous planning docs `BACKLOG.md` and `data-access-findings.md` were retired during the
 > stack conversion. Their still-relevant items are folded into the phases below; the legacy system's
@@ -41,10 +43,14 @@ lets the numbers close ◆G7. Full design in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_
 Two things to keep straight about this track:
 
 - It deliberately restores a **dev-only** pgvector sidecar as the legacy-parity baseline — a measuring
-  stick, not a reversal of ◆G1. It never enters the deployed path and is deleted once ◆G7 closes.
-- **It is deferred, and not on this branch.** `migration` stays scoped to the skeleton + docs. The
-  bake-off runs on its own branch (e.g. `feat/retrieval-bakeoff`) *after* `migration` merges and
-  *after* Phase N1 provides the adapter seam. Nothing in it should be implemented now.
+  stick, not a reversal of ◆G1. It never enters the deployed path and comes out once ◆G7 closes.
+  **Current intent is to archive rather than delete** — the *evidence* (transcripts, scores, the
+  `pgvector-rag` cost scenario) is what makes ◆G7 auditable later and stays; the *runtime code*
+  (adapter, seeder, schema, compose file, the `pg` dependency) is what costs upkeep and goes. Not
+  yet ratified — until it is, `RETRIEVAL_BAKEOFF.md` §9 and this phase's exit criteria still say
+  "deleted".
+- **It is built and swept.** All three arms are implemented, seeded and captured cold + warm on
+  `feat/bakeoff-sweep`. What remains is grading — see ◆G7 below.
 
 ### Corpus scoped to what the DataPod measures (2026-07-29)
 
@@ -82,8 +88,9 @@ default and RAG would be moot.
 
 ## Confirmed decisions (carried forward, still in force)
 
-- **Data:** synthetic 766-row CSV for now. Future structure = the current 5 metrics (DO, ORP, pH,
-  conductivity, temperature) **+ a new `turbidity` column**. Real-data integration is a later phase.
+- **Data:** the **live device API**, all six metrics (DO, ORP, pH, conductivity, temperature,
+  turbidity), since ◆G8 resolved and N3 landed. The synthetic 766-row CSV this line used to describe
+  is retired — it was never ported to Firestore and nothing reads it.
   *0 is a valid reading for turbidity and ORP — never flag 0 as erroneous for those.*
 - **Sensor access:** **backend-mediated tool call** — `query_sensor_data` fetches data (user token
   forwarded), so the LLM queries on demand.
@@ -151,10 +158,15 @@ casualty. That trade-off is ◆G11.
 method costs**, not by arguing. Full experiment design:
 [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md).*
 
-> **Deferred — do not start on the `migration` branch.** Runs on its own branch
-> (e.g. `feat/retrieval-bakeoff`) after `migration` merges and after N1 delivers the adapter seam.
-> Also needs two inputs from outside the code: **projected requests/month** and **current Fireworks
-> pricing incl. the cached-input rate** — the break-even math is meaningless without both.
+> **Status 2026-08-17 — built and swept, blocked on grading.** All three arms are implemented,
+> seeded and captured (168 transcripts, cold + warm, 28 of 30 fixtures, zero failed turns). Fireworks
+> pricing was recorded 2026-08-03 and the cost model runs on measured sweep means (`npm run cost`).
+> The one input still owed from outside the code is **projected requests/month**, without which the
+> break-even curve has no operating point to read off.
+>
+> **What remains is grading, not building.** `eval/grading/warm/scores.csv` is 36 of 174 rows scored
+> — the deliberate 6-fixture calibration sample. The other 22 fixtures are unscored, and the cold
+> pass has no grading scaffolding at all.
 
 **◆ G7 — Retrieval store & method (the pgvector replacement gate). Resolved *by* this phase**, not
 before it. Each candidate becomes an adapter behind the N1 interface and is graded on the same eval
@@ -164,12 +176,13 @@ set; the winner closes the gate.
 |---|---|---|
 | `firestore-direct` ✅ built | **Direct feed** — read the corpus slice from Firestore, put it in the prompt whole. No embedding, no ranking, no top-k, structurally no retrieval miss. | none |
 | `pgvector-rag` ✅ built | **Legacy-parity RAG** — hybrid dense + Postgres full-text fused with RRF, exactly `MIGRATION_SPEC.md` §7. | Postgres+pgvector sidecar, **dev-only**, deleted after G7 |
-| `firestore-vector` | RAG on Firestore native `findNearest`, dense-only unless a lexical path is built | Firestore vector index |
+| `firestore-vector` ✅ built | RAG on Firestore native `findNearest`, dense-only unless a lexical path is built | Firestore vector index |
 
-**The corpus does not fit in context.** ~1.357M chars ≈ **339K tokens** across 9 docs
-(`MIGRATION_SPEC.md` §10.1), so "direct feed" means a *defined slice*, not everything — see ◆G9. The
-small authoritative tier (criteria table + USGS DO + factsheet) is ~21K tokens and is the recommended
-starting slice. Confirm the configured model's real context limit first; the serverless catalogue rotates.
+**The corpus does not fit in context.** After the 2026-07-29 rescoping: 716,603 chars ≈ **179K
+tokens** across 8 docs, so "direct feed" means a *defined slice*, not everything — see ◆G9. The slice
+◆G9 settled on (operator source-of-truth + 4 probe datasheets) measures **~9.4K tokens**, 11,023
+prompt tokens as actually sent. Confirm the configured model's real context limit before changing it;
+the serverless catalogue rotates.
 
 **Lexical arm is a distinct sub-problem** for the Firestore RAG arm: the legacy retrieval was hybrid
 dense + BM25 fused with RRF, and **Firestore has no full-text search**. Either go dense-only and
@@ -416,13 +429,66 @@ an input to **◆G3**.
   defaults to 16 plus the forced text-only round; it was raised with the loop rather than after it,
   because the six-parameter eval fixture cannot run at 5. Still a **hard dependency for reports**;
   re-check the number once a report actually exercises it.
-- System-prompt personality (friendly; steers toward water-quality topics).
-- **Markdown rendering + XSS hardening** in the UI.
+- System-prompt personality (friendly; steers toward water-quality topics). **Blocked by ◆G7** — the
+  prompt is a pinned control while the bake-off is ungraded, and a personality edit voids all three
+  captured arms. This is the one N5 item that cannot start.
+- Strip `gpt-oss-20b`'s `【commentary…】` markers. **Post-processing on the answer, never a prompt
+  instruction**, for the same reason.
+
+### Answer rendering
+
+- **Markdown rendering + XSS hardening** — tables, bold, lists, code. The model's output is untrusted
+  input; it is rendered as HTML, so sanitization is part of the feature, not a follow-up.
 - **Show retrieved chunks + inline quote citations**; **no public links** to source-of-truth docs.
-- Strip `gpt-oss-20b`'s `【commentary…】` markers.
+- **Sensor readings as a compact table** with units and the faulted-sample count, rather than prose
+  the model reassembles.
+- **Inline chart for `series` results.** The tool already returns epoch-aligned buckets with
+  mean/min/max/n — the data is there and currently unused. Distinct from the report's "no
+  visualizations in v1" rule, which governs the PDF, not the chat.
+
+### Provenance surfacing
+
+Everything here is already in the response body and invisible to the user today.
+
+- **Render `tool_calls`** — "queried Algalita Pod · last 24h · mean DO". `tool_calls` is the
+  diagnostic the runbook tells operators to read; the UI should not make them open DevTools for it.
+- **Data-freshness badge.** Ranges anchor to the device's newest reading, not the wall clock, so "the
+  last day" on a stale pod means *its* last day. Old Woman Creek has been silent since 2026-08-07 and
+  nothing on screen says so.
+- **Caveat badges** for what the tool already flags: turbidity provisional/uncalibrated, and the
+  `WATER_TYPE`-vs-`operatingEnvironment` mismatch.
+- **Refusals styled as intentional**, not as errors. The refusal sentence is a pinned behavior; a
+  refusal that renders like a crash reads as a bug and will be reported as one.
+
+### Input & response controls
+
+- Multi-line input (shift+enter, autosize).
+- **Starter prompts**, generated from `eval/fixtures/` rather than hand-written — the question set is
+  already curated and stays in sync for free.
+- **Pod picker + time-range chips**, so a user need not name a device in prose. `SENSOR_DEVICE_LABEL`
+  is deliberately unset because guessing between two pods on opposite coasts is unsafe; a picker
+  removes the guess instead of defaulting it.
+- **Stop generation.** The server already aborts the upstream call on client disconnect via
+  `AbortController`; this is mostly a button.
+- Copy answer, copy table, regenerate.
+
+### Error UX
+
+- Distinguish **503 no key**, **401 expired token**, **device-API timeout**, and **empty window**.
+  Token expiry must be *surfaced*, not blindly retried (`DEVICE_API.md`); the dashboard's own
+  interceptor clears and redirects.
+- **"Pod silent since Aug 7", never "no data"** — and never `0`. A fabricated zero is the eval's
+  automatic disqualification, and the same rule applies to how the UI renders `value: null`.
+
+### Feedback loop
+
+- **Thumbs up/down + optional comment on any answer.** Sized here because it is cheap and because it
+  closes the eval loop: a flagged answer converts directly into a new fixture for the next sweep.
+- A dedicated "this number looks wrong" path on sensor answers, which is a different failure from a
+  bad document answer and should not land in the same bucket.
 
 *Exit: chat renders rich answers with grounded, non-hallucinated, link-free citations; multi-tool
-answers complete.*
+answers complete; every sensor answer shows which pod, which window, and how fresh the data is.*
 
 ---
 
@@ -450,9 +516,29 @@ answers complete.*
 - Re-point the dashboard's `services/gilligan.js` from `/gilligan/*` to the new `/chat`; match
   request/response shapes; retire/re-map `askGilligan`/`getChats`/`checkQuota`.
 - **◆ G5 responsiveness** (mobile/tablet) and **◆ G6 redesign vs. match existing style** — both gate
-  the UI build.
+  the UI build. **Neither is blocked by anything; they are the cheapest way to unblock this phase.**
 
-*Exit: chatbot reachable from the dashboard, styled per decision, answering end to end.*
+### Persisted chat history
+
+Distinct from the per-request `history` array N1 already accepts. That one is client-supplied,
+trimmed to `MAX_HISTORY_MESSAGES`, and forgotten the moment the response is sent — it makes a
+conversation coherent, not durable.
+
+- **Auth is the hard prerequisite.** There is no authentication in this service today, and a
+  conversation cannot be scoped to a person without an identity. It lands here rather than in N5
+  because N7 is where the dashboard's JWT arrives — the same token already forwarded for sensor
+  calls. Until then, persisted history, per-user quota, and per-user device scoping are all blocked
+  on the same thing.
+- Firestore conversation store: list, resume, rename, delete, and a `new chat` action.
+- Server endpoints for the above; the legacy `getChats` gives the shape to port.
+- Export a conversation (markdown). **Share links are deliberately out** — a transcript contains
+  customer sensor readings, which `SPECS.md` §18 treats as confidential.
+- **Token streaming with tools on.** Today the finished text arrives as one `token` event because the
+  loop cannot know a round is the last until it returns without tool calls. Real streaming needs
+  incremental `delta.tool_calls` assembly. This is the phase that wants it.
+
+*Exit: chatbot reachable from the dashboard, styled per decision, answering end to end, with
+conversations that survive a page reload.*
 
 ---
 
@@ -483,12 +569,13 @@ answers complete.*
 ## Cross-cutting: data requirements
 
 1. **Sensor time-series** — per device, per timestamp: DO, ORP, pH, conductivity, temperature,
-   **+ turbidity (new)**. Today: 766-row CSV, one device. Future: real rovers, numeric-keyed from the
-   production API (decode in the adapter). *0 is valid for turbidity and ORP.*
+   turbidity. **Live since N3**: numeric-keyed from the production API, decoded in
+   `src/devices/metrics.ts`. *0 is valid for turbidity and ORP.*
 2. **Operator normal-ranges / site baseline** — per metric, per site; authoritative over documents.
    Add a turbidity range. See ◆G3.
 3. **Site/device metadata** — coordinates, water-body type, client/contract, calibration dates.
-4. **Source-of-truth corpus** — the 9 EPA/USGS docs **+ a sensor datasheet/manual**. No public links.
+4. **Source-of-truth corpus** — the 8 active docs (operator source-of-truth, 4 Atlas Scientific probe
+   datasheets, 3 USGS/EPA field-methods manuals). No public links.
 5. **Unit confirmations** — turbidity (NTU vs FNU) before answers quote it as fact.
 6. **Auth context** — the user's JWT, forwarded for backend-mediated sensor calls, scoped so the bot
    only sees that user's rovers.
@@ -500,7 +587,7 @@ answers complete.*
 | Gate | Decision | Status | Blocks |
 |---|---|---|---|
 | ◆ G1 | Target stack (A/B/C) | **Resolved → C (Node/Express + Firestore)** | — (unblocked all) |
-| ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open — **resolved by the N2 bake-off**, by measurement, on its own branch later | Phases N2→N6 depend on the answer; N2 itself is the experiment |
+| ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open — **arms built and swept**; blocked on grading `eval/grading/warm/scores.csv` (36/174 rows scored) and on writing `RETRIEVAL_COMPARISON.md` | Phases N2→N6; the pinned system prompt, which blocks N5's personality item; pgvector archival |
 | ◆ G9 | Direct-feed corpus slice | **Resolved → operator source-of-truth + 4 probe datasheets (~9.4K tokens)**. Revised 2026-07-29: the original small tier was 83% a structurally shredded criteria table covering pollutants this sensor cannot measure | — |
 | ◆ G10 | Third bake-off arm | **Resolved → yes, three arms**: `firestore-direct`, `pgvector-rag`, `firestore-vector`. Also answers whether Firestore's own vector search is good enough if RAG wins | — |
 | ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open — **cheaper now**: N3 built the loop, so adding it is one entry in `buildToolRegistry` plus a prompt line, not new machinery | multi-part answer quality |
@@ -514,147 +601,18 @@ answers complete.*
 
 ---
 
-## Session handoff — 2026-07-31, updated 2026-08-04 — **SUPERSEDED**
+## Session handoffs
 
-> **Superseded by [`HANDOFF.md`](HANDOFF.md) (2026-08-13).** Everything this section describes as
-> pending has since happened: all three arms were swept (168 transcripts, zero failed turns), the
-> cost model runs on measured means, and a blind grading packet is built. **The one open item is
-> grading.** Kept below rather than deleted because its findings — prompt caching, the embeddings
-> `encoding_format` bug, the fixed quality floor — are still in force and still explain why the
-> code looks the way it does.
+Current state, open decisions, and how to resume: **[`HANDOFF.md`](HANDOFF.md)**.
 
-**Phase N1 complete and merged to `demo`. Phase N2 (the retrieval bake-off) is most of the way
-built.** Everything below is committed and pushed on `feat/retrieval-bakeoff`. **228 tests, none
-touching the network.**
+The 2026-07-31 / 2026-08-04 handoff that used to sit here has been removed — every item it listed as
+pending has since happened, and it had begun to contradict the phases above. The findings it carried
+that are still in force live in their permanent homes:
 
-> **Update 2026-08-04. Both blockers are closed and all three arms now exist.** Fireworks pricing
-> is measured and modelled (`npm run cost`); Firestore credentials turned out to be already
-> configured; the redundant `chunks` field is gone; and `firestore-vector` is built, seeded and
-> verified end-to-end through the chat pipeline. **What remains is running the experiment, not
-> building it.** Struck-through items below are kept rather than deleted so the sequence stays
-> readable.
-
-### The three arms
-
-| arm | status |
+| finding | now recorded in |
 |---|---|
-| `firestore-direct` | ✅ built, verified live. Firestore is now seeded and the slice reads back from it, so `CORPUS_SOURCE=firestore` is ready — the *measured* run under it still has not happened. |
-| `pgvector-rag` | ✅ built, seeded, verified live. Sidecar is `docker-compose.bakeoff.yml`; **it is not running — restart it before use.** |
-| `firestore-vector` | ✅ built, seeded (305 chunks, both indexes present) and **verified end-to-end through `POST /api/v1/chat`** on 2026-08-04 — including the two discriminating fixtures: it answers the deep-in-manual question direct-feed refuses, and it refuses the fecal-coliform probe *despite retrieving the coliform chapter*. **Swept 2026-08-11 (cold + warm, 58/58 turns, zero failures).** |
-
-Also built: the **eval fixtures** (30 conversations / 62 turns, `eval/fixtures/`, see
-[`EVAL_FIXTURES.md`](EVAL_FIXTURES.md)) and the **capture runner**
-(`npm run bakeoff -- --arm=<mode> --pass=<cold|warm>`, plus `--spot-check`, `--only`, `--dry-run`).
-**28 of 30 fixtures (58 of 62 turns) are runnable**; the 2 held back need `query_sensor_data` (N3).
-
-### Decisions already fixed — do not reopen without a reason
-
-- **Quality floor and latency ceiling**, written before any arm ran:
-  [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8a. Hard gates on grounding (zero fabricated
-  figures, 100% refusal where required, citations ≥95%); correctness mean ≥1.0 per servable class
-  and ≥1.3 overall; latency veto = ≤1.5s p95 TTFT over the fastest arm; p95 wall ≤10s is a flag,
-  not a veto. **If every arm fails, ◆G7 stays open and the floor does not move.**
-- **Grading:** LLM judge calibrated against a ~20% human sample, collected through the blind
-  frontend harness (§7c). Judge model must differ from the model under test.
-- **Turbidity is in scope**, reported in **NTU**, operator range `0-25 NTU` freshwater /
-  `0-10 NTU` saltwater. The system prompt is a **pinned control** — changing it after an arm runs
-  voids that arm.
-- **Temperature pinned to 0** (`LLM_TEMPERATURE`), recorded in every transcript.
-
-### The two findings that matter most
-
-**1. Prompt caching works — and the discount was priced on 2026-08-03. It does *not* invert the
-story on our model.** Direct-feed's prefix is byte-identical every request, so ~99.4-99.9% of its
-~10,900 prompt tokens are cached — roughly **14 uncached tokens per warm request**. RAG sends far
-fewer tokens (~2,700-4,400) but its context changes per query, so the prefix diverges early and
-only ~570 cache. **RAG sends fewer tokens and pays near-full price for most of them.**
-
-`gpt-oss-20b` caches at **50% off** ($0.07 → $0.035/1M), which is not enough: direct-feed's warm
-input is still ~1.3× RAG's. But `gpt-oss-120b` caches at **90.7% off** ($0.15 → $0.014/1M), which
-inverts it completely — direct-feed becomes ~3.7× cheaper on input, and cheaper than direct-feed on
-*20b*. Full price sheet, arithmetic, and the two consequences (including that completion tokens now
-cost more than the retrieval choice does) in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §1b.
-Reproduce with `npm run cost`.
-
-**2. A provider bug nearly invalidated the RAG arms.** Calling Fireworks' embeddings endpoint
-*without* `encoding_format` returns a corrupt **192-element all-zero vector** instead of the
-768-dim embedding, silently. Dense search over zero vectors ranks arbitrarily, so RAG would have
-lost the bake-off to a bug. `EmbeddingService` now always sends `encoding_format: "float"` and
-rejects wrong dimensions **and** all-zero vectors. Do not remove either guard.
-
-### Blocked, and on whom
-
-- ~~**Firestore credentials (user).**~~ **RESOLVED — they were already in place.** Application
-  Default Credentials were written 2026-07-31 (`~/.config/gcloud/application_default_credentials.json`,
-  account `winsyu475@gmail.com`, project **`cer-demo-2026`**, database `(default)`), i.e. after
-  this handoff was drafted. Verified live 2026-08-03: `npm run seed:firestore` committed all 8
-  documents, and `FirestoreCorpusSource.loadSlice()` read the 5-document slice back in stable
-  filename order. **The `where(inDirectFeedSlice) + orderBy(filename)` query served without
-  raising `FAILED_PRECONDITION`**, so the composite index the shape notes below anticipated is
-  either already present or unnecessary — check the console before creating one. `firestore-vector`
-  and the measured `CORPUS_SOURCE=firestore` run are both unblocked.
-- ~~**Fireworks pricing incl. the cached-input rate.**~~ **RESOLVED 2026-08-03.** Prices recorded
-  in `src/eval/prices.ts`, cost model in `src/eval/cost.ts`, CLI `npm run cost`, findings in
-  `RETRIEVAL_BAKEOFF.md` §1b. Re-read the sources before publishing the comparison — rates rotate.
-- **`query_sensor_data` / tool loop (N3).** Holds back 2 fixtures. Low priority: they discriminate
-  little between arms by design.
-
-### Firestore shape decisions pending (needed before `firestore-vector`)
-
-The existing `corpus_documents` collection stores **one document per file** with `chunks` as an
-array field. Vector search cannot index a vector inside an array element, so the vector arm needs a
-separate per-chunk collection (~305 docs), proposed `corpus_chunks` with a `Vector(768)` `embedding`
-field. Two indexes will be needed: a composite (`inDirectFeedSlice` ASC, `filename` ASC) for the
-existing direct-feed query, and a vector index on `corpus_chunks.embedding`.
-
-**Two traps found while planning this:**
-
-- The embedding must be written with `FieldValue.vector([...])`. A plain `number[]` writes as an
-  array, the index never matches, and `findNearest` returns nothing **with no error**.
-- ~~`volunteer_stream_monitoring_a_methods_manual.pdf` serialises to ~1,005,018 bytes…~~
-  **DONE 2026-08-03.** `chunks` is no longer written to `corpus_documents`. Measured: that
-  document went **1,005,018 → 478,584 bytes (96% → 45.6% of the limit)**, headroom 43 KB → 570 KB,
-  and every other document is now under 17%. `seed:firestore` also **size-checks every document
-  before committing anything**, so an oversized document names itself instead of failing an opaque
-  batch commit. `corpus.json` still carries `chunks` — the pgvector seeder and the future vector
-  seeder both read it from there.
-
-### Immediate next steps
-
-**No external blockers remain.** All three of the items this handoff was waiting on are closed.
-
-1. ~~Land Firestore credentials.~~ Done — already present, verified live.
-2. ~~Get Fireworks pricing.~~ Done — `npm run cost`. Feed it real sweep numbers once captured:
-   replace the spot-check constants in `src/eval/costScenarios.ts` and flip `TOKEN_PROVENANCE`
-   to `measured`.
-3. ~~Drop the redundant `chunks` field from `corpus_documents`.~~ Done.
-4. ~~Build `firestore-vector`.~~ Done — `corpus_chunks` seeded with 305 chunks, both indexes
-   present, `findNearest` returning ranked results, and the arm answered end-to-end through the
-   chat pipeline on both discriminating fixtures. See `SPECS.md` §14b.
-5. Then: spot-check every arm, run the sweep (cold + warm), grade blind, write
-   `RETRIEVAL_COMPARISON.md`, close ◆G7, delete the pgvector sidecar.
-
-### Environment notes
-
-- `ts-node` cold start is ~80s. `npm run dev` looks hung but is not.
-- `docker compose` (plugin) is not installed; use **`docker-compose`** (standalone v5.0.1).
-- A dev server may already be on **:8000**; use another port (e.g. `PORT=8099`) for test runs.
-- Sidecar: `docker-compose -f docker-compose.bakeoff.yml up -d`, then
-  `PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff`. Re-seeding is idempotent and
-  costs no embedding calls.
-
-**Measurements so far** (live, single runs — indicative, not the eval):
-
-| | prompt tokens | cached | TTFT | wall |
-|---|---:|---:|---:|---:|
-| `firestore-direct`, warm | ~10,900 | ~99.4-99.9% | 7.8-9.3s | 9.5-11.6s |
-| `pgvector-rag` | 2,722-4,446 | 0-569 | — | — |
-| `firestore-vector` | 2,738-3,969 | 0 | — | — |
-
-`firestore-direct` read from Firestore (`CORPUS_SOURCE=firestore`) at **10,889** prompt tokens —
-within noise of the artifact-backed figure, which is what confirms Firestore returns the slice in a
-stable `filename` order. An unstable order would destroy the prompt-cache hit rate the arm's whole
-cost case rests on, silently.
-
-Completion tokens ran 158-1,299 (earlier runs up to 4,060) — gpt-oss emits reasoning tokens, so
-cost per answer cannot be inferred from answer length.
+| Prompt caching works; the cached-input discount does not invert the cost story on `gpt-oss-20b` but does on `120b` | [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §1b |
+| Fireworks embeddings return a corrupt 192-element all-zero vector without `encoding_format` — do not remove either guard | [`SPECS.md`](SPECS.md) §14 |
+| Quality floor and latency ceiling, fixed before any arm ran | [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8a |
+| Firestore document-size limit and why `chunks` is not stored | [`SPECS.md`](SPECS.md) §11 |
+| Environment traps (~80s `ts-node` cold start, `docker-compose` not `docker compose`) | [`README.md`](../README.md) §11 |
