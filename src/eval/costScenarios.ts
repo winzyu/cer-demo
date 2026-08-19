@@ -123,6 +123,10 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
     {
       arm: "pgvector-rag",
       tokens: {
+        // The arm's runtime code is archived (`archive/pgvector-rag/`), but this scenario stays:
+        // it is measured ◆G7 evidence, and the cost comparison that retired the arm is only
+        // auditable if the losing arm's numbers are still in it.
+        //
         // Sweep means, warm pass, **after the lexical-branch repair** (2026-08-12): 3,976 prompt
         // tokens/turn at a 42.6% cache rate. The pre-repair sweep measured 3,584 at 38.4%, but
         // that arm was running dense-only (`RETRIEVAL_BAKEOFF.md` §4a) and its token profile

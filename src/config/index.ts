@@ -120,17 +120,6 @@ export interface RetrievalConfig {
   corpusSource: CorpusSourceName;
 }
 
-/**
- * Postgres + pgvector sidecar for the Phase N2 `pgvector-rag` arm.
- *
- * ⚠️ Dev/experiment only — removed with the arm once ◆G7 resolves. Unset in every normal
- * deployment; the adapter fails with a clear message rather than the process refusing to boot,
- * matching how a missing Fireworks key is handled.
- */
-export interface PgVectorConfig {
-  url?: string;
-}
-
 export interface Config {
   nodeEnv: NodeEnv;
   isProduction: boolean;
@@ -142,7 +131,6 @@ export interface Config {
   tools: ToolsConfig;
   chat: ChatConfig;
   retrieval: RetrievalConfig;
-  pgvector: PgVectorConfig;
   waterType: WaterType;
 }
 
@@ -259,9 +247,6 @@ const load = (): Config => {
         ["artifact", "firestore"],
         "artifact",
       ),
-    },
-    pgvector: {
-      url: readString("PGVECTOR_URL"),
     },
     waterType: readEnum<WaterType>("WATER_TYPE", ["freshwater", "saltwater"], "freshwater"),
   };

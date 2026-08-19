@@ -78,7 +78,8 @@ const ingestDocument = async (
  * guarantee rather than an intention (docs/RETRIEVAL_BAKEOFF.md §4).
  *
  * Writing to disk rather than straight to Firestore also keeps the parse re-runnable without
- * credentials, and keeps the pgvector arm from needing Firestore at all.
+ * credentials, and lets an arm with its own store seed from the artifact without touching
+ * Firestore at all.
  */
 export const ingestCorpus = async (
   documentsDir = DOCUMENTS_DIR,

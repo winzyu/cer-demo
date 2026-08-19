@@ -53,6 +53,10 @@ const loadAppWith = (env: Record<string, string>): Express => {
 
 const SENSOR_ENV = {
   SENSOR_TOOL: "true",
+  // Pinned, or the suite inherits the developer's `.env` and runs the direct-feed arm against
+  // the gitignored `data/corpus/corpus.json` — green here, 500 on a fresh clone. The tool loop
+  // is what these tests assert; the retrieval arm underneath it should be the inert one.
+  DEFAULT_RETRIEVAL: "stub",
   DEVICE_API_BASE_URL: "https://example.invalid/api/v1",
   DEVICE_API_TOKEN: "test-token",
   SENSOR_DEVICE_LABEL: ALGALITA,

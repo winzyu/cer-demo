@@ -1,5 +1,5 @@
 import { RetrievalRegistry } from "../../src/retrieval/RetrievalRegistry";
-import { StubAdapter, STUB_CHUNKS } from "../../src/retrieval/adapters/StubAdapter";
+import { StubAdapter } from "../../src/retrieval/adapters/StubAdapter";
 import { DEFAULT_TOP_K, MAX_TOP_K, resolveTopK } from "../../src/retrieval/options";
 import type { RetrievalAdapter } from "../../src/types/retrieval.types";
 
@@ -78,10 +78,6 @@ describe("StubAdapter", () => {
       { id: "c1", text: "custom", source: "test://x" },
     ]);
   });
-
-  it("exposes its fixture for assertions elsewhere", () => {
-    expect(STUB_CHUNKS.length).toBeGreaterThan(0);
-  });
 });
 
 describe("RetrievalRegistry", () => {
@@ -102,11 +98,11 @@ describe("RetrievalRegistry", () => {
   it("lists modes sorted", () => {
     const registry = registryWith("stub", false, [
       new StubAdapter(),
-      fakeAdapter("pgvector-rag"),
+      fakeAdapter("firestore-vector"),
       fakeAdapter("firestore-direct"),
     ]);
 
-    expect(registry.modes()).toEqual(["firestore-direct", "pgvector-rag", "stub"]);
+    expect(registry.modes()).toEqual(["firestore-direct", "firestore-vector", "stub"]);
   });
 
   describe("resolve", () => {

@@ -42,13 +42,19 @@ lets the numbers close ◆G7. Full design in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_
 
 Two things to keep straight about this track:
 
-- It deliberately restores a **dev-only** pgvector sidecar as the legacy-parity baseline — a measuring
-  stick, not a reversal of ◆G1. It never enters the deployed path and comes out once ◆G7 closes.
-  **Current intent is to archive rather than delete** — the *evidence* (transcripts, scores, the
-  `pgvector-rag` cost scenario) is what makes ◆G7 auditable later and stays; the *runtime code*
-  (adapter, seeder, schema, compose file, the `pg` dependency) is what costs upkeep and goes. Not
-  yet ratified — until it is, `RETRIEVAL_BAKEOFF.md` §9 and this phase's exit criteria still say
-  "deleted".
+- It deliberately restored a **dev-only** pgvector sidecar as the legacy-parity baseline — a measuring
+  stick, not a reversal of ◆G1. It never entered the deployed path.
+  **Executed as archival on 2026-08-19** — the *evidence* (transcripts, scores, the `pgvector-rag`
+  cost scenario) is what makes ◆G7 auditable later and stays; the *runtime code* (adapter, seeder,
+  schema, compose file, the `pg` dependency) is what costs upkeep and went, to
+  `archive/pgvector-rag/` at its original paths.
+  **This happened ahead of ◆G7 by decision, not because ◆G7 closed** — the gate is still open on
+  grading and on `RETRIEVAL_COMPARISON.md` (see ◆G7 below). It was safe to do early *because* of the
+  split above: grading, `npm run cost` and `npm run grade:packet` all read captured evidence, none of
+  them the arm's code. The price paid is that the arm **cannot be re-run or re-captured** without
+  restoring it from the archive — so if grading ever demands a fresh `pgvector-rag` capture, that
+  restore is the first step, and any re-capture must re-run every arm (the prompt is a pinned
+  control).
 - **It is built and swept.** All three arms are implemented, seeded and captured cold + warm on
   `feat/bakeoff-sweep`. What remains is grading — see ◆G7 below.
 
@@ -167,6 +173,12 @@ method costs**, not by arguing. Full experiment design:
 > **What remains is grading, not building.** `eval/grading/warm/scores.csv` is 36 of 174 rows scored
 > — the deliberate 6-fixture calibration sample. The other 22 fixtures are unscored, and the cold
 > pass has no grading scaffolding at all.
+>
+> **2026-08-19: `pgvector-rag`'s runtime code archived** to `archive/pgvector-rag/`, ahead of ◆G7
+> and by decision — the gate did **not** close. Nothing grading needs was touched: the 56
+> transcripts, `eval/grading/warm/KEY.json`, the arm's cost scenario and its row in
+> `scripts/gradePacket.ts` are all live, so `npm run grade:packet` and `npm run cost` still cover
+> three arms.
 
 **◆ G7 — Retrieval store & method (the pgvector replacement gate). Resolved *by* this phase**, not
 before it. Each candidate becomes an adapter behind the N1 interface and is graded on the same eval
@@ -175,7 +187,7 @@ set; the winner closes the gate.
 | arm | what it does | infra |
 |---|---|---|
 | `firestore-direct` ✅ built | **Direct feed** — read the corpus slice from Firestore, put it in the prompt whole. No embedding, no ranking, no top-k, structurally no retrieval miss. | none |
-| `pgvector-rag` ✅ built | **Legacy-parity RAG** — hybrid dense + Postgres full-text fused with RRF, exactly `MIGRATION_SPEC.md` §7. | Postgres+pgvector sidecar, **dev-only**, deleted after G7 |
+| `pgvector-rag` ✅ built, swept, **archived 2026-08-19** | **Legacy-parity RAG** — hybrid dense + Postgres full-text fused with RRF, exactly `MIGRATION_SPEC.md` §7 (with the §4a lexical caveat). Graded from its captured transcripts; the code is in `archive/pgvector-rag/` and the mode is no longer selectable. | Postgres+pgvector sidecar, **dev-only**, archived ahead of G7 |
 | `firestore-vector` ✅ built | RAG on Firestore native `findNearest`, dense-only unless a lexical path is built | Firestore vector index |
 
 **The corpus does not fit in context.** After the 2026-07-29 rescoping: 716,603 chars ≈ **179K
@@ -199,7 +211,8 @@ Build work in this phase:
 - **Ingestion → Firestore** (port of `MIGRATION_SPEC.md` §5): documents → chunks → embeddings;
   preserve chunking (3200 chars / 400 overlap), the quality filter, and OCR for the one scanned PDF.
   Idempotent by filename. Direct-feed needs the document text but not the embeddings.
-- **`pgvector-rag` sidecar** — `docker-compose.bakeoff.yml`, never in the deployed image.
+- **`pgvector-rag` sidecar** — `docker-compose.bakeoff.yml`, never in the deployed image. ✅ built and
+  swept; archived 2026-08-19 to `archive/pgvector-rag/`.
 - **Eval fixtures** — ✅ **done**: 30 conversations / 62 turns in `eval/fixtures/`, with per-turn
   rubrics, committed before any arm runs. See [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md).
 - **Eval harness (programmatic)** — ✅ **done**: `npm run bakeoff`. Replays the fixed **multi-turn conversations** over
@@ -237,7 +250,10 @@ a veto, not a tiebreaker.
 
 *Exit: every selected arm selectable via config and verified; eval set, rubrics, and raw per-question
 results committed; **`RETRIEVAL_COMPARISON.md` written**; ◆G7 resolved with the numbers that resolved
-it; ◆G9/◆G10 closed; pgvector sidecar removed. A **split outcome is a legitimate result** —
+it; ◆G9/◆G10 closed; ~~pgvector sidecar removed~~ **done 2026-08-19, ahead of the decision** — the
+sidecar, adapter, seeder and `pg` dependency are archived to `archive/pgvector-rag/` and the mode is
+unregistered, with the transcripts, grading key and cost scenario retained so the remaining criteria
+above are all still reachable. A **split outcome is a legitimate result** —
 direct-feed the small authoritative tier, RAG the long manuals — and the adapter registry composes
 that without a rewrite.*
 
@@ -587,7 +603,7 @@ conversations that survive a page reload.*
 | Gate | Decision | Status | Blocks |
 |---|---|---|---|
 | ◆ G1 | Target stack (A/B/C) | **Resolved → C (Node/Express + Firestore)** | — (unblocked all) |
-| ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open — **arms built and swept**; blocked on grading `eval/grading/warm/scores.csv` (36/174 rows scored) and on writing `RETRIEVAL_COMPARISON.md` | Phases N2→N6; the pinned system prompt, which blocks N5's personality item; pgvector archival |
+| ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open — **arms built and swept**; blocked on grading `eval/grading/warm/scores.csv` (36/174 rows scored) and on writing `RETRIEVAL_COMPARISON.md` | Phases N2→N6; the pinned system prompt, which blocks N5's personality item. **No longer blocks pgvector archival** — that was taken ahead of the gate on 2026-08-19 (see "Where we are now"), with the evidence retained so grading is unaffected |
 | ◆ G9 | Direct-feed corpus slice | **Resolved → operator source-of-truth + 4 probe datasheets (~9.4K tokens)**. Revised 2026-07-29: the original small tier was 83% a structurally shredded criteria table covering pollutants this sensor cannot measure | — |
 | ◆ G10 | Third bake-off arm | **Resolved → yes, three arms**: `firestore-direct`, `pgvector-rag`, `firestore-vector`. Also answers whether Firestore's own vector search is good enough if RAG wins | — |
 | ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open — **cheaper now**: N3 built the loop, so adding it is one entry in `buildToolRegistry` plus a prompt line, not new machinery | multi-part answer quality |

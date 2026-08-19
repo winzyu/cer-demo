@@ -115,7 +115,8 @@ export class EmbeddingService {
 
     const wrong = vectors.find((vector) => vector.length !== EMBEDDING_DIMENSIONS);
     if (wrong) {
-      // Caught here rather than at INSERT, where the error is an opaque Postgres type failure.
+      // Caught here rather than at write time, where the store reports a wrong-width vector as
+      // an opaque type or index error — if it reports it at all.
       throw createError(
         502,
         `Embedding model "${config.fireworks.embeddingModel}" returned ${wrong.length} dimensions; `
