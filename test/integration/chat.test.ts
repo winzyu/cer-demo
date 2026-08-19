@@ -111,6 +111,15 @@ describe("POST /api/v1/chat", () => {
       await request(app).post(CHAT).send({ query: "hi", history: "nope" }).expect(400);
     });
 
+    it("rejects a non-string, empty, or absurdly long device", async () => {
+      const bad = await request(app).post(CHAT).send({ query: "hi", device: 7 }).expect(400);
+      expect(bad.body.error).toMatch(/"device"/);
+      expect(bad.body).not.toHaveProperty("status");
+
+      await request(app).post(CHAT).send({ query: "hi", device: "   " }).expect(400);
+      await request(app).post(CHAT).send({ query: "hi", device: "x".repeat(500) }).expect(400);
+    });
+
     it("rejects a history entry with a bad role or empty content", async () => {
       await request(app)
         .post(CHAT)
@@ -134,6 +143,31 @@ describe("POST /api/v1/chat", () => {
         .expect(400);
 
       expect(response.body.error).toMatch(/role.*must be one of/);
+    });
+  });
+
+  describe("device", () => {
+    it("is accepted and has no effect with the sensor tool off", async () => {
+      // This app is pinned to SENSOR_TOOL=false. A UI that always sends its selected pod must
+      // still get the pre-N3 response shape: no tools offered, and no tool keys in the body.
+      const response = await request(app)
+        .post(CHAT)
+        .send({ query: "what is ORP?", device: "Algalita Pod" })
+        .expect(200);
+
+      expect(response.body.answer).toBe("Stubbed model answer.");
+      expect(response.body).not.toHaveProperty("tool_calls");
+      expect(response.body).not.toHaveProperty("tool_round_cap_reached");
+    });
+
+    it("is accepted on the streaming path too", async () => {
+      const response = await request(app)
+        .post(CHAT)
+        .send({ query: "what is ORP?", device: "Algalita Pod", stream: true })
+        .expect(200);
+
+      expect(response.headers["content-type"]).toMatch(/text\/event-stream/);
+      expect(response.text).toContain("event: token");
     });
   });
 

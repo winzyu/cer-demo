@@ -20,6 +20,7 @@ const load = (name: string): unknown => JSON.parse(fs.readFileSync(path.join(FIX
 const DEVICES = load("devices.json");
 const ALGALITA_PERIOD = load("algalita-period-1-day.json");
 const ALGALITA = "dev:351077454569099";
+const OWC = "Old Woman Creek 2026";
 
 /** Scripted model responses, replaced per test. */
 let script: Array<Record<string, unknown>> = [];
@@ -57,6 +58,13 @@ const SENSOR_ENV = {
   SENSOR_DEVICE_LABEL: ALGALITA,
   WATER_TYPE: "saltwater",
 };
+
+/**
+ * The same deployment with **no** `SENSOR_DEVICE_LABEL` — the shipped default, and the case the
+ * request's `device` exists for. The recorded registry holds four distinct pods, so with no
+ * default and no argument the tool's correct answer is "tell me which pod you mean".
+ */
+const NO_DEFAULT_ENV = { ...SENSOR_ENV, SENSOR_DEVICE_LABEL: "" };
 
 const originalFetch = global.fetch;
 const fetchCalls: string[] = [];
@@ -214,6 +222,85 @@ describe("POST /api/v1/chat with the sensor tool enabled", () => {
   }, RELOAD_TIMEOUT_MS);
 });
 
+/**
+ * `device` on the request — the pod the UI already chose.
+ *
+ * `SENSOR_DEVICE_LABEL` is deliberately unset in this deployment (guessing between pods on
+ * opposite coasts is unsafe), so without a request device the tool has to stop and ask. These
+ * cover the gap it fills and the one thing it must never do: overrule the model.
+ */
+describe("POST /api/v1/chat with a device on the request", () => {
+  const latestPh = (args: Record<string, unknown> = {}) => ({
+    content: "",
+    toolCalls: [{
+      id: "call_1",
+      type: "function",
+      function: {
+        name: "query_sensor_data",
+        arguments: JSON.stringify({
+          metric: "ph", time_range: "now", aggregation: "latest", ...args,
+        }),
+      },
+    }],
+  });
+
+  it("asks which pod when nothing names one", async () => {
+    // The behavior the request device replaces — pinned so the gap it fills stays visible.
+    script = [latestPh(), { content: "Which pod did you mean?", toolCalls: [] }];
+
+    const app = loadAppWith(NO_DEFAULT_ENV);
+    const response = await request(app).post(CHAT).send({ query: "pH now?" }).expect(200);
+
+    expect(response.body.tool_calls[0].result.error).toMatch(/"device" is required/);
+  }, RELOAD_TIMEOUT_MS);
+
+  it("uses the pod from the request when the model named none", async () => {
+    script = [latestPh(), { content: "pH is 7.13.", toolCalls: [] }];
+
+    const app = loadAppWith(NO_DEFAULT_ENV);
+    const response = await request(app)
+      .post(CHAT)
+      .send({ query: "pH now?", device: "Algalita Pod" })
+      .expect(200);
+
+    const trace = response.body.tool_calls[0];
+    expect(trace.arguments.device).toBe("Algalita Pod");
+    expect(trace.result.error).toBeUndefined();
+    expect(trace.result.device.label).toBe(ALGALITA);
+  }, RELOAD_TIMEOUT_MS);
+
+  it("lets a device the model named beat the one on the request", async () => {
+    // The user asked about another pod inside the question; that is the more specific
+    // instruction, and the selector must not silently redirect it.
+    script = [latestPh({ device: OWC }), { content: "pH is 7.13.", toolCalls: [] }];
+
+    const app = loadAppWith(NO_DEFAULT_ENV);
+    const response = await request(app)
+      .post(CHAT)
+      .send({ query: "pH at Old Woman Creek?", device: "Algalita Pod" })
+      .expect(200);
+
+    const trace = response.body.tool_calls[0];
+    expect(trace.arguments.device).toBe(OWC);
+    expect(trace.result.device.name).toBe(OWC);
+  }, RELOAD_TIMEOUT_MS);
+
+  it("returns an unknown device as a recoverable tool error, not a 400", async () => {
+    // The caller may be a stale UI naming a pod that has since gone. A 400 would end the
+    // request; a tool result lets the model say so and recover in the next round.
+    script = [latestPh(), { content: "I could not find that pod.", toolCalls: [] }];
+
+    const app = loadAppWith(NO_DEFAULT_ENV);
+    const response = await request(app)
+      .post(CHAT)
+      .send({ query: "pH now?", device: "Pod That Does Not Exist" })
+      .expect(200);
+
+    expect(response.body.tool_calls[0].result.error).toContain("No device matches");
+    expect(response.body.answer).toContain("could not find that pod");
+  }, RELOAD_TIMEOUT_MS);
+});
+
 describe("POST /api/v1/chat with the sensor tool disabled", () => {
   it("makes one tool-free call and returns the pre-N3 response shape", async () => {
     // The default. This path must stay identical to what the three captured bake-off arms ran
@@ -238,6 +325,24 @@ describe("POST /api/v1/chat with the sensor tool disabled", () => {
     const app = loadAppWith({ ...SENSOR_ENV, SENSOR_TOOL: "false" });
     await request(app).post(CHAT).send({ query: "what is ORP?" }).expect(200);
 
+    expect(fetchCalls).toHaveLength(0);
+  }, RELOAD_TIMEOUT_MS);
+
+  it("accepts a device on the request and does nothing with it", async () => {
+    // A UI that always sends the selected pod must not break when the flag is off, and it must
+    // not drag a `tools` array into the request that the bake-off arms were captured without.
+    script = [{ content: "Answered from context.", toolCalls: [] }];
+
+    const app = loadAppWith({ ...SENSOR_ENV, SENSOR_TOOL: "false" });
+    const response = await request(app)
+      .post(CHAT)
+      .send({ query: "what is ORP?", device: "Algalita Pod" })
+      .expect(200);
+
+    expect(sent).toHaveLength(1);
+    expect(sent[0].tools).toBeUndefined();
+    expect(response.body).not.toHaveProperty("tool_calls");
+    expect(response.body).not.toHaveProperty("tool_round_cap_reached");
     expect(fetchCalls).toHaveLength(0);
   }, RELOAD_TIMEOUT_MS);
 });
