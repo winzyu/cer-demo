@@ -11,6 +11,12 @@ import { QuerySensorData, SensorQueryError, querySensorDataDefinition } from "./
  * offers one the model was never told about — and the first also changes the prompt, which is a
  * pinned control for the Phase N2 bake-off while ◆G7 is open (`RETRIEVAL_BAKEOFF.md` §4).
  *
+ * **This registry is built once, not per request** — `ChatController` calls it from its
+ * constructor default and the resulting handlers are shared by every request the process serves.
+ * Nothing request-scoped may be closed over here: a caller-chosen device baked into a handler
+ * would be handed to whichever request ran next. The chat request's `device` is threaded through
+ * `ChatOrchestrator.run(messages, { device })` instead, where it stays on one call's stack.
+ *
  * `search_documents` is deliberately absent. Retrieval runs before the call and arrives as
  * CONTEXT; whether it returns as a tool is ◆G11, still open.
  */

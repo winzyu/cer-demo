@@ -4,54 +4,19 @@
   "sensorTool": false,
   "prompts": [
     {
-      "id": "definitional-conductivity",
+      "id": "definitional-orp",
       "class": "definitional",
-      "text": "What does conductivity tell me about the water?"
+      "text": "What is ORP and what does it actually measure?"
     },
     {
-      "id": "acronym-ec-specific-conductance",
-      "class": "acronym-exact-token",
-      "text": "What's the difference between EC and specific conductance?"
-    },
-    {
-      "id": "threshold-do-hypoxia",
-      "class": "threshold-lookup",
-      "text": "At what dissolved oxygen level does the water become hypoxic?"
-    },
-    {
-      "id": "crossdoc-do-drift-vs-hypoxia",
-      "class": "cross-document",
-      "text": "Our DO has slid down for three weeks and now reads 1.8 mg/L. Is the river going hypoxic?"
-    },
-    {
-      "id": "deepmanual-do-calibration-procedure",
-      "class": "deep-in-manual",
-      "text": "Walk me through the one-point DO calibration options for a field sonde."
-    },
-    {
-      "id": "followup-diel-swing",
-      "class": "follow-up",
-      "text": "Our DO swings between 6 and 11 mg/L every day."
-    },
-    {
-      "id": "precedence-conductivity-range",
+      "id": "precedence-ph-range",
       "class": "precedence",
-      "text": "Our conductivity is 30 µS/cm. Flag it?"
-    },
-    {
-      "id": "probecal-conductivity-interval",
-      "class": "probe-calibration",
-      "text": "How often does the conductivity probe need recalibrating?"
+      "text": "Is a pH of 8.4 normal for us?"
     },
     {
       "id": "fouling-do-erratic",
       "class": "fouling-drift",
       "text": "DO has gone erratic — jumping around instead of tracing a smooth curve."
-    },
-    {
-      "id": "event-sewage-signature",
-      "class": "event-signature",
-      "text": "DO and ORP are both crashing, EC has risen and turbidity is up. What is this?"
     }
   ]
 }

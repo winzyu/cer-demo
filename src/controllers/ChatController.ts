@@ -43,7 +43,7 @@ export class ChatController {
   postChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const {
-        query, retrieval, stream, history,
+        query, retrieval, stream, history, device,
       } = parseChatRequest(req.body);
 
       // Selection rules (including the DEBUG_RETRIEVAL override rule) live in the
@@ -55,11 +55,15 @@ export class ChatController {
       const messages = buildMessages({ query, chunks, history });
 
       if (stream) {
-        await this.streamAnswer(req, res, messages, adapter.mode, chunks);
+        await this.streamAnswer(req, res, messages, adapter.mode, chunks, device);
         return;
       }
 
-      const answer = await this.orchestrator.run(messages);
+      // The chosen pod travels as a call argument, not as controller or orchestrator state:
+      // both are constructed once at boot and shared by every request, so anything stored on
+      // them would be visible to whatever request runs next. With SENSOR_TOOL off the
+      // orchestrator has no tools and this is simply ignored — accepted, with no effect.
+      const answer = await this.orchestrator.run(messages, { device });
 
       res.status(200).json({
         answer: answer.content,
@@ -94,6 +98,7 @@ export class ChatController {
     messages: ReturnType<typeof buildMessages>,
     mode: string,
     chunks: Chunk[],
+    device?: string,
   ): Promise<void> => {
     const controller = new AbortController();
     // A client that closes the tab should stop costing us tokens.
@@ -110,7 +115,7 @@ export class ChatController {
         // cost of every answer, so the finished text is emitted as a single token event and the
         // SSE contract holds. Real streaming needs incremental `delta.tool_calls` assembly —
         // N7's chat UI is the phase that will want it.
-        const answer = await this.orchestrator.run(messages);
+        const answer = await this.orchestrator.run(messages, { device });
         writeSseEvent(res, "token", { text: answer.content });
         writeSseEvent(res, "done", {
           model: answer.model,

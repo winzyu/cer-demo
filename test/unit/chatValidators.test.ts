@@ -51,4 +51,39 @@ describe("parseChatRequest", () => {
       /must be an array/,
     );
   });
+
+  describe("device", () => {
+    it("is absent from the parsed request when it was not sent", () => {
+      expect(parseChatRequest({ query: "q" })).not.toHaveProperty("device");
+    });
+
+    it("accepts a device name and trims it", () => {
+      expect(parseChatRequest({ query: "q", device: "  Algalita Pod  " })).toEqual({
+        query: "q",
+        device: "Algalita Pod",
+      });
+    });
+
+    it("accepts a dev: label", () => {
+      expect(parseChatRequest({ query: "q", device: "dev:351077454569099" }).device)
+        .toBe("dev:351077454569099");
+    });
+
+    it("rejects an empty or whitespace-only device", () => {
+      expect(() => parseChatRequest({ query: "q", device: "" })).toThrow(/non-empty string/);
+      expect(() => parseChatRequest({ query: "q", device: "   " })).toThrow(/non-empty string/);
+    });
+
+    it("rejects a non-string device", () => {
+      expect(() => parseChatRequest({ query: "q", device: 7 })).toThrow(/non-empty string/);
+      expect(() => parseChatRequest({ query: "q", device: ["a"] })).toThrow(/non-empty string/);
+      expect(() => parseChatRequest({ query: "q", device: null })).toThrow(/non-empty string/);
+    });
+
+    it("rejects an absurdly long device", () => {
+      expect(() => parseChatRequest({ query: "q", device: "x".repeat(500) })).toThrow(
+        /at most \d+ characters/,
+      );
+    });
+  });
 });

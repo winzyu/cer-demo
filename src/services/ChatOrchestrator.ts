@@ -28,6 +28,25 @@ const log = createLogger("Orchestrator");
  * only on the invoice.
  */
 
+/**
+ * Per-request inputs to one `run()`. Everything here is scoped to a single call and lives on
+ * that call's stack — never on the orchestrator, which is constructed once per process and
+ * shared by every concurrent request.
+ */
+export interface RunOptions {
+  /**
+   * The pod the caller already chose, used as the **default** `device` argument for any tool
+   * that declares one and was called without it.
+   *
+   * **The model's choice wins.** This only fills the gap where the tool would otherwise have to
+   * come back and ask which pod was meant (`SENSOR_DEVICE_LABEL` is deliberately unset, so with
+   * several pods visible that question is the tool's normal answer). If the model names a device
+   * in its arguments — because the user asked about a different pod in the question itself —
+   * that name is used and this one is ignored.
+   */
+  device?: string;
+}
+
 export interface OrchestratorResult {
   content: string;
   model: string;
@@ -95,7 +114,7 @@ export class ChatOrchestrator {
     return this.definitions.length > 0;
   }
 
-  async run(messages: ChatMessage[]): Promise<OrchestratorResult> {
+  async run(messages: ChatMessage[], options: RunOptions = {}): Promise<OrchestratorResult> {
     // Copied, not mutated in place: the caller's message list is built per request and reused
     // by the streaming path, and a loop that appends to it would leak tool turns across calls.
     const conversation: ChatMessage[] = [...messages];
@@ -165,8 +184,10 @@ export class ChatOrchestrator {
         tool_calls: toolCalls,
       });
 
+      // `options.device` is passed down rather than stored: two requests running through this
+      // shared orchestrator at the same time must not be able to see each other's pod.
       // eslint-disable-next-line no-await-in-loop
-      const results = await this.dispatch(toolCalls, round, resultCache);
+      const results = await this.dispatch(toolCalls, round, resultCache, options.device);
       invocations.push(...results.invocations);
       conversation.push(...results.messages);
     }
@@ -195,6 +216,7 @@ export class ChatOrchestrator {
     toolCalls: ToolCall[],
     round: number,
     resultCache: Map<string, unknown>,
+    requestDevice?: string,
   ): Promise<{ messages: ChatMessage[]; invocations: ToolInvocation[] }> {
     const messages: ChatMessage[] = [];
     const invocations: ToolInvocation[] = [];
@@ -219,7 +241,13 @@ export class ChatOrchestrator {
         if ("error" in parsedArgs) {
           result = parsedArgs;
         } else {
-          args = parsedArgs.args;
+          args = ChatOrchestrator.withRequestDevice(
+            parsedArgs.args,
+            handler.definition,
+            requestDevice,
+          );
+          // Keyed on the *effective* arguments, so the dedupe cache cannot serve a reading from
+          // one pod as the answer for another, and the trace records the pod actually queried.
           const key = callKey(name, args);
           if (resultCache.has(key)) {
             // The stuck-model pattern: re-asking a question it already asked. Serving the
@@ -247,6 +275,34 @@ export class ChatOrchestrator {
     }
 
     return { messages, invocations };
+  }
+
+  /**
+   * Fills in the request's device where the model left one out.
+   *
+   * **Precedence: the model's explicit `device` beats the request's.** The request device is a
+   * default, not an override — the caller picked a pod for the session, but a question naming
+   * another pod is a more specific instruction and must not be silently redirected. Only an
+   * absent or blank argument is filled.
+   *
+   * Applied only to tools whose schema actually declares `device`, so nothing is injected into a
+   * tool that would not understand it and then have it recorded in the trace as if it mattered.
+   */
+  private static withRequestDevice(
+    args: Record<string, unknown>,
+    definition: ToolDefinition,
+    requestDevice?: string,
+  ): Record<string, unknown> {
+    if (requestDevice === undefined || requestDevice.trim() === "") {
+      return args;
+    }
+    if (!("device" in definition.function.parameters.properties)) {
+      return args;
+    }
+    if (typeof args.device === "string" && args.device.trim() !== "") {
+      return args;
+    }
+    return { ...args, device: requestDevice };
   }
 
   /**

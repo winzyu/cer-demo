@@ -1,20 +1,27 @@
 /**
  * CLI: generate the frontend's starter prompts from the eval fixture set.
  *
- *   npm run starter:prompts                    # write frontend/starter-prompts.json
+ *   npm run starter:prompts                    # write frontend/starter-prompts.json (3 chips)
  *   npm run starter:prompts -- --sensor        # include the sensor-tool fixtures
  *   npm run starter:prompts -- --per-class=2   # two prompts per class instead of one
- *   npm run starter:prompts -- --limit=6       # cap the list, cutting evenly across classes
+ *   npm run starter:prompts -- --limit=6       # a different cap, still cut evenly across classes
+ *   npm run starter:prompts -- --limit=0       # no cap at all — every eligible class
  *   npm run starter:prompts -- --out=/tmp/x.json
  *
  * The question set in `eval/fixtures/` is already curated and reviewed, so generating the
  * starter chips from it keeps them in sync for free instead of drifting from a hand-written
  * list. Reads no network and calls no provider — it is a projection of committed JSON.
  *
+ * **Three, not ten** (`CHAT_UX_WORKPLAN.md`, "Wave 2 — where things belong"). The chips exist
+ * to show what the assistant can do and then get out of the way; enumerating the eval set in
+ * front of an empty conversation is the thing users complained about. Because `--limit` is now
+ * a real default rather than "no cap", `--per-class=N` needs `--limit=0` (or a larger cap) to
+ * show its extra rounds.
+ *
  * **Deterministic by construction.** Fixtures are read through `src/eval/fixtures.ts` (which
- * sorts by filename), classes are emitted in the curated `EVAL_CLASSES` order, and within a
- * class fixtures are ordered by id. Nothing samples, and nothing stamps a time — so the same
- * fixtures produce the same bytes and a regeneration diff is reviewable.
+ * sorts by filename), classes are emitted in a fixed curated order, and within a class fixtures
+ * are ordered by question length then id. Nothing samples, and nothing stamps a time — so the
+ * same fixtures produce the same bytes and a regeneration diff is reviewable.
  */
 
 import fs from "fs";
@@ -30,6 +37,13 @@ const log = createLogger("StarterPrompts");
 const DEFAULT_OUT = path.resolve(__dirname, "../frontend/starter-prompts.json");
 
 /**
+ * How many chips the frontend gets by default. `frontend/starter-prompts.json` is the single
+ * source of truth for the count — `frontend/js/input.js` renders every entry it finds and
+ * caps nothing, so this constant is the only place the number 3 exists.
+ */
+export const DEFAULT_LIMIT = 3;
+
+/**
  * `refusal` fixtures are excluded from the starter chips.
  *
  * This is a **UX call, not a claim the refusals are wrong** — refusing cleanly is pinned,
@@ -38,6 +52,32 @@ const DEFAULT_OUT = path.resolve(__dirname, "../frontend/starter-prompts.json");
  * the chips offer questions it can actually answer.
  */
 const EXCLUDED_CLASSES: readonly EvalClass[] = ["refusal"];
+
+/**
+ * Classes grouped by *what kind of question they are*, and emitted one family at a time.
+ *
+ * This exists because of the cut to three. `EVAL_CLASSES` order opens with `definitional`,
+ * `acronym-exact-token`, `threshold-lookup` — taking the first three would have produced three
+ * flavours of the same question (look a fact up in the reference) and made the assistant look
+ * like a glossary. Rotating families first means a short list spans visibly different things:
+ * define a term, judge a reading, diagnose a symptom.
+ *
+ * `sensor-combined` leads because with `--sensor` a live reading is the most convincing thing
+ * the assistant does; with the flag off its fixtures are not runnable, the group is empty, and
+ * the rotation simply skips it, so the default output is unaffected.
+ */
+export const CLASS_FAMILIES: readonly (readonly EvalClass[])[] = [
+  // read the pod — only eligible with --sensor
+  ["sensor-combined"],
+  // what does this term mean — the reference, read back to you
+  ["definitional", "acronym-exact-token", "deep-in-manual"],
+  // is this number OK — a reading judged against a threshold or a site range
+  ["precedence", "threshold-lookup"],
+  // why is my data doing this — a symptom pattern diagnosed
+  ["fouling-drift", "event-signature", "follow-up"],
+  // what do we do about the hardware — operations, and answers spanning documents
+  ["probe-calibration", "cross-document"],
+];
 
 export interface StarterPrompt {
   /** The fixture this came from, so a chip can be traced back to its rubric. */
@@ -66,7 +106,7 @@ export interface Options {
 const parseArgs = (argv: string[]): Options => {
   const problems: string[] = [];
   const options: Options = {
-    sensor: false, perClass: 1, limit: 0, out: DEFAULT_OUT,
+    sensor: false, perClass: 1, limit: DEFAULT_LIMIT, out: DEFAULT_OUT,
   };
 
   argv.forEach((arg) => {
@@ -112,18 +152,53 @@ export const eligibleFixtures = (fixtures: LoadedFixture[]): LoadedFixture[] => 
   .filter((fixture) => fixture.runnable && !EXCLUDED_CLASSES.includes(fixture.class));
 
 /**
- * One list, spread across classes: round-robin over the classes in their curated order, taking
- * up to `perClass` fixtures from each. A `limit` then cuts evenly rather than lopping off the
- * tail classes, so a short list still samples the breadth of what the assistant can answer.
+ * The class rotation: one class from each family in turn, families in `CLASS_FAMILIES` order.
+ * A class that gains a family later still appears — anything `EVAL_CLASSES` declares but no
+ * family claims is appended rather than silently dropped from the chips.
+ */
+export const starterClassOrder = (): EvalClass[] => {
+  const ordered: EvalClass[] = [];
+  const rounds = Math.max(...CLASS_FAMILIES.map((family) => family.length));
+
+  for (let round = 0; round < rounds; round += 1) {
+    CLASS_FAMILIES.forEach((family) => {
+      const evalClass = family[round];
+      if (evalClass !== undefined && !ordered.includes(evalClass)) ordered.push(evalClass);
+    });
+  }
+  EVAL_CLASSES.forEach((evalClass) => {
+    if (!ordered.includes(evalClass)) ordered.push(evalClass);
+  });
+
+  return ordered;
+};
+
+/**
+ * Shortest question first, id as the tiebreak.
+ *
+ * A chip has to fit one or two lines next to two others, so among equally good fixtures in a
+ * class the brief one wins. `id` keeps the order total, so the sort stays deterministic even
+ * if two questions are the same length.
+ */
+const byBrevityThenId = (a: LoadedFixture, b: LoadedFixture): number => (
+  a.turns[0].content.length - b.turns[0].content.length || a.id.localeCompare(b.id)
+);
+
+/**
+ * One list, spread across classes: round-robin over the classes in `starterClassOrder()`,
+ * taking up to `perClass` fixtures from each. A `limit` then cuts evenly rather than lopping
+ * off the tail classes, so a short list still samples the breadth of what the assistant can
+ * answer — and because the rotation is family-first, the first three are three different
+ * kinds of question rather than three lookups.
  */
 export const spreadAcrossClasses = (
   fixtures: LoadedFixture[],
   perClass: number,
   limit: number,
 ): LoadedFixture[] => {
-  const byClass = EVAL_CLASSES.map((evalClass) => fixtures
+  const byClass = starterClassOrder().map((evalClass) => fixtures
     .filter((fixture) => fixture.class === evalClass)
-    .sort((a, b) => a.id.localeCompare(b.id)));
+    .sort(byBrevityThenId));
 
   const picked: LoadedFixture[] = [];
   for (let round = 0; round < perClass; round += 1) {
@@ -143,7 +218,7 @@ export const selectStarterPrompts = (
   const chosen = spreadAcrossClasses(
     eligibleFixtures(fixtures),
     options.perClass ?? 1,
-    options.limit ?? 0,
+    options.limit ?? DEFAULT_LIMIT,
   );
 
   return chosen.map((fixture) => ({

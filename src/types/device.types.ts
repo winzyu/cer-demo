@@ -126,3 +126,40 @@ export const PERIOD_UNITS: readonly PeriodUnit[] = [
   "year",
   "fiveYears",
 ] as const;
+
+/**
+ * One pod as published by **this service's** `GET /api/v1/devices` — the pod picker's contract,
+ * not the backend's registry row.
+ *
+ * Snake_case and deliberately narrow: the frontend needs an identifier, something to show, and
+ * the two facts it decides freshness and water-type agreement from. Everything else the registry
+ * carries (thresholds, organization, calibration dates, the duplicate document ids) is either
+ * another organization's business or noise in a dropdown.
+ */
+export interface DeviceListEntry {
+  /** `dev:<numeric id>` — the query key, and the value the chat request will carry. */
+  label: string;
+  /** Display name. Falls back to `label` for the registry rows that carry no name. */
+  name: string;
+  /**
+   * The registry's own spelling — `"salt-water"`, `"fresh-water"` — left unnormalized so the UI
+   * shows what the device is actually registered as. `null` when the row declares none.
+   */
+  operating_environment: string | null;
+  /**
+   * ISO-8601 timestamp of the pod's newest reading, or `null` when it has none. A pod with no
+   * readings is a normal state, not an error: it may be new, or reporting without a GPS fix
+   * (`/water/last` filters those out — see `DeviceApiClient.getLastReading`).
+   */
+  last_reported: string | null;
+}
+
+/** Body of `GET /api/v1/devices`. */
+export interface DeviceListResponse {
+  devices: DeviceListEntry[];
+  /**
+   * The deployment's configured `WATER_TYPE`, sent so the UI can flag a pod whose
+   * `operating_environment` disagrees with it without re-implementing that rule client-side.
+   */
+  water_type: string;
+}

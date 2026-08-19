@@ -8,12 +8,15 @@ import type { ToolDefinition, ToolHandler } from "../../src/types/tool.types";
  * of responses and the tools are local functions, so nothing here needs a key or a network.
  */
 
-const definition = (name: string): ToolDefinition => ({
+const definition = (
+  name: string,
+  properties: Record<string, unknown> = {},
+): ToolDefinition => ({
   type: "function",
   function: {
     name,
     description: `the ${name} tool`,
-    parameters: { type: "object", properties: {}, required: [] },
+    parameters: { type: "object", properties, required: [] },
   },
 });
 
@@ -53,8 +56,9 @@ const scriptedLlm = (script: LlmAnswer[]): {
   return { llm, seen };
 };
 
+/** Declares an optional `device`, the way the real `query_sensor_data` schema does. */
 const sensorTool = (run: ToolHandler["run"]): ToolHandler => ({
-  definition: definition("query_sensor_data"),
+  definition: definition("query_sensor_data", { device: { type: "string" } }),
   run,
 });
 
@@ -326,5 +330,125 @@ describe("ChatOrchestrator round cap", () => {
     await new ChatOrchestrator(llm, [sensorTool(run)], 5).run(messages);
 
     expect(run).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("ChatOrchestrator request device", () => {
+  /**
+   * The pod chosen in the UI arrives per request and must behave as a *default* for the sensor
+   * tool: it fills the gap where the tool would otherwise report that it needs to be told which
+   * pod, and it loses to a device the model named itself.
+   */
+
+  const oneCall = (args: unknown) => [
+    answer({ toolCalls: [toolCall("call_1", "query_sensor_data", args)] }),
+    answer({ content: "done" }),
+  ];
+
+  /**
+   * Order-independent, unlike the scripted queue: it asks for one tool call and then answers,
+   * decided from the conversation it is handed rather than from a shared counter. Runs that
+   * interleave — or simply reuse one orchestrator — stay legible.
+   */
+  const toolThenAnswer = (): LlmService => ({
+    complete: async (sent: ChatMessage[]): Promise<LlmAnswer> => (
+      sent.some((message) => message.role === "tool")
+        ? answer({ content: "done" })
+        : answer({ toolCalls: [toolCall("call_1", "query_sensor_data", { metric: "ph" })] })
+    ),
+  } as unknown as LlmService);
+
+  it("passes the request's device to the tool when the model named none", async () => {
+    const run = jest.fn().mockResolvedValue({ value: 7.1 });
+    const { llm } = scriptedLlm(oneCall({ metric: "ph", time_range: "now" }));
+
+    const result = await new ChatOrchestrator(llm, [sensorTool(run)])
+      .run(messages, { device: "Algalita Pod" });
+
+    expect(run).toHaveBeenCalledWith({
+      metric: "ph", time_range: "now", device: "Algalita Pod",
+    });
+    // Traced as it actually ran, so the response says which pod was read.
+    expect(result.invocations[0].arguments.device).toBe("Algalita Pod");
+  });
+
+  it("lets the model's explicit device win over the request's", async () => {
+    // The request device is a default, not an override: a question naming another pod is the
+    // more specific instruction and must not be silently redirected to the selected one.
+    const run = jest.fn().mockResolvedValue({ value: 7.1 });
+    const { llm } = scriptedLlm(oneCall({ metric: "ph", device: "Old Woman Creek 2026" }));
+
+    const result = await new ChatOrchestrator(llm, [sensorTool(run)])
+      .run(messages, { device: "Algalita Pod" });
+
+    expect(run).toHaveBeenCalledWith({ metric: "ph", device: "Old Woman Creek 2026" });
+    expect(result.invocations[0].arguments.device).toBe("Old Woman Creek 2026");
+  });
+
+  it("treats a blank device from the model as no device at all", async () => {
+    const run = jest.fn().mockResolvedValue({ value: 7.1 });
+    const { llm } = scriptedLlm(oneCall({ metric: "ph", device: "  " }));
+
+    await new ChatOrchestrator(llm, [sensorTool(run)]).run(messages, { device: "Algalita Pod" });
+
+    expect(run).toHaveBeenCalledWith({ metric: "ph", device: "Algalita Pod" });
+  });
+
+  it("adds nothing when the request carried no device", async () => {
+    const run = jest.fn().mockResolvedValue({ value: 7.1 });
+    const { llm } = scriptedLlm(oneCall({ metric: "ph" }));
+
+    await new ChatOrchestrator(llm, [sensorTool(run)]).run(messages);
+
+    expect(run).toHaveBeenCalledWith({ metric: "ph" });
+  });
+
+  it("does not inject a device into a tool whose schema has none", async () => {
+    const run = jest.fn().mockResolvedValue({ ok: true });
+    const { llm } = scriptedLlm([
+      answer({ toolCalls: [toolCall("call_1", "other_tool", { foo: 1 })] }),
+      answer({ content: "done" }),
+    ]);
+    const handler: ToolHandler = { definition: definition("other_tool"), run };
+
+    await new ChatOrchestrator(llm, [handler]).run(messages, { device: "Algalita Pod" });
+
+    expect(run).toHaveBeenCalledWith({ foo: 1 });
+  });
+
+  it("keeps two concurrent runs on their own devices", async () => {
+    // The orchestrator is built once at boot and shared by every request, so the device has to
+    // live on the call, not on the instance. Two overlapping runs prove it does.
+    const seenDevices: unknown[] = [];
+    const run = async (args: Record<string, unknown>): Promise<unknown> => {
+      // Yield the event loop mid-dispatch so the two runs genuinely interleave.
+      await new Promise((resolve) => { setTimeout(resolve, 0); });
+      seenDevices.push(args.device);
+      return { value: 1 };
+    };
+
+    const orchestrator = new ChatOrchestrator(toolThenAnswer(), [sensorTool(run)]);
+    const [algalita, owc] = await Promise.all([
+      orchestrator.run(messages, { device: "Algalita Pod" }),
+      orchestrator.run(messages, { device: "Old Woman Creek 2026" }),
+    ]);
+
+    expect(algalita.invocations[0].arguments.device).toBe("Algalita Pod");
+    expect(owc.invocations[0].arguments.device).toBe("Old Woman Creek 2026");
+    expect([...seenDevices].sort()).toEqual(["Algalita Pod", "Old Woman Creek 2026"]);
+  });
+
+  it("does not carry a device over to the next run on the same orchestrator", async () => {
+    const run = jest.fn().mockResolvedValue({ value: 7.1 });
+    const orchestrator = new ChatOrchestrator(toolThenAnswer(), [sensorTool(run)]);
+
+    const first = await orchestrator.run(messages, { device: "Algalita Pod" });
+    const second = await orchestrator.run(messages, { device: "Old Woman Creek 2026" });
+    const third = await orchestrator.run(messages);
+
+    expect(first.invocations[0].arguments.device).toBe("Algalita Pod");
+    expect(second.invocations[0].arguments.device).toBe("Old Woman Creek 2026");
+    // A request that chose no pod gets none — not the pod the previous caller chose.
+    expect(third.invocations[0].arguments).not.toHaveProperty("device");
   });
 });

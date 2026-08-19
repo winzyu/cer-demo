@@ -25,13 +25,30 @@
  * `src/tools/aggregate.ts`. The surrounding result is snake_case (`bucket_ms`, `n_samples`);
  * the buckets themselves are not.
  *
- * Contract: return true if a chart was drawn, false to leave the slot empty and let the
- * caller keep its current rendering. Fewer than three buckets draws nothing, so `app.css`'s
- * `.chart:empty` rule collapses the slot and the prose/table carries the answer.
+ * **A chart is opt-in** (Wave 2, "where things belong"): it is an answer to "show me the
+ * trend", not a decoration on every series result. So a chartable result renders a single
+ * `.btn--ghost` offer — *Chart this series* — and draws only when the reader asks for it,
+ * with a matching *Hide chart* to put it away again. The one exception is a reader who
+ * already asked: if the **user's own question** says chart / graph / plot / trend / over
+ * time / visualise, that is the explicit request and the chart is drawn straight away.
+ *
+ * The question is read off the transcript, not off the tool arguments — the model choosing
+ * `aggregation: "series"` is the model's decision, not the user's. `renderChart` gets the
+ * message's `.chart` slot, so the preceding `[data-role="user"]` message's body slot is one
+ * DOM walk away (`render.js` writes it with `textContent`, so it is the user's own words).
+ * A `query` on the payload wins if a caller ever supplies one; nothing today does.
+ *
+ * Expansion state is **per message**: each slot owns its own button and remembers nothing
+ * about any other message, so a long transcript does not fill with charts.
+ *
+ * Contract: return true if the slot was filled (with a chart or with the offer of one),
+ * false to leave the slot empty and let the caller keep its current rendering. Fewer than
+ * three buckets fills nothing, so `app.css`'s `.chart:empty` rule collapses the slot and
+ * the prose/table carries the answer.
  *
  * @param {HTMLElement} slot the message's empty `.chart` element
  * @param {object} payload the SSE `done` data for that message
- * @returns {boolean} whether a chart was rendered
+ * @returns {boolean} whether the slot was filled
  */
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -384,11 +401,155 @@ function buildFrame(chart) {
   return frame;
 }
 
+/**
+ * Words on the offer, and on the way back out of it.
+ *
+ * `metric: "all"` produces one frame per metric, so the offer counts them rather than
+ * promising a single chart and then unrolling six.
+ */
+function offerLabel(count) {
+  return count > 1 ? `Chart ${count} series` : "Chart this series";
+}
+
+function hideLabel(count) {
+  return count > 1 ? "Hide charts" : "Hide chart";
+}
+
+/**
+ * Icons are `stroke="currentColor"`, never a literal — `currentColor` resolves to the
+ * button's `color`, which `.btn--ghost` takes from a token, so the glyph inverts with the
+ * theme exactly like the chart does. `.btn--ghost svg` in app.css sizes them.
+ */
+function iconChart() {
+  const node = svg("svg", {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    "stroke-width": 2,
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round",
+    "aria-hidden": "true",
+    focusable: "false",
+  });
+  node.appendChild(svg("polyline", { points: "3 3 3 21 21 21" }));
+  node.appendChild(svg("polyline", { points: "7 15 11 10 15 13 20 6" }));
+  return node;
+}
+
+function iconCollapse() {
+  const node = svg("svg", {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    "stroke-width": 2,
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round",
+    "aria-hidden": "true",
+    focusable: "false",
+  });
+  node.appendChild(svg("polyline", { points: "6 15 12 9 18 15" }));
+  return node;
+}
+
+/** `.btn--ghost` is WS-3's existing token-driven button; this module adds no styling. */
+function ghostButton(label, icon, expanded, onClick) {
+  const button = el("button", "btn--ghost");
+  button.setAttribute("type", "button");
+  button.setAttribute("aria-expanded", expanded ? "true" : "false");
+  button.appendChild(icon);
+  button.appendChild(el("span", null, label));
+  button.addEventListener("click", onClick);
+  return button;
+}
+
+function clearSlot(slot) {
+  while (slot.firstChild) slot.removeChild(slot.firstChild);
+}
+
+/** The default: an offer, one line high, that draws in place when clicked. */
+function showOffer(slot, charts) {
+  clearSlot(slot);
+  slot.appendChild(ghostButton(
+    offerLabel(charts.length),
+    iconChart(),
+    false,
+    () => showCharts(slot, charts),
+  ));
+}
+
+/** Drawn state: the frames, then the way back to the offer. */
+function showCharts(slot, charts) {
+  clearSlot(slot);
+  charts.forEach((chart) => slot.appendChild(buildFrame(chart)));
+  slot.appendChild(ghostButton(
+    hideLabel(charts.length),
+    iconCollapse(),
+    true,
+    () => showOffer(slot, charts),
+  ));
+}
+
+/**
+ * What counts as the user asking for a chart.
+ *
+ * Deliberately generous on the verbs and blind to everything else: the cost of a false
+ * positive is one chart the reader collapses, and the cost of a false negative is one
+ * click. "over time" and "time series" are included because that is how people ask for a
+ * trend without naming a chart.
+ */
+const CHART_REQUEST = /\b(?:charts?|charted|charting|graphs?|graphed|graphing|plots?|plotted|plotting|trends?|trending|sparklines?|visuali[sz]e[sd]?|visuali[sz]ing|visuali[sz]ations?|over time|time series|timeseries)\b/i;
+
+/** Climbs out of the slot to the message that owns it (`render.js` sets `data-role`). */
+function ownerMessage(slot) {
+  let node = slot;
+  while (node) {
+    if (node.dataset && node.dataset.role) return node;
+    node = node.parentElement;
+  }
+  return null;
+}
+
+/** The message's own text, read from its `[data-slot="body"]` child. */
+function messageText(wrap) {
+  const kids = wrap.children || [];
+  for (let i = 0; i < kids.length; i += 1) {
+    const kid = kids[i];
+    if (kid && kid.dataset && kid.dataset.slot === "body") return kid.textContent || "";
+  }
+  return "";
+}
+
+/**
+ * The user turn this answer belongs to: the nearest preceding `[data-role="user"]` message.
+ *
+ * Nearest-preceding rather than last-in-transcript because regenerate rewrites the tail,
+ * and because a `done` for an older message must not read a newer question.
+ */
+function questionForSlot(slot) {
+  const wrap = ownerMessage(slot);
+  if (!wrap) return "";
+  let node = wrap.previousElementSibling;
+  while (node) {
+    if (node.dataset && node.dataset.role === "user") return messageText(node);
+    node = node.previousElementSibling;
+  }
+  return "";
+}
+
+/** A caller-supplied question wins; otherwise read the transcript. */
+function askedForChart(slot, payload) {
+  const supplied = payload && typeof payload === "object"
+    ? [payload.query, payload.user_query, payload.question].find((v) => typeof v === "string")
+    : null;
+  const text = supplied || questionForSlot(slot);
+  return typeof text === "string" && text !== "" && CHART_REQUEST.test(text);
+}
+
 export function renderChart(slot, payload) {
   if (!slot || typeof slot.appendChild !== "function") return false;
 
   // Idempotent: `done` can follow an earlier render of the same message.
-  while (slot.firstChild) slot.removeChild(slot.firstChild);
+  clearSlot(slot);
 
   // The default build runs with SENSOR_TOOL=false, so `tool_calls` is omitted entirely and
   // this is the path almost every message takes. It must cost nothing and leave the slot
@@ -406,6 +567,10 @@ export function renderChart(slot, payload) {
 
   if (charts.length === 0) return false;
 
-  charts.forEach((chart) => slot.appendChild(buildFrame(chart)));
+  if (askedForChart(slot, payload)) {
+    showCharts(slot, charts);
+  } else {
+    showOffer(slot, charts);
+  }
   return true;
 }

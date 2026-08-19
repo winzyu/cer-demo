@@ -1,5 +1,6 @@
 import { Router } from "express";
 import chatRoutes from "./chatRoutes";
+import deviceRoutes from "./deviceRoutes";
 
 /** API v1 aggregator. Resource routers mount here. */
 const router = Router();
@@ -9,5 +10,6 @@ router.get("/", (_req, res) => {
 });
 
 router.use("/chat", chatRoutes);
+router.use("/devices", deviceRoutes);
 
 export default router;

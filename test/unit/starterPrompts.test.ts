@@ -1,11 +1,17 @@
 import fs from "fs";
 import path from "path";
 import {
-  eligibleFixtures, renderDocument, selectStarterPrompts, spreadAcrossClasses,
+  CLASS_FAMILIES, DEFAULT_LIMIT, eligibleFixtures, renderDocument, selectStarterPrompts,
+  spreadAcrossClasses, starterClassOrder,
 } from "../../scripts/starterPrompts";
 import { availableCapabilities, loadFixtures } from "../../src/eval/fixtures";
+import { EVAL_CLASSES } from "../../src/eval/types";
+import type { EvalClass } from "../../src/eval/types";
 
 const OUTPUT_FILE = path.resolve(__dirname, "../../frontend/starter-prompts.json");
+
+/** `limit: 0` is the explicit "no cap" — the default is a real cap now, not zero. */
+const UNCAPPED = { sensor: false, perClass: 99, limit: 0 };
 
 describe("starter prompts — generated from the eval fixture set", () => {
   it("emits a non-empty list of first user turns", () => {
@@ -36,7 +42,7 @@ describe("starter prompts — generated from the eval fixture set", () => {
   it("excludes the refusal class", () => {
     // A UX call, not a claim the refusals are wrong: they stay in the eval set, they are just
     // a bad suggested first question.
-    const prompts = selectStarterPrompts({ sensor: false, perClass: 99 });
+    const prompts = selectStarterPrompts(UNCAPPED);
 
     expect(prompts.some((prompt) => prompt.class === "refusal")).toBe(false);
     expect(prompts.some((prompt) => prompt.id.startsWith("refusal-"))).toBe(false);
@@ -45,27 +51,75 @@ describe("starter prompts — generated from the eval fixture set", () => {
   });
 
   it("excludes requires: sensor-tool fixtures by default", () => {
-    const prompts = selectStarterPrompts({ sensor: false, perClass: 99 });
+    const prompts = selectStarterPrompts(UNCAPPED);
 
     expect(prompts.some((prompt) => prompt.class === "sensor-combined")).toBe(false);
     expect(prompts.map((p) => p.id)).not.toContain("sensor-doc-do-normal");
   });
 
   it("includes them when --sensor is passed", () => {
-    const prompts = selectStarterPrompts({ sensor: true, perClass: 99 });
+    const prompts = selectStarterPrompts({ ...UNCAPPED, sensor: true });
 
     expect(prompts.map((p) => p.id)).toContain("sensor-doc-do-normal");
     expect(prompts.map((p) => p.id)).toContain("sensor-doc-event-check");
     expect(renderDocument(prompts, true)).toContain("\"sensorTool\": true");
   });
 
-  it("spreads across classes rather than stacking one", () => {
-    const prompts = selectStarterPrompts({ sensor: false });
-    const classes = new Set(prompts.map((prompt) => prompt.class));
+  it("defaults to three prompts", () => {
+    // Fifteen chips in front of an empty conversation was the complaint; the chips show what
+    // the assistant can do and then get out of the way (CHAT_UX_WORKPLAN, "Wave 2 — where
+    // things belong").
+    expect(DEFAULT_LIMIT).toBe(3);
+    expect(selectStarterPrompts({ sensor: false })).toHaveLength(3);
+  });
 
-    // Ten eligible classes with the flag off (twelve, minus refusal and sensor-combined).
-    expect(classes.size).toBe(prompts.length);
-    expect(classes.size).toBeGreaterThanOrEqual(8);
+  it("still honours an explicit --limit, including 0 for no cap", () => {
+    expect(selectStarterPrompts({ sensor: false, limit: 6 })).toHaveLength(6);
+
+    const uncapped = selectStarterPrompts({ sensor: false, limit: 0 });
+    expect(uncapped.length).toBeGreaterThan(DEFAULT_LIMIT);
+    // One per eligible class with the default perClass of 1.
+    expect(new Set(uncapped.map((p) => p.class)).size).toBe(uncapped.length);
+  });
+
+  it("--per-class adds rounds once the cap is lifted", () => {
+    const single = selectStarterPrompts({ sensor: false, limit: 0 });
+    const double = selectStarterPrompts({ sensor: false, perClass: 2, limit: 0 });
+
+    expect(double.length).toBeGreaterThan(single.length);
+    expect(double.slice(0, single.length)).toEqual(single);
+  });
+
+  it("spans different question families rather than three flavours of one", () => {
+    // EVAL_CLASSES order opens definitional / acronym / threshold — three ways of asking the
+    // reference to look something up. Taking its first three would read as a glossary, so the
+    // rotation goes family-first.
+    const prompts = selectStarterPrompts({ sensor: false });
+    const familyOf = (evalClass: EvalClass): number => CLASS_FAMILIES
+      .findIndex((family) => family.includes(evalClass));
+
+    const families = prompts.map((prompt) => familyOf(prompt.class));
+    expect(families).not.toContain(-1);
+    expect(new Set(families).size).toBe(prompts.length);
+    expect(new Set(prompts.map((prompt) => prompt.class)).size).toBe(prompts.length);
+  });
+
+  it("prefers the shortest question available in each class", () => {
+    // A chip has to fit one or two lines beside two others.
+    const fixtures = eligibleFixtures(loadFixtures(undefined, availableCapabilities(false)));
+
+    selectStarterPrompts({ sensor: false }).forEach((prompt) => {
+      const sameClass = fixtures.filter((fixture) => fixture.class === prompt.class);
+      const shortest = Math.min(...sameClass.map((fixture) => fixture.turns[0].content.length));
+      expect(prompt.text.length).toBe(shortest);
+    });
+  });
+
+  it("orders every class exactly once, including any without a family", () => {
+    const order = starterClassOrder();
+
+    expect(new Set(order).size).toBe(order.length);
+    expect([...order].sort()).toEqual([...EVAL_CLASSES].sort());
   });
 
   it("cuts a limit evenly across classes instead of lopping off the tail", () => {
@@ -82,5 +136,16 @@ describe("starter prompts — generated from the eval fixture set", () => {
     const expected = renderDocument(selectStarterPrompts({ sensor: false }), false);
 
     expect(fs.readFileSync(OUTPUT_FILE, "utf8")).toBe(expected);
+  });
+
+  it("the committed file is what frontend/js/input.js reads: .prompts[].text, three of them", () => {
+    const parsed = JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf8"));
+
+    expect(parsed.prompts).toHaveLength(DEFAULT_LIMIT);
+    parsed.prompts.forEach((prompt: { id: string; class: string; text: string }) => {
+      expect(typeof prompt.id).toBe("string");
+      expect(typeof prompt.class).toBe("string");
+      expect(typeof prompt.text).toBe("string");
+    });
   });
 });
