@@ -632,10 +632,12 @@ docs/                   # HANDOFF.md (start here), SPECS.md, timeline.md, RETRIE
 | `GET` | `/` | service banner |
 | `GET` | `/health` | liveness + config-presence checks (no external I/O) |
 | `GET` | `/api/v1` | API v1 banner |
+| `GET` | `/api/v1/devices` | pod list for the UI selector (read-only, forwards the caller's token) |
 | `POST` | `/api/v1/chat` | JSON, or SSE when `"stream": true` |
 
-**Request:** `{ query, retrieval?, stream?, history? }`. `query` required; `retrieval` honoured only
-when `DEBUG_RETRIEVAL=true`.
+**Request:** `{ query, retrieval?, stream?, history?, device? }`. `query` required; `retrieval`
+honoured only when `DEBUG_RETRIEVAL=true`; `device` names the pod to read when the model does not
+name one itself (the model's own choice wins).
 
 **Response:** `{ answer, model, mode, citations, usage }`, plus `tool_calls` when any tool ran and
 `tool_round_cap_reached` when the loop hit its cap. Both are **omitted** when no tool ran.

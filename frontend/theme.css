@@ -40,8 +40,11 @@
   --radius-lg: 14px;
   --radius-pill: 999px;
 
-  /* Readability cap. Long manual excerpts are unreadable at full window width. */
-  --measure: 74ch;
+  /* Column width. Relative, not a fixed pixel cap: tables, charts and six-metric reads
+     were cramped at 74ch. Grows to half the viewport, with a floor so it stays readable on
+     a small laptop and a ceiling so prose does not run to 200 characters on an ultrawide.
+     Under 900px the media query in app.css overrides this to 100%. */
+  --measure: clamp(32rem, 50vw, 66rem);
 
   /* ---- light palette (Direction A) ---- */
   --bg: #f4f6f9;

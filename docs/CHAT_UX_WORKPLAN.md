@@ -259,8 +259,10 @@ already curated, and generated prompts stay in sync for free.
 **Acceptance:** `npm run starter:prompts` regenerates the file; the test asserts determinism and the
 two exclusions.
 
-**Status: complete** on `feat/starter-prompts` — 10 prompts from 10 fixtures, one per eligible class
-(30 in, 3 `refusal` and 2 `sensor-tool` dropped). **The output shape is an object wrapper, and it
+**Status: complete** on `feat/starter-prompts`, then cut to **3** in Wave 2 (`DEFAULT_LIMIT`).
+The three rotate *families* of question rather than classes — slicing class order gave three ways of
+asking the reference to look a fact up, which is the "three flavours of the same question" failure
+this was meant to avoid. **The output shape is an object wrapper, and it
 wins over Phase 0's placeholder** at merge:
 
 ```json
@@ -308,3 +310,36 @@ Phase 0 wrote `{ "prompts": [string] }`, so WS-3's loader must read `.prompts[].
 
 WS-5, WS-6 and WS-7 touch no frontend files at all, so they can run **during Phase 0** if you want to
 start immediately.
+
+---
+
+## Wave 2 — where things belong (decided 2026-08-18, from live testing)
+
+Wave 1 put every piece of provenance into the message. Reading a real conversation showed
+the cost: a routine question returned a tool chip, a freshness badge, a water-type warning,
+an auto-drawn chart and fifteen starter prompts. Each was individually defensible and the
+whole was unreadable.
+
+The rule that sorts them: **a message carries what qualifies THAT answer; the chrome carries
+what is true of the session.** Anything constant across answers is chrome — repeating it per
+message is noise that trains the reader to skip the line where it finally matters.
+
+| surface | what lives there | why |
+|---|---|---|
+| **Context bar** (persistent) | pod selector, pod status + last reading, water-type mismatch | Properties of the *deployment*, identical on every answer. The mismatch is a config fact, not a finding about a reading. |
+| **Message** (always) | the answer; qualifications specific to it — empty window ("silent since Aug 7"), `complete:false`, turbidity-provisional *when turbidity is in the answer* | These change how you read this particular number. Dropping them would be dishonest. |
+| **Message** (collapsed) | which tool ran, its arguments, sample counts, citations | Auditable on demand. Present for anyone checking the work, silent for everyone else. Closed by default. |
+| **On request** | the series chart | A chart is an answer to "show me the trend", not a decoration on every series result. |
+
+Three consequences that are not obvious:
+
+- **The pod selector replaces the bot asking.** `SENSOR_DEVICE_LABEL` is deliberately unset
+  because guessing between pods on opposite coasts is unsafe, so today the model asks and
+  lists every device. A picker is both better UX and closer to the real workflow: a user has
+  a few pods, not seventeen, and would have to choose anyway. It needs two things that do not
+  exist yet — `GET /api/v1/devices`, and an optional `device` on the chat request.
+- **Freshness moves but does not disappear.** "Silent since Aug 7" stays *in* the message when
+  it explains an empty result, because there it is the answer. What moves is the routine
+  "reporting, 8 minutes ago" on a healthy pod.
+- **Starter prompts: 3, not 10.** They exist to show what the thing can do, not to enumerate
+  the eval set. One line, then they get out of the way.

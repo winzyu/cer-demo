@@ -48,6 +48,24 @@
   </header>
 
   <!--
+    Context bar — session-level facts, deliberately OUT of the transcript.
+    Owned by js/podbar.js (Wave 2). It fills #pod-select from GET /api/v1/devices and renders
+    the selected pod's status and any water-type mismatch beside it. These are constant across
+    answers; repeating them per message is what made the chat unreadable.
+  -->
+  <div class="contextbar" id="context-bar">
+    <label class="podpicker" for="pod-select">
+      <span class="podpicker__label">Pod</span>
+      <select class="podpicker__select" id="pod-select" disabled>
+        <option value="">Loading pods…</option>
+      </select>
+    </label>
+    <!-- podbar.js renders status / mismatch badges here -->
+    <div id="pod-status"></div>
+    <span class="contextbar__spacer"></span>
+  </div>
+
+  <!--
     Message list. Every message element is built by js/render.js, which gives each one
     these named slots so Wave 1 streams can mount into a message without editing this file:
 
@@ -65,6 +83,9 @@
     Class vocabulary lives in app.css — .chip / .chip--tool / .chip--deduped /
     .badge--ok / .badge--warn / .notice--error / .chart__* / .btn--ghost. Use those
     names rather than new ones, and never a literal colour: it will not invert.
+
+    Wave 2: routine provenance collapses into <details class="details"> (closed by default).
+    Only answer-specific caveats stay loose in the slot.
   -->
   <div id="messages" aria-live="polite"></div>
 

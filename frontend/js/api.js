@@ -14,9 +14,36 @@ export function postChat(query, history, options = {}) {
   return fetch(BACKEND + API_PATH, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, history, stream: true }),
+    // `device` is omitted when no pod is selected, so the server keeps its existing behaviour
+    // of asking rather than guessing between pods on opposite coasts.
+    body: JSON.stringify({
+      query,
+      history,
+      stream: true,
+      ...(options.device ? { device: options.device } : {}),
+    }),
     ...(options.signal ? { signal: options.signal } : {}),
   });
+}
+
+/**
+ * The pod list for the context bar. Returns { devices: [...], water_type } or throws.
+ * Read-only; the server forwards the caller's token.
+ */
+export async function getDevices() {
+  const r = await fetch(BACKEND + "/api/v1/devices");
+  if (!r.ok) {
+    // Carry the server's machine-readable `code` through to the caller. Throwing a bare
+    // status string forces the UI to re-derive the reason by parsing text, and loses the
+    // distinction between an expired token and an unconfigured deployment.
+    const body = await r.json().catch(() => ({}));
+    const err = new Error(body.error || "devices " + r.status);
+    err.status = r.status;
+    err.code = body.code;
+    err.body = body;
+    throw err;
+  }
+  return r.json();
 }
 
 /** Minimal SSE parser over a fetch body stream. Yields { event, data }. */

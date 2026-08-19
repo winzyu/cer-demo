@@ -83,6 +83,45 @@ a:hover { text-decoration: underline; }
   :root:not([data-theme="light"]) .theme-toggle .icon-light { display: none; }
 }
 
+/* ============================= context bar =============================
+ * Session-level facts live here, not in the transcript: which pod is selected, whether it
+ * is reporting, and whether its water type disagrees with the deployment's. These are
+ * identical on every answer, so repeating them per message trains the reader to skip the
+ * line where a caveat finally matters. See docs/CHAT_UX_WORKPLAN.md, "Wave 2".
+ */
+
+.contextbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  padding: var(--sp-2) var(--sp-7);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.podpicker { display: inline-flex; align-items: center; gap: var(--sp-2); }
+.podpicker__label { font-size: var(--fs-sm); color: var(--text-3); }
+
+/* A real <select>: native keyboard behaviour and mobile pickers for free. */
+.podpicker__select {
+  font: inherit;
+  font-size: var(--fs-md);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-3);
+  max-width: 18rem;
+  cursor: pointer;
+}
+.podpicker__select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.podpicker__select:disabled { opacity: 0.6; cursor: default; }
+
+.contextbar .badge { font-size: var(--fs-sm); }
+.contextbar__spacer { flex-grow: 1; }
+
 /* ============================= transcript ============================= */
 
 #messages {
@@ -212,6 +251,11 @@ a:hover { text-decoration: underline; }
   align-items: center;
 }
 
+/* The disclosure takes its own full-width row beneath any loose caveat badges, rather than
+   competing with them as a flex item. Caveats qualify the answer and are read first; the
+   audit trail sits under them. */
+.provenance > .details { flex-basis: 100%; }
+
 .chip {
   display: inline-flex;
   align-items: center;
@@ -260,6 +304,42 @@ a:hover { text-decoration: underline; }
 .badge--warn svg { color: var(--warn-icon); }
 
 .badge--muted { border-color: var(--border-strong); color: var(--text-3); }
+
+/* Collapsed provenance. Closed by default: auditable for anyone checking the work, silent
+   for everyone else. Only answer-specific caveats sit outside it, as loose .badge--warn. */
+.details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  font-size: var(--fs-sm);
+  max-width: 100%;
+}
+.details > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: var(--sp-2) var(--sp-3);
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.details > summary::-webkit-details-marker { display: none; }
+.details > summary::before {
+  content: "";
+  width: 0; height: 0;
+  border-left: 4px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform 120ms ease;
+}
+.details[open] > summary::before { transform: rotate(90deg); }
+.details > summary:hover { color: var(--text-2); }
+.details__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-3) var(--sp-3);
+}
 
 /* ============================= errors ============================= */
 
@@ -472,6 +552,7 @@ button { font: inherit; cursor: pointer; }
 @media (max-width: 900px) {
   #messages { padding: var(--sp-4) var(--sp-4); }
   #input-region { padding: var(--sp-3) var(--sp-4) var(--sp-4); }
+  .contextbar { padding: var(--sp-2) var(--sp-4); }
   .msg { max-width: 100%; }
 }
 
@@ -483,6 +564,9 @@ button { font: inherit; cursor: pointer; }
   .appbar__logo { height: 26px; }
 
   #messages { padding: var(--sp-4) var(--sp-3); gap: var(--sp-5); }
+  .contextbar { padding: var(--sp-2) var(--sp-3); gap: var(--sp-2); }
+  .podpicker__select { max-width: 11rem; }
+  .podpicker__label { display: none; }
   .msg.user { max-width: 88%; }
 
   .composer__hint { display: none; }

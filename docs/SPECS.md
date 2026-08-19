@@ -326,7 +326,8 @@ ChatController ─► RetrievalRegistry.resolve(retrieval?) ─► adapter.getCo
 
 ### 10.1 Request
 
-`{ query: string, retrieval?: string, stream?: boolean, history?: ChatMessage[] }`, validated by
+`{ query: string, retrieval?: string, stream?: boolean, history?: ChatMessage[], device?: string }`,
+validated by
 hand in `validators/chatValidators.ts` (conventions §8 — no schema library). `query` is required and
 trimmed; the rest are optional and type-checked. Every failure is a `ValidationError` → 400 in the
 house `{ error, message }` shape.
@@ -516,6 +517,50 @@ error event. A client disconnect aborts the upstream call via `AbortController` 
 tab keeps generating billable tokens. `X-Accel-Buffering: no` is set because a buffering proxy in
 front of Cloud Run would otherwise hold the whole stream and release it at once, which is
 indistinguishable from streaming being broken.
+
+### 10.5 Device list (`GET /api/v1/devices`)
+
+Added 2026-08-19 for the UI's pod selector. Read-only: it lists the pods the caller's token can see
+so a human can choose one, replacing the tool's "which pod do you mean?" round trip.
+
+**Deliberately not gated on `SENSOR_TOOL`.** That flag governs whether the *model* is handed a tool;
+listing pods for a person to pick from is a different act. But an unconfigured `DEVICE_API_BASE_URL`
+returns the coded 503 rather than an empty list — an empty `devices` array must mean "this token sees
+no pods", never "the service is not set up".
+
+- **Deduped by `dev:` label** via the same `dedupeByLabel` the tool uses: the registry genuinely
+  returns three rows for Algalita Pod. Rows with no label are dropped — nothing in `/water/*` can
+  address them, so they cannot serve a picker.
+- **`name` falls back to `label`**, because six registry rows have no name, and ordering tie-breaks on
+  label so unnamed rows cannot reshuffle between loads. A reshuffling dropdown loses the selection.
+- **`water_type` is echoed** so the client can flag a pod whose `operating_environment` disagrees
+  without duplicating the rule. Comparison is `environment.includes("salt")`, matching the tool —
+  `"salt-water"` and `"saltwater"` are the same claim, and the strings are left unnormalized.
+- **`last_reported` costs one `/water/last` call per pod**, run concurrently. The registry row carries
+  no recency at all, so there is no cheaper source — but on the live fleet that is ~15 upstream reads
+  per picker load. **Do not poll this on a timer**; there is no QA mirror and every call reads
+  production (`migration/DEVICE_API.md` §3).
+- **A coded upstream failure is not flattened to `null`.** `device_auth_expired` / `device_timeout` /
+  `device_unavailable` propagate, because reporting an outage as `last_reported: null` would assert
+  that a pod has never reported. Only an *uncoded* per-device failure degrades to `null`, so one odd
+  row cannot take the whole picker down.
+
+### 10.6 Per-request device (`device` on `POST /api/v1/chat`)
+
+Optional, trimmed, max 120 characters; a malformed value is a 400, an *unrecognised* pod is not —
+that stays a recoverable `{ error }` tool result, because a stale UI holding a removed pod should not
+hard-fail a conversation the model could still rescue.
+
+**It fills a gap; it never overrides.** If the model names a device in its tool arguments, the model
+wins. Nothing is injected into a tool whose schema does not declare `device`, so the trace never shows
+an argument the tool would ignore.
+
+**The value lives on the `ChatOrchestrator.run` call stack, never on an instance or the registry.**
+`chatRoutes.ts` constructs the controller at module load and its constructor evaluates
+`buildToolRegistry()` once, so a single orchestrator, tool and handler closure serve every request in
+the process — a device stored on any of them would be handed to whichever request ran next. The
+per-request dedupe cache keys on the *effective* arguments for the same reason: otherwise one pod's
+reading could be served as the answer for another.
 
 ---
 
@@ -818,6 +863,7 @@ turn (against 11 for `pgvector-rag`). It also wins `deep-in-manual` outright at 
 | `GET` | `/` | `{ "message": "Clean Earth RAG service" }` |
 | `GET` | `/health` | `{ status, service, environment, timestamp, uptime, checks: { fireworksConfigured, firestoreProjectConfigured } }` |
 | `GET` | `/api/v1` | `{ "message": "Clean Earth RAG API v1" }` |
+| `GET` | `/api/v1/devices` | `{ devices: [{ label, name, operating_environment, last_reported }], water_type }` (§10.5) |
 | `POST` | `/api/v1/chat` | `{ answer, model, mode, citations, usage }`, or SSE when `stream: true` (§10) |
 
 `/health` does **no** network I/O (no Firestore/Fireworks calls), so it always succeeds while the

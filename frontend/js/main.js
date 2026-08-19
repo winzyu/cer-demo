@@ -18,6 +18,8 @@ import { renderMarkdown } from "./markdown.js";       // WS-1 · markdown + XSS 
 import { renderProvenance } from "./provenance.js";   // WS-2 · provenance surfacing
 import { initInput } from "./input.js";               // WS-3 · input & response controls
 import { renderChart } from "./chart.js";             // WS-4 · series chart
+import { initTheme } from "./theme.js";               // light / dark toggle
+import { initPodBar, selectedDevice } from "./podbar.js"; // Wave 2 · pod selector + status
 
 const messagesEl = document.getElementById("messages");
 const inputEl = document.getElementById("input");
@@ -28,8 +30,14 @@ const promptsEl = document.getElementById("starter-prompts");
 const controlsEl = document.getElementById("response-controls");
 
 const history = []; // [{role, content}]
+let inflight = null;  // AbortController for the request in flight, or null
 
 initRender(messagesEl);
+initTheme(document.getElementById("theme-toggle"));
+initPodBar({
+  select: document.getElementById("pod-select"),
+  status: document.getElementById("pod-status"),
+});
 
 async function send(msg) {
   renderMessage("user", msg);
@@ -42,7 +50,11 @@ async function send(msg) {
   let answer = "";
   try {
     // history excludes the turn just pushed — that one is sent as `query`.
-    const r = await postChat(msg, history.slice(0, -1));
+    inflight = new AbortController();
+    const r = await postChat(msg, history.slice(0, -1), {
+      signal: inflight.signal,
+      device: selectedDevice(),
+    });
 
     if (!r.ok) {
       // Validation failures arrive as JSON before the stream opens.
@@ -78,8 +90,11 @@ async function send(msg) {
     if (answer) history.push({ role: "assistant", content: answer });
   } catch (e) {
     removeThinking();
-    renderMessage("assistant", "Network error: " + e.message);
+    // A user-initiated stop is not an error: keep whatever text already arrived.
+    if (e.name !== "AbortError") renderMessage("assistant", "Network error: " + e.message);
+    if (e.name === "AbortError" && answer) history.push({ role: "assistant", content: answer });
   } finally {
+    inflight = null;
     sendBtn.disabled = false;
     inputEl.focus();
   }
@@ -100,6 +115,17 @@ initInput({
   controlsEl,
   submit: send,
   getLastUserTurn: () => [...history].reverse().find((m) => m.role === "user") || null,
+  // Wave 2 seam: input.js no longer needs to wrap window.fetch to stop a request.
+  abort: () => { if (inflight) inflight.abort(); },
+  // Regenerate drops the previous user+assistant pair instead of appending a second copy.
+  dropLastExchange: () => {
+    const msgs = messagesEl.querySelectorAll(".msg");
+    for (let i = msgs.length - 1, removed = 0; i >= 0 && removed < 2; i -= 1, removed += 1) {
+      msgs[i].remove();
+    }
+    while (history.length && history[history.length - 1].role === "assistant") history.pop();
+    if (history.length && history[history.length - 1].role === "user") history.pop();
+  },
 });
 
 refreshHealth(healthEl);
