@@ -7,7 +7,7 @@
  *   - multi-line composer → the <input> is upgraded to a <textarea> at runtime
  *   - stop / copy / regenerate → #response-controls
  *
- * Two notes on how this file has to work, because it may not edit any other file:
+ * Two notes on how this file works, because it may not edit any other file:
  *
  * 1. The composer swap keeps the ORIGINAL <input> object alive. main.js captured it as
  *    `inputEl` at module scope before calling initInput, and reads `.value`, writes
@@ -15,29 +15,22 @@
  *    its `value` / `focus` are redefined to proxy the textarea, so main.js keeps working
  *    against the live field without knowing it moved.
  *
- * 2. main.js calls `postChat(msg, history)` with no options, so there is no seam to hand
- *    it an AbortSignal — see `installStopHook`. Rather than edit main.js, this module
- *    wraps `window.fetch` for POSTs to the chat path only, attaches its own
- *    AbortController, and re-wraps the response body so a user stop ends the SSE stream
- *    *cleanly* (`done: true`) instead of rejecting mid-read. That matters: an AbortError
- *    thrown into main.js's read loop would print "Network error: …" under the partial
- *    answer and drop that answer from `history`. Closing the stream instead leaves the
- *    partial text on screen and in history, which is what stopping should mean.
- *    The clean fix is a signature change; see the notes at the bottom of this file.
+ * 2. Stop and Regenerate run through the ctx, not through the transport. main.js owns an
+ *    AbortController per request and hands this module `abort()` and `dropLastExchange()`;
+ *    an earlier revision of this file had to monkey-patch `window.fetch` to get at the
+ *    request, and that wrapper is gone. main.js also treats an AbortError as a stop rather
+ *    than a failure — it keeps the partial answer on screen and pushes it to history — so
+ *    nothing here needs to fake a clean end-of-stream any more.
  *
  * No literal colours and no inline styles: every class name here already exists in
  * app.css (.chip / .chip--starter / .btn--ghost / .composer__hint), and the composer
  * autosizes by setting `rows`, not a height.
  */
 
-import { API_PATH } from "./api.js";
-
 const SVG_NS = "http://www.w3.org/2000/svg";
 const PROMPTS_URL = "starter-prompts.json";
 const FALLBACK_MAX_ROWS = 8;
 const FEEDBACK_MS = 1600;
-
-const noop = () => {};
 
 /* ============================= icons ============================= */
 
@@ -104,6 +97,10 @@ function flash(labelEl, message, original) {
  * so the text lives at `.prompts[].text`. Phase 0's placeholder file was a flat array of
  * strings; that shape is deliberately NOT accepted, so a stale placeholder shows no chips
  * rather than half-working. Anything malformed degrades to [] and never throws.
+ *
+ * **Every prompt in the file is rendered — there is no cap here.** How many chips appear is
+ * the generator's decision (`--limit`, default 3) and the committed file is the single
+ * source of truth; a second ceiling in this module would silently disagree with it.
  *
  * @param {unknown} data parsed JSON
  * @returns {string[]}
@@ -200,115 +197,27 @@ function upgradeComposer(form, legacy) {
   return ta;
 }
 
-/* ============================= stop generation ============================= */
-
-/**
- * Wraps a streaming Response so that a user stop closes the stream instead of rejecting
- * the pending read. main.js consumes the body with `for await (… of readSse(r))`; a
- * rejection there lands in its catch and prints a network error over the partial answer.
- */
-function gracefulStream(res, handle) {
-  if (!res.body) return res;
-  const reader = res.body.getReader();
-
-  const stream = new ReadableStream({
-    async pull(controller) {
-      if (handle.stopped) {
-        reader.cancel().catch(noop);
-        controller.close();
-        return;
-      }
-      let chunk;
-      try {
-        chunk = await reader.read();
-      } catch (err) {
-        if (handle.stopped) controller.close(); // the abort we asked for, not a failure
-        else controller.error(err);
-        return;
-      }
-      if (chunk.done || handle.stopped) {
-        controller.close();
-        return;
-      }
-      controller.enqueue(chunk.value);
-    },
-    cancel(reason) { reader.cancel(reason).catch(noop); },
-  });
-
-  try {
-    return new Response(stream, {
-      status: res.status,
-      statusText: res.statusText,
-      headers: res.headers,
-    });
-  } catch (e) {
-    return res; // never break sending just because the wrapper could not be built
-  }
-}
-
-/** An immediately-finished SSE response, for a stop that lands before the headers do. */
-function emptyStream() {
-  return new Response(
-    new ReadableStream({ start(controller) { controller.close(); } }),
-    { status: 200, statusText: "OK", headers: { "Content-Type": "text/event-stream" } },
-  );
-}
-
-/**
- * Installs the fetch wrapper. Only POSTs to the chat path are touched; the health poll
- * and the starter-prompts GET pass straight through.
- *
- * @param {(handle: object) => void} onStart called when a chat request goes out
- * @returns {{ stop: () => void, isStopped: () => boolean }}
- */
-function installStopHook(onStart) {
-  const native = window.fetch.bind(window);
-  let current = null;
-
-  window.fetch = function patchedFetch(input, init) {
-    const url = typeof input === "string" ? input : (input && input.url) || "";
-    const method = String((init && init.method) || (input && input.method) || "GET").toUpperCase();
-    if (method !== "POST" || url.indexOf(API_PATH) === -1) return native(input, init);
-
-    const controller = new AbortController();
-    const options = { ...(init || {}) };
-    // postChat already supports a caller-supplied signal; never clobber one.
-    if (!options.signal) options.signal = controller.signal;
-
-    const handle = { controller, stopped: false, owned: options.signal === controller.signal };
-    current = handle;
-    onStart(handle);
-
-    return native(input, options).then(
-      (res) => gracefulStream(res, handle),
-      (err) => {
-        // Stopped before the response headers arrived: hand back an empty stream so the
-        // read loop finishes normally rather than surfacing an AbortError.
-        if (handle.stopped) return emptyStream();
-        throw err;
-      },
-    );
-  };
-
-  return {
-    stop() {
-      const handle = current;
-      if (!handle || handle.stopped) return;
-      handle.stopped = true;
-      if (handle.owned) {
-        try { handle.controller.abort(); } catch (e) { /* already settled */ }
-      }
-    },
-    isStopped() { return Boolean(current && current.stopped); },
-  };
-}
-
 /* ============================= response controls ============================= */
 
 /** The body slot of the newest assistant message, or null. render.js owns the markup. */
 function lastAnswerEl() {
   const bodies = document.querySelectorAll('.msg.assistant [data-slot="body"]');
   return bodies.length ? bodies[bodies.length - 1] : null;
+}
+
+/**
+ * True when the newest message on screen is an assistant answer.
+ *
+ * Regenerate is gated on this, not merely on "an answer exists somewhere". main.js's
+ * `dropLastExchange()` removes the last two message elements as a pair, so if a turn was
+ * stopped before the assistant bubble appeared, the newest message is the *user* turn and
+ * dropping two would also take the previous answer off screen while `history` kept it.
+ * Offering Regenerate only when a real pair is there keeps the two in step.
+ */
+function lastMessageIsAnswer() {
+  const msgs = document.querySelectorAll(".msg");
+  const last = msgs.length ? msgs[msgs.length - 1] : null;
+  return Boolean(last && last.classList && last.classList.contains("assistant"));
 }
 
 /** Selects the answer so the reader can copy by hand when the clipboard API is barred. */
@@ -349,18 +258,23 @@ async function copyAnswer(labelEl, original) {
 
 /**
  * @param {object} ctx wiring handed in by main.js:
- *   { form, input, sendButton, promptsEl, controlsEl, submit(text), getLastUserTurn() }
+ *   {
+ *     form, input, sendButton, promptsEl, controlsEl,
+ *     submit(text),          // run one turn, exactly as the composer would
+ *     getLastUserTurn(),     // {role, content} | string | null
+ *     abort(),               // abort the request in flight; a no-op when idle
+ *     dropLastExchange(),    // drop the previous user+assistant pair, transcript + history
+ *   }
  * @returns {void}
  */
 export function initInput(ctx) {
   const {
-    form, input, sendButton, promptsEl, controlsEl, submit, getLastUserTurn,
+    form, input, sendButton, promptsEl, controlsEl,
+    submit, getLastUserTurn, abort, dropLastExchange,
   } = ctx || {};
 
   const field = upgradeComposer(form, input);
   let busy = false;
-
-  const hooks = installStopHook(() => setBusy(true));
 
   function clearStarters() {
     // app.css collapses #starter-prompts:empty, so emptying it removes the row.
@@ -372,9 +286,14 @@ export function initInput(ctx) {
     controlsEl.textContent = ""; // :empty collapses the row
 
     if (busy) {
+      // No abort() in the ctx means nothing here can actually stop the request, and a Stop
+      // button that does nothing is worse than none.
+      if (typeof abort !== "function") return;
       controlsEl.appendChild(ghostButton(ICON_STOP, "Stop", (btn) => {
         btn.disabled = true;
-        hooks.stop();
+        // main.js aborts its own AbortController and keeps the partial answer, so there is
+        // nothing to clean up on this side.
+        abort();
       }));
       return;
     }
@@ -383,11 +302,17 @@ export function initInput(ctx) {
     controlsEl.appendChild(ghostButton(ICON_COPY, "Copy answer", (btn, labelEl, original) => {
       copyAnswer(labelEl, original);
     }));
-    if (typeof submit === "function" && typeof getLastUserTurn === "function") {
+    if (typeof submit === "function" && typeof getLastUserTurn === "function"
+        && lastMessageIsAnswer()) {
       controlsEl.appendChild(ghostButton(ICON_REGENERATE, "Regenerate", () => {
         const last = getLastUserTurn();
         const text = typeof last === "string" ? last : last && last.content;
-        if (text) submit(text);
+        if (!text) return;
+        // Read the turn BEFORE dropping it — dropLastExchange pops it off `history`.
+        // Regenerate replaces the last answer; without this the question is asked twice,
+        // once in the transcript and once again in the history payload.
+        if (typeof dropLastExchange === "function") dropLastExchange();
+        submit(text);
       }));
     }
   }
@@ -396,12 +321,6 @@ export function initInput(ctx) {
     if (busy === next) return;
     busy = next;
     if (busy) clearStarters();
-    else if (hooks.isStopped()) {
-      // A stop before the first SSE event leaves main.js's "thinking…" row behind,
-      // because nothing in its read loop ever reached removeThinking().
-      const t = document.getElementById("thinking-indicator");
-      if (t) t.remove();
-    }
     renderControls();
   }
 
@@ -413,7 +332,15 @@ export function initInput(ctx) {
     observer.observe(sendButton, { attributes: true, attributeFilter: ["disabled"] });
   }
 
-  if (form) form.addEventListener("submit", clearStarters);
+  if (form) {
+    form.addEventListener("submit", () => {
+      clearStarters();
+      // main.js registered its submit handler first and has already flipped #send by now,
+      // so this shows Stop on the same tick instead of waiting for the observer — and is
+      // the only path to it where MutationObserver does not exist.
+      if (sendButton) setBusy(Boolean(sendButton.disabled));
+    });
+  }
 
   if (promptsEl) {
     loadStarterPrompts(PROMPTS_URL).then((prompts) => {
@@ -433,15 +360,3 @@ export function initInput(ctx) {
     });
   }
 }
-
-/*
- * What a signature change in main.js would buy, if WS-3 is ever allowed to touch it:
- *
- *   1. `postChat(msg, history, { signal })` + an `onAbortController(c)` (or a `controls`
- *      object) in the initInput ctx — then the fetch wrapper above disappears entirely.
- *      main.js would also need `catch (e) { if (e.name === "AbortError") …keep answer… }`
- *      and to push the partial answer into history itself.
- *   2. `history` (the array itself) or a `dropLastTurn()` in the ctx — then Regenerate can
- *      drop the previous user+assistant pair before re-sending, instead of appending a
- *      second copy of the question to both the transcript and the history payload.
- */
