@@ -1,4 +1,7 @@
-import { buildReportPdf, resolveSectionNumbers } from "../../src/report/renderPdf";
+import PDFDocument from "pdfkit";
+import {
+  buildReportPdf, resolveSectionNumbers, drawGridTable, drawKeyValueTable, MARGIN,
+} from "../../src/report/renderPdf";
 import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent, DataQualityCheck,
 } from "../../src/report/types";
@@ -122,5 +125,49 @@ describe("buildReportPdf — smoke test", () => {
     };
     const buffer = await render(report);
     expect(buffer.length).toBeGreaterThan(0);
+  });
+});
+
+/**
+ * Regression test for a real layout bug (found visually: "Section 3 formatting is a bit weird"
+ * -- the reporting period's Parameter Analysis prose rendered as a squeezed sliver jammed
+ * against the right margin instead of full-width paragraphs).
+ *
+ * Root cause: both grid-drawing helpers position every cell with an explicit-x `.text(cell, x,
+ * y, opts)` call. pdfkit leaves `doc.x` parked at that x afterward -- it does not restore the
+ * page's left margin the way `doc.y` is explicitly reset here. Every subsequent unqualified
+ * `.text()` call (section headers, `bodyText` paragraphs, `doc.list`) then flows from that
+ * leftover x instead of `MARGIN`: a single-line heading just looks nudged right (easy to miss
+ * at a glance -- confirmed indented via `pdftotext -layout`, not just eyeballing a screenshot),
+ * but a wrapped paragraph asking for `width: CONTENT_WIDTH` from that far right collides with
+ * the page's own right margin and wraps into a narrow column instead -- exactly what made
+ * Section 3 (and, after a Data Quality table, Section 6) render broken.
+ */
+describe("drawKeyValueTable / drawGridTable — text cursor reset", () => {
+  const newDoc = (): PDFKit.PDFDocument => new PDFDocument({
+    size: "LETTER",
+    margins: {
+      top: MARGIN, bottom: MARGIN, left: MARGIN, right: MARGIN,
+    },
+  });
+
+  it("drawKeyValueTable leaves doc.x at the page margin, not mid-row", () => {
+    const doc = newDoc();
+    drawKeyValueTable(doc, [
+      { label: "Status", value: "Normal" },
+      { label: "Water Body Type", value: "Freshwater" },
+    ]);
+    expect(doc.x).toBe(MARGIN);
+  });
+
+  it("drawGridTable leaves doc.x at the page margin, not the last column's x", () => {
+    const doc = newDoc();
+    drawGridTable(doc, [
+      { header: "Parameter", width: 130 },
+      { header: "Flag", width: 73, align: "center" },
+    ], [["pH", "Normal"], ["Turbidity (NTU)", "Exceedance"]]);
+    // Pre-fix this was ~MARGIN + 130 (the Flag column's x), not the margin itself -- a value
+    // greater than MARGIN here means the next section will render squeezed again.
+    expect(doc.x).toBe(MARGIN);
   });
 });

@@ -29,7 +29,7 @@ const FLAG_COLORS: Record<Flag, string> = {
   "N/A": "#777777",
 };
 
-const MARGIN = 54; // 0.75in
+export const MARGIN = 54; // 0.75in
 const PAGE_WIDTH = 612; // US Letter, points
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
 
@@ -58,8 +58,9 @@ const bodyText = (
   doc.text(text, { width: CONTENT_WIDTH, ...opts });
 };
 
-/** Two-column label/value rows with a bottom border line each, e.g. the metadata block. */
-const drawKeyValueTable = (
+/** Two-column label/value rows with a bottom border line each, e.g. the metadata block.
+ * Exported for `reportRenderPdf.test.ts`'s cursor-reset regression test. */
+export const drawKeyValueTable = (
   doc: PDFKit.PDFDocument,
   rows: Array<{ label: string; value: string; color?: string }>,
 ): void => {
@@ -82,6 +83,15 @@ const drawKeyValueTable = (
     doc.moveTo(MARGIN, doc.y).lineTo(MARGIN + CONTENT_WIDTH, doc.y).strokeColor("#dddddd").lineWidth(0.5)
       .stroke();
   });
+  // Each row above calls `.text(str, x, y, opts)` with an explicit x -- pdfkit leaves `doc.x`
+  // parked at that x afterward rather than restoring the page's left margin. Every following
+  // call that omits x/y (sectionHeader, bodyText, doc.list, ...) flows from whatever `doc.x`
+  // currently is, so without this the entire rest of the document renders indented by
+  // `labelWidth` (visible for one line as a nudged heading, worse once the leftover x conflicts
+  // with an explicit `width` on a later wrapped paragraph -- see drawGridTable's version of the
+  // same bug, which is why "3. Parameter Analysis" render as a squeezed sliver on the right
+  // margin instead of full-width prose).
+  doc.x = MARGIN;
 };
 
 interface GridColumn {
@@ -92,8 +102,9 @@ interface GridColumn {
 
 /** A bordered grid table with a dark header row and zebra-striped body rows -- used for both
  * the Parameter Data and Data Quality tables. `cellColor` lets a caller color one cell's text
- * (used for the Flag column). */
-const drawGridTable = (
+ * (used for the Flag column). Exported for `reportRenderPdf.test.ts`'s cursor-reset regression
+ * test. */
+export const drawGridTable = (
   doc: PDFKit.PDFDocument,
   columns: GridColumn[],
   rows: string[][],
@@ -133,6 +144,13 @@ const drawGridTable = (
       x += col.width;
     });
     doc.y = top + rowHeight;
+    // Same reason as drawKeyValueTable's version of this line: the last cell's explicit-x
+    // `.text()` call above leaves `doc.x` parked at that cell's x instead of the page margin,
+    // and every unqualified `.text()` call after this table (the "Flag values" footnote,
+    // "3. Parameter Analysis" and its paragraphs, and — after the Data Quality table — the
+    // Recommendations section) would otherwise flow from there: squeezed into whatever sliver
+    // of page width remains between that x and the right margin.
+    doc.x = MARGIN;
   };
 
   drawRow(columns.map((c) => c.header), { header: true, bg: "#2c3e50" });
