@@ -43,11 +43,6 @@ const getClient = (): OpenAI => {
   return client;
 };
 
-/** Test seam, mirroring `LlmService.resetClient`. */
-export const resetEmbeddingClient = (): void => {
-  client = undefined;
-};
-
 /** Splits into fixed-size batches. Exported because the batching boundary is worth testing. */
 export const batched = <T>(items: T[], size: number): T[][] => {
   const batches: T[][] = [];

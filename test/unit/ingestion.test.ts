@@ -109,7 +109,7 @@ describe("corpus metadata", () => {
     // slice was 83% a mangled table covering pollutants this sensor cannot detect.
     expect(DIRECT_FEED_SLICE).toHaveLength(5);
     expect(DIRECT_FEED_SLICE).toContain("water-quality-metrics-source-of-truth.pdf");
-    expect(DIRECT_FEED_SLICE.filter((f) => f.includes("probe") || f.includes("probe"))).toHaveLength(4);
+    expect(DIRECT_FEED_SLICE.filter((f) => f.includes("probe"))).toHaveLength(4);
   });
 });
 

@@ -4,9 +4,12 @@ import type { RetrievalRegistry } from "../retrieval/RetrievalRegistry";
 import type { Chunk } from "../types/retrieval.types";
 import { buildMessages } from "../prompt/promptBuilder";
 import { LlmService } from "../services/LlmService";
+import type { LlmUsage } from "../services/LlmService";
 import { ChatOrchestrator } from "../services/ChatOrchestrator";
 import { buildToolRegistry } from "../tools";
 import { parseChatRequest } from "../validators/chatValidators";
+import { createStreamingCommentaryFilter } from "../utils/answerFormat";
+import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
 import { openSseStream, writeSseEvent } from "../utils/sse";
 
@@ -55,7 +58,7 @@ export class ChatController {
       const messages = buildMessages({ query, chunks, history });
 
       if (stream) {
-        await this.streamAnswer(req, res, messages, adapter.mode, chunks, device);
+        await this.streamAnswer(res, messages, adapter.mode, chunks, device);
         return;
       }
 
@@ -93,7 +96,6 @@ export class ChatController {
    * anchor them, and after the first byte the status code can no longer change.
    */
   private streamAnswer = async (
-    req: Request,
     res: Response,
     messages: ReturnType<typeof buildMessages>,
     mode: string,
@@ -101,8 +103,21 @@ export class ChatController {
     device?: string,
   ): Promise<void> => {
     const controller = new AbortController();
-    // A client that closes the tab should stop costing us tokens.
-    req.on("close", () => controller.abort());
+    /**
+     * A client that closes the tab should stop costing us tokens.
+     *
+     * This must listen on `res`, not `req`. Since Node 16 `req` emits `close` when the *request*
+     * finishes, and `express.json()` has already drained the body before this handler runs — so
+     * `req.on("close")` fires on the next tick and aborts the upstream call about 3ms after it
+     * starts, before a single token arrives. `res` emits `close` when the response is done or the
+     * socket really is gone, which is the event this is trying to catch. The `writableEnded`
+     * guard keeps a normal completion from aborting a call that already finished.
+     */
+    res.on("close", () => {
+      if (!res.writableEnded) {
+        controller.abort();
+      }
+    });
 
     openSseStream(res);
     writeSseEvent(res, "meta", { mode, citations: chunks });
@@ -127,21 +142,49 @@ export class ChatController {
         return;
       }
 
+      let model: string | undefined;
+      let usage: LlmUsage | undefined;
+      // The tool branch gets its marker stripping from `ChatOrchestrator`; this branch bypasses
+      // the orchestrator entirely, so without this a leaked `【commentary…】` reached the UI
+      // verbatim on the default configuration — the exact defect `answerFormat` exists to fix.
+      const commentary = createStreamingCommentaryFilter();
+
       for await (const event of this.llm.completeStream(messages, controller.signal)) {
         if (event.text) {
-          writeSseEvent(res, "token", { text: event.text });
+          const text = commentary.push(event.text);
+          if (text) {
+            writeSseEvent(res, "token", { text });
+          }
+        }
+        if (event.model) {
+          model = event.model;
         }
         if (event.usage) {
-          writeSseEvent(res, "done", { model: event.model, usage: event.usage });
+          usage = event.usage;
         }
       }
+
+      const tail = commentary.flush();
+      if (tail) {
+        writeSseEvent(res, "token", { text: tail });
+      }
+
+      // Unconditional, like the tool branch above. `stream_options.include_usage` support varies
+      // by provider (`LlmService.completeStream`), and gating `done` on it meant that against a
+      // provider that omits usage the client saw `meta` → `token`* → `end` and never ran the
+      // `done` handler that renders provenance and the series chart.
+      writeSseEvent(res, "done", { model, ...(usage ? { usage } : {}) });
       writeSseEvent(res, "end", {});
     } catch (error) {
       // Headers are already sent, so the status code cannot be changed and the central
       // error handler cannot render this. Report it in-band instead of dying silently.
       const message = error instanceof Error ? error.message : "Stream failed.";
       log.error(`Stream failed: ${message}`);
-      writeSseEvent(res, "error", { error: message, message });
+      // Same shape as `errorHandler`'s JSON body, `code` included. The status line went out with
+      // `openSseStream` before the LLM was ever called, so this event is the only place a coded
+      // failure — `llm_not_configured`, `device_timeout` — can reach the client on this path.
+      const code = resolveErrorCode(error);
+      writeSseEvent(res, "error", { error: message, message, ...(code ? { code } : {}) });
     } finally {
       res.end();
     }

@@ -17,7 +17,7 @@ Phase 0 creates the seam first.
    change is wrong, not the test.
 2. **Never change the defaults** of `SENSOR_TOOL` (`false`), `DEFAULT_RETRIEVAL` (`stub`), or
    `DEBUG_RETRIEVAL` (`false`) in `src/config/index.ts`. A fresh checkout must stay credential-free.
-3. **All 429 tests stay green.** No test may touch the network, need an API key, or cost money. New
+3. **All 515 tests stay green.** No test may touch the network, need an API key, or cost money. New
    tests follow that rule too — mock `LlmService`, serve recorded bodies through a stubbed `fetch`.
 4. **The response shape is a contract.** `tool_calls` and `tool_round_cap_reached` are *omitted* when
    no tool ran; the error body is `{ error, message }` with **no `status` field**. Adding fields is
@@ -54,7 +54,7 @@ Phase 0 creates the seam first.
 > `ln -s <main-checkout>/data/corpus data/corpus`.
 
 ```bash
-npm test                      # 429 passing, 21 suites at the Phase 0 base
+npm test                      # 515 passing, 24 suites
 npm run typecheck             # tsc --noEmit, silent
 npx eslint src --ext .ts      # NOT `npm run lint` — that runs --fix and writes files
 ```
@@ -278,11 +278,11 @@ Phase 0 wrote `{ "prompts": [string] }`, so WS-3's loader must read `.prompts[].
 
 - **Error UX in the UI** — consumes WS-6's codes. "Pod silent since Aug 7", never "no data", and never
   `0`. Needs WS-6 first.
-- **Pod picker + time-range chips** — **blocked on a new endpoint.** `DeviceApiClient` exists
-  server-side but no HTTP route exposes the device list; this needs `GET /api/v1/devices`
-  (read-only, forwarding the caller's token) before the UI work can start. Worth doing:
-  `SENSOR_DEVICE_LABEL` is deliberately unset because guessing between two pods on opposite coasts is
-  unsafe, and a picker removes the guess rather than defaulting it.
+- **Pod picker + time-range chips** — *Status: the blocker is cleared; the picker has landed.*
+  `GET /api/v1/devices` (read-only, forwarding the caller's token) is live in
+  `src/routes/deviceRoutes.ts`, and the picker itself is `frontend/js/podbar.js`. Time-range chips
+  are still open. `SENSOR_DEVICE_LABEL` stays deliberately unset because guessing between two pods
+  on opposite coasts is unsafe, and the picker removes the guess rather than defaulting it.
 - **Feedback loop** (thumbs up/down → new eval fixture) — needs a decision on where feedback is
   stored, which is the same persistence question as chat history.
 
@@ -336,8 +336,9 @@ Three consequences that are not obvious:
 - **The pod selector replaces the bot asking.** `SENSOR_DEVICE_LABEL` is deliberately unset
   because guessing between pods on opposite coasts is unsafe, so today the model asks and
   lists every device. A picker is both better UX and closer to the real workflow: a user has
-  a few pods, not seventeen, and would have to choose anyway. It needs two things that do not
-  exist yet — `GET /api/v1/devices`, and an optional `device` on the chat request.
+  a few pods, not seventeen, and would have to choose anyway. It needed two things that have
+  since landed — `GET /api/v1/devices` (`src/routes/deviceRoutes.ts`) and an optional `device` on
+  the chat request (`src/validators/chatValidators.ts`).
 - **Freshness moves but does not disappear.** "Silent since Aug 7" stays *in* the message when
   it explains an empty result, because there it is the answer. What moves is the routine
   "reporting, 8 minutes ago" on a healthy pod.

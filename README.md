@@ -571,7 +571,7 @@ reporting still answers "the last day" about its last day of data.
 |---|---|
 | `npm run dev` | live-reload dev server (`ts-node-dev`) |
 | `npm run build` / `npm start` | compile to `dist/` / run compiled |
-| `npm test` | full Jest suite (429 tests, none touching the network) |
+| `npm test` | full Jest suite (515 tests in 24 suites, none touching the network) |
 | `npm run test:coverage` / `test:watch` | coverage / watch mode |
 | `npm run lint` / `npm run typecheck` | ESLint `--fix` over `src` / `tsc --noEmit` |
 | `npm run ingest` | parse `documents/` → `data/corpus/corpus.json` ([§6](#6-retrieval-arms)) |
@@ -583,6 +583,7 @@ reporting still answers "the last day" about its last day of data.
 | `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a run; `--spot-check`, `--only`, `--dry-run` |
 | `npm run cost` | price the arms and compute break-even |
 | `npm run grade:packet` | build the blind grading packet (`--pass=`, `--sample=`) |
+| `npm run starter:prompts` | generate the composer's starter prompts (`--limit=`, `--sensor`) |
 
 ---
 
@@ -593,8 +594,8 @@ src/
   index.ts              # entry: load config, start the server
   app.ts                # express assembly, exported for tests
   config/               # index.ts (env loading + validation), database.ts, pgvector.ts
-  routes/               # /api/v1 aggregator, healthRoutes, chatRoutes
-  controllers/          # HealthController, ChatController
+  routes/               # /api/v1 aggregator, healthRoutes, chatRoutes, deviceRoutes
+  controllers/          # HealthController, ChatController, DeviceController
   retrieval/            # the retrieval seam — SPECS.md §9
     RetrievalRegistry.ts  #   mode -> adapter, selected by DEFAULT_RETRIEVAL
     adapters/           #   Stub, DirectFeed, PgVectorRag, FirestoreVector
@@ -607,9 +608,10 @@ src/
   ingestion/            # extract, chunk, corpus, ingest
   eval/                 # bake-off runner, fixtures, cost model
   validators/ types/ middleware/ utils/
-scripts/                # ingest, bakeoff, cost, seed*, exploreDeviceApi, verifySensorTool
+scripts/                # ingest, bakeoff, cost, seed*, exploreDeviceApi, verifySensorTool,
+                        #   gradePacket, starterPrompts
 test/
-  integration/          # health, chat, sensorChat
+  integration/          # health, chat, sensorChat, devices
   unit/                 # per-module suites
   fixtures/device-api/  # recorded production bodies + provenance README
 frontend/               # chat UI (manual test surface, not the product). Served, not file://

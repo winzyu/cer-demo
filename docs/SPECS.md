@@ -21,9 +21,13 @@ current codebase.
 >
 > **What remains in N2 is grading, not building.** ◆G7 is open until the blind packet
 > (`eval/grading/`, [`GRADING_GUIDE.md`](GRADING_GUIDE.md)) is scored and
-> `RETRIEVAL_COMPARISON.md` is written. Sensor queries and the tool-calling loop are **not
-> implemented** on this branch (see §17); a read-only device-API client exists on
-> `feat/device-api` — see [`migration/DEVICE_API.md`](migration/DEVICE_API.md).
+> `RETRIEVAL_COMPARISON.md` is written.
+>
+> **Phase N3 is built:** the device-API client, `query_sensor_data`, and the tool-calling loop
+> (§10.3a) are all in the tree and covered by tests. They are **gated on `SENSOR_TOOL`, which
+> defaults off**, precisely so the system prompt stays byte-identical to the one all three
+> captured arms ran against while ◆G7 is open — see
+> [`migration/DEVICE_API.md`](migration/DEVICE_API.md).
 >
 > **Current state and how to resume: [`HANDOFF.md`](HANDOFF.md).**
 
@@ -41,8 +45,9 @@ current codebase.
   chat completion, and opt-in SSE streaming.
 - Tests covering all of the above, with the LLM mocked — no test spends money or needs a key.
 
-Deliberately **out of scope at this stage:** the tool-calling orchestration loop, embedding calls,
-any *real* document retrieval, sensor-data queries, corpus/CSV ingestion, and any authentication.
+Deliberately **out of scope at this stage:** authentication. Everything else once listed here —
+the tool-calling orchestration loop, embedding calls, real document retrieval, sensor-data
+queries, corpus ingestion — has since been built; see the status block above and §10.3a, §14.
 
 ---
 
@@ -237,12 +242,25 @@ morgan("dev") → helmet(...) → cors() → express.json()
 - `src/middleware/errorHandler.ts` — the single terminal handler. Response body (conventions §6):
 
   ```json
-  { "error": "<message>", "message": "<message>" }
+  { "error": "<message>", "message": "<message>", "code": "<error-code>" }
   ```
 
   `error` is mandatory (the deployed client reads it); `message` mirrors it; **no `status` field is
   placed in the body** (the HTTP status line carries it); the stack is included only outside
   production. 5xx errors are logged.
+
+  `code` is **optional and machine-readable** — present only when the failure belongs to the
+  taxonomy in `src/utils/errors.ts`, absent for everything else. The closed set is:
+
+  | code | status | meaning |
+  |---|---|---|
+  | `llm_not_configured` | 503 | no `FIREWORKS_API_KEY` / `LLM_MODEL` |
+  | `device_auth_expired` | 401 | the device API rejected the token; terminal, never retried |
+  | `device_timeout` | 504 | the device API did not answer within `DEVICE_API_TIMEOUT_MS` |
+  | `device_unavailable` | 502/503 | the device API is unreachable or `DEVICE_API_BASE_URL` is unset |
+
+  Clients branch on `code`, never on prose: `frontend/js/podbar.js` maps these four to its badge
+  text, and falls back to `err.status` when a failure carries no code at all.
 
 ---
 
@@ -508,9 +526,9 @@ callers should not have to parse SSE. N7's chat UI will likely flip the default 
 |---|---|---|
 | `meta` | `{ mode, citations }` | **Always first.** After the first byte the status code cannot change, so provenance must lead. |
 | `token` | `{ text }` | one per delta |
-| `done` | `{ model, usage }` | only when the provider reports usage |
+| `done` | `{ model, usage?, tool_calls?, tool_round_cap_reached? }` | **always emitted**, on both branches. `usage` is omitted when the provider reports none — `stream_options.include_usage` support varies — and `tool_calls` / `tool_round_cap_reached` appear only on the tool branch, when a tool actually ran. |
 | `end` | `{}` | terminator |
-| `error` | `{ error, message }` | in-band; headers are already sent, so the central error handler cannot render it |
+| `error` | `{ error, message, code? }` | in-band; headers are already sent, so the central error handler cannot render it. Same shape as the JSON error body above, `code` included, so a client branches identically on either transport. |
 
 Validation runs **before** the stream opens, so a bad request is still a JSON 400 rather than an SSE
 error event. A client disconnect aborts the upstream call via `AbortController` — otherwise a closed

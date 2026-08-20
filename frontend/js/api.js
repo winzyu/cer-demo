@@ -3,8 +3,8 @@
  * Moved out of index.html in Phase 0 — behavior is unchanged.
  */
 
-export const BACKEND = (new URLSearchParams(location.search)).get("backend") || "http://localhost:8000";
-export const API_PATH = "/api/v1/chat";
+const BACKEND = (new URLSearchParams(location.search)).get("backend") || "http://localhost:8000";
+const API_PATH = "/api/v1/chat";
 
 /**
  * POSTs one turn and returns the raw Response so the caller can branch on `r.ok`
@@ -28,7 +28,10 @@ export function postChat(query, history, options = {}) {
 
 /**
  * The pod list for the context bar. Returns { devices: [...], water_type } or throws.
- * Read-only; the server forwards the caller's token.
+ *
+ * Read-only, and sent with no `Authorization` header — this demo client has no token to send.
+ * `DeviceController` reads one when a caller supplies it and otherwise falls back to the
+ * deployment's `DEVICE_API_TOKEN`, which is the path every request from this page takes.
  */
 export async function getDevices() {
   const r = await fetch(BACKEND + "/api/v1/devices");

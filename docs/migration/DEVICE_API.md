@@ -21,7 +21,7 @@ behavior being restored).
 | piece | state |
 |---|---|
 | Contract mapped from server + dashboard source | ✅ this document |
-| `DeviceApiClient` (read-only typed client) | ✅ built, 45 unit tests, no network |
+| `DeviceApiClient` (read-only typed client) | ✅ built, unit-tested, no network |
 | Metric decoding (codes, units, error flags) | ✅ built |
 | `npm run explore:devices` (discover + record) | ✅ built |
 | **Live verification against production** | ✅ **2026-08-11 — 21 devices listed, both cleared pods sampled and recorded** |
@@ -382,7 +382,7 @@ comparison is still open.
 | `src/devices/metrics.ts` | the code table, error-flag validity, reading/average decoding |
 | `src/devices/DeviceApiClient.ts` | read-only typed client: login, devices, last, period, averages |
 | `scripts/exploreDeviceApi.ts` | `npm run explore:devices` — discover, sample, record |
-| `test/unit/deviceApi.test.ts` | 36 tests, no network, no credentials, no cost |
+| `test/unit/deviceApi.test.ts` | 62 tests, no network, no credentials, no cost |
 
 Guards worth knowing about, each covering a failure that otherwise produces plausible-looking
 numbers rather than an error:

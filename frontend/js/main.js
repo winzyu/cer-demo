@@ -40,19 +40,29 @@ initPodBar({
 });
 
 async function send(msg) {
+  // One turn at a time. Disabling #send is not enough on its own: the composer's Enter handler
+  // calls `form.requestSubmit()` with no submitter, which submits from the *form* and so never
+  // consults the button's disabled state. Without this guard a second Enter mid-stream starts a
+  // parallel turn that appends a duplicate `#thinking-indicator`, interleaves two assistant
+  // bubbles, and — because `inflight` is a single slot — orphans the first controller so Stop
+  // can no longer reach it.
+  if (inflight) return;
+
   renderMessage("user", msg);
   history.push({ role: "user", content: msg });
   inputEl.value = "";
   sendBtn.disabled = true;
   renderThinking();
 
+  const controller = new AbortController();
+  inflight = controller;
+
   let target = null;
   let answer = "";
   try {
     // history excludes the turn just pushed — that one is sent as `query`.
-    inflight = new AbortController();
     const r = await postChat(msg, history.slice(0, -1), {
-      signal: inflight.signal,
+      signal: controller.signal,
       device: selectedDevice(),
     });
 
@@ -69,7 +79,8 @@ async function send(msg) {
         removeThinking();
         target = renderMessage("assistant", "");
         renderCitations(target.wrap, data.citations);
-        renderProvenance(target.slots.provenance, data);
+        // No `renderProvenance` here: the server's `meta` payload is `{ mode, citations }` and
+        // `tool_calls` only ever rides on `done`, so the call returned immediately every time.
       } else if (event === "token") {
         if (!target) { removeThinking(); target = renderMessage("assistant", ""); }
         answer += data.text;
@@ -94,9 +105,13 @@ async function send(msg) {
     if (e.name !== "AbortError") renderMessage("assistant", "Network error: " + e.message);
     if (e.name === "AbortError" && answer) history.push({ role: "assistant", content: answer });
   } finally {
-    inflight = null;
-    sendBtn.disabled = false;
-    inputEl.focus();
+    // Only the turn that still owns the slot may release it, so a late-finishing request can
+    // never re-enable the composer on behalf of one that is still streaming.
+    if (inflight === controller) {
+      inflight = null;
+      sendBtn.disabled = false;
+      inputEl.focus();
+    }
   }
 }
 

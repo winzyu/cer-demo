@@ -103,7 +103,15 @@ export function renderCitations(wrap, citations) {
 export function renderThinking() {
   const t = document.createElement("div");
   t.className = "thinking"; t.id = "thinking-indicator";
-  t.textContent = "thinking…";
+  const label = document.createElement("span");
+  label.textContent = "thinking…";
+  // app.css has always carried `.thinking__dots` and its `thinking-pulse` keyframe, including a
+  // `prefers-reduced-motion` override; nothing ever emitted the markup, so the animation was
+  // dead CSS and the indicator was a bare word.
+  const dots = document.createElement("span");
+  dots.className = "thinking__dots";
+  for (let i = 0; i < 3; i += 1) dots.appendChild(document.createElement("span"));
+  t.append(label, dots);
   messagesEl.appendChild(t);
   scrollToBottom();
 }

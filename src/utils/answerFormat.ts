@@ -117,3 +117,122 @@ export const stripCommentaryMarkers = (text: string): string => {
   // or ending in the whitespace that used to separate it from the prose.
   return removed ? out.trim() : out;
 };
+
+/** The longest string a `【` can grow into while still possibly opening a commentary marker. */
+const COMMENTARY_OPENER = `${OPEN}commentary`;
+
+/**
+ * Can `text` — known to start with `【` and possibly still arriving — become a commentary marker?
+ *
+ * `undefined` means "not yet decidable": too few characters have arrived to tell. Citations
+ * settle this on their very next character (`【1】` is not a prefix of `【commentary`), which is
+ * what keeps the streaming filter below from stalling on the brackets that carry the graded
+ * citation evidence.
+ */
+const mayOpenCommentary = (text: string): boolean | undefined => {
+  if (text.length >= PROBE_LENGTH || text.includes(CLOSE)) {
+    return opensCommentary(text, 0);
+  }
+  const seen = text.replace(/\s+/g, "").toLowerCase();
+  // Enough has arrived to read the channel name, whatever follows it.
+  if (seen.length >= COMMENTARY_OPENER.length) {
+    return opensCommentary(text, 0);
+  }
+  return seen === COMMENTARY_OPENER.slice(0, seen.length).toLowerCase() ? undefined : false;
+};
+
+/**
+ * Streaming counterpart to `stripCommentaryMarkers`, for the non-tool SSE branch.
+ *
+ * Stripping each chunk on its own cannot work: a `【commentary…】` marker routinely spans several
+ * deltas, so a per-chunk filter either emits half a marker or eats the prose around it.
+ *
+ * So this stays out of the way until there is something to decide. Text is passed straight
+ * through until a `【` appears, and that bracket is then held back only for as long as it takes
+ * to tell what it is — usually one more character. A citation (`【1】`, `【5†L1-L3】`) is released
+ * immediately and streaming continues, which matters because those brackets are the evidence
+ * `GRADING_GUIDE.md` scores. Only a real commentary opener switches the filter into buffering
+ * mode, and from there `flush` runs the whole answer through `stripCommentaryMarkers` and returns
+ * whatever has not already gone out — so the marker handling is the batch implementation exactly,
+ * nesting and unclosed-marker behavior included.
+ *
+ * The one thing streaming cannot reproduce is the batch trim reaching backwards into text already
+ * on the wire, so `flush` re-anchors on the emitted prefix rather than repeating the answer.
+ */
+export const createStreamingCommentaryFilter = (): {
+  push: (chunk: string) => string;
+  flush: () => string;
+} => {
+  let emitted = "";
+  /** Text held back: either an undecided `【…` or, once buffering, the rest of the answer. */
+  let pending = "";
+  let buffering = false;
+
+  const release = (text: string): string => {
+    emitted += text;
+    return text;
+  };
+
+  return {
+    push: (chunk: string): string => {
+      if (buffering) {
+        pending += chunk;
+        return "";
+      }
+
+      pending += chunk;
+      let out = "";
+
+      let scanning = true;
+      while (scanning) {
+        if (!pending.startsWith(OPEN)) {
+          const open = pending.indexOf(OPEN);
+          if (open === -1) {
+            out += pending;
+            pending = "";
+            break;
+          }
+          out += pending.slice(0, open);
+          pending = pending.slice(open);
+        }
+
+        const verdict = mayOpenCommentary(pending);
+        if (verdict === undefined) {
+          // Still ambiguous. Hold the whole tail; the next delta almost always settles it.
+          scanning = false;
+        } else if (verdict) {
+          buffering = true;
+          scanning = false;
+        } else {
+          // A citation or ordinary prose: emit the bracket and carry on scanning after it, the
+          // same way the batch scan resumes past an opener it declined.
+          out += OPEN;
+          pending = pending.slice(OPEN.length);
+        }
+      }
+
+      return release(out);
+    },
+
+    flush: (): string => {
+      if (pending === "") {
+        return "";
+      }
+
+      const stripped = stripCommentaryMarkers(emitted + pending);
+      pending = "";
+      if (stripped.startsWith(emitted)) {
+        return stripped.slice(emitted.length);
+      }
+
+      // The batch trim cut into a prefix that is already on the wire. Send the longest tail that
+      // does not repeat what the client has, rather than duplicating the answer.
+      for (let keep = emitted.length; keep > 0; keep -= 1) {
+        if (stripped.startsWith(emitted.slice(emitted.length - keep))) {
+          return stripped.slice(keep);
+        }
+      }
+      return stripped;
+    },
+  };
+};

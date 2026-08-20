@@ -1,4 +1,7 @@
-import { stripCommentaryMarkers } from "../../src/utils/answerFormat";
+import {
+  createStreamingCommentaryFilter,
+  stripCommentaryMarkers,
+} from "../../src/utils/answerFormat";
 import { ChatOrchestrator, ROUND_CAP_PLACEHOLDER } from "../../src/services/ChatOrchestrator";
 import type { LlmAnswer, LlmService } from "../../src/services/LlmService";
 import type { ChatMessage } from "../../src/types/chat.types";
@@ -209,5 +212,73 @@ describe("ChatOrchestrator answer formatting", () => {
 
     expect(result.capped).toBe(true);
     expect(result.content).toBe(ROUND_CAP_PLACEHOLDER);
+  });
+});
+
+describe("createStreamingCommentaryFilter", () => {
+  /** Drives the filter one chunk at a time and returns what a client would have received. */
+  const stream = (chunks: string[]): string => {
+    const filter = createStreamingCommentaryFilter();
+    return chunks.map((chunk) => filter.push(chunk)).join("") + filter.flush();
+  };
+
+  /** Splits into fixed-width deltas, which is how a real provider hands text over. */
+  const inChunks = (text: string, width: number): string[] => (
+    text.match(new RegExp(`[\\s\\S]{1,${width}}`, "g")) ?? []
+  );
+
+  it("agrees with the batch stripper however the text is chopped up", () => {
+    // The whole point of the filter: a marker split across deltas must not survive, and must not
+    // take the prose around it with it.
+    const answers = [
+      "ORP is measured in millivolts.",
+      "【commentary】ORP is measured in millivolts.",
+      "ORP is measured in millivolts.【commentary the user wants units】",
+      "ORP is 【commentary aside】 measured in millivolts.",
+      "See 【1】 and 【5†L1-L3】 for the range.",
+      "【Authoritative Normal Ranges】 lists 【commentary noise】 the bounds.",
+      "【commentary outer 【commentary inner】 still outer】Answer.",
+      "Answer.【commentary truncated mid-mar",
+      "【commentary】",
+    ];
+
+    answers.forEach((answer) => {
+      [1, 2, 3, 5, 13, answer.length].forEach((width) => {
+        expect(stream(inChunks(answer, width))).toBe(stripCommentaryMarkers(answer));
+      });
+    });
+  });
+
+  it("passes an unmarked answer through chunk for chunk, so it still streams", () => {
+    const filter = createStreamingCommentaryFilter();
+
+    expect(filter.push("ORP is ")).toBe("ORP is ");
+    expect(filter.push("measured in mV.")).toBe("measured in mV.");
+    expect(filter.flush()).toBe("");
+  });
+
+  it("releases a citation bracket as soon as it cannot be commentary", () => {
+    // Citations live in the same full-width brackets and are graded evidence
+    // (`GRADING_GUIDE.md`), so stalling the stream on every one of them would defeat streaming
+    // for exactly the answers that cite their sources.
+    const filter = createStreamingCommentaryFilter();
+
+    expect(filter.push("See 【")).toBe("See ");
+    expect(filter.push("1】 for the range.")).toBe("【1】 for the range.");
+    expect(filter.flush()).toBe("");
+  });
+
+  it("emits nothing for an answer that is only a marker", () => {
+    expect(stream(["【comm", "entary all of it】"])).toBe("");
+  });
+
+  it("holds a marker back rather than leaking its opening bytes", () => {
+    const filter = createStreamingCommentaryFilter();
+
+    expect(filter.push("Answer.")).toBe("Answer.");
+    // Ambiguous so far — `【c` is still a prefix of `【commentary`.
+    expect(filter.push("【c")).toBe("");
+    expect(filter.push("ommentary aside】")).toBe("");
+    expect(filter.flush()).toBe("");
   });
 });

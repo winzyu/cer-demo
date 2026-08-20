@@ -98,35 +98,16 @@ export const resolveErrorCode = (err: unknown): ErrorCode | undefined => {
 };
 
 /**
- * Thin domain error classes over `http-errors`. They carry the correct `statusCode`
- * and are formatted by the central error handler (docs/migration/CONVENTIONS.md §6).
+ * Thin domain error class over `http-errors`. It carries the correct `statusCode` and is
+ * formatted by the central error handler (docs/migration/CONVENTIONS.md §6).
+ *
+ * Only the 400 is kept. `NotFoundError`, `UnauthorizedError`, `ForbiddenError` and
+ * `ConflictError` sat here unused for their whole life — the 404 path uses
+ * `createError.NotFound` directly (`middleware/notFound.ts`) and nothing else in the service
+ * raises those statuses, so they were four ways to describe responses this API never sends.
  */
-export class NotFoundError extends createError.NotFound {
-  constructor(message = "Resource not found") {
-    super(message);
-  }
-}
-
 export class ValidationError extends createError.BadRequest {
   constructor(message = "Validation error") {
-    super(message);
-  }
-}
-
-export class UnauthorizedError extends createError.Unauthorized {
-  constructor(message = "Unauthorized") {
-    super(message);
-  }
-}
-
-export class ForbiddenError extends createError.Forbidden {
-  constructor(message = "Forbidden") {
-    super(message);
-  }
-}
-
-export class ConflictError extends createError.Conflict {
-  constructor(message = "Conflict") {
     super(message);
   }
 }

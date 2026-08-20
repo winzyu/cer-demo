@@ -107,11 +107,6 @@ const getClient = (): OpenAI => {
   return client;
 };
 
-/** Test seam: drop the memoized client so a fake can be injected or config re-read. */
-export const resetClient = (): void => {
-  client = undefined;
-};
-
 /**
  * Wraps the Fireworks chat-completions call. Fireworks speaks the OpenAI API, so the
  * official SDK is pointed at its base URL (`MIGRATION_SPEC.md` §4).

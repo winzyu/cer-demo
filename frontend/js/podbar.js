@@ -292,13 +292,11 @@ function renderUnavailable(optionText, badgeText) {
 /* ------------------------------- failure classification ------------------------------- */
 
 /**
- * WS-6's taxonomy, as far as it survives the transport.
+ * WS-6's taxonomy.
  *
- * `getDevices()` throws `Error("devices <status>")` and discards the response body, so the
- * `code` field never reaches this module today; the status parse below is what actually
- * fires. The `err.code` / `err.body.code` branches are here so that the moment api.js
- * attaches the parsed body, the mapping is already exact rather than inferred from a status
- * that two codes share.
+ * `getDevices()` parses the error body and attaches `code`, `status` and `body` to what it
+ * throws, so the `code` branch below is the one that normally fires and the mapping is exact
+ * rather than inferred from a status that two codes share.
  */
 const FAILURE_TEXT = {
   device_auth_expired: {
@@ -328,7 +326,11 @@ function classifyFailure(err) {
     return FAILURE_TEXT.device_timeout;
   }
 
-  const status = Number((/(\d{3})/.exec(String(err && err.message)) || [])[1]);
+  // `err.status`, not a regex over the message. The backend always sends human prose in
+  // `error` (`errorHandler`), so the old scrape found no digits on a coded failure and fell
+  // through to "could not reach the backend" — and mis-fired the other way on any prose that
+  // happened to contain a three-digit number, such as a device id or a port.
+  const status = Number(err && err.status);
   if (status === 401 || status === 403) return FAILURE_TEXT.device_auth_expired;
   if (status === 504 || status === 408) return FAILURE_TEXT.device_timeout;
   if (status >= 500) return FAILURE_TEXT.device_unavailable;

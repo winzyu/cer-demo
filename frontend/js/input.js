@@ -105,7 +105,7 @@ function flash(labelEl, message, original) {
  * @param {unknown} data parsed JSON
  * @returns {string[]}
  */
-export function readStarterPrompts(data) {
+function readStarterPrompts(data) {
   if (!data || typeof data !== "object" || !Array.isArray(data.prompts)) return [];
   return data.prompts
     .filter((p) => p && typeof p === "object" && typeof p.text === "string")
