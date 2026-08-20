@@ -283,7 +283,10 @@ Phase 0 wrote `{ "prompts": [string] }`, so WS-3's loader must read `.prompts[].
 - **Pod picker + time-range chips** — *Status: the blocker is cleared; the picker has landed.*
   `GET /api/v1/devices` (read-only, forwarding the caller's token) is live in
   `src/routes/deviceRoutes.ts`, and the picker itself is `frontend/js/podbar.js`. Time-range chips
-  are still open. `SENSOR_DEVICE_LABEL` stays deliberately unset because guessing between two pods
+  are still open — and when they land, **use the five labels the customer-facing dashboard already
+  uses: Live / Week / Month / Year / 5 Years** (`migration/DEVICE_API.md` §14c). They map one-to-one
+  onto the device API's `:unit` ladder (`hour|day|week|month|year|fiveYears`), so matching them
+  costs nothing and inventing our own vocabulary would teach users a second one. `SENSOR_DEVICE_LABEL` stays deliberately unset because guessing between two pods
   on opposite coasts is unsafe, and the picker removes the guess rather than defaulting it.
 - **Feedback loop** (thumbs up/down → new eval fixture) — needs a decision on where feedback is
   stored, which is the same persistence question as chat history.
