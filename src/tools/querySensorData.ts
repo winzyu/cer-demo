@@ -5,8 +5,9 @@ import { config } from "../config";
 import { DeviceApiClient } from "../devices/DeviceApiClient";
 import { METRIC_BY_KEY, METRICS } from "../devices/metrics";
 import type { DeviceReading, DeviceSummary, MetricKey } from "../types/device.types";
+import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
-import type { ToolDefinition } from "../types/tool.types";
+import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import {
   AGGREGATIONS, aggregate, isAggregation,
 } from "./aggregate";
@@ -206,7 +207,13 @@ export class QuerySensorData {
 
   private readonly waterType: string;
 
-  private deviceCache?: { at: number; devices: DeviceSummary[] };
+  /**
+   * Keyed by token, because the device API scopes `/devices` to the token holder's organization.
+   * A single-slot cache on this shared singleton would serve one caller's fleet to the next.
+   * The key for "no caller token" is the empty string — that is the `DEVICE_API_TOKEN` fallback,
+   * which is a real, distinct scope of its own.
+   */
+  private deviceCache = new Map<string, { at: number; devices: DeviceSummary[] }>();
 
   constructor(options: QuerySensorDataOptions = {}) {
     this.clientOverride = options.client;
@@ -221,17 +228,20 @@ export class QuerySensorData {
    * the same rule the Fireworks client follows. A missing base URL becomes a tool-result error
    * the model can report, not a 500 on an unrelated chat request.
    */
-  private client(): DeviceApiClient {
-    return this.clientOverride ?? new DeviceApiClient();
+  private client(token?: string): DeviceApiClient {
+    // Built per call, not memoized: the token varies by caller, and a client cached on this
+    // shared instance would authenticate one user's request as another.
+    return this.clientOverride ?? new DeviceApiClient({ token });
   }
 
-  private async devices(): Promise<DeviceSummary[]> {
-    const cached = this.deviceCache;
+  private async devices(token?: string): Promise<DeviceSummary[]> {
+    const key = token ?? "";
+    const cached = this.deviceCache.get(key);
     if (cached && this.now() - cached.at < DEVICE_CACHE_MS) {
       return cached.devices;
     }
-    const devices = dedupeByLabel(await this.client().listDevices());
-    this.deviceCache = { at: this.now(), devices };
+    const devices = dedupeByLabel(await this.client(token).listDevices());
+    this.deviceCache.set(key, { at: this.now(), devices });
     return devices;
   }
 
@@ -244,8 +254,9 @@ export class QuerySensorData {
    */
   private async resolveDevice(
     requested?: string,
+    token?: string,
   ): Promise<{ device: DeviceSummary } | { error: SensorToolResult }> {
-    const devices = await this.devices();
+    const devices = await this.devices(token);
     if (devices.length === 0) {
       return {
         error: failure(
@@ -308,9 +319,10 @@ export class QuerySensorData {
   private async fetchWindow(
     label: string,
     lookbackMs: number,
+    token?: string,
   ): Promise<{ readings: DeviceReading[]; window: FetchWindow }> {
     let window = fetchWindowFor(lookbackMs);
-    let readings = await this.client().getPeriod(window.duration, window.unit, label);
+    let readings = await this.client(token).getPeriod(window.duration, window.unit, label);
     let escalations = 0;
 
     while (readings.length === 0 && escalations < MAX_ESCALATIONS) {
@@ -320,7 +332,7 @@ export class QuerySensorData {
       }
       window = wider;
       // eslint-disable-next-line no-await-in-loop
-      readings = await this.client().getPeriod(window.duration, window.unit, label);
+      readings = await this.client(token).getPeriod(window.duration, window.unit, label);
       escalations += 1;
     }
 
@@ -334,10 +346,23 @@ export class QuerySensorData {
    * This is the **LLM-facing** entry point: loose arguments in, errors as data out. Code that is
    * not a language model should call `query()` instead.
    */
-  async run(args: Record<string, unknown>): Promise<SensorToolResult> {
+  async run(args: Record<string, unknown>, context?: ToolContext): Promise<SensorToolResult> {
     try {
-      return await this.execute(args);
+      return await this.execute(args, context?.token);
     } catch (error) {
+      // `device_auth_expired` alone is re-thrown. It is terminal by design (`errors.ts`): this
+      // service has no refresh path, so no number of retries and no rewording by the model can
+      // recover it. Returned as a tool result it becomes prose inside a 200, the UI gets no
+      // machine-readable signal, and — because the dedupe cache keys on arguments — a model that
+      // varies the metric re-issues the failing call every round until the cap.
+      //
+      // Every other coded failure stays a tool result on purpose. `device_unavailable` and
+      // `device_timeout` are transient and *are* the model's to report: a 500 on the chat
+      // request would deny it the chance to say it could not reach the sensors
+      // (`MIGRATION_SPEC.md` §3, §8).
+      if (resolveErrorCode(error) === "device_auth_expired") {
+        throw error;
+      }
       const message = error instanceof Error ? error.message : String(error);
       log.error(`query_sensor_data failed: ${message}`);
       return failure(`Could not read sensor data: ${message}`);
@@ -370,7 +395,7 @@ export class QuerySensorData {
     return result;
   }
 
-  private async execute(args: Record<string, unknown>): Promise<SensorToolResult> {
+  private async execute(args: Record<string, unknown>, token?: string): Promise<SensorToolResult> {
     const metricName = typeof args.metric === "string" ? normalize(args.metric) : "";
     // "all" fetches one window and reads every metric out of it — one API call, not six, and
     // six fewer chances for the model to drop a parameter while reassembling them.
@@ -413,6 +438,7 @@ export class QuerySensorData {
 
     const resolved = await this.resolveDevice(
       typeof args.device === "string" ? args.device : undefined,
+      token,
     );
     if ("error" in resolved) {
       return resolved.error;
@@ -453,14 +479,14 @@ export class QuerySensorData {
     // Asking `/water/last` first — one document — makes the window sizeable in one shot instead
     // of fetching a series, discovering it was short, and fetching a wider one. Two calls either
     // way, but the first is now tiny and the second is exactly the right size.
-    let referenceIso = await this.lastReportedAt(label);
+    let referenceIso = await this.lastReportedAt(label, token);
     let readings: DeviceReading[] = [];
     let probeSpanMs = 0;
 
     if (referenceIso === null) {
       // `/water/last` drops readings with no GPS fix, so a null here is not proof of silence.
       // Fall back to widening period windows, which do not filter, to find any data at all.
-      const probe = await this.fetchWindow(label, lookbackMsFor(parsed, this.now()));
+      const probe = await this.fetchWindow(label, lookbackMsFor(parsed, this.now()), token);
       readings = probe.readings;
       probeSpanMs = probe.window.spanMs;
       referenceIso = QuerySensorData.newestObservedAt(readings);
@@ -489,7 +515,7 @@ export class QuerySensorData {
     const neededLookback = Math.max(this.now() - range.startMs, MIN_LOOKBACK_MS);
     const window = fetchWindowFor(neededLookback);
     if (readings.length === 0 || window.spanMs > probeSpanMs) {
-      readings = await this.client().getPeriod(window.duration, window.unit, label);
+      readings = await this.client(token).getPeriod(window.duration, window.unit, label);
     }
 
     if (readings.length === 0) {
@@ -623,9 +649,9 @@ export class QuerySensorData {
   }
 
   /** Best-effort "when did this pod last speak", used only when a window came back empty. */
-  private async lastReportedAt(label: string): Promise<string | null> {
+  private async lastReportedAt(label: string, token?: string): Promise<string | null> {
     try {
-      const reading = await this.client().getLastReading(label);
+      const reading = await this.client(token).getLastReading(label);
       return reading?.observedAt ?? null;
     } catch (error) {
       // Already in the no-data path; a second failure should not replace a useful answer

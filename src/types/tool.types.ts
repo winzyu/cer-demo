@@ -37,10 +37,28 @@ export interface ToolCall {
   };
 }
 
+/**
+ * Per-call state a handler may need, threaded down from the HTTP request.
+ *
+ * Passed as an argument rather than held on the handler: `buildToolRegistry` constructs each
+ * handler once at boot and every concurrent request shares it, so anything stored on the
+ * instance would be visible to whatever request runs next.
+ */
+export interface ToolContext {
+  /**
+   * The caller's bearer token, when they sent one.
+   *
+   * The device API scopes every response to the token holder's organization, so a handler that
+   * ignores this and falls back to the deployment's `DEVICE_API_TOKEN` answers one user's
+   * question out of another organization's fleet.
+   */
+  token?: string;
+}
+
 /** A tool the loop can dispatch to. */
 export interface ToolHandler {
   definition: ToolDefinition;
-  run: (args: Record<string, unknown>) => Promise<unknown>;
+  run: (args: Record<string, unknown>, context?: ToolContext) => Promise<unknown>;
 }
 
 /** One executed call, kept for the response trace. Results are traced, never cited (§3 rule 4). */

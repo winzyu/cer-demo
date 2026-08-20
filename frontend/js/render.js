@@ -72,9 +72,23 @@ function isUserTarget(target) {
  * `.body--md` — without the class every block element the renderer emits would inherit
  * pre-wrap and the spacing would come out doubled.
  */
+/**
+ * The model's refusal, reproduced verbatim from `src/prompt/systemPrompt.ts`.
+ *
+ * Duplicated rather than fetched because the frontend has no build step and no import path into
+ * `src/`. Safe to duplicate precisely because the sentence cannot drift silently: the system
+ * prompt is a pinned control for the N2 bake-off and `test/unit/prompt.test.ts` pins its SHA-256,
+ * so any edit to it fails that test first.
+ */
+const REFUSAL_SENTENCE = "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that.";
+
+/** A refusal is a legitimate answer, but it is not a finding — app.css styles it apart. */
+const isRefusal = (text) => typeof text === "string" && text.trim().startsWith(REFUSAL_SENTENCE);
+
 export function updateMessageBody(target, text, markdownRenderer) {
   // Never route a user turn through the markdown renderer, whatever the caller passes.
   const html = markdownRenderer && !isUserTarget(target) ? markdownRenderer(text) : null;
+  target.body.classList.toggle("body--refusal", !isUserTarget(target) && isRefusal(text));
   if (html === null || html === undefined) {
     target.body.classList.remove("body--md");
     target.body.textContent = text;
@@ -114,6 +128,48 @@ export function renderThinking() {
   t.append(label, dots);
   messagesEl.appendChild(t);
   scrollToBottom();
+}
+
+/**
+ * A failure, rendered as a failure.
+ *
+ * Errors used to go out as ordinary assistant bubbles reading "Error: …", which is visually
+ * indistinguishable from an answer — the one thing a grounded assistant must never blur. The
+ * `.notice` component in app.css was written for this and had no producer until now.
+ *
+ * `code` is the backend's machine-readable taxonomy value (`llm_not_configured`,
+ * `device_auth_expired`, `device_timeout`, `device_unavailable`). It is shown, in small mono
+ * type, because it is the string worth quoting when reporting the problem.
+ */
+export function renderNotice(text, code, title = "Something went wrong") {
+  const wrap = document.createElement("div");
+  wrap.className = "notice notice--error";
+  wrap.setAttribute("role", "alert");
+
+  const body = document.createElement("div");
+  body.className = "notice__body";
+
+  const h = document.createElement("div");
+  h.className = "notice__title";
+  h.textContent = title;
+  body.appendChild(h);
+
+  const p = document.createElement("div");
+  p.className = "notice__text";
+  p.textContent = text;
+  body.appendChild(p);
+
+  if (code) {
+    const c = document.createElement("div");
+    c.className = "notice__code";
+    c.textContent = code;
+    body.appendChild(c);
+  }
+
+  wrap.appendChild(body);
+  messagesEl.appendChild(wrap);
+  scrollToBottom();
+  return wrap;
 }
 
 export function removeThinking() {

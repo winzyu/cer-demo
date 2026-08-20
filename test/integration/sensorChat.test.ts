@@ -72,17 +72,27 @@ const NO_DEFAULT_ENV = { ...SENSOR_ENV, SENSOR_DEVICE_LABEL: "" };
 
 const originalFetch = global.fetch;
 const fetchCalls: string[] = [];
+/** Authorization header of every upstream call, so token forwarding can be asserted. */
+let fetchAuth: Array<string | undefined> = [];
+/** Set to a status >= 400 to make every upstream call fail with it. */
+let upstreamStatus = 200;
 
 beforeEach(() => {
   script = [];
   sent = [];
   fetchCalls.length = 0;
+  fetchAuth = [];
+  upstreamStatus = 200;
 
-  global.fetch = (async (url: string) => {
+  global.fetch = (async (url: string, init?: RequestInit) => {
     fetchCalls.push(String(url));
+    fetchAuth.push(((init?.headers ?? {}) as Record<string, string>).Authorization);
     const body = String(url).includes("/devices") ? DEVICES : ALGALITA_PERIOD;
     return {
-      ok: true, status: 200, json: async () => body, text: async () => JSON.stringify(body),
+      ok: upstreamStatus < 400,
+      status: upstreamStatus,
+      json: async () => body,
+      text: async () => JSON.stringify(body),
     };
   }) as unknown as typeof fetch;
 });
@@ -348,5 +358,94 @@ describe("POST /api/v1/chat with the sensor tool disabled", () => {
     expect(response.body).not.toHaveProperty("tool_calls");
     expect(response.body).not.toHaveProperty("tool_round_cap_reached");
     expect(fetchCalls).toHaveLength(0);
+  }, RELOAD_TIMEOUT_MS);
+});
+
+describe("POST /api/v1/chat forwards the caller's identity to the device API", () => {
+  it("uses the caller's bearer token for every upstream call, not the deployment's", async () => {
+    // The device API scopes `/devices` and `/water/*` to the token holder's organization, so a
+    // fallback slipping into any one of these calls reads another org's fleet.
+    script = [
+      {
+        content: "",
+        toolCalls: [{
+          id: "call_1",
+          type: "function" as const,
+          function: {
+            name: "query_sensor_data",
+            arguments: JSON.stringify({
+              metric: "ph", time_range: "last 24 hours", aggregation: "mean",
+            }),
+          },
+        }],
+      },
+      { content: "pH averaged 7.9.", toolCalls: [] },
+    ];
+
+    const app = loadAppWith(SENSOR_ENV);
+    await request(app)
+      .post(CHAT)
+      .set("Authorization", "Bearer caller-jwt")
+      .send({ query: "what is the pH?" })
+      .expect(200);
+
+    expect(fetchAuth.length).toBeGreaterThan(0);
+    fetchAuth.forEach((auth) => expect(auth).toBe("Bearer caller-jwt"));
+  }, RELOAD_TIMEOUT_MS);
+
+  it("falls back to DEVICE_API_TOKEN when the caller sends no bearer token", async () => {
+    script = [
+      {
+        content: "",
+        toolCalls: [{
+          id: "call_1",
+          type: "function" as const,
+          function: {
+            name: "query_sensor_data",
+            arguments: JSON.stringify({
+              metric: "ph", time_range: "last 24 hours", aggregation: "mean",
+            }),
+          },
+        }],
+      },
+      { content: "pH averaged 7.9.", toolCalls: [] },
+    ];
+
+    const app = loadAppWith(SENSOR_ENV);
+    await request(app).post(CHAT).send({ query: "what is the pH?" }).expect(200);
+
+    expect(fetchAuth.length).toBeGreaterThan(0);
+    fetchAuth.forEach((auth) => expect(auth).toBe("Bearer test-token"));
+  }, RELOAD_TIMEOUT_MS);
+
+  it("surfaces an expired device token as a coded error instead of prose in a 200", async () => {
+    // `device_auth_expired` is terminal by design — this service has no refresh path. Returned
+    // as a tool result it becomes something the model paraphrases inside a successful answer,
+    // and the UI gets no machine-readable signal to act on.
+    upstreamStatus = 401;
+    script = [
+      {
+        content: "",
+        toolCalls: [{
+          id: "call_1",
+          type: "function" as const,
+          function: {
+            name: "query_sensor_data",
+            arguments: JSON.stringify({
+              metric: "ph", time_range: "last 24 hours", aggregation: "mean",
+            }),
+          },
+        }],
+      },
+    ];
+
+    const app = loadAppWith(SENSOR_ENV);
+    const response = await request(app)
+      .post(CHAT)
+      .send({ query: "what is the pH?" })
+      .expect(401);
+
+    expect(response.body.code).toBe("device_auth_expired");
+    expect(response.body).not.toHaveProperty("status");
   }, RELOAD_TIMEOUT_MS);
 });

@@ -20,8 +20,10 @@ Phase 0 creates the seam first.
 3. **All 491 tests stay green.** No test may touch the network, need an API key, or cost money. New
    tests follow that rule too — mock `LlmService`, serve recorded bodies through a stubbed `fetch`.
 4. **The response shape is a contract.** `tool_calls` and `tool_round_cap_reached` are *omitted* when
-   no tool ran; the error body is `{ error, message }` with **no `status` field**. Adding fields is
-   fine; changing or removing these is not.
+   no tool ran; the error body is `{ error, message }` plus an optional machine-readable `code`,
+   with **no `status` field**. The SSE `error` event carries the same shape, `code` included, so a
+   client branches identically on either transport (`SPECS.md` §7). Adding fields is fine; changing
+   or removing these is not.
 5. **No CDN, no remote assets in the frontend.** There is no build step and no bundler. Third-party
    code is vendored into `frontend/vendor/` with its license header intact.
 6. **The demo UI is served, not double-clicked** (decided 2026-08-17, during Phase 0). ES module

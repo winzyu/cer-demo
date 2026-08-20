@@ -7,6 +7,7 @@ import { postChat, readSse, refreshHealth } from "./api.js";
 import {
   initRender,
   renderMessage,
+  renderNotice,
   renderCitations,
   renderThinking,
   removeThinking,
@@ -70,7 +71,8 @@ async function send(msg) {
       // Validation failures arrive as JSON before the stream opens.
       removeThinking();
       const err = await r.json().catch(() => ({ error: r.statusText }));
-      renderMessage("assistant", "Error: " + (err.error || r.statusText));
+      // A notice, not an assistant bubble: a failure must not look like an answer.
+      renderNotice(err.error || r.statusText, err.code);
       return;
     }
 
@@ -93,8 +95,10 @@ async function send(msg) {
           renderChart(target.slots.chart, data);
         }
       } else if (event === "error") {
-        if (!target) { removeThinking(); target = renderMessage("assistant", ""); }
-        updateMessageBody(target, answer + "\n[stream error: " + data.error + "]", renderMarkdown);
+        // The stream opened with a 200, so the status line cannot carry this — the event is the
+        // only signal. Any text that already arrived is kept: it is a partial answer, not a lie.
+        removeThinking();
+        renderNotice(data.error || "The response stopped early.", data.code);
       }
     }
 
@@ -102,7 +106,7 @@ async function send(msg) {
   } catch (e) {
     removeThinking();
     // A user-initiated stop is not an error: keep whatever text already arrived.
-    if (e.name !== "AbortError") renderMessage("assistant", "Network error: " + e.message);
+    if (e.name !== "AbortError") renderNotice(e.message, e.code, "Could not reach the backend");
     if (e.name === "AbortError" && answer) history.push({ role: "assistant", content: answer });
   } finally {
     // Only the turn that still owns the slot may release it, so a late-finishing request can

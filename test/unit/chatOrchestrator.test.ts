@@ -98,7 +98,7 @@ describe("ChatOrchestrator tool rounds", () => {
 
     expect(result.content).toBe("pH is 7.1.");
     expect(result.rounds).toBe(2);
-    expect(run).toHaveBeenCalledWith({ metric: "ph" });
+    expect(run.mock.calls[0][0]).toEqual({ metric: "ph" });
 
     // The second round must carry the assistant turn with its tool_calls, then the tool result
     // keyed by tool_call_id — providers reject a tool message whose id has no matching call.
@@ -365,7 +365,7 @@ describe("ChatOrchestrator request device", () => {
     const result = await new ChatOrchestrator(llm, [sensorTool(run)])
       .run(messages, { device: "Algalita Pod" });
 
-    expect(run).toHaveBeenCalledWith({
+    expect(run.mock.calls[0][0]).toEqual({
       metric: "ph", time_range: "now", device: "Algalita Pod",
     });
     // Traced as it actually ran, so the response says which pod was read.
@@ -381,7 +381,7 @@ describe("ChatOrchestrator request device", () => {
     const result = await new ChatOrchestrator(llm, [sensorTool(run)])
       .run(messages, { device: "Algalita Pod" });
 
-    expect(run).toHaveBeenCalledWith({ metric: "ph", device: "Old Woman Creek 2026" });
+    expect(run.mock.calls[0][0]).toEqual({ metric: "ph", device: "Old Woman Creek 2026" });
     expect(result.invocations[0].arguments.device).toBe("Old Woman Creek 2026");
   });
 
@@ -391,7 +391,7 @@ describe("ChatOrchestrator request device", () => {
 
     await new ChatOrchestrator(llm, [sensorTool(run)]).run(messages, { device: "Algalita Pod" });
 
-    expect(run).toHaveBeenCalledWith({ metric: "ph", device: "Algalita Pod" });
+    expect(run.mock.calls[0][0]).toEqual({ metric: "ph", device: "Algalita Pod" });
   });
 
   it("adds nothing when the request carried no device", async () => {
@@ -400,7 +400,7 @@ describe("ChatOrchestrator request device", () => {
 
     await new ChatOrchestrator(llm, [sensorTool(run)]).run(messages);
 
-    expect(run).toHaveBeenCalledWith({ metric: "ph" });
+    expect(run.mock.calls[0][0]).toEqual({ metric: "ph" });
   });
 
   it("does not inject a device into a tool whose schema has none", async () => {
@@ -413,7 +413,7 @@ describe("ChatOrchestrator request device", () => {
 
     await new ChatOrchestrator(llm, [handler]).run(messages, { device: "Algalita Pod" });
 
-    expect(run).toHaveBeenCalledWith({ foo: 1 });
+    expect(run.mock.calls[0][0]).toEqual({ foo: 1 });
   });
 
   it("keeps two concurrent runs on their own devices", async () => {
@@ -450,5 +450,35 @@ describe("ChatOrchestrator request device", () => {
     expect(second.invocations[0].arguments.device).toBe("Old Woman Creek 2026");
     // A request that chose no pod gets none — not the pod the previous caller chose.
     expect(third.invocations[0].arguments).not.toHaveProperty("device");
+  });
+});
+
+describe("ChatOrchestrator tool context", () => {
+  it("hands the caller's token to every tool call", async () => {
+    // The device API is organization-scoped, so a tool that does not receive this authenticates
+    // with the deployment's own token and answers out of the wrong fleet.
+    const run = jest.fn().mockResolvedValue({ ok: true });
+    const { llm } = scriptedLlm([
+      answer({ toolCalls: [toolCall("c1", "query_sensor_data", { metric: "ph" })] }),
+      answer({ content: "pH is 7.9." }),
+    ]);
+
+    await new ChatOrchestrator(llm, [sensorTool(run)]).run(messages, { token: "caller-jwt" });
+
+    expect(run.mock.calls[0][1]).toEqual({ token: "caller-jwt" });
+  });
+
+  it("stops before the next round once the caller has gone away", async () => {
+    // The loop can make MAX_TOOL_ROUNDS + 1 paid calls; a closed tab should not pay for them.
+    const controller = new AbortController();
+    controller.abort();
+    const { llm, seen } = scriptedLlm([answer({ content: "never asked for" })]);
+
+    const result = await new ChatOrchestrator(llm, []).run(messages, {
+      signal: controller.signal,
+    });
+
+    expect(result.rounds).toBe(0);
+    expect(seen).toHaveLength(0);
   });
 });

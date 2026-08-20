@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { config } from "../config";
 import { DeviceApiClient } from "../devices/DeviceApiClient";
 import { dedupeByLabel } from "../tools/querySensorData";
+import { callerToken } from "../utils/bearerToken";
 import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
 import type {
@@ -11,22 +12,6 @@ import type {
 } from "../types/device.types";
 
 const log = createLogger("Devices");
-
-/**
- * Reads the caller's bearer token off the request.
- *
- * Returns `undefined` rather than an empty string for a malformed or absent header, so the
- * client falls back to `DEVICE_API_TOKEN` exactly as the sensor tool does — a header of
- * `Bearer ` must not be forwarded as a token that is guaranteed to 401.
- */
-const callerToken = (req: Request): string | undefined => {
-  const header = req.headers.authorization;
-  if (typeof header !== "string") {
-    return undefined;
-  }
-  const match = /^Bearer\s+(\S.*)$/i.exec(header.trim());
-  return match ? match[1].trim() : undefined;
-};
 
 const nameOf = (device: DeviceSummary): string => device.name ?? device.label ?? "";
 

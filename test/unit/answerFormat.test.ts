@@ -242,9 +242,9 @@ describe("createStreamingCommentaryFilter", () => {
       "【commentary】",
     ];
 
-    answers.forEach((answer) => {
-      [1, 2, 3, 5, 13, answer.length].forEach((width) => {
-        expect(stream(inChunks(answer, width))).toBe(stripCommentaryMarkers(answer));
+    answers.forEach((text) => {
+      [1, 2, 3, 5, 13, text.length].forEach((width) => {
+        expect(stream(inChunks(text, width))).toBe(stripCommentaryMarkers(text));
       });
     });
   });

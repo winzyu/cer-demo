@@ -9,6 +9,7 @@ import { ChatOrchestrator } from "../services/ChatOrchestrator";
 import { buildToolRegistry } from "../tools";
 import { parseChatRequest } from "../validators/chatValidators";
 import { createStreamingCommentaryFilter } from "../utils/answerFormat";
+import { callerToken } from "../utils/bearerToken";
 import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
 import { openSseStream, writeSseEvent } from "../utils/sse";
@@ -57,8 +58,14 @@ export class ChatController {
       // Ordering is load-bearing for prompt caching — see promptBuilder.
       const messages = buildMessages({ query, chunks, history });
 
+      // The device API scopes every response to the token holder's organization, so the
+      // caller's own token has to reach the tool. Falling back to `DEVICE_API_TOKEN` — which is
+      // what happened before this was threaded — answers one user's question out of the
+      // deployment's own fleet rather than theirs.
+      const token = callerToken(req);
+
       if (stream) {
-        await this.streamAnswer(res, messages, adapter.mode, chunks, device);
+        await this.streamAnswer(res, messages, adapter.mode, chunks, device, token);
         return;
       }
 
@@ -66,7 +73,7 @@ export class ChatController {
       // both are constructed once at boot and shared by every request, so anything stored on
       // them would be visible to whatever request runs next. With SENSOR_TOOL off the
       // orchestrator has no tools and this is simply ignored — accepted, with no effect.
-      const answer = await this.orchestrator.run(messages, { device });
+      const answer = await this.orchestrator.run(messages, { device, token });
 
       res.status(200).json({
         answer: answer.content,
@@ -101,6 +108,7 @@ export class ChatController {
     mode: string,
     chunks: Chunk[],
     device?: string,
+    token?: string,
   ): Promise<void> => {
     const controller = new AbortController();
     /**
@@ -130,7 +138,11 @@ export class ChatController {
         // cost of every answer, so the finished text is emitted as a single token event and the
         // SSE contract holds. Real streaming needs incremental `delta.tool_calls` assembly —
         // N7's chat UI is the phase that will want it.
-        const answer = await this.orchestrator.run(messages, { device });
+        const answer = await this.orchestrator.run(messages, {
+          device,
+          token,
+          signal: controller.signal,
+        });
         writeSseEvent(res, "token", { text: answer.content });
         writeSseEvent(res, "done", {
           model: answer.model,

@@ -1,7 +1,7 @@
 import { config } from "../config";
 import type { ChatMessage } from "../types/chat.types";
 import type {
-  ToolCall, ToolDefinition, ToolHandler, ToolInvocation,
+  ToolCall, ToolContext, ToolDefinition, ToolHandler, ToolInvocation,
 } from "../types/tool.types";
 import { stripCommentaryMarkers } from "../utils/answerFormat";
 import { createLogger } from "../utils/logger";
@@ -45,6 +45,25 @@ export interface RunOptions {
    * that name is used and this one is ignored.
    */
   device?: string;
+
+  /**
+   * The caller's bearer token, forwarded to every tool call this run makes.
+   *
+   * Without it the sensor tool authenticates with the deployment's `DEVICE_API_TOKEN`, and
+   * because the device API is organization-scoped that means one user's question is answered
+   * out of another organization's fleet.
+   */
+  token?: string;
+
+  /**
+   * Aborts the run between rounds.
+   *
+   * The loop can make up to `MAX_TOOL_ROUNDS + 1` paid LLM calls, so a caller that has gone
+   * away — a closed tab, a cancelled stream — should not keep paying for rounds whose result
+   * nothing will read. Checked at the top of each round rather than mid-call, so a round in
+   * flight completes and the transcript stays coherent.
+   */
+  signal?: AbortSignal;
 }
 
 export interface OrchestratorResult {
@@ -130,6 +149,12 @@ export class ChatOrchestrator {
     const totalRounds = this.maxToolRounds + 1;
 
     for (let round = 1; round <= totalRounds; round += 1) {
+      // Checked before the round is paid for, not after. A caller that has gone away should
+      // stop costing money at the next boundary rather than at the round cap.
+      if (options.signal?.aborted) {
+        break;
+      }
+
       const offerTools = this.hasTools && round <= this.maxToolRounds;
 
       // Sequential by nature — each round's input is the previous round's output.
@@ -187,7 +212,9 @@ export class ChatOrchestrator {
       // `options.device` is passed down rather than stored: two requests running through this
       // shared orchestrator at the same time must not be able to see each other's pod.
       // eslint-disable-next-line no-await-in-loop
-      const results = await this.dispatch(toolCalls, round, resultCache, options.device);
+      const results = await this.dispatch(toolCalls, round, resultCache, options.device, {
+        token: options.token,
+      });
       invocations.push(...results.invocations);
       conversation.push(...results.messages);
     }
@@ -217,6 +244,7 @@ export class ChatOrchestrator {
     round: number,
     resultCache: Map<string, unknown>,
     requestDevice?: string,
+    context?: ToolContext,
   ): Promise<{ messages: ChatMessage[]; invocations: ToolInvocation[] }> {
     const messages: ChatMessage[] = [];
     const invocations: ToolInvocation[] = [];
@@ -257,7 +285,7 @@ export class ChatOrchestrator {
             log.warn(`Repeated identical call to ${name}; serving the earlier result.`);
           } else {
             // eslint-disable-next-line no-await-in-loop
-            result = await handler.run(args);
+            result = await handler.run(args, context);
             resultCache.set(key, result);
           }
         }
