@@ -27,6 +27,10 @@ import { promises as fs } from "fs";
 import path from "path";
 import { loadFixtures } from "../src/eval/fixtures";
 
+// `pgvector-rag` stays in this list even though the arm's runtime code is archived
+// (`archive/pgvector-rag/`). The packet grades *captured* transcripts, and the sweep captured
+// all three arms — dropping the name here would silently grade a two-arm packet against a
+// three-arm sweep.
 const ARMS = ["firestore-direct", "pgvector-rag", "firestore-vector"] as const;
 const LABELS = ["A", "B", "C"] as const;
 

@@ -3,8 +3,8 @@
  *
  * Quality gates the arms; **cost decides between the ones that clear the gate**. This module is
  * the arithmetic half of that decision, kept as pure functions so it can be unit-tested without a
- * sweep, a database, or a single paid inference call — the same reason `rrf.ts` is separate from
- * its adapter.
+ * sweep, a database, or a single paid inference call — the same reason ranking arithmetic is kept
+ * out of the adapters that call it.
  *
  * The shape of the comparison is deliberately linear:
  *

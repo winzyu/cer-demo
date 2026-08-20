@@ -1,4 +1,4 @@
-import { SPOT_CHECK_QUERIES, parseArgs } from "../../src/eval/cli";
+import { parseArgs } from "../../src/eval/cli";
 import {
   ArmMismatchError,
   replayAll,
@@ -273,25 +273,18 @@ describe("parseArgs", () => {
 
   it("parses the remaining options", () => {
     const args = parseArgs([
-      "--arm=pgvector-rag", "--pass=warm", "--base-url=http://x/api/v1",
+      "--arm=firestore-vector", "--pass=warm", "--base-url=http://x/api/v1",
       "--out=tmp", "--only=definitional-orp", "--dry-run",
     ]);
 
     expect(args).toMatchObject({
-      arm: "pgvector-rag",
+      arm: "firestore-vector",
       pass: "warm",
       baseUrl: "http://x/api/v1",
       outDir: "tmp",
       only: "definitional-orp",
       dryRun: true,
     });
-  });
-});
-
-describe("spot-check probes", () => {
-  it("covers in-slice, out-of-slice and refusal cases", () => {
-    // Three probes that fail loudly rather than plausibly if the adapter is misconfigured.
-    expect(SPOT_CHECK_QUERIES).toHaveLength(3);
   });
 });
 

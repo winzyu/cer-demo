@@ -17,7 +17,7 @@ Phase 0 creates the seam first.
    change is wrong, not the test.
 2. **Never change the defaults** of `SENSOR_TOOL` (`false`), `DEFAULT_RETRIEVAL` (`stub`), or
    `DEBUG_RETRIEVAL` (`false`) in `src/config/index.ts`. A fresh checkout must stay credential-free.
-3. **All 515 tests stay green.** No test may touch the network, need an API key, or cost money. New
+3. **All 491 tests stay green.** No test may touch the network, need an API key, or cost money. New
    tests follow that rule too — mock `LlmService`, serve recorded bodies through a stubbed `fetch`.
 4. **The response shape is a contract.** `tool_calls` and `tool_round_cap_reached` are *omitted* when
    no tool ran; the error body is `{ error, message }` with **no `status` field**. Adding fields is
@@ -54,7 +54,7 @@ Phase 0 creates the seam first.
 > `ln -s <main-checkout>/data/corpus data/corpus`.
 
 ```bash
-npm test                      # 515 passing, 24 suites
+npm test                      # 491 passing, 24 suites
 npm run typecheck             # tsc --noEmit, silent
 npx eslint src --ext .ts      # NOT `npm run lint` — that runs --fix and writes files
 ```
@@ -296,7 +296,17 @@ Phase 0 wrote `{ "prompts": [string] }`, so WS-3's loader must read `.prompts[].
 | Persisted chat history, per-user quota | **Authentication**, which does not exist in this service. Lands with N7, where the dashboard's JWT arrives. |
 | Next.js chatbot page | **◆G5** (responsive scope) and **◆G6** (redesign vs. match dashboard style). Both are decisions, not work — resolving them is the cheapest unblock available. |
 | Token streaming with tools on | Not blocked, but needs incremental `delta.tool_calls` assembly. Sized for N7. |
-| Deleting/archiving the pgvector arm | **◆G7.** See `timeline.md`; the deletion set is wider than the docs list — `src/retrieval/rrf.ts`, `scripts/gradePacket.ts`'s `ARMS`, and the `pgvector-rag` entry in `src/eval/costScenarios.ts` are all coupled to it. |
+
+**Done 2026-08-19 — archiving the pgvector arm.** Taken off this list by decision rather than by
+◆G7, which is still open. The coupled set was indeed wider than the docs listed, and the split fell
+along the evidence/runtime line: **archived** to `archive/pgvector-rag/` — the adapter,
+`src/retrieval/rrf.ts`, the seeder, `db/bakeoff/schema.sql`, `docker-compose.bakeoff.yml`,
+`src/config/pgvector.ts`, plus the `pg` dependency, the `seed:pgvector` script and `PGVECTOR_URL`;
+**kept live** — `scripts/gradePacket.ts`'s `ARMS` and the `pgvector-rag` entry in
+`src/eval/costScenarios.ts`, because both operate on captured evidence, not on the arm. One item the
+original note missed: `test/unit/pgvectorRag.test.ts` also tested `EmbeddingService`, which the
+`firestore-vector` arm still uses, so it was **split** rather than moved —
+`test/unit/embeddingService.test.ts` is the live half. Detail in `SPECS.md` §14.
 
 ---
 

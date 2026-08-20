@@ -53,11 +53,19 @@ const ENV_KEYS = [
 ];
 const originalEnv = ENV_KEYS.map((key) => [key, process.env[key]] as const);
 
-/** Rebuilds the app so `config` re-reads the environment. Mirrors `sensorChat.test.ts`. */
+/**
+ * Rebuilds the app so `config` re-reads the environment. Mirrors `sensorChat.test.ts`.
+ *
+ * Keys are blanked, never deleted. `jest.resetModules()` makes `src/config` re-run its
+ * `import "dotenv/config"`, and dotenv refills any key **absent** from `process.env` — so a
+ * `delete` here is undone from the developer's `.env` before the config module reads it, and
+ * the test silently runs against whatever that file happens to say. `""` keeps the key present,
+ * which dotenv leaves alone, and every reader in `src/config` already treats blank as unset.
+ */
 const loadAppWith = (env: Record<string, string>): Express => {
   jest.resetModules();
   ENV_KEYS.forEach((key) => {
-    delete process.env[key];
+    process.env[key] = "";
   });
   Object.entries(env).forEach(([key, value]) => {
     process.env[key] = value;

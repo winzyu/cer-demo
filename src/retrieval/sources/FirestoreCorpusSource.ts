@@ -32,7 +32,7 @@ export interface CorpusDocumentFields {
  * Shapes one corpus document for Firestore.
  *
  * **`chunks` is deliberately not stored** (removed 2026-08-03). Nothing read it: the direct-feed
- * arm reads `text`, the pgvector seeder reads `data/corpus/corpus.json` directly, and the vector
+ * arm reads `text`, the chunk seeder reads `data/corpus/corpus.json` directly, and the vector
  * arm needs its own per-chunk collection anyway — Firestore cannot index a vector inside an array
  * element. Storing it made `volunteer_stream_monitoring_a_methods_manual.pdf` serialise to
  * **1,005,018 bytes against a 1,048,576-byte limit — 96% full, ~43 KB of headroom**, so one

@@ -120,19 +120,32 @@ npm run grade:packet -- --sample=6   # 6-sheet calibration subset
   exercising the bot in a browser.
 
 Then: write `docs/RETRIEVAL_COMPARISON.md` (§10 lists required contents; most inputs already
-exist), close ◆G7 in `timeline.md`'s gate table, delete the pgvector sidecar per §9.
+exist), close ◆G7 in `timeline.md`'s gate table. ~~Delete the pgvector sidecar per §9.~~
+
+> **Update 2026-08-19 — the pgvector work is done, out of order.** The arm's runtime code was
+> **archived** (not deleted) to `archive/pgvector-rag/` **ahead of ◆G7, by decision**; the gate is
+> still open on exactly the two items above. Grading is unaffected: the transcripts,
+> `eval/grading/warm/KEY.json`, the arm's cost scenario and its row in `scripts/gradePacket.ts` all
+> stayed live, so `npm run grade:packet` and `npm run cost` are unchanged and still cover three arms.
+> `SPECS.md` §14 holds the arm's findings and what restoring it would take.
 
 ## 6. Runbook
 
+> **Stale since 2026-08-19 in one respect:** the pgvector sidecar lines below no longer run — the
+> arm is archived to `archive/pgvector-rag/` and `PGVECTOR_URL` is not a configuration variable any
+> more. They are kept struck through because they are what the captured sweep ran under. Everything
+> else in this runbook still applies to the two live arms.
+
 ```bash
-# pgvector sidecar (dev-only; NOT `docker compose` — the plugin is not installed)
-docker-compose -f docker-compose.bakeoff.yml up -d
-docker-compose -f docker-compose.bakeoff.yml down
+# pgvector sidecar — ARCHIVED 2026-08-19; needs the files restored from archive/pgvector-rag/ first
+# (dev-only; NOT `docker compose` — the plugin is not installed)
+# docker-compose -f docker-compose.bakeoff.yml up -d
+# docker-compose -f docker-compose.bakeoff.yml down
 
 # service with every bake-off setting (do NOT rely on .env — it lacks these)
 DEBUG_RETRIEVAL=true CORPUS_SOURCE=firestore \
-PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff \
 LLM_MAX_TOKENS=16384 LLM_TEMPERATURE=0 PORT=8000 npm run dev
+# the sweep also passed PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff — archived
 
 npm run bakeoff -- --arm=<mode> --spot-check
 npm run bakeoff -- --arm=<mode> --pass=<cold|warm>
@@ -182,8 +195,14 @@ git commit -m "docs: refresh stale corpus, eval, and status documentation"
 2. ~~**Merge `feat/device-api` into `feat/bakeoff-sweep`?**~~ **Done 2026-08-13** — merged at
    `fa299ef`, conflict-free. Phase N3's tool layer was then built on top. §2's branch table and §7's
    uncommitted list are both stale from that point on.
-3. **Does `pgvector-rag` stay in the comparison?** It works now but is no longer a strict legacy
-   port, so its role as "what we had before" is compromised.
+3. **Does `pgvector-rag` stay in the comparison?** It worked at capture time but is no longer a
+   strict legacy port (§4b), so its role as "what we had before" is compromised.
+   **Partly settled 2026-08-19:** the arm is **archived**, and its captured results **stay in the
+   comparison** — transcripts, grading key and cost scenario are all live, and `npm run cost` still
+   prices three arms. What is settled is that it will not be re-run: re-capturing it now requires
+   restoring `archive/pgvector-rag/`, and the pinned prompt means a re-capture would void the other
+   two arms unless they are re-run as well. What is still open is **how much weight** the §4a
+   dead-lexical-branch caveat leaves its numbers in `RETRIEVAL_COMPARISON.md`.
 4. **Commit or git-ignore `eval/grading/`?** 4.1 MB, regenerable. Currently committed, on the
    argument that the packet a human graded against should be recoverable exactly.
 5. **◆G11** — does `search_documents` return as a tool? The dead-lexical-branch finding (§4a)
@@ -218,9 +237,13 @@ git commit -m "docs: refresh stale corpus, eval, and status documentation"
 
 ## 10. Cleanup
 
-A dev server and the pgvector sidecar may still be running:
+A dev server may still be running:
 
 ```bash
 pkill -f "[t]s-node-dev"
-docker-compose -f docker-compose.bakeoff.yml down
 ```
+
+At the time of writing a pgvector sidecar could also be up, cleaned with
+`docker-compose -f docker-compose.bakeoff.yml down`. **Since 2026-08-19 that compose file lives in
+`archive/pgvector-rag/`**; if a container from an old session is still running, stop it by name with
+`docker ps` / `docker stop` rather than restoring the archive.

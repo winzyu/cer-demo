@@ -252,7 +252,14 @@ reimplementation-from-memory proves nothing. Constraints:
   in the Cloud Run path.
 - It is a **measuring stick, not a migration reversal.** If it wins, the follow-up decision is
   whether to port its *technique* (hybrid + RRF) onto the production store — not to move back.
-- Delete the sidecar once ◆G7 is resolved.
+- ~~Delete the sidecar once ◆G7 is resolved.~~ **Archived 2026-08-19, ahead of ◆G7 and by
+  decision — the gate did not close.** The runtime code (adapter, `rrf.ts`, seeder, schema, compose
+  file, config, the `pg` dependency) is in `archive/pgvector-rag/` and the mode is unregistered;
+  the **evidence is retained and live** — the 56 transcripts, `eval/grading/warm/KEY.json`, the
+  arm's cost scenario, and its row in `scripts/gradePacket.ts`. So the arm is still graded and still
+  priced here; what it can no longer do is **run**. Re-running or re-capturing it means restoring the
+  archive first — and because the system prompt is a pinned control (§4), a re-capture voids the
+  other two arms unless they are re-captured too. See `SPECS.md` §14.
 
 ### On the `firestore-vector` arm — ◆G10 **RESOLVED → included**
 
@@ -659,10 +666,13 @@ so arms stop being comparable and you end up measuring question difficulty. Two 
 - A per-session cost cap. Direct-feed bills ~11K input tokens per turn, and testers are not
   rate-limited by a script.
 
-**This does not change the arms' fate.** They are still deleted once ◆G7 closes (§2); the selector
-goes with them, and the frontend keeps calling `POST /chat` and getting whatever `DEFAULT_RETRIEVAL`
-resolves to. Nothing here reverses the rule that a caller does not get to choose the cost of their
-own request.
+**This does not change the arms' fate.** The losing arms still come out once ◆G7 closes (§2) — and
+`pgvector-rag` came out early, archived on 2026-08-19 ahead of the gate. The selector goes with
+them, and the frontend keeps calling `POST /chat` and getting whatever `DEFAULT_RETRIEVAL` resolves
+to. Nothing here reverses the rule that a caller does not get to choose the cost of their own
+request. Note the consequence for this section: a blind harness built now can offer only the two
+live arms, so any human calibration sample covering `pgvector-rag` has to be graded from its
+**captured transcripts**, which is what the offline packet (§7b) already does.
 
 ---
 
@@ -753,7 +763,11 @@ Whatever wins, record the outcome and the numbers in `timeline.md`'s gate table 
 - **Standing/upkeep costs priced** for each arm's deployed counterfactual, not just token costs.
 - **The comparison report (§10) written and committed** — this is the deliverable, not a by-product.
 - ◆G7 resolved with the numbers that resolved it; ◆G9 and ◆G10 closed.
-- The pgvector sidecar removed once the decision is recorded.
+- ~~The pgvector sidecar removed once the decision is recorded.~~ **Done 2026-08-19 — archived, and
+  ahead of the decision rather than after it** (§2). The runtime code is in `archive/pgvector-rag/`;
+  the transcripts, grading key, cost scenario and packet entry stayed live **precisely so every
+  criterion above is still reachable** — the packet still grades three arms and `npm run cost` still
+  prices three arms. ◆G7 remains open on grading and on the §10 report.
 
 ---
 
