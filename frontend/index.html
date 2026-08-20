@@ -74,15 +74,16 @@
         <div class="body"        data-slot="body">…</div>          WS-1 markdown target
         <div class="provenance"  data-slot="provenance"></div>     WS-2, assistant only
         <div class="chart"       data-slot="chart"></div>          WS-4, assistant only
+        <div class="report"      data-slot="report"></div>         generate_report link, assistant only
         …citations appended here by renderCitations()
       </div>
 
-    The provenance and chart slots start empty and are absent from user messages.
+    The provenance, chart, and report slots start empty and are absent from user messages.
     Empty slots are display:none, so they cost no space until something mounts.
 
     Class vocabulary lives in app.css — .chip / .chip--tool / .chip--deduped /
-    .badge--ok / .badge--warn / .notice--error / .chart__* / .btn--ghost. Use those
-    names rather than new ones, and never a literal colour: it will not invert.
+    .badge--ok / .badge--warn / .notice--error / .chart__* / .btn--ghost / .btn--report.
+    Use those names rather than new ones, and never a literal colour: it will not invert.
 
     Wave 2: routine provenance collapses into <details class="details"> (closed by default).
     Only answer-specific caveats stay loose in the slot.

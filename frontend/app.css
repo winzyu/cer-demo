@@ -242,7 +242,7 @@ a:hover { text-decoration: underline; }
 
 /* ============================= provenance (WS-2) ============================= */
 
-.provenance:empty, .chart:empty { display: none; }
+.provenance:empty, .chart:empty, .report:empty { display: none; }
 
 .provenance {
   display: flex;
@@ -545,6 +545,12 @@ button { font: inherit; cursor: pointer; }
 }
 .btn--ghost:hover { border-color: var(--accent); color: var(--text); }
 .btn--ghost svg { width: 14px; height: 14px; }
+
+/* generate_report link. An <a>, not a <button> — it opens the PDF, it doesn't act on this
+   page — so .btn--report only overrides what .btn--ghost otherwise inherits from being an
+   anchor (underline, non-pointer cursor). Colour and layout stay shared with .btn--ghost. */
+.report { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.btn--report { text-decoration: none; cursor: pointer; }
 
 /* ============================= responsive ============================= */
 

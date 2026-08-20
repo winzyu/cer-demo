@@ -25,9 +25,9 @@ function makeSlot(name) {
 
 /**
  * Appends a message and returns its handles:
- *   { wrap, body, slots: { body, provenance, chart } }
- * `provenance` and `chart` are null on user messages. `body` is returned at the top level
- * too, because streamed tokens are appended to it as they arrive.
+ *   { wrap, body, slots: { body, provenance, chart, report } }
+ * `provenance`, `chart`, and `report` are null on user messages. `body` is returned at the
+ * top level too, because streamed tokens are appended to it as they arrive.
  */
 export function renderMessage(role, body) {
   const wrap = document.createElement("div");
@@ -39,18 +39,20 @@ export function renderMessage(role, body) {
   const b = makeSlot("body"); b.textContent = body || "";
   wrap.append(r, b);
 
-  // WS-2 / WS-4 mount points. Assistant messages only — a user turn has no provenance.
+  // WS-2 / WS-4 / report mount points. Assistant messages only — a user turn has none of these.
   let provenance = null;
   let chart = null;
+  let report = null;
   if (role === "assistant") {
     provenance = makeSlot("provenance");
     chart = makeSlot("chart");
-    wrap.append(provenance, chart);
+    report = makeSlot("report");
+    wrap.append(provenance, chart, report);
   }
 
   messagesEl.appendChild(wrap);
   scrollToBottom();
-  return { wrap, role, body: b, slots: { body: b, provenance, chart } };
+  return { wrap, role, body: b, slots: { body: b, provenance, chart, report } };
 }
 
 /** A user turn is always plain text — markdown is an assistant-only affordance (WS-1). */
