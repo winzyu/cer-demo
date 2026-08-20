@@ -1,0 +1,429 @@
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0004, score 0.6683679943187765)
+
+rature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm
+weather. DO and ORP falling together while EC and turbidity rise is a far more specific signal
+pointing to an organic/sewage source.
+5. Separating Natural Cycles from Pollution Events
+Rule out the water body’s normal rhythms before declaring an event.
+Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,
+bottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.
+A smooth, repeating daily oscillation is biology, not pollution.
+Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity
+often peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is
+mixing, not a discharge.
+Seasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.
+Compare any reading to the same season’s baseline.
+The test for a real event: A pollution event typically appears as a step-change or sustained
+excursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it
+shows up as a correlated shift across multiple parameters consistent with one of the signatures
+above.
+6. Sensor & Data-Quality Caveats
+A trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an
+event.
+Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across
+weeks may be drift, not water chemistry — cross-check against calibration history and class-
+balanced expectations.
+ORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.
+standard hydrogen electrode). Record which reference is used so values are comparable across
+DataPods and over time. Treat ORP trend as more reliable than absolute value.
+EC temperature compensation: Always report specific conductance (25°C-corrected).
+Uncorrected EC will track temperature and produce false signals.
+Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on
+one across the fleet.
+DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the
+antifouling/cleaning schedule.
+
+-- 6 of 7 --
+
+Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long
+deployment is a fouling/maintenance flag first, an environmental signal second.
+Maintain this as a living document. As DataPod deployments build site-specific baselines, append
+local “normal” ranges and any site-specific event signatures observed in the field.
+
+-- 7 of 7 --
+
+
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0003, score 0.6281817797960701)
+
+U
+Ranges are general guidance. Establish a site-specific baseline before treating deviations as events
+— local geology, season, and tidal stage shift “normal” substantially.
+3. How the Parameters Interrelate
+Understanding these couplings is what turns six independent readings into a diagnostic system.
+Temperature → DO (inverse, two ways): Warmer water physically holds less oxygen and
+
+-- 3 of 7 --speeds the respiration/decomposition that consumes it. A temperature rise should always be
+paired with an expected DO decline.
+Temperature → EC: Ion mobility rises with temperature; raw EC increases ~2% per °C. Always
+report temperature-corrected specific conductance so EC changes reflect chemistry, not
+warming.
+DO ↔ ORP (tightly coupled): Oxygen is the dominant electron acceptor — abundant DO drives
+ORP strongly positive. As DO is consumed, ORP declines; once oxygen is exhausted, ORP goes
+negative. ORP often moves before DO hits bottom, giving lead time.
+pH ↔ DO (the photosynthesis/respiration couple): Photosynthesis removes CO₂ (raises pH)
+and releases O₂; respiration adds CO₂ (lowers pH) and consumes O₂. pH and DO therefore rise
+and fall together on the daily cycle. In-phase daily swings of pH and DO are the fingerprint
+of biological productivity.
+Turbidity → DO/pH: Suspended particles block light, suppressing photosynthesis and
+dampening daytime DO/pH gains. Organic-rich turbidity also adds direct oxygen demand.
+Turbidity as a contaminant carrier: Sediment transports adsorbed nutrients, metals, and
+pathogens — a turbidity spike can stand in for a loading event even when chemistry looks
+stable.
+EC as a source fingerprint: Because fresh and salt water differ ~1,000× in EC, the direction of
+an EC change tells you whether freshwater (rain, runoff, groundwater) or saline/ionic input (tide,
+intrusion, discharge) is driving the event.
+4. Pollution Event Signature Matrix
+Arrows show the expected direction of change relative to baseline. ↑↑ / ↓↓ = strong, ↑ / ↓ =
+moderate, 	= large swing or variable, → = little change.
+Event 	Temp 	DO 	ORP 	EC 	pH 	Turbidity Primary
+Signature
+Sewage /
+sanitary
+discharge
+→/↑ 	↓↓ 	↓↓ 	↑ 	↓ 	↑
+DO crash +
+ORP crash +
+EC rise +
+turbidity rise,
+not tied to
+time of day
+Algal bloom /
+(super-
+sat.
+midday, 	(high
+Large in-
+phase daily
+DO + pH
+oscillations;
+
+-- 4 of 7 --
+
+eutrophication 	↑ 	crash
+pre-
+dawn)
+→ 	midday) 	↑ 	pre-dawn DO
+minimum is
+the danger
+window
+Stormwater /
+urban runoff ↓ 	↓
+↓
+(marine)
+/
+(fresh)
+↑↑
+Sharp
+turbidity spike
+coincident
+with rainfall;
+EC shifts
+(drops in
+marine, may
+spike in fresh
+from road salt)
+Industrial /
+chemical
+discharge
+↑↑
+Abrupt step-
+changes in EC
+and/or pH
+and/or ORP
+with no diel or
+tidal
+explanation
+Thermal
+discharge ↑↑ 	↓ 	→ 	→ 	→ 	→
+Temperature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0134, score 0.5738275614458611)
+
+ttle
+- DO (mg/L) of second bottle
+= BOD (mg/L)
+References
+APHA. 1992. Standard methods for the examination of water and wastewater. 18th ed. American Public Health
+Association, Washington, DC.
+< Previous · Table of Contents · Next >
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 146 of 227 --5.3
+Temperature
+Why is temperature important?
+The rates of biological and chemical processes depend on temperature. Aquatic
+organisms from microbes to fish are dependent on certain temperature ranges for their
+optimal health. Optimal temperatures for fish depend on the species: some survive best in
+colder water, whereas others prefer warmer water. Benthic macroinvertebrates are also
+sensitive to temperature and will move in the stream to find their optimal temperature. If
+temperatures are outside this optimal range for a prolonged period of time, organisms are
+stressed and can die. Temperature is measured in de-grees Fahrenheit (F) or degrees
+Celsius (C).
+For fish, there are two kinds of limiting temperatures the maximum temperature for short
+exposures and a weekly average temperature that varies according to the time of year and
+the life cycle stage of the fish species. Reproductive stages (spawning and embryo
+development) are the most sensitive stages. Table 5.5 provides temperature criteria for
+some species.
+Species
+Max.
+weekly
+average
+temp. for
+growth
+(juveniles)
+Max.
+temp. for
+survival
+of short
+exposure
+(juveniles)
+Max.
+weekly
+average
+temp. for
+spawning
+a
+Max.
+temp. for
+embryo
+spawning
+b
+Table 5.5
+Maximum
+average
+temperatures
+for growth
+and
+short-term
+maximum
+temperatures
+for selected
+fish (°C and
+° F)
+Atlantic
+salmon
+20 °C (68
+°F)
+23 °C (73
+°F)
+5 °C (41
+°F)
+11 °C
+(52 °F)
+Bluegill 32 °C (90
+°F)
+35 °C (95
+°F)
+25 °C
+(77 °F)
+34 °C
+(93 °F)
+Brook trout 19 °C (66
+°F)
+24 °C (75
+°F)
+9 °C (48
+°F)
+13 °C
+(55 °F)
+Common
+carp --- 	--- 21 °C
+(70 °F)
+33 °C
+(91 °F)
+Temperature
+affects the
+oxygen content
+of the water
+(oxygen levels
+become lower as
+temperature
+increases); the
+rate of
+photosynthesis
+by aquatic
+plants; the
+metabolic rates
+of aquatic
+organisms; and
+the sensitivity of
+
+-- 147 of 227 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0019, score 0.571390484385923)
+
+ield setting so long as the temperature of the air
+calibration chamber is stable.
+The air calibration or check with a wet-towel method
+(variation of Procedure 1) is the recommended method to
+be performed at the field site. This method is well suited to
+checking an instrument after transportation to a field site fol-
+lowed by calibration if the instrument fails the check with a
+wet-towel procedure.The air-saturated water method (Procedure 2) is the pre-
+ferred method specified by some manufacturers. Temperature
+stability of the bubbled solution and equilibration of the DO-
+sensor temperature with the solution is important and easily
+accomplished. This procedure is generally favored for labora-
+tory calibrations because of the equipment required.
+The DO-meter calibration check is required at each
+field site.
+2.2.3 Optical (Luminescence) DO Sensors—
+Calibration Procedures
+The luminescence technology used in optical DO field
+instruments has improved and simplified the data-collection
+process for field determination of DO concentration. Optical
+DO sensors generally have accuracy specifications of ±0.1
+mg/L or 1 percent after calibration. This level of accuracy is
+best achieved by calibrating under controlled conditions in a
+laboratory or simulated laboratory environment.
+TECHNICAL NOTE 3.
+Optical DO sensors contain internal calibration information
+from the manufacturer. Although some manufacturers advise
+that no further calibration is needed, the accuracy of factory
+calibrations does not necessarily satisfy the data-quality objec-
+tives required for USGS applications. Because the validity of
+a calibration can substantially affect the overall accuracy and
+precision of DO measurements, users are required to check the
+calibration at every field site or as often as is necessary to meet
+specific data-quality objectives.
+Optical DO sensors are subject to very little drift after a
+successful calibration. A laboratory-performed calibration is
+likely to remain stable after transport to the field. Neverthe-
+less, calibrations are required to be verified at the field site.
+Laboratory calibrations are generally preferred because of the
+stability of the laboratory environment compared to a typical
+field site.
+The Rhodazine DTM 2 spectrophotometric method for
+DO measurement described in section 3.0 has been used to
+check the calibration of these instruments. USGS field scien-
+tists have corroborated the accuracy of the optical sensor to
+0.03 mg/L DO by using repeated comparisons of results with
+the Rhodazine D spectrophotometric method described in
+2Rhodazine D is a proprietary product of CHEMetrics, Inc. (White and
+others, 1990).
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0016, score 0.5692059062057031)
+
+ result of a DO instrument performance check
+should be within +/- 0.2 mg/L of the 100-percent
+saturated concentration determined from the DO
+solubility tables found at https://water.usgs.gov/
+software/DOTABLES or, if checking at the zero
+point, the sensor should read within 0.2 mg/L of zero.
+Project objectives may dictate a deviation of less than
+0.2 mg/L from the calculated 100-percent saturationvalue or zero. Recalibration and additional trouble-
+shooting are warranted if instruments fail the DO
+performance checks.
+Do not use an instrument that fails to calibrate properly
+or fails performance checks.
+2.2.1 Correction for Atmospheric Pressure and
+Salinity
+DO calibration procedures include corrections for
+atmospheric pressure and ionic strength. (Ionic strength is
+estimated from the conductivity measurement for routine field
+applications.) Atmospheric pressure, the temperature of the
+water or water vapor, and the ionic strength of the water must
+be known to determine the theoretical amount of oxygen that
+will be dissolved in water.
+Record all calibration information in instrument log
+books and copy calibration data onto field forms at the time of
+calibration.
+TECHNICAL NOTE 2.
+DO sensors do not directly measure oxygen in milligrams
+per liter or parts per million. Expressed concentrations are
+based on calculations that relate instrument sensor data with
+the temperature and ionic strength of the sample water. The
+sensor signal is proportional to the ambient partial pressure of
+oxygen, which can be displayed either as percent saturation or
+in milligrams per liter, depending on user specification.
+Ambient atmospheric pressure is true atmospheric
+pressure at the measurement site, not the pressure that has
+been adjusted to sea level. Atmospheric pressure (also known
+as barometric pressure) reported by the National Weather
+Service (NWS) generally is not the absolute (ambient) value.
+NWS atmospheric pressure readings typically are adjusted to
+sea level for comparison among weather stations and must be
+adjusted back to the altitude of the weather station in order to
+obtain ambient barometric pressure values. Previous versions
+of this chapter described a procedure for correcting NWS
+barometric pressure readings for use during DO calibrations.
+With the advent of inexpensive, National Institute of Standards
+and Technology- (NIST) traceable barometers, correction of a

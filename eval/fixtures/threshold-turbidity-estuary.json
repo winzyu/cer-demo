@@ -1,0 +1,52 @@
+{
+  "id": "threshold-turbidity-estuary",
+  "class": "precedence",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [
+    "turbidity-in-scope"
+  ],
+  "notes": "Reworked 2026-07-29, when turbidity gained an operator range (0-25 NTU freshwater, derived from the reference's own baseline table). That turned this from a pure threshold lookup into a precedence case: 60 NTU is normal for an estuary by the document and above the operator range for this freshwater deployment.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "What's a normal turbidity for an estuary compared with a freshwater river?",
+      "rubric": {
+        "must_contain": [
+          "gives brackish/estuarine 5–100+ NTU",
+          "gives healthy freshwater <5–25 NTU",
+          "notes rivers and estuaries are naturally more turbid and event-driven than open coastal water"
+        ],
+        "must_not": [
+          "gives a single range for all water types",
+          "invents a numeric range"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "We're at 60 — should I be worried?",
+      "rubric": {
+        "must_contain": [
+          "uses the operator's authoritative turbidity range of 0 to 25 NTU for this freshwater deployment and states 60 NTU is above it",
+          "notes the reference's estuarine band of 5-100+ NTU would place 60 within normal for an estuary, and names the discrepancy",
+          "states the operator range governs the normal/abnormal call",
+          "notes turbidity is event-driven — storms, dredging, tidal resuspension — so one high reading is not by itself an event"
+        ],
+        "must_not": [
+          "treats the document's estuarine band as the authority for this deployment",
+          "declares the reading normal without reference to the operator range"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ],
+        "notes": "The operator range comes from the system prompt, not the corpus; only the estuarine band needs a citation."
+      }
+    }
+  ]
+}

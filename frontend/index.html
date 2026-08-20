@@ -2,145 +2,113 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Clean Earth RAG</title>
+  <title>Gilligan — water quality assistant</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    :root { color-scheme: light dark; --border:#d6d6d6; --muted:#666; }
-    html, body { height: 100%; margin: 0; }
-    body {
-      font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      display: flex; flex-direction: column;
-    }
-    header {
-      padding: 10px 16px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: baseline; gap: 12px;
-    }
-    header h1 { font-size: 16px; margin: 0; font-weight: 600; }
-    header .meta { color: var(--muted); font-size: 12px; }
-    #messages {
-      flex: 1; overflow-y: auto; padding: 16px;
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    .msg { max-width: 720px; }
-    .msg.user { align-self: flex-end; }
-    .msg.assistant { align-self: flex-start; }
-    .msg .role { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
-    .msg .body { white-space: pre-wrap; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
-    .msg.user .body { background: rgba(0,80,200,0.06); }
-    .citations { font-size: 12px; color: var(--muted); margin-top: 6px; padding-left: 0; list-style: none; }
-    .citations li { margin: 2px 0; }
-    .citations .file { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .thinking { font-size: 12px; color: var(--muted); padding: 4px 8px; }
-    form { display: flex; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--border); }
-    input[type=text] { flex: 1; padding: 8px 10px; font: inherit; border: 1px solid var(--border); border-radius: 6px; }
-    button { padding: 8px 14px; font: inherit; border: 1px solid var(--border); border-radius: 6px; background: rgba(0,0,0,0.04); cursor: pointer; }
-    button:disabled { opacity: 0.5; cursor: progress; }
-    .error { color: #b00020; }
-  </style>
+  <meta name="color-scheme" content="light dark">
+
+  <!--
+    Theme must be stamped BEFORE first paint. js/theme.js is an ES module and therefore
+    deferred, so doing it there would flash the wrong palette on every load.
+  -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("gilligan.theme");
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch (e) { /* storage disabled: fall through to prefers-color-scheme */ }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <header>
-    <h1>Clean Earth RAG</h1>
-    <span class="meta">single-sensor water-quality assistant</span>
-    <span class="meta" id="health"></span>
+  <header class="appbar">
+    <img class="appbar__logo" src="assets/cer-logo.png" alt="Clean Earth Rovers">
+    <span class="appbar__title">Gilligan</span>
+    <span class="appbar__meta">water quality assistant</span>
+
+    <span class="appbar__spacer"></span>
+
+    <!-- Health text from api.js. WS-2 may add a pod/freshness badge alongside it. -->
+    <div class="appbar__status">
+      <span class="appbar__meta" id="health"></span>
+    </div>
+
+    <button type="button" class="theme-toggle" id="theme-toggle"
+            aria-label="Switch to dark theme" aria-pressed="false" title="Toggle light / dark">
+      <svg class="icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+      </svg>
+      <svg class="icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"/>
+        <path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+      </svg>
+    </button>
   </header>
 
+  <!--
+    Context bar — session-level facts, deliberately OUT of the transcript.
+    Owned by js/podbar.js (Wave 2). It fills #pod-select from GET /api/v1/devices and renders
+    the selected pod's status and any water-type mismatch beside it. These are constant across
+    answers; repeating them per message is what made the chat unreadable.
+  -->
+  <div class="contextbar" id="context-bar">
+    <label class="podpicker" for="pod-select">
+      <span class="podpicker__label">Pod</span>
+      <select class="podpicker__select" id="pod-select" disabled>
+        <option value="">Loading pods…</option>
+      </select>
+    </label>
+    <!-- podbar.js renders status / mismatch badges here -->
+    <div id="pod-status"></div>
+    <span class="contextbar__spacer"></span>
+  </div>
+
+  <!--
+    Message list. Every message element is built by js/render.js, which gives each one
+    these named slots so Wave 1 streams can mount into a message without editing this file:
+
+      <div class="msg {user|assistant}">
+        <div class="role">…</div>                                 (hidden by CSS)
+        <div class="body"        data-slot="body">…</div>          WS-1 markdown target
+        <div class="provenance"  data-slot="provenance"></div>     WS-2, assistant only
+        <div class="chart"       data-slot="chart"></div>          WS-4, assistant only
+        …citations appended here by renderCitations()
+      </div>
+
+    The provenance and chart slots start empty and are absent from user messages.
+    Empty slots are display:none, so they cost no space until something mounts.
+
+    Class vocabulary lives in app.css — .chip / .chip--tool / .chip--deduped /
+    .badge--ok / .badge--warn / .notice--error / .chart__* / .btn--ghost. Use those
+    names rather than new ones, and never a literal colour: it will not invert.
+
+    Wave 2: routine provenance collapses into <details class="details"> (closed by default).
+    Only answer-specific caveats stay loose in the slot.
+  -->
   <div id="messages" aria-live="polite"></div>
 
-  <form id="composer">
-    <input type="text" id="input" placeholder="Ask about your water…" autocomplete="off" autofocus required>
-    <button type="submit" id="send">Send</button>
-  </form>
+  <!-- Input / controls region. WS-3 owns everything inside it except the composer form. -->
+  <div id="input-region">
+    <!-- Starter prompts (WS-3). Read frontend/starter-prompts.json → .prompts[].text -->
+    <div id="starter-prompts"></div>
 
-  <script>
-    const BACKEND = (new URLSearchParams(location.search)).get("backend") || "http://localhost:8000";
+    <form id="composer">
+      <input type="text" id="input" placeholder="Ask about a reading, a threshold, or a site…" autocomplete="off" autofocus required>
+      <span class="composer__hint">Shift + Enter for a new line</span>
+      <button type="submit" id="send" aria-label="Send">Send</button>
+    </form>
 
-    const messagesEl = document.getElementById("messages");
-    const inputEl = document.getElementById("input");
-    const sendBtn = document.getElementById("send");
-    const healthEl = document.getElementById("health");
-    const history = []; // [{role, content}]
+    <!-- Response controls: stop / copy / regenerate (WS-3). Empty today. -->
+    <div id="response-controls"></div>
+  </div>
 
-    function renderMessage(role, body, citations) {
-      const wrap = document.createElement("div");
-      wrap.className = "msg " + role;
-      const r = document.createElement("div"); r.className = "role"; r.textContent = role;
-      const b = document.createElement("div"); b.className = "body"; b.textContent = body;
-      wrap.append(r, b);
-      if (citations && citations.length) {
-        const seen = new Set();
-        const ul = document.createElement("ul"); ul.className = "citations";
-        for (const c of citations) {
-          if (seen.has(c.filename)) continue;
-          seen.add(c.filename);
-          const li = document.createElement("li");
-          const f = document.createElement("span"); f.className = "file"; f.textContent = c.filename;
-          li.append(f, document.createTextNode(" — " + c.document_title));
-          ul.appendChild(li);
-        }
-        wrap.appendChild(ul);
-      }
-      messagesEl.appendChild(wrap);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-
-    function renderThinking() {
-      const t = document.createElement("div");
-      t.className = "thinking"; t.id = "thinking-indicator";
-      t.textContent = "thinking…";
-      messagesEl.appendChild(t);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-    function removeThinking() {
-      const t = document.getElementById("thinking-indicator");
-      if (t) t.remove();
-    }
-
-    async function refreshHealth() {
-      try {
-        const r = await fetch(BACKEND + "/health");
-        const j = await r.json();
-        healthEl.textContent = `model: ${j.model} · db: ${j.db_ok ? "ok" : "down"} · water: ${j.water_type}`;
-      } catch (e) {
-        healthEl.textContent = "backend unreachable @ " + BACKEND;
-        healthEl.classList.add("error");
-      }
-    }
-
-    document.getElementById("composer").addEventListener("submit", async (ev) => {
-      ev.preventDefault();
-      const msg = inputEl.value.trim();
-      if (!msg) return;
-      renderMessage("user", msg);
-      history.push({ role: "user", content: msg });
-      inputEl.value = "";
-      sendBtn.disabled = true;
-      renderThinking();
-      try {
-        const r = await fetch(BACKEND + "/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: msg, history: history.slice(0, -1) }),
-        });
-        removeThinking();
-        if (!r.ok) {
-          const err = await r.text();
-          renderMessage("assistant", "Error: " + err);
-          return;
-        }
-        const j = await r.json();
-        renderMessage("assistant", j.response, j.citations);
-        history.push({ role: "assistant", content: j.response });
-      } catch (e) {
-        removeThinking();
-        renderMessage("assistant", "Network error: " + e.message);
-      } finally {
-        sendBtn.disabled = false;
-        inputEl.focus();
-      }
-    });
-
-    refreshHealth();
-  </script>
+  <!--
+    ES modules. NOTE: module scripts are fetched with CORS, and a file:// page has an
+    opaque origin, so browsers block them. Serve this directory over HTTP to open it,
+    e.g. `python3 -m http.server 5173` from frontend/ then http://localhost:5173/.
+  -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>

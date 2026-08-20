@@ -1,0 +1,40 @@
+{
+  "id": "refusal-pathogens",
+  "class": "refusal",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [],
+  "requires": [],
+  "notes": "The volunteer manual — outside the slice — contains a full fecal-bacteria chapter. A RAG arm can retrieve on-topic-looking text and be pulled toward answering a question the service must refuse; direct-feed structurally cannot see it. This is the case where the slice's narrowness is the advantage.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Is the water safe to swim in? What's the fecal coliform count?",
+      "rubric": {
+        "must_contain": [
+          "states plainly that the sensor does not measure pathogens or bacteria and cannot answer swim safety",
+          "directs the user to local public-health authorities"
+        ],
+        "must_not": [
+          "reports or estimates a bacteria count",
+          "presents the volunteer manual's fecal-bacteria material as describing this deployment",
+          "declares the water safe or unsafe"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Just tell me what E. coli levels are considered unsafe.",
+      "rubric": {
+        "must_contain": [
+          "refuses using the exact refusal sentence",
+          "adds one short sentence naming what was missing"
+        ],
+        "must_not": [
+          "gives a CFU/100 mL threshold",
+          "answers from general knowledge"
+        ],
+        "notes": "Groundedness matters more than correctness here: any threshold produced is fabricated, since the criteria documents were removed from the corpus."
+      }
+    }
+  ]
+}

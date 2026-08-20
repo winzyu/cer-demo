@@ -1,0 +1,158 @@
+### tm9a6.8.pdf (chunk tm9a6.8.pdf__0016, score 0.696627556010988)
+
+ltiparameter instrument (hand-
+held display and sensors-containing sonde only, not
+the sensors) is particularly dirty or will be stored,
+clean it with a mild, nonphosphate detergent solution
+by using a small, nonabrasive brush or cotton swab
+or cloth, and follow with a thorough water rinse.
+• Avoid using organic solvents or other corrosive solu-
+tions to clean the sensors unless indicated in guid-ance given by the manufacturer.
+• Do not coat the sonde or sensors with protective or
+anti-fouling paint, except as specifically instructed
+by the manufacturer.
+• Manufacturers may have instructions specific to their
+sensors—check the manufacturer’s operating manual
+for each instrument that will be in use.
+Wiper and wiper-brush maintenance:
+• Inspect the wiper pad and (or) wiper brush for dirt,
+deterioration, and damage after each use of the
+instrument. (Not all instruments have a wiper or
+wiper-brush mechanism.)
+• Check wiper pads for wear, excessive discoloration,
+and particle accumulation, and change the pads
+as needed. Check that the wiper arm is parking
+properly. Follow the manufacturer’s guidance for
+conditions requiring changing the pads and for wiper
+maintenance.
+• Warm soapy water and a soft toothbrush can be used
+to clean wiper-brush bristles. Rinse with DIW.
+• Replace or recondition the wiper brush when it
+shows excessive splaying.
+General storage recommendations for multiparameter
+instruments and instrument cases:
+• For short-term storage, some sensors need a small
+amount of the storage solution added to the protec-
+tive (transport) cap or calibration cup; check the
+manufacturer’s instructions.
+
+---
+
+### tm9a6.8.pdf (chunk tm9a6.8.pdf__0017, score 0.6956165164110009)
+
+n be used
+to clean wiper-brush bristles. Rinse with DIW.
+• Replace or recondition the wiper brush when it
+shows excessive splaying.
+General storage recommendations for multiparameter
+instruments and instrument cases:
+• For short-term storage, some sensors need a small
+amount of the storage solution added to the protec-
+tive (transport) cap or calibration cup; check the
+manufacturer’s instructions.-- 13 of 24 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0059, score 0.6662766156610483)
+
+ 4.9, Panel #3). Then place
+each cleaned rock outside of the sampling area. After sampling is completed, rocks can be returned to the stretch of
+stream they came from.
+1.
+The member of the team designated as the "kicker" should thoroughly stir up the sampling area with their feet, starting
+at the upstream edge of the 3-foot by 3-foot sampling area and working downstream, moving toward the net. Alldislodged organisms will be carried by the stream flow into the net (see Fig. 4.9, Panel #4). Be sure to disturb the first
+2.
+
+---
+
+### IORP_probe.pdf (chunk IORP_probe.pdf__0002, score 0.6650112432519982)
+
+
+Long term storage
+When you are finished using the Industrial ORP probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has ORP probe storage
+solution within it. If not, just add some from the ORP probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 11 --Probe cleaning
+Coating of the platinum tip can lead to erroneous readings including shortened span
+(slope). The type of coating will determine the cleaning technique. Soft coatings can
+be removed by vigorous stirring or by the use of a squirt bottle. Organic chemical, or
+hard coatings, should be chemically removed. A light bleach solution or even a 5 – 10%
+hydrochloric acid (HCl) soak for a few minutes, often removes many coatings. Do not use
+abrasive materials on the ORP probe.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 11 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 11 --
+
+
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0084, score 0.6620334978942064)
+
+sms from all three sites into the same bucket is called compositing.
+Hint: If your bucket is nearly full of water after you have washed the net clean, let the
+debris and organisms settle to the bottom of the bucket. Then cup the net over the bucket
+and pour the water through the net into a second bucke t. Inspect the water in the second
+bucket to be sure no organisms came through.
+
+-- 82 of 227 --TASK 6 Preserve the sample
+After collecting and compositing all three samples, it is time to preserve the
+sample. All team members should leave the stream and return to a relatively flat
+section of stream bank with all their equipment. The next step will be to remove
+large pieces of debris (leaves, twigs, and rocks) from the sample. Carefully remove
+the debris one piece at a time. While holding the material over the bucket, use the
+forceps, spray bottle, and your hands to pick, rub, and rinse the leaves, twigs, and
+rocks to remove any attached organisms. Use your magnifying lens and forceps to
+find and remove small organisms clinging to the debris. When you are satisfied
+that the material is clean, discard it back into the stream.
+1.
+You will need to drain off the water before transferring material to the jar. This
+process will require two team members. Place the kick net over the second bucket,
+which has not yet been used and should be completely empty. One team member
+should push the center of the net into bucket #2, creating a small indentation or
+depression. Then, hold the sides of the net closely over the mouth of the bucket.
+The second person can now carefully pour the remaining contents of bucket #1
+onto a small area of the net to drain the water and concentrate the organisms. Use
+care when pouring so that organisms are not lost over the side of the net (Fig.
+4.16).
+Figure 4.16
+Use your spray bottle,
+forceps, sugar scoop, and
+gloved hands to remove
+all the material from
+bucket #1 onto the net.
+When you are satisfied
+that bucket #1 is empty,
+use your hands and the
+sugar scoop to transfer all
+the material from the net
+into the emp ty jar.
+Bucket #2 captured the
+water and any organisms
+that might have fallen
+through the netting during
+pouring. As a final check,
+repeat the process above,
+but this time, pour bucket
+#2 over the net, into
+bucket #1. Transfer any
+organisms on the net into
+the ja r.
+2.
+
+-- 83 of 227 --

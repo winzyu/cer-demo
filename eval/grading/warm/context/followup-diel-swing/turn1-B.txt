@@ -1,0 +1,177 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0125, score 0.6329316173715092)
+
+
+behind the dam, immediately below the spillway, and
+upstream of the dam. Since DO levels are critical to fish,
+a good place to sample is in the pools that fish tend to
+favor or in the spawning areas they use.
+An hourly time profile of DO levels at a sampling site is
+a valuable set of data because it shows the change in DO
+levels from the low point just before sunrise to the high
+
+-- 139 of 227 --16 	9.85 	39 	6.51
+17 	9.65 	40 	6.41
+18 	9.45 	41 	6.41
+19 	9.26 	42 	6.22
+20 	9.07 	43 	6.13
+21 	8.90 	44 	6.04
+22 	8.72 	45 	5.95
+point sometime in the midday. However, this might not
+be practical for a volunteer monitoring program. It is
+important to note the time of your DO sampling to help
+judge when in the daily cycle the data were collected.
+DO is measured either in milligrams per liter (mg/L) or
+"percent saturation." Milligrams per liter is the amount of
+oxygen in a liter of water. Percent saturation is the
+amount of oxygen in a liter of water relative to the total
+amount of oxygen that the water can hold at that temperature.
+DO samples are collected using a special BOD bottle: a glass bottle with a "turtleneck" and a ground glass
+stopper. You can fill the bottle directly in the stream if the stream is wadable or boatable, or you can use a
+sampler that is dropped from a bridge or boat into water deep enough to submerse the sampler. Samplers can be
+made or purchased. Dissolved oxygen is measured primarily either by using some variation of the Winkler
+method or by using a meter and probe. Winkler Method The Winkler method involves filling a sample bottle
+completely with water (no air is left to bias the test). The dissolved oxygen is then "fixed" using a series of
+reagents that form an acid compound that is titrated. Titration involves the drop-by-drop addition of a reagent that
+neutralizes the acid compound and causes a change in the color of the solution. The point at which the color
+changes is the "endpoint" and is equivalent to the amount of oxygen dissolved in the sample. The sample is
+usually fixed and titrated in the field at the sample site. It is possible, however, to prepare the sample in the field
+and deliver it to a lab for titration.
+Dissolved oxygen field kits using the Winkler method are relatively inexpensive, especially compared to a meter
+and probe. Field kits run between $35 and $200, and each kit comes with enough reagents to run 50 to 100 DO
+tests. Replacement reagents are inexpensive, and you can buy them already measured out for each test in plastic
+pillows.
+You can also buy the reagents in larger quantities, in bottles, and measure them out with a volumetric scoop. The
+advantage of the pillows is that they have a longer shelf life and are much less prone to contamination or spillage.
+The advantage of buying larger quantities in bottles is that the cost per test is considerably less.
+The major factor in the expense of the kits is the method of titration they use eyedropper, syringe-type titrator, or
+digital titrator. Eyedropper and syringe-type titration is less precise than digital titration because a larger drop of
+titrant is allowed to pass through the dropper opening and, on a micro-scale, the drop size (and thus the volume of
+titrant) can vary from drop to drop. A digital titrator or a buret (which is a long glass tube with a tapered tip like a
+pipet) permits much more precision and uniformity in the amount of titrant that is allowed to pass.
+If your program requires a high degree of accuracy and precision in DO results, use a digital titrator. A kit that
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0028, score 0.6247195785624753)
+
+m that generates tables of DO solubility values and
+(or) salinity correction factors over a range of user-specified
+temperature, atmospheric pressure, and salinity or specific
+conductance (https://water.usgs.gov/software/DOTABLES/).
+2.3.1 Surface Water
+Standard determinations of DO in riverine surface water
+represent the cross-sectional median or mean DO concentra-
+tion at the time of observation.Multiparameter instruments (sondes) are in common use
+by the USGS for measurement of DO and other field param-
+eters, both for in situ discrete measurements in surface water
+and for short- or long-term deployment in streams, lakes and
+reservoirs, and other surface-water bodies. Refer to NFM
+6.8, Wagner and others (2006), and manufacturer guidance
+for additional information regarding the siting and use of
+multiparameter instruments.
+Measuring the DO concentration at one distinct point in
+a cross section is valid only for flowing water with a cross-
+sectional DO variation less than 0.5 mg/L. Discerning such
+variation requires a reconnaissance cross-section measure-
+ment. Measurements made at multiple locations in the cross
+section are recommended when possible. Determining DO
+concentration for a single channel at the centroid of flow at the
+midpoint of the vertical represents the cross section only under
+ideal mixing conditions.
+Do not measure DO in or directly below sections with
+turbulent flow, in still water, or from the bank unless these
+conditions represent most of the stream reach or are required
+to fulfill project objectives.
+Verify whether or not the instrument in use applies salin-
+ity corrections automatically. If not, apply a salinity correction
+to the saturation values after making the DO measurement,
+referring to section 5.0 and table 6.2–4 (at end of chapter).
+If the anticipated DO concentration is less than 1.0 mg/L,
+use of spectrophotometric methods (section 3.0) is required
+to develop an instrument-specific rating before measure-
+ments made with a field instrument can be reported. Optical
+DO instrument readings are required to be verified through
+the development of an instrument-specific comparison with
+spectrophotometric methods. The instrument-specific rating
+should consist of at least five measurements made as nearly
+simultaneously as possible with the optical instrument and
+the spectrophotometric method. When compared, the median
+of these measurements should agree within 0.03 mg/L. If the
+measurements do not agree within 0.03 mg/L, the optical
+instrument should be checked and, if necessary, calibrated to
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0020, score 0.6213396918607397)
+
+hotometric method for
+DO measurement described in section 3.0 has been used to
+check the calibration of these instruments. USGS field scien-
+tists have corroborated the accuracy of the optical sensor to
+0.03 mg/L DO by using repeated comparisons of results with
+the Rhodazine D spectrophotometric method described in
+2Rhodazine D is a proprietary product of CHEMetrics, Inc. (White and
+others, 1990).-- 15 of 44 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0016, score 0.6085485097357128)
+
+ result of a DO instrument performance check
+should be within +/- 0.2 mg/L of the 100-percent
+saturated concentration determined from the DO
+solubility tables found at https://water.usgs.gov/
+software/DOTABLES or, if checking at the zero
+point, the sensor should read within 0.2 mg/L of zero.
+Project objectives may dictate a deviation of less than
+0.2 mg/L from the calculated 100-percent saturationvalue or zero. Recalibration and additional trouble-
+shooting are warranted if instruments fail the DO
+performance checks.
+Do not use an instrument that fails to calibrate properly
+or fails performance checks.
+2.2.1 Correction for Atmospheric Pressure and
+Salinity
+DO calibration procedures include corrections for
+atmospheric pressure and ionic strength. (Ionic strength is
+estimated from the conductivity measurement for routine field
+applications.) Atmospheric pressure, the temperature of the
+water or water vapor, and the ionic strength of the water must
+be known to determine the theoretical amount of oxygen that
+will be dissolved in water.
+Record all calibration information in instrument log
+books and copy calibration data onto field forms at the time of
+calibration.
+TECHNICAL NOTE 2.
+DO sensors do not directly measure oxygen in milligrams
+per liter or parts per million. Expressed concentrations are
+based on calculations that relate instrument sensor data with
+the temperature and ionic strength of the sample water. The
+sensor signal is proportional to the ambient partial pressure of
+oxygen, which can be displayed either as percent saturation or
+in milligrams per liter, depending on user specification.
+Ambient atmospheric pressure is true atmospheric
+pressure at the measurement site, not the pressure that has
+been adjusted to sea level. Atmospheric pressure (also known
+as barometric pressure) reported by the National Weather
+Service (NWS) generally is not the absolute (ambient) value.
+NWS atmospheric pressure readings typically are adjusted to
+sea level for comparison among weather stations and must be
+adjusted back to the altitude of the weather station in order to
+obtain ambient barometric pressure values. Previous versions
+of this chapter described a procedure for correcting NWS
+barometric pressure readings for use during DO calibrations.
+With the advent of inexpensive, National Institute of Standards
+and Technology- (NIST) traceable barometers, correction of a
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0038, score 0.6076970060986503)
+
+-concentration data for groundwa-
+ter at a time when sensor methods were not capable of in
+situ measurement.
+As mentioned previously, USGS technical staff have doc-
+umented optical sensor measurements at DO concentrations
+of 0.03 mg/L and spectrophotometric readings by using either
+Rhodazine D or Indigo Carmine to be of comparable accuracy.
+Data are shown in appendix 1. Comparisons between optical-- 21 of 44 --

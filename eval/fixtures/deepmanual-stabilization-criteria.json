@@ -1,0 +1,48 @@
+{
+  "id": "deepmanual-stabilization-criteria",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "tm9a6.8.pdf"
+  ],
+  "requires": [],
+  "notes": "A numeric table deep in TM 9-A6.8, outside the slice. Table-shaped material is also what the alpha-ratio filter deviation exists to protect, so this fixture doubles as a check that the filter change did its job for the chunked arms.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "What stabilization criteria should we hold a sonde reading to before recording it?",
+      "rubric": {
+        "must_contain": [
+          "temperature ±0.2 °C",
+          "DO ±0.2 mg/L",
+          "pH ±0.1 pH units",
+          "specific conductance ±5 µS/cm at or below 100 µS/cm, or ±3% above 100 µS/cm",
+          "turbidity ±0.5 turbidity units or 5% of the reading, whichever is greater, at or below 100 units"
+        ],
+        "must_not": [
+          "invents numeric criteria",
+          "quotes probe accuracy specs from the Atlas datasheets in their place"
+        ],
+        "cite": [
+          "tm9a6.8.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "How long do we wait at each new depth?",
+      "rubric": {
+        "must_contain": [
+          "states a minimum of 60 seconds for the sensors and sonde body to reach thermal equilibrium",
+          "notes some instruments need longer and the manufacturer's guidance governs"
+        ],
+        "must_not": [
+          "invents a wait time"
+        ],
+        "cite": [
+          "tm9a6.8.pdf"
+        ]
+      }
+    }
+  ]
+}

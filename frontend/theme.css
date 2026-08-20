@@ -1,0 +1,207 @@
+/*
+ * Design tokens — the whole palette, in one place, twice.
+ *
+ * Direction A (light) and Direction B (dark) from the design canvas are the SAME layout
+ * with a swapped token set, so every component below styles itself from these variables
+ * and never hardcodes a colour. Adding a component means using tokens, not picking hexes:
+ * a literal colour in a component rule is a bug, because it will not invert.
+ *
+ * Colours are lifted from the real dashboard (../user-dashboard), not sampled from a
+ * screenshot: #12182b field and Work Sans/Poppins from src/app/globals.css, #2D77A6
+ * message bubble and #a89748 / #f5cd19 from the components. Do not invent new brand hues.
+ *
+ * Resolution order: OS preference by default, an explicit choice wins and persists.
+ * js/theme.js stamps data-theme on <html>; the media query only applies when it has not.
+ */
+
+:root {
+  /* ---- type ---- */
+  --font-body: "Work Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-head: "Poppins", "Work Sans", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --fs-xs: 11.5px;
+  --fs-sm: 12.5px;
+  --fs-md: 13.5px;
+  --fs-base: 15px;
+  --fs-lg: 17px;
+  --lh-body: 1.6;
+
+  /* ---- spacing: a 4px scale, so nothing lands on an arbitrary value ---- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 26px;
+  --sp-7: 32px;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  /* Column width. Relative, not a fixed pixel cap: tables, charts and six-metric reads
+     were cramped at 74ch. Grows to half the viewport, with a floor so it stays readable on
+     a small laptop and a ceiling so prose does not run to 200 characters on an ultrawide.
+     Under 900px the media query in app.css overrides this to 100%. */
+  --measure: clamp(32rem, 50vw, 66rem);
+
+  /* ---- light palette (Direction A) ---- */
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #f7f8fa;
+  --surface-3: #f1f3f7;
+
+  --text: #1b2233;
+  --text-2: #4a5468;
+  --text-3: #8a93a6;
+
+  --border: #e3e7ee;
+  --border-strong: #d8dde6;
+
+  --accent: #a89748;
+  --accent-hover: #96863f;
+  --accent-text: #ffffff;
+
+  --nav-bg: #12182b;
+  --nav-text: #aab3c5;
+
+  --bubble-user-bg: #2d77a6;
+  --bubble-user-text: #ffffff;
+
+  /* tool-call chip */
+  --tool-bg: #eef4f8;
+  --tool-border: #d5e3ec;
+  --tool-text: #2b5a76;
+  --tool-icon: #2d77a6;
+
+  /* caveat / stale / warning */
+  --warn-bg: #fdf6e3;
+  --warn-border: #ecdcae;
+  --warn-text: #7a6320;
+  --warn-icon: #b28c1e;
+
+  /* error */
+  --err-bg: #fdeeec;
+  --err-border: #f2c4bd;
+  --err-text: #8f2c1f;
+  --err-icon: #c0392b;
+
+  /* healthy / reporting */
+  --ok-bg: #edf7ee;
+  --ok-text: #2f6b3a;
+  --ok-dot: #43a047;
+
+  --chart-line: #2d77a6;
+  --chart-fill: rgba(45, 119, 166, 0.10);
+  --chart-grid: #e8ebf1;
+  --chart-last: #a89748;
+
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+/* ---- dark palette (Direction B) ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12182b;
+    --surface: #182034;
+    --surface-2: #0f1425;
+    --surface-3: #1b2340;
+
+    --text: #e6eaf2;
+    --text-2: #b9c1d3;
+    --text-3: #7d879f;
+
+    --border: #24304f;
+    --border-strong: #2a3350;
+
+    --accent: #f5cd19;
+    --accent-hover: #ffd93a;
+    --accent-text: #12182b;
+
+    --nav-bg: #0d1220;
+    --nav-text: #8892a8;
+
+    --bubble-user-bg: #2d77a6;
+    --bubble-user-text: #ffffff;
+
+    --tool-bg: #16203a;
+    --tool-border: #24304f;
+    --tool-text: #9fc0d8;
+    --tool-icon: #5aa4d0;
+
+    --warn-bg: #3a2a12;
+    --warn-border: #6b4f1c;
+    --warn-text: #f0c869;
+    --warn-icon: #e0a92b;
+
+    --err-bg: #3a1a17;
+    --err-border: #6e2f26;
+    --err-text: #f2a99e;
+    --err-icon: #e0685a;
+
+    --ok-bg: #16301c;
+    --ok-text: #8fd39b;
+    --ok-dot: #43a047;
+
+    --chart-line: #5aa4d0;
+    --chart-fill: rgba(90, 164, 208, 0.12);
+    --chart-grid: #242e48;
+    --chart-last: #f5cd19;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.30);
+  }
+}
+
+/* Explicit choice beats the OS in both directions. Duplicated rather than shared with the
+   media query on purpose: a token defined ONLY inside a media block has no value when the
+   toggle forces the other way. */
+:root[data-theme="dark"] {
+  --bg: #12182b;
+  --surface: #182034;
+  --surface-2: #0f1425;
+  --surface-3: #1b2340;
+
+  --text: #e6eaf2;
+  --text-2: #b9c1d3;
+  --text-3: #7d879f;
+
+  --border: #24304f;
+  --border-strong: #2a3350;
+
+  --accent: #f5cd19;
+  --accent-hover: #ffd93a;
+  --accent-text: #12182b;
+
+  --nav-bg: #0d1220;
+  --nav-text: #8892a8;
+
+  --bubble-user-bg: #2d77a6;
+  --bubble-user-text: #ffffff;
+
+  --tool-bg: #16203a;
+  --tool-border: #24304f;
+  --tool-text: #9fc0d8;
+  --tool-icon: #5aa4d0;
+
+  --warn-bg: #3a2a12;
+  --warn-border: #6b4f1c;
+  --warn-text: #f0c869;
+  --warn-icon: #e0a92b;
+
+  --err-bg: #3a1a17;
+  --err-border: #6e2f26;
+  --err-text: #f2a99e;
+  --err-icon: #e0685a;
+
+  --ok-bg: #16301c;
+  --ok-text: #8fd39b;
+  --ok-dot: #43a047;
+
+  --chart-line: #5aa4d0;
+  --chart-fill: rgba(90, 164, 208, 0.12);
+  --chart-grid: #242e48;
+  --chart-last: #f5cd19;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.30);
+}

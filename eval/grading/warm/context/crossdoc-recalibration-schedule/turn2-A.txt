@@ -1,0 +1,189 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0020, score 0.6070362605031285)
+
+volunteers that lists the tasks they will
+perform in the field and lab, and that identifies the obligations to which they will
+be held and the schedule they will follow. Hand this out at the first training session.
+Volunteers should leave the session knowing what is expected of them. If they
+decide not to join after all because the tasks are too onerous, it is better for you to
+2.
+
+-- 25 of 227 --find out after the first session than later in the sampling year.
+Be prepared. Nothing will discourage volunteers more than an illplanned, chaotic
+initial training session. The elements of a successful initial training session include:
+Enthusiastic, knowledgeable trainers	m
+Short presentations that encourage audience participation and don't strain
+attention spans
+m
+A low ratio of trainers to trainees	m
+Presentations that include why the monitoring is needed, what the program
+hopes to accomplish, and what will be done with the data
+m
+An agenda that is followed (especially start and finish times)	m
+Good acoustics, clear voices, and interesting audiovisual aids	m
+Opportunities for all trainees to handle equipment, view demonstrations of
+sampling protocols, and practice sampling
+m
+Instruction on safety considerations	m
+Refreshments and opportunities for trainees to meet one another, socialize,
+and have fun
+m
+Time for questions and answers.	m
+3.
+Conduct quality control checks. After your initial training session(s), schedule
+opportunities to "check up" on how your volunteers are performing. The purpose
+of these quality control checks is to ensure that all volunteers are monitoring using
+proper and consistent protocols, and to emphasize the importance of quality control
+measures. Some time into the sampling season, observe how volunteers are
+sampling, analyzing their samples, identifying macroinvertebrates, and recording
+their results. Either observe volunteers in small groups at their monitoring sites or
+bring them to a central location for an organized quality control session. If your
+program is involved in chemical monitoring, you might want all volunteers to
+analyze the same water sample using their own equipment, or hold a lab exercise in
+which volunteers read and record results from equipment and kits that have already
+been set up. For a biological monitoring program, have trainers or seasoned
+volunteers observe sampling methods in the field and provide preserved samples of
+macroinvertebrates for volunteers to identify. Reserve time to answer questions,
+talk about initial findings, and have some fun.
+4.
+Review the effectiveness of your training program. At the end of each training
+session, encourage volunteers to fill out a training evaluation form. This form
+should help you assess the effectiveness of individual trainers and their styles, the
+handouts and audiovisual aids, the general atmosphere of the training session, and
+what the volunteers liked most and least about the session. Use the results of the
+evaluation to revise training protocols as needed to best meet program and
+volunteer needs.
+5.
+
+-- 26 of 227 --
+
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 27 of 227 --
+
+---
+
+### tm9a6.8.pdf (chunk tm9a6.8.pdf__0020, score 0.59058112516639)
+
+the expected measurement or deployment
+range of measurements.
+• Check sensor ports to ensure that sensors are prop-
+erly installed or that empty ports are sealed. Sensors
+from which data are not being collected routinely
+can be removed from the sonde for safe storage. The
+temperature sensor should not be removed. All electri-
+cal connections must be clean, dry, waterproof, and
+protected from dust.-- 14 of 24 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0013, score 0.5899159185431372)
+
+eparations
+The service performed on all equipment, whether a full
+calibration, calibration check, or replacement or repair of
+parts for the instrument, and whether performed in the office,
+laboratory, or field, must be accurately recorded and dated in
+the instrument or sensor log book.
+Field-measurement instruments are required to be main-
+tained on a regular schedule and performance tested beforefield use, as described below:
+1. 	Check all electrical connections and the charge on
+the batteries, as applicable for the instrument in
+use. Batteries should be in good condition with as
+high a state of charge as possible. Replace or charge
+questionable batteries.
+2. 	Thermistors/thermometers must be calibrated
+and field checked before use, as described in
+NFM 6.1, Temperature.
+3. 	Perform a 100-percent oxygen-saturation calibration
+check (see section 2.2). This performance check does not
+negate the need for an onsite sensor-calibration check
+at oxygen saturation. The result of the check should be
+within +/- 0.2 mg/L of the 100-percent saturated concen-
+tration determined from the DO solubility tables found at
+https://water.usgs.gov/software/DOTABLES.
+4. 	Perform a zero-DO sensor-performance check.
+• Prepare the zero-DO sodium sulfite
+solution (see table 6.2–1).
+• Before immersing the sensor in the zero-DO solu-
+tion, remove the wiper (or sponge) from the unit to
+avoid saturating it with the sodium sulfite solution.
+(Not all instruments have a wiper.)
+• Immerse the sensor into the zero-DO solution,
+wait for reading to stabilize (usually within
+5–10 minutes), record reading.
+• If the instrument reading exceeds 0.2 mg/L in the
+zero-DO solution, check DO again with a freshly
+prepared zero-DO solution; if a reading greater than
+0.2 mg/L persists, contact the instrument manufac-
+turer and inquire whether the luminophore module
+should be replaced.
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0182, score 0.5897936236591673)
+
+ffer to sample at that site as a backup until uncertainties are resolved, or work
+with the volunteer to verify that proper sampling and analytical protocols are being
+foll owed.
+l
+Are the field data sheets complete?
+If a volunteer is consistently leaving a section of the sheet incomplete, follow up
+and ask why. Instructions may not always be easily understood. All sheets should
+l
+
+-- 202 of 227 --include site location and identification, name of the volunteer, date, time, an d
+weather conditions.
+Are all measurements reported in the correct units?
+You should minimize the chance for error by including on the data form itself any
+equations needed to convert measurements, and specify on the form what units
+should be used. Check the math. All field data sheets should be kept on file in the
+event that f indings are brought into question at a later date.
+l
+Review Information in Your Database
+Once volunteer data enters a computerized database, it can take on a life of its own. It is a
+phenomenon of human nature that data suddenly seem more believable once
+computerized. Therefore, be sure to carefully screen information as soon as yo u enter it
+into a database. Then review a printout (preferably with a fresh pair of eyes) against the
+original field data sheets. One way to minimize transcription errors is to design the
+computer input screens to look like the field data forms.
+As a further check, you can run some simple calculations like determining medians and
+means to make sure no errors have slipped through. (If the median and the mean are very
+different, an outlier may be skewing the results.) Again, if you uncover unusual data
+points that cannot be explained by backup information on the field data sheets or the
+comment field in the database, flag the data as questionable until it can be verified.
+Review Your Final Results
+Once volunteer monitoring data has been entered into a database, the next step is to
+generate reports on the findings of the data. Even at this stage you should continue to
+look for inconsistencies and problems. For example, you should:
+Review findings against previous years' data.	l
+Look for outliers on graphs and maps.	l
+Not remove data just because you don't like it, but do investigate findings that are
+unusual or can't be explained.
+l
+By the time you present your final results to your volunteers or other data users, you
+should feel fully confident that you have assembled the best possible picture of water
+quality conditions in your study streams.
+Develop a Coding System
+A coding system will help simplify the tracking and recording of data. Make sure,
+however, that the system you create is easily understood and simple to use. Codes
+developed for sample sites, parameters, and other information on field and lab sheets
+shoul d parallel the codes you use in your database. If you will be sharing your
+information with a state or local natural resource agency, you may want your coding
+
+-- 203 of 227 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0026, score 0.5834739081019004)
+
+ place the DO sensor (or
+multiparameter sonde) in the bucket and allow 5 to
+10 minutes for the sensor to come to thermal equi-
+librium with the aerated water. Take care not to place
+the sensor over or in the bubbles from the air stone.
+b. 	For field calibration verification of a DO sensor, use
+the wet-towel method.
+5. 	Read and record the temperature of the calibration water
+to the nearest 0.1 °C.-- 17 of 44 --

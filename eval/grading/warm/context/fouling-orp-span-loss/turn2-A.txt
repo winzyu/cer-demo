@@ -1,0 +1,293 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 279, score 0.01639344262295082)
+
+mber them yourself.
+l
+TASK 3 Collect the sample
+Refer Task 2 in Chapter 5 - Water Quality Conditions for details on collecting a sample
+using screw-cap bottles or Whirl-pak® bags. Remember to wash your hands thoroughly
+after collecting samples suspected of containing fecal contamination. Also, be careful not
+to touch your eyes, ears, nose, or mouth until you've washed your hands.
+
+-- 192 of 227 --Recommended field quality assurance/quality control procedures include:
+Field Blanks. These should be collected at 10 percent of your sample sites along
+with the regular samples. Sterile water in sterilized containers should be sent out
+with selected samplers. At a predetermined sample site, the sampler fills the usual
+sample container with this sterile water. This is labeled as a regular sample, but
+with a special notation (such as a "B") that indicates it is a field blank. It is then
+analyzed with the regular samples. Lab analysis should result in "0" bacteria counts
+for all blanks. Blanks are used to identify errors or contamination in sample
+collection and analysis.
+l
+Internal Field Duplicates. These should be collected at 10 percent of your sampling
+sites along with the regular samples. A field duplicate is a duplicate stream sample
+collected at the same time and at the same place either by the same sampler or by
+another sampler. This is labeled as a regular sample, but with a special notation
+(such as a "D") that indicates it is a duplicate. It is then analyzed with the regular
+samples. Lab analysis should result in comparable bacteria counts per 100 mL for
+duplicates and regular samples collected at the same site. Duplicates are used to
+estimate sampling and laboratory analysis precision.
+l
+External Field Duplicates. An external field duplicate is a duplicate stream sample
+collected and processed by an independent (e.g., professional) sampler or team at
+the same place at the same time as regular stream samples. It is used to estimate
+sampling and laboratory analysis precision.
+l
+TASK 4 Return the field data sheets and the samples to
+the lab or drop-off point
+Samples for bacteria must be analyzed within 6 hours of collection. Keep the samples on
+ice and take them to the lab or drop-off point as soon as possible.
+TASK 5 Analyze the samples in the lab
+This manual does not address laboratory analysis of water samples. Lab methods are
+described in the references below (APHA, 1992; River Watch Network, 1991; USEPA,
+1985). However, the lab you work with should carry out the following recommended
+laboratory quality assurance/quality control procedures:
+Negative Plates result when the buffered rinse water (the water used to rinse down
+the sides of the filter funnel during filtration) has been filtered the same way as a
+sample. This is different from a field blank in that it contains reagents used in the
+rinse water. There should be no bacteria growth on the filter after incubation. It is
+used to detect laboratory bacteria contamination of the sample.
+l
+Positive Plates result when water known to contain bacteria (such as wastewater
+treatment plant influent) is filtered the same way as a sample. There should be
+plenty of bacteria growth on the filter after incubation. Positive plates are used to
+detect procedural errors or the presence of contaminants in the laboratory analysis
+l
+
+-- 193 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 255, score 0.01639344262295082)
+
+x gloves.
+TASK 2 Prepare before leaving for the sample site
+Refer to section 2.3 - Safety Considerations for details on confirming sampling date and time, safety
+considerations, checking supplies, and checking weather and directions. In addition to sample containers and the
+standard sampling apparel, you will need the following equipment and supplies for total reactive phosphorus
+
+-- 164 of 227 --analysis:
+Color comparator or field spectrophotometer with sample tubes for reading the absorbance of the sample	l
+Prepackaged reagents (combined reagents) to turn the water blue	l
+Deionized or distilled water to rinse the sample tubes between uses	l
+Wash bottle to hold rinse water	l
+Mixing container with a mark at the recommended sample volume (usually 25 mL) to hold and mix the
+sample
+l
+Clean, lint-free wipes to clean and dry the sample tubes	l
+Note that prepackaged reagents are recommended for ease and safety.
+TASK 3 Collect the sample
+Refer to Task 2 in the Introduction to Chapter 5 for details on how to collect water samples using screw-cap
+bottles or Whirl-pak® bags.
+TASK 4 Analyze the sample in the field (for total orthophosphate only)
+using the ascorbic acid method.
+If using an electronic spectrophotometer or colorimeter:
+"Zero" the meter (if you are using one) using a reagent blank (distilled water plus the reagent powder) and
+following the manufacturer's directions.
+1.
+Pour the recommended sample volume (usually 25 mL) into a mixing container and add reagent powder
+pillows. Swirl to mix. Wait the recommended time (usually at least 10 minutes) before proceeding.
+2.
+Pour the first field sample into the sample cell test tube. Wipe the tube with a lint-free cloth to be sure it is
+clean and free of smudges or water droplets. Insert the tube into the sample cell.
+3.
+Record the bottle number on the field data sheet.	4.
+Place the cover over the sample cell. Read the absorbance or concentration of this sample and record it on
+the field data sheet.
+5.
+Pour the sample back into its flask.	6.
+Rinse the sample cell test tube and mixing container three times with distilled, deionized water. Avoid
+touching the lower portion of the sample cell test tube. Wipe with a clean, lint-free wipe. Be sure that the
+lower part of the sample cell test tube is clean and free of smudges or water droplets.
+7.
+Be sure to use the same sample cell test tube for each sample. If the test tube breaks, use a new one and repeat
+step 1 to "zero" the meter.
+If using a color comparator:
+Follow the manufacturer's directions. Be sure to pay attention to the direction of your light source when
+reading the color development. The light source should be in the same position relative to the color
+comparator for each sample. Otherwise, this is a source of significant error. As a quality check, have
+someone else read the comparator after you.
+1.
+Record the concentration on the field data sheet.	2.
+TASK 5 Return the samples (for lab analysis for other tests) and the field
+data sheets to the lab/drop-off point.
+Samples for different types of phosphorus must be analyzed within a certain time period. For some types of
+phosphorus, this is a matter of hours; for others, samples can be preserved and held for longer periods. Samples
+being tested for orthophosphate must be analyzed within 48 hours of collection. In any case, keep the samples on
+ice and take them to the lab or drop-off point as soon as possible.
+
+-- 165 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 212, score 0.016129032258064516)
+
+onductivity, total alkalinity, and fecal bacteria. Of these, the first five are the most basic and
+should form the foundation of almost any volunteer water quality monitoring program.
+Relatively inexpensive and simple-to-use kits are available from scientific supply houses to monitor these
+pollutants. Many volunteer programs use these kits effectively. Meters and sophisticated lab equipment may bemore accurate, but they are also more expensive, less flexible (e.g., meters generally have to be read in the field),
+and require periodic calibration. This chapter discusses specific equipment and sampling considerations for each
+
+---
+
+### tm9a6.8.pdf (chunk 82, score 0.016129032258064516)
+
+-- 12 of 24 --2.0 Equipment and Supplies 	5
+2.2 Instrument Maintenance and Storage
+Each instrument requires a dedicated logbook that
+accompanies the instrument.
+• A separate logbook in which instrument repair, mainte-
+nance, and calibration history information is recorded
+is required to be maintained for each field instrument
+or replaceable sensor that stores calibration information
+within the sensor’s internal processor. The logbook
+should travel with the instrument or be accessible
+through electronic means. The pages of a paper instru-
+ment logbook should be prenumbered consecutively.
+Do not skip or tear out pages. Water-resistant paper
+is recommended. Paper logbooks are available to
+USGS personnel through One-Stop shopping (item
+Q609FLD).
+• USGS personnel are encouraged to use electronic
+rather than paper field notes to increase efficiency and
+minimize transcription errors. Office of Water Quality
+Technical Memorandum 2016.09 recommends that all
+water-quality records, including logbooks, be collected
+electronically wherever feasible and specifies require-
+ments for electronic records.
+• Use a blue or black indelible ballpoint pen to write
+on paper forms and in logbooks. Use of a pencil is
+not acceptable; felt-tipped pens (for example, Sharpie
+markers) should not be used, and could compromise
+the quality of data for samples collected for analysis of
+volatile organic compounds.
+The following recommendations pertain to maintenance
+of the multiparameter instrument that is used over discrete or
+short (attended) time intervals. For maintenance of instruments
+intended for long-term or unattended instrument deployment,
+refer to Wagner and others (2006) and the instructions pro-
+vided by the manufacturer.
+General care of multiparameter instruments:
+• Do not leave instruments in vehicles during extremes
+in temperature. It is good practice to transport and
+store them in an insulated case or cooler.
+• Routinely inspect cables for damage, and electronic
+connectors and sensor ports for corrosion.
+• Inspect and clean the cable connection and sensor
+O-rings annually, at a minimum. Lubricate them
+lightly with silicone grease or Krytox. Replace any
+that are damaged.
+• Store cables in a plastic container only after they are
+clean, dry, and neatly coiled (no tighter than 6-in-
+diameter coils). Use protective plugs when cable
+connectors are not in use. When they are in use,
+protect cables from abrasion or unnecessary tension.
+• Make sure the instrument is running on software and
+firmware that is up to date. Check for updates from
+the manufacturer every 6 months at a minimum and
+follow the manufacturer’s installation instructions.
+Sensor and sonde care and maintenance:
+• Rinse the sensors immediately after each use with
+deionized water (DIW).
+• If the body of the multiparameter instrument (hand-
+held display and sensors-containing sonde only, not
+the sensors) is particularly dirty or will be stored,
+clean it with a mild, nonphosphate detergent solution
+by using a small, nonabrasive brush or cotton swab
+or cloth, and follow with a thorough water rinse.
+• Avoid using organic solvents or other corrosive solu-
+tions to clean the sensors unless indicated in guid-
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 280, score 0.015873015873015872)
+
+tion.
+Turbidity
+Meter 	Either
+If lab, measured
+ASAP within 24
+hours of
+collection.
+Total Orthophosphate
+Ascorbic Acid w/ color
+comparator Either
+If lab, measured
+within 48 hours
+of collection.
+Ascorbic acid w/
+spectophotometer Either
+If lab, measured
+within 48 hours
+of collection.
+Nitrate
+Cadmium reduction w/
+color comparator Either
+If lab, measured
+within 48 hours
+of collection.
+
+-- 198 of 227 --Cadmium reduction w/
+spectrophotometer Either
+If lab, measured
+within 48 hours
+of collection.
+Total Solids
+Oven drying/weighing 	Lab
+Must be
+measured within
+7 days of
+collection.
+Conductivity
+Meter 	Either
+If lab, measured
+ASAP within 28
+days of
+collection.
+Total Alkalinity
+Titration 	Either
+If lab, measured
+within 24 hours
+of collection.
+Fecal Bacteria
+Membrane filtration 	Lab
+Must be
+measured within
+6 hours of
+collection.
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 199 of 227 --
+
+Chapter 6
+Managing and Presenting Monitoring Data
+6.1 - Managing Volunteer Data
+6.2 - Presenting the Data
+6.3 - Producing Reports
+It is hard to overemphasize the importance of having established methods of handling
+volunteer data, analyzing that data, and presenting results effectively to volunteers, the
+public, and water resource decision-makers. Without these tools and processes, the data
+that volunteers and program managers have labored hard to collect are virtually useless,
+and the program will surely fail to meet its goals.
+This chapter addresses data management and data presentation. Members of the program
+planning committee will need to make many decisions on these issues before the first
+field data sheet is filled out by the program's first volunteer. In particular, they should
+consult any potential data users such as state water quality agencies or county planning
+boards regarding their own data needs. Data users will be particularly concerned about:
+Procedures used to verify and check the raw volunteer data.	l
+Databases and software used to manage the data.	l
+Analytical procedures used to convert the raw data into findings and conclusions.	l
+Reporting formats.	l
+Data users may, for example, be able to offer concrete suggestions about databases and
+presentation formats that will make the data more accessible to them. To ensure that all
+questions about the validity of the data can be answered, the program planning committee
+should develop and implement a quality assurance/quality control plan designed to
+minimize data collection errors, weed out data that fail to meet the program's standards,
+and effectively analyze and present the results. This plan should identify key personnel
+with responsibilities for data management and data analysis and clearly indicate all the
+steps the program will take to handle the data.
+Unfortunately, volunteers and program coordinators seldom recognize the importance of
+this aspect of a volunteer monitoring program. It tends to be considered "drudge" work
+
+-- 200 of 227 --

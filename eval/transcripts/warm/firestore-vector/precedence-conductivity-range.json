@@ -1,0 +1,121 @@
+{
+  "fixtureId": "precedence-conductivity-range",
+  "fixtureClass": "precedence",
+  "arm": "firestore-vector",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-08-11T23:32:23.664Z",
+    "gitSha": "3a94f6d8d5c409c382651100fe6f0d10a98440af",
+    "model": "accounts/fireworks/models/gpt-oss-20b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "corpusSource": "firestore",
+    "baseUrl": "http://localhost:8000/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "Our conductivity is 30 µS/cm. Flag it?",
+      "answer": "No.  \nYour sensor’s normal range for conductivity is 0 – 1,500 µS/cm, and 30 µS/cm falls well within that window. (Typical river conductivity is usually 50 – 1,500 µS/cm, so 30 µS/cm is on the low side but still normal for the sensor.)",
+      "context": [
+        {
+          "id": "tm9a6.8.pdf__0023",
+          "text": "riteria\n(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)\nTemperature \t± 0.2 °C\nSpecific electrical conductance (SC) \t± 5 μS/cm for SC ≤100 μS/cm, or ± 3% for SC >100 μS/cm\nDO \t± 0.2 mg/L\npH \t± 0.1 pH units\nTurbidity \t± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or\n10% of the measured value for turbidity >100 TU-- 15 of 24 --",
+          "source": "tm9a6.8.pdf",
+          "score": 0.7349736623683883
+        },
+        {
+          "id": "EC_K_1.0_probe.pdf__0001",
+          "text": "ed as the conductivity cells\nK constant.\nHow often do you need to\nrecalibrate a conductivity probe?\nConductivity probes work by measuring the electrical current of the water between two\ngraphite plates. The plates do not go bad, or change, so recalibration is not necessary. After\nthe first calibration your conductivity probe is good to go.\nV\nV\n0000\n6 \tCopyright © Atlas Scientific LLC\n\n-- 6 of 9 --Extending the probe cable length\nYou can extend the cable to greater than 100 meters with no loss of signal. Atlas Scientific\nhas tested up to 300 meters without a problem, however you run the risk of turning your\nE.C. probe into an antenna, picking up noise along the length of your cable.\nIf you want to extend your cable, we recommend that you use proper isolation, such as\nthe Basic EZO TM Inline Voltage Isolator, or an i2 InterLink. Be sure to calibrate your\nprobe with the extended cable.\nExtending a probe cable can be easily done with our SMA Extension Cables. Simply\nconnect the SMA end of the probe to the Extension cable, and you are all set.\nIf you need to water proof a SMA connection, we highly recommend using a product like\nCoax-Seal to safely cover and prevent any water damage that may occur.\nWater proof\n7 \tCopyright © Atlas Scientific LLC\n\n-- 7 of 9 --\n\nHelpful operating tips\nBe sure to watch out for air bubbles, as they can get caught between the two\ngraphite plates and throw off your results. Lightly tap your conductivity probe to\nknock out any bubbles caught in the probe.\nBubbles\nOver time conductivity probes can become dirty and covered in deposits, which can\nchange the basic electrical properties of the probe and cause inaccurate readings.\nSoft coatings can be removed by lightly brushing around the conducting area.\nProbe cleaning\n8 \tCopyright © Atlas Scientific LLC\n\n-- 8 of 9 --\n\nHard coatings should be chemically removed. We highly recommend you use the\nAtlas Scientific conductivity probe cleaner.\n9 \tCopyright © Atlas Scientific LLC\n\n-- 9 of 9 --\n\n",
+          "source": "EC_K_1.0_probe.pdf",
+          "score": 0.7152119030830911
+        },
+        {
+          "id": "EC_K_1.0_probe.pdf__0000",
+          "text": "Range \t5 − 200,000 μS/cm\n90% in 1s\tResponse time\n3,447 kPa (500 PSI)\tMax pressure\n1 meter\tCable length\nNo\tInternal temperature sensor\n~10 years\tTime before recalibration\nGraphite\nReads \tConductivity\n1 − 110 °C\tTemperature range °C\n352m (1,157 ft)\tMax depth\n+/ – 2%\tAccuracy\nMale SMA / Male BNC\tConnector\n~10 years\tLife expectancy\nConductivity\nGen 3\nProbe K 1.0\n(Optional)\nRevised 10/25\nV 4.2\n\n-- 1 of 9 --\n\nOperating principle\nAn E.C. (electrical conductivity) probe measures the electrical conductivity in a solution.\nIt is commonly used in hydroponics, aquaculture and freshwater systems to monitor the\namount of nutrients, salts or impurities in the water.\nInside the conductivity probe, two electrodes are positioned opposite from each other,\nan AC voltage is applied to the electrodes causing cations to move to the negatively\ncharged electrode, while the anions move to the positively electrode. The more free\nelectrolyte the liquid contains, the higher the electrical conductivity.\nAC voltage\nEpoxy body\nGraphite\nEpoxy body\nGraphite\nEpoxy body\nGlass stem\nPlatinum\nody\ne\nEpoxy body\nGraphite\nThe entire conducting area must be\nsubmerged in order to get accurate\nreadings.\n2 \tCopyright © Atlas Scientific LLC\n\n-- 2 of 9 --\n\n112.7mm\n(4.4”)\n150.3mm\n(5.9”)\n37.6mm\n(1.4”)\n12mm (0.5”)\nCable Length\n1m (3.2’)\n29mm\n(1.1”)\nØ 8mm\nØ 2.6mm\nOptional\nSensing area\n15.5mm\n(0.6”)\n16mm\n(0.6”)\nMeasurements\n3 \tCopyright © Atlas Scientific LLC\n\n-- 3 of 9 --\n\nPVC\nABS \tPolyethylene\nTitanium Nitride\nABS\nGraphite\nTitanium Nitride\nNSF-51 Compliant\nPolyethylene\nNSF-51 Compliant\nABS\nNSF-51 Compliant\nGraphite\nNSF-51 Compliant\nPVC\nNSF-51 Compliant\nNSF/ANSI 51 Compliant\nAtlas Scientific LLC, hereby certifies that,\nConductivity Probe K 1.0\nPart # ENV-40-EC-K1.0\nComplies with NSF/ANSI Standard 51\nFood Safe\n4 \tCopyright © Atlas Scientific LLC\n\n-- 4 of 9 --\n\nSpecifications\n• \tStandard Lab use\n• \tField use\n• \tAquarium\n• \tHydroponics\n• \tFish keeping\n• \tMixed aqueous/organic\n• \tSamples containing Heavy metals\n• \tSoil Samples\n• \tStrong reducing agents\nTypical applications\nThis Conductivity probe can be \tfully\nsubmerged \tin fresh or salt water, up\nto the SMA connector indefinitely.\nMaterials\nPVC\nABS\nPolyethylene\nABS \tGraphite\nTitanium Nitride\nK 1.0\nMax depth\nCable length\nWeight\nSpeed of response\nMeasuring Surface\nDimensions\nSMA connector\nSterilization\nFood safe\n5 μS/cm – 200,000 μS/cm\n352m (1,157 ft)\n1 meter\n43 grams\n90% in 1 second\nGraphite\n12mm x 145.5mm (0.47\" x 5.7\")\nMale\nChemical only\nYes\n5 \tCopyright © Atlas Scientific LLC\n\n-- 5 of 9 --\n\nA conductivity probe is a very simple device. It is just two conductors with a fixed surface\narea at a fixed distance from each other. This distance and surface area is known as the\nconductivity cell. The cells distance and surface area is quantified as the conductivity cells\nK constant.\nHow often do you need to\nrecalibrate a conductivity probe?\nConductivity probes work by measuring the electrical current of the water between two\ngraphite plates. The plates do not go bad, or change, so recalibration is not necessary. After\nthe first calibration your conductivity probe is good to go.\nV\nV\n0000\n6 \tCopyright © Atlas Scientific LLC\n\n-- 6 of 9 --",
+          "source": "EC_K_1.0_probe.pdf",
+          "score": 0.7149869548554597
+        },
+        {
+          "id": "volunteer_stream_monitoring_a_methods_manual.pdf__0168",
+          "text": "rivers in the United States generally ranges from 50 to 1500 μmhos/cm.\nStudies of inland fresh waters indicate that streams supporting good mixed fisheries have\na range between 150 and 500 μhos/cm. Conductivity outside this range could indicate\nthat the water is not suitable for certain species of fish or macroinvertebrates. Industrial\nwaters can range as high as 10,000 μmhos/cm.\n\n-- 179 of 227 --Sampling and equipment Considerations\nConductivity is useful as a general measure of stream water quality. Each stream tends to\nhave a relatively constant range of conductivity that, once established, can be used as a\nbaseline for comparison with regular conductivity measurements. Significant changes in\nconductivity could then be an indicator that a discharge or some other source of pollution\nhas entered a stream.\nConductivity is measured with a probe and a meter. Voltage is applied between two\nelectrodes in a probe immersed in the sample water. The drop in voltage caused by the\nresistance of the water is used to calculate the conductivity per centimeter. The meter\nconverts the probe measurement to micromhos per centimeter and displays the result for\nthe user. NOTE: Some conductivity meters can also be used to test for total dissolved\nsolids and salinity. The total dissolved solids concentration in milligrams per liter (mg/L)\ncan also be calculated by multiplying the conductivity result by a factor between 0.55 and\n0.9, which is empirically determined (see Standard Methods #2510, APHA 1992).\nSuitable conductivity meters cost about $350. Meters in this price range should also\nmeasure temperature and automatically compensate for temperature in the conductivity\nreading. Conductivity can be measured in the field or the lab. In most cases, it is probably\nbetter if the samples are collected in the field and taken to a lab for testing. In this way\nseveral teams of volunteers can collect samples simultaneously. If it is important to test in\nthe field, meters designed for field use can be obtained for around the same cost\nmentioned above.\nIf samples will be collected in the field for later measurement, the sample bottle should\nbe a glass or polyethylene bottle that has been washed in phosphate-free detergent and\nrinsed thoroughly with both tap and distilled water. Factory-prepared Whirl-pak® bags\nmay be used.\nHow to sample\nThe procedures for collecting samples and analyzing conductivity consist of the\nfollowing tasks:\nTASK 1 Prepare the sample containers\nIf factory-sealed, disposable Whirl-pak® bags are used for sampling, no preparation is\nneeded. Reused sample containers (and all glassware used in this procedure) must be\ncleaned before the first run and after each sampling run by following Method A as\ndescribed in MEthod A in Table 1 in Chapter 5 - Water Quality Conditions.\n\n-- 180 of 227 --",
+          "source": "volunteer_stream_monitoring_a_methods_manual.pdf",
+          "score": 0.6966521784251685
+        },
+        {
+          "id": "volunteer_stream_monitoring_a_methods_manual.pdf__0167",
+          "text": "tion. Keep the samples on ice or refrigerated.\nReferences\nAPHA. 1992. Standard methods for the examination of water and wastewater. 18th ed.\nAmerican Public Health Association, Washington, DC.\n< Previous · Table of Contents · Next >\nOffice of Wetlands, Oceans & Watersheds Home\nWatershed Protection Home | Monitoring Water Quality Home\nEPA Home | Office of Water | Search | Comments\n\n-- 178 of 227 --5.9\nConductivity\nWhat is conductivity and why is it important?\nConductivity is a measure of the ability of water to pass an electrical current.\nConductivity in water is affected by the presence of inorganic dissolved solids such as\nchloride, nitrate, sulfate, and phosphate anions (ions that carry a negative charge) or\nsodium, magnesium, calcium, iron, and aluminum cations (ions that carry a positive\ncharge). Organic compounds like oil, phenol, alcohol, and sugar do not conduct electrical\ncurrent very well and therefore have a low conductivity when in water. Conductivity is\nalso affected by temperature: the warmer the water, the higher the conductivity. For this\nreason, conductivity is reported as conductivity at 25 degrees Celsius (25 C).\nConductivity in streams and rivers is affected primarily by the geology of the area\nthrough which the water flows. Streams that run through areas with granite bedrock tend\nto have lower conductivity because granite is composed of more inert materials that do\nnot ionize (dissolve into ionic components) when washed into the water. On the other\nhand, streams that run through areas with clay soils tend to have higher conductivity\nbecause of the presence of materials that ionize when washed into the water. Ground\nwater inflows can have the same effects depending on the bedrock they flow through.\nDischarges to streams can change the conductivity depending on their make-up. A failing\nsewage system would raise the conductivity because of the presence of chloride,\nphosphate, and nitrate; an oil spill would lower the conductivity.\nThe basic unit of measurement of conductivity is the mho or siemens. Conductivity is\nmeasured in micromhos per centimeter (μmhos/cm) or microsiemens per centimeter\n(μs/cm). Distilled water has a conductivity in the range of 0.5 to 3 μmhos/cm. The\nconductivity of rivers in the United States generally ranges from 50 to 1500 μmhos/cm.\nStudies of inland fresh waters indicate that streams supporting good mixed fisheries have\na range between 150 and 500 μhos/cm. Conductivity outside this range could indicate\nthat the water is not suitable for certain species of fish or macroinvertebrates. Industrial\nwaters can range as high as 10,000 μmhos/cm.\n\n-- 179 of 227 --",
+          "source": "volunteer_stream_monitoring_a_methods_manual.pdf",
+          "score": 0.6851639589118939
+        }
+      ],
+      "mode": "firestore-vector",
+      "usage": {
+        "promptTokens": 3423,
+        "completionTokens": 340,
+        "totalTokens": 3763,
+        "cachedPromptTokens": 2159
+      },
+      "timing": {
+        "ttftMs": 2147,
+        "wallMs": 2619
+      }
+    },
+    {
+      "index": 1,
+      "question": "What would push it that low?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The context does not contain any explanation of factors that affect conductivity.",
+      "context": [
+        {
+          "id": "tm9a6.2.pdf__0041",
+          "text": "omium,\nresulting in high-biased DO readings (White and others,\n1990).4\n• The presence of cupric copper and ferric iron at a\nconcentration less than 50 micrograms per liter (μg/L)\nmay cause a bias of less than 1 μg/L; at a concentration\n4See also CHEMetrics, Inc., Simplicity in water analysis, accessed Sep-\ntember 4, 2019, at https://www.chemetrics.com/product-category/test-kits/\noxygen-dissolved/.-- 22 of 44 --",
+          "source": "tm9a6.2.pdf",
+          "score": 0.5887734307832165
+        },
+        {
+          "id": "tm9a6.2.pdf__0044",
+          "text": "teps 7a through 7d.\na. \tCarefully immerse a reagent-containing ampule on\nthe sampling tool that is attached to a wire line.\nb. \tAt the desired depth of sample collection (in a well\nor surface-water body), break the scored tip of the\nampule by using a sharp upward tugging motion on\nthe sampling tool. This action permits sample water\n6A downhole sampling tool is described by White and others (1990).-- 23 of 44 --",
+          "source": "tm9a6.2.pdf",
+          "score": 0.5632309731056098
+        },
+        {
+          "id": "tm9a6.2.pdf__0038",
+          "text": "-concentration data for groundwa-\nter at a time when sensor methods were not capable of in\nsitu measurement.\nAs mentioned previously, USGS technical staff have doc-\numented optical sensor measurements at DO concentrations\nof 0.03 mg/L and spectrophotometric readings by using either\nRhodazine D or Indigo Carmine to be of comparable accuracy.\nData are shown in appendix 1. Comparisons between optical-- 21 of 44 --",
+          "source": "tm9a6.2.pdf",
+          "score": 0.5484661611361682
+        },
+        {
+          "id": "tm9a6.2.pdf__0032",
+          "text": "air when transferred to a measurement or analysis vessel.\nProject data-quality requirements and objectives, site\ncharacteristics, and equipment availability will dictate whether\n(1) measurements will be made in situ (DO measured down-\nhole) or ex situ (DO measured above land surface, the inline-\nflow procedure), and whether (2) optical or spectrophotometric\nmethods will be used for DO measurement.-- 19 of 44 --",
+          "source": "tm9a6.2.pdf",
+          "score": 0.5468796711067246
+        },
+        {
+          "id": "tm9a6.2.pdf__0047",
+          "text": "val directed by the kit manufacturer.\n• If using a spectrophotometer that does not convert\nabsorbance values of DO measurements to units\nof milligrams per liter for the kit being used, use\nregression equations (or the chart provided in the kit)\nto convert the units (see White and others, 1990).\n11. \tQuality control: It is recommended to make multiple\nmeasurements to document the precision and (or)-- 24 of 44 --",
+          "source": "tm9a6.2.pdf",
+          "score": 0.5423488084192465
+        }
+      ],
+      "mode": "firestore-vector",
+      "usage": {
+        "promptTokens": 1299,
+        "completionTokens": 364,
+        "totalTokens": 1663,
+        "cachedPromptTokens": 577
+      },
+      "timing": {
+        "ttftMs": 3108,
+        "wallMs": 3895
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 4722,
+    "cachedPromptTokens": 2736,
+    "completionTokens": 704,
+    "wallMs": 6514
+  }
+}

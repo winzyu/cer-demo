@@ -1,0 +1,106 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0153, score 0.6299166332897163)
+
+ctions).
+A color comparator may be useful for identifying heavily polluted sites with high concentrations (greater than 0.1
+mg/L). However, matching the color of a treated sample to a comparator can be very subjective, especially at low
+concentrations, and can lead to variable results.
+A field spectrophotometer or colorimeter with a 2.5-cm light path and an infrared photocell (set for a wavelengthof 700-880 nm) is recommended for accurate determination of low concentrations (between 0.2 and 0.02 mg/L ).
+Use of a meter requires that you prepare and analyze known standard concentrations ahead of time in order to
+convert the absorbance readings of your stream sample to milligrams per liter, or that your meter reads directly as
+milligrams per liter.
+How to prepare standard concentrations
+Note that this step is best accomplished in the lab before leaving for sampling. Standards are prepared using a
+phosphate standard solution of 3 mg/L as phosphate (PO4). This is equivalent to a concentration of 1 mg/L as
+Phosphorus (P). All references to concentrations and results from this point on in this procedure will be expressed
+as mg/L as P, since this is the convention for reporting results.
+Six standard concentrations will be prepared for every sampling date in the range of expected results. For most
+samples, the following six concentrations should be adequate:
+
+---
+
+### tm9a6.8.pdf (chunk tm9a6.8.pdf__0008, score 0.6278783087278214)
+
+situ are likely more representative than
+measurements made in samples removed from their source.
+Purchase costs for multiparameter instruments are higher than those
+for single-parameter instruments.
+Instruments can store data, either in a display device or to internal
+memory.
+Calibration may require use of a greater volume of standards for
+rinsing than that needed for single-parameter instruments.-- 10 of 24 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0029, score 0.6229799194108441)
+
+metric methods. The instrument-specific rating
+should consist of at least five measurements made as nearly
+simultaneously as possible with the optical instrument and
+the spectrophotometric method. When compared, the median
+of these measurements should agree within 0.03 mg/L. If the
+measurements do not agree within 0.03 mg/L, the optical
+instrument should be checked and, if necessary, calibrated to-- 18 of 44 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0112, score 0.6116612334902763)
+
+onductivity, total alkalinity, and fecal bacteria. Of these, the first five are the most basic and
+should form the foundation of almost any volunteer water quality monitoring program.
+Relatively inexpensive and simple-to-use kits are available from scientific supply houses to monitor these
+pollutants. Many volunteer programs use these kits effectively. Meters and sophisticated lab equipment may bemore accurate, but they are also more expensive, less flexible (e.g., meters generally have to be read in the field),
+and require periodic calibration. This chapter discusses specific equipment and sampling considerations for each
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0187, score 0.6075666672275674)
+
+tering near the
+average than further away. In this i deal situation, a graph
+of the frequency of each measure plotted against its
+magnitude should yield a bell-shaped or normal curve.
+The mean and the standard deviation determine the
+height and breadth of this curve, respectively.
+The mean is simply the sum of all the measurement
+values divided by the number of measurements. This
+
+-- 208 of 227 --Example of a pie chart summarizing water quality ratings	statistic is a measure of location and in a normal curve
+marks the highest point at the center of the bell.
+The standard deviation, on the other hand, describes the variability of the data points around the mean. Very
+similar measurement values will have a small standard deviation while widely scattered data will have a much
+larger standard deviation.
+While both the mean and standard deviation are quite useful in describing stream data, often the actual measures
+do not fit a normal distribution. Other statistics often come into play to describe the data. Some data are skewed
+in one direction or the oth er. Other data may have a flattened bell shape.
+It is important to note that biological information often does not follow normal, bell-shaped distribution. This is
+because biological communities are dynamic, complex, and interdependent systems; many factors influence them,
+and these cannot be statistica lly predicted. For example, bioassessment scores plotted against habitat assessment
+scores will be at their best when habitat quality is at its best. For data that is non-normally distributed, the mean
+and the standard deviation are not appropriate summary statistics.
+For describing non-normally distributed data, it is best to use statistics that can convey the information for a
+variety of conditions and which are not overly influenced by the data points at the extremes of the distribution.
+The median and the interquart ile range are two statistics that are commonly used to describe the central tendency
+and the spread around the median, respectively. These statistics are derived by placing the data points in order of
+value from lowest to highest. The median is simply the value that is in the middle of the data set. The interquartile
+range is the difference between the value at the 75 percent level and the value at the 25 percent level.
+The best method for presenting this type of data is called a box and whisker plot. One simple box and whisker
+plot will graphically display the following information:
+Median	l
+Variability of the data around the median	l
+Skew of the data	l
+Range of the data	l
+Size of the data set	l
+Statistical software packages for computers will easily construct box and whisker plots. You can construct these
+plots by following procedure shown below:
+Order the data from the lowest to the highest.	1.
+Plot the lowest and highest values on the graph as short horizontal lines. These are the extreme values of
+the data set and represent the data range.
+2.
+Determine the 75 percent value and the 25 percent value of the data set. These values define the
+interquartile range and are represented by the location of the top and bottom lines of the box.
+3.
+The horizontal length of the lines that define the top and bottom lines of the box (the box width) can be
+used as a relative indication of the size of the data set. For example, the box width that describes a data set
+of 20 values can be displayed twice as wide as a data set of 10 values. Any proportional scheme can be
+used as long as it is consistently applied.
+4.

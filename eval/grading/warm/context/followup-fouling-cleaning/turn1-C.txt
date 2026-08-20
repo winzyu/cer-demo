@@ -1,0 +1,325 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 210, score 0.03028233151183971)
+
+loss of some
+pollution-intolerant forms. Percent
+contribution of tolerant forms
+increased. Reduction in EPT
+index.
+0-6 	Poor 	Few species present. If high
+denisities of organisms, then
+dominated by one or two
+polution-tolerant taxa.
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 124 of 227 --Chapter 5
+Water Quality Conditions
+5.1 - Stream Flow
+5.2 - Dissolved Oxygen and
+Biochemical Oxygen Demand
+5.3 - Temperature
+5.4 - pH
+5.5 - Turbidity
+5.6 - Phosphorus
+5.7 - Nitrates
+5.8 - Total Solids
+5.9 - Conductivity
+5.10 - Total Alkalinity
+5.11 - Fecal Bacteria
+Quality Assurance, Quality Control, and Quality Assessment Measures
+Water quality monitoring is defined here as the sampling and analysis of water constituents and conditions. These
+may include:
+Introduced pollutants, such as pesticides, metals, and oil	l
+Constituents found naturally in water that can nevertheless be affected by human sources, such as dissolved
+oxygen, bacteria, and nutrients
+l
+The magnitude of their effects can be influenced by properties such as pH and temperature. For example,
+temperature influences the quantity of dissolved oxygen that water is able to contain, and pH affects the toxicity
+of ammonia.
+Volunteers, as well as state and local water quality professionals, have been monitoring water quality conditions
+for many years. In fact, until the past decade or so (when biological monitoring protocols were developed and
+began to take hold), water quality monitoring was generally considered the primary way of identifying water
+pollution problems. Today, professional water quality specialists and volunteer program coordinators alike are
+moving toward approaches that combine chemical, physical, and biological monitoring methods to achieve the
+best picture of water quality conditions.
+Water quality monitoring can be used for many purposes:
+To identify whether waters are meeting designated uses. All states have established specific criteria (limits
+on pollutants) identifying what concentrations of chemical pollutants are allowable in their waters. When
+chemical pollutants exceed maximum or minimum allowable concentrations, waters might no longer be
+able to support the beneficial uses such as fishing, swimming, and drinking for which they have been
+designated. Designated uses and the specific criteria that protect them (along with antidegradation
+statements say waters should not be allowed to deteriorate below existing or anticipated uses) together form
+water quality standards. State water quality professionals assess water quality by comparing the
+concentrations of chemical pollutants found in streams to the criteria in the state's standards, and so judge
+whether streams are meeting their designated uses.
+Water quality monitoring, however, might be inadequate for determining whether aquatic life uses are
+being met in a stream. While some constituents (such as dissolved oxygen and temperature) are important
+to maintaining healthy fish and aquatic insect populations, other factors, such as the physical structure of
+the stream and the condition of the habitat, play an equal or greater role. Biological monitoring methods
+(see Chapter 4) are generally better suited to determining whether aquatic life is supported.
+l
+To identify specific pollutants and sources of pollution. Water quality monitoring helps link sources of
+pollution to a stream quality problem because it identifies specific problem pollutants. Since certain
+l
+
+-- 125 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 264, score 0.029386529386529386)
+
+ve is displayed again.
+m
+2.
+
+-- 174 of 227 --
+
+References
+APHA. 1992. Standard methods for the examination of water and wastewater. 18th ed.
+American Public Health Association, Washington, DC.
+< Previous · Table of Contents · Next >
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 175 of 227 --5.8
+Total Solids
+What are total solids and why are they important?
+Total solids are dissolved solids plus suspended and settleable solids in water. In stream
+water, dissolved solids consist of calcium, chlorides, nitrate, phosphorus, iron, sulfur, and
+other ions particles that will pass through a filter with pores of around 2 microns (0.002
+cm) in size. Suspended solids include silt and clay particles, plankton, algae, fine organic
+debris, and other particulate matter. These are particles that will not pass through a
+2-micron filter.
+The concentration of total dissolved solids affects the water balance in the cells of aquatic
+organisms. An organism placed in water with a very low level of solids, such as distilled
+water, will swell up because water will tend to move into its cells, which have a higher
+concentration of solids. An organism placed in water with a high concentration of solids
+will shrink somewhat because the water in its cells will tend to move out. This will in
+turn affect the organism's ability to maintain the proper cell density, making it difficult to
+keep its position in the water column. It might float up or sink down to a depth to which it
+is not adapted, and it might not survive.
+Higher concentrations of suspended solids can serve as carriers of toxics, which readily
+cling to suspended particles. This is particularly a concern where pesticides are being
+used on irrigated crops. Where solids are high, pesticide concentrations may increase well
+beyond those of the original application as the irrigation water travels down irrigation
+ditches. Higher levels of solids can also clog irrigation devices and might become so high
+that irrigated plant roots will lose water rather than gain it.
+A high concentration of total solids will make drinking water unpalatable and might have
+an adverse effect on people who are not used to drinking such water. Levels of total
+solids that are too high or too low can also reduce the efficiency of wastewater treatment
+plants, as well as the operation of industrial processes that use raw water.
+Total solids also affect water clarity. Higher solids decrease the passage of light through
+water, thereby slowing photosynthesis by aquatic plants. Water will heat up more rapidly
+and hold more heat; this, in turn, might adversely affect aquatic life that has adapted to a
+
+-- 176 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 221, score 0.027783137179239824)
+
+Environmental Protection Agency, Office of Water, Washington, DC.
+Common Quality Control Measures
+..... Dissolved
+Oxygen Temperature pH Turbidity Phosphorus Nitrates Total
+Solids Conductivity Total
+Alkalinity
+Fecal
+Bacteria
+Internal Checks
+Field
+blanks . 	. 	. 	• 	• 	• 	• 	• 	• 	.
+Field
+duplicates • 	• 	• 	• 	• 	• 	• 	• 	• 	•-- 132 of 227 --
+
+Lab
+replicates • 	. 	• 	• 	• 	• 	• 	• 	• 	•b
+Positive
+plates . 	. 	. 	. 	. 	. 	. 	. 	. 	•
+Negative
+plates . 	. 	. 	. 	. 	. 	. 	. 	. 	•
+Spike
+samples . 	• 	. 	. 	• 	• 	. 	. 	• 	•
+Calibration
+blank . 	. 	. 	• 	• 	• 	. 	• 	. 	.
+Calibration
+standard •a 	. 	• 	• 	• 	• 	. 	• 	. 	.
+External Checks
+External
+field
+duplicates
+. 	. 	• 	• 	• 	• 	• 	• 	• 	•
+Split
+samples . 	. 	• 	• 	• 	• 	• 	• 	• 	.
+Outside lab
+analysis • 	. 	. 	• 	• 	• 	• 	• 	• 	•
+Verification 	. 	. 	. 	. 	. 	. 	. 	. 	. 	•
+Knowns 	• 	. 	• 	• 	• 	• 	. 	• 	• 	•
+Unknowns 	• 	. 	• 	• 	• 	• 	. 	• 	• 	•
+a - using an oxygen-saturated sample
+b - using subsamples of different sizes
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 133 of 227 --
+
+5.1
+Stream Flow
+What is stream flow and why is it important?
+Stream flow, or discharge, is the volume of water that moves over a designated point over
+a fixed period of time. It is often expressed as cubic feet per second (ft3/sec).
+The flow of a stream is directly related to the amount of water moving off the watershed
+into the stream channel. It is affected by weather, increasing during rainstorms and
+decreasing during dry periods. It also changes during different seasons of the year,
+decreasing during the summer months when evaporation rates are high and shoreline
+vegetation is actively growing and removing water from the ground. August and
+September are usually the months of lowest flow for most streams and rivers in most of
+the country.
+Water withdrawals for irrigation purposes can seriously deplete water flow, as can
+industrial water withdrawals. Dams used for electric power generation, particularly
+facilities designed to produce power during periods of peak need, often block the flow of
+a stream and later release it in a surge.
+Flow is a function of water volume and velocity. It is important because of its impact on
+water quality and on the living organisms and habitats in the stream. Large, swiftly
+flowing rivers can receive pollution discharges and be little affected, whereas small
+streams have less capacity to dilute and degrade wastes.
+Stream velocity, which increases as the volume of the water in the stream increases,
+determines the kinds of organisms that can live in the stream (some need fast-flowing
+areas; others need quiet pools). It also affects the amount of silt and sediment carried by
+the stream. Sediment introduced to quiet, slow-flowing streams will settle quickly to the
+stream bottom. Fast moving streams will keep sediment suspended longer in the water
+column. Lastly, fast-moving streams generally have higher levels of dissolved oxygen
+than slow streams because they are better aerated.
+This section describes one method for estimating flow in a specific area or reach of a
+stream. It is adapted from techniques used by several volunteer monitoring programs and
+
+-- 134 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 267, score 0.02761904761904762)
+
+tion. Keep the samples on ice or refrigerated.
+References
+APHA. 1992. Standard methods for the examination of water and wastewater. 18th ed.
+American Public Health Association, Washington, DC.
+< Previous · Table of Contents · Next >
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 178 of 227 --5.9
+Conductivity
+What is conductivity and why is it important?
+Conductivity is a measure of the ability of water to pass an electrical current.
+Conductivity in water is affected by the presence of inorganic dissolved solids such as
+chloride, nitrate, sulfate, and phosphate anions (ions that carry a negative charge) or
+sodium, magnesium, calcium, iron, and aluminum cations (ions that carry a positive
+charge). Organic compounds like oil, phenol, alcohol, and sugar do not conduct electrical
+current very well and therefore have a low conductivity when in water. Conductivity is
+also affected by temperature: the warmer the water, the higher the conductivity. For this
+reason, conductivity is reported as conductivity at 25 degrees Celsius (25 C).
+Conductivity in streams and rivers is affected primarily by the geology of the area
+through which the water flows. Streams that run through areas with granite bedrock tend
+to have lower conductivity because granite is composed of more inert materials that do
+not ionize (dissolve into ionic components) when washed into the water. On the other
+hand, streams that run through areas with clay soils tend to have higher conductivity
+because of the presence of materials that ionize when washed into the water. Ground
+water inflows can have the same effects depending on the bedrock they flow through.
+Discharges to streams can change the conductivity depending on their make-up. A failing
+sewage system would raise the conductivity because of the presence of chloride,
+phosphate, and nitrate; an oil spill would lower the conductivity.
+The basic unit of measurement of conductivity is the mho or siemens. Conductivity is
+measured in micromhos per centimeter (μmhos/cm) or microsiemens per centimeter
+(μs/cm). Distilled water has a conductivity in the range of 0.5 to 3 μmhos/cm. The
+conductivity of rivers in the United States generally ranges from 50 to 1500 μmhos/cm.
+Studies of inland fresh waters indicate that streams supporting good mixed fisheries have
+a range between 150 and 500 μhos/cm. Conductivity outside this range could indicate
+that the water is not suitable for certain species of fish or macroinvertebrates. Industrial
+waters can range as high as 10,000 μmhos/cm.
+
+-- 179 of 227 --
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk 305, score 0.01639344262295082)
+
+rature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm
+weather. DO and ORP falling together while EC and turbidity rise is a far more specific signal
+pointing to an organic/sewage source.
+5. Separating Natural Cycles from Pollution Events
+Rule out the water body’s normal rhythms before declaring an event.
+Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,
+bottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.
+A smooth, repeating daily oscillation is biology, not pollution.
+Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity
+often peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is
+mixing, not a discharge.
+Seasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.
+Compare any reading to the same season’s baseline.
+The test for a real event: A pollution event typically appears as a step-change or sustained
+excursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it
+shows up as a correlated shift across multiple parameters consistent with one of the signatures
+above.
+6. Sensor & Data-Quality Caveats
+A trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an
+event.
+Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across
+weeks may be drift, not water chemistry — cross-check against calibration history and class-
+balanced expectations.
+ORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.
+standard hydrogen electrode). Record which reference is used so values are comparable across
+DataPods and over time. Treat ORP trend as more reliable than absolute value.
+EC temperature compensation: Always report specific conductance (25°C-corrected).
+Uncorrected EC will track temperature and produce false signals.
+Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on
+one across the fleet.
+DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the
+antifouling/cleaning schedule.
+
+-- 6 of 7 --
+
+Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long
+deployment is a fouling/maintenance flag first, an environmental signal second.
+Maintain this as a living document. As DataPod deployments build site-specific baselines, append
+local “normal” ranges and any site-specific event signatures observed in the field.
+
+-- 7 of 7 --
+

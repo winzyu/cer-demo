@@ -1,0 +1,147 @@
+{
+  "note": "Label -> arm mapping. DO NOT open before grading is complete and scores.csv is filled in.",
+  "pass": "warm",
+  "generatedAt": "2026-08-13T05:54:36.275Z",
+  "key": {
+    "acronym-ec-specific-conductance": {
+      "A": "pgvector-rag",
+      "B": "firestore-direct",
+      "C": "firestore-vector"
+    },
+    "acronym-kcl-creep": {
+      "A": "firestore-vector",
+      "B": "firestore-direct",
+      "C": "pgvector-rag"
+    },
+    "acronym-ntu-fnu": {
+      "A": "firestore-vector",
+      "B": "pgvector-rag",
+      "C": "firestore-direct"
+    },
+    "crossdoc-do-drift-vs-hypoxia": {
+      "A": "firestore-vector",
+      "B": "pgvector-rag",
+      "C": "firestore-direct"
+    },
+    "crossdoc-orp-reference-offset": {
+      "A": "pgvector-rag",
+      "B": "firestore-direct",
+      "C": "firestore-vector"
+    },
+    "crossdoc-recalibration-schedule": {
+      "A": "firestore-vector",
+      "B": "firestore-direct",
+      "C": "pgvector-rag"
+    },
+    "deepmanual-do-calibration-procedure": {
+      "A": "firestore-direct",
+      "B": "firestore-vector",
+      "C": "pgvector-rag"
+    },
+    "deepmanual-stabilization-criteria": {
+      "A": "pgvector-rag",
+      "B": "firestore-direct",
+      "C": "firestore-vector"
+    },
+    "deepmanual-turbidity-optics": {
+      "A": "pgvector-rag",
+      "B": "firestore-vector",
+      "C": "firestore-direct"
+    },
+    "definitional-conductivity": {
+      "A": "firestore-direct",
+      "B": "firestore-vector",
+      "C": "pgvector-rag"
+    },
+    "definitional-orp": {
+      "A": "pgvector-rag",
+      "B": "firestore-vector",
+      "C": "firestore-direct"
+    },
+    "definitional-temperature-master-variable": {
+      "A": "firestore-direct",
+      "B": "firestore-vector",
+      "C": "pgvector-rag"
+    },
+    "event-sewage-signature": {
+      "A": "pgvector-rag",
+      "B": "firestore-vector",
+      "C": "firestore-direct"
+    },
+    "event-stormwater-vs-intrusion": {
+      "A": "firestore-direct",
+      "B": "firestore-vector",
+      "C": "pgvector-rag"
+    },
+    "followup-diel-swing": {
+      "A": "pgvector-rag",
+      "B": "firestore-vector",
+      "C": "firestore-direct"
+    },
+    "followup-fouling-cleaning": {
+      "A": "firestore-vector",
+      "B": "firestore-direct",
+      "C": "pgvector-rag"
+    },
+    "fouling-do-erratic": {
+      "A": "firestore-direct",
+      "B": "firestore-vector",
+      "C": "pgvector-rag"
+    },
+    "fouling-orp-span-loss": {
+      "A": "pgvector-rag",
+      "B": "firestore-direct",
+      "C": "firestore-vector"
+    },
+    "precedence-conductivity-range": {
+      "A": "firestore-vector",
+      "B": "pgvector-rag",
+      "C": "firestore-direct"
+    },
+    "precedence-ph-range": {
+      "A": "firestore-vector",
+      "B": "firestore-direct",
+      "C": "pgvector-rag"
+    },
+    "probecal-conductivity-interval": {
+      "A": "pgvector-rag",
+      "B": "firestore-direct",
+      "C": "firestore-vector"
+    },
+    "probecal-ph-interval": {
+      "A": "pgvector-rag",
+      "B": "firestore-direct",
+      "C": "firestore-vector"
+    },
+    "refusal-nutrients": {
+      "A": "firestore-vector",
+      "B": "pgvector-rag",
+      "C": "firestore-direct"
+    },
+    "refusal-out-of-domain": {
+      "A": "firestore-vector",
+      "B": "pgvector-rag",
+      "C": "firestore-direct"
+    },
+    "refusal-pathogens": {
+      "A": "pgvector-rag",
+      "B": "firestore-vector",
+      "C": "firestore-direct"
+    },
+    "threshold-do-hypoxia": {
+      "A": "firestore-vector",
+      "B": "firestore-direct",
+      "C": "pgvector-rag"
+    },
+    "threshold-orp-range": {
+      "A": "pgvector-rag",
+      "B": "firestore-vector",
+      "C": "firestore-direct"
+    },
+    "threshold-turbidity-estuary": {
+      "A": "firestore-direct",
+      "B": "firestore-vector",
+      "C": "pgvector-rag"
+    }
+  }
+}

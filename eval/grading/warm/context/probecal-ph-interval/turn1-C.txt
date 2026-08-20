@@ -1,0 +1,418 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0140, score 0.7725799330452771)
+
+ meter or "pocket pal." The pH meter and
+"pocket pal" should be calibrated prior to sample analysis and after every 25 samples according to the instructions
+that come with them.
+If you are using a "pocket pal," use the buffer recommended by the manufacturer. If you are using a laboratory
+grade meter, use two pH standard buffer solutions: 4.01 and 7.0. (Buffers can be purchased from test kit supply-- 152 of 227 --
+
+companies, such as Hach or LaMotte.) Following are notes regarding buffers.
+The buffer solutions should be at room temperature when you calibrate the meter.	l
+Do not use a buffer after its expiration date.	l
+Always cap the buffers during storage to prevent contamination.	l
+Because buffer pH values change with temperature, the meter must have a built-in temperature sensor that
+automatically standardizes the pH when the meter is calibrated.
+l
+Do not reuse buffer solutions!	l
+TASK 3 Collect the sample
+Refer to Task 2 in Chapter 5 - Water Quality Conditions for details on how to collect water samples using
+screw-cap bottles or Whirl-pak® bags.
+TASK 4 Measure pH
+The procedure for measuring pH is the same whether it is conducted in the field or lab.
+If you are using a "pocket pal" or color comparator, follow the manufacturer's instructions. Use the following
+steps to determine the pH of your sample if you are using a meter.
+Rinse the electrode well with deionized water.	1.
+Place the pH meter or electrode into the sample. Depress the dispenser button once to dispense electrolyte.
+Read and record the temperature and pH in the appropriate column on the data sheet. Rinse the electrode
+well with deionized water. 3. Measure the pH of the 4.01 and 7.0 buffers periodically to ensure that the
+meter is not drifting off calibration. If it has drifted, recalibrate it.
+2.
+TASK 4 Return the field data sheets and samples to the lab or drop-off
+point.
+Samples for pH must be analyzed within 2 hours of collection. If the samples cannot be analyzed in the field,
+keep the samples on ice and take them to the lab or drop-off point as soon as possible within the 2-hour limit.
+References
+APHA. 1992. Standard methods for the examination of water and wastewater. 18th ed. American Public Health
+Association, Washington, DC. River Watch Network. 1992. Total alkalinity and pH field and laboratory
+procedures (based on University of Massachusetts Acid Rain Monitoring Project). July 1.
+< Previous · Table of Contents · Next >
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 153 of 227 --
+
+---
+
+### IpH_probe.pdf (chunk IpH_probe.pdf__0000, score 0.7725768176641835)
+
+pH Probe
+Range 	0 − 14
+95% in 1s	Response time
++/- 0.001	Resolution
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+Double junction silver / silver chloride
+No Temp
+Reads 	pH
+-5 − 99 °C	Temperature range °C
+70m (230’)	Max depth
++/– 0.002	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+~1 Year	Time before recalibration
+~4 Years +	Life expectancy
+or
+Revised 11/25
+V 5.3
+
+-- 1 of 12 --
+
+Operating principle
+A pH (potential of Hydrogen) probe measures the hydrogen ion activity in a liquid.
+At the tip of a pH probe is a glass membrane. This glass membrane permits hydrogen
+ions from the liquid being measured to defuse into the outer layer of the glass, while
+larger ions remain in the solution. The difference in the concentration of hydrogen ions
+(outside the probe vs. inside the probe) creates a VERY small current. This current
+is proportional to the concentration of hydrogen ions in the liquid being measured.
+Base: pH > 7	Neutral: pH = 7	Acid: pH < 7
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 2 of 12 --
+
+46.6mm
+(1.8”)
+Soaker cap
+~3 – 4 pH
+pH
+197mm
+(7.7”)
+99.2mm
+(3.9”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+10ml
+Ø 2.8mm
+Ø 8mm
+Minimum
+Immersion
+Unique
+12-digit
+serial #
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 12 --
+
+Glass
+Teflon
+PVC
+EPDM
+Delrin ®
+(body) Polyethylene
+Titanium
+Nitride
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+Glass
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Food Safe
+Atlas Scientific LLC, hereby certifies that,
+Gen 3 Industrial pH Probe – No Temp
+Part # ENV-50-pH-NT
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 12 --
+
+Reference electrode
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Silver / Silver Chloride
+Delrin® thermoplastic
+70m (230 feet)
+3m (9.8 feet)
+No
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This pH probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Glass
+Teflon
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 12 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0138, score 0.745280539711599)
+
+ple with a pH of 5.0 is 10 times as
+acidic as one with a pH of 6.0, and pH 4.0 is 100 times as acidic as pH 6.0.
+Analytical and equipment considerations
+pH can be analyzed in the field or in the lab. If it is analyzed in the lab, you must measure the pH within 2 hours
+of the sample collection. This is because the pH will change due to the carbon dioxide from the air dissolving in
+
+-- 151 of 227 --the water, which will bring the pH toward 7. If your program requires a high degree of accuracy and precision in
+pH results, the pH should be measured with a laboratory quality pH meter and electrode. Meters of this quality
+range in cost from around $250 to $1,000. Color comparators and pH "pocket pals" are suitable for most other
+purposes. The cost of either of these is in the $50 range. The lower cost of the alternatives might be attractive if
+you are relying on several teams of volunteers sampling multiple sites at the same time.
+pH Meters
+A pH meter measures the electric potential (millivolts) across an electrode when immersed in water. This electric
+potential is a function of the hydrogen ion activity in the sample. Therefore, pH meters can display results in
+either millivolts (mV) or pH units.
+A pH meter consists of a potentiometer, which measures electric current; a glass electrode, which senses the
+electric potential where it meets the water sample; a reference electrode, which provides a constant electric
+potential; and a temperature compensating device, which adjusts the readings according to the temperature of the
+sample (since pH varies with temperature). The reference and glass electrodes are frequently combined into a
+single probe called a combination electrode.
+There is a wide variety of meters, but the most important part of the pH meter is the electrode. Buy a good,
+reliable electrode and follow the manufacturer's instructions for proper maintenance. Infrequently used or
+improperly maintained electrodes are subject to corrosion, which makes them highly inaccurate.
+pH "Pocket Pals" and Color Comparators
+pH "pocket pals" are electronic hand-held "pens" that are dipped in the water and provide a digital readout of the
+pH. They can be calibrated to one pH buffer (lab meters, on the other hand, can be calibrated to two or more
+buffer solutions and thus are more accurate over a wide range of pH measurements).
+Color comparators involve adding a reagent to the sample that colors the sample water. The intensity of the color
+is proportional to the pH of the sample. This color is then matched against a standard color chart. The color chart
+equates particular colors to associated pH values. The pH can be determined by matching the colors from the
+chart to the color of the sample.
+How to collect and analyze samples
+The field procedures for collecting and analyzing samples for pH consist of the following tasks.
+TASK 1 Prepare the sample containers
+Sample containers (and all glassware used in this procedure) must be cleaned and rinsed before the first run and
+after each sampling run by following the procedure described under Method A on page 128. Remember to wear
+latex gloves.
+TASK 2 Prepare before leaving for the sampling site
+Refer to Section 2.3 - Saftey Considerations for details on confirming sampling date and time, picking up and
+checking supplies, and checking weather and directions. In addition to the standard sampling equipment and
+apparel, when sampling for pH, include the following equipment:
+pH meter with combination temperature and reference electrode, or pH "pocket pal" or color comparator	l
+
+---
+
+### IpH_probe.pdf (chunk IpH_probe.pdf__0001, score 0.7405686033562142)
+
+
+Silver / Silver Chloride
+Delrin® thermoplastic
+70m (230 feet)
+3m (9.8 feet)
+No
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This pH probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Glass
+Teflon
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 12 --A pH electrode is a passive device that detects a current generated from hydrogen ion
+activity. This current (which can be positive or negative) is very weak and cannot be
+detected with a multimeter, or an analog to digital converter. This weak electrical signal
+can easily be disrupted and care should be taken to only use proper connectors and cables.
+The current that is generated from the hydrogen ion activity is the reciprocal of that
+activity and can be predicted using this equation:
+Because a pH probe is a passive device it can pick up voltages that are transmitted
+through the solution being measured. This will result in incorrect readings and will
+slowly damage the pH probe over time. In this instance, proper isolation is required.
+Where R is the ideal gas constant.
+T is the temperature in Kelvin.
+F is the Faraday constant.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 12 --
+
+AtlasScientific
+PWR
+RX
+TX
+9 - 36VDC
+pH
+How to connect the
+industrial pH probe
+The Atlas Scientific ™ Gen 3 Industrial pH probe - No Temp, can be connected in several
+different ways. The following show two examples:
+Using our EZO Complete-pH ™ you can easily connect the
+Gen 3 Industrial pH probe - No Temp, via the probes SMA
+connector.
+Gen 3 Industrial pH probe - No Temp
+with the SMA connector option.
+Gen 3 Industrial pH probe - No Temp
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial pH probe -
+No Temp, can be easily connected 	to our Industrial pH
+Transmitter via the probes tinned leads.
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 12 --
+
+Remove the Industrial pH probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the pH probe can be left dry for up to 3 weeks
+without damaging the probe, this is why every Industrial pH probe is shipped with a
+plastic cap containing pH probe storage solution. The cap should remain on the probe
+until it is used.
+Long term storage
+When you are finished using the Industrial pH probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has pH probe storage
+solution within it. If not, just add some from the pH probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+Ready to use
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 12 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0139, score 0.737205187991421)
+
+e sampling site
+Refer to Section 2.3 - Saftey Considerations for details on confirming sampling date and time, picking up and
+checking supplies, and checking weather and directions. In addition to the standard sampling equipment and
+apparel, when sampling for pH, include the following equipment:
+pH meter with combination temperature and reference electrode, or pH "pocket pal" or color comparator	lWash bottle with deionized water to rinse pH meter electrode (if appropriate)	l
+Data sheet for pH to record results	l
+Before you leave for the sampling site, be sure to calibrate the pH meter or "pocket pal." The pH meter and
+"pocket pal" should be calibrated prior to sample analysis and after every 25 samples according to the instructions
+that come with them.
+If you are using a "pocket pal," use the buffer recommended by the manufacturer. If you are using a laboratory
+grade meter, use two pH standard buffer solutions: 4.01 and 7.0. (Buffers can be purchased from test kit supply

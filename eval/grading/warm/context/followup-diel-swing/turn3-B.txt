@@ -1,0 +1,185 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0017, score 0.6233093927333626)
+
+are considered
+adequate to identify water quality changes over time. Biological sampling should be
+conducted at the same time each year because natural variations in aquatic insect
+population and streamside vegetation occur as seasons change. Monitoring at the same
+time of day and at regular intervals (e.g., at 2:00 p.m. every 30 days) helps ensure
+comparability of data over time.
+
+-- 22 of 227 --9. How will monitoring data be managed and presented?
+The volunteer program coordinator should have a clear plan for dealing with the data
+collected each year. Field and lab data sheets should be checked for completeness, data
+should be screened for outliers, and a database should be developed or adapted to store and
+manipulate the data. The elements of such a database should be clearly explained in order
+to allow users to interpret the data accurately and with confidence.
+Program coordinators will also have to decide how they want to present data results, not
+only to the general public and to specific data users, but also to the volunteers themselves.
+Different levels of analysis might be needed for different audiences. A volunteer group
+collecting data for state or county use should consult with the appropriate agency before
+investing in computerized data management software because the agency could have
+specific needs or recommendations based on its own data management protocols.
+10. How will the program ensure that data are credible?
+Developing specific answers to questions 19 is the first step in ensuring that data are
+credible. Credible data meet specific needs and can be used with confidence for those
+needs. Other steps include:
+Properly training, testing, and retraining volunteers	l
+Evaluating the program's success after an initial pilot stage and making any
+necessary adjustments
+l
+Assigning specific quality assurance tasks to qualified individuals in the program	l
+Documenting in a written plan all the steps taken to sample, analyze, store, manage,
+and present data
+l
+A written plan, known as a quality assurance project plan, can be elaborate or simple
+depending on the volunteer program's goals. Its essential feature, however, is that it
+documents how the data are to be generated. Without such knowledge, the data cannot be
+used with confidence. It is also important for educating future volunteers and data users
+about the program and the data. People might be analyzing the data 5 or 10 or more years
+later to study trends in stream quality. (Note: EPA requires that any monitoring program
+sponsored by EPA through grants, contracts, or other formal agreement must carry out a
+quality assurance/quality control program and develop a quality assurance project plan.)
+
+-- 23 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0031, score 0.6202347390496072)
+
+. Then, either draw the outline and significant features of the
+stream and its surroundings on a blank sheet of paper or obtain a more detailed map of
+the area, such as a plat, road, or neighborhood map. This will serve as the base map you
+will use to mark stream obstructions, pollution sources, land uses, litter, spills, or other
+problems identified during your visual assessment.
+
+-- 42 of 227 --Task 2 Determine when to survey
+Because land and water uses can change rapidly and because the natural condition of the
+stream might change with the seasons, it is best to visually assess the stream or stream
+segment at least three times a year. In areas with seasonal changes, the best times to
+survey are:
+Early spring, before trees and shrubs are in full leaf and when water levels are
+generally high
+l
+Late summer, when trees and shrubs are in full leaf and when water levels are
+generally low
+l
+Late fall, when trees and shrubs have dropped their leaves but before the onset of
+freezing weather
+l
+In addition, you may wish to spotcheck potential problem areas more frequently. These
+include construction sites, combined sewer overflow discharges, animal feedlots, or
+bridge/highway crossings. If polluted runoff or failing septic systems are suspected,
+schedule a survey during or after heavy rainfall. If a stream is diverted for irrigation
+purposes, surveys during the summer season will identify whether water withdrawals are
+affecting the stream.
+Again, it is important to survey the stream at approximately the same time each season to
+account for seasonal variations. You might find it productive to drive through the
+watershed once a year and to walk the stream (or the stream's problem sites) at other
+times (see Tasks 4 and 5).
+Task 3 Gather necessary equipment
+In addition to the general and safety equipment listed in Chapter 2, the following
+equipment should be gathered before beginning the visual assessment:
+Reference map such as road map or USGS topographic map, to locate the stream
+and the area to be assessed
+l
+Base map to record land uses, land characteristics, stream obstructions, sources of
+pollution, and landmarks
+l
+Field data sheet	l
+Additional blank paper, to draw maps or take notes if needed	l
+Relevant information from background investigation (e.g., location of NPDES
+outfalls, farms, abandoned mines, etc.)
+l
+Task 4 Drive (or walk) the watershed
+The purpose of driving (or walking) the watershed is to get an overall picture of the land
+that is drained by your stream or stream segment. It will help you understand what
+problems to expect in your stream, and it will help you know where to look for those
+problems.
+
+-- 43 of 227 --
+
+---
+
+### tm9a6.8.pdf (chunk tm9a6.8.pdf__0020, score 0.6138607712810135)
+
+the expected measurement or deployment
+range of measurements.
+• Check sensor ports to ensure that sensors are prop-
+erly installed or that empty ports are sealed. Sensors
+from which data are not being collected routinely
+can be removed from the sonde for safe storage. The
+temperature sensor should not be removed. All electri-
+cal connections must be clean, dry, waterproof, and
+protected from dust.-- 14 of 24 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0035, score 0.6077547068331317)
+
+ideal or nearly ideal condition (called a reference condition). Individual stream sites can then be ranked from
+best to worst, and priorities can be set for their improvement.
+l
+To determine support of aquatic life uses. All states designate their waters for certain specific uses, such as
+swimming or as cold water fishery. States establish specific standards (limits on pollutants) identifying whatconcentrations of chemical pollutants are allowable if designated stream uses are to be maintained.
+Increasingly, states are also developing biological criteria essentially, statements of what biological conditions
+should be in various types of streams throughout the state. States are required by the Clean Water Act to
+report on those waters which do not support their designated uses.
+Biological surveys directly examine the aquatic organisms in streams and the stressors that affect them.
+Therefore, these surveys are ideal tools to use in determining whether a stream's designated aquatic life uses
+are supported.
+l
+To identify water quality trends. In any given site, biological data can be used to identify water quality trends
+(increasing or decreasing) over several years.
+l
+Designing a Biosurvey Program
+In most cases, this manual recommends that local aquatic biologists assist in the development of volunteer
+biological monitoring programs. This is because the types of habitats and organisms in streams vary widely with
+geography and climate. Tools as basic as macroinvertebrate identification keys might need to be adapted to local
+conditions.
+Many volunteer monitoring programs rely for assistance on aquatic biologists working for state water-quality or
+natural resource agencies. Others are assisted by university personnel, hire their own expert staff, or contract out for
+consulting services. Whatever the source of expertise, professional guidance is essential for creating a successful
+biosurvey program. This manual strongly recommends a close level of coordination with state or local agencies
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0018, score 0.5924203788863432)
+
+ure volunteers and data users
+about the program and the data. People might be analyzing the data 5 or 10 or more years
+later to study trends in stream quality. (Note: EPA requires that any monitoring program
+sponsored by EPA through grants, contracts, or other formal agreement must carry out a
+quality assurance/quality control program and develop a quality assurance project plan.)
+
+-- 23 of 227 --Put It in Writing
+When you and the volunteer program planning committee have answered the
+ten project design questions to everyone's satisfaction, your next critical step
+is to put it all in writing. The written plan, including sampling and analytical
+methods, sites, parameters, project goals, and data quality considerations, is
+your bible. With a written plan you:
+Document the particulars of your program for your data users	l
+Educate newcomers to the program	l
+Ensure that newcomers will use the same methods as those who came
+before them
+l
+Keep an historical record for future program leaders, volunteers, and
+data users
+l
+Your written plan may simply consist of a study design and standard
+l operating procedures such as a monitoring and lab methods manual. You
+may, however, prefer to develop a more comprehensive quality assurance
+project plan. The quality assurance project plan is a document that outlines
+the procedures you will use to ensure high quality data when conducting
+sample collection and analysis in your program.
+By law, any water quality monitoring program that receives EPA funding is
+required to have an EPA-approved quality assurance project plan. Even if
+you don't receive EPA funding, you will find that preparing a written plan
+helps ensure that your data are used with confidence, now and in the future.
+(See The Volunteer Monitor's Guide to Quality Assurance Project Plans
+(EPA 841-B-96-003 September 1996) for more information.)
+< Previous · Table of Contents · Next >
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 24 of 227 --

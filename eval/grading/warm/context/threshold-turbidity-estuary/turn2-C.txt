@@ -1,0 +1,381 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 119, score 0.02919863597612958)
+
+re that your data are used with confidence, now and in the future.
+(See The Volunteer Monitor's Guide to Quality Assurance Project Plans
+(EPA 841-B-96-003 September 1996) for more information.)
+< Previous · Table of Contents · Next >
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 24 of 227 --Training Volunteer Monitors
+Back to Section 2.2 - Designing the Stream Study
+Training should be an essential component of any volunteer stream monitoring project.
+When volunteers are properly trained in the goals of the volunteer project and its
+sampling and analytical methods, they:
+Produce higher quality, more credible data.	l
+Better understand their role in protecting water quality.	l
+Are more motivated to continue monitoring.	l
+Save program manager time and effort by becoming better monitors who require
+less supervision.
+l
+Feel more like part of a dedicated team.	l
+Some of the key elements to consider in developing a training program for volunteers
+include the following:
+Plan ahead. When you are in the early stages of developing your training program,
+decide who will do the training, when training will occur, where it will be held,
+what equipment and handouts volunteers will receive, and what, in they end, they
+will learn. Plan on at least one initial training session at the start of the sampling
+season and a quality control session somewhat into the season (to see if volunteers
+are using the right methods, and to answer questions). If volunteers will be
+sampling many different chemical parameters or will be conducting intensive
+biological monitoring, you should probably schedule two initial training
+sessions—one to introduce volunteers to the program, and the other to cover
+sampling and analytical methods in detail. You might also want to plan a
+postseason session that encourages volunteers to air problems, exchange
+information, and make suggestions for the coming year. Make sure the program
+planning committee agrees to the training plan.
+1.
+Put it in writing. Once you've made these decisions, write them all down. Note the
+training specifics in the program's quality assurance project plan. It might also help
+to develop a "job description" for the volunteers that lists the tasks they will
+perform in the field and lab, and that identifies the obligations to which they will
+be held and the schedule they will follow. Hand this out at the first training session.
+Volunteers should leave the session knowing what is expected of them. If they
+decide not to join after all because the tasks are too onerous, it is better for you to
+2.
+
+-- 25 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 139, score 0.02900988017658188)
+
+collaboration with local or state water quality personnel. Other
+programs allow their volunteers to c hoose the site based on their personal interests. (See Chapter 2 for a
+discussion on choosing monitoring locations.) If a Watershed Survey is conducted (see Chapter 3), this
+information should play a role in deciding which areas are the best candidates for the Stream Habitat Walk.
+
+-- 51 of 227 --Once a monitoring site is chosen, it should be marked on the topo map. This will document the location and serve
+as a record in case future volunteers or data users need to find the site.
+TASK 4 Become familiar with safety procedures
+Volunteers must always keep safety in mind while conducting any stream monitoring activity. Provide all Stream
+Habitat Walk participants with a list of safety do's and don'ts and have them review this list thoroughly. Chapter
+3 covers several important safety concerns that should be incorporated into a stream monitoring program.
+Remember, volunteer safety is more important than the data. Some reminders include:
+Let someone know where you're going and when you expect to return. Make sure you have an "in case of
+emergency" phone number with you before leaving for the field.
+l
+Do not cross streams in high flows.	l
+Never go into the field alone; always work in teams of at least two people.	l
+If for any reason you feel unsafe, do not attempt to monitor on that day.	l
+TASK 5 Gather equipment and tools for the Habitat Walk
+There is nothing more frustrating than arriving at a field monitoring site and not having all your equipment and
+supplies. Providing volunteers with a checklist of necessary items will help keep them organized. In addition to
+the basic equipment listed in Chapter 2, you will need the following for the Stream Habitat Walk. For locating the
+site
+U.S. Geological Survey (USGS) topographic map of the stream area (supplemented by regular street map if
+needed)
+l
+For recording observations
+Stream Habitat Walk field data sheet	l
+For marking-off the stream stretch of study
+Tape measure, string, or twine (25 yards)	l
+For working in and around the stream
+Thermometer for measuring water temperature (Scientific supply houses sell armored thermometers that
+are best suited for this purpose, although you can obtain a good thermometer from an aquarium store. Some
+thermometers need to be calibrated befor e use. See Chapter 5 for instruction on calibrating and using
+thermometers.)
+l
+Watch with a second hand or a stopwatch	l
+For observing macroinvertebrates (optional)
+A bucket	l
+A shallow white pan. (Alternatives: white plastic plate or the bottom of a white plastic detergent jug)	l
+Tweezers or soft brush	l
+Ice cube trays (for sorting macroinvertebrates)	l
+Magnifying glass	l
+TASK 6 Become familiar with the Stream Habitat Walk field data sheet and
+the definitions of its elements
+It is important to become familiar with the Stream Habitat Walk field data sheet and its instructions before you
+begin your Stream Habitat Walk. If you are unclear about any instructions when you are conducting your Walk,
+just leave that space blank and k eep going. You might wish to contact your volunteer program coordinator for
+further explanation after you have completed your Walk.
+At the end of this section is a sample field data sheet. You might find it necessary to modify this sheet slightly to
+better meet the needs of your volunteers, your ecological region, and your program. When you fill out your field
+
+-- 52 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 121, score 0.01639344262295082)
+
+mosphere of the training session, and
+what the volunteers liked most and least about the session. Use the results of the
+evaluation to revise training protocols as needed to best meet program and
+volunteer needs.
+5.
+
+-- 26 of 227 --
+
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 27 of 227 --2.3
+Safety Considerations
+One of the most critical considerations for a volunteer monitoring program is the safety
+of its volunteers. All volunteers should be trained in safety procedures and should carry
+with them a set of safety instructions and the phone number of their program coordinator
+or team leader. Safety precautions can never be overemphasized.
+The following are some basic common sense safety rules. At the site:
+Always monitor with at least one partner. Teams of three or four people are best.
+Always let someone else know where you are, when you intend to return, and what
+to do if you don't come back at the appointed time.
+l
+Develop a safety plan. Find out the location and telephone number of the nearest
+telephone and write it down. Locate the nearest medical center and write down
+directions on how to get between the center and your site(s) so that you can direct
+emergency personnel. Have each member of the sampling team complete a
+medical form that includes emergency contacts, insurance information, and
+pertinent health information such as allergies, diabetes, epilepsy, etc.
+l
+Have a first aid kit handy (see box below). Know any important medical conditions
+of team members (e.g., heart conditions or allergic reactions to bee stings). It is
+best if at least one team member has first aid/CPR training.
+l
+Listen to weather reports. Never go sampling if severe weather is predicted or if a
+storm occurs while at the site.
+l
+Never wade in swift or high water. Do not monitor if the stream is at flood stage.	l
+If you drive, park in a safe location. Be sure your car doesn't pose a hazard to other
+drivers and that you don't block traffic.
+l
+Put your wallet and keys in a safe place, such as a watertight bag you keep in a
+pouch strapped to your waist. Without proper precautions, wallet and keys might
+end up downstream.
+l
+Never cross private property without the permission of the landowner. Better yet,
+sample only at public access points such as bridge or road crossings or public
+parks. Take along a card identifying you as a volunteer monitor.
+l
+Confirm that you are at the proper site location by checking maps, site	l
+
+-- 28 of 227 --
+
+---
+
+### Industrial-DO-probe.pdf (chunk 6, score 0.01639344262295082)
+
+Range 	0 − 100 mg/L
+~0.1 mg/L/per sec	Response time
+300 PSI	Max pressure
+3 Meters	Cable length
+Yes (PT-1000)	Internal temperature sensor
+~1 Year	Time before recalibration
+~ 4 Years	Life expectancy
+~18 Months	Maintenance
+Reads 	Dissolved Oxygen
+1 − 99 °C	Temperature range °C
+212m (694 ft)	Max depth
++/– 0.05 mg/L	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+D.O. Probe
+or
+Revised 4/26
+V 2.4
+
+-- 1 of 13 --
+
+Wastewater
+Treatment
+Food
+Production
+Chemical
+Production
+Envriomental
+Monitoring
+(No Organic Solvents)
+This Probe can be used for:
+2	Copyright © Atlas Scientific LLC
+
+-- 2 of 13 --
+
+Operating principle
+This galvanic dissolved oxygen probe consists of a HDPE membrane, an anode bathed
+in an electrolyte and a cathode. Oxygen molecules defuse through the probes membrane
+at a constant rate (without the membrane the reaction happens too quickly). Once the
+oxygen molecules have crossed the membrane they are reduced at the cathode and
+a small voltage is produced. If no oxygen molecules are present, the probe will output
+0 mV. As the oxygen increases so does the mV output from the probe. Each probe will
+output a different voltage in the presence of oxygen. The only thing that is constant is that
+0mV = 0 Oxygen.
+Electrolyte
+Cathode (Pure silver rod)
+Membrane
+Anode (Zinc)
+Time (sec)
+90%
+60%
+5 	10 	15 	20 	25 	30	0
+Dissolved Oxygen
+Stagnant water
+Oxygen being
+consumed by probe
+20%
+One of the drawbacks from using a galvanic
+probe is that it consumes a VERY small amount
+of the oxygen it reads. Therefore, a small amount
+of water movement is necessary to take accurate
+readings. Approximately 60 ml/min.
+3	Copyright © Atlas Scientific LLC
+
+-- 3 of 13 --
+
+Ø 4.4mm
+Ø 5.3mm
+D.O.
+D.O.
+PT-1000(There is no polarity)
+PT-1000
+175.5mm
+(6.9”)
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+47.9mm
+(1.8”)
+19.7mm (.7”)
+Cable Length
+3m (10’)
+3/4 NPT
+28.4mm
+(1.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+Measurements
+4	Copyright © Atlas Scientific LLC
+
+-- 4 of 13 --
+
+PVC
+PVCDelrin ®
+(body)
+Polyethylene
+HDPE
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+HDPE
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+ABS
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Dissolved Oxygen Probe
+Part # ENV-50-DO
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+Food Safe
+5	Copyright © Atlas Scientific LLC
+
+-- 5 of 13 --
+
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Temp. probe type
+Temp. accuracy
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+212m (694 ft)
+3m (10 feet)
+Yes
+Class A platinum, RTD
++/- (0.15 + (0.002*t))
+SMA or Tinned Leads
+195 grams
+(3/4") NPT
+Chemical only
+Yes
+Materials
+Polyethylene
+Delrin® thermoplastic
+ABS
+HDPE
+PVC 	PVC
+PVC
+PVC
+Polyethylene
+Polyethylene Titanium Nitride
+Titanium Nitride
+This Dissolved Oxygen probe can be
+fully submerged in fresh or salt water,
+up to the SMA connector or Tinned
+leads indefinitely.
+6	Copyright © Atlas Scientific LLC
+
+-- 6 of 13 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 117, score 0.016129032258064516)
+
+are considered
+adequate to identify water quality changes over time. Biological sampling should be
+conducted at the same time each year because natural variations in aquatic insect
+population and streamside vegetation occur as seasons change. Monitoring at the same
+time of day and at regular intervals (e.g., at 2:00 p.m. every 30 days) helps ensure
+comparability of data over time.
+
+-- 22 of 227 --9. How will monitoring data be managed and presented?
+The volunteer program coordinator should have a clear plan for dealing with the data
+collected each year. Field and lab data sheets should be checked for completeness, data
+should be screened for outliers, and a database should be developed or adapted to store and
+manipulate the data. The elements of such a database should be clearly explained in order
+to allow users to interpret the data accurately and with confidence.
+Program coordinators will also have to decide how they want to present data results, not
+only to the general public and to specific data users, but also to the volunteers themselves.
+Different levels of analysis might be needed for different audiences. A volunteer group
+collecting data for state or county use should consult with the appropriate agency before
+investing in computerized data management software because the agency could have
+specific needs or recommendations based on its own data management protocols.
+10. How will the program ensure that data are credible?
+Developing specific answers to questions 19 is the first step in ensuring that data are
+credible. Credible data meet specific needs and can be used with confidence for those
+needs. Other steps include:
+Properly training, testing, and retraining volunteers	l
+Evaluating the program's success after an initial pilot stage and making any
+necessary adjustments
+l
+Assigning specific quality assurance tasks to qualified individuals in the program	l
+Documenting in a written plan all the steps taken to sample, analyze, store, manage,
+and present data
+l
+A written plan, known as a quality assurance project plan, can be elaborate or simple
+depending on the volunteer program's goals. Its essential feature, however, is that it
+documents how the data are to be generated. Without such knowledge, the data cannot be
+used with confidence. It is also important for educating future volunteers and data users
+about the program and the data. People might be analyzing the data 5 or 10 or more years
+later to study trends in stream quality. (Note: EPA requires that any monitoring program
+sponsored by EPA through grants, contracts, or other formal agreement must carry out a
+quality assurance/quality control program and develop a quality assurance project plan.)
+
+-- 23 of 227 --

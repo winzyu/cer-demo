@@ -1,0 +1,52 @@
+{
+  "id": "definitional-orp",
+  "class": "definitional",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf",
+    "IORP_probe.pdf"
+  ],
+  "requires": [],
+  "notes": "Baseline competence on the one parameter that had no coverage at all before the corpus was rescoped. Every arm should clear this; an arm that cannot is broken, not merely worse.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "What is ORP and what does it actually measure?",
+      "rubric": {
+        "must_contain": [
+          "expands ORP as oxidation-reduction potential",
+          "states it measures the water's net tendency to oxidize or reduce — electron activity, not a concentration",
+          "gives the unit as millivolts (mV)"
+        ],
+        "must_not": [
+          "states ORP measures dissolved oxygen concentration or the amount of oxygen present",
+          "gives a unit other than mV",
+          "claims the reading indicates how many electrons are available for transfer"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf",
+          "IORP_probe.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Why does it start dropping before DO does?",
+      "rubric": {
+        "must_contain": [
+          "resolves \"it\" to ORP without the user restating it",
+          "explains ORP tracks the dominant electron acceptor, which shifts from oxygen to nitrate, then manganese/iron, then sulfate as oxygen is consumed",
+          "states ORP is the early-warning twin of DO and often begins falling before DO bottoms out"
+        ],
+        "must_not": [
+          "claims DO always moves first",
+          "invents a numeric lead time"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ],
+        "notes": "Pronoun resolution across turns is the point; the answer is one paragraph in the source-of-truth ORP section."
+      }
+    }
+  ]
+}

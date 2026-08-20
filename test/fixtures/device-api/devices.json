@@ -1,0 +1,139 @@
+[
+  {
+    "id": "Hqpz8koCp8CtNoREwUyN",
+    "data": {
+      "name": "Algalita Pod",
+      "operatingEnvironment": "salt-water",
+      "nextCalibrationDate": "2026-09-30T19:39:20.000Z",
+      "label": "dev:351077454569099",
+      "organization": "NWMadt0Kwh3A62B7pqhH",
+      "thresholds": {
+        "minPH": "6",
+        "maxPH": "10",
+        "minORP": "50",
+        "maxORP": "400",
+        "minDissolvedOxygen": "4",
+        "maxDissolvedOxygen": "15",
+        "minConductivity": "40000",
+        "maxConductivity": "75000",
+        "minTemperature": "50",
+        "maxTemperature": "80"
+      },
+      "notificationFrequency": "1x/week"
+    }
+  },
+  {
+    "id": "iwuPQsfZmwXYRs7SFxXu",
+    "data": {
+      "name": "Algalita Pod",
+      "operatingEnvironment": "salt-water",
+      "nextCalibrationDate": "2026-09-30T19:49:51.000Z",
+      "label": "dev:351077454569099",
+      "organization": "FF8Syo9Sypomrf4fqOez",
+      "thresholds": {
+        "minPH": "6",
+        "maxPH": "10",
+        "minORP": "200",
+        "maxORP": "400",
+        "minDissolvedOxygen": "5",
+        "maxDissolvedOxygen": "10",
+        "minConductivity": "40000",
+        "maxConductivity": "80000",
+        "minTemperature": "50",
+        "maxTemperature": "67"
+      },
+      "notificationFrequency": "1x/day"
+    }
+  },
+  {
+    "id": "xIkve0AdnusbwhZTG3Zj",
+    "data": {
+      "name": "Algalita Pod",
+      "operatingEnvironment": "salt-water",
+      "nextCalibrationDate": "2026-09-30T19:49:51.000Z",
+      "label": "dev:351077454569099",
+      "organization": "FF8Syo9Sypomrf4fqOez",
+      "thresholds": {
+        "minPH": "5",
+        "maxPH": "10",
+        "minORP": "200",
+        "maxORP": "400",
+        "minDissolvedOxygen": "5",
+        "maxDissolvedOxygen": "10",
+        "minConductivity": "40000",
+        "maxConductivity": "75000",
+        "minTemperature": "50",
+        "maxTemperature": "80"
+      },
+      "notificationFrequency": "1x/day"
+    }
+  },
+  {
+    "id": "4cpbtitO4ISMFiDiBjUu",
+    "data": {
+      "nextCalibrationDate": "2026-06-14T23:18:22.806Z",
+      "thresholds": {
+        "minPH": "0",
+        "maxPH": "10",
+        "minORP": "0",
+        "maxORP": "800",
+        "minDissolvedOxygen": "0",
+        "maxDissolvedOxygen": "12",
+        "minConductivity": "0",
+        "maxConductivity": "100000",
+        "minTemperature": "30",
+        "maxTemperature": "100"
+      },
+      "notificationFrequency": "1x/day",
+      "label": "dev:351077454567580",
+      "organization": "bLTGwdVSDUMc8iYVNjkK",
+      "name": "Old Woman Creek 2026",
+      "operatingEnvironment": "fresh-water"
+    }
+  },
+  {
+    "id": "F1Syqwk8e24hkg0OWQaS",
+    "data": {
+      "name": "dev:351077454591408",
+      "operatingEnvironment": "salt-water",
+      "nextCalibrationDate": "2026-09-04T16:03:51.303Z",
+      "label": "dev:351077454591408",
+      "organization": "MWv7vOvPOL2xwNINk4eV",
+      "thresholds": {
+        "minPH": "0",
+        "maxPH": "0",
+        "minORP": "0",
+        "maxORP": "0",
+        "minDissolvedOxygen": "0",
+        "maxDissolvedOxygen": "0",
+        "minConductivity": "0",
+        "maxConductivity": "0",
+        "minTemperature": "0",
+        "maxTemperature": "0"
+      },
+      "notificationFrequency": "1x/day"
+    }
+  },
+  {
+    "id": "e8jjmfAVaAIjsz0Lb10H",
+    "data": {
+      "operatingEnvironment": "fresh-water",
+      "nextCalibrationDate": "2024-09-30T17:56:41.164Z",
+      "organization": "FF8Syo9Sypomrf4fqOez",
+      "label": "dev:9879347923842",
+      "name": "Test 2",
+      "thresholds": {
+        "minPH": "5",
+        "maxPH": "8",
+        "minORP": "10",
+        "maxORP": "20",
+        "minDissolvedOxygen": "10",
+        "maxDissolvedOxygen": "20",
+        "minConductivity": "10",
+        "maxConductivity": "10",
+        "minTemperature": "1",
+        "maxTemperature": "1"
+      }
+    }
+  }
+]

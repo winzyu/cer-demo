@@ -1,0 +1,46 @@
+{
+  "id": "precedence-conductivity-range",
+  "class": "precedence",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [],
+  "notes": "The eval runs with WATER_TYPE=freshwater, so the operator range is 0–1,500 µS/cm while the reference's healthy-freshwater band starts at 50 µS/cm. 30 µS/cm is inside one and below the other.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our conductivity is 30 µS/cm. Flag it?",
+      "rubric": {
+        "must_contain": [
+          "states the operator range for this freshwater deployment is 0 to 1,500 µS/cm, so 30 µS/cm is inside it",
+          "notes the reference's healthy-freshwater band starts at 50 µS/cm, so the reading sits below general guidance",
+          "states the operator range governs the normal/abnormal call"
+        ],
+        "must_not": [
+          "flags an exceedance against the operator range",
+          "silently adopts the 50 µS/cm floor as the authority"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "What would push it that low?",
+      "rubric": {
+        "must_contain": [
+          "attributes low EC to freshwater input — rain, runoff, or groundwater",
+          "notes the direction of an EC change fingerprints freshwater versus saline input"
+        ],
+        "must_not": [
+          "attributes low EC to a saline or ionic discharge"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

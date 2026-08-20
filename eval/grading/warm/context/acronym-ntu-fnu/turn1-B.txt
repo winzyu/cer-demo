@@ -1,0 +1,278 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 243, score 0.03252247488101534)
+
+Secchi Disk or Tranparency Tube).
+Figure 5.10
+Using a Secchi disk to measure transparency
+A turbidity
+meter consists
+of a light
+source that
+illuminates a
+water sample
+and a
+photoelectric
+cell that
+measures the
+intensity of
+light scattered
+at a 90 angle
+by the
+particles in the
+sample. It
+measures
+turbidity in
+nephelometric
+turbidity units
+or NTUs.
+Meters can
+measure
+turbidity over
+
+-- 155 of 227 --The disk is lowered until it is no longer visible.
+That point is the Secchi disk depth.
+Figure 5.11
+Using a transparency tube
+(A) Prepare the tranparency tube to take a reading. Place the tube on a
+white surface and look vertically down the tube to see the wave pattern at
+the bottom.
+(B) Slowly pour water sample into the tube stopping intermittently to see if
+the wave pattern has disappeared.
+a wide range
+from 0 to 1000
+NTUs. A clear
+mountain
+stream might
+have a
+turbidity of
+around 1
+NTU, whereas
+a large river
+like the
+Mississippi
+might have a
+dry-weather
+turbidity of
+around 10
+NTUs. These
+values can
+jump into
+hundreds of
+NTU during
+runoff events.
+Therefore, the
+turbidity meter
+to be used should be reliable over the range in which you will be working. Meters of this
+quality cost about $800. Many meters in this price range are designed for field or lab use.
+Although turbidity meters can be used in the field, volunteers might want to collect
+samples and take them to a central point for turbidity measurements. This is because of
+the expense of the meter (most programs can afford only one and would have to pass it
+along from site to site, complicating logistics and increasing the risk of damage to the
+meter) and because the meter includes glass cells that must remain optically clear and
+free of scratches.
+Volunteers can also take turbidity samples to a lab for meter analysis at a reasonable cost.
+How to sample
+The procedures for collecting samples and analyzing turbidity consist of the following
+tasks:
+TASK 1 Prepare the sample containers
+If factory-sealed, disposable Whirl-pak® bags are used to sample, no preparation is
+needed. Reused sample containers (and all glassware used in this procedure) must be
+
+-- 156 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 244, score 0.03125763125763126)
+
+e turbidity samples to a lab for meter analysis at a reasonable cost.
+How to sample
+The procedures for collecting samples and analyzing turbidity consist of the following
+tasks:
+TASK 1 Prepare the sample containers
+If factory-sealed, disposable Whirl-pak® bags are used to sample, no preparation is
+needed. Reused sample containers (and all glassware used in this procedure) must be
+
+-- 156 of 227 --cleaned before the first run and after each sampling run by following Method A described
+in Chapter 5 - Water Quality Conditions.
+TASK 2 Prepare before leaving for the sampling site
+Refer to section 2.3 - Safety Considerations for details on confirming sampling date and
+time, safety consideration, checking supplies, and checking weather and directions. In
+addition to the standard sampling equipment and apparel, when sampling for turbidity,
+include the following equipment:
+Turbidity meter	l
+Turbidity standards	l
+Lint-free cloth to wipe the cells of the meter	l
+Data sheet for turbidity to record results	l
+Be sure to let someone know where you are going and when you expect to return.
+TASK 3 Collect the sample
+Refer to Task 2 in Chapter 5 - Water Quality Conditions for details on how to collect
+water samples using screw-cap bottles or Whirl-pak® bags.
+TASK 4 Analyze the sample
+The following procedure applies to field or lab use of the turbidity meter.
+Prepare the turbidity meter for use according to the manufacturer's directions.	1.
+Use the turbidity standards provided with the meter to calibrate it. Make sure it is
+reading accurately in the range in which you will be working.
+2.
+Shake the sample vigorously and wait until the bubbles have disappeared. You
+might want to tap the sides of the bottle gently to accelerate the process.
+3.
+Use a lint-free cloth to wipe the outside of the tube into which the sample will be
+poured. Be sure not to handle the tube below the line where the light will pass
+when the tube is placed in the meter.
+4.
+Pour the sample water into the tube. Wipe off any drops on the outside of the tube.	5.
+Set the meter for the appropriate turbidity range. Place the tube in the meter and
+read the turbidity measurement directly from the meter display.
+6.
+Record the result on the field or lab sheet.	7.
+Repeat steps 3-7 for each sample.	8.
+
+-- 157 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 245, score 0.028629032258064516)
+
+the light will pass
+when the tube is placed in the meter.
+4.
+Pour the sample water into the tube. Wipe off any drops on the outside of the tube.	5.
+Set the meter for the appropriate turbidity range. Place the tube in the meter and
+read the turbidity measurement directly from the meter display.
+6.
+Record the result on the field or lab sheet.	7.
+Repeat steps 3-7 for each sample.	8.
+
+-- 157 of 227 --TASK 5 Return the samples and the field data sheets to
+the lab/drop-off point.
+If you are sending your samples to a lab for analysis, they must be tested within 24 hours
+of collection. Keep samples in the dark and on ice or refrigerated.
+References and Further Reading
+APHA. 1992. Standard methods for the examination of water and wastewater. 18th ed.
+American Public Health Association, Washington, DC.
+Minnesota Pollution Control Agency. 1997. An Attempt to Classify Transparency Tube
+Readings for Southern Minnesota, by Lee Ganske. Contact Louise Hotka, MPCA, Tel:
+(612) 296-7223, E-mail: louise.hotka@pca.state.mn.us.
+Mississippi Headwaters River Watch. 1991. Water quality procedures. Mississippi
+Headwaters Board. March.
+Mitchell, M.K., and W. Stapp. Field manual for water quality monitoring. 5th ed.
+Thompson Shore Printers.
+Tennessee Valley Authority (TVA). 1995 (draft). Clean Water Initiative Volunteer
+Stream Monitoring Methods Manual. TVA, 1101 Market Street, CST 17D, Chattanooga,
+TN 37402-2801
+USEPA. 1991. Volunteer lake monitoring: A methods manual. EPA 440/4-91-002. Office
+of Water, U. S. Environmental Protection Agency, Washington, DC.
+White, T. 1994. Monitoring a watershed: Nationwide turbidity testing in Australia.
+Volunteer Monitor. 6(2):22-23.
+< Previous · Table of Contents · Next >
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 158 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 219, score 0.02649122807017544)
+
+-- 131 of 227 --Quality Control And Assessment Measures: External Checks
+External checks are performed by nonvolunteer field staff and a lab (also known as a "quality control lab"). The
+results are compared with those obtained by the project lab.
+External Field Duplicates. An external field duplicate is a duplicate river sample collected and processed
+by an independent (e.g., professional) sampler or team at the same place at the same time as regular river
+samples. It is used to estimate sampling and laboratory analysis precision.
+l
+Split Samples. A split sample is a sample that is divided into two subsamples at the lab. One subsample is
+analyzed at the project lab and the other is analyzed at an independent lab. The results are compared.
+l
+Outside Lab Analysis of Duplicate Samples. Either internal or external field duplicates can be analyzed at
+an independent lab. The results should be comparable with those obtained by the project lab.
+l
+Knowns. The quality control lab sends samples for selected indicators, labeled with the concentrations, to
+the project lab for analysis prior to the first sample run. These samples are analyzed and the results
+compared with the known concentrations. Problems are reported to the quality control lab.
+l
+Unknowns. The quality control lab sends samples to the project lab for analysis for selected indicators,
+prior to the first sample run. The concentrations of these samples are unknown to the project lab. These
+samples are analyzed and the results reported to the quality control lab. Discrepancies are reported to the
+project lab and a problemidentification and solving process follows.
+l
+The table below shows the applicability of common quality control measures to the water quality indicators
+covered in this manual.
+Steps To Quality Control
+Consult with your technical committee and/or program advisor to help you determine quality
+assurance/quality control measures you will use to answer your questions and meet your data quality
+requirements
+1.
+Locate a quality control lab—-an independent lab that can run external checks for you.	2.
+Determine which quality checks you have the resources and capabilities to carry out. Your human and
+financial resources and expertise might limit the water quality indicators your can monitor.
+3.
+References
+APHA. 1992. Standard Methods for the Examination of Water and Wastewater. 18th ed. American Public Health
+Association, Washington, DC.
+Intergovernmental Task Force on Monitoring Water Quality. 1994. Water quality monitoring in the United States.
+1993 report and technical appendixes. Washington, DC.
+Mattson, M. 1992. The basics of quality control. The Volunteer Monitor. 4(2) Fall 1992.
+USEPA. 1983. Methods for chemical analysis of water and wastes. EPA600/479020. U.S. Environmental
+Protection Agency, Environmental Monitoring and Support Laboratory, Cincinnati, OH. March.
+USEPA. 1984. Guidance for preparation of combined work/quality assurance project plans for environmental
+monitoring. ORWS QA1, U.S. Environmental Protection Agency, Office of Water Regulations and Standards.
+Washington DC, May.
+USEPA. 1996. The Volunteer Monitor's Guide to Quality Assurance Project Plans. EPA841-B-96-003.
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 242, score 0.01639344262295082)
+
+ of runoff from construction,
+agricultural practices, logging activity, discharges, and other sources. Turbidity often
+increases sharply during a rainfall, especially in developed watersheds, which typically
+have relatively high proportions of impervious surfaces. The flow of stormwater runoff
+from impervious surfaces rapidly increases stream velocity, which increases the erosion
+
+-- 154 of 227 --rates of streambanks and channels. Turbidity can also rise sharply during dry weather if
+earth-disturbing activities are occurring in or near a stream without erosion control
+practices in place.
+Regular monitoring of turbidity can help detect trends that might indicate increasing
+erosion in developing watersheds. However, turbidity is closely related to stream flow
+and velocity and should be correlated with these factors. Comparisons of the change in
+turbidity over time, therefore, should be made at the same point at the same flow.
+Turbidity is not a measurement of the amount of suspended solids present or the rate of
+sedimentation of a steam since it measures only the amount of light that is scattered by
+suspended particles. Measurement of total solids is a more direct measure of the amount
+of material suspended and dissolved in water (see section 5.9 - Conductivity).
+Turbidity is generally measured by using a turbidity meter. Volunteer programs may also
+take samples to a lab for analysis. Another approach is to measure transparency (an
+integrated measure of light scattering and absorption) instead of turbidity. Water
+clarity/transparency can be measured using a Secchi disk or transparency tube. The
+Secchi disk can only be used in deep, slow moving rivers; the transparency tube, a
+comparatively new development, is gaining acceptance in programs around the country
+but is not yet in wide use (see Using a Secchi Disk or Tranparency Tube).
+Figure 5.10
+Using a Secchi disk to measure transparency
+A turbidity
+meter consists
+of a light
+source that
+illuminates a
+water sample
+and a
+photoelectric
+cell that
+measures the
+intensity of
+light scattered
+at a 90 angle
+by the
+particles in the
+sample. It
+measures
+turbidity in
+nephelometric
+turbidity units
+or NTUs.
+Meters can
+measure
+turbidity over
+
+-- 155 of 227 --

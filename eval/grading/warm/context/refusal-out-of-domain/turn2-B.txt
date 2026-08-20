@@ -1,0 +1,452 @@
+### water-quality-metrics-source-of-truth.pdf (chunk 302, score 0.030776515151515152)
+
+r at the same temperature
+— marine systems sit closer to the hypoxia threshold by default.
+Pollution relevance: The single most important indicator of aquatic health. Organic pollution
+consumes oxygen (biochemical oxygen demand). Watch both the absolute value and the shape
+of the daily curve — large swings signal eutrophication; a sustained sag signals an oxygen-
+demanding discharge.
+
+-- 1 of 7 --Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L
+hypoxia · ~0 anoxia.
+ORP (Oxidation-Reduction Potential)
+Measures: The water’s net tendency to oxidize or reduce — effectively, the “electron pressure.”
+Units: mV.
+What drives it: The dominant electron acceptor present. Oxygen-rich water reads strongly
+positive; as oxygen is consumed, the system shifts to nitrate, then manganese/iron, then
+sulfate, driving ORP downward and eventually negative.
+Fresh vs. salt: Healthy aerobic water typically reads +200 to +400 mV. Negative values
+indicate reducing, anoxic, or septic conditions. Seawater’s high ionic strength makes absolute
+readings less comparable between sites — trend matters more than the raw number.
+Pollution relevance: ORP is the early-warning twin of DO. Because it responds to the chemical
+environment, it often begins falling before DO bottoms out. A drop toward or below zero is a
+strong signal of organic loading, sewage, or decomposition.
+Electrical Conductivity (EC)
+Measures: The water’s ability to carry current — a proxy for total dissolved ions/salts. Units:
+μS/cm (report temperature-corrected “specific conductance” at 25°C).
+What drives it: Dissolved ion content. Salinity dominates in marine water; in freshwater, EC
+reflects geology, runoff, road salt, and discharges.
+Fresh vs. salt: Freshwater and seawater differ by roughly 1,000× in EC. This makes EC the
+primary tool for identifying the source of a change — freshwater input vs. saline input vs. an
+ionic discharge.
+Pollution relevance: Sudden EC shifts flag saltwater intrusion, road-salt runoff,
+industrial/chemical discharge, or sewage. In estuaries, EC normally tracks the tide — separate
+that rhythm from genuine events.
+pH
+Measures: Acidity/alkalinity on a logarithmic scale of hydrogen-ion activity. Units: pH (unitless).
+What drives it: The CO₂–carbonate balance. Photosynthesis removes CO₂ and raises pH;
+respiration/decomposition adds CO₂ and lowers pH. Also affected by acidic/alkaline inputs.
+Fresh vs. salt: Freshwater (typically 6.5–8.5) is poorly buffered and naturally variable.
+Seawater (~8.0–8.2) is strongly carbonate-buffered — so any meaningful pH excursion in
+marine water is significant and worth investigating.
+Pollution relevance: Acidic inputs (acid mine drainage, certain industrial effluent) crash pH;
+alkaline inputs (concrete/construction washwater, some industrial discharge) raise it. Large
+
+-- 2 of 7 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 264, score 0.026742734890354787)
+
+ve is displayed again.
+m
+2.
+
+-- 174 of 227 --
+
+References
+APHA. 1992. Standard methods for the examination of water and wastewater. 18th ed.
+American Public Health Association, Washington, DC.
+< Previous · Table of Contents · Next >
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 175 of 227 --5.8
+Total Solids
+What are total solids and why are they important?
+Total solids are dissolved solids plus suspended and settleable solids in water. In stream
+water, dissolved solids consist of calcium, chlorides, nitrate, phosphorus, iron, sulfur, and
+other ions particles that will pass through a filter with pores of around 2 microns (0.002
+cm) in size. Suspended solids include silt and clay particles, plankton, algae, fine organic
+debris, and other particulate matter. These are particles that will not pass through a
+2-micron filter.
+The concentration of total dissolved solids affects the water balance in the cells of aquatic
+organisms. An organism placed in water with a very low level of solids, such as distilled
+water, will swell up because water will tend to move into its cells, which have a higher
+concentration of solids. An organism placed in water with a high concentration of solids
+will shrink somewhat because the water in its cells will tend to move out. This will in
+turn affect the organism's ability to maintain the proper cell density, making it difficult to
+keep its position in the water column. It might float up or sink down to a depth to which it
+is not adapted, and it might not survive.
+Higher concentrations of suspended solids can serve as carriers of toxics, which readily
+cling to suspended particles. This is particularly a concern where pesticides are being
+used on irrigated crops. Where solids are high, pesticide concentrations may increase well
+beyond those of the original application as the irrigation water travels down irrigation
+ditches. Higher levels of solids can also clog irrigation devices and might become so high
+that irrigated plant roots will lose water rather than gain it.
+A high concentration of total solids will make drinking water unpalatable and might have
+an adverse effect on people who are not used to drinking such water. Levels of total
+solids that are too high or too low can also reduce the efficiency of wastewater treatment
+plants, as well as the operation of industrial processes that use raw water.
+Total solids also affect water clarity. Higher solids decrease the passage of light through
+water, thereby slowing photosynthesis by aquatic plants. Water will heat up more rapidly
+and hold more heat; this, in turn, might adversely affect aquatic life that has adapted to a
+
+-- 176 of 227 --
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk 305, score 0.01639344262295082)
+
+rature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm
+weather. DO and ORP falling together while EC and turbidity rise is a far more specific signal
+pointing to an organic/sewage source.
+5. Separating Natural Cycles from Pollution Events
+Rule out the water body’s normal rhythms before declaring an event.
+Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,
+bottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.
+A smooth, repeating daily oscillation is biology, not pollution.
+Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity
+often peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is
+mixing, not a discharge.
+Seasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.
+Compare any reading to the same season’s baseline.
+The test for a real event: A pollution event typically appears as a step-change or sustained
+excursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it
+shows up as a correlated shift across multiple parameters consistent with one of the signatures
+above.
+6. Sensor & Data-Quality Caveats
+A trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an
+event.
+Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across
+weeks may be drift, not water chemistry — cross-check against calibration history and class-
+balanced expectations.
+ORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.
+standard hydrogen electrode). Record which reference is used so values are comparable across
+DataPods and over time. Treat ORP trend as more reliable than absolute value.
+EC temperature compensation: Always report specific conductance (25°C-corrected).
+Uncorrected EC will track temperature and produce false signals.
+Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on
+one across the fleet.
+DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the
+antifouling/cleaning schedule.
+
+-- 6 of 7 --
+
+Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long
+deployment is a fouling/maintenance flag first, an environmental signal second.
+Maintain this as a living document. As DataPod deployments build site-specific baselines, append
+local “normal” ranges and any site-specific event signatures observed in the field.
+
+-- 7 of 7 --
+
+
+
+---
+
+### IORP_probe.pdf (chunk 3, score 0.01639344262295082)
+
+Range 	-2000mV – 2000mV
+95% in 1s	Response time
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+No	Internal temperature sensor
+~1 Year	Time before recalibration
+Reads 	ORP
+Platinum	Sensing element
+1 − 99 °C	Temperature range °C
+70m (230’)	Max depth
+SMA or Tinned leads	Connector
++/– 1mV	Accuracy
+~4 Years +	Life expectancy
+or
+ORP Probe
+Industrial
+Gen 3
+with Platinum sensing element
+Revised 8/25
+V 3.2
+
+-- 1 of 11 --
+
+Operating principle
+ORP stands for oxidation/reduction potential. Oxidation is the loss of electrons and
+reduction is the gain of electrons. The output of the probe is represented in millivolts and
+can be positive or negative.
+Just like a pH probe measures hydrogen ion activity in a liquid; an ORP probe measures
+electron activity in a liquid. The ORP readings represents how strongly electrons are
+transferred to or from substances in a liquid. Keeping in mind that the readings do not
+indicate the amount of electrons available for transfer.
+pH Probe 	ORP Probe
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 11 --
+
+Add just a drop of bleach
+(which is an oxidizing agent)
+606.9
+Reading A
+605.3
+Reading B
+-234.6
+Reading A
+24.2
+Reading B
+A	
+A
+B	
+B
+Tap water 	Tap water
+The water is unreactive and has only trace amounts of electron movement. These
+readings are equivalent to the readings you see with an unconnected multimeter.
+An ORP probe has a platinum tip that is connected to a silver wire, surrounded by
+silver chloride. That silver wire is then connected to a KCL reference solution. Because
+platinum is an unreactive metal it can “silently observe” the electron activity of the
+liquid without becoming apart of whatever reaction is occurring in the liquid.
+When reading the ORP of a liquid that has very few electrons available for
+transfer, ORP readings can appear to be inconsistent.
+(Theoretical value)
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 3 of 11 --
+
+46.6mm
+(1.8”)
+Soaker bottle
++ 	–
+10ml
+Ø 8mm
+197mm
+(7.7”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Ø 2.8mm
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+Measurements
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 11 --
+
+Platinum
+Teflon
+PVC
+EPDM
+Delrin ®
+(body)
+Polyethylene
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Platinum
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Grade ORP Probe
+Part # ENV-50-ORP
+Complies with NSF/ANSI Standard 51
+Food Safe
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 11 --
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk 303, score 0.016129032258064516)
+
+ically 6.5–8.5) is poorly buffered and naturally variable.
+Seawater (~8.0–8.2) is strongly carbonate-buffered — so any meaningful pH excursion in
+marine water is significant and worth investigating.
+Pollution relevance: Acidic inputs (acid mine drainage, certain industrial effluent) crash pH;
+alkaline inputs (concrete/construction washwater, some industrial discharge) raise it. Large
+
+-- 2 of 7 --daily pH swings indicate biological productivity, not a discharge.
+Turbidity
+Measures: Water clarity — light scattered by suspended particles (sediment, plankton, organic
+matter). Units: NTU or FNU.
+What drives it: Sediment runoff, shoreline erosion, bottom resuspension by
+currents/waves/dredging, and algal cells.
+Fresh vs. salt: Rivers and estuaries are naturally more turbid and event-driven (storms,
+dredging). Open coastal water is clearer; resuspension peaks at maximum tidal current.
+Pollution relevance: A turbidity spike flags storm runoff, construction/erosion, or dredging.
+Critically, particles carry adsorbed pollutants — phosphorus, metals, hydrocarbons,
+pathogens — so a turbidity spike is also a proxy for contaminant loading. High turbidity also
+suppresses photosynthesis by blocking light.
+2. Baseline Reference Ranges
+Parameter 	Healthy Freshwater 	Brackish / Estuarine 	Healthy Seawater
+Temperature Climate/season-
+dependent
+Climate/season-
+dependent Climate/season-dependent
+Dissolved
+Oxygen 6–11 mg/L (>80% sat.) 	5–9 mg/L 5–8 mg/L (~7–8 at 100%
+sat.)
+ORP 	+200 to +400 mV 	+150 to +350 mV 	+200 to +400 mV
+Conductivity
+(EC) 50–1,500 μS/cm 	~1,000–35,000 μS/cm ~45,000–55,000 μS/cm (~35
+PSU)
+pH 	6.5–8.5 	7.0–8.3 	7.8–8.3
+Turbidity 	<5–25 NTU 	5–100+ NTU 	<5–10 NTU
+Ranges are general guidance. Establish a site-specific baseline before treating deviations as events
+— local geology, season, and tidal stage shift “normal” substantially.
+3. How the Parameters Interrelate
+Understanding these couplings is what turns six independent readings into a diagnostic system.
+Temperature → DO (inverse, two ways): Warmer water physically holds less oxygen and
+
+-- 3 of 7 --

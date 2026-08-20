@@ -1,0 +1,321 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0050, score 0.6967344988512835)
+
+void of pl ants could be affected by extreme acidity or toxic
+pollutants. Aquatic plants may also be an indicator of stream velocity because plants cannot take root
+in fast-flowing streams.
+19.
+Algae are simple plants that do not grow true roots, stems, or leaves and that mainly live in water,
+providing food for the food chain. Algae may grow on rocks, twigs, or other submerged materials, or
+20.
+l-- 60 of 227 --
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0004, score 0.6474068782886776)
+
+rature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm
+weather. DO and ORP falling together while EC and turbidity rise is a far more specific signal
+pointing to an organic/sewage source.
+5. Separating Natural Cycles from Pollution Events
+Rule out the water body’s normal rhythms before declaring an event.
+Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,
+bottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.
+A smooth, repeating daily oscillation is biology, not pollution.
+Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity
+often peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is
+mixing, not a discharge.
+Seasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.
+Compare any reading to the same season’s baseline.
+The test for a real event: A pollution event typically appears as a step-change or sustained
+excursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it
+shows up as a correlated shift across multiple parameters consistent with one of the signatures
+above.
+6. Sensor & Data-Quality Caveats
+A trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an
+event.
+Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across
+weeks may be drift, not water chemistry — cross-check against calibration history and class-
+balanced expectations.
+ORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.
+standard hydrogen electrode). Record which reference is used so values are comparable across
+DataPods and over time. Treat ORP trend as more reliable than absolute value.
+EC temperature compensation: Always report specific conductance (25°C-corrected).
+Uncorrected EC will track temperature and produce false signals.
+Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on
+one across the fleet.
+DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the
+antifouling/cleaning schedule.
+
+-- 6 of 7 --
+
+Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long
+deployment is a fouling/maintenance flag first, an environmental signal second.
+Maintain this as a living document. As DataPod deployments build site-specific baselines, append
+local “normal” ranges and any site-specific event signatures observed in the field.
+
+-- 7 of 7 --
+
+
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0051, score 0.6313620413955778)
+
+-- 60 of 227 --float on the surface of the water. The algae naturally occurs in green and brown colors. Excessive
+algal growth may indicate excessive nutrients (organic matter or a pollutant such as fertilizer) in the
+stream.
+Macroinvertebrate survey (optional)
+Macroinvertebrates are organisms that lack a backbone and can be seen with the naked eye such as
+clams, mussels, snails, worms, crayfish, and larval insects. To locate macroinvertebrates in the
+stream, use one or more of the following metho ds.
+Rock-rubbing method. (Use this method in streams with riffle areas and rocky bottoms.)
+Remove several rocks from within a riffle area of your stream site (e.g., randomly pick
+1 rock from each side of the stream, 1 rock from the middle, and 1 rock from in
+between). Try to choose rocks that are submerged during normal flow conditions. Each
+rock should be about 4-6 inches in diameter and should be easily moved (not
+embedded).
+n
+Either inspect the rock's surface for any living organisms or place the rock in a
+light-colored bucket or shallow pan, add some stream water, and brush the rock with a
+soft brush or your hands. Try to dislodge the foreign particles from the rock's surface.
+Also look for clumps of gravel or leaves stuck to the rock. These clumps may be
+caddisfly houses and should be dislodged as well.
+n
+l
+Stick-picking method. (Use this method in streams without riffles or without a rock bottom.)
+Collect several sticks (approximately 1 inch in diameter and relatively short) from
+inside the stream site, and place then in a bucket filled with stream water. Select
+partially decomposed objects that have soft, pulpy wood and a lot of crevices a nd are
+found in the flowing water, not buried in the bottom. Pick the loose bark from the sticks
+to find organisms.
+n
+Fill the shallow pan with water from the stream and remove one of the sticks from the
+bucket. Examine the stick making sure you hold it over the pan so no organisms are
+lost. Remember that the organisms will have sought shelter, and they could be hiding in
+loose bark or crevices. After examining the sticks, it might be helpful to break up the
+woody material. Examine each stick carefully. Using tweezers or a soft brush, carefully
+remove anything that resembles a living organism and place it in the pan. Also examine
+the bucket contents for anything that has fallen off the sticks.
+n
+l
+Leaf pack-sorting method. (This method can be used in streams with or without a rock
+bottom.)
+Remove several handfuls of submerged leaves from the stream and place them into a
+bucket. Remove the leaves one at a time and look closely for the presence of insects.
+Using tweezers or soft brush, carefully remove anything that resembles a living
+organism and place it in a pan containing stream water. Also examine the bucket
+contents to see if anything has fallen off the leaves.
+n
+l
+21.
+Note whether you have found any macroinvertebrates using one of the above methods.	22.
+After collecting macroinvertebrates using any of the above methods, examine the types of organisms
+by gross morphological features (e.g., snails or worm-like). Use a magnifying glass to observe the
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0034, score 0.6178439990721336)
+
+ot difficult to
+realize that a stream full of many kinds of crawling and swimming "critters" is healthier than one without much life.
+The disadvantage of the biosurvey, on the other hand, is that it cannot definitively tell us why certain types of
+creatures are present or absent.
+In this case, the absence of stoneflies might indeed be due to low dissolved oxygen. But is the stream
+
+-- 47 of 227 --underoxygenated because it flows too sluggishly or because pollutants in the stream are damaging water quality by
+using up the oxygen? The absence of stoneflies might also be due to other pollutants discharged by factories or
+running off farmland, water temperatures that are too high, habitat degradation such as excess sand or silt on the
+stream bottom that has ruined stonefly sheltering areas, or other conditions. Thus a biosurvey should be
+accompanied by an assessment of habitat and water quality conditions in order to help explain biosurvey results.
+Habitat, as it relates to the biosurvey, is defined as the space occupied by living organisms. In a stream, habitat for
+macroinvertebrates includes the rocks and sediments of the stream bottom, the plants in and around the stream, leaf
+litter and other decomposing organic material that falls into the stream, and submerged logs, sticks, and woody
+debris. Macroinvertebrates need the shelter and food these habitats provide and tend to congregate in areas that
+provide the best shelter, the most food, and the most dissolved oxygen. A habitat survey examines these aspects and
+rates the stream according to their quality. This chapter includes both simple and intensive habitat surveys
+volunteers can conduct.
+Monitoring for water quality conditions such as low dissolved oxygen, temperature, nutrients, and pH helps identify
+which pollutants are responsible for impacts to a stream. Water quality monitoring is discussed in Chapter 5.
+Uses of the Biosurvey and Habitat Assessment
+The information provided by biosurveys and habitat assessments can be used for many purposes.
+Biosurveys can be used to identify problem sites along a stream. A habitat assessment can help determine
+whether the problem is due, at least in part, to a habitat limitation such as poor bank conditions.
+l
+To identify the impact of pollution and of pollution control activities. Because macroinvertebrates are
+stationary and are sensitive to different degrees of pollution, changes in their abundance and variety vividly
+illustrate the impact pollution is having on the stream. Loss of macroinvertebrates in the stream, or of trees
+along the stream bank, are environmental impacts that a wide segment of society can relate to. Similarly,
+when a pollution control activity takes place say, a fence is built to keep cows out of the stream a biosurvey
+may show that the sensitive macroinvertebrates have returned and a habitat assessment might find that the
+formerly eroded stream banks have recovered.
+l
+To determine the severity of the pollution problem and to rank stream sites. To use biological data properly,
+water resource analysts generally compare the results from the stream sites under study to those of sites in
+ideal or nearly ideal condition (called a reference condition). Individual stream sites can then be ranked from
+best to worst, and priorities can be set for their improvement.
+l
+To determine support of aquatic life uses. All states designate their waters for certain specific uses, such as
+swimming or as cold water fishery. States establish specific standards (limits on pollutants) identifying what
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0003, score 0.6122814456588421)
+
+U
+Ranges are general guidance. Establish a site-specific baseline before treating deviations as events
+— local geology, season, and tidal stage shift “normal” substantially.
+3. How the Parameters Interrelate
+Understanding these couplings is what turns six independent readings into a diagnostic system.
+Temperature → DO (inverse, two ways): Warmer water physically holds less oxygen and
+
+-- 3 of 7 --speeds the respiration/decomposition that consumes it. A temperature rise should always be
+paired with an expected DO decline.
+Temperature → EC: Ion mobility rises with temperature; raw EC increases ~2% per °C. Always
+report temperature-corrected specific conductance so EC changes reflect chemistry, not
+warming.
+DO ↔ ORP (tightly coupled): Oxygen is the dominant electron acceptor — abundant DO drives
+ORP strongly positive. As DO is consumed, ORP declines; once oxygen is exhausted, ORP goes
+negative. ORP often moves before DO hits bottom, giving lead time.
+pH ↔ DO (the photosynthesis/respiration couple): Photosynthesis removes CO₂ (raises pH)
+and releases O₂; respiration adds CO₂ (lowers pH) and consumes O₂. pH and DO therefore rise
+and fall together on the daily cycle. In-phase daily swings of pH and DO are the fingerprint
+of biological productivity.
+Turbidity → DO/pH: Suspended particles block light, suppressing photosynthesis and
+dampening daytime DO/pH gains. Organic-rich turbidity also adds direct oxygen demand.
+Turbidity as a contaminant carrier: Sediment transports adsorbed nutrients, metals, and
+pathogens — a turbidity spike can stand in for a loading event even when chemistry looks
+stable.
+EC as a source fingerprint: Because fresh and salt water differ ~1,000× in EC, the direction of
+an EC change tells you whether freshwater (rain, runoff, groundwater) or saline/ionic input (tide,
+intrusion, discharge) is driving the event.
+4. Pollution Event Signature Matrix
+Arrows show the expected direction of change relative to baseline. ↑↑ / ↓↓ = strong, ↑ / ↓ =
+moderate, 	= large swing or variable, → = little change.
+Event 	Temp 	DO 	ORP 	EC 	pH 	Turbidity Primary
+Signature
+Sewage /
+sanitary
+discharge
+→/↑ 	↓↓ 	↓↓ 	↑ 	↓ 	↑
+DO crash +
+ORP crash +
+EC rise +
+turbidity rise,
+not tied to
+time of day
+Algal bloom /
+(super-
+sat.
+midday, 	(high
+Large in-
+phase daily
+DO + pH
+oscillations;
+
+-- 4 of 7 --
+
+eutrophication 	↑ 	crash
+pre-
+dawn)
+→ 	midday) 	↑ 	pre-dawn DO
+minimum is
+the danger
+window
+Stormwater /
+urban runoff ↓ 	↓
+↓
+(marine)
+/
+(fresh)
+↑↑
+Sharp
+turbidity spike
+coincident
+with rainfall;
+EC shifts
+(drops in
+marine, may
+spike in fresh
+from road salt)
+Industrial /
+chemical
+discharge
+↑↑
+Abrupt step-
+changes in EC
+and/or pH
+and/or ORP
+with no diel or
+tidal
+explanation
+Thermal
+discharge ↑↑ 	↓ 	→ 	→ 	→ 	→
+Temperature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --

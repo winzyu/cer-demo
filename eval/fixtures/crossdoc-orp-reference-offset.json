@@ -1,0 +1,49 @@
+{
+  "id": "crossdoc-orp-reference-offset",
+  "class": "cross-document",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf",
+    "IORP_probe.pdf"
+  ],
+  "requires": [],
+  "notes": "Cross-document synthesis where the correct answer is a refusal to adjudicate: the reference explains why absolute ORP is not comparable, the datasheet supplies our electrode's reference type, and the missing fact is the other pod's.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our ORP reads 60 mV lower than the pod across the bay. Which one is wrong?",
+      "rubric": {
+        "must_contain": [
+          "states ORP values depend on the electrode's reference type (Ag/AgCl vs standard hydrogen electrode) and that the reference used must be recorded for values to be comparable",
+          "identifies our probe's construction: platinum sensing element with a silver/silver-chloride reference in KCl",
+          "notes ionic strength makes absolute ORP readings less comparable between sites, so trend matters more than the raw number",
+          "declines to call either pod wrong without knowing the other's reference type"
+        ],
+        "must_not": [
+          "declares one pod faulty",
+          "supplies a numeric conversion between reference electrodes"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf",
+          "IORP_probe.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "So what should I compare instead?",
+      "rubric": {
+        "must_contain": [
+          "recommends comparing trends over time rather than absolute values",
+          "recommends recording the reference type per DataPod so future values are comparable"
+        ],
+        "must_not": [
+          "recommends comparing raw absolute values across pods"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

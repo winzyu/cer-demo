@@ -1,0 +1,581 @@
+/*
+ * Gilligan chat — layout and components.
+ *
+ * Every colour comes from theme.css. A literal hex in this file is a bug: it will not
+ * invert between light and dark. Wave 1 streams produce MARKUP using the class names
+ * documented here; the styling lives here so the two directions stay coherent.
+ *
+ * There is deliberately no chat-history rail. Persisted conversations need authentication,
+ * which this service does not have (timeline.md, N7) — a non-functional sidebar would be
+ * decoration pretending to be a feature.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; margin: 0; }
+
+body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ============================= app bar ============================= */
+
+.appbar {
+  flex-shrink: 0;
+  background: var(--nav-bg);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-4);
+}
+
+.appbar__logo { height: 30px; width: auto; display: block; }
+
+.appbar__title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: var(--fs-base);
+  color: #ffffff;              /* on the navy bar in BOTH themes, so it is not a token */
+}
+
+.appbar__meta { font-size: var(--fs-sm); color: var(--nav-text); }
+
+.appbar__spacer { flex-grow: 1; }
+
+/* Pod + freshness live here; WS-2 may also render freshness per message. */
+.appbar__status {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: transparent;
+  color: var(--nav-text);
+  cursor: pointer;
+  padding: 0;
+}
+.theme-toggle:hover { color: #ffffff; border-color: rgba(255, 255, 255, 0.34); }
+.theme-toggle svg { width: 17px; height: 17px; }
+/* Show the icon for the theme you would switch TO. */
+.theme-toggle .icon-dark { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-dark { display: block; }
+:root[data-theme="dark"] .theme-toggle .icon-light { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .icon-dark { display: block; }
+  :root:not([data-theme="light"]) .theme-toggle .icon-light { display: none; }
+}
+
+/* ============================= context bar =============================
+ * Session-level facts live here, not in the transcript: which pod is selected, whether it
+ * is reporting, and whether its water type disagrees with the deployment's. These are
+ * identical on every answer, so repeating them per message trains the reader to skip the
+ * line where a caveat finally matters. See docs/CHAT_UX_WORKPLAN.md, "Wave 2".
+ */
+
+.contextbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  padding: var(--sp-2) var(--sp-7);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.podpicker { display: inline-flex; align-items: center; gap: var(--sp-2); }
+.podpicker__label { font-size: var(--fs-sm); color: var(--text-3); }
+
+/* A real <select>: native keyboard behaviour and mobile pickers for free. */
+.podpicker__select {
+  font: inherit;
+  font-size: var(--fs-md);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-3);
+  max-width: 18rem;
+  cursor: pointer;
+}
+.podpicker__select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.podpicker__select:disabled { opacity: 0.6; cursor: default; }
+
+.contextbar .badge { font-size: var(--fs-sm); }
+.contextbar__spacer { flex-grow: 1; }
+
+/* ============================= transcript ============================= */
+
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-6) var(--sp-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.msg {
+  max-width: var(--measure);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.msg.user { align-self: flex-end; align-items: flex-end; max-width: 560px; }
+.msg.assistant { align-self: flex-start; }
+
+/* The old uppercase role label is gone: the bubble side and colour already say who spoke,
+   and a "ASSISTANT" caption above every answer is noise at this density. */
+.msg .role { display: none; }
+
+.msg .body {
+  border-radius: var(--radius-sm) var(--radius-lg) var(--radius-lg) var(--radius-lg);
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow-wrap: anywhere;
+}
+
+.msg.user .body {
+  background: var(--bubble-user-bg);
+  color: var(--bubble-user-text);
+  border-color: transparent;
+  border-radius: var(--radius-lg) var(--radius-sm) var(--radius-lg) var(--radius-lg);
+  box-shadow: none;
+}
+
+/* Streaming plain text still needs its newlines; markdown output must not be pre-wrapped
+   or every block element inherits collapsed whitespace. WS-1 adds .body--md when it wins. */
+.msg .body { white-space: pre-wrap; }
+.msg .body.body--md { white-space: normal; }
+
+/* A refusal is pinned behaviour, not a failure. Grey and calm — if it renders red, it gets
+   reported as a bug. WS-1/WS-2 add .body--refusal. */
+.msg .body--refusal {
+  background: var(--surface-2);
+  border-left: 3px solid var(--text-3);
+  color: var(--text-2);
+}
+
+/* ---------- markdown inside an answer (WS-1 emits these tags) ---------- */
+
+.body--md > *:first-child { margin-top: 0; }
+.body--md > *:last-child { margin-bottom: 0; }
+.body--md p { margin: 0 0 var(--sp-3); }
+.body--md h1, .body--md h2, .body--md h3 {
+  font-family: var(--font-head);
+  font-weight: 600;
+  line-height: 1.3;
+  margin: var(--sp-4) 0 var(--sp-2);
+}
+.body--md h1 { font-size: var(--fs-lg); }
+.body--md h2 { font-size: var(--fs-base); }
+.body--md h3 { font-size: var(--fs-md); }
+.body--md ul, .body--md ol { margin: 0 0 var(--sp-3); padding-left: var(--sp-5); }
+.body--md li { margin: var(--sp-1) 0; }
+.body--md li::marker { color: var(--accent); }
+.body--md strong { font-weight: 600; }
+.body--md code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--surface-3);
+  border-radius: var(--radius-sm);
+  padding: 1px 5px;
+}
+.body--md pre {
+  background: var(--surface-3);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-3);
+  overflow-x: auto;                /* code must scroll itself, never the page */
+  margin: 0 0 var(--sp-3);
+}
+.body--md pre code { background: none; padding: 0; }
+.body--md blockquote {
+  margin: 0 0 var(--sp-3);
+  padding-left: var(--sp-3);
+  border-left: 3px solid var(--border-strong);
+  color: var(--text-2);
+}
+
+/* A six-metric table is the common case and must not blow out the layout. */
+.body--md .table-wrap { overflow-x: auto; margin: 0 0 var(--sp-3); }
+.body--md table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--fs-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.body--md th, .body--md td {
+  text-align: left;
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--border);
+}
+.body--md thead th {
+  background: var(--surface-2);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.04em;
+  color: var(--text-2);
+}
+.body--md tbody tr:last-child td { border-bottom: none; }
+
+/* ============================= provenance (WS-2) ============================= */
+
+.provenance:empty, .chart:empty { display: none; }
+
+.provenance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+}
+
+/* The disclosure takes its own full-width row beneath any loose caveat badges, rather than
+   competing with them as a flex item. Caveats qualify the answer and are read first; the
+   audit trail sits under them. */
+.provenance > .details { flex-basis: 100%; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-strong);
+  color: var(--text-2);
+  background: var(--surface);
+}
+.chip svg { width: 14px; height: 14px; flex-shrink: 0; }
+.chip b { font-weight: 600; }
+
+/* what the model actually queried */
+.chip--tool {
+  background: var(--tool-bg);
+  border-color: var(--tool-border);
+  color: var(--tool-text);
+}
+.chip--tool svg { color: var(--tool-icon); }
+
+/* a repeated identical call, served from the per-request cache */
+.chip--deduped {
+  background: var(--surface-2);
+  border-style: dashed;
+  color: var(--text-3);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-xs);
+  border-radius: var(--radius-pill);
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px solid transparent;
+}
+.badge svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+.badge--ok { background: var(--ok-bg); color: var(--ok-text); }
+.badge--ok .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok-dot); }
+
+/* stale pod, provisional turbidity, water-type mismatch, complete:false */
+.badge--warn { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn-text); }
+.badge--warn svg { color: var(--warn-icon); }
+
+.badge--muted { border-color: var(--border-strong); color: var(--text-3); }
+
+/* Collapsed provenance. Closed by default: auditable for anyone checking the work, silent
+   for everyone else. Only answer-specific caveats sit outside it, as loose .badge--warn. */
+.details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  font-size: var(--fs-sm);
+  max-width: 100%;
+}
+.details > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: var(--sp-2) var(--sp-3);
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.details > summary::-webkit-details-marker { display: none; }
+.details > summary::before {
+  content: "";
+  width: 0; height: 0;
+  border-left: 4px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform 120ms ease;
+}
+.details[open] > summary::before { transform: rotate(90deg); }
+.details > summary:hover { color: var(--text-2); }
+.details__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-3) var(--sp-3);
+}
+
+/* ============================= errors ============================= */
+
+.notice {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: flex-start;
+  border-radius: var(--radius);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  max-width: var(--measure);
+}
+.notice svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px; }
+.notice__body { display: flex; flex-direction: column; gap: var(--sp-1); }
+.notice__title { font-family: var(--font-head); font-weight: 600; font-size: var(--fs-md); }
+.notice__text { font-size: var(--fs-sm); color: var(--text-2); }
+.notice__code { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-3); }
+
+.notice--error { background: var(--err-bg); border-color: var(--err-border); }
+.notice--error .notice__title { color: var(--err-text); }
+.notice--error .notice__text { color: var(--err-text); }
+.notice--error svg { color: var(--err-icon); }
+
+.notice--warn { background: var(--warn-bg); border-color: var(--warn-border); }
+.notice--warn .notice__title, .notice--warn .notice__text { color: var(--warn-text); }
+.notice--warn svg { color: var(--warn-icon); }
+
+/* Legacy hook from Phase 0's error path. */
+.error { color: var(--err-text); }
+
+/* ============================= chart (WS-4) ============================= */
+
+.chart__frame {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--sp-4) var(--sp-4) var(--sp-3);
+}
+.chart__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+.chart__axis {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  margin-top: var(--sp-1);
+}
+.chart__line { fill: none; stroke: var(--chart-line); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.chart__band { fill: var(--chart-fill); }
+.chart__grid { stroke: var(--chart-grid); stroke-width: 1; }
+.chart__dot { fill: var(--chart-line); }
+.chart__dot--last { fill: var(--chart-last); }
+
+/* ============================= citations ============================= */
+
+.citations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.citations li {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: var(--sp-1) var(--sp-3);
+}
+.citations .file { font-family: var(--font-mono); }
+
+/* ============================= thinking ============================= */
+
+.thinking {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-3);
+  align-self: flex-start;
+}
+.thinking__dots { display: flex; gap: var(--sp-1); }
+.thinking__dots span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: thinking-pulse 1.2s infinite ease-in-out;
+}
+.thinking__dots span:nth-child(2) { animation-delay: 0.15s; }
+.thinking__dots span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes thinking-pulse { 0%, 60%, 100% { opacity: 0.28; } 30% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .thinking__dots span { animation: none; opacity: 0.6; }
+}
+
+/* ============================= composer ============================= */
+
+#input-region {
+  flex-shrink: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: var(--sp-3) var(--sp-7) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+/* Starter prompts (WS-3). Horizontally scrollable so they never wrap into a wall. */
+#starter-prompts { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+#starter-prompts:empty { display: none; }
+
+.chip--starter {
+  cursor: pointer;
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+}
+.chip--starter:hover { border-color: var(--accent); color: var(--text); }
+
+#composer {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sp-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-4);
+}
+#composer:focus-within { border-color: var(--accent); }
+
+/* WS-3 swaps the input for a textarea; both inherit this. */
+#composer #input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: var(--text);
+  resize: none;
+  max-height: 160px;
+  padding: var(--sp-2) 0;
+}
+#composer #input::placeholder { color: var(--text-3); }
+
+.composer__hint { font-size: var(--fs-xs); color: var(--text-3); white-space: nowrap; }
+
+button { font: inherit; cursor: pointer; }
+
+#send {
+  width: 38px; height: 38px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 0;                      /* hides the Phase 0 "Send" label; the arrow says it */
+}
+#send::after {
+  content: "";
+  width: 17px; height: 17px;
+  background: currentColor;
+  -webkit-mask: var(--icon-send) center / contain no-repeat;
+  mask: var(--icon-send) center / contain no-repeat;
+}
+:root {
+  --icon-send: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13 6l6 6-6 6"/></svg>');
+}
+#send:hover { background: var(--accent-hover); }
+#send:disabled { opacity: 0.5; cursor: progress; }
+
+/* Secondary actions: stop, copy, regenerate (WS-3). */
+#response-controls { display: flex; gap: var(--sp-2); }
+#response-controls:empty { display: none; }
+
+.btn--ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-3);
+}
+.btn--ghost:hover { border-color: var(--accent); color: var(--text); }
+.btn--ghost svg { width: 14px; height: 14px; }
+
+/* ============================= responsive ============================= */
+
+/* Tablet */
+@media (max-width: 900px) {
+  #messages { padding: var(--sp-4) var(--sp-4); }
+  #input-region { padding: var(--sp-3) var(--sp-4) var(--sp-4); }
+  .contextbar { padding: var(--sp-2) var(--sp-4); }
+  .msg { max-width: 100%; }
+}
+
+/* Phone. Hit targets go to 44px; the composer hint is dropped for room. */
+@media (max-width: 620px) {
+  body { font-size: 14.5px; }
+  .appbar { padding: var(--sp-2) var(--sp-3); gap: var(--sp-2); }
+  .appbar__meta { display: none; }
+  .appbar__logo { height: 26px; }
+
+  #messages { padding: var(--sp-4) var(--sp-3); gap: var(--sp-5); }
+  .contextbar { padding: var(--sp-2) var(--sp-3); gap: var(--sp-2); }
+  .podpicker__select { max-width: 11rem; }
+  .podpicker__label { display: none; }
+  .msg.user { max-width: 88%; }
+
+  .composer__hint { display: none; }
+  #composer { border-radius: 24px; padding: var(--sp-1) var(--sp-1) var(--sp-1) var(--sp-4); }
+  #send { width: 44px; height: 44px; border-radius: 50%; }
+  .theme-toggle { width: 44px; height: 44px; }
+  .btn--ghost { min-height: 44px; }
+
+  /* Chips scroll on one line instead of stacking into a wall of pills. */
+  #starter-prompts { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--sp-1); }
+  .chip--starter { flex-shrink: 0; }
+}

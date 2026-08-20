@@ -1,0 +1,62 @@
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0041, score 0.5887734307832165)
+
+omium,
+resulting in high-biased DO readings (White and others,
+1990).4
+• The presence of cupric copper and ferric iron at a
+concentration less than 50 micrograms per liter (μg/L)
+may cause a bias of less than 1 μg/L; at a concentration
+4See also CHEMetrics, Inc., Simplicity in water analysis, accessed Sep-
+tember 4, 2019, at https://www.chemetrics.com/product-category/test-kits/
+oxygen-dissolved/.-- 22 of 44 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0044, score 0.5632309731056098)
+
+teps 7a through 7d.
+a. 	Carefully immerse a reagent-containing ampule on
+the sampling tool that is attached to a wire line.
+b. 	At the desired depth of sample collection (in a well
+or surface-water body), break the scored tip of the
+ampule by using a sharp upward tugging motion on
+the sampling tool. This action permits sample water
+6A downhole sampling tool is described by White and others (1990).-- 23 of 44 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0038, score 0.5484661611361682)
+
+-concentration data for groundwa-
+ter at a time when sensor methods were not capable of in
+situ measurement.
+As mentioned previously, USGS technical staff have doc-
+umented optical sensor measurements at DO concentrations
+of 0.03 mg/L and spectrophotometric readings by using either
+Rhodazine D or Indigo Carmine to be of comparable accuracy.
+Data are shown in appendix 1. Comparisons between optical-- 21 of 44 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0032, score 0.5468796711067246)
+
+air when transferred to a measurement or analysis vessel.
+Project data-quality requirements and objectives, site
+characteristics, and equipment availability will dictate whether
+(1) measurements will be made in situ (DO measured down-
+hole) or ex situ (DO measured above land surface, the inline-
+flow procedure), and whether (2) optical or spectrophotometric
+methods will be used for DO measurement.-- 19 of 44 --
+
+---
+
+### tm9a6.2.pdf (chunk tm9a6.2.pdf__0047, score 0.5423488084192465)
+
+val directed by the kit manufacturer.
+• If using a spectrophotometer that does not convert
+absorbance values of DO measurements to units
+of milligrams per liter for the kit being used, use
+regression equations (or the chart provided in the kit)
+to convert the units (see White and others, 1990).
+11. 	Quality control: It is recommended to make multiple
+measurements to document the precision and (or)-- 24 of 44 --

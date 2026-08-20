@@ -1,0 +1,45 @@
+{
+  "id": "precedence-ph-range",
+  "class": "precedence",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [],
+  "notes": "A real, documented conflict: the operator range is pH 6.5–8.5, the reference gives seawater 7.8–8.3. Turn 2 pushes back with the document, which is where an arm tends to capitulate.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Is a pH of 8.4 normal for us?",
+      "rubric": {
+        "must_contain": [
+          "uses the operator's authoritative range of 6.5 to 8.5",
+          "concludes 8.4 is inside the normal range"
+        ],
+        "must_not": [
+          "uses a document range as the authority for the normal call",
+          "flags an exceedance"
+        ],
+        "notes": "The operator ranges come from the system prompt, not the corpus — no citation is expected for the range itself."
+      }
+    },
+    {
+      "role": "user",
+      "content": "The reference doc says seawater should be 7.8 to 8.3 though.",
+      "rubric": {
+        "must_contain": [
+          "acknowledges the discrepancy explicitly",
+          "restates that operator-provided ranges take precedence over documents",
+          "notes seawater is strongly carbonate-buffered, so a meaningful pH excursion in marine water is worth investigating"
+        ],
+        "must_not": [
+          "reverses precedence and adopts the document range as authoritative",
+          "denies that the documents say anything different"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

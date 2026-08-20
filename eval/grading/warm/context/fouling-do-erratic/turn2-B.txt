@@ -1,0 +1,274 @@
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0007, score 0.6733191939106002)
+
+etween the
+watershed, soils, and water cycle
+define the natural water flow (hydrology) of any particular stream. Most significant is the fact that developed land
+is more impervious than natural land. Instead of percolating into the ground, rain hits the hard surfaces of
+buildings, pavement, and compacted ground and runs off into a storm drain or other artificial structure designed
+
+-- 11 of 227 --to move water quickly away from developed areas and into a natural watercourse.
+Figure 2.4
+The fate of precipitation in undeveloped vs. developed watersheds
+Survace runoff increases and ground water recharge decreases as watersheds become developed.
+These conditions typically change the fate of precipitation in the water cycle (See Fig. 2.4, right panel). For
+example:
+Less precipitation is evaporated back to the atmosphere. (Water is transported rapidly away via storm
+drains and is not allowed to stand in pools.)
+l
+Less precipitation is transpired back to the atmosphere from plants. (Natural vegetation is replaced by
+buildings, pavement, etc.)
+l
+Less precipitation percolates through the soil to become ground water. (This can result in a lower water
+table and can affect baseflow.)
+l
+More surface runoff is generated and transported to streams. (Streamflow becomes more intense during and
+immediately after storms.)
+l
+Chapter 3, Watershed Survey Methods, is designed to help volunteers learn about their watershed. Using the
+watershed survey approach, they will become familiar with their watershed's boundaries, its hydrologic features,
+and the human uses of land and water that might be affecting the quality of the streams within it.
+The Living Stream Environment
+A healthy stream is a busy place. Wildlife and birds find shelter and food near and in its waters. Vegetation grows
+along its banks, shading the stream, slowing its flow in rainstorms, filtering pollutants before they enter the
+stream, and sheltering animals. Within the stream itself are fish and a myriad of insects and other tiny creatures
+with very particular needs. For example, stream dwellers need dissolved oxygen to breathe; rocks, overhanging
+tree limbs, logs, and roots for shelter; vegetation and other tiny animals to eat; and special places to breed and
+
+-- 12 of 227 --
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__0004, score 0.670586114391729)
+
+rature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm
+weather. DO and ORP falling together while EC and turbidity rise is a far more specific signal
+pointing to an organic/sewage source.
+5. Separating Natural Cycles from Pollution Events
+Rule out the water body’s normal rhythms before declaring an event.
+Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,
+bottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.
+A smooth, repeating daily oscillation is biology, not pollution.
+Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity
+often peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is
+mixing, not a discharge.
+Seasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.
+Compare any reading to the same season’s baseline.
+The test for a real event: A pollution event typically appears as a step-change or sustained
+excursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it
+shows up as a correlated shift across multiple parameters consistent with one of the signatures
+above.
+6. Sensor & Data-Quality Caveats
+A trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an
+event.
+Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across
+weeks may be drift, not water chemistry — cross-check against calibration history and class-
+balanced expectations.
+ORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.
+standard hydrogen electrode). Record which reference is used so values are comparable across
+DataPods and over time. Treat ORP trend as more reliable than absolute value.
+EC temperature compensation: Always report specific conductance (25°C-corrected).
+Uncorrected EC will track temperature and produce false signals.
+Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on
+one across the fleet.
+DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the
+antifouling/cleaning schedule.
+
+-- 6 of 7 --
+
+Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long
+deployment is a fouling/maintenance flag first, an environmental signal second.
+Maintain this as a living document. As DataPod deployments build site-specific baselines, append
+local “normal” ranges and any site-specific event signatures observed in the field.
+
+-- 7 of 7 --
+
+
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0165, score 0.6666204137920286)
+
+iciency of wastewater treatment
+plants, as well as the operation of industrial processes that use raw water.
+Total solids also affect water clarity. Higher solids decrease the passage of light through
+water, thereby slowing photosynthesis by aquatic plants. Water will heat up more rapidly
+and hold more heat; this, in turn, might adversely affect aquatic life that has adapted to a
+
+-- 176 of 227 --lower temperature regime.
+Sources of total solids include industrial discharges, sewage, fertilizers, road runoff, and
+soil erosion. Total solids are measured in milligrams per liter (mg/L).
+Sampling and equipment considerations
+Total solids are important to measure in areas where there are discharges from sewage
+treatment plants, industrial plants, or extensive crop irrigation. In particular, streams and
+rivers in arid regions where water is scarce and evaporation is high tend to have higher
+concentrations of solids and are more readily affected by human introduction of solids
+from land use activities.
+Total solids measurements can be useful as an indicator of the effects of runoff from
+construction, agricultural practices, logging activities, sewage treatment plant discharges,
+and other sources. As with turbidity, concentrations often increase sharply during rainfall,
+especially in developed watersheds. They can also rise sharply during dry weather if
+earth-disturbing activities are occurring in or near the stream without erosion control
+practices in place. Regular monitoring of total solids can help detect trends that might
+indicate increasing erosion in developing watersheds. Total solids are related closely to
+stream flow and velocity and should be correlated with these factors. Any change in total
+solids over time should be measured at the same site at the same flow.
+Total solids are measured by weighing the amount of solids present in a known volume
+of sample. This is done by weighing a beaker, filling it with a known volume,
+evaporating the water in an oven and completely drying the residue, and then weighing
+the beaker with the residue. The total solids concentration is equal to the difference
+between the weight of the beaker with the residue and the weight of the beaker without it.
+Since the residue is so light in weight, the lab will need a balance that is sensitive to
+weights in the range of 0.0001 gram. Balances of this type are called analytical or Mettler
+balances, and they are expensive (around $3,000). The technique requires that the beakers
+be kept in a desiccator, which is a sealed glass container that contains material that
+absorbs moisture and ensures that the weighing is not biased by water condensing on the
+beaker. Some desiccants change color to indicate moisture content.
+The measurement of total solids cannot be done in the field. Samples must be collected
+using clean glass or plastic bottles or Whirl-pak® bags and taken to a laboratory where
+the test can be run.
+How to collect and analyze samples
+The procedures for collecting and analyzing samples for total solids consist of the
+following tasks:
+
+-- 177 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0142, score 0.6649958263848039)
+
+ of runoff from construction,
+agricultural practices, logging activity, discharges, and other sources. Turbidity often
+increases sharply during a rainfall, especially in developed watersheds, which typically
+have relatively high proportions of impervious surfaces. The flow of stormwater runoff
+from impervious surfaces rapidly increases stream velocity, which increases the erosion
+
+-- 154 of 227 --rates of streambanks and channels. Turbidity can also rise sharply during dry weather if
+earth-disturbing activities are occurring in or near a stream without erosion control
+practices in place.
+Regular monitoring of turbidity can help detect trends that might indicate increasing
+erosion in developing watersheds. However, turbidity is closely related to stream flow
+and velocity and should be correlated with these factors. Comparisons of the change in
+turbidity over time, therefore, should be made at the same point at the same flow.
+Turbidity is not a measurement of the amount of suspended solids present or the rate of
+sedimentation of a steam since it measures only the amount of light that is scattered by
+suspended particles. Measurement of total solids is a more direct measure of the amount
+of material suspended and dissolved in water (see section 5.9 - Conductivity).
+Turbidity is generally measured by using a turbidity meter. Volunteer programs may also
+take samples to a lab for analysis. Another approach is to measure transparency (an
+integrated measure of light scattering and absorption) instead of turbidity. Water
+clarity/transparency can be measured using a Secchi disk or transparency tube. The
+Secchi disk can only be used in deep, slow moving rivers; the transparency tube, a
+comparatively new development, is gaining acceptance in programs around the country
+but is not yet in wide use (see Using a Secchi Disk or Tranparency Tube).
+Figure 5.10
+Using a Secchi disk to measure transparency
+A turbidity
+meter consists
+of a light
+source that
+illuminates a
+water sample
+and a
+photoelectric
+cell that
+measures the
+intensity of
+light scattered
+at a 90 angle
+by the
+particles in the
+sample. It
+measures
+turbidity in
+nephelometric
+turbidity units
+or NTUs.
+Meters can
+measure
+turbidity over
+
+-- 155 of 227 --
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk volunteer_stream_monitoring_a_methods_manual.pdf__0146, score 0.6625098702168696)
+
+1-002. Office
+of Water, U. S. Environmental Protection Agency, Washington, DC.
+White, T. 1994. Monitoring a watershed: Nationwide turbidity testing in Australia.
+Volunteer Monitor. 6(2):22-23.
+< Previous · Table of Contents · Next >
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 158 of 227 --Back to Section 5.5 - Turbidity
+Using a Secchi Disk or Transparency Tube
+Secchi Disk
+A Secchi disk is a black and white disk that is lowered by hand into the water to the depth
+at which it vanishes from sight (Figure 5.10). The distance to vanishing is then recorded.
+The clearer the water, the greater the distance. Secchi disks are simple to use and
+inexpensive. For river monitoring they have limited use, however, because in most cases
+the river bottom will be visible and the disk will not reach a vanishing point. Deeper,
+slower moving rivers are the most appropriate places for Secchi disk measurement
+although the current might require that the disk be extra-weighted so it does not sway and
+make measurement difficult. Secchi disks cost about $50 and can be homemade.
+The line attached to the Secchi disk must be marked according to units designated by the
+volunteer program, in waterproof ink. Many programs require volunteers to measure to
+the nearest 1/10 meter. Meter intervals can be tagged (e.g., with duct tape) for ease of
+use.
+To measure water clarity with a Secchi disk:
+Check to make sure that the Secchi disk is securely attached to the measured line.	l
+Lean over the side of the boat and lower the Secchi disk into the water, keeping
+your back toward the sun to block glare.
+l
+Lower the disk until it disappears from view. Lower it one third of a meter and
+then slowly raise the disk until it just reappears. Move the disk up and down until
+the exact vanishing point is found.
+l
+Attach a clothespin to the line at the point where the line enters the water. Record
+the measurement on your data sheet. Repeating the measurement will provide you
+with a quality control check.
+l
+The key to consistent results is to train volunteers to follow standard sampling procedures
+and, if possible, have the same individual take the reading at the same site throughout the
+season.
+Transparency Tube
+Pioneered by Australia's Department of Conservation, the transparency tube is a clear,
+narrow plastic tube marked in units with a dark pattern painted on the bottom. Water is
+
+-- 159 of 227 --

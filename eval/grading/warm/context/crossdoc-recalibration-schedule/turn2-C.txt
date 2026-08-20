@@ -1,0 +1,221 @@
+### tm9a6.2.pdf (chunk 23, score 0.028283227848101264)
+
+
+• Hach specifies a 2-year life of the sensor cap of its
+LDO (Luminescent Dissolved Oxygen) sensor.
+• YSI Environmental (EXO) specifies annual replace-
+ment of the sensor cap for its optical DO sensor.
+• In-Situ, Inc., advises that the RDO (Rugged Dissolved
+Oxygen) sensor cap has a 2-year life.
+• Thermo Scientific specifies a 365-day lifespan for the
+RDO cap once it is installed on the RDO sensor.-- 11 of 44 --
+
+4 	Chapter A6.2. Dissolved Oxygen
+Table 6.2–1. 	Equipment and supplies for the optical sensor method of determining dissolved-oxygen concentration (modify this list to
+meet specific needs of the field effort).
+[[DO, dissolved oxygen; mg/L, milligrams per liter; NFM, National Field Manual for the Collection of Water-Quality Data; –, minus; +, plus; °C, degrees
+Celsius; ±, plus or minus; NIST, National Institute of Standards and Technology; M, molar]
+DO instrument should have a digital temperature and DO readout display and have:
+• Automatic temperature compensation
+• An operating range in water with a temperature range of at least –5 to 45 °C
+• Capability to measure DO concentrations from 0.01 to 20 mg/L (instrument capability can range to 50 mg/L)
+• Minimum display resolution of 0.01 mg/L DO
+• Calibrated accuracy within ±0.1 mg/L DO
+Calibration equipment, per manufacturer’s recommendation
+Pocket altimeter-barometer or DO instrument with built-in barometer; barometer measures to nearest 1 millimeter of mercury and its
+calibration has been checked before use or at least annually against a NIST-traceable barometer or the uncorrected barometric pressure
+obtained from a National Weather Service location at the same altitude as calibration or calibration check
+Thermometer (see NFM chapters A6.1 and A6.8 for calibration-check criteria)
+Zero-DO solution. Dissolve approximately 2 grams sodium sulfite in 1 liter of deionized water (0.016–M solution, prepared fresh just
+before the field trip or during week of use)1
+Flow-through chamber for determining groundwater DO concentration, if downhole sensor deployment is impractical
+Oxygen-solubility table (table 6.2–2, at end of chapter), or access to table at https://water.usgs.gov/software/DOTABLES/
+Waste-disposal containers
+Spare batteries
+Calibrated specific-conductance sensor, if measurement is being made in a saline or brackish system
+Calibration and maintenance log books for DO instrument and barometer
+1Take special note of the manufacturer’s guidance for your sensor. Some manufacturers supply the zero-DO solution required or document the specific
+instructions for preparing the zero-DO solution recommended for their sensors, including an alternative by which nitrogen gas is forced into tap or deionized
+water to produce a zero-DO solution. (Consult with the manufacturer’s division of technical support.)
+
+-- 12 of 44 --
+
+---
+
+### tm9a6.2.pdf (chunk 22, score 0.027651515151515153)
+
+he fluorescence response
+of the dye. Higher DO concentrations result in greater quench-
+ing and a decreased fluorescence response. The signal to the
+fluorescence detector is greatest at lowest DO concentrations.
+More importantly, the timescale, or lifetime, of the fluores-
+cence reaction is also dependent on the DO concentration and
+is not dependent on the light intensity of excitation or fluores-cence, thereby allowing more reliable determination of the DO
+concentration. Temperature stability during calibration and
+measurement is extremely important, as temperature controls
+the solubility of oxygen in water.
+2.1 Equipment and Field Preparations
+DO instruments (meters and sensors) are available from a
+number of commercial vendors. Because of differences among
+manufacturers in the instrument design and instructions for
+use, calibration, and maintenance, it is important that the user
+be thoroughly familiar with the instructional manual for the
+specific instrument system to be used in addition to the guid-
+ance given here.
+2.1.1 Equipment Description and Maintenance
+Meters, sondes, and the DO sensors used in these instru-
+ments are sophisticated electronic equipment that require care
+in handling and operation. Information about the equipment
+and supplies required for the optical method of determining
+aqueous DO concentrations is summarized in table 6.2–1.
+Guidance on when to replace the luminophore-containing
+cap or module varies among manufacturers and can be based
+on the specific design and materials used, the environmental
+conditions to which the sensor is exposed, the age of the sen-
+sor, and (or) the amount of time it is deployed. For example—
+• Hach specifies a 2-year life of the sensor cap of its
+LDO (Luminescent Dissolved Oxygen) sensor.
+• YSI Environmental (EXO) specifies annual replace-
+ment of the sensor cap for its optical DO sensor.
+• In-Situ, Inc., advises that the RDO (Rugged Dissolved
+Oxygen) sensor cap has a 2-year life.
+• Thermo Scientific specifies a 365-day lifespan for the
+RDO cap once it is installed on the RDO sensor.
+
+---
+
+### tm9a6.2.pdf (chunk 25, score 0.01639344262295082)
+
+eparations
+The service performed on all equipment, whether a full
+calibration, calibration check, or replacement or repair of
+parts for the instrument, and whether performed in the office,
+laboratory, or field, must be accurately recorded and dated in
+the instrument or sensor log book.
+Field-measurement instruments are required to be main-
+tained on a regular schedule and performance tested beforefield use, as described below:
+1. 	Check all electrical connections and the charge on
+the batteries, as applicable for the instrument in
+use. Batteries should be in good condition with as
+high a state of charge as possible. Replace or charge
+questionable batteries.
+2. 	Thermistors/thermometers must be calibrated
+and field checked before use, as described in
+NFM 6.1, Temperature.
+3. 	Perform a 100-percent oxygen-saturation calibration
+check (see section 2.2). This performance check does not
+negate the need for an onsite sensor-calibration check
+at oxygen saturation. The result of the check should be
+within +/- 0.2 mg/L of the 100-percent saturated concen-
+tration determined from the DO solubility tables found at
+https://water.usgs.gov/software/DOTABLES.
+4. 	Perform a zero-DO sensor-performance check.
+• Prepare the zero-DO sodium sulfite
+solution (see table 6.2–1).
+• Before immersing the sensor in the zero-DO solu-
+tion, remove the wiper (or sponge) from the unit to
+avoid saturating it with the sodium sulfite solution.
+(Not all instruments have a wiper.)
+• Immerse the sensor into the zero-DO solution,
+wait for reading to stabilize (usually within
+5–10 minutes), record reading.
+• If the instrument reading exceeds 0.2 mg/L in the
+zero-DO solution, check DO again with a freshly
+prepared zero-DO solution; if a reading greater than
+0.2 mg/L persists, contact the instrument manufac-
+turer and inquire whether the luminophore module
+should be replaced.
+
+---
+
+### volunteer_stream_monitoring_a_methods_manual.pdf (chunk 123, score 0.01639344262295082)
+
+ test or handling preservatives.
+l
+Know chemical cleanup and disposal procedures. Wipe up all spills when they
+occur. Return all unused chemicals to your program coordinator for safe disposal.
+Close all containers tightly after use. Do not switch caps.
+l
+Know how to use and store chemicals. Do not expose chemicals or equipment to
+temperature extremes or longterm direct sunshine.
+l
+
+-- 29 of 227 --First Aid Kit
+The minimum first aid kit should contain the following items:
+Telephone numbers of emergency personnel such as the police and an
+ambulance service.
+m
+Several band-aids for minor cuts.	m
+Antibacterial or alcohol wipes.	m
+First aid creme or ointment.	m
+Several gauze pads 3 or 4 inches square for deep wounds with
+excessive bleeding.
+m
+Acetaminophen for relieving pain and reducing fever.	m
+A needle for removing splinters.	m
+A first aid manual which outlines diagnosis and treatment procedures.	m
+A single-edged razor blade for minor surgery, cutting tape to size, and
+shaving hairy spots before taping.
+m
+A 2-inch roll of gauze bandage for large cuts.	m
+A triangular bandage for large wounds.	m
+A large compress bandage to hold dressings in place.	m
+A 3-inch wide elastic bandage for sprains and applying pressure to
+bleeding wounds.
+m
+If a participant is sensitive to bee stings, include their
+doctor-prescribed antihistamine.
+m
+Be sure you have emergency telephone numbers and medical information
+with you at the field site for everyone participating in field work (including
+the leader) in case there is an emergency.
+< Previous · Table of Contents · Next >
+Office of Wetlands, Oceans & Watersheds Home
+Watershed Protection Home | Monitoring Water Quality Home
+EPA Home | Office of Water | Search | Comments
+
+-- 30 of 227 --
+
+2.4
+Basic Equipment
+Much of the equipment a volunteer will need is easily obtained from either hardware
+stores or scientific supply houses. Other equipment can be found around the house. In
+either case, the volunteer program should clearly specify the equipment its volunteers
+will need and where it should be obtained.
+Listed below is some basic equipment appropriate for any volunteer field activity. Much
+of this equipment is optional but will enhance the volunteers' safety and effectiveness.
+Boots or waders; life jackets if you are sampling by boat	l
+Walking stick of known length for balance, probing, and measuring	l
+Bright-colored snag- and thorn- resistant clothes; long sleeves and pants are best	l
+Rubber gloves to guard against contamination	l
+Insect repellent/sunscreen	l
+Small first aid kit, flashlight, and extra batteries	l
+Whistle to summon help in emergencies	l
+Refreshments and drinking water	l
+Clipboard, preferably with plastic cover	l
+Several pencils	l
+Tape measure	l
+Thermometer	l
+Field data sheet	l
+Information sheet with safety instructions, site location information, and numbers
+to call in emergencies
+l
+Camera and film, to document particular conditions	l
+Specific equipment lists for the chemical and biological monitoring procedures included
+in the manual are provided in the relevant chapters.
+
+-- 31 of 227 --
+
+---
+
+### tm9a6.2.pdf (chunk 38, score 0.016129032258064516)
+
+ place the DO sensor (or
+multiparameter sonde) in the bucket and allow 5 to
+10 minutes for the sensor to come to thermal equi-
+librium with the aerated water. Take care not to place
+the sensor over or in the bubbles from the air stone.
+b. 	For field calibration verification of a DO sensor, use
+the wet-towel method.
+5. 	Read and record the temperature of the calibration water
+to the nearest 0.1 °C.-- 17 of 44 --

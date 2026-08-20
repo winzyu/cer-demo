@@ -1,0 +1,41 @@
+# Postgres + pgvector sidecar for the Phase N2 bake-off's `pgvector-rag` arm.
+#
+# ⚠️  DEV / EXPERIMENT ONLY. This file must never reach the deployed image or the Cloud Run path.
+#     It deliberately re-introduces the stack ◆G1 resolved away from, as the only honest baseline
+#     for "what we had before" — a bake-off against a reimplementation-from-memory proves nothing.
+#     DELETE this file, the adapter, the seeder and the `pg` dependency once ◆G7 is resolved
+#     (docs/RETRIEVAL_BAKEOFF.md §2, §9).
+#
+#   docker-compose -f docker-compose.bakeoff.yml up -d      (or `docker compose` if you have the plugin)
+#   npm run seed:pgvector
+#   PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff npm run dev
+#
+# Port 5433, not 5432, so it cannot collide with a Postgres someone already runs locally.
+
+services:
+  pgvector:
+    # Pinned to the image the legacy service used (MIGRATION_SPEC.md §6): PostgreSQL 16.
+    # Parity is the entire point of this arm — a different major version is a different planner.
+    image: pgvector/pgvector:pg16
+    container_name: cer-bakeoff-pgvector
+    environment:
+      POSTGRES_USER: cer
+      POSTGRES_PASSWORD: cer
+      POSTGRES_DB: cer_bakeoff
+    ports:
+      - "5433:5432"
+    volumes:
+      # Applied automatically on first boot of an empty data directory. If you change the schema,
+      # `docker-compose -f docker-compose.bakeoff.yml down -v` to drop the volume and re-init —
+      # without -v the old schema survives and the change silently does not apply.
+      - ./db/bakeoff/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - pgvector_data:/var/lib/postgresql/data
+    healthcheck:
+      # The seeder and the adapter both fail confusingly against a still-initializing server.
+      test: ["CMD-SHELL", "pg_isready -U cer -d cer_bakeoff"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pgvector_data:

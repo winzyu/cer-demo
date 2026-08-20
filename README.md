@@ -1,473 +1,727 @@
-# Clean Earth RAG — Baseline Build
+# Clean Earth RAG — Node/Express + Firestore service
 
-A single-page chat interface where a user asks questions about water-quality sensor data and authoritative water-quality documents, and the backend produces grounded answers with citations.
+A water-quality assistant that answers questions grounded in a single sensor deployment's real
+readings and a corpus of authoritative water-quality documents.
 
-This README is the build spec. It is intentionally narrow. Anything not listed here is **explicitly deferred** — see the "Deferred" section at the end. Do not add scope without checking that section first.
-
----
-
-## 0. Setup
-
-Run these from the repo root.
-
-1. **Configure environment.** Copy the template and fill in your Fireworks key:
-   ```bash
-   cp .env.example .env
-   # then edit .env and set FIREWORKS_API_KEY=...
-   ```
-2. **Provide source data.** Drop the seed PDFs listed in section 5 into `docs/`, and the sensor CSV at `data/water-data.csv`.
-3. **Start Postgres + pgvector** (docker-compose, exposes 5432):
-   ```bash
-   docker compose up -d
-   ```
-4. **Apply the schema** (one-time; creates `documents`, `chunks`, `sensor_data` and the `vector` extension):
-   ```bash
-   docker exec -i cer_rag_db psql -U postgres -d cleanearth < backend/schema.sql
-   ```
-5. **Install Python deps** (use a venv):
-   ```bash
-   python -m venv .venv && source .venv/bin/activate
-   pip install -r backend/requirements.txt
-   ```
-6. **Seed documents + sensor data** (idempotent; embeds via Fireworks):
-   ```bash
-   python -m backend.seed
-   ```
-7. **Run the backend** (FastAPI on :8000):
-   ```bash
-   uvicorn backend.main:app --reload --port 8000
-   ```
-   Sanity check: `curl http://localhost:8000/health` should report `db_ok: true` and `fireworks_configured: true`.
-8. **Open the frontend.** Open `frontend/index.html` directly in a browser. It calls `http://localhost:8000` by default; override with `?backend=http://host:port` if needed.
+Migrated from the original FastAPI + Postgres/pgvector implementation to **Node/Express +
+Firestore**.
 
 ---
 
-## 1. What we're building
+## Where do I go?
 
-**Scope:**
-- One user, one tenant, one device's worth of sensor data.
-- A handful of seed documents covering recreational water criteria, aquatic-life criteria, and field-measurement interpretation for the parameters the sensor measures.
-- A `/chat` endpoint that retrieves relevant context (from documents and/or sensor data), produces an answer via Qwen3-30B-A3B-Instruct-2507, and returns it with citations.
-- A minimal HTML chat UI.
+**If you read one thing first:** [`docs/HANDOFF.md`](docs/HANDOFF.md) — current state, open
+decisions, and the traps that cost time.
 
-**Out of scope** (do not implement):
-- Authentication, user accounts, multi-tenancy
-- Fine-tuning
-- A separate guardrails layer
-- External API tools (EPA ECHO, NOAA, USGS web APIs)
-- LiteLLM or any multi-provider abstraction
-- A dedicated vector database (Pinecone, Qdrant, Weaviate)
-- TimescaleDB or any time-series-optimized storage
-- Sandboxed code execution for charts
-- Streaming responses
-- A document ingestion UI (we ingest via a one-time script)
-
----
-
-## 2. Decisions already made
-
-| Decision | Choice |
+| I want to… | Go to |
 |---|---|
-| LLM | Qwen3-30B-A3B-Instruct-2507 |
-| LLM provider | **Fireworks AI** (OpenAI-compatible API) |
-| Embedding model | **`nomic-ai/nomic-embed-text-v1.5`** via Fireworks |
-| Frontend | **Plain HTML + JS** (single file, no build step) |
-| Backend | **Python + FastAPI** |
-| Database | **Postgres + pgvector** (one instance, via docker-compose) |
-| Deployment | **Local for now.** Plan to deploy to Railway when we need to share. |
-| Privacy posture | Signed DPA with Fireworks; no training on data. See section 6.1 for the full contract checklist. |
-| Safety posture | The sensor does not measure pathogens. For any safety question, defer to local public-health authorities. |
-| Operator-provided normal ranges | Authoritative. See section 7. Supplied in the system prompt as ground truth, take precedence over document-retrieved ranges in case of conflict. |
+| Understand what this is and what's built | [§1 Overview](#1-overview) · [`docs/SPECS.md`](docs/SPECS.md) |
+| Get it running in 5 minutes with no credentials | [§3 Quick start](#3-quick-start) |
+| Get credentials (Fireworks / Firestore / device API) | [§2 Credentials](#2-credentials) |
+| **Run the server a particular way** (sensor tool on/off, pick a retrieval arm, debug mode) | **[§4 Run recipes](#4-run-recipes)** ← *the copy-paste section* |
+| Look up one environment variable | [§5 Configuration reference](#5-configuration-reference) |
+| Set up a retrieval arm (direct-feed / vector) | [§6 Retrieval arms](#6-retrieval-arms) |
+| Turn on sensor querying and check it reads real pods | [§7 Sensor querying](#7-sensor-querying) |
+| Query sensor data by hand with `curl` | [§7c Query the device API directly](#7c-query-the-device-api-directly) |
+| Call the sensor layer from my own code (e.g. report generation) | [§7d Programmatic access](#7d-programmatic-access) |
+| See every npm script | [§8 Scripts](#8-scripts) |
+| Find a file | [§9 Project layout](#9-project-layout) |
+| Know the HTTP contract | [§10 Endpoints](#10-endpoints) |
+| Fix something that's broken or silently wrong | [§11 Troubleshooting](#11-troubleshooting) |
+| Understand *why* a decision was made | [`docs/timeline.md`](docs/timeline.md) (phases + ◆ gates) |
+
+### Companion docs
+
+| doc | what it covers |
+|---|---|
+| [`docs/HANDOFF.md`](docs/HANDOFF.md) | **Start here.** State, open decisions, silent-failure traps. |
+| [`docs/SPECS.md`](docs/SPECS.md) | Architecture as built today, section by section. |
+| [`docs/timeline.md`](docs/timeline.md) | Phased plan, and the **◆ decision gates** that block work. |
+| [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) | The direct-feed vs RAG cost experiment (◆G7). |
+| [`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md) | The sensor API contract, verified live. **Read §12 before trusting any reading.** |
+| [`docs/migration/MIGRATION_SPEC.md`](docs/migration/MIGRATION_SPEC.md) | Behaviour of the legacy FastAPI system being ported. |
+| [`docs/migration/CONVENTIONS.md`](docs/migration/CONVENTIONS.md) | Coding conventions this repo follows. |
+| [`docs/EVAL_FIXTURES.md`](docs/EVAL_FIXTURES.md) · [`eval/README.md`](eval/README.md) | The committed question set and captured sweeps. |
 
 ---
 
-## 3. File layout
+## 1. Overview
 
-```
-clean-earth-rag/
-├── docker-compose.yml      # Postgres with pgvector
-├── .env.example            # template; copy to .env and fill in
-├── backend/
-│   ├── main.py             # FastAPI app: POST /chat, GET /health
-│   ├── llm.py              # Fireworks client wrapper (OpenAI SDK pointed at Fireworks)
-│   ├── tools.py            # query_sensor_data, search_documents
-│   ├── rag.py              # embed query, retrieve top-k chunks
-│   ├── seed.py             # one-time script: load docs + CSV into Postgres
-│   ├── schema.sql          # CREATE TABLE statements for documents, chunks, sensor_data
-│   └── requirements.txt
-├── frontend/
-│   └── index.html          # chat UI: one input, one message list, one thinking indicator
-├── docs/                   # source PDFs to ingest (see section 5)
-├── data/
-│   └── water-data.csv      # sensor CSV
-└── README.md
-```
+**What works today:** `POST /api/v1/chat` end to end — retrieval adapter selection, prompt
+assembly, a Fireworks answer, multi-turn history, optional streaming, **and sensor querying against
+the real device API** via `query_sensor_data` and a tool-round loop.
+
+| phase | state |
+|---|---|
+| **N1** — chat spine + retrieval seam | ✅ complete |
+| **N2** — retrieval bake-off | ⏳ all three arms built, sweep captured, **awaiting grading** (◆G7 open). `pgvector-rag`'s runtime code was archived 2026-08-19 ahead of ◆G7; its captured evidence stays ([§6](#6-retrieval-arms)) |
+| **N3** — sensor querying + tool loop | ✅ built, **behind `SENSOR_TOOL`, default off** |
+| **N4+** — per-device water type, reports, UI | not started |
+
+**Two defaults will surprise you on a fresh checkout:**
+
+- `DEFAULT_RETRIEVAL=stub` → answers come from three lines of placeholder text. Pick an arm in
+  [§6](#6-retrieval-arms).
+- `SENSOR_TOOL=false` → the bot has **no access to sensor readings at all** and will refuse to
+  answer questions about them. Turn it on in [§7](#7-sensor-querying).
+
+> **Why is the sensor tool off by default?** Enabling it appends a tool block to the system prompt,
+> and that prompt is a **pinned control** for the Phase N2 bake-off. ◆G7 is still open — the sweep is
+> captured but ungraded — so changing the default prompt would void all three arms. With the flag
+> off the prompt is byte-identical to the one they ran against (pinned by a SHA-256 in
+> `test/unit/prompt.test.ts`). Turning it on for normal use is fine. **Do not capture bake-off arms
+> with it on.**
+
+### Stack
+
+Node.js 18+ · TypeScript (CommonJS, strict) · Express 4 (`helmet`, `cors`, `morgan`) ·
+Firestore (`@google-cloud/firestore`) · Fireworks via the `openai` SDK · Jest + `ts-jest` +
+`supertest`.
 
 ---
 
-## 4. Sensor data
+## 2. Credentials
 
-**File:** `data/water-data.csv` (~766 rows, one device).
+> **You need none of these to boot the service or pass `/health`.** Startup opens no connections.
 
-**Columns:**
-
-| Column | Type | Notes |
+| credential | unlocks | section |
 |---|---|---|
-| `DEVICE` | string | device identifier |
-| `DATE` | timestamp | **TODO (user): confirm exact format before running `seed.py` — e.g. `YYYY-MM-DD HH:MM:SS` or ISO 8601** |
-| `DISSOLVED OXYGEN` | float | **TODO (user): confirm unit — mg/L or % saturation** |
-| `ORP` | float | millivolts (mV) |
-| `PH` | float | unitless (0–14) |
-| `CONDUCTIVITY` | float | **TODO (user): confirm unit — µS/cm is most common** |
-| `TEMPERATURE` | float | **TODO (user): confirm unit — °C or °F** |
+| **Fireworks key** | any chat answer; embeddings for the RAG arms | [§2a](#2a-fireworks-ai) |
+| **Firestore auth + indexes** | `CORPUS_SOURCE=firestore` and the `firestore-vector` arm | [§2b](#2b-google-cloud--firestore) |
+| **Device API token** | `query_sensor_data` — all sensor readings | [§2c](#2c-clean-earth-device-api) |
 
-**Postgres table:**
+### Prerequisites
 
-```sql
-CREATE TABLE sensor_data (
-    id            SERIAL PRIMARY KEY,
-    device        TEXT NOT NULL,
-    measured_at   TIMESTAMPTZ NOT NULL,
-    dissolved_oxygen NUMERIC,
-    orp           NUMERIC,
-    ph            NUMERIC,
-    conductivity  NUMERIC,
-    temperature   NUMERIC
-);
-CREATE INDEX idx_sensor_measured_at ON sensor_data(measured_at);
-```
-
-`seed.py` should bulk-load the CSV with `COPY` or a batched `INSERT`. Normalize column names to snake_case on the way in.
-
----
-
-## 5. Document corpus
-
-**Owner:** TODO (user — assign one teammate as the document curator before first ingest. Their job is to decide what stays in `docs/`, version the list, and update when new docs are added.)
-
-**Seed documents** (download manually into `docs/` before running `seed.py`). These were chosen to cover every parameter the sensor measures, in both authoritative-regulatory and accessible-interpretive registers:
-
-1. **EPA Recreational Water Quality Criteria (2012)** — `rwqc2012.pdf`
-   - https://www.epa.gov/sites/default/files/2015-10/documents/rwqc2012.pdf
-   - Use case: questions about whether a body of water is safe for swimming, surfing, wading.
-
-2. **EPA Ambient Water Quality Criteria for Dissolved Oxygen (Freshwater), 1986** — `ambient-wqc-dissolved-oxygen-1986.pdf`
-   - https://www.epa.gov/sites/default/files/2019-03/documents/ambient-wqc-dissolved-oxygen-1986.pdf
-   - Use case: DO thresholds for protecting aquatic life (the canonical 5 mg/L number, plus salmonid-specific guidance).
-
-3. **EPA National Recommended Water Quality Criteria — Aquatic Life Criteria Table** — `aquatic-life-criteria-table.pdf` (save the page as PDF)
-   - https://www.epa.gov/wqc/national-recommended-water-quality-criteria-aquatic-life-criteria-table
-   - Use case: pollutant-specific thresholds. Mostly chemicals we don't measure, but provides the regulatory framing.
-
-4. **EPA Volunteer Stream Monitoring: A Methods Manual (1997)** — `volunteer-stream-monitoring-methods-manual.pdf`
-   - https://www.epa.gov/sites/default/files/2015-04/documents/volunteer_stream_monitoring_a_methods_manual.pdf
-   - Use case: **the highest-value document in the corpus.** Chapter 5 has plain-language sections on DO/BOD, temperature, pH, turbidity, conductivity — exactly the registers a typical user will write questions in.
-
-5. **USGS National Field Manual Chapter A6.2 — Dissolved Oxygen** — `usgs-nfm-a6.2-dissolved-oxygen.pdf`
-   - https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf
-   - Use case: how DO is actually measured, what affects readings (temperature, pressure, salinity), oxygen-solubility tables.
-
-6. **USGS National Field Manual Chapter A6.8 — Multiparameter Instruments** — `usgs-nfm-a6.8-multiparameter.pdf`
-   - https://pubs.usgs.gov/publication/tm9A6.8/full (download the full PDF)
-   - Use case: covers temperature, specific conductance, pH, DO, and ORP all in one chapter — the closest single document to "interpret what my sensor is telling you."
-
-7. **USGS Water Science School — Dissolved Oxygen and Water** — `usgs-dissolved-oxygen-water.pdf` (save the page as PDF)
-   - https://www.usgs.gov/water-science-school/science/dissolved-oxygen-and-water
-   - Use case: accessible explanations of why each metric matters.
-
-8. **EPA Ambient Water Quality Criteria for Nutrient Pollution (Lakes and Reservoirs)** — `nutrient-pollution-lakes-reservoirs.pdf`
-   - https://www.epa.gov/nutrientpollution/ambient-water-quality-criteria-address-nutrient-pollution-lakes-and-reservoirs
-   - Use case: nitrogen/phosphorus context (nutrients drive DO swings via algal blooms — explains the *why* behind low-DO events).
-
-9. **Sensor manufacturer datasheets** — `<manufacturer>-<model>-datasheet.pdf`
-   - TODO (user): drop the datasheets for the specific sensor model(s) producing `water-data.csv` into `docs/`. These document accuracy, range, calibration, and known failure modes — invaluable when a user asks "is this reading plausible?"
-
-**ORP note:** The EPA and USGS have not published a standalone authoritative criteria document for ORP comparable to the DO one. NFM A6.8 (item 6) is the canonical USGS treatment and is sufficient at baseline. If retrieval quality on ORP questions disappoints, consider adding a vetted secondary source (e.g. the YSI or Hach technical notes), but mark them clearly as manufacturer-authored in the metadata.
-
-**Documents table:**
-
-```sql
-CREATE TABLE documents (
-    id            SERIAL PRIMARY KEY,
-    filename      TEXT NOT NULL UNIQUE,
-    title         TEXT NOT NULL,
-    source_url    TEXT,
-    ingested_at   TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE TABLE chunks (
-    id            SERIAL PRIMARY KEY,
-    document_id   INTEGER REFERENCES documents(id) ON DELETE CASCADE,
-    chunk_index   INTEGER NOT NULL,
-    content       TEXT NOT NULL,
-    embedding     VECTOR(768)  -- nomic-embed-text-v1.5 is 768-dim
-);
-CREATE INDEX idx_chunks_embedding ON chunks USING ivfflat (embedding vector_cosine_ops);
-```
-
-**Chunking:** Use a recursive character splitter with chunk size ~800 tokens and ~100 token overlap. Strip page headers/footers where obvious. Store the source filename and a human-readable title with each document so citations can reference it.
-
----
-
-## 6. LLM access
-
-**Provider:** Fireworks AI. Use the OpenAI Python SDK pointed at `https://api.fireworks.ai/inference/v1`. Read `FIREWORKS_API_KEY` from env.
-
-**Model string:** `accounts/fireworks/models/qwen3-30b-a3b-instruct-2507` (verify exact model string in Fireworks console before first call — model paths occasionally change).
-
-**Embeddings model string:** `nomic-ai/nomic-embed-text-v1.5` via the same Fireworks endpoint.
-
-**Function calling:** Use the provider's native tool-calling format (OpenAI-compatible). Do **not** add LangChain or LlamaIndex.
-
----
-
-## 6.1 Privacy & data handling
-
-The architecture sends prompts (including any sensor data, document chunks, and user messages embedded in the prompt) to Fireworks AI for inference. **Customer data does not stay on infrastructure you control** — it travels to Fireworks. What protects confidentiality is contractual, not topological.
-
-**Required before production data flows through the system:**
-
-1. **Executed DPA with Fireworks** that explicitly covers:
-   - No use of customer inputs or outputs for model training or fine-tuning.
-   - Defined data retention window. Ideally **Zero Data Retention (ZDR)** — Fireworks offers this on enterprise plans. Without ZDR, expect ~30-day retention for abuse-detection purposes even though the data is not used for training.
-   - Sub-processor disclosure (so you know who else handles the data downstream).
-   - Breach notification terms.
-   - Same coverage for embeddings calls (`nomic-ai/nomic-embed-text-v1.5` is served through the same Fireworks endpoint, so the DPA scope must include both completions and embeddings).
-
-2. **For the dummy-data baseline build:** the DPA does not need to be in place yet, since no real customer data is involved. But it must be signed before the first byte of production data is sent through the system.
-
-**What this baseline does NOT provide:**
-
-- **True on-premises hosting.** If the privacy bar is "customer data physically never leaves our infrastructure," Fireworks is the wrong inference provider. You would need to self-host Qwen3 via vLLM, TGI, or similar on single-tenant GPUs. This is a much larger build and was not chosen for the baseline. Confirm with stakeholders that the "vendor contractually committed via DPA" bar is the correct one before going live.
-
-- **Encryption of prompts at the application layer.** Fireworks calls go over TLS (encrypted in transit), and Fireworks encrypts at rest on their side, but the prompt body itself is in plaintext as it enters Fireworks' systems — that's necessary for the model to read it. There is no end-to-end encryption story available with hosted inference.
-
-**Future risk to flag now:** any deferred tool that calls a third-party API (EPA ECHO, NOAA, USGS web services) will send data to a vendor outside the Fireworks DPA. Each such integration needs its own privacy review before it ships. Don't let these slip in quietly.
-
----
-
-## 7. Operator-provided normal ranges (authoritative)
-
-These are the supervisor-supplied normal operating ranges for the sensor. **They are a higher source of truth than anything retrieved from documents.** If the LLM finds a different range in a retrieved document chunk (e.g. the EPA Volunteer Stream Monitoring Manual gives a different pH range), it should prefer these values and explicitly note the discrepancy if relevant.
-
-| Metric | Normal range | Unit |
+| Tool | Version | Needed for |
 |---|---|---|
-| pH | 6.5 – 8.5 | unitless |
-| ORP | 200 – 400 | mV |
-| Dissolved oxygen | 5 – 14 | mg/L |
-| Temperature | 32 – 95 | °F |
-| Conductivity (freshwater) | 0 – 1,500 | µS/cm |
-| Conductivity (saltwater) | 40,000 – 50,000 | µS/cm |
+| **Node.js** | 18+ | everything |
+| **npm** | ships with Node | everything |
+| **Google Cloud SDK** (`gcloud`) | latest | Firestore auth **and creating the two indexes** ([§2b](#2b-google-cloud--firestore)) |
+| **Docker** | latest | *optional* — the container run path ([§3](#3-quick-start)) |
 
-**Conductivity is context-dependent.** The freshwater vs saltwater distinction must be resolved before the model can judge whether a reading is normal. At baseline, hard-code the water body's type as an environment variable (`WATER_TYPE=freshwater` or `WATER_TYPE=saltwater`) and pass it into the system prompt. When you later support multiple devices, this becomes a per-device attribute.
+### 2a. Fireworks AI
 
-**How these are surfaced to the model:** these ranges go directly into the system prompt as structured facts, not into the document store. The model has them in context on every turn — no retrieval needed. This is deliberate: ranges are short, authoritative, change rarely, and the cost of a retrieval miss on them is high (the model would either invent a range or fall back to a document's range, both of which are worse).
+1. Create an account at **https://fireworks.ai**.
+2. **API Keys** → generate a key → put it in `.env` as `FIREWORKS_API_KEY`.
+3. Model ids are already in `.env.example` (`accounts/fireworks/models/gpt-oss-20b`,
+   `nomic-ai/nomic-embed-text-v1.5`). **Confirm the exact id in the console first** — the serverless
+   catalogue rotates.
+
+### 2b. Google Cloud / Firestore
+
+1. Create or pick a project at https://console.cloud.google.com.
+2. Enable the **Firestore API**, create a **Native mode** database. The default one is literally
+   named `(default)`.
+3. Authenticate:
+   ```bash
+   gcloud auth application-default login
+   ```
+4. Set `FIRESTORE_PROJECT_ID` and `FIRESTORE_DATABASE_ID` in `.env`.
+
+   > **Cost note:** the "Always Free" daily quota has historically applied to the **`(default)`**
+   > database — a *named* database can bill from the first read. Keep `FIRESTORE_DATABASE_ID=(default)`
+   > unless you have a reason not to.
+
+   *For CI/deployment:* download a service-account JSON, save as `serviceAccountKey.json`
+   (git-ignored), export `GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json`.
+
+5. **Create the two indexes.** Firestore will not build these on demand, and **neither failure is
+   obvious**: without the composite index the direct-feed query fails outright; without the vector
+   index `findNearest` returns **nothing at all, with no error**.
+
+   ```bash
+   # Direct-feed slice query: equality on inDirectFeedSlice + orderBy filename.
+   gcloud firestore indexes composite create \
+     --project="$FIRESTORE_PROJECT_ID" --database='(default)' \
+     --collection-group=corpus_documents \
+     --query-scope=collection \
+     --field-config=field-path=inDirectFeedSlice,order=ascending \
+     --field-config=field-path=filename,order=ascending
+
+   # Vector search for the firestore-vector arm. 768 must match the embedding model.
+   gcloud firestore indexes composite create \
+     --project="$FIRESTORE_PROJECT_ID" --database='(default)' \
+     --collection-group=corpus_chunks \
+     --query-scope=collection \
+     --field-config=field-path=embedding,vector-config='{"dimension":"768","flat":"{}"}'
+   ```
+
+   Field order in the first command must match the query: equality field first, `orderBy` second.
+   Confirm both reach `READY` before seeding:
+
+   ```bash
+   gcloud firestore indexes composite list --project="$FIRESTORE_PROJECT_ID" --database='(default)'
+   ```
+
+   > Requires `roles/datastore.indexAdmin` (or owner). Firestore must be **Native mode, Standard
+   > edition** — Enterprise has no `findNearest`.
+
+### 2c. Clean Earth device API
+
+Required for all sensor readings. **Both values go in `.env`** (git-ignored) — never in
+`.env.example`, never in code.
+
+| variable | value |
+|---|---|
+| `DEVICE_API_BASE_URL` | Backend base URL **including `/api/v1`**. Production: `https://cer-api-98242557946.us-central1.run.app/api/v1`. Local: `http://localhost:5001/api/v1`. |
+| `DEVICE_API_TOKEN` | **Dev only.** A bearer JWT. |
+
+Getting a token:
+
+1. **From the dashboard** (fastest): log in → DevTools → Application → Local Storage → copy `token`.
+2. **Directly:**
+   ```bash
+   curl -s -X POST "$DEVICE_API_BASE_URL/users/login" \
+     -H 'Content-Type: application/json' \
+     -d '{"email":"you@example.com","password":"…"}'
+   ```
+
+> ⚠️ **There is no QA mirror.** Any live call reads **production** data — a real customer fleet.
+> Read-only, no bursts. See [`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md) §3.
+>
+> ⚠️ **Tokens never expire** and are **org-scoped**. A leaked one is valid forever; a wrong-org one
+> returns a short, plausible device list rather than an error.
+>
+> `DEVICE_API_TOKEN` is a development shortcut. In production the service forwards the *caller's*
+> JWT, so a chat user only ever sees their own devices.
 
 ---
 
-## 8. Tools the LLM can call
+## 3. Quick start
 
-Exactly two. No more at baseline.
+No credentials needed for steps 1–4.
 
-### `query_sensor_data`
-
-```python
-def query_sensor_data(
-    metric: Literal["dissolved_oxygen", "orp", "ph", "conductivity", "temperature"],
-    time_range: str,           # natural-language spec like "last 7 days", "2025-04-01 to 2025-04-15"
-    aggregation: Literal["min", "max", "mean", "median", "latest", "raw"]
-) -> dict
+```bash
+npm install
+cp .env.example .env
+npm run dev                      # ~80s cold start — ts-node is slow, it is not hung
+curl http://localhost:8000/health
 ```
 
-Returns a dict with `metric`, `time_range_resolved` (the parsed start/end timestamps), `aggregation`, `value` (or list of values for `raw`), `unit`, and `n_samples`.
+Then add `FIREWORKS_API_KEY` and `LLM_MODEL` to `.env` and ask it something:
 
-Implement `time_range` parsing with a small set of patterns (last N days/weeks, explicit ISO date range, "today", "this week"). If parsing fails, return an error dict the LLM can read and recover from.
-
-### `search_documents`
-
-```python
-def search_documents(query: str, top_k: int = 5) -> list[dict]
+```bash
+curl -s -X POST localhost:8000/api/v1/chat \
+  -H 'Content-Type: application/json' \
+  -d '{"query":"What is ORP?"}' | jq
 ```
 
-Embeds `query` with nomic-embed-text-v1.5, runs cosine similarity in pgvector, returns the top-k chunks. Each result is `{chunk_id, document_filename, document_title, content, score}`.
+At this point you have a working chat service answering from **placeholder text** with **no sensor
+access**. To make it useful, continue to [§4](#4-run-recipes).
 
----
+Other ways to run it:
 
-## 9. Orchestration loop
-
-The simplest possible flow. No framework.
-
-1. User POSTs `{message: str, history: list[{role, content}]}` to `/chat`.
-2. Backend constructs the prompt: system message (see section 9), the history, and the new user message.
-3. Backend sends to Fireworks with both tools defined.
-4. If the model returns tool calls, backend executes them, appends tool results to the message list, and re-calls the model. Loop until the model returns a final text response (cap at ~5 tool-call rounds to avoid runaway loops).
-5. Backend returns `{response: str, citations: list[{document_title, filename, chunk_excerpt}], tool_calls: list[...]}` to the frontend.
-6. Frontend appends the response to the message list and renders citations as a small footnote-style list beneath the answer.
-
----
-
-## 10. System prompt (starting point)
-
-The system prompt must include the operator-provided ranges from section 7 as structured facts. Build it at request time so it's easy to update.
-
-```
-You are a water-quality assistant for a single sensor deployment. You answer
-questions about the sensor's readings and about authoritative water-quality
-documents.
-
-AUTHORITATIVE NORMAL RANGES (operator-provided, take precedence over documents):
-- pH: 6.5 to 8.5
-- ORP: 200 to 400 mV
-- Dissolved oxygen: 5 to 14 mg/L
-- Temperature: 32 to 95 °F
-- Conductivity (this deployment is {WATER_TYPE}): {RANGE_FOR_WATER_TYPE} µS/cm
-
-You have two tools:
-- query_sensor_data: get statistics from the local sensor database
-- search_documents: search regulatory and interpretive documents
-
-Rules:
-- For questions about the user's actual water, call query_sensor_data.
-- For questions about thresholds, normal ranges, or what a metric means:
-  - If the question is about whether a reading is normal, use the
-    AUTHORITATIVE NORMAL RANGES above. Do not retrieve a document for this.
-  - For everything else (what a metric means, why it matters, how it's
-    measured, regulatory context), call search_documents.
-- For questions that mix both ("is my pH normal?"), call query_sensor_data
-  for the reading and compare against the AUTHORITATIVE NORMAL RANGES.
-- If a retrieved document chunk disagrees with the AUTHORITATIVE NORMAL
-  RANGES, prefer the operator-provided ranges and note the discrepancy
-  if it's relevant to the user's question.
-- Always cite the document filename when you use information from a document.
-- The sensor measures dissolved oxygen, ORP, pH, conductivity, and temperature.
-  It does NOT measure pathogens, bacteria, chemicals, or turbidity. If asked
-  whether water is safe to swim in or drink, say plainly that the sensor cannot
-  answer that and the user should consult local public-health authorities.
-- IN-SCOPE topics are ONLY: this sensor's readings (dissolved oxygen, ORP,
-  pH, conductivity, temperature) and content returned by search_documents
-  over the loaded corpus. The AUTHORITATIVE NORMAL RANGES above are also
-  in-scope.
-- If a question is outside that scope, or if your tool calls return no
-  useful data (search_documents returns nothing relevant, or
-  query_sensor_data returns an error or empty result), DO NOT answer from
-  prior knowledge. Respond with exactly:
-    "I can only answer questions grounded in this sensor's readings or
-    the loaded water-quality documents, and I don't have enough
-    information to answer that."
-  Then add one short sentence describing what was missing.
-- Never use general world knowledge to fill gaps. If the tools do not
-  support the answer, refuse using the line above.
-- Do not fabricate readings or citations.
-- Keep answers short and direct. Cite specific numbers from the data.
+```bash
+npm run build && npm start                                   # compiled
+docker build -t clean-earth-rag . && docker run -p 8000:8000 clean-earth-rag
 ```
 
-`{WATER_TYPE}` and `{RANGE_FOR_WATER_TYPE}` are interpolated at request time from the `WATER_TYPE` env var. Iterate on this prompt once you have real conversations to look at — the prompt is not load-bearing for the architecture, but the precedence rule about authoritative ranges is.
-
 ---
 
-## 11. Frontend
+## 4. Run recipes
 
-`frontend/index.html` is a single file. Vanilla JS, no framework.
+Copy-paste configurations. Every variable can live in `.env` instead — the inline form is shown so
+you can switch without editing files, which matters when comparing setups.
 
-- One text input pinned to the bottom.
-- One scrollable message list above it.
-- One "thinking..." indicator while a request is in flight.
-- Render assistant messages with their citations as a small list below the message body, each citation showing the document title.
-- Configurable backend URL (default `http://localhost:8000`).
-- No login, no sidebar, no settings, no styling beyond what's needed for legibility.
+### 4a. The one you probably want
 
----
+Grounded document answers **and** live sensor readings:
 
-## 12. Environment
-
-`.env.example`:
-
-```
-FIREWORKS_API_KEY=
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/cleanearth
-LLM_MODEL=accounts/fireworks/models/qwen3-30b-a3b-instruct-2507
-EMBEDDING_MODEL=nomic-ai/nomic-embed-text-v1.5
-WATER_TYPE=freshwater   # or "saltwater" — controls which conductivity range is treated as normal
+```bash
+DEFAULT_RETRIEVAL=firestore-direct \
+SENSOR_TOOL=true \
+LLM_MAX_TOKENS=16384 \
+npm run dev
 ```
 
-`docker-compose.yml` runs `pgvector/pgvector:pg16` (or the latest stable pgvector image) exposing 5432, with a volume for persistence. `seed.py` should be idempotent: safe to re-run, skipping documents already ingested (by filename) and skipping CSV rows already loaded (by `device + measured_at`).
+Startup should print `SENSOR_TOOL is ON …` and, on the first request,
+`[DirectFeed] Loaded 5 documents …`. Needs `npm run ingest` once ([§6](#6-retrieval-arms)) and a
+device token ([§2c](#2c-clean-earth-device-api)).
+
+### 4b. By what you're doing
+
+| goal | command |
+|---|---|
+| **Minimal / no credentials** | `npm run dev` |
+| **Documents only**, no sensor access | `DEFAULT_RETRIEVAL=firestore-direct npm run dev` |
+| **Sensors only**, placeholder documents | `SENSOR_TOOL=true npm run dev` |
+| **Compare retrieval arms** without restarting | `DEBUG_RETRIEVAL=true DEFAULT_RETRIEVAL=firestore-direct npm run dev` |
+| **A second server** alongside the first | add `PORT=8001` |
+| **Capture a bake-off arm** ⚠️ | `SENSOR_TOOL=false DEBUG_RETRIEVAL=true CORPUS_SOURCE=firestore LLM_MAX_TOKENS=16384 LLM_TEMPERATURE=0 npm run dev` |
+
+⚠️ **The bake-off row is not optional detail.** `SENSOR_TOOL` must be `false` or the run is not
+comparable to the three captured arms, and `.env` does **not** contain these settings by default.
+
+### 4c. Switching retrieval arm per request
+
+Only works with `DEBUG_RETRIEVAL=true`. Without it the override is **ignored silently** and the
+default arm answers.
+
+```bash
+curl -s -X POST localhost:8000/api/v1/chat -H 'Content-Type: application/json' \
+  -d '{"query":"What is the normal turbidity range?","retrieval":"firestore-vector"}' | jq '.mode'
+```
+
+**Always check the echoed `mode`** — it is the only confirmation of which arm actually answered.
+
+### 4d. Two servers, side by side
+
+Useful for comparing arms or flag states with one browser tab each:
+
+```bash
+DEFAULT_RETRIEVAL=firestore-direct SENSOR_TOOL=true  PORT=8000 npm run dev   # terminal 1
+DEFAULT_RETRIEVAL=stub            SENSOR_TOOL=false PORT=8001 npm run dev   # terminal 2
+```
+
+The frontend takes a `?backend=` override: `http://localhost:5173?backend=http://localhost:8001`.
+
+> **Serve the frontend, don't double-click it.** It is now ES modules, and module scripts are
+> blocked over `file://` (opaque origin, CORS). From `frontend/`, run
+> `python3 -m http.server 5173`.
+
+### 4e. Stopping it
+
+```bash
+pkill -f "[t]s-node-dev"
+```
+
+**Never `pkill -f "src/index.ts"`** — it matches your own shell and kills it.
 
 ---
 
-## 13. Acceptance tests
+## 5. Configuration reference
 
-The baseline is **done** when the system handles these five conversations correctly. "Correctly" means: the answer is factually grounded in the right source (sensor data, document, or operator-provided ranges), citations point to the actual chunk used, and no values are fabricated.
+`cp .env.example .env`. Nothing here blocks boot; invalid *values* fail fast with a message listing
+every problem, missing secrets are warnings only.
 
-1. **Sensor-only question.**
-   User: *"What's my dissolved oxygen been like this week?"*
-   Expected: Model calls `query_sensor_data(metric="dissolved_oxygen", time_range="last 7 days", aggregation="mean")` (or similar). Response cites the actual data (mean, min, max, sample count) from the database. No document citation needed.
+### Core
 
-2. **Document-only question.**
-   User: *"Is a pH of 8.2 normal?"*
-   Expected: Model recognizes this as a "is this normal" question, uses the **operator-provided range (pH 6.5–8.5)** from the system prompt, and answers that 8.2 is within range. Does **not** retrieve a document for the range itself. May optionally call `search_documents` for additional context on why pH matters, citing the source.
+| Variable | Default | Purpose |
+|---|---|---|
+| `NODE_ENV` | `development` | `development` \| `test` \| `production`. Controls error-stack exposure. |
+| `PORT` | `8000` | HTTP port. |
+| `LOG_LEVEL` | `info` | Log verbosity label. |
+| `MAX_HISTORY_MESSAGES` | `20` | Cap on prior turns per request. Oldest dropped, not rejected. |
+| `WATER_TYPE` | `freshwater` | `freshwater` \| `saltwater`. Selects conductivity + turbidity normal ranges in the prompt. **Global — see the caveat in [§7e](#7e-known-limits).** |
 
-3. **Definitional question.**
-   User: *"What does ORP measure?"*
-   Expected: Model calls `search_documents("ORP oxidation reduction potential")`. Response explains ORP based on retrieved chunks (likely USGS NFM A6.8), with a citation.
+### LLM (Fireworks)
 
-4. **Follow-up question referencing prior answer.**
-   User: *(after question 1)* *"How does that compare to what's healthy for aquatic life?"*
-   Expected: Model combines the prior sensor result with the operator-provided DO range (5–14 mg/L) and may also call `search_documents` for the EPA DO criteria document for additional aquatic-life-specific context. Cites both the sensor reading from turn 1 and any document chunk used.
+| Variable | Default | Purpose |
+|---|---|---|
+| `FIREWORKS_API_KEY` | *(unset)* | Required before any chat works. |
+| `FIREWORKS_BASE_URL` | `https://api.fireworks.ai/inference/v1` | OpenAI-compatible endpoint. |
+| `LLM_MODEL` | *(unset)* | e.g. `accounts/fireworks/models/gpt-oss-20b`. |
+| `LLM_MAX_TOKENS` | `4096` | **Raise to 16384 for tool use or capture runs.** gpt-oss emits reasoning tokens and returns an *empty answer* if starved — the API call still succeeds. |
+| `LLM_TEMPERATURE` | `0` | **Leave at 0 for the bake-off** — sampling variance would measure the sampler, not retrieval. |
+| `FIREWORKS_USER` | `clean-earth-rag` | Sent as the OpenAI `user` field; drives serverless prompt-cache affinity. |
+| `EMBEDDING_MODEL` | `nomic-ai/nomic-embed-text-v1.5` | 768-dim. |
 
-5. **Precedence test (catches a regression where the model trusts a document over the operator range).**
-   User: *"What's the normal range for pH in surface water?"*
-   Expected: Model gives the operator-provided range (6.5–8.5) as authoritative. If it also surfaces a document range (e.g. the EPA Volunteer Manual mentions different values), it should explicitly note that the operator-provided range is the source of truth for this deployment.
+### Retrieval ([§6](#6-retrieval-arms))
 
-6. **Out-of-scope refusal (catches a regression where the model answers from prior knowledge).**
-   User: *"What's the boiling point of mercury?"*
-   Expected: Model recognizes the question is outside the in-scope topics (this sensor's readings + the loaded corpus + the operator-provided ranges) and returns the refusal line from the system prompt rather than answering from prior knowledge. Same expected behavior if all tool calls come back empty/error on an otherwise on-topic-sounding question (e.g. asking about a pollutant the corpus does not cover and the sensor does not measure). No fabricated citations.
+| Variable | Default | Purpose |
+|---|---|---|
+| `DEFAULT_RETRIEVAL` | `stub` | `stub` \| `firestore-direct` \| `firestore-vector`. **`pgvector-rag` is no longer a selectable value** — the arm was archived 2026-08-19 ([§6](#6-retrieval-arms)). A stale `.env` still naming it throws on the **first chat request**, not at startup — see [§11](#11-troubleshooting). |
+| `DEBUG_RETRIEVAL` | `false` | When `true`, a request's `"retrieval"` field is honoured. Required by the bake-off runner. |
+| `CORPUS_SOURCE` | `artifact` | Where `firestore-direct` reads text: `artifact` (local file, no credentials) or `firestore`. Explicit rather than auto-detected — a silent fallback would measure the wrong source. |
 
-If all six work end-to-end, the spine is real. Stop adding to the baseline and start collecting real conversations.
+### Sensor tool ([§7](#7-sensor-querying))
 
----
+| Variable | Default | Purpose |
+|---|---|---|
+| `SENSOR_TOOL` | `false` | **The gate.** Enables `query_sensor_data`, the tool-round loop, and the prompt's tool block. Off ⇒ the bot cannot read sensors at all. |
+| `MAX_TOOL_ROUNDS` | `16` | Tool-enabled rounds before a forced text-only round. Legacy was 5, which cannot fit a six-parameter question. |
+| `RAW_LIMIT` | `200` | Rows an `aggregation: "raw"` call returns. A cap, not a page size — raw output goes into the next prompt. |
+| `SENSOR_DEVICE_LABEL` | *(unset)* | Default pod when the model names none. **Leave unset unless the deployment truly has one pod** — the token sees ~17 devices and the two cleared test pods are on opposite coasts. Unset means the tool asks. |
 
-## 14. Build order (suggested)
+### Device API ([§2c](#2c-clean-earth-device-api))
 
-1. `docker-compose up` — Postgres + pgvector running.
-2. `schema.sql` applied — tables exist.
-3. `seed.py` for documents — ingest, chunk, embed, store. Verify a vector similarity query returns sensible neighbors for a test phrase.
-4. `seed.py` for CSV — load sensor data, verify row count.
-5. `tools.py` — implement and unit-test the two tools standalone.
-6. `llm.py` — implement Fireworks client, verify a no-tool completion works.
-7. `main.py` — wire `/chat` with the orchestration loop, no UI yet, test with `curl`.
-8. `frontend/index.html` — wire to the backend, run through the four acceptance tests.
-9. Stop. Do not start adding features until you have real user questions to learn from.
-
----
-
-## 15. Deferred (do not build at baseline)
-
-For each item: why it's safe to defer, and the trigger that means "now's the time."
-
-- **Auth / multi-tenancy.** Defer until you know who the users actually are. Trigger: a second user or a customer who needs SSO.
-- **Fine-tuning.** Defer until you have example conversations to train on. Trigger: a recurring failure mode that prompt engineering can't fix.
-- **Guardrails layer.** Defer until you've observed real outputs. Trigger: a specific failure class you want to catch (e.g. fabricated readings).
-- **External-API tools (EPA ECHO, NOAA, USGS APIs).** Defer. Trigger: questions the document store alone can't answer keep coming up.
-- **LiteLLM / multi-provider abstraction.** Defer. Trigger: you have a second provider you actually want to use.
-- **Dedicated vector DB.** Defer. Trigger: pgvector latency on retrieval exceeds ~500ms p95, or chunk count exceeds ~100K.
-- **TimescaleDB.** Defer. Trigger: sensor table queries get slow (won't happen at <1M rows).
-- **Sandboxed code execution / Plotly-from-LLM.** Defer. Trigger: users explicitly ask for charts and numeric summaries aren't enough.
-- **Streaming responses.** Defer. Trigger: UX feedback that the "thinking..." spinner feels too long.
-- **Ingestion UI.** Defer. Trigger: the document curator is updating `docs/` more than once a week.
+| Variable | Default | Purpose |
+|---|---|---|
+| `DEVICE_API_BASE_URL` | *(unset)* | Backend base URL **including `/api/v1`**. |
+| `DEVICE_API_TOKEN` | *(unset)* | Dev-only bearer JWT. |
+| `DEVICE_API_TIMEOUT_MS` | `10000` | Request timeout. Node's default is effectively none. |
+| `CER_EMAIL` / `CER_PASSWORD` | *(unset)* | Optional — lets `npm run explore:devices` mint a token for the run instead of storing one. |
 
 ---
 
-## 16. Open items (need user input before building)
+## 6. Retrieval arms
 
-These are marked `TODO (user)` above and gathered here for visibility:
+Makes document answers grounded. Background: [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md);
+implementation: [`docs/SPECS.md`](docs/SPECS.md) §11–14b.
 
-1. Confirm the exact `DATE` format in `water-data.csv`.
-2. Confirm the unit for `DISSOLVED OXYGEN` (mg/L or % saturation). Note: operator-provided range is in mg/L, so if the CSV is in % saturation it must be converted at ingest.
-3. Confirm the unit for `CONDUCTIVITY` (µS/cm assumed).
-4. Confirm the unit for `TEMPERATURE`. Note: operator-provided range is in °F. If the CSV is in °C it must be converted at ingest, or the system prompt must be updated to use °C ranges (32 °F = 0 °C, 95 °F = 35 °C).
-5. Set `WATER_TYPE` env var to `freshwater` or `saltwater`.
-6. Assign a document corpus owner.
-7. Drop the actual sensor manufacturer datasheet(s) into `docs/`.
-8. Confirm the privacy posture in section 6.1 matches what your supervisor expects. Specifically: is "Fireworks DPA with no-training clause" the bar, or does the bar require on-prem hosting? These imply very different builds.
+**Step 1 — build the corpus artifact** (once). Put source PDFs in `documents/`, then:
 
-Claude Code: if any of these are not resolved before you start, write `seed.py` to detect units defensively where possible (e.g. if every DO value is between 0 and 20, it's mg/L; if every value is between 0 and 100 and clustered above 50, it's likely % saturation), log what was detected, and flag it in stdout so the user can correct course. Unit mismatches between the CSV and the operator-provided ranges will silently produce wrong "is this normal" answers, so this is the highest-risk class of bug.
+```bash
+npm run ingest
+```
+
+Writes `data/corpus/corpus.json` (git-ignored). **Every arm reads this one artifact** — none
+re-parse the PDFs. Deliberate: if each arm extracted its own text, extraction differences would
+surface as answer-quality differences and be misread as one strategy beating another.
+
+**Step 2 — pick an arm.**
+
+| arm | what it does | needs |
+|---|---|---|
+| `stub` | three lines of placeholder text | nothing |
+| **`firestore-direct`** ⭐ | feeds the whole ◆G9 slice, no embeddings, no ranking | the artifact |
+| `firestore-vector` | dense RAG on Firestore vector search | Fireworks key + vector index |
+
+⭐ = the provisional working choice (7.1% retrieval miss vs 33.9%). See
+[`docs/HANDOFF.md`](docs/HANDOFF.md) §3.
+
+> **Where did `pgvector-rag` go?** The dev-only legacy-parity arm's **runtime code was archived on
+> 2026-08-19** to `archive/pgvector-rag/`, which mirrors the original paths (adapter, `rrf.ts`,
+> seeder, `db/bakeoff/schema.sql`, `docker-compose.bakeoff.yml`, `src/config/pgvector.ts`). This was
+> done **ahead of ◆G7 by decision, not because ◆G7 closed** — it is still open on grading.
+> Its **evidence stays live and untouched**: the 56 transcripts under `eval/transcripts/*/pgvector-rag/`,
+> the label→arm mapping in `eval/grading/warm/KEY.json`, the arm's cost scenario (so `npm run cost`
+> still prices all three), and its entry in `scripts/gradePacket.ts` (so `npm run grade:packet`
+> still works). What archiving gave up is the ability to **re-run or re-capture** the arm: that now
+> requires restoring the files from `archive/pgvector-rag/`, re-adding the `pg` dependency, and
+> re-registering the mode. See [`docs/SPECS.md`](docs/SPECS.md) §14 for the arm's findings.
+
+<details>
+<summary><b><code>firestore-direct</code></b></summary>
+
+Despite the name it reads the **local artifact** by default — no Firestore, no credentials:
+
+```bash
+DEFAULT_RETRIEVAL=firestore-direct npm run dev
+```
+
+For a **measured** run where Firestore read costs are counted (needs the composite index from
+[§2b](#2b-google-cloud--firestore)):
+
+```bash
+npm run seed:firestore
+CORPUS_SOURCE=firestore DEFAULT_RETRIEVAL=firestore-direct npm run dev
+```
+
+Re-running the seeder overwrites by filename rather than duplicating.
+</details>
+
+<details>
+<summary><b><code>firestore-vector</code></b></summary>
+
+Requires `FIREWORKS_API_KEY` (it embeds 305 chunks) and the **vector index** from
+[§2b](#2b-google-cloud--firestore).
+
+```bash
+npm run seed:firestore-chunks
+DEFAULT_RETRIEVAL=firestore-vector npm run dev
+```
+
+Idempotency is checked *before* embedding, so a re-run costs nothing. Expect
+`305 chunks in "corpus_chunks"`.
+</details>
+
+<details>
+<summary><b><code>pgvector-rag</code></b> ⚠️ archived 2026-08-19 — not runnable</summary>
+
+Re-introduced the stack ◆G1 moved away from, as the only honest "what we had before" baseline. Its
+runtime code now lives in `archive/pgvector-rag/`; nothing in the live tree registers the mode, and
+`PGVECTOR_URL` is no longer a configuration variable.
+
+The commands below are the ones the captured sweep ran under. They are recorded so the transcripts
+can be interpreted, **not so they can be pasted** — they need the archived files restored first:
+
+```bash
+docker-compose -f docker-compose.bakeoff.yml up -d      # NOT `docker compose` — plugin may be absent
+npm run seed:pgvector
+PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff \
+  DEFAULT_RETRIEVAL=pgvector-rag npm run dev
+```
+</details>
+
+**Step 3 — capture a bake-off run** ([`eval/README.md`](eval/README.md)):
+
+```bash
+npm run bakeoff -- --arm=firestore-vector --spot-check    # ALWAYS run this first
+npm run bakeoff -- --arm=firestore-vector --pass=warm
+npm run cost                                              # pure arithmetic, no network, free
+```
+
+`--spot-check` probes the arm with three questions and prints the retrieved context. An adapter
+returning empty context still produces a clean-looking, completely meaningless dataset.
+
+---
+
+## 7. Sensor querying
+
+`query_sensor_data` reads the **real Clean Earth device API**. Implementation:
+[`docs/SPECS.md`](docs/SPECS.md) §10.3a; API contract and traps:
+[`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md).
+
+### 7a. Turn it on
+
+```bash
+DEVICE_API_BASE_URL=…  DEVICE_API_TOKEN=…       # in .env, see §2c
+SENSOR_TOOL=true LLM_MAX_TOKENS=16384 npm run dev
+```
+
+Startup prints a warning confirming it's on. `LLM_MAX_TOKENS=16384` matters here: each tool round
+re-consumes the budget, and a starved model returns an *empty answer* from a *successful* API call.
+
+### 7b. Verify it reads real pods — free, no LLM
+
+```bash
+npm run verify:sensor                      # both cleared test pods
+npm run verify:sensor -- --pods=Algalita   # one
+npm run verify:sensor -- --json            # machine-readable
+```
+
+This drives the tool directly with the model removed as a variable, so a failure here is
+unambiguously a data problem. **Run it before spending tokens on a chat round-trip.** It prints a
+checklist of what a passing run looks like.
+
+The two cleared test pods:
+
+| pod | label | environment |
+|---|---|---|
+| Algalita Pod | `dev:351077454569099` | salt-water |
+| Old Woman Creek 2026 | `dev:351077454567580` | fresh-water |
+
+> "OWC" appears **nowhere** in the registry — the pod is named "Old Woman Creek 2026". The tool
+> matches the acronym anyway; a raw API filter on `owc` matches nothing and *succeeds*.
+
+Then through the bot:
+
+```bash
+curl -s localhost:8000/api/v1/chat -H 'Content-Type: application/json' \
+  -d '{"query":"What is the current dissolved oxygen at the Algalita Pod?"}' \
+  | jq '{answer, tool_calls}'
+```
+
+**`tool_calls` is the diagnostic.** Absent ⇒ the model never called the tool (a prompt/model
+problem, not a data one). Present with `result.error` ⇒ a tool problem, and the message says which.
+Present with a real `value` but disagreeing prose ⇒ the model is mis-narrating a number it has.
+
+### 7c. Query the device API directly
+
+Ground truth, bypassing everything in this repo. Never paste a token — source it:
+
+```bash
+set -a; source .env; set +a
+D=dev:351077454569099                      # Algalita
+
+curl -s "$DEVICE_API_BASE_URL/water/last/$D" -H "Authorization: Bearer $DEVICE_API_TOKEN" | jq
+curl -s "$DEVICE_API_BASE_URL/water/period/1/day?device=$D" -H "Authorization: Bearer $DEVICE_API_TOKEN" | jq 'length'
+curl -s "$DEVICE_API_BASE_URL/devices" -H "Authorization: Bearer $DEVICE_API_TOKEN" \
+  | jq -r '.[] | "\(.data.label)  \(.data.operatingEnvironment // "?")  \(.data.name // "(unnamed)")"'
+```
+
+Metric codes: `97` DO mg/L · `98` ORP mV · `99` pH · `100` conductivity µS/cm · `102` temperature ·
+`72` turbidity NTU. Timestamps are epoch **seconds**.
+
+> ⚠️ **Do not compare raw output against what the bot says.** Temperature is **°F** from
+> `/water/last` and **raw °C** from `/water/period`, with nothing in either payload saying which —
+> you will conclude the bot is hallucinating when it is correcting. And **never use
+> `/water/average`**: it returns zeros for all six metrics on an empty window and drops whole rows
+> when any single probe faults. The tool never calls it.
+
+### 7d. Programmatic access
+
+For code that must not get its numbers by asking a language model — Phase N6 report generation
+computes the header, §2 and §5 deterministically.
+
+```ts
+import { QuerySensorData } from "./src/tools";
+
+const sensors = new QuerySensorData();
+
+const now = await sensors.query({
+  metric: "all", timeRange: "last day", aggregation: "mean", device: "Algalita Pod",
+});
+
+const first = await sensors.query({
+  metric: "dissolved_oxygen", timeRange: "last 1 year", aggregation: "earliest", device: "Algalita Pod",
+});
+
+const trend = await sensors.query({
+  metric: "temperature", timeRange: "last week", aggregation: "series", device: "Algalita Pod",
+});
+```
+
+`query()` takes typed params and **throws `SensorQueryError`**. `run()` is the LLM path — loose args
+in, `{ error }` out. Same implementation underneath. "No readings" stays a *result*
+(`value: null`, `n_samples: 0`), not an exception — a report needs to say a pod was silent.
+
+**What the tool can express:**
+
+| argument | values |
+|---|---|
+| `metric` | `dissolved_oxygen` `orp` `ph` `conductivity` `temperature` `turbidity`, or **`all`** (every metric from one fetched window) |
+| `aggregation` | `min` `max` `mean` `median` `latest` `earliest` `raw` `series` |
+| `time_range` | `last N hours/days/weeks/months`, `last day`, `last week`, `today`, `yesterday`, `this week`, `now`, `YYYY-MM-DD`, `YYYY-MM-DD to YYYY-MM-DD` |
+| `device` | name, `dev:` label, or an acronym like `OWC` |
+| `bucket` | `series` only — `auto` (default) `hour` `day` `week` |
+
+Ranges anchor to the **device's most recent reading**, not the wall clock, so a pod that stopped
+reporting still answers "the last day" about its last day of data.
+
+### 7e. Known limits
+
+- **No cross-metric or cross-pod comparisons, no trend/slope, no event detection.** `series` gives
+  bucketed means; interpreting them is the model's job. Event detection is N6, gated by ◆G4.
+- **Calendar phrases resolve in UTC**, not pod-local time. The two pods are in different timezones.
+- **`raw` drops the OLDEST rows first** when it hits `RAW_LIMIT`. Use `earliest` for first-reading
+  questions — `truncated_kept` says which end survived.
+- **`time_range_resolved` is what you asked for; `window_actually_searched` is what was searched.**
+  The API's window ladder tops out at one year, so a longer range comes back `complete: false`.
+- **`WATER_TYPE` is one global variable and the two test pods disagree.** One deployment cannot
+  serve both correctly. The tool *flags* the mismatch in its result rather than silently comparing a
+  saltwater pod against freshwater limits. Making it per-device is N4 work, gated by ◆G3.
+- **A pod's first-ever reading may be a boot artifact** (Algalita's is pH 13.58, −1809 °F) whose
+  hardware error flags are **not** set, so it passes the fault filter. A plausibility floor per
+  metric is N6's faulty-data work.
+
+---
+
+## 8. Scripts
+
+| script | purpose |
+|---|---|
+| `npm run dev` | live-reload dev server (`ts-node-dev`) |
+| `npm run build` / `npm start` | compile to `dist/` / run compiled |
+| `npm test` | full Jest suite (491 tests in 24 suites, none touching the network) |
+| `npm run test:coverage` / `test:watch` | coverage / watch mode |
+| `npm run lint` / `npm run typecheck` | ESLint `--fix` over `src` / `tsc --noEmit` |
+| `npm run ingest` | parse `documents/` → `data/corpus/corpus.json` ([§6](#6-retrieval-arms)) |
+| `npm run seed:firestore` | upload the corpus to `corpus_documents` |
+| `npm run seed:firestore-chunks` | embed + upload to `corpus_chunks` for `firestore-vector` |
+| **`npm run verify:sensor`** | **live read-only check that the sensor tool reads real pods (no LLM, no cost)** |
+| `npm run explore:devices` | discover the fleet and record raw responses to `data/device-api/` |
+| `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a run; `--spot-check`, `--only`, `--dry-run` |
+| `npm run cost` | price the arms and compute break-even |
+| `npm run grade:packet` | build the blind grading packet (`--pass=`, `--sample=`) |
+| `npm run starter:prompts` | generate the composer's starter prompts (`--limit=`, `--sensor`) |
+
+---
+
+## 9. Project layout
+
+```
+src/
+  index.ts              # entry: load config, start the server
+  app.ts                # express assembly, exported for tests
+  config/               # index.ts (env loading + validation), database.ts
+  routes/               # /api/v1 aggregator, healthRoutes, chatRoutes, deviceRoutes
+  controllers/          # HealthController, ChatController, DeviceController
+  retrieval/            # the retrieval seam — SPECS.md §9
+    RetrievalRegistry.ts  #   mode -> adapter, selected by DEFAULT_RETRIEVAL
+    adapters/           #   Stub, DirectFeed, FirestoreVector
+    sources/            #   ArtifactCorpusSource | FirestoreCorpusSource
+  devices/              # DeviceApiClient (read-only), metrics.ts (codes, flags, decoding)
+  tools/                # the sensor tool — SPECS.md §10.3a
+    querySensorData.ts  #   tool + typed query(); timeRange.ts; aggregate.ts
+  services/             # LlmService, ChatOrchestrator (tool loop), EmbeddingService
+  prompt/               # systemPrompt.ts (pinned control + TOOL_BLOCK), promptBuilder.ts
+  ingestion/            # extract, chunk, corpus, ingest
+  eval/                 # bake-off runner, fixtures, cost model
+  validators/ types/ middleware/ utils/
+scripts/                # ingest, bakeoff, cost, seed*, exploreDeviceApi, verifySensorTool,
+                        #   gradePacket, starterPrompts
+test/
+  integration/          # health, chat, sensorChat, devices
+  unit/                 # per-module suites
+  fixtures/device-api/  # recorded production bodies + provenance README
+frontend/               # chat UI (manual test surface, not the product). Served, not file://
+  index.html            #   markup + mount points; app.css; js/ modules; vendor/ for third-party
+data/                   # corpus artifact + device recordings (git-ignored)
+documents/              # source corpus. NOTE: `.gitignore` has a documents/* rule, but several
+                        #   PDFs predate it and ARE tracked — check `git status` before assuming
+                        #   a deleted one is gone.
+eval/                   # fixtures/ (committed questions), transcripts/, grading/. The
+                        #   pgvector-rag transcripts and KEY.json stay — they are ◆G7's evidence.
+archive/                # retired code kept for the record, at its original paths.
+  pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
+docs/                   # HANDOFF.md (start here), SPECS.md, timeline.md, RETRIEVAL_BAKEOFF.md,
+                        #   EVAL_FIXTURES.md, GRADING_GUIDE.md, migration/
+```
+
+---
+
+## 10. Endpoints
+
+| method | path | description |
+|---|---|---|
+| `GET` | `/` | service banner |
+| `GET` | `/health` | liveness + config-presence checks (no external I/O) |
+| `GET` | `/api/v1` | API v1 banner |
+| `GET` | `/api/v1/devices` | pod list for the UI selector (read-only, forwards the caller's token) |
+| `POST` | `/api/v1/chat` | JSON, or SSE when `"stream": true` |
+
+**Request:** `{ query, retrieval?, stream?, history?, device? }`. `query` required; `retrieval`
+honoured only when `DEBUG_RETRIEVAL=true`; `device` names the pod to read when the model does not
+name one itself (the model's own choice wins).
+
+**Response:** `{ answer, model, mode, citations, usage }`, plus `tool_calls` when any tool ran and
+`tool_round_cap_reached` when the loop hit its cap. Both are **omitted** when no tool ran.
+
+- `citations` is the **retrieved context**, not parsed inline citations — for direct-feed that is
+  the whole slice on every request.
+- **Sensor readings appear in `tool_calls`, never in `citations`.** A reading is this deployment's
+  own measurement, not a claim attributable to a corpus document.
+- `usage` is **summed across every tool round**, not just the last call.
+
+> **Streaming with `SENSOR_TOOL=true` is not token-by-token.** The loop cannot know a round is the
+> last until it returns without tool calls, by which point the text exists; re-issuing it as a
+> stream would double the cost of every answer. The finished text arrives as one `token` event.
+> With the flag off, streaming is unchanged.
+
+---
+
+## 11. Troubleshooting
+
+### Configuration
+
+- **Server exits with "Invalid configuration"** — a `.env` value failed validation; the message
+  lists each bad variable.
+- **`[Config] FIREWORKS_API_KEY is not set`** — expected until you add the key; `/health` still passes.
+- **`Configured DEFAULT_RETRIEVAL="pgvector-rag" is not registered`** — expected since 2026-08-19:
+  the arm is archived and the mode is gone ([§6](#6-retrieval-arms)). **Note where this surfaces.**
+  The registry resolves per request, not at boot, so the server starts normally and `/health`
+  passes; the first `POST /api/v1/chat` is what 500s. Throwing is deliberate — falling back to
+  `stub` would answer from placeholder text and read as a model problem.
+- **`npm run dev` looks hung** — `ts-node` cold start is ~80s. It isn't hung.
+- **Port already in use** — change `PORT`, or `pkill -f "[t]s-node-dev"`.
+
+### Answers are wrong or missing
+
+- **Answers are placeholder text** — `DEFAULT_RETRIEVAL` is still `stub` ([§6](#6-retrieval-arms)).
+- **The bot refuses every sensor question** — `SENSOR_TOOL` is not `true`. It has no sensor access
+  at all and the prompt tells it to refuse rather than guess.
+- **The bot answers sensor questions from documents instead of calling the tool** — check
+  `tool_calls` is absent in the response. With `firestore-direct` the context is ~9.4K tokens of
+  probe datasheets containing plausible-looking ranges, which can out-compete the tool. Compare the
+  same question under `DEFAULT_RETRIEVAL=stub`; a difference is evidence for ◆G11.
+- **Answers are empty, but the API call succeeded** — `LLM_MAX_TOKENS` too low. gpt-oss spends the
+  budget on reasoning tokens and truncates the visible answer to nothing. Use `16384`.
+- **A request ignored the `"retrieval"` field** — `DEBUG_RETRIEVAL` is not `true`. Check `mode`.
+
+### Sensor data
+
+- **`npm run verify:sensor` reports no devices** — the token is scoped to a different organization.
+  That is the first thing to check, not a bug.
+- **A pod returns `value: null`** — correct behaviour for an empty window. It must **never** return
+  `0` for all six metrics; if it does, something is bypassing the decoder.
+- **Raw `curl` disagrees with the bot on temperature** — expected. `/water/period` is °C,
+  `/water/last` is °F; the decoder normalizes to °F ([§7c](#7c-query-the-device-api-directly)).
+- **A "first reading" looks like garbage** — it may genuinely be a boot artifact whose error flags
+  are unset ([§7e](#7e-known-limits)).
+
+### Firestore
+
+- **Auth errors** — re-run `gcloud auth application-default login`, confirm `FIRESTORE_PROJECT_ID`.
+  Verify independently: `gcloud firestore databases list --project=<id>`.
+- **`FAILED_PRECONDITION: The query requires an index`** — the `corpus_documents` composite index is
+  missing ([§2b](#2b-google-cloud--firestore)). The error text includes a console link.
+- **`firestore-vector` returns no context, but nothing errors** — the silent failure. In order of
+  likelihood: collection unseeded, vector index missing or still `CREATING`, or embeddings written
+  as plain arrays rather than `FieldValue.vector()`. The adapter logs a warning naming all three.
+
+### Tests
+
+- **Tests fail after changing `.env`** — they shouldn't; the suites pin their own environment. If a
+  test proves otherwise, that is a test-isolation bug worth fixing rather than working around.
