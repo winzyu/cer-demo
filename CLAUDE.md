@@ -7,6 +7,21 @@ require modifying a reference repo, stop and tell me instead.
 
 All migration planning artifacts go in docs/migration/.
 
+# Testing
+
+Run only the tests relevant to what you changed. Never run the full suite — it is
+slow and burns tokens I would rather spend elsewhere. I run `npm test` myself and
+will report anything that breaks.
+
+- Target the specific suites: `npx jest test/unit/foo.test.ts`, or `npx jest -t
+  "<name>"` for a single case. Pick them by what you touched, and say which ones
+  you ran.
+- `npm run typecheck` and `npx eslint src --ext .ts` are cheap — run them freely.
+  (Use `npx eslint`, not `npm run lint`; the script runs `--fix` and writes files.)
+- This applies to subagents too. If you delegate, pass the rule along.
+- In a git plan's **Verification** line, report exactly the suites you ran and say
+  plainly that the full suite was not run. Do not claim green tests you did not run.
+
 # Git
 
 I run all git commands myself. Never commit, push, branch, or tag on my behalf.
