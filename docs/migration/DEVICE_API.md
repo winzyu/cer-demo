@@ -255,6 +255,24 @@ sequence is: finish N2, then take this to the operator as a question (is the `0-
 apply to the derived index, or to a calibrated instrument?), then change the prompt once with the
 answer. Recorded here so it is not rediscovered later as a surprise.
 
+### 8a. The public product copy omits turbidity — and that is **not** a signal (2026-08-20)
+
+The vendor's own product guide (§14) describes the DataPod as streaming "PH, temperature, ORP, DO,
+and conductivity". Five parameters. Turbidity is absent, and the FAQ never mentions it either.
+
+**Do not read this as evidence that turbidity is out of scope.** We were directed explicitly, on
+this project, to add turbidity as a measured metric; that direction is the authority, and it is
+already implemented end to end — metric code `72`, decoded in `src/devices/metrics.ts`, ranged in
+the system prompt, and covered by seven eval fixtures. The public copy is simply **behind the
+product**, which is a normal state for marketing material and a good reason not to grant it
+authority anywhere in this document.
+
+What the omission *is* mildly useful for: it is a third independent hint, alongside the backend's
+own `PROVISIONAL` comment and the dashboard's "Turbidity (Relative)" label, that turbidity is the
+least settled of the six — newer, derived rather than stored, and not yet something the company
+puts in a brochure. That reinforces the open question above about which range applies to a derived
+index. It changes nothing about whether the metric belongs.
+
 ---
 
 ## 9. The exploration and recording plan
@@ -506,3 +524,104 @@ rows are detected and excluded — OWC's week window dropped 2.
 3. **Turbidity is now 1,385 and 2,042 NTU** against a prompt range of 0–25 / 0–10 — far past the
    817 recorded on 2026-08-11. Three independent samples now say the derived index is not
    comparable to that range at all (§8).
+
+---
+
+## 14. Vendor product material, read 2026-08-20
+
+Public marketing material found at [`cleanearthrovers.com/datapod`](https://www.cleanearthrovers.com/datapod),
+its linked **Product Guide PDF**
+(`/_files/ugd/d9e6b1_841ec9a211554e91a2b3cc8029b5ea79.pdf`), and the
+[FAQ page](https://www.cleanearthrovers.com/faqs).
+
+**Treat this as the lowest-authority source in this document.** It is undated sales copy, it
+contradicts itself on how many metrics the pod reads (the guide lists five, the FAQ says "6
+sensors", the site elsewhere says "7 key metrics"), and it is demonstrably behind the product —
+see the turbidity note below. Where it disagrees with the live API, the operator's
+source-of-truth document, or `clean-earth-rovers-server`, **those win**. What it is genuinely good
+for is (a) hardware and deployment facts we had no other source for, and (b) evidence about the
+*existing* Gilligan product, which Phase N7 has to replace without regressing.
+
+The guide PDF is **image-only — no text layer**. If it is ever wanted in the corpus it needs an
+OCR transcript first (`npm run ingest` deliberately does not OCR; it reuses `.ocr_cache/` and hard
+-errors on a miss). It should not be added while ◆G7 is open in any case: a corpus change
+invalidates all 168 captured transcripts.
+
+### 14a. Hardware and deployment facts — new, and consistent with what we see
+
+| fact | quoted | why it matters here |
+|---|---|---|
+| Calibration interval | "calibration once every 3 to 6 months" | The registry carries `nextCalibrationDate` per device (Algalita: `2026-09-30`) but no interval. This is the missing half. Input to **N4**'s per-sensor calibration metadata and **N6**'s recalibration guidance. |
+| Power | "completely solar-powered and only operates on a 3.5V system" | Explains the voltage fields riding along in `water_data` — `turbVolt` 4.20 V, `NCvoltage` 4.22 V. Turbidity being voltage-derived (§8) is consistent with a low-voltage analog sensing design. |
+| Seasonal deployment | "in the water for 9 out of 12 months of the year… in more tropical climates, it can monitor year-round" | **Bears directly on operator question 3** (§12c): Old Woman Creek 2026 silent since 2026-08-07. Seasonal removal is now a plausible benign explanation. Does not answer it — August is not an obvious off-season for Lake Erie — but it lowers the alarm. |
+| Siting | "near-shore monitoring at depths of 50 ft. or less" | Context for baseline work (◆G3): these are surface, near-shore readings, not profile data. |
+| Physical | "2 Ft tall and 1 Ft. wide… 10 lbs" | Recorded for completeness. |
+| Water types | "deployed in both fresh and salt water bodies" | Confirms the fleet is mixed by design, not by accident — more support for moving water type to per-device metadata (§12c, **N4 / ◆G3**). |
+
+### 14b. Alerting is an advertised, customer-facing feature
+
+> "If your readings are unhealthy, the DataPod™ will send you an alert that there may be a
+> pollution event taking place."
+
+That is `DevicesService.checkWaterDataAndSendAlerts` — **the function whose metric-code table is
+shifted** (§7). Finding it advertised raises the stakes on that report considerably: it is not
+dormant code, it is a feature customers are sold, and while the table is displaced every alert
+compares each metric against a different metric's thresholds. Still theirs to fix, still must not
+be ported. Worth raising explicitly rather than leaving in a document they may not read.
+
+### 14c. The existing Gilligan — parity facts for Phase N7
+
+Page 3 of the guide is *"Predictive Analytics With Gilligan AI™"* and carries a screenshot of the
+production chat UI. Three things in it are requirements we did not have written down:
+
+- **A persisted chat-history sidebar**, with dated conversations (01/09/2025, 11/05/2024,
+  10/31/2024, …). `timeline.md` sizes persisted history as an N7 item blocked on authentication.
+  This makes it **parity, not enhancement** — shipping N7 without it is a visible regression.
+- **The v0 report format**, verbatim from the transcript:
+
+  ```
+  Water Quality Report for Lifeguard Dock DataPod
+  Location: Lifeguard Dock DataPod
+  Date: Not provided
+  Parameters Tested:
+    Dissolved Oxygen (DO)
+    Oxidation-Reduction Potential (ORP)
+    pH
+    Conductivity…
+  ```
+
+  Note `Date: Not provided` — v0 shipped a report with an unfilled field rendered as a
+  placeholder, and `Location` merely echoing the pod name. Both are the failure mode N6's
+  compute-then-narrate rule exists to prevent. Useful as the "before" when showing N6's output.
+- **"Gilligan AI™ uses NOAA historic datasets, and live data from your smart buoy to analyze
+  pollution risks."** This is evidence for **◆G4** (does event detection run on sensor signals
+  alone, or is external context fed in?): the shipped product already feeds external
+  environmental context. We knew `/water/tides` is a NOAA passthrough; this says NOAA *historic*
+  data is an analysis input, which is a different and larger claim. **Worth confirming what
+  dataset and how** before N6 §4 is designed.
+
+Page 2 adds two interface facts:
+
+- The dashboard's time-range control is **Live / Week / Month / Year / 5 Years**, which maps
+  exactly onto the API's `:unit` ladder (`hour|day|week|month|year|fiveYears`). N5's time-range
+  chips should use those five labels rather than invented ones.
+- "Have up to **15 accounts** in your organization" — org scale, relevant whenever per-user
+  scoping and quota land (N7).
+
+Fleet sites named across both pages: Newport Beach, Huntington Beach, Cape Fear River, Lake Erie,
+Port of Los Angeles, Fort Lauderdale; dashboard pods Braid Theory DataPod, Braid Theory DataPod 2,
+Marina Park DataPod™, Lifeguard Dock DataPod™, CWA 2025 testbed. Neither of our two cleared test
+pods appears — this is a wider fleet than the one our token sees.
+
+### 14d. What still needs confirmation
+
+Short list, each of which a person has to answer:
+
+1. **What NOAA historic dataset does Gilligan v0 use, and how does it enter the analysis?** (◆G4.)
+2. **Is the 3–6 month calibration interval per probe or per pod**, and is `nextCalibrationDate`
+   maintained by hand or derived? N4 needs to know which.
+3. **Is Old Woman Creek's silence seasonal** (§12c / §13) — now that a 9-month deployment window is
+   documented, this is a yes/no question rather than a mystery.
+4. **Does the public "5 sensors / 6 sensors / 7 metrics" inconsistency reflect a hardware
+   revision?** Our decoder implements six. If a seventh code exists on newer firmware,
+   `METRICS` in `src/devices/metrics.ts` is where it would land.

@@ -520,6 +520,12 @@ answers complete; every sensor answer shows which pod, which window, and how fre
   Build order: §2 + header → §3 → §5 → §6 → **§4 last** (own spike, gated by G4).
 - **◆ G4 — Event-detection context** (carried forward): does §4 run on sensor signals alone, or is
   rainfall/tidal/vessel-activity context fed in manually? Gates §4.
+  **New input, 2026-08-20:** the vendor's own product guide states that the *existing* Gilligan
+  "uses NOAA historic datasets, and live data from your smart buoy to analyze pollution risks"
+  (`migration/DEVICE_API.md` §14c). So the shipped product already answers this gate with "external
+  context is fed in" — which makes G4 less a design choice than a question of **what NOAA dataset
+  and by what path**. Confirm before designing §4; we knew only that `/water/tides` is a NOAA
+  passthrough, and historic-dataset analysis is a larger claim than that.
 
 *Exit: each feature demoable on synthetic data; report generation produces a template-conformant report.*
 
@@ -539,6 +545,12 @@ answers complete; every sensor answer shows which pod, which window, and how fre
 Distinct from the per-request `history` array N1 already accepts. That one is client-supplied,
 trimmed to `MAX_HISTORY_MESSAGES`, and forgotten the moment the response is sent — it makes a
 conversation coherent, not durable.
+
+> **This is parity, not enhancement (2026-08-20).** The vendor's product guide shows the shipped
+> Gilligan with a **persisted chat-history sidebar** listing dated past conversations
+> (`migration/DEVICE_API.md` §14c). Replacing that feature without durable history is a visible
+> regression for existing users, so this item cannot be deferred out of N7 the way a new feature
+> could — it moves with the replacement or the replacement waits.
 
 - **Auth is the hard prerequisite.** There is no authentication in this service today, and a
   conversation cannot be scoped to a person without an identity. It lands here rather than in N5

@@ -223,3 +223,33 @@ Re-derive the fixtures, don't reinterpret old results, if any of these change:
 - **`LLM_MODEL` changes.** Cross-model comparisons are void (§4).
 - **A rubric turns out to be wrong.** Fix it and re-grade from the saved transcripts; that is why
   transcripts are committed separately from scores. Do not quietly re-run a paid sweep.
+
+---
+
+## 8. Candidate fixtures from real production usage (2026-08-20)
+
+**These are not in the set and must not be added to it while ◆G7 is open.** Adding a fixture
+changes the question set, and the three captured arms answered the committed 30. They are recorded
+here as the queue for the *next* sweep, which is exactly the disposition `RETRIEVAL_BAKEOFF.md`
+§7c prescribes for anything discovered outside the scripted run.
+
+Source: the chat-history sidebar visible in the vendor's product guide (`migration/DEVICE_API.md`
+§14c) — real questions asked of the **existing** Gilligan by real users, dated late 2024 / early
+2025. That provenance is what makes them worth more than anything we would invent: our 30 were
+written by us, predicting what users would ask.
+
+| candidate question | class | why it earns a slot |
+|---|---|---|
+| "what is DOM which you referred to?" | **new class — self-referential follow-up** | The user asks about a term **the bot itself introduced**. Nothing in the current set covers this. It is a genuinely hard retrieval case: the query word appears in the *previous answer*, not in the user's original question, and up-front retrieval (◆G11) runs on the raw turn. A direct-feed arm has the slice regardless; a RAG arm has to retrieve on a bare acronym with no surrounding context. This is the sharpest discriminator on this list. |
+| "What would a negative ORP for [a site] mean?" | `definitional` / `event-signature` | We have `definitional-orp` and `crossdoc-orp-reference-offset`, but nothing asks the sign question directly, and negative ORP is the reducing-condition signal the event-signature matrix turns on. |
+| "what is the optimal range for [metric]?" | `precedence` | Phrased as "optimal" rather than "normal" — the operator range is authoritative, and the word *optimal* invites the model to reach for a document's general guidance instead. A precedence trap in different clothing. |
+| "are there any concerns [with my water]?" | **new shape — open-ended assessment** | No metric, no threshold, no time range. Every fixture we have names something. This is what a non-technical user actually types, and it requires the bot to choose what to look at. Note it needs the sensor tool, so it would be `requires: ["sensor-tool"]`. |
+
+Two notes before any of these are written up:
+
+- **Rubrics must be written before the next sweep runs**, same rule as §1. A rubric written against
+  an observed answer is a rationalization.
+- **The self-referential follow-up may not be gradeable as-is.** Its correctness depends on what
+  the *previous* turn said, which differs per arm. It probably has to be authored as a fixed
+  two-turn conversation where turn 1 is engineered to introduce the term reliably — otherwise the
+  arms are being graded on different questions, which §4 rules out.
