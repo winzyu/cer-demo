@@ -29,6 +29,9 @@ const FLAG_COLORS: Record<Flag, string> = {
   "N/A": "#777777",
 };
 
+/** Printed for a Data Quality check that has no detector in this pipeline (see types.ts). */
+const NOT_ASSESSED = "Not assessed";
+
 export const MARGIN = 54; // 0.75in
 const PAGE_WIDTH = 612; // US Letter, points
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
@@ -224,7 +227,15 @@ export const buildReportPdf = (
 
   drawKeyValueTable(doc, [
     { label: "Coordinates", value: coordinatesStr(report.site) },
-    { label: "Water Body Type", value: report.site.waterBodyType },
+    // The provenance travels with the value: this one field selects the whole baseline table
+    // (referenceRanges.ts), so "Freshwater" sourced from a deployment default is a materially
+    // weaker claim than "Marine" read off the device registry.
+    {
+      label: "Water Body Type",
+      value: report.site.waterBodyTypeSource === "default"
+        ? `${report.site.waterBodyType} (deployment default — registry did not specify)`
+        : `${report.site.waterBodyType} (from device registry)`,
+    },
     { label: "Client / Contract", value: report.site.clientName },
     { label: "Report Date", value: report.site.reportDate },
     { label: "Prepared By", value: "Clean Earth Rovers" },
@@ -327,10 +338,12 @@ export const buildReportPdf = (
       ],
       [
         ["Data completeness", `${dq.completenessPct.toFixed(1)}%`, dq.completenessNotes],
-        ["Calibration status", dq.calibrationStatus, dq.calibrationNotes],
-        ["Drift indicators", dq.driftStatus, dq.driftNotes],
-        ["Biofouling indicators", dq.biofoulingStatus, dq.biofoulingNotes],
-        ["Sensor agreement", dq.sensorAgreementStatus, dq.sensorAgreementNotes],
+        // An unset status means the check did not run. Printing NOT_ASSESSED rather than a
+        // default result keeps the table from claiming a clean bill of health nothing verified.
+        ["Calibration status", dq.calibrationStatus ?? NOT_ASSESSED, dq.calibrationNotes],
+        ["Drift indicators", dq.driftStatus ?? NOT_ASSESSED, dq.driftNotes],
+        ["Biofouling indicators", dq.biofoulingStatus ?? NOT_ASSESSED, dq.biofoulingNotes],
+        ["Sensor agreement", dq.sensorAgreementStatus ?? NOT_ASSESSED, dq.sensorAgreementNotes],
       ],
     );
   }

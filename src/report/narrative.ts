@@ -101,7 +101,12 @@ export const deterministicNarrative = (
   probeAccuracy: (key: string, reading: number) => number,
   status: ReportStatus,
 ): NarrativeSections => {
-  const nonNormal = report.parameters.filter((p) => flagFor(p, probeAccuracy) !== "Normal");
+  // "N/A" is excluded alongside "Normal": it means the parameter has no fixed baseline to be
+  // outside of (temperature -- see referenceRanges.ts), not that it moved. Listing it under
+  // "moved outside the site baseline" claimed an excursion against a range the report itself
+  // prints as "Not established".
+  const nonNormal = report.parameters
+    .filter((p) => !["Normal", "N/A"].includes(flagFor(p, probeAccuracy)));
 
   let summaryBullets: string[];
   if (report.events.length === 0 && status === "Normal") {

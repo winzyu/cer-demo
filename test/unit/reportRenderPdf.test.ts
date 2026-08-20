@@ -126,6 +126,49 @@ describe("buildReportPdf — smoke test", () => {
     const buffer = await render(report);
     expect(buffer.length).toBeGreaterThan(0);
   });
+
+  it("renders a Data Quality table whose statuses are all unset", async () => {
+    // Drift, biofouling and sensor agreement have no detector in this pipeline, so
+    // buildReportInput leaves them unset and the table prints "Not assessed". This checks the
+    // render survives the undefined statuses; the text itself is asserted in reportModel.test.ts,
+    // since pdf text extraction is not usable under Jest here (see the file docstring).
+    const report: ReportInput = {
+      site,
+      parameters: [param],
+      events: [],
+      dataQuality: {
+        completenessPct: 99.2,
+        completenessNotes: "1259 of 1260 readings usable",
+        calibrationStatus: "Review",
+        calibrationNotes: "1 reading was a sensor rail reported without a fault flag",
+        driftNotes: "Not assessed — this pipeline has no drift detector.",
+        biofoulingNotes: "Not assessed — this pipeline has no biofouling detector.",
+        sensorAgreementNotes: "Not assessed — needs a co-located pod or a grab sample.",
+      },
+    };
+    const buffer = await render(report);
+    expect(buffer.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+  });
+
+  it("prints the water body type's provenance alongside it", async () => {
+    // The value selects the entire baseline table, so a deployment default and a registry
+    // classification must not look identical on the page.
+    const defaulted: ReportInput = {
+      site: { ...site, waterBodyTypeSource: "default" },
+      parameters: [param],
+      events: [],
+    };
+    const fromDevice: ReportInput = {
+      site: { ...site, waterBodyType: "Marine", waterBodyTypeSource: "device" },
+      parameters: [param],
+      events: [],
+    };
+
+    const [a, b] = await Promise.all([render(defaulted), render(fromDevice)]);
+    expect(a.length).toBeGreaterThan(0);
+    expect(b.length).toBeGreaterThan(0);
+    expect(a.equals(b)).toBe(false);
+  });
 });
 
 /**

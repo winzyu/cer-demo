@@ -4,6 +4,7 @@
 import { config } from "../config";
 import { DeviceApiClient } from "../devices/DeviceApiClient";
 import { METRIC_BY_KEY, METRICS } from "../devices/metrics";
+import { implausibilityReason, isPlausible } from "../devices/plausibility";
 import type { DeviceReading, DeviceSummary, MetricKey } from "../types/device.types";
 import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
@@ -552,6 +553,9 @@ export class QuerySensorData {
       value: result.value,
       n_samples: result.nSamples,
       excluded_faulted: result.excludedFaulted,
+      ...(result.excludedImplausible > 0
+        ? { excluded_implausible: result.excludedImplausible }
+        : {}),
       ...(result.observedAt ? { observed_at: result.observedAt } : {}),
       ...(result.samples ? { samples: result.samples } : {}),
       ...(result.series ? { series: result.series, bucket_ms: result.bucketMs } : {}),
@@ -582,7 +586,17 @@ export class QuerySensorData {
     };
 
     const totalSamples = computed.reduce((sum, entry) => sum + entry.result.nSamples, 0);
-    const notes = this.notes(metricKeys, device, totalSamples, referenceMs, range.start);
+    const implausible = computed
+      .filter((entry) => entry.result.excludedImplausible > 0)
+      .map((entry): [MetricKey, number] => [entry.key, entry.result.excludedImplausible]);
+    const notes = this.notes(
+      metricKeys,
+      device,
+      totalSamples,
+      referenceMs,
+      range.start,
+      implausible,
+    );
 
     if (single) {
       // Flat shape for a single metric — unchanged from before multi-metric existed, so nothing
@@ -648,7 +662,14 @@ export class QuerySensorData {
         return [];
       }
       return [{
-        atMs, at, value: metric.value, valid: metric.valid,
+        atMs,
+        at,
+        value: metric.value,
+        valid: metric.valid,
+        // Classified here, where the metric key is known, rather than in `aggregate`. Catches
+        // probe rails the hardware did not flag -- see devices/plausibility.ts for the verified
+        // -1023 °C temperature sentinel that motivated it.
+        plausible: isPlausible(metricKey, metric.value),
       }];
     });
   }
@@ -681,8 +702,23 @@ export class QuerySensorData {
     nSamples: number,
     referenceMs: number,
     rangeStart: string,
+    implausible: Array<[MetricKey, number]> = [],
   ): Record<string, unknown> {
     const notes: string[] = [];
+
+    if (implausible.length > 0) {
+      // Said out loud rather than silently dropped: a probe that rails without setting its
+      // error flag is a maintenance finding in its own right, and a reader comparing this
+      // answer against a raw export needs to know why the counts differ.
+      const parts = implausible.map(([key, count]) => {
+        const label = METRIC_BY_KEY.get(key)?.label ?? key;
+        return `${count} ${label} reading(s) ${implausibilityReason(key)}`;
+      });
+      notes.push(
+        `Excluded as physically impossible despite no probe fault flag: ${parts.join("; ")}. `
+        + "These are sensor rails, not measurements, and are not counted in any statistic above.",
+      );
+    }
 
     if (nSamples === 0) {
       notes.push(

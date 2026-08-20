@@ -97,7 +97,9 @@ export class GenerateReport {
 
     const { report, error, skippedParameters } = await buildReportInput(
       this.sensor,
-      { timeRange, device, waterBodyType: this.defaultWaterBodyType },
+      // Fallback, not an override: the device registry's operating_environment wins when it has
+      // one. See BuildReportInputParams.waterBodyTypeFallback.
+      { timeRange, device, waterBodyTypeFallback: this.defaultWaterBodyType },
       context,
     );
     if (error || !report) {
@@ -132,6 +134,12 @@ export class GenerateReport {
       status,
       site_name: report.site.siteName,
       time_range_resolved: { start: report.site.startDate, end: report.site.endDate },
+      // Surfaced because it selects the baseline table every flag was computed against, and a
+      // reader who disagrees with it should be told rather than have to open the PDF to find out.
+      water_body_type: report.site.waterBodyType,
+      water_body_type_source: report.site.waterBodyTypeSource === "device"
+        ? "device registry"
+        : "deployment default (registry did not specify)",
       events_flagged: events.length,
       event_types: events.map((e) => e.type),
       report_url: `/api/v1/reports/${filename}`,

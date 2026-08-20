@@ -35,7 +35,7 @@ import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorDat
 import { SensorQueryError } from "../tools/querySensorData";
 import type { ToolContext } from "../types/tool.types";
 import type {
-  ParameterStats, ReportInput, SiteMetadata, WaterBodyType,
+  DataQualityCheck, ParameterStats, ReportInput, SiteMetadata, WaterBodyType,
 } from "./types";
 import { baselineFor } from "./referenceRanges";
 
@@ -51,28 +51,55 @@ const PARAMETER_META: Array<{ key: string; label: string; unit: string }> = [
   { key: "turbidity", label: "Turbidity (NTU)", unit: "NTU" },
 ];
 
-const mapWaterType = (
+/**
+ * The device registry's `operating_environment` as a report water body type, or `undefined` when
+ * the registry does not say anything usable.
+ *
+ * Returns `undefined` rather than taking a fallback argument so the caller can tell "the registry
+ * classified this pod" from "nothing was on file and a default was applied" -- a distinction the
+ * report prints, because it decides which baseline table every flag is computed against.
+ */
+export const mapWaterType = (
   operatingEnvironment: string | null | undefined,
-  fallback: WaterBodyType,
-): WaterBodyType => {
+): WaterBodyType | undefined => {
   if (!operatingEnvironment) {
-    return fallback;
+    return undefined;
   }
   const normalized = operatingEnvironment.toLowerCase();
-  if (normalized.includes("salt")) {
+  if (normalized.includes("salt") || normalized.includes("marine")) {
     return "Marine";
+  }
+  if (normalized.includes("brackish") || normalized.includes("estuar")) {
+    return "Brackish";
   }
   if (normalized.includes("fresh")) {
     return "Freshwater";
   }
-  return fallback;
+  return undefined;
 };
 
 interface MetricEntry {
   value: number | null;
   n_samples?: number;
+  excluded_faulted?: number;
+  excluded_implausible?: number;
   series?: Array<{ start: string; end: string; mean: number; min: number; max: number; n: number }>;
 }
+
+/**
+ * Buckets thinner than this are dropped from the series handed to pattern/event detection.
+ *
+ * A `series` bucket is only as trustworthy as the number of readings behind it, and `bucketize`
+ * omits empty buckets rather than zero-filling, so a reporting gap yields one bucket holding a
+ * single reading whose "mean" is that reading. Verified on the Algalita Pod: the 12h bucket at
+ * 2026-07-24T00:00Z held exactly one reading. Feeding a 1-sample bucket to the event detector
+ * as a trend point invites a step-change event out of a gap in reporting.
+ *
+ * Section 2's min/max/mean deliberately do NOT apply this floor -- those are exact statistics
+ * over every usable reading, and dropping readings from them to tidy a trend line would be the
+ * same fabrication in the other direction.
+ */
+const MIN_BUCKET_SAMPLES = 3;
 
 const asRecord = (v: unknown): Record<string, unknown> => (
   v && typeof v === "object" ? v as Record<string, unknown> : {}
@@ -85,6 +112,10 @@ const metricsOf = (result: Record<string, unknown>): Record<string, MetricEntry>
     out[key] = {
       value: typeof rec.value === "number" ? rec.value : null,
       n_samples: typeof rec.n_samples === "number" ? rec.n_samples : undefined,
+      excluded_faulted: typeof rec.excluded_faulted === "number" ? rec.excluded_faulted : undefined,
+      excluded_implausible: typeof rec.excluded_implausible === "number"
+        ? rec.excluded_implausible
+        : undefined,
       series: Array.isArray(rec.series) ? (rec.series as MetricEntry["series"]) : undefined,
     };
     return out;
@@ -96,8 +127,21 @@ export interface BuildReportInputParams {
    * (e.g. "last 7 days"). */
   timeRange: string;
   device?: string;
-  /** Overrides the device registry's operating_environment when set. */
-  waterBodyType?: WaterBodyType;
+  /**
+   * Water body type to fall back on when the device registry's `operating_environment` is
+   * missing or unrecognized. **Not an override** -- the registry wins.
+   *
+   * It used to be an override, and that was a real defect: `generateReport` always passes this
+   * (it defaults from `config.waterType`), so the `??` that was meant to let the registry decide
+   * never fell through and `mapWaterType` was dead code on the production path. The Algalita Pod
+   * is registered `operating_environment: "salt-water"`, but a deployment with
+   * `WATER_TYPE=freshwater` produced a report headed "Freshwater" and judged its conductivity
+   * against the freshwater baseline of 50-1500 µS/cm instead of seawater's 45,000-55,000 --
+   * turning ordinary seawater into a 45x exceedance, a High-severity "Stormwater" event, and an
+   * "Action Required" status. The device knows what it is sitting in; one global env var does
+   * not.
+   */
+  waterBodyTypeFallback?: WaterBodyType;
 }
 
 export interface BuildReportInputResult {
@@ -106,6 +150,68 @@ export interface BuildReportInputResult {
   /** Parameters with no readings in the window -- surfaced to the caller, not silently dropped. */
   skippedParameters?: string[];
 }
+
+/**
+ * Fills in the Data Quality section from what the query layer actually reported.
+ *
+ * Previously hardcoded to `undefined`, which made the section unreachable on live data --
+ * `renderPdf` only prints it `if (report.dataQuality)`. That is why the report that carried a
+ * -1809.4 °F probe rail into Section 2 had no Data Quality section to disclose it.
+ *
+ * Only two rows are genuinely computable here. Drift, biofouling, and cross-sensor agreement have
+ * no detector in this pipeline, so their statuses are left unset and render as "Not assessed"
+ * rather than as a clean result nothing verified (see DataQualityCheck).
+ */
+const buildDataQuality = (
+  seriesMetrics: Record<string, MetricEntry>,
+  skipped: string[],
+): DataQualityCheck => {
+  const entries = PARAMETER_META
+    .map((meta) => ({ meta, entry: seriesMetrics[meta.key] }))
+    .filter((e): e is { meta: typeof PARAMETER_META[number]; entry: MetricEntry } => !!e.entry);
+
+  const used = entries.reduce((sum, e) => sum + (e.entry.n_samples ?? 0), 0);
+  const faulted = entries.reduce((sum, e) => sum + (e.entry.excluded_faulted ?? 0), 0);
+  const implausible = entries.reduce((sum, e) => sum + (e.entry.excluded_implausible ?? 0), 0);
+  const offered = used + faulted + implausible;
+  // "Completeness" here is the share of readings the device returned that survived filtering --
+  // not coverage against an expected cadence, which this pipeline cannot know. Said plainly in
+  // the note so the number is not read as the stronger claim.
+  const completenessPct = offered === 0 ? 0 : (used / offered) * 100;
+
+  const railed = entries
+    .filter((e) => (e.entry.excluded_implausible ?? 0) > 0)
+    .map((e) => `${e.meta.label}: ${e.entry.excluded_implausible}`);
+
+  const completenessNotes = [
+    `${used} of ${offered} readings returned for the period were usable`,
+    faulted > 0 ? `${faulted} excluded on the probe's own fault flag` : null,
+    implausible > 0 ? `${implausible} excluded as physically impossible` : null,
+    skipped.length > 0 ? `no readings at all for: ${skipped.join(", ")}` : null,
+    "Share of returned readings, not coverage against an expected sampling cadence.",
+  ].filter(Boolean).join(". ");
+
+  return {
+    completenessPct,
+    completenessNotes,
+    // A probe that rails without raising its error flag is exactly the signal a calibration
+    // review exists to catch, so this row is driven by the plausibility filter's count.
+    calibrationStatus: implausible > 0 ? "Review" : "Pass",
+    calibrationNotes: implausible > 0
+      ? `${implausible} reading(s) were sensor rails reported without a fault flag (${railed.join("; ")}). `
+        + "Inspect and recalibrate the affected probes; the hardware did not self-report these."
+      : "No physically impossible readings in the period. Probe error flags were clear for all "
+        + "readings counted above.",
+    driftNotes: "Not assessed — this pipeline has no drift detector. Requires comparison against "
+      + "a calibration record, which is not available from the device API.",
+    biofoulingNotes: "Not assessed — this pipeline has no biofouling detector. Requires service "
+      + "history or a fouling-sensitive baseline, neither of which is available here.",
+    sensorAgreementNotes: "Not assessed — cross-sensor agreement needs a second co-located pod "
+      + "or a grab-sample result to compare against.",
+    // driftStatus, biofoulingStatus and sensorAgreementStatus are deliberately left unset:
+    // no detector ran, so the PDF prints "Not assessed" instead of inventing a result.
+  };
+};
 
 export const buildReportInput = async (
   sensor: QuerySensorData,
@@ -150,7 +256,11 @@ export const buildReportInput = async (
   const operatingEnvironment = typeof device.operating_environment === "string"
     ? device.operating_environment
     : undefined;
-  const waterBodyType = params.waterBodyType ?? mapWaterType(operatingEnvironment, "Freshwater");
+  // The registry is authoritative; the caller's value is only the fallback. See
+  // BuildReportInputParams.waterBodyTypeFallback for the defect this ordering fixes.
+  const registryWaterBodyType = mapWaterType(operatingEnvironment);
+  const waterBodyType = registryWaterBodyType ?? params.waterBodyTypeFallback ?? "Freshwater";
+  const waterBodyTypeSource = registryWaterBodyType ? "device" as const : "default" as const;
 
   const site: SiteMetadata = {
     siteName,
@@ -158,6 +268,7 @@ export const buildReportInput = async (
     endDate,
     reportDate: new Date().toISOString().slice(0, 10),
     waterBodyType,
+    waterBodyTypeSource,
     // Not available from query_sensor_data -- see file docstring §3.
     clientName: "Not available from device registry",
   };
@@ -198,14 +309,19 @@ export const buildReportInput = async (
         hasFixedBaseline: false,
       };
 
-    const series: Array<[number, number]> = buckets.map((b) => {
-      const startMs = Date.parse(b.start);
-      const endMs = Date.parse(b.end);
-      const midMs = Number.isFinite(startMs) && Number.isFinite(endMs)
-        ? (startMs + endMs) / 2
-        : startMs;
-      return [midMs, b.mean];
-    });
+    // Thin buckets are dropped from the trend series only -- see MIN_BUCKET_SAMPLES. The floor
+    // is skipped entirely when it would empty the series (a genuinely sparse pod), since a
+    // coarse trend beats no trend and the bucket count is what event detection reasons over.
+    const trendBuckets = buckets.filter((b) => b.n >= MIN_BUCKET_SAMPLES);
+    const series: Array<[number, number]> = (trendBuckets.length > 0 ? trendBuckets : buckets)
+      .map((b) => {
+        const startMs = Date.parse(b.start);
+        const endMs = Date.parse(b.end);
+        const midMs = Number.isFinite(startMs) && Number.isFinite(endMs)
+          ? (startMs + endMs) / 2
+          : startMs;
+        return [midMs, b.mean];
+      });
 
     return {
       parameter: {
@@ -237,8 +353,7 @@ export const buildReportInput = async (
     site,
     parameters,
     events: [],
-    // Deployment metadata, not derivable from readings -- see events/narrative docs.
-    dataQuality: undefined,
+    dataQuality: buildDataQuality(seriesMetrics, skipped),
   };
 
   return { report, ...(skipped.length > 0 ? { skippedParameters: skipped } : {}) };

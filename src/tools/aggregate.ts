@@ -29,6 +29,15 @@ export interface Sample {
   value: number;
   /** False when the metric's own error flag was set on this reading. */
   valid: boolean;
+  /**
+   * False when the value is physically impossible for its metric (`devices/plausibility.ts`) --
+   * a probe rail the hardware did not flag.
+   *
+   * Optional, defaulting to plausible, because a caller that has not classified its samples
+   * should get the pre-existing behaviour rather than have every reading silently dropped.
+   * `QuerySensorData.samplesInRange` sets it for everything that reaches the tool paths.
+   */
+  plausible?: boolean;
 }
 
 /**
@@ -71,6 +80,13 @@ export interface AggregateResult {
   nSamples: number;
   /** Readings dropped because the device flagged that probe as faulted. */
   excludedFaulted: number;
+  /**
+   * Readings dropped because the value was physically impossible, despite the probe reporting
+   * no fault (`devices/plausibility.ts`). Counted separately from `excludedFaulted` because the
+   * two mean different things operationally: a faulted probe announced itself, an implausible
+   * reading did not, and only the second one indicates a probe failing silently.
+   */
+  excludedImplausible: number;
   /** When `value` comes from one reading (`latest`/`earliest`), the instant it was taken. */
   observedAt?: string;
   /** Populated only by `raw`. */
@@ -180,10 +196,15 @@ const median = (sorted: number[]): number => {
  * Faulted samples are excluded from every statistic — a probe the hardware says is broken
  * still reports a plausible number, which is precisely why it must not be averaged in.
  *
+ * Samples the caller marked implausible are excluded too, and counted separately — see
+ * `Sample.plausible` and `devices/plausibility.ts`. That filter lives at the caller because it
+ * is per-metric and this function is not told which metric it is reducing.
+ *
  * Note what is *not* here: no filtering on the value itself. `0` is a valid reading for ORP and
  * turbidity (`timeline.md`), so a falsy check would silently drop real measurements — and
  * dropping the zeros from a turbidity series is exactly the bias that would make an
- * uncalibrated-index problem look like clean water.
+ * uncalibrated-index problem look like clean water. The plausibility bounds preserve that
+ * carve-out explicitly rather than reintroducing it here.
  */
 export const aggregate = (
   samples: Sample[],
@@ -191,16 +212,23 @@ export const aggregate = (
   rawLimit: number,
   options: AggregateOptions = {},
 ): AggregateResult => {
-  const usable = samples.filter((sample) => sample.valid);
-  const excludedFaulted = samples.length - usable.length;
+  // `plausible !== false` rather than a truthy check: the field is optional, and an unset one
+  // means "not classified", which must keep the pre-existing include-everything behaviour.
+  const faulted = samples.filter((sample) => !sample.valid);
+  const implausible = samples.filter((sample) => sample.valid && sample.plausible === false);
+  const usable = samples.filter((sample) => sample.valid && sample.plausible !== false);
+  const excludedFaulted = faulted.length;
+  const excludedImplausible = implausible.length;
 
   if (usable.length === 0) {
-    return { value: null, nSamples: 0, excludedFaulted };
+    return {
+      value: null, nSamples: 0, excludedFaulted, excludedImplausible,
+    };
   }
 
   const chronological = [...usable].sort((a, b) => a.atMs - b.atMs);
   const values = chronological.map((sample) => sample.value);
-  const base = { nSamples: usable.length, excludedFaulted };
+  const base = { nSamples: usable.length, excludedFaulted, excludedImplausible };
 
   switch (aggregation) {
     case "min":

@@ -43,6 +43,14 @@ export interface SiteMetadata {
   latitude?: number;
   longitude?: number;
   waterBodyType: WaterBodyType;
+  /**
+   * Where `waterBodyType` came from. Printed alongside it, because the choice selects the entire
+   * baseline table (`referenceRanges.ts`) and therefore every flag in Section 2 -- a reader who
+   * disagrees with the classification needs to know whether to fix the device registry or the
+   * deployment's WATER_TYPE. `"default"` means the registry did not say and the deployment
+   * setting was used.
+   */
+  waterBodyTypeSource?: "device" | "default";
   /** Best-effort; no clean "client" field exists on DeviceSummary today -- see
    * buildReportInput.ts. */
   clientName: string;
@@ -100,16 +108,24 @@ export interface WQEvent {
   confidence: number;
 }
 
+/**
+ * Every status here is **optional**, and an absent one renders as "Not assessed".
+ *
+ * That distinction is the point of the type. Drift, biofouling, and cross-sensor agreement have
+ * no detector in this pipeline, and printing "Drift: None" for a check that never ran is a
+ * fabricated clean bill of health -- the same class of claim as reporting a probe rail as a
+ * measurement. A check that did not run says so.
+ */
 export interface DataQualityCheck {
   completenessPct: number;
   completenessNotes: string;
-  calibrationStatus: CalibrationResult;
+  calibrationStatus?: CalibrationResult;
   calibrationNotes: string;
-  driftStatus: DriftResult;
+  driftStatus?: DriftResult;
   driftNotes: string;
-  biofoulingStatus: DriftResult;
+  biofoulingStatus?: DriftResult;
   biofoulingNotes: string;
-  sensorAgreementStatus: CalibrationResult;
+  sensorAgreementStatus?: CalibrationResult;
   sensorAgreementNotes: string;
 }
 
