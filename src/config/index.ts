@@ -77,6 +77,18 @@ export interface ToolsConfig {
   /** Master switch for `query_sensor_data` — the prompt block, the tools array, and the loop. */
   sensorTool: boolean;
   /**
+   * Master switch for `generate_report` — the prompt block's report-vs-stat routing rule, the
+   * tools array entry, and the tool registry.
+   *
+   * Separate from `sensorTool` rather than folded into it: `generate_report` calls
+   * `QuerySensorData.query()` directly (not through the model's tool loop), so it does not
+   * strictly need `sensorTool` on to function -- but it does need `DEVICE_API_BASE_URL`
+   * configured, same as `sensorTool` does, since both ultimately read the same device data.
+   * Also defaults to **false**, for the same system-prompt pinning reason `sensorTool` does
+   * (`RETRIEVAL_BAKEOFF.md` §4) -- see systemPrompt.ts's REPORT_TOOL_BLOCK.
+   */
+  reportTool: boolean;
+  /**
    * Tool-enabled rounds before the loop forces a text-only answer. Legacy was 5
    * (`MIGRATION_SPEC.md` §9, hard-coded); raised here because the six-parameter eval fixture
    * needs one call per metric plus room for follow-ups, which 5 cannot fit. This is N5's
@@ -233,6 +245,7 @@ const load = (): Config => {
     },
     tools: {
       sensorTool: readBool("SENSOR_TOOL", false),
+      reportTool: readBool("REPORT_TOOL", false),
       maxToolRounds: readInt("MAX_TOOL_ROUNDS", 16),
       rawLimit: readInt("RAW_LIMIT", 200),
     },
@@ -282,6 +295,15 @@ const load = (): Config => {
     );
     if (!config.deviceApi.baseUrl) {
       log.warn("SENSOR_TOOL is on but DEVICE_API_BASE_URL is not set — query_sensor_data will fail at call time.");
+    }
+  }
+  if (config.tools.reportTool) {
+    log.warn(
+      "REPORT_TOOL is ON — the system prompt carries a report-vs-stat routing rule and "
+      + "generate_report is registered. Same bake-off-comparability caveat as SENSOR_TOOL above.",
+    );
+    if (!config.deviceApi.baseUrl) {
+      log.warn("REPORT_TOOL is on but DEVICE_API_BASE_URL is not set — generate_report will fail at call time.");
     }
   }
   if (config.isProduction && !config.firestore.projectId) {

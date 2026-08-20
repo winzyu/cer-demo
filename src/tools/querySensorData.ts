@@ -379,15 +379,20 @@ export class QuerySensorData {
    * that a caller can forget to check and then render into a customer-facing document.
    *
    * Same code path as `run()` underneath, so there is one implementation of the traps, not two.
+   *
+   * `token` threads the caller's bearer token the same way `run()`'s `ToolContext` does (added
+   * for `generateReport.ts`, N6 landing) -- omit it and, same as an unauthenticated `run()` call,
+   * the device API falls back to `DEVICE_API_TOKEN`, which on an organization-scoped API answers
+   * out of that token's fleet rather than the caller's.
    */
-  async query(params: SensorQueryParams): Promise<SensorToolResult> {
+  async query(params: SensorQueryParams, token?: string): Promise<SensorToolResult> {
     const result = await this.execute({
       metric: params.metric,
       time_range: params.timeRange,
       aggregation: params.aggregation,
       ...(params.device !== undefined ? { device: params.device } : {}),
       ...(params.bucket !== undefined ? { bucket: params.bucket } : {}),
-    });
+    }, token);
 
     if (typeof result.error === "string") {
       throw new SensorQueryError(result.error);

@@ -117,15 +117,53 @@ Reading a tool result:
   round away, or re-derive it.`;
 
 /**
+ * The `generate_report` inventory entry and its routing rule, appended only when `REPORT_TOOL`
+ * is on. Self-contained with its own "TOOLS:" header rather than assuming `TOOL_BLOCK` printed
+ * first: `REPORT_TOOL` does not require `SENSOR_TOOL` (see config/index.ts's ToolsConfig doc),
+ * so a deployment can turn this on alone, and the block has to read correctly on its own in that
+ * case. When both flags are on, this still appends AFTER `TOOL_BLOCK`, never merged into it —
+ * `TOOL_BLOCK`'s text is pinned byte-for-byte (`test/unit/prompt.test.ts`), so a second "TOOLS:"
+ * header reads slightly redundant in that combined case but keeps the pin intact.
+ *
+ * This is this port's answer to the "how does the model tell a report request from a single-stat
+ * request apart" question: report-shaped language (a report, a summary of conditions, "how has
+ * the water been") routes to `generate_report`; a question about one specific reading, trend, or
+ * value routes to `query_sensor_data`, same as it always did. Neither this block nor
+ * `generate_report` itself exists unless `REPORT_TOOL` is on.
+ */
+export const REPORT_TOOL_BLOCK = `TOOLS:
+- generate_report — produces a full water quality report PDF for a reporting
+  period: baseline comparison, flagged excursions, candidate pollution events, and
+  recommendations, across all six parameters at once. It calls query_sensor_data
+  internally; you do not need to call query_sensor_data yourself first.
+
+Report vs. single-stat routing:
+- A request for a REPORT, a SUMMARY of conditions over a period, or a general
+  "how has the water been" / "any issues lately" question — call generate_report.
+  Do not try to assemble a report yourself from several query_sensor_data calls.
+- A request for ONE specific reading, value, trend, or comparison — call
+  query_sensor_data directly, not generate_report. generate_report is slower and
+  returns a PDF, not a number; do not reach for it to answer "what is the pH right
+  now."
+- generate_report's result gives you a status, an event count, and a report_url —
+  not the underlying numbers. State the status and event count in your reply, and
+  give the reader the report_url so they can open the PDF. Do not describe report
+  contents you were not given; the PDF is the source of truth for anything beyond
+  what the tool result states.
+- If generate_report returns an "error" or a "note" about parameters with no
+  readings, say so plainly rather than presenting the report as complete.`;
+
+/**
  * Builds the system message. Depends only on deployment-level config, never on the request —
  * that is what keeps it byte-identical across calls and therefore cacheable (see promptBuilder).
  *
- * `sensorTool` is a parameter rather than a direct `config` read so tests can exercise both
- * states without reloading the module registry.
+ * `sensorTool`/`reportTool` are parameters rather than direct `config` reads so tests can
+ * exercise every combination without reloading the module registry.
  */
 export const buildSystemPrompt = (
   waterType: WaterType = config.waterType,
   sensorTool: boolean = config.tools.sensorTool,
+  reportTool: boolean = config.tools.reportTool,
 ): string => `You are a water-quality assistant for a single sensor deployment. You answer
 questions about the sensor's readings and about authoritative water-quality
 documents.
@@ -163,4 +201,4 @@ Rules:
 - Never use general world knowledge to fill gaps. If the context does not
   support the answer, refuse using the line above.
 - Do not fabricate readings or citations.
-- Keep answers short and direct. Cite specific numbers from the data.${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}`;
+- Keep answers short and direct. Cite specific numbers from the data.${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}${reportTool ? `\n\n${REPORT_TOOL_BLOCK}` : ""}`;
