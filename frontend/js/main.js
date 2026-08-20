@@ -19,6 +19,7 @@ import { renderMarkdown } from "./markdown.js";       // WS-1 · markdown + XSS 
 import { renderProvenance } from "./provenance.js";   // WS-2 · provenance surfacing
 import { initInput } from "./input.js";               // WS-3 · input & response controls
 import { renderChart } from "./chart.js";             // WS-4 · series chart
+import { renderReport } from "./report.js";           // generate_report · report link
 import { initTheme } from "./theme.js";               // light / dark toggle
 import { initPodBar, selectedDevice } from "./podbar.js"; // Wave 2 · pod selector + status
 
@@ -93,6 +94,7 @@ async function send(msg) {
         if (target) {
           renderProvenance(target.slots.provenance, data);
           renderChart(target.slots.chart, data);
+          renderReport(target.slots.report, data);
         }
       } else if (event === "error") {
         // The stream opened with a 200, so the status line cannot carry this — the event is the
