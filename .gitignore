@@ -17,6 +17,9 @@ npm-debug.log*
 # test coverage
 coverage/
 
+# generated report PDFs (generate_report tool output -- local disk, not a tracked deliverable)
+generated_reports/
+
 # editor / OS
 .DS_Store
 .vscode/

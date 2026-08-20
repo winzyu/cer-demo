@@ -1,15 +1,19 @@
 import { config } from "../config";
 import type { ToolHandler } from "../types/tool.types";
 import { QuerySensorData, SensorQueryError, querySensorDataDefinition } from "./querySensorData";
+import { GenerateReport, generateReportDefinition } from "./generateReport";
 
 /**
  * The tool inventory offered to the model.
  *
- * **Gated on `SENSOR_TOOL`, which defaults off.** The flag governs three things that must move
- * together or not at all: the system prompt's tool block, the `tools` array on the request, and
- * this registry. Any one of them landing alone either promises a tool that cannot be called or
- * offers one the model was never told about — and the first also changes the prompt, which is a
- * pinned control for the Phase N2 bake-off while ◆G7 is open (`RETRIEVAL_BAKEOFF.md` §4).
+ * **Gated on `SENSOR_TOOL` and `REPORT_TOOL`, both defaulting off.** Each flag governs the same
+ * three things that must move together or not at all: the system prompt's tool block, the
+ * `tools` array on the request, and this registry. Any one landing alone either promises a tool
+ * that cannot be called or offers one the model was never told about — and the prompt half of
+ * that is a pinned control for the Phase N2 bake-off while ◆G7 is open (`RETRIEVAL_BAKEOFF.md`
+ * §4). `generate_report` has its own flag rather than riding on `sensorTool`: it calls
+ * `QuerySensorData.query()` directly, not through the model, so it does not strictly need the
+ * model-facing sensor tool switched on to work.
  *
  * **This registry is built once, not per request** — `ChatController` calls it from its
  * constructor default and the resulting handlers are shared by every request the process serves.
@@ -21,19 +25,34 @@ import { QuerySensorData, SensorQueryError, querySensorDataDefinition } from "./
  * `search_documents` is deliberately absent. Retrieval runs before the call and arrives as
  * CONTEXT; whether it returns as a tool is ◆G11, still open.
  */
-export const buildToolRegistry = (sensorTool: boolean = config.tools.sensorTool): ToolHandler[] => {
-  if (!sensorTool) {
-    return [];
+export const buildToolRegistry = (
+  sensorTool: boolean = config.tools.sensorTool,
+  reportTool: boolean = config.tools.reportTool,
+): ToolHandler[] => {
+  const handlers: ToolHandler[] = [];
+
+  if (sensorTool) {
+    const sensor = new QuerySensorData();
+    handlers.push({
+      definition: querySensorDataDefinition,
+      // `context` must be forwarded, not dropped: it carries the caller's bearer token, and the
+      // handler falls back to the deployment's `DEVICE_API_TOKEN` without it — which, on an
+      // organization-scoped API, answers out of the wrong fleet.
+      run: (args, context) => sensor.run(args, context),
+    });
   }
-  const sensor = new QuerySensorData();
-  return [{
-    definition: querySensorDataDefinition,
-    // `context` must be forwarded, not dropped: it carries the caller's bearer token, and the
-    // handler falls back to the deployment's `DEVICE_API_TOKEN` without it — which, on an
-    // organization-scoped API, answers out of the wrong fleet.
-    run: (args, context) => sensor.run(args, context),
-  }];
+
+  if (reportTool) {
+    const report = new GenerateReport();
+    handlers.push({
+      definition: generateReportDefinition,
+      run: (args, context) => report.run(args, context),
+    });
+  }
+
+  return handlers;
 };
 
 export { QuerySensorData, SensorQueryError, querySensorDataDefinition };
+export { GenerateReport, generateReportDefinition };
 export type { SensorQueryParams } from "./querySensorData";

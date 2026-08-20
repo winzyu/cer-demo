@@ -1,0 +1,143 @@
+/**
+ * `generate_report` tool: the model's entry point for "give me a water quality report",
+ * distinct from `query_sensor_data`'s "what is a reading" (see the routing rule this adds to
+ * `systemPrompt.ts`'s TOOL_BLOCK).
+ *
+ * Unlike `query_sensor_data`, this tool does not hand the model raw numbers to reason over --
+ * it calls `QuerySensorData.query()` itself (the typed programmatic path that module documents
+ * as existing for exactly this purpose), runs the same deterministic compute-then-narrate
+ * pipeline end to end, and returns a short structured summary plus a URL to the finished PDF.
+ * Nothing here calls an LLM: report prose is produced by `narrative.ts`'s rule-based writer,
+ * per the team's zero-AI-calls decision for report generation. That is a deliberate difference
+ * from `query_sensor_data`, whose whole point is handing facts to the model to narrate.
+ *
+ * PDF storage is local disk (`generated_reports/`, served by `reportRoutes.ts`) for this first
+ * cut. On Cloud Run that directory does not survive a redeploy or scale-to-zero cycle -- moving
+ * it to Cloud Storage (this deployment already depends on GCP via Firestore) is a reasonable,
+ * bounded follow-up once report generation is more than a demo path.
+ */
+
+import fs from "fs";
+import path from "path";
+import { randomUUID } from "crypto";
+import { config } from "../config";
+import { createLogger } from "../utils/logger";
+import type { ToolContext, ToolDefinition } from "../types/tool.types";
+import { QuerySensorData, type SensorToolResult } from "./querySensorData";
+import { buildReportInput } from "../report/buildReportInput";
+import { detectEvents } from "../report/events";
+import { deterministicNarrative } from "../report/narrative";
+import { buildReportPdf } from "../report/renderPdf";
+import { overallStatus } from "../report/types";
+import { probeAccuracy } from "../report/referenceRanges";
+import type { WaterBodyType } from "../report/types";
+
+const log = createLogger("GenerateReport");
+
+export const REPORTS_DIR = path.join(process.cwd(), "generated_reports");
+
+export const generateReportDefinition: ToolDefinition = {
+  type: "function",
+  function: {
+    name: "generate_report",
+    description:
+      "Generates a water quality report PDF for a reporting period, covering all six sensor "
+      + "parameters at once: baseline comparison, flagged excursions, candidate pollution "
+      + "events, and recommendations. Use this for a request that asks for a report, a "
+      + "summary of conditions, or \"how has the water been\" -- NOT for a question about one "
+      + "specific reading or stat, which query_sensor_data answers directly and faster.",
+    parameters: {
+      type: "object",
+      properties: {
+        time_range: {
+          type: "string",
+          description:
+            "Natural-language reporting period, same grammar query_sensor_data accepts "
+            + "(e.g. \"last 7 days\", \"last 30 days\", \"this month\").",
+        },
+        device: {
+          type: "string",
+          description: "Device name or dev: label. Required whenever more than one device is visible.",
+        },
+      },
+      required: ["time_range"],
+    },
+  },
+};
+
+const failure = (message: string): SensorToolResult => ({ error: message });
+
+export interface GenerateReportOptions {
+  sensor?: QuerySensorData;
+  reportsDir?: string;
+  /** Injectable for tests; defaults to config.waterType mapped to the report's WaterBodyType. */
+  defaultWaterBodyType?: WaterBodyType;
+}
+
+export class GenerateReport {
+  private readonly sensor: QuerySensorData;
+
+  private readonly reportsDir: string;
+
+  private readonly defaultWaterBodyType: WaterBodyType;
+
+  constructor(options: GenerateReportOptions = {}) {
+    this.sensor = options.sensor ?? new QuerySensorData();
+    this.reportsDir = options.reportsDir ?? REPORTS_DIR;
+    this.defaultWaterBodyType = options.defaultWaterBodyType
+      ?? (config.waterType === "saltwater" ? "Marine" : "Freshwater");
+  }
+
+  async run(args: Record<string, unknown>, context?: ToolContext): Promise<SensorToolResult> {
+    const timeRange = typeof args.time_range === "string" ? args.time_range : "";
+    if (!timeRange) {
+      return failure("\"time_range\" is required, e.g. \"last 7 days\".");
+    }
+    const device = typeof args.device === "string" ? args.device : undefined;
+
+    const { report, error, skippedParameters } = await buildReportInput(
+      this.sensor,
+      { timeRange, device, waterBodyType: this.defaultWaterBodyType },
+      context,
+    );
+    if (error || !report) {
+      return failure(error ?? "Could not build a report from the available sensor data.");
+    }
+
+    const events = detectEvents(report);
+    report.events = events;
+    const status = overallStatus(report, probeAccuracy);
+    const narrative = deterministicNarrative(report, probeAccuracy, status);
+
+    fs.mkdirSync(this.reportsDir, { recursive: true });
+    const filename = `report_${randomUUID().slice(0, 8)}.pdf`;
+    const outPath = path.join(this.reportsDir, filename);
+
+    await new Promise<void>((resolve, reject) => {
+      try {
+        const doc = buildReportPdf(report, narrative, { probeAccuracy, status });
+        const stream = fs.createWriteStream(outPath);
+        doc.pipe(stream);
+        doc.end();
+        stream.on("finish", () => resolve());
+        stream.on("error", reject);
+      } catch (err) {
+        reject(err instanceof Error ? err : new Error(String(err)));
+      }
+    });
+
+    log.info(`Report generated: ${filename} (status=${status}, events=${events.length})`);
+
+    return {
+      status,
+      site_name: report.site.siteName,
+      time_range_resolved: { start: report.site.startDate, end: report.site.endDate },
+      events_flagged: events.length,
+      event_types: events.map((e) => e.type),
+      report_url: `/api/v1/reports/${filename}`,
+      ...(skippedParameters && skippedParameters.length > 0
+        ? { note: `No readings for: ${skippedParameters.join(", ")}. Report covers the remaining parameters only.` }
+        : {}),
+    };
+  }
+}
