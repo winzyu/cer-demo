@@ -22,6 +22,7 @@
 import type {
   ParameterStats, ReportInput, WQEvent, EventType, Severity,
 } from "./types";
+import { isRelativeIndex } from "./types";
 
 const MIN_EVENT_DURATION_MS = 60 * 60_000; // 1 hour
 export const CONFIDENCE_FLOOR_FOR_CLASSIFICATION = 0.5;
@@ -51,6 +52,13 @@ const outsideBaselineWindows = (p: ParameterStats): Window[] => {
     // threshold-cross against. The Python prototype never had a code path where this ran
     // without a baseline; this guard makes that assumption explicit rather than computing
     // against an undefined range.
+    //
+    // Turbidity is excluded by the same guard, and that is deliberate: a relative-index
+    // parameter must never *originate* an event window, because "crossed a threshold" is the
+    // one claim its uncalibrated scale cannot support. It still participates fully in
+    // classifying a window some other parameter opened -- see `movementsIn` below, which reads
+    // its relative movement rather than a range crossing. The sewage and stormwater signatures
+    // therefore keep working.
     || !p.baseline.hasFixedBaseline
   ) {
     return [];
@@ -330,13 +338,43 @@ const detectAlgalBloom = (report: ReportInput): WQEvent | null => {
   };
 };
 
-/** Movement direction for every parameter whose windowed average clears baseline in `window`,
- * plus the human-readable clause describing each. */
+/**
+ * How far a relative-index parameter's windowed average must sit from its own period average
+ * before it counts as having moved, as a fraction of that period average.
+ *
+ * A relative index has no operator range and no calibrated units, so there is no absolute
+ * threshold to set this in -- the parameter's own period average is the only reference point it
+ * has. 0.25 is a deadband, not a finding: it is set wide enough that ordinary bucket-to-bucket
+ * wobble does not register as a movement, and it is as PROVISIONAL as the conversion behind the
+ * index itself (see referenceRanges.ts TURBIDITY_BAND_EDGES).
+ *
+ * A period whose average is 0 -- every reading at or above the clear-water reference voltage,
+ * which is real and does happen -- gives a deadband of 0, so any non-zero window average reads
+ * as "up". That is the correct call: rising from nothing to something is a genuine rise.
+ */
+const RELATIVE_MOVEMENT_FRACTION = 0.25;
+
+/** Movement direction for every parameter that moved during `window`, plus the human-readable
+ * clause describing each.
+ *
+ * Two different tests, because the two kinds of parameter support two different claims:
+ *
+ * - **Numeric** parameters move when the windowed average clears their baseline. That is an
+ *   absolute statement about a calibrated measurement, and it is what the signature matrix's
+ *   thresholds assume.
+ * - **Relative-index** parameters (turbidity) move when the windowed average departs from the
+ *   parameter's own period average. The index is monotonic even though it is not calibrated, so
+ *   "rose during this window" is a real observation while "exceeded 25 NTU" is not. This is what
+ *   keeps the matrix's sewage ("turbidity rise") and stormwater ("sharp turbidity spike")
+ *   signatures working after turbidity stopped having a numeric baseline: `classify` only ever
+ *   reads the direction, never the magnitude.
+ */
 const movementsIn = (
   parameters: ParameterStats[],
   [wStart, wEnd]: Window,
 ): { moved: Partial<Record<string, Movement>>; movementDesc: string[] } => parameters
-  .filter((p) => p.series && p.series.length > 0 && p.baseline.hasFixedBaseline)
+  .filter((p) => p.series && p.series.length > 0
+    && (p.baseline.hasFixedBaseline || isRelativeIndex(p.baseline)))
   .reduce<{ moved: Partial<Record<string, Movement>>; movementDesc: string[] }>((acc, p) => {
     const windowVals = p.series!.filter(([t]) => t >= wStart && t <= wEnd).map(([, v]) => v);
     if (windowVals.length === 0) {
@@ -344,12 +382,31 @@ const movementsIn = (
     }
     const b = p.baseline;
     const avg = windowVals.reduce((s, v) => s + v, 0) / windowVals.length;
+
+    if (isRelativeIndex(b)) {
+      const deadband = Math.abs(p.mean) * RELATIVE_MOVEMENT_FRACTION;
+      const delta = avg - p.mean;
+      if (Math.abs(delta) <= deadband) {
+        return acc;
+      }
+      const direction: Movement = delta > 0 ? "up" : "down";
+      const extreme = direction === "up" ? Math.max(...windowVals) : Math.min(...windowVals);
+      acc.moved[b.key] = direction;
+      // No unit is printed and no baseline is named: the wording says what actually happened --
+      // a relative move against the period's own average.
+      acc.movementDesc.push(
+        `${b.label} ${direction === "up" ? "rose" : "fell"} to a relative index of `
+        + `${extreme.toFixed(2)}, against a period average of ${p.mean.toFixed(2)}`,
+      );
+      return acc;
+    }
+
     if (avg > b.baselineMax) {
-      acc.moved[p.baseline.key] = "up";
-      acc.movementDesc.push(`${p.baseline.label} rose to ${Math.max(...windowVals).toFixed(2)} ${b.unit}`);
+      acc.moved[b.key] = "up";
+      acc.movementDesc.push(`${b.label} rose to ${Math.max(...windowVals).toFixed(2)} ${b.unit}`);
     } else if (avg < b.baselineMin) {
-      acc.moved[p.baseline.key] = "down";
-      acc.movementDesc.push(`${p.baseline.label} fell to ${Math.min(...windowVals).toFixed(2)} ${b.unit}`);
+      acc.moved[b.key] = "down";
+      acc.movementDesc.push(`${b.label} fell to ${Math.min(...windowVals).toFixed(2)} ${b.unit}`);
     }
     return acc;
   }, { moved: {}, movementDesc: [] });

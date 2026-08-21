@@ -11,9 +11,10 @@
 
 import PDFDocument from "pdfkit";
 import type {
-  ReportInput, WQEvent, Flag, ReportStatus,
+  ReportInput, WQEvent, Flag, ReportStatus, ParameterStats,
 } from "./types";
-import { coordinatesStr, flagFor } from "./types";
+import { coordinatesStr, flagFor, isRelativeIndex } from "./types";
+import { clarityBandFor, TURBIDITY_NO_BASELINE_TEXT } from "./referenceRanges";
 import type { NarrativeSections } from "./narrative";
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
@@ -27,7 +28,25 @@ const FLAG_COLORS: Record<Flag, string> = {
   Low: "#b35900",
   Exceedance: "#c0392b",
   "N/A": "#777777",
+  // Deliberately outside the green/amber/red verdict palette. A clarity band is an observation,
+  // not a pass/fail, and colouring "Very turbid" red would smuggle back exactly the exceedance
+  // claim this row exists to avoid -- against a range that does not exist. One neutral slate for
+  // all four bands; the band's own wording carries the severity.
+  Qualitative: "#4a5a6a",
 };
+
+/**
+ * What goes in the Flag column. For a relative-index parameter that is the clarity band, derived
+ * from the period mean -- the same value the row's Mean column prints, so a reader can see where
+ * the band came from without a second lookup. Exported for `reportRenderPdf.test.ts`, since the
+ * rendered PDF's text cannot be extracted under Jest (see the test file's docstring).
+ */
+export const flagCellText = (
+  p: ParameterStats,
+  probeAccuracy: (key: string, reading: number) => number,
+): string => (
+  isRelativeIndex(p.baseline) ? clarityBandFor(p.mean) : flagFor(p, probeAccuracy)
+);
 
 /** Printed for a Data Quality check that has no detector in this pipeline (see types.ts). */
 const NOT_ASSESSED = "Not assessed";
@@ -269,16 +288,27 @@ export const buildReportPdf = (
     { header: "Flag", width: 73, align: "center" },
   ];
   const paramFlags = report.parameters.map((p) => flagFor(p, probeAccuracy));
+  const paramCells = report.parameters.map((p) => flagCellText(p, probeAccuracy));
   const paramRows = report.parameters.map((p, i) => {
     const b = p.baseline;
+    const baselineText = (() => {
+      if (b.hasFixedBaseline) {
+        return `${b.baselineMin}-${b.baselineMax}`;
+      }
+      // "Not established (site-specific)" is temperature's story -- a range that could exist once
+      // a deployment has one. Turbidity's is different and must not borrow that wording: there
+      // is no operator turbidity range on any device, and the value is not on a calibrated
+      // scale, so no site-specific range would help.
+      return isRelativeIndex(b) ? TURBIDITY_NO_BASELINE_TEXT : "Not established (site-specific)";
+    })();
     return [
       b.label,
-      b.hasFixedBaseline ? `${b.baselineMin}-${b.baselineMax}` : "Not established (site-specific)",
+      baselineText,
       p.min.toFixed(2),
       p.max.toFixed(2),
       p.mean.toFixed(2),
       p.median.toFixed(2),
-      paramFlags[i],
+      paramCells[i],
     ];
   });
   drawGridTable(doc, paramColumns, paramRows, {
@@ -287,8 +317,16 @@ export const buildReportPdf = (
     ),
   });
   doc.moveDown(0.15);
+  const hasRelativeIndex = report.parameters.some((p) => isRelativeIndex(p.baseline));
+  const clarityFootnote = hasRelativeIndex
+    ? "  Turbidity is reported as a water-clarity band (Clear / Slightly turbid / Turbid / Very "
+      + "turbid) from a provisional, uncalibrated relative index derived from a raw sensor "
+      + "voltage. No operator turbidity range exists on any device, so it is never flagged in or "
+      + "out of range; its Min/Max/Mean/Median are shown for period-to-period comparison only. A "
+      + "reading of 0 is a real reading."
+    : "";
   doc.font("Helvetica").fontSize(8).fillColor("#777777").text(
-    "Flag values: Normal, Elevated, Low, or Exceedance relative to the site baseline.",
+    `Flag values: Normal, Elevated, Low, or Exceedance relative to the site baseline.${clarityFootnote}`,
     { width: CONTENT_WIDTH },
   );
 

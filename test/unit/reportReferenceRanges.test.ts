@@ -1,5 +1,6 @@
 import {
   baselineFor, probeAccuracy, temperatureAccuracyC, rangeForTier, WATER_BODY_TO_TIER, BASELINE_RANGES,
+  clarityBandFor, TURBIDITY_BAND_EDGES,
 } from "../../src/report/referenceRanges";
 
 /**
@@ -43,6 +44,61 @@ describe("baselineFor", () => {
 
   it("returns undefined, not a throw, for an unrecognized metric key", () => {
     expect(baselineFor("salinity", "Salinity", "ppt", "Freshwater")).toBeUndefined();
+  });
+
+  it("returns undefined for turbidity in every water type -- it has no numeric baseline at all", () => {
+    // Not the same case as temperature. Temperature has no range *yet*; turbidity's value is a
+    // provisional uncalibrated index with no operator range on any of the 15 registered devices,
+    // so a numeric baseline would be a fabrication rather than a gap.
+    expect(BASELINE_RANGES.turbidity).toBeUndefined();
+    (["Freshwater", "Brackish", "Estuarine", "Marine"] as const).forEach((waterType) => {
+      expect(baselineFor("turbidity", "Turbidity (Relative)", "", waterType)).toBeUndefined();
+    });
+  });
+});
+
+describe("clarityBandFor", () => {
+  it("puts 0 in the bottom band -- 0 is a real reading, never missing data", () => {
+    // A turbVolt above the 3.35 V clear-water reference clamps the derived index to 0 (observed
+    // live at 4.20 V). Anything that treated 0 as absent would delete a real observation.
+    expect(clarityBandFor(0)).toBe("Clear");
+  });
+
+  it("bands each cut point on its lower edge, inclusive", () => {
+    expect(clarityBandFor(249)).toBe("Clear");
+    expect(clarityBandFor(250)).toBe("Slightly turbid");
+    expect(clarityBandFor(599)).toBe("Slightly turbid");
+    expect(clarityBandFor(600)).toBe("Turbid");
+    expect(clarityBandFor(1_004)).toBe("Turbid");
+    expect(clarityBandFor(1_005)).toBe("Very turbid");
+  });
+
+  it("handles a reading in the thousands without falling off the top of the scale", () => {
+    // 1005 = 3.35 V x 300, the most the documented conversion can produce from a non-negative
+    // input voltage. Live 1-day means of 1385 and 2042 sit well past it, which is precisely why
+    // the index is not treated as calibrated NTU.
+    expect(clarityBandFor(1_385)).toBe("Very turbid");
+    expect(clarityBandFor(2_042)).toBe("Very turbid");
+    expect(clarityBandFor(4_550)).toBe("Very turbid"); // the conversion's own ceiling
+  });
+
+  it("bands the observed fleet distribution the way the cut points were derived to", () => {
+    // The five sampled 1-day means the edges were chosen against.
+    expect([456, 555].map(clarityBandFor)).toEqual(["Slightly turbid", "Slightly turbid"]);
+    expect(clarityBandFor(1_006)).toBe("Very turbid");
+    expect([1_385, 2_042].map(clarityBandFor)).toEqual(["Very turbid", "Very turbid"]);
+  });
+
+  it("degrades to the bottom band rather than throwing on a negative index", () => {
+    // The conversion clamps at 0, so this should not occur -- but failing to "Clear" beats
+    // returning undefined into a report row.
+    expect(clarityBandFor(-5)).toBe("Clear");
+  });
+
+  it("keeps the edge table descending, which is what makes the first match the right band", () => {
+    const mins = TURBIDITY_BAND_EDGES.map((e) => e.min);
+    expect(mins).toEqual([...mins].sort((a, b) => b - a));
+    expect(mins[mins.length - 1]).toBe(0); // the bottom band must admit 0
   });
 });
 

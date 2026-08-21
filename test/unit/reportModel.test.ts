@@ -25,6 +25,18 @@ const baseline = (overrides: Partial<ParameterBaseline> = {}): ParameterBaseline
   ...overrides,
 });
 
+/** Turbidity as buildReportInput now constructs it: no numeric baseline, relative-index scale. */
+const turbidityBaseline = (overrides: Partial<ParameterBaseline> = {}): ParameterBaseline => baseline({
+  key: "turbidity",
+  label: "Turbidity (Relative)",
+  unit: "",
+  baselineMin: 0,
+  baselineMax: 0,
+  hasFixedBaseline: false,
+  scale: "relative-index",
+  ...overrides,
+});
+
 const param = (overrides: Partial<ParameterStats> = {}): ParameterStats => ({
   baseline: baseline(),
   min: 7.0,
@@ -67,6 +79,39 @@ describe("flagFor", () => {
     });
     expect(flagFor(noBaseline, noAccuracy)).toBe("N/A");
   });
+
+  it("returns Qualitative for a relative-index parameter, never an excursion verdict", () => {
+    // Turbidity. A reading of 2042 against the system prompt's nominal 0-25 NTU would be a 80x
+    // exceedance if the scale meant what its units say; it does not, so no numeric verdict is
+    // produced at all.
+    const turbidity = param({
+      baseline: turbidityBaseline(),
+      min: 0,
+      max: 2_042,
+      mean: 1_006,
+      median: 980,
+    });
+    expect(flagFor(turbidity, noAccuracy)).toBe("Qualitative");
+  });
+
+  it("returns Qualitative even when a stale numeric baseline is still attached", () => {
+    // Defensive: the scale check runs before any range arithmetic, so a leftover
+    // hasFixedBaseline/min/max on a relative-index parameter cannot resurrect an Exceedance.
+    const turbidity = param({
+      baseline: turbidityBaseline({ hasFixedBaseline: true, baselineMin: 5, baselineMax: 25 }),
+      min: 0,
+      max: 2_042,
+      mean: 1_006,
+    });
+    expect(flagFor(turbidity, noAccuracy)).toBe("Qualitative");
+  });
+
+  it("returns Qualitative for a flat all-zero turbidity period -- 0 is a real reading", () => {
+    const turbidity = param({
+      baseline: turbidityBaseline(), min: 0, max: 0, mean: 0, median: 0,
+    });
+    expect(flagFor(turbidity, noAccuracy)).toBe("Qualitative");
+  });
 });
 
 describe("heldSteady", () => {
@@ -83,6 +128,9 @@ describe("heldSteady", () => {
   it("is false for any non-Normal flag, no matter the pattern", () => {
     expect(heldSteady(param({ pattern: "flat" }), "Elevated")).toBe(false);
     expect(heldSteady(param({ pattern: "flat" }), "N/A")).toBe(false);
+    // Qualitative too: turbidity is a deliberately reported metric, so it always earns a line in
+    // Section 3 rather than being dropped as "held steady".
+    expect(heldSteady(param({ pattern: "flat" }), "Qualitative")).toBe(false);
   });
 });
 
@@ -126,6 +174,16 @@ describe("overallStatus", () => {
     expect(overallStatus(report({ events: [event({ severity: "Moderate" })] }), noAccuracy)).toBe("Watch");
   });
 
+  it("is Normal for a very turbid relative index alone -- a band is not an excursion", () => {
+    // The whole point of the qualitative treatment: turbidity cannot move the report status on
+    // its own, because it cannot be shown to have left a range. It still reaches the status
+    // legitimately through events.ts, which reads its relative movement instead.
+    const turbidity = param({
+      baseline: turbidityBaseline(), min: 900, max: 3_000, mean: 2_042, median: 2_000,
+    });
+    expect(overallStatus(report({ parameters: [turbidity] }), noAccuracy)).toBe("Normal");
+  });
+
   it("lets an Exceedance parameter override a merely Watch-level event", () => {
     const r = report({
       parameters: [param({ max: 9.0 })],
@@ -141,8 +199,22 @@ describe("coordinatesStr", () => {
     expect(coordinatesStr(site)).toBe("33.7000° N, 118.2000° W");
   });
 
-  it("reports Not available when the registry has no coordinates, rather than fabricating one", () => {
+  it("says no GPS fix, rather than fabricating a coordinate, when none is present", () => {
+    // Wording changed with the coordinate plumbing: coordinates ride on the readings, not on
+    // the device registry, so an absent value means no reading in the window carried a fix.
     const site = {} as SiteMetadata;
-    expect(coordinatesStr(site)).toBe("Not available from device registry");
+    expect(coordinatesStr(site)).toBe("No GPS fix in the reporting period");
+  });
+
+  it("falls back to the API's location label when there is no numeric fix", () => {
+    const site = { locationName: "Seal Beach CA" } as SiteMetadata;
+    expect(coordinatesStr(site)).toBe("Seal Beach CA");
+  });
+
+  it("appends the location label to a numeric fix when both are present", () => {
+    const site = {
+      latitude: 33.7496725, longitude: -118.11551953, locationName: "Seal Beach CA",
+    } as SiteMetadata;
+    expect(coordinatesStr(site)).toBe("33.7497° N, 118.1155° W  (Seal Beach CA)");
   });
 });

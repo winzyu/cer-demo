@@ -22,6 +22,42 @@ const noFixedBaseline = (key: string, label: string, unit: string): ParameterBas
   key, label, unit, baselineMin: 0, baselineMax: 0, exceedanceMargin: 0.15, hasFixedBaseline: false,
 });
 
+/** Turbidity as buildReportInput builds it -- no numeric baseline, uncalibrated relative scale. */
+const relativeIndexBaseline = (): ParameterBaseline => ({
+  key: "turbidity",
+  label: "Turbidity (Relative)",
+  unit: "",
+  baselineMin: 0,
+  baselineMax: 0,
+  exceedanceMargin: 0.15,
+  hasFixedBaseline: false,
+  scale: "relative-index",
+});
+
+const HOUR = 3_600_000;
+const BASE = Date.parse("2026-08-01T00:00:00.000Z");
+/** A series whose values are given in order, one per hour. */
+const hourly = (values: number[]): Array<[number, number]> => (
+  values.map((v, i) => [BASE + i * HOUR, v])
+);
+
+const turbidityParam = (
+  values: number[], overrides: Partial<ParameterStats> = {},
+): ParameterStats => {
+  const series = hourly(values);
+  const sorted = [...values].sort((a, b) => a - b);
+  return {
+    baseline: relativeIndexBaseline(),
+    min: sorted[0],
+    max: sorted[sorted.length - 1],
+    mean: values.reduce((sum, v) => sum + v, 0) / values.length,
+    median: sorted[Math.floor(sorted.length / 2)],
+    pattern: "unknown",
+    series,
+    ...overrides,
+  };
+};
+
 const param = (baseline: ParameterBaseline, overrides: Partial<ParameterStats> = {}): ParameterStats => ({
   baseline,
   min: (baseline.baselineMin + baseline.baselineMax) / 2 - 0.1,
@@ -108,6 +144,80 @@ describe("deterministicNarrative — parameter analysis", () => {
     const text = parameterAnalysis.get("Temperature (°F)")!;
     expect(text).toContain("No fixed baseline exists");
     expect(text).not.toContain("site baseline.");
+  });
+
+  it("gives turbidity a clarity band and supporting context, never an in/out-of-range verdict", () => {
+    // mean 650 -> "Turbid"; the second half averages 200 above the first, clearing the trend
+    // deadband (10% of the period mean) so the direction of change is reported.
+    const turbidity = turbidityParam([500, 550, 600, 700, 750, 800]);
+    const { parameterAnalysis } = deterministicNarrative(report([turbidity]), noAccuracy, "Normal");
+
+    expect(parameterAnalysis.has("Turbidity (Relative)")).toBe(true);
+    const text = parameterAnalysis.get("Turbidity (Relative)")!;
+    expect(text).toContain("Turbid");
+    expect(text).toContain("relative index mean 650.0");
+    expect(text).toContain("rising across the period"); // the legitimate relative claim
+    expect(text).toContain("provisional, uncalibrated conversion");
+    // The claims a report must never make about a turbidity value.
+    expect(text).not.toContain("site baseline");
+    expect(text).not.toContain("NTU");
+    expect(text).not.toMatch(/[Ee]xceedance|[Ee]levated reading|outside the/);
+  });
+
+  it("bands a period of all-zero turbidity as Clear rather than treating 0 as missing data", () => {
+    const turbidity = turbidityParam([0, 0, 0, 0]);
+    const { parameterAnalysis } = deterministicNarrative(report([turbidity]), noAccuracy, "Normal");
+
+    const text = parameterAnalysis.get("Turbidity (Relative)")!;
+    expect(text).toContain("Clear");
+    expect(text).toContain("relative index mean 0.0");
+    expect(text).toContain("held steady across the period");
+    expect(text).not.toMatch(/no data|not available|missing/i);
+  });
+
+  it("bands a reading in the thousands without inventing an exceedance", () => {
+    const turbidity = turbidityParam([2_400, 2_200, 2_000, 1_800, 1_600, 1_400]); // mean 1900, falling
+    const { parameterAnalysis } = deterministicNarrative(report([turbidity]), noAccuracy, "Normal");
+
+    const text = parameterAnalysis.get("Turbidity (Relative)")!;
+    expect(text).toContain("Very turbid");
+    expect(text).toContain("falling across the period");
+    expect(text).not.toMatch(/[Ee]xceedance/);
+  });
+
+  it("names the bands a period spanned when min and max fall in different ones", () => {
+    const turbidity = turbidityParam([0, 100, 900, 1_400]); // Clear -> Very turbid
+    const { parameterAnalysis } = deterministicNarrative(report([turbidity]), noAccuracy, "Normal");
+
+    expect(parameterAnalysis.get("Turbidity (Relative)")!)
+      .toContain("The period spanned clear to very turbid conditions.");
+  });
+
+  it("keeps turbidity out of the excursion list, however turbid, and gives it its own bullet", () => {
+    const ph = param(fixedBaseline("ph", "pH", "", 6.5, 8.5), { max: 9.0 });
+    const turbidity = turbidityParam([2_042, 2_042, 2_042]);
+    const { summaryBullets } = deterministicNarrative(report([ph, turbidity]), noAccuracy, "Watch");
+
+    // Only pH is named as having moved outside the site baseline.
+    expect(summaryBullets[1]).toMatch(/^PH moved outside the site baseline/);
+    expect(summaryBullets[1]).not.toContain("Turbidity");
+
+    const clarity = summaryBullets.find((b) => b.startsWith("Turbidity (Relative):"))!;
+    expect(clarity).toBeDefined();
+    expect(clarity).toContain("Very turbid");
+    expect(clarity).toContain("no");
+    expect(clarity).toContain("operator range");
+  });
+
+  it("still reports turbidity in the all-clear summary -- silence would read as unmeasured", () => {
+    const ph = param(fixedBaseline("ph", "pH", "", 6.5, 8.5), { pattern: "flat" });
+    const turbidity = turbidityParam([10, 10, 10]);
+    const { summaryBullets } = deterministicNarrative(report([ph, turbidity]), noAccuracy, "Normal");
+
+    expect(summaryBullets[0]).toContain("Overall status: Normal");
+    expect(summaryBullets.join(" ")).toContain("Turbidity (Relative): Clear");
+    // The all-clear line no longer over-claims on behalf of parameters that have no baseline.
+    expect(summaryBullets.join(" ")).not.toContain("All parameters held within the site baseline");
   });
 
   it("does not mangle interior acronyms the way a naive capitalize() would", () => {

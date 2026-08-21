@@ -11,9 +11,35 @@
  * to it, so it stays testable without a live device.
  */
 
-/** "N/A" is for a parameter with no fixed baseline (temperature -- see referenceRanges.ts) --
- * distinct from "Normal", which means "compared to a real baseline and found within it". */
-export type Flag = "Normal" | "Elevated" | "Low" | "Exceedance" | "N/A";
+/**
+ * "N/A" is for a parameter with no fixed baseline (temperature -- see referenceRanges.ts) --
+ * distinct from "Normal", which means "compared to a real baseline and found within it".
+ *
+ * "Qualitative" is for a parameter that is not judged against a numeric range at all
+ * (turbidity -- see ParameterScale below). It is deliberately NOT the same as "N/A": temperature
+ * has no range *yet* and could get one per deployment, whereas turbidity's value is not on a
+ * calibrated scale in the first place, so a numeric verdict would be meaningless rather than
+ * merely unavailable. A "Qualitative" row carries a ClarityBand instead, and never contributes
+ * an excursion or exceedance to `overallStatus`.
+ */
+export type Flag = "Normal" | "Elevated" | "Low" | "Exceedance" | "N/A" | "Qualitative";
+
+/**
+ * Qualitative water-clarity bands for turbidity. Cut points and their (provisional) justification
+ * live in referenceRanges.ts -- `clarityBandFor`.
+ */
+export type ClarityBand = "Clear" | "Slightly turbid" | "Turbid" | "Very turbid";
+
+/**
+ * How a parameter's values may legitimately be judged.
+ *
+ * - `"numeric"` (the default when absent): the value is a calibrated measurement, so comparing it
+ *   against `baselineMin`/`baselineMax` produces a real verdict.
+ * - `"relative-index"`: the value is monotonic but uncalibrated, and no operator range exists for
+ *   it. Relative statements ("rose", "higher than last week") stay valid; in/out-of-range
+ *   statements do not. Turbidity is the only parameter on this scale today.
+ */
+export type ParameterScale = "numeric" | "relative-index";
 export type ReportStatus = "Normal" | "Watch" | "Action Required";
 export type WaterBodyType = "Freshwater" | "Brackish" | "Estuarine" | "Marine";
 export type Pattern = "diel" | "tidal" | "event-driven" | "flat" | "irregular" | "unknown";
@@ -38,10 +64,12 @@ export interface SiteMetadata {
   startDate: string; // ISO date, e.g. "2026-08-01"
   endDate: string;
   reportDate: string;
-  /** Best-effort; the device registry does not guarantee these are set (see
-   * buildReportInput.ts). */
+  /** Newest in-window GPS fix. Absent when no reading in the window carried one (see
+   * buildReportInput.ts) -- never defaulted to 0,0. */
   latitude?: number;
   longitude?: number;
+  /** The API's own `best_location` label for that fix, e.g. "Seal Beach CA". */
+  locationName?: string;
   waterBodyType: WaterBodyType;
   /**
    * Where `waterBodyType` came from. Printed alongside it, because the choice selects the entire
@@ -58,11 +86,14 @@ export interface SiteMetadata {
 
 export const coordinatesStr = (site: SiteMetadata): string => {
   if (site.latitude === undefined || site.longitude === undefined) {
-    return "Not available from device registry";
+    // Wording no longer blames the registry: coordinates come off the readings, so an absent
+    // value means no reading in the window carried a GPS fix.
+    return site.locationName ?? "No GPS fix in the reporting period";
   }
   const ns = site.latitude >= 0 ? "N" : "S";
   const ew = site.longitude >= 0 ? "E" : "W";
-  return `${Math.abs(site.latitude).toFixed(4)}° ${ns}, ${Math.abs(site.longitude).toFixed(4)}° ${ew}`;
+  const fix = `${Math.abs(site.latitude).toFixed(4)}° ${ns}, ${Math.abs(site.longitude).toFixed(4)}° ${ew}`;
+  return site.locationName ? `${fix}  (${site.locationName})` : fix;
 };
 
 export interface ParameterBaseline {
@@ -80,9 +111,20 @@ export interface ParameterBaseline {
    */
   exceedanceMargin: number;
   /** Present only for parameters compared against a real range table; absent for temperature
-   * (see referenceRanges.ts). */
+   * (see referenceRanges.ts) and for turbidity (never range-compared at all -- see `scale`). */
   hasFixedBaseline: boolean;
+  /**
+   * Defaults to `"numeric"` when absent, which is what every parameter but turbidity is. A
+   * `"relative-index"` parameter must never produce a numeric excursion or exceedance claim --
+   * `flagFor` short-circuits to "Qualitative" before any range arithmetic runs.
+   */
+  scale?: ParameterScale;
 }
+
+/** True for a parameter whose value is monotonic but uncalibrated -- turbidity today. */
+export const isRelativeIndex = (b: Pick<ParameterBaseline, "scale">): boolean => (
+  b.scale === "relative-index"
+);
 
 export interface ParameterStats {
   baseline: ParameterBaseline;
@@ -143,6 +185,13 @@ export const flagFor = (
   probeAccuracy: (key: string, reading: number) => number,
 ): Flag => {
   const b = p.baseline;
+  // Checked before anything else, and before `hasFixedBaseline`: a relative index has no
+  // calibrated scale, so every comparison below (baseline edges, exceedance margin, probe noise
+  // floor) would be arithmetic on a number that does not mean what the units say it means.
+  // The caller renders a ClarityBand for this row instead -- see referenceRanges.clarityBandFor.
+  if (isRelativeIndex(b)) {
+    return "Qualitative";
+  }
   if (!b.hasFixedBaseline) {
     return "N/A";
   }
@@ -175,6 +224,13 @@ export const heldSteady = (
   flag: Flag,
 ): boolean => flag === "Normal" && (p.pattern === "flat" || p.pattern === "unknown");
 
+/**
+ * Note which flags are and are not consulted: "N/A" and "Qualitative" match none of the branches
+ * below, on purpose. A parameter with no range (temperature) and a parameter on an uncalibrated
+ * scale (turbidity) cannot raise or lower the report's status, because neither can be shown to
+ * have left a range. Turbidity still reaches the status indirectly and legitimately, through
+ * events.ts, which reads its *relative movement* rather than a range crossing.
+ */
 export const overallStatus = (
   report: ReportInput,
   probeAccuracy: (key: string, reading: number) => number,

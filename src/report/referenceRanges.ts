@@ -18,7 +18,13 @@
  *    over time, per the source document's own closing instruction. That is a working
  *    interpretation carried over from the prototype, not a finalized team decision -- ◆G3 is
  *    still open in docs/timeline.md as of this port.
+ * 3. Turbidity has NO numeric baseline either, for an entirely different reason: the value is
+ *    not a measurement. It is a relative index derived from a raw voltage (see
+ *    TURBIDITY_CLARITY_BANDS below). It is reported as a qualitative clarity band, never
+ *    compared against a numeric range, and is therefore also absent from BASELINE_RANGES.
  */
+
+import type { ClarityBand } from "./types";
 
 export type RangeTier = "freshwater" | "brackish_estuarine" | "seawater";
 
@@ -53,10 +59,89 @@ export const BASELINE_RANGES: Record<string, RangeByTier> = {
   ph: {
     freshwater: [6.5, 8.5], brackish_estuarine: [7.0, 8.3], seawater: [7.8, 8.3],
   },
-  turbidity: {
-    freshwater: [5, 25], brackish_estuarine: [5, 100], seawater: [5, 10],
-  },
+  // turbidity is deliberately absent -- see TURBIDITY_CLARITY_BANDS below. It has no numeric
+  // baseline in this pipeline, so `baselineFor("turbidity", ...)` returns undefined and the
+  // report never flags it in or out of a range.
 };
+
+/* -------------------------------------------------------------------------------------------
+ * Turbidity: qualitative clarity bands, not a numeric range
+ * -----------------------------------------------------------------------------------------*/
+
+/**
+ * Turbidity is the one metric this pipeline reports **qualitatively**, and these are the cut
+ * points. Read this block before changing a number in it.
+ *
+ * **Why there is no numeric range.** Turbidity is not a stored measurement. The backend derives
+ * it from a raw analog voltage (`water_data.turbVolt`) with a conversion its own source file
+ * marks PROVISIONAL and not lab-calibrated:
+ *
+ *     index = clamp((3.35 V - turbVolt) * 300, 0, 4550)
+ *
+ * Fixed constants, a clear-water reference of 3.35 V, 300 units per volt of drop. No lab
+ * calibration stands behind any of it. Three independent signals agree that the result is a
+ * monotonic relative index expressed in NTU-shaped units rather than a calibrated NTU
+ * measurement: the backend's own PROVISIONAL comment, the customer dashboard's "Turbidity
+ * (Relative)" relabel (and its shipped clarity bands), and the live data below.
+ *
+ * **And there is no operator threshold to fall back on.** A census of all 15 devices in the live
+ * Firestore registry (2026-08-20) found the `thresholds` object carries exactly 10 keys --
+ * min/max for temperature, pH, dissolved oxygen, ORP and conductivity. There is no turbidity
+ * key on any device. Every other metric has an operator-owned numeric range; turbidity has
+ * none, so there is nothing to compare a reading against even if the scale were trustworthy.
+ * See docs/migration/BACKEND_FIELDS.md §3b and DEVICE_API.md §8.
+ *
+ * **Where the cut points come from.** ⚠️ They are PROVISIONAL -- as provisional as the
+ * conversion that feeds them. They are chosen to be defensible, not precise, and they should be
+ * revisited the moment a lab-calibrated reading or an operator-set range exists. Two anchors:
+ *
+ * 1. *The conversion's own scale.* `3.35 V x 300 = 1005` is the largest index the documented
+ *    conversion can produce from a non-negative input voltage. An index at or above 1005 means
+ *    the input went below 0 V relative to the conversion's assumptions -- the reading is off the
+ *    end of the scale it was derived on. That makes 1005 a real, non-arbitrary top edge rather
+ *    than a round number picked to look tidy.
+ * 2. *The observed fleet distribution.* Sampled 1-day means across live pods came in at 456,
+ *    555, 1006, 1385 and 2042 -- against a system-prompt "authoritative range" of 0-25 NTU
+ *    freshwater / 0-10 saltwater. Every one of them is one to two orders of magnitude outside
+ *    that range, which is the clearest evidence that the index is not comparable to a calibrated
+ *    NTU scale. The lower edges split the sub-1005 part of that spread: 250 sits below the
+ *    lowest observed pod mean (456), so "Clear" means cleaner than anything we have sampled
+ *    rather than "typical"; 600 sits just above the 456/555 cluster, separating it from 1006.
+ *
+ * **0 is a real reading and lives in the bottom band.** A `turbVolt` above the 3.35 V reference
+ * yields a negative drop, which clamps to 0 -- observed live at `turbVolt = 4.20 V`. So 0 can
+ * mean "above the clear-water reference voltage" rather than "measurably clear water". It is
+ * never missing data (plausibility.ts and aggregate.ts carry the same carve-out), and it must
+ * never be filtered out or treated as absent.
+ *
+ * Reviewer note: the observed 1006 mean sits one unit above the 1005 edge, i.e. essentially at
+ * `turbVolt = 0`. That pod may be sitting on its sensor rail rather than reading very turbid
+ * water. Worth checking against `turbVolt` directly before reading its band as water quality.
+ */
+export const TURBIDITY_BAND_EDGES: ReadonlyArray<{ band: ClarityBand; min: number }> = [
+  // Descending, so the first edge a value clears is its band.
+  { band: "Very turbid", min: 1005 },
+  { band: "Turbid", min: 600 },
+  { band: "Slightly turbid", min: 250 },
+  { band: "Clear", min: 0 },
+];
+
+/** The band a relative turbidity index falls in. `0` is a real reading and returns "Clear". */
+export const clarityBandFor = (index: number): ClarityBand => (
+  TURBIDITY_BAND_EDGES.find((edge) => index >= edge.min)?.band ?? "Clear"
+);
+
+/**
+ * One sentence saying what the turbidity number is, printed wherever a turbidity value appears
+ * in user-facing output. Kept here, next to the cut points, so the caveat and the numbers cannot
+ * drift apart.
+ */
+export const TURBIDITY_SCALE_CAVEAT = "Relative index derived from a raw sensor voltage by a "
+  + "provisional, uncalibrated conversion; no operator turbidity range exists, so this is a "
+  + "clarity band and a direction of change, not a measurement judged in or out of range.";
+
+/** Column value where a numeric baseline would otherwise print. */
+export const TURBIDITY_NO_BASELINE_TEXT = "No range (relative index)";
 
 /**
  * Source-of-truth doc, DO section: absolute thresholds independent of site baseline.

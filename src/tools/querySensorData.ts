@@ -571,10 +571,15 @@ export class QuerySensorData {
     const coveredFromMs = Math.max(range.startMs, this.now() - window.spanMs);
     const partial = coveredFromMs > range.startMs;
 
+    const position = QuerySensorData.newestPosition(readings, range);
+
     const common = {
       ...identity,
       time_range_requested: timeRangeInput,
       time_range_resolved: { start: range.start, end: range.end, label: range.label },
+      // Omitted rather than nulled when no reading carried a fix, so a consumer cannot mistake
+      // an absent GPS lock for coordinates of 0,0 — the same rule metrics.ts applies to `lat`.
+      ...(position ? { position } : {}),
       window_actually_searched: {
         start: new Date(coveredFromMs).toISOString(),
         end: range.end,
@@ -622,6 +627,42 @@ export class QuerySensorData {
         shape(entry.key, entry.result),
       ])),
       ...notes,
+    };
+  }
+
+  /**
+   * The newest in-window reading's position, or null when none carries a GPS fix.
+   *
+   * Coordinates ride on the *readings*, not on the device registry — `DeviceSummary.raw` has no
+   * lat/lon field at all (verified live on `dev:351077454569099`). `decodeReading` already parses
+   * them via `resolvePosition`, which is why this needs no extra API call: it reads the window
+   * that was fetched anyway. Newest-first because a pod drifts on its mooring, so the most
+   * recent fix is the one that describes where it is now.
+   */
+  private static newestPosition(
+    readings: DeviceReading[],
+    range: ResolvedRange,
+  ): { latitude: number; longitude: number; location?: string } | null {
+    const { startMs, endMs, endInclusive } = range;
+    const positioned = readings
+      .filter((reading) => {
+        if (reading.latitude === undefined || reading.longitude === undefined) {
+          return false;
+        }
+        const atMs = reading.observedAt ? Date.parse(reading.observedAt) : Number.NaN;
+        return Number.isFinite(atMs)
+          && atMs >= startMs && (endInclusive ? atMs <= endMs : atMs < endMs);
+      })
+      .sort((a, b) => Date.parse(b.observedAt as string) - Date.parse(a.observedAt as string));
+
+    const newest = positioned[0];
+    if (!newest) {
+      return null;
+    }
+    return {
+      latitude: newest.latitude as number,
+      longitude: newest.longitude as number,
+      ...(newest.location ? { location: newest.location } : {}),
     };
   }
 

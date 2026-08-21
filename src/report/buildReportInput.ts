@@ -24,11 +24,21 @@
  *    simulated. Min/max are still exact (a bucket's min/max are real per-bucket extremes, not
  *    averaged away), so the Parameter Data table (Section 2) is unaffected; only event-window
  *    boundaries and excursion timestamps are bucket-resolution rather than reading-resolution.
- * 3. **Coordinates and client/contract are not available from this API.** `query_sensor_data`
- *    only echoes `{name, label, operating_environment}` for the device -- lat/lon and any
- *    organization/contract field live on `DeviceSummary.raw` from `GET /devices`, which this
- *    function does not call. Both report as "Not available" rather than a fabricated value.
- *    Wiring in a `GET /devices` lookup to fill these in is a reasonable, bounded follow-up.
+ * 3. **Client/contract is not available from this API.** `query_sensor_data` echoes only
+ *    `{name, label, operating_environment}` plus a position for the device, and no clean
+ *    organization/contract field exists on `DeviceSummary` today, so Client / Contract reports
+ *    as "Not available" rather than a fabricated value.
+ *
+ *    Coordinates *are* available and are now filled in. An earlier version of this note claimed
+ *    they lived on `DeviceSummary.raw` from `GET /devices`; that was wrong -- verified live,
+ *    that record carries no lat/lon field at all. Coordinates ride on the individual readings
+ *    (`decodeReading` -> `resolvePosition`), so `query_sensor_data` surfaces the newest in-window
+ *    fix as `position` and this function reads it, with no extra API call.
+ * 4. **Turbidity is reported qualitatively.** It stays fully in scope as a measured, reported
+ *    metric -- only its *expression* changed. It is built here with `scale: "relative-index"`
+ *    and no numeric baseline, so downstream it renders as a clarity band plus a direction of
+ *    change instead of a pass/fail against a range. See referenceRanges.ts's
+ *    TURBIDITY_BAND_EDGES for the cut points and why there is no range to compare against.
  */
 
 import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorData";
@@ -48,8 +58,17 @@ const PARAMETER_META: Array<{ key: string; label: string; unit: string }> = [
   // Device API reports Fahrenheit (metrics.ts) -- label reflects the unit actually returned,
   // not the Celsius unit the source-of-truth doc's probe-accuracy formula expects internally.
   { key: "temperature", label: "Temperature (°F)", unit: "°F" },
-  { key: "turbidity", label: "Turbidity (NTU)", unit: "NTU" },
+  // Deliberately NOT the template's "Turbidity (NTU)". The value is a provisional, uncalibrated
+  // relative index, not an NTU measurement (referenceRanges.ts, TURBIDITY_BAND_EDGES), so
+  // printing "NTU" on it would assert a calibration nobody has. The label matches the customer
+  // dashboard's own "Turbidity (Relative)" relabel; the unit is blank because the index has no
+  // honest unit to name. This is the one row where this port diverges from the template's exact
+  // wording, and this comment is why.
+  { key: "turbidity", label: "Turbidity (Relative)", unit: "" },
 ];
+
+/** Metrics reported on an uncalibrated relative scale -- see types.ts `ParameterScale`. */
+const RELATIVE_INDEX_KEYS = new Set(["turbidity"]);
 
 /**
  * The device registry's `operating_environment` as a report water body type, or `undefined` when
@@ -262,6 +281,11 @@ export const buildReportInput = async (
   const waterBodyType = registryWaterBodyType ?? params.waterBodyTypeFallback ?? "Freshwater";
   const waterBodyTypeSource = registryWaterBodyType ? "device" as const : "default" as const;
 
+  // Newest in-window GPS fix, carried on the readings themselves -- see file docstring §3.
+  const position = asRecord(seriesResult.position);
+  const latitude = typeof position.latitude === "number" ? position.latitude : undefined;
+  const longitude = typeof position.longitude === "number" ? position.longitude : undefined;
+
   const site: SiteMetadata = {
     siteName,
     startDate,
@@ -269,7 +293,9 @@ export const buildReportInput = async (
     reportDate: new Date().toISOString().slice(0, 10),
     waterBodyType,
     waterBodyTypeSource,
-    // Not available from query_sensor_data -- see file docstring §3.
+    ...(latitude !== undefined && longitude !== undefined ? { latitude, longitude } : {}),
+    ...(typeof position.location === "string" ? { locationName: position.location } : {}),
+    // No clean client/contract field exists on DeviceSummary -- see file docstring §3.
     clientName: "Not available from device registry",
   };
 
@@ -294,7 +320,11 @@ export const buildReportInput = async (
     const mean = buckets.reduce((s, b) => s + b.mean * b.n, 0) / totalN;
     const median = medianEntry?.value ?? mean; // falls back to mean if the median call had no data
 
-    const fixed = meta.key === "temperature"
+    // Turbidity is excluded alongside temperature, for a different reason: `BASELINE_RANGES` no
+    // longer carries a turbidity entry at all, so this would return undefined regardless -- the
+    // explicit guard states the intent rather than relying on a lookup miss.
+    const relativeIndex = RELATIVE_INDEX_KEYS.has(meta.key);
+    const fixed = meta.key === "temperature" || relativeIndex
       ? undefined
       : baselineFor(meta.key, meta.label, meta.unit, waterBodyType);
     const baseline = fixed
@@ -307,6 +337,7 @@ export const buildReportInput = async (
         baselineMax: 0,
         exceedanceMargin: 0.15,
         hasFixedBaseline: false,
+        ...(relativeIndex ? { scale: "relative-index" as const } : {}),
       };
 
     // Thin buckets are dropped from the trend series only -- see MIN_BUCKET_SAMPLES. The floor
