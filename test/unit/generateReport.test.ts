@@ -90,6 +90,18 @@ describe("GenerateReport.run", () => {
     expect(fs.statSync(pdfPath).size).toBeGreaterThan(0);
   });
 
+  it("names the temperature baseline's source, since it is the one row not from the doc's table", async () => {
+    // The source-of-truth document gives temperature no fixed range and asks for a site-specific
+    // baseline instead; that baseline is this device's operator-set registry threshold. The
+    // recorded /devices fixture has the Algalita Pod at 50-80 °F.
+    const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
+    const result = await tool.run({ time_range: "last day", device: "Algalita" });
+
+    expect(result.temperature_baseline).toBe(
+      "50-80 °F (operator-set threshold for this device, from the device registry)",
+    );
+  });
+
   it("surfaces an error from buildReportInput rather than throwing", async () => {
     const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
     const result = await tool.run({ time_range: "since the storm", device: "Algalita" });

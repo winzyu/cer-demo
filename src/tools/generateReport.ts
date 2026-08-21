@@ -30,7 +30,7 @@ import { deterministicNarrative } from "../report/narrative";
 import { buildReportPdf } from "../report/renderPdf";
 import { overallStatus } from "../report/types";
 import { probeAccuracy } from "../report/referenceRanges";
-import type { WaterBodyType } from "../report/types";
+import type { ReportInput, WaterBodyType } from "../report/types";
 
 const log = createLogger("GenerateReport");
 
@@ -66,6 +66,30 @@ export const generateReportDefinition: ToolDefinition = {
 };
 
 const failure = (message: string): SensorToolResult => ({ error: message });
+
+/**
+ * One line describing where the temperature row's baseline came from.
+ *
+ * Surfaced for the same reason `water_body_type_source` is: temperature is the only parameter
+ * judged against a **per-device operator threshold** rather than the source-of-truth reference
+ * table, and a reader who disagrees with the range needs to know it lives in the device registry
+ * rather than in an approved document. The numbers here have already passed
+ * `operatorThresholds.ts` validation, so unlike the raw `thresholds` object this is safe to put
+ * in front of the model.
+ */
+const temperatureBaselineSummary = (report: ReportInput): string => {
+  const temp = report.parameters.find((p) => p.baseline.key === "temperature");
+  if (!temp) {
+    return "no temperature readings in this period";
+  }
+  const b = temp.baseline;
+  if (!b.hasFixedBaseline) {
+    return "not established — this device has no usable temperature threshold in the registry, "
+      + "so the row is reported for reference only";
+  }
+  return `${b.baselineMin}-${b.baselineMax} ${b.unit} (operator-set threshold for this device, `
+    + "from the device registry)";
+};
 
 export interface GenerateReportOptions {
   sensor?: QuerySensorData;
@@ -140,6 +164,9 @@ export class GenerateReport {
       water_body_type_source: report.site.waterBodyTypeSource === "device"
         ? "device registry"
         : "deployment default (registry did not specify)",
+      // The source-of-truth doc gives temperature no fixed range, so this row alone is judged
+      // against the operator's own threshold -- or against nothing at all. Either way, say so.
+      temperature_baseline: temperatureBaselineSummary(report),
       events_flagged: events.length,
       event_types: events.map((e) => e.type),
       report_url: `/api/v1/reports/${filename}`,

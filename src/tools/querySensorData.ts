@@ -401,6 +401,43 @@ export class QuerySensorData {
     return result;
   }
 
+  /**
+   * The registry row for one device, resolved by the same rules `query()` uses, or `null` when
+   * nothing resolves.
+   *
+   * The second **programmatic** entry point, added for the same reason `query()` exists: report
+   * generation needs a fact that lives on the device document rather than on the readings, and
+   * needs it typed rather than as an open record it might mis-key. Today that fact is
+   * `thresholds.minTemperature`/`maxTemperature` — the site-specific temperature baseline the
+   * source-of-truth doc tells the report to establish (`operatorThresholds.ts`).
+   *
+   * Why this and not another field on the tool result. `run()`'s result is **model-facing**:
+   * everything in it is handed to an LLM to narrate. `thresholds` is ten operator-entered
+   * numbers, several of them known junk (`BACKEND_FIELDS.md` §3c) — putting them there would
+   * invite the model to quote "your acceptable pH range is 0-100" in chat, in a service whose
+   * whole posture is refusing to state numbers it cannot stand behind. The report needs the
+   * data; the model does not. A method keeps the split honest, and it keeps validation in
+   * `src/report/`, where the rule about what makes a threshold trustworthy belongs.
+   *
+   * Cheap by construction: it reads the same TTL device cache `query()` primed moments earlier
+   * (keyed by token, since `/devices` is organization-scoped), so a report costs no extra HTTP
+   * request in the normal case.
+   *
+   * Returns `null` — not an error — for an unresolvable or ambiguous `requested`. A caller here
+   * has already produced a report's worth of readings; failing the whole document over a
+   * registry lookup would be worse than the one row it can still print as "not established".
+   */
+  async deviceRecord(requested?: string, token?: string): Promise<DeviceSummary | null> {
+    try {
+      const resolved = await this.resolveDevice(requested, token);
+      return "device" in resolved ? resolved.device : null;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      log.warn(`device registry lookup failed for "${requested ?? "(default)"}": ${message}`);
+      return null;
+    }
+  }
+
   private async execute(args: Record<string, unknown>, token?: string): Promise<SensorToolResult> {
     const metricName = typeof args.metric === "string" ? normalize(args.metric) : "";
     // "all" fetches one window and reads every metric out of it — one API call, not six, and

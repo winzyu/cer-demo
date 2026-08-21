@@ -18,6 +18,14 @@
  *    over time, per the source document's own closing instruction. That is a working
  *    interpretation carried over from the prototype, not a finalized team decision -- ◆G3 is
  *    still open in docs/timeline.md as of this port.
+ *
+ *    **The site-specific baseline the doc asks for now has a source.** It is the operator's own
+ *    `minTemperature`/`maxTemperature` on the backend's device document, read and validated by
+ *    `operatorThresholds.ts` and attached by `buildReportInput.ts`. It lives in that file rather
+ *    than this one on purpose: everything here is transcribed from two approved documents and is
+ *    identical for every pod in a tier, while a registry threshold is hand-entered, per-device,
+ *    and has to be validated before it can be believed. Do not add a temperature entry to
+ *    BASELINE_RANGES to "fill the gap" -- the gap is the source document's finding.
  * 3. Turbidity has NO numeric baseline either, for an entirely different reason: the value is
  *    not a measurement. It is a relative index derived from a raw voltage (see
  *    TURBIDITY_CLARITY_BANDS below). It is reported as a qualitative clarity band, never

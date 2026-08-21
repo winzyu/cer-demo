@@ -693,6 +693,76 @@ describe("query_sensor_data — the programmatic surface", () => {
     expect(result.value).toBeNull();
     expect(result.n_samples).toBe(0);
   });
+
+  /**
+   * `deviceRecord` is the second programmatic entry point, added so report generation can read
+   * a fact that lives on the device document rather than on the readings — today the operator's
+   * temperature thresholds (`src/report/operatorThresholds.ts`).
+   */
+  describe("deviceRecord", () => {
+    it("returns the registry row, thresholds included, for a resolvable device", async () => {
+      const { tool } = makeTool();
+      const record = await tool.deviceRecord(ALGALITA);
+
+      expect(record).not.toBeNull();
+      expect(record!.label).toBe(ALGALITA);
+      // Strings, exactly as the backend stores them — casting is the report layer's job.
+      expect(record!.thresholds).toMatchObject({ minTemperature: "50", maxTemperature: "80" });
+    });
+
+    it("resolves by the same fuzzy rules query() uses", async () => {
+      const { tool } = makeTool();
+
+      expect((await tool.deviceRecord("Algalita"))!.label).toBe(ALGALITA);
+    });
+
+    it("returns null rather than throwing for an unresolvable device", async () => {
+      // A caller here already has a report's worth of readings; failing the whole document over
+      // a registry lookup would be worse than the one row it can still print as "not established".
+      const { tool } = makeTool();
+
+      expect(await tool.deviceRecord("harbour buoy")).toBeNull();
+    });
+
+    it("returns null rather than throwing when the device API itself fails", async () => {
+      const failing = new QuerySensorData({
+        client: new DeviceApiClient({
+          baseUrl: "https://example.invalid/api/v1",
+          token: "t",
+          fetchImpl: async () => { throw new Error("connection refused"); },
+        }),
+        now: () => NOW,
+      });
+
+      expect(await failing.deviceRecord(ALGALITA)).toBeNull();
+    });
+
+    it("keeps thresholds out of the model-facing tool result", async () => {
+      // The result of run() is handed to an LLM to narrate. Several devices carry junk
+      // thresholds (maxPH=100, all-zero sets), and this service does not put numbers it cannot
+      // stand behind in front of the model. That is why the report reads them through a method
+      // instead of off the tool payload.
+      const { tool } = makeTool();
+      const result = await tool.run({
+        metric: "ph", time_range: "last day", aggregation: "mean", device: "Algalita",
+      });
+
+      expect(JSON.stringify(result)).not.toContain("minTemperature");
+      expect((result.device as Record<string, unknown>).thresholds).toBeUndefined();
+    });
+
+    it("reuses the device cache the query primed, costing no extra /devices call", async () => {
+      const { tool, calls } = makeTool();
+      await tool.query({
+        metric: "ph", timeRange: "last day", aggregation: "mean", device: "Algalita",
+      });
+      const before = calls.filter((c) => c.url.includes("/devices")).length;
+
+      await tool.deviceRecord(ALGALITA);
+
+      expect(calls.filter((c) => c.url.includes("/devices")).length).toBe(before);
+    });
+  });
 });
 
 describe("query_sensor_data — window honesty", () => {

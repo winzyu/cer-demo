@@ -12,12 +12,14 @@
  */
 
 /**
- * "N/A" is for a parameter with no fixed baseline (temperature -- see referenceRanges.ts) --
- * distinct from "Normal", which means "compared to a real baseline and found within it".
+ * "N/A" is for a parameter with no baseline at all -- distinct from "Normal", which means
+ * "compared to a real baseline and found within it". In practice this is temperature on a
+ * device whose registry thresholds are absent or fail validation (`operatorThresholds.ts`);
+ * temperature has no entry in the source-of-truth reference table by design.
  *
  * "Qualitative" is for a parameter that is not judged against a numeric range at all
  * (turbidity -- see ParameterScale below). It is deliberately NOT the same as "N/A": temperature
- * has no range *yet* and could get one per deployment, whereas turbidity's value is not on a
+ * has no range *yet* and gets one as soon as an operator sets a usable threshold, whereas turbidity's value is not on a
  * calibrated scale in the first place, so a numeric verdict would be meaningless rather than
  * merely unavailable. A "Qualitative" row carries a ClarityBand instead, and never contributes
  * an excursion or exceedance to `overallStatus`.
@@ -110,9 +112,33 @@ export interface ParameterBaseline {
    * stays a configurable placeholder, same caveat as the Python prototype carried.
    */
   exceedanceMargin: number;
-  /** Present only for parameters compared against a real range table; absent for temperature
-   * (see referenceRanges.ts) and for turbidity (never range-compared at all -- see `scale`). */
+  /** True whenever this row has a real range to be compared against — from either source below.
+   * False leaves the row at Flag "N/A" with no numbers printed. */
   hasFixedBaseline: boolean;
+  /**
+   * Where the numbers in `baselineMin`/`baselineMax` came from. Printed with them, same reason
+   * `SiteMetadata.waterBodyTypeSource` is: the two sources carry different authority and a
+   * reader must not have to guess which one a row used.
+   *
+   * - `"reference-table"` — the "Water Quality Metrics — Source of Truth" doc's baseline table
+   *   for this site's water body type (`referenceRanges.ts`). Fixed, reviewed, identical for
+   *   every device in that tier.
+   * - `"operator-threshold"` — this specific device's `minTemperature`/`maxTemperature` from the
+   *   backend's device registry, typed in by whoever deployed the pod and validated by
+   *   `operatorThresholds.ts` before it is trusted. Temperature only: it is the one parameter
+   *   the source-of-truth doc refuses to give a fixed range for, telling the reader to
+   *   "establish a site-specific baseline" instead — this is that baseline.
+   *
+   * Absent when `hasFixedBaseline` is false; there is no source for a baseline that does not
+   * exist.
+   */
+  baselineSource?: BaselineSource;
+  /**
+   * One sentence about where this row's baseline came from, or about why it has none. Printed
+   * in the parameter analysis so a reader is told which registry field to go fix rather than
+   * just that a number is absent (`operatorThresholds.ts` writes the "why not" wording).
+   */
+  baselineNote?: string;
   /**
    * Defaults to `"numeric"` when absent, which is what every parameter but turbidity is. A
    * `"relative-index"` parameter must never produce a numeric excursion or exceedance claim --
@@ -120,6 +146,8 @@ export interface ParameterBaseline {
    */
   scale?: ParameterScale;
 }
+
+export type BaselineSource = "reference-table" | "operator-threshold";
 
 /** True for a parameter whose value is monotonic but uncalibrated -- turbidity today. */
 export const isRelativeIndex = (b: Pick<ParameterBaseline, "scale">): boolean => (

@@ -3,6 +3,9 @@ import path from "path";
 import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import { QuerySensorData } from "../../src/tools/querySensorData";
 import { buildReportInput } from "../../src/report/buildReportInput";
+import { flagFor } from "../../src/report/types";
+import { probeAccuracy } from "../../src/report/referenceRanges";
+import type { DeviceSummary } from "../../src/types/device.types";
 
 /**
  * buildReportInput.ts is the only place in src/report/ that talks to QuerySensorData -- these
@@ -87,12 +90,193 @@ describe("buildReportInput", () => {
     expect(temp!.baseline.label).toContain("°F");
   });
 
-  it("gives temperature no fixed baseline, so it reports as N/A rather than a fabricated range", async () => {
-    const sensor = makeSensor();
-    const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
+  /**
+   * Temperature's baseline is the one that does not come from the source-of-truth table -- that
+   * document gives it no fixed range on purpose and asks for a site-specific baseline instead.
+   * The site-specific baseline is the operator's `minTemperature`/`maxTemperature` on the device
+   * registry document, validated by operatorThresholds.ts before it is believed.
+   *
+   * The failure being guarded against is concrete: two live devices carry all ten thresholds as
+   * "0", and a report that read them naively would print "72 °F is outside the acceptable range
+   * of 0-0" in a customer-facing PDF.
+   */
+  describe("temperature baseline", () => {
+    /** A registry row in DeviceSummary's shape, with only the fields this path reads. */
+    const registryRow = (thresholds?: Record<string, string | number>): DeviceSummary => ({
+      id: "doc-id",
+      name: "Stub Pod",
+      label: "dev:stub",
+      ...(thresholds ? { thresholds } : {}),
+      raw: {},
+    });
 
-    const temp = report!.parameters.find((p) => p.baseline.key === "temperature");
-    expect(temp!.baseline.hasFixedBaseline).toBe(false);
+    /** Minimal sensor with one temperature series and a registry row of the caller's choosing. */
+    const sensorWithThresholds = (thresholds?: Record<string, string | number>): QuerySensorData => ({
+      query: async () => ({
+        device: { name: "Stub Pod", label: "dev:stub", operating_environment: "salt-water" },
+        time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
+        metrics: {
+          temperature: {
+            value: 68,
+            n_samples: 40,
+            series: [
+              { start: "2026-08-01T00:00:00.000Z", end: "2026-08-01T12:00:00.000Z", mean: 66, min: 64, max: 68, n: 20 },
+              { start: "2026-08-02T00:00:00.000Z", end: "2026-08-02T12:00:00.000Z", mean: 70, min: 68, max: 72, n: 20 },
+            ],
+          },
+        },
+      }),
+      deviceRecord: async () => registryRow(thresholds),
+    } as unknown as QuerySensorData);
+
+    const temperatureOf = async (thresholds?: Record<string, string | number>) => {
+      const { report } = await buildReportInput(
+        sensorWithThresholds(thresholds), { timeRange: "last week" },
+      );
+      return report!.parameters.find((p) => p.baseline.key === "temperature")!;
+    };
+
+    it("uses the device's operator-set threshold, cast from the registry's strings", async () => {
+      // Values arrive as strings ("50"/"80"), which is how the backend's own seed script stores
+      // them -- the report must end up with numbers, not string-compared text.
+      const temp = await temperatureOf({ minTemperature: "50", maxTemperature: "80" });
+
+      expect(temp.baseline.hasFixedBaseline).toBe(true);
+      expect(temp.baseline.baselineMin).toBe(50);
+      expect(temp.baseline.baselineMax).toBe(80);
+      expect(typeof temp.baseline.baselineMin).toBe("number");
+      expect(typeof temp.baseline.baselineMax).toBe("number");
+    });
+
+    it("marks the baseline's provenance as the operator threshold, not the reference table", async () => {
+      const temp = await temperatureOf({ minTemperature: "50", maxTemperature: "80" });
+
+      expect(temp.baseline.baselineSource).toBe("operator-threshold");
+      expect(temp.baseline.baselineNote).toContain("Operator-set threshold for this device");
+    });
+
+    it("leaves the other reference-table parameters on the reference table", async () => {
+      // Temperature only. The reference-table metrics come from the approved source-of-truth
+      // document and an operator threshold must never displace one.
+      //
+      // Turbidity is excluded from BOTH sources: it left the reference table when it became a
+      // qualitative clarity band (referenceRanges.ts), and no device carries a turbidity
+      // threshold to put in its place -- so it carries no baselineSource at all, which is
+      // asserted separately below rather than folded into this loop.
+      const sensor = makeSensor();
+      const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
+
+      report!.parameters
+        .filter((p) => p.baseline.key !== "temperature" && p.baseline.key !== "turbidity")
+        .forEach((p) => expect(p.baseline.baselineSource).toBe("reference-table"));
+
+      const turbidity = report!.parameters.find((p) => p.baseline.key === "turbidity")!;
+      expect(turbidity.baseline.scale).toBe("relative-index");
+      expect(turbidity.baseline.hasFixedBaseline).toBe(false);
+      expect(turbidity.baseline.baselineSource).toBeUndefined();
+    });
+
+    it("reads the real recorded registry fixture, not just a hand-built row", async () => {
+      // devices.json is a recorded /devices body: the Algalita Pod rows carry
+      // minTemperature "50" / maxTemperature "80".
+      const sensor = makeSensor();
+      const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
+
+      const temp = report!.parameters.find((p) => p.baseline.key === "temperature")!;
+      expect(temp.baseline.baselineMin).toBe(50);
+      expect(temp.baseline.baselineMax).toBe(80);
+      expect(temp.baseline.baselineSource).toBe("operator-threshold");
+    });
+
+    describe("falls back to no baseline rather than a bogus range", () => {
+      const expectNoBaseline = (temp: { baseline: { hasFixedBaseline: boolean; baselineSource?: string; baselineNote?: string } }) => {
+        expect(temp.baseline.hasFixedBaseline).toBe(false);
+        expect(temp.baseline.baselineSource).toBeUndefined();
+        // Says why, so the reader knows to go fix the registry rather than the probe.
+        expect(temp.baseline.baselineNote).toContain("registry");
+      };
+
+      it("when the device carries all-zero thresholds", async () => {
+        // Trinidad Island DataPod™ and dev:860322068098448, live. min === max is the registry's
+        // unconfigured state -- treating it as a range makes every reading an exceedance.
+        const temp = await temperatureOf({
+          minTemperature: "0", maxTemperature: "0", minPH: "0", maxPH: "0",
+        });
+
+        expectNoBaseline(temp);
+        expect(temp.baseline.baselineNote).toContain("identical minimum and maximum");
+      });
+
+      it("when min is greater than max", async () => {
+        const temp = await temperatureOf({ minTemperature: "95", maxTemperature: "40" });
+
+        expectNoBaseline(temp);
+        expect(temp.baseline.baselineNote).toContain("minimum above the maximum");
+      });
+
+      it("when the values are placeholders outside the sanity rail", async () => {
+        const temp = await temperatureOf({ minTemperature: "0", maxTemperature: "100000" });
+
+        expectNoBaseline(temp);
+        expect(temp.baseline.baselineNote).toContain("natural surface water");
+      });
+
+      it("when the device has no thresholds field at all", async () => {
+        const temp = await temperatureOf(undefined);
+
+        expectNoBaseline(temp);
+        expect(temp.baseline.baselineNote).toContain("No operator thresholds are configured");
+      });
+
+      it("when the registry lookup itself comes back empty", async () => {
+        const sensor = {
+          query: (sensorWithThresholds() as unknown as { query: unknown }).query,
+          deviceRecord: async () => null,
+        } as unknown as QuerySensorData;
+        const { report } = await buildReportInput(sensor, { timeRange: "last week" });
+        const temp = report!.parameters.find((p) => p.baseline.key === "temperature")!;
+
+        expectNoBaseline(temp);
+        // A registry lookup that finds nothing must not fail the whole report -- the readings
+        // are still real and the other rows still have their reference-table baselines.
+        expect(report!.parameters.length).toBeGreaterThan(0);
+      });
+
+      it("never lets the internal 0-0 placeholder reach a printed flag", async () => {
+        // flagFor short-circuits on hasFixedBaseline, so a 72 °F reading against the placeholder
+        // zeros must read "N/A", never "Exceedance".
+        const temp = await temperatureOf({ minTemperature: "0", maxTemperature: "0" });
+
+        expect(flagFor(temp, probeAccuracy)).toBe("N/A");
+      });
+    });
+
+    it("resolves the registry row by the label the query settled on, not the caller's string", async () => {
+      // A fuzzy device name ("Algalita") must not risk attaching another pod's thresholds to
+      // these readings -- the exact dev: label the query resolved is what gets looked up.
+      const requested: Array<string | undefined> = [];
+      const sensor = {
+        query: async () => ({
+          device: { name: "Algalita Pod", label: "dev:351077454569099", operating_environment: "salt-water" },
+          time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
+          metrics: {
+            temperature: {
+              value: 68,
+              n_samples: 20,
+              series: [{ start: "2026-08-01T00:00:00.000Z", end: "2026-08-01T12:00:00.000Z", mean: 68, min: 64, max: 72, n: 20 }],
+            },
+          },
+        }),
+        deviceRecord: async (label?: string) => {
+          requested.push(label);
+          return null;
+        },
+      } as unknown as QuerySensorData;
+
+      await buildReportInput(sensor, { timeRange: "last week", device: "Algalita" });
+
+      expect(requested).toEqual(["dev:351077454569099"]);
+    });
   });
 
   it("builds turbidity as a relative index with no numeric baseline, and relabels it", async () => {
@@ -165,17 +349,25 @@ describe("buildReportInput", () => {
     expect(error).toContain("No readings found");
   });
 
-  it("threads the caller's bearer token from ToolContext into both sensor.query calls", async () => {
+  it("threads the caller's bearer token from ToolContext into every device call", async () => {
     // QuerySensorData.query() only grew a `token` parameter for this integration (see
     // querySensorData.ts's docstring on `query`) -- verify buildReportInput actually passes
     // context?.token through, not just that it compiles. A real QuerySensorData wired to a
     // constructor-supplied client (as the other tests here use) ignores the per-call token, so
     // this checks buildReportInput's own responsibility with a stub in QuerySensorData's shape.
+    //
+    // deviceRecord() is covered here too: /devices is organization-scoped, so a registry lookup
+    // made on the service token would read a different fleet than the readings came from.
     const calls: Array<{ token: string | undefined }> = [];
+    const registryCalls: Array<{ token: string | undefined }> = [];
     const stubSensor = {
       query: async (_params: unknown, token?: string) => {
         calls.push({ token });
         return { device: { name: "Stub" }, time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" }, metrics: {} };
+      },
+      deviceRecord: async (_requested?: string, token?: string) => {
+        registryCalls.push({ token });
+        return null;
       },
     } as unknown as QuerySensorData;
 
@@ -183,6 +375,7 @@ describe("buildReportInput", () => {
 
     expect(calls).toHaveLength(2); // series + median
     expect(calls.every((c) => c.token === "caller-token")).toBe(true);
+    expect(registryCalls).toEqual([{ token: "caller-token" }]);
   });
 
   /**
@@ -229,6 +422,7 @@ describe("buildReportInput", () => {
             },
           },
         }),
+      deviceRecord: async () => null,
       } as unknown as QuerySensorData;
 
       const { report } = await buildReportInput(
@@ -271,6 +465,7 @@ describe("buildReportInput", () => {
             },
           },
         }),
+      deviceRecord: async () => null,
       } as unknown as QuerySensorData;
 
       const { report } = await buildReportInput(stubSensor, { timeRange: "last month" });
@@ -313,6 +508,9 @@ describe("buildReportInput", () => {
           },
         },
       }),
+      // No registry row, so temperature falls back to "no baseline" -- these cases are about
+      // other behavior and must not depend on a threshold.
+      deviceRecord: async () => null,
     } as unknown as QuerySensorData;
 
     const { report } = await buildReportInput(stubSensor, { timeRange: "last month" });

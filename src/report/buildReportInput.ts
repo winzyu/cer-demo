@@ -39,15 +39,39 @@
  *    and no numeric baseline, so downstream it renders as a clarity band plus a direction of
  *    change instead of a pass/fail against a range. See referenceRanges.ts's
  *    TURBIDITY_BAND_EDGES for the cut points and why there is no range to compare against.
+ * 5. **Temperature's baseline comes from the device registry, not from the reference table.**
+ *    The source-of-truth doc gives temperature no fixed range on purpose ("Climate/season-
+ *    dependent"; "Establish a site-specific baseline before treating deviations as events"), so
+ *    `referenceRanges.ts` has no temperature entry and never will. The site-specific baseline it
+ *    asks for is the operator's own `thresholds.minTemperature`/`maxTemperature` on the device
+ *    document, which this function reads via `sensor.deviceRecord()` -- a second registry lookup
+ *    that costs nothing, because it hits the device cache `sensor.query()` just primed.
+ *
+ *    Those numbers are hand-entered and partly junk, so they go through
+ *    `operatorThresholds.ts` first; anything that fails validation leaves temperature exactly as
+ *    it was before this existed -- Flag "N/A", baseline "Not established". The row also carries
+ *    `baselineSource` so the PDF can distinguish an operator threshold from a reviewed reference
+ *    range, the same way `waterBodyTypeSource` marks where the water type came from.
+ *
+ *    ⚠️ Knock-on worth knowing: `events.ts` skips any parameter with `hasFixedBaseline: false`,
+ *    so on a device with a usable threshold temperature now participates in event detection for
+ *    the first time, and the signature matrix's two Thermal rules can fire. That is the behavior
+ *    those rules were written for, but an operator threshold is an *alert* line, not a
+ *    seasonally-corrected baseline -- a pod whose summer water genuinely runs above the range
+ *    someone set in spring will now raise Thermal candidates. Section 4 already frames every
+ *    event as a candidate for investigation, and the alternative (a real baseline the report
+ *    refuses to act on) is worse, but this is the row to look at first if event counts jump.
  */
 
 import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorData";
 import { SensorQueryError } from "../tools/querySensorData";
 import type { ToolContext } from "../types/tool.types";
 import type {
-  DataQualityCheck, ParameterStats, ReportInput, SiteMetadata, WaterBodyType,
+  DataQualityCheck, ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WaterBodyType,
 } from "./types";
 import { baselineFor } from "./referenceRanges";
+import { temperatureThreshold, thresholdRejectionNote } from "./operatorThresholds";
+import type { ThresholdVerdict } from "./operatorThresholds";
 
 /** Wire name -> template row label + unit. Labels match the DataPod report template. */
 const PARAMETER_META: Array<{ key: string; label: string; unit: string }> = [
@@ -281,6 +305,16 @@ export const buildReportInput = async (
   const waterBodyType = registryWaterBodyType ?? params.waterBodyTypeFallback ?? "Freshwater";
   const waterBodyTypeSource = registryWaterBodyType ? "device" as const : "default" as const;
 
+  // Temperature's site-specific baseline lives on the device document, not on the readings --
+  // see file docstring §4. Looked up by the label the query already settled on rather than by
+  // the caller's `params.device` string, so a fuzzy or ambiguous device name cannot attach one
+  // pod's thresholds to another pod's readings.
+  const resolvedLabel = typeof device.label === "string" && device.label !== ""
+    ? device.label
+    : params.device;
+  const deviceRecord = await sensor.deviceRecord(resolvedLabel, context?.token);
+  const temperatureVerdict: ThresholdVerdict = temperatureThreshold(deviceRecord?.thresholds);
+
   // Newest in-window GPS fix, carried on the readings themselves -- see file docstring §3.
   const position = asRecord(seriesResult.position);
   const latitude = typeof position.latitude === "number" ? position.latitude : undefined;
@@ -299,9 +333,76 @@ export const buildReportInput = async (
     clientName: "Not available from device registry",
   };
 
+  type Meta = typeof PARAMETER_META[number];
+
+  /** The "no baseline" row: Flag "N/A", no numbers printed, and a note saying why. */
+  const absentBaseline = (meta: Meta, note?: string): ParameterBaseline => ({
+    key: meta.key,
+    label: meta.label,
+    unit: meta.unit,
+    // Zeros are placeholders that `flagFor` never reads, because `hasFixedBaseline` short-
+    // circuits to "N/A" before any comparison happens. Nothing downstream may print them --
+    // "0-0" as a range is the fabricated figure this whole path exists to avoid.
+    baselineMin: 0,
+    baselineMax: 0,
+    exceedanceMargin: 0.15,
+    hasFixedBaseline: false,
+    ...(note ? { baselineNote: note } : {}),
+  });
+
+  /**
+   * Source-of-truth reference table, for the four metrics that have an entry in it.
+   *
+   * Turbidity is intercepted first: `BASELINE_RANGES` no longer carries a turbidity entry, so the
+   * lookup would miss regardless -- the explicit guard states the intent rather than relying on a
+   * lookup miss, and tags the row `relative-index` so nothing downstream range-compares it.
+   * See file docstring §4.
+   */
+  const fixedBaseline = (meta: Meta): ParameterBaseline => {
+    if (RELATIVE_INDEX_KEYS.has(meta.key)) {
+      return { ...absentBaseline(meta), scale: "relative-index" as const };
+    }
+    const fixed = baselineFor(meta.key, meta.label, meta.unit, waterBodyType);
+    return fixed
+      ? {
+        ...fixed,
+        exceedanceMargin: 0.15,
+        hasFixedBaseline: true,
+        baselineSource: "reference-table",
+      }
+      : absentBaseline(meta);
+  };
+
+  /**
+   * Temperature only: this device's validated operator threshold, or no baseline at all.
+   *
+   * There is deliberately no fallback to a reference range here. The source-of-truth doc's
+   * position is that no fixed temperature range is defensible for any water type, so inventing
+   * one when the registry is unconfigured would contradict the document this report cites.
+   */
+  const temperatureBaseline = (meta: Meta): ParameterBaseline => {
+    if (!temperatureVerdict.usable) {
+      return absentBaseline(meta, thresholdRejectionNote(temperatureVerdict.reason));
+    }
+    return {
+      key: meta.key,
+      label: meta.label,
+      unit: meta.unit,
+      baselineMin: temperatureVerdict.min,
+      baselineMax: temperatureVerdict.max,
+      exceedanceMargin: 0.15,
+      hasFixedBaseline: true,
+      baselineSource: "operator-threshold",
+      baselineNote: `Operator-set threshold for this device (${temperatureVerdict.min}-`
+        + `${temperatureVerdict.max} ${meta.unit}, from the device registry), not a fixed `
+        + "reference range — the source-of-truth document gives temperature none, and asks for a "
+        + "site-specific baseline instead.",
+    };
+  };
+
   type ParamResult = { parameter: ParameterStats } | { skippedLabel: string };
 
-  const buildParameter = (meta: typeof PARAMETER_META[number]): ParamResult => {
+  const buildParameter = (meta: Meta): ParamResult => {
     const seriesEntry = seriesMetrics[meta.key];
     const medianEntry = medianMetrics[meta.key];
     const hasNoReadings = !seriesEntry || !seriesEntry.series || seriesEntry.series.length === 0
@@ -320,25 +421,13 @@ export const buildReportInput = async (
     const mean = buckets.reduce((s, b) => s + b.mean * b.n, 0) / totalN;
     const median = medianEntry?.value ?? mean; // falls back to mean if the median call had no data
 
-    // Turbidity is excluded alongside temperature, for a different reason: `BASELINE_RANGES` no
-    // longer carries a turbidity entry at all, so this would return undefined regardless -- the
-    // explicit guard states the intent rather than relying on a lookup miss.
-    const relativeIndex = RELATIVE_INDEX_KEYS.has(meta.key);
-    const fixed = meta.key === "temperature" || relativeIndex
-      ? undefined
-      : baselineFor(meta.key, meta.label, meta.unit, waterBodyType);
-    const baseline = fixed
-      ? { ...fixed, exceedanceMargin: 0.15, hasFixedBaseline: true }
-      : {
-        key: meta.key,
-        label: meta.label,
-        unit: meta.unit,
-        baselineMin: 0,
-        baselineMax: 0,
-        exceedanceMargin: 0.15,
-        hasFixedBaseline: false,
-        ...(relativeIndex ? { scale: "relative-index" as const } : {}),
-      };
+    // Two sources, and which one applies is decided by the metric, not by availability:
+    // temperature is always the operator threshold (the reference table has no entry for it and
+    // will not get one), every other metric is always the reference table (an operator threshold
+    // must never quietly displace a reviewed range). See file docstring §5.
+    const baseline = meta.key === "temperature"
+      ? temperatureBaseline(meta)
+      : fixedBaseline(meta);
 
     // Thin buckets are dropped from the trend series only -- see MIN_BUCKET_SAMPLES. The floor
     // is skipped entirely when it would empty the series (a genuinely sparse pod), since a

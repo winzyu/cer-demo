@@ -7,7 +7,8 @@ import type {
  * narrative.ts is the rule-based (zero-AI-call) prose writer. Covers the two user-requested
  * fixes carried into this port -- summary as discrete bullets rather than one paragraph, and no
  * hardcoded section-number reference now that section numbering is dynamic (renderPdf.ts) -- plus
- * the new N/A branch for temperature's no-fixed-baseline case.
+ * the N/A branch for a parameter with no baseline at all, and the provenance wording that
+ * distinguishes a source-of-truth reference range from a device's operator-set threshold.
  */
 
 const noAccuracy = (): number => 0;
@@ -142,8 +143,52 @@ describe("deterministicNarrative — parameter analysis", () => {
     // so heldSteady is false and this parameter must still get a line.
     expect(parameterAnalysis.has("Temperature (°F)")).toBe(true);
     const text = parameterAnalysis.get("Temperature (°F)")!;
-    expect(text).toContain("No fixed baseline exists");
+    // Wording widened with the operator-threshold baseline: "no fixed baseline" was accurate
+    // when the reference table was the only source, but N/A now means no baseline from EITHER
+    // source -- the doc's table or this device's registry thresholds.
+    expect(text).toContain("No baseline is established");
     expect(text).not.toContain("site baseline.");
+    expect(text).not.toMatch(/\b0-0\b/); // the internal placeholder must never be printed
+  });
+
+  it("carries the baseline note onto the parameter line, so the reader is told why there is none", () => {
+    const baseline = {
+      ...noFixedBaseline("temperature", "Temperature (°F)", "°F"),
+      baselineNote: "No operator thresholds are configured for this device.",
+    };
+    const temp = param(baseline, { min: 60, max: 90, pattern: "unknown" });
+    const { parameterAnalysis } = deterministicNarrative(report([temp]), noAccuracy, "Normal");
+
+    expect(parameterAnalysis.get("Temperature (°F)")).toContain("No operator thresholds are configured");
+  });
+
+  it("calls an operator-set range a device threshold, not a site baseline", () => {
+    // The two sources carry different authority: one is a reviewed table identical for every pod
+    // in the tier, the other is one operator's number. The sentence has to say which it used.
+    const baseline: ParameterBaseline = {
+      ...fixedBaseline("temperature", "Temperature (°F)", "°F", 50, 80),
+      baselineSource: "operator-threshold",
+    };
+    // "irregular" rather than "flat": a Normal + flat parameter is held-steady and gets no
+    // analysis line at all (see heldSteady).
+    const temp = param(baseline, { min: 60, max: 70, pattern: "irregular" });
+    const { parameterAnalysis } = deterministicNarrative(report([temp]), noAccuracy, "Normal");
+
+    const text = parameterAnalysis.get("Temperature (°F)")!;
+    expect(text).toContain("operator-set threshold for this device");
+    expect(text).not.toContain("site baseline");
+  });
+
+  it("still calls a reference-table range a site baseline", () => {
+    const baseline: ParameterBaseline = {
+      ...fixedBaseline("ph", "pH", "", 7.8, 8.3),
+      baselineSource: "reference-table",
+    };
+    const { parameterAnalysis } = deterministicNarrative(
+      report([param(baseline, { pattern: "irregular" })]), noAccuracy, "Normal",
+    );
+
+    expect(parameterAnalysis.get("pH")).toContain("site baseline");
   });
 
   it("gives turbidity a clarity band and supporting context, never an in/out-of-range verdict", () => {

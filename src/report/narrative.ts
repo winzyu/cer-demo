@@ -121,15 +121,21 @@ const paramAnalysisLine = (
   const flag = flagFor(p, probeAccuracy);
   const phrase = patternPhrase[p.pattern];
 
+  // "site baseline" for a reviewed reference range; "operator-set threshold for this device" for
+  // one read off the device registry. The two carry different authority and the sentence has to
+  // say which it used -- same rule the header applies to the water body type.
+  const baselineTerm = b.baselineSource === "operator-threshold"
+    ? "operator-set threshold for this device"
+    : "site baseline";
+
   let text: string;
   if (flag === "Qualitative") {
     text = relativeIndexAnalysisLine(p);
   } else if (flag === "N/A") {
-    text = `${sentenceCase(phrase)}. No fixed baseline exists for this parameter (climate/`
-      + "season-dependent per the source-of-truth doc) -- reported for reference only, not "
-      + "flagged against a range.";
+    text = `${sentenceCase(phrase)}. No baseline is established for this parameter -- reported `
+      + "for reference only, not flagged against a range.";
   } else if (flag === "Normal") {
-    text = `${sentenceCase(phrase)}, remaining within the ${b.baselineMin}-${b.baselineMax} ${b.unit} site baseline.`;
+    text = `${sentenceCase(phrase)}, remaining within the ${b.baselineMin}-${b.baselineMax} ${b.unit} ${baselineTerm}.`;
   } else {
     const above = (flag === "Elevated" || flag === "Exceedance") && p.max > b.baselineMax;
     const direction = above ? "above" : "below";
@@ -140,11 +146,16 @@ const paramAnalysisLine = (
     const article = "aeiou".includes(flag.toLowerCase()[0]) ? "an" : "a";
     text = `${sentenceCase(phrase)}; moved ${magnitude} ${direction} baseline, recording ${article} `
       + `${flag.toLowerCase()} reading of ${extreme.toFixed(2)} ${b.unit} against the `
-      + `${b.baselineMin}-${b.baselineMax} ${b.unit} baseline.`;
+      + `${b.baselineMin}-${b.baselineMax} ${b.unit} ${baselineTerm}.`;
     const excursionTime = firstExcursionTimestamp(p);
     if (excursionTime) {
       text += ` First left baseline at ${excursionTime}.`;
     }
+  }
+  // Provenance travels with the numbers, and the "why not" travels with their absence -- see
+  // ParameterBaseline.baselineNote.
+  if (b.baselineNote) {
+    text += ` ${b.baselineNote}`;
   }
   if (p.excursionNote) {
     text += ` ${p.excursionNote}`;
@@ -157,10 +168,10 @@ export const deterministicNarrative = (
   probeAccuracy: (key: string, reading: number) => number,
   status: ReportStatus,
 ): NarrativeSections => {
-  // "N/A" is excluded alongside "Normal": it means the parameter has no fixed baseline to be
-  // outside of (temperature -- see referenceRanges.ts), not that it moved. Listing it under
-  // "moved outside the site baseline" claimed an excursion against a range the report itself
-  // prints as "Not established".
+  // "N/A" is excluded alongside "Normal": it means the parameter has no baseline to be outside
+  // of (temperature on a device with no usable registry threshold -- see operatorThresholds.ts),
+  // not that it moved. Listing it under "moved outside the site baseline" claimed an excursion
+  // against a range the report itself prints as "Not established".
   //
   // "Qualitative" is excluded for the stronger version of the same reason: turbidity is on an
   // uncalibrated relative scale with no operator range at all, so it can never be "outside the

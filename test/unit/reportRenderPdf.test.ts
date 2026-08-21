@@ -220,6 +220,65 @@ describe("buildReportPdf — smoke test", () => {
     expect(b.length).toBeGreaterThan(0);
     expect(a.equals(b)).toBe(false);
   });
+
+  it("adds a provenance footnote when a row's baseline is an operator threshold", async () => {
+    // Section 2's Site Baseline column mixes two sources of different authority: the reviewed
+    // reference table, and one device's hand-entered thresholds (temperature only). The page has
+    // to say which produced which, the same way the Water Body Type row names its source.
+    const operatorTemp: ParameterStats = {
+      baseline: {
+        key: "temperature",
+        label: "Temperature (°F)",
+        unit: "°F",
+        baselineMin: 50,
+        baselineMax: 80,
+        exceedanceMargin: 0.15,
+        hasFixedBaseline: true,
+        baselineSource: "operator-threshold",
+      },
+      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown",
+    };
+    const withFootnote: ReportInput = { site, parameters: [param, operatorTemp], events: [] };
+    const referenceOnly: ReportInput = {
+      site,
+      parameters: [
+        param,
+        { ...operatorTemp, baseline: { ...operatorTemp.baseline, baselineSource: "reference-table" } },
+      ],
+      events: [],
+    };
+
+    const [a, b] = await Promise.all([render(withFootnote), render(referenceOnly)]);
+    expect(a.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+    // The operator-sourced render carries an extra paragraph the reference-only one does not.
+    expect(a.length).toBeGreaterThan(b.length);
+  });
+
+  it("prints no baseline numbers at all for a row that has none", async () => {
+    // The 0/0 on an absent baseline are internal placeholders `flagFor` never reads. The cell
+    // must render as "Not established (site-specific)" -- printing "0-0" is the fabricated
+    // figure this whole path exists to avoid.
+    const noBaseline: ParameterStats = {
+      baseline: {
+        key: "temperature",
+        label: "Temperature (°F)",
+        unit: "°F",
+        baselineMin: 0,
+        baselineMax: 0,
+        exceedanceMargin: 0.15,
+        hasFixedBaseline: false,
+        baselineNote: "No operator thresholds are configured for this device.",
+      },
+      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown",
+    };
+    const report: ReportInput = { site, parameters: [param, noBaseline], events: [] };
+
+    const buffer = await render(report);
+    expect(buffer.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+    // No operator-sourced row, so no provenance footnote either.
+    const withoutRow: ReportInput = { site, parameters: [param], events: [] };
+    expect(buffer.length).toBeGreaterThan((await render(withoutRow)).length);
+  });
 });
 
 /**
