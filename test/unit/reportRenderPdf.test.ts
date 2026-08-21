@@ -1,6 +1,6 @@
 import PDFDocument from "pdfkit";
 import {
-  buildReportPdf, resolveSectionNumbers, drawGridTable, drawKeyValueTable, MARGIN,
+  buildReportPdf, resolveSectionNumbers, drawGridTable, drawKeyValueTable, flagCellText, MARGIN,
 } from "../../src/report/renderPdf";
 import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent, DataQualityCheck,
@@ -42,6 +42,22 @@ const param: ParameterStats = {
   baseline, min: 7.0, max: 7.5, mean: 7.2, median: 7.2, pattern: "flat",
 };
 
+/** Turbidity as buildReportInput builds it -- no numeric baseline, uncalibrated relative scale. */
+const turbidityBaseline: ParameterBaseline = {
+  key: "turbidity",
+  label: "Turbidity (Relative)",
+  unit: "",
+  baselineMin: 0,
+  baselineMax: 0,
+  exceedanceMargin: 0.15,
+  hasFixedBaseline: false,
+  scale: "relative-index",
+};
+
+const turbidityParam = (mean: number): ParameterStats => ({
+  baseline: turbidityBaseline, min: 0, max: mean * 2, mean, median: mean, pattern: "unknown",
+});
+
 const narrative: NarrativeSections = {
   summaryBullets: ["Overall status: Normal — no action required at this time."],
   parameterAnalysis: new Map(),
@@ -73,6 +89,27 @@ const dataQuality: DataQualityCheck = {
   sensorAgreementStatus: "Pass",
   sensorAgreementNotes: "n/a",
 };
+
+describe("flagCellText — the Flag column", () => {
+  it("prints the ordinary flag for a numeric parameter", () => {
+    expect(flagCellText(param, noAccuracy)).toBe("Normal");
+  });
+
+  it("prints a clarity band for turbidity instead of a range verdict", () => {
+    expect(flagCellText(turbidityParam(0), noAccuracy)).toBe("Clear"); // 0 is a real reading
+    expect(flagCellText(turbidityParam(400), noAccuracy)).toBe("Slightly turbid");
+    expect(flagCellText(turbidityParam(800), noAccuracy)).toBe("Turbid");
+    expect(flagCellText(turbidityParam(2_042), noAccuracy)).toBe("Very turbid");
+  });
+
+  it("never prints an excursion verdict for turbidity, however large the index", () => {
+    // The Flag column is where an "Exceedance" would appear; for turbidity it never can.
+    [0, 25, 456, 1_006, 2_042, 4_550].forEach((mean) => {
+      expect(["Clear", "Slightly turbid", "Turbid", "Very turbid"])
+        .toContain(flagCellText(turbidityParam(mean), noAccuracy));
+    });
+  });
+});
 
 describe("resolveSectionNumbers — dynamic section numbering", () => {
   it("numbers Recommendations as 4 when both Event Detection and Data Quality are absent", () => {
@@ -117,6 +154,20 @@ describe("buildReportPdf — smoke test", () => {
     const buffer = await render(report);
     expect(buffer.length).toBeGreaterThan(0);
     expect(buffer.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+  });
+
+  it("renders a report containing a relative-index turbidity row", async () => {
+    // The Site Baseline cell prints text rather than a numeric range for this row, and the Flag
+    // cell prints a band -- neither is a code path the numeric-only fixtures exercise.
+    const report: ReportInput = {
+      site, parameters: [param, turbidityParam(2_042)], events: [],
+    };
+    const buffer = await render(report);
+    expect(buffer.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+    // The turbidity row changes the table and adds the clarity-band footnote, so the document
+    // must differ from the numeric-only one.
+    const numericOnly = await render({ site, parameters: [param], events: [] });
+    expect(buffer.equals(numericOnly)).toBe(false);
   });
 
   it("renders without throwing when every optional section is present", async () => {

@@ -11,7 +11,8 @@
  */
 
 import type { ParameterStats, ReportInput, ReportStatus } from "./types";
-import { flagFor, heldSteady } from "./types";
+import { flagFor, heldSteady, isRelativeIndex } from "./types";
+import { clarityBandFor, TURBIDITY_SCALE_CAVEAT } from "./referenceRanges";
 
 export interface NarrativeSections {
   /** Rendered as a bulleted list, not a paragraph. */
@@ -59,6 +60,59 @@ const magnitudeWord = (extreme: number, edge: number, width: number): string => 
   return "sharply";
 };
 
+/**
+ * Direction of travel across the reporting period, from the parameter's own series.
+ *
+ * This is the piece of a relative index that stays legitimate when the absolute value does not:
+ * the conversion behind turbidity is monotonic, so "it rose" is a real observation even though
+ * "it was 1,006 NTU" is not a calibrated one. Compares the first half of the series against the
+ * second half rather than endpoint-to-endpoint, so one noisy bucket at either end cannot invent
+ * a trend.
+ *
+ * The deadband is a fraction of the period mean, because a relative index has no natural units
+ * to set an absolute one in. A period that never moves (including an all-zero one, which is a
+ * real reading for turbidity) reports "held steady" rather than a direction.
+ */
+const TREND_DEADBAND_FRACTION = 0.1;
+
+const trendWord = (p: ParameterStats): string => {
+  if (!p.series || p.series.length < 2) {
+    return "no trend available for the period";
+  }
+  const sorted = [...p.series].sort((a, b) => a[0] - b[0]);
+  const mid = Math.floor(sorted.length / 2);
+  const meanOf = (points: Array<[number, number]>): number => (
+    points.reduce((sum, [, v]) => sum + v, 0) / points.length
+  );
+  const first = meanOf(sorted.slice(0, mid));
+  const second = meanOf(sorted.slice(mid));
+  const deadband = Math.abs(p.mean) * TREND_DEADBAND_FRACTION;
+  const delta = second - first;
+  if (Math.abs(delta) <= deadband) {
+    return "held steady across the period";
+  }
+  return delta > 0 ? "rising across the period" : "falling across the period";
+};
+
+/**
+ * The analysis line for a parameter on an uncalibrated relative scale (turbidity).
+ *
+ * Says three things and no more than three: which band the period sits in, the supporting
+ * numbers so a reader can compare this report against the next one, and what the number
+ * actually is. It deliberately makes no in/out-of-range claim -- there is no range.
+ */
+const relativeIndexAnalysisLine = (p: ParameterStats): string => {
+  const band = clarityBandFor(p.mean);
+  const minBand = clarityBandFor(p.min);
+  const maxBand = clarityBandFor(p.max);
+  const spread = minBand === maxBand
+    ? ""
+    : ` The period spanned ${minBand.toLowerCase()} to ${maxBand.toLowerCase()} conditions.`;
+  return `Water clarity read as ${band} for the period (relative index mean `
+    + `${p.mean.toFixed(1)}, range ${p.min.toFixed(1)}-${p.max.toFixed(1)}), `
+    + `${trendWord(p)}.${spread} ${TURBIDITY_SCALE_CAVEAT}`;
+};
+
 const paramAnalysisLine = (
   p: ParameterStats,
   probeAccuracy: (key: string, reading: number) => number,
@@ -68,7 +122,9 @@ const paramAnalysisLine = (
   const phrase = patternPhrase[p.pattern];
 
   let text: string;
-  if (flag === "N/A") {
+  if (flag === "Qualitative") {
+    text = relativeIndexAnalysisLine(p);
+  } else if (flag === "N/A") {
     text = `${sentenceCase(phrase)}. No fixed baseline exists for this parameter (climate/`
       + "season-dependent per the source-of-truth doc) -- reported for reference only, not "
       + "flagged against a range.";
@@ -105,17 +161,30 @@ export const deterministicNarrative = (
   // outside of (temperature -- see referenceRanges.ts), not that it moved. Listing it under
   // "moved outside the site baseline" claimed an excursion against a range the report itself
   // prints as "Not established".
+  //
+  // "Qualitative" is excluded for the stronger version of the same reason: turbidity is on an
+  // uncalibrated relative scale with no operator range at all, so it can never be "outside the
+  // site baseline". It gets its own bullet below instead of being folded into an excursion list.
   const nonNormal = report.parameters
-    .filter((p) => !["Normal", "N/A"].includes(flagFor(p, probeAccuracy)));
+    .filter((p) => !["Normal", "N/A", "Qualitative"].includes(flagFor(p, probeAccuracy)));
+
+  // Turbidity always gets a summary line, whatever the band -- it is a deliberately reported
+  // metric, and silence would read as "not measured" rather than "measured and clear".
+  const clarityBullets = report.parameters
+    .filter((p) => isRelativeIndex(p.baseline))
+    .map((p) => `${p.baseline.label}: ${clarityBandFor(p.mean)} (relative index mean `
+      + `${p.mean.toFixed(1)}, ${trendWord(p)}) — provisional, uncalibrated scale with no `
+      + "operator range; reported as a band, not judged against one.");
 
   let summaryBullets: string[];
   if (report.events.length === 0 && status === "Normal") {
     summaryBullets = [
       `Overall status: ${status} — no action required at this time.`,
-      `All parameters held within the site baseline for the ${report.site.startDate} to `
+      `Every parameter with a site baseline held within it for the ${report.site.startDate} to `
         + `${report.site.endDate} reporting period.`,
       "No pollution event signatures were identified; diel and tidal rhythms tracked the site "
         + "baseline throughout.",
+      ...clarityBullets,
       "Recommendation: continue routine monitoring.",
     ];
   } else {
@@ -128,6 +197,7 @@ export const deterministicNarrative = (
       `${sentenceCase(flagged)} moved outside the site baseline for the ${report.site.startDate} `
         + `to ${report.site.endDate} reporting period.`,
       `${sentenceCase(eventClause)}.`,
+      ...clarityBullets,
       "Recommendation: see Recommendations below for the operational, investigative, and "
         + "stakeholder follow-up.",
     ];

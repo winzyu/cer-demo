@@ -273,6 +273,34 @@ least settled of the six — newer, derived rather than stored, and not yet some
 puts in a brochure. That reinforces the open question above about which range applies to a derived
 index. It changes nothing about whether the metric belongs.
 
+### 8b. The report pipeline now bands turbidity; the prompt is still pinned (2026-08-20)
+
+Acted on, in `src/report/` only. Turbidity is reported **qualitatively**: the numeric baseline is
+gone from `BASELINE_RANGES`, the parameter is built with `scale: "relative-index"`, and the report
+prints a water-clarity band (Clear / Slightly turbid / Turbid / Very turbid) plus the index value
+and direction of change, in place of a pass/fail against a range. It is never flagged in or out of
+range anywhere, and `0` remains a real reading in the bottom band. The metric stays fully in
+scope -- only its expression changed.
+
+Cut points and their justification live in `src/report/referenceRanges.ts` next to
+`TURBIDITY_BAND_EDGES`, and are marked PROVISIONAL. In short: `3.35 V x 300 = 1005` is the most
+the documented conversion can produce from a non-negative input voltage, which makes 1005 a real
+top edge rather than a round number; the lower edges (250, 600) split the observed fleet
+distribution of 1-day means (456, 555, 1006, 1385, 2042).
+
+Relative movement stays valid and is still used. `events.ts` reads turbidity's departure from its
+own period average, so the matrix's sewage and stormwater signatures keep working. What turbidity
+can no longer do is *originate* an event window -- "crossed a threshold" is the one claim an
+uncalibrated index cannot make.
+
+`src/prompt/systemPrompt.ts` is **unchanged**, deliberately. It is still the pinned N2 control
+(`RETRIEVAL_BAKEOFF.md` §4) and `test/unit/prompt.test.ts` pins it by SHA-256. The prompt change
+is recorded as deferred: `turbidityRangeText` and the `- Turbidity: ... NTU` line under
+AUTHORITATIVE NORMAL RANGES would need to be replaced with band language, after N2 finishes and
+after the operator answers whether `0-25` was ever meant to apply to the derived index. Until
+then the chat and the report describe turbidity differently -- a known, temporary inconsistency
+rather than an oversight.
+
 ---
 
 ## 9. The exploration and recording plan

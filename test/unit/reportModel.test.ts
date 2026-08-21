@@ -25,6 +25,18 @@ const baseline = (overrides: Partial<ParameterBaseline> = {}): ParameterBaseline
   ...overrides,
 });
 
+/** Turbidity as buildReportInput now constructs it: no numeric baseline, relative-index scale. */
+const turbidityBaseline = (overrides: Partial<ParameterBaseline> = {}): ParameterBaseline => baseline({
+  key: "turbidity",
+  label: "Turbidity (Relative)",
+  unit: "",
+  baselineMin: 0,
+  baselineMax: 0,
+  hasFixedBaseline: false,
+  scale: "relative-index",
+  ...overrides,
+});
+
 const param = (overrides: Partial<ParameterStats> = {}): ParameterStats => ({
   baseline: baseline(),
   min: 7.0,
@@ -67,6 +79,39 @@ describe("flagFor", () => {
     });
     expect(flagFor(noBaseline, noAccuracy)).toBe("N/A");
   });
+
+  it("returns Qualitative for a relative-index parameter, never an excursion verdict", () => {
+    // Turbidity. A reading of 2042 against the system prompt's nominal 0-25 NTU would be a 80x
+    // exceedance if the scale meant what its units say; it does not, so no numeric verdict is
+    // produced at all.
+    const turbidity = param({
+      baseline: turbidityBaseline(),
+      min: 0,
+      max: 2_042,
+      mean: 1_006,
+      median: 980,
+    });
+    expect(flagFor(turbidity, noAccuracy)).toBe("Qualitative");
+  });
+
+  it("returns Qualitative even when a stale numeric baseline is still attached", () => {
+    // Defensive: the scale check runs before any range arithmetic, so a leftover
+    // hasFixedBaseline/min/max on a relative-index parameter cannot resurrect an Exceedance.
+    const turbidity = param({
+      baseline: turbidityBaseline({ hasFixedBaseline: true, baselineMin: 5, baselineMax: 25 }),
+      min: 0,
+      max: 2_042,
+      mean: 1_006,
+    });
+    expect(flagFor(turbidity, noAccuracy)).toBe("Qualitative");
+  });
+
+  it("returns Qualitative for a flat all-zero turbidity period -- 0 is a real reading", () => {
+    const turbidity = param({
+      baseline: turbidityBaseline(), min: 0, max: 0, mean: 0, median: 0,
+    });
+    expect(flagFor(turbidity, noAccuracy)).toBe("Qualitative");
+  });
 });
 
 describe("heldSteady", () => {
@@ -83,6 +128,9 @@ describe("heldSteady", () => {
   it("is false for any non-Normal flag, no matter the pattern", () => {
     expect(heldSteady(param({ pattern: "flat" }), "Elevated")).toBe(false);
     expect(heldSteady(param({ pattern: "flat" }), "N/A")).toBe(false);
+    // Qualitative too: turbidity is a deliberately reported metric, so it always earns a line in
+    // Section 3 rather than being dropped as "held steady".
+    expect(heldSteady(param({ pattern: "flat" }), "Qualitative")).toBe(false);
   });
 });
 
@@ -124,6 +172,16 @@ describe("overallStatus", () => {
 
   it("is Watch when an event is Low or Moderate severity and nothing escalates it", () => {
     expect(overallStatus(report({ events: [event({ severity: "Moderate" })] }), noAccuracy)).toBe("Watch");
+  });
+
+  it("is Normal for a very turbid relative index alone -- a band is not an excursion", () => {
+    // The whole point of the qualitative treatment: turbidity cannot move the report status on
+    // its own, because it cannot be shown to have left a range. It still reaches the status
+    // legitimately through events.ts, which reads its relative movement instead.
+    const turbidity = param({
+      baseline: turbidityBaseline(), min: 900, max: 3_000, mean: 2_042, median: 2_000,
+    });
+    expect(overallStatus(report({ parameters: [turbidity] }), noAccuracy)).toBe("Normal");
   });
 
   it("lets an Exceedance parameter override a merely Watch-level event", () => {

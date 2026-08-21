@@ -24,6 +24,18 @@ const noFixedBaseline = (key: string, label: string, unit: string): ParameterBas
   key, label, unit, baselineMin: 0, baselineMax: 0, exceedanceMargin: 0.15, hasFixedBaseline: false,
 });
 
+/** Turbidity as buildReportInput builds it: no numeric baseline, judged only on relative movement. */
+const relativeIndexBaseline = (): ParameterBaseline => ({
+  key: "turbidity",
+  label: "Turbidity (Relative)",
+  unit: "",
+  baselineMin: 0,
+  baselineMax: 0,
+  exceedanceMargin: 0.15,
+  hasFixedBaseline: false,
+  scale: "relative-index",
+});
+
 /** A flat series at `normal` for the whole 4h window, except `abnormal` at each hour in `excursionHours`. */
 const seriesWithExcursion = (normal: number, abnormal: number, excursionHours: number[]): Array<[number, number]> => (
   [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4].map((h) => [at(h), excursionHours.includes(h) ? abnormal : normal])
@@ -68,7 +80,10 @@ describe("detectEvents — classification", () => {
     const parameters = [
       statsFor(fixedBaseline("dissolved_oxygen", "Dissolved Oxygen (mg/L)", "mg/L", 6, 11), seriesWithExcursion(9, 4, window)),
       statsFor(fixedBaseline("orp", "ORP (mV)", "mV", 200, 400), seriesWithExcursion(300, 100, window)),
-      statsFor(fixedBaseline("turbidity", "Turbidity (NTU)", "NTU", 5, 25), seriesWithExcursion(10, 40, window)),
+      // Relative index, no numeric baseline: it contributes "turbidity rose" to the sewage
+      // signature purely by departing from its own period average, which is the one claim an
+      // uncalibrated monotonic index can support.
+      statsFor(relativeIndexBaseline(), seriesWithExcursion(10, 40, window)),
       statsFor(fixedBaseline("conductivity", "Conductivity (µS/cm)", "µS/cm", 50, 1_500), seriesWithExcursion(500, 2_000, window)),
     ];
 
@@ -115,6 +130,64 @@ describe("detectEvents — pattern and baseline exclusions", () => {
       seriesWithExcursion(70, 95, window),
     );
     expect(detectEvents(report([temperature]))).toEqual([]);
+  });
+
+  it("never opens an event window on turbidity alone, however large the index swing", () => {
+    // "Crossed a threshold" is the one claim a relative index cannot make -- there is no
+    // operator turbidity range on any device to cross. A 40x swing on its own produces nothing.
+    const window = [1, 1.5, 2];
+    const turbidity = statsFor(relativeIndexBaseline(), seriesWithExcursion(50, 2_000, window));
+    expect(detectEvents(report([turbidity]))).toEqual([]);
+  });
+
+  it("describes a turbidity movement relative to its own period average, with no unit or range", () => {
+    const window = [1, 1.5, 2];
+    const parameters = [
+      statsFor(fixedBaseline("dissolved_oxygen", "Dissolved Oxygen (mg/L)", "mg/L", 6, 11), seriesWithExcursion(9, 4, window)),
+      statsFor(fixedBaseline("orp", "ORP (mV)", "mV", 200, 400), seriesWithExcursion(300, 100, window)),
+      statsFor(relativeIndexBaseline(), seriesWithExcursion(10, 40, window)),
+    ];
+
+    const events = detectEvents(report(parameters));
+    expect(events).toHaveLength(1);
+    const { parameterMovements } = events[0];
+    expect(parameterMovements).toContain("Turbidity (Relative) rose to a relative index of 40.00");
+    expect(parameterMovements).toContain("period average");
+    // No NTU claim and no baseline range anywhere in the turbidity clause.
+    expect(parameterMovements).not.toContain("NTU");
+  });
+
+  it("ignores a turbidity wobble inside the relative-movement deadband", () => {
+    // 10 -> 11 is a ~9% departure from the period average, well inside the 25% deadband, so
+    // turbidity contributes nothing and the DO/ORP-only pattern classifies as Hypoxia rather
+    // than Sewage.
+    const window = [1, 1.5, 2];
+    const parameters = [
+      statsFor(fixedBaseline("dissolved_oxygen", "Dissolved Oxygen (mg/L)", "mg/L", 6, 11), seriesWithExcursion(9, 4, window)),
+      statsFor(fixedBaseline("orp", "ORP (mV)", "mV", 200, 400), seriesWithExcursion(300, 100, window)),
+      statsFor(relativeIndexBaseline(), seriesWithExcursion(10, 11, window)),
+    ];
+
+    const events = detectEvents(report(parameters));
+    expect(events).toHaveLength(1);
+    expect(events[0].type).toBe("Hypoxia");
+    expect(events[0].parameterMovements).not.toContain("Turbidity");
+  });
+
+  it("reads a rise from an all-zero turbidity period as a real rise, not as missing data", () => {
+    // 0 is a genuine turbidity reading (a turbVolt above the clear-water reference clamps to 0),
+    // so a period average of 0 gives a deadband of 0 and any non-zero window average is a rise.
+    const window = [1, 1.5, 2];
+    const parameters = [
+      statsFor(fixedBaseline("dissolved_oxygen", "Dissolved Oxygen (mg/L)", "mg/L", 6, 11), seriesWithExcursion(9, 4, window)),
+      statsFor(fixedBaseline("orp", "ORP (mV)", "mV", 200, 400), seriesWithExcursion(300, 100, window)),
+      statsFor(fixedBaseline("conductivity", "Conductivity (µS/cm)", "µS/cm", 50, 1_500), seriesWithExcursion(500, 2_000, window)),
+      statsFor(relativeIndexBaseline(), seriesWithExcursion(0, 800, window)),
+    ];
+
+    const events = detectEvents(report(parameters));
+    expect(events).toHaveLength(1);
+    expect(events[0].type).toBe("Sewage"); // needs the turbidity rise to reach this classification
   });
 });
 

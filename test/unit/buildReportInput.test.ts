@@ -95,6 +95,32 @@ describe("buildReportInput", () => {
     expect(temp!.baseline.hasFixedBaseline).toBe(false);
   });
 
+  it("builds turbidity as a relative index with no numeric baseline, and relabels it", async () => {
+    // Turbidity stays fully in scope as a reported metric -- what changed is how it is
+    // expressed. It carries no baseline to be flagged against (there is no operator turbidity
+    // range on any registered device) and is labelled Relative, matching the dashboard, rather
+    // than claiming NTU it is not calibrated in.
+    const sensor = makeSensor();
+    const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
+
+    const turbidity = report!.parameters.find((p) => p.baseline.key === "turbidity");
+    expect(turbidity).toBeDefined();
+    expect(turbidity!.baseline.scale).toBe("relative-index");
+    expect(turbidity!.baseline.hasFixedBaseline).toBe(false);
+    expect(turbidity!.baseline.label).toBe("Turbidity (Relative)");
+    expect(turbidity!.baseline.unit).toBe("");
+    expect(turbidity!.baseline.label).not.toContain("NTU");
+  });
+
+  it("keeps every other parameter on the numeric scale", async () => {
+    const sensor = makeSensor();
+    const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
+
+    report!.parameters
+      .filter((p) => p.baseline.key !== "turbidity")
+      .forEach((p) => expect(p.baseline.scale).toBeUndefined());
+  });
+
   it("computes min/max/mean from the series buckets, and falls back mean when the median call has no data", async () => {
     const sensor = makeSensor();
     const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
