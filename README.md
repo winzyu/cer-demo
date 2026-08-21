@@ -324,6 +324,26 @@ every problem, missing secrets are warnings only.
 | `DEBUG_RETRIEVAL` | `false` | When `true`, a request's `"retrieval"` field is honoured. Required by the bake-off runner. |
 | `CORPUS_SOURCE` | `artifact` | Where `firestore-direct` reads text: `artifact` (local file, no credentials) or `firestore`. Explicit rather than auto-detected — a silent fallback would measure the wrong source. |
 
+### Query quota (`POST /api/v1/chat`)
+
+Off by default. Turning it on lets the team set the usage policy from `.env` instead of from
+code — the upstream Gilligan backend hard-codes "under 2 messages/user/week **or** under
+10/org/month **or** an active Stripe subscription **or** `superadmin`" inside
+`GilliganService.checkQuota`, and those numbers are what is still being decided. Full rationale
+and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `QUERY_QUOTA` | `false` | **The gate.** Off ⇒ nothing is counted and nothing is refused, whatever the limits below say. |
+| `QUERY_QUOTA_REQUESTS` | `unlimited` | Chat requests per key per window. `unlimited` is a **literal value**, not a big number — `none`/`off`/`-1` are rejected at boot rather than guessed. `0` refuses everything (kill switch). |
+| `QUERY_QUOTA_TOKENS` | `unlimited` | `usage.totalTokens` per key per window, summed across tool rounds. **Enforced on tokens already spent**: the request that crosses the line finishes, the next one is refused. |
+| `QUERY_QUOTA_WINDOW` | `30d` | Window length. **Unit suffix required** — `s`/`m`/`h`/`d`/`w`. Windows are fixed and epoch-aligned, so `7d` rolls over on **Thursday** 00:00 UTC and a burst of `2 x limit` is reachable across a boundary. |
+| `QUERY_QUOTA_SCOPE` | `caller` | `caller` (sha256 of the bearer token → client IP → one shared `anonymous` bucket) or `global` (whole deployment). **The bundled frontend sends no `Authorization` header and `trust proxy` is not set**, so today `caller` collapses to one IP bucket behind a proxy — `global` is the scope whose behavior matches its name until real auth lands. |
+
+> **Counters are in process memory.** They reset on every redeploy and crash, and each instance
+> enforces its own quota (`limit x instances`). Fine for deciding a policy; not a spend gate for a
+> paid tier — that needs a shared store behind the `QuotaStore` interface (`docs/SPECS.md` §4a).
+
 ### Sensor tool ([§7](#7-sensor-querying))
 
 | Variable | Default | Purpose |

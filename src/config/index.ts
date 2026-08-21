@@ -116,6 +116,65 @@ export interface ChatConfig {
   maxHistoryMessages: number;
 }
 
+/**
+ * A single quota dimension's ceiling.
+ *
+ * `"unlimited"` is a **value**, not the absence of one. The alternative — "leave it blank" or
+ * "set it to a huge number" — makes an unbounded deployment indistinguishable from a typo, and
+ * `QUERY_QUOTA_REQUESTS=99999999` still refuses somebody eventually. A literal word cannot be
+ * reached by accident and reads the same in `.env`, in `config`, and in the startup log.
+ */
+export type QuotaLimit = number | "unlimited";
+
+/**
+ * What the counters key on.
+ *
+ * - `caller` — one bucket per caller identity (see `src/quota/quotaKey.ts` for exactly what
+ *   this service can derive today, which is less than the upstream backend has).
+ * - `global` — one bucket for the whole deployment. The honest stand-in for the upstream
+ *   *organization* counter: this service cannot resolve a caller's organization without an
+ *   extra backend round-trip it does not make, and a single-tenant demo deployment is one org.
+ */
+export type QuotaScope = "caller" | "global";
+
+/** The dimensions a quota can refuse on. Both are optional and independent. */
+export type QuotaDimension = "requests" | "tokens";
+
+/**
+ * Chat query quota (`QUERY_QUOTA*`).
+ *
+ * Exists so the team can pick a policy by editing `.env` rather than by editing code — the
+ * upstream Gilligan backend hard-codes "2 messages/user/week OR 10/org/month, lifted by a Stripe
+ * subscription" inside `GilliganService.checkQuota`, and those numbers are precisely what is
+ * still being decided. This config can express that shape (`QUERY_QUOTA_REQUESTS=2`,
+ * `QUERY_QUOTA_WINDOW=7d`, `QUERY_QUOTA_SCOPE=caller`) without being limited to it, and adds the
+ * token dimension the team wants to weigh against a request count.
+ *
+ * **Defaults to fully off.** This repo is mid-experiment with pinned controls; a gate that
+ * silently began refusing requests would invalidate a capture run and look like a product bug.
+ */
+export interface QuotaConfig {
+  /**
+   * Master switch. When `false` nothing is counted and nothing is refused, whatever the limits
+   * below say — so "off" is one unambiguous state rather than an emergent property of four
+   * other variables.
+   */
+  enabled: boolean;
+  /** Chat requests allowed per key per window, or `"unlimited"`. */
+  requests: QuotaLimit;
+  /**
+   * LLM tokens (`usage.totalTokens`, summed across tool rounds) allowed per key per window, or
+   * `"unlimited"`. Enforced on *already recorded* usage, so the request that crosses the line is
+   * allowed to finish and the next one is refused — a prompt's cost is not knowable in advance.
+   */
+  tokens: QuotaLimit;
+  /** Window length in milliseconds, parsed from the suffixed form (`7d`, `24h`, `30m`). */
+  windowMs: number;
+  /** The literal string the operator wrote (`"7d"`), reused verbatim in logs and error prose. */
+  windowLabel: string;
+  scope: QuotaScope;
+}
+
 export type CorpusSourceName = "artifact" | "firestore";
 
 export interface RetrievalConfig {
@@ -142,6 +201,7 @@ export interface Config {
   deviceApi: DeviceApiConfig;
   tools: ToolsConfig;
   chat: ChatConfig;
+  quota: QuotaConfig;
   retrieval: RetrievalConfig;
   waterType: WaterType;
 }
@@ -212,12 +272,81 @@ const readEnum = <T extends string>(name: string, allowed: readonly T[], fallbac
   return raw as T;
 };
 
+/** The one spelling of "no ceiling" this service accepts, in every quota variable. */
+export const UNLIMITED = "unlimited";
+
+/**
+ * Reads a quota ceiling: either the literal `unlimited`, or a non-negative integer.
+ *
+ * Deliberately strict about what counts as unlimited. An unset or empty variable falls back to
+ * the caller's default (which is `"unlimited"` for both dimensions, so a fresh checkout is
+ * unbounded), but *anything else* that is not a non-negative integer is a hard error rather than
+ * a silent fallback: `QUERY_QUOTA_REQUESTS=none` and `=off` are things an operator will
+ * plausibly type, and quietly reading either of them as "unlimited" would hand out an unbounded
+ * deployment to somebody who was trying to bound one.
+ *
+ * `0` is accepted, and means "refuse everything" — a usable kill switch, warned about at startup
+ * because it is also what a half-finished edit looks like.
+ */
+const readLimit = (name: string, fallback: QuotaLimit): QuotaLimit => {
+  const raw = readString(name);
+  if (raw === undefined) {
+    return fallback;
+  }
+  if (raw.toLowerCase() === UNLIMITED) {
+    return UNLIMITED;
+  }
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < 0) {
+    errors.push(`${name} must be "${UNLIMITED}" or a non-negative integer (got "${raw}")`);
+    return fallback;
+  }
+  return value;
+};
+
+const DURATION_UNITS_MS: Readonly<Record<string, number>> = {
+  s: 1000,
+  m: 60_000,
+  h: 3_600_000,
+  d: 86_400_000,
+  w: 604_800_000,
+};
+
+/**
+ * Reads a `<count><unit>` duration (`30s`, `15m`, `24h`, `7d`, `4w`) into milliseconds.
+ *
+ * The unit suffix is **required**. The repo's other duration is `DEVICE_API_TIMEOUT_MS`, a bare
+ * integer, which works because 10000 is legible; a quota window is not — `604800000` is a week
+ * that nobody can check at a glance, and a bare-number window would silently accept a value in
+ * the wrong unit. Requiring the suffix makes the unit part of the value.
+ */
+const readDuration = (name: string, fallback: string): { ms: number; label: string } => {
+  const raw = readString(name, fallback) as string;
+  const match = /^(\d+)(s|m|h|d|w)$/.exec(raw.toLowerCase());
+  if (!match) {
+    errors.push(
+      `${name} must be a duration with a unit suffix, one of s/m/h/d/w (e.g. "7d") (got "${raw}")`,
+    );
+    return { ms: DURATION_UNITS_MS.d, label: fallback };
+  }
+  const ms = Number(match[1]) * DURATION_UNITS_MS[match[2]];
+  if (ms <= 0) {
+    errors.push(`${name} must be greater than zero (got "${raw}")`);
+    return { ms: DURATION_UNITS_MS.d, label: fallback };
+  }
+  return { ms, label: raw.toLowerCase() };
+};
+
 const load = (): Config => {
   const nodeEnv = readEnum<NodeEnv>(
     "NODE_ENV",
     ["development", "test", "production"],
     "development",
   );
+
+  // Parsed before the literal so the failure message names QUERY_QUOTA_WINDOW rather than
+  // surfacing as a bad `windowMs`.
+  const quotaWindow = readDuration("QUERY_QUOTA_WINDOW", "30d");
 
   const config: Config = {
     nodeEnv,
@@ -251,6 +380,14 @@ const load = (): Config => {
     },
     chat: {
       maxHistoryMessages: readInt("MAX_HISTORY_MESSAGES", 20),
+    },
+    quota: {
+      enabled: readBool("QUERY_QUOTA", false),
+      requests: readLimit("QUERY_QUOTA_REQUESTS", UNLIMITED),
+      tokens: readLimit("QUERY_QUOTA_TOKENS", UNLIMITED),
+      windowMs: quotaWindow.ms,
+      windowLabel: quotaWindow.label,
+      scope: readEnum<QuotaScope>("QUERY_QUOTA_SCOPE", ["caller", "global"], "caller"),
     },
     retrieval: {
       defaultMode: readString("DEFAULT_RETRIEVAL", "stub") as string,
@@ -306,6 +443,43 @@ const load = (): Config => {
       log.warn("REPORT_TOOL is on but DEVICE_API_BASE_URL is not set — generate_report will fail at call time.");
     }
   }
+
+  // Quota state is logged on **every** boot, in both directions. An operator's first question
+  // when a request is refused — or is not — is "what did this deployment think the limits were",
+  // and the answer must not require reading the environment of a running container.
+  if (!config.quota.enabled) {
+    log.info("QUERY_QUOTA is OFF — chat requests are unlimited and nothing is counted.");
+  } else {
+    const describe = (limit: QuotaLimit): string => (
+      limit === UNLIMITED ? UNLIMITED : String(limit)
+    );
+    log.warn(
+      `QUERY_QUOTA is ON — requests=${describe(config.quota.requests)}, `
+      + `tokens=${describe(config.quota.tokens)} per ${config.quota.windowLabel} `
+      + `per ${config.quota.scope}. Counters are in-process: they reset on redeploy and are not `
+      + "shared between instances.",
+    );
+    if (config.quota.requests === UNLIMITED && config.quota.tokens === UNLIMITED) {
+      log.warn(
+        "QUERY_QUOTA is ON but both dimensions are unlimited — nothing will ever be refused. "
+        + "Set QUERY_QUOTA_REQUESTS and/or QUERY_QUOTA_TOKENS, or set QUERY_QUOTA=false.",
+      );
+    }
+    if (config.quota.requests === 0 || config.quota.tokens === 0) {
+      log.warn("QUERY_QUOTA has a dimension set to 0 — every chat request will be refused.");
+    }
+    if (config.quota.scope === "caller") {
+      // See src/quota/quotaKey.ts. Said out loud because the failure is silent: everyone
+      // sharing one bucket looks exactly like a quota that is simply too small.
+      log.warn(
+        "QUERY_QUOTA_SCOPE=caller keys on the caller's bearer token, falling back to client IP. "
+        + "Callers that send no Authorization header (the bundled frontend sends none) share an "
+        + "IP bucket, and Express `trust proxy` is not enabled, so behind a proxy that bucket is "
+        + "the whole deployment.",
+      );
+    }
+  }
+
   if (config.isProduction && !config.firestore.projectId) {
     log.warn("FIRESTORE_PROJECT_ID is not set in production — relying on Application Default Credentials.");
   }

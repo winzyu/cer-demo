@@ -18,6 +18,11 @@ import createError from "http-errors";
  *   automatic disqualification.
  * - **There is no `device_auth_retryable`.** `device_auth_expired` is terminal by design:
  *   this service has no refresh path, so the only correct response is to surface it.
+ * - **There is no single `quota_exceeded`.** The two quota dimensions are configured
+ *   independently (`QUERY_QUOTA_REQUESTS` / `QUERY_QUOTA_TOKENS`), so which one refused is the
+ *   only actionable part of the failure — one is fixed by asking fewer questions, the other by
+ *   asking cheaper ones, and an operator raises a different variable for each. Folding them into
+ *   one code would push that distinction back into prose, which clients are told never to match.
  */
 export const ERROR_CODES = [
   /** `FIREWORKS_API_KEY` is absent, so no LLM call can be made (503). */
@@ -28,6 +33,10 @@ export const ERROR_CODES = [
   "device_timeout",
   /** The device API is 5xx, unreachable, or not configured (502/503). */
   "device_unavailable",
+  /** The caller's chat-request allowance for the current quota window is spent (429). */
+  "quota_requests_exceeded",
+  /** The caller's LLM-token allowance for the current quota window is spent (429). */
+  "quota_tokens_exceeded",
 ] as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[number];
