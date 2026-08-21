@@ -95,7 +95,14 @@ clean-earth-rag/
 │   │   └── ChatController.ts   retrieve → assemble → answer (JSON or SSE)
 │   ├── middleware/
 │   │   ├── errorHandler.ts   terminal error handler
+│   │   ├── quotaGuard.ts     429 gate on POST /chat, before SSE opens (§4a)
 │   │   └── notFound.ts       404 → http-errors NotFound
+│   ├── quota/
+│   │   ├── index.ts          composition root: the process-wide `quotaService`
+│   │   ├── QuotaService.ts   policy: check / recordRequest / recordTokens
+│   │   ├── QuotaStore.ts     storage seam + epoch-aligned window maths
+│   │   ├── InMemoryQuotaStore.ts  process-local counters (caveats in the header)
+│   │   └── quotaKey.ts       what a counter keys on, and what it cannot
 │   ├── retrieval/
 │   │   ├── index.ts          shared registry, built-in adapters registered here
 │   │   ├── RetrievalRegistry.ts  mode → adapter + selection rules
@@ -151,7 +158,7 @@ clean-earth-rag/
 │                             bakeoff.ts, cost.ts, gradePacket.ts,
 │                             exploreDeviceApi.ts
 ├── test/
-│   ├── integration/  health.test.ts, chat.test.ts, sensorChat.test.ts
+│   ├── integration/  health.test.ts, chat.test.ts, sensorChat.test.ts, quotaChat.test.ts
 │   ├── fixtures/device-api/  recorded production bodies + provenance README (§16)
 │   └── unit/         retrieval.test.ts, prompt.test.ts, llmService.test.ts,
 │                     directFeed.test.ts, ingestion.test.ts, chatValidators.test.ts,
@@ -159,7 +166,7 @@ clean-earth-rag/
 │                     cost.test.ts, firestoreCorpus.test.ts, firestoreVector.test.ts,
 │                     gradePacket.test.ts, deviceApi.test.ts, timeRange.test.ts,
 │                     aggregate.test.ts, querySensorData.test.ts,
-│                     chatOrchestrator.test.ts
+│                     chatOrchestrator.test.ts, quota.test.ts, quotaConfig.test.ts
 ├── eval/fixtures/            30 committed bake-off conversations (§12)
 ├── eval/transcripts/         captured sweeps, <pass>/<arm>/<fixture>.json (§13)
 ├── eval/grading/             blind grading packet, <pass>/{packet,context,scores.csv,KEY.json}
@@ -194,6 +201,7 @@ config = {
   deviceApi:  { baseUrl?, devToken?, timeoutMs, defaultDeviceLabel? },
   tools:      { sensorTool, maxToolRounds, rawLimit },
   chat:       { maxHistoryMessages },
+  quota:      { enabled, requests, tokens, windowMs, windowLabel, scope },
   retrieval:  { defaultMode, debug, corpusSource },
   waterType,
 }
@@ -205,6 +213,102 @@ capture run made with it on is not comparable to the three already captured. Bet
 startup log than a silently voided sweep.
 
 Environment variables and defaults are documented in `README.md` §3 and `.env.example`.
+
+Two readers exist only for the quota block (§4a) and are worth naming, because both are stricter
+than the getters above rather than more forgiving:
+
+- `readLimit` accepts the literal `unlimited` or a non-negative integer, and **fails the boot on
+  anything else**. `none`, `off`, `-1` are all plausible things to type, and reading any of them
+  as "unlimited" would hand an unbounded deployment to somebody who was trying to bound one.
+- `readDuration` requires a unit suffix (`s`/`m`/`h`/`d`/`w`). `DEVICE_API_TIMEOUT_MS` gets away
+  with a bare integer because `10000` is legible; `604800000` is not, and a unitless window
+  silently accepts a value in the wrong unit.
+
+---
+
+## 4a. Query quota (`src/quota/`, `src/middleware/quotaGuard.ts`)
+
+**Off by default, and that is a requirement rather than a default.** This repo runs pinned
+experimental controls (`SENSOR_TOOL`, `REPORT_TOOL`, the system-prompt hash); a gate that began
+refusing requests without an operator opting in would void a capture run and look like a product
+bug. `QUERY_QUOTA=false` short-circuits everything: nothing is counted, nothing is refused, and
+the limits below are ignored — "off" is one state, not something inferred from four variables.
+
+### Why it exists
+
+The upstream backend hard-codes its policy in `GilliganService.checkQuota`
+(`GET /api/v1/gilligan/check-quota`): allowed if **any** of — under 2 messages by this user in the
+last week, under 10 by their organization this month, any active Stripe subscription, or
+`role === "superadmin"`. Whatever replaces Gilligan inherits that contract, and those numbers are
+exactly what the team is still deciding. This block makes the policy an `.env` edit, and adds the
+**token** dimension so a request count and a spend cap can be compared on one deployment.
+
+| variable | default | meaning |
+|---|---|---|
+| `QUERY_QUOTA` | `false` | master switch |
+| `QUERY_QUOTA_REQUESTS` | `unlimited` | chat requests per key per window, or `unlimited`; `0` = refuse everything |
+| `QUERY_QUOTA_TOKENS` | `unlimited` | `usage.totalTokens` per key per window, summed across tool rounds |
+| `QUERY_QUOTA_WINDOW` | `30d` | window length; **unit suffix required** (`s`/`m`/`h`/`d`/`w`) |
+| `QUERY_QUOTA_SCOPE` | `caller` | `caller` (per identity) or `global` (whole deployment) |
+
+The two dimensions are independent — either, neither, or both. `requests` is evaluated first, so
+when both are simultaneously spent the refusal names the request count: it is the cheaper, more
+legible ceiling for an operator to raise. Upstream's `OR` is deliberately **not** reproduced; its
+semantics mean the effective limit is the *maximum* of its clauses, which is almost certainly not
+what anyone reading "2 messages per week" expects. Here every enabled dimension must be satisfied.
+
+### Enforcement point
+
+`quotaGuard` is middleware on `POST /api/v1/chat`, ahead of the controller. It has to be:
+`openSseStream` writes the status line before the first token, so a refusal discovered inside the
+handler could only be an in-band `error` event on a 200. As middleware, an over-quota request —
+streamed or not — is refused as a real **429 with a JSON body** and `Retry-After` set to the
+window's remaining seconds. This matches the existing rule that validation 400s arrive as JSON
+rather than as SSE.
+
+The gate **reads**; `ChatController` **writes**. Requests are counted after `parseChatRequest`
+succeeds, so a 400 does not consume an allowance, and tokens are recorded when the model reports
+usage — on the JSON path, the tool-loop streaming path, and the token-streaming path alike.
+
+**Token accounting is retrospective and cannot be otherwise.** A prompt's cost is unknown until
+the provider answers, so the ceiling is enforced against usage already recorded: the request that
+crosses the line completes, the next one is refused. The overshoot is bounded by one
+`LLM_MAX_TOKENS` answer. An absent `totalTokens` is dropped rather than counted as `0` — "not
+reported" and "free" are different facts.
+
+### What the counters key on — and what they cannot
+
+`caller` scope resolves, in order: `sha256(bearer token)` truncated to 16 hex chars → `ip:<addr>`
+→ a single shared `anonymous` bucket. Being unattributable must not buy an unlimited allowance.
+What is **not** available here, stated plainly:
+
+- **No user id.** This service authenticates nobody — `callerToken` lifts the header verbatim and
+  the device API judges it. The token is a JWT, but keying on an *unverified* `sub` would be a
+  quota any caller can reset by editing a payload. Hashing the whole token means a second bucket
+  costs a second token the device API accepts.
+- **No organization.** Resolving one needs a backend round-trip this service does not make.
+  `QUERY_QUOTA_SCOPE=global` is the honest stand-in on a single-tenant deployment; a real per-org
+  quota arrives with real auth.
+- **The bundled frontend sends no `Authorization` header** (`frontend/js/api.js`), so today
+  `caller` lands on the IP branch for every browser request.
+- **`trust proxy` is not set** in `app.ts`, so `req.ip` is the socket peer — behind Cloud Run,
+  the proxy. Until the frontend sends a token, `global` is the scope whose behavior matches its
+  name. `config` warns about all of this at startup rather than leaving it to be discovered.
+
+### Storage caveat
+
+`InMemoryQuotaStore` is a `Map` in the process: it **resets on every redeploy and crash**, it is
+**per instance** (N containers enforce N quotas, so the effective limit is `limit x N`), and
+read-then-record is not transactional, so concurrent requests from one key can overshoot by one
+or two. Windows are **fixed and epoch-aligned**, not rolling — a caller can spend a full
+allowance on each side of a boundary, and a `7d` window rolls over on Thursday 00:00 UTC rather
+than on Sunday or on the caller's first request.
+
+That is adequate for deciding which policy the team wants, and inadequate as the gate on a paid
+tier. The `QuotaStore` interface is where a Firestore or Redis implementation lands: policy
+(`QuotaService`) and counting (`QuotaStore`) are already separate, and swapping the store is a
+new file plus one line in `src/quota/index.ts`. Every method takes `nowMs` explicitly so window
+rollover is testable without faking the clock.
 
 ---
 
@@ -262,9 +366,15 @@ morgan("dev") → helmet(...) → cors() → express.json()
   | `device_auth_expired` | 401 | the device API rejected the token; terminal, never retried |
   | `device_timeout` | 504 | the device API did not answer within `DEVICE_API_TIMEOUT_MS` |
   | `device_unavailable` | 502/503 | the device API is unreachable or `DEVICE_API_BASE_URL` is unset |
+  | `quota_requests_exceeded` | 429 | this key's `QUERY_QUOTA_REQUESTS` allowance is spent (§4a) |
+  | `quota_tokens_exceeded` | 429 | this key's `QUERY_QUOTA_TOKENS` allowance is spent (§4a) |
 
-  Clients branch on `code`, never on prose: `frontend/js/podbar.js` maps these four to its badge
-  text, and falls back to `err.status` when a failure carries no code at all.
+  Clients branch on `code`, never on prose: `frontend/js/podbar.js` maps the four device/LLM codes
+  to its badge text, and falls back to `err.status` when a failure carries no code at all.
+
+  The two quota codes are separate rather than one `quota_exceeded` because the dimensions are
+  configured independently: one is fixed by asking fewer questions, the other by asking cheaper
+  ones, and an operator raises a different variable for each. Both carry a `Retry-After` header.
 
 ---
 
@@ -931,7 +1041,7 @@ turn (against 11 for `pgvector-rag`). It also wins `deep-in-manual` outright at 
 | `GET` | `/health` | `{ status, service, environment, timestamp, uptime, checks: { fireworksConfigured, firestoreProjectConfigured } }` |
 | `GET` | `/api/v1` | `{ "message": "Clean Earth RAG API v1" }` |
 | `GET` | `/api/v1/devices` | `{ devices: [{ label, name, operating_environment, last_reported }], water_type }` (§10.5) |
-| `POST` | `/api/v1/chat` | `{ answer, model, mode, citations, usage }`, or SSE when `stream: true` (§10) |
+| `POST` | `/api/v1/chat` | `{ answer, model, mode, citations, usage }`, or SSE when `stream: true` (§10). **429** with `code: quota_requests_exceeded` / `quota_tokens_exceeded` plus `Retry-After` when the quota gate refuses — as JSON, before any stream opens (§4a) |
 
 `/health` does **no** network I/O (no Firestore/Fireworks calls), so it always succeeds while the
 process is up and never blocks on external services. CORS is currently wide open (`cors()`) — fine
@@ -970,6 +1080,9 @@ branch at `fa299ef` (279), and Phase N3's tool layer added the suites marked N3 
 | **N3** `unit/aggregate.test.ts` | the six aggregations, `null`-never-`0` on an empty window, `0` kept as a real reading, faulted-sample exclusion and its count, the raw cap keeping the newest rows |
 | **N3** `unit/querySensorData.test.ts` | the tool against recorded production bodies: Celsius→Fahrenheit on `/water/period`, the OWC acronym match, duplicate-row dedupe, empty-window escalation, `/water/average` never called, the caveat notes, and every error path |
 | **N3** `unit/chatOrchestrator.test.ts` | the round loop: tool dispatch and `tool_call_id` replay, multi-call rounds, summed usage, unknown-tool and malformed-argument recovery, the forced final round, the cap fallback, and call dedupe |
+| `unit/quota.test.ts` | the quota policy in isolation: unlimited (both off and on), the count and token ceilings biting at `>=` rather than `>`, each dimension enforced while the other is unlimited, request-before-token precedence, window rollover in both directions, the `Retry-After` boundary, per-key isolation, and what `quotaKeyFor` derives — token hashed never raw, IPv4-mapped normalization, the shared `anonymous` bucket |
+| `unit/quotaConfig.test.ts` | the `QUERY_QUOTA*` parsing rules: the off-and-unlimited default, `unlimited` accepted case-insensitively, `none`/`off`/`-1` **rejected** rather than guessed, the required duration unit suffix, `org` rejected as a scope this service cannot key on, and Gilligan's free tier expressed without a code change |
+| `integration/quotaChat.test.ts` | the gate over HTTP: the disabled default answering past tiny limits, the 429 body and `Retry-After`, a validation 400 not consuming an allowance, per-token vs global bucketing, tokens counted on the streamed path, and a refused `stream: true` request arriving as JSON with no SSE frames |
 | **N3** `integration/sensorChat.test.ts` | `query_sensor_data` end to end through `POST /chat` — scripted model, recorded device bodies, real loop/client/decoder in between — and the flag-off path making one tool-free call that never touches the device API |
 
 **`unit/pgvectorRag.test.ts` is gone from the live suite** (2026-08-19). Its `fuseRrf` and

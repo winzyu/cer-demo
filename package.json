@@ -21,7 +21,9 @@
     "seed:firestore-chunks": "ts-node scripts/seedFirestoreChunks.ts",
     "cost": "ts-node scripts/cost.ts",
     "grade:packet": "ts-node scripts/gradePacket.ts",
-    "starter:prompts": "ts-node scripts/starterPrompts.ts"
+    "starter:prompts": "ts-node scripts/starterPrompts.ts",
+    "explore:fields": "bash scripts/exploreDeviceFields.sh",
+    "explore:surface": "bash scripts/exploreBackendSurface.sh"
   },
   "license": "MIT",
   "dependencies": {

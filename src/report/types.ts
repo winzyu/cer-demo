@@ -38,10 +38,12 @@ export interface SiteMetadata {
   startDate: string; // ISO date, e.g. "2026-08-01"
   endDate: string;
   reportDate: string;
-  /** Best-effort; the device registry does not guarantee these are set (see
-   * buildReportInput.ts). */
+  /** Newest in-window GPS fix. Absent when no reading in the window carried one (see
+   * buildReportInput.ts) -- never defaulted to 0,0. */
   latitude?: number;
   longitude?: number;
+  /** The API's own `best_location` label for that fix, e.g. "Seal Beach CA". */
+  locationName?: string;
   waterBodyType: WaterBodyType;
   /**
    * Where `waterBodyType` came from. Printed alongside it, because the choice selects the entire
@@ -58,11 +60,14 @@ export interface SiteMetadata {
 
 export const coordinatesStr = (site: SiteMetadata): string => {
   if (site.latitude === undefined || site.longitude === undefined) {
-    return "Not available from device registry";
+    // Wording no longer blames the registry: coordinates come off the readings, so an absent
+    // value means no reading in the window carried a GPS fix.
+    return site.locationName ?? "No GPS fix in the reporting period";
   }
   const ns = site.latitude >= 0 ? "N" : "S";
   const ew = site.longitude >= 0 ? "E" : "W";
-  return `${Math.abs(site.latitude).toFixed(4)}° ${ns}, ${Math.abs(site.longitude).toFixed(4)}° ${ew}`;
+  const fix = `${Math.abs(site.latitude).toFixed(4)}° ${ns}, ${Math.abs(site.longitude).toFixed(4)}° ${ew}`;
+  return site.locationName ? `${fix}  (${site.locationName})` : fix;
 };
 
 export interface ParameterBaseline {

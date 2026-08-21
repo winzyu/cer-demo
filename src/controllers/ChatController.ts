@@ -8,6 +8,7 @@ import type { LlmUsage } from "../services/LlmService";
 import { ChatOrchestrator } from "../services/ChatOrchestrator";
 import { buildToolRegistry } from "../tools";
 import { parseChatRequest } from "../validators/chatValidators";
+import { QuotaService, quotaKeyFor, quotaService } from "../quota";
 import { createStreamingCommentaryFilter } from "../utils/answerFormat";
 import { callerToken } from "../utils/bearerToken";
 import { resolveErrorCode } from "../utils/errors";
@@ -31,6 +32,8 @@ export class ChatController {
 
   private readonly orchestrator: ChatOrchestrator;
 
+  private readonly quota: QuotaService;
+
   constructor(
     registry: RetrievalRegistry = retrievalRegistry,
     llm: LlmService = new LlmService(),
@@ -38,10 +41,14 @@ export class ChatController {
     // first round is a single tool-free call — byte-identical to the pre-N3 request the
     // bake-off arms were captured against.
     orchestrator: ChatOrchestrator = new ChatOrchestrator(llm, buildToolRegistry()),
+    // The process-wide counters. Refusing is `quotaGuard`'s job, one layer up; the controller
+    // only records what a request spent, and every method here is inert while QUERY_QUOTA is off.
+    quota: QuotaService = quotaService,
   ) {
     this.registry = registry;
     this.llm = llm;
     this.orchestrator = orchestrator;
+    this.quota = quota;
   }
 
   postChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -49,6 +56,12 @@ export class ChatController {
       const {
         query, retrieval, stream, history, device,
       } = parseChatRequest(req.body);
+
+      // Counted here rather than in the gate: a request that failed validation never reached
+      // retrieval or the model, so charging a weekly allowance for a typo'd body would be a
+      // bill for nothing. `quotaKeyFor` is pure, so this is the same bucket `quotaGuard` read.
+      const quotaKey = quotaKeyFor(req);
+      this.quota.recordRequest(quotaKey);
 
       // Selection rules (including the DEBUG_RETRIEVAL override rule) live in the
       // registry, so this controller stays a thin HTTP wrapper.
@@ -65,7 +78,7 @@ export class ChatController {
       const token = callerToken(req);
 
       if (stream) {
-        await this.streamAnswer(res, messages, adapter.mode, chunks, device, token);
+        await this.streamAnswer(res, messages, adapter.mode, chunks, quotaKey, device, token);
         return;
       }
 
@@ -74,6 +87,10 @@ export class ChatController {
       // them would be visible to whatever request runs next. With SENSOR_TOOL off the
       // orchestrator has no tools and this is simply ignored — accepted, with no effect.
       const answer = await this.orchestrator.run(messages, { device, token });
+
+      // Retrospective by necessity — a prompt's cost is not knowable before the call. The
+      // request that crosses a token ceiling completes; the next one is refused.
+      this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
 
       res.status(200).json({
         answer: answer.content,
@@ -107,6 +124,7 @@ export class ChatController {
     messages: ReturnType<typeof buildMessages>,
     mode: string,
     chunks: Chunk[],
+    quotaKey: string,
     device?: string,
     token?: string,
   ): Promise<void> => {
@@ -143,6 +161,7 @@ export class ChatController {
           token,
           signal: controller.signal,
         });
+        this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
         writeSseEvent(res, "token", { text: answer.content });
         writeSseEvent(res, "done", {
           model: answer.model,
@@ -175,6 +194,10 @@ export class ChatController {
           usage = event.usage;
         }
       }
+
+      // Recorded whether or not the provider reported usage: `recordTokens` drops an absent
+      // count rather than charging zero, since "free" and "not reported" are different facts.
+      this.quota.recordTokens(quotaKey, usage?.totalTokens);
 
       const tail = commentary.flush();
       if (tail) {

@@ -141,8 +141,22 @@ describe("coordinatesStr", () => {
     expect(coordinatesStr(site)).toBe("33.7000° N, 118.2000° W");
   });
 
-  it("reports Not available when the registry has no coordinates, rather than fabricating one", () => {
+  it("says no GPS fix, rather than fabricating a coordinate, when none is present", () => {
+    // Wording changed with the coordinate plumbing: coordinates ride on the readings, not on
+    // the device registry, so an absent value means no reading in the window carried a fix.
     const site = {} as SiteMetadata;
-    expect(coordinatesStr(site)).toBe("Not available from device registry");
+    expect(coordinatesStr(site)).toBe("No GPS fix in the reporting period");
+  });
+
+  it("falls back to the API's location label when there is no numeric fix", () => {
+    const site = { locationName: "Seal Beach CA" } as SiteMetadata;
+    expect(coordinatesStr(site)).toBe("Seal Beach CA");
+  });
+
+  it("appends the location label to a numeric fix when both are present", () => {
+    const site = {
+      latitude: 33.7496725, longitude: -118.11551953, locationName: "Seal Beach CA",
+    } as SiteMetadata;
+    expect(coordinatesStr(site)).toBe("33.7497° N, 118.1155° W  (Seal Beach CA)");
   });
 });

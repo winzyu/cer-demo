@@ -405,6 +405,8 @@ describe("error taxonomy", () => {
       "device_auth_expired",
       "device_timeout",
       "device_unavailable",
+      "quota_requests_exceeded",
+      "quota_tokens_exceeded",
     ]);
   });
 
