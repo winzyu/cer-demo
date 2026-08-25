@@ -25,8 +25,12 @@ describe("resolveTopK", () => {
     expect(resolveTopK({})).toBe(DEFAULT_TOP_K);
   });
 
-  it("clamps to the legacy maximum", () => {
-    expect(resolveTopK({ topK: 50 })).toBe(MAX_TOP_K);
+  it("clamps a request above the ceiling", () => {
+    // Deliberately far above MAX_TOP_K, so this keeps testing clamping if the ceiling moves
+    // again. It was raised 10 -> 50 on 2026-08-24; a literal equal to the cap would have
+    // silently stopped testing anything.
+    expect(resolveTopK({ topK: 9999 })).toBe(MAX_TOP_K);
+    expect(resolveTopK({ topK: MAX_TOP_K + 1 })).toBe(MAX_TOP_K);
   });
 
   it("returns 0 for non-positive requests", () => {

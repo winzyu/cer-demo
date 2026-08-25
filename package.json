@@ -19,11 +19,14 @@
     "verify:sensor": "ts-node scripts/verifySensorTool.ts",
     "seed:firestore": "ts-node scripts/seedFirestore.ts",
     "seed:firestore-chunks": "ts-node scripts/seedFirestoreChunks.ts",
+    "embed:cache": "ts-node scripts/buildEmbeddingCache.ts",
+    "compare:vector-arms": "ts-node scripts/compareVectorArms.ts",
     "cost": "ts-node scripts/cost.ts",
     "grade:packet": "ts-node scripts/gradePacket.ts",
     "starter:prompts": "ts-node scripts/starterPrompts.ts",
     "explore:fields": "bash scripts/exploreDeviceFields.sh",
-    "explore:surface": "bash scripts/exploreBackendSurface.sh"
+    "explore:surface": "bash scripts/exploreBackendSurface.sh",
+    "retrieval:eval": "ts-node scripts/retrievalEval.ts"
   },
   "license": "MIT",
   "dependencies": {

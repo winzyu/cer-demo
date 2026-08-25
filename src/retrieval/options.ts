@@ -1,12 +1,24 @@
 import type { GetContextOptions } from "../types/retrieval.types";
 
 /**
- * Top-k bounds carried over from the legacy service so retrieval behavior stays
- * comparable across the migration (docs/migration/MIGRATION_SPEC.md §7: default 5,
- * caller-capped 1–10).
+ * Top-k bounds.
+ *
+ * `DEFAULT_TOP_K` is the legacy value (`docs/migration/MIGRATION_SPEC.md` §7) and stays until
+ * measurement says otherwise — it sets prompt size and cost on every request.
+ *
+ * **`MAX_TOP_K` was raised from 10 to 50 on 2026-08-24.** The old ceiling was legacy parity, never
+ * a measured choice, and it was silently binding: `retrieval:eval --k=20` returned exactly the
+ * k=10 numbers because `resolveTopK` clamped, which reads as "more depth does not help" when the
+ * request simply never happened. The retrieval harness needs to see the recall/precision curve
+ * past 10 to choose a default at all (`docs/RETRIEVAL_EVAL.md` §4a).
+ *
+ * This is a ceiling on what a caller may *request*, not a change to what they get by default. It
+ * does raise the worst case a `DEBUG_RETRIEVAL` caller can ask for: 50 chunks is roughly 27K
+ * prompt tokens on this corpus, so the cap is what keeps a request from being unbounded rather
+ * than what keeps it small.
  */
 export const DEFAULT_TOP_K = 5;
-export const MAX_TOP_K = 10;
+export const MAX_TOP_K = 50;
 
 /**
  * Normalizes a caller's `topK` into the supported range. Returns 0 for a non-positive
