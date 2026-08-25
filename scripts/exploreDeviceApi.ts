@@ -134,7 +134,11 @@ const main = async (): Promise<void> => {
     );
   }
 
-  let client = new DeviceApiClient();
+  // `useConfiguredToken` is the opt-in that keeps `DEVICE_API_TOKEN` usable from offline tooling
+  // after the implicit fallback was removed (DeviceApiClient.ts). There is no request behind this
+  // script, so the deployment's own credential is the only one it could possibly use -- which is
+  // exactly the case the flag exists for, and exactly what a request handler must never do.
+  let client = new DeviceApiClient({ useConfiguredToken: true });
   client.describe();
 
   if (args.email && args.password) {

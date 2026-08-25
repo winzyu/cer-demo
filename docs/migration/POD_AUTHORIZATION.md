@@ -118,10 +118,28 @@ this.token = options.token ?? config.deviceApi.devToken;
 no `Authorization` header — so an **unauthenticated** `GET /api/v1/devices` answers out of
 `DEVICE_API_TOKEN`'s fleet. Our token is superadmin, so that is all 15 pods. Ours to fix (P0).
 
+> **FIXED 2026-08-21.** The fallback is gone, not merely gated: `token` has no default, and
+> `DEVICE_API_TOKEN` is reached only by passing `useConfiguredToken: true`, which nothing behind an
+> HTTP handler does. Broader than P0 item 1 proposed — the plan said drop it *when
+> `NODE_ENV === "production"`*, which would have left the hole open on every non-production
+> deployment and made the security-relevant behaviour differ between the environment developers
+> test in and the one that matters. `requireCallerToken` refuses the route outright (401
+> `caller_token_required`), and the same requirement now applies to the sensor and report tools
+> reached through chat, which had the identical fallback. See `docs/SPECS.md` §10.5.
+
 **(2) `GET /api/v1/reports/:filename` has no authentication at all.**
 `ReportController.getReport` validates the filename against a path-traversal regex and then
 `sendFile`s. Whoever holds the URL holds the report, forever, with no revocation. A multi-pod
 report is precisely the artifact this matters for. Ours to fix (P0).
+
+> **FIXED 2026-08-21, in the proportionate subset.** A bearer token is required, and the report is
+> bound to the credential that generated it: a sha256 of that token goes in a `.pdf.owner` sidecar
+> beside the PDF, and a token that does not match gets the same 404 a missing file gets (§8b's
+> `{ owner }` field, on disk). What is deliberately **not** built: the `report_manifests` Firestore
+> record, `labels`/`chains`, `expiresAt`, and fetch-time grant re-checking. Those need `PodScope`
+> (P0 item 3), which does not exist yet — there are no grants to re-check. Revocation is therefore
+> still absent, and a re-login loses access to earlier reports because a new token hashes
+> differently. Both are recorded as accepted residual risk in `src/report/reportOwnership.ts`.
 
 **(3) UPSTREAM — `GET /water/period/:duration/:unit?device=` is not org-scoped.**
 
@@ -607,11 +625,13 @@ becomes the *only* gate — which invalidates §3b's reasoning.
 Nothing here needs another team, and three items are bugs that exist today regardless of pod
 granularity.
 
-1. **Require a caller token in production.** Drop the `?? config.deviceApi.devToken` fallback when
-   `NODE_ENV === "production"` (`src/devices/DeviceApiClient.ts`); an absent token becomes a coded
-   401, not the superadmin fleet. (§2d(1))
-2. **Authenticate `GET /api/v1/reports/:filename`** and add the `report_manifests` ownership
-   record. (§2d(2), §8b)
+1. ~~**Require a caller token in production.**~~ **DONE 2026-08-21**, and in every environment
+   rather than only production — see §2d(1). The fallback is opt-in at the call site
+   (`useConfiguredToken`) instead of environment-gated, so the offline scripts keep working and no
+   request path can reach it.
+2. ~~**Authenticate `GET /api/v1/reports/:filename`**~~ **DONE 2026-08-21** — token required, plus
+   an owner-binding sidecar. The `report_manifests` record and fetch-time grant re-checking are
+   **still open** and wait on item 3; see §2d(2).
 3. **Build `PodScope`** (`src/auth/podScope.ts`) — one resolver, per-request, `AuthorizedLabel`
    branded type, `POD_GRANTS_MODE=off|shadow|enforce` defaulting to `off`. (§4a)
 4. **Route every label through it**: `QuerySensorData.resolveDevice`, `DeviceController.toEntry`,

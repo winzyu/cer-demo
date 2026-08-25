@@ -18,8 +18,28 @@ export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>
 export interface DeviceApiClientOptions {
   /** Base URL **including** the `/api/v1` suffix. Defaults to `config.deviceApi.baseUrl`. */
   baseUrl?: string;
-  /** Bearer JWT. Defaults to `config.deviceApi.devToken`. */
+  /**
+   * Bearer JWT. **No default.** A client built without one refuses every authenticated call.
+   *
+   * This used to fall back to `config.deviceApi.devToken` implicitly, which is what turned an
+   * unauthenticated `GET /api/v1/devices` into a read of the whole fleet. See
+   * `useConfiguredToken` for the fallback's remaining, opt-in home.
+   */
   token?: string;
+  /**
+   * Opt in to `DEVICE_API_TOKEN` when no `token` is given. **Defaults to `false`.**
+   *
+   * For code that has no request behind it and never will: `scripts/exploreDeviceApi.ts`,
+   * `scripts/verifySensorTool.ts`, and offline tooling. Anything reached from an HTTP handler
+   * must leave this off and pass the caller's own token, because `DEVICE_API_TOKEN` is a
+   * deployment credential — in practice a superadmin one — and using it to answer a request
+   * answers out of *its* organization rather than the caller's.
+   *
+   * It is a constructor argument rather than an environment switch on purpose: which call sites
+   * may use the deployment's credential is a property of the code, decided once where the client
+   * is built, not a deployment setting somebody can flip back on by accident.
+   */
+  useConfiguredToken?: boolean;
   timeoutMs?: number;
   fetchImpl?: FetchLike;
 }
@@ -37,10 +57,13 @@ const asRecord = (value: unknown): Record<string, unknown> => (
  * has them. This service answers questions about a fleet it does not own, and a client that
  * cannot write cannot corrupt someone else's production device registry through a prompt.
  *
- * Auth is a bearer JWT. `config.deviceApi.devToken` is the dev fallback; a per-request caller
- * token should be passed to the constructor in production, because the backend scopes `/devices`
- * and every `/water/*` route to the **token holder's organization** — a shared service token
- * would hand every chat user the whole fleet.
+ * Auth is a bearer JWT, and there is **no implicit fallback**: a client built with no `token`
+ * has no token, and every authenticated call it makes fails closed. The backend scopes `/devices`
+ * and every `/water/*` route to the **token holder's organization**, so a shared service token
+ * would hand every chat user the whole fleet — which is exactly what the old
+ * `options.token ?? config.deviceApi.devToken` default did whenever a caller sent no
+ * `Authorization` header. `DEVICE_API_TOKEN` is still reachable, but only by explicitly passing
+ * `useConfiguredToken: true`, which no request-scoped call site does.
  */
 export class DeviceApiClient {
   private readonly baseUrl: string;
@@ -62,7 +85,10 @@ export class DeviceApiClient {
     // A trailing slash would produce `//water/last/...`, which some proxies 404 rather than
     // normalize. Cheaper to strip once here than to debug against a live deployment.
     this.baseUrl = baseUrl.replace(/\/+$/, "");
-    this.token = options.token ?? config.deviceApi.devToken;
+    // `??` on the option alone. The deployment credential is reached only when the call site
+    // asked for it by name — see `useConfiguredToken`.
+    this.token = options.token
+      ?? (options.useConfiguredToken ? config.deviceApi.devToken : undefined);
     this.timeoutMs = options.timeoutMs ?? config.deviceApi.timeoutMs;
     this.fetchImpl = options.fetchImpl ?? ((input, init) => fetch(input, init));
   }
@@ -85,7 +111,9 @@ export class DeviceApiClient {
       // has no credential would send them to a login flow that cannot fix it.
       throw codedError(
         503,
-        "No device-API token available. Set DEVICE_API_TOKEN, or pass a caller token to DeviceApiClient.",
+        "No device-API token available. Request-scoped callers must send an "
+        + "`Authorization: Bearer <token>` header; offline tooling must construct "
+        + "DeviceApiClient with `useConfiguredToken: true` and set DEVICE_API_TOKEN.",
         "device_unavailable",
       );
     }

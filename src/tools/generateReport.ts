@@ -15,12 +15,18 @@
  * cut. On Cloud Run that directory does not survive a redeploy or scale-to-zero cycle -- moving
  * it to Cloud Storage (this deployment already depends on GCP via Firestore) is a reasonable,
  * bounded follow-up once report generation is more than a demo path.
+ *
+ * Each PDF is written together with an ownership sidecar recording a hash of the caller's token,
+ * because `report_<8 hex>.pdf` on a route with no auth was a guessable capability URL onto a
+ * named customer's readings. See `report/reportOwnership.ts` -- that file carries the reasoning
+ * and the residual risk; this one just has to remember to call it.
  */
 
 import fs from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 import { config } from "../config";
+import { codedError } from "../utils/errors";
 import { createLogger } from "../utils/logger";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import { QuerySensorData, type SensorToolResult } from "./querySensorData";
@@ -28,6 +34,7 @@ import { buildReportInput } from "../report/buildReportInput";
 import { detectEvents } from "../report/events";
 import { deterministicNarrative } from "../report/narrative";
 import { buildReportPdf } from "../report/renderPdf";
+import { recordReportOwner } from "../report/reportOwnership";
 import { overallStatus } from "../report/types";
 import { probeAccuracy } from "../report/referenceRanges";
 import type { ReportInput, WaterBodyType } from "../report/types";
@@ -112,11 +119,34 @@ export class GenerateReport {
       ?? (config.waterType === "saltwater" ? "Marine" : "Freshwater");
   }
 
+  /**
+   * **Throws** `caller_token_required` when the request carried no bearer token, rather than
+   * returning it as a `{ error }` the model narrates. Same call the sensor tool makes, for the
+   * same reason (`querySensorData.ts`): the model cannot reword its way out of having no
+   * credentials, and the UI needs a machine-readable signal to send the user to a sign-in.
+   *
+   * Checked *after* `time_range`, so an obviously malformed call still gets the argument error
+   * it would have got before -- a missing header is not the interesting failure there.
+   */
   async run(args: Record<string, unknown>, context?: ToolContext): Promise<SensorToolResult> {
     const timeRange = typeof args.time_range === "string" ? args.time_range : "";
     if (!timeRange) {
       return failure("\"time_range\" is required, e.g. \"last 7 days\".");
     }
+
+    // Required up front rather than left to fail somewhere inside the sensor path: a report is
+    // *bound* to this token, so without one there is nobody to bind the finished PDF to and the
+    // document would be written and then be unreadable by anyone, forever.
+    const token = context?.token;
+    if (!token) {
+      throw codedError(
+        401,
+        "Generating a report requires the caller's own credentials. Send an "
+        + "`Authorization: Bearer <token>` header with the chat request.",
+        "caller_token_required",
+      );
+    }
+
     const device = typeof args.device === "string" ? args.device : undefined;
 
     const { report, error, skippedParameters } = await buildReportInput(
@@ -151,6 +181,10 @@ export class GenerateReport {
         reject(err instanceof Error ? err : new Error(String(err)));
       }
     });
+
+    // Written after the PDF, never before: a sidecar for a document that failed to render would
+    // outlive nothing and confuse the next reader of this directory.
+    recordReportOwner(this.reportsDir, filename, token);
 
     log.info(`Report generated: ${filename} (status=${status}, events=${events.length})`);
 

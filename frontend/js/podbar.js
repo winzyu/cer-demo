@@ -299,6 +299,14 @@ function renderUnavailable(optionText, badgeText) {
  * rather than inferred from a status that two codes share.
  */
 const FAILURE_TEXT = {
+  // Not the same thing as `device_auth_expired`, which is why it is not folded into it: this one
+  // means the request carried no credential at all, so "the device session expired" would send
+  // the reader looking for a session that never existed. Both arrive as a 401, which is exactly
+  // why the `code` branch above exists rather than a status check.
+  caller_token_required: {
+    option: "Pods unavailable",
+    badge: "Pod list unavailable · sign in to see your organization's pods",
+  },
   device_auth_expired: {
     option: "Pods unavailable",
     badge: "Pod list unavailable · the device session expired",

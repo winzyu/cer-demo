@@ -518,6 +518,55 @@ describe("query_sensor_data — errors are returned, not thrown", () => {
   });
 });
 
+describe("query_sensor_data — the caller's token is required, not optional", () => {
+  /**
+   * The bug: `DeviceApiClient` defaulted its token to `DEVICE_API_TOKEN`, so a chat request with
+   * no `Authorization` header was answered out of the deployment's own — in practice superadmin —
+   * organization instead of the caller's. No `client` override here, because the override is the
+   * one exemption (offline CLI, tests) and this is about the production path.
+   */
+  const anonymousTool = (): QuerySensorData => new QuerySensorData({ now: () => NOW });
+  const PH_QUERY = { metric: "ph", time_range: "last day", aggregation: "mean" };
+
+  it("throws a coded 401 rather than reading somebody's fleet", async () => {
+    await expect(anonymousTool().run(PH_QUERY))
+      .rejects.toMatchObject({ status: 401, code: "caller_token_required" });
+  });
+
+  it("throws instead of returning `{ error }`, unlike every other failure here", async () => {
+    // `run()` is otherwise documented as never throwing. This joins `device_auth_expired` as the
+    // exception, for its reasons plus one: the model cannot reword its way out of the request
+    // having had no credentials, and the dedupe cache keys on arguments — so a model varying the
+    // metric would re-issue the failing call every round until the cap.
+    const result = await anonymousTool()
+      .run(PH_QUERY, { token: undefined })
+      .catch((error: unknown) => error);
+
+    expect(result).toBeInstanceOf(Error);
+    expect((result as { code?: string }).code).toBe("caller_token_required");
+  });
+
+  it("throws from the programmatic path too, so a report cannot be built anonymously", async () => {
+    await expect(anonymousTool().query({
+      metric: "ph", timeRange: "last day", aggregation: "mean",
+    })).rejects.toMatchObject({ code: "caller_token_required" });
+  });
+
+  it("refuses before any HTTP call is attempted", async () => {
+    // Fails closed at the decision, not at the wire: nothing is ever sent, so nothing is ever
+    // sent as the deployment.
+    const originalFetch = global.fetch;
+    const fetchSpy = jest.fn();
+    global.fetch = fetchSpy as unknown as typeof fetch;
+    try {
+      await expect(anonymousTool().run(PH_QUERY)).rejects.toThrow();
+      expect(fetchSpy).not.toHaveBeenCalled();
+    } finally {
+      global.fetch = originalFetch;
+    }
+  });
+});
+
 describe("query_sensor_data — earliest", () => {
   it("returns the oldest reading in the window, exactly", async () => {
     const { tool } = makeTool();

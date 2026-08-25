@@ -71,10 +71,14 @@ export class ChatController {
       // Ordering is load-bearing for prompt caching — see promptBuilder.
       const messages = buildMessages({ query, chunks, history });
 
-      // The device API scopes every response to the token holder's organization, so the
-      // caller's own token has to reach the tool. Falling back to `DEVICE_API_TOKEN` — which is
-      // what happened before this was threaded — answers one user's question out of the
-      // deployment's own fleet rather than theirs.
+      // The device API scopes every response to the token holder's organization, so the caller's
+      // own token has to reach the tool. Falling back to `DEVICE_API_TOKEN` — which is what
+      // happened before this was threaded, and again inside `DeviceApiClient` until that default
+      // was removed — answers one user's question out of the deployment's own fleet.
+      //
+      // Not gated by `requireCallerToken`: chat over the document corpus reads nothing org-scoped
+      // and must keep working without a token. The org-scoped half is the tool path, which
+      // refuses on its own (`querySensorData.ts`, `generateReport.ts`) when this is undefined.
       const token = callerToken(req);
 
       if (stream) {

@@ -99,7 +99,10 @@ const run = async (): Promise<void> => {
   process.stdout.write(`WATER_TYPE: ${config.waterType}\n`);
   process.stdout.write(`SENSOR_TOOL: ${config.tools.sensorTool} (not required by this script)\n\n`);
 
-  const client = new DeviceApiClient();
+  // Offline CLI: no caller, so `DEVICE_API_TOKEN` is opted into explicitly. `QuerySensorData`
+  // takes this as its `client` override below, which is the one path through the sensor tool that
+  // does not require a per-request caller token. See DeviceApiClient.ts `useConfiguredToken`.
+  const client = new DeviceApiClient({ useConfiguredToken: true });
   const devices = dedupeByLabel(await client.listDevices());
   process.stdout.write(`Devices visible to this token: ${devices.length}\n`);
 

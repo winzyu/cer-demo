@@ -18,6 +18,10 @@ import createError from "http-errors";
  *   automatic disqualification.
  * - **There is no `device_auth_retryable`.** `device_auth_expired` is terminal by design:
  *   this service has no refresh path, so the only correct response is to surface it.
+ * - **`caller_token_required` is not `device_auth_expired`.** One says the caller sent no
+ *   credential at all, the other says they sent one the backend rejected. The UI's response
+ *   differs — sign in, versus sign in *again* — and a service that cannot verify a JWT is in no
+ *   position to guess which of the two a missing header means.
  * - **There is no single `quota_exceeded`.** The two quota dimensions are configured
  *   independently (`QUERY_QUOTA_REQUESTS` / `QUERY_QUOTA_TOKENS`), so which one refused is the
  *   only actionable part of the failure — one is fixed by asking fewer questions, the other by
@@ -29,6 +33,15 @@ export const ERROR_CODES = [
   "llm_not_configured",
   /** The device API rejected the bearer token (401). Terminal — never retried. */
   "device_auth_expired",
+  /**
+   * The request reached a device-scoped path without an `Authorization: Bearer` header (401).
+   *
+   * Distinct from `device_unavailable`: nothing is wrong with the deployment. The device API
+   * scopes every response to the token holder's organization, so a request with no token has no
+   * organization to be scoped to — and answering it out of `DEVICE_API_TOKEN` would hand the
+   * caller whichever fleet that token can see.
+   */
+  "caller_token_required",
   /** The device API did not answer inside `DEVICE_API_TIMEOUT_MS` (504). */
   "device_timeout",
   /** The device API is 5xx, unreachable, or not configured (502/503). */

@@ -35,9 +35,10 @@ export const buildToolRegistry = (
     const sensor = new QuerySensorData();
     handlers.push({
       definition: querySensorDataDefinition,
-      // `context` must be forwarded, not dropped: it carries the caller's bearer token, and the
-      // handler falls back to the deployment's `DEVICE_API_TOKEN` without it — which, on an
-      // organization-scoped API, answers out of the wrong fleet.
+      // `context` must be forwarded, not dropped: it carries the caller's bearer token, and
+      // without it the handler has no credential at all and refuses with a coded 401. It used to
+      // fall back to the deployment's `DEVICE_API_TOKEN` instead, which on an organization-scoped
+      // API answered out of the wrong fleet rather than failing.
       run: (args, context) => sensor.run(args, context),
     });
   }

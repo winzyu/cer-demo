@@ -37,6 +37,15 @@ const TEST_2 = "dev:9879347923842";
 
 const DEVICES_URL = "/api/v1/devices";
 /**
+ * Every test here sends one, because the route now refuses a request without it.
+ *
+ * `/devices` is org-scoped by whoever asks, and before `requireCallerToken` an anonymous request
+ * was answered with `DEVICE_API_TOKEN` — a superadmin credential on a real deployment — so the
+ * fleet it returned was everybody's. The refusal has its own tests below; the rest of the suite
+ * is about what an *authenticated* caller gets, so it authenticates.
+ */
+const CALLER = "Bearer caller-jwt";
+/**
  * Reloading the app under ts-jest is slow — the compile dominates, the assertions are instant —
  * so the shared-environment app is built once and only the tests that need a different
  * configuration pay for a reload.
@@ -91,6 +100,9 @@ const appOnDefaultConfig = (): Express => {
   }
   return baseApp;
 };
+
+/** `GET /api/v1/devices` as an authenticated caller — the shape every test but one wants. */
+const getDevices = (app: Express) => request(app).get(DEVICES_URL).set("Authorization", CALLER);
 
 const originalFetch = global.fetch;
 let calls: Array<{ url: string; authorization?: string }> = [];
@@ -151,8 +163,7 @@ afterAll(() => {
 describe("GET /api/v1/devices", () => {
   it("returns the pod list the picker is written against", async () => {
     const app = appOnDefaultConfig();
-    const response = await request(app)
-      .get(DEVICES_URL)
+    const response = await getDevices(app)
       .expect("Content-Type", /json/)
       .expect(200);
 
@@ -194,21 +205,21 @@ describe("GET /api/v1/devices", () => {
     // The flag governs whether the *model* gets a tool. A human picking a pod is a different
     // thing, and `SENSOR_TOOL=false` — the default — is precisely where the picker has to work.
     const app = loadAppWith({ ...BASE_ENV, SENSOR_TOOL: "false" });
-    const response = await request(app).get(DEVICES_URL).expect(200);
+    const response = await getDevices(app).expect(200);
 
     expect(response.body.devices.length).toBeGreaterThan(0);
   }, RELOAD_TIMEOUT_MS);
 
   it("reports the deployment's configured water type", async () => {
     const app = loadAppWith({ ...BASE_ENV, WATER_TYPE: "saltwater" });
-    const response = await request(app).get(DEVICES_URL).expect(200);
+    const response = await getDevices(app).expect(200);
 
     expect(response.body.water_type).toBe("saltwater");
   }, RELOAD_TIMEOUT_MS);
 
   it("collapses the three duplicate Algalita registry rows into one pod", async () => {
     const app = appOnDefaultConfig();
-    const response = await request(app).get(DEVICES_URL).expect(200);
+    const response = await getDevices(app).expect(200);
 
     const labels = response.body.devices.map((device: { label: string }) => device.label);
     expect(labels.filter((label: string) => label === ALGALITA)).toHaveLength(1);
@@ -227,8 +238,8 @@ describe("GET /api/v1/devices", () => {
 
   it("orders devices by name so the dropdown does not reshuffle between loads", async () => {
     const app = appOnDefaultConfig();
-    const first = await request(app).get(DEVICES_URL).expect(200);
-    const second = await request(app).get(DEVICES_URL).expect(200);
+    const first = await getDevices(app).expect(200);
+    const second = await getDevices(app).expect(200);
 
     const names = (body: { devices: Array<{ name: string }> }) => body.devices.map((d) => d.name);
     expect(names(first.body)).toEqual(["Algalita Pod", UNNAMED, "Old Woman Creek 2026", "Test 2"]);
@@ -237,7 +248,7 @@ describe("GET /api/v1/devices", () => {
 
   it("reports a pod with no readings as last_reported: null, not as an error", async () => {
     const app = appOnDefaultConfig();
-    const response = await request(app).get(DEVICES_URL).expect(200);
+    const response = await getDevices(app).expect(200);
 
     const silent = response.body.devices.find(
       (device: { label: string }) => device.label === TEST_2,
@@ -252,29 +263,60 @@ describe("GET /api/v1/devices", () => {
 
   it("forwards the caller's bearer token unchanged", async () => {
     const app = appOnDefaultConfig();
-    await request(app)
-      .get(DEVICES_URL)
-      .set("Authorization", "Bearer caller-jwt")
-      .expect(200);
+    await getDevices(app).expect(200);
 
     // Every upstream call, not just the first: `/devices` and `/water/*` are both org-scoped to
     // the token holder, so a fallback slipping into the fan-out would read another org's fleet.
     expect(calls.length).toBeGreaterThan(1);
-    calls.forEach((call) => expect(call.authorization).toBe("Bearer caller-jwt"));
+    calls.forEach((call) => expect(call.authorization).toBe(CALLER));
   }, RELOAD_TIMEOUT_MS);
 
-  it("falls back to DEVICE_API_TOKEN when the caller sends no bearer token", async () => {
+  it("refuses an unauthenticated request instead of answering it as the deployment", async () => {
+    // The bug, exactly: with no `Authorization` header this route used to fall through to
+    // `DEVICE_API_TOKEN` and return that token's fleet — every organization's, since the
+    // deployment credential is a superadmin one in practice (.env.example). A caller who sends
+    // no credential has no organization to be scoped to, so there is no correct list to return.
     const app = appOnDefaultConfig();
-    await request(app).get(DEVICES_URL).expect(200);
+    const response = await request(app).get(DEVICES_URL).expect(401);
 
-    calls.forEach((call) => expect(call.authorization).toBe("Bearer dev-fallback-token"));
+    expect(response.body.code).toBe("caller_token_required");
+    expect(response.body.error).toBe(response.body.message);
+    expect(response.body).not.toHaveProperty("status");
+    expect(response.body).not.toHaveProperty("devices");
+    // Refused before any upstream call — the deployment's token never reaches the wire.
+    expect(calls).toHaveLength(0);
+  }, RELOAD_TIMEOUT_MS);
+
+  it("challenges with WWW-Authenticate, so a generic client knows what to retry with", async () => {
+    const app = appOnDefaultConfig();
+    const response = await request(app).get(DEVICES_URL).expect(401);
+
+    expect(response.headers["www-authenticate"]).toBe("Bearer");
+  }, RELOAD_TIMEOUT_MS);
+
+  it("refuses a malformed Authorization header rather than falling back", async () => {
+    // `callerToken` returns undefined for anything that is not `Bearer <something>`, and the
+    // whole point of that `undefined` used to be "so the device client falls back". It no longer
+    // does, and a header of `Bearer ` must not be a way back to the deployment's fleet.
+    const app = appOnDefaultConfig();
+    const response = await request(app)
+      .get(DEVICES_URL)
+      .set("Authorization", "Bearer ")
+      .expect(401);
+
+    expect(response.body.code).toBe("caller_token_required");
+    expect(calls).toHaveLength(0);
   }, RELOAD_TIMEOUT_MS);
 
   it("surfaces an expired token as device_auth_expired and never retries it", async () => {
     global.fetch = recordingFetch(401);
 
     const app = appOnDefaultConfig();
-    const response = await request(app).get(DEVICES_URL).expect(401);
+    // Sent *with* a token, which is what separates this 401 from the one above: the caller
+    // presented a credential and the backend rejected it. `caller_token_required` means they
+    // presented none. Both are 401s and the UI acts on them differently, which is why the codes
+    // are distinct (`errors.ts`).
+    const response = await getDevices(app).expect(401);
 
     expect(response.body.code).toBe("device_auth_expired");
     expect(response.body.error).toMatch(/rejected the token/i);
@@ -289,7 +331,7 @@ describe("GET /api/v1/devices", () => {
     global.fetch = hangingFetch;
 
     const app = loadAppWith({ ...BASE_ENV, DEVICE_API_TIMEOUT_MS: "25" });
-    const response = await request(app).get(DEVICES_URL).expect(504);
+    const response = await getDevices(app).expect(504);
 
     expect(response.body.code).toBe("device_timeout");
     expect(response.body.error).toMatch(/timed out after 25ms/);
@@ -298,7 +340,7 @@ describe("GET /api/v1/devices", () => {
 
   it("returns a coded 503 when DEVICE_API_BASE_URL is unset, never an empty list", async () => {
     const app = loadAppWith({ DEVICE_API_TOKEN: "dev-fallback-token" });
-    const response = await request(app).get(DEVICES_URL).expect(503);
+    const response = await getDevices(app).expect(503);
 
     expect(response.body.code).toBe("device_unavailable");
     expect(response.body.error).toMatch(/DEVICE_API_BASE_URL/);

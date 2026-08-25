@@ -4,6 +4,7 @@ import path from "path";
 import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import { QuerySensorData } from "../../src/tools/querySensorData";
 import { GenerateReport, generateReportDefinition } from "../../src/tools/generateReport";
+import { isReportOwner } from "../../src/report/reportOwnership";
 
 /**
  * generate_report end to end: builds a real PDF on disk from recorded device-api fixtures (same
@@ -46,6 +47,13 @@ const makeSensor = (): QuerySensorData => {
   });
 };
 
+/**
+ * The caller's bearer token, which a report is now *bound* to: `reportOwnership.ts` records a
+ * hash of it beside the PDF so `GET /api/v1/reports/:filename` can refuse a token that did not
+ * generate the document. Without it `run()` throws rather than writing a PDF nobody could read.
+ */
+const CALLER = { token: "caller-jwt" };
+
 let tmpDir: string;
 
 beforeEach(() => {
@@ -72,7 +80,7 @@ describe("GenerateReport.run", () => {
 
   it("produces a PDF on disk and returns a status, event count, and report_url -- no raw numbers", async () => {
     const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
-    const result = await tool.run({ time_range: "last day", device: "Algalita" });
+    const result = await tool.run({ time_range: "last day", device: "Algalita" }, CALLER);
 
     expect(result.error).toBeUndefined();
     expect(["Normal", "Watch", "Action Required"]).toContain(result.status);
@@ -90,12 +98,44 @@ describe("GenerateReport.run", () => {
     expect(fs.statSync(pdfPath).size).toBeGreaterThan(0);
   });
 
+  it("binds the PDF to the token that generated it, and to no other", async () => {
+    // The filename is eight hex characters and the route has no expiry, so without this the URL
+    // is a guessable capability onto a named customer's readings. The bound token is the only
+    // identity this service has: it cannot verify a JWT, so it cannot bind to a user id.
+    const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
+    const result = await tool.run({ time_range: "last day", device: "Algalita" }, CALLER);
+    const filename = (result.report_url as string).split("/").pop()!;
+
+    expect(isReportOwner(tmpDir, filename, CALLER.token)).toBe(true);
+    // A different organization's perfectly valid token is still not this report's owner.
+    expect(isReportOwner(tmpDir, filename, "some-other-orgs-jwt")).toBe(false);
+  });
+
+  it("fails closed for a report that has no ownership record at all", () => {
+    // A PDF written before this existed, or one whose sidecar was removed. "Cannot establish who
+    // this belongs to" must not read as "anyone".
+    fs.writeFileSync(path.join(tmpDir, "report_deadbeef.pdf"), "%PDF-1.4");
+
+    expect(isReportOwner(tmpDir, "report_deadbeef.pdf", CALLER.token)).toBe(false);
+  });
+
+  it("refuses to generate a report for a caller who sent no token", async () => {
+    // Thrown, not returned as `{ error }`: the model cannot reword its way out of the request
+    // having had no credentials. And a report generated anonymously would have nobody to bind
+    // to, so it would be written and then be unreadable by everyone, forever.
+    const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
+
+    await expect(tool.run({ time_range: "last day", device: "Algalita" }))
+      .rejects.toMatchObject({ status: 401, code: "caller_token_required" });
+    expect(fs.readdirSync(tmpDir)).toHaveLength(0);
+  });
+
   it("names the temperature baseline's source, since it is the one row not from the doc's table", async () => {
     // The source-of-truth document gives temperature no fixed range and asks for a site-specific
     // baseline instead; that baseline is this device's operator-set registry threshold. The
     // recorded /devices fixture has the Algalita Pod at 50-80 °F.
     const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
-    const result = await tool.run({ time_range: "last day", device: "Algalita" });
+    const result = await tool.run({ time_range: "last day", device: "Algalita" }, CALLER);
 
     expect(result.temperature_baseline).toBe(
       "50-80 °F (operator-set threshold for this device, from the device registry)",
@@ -104,7 +144,7 @@ describe("GenerateReport.run", () => {
 
   it("surfaces an error from buildReportInput rather than throwing", async () => {
     const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
-    const result = await tool.run({ time_range: "since the storm", device: "Algalita" });
+    const result = await tool.run({ time_range: "since the storm", device: "Algalita" }, CALLER);
 
     expect(result.error).toBeDefined();
     expect(fs.readdirSync(tmpDir)).toHaveLength(0); // no partial PDF left behind on failure

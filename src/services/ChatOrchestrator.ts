@@ -49,9 +49,11 @@ export interface RunOptions {
   /**
    * The caller's bearer token, forwarded to every tool call this run makes.
    *
-   * Without it the sensor tool authenticates with the deployment's `DEVICE_API_TOKEN`, and
-   * because the device API is organization-scoped that means one user's question is answered
-   * out of another organization's fleet.
+   * Without it the sensor and report tools refuse with a coded `caller_token_required` 401, which
+   * propagates out of `run()` and ends the request. That is the intended outcome: the device API
+   * is organization-scoped, so there is no fleet a question from an unidentified caller could
+   * correctly be answered from. It used to authenticate with the deployment's `DEVICE_API_TOKEN`
+   * instead — answering one user's question out of another organization's fleet.
    */
   token?: string;
 

@@ -166,7 +166,7 @@ Required for all sensor readings. **Both values go in `.env`** (git-ignored) —
 | variable | value |
 |---|---|
 | `DEVICE_API_BASE_URL` | Backend base URL **including `/api/v1`**. Production: `https://cer-api-98242557946.us-central1.run.app/api/v1`. Local: `http://localhost:5001/api/v1`. |
-| `DEVICE_API_TOKEN` | **Dev only.** A bearer JWT. |
+| `DEVICE_API_TOKEN` | **Offline tooling only.** A bearer JWT. No HTTP request can reach it — see the note below. |
 
 Getting a token:
 
@@ -184,8 +184,15 @@ Getting a token:
 > ⚠️ **Tokens never expire** and are **org-scoped**. A leaked one is valid forever; a wrong-org one
 > returns a short, plausible device list rather than an error.
 >
-> `DEVICE_API_TOKEN` is a development shortcut. In production the service forwards the *caller's*
-> JWT, so a chat user only ever sees their own devices.
+> `DEVICE_API_TOKEN` is reachable **only** from `npm run explore:devices` and
+> `npm run verify:sensor`, which pass `useConfiguredToken: true` to `DeviceApiClient`. Every
+> request-scoped path forwards the *caller's* JWT and refuses without one (401
+> `caller_token_required`), so a chat user only ever sees their own devices.
+>
+> ⚠️ This used to be an implicit default rather than an opt-in, which made an unauthenticated
+> `GET /api/v1/devices` — or an unauthenticated chat question that reached the sensor tool —
+> answer out of this token's fleet. Since it is a superadmin token in practice, that was every
+> organization's fleet. Fixed 2026-08-21; see [`docs/SPECS.md`](docs/SPECS.md) §10.5.
 
 ---
 
@@ -366,7 +373,7 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | Variable | Default | Purpose |
 |---|---|---|
 | `DEVICE_API_BASE_URL` | *(unset)* | Backend base URL **including `/api/v1`**. |
-| `DEVICE_API_TOKEN` | *(unset)* | Dev-only bearer JWT. |
+| `DEVICE_API_TOKEN` | *(unset)* | Bearer JWT for offline tooling only (`explore:devices`, `verify:sensor`). Never used to answer a request — see [§2c](#2c-clean-earth-device-api). |
 | `DEVICE_API_TIMEOUT_MS` | `10000` | Request timeout. Node's default is effectively none. |
 | `CER_EMAIL` / `CER_PASSWORD` | *(unset)* | Optional — lets `npm run explore:devices` mint a token for the run instead of storing one. |
 
@@ -714,9 +721,9 @@ docs/                   # HANDOFF.md (start here), SPECS.md, timeline.md, RETRIE
 | `GET` | `/` | service banner |
 | `GET` | `/health` | liveness + config-presence checks (no external I/O) |
 | `GET` | `/api/v1` | API v1 banner |
-| `GET` | `/api/v1/devices` | pod list for the UI selector (read-only, forwards the caller's token) |
-| `GET` | `/api/v1/reports/:filename` | a generated report PDF. **Not gated on `REPORT_TOOL`** — a PDF already written stays fetchable if the flag is later turned off. ⚠️ **No authentication on this branch**; the fix is tracked in [`docs/migration/SECURITY_FINDINGS.md`](docs/migration/SECURITY_FINDINGS.md) §6b. |
-| `POST` | `/api/v1/chat` | JSON, or SSE when `"stream": true` |
+| `GET` | `/api/v1/devices` | pod list for the UI selector (read-only, forwards the caller's token). **Requires `Authorization: Bearer`** |
+| `GET` | `/api/v1/reports/:filename` | a PDF `generate_report` wrote. **Requires `Authorization: Bearer`**, and only the token that generated the report can fetch it. **Not gated on `REPORT_TOOL`** — a PDF already written stays fetchable if the flag is later turned off. |
+| `POST` | `/api/v1/chat` | JSON, or SSE when `"stream": true`. Not itself gated, but the sensor and report tools require the caller's token |
 
 **Request:** `{ query, retrieval?, stream?, history?, device? }`. `query` required; `retrieval`
 honoured only when `DEBUG_RETRIEVAL=true`; `device` names the pod to read when the model does not

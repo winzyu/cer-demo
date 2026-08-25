@@ -40,7 +40,16 @@ jest.mock("../../src/services/LlmService", () => ({
 }));
 
 const CHAT = "/api/v1/chat";
+/**
+ * The sensor tool reads an organization's own pods, so every request that expects it to work has
+ * to say whose. Before `querySensorData` required this, a chat request with no `Authorization`
+ * header was answered out of `DEVICE_API_TOKEN` — the deployment's fleet, not the caller's.
+ */
+const CALLER = "Bearer caller-jwt";
 const RELOAD_TIMEOUT_MS = 60_000;
+
+/** `POST /api/v1/chat` as an authenticated caller. */
+const chat = (app: Express) => request(app).post(CHAT).set("Authorization", CALLER);
 
 const loadAppWith = (env: Record<string, string>): Express => {
   jest.resetModules();
@@ -123,8 +132,7 @@ describe("POST /api/v1/chat with the sensor tool enabled", () => {
     ];
 
     const app = loadAppWith(SENSOR_ENV);
-    const response = await request(app)
-      .post(CHAT)
+    const response = await chat(app)
       .send({ query: "What's our current DO reading?" })
       .expect(200);
 
@@ -155,7 +163,7 @@ describe("POST /api/v1/chat with the sensor tool enabled", () => {
     script = [{ content: "Answered from context.", toolCalls: [] }];
 
     const app = loadAppWith(SENSOR_ENV);
-    await request(app).post(CHAT).send({ query: "what is ORP?" }).expect(200);
+    await chat(app).send({ query: "what is ORP?" }).expect(200);
 
     const tools = sent[0].tools as Array<{ function: { name: string } }>;
     expect(tools.map((tool) => tool.function.name)).toEqual(["query_sensor_data"]);
@@ -181,7 +189,7 @@ describe("POST /api/v1/chat with the sensor tool enabled", () => {
     ];
 
     const app = loadAppWith(SENSOR_ENV);
-    await request(app).post(CHAT).send({ query: "average pH yesterday?" }).expect(200);
+    await chat(app).send({ query: "average pH yesterday?" }).expect(200);
 
     expect(sent).toHaveLength(2);
     const second = sent[1].messages as Array<{ role: string; tool_call_id?: string }>;
@@ -207,7 +215,7 @@ describe("POST /api/v1/chat with the sensor tool enabled", () => {
     ];
 
     const app = loadAppWith(SENSOR_ENV);
-    const response = await request(app).post(CHAT).send({ query: "pH now?" }).expect(200);
+    const response = await chat(app).send({ query: "pH now?" }).expect(200);
 
     expect(response.body.usage.totalTokens).toBe(24);
   }, RELOAD_TIMEOUT_MS);
@@ -229,7 +237,7 @@ describe("POST /api/v1/chat with the sensor tool enabled", () => {
     ];
 
     const app = loadAppWith(SENSOR_ENV);
-    const response = await request(app).post(CHAT).send({ query: "salinity?" }).expect(200);
+    const response = await chat(app).send({ query: "salinity?" }).expect(200);
 
     expect(response.body.tool_calls[0].result.error).toContain("salinity");
     expect(response.body.answer).toContain("does not measure salinity");
@@ -263,7 +271,7 @@ describe("POST /api/v1/chat with a device on the request", () => {
     script = [latestPh(), { content: "Which pod did you mean?", toolCalls: [] }];
 
     const app = loadAppWith(NO_DEFAULT_ENV);
-    const response = await request(app).post(CHAT).send({ query: "pH now?" }).expect(200);
+    const response = await chat(app).send({ query: "pH now?" }).expect(200);
 
     expect(response.body.tool_calls[0].result.error).toMatch(/"device" is required/);
   }, RELOAD_TIMEOUT_MS);
@@ -272,8 +280,7 @@ describe("POST /api/v1/chat with a device on the request", () => {
     script = [latestPh(), { content: "pH is 7.13.", toolCalls: [] }];
 
     const app = loadAppWith(NO_DEFAULT_ENV);
-    const response = await request(app)
-      .post(CHAT)
+    const response = await chat(app)
       .send({ query: "pH now?", device: "Algalita Pod" })
       .expect(200);
 
@@ -289,8 +296,7 @@ describe("POST /api/v1/chat with a device on the request", () => {
     script = [latestPh({ device: OWC }), { content: "pH is 7.13.", toolCalls: [] }];
 
     const app = loadAppWith(NO_DEFAULT_ENV);
-    const response = await request(app)
-      .post(CHAT)
+    const response = await chat(app)
       .send({ query: "pH at Old Woman Creek?", device: "Algalita Pod" })
       .expect(200);
 
@@ -305,8 +311,7 @@ describe("POST /api/v1/chat with a device on the request", () => {
     script = [latestPh(), { content: "I could not find that pod.", toolCalls: [] }];
 
     const app = loadAppWith(NO_DEFAULT_ENV);
-    const response = await request(app)
-      .post(CHAT)
+    const response = await chat(app)
       .send({ query: "pH now?", device: "Pod That Does Not Exist" })
       .expect(200);
 
@@ -322,7 +327,7 @@ describe("POST /api/v1/chat with the sensor tool disabled", () => {
     script = [{ content: "Answered from context.", toolCalls: [] }];
 
     const app = loadAppWith({ ...SENSOR_ENV, SENSOR_TOOL: "false" });
-    const response = await request(app).post(CHAT).send({ query: "what is ORP?" }).expect(200);
+    const response = await chat(app).send({ query: "what is ORP?" }).expect(200);
 
     expect(sent).toHaveLength(1);
     expect(sent[0].tools).toBeUndefined();
@@ -337,7 +342,7 @@ describe("POST /api/v1/chat with the sensor tool disabled", () => {
     script = [{ content: "Answered from context.", toolCalls: [] }];
 
     const app = loadAppWith({ ...SENSOR_ENV, SENSOR_TOOL: "false" });
-    await request(app).post(CHAT).send({ query: "what is ORP?" }).expect(200);
+    await chat(app).send({ query: "what is ORP?" }).expect(200);
 
     expect(fetchCalls).toHaveLength(0);
   }, RELOAD_TIMEOUT_MS);
@@ -348,8 +353,7 @@ describe("POST /api/v1/chat with the sensor tool disabled", () => {
     script = [{ content: "Answered from context.", toolCalls: [] }];
 
     const app = loadAppWith({ ...SENSOR_ENV, SENSOR_TOOL: "false" });
-    const response = await request(app)
-      .post(CHAT)
+    const response = await chat(app)
       .send({ query: "what is ORP?", device: "Algalita Pod" })
       .expect(200);
 
@@ -383,17 +387,23 @@ describe("POST /api/v1/chat forwards the caller's identity to the device API", (
     ];
 
     const app = loadAppWith(SENSOR_ENV);
-    await request(app)
-      .post(CHAT)
-      .set("Authorization", "Bearer caller-jwt")
+    await chat(app)
       .send({ query: "what is the pH?" })
       .expect(200);
 
     expect(fetchAuth.length).toBeGreaterThan(0);
-    fetchAuth.forEach((auth) => expect(auth).toBe("Bearer caller-jwt"));
+    fetchAuth.forEach((auth) => expect(auth).toBe(CALLER));
   }, RELOAD_TIMEOUT_MS);
 
-  it("falls back to DEVICE_API_TOKEN when the caller sends no bearer token", async () => {
+  it("refuses a sensor question from a caller who sent no token, as a coded 401", async () => {
+    // The bug, on the chat side of it: `DeviceApiClient` used to default to `DEVICE_API_TOKEN`,
+    // so a question from an unauthenticated caller was answered out of the deployment's own —
+    // in practice superadmin — fleet rather than theirs. There is no correct fleet to answer
+    // from when nobody said who is asking.
+    //
+    // Thrown rather than returned as a `{ error }` tool result, for the reason `device_auth_expired`
+    // is: the model cannot reword its way out of the request having had no credentials, and a
+    // 200 carrying an apology gives the UI nothing to send the user to a sign-in with.
     script = [
       {
         content: "",
@@ -412,10 +422,27 @@ describe("POST /api/v1/chat forwards the caller's identity to the device API", (
     ];
 
     const app = loadAppWith(SENSOR_ENV);
-    await request(app).post(CHAT).send({ query: "what is the pH?" }).expect(200);
+    const response = await request(app).post(CHAT).send({ query: "what is the pH?" }).expect(401);
 
-    expect(fetchAuth.length).toBeGreaterThan(0);
-    fetchAuth.forEach((auth) => expect(auth).toBe("Bearer test-token"));
+    expect(response.body.code).toBe("caller_token_required");
+    expect(response.body).not.toHaveProperty("status");
+    // Nothing reached the device API, so `DEVICE_API_TOKEN` was never put on the wire.
+    expect(fetchAuth).toHaveLength(0);
+  }, RELOAD_TIMEOUT_MS);
+
+  it("still answers a corpus-only question with no token — chat itself is not gated", async () => {
+    // The gate belongs to the org-scoped path, not to the endpoint. A question the document
+    // corpus can answer reads nobody's fleet, so refusing it would be a different bug.
+    script = [{ content: "Answered from context.", toolCalls: [] }];
+
+    const app = loadAppWith({ ...SENSOR_ENV, SENSOR_TOOL: "false" });
+    const response = await request(app)
+      .post(CHAT)
+      .send({ query: "what does the corpus say about turbidity?" })
+      .expect(200);
+
+    expect(response.body.answer).toBe("Answered from context.");
+    expect(fetchCalls).toHaveLength(0);
   }, RELOAD_TIMEOUT_MS);
 
   it("surfaces an expired device token as a coded error instead of prose in a 200", async () => {
@@ -440,8 +467,7 @@ describe("POST /api/v1/chat forwards the caller's identity to the device API", (
     ];
 
     const app = loadAppWith(SENSOR_ENV);
-    const response = await request(app)
-      .post(CHAT)
+    const response = await chat(app)
       .send({ query: "what is the pH?" })
       .expect(401);
 

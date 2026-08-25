@@ -706,6 +706,18 @@ indistinguishable from streaming being broken.
 Added 2026-08-19 for the UI's pod selector. Read-only: it lists the pods the caller's token can see
 so a human can choose one, replacing the tool's "which pod do you mean?" round trip.
 
+**A caller token is required** (`middleware/requireCallerToken.ts`; 401 with
+`code: caller_token_required`, plus a `WWW-Authenticate: Bearer` challenge). Until 2026-08-21 it was
+not, and that was an authentication hole rather than a convenience: `DeviceApiClient` defaulted its
+token to `DEVICE_API_TOKEN`, so a request with no `Authorization` header was answered with the
+deployment's own credential — a superadmin one in practice — and returned **every organization's**
+fleet, while this section and the controller's docstring both described the route as scoped to the
+caller. The fix has two halves and needs both: the route refuses an anonymous request, and the
+client no longer has that default at all (`useConfiguredToken` must be passed explicitly, which
+only the offline scripts do). The same requirement applies to the sensor and report tools reached
+through `POST /api/v1/chat`, which is where the identical fallback used to answer a chat question
+out of the wrong fleet.
+
 **Deliberately not gated on `SENSOR_TOOL`.** That flag governs whether the *model* is handed a tool;
 listing pods for a person to pick from is a different act. But an unconfigured `DEVICE_API_BASE_URL`
 returns the coded 503 rather than an empty list — an empty `devices` array must mean "this token sees
@@ -744,6 +756,37 @@ an argument the tool would ignore.
 the process — a device stored on any of them would be handed to whichever request ran next. The
 per-request dedupe cache keys on the *effective* arguments for the same reason: otherwise one pod's
 reading could be served as the answer for another.
+
+### 10.7 Report download (`GET /api/v1/reports/:filename`)
+
+Serves a PDF `generate_report` already wrote to `generated_reports/`. Three guards, answering three
+different questions, in this order:
+
+1. **`SAFE_FILENAME`** (`/^[a-zA-Z0-9_-]+\.pdf$/`) — is this a name at all? Rejects a `..`-laden
+   request with a 400 before it can become a filesystem path. Unchanged; it was always correct.
+2. **`requireCallerToken`** — is anybody asking? Until 2026-08-21 there was nothing here. Filenames
+   are `report_<8 hex>.pdf` (~32 bits) with no expiry, so a document containing a named customer's
+   coordinates and readings was an unauthenticated, guessable capability URL.
+3. **Ownership** (`report/reportOwnership.ts`) — is it the *same* somebody? Every other route is
+   org-scoped by the caller's token; a report gate that accepted any valid token would be the one
+   place organization A could read organization B's data by guessing eight characters.
+
+Ownership is a sha256 of the bearer token, written to a `.pdf.owner` sidecar beside the PDF when the
+report is generated. It is the token and not a user id because this service cannot verify a JWT — it
+has no `ACCESS_TOKEN_SECRET` — and binding to an unverified `sub` would bind to a claim any caller
+can forge, the same conclusion `quotaKey.ts` reached (§4a). It is a file and not a process-memory map
+because the PDF outlives the process; a map would forget owners on restart and leave reports on disk
+that nobody could ever fetch.
+
+"Not found" and "not yours" both answer **404**, deliberately: a distinguishable 403 would confirm a
+filename guess and turn the route into an enumeration oracle.
+
+**Accepted residual risk.** A re-login mints a different token string, so the same human loses access
+to reports generated under the previous one — acceptable while reports are generated and linked
+inside a single conversation and already do not survive a redeploy. Anyone holding the token holds
+the report, which is what a bearer credential means. There is still no expiry; a TTL sweeper is a
+reasonable follow-up, not a prerequisite. Real per-user report history needs the identity work
+§4a is also waiting on.
 
 ---
 
@@ -1107,7 +1150,8 @@ turn (against 11 for `pgvector-rag`). It also wins `deep-in-manual` outright at 
 | `GET` | `/` | `{ "message": "Clean Earth RAG service" }` |
 | `GET` | `/health` | `{ status, service, environment, timestamp, uptime, checks: { fireworksConfigured, firestoreProjectConfigured } }` |
 | `GET` | `/api/v1` | `{ "message": "Clean Earth RAG API v1" }` |
-| `GET` | `/api/v1/devices` | `{ devices: [{ label, name, operating_environment, last_reported }], water_type }` (§10.5) |
+| `GET` | `/api/v1/devices` | `{ devices: [{ label, name, operating_environment, last_reported }], water_type }` (§10.5). **Requires `Authorization: Bearer`** — 401 `caller_token_required` without one |
+| `GET` | `/api/v1/reports/:filename` | the generated PDF. **Requires `Authorization: Bearer`**, and the token must be the one `generate_report` ran under (§10.7); 404 otherwise |
 | `POST` | `/api/v1/chat` | `{ answer, model, mode, citations, usage }`, or SSE when `stream: true` (§10). **429** with `code: quota_requests_exceeded` / `quota_tokens_exceeded` plus `Retry-After` when the quota gate refuses — as JSON, before any stream opens (§4a) |
 
 `/health` does **no** network I/O (no Firestore/Fireworks calls), so it always succeeds while the

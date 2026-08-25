@@ -26,8 +26,14 @@ const byName = (a: DeviceSummary, b: DeviceSummary): number => (
   nameOf(a).localeCompare(nameOf(b), "en") || (a.label ?? "").localeCompare(b.label ?? "", "en")
 );
 
-/** Injectable for tests; production builds one client per request around the caller's token. */
-export type DeviceClientFactory = (token?: string) => DeviceApiClient;
+/**
+ * Injectable for tests; production builds one client per request around the caller's token.
+ *
+ * `token` is required, not optional. `requireCallerToken` guarantees the route cannot be reached
+ * without one, and a signature that still accepted `undefined` would leave the old
+ * fall-back-to-the-deployment-credential shape one careless call away from returning.
+ */
+export type DeviceClientFactory = (token: string) => DeviceApiClient;
 
 /**
  * `GET /api/v1/devices` — the pod list the picker is built on.
@@ -40,6 +46,13 @@ export type DeviceClientFactory = (token?: string) => DeviceApiClient;
  * token holder's organization, so the honest failure mode is an empty list — which is why an
  * unconfigured deployment returns a coded 503 instead: an empty `devices` array must mean "this
  * token sees no pods", never "nobody wired up `DEVICE_API_BASE_URL`".
+ *
+ * **A caller token is mandatory** (`requireCallerToken`, mounted in `deviceRoutes.ts`). That
+ * sentence above used to be true only when a caller happened to send one: `DeviceApiClient`
+ * defaulted to `DEVICE_API_TOKEN`, so an anonymous request was answered out of the deployment's
+ * own — in practice superadmin — fleet, which is every organization's. The client no longer has
+ * that default and the route no longer accepts an anonymous request; both halves are needed,
+ * because either one alone leaves a way back to the old behavior.
  */
 export class DeviceController {
   private readonly createClient: DeviceClientFactory;
@@ -50,10 +63,15 @@ export class DeviceController {
 
   listDevices = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      // Non-null by construction: `requireCallerToken` refuses the request before it reaches
+      // here. Re-derived rather than read off `req` so there is exactly one parser for the
+      // header (`bearerToken.ts`) and the gate and the client cannot disagree about it.
+      const token = callerToken(req) as string;
+
       // Constructed per request, not once at boot: the client is bound to the caller's token,
       // and an unconfigured base URL has to surface as this request's coded 503 rather than as
       // a crash on startup that also takes /health down.
-      const client = this.createClient(callerToken(req));
+      const client = this.createClient(token);
 
       // `dedupeByLabel` collapses the three Algalita Pod rows (`DEVICE_API.md` §2) and drops
       // rows with no label — a label is the only identifier `/water/*` accepts, so a row

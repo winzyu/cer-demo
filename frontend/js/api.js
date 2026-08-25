@@ -32,9 +32,20 @@ export function postChat(query, history, options = {}) {
 /**
  * The pod list for the context bar. Returns { devices: [...], water_type } or throws.
  *
- * Read-only, and sent with no `Authorization` header — this demo client has no token to send.
- * `DeviceController` reads one when a caller supplies it and otherwise falls back to the
- * deployment's `DEVICE_API_TOKEN`, which is the path every request from this page takes.
+ * ⚠️ **This page has no token, and the endpoint now requires one.** As of 2026-08-21
+ * `GET /api/v1/devices` refuses a request with no `Authorization: Bearer` header (401,
+ * `code: "caller_token_required"`), so from this demo client the pod picker reports that error
+ * instead of a fleet.
+ *
+ * That is the fix working, not a regression to route around. The route is scoped to the caller's
+ * organization; what used to make it "work" from here was `DeviceApiClient` silently falling back
+ * to the deployment's `DEVICE_API_TOKEN` — a superadmin credential in practice — so this page was
+ * being shown every organization's pods. Restoring the picker means giving this client a real
+ * token to send, which needs a sign-in this demo does not have. Do **not** re-add it as a URL
+ * parameter: that puts a non-expiring bearer credential into browser history, referrers and
+ * server logs.
+ *
+ * The `code` is carried through below precisely so the UI can tell this apart from an outage.
  */
 export async function getDevices() {
   const r = await fetch(BACKEND + "/api/v1/devices");

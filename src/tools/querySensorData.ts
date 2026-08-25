@@ -6,7 +6,7 @@ import { DeviceApiClient } from "../devices/DeviceApiClient";
 import { METRIC_BY_KEY, METRICS } from "../devices/metrics";
 import { implausibilityReason, isPlausible } from "../devices/plausibility";
 import type { DeviceReading, DeviceSummary, MetricKey } from "../types/device.types";
-import { resolveErrorCode } from "../utils/errors";
+import { codedError, resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import {
@@ -211,8 +211,9 @@ export class QuerySensorData {
   /**
    * Keyed by token, because the device API scopes `/devices` to the token holder's organization.
    * A single-slot cache on this shared singleton would serve one caller's fleet to the next.
-   * The key for "no caller token" is the empty string — that is the `DEVICE_API_TOKEN` fallback,
-   * which is a real, distinct scope of its own.
+   * The empty-string key survives only for an injected `clientOverride`, whose scope is whatever
+   * that client was built with. A real request always carries a token now, so it always has a key
+   * of its own.
    */
   private deviceCache = new Map<string, { at: number; devices: DeviceSummary[] }>();
 
@@ -230,9 +231,29 @@ export class QuerySensorData {
    * the model can report, not a 500 on an unrelated chat request.
    */
   private client(token?: string): DeviceApiClient {
+    if (this.clientOverride) {
+      return this.clientOverride;
+    }
+    if (!token) {
+      // **A caller token is required.** `DeviceApiClient` used to default to `DEVICE_API_TOKEN`,
+      // so a chat request with no `Authorization` header answered the user's sensor question out
+      // of the deployment's own organization rather than theirs. Refusing here rather than
+      // letting the client fall back is the same fix `deviceRoutes.ts` applies to `GET /devices`,
+      // at the other end of the same class of bug.
+      //
+      // `clientOverride` above is deliberately exempt: a test or a CLI script that supplies its
+      // own client has already decided what that client authenticates with
+      // (`scripts/verifySensorTool.ts` passes one built with `useConfiguredToken: true`).
+      throw codedError(
+        401,
+        "Reading sensor data requires the caller's own credentials. Send an "
+        + "`Authorization: Bearer <token>` header with the chat request.",
+        "caller_token_required",
+      );
+    }
     // Built per call, not memoized: the token varies by caller, and a client cached on this
     // shared instance would authenticate one user's request as another.
-    return this.clientOverride ?? new DeviceApiClient({ token });
+    return new DeviceApiClient({ token });
   }
 
   private async devices(token?: string): Promise<DeviceSummary[]> {
@@ -361,7 +382,12 @@ export class QuerySensorData {
       // `device_timeout` are transient and *are* the model's to report: a 500 on the chat
       // request would deny it the chance to say it could not reach the sensors
       // (`MIGRATION_SPEC.md` §3, §8).
-      if (resolveErrorCode(error) === "device_auth_expired") {
+      // `caller_token_required` is re-thrown for the same reasons and one more: the request
+      // never had credentials, so there is nothing for the model to word differently. Returned as
+      // a tool result it would become an apology inside a 200 and the UI would get no signal to
+      // send the user to a sign-in.
+      const code = resolveErrorCode(error);
+      if (code === "device_auth_expired" || code === "caller_token_required") {
         throw error;
       }
       const message = error instanceof Error ? error.message : String(error);
@@ -382,9 +408,9 @@ export class QuerySensorData {
    * Same code path as `run()` underneath, so there is one implementation of the traps, not two.
    *
    * `token` threads the caller's bearer token the same way `run()`'s `ToolContext` does (added
-   * for `generateReport.ts`, N6 landing) -- omit it and, same as an unauthenticated `run()` call,
-   * the device API falls back to `DEVICE_API_TOKEN`, which on an organization-scoped API answers
-   * out of that token's fleet rather than the caller's.
+   * for `generateReport.ts`, N6 landing). It is **required in practice**: omit it and, unless the
+   * caller injected its own `client`, this throws a coded `caller_token_required` 401 rather than
+   * quietly reading someone else's organization out of `DEVICE_API_TOKEN`.
    */
   async query(params: SensorQueryParams, token?: string): Promise<SensorToolResult> {
     const result = await this.execute({

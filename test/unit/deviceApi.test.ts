@@ -325,6 +325,76 @@ describe("DeviceApiClient", () => {
     expect(calls).toHaveLength(0);
   });
 
+  describe("DEVICE_API_TOKEN is opt-in, not a default", () => {
+    /**
+     * The bug this pins: `token` used to default to `config.deviceApi.devToken`, so a client
+     * built with no token — which is what a request carrying no `Authorization` header produced —
+     * silently authenticated as the deployment. On a real deployment that credential is a
+     * superadmin one, so an anonymous caller read every organization's fleet.
+     */
+    const CONFIGURED = "deployment-superadmin-token";
+
+    /**
+     * Builds a client from a module graph where `DEVICE_API_TOKEN` really is set.
+     *
+     * `test/setupEnv.ts` cuts the developer's `.env` out of the run, so without this there is no
+     * configured token to fall back *to* and these tests would pass for the wrong reason. The
+     * constructor reads `config` synchronously, so the environment only has to hold still for the
+     * `new` — which is why this returns the client rather than running the assertions inside.
+     */
+    const buildWithConfiguredToken = (
+      options: ConstructorParameters<typeof DeviceApiClient>[0],
+    ): DeviceApiClient => {
+      const previous = process.env.DEVICE_API_TOKEN;
+      process.env.DEVICE_API_TOKEN = CONFIGURED;
+      jest.resetModules();
+      try {
+        // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports
+        const Reloaded = require("../../src/devices/DeviceApiClient").DeviceApiClient;
+        return new Reloaded(options) as DeviceApiClient;
+      } finally {
+        if (previous === undefined) {
+          delete process.env.DEVICE_API_TOKEN;
+        } else {
+          process.env.DEVICE_API_TOKEN = previous;
+        }
+        jest.resetModules();
+      }
+    };
+
+    it("does not reach for the configured token when none was passed", async () => {
+      const { fetchImpl, calls } = stubFetch([]);
+      const anonymous = buildWithConfiguredToken({ baseUrl: BASE, fetchImpl });
+
+      await expect(anonymous.listDevices()).rejects.toMatchObject({ status: 503 });
+      // The point of the fix: nothing was sent at all, so nothing was sent as superadmin.
+      expect(calls).toHaveLength(0);
+    });
+
+    it("uses the configured token only when the call site asks for it by name", async () => {
+      const { fetchImpl, calls } = stubFetch([]);
+      const offline = buildWithConfiguredToken({
+        baseUrl: BASE, useConfiguredToken: true, fetchImpl,
+      });
+
+      await offline.listDevices();
+      expect(calls).toHaveLength(1);
+      expect((calls[0].init?.headers as Record<string, string>).Authorization)
+        .toBe(`Bearer ${CONFIGURED}`);
+    });
+
+    it("prefers an explicit caller token over the configured one", async () => {
+      const { fetchImpl, calls } = stubFetch([]);
+      const scoped = buildWithConfiguredToken({
+        baseUrl: BASE, token: "caller-jwt", useConfiguredToken: true, fetchImpl,
+      });
+
+      await scoped.listDevices();
+      expect((calls[0].init?.headers as Record<string, string>).Authorization)
+        .toBe("Bearer caller-jwt");
+    });
+  });
+
   it("reports upstream 5xx as a 502 naming the path", async () => {
     const { fetchImpl } = stubFetch(null, { status: 500, text: "boom" });
     await expect(client(fetchImpl).listDevices()).rejects.toMatchObject({ status: 502 });
@@ -403,6 +473,7 @@ describe("error taxonomy", () => {
     expect([...ERROR_CODES]).toEqual([
       "llm_not_configured",
       "device_auth_expired",
+      "caller_token_required",
       "device_timeout",
       "device_unavailable",
       "quota_requests_exceeded",

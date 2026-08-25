@@ -46,11 +46,17 @@ export interface ToolCall {
  */
 export interface ToolContext {
   /**
-   * The caller's bearer token, when they sent one.
+   * The caller's bearer token.
    *
-   * The device API scopes every response to the token holder's organization, so a handler that
-   * ignores this and falls back to the deployment's `DEVICE_API_TOKEN` answers one user's
-   * question out of another organization's fleet.
+   * Optional in the type, **required in practice** by every handler that reads device data: the
+   * device API scopes every response to the token holder's organization, so a request that did
+   * not say who is asking has no fleet it could correctly be answered from. Those handlers throw
+   * a coded `caller_token_required` 401 rather than reaching for the deployment's
+   * `DEVICE_API_TOKEN`, which is what they used to do — and which answered one user's question
+   * out of another organization's fleet.
+   *
+   * Left optional rather than made required because a handler that needs no device data needs no
+   * token, and the loop that dispatches them (`ChatOrchestrator`) does not know which is which.
    */
   token?: string;
 }
