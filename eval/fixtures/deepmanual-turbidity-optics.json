@@ -3,14 +3,14 @@
   "class": "deep-in-manual",
   "expected_to_favor": "rag",
   "answerable_from": [
-    "tm9a6.8.pdf",
-    "volunteer_stream_monitoring_a_methods_manual.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+    "usgs-nfm-a6.7-turbidity.pdf",
     "water-quality-metrics-source-of-truth.pdf"
   ],
   "requires": [
     "turbidity-in-scope"
   ],
-  "notes": "Turn 1 is manual-only; turn 2 needs the in-slice reference. A split conversation, which is exactly the hybrid outcome the bake-off treats as a legitimate result — watch whether any single arm handles both turns.",
+  "notes": "Turn 1 is manual-only; turn 2 needs the in-slice reference. A split conversation, which is exactly the hybrid outcome the bake-off treats as a legitimate result — watch whether any single arm handles both turns. **2026-08-21:** the volunteer manual left the corpus and USGS NFM 6.7 Turbidity v2.1 replaced it here. That edition documents the NTU/FNU distinction directly (the 1998 edition contained no 'FNU' at all), so turn 2 is no longer answerable ONLY from the in-slice reference — a RAG arm can now ground it from 6.7. The cite rubric is left pointing at the in-slice doc on purpose, to keep measuring the split; grade turn 2 as correct if it is grounded either way.",
   "turns": [
     {
       "role": "user",
@@ -26,8 +26,8 @@
           "confuses the turbidity sensor with the optical DO sensor"
         ],
         "cite": [
-          "tm9a6.8.pdf",
-          "volunteer_stream_monitoring_a_methods_manual.pdf"
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "usgs-nfm-a6.7-turbidity.pdf"
         ]
       }
     },

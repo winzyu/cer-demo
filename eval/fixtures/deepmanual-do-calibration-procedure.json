@@ -3,7 +3,7 @@
   "class": "deep-in-manual",
   "expected_to_favor": "rag",
   "answerable_from": [
-    "tm9a6.2.pdf"
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf"
   ],
   "requires": [],
   "notes": "Answerable only from USGS TM 9-A6.2, which is outside the ◆G9 slice. Direct-feed is expected to refuse. A clean refusal scores 0 for correctness and must NOT be penalised on groundedness — inventing a plausible calibration procedure is the failure that matters here.",
@@ -23,7 +23,7 @@
           "presents the Atlas datasheet's maintenance steps as the USGS calibration procedure"
         ],
         "cite": [
-          "tm9a6.2.pdf"
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
         ],
         "notes": "Refusal is the expected direct-feed behaviour and is graded as a miss, not as a groundedness failure."
       }
@@ -40,7 +40,7 @@
           "invents a recommendation"
         ],
         "cite": [
-          "tm9a6.2.pdf"
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
         ]
       }
     }

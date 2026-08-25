@@ -179,7 +179,7 @@ describe("fixture validation", () => {
     const turns = [
       {
         ...validFixture.turns[0],
-        rubric: { must_contain: ["something"], must_not: [], cite: ["tm9a6.2.pdf"] },
+        rubric: { must_contain: ["something"], must_not: [], cite: ["usgs-nfm-a6.2-dissolved-oxygen.pdf"] },
       },
       validFixture.turns[1],
     ];
@@ -214,7 +214,7 @@ describe("fixture validation", () => {
   it("rejects a direct-feed prediction with no in-slice source", () => {
     expect(() => loadFixtures(withFixture({
       expected_to_favor: "direct-feed",
-      answerable_from: ["tm9a6.2.pdf"],
+      answerable_from: ["usgs-nfm-a6.2-dissolved-oxygen.pdf"],
       turns: validFixture.turns.map((turn) => ({ ...turn, rubric: { ...turn.rubric } })),
     }))).toThrow(/no source is inside/);
   });

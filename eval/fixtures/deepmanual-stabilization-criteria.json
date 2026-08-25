@@ -3,7 +3,7 @@
   "class": "deep-in-manual",
   "expected_to_favor": "rag",
   "answerable_from": [
-    "tm9a6.8.pdf"
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
   ],
   "requires": [],
   "notes": "A numeric table deep in TM 9-A6.8, outside the slice. Table-shaped material is also what the alpha-ratio filter deviation exists to protect, so this fixture doubles as a check that the filter change did its job for the chunked arms.",
@@ -24,7 +24,7 @@
           "quotes probe accuracy specs from the Atlas datasheets in their place"
         ],
         "cite": [
-          "tm9a6.8.pdf"
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
         ]
       }
     },
@@ -40,7 +40,7 @@
           "invents a wait time"
         ],
         "cite": [
-          "tm9a6.8.pdf"
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
         ]
       }
     }

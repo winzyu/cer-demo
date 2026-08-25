@@ -7,6 +7,13 @@
  * criteria (pathogens), and nutrient criteria (N/P). They were not merely useless — the system
  * prompt already declares those topics out of scope, so retrieving them can only pull an answer
  * toward material the bot is supposed to refuse.
+ *
+ * **Expanded 2026-08-21** from 8 documents to 18, on the way to a RAG-first retrieval posture.
+ * The reference tier is now the *whole* USGS National Field Manual Chapter A6 — one chapter per
+ * measured parameter rather than two chapters covering two of them — plus EPA numeric-criteria
+ * and calibration material and a small situational tier for N6 event detection. The direct-feed
+ * slice below is **deliberately unchanged**: the new mass is reachable only by a RAG arm, which
+ * is what makes direct-feed a baseline rather than a candidate.
  */
 
 export interface DocMeta {
@@ -15,14 +22,12 @@ export interface DocMeta {
 }
 
 export const DOC_META: Record<string, DocMeta> = {
-  // --- Operator source of truth: the six measured parameters, their ranges, and how they move
-  // together. Written for this deployment, so it outranks any general reference. ---
+  // === Tier 1 — company-specific. Operator-written or vendor datasheets for the probes this
+  // deployment actually carries, so they outrank any general reference. This is the ◆G9 slice. ===
+
   "water-quality-metrics-source-of-truth.pdf": {
     title: "Water Quality Metrics — Source of Truth (DataPod)",
   },
-
-  // --- Probe datasheets: specs, operating principle, calibration and fouling behavior.
-  // These are what "does this reading mean the sensor is broken?" gets answered from. ---
   "EC_K_1.0_probe.pdf": {
     title: "Atlas Scientific Conductivity Probe K 1.0 — Datasheet",
   },
@@ -36,18 +41,95 @@ export const DOC_META: Record<string, DocMeta> = {
     title: "Atlas Scientific Industrial Dissolved Oxygen Probe — Datasheet",
   },
 
-  // --- Field-methods references, retained for depth on measured metrics. ---
-  "tm9a6.2.pdf": {
-    title: "USGS TM 9-A6.2 — Dissolved Oxygen (field methods)",
+  // === Tier 2 — USGS National Field Manual, Chapter A6 (field measurements). The authoritative
+  // method reference: one chapter per parameter, each covering calibration, interferences,
+  // troubleshooting and reporting conventions.
+  //
+  // **Every chapter here is the current edition, verified against the USGS publications API
+  // 2026-08-21** (`pubs-services/publication/?q=tm9A6.x`), which records `SUPERSEDED_BY` links
+  // explicitly. Six chapters have been reissued in the newer **Techniques and Methods (TM 9-A6.x)**
+  // series; 6.5, 6.6 and 6.7 have not and their current TWRI Book 9 editions are used. The title
+  // is what the model cites, so the edition named in the title has to match the file on disk —
+  // a stale edition here is how a superseded calibration procedure gets quoted as current. ===
+
+  "usgs-nfm-a6.0-field-measurement-guidelines.pdf": {
+    title: "USGS TM 9-A6.0 — Guidelines for Field-Measured Water-Quality Properties (2023)",
+    sourceUrl: "https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf",
   },
-  // Not a turbidity chapter — A6.8 covers multiparameter sondes. (The turbidity chapter is
-  // A6.7, which is not in this corpus.) The title is what the model cites, so a wrong one
-  // makes citation-validity ungradeable in the N2 eval.
-  "tm9a6.8.pdf": {
-    title: "USGS TM 9-A6.8 — Use of Multiparameter Instruments for Routine Field Measurements",
+  "usgs-nfm-a6.1-temperature.pdf": {
+    title: "USGS TM 9-A6.1 — Temperature (2024)",
+    sourceUrl: "https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf",
   },
-  "volunteer_stream_monitoring_a_methods_manual.pdf": {
-    title: "Volunteer Stream Monitoring: A Methods Manual (EPA)",
+  "usgs-nfm-a6.2-dissolved-oxygen.pdf": {
+    title: "USGS TM 9-A6.2 — Dissolved Oxygen (2020)",
+    sourceUrl: "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
+  },
+  "usgs-nfm-a6.3-specific-conductance.pdf": {
+    title: "USGS TM 9-A6.3 — Specific Conductance (2019)",
+    sourceUrl: "https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf",
+  },
+  "usgs-nfm-a6.4-ph.pdf": {
+    title: "USGS TM 9-A6.4 — Measurement of pH (2021)",
+    sourceUrl: "https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf",
+  },
+  "usgs-nfm-a6.5-orp.pdf": {
+    title: "USGS NFM 6.5 — Reduction-Oxidation Potential, electrode method (version 1.2, 9/2005)",
+    sourceUrl: "https://pubs.usgs.gov/twri/twri9a6/twri9a65/twri9a_6.5_v_1.2.pdf",
+  },
+  "usgs-nfm-a6.6-alkalinity.pdf": {
+    title: "USGS NFM 6.6 — Alkalinity and Acid Neutralizing Capacity (version 4.0, 9/2012)",
+    sourceUrl: "https://pubs.usgs.gov/twri/twri9a6/twri9a66/twri9a_6.6.pdf",
+  },
+  // **Version 2.1, not the 1998 original.** The 1998 edition does not contain the string "FNU"
+  // anywhere; v2.1 introduces the NTU/FNU distinction this fleet's turbidity reading depends on
+  // (white-light NTU vs infrared FNU — not interchangeable; see timeline.md's turbidity-unit row).
+  "usgs-nfm-a6.7-turbidity.pdf": {
+    title: "USGS NFM 6.7 — Turbidity (version 2.1, 9/2005)",
+    sourceUrl: "https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf",
+  },
+  "usgs-nfm-a6.8-multiparameter-instruments.pdf": {
+    title:
+      "USGS TM 9-A6.8 — Use of Multiparameter Instruments for Routine Field Measurements "
+      + "(version 1.1, 6/2025)",
+    sourceUrl: "https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf",
+  },
+
+  // === Tier 3 — regulatory and numeric thresholds. Where a number comes from when the operator's
+  // source-of-truth does not carry one. ===
+
+  "epa-wqs-handbook-ch3-water-quality-criteria.pdf": {
+    title: "EPA Water Quality Standards Handbook, Chapter 3 — Water Quality Criteria (Dec 2023)",
+    sourceUrl:
+      "https://www.epa.gov/sites/default/files/2014-10/documents/handbook-chapter3.pdf",
+  },
+  // Scanned images — ingest reads `.ocr_cache/` for this one. See `documents/README.md`.
+  "epa-sop-field-instrument-calibration-2010.pdf": {
+    title:
+      "EPA SOP — Calibration of Field Instruments (Temperature, pH, DO, Conductivity, ORP, "
+      + "Turbidity), January 2010",
+    sourceUrl:
+      "https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/"
+      + "EQASOP-FieldCalibrat.pdf",
+  },
+
+  // === Tier 4 — situational / pollution-event context, for N6 §4 event detection (◆G4).
+  //
+  // **These cover things the DataPod cannot measure** (floating debris; algal toxins and
+  // chlorophyll) and so sit in tension with the 2026-07-29 scoping rule above. They are here for
+  // event *interpretation* — what a DO/pH/turbidity signature tends to mean — not to answer
+  // "is there a bloom". The refusal fixtures are the check on that; see `documents/README.md`. ===
+
+  "epa-assessing-monitoring-floatable-debris.pdf": {
+    title: "EPA — Assessing and Monitoring Floatable Debris",
+    sourceUrl:
+      "https://www.epa.gov/sites/default/files/2018-12/documents/assess-monitor-floatable-debris.pdf",
+  },
+  "noaa-nhabon-framework-workshop-report.pdf": {
+    title:
+      "NOAA — Framework for the National Harmful Algal Bloom Observing Network: Workshop Report",
+    sourceUrl:
+      "https://cdn.coastalscience.noaa.gov/page-attachments/news/"
+      + "NHABON_Framewk_WkshpReport_12-18-20_Final.pdf",
   },
 };
 
@@ -60,6 +142,12 @@ export const DOC_META: Record<string, DocMeta> = {
  * The replacement is the operator's source-of-truth reference plus the four probe datasheets —
  * ~9.4K tokens, every one of them about a parameter the DataPod actually reads. Smaller than the
  * document it replaced, and it covers all six metrics rather than none of them.
+ *
+ * **Left alone by the 2026-08-21 corpus expansion, on purpose.** Direct-feed's cost is its slice
+ * size, so growing the slice with the new reference tier would not make it a better arm — it
+ * would make it a more expensive one and destroy the only fixed point the RAG arms are measured
+ * against. Direct-feed keeps this slice as the **baseline** (replacing `stub` in that role);
+ * everything added above is reachable only by a RAG arm.
  */
 export const DIRECT_FEED_SLICE = [
   "water-quality-metrics-source-of-truth.pdf",
