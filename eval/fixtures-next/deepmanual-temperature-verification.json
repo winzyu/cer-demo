@@ -1,0 +1,56 @@
+{
+  "id": "deepmanual-temperature-verification",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.1-temperature.pdf",
+    "epa-sop-field-instrument-calibration-2010.pdf"
+  ],
+  "requires": [],
+  "notes": "Temperature gained a dedicated authoritative chapter in the 2026-08-21 expansion and nothing in the committed 30 reaches it. The chapter's whole frame is calibration VERIFICATION rather than calibration — there is no temperature standard to calibrate against — which is exactly the thing a customer gets wrong. Both sources sit outside the ◆G9 slice, so direct-feed is expected to refuse; a refusal scores 0 on correctness and must NOT be penalised on groundedness. Inventing a temperature calibration procedure is the failure that matters.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "There's no calibration solution for a temperature sensor the way there is for pH. So how am I supposed to know ours is still telling the truth after a season in the water?",
+      "rubric": {
+        "must_contain": [
+          "states that a temperature sensor is not calibrated but verified — its accuracy is checked against a reference sensor rather than adjusted to a standard",
+          "states the comparison is made against a certified or traceable temperature sensor",
+          "gives the agreement tolerance as ±0.2 °C",
+          "states the verification is done annually, or at least once per year"
+        ],
+        "must_not": [
+          "describes a temperature calibration standard or calibration solution",
+          "invents a verification tolerance or interval not present in the corpus",
+          "presents an Atlas probe datasheet's recalibration interval as the temperature verification requirement"
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf",
+          "epa-sop-field-instrument-calibration-2010.pdf"
+        ],
+        "notes": "Two independent sources agree here: USGS TM 9-A6.1 §2.1/§3.0 defines the certified/traceable/verified hierarchy at ±0.2 °C, and the EPA SOP §5.1 says most instrument manuals state there is no calibration of the temperature sensor but the sensor must be checked for accuracy at least once per year. Either citation is acceptable; naming both is better."
+      }
+    },
+    {
+      "role": "user",
+      "content": "We can't pull the pod out of the water to do that. Is there anything we can do at the buoy itself?",
+      "rubric": {
+        "must_contain": [
+          "states there is an in situ verification procedure for a deployed surface-water sensor — the sensor stays at the site and is checked against a certified or traceable sensor during a site visit",
+          "gives the placement rule: the two sensors immersed next to each other but not touching, in a flowing section, out of direct sunlight if possible",
+          "gives an equilibration period of at least 2 minutes with no upward or downward trend on the reference sensor",
+          "gives the reading protocol: three measurements at least 1 minute apart within a 5-minute span, then compare the means",
+          "states the result is logged with the date, the sensor's accuracy relative to the reference, and the certifier's initials"
+        ],
+        "must_not": [
+          "invents an in situ procedure absent from the corpus",
+          "claims the deployed sensor can be verified without a reference sensor"
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ],
+        "notes": "USGS TM 9-A6.1 §3.3.1 Surface Water In Situ Calibration Verification. This is the only procedure in the corpus that fits a moored buoy, which is what makes the turn worth grading."
+      }
+    }
+  ]
+}

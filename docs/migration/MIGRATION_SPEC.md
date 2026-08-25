@@ -1,8 +1,12 @@
 # Migration Spec — Clean Earth RAG Service
 
-Functional specification of the existing FastAPI + pgvector RAG service, derived from the
-`backend/` source. This describes **what the system does** so it can be rebuilt on a
-different stack. No implementation code is reproduced here.
+Functional specification of the **retired** FastAPI + pgvector RAG service, derived from its
+`backend/` source before that source was removed from this repo. This describes **what the system
+did** so it could be rebuilt on a different stack. No implementation code is reproduced here.
+
+Everything below is a record, in the present tense of the system it describes. Nothing in it is
+runnable, and no path it names still exists here. What the replacement actually does is
+[`../SPECS.md`](../SPECS.md).
 
 ## 1. System overview
 
@@ -16,7 +20,7 @@ endpoint backed by an LLM tool-calling loop with two tools:
 The LLM is instructed to answer **only** from sensor readings, retrieved document chunks, or a
 fixed set of operator-provided "normal ranges" in the system prompt; otherwise it must refuse.
 
-**Stack (current):** FastAPI, PostgreSQL 16 + `pgvector`, OpenAI Python SDK pointed at
+**Stack (as it was):** FastAPI, PostgreSQL 16 + `pgvector`, OpenAI Python SDK pointed at
 Fireworks' OpenAI-compatible endpoint (chat + embeddings), psycopg 3.
 
 **Components:**
@@ -355,7 +359,12 @@ doc), matching what the ingester would chunk. Tokens estimated as chars/4.
 - **Estimated tokens (chars/4):** ~339K.
 - **Chunk estimate:** at 3,200 chars/chunk with 400-char overlap (~2,800 net advance per chunk after the first), the corpus yields **roughly 480–490 raw chunks** before the quality filter drops PDF-noise chunks. (Exact count depends on separator boundaries; run the seeder to get the authoritative number.)
 
-### 10.2 Sensor CSV
+### 10.2 Sensor CSV — **retired, not ported**
+
+> ◆G8 resolved to the live device API, so this file was never ported to Firestore and nothing in
+> the replacement reads it (`../timeline.md`, "Confirmed decisions"). Described below only so the
+> legacy record is complete.
+
 
 - File: `data/water-data-dev_860322068098448-04_29_2018-05_06_2026.csv`.
 - Columns: `DEVICE, DATE, DISSOLVED OXYGEN, ORP, PH, CONDUCTIVITY, TEMPERATURE`.
@@ -366,6 +375,18 @@ doc), matching what the ingester would chunk. Tokens estimated as chars/4.
 ---
 
 ## 11. Migration checklist / gotchas
+
+> **Status: all but one of these are settled, and the boxes are left unticked on purpose — each
+> line is the *reason* the thing had to be preserved, which outlives the doing of it.** Carried
+> across and verified by tests: the nomic task prefixes, the 768 dimension, the exact refusal
+> string, the reference-time-anchoring rule, excluding `documents/README.md` from ingestion, and
+> reusing `.ocr_cache/` for the one scanned PDF (`../SPECS.md` §11, §16). The source path reads
+> `documents/`. The IVFFlat and hybrid-retrieval lines were carried into the `pgvector-rag` arm,
+> now archived (`../SPECS.md` §14) — Firestore has no full-text search, so the surviving RAG arm is
+> dense-only, which is a recorded finding rather than an omission (`../RETRIEVAL_BAKEOFF.md` §4b).
+> **Still open: "no auth + open CORS."** Both remain true of this service and are N9 hardening
+> (`../timeline.md`), with two of this service's own endpoints written up in
+> [`SECURITY_FINDINGS.md`](SECURITY_FINDINGS.md) §6.
 
 - [ ] **Fix the document source path:** seeder reads `docs/` but corpus is in `documents/`. Reconcile before seeding.
 - [ ] **Preserve nomic task prefixes** (`search_query:` / `search_document:`) exactly, or retrieval quality drops.

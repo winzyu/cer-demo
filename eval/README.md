@@ -15,7 +15,7 @@ re-run a paid sweep to make an arm look better.
 
 | path | what it is |
 |---|---|
-| `fixtures/` | the 30 committed conversations (62 turns; 28/58 runnable, 2 need `query_sensor_data`) |
+| `fixtures/` | the 30 committed conversations (62 turns; 28/58 runnable with `SENSOR_TOOL` off — the two `sensor-combined` fixtures need the flag on, which is what the captured arms ran without) |
 | `transcripts/<pass>/<arm>/` | the captured sweep — 2026-08-11/12, 3 arms × cold+warm × 28 files, **zero failed turns** |
 | `grading/<pass>/` | the blind grading packet built from those transcripts by `npm run grade:packet` |
 

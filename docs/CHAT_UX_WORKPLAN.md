@@ -17,7 +17,7 @@ Phase 0 creates the seam first.
    change is wrong, not the test.
 2. **Never change the defaults** of `SENSOR_TOOL` (`false`), `DEFAULT_RETRIEVAL` (`stub`), or
    `DEBUG_RETRIEVAL` (`false`) in `src/config/index.ts`. A fresh checkout must stay credential-free.
-3. **All 491 tests stay green.** No test may touch the network, need an API key, or cost money. New
+3. **All 720 tests stay green.** No test may touch the network, need an API key, or cost money. New
    tests follow that rule too — mock `LlmService`, serve recorded bodies through a stubbed `fetch`.
 4. **The response shape is a contract.** `tool_calls` and `tool_round_cap_reached` are *omitted* when
    no tool ran; the error body is `{ error, message }` plus an optional machine-readable `code`,
@@ -56,7 +56,7 @@ Phase 0 creates the seam first.
 > `ln -s <main-checkout>/data/corpus data/corpus`.
 
 ```bash
-npm test                      # 491 passing, 24 suites
+npm test                      # 720 passing, 36 suites
 npm run typecheck             # tsc --noEmit, silent
 npx eslint src --ext .ts      # NOT `npm run lint` — that runs --fix and writes files
 ```
@@ -104,6 +104,12 @@ sibling of the form, not a flex child of it, so it cannot steal width from the i
 ---
 
 ## Wave 1 — parallel, disjoint ownership
+
+**Status: all seven streams have landed.** `frontend/js/markdown.js`, `provenance.js`, `input.js`
+and `chart.js` are implemented (with `marked` + `DOMPurify` vendored under `frontend/vendor/`), as
+are `src/utils/answerFormat.ts`, the error taxonomy, and `scripts/starterPrompts.ts`. The briefs
+below are kept as written — they are what each stream was built from, and the findings appended to
+some of them outlast the task.
 
 ### WS-1 · Markdown rendering + XSS hardening
 
@@ -199,9 +205,11 @@ mid-sentence.
   (`【1】` alone 62×), which `GRADING_GUIDE.md` scores as `invalid_citations`. A naive strip-anything
   -in-brackets would have silently deleted graded evidence in 168 transcripts. The matcher is
   anchored to the channel name; everything else passes through byte-for-byte.
-- **Follow-up (Wave 2):** the non-tool SSE branch at `ChatController.ts:125` — the default path with
-  `SENSOR_TOOL=false` — bypasses the orchestrator and emits raw provider deltas, so it is **not**
-  stripped. Fixing it needs stream buffering, because a marker can straddle chunk boundaries.
+- ~~**Follow-up (Wave 2):** the non-tool SSE branch bypasses the orchestrator and emits raw
+  provider deltas, so it is **not** stripped.~~ **Done.** `createStreamingCommentaryFilter` now
+  wraps that branch in `ChatController`; it holds a marker back rather than leaking its opening
+  bytes, releases a citation bracket as soon as it cannot be commentary, and is tested to agree
+  with the batch stripper however the text is chopped up.
 
 ### WS-6 · Error taxonomy *(server)*
 

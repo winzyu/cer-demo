@@ -41,6 +41,7 @@ decisions, and the traps that cost time.
 | [`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md) | The sensor API contract, verified live. **Read §12 before trusting any reading.** |
 | [`docs/migration/MIGRATION_SPEC.md`](docs/migration/MIGRATION_SPEC.md) | Behaviour of the legacy FastAPI system being ported. |
 | [`docs/migration/CONVENTIONS.md`](docs/migration/CONVENTIONS.md) | Coding conventions this repo follows. |
+| [`docs/migration/SECURITY_FINDINGS.md`](docs/migration/SECURITY_FINDINGS.md) | Device-authorization findings — upstream, **and two still open in this service** (§6). |
 | [`docs/EVAL_FIXTURES.md`](docs/EVAL_FIXTURES.md) · [`eval/README.md`](eval/README.md) | The committed question set and captured sweeps. |
 
 ---
@@ -56,7 +57,7 @@ the real device API** via `query_sensor_data` and a tool-round loop.
 | **N1** — chat spine + retrieval seam | ✅ complete |
 | **N2** — retrieval bake-off | ⏳ all three arms built, sweep captured, **awaiting grading** (◆G7 open). `pgvector-rag`'s runtime code was archived 2026-08-19 ahead of ◆G7; its captured evidence stays ([§6](#6-retrieval-arms)) |
 | **N3** — sensor querying + tool loop | ✅ built, **behind `SENSOR_TOOL`, default off** |
-| **N4+** — per-device water type, reports, UI | not started |
+| **N4+** — reports, chat UX | ⏳ report generation built, **behind `REPORT_TOOL`, default off** ([§5](#5-configuration-reference), [§10](#10-endpoints)); N5's chat-UX streams have landed ([`docs/CHAT_UX_WORKPLAN.md`](docs/CHAT_UX_WORKPLAN.md)). Per-device water type is live in the **report** path only — chat still reads the global `WATER_TYPE` ([§7e](#7e-known-limits)) |
 
 **Two defaults will surprise you on a fresh checkout:**
 
@@ -351,7 +352,13 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | `SENSOR_TOOL` | `false` | **The gate.** Enables `query_sensor_data`, the tool-round loop, and the prompt's tool block. Off ⇒ the bot cannot read sensors at all. |
 | `MAX_TOOL_ROUNDS` | `16` | Tool-enabled rounds before a forced text-only round. Legacy was 5, which cannot fit a six-parameter question. |
 | `RAW_LIMIT` | `200` | Rows an `aggregation: "raw"` call returns. A cap, not a page size — raw output goes into the next prompt. |
-| `SENSOR_DEVICE_LABEL` | *(unset)* | Default pod when the model names none. **Leave unset unless the deployment truly has one pod** — the token sees ~17 devices and the two cleared test pods are on opposite coasts. Unset means the tool asks. |
+| `SENSOR_DEVICE_LABEL` | *(unset)* | Default pod when the model names none. **Leave unset unless the deployment truly has one pod** — the token sees a whole fleet (21 → 17 → **15** across three live counts; nothing may hard-code it — `docs/migration/BACKEND_FIELDS.md` §1) and the two cleared test pods are on opposite coasts. Unset means the tool asks. |
+
+### Report tool ([§10](#10-endpoints))
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `REPORT_TOOL` | `false` | **The gate.** Enables `generate_report`, its entry in the tool registry, and the prompt's report-vs-stat routing rule. Separate from `SENSOR_TOOL` because `generate_report` calls `QuerySensorData.query()` directly rather than through the model's tool loop — but it needs `DEVICE_API_BASE_URL` all the same. Same pinned-prompt caveat as `SENSOR_TOOL`. |
 
 ### Device API ([§2c](#2c-clean-earth-device-api))
 
@@ -424,7 +431,7 @@ Re-running the seeder overwrites by filename rather than duplicating.
 <details>
 <summary><b><code>firestore-vector</code></b></summary>
 
-Requires `FIREWORKS_API_KEY` (it embeds 305 chunks) and the **vector index** from
+Requires `FIREWORKS_API_KEY` (it embeds 558 chunks) and the **vector index** from
 [§2b](#2b-google-cloud--firestore).
 
 ```bash
@@ -433,7 +440,7 @@ DEFAULT_RETRIEVAL=firestore-vector npm run dev
 ```
 
 Idempotency is checked *before* embedding, so a re-run costs nothing. Expect
-`305 chunks in "corpus_chunks"`.
+`558 chunks in "corpus_chunks"`.
 </details>
 
 <details>
@@ -590,11 +597,15 @@ reporting still answers "the last day" about its last day of data.
 - **`time_range_resolved` is what you asked for; `window_actually_searched` is what was searched.**
   The API's window ladder tops out at one year, so a longer range comes back `complete: false`.
 - **`WATER_TYPE` is one global variable and the two test pods disagree.** One deployment cannot
-  serve both correctly. The tool *flags* the mismatch in its result rather than silently comparing a
-  saltwater pod against freshwater limits. Making it per-device is N4 work, gated by ◆G3.
+  serve both correctly *in chat*. The tool *flags* the mismatch in its result rather than silently
+  comparing a saltwater pod against freshwater limits. Reports already read the device's own
+  `operatingEnvironment` (`src/report/buildReportInput.ts`); moving the **prompt** to per-device is
+  still N4 work, gated by ◆G3, and blocked meanwhile by the pinned system prompt.
 - **A pod's first-ever reading may be a boot artifact** (Algalita's is pH 13.58, −1809 °F) whose
-  hardware error flags are **not** set, so it passes the fault filter. A plausibility floor per
-  metric is N6's faulty-data work.
+  hardware error flags are **not** set. It is now excluded by the per-metric plausibility rails in
+  `src/devices/plausibility.ts` — the count comes back as `excluded_implausible`. Those are rails,
+  not quality thresholds: judging whether a *plausible* reading is normal is the site baseline's
+  job (◆G3).
 
 ---
 
@@ -604,7 +615,7 @@ reporting still answers "the last day" about its last day of data.
 |---|---|
 | `npm run dev` | live-reload dev server (`ts-node-dev`) |
 | `npm run build` / `npm start` | compile to `dist/` / run compiled |
-| `npm test` | full Jest suite (491 tests in 24 suites, none touching the network) |
+| `npm test` | full Jest suite (720 tests in 36 suites, none touching the network) |
 | `npm run test:coverage` / `test:watch` | coverage / watch mode |
 | `npm run lint` / `npm run typecheck` | ESLint `--fix` over `src` / `tsc --noEmit` |
 | `npm run ingest` | parse `documents/` → `data/corpus/corpus.json` ([§6](#6-retrieval-arms)) |
@@ -612,6 +623,7 @@ reporting still answers "the last day" about its last day of data.
 | `npm run seed:firestore-chunks` | embed + upload to `corpus_chunks` for `firestore-vector` |
 | **`npm run verify:sensor`** | **live read-only check that the sensor tool reads real pods (no LLM, no cost)** |
 | `npm run explore:devices` | discover the fleet and record raw responses to `data/device-api/` |
+| `npm run explore:fields` / `explore:surface` | read-only backend census: per-device field coverage / route surface (`docs/migration/BACKEND_FIELDS.md`) |
 | `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a run; `--spot-check`, `--only`, `--dry-run` |
 | `npm run cost` | price the arms and compute break-even |
 | `npm run grade:packet` | build the blind grading packet (`--pass=`, `--sample=`) |
@@ -626,38 +638,49 @@ src/
   index.ts              # entry: load config, start the server
   app.ts                # express assembly, exported for tests
   config/               # index.ts (env loading + validation), database.ts
-  routes/               # /api/v1 aggregator, healthRoutes, chatRoutes, deviceRoutes
-  controllers/          # HealthController, ChatController, DeviceController
+  routes/               # /api/v1 aggregator, healthRoutes, chatRoutes, deviceRoutes,
+                        #   reportRoutes
+  controllers/          # HealthController, ChatController, DeviceController,
+                        #   ReportController
   retrieval/            # the retrieval seam — SPECS.md §9
     RetrievalRegistry.ts  #   mode -> adapter, selected by DEFAULT_RETRIEVAL
     adapters/           #   Stub, DirectFeed, FirestoreVector
     sources/            #   ArtifactCorpusSource | FirestoreCorpusSource
-  devices/              # DeviceApiClient (read-only), metrics.ts (codes, flags, decoding)
-  tools/                # the sensor tool — SPECS.md §10.3a
-    querySensorData.ts  #   tool + typed query(); timeRange.ts; aggregate.ts
+  devices/              # DeviceApiClient (read-only), metrics.ts (codes, flags, decoding),
+                        #   plausibility.ts (per-metric rails the hardware flags miss)
+  tools/                # the model-facing tools — SPECS.md §10.3a
+    querySensorData.ts  #   the sensor tool + typed query(); timeRange.ts; aggregate.ts
+    generateReport.ts   #   the report tool, gated on REPORT_TOOL
+  report/               # the deterministic report pipeline: buildReportInput, events,
+                        #   referenceRanges, operatorThresholds, narrative, renderPdf
+  quota/                # QuotaService + QuotaStore seam — SPECS.md §4a
   services/             # LlmService, ChatOrchestrator (tool loop), EmbeddingService
-  prompt/               # systemPrompt.ts (pinned control + TOOL_BLOCK), promptBuilder.ts
+  prompt/               # systemPrompt.ts (pinned control + TOOL_BLOCK / REPORT_TOOL_BLOCK),
+                        #   promptBuilder.ts
   ingestion/            # extract, chunk, corpus, ingest
   eval/                 # bake-off runner, fixtures, cost model
   validators/ types/ middleware/ utils/
 scripts/                # ingest, bakeoff, cost, seed*, exploreDeviceApi, verifySensorTool,
-                        #   gradePacket, starterPrompts
+                        #   gradePacket, starterPrompts, exploreDeviceFields.sh,
+                        #   exploreBackendSurface.sh
 test/
-  integration/          # health, chat, sensorChat, devices
+  integration/          # health, chat, sensorChat, devices, quotaChat
   unit/                 # per-module suites
   fixtures/device-api/  # recorded production bodies + provenance README
 frontend/               # chat UI (manual test surface, not the product). Served, not file://
   index.html            #   markup + mount points; app.css; js/ modules; vendor/ for third-party
 data/                   # corpus artifact + device recordings (git-ignored)
-documents/              # source corpus. NOTE: `.gitignore` has a documents/* rule, but several
-                        #   PDFs predate it and ARE tracked — check `git status` before assuming
-                        #   a deleted one is gone.
+documents/              # source corpus, 18 docs since 2026-08-21. NOTE: `.gitignore` has a
+                        #   documents/* rule and MOST FILES ARE UNTRACKED. The five Tier 1
+                        #   docs are force-tracked because they are the whole direct-feed
+                        #   slice. Read documents/README.md before ingesting.
 eval/                   # fixtures/ (committed questions), transcripts/, grading/. The
                         #   pgvector-rag transcripts and KEY.json stay — they are ◆G7's evidence.
 archive/                # retired code kept for the record, at its original paths.
   pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
 docs/                   # HANDOFF.md (start here), SPECS.md, timeline.md, RETRIEVAL_BAKEOFF.md,
-                        #   EVAL_FIXTURES.md, GRADING_GUIDE.md, migration/
+                        #   EVAL_FIXTURES.md, GRADING_GUIDE.md, CHAT_UX_WORKPLAN.md,
+                        #   CORPUS_SOURCING_BRIEF.md, migration/
 ```
 
 ---
@@ -670,6 +693,7 @@ docs/                   # HANDOFF.md (start here), SPECS.md, timeline.md, RETRIE
 | `GET` | `/health` | liveness + config-presence checks (no external I/O) |
 | `GET` | `/api/v1` | API v1 banner |
 | `GET` | `/api/v1/devices` | pod list for the UI selector (read-only, forwards the caller's token) |
+| `GET` | `/api/v1/reports/:filename` | a generated report PDF. **Not gated on `REPORT_TOOL`** — a PDF already written stays fetchable if the flag is later turned off. ⚠️ **No authentication on this branch**; the fix is tracked in [`docs/migration/SECURITY_FINDINGS.md`](docs/migration/SECURITY_FINDINGS.md) §6b. |
 | `POST` | `/api/v1/chat` | JSON, or SSE when `"stream": true` |
 
 **Request:** `{ query, retrieval?, stream?, history?, device? }`. `query` required; `retrieval`

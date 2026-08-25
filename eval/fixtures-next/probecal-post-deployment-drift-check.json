@@ -1,0 +1,57 @@
+{
+  "id": "probecal-post-deployment-drift-check",
+  "class": "probe-calibration",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "epa-sop-field-instrument-calibration-2010.pdf",
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+  ],
+  "requires": [],
+  "notes": "The grounding Phase N6's recalibration-guidance feature will be graded on. The EPA SOP added on 2026-08-21 covers calibration of exactly the six parameters the DataPod measures and is the only document in the corpus with per-parameter post-calibration drift criteria — the numbers a recalibration recommendation would have to cite. It also states the deployment pattern this fleet actually runs: continuous instruments are calibrated before deployment and checked on recovery. Both sources are outside the ◆G9 slice, so direct-feed is expected to refuse. NOTE: this document is scanned and its text comes from OCR; the criteria table reads cleanly but the plus/minus signs render as bare '+' in places.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "We pull the pods every autumn after about nine months in the water. What are we actually supposed to check when one comes out?",
+      "rubric": {
+        "must_contain": [
+          "states that a continuously monitoring instrument is calibrated before deployment and its calibration is checked on recovery to determine whether it drifted",
+          "gives the mechanics of the check: put the instrument in measurement mode, not calibration mode, read the standards used at the initial calibration, and compare against the initial calibration values",
+          "states that if the check falls outside the criteria the measurement data must be qualified",
+          "states the result is recorded in the calibration log with the instrument, the standards used and their source, the date, the readings, the post-calibration check and who performed it"
+        ],
+        "must_not": [
+          "describes recalibrating the instrument before recording the recovery check",
+          "invents a post-deployment procedure absent from the corpus",
+          "presents an Atlas datasheet's recalibration interval as the post-deployment check"
+        ],
+        "cite": [
+          "epa-sop-field-instrument-calibration-2010.pdf"
+        ],
+        "notes": "EPA SOP §4.0 and §6.0. The 'measurement mode, not calibration mode' detail is the one that separates a real reading of the SOP from a plausible paraphrase — recalibrating first destroys the evidence of drift."
+      }
+    },
+    {
+      "role": "user",
+      "content": "What counts as drifted, though? Give me the numbers per parameter.",
+      "rubric": {
+        "must_contain": [
+          "dissolved oxygen: ±0.5 mg/L of the saturation value, and below 0.5 mg/L for the zero-DO solution but not a negative value",
+          "specific conductance: ±5 percent of the standard or ±10 µS/cm, whichever is greater",
+          "pH: ±0.3 pH unit against the pH 7 buffer",
+          "turbidity: ±5 percent of the standard",
+          "ORP: ±10 mV",
+          "states these are the defaults used only when the project's quality-assurance project plan or sampling and analysis plan does not specify its own criteria"
+        ],
+        "must_not": [
+          "invents a criterion for a parameter the SOP does not list",
+          "presents the USGS stabilization criteria for recording a reading as post-calibration drift criteria",
+          "omits the conditional and presents the numbers as universal"
+        ],
+        "cite": [
+          "epa-sop-field-instrument-calibration-2010.pdf"
+        ],
+        "notes": "EPA SOP §6.0 criteria table. The last must_contain is the trap: the stabilization criteria in NFM A6.0 table 6.0–1 (±0.2 °C, ±0.2 mg/L, ±0.1 pH unit, ±5 µS/cm or ±3 %, ±0.5 TU or ±5 %) look similar and mean something entirely different. An answer that mixes the two tables is wrong even though every number in it exists in the corpus."
+      }
+    }
+  ]
+}

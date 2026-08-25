@@ -1,7 +1,8 @@
 # Device API — sensor data access
 
-How sensor data is actually queried out of the Clean Earth backend, and the plan for exploring
-and recording it before `query_sensor_data` is built.
+How sensor data is actually queried out of the Clean Earth backend. It also carries the
+exploration-and-recording plan (§9) that ran before `query_sensor_data` was built — kept because
+the recordings it produced are the offline fixtures the tool is still tested against.
 
 This is the ◆G8 follow-through. `timeline.md` Phase N3 recorded the contract as read from
 `../user-dashboard`; this document adds the **server side** (`../clean-earth-rovers-server`) and
@@ -426,6 +427,7 @@ comparison is still open.
 |---|---|
 | `src/types/device.types.ts` | device, reading, and metric shapes |
 | `src/devices/metrics.ts` | the code table, error-flag validity, reading/average decoding |
+| `src/devices/plausibility.ts` | per-metric physical rails for the probe failures the error flags do **not** set — added after a `-1023 °C` reading with `rtdError = 0` reached a generated report as a genuine `-1809.4 °F` minimum |
 | `src/devices/DeviceApiClient.ts` | read-only typed client: login, devices, last, period, averages |
 | `scripts/exploreDeviceApi.ts` | `npm run explore:devices` — discover, sample, record |
 | `test/unit/deviceApi.test.ts` | 62 tests, no network, no credentials, no cost |
@@ -505,7 +507,12 @@ Two consequences:
 
 1. **Water type has to become per-device**, read from the device's `operatingEnvironment` field,
    not from deployment config. That is Phase N4's site/device metadata store and it bears on ◆G3.
-   Not a change to make now — the prompt is a pinned N2 control.
+   **Half done, the same way §8b's turbidity change is half done:** the report pipeline already
+   reads `operatingEnvironment` per device (`src/report/buildReportInput.ts`), and takes the site
+   temperature baseline from the registry's own `thresholds.min/maxTemperature`
+   (`src/report/operatorThresholds.ts`). The **chat** path is unchanged and still reads the single
+   global `WATER_TYPE`, because moving it means editing the pinned N2 prompt. The tool flags the
+   disagreement instead of hiding it.
 2. **Algalita reads above the saltwater range**, by 4,000–10,000 µS/cm consistently. Either the
    operator range is wrong for this site or the probe needs attention. A question for the
    operator, and a good example of why ◆G3 matters.

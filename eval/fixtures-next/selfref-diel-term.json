@@ -1,0 +1,70 @@
+{
+  "id": "selfref-diel-term",
+  "class": "follow-up",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [],
+  "notes": "The §8 self-referential follow-up, written the way §8 says it has to be: turn 1 is engineered so that any correct answer introduces the word 'diel', and turn 2 then asks about a term THE BOT said, not one the user typed. Up-front retrieval (◆G11) runs on the raw turn, so turn 2 is a bare rare token with no surrounding context — a direct-feed arm has the slice regardless, a RAG arm has to retrieve on the word alone. Turn 1 deliberately enters through pH rather than DO so the conversation does not repeat `followup-diel-swing`. If turn 1 fails to introduce the term, turn 2 is ungradeable and the fixture should be dropped rather than rescued — say so in the sweep notes.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our pH climbs about half a unit every afternoon and is back down by sunrise. Somebody's discharging on a schedule, right?",
+      "rubric": {
+        "must_contain": [
+          "identifies the pattern as the diel cycle and uses the word 'diel'",
+          "explains the mechanism: photosynthesis removes CO₂ and raises pH during the day, respiration and decomposition add CO₂ and lower it overnight",
+          "states that a smooth, repeating daily oscillation is biology rather than pollution",
+          "notes DO should be swinging in phase with pH, and that in-phase daily pH and DO swings are the fingerprint of biological productivity"
+        ],
+        "must_not": [
+          "treats a regular daily oscillation as a discharge event",
+          "claims pH and DO move in opposite directions on the daily cycle"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ],
+        "notes": "Turn 1 exists to plant the term. Grade it, but the reason it is here is turn 2. If an arm answers correctly without ever saying 'diel', mark turn 2 unscored for that arm rather than grading it against a term the arm never introduced."
+      }
+    },
+    {
+      "role": "user",
+      "content": "What's diel? You used that word, I've not seen it before.",
+      "rubric": {
+        "must_contain": [
+          "defines diel as the 24-hour daily cycle",
+          "states DO, pH and ORP all swing on it, peaking mid-afternoon and bottoming pre-dawn",
+          "connects the definition back to the pH pattern the user described without the user having restated it"
+        ],
+        "must_not": [
+          "refuses on the grounds that the term is not in the provided context",
+          "answers about a different cycle — tidal or seasonal — instead of the daily one",
+          "invents an etymology or a definition not supported by the corpus"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ],
+        "notes": "This is the discriminator. The query word appears in the previous ANSWER, not in the user's original question, and retrieval runs on this turn's raw text."
+      }
+    },
+    {
+      "role": "user",
+      "content": "So when does it stop being that and start being a problem?",
+      "rubric": {
+        "must_contain": [
+          "states the test for a real event: a step-change or sustained excursion that breaks the expected daily or tidal rhythm, rather than a smooth oscillation",
+          "states the event must show up as a correlated shift across several parameters, not one",
+          "names the pre-dawn DO minimum as the danger window and large in-phase DO and pH swings as a eutrophication or bloom signal"
+        ],
+        "must_not": [
+          "invents a numeric swing threshold",
+          "loses the referent of 'it' and answers about something other than the daily cycle"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

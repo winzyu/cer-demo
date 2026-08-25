@@ -31,7 +31,7 @@ window. The corpus here is small enough that the answer is genuinely not obvious
 | | direct-feed | RAG |
 |---|---|---|
 | **Per request** | Large, ~constant input (the whole slice) + output | Small input (top-k chunks) + output + one query embedding |
-| **One-time / amortized** | none | Embed the corpus (~490 chunks, ~339K tokens), build the index |
+| **One-time / amortized** | none | Embed the corpus (558 chunks, ~314K tokens since 2026-08-21; 305 chunks when the arms were swept), build the index |
 | **Ongoing infra** | none | Vector index storage; a Postgres instance if pgvector wins |
 | **On a corpus change** | nothing — next request just reads the new text | Re-chunk, re-embed, re-index the changed documents |
 | **Cost predictability** | Flat and easy to forecast: cost ≈ requests × slice size | Low marginal cost, but an infra tail that exists at zero traffic |
@@ -48,6 +48,12 @@ rag         = (S_sys + k × C)   × P_in + O × P_out + Q × P_embed
 
   S_slice ≈ 21K tokens (small tier, ◆G9)     k × C ≈ 5 × ~800 = ~4K tokens (top-k 5 @ 3200 chars)
 ```
+
+> **`S_slice` was superseded before any arm ran.** ◆G9's original small tier was ~21K tokens; the
+> 2026-07-29 revision (§3) replaced it with the operator reference plus the four probe datasheets,
+> **~9.4K tokens — 11,023 prompt tokens as actually sent**. The 5× ratio below is therefore the
+> pre-revision estimate; the measured numbers are in §1b and §4b. The shape of the argument is
+> unchanged, which is why it is left standing.
 
 So direct-feed carries roughly **5× the document-context tokens per request** — before caching. That
 "before caching" is the crux:
@@ -204,7 +210,7 @@ conflated:
 | **Free tier** | Firestore has an "Always Free" daily quota (reads/writes/deletes/storage) — plausibly covers a demo entirely | Same quota, but vector search consumes reads faster and the index adds storage | None. Cloud SQL has no free tier | **Confirm the current quota numbers, and confirm they apply to the `(default)` database — named databases have historically billed differently.** Our config defaults to `(default)` (`FIRESTORE_DATABASE_ID`) |
 | **Compute (the app)** | Cloud Run, scale-to-zero, shared by all arms | same | same, **plus** the DB instance | Constant across arms → cancels out of the comparison, but include it in the absolute figure |
 | **LLM inference** | Fireworks serverless: per-token, **no idle cost** | same | same | Note if a dedicated deployment is ever considered — that bills by GPU-hour and changes the shape completely |
-| **Embeddings** | **none — this arm needs no embedding model at all** | Corpus embedding once (~339K tokens) + one query embedding per request + re-embed on corpus change | Same | Fireworks embedding rate |
+| **Embeddings** | **none — this arm needs no embedding model at all** | Corpus embedding once (~314K tokens at the current corpus) + one query embedding per request + re-embed on corpus change | Same | Fireworks embedding rate |
 | **Index/storage** | Document text only | Vectors + index | Vectors + index + WAL/backups | — |
 | **Ops burden** | Nothing to run, patch, back up, or monitor | Managed | **A database to run, patch, back up, monitor, and pay for** — the cost that doesn't appear on any invoice line | Estimate honestly |
 
@@ -273,7 +279,10 @@ weakness the legacy hybrid was built to fix, and one the direct-feed arm doesn't
 
 ## 3. The hard constraint: the corpus doesn't fit
 
-From `MIGRATION_SPEC.md` §10.1 — 9 authoritative documents, ~1.357M characters, **~339K tokens**:
+From `MIGRATION_SPEC.md` §10.1 — the **legacy** corpus, 9 authoritative documents, ~1.357M
+characters, **~339K tokens**. It has been rescoped twice since (to 8 docs / ~179K tokens on
+2026-07-29, then expanded to **18 docs / ~1.25M chars / 558 chunks** on 2026-08-21 —
+[`../documents/README.md`](../documents/README.md)). The conclusion is unchanged in every version:
 
 | slice | ~tokens | direct-feed viable? |
 |---|---:|---|
@@ -540,7 +549,7 @@ Per question, per arm. **Cost is the deciding axis; quality is a floor** — see
 - **Input / output tokens per answer**, split **cached vs. uncached input** — the split, not the
   total, is what determines direct-feed's viability.
 - **Cost per answer**, cold and warm, priced at run-time rates.
-- **Prompt-cache hit rate.** Pivotal. Direct-feed sends ~21K static input tokens every request; its
+- **Prompt-cache hit rate.** Pivotal. Direct-feed sends ~11K static input tokens every request; its
   economics live or die on those being cached. Report cold and warm separately, never blended.
 - **RAG fixed costs:** one-time corpus embedding, index storage per month, and re-embedding cost per
   corpus change.
@@ -814,11 +823,18 @@ pricing changes, or the corpus grows substantially.
 
 ---
 
-## 11. When and where this runs — **not now, not on this branch**
+## 11. When and where this ran — **executed as planned**
 
-**Deferred by decision.** This is planned work, not current work. The `migration` branch stays scoped
-to what it already contains: the Node/Express + Firestore skeleton and these planning docs. Building
-adapters, standing up a pgvector sidecar, and running a paid eval sweep all belong elsewhere.
+> **This section is the original sequencing decision, and it has been carried out.** All three arms
+> were built and swept on `feat/bakeoff-sweep` after Phase N1 landed, and that work has since
+> merged. Nothing here is an instruction any more; it is kept because the sequencing rationale —
+> in particular *why the pgvector sidecar must never appear on a branch headed for deploy* — is
+> still in force, and because the "also needed before starting" list below records which inputs
+> were supplied and which were assumptions.
+
+**Deferred by decision, at the time of writing.** The `migration` branch stayed scoped to what it
+already contained: the Node/Express + Firestore skeleton and these planning docs. Building
+adapters, standing up a pgvector sidecar, and running a paid eval sweep all belonged elsewhere.
 
 - **Sequence:** finish and merge `migration` → build **Phase N1** (the retrieval seam + `POST /chat`
   on the stub) → *then* open the bake-off.
@@ -840,4 +856,5 @@ adapters, standing up a pgvector sidecar, and running a paid eval sweep all belo
     sample** (§7b). The judge model must differ from the model under test; the human sample is
     collected through the blind frontend harness (§7c) rather than by hand-driving the API.
 
-Until then this document is a plan of record. Nothing here should be implemented on `migration`.
+Nothing here was implemented on `migration`, and the sidecar never reached a deploy branch. What
+remains open is not in this section — it is grading and the §10 report (◆G7).

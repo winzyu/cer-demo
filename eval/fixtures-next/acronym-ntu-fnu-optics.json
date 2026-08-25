@@ -1,0 +1,55 @@
+{
+  "id": "acronym-ntu-fnu-optics",
+  "class": "acronym-exact-token",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.7-turbidity.pdf",
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+  ],
+  "requires": [
+    "turbidity-in-scope"
+  ],
+  "notes": "`acronym-ntu-fnu` grounds the NTU/FNU distinction in the operator reference's two-line caveat. This one grounds it in the chapter that actually defines it, which the corpus could not do before 2026-08-21 — the 1998 turbidity edition contains no 'FNU' at all, v2.1 defines both units by light source and detector geometry. It also reaches the fact that matters most to this fleet: the label 'NTU' on a datasheet does not establish the optics, because manufacturers use it generically for calibrants and equipment. Entirely outside the ◆G9 slice.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our pod reports turbidity in NTU but nobody ever told us what light source is in it. Does the unit itself tell me what's inside?",
+      "rubric": {
+        "must_contain": [
+          "states NTU and the related designations signify broad-spectrum or white incident light in the 400 to 680 nm range",
+          "states FNU and the related designations signify incident light in the 780 to 900 nm near-infrared range",
+          "gives at least one of the defining method geometries — EPA Method 180.1 for NTU (detector at 90° ± 30°, tungsten lamp at 2,200 to 3,000 K) or ISO 7027 for FNU (detector at 90° ± 2.5°, LED at 860 ± 60 nm)",
+          "states plainly that the printed unit is not proof of the optics, because manufacturers may keep using 'NTU' generically for calibrants and equipment"
+        ],
+        "must_not": [
+          "supplies a conversion between NTU and FNU",
+          "states the units are interchangeable",
+          "asserts what light source this specific pod uses"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ],
+        "notes": "NFM 6.7 v2.1 §6.7.1.B and table 6.7-4 including both footnotes. NFM A6.0 table 6.0–1 footnote 3 — most in situ multiparameter turbidity sensors are single-beam infrared and reported in FNU — is the corroborating citation and is why A6.0 is in answerable_from. A good answer says the labelled unit alone cannot settle the question and names what would: the wavelength."
+      }
+    },
+    {
+      "role": "user",
+      "content": "So can I put our numbers next to the county's sonde readings in the same chart or not?",
+      "rubric": {
+        "must_contain": [
+          "states the reporting units are equivalent only when measuring a calibration solution such as formazin or polymer beads",
+          "states the instruments may not produce equivalent results on environmental samples, so raw data from differently designed instruments are not directly interchangeable",
+          "gives the rule for valid comparison over time, between sites and among projects: instruments with identical optical and data-processing configurations",
+          "declines to give a conversion and recommends establishing the relation between the two instruments over the range of conditions instead"
+        ],
+        "must_not": [
+          "supplies a conversion factor or a correction between the two instruments",
+          "declares the two data sets directly comparable"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    }
+  ]
+}

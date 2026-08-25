@@ -1,7 +1,7 @@
 # Clean Earth RAG — Current Specs
 
-What is built and how it works **as of Phase N1**. This is the implementation reference for the
-current codebase.
+What is built and how it works. This is the implementation reference for the current codebase; the
+status block below says which phase each piece belongs to.
 
 - The **legacy** FastAPI + Postgres/pgvector behavior being ported lives in
   [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md).
@@ -63,7 +63,7 @@ queries, corpus ingestion — has since been built; see the status block above a
 | Language | TypeScript 5, `strict`, **CommonJS** output via `tsc` → `dist/` |
 | HTTP | Express 4 |
 | Middleware | `morgan` (dev logging), `helmet`, `cors`, `express.json` |
-| Datastore | Firestore via `@google-cloud/firestore` (client constructed, not yet queried) |
+| Datastore | Firestore via `@google-cloud/firestore` — read by `FirestoreCorpusSource` and `FirestoreVectorAdapter`; the client is still lazy, so boot needs no credentials (§5) |
 | LLM | Fireworks via the official `openai` SDK pointed at its compatible endpoint |
 | Errors | `http-errors` + thin subclasses + one terminal handler |
 | Config | hand-rolled loader + validation (no config-schema library, per conventions §8) |
@@ -89,10 +89,14 @@ clean-earth-rag/
 │   ├── routes/
 │   │   ├── index.ts          /api/v1 aggregator
 │   │   ├── healthRoutes.ts   GET /health
-│   │   └── chatRoutes.ts     POST /api/v1/chat
+│   │   ├── chatRoutes.ts     POST /api/v1/chat
+│   │   ├── deviceRoutes.ts   GET /api/v1/devices (§10.5)
+│   │   └── reportRoutes.ts   GET /api/v1/reports/:filename — not gated on REPORT_TOOL
 │   ├── controllers/
 │   │   ├── HealthController.ts
-│   │   └── ChatController.ts   retrieve → assemble → answer (JSON or SSE)
+│   │   ├── ChatController.ts   retrieve → assemble → answer (JSON or SSE)
+│   │   ├── DeviceController.ts pod list for the UI selector
+│   │   └── ReportController.ts serves a generated PDF off local disk
 │   ├── middleware/
 │   │   ├── errorHandler.ts   terminal error handler
 │   │   ├── quotaGuard.ts     429 gate on POST /chat, before SSE opens (§4a)
@@ -129,16 +133,27 @@ clean-earth-rag/
 │   │   ├── costScenarios.ts  measured token counts + fixed costs
 │   │   └── cost.ts           per-request / monthly / break-even math
 │   ├── prompt/
-│   │   ├── systemPrompt.ts   ported legacy prompt + REFUSAL_SENTENCE + TOOL_BLOCK (flagged)
+│   │   ├── systemPrompt.ts   ported legacy prompt + REFUSAL_SENTENCE + TOOL_BLOCK /
+│   │   │                     REPORT_TOOL_BLOCK (both flagged)
 │   │   └── promptBuilder.ts  static-first message assembly
 │   ├── devices/
 │   │   ├── DeviceApiClient.ts  read-only client for the Clean Earth backend
-│   │   └── metrics.ts        metric codes, error flags, reading/average decoding
+│   │   ├── metrics.ts        metric codes, error flags, reading/average decoding
+│   │   └── plausibility.ts   per-metric physical rails the hardware error flags miss
 │   ├── tools/
-│   │   ├── index.ts          tool registry, gated on SENSOR_TOOL
-│   │   ├── querySensorData.ts  the tool: device match, fetch, caveats (§10.3a)
+│   │   ├── index.ts          tool registry, gated on SENSOR_TOOL and REPORT_TOOL
+│   │   ├── querySensorData.ts  the sensor tool: device match, fetch, caveats (§10.3a)
+│   │   ├── generateReport.ts   the report tool, gated on REPORT_TOOL
 │   │   ├── timeRange.ts      NL range parsing + reference-time anchoring
-│   │   └── aggregate.ts      min/max/mean/median/latest/raw, null-never-zero
+│   │   └── aggregate.ts      min/max/mean/median/latest/earliest/raw/series, null-never-zero
+│   ├── report/              the deterministic report pipeline (compute, then narrate)
+│   │   ├── buildReportInput.ts  assembles the report model from sensor + registry data
+│   │   ├── events.ts         period-relative event detection
+│   │   ├── referenceRanges.ts   transcribed baselines + TURBIDITY_BAND_EDGES
+│   │   ├── operatorThresholds.ts  validated per-device temperature baseline
+│   │   ├── narrative.ts      LLM narration over pre-computed facts
+│   │   ├── renderPdf.ts      pdfkit layout
+│   │   └── types.ts
 │   ├── services/
 │   │   ├── LlmService.ts     Fireworks chat completion + streaming + tool calls
 │   │   ├── ChatOrchestrator.ts  the tool-round loop, dispatch, cap fallback
@@ -151,28 +166,27 @@ clean-earth-rag/
 │   │   ├── tool.types.ts       ToolDefinition / ToolCall / ToolHandler / ToolInvocation
 │   │   └── chat.types.ts       ChatMessage / ChatRole (incl. the tool role)
 │   └── utils/
-│       ├── errors.ts         NotFound/Validation/Unauthorized/Forbidden/Conflict
+│       ├── errors.ts         NotFound/Validation/Unauthorized/Forbidden/Conflict + codedError
+│       ├── answerFormat.ts   【commentary…】 stripping, buffered for the streaming path
+│       ├── bearerToken.ts    lifts the caller's Authorization header
 │       ├── logger.ts         createLogger(tag)
 │       └── sse.ts            Server-Sent Events helpers
 ├── scripts/                  ingest.ts, seedFirestore.ts, seedFirestoreChunks.ts,
-│                             bakeoff.ts, cost.ts, gradePacket.ts,
-│                             exploreDeviceApi.ts
+│                             bakeoff.ts, cost.ts, gradePacket.ts, starterPrompts.ts,
+│                             exploreDeviceApi.ts, verifySensorTool.ts,
+│                             exploreDeviceFields.sh, exploreBackendSurface.sh
 ├── test/
-│   ├── integration/  health.test.ts, chat.test.ts, sensorChat.test.ts, quotaChat.test.ts
+│   ├── integration/  health.test.ts, chat.test.ts, sensorChat.test.ts, quotaChat.test.ts,
+│   │                 devices.test.ts
 │   ├── fixtures/device-api/  recorded production bodies + provenance README (§16)
-│   └── unit/         retrieval.test.ts, prompt.test.ts, llmService.test.ts,
-│                     directFeed.test.ts, ingestion.test.ts, chatValidators.test.ts,
-│                     evalFixtures.test.ts, bakeoffRunner.test.ts, embeddingService.test.ts,
-│                     cost.test.ts, firestoreCorpus.test.ts, firestoreVector.test.ts,
-│                     gradePacket.test.ts, deviceApi.test.ts, timeRange.test.ts,
-│                     aggregate.test.ts, querySensorData.test.ts,
-│                     chatOrchestrator.test.ts, quota.test.ts, quotaConfig.test.ts
+│   └── unit/         31 suites — see the table in §16
 ├── eval/fixtures/            30 committed bake-off conversations (§12)
 ├── eval/transcripts/         captured sweeps, <pass>/<arm>/<fixture>.json (§13)
 ├── eval/grading/             blind grading packet, <pass>/{packet,context,scores.csv,KEY.json}
 ├── frontend/index.html       static chat UI, wired to POST /api/v1/chat (streaming)
-├── data/                     sensor CSV + corpus artifact (git-ignored)
-├── documents/                corpus PDFs (git-ignored)
+├── data/                     corpus artifact + device-API recordings (git-ignored)
+├── documents/                corpus PDFs — `documents/*` is git-ignored, but the five Tier 1
+│                             files (the ◆G9 slice) are force-tracked; see documents/README.md
 ├── archive/pgvector-rag/     the archived bake-off arm at its original paths (§14) —
 │                             not compiled, not tested, not imported; excluded from the image
 └── docs/                     SPECS.md, timeline.md, EVAL_FIXTURES.md, migration/
@@ -197,9 +211,9 @@ Shape:
 config = {
   nodeEnv, isProduction, port, logLevel,
   firestore:  { projectId?, databaseId },
-  fireworks:  { apiKey?, baseUrl, chatModel?, embeddingModel, maxTokens, user },
+  fireworks:  { apiKey?, baseUrl, chatModel?, embeddingModel, maxTokens, temperature, user },
   deviceApi:  { baseUrl?, devToken?, timeoutMs, defaultDeviceLabel? },
-  tools:      { sensorTool, maxToolRounds, rawLimit },
+  tools:      { sensorTool, reportTool, maxToolRounds, rawLimit },
   chat:       { maxHistoryMessages },
   quota:      { enabled, requests, tokens, windowMs, windowLabel, scope },
   retrieval:  { defaultMode, debug, corpusSource },
@@ -207,12 +221,15 @@ config = {
 }
 ```
 
-`tools.sensorTool` (`SENSOR_TOOL`, default `false`) is the Phase N3 gate — see §10.3a. Turning it
-on **logs a warning at startup**, deliberately: it un-pins the bake-off's system prompt, and a
-capture run made with it on is not comparable to the three already captured. Better a line in every
-startup log than a silently voided sweep.
+`tools.sensorTool` (`SENSOR_TOOL`, default `false`) is the Phase N3 gate — see §10.3a.
+`tools.reportTool` (`REPORT_TOOL`, default `false`) is the same shape for `generate_report`: a
+separate flag rather than a fold into `sensorTool`, because `generate_report` calls
+`QuerySensorData.query()` directly instead of going through the model's tool loop. Turning either
+on **logs a warning at startup**, deliberately: both un-pin the bake-off's system prompt, and a
+capture run made with one on is not comparable to the three already captured. Better a line in
+every startup log than a silently voided sweep.
 
-Environment variables and defaults are documented in `README.md` §3 and `.env.example`.
+Environment variables and defaults are documented in `README.md` §5 and `.env.example`.
 
 Two readers exist only for the quota block (§4a) and are worth naming, because both are stricter
 than the getters above rather than more forgiving:
@@ -567,8 +584,10 @@ prompt block, the `tools` array, and the tool registry.
 - **Round-cap fallback:** the last prose the model produced, or `ROUND_CAP_PLACEHOLDER` if it never
   produced any.
 
-`query_sensor_data` (`src/tools/querySensorData.ts`) is the only registered tool. `search_documents`
-is **not** a tool — ◆G11 is open, and retrieval still runs before the call as CONTEXT.
+`query_sensor_data` (`src/tools/querySensorData.ts`) and `generate_report`
+(`src/tools/generateReport.ts`) are the registered tools, each behind its own flag.
+`search_documents` is **not** a tool — ◆G11 is open, and retrieval still runs before the call as
+CONTEXT.
 
 **Arguments:** `metric` (six names, or `all`), `time_range`, `aggregation`, optional `device`, and
 optional `bucket` for `series`.
@@ -716,12 +735,29 @@ retrieval-strategy differences.
 | Filter | length ≥ 100, no PDF boilerplate, and an alphabetic-ratio ≥ 0.5 test **skipped for `.md`/`.txt`** — see below |
 | Output | per document: full `text` (direct-feed) and filtered `chunks` (vector arms), plus the ◆G9 slice flag |
 
-Current run: **8 documents, 716,603 chars (~179K tokens), 305 chunks**; direct-feed slice
-**37,660 chars (~9.4K tokens)**.
+Current run, **corpus expanded 2026-08-21**: **18 documents, 1,254,899 chars (~314K tokens),
+558 chunks**; direct-feed slice unchanged at **37,660 chars (~9.4K tokens)**. Previously 8
+documents / 716,603 chars / 305 chunks.
 
 The corpus is scoped to the six parameters the DataPod measures. Documents about undetectable
 analytes live in `documents/_excluded/` — see `timeline.md`. Active set: the operator
-source-of-truth, four Atlas Scientific probe datasheets, and three USGS/EPA field-methods manuals.
+source-of-truth, four Atlas Scientific probe datasheets, **the whole USGS National Field Manual
+Chapter A6 (nine chapters, one per parameter)**, two EPA regulatory/calibration documents, and two
+situational pollution-event references. Full breakdown and the edition-currency check in
+[`documents/README.md`](../documents/README.md).
+
+**The slice did not grow with the corpus, deliberately.** Direct-feed's cost *is* its slice size,
+so the ~1.2M-char reference tier is reachable only by a RAG arm — which is what makes direct-feed
+a fixed baseline rather than a fourth candidate.
+
+**Two traps this expansion introduced**, both documented in `documents/README.md`:
+
+- **The five Tier 1 files are the entire direct-feed slice**, so they are force-tracked past the
+  `documents/*` ignore rule. If they ever go missing, ingest **exits 0** and prints
+  `direct-feed slice: 0 chars`; the arm then answers ungrounded, warning once at load. Read the
+  number ingest prints.
+- **`epa-sop-field-instrument-calibration-2010.pdf` is scanned** (18 chars/page) and ingests only
+  via `.ocr_cache/`, which is git-ignored. Missing cache is a hard error, not silent partial text.
 
 **The alpha-ratio exemption is a deliberate break from legacy parity.** The 0.5 threshold cannot tell
 OCR noise from a table — markdown tables here score 0.07–0.14, so the legacy rule discarded 15 of 23
@@ -983,7 +1019,7 @@ it is the weakness the legacy hybrid existed to cover, and the eval's exact-toke
 
 | element | value | why |
 |---|---|---|
-| Collection | `corpus_chunks`, ~305 docs, id `<filename>__<0000-padded index>` | **Separate from `corpus_documents` by necessity** — Firestore will not index a vector inside an array element |
+| Collection | `corpus_chunks`, one per chunk (**558** since the 2026-08-21 corpus expansion; 305 when the arms were swept), id `<filename>__<0000-padded index>` | **Separate from `corpus_documents` by necessity** — Firestore will not index a vector inside an array element |
 | Vector field | `embedding`, `Vector(768)` via `FieldValue.vector()` | must match the index |
 | Distance | `COSINE`, to match pgvector's `<=>` | a different measure would mean the two RAG arms no longer compare the same similarity |
 | Fetch depth | `limit = topK` (5), not the pgvector arm's fetch-20 | depth 20 exists to give RRF something to fuse; with one branch it would only pay for discarded reads |
@@ -1014,7 +1050,7 @@ arms:
 | probe | result |
 |---|---|
 | Turbidity normal range | **3,532** prompt tokens against direct-feed's **10,889**, cosine scores descending 0.735 → 0.718 |
-| `deepmanual-stabilization-criteria` | **Answers what direct-feed refuses** — all five rubric figures, top chunks from `tm9a6.8.pdf`, no probe-datasheet specs substituted |
+| `deepmanual-stabilization-criteria` | **Answers what direct-feed refuses** — all five rubric figures, top chunks from `tm9a6.8.pdf` (renamed `usgs-nfm-a6.8-multiparameter-instruments.pdf` on 2026-08-21), no probe-datasheet specs substituted |
 | `refusal-pathogens` | Retrieved the volunteer manual's fecal-bacteria chapter (chunks 175–177) and **still refused**, using the exact refusal sentence |
 
 The refusal result is the one worth recording: it is the case that fixture exists to catch, where a
@@ -1055,8 +1091,9 @@ for local demo, to be tightened before deploy.
 
 ## 16. Testing
 
-Jest + `ts-jest` + `supertest`. **All passing.** The device-API branch merged into the bake-off
-branch at `fa299ef` (279), and Phase N3's tool layer added the suites marked N3 below.
+Jest + `ts-jest` + `supertest`. **720 tests in 36 suites, all passing** (measured 2026-08-24 on
+`dev`). The table below names the suites that carry a design decision worth reading; it is not the
+full list — `npx jest --listTests` is.
 
 | suite | covers |
 |---|---|
@@ -1084,6 +1121,12 @@ branch at `fa299ef` (279), and Phase N3's tool layer added the suites marked N3 
 | `unit/quotaConfig.test.ts` | the `QUERY_QUOTA*` parsing rules: the off-and-unlimited default, `unlimited` accepted case-insensitively, `none`/`off`/`-1` **rejected** rather than guessed, the required duration unit suffix, `org` rejected as a scope this service cannot key on, and Gilligan's free tier expressed without a code change |
 | `integration/quotaChat.test.ts` | the gate over HTTP: the disabled default answering past tiny limits, the 429 body and `Retry-After`, a validation 400 not consuming an allowance, per-token vs global bucketing, tokens counted on the streamed path, and a refused `stream: true` request arriving as JSON with no SSE frames |
 | **N3** `integration/sensorChat.test.ts` | `query_sensor_data` end to end through `POST /chat` — scripted model, recorded device bodies, real loop/client/decoder in between — and the flag-off path making one tool-free call that never touches the device API |
+| `integration/devices.test.ts` | `GET /api/v1/devices` (§10.5): label dedupe, the `name`→`label` fallback and its stable tie-break, `water_type` echo, and a coded upstream failure propagating rather than flattening to `null` |
+| `unit/plausibility.test.ts` | the per-metric physical rails, including the verified −1023 °C temperature rail and the pH 0.000/14.000 exclusive bounds, and that `0` stays plausible for ORP and turbidity |
+| `unit/operatorThresholds.test.ts` | every rejection reason for an operator-entered temperature baseline — the all-zero "never configured" registry state, an inverted range, a typed-in placeholder magnitude — each falling back to "no baseline established" rather than to a wrong range, and never printing the rejected numbers |
+| `unit/answerFormat.test.ts` | `【commentary…】` stripping anchored to the channel name, **citation markers in the same brackets left untouched** (~160 of them across the captured transcripts), the marker-only answer coming out empty so the existing 502 guard fires, and the streaming filter agreeing with the batch stripper however the text is chopped up |
+| `unit/generateReport.test.ts`, `unit/buildReportInput.test.ts`, `unit/reportModel.test.ts`, `unit/reportEvents.test.ts`, `unit/reportReferenceRanges.test.ts`, `unit/reportNarrative.test.ts`, `unit/reportRenderPdf.test.ts` | the report pipeline: the tool's arguments and flag gating, the computed model assembled from sensor + registry data, event detection, the transcribed baselines and turbidity bands, narration confined to pre-computed facts, and the PDF layout |
+| `unit/starterPrompts.test.ts` | deterministic output, and the two exclusions (`refusal` class, `requires: sensor-tool` without `--sensor`) |
 
 **`unit/pgvectorRag.test.ts` is gone from the live suite** (2026-08-19). Its `fuseRrf` and
 `PgVectorRagAdapter` blocks went to `archive/pgvector-rag/` with the code they test — a suite whose
@@ -1116,10 +1159,11 @@ conventions this codebase follows, rather than disabled globally:
 |---|---|---|
 | ~~Tool-calling orchestration loop~~ | `MIGRATION_SPEC.md` §3 | **Built (N3, §10.3a).** 16 tool rounds + 1 forced-text round, `role:"tool"` messages, round-cap fallback. Gated on `SENSOR_TOOL`, default off |
 | Corpus ingestion + real adapters | `MIGRATION_SPEC.md` §5 | N2 bake-off: `firestore-direct` (small tier, ◆G9), `pgvector-rag` (**archived 2026-08-19**, §14), `firestore-vector` (◆G10 → all three built and swept) |
-| Embedding calls | `MIGRATION_SPEC.md` §4.4 | only needed if the bake-off selects a vector arm |
+| ~~Embedding calls~~ | `MIGRATION_SPEC.md` §4.4 | **Built.** `EmbeddingService` (nomic task prefixes, dimension and all-zero guards, §14) serves `firestore-vector` and `scripts/seedFirestoreChunks.ts`. It becomes dead code only if ◆G7 resolves to direct-feed alone |
 | Document context strategy | `MIGRATION_SPEC.md` §6–7 (pgvector) | **open gate ◆G7** — decided by the [direct-feed vs RAG bake-off](RETRIEVAL_BAKEOFF.md) over the three captured arms: `firestore-direct` vs `pgvector-rag` vs `firestore-vector`. Two are still selectable; `pgvector-rag` is graded from its transcripts (§14) |
 | ~~`query_sensor_data`~~ | `MIGRATION_SPEC.md` §8 | **Built (N3, §10.3a)** on the device API (◆G8 resolved). Remaining: per-device water type (N4/◆G3) and token streaming with tools on (N7) |
-| Ingestion (docs + CSV) | `MIGRATION_SPEC.md` §5 | re-home to Firestore |
+| ~~Ingestion (docs + CSV)~~ | `MIGRATION_SPEC.md` §5 | **Documents: built** (§11) — `npm run ingest` → `data/corpus/corpus.json`, seeded to `corpus_documents` / `corpus_chunks`. **The CSV half is retired, not pending:** ◆G8 resolved to the live device API, the synthetic 766-row CSV was never ported, and nothing reads it (`timeline.md`, "Confirmed decisions") |
+| Document upload / delete | — | N6. Also the first of the two things `HANDOFF.md` §3 says would reverse the provisional `firestore-direct` choice: direct-feed's slice grows unbounded as documents are added |
 
 
 ---
@@ -1129,5 +1173,11 @@ conventions this codebase follows, rather than disabled globally:
 Unchanged in intent from the legacy build: once chat lands, all prompts (system + history +
 retrieved chunks + user message) are sent to Fireworks AI, and confidentiality rests on a
 contractual DPA with Fireworks, not on data residency. For the skeleton, no data flows to any LLM.
-Sensor data (`data/`) and the corpus (`documents/`) are git-ignored; sensor data is treated as
-confidential per `CLAUDE.md`.
+Sensor data (`data/`) is git-ignored and treated as confidential per `CLAUDE.md`; `documents/` is
+git-ignored too, with the five Tier 1 corpus files force-tracked as the exception (§11).
+
+Two holes of this service's own — an unauthenticated `GET /api/v1/devices` served out of the
+deployment's superadmin token, and an unauthenticated `GET /api/v1/reports/:filename` over
+customer water-quality PDFs — are written up in
+[`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md) §6. **Both are still open on
+`dev`**; the fix lives on `fix/unauthenticated-endpoints`.

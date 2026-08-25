@@ -160,17 +160,26 @@ it counts for less than a result contradicting it.
 
 ---
 
-## 5. One blocker left: what cannot run today
+## 5. What runs, and what the runnable set depends on
 
-Blockers are recorded in each fixture's `requires` field and reflected in `AVAILABLE_CAPABILITIES`
-(`src/eval/fixtures.ts`). **28 of 30 fixtures (58 of 62 turns) are runnable today.**
+Requirements are recorded in each fixture's `requires` field and resolved against
+`AVAILABLE_CAPABILITIES` (`src/eval/fixtures.ts`). **The runnable set is 28 of 30 fixtures (58 of
+62 turns) on the default configuration, and 30 of 30 with `SENSOR_TOOL=true`.**
 
-### `sensor-tool` — 2 fixtures, 4 turns · still blocked
+### `sensor-tool` — 2 fixtures, 4 turns · **built 2026-08-13, gated on a flag**
 
-`query_sensor_data` and the tool-round orchestration loop land in N3. Until then the two
-`sensor-combined` conversations are committed but unrunnable. They discriminate little between
-arms by design — the sensor path is held constant across arms — so the headline comparison does
-not wait for them.
+`query_sensor_data` and the tool-round orchestration loop landed in N3. They are not missing any
+more; they are **off by default**, because the tool block changes the pinned system prompt while
+◆G7 is open (`RETRIEVAL_BAKEOFF.md` §4).
+
+`availableCapabilities()` is **derived from that same flag** rather than hard-coded, and the
+derivation is what keeps the eval honest in both directions. With the flag off, a sweep replays
+exactly the 28 fixtures the three captured arms ran, so it stays comparable to them. With it on,
+all 30 run. Hard-coding `sensor-tool` as available would let a default-configured sweep "run" two
+fixtures against a tool the model was never offered, and grade the resulting refusals as answers.
+
+The two `sensor-combined` conversations discriminate little between arms by design — the sensor
+path is held constant across arms — so the headline comparison never waited for them.
 
 ### `turbidity-in-scope` — 7 fixtures · **resolved 2026-07-29**
 
@@ -197,7 +206,7 @@ Changing it later voids every completed arm.
 | | turns | × 3 arms × 2 passes |
 |---|--:|--:|
 | Full set | 62 | 372 LLM calls |
-| Runnable today | 58 | **348 LLM calls** |
+| Runnable with `SENSOR_TOOL` off | 58 | **348 LLM calls** |
 
 Against the measured direct-feed prompt size (~10,900 tokens for a first turn, growing with
 history) and measured completions of 235–4,060 tokens, the runnable sweep is on the order of

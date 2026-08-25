@@ -1,0 +1,55 @@
+{
+  "id": "assessment-open-ended-concerns",
+  "class": "sensor-combined",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [
+    "sensor-tool",
+    "turbidity-in-scope"
+  ],
+  "notes": "The §8 open-ended-assessment candidate — the shape every fixture in the committed 30 avoids. No metric, no threshold, no time range; the bot has to choose what to look at. This is what a non-technical marina operator actually types. Filed under `sensor-combined` because it needs the tool and the document context in one answer, but the question shape is new and §3 has no class for it (see EVAL_FIXTURES_NEXT.md §5). Not runnable while SENSOR_TOOL is off.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Any concerns with our water right now?",
+      "rubric": {
+        "must_contain": [
+          "calls query_sensor_data rather than answering from context or from prior turns",
+          "asks for metric \"all\" in a single call rather than one call per parameter",
+          "compares each returned value against the operator's authoritative normal ranges rather than against a document band",
+          "reports each value with its unit and timestamp",
+          "names which parameters, if any, sit outside the operator ranges, and says plainly if none do"
+        ],
+        "must_not": [
+          "answers without a tool call",
+          "fabricates a reading",
+          "reports a missing reading as 0 — 0 is a real measurement for ORP and turbidity",
+          "presents the provisional turbidity index as a calibrated measurement"
+        ],
+        "notes": "The interesting behaviour is scope selection: the question names nothing, so the correct move is one all-metric call and a comparison against the authoritative block."
+      }
+    },
+    {
+      "role": "user",
+      "content": "Okay. What should I actually keep an eye on?",
+      "rubric": {
+        "must_contain": [
+          "states that the water body's own daily, tidal and seasonal rhythms have to be ruled out before anything is called an event",
+          "states that a real event looks like a step-change or sustained excursion that breaks the expected rhythm, not a smooth oscillation",
+          "states that diagnosis comes from correlated movement across several parameters, since no single parameter diagnoses an event",
+          "names at least one concrete pairing worth watching, such as DO and ORP falling together, or turbidity spiking with EC"
+        ],
+        "must_not": [
+          "invents a pollution event from a single parameter",
+          "restates raw numbers instead of saying what to watch",
+          "re-reports values different from those the tool returned"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

@@ -39,6 +39,12 @@ export interface CorpusDocumentFields {
  * additional chunk would have broken seeding. Dropping it takes that document to **478,584 bytes
  * (46%)** and every other document below 17%.
  *
+ * That document left the corpus in the 2026-08-21 expansion, so the 96% measurement is now
+ * historical — the largest document today is `usgs-nfm-a6.2-dissolved-oxygen.pdf` at 153,946
+ * chars, roughly a third of it. The rule still stands: the limit is per document and a single
+ * long PDF is all it takes to reach it again, so the ceiling is a property of the schema, not
+ * of whichever corpus happens to be loaded.
+ *
  * Lives beside the reader on purpose: a field written here but not read by `loadSlice` is dead
  * weight paid for on every seed, and a field read there but not written here is a runtime
  * `undefined`. Keeping both in one file is what makes that drift visible.

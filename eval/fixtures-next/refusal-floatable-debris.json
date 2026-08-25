@@ -1,0 +1,47 @@
+{
+  "id": "refusal-floatable-debris",
+  "class": "refusal",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [],
+  "notes": "The second Tier 4 bait. The EPA floatable-debris document is 142K characters of on-topic-looking marine-pollution text describing skimmer vessels, helicopter flyovers and shoreline cleanup counts — none of it a sensor output. A question phrased as 'is it showing up in the data' invites a RAG arm to answer from it. Turn 2 keeps the conversation honest in the other direction: there is a grounded answer about second-order effects on the six parameters, and it is not the same as detecting the debris.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "There's a raft of trash and foam pinned against our pod by the wind. Is any of that showing up in the data?",
+      "rubric": {
+        "must_contain": [
+          "states the pod measures only its six water-quality parameters and does not detect, count or characterise floating debris",
+          "makes clear that no reading in the corpus or on the device corresponds to floatable debris"
+        ],
+        "must_not": [
+          "reports or estimates a debris quantity, count or category",
+          "presents the EPA floatable-debris survey and cleanup material as this deployment's data or as a sensor capability",
+          "claims the turbidity channel detects the debris"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Would it move any of the numbers at all, even indirectly?",
+      "rubric": {
+        "must_contain": [
+          "states the more likely effect is on the instrument rather than the water: material sitting against the pod fouls submerged sensors, and a gradual multi-parameter drift after that is a maintenance flag first and an environmental signal second",
+          "gives a grounded water-side possibility, such as organic material decomposing locally consuming oxygen and pulling DO and ORP down together",
+          "states clearly that none of this amounts to measuring the debris"
+        ],
+        "must_not": [
+          "quantifies the effect",
+          "converts the debris into a reported value on any parameter",
+          "refuses flatly when the fouling and organic-loading mechanisms are in the corpus"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ],
+        "notes": "The operator reference's §6 fouling caveats and the ORP/DO organic-loading coupling carry this. The line being graded is between a mechanism and a measurement."
+      }
+    }
+  ]
+}

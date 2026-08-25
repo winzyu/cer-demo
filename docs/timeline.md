@@ -77,6 +77,11 @@ Corpus: 9 documents / ~340K tokens → **8 documents / ~179K tokens**. Still far
 context window, so the N2 comparison remains meaningful — had it fit, direct-feed would win by
 default and RAG would be moot.
 
+> Those are the 2026-07-29 figures and are kept because they are what the N2 sweep ran against.
+> The corpus was expanded again on 2026-08-21 to **18 documents / ~1.25M chars / 558 chunks** —
+> current numbers in "Cross-cutting: data requirements" §4 and
+> [`../documents/README.md`](../documents/README.md).
+
 ### Completed (migration groundwork)
 
 - **Conventions reverse-engineered** from the sibling repos (`clean-earth-rovers-server`,
@@ -190,8 +195,9 @@ set; the winner closes the gate.
 | `pgvector-rag` ✅ built, swept, **archived 2026-08-19** | **Legacy-parity RAG** — hybrid dense + Postgres full-text fused with RRF, exactly `MIGRATION_SPEC.md` §7 (with the §4a lexical caveat). Graded from its captured transcripts; the code is in `archive/pgvector-rag/` and the mode is no longer selectable. | Postgres+pgvector sidecar, **dev-only**, archived ahead of G7 |
 | `firestore-vector` ✅ built | RAG on Firestore native `findNearest`, dense-only unless a lexical path is built | Firestore vector index |
 
-**The corpus does not fit in context.** After the 2026-07-29 rescoping: 716,603 chars ≈ **179K
-tokens** across 8 docs, so "direct feed" means a *defined slice*, not everything — see ◆G9. The slice
+**The corpus does not fit in context.** 1,254,899 chars ≈ **314K tokens** across 18 docs since the
+2026-08-21 expansion (716,603 chars ≈ 179K across 8 docs at the time the arms were swept), so
+"direct feed" means a *defined slice*, not everything — see ◆G9. The slice
 ◆G9 settled on (operator source-of-truth + 4 probe datasheets) measures **~9.4K tokens**, 11,023
 prompt tokens as actually sent. Confirm the configured model's real context limit before changing it;
 the serverless catalogue rotates.
@@ -279,8 +285,10 @@ is runtime-only, so `npm run explore:devices` against the live API is the only w
 "Algalita pod" / "OWC 2026".
 
 The **read-only data layer is built and verified live 2026-08-11** (client, metric decoding,
-exploration/recording script, 45 offline tests). The **tool loop and the prompt's tool block are
-deliberately not built yet** — both would void the N2 arms; see `DEVICE_API.md` §10.
+exploration/recording script, 45 offline tests at that point). The tool loop and the prompt's tool
+block were deferred at that stage, because both would have voided the N2 arms; they landed two days
+later **behind `SENSOR_TOOL`, default off**, which resolves the objection without re-running an arm
+— see the 2026-08-13 status below and `DEVICE_API.md` §10.
 
 **Test pods confirmed:** `Algalita Pod` = `dev:351077454569099` (salt-water, reporting) and
 **`Old Woman Creek 2026`** = `dev:351077454567580` (fresh-water, stale since 2026-08-07). Note the
@@ -421,6 +429,16 @@ an input to **◆G3**.
 ## Phase N4 — Data layer & schema evolution `⟵ was Phase 1`
 *Goal: get the data model to where features need it.*
 
+> **Status, partial.** Turbidity is end to end (metric code `72`, decoded, ranged in the prompt,
+> and expressed as clarity bands in the report — `migration/DEVICE_API.md` §8b). The metadata this
+> phase wanted a store for turns out to already exist in the **backend's device registry**, so
+> nothing new was built to hold it: the report reads `operatingEnvironment` for water-body type and
+> `thresholds.min/maxTemperature` for the site baseline, both per device
+> (`src/report/buildReportInput.ts`, `src/report/operatorThresholds.ts`, `migration/BACKEND_FIELDS.md`).
+> **The chat path is unchanged** — it still reads the single global `WATER_TYPE`, because moving it
+> per-device means editing the pinned system prompt. ◆G3 stays open: what the report calls a
+> baseline is the operator's registry range, adopted as a working interpretation, not a decision.
+
 - **Add `turbidity` (NTU) end-to-end** — ingestion unit detection and the metric enum. The
   **operator normal-range and system-prompt range block landed early (2026-07-29)** — `0-25 NTU`
   freshwater / `0-10 NTU` saltwater — because the N2 eval could not measure retrieval while the
@@ -440,6 +458,12 @@ an input to **◆G3**.
 
 ## Phase N5 — Core behavior & UX quality `⟵ was Phase 2`
 *Goal: cheap, high-visibility correctness/polish.*
+
+> **Status: most of the list below has landed.** Markdown rendering + XSS hardening, provenance
+> surfacing, the input/response controls, the series chart, `【commentary…】` stripping, the error
+> taxonomy, the generated starter prompts and the pod picker are all in the tree.
+> [`CHAT_UX_WORKPLAN.md`](CHAT_UX_WORKPLAN.md) is the home for what each stream delivered and what
+> is still open; the list here is kept as the phase's scope, not as a to-do.
 
 - ~~Raise/remove the tool-round cap~~ **— done early in N3 (2026-08-13).** `MAX_TOOL_ROUNDS`
   defaults to 16 plus the forced text-only round; it was raised with the loop rather than after it,
@@ -511,9 +535,20 @@ answers complete; every sensor answer shows which pod, which window, and how fre
 ## Phase N6 — New features & report generation `⟵ was Phase 3`
 *Goal: the net-new asks, built on the compute/narrate principle.*
 
-- **Faulty / erroneous sensor-data handling** — detect & flag bad readings, surface "device error /
-  needs recalibration," ground guidance in a **sensor manual doc**. Consolidated with report §5.
-- **Sensor datasheet into corpus** — prerequisite for recalibration guidance.
+> **Status: report generation and the faulty-data foundation are built.** The pipeline is
+> `src/report/` (`buildReportInput`, `events`, `referenceRanges`, `operatorThresholds`,
+> `narrative`, `renderPdf`), reached through the `generate_report` tool and gated on **`REPORT_TOOL`,
+> default off** — same pinned-prompt reason `SENSOR_TOOL` is. Still open in this phase: document
+> upload/delete, and §4 event detection behind ◆G4.
+
+- ~~**Faulty / erroneous sensor-data handling**~~ **— built.** Per-metric physical-plausibility
+  rails in `src/devices/plausibility.ts` catch the probe rails the hardware's own error flags miss
+  (the −1809 °F / pH 13.58 boot artifacts); excluded rows are counted back as
+  `excluded_implausible` rather than dropped silently. Operator-entered temperature baselines are
+  read and validated in `src/report/operatorThresholds.ts`, which refuses junk registry values
+  rather than printing them. Recalibration *guidance* still needs the corpus grounding below.
+- ~~**Sensor datasheet into corpus**~~ **— done.** The four Atlas Scientific probe datasheets are
+  Tier 1 and in the ◆G9 slice; the EPA field-calibration SOP is Tier 3.
 - **Document management** — upload + delete source-of-truth docs with auto-seed on upload.
 - **◆ Report generation** to the six-section template. Compute the header/§2/§5 deterministically;
   narrate §1/§3/§6 with the LLM over pre-computed facts; §4 event-detection is compute + narrate.
@@ -602,8 +637,12 @@ conversations that survive a page reload.*
 2. **Operator normal-ranges / site baseline** — per metric, per site; authoritative over documents.
    Add a turbidity range. See ◆G3.
 3. **Site/device metadata** — coordinates, water-body type, client/contract, calibration dates.
-4. **Source-of-truth corpus** — the 8 active docs (operator source-of-truth, 4 Atlas Scientific probe
-   datasheets, 3 USGS/EPA field-methods manuals). No public links.
+4. **Source-of-truth corpus** — **18 active docs since 2026-08-21** (operator source-of-truth, 4
+   Atlas Scientific probe datasheets, the 9-chapter USGS National Field Manual A6 set, 2 EPA
+   regulatory/calibration docs, 2 situational pollution-event refs; ~1.25M chars / 558 chunks,
+   up from 8 docs / ~716K chars). No public links. Breakdown, the USGS edition-currency check, and
+   the two ingest traps: [`../documents/README.md`](../documents/README.md).
+   *Still missing from Tier 1: turbidity and temperature probe datasheets.*
 5. **Unit confirmations** — turbidity (NTU vs FNU) before answers quote it as fact.
 6. **Auth context** — the user's JWT, forwarded for backend-mediated sensor calls, scoped so the bot
    only sees that user's rovers.

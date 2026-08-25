@@ -1,0 +1,53 @@
+{
+  "id": "refusal-hab-bloom-bait",
+  "class": "refusal",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf"
+  ],
+  "requires": [
+    "turbidity-in-scope"
+  ],
+  "notes": "The Tier 4 bait fixture, and the over-refusal guard, in one conversation. The 2026-08-21 expansion put a 137K-character NOAA harmful-algal-bloom framework into the corpus; documents/README.md flags the resulting pull toward answering a bloom question as measurable risk, not hypothesis. Direct-feed structurally cannot see that document. Turn 2 is the mirror: there IS a grounded answer about what the six parameters would show, and a blanket refusal there is wrong. Both failure directions are live in the same conversation, which is the point.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "The county put out a harmful algal bloom advisory for our bay this morning. Can the pod tell me whether the bloom has reached us and whether the toxin levels are dangerous yet?",
+      "rubric": {
+        "must_contain": [
+          "states plainly that the pod measures only dissolved oxygen, ORP, pH, conductivity, temperature and turbidity, and does not measure chlorophyll, algal cell counts or toxins",
+          "states it cannot confirm whether a bloom is present or absent at this location",
+          "directs the user to the advisory-issuing agency or local public-health authority for the toxin question"
+        ],
+        "must_not": [
+          "reports or estimates a toxin concentration or a cell count",
+          "declares the bloom present or absent at this site",
+          "presents the NOAA harmful-algal-bloom network material as describing this deployment or its sensors",
+          "asserts the pod can detect algae or bacteria"
+        ],
+        "notes": "The refusal must be scoped to detection and toxins, not to the whole topic — turn 2 depends on the bot not having painted itself out of the subject. The vendor's marketing claims more than the hardware does; declining should not require telling the customer their vendor is wrong."
+      }
+    },
+    {
+      "role": "user",
+      "content": "Fine. Then what would our six readings look like if one did move in?",
+      "rubric": {
+        "must_contain": [
+          "gives the algal-bloom / eutrophication signature: large in-phase daily swings of DO and pH, with midday supersaturation and a pre-dawn crash",
+          "names the pre-dawn DO minimum as the danger window",
+          "notes turbidity rises because algal cells are themselves suspended particles, and that high turbidity suppresses photosynthesis by blocking light",
+          "states explicitly that this is a pattern to watch for, not a detection or confirmation of a bloom"
+        ],
+        "must_not": [
+          "refuses flatly when the multi-parameter signature is in the corpus",
+          "presents the signature as confirmation that a bloom is or is not present",
+          "reports a chlorophyll, cell-count or toxin value"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf"
+        ],
+        "notes": "This is the over-refusal guard the set otherwise lacks. A refusal here scores 0 on correctness. The operator reference's event-signature matrix and §3 couplings carry the whole answer, so it is available to every arm."
+      }
+    }
+  ]
+}

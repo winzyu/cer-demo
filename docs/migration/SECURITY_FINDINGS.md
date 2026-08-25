@@ -195,3 +195,64 @@ Theirs to fix, ours to raise. Bundled with the two already-known items so it goe
 4. **Dangling organization references** on `Marina Park` and `CWA Old` (§2).
 5. **Tokens are minted with no expiry** (`DEVICE_API.md` §4), so every issue above has an
    unbounded blast radius once a token leaks.
+
+---
+
+## 6. Two holes in **this** service — found 2026-08-21, fixed the same day
+
+Everything above is upstream and theirs to fix. These two were ours, and are now closed on
+`fix/unauthenticated-endpoints`. Both were found by reading the code, not by exploitation.
+
+### 6a. `GET /api/v1/devices` served unauthenticated callers out of the superadmin token
+
+`src/routes/deviceRoutes.ts` mounted the route with **no auth middleware**, and
+`DeviceApiClient` defaulted its token: `options.token ?? config.deviceApi.devToken`. A request
+with no `Authorization` header therefore fell through to `DEVICE_API_TOKEN` from `.env` — a
+**superadmin** token in this deployment, which sees all 8 organizations. The controller's own
+docstring claimed the endpoint was "org-scoped by the caller's token", which held only when a
+caller token was present.
+
+**Fixed in the class, not the route.** The implicit default is gone; the deployment credential is
+reachable only via an explicit `useConfiguredToken: true` at the call site, so *which code may use
+it* is a property of the code rather than a setting. The legitimate users of that fallback are
+offline (`scripts/exploreDeviceApi.ts`, `scripts/verifySensorTool.ts`) and now say so. A new
+`requireCallerToken` middleware returns 401 + `WWW-Authenticate: Bearer` with code
+`caller_token_required`.
+
+Deliberately **not** gated on `NODE_ENV === "production"` (the shape `POD_AUTHORIZATION.md` §10
+P0(1) originally proposed): that leaves the hole open in exactly the environment developers
+exercise, so the security-relevant behaviour would differ from the one that matters.
+
+`/chat` is **not** gated wholesale — a corpus-only question reads nothing org-scoped, so refusing
+it would deny answers the service can correctly give. The org-scoped half enforces it where it
+applies (`QuerySensorData.client()`, `GenerateReport.run()`).
+
+### 6b. `GET /api/v1/reports/:filename` had no authentication at all
+
+Generated PDFs contain customer water-quality data. Filenames are
+`report_${randomUUID().slice(0, 8)}.pdf` — **32 bits of entropy**, no expiry, persisted on local
+disk. Path traversal was already correctly guarded and remains so.
+
+**Fixed with a token requirement plus ownership binding.** `generate_report` writes a sha256 of
+the generating caller's token to a `.owner` sidecar; the controller refuses anything else. A
+login-only gate was rejected because it would let organization A read organization B's report by
+guessing eight hex characters — the one place this service's own org scoping would leak.
+
+Both "no such file" and "not yours" answer **404**: a distinguishable 403 confirms a filename
+guess and turns 32 bits of entropy into an enumeration oracle.
+
+The owner key is a **token hash, not a user id** — with no `ACCESS_TOKEN_SECRET` an unverified
+`sub` claim is forgeable, the same constraint `quotaKey.ts` and `POD_AUTHORIZATION.md` §9 both
+run into. A sidecar rather than an in-memory map because the PDF outlives the process.
+
+**Residual risk, accepted and documented:** re-login mints a different token string, so a user
+loses access to reports generated under a previous one. No revocation, no expiry.
+
+### 6c. Knock-on: the bundled demo frontend's pod picker now fails closed
+
+`frontend/js/api.js` sends no `Authorization` header. That page only ever worked because it was
+being served every organization's fleet through the fallback in §6a — it was a symptom of the bug,
+not a feature. It now shows a `caller_token_required` message telling the user to sign in.
+
+This was **not** papered over with a `?token=` URL parameter: that puts a non-expiring bearer
+credential into browser history, referrer headers, and server logs.

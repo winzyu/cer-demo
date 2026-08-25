@@ -4,6 +4,12 @@ Everything needed to resume this work cold. Written at the end of the session th
 Phase N2 bake-off, repaired a validity threat in it, built the grading packet, and added the
 Phase N3 device-API read layer.
 
+> **This is a dated session record, and two of its sections describe a working tree that no longer
+> exists.** §2's branch table and §7's uncommitted list are **superseded** and marked as such where
+> they sit — they are kept because §8 refers back to them, not because they describe today. §3, §4,
+> §5 and §9 are still the live orientation. For state as of now, read
+> [`SPECS.md`](SPECS.md)'s status block and [`timeline.md`](timeline.md)'s gate table.
+
 **Read order for a cold start:** this file → [`timeline.md`](timeline.md) (phases + gates) →
 [`SPECS.md`](SPECS.md) (what's built) → [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) (the
 experiment; §4a and §4b are the newest and most important).
@@ -17,10 +23,15 @@ arms were swept over 28 conversations × 58 turns × 2 passes with zero failures
 on measured numbers; a blind grading packet is built and waiting for a human. **◆G7 cannot close
 until that grading happens** — quality gates the decision and quality is the one thing unmeasured.
 Separately, a detour built the Phase N3 **device-API read layer** on its own branch, verified live
-against production. The tool-calling loop was deliberately not built, because it would void the
-bake-off's pinned prompt.
+against production. The tool-calling loop was deferred at the time of writing, on the ground that it
+would void the bake-off's pinned prompt; it landed later the same day behind `SENSOR_TOOL`, which
+resolves that objection without re-running an arm — see §9.
 
-## 2. The single most useful thing to know
+## 2. ~~The single most useful thing to know~~ — SUPERSEDED 2026-08-13
+
+> **The split this section describes is over.** `feat/device-api` was merged at `fa299ef` the same
+> day (§8 item 2), and everything below has since landed on `dev`. The table and the test counts are
+> left as written because §8 refers to them. Current test count: **720 in 36 suites**, all passing.
 
 **The work is split across two branches that do not contain each other.**
 
@@ -168,11 +179,17 @@ npm run grade:packet
   and destroys a cold pass.
 - Firestore uses ADC (`~/.config/gcloud/application_default_credentials.json`, project
   `cer-demo-2026`). Configured and verified.
-- **`documents/*.pdf` are tracked in git despite the `.gitignore` rule** — they were committed
-  before it was added. A deleted PDF is recoverable with `git checkout --`; check `git status`
-  before assuming otherwise. (This came up for real: two USGS manuals were deleted and restored.)
+- **Only *some* `documents/*.pdf` are tracked, despite the `.gitignore` rule.** The five Tier 1
+  files (the ◆G9 direct-feed slice) and the two USGS chapters that predate the rule are tracked;
+  the other eleven documents added on 2026-08-21 are not. So a deleted PDF is recoverable with
+  `git checkout --` *if it is one of the seven* — `git ls-files documents/` is the check, not
+  `ls`. (This came up for real: two USGS manuals were deleted and restored.)
 
-## 7. Uncommitted right now
+## 7. ~~Uncommitted right now~~ — SUPERSEDED 2026-08-13
+
+> **This describes a working tree that no longer exists.** Those five doc files were committed; the
+> `git add`/`git commit` lines below must not be run. Kept as the record §8 item 2 points at. Run
+> `git status --short` for what is actually uncommitted.
 
 ```
  M README.md            grade:packet script; corrected project layout

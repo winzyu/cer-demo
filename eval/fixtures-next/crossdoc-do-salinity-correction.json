@@ -1,0 +1,57 @@
+{
+  "id": "crossdoc-do-salinity-correction",
+  "class": "cross-document",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf",
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+    "Industrial-DO-probe.pdf"
+  ],
+  "requires": [],
+  "notes": "The fleet runs a freshwater pod and a saltwater pod, and comparing them is the first thing an operator does. The operator reference explains why the salt pod reads lower; TM 9-A6.2 adds the part the reference omits — that the salinity correction is a real processing step, that it can be driven from a calibrated specific-conductance sensor, and that it is not automatic on every instrument. Turn 2 is a discipline test with a negative answer: nothing in the corpus says whether this deployment applies one, and the correct move is to say that rather than to assume either way.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our saltwater pod sits around 6.5 mg/L DO while the freshwater one runs about 9. Is the salt pod sick?",
+      "rubric": {
+        "must_contain": [
+          "states the solubility of oxygen falls as salinity rises, so saltwater holds roughly 20 percent less DO than freshwater at the same temperature",
+          "states marine systems therefore sit closer to the hypoxia threshold by default and the gap between the two pods is expected, not a fault",
+          "places both values inside the operator's authoritative 5 to 14 mg/L range and says neither is flagged",
+          "notes temperature also sets the saturation ceiling, so the two pods should be compared at comparable temperatures"
+        ],
+        "must_not": [
+          "concludes the saltwater pod's probe is failing on the difference alone",
+          "invents a saturation percentage or a solubility figure for either pod",
+          "compares the two readings against a document band instead of the operator range for the normal call"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf",
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Is the number we're shown corrected for the salt, or is it raw?",
+      "rubric": {
+        "must_contain": [
+          "states plainly that the corpus does not say whether this deployment applies a salinity correction, and recommends confirming it with the operator",
+          "explains the correction as USGS describes it: salinity-correction factors are applied to the saturation values after measurement, and can be derived from specific conductance",
+          "notes that an instrument with a calibrated specific-conductance sensor can apply the correction internally and that it is worth activating, but that whether the instrument does so must be verified",
+          "notes the pod does measure conductivity, so the input the correction needs is available"
+        ],
+        "must_not": [
+          "asserts that the pod's DO reading is salinity corrected",
+          "asserts that it is not",
+          "supplies a numeric salinity-correction factor",
+          "converts the reading to a corrected value"
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ],
+        "notes": "TM 9-A6.2 §2.3 and §5.0, and table 6.2–4 (salinity correction factors based on specific conductance). The graded behaviour is the refusal to guess a deployment fact, held together with a grounded explanation of what the correction is."
+      }
+    }
+  ]
+}

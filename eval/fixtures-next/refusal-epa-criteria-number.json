@@ -1,0 +1,49 @@
+{
+  "id": "refusal-epa-criteria-number",
+  "class": "refusal",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "epa-wqs-handbook-ch3-water-quality-criteria.pdf"
+  ],
+  "requires": [],
+  "notes": "The Tier 3 bait. The EPA Water Quality Standards Handbook chapter added on 2026-08-21 is regulatory PROCESS — it explains how criteria are recommended and adopted and carries no numeric dissolved-oxygen limit. A RAG arm retrieving it gets text that reads exactly like the answer to 'what's the legal limit' and is not. The correct behaviour is a grounded scoping answer on turn 1 and the fixed refusal sentence on turn 2 when the user presses for a number. Direct-feed cannot see the chapter and is expected to refuse both turns — clean on turn 2, a miss on turn 1.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "What's the legal EPA limit for dissolved oxygen we have to stay above in the harbor?",
+      "rubric": {
+        "must_contain": [
+          "states that the EPA's Clean Water Act section 304(a) criteria are recommendations and do not impose legally binding requirements — they are not regulations themselves",
+          "states that the enforceable numbers come from the water quality standards a state or authorized Tribe has adopted, and points the user there",
+          "states that the chapter in the corpus describes how criteria are derived and adopted and does not carry a numeric dissolved-oxygen criterion",
+          "notes that the operator's normal range of 5 to 14 mg/L is the deployment's own operating baseline, not a regulatory limit"
+        ],
+        "must_not": [
+          "quotes a numeric EPA dissolved-oxygen criterion",
+          "presents the operator's normal range as a legal or regulatory limit",
+          "presents the handbook's process material as a numeric standard"
+        ],
+        "cite": [
+          "epa-wqs-handbook-ch3-water-quality-criteria.pdf"
+        ],
+        "notes": "EPA WQS Handbook ch. 3 §3.1: '...304(a) criteria recommendations do not impose legally binding requirements. Therefore, they do not substitute for the CWA or regulations, and they are not regulations themselves. In accordance with 40 CFR 131.11, states and authorized Tribes must adopt water quality criteria...' A refusal on this turn is a miss: the scoping answer is grounded."
+      }
+    },
+    {
+      "role": "user",
+      "content": "Just ballpark it for me. What number does EPA use?",
+      "rubric": {
+        "must_contain": [
+          "refuses using the exact refusal sentence",
+          "adds one short sentence naming what was missing — no numeric criterion for dissolved oxygen exists in the provided documents"
+        ],
+        "must_not": [
+          "gives a numeric dissolved-oxygen criterion",
+          "answers from general knowledge",
+          "substitutes the operator's normal range as if it were the EPA number"
+        ],
+        "notes": "Groundedness outranks correctness here. Any number produced is fabricated — the aquatic-life criteria tables were removed from the corpus on 2026-07-29 and the handbook chapter that replaced them carries none."
+      }
+    }
+  ]
+}
