@@ -1,0 +1,47 @@
+{
+  "fixtureId": "definitional-temperature-master-variable",
+  "set": "committed",
+  "fixtureClass": "definitional",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Why does the reference call temperature the master variable?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__c823e6132551",
+          "contentHash": "c823e6132551",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Pollution relevance: Temperature is the master variable — it sets DO capacity, accelerates\nbiological and chemical rates, and shifts EC readings."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Temperature → EC: Ion mobility rises with temperature; raw EC increases ~2% per °C."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Our temperature rose 3 °C this week and DO fell. Event or expected?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "A temperature rise should always be\npaired with an expected DO decline."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "The test for a real event: A pollution event typically appears as a step-change or sustained\nexcursion that breaks the expected diel/tidal rhythm"
+        }
+      ]
+    }
+  ]
+}

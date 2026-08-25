@@ -1,0 +1,47 @@
+{
+  "fixtureId": "precedence-optimal-do-range",
+  "set": "next",
+  "fixtureClass": "precedence",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "What's the optimal dissolved oxygen range for our lake?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Dissolved\nOxygen 6–11 mg/L (>80% sat.)"
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L\nhypoxia · ~0 anoxia."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "The reference doc says 6 to 11 for healthy freshwater though, and we've been sitting at 5.4. So which is it — am I fine or not?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L\nhypoxia · ~0 anoxia."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Dissolved\nOxygen 6–11 mg/L (>80% sat.)"
+        }
+      ]
+    }
+  ]
+}

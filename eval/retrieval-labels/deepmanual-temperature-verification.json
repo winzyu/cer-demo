@@ -1,0 +1,68 @@
+{
+  "fixtureId": "deepmanual-temperature-verification",
+  "set": "next",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "There's no calibration solution for a temperature sensor the way there is for pH. So how am I supposed to know ours is still telling the truth after a season in the water?",
+      "relevant": [
+        {
+          "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__a94d853fd809",
+          "contentHash": "a94d853fd809",
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "grade": 2,
+          "evidence": "Most instrument manuals state there is no calibration of the temperature sensor, but the\ntemperature sensor must be checked to determine its accuracy. This accuracy check is performed\nat least once per year"
+        },
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__6c3145b44cb4",
+          "contentHash": "6c3145b44cb4",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "Verified Temperature Sensor.— A sensor with\ndocumented data quality determined via an annual\ncomparison to a traceable or certified temperature\nsensor, creating NIST traceability."
+        },
+        {
+          "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__86e2872125d1",
+          "contentHash": "86e2872125d1",
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "grade": 2,
+          "evidence": "The instrument’s temperature sensor must agree with\nthe reference thermometer measurement within the accuracy of the sensor (e.g.,\n+0.2°C)."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__ade231e44788",
+          "contentHash": "ade231e44788",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 1,
+          "evidence": "Required to be compared against and verified\nwith a traceable or certified sensor at points across\nthe range of use, annually, to define and verify\nuncertainty."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "We can't pull the pod out of the water to do that. Is there anything we can do at the buoy itself?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__09a7f331e5eb",
+          "contentHash": "09a7f331e5eb",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "This procedure can be used to verify the calibration of a\ndeployed surface water temperature sensor where the sensor is\nleft at the field site and checked against a certified or traceable\nsensor during site visits."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__607c227d0afe",
+          "contentHash": "607c227d0afe",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 1,
+          "evidence": "3.3. \tIn Situ Calibration Verification of Sensors\nThese procedures are for calibration verification of tem-\nperature sensors when equipment is not removed from service."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__1d1da8dd9efb",
+          "contentHash": "1d1da8dd9efb",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 1,
+          "evidence": "The annual verification requirement for\ndeployed temperature sensors is met by performing a veri-\nfication during each site visit throughout the year or field\ndeployment period by comparison with a certified or traceable\ntemperature sensor, in situ"
+        }
+      ]
+    }
+  ]
+}

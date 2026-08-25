@@ -1,0 +1,67 @@
+{
+  "fixtureId": "followup-fouling-cleaning",
+  "set": "committed",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "We've had the pod in the water for eight months and every parameter is drifting a little.",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long\ndeployment is a fouling/maintenance flag first, an environmental signal second."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Is that the water or the pod?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "A gradual multi-parameter drift after a long\ndeployment is a fouling/maintenance flag first, an environmental signal second."
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "query": "What do I clean them with?",
+      "relevant": [
+        {
+          "chunkId": "IpH_probe.pdf__950607bd1cfd",
+          "contentHash": "950607bd1cfd",
+          "filename": "IpH_probe.pdf",
+          "grade": 1,
+          "evidence": "Soft coatings can be removed\nby vigorous stirring or by the use of a squirt bottle. Organic chemical, or hard coatings,\nshould be chemically removed using a light bleach solution. If cleaning does not restore\nperformance, reconditioning may be tried. Do not use a brush or abrasive materials\non the pH probe."
+        },
+        {
+          "chunkId": "IORP_probe.pdf__d79583029faf",
+          "contentHash": "d79583029faf",
+          "filename": "IORP_probe.pdf",
+          "grade": 1,
+          "evidence": "Soft coatings can\nbe removed by vigorous stirring or by the use of a squirt bottle. Organic chemical, or\nhard coatings, should be chemically removed. A light bleach solution or even a 5 – 10%\nhydrochloric acid (HCl) soak for a few minutes, often removes many coatings. Do not use\nabrasive materials on the ORP probe."
+        },
+        {
+          "chunkId": "EC_K_1.0_probe.pdf__395d6ce85672",
+          "contentHash": "395d6ce85672",
+          "filename": "EC_K_1.0_probe.pdf",
+          "grade": 1,
+          "evidence": "Soft coatings can be removed by lightly brushing around the conducting area."
+        },
+        {
+          "chunkId": "Industrial-DO-probe.pdf__11072467484a",
+          "contentHash": "11072467484a",
+          "filename": "Industrial-DO-probe.pdf",
+          "grade": 1,
+          "evidence": "Soft coatings can be removed by lightly brushing around the sides of the probe and\nmembrane cap. If the probes membrane is in need of cleaning, use a mild bleach mixture\nto gently wash away any deposits.\nDO NOT USE A BRUSH TO CLEAN THE MEMBRANE"
+        }
+      ]
+    }
+  ]
+}

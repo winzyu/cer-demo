@@ -1,0 +1,61 @@
+{
+  "fixtureId": "event-stormwater-vs-intrusion",
+  "set": "committed",
+  "fixtureClass": "event-signature",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Turbidity spiked hard and EC dropped. Storm runoff or saltwater intrusion?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Stormwater /\nurban runoff ↓ \t↓\n↓\n(marine)\n/\n(fresh)\n↑↑\nSharp\nturbidity spike\ncoincident\nwith rainfall;\nEC shifts\n(drops in\nmarine, may\nspike in fresh\nfrom road salt)"
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Saltwater\nintrusion → \t→ \t→ \t↑↑ \t→/↑ \t→\nEC rise\ncorrelated\nwith tidal\nphase,\ndrought, or\nsea-level\nconditions"
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "What drives it: Sediment runoff, shoreline erosion, bottom resuspension by\ncurrents/waves/dredging, and algal cells."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "How do I rule out the tide?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity\noften peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is\nmixing, not a discharge."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "In estuaries, EC normally tracks the tide — separate\nthat rhythm from genuine events."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Open coastal water is clearer; resuspension peaks at maximum tidal current."
+        }
+      ]
+    }
+  ]
+}

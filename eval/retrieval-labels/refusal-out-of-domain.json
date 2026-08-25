@@ -1,0 +1,48 @@
+{
+  "fixtureId": "refusal-out-of-domain",
+  "set": "committed",
+  "fixtureClass": "refusal",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "What's the tide schedule for tomorrow, and will it rain?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 0,
+          "evidence": "Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide."
+        }
+      ],
+      "noRelevantChunks": "No document carries a tide table or a weather forecast, and the DataPod measures neither. The grade-0 entry is the near-miss a lexical match on 'tide' will surface."
+    },
+    {
+      "turn": 2,
+      "query": "Fine — then just tell me how tides affect the readings.",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity\noften peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is\nmixing, not a discharge."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "In estuaries, EC normally tracks the tide — separate\nthat rhythm from genuine events."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Open coastal water is clearer; resuspension peaks at maximum tidal current."
+        }
+      ]
+    }
+  ]
+}

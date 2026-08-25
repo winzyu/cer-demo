@@ -1,0 +1,61 @@
+{
+  "fixtureId": "threshold-orp-range",
+  "set": "committed",
+  "fixtureClass": "threshold-lookup",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "What ORP range should healthy aerobic water sit in?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Healthy aerobic water typically reads +200 to +400 mV. Negative values\nindicate reducing, anoxic, or septic conditions."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "ORP \t+200 to +400 mV \t+150 to +350 mV \t+200 to +400 mV"
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Ours has been reading +90 mV for two days. Bad?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Healthy aerobic water typically reads +200 to +400 mV. Negative values\nindicate reducing, anoxic, or septic conditions. Seawater’s high ionic strength makes absolute\nreadings less comparable between sites — trend matters more than the raw number."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Treat ORP trend as more reliable than absolute value."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "DO ↔ ORP (tightly coupled): Oxygen is the dominant electron acceptor — abundant DO drives\nORP strongly positive."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__c823e6132551",
+          "contentHash": "c823e6132551",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Core principle: No single parameter diagnoses a pollution event."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "fixtureId": "deepmanual-do-calibration-procedure",
+  "set": "committed",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Walk me through the one-point DO calibration options for a field sonde.",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__25b8f6270fca",
+          "contentHash": "25b8f6270fca",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "There are two procedures that can\nbe used for a one-point calibration:\n• Procedure 1—Calibration in air (can be accom-\nplished with air-calibration chamber or wet-towel\nmethod)\n• Procedure 2—Calibration in air-saturated water\n(water bubbled with air)"
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__dc51eae3cee7",
+          "contentHash": "dc51eae3cee7",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 1,
+          "evidence": "Manufacturers uniformly recommend a 100-percent satu-\nrated oxygen calibration of DO sensors regardless of whether\ncalibration in air (Procedure 1) or calibration in air-saturated\nwater (Procedure 2) is used."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__7609693093b6",
+          "contentHash": "7609693093b6",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 1,
+          "evidence": "Procedure 1—Calibration in Air\nThis procedure is commonly used to calibrate optical\nDO instruments."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__10b503e7f3e2",
+          "contentHash": "10b503e7f3e2",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 1,
+          "evidence": "Variation of Procedure 1—Air Calibration with a Wet\nTowel\nFor many multiparameter instruments, a 100-percent\nhumidity environment can be created by wrapping a wet\ntowel around the sensor guard and inserting it into a plastic\nbag."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__4ab23372fa3d",
+          "contentHash": "4ab23372fa3d",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 1,
+          "evidence": "Procedure 2—Calibration with Air-Saturated Water\nThis procedure, in which the DO sensor or instrument\nsystem is calibrated in water that is saturated with oxygen at a\nknown temperature and ambient atmospheric pressure"
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Which of those is recommended at the field site itself?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__aa1374c14e21",
+          "contentHash": "aa1374c14e21",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "The air calibration or check with a wet-towel method\n(variation of Procedure 1) is the recommended method to\nbe performed at the field site."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__36eaf21615b7",
+          "contentHash": "36eaf21615b7",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "producing aerated water under\ncontrolled laboratory conditions is preferred; calibrate the\nDO sensor in the laboratory before departing for the field site\n(step 4a below). The variation of Procedure 1 using a wet\ntowel is the recommended method to be performed at a field\nsite."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__dc51eae3cee7",
+          "contentHash": "dc51eae3cee7",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 1,
+          "evidence": "Calibration or checking of an instrument in air\n(Procedure 1) is the preferred method specified by some\nmanufacturers."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__10b503e7f3e2",
+          "contentHash": "10b503e7f3e2",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 1,
+          "evidence": "For field\ncalibration verification of a DO sensor, the wet-towel method\nis recommended."
+        }
+      ]
+    }
+  ]
+}

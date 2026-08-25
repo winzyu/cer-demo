@@ -1,0 +1,40 @@
+{
+  "fixtureId": "threshold-do-hypoxia",
+  "set": "committed",
+  "fixtureClass": "threshold-lookup",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "At what dissolved oxygen level does the water become hypoxic?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L\nhypoxia · ~0 anoxia."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__c823e6132551",
+          "contentHash": "c823e6132551",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Saltwater holds roughly 20% less DO than freshwater at the same temperature\n— marine systems sit closer to the hypoxia threshold by default."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Hypoxia / fish-\nkill conditions"
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "And what would you call 5.2?",
+      "relevant": [],
+      "noRelevantChunks": "A bare number with no parameter and no unit. 5.2 is a plausible DO concentration and a plausible pH; nothing in the raw turn selects between them. Unanswerable in isolation (◆G11)."
+    }
+  ]
+}

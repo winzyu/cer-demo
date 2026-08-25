@@ -1,0 +1,61 @@
+{
+  "fixtureId": "event-sewage-signature",
+  "set": "committed",
+  "fixtureClass": "event-signature",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "DO and ORP are both crashing, EC has risen and turbidity is up. What is this?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Sewage /\nsanitary\ndischarge\n→/↑ \t↓↓ \t↓↓ \t↑ \t↓ \t↑\nDO crash +\nORP crash +\nEC rise +\nturbidity rise,\nnot tied to\ntime of day"
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "DO and ORP falling together while EC and turbidity rise is a far more specific signal\npointing to an organic/sewage source."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__c823e6132551",
+          "contentHash": "c823e6132551",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Core principle: No single parameter diagnoses a pollution event."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Could it be an algal bloom instead?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Algal bloom /\n(super-\nsat.\nmidday, \t(high\nLarge in-\nphase daily\nDO + pH\noscillations;"
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,\nbottoming pre-dawn — driven by photosynthesis and respiration."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "daily pH swings indicate biological productivity, not a discharge."
+        }
+      ]
+    }
+  ]
+}

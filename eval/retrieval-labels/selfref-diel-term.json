@@ -1,0 +1,81 @@
+{
+  "fixtureId": "selfref-diel-term",
+  "set": "next",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Our pH climbs about half a unit every afternoon and is back down by sunrise. Somebody's discharging on a schedule, right?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "pH ↔ DO (the photosynthesis/respiration couple): Photosynthesis removes CO₂ (raises pH)\nand releases O₂; respiration adds CO₂ (lowers pH) and consumes O₂. pH and DO therefore rise\nand fall together on the daily cycle. In-phase daily swings of pH and DO are the fingerprint\nof biological productivity."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,\nbottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.\nA smooth, repeating daily oscillation is biology, not pollution."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "daily pH swings indicate biological productivity, not a discharge."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__d69cb303fc10",
+          "contentHash": "d69cb303fc10",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 1,
+          "evidence": "River waters not affected by contamination generally\nhave a pH in the range of 6.5 to 8.5 and commonly\nexhibit diel fluctuations in pH as a result of photosyn-\nthesis, respiration, and temperature, causing variations\nin dissolved CO2"
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "What's diel? You used that word, I've not seen it before.",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,\nbottoming pre-dawn — driven by photosynthesis and respiration."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "pH and DO therefore rise\nand fall together on the daily cycle."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__d69cb303fc10",
+          "contentHash": "d69cb303fc10",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 1,
+          "evidence": "commonly\nexhibit diel fluctuations in pH as a result of photosyn-\nthesis, respiration, and temperature"
+        },
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__592946fe84a5",
+          "contentHash": "592946fe84a5",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 1,
+          "evidence": "commonly\nexhibit diel fluctuations in pH as a result of photosyn-\nthesis, respiration, and temperature"
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "query": "So when does it stop being that and start being a problem?",
+      "relevant": [],
+      "noRelevantChunks": "Pure-deixis follow-up — 'it', 'that' and 'a problem' name nothing retrievable. Unanswerable in isolation (◆G11)."
+    }
+  ]
+}

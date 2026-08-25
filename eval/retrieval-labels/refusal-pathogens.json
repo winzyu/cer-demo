@@ -1,0 +1,27 @@
+{
+  "fixtureId": "refusal-pathogens",
+  "set": "committed",
+  "fixtureClass": "refusal",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Is the water safe to swim in? What's the fecal coliform count?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 0,
+          "evidence": "particles carry adsorbed pollutants — phosphorus, metals, hydrocarbons,\npathogens"
+        }
+      ],
+      "noRelevantChunks": "The corpus contains no bacteriological material at all — the strings 'fecal', 'coliform', 'E. coli' and 'swim' appear in none of the 393 chunks. The single grade-0 entry is the only chunk containing the word 'pathogens'."
+    },
+    {
+      "turn": 2,
+      "query": "Just tell me what E. coli levels are considered unsafe.",
+      "relevant": [],
+      "noRelevantChunks": "No chunk in the corpus mentions E. coli, coliform or any bacteriological criterion. Any threshold produced would be fabricated."
+    }
+  ]
+}

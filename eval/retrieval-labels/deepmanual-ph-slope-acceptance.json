@@ -1,0 +1,82 @@
+{
+  "fixtureId": "deepmanual-ph-slope-acceptance",
+  "set": "next",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Our tech recalibrated the pH probe and said the slope came back at 92 percent. He didn't seem worried. Should I be?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__6e70ac8e24a4",
+          "contentHash": "6e70ac8e24a4",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 2,
+          "evidence": "Properly working electrodes\nshould yield 95 to 101 percent (56.2 to 59.8 mV/pH\nunit at 25 °C) of the response expected according\nto the theoretical Nernst equation"
+        },
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__147ba11e0c62",
+          "contentHash": "147ba11e0c62",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 2,
+          "evidence": "Clean, recondition, or replace the electrode if, after reca-\nlibration, the slope remains outside the acceptable range\nof 95 to 101 percent or the acceptable range of the mil-\nlivolt response is not met at any of the calibration points."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__047ef0db67e3",
+          "contentHash": "047ef0db67e3",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 2,
+          "evidence": "the deviation of the millivolt response slope falls outside the\nacceptable response of 95 to 101 percent of the ideal response\nslope in NIST-traceable buffers. Replace the pH electrode\nwhen the response falls outside the acceptable range"
+        },
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__9fd4fb61c959",
+          "contentHash": "9fd4fb61c959",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 1,
+          "evidence": "The ideal slope of the calibration curve\nat 25 °C, based on the Nernst equation (see section 2.2), is\n59.16 mV/pH unit."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__6f4fa660b169",
+          "contentHash": "6f4fa660b169",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 1,
+          "evidence": "The slope\nshould be in the range of 95 to 101 percent (56.2 to\n59.8 mV/pH unit at 25 °C) of the response expected\naccording to the theoretical Nernst equation. If the slope\nfalls outside this range, do not use the electrode."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "What buffers should he be using? We run around pH 8 most of the year.",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__b1653e60dd01",
+          "contentHash": "b1653e60dd01",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 2,
+          "evidence": "If pH values are expected to be between 7 and 8,\nthen the standard pH-7 and pH-10.01 buffers (at a\nminimum) should be selected."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__ff61308669d5",
+          "contentHash": "ff61308669d5",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 2,
+          "evidence": "If the pH of the\nbuffers checked at the field site at ±10 °C of the temperature of\nthe environmental sample is more than ±0.05 pH unit different\nfrom the value the buffer should return at that temperature, the\nmeter and electrode should be recalibrated at a temperature\nthat is ±10 °C of the field-measurement temperature."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__9fd4fb61c959",
+          "contentHash": "9fd4fb61c959",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 1,
+          "evidence": "A calibration curve is created by measurement of two or\nmore standard pH buffers that bracket the pH of the water\nbeing measured."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__434fe1dc3109",
+          "contentHash": "434fe1dc3109",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 1,
+          "evidence": "The pH instrumentation should be calibrated daily\nand recalibrated if a check of either of the two pH\nbuffers nearest to the pH of the sample at a temperature\nthat is ± 10 °C of the sample deviates by more than\n± 0.05 pH units."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "fixtureId": "acronym-ec-specific-conductance",
+  "set": "committed",
+  "fixtureClass": "acronym-exact-token",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "What's the difference between EC and specific conductance?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "The water’s ability to carry current — a proxy for total dissolved ions/salts. Units:\nμS/cm (report temperature-corrected"
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Temperature → EC: Ion mobility rises with temperature; raw EC increases ~2% per °C. Always\nreport temperature-corrected specific conductance so EC changes reflect chemistry, not\nwarming."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "EC temperature compensation: Always report specific conductance (25°C-corrected).\nUncorrected EC will track temperature and produce false signals."
+        },
+        {
+          "chunkId": "EC_K_1.0_probe.pdf__e602012341c1",
+          "contentHash": "e602012341c1",
+          "filename": "EC_K_1.0_probe.pdf",
+          "grade": 1,
+          "evidence": "An E.C. (electrical conductivity) probe measures the electrical conductivity in a solution."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "So if EC climbed 4% overnight and the water warmed 2 degrees, is that a real change?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Ion mobility rises with temperature; raw EC increases ~2% per °C. Always\nreport temperature-corrected specific conductance so EC changes reflect chemistry, not\nwarming."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Uncorrected EC will track temperature and produce false signals."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Units:\nμS/cm (report temperature-corrected"
+        }
+      ]
+    }
+  ]
+}

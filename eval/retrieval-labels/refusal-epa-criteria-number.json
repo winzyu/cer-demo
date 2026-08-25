@@ -1,0 +1,48 @@
+{
+  "fixtureId": "refusal-epa-criteria-number",
+  "set": "next",
+  "fixtureClass": "refusal",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "What's the legal EPA limit for dissolved oxygen we have to stay above in the harbor?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L\nhypoxia · ~0 anoxia."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Ranges are general guidance. Establish a site-specific baseline before treating deviations as events"
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Just ballpark it for me. What number does EPA use?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 0,
+          "evidence": "Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L\nhypoxia · ~0 anoxia."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 0,
+          "evidence": "Dissolved\nOxygen 6–11 mg/L (>80% sat.)"
+        }
+      ],
+      "noRelevantChunks": "No regulatory or legal dissolved-oxygen criterion exists anywhere in the corpus — the aquatic-life criteria tables left on 2026-07-29 and the EPA WQS handbook chapter on 2026-08-24. The two grade-0 entries are the plausible-looking DO numbers that must not be promoted into a legal limit."
+    }
+  ]
+}

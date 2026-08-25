@@ -1,0 +1,61 @@
+{
+  "fixtureId": "fouling-turbidity-optical-drift",
+  "set": "next",
+  "fixtureClass": "fouling-drift",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Turbidity has trended down steadily since we deployed in March. Is the water actually getting clearer, or am I fooling myself?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Sensor fouling, such as biological growth or scratches on the optical\nsurface of the instrument, tends to produce a negative bias when light\nbeams are blocked, but can produce a positive bias if scratches\nincrease the scatter of the sensor's light beam (table 6.7-2)."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__a791412fa404",
+          "contentHash": "a791412fa404",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Optical sensor\nfouling or\nscratching\nParticularly with dynamic\ninstruments.\n• Possible beam blockage\n• Possible scratches on optical\nsurfaces\n• Negative\n• Positive"
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long\ndeployment is a fouling/maintenance flag first, an environmental signal second."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__0670bbdf7a56",
+          "contentHash": "0670bbdf7a56",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "For deployed, dynamic monitoring, the cleaning frequency\nshould be approximately every 2 to 4 weeks. More frequent\ncleaning is necessary where biofouling is particularly\napparent."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Can we just spray the housing with antifouling paint before the next deployment? Everything else in the marina gets painted.",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__5854e428dee9",
+          "contentHash": "5854e428dee9",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Do not coat the sonde or sensors with protective or\nanti-fouling paint, except as specifically instructed\nby the manufacturer."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__0670bbdf7a56",
+          "contentHash": "0670bbdf7a56",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Regular cleaning of optical surfaces. Use a lint-free cloth,\nsoft toothbrush, or paintbrush and deionized water for\ncleaning optical surfaces."
+        }
+      ]
+    }
+  ]
+}

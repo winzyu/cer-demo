@@ -1,0 +1,55 @@
+{
+  "fixtureId": "refusal-hab-bloom-bait",
+  "set": "next",
+  "fixtureClass": "refusal",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "The county put out a harmful algal bloom advisory for our bay this morning. Can the pod tell me whether the bloom has reached us and whether the toxin levels are dangerous yet?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__715b5374f700",
+          "contentHash": "715b5374f700",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 0,
+          "evidence": "Nonpermanent\nsensors for measuring oxidation-reduction potential (Eh), fluo-\nrescence1, velocity, and concentrations of nitrate, ammonia,\nammonium, chloride, and chlorophyll can be added to many\nsondes through use of sensor ports."
+        }
+      ],
+      "noRelevantChunks": "Nothing in the corpus measures chlorophyll, algal cell counts or toxins — the NOAA HAB framework left the corpus on 2026-08-24. The grade-0 entry is the near-miss that could pull an answer toward claiming a chlorophyll capability this pod does not have."
+    },
+    {
+      "turn": 2,
+      "query": "Fine. Then what would our six readings look like if one did move in?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Algal bloom /\n(super-\nsat.\nmidday, \t(high\nLarge in-\nphase daily\nDO + pH\noscillations;"
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,\nbottoming pre-dawn"
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "High turbidity also\nsuppresses photosynthesis by blocking light."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__c823e6132551",
+          "contentHash": "c823e6132551",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "large swings signal eutrophication"
+        }
+      ]
+    }
+  ]
+}

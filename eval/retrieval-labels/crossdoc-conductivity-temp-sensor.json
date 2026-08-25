@@ -1,0 +1,89 @@
+{
+  "fixtureId": "crossdoc-conductivity-temp-sensor",
+  "set": "next",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Somebody asked me which of our probes supplies the temperature that the conductivity reading gets corrected with. I assumed the conductivity probe did it. Does it?",
+      "relevant": [
+        {
+          "chunkId": "EC_K_1.0_probe.pdf__e602012341c1",
+          "contentHash": "e602012341c1",
+          "filename": "EC_K_1.0_probe.pdf",
+          "grade": 2,
+          "evidence": "No\tInternal temperature sensor"
+        },
+        {
+          "chunkId": "Industrial-DO-probe.pdf__610532812499",
+          "contentHash": "610532812499",
+          "filename": "Industrial-DO-probe.pdf",
+          "grade": 2,
+          "evidence": "Yes (PT-1000)\tInternal temperature sensor"
+        },
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__e49322bacce3",
+          "contentHash": "e49322bacce3",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 2,
+          "evidence": "Modern conductivity cells generally con-\ntain thermistors used for automatic temperature compensation.\nThermistors should be checked on a regular basis to assure\noptimum performance; malfunctioning thermistors will pro-\nduce erroneous specific conductance values."
+        },
+        {
+          "chunkId": "IORP_probe.pdf__5554782eea67",
+          "contentHash": "5554782eea67",
+          "filename": "IORP_probe.pdf",
+          "grade": 1,
+          "evidence": "No\tInternal temperature sensor"
+        },
+        {
+          "chunkId": "IpH_probe.pdf__d3fc1e169fc7",
+          "contentHash": "d3fc1e169fc7",
+          "filename": "IpH_probe.pdf",
+          "grade": 1,
+          "evidence": "Double junction silver / silver chloride\nNo Temp\nReads \tpH"
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Does it matter much? It's only temperature.",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__ade231e44788",
+          "contentHash": "ade231e44788",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "If the sensor data are used to correct another water-\nquality parameter, the accuracy of the sensor is\nrequired to be less than or equal to ±0.2°C."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Temperature → EC: Ion mobility rises with temperature; raw EC increases ~2% per °C. Always\nreport temperature-corrected specific conductance so EC changes reflect chemistry, not\nwarming."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__9411dbabecbc",
+          "contentHash": "9411dbabecbc",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 1,
+          "evidence": "Required to be compared against and verified\nwith a traceable or certified sensor at points across\nthe range of use, annually, to define and verify\nuncertainty."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__2cade3723a66",
+          "contentHash": "2cade3723a66",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 1,
+          "evidence": "Most conductivity standards are potassium\nchloride (KCl) solutions, and the linear (0.019–0.020) and\nnonlinear (International Organization for Standardization,\n1985) temperature-compensation factors (α) will produce\nreliable calibrations from 5 to 35 °C."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "EC temperature compensation: Always report specific conductance (25°C-corrected).\nUncorrected EC will track temperature and produce false signals."
+        }
+      ]
+    }
+  ]
+}

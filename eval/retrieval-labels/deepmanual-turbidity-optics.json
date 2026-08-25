@@ -1,0 +1,68 @@
+{
+  "fixtureId": "deepmanual-turbidity-optics",
+  "set": "committed",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "How does a turbidity sensor physically take its reading?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__e0ef163ad4b2",
+          "contentHash": "e0ef163ad4b2",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Most multiparameter-instrument turbidity sensors use a\nmonochrome light source with a spectral output typically near infrared (780–900 nm), typically a light-\nemitting diode, and one detector at 90-degree orientation to the light source."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__10c1b495aa2d",
+          "contentHash": "10c1b495aa2d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "90° DETECTOR\n(Required)\nFORWARD SCATTER\nDETECTOR\n(Optional)\nθ\nDetector angle\nto incident light\nor Tungsten)\nFigure 6.7-1. Photoelectric nephelometer (single-beam design)"
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__4b93f831d4bd",
+          "contentHash": "4b93f831d4bd",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "TURBIDITY−an expression of the\noptical properties of a liquid that\ncauses light rays to be scattered and\nabsorbed rather than transmitted\nin straight lines through a sample."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__0663ce0e133d",
+          "contentHash": "0663ce0e133d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "EPA Method 180.1 defines the optical geometry for NTU measurements. The detector\nangle must be 90o ± 30 to the incident light beam."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Does that explain why NTU and FNU differ?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on\none across the fleet."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__f9ac2c6ac6c1",
+          "contentHash": "f9ac2c6ac6c1",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "The designations NTU, NTRU, BU, AU, and NTMU signify the\nuse of a broad spectrum incident light in the wavelength range\n400-680 nanometers (nm).\nX \tThe designations FNU, FNRU, FBU, FAU, and FNMU\ngenerally signify an incident light in the range between 780-\n900 nm."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__e0ef163ad4b2",
+          "contentHash": "e0ef163ad4b2",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 1,
+          "evidence": "a\nmonochrome light source with a spectral output typically near infrared (780–900 nm)"
+        }
+      ]
+    }
+  ]
+}

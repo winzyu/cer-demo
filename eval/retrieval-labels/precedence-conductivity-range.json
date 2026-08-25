@@ -1,0 +1,33 @@
+{
+  "fixtureId": "precedence-conductivity-range",
+  "set": "committed",
+  "fixtureClass": "precedence",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Our conductivity is 30 µS/cm. Flag it?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Conductivity\n(EC) 50–1,500 μS/cm"
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 1,
+          "evidence": "in freshwater, EC\nreflects geology, runoff, road salt, and discharges."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "What would push it that low?",
+      "relevant": [],
+      "noRelevantChunks": "Pure-deixis follow-up — 'it' and 'that low' name no parameter. Unanswerable in isolation (◆G11)."
+    }
+  ]
+}

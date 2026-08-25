@@ -1,0 +1,55 @@
+{
+  "fixtureId": "acronym-ntu-fnu",
+  "set": "committed",
+  "fixtureClass": "acronym-exact-token",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Our turbidity readings are in NTU but another pod reports FNU — can I compare them?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on\none across the fleet."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__f9ac2c6ac6c1",
+          "contentHash": "f9ac2c6ac6c1",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "The designations NTU, NTRU, BU, AU, and NTMU signify the\nuse of a broad spectrum incident light in the wavelength range\n400-680 nanometers (nm)."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__10c1b495aa2d",
+          "contentHash": "10c1b495aa2d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "raw data from differently designed instruments\nshould not be considered directly interchangeable"
+        },
+        {
+          "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__1b7e9852e841",
+          "contentHash": "1b7e9852e841",
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "grade": 1,
+          "evidence": "Multiparameter instruments used for most in situ turbidity applications contain single-beam infrared wavelength turbidity sensors and are reported in FNU."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Which one does our sensor use?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 0,
+          "evidence": "Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable."
+        }
+      ],
+      "noRelevantChunks": "The unit this deployment reports (NTU) is stated in the operator block of the system prompt, not in any document. The NTU/FNU caveat chunk is a near-miss: it defines the units but never says which one this pod uses."
+    }
+  ]
+}

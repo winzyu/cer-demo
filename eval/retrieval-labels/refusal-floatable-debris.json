@@ -1,0 +1,19 @@
+{
+  "fixtureId": "refusal-floatable-debris",
+  "set": "next",
+  "fixtureClass": "refusal",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "There's a raft of trash and foam pinned against our pod by the wind. Is any of that showing up in the data?",
+      "relevant": [],
+      "noRelevantChunks": "No chunk describes detection, counting or characterisation of floating debris; the DataPod's six measured parameters are declared in the system prompt, not in a document."
+    },
+    {
+      "turn": 2,
+      "query": "Would it move any of the numbers at all, even indirectly?",
+      "relevant": [],
+      "noRelevantChunks": "Pure-deixis follow-up — 'it' and 'any of the numbers' name nothing retrievable. Unanswerable in isolation (◆G11)."
+    }
+  ]
+}

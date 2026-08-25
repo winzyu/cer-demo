@@ -1,0 +1,89 @@
+{
+  "fixtureId": "crossdoc-recalibration-schedule",
+  "set": "committed",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Give me the recalibration interval for each of our four probes.",
+      "relevant": [
+        {
+          "chunkId": "IpH_probe.pdf__d3fc1e169fc7",
+          "contentHash": "d3fc1e169fc7",
+          "filename": "IpH_probe.pdf",
+          "grade": 1,
+          "evidence": "~1 Year\tTime before recalibration"
+        },
+        {
+          "chunkId": "IpH_probe.pdf__950607bd1cfd",
+          "contentHash": "950607bd1cfd",
+          "filename": "IpH_probe.pdf",
+          "grade": 1,
+          "evidence": "you will only need to recalibrate your probe\nonce per year for the first two years. After that every ~six months."
+        },
+        {
+          "chunkId": "IORP_probe.pdf__5554782eea67",
+          "contentHash": "5554782eea67",
+          "filename": "IORP_probe.pdf",
+          "grade": 1,
+          "evidence": "~1 Year\tTime before recalibration"
+        },
+        {
+          "chunkId": "IORP_probe.pdf__566989019e52",
+          "contentHash": "566989019e52",
+          "filename": "IORP_probe.pdf",
+          "grade": 1,
+          "evidence": "you will only need to recalibrate your probe\nonce per year for the first 2 years. After that every ~6 months."
+        },
+        {
+          "chunkId": "Industrial-DO-probe.pdf__610532812499",
+          "contentHash": "610532812499",
+          "filename": "Industrial-DO-probe.pdf",
+          "grade": 1,
+          "evidence": "~1 Year\tTime before recalibration"
+        },
+        {
+          "chunkId": "Industrial-DO-probe.pdf__cc6df5ba5474",
+          "contentHash": "cc6df5ba5474",
+          "filename": "Industrial-DO-probe.pdf",
+          "grade": 1,
+          "evidence": "Best practice is\nto replace the electrolyte solution and membrane every 1 – 2 years."
+        },
+        {
+          "chunkId": "EC_K_1.0_probe.pdf__e602012341c1",
+          "contentHash": "e602012341c1",
+          "filename": "EC_K_1.0_probe.pdf",
+          "grade": 1,
+          "evidence": "The plates do not go bad, or change, so recalibration is not necessary. After\nthe first calibration your conductivity probe is good to go."
+        },
+        {
+          "chunkId": "EC_K_1.0_probe.pdf__395d6ce85672",
+          "contentHash": "395d6ce85672",
+          "filename": "EC_K_1.0_probe.pdf",
+          "grade": 1,
+          "evidence": "The plates do not go bad, or change, so recalibration is not necessary."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Which of those would you do first, a year into deployment?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+          "contentHash": "5c7643fce7a3",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Calibration drift: pH, DO, and ORP probes drift over time."
+        },
+        {
+          "chunkId": "Industrial-DO-probe.pdf__cc6df5ba5474",
+          "contentHash": "cc6df5ba5474",
+          "filename": "Industrial-DO-probe.pdf",
+          "grade": 1,
+          "evidence": "Best practice is\nto replace the electrolyte solution and membrane every 1 – 2 years."
+        }
+      ]
+    }
+  ]
+}

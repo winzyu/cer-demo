@@ -1,0 +1,40 @@
+{
+  "fixtureId": "probecal-ph-interval",
+  "set": "committed",
+  "fixtureClass": "probe-calibration",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "What's the calibration interval for the pH probe?",
+      "relevant": [
+        {
+          "chunkId": "IpH_probe.pdf__950607bd1cfd",
+          "contentHash": "950607bd1cfd",
+          "filename": "IpH_probe.pdf",
+          "grade": 2,
+          "evidence": "How often do you need\nto recalibrate a pH probe?\nBecause every use case is different, there is no set schedule for recalibration.\nIf you are using your probe in a fish tank, a hydroponic system or any environment that\nhas generally weak levels of acids and bases you will only need to recalibrate your probe\nonce per year for the first two years. After that every ~six months."
+        },
+        {
+          "chunkId": "IpH_probe.pdf__d3fc1e169fc7",
+          "contentHash": "d3fc1e169fc7",
+          "filename": "IpH_probe.pdf",
+          "grade": 2,
+          "evidence": "~1 Year\tTime before recalibration"
+        },
+        {
+          "chunkId": "IORP_probe.pdf__566989019e52",
+          "contentHash": "566989019e52",
+          "filename": "IORP_probe.pdf",
+          "grade": 0,
+          "evidence": "How often do you need\nto recalibrate an ORP probe?\nBecause every use case is different, there is no set schedule for recalibration."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Which of those applies to us?",
+      "relevant": [],
+      "noRelevantChunks": "Pure-deixis follow-up — 'those' and 'us' name nothing retrievable. Unanswerable in isolation (◆G11)."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "fixtureId": "deepmanual-conductivity-cell-constant",
+  "set": "next",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Conductivity has been creeping up all summer at our site. Is there a check that tells me whether it's the probe or the water?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__b3064a2bd728",
+          "contentHash": "b3064a2bd728",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 2,
+          "evidence": "Record and track the cell constant with each cali-\nbration, as changes in the cell constant that exceed 2 percent\nmay be the result of a contaminated standard or dirty probe."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__f9d002693709",
+          "contentHash": "f9d002693709",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 1,
+          "evidence": "Record and track the cell constant (one-point\ncalibration) or slope (multipoint calibration), as deviations can\nbe used to identify inaccurate calibrations or faulty equipment."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__b5488a5db6ff",
+          "contentHash": "b5488a5db6ff",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 1,
+          "evidence": "Temperature compensation incorrect—ensure that thermistor is operating properly."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Which standard would we use? This one's a saltwater pod, it sits around 55,000.",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__b3064a2bd728",
+          "contentHash": "b3064a2bd728",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 2,
+          "evidence": "standard solutions having specific conductance values of 500,\n1,413, or 12,900 μS/cm. Select the standard with a specific\nconductance that is closest to the expected specific conduc-\ntance of the samples."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__f9d002693709",
+          "contentHash": "f9d002693709",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 2,
+          "evidence": "Specific conductance standards with certificates of analyses\n(NIST traceable) with values between 50 and 50,000 μS/cm\nare available from USGS One Stop."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__603c9e54d9bd",
+          "contentHash": "603c9e54d9bd",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 1,
+          "evidence": "use\nspecific conductance standards that bracket\n(multipoint calibration) or are near (one-point\ncalibration) the expected specific conductance\nof the samples."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__2cade3723a66",
+          "contentHash": "2cade3723a66",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 1,
+          "evidence": "temperature-compensation factors (α) will produce\nreliable calibrations from 5 to 35 °C"
+        }
+      ]
+    }
+  ]
+}

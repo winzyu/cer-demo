@@ -1,0 +1,55 @@
+{
+  "fixtureId": "refusal-nutrients",
+  "set": "committed",
+  "fixtureClass": "refusal",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "What are our nitrate and phosphorus levels?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+          "contentHash": "57fe7a67fc10",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 0,
+          "evidence": "as oxygen is consumed, the system shifts to nitrate, then manganese/iron, then\nsulfate"
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 0,
+          "evidence": "particles carry adsorbed pollutants — phosphorus, metals, hydrocarbons,\npathogens"
+        }
+      ],
+      "noRelevantChunks": "The DataPod does not measure nutrients and no chunk reports a nitrate or phosphorus concentration. The two grade-0 entries are the on-topic-looking near-misses: both name the analyte in a completely different role."
+    },
+    {
+      "turn": 2,
+      "query": "But turbidity is up — doesn't that mean nutrients are up?",
+      "relevant": [
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+          "contentHash": "19b15475035b",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Critically, particles carry adsorbed pollutants — phosphorus, metals, hydrocarbons,\npathogens — so a turbidity spike is also a proxy for contaminant loading."
+        },
+        {
+          "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+          "contentHash": "3ad84c74c7db",
+          "filename": "water-quality-metrics-source-of-truth.pdf",
+          "grade": 2,
+          "evidence": "Turbidity as a contaminant carrier: Sediment transports adsorbed nutrients, metals, and\npathogens — a turbidity spike can stand in for a loading event even when chemistry looks\nstable."
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2db3b29c7433",
+          "contentHash": "2db3b29c7433",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "Such turbidity data can be used for watershed investigations; for\nexample, for determination of visual impairment (Davies-Colley and\nSmith, 2001), for correlation with concentrations of suspended\nsediment, total phosphorus, or other chemical constituents, and\nindicator bacteria"
+        }
+      ]
+    }
+  ]
+}
