@@ -31,7 +31,7 @@ window. The corpus here is small enough that the answer is genuinely not obvious
 | | direct-feed | RAG |
 |---|---|---|
 | **Per request** | Large, ~constant input (the whole slice) + output | Small input (top-k chunks) + output + one query embedding |
-| **One-time / amortized** | none | Embed the corpus (558 chunks, ~314K tokens since 2026-08-21; 305 chunks when the arms were swept), build the index |
+| **One-time / amortized** | none | Embed the corpus (393 chunks, ~213K tokens since the 2026-08-24 trim; 305 chunks when the arms were swept), build the index |
 | **Ongoing infra** | none | Vector index storage; a Postgres instance if pgvector wins |
 | **On a corpus change** | nothing — next request just reads the new text | Re-chunk, re-embed, re-index the changed documents |
 | **Cost predictability** | Flat and easy to forecast: cost ≈ requests × slice size | Low marginal cost, but an infra tail that exists at zero traffic |
@@ -210,7 +210,7 @@ conflated:
 | **Free tier** | Firestore has an "Always Free" daily quota (reads/writes/deletes/storage) — plausibly covers a demo entirely | Same quota, but vector search consumes reads faster and the index adds storage | None. Cloud SQL has no free tier | **Confirm the current quota numbers, and confirm they apply to the `(default)` database — named databases have historically billed differently.** Our config defaults to `(default)` (`FIRESTORE_DATABASE_ID`) |
 | **Compute (the app)** | Cloud Run, scale-to-zero, shared by all arms | same | same, **plus** the DB instance | Constant across arms → cancels out of the comparison, but include it in the absolute figure |
 | **LLM inference** | Fireworks serverless: per-token, **no idle cost** | same | same | Note if a dedicated deployment is ever considered — that bills by GPU-hour and changes the shape completely |
-| **Embeddings** | **none — this arm needs no embedding model at all** | Corpus embedding once (~314K tokens at the current corpus) + one query embedding per request + re-embed on corpus change | Same | Fireworks embedding rate |
+| **Embeddings** | **none — this arm needs no embedding model at all** | Corpus embedding once (~213K tokens at the current corpus) + one query embedding per request + re-embed on corpus change | Same | Fireworks embedding rate |
 | **Index/storage** | Document text only | Vectors + index | Vectors + index + WAL/backups | — |
 | **Ops burden** | Nothing to run, patch, back up, or monitor | Managed | **A database to run, patch, back up, monitor, and pay for** — the cost that doesn't appear on any invoice line | Estimate honestly |
 
@@ -281,7 +281,8 @@ weakness the legacy hybrid was built to fix, and one the direct-feed arm doesn't
 
 From `MIGRATION_SPEC.md` §10.1 — the **legacy** corpus, 9 authoritative documents, ~1.357M
 characters, **~339K tokens**. It has been rescoped twice since (to 8 docs / ~179K tokens on
-2026-07-29, then expanded to **18 docs / ~1.25M chars / 558 chunks** on 2026-08-21 —
+2026-07-29, expanded to 18 docs / ~1.25M chars / 558 chunks on 2026-08-21, then trimmed to
+**15 docs / 851,891 chars / 393 chunks** on 2026-08-24 —
 [`../documents/README.md`](../documents/README.md)). The conclusion is unchanged in every version:
 
 | slice | ~tokens | direct-feed viable? |
@@ -759,6 +760,64 @@ Applied:
   adapter registry composes without a rewrite.
 
 Whatever wins, record the outcome and the numbers in `timeline.md`'s gate table and close ◆G7.
+
+### 8b. Amendment — 2026-08-25: machine-checked gates first
+
+**No threshold in §8a moves.** This amendment changes the *order* the gates are applied in, the
+*instrument* used for three of them, and which captured evidence is admissible. It is recorded here
+rather than edited into §8a because §8a is a pre-registration, and silently rewriting one is how a
+test becomes a formality.
+
+**What prompted it.** The corpus changed twice after the arms were swept — expanded 2026-08-21,
+trimmed 2026-08-24 — and four new arms were added on 2026-08-24/25. The 2026-08-11/12 packet
+therefore grades a system that no longer exists, for most of it (see "Evidence currency" below).
+Separately, the offline retrieval harness (`RETRIEVAL_EVAL.md`) demonstrated that a deterministic
+labelled check turns an afternoon of grading into ten seconds, and three of §8a's five gates are
+mechanically decidable in exactly that way.
+
+**Tier 1 — machine-checked, deterministic, run first.** These are §8a's three *hard* gates. They
+are absolute: an arm that fails one is out at any price, so deciding them cheaply and first means
+never paying to grade an arm that was already eliminated.
+
+| gate (§8a, unchanged) | decided by |
+|---|---|
+| **Fabricated figures — zero** | Every numeric literal in `answer` must appear in that turn's captured `context` or in a `tool_calls` result. Requires a unit normalizer (the decoder converts °C→°F) and a whitelist for values the tool computed, or conversions and legitimate statistics read as fabrications. |
+| **Refusal integrity — 100%** | Exact match against `REFUSAL_SENTENCE` (`src/prompt/systemPrompt.ts`, a pinned constant) on every turn whose rubric requires a refusal. |
+| **Citation validity — ≥95%** | Each cited span must be a verbatim substring of the chunk it cites — the same check `RETRIEVAL_LABELS.md` applies to evidence snippets. |
+
+**Tier 2 — judgement, run only on Tier-1 survivors.** These stay in the floor exactly as written.
+
+| gate (§8a, unchanged) | decided by |
+|---|---|
+| **Ungrounded claims — ≤2% of turns** | LLM judge per §7b |
+| **Correctness — ≥1.0/2 in every servable class, ≥1.3/2 overall** | LLM judge per §7b |
+
+**The judge is not a new decision.** §8a's input list already resolved it on 2026-07-29: an LLM
+judge calibrated against a human sample. §7b's constraints bind unchanged — a different model than
+the one under test, one dimension per call, the supplied context given to the judge, calibration on
+~20% of transcripts with the human-agreement rate reported, and the judge's own tokens counted in
+the budget. What changes is only that the judge now runs on a smaller set, because Tier 1 has
+already removed arms and Tier 1's failures are not re-litigated by it.
+
+**Evidence currency — which captured transcripts are still admissible.** Checked 2026-08-25:
+
+| evidence | admissible | why |
+|---|---|---|
+| The 30 committed fixtures | **yes** | Every `answerable_from` / `requires` filename still resolves against the 15-document corpus; no fixture references a removed document, so §7's loader guard never fires. `refusal-pathogens`'s `notes` are stale — they justify the fixture by the volunteer manual's fecal-bacteria chapter, removed 2026-08-21 — but its rubric is unaffected. |
+| `firestore-direct` transcripts | **yes** | It reads only the ◆G9 slice, unchanged at 37,660 chars through both the expansion and the trim. |
+| `firestore-vector` transcripts | **no** | Captured retrieving over 305 chunks of an 8-document corpus that no longer exists. |
+| `pgvector-rag` transcripts | **no** | Same, and the arm is archived and unrunnable without restoring `archive/pgvector-rag/`. |
+| `local-vector`, `local-hybrid`, `hybrid-slice-vector`, `hybrid-slice-lexvec` | **none exist** | Never swept. |
+
+So a re-capture is required before either tier can be run over anything but direct-feed, and the
+arms to capture are `firestore-direct`, `firestore-vector`, `hybrid-slice-lexvec` and — if the
+lexical delta is wanted at the answer layer as well as the retrieval layer —
+`hybrid-slice-vector`. `pgvector-rag` stays out unless deliberately restored.
+
+**What this amendment does not do.** It does not admit retrieval metrics as quality gates. Recall,
+precision, MRR and nDCG remain diagnostics with no target (`RETRIEVAL_EVAL.md` §1) — a model can be
+handed perfect context and still invent a number, which is the failure Tier 1 exists to catch. An
+arm cannot pass ◆G7 on retrieval evidence, and 81.8% recall is not a result about answers.
 
 ---
 

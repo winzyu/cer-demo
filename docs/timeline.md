@@ -56,7 +56,8 @@ Two things to keep straight about this track:
   restore is the first step, and any re-capture must re-run every arm (the prompt is a pinned
   control).
 - **It is built and swept.** All three arms are implemented, seeded and captured cold + warm on
-  `feat/bakeoff-sweep`. What remains is grading — see ◆G7 below.
+  `feat/bakeoff-sweep`. What remains is a re-capture on the current corpus, then the gate passes —
+  see ◆G7 below and [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8b.
 
 ### Corpus scoped to what the DataPod measures (2026-07-29)
 
@@ -78,8 +79,10 @@ context window, so the N2 comparison remains meaningful — had it fit, direct-f
 default and RAG would be moot.
 
 > Those are the 2026-07-29 figures and are kept because they are what the N2 sweep ran against.
-> The corpus was expanded again on 2026-08-21 to **18 documents / ~1.25M chars / 558 chunks** —
-> current numbers in "Cross-cutting: data requirements" §4 and
+> The corpus was expanded on 2026-08-21 to 18 documents / ~1.25M chars / 558 chunks, then
+> **trimmed on 2026-08-24 to 15 documents / 851,891 chars / 393 chunks** — three documents were cut
+> after each was scanned for numeric criteria on the six parameters and all three returned zero.
+> Current numbers in "Cross-cutting: data requirements" §4 and
 > [`../documents/README.md`](../documents/README.md).
 
 ### Completed (migration groundwork)
@@ -169,15 +172,44 @@ casualty. That trade-off is ◆G11.
 method costs**, not by arguing. Full experiment design:
 [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md).*
 
-> **Status 2026-08-17 — built and swept, blocked on grading.** All three arms are implemented,
+> **Status 2026-08-17, revised 2026-08-25 — built and swept, blocked on re-capture then grading.**
+> All three arms are implemented,
 > seeded and captured (168 transcripts, cold + warm, 28 of 30 fixtures, zero failed turns). Fireworks
 > pricing was recorded 2026-08-03 and the cost model runs on measured sweep means (`npm run cost`).
 > The one input still owed from outside the code is **projected requests/month**, without which the
 > break-even curve has no operating point to read off.
 >
-> **What remains is grading, not building.** `eval/grading/warm/scores.csv` is 36 of 174 rows scored
-> — the deliberate 6-fixture calibration sample. The other 22 fixtures are unscored, and the cold
-> pass has no grading scaffolding at all.
+> **What remains, revised 2026-08-25: re-capture, then machine-checked gates, then judgement.**
+> It was "grading, not building"; it is now partly building again, because the evidence went stale.
+> [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8b is the amendment and carries the detail. In
+> short:
+>
+> - **Most of the captured packet no longer grades the live system.** `firestore-direct`'s
+>   transcripts survive — its ◆G9 slice is unchanged at 37,660 chars — but `firestore-vector`'s
+>   were captured retrieving over 305 chunks of an 8-document corpus that is gone, `pgvector-rag`
+>   is archived, and the four arms added 2026-08-24/25 have never been swept at all. **The 30
+>   fixtures themselves are fine**: every filename they name still resolves.
+> - **Three of §8a's five gates are mechanically decidable** — fabricated figures, refusal
+>   integrity, citation validity — and those are exactly the three §8a makes *absolute*. They run
+>   first and eliminate.
+> - **The two judgement gates stay in the floor unchanged**, satisfied by the LLM judge §7b already
+>   specifies, run only on Tier-1 survivors.
+> - `eval/grading/warm/scores.csv` holds 36 of 174 rows from the 6-fixture calibration sample.
+>   Those rows are kept as the human sample the judge calibrates against, not as the pass itself.
+>
+> **No threshold moved.** What changed is the order, the instrument, and which evidence counts.
+>
+> **2026-08-24/25 — retrieval is now measurable offline, and ◆G7 is no closer.** An
+> LLM-free harness (`npm run retrieval:eval`, [`RETRIEVAL_EVAL.md`](RETRIEVAL_EVAL.md)) scores
+> adapters against 99 labelled queries / 259 chunk-level labels in about ten seconds, and four new
+> arms were built on it — `local-vector`, `local-hybrid`, `hybrid-slice-vector`,
+> `hybrid-slice-lexvec`. Best recall moved 74.9% → **81.8%**, best MRR 0.551 → **0.623**.
+> **None of that touches this gate.** Every pre-registered target in
+> [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8a is *answer* quality — fabricated figures,
+> refusal integrity, citation validity, per-class correctness — and recall/MRR/nDCG appear in none
+> of them. They are diagnostics. Grading is still the only thing that closes ◆G7, and it is still
+> at 36 of 174 rows. Read §3's 20.2% floor before quoting any recall number: the `stub` adapter
+> scores 20.2% while retrieving nothing at all.
 >
 > **2026-08-19: `pgvector-rag`'s runtime code archived** to `archive/pgvector-rag/`, ahead of ◆G7
 > and by decision — the gate did **not** close. Nothing grading needs was touched: the 56
@@ -195,8 +227,8 @@ set; the winner closes the gate.
 | `pgvector-rag` ✅ built, swept, **archived 2026-08-19** | **Legacy-parity RAG** — hybrid dense + Postgres full-text fused with RRF, exactly `MIGRATION_SPEC.md` §7 (with the §4a lexical caveat). Graded from its captured transcripts; the code is in `archive/pgvector-rag/` and the mode is no longer selectable. | Postgres+pgvector sidecar, **dev-only**, archived ahead of G7 |
 | `firestore-vector` ✅ built | RAG on Firestore native `findNearest`, dense-only unless a lexical path is built | Firestore vector index |
 
-**The corpus does not fit in context.** 1,254,899 chars ≈ **314K tokens** across 18 docs since the
-2026-08-21 expansion (716,603 chars ≈ 179K across 8 docs at the time the arms were swept), so
+**The corpus does not fit in context.** 851,891 chars ≈ **213K tokens** across 15 docs since the
+2026-08-24 trim (716,603 chars ≈ 179K across 8 docs at the time the arms were swept), so
 "direct feed" means a *defined slice*, not everything — see ◆G9. The slice
 ◆G9 settled on (operator source-of-truth + 4 probe datasheets) measures **~9.4K tokens**, 11,023
 prompt tokens as actually sent. Confirm the configured model's real context limit before changing it;
@@ -234,9 +266,16 @@ Build work in this phase:
   Seeded sessions (tester asks fixture questions) feed the human calibration sample; roaming
   sessions are for discovering missing question classes, which become new fixtures for the *next*
   sweep, never scores in this one. **Not** the N7 Next.js page — this is the throwaway demo UI.
+- **An automated §8a gate checker** (added 2026-08-25) — a deterministic pass over saved
+  transcripts deciding the three hard gates: no numeric literal in an answer that is absent from
+  its captured context or tool results, exact-match `REFUSAL_SENTENCE` on every turn whose rubric
+  demands a refusal, and every cited span a verbatim substring of the chunk it cites. No LLM, no
+  network, re-runnable after every corpus change — the `RETRIEVAL_EVAL.md` method applied one
+  layer up. It gates admission to the paid judging pass rather than replacing it.
 - **Grading is a separate offline pass** over the saved transcripts, arms stripped and shuffled —
   human, LLM judge, or judge calibrated against a human sample. If a judge grades: different model
-  than the one under test, one dimension per call, and the human-agreement rate reported.
+  than the one under test, one dimension per call, and the human-agreement rate reported. Runs
+  **only on arms that cleared the automated gates** (`RETRIEVAL_BAKEOFF.md` §8b).
 - **Cost accounting covers upkeep, not just tokens** — idle/standing cost per arm (direct-feed: $0;
   deployed `pgvector-rag`: an always-on DB instance that likely dominates at our volume), Firestore
   free-tier headroom, index storage, re-embedding on corpus change, and the legacy FastAPI+pgvector
@@ -637,11 +676,13 @@ conversations that survive a page reload.*
 2. **Operator normal-ranges / site baseline** — per metric, per site; authoritative over documents.
    Add a turbidity range. See ◆G3.
 3. **Site/device metadata** — coordinates, water-body type, client/contract, calibration dates.
-4. **Source-of-truth corpus** — **18 active docs since 2026-08-21** (operator source-of-truth, 4
-   Atlas Scientific probe datasheets, the 9-chapter USGS National Field Manual A6 set, 2 EPA
-   regulatory/calibration docs, 2 situational pollution-event refs; ~1.25M chars / 558 chunks,
-   up from 8 docs / ~716K chars). No public links. Breakdown, the USGS edition-currency check, and
-   the two ingest traps: [`../documents/README.md`](../documents/README.md).
+4. **Source-of-truth corpus** — **15 active docs since 2026-08-24** (operator source-of-truth, 4
+   Atlas Scientific probe datasheets, the 9-chapter USGS National Field Manual A6 set, and 1 EPA
+   field-calibration SOP; **851,891 chars / 393 chunks**, expanded to 18 docs / ~1.25M chars on
+   2026-08-21 and trimmed back on 2026-08-24 — the EPA standards handbook and the two
+   pollution-event references carried no numeric criteria for any measured parameter). No public
+   links. Breakdown, the USGS edition-currency check, and the two ingest traps:
+   [`../documents/README.md`](../documents/README.md).
    *Still missing from Tier 1: turbidity and temperature probe datasheets.*
 5. **Unit confirmations** — turbidity (NTU vs FNU) before answers quote it as fact.
 6. **Auth context** — the user's JWT, forwarded for backend-mediated sensor calls, scoped so the bot
@@ -654,7 +695,7 @@ conversations that survive a page reload.*
 | Gate | Decision | Status | Blocks |
 |---|---|---|---|
 | ◆ G1 | Target stack (A/B/C) | **Resolved → C (Node/Express + Firestore)** | — (unblocked all) |
-| ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open — **arms built and swept**; blocked on grading `eval/grading/warm/scores.csv` (36/174 rows scored) and on writing `RETRIEVAL_COMPARISON.md` | Phases N2→N6; the pinned system prompt, which blocks N5's personality item. **No longer blocks pgvector archival** — that was taken ahead of the gate on 2026-08-19 (see "Where we are now"), with the evidence retained so grading is unaffected |
+| ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open. **Blocker revised 2026-08-25** (`RETRIEVAL_BAKEOFF.md` §8b): re-capture on the 15-document corpus → automated pass on the three hard gates → LLM judge on the survivors → `RETRIEVAL_COMPARISON.md`. Only `firestore-direct`'s transcripts survived the corpus change. The offline retrieval harness and its four new arms **do not advance this gate** — §8a's targets are all answer-quality and recall/MRR are diagnostics with no target | Phases N2→N6; the pinned system prompt, which blocks N5's personality item. **No longer blocks pgvector archival** — that was taken ahead of the gate on 2026-08-19 (see "Where we are now"), with the evidence retained so grading is unaffected |
 | ◆ G9 | Direct-feed corpus slice | **Resolved → operator source-of-truth + 4 probe datasheets (~9.4K tokens)**. Revised 2026-07-29: the original small tier was 83% a structurally shredded criteria table covering pollutants this sensor cannot measure | — |
 | ◆ G10 | Third bake-off arm | **Resolved → yes, three arms**: `firestore-direct`, `pgvector-rag`, `firestore-vector`. Also answers whether Firestore's own vector search is good enough if RAG wins | — |
 | ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open — **cheaper now**: N3 built the loop, so adding it is one entry in `buildToolRegistry` plus a prompt line, not new machinery | multi-part answer quality |

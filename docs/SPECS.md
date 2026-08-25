@@ -114,7 +114,10 @@ clean-earth-rag/
 │   │   ├── adapters/
 │   │   │   ├── StubAdapter.ts
 │   │   │   ├── DirectFeedAdapter.ts
-│   │   │   └── FirestoreVectorAdapter.ts
+│   │   │   ├── FirestoreVectorAdapter.ts
+│   │   │   ├── LocalVectorAdapter.ts     in-process dense, over the embedding cache
+│   │   │   ├── RrfHybridAdapter.ts       dense + BM25, fused with RRF
+│   │   │   └── HybridSliceVectorAdapter.ts  the ◆G9 slice + a ranked arm
 │   │   └── sources/
 │   │       ├── corpusSource.ts        CorpusSource contract
 │   │       ├── ArtifactCorpusSource.ts
@@ -452,6 +455,22 @@ tests construct isolated instances instead of depending on import order.
   an automatic fallback** — a silent switch could have a run measured against the wrong source.
 - **`firestore-vector`** (`FirestoreVectorAdapter`) — dense RAG on Firestore's own vector search
   (§14b), the surviving RAG arm.
+- **`local-vector`** (`LocalVectorAdapter`) — the same dense retrieval computed in process against
+  the cache `npm run embed:cache` writes. No credentials, no vector index, no network on the query
+  path. It exists so retrieval can be evaluated offline and free; `npm run compare:vector-arms`
+  reports **30/30 queries ranked identically** to `firestore-vector`, drift ~1e-4, because
+  Firestore's index is configured `flat` (exhaustive) rather than approximate.
+- **`local-hybrid`** (`RrfHybridAdapter`) — dense fused with an in-process BM25 index using
+  Reciprocal Rank Fusion, `RRF_K = 60`. This restores the lexical half the migration dropped
+  because Firestore has no full-text search (`RETRIEVAL_BAKEOFF.md` §4b's "dead lexical branch").
+  **`RRF_K` is the published default and deliberately untuned** — tuning it against the same 99
+  queries used to report the result would fit the constant to the test set.
+- **`hybrid-slice-vector`** / **`hybrid-slice-lexvec`** (`HybridSliceVectorAdapter`) — the ◆G9
+  slice returned whole, **first**, plus a ranked arm over everything else. The slice leads so the
+  cacheable prompt prefix stays byte-identical across requests; reversing the order would destroy
+  direct-feed's ~99% prompt-cache hit rate. Composed from the adapters above rather than
+  reimplementing either — this is the split outcome `timeline.md` names as a legitimate ◆G7 result,
+  and it cost one delegating adapter.
 - Registration happens in one place (`src/retrieval/index.ts`), so adding a bake-off arm is a single
   line rather than an import side effect — and **removing one is a single line too**: that is how
   `pgvector-rag` stopped being selectable on 2026-08-19 when its code was archived (§14). The seam
@@ -459,10 +478,15 @@ tests construct isolated instances instead of depending on import order.
 
 ### Shared guards (`options.ts`)
 
-`resolveTopK()` centralizes the legacy bounds — default 5, max 10, non-positive → 0 — and an empty
-query returns `[]`. Carried over from `MIGRATION_SPEC.md` §7 so every adapter degrades identically
-instead of each inventing its own edge-case behavior, and so retrieval stays comparable across the
-migration.
+`resolveTopK()` centralizes the bounds — **default 5, max 50**, non-positive → 0 — and an empty
+query returns `[]`. Every adapter degrades identically instead of each inventing its own edge-case
+behavior, so retrieval stays comparable across the migration.
+
+**`MAX_TOP_K` was raised from 10 to 50 on 2026-08-24.** The old ceiling was legacy parity
+(`MIGRATION_SPEC.md` §7: default 5, caller-capped 1–10), never a measurement. While it stood, a
+`k=20` run returned exactly `k=10`'s numbers because `resolveTopK` clamped — which reads as "depth
+does not help" when the request simply never happened. **`DEFAULT_TOP_K` is unchanged at 5**: the
+ceiling bounds what a caller may request, the default is what every request pays.
 
 ---
 
@@ -735,19 +759,22 @@ retrieval-strategy differences.
 | Filter | length ≥ 100, no PDF boilerplate, and an alphabetic-ratio ≥ 0.5 test **skipped for `.md`/`.txt`** — see below |
 | Output | per document: full `text` (direct-feed) and filtered `chunks` (vector arms), plus the ◆G9 slice flag |
 
-Current run, **corpus expanded 2026-08-21**: **18 documents, 1,254,899 chars (~314K tokens),
-558 chunks**; direct-feed slice unchanged at **37,660 chars (~9.4K tokens)**. Previously 8
-documents / 716,603 chars / 305 chunks.
+Current run, **corpus trimmed 2026-08-24**: **15 documents, 851,891 chars (~213K tokens),
+393 chunks**; direct-feed slice unchanged at **37,660 chars (~9.4K tokens)**. It was 18 documents /
+1,254,899 chars / 558 chunks after the 2026-08-21 expansion, and 8 documents / 716,603 chars /
+305 chunks before that. The trim cut three documents that carried no number or procedure for any
+measured parameter — 32% of the characters, and nothing that answers a question
+([`../documents/README.md`](../documents/README.md)).
 
 The corpus is scoped to the six parameters the DataPod measures. Documents about undetectable
 analytes live in `documents/_excluded/` — see `timeline.md`. Active set: the operator
 source-of-truth, four Atlas Scientific probe datasheets, **the whole USGS National Field Manual
-Chapter A6 (nine chapters, one per parameter)**, two EPA regulatory/calibration documents, and two
-situational pollution-event references. Full breakdown and the edition-currency check in
+Chapter A6 (nine chapters, one per parameter)**, and one EPA field-calibration SOP. The two
+situational pollution-event references and the EPA standards handbook were cut on 2026-08-24. Full breakdown and the edition-currency check in
 [`documents/README.md`](../documents/README.md).
 
 **The slice did not grow with the corpus, deliberately.** Direct-feed's cost *is* its slice size,
-so the ~1.2M-char reference tier is reachable only by a RAG arm — which is what makes direct-feed
+so the ~814K-char reference tier is reachable only by a RAG arm — which is what makes direct-feed
 a fixed baseline rather than a fourth candidate.
 
 **Two traps this expansion introduced**, both documented in `documents/README.md`:
@@ -1019,7 +1046,7 @@ it is the weakness the legacy hybrid existed to cover, and the eval's exact-toke
 
 | element | value | why |
 |---|---|---|
-| Collection | `corpus_chunks`, one per chunk (**558** since the 2026-08-21 corpus expansion; 305 when the arms were swept), id `<filename>__<0000-padded index>` | **Separate from `corpus_documents` by necessity** — Firestore will not index a vector inside an array element |
+| Collection | `corpus_chunks`, one per chunk (**393** since the 2026-08-24 corpus trim; 305 when the arms were swept), id `<filename-slug>__<12 hex chars of sha256(chunk text)>` since 2026-08-24 — **positional before that**, which is why re-seeding never repaired the stale collection and `--wipe` exists | **Separate from `corpus_documents` by necessity** — Firestore will not index a vector inside an array element |
 | Vector field | `embedding`, `Vector(768)` via `FieldValue.vector()` | must match the index |
 | Distance | `COSINE`, to match pgvector's `<=>` | a different measure would mean the two RAG arms no longer compare the same similarity |
 | Fetch depth | `limit = topK` (5), not the pgvector arm's fetch-20 | depth 20 exists to give RRF something to fuse; with one branch it would only pay for discarded reads |
@@ -1091,9 +1118,11 @@ for local demo, to be tightened before deploy.
 
 ## 16. Testing
 
-Jest + `ts-jest` + `supertest`. **720 tests in 36 suites, all passing** (measured 2026-08-24 on
-`dev`). The table below names the suites that carry a design decision worth reading; it is not the
-full list — `npx jest --listTests` is.
+Jest + `ts-jest` + `supertest`. **42 suites** on `dev` (counted 2026-08-25 with
+`npx jest --listTests`). The last recorded full run was **720 tests in 36 suites, all passing**,
+measured 2026-08-24 — before the retrieval-harness and hybrid-arm suites landed, so the test total
+is due a re-measure. The table below names the suites that carry a design decision worth reading;
+it is not the full list — `npx jest --listTests` is.
 
 | suite | covers |
 |---|---|

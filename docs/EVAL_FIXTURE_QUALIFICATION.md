@@ -4,6 +4,19 @@ A per-fixture re-examination of `eval/fixtures/`, run **2026-08-24** against the
 `data/corpus/corpus.json` (generated `2026-08-22T01:14:04Z`, 18 documents, 1,254,899 chars) and the
 code as it stands on `dev`.
 
+> **The corpus changed the day after this was written.** On 2026-08-24 three documents —
+> `epa-wqs-handbook-ch3-water-quality-criteria.pdf`, `epa-assessing-monitoring-floatable-debris.pdf`
+> and `noaa-nhabon-framework-workshop-report.pdf` — were cut for carrying no numeric criteria on
+> any measured parameter, leaving **15 documents / 851,891 chars / 393 chunks**.
+>
+> **No finding below rests on those three as a source of an answer**, so the per-fixture
+> judgements stand. What does change is every place they appear as a *distractor*: the
+> recommendation to add `epa-wqs-handbook-ch3-water-quality-criteria.pdf` to a `must_not` list is
+> now moot, and the `event-stormwater-vs-intrusion` note about the debris document costing a RAG
+> arm top-k slots describes a problem that no longer exists. Read "nowhere else in the 18
+> documents" as being against 15, and re-derive against the current artifact.
+> See [`../documents/README.md`](../documents/README.md).
+
 The 30 fixtures are a pinned control — three arms were captured against them
 ([`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §4b). **Nothing in `eval/fixtures/` was edited to
 produce this document.** Everything below is a recommendation for whoever re-derives the set for

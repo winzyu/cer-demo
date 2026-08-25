@@ -12,7 +12,71 @@ Phase N3 device-API read layer.
 
 **Read order for a cold start:** this file → [`timeline.md`](timeline.md) (phases + gates) →
 [`SPECS.md`](SPECS.md) (what's built) → [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) (the
-experiment; §4a and §4b are the newest and most important).
+experiment; §4a and §4b are the newest and most important) →
+[`RETRIEVAL_EVAL.md`](RETRIEVAL_EVAL.md) (the offline harness, and the only place the 20.2% floor
+is explained).
+
+---
+
+## 0. What has happened since this file was written (2026-08-24/25)
+
+The corpus, the retrieval arms and the measurement apparatus all moved — and so, as of 2026-08-25,
+did §5's "next task".
+
+- **Corpus: 15 documents / 851,891 chars / 393 chunks.** Expanded to 18 on 2026-08-21, trimmed on
+  2026-08-24 after three documents were scanned for numeric criteria on the six measured
+  parameters and all three returned zero.
+- **Chunk ids are content-derived** (`sha256`, 12 hex chars), not positional. This is what makes a
+  durable label set possible — and it means **re-chunking invalidates all 259 labels**.
+- **An offline retrieval harness exists**: `npm run retrieval:eval`, 99 labelled queries over 48
+  fixtures, no LLM, deterministic, ~10s. Read [`RETRIEVAL_EVAL.md`](RETRIEVAL_EVAL.md) before
+  quoting any number from it.
+- **Four new arms**: `local-vector`, `local-hybrid` (dense + BM25 via RRF), `hybrid-slice-vector`
+  and `hybrid-slice-lexvec` (the ◆G9 slice plus a ranked arm). Best offline recall at k=10 is
+  **81.8%**, best MRR **0.623**.
+- **`MAX_TOP_K` raised 10 → 50.** `DEFAULT_TOP_K` is still 5.
+- **The `corpus_chunks` collection was stale and was wiped + re-seeded.** It held 305 chunks of a
+  corpus that no longer existed; the seeder is idempotent by filename and never deletes, so no
+  re-seed would ever have fixed it. Use `npm run seed:firestore-chunks -- --wipe`.
+
+**None of this closes ◆G7, and none of it is evidence that the project is passing.** Two things to
+hold onto:
+
+1. **`stub` scores 20.2% recall while retrieving nothing at all** — 20 of the 99 turns are labelled
+   `noRelevantChunks`, and correctly retrieving nothing scores 1. Every recall number reads about
+   20 points better than it is until you subtract that floor.
+2. **Every pre-registered target is answer quality, and every one is unmeasured.**
+   [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8a fixed them on 2026-07-30: zero fabricated
+   figures, 100% refusal integrity, ≥95% citation validity, correctness ≥1.0/2 in every servable
+   class and ≥1.3 overall. Recall, MRR and nDCG appear in none of them — they are diagnostics.
+   Grading is still **36 of 174 rows**.
+
+**The next task changed on 2026-08-25, and §5 below is superseded.** Grading the captured packet
+would mostly measure an 8-document corpus that no longer exists — only `firestore-direct`'s
+transcripts survive, because its ◆G9 slice never changed. The revised sequence, amended into the
+pre-registration at [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8b:
+
+1. **Build the automated §8a gate checker.** Deterministic, no LLM: no numeric literal in an answer
+   that is absent from its captured context or tool results; exact-match `REFUSAL_SENTENCE` where a
+   rubric demands a refusal; every cited span a verbatim substring of the chunk it cites. These are
+   §8a's three *hard* gates — absolute, so deciding them cheaply and first means never paying to
+   judge an arm that was already out.
+2. **Re-capture** `firestore-direct`, `firestore-vector`, `hybrid-slice-lexvec` (and
+   `hybrid-slice-vector` if you want the lexical delta at the answer layer) on the 15-document
+   corpus. `pgvector-rag` stays out unless restored from `archive/`.
+3. **Run the gates.** Survivors only go to step 4.
+4. **LLM judge** for the two judgement gates, which are **unchanged**: ungrounded claims ≤2%,
+   correctness ≥1.0/2 per servable class and ≥1.3 overall. §7b's constraints bind — different model
+   than `gpt-oss-20b`, one dimension per call, context supplied, calibrated against a human sample
+   with the agreement rate reported. The 36 rows already scored are that sample.
+5. **Write `RETRIEVAL_COMPARISON.md`** and close ◆G7.
+
+**No threshold moved.** The order, the instrument and the admissible evidence changed; the floor did
+not. Retrieval metrics are still not gates — an arm cannot pass ◆G7 on recall.
+
+The binding risk to watch: `deep-in-manual` recall is 21–31% across the new arms
+(`local-hybrid` 24.5% at k=10, `hybrid-slice-vector` 21.0% at k=10 / 31.0% at k=20), and the RAG
+arms get **no servable-set exemption** for that class, so they must still clear 1.0/2 correctness on it.
 
 ---
 
@@ -31,7 +95,8 @@ resolves that objection without re-running an arm — see §9.
 
 > **The split this section describes is over.** `feat/device-api` was merged at `fa299ef` the same
 > day (§8 item 2), and everything below has since landed on `dev`. The table and the test counts are
-> left as written because §8 refers to them. Current test count: **720 in 36 suites**, all passing.
+> left as written because §8 refers to them. Test count when that was written: **720 in 36 suites**,
+> all passing. The suite is **42 suites** as of 2026-08-25; the test total is un-re-measured.
 
 **The work is split across two branches that do not contain each other.**
 
@@ -110,10 +175,23 @@ Facts that constrain how these may be reported:
 
 ## 5. The next task
 
-**Grade the blind packet.** Everything else in N2 is done.
+> **Superseded 2026-08-25 — do not start here.** This section said "grade the blind packet", and
+> that is no longer the next task: most of the packet grades an 8-document corpus that no longer
+> exists. The revised sequence is **re-capture → automated gates → LLM judge**, specified in
+> [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8b and summarised in §0 above. The rest of this
+> section is kept because the packet mechanics, the guide and the §7b protocol are all still
+> correct for whatever *is* graded.
+>
+> ⚠️ **`npm run grade:packet` overwrites `scores.csv` unconditionally** (`scripts/gradePacket.ts`
+> writes it with no existence check). Re-running it **destroys grading in progress** — it wiped the
+> 36 completed calibration rows on 2026-08-25, recovered from git. Back up or commit `scores.csv`
+> before ever re-running the packet builder. The line below used to call it "safe to re-run"; it is
+> not.
+
+**Grade the blind packet.** ~~Everything else in N2 is done.~~
 
 ```bash
-npm run grade:packet                 # already built; safe to re-run, labels are stable
+npm run grade:packet                 # ⚠️ CLOBBERS scores.csv — commit it first
 npm run grade:packet -- --sample=6   # 6-sheet calibration subset
 ```
 
@@ -123,8 +201,10 @@ npm run grade:packet -- --sample=6   # 6-sheet calibration subset
 - Protocol (`RETRIEVAL_BAKEOFF.md` §7b): blind, arms shuffled. An LLM judge must be a **different
   model than `gpt-oss-20b`**, judge one dimension per call, and be calibrated against a ~20% human
   sample with the agreement rate reported.
-- **Recommended:** do the 6-sheet subset first. ~45 minutes, and it tells you whether direct-feed's
-  answers hold up before anyone spends 3–4 hours on the full set.
+- **Recommended, revised:** the 36 rows already scored from the 6-sheet subset are now the
+  **human calibration sample** the LLM judge is measured against (§7b requires ~20% and an agreement
+  rate), not a pass in their own right. Do not re-grade them by hand; the next human effort worth
+  spending is on transcripts captured against the current corpus.
 - The human sample was designed to come from a blind frontend harness (§7c:
   `GET /api/v1/retrieval/modes` + an arm selector). **That is not built.** The packet works
   standalone and is the cheaper path — build the harness only if you want non-technical testers

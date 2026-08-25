@@ -352,10 +352,11 @@ history) this set is smaller than the committed thirty and costs proportionally 
 dollars either way. Price it before running, per `RETRIEVAL_BAKEOFF.md` §1, and note as before
 that this is the *experiment* cost and says nothing about steady state.
 
-One thing that has changed since §6 was written: **the corpus is 1.25M characters, not 716K.**
-Direct-feed's prompt is unaffected — the ◆G9 slice was deliberately left alone — but a RAG arm's
-retrieval now chooses from 558 chunks instead of roughly half that, so retrieval latency and
-embedding cost are not comparable to the N2 numbers even for the arms that still exist.
+One thing that has changed since §6 was written: **the corpus is 851,891 characters, not 716K**
+(it peaked at 1.25M on 2026-08-21 and was trimmed on 2026-08-24). Direct-feed's prompt is
+unaffected — the ◆G9 slice was deliberately left alone — but a RAG arm's retrieval now chooses
+from 393 chunks instead of 305, so retrieval latency and embedding cost are not comparable to the
+N2 numbers even for the arms that still exist.
 
 ---
 

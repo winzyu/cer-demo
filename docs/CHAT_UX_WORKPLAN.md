@@ -17,7 +17,7 @@ Phase 0 creates the seam first.
    change is wrong, not the test.
 2. **Never change the defaults** of `SENSOR_TOOL` (`false`), `DEFAULT_RETRIEVAL` (`stub`), or
    `DEBUG_RETRIEVAL` (`false`) in `src/config/index.ts`. A fresh checkout must stay credential-free.
-3. **All 720 tests stay green.** No test may touch the network, need an API key, or cost money. New
+3. **The whole suite stays green.** No test may touch the network, need an API key, or cost money. New
    tests follow that rule too — mock `LlmService`, serve recorded bodies through a stubbed `fetch`.
 4. **The response shape is a contract.** `tool_calls` and `tool_round_cap_reached` are *omitted* when
    no tool ran; the error body is `{ error, message }` plus an optional machine-readable `code`,
@@ -56,7 +56,7 @@ Phase 0 creates the seam first.
 > `ln -s <main-checkout>/data/corpus data/corpus`.
 
 ```bash
-npm test                      # 720 passing, 36 suites
+npm test                      # 42 suites; last recorded full pass 720 tests / 36 suites, 2026-08-24
 npm run typecheck             # tsc --noEmit, silent
 npx eslint src --ext .ts      # NOT `npm run lint` — that runs --fix and writes files
 ```

@@ -38,6 +38,7 @@ decisions, and the traps that cost time.
 | [`docs/SPECS.md`](docs/SPECS.md) | Architecture as built today, section by section. |
 | [`docs/timeline.md`](docs/timeline.md) | Phased plan, and the **◆ decision gates** that block work. |
 | [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) | The direct-feed vs RAG cost experiment (◆G7). |
+| [`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) · [`docs/RETRIEVAL_LABELS.md`](docs/RETRIEVAL_LABELS.md) | The offline retrieval harness (`npm run retrieval:eval`) and its ground truth. **Read the 20.2% floor in §3 before reading any recall number.** |
 | [`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md) | The sensor API contract, verified live. **Read §12 before trusting any reading.** |
 | [`docs/migration/MIGRATION_SPEC.md`](docs/migration/MIGRATION_SPEC.md) | Behaviour of the legacy FastAPI system being ported. |
 | [`docs/migration/CONVENTIONS.md`](docs/migration/CONVENTIONS.md) | Coding conventions this repo follows. |
@@ -55,7 +56,7 @@ the real device API** via `query_sensor_data` and a tool-round loop.
 | phase | state |
 |---|---|
 | **N1** — chat spine + retrieval seam | ✅ complete |
-| **N2** — retrieval bake-off | ⏳ all three arms built, sweep captured, **awaiting grading** (◆G7 open). `pgvector-rag`'s runtime code was archived 2026-08-19 ahead of ◆G7; its captured evidence stays ([§6](#6-retrieval-arms)) |
+| **N2** — retrieval bake-off | ⏳ all three arms built, sweep captured, **awaiting re-capture then grading** (◆G7 open; sequence amended 2026-08-25 in [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) §8b — only `firestore-direct`'s transcripts survived the corpus change). `pgvector-rag`'s runtime code was archived 2026-08-19 ahead of ◆G7; its captured evidence stays ([§6](#6-retrieval-arms)). Four further arms and an offline retrieval harness landed 2026-08-24/25 — **retrieval measured, answers still not** ([`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md)) |
 | **N3** — sensor querying + tool loop | ✅ built, **behind `SENSOR_TOOL`, default off** |
 | **N4+** — reports, chat UX | ⏳ report generation built, **behind `REPORT_TOOL`, default off** ([§5](#5-configuration-reference), [§10](#10-endpoints)); N5's chat-UX streams have landed ([`docs/CHAT_UX_WORKPLAN.md`](docs/CHAT_UX_WORKPLAN.md)). Per-device water type is live in the **report** path only — chat still reads the global `WATER_TYPE` ([§7e](#7e-known-limits)) |
 
@@ -321,7 +322,7 @@ every problem, missing secrets are warnings only.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `DEFAULT_RETRIEVAL` | `stub` | `stub` \| `firestore-direct` \| `firestore-vector`. **`pgvector-rag` is no longer a selectable value** — the arm was archived 2026-08-19 ([§6](#6-retrieval-arms)). A stale `.env` still naming it throws on the **first chat request**, not at startup — see [§11](#11-troubleshooting). |
+| `DEFAULT_RETRIEVAL` | `stub` | `stub` \| `firestore-direct` \| `firestore-vector` \| `local-vector` \| `local-hybrid` \| `hybrid-slice-vector` \| `hybrid-slice-lexvec` ([§6](#6-retrieval-arms)). **`pgvector-rag` is no longer a selectable value** — the arm was archived 2026-08-19 ([§6](#6-retrieval-arms)). A stale `.env` still naming it throws on the **first chat request**, not at startup — see [§11](#11-troubleshooting). |
 | `DEBUG_RETRIEVAL` | `false` | When `true`, a request's `"retrieval"` field is honoured. Required by the bake-off runner. |
 | `CORPUS_SOURCE` | `artifact` | Where `firestore-direct` reads text: `artifact` (local file, no credentials) or `firestore`. Explicit rather than auto-detected — a silent fallback would measure the wrong source. |
 
@@ -393,9 +394,20 @@ surface as answer-quality differences and be misread as one strategy beating ano
 | `stub` | three lines of placeholder text | nothing |
 | **`firestore-direct`** ⭐ | feeds the whole ◆G9 slice, no embeddings, no ranking | the artifact |
 | `firestore-vector` | dense RAG on Firestore vector search | Fireworks key + vector index |
+| `local-vector` | the same dense retrieval, in process against `npm run embed:cache` | the artifact + the cache |
+| `local-hybrid` | dense + BM25, fused with RRF | the artifact + the cache |
+| `hybrid-slice-vector` | the ◆G9 slice **plus** dense retrieval over everything else | the artifact + the cache |
+| `hybrid-slice-lexvec` | the slice plus dense + BM25 fusion | the artifact + the cache |
 
 ⭐ = the provisional working choice (7.1% retrieval miss vs 33.9%). See
 [`docs/HANDOFF.md`](docs/HANDOFF.md) §3.
+
+> **The four arms below the line were added 2026-08-24/25 and are measured, not graded.** Offline
+> recall at k=10: `local-vector` 54.3%, `local-hybrid` 59.5%, `firestore-direct` 74.9%,
+> `hybrid-slice-vector` 80.8%, `hybrid-slice-lexvec` 81.8% — against a **20.2% floor**, not zero
+> ([`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) §3). Those are retrieval numbers only. ◆G7's
+> pre-registered targets are all **answer**-quality and remain unmeasured, so none of this changes
+> which arm passes.
 
 > **Where did `pgvector-rag` go?** The dev-only legacy-parity arm's **runtime code was archived on
 > 2026-08-19** to `archive/pgvector-rag/`, which mirrors the original paths (adapter, `rrf.ts`,
@@ -431,7 +443,7 @@ Re-running the seeder overwrites by filename rather than duplicating.
 <details>
 <summary><b><code>firestore-vector</code></b></summary>
 
-Requires `FIREWORKS_API_KEY` (it embeds 558 chunks) and the **vector index** from
+Requires `FIREWORKS_API_KEY` (it embeds 393 chunks) and the **vector index** from
 [§2b](#2b-google-cloud--firestore).
 
 ```bash
@@ -440,7 +452,13 @@ DEFAULT_RETRIEVAL=firestore-vector npm run dev
 ```
 
 Idempotency is checked *before* embedding, so a re-run costs nothing. Expect
-`558 chunks in "corpus_chunks"`.
+`393 chunks in "corpus_chunks"`.
+
+**Re-seeding does not remove stale chunks.** The seeder is idempotent by filename and never
+deletes, so chunks from documents that have left the corpus survive every re-seed — that is how
+the collection came to hold 305 chunks of a corpus that no longer existed
+([`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) §4b). Use `npm run seed:firestore-chunks -- --wipe`
+after any corpus change.
 </details>
 
 <details>
@@ -615,12 +633,14 @@ reporting still answers "the last day" about its last day of data.
 |---|---|
 | `npm run dev` | live-reload dev server (`ts-node-dev`) |
 | `npm run build` / `npm start` | compile to `dist/` / run compiled |
-| `npm test` | full Jest suite (720 tests in 36 suites, none touching the network) |
+| `npm test` | full Jest suite (42 suites, none touching the network) |
 | `npm run test:coverage` / `test:watch` | coverage / watch mode |
 | `npm run lint` / `npm run typecheck` | ESLint `--fix` over `src` / `tsc --noEmit` |
 | `npm run ingest` | parse `documents/` → `data/corpus/corpus.json` ([§6](#6-retrieval-arms)) |
 | `npm run seed:firestore` | upload the corpus to `corpus_documents` |
-| `npm run seed:firestore-chunks` | embed + upload to `corpus_chunks` for `firestore-vector` |
+| `npm run seed:firestore-chunks` | embed + upload to `corpus_chunks` for `firestore-vector`; `--wipe` clears stale chunks first |
+| `npm run embed:cache` | build the local embedding cache the `local-*` and `hybrid-slice-*` arms read |
+| `npm run compare:vector-arms` | prove `local-vector` and `firestore-vector` rank identically |
 | **`npm run verify:sensor`** | **live read-only check that the sensor tool reads real pods (no LLM, no cost)** |
 | `npm run explore:devices` | discover the fleet and record raw responses to `data/device-api/` |
 | `npm run explore:fields` / `explore:surface` | read-only backend census: per-device field coverage / route surface (`docs/migration/BACKEND_FIELDS.md`) |
@@ -628,6 +648,7 @@ reporting still answers "the last day" about its last day of data.
 | `npm run cost` | price the arms and compute break-even |
 | `npm run grade:packet` | build the blind grading packet (`--pass=`, `--sample=`) |
 | `npm run starter:prompts` | generate the composer's starter prompts (`--limit=`, `--sensor`) |
+| `npm run retrieval:eval` | score adapters against the labelled query set — no LLM, free, ~10s (`--adapter=`, `--k=`, `--out=`) |
 
 ---
 
@@ -670,7 +691,7 @@ test/
 frontend/               # chat UI (manual test surface, not the product). Served, not file://
   index.html            #   markup + mount points; app.css; js/ modules; vendor/ for third-party
 data/                   # corpus artifact + device recordings (git-ignored)
-documents/              # source corpus, 18 docs since 2026-08-21. NOTE: `.gitignore` has a
+documents/              # source corpus, 15 docs since 2026-08-24. NOTE: `.gitignore` has a
                         #   documents/* rule and MOST FILES ARE UNTRACKED. The five Tier 1
                         #   docs are force-tracked because they are the whole direct-feed
                         #   slice. Read documents/README.md before ingesting.
