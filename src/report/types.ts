@@ -18,11 +18,12 @@
  * temperature has no entry in the source-of-truth reference table by design.
  *
  * "Qualitative" is for a parameter that is not judged against a numeric range at all
- * (turbidity -- see ParameterScale below). It is deliberately NOT the same as "N/A": temperature
- * has no range *yet* and gets one as soon as an operator sets a usable threshold, whereas turbidity's value is not on a
- * calibrated scale in the first place, so a numeric verdict would be meaningless rather than
- * merely unavailable. A "Qualitative" row carries a ClarityBand instead, and never contributes
- * an excursion or exceedance to `overallStatus`.
+ * (turbidity -- see ParameterScale below). It is deliberately NOT the same as "N/A":
+ * temperature has no range *yet* and gets one as soon as an operator sets a usable
+ * threshold, whereas turbidity's value is not on a calibrated scale in the first place,
+ * so a numeric verdict would be meaningless rather than merely unavailable. A
+ * "Qualitative" row carries a ClarityBand instead, and never contributes an excursion
+ * or exceedance to `overallStatus`.
  */
 export type Flag = "Normal" | "Elevated" | "Low" | "Exceedance" | "N/A" | "Qualitative";
 
