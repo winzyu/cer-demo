@@ -112,8 +112,9 @@ and a fabricated zero is an automatic disqualification in evaluation.
 ## 4. What the corpus is, right now
 
 Documents are parsed once into a single artifact that all retrieval strategies read from, chunked
-at 3,200 characters with 400 overlap. **~314K tokens across 18 documents today** — far larger than
-any context window, which is the point: retrieval has to choose.
+at 3,200 characters with 400 overlap. **~213K tokens across 15 documents** (851,891 chars, 393
+chunks, measured 2026-08-24) — still far larger than any context window, which is the point:
+retrieval has to choose.
 
 ### Tier 1 — company-specific (5 docs, ~9.4K tokens) — do not source, we have these
 Operator-written source-of-truth document plus the four Atlas Scientific probe datasheets. These
@@ -124,16 +125,21 @@ One chapter per parameter: 6.0 general guidelines, 6.1 temperature, 6.2 dissolve
 6.3 specific conductance, 6.4 pH, 6.5 ORP, 6.6 alkalinity, 6.7 turbidity, 6.8 multiparameter
 instruments. **All confirmed current editions.**
 
-### Tier 3 — regulatory / calibration (2 docs)
-EPA Water Quality Standards Handbook Ch. 3; EPA SOP for calibration of field instruments (2010).
+### Tier 3 — calibration (1 doc)
+EPA SOP for calibration of field instruments (2010).
 
-### Tier 4 — situational (2 docs)
-EPA floatable debris; NOAA harmful-algal-bloom observing network framework.
+### ~~Tier 4 — situational~~ — removed 2026-08-24
 
-### Under review for removal (~124K tokens, 39% of the corpus)
+### Cut 2026-08-24 (403,008 chars, 32% of the corpus) — do not source replacements in these veins
 `epa-wqs-handbook-ch3` (regulatory *process*, not thresholds), `epa-assessing-floatable-debris`,
-`noaa-nhabon` (governance and funding), `usgs-nfm-a6.6-alkalinity` (titration procedure for a
-parameter the pod does not measure). **Do not source replacements in these veins.**
+`noaa-nhabon` (governance and funding). All three were scanned before cutting and carry **zero
+numeric criteria** for any of the six parameters; they ran 0.8–3.8 six-parameter mentions per 10K
+chars against 16–109 for the documents that stayed.
+
+**`usgs-nfm-a6.6-alkalinity` was on this list and was kept.** It measures 19.0 mentions per 10K
+chars — **129 of them pH** — denser than `usgs-nfm-a6.0`, which nobody proposed cutting. Alkalinity
+is the buffering capacity that governs how pH responds, so the chapter is about a measured
+parameter even though alkalinity itself is not one. The earlier grouping was wrong on this.
 
 ### Already excluded, deliberately
 EPA aquatic-life criteria (metals/pesticides), recreational water criteria (pathogens), nutrient

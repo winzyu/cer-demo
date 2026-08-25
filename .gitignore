@@ -27,11 +27,10 @@ generated_reports/
 # claude worktrees / local agent state
 .claude/
 
-# legacy python pipeline artifacts
-__pycache__/
-*.pyc
+# OCR transcripts for scanned PDFs. NOT a legacy artifact — `src/ingestion/extract.ts` reads
+# `.ocr_cache/<filename>.txt` and hard-errors when it is missing, so ingesting a scanned document
+# on a fresh clone requires re-running OCR or being handed the .txt (documents/README.md).
 .ocr_cache/
-.claude/
 
 # Sensor data — confidential per CLAUDE.md privacy posture
 data/*

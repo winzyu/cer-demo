@@ -94,14 +94,16 @@ export const DOC_META: Record<string, DocMeta> = {
     sourceUrl: "https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf",
   },
 
-  // === Tier 3 — regulatory and numeric thresholds. Where a number comes from when the operator's
-  // source-of-truth does not carry one. ===
+  // === Tier 3 — calibration procedure. Kept deliberately narrow: a document earns a place here
+  // only if it carries a procedure or a number for one of the six measured parameters.
+  //
+  // **Cut 2026-08-24: `epa-wqs-handbook-ch3-water-quality-criteria.pdf`.** It was filed here as
+  // the source of numeric thresholds and turned out to carry none — a scan of all 123,131 chars
+  // found zero numeric criteria for DO, pH, turbidity, conductivity, temperature or ORP. It is
+  // regulatory *process* (how criteria get recommended and adopted), not criteria. 9.8% of the
+  // corpus competing for top-k slots with nothing to contribute. Moved to `documents/_excluded/`.
+  // ===
 
-  "epa-wqs-handbook-ch3-water-quality-criteria.pdf": {
-    title: "EPA Water Quality Standards Handbook, Chapter 3 — Water Quality Criteria (Dec 2023)",
-    sourceUrl:
-      "https://www.epa.gov/sites/default/files/2014-10/documents/handbook-chapter3.pdf",
-  },
   // Scanned images — ingest reads `.ocr_cache/` for this one. See `documents/README.md`.
   "epa-sop-field-instrument-calibration-2010.pdf": {
     title:
@@ -112,25 +114,20 @@ export const DOC_META: Record<string, DocMeta> = {
       + "EQASOP-FieldCalibrat.pdf",
   },
 
-  // === Tier 4 — situational / pollution-event context, for N6 §4 event detection (◆G4).
+  // === Tier 4 — situational / pollution-event context. **Removed entirely 2026-08-24.**
   //
-  // **These cover things the DataPod cannot measure** (floating debris; algal toxins and
-  // chlorophyll) and so sit in tension with the 2026-07-29 scoping rule above. They are here for
-  // event *interpretation* — what a DO/pH/turbidity signature tends to mean — not to answer
-  // "is there a bloom". The refusal fixtures are the check on that; see `documents/README.md`. ===
-
-  "epa-assessing-monitoring-floatable-debris.pdf": {
-    title: "EPA — Assessing and Monitoring Floatable Debris",
-    sourceUrl:
-      "https://www.epa.gov/sites/default/files/2018-12/documents/assess-monitor-floatable-debris.pdf",
-  },
-  "noaa-nhabon-framework-workshop-report.pdf": {
-    title:
-      "NOAA — Framework for the National Harmful Algal Bloom Observing Network: Workshop Report",
-    sourceUrl:
-      "https://cdn.coastalscience.noaa.gov/page-attachments/news/"
-      + "NHABON_Framewk_WkshpReport_12-18-20_Final.pdf",
-  },
+  // It held `epa-assessing-monitoring-floatable-debris.pdf` and
+  // `noaa-nhabon-framework-workshop-report.pdf`, kept for event *interpretation* on the argument
+  // that they explain what a DO/pH/turbidity signature tends to mean. Measured against the six
+  // parameters they do not: 11 and 15 mentions respectively (0.8 and 1.1 per 10K chars, against
+  // 44-109 for the documents that earn their place), and **zero numeric criteria** between them.
+  // They were 22.3% of the corpus supplying retrieval noise — floatable-debris alone contributes
+  // 87 hits on "storm", directly competing for slots in the stormwater-vs-intrusion question it
+  // was supposed to help with. Moved to `documents/_excluded/`.
+  //
+  // This also settles the tension the tier was always in with the 2026-07-29 scoping rule: both
+  // documents were about things the DataPod cannot measure. ◆G4's external-context question is
+  // unaffected — it was never going to be answered by a workshop governance report. ===
 };
 
 /**

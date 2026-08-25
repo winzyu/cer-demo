@@ -26,14 +26,21 @@ and the `firestore-direct` arm then answers every question ungrounded — it war
 once, into the server log. **Check the `direct-feed slice:` line ingest prints** before trusting a
 run. Everything else in `documents/` is untracked and does not survive a fresh clone.
 
-## Current corpus — 18 documents, ~1.25M chars, 558 chunks
+## Current corpus — 15 documents, 851,891 chars (~213K tokens), 393 chunks
 
-Expanded 2026-08-21 from 8 documents (~716K chars) as the retrieval posture moves toward
-RAG-first. The corpus is still **scoped to the six parameters the DataPod measures** —
-temperature, dissolved oxygen, ORP, conductivity, pH, turbidity — but the reference tier now
-carries one authoritative chapter per parameter instead of two chapters covering two of them.
+Expanded 2026-08-21 from 8 documents (~716K chars) to 18 as the retrieval posture moved toward
+RAG-first, then **trimmed to 15 on 2026-08-24** by cutting three documents that carried no number
+or procedure for any measured parameter (32% of the corpus; see [`_excluded/`](#_excluded)). The
+corpus is **scoped to the six parameters the DataPod measures** — temperature, dissolved oxygen,
+ORP, conductivity, pH, turbidity — and the reference tier carries one authoritative chapter per
+parameter.
 
-Every row below was measured by the 2026-08-21 ingest run and matches `data/corpus/corpus.json`.
+The expand-then-trim is not indecision: the expansion bought per-parameter depth, and the trim
+removed bulk that was competing for top-k slots without contributing. Net against 2026-08-21,
+the corpus lost 32% of its characters and kept every document that answers a question.
+
+Every row below was measured by the **2026-08-24** ingest run and matches `data/corpus/corpus.json`.
+The direct-feed slice is unchanged at 37,660 chars (~9,415 tokens).
 
 ### Tier 1 — company-specific ⟵ the direct-feed slice
 
@@ -95,37 +102,36 @@ distinction at all.
 Not used: `twri9a6_final508ChapterA6.pdf`, circulated as "the full combined chapter". It is **9
 pages of front matter and table of contents** (12,359 chars), not the combined text.
 
-### Tier 3 — regulatory / numeric thresholds
+### Tier 3 — calibration procedure
 
 | file | chars | chunks | note |
 |---|---:|---:|---|
-| `epa-wqs-handbook-ch3-water-quality-criteria.pdf` | 123,131 | 56 | EPA 823-B-23-001, Dec 2023 |
 | `epa-sop-field-instrument-calibration-2010.pdf` | 34,251 | 10 | **scanned — OCR, see below** |
 
-Where a number comes from when the operator's source-of-truth does not carry one. The EPA SOP
-covers calibration of exactly the six measured parameters and is the grounding N6's
+Covers calibration of exactly the six measured parameters, and is the grounding N6's
 recalibration-guidance feature needs.
 
-### Tier 4 — situational / pollution-event context
+This tier used to be described as "where a number comes from when the operator's source-of-truth
+does not carry one". It no longer claims that, because the document that was supposed to supply
+the numbers did not — see the 2026-08-24 removals under [`_excluded/`](#_excluded).
 
-| file | chars | chunks |
-|---|---:|---:|
-| `epa-assessing-monitoring-floatable-debris.pdf` | 142,843 | 57 |
-| `noaa-nhabon-framework-workshop-report.pdf` | 137,034 | 52 |
+### ~~Tier 4 — situational / pollution-event context~~ — removed 2026-08-24
 
-**Read the tension here before adding more of this tier.** These cover things the DataPod cannot
-measure — floating debris; algal toxins and chlorophyll — which is the exact property that got six
-documents moved to `_excluded/` on 2026-07-29. They are kept for event *interpretation* (what a
-DO/pH/turbidity signature tends to mean) rather than detection, and NHABON specifically because
-◆G4 now looks less like a design choice than a question of which NOAA dataset the shipped product
-already uses ([`../docs/timeline.md`](../docs/timeline.md) Phase N6).
+The tier is gone. It held two documents kept for event *interpretation*, on the argument that they
+explain what a DO/pH/turbidity signature tends to mean. Measured, they did not: see
+[`_excluded/`](#_excluded).
 
-The risk is measurable, not hypothetical: `refusal-pathogens` exists because a RAG arm can retrieve
-on-topic-looking text and get pulled off a refusal the service must make.
-[`../docs/SPECS.md`](../docs/SPECS.md) §14b records `firestore-vector` retrieving the volunteer
-manual's fecal-bacteria chapter and refusing anyway. **Re-check the refusal fixtures after any
-sweep on this corpus** — if over-refusal drops or a refusal turn starts answering, this tier is the
-first thing to pull.
+The tension this tier was always in with the 2026-07-29 scoping rule is what settled it — both
+documents were about things the DataPod cannot measure, which is the exact property that got six
+documents excluded in the first place. **◆G4 is unaffected**: the question of what external context
+feeds event detection was never going to be answered by a workshop governance report, and
+[`../docs/timeline.md`](../docs/timeline.md) Phase N6 still records it as open.
+
+**The refusal-fixture warning that lived here still stands**, and now applies to Tier 2:
+`refusal-pathogens` exists because a RAG arm can retrieve on-topic-looking text and get pulled off
+a refusal the service must make, and [`../docs/SPECS.md`](../docs/SPECS.md) §14b records
+`firestore-vector` doing exactly that with the volunteer manual's fecal-bacteria chapter.
+**Re-check the refusal fixtures after any sweep on this corpus.**
 
 ## OCR
 
@@ -157,6 +163,37 @@ Nothing in `_excluded/` is parsed by `npm run ingest`.
   **This one is a judgement call and is reversible with one `mv`** — it is broad field-methods
   material with no direct replacement outside the six parameters, and two eval fixtures
   (`deepmanual-turbidity-optics`, and the `refusal-pathogens` retrieval path) reference it.
+- **Removed 2026-08-24** — three documents, **403,008 chars / 165 chunks / 32% of the corpus**,
+  cut to raise retrieval precision ahead of the retrieval-quality work. Each was measured before
+  being cut, against the only question that matters for this corpus: does it carry a procedure or
+  a **number** for one of the six parameters?
+
+  | file | chars | six-parameter mentions | per 10K chars | numeric criteria |
+  |---|---:|---:|---:|---:|
+  | `epa-wqs-handbook-ch3-water-quality-criteria.pdf` | 123,131 | 47 | 3.8 | **0** |
+  | `epa-assessing-monitoring-floatable-debris.pdf` | 142,843 | 11 | 0.8 | **0** |
+  | `noaa-nhabon-framework-workshop-report.pdf` | 137,034 | 15 | 1.1 | **0** |
+
+  For scale, the documents that stay run **16–109** mentions per 10K chars. "Numeric criteria"
+  counts values attached to a measured parameter — DO in mg/L, a pH range, NTU/FNU, µS/cm, a
+  temperature limit, mV. The patterns were validated against controls first, where they correctly
+  find `Oxygen 6–11 mg/L`, `pH 6.5–8.5`, `25 NTU`, `1,500 μS/cm` and `400 mV` in the operator
+  reference, and 30 DO thresholds in USGS 6.2.
+
+  **The EPA handbook is the one worth understanding.** It was filed under Tier 3 as the source of
+  numeric thresholds and carries none in 123K characters — it describes how criteria are
+  *recommended and adopted*, which is regulatory process, not a criterion. It was not a marginal
+  document that got cut; it never did the job it was added for.
+
+  `epa-assessing-monitoring-floatable-debris.pdf` was additionally *harmful* to retrieval: 87 hits
+  on "storm" with nothing to say about the six parameters, competing directly for top-k slots in
+  the stormwater-vs-saltwater-intrusion question it was nominally there to support.
+
+  **Fixture impact was one file.** `eval/fixtures-next/refusal-epa-criteria-number.json` was built
+  on the EPA handbook as retrieval bait and was rewritten the same day to test the residual and
+  more durable behaviour (no legal limit exists anywhere in the corpus; several plausible DO
+  numbers do; do not promote one into the other). No fixture in `eval/fixtures/` referenced any of
+  the three, so the committed set and its captured transcripts are untouched.
 
 ## Git
 
