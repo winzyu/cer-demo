@@ -56,14 +56,25 @@ would mostly measure an 8-document corpus that no longer exists — only `firest
 transcripts survive, because its ◆G9 slice never changed. The revised sequence, amended into the
 pre-registration at [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8b:
 
-1. **Build the automated §8a gate checker.** Deterministic, no LLM: no numeric literal in an answer
-   that is absent from its captured context or tool results; exact-match `REFUSAL_SENTENCE` where a
-   rubric demands a refusal; every cited span a verbatim substring of the chunk it cites. These are
-   §8a's three *hard* gates — absolute, so deciding them cheaply and first means never paying to
-   judge an arm that was already out.
+1. ~~**Build the automated §8a gate checker.**~~ **Built 2026-08-25** — `npm run gate:check`,
+   `src/eval/gates/`, 22 tests in `test/unit/gateCheck.test.ts`. Deterministic, no LLM, no network.
+   Decides §8a's three *hard* gates: no numeric literal in an answer that is absent from its
+   grounding; the pinned `REFUSAL_SENTENCE` present where a rubric demands a refusal; every
+   `【N†Lx-Ly】` marker resolving to context that was actually supplied. Two traps it exists to
+   avoid, both found by running it (`RETRIEVAL_BAKEOFF.md` §8b): an exact string comparison fails
+   on a *correct* refusal because the model emits U+2011 where the constant has U+002D, and the
+   grounding a figure may come from includes the **system prompt** and the question, not just the
+   retrieval context.
 2. **Re-capture** `firestore-direct`, `firestore-vector`, `hybrid-slice-lexvec` (and
    `hybrid-slice-vector` if you want the lexical delta at the answer layer) on the 15-document
    corpus. `pgvector-rag` stays out unless restored from `archive/`.
+
+   > **First Tier-1 result is already in, free** (`data/gate-check/warm.json`, 2026-08-25):
+   > `firestore-direct` **clears all three hard gates** on the transcripts that survived the corpus
+   > change — refusal 3/3, citations 95.3%, zero unexplained figures in 187. The other two arms
+   > fail, but their evidence is inadmissible (stale corpus), so those failures are indicative
+   > only. **The 95.3% is 0.3 points above the floor**; three invented citations out of 64 would
+   > become a gate failure at four.
 3. **Run the gates.** Survivors only go to step 4.
 4. **LLM judge** for the two judgement gates, which are **unchanged**: ungrounded claims ≤2%,
    correctness ≥1.0/2 per servable class and ≥1.3 overall. §7b's constraints bind — different model

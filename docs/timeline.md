@@ -266,12 +266,17 @@ Build work in this phase:
   Seeded sessions (tester asks fixture questions) feed the human calibration sample; roaming
   sessions are for discovering missing question classes, which become new fixtures for the *next*
   sweep, never scores in this one. **Not** the N7 Next.js page — this is the throwaway demo UI.
-- **An automated §8a gate checker** (added 2026-08-25) — a deterministic pass over saved
-  transcripts deciding the three hard gates: no numeric literal in an answer that is absent from
-  its captured context or tool results, exact-match `REFUSAL_SENTENCE` on every turn whose rubric
-  demands a refusal, and every cited span a verbatim substring of the chunk it cites. No LLM, no
-  network, re-runnable after every corpus change — the `RETRIEVAL_EVAL.md` method applied one
-  layer up. It gates admission to the paid judging pass rather than replacing it.
+- ~~**An automated §8a gate checker**~~ **— built 2026-08-25**, `npm run gate:check`
+  (`src/eval/gates/`). A deterministic pass over saved transcripts deciding the three hard gates:
+  no numeric literal in an answer that is absent from its grounding, the pinned `REFUSAL_SENTENCE`
+  present on every turn whose rubric demands a refusal, and every `【N†Lx-Ly】` marker resolving to
+  context that was actually supplied. No LLM, no network, re-runnable after every corpus change —
+  the `RETRIEVAL_EVAL.md` method applied one layer up. It gates admission to the paid judging pass
+  rather than replacing it. **Two traps it exists to avoid**, both found by running it and recorded
+  in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8b: an exact string comparison scores a
+  *correct* refusal as zero (the model emits U+2011 where the constant has U+002D, and NFKC folds
+  it to U+2010, not U+002D), and the grounding a figure may legitimately come from includes the
+  **system prompt's operator ranges** and the user's own question, not just the retrieval context.
 - **Grading is a separate offline pass** over the saved transcripts, arms stripped and shuffled —
   human, LLM judge, or judge calibrated against a human sample. If a judge grades: different model
   than the one under test, one dimension per call, and the human-agreement rate reported. Runs

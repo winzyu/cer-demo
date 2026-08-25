@@ -132,6 +132,10 @@ clean-earth-rag/
 │   │   ├── transport.ts      SSE + JSON HTTP transports
 │   │   ├── runner.ts         replay engine + sweep summary
 │   │   ├── transcript.ts     transcript shape and totals
+│   │   ├── gates/            §8a hard-gate checker — npm run gate:check
+│   │   │   ├── normalize.ts  NFKC + dash/quote folding, edit distance, similarity
+│   │   │   ├── checks.ts     refusal / citations / figures, per turn
+│   │   │   └── runner.ts     walks transcripts, aggregates per arm
 │   │   ├── prices.ts         dated price sheet + sources
 │   │   ├── costScenarios.ts  measured token counts + fixed costs
 │   │   └── cost.ts           per-request / monthly / break-even math
@@ -1128,6 +1132,7 @@ it is not the full list — `npx jest --listTests` is.
 |---|---|
 | `integration/health.test.ts` | `/health` shape; unknown route → 404 `{ error, message }`, no `status` |
 | `integration/chat.test.ts` | `POST /chat` happy path, validation, the `DEBUG_RETRIEVAL` override rule end to end, and the SSE wire format (event order, headers, terminator) |
+| `unit/gateCheck.test.ts` | the §8a hard gates. Pins the U+2011 refusal case — an exact comparison scores a *correct* refusal zero, and NFKC alone does not fix it — and the rule that a tolerance match is never counted as an exact pass |
 | `unit/retrieval.test.ts` | `resolveTopK`, `StubAdapter` guards, registry lookup, all five selection rules |
 | `unit/prompt.test.ts` | ranges, `REFUSAL_SENTENCE` pinned verbatim, block ordering, cacheable-prefix stability |
 | `unit/llmService.test.ts` | request params (`max_tokens`, `user`, no tools), empty-answer 502, streaming deltas, abort signal, usage handling |

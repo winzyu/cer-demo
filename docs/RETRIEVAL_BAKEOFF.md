@@ -782,8 +782,8 @@ never paying to grade an arm that was already eliminated.
 | gate (§8a, unchanged) | decided by |
 |---|---|
 | **Fabricated figures — zero** | Every numeric literal in `answer` must appear in that turn's captured `context` or in a `tool_calls` result. Requires a unit normalizer (the decoder converts °C→°F) and a whitelist for values the tool computed, or conversions and legitimate statistics read as fabrications. |
-| **Refusal integrity — 100%** | Exact match against `REFUSAL_SENTENCE` (`src/prompt/systemPrompt.ts`, a pinned constant) on every turn whose rubric requires a refusal. |
-| **Citation validity — ≥95%** | Each cited span must be a verbatim substring of the chunk it cites — the same check `RETRIEVAL_LABELS.md` applies to evidence snippets. |
+| **Refusal integrity — 100%** | Match against `REFUSAL_SENTENCE` (`src/prompt/systemPrompt.ts`, a pinned constant) on every turn whose rubric requires a refusal — 3 of the 62 turns, 2 of them demanding the sentence verbatim. **An exact comparison is wrong here and was measured to be wrong:** the captured answers contain `water‑quality` with U+2011 NON-BREAKING HYPHEN where the constant has U+002D, and NFKC folds U+2011 to U+2010 rather than U+002D, so normalising without an explicit dash class does not fix it either. The check folds dashes, quotes, invisibles and whitespace, then compares; a residual edit-distance tolerance (default 2) is reported as **its own outcome** and never counted as an exact pass, because a tunable threshold silently deciding an absolute pre-registered gate would hollow the gate out. |
+| **Citation validity — ≥95%** | Each `【N】` / `【N†Lx-Ly】` marker must resolve to a context chunk that was actually supplied, and to a line range that chunk actually has. 168 of the 348 captured turns carry at least one marker. **Scope correction, same day:** this decides *resolution*, not *support*. §8a's wording — "the cited document must actually contain the claim" — has a judgement half that no string match settles, and that half moves to Tier 2. What stays here is unambiguous: `【9】` when five chunks were supplied is an invented source whatever the sentence around it says. |
 
 **Tier 2 — judgement, run only on Tier-1 survivors.** These stay in the floor exactly as written.
 
@@ -813,6 +813,39 @@ So a re-capture is required before either tier can be run over anything but dire
 arms to capture are `firestore-direct`, `firestore-vector`, `hybrid-slice-lexvec` and — if the
 lexical delta is wanted at the answer layer as well as the retrieval layer —
 `hybrid-slice-vector`. `pgvector-rag` stays out unless deliberately restored.
+
+**The grounding a figure may come from is wider than the retrieval context.** Learned the
+expensive way: the checker's first run reported ~24 fabricated figures per arm, and most were the
+system prompt's own `AUTHORITATIVE NORMAL RANGES` block — pH 6.5-8.5, DO 5-14 mg/L, conductivity
+0-1,500 µS/cm — quoted back correctly, plus figures the *user* supplied in the question ("is pH 8.4
+normal?"). A transcript's `context` field holds retrieval context only. Any implementation of this
+gate must admit the system prompt and the conversation so far as grounding, or it accuses an arm of
+inventing the operator ranges the prompt told it to apply — and a gate that cries wolf gets
+switched off.
+
+**First Tier-1 result, 2026-08-25** (`npm run gate:check --pass=warm`, output in
+`data/gate-check/warm.json`):
+
+| arm | refusal | citations | figures | Tier 1 | evidence admissible? |
+|---|---|---|---|---|---|
+| `firestore-direct` | pass (3/3, all after folding) | **95.3%** (61/64) | 0 unexplained of 187 | **PASS** | **yes** |
+| `firestore-vector` | pass (3/3, after folding) | 100% (61/61) | 5 of 132 | fail | no — stale corpus |
+| `pgvector-rag` | pass (3/3, after folding) | 92.1% (35/38) | 5 of 144 | fail | no — stale corpus, archived arm |
+
+**Read the admissibility column before the verdict column.** Only `firestore-direct`'s transcripts
+survived the corpus change, so it is the only row that is a statement about the live system. The
+other two rows describe arms retrieving over an 8-document corpus that no longer exists; their
+failures are indicative, not disqualifying, and must be re-earned on a re-capture.
+
+What the passing row buys: the provisional working choice clears all three hard gates on
+admissible evidence, at no cost, before anyone funds a sweep. Two cautions attach to it —
+
+- **95.3% against a 95% floor is 0.3 points of headroom.** Three invented citations
+  (`【6】`, `【10】` where 5 chunks were supplied) out of 64. One more would fail the gate.
+- The `firestore-vector` figure findings are the shape a genuine fabrication takes and are worth
+  keeping as regression cases even though the run is inadmissible: "typical healthy streams
+  150-500 µS/cm", "seawater ~30,000 µS/cm", tidal periods "12.4 h / 24.8 h". None of it was in its
+  context; all of it is the model's general knowledge presented as grounded.
 
 **What this amendment does not do.** It does not admit retrieval metrics as quality gates. Recall,
 precision, MRR and nDCG remain diagnostics with no target (`RETRIEVAL_EVAL.md` §1) — a model can be
