@@ -1,3 +1,5 @@
+import { createHash } from "crypto";
+
 /**
  * Chunking and the quality filter, ported from `MIGRATION_SPEC.md` §5.1 steps 3–4.
  *
@@ -132,3 +134,43 @@ export const isQualityChunk = (
 
 export const filterChunks = (chunks: string[], options: QualityOptions = {}): string[] => chunks
   .filter((chunk) => isQualityChunk(chunk, options));
+
+/**
+ * Stable chunk identity.
+ *
+ * **Chunk ids used to be positional** — `<filename>__0007`, assigned by the Firestore seeder from
+ * the array index. That is fine while the corpus is frozen and actively wrong once it is not:
+ * inserting a paragraph into page 2 of a document shifts every id after it, so anything that
+ * recorded "chunk 7 answers this question" now points at different text, silently. Retrieval
+ * labels (`eval/retrieval-labels/`) are exactly that kind of record, and the corpus is expected
+ * to churn as source-of-truth documents are replaced.
+ *
+ * So identity is derived from the chunk's own content instead of its position. An edit elsewhere
+ * in the document leaves this chunk's id untouched; an edit to *this* chunk changes it, which is
+ * the honest outcome — the labelled text no longer exists and the label should be re-checked
+ * rather than silently re-pointed at something else.
+ *
+ * Two fields rather than one, because they answer different questions:
+ *
+ * - `contentHash` is the bare hash. It survives a **rename or re-tiering** of the document, and
+ *   it is what detects the same passage appearing in two documents.
+ * - `id` prefixes the filename. It is what addresses a chunk in a store, and keeping the filename
+ *   in it means a collision between two documents that happen to share boilerplate produces two
+ *   distinct records rather than one silently overwriting the other.
+ *
+ * Twelve hex characters is 48 bits. At corpus scale (hundreds of chunks) collision probability is
+ * negligible, and `ingestCorpus` warns if one occurs anyway rather than trusting the arithmetic.
+ */
+export const CHUNK_ID_HASH_CHARS = 12;
+
+/** Firestore ids cannot contain "/", and a readable prefix makes a seeded store browsable. */
+export const filenameSlug = (filename: string): string => filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+
+export const contentHashOf = (text: string): string => createHash("sha256")
+  .update(text, "utf8")
+  .digest("hex")
+  .slice(0, CHUNK_ID_HASH_CHARS);
+
+export const chunkIdOf = (filename: string, text: string): string => (
+  `${filenameSlug(filename)}__${contentHashOf(text)}`
+);

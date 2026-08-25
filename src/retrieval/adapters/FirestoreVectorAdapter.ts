@@ -40,13 +40,17 @@ export const DISTANCE_MEASURE = "COSINE" as const;
 export const DISTANCE_FIELD = "vector_distance";
 
 /**
- * Firestore ids cannot contain "/". Derived and stable, so re-seeding overwrites rather than
- * duplicating. The zero-padded index keeps a document's chunks in reading order under a plain id
- * sort, which makes a seeded collection browsable in the console.
+ * The Firestore document id for a chunk is the chunk's own id — content-derived, assigned at
+ * ingest (`src/ingestion/chunk.ts`).
+ *
+ * **This replaced a positional id** (`<filename>__0007`) on 2026-08-24. Positional ids made
+ * re-seeding after a document edit shift every id past the edit, which silently re-points
+ * anything that recorded a chunk — retrieval labels above all. Re-seeding still overwrites rather
+ * than duplicating, because an unchanged chunk hashes to the same id; a *changed* chunk now
+ * writes a new document instead of overwriting, so a re-seed onto an existing collection should
+ * be preceded by a wipe if stale chunks must not linger.
  */
-export const chunkDocumentId = (filename: string, chunkIndex: number): string => (
-  `${filename.replace(/[^a-zA-Z0-9._-]/g, "_")}__${String(chunkIndex).padStart(4, "0")}`
-);
+export const chunkDocumentId = (chunk: { id: string }): string => chunk.id;
 
 /** The fields the chunk seeder writes. Exactly the fields `getContext` reads back. */
 export interface ChunkDocumentFields {
@@ -54,6 +58,8 @@ export interface ChunkDocumentFields {
   title: string;
   sourceUrl: string | null;
   chunkIndex: number;
+  /** Bare content hash — lets a chunk be reconciled across a document rename. */
+  contentHash: string;
   text: string;
   embedding: VectorValue;
 }
@@ -72,15 +78,15 @@ export interface ChunkDocumentFields {
  */
 export const chunkDocumentFields = (
   document: { filename: string; title: string; sourceUrl?: string },
-  chunkIndex: number,
-  text: string,
+  chunk: { contentHash: string; index: number; text: string },
   embedding: number[],
 ): ChunkDocumentFields => ({
   filename: document.filename,
   title: document.title,
   sourceUrl: document.sourceUrl ?? null,
-  chunkIndex,
-  text,
+  chunkIndex: chunk.index,
+  contentHash: chunk.contentHash,
+  text: chunk.text,
   embedding: FieldValue.vector(embedding),
 });
 

@@ -33,10 +33,47 @@ const log = createLogger("SeedChunks");
  */
 const MAX_BATCH_WRITES = 500;
 
+/**
+ * Deletes every chunk document, in batches.
+ *
+ * **Why this had to exist.** The seeder is idempotent by *filename*: it skips a document already
+ * present and never deletes. That is right for re-running after an interruption and wrong after a
+ * corpus change, and the failure is silent — on 2026-08-24 this collection still held 305 chunks
+ * under the pre-2026-08-24 positional id scheme, 289 of them belonging to files that had left the
+ * corpus (`tm9a6.2.pdf`, `tm9a6.8.pdf`, the volunteer manual). `firestore-vector` was retrieving
+ * from a corpus that no longer existed, and nothing in a re-seed would ever have corrected it.
+ *
+ * Chunk ids are content-derived now, so a changed chunk writes a *new* document rather than
+ * overwriting the old one — which makes stale accumulation the default, not the exception. Hence
+ * an explicit wipe rather than a smarter merge.
+ */
+const wipeChunks = async (db: FirebaseFirestore.Firestore): Promise<number> => {
+  let deleted = 0;
+  // Paged rather than one query: the collection can exceed a single batch's 500-write limit.
+  for (;;) {
+    // eslint-disable-next-line no-await-in-loop
+    const snapshot = await db.collection(CHUNK_COLLECTION).limit(MAX_BATCH_WRITES).get();
+    if (snapshot.empty) break;
+    const batch = db.batch();
+    snapshot.docs.forEach((doc) => batch.delete(doc.ref));
+    // eslint-disable-next-line no-await-in-loop
+    await batch.commit();
+    deleted += snapshot.size;
+    log.info(`  deleted ${deleted}…`);
+  }
+  return deleted;
+};
+
 const main = async (): Promise<void> => {
   const corpus = readCorpus();
   const db = getFirestore();
   const embeddings = new EmbeddingService();
+
+  if (process.argv.includes("--wipe")) {
+    log.warn(`--wipe: deleting every document in "${CHUNK_COLLECTION}" before seeding.`);
+    const deleted = await wipeChunks(db);
+    log.info(`Wiped ${deleted} chunk documents.`);
+  }
 
   log.info(`Artifact: ${corpus.documents.length} documents.`);
 
@@ -68,16 +105,16 @@ const main = async (): Promise<void> => {
     } else {
       log.info(`  ${document.filename}: embedding ${document.chunks.length} chunks…`);
       // eslint-disable-next-line no-await-in-loop
-      const vectors = await embeddings.embedDocuments(document.chunks);
+      const vectors = await embeddings.embedDocuments(document.chunks.map((c) => c.text));
 
       // One batch per document: a failure part-way leaves no half-seeded document for the
       // idempotency check above to later skip over as though it were complete.
       const batch = db.batch();
 
-      document.chunks.forEach((text, chunkIndex) => {
+      document.chunks.forEach((chunk, chunkIndex) => {
         batch.set(
-          db.collection(CHUNK_COLLECTION).doc(chunkDocumentId(document.filename, chunkIndex)),
-          chunkDocumentFields(document, chunkIndex, text, vectors[chunkIndex]),
+          db.collection(CHUNK_COLLECTION).doc(chunkDocumentId(chunk)),
+          chunkDocumentFields(document, chunk, vectors[chunkIndex]),
         );
       });
 

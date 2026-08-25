@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { chunkText, filterChunks } from "./chunk";
+import {
+  chunkIdOf, chunkText, contentHashOf, filterChunks,
+} from "./chunk";
 import {
   DIRECT_FEED_SLICE, EXCLUDED_FILES, INGESTIBLE_EXTENSIONS, metaFor,
 } from "./corpus";
@@ -12,6 +14,20 @@ const log = createLogger("Ingest");
 export const DOCUMENTS_DIR = "documents";
 export const CORPUS_OUTPUT = path.join("data", "corpus", "corpus.json");
 
+/**
+ * One quality-filtered chunk, carrying its own stable identity.
+ *
+ * `id` and `contentHash` are content-derived (see `chunk.ts`), so they survive edits elsewhere in
+ * the document. `index` is reading order and is **debug metadata only** — nothing should key off
+ * it, because that is precisely the positional coupling this shape exists to remove.
+ */
+export interface IngestedChunk {
+  id: string;
+  contentHash: string;
+  index: number;
+  text: string;
+}
+
 export interface IngestedDocument {
   filename: string;
   title: string;
@@ -22,7 +38,7 @@ export interface IngestedDocument {
   /** Whole extracted text — what the direct-feed arm consumes. */
   text: string;
   /** Quality-filtered chunks — what the vector arms embed. */
-  chunks: string[];
+  chunks: IngestedChunk[];
   chunksBeforeFilter: number;
   inDirectFeedSlice: boolean;
 }
@@ -42,7 +58,16 @@ const ingestDocument = async (
   const raw = chunkText(text);
   // `.md`/`.txt` are authored, structured text: a low alphabetic ratio there means a table,
   // not OCR noise. See QualityOptions.checkAlphaRatio.
-  const chunks = filterChunks(raw, { checkAlphaRatio: method !== "text" });
+  const kept = filterChunks(raw, { checkAlphaRatio: method !== "text" });
+
+  // Identity is assigned after filtering, from content. `index` is the position among *surviving*
+  // chunks, which is what a reader browsing the store expects to see.
+  const chunks: IngestedChunk[] = kept.map((chunkTextValue, index) => ({
+    id: chunkIdOf(filename, chunkTextValue),
+    contentHash: contentHashOf(chunkTextValue),
+    index,
+    text: chunkTextValue,
+  }));
 
   if (chunks.length === 0) {
     // Legacy behavior: a document with no surviving chunks is skipped entirely.
@@ -102,6 +127,22 @@ export const ingestCorpus = async (
       documents.push(document);
     }
   }
+
+  // A content-hash collision would mean two distinct passages sharing an id, and the second
+  // silently overwriting the first in any keyed store. At this corpus size it should never fire;
+  // warning is cheaper than trusting 48 bits of birthday arithmetic in silence.
+  const seen = new Map<string, string>();
+  documents.forEach((document) => {
+    document.chunks.forEach((chunk) => {
+      const previous = seen.get(chunk.id);
+      if (previous !== undefined) {
+        log.warn(
+          `chunk id collision: "${chunk.id}" produced by both ${previous} and ${document.filename}.`,
+        );
+      }
+      seen.set(chunk.id, document.filename);
+    });
+  });
 
   return { generatedAt: new Date().toISOString(), documents };
 };

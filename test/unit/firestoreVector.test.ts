@@ -8,6 +8,8 @@ import {
   chunkDocumentFields,
   chunkDocumentId,
 } from "../../src/retrieval/adapters/FirestoreVectorAdapter";
+import { chunkIdOf, contentHashOf } from "../../src/ingestion/chunk";
+import { MAX_TOP_K } from "../../src/retrieval/options";
 import { EmbeddingService } from "../../src/services/EmbeddingService";
 
 /**
@@ -74,13 +76,19 @@ beforeEach(() => {
 
 describe("chunkDocumentFields", () => {
   const source = { filename: "a.pdf", title: "A", sourceUrl: "https://example.test/a" };
+  const chunkOf = (text: string, index: number) => ({
+    id: chunkIdOf("a.pdf", text),
+    contentHash: contentHashOf(text),
+    index,
+    text,
+  });
 
   /**
    * The trap this arm was warned about before a line of it existed. A plain `number[]` stores an
    * array; the vector index never matches it and `findNearest` returns nothing with no error.
    */
   it("wraps the embedding in FieldValue.vector, not a plain array", () => {
-    const fields = chunkDocumentFields(source, 0, "text", [0.1, 0.2, 0.3]);
+    const fields = chunkDocumentFields(source, chunkOf("text", 0), [0.1, 0.2, 0.3]);
 
     expect(Array.isArray(fields.embedding)).toBe(false);
     expect(fields.embedding).toBeInstanceOf(FieldValue.vector([0]).constructor);
@@ -88,37 +96,49 @@ describe("chunkDocumentFields", () => {
   });
 
   it("writes exactly the fields getContext reads back", () => {
-    const fields = chunkDocumentFields(source, 3, "chunk text", [0.1]);
+    const fields = chunkDocumentFields(source, chunkOf("chunk text", 3), [0.1]);
 
     expect(Object.keys(fields).sort()).toEqual(
-      ["chunkIndex", "embedding", "filename", "sourceUrl", "text", "title"],
+      ["chunkIndex", "contentHash", "embedding", "filename", "sourceUrl", "text", "title"],
     );
     expect(fields.text).toBe("chunk text");
     expect(fields.chunkIndex).toBe(3);
   });
 
+  it("carries the bare content hash, so a chunk survives a document rename", () => {
+    // The id is filename-prefixed and therefore rename-sensitive by design; the hash is not.
+    // Reconciling labels across a renamed source document is what this field is for.
+    const fields = chunkDocumentFields(source, chunkOf("chunk text", 3), [0.1]);
+    expect(fields.contentHash).toBe(contentHashOf("chunk text"));
+  });
+
   it("normalises a missing sourceUrl to null rather than dropping the field", () => {
     const withoutUrl = { filename: source.filename, title: source.title };
-    expect(chunkDocumentFields(withoutUrl, 0, "t", [0.1]).sourceUrl).toBeNull();
+    expect(chunkDocumentFields(withoutUrl, chunkOf("t", 0), [0.1]).sourceUrl).toBeNull();
   });
 });
 
 describe("chunkDocumentId", () => {
-  it("is derived and stable, so re-seeding overwrites rather than duplicating", () => {
-    expect(chunkDocumentId("a.pdf", 7)).toBe(chunkDocumentId("a.pdf", 7));
-    expect(chunkDocumentId("a.pdf", 7)).not.toBe(chunkDocumentId("a.pdf", 8));
+  /**
+   * Replaced a positional id (`<filename>__0007`) on 2026-08-24. The property that matters is no
+   * longer "stable for a given index" but "stable for given content" — an edit earlier in the
+   * document must not move this chunk's id, because retrieval labels record it.
+   */
+  it("is the chunk's own content-derived id", () => {
+    const chunk = { id: chunkIdOf("a.pdf", "seven"), contentHash: contentHashOf("seven"), index: 7, text: "seven" };
+    expect(chunkDocumentId(chunk)).toBe(chunk.id);
+  });
+
+  it("does not depend on the chunk's position", () => {
+    const atSeven = { id: chunkIdOf("a.pdf", "same text"), contentHash: contentHashOf("same text"), index: 7, text: "same text" };
+    const atTwo = { ...atSeven, index: 2 };
+    expect(chunkDocumentId(atTwo)).toBe(chunkDocumentId(atSeven));
   });
 
   it("strips characters Firestore ids cannot contain", () => {
-    expect(chunkDocumentId("dir/sub file.pdf", 0)).not.toContain("/");
-    expect(chunkDocumentId("dir/sub file.pdf", 0)).not.toContain(" ");
-  });
-
-  it("zero-pads the index so ids sort in chunk order", () => {
-    // Lexical id ordering is the only ordering a Firestore id scan gives; unpadded, chunk 10
-    // would sort before chunk 2.
-    expect([chunkDocumentId("a.pdf", 10), chunkDocumentId("a.pdf", 2)].sort())
-      .toEqual([chunkDocumentId("a.pdf", 2), chunkDocumentId("a.pdf", 10)]);
+    const id = chunkIdOf("dir/sub file.pdf", "t");
+    expect(id).not.toContain("/");
+    expect(id).not.toContain(" ");
   });
 });
 
@@ -228,8 +248,10 @@ describe("FirestoreVectorAdapter", () => {
 
     await adapter.getContext("q", { topK: 999 });
 
-    // Shared with every other adapter (options.ts), not a local constant.
-    expect(calls[0].options.limit).toBe(10);
+    // Shared with every other adapter (options.ts), not a local constant — asserted against the
+    // constant rather than a literal, which is what let the 10 -> 50 raise on 2026-08-24 slip
+    // past a grep for MAX_TOP_K.
+    expect(calls[0].options.limit).toBe(MAX_TOP_K);
   });
 
   it("returns nothing — and queries nothing — for an empty query", async () => {
