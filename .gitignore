@@ -30,7 +30,6 @@ generated_reports/
 # legacy python pipeline artifacts
 __pycache__/
 *.pyc
-.pytest_cache/
 .ocr_cache/
 .claude/
 
