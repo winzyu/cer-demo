@@ -1,0 +1,269 @@
+/**
+ * The judge's prompts — one per dimension, and the parser for what comes back.
+ *
+ * `RETRIEVAL_BAKEOFF.md` §7b fixes the shape of this and the constraints are not stylistic:
+ *
+ * - **One dimension per call.** A combined "rate this 1-10" prompt collapses distinct failure
+ *   modes into one uninformative number, and the two Tier-2 gates (§8b) are thresholded
+ *   separately — correctness against a per-class mean, ungrounded claims against a turn rate.
+ * - **Blind.** No prompt below names an arm, a retrieval strategy, or how many arms exist. The
+ *   judge scores one answer with no sibling to compare it against, so there is no cross-arm
+ *   impression for a label to attach to. That is a stronger blind than the human packet's
+ *   shuffled A/B/C, which still shows all arms on one sheet.
+ * - **Rubric-anchored, not vibes.** The scale below is `GRADING_GUIDE.md` §3 verbatim, because
+ *   the judge is calibrated against humans who were handed exactly that text.
+ *
+ * The two count dimensions ask the model to **enumerate then count**, never to emit a number.
+ * A bare count is unauditable and models are poor at it; a list is checkable by a human reading
+ * the report, and its length is the count.
+ */
+import type { EvalRubric } from "../types";
+
+export type JudgeDimension = "correctness" | "ungrounded" | "citations";
+
+export const JUDGE_DIMENSIONS: readonly JudgeDimension[] = ["correctness", "ungrounded", "citations"];
+
+/** What one turn of one arm looks like to the judge. Arm identity is deliberately absent. */
+export interface JudgeEvidence {
+  question: string;
+  answer: string;
+  rubric: EvalRubric;
+  /** The retrieval context supplied for this turn, in the order the model saw it. */
+  context: { id: string; text: string }[];
+  /** The system prompt the answer was generated under — operator ranges and service rules. */
+  systemPrompt: string;
+  /** Earlier turns of this conversation, oldest first. */
+  history: { question: string; answer: string }[];
+}
+
+const JSON_ONLY = "Reply with one JSON object and nothing else. No prose, no code fences.";
+
+const bullets = (items: readonly string[]): string => (
+  items.length === 0 ? "(none)" : items.map((item) => `- ${item}`).join("\n")
+);
+
+const rubricBlock = (rubric: EvalRubric): string => [
+  "MUST CONTAIN:",
+  bullets(rubric.must_contain),
+  "",
+  "MUST NOT:",
+  bullets(rubric.must_not ?? []),
+  ...(rubric.cite?.length ? ["", "SHOULD CITE:", bullets(rubric.cite)] : []),
+  ...(rubric.notes ? ["", `RUBRIC NOTES: ${rubric.notes}`] : []),
+].join("\n");
+
+const historyBlock = (history: JudgeEvidence["history"]): string => (
+  history.length === 0
+    ? "(this is the first turn)"
+    : history
+      .map((h, i) => `Turn ${i + 1} user: ${h.question}\nTurn ${i + 1} assistant: ${h.answer}`)
+      .join("\n\n")
+);
+
+const contextBlock = (context: JudgeEvidence["context"]): string => (
+  context.length === 0
+    ? "(no documents were retrieved for this turn)"
+    : context
+      .map((chunk, i) => `[${i + 1}] source: ${chunk.id}\n${chunk.text}`)
+      .join("\n\n---\n\n")
+);
+
+/**
+ * Correctness — 0/1/2 against the turn's rubric.
+ *
+ * **The retrieval context is deliberately withheld here.** `GRADING_GUIDE.md` §3 tells the human
+ * to score against the rubric and *not* against their own knowledge or the source text: "if an
+ * answer is true but does not make the points the rubric lists, it is not a 2". Supplying the
+ * context invites the judge to grade truth instead of rubric coverage, which is a different
+ * measurement — and it would triple the input tokens of the one dimension that does not need
+ * them. Groundedness is where the context earns its cost, and it gets it in full below.
+ */
+export const correctnessPrompt = (evidence: JudgeEvidence): string => `You are grading one answer
+from a water-quality assistant against a fixed rubric. Grade only what the rubric asks for.
+
+SCALE:
+2 = every "must contain" point is made, and made correctly.
+1 = partially there — some points made, or the right idea stated vaguely or incompletely.
+0 = misses the point, is wrong, or refuses when the rubric expected a real answer.
+
+RULES:
+- Score against the rubric, not against your own knowledge. A true answer that does not make the
+  rubric's points is not a 2.
+- If any "must not" item appears in the answer, the score is 0 regardless of everything else.
+- A refusal scores 0 when the rubric expected content, and 2 when the rubric asked for a refusal.
+- Ignore style, tone, formatting and length. A blunt correct answer and an elegant correct answer
+  score the same.
+
+CONVERSATION SO FAR:
+${historyBlock(evidence.history)}
+
+QUESTION BEING GRADED:
+${evidence.question}
+
+RUBRIC:
+${rubricBlock(evidence.rubric)}
+
+ANSWER:
+${evidence.answer}
+
+${JSON_ONLY}
+{"score": 0 | 1 | 2, "reason": "<one sentence, naming the rubric points made or missed>"}`;
+
+/**
+ * Ungrounded claims — enumerate, do not count.
+ *
+ * **The grounding is wider than the retrieval context, and this is the expensive lesson of
+ * §8b.** The Tier-1 checker's first run reported ~24 fabricated figures per arm, and most were
+ * the system prompt's own operator ranges quoted back correctly, plus figures the *user* supplied
+ * in the question. A judge told "context only" reproduces that error at scale and at cost, so all
+ * three sources are supplied and named.
+ *
+ * Prior *assistant* answers are shown for pronoun resolution but excluded from grounding by an
+ * explicit rule — otherwise a model that invented a number on turn 1 grounds itself on turn 2.
+ */
+export const ungroundedPrompt = (evidence: JudgeEvidence): string => `You are auditing one answer
+from a water-quality assistant for claims it had no grounds to make.
+
+List every specific factual claim in the answer that is NOT supported by the supplied material
+below. A claim is a number, threshold, range, unit, procedure, mechanism or attribution stated as
+fact.
+
+WHAT COUNTS AS GROUNDED — any one of these three is enough:
+- The RETRIEVED DOCUMENTS section.
+- The SERVICE RULES section. The operator-provided normal ranges in it are legitimate grounding;
+  an answer quoting them back is grounded, not inventing.
+- A figure the user supplied in their own question, in this turn or an earlier one.
+Arithmetic on supplied numbers is grounded, including a degC/degF conversion of a supplied
+temperature. A previous ASSISTANT answer is NOT grounding — an earlier invention does not become
+a fact by being repeated.
+
+DO NOT LIST:
+- General phrasing, restatement of the question, hedging, or an offer to help further.
+- A refusal, or a statement that the assistant lacks the information.
+- A missing citation. That is a different dimension.
+- Something you believe is true but cannot find in the supplied material. The question is not
+  "is this true" — it is "did the assistant have grounds to say it".
+
+SERVICE RULES (the standing instructions this answer was generated under):
+${evidence.systemPrompt}
+
+RETRIEVED DOCUMENTS (the retrieval context supplied for this turn):
+${contextBlock(evidence.context)}
+
+CONVERSATION SO FAR:
+${historyBlock(evidence.history)}
+
+QUESTION:
+${evidence.question}
+
+ANSWER BEING AUDITED:
+${evidence.answer}
+
+${JSON_ONLY}
+{"claims": [{"claim": "<the unsupported words, quoted from the answer>",
+"why": "<what you searched the supplied material for and did not find>"}]}
+An answer with nothing unsupported returns {"claims": []}.`;
+
+/**
+ * Citation support — the judgement half of §8a's citation gate.
+ *
+ * §8b split this deliberately: the Tier-1 checker decides *resolution* (does `[9]` exist when
+ * five chunks were supplied), and §8a's actual wording — "the cited document must actually
+ * contain the claim" — has a support half no string match settles. That half is here. The judge
+ * is told to assume resolution so the two instruments cannot double-count one defect.
+ */
+export const citationsPrompt = (evidence: JudgeEvidence): string => `You are checking whether this
+answer's citations support what they are attached to.
+
+The answer cites sources as markers like [1] or [1 L4-L9], where the number is a 1-based index
+into the RETRIEVED DOCUMENTS below. It may also cite by filename.
+
+For each citation, decide whether the document it points at actually contains the claim in the
+sentence carrying it. List only the ones that do not.
+
+RULES:
+- Assume every marker's number resolves. Whether the index exists is checked separately; do not
+  report it here.
+- A missing citation is not an invalid one. Do not list claims that carry no citation.
+- The cited document must support the specific claim, not merely the general topic.
+- A citation on a paraphrase is fine if the document supports the paraphrase.
+
+RETRIEVED DOCUMENTS:
+${contextBlock(evidence.context)}
+
+ANSWER:
+${evidence.answer}
+
+${JSON_ONLY}
+{"invalid": [{"marker": "<the citation as written>",
+"why": "<the claim it is attached to, and what the cited document says instead>"}]}
+An answer whose citations all check out returns {"invalid": []}.`;
+
+export const PROMPT_BUILDERS: Record<JudgeDimension, (evidence: JudgeEvidence) => string> = {
+  correctness: correctnessPrompt,
+  ungrounded: ungroundedPrompt,
+  citations: citationsPrompt,
+};
+
+export interface JudgeVerdict {
+  /** Correctness only. */
+  score?: number;
+  /** The enumerated findings for the two count dimensions; `items.length` is the count. */
+  items: { text: string; why: string }[];
+  /** One line for the `notes` column. Commas are stripped — they break the score CSV. */
+  note: string;
+}
+
+/**
+ * Pulls the verdict out of whatever the model actually emitted.
+ *
+ * Tolerant on the way in, strict on the way out. Models wrap JSON in prose or code fences often
+ * enough that a bare `JSON.parse` would throw away a paid call, so the first balanced-looking
+ * object in the reply is extracted. What it must then contain is checked hard: a correctness
+ * reply with no numeric `score` in 0..2 throws rather than defaulting, because a silent default
+ * is a fabricated grade and this feeds a pre-registered gate.
+ */
+export const parseVerdict = (dimension: JudgeDimension, reply: string): JudgeVerdict => {
+  const start = reply.indexOf("{");
+  const end = reply.lastIndexOf("}");
+  if (start < 0 || end <= start) {
+    throw new Error(`no JSON object in judge reply: ${reply.slice(0, 200)}`);
+  }
+
+  let parsed: Record<string, unknown>;
+  try {
+    parsed = JSON.parse(reply.slice(start, end + 1)) as Record<string, unknown>;
+  } catch (error) {
+    throw new Error(`unparseable judge reply: ${(error as Error).message}`);
+  }
+
+  const clean = (value: unknown): string => String(value ?? "")
+    .replace(/[,\r\n]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (dimension === "correctness") {
+    const score = Number(parsed.score);
+    if (!Number.isInteger(score) || score < 0 || score > 2) {
+      throw new Error(`judge returned score ${JSON.stringify(parsed.score)}, expected 0, 1 or 2`);
+    }
+    return { score, items: [], note: clean(parsed.reason) };
+  }
+
+  const listKey = dimension === "ungrounded" ? "claims" : "invalid";
+  const textKey = dimension === "ungrounded" ? "claim" : "marker";
+  const raw = parsed[listKey];
+  if (!Array.isArray(raw)) {
+    throw new Error(`judge returned no "${listKey}" array; got ${Object.keys(parsed).join(", ")}`);
+  }
+
+  const items = raw.map((entry) => {
+    const row = (entry ?? {}) as Record<string, unknown>;
+    return { text: clean(row[textKey]), why: clean(row.why) };
+  });
+
+  return {
+    items,
+    note: items.map((item) => `${item.text} — ${item.why}`).join("; "),
+  };
+};

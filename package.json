@@ -27,7 +27,8 @@
     "explore:fields": "bash scripts/exploreDeviceFields.sh",
     "explore:surface": "bash scripts/exploreBackendSurface.sh",
     "retrieval:eval": "ts-node scripts/retrievalEval.ts",
-    "gate:check": "ts-node scripts/gateCheck.ts"
+    "gate:check": "ts-node scripts/gateCheck.ts",
+    "judge": "ts-node scripts/judge.ts"
   },
   "license": "MIT",
   "dependencies": {
