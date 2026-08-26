@@ -164,6 +164,11 @@ designated dangerous failure class.
 **The tool must fan out over `labels[]`** whenever a question's window predates the survivor's
 first reading. Two consequences:
 
+> **Built 2026-08-25** — `src/devices/mergeChains.ts`, wired into every `/water/period` read in
+> `query_sensor_data` (and therefore into report generation, which goes through `query()`).
+> Same-organization predecessors only; cross-org and not-visible ones are withheld and named in
+> the result. `docs/SPECS.md` §10.3c.
+
 1. **No multi-device fan-out in one call.** Repeating `device=` on `/water/period` returns
    **0 rows** — the param is not treated as a list there. One call per label, then merge locally.
    (`/water/average/many-devices` *does* accept repeated `devices=` and works — but it is an

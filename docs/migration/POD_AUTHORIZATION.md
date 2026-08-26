@@ -645,8 +645,12 @@ granularity.
 
 ### P1 — chains, and multi-pod reports (cer-demo only, no upstream)
 
-7. **Chain index** from `labels[]` / `mergedInto` / `archived` (present in `DeviceSummary.raw`,
-   unread today), built from a server-side topology snapshot, with de-duplication on overlap. (§5)
+7. ~~**Chain index** from `labels[]` / `mergedInto` / `archived`~~ **DONE 2026-08-25**, in the
+   **caller-visible** form rather than from a service-token topology snapshot — the fallback §5
+   names, chosen because it needs no bounded use of `DEVICE_API_TOKEN` and cannot widen what the
+   caller could already reach. It under-reports a chain whose survivor is outside the caller's
+   org, and says so in the result rather than silently. De-duplication on overlap is included.
+   `src/devices/mergeChains.ts`, `docs/SPECS.md` §10.3c.
 8. **`history` on grants** (`none` / `same-org` / `all`), cross-org denied by default. (§6)
 9. **`generate_report({ devices: [...] })`** plus a multi-site `SiteMetadata`; authorize-all-then-
    fetch; refuse-and-name on any denial. (§8a, §8b)
