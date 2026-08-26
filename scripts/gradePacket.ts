@@ -4,9 +4,9 @@
  * `RETRIEVAL_BAKEOFF.md` §7b requires grading to run over saved transcripts with **arm labels
  * stripped and order randomized**, so neither a human nor a judge model can tell which retrieval
  * strategy produced an answer. This script is what makes that possible: it emits one markdown
- * sheet per fixture with the three arms' answers relabelled `A`/`B`/`C`, shuffled independently
- * per fixture, plus the context each answer was actually given — without which groundedness
- * cannot be graded at all (§7a).
+ * sheet per fixture with every captured arm's answer relabelled `A`/`B`/`C`/…, shuffled
+ * independently per fixture, plus the context each answer was actually given — without which
+ * groundedness cannot be graded at all (§7a).
  *
  *   npm run grade:packet                 # build from eval/transcripts/warm
  *   npm run grade:packet -- --pass=cold
@@ -21,28 +21,73 @@
  *
  * The shuffle is seeded from the fixture id, so re-running produces the same packet rather than
  * a new random assignment that would invalidate scores already collected against the old one.
+ *
+ * **The arm list is read off disk, never hard-coded.** It used to be a literal naming the three
+ * arms of the 2026-08-11 sweep, which silently graded a three-arm packet after `hybrid-slice-*`
+ * were captured — the missing arms simply never appeared on a sheet, and nothing said so. What
+ * is in `eval/transcripts/<pass>/` is what gets graded.
+ *
+ * **Re-running with a different arm set moves every label.** A four-arm shuffle assigns nothing
+ * where the three-arm one did, so scores already collected against the old sheets no longer
+ * describe the same answers. That is why a filled-in `scores.csv` blocks the build (`--force`
+ * overrides, `--out` writes elsewhere): this script has destroyed a completed grading pass once.
  */
 
 import { promises as fs } from "fs";
 import path from "path";
 import { loadFixtures } from "../src/eval/fixtures";
 
-// `pgvector-rag` stays in this list even though the arm's runtime code is archived
-// (`archive/pgvector-rag/`). The packet grades *captured* transcripts, and the sweep captured
-// all three arms — dropping the name here would silently grade a two-arm packet against a
-// three-arm sweep.
-const ARMS = ["firestore-direct", "pgvector-rag", "firestore-vector"] as const;
-const LABELS = ["A", "B", "C"] as const;
+/**
+ * The arms to grade: every directory under `eval/transcripts/<pass>/`, sorted.
+ *
+ * Read rather than declared. `pgvector-rag` is archived (`archive/pgvector-rag/`) and still has
+ * transcripts, so it still gets graded — the packet grades *captured* answers, and whether an
+ * arm's runtime code is live is a separate question from whether its transcripts exist.
+ */
+const armsOnDisk = async (transcriptRoot: string, pass: string): Promise<string[]> => {
+  const dir = path.join(transcriptRoot, pass);
+  const entries = await fs.readdir(dir, { withFileTypes: true }).catch(() => {
+    throw new Error(`No transcripts at ${dir}. Capture a pass first (npm run bakeoff).`);
+  });
+  const arms = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
+  if (arms.length < 2) {
+    throw new Error(`Found ${arms.length} arm(s) in ${dir}; a blind packet needs at least 2.`);
+  }
+  return arms;
+};
 
-interface Args { pass: string; sample?: number; outRoot: string; }
+/** `A`, `B`, `C`, … one per arm. Twenty-six arms is not a limit anyone will reach. */
+const labelsFor = (count: number): string[] => (
+  Array.from({ length: count }, (_, i) => String.fromCharCode(65 + i))
+);
+
+/**
+ * Does this `scores.csv` already hold grades?
+ *
+ * The blocking check behind `--force`. A rebuild rewrites `scores.csv` and `KEY.json` together,
+ * and if the arm set changed, the new labels do not mean what the old grades were written
+ * against — so a silent overwrite loses the grading *and* the ability to reconstruct it. Any
+ * non-empty score cell counts; notes alone do not, since a note without a score is not a grade.
+ */
+const hasFilledScores = (csv: string): boolean => csv
+  .split("\n")
+  .slice(1)
+  .some((row) => row.trim() !== "" && row.split(",").slice(4, 7).some((cell) => cell.trim() !== ""));
+
+interface Args { pass: string; sample?: number; outRoot: string; force: boolean; }
 
 const parseArgs = (argv: string[]): Args => {
-  const args: Args = { pass: "warm", outRoot: path.join(process.cwd(), "eval", "grading") };
+  const args: Args = {
+    pass: "warm",
+    outRoot: path.join(process.cwd(), "eval", "grading"),
+    force: false,
+  };
   argv.forEach((arg) => {
     const [flag, value] = [arg.split("=")[0], arg.split("=").slice(1).join("=")];
     if (flag === "--pass") args.pass = value;
     else if (flag === "--sample") args.sample = Number(value);
     else if (flag === "--out") args.outRoot = path.resolve(value);
+    else if (flag === "--force") args.force = true;
     else throw new Error(`Unknown argument: ${arg}`);
   });
   if (!["cold", "warm"].includes(args.pass)) {
@@ -83,10 +128,13 @@ const rngFrom = (seed: number): (() => number) => {
  * `firestore-direct` at A in none. A judge grading a handful of sheets would have learned "A is
  * the one that refuses" and the blinding would have been worthless — while the packet still
  * looked correctly shuffled. `unit/gradePacket.test.ts` asserts the balance for that reason.
+ *
+ * `arms` is passed in rather than closed over so the balance test can drive it with the arm set
+ * actually on disk, whatever that has become.
  */
-const shuffleFor = (fixtureId: string): readonly string[] => {
+const shuffleFor = (fixtureId: string, arms: readonly string[]): readonly string[] => {
   const random = rngFrom(hashSeed(fixtureId));
-  const order = [...ARMS] as string[];
+  const order = [...arms];
   for (let i = order.length - 1; i > 0; i -= 1) {
     const j = Math.floor(random() * (i + 1));
     [order[i], order[j]] = [order[j], order[i]];
@@ -94,7 +142,9 @@ const shuffleFor = (fixtureId: string): readonly string[] => {
   return order;
 };
 
-export const __testing = { shuffleFor, hashSeed };
+export const __testing = {
+  shuffleFor, hashSeed, labelsFor, hasFilledScores,
+};
 
 interface Turn {
   index: number; question: string; answer: string;
@@ -124,6 +174,22 @@ const main = async (): Promise<void> => {
   const packetDir = path.join(outRoot, "packet");
   const contextDir = path.join(outRoot, "context");
 
+  const arms = await armsOnDisk(transcriptRoot, args.pass);
+  const labels = labelsFor(arms.length);
+
+  // Read before anything is written. A rebuild that changes the arm set re-labels every answer,
+  // so grades collected against the old labels stop describing the answers they were given for.
+  const existing = await fs.readFile(path.join(outRoot, "scores.csv"), "utf8").catch(() => "");
+  if (hasFilledScores(existing) && !args.force) {
+    throw new Error(
+      `${path.relative(process.cwd(), path.join(outRoot, "scores.csv"))} already holds grades.\n`
+      + "Rebuilding rewrites it and KEY.json, and with a different arm set the new labels do not\n"
+      + "mean what those grades were written against.\n"
+      + "  --out=<dir>  build elsewhere and keep the graded copy (what you almost always want)\n"
+      + "  --force      overwrite the grades",
+    );
+  }
+
   const fixtures = loadFixtures().filter((f) => f.runnable);
   // Sorted so --sample takes a stable subset rather than a different one each run.
   const selected = [...fixtures].sort((a, b) => a.id.localeCompare(b.id))
@@ -136,15 +202,16 @@ const main = async (): Promise<void> => {
   let written = 0;
 
   for (const fixture of selected) {
-    const order = shuffleFor(fixture.id);
-    key[fixture.id] = Object.fromEntries(LABELS.map((l, i) => [l, order[i]]));
+    const order = shuffleFor(fixture.id, arms);
+    key[fixture.id] = Object.fromEntries(labels.map((l, i) => [l, order[i]]));
 
     // eslint-disable-next-line no-await-in-loop
     const transcripts = await Promise.all(
       order.map((arm) => readTranscript(transcriptRoot, args.pass, arm, fixture.id)),
     );
-    if (transcripts.some((t) => t === null)) {
-      process.stdout.write(`  skip ${fixture.id} — missing transcript for one or more arms\n`);
+    const missing = order.filter((_, i) => transcripts[i] === null);
+    if (missing.length > 0) {
+      process.stdout.write(`  skip ${fixture.id} — no transcript for ${missing.join(", ")}\n`);
       continue;
     }
 
@@ -153,8 +220,9 @@ const main = async (): Promise<void> => {
       "",
       `**Class:** \`${fixture.class}\` · **Turns:** ${fixture.turns.length}`,
       "",
-      "> Answers below are labelled A/B/C in an order specific to this fixture. The same letter",
-      "> means a **different** system on another sheet. Do not compare letters across fixtures.",
+      `> Answers below are labelled ${labels.join("/")} in an order specific to this fixture. The`,
+      "> same letter means a **different** system on another sheet. Do not compare letters across",
+      "> fixtures.",
       "",
     ];
 
@@ -171,8 +239,8 @@ const main = async (): Promise<void> => {
       }
       if (turnSpec.rubric.notes) lines.push(`**Notes:** ${turnSpec.rubric.notes}`, "");
 
-      for (let ai = 0; ai < LABELS.length; ai += 1) {
-        const label = LABELS[ai];
+      for (let ai = 0; ai < labels.length; ai += 1) {
+        const label = labels[ai];
         const turn = transcripts[ai]!.turns.find((t) => t.index === ti);
         lines.push(`### Answer ${label}`, "");
         if (!turn || !turn.answer) {
@@ -217,7 +285,8 @@ const main = async (): Promise<void> => {
   );
 
   process.stdout.write(
-    `\nPacket written: ${written} fixture sheet(s) -> ${path.relative(process.cwd(), packetDir)}\n`
+    `\nArms graded:    ${arms.length} — ${arms.join(", ")}\n`
+    + `Packet written: ${written} fixture sheet(s) -> ${path.relative(process.cwd(), packetDir)}\n`
     + `Score sheet:    ${path.relative(process.cwd(), path.join(outRoot, "scores.csv"))} (${scoreRows.length - 1} rows)\n`
     + `Key:            ${path.relative(process.cwd(), path.join(outRoot, "KEY.json"))} — do not open until scoring is done\n\n`
     + "Grading instructions: docs/GRADING_GUIDE.md\n",
