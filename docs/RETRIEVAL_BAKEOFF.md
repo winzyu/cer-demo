@@ -809,10 +809,30 @@ already removed arms and Tier 1's failures are not re-litigated by it.
 | `pgvector-rag` transcripts | **no** | Same, and the arm is archived and unrunnable without restoring `archive/pgvector-rag/`. |
 | `local-vector`, `local-hybrid`, `hybrid-slice-vector`, `hybrid-slice-lexvec` | **none exist** | Never swept. |
 
-So a re-capture is required before either tier can be run over anything but direct-feed, and the
-arms to capture are `firestore-direct`, `firestore-vector`, `hybrid-slice-lexvec` and — if the
-lexical delta is wanted at the answer layer as well as the retrieval layer —
-`hybrid-slice-vector`. `pgvector-rag` stays out unless deliberately restored.
+So a re-capture is required before either tier can be run over anything but direct-feed.
+
+**The capture set, settled 2026-08-25.** Four arms end up admissible: `firestore-direct` and
+`hybrid-slice-lexvec` (both captured), plus `firestore-vector` and `hybrid-slice-vector` (to
+capture). Two registered arms are deliberately **excluded from capture**, and the reasons are worth
+keeping because both look like gaps otherwise:
+
+- **`local-vector` is not a separate arm.** `npm run compare:vector-arms` reports 30/30 queries
+  ranked identically to `firestore-vector`, drift ~1e-4, because Firestore's index is configured
+  `flat` — exhaustive, not approximate. At temperature 0 identical context yields identical
+  answers, so capturing both would pay twice for one result. It stays what it was built to be: the
+  free offline instrument, and the reason retrieval can be iterated without spending anything.
+  `local-hybrid` stands in the same relation to `hybrid-slice-lexvec` minus the slice.
+- **`pgvector-rag` stays archived.** It could be restored — the files are intact and Docker is
+  available — but it was dev-only and never deployed, ◆G1 migrated away from that stack, and it
+  already lost on cost ($12.14/mo vs $4.33 at 10k requests). Restoring it cannot produce a ◆G7
+  winner; it can only produce a legacy reference row for §10's "what did the migration save?"
+  question. Worth doing when that report is written, not before.
+
+**`firestore-vector` needs no code change.** Its Tier-1 failure is a fact about transcripts
+captured over an 8-document corpus, not about the adapter: its chunk collection was wiped and
+re-seeded to the current 393 chunks on 2026-08-24, and the embedding cache carries the same 393.
+The arm is capture-ready as it stands. Reading a stale-evidence failure as a broken arm is the
+mistake this paragraph exists to prevent.
 
 **The grounding a figure may come from is wider than the retrieval context.** Learned the
 expensive way: the checker's first run reported ~24 fabricated figures per arm, and most were the
