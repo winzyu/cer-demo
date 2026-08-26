@@ -876,6 +876,56 @@ Four things the run established that no amount of retrieval measurement would ha
   and scores 100%. The gate mildly favours high-context arms. Normalise it or state it in
   `RETRIEVAL_COMPARISON.md` — do not read the 95.3% vs 100% gap as a quality difference.
 
+**First Tier-2 calibration, 2026-08-26** (`npm run judge -- --calibration`, then `--calibrate`;
+verdicts in `data/judge/warm.jsonl`, summary in `data/judge/warm.json`). The judge harness is
+`src/eval/judge/` + `scripts/judge.ts`, built to the §7b constraints. 84 calls, 0 failed, $0.0777
+at the 2026-08-03 `gpt-oss-120b` rate — that is the judge's budget line to date. It covers the
+**6 fixtures the human already graded**, 3 arms, 12 turns each: a calibration, not a result.
+
+| dimension | n | exact | within-1 | any/none | Cohen's kappa | usable? |
+|---|---:|---:|---:|---:|---:|---|
+| correctness | 36 | 83.3% | 94.4% | 94.4% | **0.75** | yes |
+| ungrounded claims | 36 | 72.2% | 83.3% | 86.1% | **0.46** | yes, with the strictness bias stated |
+| citation support | 12 | 50.0% | 91.7% | 58.3% | **−0.06** | **no — worse than chance** |
+
+**The judge model is `gpt-oss-120b`, and that is a stated weakness of the quality claim.** §7b's
+rule is "a different model than the one under test"; 120b is a different model from 20b and clears
+it as written. It does not clear the intent — same family, same lineage, so some self-preference
+plausibly survives. It was chosen anyway because it is the only non-under-test chat model in
+`prices.ts` with a rate read on a known date, and §10 item 4 requires every price in the report to
+carry one. A cross-family judge meant an unverified model id *and* an invented rate: an unstated
+bias in the cost table traded for a stated one in the quality table. `npm run judge` prints the
+caveat on every run. If the agreement rate degrades, try a cross-family judge before the rubric.
+
+Three things the calibration established:
+
+- **Correctness at kappa 0.75 is substantial agreement, and the harness can be trusted on it** —
+  with one systematic defect. On `deepmanual-stabilization-criteria` turn 1 the judge scored two
+  arms 0 where the human scored both 2, invoking `must not invent numeric criteria` against the
+  `>100 TU` row of Table 6.8-5, which is verbatim in the source. The judge could not know: the
+  correctness prompt deliberately withholds the retrieval context, on `GRADING_GUIDE.md` §3's
+  principle that correctness is scored against the rubric and not the source text. That principle
+  is right for `must_contain` and **wrong for any `must_not` phrased as an invention check**.
+  Both distance-2 disagreements are this one defect, and it is fixed before the full pass, not
+  after.
+- **The citation-support dimension is not measuring what the human measured.** Kappa −0.06 on
+  n=12. It gates nothing — §8a's citation threshold is spent on the *resolution* half, which Tier 1
+  decides deterministically — so nothing downstream is contaminated, but no citation-support
+  number from this judge belongs in a conclusion until it is re-specified.
+- **The ungrounded-claims gate is nowhere near met, and it is not the judge's doing.** The human
+  flags **9 of 36 turns (25.0%)** as carrying at least one unsupported claim; the judge flags
+  **14 of 36 (38.9%)**. §8a's ceiling is **2%**, about one turn in 58. The human's number was
+  collected blind, before this harness existed, and is the conservative of the two. Per-arm the
+  human flags `firestore-direct` on 4/12 and `firestore-vector` on 5/12; `pgvector-rag` scores
+  0/12 only because it refused five of its twelve turns, which its correctness column pays for.
+
+The last of those is the finding that matters, and §8a already pre-committed to it: *"If every arm
+fails the quality floor: ◆G7 stays open. Record that nothing cleared the bar, fix the system —
+prompt, slice, `max_tokens`, or model — and re-run. The floor does not move."* Nothing measured
+here is grounds to move it. **Expect a full Tier-2 pass to fail the groundedness gate on every
+arm**, and treat the open question as which of prompt, slice or model is the fix — not what the
+threshold should have been.
+
 **What this amendment does not do.** It does not admit retrieval metrics as quality gates. Recall,
 precision, MRR and nDCG remain diagnostics with no target (`RETRIEVAL_EVAL.md` §1) — a model can be
 handed perfect context and still invent a number, which is the failure Tier 1 exists to catch. An
