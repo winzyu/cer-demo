@@ -8,8 +8,8 @@
 > | | |
 > |---|---|
 > | **Decided** | Tier 1 — the three machine-checked hard gates (§8b). Both admissible arms **PASS**. |
-> | **Undecided** | Tier 2 — correctness and ungrounded claims, the two gates that carry the ◆G7 decision. The judge is **built and calibrated** (§6.4: correctness kappa 0.75, groundedness 0.46, citation support −0.06 and unusable) but has run on **6 of 28 fixtures**. No arm has a Tier 2 result. |
-| **Early signal** | Human and judge independently put **25%** and **39%** of turns over §8a's **2%** ungrounded-claims ceiling (§6.5). Expect a failed groundedness gate on every arm, and read §8a's "the floor does not move". |
+> | **Undecided** | Tier 2 — correctness and ungrounded claims, the two gates that carry the ◆G7 decision. The judge is **built and calibrated** (§6.4: correctness kappa **0.87**, citation support **0.52**, groundedness **0.46**) but has run on **6 of 28 fixtures**. No arm has a Tier 2 result. |
+| **Early signal** | Human and judge independently put **25%** and **39%** of turns over §8a's **2%** ungrounded-claims ceiling (§6.6). Expect a failed groundedness gate on every arm, and read §8a's "the floor does not move". |
 > | **Admissible arms** | `firestore-direct`, `hybrid-slice-lexvec` |
 > | **Inadmissible** | `firestore-vector`, `pgvector-rag` — swept over an 8-document corpus that no longer exists (§8b, "Evidence currency") |
 > | **Not yet captured** | `firestore-vector`, `hybrid-slice-vector` |
@@ -485,10 +485,11 @@ poor, fix the rubric — do not quietly keep the judge's scores"* — applies he
 
 ## 6. How quality was graded
 
-§10 item 6. **The honest one-line answer: on a sixth of the set, by both a human and a judge that
-substantially agree on correctness and only moderately on groundedness.** The judge has now run —
-on the calibration subset only (2026-08-26, 84 calls, $0.0777). The full Tier 2 pass has not run,
-so §1's correctness and groundedness columns are still blank and ◆G7 is still open.
+§10 item 6. **The honest one-line answer: on a sixth of the set, by a human and a judge that agree
+closely on correctness and only moderately on groundedness.** The judge has run on the calibration
+subset only — 2026-08-26, twice, 132 calls, $0.1194 — because the first pass exposed two defects
+worth fixing before spending on a full one (§6.4). §1's correctness and groundedness columns are
+still blank and ◆G7 is still open.
 
 ### 6.1 What has been measured
 
@@ -496,7 +497,7 @@ so §1's correctness and groundedness columns are still blank and ◆G7 is still
 |---|---|---|
 | Tier 1 gate checker (`npm run gate:check`) | **run**, 2026-08-25 | 3 of 5 §8a gates, all four arms, deterministic |
 | Human blind grading (`eval/grading/warm/scores.csv`) | **36 of 174 rows** | 6 fixtures × 12 turns × 3 arms — the calibration sample, not a result |
-| LLM judge (`npm run judge`) | **run on the calibration subset only**, 2026-08-26 | the 2 remaining gates, 3 arms × 6 fixtures × 12 turns — 84 calls, 0 failed |
+| LLM judge (`npm run judge`) | **run on the calibration subset only**, 2026-08-26, twice | the 2 remaining gates, 3 arms × 6 fixtures × 12 turns — 132 calls total, 0 failed, $0.1194 |
 
 ### 6.2 The human sample — what it is and what it is not
 
@@ -539,7 +540,7 @@ implemented:
 |---|---|
 | **A different model than the one under test** | Default `accounts/fireworks/models/gpt-oss-120b`. **Met as written, not as intended — see the caveat below.** Overridable via `JUDGE_MODEL` / `--judge-model=`, and whatever is used lands in the run manifest. |
 | **One dimension per call** | Three dimensions, three calls: correctness 0/1/2; ungrounded claims **enumerated then counted** (never a bare number); citation **support** as a third dimension. |
-| **The supplied context given to the judge** | Groundedness receives the retrieval context **plus the system prompt plus the user's own earlier questions**. This is not generosity — it is the §8b lesson: the checker's first run reported ~24 "fabricated" figures per arm that were the prompt's own `AUTHORITATIVE NORMAL RANGES` block quoted back correctly, or figures the user supplied. **A gate that cries wolf gets switched off.** |
+| **The supplied context given to the judge** | Groundedness receives the retrieval context **plus the system prompt plus the user's own earlier questions**; citation support receives it **grouped by source document**; correctness receives it **only when the turn's `must_not` is an invention check** (§6.4). This is not generosity — it is the §8b lesson: the checker's first run reported ~24 "fabricated" figures per arm that were the prompt's own `AUTHORITATIVE NORMAL RANGES` block quoted back correctly, or figures the user supplied. **A gate that cries wolf gets switched off.** |
 | **Blind** | No arm name appears in any prompt. |
 | **Calibrated against a human sample, agreement reported** | `calibrate.ts` joins verdicts to the 36 human rows through `KEY.json` and reports exact agreement, within-1 agreement, any/none agreement and **Cohen's kappa** per dimension — chance-corrected, so a dimension where everyone scores 0 cannot look good. |
 | **Judge tokens counted in the budget** | Counted per call, summed per pass, and priced from `prices.ts` — or left explicitly undefined rather than guessed if the judge model has no dated rate. |
@@ -558,50 +559,125 @@ that was supplied?); the judge decides citation *support* (does the cited chunk 
 claim?). The judge's citation dimension is **reported, not gated** — §8a's citation threshold is
 already spent on the resolution half.
 
-### 6.4 The agreement rate — measured 2026-08-26
+### 6.4 The agreement rate — measured 2026-08-26, then re-measured after two fixes
 
-`npm run judge -- --calibration` then `--calibrate`. 84 calls, 0 failed, 335,892 input / 45,499
-output tokens, **$0.0777** at the 2026-08-03 `gpt-oss-120b` rate. That is §7b's budget line, and
-it is the whole judge cost incurred to date.
+`npm run judge -- --calibration`, then `--calibrate`. Two runs: a first pass over all three
+dimensions, and — after the two defects it exposed were fixed — a re-run of the two dimensions
+whose prompts changed. The `ungrounded` verdicts were left untouched and carried forward, so its
+row below is the same measurement in both columns rather than a re-rolled one.
 
-| dimension | n | exact | within-1 | any / none | **Cohen's kappa** | verdict |
-|---|---:|---:|---:|---:|---:|---|
-| **correctness** | 36 | 83.3% | 94.4% | 94.4% | **0.75** | substantial — **usable** |
-| **ungrounded claims** | 36 | 72.2% | 83.3% | 86.1% | **0.46** | moderate — **usable with the bias below stated** |
-| **citation support** | 12 | 50.0% | 91.7% | 58.3% | **−0.06** | **worse than chance — not usable** |
+| dimension | n | exact | within-1 | any / none | **Cohen's kappa** |
+|---|---:|---:|---:|---:|---:|
+| **correctness** | 36 | 83.3% → **91.7%** | 94.4% → **100%** | 94.4% → **100%** | 0.75 → **0.87** |
+| **ungrounded claims** | 36 | 72.2% | 83.3% | 86.1% | **0.46** (unchanged) |
+| **citation support** | 12 | 50.0% → **83.3%** | 91.7% → **100%** | 58.3% → **91.7%** | −0.06 → **0.52** |
+
+**Cost, which §7b requires be counted:** 84 calls / 335,892 in / 45,499 out = **$0.0777** for the
+first pass, plus 48 calls / 193,247 in / 21,246 out = **$0.0417** for the re-run. **$0.1194 total**
+at the 2026-08-03 `gpt-oss-120b` rate. The pre-fix ledger is kept at
+`data/judge/warm.pre-fix-2026-08-26.jsonl` so the before column is auditable and not just asserted.
 
 Read the kappa column, not the percentages. Raw agreement is inflated wherever one value
 dominates: `invalid_citations` is 0 in 33 of the human's 36 rows, so a judge answering "0"
-unconditionally would post ~92% agreement and be worthless. Kappa says −0.06 — this judge and this
-human are not measuring the same thing on citations at all. **It gates nothing** (§8a's citation
-threshold is spent on the resolution half, which Tier 1 decides deterministically at 95.3%/100%),
-so nothing downstream is contaminated. But no citation-support number from this judge belongs in a
-conclusion until the dimension is re-specified. n=12 is also small; the disagreements cluster on
-whether a `†L1-L4` line range that points at a document's introduction counts as unsupported.
+unconditionally posts ~92% agreement and is worthless. That is exactly what the −0.06 was —
+apparent agreement, zero information.
 
-**The judge is systematically stricter on groundedness than the human**, mean |diff| 0.61 with the
-disagreements running one direction: judge 8 vs human 3, judge 4 vs human 0, judge 3 vs human 1.
-Part of that is a known and *deliberate* rubric difference — the human was told to check claims
-against `context/<fixture>/turn<N>-<LABEL>.txt`, retrieval context only, while the judge is
-additionally given the system prompt and the user's own earlier questions, because §8b established
-that the narrower reading produces ~24 false accusations per arm. The narrower rubric should make
-the *human* stricter, not the judge, so the residual gap is the judge genuinely splitting claims
-more finely — it enumerates "ORP responds to electron availability" and "ORP responds faster than
-DO" as two claims where the human wrote one line covering both.
+#### What the two fixes were, and why neither is a threshold moved to chase a number
 
-**One correctness failure mode is a design defect, not a disagreement.** On
-`deepmanual-stabilization-criteria` turn 1 the judge scored two arms **0** where the human scored
-both **2**, in each case invoking the rubric's `must not invent numeric criteria` against the
-`>100 TU` row of Table 6.8-5 — a row that is verbatim in the source. The judge could not know
-that: `correctnessPrompt` deliberately withholds the retrieval context, on the `GRADING_GUIDE.md`
-§3 principle that correctness is scored against the rubric and not against the source text. That
-principle is right for `must_contain` and **wrong for any `must_not` phrased as an invention
-check**, which is unjudgeable without the material. Both correctness disagreements at distance 2
-are this one defect. Fixing it — supply the context to correctness when the turn's `must_not`
-mentions inventing or fabricating — is the single highest-value change to the harness, and it
-should happen before the full pass rather than after.
+This is the part §7b warns about: *"if agreement is poor, fix the rubric — do not quietly keep the
+judge's scores."* Both changes below are corrections **to** the pre-registered definition, and both
+are defensible without reference to the number they produced. That distinction is the whole reason
+this subsection exists.
 
-### 6.5 What the run says about the gates — and what it does not
+**Correctness — the judge could not see what it was accusing arms of inventing.** On
+`deepmanual-stabilization-criteria` turn 1 it scored two arms **0** where the human scored both
+**2**, invoking `must not invent numeric criteria` against the `>100 TU` row of Table 6.8-5 — a row
+that is verbatim in the source. `correctnessPrompt` withheld the retrieval context, on
+`GRADING_GUIDE.md` §3's principle that correctness is scored against the rubric and not the source
+text. Right for `must_contain`; **wrong for any `must_not` phrased as an invention check**, which
+is a claim about what the supplied material contains and is not decidable without it. The fix
+supplies the source documents *only* for those turns — 25 of the fixtures' 110 distinct `must_not`
+items match (`needsGroundingForCorrectness`), the other 85 stay cheap — and tells the judge they
+are there to decide that one rule, not to re-grade the answer's truth. Both distance-2
+disagreements disappeared; within-1 went to 100%.
+
+**Citation support — the judge was grading line numbers nobody asked it to grade.** Every
+disagreement had the same shape: `【5†L1-L4】` called invalid because lines 1-4 of that chunk are
+introductory, while the claim sits further down the same file. But `GRADING_GUIDE.md` §3 told the
+human *"citations that point at a document which does not actually contain the claim"*, and §8a
+says *"the cited document must actually contain the claim"* — document, not line span. The narrow
+reading was the judge's invention. The fix presents the context **grouped by source document**,
+resolves a marker to its document, and tells the judge to ignore line numbers. It deliberately
+keeps the case that matters: a marker naming the *wrong* document is still invalid, which a looser
+"pass it if the evidence is anywhere in the context" rule would have wrongly forgiven.
+
+#### What is still open in the numbers
+
+**Correctness at kappa 0.87 is usable.** The three residual disagreements are all distance-1 and
+all one shape: the judge scores 1 where the human scored 2 on a refusal that named the missing
+information but did not use the pinned `REFUSAL_SENTENCE` verbatim. That is a genuine rubric
+ambiguity — Tier 1 already decided the same behaviour *passes* the refusal gate (§8b: the gate
+vetoes on answering, not on wording), so the judge is arguably being stricter than the
+pre-registration. Worth settling before the full pass; it is not a defect.
+
+**Citation support at kappa 0.52 is moderate, and n=12 is thin.** It moved from worse-than-chance
+to usable, but it gates nothing — §8a's citation threshold is spent on the resolution half, which
+Tier 1 decides deterministically at 95.3%/100%. Treat it as reported evidence, not a gate, and do
+not lean on it with twelve pairs behind it.
+
+**Groundedness is unchanged at kappa 0.46, and the judge is systematically stricter than the
+human** — mean |diff| 0.61 with disagreements running one direction: judge 8 vs human 3, judge 4 vs
+human 0, judge 3 vs human 1. Part is a known and *deliberate* rubric difference: the human checked
+claims against `context/<fixture>/turn<N>-<LABEL>.txt`, retrieval context only, while the judge
+also gets the system prompt and the user's own earlier questions, because §8b established that the
+narrower reading produces ~24 false accusations per arm. That difference should make the **human**
+stricter, not the judge, so the residual gap is the judge splitting claims more finely — it
+enumerates "ORP responds to electron availability" and "ORP responds faster than DO" as two claims
+where the human wrote one line covering both. **It does not change the finding in §6.6**, because
+that turns on whether a turn carries *any* claim, where the two agree 86.1% of the time.
+
+### 6.5 A model-behaviour finding the citation fix deliberately stops measuring
+
+Measured 2026-08-26 over `eval/transcripts/warm/`, free, no LLM: **198 citation markers. 103 carry
+a line span, and 48 of those start at line 1** — a 47% "cite the top" rate. The three commonest
+spans are `L1-L3`, `L1-L8`, `L1-L4`. The median context chunk is **77 lines** (p90 336). So the
+model points at the opening of the chunk about half the time regardless of where in it the fact
+sits.
+
+Two things follow, and they pull in opposite directions.
+
+- **It is a real defect.** A line pointer that lands on a chunk's first three lines when the claim
+  is forty lines down is not a citation, it is a gesture at a file. In a water-quality tool the
+  citation is how an operator checks a threshold before acting on it.
+- **It is not what §8a's citation gate measures, and §6.4's fix moves the judge further from it.**
+  §8a says "the cited document must actually contain the claim" — document, not line — and
+  `GRADING_GUIDE.md` §3 told the human the same. The judge is now told to ignore line spans, which
+  is a correction *to* the pre-registered definition, not away from it. The consequence is that
+  after the fix **nothing in either tier measures this**, so it is recorded here instead of
+  vanishing into a metric that no longer looks at it.
+
+The durable fix is **quote-based citations** — have the model cite by extracting a short verbatim
+quote rather than predicting a line number, which LLMs are poor at because they process tokens, not
+lines. The prize is bigger than tidier output: a quote is checkable by normalized substring match
+against the chunk, so citation support moves out of Tier 2 (paid, judgement, kappa −0.06 before the
+fix) and into **Tier 1** (free, deterministic, re-runnable after every corpus change).
+
+**It cannot be done yet.** It is a system-prompt change, and the prompt is a pinned control until
+◆G7 closes — editing it voids every captured arm and forces a re-capture of the two arms the gate
+is being decided on. It goes at the front of the post-◆G7 queue, not before it.
+
+**Two adjacent proposals were considered and rejected**, recorded so they are not re-proposed:
+
+- **Re-chunking to smaller chunks** so the model "cannot cite the introduction". Chunk ids are
+  content-derived `sha256`, so re-chunking **invalidates all 259 retrieval labels** and the free
+  offline harness with them. The reasoning also does not hold: markers already resolve to
+  *chunks*, not documents, so smaller chunks make `L1-L3` more often accidentally correct. It
+  shrinks the target rather than fixing the aim.
+- **Instructing the model to cite exact lines** in the system prompt. Same pinned-control veto,
+  and it asks the model to do better at the thing it is structurally bad at instead of changing
+  the thing it is asked for.
+
+### 6.6 What the run says about the gates — and what it does not
 
 **It does not decide ◆G7.** Twelve turns per arm is a sixth of the 58, and two of the three arms
 graded here (`firestore-vector`, `pgvector-rag`) are inadmissible on stale-corpus grounds (§8b).
@@ -678,10 +754,12 @@ ranked second.
 
 ### 7.4 What has to happen, in order
 
-0. **Fix the two judge defects §6.4 exposed** — give `correctnessPrompt` the retrieval context
-   when the turn's `must_not` is an invention check, and re-specify the citation-support
-   dimension or drop it. Both cost nothing to change and both are cheaper to fix before a full
-   pass than to re-run after one. The calibration pass is repeatable for $0.08.
+0. ~~**Fix the two judge defects §6.4 exposed.**~~ **Done 2026-08-26** — correctness kappa
+   0.75 → 0.87, citation support −0.06 → 0.52, for $0.0417. One rubric question is left over and
+   should be settled before the full pass: whether a refusal that names the missing information
+   but does not use the pinned `REFUSAL_SENTENCE` verbatim is a correctness 1 (the judge) or a 2
+   (the human). Tier 1 already treats that behaviour as *passing* the refusal gate (§8b), so the
+   judge is currently stricter than the pre-registration.
 1. **Bump `PRICES_READ_ON`** — re-read the three source pages and update `src/eval/prices.ts`
    (§4) — including `gpt-oss-120b`'s, since it is now the judge as well as a candidate model. The
    file's own doc comment makes this a precondition of publishing this document.
@@ -752,9 +830,12 @@ invent a number — which is the failure Tier 1 exists to catch, and it caught f
 | 6 | whether a cross-family judge changes the scores | re-run with `JUDGE_MODEL=` set to another family, once its rate is priced |
 | 5 | every `hybrid-slice-lexvec` sample score | grade it into `scores.csv` |
 | 6 | ~~judge/human agreement, Cohen's kappa~~ | **done 2026-08-26** — §6.4 |
-| 6 | ~~judge token cost in USD~~ | **done** — $0.0777 for the calibration pass; ~$0.50 projected for a full one |
-| 6 | a usable citation-support dimension | re-specify it; kappa −0.06 is worse than chance (§6.4) |
-| 6 | correctness scored against invention-type `must_not` items | give `correctnessPrompt` the retrieval context when the rubric's `must_not` is an invention check (§6.4) |
+| 6 | ~~judge token cost in USD~~ | **done** — $0.1194 across both calibration passes; ~$0.50 projected for a full one |
+| 6 | ~~a usable citation-support dimension~~ | **done 2026-08-26** — judged per document, kappa −0.06 → 0.52 (§6.4). Still n=12 and still ungated. |
+| 6 | ~~correctness scored against invention-type `must_not` items~~ | **done 2026-08-26** — kappa 0.75 → 0.87 (§6.4) |
+| 6 | whether an off-contract refusal is a correctness 1 or 2 | settle it against §8b's refusal-gate scope before the full pass (§6.4) |
+| 6 | a citation format a string match can verify | quote-based citations, post-◆G7 (§6.5) — moves the dimension into Tier 1 |
+| 6 | anything measuring the 47% line-1 citation rate | nothing does, by design, after the §6.4 fix — see §6.5 |
 | 6 | Tier 2 over the other 22 fixtures | `npm run judge` without `--calibration`, after the fix above |
 | 6 | 138 of 174 human grading rows | human grading, or the judge once the two §6.4 defects are fixed |
 | 7 | **the decision** | all of the above |
