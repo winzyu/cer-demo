@@ -36,7 +36,8 @@ const printArm = (result: ArmGateResult): void => {
   log.info(
     `  refusal integrity   ${mark(refusal.met).padEnd(4)}  `
     + `${refusal.required} required — ${refusal.exact} exact, ${refusal.normalized} folded, `
-    + `${refusal.tolerance} within tolerance, ${refusal.absent} absent`,
+    + `${refusal.tolerance} within tolerance, ${refusal.offContract} off-contract, `
+    + `${refusal.answered} ANSWERED`,
   );
   log.info(
     `  citation validity   ${mark(citations.met).padEnd(4)}  `

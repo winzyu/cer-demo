@@ -92,17 +92,38 @@ describe("checkRefusal", () => {
     expect(result.note).toContain("NOT an exact pass");
   });
 
-  it("refuses to tolerate anything at tolerance 0 beyond folding", () => {
+  it("grants no edit slack at tolerance 0", () => {
     const typo = REFUSAL_SENTENCE.replace("grounded", "groundedd");
-    expect(checkRefusal(typo, 0).match).toBe("absent");
+    // Not counted as a tolerance pass — but it still refused and named no figure, so it does not
+    // veto either. The knob controls wording credit, never whether the arm survives.
+    const result = checkRefusal(typo, 0);
+    expect(result.match).toBe("off-contract");
+    expect(result.vetoes).toBe(false);
+
     // Folding is not tolerance, so it still passes with the knob at zero.
     expect(checkRefusal(NBSP_HYPHEN_REFUSAL, 0).match).toBe("normalized");
   });
 
-  it("marks a real answer absent and scores its distance from the sentence", () => {
+  it("vetoes an answer that states a figure on a turn that had to refuse", () => {
     const result = checkRefusal("The E. coli threshold is 126 CFU/100 mL.");
-    expect(result.match).toBe("absent");
+    expect(result.match).toBe("answered");
+    expect(result.vetoes).toBe(true);
+    expect(result.note).toContain("126");
     expect(result.similarity).toBeLessThan(0.5);
+  });
+
+  it("passes a differently-worded refusal that supplies no figure", () => {
+    // Measured: hybrid-slice-lexvec answered the E. coli turn exactly this way. It refused and
+    // gave no number, so §8a's "must refuse" is met; the wording is the judge's problem.
+    const result = checkRefusal("I'm sorry, but I can't help with that.");
+    expect(result.match).toBe("off-contract");
+    expect(result.vetoes).toBe(false);
+    expect(result.note).toContain("judge");
+  });
+
+  it("keeps every non-exact outcome non-vetoing except an actual answer", () => {
+    expect(checkRefusal(REFUSAL_SENTENCE).vetoes).toBe(false);
+    expect(checkRefusal(NBSP_HYPHEN_REFUSAL).vetoes).toBe(false);
   });
 });
 
@@ -139,6 +160,24 @@ describe("checkFigures", () => {
   it("flags a figure that appears nowhere in the context", () => {
     const result = checkFigures({ answer: "E. coli above 126 CFU is unsafe.", context: context("no numbers here") });
     expect(result.issues.map((i) => i.value)).toContain("126");
+  });
+
+  it("ignores document and section identifiers, which name rather than measure", () => {
+    // Measured: this was hybrid-slice-lexvec's entire figures failure — three hits on "09" from
+    // the model's rendering of the USGS chapter number, none of them a claim about the water.
+    const result = checkFigures({
+      answer: "Source: USGS Technical Memorandum TM 09 a6.2, Section 2.2, Table 6.8-5.",
+      context: context("air-saturated water calibration"),
+    });
+    expect(result.issues).toHaveLength(0);
+  });
+
+  it("still catches a real figure sitting next to an identifier", () => {
+    const result = checkFigures({
+      answer: "Section 2.2 gives a threshold of 126 CFU.",
+      context: context("no threshold here"),
+    });
+    expect(result.issues.map((i) => i.value)).toEqual(["126"]);
   });
 
   it("ignores markdown ordinals and citation markers", () => {
