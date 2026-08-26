@@ -9,7 +9,9 @@
  */
 import path from "path";
 import {
+  citationsPrompt,
   correctnessPrompt,
+  needsGroundingForCorrectness,
   parseVerdict,
   ungroundedPrompt,
   type JudgeEvidence,
@@ -61,11 +63,27 @@ describe("judge prompts — blinding", () => {
     });
   });
 
-  it("withholds the retrieval context from correctness and supplies it to groundedness", () => {
+  it("withholds the retrieval context from correctness when the rubric does not need it", () => {
     // Correctness is scored against the rubric, not the source text (GRADING_GUIDE §3), and
-    // shipping ~11K tokens of slice to the one dimension that must not use it is paid error.
-    expect(correctnessPrompt(evidence())).not.toContain("Hypoxia begins below 2 mg/L");
-    expect(ungroundedPrompt(evidence())).toContain("Hypoxia begins below 2 mg/L");
+    // shipping ~11K tokens of slice to a dimension that must not use it is paid error.
+    const plain = evidence({
+      rubric: { must_contain: ["states the 2 mg/L threshold"], must_not: ["declares the water safe"] },
+    });
+    expect(correctnessPrompt(plain)).not.toContain("Hypoxia begins below 2 mg/L");
+    expect(ungroundedPrompt(plain)).toContain("Hypoxia begins below 2 mg/L");
+  });
+
+  it("supplies it when a must_not asks whether the answer invented something", () => {
+    // The defect the first calibration found: the judge scored two arms 0 for "inventing" the
+    // >100 TU row of Table 6.8-5, which is verbatim in the source it was not shown.
+    const invention = evidence({
+      rubric: { must_contain: ["reproduces the table"], must_not: ["invents numeric criteria"] },
+    });
+    const prompt = correctnessPrompt(invention);
+    expect(prompt).toContain("Hypoxia begins below 2 mg/L");
+    expect(prompt).toMatch(/was NOT invented/);
+    // ...and is still told not to re-grade truth against them, which is a different measurement.
+    expect(prompt).toMatch(/entirely true and still miss the\s+rubric's points/);
   });
 
   it("gives groundedness the system prompt, not just the retrieved chunks", () => {
@@ -80,6 +98,64 @@ describe("judge prompts — blinding", () => {
     }));
     expect(prompt).toContain("The threshold is 9.9 mg/L.");
     expect(prompt).toMatch(/ASSISTANT answer is NOT grounding/);
+  });
+});
+
+describe("correctness grounding predicate", () => {
+  it("fires on the fixtures' invention-flavoured must_not items", () => {
+    ["invents numeric criteria", "fabricates a reading", "invents a range not in the context",
+      "answers from general knowledge", "describes an optical arrangement absent from the corpus",
+    ].forEach((item) => {
+      expect(needsGroundingForCorrectness({ must_contain: [], must_not: [item] })).toBe(true);
+    });
+  });
+
+  it("does not fire on must_not items decidable from the answer alone", () => {
+    // 85 of the fixtures' 110 distinct must_not items are these, and they stay cheap.
+    ["declares the reading normal", "concludes saltwater intrusion", "asserts one cause with certainty",
+      "answers only in % saturation with no mg/L figure",
+    ].forEach((item) => {
+      expect(needsGroundingForCorrectness({ must_contain: [], must_not: [item] })).toBe(false);
+    });
+  });
+
+  it("is false when there is no must_not list at all", () => {
+    expect(needsGroundingForCorrectness({ must_contain: ["x"], must_not: [] })).toBe(false);
+  });
+});
+
+describe("citation support — judged per document, not per line range", () => {
+  // Cohen's kappa was -0.06 before this: every disagreement was the judge calling a marker
+  // invalid because the cited chunk's first lines are introductory, while the claim sat further
+  // down the same file. GRADING_GUIDE §3 and §8a both say *document*, never line span.
+  const twoChunksOneDoc = evidence({
+    context: [
+      { id: "source-of-truth.pdf", text: "Title. Scope. Core principle." },
+      { id: "source-of-truth.pdf", text: "Hypoxia begins below 2 mg/L." },
+      { id: "other.pdf", text: "Unrelated." },
+    ],
+  });
+
+  it("groups every marker drawn from one document under that document", () => {
+    const prompt = citationsPrompt(twoChunksOneDoc);
+    expect(prompt).toMatch(/DOCUMENT: source-of-truth\.pdf\ncited by marker\(s\): \[1\] \[2\]/);
+    expect(prompt).toMatch(/DOCUMENT: other\.pdf\ncited by marker\(s\): \[3\]/);
+    // Both chunks' text has to be present under the one heading, or the grouping is cosmetic.
+    expect(prompt).toContain("Title. Scope. Core principle.");
+    expect(prompt).toContain("Hypoxia begins below 2 mg/L.");
+  });
+
+  it("tells the judge to ignore line numbers and why a wrong range is still valid", () => {
+    const prompt = citationsPrompt(twoChunksOneDoc);
+    expect(prompt).toMatch(/\*\*Ignore the line numbers\.\*\*/);
+    expect(prompt).toMatch(/wrong line range is\s+valid/);
+  });
+
+  it("still fails a marker naming the wrong document", () => {
+    // The hole in "pass it if the evidence exists anywhere in the context": that would score a
+    // citation valid when the claim is in a different file, which is the defect being measured.
+    expect(citationsPrompt(twoChunksOneDoc))
+      .toMatch(/supported\s+instead by a DIFFERENT document/);
   });
 });
 

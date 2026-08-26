@@ -69,14 +69,68 @@ const contextBlock = (context: JudgeEvidence["context"]): string => (
 );
 
 /**
+ * The same context, grouped by the **document** each chunk came from.
+ *
+ * The citation dimension judges documents, not chunks — see `citationsPrompt`. Two chunks of the
+ * same PDF are two context entries and one source, and a claim supported by either is supported
+ * by the document both markers name. Presenting them ungrouped is what made the judge report a
+ * citation invalid because the claim sat in the *next* chunk of the file it pointed at.
+ */
+const groupedContextBlock = (context: JudgeEvidence["context"]): string => {
+  if (context.length === 0) {
+    return "(no documents were retrieved for this turn)";
+  }
+  const bySource = new Map<string, { entries: number[]; texts: string[] }>();
+  context.forEach((chunk, i) => {
+    const group = bySource.get(chunk.id) ?? { entries: [], texts: [] };
+    group.entries.push(i + 1);
+    group.texts.push(chunk.text);
+    bySource.set(chunk.id, group);
+  });
+  return [...bySource.entries()]
+    .map(([source, group]) => (
+      `DOCUMENT: ${source}\ncited by marker(s): ${group.entries.map((e) => `[${e}]`).join(" ")}`
+      + `\n\n${group.texts.join("\n\n")}`
+    ))
+    .join("\n\n=====\n\n");
+};
+
+/**
+ * Does this turn's rubric ask whether the answer made something up?
+ *
+ * A `must_not` like *"invents a numeric range"* or *"answers from general knowledge"* is not
+ * decidable from the rubric alone — it is a claim about what the supplied material contains, and
+ * a judge without that material can only guess. Measured, it guessed wrong: on
+ * `deepmanual-stabilization-criteria` turn 1 it scored two arms 0 for "inventing" the `>100 TU`
+ * row of Table 6.8-5, which is verbatim in the source. Both of the calibration's distance-2
+ * correctness disagreements were this one defect.
+ *
+ * 25 of the fixtures' 110 distinct `must_not` items match. The other 85 — "declares the reading
+ * normal", "concludes saltwater intrusion" — are decidable from the answer alone and stay cheap,
+ * which is why this is a predicate rather than a blanket "always send the context": on direct-feed
+ * the slice is ~11K tokens a call, and `GRADING_GUIDE.md` §3's rule that correctness is scored
+ * against the rubric and not the source text is right everywhere it applies.
+ */
+const INVENTION_CHECK = /\b(invents?|inventing|fabricates?|fabricating)\b|not in the context|absent from|not supported by|from general knowledge|not derivable|not present in/i;
+
+export const needsGroundingForCorrectness = (rubric: EvalRubric): boolean => (
+  (rubric.must_not ?? []).some((item) => INVENTION_CHECK.test(item))
+);
+
+/**
  * Correctness — 0/1/2 against the turn's rubric.
  *
- * **The retrieval context is deliberately withheld here.** `GRADING_GUIDE.md` §3 tells the human
- * to score against the rubric and *not* against their own knowledge or the source text: "if an
- * answer is true but does not make the points the rubric lists, it is not a 2". Supplying the
- * context invites the judge to grade truth instead of rubric coverage, which is a different
- * measurement — and it would triple the input tokens of the one dimension that does not need
- * them. Groundedness is where the context earns its cost, and it gets it in full below.
+ * **The retrieval context is withheld unless the rubric needs it.** `GRADING_GUIDE.md` §3 tells
+ * the human to score against the rubric and *not* against their own knowledge or the source text:
+ * "if an answer is true but does not make the points the rubric lists, it is not a 2". Supplying
+ * the context invites the judge to grade truth instead of rubric coverage, which is a different
+ * measurement — and it would triple the input tokens of a dimension that mostly does not need
+ * them.
+ *
+ * The exception, added 2026-08-26 after the first calibration: a `must_not` phrased as an
+ * invention check is *unjudgeable* without the material (see `needsGroundingForCorrectness`). For
+ * those turns the source documents are supplied and the judge is told what they are for — deciding
+ * that one rule, not re-grading the answer's truth.
  */
 export const correctnessPrompt = (evidence: JudgeEvidence): string => `You are grading one answer
 from a water-quality assistant against a fixed rubric. Grade only what the rubric asks for.
@@ -90,11 +144,22 @@ RULES:
 - Score against the rubric, not against your own knowledge. A true answer that does not make the
   rubric's points is not a 2.
 - If any "must not" item appears in the answer, the score is 0 regardless of everything else.
+- Judge each "must not" item on its own terms. Do not invent additional ones.
 - A refusal scores 0 when the rubric expected content, and 2 when the rubric asked for a refusal.
 - Ignore style, tone, formatting and length. A blunt correct answer and an elegant correct answer
   score the same.
 
-CONVERSATION SO FAR:
+${needsGroundingForCorrectness(evidence.rubric) ? `SOURCE DOCUMENTS SUPPLIED TO THE ANSWER
+These are here for ONE purpose: this turn's "must not" list asks whether the answer made
+something up, and that cannot be decided without them. A figure, range, procedure or statement
+that appears anywhere below — or in the operator-provided normal ranges the assistant is
+instructed to apply — was NOT invented, even if the rubric does not mention it. Do not otherwise
+grade the answer against these documents: an answer can be entirely true and still miss the
+rubric's points, and that is still not a 2.
+
+${contextBlock(evidence.context)}
+
+` : ""}CONVERSATION SO FAR:
 ${historyBlock(evidence.history)}
 
 QUESTION BEING GRADED:
@@ -171,25 +236,49 @@ An answer with nothing unsupported returns {"claims": []}.`;
  * five chunks were supplied), and §8a's actual wording — "the cited document must actually
  * contain the claim" — has a support half no string match settles. That half is here. The judge
  * is told to assume resolution so the two instruments cannot double-count one defect.
+ *
+ * **It judges documents, not line ranges — corrected 2026-08-26.** The first calibration put this
+ * dimension at Cohen's kappa **−0.06**, worse than chance, and every disagreement was the same
+ * shape: the judge called `【5†L1-L4】` invalid because lines 1-4 of that chunk are introductory,
+ * while the claim sits further down the same file. The human was never asked about line spans —
+ * `GRADING_GUIDE.md` §3 says "citations that point at a document which **does not actually
+ * contain the claim**", and §8a's own wording agrees. So the narrower reading was the judge's
+ * invention, not the rubric's, and correcting it is a correction *to the pre-registered
+ * definition* rather than a threshold moved to chase agreement.
+ *
+ * The line spans are unreliable and separately known to be so: across the warm sweep, 48 of the
+ * 103 spans start at line 1 while the median chunk is 77 lines. That is a real model-behaviour
+ * finding, recorded in `RETRIEVAL_COMPARISON.md` — it is simply not this gate's business, and it
+ * is not decidable by judgement anyway. The durable fix is quote-based citations, which a string
+ * match can verify and which would move this dimension into Tier 1 for free. That needs a system
+ * prompt change, so it waits for ◆G7 to close.
  */
 export const citationsPrompt = (evidence: JudgeEvidence): string => `You are checking whether this
 answer's citations support what they are attached to.
 
-The answer cites sources as markers like [1] or [1 L4-L9], where the number is a 1-based index
-into the RETRIEVED DOCUMENTS below. It may also cite by filename.
+The answer cites sources as markers like [1] or [1 L4-L9]. The number identifies a document; the
+answer may also cite by filename.
 
 For each citation, decide whether the document it points at actually contains the claim in the
 sentence carrying it. List only the ones that do not.
 
 RULES:
-- Assume every marker's number resolves. Whether the index exists is checked separately; do not
-  report it here.
+- **Ignore the line numbers.** A marker such as [5 L1-L4] is unreliable about *where* in the
+  document the support sits, and that is checked separately. Treat it as naming the DOCUMENT the
+  marker belongs to, and ask only whether that document supports the claim ANYWHERE in the text
+  shown for it below — including passages far from any line range the marker mentions.
+- Assume every marker's number resolves to a document. Whether the index exists is checked
+  separately; do not report it here.
+- A citation is invalid only when the claim is absent from the document it names, or is supported
+  instead by a DIFFERENT document. Pointing at the right document with the wrong line range is
+  valid.
 - A missing citation is not an invalid one. Do not list claims that carry no citation.
 - The cited document must support the specific claim, not merely the general topic.
 - A citation on a paraphrase is fine if the document supports the paraphrase.
 
-RETRIEVED DOCUMENTS:
-${contextBlock(evidence.context)}
+RETRIEVED DOCUMENTS, grouped by document. Every marker listed under a document points at that
+document, and the whole text shown for it counts as its content:
+${groupedContextBlock(evidence.context)}
 
 ANSWER:
 ${evidence.answer}
