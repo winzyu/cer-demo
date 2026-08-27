@@ -1,0 +1,513 @@
+### IORP_probe.pdf (chunk IORP_probe.pdf__5554782eea67, score 0.7877527410975446)
+
+Range 	-2000mV – 2000mV
+95% in 1s	Response time
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+No	Internal temperature sensor
+~1 Year	Time before recalibration
+Reads 	ORP
+Platinum	Sensing element
+1 − 99 °C	Temperature range °C
+70m (230’)	Max depth
+SMA or Tinned leads	Connector
++/– 1mV	Accuracy
+~4 Years +	Life expectancy
+or
+ORP Probe
+Industrial
+Gen 3
+with Platinum sensing element
+Revised 8/25
+V 3.2
+
+-- 1 of 11 --
+
+Operating principle
+ORP stands for oxidation/reduction potential. Oxidation is the loss of electrons and
+reduction is the gain of electrons. The output of the probe is represented in millivolts and
+can be positive or negative.
+Just like a pH probe measures hydrogen ion activity in a liquid; an ORP probe measures
+electron activity in a liquid. The ORP readings represents how strongly electrons are
+transferred to or from substances in a liquid. Keeping in mind that the readings do not
+indicate the amount of electrons available for transfer.
+pH Probe 	ORP Probe
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 11 --
+
+Add just a drop of bleach
+(which is an oxidizing agent)
+606.9
+Reading A
+605.3
+Reading B
+-234.6
+Reading A
+24.2
+Reading B
+A	
+A
+B	
+B
+Tap water 	Tap water
+The water is unreactive and has only trace amounts of electron movement. These
+readings are equivalent to the readings you see with an unconnected multimeter.
+An ORP probe has a platinum tip that is connected to a silver wire, surrounded by
+silver chloride. That silver wire is then connected to a KCL reference solution. Because
+platinum is an unreactive metal it can “silently observe” the electron activity of the
+liquid without becoming apart of whatever reaction is occurring in the liquid.
+When reading the ORP of a liquid that has very few electrons available for
+transfer, ORP readings can appear to be inconsistent.
+(Theoretical value)
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 3 of 11 --
+
+46.6mm
+(1.8”)
+Soaker bottle
++ 	–
+10ml
+Ø 8mm
+197mm
+(7.7”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Ø 2.8mm
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+Measurements
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 11 --
+
+Platinum
+Teflon
+PVC
+EPDM
+Delrin ®
+(body)
+Polyethylene
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Platinum
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Grade ORP Probe
+Part # ENV-50-ORP
+Complies with NSF/ANSI Standard 51
+Food Safe
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 11 --
+
+---
+
+### IORP_probe.pdf (chunk IORP_probe.pdf__566989019e52, score 0.7209825857400093)
+
+m
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Platinum
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Grade ORP Probe
+Part # ENV-50-ORP
+Complies with NSF/ANSI Standard 51
+Food Safe
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 11 --Body material
+Max depth
+Cable length
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+70m (230 ft)
+3m (9.8 feet)
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This ORP probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Platinum
+Teflon
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 11 --
+
+An ORP probe is a passive device that detects a current generated from the oxidation or
+reduction chemical substances in water. This current (which can be positive or negative)
+is very weak and cannot be detected with a multimeter, or an analog to digital converter.
+How often do you need
+to recalibrate an ORP probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that has
+generally weak levels of chemical reactions you will only need to recalibrate your probe
+once per year for the first 2 years. After that every ~6 months.
+If you are using the ORP probe in batch chemical manufacturing, industrial process, or
+in a solution that is known to have strong chemical reactions, then calibration should be
+done monthly or in extreme cases after each batch.
+V
+V
+0000
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 11 --
+
+AtlasScientific
+PWR
+RX
+TX
+225 	B	A
+ORP
+How to connect the
+industrial ORP probe
+The Atlas Scientific ™ Industrial ORP probe can be connected in several different ways.
+The following show two examples:
+Using our EZO Complete-ORP ™ you can easily connect the
+Gen 3 Industrial ORP probe, via the probes SMA connector.
+Gen 3 Industrial ORP probe
+with the SMA connector option.
+Gen 3 Industrial ORP probe
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial ORP probe, can
+be easily connected to our Industrial ORP Transmitter via
+the probes tinned leads.
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 11 --
+
+Remove the Industrial ORP probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the ORP probe must stay wet and cannot be
+allowed to dry out, this is why every Industrial ORP probe is shipped with a plastic cap
+containing ORP probe storage solution. The cap should remain on the probe until it is used.
+fi
+Long term storage
+When you are finished using the Industrial ORP probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has ORP probe storage
+solution within it. If not, just add some from the ORP probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 11 --
+
+---
+
+### https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/EQASOP-FieldCalibrat.pdf (chunk epa-sop-field-instrument-calibration-2010.pdf__91b16d25fd4a, score 0.717320659422439)
+
+ORDS MANAGEMENT «.sccccccsesees 15
+8.0. REFERENCES.sscssssscsccsvessessevesvasssssecuvesssssesspsusssstsesuessssssanessen 15
+Table 1 INSTRUMENT CALIBRATION LOG .......cesscseseseseeeee ceevevettevevevsvscanee 16
+
+OXYGEN SOLUBILITY
+EQASOP-FieldCalibrat
+Region 1 Calibration of
+Field Instruments
+
+Revision Number: 2
+Date: June 3, 1998
+
+' Revised January 19, 2010
+Page 4 of 18
+
+1.0 SCOPE AND APPLICATIONThe purpose of this standard operating procedure (SOP) is to provide a framework for calibrating
+field instruments used to measure water quality parameters for groundwater and surface water.
+Water quality parameters include temperature, pH, dissolved oxygen, specific conductance,
+oxidation/reduction potential [ORP], and turbidity. This SOP supplements, but does not replace,
+EPA analytical methods listed in 40 CFR 136 and 40 CFR 141 for temperature, dissolved
+oxygen, conductivity/specific conductance, pH and turbidity.
+
+This SOP is written for instruments that measure temperature, pH, dissolved oxygen, specific
+conductance, turbidity, and/or oxidation/reduction potential [ORP] and the probe readings for
+pH, dissolved oxygen, and specific conductance are automatically corrected for temperature.
+
+For groundwater monitoring, the instrument must be equipped with a flow-through-cell and the
+display/logger or computer display screen needs to be large enough to simultaneously contain the
+readouts of each probe in the instrument. Turbidity is measured using a separate instrument. It
+must not be measured in a flow-through-cell because the flow-through-cell acts as a sediment
+trap. This procedure is applicable for use with the EPA Region 1 Low Stress (low flow) Purging
+and Sampling Procedure for the Collection of Ground Water Samples from Monitoring Wells.
+
+2.0 HEALTH AND SAFETY WARNINGS
+
+Read all labels on the standards and note any warnings on the labels. Wear appropriate personal
+protection equipment (e.g., gloves, eye shields, etc.) when handling the standards. Ifnecessary,
+consult the Material Safety Data Sheets (MSDS) for additional safety information on the
+chemicals in the standards. .
+
+3.0 GENERAL
+
+All monitoring instruments must be calibrated before they are used to measure environmental
+samples. For instrument probes that rely on the temperature sensor (pH, dissolved oxygen,
+specific conductance, and oxidation/reduction potential [ORP]), each temperature sensor needs to
+be checked for accuracy against a thermometer that is traceable to the National Institute of
+Standards and Technology (NIST). Before any instrument is calibrated or used to perform
+environmental measurements, the instrument must stabilize (warm-up) according to
+
+manufacturer's instructions and must have no air bubbles lodged between the probe and probe
+guard.
+EQASOP-FieldCalibrat
+Region | Calibration of
+
+Field Instruments
+Revision Number: 2
+Date: June 3, 1998
+Revised January 19, 2010
+Page 5 of 18
+
+_ Most projects will require at least two standards to bracket the expected measurement range.
+
+This means that one standard is less than the expected value and one is higher. When an
+environmental sample measurement falls outside the calibration range, the instrument must be re-
+calibrated to bracket the new range before continuing measurements. Otherwise, the
+measurements that are outside the calibration range will need to be qualified.
+
+This SOP requires that the manufacturer's instruction manual (including the instrument
+specifications) accompany the instrument into the field.
+
+4.0 FREQUENCY OF CALIBRATION
+
+---
+
+### https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/EQASOP-FieldCalibrat.pdf (chunk epa-sop-field-instrument-calibration-2010.pdf__dc5fead69969, score 0.7111381097812709)
+
+ording to manufacturer’s instructions. .
+
+8. Record the calibration information on Table 1.
+
+Note: for projects where specific conductance is not a critical measurement it may be possible to
+calibrate with one standard in the range of the expected measurement.
+
+5.5 | OXIDATION/REDUCTION POTENTIAL (ORP)
+The oxidation/reduction potential is the electrometric difference measured in a solution betweenan inert indicator electrode and a suitable reference electrode. The electrometric difference is
+measured in millivolts and is temperature dependent.
+EQASOP-FieldCalibrat
+Region 1 Calibration of
+Field Instruments
+Revision Number: 2
+Date: June 3, 1998
+Revised January 19, 2010
+Page 12 of 18
+
+Calibration or Verification Procedure
+
+1. Allow the calibration standard (a Zobell solution: read the warning on the label before
+use) to equilibrate to ambient temperature. , .
+
+2. Remove the probe from its storage container and place it into the standard.
+
+3. Select measurement mode.
+4. Wait for the probe temperature to stabilize, and then read the temperature.
+
+"5, If the instrument is to be calibrated, do Steps 6 and 7. If the instrument calibration is to
+be verified, then go to Step 8. .
+
+6. Look up the millivolt (mv) value at this temperature from the millivolt versus
+temperature correction table usually found on the standard bottle or on the standard
+instruction sheet. You may need to interpolate millivolt value between temperatures.
+Select “calibration mode”, then “ORP”. Enter the temperature-corrected ORP value
+into the instrument.
+
+7. Select measurement mode. The readings should remain unchanged within
+manufacturer’s specifications. If they change, re-calibrate. If readings continue to
+
+change after re-calibration, try a new Zobell solution or consult manufacturer. Go to
+Step 9. .
+
+8. If the instrument instruction manual states that the instrument is factory calibrated, then
+- verify the factory calibration against the Zobell solution. If they do not agree within
+the specifications of the instrument, try a new Zobell solution. Ifit does not agree, the
+instrument will need to be re-calibrated by the manufacturer.
+
+9. After the calibration has been completed, rinse the probe with deionized water and
+store the probe according to manufacturer’s instructions. .
+
+10. Record the calibration information on Table 1.
+
+5.6. TURBIDITY
+
+The turbidity method is based upon a comparison of intensity of light scattered by a sample under
+defined conditions with the intensity of light scattered by a standard reference suspension. A
+EQASOP-FieldCalibrat
+Region 1 Calibration of
+
+Field Instruments
+Revision Number: 2
+Date: June 3, 1998
+Revised January 19, 2010
+Page 13 of 18
+
+turbidimeter is a nephelometer with a visible light source for illuminating the sample and one or
+more photo-electric detectors placed ninety degrees to the path of the light source. Note: the
+below calibration procedure is for a turbidimeter which the sample is placed into a cuvette.
+
+Some instruments will only accept one standard. For those instruments, the second, third, etc.,
+standards will serve as check points.
+
+Calibration Procedures
+
+1. Allow the calibration standards to equilibrate at the ambient temperature. The use of
+commercially available polymer primary standards (AMCO-AEPA-1) is preferred;
+however, the standards can be prepared using Formazin (read the warning on the label
+before use) according to the EPA analytical Method 180,1. Other standards may be
+used if they can be shown that they are equivalent to the previously mentioned
+standards.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__40490e0e9a9d, score 0.7107511470802385)
+
+tting diode, and one detector at 90-degree orientation to the light source.
+ORP 	Accuracy, ±5 mV. For guidance on Eh measurements using the platinum electrode, refer to NFM A6.5 and
+the manufacturer’s instructions.
+Air pressure 	Select instruments that incorporate an altimeter/barometer that measures to at least the nearest 1 mm Hg.
+1 Modify this list to meet the specific needs of the field effort-- 11 of 24 --

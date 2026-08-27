@@ -1,0 +1,302 @@
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__0663ce0e133d, score 0.7766073089970591)
+
+ and Formazin Turbidity Units
+(FTU). Neither unit is still in common use, due to lack of
+precision (JTU) and lack of specificity about instrumentation
+type (FTU).
+2ISO 7027 specifically defines the light source for FNU measurements as having a wavelength
+of 860 nm, with a bandwidth of 60 nm. The angle of the detector must be 90 degrees from
+incident light, plus or minus 2.5 degrees.
+
+-- 9 of 55 --Turbidity, Version 2.1 (9/2005) 	U.S. Geological Survey TWRI Book 9
+10—TBY
+Table 6.7-4. Reporting units corresponding to turbidity instrument designs
+[Parameter code numbers begin with a "P"; nm, nanometers; o, degree; ±, plus or minus;
+K, kelvin]
+Detector geometry
+Light wavelength
+White or broadband
+(with a peak
+spectral output
+of 400-680 nm)
+Monochrome
+(spectral output
+typically near infrared,
+780-900 nm)
+Single illumination beam light source
+At 90o to incident beam 	Nephelometric Turbidity Unit
+(NTU)1 (P63675)
+Formazin Nephelometric
+Unit (FNU)2 (P63680)
+At 90o and other angles. An
+instrument algorithm uses a
+combination of detector
+readings, which may differ
+for values of varying
+magnitude.
+Nephelometric Turbidity Ratio
+Unit (NTRU) (P63676)
+Formazin Nephelometric
+Ratio Unit (FNRU)
+(P63681)
+At 30o ± 15 to incident beam
+(backscatter)
+Backscatter Unit (BU)
+(P63677)
+Formazin Backscatter
+Unit (FBU) (P63682)
+At 180o to incident beam
+(attenuation)
+Attenuation Unit (AU)
+(P63678)
+Formazin Attenuation
+Unit (FAU) (P63683)
+Multiple illumination beam light source
+At 90o and possibly other
+angles to each beam. An
+instrument algorithm uses a
+combination of detector
+readings, which may differ
+for values of varying
+magnitude.
+Nephelometric Turbidity
+Multibeam Unit (NTMU)
+(P63679)
+Formazin Nephelometric
+Multibeam Unit
+(FNMU) (P63684)
+1EPA Method 180.1 defines the optical geometry for NTU measurements. The detector
+angle must be 90o ± 30 to the incident light beam. The light source must be a tungsten
+lamp with color temperature 2,200 - 3,000 K. (Source: U.S. Environmental Protection
+Agency, 1993)
+2ISO 7027 defines the optical geometry for FNU measurements. The detector angle must
+be 90o ± 2.5 to the incident light beam. The light source must be a light-emitting diode
+(LED) with wavelength 860 ± 60 nm. (Source: International Organization for Standardiza-
+tion, 1999).
+
+-- 10 of 55 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__5bf774f777a4, score 0.7761396740252104)
+
+Units; FNU, Formazin Nephelometric Units; N/A, not applicable;<, less than; >,
+equal to or greater than]
+Turbidity
+Reading USGS 	ASTM EPA 180.1
+(NTU)
+GLI Method 2
+(FNMU)
+ISO 7027
+(FNU)
+0–<1 	0.05 	0.05 	0.05 	0.05 	0.01
+1–<10 	.1 	.1 	.1 	.1 	.1
+10–<40 	1 	1 	1 	1 	1
+40–<100 	1 	1 	5 	5 	N/A
+100–<400 	10 	10 	10 	10 	N/A
+400–<1,000 	10 	10 	50 	50 	N/A
+>1,000 	50 	50 	100 	100 	N/A
+
+-- 51 of 55 --Turbidity, Version 2.1 (9/2005) 	U.S. Geological Survey TWRI Book 9
+52—TBY
+6.7.6 	TROUBLESHOOTING
+Consult the instrument manufacturer for additional guidance if the
+suggestions shown on table 6.7–7 do not remedy the problem
+encountered.
+Table 6.7–7. Troubleshooting guide for field turbidity measurement
+Symptom 	Possible cause and corrective action
+Erratic reading 	• Check voltage of the batteries: replace weak batteries with new
+batteries.
+• Condensation on cell wall of static turbidimeter: see "Moisture"
+symptom.
+• Bubbles in sampling system or on optical surface of sensor: tap
+sample line to flowthrough cell or chamber systems to dislodge
+bubbles; adjust degassing apparatus; remove bubbles on
+sonde/sensor system by agitating the unit repeatedly or by
+activating the wiper mechanism.
+Unusually high or low
+turbidity
+• Bubbles in sampling system or on optical surface of sensor:
+see "Erratic reading" symptom.
+• Fouling of optical surfaces. Clean with lint-free cloth or
+toothbrush.
+• Wiper mechanism is "parking" on optical surfaces. Use software
+to reset wiper, or replace wiper mechanism (may require factory
+repair).
+• Inappropriate turbidimeter for environmental conditions. See
+tables 6.7–1, 6.7–2, and 6.7–3, or figure 6.7–2 to determine most
+appropriate turbidimeter type.
+Calibration value "out of
+range"
+• Contaminated calibrant solution or value entered incorrectly.
+Verify intended calibrant value and start over. If problem
+persists, try using a different batch of calibrant solution.
+Readings first appear stable,
+then begin to increase
+inexplicably
+• Check for moisture on cell wall: see "Moisture" symptom.
+Moisture condensation on
+cell wall (static turbidimeter
+or spectrophotometer)
+• Wipe cell dry with soft, lint-free cloth.
+• Apply a thin veneer of silicon oil (first check instrument
+manufacturer’s instructions).
+• Add gas sweep to system.
+Blank samples or reference
+material standards do not
+read accurately
+• Check that the cells are oriented as instructed.
+• Check age/expiration of calibrant solutions.
+• Check accuracy against that of another instrument.
+
+-- 52 of 55 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0, score 0.7539066076295473)
+
+ity ranges. For example, although the maximum
+turbidity based on factory settings is just over 1,000 FNU, the YSI
+6026 can be factory adjusted to read turbidities up to 4,000 FNU,
+allowing readings to be obtained that would otherwise be off scale.
+The adjustment, however, is specific to the individual instrument, with
+calibration being non-linear between 1,000 and 4,000 FNU; hence,
+
+-- 42 of 55 --Chapter A6. Field Measurements 	Turbidity, Version 2.1 (9/2005)
+TBY—43
+readings in this high range are not reproducible between instruments
+(M. Lizotte, YSI Environmental, written commun., May 2003). Any
+such adjustments made to an instrument’s operating range must be
+documented in the instrument’s logbook and in applicable field notes.
+The following procedures apply to in situ determination and to
+determination of turbidity in a flowthrough chamber:
+1. 	Calibrate the instrument in the laboratory or office using a cali-
+bration solution before leaving for the field (see section 6.7.2).
+2. 	At the field site, verify that the instrument has retained its
+calibration within 5 percent. If it fails verification, then the
+instrument must be recalibrated.
+3. 	Follow procedures for selection of surface-water and ground-
+water sampling locations and for dynamic (Procedure A) or
+flowthrough-chamber (Procedure B) field measurements, as
+described in NFM 6.0.
+Procedure A: Dynamic measurement—Immerse the multi-
+parameter sonde or single turbidity sensor in the water body.
+Procedure B: Flowthrough chamber (ground water
+only)—Secure chamber cover over sonde/sensor to form an
+air-tight and water-tight seal. Discharge the first sample ali-
+quot to waste, then open the connection to the flowthrough
+chamber and pump a sample from the water source to the
+flowthrough chamber according to instructions in NFM 6.0.3.
+Dynamic determination generally reflects the dynamic
+conditions in a water body more accurately than static
+measurements of discrete samples because it avoids
+problems of particle settling. Instrumentation of this
+type, however, is not approved by the USEPA for
+evaluating drinking water.
+
+-- 43 of 55 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__f9ac2c6ac6c1, score 0.7538079372888511)
+
+ ratio of the light received by the different detectors.
+Furthermore, because turbidity is an optical measurement, the
+absorption of light by colored particles or by a colored matrix can
+cause a reduction in the apparent turbidity. The negative effect
+from color is minimized by using near-infrared light frequencies
+as the light source (tables 6.7-1, 6.7-3) or ratiometric techniques.
+
+-- 8 of 55 --Chapter A6. Field Measurements 	Turbidity, Version 2.1 (9/2005)
+TBY—9
+DATA STORAGE 	6.7.1.B
+To ensure that USGS turbidity data can be understood and interpreted
+properly within the context of the instrument used and site conditions
+encountered, data from each instrument type will be stored and
+reported in the National Water Information System (NWIS) using
+parameter codes and measurement reporting units that are specific to
+the instrument type, with specific instruments designated by the
+method code. The respective measurement units, most of which also
+are in use internationally, are listed and defined in table 6.7-4.
+X 	The designations NTU, NTRU, BU, AU, and NTMU signify the
+use of a broad spectrum incident light in the wavelength range
+400-680 nanometers (nm).
+X 	The designations FNU, FNRU, FBU, FAU, and FNMU
+generally signify an incident light in the range between 780-
+900 nm.2
+These reporting units are equivalent when measuring a calibration
+solution (for example, formazin or polymer beads—see section
+6.7.2), but their respective instruments may not produce equivalent
+results for environmental samples. Information for specific
+instruments is maintained at:
+http://water.usgs.gov/owq/turbidity_codes.xls
+The term “turbidity unit,” as used in this manual, refers generically to
+turbidity measured by instruments of undefined design. Note that
+manufacturers might, for the foreseeable future, retain the general use
+of the measurement unit “NTU” when referring to calibrants and
+equipment.
+TECHNICAL NOTE (2): Historically, reporting units included
+Jackson Turbidity Units (JTU) and Formazin Turbidity Units
+(FTU). Neither unit is still in common use, due to lack of
+precision (JTU) and lack of specificity about instrumentation
+type (FTU).
+2ISO 7027 specifically defines the light source for FNU measurements as having a wavelength
+of 860 nm, with a bandwidth of 60 nm. The angle of the detector must be 90 degrees from
+incident light, plus or minus 2.5 degrees.
+
+-- 9 of 55 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__d26b4baa6e12, score 0.748740818186147)
+
+ a tungsten
+lamp with color temperature 2,200 - 3,000 K. (Source: U.S. Environmental Protection
+Agency, 1993)
+2ISO 7027 defines the optical geometry for FNU measurements. The detector angle must
+be 90o ± 2.5 to the incident light beam. The light source must be a light-emitting diode
+(LED) with wavelength 860 ± 60 nm. (Source: International Organization for Standardiza-
+tion, 1999).
+
+-- 10 of 55 --Chapter A6. Field Measurements 	Turbidity, Version 2.1 (9/2005)
+TBY—11
+INSTRUMENT SELECTION AND 	6.7.1.C
+MAINTENANCE
+Owing to potential differences in turbidity readings resulting from
+different instrument types, it is critical that when selecting
+turbidimeters, investigators carefully consider the objectives of the
+study and the uses of the resulting data. Considerations include:
+X 	Whether the program will be regulatory in nature (typically
+applies in a drinking water context).
+X 	The expected range in turbidity and the portions of that range
+that will be the most important to measure with accuracy.
+X 	The need for consistency of method and comparability among
+data sources (whether data from one site need to be comparable
+with data from another site or with historical data).
+X 	Which potential interferences are the most important to quantify
+or otherwise take into account (tables 6.7-1 through 6.7-4).
+Within the United States, turbidity is regulated by the U.S.
+Environmental Protection Agency (USEPA) only for water that is
+intended for use as drinking water. In some cases, States use turbidity
+for regulations associated with the Clean Water Act (U.S.
+Environmental Protection Agency, 2002a). To date, the USEPA has
+approved the following three methods to measure turbidity in drinking
+water: (1) EPA Method 180.1 (U.S. Environmental Protection
+Agency, 1993), based on white-light nephelometric instrument
+designs; (2) GLI Method 2 (U.S. Environmental Protection Agency,
+1999; Great Lakes Instrument Company, undated), which uses a dual-
+beam and dual detector technology with an 860 nm light-emitting
+diode (LED) light source to compensate for color and reduce erratic
+readings; and (3) Hach Method 10133 (U.S. Environmental Protection
+Agency, 2002b), an inline process-stream method that is unlikely to
+be used within USGS. Owing to a nonlinear response of these
+technologies at high turbidities, their applicable range in drinking
+water is from 0 to 40 turbidity units. Instrument designs that conform
+to EPA Method 180.1 or GLI Method 2 may perform poorly
+(including nonlinear responses) at turbidities that commonly occur in
+surface-water bodies (greater than 40 turbidity units). Also, white-
+light instruments typically consume more power than monochrome
+instruments, so access to the regional power grid is commonly
+required. For these methods, waters with turbidities greater than 40
+
+-- 11 of 55 --

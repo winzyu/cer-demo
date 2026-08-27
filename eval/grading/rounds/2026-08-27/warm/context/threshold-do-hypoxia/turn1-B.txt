@@ -1,0 +1,249 @@
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__4c5e9d344235, score 0.8084740194816677)
+
+
+sions of NFM chapters are available in the USGS Publications
+Warehouse at https://pubs.er.usgs.gov. Comments, questions,
+and suggestions related to the NFM can be addressed to
+nfm@usgs.gov.
+1.1 Overview of Dissolved Oxygen
+The concentration of DO in water is affected by many
+factors, including ambient temperature, atmospheric pressure,
+and ion activity (ionic strength of the water body). Accuratedissolved-oxygen data are essential for understanding and
+documenting effects on environmental water resources that
+result from natural phenomena and human activities. Sources
+of DO in water include atmospheric aeration and photo-
+synthetic activities of aquatic plants. Sinks of DO in water
+include respiration, aerobic decomposition processes, ammo-
+nia nitrification, and other chemical and biological reactions.
+Many chemical and biological reactions in groundwater and
+surface water depend on the amount of available oxygen.
+The presence of DO in aquatic systems is necessary for the
+survival and growth of many aquatic organisms and is used as
+an indicator of the health and geochemical quality of surface
+water and groundwater systems.
+DISSOLVED OXYGEN: Molecular oxygen (oxygen gas)
+dissolved in water.
+Standard procedures used by the USGS to determine
+concentrations of DO in surface water and groundwater involve
+the use of luminescence-based optical sensors, or spectro-
+phoometric methods of analysis. Before the advent in the 2000s
+of optical sensors for DO measurement, the amperometric
+(Clark cell) sensor was used. Optical sensors have replaced
+the amperometric type of sensor. The amperometric sensor
+is an acceptable method for use in the measurement of DO;
+however, barring any project-specific requirements, optical
+sensors should be considered the standard field method. The
+iodometric (Winkler) method is no longer used by the USGS
+for routine measurement of DO at field sites, but remains an
+acceptable method for verifying the results of DO measure-
+ments made with other methods.
+The selection of field equipment and measurement
+methods takes into consideration (1) whether equipment
+will be used at multiple and discrete locations and times or
+be deployed at a single location over a period during which
+it will be unattended, (2) anticipated environmental condi-
+tions, (3) the specific data-quality objectives of the data-
+collection program, and (4) specific program objectives. The
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__aef58b3384c0, score 0.7944810589230757)
+
+-- 17 of 44 --10 	Chapter A6.2. Dissolved Oxygen
+6. 	Using a calibration-checked barometer, determine the
+ambient atmospheric pressure to the nearest 1 mm
+of mercury.
+7. 	Using oxygen-solubility table 6.2–2 (at end of chapter)
+or the online software DOTABLES (https://water.usgs.
+gov/software/DOTABLES/), determine the DO-satura-
+tion value at the measured temperature and atmospheric
+pressure of the calibration water. (Refer to section 5.0
+and table 6.2–4 (at end of chapter) for salinity correc-
+tions; salinity corrections should not be necessary for
+tap water.)
+8. 	When the instrument readings are stable, adjust the
+instrument to the DO-saturation value determined from
+the oxygen-solubility table.
+• If an instrument that allows calibration simply to a
+100-percent saturation condition is used, all that may
+be needed is to provide the ambient atmospheric
+pressure for the instrument to determine (with
+internal software) the resulting DO concentration.
+If the instrument has an internal barometer, it
+may only be necessary to put the instrument into
+calibration mode and check the calibration once it
+has been completed.
+9. 	Verify that the instrument reading is within ±0.2 mg/L or
+2 percent of the computed saturation value, or use more
+stringent accuracy criteria that reflect the data-quality
+requirements of the project.
+10. 	After all the steps above have been followed, the DO
+sensor is calibrated and ready for use.
+11. 	Record the calibration information in instrument
+log books and transfer calibration data into elec-
+tronic records or onto paper field forms at the time
+of calibration.
+For accurate calibration, ensure that the water is
+100-percent saturated with oxygen.
+2.3 Measurement
+The solubility of oxygen in water depends on the
+temperature and ionic strength of the water. The higher the
+atmospheric pressure on the water’s surface and the lower the
+temperature and conductivity of the water, the more oxygen
+will be dissolved in the water.
+Degassing, mineral precipitation, and other chemical,
+physical, and biological reactions can cause the DO concentra-
+tion of a water sample to change substantially within minutes
+after sample collection, especially if the water sampled was
+originally isolated from the atmosphere as in the case of
+groundwater or water in a deep lake or reservoir.
+The solubility of oxygen in water decreases as salinity
+increases. Correction factors for salinity typically are applied
+after measuring DO for single-point samples; however, for
+DO measurements made with multiparameter instruments
+that include calibrated specific-conductance sensors, it is
+wise to activate the instrument’s internal salinity correction
+algorithms. Information that pertains to oxygen solubility and
+salinity is given in section 5.0, including the link to an online
+program that generates tables of DO solubility values and
+(or) salinity correction factors over a range of user-specified
+temperature, atmospheric pressure, and salinity or specific
+conductance (https://water.usgs.gov/software/DOTABLES/).
+2.3.1 Surface Water
+Standard determinations of DO in riverine surface water
+represent the cross-sectional median or mean DO concentra-
+tion at the time of observation.
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__57fe7a67fc10, score 0.7872726729561498)
+
+r at the same temperature
+— marine systems sit closer to the hypoxia threshold by default.
+Pollution relevance: The single most important indicator of aquatic health. Organic pollution
+consumes oxygen (biochemical oxygen demand). Watch both the absolute value and the shape
+of the daily curve — large swings signal eutrophication; a sustained sag signals an oxygen-
+demanding discharge.
+
+-- 1 of 7 --Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L
+hypoxia · ~0 anoxia.
+ORP (Oxidation-Reduction Potential)
+Measures: The water’s net tendency to oxidize or reduce — effectively, the “electron pressure.”
+Units: mV.
+What drives it: The dominant electron acceptor present. Oxygen-rich water reads strongly
+positive; as oxygen is consumed, the system shifts to nitrate, then manganese/iron, then
+sulfate, driving ORP downward and eventually negative.
+Fresh vs. salt: Healthy aerobic water typically reads +200 to +400 mV. Negative values
+indicate reducing, anoxic, or septic conditions. Seawater’s high ionic strength makes absolute
+readings less comparable between sites — trend matters more than the raw number.
+Pollution relevance: ORP is the early-warning twin of DO. Because it responds to the chemical
+environment, it often begins falling before DO bottoms out. A drop toward or below zero is a
+strong signal of organic loading, sewage, or decomposition.
+Electrical Conductivity (EC)
+Measures: The water’s ability to carry current — a proxy for total dissolved ions/salts. Units:
+μS/cm (report temperature-corrected “specific conductance” at 25°C).
+What drives it: Dissolved ion content. Salinity dominates in marine water; in freshwater, EC
+reflects geology, runoff, road salt, and discharges.
+Fresh vs. salt: Freshwater and seawater differ by roughly 1,000× in EC. This makes EC the
+primary tool for identifying the source of a change — freshwater input vs. saline input vs. an
+ionic discharge.
+Pollution relevance: Sudden EC shifts flag saltwater intrusion, road-salt runoff,
+industrial/chemical discharge, or sewage. In estuaries, EC normally tracks the tide — separate
+that rhythm from genuine events.
+pH
+Measures: Acidity/alkalinity on a logarithmic scale of hydrogen-ion activity. Units: pH (unitless).
+What drives it: The CO₂–carbonate balance. Photosynthesis removes CO₂ and raises pH;
+respiration/decomposition adds CO₂ and lowers pH. Also affected by acidic/alkaline inputs.
+Fresh vs. salt: Freshwater (typically 6.5–8.5) is poorly buffered and naturally variable.
+Seawater (~8.0–8.2) is strongly carbonate-buffered — so any meaningful pH excursion in
+marine water is significant and worth investigating.
+Pollution relevance: Acidic inputs (acid mine drainage, certain industrial effluent) crash pH;
+alkaline inputs (concrete/construction washwater, some industrial discharge) raise it. Large
+
+-- 2 of 7 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__072c8e8d2f1e, score 0.7671053534973714)
+
+trics, Inc., 2012, Oxygen, dissolved: CHEMetrics,
+Inc., web page accessed January 6, 2020, at
+https://www.chemetrics.com/product-category/test-kits/
+oxygen-dissolved/.
+Fishman, M.J., and Friedman, L.C., eds., 1989, Methods for
+determination of inorganic substances in water and fluvial
+sediments (3d ed.): U.S. Geological Survey Techniques of
+Water-Resources Investigations, book 5, chap. A1, 545 p.,http://pubs.usgs.gov/twri/05a01/report.pdf.
+Gilbert, T.W., Behymer, T.D., Castaneda, H.B., 1982, Deter-
+mination of dissolved oxygen in natural and wastewaters:
+American Laboratory, p. 119–134. (Also available at
+http://www.expotechusa.com/catalogs%5CChemetric
+s%5Ccatalogs/Oxygen_Dissolved_2004.pdf, accessed
+January 16, 2020.)
+Hach, Hach LDO FAQ: Hach web page accessed
+January 6, 2020, at https://www.hach.com/LDOFAQ.
+Hem, J.D., 1985, Study and interpretation of the chemical
+characteristics of natural water (3d ed.): U.S. Geological
+Survey Water-Supply Paper 2254, p. 155–156,
+http://pubs.usgs.gov/wsp/wsp2254/.
+In-Situ Inc., 2016, Aqua TROLL® 600 multiparameter
+sonde Operator’s Manual: In-Situ Inc. web page accessed
+January 6, 2020, at https://in-situ.com/pub/media/support/
+documents/Aqua-TROLL-600-Manual.pdf.
+Kane, J.A., 1999, Improved optical sensor for monitoring
+dissolved oxygen: Tech Briefs Media Group, KSC-11998,
+accessed January 6, 2020, at https://www.techbriefs.com/
+component/content/article/tb/supplements/ptb/briefs/30037.
+Rounds, S.A., Wilde, F.D., and Ritz, G.D., 2013 (ver. 3.0),
+Dissolved oxygen: U.S. Geological Survey Techniques of
+Water-Resources Investigations, book 9, chap. A6.2, 55 p.,
+https://doi.org/10.3133/twri09A6.2.
+U.S. Geological Survey, 2002, Water-quality field methods/
+National Field Manual for the Collection of Water-Quality
+Data: U.S. Geological Survey Office of Water Quality
+Technical Memorandum 2002.13, accessed March 26, 2019,
+at https://water.usgs.gov/admin/memo/QW/qw02.13.html.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__116a7989b64e, score 0.7650834893210441)
+
+
+• Hach specifies a 2-year life of the sensor cap of its
+LDO (Luminescent Dissolved Oxygen) sensor.
+• YSI Environmental (EXO) specifies annual replace-
+ment of the sensor cap for its optical DO sensor.
+• In-Situ, Inc., advises that the RDO (Rugged Dissolved
+Oxygen) sensor cap has a 2-year life.
+• Thermo Scientific specifies a 365-day lifespan for the
+RDO cap once it is installed on the RDO sensor.-- 11 of 44 --
+
+4 	Chapter A6.2. Dissolved Oxygen
+Table 6.2–1. 	Equipment and supplies for the optical sensor method of determining dissolved-oxygen concentration (modify this list to
+meet specific needs of the field effort).
+[[DO, dissolved oxygen; mg/L, milligrams per liter; NFM, National Field Manual for the Collection of Water-Quality Data; –, minus; +, plus; °C, degrees
+Celsius; ±, plus or minus; NIST, National Institute of Standards and Technology; M, molar]
+DO instrument should have a digital temperature and DO readout display and have:
+• Automatic temperature compensation
+• An operating range in water with a temperature range of at least –5 to 45 °C
+• Capability to measure DO concentrations from 0.01 to 20 mg/L (instrument capability can range to 50 mg/L)
+• Minimum display resolution of 0.01 mg/L DO
+• Calibrated accuracy within ±0.1 mg/L DO
+Calibration equipment, per manufacturer’s recommendation
+Pocket altimeter-barometer or DO instrument with built-in barometer; barometer measures to nearest 1 millimeter of mercury and its
+calibration has been checked before use or at least annually against a NIST-traceable barometer or the uncorrected barometric pressure
+obtained from a National Weather Service location at the same altitude as calibration or calibration check
+Thermometer (see NFM chapters A6.1 and A6.8 for calibration-check criteria)
+Zero-DO solution. Dissolve approximately 2 grams sodium sulfite in 1 liter of deionized water (0.016–M solution, prepared fresh just
+before the field trip or during week of use)1
+Flow-through chamber for determining groundwater DO concentration, if downhole sensor deployment is impractical
+Oxygen-solubility table (table 6.2–2, at end of chapter), or access to table at https://water.usgs.gov/software/DOTABLES/
+Waste-disposal containers
+Spare batteries
+Calibrated specific-conductance sensor, if measurement is being made in a saline or brackish system
+Calibration and maintenance log books for DO instrument and barometer
+1Take special note of the manufacturer’s guidance for your sensor. Some manufacturers supply the zero-DO solution required or document the specific
+instructions for preparing the zero-DO solution recommended for their sensors, including an alternative by which nitrogen gas is forced into tap or deionized
+water to produce a zero-DO solution. (Consult with the manufacturer’s division of technical support.)
+
+-- 12 of 44 --

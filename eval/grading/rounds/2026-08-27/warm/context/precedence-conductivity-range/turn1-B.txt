@@ -1,0 +1,275 @@
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__361ef9509206, score 0.7652658437424139)
+
+he following equation:
+ = K 	G	cell 	(1)
+where 𝐾cell is the cell constant (in units of cm-1). The cell con-
+stant is the ratio of the distance between two electrode plates
+(d) and their area (A). The units of electrical conductivity are
+siemens per centimeter (S/cm), which is the equivalent of
+mhos per centimeter (mhos/cm). Most values reported prior to
+1971 were in units of mhos per centimeter.Electrical conductivity increases by 0.5 to 3 percent per
+degree Celsius and varies depending on the ionic species
+present (Robinson and Stokes, 1970; McCleskey, 2013). For
+natural waters, conductometric measurements are typically
+used to estimate the concentrations of total dissolved solids
+(TDS); therefore, the electrical conductivity is reported at
+25 °C (κ25 °C, which is equivalent to specific conductance), to
+facilitate this estimation of TDS by removing the effects of
+temperature. The value of κ25 °C is typically calculated by using
+the following equation:
+κ
+κ
+α
+25 1 	25
+° 	= + 	− 	°
+C t 	C	( 	) (2)
+where α is the temperature-compensation factor and t is the
+measured temperature in degrees Celsius. Modern specific
+conductance field meters typically have preprogrammed
+temperature-compensation factors (α) and report specific
+conductance (or electrical conductivity) at 25 °C (κ25 °C).
+Most specific conductance meters utilize either linear
+(0.019–0.020 per °C) or nonlinear (International Organiza-
+tion for Standardization, 1985) temperature-compensation
+algorithms that are applicable for most natural waters. The
+temperature compensation used is likely described in the
+meter’s manual or can be determined by using standard
+solutions and the method described by McCleskey (2013).
+Conductance and temperature can be measured accurately
+with modern instrumentation, and temperature compensation
+is typically accurate to ±5 percent for water in the range from
+5 to 35 ºC and whose pH is between 4 and 11. For low-pH
+(pH <4) waters, using the standard temperature-compensation
+factors can result in κ25 °C errors as large as 50 percent, because
+the transport properties of the hydrogen ion are different from
+those of most other ions, and the hydrogen ion contributes sub-
+stantially to the electrical conductance at low pH (McCleskey,
+2013). For low-pH waters, temperature corrections may
+represent the largest source of error. A temperature-compen-
+sation method applicable to low-pH waters is described in
+section 4.3 below and by McCleskey (2013). No temperature-
+compensation method is available for waters with pH greater
+than 11; therefore, the specific conductance in high-pH waters
+should be checked by measuring at ambient temperature and
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__05c228f6e257, score 0.7551242678408866)
+
+f check standards should be
+within ±5 μS/cm for measurements ≤100 μS/cm
+or ±3 percent for measurements >100 μS/cm.
+Recalibrate if necessary.
+2. 	Install the specific conductance probe.
+a. 	For measurement in a downhole system—
+i. 	Lower the probe to the sampling point.
+ii. 	Remove air trapped in the conductiv-
+ity cell by gently moving the probe up
+and down under the water; read the
+meter display.-- 18 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__ddc94df81b4f, score 0.7528414532960398)
+
+-- 21 of 24 --14 	Chapter A6.3. Specific Conductance
+in microsiemens per centimeter (μS/cm) where the ratio is
+expected to be between 0.5 and 0.9 (Hem, 1985).
+TD 	mg/L
+specific conductance in μS/cm
+S in  0.5 to 0.9 	(3)
+Measurements of specific conductance are commonly used
+to estimate the salinity of water.
+Acknowledgments
+The information included in the U.S. Geological Survey
+(USGS) National Field Manual (NFM) is based on existing
+manuals, various reference documents, and a broad spectrum
+of expertise provided by USGS colleagues. Authors of previ-
+ous versions of NFM chapter A6.3 were D.B. Radtke, J.V.
+Davis, and F.D. Wilde, whose expertise and integrity provided
+the groundwork for this and future versions of this chapter.
+The persistence and spirit that all of our USGS colleagues
+brought to the development of a national field manual were
+invaluable.
+The following USGS colleagues provided detailed techni-
+cal content and reviews that improved the quality of this report:
+R. Blaine McCleskey, Gerolamo Casile, Joseph Domagalski,
+Michael Manning, Cherie Miller, Michael Rosen, Stanley
+Skrobialowski, and Teri Snazell. Editorial and production
+assistance from Marilyn Billone, Sandy Cooper, Elizabeth
+Good, Cathy Knutson, Katharine Schindler, and Dale Simmons
+is greatly appreciated. These individuals contributed to the
+accuracy, quality, and usability of the NFM, and demonstrated
+much patience as we traversed the difficult task of developing
+the new format.
+Special thanks are extended to Franceska Wilde (USGS),
+who led the effort for the NFM from its inception until her
+retirement in 2014; the USGS NFM Steering Committee
+(Gerolamo Casile, Michael Manning, Cherie Miller, Callie
+Oblinger (retired), Timothy Oden, Lisa Olsen, Michael Rosen,
+and Stanley Skrobialowski); Cherie Miller, who led the effort
+from 2016 to 2018; and Gerolamo Casile, who assumed
+responsibility for the NFM in 2018.
+References Cited
+Ball, J.W., and Nordstrom, D.K., 1991, User’s manual for
+WATEQ4F, with revised thermodynamic data base and
+test cases for calculating speciation of major, trace, and
+redox elements in natural waters (ver. 2.0): U.S. Geological
+Survey Open-File Report 91–183, 189 p., accessed
+September 11, 2017, at https://pubs.er.usgs.gov/publication/
+ofr91183.
+Hem, J.D., 1982, Conductance—A collective measure of
+dissolved ions, in Minear, R.A., and Keith, L.H., eds., Water
+analysis—v. 1 Inorganic species, part 1: Orlando, Fla., Aca-
+demic Press, Inc., p. 137–161.
+Hem, J.D., 1985, Study and interpretation of the chemical
+characteristics of natural water (3d ed.): U.S. Geological
+Survey Water-Supply Paper 2254, 264 p., accessed
+September 11, 2017, at https://pubs.usgs.gov/wsp/wsp2254/.
+International Organization for Standardization, 1985,
+International Standard ISO–7888, Water quality—
+Determination of electrical conductivity: Geneva,
+Switzerland, International Organization for Standardization,
+6 p.
+Lewis, E.L., 1980, The practical salinity scale 1978 and its
+antecedents: IEEE Journal of Oceanic Engineering, v. 5,
+no. 1, p. 3–8. [Also available at https://doi.org/10.1109/
+JOE.1980.1145448.]
+Lind, C.J., 1970, Specific conductance as a means of esti-
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__2cade3723a66, score 0.7456663285587875)
+
+tergents for many
+hours without damage.
+Figure 6.3–1. 	Diagram
+showing general guidelines
+for selecting an electrical
+conductivity probe with
+the optimum cell constant.
+Modified from chart in the
+YSI Model 3200 Operations
+Manual (YSI Incorporated,
+1999, p. 43). Definitions: cm-1,
+per centimeter; CO2, carbon
+dioxide; μS/cm at 25 °C,
+microsiemens per centimeter
+at 25 degrees Celsius.
+
+-- 12 of 24 --3.0 Calibration 	5
+• When additional cleaning is required, soak the probe
+in 5-percent volume per volume (v/v) hydrochloric
+acid for as long as 2 hours and then rinse thoroughly
+with DIW. Check the manufacturer’s recommenda-
+tions before using acid.
+• Caution: Platinum and platinum-iridium electrodes
+should not be cleaned in nitric acid (HNO3), aqua
+regia, or any other solution that is known to etch
+platinum or gold.
+Consult your instruction manual for specific storage
+instructions. Most conductivity probes, including probes with
+graphite electrodes, can be stored clean and dry; however,
+probes on multiparameter sondes are required to be stored
+in water (typically tap water) to prevent drying out of other
+sensors. Storage in water is acceptable while the probe is
+in use.
+3.0 	Calibration
+Specific conductance measurements are only as good
+as the calibration itself. Several factors must be considered
+when calibrating the meter. Thermal expansion of the con-
+ductivity cell can affect the cell constant; however, the cell
+constants (𝐾cell) of modern field probes are generally stable
+from 0 to 100 °C. Most conductivity standards are potassium
+chloride (KCl) solutions, and the linear (0.019–0.020) and
+nonlinear (International Organization for Standardization,
+1985) temperature-compensation factors (α) will produce
+reliable calibrations from 5 to 35 °C. Caution should be
+used when calibrating at temperatures greater than 35 °C,
+however, because the commonly used nonlinear (International
+Organization for Standardization, 1985) temperature compen-
+sation deviates substantially when applied to KCl solutions.
+Therefore, if a modern conductivity probe that expands
+minimally with temperature is used and the temperature of the
+water to be measured is between 5 and 35 °C, the temperature
+of the calibration solutions (either laboratory or in situ) is not
+expected to significantly affect the measurement of specific
+conductance of samples in the field.
+Conductivity standards are susceptible to contamination
+or dilution from residual solutions, including rinse water, and
+each calibration should be done with care. Low-conductivity
+standards (<200 μS/cm) are especially susceptible to con-
+tamination. Calibration in the laboratory prior to field
+measurement, for both specific conductance meters and
+multiparameter sondes, is recommended because the tempera-
+ture is regulated and the standard solutions are less susceptible
+to contamination.
+Specific conductance meters must be checked or calibrated
+before every field trip to ensure that the meter and probe
+are working properly. The accuracy of specific conductance
+measurements should be checked in the laboratory and in the
+field by conducting measurements on standards whose specific
+conductance is near the expected specific conductance of the
+sample. Measurements of specific conductance standards that
+are within ±5 μS/cm of the certified values for measurements
+≤100 μS/cm or ±3 percent of the certified values for measure-
+ments >100 μS/cm are considered accurate and do not warrant
+recalibration. Because specific conductance meters typically
+maintain their calibration, frequent recalibration is generally
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__f9d002693709, score 0.7368082144614941)
+
+cted specific conductance of the
+sample. Measurements of specific conductance standards that
+are within ±5 μS/cm of the certified values for measurements
+≤100 μS/cm or ±3 percent of the certified values for measure-
+ments >100 μS/cm are considered accurate and do not warrant
+recalibration. Because specific conductance meters typically
+maintain their calibration, frequent recalibration is generallyunnecessary and may not improve data accuracy. If calibration
+in the field is required, make certain the temperature of the
+standards is stable and between 5 and 35 °C.
+Specific conductance meters utilize either a one- or a
+multipoint calibration procedure. Both calibration proce-
+dures work well and the instruction manual accompanying
+the specific conductance meter as well as the NFM should be
+followed closely. Record and track the cell constant (one-point
+calibration) or slope (multipoint calibration), as deviations can
+be used to identify inaccurate calibrations or faulty equipment.
+To verify that the specific conductance meter is responding
+properly at low values of specific conductance, check the zero
+response of the dry conductivity cell in air or DIW. The mea-
+sured specific conductance of DIW should be <3 μS/cm.
+Specific conductance meters are typically calibrated
+with KCl solutions of known concentration that are traceable
+to National Institute of Standards and Technology (NIST).
+Specific conductance standards with certificates of analyses
+(NIST traceable) with values between 50 and 50,000 μS/cm
+are available from USGS One Stop.1 Electrical conductivi-
+ties of highly accurate KCl standards (0.01, 0.1, and 1.0 mole
+per kilogram [mol/kg]) were determined by Pratt and others
+(2001) and are shown in table 6.3–2. Extreme care should be
+used when calibrating with dilute (<200-μS/cm) solutions,
+as small amounts of contaminants or minor dilution can
+substantially affect the calibration. Triple rinsing with DIW
+and calibration standards is required. In addition to conduc-
+tivity standards, the USGS Quality Systems Branch (QSB)
+provides a variety of standard reference samples (SRSs),
+prepared from natural waters, for quality-assurance testing and
+measurements of specific conductance.
+3.1 One-Point Calibration—Determination of
+the Cell Constant
+Many specific conductance meters and multiparameter
+sondes utilize a one-point calibration for measurement of
+specific conductance. Calibration of specific conductance
+meters using a one-point calibration involves determination
+of the cell constant (𝐾cell) by measuring the conductance (G)
+of a standard solution with a known conductivity (κ) (see
+equation 1, where the value of κ is known). Meters utiliz-
+ing one-point calibrations typically require calibration with
+1Equipment and supplies that are tested and quality assured are available
+to USGS field studies from the National Field Supply Service (NFSS)
+and the Hydrologic Instrumentation Facility (HIF), and are sold through
+the USGS One Stop ordering system (accessed September 11, 2017, at
+https://1stop.usgs.gov/, internal USGS access only).

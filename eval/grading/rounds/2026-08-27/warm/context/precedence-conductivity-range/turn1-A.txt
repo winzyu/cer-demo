@@ -1,0 +1,1727 @@
+### EC_K_1.0_probe.pdf (chunk EC_K_1.0_probe.pdf)
+
+Range 	5 − 200,000 μS/cm
+90% in 1s	Response time
+3,447 kPa (500 PSI)	Max pressure
+1 meter	Cable length
+No	Internal temperature sensor
+~10 years	Time before recalibration
+Graphite
+Reads 	Conductivity
+1 − 110 °C	Temperature range °C
+352m (1,157 ft)	Max depth
++/ – 2%	Accuracy
+Male SMA / Male BNC	Connector
+~10 years	Life expectancy
+Conductivity
+Gen 3
+Probe K 1.0
+(Optional)
+Revised 10/25
+V 4.2
+
+-- 1 of 9 --
+
+Operating principle
+An E.C. (electrical conductivity) probe measures the electrical conductivity in a solution.
+It is commonly used in hydroponics, aquaculture and freshwater systems to monitor the
+amount of nutrients, salts or impurities in the water.
+Inside the conductivity probe, two electrodes are positioned opposite from each other,
+an AC voltage is applied to the electrodes causing cations to move to the negatively
+charged electrode, while the anions move to the positively electrode. The more free
+electrolyte the liquid contains, the higher the electrical conductivity.
+AC voltage
+Epoxy body
+Graphite
+Epoxy body
+Graphite
+Epoxy body
+Glass stem
+Platinum
+ody
+e
+Epoxy body
+Graphite
+The entire conducting area must be
+submerged in order to get accurate
+readings.
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 9 --
+
+112.7mm
+(4.4”)
+150.3mm
+(5.9”)
+37.6mm
+(1.4”)
+12mm (0.5”)
+Cable Length
+1m (3.2’)
+29mm
+(1.1”)
+Ø 8mm
+Ø 2.6mm
+Optional
+Sensing area
+15.5mm
+(0.6”)
+16mm
+(0.6”)
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 9 --
+
+PVC
+ABS 	Polyethylene
+Titanium Nitride
+ABS
+Graphite
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Graphite
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Conductivity Probe K 1.0
+Part # ENV-40-EC-K1.0
+Complies with NSF/ANSI Standard 51
+Food Safe
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 9 --
+
+Specifications
+• 	Standard Lab use
+• 	Field use
+• 	Aquarium
+• 	Hydroponics
+• 	Fish keeping
+• 	Mixed aqueous/organic
+• 	Samples containing Heavy metals
+• 	Soil Samples
+• 	Strong reducing agents
+Typical applications
+This Conductivity probe can be 	fully
+submerged 	in fresh or salt water, up
+to the SMA connector indefinitely.
+Materials
+PVC
+ABS
+Polyethylene
+ABS 	Graphite
+Titanium Nitride
+K 1.0
+Max depth
+Cable length
+Weight
+Speed of response
+Measuring Surface
+Dimensions
+SMA connector
+Sterilization
+Food safe
+5 μS/cm – 200,000 μS/cm
+352m (1,157 ft)
+1 meter
+43 grams
+90% in 1 second
+Graphite
+12mm x 145.5mm (0.47" x 5.7")
+Male
+Chemical only
+Yes
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 9 --
+
+A conductivity probe is a very simple device. It is just two conductors with a fixed surface
+area at a fixed distance from each other. This distance and surface area is known as the
+conductivity cell. The cells distance and surface area is quantified as the conductivity cells
+K constant.
+How often do you need to
+recalibrate a conductivity probe?
+Conductivity probes work by measuring the electrical current of the water between two
+graphite plates. The plates do not go bad, or change, so recalibration is not necessary. After
+the first calibration your conductivity probe is good to go.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 9 --
+
+Extending the probe cable length
+You can extend the cable to greater than 100 meters with no loss of signal. Atlas Scientific
+has tested up to 300 meters without a problem, however you run the risk of turning your
+E.C. probe into an antenna, picking up noise along the length of your cable.
+If you want to extend your cable, we recommend that you use proper isolation, such as
+the Basic EZO TM Inline Voltage Isolator, or an i2 InterLink. Be sure to calibrate your
+probe with the extended cable.
+Extending a probe cable can be easily done with our SMA Extension Cables. Simply
+connect the SMA end of the probe to the Extension cable, and you are all set.
+If you need to water proof a SMA connection, we highly recommend using a product like
+Coax-Seal to safely cover and prevent any water damage that may occur.
+Water proof
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 9 --
+
+Helpful operating tips
+Be sure to watch out for air bubbles, as they can get caught between the two
+graphite plates and throw off your results. Lightly tap your conductivity probe to
+knock out any bubbles caught in the probe.
+Bubbles
+Over time conductivity probes can become dirty and covered in deposits, which can
+change the basic electrical properties of the probe and cause inaccurate readings.
+Soft coatings can be removed by lightly brushing around the conducting area.
+Probe cleaning
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 9 --
+
+Hard coatings should be chemically removed. We highly recommend you use the
+Atlas Scientific conductivity probe cleaner.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 9 --
+
+
+
+---
+
+### IORP_probe.pdf (chunk IORP_probe.pdf)
+
+Range 	-2000mV – 2000mV
+95% in 1s	Response time
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+No	Internal temperature sensor
+~1 Year	Time before recalibration
+Reads 	ORP
+Platinum	Sensing element
+1 − 99 °C	Temperature range °C
+70m (230’)	Max depth
+SMA or Tinned leads	Connector
++/– 1mV	Accuracy
+~4 Years +	Life expectancy
+or
+ORP Probe
+Industrial
+Gen 3
+with Platinum sensing element
+Revised 8/25
+V 3.2
+
+-- 1 of 11 --
+
+Operating principle
+ORP stands for oxidation/reduction potential. Oxidation is the loss of electrons and
+reduction is the gain of electrons. The output of the probe is represented in millivolts and
+can be positive or negative.
+Just like a pH probe measures hydrogen ion activity in a liquid; an ORP probe measures
+electron activity in a liquid. The ORP readings represents how strongly electrons are
+transferred to or from substances in a liquid. Keeping in mind that the readings do not
+indicate the amount of electrons available for transfer.
+pH Probe 	ORP Probe
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 11 --
+
+Add just a drop of bleach
+(which is an oxidizing agent)
+606.9
+Reading A
+605.3
+Reading B
+-234.6
+Reading A
+24.2
+Reading B
+A	
+A
+B	
+B
+Tap water 	Tap water
+The water is unreactive and has only trace amounts of electron movement. These
+readings are equivalent to the readings you see with an unconnected multimeter.
+An ORP probe has a platinum tip that is connected to a silver wire, surrounded by
+silver chloride. That silver wire is then connected to a KCL reference solution. Because
+platinum is an unreactive metal it can “silently observe” the electron activity of the
+liquid without becoming apart of whatever reaction is occurring in the liquid.
+When reading the ORP of a liquid that has very few electrons available for
+transfer, ORP readings can appear to be inconsistent.
+(Theoretical value)
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 3 of 11 --
+
+46.6mm
+(1.8”)
+Soaker bottle
++ 	–
+10ml
+Ø 8mm
+197mm
+(7.7”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Ø 2.8mm
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+Measurements
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 11 --
+
+Platinum
+Teflon
+PVC
+EPDM
+Delrin ®
+(body)
+Polyethylene
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Platinum
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Grade ORP Probe
+Part # ENV-50-ORP
+Complies with NSF/ANSI Standard 51
+Food Safe
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 11 --
+
+Body material
+Max depth
+Cable length
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+70m (230 ft)
+3m (9.8 feet)
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This ORP probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Platinum
+Teflon
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 11 --
+
+An ORP probe is a passive device that detects a current generated from the oxidation or
+reduction chemical substances in water. This current (which can be positive or negative)
+is very weak and cannot be detected with a multimeter, or an analog to digital converter.
+How often do you need
+to recalibrate an ORP probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that has
+generally weak levels of chemical reactions you will only need to recalibrate your probe
+once per year for the first 2 years. After that every ~6 months.
+If you are using the ORP probe in batch chemical manufacturing, industrial process, or
+in a solution that is known to have strong chemical reactions, then calibration should be
+done monthly or in extreme cases after each batch.
+V
+V
+0000
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 11 --
+
+AtlasScientific
+PWR
+RX
+TX
+225 	B	A
+ORP
+How to connect the
+industrial ORP probe
+The Atlas Scientific ™ Industrial ORP probe can be connected in several different ways.
+The following show two examples:
+Using our EZO Complete-ORP ™ you can easily connect the
+Gen 3 Industrial ORP probe, via the probes SMA connector.
+Gen 3 Industrial ORP probe
+with the SMA connector option.
+Gen 3 Industrial ORP probe
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial ORP probe, can
+be easily connected to our Industrial ORP Transmitter via
+the probes tinned leads.
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 11 --
+
+Remove the Industrial ORP probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the ORP probe must stay wet and cannot be
+allowed to dry out, this is why every Industrial ORP probe is shipped with a plastic cap
+containing ORP probe storage solution. The cap should remain on the probe until it is used.
+fi
+Long term storage
+When you are finished using the Industrial ORP probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has ORP probe storage
+solution within it. If not, just add some from the ORP probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 11 --
+
+Probe cleaning
+Coating of the platinum tip can lead to erroneous readings including shortened span
+(slope). The type of coating will determine the cleaning technique. Soft coatings can
+be removed by vigorous stirring or by the use of a squirt bottle. Organic chemical, or
+hard coatings, should be chemically removed. A light bleach solution or even a 5 – 10%
+hydrochloric acid (HCl) soak for a few minutes, often removes many coatings. Do not use
+abrasive materials on the ORP probe.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 11 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 11 --
+
+
+
+---
+
+### Industrial-DO-probe.pdf (chunk Industrial-DO-probe.pdf)
+
+Range 	0 − 100 mg/L
+~0.1 mg/L/per sec	Response time
+300 PSI	Max pressure
+3 Meters	Cable length
+Yes (PT-1000)	Internal temperature sensor
+~1 Year	Time before recalibration
+~ 4 Years	Life expectancy
+~18 Months	Maintenance
+Reads 	Dissolved Oxygen
+1 − 99 °C	Temperature range °C
+212m (694 ft)	Max depth
++/– 0.05 mg/L	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+D.O. Probe
+or
+Revised 4/26
+V 2.4
+
+-- 1 of 13 --
+
+Wastewater
+Treatment
+Food
+Production
+Chemical
+Production
+Envriomental
+Monitoring
+(No Organic Solvents)
+This Probe can be used for:
+2	Copyright © Atlas Scientific LLC
+
+-- 2 of 13 --
+
+Operating principle
+This galvanic dissolved oxygen probe consists of a HDPE membrane, an anode bathed
+in an electrolyte and a cathode. Oxygen molecules defuse through the probes membrane
+at a constant rate (without the membrane the reaction happens too quickly). Once the
+oxygen molecules have crossed the membrane they are reduced at the cathode and
+a small voltage is produced. If no oxygen molecules are present, the probe will output
+0 mV. As the oxygen increases so does the mV output from the probe. Each probe will
+output a different voltage in the presence of oxygen. The only thing that is constant is that
+0mV = 0 Oxygen.
+Electrolyte
+Cathode (Pure silver rod)
+Membrane
+Anode (Zinc)
+Time (sec)
+90%
+60%
+5 	10 	15 	20 	25 	30	0
+Dissolved Oxygen
+Stagnant water
+Oxygen being
+consumed by probe
+20%
+One of the drawbacks from using a galvanic
+probe is that it consumes a VERY small amount
+of the oxygen it reads. Therefore, a small amount
+of water movement is necessary to take accurate
+readings. Approximately 60 ml/min.
+3	Copyright © Atlas Scientific LLC
+
+-- 3 of 13 --
+
+Ø 4.4mm
+Ø 5.3mm
+D.O.
+D.O.
+PT-1000(There is no polarity)
+PT-1000
+175.5mm
+(6.9”)
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+47.9mm
+(1.8”)
+19.7mm (.7”)
+Cable Length
+3m (10’)
+3/4 NPT
+28.4mm
+(1.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+Measurements
+4	Copyright © Atlas Scientific LLC
+
+-- 4 of 13 --
+
+PVC
+PVCDelrin ®
+(body)
+Polyethylene
+HDPE
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+HDPE
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+ABS
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Dissolved Oxygen Probe
+Part # ENV-50-DO
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+Food Safe
+5	Copyright © Atlas Scientific LLC
+
+-- 5 of 13 --
+
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Temp. probe type
+Temp. accuracy
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+212m (694 ft)
+3m (10 feet)
+Yes
+Class A platinum, RTD
++/- (0.15 + (0.002*t))
+SMA or Tinned Leads
+195 grams
+(3/4") NPT
+Chemical only
+Yes
+Materials
+Polyethylene
+Delrin® thermoplastic
+ABS
+HDPE
+PVC 	PVC
+PVC
+PVC
+Polyethylene
+Polyethylene Titanium Nitride
+Titanium Nitride
+This Dissolved Oxygen probe can be
+fully submerged in fresh or salt water,
+up to the SMA connector or Tinned
+leads indefinitely.
+6	Copyright © Atlas Scientific LLC
+
+-- 6 of 13 --
+
+This galvanic dissolved oxygen probe is a passive device that generates a small voltage
+from 0mv – 60+ mv depending on the oxygen saturation of the sensing membrane. This
+voltage can easily be read by a multimeter or an analog to digital converter.
+Because every use case is different, there is no set schedule for recalibration.
+The dissolved oxygen probe reacts with oxygen in the water, the more oxygen it reacts
+with the more the probe is depleted of its electrolyte solution. Typically an industrial
+dissolved oxygen probe will last 2 years before the electrolyte is depleted (results will
+vary). When the electrolyte is depleted, the probe will read very low numbers. Best practice is
+to replace the electrolyte solution and membrane every 1 – 2 years.
+How often do you need to
+recalibrate a dissolved oxygen probe?
+V
+V
+0000
+7	Copyright © Atlas Scientific LLC
+
+-- 7 of 13 --
+
+9 - 36VDC
+	L H
+DO
+A 	Low 	High
+AtlasScientific
+PWR
+RX
+TX
+AtlasScientific
+PWR
+RX
+TX
+How to connect the industrial
+Dissolved Oxygen probe
+The Atlas Scientific ™ Gen 3 Industrial Dissolved Oxygen probe can be connected in
+several different ways. The following show two examples:
+For industrial purposes, the Gen 3 Industrial DO probe,
+can be easily connected to our Industrial DO Transmitter
+via the probes tinned leads.
+Using 	our 	EZO 	Complete-DO™ and
+EZO 	Complete-TMP™ you can easily
+connect the Gen 3 Industrial DO probe,
+via the probes SMA connectors.
+8	Copyright © Atlas Scientific LLC
+
+-- 8 of 13 --
+
+How to add more electrolyte solution
+During usage, a small amount of electrolyte solution within the dissolved oxygen probe
+will deplete. In this case, you will need to add more solution into the probe.
+To add more electrolyte solution: Carefully unscrew the probes membrane cap, and
+drain any remaining electrolyte solution. Using the supplied syringe, inject solution into
+the membrane cap until it's filled half way. Screw the membrane cap back onto probe.
+Once the probe is reassembled, rinse of the probe.
+1 	Rinse
+probe
+Fill half way
+2 	3 	4 	5 	6 	7
+RIGHT SIDE UP 	UPSIDE DOWN
+9	Copyright © Atlas Scientific LLC
+
+-- 9 of 13 --
+
+How to recondition the industrial
+Dissolved Oxygen probe
+During usage, a small amount of corrosion (zinc oxide) may build up around the anode of
+the probe, this will cause irregular readings. In this case, you will need to recondition the
+probe.
+To recondition the probe: Carefully unscrew the probes membrane cap, and drain any
+remaining electrolyte solution. Using a small file, carefully file off the corrsion buildup
+around the anode of the probe. Do not file the cathode, as this will damage the probe.
+Once the corrosion has been removed, rinse the off the anode.
+Using the supplied syringe, inject solution into the membrane cap until it's filled half
+way. Screw the membrane cap back onto probe. Once the probe is reassembled, rinse
+of the probe.
+1 	2
+anode
+cathode
+3 	4
+RIGHT SIDE UP 	UPSIDE DOWN
+10	Copyright © Atlas Scientific LLC
+
+-- 10 of 13 --
+
+Over time, the membrane can wear out, this will lead to irregular readings from
+the probe. To correct this issue, the probes membrane cap must be replaced.
+To replace membrane cap: Carefully unscrew the probes membrane cap, drain
+any remaining electrolyte solution; Then discard the damaged membrane cap.
+With a new membrane cap ready, fill the new membrane cap half way with electrolyte
+solution and screw back on to probe body.
+How to replace the membrane cap
+1 	2 	3
+RIGHT SIDE UP 	UPSIDE DOWN
+Fill half way
+5	4 	6
+OLD &
+DAMAGED
+NEW
+11	Copyright © Atlas Scientific LLC
+
+-- 11 of 13 --
+
+Over time dissolved oxygen probes can become dirty and covered in chemical deposits.
+Soft coatings can be removed by lightly brushing around the sides of the probe and
+membrane cap. If the probes membrane is in need of cleaning, use a mild bleach mixture
+to gently wash away any deposits.
+DO NOT USE A BRUSH TO CLEAN THE MEMBRANE
+If the probes membrane is ripped it must be replaced, as it will cause irregular readings.
+Probe cleaning
+12	Copyright © Atlas Scientific LLC
+
+-- 12 of 13 --
+
+Dried KCl residue
+from Electrolyte
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+13	Copyright © Atlas Scientific LLC
+
+-- 13 of 13 --
+
+
+
+---
+
+### IpH_probe.pdf (chunk IpH_probe.pdf)
+
+pH Probe
+Range 	0 − 14
+95% in 1s	Response time
++/- 0.001	Resolution
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+Double junction silver / silver chloride
+No Temp
+Reads 	pH
+-5 − 99 °C	Temperature range °C
+70m (230’)	Max depth
++/– 0.002	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+~1 Year	Time before recalibration
+~4 Years +	Life expectancy
+or
+Revised 11/25
+V 5.3
+
+-- 1 of 12 --
+
+Operating principle
+A pH (potential of Hydrogen) probe measures the hydrogen ion activity in a liquid.
+At the tip of a pH probe is a glass membrane. This glass membrane permits hydrogen
+ions from the liquid being measured to defuse into the outer layer of the glass, while
+larger ions remain in the solution. The difference in the concentration of hydrogen ions
+(outside the probe vs. inside the probe) creates a VERY small current. This current
+is proportional to the concentration of hydrogen ions in the liquid being measured.
+Base: pH > 7	Neutral: pH = 7	Acid: pH < 7
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 2 of 12 --
+
+46.6mm
+(1.8”)
+Soaker cap
+~3 – 4 pH
+pH
+197mm
+(7.7”)
+99.2mm
+(3.9”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+10ml
+Ø 2.8mm
+Ø 8mm
+Minimum
+Immersion
+Unique
+12-digit
+serial #
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 12 --
+
+Glass
+Teflon
+PVC
+EPDM
+Delrin ®
+(body) Polyethylene
+Titanium
+Nitride
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+Glass
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Food Safe
+Atlas Scientific LLC, hereby certifies that,
+Gen 3 Industrial pH Probe – No Temp
+Part # ENV-50-pH-NT
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 12 --
+
+Reference electrode
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Silver / Silver Chloride
+Delrin® thermoplastic
+70m (230 feet)
+3m (9.8 feet)
+No
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This pH probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Glass
+Teflon
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 12 --
+
+A pH electrode is a passive device that detects a current generated from hydrogen ion
+activity. This current (which can be positive or negative) is very weak and cannot be
+detected with a multimeter, or an analog to digital converter. This weak electrical signal
+can easily be disrupted and care should be taken to only use proper connectors and cables.
+The current that is generated from the hydrogen ion activity is the reciprocal of that
+activity and can be predicted using this equation:
+Because a pH probe is a passive device it can pick up voltages that are transmitted
+through the solution being measured. This will result in incorrect readings and will
+slowly damage the pH probe over time. In this instance, proper isolation is required.
+Where R is the ideal gas constant.
+T is the temperature in Kelvin.
+F is the Faraday constant.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 12 --
+
+AtlasScientific
+PWR
+RX
+TX
+9 - 36VDC
+pH
+How to connect the
+industrial pH probe
+The Atlas Scientific ™ Gen 3 Industrial pH probe - No Temp, can be connected in several
+different ways. The following show two examples:
+Using our EZO Complete-pH ™ you can easily connect the
+Gen 3 Industrial pH probe - No Temp, via the probes SMA
+connector.
+Gen 3 Industrial pH probe - No Temp
+with the SMA connector option.
+Gen 3 Industrial pH probe - No Temp
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial pH probe -
+No Temp, can be easily connected 	to our Industrial pH
+Transmitter via the probes tinned leads.
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 12 --
+
+Remove the Industrial pH probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the pH probe can be left dry for up to 3 weeks
+without damaging the probe, this is why every Industrial pH probe is shipped with a
+plastic cap containing pH probe storage solution. The cap should remain on the probe
+until it is used.
+Long term storage
+When you are finished using the Industrial pH probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has pH probe storage
+solution within it. If not, just add some from the pH probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+Ready to use
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 12 --
+
+Unlike most pH probes, this probe can dry out. It can be left dry for up to 3 weeks without
+damaging the probe. However, repeated wetting and drying cycles will eventually damage
+the probe. For best results, keep the probe wet at all times. But if the probe is left out to
+dry, it should not be considered damaged. It just needs to be rehydrated.
+If a pH probe is kept in a hot environment during shipping, KCl creep may cause the soaker
+bottle to dry out. KCl will form a salt channel that wicks the water out of the probe's soaker
+bottle.
+Follow these instructions to rehydrate your industrial pH probe:
+1. Place the probe into a beaker of tap water.
+2. Let the probe sit in the water for 3 – 5 mins.
+3. Add a scoop of KCL (best) or NaCl (good) to the beaker.
+(a scoop = so much salt that no human could drink the water)
+4. Let the probe sit in the salt water for 15 – 20 mins.
+5. Done.
+The probe is now ready to use.
+Probe can dry out
+
+-- 9 of 12 --
+
+Probe cleaning
+Coating of the pH bulb can lead to erroneous readings including shortened span (slope).
+The type of coating will determine the cleaning technique. Soft coatings can be removed
+by vigorous stirring or by the use of a squirt bottle. Organic chemical, or hard coatings,
+should be chemically removed using a light bleach solution. If cleaning does not restore
+performance, reconditioning may be tried. Do not use a brush or abrasive materials
+on the pH probe.
+How often do you need
+to recalibrate a pH probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that
+has generally weak levels of acids and bases you will only need to recalibrate your probe
+once per year for the first two years. After that every ~six months.
+If you are using the pH probe in batch chemical manufacturing, industrial process,
+or in a solution that is known to have strong acids and bases, then calibration should be
+done monthly or in extreme cases after each batch.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 12 --
+
+Probe reconditioning
+When reconditioning your pH probe is required due to aging, we recommend you use
+the Atlas Scientific pH probe reconditioning kit.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 12 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+12 Copyright © Atlas Scientific LLC
+
+-- 12 of 12 --
+
+
+
+---
+
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf)
+
+Water Quality Metrics — Source of Truth
+Scope: Reference for the six core parameters measured by the DataPod — Temperature, ORP,
+Dissolved Oxygen (DO), Electrical Conductivity (EC), pH, and Turbidity — across both freshwater
+and saltwater systems, and how they move together to fingerprint pollution events.
+Core principle: No single parameter diagnoses a pollution event. Diagnosis comes from the
+pattern of correlated change across multiple parameters, and from separating that pattern from the
+water body’s normal daily, tidal, and seasonal rhythms.
+1. Parameter Reference
+Temperature
+Measures: Thermal energy of the water. Units: °C.
+What drives it: Solar input, air temperature, depth/stratification, tidal and current mixing,
+freshwater inflow, discharges.
+Fresh vs. salt: Freshwater bodies are smaller and respond faster to air temperature and runoff.
+Coastal/marine water is more thermally buffered but driven by tidal exchange and upwelling.
+Pollution relevance: Temperature is the master variable — it sets DO capacity, accelerates
+biological and chemical rates, and shifts EC readings. Thermal pollution (power-plant cooling
+water, hot-pavement stormwater) is itself an event type. Always interpret the other five
+parameters relative to temperature.
+Dissolved Oxygen (DO)
+Measures: Oxygen dissolved in the water, available to aquatic life. Units: mg/L (concentration)
+and % saturation.
+What drives it: Temperature and salinity (set the saturation ceiling), photosynthesis (adds O₂
+by day), respiration/decomposition (removes O₂), atmospheric exchange, turbulence.
+Fresh vs. salt: Saltwater holds roughly 20% less DO than freshwater at the same temperature
+— marine systems sit closer to the hypoxia threshold by default.
+Pollution relevance: The single most important indicator of aquatic health. Organic pollution
+consumes oxygen (biochemical oxygen demand). Watch both the absolute value and the shape
+of the daily curve — large swings signal eutrophication; a sustained sag signals an oxygen-
+demanding discharge.
+
+-- 1 of 7 --
+
+Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L
+hypoxia · ~0 anoxia.
+ORP (Oxidation-Reduction Potential)
+Measures: The water’s net tendency to oxidize or reduce — effectively, the “electron pressure.”
+Units: mV.
+What drives it: The dominant electron acceptor present. Oxygen-rich water reads strongly
+positive; as oxygen is consumed, the system shifts to nitrate, then manganese/iron, then
+sulfate, driving ORP downward and eventually negative.
+Fresh vs. salt: Healthy aerobic water typically reads +200 to +400 mV. Negative values
+indicate reducing, anoxic, or septic conditions. Seawater’s high ionic strength makes absolute
+readings less comparable between sites — trend matters more than the raw number.
+Pollution relevance: ORP is the early-warning twin of DO. Because it responds to the chemical
+environment, it often begins falling before DO bottoms out. A drop toward or below zero is a
+strong signal of organic loading, sewage, or decomposition.
+Electrical Conductivity (EC)
+Measures: The water’s ability to carry current — a proxy for total dissolved ions/salts. Units:
+μS/cm (report temperature-corrected “specific conductance” at 25°C).
+What drives it: Dissolved ion content. Salinity dominates in marine water; in freshwater, EC
+reflects geology, runoff, road salt, and discharges.
+Fresh vs. salt: Freshwater and seawater differ by roughly 1,000× in EC. This makes EC the
+primary tool for identifying the source of a change — freshwater input vs. saline input vs. an
+ionic discharge.
+Pollution relevance: Sudden EC shifts flag saltwater intrusion, road-salt runoff,
+industrial/chemical discharge, or sewage. In estuaries, EC normally tracks the tide — separate
+that rhythm from genuine events.
+pH
+Measures: Acidity/alkalinity on a logarithmic scale of hydrogen-ion activity. Units: pH (unitless).
+What drives it: The CO₂–carbonate balance. Photosynthesis removes CO₂ and raises pH;
+respiration/decomposition adds CO₂ and lowers pH. Also affected by acidic/alkaline inputs.
+Fresh vs. salt: Freshwater (typically 6.5–8.5) is poorly buffered and naturally variable.
+Seawater (~8.0–8.2) is strongly carbonate-buffered — so any meaningful pH excursion in
+marine water is significant and worth investigating.
+Pollution relevance: Acidic inputs (acid mine drainage, certain industrial effluent) crash pH;
+alkaline inputs (concrete/construction washwater, some industrial discharge) raise it. Large
+
+-- 2 of 7 --
+
+daily pH swings indicate biological productivity, not a discharge.
+Turbidity
+Measures: Water clarity — light scattered by suspended particles (sediment, plankton, organic
+matter). Units: NTU or FNU.
+What drives it: Sediment runoff, shoreline erosion, bottom resuspension by
+currents/waves/dredging, and algal cells.
+Fresh vs. salt: Rivers and estuaries are naturally more turbid and event-driven (storms,
+dredging). Open coastal water is clearer; resuspension peaks at maximum tidal current.
+Pollution relevance: A turbidity spike flags storm runoff, construction/erosion, or dredging.
+Critically, particles carry adsorbed pollutants — phosphorus, metals, hydrocarbons,
+pathogens — so a turbidity spike is also a proxy for contaminant loading. High turbidity also
+suppresses photosynthesis by blocking light.
+2. Baseline Reference Ranges
+Parameter 	Healthy Freshwater 	Brackish / Estuarine 	Healthy Seawater
+Temperature Climate/season-
+dependent
+Climate/season-
+dependent Climate/season-dependent
+Dissolved
+Oxygen 6–11 mg/L (>80% sat.) 	5–9 mg/L 5–8 mg/L (~7–8 at 100%
+sat.)
+ORP 	+200 to +400 mV 	+150 to +350 mV 	+200 to +400 mV
+Conductivity
+(EC) 50–1,500 μS/cm 	~1,000–35,000 μS/cm ~45,000–55,000 μS/cm (~35
+PSU)
+pH 	6.5–8.5 	7.0–8.3 	7.8–8.3
+Turbidity 	<5–25 NTU 	5–100+ NTU 	<5–10 NTU
+Ranges are general guidance. Establish a site-specific baseline before treating deviations as events
+— local geology, season, and tidal stage shift “normal” substantially.
+3. How the Parameters Interrelate
+Understanding these couplings is what turns six independent readings into a diagnostic system.
+Temperature → DO (inverse, two ways): Warmer water physically holds less oxygen and
+
+-- 3 of 7 --
+
+speeds the respiration/decomposition that consumes it. A temperature rise should always be
+paired with an expected DO decline.
+Temperature → EC: Ion mobility rises with temperature; raw EC increases ~2% per °C. Always
+report temperature-corrected specific conductance so EC changes reflect chemistry, not
+warming.
+DO ↔ ORP (tightly coupled): Oxygen is the dominant electron acceptor — abundant DO drives
+ORP strongly positive. As DO is consumed, ORP declines; once oxygen is exhausted, ORP goes
+negative. ORP often moves before DO hits bottom, giving lead time.
+pH ↔ DO (the photosynthesis/respiration couple): Photosynthesis removes CO₂ (raises pH)
+and releases O₂; respiration adds CO₂ (lowers pH) and consumes O₂. pH and DO therefore rise
+and fall together on the daily cycle. In-phase daily swings of pH and DO are the fingerprint
+of biological productivity.
+Turbidity → DO/pH: Suspended particles block light, suppressing photosynthesis and
+dampening daytime DO/pH gains. Organic-rich turbidity also adds direct oxygen demand.
+Turbidity as a contaminant carrier: Sediment transports adsorbed nutrients, metals, and
+pathogens — a turbidity spike can stand in for a loading event even when chemistry looks
+stable.
+EC as a source fingerprint: Because fresh and salt water differ ~1,000× in EC, the direction of
+an EC change tells you whether freshwater (rain, runoff, groundwater) or saline/ionic input (tide,
+intrusion, discharge) is driving the event.
+4. Pollution Event Signature Matrix
+Arrows show the expected direction of change relative to baseline. ↑↑ / ↓↓ = strong, ↑ / ↓ =
+moderate, 	= large swing or variable, → = little change.
+Event 	Temp 	DO 	ORP 	EC 	pH 	Turbidity Primary
+Signature
+Sewage /
+sanitary
+discharge
+→/↑ 	↓↓ 	↓↓ 	↑ 	↓ 	↑
+DO crash +
+ORP crash +
+EC rise +
+turbidity rise,
+not tied to
+time of day
+Algal bloom /
+(super-
+sat.
+midday, 	(high
+Large in-
+phase daily
+DO + pH
+oscillations;
+
+-- 4 of 7 --
+
+eutrophication 	↑ 	crash
+pre-
+dawn)
+→ 	midday) 	↑ 	pre-dawn DO
+minimum is
+the danger
+window
+Stormwater /
+urban runoff ↓ 	↓
+↓
+(marine)
+/
+(fresh)
+↑↑
+Sharp
+turbidity spike
+coincident
+with rainfall;
+EC shifts
+(drops in
+marine, may
+spike in fresh
+from road salt)
+Industrial /
+chemical
+discharge
+↑↑
+Abrupt step-
+changes in EC
+and/or pH
+and/or ORP
+with no diel or
+tidal
+explanation
+Thermal
+discharge ↑↑ 	↓ 	→ 	→ 	→ 	→
+Temperature
+rise with
+proportional
+DO decline;
+other
+chemistry flat
+Saltwater
+intrusion → 	→ 	→ 	↑↑ 	→/↑ 	→
+EC rise
+correlated
+with tidal
+phase,
+drought, or
+sea-level
+conditions
+Acidic input
+(acid mine
+drainage /
+spill)
+→ 	↑ 	↑ 	↓↓ 	↑
+pH crash
+paired with EC
+rise (dissolved
+metals/sulfate)
+Hypoxia / fish-
+kill conditions
+often
+↑ →0 ↓↓
+(negative) → 	↓
+DO and ORP
+both
+bottoming out
+together
+
+-- 5 of 7 --
+
+Reading the matrix: The diagnostic value is in the combination. DO falling alone could be warm
+weather. DO and ORP falling together while EC and turbidity rise is a far more specific signal
+pointing to an organic/sewage source.
+5. Separating Natural Cycles from Pollution Events
+Rule out the water body’s normal rhythms before declaring an event.
+Diel (24-hour) cycle: DO, pH, and ORP swing predictably each day — peaking mid-afternoon,
+bottoming pre-dawn — driven by photosynthesis and respiration. Temperature follows the sun.
+A smooth, repeating daily oscillation is biology, not pollution.
+Tidal cycle (estuarine/coastal): EC, temperature, and turbidity oscillate with the tide. Turbidity
+often peaks at maximum current (resuspension). An EC change that repeats on the tidal clock is
+mixing, not a discharge.
+Seasonal cycle: Temperature, stratification, runoff, and bloom potential shift across the year.
+Compare any reading to the same season’s baseline.
+The test for a real event: A pollution event typically appears as a step-change or sustained
+excursion that breaks the expected diel/tidal rhythm — not a smooth oscillation. Confirm it
+shows up as a correlated shift across multiple parameters consistent with one of the signatures
+above.
+6. Sensor & Data-Quality Caveats
+A trend is only as trustworthy as the sensor producing it. Rule out instrument drift before calling an
+event.
+Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across
+weeks may be drift, not water chemistry — cross-check against calibration history and class-
+balanced expectations.
+ORP reference offset: ORP values depend on the electrode’s reference type (Ag/AgCl vs.
+standard hydrogen electrode). Record which reference is used so values are comparable across
+DataPods and over time. Treat ORP trend as more reliable than absolute value.
+EC temperature compensation: Always report specific conductance (25°C-corrected).
+Uncorrected EC will track temperature and produce false signals.
+Turbidity units: NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on
+one across the fleet.
+DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the
+antifouling/cleaning schedule.
+
+-- 6 of 7 --
+
+Biofouling, broadly: All submerged sensors foul. A gradual multi-parameter drift after a long
+deployment is a fouling/maintenance flag first, an environmental signal second.
+Maintain this as a living document. As DataPod deployments build site-specific baselines, append
+local “normal” ranges and any site-specific event signatures observed in the field.
+
+-- 7 of 7 --
+
+
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__361ef9509206, score 0.7652658437424139)
+
+he following equation:
+ = K 	G	cell 	(1)
+where 𝐾cell is the cell constant (in units of cm-1). The cell con-
+stant is the ratio of the distance between two electrode plates
+(d) and their area (A). The units of electrical conductivity are
+siemens per centimeter (S/cm), which is the equivalent of
+mhos per centimeter (mhos/cm). Most values reported prior to
+1971 were in units of mhos per centimeter.Electrical conductivity increases by 0.5 to 3 percent per
+degree Celsius and varies depending on the ionic species
+present (Robinson and Stokes, 1970; McCleskey, 2013). For
+natural waters, conductometric measurements are typically
+used to estimate the concentrations of total dissolved solids
+(TDS); therefore, the electrical conductivity is reported at
+25 °C (κ25 °C, which is equivalent to specific conductance), to
+facilitate this estimation of TDS by removing the effects of
+temperature. The value of κ25 °C is typically calculated by using
+the following equation:
+κ
+κ
+α
+25 1 	25
+° 	= + 	− 	°
+C t 	C	( 	) (2)
+where α is the temperature-compensation factor and t is the
+measured temperature in degrees Celsius. Modern specific
+conductance field meters typically have preprogrammed
+temperature-compensation factors (α) and report specific
+conductance (or electrical conductivity) at 25 °C (κ25 °C).
+Most specific conductance meters utilize either linear
+(0.019–0.020 per °C) or nonlinear (International Organiza-
+tion for Standardization, 1985) temperature-compensation
+algorithms that are applicable for most natural waters. The
+temperature compensation used is likely described in the
+meter’s manual or can be determined by using standard
+solutions and the method described by McCleskey (2013).
+Conductance and temperature can be measured accurately
+with modern instrumentation, and temperature compensation
+is typically accurate to ±5 percent for water in the range from
+5 to 35 ºC and whose pH is between 4 and 11. For low-pH
+(pH <4) waters, using the standard temperature-compensation
+factors can result in κ25 °C errors as large as 50 percent, because
+the transport properties of the hydrogen ion are different from
+those of most other ions, and the hydrogen ion contributes sub-
+stantially to the electrical conductance at low pH (McCleskey,
+2013). For low-pH waters, temperature corrections may
+represent the largest source of error. A temperature-compen-
+sation method applicable to low-pH waters is described in
+section 4.3 below and by McCleskey (2013). No temperature-
+compensation method is available for waters with pH greater
+than 11; therefore, the specific conductance in high-pH waters
+should be checked by measuring at ambient temperature and
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__05c228f6e257, score 0.7551242678408866)
+
+f check standards should be
+within ±5 μS/cm for measurements ≤100 μS/cm
+or ±3 percent for measurements >100 μS/cm.
+Recalibrate if necessary.
+2. 	Install the specific conductance probe.
+a. 	For measurement in a downhole system—
+i. 	Lower the probe to the sampling point.
+ii. 	Remove air trapped in the conductiv-
+ity cell by gently moving the probe up
+and down under the water; read the
+meter display.-- 18 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__ddc94df81b4f, score 0.7528539626818208)
+
+-- 21 of 24 --14 	Chapter A6.3. Specific Conductance
+in microsiemens per centimeter (μS/cm) where the ratio is
+expected to be between 0.5 and 0.9 (Hem, 1985).
+TD 	mg/L
+specific conductance in μS/cm
+S in  0.5 to 0.9 	(3)
+Measurements of specific conductance are commonly used
+to estimate the salinity of water.
+Acknowledgments
+The information included in the U.S. Geological Survey
+(USGS) National Field Manual (NFM) is based on existing
+manuals, various reference documents, and a broad spectrum
+of expertise provided by USGS colleagues. Authors of previ-
+ous versions of NFM chapter A6.3 were D.B. Radtke, J.V.
+Davis, and F.D. Wilde, whose expertise and integrity provided
+the groundwork for this and future versions of this chapter.
+The persistence and spirit that all of our USGS colleagues
+brought to the development of a national field manual were
+invaluable.
+The following USGS colleagues provided detailed techni-
+cal content and reviews that improved the quality of this report:
+R. Blaine McCleskey, Gerolamo Casile, Joseph Domagalski,
+Michael Manning, Cherie Miller, Michael Rosen, Stanley
+Skrobialowski, and Teri Snazell. Editorial and production
+assistance from Marilyn Billone, Sandy Cooper, Elizabeth
+Good, Cathy Knutson, Katharine Schindler, and Dale Simmons
+is greatly appreciated. These individuals contributed to the
+accuracy, quality, and usability of the NFM, and demonstrated
+much patience as we traversed the difficult task of developing
+the new format.
+Special thanks are extended to Franceska Wilde (USGS),
+who led the effort for the NFM from its inception until her
+retirement in 2014; the USGS NFM Steering Committee
+(Gerolamo Casile, Michael Manning, Cherie Miller, Callie
+Oblinger (retired), Timothy Oden, Lisa Olsen, Michael Rosen,
+and Stanley Skrobialowski); Cherie Miller, who led the effort
+from 2016 to 2018; and Gerolamo Casile, who assumed
+responsibility for the NFM in 2018.
+References Cited
+Ball, J.W., and Nordstrom, D.K., 1991, User’s manual for
+WATEQ4F, with revised thermodynamic data base and
+test cases for calculating speciation of major, trace, and
+redox elements in natural waters (ver. 2.0): U.S. Geological
+Survey Open-File Report 91–183, 189 p., accessed
+September 11, 2017, at https://pubs.er.usgs.gov/publication/
+ofr91183.
+Hem, J.D., 1982, Conductance—A collective measure of
+dissolved ions, in Minear, R.A., and Keith, L.H., eds., Water
+analysis—v. 1 Inorganic species, part 1: Orlando, Fla., Aca-
+demic Press, Inc., p. 137–161.
+Hem, J.D., 1985, Study and interpretation of the chemical
+characteristics of natural water (3d ed.): U.S. Geological
+Survey Water-Supply Paper 2254, 264 p., accessed
+September 11, 2017, at https://pubs.usgs.gov/wsp/wsp2254/.
+International Organization for Standardization, 1985,
+International Standard ISO–7888, Water quality—
+Determination of electrical conductivity: Geneva,
+Switzerland, International Organization for Standardization,
+6 p.
+Lewis, E.L., 1980, The practical salinity scale 1978 and its
+antecedents: IEEE Journal of Oceanic Engineering, v. 5,
+no. 1, p. 3–8. [Also available at https://doi.org/10.1109/
+JOE.1980.1145448.]
+Lind, C.J., 1970, Specific conductance as a means of esti-
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__2cade3723a66, score 0.7456663285587875)
+
+tergents for many
+hours without damage.
+Figure 6.3–1. 	Diagram
+showing general guidelines
+for selecting an electrical
+conductivity probe with
+the optimum cell constant.
+Modified from chart in the
+YSI Model 3200 Operations
+Manual (YSI Incorporated,
+1999, p. 43). Definitions: cm-1,
+per centimeter; CO2, carbon
+dioxide; μS/cm at 25 °C,
+microsiemens per centimeter
+at 25 degrees Celsius.
+
+-- 12 of 24 --3.0 Calibration 	5
+• When additional cleaning is required, soak the probe
+in 5-percent volume per volume (v/v) hydrochloric
+acid for as long as 2 hours and then rinse thoroughly
+with DIW. Check the manufacturer’s recommenda-
+tions before using acid.
+• Caution: Platinum and platinum-iridium electrodes
+should not be cleaned in nitric acid (HNO3), aqua
+regia, or any other solution that is known to etch
+platinum or gold.
+Consult your instruction manual for specific storage
+instructions. Most conductivity probes, including probes with
+graphite electrodes, can be stored clean and dry; however,
+probes on multiparameter sondes are required to be stored
+in water (typically tap water) to prevent drying out of other
+sensors. Storage in water is acceptable while the probe is
+in use.
+3.0 	Calibration
+Specific conductance measurements are only as good
+as the calibration itself. Several factors must be considered
+when calibrating the meter. Thermal expansion of the con-
+ductivity cell can affect the cell constant; however, the cell
+constants (𝐾cell) of modern field probes are generally stable
+from 0 to 100 °C. Most conductivity standards are potassium
+chloride (KCl) solutions, and the linear (0.019–0.020) and
+nonlinear (International Organization for Standardization,
+1985) temperature-compensation factors (α) will produce
+reliable calibrations from 5 to 35 °C. Caution should be
+used when calibrating at temperatures greater than 35 °C,
+however, because the commonly used nonlinear (International
+Organization for Standardization, 1985) temperature compen-
+sation deviates substantially when applied to KCl solutions.
+Therefore, if a modern conductivity probe that expands
+minimally with temperature is used and the temperature of the
+water to be measured is between 5 and 35 °C, the temperature
+of the calibration solutions (either laboratory or in situ) is not
+expected to significantly affect the measurement of specific
+conductance of samples in the field.
+Conductivity standards are susceptible to contamination
+or dilution from residual solutions, including rinse water, and
+each calibration should be done with care. Low-conductivity
+standards (<200 μS/cm) are especially susceptible to con-
+tamination. Calibration in the laboratory prior to field
+measurement, for both specific conductance meters and
+multiparameter sondes, is recommended because the tempera-
+ture is regulated and the standard solutions are less susceptible
+to contamination.
+Specific conductance meters must be checked or calibrated
+before every field trip to ensure that the meter and probe
+are working properly. The accuracy of specific conductance
+measurements should be checked in the laboratory and in the
+field by conducting measurements on standards whose specific
+conductance is near the expected specific conductance of the
+sample. Measurements of specific conductance standards that
+are within ±5 μS/cm of the certified values for measurements
+≤100 μS/cm or ±3 percent of the certified values for measure-
+ments >100 μS/cm are considered accurate and do not warrant
+recalibration. Because specific conductance meters typically
+maintain their calibration, frequent recalibration is generally
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__f9d002693709, score 0.7368082144614941)
+
+cted specific conductance of the
+sample. Measurements of specific conductance standards that
+are within ±5 μS/cm of the certified values for measurements
+≤100 μS/cm or ±3 percent of the certified values for measure-
+ments >100 μS/cm are considered accurate and do not warrant
+recalibration. Because specific conductance meters typically
+maintain their calibration, frequent recalibration is generallyunnecessary and may not improve data accuracy. If calibration
+in the field is required, make certain the temperature of the
+standards is stable and between 5 and 35 °C.
+Specific conductance meters utilize either a one- or a
+multipoint calibration procedure. Both calibration proce-
+dures work well and the instruction manual accompanying
+the specific conductance meter as well as the NFM should be
+followed closely. Record and track the cell constant (one-point
+calibration) or slope (multipoint calibration), as deviations can
+be used to identify inaccurate calibrations or faulty equipment.
+To verify that the specific conductance meter is responding
+properly at low values of specific conductance, check the zero
+response of the dry conductivity cell in air or DIW. The mea-
+sured specific conductance of DIW should be <3 μS/cm.
+Specific conductance meters are typically calibrated
+with KCl solutions of known concentration that are traceable
+to National Institute of Standards and Technology (NIST).
+Specific conductance standards with certificates of analyses
+(NIST traceable) with values between 50 and 50,000 μS/cm
+are available from USGS One Stop.1 Electrical conductivi-
+ties of highly accurate KCl standards (0.01, 0.1, and 1.0 mole
+per kilogram [mol/kg]) were determined by Pratt and others
+(2001) and are shown in table 6.3–2. Extreme care should be
+used when calibrating with dilute (<200-μS/cm) solutions,
+as small amounts of contaminants or minor dilution can
+substantially affect the calibration. Triple rinsing with DIW
+and calibration standards is required. In addition to conduc-
+tivity standards, the USGS Quality Systems Branch (QSB)
+provides a variety of standard reference samples (SRSs),
+prepared from natural waters, for quality-assurance testing and
+measurements of specific conductance.
+3.1 One-Point Calibration—Determination of
+the Cell Constant
+Many specific conductance meters and multiparameter
+sondes utilize a one-point calibration for measurement of
+specific conductance. Calibration of specific conductance
+meters using a one-point calibration involves determination
+of the cell constant (𝐾cell) by measuring the conductance (G)
+of a standard solution with a known conductivity (κ) (see
+equation 1, where the value of κ is known). Meters utiliz-
+ing one-point calibrations typically require calibration with
+1Equipment and supplies that are tested and quality assured are available
+to USGS field studies from the National Field Supply Service (NFSS)
+and the Hydrologic Instrumentation Facility (HIF), and are sold through
+the USGS One Stop ordering system (accessed September 11, 2017, at
+https://1stop.usgs.gov/, internal USGS access only).

@@ -1,0 +1,65 @@
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__786324b0bc6d, score 0.5887734307832165)
+
+omium,
+resulting in high-biased DO readings (White and others,
+1990).4
+• The presence of cupric copper and ferric iron at a
+concentration less than 50 micrograms per liter (μg/L)
+may cause a bias of less than 1 μg/L; at a concentration
+4See also CHEMetrics, Inc., Simplicity in water analysis, accessed Sep-
+tember 4, 2019, at https://www.chemetrics.com/product-category/test-kits/
+oxygen-dissolved/.-- 22 of 44 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__fa2413681e5b, score 0.5632309731056098)
+
+teps 7a through 7d.
+a. 	Carefully immerse a reagent-containing ampule on
+the sampling tool that is attached to a wire line.
+b. 	At the desired depth of sample collection (in a well
+or surface-water body), break the scored tip of the
+ampule by using a sharp upward tugging motion on
+the sampling tool. This action permits sample water
+6A downhole sampling tool is described by White and others (1990).-- 23 of 44 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__05c228f6e257, score 0.5602182074375722)
+
+f check standards should be
+within ±5 μS/cm for measurements ≤100 μS/cm
+or ±3 percent for measurements >100 μS/cm.
+Recalibrate if necessary.
+2. 	Install the specific conductance probe.
+a. 	For measurement in a downhole system—
+i. 	Lower the probe to the sampling point.
+ii. 	Remove air trapped in the conductiv-
+ity cell by gently moving the probe up
+and down under the water; read the
+meter display.-- 18 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__7abc0fdf01b2, score 0.5597013327698244)
+
+ slope of less
+than 95 percent or greater than 101 percent indicates
+probable electrode deterioration. If the slope is outside
+the acceptable range (95–101 percent), the electrode
+should be cleaned, reconditioned, or replaced, and the
+new electrode calibrated. If a liquid-filled electrode is
+being used, try reconditioning it (section 3.2) in the
+laboratory before replacing it with a new electrode.-- 19 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__4c8cc53480b4, score 0.5579645112207828)
+
+ow-pH waters, temperature corrections may
+represent the largest source of error. A temperature-compen-
+sation method applicable to low-pH waters is described in
+section 4.3 below and by McCleskey (2013). No temperature-
+compensation method is available for waters with pH greater
+than 11; therefore, the specific conductance in high-pH waters
+should be checked by measuring at ambient temperature and-- 10 of 24 --
