@@ -129,7 +129,7 @@ describe("costCurve", () => {
  */
 describe("the ◆G7 cost conclusion", () => {
   const armsFor = (chatModel: string) => scenarioArms({
-    completionTokens: 400, chatModel, directFeedCacheRate: 0.996,
+    completionTokens: 400, chatModel, sliceCacheRate: 0.996,
   });
   const byName = (list: ArmCostInputs[], name: string): ArmCostInputs => {
     const found = list.find((a) => a.arm === name);
@@ -211,8 +211,63 @@ describe("the ◆G7 cost conclusion", () => {
 
   it("refuses to price a model with no recorded rate rather than inventing one", () => {
     expect(() => scenarioArms({
-      completionTokens: 400, chatModel: "accounts/fireworks/models/unpriced", directFeedCacheRate: 1,
+      completionTokens: 400, chatModel: "accounts/fireworks/models/unpriced", sliceCacheRate: 1,
     })).toThrow(/No price recorded/);
+  });
+
+  it("prices every captured arm, so the report never has to hand-compute one", () => {
+    const arms = armsFor("accounts/fireworks/models/gpt-oss-20b").map((a) => a.arm);
+
+    // The two hybrids were priced by hand (marked ‡ in RETRIEVAL_COMPARISON.md §1) until they
+    // were added here. Hand arithmetic in a report cannot be re-run by an auditor.
+    expect(arms.sort()).toEqual([
+      "firestore-direct", "firestore-vector", "hybrid-slice-lexvec", "hybrid-slice-vector",
+      "pgvector-rag",
+    ]);
+  });
+
+  it("charges the hybrids nothing per query for Firestore, because they issue no query to it", () => {
+    const arms = armsFor("accounts/fireworks/models/gpt-oss-20b");
+
+    // Composed from DirectFeedAdapter (slice cached once per process) and LocalVectorAdapter
+    // (local embedding cache). The kNN reads firestore-vector pays have no counterpart.
+    ["hybrid-slice-vector", "hybrid-slice-lexvec"].forEach((name) => {
+      expect(perRequestCost(byName(arms, name)).datastoreUsd).toBe(0);
+      expect(byName(arms, name).fixed?.usdPerMonth).toBe(0);
+    });
+
+    expect(perRequestCost(byName(arms, "firestore-vector")).datastoreUsd).toBeGreaterThan(0);
+  });
+
+  it("prices the hybrids ABOVE direct-feed per answer — composing retrieval is a surcharge", () => {
+    const arms = armsFor("accounts/fireworks/models/gpt-oss-20b");
+    const direct = perRequestCost(byName(arms, "firestore-direct")).totalUsd;
+
+    // Both hybrids send the whole operator slice AND retrieved chunks. Their case is the ◆G9
+    // "never face an empty context" quality argument; on cost they are strictly dearer, and the
+    // report must not imply otherwise.
+    expect(perRequestCost(byName(arms, "hybrid-slice-vector")).totalUsd).toBeGreaterThan(direct);
+    expect(perRequestCost(byName(arms, "hybrid-slice-lexvec")).totalUsd).toBeGreaterThan(direct);
+  });
+
+  it("caps cached tokens at what each arm measured, and zeroes them on the cold sweep", () => {
+    const sliceCarrying = ["firestore-direct", "hybrid-slice-vector", "hybrid-slice-lexvec"];
+
+    // A cache rate above every measured rate must not credit an arm with more cache than the
+    // sweep saw — that would flatter exactly the arms being priced.
+    const generous = scenarioArms({ completionTokens: 400, sliceCacheRate: 1 });
+    expect(byName(generous, "firestore-direct").tokens.cachedPromptTokens).toBe(10_910);
+    expect(byName(generous, "hybrid-slice-vector").tokens.cachedPromptTokens).toBe(11_015);
+    expect(byName(generous, "hybrid-slice-lexvec").tokens.cachedPromptTokens).toBe(10_564);
+
+    // --cache-rate=0 is the post-eviction worst case, and it must hit every arm carrying the
+    // slice. Sweeping direct-feed alone would have priced the cold case with the hybrids still
+    // ~87% cached, inverting the ranking for reasons that are an artifact of the model.
+    const cold = scenarioArms({ completionTokens: 400, sliceCacheRate: 0 });
+    sliceCarrying.forEach((name) => {
+      expect(byName(cold, name).tokens.cachedPromptTokens).toBe(0);
+      expect(perRequestCost(byName(cold, name)).cachedInputUsd).toBe(0);
+    });
   });
 
   it("spans the 1k-100k range §1 asks for", () => {

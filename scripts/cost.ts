@@ -16,7 +16,9 @@ import {
   COMPLETION_TOKEN_CASES, CURVE_VOLUMES, PROJECTED_ARMS, TOKEN_PROVENANCE, TOKEN_SOURCE,
   scenarioArms,
 } from "../src/eval/costScenarios";
-import { CHAT_PRICES, PRICES_READ_ON, PRICE_SOURCES } from "../src/eval/prices";
+import {
+  CHAT_PRICES, PRICES_OLDEST_READ_ON, PRICES_READ_ON, PRICE_SOURCES,
+} from "../src/eval/prices";
 import { createLogger } from "../src/utils/logger";
 
 const log = createLogger("Cost");
@@ -65,7 +67,12 @@ const padLeft = (value: string, width: number): string => value.padStart(width);
 const main = (): void => {
   const options = parseArgs(process.argv.slice(2));
 
-  log.info(`Price sheet read ${PRICES_READ_ON} — ${PRICE_SOURCES.fireworksServerless}`);
+  // Every source dated separately, oldest first: the sheet is only as fresh as its stalest line,
+  // and a reader auditing a cost figure needs to know which line that is.
+  log.info(`Price sheet — oldest read ${PRICES_OLDEST_READ_ON}:`);
+  (Object.keys(PRICE_SOURCES) as (keyof typeof PRICE_SOURCES)[]).forEach((source) => {
+    log.info(`  ${pad(source, 22)}read ${PRICES_READ_ON[source]} — ${PRICE_SOURCES[source]}`);
+  });
   log.info(`Token counts: ${TOKEN_PROVENANCE.toUpperCase()} — ${TOKEN_SOURCE}`);
   log.info(`Model: ${options.model}`);
 
@@ -82,18 +89,18 @@ const main = (): void => {
     const arms = scenarioArms({
       completionTokens,
       chatModel: options.model,
-      directFeedCacheRate: options.cacheRate,
+      sliceCacheRate: options.cacheRate,
     });
 
     log.info("");
-    log.info(`===== ${completionTokens} completion tokens, direct-feed cache ${(options.cacheRate * 100).toFixed(1)}% =====`);
-    log.info(`${pad("arm", 18)}${padLeft("uncached in", 13)}${padLeft("cached in", 12)}${padLeft("output", 11)}${padLeft("per answer", 13)}`);
+    log.info(`===== ${completionTokens} completion tokens, slice cache ${(options.cacheRate * 100).toFixed(1)}% =====`);
+    log.info(`${pad("arm", 22)}${padLeft("uncached in", 13)}${padLeft("cached in", 12)}${padLeft("output", 11)}${padLeft("per answer", 13)}`);
 
     arms.forEach((arm) => {
       const cost = perRequestCost(arm);
       const marker = (PROJECTED_ARMS as readonly string[]).includes(arm.arm) ? " *" : "";
       log.info(
-        pad(arm.arm + marker, 18)
+        pad(arm.arm + marker, 22)
         + padLeft(usd(cost.inputUsd, 6), 13)
         + padLeft(usd(cost.cachedInputUsd, 6), 12)
         + padLeft(usd(cost.outputUsd, 6), 11)
@@ -103,12 +110,14 @@ const main = (): void => {
 
     log.info("");
     log.info("Monthly total (marginal × volume + fixed):");
-    log.info(pad("requests/mo", 14) + arms.map((a) => padLeft(a.arm, 19)).join(""));
+    // 21, not 19: "hybrid-slice-lexvec" is exactly 19 characters, so the old width left no gap
+    // and the header ran its columns together.
+    log.info(pad("requests/mo", 14) + arms.map((a) => padLeft(a.arm, 21)).join(""));
 
     costCurve(arms, CURVE_VOLUMES).forEach((row) => {
       log.info(
         pad(row.requestsPerMonth.toLocaleString(), 14)
-        + arms.map((a) => padLeft(usd(row.byArm[a.arm]), 19)).join(""),
+        + arms.map((a) => padLeft(usd(row.byArm[a.arm]), 21)).join(""),
       );
     });
 
@@ -152,7 +161,7 @@ const main = (): void => {
   const atCeiling = scenarioArms({
     completionTokens: COMPLETION_TOKEN_CASES[0],
     chatModel: options.model,
-    directFeedCacheRate: options.cacheRate,
+    sliceCacheRate: options.cacheRate,
   }).map((arm) => `${arm.arm} ${usd(monthlyCost(arm, 100_000))}`);
   log.info("");
   log.info(`At the 100k/month ceiling (${COMPLETION_TOKEN_CASES[0]} completion tokens): ${atCeiling.join(" · ")}`);
