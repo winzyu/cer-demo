@@ -8,7 +8,7 @@ import {
 import type { AskFn, AskResult } from "../../src/eval/runner";
 import { totalsFor, transcriptPath } from "../../src/eval/transcript";
 import type { TranscriptRunMeta, TranscriptTurn } from "../../src/eval/transcript";
-import { parseSseChunk } from "../../src/eval/transport";
+import { elapsedMsSince, monotonicNowMs, parseSseChunk } from "../../src/eval/transport";
 import type { LoadedFixture } from "../../src/eval/types";
 
 const run: TranscriptRunMeta = {
@@ -292,5 +292,44 @@ describe("transcriptPath", () => {
   it("separates passes and arms so they can never be blended", () => {
     expect(transcriptPath("firestore-direct", "cold", "definitional-orp"))
       .toBe("cold/firestore-direct/definitional-orp.json");
+  });
+});
+
+/**
+ * The regression guard for the negative `ttftMs`/`wallMs` values in the 2026-08-11 transcripts
+ * (`RETRIEVAL_COMPARISON.md` §1a). Those came from measuring elapsed time with `Date.now()`,
+ * which the OS may step backwards; the fix is a monotonic clock, and this locks it in.
+ */
+describe("elapsed-time measurement", () => {
+  const realDateNow = Date.now;
+
+  afterEach(() => {
+    Date.now = realDateNow;
+  });
+
+  it("does not run backwards when the system clock is stepped backwards", () => {
+    const started = monotonicNowMs();
+
+    // A backward step of a full hour — far larger than the ~1.4s the real sweeps saw, so this
+    // fails loudly rather than marginally if the clock source ever regresses to Date.now().
+    let fakeNow = realDateNow() - 3_600_000;
+    Date.now = () => fakeNow;
+    fakeNow -= 60_000;
+
+    expect(monotonicNowMs()).toBeGreaterThanOrEqual(started);
+    expect(elapsedMsSince(started)).toBeGreaterThanOrEqual(0);
+  });
+
+  it("reports whole milliseconds, so a transcript never carries a fractional duration", () => {
+    expect(Number.isInteger(elapsedMsSince(monotonicNowMs()))).toBe(true);
+  });
+
+  it("measures real elapsed time rather than always returning zero", async () => {
+    const started = monotonicNowMs();
+    await new Promise((resolve) => { setTimeout(resolve, 25); });
+
+    // Loose lower bound: timers fire late, never early, and a tight one would be flaky on a
+    // loaded machine. The point is that the clock advances at all.
+    expect(elapsedMsSince(started)).toBeGreaterThanOrEqual(10);
   });
 });
