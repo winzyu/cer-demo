@@ -51,6 +51,11 @@ describe("blind grading packet — label assignment", () => {
     // label A in 22 of 28 sheets and firestore-direct at A in none. Each sheet looked shuffled;
     // the SET leaked the mapping, so a judge would learn "A is the one that refuses" and the
     // blinding — the whole basis of §7b — would be void with nothing visibly wrong.
+    //
+    // Measured as chi-square over the whole arm x label table rather than a bound on each cell.
+    // A per-cell bound has to be re-tuned every time an arm is added: with 3 arms each cell
+    // expects 9.3 draws, with 5 it expects 6.0, and ordinary +/-2 sd lumpiness trips a fixed
+    // multiplier at the smaller count. Chi-square pools the evidence and scales on its own.
     const labels = labelsFor(ARMS.length);
     const counts: Record<string, Record<string, number>> = {};
     ARMS.forEach((arm) => {
@@ -64,11 +69,22 @@ describe("blind grading packet — label assignment", () => {
     });
 
     const expected = fixtureIds.length / ARMS.length;
+    const chi2 = ARMS.reduce((sum, arm) => sum + labels.reduce(
+      (rowSum, label) => rowSum + ((counts[arm][label] - expected) ** 2) / expected,
+      0,
+    ), 0);
+    const df = (ARMS.length - 1) ** 2;
+
+    // Generous: this is a leak detector, not a uniformity test, and it must not go flaky as arms
+    // come and go. Measured 1.94 on the current 5-arm set; the shuffle it exists to catch scores
+    // 10.39 on the 3-arm table above.
+    expect(chi2 / df).toBeLessThan(3);
+
+    // And the blunt version of the same question, which the original bug fails outright: no arm
+    // may sit at one label for anything close to half the sheets.
     ARMS.forEach((arm) => {
       labels.forEach((label) => {
-        // Generous bound — this is catching a broken shuffle, not testing for uniformity.
-        expect(counts[arm][label]).toBeGreaterThan(expected * 0.4);
-        expect(counts[arm][label]).toBeLessThan(expected * 1.8);
+        expect(counts[arm][label]).toBeLessThan(fixtureIds.length / 2);
       });
     });
   });
