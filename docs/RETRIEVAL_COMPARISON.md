@@ -1051,6 +1051,29 @@ message, and not implied by a document quietly proceeding as though the decision
 
 ### 7.3 What is not established
 
+- **Whether the fixture set is representative of real questions, and this one is load-bearing.**
+  Measured 2026-08-27: the ◆G9 slice is **37,660 of the corpus's 851,611 chars — 4.4%** — and
+  **only 3 of the 30 fixtures require material outside it.** All three are `deep-in-manual`, the
+  one class `firestore-direct` cannot reach, where it scores **0.33/2** against
+  `hybrid-slice-vector`'s 0.83 and a 1.0 per-class floor.
+
+  So 90% of the evaluation is answerable from 4.4% of the corpus, and direct-feed's headline win —
+  8 of 11 classes — is a win on a question mix that is overwhelmingly slice-answerable. **That is
+  not a rigged test**: the slice was curated to be the authoritative tier and §8a charges the gap
+  as coverage, which direct-feed duly fails at 89.3%. But it does mean the margin is a function of
+  the fixture mix. If real usage skews toward manual-depth questions, direct-feed's advantage
+  shrinks toward its worst class rather than its average, and the split outcome §8a names —
+  direct-feed for the authoritative tier, retrieval for the long manuals — becomes the answer on
+  quality grounds alone.
+
+  **What would settle it:** fixtures drawn from real user questions rather than authored against
+  the corpus, or simply more `deep-in-manual` coverage. Three fixtures is too thin to carry the
+  weight this class is now bearing.
+
+  Note the mechanism, because it is easy to state wrongly: direct-feed does **not** degrade by
+  being handed a large context. It never sees one — its prompt is ~9,415 tokens and fixed. The
+  whole corpus is ~213,000 tokens and is not feedable by any arm at any price. The exposure is
+  blindness to the 95.6% it never sees, not dilution within what it does.
 - **Whether the quality floor is reachable at all** on this prompt, this `max_tokens`, and this
   model. Nothing here bounds how much of the 53% groundedness rate a prompt change recovers.
 - **Whether the arm ranking survives a system change.** Correctness was measured against a pinned
@@ -1168,6 +1191,7 @@ point twice over: the arm with the *least* retrieval scored the best answers.
 | 6 | 138 of 174 human grading rows | human grading; the judge now covers the full set on its own |
 | 7 | ~~**the ◆G7 scoping decision**~~ | **filled 2026-08-26 — split**, recorded in `timeline.md` (§7.1a) |
 | 7 | **a deployable system** | groundedness at 53–59% of turns against a 2% ceiling (§7.4 step 3) |
+| 7 | **evidence that the fixture mix reflects real questions** | only 3 of 30 fixtures need material outside the 4.4% slice, and all 3 are the class direct-feed fails (§7.3) |
 
 ---
 
