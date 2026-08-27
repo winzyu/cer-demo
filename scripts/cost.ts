@@ -4,6 +4,7 @@
  *   npm run cost
  *   npm run cost -- --model=accounts/fireworks/models/gpt-oss-120b
  *   npm run cost -- --cache-rate=0
+ *   npm run cost -- --completion=measured   # each arm at its own answer length (§1's table)
  *
  * Reads no network and calls no provider — it is arithmetic over the recorded price sheet
  * (`src/eval/prices.ts`) and the recorded token measurements (`src/eval/costScenarios.ts`), so it
@@ -29,18 +30,31 @@ const DEFAULT_CACHE_RATE = 0.996;
 interface Options {
   model: string;
   cacheRate: number;
+  /**
+   * `undefined` sweeps `COMPLETION_TOKEN_CASES` with one length for every arm — the comparison
+   * view. `"measured"` gives each arm its own measured length, which is what §1's per-answer
+   * column reports and the only way to reproduce it from this script.
+   */
+  completion?: "measured";
 }
 
 const parseArgs = (argv: string[]): Options => {
   const problems: string[] = [];
   let model = DEFAULT_MODEL;
   let cacheRate = DEFAULT_CACHE_RATE;
+  let completion: "measured" | undefined;
 
   argv.forEach((arg) => {
     const [flag, value] = arg.split("=", 2);
 
     if (flag === "--model" && value) {
       model = value;
+    } else if (flag === "--completion" && value !== undefined) {
+      if (value !== "measured") {
+        problems.push(`--completion accepts only "measured", got "${value}"`);
+      } else {
+        completion = value;
+      }
     } else if (flag === "--cache-rate" && value !== undefined) {
       const parsed = Number(value);
       if (!Number.isFinite(parsed) || parsed < 0 || parsed > 1) {
@@ -57,7 +71,7 @@ const parseArgs = (argv: string[]): Options => {
     throw new Error(`Bad arguments:\n  - ${problems.join("\n  - ")}`);
   }
 
-  return { model, cacheRate };
+  return { model, cacheRate, completion };
 };
 
 const usd = (value: number, places = 2): string => `$${value.toFixed(places)}`;
@@ -85,7 +99,13 @@ const main = (): void => {
     );
   }
 
-  COMPLETION_TOKEN_CASES.forEach((completionTokens) => {
+  // One pass at each arm's own length, or the sweep. Same code path either way, so the two
+  // views cannot drift apart in how they price anything else.
+  const cases: (number | "measured")[] = options.completion
+    ? [options.completion]
+    : [...COMPLETION_TOKEN_CASES];
+
+  cases.forEach((completionTokens) => {
     const arms = scenarioArms({
       completionTokens,
       chatModel: options.model,
@@ -93,7 +113,10 @@ const main = (): void => {
     });
 
     log.info("");
-    log.info(`===== ${completionTokens} completion tokens, slice cache ${(options.cacheRate * 100).toFixed(1)}% =====`);
+    const heading = completionTokens === "measured"
+      ? "each arm at its own measured completion length"
+      : `${completionTokens} completion tokens`;
+    log.info(`===== ${heading}, slice cache ${(options.cacheRate * 100).toFixed(1)}% =====`);
     log.info(`${pad("arm", 22)}${padLeft("uncached in", 13)}${padLeft("cached in", 12)}${padLeft("output", 11)}${padLeft("per answer", 13)}`);
 
     arms.forEach((arm) => {
@@ -159,12 +182,13 @@ const main = (): void => {
 
   // Sanity anchor for the reader: the single number the whole phase turns on.
   const atCeiling = scenarioArms({
-    completionTokens: COMPLETION_TOKEN_CASES[0],
+    completionTokens: options.completion ?? COMPLETION_TOKEN_CASES[0],
     chatModel: options.model,
     sliceCacheRate: options.cacheRate,
   }).map((arm) => `${arm.arm} ${usd(monthlyCost(arm, 100_000))}`);
   log.info("");
-  log.info(`At the 100k/month ceiling (${COMPLETION_TOKEN_CASES[0]} completion tokens): ${atCeiling.join(" · ")}`);
+  const ceilingBasis = options.completion ?? `${COMPLETION_TOKEN_CASES[0]} completion tokens`;
+  log.info(`At the 100k/month ceiling (${ceilingBasis}): ${atCeiling.join(" · ")}`);
 };
 
 try {

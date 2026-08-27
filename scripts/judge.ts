@@ -13,9 +13,9 @@
  *   npm run judge -- --report                     # summarize what is already judged, no calls
  *   npm run judge -- --calibrate                  # judge-vs-human agreement, no calls
  *
- * **Every verdict is appended to `data/judge/<pass>.jsonl` as it arrives**, and a re-run skips
- * what is already there. An interrupted pass resumes; it is not repaid. Delete lines from that
- * file to force a re-judge of specific turns.
+ * **Every verdict is appended to `data/results/judge/<pass>.jsonl` as it arrives**, and a re-run
+ * skips what is already there. An interrupted pass resumes; it is not repaid. Delete lines from
+ * that file to force a re-judge of specific turns.
  */
 import fs from "fs";
 import path from "path";

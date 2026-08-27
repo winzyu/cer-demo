@@ -63,6 +63,26 @@ export const COMPLETION_TOKEN_CASES = [400, 760, 1300] as const;
 export const MEASURED_COMPLETION_TOKENS = 760;
 
 /**
+ * Each arm's own measured completion length, warm pass.
+ *
+ * Recorded **in addition to** the swept constant above, not instead of it, because the two answer
+ * different questions. The sweep asks "how do these arms compare when answer length is held
+ * still?" — the right question for a retrieval comparison. This map answers "what does each arm
+ * actually cost today?", which is the question `RETRIEVAL_COMPARISON.md` §1 puts in its table.
+ *
+ * Without it §1's per-answer column could not be reproduced by `npm run cost` at all, and it was
+ * carrying hand arithmetic marked `‡` for exactly that reason. Hand arithmetic in a report is
+ * unauditable: nobody can re-run it, and nobody notices when the transcripts move underneath it.
+ */
+export const MEASURED_COMPLETION_TOKENS_BY_ARM: Record<string, number> = {
+  "firestore-direct": 740,
+  "pgvector-rag": 594,
+  "firestore-vector": 460,
+  "hybrid-slice-vector": 405,
+  "hybrid-slice-lexvec": 961,
+};
+
+/**
  * One kNN query bills `ceil(chunks / 100)` index reads plus one read per document returned.
  * 393 chunks and top-k 5 → 4 + 5 = 9 reads. (Was written against a 305-chunk corpus; the count
  * is now 393 and the billed figure is unchanged, since both land in the same 100-entry batch.)
@@ -106,7 +126,12 @@ export const HYBRID_SLICE_FIXED: FixedCost = {
 };
 
 export interface ScenarioOptions {
-  completionTokens: number;
+  /**
+   * A single length applied to every arm, or `"measured"` to give each arm its own
+   * (`MEASURED_COMPLETION_TOKENS_BY_ARM`). Use a number to compare arms; use `"measured"` to
+   * reproduce §1's table of what each arm costs as it stands.
+   */
+  completionTokens: number | "measured";
   chatModel?: string;
   /**
    * Cache hit rate on the **operator slice** — the shared prompt prefix. Measured at 99.0-99.9%
@@ -145,6 +170,26 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
   const embeddingPricePerMillion = EMBEDDING_PRICES[EMBEDDING_MODEL];
 
   /**
+   * Throws rather than falling back on the swept constant for an arm with no measurement: a
+   * silent substitution would print a mixed table — some arms measured, some assumed — under one
+   * heading, which is the sort of number that survives into a report unchallenged.
+   */
+  const completionFor = (arm: string): number => {
+    if (options.completionTokens !== "measured") {
+      return options.completionTokens;
+    }
+    const measured = MEASURED_COMPLETION_TOKENS_BY_ARM[arm];
+    if (measured === undefined) {
+      throw new Error(
+        `No measured completion length for "${arm}". Add it to `
+        + "MEASURED_COMPLETION_TOKENS_BY_ARM from that arm's transcripts, or price the whole "
+        + "table at one length instead.",
+      );
+    }
+    return measured;
+  };
+
+  /**
    * Cached tokens for an arm carrying the slice: the swept rate applied to the slice, **capped at
    * what that arm actually measured**. The cap matters — the default `--cache-rate` (0.996) is
    * above every arm's measured rate, so without it the model would credit each arm with more
@@ -163,7 +208,7 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
         // Sweep means, warm pass: 11,023 prompt tokens/turn at 10,910 cached (99.0%), 58 turns.
         promptTokens: SLICE_PROMPT_TOKENS,
         cachedPromptTokens: sliceCached(10_910),
-        completionTokens: options.completionTokens,
+        completionTokens: completionFor("firestore-direct"),
       },
       chatPrices,
       // The slice is loaded once per process, not once per request, so Firestore reads amortize
@@ -186,7 +231,7 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
         // text. The direction matters — the bug was flattering this arm on cost.
         promptTokens: 3976,
         cachedPromptTokens: 1694,
-        completionTokens: options.completionTokens,
+        completionTokens: completionFor("pgvector-rag"),
         embeddingTokens: 20,
       },
       chatPrices,
@@ -208,7 +253,7 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
         // same reason `pgvector-rag` is — a comparison that drops its losers is unauditable.
         promptTokens: 3342,
         cachedPromptTokens: 1030,
-        completionTokens: options.completionTokens,
+        completionTokens: completionFor("firestore-vector"),
         embeddingTokens: 20,
       },
       chatPrices,
@@ -230,7 +275,7 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
         // strictly a surcharge.
         promptTokens: 12_671,
         cachedPromptTokens: sliceCached(11_015),
-        completionTokens: options.completionTokens,
+        completionTokens: completionFor("hybrid-slice-vector"),
         embeddingTokens: 20,
       },
       chatPrices,
@@ -256,7 +301,7 @@ export const scenarioArms = (options: ScenarioOptions): ArmCostInputs[] => {
         // prefix without lengthening the prefix itself.
         promptTokens: 12_985,
         cachedPromptTokens: sliceCached(10_564),
-        completionTokens: options.completionTokens,
+        completionTokens: completionFor("hybrid-slice-lexvec"),
         embeddingTokens: 20,
       },
       chatPrices,

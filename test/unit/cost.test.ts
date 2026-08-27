@@ -2,7 +2,9 @@ import {
   breakEven, costCurve, monthlyCost, perRequestCost,
 } from "../../src/eval/cost";
 import type { ArmCostInputs } from "../../src/eval/cost";
-import { CURVE_VOLUMES, scenarioArms } from "../../src/eval/costScenarios";
+import {
+  CURVE_VOLUMES, MEASURED_COMPLETION_TOKENS_BY_ARM, scenarioArms,
+} from "../../src/eval/costScenarios";
 import { CHAT_PRICES, EMBEDDING_PRICES } from "../../src/eval/prices";
 
 const GPT_OSS_20B = CHAT_PRICES["accounts/fireworks/models/gpt-oss-20b"];
@@ -268,6 +270,35 @@ describe("the ◆G7 cost conclusion", () => {
       expect(byName(cold, name).tokens.cachedPromptTokens).toBe(0);
       expect(perRequestCost(byName(cold, name)).cachedInputUsd).toBe(0);
     });
+  });
+
+  it("reproduces §1's per-answer column, so the report is no longer hand arithmetic", () => {
+    const arms = scenarioArms({
+      completionTokens: "measured",
+      chatModel: "accounts/fireworks/models/gpt-oss-20b",
+      sliceCacheRate: 0.996,
+    });
+    const perAnswer = (name: string) => perRequestCost(byName(arms, name)).totalUsd;
+
+    // These are the figures printed in RETRIEVAL_COMPARISON.md §1. They were computed by hand for
+    // the two hybrids (marked ‡) because nothing priced them; if this test fails, either the
+    // transcripts moved or the price sheet did, and §1 is stale — that is the point of the test.
+    expect(perAnswer("firestore-direct")).toBeCloseTo(0.000612, 6);
+    expect(perAnswer("hybrid-slice-vector")).toBeCloseTo(0.000624, 6);
+    expect(perAnswer("hybrid-slice-lexvec")).toBeCloseTo(0.000828, 6);
+    expect(perAnswer("firestore-vector")).toBeCloseTo(0.000339, 6);
+  });
+
+  it("refuses to price an arm at a measured length it has no measurement for", () => {
+    // Falling back on the swept constant would print one table mixing measured and assumed
+    // lengths under a heading that says "measured".
+    expect(() => scenarioArms({
+      completionTokens: "measured",
+      chatModel: "accounts/fireworks/models/gpt-oss-20b",
+      sliceCacheRate: 1,
+    })).not.toThrow();
+
+    expect(MEASURED_COMPLETION_TOKENS_BY_ARM["no-such-arm"]).toBeUndefined();
   });
 
   it("spans the 1k-100k range §1 asks for", () => {
