@@ -4,13 +4,13 @@
   "arm": "firestore-vector",
   "pass": "warm",
   "run": {
-    "startedAt": "2026-08-11T23:32:23.664Z",
-    "gitSha": "3a94f6d8d5c409c382651100fe6f0d10a98440af",
+    "startedAt": "2026-08-26T22:28:44.754Z",
+    "gitSha": "44890dddd2412dae834562c84cd60e97c6148114",
     "model": "accounts/fireworks/models/gpt-oss-20b",
     "temperature": 0,
     "maxTokens": 16384,
     "corpusSource": "firestore",
-    "baseUrl": "http://localhost:8000/api/v1",
+    "baseUrl": "http://localhost:8010/api/v1",
     "transport": "sse",
     "cacheReportingAvailable": true
   },
@@ -18,104 +18,104 @@
     {
       "index": 0,
       "question": "Our conductivity is 30 µS/cm. Flag it?",
-      "answer": "No.  \nYour sensor’s normal range for conductivity is 0 – 1,500 µS/cm, and 30 µS/cm falls well within that window. (Typical river conductivity is usually 50 – 1,500 µS/cm, so 30 µS/cm is on the low side but still normal for the sensor.)",
+      "answer": "No. The sensor’s conductivity reading of 30 µS/cm falls within the operator‑provided normal range of 0 – 1,500 µS/cm.",
       "context": [
         {
-          "id": "tm9a6.8.pdf__0023",
-          "text": "riteria\n(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)\nTemperature \t± 0.2 °C\nSpecific electrical conductance (SC) \t± 5 μS/cm for SC ≤100 μS/cm, or ± 3% for SC >100 μS/cm\nDO \t± 0.2 mg/L\npH \t± 0.1 pH units\nTurbidity \t± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or\n10% of the measured value for turbidity >100 TU-- 15 of 24 --",
-          "source": "tm9a6.8.pdf",
-          "score": 0.7349736623683883
+          "id": "usgs-nfm-a6.3-specific-conductance.pdf__361ef9509206",
+          "text": "he following equation:\n = K \tG\tcell \t(1)\nwhere 𝐾cell is the cell constant (in units of cm-1). The cell con-\nstant is the ratio of the distance between two electrode plates\n(d) and their area (A). The units of electrical conductivity are\nsiemens per centimeter (S/cm), which is the equivalent of\nmhos per centimeter (mhos/cm). Most values reported prior to\n1971 were in units of mhos per centimeter.Electrical conductivity increases by 0.5 to 3 percent per\ndegree Celsius and varies depending on the ionic species\npresent (Robinson and Stokes, 1970; McCleskey, 2013). For\nnatural waters, conductometric measurements are typically\nused to estimate the concentrations of total dissolved solids\n(TDS); therefore, the electrical conductivity is reported at\n25 °C (κ25 °C, which is equivalent to specific conductance), to\nfacilitate this estimation of TDS by removing the effects of\ntemperature. The value of κ25 °C is typically calculated by using\nthe following equation:\nκ\nκ\nα\n25 1 \t25\n° \t= + \t− \t°\nC t \tC\t( \t) (2)\nwhere α is the temperature-compensation factor and t is the\nmeasured temperature in degrees Celsius. Modern specific\nconductance field meters typically have preprogrammed\ntemperature-compensation factors (α) and report specific\nconductance (or electrical conductivity) at 25 °C (κ25 °C).\nMost specific conductance meters utilize either linear\n(0.019–0.020 per °C) or nonlinear (International Organiza-\ntion for Standardization, 1985) temperature-compensation\nalgorithms that are applicable for most natural waters. The\ntemperature compensation used is likely described in the\nmeter’s manual or can be determined by using standard\nsolutions and the method described by McCleskey (2013).\nConductance and temperature can be measured accurately\nwith modern instrumentation, and temperature compensation\nis typically accurate to ±5 percent for water in the range from\n5 to 35 ºC and whose pH is between 4 and 11. For low-pH\n(pH <4) waters, using the standard temperature-compensation\nfactors can result in κ25 °C errors as large as 50 percent, because\nthe transport properties of the hydrogen ion are different from\nthose of most other ions, and the hydrogen ion contributes sub-\nstantially to the electrical conductance at low pH (McCleskey,\n2013). For low-pH waters, temperature corrections may\nrepresent the largest source of error. A temperature-compen-\nsation method applicable to low-pH waters is described in\nsection 4.3 below and by McCleskey (2013). No temperature-\ncompensation method is available for waters with pH greater\nthan 11; therefore, the specific conductance in high-pH waters\nshould be checked by measuring at ambient temperature and",
+          "source": "https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf",
+          "score": 0.7652658437424139
         },
         {
-          "id": "EC_K_1.0_probe.pdf__0001",
-          "text": "ed as the conductivity cells\nK constant.\nHow often do you need to\nrecalibrate a conductivity probe?\nConductivity probes work by measuring the electrical current of the water between two\ngraphite plates. The plates do not go bad, or change, so recalibration is not necessary. After\nthe first calibration your conductivity probe is good to go.\nV\nV\n0000\n6 \tCopyright © Atlas Scientific LLC\n\n-- 6 of 9 --Extending the probe cable length\nYou can extend the cable to greater than 100 meters with no loss of signal. Atlas Scientific\nhas tested up to 300 meters without a problem, however you run the risk of turning your\nE.C. probe into an antenna, picking up noise along the length of your cable.\nIf you want to extend your cable, we recommend that you use proper isolation, such as\nthe Basic EZO TM Inline Voltage Isolator, or an i2 InterLink. Be sure to calibrate your\nprobe with the extended cable.\nExtending a probe cable can be easily done with our SMA Extension Cables. Simply\nconnect the SMA end of the probe to the Extension cable, and you are all set.\nIf you need to water proof a SMA connection, we highly recommend using a product like\nCoax-Seal to safely cover and prevent any water damage that may occur.\nWater proof\n7 \tCopyright © Atlas Scientific LLC\n\n-- 7 of 9 --\n\nHelpful operating tips\nBe sure to watch out for air bubbles, as they can get caught between the two\ngraphite plates and throw off your results. Lightly tap your conductivity probe to\nknock out any bubbles caught in the probe.\nBubbles\nOver time conductivity probes can become dirty and covered in deposits, which can\nchange the basic electrical properties of the probe and cause inaccurate readings.\nSoft coatings can be removed by lightly brushing around the conducting area.\nProbe cleaning\n8 \tCopyright © Atlas Scientific LLC\n\n-- 8 of 9 --\n\nHard coatings should be chemically removed. We highly recommend you use the\nAtlas Scientific conductivity probe cleaner.\n9 \tCopyright © Atlas Scientific LLC\n\n-- 9 of 9 --\n\n",
-          "source": "EC_K_1.0_probe.pdf",
-          "score": 0.7152119030830911
+          "id": "usgs-nfm-a6.3-specific-conductance.pdf__05c228f6e257",
+          "text": "f check standards should be\nwithin ±5 μS/cm for measurements ≤100 μS/cm\nor ±3 percent for measurements >100 μS/cm.\nRecalibrate if necessary.\n2. \tInstall the specific conductance probe.\na. \tFor measurement in a downhole system—\ni. \tLower the probe to the sampling point.\nii. \tRemove air trapped in the conductiv-\nity cell by gently moving the probe up\nand down under the water; read the\nmeter display.-- 18 of 24 --",
+          "source": "https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf",
+          "score": 0.7551242678408866
         },
         {
-          "id": "EC_K_1.0_probe.pdf__0000",
-          "text": "Range \t5 − 200,000 μS/cm\n90% in 1s\tResponse time\n3,447 kPa (500 PSI)\tMax pressure\n1 meter\tCable length\nNo\tInternal temperature sensor\n~10 years\tTime before recalibration\nGraphite\nReads \tConductivity\n1 − 110 °C\tTemperature range °C\n352m (1,157 ft)\tMax depth\n+/ – 2%\tAccuracy\nMale SMA / Male BNC\tConnector\n~10 years\tLife expectancy\nConductivity\nGen 3\nProbe K 1.0\n(Optional)\nRevised 10/25\nV 4.2\n\n-- 1 of 9 --\n\nOperating principle\nAn E.C. (electrical conductivity) probe measures the electrical conductivity in a solution.\nIt is commonly used in hydroponics, aquaculture and freshwater systems to monitor the\namount of nutrients, salts or impurities in the water.\nInside the conductivity probe, two electrodes are positioned opposite from each other,\nan AC voltage is applied to the electrodes causing cations to move to the negatively\ncharged electrode, while the anions move to the positively electrode. The more free\nelectrolyte the liquid contains, the higher the electrical conductivity.\nAC voltage\nEpoxy body\nGraphite\nEpoxy body\nGraphite\nEpoxy body\nGlass stem\nPlatinum\nody\ne\nEpoxy body\nGraphite\nThe entire conducting area must be\nsubmerged in order to get accurate\nreadings.\n2 \tCopyright © Atlas Scientific LLC\n\n-- 2 of 9 --\n\n112.7mm\n(4.4”)\n150.3mm\n(5.9”)\n37.6mm\n(1.4”)\n12mm (0.5”)\nCable Length\n1m (3.2’)\n29mm\n(1.1”)\nØ 8mm\nØ 2.6mm\nOptional\nSensing area\n15.5mm\n(0.6”)\n16mm\n(0.6”)\nMeasurements\n3 \tCopyright © Atlas Scientific LLC\n\n-- 3 of 9 --\n\nPVC\nABS \tPolyethylene\nTitanium Nitride\nABS\nGraphite\nTitanium Nitride\nNSF-51 Compliant\nPolyethylene\nNSF-51 Compliant\nABS\nNSF-51 Compliant\nGraphite\nNSF-51 Compliant\nPVC\nNSF-51 Compliant\nNSF/ANSI 51 Compliant\nAtlas Scientific LLC, hereby certifies that,\nConductivity Probe K 1.0\nPart # ENV-40-EC-K1.0\nComplies with NSF/ANSI Standard 51\nFood Safe\n4 \tCopyright © Atlas Scientific LLC\n\n-- 4 of 9 --\n\nSpecifications\n• \tStandard Lab use\n• \tField use\n• \tAquarium\n• \tHydroponics\n• \tFish keeping\n• \tMixed aqueous/organic\n• \tSamples containing Heavy metals\n• \tSoil Samples\n• \tStrong reducing agents\nTypical applications\nThis Conductivity probe can be \tfully\nsubmerged \tin fresh or salt water, up\nto the SMA connector indefinitely.\nMaterials\nPVC\nABS\nPolyethylene\nABS \tGraphite\nTitanium Nitride\nK 1.0\nMax depth\nCable length\nWeight\nSpeed of response\nMeasuring Surface\nDimensions\nSMA connector\nSterilization\nFood safe\n5 μS/cm – 200,000 μS/cm\n352m (1,157 ft)\n1 meter\n43 grams\n90% in 1 second\nGraphite\n12mm x 145.5mm (0.47\" x 5.7\")\nMale\nChemical only\nYes\n5 \tCopyright © Atlas Scientific LLC\n\n-- 5 of 9 --\n\nA conductivity probe is a very simple device. It is just two conductors with a fixed surface\narea at a fixed distance from each other. This distance and surface area is known as the\nconductivity cell. The cells distance and surface area is quantified as the conductivity cells\nK constant.\nHow often do you need to\nrecalibrate a conductivity probe?\nConductivity probes work by measuring the electrical current of the water between two\ngraphite plates. The plates do not go bad, or change, so recalibration is not necessary. After\nthe first calibration your conductivity probe is good to go.\nV\nV\n0000\n6 \tCopyright © Atlas Scientific LLC\n\n-- 6 of 9 --",
-          "source": "EC_K_1.0_probe.pdf",
-          "score": 0.7149869548554597
+          "id": "usgs-nfm-a6.3-specific-conductance.pdf__ddc94df81b4f",
+          "text": "-- 21 of 24 --14 \tChapter A6.3. Specific Conductance\nin microsiemens per centimeter (μS/cm) where the ratio is\nexpected to be between 0.5 and 0.9 (Hem, 1985).\nTD \tmg/L\nspecific conductance in μS/cm\nS in \u001f 0.5 to 0.9 \t(3)\nMeasurements of specific conductance are commonly used\nto estimate the salinity of water.\nAcknowledgments\nThe information included in the U.S. Geological Survey\n(USGS) National Field Manual (NFM) is based on existing\nmanuals, various reference documents, and a broad spectrum\nof expertise provided by USGS colleagues. Authors of previ-\nous versions of NFM chapter A6.3 were D.B. Radtke, J.V.\nDavis, and F.D. Wilde, whose expertise and integrity provided\nthe groundwork for this and future versions of this chapter.\nThe persistence and spirit that all of our USGS colleagues\nbrought to the development of a national field manual were\ninvaluable.\nThe following USGS colleagues provided detailed techni-\ncal content and reviews that improved the quality of this report:\nR. Blaine McCleskey, Gerolamo Casile, Joseph Domagalski,\nMichael Manning, Cherie Miller, Michael Rosen, Stanley\nSkrobialowski, and Teri Snazell. Editorial and production\nassistance from Marilyn Billone, Sandy Cooper, Elizabeth\nGood, Cathy Knutson, Katharine Schindler, and Dale Simmons\nis greatly appreciated. These individuals contributed to the\naccuracy, quality, and usability of the NFM, and demonstrated\nmuch patience as we traversed the difficult task of developing\nthe new format.\nSpecial thanks are extended to Franceska Wilde (USGS),\nwho led the effort for the NFM from its inception until her\nretirement in 2014; the USGS NFM Steering Committee\n(Gerolamo Casile, Michael Manning, Cherie Miller, Callie\nOblinger (retired), Timothy Oden, Lisa Olsen, Michael Rosen,\nand Stanley Skrobialowski); Cherie Miller, who led the effort\nfrom 2016 to 2018; and Gerolamo Casile, who assumed\nresponsibility for the NFM in 2018.\nReferences Cited\nBall, J.W., and Nordstrom, D.K., 1991, User’s manual for\nWATEQ4F, with revised thermodynamic data base and\ntest cases for calculating speciation of major, trace, and\nredox elements in natural waters (ver. 2.0): U.S. Geological\nSurvey Open-File Report 91–183, 189 p., accessed\nSeptember 11, 2017, at https://pubs.er.usgs.gov/publication/\nofr91183.\nHem, J.D., 1982, Conductance—A collective measure of\ndissolved ions, in Minear, R.A., and Keith, L.H., eds., Water\nanalysis—v. 1 Inorganic species, part 1: Orlando, Fla., Aca-\ndemic Press, Inc., p. 137–161.\nHem, J.D., 1985, Study and interpretation of the chemical\ncharacteristics of natural water (3d ed.): U.S. Geological\nSurvey Water-Supply Paper 2254, 264 p., accessed\nSeptember 11, 2017, at https://pubs.usgs.gov/wsp/wsp2254/.\nInternational Organization for Standardization, 1985,\nInternational Standard ISO–7888, Water quality—\nDetermination of electrical conductivity: Geneva,\nSwitzerland, International Organization for Standardization,\n6 p.\nLewis, E.L., 1980, The practical salinity scale 1978 and its\nantecedents: IEEE Journal of Oceanic Engineering, v. 5,\nno. 1, p. 3–8. [Also available at https://doi.org/10.1109/\nJOE.1980.1145448.]\nLind, C.J., 1970, Specific conductance as a means of esti-",
+          "source": "https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf",
+          "score": 0.7528414532960398
         },
         {
-          "id": "volunteer_stream_monitoring_a_methods_manual.pdf__0168",
-          "text": "rivers in the United States generally ranges from 50 to 1500 μmhos/cm.\nStudies of inland fresh waters indicate that streams supporting good mixed fisheries have\na range between 150 and 500 μhos/cm. Conductivity outside this range could indicate\nthat the water is not suitable for certain species of fish or macroinvertebrates. Industrial\nwaters can range as high as 10,000 μmhos/cm.\n\n-- 179 of 227 --Sampling and equipment Considerations\nConductivity is useful as a general measure of stream water quality. Each stream tends to\nhave a relatively constant range of conductivity that, once established, can be used as a\nbaseline for comparison with regular conductivity measurements. Significant changes in\nconductivity could then be an indicator that a discharge or some other source of pollution\nhas entered a stream.\nConductivity is measured with a probe and a meter. Voltage is applied between two\nelectrodes in a probe immersed in the sample water. The drop in voltage caused by the\nresistance of the water is used to calculate the conductivity per centimeter. The meter\nconverts the probe measurement to micromhos per centimeter and displays the result for\nthe user. NOTE: Some conductivity meters can also be used to test for total dissolved\nsolids and salinity. The total dissolved solids concentration in milligrams per liter (mg/L)\ncan also be calculated by multiplying the conductivity result by a factor between 0.55 and\n0.9, which is empirically determined (see Standard Methods #2510, APHA 1992).\nSuitable conductivity meters cost about $350. Meters in this price range should also\nmeasure temperature and automatically compensate for temperature in the conductivity\nreading. Conductivity can be measured in the field or the lab. In most cases, it is probably\nbetter if the samples are collected in the field and taken to a lab for testing. In this way\nseveral teams of volunteers can collect samples simultaneously. If it is important to test in\nthe field, meters designed for field use can be obtained for around the same cost\nmentioned above.\nIf samples will be collected in the field for later measurement, the sample bottle should\nbe a glass or polyethylene bottle that has been washed in phosphate-free detergent and\nrinsed thoroughly with both tap and distilled water. Factory-prepared Whirl-pak® bags\nmay be used.\nHow to sample\nThe procedures for collecting samples and analyzing conductivity consist of the\nfollowing tasks:\nTASK 1 Prepare the sample containers\nIf factory-sealed, disposable Whirl-pak® bags are used for sampling, no preparation is\nneeded. Reused sample containers (and all glassware used in this procedure) must be\ncleaned before the first run and after each sampling run by following Method A as\ndescribed in MEthod A in Table 1 in Chapter 5 - Water Quality Conditions.\n\n-- 180 of 227 --",
-          "source": "volunteer_stream_monitoring_a_methods_manual.pdf",
-          "score": 0.6966521784251685
+          "id": "usgs-nfm-a6.3-specific-conductance.pdf__2cade3723a66",
+          "text": "tergents for many\nhours without damage.\nFigure 6.3–1. \tDiagram\nshowing general guidelines\nfor selecting an electrical\nconductivity probe with\nthe optimum cell constant.\nModified from chart in the\nYSI Model 3200 Operations\nManual (YSI Incorporated,\n1999, p. 43). Definitions: cm-1,\nper centimeter; CO2, carbon\ndioxide; μS/cm at 25 °C,\nmicrosiemens per centimeter\nat 25 degrees Celsius.\n\n-- 12 of 24 --3.0 Calibration \t5\n• When additional cleaning is required, soak the probe\nin 5-percent volume per volume (v/v) hydrochloric\nacid for as long as 2 hours and then rinse thoroughly\nwith DIW. Check the manufacturer’s recommenda-\ntions before using acid.\n• Caution: Platinum and platinum-iridium electrodes\nshould not be cleaned in nitric acid (HNO3), aqua\nregia, or any other solution that is known to etch\nplatinum or gold.\nConsult your instruction manual for specific storage\ninstructions. Most conductivity probes, including probes with\ngraphite electrodes, can be stored clean and dry; however,\nprobes on multiparameter sondes are required to be stored\nin water (typically tap water) to prevent drying out of other\nsensors. Storage in water is acceptable while the probe is\nin use.\n3.0 \tCalibration\nSpecific conductance measurements are only as good\nas the calibration itself. Several factors must be considered\nwhen calibrating the meter. Thermal expansion of the con-\nductivity cell can affect the cell constant; however, the cell\nconstants (𝐾cell) of modern field probes are generally stable\nfrom 0 to 100 °C. Most conductivity standards are potassium\nchloride (KCl) solutions, and the linear (0.019–0.020) and\nnonlinear (International Organization for Standardization,\n1985) temperature-compensation factors (α) will produce\nreliable calibrations from 5 to 35 °C. Caution should be\nused when calibrating at temperatures greater than 35 °C,\nhowever, because the commonly used nonlinear (International\nOrganization for Standardization, 1985) temperature compen-\nsation deviates substantially when applied to KCl solutions.\nTherefore, if a modern conductivity probe that expands\nminimally with temperature is used and the temperature of the\nwater to be measured is between 5 and 35 °C, the temperature\nof the calibration solutions (either laboratory or in situ) is not\nexpected to significantly affect the measurement of specific\nconductance of samples in the field.\nConductivity standards are susceptible to contamination\nor dilution from residual solutions, including rinse water, and\neach calibration should be done with care. Low-conductivity\nstandards (<200 μS/cm) are especially susceptible to con-\ntamination. Calibration in the laboratory prior to field\nmeasurement, for both specific conductance meters and\nmultiparameter sondes, is recommended because the tempera-\nture is regulated and the standard solutions are less susceptible\nto contamination.\nSpecific conductance meters must be checked or calibrated\nbefore every field trip to ensure that the meter and probe\nare working properly. The accuracy of specific conductance\nmeasurements should be checked in the laboratory and in the\nfield by conducting measurements on standards whose specific\nconductance is near the expected specific conductance of the\nsample. Measurements of specific conductance standards that\nare within ±5 μS/cm of the certified values for measurements\n≤100 μS/cm or ±3 percent of the certified values for measure-\nments >100 μS/cm are considered accurate and do not warrant\nrecalibration. Because specific conductance meters typically\nmaintain their calibration, frequent recalibration is generally",
+          "source": "https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf",
+          "score": 0.7456663285587875
         },
         {
-          "id": "volunteer_stream_monitoring_a_methods_manual.pdf__0167",
-          "text": "tion. Keep the samples on ice or refrigerated.\nReferences\nAPHA. 1992. Standard methods for the examination of water and wastewater. 18th ed.\nAmerican Public Health Association, Washington, DC.\n< Previous · Table of Contents · Next >\nOffice of Wetlands, Oceans & Watersheds Home\nWatershed Protection Home | Monitoring Water Quality Home\nEPA Home | Office of Water | Search | Comments\n\n-- 178 of 227 --5.9\nConductivity\nWhat is conductivity and why is it important?\nConductivity is a measure of the ability of water to pass an electrical current.\nConductivity in water is affected by the presence of inorganic dissolved solids such as\nchloride, nitrate, sulfate, and phosphate anions (ions that carry a negative charge) or\nsodium, magnesium, calcium, iron, and aluminum cations (ions that carry a positive\ncharge). Organic compounds like oil, phenol, alcohol, and sugar do not conduct electrical\ncurrent very well and therefore have a low conductivity when in water. Conductivity is\nalso affected by temperature: the warmer the water, the higher the conductivity. For this\nreason, conductivity is reported as conductivity at 25 degrees Celsius (25 C).\nConductivity in streams and rivers is affected primarily by the geology of the area\nthrough which the water flows. Streams that run through areas with granite bedrock tend\nto have lower conductivity because granite is composed of more inert materials that do\nnot ionize (dissolve into ionic components) when washed into the water. On the other\nhand, streams that run through areas with clay soils tend to have higher conductivity\nbecause of the presence of materials that ionize when washed into the water. Ground\nwater inflows can have the same effects depending on the bedrock they flow through.\nDischarges to streams can change the conductivity depending on their make-up. A failing\nsewage system would raise the conductivity because of the presence of chloride,\nphosphate, and nitrate; an oil spill would lower the conductivity.\nThe basic unit of measurement of conductivity is the mho or siemens. Conductivity is\nmeasured in micromhos per centimeter (μmhos/cm) or microsiemens per centimeter\n(μs/cm). Distilled water has a conductivity in the range of 0.5 to 3 μmhos/cm. The\nconductivity of rivers in the United States generally ranges from 50 to 1500 μmhos/cm.\nStudies of inland fresh waters indicate that streams supporting good mixed fisheries have\na range between 150 and 500 μhos/cm. Conductivity outside this range could indicate\nthat the water is not suitable for certain species of fish or macroinvertebrates. Industrial\nwaters can range as high as 10,000 μmhos/cm.\n\n-- 179 of 227 --",
-          "source": "volunteer_stream_monitoring_a_methods_manual.pdf",
-          "score": 0.6851639589118939
+          "id": "usgs-nfm-a6.3-specific-conductance.pdf__f9d002693709",
+          "text": "cted specific conductance of the\nsample. Measurements of specific conductance standards that\nare within ±5 μS/cm of the certified values for measurements\n≤100 μS/cm or ±3 percent of the certified values for measure-\nments >100 μS/cm are considered accurate and do not warrant\nrecalibration. Because specific conductance meters typically\nmaintain their calibration, frequent recalibration is generallyunnecessary and may not improve data accuracy. If calibration\nin the field is required, make certain the temperature of the\nstandards is stable and between 5 and 35 °C.\nSpecific conductance meters utilize either a one- or a\nmultipoint calibration procedure. Both calibration proce-\ndures work well and the instruction manual accompanying\nthe specific conductance meter as well as the NFM should be\nfollowed closely. Record and track the cell constant (one-point\ncalibration) or slope (multipoint calibration), as deviations can\nbe used to identify inaccurate calibrations or faulty equipment.\nTo verify that the specific conductance meter is responding\nproperly at low values of specific conductance, check the zero\nresponse of the dry conductivity cell in air or DIW. The mea-\nsured specific conductance of DIW should be <3 μS/cm.\nSpecific conductance meters are typically calibrated\nwith KCl solutions of known concentration that are traceable\nto National Institute of Standards and Technology (NIST).\nSpecific conductance standards with certificates of analyses\n(NIST traceable) with values between 50 and 50,000 μS/cm\nare available from USGS One Stop.1 Electrical conductivi-\nties of highly accurate KCl standards (0.01, 0.1, and 1.0 mole\nper kilogram [mol/kg]) were determined by Pratt and others\n(2001) and are shown in table 6.3–2. Extreme care should be\nused when calibrating with dilute (<200-μS/cm) solutions,\nas small amounts of contaminants or minor dilution can\nsubstantially affect the calibration. Triple rinsing with DIW\nand calibration standards is required. In addition to conduc-\ntivity standards, the USGS Quality Systems Branch (QSB)\nprovides a variety of standard reference samples (SRSs),\nprepared from natural waters, for quality-assurance testing and\nmeasurements of specific conductance.\n3.1 One-Point Calibration—Determination of\nthe Cell Constant\nMany specific conductance meters and multiparameter\nsondes utilize a one-point calibration for measurement of\nspecific conductance. Calibration of specific conductance\nmeters using a one-point calibration involves determination\nof the cell constant (𝐾cell) by measuring the conductance (G)\nof a standard solution with a known conductivity (κ) (see\nequation 1, where the value of κ is known). Meters utiliz-\ning one-point calibrations typically require calibration with\n1Equipment and supplies that are tested and quality assured are available\nto USGS field studies from the National Field Supply Service (NFSS)\nand the Hydrologic Instrumentation Facility (HIF), and are sold through\nthe USGS One Stop ordering system (accessed September 11, 2017, at\nhttps://1stop.usgs.gov/, internal USGS access only).",
+          "source": "https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf",
+          "score": 0.7368082144614941
         }
       ],
       "mode": "firestore-vector",
       "usage": {
-        "promptTokens": 3423,
-        "completionTokens": 340,
-        "totalTokens": 3763,
-        "cachedPromptTokens": 2159
+        "promptTokens": 3869,
+        "completionTokens": 99,
+        "totalTokens": 3968,
+        "cachedPromptTokens": 1290
       },
       "timing": {
-        "ttftMs": 2147,
-        "wallMs": 2619
+        "ttftMs": 925,
+        "wallMs": 1175
       }
     },
     {
       "index": 1,
       "question": "What would push it that low?",
-      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The context does not contain any explanation of factors that affect conductivity.",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The provided excerpts do not discuss factors that would lower conductivity.",
       "context": [
         {
-          "id": "tm9a6.2.pdf__0041",
+          "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__786324b0bc6d",
           "text": "omium,\nresulting in high-biased DO readings (White and others,\n1990).4\n• The presence of cupric copper and ferric iron at a\nconcentration less than 50 micrograms per liter (μg/L)\nmay cause a bias of less than 1 μg/L; at a concentration\n4See also CHEMetrics, Inc., Simplicity in water analysis, accessed Sep-\ntember 4, 2019, at https://www.chemetrics.com/product-category/test-kits/\noxygen-dissolved/.-- 22 of 44 --",
-          "source": "tm9a6.2.pdf",
+          "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
           "score": 0.5887734307832165
         },
         {
-          "id": "tm9a6.2.pdf__0044",
+          "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__fa2413681e5b",
           "text": "teps 7a through 7d.\na. \tCarefully immerse a reagent-containing ampule on\nthe sampling tool that is attached to a wire line.\nb. \tAt the desired depth of sample collection (in a well\nor surface-water body), break the scored tip of the\nampule by using a sharp upward tugging motion on\nthe sampling tool. This action permits sample water\n6A downhole sampling tool is described by White and others (1990).-- 23 of 44 --",
-          "source": "tm9a6.2.pdf",
+          "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
           "score": 0.5632309731056098
         },
         {
-          "id": "tm9a6.2.pdf__0038",
-          "text": "-concentration data for groundwa-\nter at a time when sensor methods were not capable of in\nsitu measurement.\nAs mentioned previously, USGS technical staff have doc-\numented optical sensor measurements at DO concentrations\nof 0.03 mg/L and spectrophotometric readings by using either\nRhodazine D or Indigo Carmine to be of comparable accuracy.\nData are shown in appendix 1. Comparisons between optical-- 21 of 44 --",
-          "source": "tm9a6.2.pdf",
-          "score": 0.5484661611361682
+          "id": "usgs-nfm-a6.3-specific-conductance.pdf__05c228f6e257",
+          "text": "f check standards should be\nwithin ±5 μS/cm for measurements ≤100 μS/cm\nor ±3 percent for measurements >100 μS/cm.\nRecalibrate if necessary.\n2. \tInstall the specific conductance probe.\na. \tFor measurement in a downhole system—\ni. \tLower the probe to the sampling point.\nii. \tRemove air trapped in the conductiv-\nity cell by gently moving the probe up\nand down under the water; read the\nmeter display.-- 18 of 24 --",
+          "source": "https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf",
+          "score": 0.5602182074375722
         },
         {
-          "id": "tm9a6.2.pdf__0032",
-          "text": "air when transferred to a measurement or analysis vessel.\nProject data-quality requirements and objectives, site\ncharacteristics, and equipment availability will dictate whether\n(1) measurements will be made in situ (DO measured down-\nhole) or ex situ (DO measured above land surface, the inline-\nflow procedure), and whether (2) optical or spectrophotometric\nmethods will be used for DO measurement.-- 19 of 44 --",
-          "source": "tm9a6.2.pdf",
-          "score": 0.5468796711067246
+          "id": "usgs-nfm-a6.4-ph.pdf__7abc0fdf01b2",
+          "text": " slope of less\nthan 95 percent or greater than 101 percent indicates\nprobable electrode deterioration. If the slope is outside\nthe acceptable range (95–101 percent), the electrode\nshould be cleaned, reconditioned, or replaced, and the\nnew electrode calibrated. If a liquid-filled electrode is\nbeing used, try reconditioning it (section 3.2) in the\nlaboratory before replacing it with a new electrode.-- 19 of 32 --",
+          "source": "https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf",
+          "score": 0.5597013327698244
         },
         {
-          "id": "tm9a6.2.pdf__0047",
-          "text": "val directed by the kit manufacturer.\n• If using a spectrophotometer that does not convert\nabsorbance values of DO measurements to units\nof milligrams per liter for the kit being used, use\nregression equations (or the chart provided in the kit)\nto convert the units (see White and others, 1990).\n11. \tQuality control: It is recommended to make multiple\nmeasurements to document the precision and (or)-- 24 of 44 --",
-          "source": "tm9a6.2.pdf",
-          "score": 0.5423488084192465
+          "id": "usgs-nfm-a6.3-specific-conductance.pdf__4c8cc53480b4",
+          "text": "ow-pH waters, temperature corrections may\nrepresent the largest source of error. A temperature-compen-\nsation method applicable to low-pH waters is described in\nsection 4.3 below and by McCleskey (2013). No temperature-\ncompensation method is available for waters with pH greater\nthan 11; therefore, the specific conductance in high-pH waters\nshould be checked by measuring at ambient temperature and-- 10 of 24 --",
+          "source": "https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf",
+          "score": 0.5579645112207828
         }
       ],
       "mode": "firestore-vector",
       "usage": {
-        "promptTokens": 1299,
-        "completionTokens": 364,
-        "totalTokens": 1663,
-        "cachedPromptTokens": 577
+        "promptTokens": 1343,
+        "completionTokens": 201,
+        "totalTokens": 1544,
+        "cachedPromptTokens": 617
       },
       "timing": {
-        "ttftMs": 3108,
-        "wallMs": 3895
+        "ttftMs": 2125,
+        "wallMs": 2405
       }
     }
   ],
   "totals": {
-    "promptTokens": 4722,
-    "cachedPromptTokens": 2736,
-    "completionTokens": 704,
-    "wallMs": 6514
+    "promptTokens": 5212,
+    "cachedPromptTokens": 1907,
+    "completionTokens": 300,
+    "wallMs": 3580
   }
 }

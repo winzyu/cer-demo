@@ -4,13 +4,13 @@
   "arm": "firestore-vector",
   "pass": "warm",
   "run": {
-    "startedAt": "2026-08-11T23:32:23.664Z",
-    "gitSha": "3a94f6d8d5c409c382651100fe6f0d10a98440af",
+    "startedAt": "2026-08-26T22:28:44.754Z",
+    "gitSha": "44890dddd2412dae834562c84cd60e97c6148114",
     "model": "accounts/fireworks/models/gpt-oss-20b",
     "temperature": 0,
     "maxTokens": 16384,
     "corpusSource": "firestore",
-    "baseUrl": "http://localhost:8000/api/v1",
+    "baseUrl": "http://localhost:8010/api/v1",
     "transport": "sse",
     "cacheReportingAvailable": true
   },
@@ -18,104 +18,104 @@
     {
       "index": 0,
       "question": "What stabilization criteria should we hold a sonde reading to before recording it?",
-      "answer": "For a sonde to be considered stable before you record the data, the following criteria are typically used (from the USGS guidance):\n\n| Parameter | Stabilization criterion |\n|-----------|--------------------------|\n| Temperature | ± 0.2 °C |\n| Specific electrical conductance (SC) | ± 5 µS/cm for SC ≤ 100 µS/cm, or ± 3 % for SC > 100 µS/cm |\n| Dissolved oxygen (DO) | ± 0.2 mg L⁻¹ |\n| pH | ± 0.1 pH units |\n| Turbidity | ± 0.5 NTU or 5 % of the measured value (whichever is greater) for turbidity ≤ 100 NTU; or 10 % of the measured value for turbidity > 100 NTU |\n\nThese are the standard sensor stabilization criteria for field measurements【5】.",
+      "answer": "The stabilization criteria for recording a sonde’s field measurements are defined in Table 6.0‑1 of the National Water‑Quality Monitoring Field Manual [5]. The table lists the specific time‑ or change‑limits that a parameter must meet before the value is considered stable and can be recorded. (The exact numeric thresholds are in that table, which is not included in the excerpts provided.)",
       "context": [
         {
-          "id": "tm9a6.8.pdf__0007",
+          "id": "usgs-nfm-a6.8-multiparameter-instruments.pdf__e8a33e86d4b3",
           "text": " in wells, but may have more limited\nwiper and sensor capability than the larger diameter sondes\n(because fewer ports are available for sensors). Depending on\nthe manufacturer, some instruments can store measurements\nto internal or removeable memory in a format compatible with\na hand-held display, laptop computer, tablet, database input\nfile, or typical cell phone. Many instruments are operated byapplications run on tablets or cell phones and communicate by\nusing wireless communication protocols. Instruments may be\npowered by their own internal batteries or through cables con-\nnected to external devices, such as wireless communicators,\nhand-held displays, or laptop computers.\nThe use of multiparameter instruments for field mea-\nsurements has become routine. Advances in technology and\ndesign are expanding the sensor capabilities of multiparameter\ninstruments and are improving the utility of the instruments.\nThe procedures required for the maintenance, calibration, and\nuse of these instruments can change over time as a result of\ntechnological changes. Users must stay current with respect\nto how their instrument operates and is maintained. Sensors\nTable 6.8–1. \tAdvantages and limitations of multiparameter instruments for field use.\nAdvantages \tLimitations\nThe time needed to measure and record multiple field parameters at\none time is reduced.\nOne system (inside the sonde) is responsible for recording all\nparameters, which would cause the loss of all parameter values\nupon failure.\nMeasurements can be made in situ instead of in samples removed\nfrom the source water.\nBackup field instruments (single parameter or multiparameter) are\nrecommended to prevent data loss.\nMeasurements made in situ are likely more representative than\nmeasurements made in samples removed from their source.\nPurchase costs for multiparameter instruments are higher than those\nfor single-parameter instruments.\nInstruments can store data, either in a display device or to internal\nmemory.\nCalibration may require use of a greater volume of standards for\nrinsing than that needed for single-parameter instruments.",
-          "source": "tm9a6.8.pdf",
+          "source": "https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf",
           "score": 0.7047244872611743
         },
         {
-          "id": "tm9a6.2.pdf__0014",
+          "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c536dd79ec6f",
           "text": ".)\n• Immerse the sensor into the zero-DO solution,\nwait for reading to stabilize (usually within\n5–10 minutes), record reading.\n• If the instrument reading exceeds 0.2 mg/L in the\nzero-DO solution, check DO again with a freshly\nprepared zero-DO solution; if a reading greater than\n0.2 mg/L persists, contact the instrument manufac-\nturer and inquire whether the luminophore module\nshould be replaced.-- 13 of 44 --",
-          "source": "tm9a6.2.pdf",
+          "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
           "score": 0.7032842356477021
         },
         {
-          "id": "tm9a6.8.pdf__0016",
+          "id": "usgs-nfm-a6.8-multiparameter-instruments.pdf__5854e428dee9",
           "text": "ltiparameter instrument (hand-\nheld display and sensors-containing sonde only, not\nthe sensors) is particularly dirty or will be stored,\nclean it with a mild, nonphosphate detergent solution\nby using a small, nonabrasive brush or cotton swab\nor cloth, and follow with a thorough water rinse.\n• Avoid using organic solvents or other corrosive solu-\ntions to clean the sensors unless indicated in guid-ance given by the manufacturer.\n• Do not coat the sonde or sensors with protective or\nanti-fouling paint, except as specifically instructed\nby the manufacturer.\n• Manufacturers may have instructions specific to their\nsensors—check the manufacturer’s operating manual\nfor each instrument that will be in use.\nWiper and wiper-brush maintenance:\n• Inspect the wiper pad and (or) wiper brush for dirt,\ndeterioration, and damage after each use of the\ninstrument. (Not all instruments have a wiper or\nwiper-brush mechanism.)\n• Check wiper pads for wear, excessive discoloration,\nand particle accumulation, and change the pads\nas needed. Check that the wiper arm is parking\nproperly. Follow the manufacturer’s guidance for\nconditions requiring changing the pads and for wiper\nmaintenance.\n• Warm soapy water and a soft toothbrush can be used\nto clean wiper-brush bristles. Rinse with DIW.\n• Replace or recondition the wiper brush when it\nshows excessive splaying.\nGeneral storage recommendations for multiparameter\ninstruments and instrument cases:\n• For short-term storage, some sensors need a small\namount of the storage solution added to the protec-\ntive (transport) cap or calibration cup; check the\nmanufacturer’s instructions.",
-          "source": "tm9a6.8.pdf",
+          "source": "https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf",
           "score": 0.6931602792051932
         },
         {
-          "id": "tm9a6.8.pdf__0009",
+          "id": "usgs-nfm-a6.8-multiparameter-instruments.pdf__715b5374f700",
           "text": "-- 10 of 24 --2.0 Equipment and Supplies \t3\nfor the determination of water temperature, specific electrical\nconductance (SC), pH, dissolved-oxygen (DO) concentration\nand turbidity are commonly bundled in sondes used for USGS\nwater-quality studies. Permanent sensors for measuring baro-\nmetric pressure (for use with a DO sensor), water depth (either\nvented or unvented), and location (global positioning systems)\neither are standard equipment with many multiparameter\ninstruments or can be added at extra cost. Nonpermanent\nsensors for measuring oxidation-reduction potential (Eh), fluo-\nrescence1, velocity, and concentrations of nitrate, ammonia,\nammonium, chloride, and chlorophyll can be added to many\nsondes through use of sensor ports. The types and number of\nsensors that can be bundled in a given sonde depend on the\nnumber of ports available in an instrument model, typically\nfour to seven. When selecting a sensor, consult the manufac-\nturer’s recommendations and specifications for the instrument,\ntaking into consideration the environmental conditions to be\nencountered, the data-quality objectives of the study, and the\nspecific benefit of a particular sensor technology that could be\napplicable to the anticipated field conditions.\nTable 6.8–2 lists the equipment specifications required\nwhen making field measurements with a multiparameter\ninstrument. Table 6.8–3 lists the specifications for calibration\n1Fluorescence sensors indicate different algal pigment concentrations; see\nNFM chapter A7.4 and Booth and others (2023) for additional information.\nsolutions required when using multiparameter instruments.\nThe requirements in tables 6.8–2 and 6.8–3 may be modified\nto fit specific project needs. Ancillary supplies and equipment\nneeded to measure field properties with multiparameter instru-\nments (table 6.8–4) are the same as or similar to those required\nfor the calibration and maintenance of single-parameter\ninstruments, and are discussed in detail in the individual field-\nmeasurement chapters (NFM chapters A6.1 through A6.7).\n2.1 Equipment Transport\nMultiparameter instruments have become more robust\nwith time, but the sensors can easily be damaged if handled\nimproperly. Some sensors require storage and transporta-\ntion in a wet/moist environment, whereas others do not,\ncheck the manufacturer’s recommendations. Sondes should\nnot be exposed to extreme heat or cold. Transport in a case\nthat is designed to protect the equipment following the\nmanufacturer’s recommendations is best. For transportation\nand storage, use a padded case that protects the sonde from\nshock. The padding should be of a type that will not absorb\nwater. Hard-sided cases should be equipped with a vent so\nthat internal pressure can equalize with that of the atmosphere.\nDo not expose the case to direct sunlight in order to avoid\nsolar heating of the equipment inside.\nTable 6.8–2. \tSpecifications for multiparameter instruments.\n[±, plus or minus; mV, millivolt; −, minus; +, plus; °C, degrees Celsius; SC, specific electrical conductance; μS/cm, microsiemens per centimeter at 25 °C; DO,",
-          "source": "tm9a6.8.pdf",
+          "source": "https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf",
           "score": 0.6838478494654247
         },
         {
-          "id": "tm9a6.8.pdf__0022",
-          "text": "assurance protocols allow, adjust the locations of the\nmeasurements along the cross section or transect to\navoid areas that will require stopping and cleaning\nplant growth, sediment, or debris from the sensors.\n4.2 Groundwater\nThe stability of field-parameter values is monitored\ntoward the end of well purging to help indicate when the water\nbeing withdrawn represents fresh formation water and whensample collection should begin (see NFM A6.0, NFM A4).\nThe final field-parameter values typically are recorded after\nthree or more well volumes have been purged and stability\ncriteria have been met.\nIf the purpose of sampling is to obtain field measure-\nments only, these data can be obtained in situ by deploying a\nmultiparameter sonde into the well, followed by a submersible\npump to draw water upward. If water-quality samples will be\ncollected, pumping the water from the well to and through\na flow-through cell that contains the instrument’s sensors is\nanother efficient method for collecting field-parameter data\nwithout having to remove and redeploy sampling equipment.\nFlow-through cells are typically supplied by the manufacturers\nTable 6.8–5. \tStabilization criteria for common field parameters.\n[±, plus or minus; °C, degrees Celsius; SC, specific electrical conductance; ≤, less than or equal to; %, percent; μS/cm, microsiemens per centimeter at 25\ndegrees Celsius; >, greater than; DO, dissolved oxygen; mg/L, milligram per liter; TU, turbidity unit]\nSensor\nStandard sensor stabilization criteria\n(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)\nTemperature \t± 0.2 °C\nSpecific electrical conductance (SC) \t± 5 μS/cm for SC ≤100 μS/cm, or ± 3% for SC >100 μS/cm\nDO \t± 0.2 mg/L\npH \t± 0.1 pH units\nTurbidity \t± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or\n10% of the measured value for turbidity >100 TU",
-          "source": "tm9a6.8.pdf",
-          "score": 0.676693491023244
+          "id": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__ab206848465b",
+          "text": "each field-measurement\nchapter of the NMF. Stabilization criteria for recording\ndirect field measurements are given in table 6.0–1.\n• Final or reported field-measurement values for USGS\nstudies are to be entered into the following parts of the\nNational Water Information System (NWIS):\n• QWDATA: Contains discrete (noncontinuous) field-\nmeasurement data in addition to results of laboratory\nanalyses.-- 10 of 32 --",
+          "source": "https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf",
+          "score": 0.6832492838470391
         }
       ],
       "mode": "firestore-vector",
       "usage": {
-        "promptTokens": 2738,
-        "completionTokens": 530,
-        "totalTokens": 3268,
-        "cachedPromptTokens": 577
+        "promptTokens": 2421,
+        "completionTokens": 361,
+        "totalTokens": 2782,
+        "cachedPromptTokens": 617
       },
       "timing": {
-        "ttftMs": 2514,
-        "wallMs": 3858
+        "ttftMs": 1759,
+        "wallMs": 2151
       }
     },
     {
       "index": 1,
       "question": "How long do we wait at each new depth?",
-      "answer": "When you move the sonde to a new depth, let it sit for **5–10 minutes** before taking a reading.  \nThis time allows the sensor to reach thermal equilibrium with the water and for the dissolved‑oxygen, temperature, and other parameters to stabilize.  \nThe USGS guidance notes that “allow 5 to 10 minutes for the sensor to come to thermal equilibrium with the aerated water” and that a zero‑DO calibration “waits for reading to stabilize (usually within 5–10 minutes)”【4】【2】.",
+      "answer": "For each new depth you should let the sonde equilibrate for **5–10 minutes** before taking a reading.  \nAfter that, record **at least five sets of measurements** taken at **3–5‑minute intervals** and report the median of the last five (or more) readings.  \nThese are the stabilization and reporting criteria outlined in the USGS National Water‑Quality Monitoring Field Manual [4] and the DO‑sensor calibration guidance [5].",
       "context": [
         {
-          "id": "volunteer_stream_monitoring_a_methods_manual.pdf__0124",
-          "text": "equal\nintervals along the string\nwith the twist ties. The\nintervals can be\none-fourth, one-half, and\nthree-fourths of the\ndistance across the\nstream. Measure the\nwater's depth at each\ninterval point (Fig. 5.5).\nTo calculate average\ndepth for each transect,\ndivide the total of the\nthree depth measurements\nby 4. (You divide by 4\ninstead of 3 because you\nneed to account for the 0\n1.\n\n-- 136 of 227 --depths that occur at the\nshores.) In the example\nshown in Figure 5.6, the\naverage depth of Transect\n#1 is 0.575 feet and the\naverage depth of Transect\n#2 is 0.625 feet.\nDetermine the width of each transect by measuring the distance from shoreline to\nshoreline. Simply add together all the interval widths for each transect to determine\nits width. In the Figure 5.6 example, the width of Transect #1 is 8 feet and the\nwidth of Transect #2 is 10 feet.\n2.\nCalculate the cross-sectional area of each transect by multiplying width times\naverage depth. The example given in Figure 5.6 shows that the average\ncross-sectional area of Transect #1 is 4.60 square feet and the average\ncross-sectional area of Transect #2 is 6.25 square feet.\n3.\nTo determine the average cross-sectional area of the entire stream reach (A in the\nformula), add together the average cross-sectional area of each transect and then\ndivide by 2. The average cross-sectional area for the stream reach in Figure 5.6 is\n5.42 square feet.\n4.\nTask 4 Measure travel time\nVolunteers should time with a stopwatch how long it takes for an orange (or some other\nobject) to float from the upstream to the downstream transect. An orange is a good object\nto use because it has enough buoyancy to float just below the water surface. It is at this\nposition that maximum velocity typically occurs.\nThe volunteer who lets the orange go at the upstream transect should position it so it\nflows into the fastest current. The clock stops when the orange passes fully under the\ndownstream transect line. Once under the transect line, the orange can be scooped out of\nthe water with the fishing net. This \"time of travel\" measurement should be conducted at\nleast three times and the results averaged--the more trials you do, the more accurate your\nresults will be. The averaged results are equal to T in the formula. It is a good idea to\nfloat the orange at different distances from the bank to get various velocity estimates.\nYou should discard any float trials if the object gets hung up in the stream (by cobbles,\nroots, debris, etc.)\nTask 5 Calculate flow\nRecall that flow can be calculated using the equation:\nFlow = ALC / T\nContinuing the example in Fig. 5.6. say the average time of travel for the orange between\nTransect #1 and #2 is 15 seconds and the stream had a rocky bottom. The calculation of\n\n-- 137 of 227 --",
-          "source": "volunteer_stream_monitoring_a_methods_manual.pdf",
-          "score": 0.6798962413857861
+          "id": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__6ce950d1b439",
+          "text": "re is as follows.\n1. \tIf access is possible, determine or estimate and record\nthe depth to static water level (fig. 6.0–4). Instructions\nfor water-level measurement are given in NFM 4.\n2. \tCalculate and record the well volume using the infor-\nmation on figure 6.0–4. Note that the depth to the static\nwater level, well depth, and the inside casing diameter\nmust be known to calculate the well volume.-- 24 of 32 --",
+          "source": "https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf",
+          "score": 0.648861868317797
         },
         {
-          "id": "tm9a6.2.pdf__0014",
+          "id": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__9468990c7428",
+          "text": "actice can save time and help determine the appropri-\nate procedures and length of time over which the well\nshould be purged.\nTo purge a monitor well (assuming that the well will\nbe pumped and that a flow-through cell/chamber system and\nwater-level sensor will be used):\n1. \tMeasure and record the depth to static water level\n(fig. 6.0–4). Instructions for water-level measurement are\ngiven in NFM 4.-- 23 of 32 --",
+          "source": "https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf",
+          "score": 0.6456635327145213
+        },
+        {
+          "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c536dd79ec6f",
           "text": ".)\n• Immerse the sensor into the zero-DO solution,\nwait for reading to stabilize (usually within\n5–10 minutes), record reading.\n• If the instrument reading exceeds 0.2 mg/L in the\nzero-DO solution, check DO again with a freshly\nprepared zero-DO solution; if a reading greater than\n0.2 mg/L persists, contact the instrument manufac-\nturer and inquire whether the luminophore module\nshould be replaced.-- 13 of 44 --",
-          "source": "tm9a6.2.pdf",
+          "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
           "score": 0.6430865476168989
         },
         {
-          "id": "volunteer_stream_monitoring_a_methods_manual.pdf__0123",
-          "text": "scharge should be straight (no\nbends), at least 6 inches deep, and should not contain an area of slow water such as a\npool. Unobstructed riffles or runs are ideal. The length that you select will be equal to L\nin solving the flow equation. Twenty feet is a standard length used by many programs.\nMeasure your length and mark the upper and lower end by running a transect line across\n\n-- 135 of 227 --Figure 5.4\nA diagram of a 20-foot transect\nthe stream perpendicular to the\nshore using the string and stakes\n(Fig. 5.4). The string should be\ntaut and near the water surface.\nThe upstream transect is\nTransect #1 and the downstream\none is Transect #2.\nTask 3 Calculate the\naverage\ncross-sectional area\nCross-sectional area (A in the\nformula) is the product of\nstream width multiplied by\naverage water depth. To\ncalculate the average\ncross-sectional area for the\nstudy stream reach, volunteers\nshould determine the\ncross-sectional area for each\ntransect, add the results together, and then divide by 2 to determine the average\ncross-sectional area for the stream reach.\nTo measure cross-sectional area:\nFigure 5.5\nA cross section view to measure stream width and depth\nDetermine the average\ndepth along the transect\nby marking off equal\nintervals along the string\nwith the twist ties. The\nintervals can be\none-fourth, one-half, and\nthree-fourths of the\ndistance across the\nstream. Measure the\nwater's depth at each\ninterval point (Fig. 5.5).\nTo calculate average\ndepth for each transect,\ndivide the total of the\nthree depth measurements\nby 4. (You divide by 4\ninstead of 3 because you\nneed to account for the 0\n1.\n\n-- 136 of 227 --",
-          "source": "volunteer_stream_monitoring_a_methods_manual.pdf",
-          "score": 0.629949939591338
+          "id": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__f1715861e455",
+          "text": "en water is quiescent. Redirect\nflow to chamber for next set of readings.\nAre stabilization criteria being met?\tAre stabilization criteria being met?\n(table 6.0-1)\nNO \tYES\nExtend purge time.\nDocument circumstances in field notes.\nRecord at least five sets of measurements\nat intervals of 3 to 5 minutes.\nReport the median of the last five or more readings\nand the time of measurement.\n\n-- 26 of 32 --Acknowledgments \t19\n• Adjust the flow into the chamber so that a constant\nstream of water is maintained at the rate required for\nmeasurements. Correct any back-pressure conditions;\ntilt the chamber if necessary to expel trapped air or any\ngas bubbles that form.\nDownhole (In Situ) Procedure\nWhen deploying sensors or a multiparameter sonde\ndownhole, it is recommended that groundwater be pumped to\nflow past downhole sensors in order to obtain values repre-\nsentative of the depth interval being sampled. Because of this\nconstraint, the downhole method may not be practical at wells\nwith dedicated pumps or when working in small-diameter\nwells. Figure 6.0–6 shows the steps to be used for downhole\nmeasurement of field parameters.\n• The depth at which sensors are located depends on\nstudy objectives. If a sample is to represent groundwa-\nter that is integrated over the screened interval, locate\nsensors approximately 1 ft above the screened interval\nin a 2-in.-diameter well and below the pump intake.\n• Remove downhole sensors from the well before col-\nlecting samples for chemical analysis to prevent these\ninstruments from affecting sample chemistry. Note that\nthe process of removing these instruments and replac-\ning the pump causes disturbances in the well that can\naffect the quality of samples subsequently collected for\nchemical analysis (Puls and others, 1991; Kearl and\nothers, 1992; Puls and Powell, 1992). For this reason,\nthe inline flow method using a flow-through cell/\nchamber is recommended when a well will be pumped\nand sampled.\n3.2.3 \tSubsample Field-Measurement\nProcedures\nSubsamples or discrete samples are aliquots of sample\ncollected from a nonpumping sampling device such as a\nbailer, a thief sampler, or a syringe sampler. Measurements\nof field parameters made in discrete or nonpumped samples\nare more vulnerable to bias from changes in temperature,\npressure, turbidity, and concentrations of DO and other gases\nthan measurements made by using inline-flow or in situ\nmeasurement procedures.\n● \tSubsamples must not be used for reported measure-\nments of temperature, DO concentration, Eh, or tur-\nbidity without value qualifiers and comments indicat-\ning that the measurements are estimated and made on\na subsample.\n● \tSubsamples can be used to determine ambient\ngroundwater conductivity, pH, and alkalinity and\nother carbonate species.\n● \tSubsample procedures must not be used for any\nfield-measurement determination if the groundwater\nconditions are reducing or anoxic unless the sample is\ndecanted and measurements are made within a cham-\nber or glove box filled with an inert gas (for example,\nultrapure nitrogen or argon gas).\nFigure 6.0–7 shows the steps for measurement of field\nparameters on a bailed or other nonpumped sample. Use of\nbailers with double (top and bottom) check valves and a bot-\ntom-emptying device is recommended. To shield the sample\nfrom atmospheric contamination, make measurements within a\ncollection chamber or glove box.\nAcknowledgments\nThe information in the U.S. Geological Survey (USGS)\nNational Field Manual (NFM) is based on existing manuals,\nvarious reference documents, and a broad spectrum of exper-",
+          "source": "https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf",
+          "score": 0.6396110332356048
         },
         {
-          "id": "tm9a6.2.pdf__0026",
+          "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__134a0ec7aa9e",
           "text": " place the DO sensor (or\nmultiparameter sonde) in the bucket and allow 5 to\n10 minutes for the sensor to come to thermal equi-\nlibrium with the aerated water. Take care not to place\nthe sensor over or in the bubbles from the air stone.\nb. \tFor field calibration verification of a DO sensor, use\nthe wet-towel method.\n5. \tRead and record the temperature of the calibration water\nto the nearest 0.1 °C.-- 17 of 44 --",
-          "source": "tm9a6.2.pdf",
+          "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
           "score": 0.6259526747551792
-        },
-        {
-          "id": "volunteer_stream_monitoring_a_methods_manual.pdf__0132",
-          "text": " in the dark at 20 C for 5 days and then tested for the amount of dissolved oxygen\nremaining. The difference in oxygen levels between the first test and the second test, in milligrams per liter\n(mg/L), is the amount of BOD. This represents the amount of oxygen consumed by microorganisms to break\ndown the organic matter present in the sample bottle during the incubation period. Because of the 5-dayincubation, the tests should be conducted in a laboratory.\nSometimes by the end of the 5-day incubation period the dissolved oxygen level is zero. This is especially true for\nrivers and streams with a lot of organic pollution. Since it is not known when the zero point was reached, it is not\npossible to tell what the BOD level is. In this case it is necessary to dilute the original sample by a factor that\nresults in a final dissolved oxygen level of at least 2 mg/L. Special dilution water should be used for the dilutions.\n(See APHA, 1992.)\nIt takes some experimentation to determine the appropriate dilution factor for a particular sampling site. The final\nresult is the difference in dissolved oxygen between the first measurement and the second after multiplying the\nsecond result by the dilution factor. More details are provided in the following section.",
-          "source": "volunteer_stream_monitoring_a_methods_manual.pdf",
-          "score": 0.611295083059225
         }
       ],
       "mode": "firestore-vector",
       "usage": {
-        "promptTokens": 2497,
-        "completionTokens": 305,
-        "totalTokens": 2802,
-        "cachedPromptTokens": 578
+        "promptTokens": 2080,
+        "completionTokens": 302,
+        "totalTokens": 2382,
+        "cachedPromptTokens": 617
       },
       "timing": {
-        "ttftMs": 1504,
-        "wallMs": 2082
+        "ttftMs": 1512,
+        "wallMs": 1948
       }
     }
   ],
   "totals": {
-    "promptTokens": 5235,
-    "cachedPromptTokens": 1155,
-    "completionTokens": 835,
-    "wallMs": 5940
+    "promptTokens": 4501,
+    "cachedPromptTokens": 1234,
+    "completionTokens": 663,
+    "wallMs": 4099
   }
 }
