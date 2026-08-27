@@ -218,8 +218,12 @@ method costs**, not by arguing. Full experiment design:
 > arm was re-captured 2026-08-26 after the human graded it, so 12 of 36 human rows describe answers
 > that no longer exist, and `--calibrate` cannot detect it. Scored over all 36 rows the refusal fix
 > looks like a regression (kappa 0.87 → 0.83); scored over the 24 valid rows it is a clear
-> improvement (0.81 → **0.94**). Any re-capture re-creates this, so the join needs to be made
-> self-checking before the next one (`RETRIEVAL_COMPARISON.md` §6.4a).
+> improvement (0.81 → **0.94**). **The join was made self-checking on 2026-08-27**:
+> `--calibrate` compares the packet's answer to the transcript and excludes rows the arm has
+> outgrown. Doing so raised every dimension — correctness 0.83 → 0.87, ungrounded 0.33 → 0.57,
+> citations 0.17 → 0.44 — so the judge was always better than the report claimed. What is left is
+> data: `firestore-vector` contributes no human rows until it is re-graded
+> (`RETRIEVAL_COMPARISON.md` §6.4a).
 >
 > **Status 2026-08-17, revised 2026-08-25 — built and swept, blocked on re-capture then grading.**
 > All three arms are implemented,

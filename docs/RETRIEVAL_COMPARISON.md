@@ -787,11 +787,39 @@ perfect*. **The published 0.87 in §6.4 is itself computed over those 12 stale r
 measurement of the current system.
 
 **This generalises past this one arm.** A human grading packet is pinned to the transcripts it was
-generated from. Re-capturing an arm silently invalidates every human row for it, and nothing in the
-harness detects it — the same class of failure as §6.6's optimistic subset, and cheaper to prevent:
-the packet already contains the answer text the human read, so `--calibrate` could compare it to
-the transcript and drop or flag the rows that no longer match. **Not built. It is the highest-value
-cheap fix left in the grading harness**, because every future re-capture re-creates the problem.
+generated from. Re-capturing an arm silently invalidates every human row for it — the same class of
+failure as §6.6's optimistic subset.
+
+**Built 2026-08-27.** `--calibrate` now reads the answer text out of the grading packet — the
+artifact the human actually read — compares it to the transcript on disk, and **excludes** the rows
+that no longer match, printing them before the numbers rather than after. Comparison goes through
+`normalizeForMatch`, so typographic drift is not mistaken for a re-capture; a row whose packet or
+transcript is missing is left alone, because absence is not divergence. On the current sample it
+reports:
+
+```
+12 row(s) EXCLUDED — the arm was re-captured after grading, so the human
+and the judge scored different answers:
+  firestore-vector: 12 row(s) — re-grade this arm, or exclude it deliberately
+  e.g. acronym-ntu-fnu t1 (firestore-vector)
+    human graded: No. NTU (nephelometric turbidity units) and FNU (field nephelometric units)…
+    on disk now : No. NTU (nephelometric turbidity units) and FNU (formazin nephelometric units)…
+```
+
+**Excluded rather than warned about, deliberately.** A warning above a number does not stop the
+number being quoted, and this one had already been quoted. The effect of the exclusion on every
+dimension, measured over the same ledger:
+
+| dimension | over all 36 rows | over the 24 comparable rows |
+|---|---:|---:|
+| correctness | kappa 0.83 | **0.87** |
+| ungrounded claims | kappa 0.33 | **0.57** |
+| citation support | kappa 0.17 | **0.44** |
+
+The stale rows were depressing every dimension, not just the one that exposed them — `ungrounded`
+and `citations` never had a rubric change to blame, and both nearly doubled. **The judge was always
+this much better than §6.4 reported; a third of the sample was scoring it against answers it never
+saw.**
 
 #### What is actually noisy
 
@@ -1073,10 +1101,8 @@ Tier 1 re-run, Tier 2 run in full. What remains:
    deterministic Tier 1 — see §6.5. §6.4a strengthens the case: the citation dimension reproduces
    itself only 5 times in 9, so the thing it measures is currently being measured with an
    unreliable instrument for money.
-8. **Make `--calibrate` detect stale human rows.** The grading packet stores the answer text the
-   human actually read; compare it to the transcript and drop or flag rows where the arm has since
-   been re-captured (§6.4a). Free, deterministic, and it prevents a whole class of wrong conclusion
-   — it already produced one, reversing the apparent sign of the refusal fix.
+8. ~~**Make `--calibrate` detect stale human rows.**~~ — **done 2026-08-27** (§6.4a). The remaining
+   work it exposes is data, not code: **re-grade `firestore-vector`**, or accept a 24-row sample.
 9. **Grade a hybrid arm into the human sample.** Neither hybrid has any human judgement, so the
    calibration join is one-sided on exactly the arms the comparison now turns on. Doing this at the
    same time as re-grading `firestore-vector` shares the cost of one packet.
@@ -1136,7 +1162,8 @@ point twice over: the arm with the *least* retrieval scored the best answers.
 | 6 | anything measuring the 47% line-1 citation rate | nothing does, by design, after the §6.4 fix — see §6.5 |
 | 6 | ~~whether an off-contract refusal is a correctness 1 or 2~~ | **filled 2026-08-26 — a 2, in any wording** (§6.4a) |
 | 6 | **an error bar on the groundedness and citation kappas** | judge each turn *k* times and report median + spread; re-judging changed 11 of 36 groundedness verdicts at temperature 0. Correctness needs no error bar — it is deterministic (§6.4a) |
-| 6 | **a calibration join that notices stale human rows** | compare the packet's stored answer to the transcript; 12 of 36 rows currently grade replaced `firestore-vector` answers (§6.4a) |
+| 6 | ~~**a calibration join that notices stale human rows**~~ | **filled 2026-08-27** — `--calibrate` excludes and prints them |
+| 6 | **human grades for `firestore-vector` on its current answers** | 12 rows excluded as stale; re-grade that arm, or state that the sample is 24 rows |
 | 6 | human grading for either hybrid arm | neither has any, so the calibration join is one-sided on the arms that now matter |
 | 6 | 138 of 174 human grading rows | human grading; the judge now covers the full set on its own |
 | 7 | ~~**the ◆G7 scoping decision**~~ | **filled 2026-08-26 — split**, recorded in `timeline.md` (§7.1a) |

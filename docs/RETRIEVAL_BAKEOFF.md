@@ -893,10 +893,16 @@ refusal fix appears to *lower* correctness kappa 0.87 → 0.83; scored over the 
 and judge saw the same answer, it *raises* it 0.81 → **0.94**. The stale rows inverted the sign of
 the result, and an earlier draft of this amendment recorded the inverted version.
 
-This is a §7b problem, not a bookkeeping one: the agreement rate §7b requires is currently part
-measurement and part archaeology. The packet already stores the answer text the human read, so the
-join can be made self-checking. **Until it is, treat any `--calibrate` output as a lower bound and
-re-derive it on the arms that have not been re-captured.**
+This is a §7b problem, not a bookkeeping one: the agreement rate §7b requires was part measurement
+and part archaeology. **Fixed 2026-08-27** — `--calibrate` compares the packet's stored answer to
+the transcript and excludes rows the arm has outgrown, printing them first. Excluding all 12 raised
+every dimension, not only the one that exposed the bug: correctness kappa 0.83 → 0.87, ungrounded
+0.33 → 0.57, citations 0.17 → 0.44. **The judge was always better than §6.4 reported.**
+
+What remains is data rather than code: `firestore-vector` now contributes **no** human rows, so the
+calibration sample is 24 rows until that arm is re-graded. §7b asks for calibration on ~20% of
+transcripts; 24 rows still clears that, but the sample is now one-sided in a second way — it covers
+neither hybrid *and* no longer covers the dense arm.
 
 **First Tier-1 result, 2026-08-25** (`npm run gate:check --pass=warm`, output in
 `data/results/gate-check/warm.json`). Two corrections to the checker were needed before these numbers meant
