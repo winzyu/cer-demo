@@ -29,7 +29,9 @@ const arg = (name: string): string | undefined => process.argv
 const mark = (met: boolean): string => (met ? "PASS" : "FAIL");
 
 const printArm = (result: ArmGateResult): void => {
-  const { refusal, citations, figures } = result;
+  const {
+    refusal, citations, figures, quotes,
+  } = result;
 
   log.info("");
   log.info(`${result.arm}  (${result.pass} pass, ${result.turns} turns)  ${mark(result.gatesMet)}`);
@@ -48,6 +50,15 @@ const printArm = (result: ArmGateResult): void => {
     `  fabricated figures  ${mark(figures.met).padEnd(4)}  `
     + `${figures.unexplained} unexplained of ${figures.total} `
     + `(${figures.conversions} explained by °C/°F conversion)`,
+  );
+  // No PASS/FAIL column: this is measured, not gated. "n/a" rather than "0/0 (100%)" so an arm
+  // that was captured before the prompt asked for quotes cannot be misread as scoring perfectly.
+  log.info(
+    `  quoted citations    ${"—".padEnd(4)}  `
+    + (quotes.total === 0
+      ? "n/a — no quoted citations in this pass (expected pre-prompt-change)"
+      : `${quotes.supported}/${quotes.total} verbatim `
+        + `(${(quotes.rate * 100).toFixed(1)}%, ${quotes.short} too short to be evidence)`),
   );
 
   if (result.findings.length > 0) {

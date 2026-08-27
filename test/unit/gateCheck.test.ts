@@ -10,7 +10,9 @@
 import {
   checkCitations,
   checkFigures,
+  checkQuotes,
   checkRefusal,
+  MIN_QUOTE_CHARS,
 } from "../../src/eval/gates/checks";
 import {
   closestWindow,
@@ -216,5 +218,84 @@ describe("checkFigures", () => {
     const result = checkFigures({ answer: "It reads 77 degrees.", context: context("water temperature 25 C") });
     expect(result.issues).toHaveLength(1);
     expect(result.issues[0].explained).toBe("°C→°F");
+  });
+});
+
+describe("checkQuotes", () => {
+  const QUOTED = "conductivity varies with temperature";
+
+  it("supports a quote that appears verbatim in the chunk it cites", () => {
+    const result = checkQuotes({
+      answer: `Temperature matters 【1†"${QUOTED}"】.`,
+      context: context(`Section 4. ${QUOTED}, so readings are compensated.`),
+    });
+    expect(result.total).toBe(1);
+    expect(result.supported).toBe(1);
+    expect(result.issues).toHaveLength(0);
+  });
+
+  it("flags a quote the cited chunk does not contain", () => {
+    const result = checkQuotes({
+      answer: "It says 【1†\"ORP responds faster than DO\"】.",
+      context: context(`Section 4. ${QUOTED}.`),
+    });
+    expect(result.supported).toBe(0);
+    expect(result.issues[0].reason).toContain("not found verbatim");
+  });
+
+  it("flags a quote pointing past the end of the supplied context", () => {
+    const result = checkQuotes({
+      answer: `See 【7†"${QUOTED}"】.`,
+      context: context(QUOTED),
+    });
+    expect(result.supported).toBe(0);
+    expect(result.issues[0].reason).toContain("1 chunk(s) were supplied");
+  });
+
+  /**
+   * The check that stops this instrument reporting full support while measuring nothing: "pH"
+   * occurs in nearly every chunk, so a two-character quote matches whatever it is pointed at.
+   */
+  it("counts a quote too short to be evidence separately from a missing one", () => {
+    const short = "pH";
+    expect(short.length).toBeLessThan(MIN_QUOTE_CHARS);
+
+    const result = checkQuotes({
+      answer: `The 【1†"${short}"】 reading.`,
+      context: context(`${short} is the master variable here.`),
+    });
+    expect(result.supported).toBe(0);
+    expect(result.short).toBe(1);
+    expect(result.issues[0].reason).toContain("too short to be evidence");
+  });
+
+  /**
+   * Same defect family as the U+2011 refusal hyphen: the corpus comes from PDFs and the answer
+   * comes from a model, so they disagree on hyphens, typographic quotes and µ vs μ without
+   * disagreeing on a word. A bare `includes` scores this as fabrication.
+   */
+  it("matches through the typographic drift that breaks exact comparison", () => {
+    const result = checkQuotes({
+      answer: "It states 【1†“the water‑quality probe reads 5 μS/cm”】.",
+      context: context("Note: the water-quality probe reads 5 µS/cm at rest."),
+    });
+    expect(result.supported).toBe(1);
+    expect(result.issues).toHaveLength(0);
+  });
+
+  /**
+   * The claim that lets the prompt change land without a flag day: `CITATION_PATTERN`'s line-span
+   * group is optional and its trailing `[^】]*` swallows a quote, so a quote-style marker still
+   * resolves as a plain `【n】` under the pre-registered citation gate. If this breaks, asking the
+   * model for quotes silently moves published §8a citation numbers.
+   */
+  it("still resolves as a plain citation under the pre-registered gate", () => {
+    const turn = {
+      answer: `Temperature matters 【1†"${QUOTED}"】.`,
+      context: context(QUOTED),
+    };
+    const citations = checkCitations(turn);
+    expect(citations.total).toBe(1);
+    expect(citations.issues).toHaveLength(0);
   });
 });
