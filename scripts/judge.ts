@@ -136,6 +136,25 @@ const printCalibration = (pass: string, records: JudgeRecord[]): void => {
   log.info("");
   log.info(`Judge vs human — ${path.relative(process.cwd(), report.scoresPath)}`);
   log.info(`  ${report.humanRows} graded row(s); ${report.unmatched} not yet judged`);
+
+  // Printed before the numbers, not after: a reader who sees an agreement rate first has already
+  // formed a view of it by the time a footnote tells them what it was computed over.
+  if (report.stale.length > 0) {
+    log.warn(
+      `  ${report.stale.length} row(s) EXCLUDED — the arm was re-captured after grading, so the `
+      + "human and the judge scored different answers:",
+    );
+    const arms = [...new Set(report.stale.map((row) => row.arm))].sort();
+    arms.forEach((arm) => {
+      const rows = report.stale.filter((row) => row.arm === arm);
+      log.warn(`    ${arm}: ${rows.length} row(s) — re-grade this arm, or exclude it deliberately`);
+    });
+    const sample = report.stale[0];
+    log.warn(`    e.g. ${sample.fixtureId} t${sample.turn} (${sample.arm})`);
+    log.warn(`      human graded: ${sample.gradedExcerpt}`);
+    log.warn(`      on disk now : ${sample.currentExcerpt}`);
+    log.warn("    The numbers below are computed WITHOUT these rows.");
+  }
   report.dimensions.forEach((d) => {
     log.info("");
     log.info(

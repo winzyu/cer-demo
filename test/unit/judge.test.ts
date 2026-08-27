@@ -8,6 +8,7 @@
  * would move a pre-registered threshold without anyone seeing it happen.
  */
 import fs from "fs";
+import os from "os";
 import path from "path";
 import {
   citationsPrompt,
@@ -25,7 +26,13 @@ import {
   summarize,
   type JudgeRecord,
 } from "../../src/eval/judge/runner";
-import { agreementFor, cohensKappa, readHumanRows } from "../../src/eval/judge/calibrate";
+import {
+  agreementFor,
+  cohensKappa,
+  findStaleRows,
+  readHumanRows,
+  readPacketAnswers,
+} from "../../src/eval/judge/calibrate";
 
 const evidence = (overrides: Partial<JudgeEvidence> = {}): JudgeEvidence => ({
   question: "What is the hypoxia threshold?",
@@ -409,5 +416,115 @@ describe("cohensKappa", () => {
 
   it("goes negative when the raters do worse than chance", () => {
     expect(cohensKappa([[0, 1], [1, 0], [0, 1], [1, 0]])).toBeLessThan(0);
+  });
+});
+
+/**
+ * The stale-grade guard. A grading packet is pinned to the transcripts it was built from; when an
+ * arm is re-captured, its human rows describe answers that no longer exist. Scoring them anyway
+ * once inverted the sign of a real result (`RETRIEVAL_COMPARISON.md` §6.4a), which is why this is
+ * an exclusion rather than a warning.
+ */
+describe("stale human grades", () => {
+  const sheet = [
+    "# demo",
+    "",
+    "## Turn 1",
+    "",
+    "### Rubric",
+    "",
+    "### Answer A",
+    "",
+    "The original answer, as graded.",
+    "",
+    "<sub>Context supplied: 2 chunk(s) from 1 document(s) — x.pdf. Full text: `context/x.txt`</sub>",
+    "",
+    "### some-source.pdf (chunk abc, score 0.9)",
+    "",
+    "Chunk text that must NOT be read as part of the answer.",
+    "",
+    "### Answer B",
+    "",
+    "A second answer.",
+    "",
+    "<sub>Context supplied: 0 chunk(s) from 0 document(s) — none. Full text: `context/y.txt`</sub>",
+    "",
+  ].join("\n");
+
+  it("reads each answer and stops at the context footer", () => {
+    const answers = readPacketAnswers(sheet);
+
+    expect(answers.get("1|A")).toBe("The original answer, as graded.");
+    expect(answers.get("1|B")).toBe("A second answer.");
+    // The chunk dump uses "### <source>" headings too; swallowing it would make every row look
+    // stale, which is worse than not checking at all.
+    expect(answers.get("1|A")).not.toContain("must NOT be read");
+  });
+
+  describe("against transcripts on disk", () => {
+    let root: string;
+    const rows = [{
+      fixtureId: "demo",
+      fixtureClass: "definitional",
+      turn: 1,
+      label: "A",
+      arm: "some-arm",
+      correctness: 2,
+      notes: "",
+    }];
+
+    const writeTranscript = (answer: string): void => {
+      const dir = path.join(root, "transcripts", "warm", "some-arm");
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(
+        path.join(dir, "demo.json"),
+        JSON.stringify({ turns: [{ index: 0, answer }] }),
+        "utf8",
+      );
+    };
+
+    beforeEach(() => {
+      root = fs.mkdtempSync(path.join(os.tmpdir(), "stale-grades-"));
+      const packet = path.join(root, "grading", "warm", "packet");
+      fs.mkdirSync(packet, { recursive: true });
+      fs.writeFileSync(path.join(packet, "demo.md"), sheet, "utf8");
+    });
+
+    const find = () => findStaleRows(
+      rows,
+      "warm",
+      path.join(root, "grading"),
+      path.join(root, "transcripts"),
+    );
+
+    it("flags a row whose answer was replaced by a re-capture", () => {
+      writeTranscript("A completely different answer after re-capturing.");
+
+      const stale = find();
+      expect(stale).toHaveLength(1);
+      expect(stale[0]).toMatchObject({ fixtureId: "demo", turn: 1, arm: "some-arm" });
+      // The excerpts exist so a report can show the divergence rather than assert it.
+      expect(stale[0].gradedExcerpt).toContain("original");
+      expect(stale[0].currentExcerpt).toContain("different");
+    });
+
+    it("does not flag typographic drift — that would be worse than not checking", () => {
+      // A non-breaking space where the packet has an ordinary one — the class of difference that
+      // made the refusal gate need normalizeForMatch in the first place.
+      writeTranscript("The original\u00a0answer, as graded.");
+
+      expect(find()).toHaveLength(0);
+    });
+
+    it("does not flag a row it cannot check", () => {
+      // No transcript written at all. Absence is not divergence — `unmatched` counts that case.
+      expect(find()).toHaveLength(0);
+    });
+
+    it("leaves an unchanged answer alone", () => {
+      writeTranscript("The original answer, as graded.");
+
+      expect(find()).toHaveLength(0);
+    });
   });
 });
