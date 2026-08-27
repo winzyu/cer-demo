@@ -1,27 +1,26 @@
-# Retrieval Comparison — ◆G7, the numbers so far
+# Retrieval Comparison — ◆G7
 
-> **STATUS: DRAFT. ◆G7 IS OPEN.** This is the deliverable specified in
-> [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §10, written while the experiment is still
-> running. **No arm has been graded for correctness or groundedness**, which is the entire
-> remaining blocker. Nothing here selects a retrieval strategy, and no threshold in §8a moves.
+> **STATUS: ◆G7 IS OPEN, AND THE DATA IS WHY.** This is the deliverable specified in
+> [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §10. Both tiers have now run on admissible
+> evidence. **Every arm fails the §8a quality floor**, so no retrieval strategy is selected and
+> no threshold moves — which is precisely what §8a pre-committed to on 2026-07-30.
 >
 > | | |
 > |---|---|
-> | **Decided** | Tier 1 — the three machine-checked hard gates (§8b). Both admissible arms **PASS**. |
-> | **Undecided** | Tier 2 — correctness and ungrounded claims, the two gates that carry the ◆G7 decision. The judge is **built and calibrated** (§6.4: correctness kappa **0.87**, citation support **0.52**, groundedness **0.46**) but has run on **6 of 28 fixtures**. No arm has a Tier 2 result. |
-| **Early signal** | Human and judge independently put **25%** and **39%** of turns over §8a's **2%** ungrounded-claims ceiling (§6.6). Expect a failed groundedness gate on every arm, and read §8a's "the floor does not move". |
-> | **Admissible arms** | `firestore-direct`, `hybrid-slice-lexvec` |
-> | **Inadmissible** | `firestore-vector`, `pgvector-rag` — swept over an 8-document corpus that no longer exists (§8b, "Evidence currency") |
-> | **Not yet captured** | `firestore-vector`, `hybrid-slice-vector` |
-> | **Written** | 2026-08-26, against `npm run cost`, `data/gate-check/warm.json`, `npm run retrieval:eval`, and `eval/transcripts/warm/` |
+> | **The result** | All three surviving arms fail the §8a quality floor, on correctness **and** on ungrounded claims (§6.7). Per §8a: *"If every arm fails the quality floor: ◆G7 stays open. The floor does not move."* |
+> | **What that means** | The failures are common to every arm and **larger than the differences between them**, so no arm choice fixes them. This is a system-level defect — prompt, `max_tokens`, or model — not a retrieval-strategy question. §7 sets out the reframe it forces. |
+> | **The comparison ◆G7 asked, answered anyway** | On correctness **`firestore-direct` wins**: 1.08/2 vs 0.88 and 0.86 — the arm with the *least* retrieval. Lexical fusion buys nothing at the answer layer (0.86 vs 0.88). |
+> | **Arms judged** | `firestore-direct`, `hybrid-slice-lexvec`, `hybrid-slice-vector` — all captured on the current 15-document corpus, all Tier-1 survivors |
+> | **Eliminated** | `firestore-vector` — **fails Tier 1 on fresh evidence**, 2 fabricated figures (§1c). `pgvector-rag` — dropped by decision 2026-08-26: archived, never deployed, already lost on cost. |
+> | **Written** | 2026-08-26, against `npm run cost`, `data/gate-check/warm.json`, `data/judge/warm.json`, `npm run retrieval:eval`, and `eval/transcripts/warm/` |
 
 **Three things a skim must not miss.**
 
-1. **Tier 1 passing is necessary, not sufficient.** Both admissible arms cleared it, and all that
-   means is that they invented no figure, refused where a rubric demanded a refusal, and cited
-   nothing they were not handed. It says **nothing about whether the answers are correct.**
-   §8a's correctness floor — ≥1.0/2 in every servable class, ≥1.3/2 overall — is unmeasured for
-   every arm.
+1. **Tier 1 passing was necessary and is now demonstrably not sufficient.** Three arms cleared it
+   — inventing no figure, refusing where a rubric demanded it, citing nothing they were not
+   handed — and **all three then failed the correctness floor and the groundedness ceiling**
+   (§6.7). Clearing the mechanical gates says nothing about whether the answers are any good, and
+   this run is the proof rather than the caveat.
 2. **Retrieval metrics are not gates.** Recall, precision, MRR and nDCG have no pre-registered
    target ([`RETRIEVAL_EVAL.md`](RETRIEVAL_EVAL.md) §1, restated in §8b). An arm cannot pass ◆G7
    on retrieval evidence. Where they appear below they are labelled **diagnostic**.
@@ -39,44 +38,43 @@ offline harness and the floor), [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md) (the ques
 
 ## 1. The headline table
 
-§10 item 1. One row per retrieval method. **Cost is measured; quality is not.**
+§10 item 1. One row per retrieval method. **Cost and quality are both measured now.** Struck rows
+are eliminated arms, kept visible because an arm that was cheapest and still lost is part of the
+result rather than a gap in it.
 
-Cost is at the sweep's own mean completion length (760 tokens) — the honest middle case, not the
-flattering one. Cache hit rates and prompt tokens are warm-pass sweep means from
-`eval/transcripts/warm/`.
+| method | cost/answer (warm) | cache hit (warm) | idle $/mo | 12-mo TCO @ 10k/mo | coverage | **correctness** | **ungrounded** | Tier 1 | p95 TTFT (warm) |
+|---|---:|---:|---:|---:|---:|---:|---:|---|---:|
+| **`firestore-direct`** | $0.000612 | **99.0%** | **$0** | $73.80 | 25/28 = **89.3%** | **1.08** FAIL | **53.4%** FAIL | PASS | 15.2s † |
+| **`hybrid-slice-vector`** | $0.000623 | 86.9% | **$0** | ~$74.8 ‡ | 28/28 = **100%** | **0.88** FAIL | **58.6%** FAIL | PASS | 5.1s |
+| **`hybrid-slice-lexvec`** | $0.000828 | 81.4% | **$0** | ~$99.4 ‡ | 28/28 = **100%** | **0.86** FAIL | **58.6%** FAIL | PASS | 32.4s |
+| ~~`firestore-vector`~~ | $0.000336 | 30.8% | **$0** | ~$40.3 ‡ | 28/28 = 100% | — not judged | — not judged | **FAIL** | 4.4s |
+| ~~`pgvector-rag`~~ | — dropped | — | $7.67 | — | — | — | — | FAIL | — |
 
-| method | cost/answer (cold) | cost/answer (warm) | cache hit (cold / warm) | idle $/mo | 12-mo TCO @ 10k/mo | coverage | correctness | groundedness | p95 TTFT (cold / warm) |
-|---|---:|---:|---:|---:|---:|---:|---|---|---|
-| **`firestore-direct`** | *see note* | **$0.000615** | 95.5% / **99.0%** | **$0** | **$73.80** | 25/28 = **89.3%** | — **pending** | — **pending** | 26.0s / 17.8s — **untrustworthy** |
-| **`hybrid-slice-lexvec`** | — **pending** | **$0.000767** † | — / **81.4%** | **$0** | **$92.09** † | 28/28 = **100%** | — **pending** | — **pending** | — **pending** / 33.4s — **untrustworthy** |
-| `firestore-vector` | $0.000433 | $0.000433 | 36.0% / 34.5% | $0 | $51.96 | 28/28 = 100% | — inadmissible | — inadmissible | 21.6s / 19.3s |
-| `pgvector-rag` (archived) | $0.000447 | $0.000447 | 22.2% / 42.6% | **$7.67** (Cloud SQL, 24/7) | $145.68 | 28/28 = 100% | — inadmissible | — inadmissible | 16.3s / 12.2s |
+**Floors, for reading the two quality columns:** correctness **≥1.30/2 overall and ≥1.00 in every
+servable class**; ungrounded claims **≤2% of turns**. Both pre-registered 2026-07-30, neither
+moved. **Nothing passes.** The best correctness on offer is 0.22 short, and the best groundedness
+is **26× over** its ceiling.
 
-† **Hand-derived, not from `npm run cost`.** `src/eval/costScenarios.ts` has **no
-`hybrid-slice-lexvec` entry** — the scenario table still prices the three arms swept on
-2026-08-11. The figure above is the same arithmetic (`src/eval/cost.ts`) applied by hand to the
-arm's measured warm-pass means — 12,985 prompt tokens, 10,564 cached (81.4%), plus a ~20-token
-query embedding — against the same 2026-08-03 price sheet. It also **omits any Firestore read
-charge**, which for this arm is unquantified. Treat it as indicative until the arm is added to
-`scenarioArms()` and `npm run cost` reproduces it.
+Cost is per answer at each arm's own measured warm-pass means (prompt tokens, cache hit and
+completion length all differ per arm), against the 2026-08-03 price sheet.
 
-**Notes that change how each column reads:**
+† `firestore-direct`'s p95 is computed over 54 of 58 turns — four carry negative timings (§1a).
+The three arms captured on 2026-08-26 have **zero** bad rows, so latency is finally measurable for
+them; the older captures are not.
 
-- **cost/answer (cold) is not measurable for `firestore-direct`.** A 20-minute idle failed to
-  expire the Fireworks prompt cache, so the "cold" pass still measured 95.5% cached
-  (`src/eval/costScenarios.ts`). A genuinely cold direct-feed price remains **unmeasured**;
-  `npm run cost -- --cache-rate=0` is the way to price that worst case, and it has not been run
-  into this table. `hybrid-slice-lexvec` has **no cold pass at all** — it was captured warm-only
-  on 2026-08-25.
-- **coverage** is the share of the 28 runnable fixtures in the arm's servable set (§8a).
-  `firestore-direct` cannot reach material outside the ◆G9 slice, so the three `deep-in-manual`
-  fixtures are excluded from its correctness floor and counted here instead. That exemption is the
-  reason this column exists; it is also the reason the two admissible arms are **not** competing on
-  equal terms, and §7 below turns on it.
-- **correctness / groundedness are blank for every arm, including the ones that passed Tier 1.**
-  To fill them: run `npm run judge` (Tier 2), then `npm run judge -- --calibrate` against the 36
-  human-graded rows. See §6.
-- **p95 TTFT is reported and immediately disclaimed.** See §1a.
+‡ Hand-derived. `src/eval/costScenarios.ts` still prices only the three arms swept on 2026-08-11,
+so `npm run cost` does not reproduce these and they omit Firestore read charges. Indicative until
+the arms are added to `scenarioArms()`.
+
+**Two columns that changed the shape of the result:**
+
+- **`firestore-vector` was the cheapest arm on the table and is out.** $0.000336/answer, roughly
+  half of direct-feed, 100% coverage — and it **fabricated two figures** on fresh evidence, which
+  §8a makes an absolute disqualifier at any price. §1c has the detail; it is worth reading,
+  because the way it failed is the same story as the groundedness column.
+- **Correctness runs opposite to retrieval sophistication.** The arm with a fixed 5-document slice
+  and no ranking beats both hybrids, and beats them on 8 of 11 classes (§6.7). That is the single
+  most decision-relevant number in this document.
 
 ### 1a. Latency — the instrumentation is broken and the numbers are not yet usable
 
@@ -152,18 +150,42 @@ entirely.
 
 ### 1c. Tier 1 — the machine-checked hard gates
 
-`npm run gate:check --pass=warm`, results in `data/gate-check/warm.json`, first run 2026-08-25.
-Deterministic, no LLM, no network. These are §8a's three *hard* gates, unchanged in threshold and
-re-ordered by §8b to run first, so no money is spent grading an arm already eliminated.
+`npm run gate:check`, results in `data/gate-check/warm.json`, **re-run 2026-08-26 over the fresh
+captures**. Deterministic, no LLM, no network, seconds. These are §8a's three *hard* gates,
+unchanged in threshold and re-ordered by §8b to run first, so no money is spent grading an arm
+already eliminated — which is exactly what happened here.
 
-| arm | refusal integrity (100%) | citation validity (≥95%) | fabricated figures (zero) | Tier 1 | evidence |
-|---|---|---:|---:|---|---|
-| `firestore-direct` | pass — 3 required, 3 folded | **95.3% (61/64)** | 0 of 187 | **PASS** | **admissible** — slice unchanged at 37,660 chars |
-| `hybrid-slice-lexvec` | pass — 1 exact, 1 folded, 1 off-contract | 100% (35/35) | 0 of 224 | **PASS** | **admissible** — captured on the current corpus |
-| `firestore-vector` | pass — 3 folded | 100% (61/61) | 5 of 132 | fail | **inadmissible** — stale corpus |
-| `pgvector-rag` | pass — 3 folded | 92.1% (35/38) | 5 of 143 | fail | **inadmissible** — stale corpus, archived arm |
+| arm | refusal integrity (100%) | citation validity (≥95%) | fabricated figures (zero) | Tier 1 |
+|---|---|---:|---:|---|
+| `firestore-direct` | pass — 3 required, 3 folded | **95.3% (61/64)** | 0 of 187 | **PASS** |
+| `hybrid-slice-lexvec` | pass — 1 exact, 1 folded, 1 off-contract | 100% (35/35) | 0 of 224 | **PASS** |
+| `hybrid-slice-vector` | pass — 3 folded | 100% (56/56) | 0 of 245 | **PASS** |
+| `firestore-vector` | pass — 3 folded | 97.8% (44/45) | **2 of 122** | **FAIL** |
+| `pgvector-rag` | pass — 3 folded | 92.1% (35/38) | 5 of 143 | FAIL — dropped by decision |
 
-Four readings, none of them optional:
+Every row above is now **admissible evidence**. §8b's 2026-08-25 table marked `firestore-vector`
+and `pgvector-rag` inadmissible because they had been swept over an 8-document corpus that no
+longer existed; `firestore-vector` and `hybrid-slice-vector` were re-captured on the current
+15-document corpus on 2026-08-26 (28 transcripts, 58 turns, 0 failed each, ~$0.056 for both).
+
+**`firestore-vector`'s failure is the one that decides an arm, and it was re-earned, not inherited.**
+Its 2026-08-11 failure was indicative only. On fresh evidence it states, in
+`definitional-conductivity` turn 2, that seawater conductivity is *"roughly 1,000× higher (often
+10,000–50,000 µS cm⁻¹)"*. Neither figure appears in the five retrieved chunks, the system prompt,
+or the question. What it *was* handed for a salt-water conductivity question was a DO probe
+datasheet, two source-of-truth chunks, and USGS chapters on dissolved oxygen and temperature — a
+retrieval miss — and the model filled the gap from world knowledge instead of refusing, which the
+system prompt forbids outright (*"Never use general world knowledge to fill gaps"*). §8a makes this
+an absolute disqualifier: *"Refusing is always available, so the slice is never an excuse."*
+**The cheapest arm on the table is out, at $0.000336 an answer.**
+
+The mechanism matters beyond this one arm. The hybrids never present the model with an empty or
+irrelevant context, because the ◆G9 operator slice is always there — so a retrieval miss degrades
+to "answered from the wrong-but-authoritative material" rather than "answered from nothing". That
+is a structural argument for the slice that neither retrieval metrics nor Tier 2 surfaces, and it
+is the strongest thing this experiment found in favour of the hybrid shape.
+
+Four further readings, none of them optional:
 
 - **`firestore-direct` has 0.3 points of headroom on citations and that is the whole margin.**
   95.3% against a 95.0% floor is **three invented citations out of 64** — `【6†L1-L4】` and
@@ -171,19 +193,19 @@ Four readings, none of them optional:
   outright.** This is not a comfortable pass and must not be reported as one.
 - **Citation validity is confounded by context volume, in both directions.** §8b says to state
   this rather than read it as quality. Direct-feed supplies 5 context entries, so the model's habit
-  of reaching for `【6】`/`【10】` breaks and scores 95.3%; the hybrid supplies 8–10, so the
+  of reaching for `【6】`/`【10】` breaks and scores 95.3%; the hybrids supply 8–10, so the
   *identical habit* resolves and scores 100%. The gate mildly favours high-context arms. A second
-  confound runs the other way and is worth naming: the hybrid emitted **35 markers to direct-feed's
-  64** — it cites roughly half as often, so its 100% is computed over a smaller and easier
-  denominator. **The 95.3% vs 100% gap is not a quality difference.**
-- **`hybrid-slice-lexvec` invented nothing across 224 numeric literals** — the largest figure count
-  of any arm, because it carries the most context. The standing worry that a wider net means more
-  distractor text and more invention is **not visible at this layer**.
-- **Its one deviation is presentational and is now the judge's problem.** On the E. coli turn it
-  answered *"I'm sorry, but I can't help with that."* — a refusal that supplies no figure and does
-  nothing unsafe, so it **passes** the gate under §8b's scope decision, but it is not the service's
-  pinned `REFUSAL_SENTENCE` and it omits the required short sentence naming what was missing. A
-  rubric miss, handed to Tier 2, not a gate failure.
+  confound runs the other way: `hybrid-slice-lexvec` emitted **35 markers to direct-feed's 64** —
+  it cites roughly half as often, so its 100% is computed over a smaller and easier denominator.
+  **The 95.3% vs 100% gap is not a quality difference.**
+- **No arm invented a figure except the eliminated one.** `hybrid-slice-vector` carried the largest
+  literal count of any arm — **245** — and fabricated none. The standing worry that a wider net
+  means more distractor text and more invention is **not visible at this layer**, on any arm.
+- **`hybrid-slice-lexvec`'s one deviation is presentational and became the judge's problem.** On
+  the E. coli turn it answered *"I'm sorry, but I can't help with that."* — a refusal that supplies
+  no figure and does nothing unsafe, so it **passes** under §8b's scope decision, but it is not the
+  pinned `REFUSAL_SENTENCE` and omits the required sentence naming what was missing. Tier 2 scored
+  exactly that class of miss, and §6.4 records the rubric ambiguity it exposed.
 
 One implementation detail worth keeping because it nearly hollowed out a gate: all three refusals
 on most arms matched **only after folding**. The captured answers carry `water‑quality` with
@@ -677,42 +699,74 @@ is being decided on. It goes at the front of the post-◆G7 queue, not before it
   and it asks the model to do better at the thing it is structurally bad at instead of changing
   the thing it is asked for.
 
-### 6.6 What the run says about the gates — and what it does not
+### 6.6 The calibration subset was optimistic, and that is worth recording
 
-**It does not decide ◆G7.** Twelve turns per arm is a sixth of the 58, and two of the three arms
-graded here (`firestore-vector`, `pgvector-rag`) are inadmissible on stale-corpus grounds (§8b).
-The per-arm gate verdicts `npm run judge` printed are the gate arithmetic applied to a calibration
-subset, and they are recorded in `data/judge/warm.json` as such. They are not a result.
+The 6-fixture calibration put `firestore-direct` at **1.50/2** correctness. The full 58-turn pass
+put it at **1.08/2**. Twelve turns did not merely have wide error bars — they were wrong about the
+verdict, because 1.50 clears the 1.30 floor and 1.08 does not.
 
-**One finding does survive the small sample, because both raters produce it independently:**
+This is why §7b asks for the calibration to be a *calibration* and not a shortcut. The subset's job
+was to establish that the judge agrees with a human, which it did (§6.4). Its numbers were never a
+result, are labelled as such above, and are superseded by §6.7.
 
-| rater | turns carrying at least one ungrounded claim |
-|---|---|
-| Human, 36 graded rows | **9 / 36 = 25.0%** |
-| Judge, same 36 rows | **14 / 36 = 38.9%** |
-| **§8a ceiling** | **2% — about 1 turn in 58** |
+### 6.7 Tier 2 — the full pass, 2026-08-26
 
-Both are an order of magnitude over the ceiling, and the human's number is the conservative one,
-collected blind and before the judge existed. **The ungrounded-claims gate is not close on any arm
-measured so far, and that cannot be attributed to a strict judge.** Per-arm, the human flags
-`firestore-direct` on 4/12 turns and `firestore-vector` on 5/12; `pgvector-rag` scores 0/12 only
-because it refused five of its twelve turns outright, which its correctness column pays for.
+`npm run judge --arm=firestore-direct,hybrid-slice-lexvec,hybrid-slice-vector`, verdicts in
+`data/judge/warm.jsonl`, summary in `data/judge/warm.json`. 398 calls on top of the calibration's
+84, 0 failed. Judge `gpt-oss-120b`, calibrated at kappa 0.87 / 0.52 / 0.46 (§6.4). Cumulative judge
+budget **$0.8082** — 4,122,348 input / 316,454 output tokens over 429 recorded calls.
 
-§8a pre-committed to this exact situation: *"If every arm fails the quality floor: ◆G7 stays open.
-Record that nothing cleared the bar, fix the system — prompt, slice, `max_tokens`, or model — and
-re-run. The floor does not move."* Nothing here is grounds to move it. It is grounds to expect
-that a full Tier 2 pass reports a failed groundedness gate for every arm, and to start thinking
-about which of prompt, slice or model is the fix.
+| arm | correctness (floor **1.30**) | worst servable class | ungrounded turns (ceiling **2%**) | coverage | **Tier 2** |
+|---|---:|---|---:|---:|---|
+| `firestore-direct` | **1.08** | `cross-document` 0.67 | **53.4%** (31/58) | 89.3% | **FAIL** |
+| `hybrid-slice-vector` | **0.88** | `cross-document` 0.17 | **58.6%** (34/58) | 100% | **FAIL** |
+| `hybrid-slice-lexvec` | **0.86** | `cross-document` 0.50 | **58.6%** (34/58) | 100% | **FAIL** |
 
-| output | value |
-|---|---|
-| Judge/human agreement rate | **measured** — see the table above |
-| Correctness, per servable class, per arm | **— pending.** Requires a full Tier 2 run over the admissible arms; the subset run covers 6 of 28 fixtures. |
-| Ungrounded claims as % of turns, full set | **— pending.** Same run. Indicated at 25–39% against a 2% ceiling. |
-| Any Tier 2 number for `hybrid-slice-lexvec` | **— pending.** It postdates the graded packet, so it has no human rows and was excluded from calibration. |
-| Judge token cost, full pass | **— pending.** ~$0.50 projected from `--dry-run`: 567 calls / ~2.75M input tokens at the 2026-08-03 rate. |
+Per class, out of 2. Starred entries sit outside that arm's servable set (§8a) and are counted as
+coverage, not correctness:
 
----
+| class | `firestore-direct` | `hybrid-slice-lexvec` | `hybrid-slice-vector` |
+|---|---:|---:|---:|
+| acronym-exact-token | **1.50** | 1.00 | 1.33 |
+| cross-document | **0.67** | 0.50 | 0.17 |
+| deep-in-manual | 0.33* | 0.50 | **0.83** |
+| definitional | **1.17** | 1.00 | **1.17** |
+| event-signature | **1.00** | 0.75 | 0.75 |
+| follow-up | **1.00** | 0.67 | 0.83 |
+| fouling-drift | **0.75** | **0.75** | 0.50 |
+| precedence | **1.00** | **1.00** | 0.67 |
+| probe-calibration | **1.00** | 0.75 | 0.50 |
+| refusal | 1.33 | **1.50** | **1.50** |
+| threshold-lookup | **1.25** | 1.00 | **1.25** |
+
+**Four findings.**
+
+**1. Retrieval is not the bottleneck, and the control is what proves it.** `firestore-direct` — a
+fixed 5-document slice, no ranking, no vector search, no query embedding — has the best correctness
+of any arm and wins **8 of 11 classes**. It wins `cross-document`, the class most obviously suited
+to whole-corpus retrieval. Keeping it as a scored control cost about $0.18 of the judging budget
+and produced the most decision-relevant number in this document: **more retrieval did not produce
+better answers.** Note the one place it genuinely loses — `deep-in-manual`, where it scores 0.33
+against the hybrids' 0.50 and 0.83 — which is exactly the material outside its ◆G9 slice, and is
+why §8a exempts that class for this arm and charges it as coverage instead.
+
+**2. Lexical fusion buys nothing at the answer layer.** `hybrid-slice-vector` 0.88 vs
+`hybrid-slice-lexvec` 0.86 — same slice, same dense retriever, one adds BM25 fused by RRF. This is
+the precise question the pairing was captured to answer, and 0.02 on a 2-point scale over 58 turns
+is noise. **That result is settled even though ◆G7 is not**, and it retires the "restore the
+lexical branch" thread that §4a/§4b opened. Note this is a finding *about answers*: the two arms do
+differ at the retrieval layer, and it does not survive into what the user reads.
+
+**3. The groundedness failure is systemic, not per-arm.** 53.4% / 58.6% / 58.6% of turns carry at
+least one unsupported claim, against a 2% ceiling — a **26× breach on the best arm**. The spread
+between arms is 5 points; the distance to the floor is 51. It cannot be attributed to a strict
+judge: a human, grading blind before this harness existed, independently flagged 25% of the turns
+they graded (§6.4). No retrieval strategy is going to move a number that behaves this way.
+
+**4. Every arm fails every gate that matters, and the arms are closer to each other than any of
+them is to the floor.** Correctness spread 0.22, distance to floor 0.22 on the *best* arm.
+Groundedness spread 5.2 points, distance to ceiling 51.4. **A different arm choice does not
+produce a passing system.**
 
 ## 7. The decision, the numbers behind it, and what would reverse it
 
@@ -720,68 +774,115 @@ about which of prompt, slice or model is the fix.
 
 ### 7.1 The decision
 
-**There is none. ◆G7 remains open**, and §8a pre-committed to exactly this posture: quality gates,
-cost decides — *"any arm below the correctness/groundedness threshold is out, however cheap. A
-cheaper wrong answer is not cheaper."* The correctness and groundedness thresholds are unmeasured
-for every arm, so **step 1 of the decision rule has not been executed**, and steps 2 and 3 are not
-reachable until it has.
+**No arm is selected, and ◆G7 remains open — because every arm failed the floor, not because the
+floor was not measured.** §8a's decision rule is *quality gates, cost decides*: step 1 is *"any arm
+below the correctness/groundedness threshold is out, however cheap. A cheaper wrong answer is not
+cheaper."* Step 1 has now been executed in full and **it eliminated the entire field**. Steps 2 and
+3 — total cost of ownership, then the latency veto — are never reached.
 
-Recording this rather than picking a winner from the numbers that *do* exist is not caution, it is
-the pre-registration working as designed. Cost is fully measured and it is the axis §8a explicitly
-ranked second.
+§8a wrote down what happens next, before any of this data existed:
+
+> **If every arm fails the quality floor: ◆G7 stays open.** Record that nothing cleared the bar,
+> fix the system — prompt, slice, `max_tokens`, or model — and re-run. **The floor does not move.**
+> Pre-committing to this is what makes it a test rather than a formality.
+
+That is the operative instruction and this document is the record it asks for. **No threshold in
+§8a has been changed, softened, or reinterpreted.**
+
+### 7.1a The reframe this forces — a decision that is not ours to make silently
+
+There is a structural problem with simply "re-running", and it should be surfaced rather than
+discovered later:
+
+1. ◆G7 cannot close while the quality floor is unmet.
+2. The floor is unmet because of a defect the data says is **systemic** — the failures are common
+   to every arm and larger than the differences between them (§6.7).
+3. Fixing a systemic defect means changing the prompt, `max_tokens`, or the model.
+4. **The system prompt is a pinned control until ◆G7 closes.** Changing it voids every captured
+   arm and forces a full re-capture of the arms ◆G7 exists to compare.
+
+As stated, that is a loop. The way out is to notice what the data actually licenses: because the
+quality failures do not discriminate between arms, they are **not evidence about retrieval
+strategy**. ◆G7 asks *which retrieval strategy ships*. That question has an answer in this data —
+`firestore-direct` wins correctness on 8 of 11 classes at near-identical cost to the best hybrid,
+and the hybrids' only real advantage is the `deep-in-manual` class its ◆G9 slice cannot reach.
+
+So the choice in front of you is between two honest readings, and it is a judgement call rather
+than something the numbers settle:
+
+- **Hold ◆G7 open as written.** Strictest reading, exactly what §8a says. Cost: the prompt stays
+  pinned, so the systemic defect cannot be worked on, and the gate blocks its own remedy.
+- **Split ◆G7.** Close the *retrieval-strategy* half on the evidence above, and re-file the quality
+  floor as a **system-level deploy blocker** — which is what it is — carrying §8a's thresholds
+  forward unchanged onto whatever prompt/model configuration comes next. This unpins the prompt and
+  lets the actual problem be worked, at the cost of re-capturing to re-verify the arm choice once
+  the system changes.
+
+**Recommendation: split it**, with the floor carried forward verbatim and re-run before deploy.
+The alternative spends the project's remaining time protecting a comparison the data has already
+made, while the defect that actually blocks shipping goes untouched. But this is a
+pre-registration, so the decision belongs to whoever owns the gate and belongs in
+[`timeline.md`](timeline.md) with its reasoning — not in a commit message, and not implied by a
+document quietly proceeding as though it had been made.
 
 ### 7.2 What is actually established
 
 | established | number |
 |---|---|
-| Both admissible arms clear all three **Tier 1** hard gates | `firestore-direct` 95.3% citations / 0 of 187 figures / 3 of 3 refusals; `hybrid-slice-lexvec` 100% / 0 of 224 / 3 of 3 |
-| Cost at realistic volume is a **non-issue** | $4.33–$12.14/month at 10k requests; the whole spread is ~$8 |
+| **Every arm fails the §8a quality floor** | correctness 1.08 / 0.88 / 0.86 against 1.30; ungrounded 53.4% / 58.6% / 58.6% against 2% |
+| **Three arms clear all three Tier 1 hard gates** on fresh evidence | `firestore-direct` 95.3% citations / 0 of 187 figures; `hybrid-slice-lexvec` 100% / 0 of 224; `hybrid-slice-vector` 100% / 0 of 245 |
+| **`firestore-vector` is eliminated** | 2 fabricated figures of 122 — an absolute §8a disqualifier, re-earned on the current corpus |
+| **Direct-feed wins correctness** | 1.08/2, and 8 of 11 classes, against arms with full-corpus retrieval |
+| **Lexical fusion buys nothing at the answer layer** | 0.86 vs 0.88 — same slice, same dense arm, one adds BM25 |
+| **The slice prevents the empty-context failure** | the eliminated arm invented figures after a retrieval miss handed it irrelevant chunks; arms carrying the ◆G9 slice never face an empty context |
+| Cost at realistic volume is a **non-issue** | $73.80–$99.40 per year at 10k/month; the whole spread is ~$26 |
+| Both surviving shapes have **zero fixed cost** | vs the legacy stack's $7.67/month floor at zero traffic |
 | The break-even that matters | **45,613 requests/month**, direct-feed vs a deployed pgvector arm |
-| Both admissible arms have **zero fixed cost** | vs the legacy stack's $7.67/month floor at zero traffic |
-| `firestore-direct` is **structurally blind** on `deep-in-manual` | 2.4% chunk recall (floor 20.2%), and a real 0/2 with 5 ungrounded claims on the one such fixture a human graded |
-| `hybrid-slice-lexvec` reaches that class | 24.5% recall (floor 20.2%) — **diagnostic, not a gate**, and with **no servable-set exemption** it must still clear 1.0/2 there |
-| The hybrid costs ~25% more per answer, everywhere | 12,985 vs 11,023 prompt tokens, 81.4% vs 99.0% cache; no crossover exists |
+| `firestore-direct` is **structurally blind** on `deep-in-manual` | 0.33/2 there vs the hybrids' 0.50 and 0.83; 2.4% chunk recall against a 20.2% floor. Its one real weakness, and §8a charges it as coverage |
+| Latency is finally measurable | the 2026-08-26 captures carry **zero** negative timings; the older ones still do (§1a) |
 
 ### 7.3 What is not established
 
-- **Correctness and groundedness for every arm.** The two gates that decide ◆G7.
-- **Any quality number at all for `hybrid-slice-lexvec`**, human or machine, beyond Tier 1.
-- **A trustworthy latency figure for any arm** (§1a) — so §8a's 1.5s p95 TTFT veto is unapplied.
-- **A cold pass for `hybrid-slice-lexvec`**, and a genuinely cold price for `firestore-direct`.
-- **`firestore-vector` and `hybrid-slice-vector` on the current corpus** — both pending capture.
-  Without `hybrid-slice-vector` there is no measurement of what the *lexical* half of the hybrid
-  buys at the answer layer, only at the retrieval layer.
+- **Whether the quality floor is reachable at all** on this prompt, this `max_tokens`, and this
+  model. Nothing here bounds how much of the 53% groundedness rate a prompt change recovers.
+- **Whether the arm ranking survives a system change.** Correctness was measured against a pinned
+  prompt; change it and the comparison has to be re-earned.
+- **A cold pass for anything but `firestore-direct` and `firestore-vector`**, and a genuinely cold
+  price for direct-feed — its captured cold pass still measured 95.5% cached.
+- **The §8a latency veto**, which is not reached: step 1 eliminated the field, and the older
+  captures' timings remain untrustworthy in any case.
+- **`hybrid-slice-vector` and `hybrid-slice-lexvec` in `scenarioArms()`**, so their costs are hand
+  arithmetic and omit Firestore reads.
 
 ### 7.4 What has to happen, in order
 
-0. ~~**Fix the two judge defects §6.4 exposed.**~~ **Done 2026-08-26** — correctness kappa
-   0.75 → 0.87, citation support −0.06 → 0.52, for $0.0417. One rubric question is left over and
-   should be settled before the full pass: whether a refusal that names the missing information
-   but does not use the pinned `REFUSAL_SENTENCE` verbatim is a correctness 1 (the judge) or a 2
-   (the human). Tier 1 already treats that behaviour as *passing* the refusal gate (§8b), so the
-   judge is currently stricter than the pre-registration.
-1. **Bump `PRICES_READ_ON`** — re-read the three source pages and update `src/eval/prices.ts`
-   (§4) — including `gpt-oss-120b`'s, since it is now the judge as well as a candidate model. The
-   file's own doc comment makes this a precondition of publishing this document.
-2. **Add `hybrid-slice-lexvec` to `scenarioArms()`** so `npm run cost` prices it and the † figures
-   stop being hand arithmetic.
-3. **Fix the timing instrumentation and re-capture**, including a cold pass for the hybrid. Until
-   then §1's latency column is decorative.
-4. **Capture `firestore-vector` and `hybrid-slice-vector`** on the 15-document corpus. Neither
-   needs a code change — `firestore-vector`'s chunk collection was wiped and re-seeded to 393
-   chunks on 2026-08-24, so its Tier 1 failure is a fact about stale transcripts, **not a broken
-   adapter**.
-5. **Re-run `npm run gate:check`** over the new captures. Tier 1 failures are eliminations; nothing
-   proceeds past them.
-6. **Run Tier 2** — `npm run judge -- --calibration`, then `--calibrate` to report agreement and
-   kappa against the 36 human rows, then the full run over Tier 1 survivors. **If agreement is
-   poor, fix the rubric — do not quietly keep the judge's scores** (§7b). The
-   `threshold-do-hypoxia` turn-2 note (§5.5), where the human recorded *"genuinely borderline 0 vs
-   1"*, is the first place to look.
-7. **Grade `hybrid-slice-lexvec` into the human sample** — it is currently the only admissible arm
-   with no human judgement whatsoever, which makes its calibration join one-sided.
-8. **Fill §1, close ◆G7 in [`timeline.md`](timeline.md)'s gate table, and delete this status
-   block.**
+Steps 0–6 of the previous plan are **done** — judge defects fixed, both pending arms captured,
+Tier 1 re-run, Tier 2 run in full. What remains:
+
+1. **Make the ◆G7 scoping decision in §7.1a** and record it, with its reasoning, in
+   [`timeline.md`](timeline.md). Everything below branches on it.
+2. **Settle the off-contract-refusal rubric question.** The judge scores 1 where the human scored
+   2 on a refusal that names the missing information but does not use `REFUSAL_SENTENCE` verbatim;
+   Tier 1 already treats that behaviour as *passing* (§8b). It is the only known systematic
+   judge/human divergence left on correctness, and it is worth 0.1–0.2 on the arm means.
+3. **Attack groundedness, which is the deploy blocker.** The failure mode is consistent across
+   every arm: the model volunteers mechanism the documents do not support — *"dilution with
+   low-mineral water lowers conductivity"*, *"ORP responds faster than DO"*. That is a generation
+   behaviour, addressable in the prompt, and **not addressable by retrieval**. Requires the prompt
+   to be unpinned, hence step 1 first.
+4. **Bump `PRICES_READ_ON`** — re-read the three source pages and update `src/eval/prices.ts` (§4),
+   `gpt-oss-120b` included, since it is now the judge as well as a candidate model. The file's own
+   doc comment makes this a precondition of publishing this document.
+5. **Add `hybrid-slice-lexvec` and `hybrid-slice-vector` to `scenarioArms()`** so `npm run cost`
+   prices them and the ‡ figures stop being hand arithmetic.
+6. **Fix the timing instrumentation on the older captures** and take a cold pass for the two hybrid
+   arms. The 2026-08-26 captures are clean; `firestore-direct`'s and `hybrid-slice-lexvec`'s are
+   not (§1a).
+7. **Grade a hybrid arm into the human sample.** Neither hybrid has any human judgement, so the
+   calibration join is one-sided on exactly the arms the comparison now turns on.
+8. **Re-verify after any system change.** §8a's floor carries forward unchanged onto whatever
+   prompt or model configuration follows; a passing groundedness number on a changed system does
+   not retroactively validate an arm choice made on this one.
 
 ### 7.5 What would reverse the decision, once there is one
 
@@ -798,47 +899,45 @@ Written now, while there is no result to rationalise:
   corpus has already been rescoped three times.
 - **Volume above ~46k requests/month**, sustained, against a deployed pgvector arm. Below it, zero
   fixed cost dominates; above it, marginal cost does.
-- **A `deep-in-manual` correctness result.** If Tier 2 finds the hybrid clears 1.0/2 on that class
-  and direct-feed's excused blindness is costing real users real answers, the split outcome §8a
-  named becomes the answer regardless of the ~25% cost premium — because at 10k requests/month that
-  premium is **$1.52 per month.**
+- **A `deep-in-manual` correctness result — now measured, and it did not settle this.**
+  `hybrid-slice-vector` scores **0.83/2** there against direct-feed's 0.33, so the hybrid *is*
+  meaningfully better on the class direct-feed cannot reach — but it does not clear the 1.0 floor
+  either, so the split outcome §8a named is not yet earned. If a system fix lifts that class over
+  1.0 while direct-feed stays blind, the split becomes the answer regardless of cost — at 10k
+  requests/month the hybrid premium is **under $2 a month**.
 - **The reasoning-token finding.** If `max_tokens` and reasoning effort are tuned in N5, every
   arm's output cost moves by more than the gap between arms. Cost as a tiebreaker gets weaker, not
   stronger.
 
 **And one thing that would not reverse it: any retrieval metric.** Recall, precision, MRR and nDCG
 remain diagnostics with no pre-registered target. A model can be handed perfect context and still
-invent a number — which is the failure Tier 1 exists to catch, and it caught five of them on
-`firestore-vector`. **81.8% recall is not a result about answers.**
+invent a number — which is the failure Tier 1 exists to catch, and it caught two of them on
+`firestore-vector` and eliminated the cheapest arm in the field. The full Tier 2 pass made the
+point twice over: the arm with the *least* retrieval scored the best answers.
+**81.8% recall is not a result about answers.**
 
 ---
 
-## 8. Pending ledger — every blank in this document
+## 8. Pending ledger — every blank left in this document
 
 | § | blank | what fills it |
 |---|---|---|
-| 1 | correctness, all arms | Tier 2 run (`npm run judge`) |
-| 1 | groundedness, all arms | Tier 2 run |
-| 1 | `hybrid-slice-lexvec` cold cost, cold cache rate, cold p95 | a cold-pass capture — the arm was swept warm-only |
-| 1 | `firestore-direct` genuinely-cold cost | `npm run cost -- --cache-rate=0`; the captured cold pass still measured 95.5% cached |
-| 1 | `hybrid-slice-lexvec` cost via `npm run cost` | add it to `scenarioArms()` in `src/eval/costScenarios.ts` |
-| 1a | any trustworthy latency figure | fix the negative-timing instrumentation, re-capture |
-| 1a | §8a's 1.5s p95 TTFT veto | the same |
-| 2 | `hybrid-slice-lexvec` Firestore read charge | measure reads per query for the composed adapter |
-| 4 | current prices | re-read the three sources, bump `PRICES_READ_ON` |
-| 4 | a judge-model rate newer than 2026-08-03 | re-read the Fireworks catalogue, bump `PRICES_READ_ON` |
+| 1 | `hybrid-slice-*` costs via `npm run cost` | add them to `scenarioArms()` in `src/eval/costScenarios.ts` |
+| 1 | cold pass for either hybrid arm | a cold capture — both were swept warm-only |
+| 1 | genuinely-cold `firestore-direct` cost | `npm run cost -- --cache-rate=0`; the captured cold pass still measured 95.5% cached |
+| 1a | trustworthy latency for the 2026-08-11/25 captures | fix the negative-timing instrumentation, re-capture. The 2026-08-26 captures are already clean |
+| 1a | §8a's 1.5s p95 TTFT veto | never reached — step 1 of the decision rule eliminated the field |
+| 2 | `hybrid-slice-*` Firestore read charges | measure reads per query for the composed adapters |
+| 4 | prices newer than 2026-08-03 | re-read the three sources, bump `PRICES_READ_ON` |
+| 5 | sample outputs for `hybrid-slice-vector` | it postdates §5, which was written against three arms |
 | 6 | whether a cross-family judge changes the scores | re-run with `JUDGE_MODEL=` set to another family, once its rate is priced |
-| 5 | every `hybrid-slice-lexvec` sample score | grade it into `scores.csv` |
-| 6 | ~~judge/human agreement, Cohen's kappa~~ | **done 2026-08-26** — §6.4 |
-| 6 | ~~judge token cost in USD~~ | **done** — $0.1194 across both calibration passes; ~$0.50 projected for a full one |
-| 6 | ~~a usable citation-support dimension~~ | **done 2026-08-26** — judged per document, kappa −0.06 → 0.52 (§6.4). Still n=12 and still ungated. |
-| 6 | ~~correctness scored against invention-type `must_not` items~~ | **done 2026-08-26** — kappa 0.75 → 0.87 (§6.4) |
-| 6 | whether an off-contract refusal is a correctness 1 or 2 | settle it against §8b's refusal-gate scope before the full pass (§6.4) |
 | 6 | a citation format a string match can verify | quote-based citations, post-◆G7 (§6.5) — moves the dimension into Tier 1 |
 | 6 | anything measuring the 47% line-1 citation rate | nothing does, by design, after the §6.4 fix — see §6.5 |
-| 6 | Tier 2 over the other 22 fixtures | `npm run judge` without `--calibration`, after the fix above |
-| 6 | 138 of 174 human grading rows | human grading, or the judge once the two §6.4 defects are fixed |
-| 7 | **the decision** | all of the above |
+| 6 | whether an off-contract refusal is a correctness 1 or 2 | settle it against §8b's refusal-gate scope (§7.4 step 2) |
+| 6 | human grading for either hybrid arm | neither has any, so the calibration join is one-sided on the arms that now matter |
+| 6 | 138 of 174 human grading rows | human grading; the judge now covers the full set on its own |
+| 7 | **the ◆G7 scoping decision** | §7.1a — yours to make, and to record in `timeline.md` |
+| 7 | **a deployable system** | groundedness at 53–59% of turns against a 2% ceiling (§7.4 step 3) |
 
 ---
 

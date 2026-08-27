@@ -955,6 +955,139 @@ here is grounds to move it. **Expect a full Tier-2 pass to fail the groundedness
 arm**, and treat the open question as which of prompt, slice or model is the fix — not what the
 threshold should have been.
 
+**Tier 1 re-run and Tier 2 in full, 2026-08-26.** `firestore-vector` and `hybrid-slice-vector`
+were captured on the current 15-document corpus (28 transcripts / 58 turns / 0 failed each,
+~$0.056 for both), which makes every row below **admissible evidence** and retires the currency
+table above. Tier 1 was re-run first, then Tier 2 on its survivors — 398 further judge calls,
+cumulative judge budget **$0.8082**.
+
+| arm | Tier 1 | correctness (floor 1.30) | ungrounded turns (ceiling 2%) | coverage | **verdict** |
+|---|---|---:|---:|---:|---|
+| `firestore-direct` | PASS | **1.08** | **53.4%** | 89.3% | **FAIL** |
+| `hybrid-slice-vector` | PASS | **0.88** | **58.6%** | 100% | **FAIL** |
+| `hybrid-slice-lexvec` | PASS | **0.86** | **58.6%** | 100% | **FAIL** |
+| `firestore-vector` | **FAIL** — 2 fabricated figures of 122 | — not judged | — | 100% | **OUT at Tier 1** |
+| `pgvector-rag` | FAIL | — | — | — | dropped by decision |
+
+**Every arm fails the quality floor, so §8a's own contingency governs:** *"If every arm fails the
+quality floor: ◆G7 stays open. Record that nothing cleared the bar, fix the system — prompt, slice,
+`max_tokens`, or model — and re-run. The floor does not move."* Nothing here is grounds to move it.
+`RETRIEVAL_COMPARISON.md` §7 is the record, and §7.1a raises the scoping problem this creates: the
+prompt is a pinned control until ◆G7 closes, so the gate currently blocks its own remedy. That is a
+decision for whoever owns the gate, and it belongs in `timeline.md`, not in a document proceeding
+as though it had been made.
+
+Five results worth carrying forward regardless of how that decision goes:
+
+- **`firestore-vector` was eliminated on an absolute gate, and it re-earned that failure.** Its
+  2026-08-11 failure was inadmissible. On fresh evidence it stated that seawater conductivity is
+  *"roughly 1,000× higher (often 10,000–50,000 µS cm⁻¹)"* — neither figure in its five retrieved
+  chunks, the system prompt, or the question. Retrieval had handed it DO and temperature material
+  for a salt-water conductivity question, and the model filled the gap from world knowledge, which
+  the prompt forbids outright. **The cheapest arm in the field, at $0.000336/answer, is out.**
+- **The ◆G9 slice prevents exactly that failure.** Arms carrying it never face an empty or wholly
+  irrelevant context, so a retrieval miss degrades to "answered from authoritative-but-wrong
+  material" rather than "answered from nothing". This is the strongest argument the experiment
+  found for the hybrid shape, and neither retrieval metrics nor Tier 2 surfaces it.
+- **Retrieval is not the bottleneck.** `firestore-direct` — fixed 5-document slice, no ranking, no
+  vector search — has the **best correctness of any arm** and wins **8 of 11 classes**, including
+  `cross-document`. It loses only `deep-in-manual` (0.33 vs 0.83), which is precisely the material
+  outside its slice and which §8a already charges to coverage. Keeping it as a scored control cost
+  ~$0.18 and produced the most decision-relevant number in the experiment.
+- **Lexical fusion buys nothing at the answer layer.** `hybrid-slice-vector` 0.88 vs
+  `hybrid-slice-lexvec` 0.86: same slice, same dense retriever, one adds BM25 via RRF. This is the
+  question that pairing was captured to answer, and 0.02 over 58 turns is noise. **Settled**, and
+  it retires the "restore the lexical branch" thread §4a/§4b opened. The two arms do differ at the
+  retrieval layer; it does not survive into what a user reads.
+- **The groundedness failure is systemic and generation-shaped.** 53–59% of turns carry an
+  unsupported claim against a 2% ceiling — a 26× breach on the best arm, with only 5 points
+  separating the arms. The flagged claims are volunteered mechanism the documents do not support
+  ("dilution with low-mineral water lowers conductivity", "ORP responds faster than DO"), not
+  retrieval misses. A human grading blind, before the judge existed, independently flagged 25% of
+  their turns. **No arm choice moves this**; prompt, `max_tokens` and model are the levers §8a
+  itself names.
+
+**One methodological note, because it nearly produced the wrong verdict.** The 6-fixture
+calibration put `firestore-direct` at 1.50/2 correctness; the full 58-turn pass put it at 1.08/2.
+Twelve turns did not merely carry wide error bars — they cleared a floor the full set fails. A
+calibration subset establishes that the judge agrees with a human. It is not a result, and this is
+what it looks like when one is mistaken for one.
+
+**Capture set completed and Tier 1 re-run, 2026-08-26.** `firestore-vector` and
+`hybrid-slice-vector` were captured on the current 15-document corpus — 28 transcripts, 58 turns,
+0 failed each, ~$0.056 for both — which makes every row of the table above admissible evidence
+rather than a mix of live and stale. `pgvector-rag` was **dropped by decision** rather than
+re-captured: archived, never deployed, ◆G1 migrated off that stack, and it had already lost on cost.
+
+| arm | refusal | citations | figures | Tier 1 |
+|---|---|---|---|---|
+| `firestore-direct` | pass — 3 folded | 95.3% (61/64) | 0 of 187 | **PASS** |
+| `hybrid-slice-lexvec` | pass — 1 exact, 1 folded, 1 off-contract | 100% (35/35) | 0 of 224 | **PASS** |
+| `hybrid-slice-vector` | pass — 3 folded | 100% (56/56) | 0 of 245 | **PASS** |
+| `firestore-vector` | pass — 3 folded | 97.8% (44/45) | **2 of 122** | **FAIL** |
+
+**`firestore-vector`'s failure is re-earned, not inherited, and it eliminates the arm.** Its
+2026-08-11 failure was inadmissible and explicitly indicative only. On fresh evidence it states, in
+`definitional-conductivity` turn 2, that seawater conductivity is *"roughly 1,000× higher (often
+10,000–50,000 µS cm⁻¹)"* — neither figure present in its five retrieved chunks, the system prompt,
+or the question. Retrieval had handed it a DO datasheet and USGS chapters on dissolved oxygen and
+temperature for a salt-water *conductivity* question, and the model covered the gap from world
+knowledge rather than refusing. §8a is unambiguous: zero fabricated figures, *"refusing is always
+available, so the slice is never an excuse."* The cheapest arm in the field — $0.000336 an answer,
+roughly half of direct-feed — is out.
+
+Worth carrying forward, because no retrieval metric surfaces it: **the arms carrying the ◆G9 slice
+never face an empty or wholly-irrelevant context**, so a retrieval miss degrades to "answered from
+authoritative-but-wrong material" rather than "answered from nothing". That is the strongest
+argument this experiment produced for the hybrid *shape*, and it is an argument about failure modes
+rather than about recall.
+
+**Tier 2 — the full pass, 2026-08-26.** Run over the three Tier-1 survivors: 398 calls on top of
+the calibration's 84, 0 failed, cumulative judge budget **$0.8082** (4,122,348 in / 316,454 out).
+
+| arm | correctness (floor 1.30) | worst servable class | ungrounded turns (ceiling 2%) | coverage | Tier 2 |
+|---|---:|---|---:|---:|---|
+| `firestore-direct` | **1.08** | `cross-document` 0.67 | **53.4%** (31/58) | 89.3% | **FAIL** |
+| `hybrid-slice-vector` | **0.88** | `cross-document` 0.17 | **58.6%** (34/58) | 100% | **FAIL** |
+| `hybrid-slice-lexvec` | **0.86** | `cross-document` 0.50 | **58.6%** (34/58) | 100% | **FAIL** |
+
+**Every arm fails the quality floor, so §8a's own contingency governs**: *"If every arm fails the
+quality floor: ◆G7 stays open. Record that nothing cleared the bar, fix the system — prompt, slice,
+`max_tokens`, or model — and re-run. The floor does not move."* Nothing in §8a has been changed,
+softened or reinterpreted. `RETRIEVAL_COMPARISON.md` is the record it asks for.
+
+Four results that stand regardless of how ◆G7 is finally scoped:
+
+- **Retrieval is not the bottleneck.** `firestore-direct` — a fixed 5-document slice, no ranking,
+  no vector search — has the best correctness of any arm and wins **8 of 11 classes**, including
+  `cross-document`, the class most obviously suited to whole-corpus retrieval. It was kept in the
+  judging pass as a scored *control* rather than a candidate, at about $0.18, and that decision
+  produced the most decision-relevant number in the experiment.
+- **Lexical fusion buys nothing at the answer layer.** `hybrid-slice-vector` 0.88 vs
+  `hybrid-slice-lexvec` 0.86 — same slice, same dense retriever, one adds BM25 via RRF. This is
+  exactly the question the pairing was captured to answer, and 0.02 over 58 turns is noise. It
+  retires the "restore the lexical branch" thread §4a/§4b opened: the two arms differ at the
+  retrieval layer and it **does not survive into the answers**.
+- **The quality failure is systemic, not per-arm.** Correctness spread across arms is 0.22 and the
+  best arm is 0.22 below the floor; groundedness spread is 5.2 points and the best arm is 51.4
+  points above the ceiling. **A different arm choice does not produce a passing system.** Nor is it
+  a strict judge: a human, grading blind before the harness existed, independently flagged 25% of
+  the turns they graded.
+- **The calibration subset was optimistic enough to have misled.** `firestore-direct` scored
+  1.50/2 on the 6-fixture calibration and **1.08/2** on all 58 — the difference between clearing
+  the floor and failing it. The subset's job was to calibrate the judge, not to produce a result,
+  and it is the reason §7b asks for both.
+
+**The scoping problem this creates, recorded rather than resolved here.** ◆G7 cannot close while
+the floor is unmet; the floor is unmet for systemic reasons; fixing systemic reasons means editing
+the system prompt; and the system prompt is a **pinned control until ◆G7 closes**. The way out is
+that quality failures which do not discriminate between arms are not evidence *about* arms —
+so the retrieval-strategy question ◆G7 actually asks is answerable on this data, while the floor is
+re-filed as a system-level deploy blocker carrying §8a's thresholds forward unchanged.
+`RETRIEVAL_COMPARISON.md` §7.1a sets out both readings and recommends the split. **That decision
+belongs in `timeline.md` with its reasoning**, made explicitly by whoever owns the gate — not
+assumed by a document that proceeds as though it had been made.
+
 **What this amendment does not do.** It does not admit retrieval metrics as quality gates. Recall,
 precision, MRR and nDCG remain diagnostics with no target (`RETRIEVAL_EVAL.md` §1) — a model can be
 handed perfect context and still invent a number, which is the failure Tier 1 exists to catch. An
