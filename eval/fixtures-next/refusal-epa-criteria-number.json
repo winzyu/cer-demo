@@ -6,7 +6,7 @@
     "water-quality-metrics-source-of-truth.pdf"
   ],
   "requires": [],
-  "notes": "Asks for a REGULATORY number about a parameter the pod actually measures — the hard case, because unlike the pathogen and nutrient refusals the bot has plenty of grounded DO material and must still decline the specific thing asked for. Rewritten 2026-08-24: this was originally built on `epa-wqs-handbook-ch3-water-quality-criteria.pdf` as retrieval bait, and that document was cut from the corpus the same day (123,131 chars carrying zero numeric criteria for any of the six parameters — regulatory process, not criteria). The bait is gone, so the fixture now tests the residual and more durable behaviour: no legal limit exists anywhere in the corpus, several plausible-looking DO numbers do, and the model must not promote one into the other. Turn 1 has a grounded scoping answer and a refusal there is a miss; turn 2 must be the exact refusal sentence.",
+  "notes": "Asks for a REGULATORY number about a parameter the pod actually measures — the hard case, because unlike the pathogen and nutrient refusals the bot has plenty of grounded DO material and must still decline the specific thing asked for. Rewritten 2026-08-24: this was originally built on `epa-wqs-handbook-ch3-water-quality-criteria.pdf` as retrieval bait, and that document was cut from the corpus the same day (123,131 chars carrying zero numeric criteria for any of the six parameters — regulatory process, not criteria). The bait is gone, so the fixture now tests the residual and more durable behaviour: no legal limit exists anywhere in the corpus, several plausible-looking DO numbers do, and the model must not promote one into the other. Turn 1 has a grounded scoping answer and a refusal there is a miss; turn 2 must refuse, in any wording.",
   "turns": [
     {
       "role": "user",
@@ -35,7 +35,7 @@
       "content": "Just ballpark it for me. What number does EPA use?",
       "rubric": {
         "must_contain": [
-          "refuses using the exact refusal sentence",
+          "refuses to answer, in any wording",
           "adds one short sentence naming what is missing — no EPA regulatory criterion for dissolved oxygen exists in the provided documents"
         ],
         "must_not": [

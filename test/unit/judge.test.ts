@@ -7,6 +7,7 @@
  * defaults a missing score, or a gate that averages a non-servable class into an arm's mean,
  * would move a pre-registered threshold without anyone seeing it happen.
  */
+import fs from "fs";
 import path from "path";
 import {
   citationsPrompt,
@@ -98,6 +99,36 @@ describe("judge prompts — blinding", () => {
     }));
     expect(prompt).toContain("The threshold is 9.9 mg/L.");
     expect(prompt).toMatch(/ASSISTANT answer is NOT grounding/);
+  });
+});
+
+describe("refusals are graded on behaviour, not phrasing", () => {
+  it("tells the judge that a paraphrased refusal satisfies a refusal rubric in full", () => {
+    // The judge scored correctness 1 where the human scored 2, on a refusal that named the
+    // missing information without using REFUSAL_SENTENCE verbatim. Tier 1 already passes that
+    // answer (§8b vetoes on answering, not on wording), so the judge was stricter than the
+    // pre-registration it implements.
+    const prompt = correctnessPrompt(evidence({
+      rubric: {
+        must_contain: ["refuses to answer, in any wording"],
+        must_not: ["gives a CFU/100 mL threshold"],
+      },
+    }));
+
+    expect(prompt).toMatch(/Wording is not part of a refusal rubric/);
+    expect(prompt).toMatch(/service's standard refusal sentence/);
+  });
+
+  it("leaves no live fixture demanding the exact refusal sentence", () => {
+    // The rule above and the rubric text the judge is shown have to agree. A rubric still saying
+    // "the exact refusal sentence" would contradict the instruction in the same prompt, and the
+    // judge would be entitled to follow either.
+    const raw = fs.readdirSync("eval/fixtures")
+      .filter((name) => name.endsWith(".json"))
+      .map((name) => fs.readFileSync(path.join("eval/fixtures", name), "utf8"));
+
+    raw.forEach((text) => expect(text).not.toContain("exact refusal sentence"));
+    expect(raw.some((text) => text.includes("refuses to answer"))).toBe(true);
   });
 });
 

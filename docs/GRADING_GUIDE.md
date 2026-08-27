@@ -73,6 +73,12 @@ How well the answer satisfies that turn's **Must contain** list.
   the specific wrong answers this question exists to catch.
 - **A refusal is a 0 when the rubric expected content**, and a 2 when the rubric asked for a
   refusal. Some conversations mix both across their turns — read each turn's rubric.
+- **Wording is not part of a refusal rubric.** If the rubric asks for a refusal, an answer that
+  declines and says what it lacks is a 2, whether or not it uses the service's standard refusal
+  sentence. Do not dock a point for paraphrasing it. Whether the exact sentence appears is checked
+  separately, for free, by the Tier 1 gate — and that gate passes a correct refusal in any wording
+  (`RETRIEVAL_BAKEOFF.md` §8b), so grading it more strictly here would measure two different
+  things and report them as one.
 - Ignore style, tone, formatting and length. A blunt correct answer and an elegant correct answer
   are both 2.
 
