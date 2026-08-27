@@ -28,8 +28,10 @@ import {
 } from "../../src/eval/judge/runner";
 import {
   agreementFor,
+  calibrate,
   cohensKappa,
   findStaleRows,
+  gradingSets,
   readHumanRows,
   readPacketAnswers,
 } from "../../src/eval/judge/calibrate";
@@ -463,7 +465,9 @@ describe("stale human grades", () => {
 
   describe("against transcripts on disk", () => {
     let root: string;
-    const rows = [{
+    // Built per test rather than once: a row carries the packet it was graded from, and that
+    // path only exists after `beforeEach` has made the temp tree.
+    const rows = () => [{
       fixtureId: "demo",
       fixtureClass: "definitional",
       turn: 1,
@@ -471,6 +475,7 @@ describe("stale human grades", () => {
       arm: "some-arm",
       correctness: 2,
       notes: "",
+      packetDir: path.join(root, "grading", "warm", "packet"),
     }];
 
     const writeTranscript = (answer: string): void => {
@@ -491,9 +496,8 @@ describe("stale human grades", () => {
     });
 
     const find = () => findStaleRows(
-      rows,
+      rows(),
       "warm",
-      path.join(root, "grading"),
       path.join(root, "transcripts"),
     );
 
@@ -526,5 +530,116 @@ describe("stale human grades", () => {
 
       expect(find()).toHaveLength(0);
     });
+  });
+});
+
+/**
+ * Top-up grading rounds. A sample is not built once: arms get re-captured, and arms get added.
+ * Re-grading everything to absorb either would throw away good human judgement, and rebuilding the
+ * original packet in place re-labels answers that grades were already written against.
+ */
+describe("grading rounds", () => {
+  let root: string;
+
+  const sheetFor = (answer: string): string => [
+    "# demo", "", "## Turn 1", "", "### Answer A", "", answer, "",
+    "<sub>Context supplied: 0 chunk(s) from 0 document(s) — none. Full text: `context/x.txt`</sub>",
+    "",
+  ].join("\n");
+
+  const writeSet = (dir: string, answer: string, score: string, label = "A"): void => {
+    fs.mkdirSync(path.join(dir, "packet"), { recursive: true });
+    fs.writeFileSync(path.join(dir, "packet", "demo.md"), sheetFor(answer), "utf8");
+    fs.writeFileSync(
+      path.join(dir, "KEY.json"),
+      JSON.stringify({ key: { demo: { [label]: "some-arm" } } }),
+      "utf8",
+    );
+    fs.writeFileSync(
+      path.join(dir, "scores.csv"),
+      "fixture,class,turn,label,correctness_0_1_2,ungrounded_claims,invalid_citations,notes\n"
+      + `demo,definitional,1,${label},${score},0,0,\n`,
+      "utf8",
+    );
+  };
+
+  const writeTranscript = (answer: string): void => {
+    const dir = path.join(root, "transcripts", "warm", "some-arm");
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, "demo.json"),
+      JSON.stringify({ turns: [{ index: 0, answer }] }),
+      "utf8",
+    );
+  };
+
+  const judged = [{
+    arm: "some-arm",
+    fixtureId: "demo",
+    fixtureClass: "definitional",
+    turn: 1,
+    dimension: "correctness" as const,
+    score: 2,
+    note: "",
+    items: [],
+    promptTokens: 1,
+    completionTokens: 1,
+    model: "m",
+    judgedAt: "2026-08-27T00:00:00.000Z",
+  }];
+
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), "grading-rounds-"));
+  });
+
+  const gradingRoot = () => path.join(root, "grading");
+  const run = () => calibrate(
+    "warm",
+    judged,
+    gradingRoot(),
+    path.join(root, "transcripts"),
+  );
+
+  it("finds the base packet and every round, base first", () => {
+    writeSet(path.join(gradingRoot(), "warm"), "original", "1");
+    writeSet(path.join(gradingRoot(), "rounds", "2026-08-27", "warm"), "replacement", "2");
+
+    const sets = gradingSets(gradingRoot(), "warm");
+    expect(sets).toHaveLength(2);
+    expect(sets[0].scoresPath).toContain(path.join("grading", "warm"));
+    expect(sets[1].scoresPath).toContain(path.join("rounds", "2026-08-27"));
+  });
+
+  it("lets a round supersede the base row it re-grades", () => {
+    // Same arm, fixture and turn — a re-grade. The label differs between packets, which is exactly
+    // why the merge key cannot include it.
+    writeSet(path.join(gradingRoot(), "warm"), "replacement", "0");
+    writeSet(path.join(gradingRoot(), "rounds", "2026-08-27", "warm"), "replacement", "2", "B");
+    writeTranscript("replacement");
+
+    const report = run();
+    expect(report.humanRows).toBe(1);
+    expect(report.stale).toHaveLength(0);
+    // The judge said 2; the round says 2 and the base said 0. Agreement proves the round won.
+    expect(report.dimensions[0].exact).toBe(1);
+  });
+
+  it("clears a stale row once a round re-grades it against the current answer", () => {
+    // The base graded text that no longer exists — the firestore-vector situation.
+    writeSet(path.join(gradingRoot(), "warm"), "the old answer", "2");
+    writeTranscript("the new answer after a re-capture");
+    expect(run().stale).toHaveLength(1);
+
+    // A round built from the current transcripts restores the row to the sample.
+    writeSet(
+      path.join(gradingRoot(), "rounds", "2026-08-27", "warm"),
+      "the new answer after a re-capture",
+      "2",
+      "B",
+    );
+
+    const report = run();
+    expect(report.stale).toHaveLength(0);
+    expect(report.dimensions[0].pairs).toBe(1);
   });
 });

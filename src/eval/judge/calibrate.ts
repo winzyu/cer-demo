@@ -47,7 +47,48 @@ export interface HumanRow {
   ungrounded?: number;
   citations?: number;
   notes: string;
+  /**
+   * The packet this row was graded from. Carried per row rather than derived from the pass,
+   * because a sample can span several rounds and **labels mean different things in each** — a
+   * two-arm top-up's `A` is not the base packet's `A`. It is also what the staleness check needs
+   * in order to read back the answer the human actually saw.
+   */
+  packetDir: string;
 }
+
+/**
+ * Every graded sheet for a pass: the original packet, plus any top-up round.
+ *
+ * **Rounds exist because a sample is not built once.** An arm gets re-captured and its rows go
+ * stale; an arm is added and has no rows at all. Re-grading everything to fix either would throw
+ * away good human judgement, and rebuilding the original packet in place re-labels answers that
+ * grades were already written against — the failure `gradePacket.ts` guards against. So a round is
+ * a separate packet under `rounds/<name>/`, with its own labels and its own key, and this function
+ * is the only place that knows they compose.
+ */
+export const gradingSets = (
+  gradingRoot: string,
+  pass: string,
+): { scoresPath: string; keyPath: string; packetDir: string }[] => {
+  const roots = [path.join(gradingRoot, pass)];
+
+  const roundsDir = path.join(gradingRoot, "rounds");
+  if (fs.existsSync(roundsDir)) {
+    fs.readdirSync(roundsDir)
+      .sort()
+      .map((name) => path.join(roundsDir, name, pass))
+      .filter((dir) => fs.existsSync(dir))
+      .forEach((dir) => roots.push(dir));
+  }
+
+  return roots
+    .map((root) => ({
+      scoresPath: path.join(root, "scores.csv"),
+      keyPath: path.join(root, "KEY.json"),
+      packetDir: path.join(root, "packet"),
+    }))
+    .filter((set) => fs.existsSync(set.scoresPath) && fs.existsSync(set.keyPath));
+};
 
 /**
  * Reads the graded rows out of a `scores.csv`, resolving each label to its arm.
@@ -58,6 +99,7 @@ export interface HumanRow {
 export const readHumanRows = (
   scoresPath: string,
   keyPath: string,
+  packetDir = path.join(path.dirname(scoresPath), "packet"),
 ): HumanRow[] => {
   const { key } = JSON.parse(fs.readFileSync(keyPath, "utf8")) as {
     key: Record<string, Record<string, string>>;
@@ -86,6 +128,7 @@ export const readHumanRows = (
         ungrounded: cell(fields[HUMAN_COLUMN.ungrounded]),
         citations: cell(fields[HUMAN_COLUMN.citations]),
         notes: fields.slice(7).join(",").trim(),
+        packetDir,
       };
     })
     .filter((row) => row.correctness !== undefined
@@ -194,20 +237,19 @@ const excerptAround = (text: string, other: string): string => {
 export const findStaleRows = (
   rows: HumanRow[],
   pass: string,
-  gradingRoot: string,
   transcriptRoot: string,
 ): StaleRow[] => {
   const sheets = new Map<string, Map<string, string>>();
-  const packetAnswers = (fixtureId: string): Map<string, string> => {
-    const cached = sheets.get(fixtureId);
+  const packetAnswers = (packetDir: string, fixtureId: string): Map<string, string> => {
+    const file = path.join(packetDir, `${fixtureId}.md`);
+    const cached = sheets.get(file);
     if (cached) {
       return cached;
     }
-    const file = path.join(gradingRoot, pass, "packet", `${fixtureId}.md`);
     const parsed = fs.existsSync(file)
       ? readPacketAnswers(fs.readFileSync(file, "utf8"))
       : new Map<string, string>();
-    sheets.set(fixtureId, parsed);
+    sheets.set(file, parsed);
     return parsed;
   };
 
@@ -232,7 +274,7 @@ export const findStaleRows = (
 
   const stale: StaleRow[] = [];
   rows.forEach((row) => {
-    const graded = packetAnswers(row.fixtureId).get(`${row.turn}|${row.label}`);
+    const graded = packetAnswers(row.packetDir, row.fixtureId).get(`${row.turn}|${row.label}`);
     const current = currentAnswer(row.arm, row.fixtureId, row.turn);
     if (!graded || !current) {
       return;
@@ -376,7 +418,8 @@ export const agreementFor = (
 };
 
 export interface CalibrationReport {
-  scoresPath: string;
+  /** Every graded sheet that contributed rows — the base packet plus any top-up round. */
+  scoresPaths: string[];
   humanRows: number;
   /** Rows the human graded that the judge has no verdict for — the pass is incomplete. */
   unmatched: number;
@@ -395,23 +438,33 @@ export const calibrate = (
   gradingRoot = path.join(process.cwd(), "eval", "grading"),
   transcriptRoot = path.join(process.cwd(), "eval", "transcripts"),
 ): CalibrationReport => {
-  const scoresPath = path.join(gradingRoot, pass, "scores.csv");
-  const keyPath = path.join(gradingRoot, pass, "KEY.json");
-  if (!fs.existsSync(scoresPath) || !fs.existsSync(keyPath)) {
-    throw new Error(`No graded sample at ${path.relative(process.cwd(), scoresPath)}.`);
+  const sets = gradingSets(gradingRoot, pass);
+  if (sets.length === 0) {
+    throw new Error(
+      `No graded sample at ${path.relative(process.cwd(), path.join(gradingRoot, pass))}.`,
+    );
   }
 
-  const human = readHumanRows(scoresPath, keyPath);
+  // A later round supersedes an earlier one for the same (arm, fixture, turn): that is what a
+  // re-grade *is*. Keyed without the label on purpose — the label is a property of the packet,
+  // not of the answer, and the whole reason a round exists is that the labels moved.
+  const merged = new Map<string, HumanRow>();
+  sets.forEach((set) => {
+    readHumanRows(set.scoresPath, set.keyPath, set.packetDir).forEach((row) => {
+      merged.set(`${row.arm}|${row.fixtureId}|${row.turn}`, row);
+    });
+  });
+  const human = [...merged.values()];
   const judgedKeys = new Set(judged.map((r) => `${r.arm}|${r.fixtureId}|${r.turn}`));
 
-  const stale = findStaleRows(human, pass, gradingRoot, transcriptRoot);
+  const stale = findStaleRows(human, pass, transcriptRoot);
   const staleKeys = new Set(stale.map((row) => `${row.arm}|${row.fixtureId}|${row.turn}`));
   const comparable = human.filter(
     (row) => !staleKeys.has(`${row.arm}|${row.fixtureId}|${row.turn}`),
   );
 
   return {
-    scoresPath,
+    scoresPaths: sets.map((set) => set.scoresPath),
     humanRows: human.length,
     unmatched: comparable.filter(
       (row) => !judgedKeys.has(`${row.arm}|${row.fixtureId}|${row.turn}`),

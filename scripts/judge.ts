@@ -134,7 +134,8 @@ const printArm = (result: ArmJudgeResult): void => {
 const printCalibration = (pass: string, records: JudgeRecord[]): void => {
   const report = calibrate(pass, records);
   log.info("");
-  log.info(`Judge vs human — ${path.relative(process.cwd(), report.scoresPath)}`);
+  const sheets = report.scoresPaths.map((p) => path.relative(process.cwd(), p));
+  log.info(`Judge vs human — ${sheets.join(" + ")}`);
   log.info(`  ${report.humanRows} graded row(s); ${report.unmatched} not yet judged`);
 
   // Printed before the numbers, not after: a reader who sees an agreement rate first has already
