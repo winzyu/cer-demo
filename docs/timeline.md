@@ -172,6 +172,48 @@ casualty. That trade-off is ◆G11.
 method costs**, not by arguing. Full experiment design:
 [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md).*
 
+> **2026-08-26 — ◆G7 is split, and the retrieval half is decided.** Both gate tiers ran to
+> completion. **Every arm failed the §8a quality floor** — best correctness 1.08/2 against a 1.30
+> floor, best groundedness 53.4% of turns carrying an unsupported claim against a 2% ceiling — and
+> §8a pre-committed to what happens then: record it, fix the system, re-run, and **do not move the
+> floor.** The floor has not moved.
+>
+> The problem that forced a decision is that §8a's remedy was unreachable from inside §8a. Fixing a
+> systemic quality defect means changing the system prompt; the system prompt is a pinned control
+> until ◆G7 closes; ◆G7 cannot close while the floor is unmet. The gate blocked its own remedy.
+>
+> **Decision: split ◆G7.** The reasoning, and why it is not a loophole:
+>
+> - **The quality failures do not discriminate between arms.** Correctness spans 0.86–1.08 across
+>   the three survivors and groundedness 53.4–58.6%; the *spread* between arms is far smaller than
+>   the *distance* from either bar. A failure common to every arm is not evidence about retrieval
+>   strategy, and ◆G7 asks which retrieval strategy ships.
+> - **That question does have an answer in this data.** `firestore-direct` — a fixed 5-document
+>   slice, no ranking, no vector search — wins correctness outright and takes 8 of 11 classes, at
+>   cost within $26/year of the best hybrid at 10k requests/month. Retrieval sophistication ran
+>   *opposite* to answer quality.
+> - **So the retrieval half closes on the evidence, and the floor is re-filed where it belongs** —
+>   as a **system-level deploy blocker**, carrying §8a's thresholds forward verbatim onto whatever
+>   prompt and model configuration follows. Nothing ships below it. What changes is which gate owns
+>   it, not what it demands.
+>
+> **The price of the split, accepted knowingly:** the arm comparison is now dated evidence. The
+> prompt is unpinned, and the first thing that will happen is a prompt change to attack
+> groundedness — which invalidates every captured arm. A passing groundedness number on a changed
+> prompt does **not** retroactively confirm `firestore-direct`; that has to be re-earned by
+> re-capturing. The alternative was to spend the remaining time protecting a comparison the data
+> had already made while the defect that actually blocks shipping went untouched.
+>
+> Recorded in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8c and
+> [`RETRIEVAL_COMPARISON.md`](RETRIEVAL_COMPARISON.md) §7.1a. **Two N5/N-series items unblock
+> immediately:** system-prompt personality, and ◆G11's `search_documents`-as-a-tool question.
+>
+> **One caveat to carry forward:** the Tier-2 judge does not reproduce itself. Re-judging the same
+> turns at temperature 0, with two of three prompts unchanged, moved 11 of 36 groundedness verdicts
+> (`RETRIEVAL_COMPARISON.md` §6.4a). The gross conclusions above survive it — a judge that noisy
+> still cannot turn 53% into 2% — but no argument may rest on per-arm *differences* in the Tier-2
+> numbers.
+>
 > **Status 2026-08-17, revised 2026-08-25 — built and swept, blocked on re-capture then grading.**
 > All three arms are implemented,
 > seeded and captured (168 transcripts, cold + warm, 28 of 30 fixtures, zero failed turns). Fireworks
@@ -513,9 +555,13 @@ an input to **◆G3**.
   defaults to 16 plus the forced text-only round; it was raised with the loop rather than after it,
   because the six-parameter eval fixture cannot run at 5. Still a **hard dependency for reports**;
   re-check the number once a report actually exercises it.
-- System-prompt personality (friendly; steers toward water-quality topics). **Blocked by ◆G7** — the
-  prompt is a pinned control while the bake-off is ungraded, and a personality edit voids all three
-  captured arms. This is the one N5 item that cannot start.
+- System-prompt personality (friendly; steers toward water-quality topics). ~~**Blocked by ◆G7**~~
+  — **unblocked 2026-08-26** when ◆G7 split and the prompt was unpinned. Note the new constraint
+  that replaces the old one: prompt changes now invalidate the captured arm comparison, so
+  personality work and the groundedness fix should land together and be re-captured once, not
+  separately and re-captured twice. Historically: the
+  prompt was a pinned control while the bake-off was ungraded, and a personality edit voided all
+  three captured arms — which is why this was the one N5 item that could not start.
 - Strip `gpt-oss-20b`'s `【commentary…】` markers. **Post-processing on the answer, never a prompt
   instruction**, for the same reason.
 
@@ -700,7 +746,7 @@ conversations that survive a page reload.*
 | Gate | Decision | Status | Blocks |
 |---|---|---|---|
 | ◆ G1 | Target stack (A/B/C) | **Resolved → C (Node/Express + Firestore)** | — (unblocked all) |
-| ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | Open. **Blocker revised 2026-08-25** (`RETRIEVAL_BAKEOFF.md` §8b): re-capture on the 15-document corpus → automated pass on the three hard gates → LLM judge on the survivors → `RETRIEVAL_COMPARISON.md`. Only `firestore-direct`'s transcripts survived the corpus change. The offline retrieval harness and its four new arms **do not advance this gate** — §8a's targets are all answer-quality and recall/MRR are diagnostics with no target | Phases N2→N6; the pinned system prompt, which blocks N5's personality item. **No longer blocks pgvector archival** — that was taken ahead of the gate on 2026-08-19 (see "Where we are now"), with the evidence retained so grading is unaffected |
+| ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | **Split 2026-08-26.** Retrieval half **CLOSED**: `firestore-direct` on the evidence in `RETRIEVAL_COMPARISON.md` §7. Quality floor **re-filed as a system-level deploy blocker**, thresholds carried forward verbatim and still **unmet** (§8c). The system prompt is **unpinned**, which releases N5's personality item and ◆G11. Historical blocker, revised 2026-08-25 (`RETRIEVAL_BAKEOFF.md` §8b): re-capture on the 15-document corpus → automated pass on the three hard gates → LLM judge on the survivors → `RETRIEVAL_COMPARISON.md`. Only `firestore-direct`'s transcripts survived the corpus change. The offline retrieval harness and its four new arms **do not advance this gate** — §8a's targets are all answer-quality and recall/MRR are diagnostics with no target | Phases N2→N6; the pinned system prompt, which blocks N5's personality item. **No longer blocks pgvector archival** — that was taken ahead of the gate on 2026-08-19 (see "Where we are now"), with the evidence retained so grading is unaffected |
 | ◆ G9 | Direct-feed corpus slice | **Resolved → operator source-of-truth + 4 probe datasheets (~9.4K tokens)**. Revised 2026-07-29: the original small tier was 83% a structurally shredded criteria table covering pollutants this sensor cannot measure | — |
 | ◆ G10 | Third bake-off arm | **Resolved → yes, three arms**: `firestore-direct`, `pgvector-rag`, `firestore-vector`. Also answers whether Firestore's own vector search is good enough if RAG wins | — |
 | ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open — **cheaper now**: N3 built the loop, so adding it is one entry in `buildToolRegistry` plus a prompt line, not new machinery | multi-part answer quality |

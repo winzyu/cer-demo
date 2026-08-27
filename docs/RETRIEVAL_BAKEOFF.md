@@ -843,8 +843,45 @@ gate must admit the system prompt and the conversation so far as grounding, or i
 inventing the operator ranges the prompt told it to apply — and a gate that cries wolf gets
 switched off.
 
+### 8c. Amendment — 2026-08-26: refusal wording leaves the correctness rubric, and ◆G7 is split
+
+**No threshold in §8a moves.** Two changes, both to instruments and scope rather than to bars.
+
+**1. A refusal is graded on behaviour, not on phrasing — in Tier 2 as well as Tier 1.** §8b settled
+this for the Tier-1 gate: it vetoes on *answering*, not on wording. The Tier-2 correctness rubric
+was never updated to match, and two live fixtures still read `"refuses using the exact refusal
+sentence"`. The judge followed them literally and scored **1** where the human scored **2** on
+`refusal-pathogens` turn 2 — so the two tiers were applying different definitions of the same word
+and reporting one result.
+
+Settled 2026-08-26 by the gate owner: **a refusal that declines and names what is missing scores
+full marks in any wording.** The fixtures now say `"refuses to answer, in any wording"`,
+`correctnessPrompt` carries the matching rule, and `GRADING_GUIDE.md` §3 tells the human the same.
+Whether the service *should* emit a fixed sentence is a system-prompt question and is enforced in
+Tier 1, free and deterministically; paying a judge to re-check a string match is the wrong
+instrument for it. Re-judged, both target rows moved to 2 and now match the human.
+
+**This is a scope correction, not a loosening.** The stricter reading was never what §8a said, and
+it was already rejected for Tier 1 on the same grounds a day earlier.
+
+**2. ◆G7 is split** (`RETRIEVAL_COMPARISON.md` §7.1a, decision recorded in `timeline.md`). The
+retrieval-strategy half closes on the 2026-08-26 evidence. The quality floor is re-filed as a
+**system-level deploy blocker** carrying §8a's thresholds forward verbatim — correctness ≥1.30/2
+overall and ≥1.00 per servable class, ungrounded turns ≤2%. **The floor did not move; its owner
+did.** The consequence that matters for this document: **the system prompt is no longer a pinned
+control**, so §4's pinning note is spent, and any prompt change from here invalidates every
+captured arm and requires a re-capture before the arm comparison can be quoted again.
+
+**3. A caveat this amendment adds rather than removes: the judge does not reproduce itself.**
+Re-judging the calibration set at temperature 0, with two of three prompts byte-identical, changed
+11 of 36 groundedness verdicts and 4 of 9 citation verdicts (`RETRIEVAL_COMPARISON.md` §6.4a).
+§7b requires the agreement rate be reported; it does not require an error bar, and there is not
+one. Every kappa in the report is a single sample. The gross Tier-2 conclusions survive this
+easily — 53–59% against a 2% ceiling is not a measurement error — but **no argument may rest on
+differences between arms in the Tier-2 columns**, which sit inside the instrument's own noise.
+
 **First Tier-1 result, 2026-08-25** (`npm run gate:check --pass=warm`, output in
-`data/gate-check/warm.json`). Two corrections to the checker were needed before these numbers meant
+`data/results/gate-check/warm.json`). Two corrections to the checker were needed before these numbers meant
 anything, both recorded above: document identifiers were being scored as figures, and the refusal
 gate was vetoing on wording rather than on behaviour.
 
@@ -877,8 +914,8 @@ Four things the run established that no amount of retrieval measurement would ha
   `RETRIEVAL_COMPARISON.md` — do not read the 95.3% vs 100% gap as a quality difference.
 
 **First Tier-2 calibration, 2026-08-26** (`npm run judge -- --calibration`, then `--calibrate`;
-verdicts in `data/judge/warm.jsonl`, pre-fix ledger kept at `data/judge/warm.pre-fix-2026-08-26.jsonl`,
-summary in `data/judge/warm.json`). The judge harness is `src/eval/judge/` + `scripts/judge.ts`,
+verdicts in `data/results/judge/warm.jsonl`, pre-fix ledger kept at `data/results/judge/warm.pre-fix-2026-08-26.jsonl`,
+summary in `data/results/judge/warm.json`). The judge harness is `src/eval/judge/` + `scripts/judge.ts`,
 built to the §7b constraints. It covers the **6 fixtures the human already graded**, 3 arms, 12
 turns each: a calibration, not a result. **Run twice** — the first pass exposed two defects in the
 judge, and the second re-measured the two dimensions whose prompts changed. 132 calls total, 0
