@@ -208,11 +208,18 @@ method costs**, not by arguing. Full experiment design:
 > [`RETRIEVAL_COMPARISON.md`](RETRIEVAL_COMPARISON.md) §7.1a. **Two N5/N-series items unblock
 > immediately:** system-prompt personality, and ◆G11's `search_documents`-as-a-tool question.
 >
-> **One caveat to carry forward:** the Tier-2 judge does not reproduce itself. Re-judging the same
-> turns at temperature 0, with two of three prompts unchanged, moved 11 of 36 groundedness verdicts
-> (`RETRIEVAL_COMPARISON.md` §6.4a). The gross conclusions above survive it — a judge that noisy
-> still cannot turn 53% into 2% — but no argument may rest on per-arm *differences* in the Tier-2
-> numbers.
+> **Two caveats to carry forward, both about the grading instrument rather than the result.**
+> First, the judge's *count* dimensions do not reproduce — re-judging at temperature 0 moved 11 of
+> 36 groundedness verdicts — while correctness is deterministic (36/36 and 30/30 across repeated
+> runs). So no argument may rest on per-arm *differences* in the groundedness column; the gross
+> conclusions survive, since a judge that noisy still cannot turn 53% into 2%.
+>
+> Second, and more actionable: **the human grading sample is stale for `firestore-vector`.** That
+> arm was re-captured 2026-08-26 after the human graded it, so 12 of 36 human rows describe answers
+> that no longer exist, and `--calibrate` cannot detect it. Scored over all 36 rows the refusal fix
+> looks like a regression (kappa 0.87 → 0.83); scored over the 24 valid rows it is a clear
+> improvement (0.81 → **0.94**). Any re-capture re-creates this, so the join needs to be made
+> self-checking before the next one (`RETRIEVAL_COMPARISON.md` §6.4a).
 >
 > **Status 2026-08-17, revised 2026-08-25 — built and swept, blocked on re-capture then grading.**
 > All three arms are implemented,

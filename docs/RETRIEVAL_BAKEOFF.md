@@ -872,13 +872,31 @@ did.** The consequence that matters for this document: **the system prompt is no
 control**, so §4's pinning note is spent, and any prompt change from here invalidates every
 captured arm and requires a re-capture before the arm comparison can be quoted again.
 
-**3. A caveat this amendment adds rather than removes: the judge does not reproduce itself.**
-Re-judging the calibration set at temperature 0, with two of three prompts byte-identical, changed
-11 of 36 groundedness verdicts and 4 of 9 citation verdicts (`RETRIEVAL_COMPARISON.md` §6.4a).
-§7b requires the agreement rate be reported; it does not require an error bar, and there is not
-one. Every kappa in the report is a single sample. The gross Tier-2 conclusions survive this
-easily — 53–59% against a 2% ceiling is not a measurement error — but **no argument may rest on
-differences between arms in the Tier-2 columns**, which sit inside the instrument's own noise.
+**3. Two caveats this amendment adds rather than removes.** Both were found while checking the
+change above, and one of them corrects a claim made in an earlier draft of this section.
+
+**(a) The judge's *count* dimensions do not reproduce; correctness does.** Re-judging the
+calibration set at temperature 0 changed 11 of 36 groundedness verdicts and 4 of 9 citation
+verdicts on byte-identical prompts. Correctness, checked separately, agreed **36/36** across two
+runs and **30/30** across five runs on the refusal fixtures. The instability tracks how much text
+the judge is asked to emit — a score is stable, an enumerated list of claims is not. §7b requires
+the agreement rate be reported; it does not require an error bar, and there is none for the two
+list dimensions. **No argument may rest on differences between arms in the groundedness column.**
+The gate metric is steadier than the raw counts it is derived from (86.1% vs 69.4%), and the gross
+Tier-2 conclusions survive easily — 53–59% against a 2% ceiling is not a measurement error.
+
+**(b) A human grading packet is pinned to the transcripts it was built from, and nothing enforces
+that.** `firestore-vector` was re-captured 2026-08-26 *after* the human graded it, so **12 of the
+36 human rows describe answers that no longer exist**. `--calibrate` joins on
+`(fixture, turn, arm)` and cannot see it. The effect is not cosmetic: scored over all 36 rows the
+refusal fix appears to *lower* correctness kappa 0.87 → 0.83; scored over the 24 rows where human
+and judge saw the same answer, it *raises* it 0.81 → **0.94**. The stale rows inverted the sign of
+the result, and an earlier draft of this amendment recorded the inverted version.
+
+This is a §7b problem, not a bookkeeping one: the agreement rate §7b requires is currently part
+measurement and part archaeology. The packet already stores the answer text the human read, so the
+join can be made self-checking. **Until it is, treat any `--calibrate` output as a lower bound and
+re-derive it on the arms that have not been re-captured.**
 
 **First Tier-1 result, 2026-08-25** (`npm run gate:check --pass=warm`, output in
 `data/results/gate-check/warm.json`). Two corrections to the checker were needed before these numbers meant
