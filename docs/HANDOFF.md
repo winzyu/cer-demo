@@ -4,6 +4,11 @@ Everything needed to resume this work cold. Written at the end of the session th
 Phase N2 bake-off, repaired a validity threat in it, built the grading packet, and added the
 Phase N3 device-API read layer.
 
+> **SUPERSEDED for current state by [`HANDOFF_2026-08-26.md`](HANDOFF_2026-08-26.md)**, written
+> after the Tier-2 judge was built and both gate tiers ran to completion. Read that first; this
+> file's §3, §4 and §9 remain useful orientation, and §0 below is now a historical record of where
+> things stood on 2026-08-25.
+>
 > **This is a dated session record, and two of its sections describe a working tree that no longer
 > exists.** §2's branch table and §7's uncommitted list are **superseded** and marked as such where
 > they sit — they are kept because §8 refers back to them, not because they describe today. §3, §4,
