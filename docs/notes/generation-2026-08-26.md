@@ -1,8 +1,17 @@
 # Generation quality — findings, 2026-08-26
 
-Agent A's brief (`HANDOFF_2026-08-27.md` §7a). **No code was changed.** The worktree it was
-dispatched into is on the wrong base (see §0), so none of the four levers could be implemented or
-measured. What follows is what could be established for free from the ledger and the transcripts
+Agent A's brief (`HANDOFF_2026-08-27.md` §7a). **No generation lever was changed** — see §0 for
+why. The worktree it was dispatched into is on the wrong base, so none of the four levers could be
+implemented or measured.
+
+> **Amended 2026-08-27.** The §5 quote check *was* subsequently built on this branch
+> (`checkQuotes` in `src/eval/gates/checks.ts`, wired into `runner.ts` and `gateCheck.ts`, with
+> `test/unit/gateCheck.test.ts` coverage) after the base was corrected. §5 below reads "Not
+> implemented", which described the repository when it was written and no longer does. **What is
+> still true, and is the point:** `src/prompt/systemPrompt.ts` is untouched, so no answer has
+> changed, and the new check measures **0 quoted citations on every captured arm** because the
+> model has never been asked to emit one. The instrument exists; the lever it was built for has
+> not been pulled. What follows is what could be established for free from the ledger and the transcripts
 already on disk, plus two hazards in the code that the brief did not carry.
 
 Everything below is reproducible with no LLM calls and no spending.
@@ -52,7 +61,17 @@ argument for doing the prompt work at all.
 
 `firestore-direct`'s clean turns average **1.148**. If every flagged turn stopped being flagged and
 rose to exactly that clean-turn mean, overall correctness would be 1.148 — **0.152 short of the
-1.300 floor**, and almost exactly the 1.155 oracle-router ceiling from §2b.
+1.300 floor**.
+
+**State the basis, because this arm has two and they are not interchangeable.** The 1.148 above is
+over **all 58 judged turns**. §8a scores `firestore-direct` on its **servable 52** (the three
+`deep-in-manual` fixtures are charged as coverage), and on that basis the clean-turn mean is
+**1.192** and the counterfactual is **1.192 — 0.108 short**. Both miss the floor, so the finding
+stands either way; but the published 1.08 in `RETRIEVAL_COMPARISON.md` §6.7 is the servable figure,
+so the servable 0.108 is the number to compare against it. An earlier draft of this section paired
+the all-58 counterfactual with the servable floor comparison and noted it landed "almost exactly"
+on the 1.155 oracle ceiling — that near-coincidence is partly an artifact of mixing the two bases,
+and is not evidence that the two arguments converge.
 
 That is not a coincidence and it is the number that should drive planning: *perfect groundedness
 does not open the correctness gate either.* Clearing 1.30 requires the already-clean turns to get
