@@ -911,11 +911,16 @@ result, are labelled as such above, and are superseded by §6.7.
 84, 0 failed. Judge `gpt-oss-120b`, calibrated at kappa 0.87 / 0.52 / 0.46 (§6.4). Cumulative judge
 budget **$0.8082** — 4,122,348 input / 316,454 output tokens over 429 recorded calls.
 
-| arm | correctness (floor **1.30**) | worst servable class | ungrounded turns (ceiling **2%**) | coverage | **Tier 2** |
-|---|---:|---|---:|---:|---|
-| `firestore-direct` | **1.08** | `cross-document` 0.67 | **53.4%** (31/58) | 89.3% | **FAIL** |
-| `hybrid-slice-vector` | **0.88** | `cross-document` 0.17 | **58.6%** (34/58) | 100% | **FAIL** |
-| `hybrid-slice-lexvec` | **0.86** | `cross-document` 0.50 | **58.6%** (34/58) | 100% | **FAIL** |
+| arm | correctness (floor **1.30**) | servable classes **< 1.00** (floor: none) | worst servable class | ungrounded turns (ceiling **2%**) | coverage | **Tier 2** |
+|---|---:|---:|---|---:|---:|---|
+| `firestore-direct` | **1.08** | **2 of 10** | `cross-document` 0.67 | **53.4%** (31/58) | 89.3% | **FAIL** |
+| `hybrid-slice-vector` | **0.88** | **7 of 11** | `cross-document` 0.17 | **58.6%** (34/58) | 100% | **FAIL** |
+| `hybrid-slice-lexvec` | **0.86** | **6 of 11** | `cross-document` 0.50 | **58.6%** (34/58) | 100% | **FAIL** |
+
+**Read the per-class column, not just the overall mean.** §8a gates *every* servable class at
+≥1.00, so an arm fails the floor twice over. `firestore-direct` misses on `cross-document` (0.67)
+and `fouling-drift` (0.75); the hybrids miss on most of the set. Quoting only the overall 1.08
+understates the gap — even a system that reached 1.30 overall would still have to lift two classes.
 
 Per class, out of 2. Starred entries sit outside that arm's servable set (§8a) and are counted as
 coverage, not correctness:
@@ -956,7 +961,9 @@ differ at the retrieval layer, and it does not survive into what the user reads.
 least one unsupported claim, against a 2% ceiling — a **26× breach on the best arm**. The spread
 between arms is 5 points; the distance to the floor is 51. It cannot be attributed to a strict
 judge: a human, grading blind before this harness existed, independently flagged 25% of the turns
-they graded (§6.4). No retrieval strategy is going to move a number that behaves this way.
+they graded — **9 of the 36 filled rows** in `eval/grading/warm/scores.csv`. (Derived from that
+file, not from §6.4, which reports judge/human *agreement* and never states the human's own rate.
+An earlier draft cited §6.4 here; the number is right, the cross-reference was not.) No retrieval strategy is going to move a number that behaves this way.
 
 **4. Every arm fails every gate that matters, and the arms are closer to each other than any of
 them is to the floor.** Correctness spread 0.22, distance to floor 0.22 on the *best* arm.
@@ -1060,7 +1067,10 @@ message, and not implied by a document quietly proceeding as though the decision
   So 90% of the evaluation is answerable from 4.4% of the corpus, and direct-feed's headline win —
   8 of 11 classes — is a win on a question mix that is overwhelmingly slice-answerable. **That is
   not a rigged test**: the slice was curated to be the authoritative tier and §8a charges the gap
-  as coverage, which direct-feed duly fails at 89.3%. But it does mean the margin is a function of
+  as coverage — direct-feed scores **89.3% (25 of the 28 runnable fixtures)**. Coverage is *not* a
+  gate: §8a makes it a headline-table column and an input to the split-outcome decision, and sets
+  no threshold on it, so "fails coverage" is a category error an earlier draft of this line made.
+  But it does mean the margin is a function of
   the fixture mix. If real usage skews toward manual-depth questions, direct-feed's advantage
   shrinks toward its worst class rather than its average, and the split outcome §8a names —
   direct-feed for the authoritative tier, retrieval for the long manuals — becomes the answer on

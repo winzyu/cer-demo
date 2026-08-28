@@ -916,6 +916,16 @@ gate was vetoing on wording rather than on behaviour.
 | `firestore-vector` | pass — 3 folded | 100% (61/61) | 5 of 132 | fail | no — stale corpus |
 | `pgvector-rag` | pass — 3 folded | 92.1% (35/38) | 5 of 143 | fail | no — stale corpus, archived arm |
 
+> **Superseded for two arms — this table is the 2026-08-25 run and is kept as the record of it.**
+> `firestore-vector` and `hybrid-slice-vector` were re-captured on the 15-document corpus and Tier 1
+> re-run; the current numbers are in `data/results/gate-check/warm.json` and in
+> [`RETRIEVAL_COMPARISON.md`](RETRIEVAL_COMPARISON.md) §1c. What changed: `firestore-vector` now
+> reads **97.8% citations (44/45)** and **2 unexplained figures of 122**, not the 100% (61/61) and
+> 5 of 132 above — it still **fails**, on figures, and the failure is now re-earned on the current
+> corpus rather than indicative. `hybrid-slice-vector` did not exist in this run and passes at
+> 100% (56/56) / 0 of 245. `firestore-direct`, `hybrid-slice-lexvec` and `pgvector-rag` are
+> unchanged. **Quote the re-run, not this table.**
+
 **Both admissible arms clear Tier 1, so both go to the judge** and ◆G7 is decided on correctness
 and cost rather than by elimination. The two failing rows describe arms retrieving over an
 8-document corpus that no longer exists; their failures are indicative and must be re-earned on a

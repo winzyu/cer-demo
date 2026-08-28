@@ -69,7 +69,7 @@ pre-registration at [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8b:
    `hybrid-slice-vector` if you want the lexical delta at the answer layer) on the 15-document
    corpus. `pgvector-rag` stays out unless restored from `archive/`.
 
-   > **First Tier-1 result is already in, free** (`data/gate-check/warm.json`, 2026-08-25):
+   > **First Tier-1 result is already in, free** (`data/results/gate-check/warm.json`, 2026-08-25):
    > `firestore-direct` **clears all three hard gates** on the transcripts that survived the corpus
    > change — refusal 3/3, citations 95.3%, zero unexplained figures in 187. The other two arms
    > fail, but their evidence is inadmissible (stale corpus), so those failures are indicative
