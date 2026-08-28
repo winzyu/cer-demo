@@ -16,6 +16,7 @@ import { buildSystemPrompt } from "../../prompt/systemPrompt";
 import {
   checkCitations,
   checkFigures,
+  checkQuotes,
   checkRefusal,
   REFUSAL_TOLERANCE,
   type RefusalMatch,
@@ -36,7 +37,7 @@ export interface TurnFinding {
   fixtureId: string;
   fixtureClass: string;
   turn: number;
-  gate: "refusal" | "citations" | "figures";
+  gate: "refusal" | "citations" | "figures" | "quotes";
   detail: string;
 }
 
@@ -69,6 +70,20 @@ export interface ArmGateResult {
     conversions: number;
     /** §8a: zero fabricated figures, absolute. */
     met: boolean;
+  };
+  /**
+   * Quote-backed citations — **measured, never gating.** No `met`, and it is not folded into
+   * `gatesMet`: §8a pre-registered three hard gates before any arm ran, and silently adding a
+   * fourth would change published per-arm verdicts (§1c) as a side effect of building an
+   * instrument. It reads zero on every arm captured before the prompt asks for quotes; that is
+   * the expected baseline, not a failure.
+   */
+  quotes: {
+    total: number;
+    supported: number;
+    short: number;
+    /** `supported / total`, or 1 when the arm produced no quotes at all. */
+    rate: number;
   };
   gatesMet: boolean;
   findings: TurnFinding[];
@@ -140,6 +155,9 @@ export const runGateCheck = (options: GateRunOptions = {}): ArmGateResult[] => {
       figures: {
         total: 0, unexplained: 0, conversions: 0, met: true,
       },
+      quotes: {
+        total: 0, supported: 0, short: 0, rate: 1,
+      },
       gatesMet: true,
       findings: [],
     };
@@ -194,6 +212,14 @@ export const runGateCheck = (options: GateRunOptions = {}): ArmGateResult[] => {
           }
         }
 
+        const quotes = checkQuotes(evidence);
+        result.quotes.total += quotes.total;
+        result.quotes.supported += quotes.supported;
+        result.quotes.short += quotes.short;
+        quotes.issues.forEach((issue) => result.findings.push({
+          ...label, gate: "quotes", detail: `${issue.marker} ${issue.reason}`,
+        }));
+
         const citations = checkCitations(evidence);
         result.citations.total += citations.total;
         result.citations.valid += citations.valid;
@@ -222,6 +248,10 @@ export const runGateCheck = (options: GateRunOptions = {}): ArmGateResult[] => {
       : result.citations.valid / result.citations.total;
     result.citations.met = result.citations.rate >= CITATION_FLOOR;
     result.figures.met = result.figures.unexplained === 0;
+    result.quotes.rate = result.quotes.total === 0
+      ? 1
+      : result.quotes.supported / result.quotes.total;
+    // Deliberately three terms, not four — see the `quotes` field's doc comment.
     result.gatesMet = result.refusal.met && result.citations.met && result.figures.met;
 
     return result;

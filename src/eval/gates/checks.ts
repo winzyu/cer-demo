@@ -352,3 +352,116 @@ export const checkFigures = (turn: TurnEvidence): FigureResult => {
 
   return { total: found.length, supported: found.length - issues.length, issues };
 };
+
+// ---------------------------------------------------------------------------------------------
+// Gate 4 — quote-backed citations (measurement only, deliberately not a gate)
+// ---------------------------------------------------------------------------------------------
+
+/**
+ * `【3†"conductivity varies with temperature"】` — a citation carrying a short verbatim quote
+ * instead of a predicted line span.
+ *
+ * **Why this exists.** Measured over `eval/transcripts/warm/` (`RETRIEVAL_COMPARISON.md` §6.5):
+ * 198 citation markers, 103 with a line span, **48 of those starting at line 1** against a median
+ * chunk of 77 lines. The model points at the top of the chunk about half the time regardless of
+ * where the fact sits, because it processes tokens, not lines. A quote is the thing it *can*
+ * produce, and unlike a line number it is checkable by normalised substring match — which moves
+ * citation support out of the paid, noisy Tier 2 (kappa 0.44, n=7) into free deterministic Tier 1.
+ *
+ * **Why a second pattern rather than widening `CITATION_PATTERN`.** That one decides an absolute
+ * pre-registered gate whose per-arm numbers are published (§1c); editing it risks moving them.
+ * The two schemes already coexist by construction: `CITATION_PATTERN`'s line-span group is
+ * optional and its trailing `[^】]*` swallows a quote, so a quote-style marker still resolves as a
+ * plain `【n】` there. That is what lets the prompt change land without a flag day.
+ *
+ * The quote delimiters are a character class because the model emits typographic quotes — the same
+ * defect family as the U+2011 hyphen, and the reason `normalize.ts` folds them.
+ */
+const QUOTE_CITATION_PATTERN = /【\s*(\d+)\s*†\s*["“”„‟″]([^】]*?)["“”„‟″]\s*】/g;
+
+/**
+ * Below this a quote stops being evidence. "pH" occurs in nearly every chunk in the corpus, so a
+ * two-character quote matches whatever it is pointed at and proves nothing — the check would
+ * report full support while measuring nothing.
+ *
+ * Counted as its own outcome rather than failed, and deliberately **not** a threshold: §8a
+ * pre-registered three hard gates and this is not one of them. A tuned constant quietly deciding a
+ * fourth is the mistake `REFUSAL_TOLERANCE` documents avoiding.
+ */
+export const MIN_QUOTE_CHARS = 12;
+
+export interface QuoteIssue {
+  marker: string;
+  reason: string;
+}
+
+export interface QuoteResult {
+  /** Quote-carrying markers seen. **Zero on every arm captured before the prompt change.** */
+  total: number;
+  /** Quotes found verbatim, after folding, in the chunk they cite. */
+  supported: number;
+  /** Quotes too short to be evidence. A subset of `issues`, split out because it wants a
+   * different response: trivial quoting is a prompt-wording problem, a missing quote is a
+   * fabrication. */
+  short: number;
+  /** Everything that is not `supported`, with the reason. */
+  issues: QuoteIssue[];
+}
+
+/**
+ * Does every quoted citation actually appear in the chunk it points at?
+ *
+ * **This decides support, which is precisely what `checkCitations` cannot.** That gate decides
+ * *resolution* — whether `【9】` names a chunk that exists — and explicitly leaves "does the cited
+ * passage contain the claim" to the judge. A verbatim quote collapses that judgement into a
+ * substring match, so the part of groundedness that was Tier 2 becomes Tier 1.
+ *
+ * `normalizeForMatch` on both sides, never `===` and never a bare `.normalize()`: the corpus comes
+ * from PDFs and the answer comes from a model, so they disagree on hyphens, quotes, µ vs μ and
+ * whitespace without disagreeing on a single word.
+ *
+ * ponytail: substring containment, so a quote the model silently elides a clause from
+ * ("A ... C" for "A B C") reads as unsupported. Upgrade path if that becomes the dominant finding:
+ * reuse `closestWindow` with a small cutoff, the way `checkRefusal` already does.
+ */
+export const checkQuotes = (turn: TurnEvidence): QuoteResult => {
+  const issues: QuoteIssue[] = [];
+  let total = 0;
+  let supported = 0;
+  let short = 0;
+
+  Array.from(turn.answer.matchAll(QUOTE_CITATION_PATTERN)).forEach((match) => {
+    total += 1;
+    const marker = match[0];
+    const quote = match[2].trim();
+    const chunk = turn.context[Number(match[1]) - 1];
+
+    if (chunk === undefined) {
+      issues.push({
+        marker,
+        reason: `quotes context #${match[1]}, but ${turn.context.length} chunk(s) were supplied`,
+      });
+      return;
+    }
+
+    if (quote.length < MIN_QUOTE_CHARS) {
+      short += 1;
+      issues.push({
+        marker,
+        reason: `quote is ${quote.length} chars, under ${MIN_QUOTE_CHARS} — too short to be evidence`,
+      });
+      return;
+    }
+
+    if (normalizeForMatch(chunk.text).includes(normalizeForMatch(quote))) {
+      supported += 1;
+      return;
+    }
+
+    issues.push({ marker, reason: `not found verbatim in "${chunk.id}"` });
+  });
+
+  return {
+    total, supported, short, issues,
+  };
+};
