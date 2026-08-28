@@ -19,7 +19,7 @@
  * checked ones — the precise failure this constant exists to prevent.
  */
 export const PRICES_READ_ON = {
-  fireworksServerless: "2026-08-26",
+  fireworksServerless: "2026-08-28",
   fireworksCaching: "2026-08-26",
   /**
    * Confirmed 2026-08-26 **by the user reading the page**, not by this tooling — the page is too
@@ -62,6 +62,26 @@ export const CHAT_PRICES: Record<string, TokenPrices> = {
   // prints a flat 90% off rather than the 90.7% the older figure implied. This model is the
   // Tier-2 judge as well as a costed candidate, so the rate bills real spend either way.
   "accounts/fireworks/models/gpt-oss-120b": { input: 0.15, cachedInput: 0.015, output: 0.60 },
+  // Judge candidate, evaluated and REJECTED 2026-08-28. Listed on rate alone it looks 3x cheaper
+  // than `gpt-oss-120b` and, unlike either gpt-oss model, satisfies §7b's *intent* rather than only
+  // its letter. Calibrated against the human sample it failed on all three counts, and the ledger
+  // is kept at `data/results/judge/warm.nemotron-2026-08-28.jsonl` so this is checkable:
+  //
+  //   - **No cost saving.** 3,350 output tokens/call against `gpt-oss-120b`'s 542 — 6.2x the
+  //     verbosity, because it emits reasoning prose around the JSON. That cancels the cheaper rate
+  //     exactly: $0.00093/usable call vs $0.00092. The rate card is not the price.
+  //   - **22.9% of calls unusable** (19 of 83) — unparseable replies, against 0 of 429 for
+  //     `gpt-oss-120b`. It does not reliably hold a JSON output contract.
+  //   - **`ungrounded` kappa -0.04**, worse than chance, against 0.57 on the comparable rows.
+  //     One recorded verdict echoed the prompt's own template placeholders back as its finding,
+  //     so the damage is not confined to the calls that failed outright.
+  //
+  // Correctness came back at kappa 0.87, matching `gpt-oss-120b` — but on n=23 survivors of a run
+  // that dropped 19 calls, which is a biased sample, not a tie. Kept in the sheet so the rejection
+  // is priced and dated rather than re-litigated.
+  "accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b": {
+    input: 0.05, cachedInput: 0.01, output: 0.20,
+  },
 };
 
 /**
