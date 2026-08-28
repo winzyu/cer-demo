@@ -1,0 +1,343 @@
+[
+  {
+    "arm": "firestore-direct",
+    "pass": "warm",
+    "turns": 58,
+    "refusal": {
+      "required": 3,
+      "exact": 0,
+      "normalized": 3,
+      "tolerance": 0,
+      "offContract": 0,
+      "answered": 0,
+      "met": true
+    },
+    "citations": {
+      "total": 64,
+      "valid": 61,
+      "rate": 0.953125,
+      "met": true
+    },
+    "figures": {
+      "total": 187,
+      "unexplained": 0,
+      "conversions": 0,
+      "met": true
+    },
+    "gatesMet": true,
+    "findings": [
+      {
+        "fixtureId": "fouling-do-erratic",
+        "fixtureClass": "fouling-drift",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【6†L1-L4】 points at context #6, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "fouling-orp-span-loss",
+        "fixtureClass": "fouling-drift",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【6†L1-L8】 points at context #6, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "fouling-orp-span-loss",
+        "fixtureClass": "fouling-drift",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【10†L1-L8】 points at context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "refusal-nutrients",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-out-of-domain",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-pathogens",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      }
+    ]
+  },
+  {
+    "arm": "firestore-vector",
+    "pass": "warm",
+    "turns": 58,
+    "refusal": {
+      "required": 3,
+      "exact": 0,
+      "normalized": 3,
+      "tolerance": 0,
+      "offContract": 0,
+      "answered": 0,
+      "met": true
+    },
+    "citations": {
+      "total": 45,
+      "valid": 44,
+      "rate": 0.9777777777777777,
+      "met": true
+    },
+    "figures": {
+      "total": 122,
+      "unexplained": 2,
+      "conversions": 0,
+      "met": false
+    },
+    "gatesMet": false,
+    "findings": [
+      {
+        "fixtureId": "deepmanual-turbidity-optics",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†L1-L4】 cites lines 1-4 of \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__f36cc71d771b\", which has 3"
+      },
+      {
+        "fixtureId": "definitional-conductivity",
+        "fixtureClass": "definitional",
+        "turn": 2,
+        "gate": "figures",
+        "detail": "\"10,000\" not in context — ty is roughly **1,000 × higher** (often 10,000–50,000 µS cm⁻¹). Because of this, a “no"
+      },
+      {
+        "fixtureId": "definitional-conductivity",
+        "fixtureClass": "definitional",
+        "turn": 2,
+        "gate": "figures",
+        "detail": "\"50,000\" not in context — oughly **1,000 × higher** (often 10,000–50,000 µS cm⁻¹). Because of this, a “normal” c"
+      },
+      {
+        "fixtureId": "refusal-nutrients",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-out-of-domain",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-pathogens",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      }
+    ]
+  },
+  {
+    "arm": "hybrid-slice-lexvec",
+    "pass": "warm",
+    "turns": 58,
+    "refusal": {
+      "required": 3,
+      "exact": 1,
+      "normalized": 1,
+      "tolerance": 0,
+      "offContract": 1,
+      "answered": 0,
+      "met": true
+    },
+    "citations": {
+      "total": 35,
+      "valid": 35,
+      "rate": 1,
+      "met": true
+    },
+    "figures": {
+      "total": 224,
+      "unexplained": 0,
+      "conversions": 1,
+      "met": true
+    },
+    "gatesMet": true,
+    "findings": [
+      {
+        "fixtureId": "refusal-out-of-domain",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-pathogens",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "off-contract: refused without the pinned sentence and stated no figure — passes the gate, fails the rubric; hand to the judge"
+      }
+    ]
+  },
+  {
+    "arm": "hybrid-slice-vector",
+    "pass": "warm",
+    "turns": 58,
+    "refusal": {
+      "required": 3,
+      "exact": 0,
+      "normalized": 3,
+      "tolerance": 0,
+      "offContract": 0,
+      "answered": 0,
+      "met": true
+    },
+    "citations": {
+      "total": 56,
+      "valid": 56,
+      "rate": 1,
+      "met": true
+    },
+    "figures": {
+      "total": 245,
+      "unexplained": 0,
+      "conversions": 3,
+      "met": true
+    },
+    "gatesMet": true,
+    "findings": [
+      {
+        "fixtureId": "refusal-nutrients",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-out-of-domain",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-pathogens",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      }
+    ]
+  },
+  {
+    "arm": "pgvector-rag",
+    "pass": "warm",
+    "turns": 58,
+    "refusal": {
+      "required": 3,
+      "exact": 0,
+      "normalized": 3,
+      "tolerance": 0,
+      "offContract": 0,
+      "answered": 0,
+      "met": true
+    },
+    "citations": {
+      "total": 38,
+      "valid": 35,
+      "rate": 0.9210526315789473,
+      "met": false
+    },
+    "figures": {
+      "total": 143,
+      "unexplained": 5,
+      "conversions": 2,
+      "met": false
+    },
+    "gatesMet": false,
+    "findings": [
+      {
+        "fixtureId": "acronym-ec-specific-conductance",
+        "fixtureClass": "acronym-exact-token",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†L179-L186】 cites lines 179-186 of \"267\", which has 40"
+      },
+      {
+        "fixtureId": "acronym-kcl-creep",
+        "fixtureClass": "acronym-exact-token",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【12】 points at context #12, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "acronym-kcl-creep",
+        "fixtureClass": "acronym-exact-token",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【12】 points at context #12, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-stabilization-criteria",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "figures",
+        "detail": "\"100\" not in context — its * Conductivity: ± 5 µS cm⁻¹ (≤ 100 µS cm⁻¹) or ± 3 % (> 100 µS cm⁻¹)"
+      },
+      {
+        "fixtureId": "deepmanual-stabilization-criteria",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "figures",
+        "detail": "\"100\" not in context — ± 5 µS cm⁻¹ (≤ 100 µS cm⁻¹) or ± 3 % (> 100 µS cm⁻¹) * Turbidity: ± 0.5 TU or"
+      },
+      {
+        "fixtureId": "deepmanual-stabilization-criteria",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "figures",
+        "detail": "\"100\" not in context — ¹) * Turbidity: ± 0.5 TU or 5 % (≤ 100 TU) / 10 % (> 100 TU) Only after bot"
+      },
+      {
+        "fixtureId": "deepmanual-stabilization-criteria",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "figures",
+        "detail": "\"100\" not in context — y: ± 0.5 TU or 5 % (≤ 100 TU) / 10 % (> 100 TU) Only after both the thermal equi"
+      },
+      {
+        "fixtureId": "event-stormwater-vs-intrusion",
+        "fixtureClass": "event-signature",
+        "turn": 2,
+        "gate": "figures",
+        "detail": "\"12\" not in context — epeat** | Tides are strictly periodic (≈12 h 25 min for a semi‑diurnal tide). | Pl"
+      },
+      {
+        "fixtureId": "refusal-nutrients",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-out-of-domain",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-pathogens",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      }
+    ]
+  }
+]

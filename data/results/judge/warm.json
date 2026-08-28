@@ -1,0 +1,1345 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/gpt-oss-120b",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-20b"
+  ],
+  "judgedAt": "2026-08-26T22:47:44.083Z",
+  "budget": {
+    "calls": 429,
+    "promptTokens": 4122348,
+    "completionTokens": 316454,
+    "usd": 0.8082246
+  },
+  "results": [
+    {
+      "arm": "firestore-direct",
+      "pass": "warm",
+      "turnsJudged": 58,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "acronym-exact-token",
+            "turns": 6,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "cross-document",
+            "turns": 6,
+            "mean": 0.6666666666666666,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 6,
+            "mean": 0.3333333333333333,
+            "servable": false,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 6,
+            "mean": 1.1666666666666667,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "event-signature",
+            "turns": 4,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 6,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "fouling-drift",
+            "turns": 4,
+            "mean": 0.75,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 4,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 6,
+            "mean": 1.3333333333333333,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "threshold-lookup",
+            "turns": 4,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.0769230769230769,
+        "coverage": 0.9,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 31,
+        "turns": 58,
+        "rate": 0.5344827586206896,
+        "totalClaims": 136,
+        "met": false
+      },
+      "citationSupport": {
+        "turnsChecked": 33,
+        "unsupported": 13
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — Did not provide any of the required stabilization criteria or citation and refused to answer."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — Did not state the required 60‑second minimum omitted manufacturer guidance failed to cite the required source and invented a much shorter wait time (1–3 s)"
+        },
+        {
+          "fixtureId": "crossdoc-do-drift-vs-hypoxia",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer only asserts hypoxia with certainty omits any instrument explanation provides no citations and lacks the required discriminating check violating the must‑not items."
+        },
+        {
+          "fixtureId": "crossdoc-orp-reference-offset",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer does not recommend comparing trends over time nor recording the reference type per DataPod missing both required rubric points"
+        },
+        {
+          "fixtureId": "deepmanual-do-calibration-procedure",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer fails to mention the air calibration/wet‑towel method and the lab‑favoured air‑saturated‑water method and it invents a field recommendation not supported by the sources."
+        },
+        {
+          "fixtureId": "deepmanual-do-calibration-procedure",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits the required Procedure 1 and Procedure 2 names lacks the goal statement and USGS citation and adds a nitrogen‑purge zero‑point method not found in the provided documents violating a 'must not' item."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-optics",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — Fails to mention the near‑infrared (780–900 nm) LED and nephelometric NTU omits required citations and adds a detector‑on‑the‑opposite‑side arrangement not in the corpus violating the must‑not rule."
+        },
+        {
+          "fixtureId": "followup-diel-swing",
+          "turn": 3,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer does not identify the pre‑dawn DO minimum as the danger window nor state that large in‑phase daily DO and pH oscillations indicate eutrophication or an algal bloom."
+        },
+        {
+          "fixtureId": "fouling-do-erratic",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits the required zinc‑oxide corrosion cause and reconditioning steps and does not mention a worn membrane remedied by replacing the membrane cap"
+        },
+        {
+          "fixtureId": "fouling-orp-span-loss",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — Misses all required points: does not mention platinum tip coating specific cleaning methods prohibition of abrasives or ruling out the probe and provides no citations."
+        },
+        {
+          "fixtureId": "precedence-ph-range",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — Uses a document range as authority violating the 'must not' rule"
+        },
+        {
+          "fixtureId": "probecal-ph-interval",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — Fails to map natural water deployment to the weak-chemistry schedule and omits the fouling note; provides a refusal instead of the required content."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: To compare the two pods you would need a conversion factor or to convert the FNU reading to NTU (or vice‑versa) using a calibration curve. — The supplied documents do not mention any conversion factor or calibration curve for converting between NTU and FNU; they only state that the units are not interchangeable and advise standardizing on one."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: sensor’s specifications list turbidity in NTU — No supplied document (including the retrieved PDFs or the water‑quality source‑of‑truth) contains a specification sheet for the sensor that states turbidity is reported in NTU. The only NTU mention is the operator‑provided normal range and a general note that NTU and FNU are different units which does not constitute a sensor specification."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: The probe specifications give the sensor’s response time which is the time it takes for the reading to reach about 90 % of its final value after a change in conditions. — No definition of response time as “time to reach about 90 % of final value” appears in any of the supplied documents.; Conductivity ORP pH and turbidity probes: ~1 s response time (≈ 95 % in 1 s). — The conductivity spec lists 90 % in 1 s not 95 %; the turbidity probe has no response‑time specification in the provided material.; Dissolved‑oxygen probe: ~0.1 mg L⁻¹ s⁻¹ response time which corresponds to roughly 1 s for a typical change in DO concentration. — The document gives a response time of ~0.1 mg L⁻¹ per second but does not state that this equates to a 1 s stabilization for a typical concentration change.; In practice you can record a reading after the sensor has been at the new depth for about one second once the probe is fully submerged and the water is still. — No guidance on a one‑second wait time for recording after submersion is present in the supplied sources.; If you want to be conservative waiting a few seconds (e.g. 2–3 s) ensures the reading has fully stabilized. — The documents do not provide a recommendation to wait 2–3 seconds for stabilization."
+        },
+        {
+          "fixtureId": "definitional-orp",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: ORP responds to the availability of electrons rather than to the mass of a single species. — The supplied documents describe ORP as measuring the net tendency to oxidize or reduce and being driven by the dominant electron acceptor but they do not state that ORP specifically responds to electron availability instead of the mass of a single species.; Small changes in the redox environment (e.g. a pulse of organic matter) can alter the ORP quickly whereas the DO sensor must wait for the oxygen concentration to change appreciably. — The provided sources note that ORP can drop before DO and that it serves as an early‑warning indicator but they do not mention the speed of ORP response to small redox changes or compare it to the response time of a DO sensor."
+        },
+        {
+          "fixtureId": "precedence-conductivity-range",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: Very pure or de‑ionized water results in a conductivity of 30 µS/cm because the ion concentration is almost zero. — The supplied documents describe what conductivity measures and give typical ranges but they do not state that very pure or de‑ionized water is a cause of low conductivity.; Dilution with fresh low‑mineral water reduces the overall ion load and lowers conductivity. — No source in the provided material links dilution with low‑mineral water to a decrease in conductivity.; Low‑mineral natural waters such as some streams or groundwater naturally have low total dissolved solids giving low EC. — The documents do not mention low‑mineral natural waters as a specific cause of low conductivity readings.; Sensor fouling or calibration drift can give artificially low conductivity readings. — While the documents discuss sensor fouling and calibration drift they do not specifically state that these issues cause low conductivity readings; the claim is not directly supported."
+        },
+        {
+          "fixtureId": "threshold-do-hypoxia",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: The 4–6 mg L⁻¹ stress range applies specifically to freshwater — The supplied material lists the 4–6 mg L⁻¹ stress threshold as a general guideline (not tied to freshwater) and does not state it is exclusive to freshwater.; A dissolved‑oxygen reading of 5.2 mg L⁻¹ indicates moderate oxygen stress — The source describes the range as \"stress\" but does not qualify it as \"moderate\"; the adjective \"moderate\" is not present in the provided documents."
+        },
+        {
+          "fixtureId": "acronym-ec-specific-conductance",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: EC (electrical conductivity) is the raw measurement of how well the water conducts electricity expressed in μS cm⁻¹. — The supplied documents define EC as temperature‑corrected specific conductance (i.e. the value reported at 25 °C) not as a raw uncorrected measurement. No source states that EC is the raw measurement."
+        },
+        {
+          "fixtureId": "crossdoc-do-drift-vs-hypoxia",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: which does not suffer from the same biofilm‑driven drift that optical sensors do. — The supplied documents mention that optical DO sensors drift with biofilm growth but they do not state that galvanic DO probes do not experience biofilm‑driven drift. No source confirms that galvanic probes are immune to this effect."
+        },
+        {
+          "fixtureId": "crossdoc-orp-reference-offset",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: ORP can vary across a bay because it reflects local electron‑transfer activity — The supplied documents describe what ORP measures and its general drivers but none state that ORP varies across a bay or that this variation is due to local electron‑transfer activity."
+        },
+        {
+          "fixtureId": "crossdoc-orp-reference-offset",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: ORP is temperature‑dependent — The supplied documents describe ORP measurement principles and normal ranges but do not state that ORP is temperature‑dependent.; in freshwater ORP should track DO (+200 to +400 mV when DO is high) — The normal ORP range (+200 to +400 mV) is provided but the supplied material does not link this range specifically to periods when DO is high or state that ORP should track DO under those conditions."
+        },
+        {
+          "fixtureId": "crossdoc-recalibration-schedule",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: many operators start with the dissolved‑oxygen (DO) probe — No source in the provided documents mentions operator practices or preferences for recalibration order.; DO probe often drives the most urgent maintenance actions — The supplied material does not state that DO drives urgent maintenance; it only describes its importance for aquatic health."
+        },
+        {
+          "fixtureId": "deepmanual-do-calibration-procedure",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: The zero‑point (de‑oxygenated water) calibration is the one you should perform on‑site. — No supplied document states that zero‑point calibration is the recommended or required field‑site calibration; the documents only describe calibration methods without prescribing field‑site preference.; It’s quick (a few minutes of nitrogen purging). — The provided materials do not mention nitrogen purging or the time required for a zero‑point calibration; this detail is not grounded in the supplied sources.; it ensures the sensor is properly zeroed before you start collecting data. — The documents describe zero‑point calibration but do not explicitly claim that it guarantees the sensor is properly zeroed before data collection.; Full‑scale or single‑point calibrations are usually done in a lab or with a calibrated reference solution. — No source in the supplied material indicates that full‑scale or single‑point calibrations are typically performed in a lab; this statement is not supported.; the zero‑point check is the standard field‑site procedure. — The supplied documents do not label zero‑point calibration as the standard field‑site procedure; this claim is not grounded in the provided information."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-optics",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "3: The sensor contains a light source (usually an LED) that shines a beam into the sample. — The supplied documents define turbidity as light scattered by particles and give units (NTU/FNU) but do not mention any LED light source or that the sensor shines a beam.; A photodetector (photodiode or phototransistor) is positioned either at 90° to the beam or on the opposite side to detect the light that has been scattered or transmitted. — No description of photodetector type or its placement (90° or opposite side) appears in any of the retrieved documents.; The intensity of the detected light is inversely proportional to the amount of suspended material. — The documents state turbidity measures light scattering by particles but do not specify the quantitative relationship (inverse proportionality) between detected light intensity and suspended material."
+        },
+        {
+          "fixtureId": "deepmanual-do-calibration-procedure",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "13: Purge a small volume of the probe with nitrogen or a de‑oxygenated gas for a few minutes. — The supplied documents describe the DO probe’s operating principle and specifications but do not mention nitrogen purging or de‑oxygenated gas for zero‑point calibration.; Use the sonde’s calibration command (e.g. `CAL 0`) to record the zero reading. — No calibration command syntax or procedure is described in any of the retrieved documents.; The probe’s internal temperature sensor automatically compensates for temperature so you don’t need a separate temperature correction. — The DO probe spec lists an internal PT‑1000 temperature sensor but the documents do not state that it automatically temperature‑corrects the DO reading.; Saturate a container of water with air (or use a commercial DO calibration solution) at the temperature you expect to measure. — The documents provide no guidance on creating an oxygen‑saturated calibration solution.; Use the sonde’s calibration command (e.g. `CAL 100`) to record the full‑scale reading. — No such command is mentioned in the supplied material.; Prepare a calibration solution with a known DO concentration (commercially available or calculated from temperature and salinity). — The documents do not describe preparing or using a known‑concentration DO calibration solution.; Use the sonde’s calibration command (e.g. `CAL 5`) to lock the sensor to that value. — The calibration command syntax is not present in any retrieved document.; The probe has an internal temperature sensor (Class A platinum RTD) and reports temperature‑corrected DO automatically. — While the spec lists a Class A platinum RTD temperature sensor the documents do not state that the probe automatically provides temperature‑corrected DO values.; Prepare the calibration environment – keep the probe submerged in a clean well‑mixed water sample. — No recommendation about a “clean well‑mixed” calibration environment appears in the supplied texts.; Choose the calibration point – zero full‑scale or a known concentration. — The documents do not outline a selection process for calibration points.; Equilibrate – allow the probe to stabilize (usually a few minutes). — Stabilization time for calibration is not mentioned in the retrieved documents.; Execute the calibration command – most sonde firmware accepts a simple `CAL <value>` command. — No information about sonde firmware commands is provided in the source material.; Verify – after calibration check the reading against a reference (e.g. a calibrated DO meter) to confirm accuracy. — The documents do not describe a post‑calibration verification step using a reference meter."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-optics",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "6: NTU (nephelometric turbidity units) are measured with a white‑light source — The supplied documents describe NTU only as a unit for turbidity and do not mention the type of light source used.; NTU ... a detector that captures scattered light at a 90° angle — The context explains turbidity measurement as light scattering but does not specify detector angle.; FNU (fluorescence‑based nephelometric units) use an infrared source — The documents list FNU as a turbidity unit but provide no information about it being fluorescence‑based or using infrared light.; FNU ... a detector that is sensitive to the different scattering behavior of IR light — No supporting detail about FNU detector characteristics is present in the supplied material.; Because particles scatter light differently at different wavelengths the two units are not interchangeable — The provided sources do not discuss wavelength‑dependent scattering or the interchangeability of NTU and FNU.; FNU (fluorescence‑based nephelometric units) — The term 'fluorescence‑based' for FNU is not mentioned in any of the supplied documents."
+        },
+        {
+          "fixtureId": "definitional-conductivity",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: the baseline and the sensor’s usefulness change when you move from freshwater to saltwater — The supplied documents and service rules provide typical EC ranges for freshwater and seawater and the sensor’s rated range (0‑1500 µS/cm) but they do not state that the baseline or the sensor’s usefulness changes when switching environments.; In seawater the probe would quickly saturate or give a “max” reading and you would lose the ability to detect subtle changes in salinity or ionic loading — No source in the retrieved documents or service rules mentions saturation of the probe in seawater or loss of detection capability; only the range limits are given.; If you need to monitor saltwater you’d use a probe with a higher range (tens of thousands of µS/cm) and still interpret EC as a proxy for dissolved salts but the numeric thresholds and the sensor’s suitability differ — The documents do not advise using a higher‑range probe for saltwater nor provide guidance on numeric thresholds beyond the listed ranges; this recommendation is not grounded in the supplied material."
+        },
+        {
+          "fixtureId": "definitional-temperature-master-variable",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: Temperature drives the behavior of all the other core water‑quality parameters. — The supplied document (source 5) describes temperature as the master variable that sets DO capacity accelerates biological and chemical rates and shifts EC readings but it does not state that temperature drives ORP pH or turbidity.; A change in temperature sets the baseline for DO ORP pH EC and turbidity so all other metrics must be interpreted relative to the current temperature. — Source 5 explicitly links temperature to DO and EC (and mentions it accelerates reactions) but provides no explicit statement that temperature sets the baseline for ORP pH or turbidity."
+        },
+        {
+          "fixtureId": "definitional-temperature-master-variable",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: Unless other parameters (e.g. ORR EC turbidity) also show abnormal shifts this pattern is not an event but the normal temperature‑DO coupling described in the reference — The supplied material (source 5) describes temperature affecting DO and mentions ORP EC turbidity but it does not contain a conditional statement that the pattern is not an event unless other parameters also shift. The cited lines L1‑L8 do not include this claim.; ORR — The sensor suite and the provided documents refer to ORP (oxidation‑reduction potential) not ORR. No source defines ORR as a measured parameter so this term is not grounded."
+        },
+        {
+          "fixtureId": "event-stormwater-vs-intrusion",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: EC falls because the fresh runoff water has a much lower ion concentration than the existing water diluting the dissolved‑salt load. — The supplied documents describe that stormwater runoff can cause an EC drop (especially in marine water) but do not provide the explanation that the drop is due to the runoff having a much lower ion concentration and diluting dissolved salts.; typically would not produce a turbidity spike unless accompanied by a separate sediment event. — The provided material does not state that salt‑water intrusion generally does not cause a turbidity spike; the saltwater intrusion row in the matrix mentions EC rise but gives no comment on turbidity behavior."
+        },
+        {
+          "fixtureId": "event-stormwater-vs-intrusion",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "9: Tidal‑related changes in EC and turbidity usually repeat every 12–13 h (semidiurnal) or 24 h (diurnal). — The supplied water‑quality‑metrics source discusses tidal cycles but does not specify any 12–13 h or 24 h periodicity for EC or turbidity.; If the spike occurs at a random time (e.g. after a rain event) and does not recur with the next tide it’s likely not tidal. — The source advises ruling out normal rhythms but does not state that a non‑recurring spike after rain indicates a non‑tidal cause.; Tides produce a smooth sinusoidal rise and fall in EC and turbidity. — The source mentions EC and turbidity oscillate with the tide but does not describe the shape as a smooth sinusoidal pattern.; A storm‑runoff event shows a sharp step‑like increase in turbidity and a sudden drop in EC that then gradually returns to baseline not a gradual tidal rise. — The source characterises storm‑runoff signatures but does not detail the exact step‑like shape or contrast with tidal rise.; Compare the current EC and turbidity to the long‑term tidal baseline for that site. — The source recommends comparing to baseline overall but does not specifically mention a long‑term tidal baseline for EC and turbidity.; If the values fall outside the normal tidal envelope (e.g. EC lower than the lowest tidal value) the event is probably not tidal. — The concept of a “tidal envelope” and the example of EC lower than the lowest tidal value are not present in the supplied material.; Tidal changes often affect temperature and salinity (or EC) but not usually cause a large turbidity spike unless accompanied by sediment resuspension. — The source notes tidal cycles affect EC temperature and turbidity but does not qualify the likelihood of large turbidity spikes or link them to sediment resuspension.; A storm event will also show a concurrent rise in temperature (from runoff) and possibly a drop in dissolved oxygen. — The source does not mention temperature rising or dissolved oxygen dropping as typical concurrent effects of storm‑runoff events.; If the spike does not match the regular tidal pattern and shows a sudden non‑periodic change you can rule out tide and attribute it to storm runoff. — While the source advises ruling out normal rhythms it does not provide the specific criterion of a “sudden non‑periodic change” to definitively rule out tide."
+        },
+        {
+          "fixtureId": "followup-diel-swing",
+          "turn": 3,
+          "dimension": "ungrounded",
+          "detail": "4: The healthy pH range is 6.5 – 8.5 mg L⁻¹ — The operator‑provided normal range for pH is 6.5 to 8.5 (unitless pH) not mg L⁻¹. The supplied documents give the range without a concentration unit.; Sudden large jumps or erratic pH patterns may indicate a sudden input of acid or base or a change in water chemistry. — The provided sources describe normal daily pH swings and link pH changes to biological cycles but they do not state that abrupt large jumps specifically signal an acid/base input or a change in water chemistry.; Look for a step‑change that breaks the regular diel rhythm. — The documents discuss step‑changes for certain pollution signatures but they do not explicitly advise looking for a step‑change in pH as an indicator of abnormal conditions.; A normal modest daily swing that stays within 6.5 – 8.5 mg L⁻¹ is expected. — The normal pH range is given as 6.5–8.5 (unitless pH). The claim incorrectly adds the unit mg L⁻¹ which is not present in any supplied material."
+        },
+        {
+          "fixtureId": "followup-fouling-cleaning",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: Mechanical or electrical noise – cable or connector issues can introduce a slow offset. — None of the supplied documents (EC_K_1.0_probe.pdf IORP_probe.pdf Industrial-DO-probe.pdf IpH_probe.pdf water-quality-metrics-source-of-truth.pdf) state that cable or connector issues cause a slow offset in sensor readings. The only related mention is about cable length potentially picking up noise for the conductivity probe which does not generalize to all sensors or describe a slow offset. Therefore this specific claim is not grounded in the provided material."
+        },
+        {
+          "fixtureId": "followup-fouling-cleaning",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "11: It’s common for a long‑term deployment to show a slow one‑directional shift in all of the parameters. — No document states that all parameters drift together; the supplied material only mentions sensor drift and bio‑fouling generally.; A gradual consistent drop in DO can be a sign of electrolyte depletion and membrane fouling. — The DO document describes electrolyte depletion and membrane fouling but does not explicitly link a gradual drop in DO as a diagnostic sign.; Verify that the probe is fully submerged and that the cable is not picking up noise. — No source in the provided documents mentions checking submersion depth for drift or cable noise as a cause of drift.; Fouling or scaling on the graphite plates can change the effective cell area (conductivity). — The conductivity document describes the operating principle and bubble removal but does not state that fouling/scaling changes the cell area.; No drift is expected for turbidity but a gradual rise can indicate sediment build‑up on the sensor. — The supplied documents contain no information about turbidity sensor drift or sediment build‑up; the cited source is a conductivity document not turbidity.; Clean the turbidity sensor according to the manufacturer’s instructions. — There is no turbidity‑specific cleaning guidance in any of the provided documents.; A temperature drift could indicate a sensor‑temperature mismatch or a change in the water column. — The temperature sections describe measurement principles but do not attribute drift to sensor‑temperature mismatch or water‑column changes.; Verify the temperature sensor is functioning and that the probe is not in a thermal hotspot. — No document provides guidance on checking for thermal hotspots or sensor malfunction as a drift cause.; Log the last calibration dates for each probe. — The provided material does not mention logging calibration dates as a required step.; Check the cable and connectors for corrosion or loose connections that could introduce drift. — Cable corrosion or loose connections are not discussed as drift causes in any supplied document.; Re‑install the probe in the same location and monitor for a few days to confirm that the drift has stopped. — No source describes re‑installing the probe and short‑term monitoring as a method to verify drift cessation."
+        },
+        {
+          "fixtureId": "fouling-do-erratic",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: the voltage (and the reported DO) will rise and fall erratically — The supplied documents describe that a galvanic DO probe consumes oxygen and that water movement of ~60 mL min⁻¹ is needed for accurate readings but they do not explicitly state that the voltage or DO reading will rise and fall erratically when flow is insufficient.; the water around the probe is stagnant the probe can’t be replenished quickly enough — The documents mention the need for water movement for accurate readings but they do not contain a direct statement that stagnant water prevents oxygen replenishment quickly enough."
+        },
+        {
+          "fixtureId": "fouling-do-erratic",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "4: Bio‑fouling / deposits alter the probe’s electrical resistance causing sudden changes in the output voltage. — The supplied DO documentation mentions that deposits can cause irregular readings and describes cleaning methods but it does not state that fouling changes electrical resistance or that it causes sudden voltage changes.; Re‑calibrate annually for the first two years then every ~6 months in weak environments. — The DO documentation says there is no set schedule for recalibration and does not provide an annual then semi‑annual calibration recommendation.; Rapid temperature swings can cause the DO reading to jump unless temperature‑compensated. — The DO documentation notes the probe has an internal PT‑1000 temperature sensor but it does not state that rapid temperature changes cause jumping readings or that compensation is required.; Electrical noise or cable issues can be interpreted as voltage changes; use proper isolation or shorter cables if possible. — No supplied document (sources 1‑5) discusses electrical noise cable shielding or isolation for the DO probe; the citation refers to a non‑existent source 6."
+        },
+        {
+          "fixtureId": "followup-fouling-cleaning",
+          "turn": 3,
+          "dimension": "ungrounded",
+          "detail": "13: Rinse the conductivity (EC) probe with clean tap water. — The EC_K_1.0_probe.pdf mentions tapping to remove bubbles and brushing deposits but does not specify rinsing with tap water.; Avoid harsh chemicals; the conductivity probe is food‑safe and the graphite plates are not meant to be chemically cleaned. — The document notes the probe is food‑safe but provides no guidance about avoiding chemical cleaning of the graphite plates.; Use a light bleach solution (e.g. 1 % sodium hypochlorite) to clean the ORP probe. — IORP_probe.pdf recommends a light bleach solution but does not state a specific concentration such as 1 %.; Rinse the ORP probe thoroughly with clean water after cleaning. — The ORP cleaning section describes the bleach or HCl soak but does not mention a post‑clean rinse.; Use a light bleach solution (≈ 1 % sodium hypochlorite) to clean the pH probe. — IpH_probe.pdf advises a light bleach solution but gives no concentration; 1 % is not documented.; Rinse the pH probe thoroughly with clean water after cleaning. — The pH cleaning instructions do not include a rinse step.; Use a mild bleach mixture (≈ 1 % sodium hypochlorite) to clean the dissolved oxygen (DO) probe. — Industrial‑DO‑probe.pdf mentions a mild bleach mixture but does not specify a 1 % concentration.; After cleaning the DO probe re‑fill the electrolyte and rinse the probe with clean water. — The DO cleaning section does not describe refilling electrolyte or a rinse after cleaning; those steps are in separate “add electrolyte” instructions not in the cleaning guidance.; Rinse the turbidity sensor with clean water; if a film or sediment is visible gently wipe with a soft non‑abrasive cloth. — No turbidity‑sensor cleaning procedure is provided in any of the supplied documents.; Remove the probe from the water before cleaning. — None of the retrieved documents state that probes must be removed from the water prior to cleaning.; Avoid abrasive tools (no metal files on the ORP or pH tips no stiff brushes on the conductivity plates). — The documents advise gentle brushing for conductivity and mention not using abrasive materials for pH but they do not give a blanket rule covering all probes as stated.; Rinse thoroughly with clean water after any chemical soak to remove residual bleach or acid. — The cleaning sections describe chemical soaks but do not explicitly require a thorough water rinse afterward.; Re‑calibrate each probe after cleaning to confirm the signal is back in the expected range. — Calibration after cleaning is not mentioned in the supplied documents."
+        },
+        {
+          "fixtureId": "fouling-orp-span-loss",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "11: photosynthesis adds O₂ (raising ORP) during the day and respiration consumes it (lowering ORP) at night — The supplied documents describe ORP drivers and its coupling to DO but do not state that photosynthesis raises ORP by day and respiration lowers it by night.; The daily pattern is tightly coupled to dissolved oxygen (DO) and pH — Document 5 states ORP is tightly coupled to DO but does not mention a direct tight coupling to pH.; Stable DO – e.g. a steady source of oxygen or a lack of biological activity — No supplied material lists stable DO as a cause for flat ORP or describes steady oxygen sources or lack of biological activity as explanations.; Shift to reducing conditions – e.g. anoxic event or high organic load — Document 5 mentions anoxic (negative) ORP values but does not associate high organic load with a shift to reducing conditions.; Sensor fouling or drift – biofilm deposits or aging — The provided documents do not discuss sensor fouling biofilm deposits or aging as reasons for ORP drift.; ORP may drift toward a single value often outside the normal 200–400 mV range — The normal ORP range (200–400 mV) is given but there is no mention of ORP drifting to a single value outside that range.; Temperature stability – temperature changes normally influence ORP — The documents describe temperature influencing DO and EC but do not state that temperature changes normally influence ORP.; Confirm temperature trend; a stable temperature can reduce the amplitude of ORP swings — No supplied source links stable temperature to reduced ORP swing amplitude.; Check the other core metrics (DO pH temperature conductivity turbidity). A simultaneous flattening in DO and pH would point to a change in biological activity or a new water source. — While the documents define each metric they do not assert that simultaneous flattening of DO and pH indicates a change in biological activity or a new water source.; Review calibration and maintenance logs for the ORP probe. If the probe has been in use for a long time consider cleaning or recalibrating. — The supplied material does not provide guidance on reviewing calibration logs cleaning or recalibrating the ORP probe based on age.; Compare with historical data for the same time of year. A true change in the water body’s chemistry will appear as a step‑change or sustained shift not just a smoother daily curve. — Document 5 discusses step‑changes and sustained shifts versus diel cycles but it does not specifically advise comparing with same‑time‑of‑year historical data to distinguish a true chemistry change."
+        },
+        {
+          "fixtureId": "fouling-orp-span-loss",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "13: If a gentle tap and a quick rinse don’t restore the daily swing the probe is likely no longer responding to the water’s redox changes. — The supplied documents do not mention a \"gentle tap\" or a \"quick rinse\" as a diagnostic step nor do they state that failure of such a rinse indicates loss of redox response.; The probe’s reference electrode can drift over time. — None of the retrieved documents describe drift of the ORP probe’s reference electrode.; Re‑calibration (or a full re‑reference) is the first step after cleaning. — The documents provide cleaning procedures but do not prescribe recalibration or full re‑reference as the immediate next step after cleaning.; ORP probes may need recalibration once per year for low‑activity systems and more often for high‑activity or industrial use. — The ORP probe specification (source 2) only lists a \"~1 Year Time before recalibration\" without differentiating low‑activity versus high‑activity or industrial use; no such frequency breakdown appears in any document.; Biofilm or hard‑coating buildup can blunt the signal. — The documents mention hard‑coating removal (source 10) but do not mention biofilm as a factor that blunts ORP signal.; If the probe still shows a flat curve after this the fouling may be too severe for simple cleaning. — No source states that severe fouling can cause a flat ORP curve that cannot be fixed by simple cleaning.; If the reference has degraded the probe may output a constant offset. — While the water‑quality document notes that ORP values depend on reference type it does not state that a degraded reference causes a constant offset.; Replacing the reference or the entire probe is often the only fix. — The documents do not claim that replacement of the reference electrode or whole probe is the only remedy for the described issue.; A simultaneous flattening of DO and pH usually means the water chemistry itself has stabilized (e.g. a new steady source of oxygen or a lack of biological activity). — The provided sources describe relationships between parameters but do not assert that concurrent flattening of DO and pH indicates stabilized chemistry or a steady oxygen source.; If those parameters are still oscillating the probe is likely the issue. — No document makes a diagnostic claim that oscillating DO/pH with flat ORP points to a faulty ORP probe.; If recalibration and cleaning don’t restore the swing the probe may be beyond repair. — The sources do not state that a probe is beyond repair after failed recalibration and cleaning.; Replacing it ensures you get a reliable redox signal. — There is no source guaranteeing that replacement will provide a reliable redox signal.; Record the date cleaning steps calibration and any observed drift. — The documents do not prescribe logging these specific items as a required practice."
+        },
+        {
+          "fixtureId": "probecal-conductivity-interval",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "6: Gradual slow trend or sudden jump in EC readings. — The supplied documents describe fouling and deposits causing inaccurate readings but they do not specify that the effect appears as a gradual slow trend or sudden jump in the data.; Correlated spikes or dips that match temperature swings. — Temperature dependence of EC is mentioned yet the documents do not state that temperature changes produce correlated spikes or dips in the EC readings.; Brief erratic spikes or drops. — Air bubbles are noted as causing errors but the documents do not describe the resulting pattern as brief erratic spikes or drops.; Random noise or a drift that coincides with cable changes. — Cable length and potential noise are discussed but there is no source stating that the data will show random noise or drift specifically when cable changes occur.; Step‑change that matches a known event (e.g. rain tide). — Water‑chemistry changes affecting conductivity are mentioned yet the documents do not claim that such changes manifest as step‑changes aligned with events like rain or tide.; Because the probe is a simple two‑electrode device the “no recalibration” claim refers to the probe’s internal calibration curve not to the need for routine maintenance. — The documents state the probe does not need recalibration after the first calibration but they do not explain that this refers specifically to the internal calibration curve versus routine maintenance."
+        },
+        {
+          "fixtureId": "refusal-nutrients",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: without a proportional increase in dissolved nutrients — The supplied documents describe causes of turbidity spikes (e.g. storm runoff dredging resuspension algal blooms) and note that particles can carry adsorbed pollutants but they do not state that these events can raise turbidity without a proportional increase in dissolved nutrients.; you would need separate nutrient analyses to confirm that — The supplied material explains what turbidity measures and its relationship to suspended particles and nutrients but it does not mention the need for separate nutrient analyses to confirm nutrient levels."
+        },
+        {
+          "fixtureId": "refusal-out-of-domain",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: Turbidity peaks at high‑energy tidal stages when sediment is resuspended — The supplied documents mention that turbidity oscillates with the tide and that turbidity spikes can occur but they do not specifically state that turbidity peaks at high‑energy tidal stages due to sediment resuspension.; warmer surface water during high tide and cooler water during low tide — The documents note that temperature oscillates with the tide but they do not specify that high tide brings warmer surface water and low tide brings cooler water."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: [5] — The cited document only states that turbidity is measured in NTU (or FNU) and gives typical range values up to 25 NTU but it does not mention that the sensor reports \"white‑light\" turbidity nor does it provide any sensor specifications listing turbidity in NTU. Therefore the claim that the sensor reports turbidity in NTU (white‑light) and that its specifications list turbidity in NTU is not supported by the cited source."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "2: [1] — The claim says Conductivity ORP pH and turbidity probes all have ~1 s response time but document [1] (EC_K_1.0_probe.pdf) only provides the response time for the conductivity probe and does not mention ORP pH or turbidity.; [4] — Document [4] (IpH_probe.pdf) only contains the response time for the pH probe; it does not include information on conductivity ORP or turbidity probes so it does not support the full claim."
+        },
+        {
+          "fixtureId": "threshold-do-hypoxia",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "1: [5] — The answer claims that water is considered hypoxic when dissolved oxygen drops below about 2 mg L⁻¹. The cited document defines <2 mg L⁻¹ as \"hypoxia\" and 2–4 mg L⁻¹ as \"hypoxic stress\". Therefore the document does not support the statement that <2 mg L⁻¹ is \"hypoxic\"; it only supports that 2–4 mg L⁻¹ is hypoxic stress."
+        },
+        {
+          "fixtureId": "crossdoc-do-drift-vs-hypoxia",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: [5†L6-L9] — The cited document includes the statement “DO sensor fouling: Optical DO sensors drift with biofilm growth. Pair DO trends with the antifouling/cleaning schedule ” but it does not say that a galvanic DO probe (Industrial Gen 3) does not suffer from the same biofilm‑driven drift. The claim that the galvanic probe is immune to this fouling is not found in the referenced source."
+        },
+        {
+          "fixtureId": "deepmanual-do-calibration-procedure",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "1: 【3†L1-L5】 — The claim that the probe’s response time is 90 % in 1 s is not supported by the Industrial‑DO‑probe.pdf; the document states the response time as ~0.1 mg/L per second not a 90 % in 1 s specification."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-optics",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "1: 5 — The claim describes the construction and operation of a turbidity sensor (LED light source photodetector at 90° inverse relationship to suspended material) but the cited document 'water-quality-metrics-source-of-truth.pdf' only defines turbidity as a measurement of light scattering and lists its units (NTU or FNU). It does not mention sensor components or how the sensor works so the citation does not support the claim."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-optics",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "2: [5†L1-L4] — The claim states that NTU is measured with a white‑light source and a detector that captures scattered light at a 90° angle. The cited document only says “NTU (white‑light) … are not interchangeable” and does not mention the 90° detector geometry.; [5†L5-L7] — The claim says FNU uses an infrared source and a detector that is sensitive to the different scattering behavior of IR light. The cited document only notes “FNU (infrared) … are not interchangeable” and does not describe the detector’s sensitivity to IR scattering."
+        },
+        {
+          "fixtureId": "followup-diel-swing",
+          "turn": 3,
+          "dimension": "citations",
+          "detail": "2: 5†L19-L26 — The document lists the freshwater healthy pH range as 6.5–8.5 (unitless) but the claim adds the unit “mg L⁻¹ ” which is incorrect; the citation does not fully support the statement as written.; 5†L4-L7 — The cited matrix shows DO and ORP decreasing and EC increasing for a sewage event but it does not mention a pH drop; the claim that pH also drops is not supported by the referenced text."
+        },
+        {
+          "fixtureId": "fouling-orp-span-loss",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "1: 【5†L1-L8】 — The answer claims that ORP oscillates daily as photosynthesis raises ORP and respiration lowers it. The cited document (water-quality-metrics-source-of-truth.pdf) describes what ORP measures what drives it and its relationship to DO but it does not mention a daily photosynthesis‑respiration driven swing. Therefore the document does not support the specific claim."
+        },
+        {
+          "fixtureId": "fouling-orp-span-loss",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: 10 — The claim that the cleaning guide recommends a light bleach soak or a 5–10 % HCl rinse for hard coatings is found in the IORP_probe.pdf document not in the document referenced by marker 10."
+        }
+      ]
+    },
+    {
+      "arm": "hybrid-slice-lexvec",
+      "pass": "warm",
+      "turnsJudged": 58,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "acronym-exact-token",
+            "turns": 6,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "cross-document",
+            "turns": 6,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 6,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "definitional",
+            "turns": 6,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "event-signature",
+            "turns": 4,
+            "mean": 0.75,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "follow-up",
+            "turns": 6,
+            "mean": 0.6666666666666666,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "fouling-drift",
+            "turns": 4,
+            "mean": 0.75,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 4,
+            "mean": 0.75,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "refusal",
+            "turns": 6,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "threshold-lookup",
+            "turns": 4,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 0.8620689655172413,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 34,
+        "turns": 58,
+        "rate": 0.5862068965517241,
+        "totalClaims": 125,
+        "met": false
+      },
+      "citationSupport": {
+        "turnsChecked": 18,
+        "unsupported": 6
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer violates the 'must not' rule by stating the units can be equivalent for calibration solutions"
+        },
+        {
+          "fixtureId": "crossdoc-do-drift-vs-hypoxia",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits the instrument explanation provides no candidate explanations lacks electrolyte depletion and drift/fouling citations offers no discriminating check and asserts hypoxia with certainty."
+        },
+        {
+          "fixtureId": "crossdoc-orp-reference-offset",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — Misses both required recommendations (trends over time recording reference type) and suggests comparing calibrated absolute readings across pods violating the must‑not clause and provides no citation."
+        },
+        {
+          "fixtureId": "crossdoc-recalibration-schedule",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — Misses all required points: does not prioritize pH ORP and DO over conductivity does not cite the drift statement from the reference omits the DO electrolyte/membrane service note and provides no required citations."
+        },
+        {
+          "fixtureId": "deepmanual-do-calibration-procedure",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — Includes extra calibration workflow steps not present in the USGS document violating the 'must not' clause"
+        },
+        {
+          "fixtureId": "deepmanual-do-calibration-procedure",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — Fails to identify the wet‑towel air‑calibration as the field‑site method and does not note air‑saturated water is mainly for lab use; it also invents a contrary recommendation."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer adds an extra turbidity criterion (10% >100 NTU) not in the rubric violating the 'must not invent numeric criteria' rule."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — Misses the required 60‑second minimum and adds an invented 3–5 minute wait time violating the 'must not' clause."
+        },
+        {
+          "fixtureId": "definitional-conductivity",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits the required unit (µS/cm) violating the 'must not omit units' rule."
+        },
+        {
+          "fixtureId": "event-sewage-signature",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer fails to mention the bloom signature (in‑phase DO/pH oscillations midday supersaturation pre‑dawn crash) does not note the pattern is a sustained non‑diel crash and omits the pre‑dawn DO minimum danger window."
+        },
+        {
+          "fixtureId": "followup-diel-swing",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer claims pH moves in the opposite direction to DO violating the 'must not' rule."
+        },
+        {
+          "fixtureId": "followup-diel-swing",
+          "turn": 3,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer neither identifies the pre‑dawn DO minimum as the danger window nor links large in‑phase DO‑pH swings to eutrophication/algal bloom and it invents a numeric swing threshold violating the 'must not' rule."
+        },
+        {
+          "fixtureId": "followup-fouling-cleaning",
+          "turn": 3,
+          "dimension": "correctness",
+          "detail": "scored 0 — It recommends brushing the pH and ORP probes violating the 'must not' rule and also fails to provide the detailed soft/hard coating cleaning methods required by the rubric."
+        },
+        {
+          "fixtureId": "fouling-do-erratic",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits zinc‑oxide corrosion on the anode the specific reconditioning steps and the worn membrane replacement and does not cite the Industrial‑DO‑probe.pdf as required."
+        },
+        {
+          "fixtureId": "fouling-orp-span-loss",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits required points (checking calibration history and noting ORP trend reliability) and adds unsupported diagnostic steps such as temperature compensation not found in the datasheets"
+        },
+        {
+          "fixtureId": "precedence-ph-range",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer cites a document range as authority violating the 'must not' rule"
+        },
+        {
+          "fixtureId": "probecal-conductivity-interval",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer attributes the wandering EC numbers to calibration drift which the rubric explicitly forbids."
+        },
+        {
+          "fixtureId": "acronym-ec-specific-conductance",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: Electrical conductivity (EC) is the raw measurement of how well the water conducts an electric current expressed in µS cm⁻¹. — The supplied documents provide EC ranges and state the probe \"reads Conductivity\" but do not define EC as the \"raw measurement of how well the water conducts an electric current\".; EC is the instantaneous reading from the probe. — The documents describe the probe’s range and response time but do not explicitly state that EC represents an \"instantaneous reading\"."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: you would have to convert one to the other using a calibration curve specific to the instruments — The supplied documents discuss NTU and FNU definitions and note they are equivalent for calibration solutions but not interchangeable for environmental samples. None of the documents mention the need for a calibration curve specific to the instruments to convert between NTU and FNU."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: Your DataPod reports turbidity in NTU (nephelometric turbidity units). — The supplied material (retrieved documents service rules or user‑provided numbers) does not contain any statement that the DataPod reports turbidity in NTU nor that NTU stands for nephelometric turbidity units. The service rules list a normal range for turbidity (0‑25 NTU) but do not explicitly state the sensor’s reporting unit.; The sensor’s specification states that turbidity is measured “in NTU”. — While the service rules give a normal range for turbidity in NTU no document provides a direct specification statement from the sensor saying it measures turbidity in NTU. The claim is not directly supported by the provided documents."
+        },
+        {
+          "fixtureId": "crossdoc-orp-reference-offset",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: Temperature‑dependent; a 10 °C difference can shift ORP by ~10–15 mV. — None of the supplied documents quantify the effect of a 10 °C temperature change on ORP; they only note that ORP is temperature‑dependent without giving a ~10–15 mV shift value."
+        },
+        {
+          "fixtureId": "crossdoc-do-drift-vs-hypoxia",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: The “optical‑sensor fouling” warning in the USGS reference applies only to optical (luminescence) DO sensors. — The USGS documents provided describe optical DO sensor methods and maintenance but they do not contain a specific “optical‑sensor fouling” warning nor state that it applies only to optical (luminescence) sensors.; The fouling concerns described for optical sensors—such as biofilm on the optical surface or light‑scatter interference—do not affect a galvanic probe. — The supplied materials describe fouling concerns for optical sensors (e.g. biofilm light‑scatter) only in the USGS optical‑sensor sections and they do not explicitly state that these concerns are irrelevant to galvanic probes.; Galvanic DO probes can still foul (e.g. by deposition on the membrane or electrodes) but that is a separate maintenance issue and is not covered by the optical‑sensor fouling warning in the cited document. — While the industrial DO‑probe specifications mention membrane wear and general maintenance they do not link galvanic‑probe fouling to the USGS optical‑sensor fouling warning nor do they state that the warning does not cover galvanic‑probe fouling."
+        },
+        {
+          "fixtureId": "crossdoc-orp-reference-offset",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "12: Reference solution (e.g. 0 mV or 200 mV standard) — The supplied documents describe ORP probe range and accuracy but do not mention using a 0 mV or 200 mV reference solution for calibration.; ORP changes ~10–15 mV per 10 °C — No temperature‑dependence coefficient for ORP is provided in any of the retrieved documents.; A 60 mV difference could be due to a 40 °C temperature mismatch — This inference relies on the unsupported 10–15 mV per 10 °C figure.; Reference electrode condition can bias the reading by tens of mV — The documents do not give a quantitative bias amount for a fouled or dry reference electrode.; Air bubbles or partial submersion lower the reading — While bubbles are mentioned for conductivity probes there is no statement in the ORP documentation that bubbles lower ORP readings.; Long cables or poor shielding can introduce offsets — The retrieved ORP and other sensor documents do not discuss cable length or shielding effects on ORP measurements.; ORP should correlate with DO and pH trends — The water‑quality source states ORP is tightly coupled with DO but it does not assert a direct correlation between ORP and pH trends.; Calibrate both probes in the same reference solution — Calibration procedures in the documents mention recalibration frequency but do not specify using a common reference solution for both probes.; Verify the reference electrodes are clean and wet — No guidance on checking or cleaning reference electrodes is present in the supplied material.; Apply the probe’s temperature‑compensation algorithm — The documents do not describe a temperature‑compensation algorithm for the ORP probe.; Compare the calibrated temperature‑corrected readings — Temperature correction for ORP readings is not mentioned in any of the provided sources.; If one probe still shows a ~60 mV offset that probe is likely the faulty one — The conclusion that a persistent 60 mV offset indicates a faulty sensor is an inference not supported by the supplied documents."
+        },
+        {
+          "fixtureId": "deepmanual-do-calibration-procedure",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: The USGS guidance (TM 09 a6.2) recommends using air‑saturated water for a one‑point DO calibration at the field site. — No supplied document references USGS TM 09 a6.2 or states a recommendation for air‑saturated water calibration.; It can be set up on‑site with a small water bath or container. — The supplied material does not describe setting up a water bath or container for on‑site calibration.; The probe is immersed in water that has been bubbled with air until it is fully saturated ensuring the same temperature as the field water. — No source in the provided documents mentions bubbling air into water to achieve saturation for DO calibration.; The air‑calibration chamber (or wet‑towel) method is also valid but it requires a sealed chamber that may not be practical in many field settings. — The supplied documents do not discuss an air‑calibration chamber wet‑towel method or their practicality.; Thus the air‑saturated water approach is the preferred on‑site option. — There is no evidence in the provided material that air‑saturated water is identified as the preferred on‑site method."
+        },
+        {
+          "fixtureId": "deepmanual-do-calibration-procedure",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "11: The USGS guidance (TM 09 a6.2) lists two practical ways to create that reference: — The supplied document is USGS NFM A6.2 not a Technical Memorandum TM 09 a6.2; the source name is not found in the provided material.; Place the sonde in a sealed chamber that is filled with air (or a wet towel that keeps the probe moist). — The context mentions an \"air‑calibration chamber\" or \"wet‑towel method\" but does not describe the chamber as sealed and filled with air.; Ensure the probe is fully submerged and free of bubbles. — The one‑point air‑calibration procedure does not state that the probe must be fully submerged; submersion is not mentioned in the supplied material.; The water temperature must match the field temperature. — While the goal is a 100 % saturated reference at the same temperature the documents do not explicitly require the calibration water temperature to equal the field water temperature.; The probe should be fully submerged no air bubbles trapped. — The provided documents do not specify that the probe must be fully submerged or bubble‑free during the air‑saturated water calibration.; Clean the probe – rinse with DI water tap gently to remove any air bubbles and ensure the sensing area is clear. — No cleaning procedure of this type is described in the supplied documents for one‑point DO calibration.; Allow stabilization – wait until the sensor reading stabilizes (usually a few seconds to a minute). — The documents do not mention a stabilization wait time for one‑point calibration.; Record the value – compare it to the expected 100 % saturation value for that temperature. — The supplied material does not state that the user should record and compare the reading to an expected 100 % saturation value.; Rinse and dry – after calibration rinse the probe with DI water and dry it before deployment. — Post‑calibration rinsing and drying steps are not described in the provided sources.; The USGS recommends a one‑point calibration for routine field deployments because it is quick requires only a single reference point and is sufficient when the sensor is used at a consistent temperature. — The USGS documents do not contain a recommendation that one‑point calibration is preferred for routine field deployments for those reasons.; The reading should be within the manufacturer’s tolerance (often ±0.2 mg L⁻¹ for optical sensors). — The documents specify a performance check tolerance of ±0.2 mg L⁻¹ but they do not attribute this tolerance to the manufacturer or state it as a general manufacturer tolerance."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: ± 0.1 pH tolerance — The supplied USGS documents do not specify a ±0.1 pH stabilization tolerance; they only describe general stabilization procedures without numeric pH limits.; ± 5 µS cm⁻¹ EC (or ± 3 % for higher EC) tolerance — No numeric EC stabilization tolerance appears in the provided documents; the USGS guidelines mention measurement intervals but not a ±5 µS cm⁻¹ or ±3 % rule.; ± 0.5 NTU (or ± 5 % for low turbidity) tolerance — The supplied material contains no turbidity stabilization tolerance values; the USGS guidelines do not list a ±0.5 NTU or percentage criterion.; Record the median of the last 5 + readings that meet those tolerances — The USGS documents advise reporting the median value after stabilization but do not require using the median of the last five or more readings; this specific procedure is not documented.; the tolerances listed in the USGS National Field Manual (see the table in the previous answer) — The provided USGS documents do not contain a table enumerating the exact tolerances quoted (±0.2 °C ±0.1 pH ±0.2 mg L⁻¹ DO etc.); the referenced table is not present in the supplied material."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-optics",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "4: A turbidity sensor measures how much light is scattered by suspended particles in the water. — The supplied documents describe turbidity measurement procedures and cleaning steps but they do not explicitly state that the sensor works by measuring light scattered by particles.; The sensor contains a light source (usually an LED) that shines a beam through the sample. — No source in the provided material mentions an LED or any light source being part of the turbidity sensor.; A photodetector positioned at a set angle from the beam measures the intensity of light that is scattered out of the beam. — The retrieved documents do not describe a photodetector its placement or its function in measuring scattered light.; The greater the amount of suspended material the more light is scattered and the lower the detected signal which the sensor converts into a turbidity value (NTU). — The relationship between particle concentration scattered light signal reduction and conversion to NTU is not detailed in any of the supplied sources."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-optics",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: The basic physics—light is scattered by suspended particles and the scattered light is measured—applies to both NTU and FNU sensors. — The supplied documents describe the optical geometry and light sources for NTU and FNU but they do not explicitly state that both units rely on the same basic scattering principle. The statement is not directly supported by any excerpt in the provided material."
+        },
+        {
+          "fixtureId": "definitional-conductivity",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: Low conductivity → fewer dissolved ions typical of very fresh or de‑mineralized water. — The supplied material mentions low conductivity indicating fewer dissolved ions and cites very fresh water but it does not mention de‑mineralized water.; It is also temperature‑corrected (reported as specific conductance at 25 °C) so that temperature variations don’t mask chemical changes. — The documents state that EC is reported as specific conductance at 25 °C but they do not include the explanatory clause that this correction prevents temperature variations from masking chemical changes."
+        },
+        {
+          "fixtureId": "definitional-conductivity",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: a low reading in saltwater would suggest dilution by freshwater or a loss of ions. — The supplied documents and service rules describe normal EC ranges for freshwater and seawater and define EC as a proxy for total dissolved ions but none of them state that a low EC reading in seawater specifically indicates dilution by freshwater or loss of ions."
+        },
+        {
+          "fixtureId": "definitional-temperature-master-variable",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: changes in temperature set the baseline for DO ORP EC pH and turbidity — The supplied material (source 5) states that temperature is the master variable and that it sets DO capacity accelerates biological and chemical rates and shifts EC readings and that other parameters should be interpreted relative to temperature. It does not explicitly state that temperature sets the baseline for ORP pH or turbidity."
+        },
+        {
+          "fixtureId": "definitional-temperature-master-variable",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: a temperature rise should always be paired with an expected DO decline — The supplied document [5] describes the relationship as “Warmer water physically holds less oxygen and speeds the respiration/decomposition that consumes it ” but it does not contain the exact quoted phrase. The specific wording is not present in any retrieved source.; if the DO drop is roughly in line with what a 3 °C increase would predict and no other parameters (ORP EC turbidity etc.) show abnormal changes it is an expected response rather than a pollution event — The documents explain that temperature rise generally leads to DO decline but they do not state that matching the DO drop to a 3 °C increase and the absence of changes in other parameters confirms the change is expected rather than a pollution event. This conditional conclusion is not found in the provided material."
+        },
+        {
+          "fixtureId": "event-stormwater-vs-intrusion",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "3: A turbidity spike with a simultaneous drop in EC is the classic signature of storm‑runoff (urban or agricultural runoff) not salt‑water intrusion. — The supplied water‑quality‑metrics‑source‑of‑truth matrix lists storm‑runoff as having an ↑↑ (increase) in EC not a decrease. The source does not describe a drop in EC as characteristic of storm‑runoff.; Storm runoff shows ↓ EC (freshwater input dilutes the ionic concentration). — In the same matrix the EC column for storm‑runoff shows an increase (↑↑) not a decrease. No other supplied document states that EC decreases during storm‑runoff.; Storm‑runoff (urban or agricultural runoff) is the relevant category. — The supplied documents refer to \"stormwater / urban runoff\" but do not mention \"agricultural runoff\" as part of the storm‑runoff category."
+        },
+        {
+          "fixtureId": "event-sewage-signature",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: An algal bloom would normally show increasing DO and ORP (photosynthesis adds oxygen and raises the electron‑acceptor potential) — The supplied documents describe that photosynthesis adds oxygen and that DO influences ORP but they do not explicitly state that an algal bloom is characterized by increasing ORP. The water‑quality matrix lists algal bloom signatures for DO and pH but does not mention ORP behavior so the specific claim about ORP increase is not grounded in the provided material.; with turbidity sometimes high but not necessarily accompanied by a sharp rise in EC — The retrieved documents and the water‑quality signature matrix do not contain any statement that algal blooms may have high turbidity without a corresponding sharp increase in electrical conductivity. This relationship is not documented in the supplied sources."
+        },
+        {
+          "fixtureId": "event-stormwater-vs-intrusion",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "7: Tidal changes are periodic (≈12.4 h for a semi‑diurnal tide). — No supplied document mentions a 12.4 hour period for tides; the provided materials only note that tides are periodic but give no specific duration.; If the turbidity rise and EC drop occur at the same time every 12 h it’s likely tidal. — The 12 hour repeat interval is not found in any of the retrieved documents or the operator‑provided normal ranges.; During tidal exchange EC usually rises (saltwater intrudes) or oscillates but stays within a narrow band. — The documents describe EC changes with tidal mixing but do not state that EC “usually rises” or that it stays within a narrow band; this specific behavior is not grounded.; Storm runoff will produce a step‑change in turbidity and EC that persists until the runoff stops without the regular oscillation. — The source material characterises storm runoff with a turbidity spike and possible EC shift but it does not describe a persistent step‑change or the absence of regular oscillation.; Use tide charts or a tide‑prediction model — overlay the sensor timestamps on the predicted high/low water times. — No guidance on using tide charts or prediction models is present in the supplied documents; this procedural suggestion is not grounded.; If the spike does not coincide with a tidal event it is likely runoff. — The attribution that a non‑coincident spike “is likely runoff” is not explicitly supported by any of the provided sources.; A non‑periodic step‑like turbidity spike coupled with a drop in EC that does not follow the tidal cycle is evidence that the event is storm runoff rather than tidal influence. — The specific diagnostic phrasing linking non‑periodic step‑like spikes to storm runoff is not found in the retrieved documents; it is an unsourced conclusion."
+        },
+        {
+          "fixtureId": "followup-diel-swing",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: CO₂ is a weak acid; removing it raises pH (water becomes more alkaline). — The supplied documents describe that photosynthesis removes CO₂ and raises pH but they never state that CO₂ is a weak acid.; The magnitude of the swing depends on the system’s buffering capacity and the amount of biological activity. — No supplied material links the size of daily pH swings to buffering capacity or biological activity.; A healthy system will stay within this window with daily swings of a few tenths of a pH unit being normal. — The operator‑provided normal range (6.5–8.5) is given but the documents do not specify that a few‑tenths‑of‑a‑pH‑unit daily swing is typical.; If you notice the pH swinging outside that range or the daily pattern becoming irregular it could signal a change in the system’s biogeochemistry (e.g. excess organic loading acid input or a shift in buffering capacity). — While the documents note that acid or alkaline inputs affect pH they do not mention excess organic loading or buffering‑capacity shifts as pH indicators nor do they describe irregular daily patterns as a diagnostic cue."
+        },
+        {
+          "fixtureId": "followup-diel-swing",
+          "turn": 3,
+          "dimension": "ungrounded",
+          "detail": "7: Daily swings exceed a few tenths of a pH unit — No numeric threshold for daily pH swing magnitude is provided in any supplied document; the source only mentions that daily pH swings indicate biological productivity without specifying a value.; A healthy system normally shows small diel swings (≈0.2–0.5 pH) — The supplied materials do not give a quantitative range (0.2–0.5 pH) for normal diel pH variation; only qualitative statements are present.; pH and DO/ORP move in opposite directions (pH up when DO up) — The water‑quality source states that pH and DO rise and fall together (in‑phase) during the daily cycle; it does not support the claim that they move in opposite directions.; pH and DO/ORP diverge — The concept of pH diverging from DO or ORP as a diagnostic signal is not mentioned in any of the provided documents.; A sustained trend over days/weeks can indicate acid rain increased runoff loss of carbonate buffering — While acid inputs and industrial discharge are discussed specific attribution to acid rain increased runoff or loss of carbonate buffering is not found in the supplied material.; Verify sensor calibration and cleaning — Procedures for verifying sensor calibration and cleaning are not described in any of the retrieved documents or service rules.; Check for acid or alkaline inputs (e.g. runoff industrial discharge acid mine drainage) — The documents mention industrial discharge and acid mine drainage but they do not list runoff as a specific acid or alkaline input; the claim about runoff is not directly supported."
+        },
+        {
+          "fixtureId": "followup-fouling-cleaning",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "6: Reference to \"[7] Helpful operating tips\" for cleaning conductivity probe. — The supplied EC probe document ([1]) labels the \"Helpful operating tips\" section as section 8 not 7; no section 7 matches this citation.; Temperature drift source: cable temperature lag. — None of the provided documents mention cable temperature lag affecting temperature readings.; Verify the internal temperature sensor (if present) is functioning. — The supplied materials do not describe an internal temperature sensor for the temperature probe or any procedure to verify it.; Check the cable insulation damage that could affect heat transfer. — No source in the retrieved documents discusses cable insulation damage influencing heat transfer for temperature measurements.; Verify that the sensor is fully submerged and at the correct angle (especially for DO). — The DO documents state the probe must be fully submerged but they do not specify a required angle.; If after cleaning and recalibration the drift persists consider replacing the probe or moving the deployment to a different location to rule out a site‑specific fouling or contamination source. — The recommendation to relocate the deployment or replace the probe is not found in any of the supplied documents; it is an invented procedural suggestion."
+        },
+        {
+          "fixtureId": "followup-fouling-cleaning",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: Both can contribute. — The supplied documents and service rules do not contain a statement that both the water and the pod (sensor) can contribute to observed drift; this attribution is not grounded.; A long‑term deployment often shows a slow systematic drift. — No retrieved document or service rule mentions that long‑term deployments typically exhibit a slow systematic drift; the claim is not supported by the provided material.; The sensor’s own aging and fouling are the most common culprits. — While the documents list aging fouling and bio‑film as possible causes none state that they are the *most common* cause; this superlative attribution is not grounded.; if the water chemistry is changing (e.g. a new source of ions or a shift in temperature) that will also show up as a drift in all parameters. — The supplied sources describe how temperature ion concentration and turbidity affect individual parameters but they do not claim that changes in water chemistry will produce a drift across *all* parameters; this broader statement is not found in the material."
+        },
+        {
+          "fixtureId": "fouling-do-erratic",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: A loose or damaged cable can introduce noise. Check the SMA/Tinned lead connection and cable length; replace if damaged. — The supplied documents describe the probe’s connectors and cable length but do not state that a loose or damaged cable introduces noise or that checking/replacing the cable is a recommended troubleshooting step."
+        },
+        {
+          "fixtureId": "fouling-do-erratic",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: a lack of flow can cause erratic noisy readings — The supplied documents describe that a small amount of water movement (≈60 mL min⁻¹) is needed for accurate readings but they do not explicitly state that lack of flow causes erratic or noisy readings.; If the water is still the probe may be “eating” oxygen faster than it can be replenished leading to the jumps you’re seeing — The documents note the probe consumes a tiny amount of oxygen and requires water movement but they do not specifically claim that still water causes the probe to deplete oxygen faster than it can be replenished or that this produces the observed jumps.; Increasing circulation or moving the probe to a flowing section should help stabilize the DO signal — The supplied material recommends a minimum flow rate for accurate measurements but it does not explicitly state that increasing circulation or relocating the probe to flowing water will stabilize the signal."
+        },
+        {
+          "fixtureId": "fouling-orp-span-loss",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "4: The loss of a daily ORP swing usually means the redox conditions in the water have become more stable (or the sensor is no longer responding to the usual day‑night cycle). — The supplied documents describe ORP behavior and its relationship to DO but none state that a flattened daily swing indicates more stable redox conditions or a non‑responsive sensor.; In a healthy system ORP typically rises with photosynthetic oxygen production during the day and falls as respiration consumes O₂ at night mirroring the DO curve. — The water‑quality‑metrics source notes that ORP is an early‑warning twin of DO and that it responds to chemical changes but it does not explicitly describe a daily rise‑and‑fall pattern that mirrors photosynthesis‑driven DO changes.; A flattened ORP pattern can indicate a sustained low‑oxygen or reduced state that keeps ORP near a constant value or a shift in the dominant electron acceptor (e.g. from O₂ to nitrate or sulfate). — The documents mention that a shift in the dominant electron acceptor drives ORP downward and that low‑oxygen conditions produce negative ORP values but they do not link a *flattened* ORP curve specifically to a sustained low‑oxygen state or to a constant ORP value.; Because ORP is an early‑warning twin of DO a flattened ORP curve often coincides with a stable or low DO level. — The source describes ORP as an early‑warning indicator and that it often falls before DO but it does not state that a flattened ORP curve typically coincides with a stable or low DO level."
+        },
+        {
+          "fixtureId": "followup-fouling-cleaning",
+          "turn": 3,
+          "dimension": "ungrounded",
+          "detail": "14: Conductivity cleaning: Distilled (or de‑ionized) water + a very mild detergent (e.g. a few drops of dish soap) — The supplied documents only mention tapping out bubbles and brushing the graphite plates (see EC_K_1.0_probe.pdf “Helpful operating tips”). No mention of detergent or dish soap.; Conductivity cleaning removes surface deposits and bubbles without leaving residues that could alter conductivity. — The documents describe removing bubbles and brushing deposits but do not state that the described solution removes residues without affecting conductivity.; ORP cleaning: Light bleach solution (≈ 1 %–5 % sodium hypochlorite) — The ORP probe cleaning doc (IORP_probe.pdf “Probe cleaning”) only says “light bleach solution” without specifying a concentration range.; ORP cleaning: a mild 5 % HCl solution — The ORP cleaning documentation mentions 5–10 % HCl as a possible soak but does not describe it as a “mild” 5 % solution; the answer adds a specific concentration not found in the source.; Dissolved Oxygen cleaning: Light bleach solution (≈ 1 %–5 % sodium hypochlorite) — The DO cleaning doc (Industrial-DO-probe.pdf “Probe cleaning”) mentions a “mild bleach mixture” but gives no concentration details.; Dissolved Oxygen cleaning: a mild 5 % HCl solution — The DO cleaning documentation does not mention HCl at all; only bleach is referenced.; pH cleaning: Light bleach solution (≈ 1 %–5 % sodium hypochlorite) — The pH cleaning doc (IpH_probe.pdf “Probe cleaning”) mentions a “light bleach solution” without providing a concentration range.; Turbidity cleaning: Light bleach solution (≈ 1 %–5 % sodium hypochlorite) — The turbidity document (usgs-nfm-a6.7-turbidity.pdf) discusses calibration solutions not cleaning and does not mention bleach.; Turbidity cleaning reference to [10] “Calibration turbidity solutions and calibration verification” as source for cleaning — The cited source deals with calibration standards not cleaning procedures.; General cleaning step: Turn off the sensor and disconnect it from the data‑logger. — No supplied document describes this specific procedural step.; General cleaning step: Remove the probe from the water. — The documents do not state this as a required step before cleaning.; General cleaning step: Apply the appropriate cleaning solution to the sensing area (use a soft brush or a clean cloth). — While some docs mention brushing none prescribe a universal “apply solution with a soft brush or cloth” for all probes.; General cleaning step: Rinse thoroughly with fresh distilled water to remove any residual cleaning agent. — The supplied materials do not specify a rinsing requirement with distilled water after cleaning.; General cleaning step: Dry the probe (or keep it wet if the manufacturer recommends it). — No document provides guidance on drying or keeping the probe wet after cleaning."
+        },
+        {
+          "fixtureId": "fouling-orp-span-loss",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: Re‑calibrate the probe – the reference electrode can drift especially after long use. Re‑calibration with a fresh ORP standard (±1 mV accuracy) is recommended every 6 months to a year for industrial probes — The supplied IORP_probe.pdf specifies an accuracy of ±1 mV but it does not provide a recommended recalibration interval of “every 6 months to a year” for industrial probes nor does it mention that the reference electrode drifts after long use.; Check the reference electrode and cable – a loose or corroded connection can dampen the signal. Inspect the SMA or tinned‑lead connector for corrosion or damage. — The documents list the connector types (SMA or tinned‑lead) but contain no statement about loose or corroded connections dampening the signal or the need to inspect for corrosion or damage.; Verify power and temperature compensation – ensure the probe’s power supply is stable and that any internal temperature sensor (if present) is functioning; temperature changes can mask ORP swings. — IORP_probe.pdf explicitly states the probe has “No Internal temperature sensor”. There is no mention of power‑supply stability or temperature compensation in the provided material.; Assess biofouling or chemical fouling – if the probe has been submerged for an extended period a biofilm or chemical deposit may have built up. — The supplied IORP_probe.pdf discusses cleaning methods (e.g. light bleach HCl) but does not mention biofouling or chemical fouling as a cause of signal loss."
+        },
+        {
+          "fixtureId": "precedence-conductivity-range",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: High dilution ... Adding large volumes of low‑conductivity water (e.g. fresh rain meltwater or irrigation water) to a more saline source can pull the overall EC down. — The supplied documents describe EC as a proxy for total dissolved ions and note that low EC indicates low ion content but none explicitly state that dilution of a more saline source by low‑conductivity water lowers EC.; Low mineralization or low salinity ... freshwater bodies that are fed mainly by precipitation and have little mineral runoff (e.g. oligotrophic lakes) naturally have EC values near 30 µS cm⁻¹. — The documents mention that low mineralization leads to low EC and give a general healthy freshwater range of 50–1 500 µS/cm but they do not provide a specific example or value of ~30 µS/cm for oligotrophic lakes.; Water source with naturally low EC ... Some groundwater or spring waters have very low EC because the aquifer material is low in soluble salts. — The supplied material discusses low EC in the context of freshwater precipitation‑fed systems and mineralization but it does not specifically mention groundwater or spring water having low EC due to low‑soluble‑salt aquifer material."
+        },
+        {
+          "fixtureId": "refusal-nutrients",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: turbidity itself is not a direct measure of nitrate or phosphorus. — The supplied documents describe turbidity as measuring suspended particles and note that particles can carry adsorbed pollutants (including phosphorus) but they do not explicitly state that turbidity is not a direct measure of nitrate or phosphorus."
+        },
+        {
+          "fixtureId": "probecal-conductivity-interval",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: Calibration drift: Even with a 10‑year spec small drift can accumulate especially if the probe is used near the limits of its range. — The EC probe documents state that recalibration is not necessary and do not mention any calibration drift or increased error near the probe’s range limits.; Perform a quick calibration check with a standard solution periodically (e.g. quarterly) to confirm the zero‑point. — The supplied materials contain no recommendation for periodic (e.g. quarterly) calibration checks or using a standard solution for verification."
+        },
+        {
+          "fixtureId": "threshold-do-hypoxia",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: \"moderate‑to‑high stress\" — The supplied material defines the 4–6 mg/L range as \"stress\" but does not qualify it as \"moderate‑to‑high stress\"."
+        },
+        {
+          "fixtureId": "refusal-out-of-domain",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: Tides mainly influence the sensor readings through the physical mixing of water masses and the associated changes in salinity temperature and suspended‑matter load. — The supplied documents describe tidal effects on EC temperature and turbidity but they do not explicitly state that tides cause changes in salinity or that physical mixing of water masses is the mechanism. The claim about salinity and mixing is not directly supported.; Tidal exchange can bring warmer or cooler water and the sensor’s temperature reading will track that change. — The provided material discusses temperature drivers such as solar input and air temperature and notes that temperature influences EC and DO but it does not specifically mention that tidal exchange brings warmer or cooler water that the sensor will track.; Mixing of water masses with different DO and CO₂ levels can shift DO and pH. — The documents explain that DO and pH are coupled through photosynthesis/respiration and that tidal mixing can affect parameters but they do not explicitly state that mixing water masses with differing DO and CO₂ levels shifts DO and pH."
+        },
+        {
+          "fixtureId": "threshold-turbidity-estuary",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: often higher during tidal or storm events — The supplied documents provide baseline turbidity ranges for estuaries (5–100+ NTU) and freshwater ( <5–25 NTU) but do not contain a statement that estuary turbidity is often higher during tidal or storm events."
+        },
+        {
+          "fixtureId": "threshold-turbidity-estuary",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: If your sensor is in an estuary: 60 NTU is generally considered normal and likely reflects the natural sediment load or tidal mixing. — The supplied documents provide the estuary turbidity range (≈ 5 – 100 + NTU) but do not state that values within this range ‘generally considered normal’ or that they ‘reflect the natural sediment load or tidal mixing.’; If your sensor is in a freshwater river: 60 NTU could indicate a turbidity spike—often from storm runoff erosion or other sediment‑loading events. — The documents define turbidity spikes and list causes (storm runoff erosion dredging) but do not specify that a 60 NTU reading constitutes a spike or that it ‘could indicate’ one; this inference is not directly supported by the provided material."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "2: [6] — The claim is that “the units are equivalent when measuring a calibration solution … but their respective instruments may not produce equivalent results for environmental samples.” Document 6 (usgs-nfm-a6.7-turbidity.pdf__5bf774f777a4) only provides turbidity unit tables and a troubleshooting guide; it does not contain any statement about equivalence of NTU and FNU for calibration solutions versus environmental samples.; [7] — The same claim is cited to Document 7 (usgs-nfm-a6.7-turbidity.pdf__0663ce0e133d) which only discusses ISO 7027 light‑source specifications for FNU and mentions that FTU is no longer used. It does not include the sentence about NTU/FNU being equivalent for calibration solutions but not for environmental samples."
+        },
+        {
+          "fixtureId": "definitional-conductivity",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "2: [5†L1-L8] — The claim states that freshwater normal range is 0–1 500 µS cm⁻¹ but the cited document lists the freshwater range as 50–1 500 µS cm⁻¹ not 0–1 500.; [5†L9-L15] — The claim also includes the freshwater range (0–1 500 µS cm⁻¹) which the cited document does not mention; it only provides the seawater range (45 000–55 000 µS cm⁻¹). Therefore this citation does not fully support the entire claim."
+        },
+        {
+          "fixtureId": "refusal-out-of-domain",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "2: 【5†L10-L12】 — The claim says that high‑current tidal phases resuspend sediment and produce a turbidity spike but the cited portion of the document only discusses how turbidity blocks light and dampens DO/pH without mentioning tidal‑driven resuspension or current‑related spikes.; 【5†L14-L16】 — The cited text again talks about turbidity’s effect on light and DO/pH not about tidal mixing causing turbidity spikes so it does not support the specific claim about high‑current tidal resuspension."
+        }
+      ]
+    },
+    {
+      "arm": "hybrid-slice-vector",
+      "pass": "warm",
+      "turnsJudged": 58,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "acronym-exact-token",
+            "turns": 6,
+            "mean": 1.3333333333333333,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "cross-document",
+            "turns": 6,
+            "mean": 0.16666666666666666,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 6,
+            "mean": 0.8333333333333334,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "definitional",
+            "turns": 6,
+            "mean": 1.1666666666666667,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "event-signature",
+            "turns": 4,
+            "mean": 0.75,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "follow-up",
+            "turns": 6,
+            "mean": 0.8333333333333334,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "fouling-drift",
+            "turns": 4,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 0.6666666666666666,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 4,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "refusal",
+            "turns": 6,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "threshold-lookup",
+            "turns": 4,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 0.8793103448275862,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 34,
+        "turns": 58,
+        "rate": 0.5862068965517241,
+        "totalClaims": 129,
+        "met": false
+      },
+      "citationSupport": {
+        "turnsChecked": 30,
+        "unsupported": 19
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-do-drift-vs-hypoxia",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits all required explanations citations and discriminating checks and asserts hypoxia with certainty violating both the must‑contain and must‑not items."
+        },
+        {
+          "fixtureId": "crossdoc-do-drift-vs-hypoxia",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — Fails to state the Atlas probe is galvanic with HDPE membrane zinc anode silver cathode; does not give galvanic failure modes note universal fouling or cite the required documents"
+        },
+        {
+          "fixtureId": "crossdoc-orp-reference-offset",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer provides no required content about reference electrode dependence probe construction ionic strength or a qualified decline to label a pod wrong thus missing all 'must contain' points."
+        },
+        {
+          "fixtureId": "crossdoc-orp-reference-offset",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — Misses both required points: does not recommend comparing trends over time nor recording reference type per DataPod"
+        },
+        {
+          "fixtureId": "crossdoc-recalibration-schedule",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer does not prioritize pH ORP and DO over conductivity does not cite the required sources does not reference the statement about probe drift and omits mention of DO electrolyte/membrane service at 1–2 years."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits all required stabilization tolerances and instead adds unrelated numeric criteria failing the rubric."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer fails to state the required minimum 60‑second equilibration time and invents other wait times violating the 'must not' clause."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-optics",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer mentions a detector on the opposite side of the sensor an arrangement not described in the provided sources violating the 'must not' rule."
+        },
+        {
+          "fixtureId": "event-sewage-signature",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — Fails to distinguish bloom signature does not note the pattern is a sustained non-diel crash and omits the pre-dawn DO minimum danger window; also lacks required citation."
+        },
+        {
+          "fixtureId": "followup-diel-swing",
+          "turn": 3,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer fails to identify the pre‑dawn DO minimum as the danger window and does not state that large in‑phase DO and pH swings indicate eutrophication/algal bloom and it invents numeric thresholds violating the 'must not' rule."
+        },
+        {
+          "fixtureId": "followup-fouling-cleaning",
+          "turn": 3,
+          "dimension": "correctness",
+          "detail": "scored 0 — It recommends brushing the pH probe (a prohibited method) and fails to give the required specific cleaning methods and prohibitions for pH and ORP probes."
+        },
+        {
+          "fixtureId": "fouling-do-erratic",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — Misses all required points and adds unrelated failure modes violating the must‑not items"
+        },
+        {
+          "fixtureId": "fouling-orp-span-loss",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — Misses all required points: does not mention platinum tip coating causing errors specific cleaning methods (stirring bleach/HCl) prohibition of abrasives or advising to rule out the probe before treating as an environmental signal."
+        },
+        {
+          "fixtureId": "precedence-conductivity-range",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — Did not attribute low EC to freshwater input (rain/runoff/groundwater) or note the EC change direction fingerprinting freshwater vs saline and omitted the required citation"
+        },
+        {
+          "fixtureId": "precedence-ph-range",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer cites a reference document range as authority violating the 'must not' rule."
+        },
+        {
+          "fixtureId": "probecal-conductivity-interval",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — Violates must‑not rule by attributing wandering EC values to calibration drift"
+        },
+        {
+          "fixtureId": "probecal-ph-interval",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits the required note about monthly or per‑batch calibration for strong‑acid/base use and also provides an unconditional one‑year interval which the rubric forbids."
+        },
+        {
+          "fixtureId": "acronym-ec-specific-conductance",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "4: depends on the temperature of the sample. — No supplied document explicitly states that EC (electrical conductivity) depends on sample temperature; the documents describe EC units and measurement principle but do not mention temperature dependence.; temperature compensation removes the influence of temperature on ion mobility allowing comparisons between samples taken at different temperatures — The EPA guidance and the source‑of‑truth document define specific conductance as temperature‑corrected conductivity but do not explain that the correction removes temperature influence on ion mobility or that it enables comparisons across temperatures.; EC is the uncorrected temperature‑dependent reading. — The supplied materials do not label EC as an uncorrected temperature‑dependent measurement; they only describe EC as a measure of water’s ability to carry current.; Specific conductance is the temperature‑corrected value making it a more reliable indicator of dissolved ion concentration across varying temperatures. — While the documents state that specific conductance is temperature‑corrected they do not claim it is a more reliable indicator of dissolved ion concentration across varying temperatures."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: To compare the two pods you would need a conversion factor or a common calibration otherwise the values cannot be directly compared. — The supplied documents note that NTU and FNU are not interchangeable and recommend standardizing on one unit but they do not state that a conversion factor or common calibration is required to compare the two pods."
+        },
+        {
+          "fixtureId": "crossdoc-do-drift-vs-hypoxia",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: falls into the hypoxic category defined in the water‑quality reference (≤ 2 mg L⁻¹) — The supplied water‑quality document defines < 2 mg/L as \"hypoxia\" and 2–4 mg/L as \"hypoxic stress\"; it does not define a \"hypoxic\" category as ≤ 2 mg/L.; This indicates the river is currently hypoxic. — The source uses the term \"hypoxia\" for concentrations < 2 mg/L not \"hypoxic\"; the answer’s labeling of the condition as \"hypoxic\" is not directly supported by the provided material."
+        },
+        {
+          "fixtureId": "crossdoc-do-drift-vs-hypoxia",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: If your probe is a galvanic (electrochemical) sensor the optical‑sensor fouling warning does not apply. — The supplied documents do not state that the fouling warning is inapplicable to galvanic sensors; they only mention fouling concerns for optical DO sensors without addressing galvanic sensors."
+        },
+        {
+          "fixtureId": "crossdoc-orp-reference-offset",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: Check temperature compensation – ORP is temperature‑dependent so ensure both the pod and the reference probe are at the same temperature or apply the same temperature correction. — None of the supplied documents mention that ORP is temperature‑dependent or that temperature compensation is required for ORP measurements.; Verify the reference electrode – ORP values depend on the reference type (Ag/AgCl vs. SHE). Make sure the pod and the reference probe use the same reference or note the offset. — The supplied materials do not discuss reference electrode types for ORP or state that ORP values depend on the reference electrode."
+        },
+        {
+          "fixtureId": "crossdoc-recalibration-schedule",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: many operators begin with the ORP probe because it is often the most sensitive to drift and is used as an early warning for changes in the water chemistry. — The provided documents contain no information about operator preferences which probe is calibrated first or that ORP is the most sensitive to drift; they only list recalibration intervals and technical specifications."
+        },
+        {
+          "fixtureId": "deepmanual-do-calibration-procedure",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: The USGS field‑manual recommends doing the one‑point DO calibration in air at the field site. — The provided USGS documents (sources [6]‑[10]) do not contain any statement that the USGS field manual specifically recommends performing the one‑point DO calibration in air at the field site.; This “calibration in air” (Procedure 1) is the simplest requires no water bath and can be performed on‑site with a portable air‑calibration chamber or a wet‑towel method. — None of the supplied documents describe Procedure 1 as the simplest state that it requires no water bath or mention a portable air‑calibration chamber or wet‑towel method.; “Procedure 1—Calibration in air … the sensor is exposed to air at the same temperature as the water it will measure” (USGS *A6.2*). — The exact quoted wording does not appear in any of the retrieved USGS excerpts; the sources provided do not contain this sentence."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "3: For a multiparameter sonde the USGS field‑measurement guidelines state that you should hold the sensor reading until it stabilizes before recording it. — The supplied USGS documents only describe a stabilization step for dissolved‑oxygen measurements (source [7]); they do not contain a general statement that the USGS guidelines require holding any sensor reading until it stabilizes before recording.; The same “stabilize‑before‑record” rule applies to the other parameters (pH ORP conductivity temperature turbidity) though the exact time to reach stability can vary with the sensor and the water conditions. — No provided source mentions a stabilization‑before‑record rule for pH ORP conductivity temperature or turbidity. The only stabilization guidance in the supplied material concerns dissolved‑oxygen (source [7]).; The guidelines recommend allowing the sensor to reach a steady value before logging the data. — The USGS field‑measurement guidelines supplied do not contain a blanket recommendation that all sensors must reach a steady value before logging; only the dissolved‑oxygen procedure includes a stabilization step (source [7])."
+        },
+        {
+          "fixtureId": "deepmanual-do-calibration-procedure",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "7: Record the sensor’s reading and adjust if it differs from the expected value. — The supplied USGS documents describe comparing the reading to the expected 100 % saturation value but they do not mention adjusting the sensor if it differs.; Prepare the calibration environment – heat or cool the air or water bath to the target temperature. — The documents discuss temperature stability of the calibration environment but they do not specify heating or cooling the air or water bath to a target temperature.; Place the sensor – submerge it (or expose it to air) and allow it to equilibrate for the time specified by the manufacturer (often a few minutes). — The sources mention submerging or exposing the sensor but they do not provide a manufacturer‑specified equilibration time or the suggestion of “a few minutes.”; Record the reading – note the DO value shown by the sonde. — While the procedures involve comparing the sensor reading to a reference the documents do not explicitly state that the user should record the DO value shown by the sonde.; Adjust if necessary – most sondes allow a manual offset to be set so the reading matches the expected value. — The USGS guidance does not mention the ability to manually offset the reading or that most sondes provide this feature.; Routine field checks (daily or weekly). — The provided material does not prescribe a daily or weekly frequency for one‑point calibrations.; After transport or a long deployment. — The sources do not specifically recommend performing a one‑point calibration after transport or a long deployment."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: The USGS field‑measurement guidelines do not prescribe a single “wait‑time” for every depth; instead they require that you record a stable value. — The supplied USGS documents discuss stabilization criteria and median‑of‑readings procedures but none mention depth‑specific wait times or state that the guidelines do not prescribe a single wait time for each depth.; pH ORP Conductivity Temperature Turbidity usually a few minutes (often < 5 min) to stabilize. — No supplied document provides typical stabilization times for pH ORP conductivity temperature or turbidity. Only dissolved oxygen stabilization time (5–10 min) is mentioned.; Watch the display; when the value stops changing (within the sensor’s resolution) you can record it. — The provided materials do not contain guidance that the user should watch the display and record when the reading stops changing within the sensor’s resolution.; Optionally take 5–7 readings at 3–5‑min intervals and use the median of the last 5 or more as the recorded value (this is the procedure used for zero‑DO calibration). — The median‑of‑readings procedure appears in USGS field‑measurement guidelines for general measurements not specifically for zero‑DO calibration. Linking it to zero‑DO calibration is not supported by the documents.; So the “wait time” is essentially the time needed for the sensor to reach a steady reading—typically 5–10 minutes for DO and usually a few minutes for the other parameters. — While the 5–10 minute DO stabilization is documented the statement that other parameters typically stabilize in “a few minutes” is not found in any supplied source."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-optics",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "3: measures how much light is scattered or **absorbed** by particles suspended in the water — The supplied documents (e.g. [5] water‑quality‑metrics‑source‑of‑truth) describe turbidity as measuring light **scattered** by suspended particles but they do not mention absorption as part of the measurement.; A photodetector on the **opposite side of the sensor (or at a 90° angle in some designs)** measures the intensity of light that has passed through or been scattered by the sample — None of the provided sources (e.g. [9] and [10]) specify detector placement opposite the light source or a 90° angle configuration; they only note that turbidity sensors use a single‑beam infrared design.; The difference between the emitted and detected light is **converted to a turbidity value (NTU FNU etc.)** — The documents define turbidity units (NTU FNU) and discuss optical measurement principles but they do not describe a conversion step that computes turbidity from the difference between emitted and detected light."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-optics",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: a given sample can read for example 10 NTU but 8 FNU. — No supplied document provides this specific numeric example; the documents describe general differences and ranges but do not state that a sample would read 10 NTU and 8 FNU."
+        },
+        {
+          "fixtureId": "definitional-conductivity",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "4: values above ~1 000 µS/cm often indicating a high ion load from runoff road salt or industrial discharges — The supplied documents (service rules and retrieved PDFs) give the normal freshwater range (0–1 500 µS/cm) and note that sudden EC shifts can flag salinity intrusion road‑salt runoff or industrial/chemical discharge but they do not specify a ~1 000 µS/cm threshold nor link that specific value to high ion load from those sources.; Lower conductivity (e.g. 50–200 µS/cm) usually reflects cleaner less mineral‑rich water — The documents list a healthy freshwater EC range of 50–1 500 µS/cm but do not state that the 50–200 µS/cm sub‑range specifically indicates cleaner or less mineral‑rich water.; higher conductivity can signal nutrient loading — The sources mention that EC shifts can indicate salinity intrusion road‑salt runoff or industrial/chemical discharge but they do not mention nutrient loading as an interpretation of higher conductivity.; higher conductivity can signal other chemical inputs — While the documents note that EC shifts may flag industrial/chemical discharge the phrase \"other chemical inputs\" is not explicitly supported as a general interpretation in the supplied material."
+        },
+        {
+          "fixtureId": "definitional-conductivity",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: Values in that range are interpreted as “clean” (≈50–200 µS/cm) versus “high‑ion” (≈1 000–1 500 µS/cm) water — The supplied documents only give a general healthy freshwater conductivity range of 50–1 500 µS/cm (source 5). They do not define sub‑ranges of 50–200 µS/cm for “clean” or 1 000–1 500 µS/cm for “high‑ion”.; You would need a sensor with a higher range when deployed in salt water — No provided material states a requirement to change to a higher‑range sensor for salt‑water deployments. The documents list the sensor’s freshwater range (0–1 500 µS/cm) and typical seawater conductivity values but they do not mention needing a different sensor.; The same numeric conductivity value would represent a much lower relative ion concentration compared to freshwater — The supplied sources describe absolute conductivity ranges for freshwater and seawater but do not make a direct comparison stating that an identical numeric reading corresponds to a lower relative ion concentration in salt water."
+        },
+        {
+          "fixtureId": "definitional-temperature-master-variable",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "3: temperature sets the baseline for ORP — The supplied material does not state that temperature sets the baseline for ORP; it only mentions temperature as the master variable affecting DO capacity biological/chemical rates and EC.; temperature sets the baseline for pH — The supplied material does not state that temperature sets the baseline for pH; pH is not mentioned in relation to temperature as a baseline.; temperature sets the baseline for turbidity — The supplied material does not state that temperature sets the baseline for turbidity; turbidity is not linked to temperature as a baseline."
+        },
+        {
+          "fixtureId": "definitional-temperature-master-variable",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: So a DO fall that matches the magnitude you’d expect from a 3 °C temperature increase is an expected response. — The supplied material does not contain any statement about the expected magnitude of DO change for a specific 3 °C temperature increase."
+        },
+        {
+          "fixtureId": "event-sewage-signature",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: EC ↑ (increase in dissolved ions from wastewater) — The supplied documents (water‑quality event matrix) show EC ↑ for a sewage/sanitary discharge but they do not explicitly state that the increase is due to dissolved ions from wastewater. The attribution to wastewater‑derived ions is not present in the provided material.; Turbidity ↑ (suspended solids from the discharge) — The documents indicate Turbidity ↑ for a sewage/sanitary discharge and they define turbidity as light scattered by suspended particles but they do not specifically link the increase to “suspended solids from the discharge.” That specific causal wording is not found in the supplied sources."
+        },
+        {
+          "fixtureId": "event-sewage-signature",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: An algal bloom would normally show a temperature rise — The supplied documents (water-quality-metrics source of truth) do not state that algal blooms are characterized by a temperature rise; the event matrix for algal bloom does not mention temperature change.; and a drop in DO and ORP — The documents describe algal blooms as having super‑saturation of DO (high DO) and do not indicate a drop in DO or ORP; no source supports this characterization.; but it does not typically produce a simultaneous rise in EC and a turbidity spike — The supplied material does not explicitly state that algal blooms do not cause simultaneous EC increase and turbidity spike; the event matrix does not mention EC or turbidity for algal blooms so this attribution is not grounded."
+        },
+        {
+          "fixtureId": "followup-diel-swing",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: with diel swings of a few tenths of a unit being common — The supplied documents describe daily pH swings but do not specify the magnitude as “a few tenths of a unit”. No source provides this quantitative range.; a similar daily pH swing (e.g. 7.0 → 7.4 → 7.0) would also be expected in a healthy system — The answer gives a specific numeric example of a 0.4‑unit pH swing which is not mentioned in any of the provided materials."
+        },
+        {
+          "fixtureId": "event-stormwater-vs-intrusion",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "13: Tidal changes are periodic (≈12.4 h for a semi‑diurnal tide). — No retrieved document or service rule mentions the 12.4 hour period of tides.; Storm‑runoff events are usually short‑lived and occur shortly after rainfall. — The supplied materials describe storm‑runoff signatures but do not state they are short‑lived or that they occur shortly after rain.; Tides produce a gradual repeatable rise and fall in EC temperature and turbidity that repeats each cycle. — The documents note that EC temperature and turbidity oscillate with the tide but they do not describe the change as gradual repeatable or specify the pattern.; A storm‑runoff event produces a sudden non‑repeating step‑down in EC and a sharp turbidity spike that then decays over minutes to hours. — No source provides this specific description of the EC and turbidity response to storm‑runoff.; A sudden drop in EC that does not recover in the next 12 h suggests runoff whereas a gradual sinusoidal pattern suggests tide. — The 12‑hour recovery window and the diagnostic rule linking it to runoff are not found in any provided material.; In freshwater systems EC typically rises during high tide (more saline water) and falls during low tide. — The documents discuss EC changes with tidal phase in estuarine contexts but do not state this behavior specifically for freshwater systems.; A drop in EC during a high‑tide period would be inconsistent with tidal influence. — No source asserts that an EC drop during high tide contradicts tidal effects.; If the EC drop occurs when the tide is falling it could still be runoff but a simultaneous rise in EC would be expected for tide. — The expectation of a simultaneous EC rise during falling tide is not documented.; Turbidity spikes from runoff are often accompanied by a sudden increase in suspended solids and a drop in DO (due to organic loading). — The supplied texts do not link turbidity spikes from runoff to a sudden DO drop.; Tidal turbidity changes are usually more gradual and linked to water movement rather than a sharp sediment pulse. — No material describes tidal turbidity changes as gradual or attributes them to water movement versus sediment pulses.; A rapid DO drop with the turbidity spike supports runoff. — The documents do not provide this specific diagnostic rule.; Obtain the local tidal chart (e.g. NOAA tide tables) and overlay the sensor timestamps. — The guidance to use NOAA tide tables is not present in the provided sources.; A sudden turbidity spike coupled with a sharp EC drop that does not follow the regular tidal cycle (12‑hour period) and that aligns with rainfall is most likely storm‑runoff not tidal influence. — The conclusion combines multiple unsupported specifics (12‑hour tidal cycle alignment with rainfall) that are not stated in any retrieved document or service rule."
+        },
+        {
+          "fixtureId": "followup-diel-swing",
+          "turn": 3,
+          "dimension": "ungrounded",
+          "detail": "2: DO stays below 6 mg L⁻¹ for an extended period (e.g. > 24 h) indicates a problem. — The supplied documents define threshold levels for DO (e.g. >6 mg L⁻¹ healthy 4–6 mg L⁻¹ stress) but do not specify a time duration such as “> 24 h” for concern.; DO is low during daylight but normal at night suggests high oxygen demand during the day (e.g. algal bloom or organic discharge). — The provided sources describe typical diel cycles and list patterns for algal blooms sewage discharge and other events but none describe a pattern where DO is specifically low only in daylight while normal at night as a diagnostic indicator."
+        },
+        {
+          "fixtureId": "followup-fouling-cleaning",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "14: It’s normal for a long‑term deployment to show a slow systematic drift in all of the parameters. — No document states that drift across all parameters is normal for long‑term deployments.; The most common causes are sensor aging fouling and calibration drift. — The supplied documents list specific causes for individual probes but do not provide a summary of “most common causes” for all sensors.; Sensor drift is usually < 0.1 °C over months. — No temperature‑drift specification (< 0.1 °C) appears in any of the provided materials.; The conductivity probe itself does not need recalibration but bio‑film or mineral deposits can change the effective cell area. — While the conductivity document says recalibration is not needed it does not mention bio‑film or mineral deposits altering the cell area.; No electrolyte replacement is needed for the conductivity probe. — The conductivity documents never discuss electrolyte replacement positive or negative.; pH probes drift ~0.01–0.02 pH units per year in typical use. — No drift rate for pH probes is given in the supplied pH documentation.; Re‑calibrate pH with fresh buffers (pH 4 and pH 7). — The pH document does not specify using pH 4 and pH 7 buffers for calibration.; ORP probes drift ~1–2 mV per year. — The ORP documents contain no numerical drift rate for ORP probes.; Re‑calibrate ORP with a standard ORP solution (e.g. 200 mV reference). — The ORP documentation does not mention a 200 mV reference solution for calibration.; Log the drift – note the direction and magnitude of change for each parameter. — No guidance on logging drift is present in any of the provided sources.; Perform a full calibration – use the manufacturer’s recommended buffers/standards for pH ORP and DO. — The documents give calibration procedures for each probe but do not collectively state a “full calibration” using manufacturer‑recommended buffers/standards for all three.; Re‑measure – after cleaning and calibration record the new baseline and compare to the old drift trend. — The supplied materials do not describe a post‑calibration re‑measurement and baseline‑comparison workflow.; If the drift is small (e.g. < 5 % of the sensor’s range) and the readings still fall within the operator‑provided normal ranges the sensor is likely still reliable. — No threshold of “< 5 % of the sensor’s range” is given in any document.; If the drift is larger or the readings fall outside the normal ranges consider replacing the affected probe. — The documents do not prescribe replacement based on drift magnitude or readings outside normal ranges."
+        },
+        {
+          "fixtureId": "followup-fouling-cleaning",
+          "turn": 3,
+          "dimension": "ungrounded",
+          "detail": "5: Conductivity (EC) cleaning uses a mild non‑phosphate detergent or a light bleach rinse (≈ 0.5 % NaOCl). — The EC_K_1.0_probe.pdf only mentions brushing the graphite electrodes and using an Atlas Scientific conductivity probe cleaner; it does not specify a non‑phosphate detergent bleach or a 0.5 % NaOCl concentration.; pH cleaning uses a mild bleach solution (≈ 0.5 % NaOCl) or 5 % HCl for hard coatings. — The IpH_probe.pdf describes using a light bleach solution for hard coatings but never mentions a specific concentration (0.5 % NaOCl) nor any use of 5 % HCl.; ORP cleaning uses a mild bleach solution (≈ 0.5 % NaOCl) or 5 % HCl for hard coatings. — The IORP_probe.pdf similarly recommends a light bleach solution for hard coatings but does not give a concentration nor mention 5 % HCl.; Dissolved Oxygen (DO) cleaning uses a mild bleach solution (≈ 0.5 % NaOCl) or 5 % HCl for hard coatings. — The Industrial‑DO‑probe.pdf advises a mild bleach mixture for cleaning the membrane cap and sides but it does not specify a 0.5 % NaOCl concentration nor any use of 5 % HCl.; The cited “Probe cleaning” sections (lines 7‑8) in the PDFs support the cleaning solutions listed. — The referenced PDFs do not contain line‑numbered “Probe cleaning” sections that mention the specific cleaning solutions or concentrations claimed; the citations are inaccurate."
+        },
+        {
+          "fixtureId": "followup-fouling-cleaning",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: All parameters shifting in the same direction (e.g. temperature up EC up pH down ORP down DO down) indicates sensor aging or fouling. — The supplied documents describe sensor aging fouling and calibration drift but none state that a simultaneous shift of all parameters in the same direction specifically points to sensor aging or fouling.; Only one or two parameters changing (e.g. EC spikes while others stay constant) indicates a change in the water chemistry (e.g. runoff salinity intrusion temperature change). — The documents discuss water‑chemistry effects on individual parameters but they do not link the pattern of only one or two parameters changing to a water‑chemistry change as a rule.; Sudden large changes in several parameters (e.g. EC up ORP down DO down) indicates a real water‑quality event (e.g. storm runoff sewage discharge). — While the water‑quality metrics document lists event signatures it does not state that the described pattern of sudden multi‑parameter changes definitively signals a real water‑quality event.; If the values are still within the normal ranges the water is likely fine and the pod is drifting. — The operator‑provided normal ranges are given but the documents do not assert that values within those ranges mean the water is fine and any drift must be due to the pod.; If no event is known the pod may be fouling or mis‑calibrated. — The documents mention fouling and calibration drift but they do not claim that the absence of a known external event implies the pod is fouling or mis‑calibrated."
+        },
+        {
+          "fixtureId": "fouling-do-erratic",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "4: The sudden “jumps” in your DO reading are a classic sign of a sensor‑related issue rather than a real water‑quality event. — None of the supplied documents state that erratic jumps in DO are a classic indicator that the issue is sensor‑related rather than a genuine water‑quality event.; Bio‑fouling or surface deposits on the galvanic probe can cause the voltage to drift in a step‑wise fashion as the membrane becomes partially blocked or the electrolyte is depleted. — The documents mention bio‑fouling causing irregular readings and membrane wear leading to irregular readings but they do not describe step‑wise voltage drift caused by partial blockage or electrolyte depletion.; Temperature changes affect the DO signal (the probe is temperature‑sensitive). If the temperature sensor isn’t reading correctly the DO value can jump when the water temperature changes. — The supplied material notes that temperature influences dissolved‑oxygen capacity but it does not state that temperature‑sensor errors cause jumps in DO readings.; Water movement: the galvanic probe consumes a tiny amount of oxygen; in very still water the sensor can “stall” and then release a sudden reading when the water is disturbed. — The documents confirm that a galvanic DO probe consumes a small amount of oxygen and that some water movement is needed for accurate readings but they do not describe a “stall” condition followed by a sudden release of a reading when water is disturbed."
+        },
+        {
+          "fixtureId": "fouling-do-erratic",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "6: it usually causes a slow steady drop in the reading as the probe consumes a tiny amount of oxygen not the rapid “jumps” you’re seeing. — The supplied documents describe that a galvanic DO probe consumes a very small amount of oxygen and that still water can cause the sensor to ‘stall’ and then release a sudden reading when disturbed but they do not state that still water usually causes a slow steady drop in the reading.; In still water the probe’s membrane can become partially blocked — No passage in the provided documents mentions membrane blockage occurring specifically due to still water conditions.; the electrolyte can deplete — The documents do not link electrolyte depletion to still water; electrolyte depletion is mentioned generally in maintenance sections but not as a consequence of still water.; leading to a step‑wise change when the water is disturbed or when the probe’s internal reference drifts — While step‑wise changes are discussed in the context of fouling or calibration drift the supplied material does not connect these step‑wise changes to still water or to internal reference drift in the way claimed.; This can look like erratic spikes but it’s a sensor‑related artifact rather than a true change in water quality. — The documents do not explicitly state that the described behavior is a sensor‑related artifact as opposed to a true water‑quality change.; stillness can contribute to erratic DO signals — The provided sources mention that still water can cause the probe to stall and then give a sudden reading but they do not describe stillness as contributing to erratic spikes."
+        },
+        {
+          "fixtureId": "fouling-orp-span-loss",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "12: A flat ORP curve over a month usually means the redox conditions in the water have become very stable—either because the water chemistry is truly steady or because the probe is no longer responding properly. — The supplied documents describe what ORP measures and typical ranges but none state that a flattened ORP curve indicates stable redox conditions or probe malfunction.; Low biological activity little oxygen consumption or a steady source of oxidants/reductants. — The documents discuss drivers of ORP and DO but they do not list these specific causes as explanations for a flat ORP reading.; If DO is also flat and near saturation the water may simply be in a steady state. — No source provided defines a relationship between flat DO near saturation and a steady-state interpretation.; The probe’s reference electrode or platinum tip may have degraded causing a constant reading. — While the ORP probe description mentions a platinum tip there is no statement that degradation of the reference electrode or tip results in a constant ORP value.; Run a cleaning routine and verify calibration. — Cleaning procedures are described but the claim that running a cleaning routine will resolve a constant ORP reading is not supported by the documents.; The probe’s zero/offset may have shifted masking the natural daily swing. — The documents note recalibration intervals but do not specifically state that zero/offset drift can mask daily ORP variation.; A sudden shift in the water’s chemistry (e.g. a new source of oxidants) can dampen the daily cycle. — The supplied material explains what drives ORP but does not claim that a sudden chemical shift will flatten the daily ORP cycle.; Look for concurrent changes in EC turbidity or a sudden temperature spike. — No source links concurrent changes in EC turbidity or temperature spikes to a flattened ORP curve.; Check DO and pH – If they also show a flattened daily pattern the water may be in a new steady state. — The documents do not provide guidance that simultaneous flattening of DO and pH indicates a new steady state.; Re‑calibrate the ORP probe; the document notes that industrial probes may need recalibration yearly or more often if conditions are harsh (source: water‑quality‑metrics‑source‑of‑truth). — The water‑quality‑metrics‑source‑of‑truth document contains no recalibration schedule; the recalibration interval is only found in the ORP probe spec not in the cited source.; Clean the probe tip and membrane; fouling can blunt the ORP swing (source: IORP_probe.pdf). — The IORP_probe.pdf describes cleaning but does not state that fouling specifically blunts the ORP swing.; Review recent events – Look for any recent discharges temperature changes or turbidity spikes that could have altered the redox environment (source: water‑quality‑metrics‑source‑of‑truth). — The cited document discusses event signatures but does not advise reviewing recent discharges temperature changes or turbidity spikes as a diagnostic step for a flat ORP curve."
+        },
+        {
+          "fixtureId": "fouling-orp-span-loss",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: Industrial ORP probes are recommended to be recalibrated at least once per year or more often if the environment is harsh (source: IORP_probe.pdf). — The IORP_probe.pdf document provides specific recalibration intervals for different use cases (e.g. fish tank once per year industrial use monthly) but does not contain a generic recommendation of “at least once per year or more often if the environment is harsh.”; A drifted reference electrode can produce a constant reading. — None of the supplied documents (IORP_probe.pdf EC_K_1.0_probe.pdf water‑quality‑metrics‑source‑of‑truth.pdf USGS guides) explicitly state that a drifted reference electrode results in a constant ORP reading.; Loose or dirty connections weak batteries or a broken cable can cause erratic or flat readings (source: USGS troubleshooting guides in tm9a6.1 and tm9a6.4). — The USGS troubleshooting guides cited pertain to temperature sensors not ORP probes. They do not provide evidence that the same wiring or power issues cause erratic or flat ORP readings."
+        },
+        {
+          "fixtureId": "precedence-conductivity-range",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: Low mineral or salt content – e.g. water that has been heavily filtered de‑ionized or comes from a source with naturally low dissolved‑salt levels. — The supplied documents describe what conductivity measures and give normal ranges but they do not mention heavy filtration de‑ionization or naturally low dissolved‑salt sources as causes of low conductivity.; Low salinity – freshwater that has little runoff or groundwater input so the ionic load is minimal. — The provided material does not link low salinity or limited runoff/groundwater to low conductivity; it only gives typical EC ranges and general definitions.; Low pollution or nutrient load – little industrial or agricultural discharge that would otherwise add ions. — No source in the retrieved documents or service rules connects low pollution or nutrient discharge to low conductivity values.; temperature‑compensated EC is normally used so this is a secondary factor. — While the documents note that temperature affects raw EC they do not state that temperature‑compensated EC is the normal practice."
+        },
+        {
+          "fixtureId": "probecal-conductivity-interval",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: biofilm ... can build on the graphite electrodes altering the measured conductivity — The supplied documents describe deposits and dirt on conductivity probes but do not mention biofilm formation on the graphite electrodes.; Calibration drift – even though the probe is rated for ~10 years before recalibration long deployments can still show slow one‑directional trends that are actually sensor drift rather than real water‑quality changes — The documents provide the 10‑year recalibration interval and discuss drift for pH DO and ORP but they do not state that EC probes experience calibration drift or one‑directional trends over long deployments.; Physical wear corrosion or contamination of the graphite plates can change the probe’s response — The supplied material mentions deposits and cleaning for conductivity probes but it does not specifically mention corrosion or physical wear of the graphite plates affecting response."
+        },
+        {
+          "fixtureId": "refusal-nutrients",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: but they do not prove that dissolved nutrients (nitrate phosphorus etc.) are higher. — The supplied documents describe turbidity as a proxy for contaminant (including nutrient) loading but do not state that turbidity does not prove higher dissolved nutrient concentrations.; Turbidity is a useful proxy for some types of nutrient loading—e.g. algal blooms or sediment‑rich runoff can increase both turbidity and nutrient concentrations — The provided sources mention turbidity spikes as proxies for sediment runoff and that particles can carry adsorbed nutrients but they do not specifically link algal blooms or sediment‑rich runoff to simultaneous increases in turbidity and nutrient concentrations.; To know nitrate or phosphorus levels you would need a separate chemical analysis or a sensor that measures those parameters. — No supplied material states that chemical analysis or a dedicated sensor is required to determine nitrate or phosphorus levels."
+        },
+        {
+          "fixtureId": "threshold-do-hypoxia",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: the reference document labels the 4–6 mg L⁻¹ range as “oxygen stress” — The supplied water‑quality metrics document lists the range as “4–6 mg L⁻¹ stress” but does not use the term “oxygen stress”.; the reference document labels the 4–6 mg L⁻¹ range as “moderate stress” — The document describes the range as “stress” without qualifying it as “moderate”; the phrase “moderate stress” is not present in the provided material."
+        },
+        {
+          "fixtureId": "threshold-turbidity-estuary",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: sometimes much higher during storms or runoff events — The provided documents give typical turbidity ranges for estuaries (5–100+ NTU) but do not mention storms or runoff events causing higher values so this attribution is unsupported."
+        },
+        {
+          "fixtureId": "threshold-turbidity-estuary",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: 60 NTU is on the higher end of the typical estuary range (5–100 NTU) — The provided documents list the estuary turbidity range as 5–100 NTU but they do not characterize 60 NTU as being on the higher end of that range."
+        },
+        {
+          "fixtureId": "acronym-kcl-creep",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "2: [4†L8-L12] — The IpH_probe.pdf discusses KCl creep and says to simply rinse the probe but it does not mention adding a small amount of KCl or NaCl to re‑hydrate the probe as the answer claims.; [4†L18-L22] — The same document only advises rinsing and states the probe is not damaged; it does not include the step of re‑hydrating with KCl or NaCl so the citation does not fully support the answer’s claim."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "2: [6] — The claim is that “NTU and FNU are not interchangeable.” Document [6] (usgs-nfm-a6.7-turbidity.pdf__0663ce0e133d) defines NTU and FNU provides optical geometry details and notes that FTU and JTU are obsolete but it does not contain any statement asserting that NTU and FNU are not interchangeable.; [7] — The claim is that “NTU and FNU are not interchangeable.” Document [7] (usgs-nfm-a6.7-turbidity.pdf__5bf774f777a4) presents tables of turbidity units and troubleshooting guidance but it does not include any assertion that NTU and FNU cannot be used interchangeably."
+        },
+        {
+          "fixtureId": "crossdoc-do-drift-vs-hypoxia",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "1: 5 — The cited document (water-quality-metrics-source-of-truth.pdf) does not provide a normal dissolved‑oxygen range of 5–14 mg L⁻¹; it lists different baseline ranges (e.g. 6–11 mg L⁻¹ for freshwater) and defines hypoxia as <2 mg L⁻¹ not ≤2 mg L⁻¹. Therefore the claim is not supported by this source."
+        },
+        {
+          "fixtureId": "crossdoc-orp-reference-offset",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: 【6†L1-L4】 — The claim that the ORP probe’s life expectancy is ~4 years and that recalibration is recommended yearly for the first two years is not present in the USGS field‑measurement‑guidelines document which only discusses averaging multiple measurements and does not mention ORP probe specifications or recalibration schedules."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "2: [7] — The claim that you should “take at least five readings 3–5 min apart and use the median of the last five or more readings” is not found in document [7] (USGS NFM field‑measurement guidelines __9468990c7428) which only describes how to purge a monitor well. The described five‑reading median‑of‑last‑five procedure appears in document [9] (USGS NFM field‑measurement guidelines __f1715861e455).; [7] — The claim that “this is the procedure used for zero‑DO calibration” is not supported by document [7]; that document does not mention zero‑DO calibration at all. The zero‑DO calibration steps (immersing the sensor waiting 5–10 min recording the reading) are described in document [8] (USGS NFM dissolved‑oxygen guidelines __c536dd79ec6f)."
+        },
+        {
+          "fixtureId": "definitional-conductivity",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: 5 — The claim that “In freshwater the sensor’s useful range is 0–1 500 µS/cm. Values in that range are interpreted as ‘clean’ (≈50–200 µS/cm) versus ‘high‑ion’ (≈1 000–1 500 µS/cm) water” is not found in the water-quality-metrics-source-of-truth document. The document only provides typical EC ranges (e.g. 50–1 500 µS/cm for freshwater) and does not mention a sensor’s usable range or the specific clean vs. high‑ion interpretation."
+        },
+        {
+          "fixtureId": "followup-diel-swing",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: [5] — The water-quality-metrics-source-of-truth.pdf provides the healthy freshwater pH range of 6.5–8.5 but it does not state that diel pH swings of a few tenths of a unit are common; it only mentions that daily pH swings occur without specifying their magnitude."
+        },
+        {
+          "fixtureId": "fouling-do-erratic",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "2: 【3†L11-L15】 — The claim that still water makes a galvanic DO probe show a slow steady drop because the probe consumes oxygen and that this explains the erratic jumps is not supported by the Industrial-DO-probe.pdf document. That document only notes that a galvanic DO probe consumes a very small amount of oxygen and that some water movement is needed for accurate readings; it does not describe a slow steady drop in still water or link stillness to the specific erratic behavior described.; 【5†L6-L9】 — The claim that in still water the probe’s membrane can become partially blocked or the electrolyte can deplete causing step‑wise changes when disturbed or when the internal reference drifts is not found in the water-quality-metrics-source-of-truth.pdf document. That document discusses water‑quality parameters (temperature DO ORP EC pH turbidity) and their relationships but contains no information about probe membrane blockage electrolyte depletion or reference drift."
+        },
+        {
+          "fixtureId": "precedence-ph-range",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: [5] — The answer claims that the operator‑provided normal range (6.5–8.5 pH) takes precedence over the seawater range (7.8–8.3 pH). The cited document only lists typical pH ranges for freshwater (6.5–8.5) and seawater (7.8–8.3); it does not mention any operator‑provided range or that such a range overrides the document’s values. Therefore the citation does not support the claim about operator precedence."
+        },
+        {
+          "fixtureId": "probecal-conductivity-interval",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "2: [1] — The claim states that EC probes experience calibration drift over long deployments. The EC_K_1.0_probe.pdf document only mentions a 10‑year interval before recalibration and says recalibration is generally not necessary; it does not discuss any sensor drift or gradual one‑directional trends.; [5] — The claim asserts that EC readings can show calibration drift. The water-quality-metrics-source-of-truth.pdf document discusses calibration drift only for pH DO and ORP probes not for electrical conductivity so it does not support the EC‑specific drift claim."
+        },
+        {
+          "fixtureId": "threshold-do-hypoxia",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: [5] — The answer claims the reference document labels the 4–6 mg/L dissolved‑oxygen range as “oxygen stress” (moderate stress). The water-quality-metrics-source-of-truth document lists the range as “stress” (Thresholds: >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress …) and does not use the term “oxygen stress”."
+        },
+        {
+          "fixtureId": "refusal-out-of-domain",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "3: 【5†L1-L4】 — The answer claims that tidal currents cause only a modest temperature shift compared with weather‑driven changes but the water‑quality‑metrics‑source‑of‑truth document only states that temperature oscillates with the tide; it does not mention the magnitude of the tidal effect or compare it to weather‑driven temperature changes.; 【5†L19-L22】 — The answer asserts that the temperature effect of tides is usually modest relative to weather‑driven changes yet the cited document provides no such qualification; it merely notes that temperature can oscillate with the tide.; 【5†L23-L26】 — The answer says turbidity peaks at maximum tidal currents because sediment resuspension is strongest then but the cited document only mentions that turbidity oscillates with the tide and does not give this specific causal explanation."
+        }
+      ]
+    }
+  ]
+}

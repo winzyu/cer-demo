@@ -1,0 +1,388 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/gpt-oss-120b",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-20b"
+  ],
+  "judgedAt": "2026-08-27T02:08:43.041Z",
+  "budget": {
+    "calls": 83,
+    "promptTokens": 417574,
+    "completionTokens": 45314,
+    "usd": 0.0898245
+  },
+  "results": [
+    {
+      "arm": "firestore-direct",
+      "pass": "warm",
+      "turnsJudged": 12,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "acronym-exact-token",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 2,
+            "mean": 0,
+            "servable": false,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 2,
+            "mean": 2,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "threshold-lookup",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.6,
+        "coverage": 0.9,
+        "met": true
+      },
+      "ungrounded": {
+        "turnsWithClaims": 6,
+        "turns": 12,
+        "rate": 0.5,
+        "totalClaims": 15,
+        "met": false
+      },
+      "citationSupport": {
+        "turnsChecked": 7,
+        "unsupported": 5
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer provides no stabilization criteria missing all required numeric tolerances and does not cite the required source."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer does not state a minimum of 60 seconds does not note that some instruments may need longer per manufacturer guidance and invents a short wait time (1–3 seconds) without citing the required USGS document."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: To compare the two pods you would need a conversion factor or to convert the FNU reading to NTU (or vice‑versa) using a calibration curve. — The supplied documents (including the water‑quality source of truth) state that NTU and FNU are not interchangeable and advise standardizing on one but they do not mention any conversion factor calibration curve or method for converting between the units."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: the sensor’s specifications list turbidity in NTU — No supplied document provides a specification sheet for the sensor that explicitly states turbidity is reported in NTU; the only references are the operator‑provided normal range (0–25 NTU) and a general statement about NTU vs. FNU units which do not constitute a sensor specification."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: The probe specifications give the sensor’s response time which is the time it takes for the reading to reach about 90 % of its final value after a change in conditions. — The supplied documents list response‑time numbers (e.g. “90% in 1 s” for conductivity) but do not define response time as the time to reach ~90 % of the final value.; Conductivity ORP pH and turbidity probes: ~1 s response time (≈ 95 % in 1 s). — The documents provide response‑time specs for conductivity (90 % in 1 s) ORP (95 % in 1 s) and pH (95 % in 1 s) but no turbidity spec is present and the conductivity figure is incorrectly quoted as 95 %.; Dissolved‑oxygen probe: ~0.1 mg L⁻¹ s⁻¹ response time which corresponds to roughly 1 s for a typical change in DO concentration. — The DO document lists a response time of “~0.1 mg/L per sec” but it does not state that this equates to a 1‑second stabilization for a typical concentration change.; In practice you can record a reading after the sensor has been at the new depth for about one second once the probe is fully submerged and the water is still. — No guidance on a one‑second wait time for recording after submersion is found in any of the supplied documents.; If you want to be conservative waiting a few seconds (e.g. 2–3 s) ensures the reading has fully stabilized. — The documents do not provide a recommendation to wait 2–3 seconds for full stabilization."
+        },
+        {
+          "fixtureId": "definitional-orp",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: ORP responds to the *availability of electrons* rather than to the mass of a single species. — The supplied documents describe ORP as measuring the net tendency to oxidize or reduce and being driven by the dominant electron acceptor but they do not state that ORP specifically responds to electron availability instead of the mass of a single species.; Small changes in the redox environment (e.g. a pulse of organic matter) can alter the ORP quickly whereas the DO sensor must wait for the oxygen concentration to change appreciably. — The provided sources note that ORP often falls before DO and can serve as an early‑warning indicator but they do not mention pulses of organic matter or compare the response speed of ORP versus DO sensors in the way described."
+        },
+        {
+          "fixtureId": "precedence-conductivity-range",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: A conductivity of 30 µS/cm is very low because the water contains very few dissolved ions (electrolytes). — The supplied documents define conductivity and its typical healthy range (50–1 500 µS/cm) but do not state that 30 µS/cm is \"very low\" or attribute it to few dissolved ions.; Very pure or de‑ionized water has an ion concentration almost zero so the solution can’t conduct electricity. — No source in the provided material mentions de‑ionized water its ion concentration or that it cannot conduct electricity.; Dilution with fresh low‑mineral water reduces the overall ion load and lowers conductivity. — The documents do not describe dilution with low‑mineral water as a cause for low conductivity.; Low‑mineral natural waters (some streams or groundwater) naturally have low total dissolved solids giving low EC. — The supplied material does not mention low‑mineral natural waters or streams/groundwater as a source of low conductivity.; Sensor fouling or calibration drift (biofilm deposits or a mis‑calibrated probe) can give artificially low conductivity readings. — While sensor fouling and calibration drift are discussed for other parameters the provided documents do not state that they cause low conductivity readings."
+        },
+        {
+          "fixtureId": "threshold-do-hypoxia",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: falls into the “stress” range (4–6 mg L⁻¹) for freshwater — The supplied material provides general DO thresholds (4–6 mg L⁻¹ stress) but does not specify that this stress range applies specifically to freshwater; the document only labels the thresholds as “general” without linking them to freshwater."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: [5] — The cited document (water-quality-metrics-source-of-truth.pdf) confirms that turbidity is measured in NTU (white‑light) but does not state that the operator‑provided normal range for turbidity is 0–25 NTU; it lists a baseline range of <5–25 NTU for healthy freshwater not the exact 0–25 NTU range claimed."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "3: [1] — The claim is that Conductivity ORP pH and turbidity probes all have ~1 s response time. EC_K_1.0_probe.pdf only provides a response time for the conductivity probe (90 % in 1 s) and does not mention ORP pH or turbidity so the document does not contain the full claim.; [4] — The claim is that Conductivity ORP pH and turbidity probes all have ~1 s response time. IpH_probe.pdf only provides a response time for the pH probe (95 % in 1 s) and does not mention conductivity ORP or turbidity so the document does not contain the full claim.; [3] — The claim is that the dissolved‑oxygen probe has a response time of ~0.1 mg L⁻¹ s⁻¹ which corresponds to roughly 1 s for a typical change in DO concentration. Industrial-DO-probe.pdf lists a response rate of \"~0.1 mg/L per sec\" but does not state that this equates to a ~1 s response for a typical concentration change so the document does not fully support the claim."
+        },
+        {
+          "fixtureId": "threshold-do-hypoxia",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: 5 — The answer claims that 5.2 mg L⁻¹ is in the “stress” range (4–6 mg L⁻¹) *for freshwater*. The cited document provides general DO thresholds (>6 mg/L healthy 4–6 mg/L stress etc.) but does not specify that these thresholds apply specifically to freshwater. Therefore the document does not fully support the claim that the stress range applies to freshwater."
+        }
+      ]
+    },
+    {
+      "arm": "firestore-vector",
+      "pass": "warm",
+      "turnsJudged": 12,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "acronym-exact-token",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 2,
+            "mean": 0,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "definitional",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "refusal",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "threshold-lookup",
+            "turns": 2,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 0.8333333333333334,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 4,
+        "turns": 12,
+        "rate": 0.3333333333333333,
+        "totalClaims": 11,
+        "met": false
+      },
+      "citationSupport": {
+        "turnsChecked": 4,
+        "unsupported": 3
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer violates the 'must not' rule by stating the units are equivalent for calibration solutions and it also fails to identify NTU as white-light FNU as infrared and does not recommend standardizing across the fleet."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer does not provide any of the required numeric stabilization criteria (temperature DO pH specific conductance turbidity)"
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer does not state the required minimum of 60 seconds omits the note about longer times and manufacturer guidance and invents a 5–10 minute wait time violating the 'must not' clause."
+        },
+        {
+          "fixtureId": "precedence-conductivity-range",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer provides no attribution of low EC to freshwater inputs nor any discussion of EC change direction thus missing all required rubric points."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: you cannot directly compare an NTU reading with an FNU reading without a conversion that has been validated for the specific instruments and sample matrix — The supplied documents state that NTU and FNU are not equivalent for environmental samples and that they use different light sources and detector geometries but they do not mention a requirement for a validated conversion specific to instruments and sample matrix."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: NTU (nephelometric turbidity units) — The supplied material and service rules list the unit NTU but do not define it as 'nephelometric turbidity units' so this definition is not grounded."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: The table lists the specific time‑ or change‑limits that a parameter must meet before the value is considered stable and can be recorded. — The supplied excerpt for document [5] only states that stabilization criteria are given in Table 6.0‑1 but it does not describe the contents of the table or mention time‑ or change‑limits.; The exact numeric thresholds are in that table which is not included in the excerpts provided. — The provided material does not specify that Table 6.0‑1 contains numeric thresholds; it merely references the table without detailing its contents."
+        },
+        {
+          "fixtureId": "definitional-orp",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "7: ORP measures the overall redox potential – it reflects the net tendency of the water to accept or donate electrons. — The supplied documents do not contain a definition of ORP or a statement that it measures overall redox potential.; When a reducing agent (e.g. organic matter sulfide or other electron donors) is added the redox potential drops immediately even if the dissolved‑oxygen (DO) concentration is still high. — No supplied material describes the immediate effect of adding reducing agents on ORP or that ORP can drop while DO remains high.; DO on the other hand is a single species; it only changes when oxygen actually dissolves or is consumed. — The documents do not contain a statement that DO changes only when oxygen dissolves or is consumed.; Redox reactions can outpace oxygen consumption – in a hypoxic event oxygen may be used up slowly but the presence of a strong reducing substance can pull the ORP down quickly. — The supplied sources do not discuss redox reactions outpacing oxygen consumption or ORP dropping quickly due to strong reducing substances.; Sensor response times differ – optical DO sensors often have a lag (seconds to minutes) while the electrochemical ORP probe can respond in real time to changes in electron activity. — No information on the relative response times of optical DO sensors versus ORP probes is present in the provided documents.; Temperature and pH effects – ORP is temperature‑and pH‑dependent; a temperature rise or pH shift can lower ORP before any measurable change in DO occurs. — The supplied material does not state that ORP is temperature‑ or pH‑dependent or that such changes can lower ORP before DO changes.; ORP can drop earlier when other redox‑active substances change. — Document [1] notes that DO and ORP bottom out together but it does not claim that ORP can drop earlier than DO in response to redox‑active substances."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: [4] — The claim states that the sensor reports turbidity in NTU and that the normal range is 0–25 NTU confirming the use of NTU as the unit. Document usgs-nfm-a6.1-temperature.pdf__39a5287b84ed contains only information about temperature sensor troubleshooting battery replacement calibration and sensor reading issues. It does not mention turbidity NTU or any normal range for turbidity so it does not support the claim."
+        },
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "1: [1] — The claim states that NTU and FNU are only equivalent for calibration solutions (e.g. formazin or polymer beads) and that they differ for environmental samples because of different light sources and detector geometries. The cited document (usgs-nfm-a6.7-turbidity.pdf__0663ce0e133d) provides tables of unit definitions and detector geometry but does **not** contain the statement that NTU and FNU are equivalent only for calibration solutions. It therefore does not fully support the claim."
+        },
+        {
+          "fixtureId": "definitional-orp",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: 【1】 — The claim is that ORP can drop earlier than DO when other redox‑active substances change. The cited document discusses that ORP trends are reliable and that DO and ORP often bottom out together during hypoxic events but it does not state that ORP can decline before DO under such conditions. Therefore the document does not support the specific claim."
+        }
+      ]
+    },
+    {
+      "arm": "pgvector-rag",
+      "pass": "warm",
+      "turnsJudged": 12,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "acronym-exact-token",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "definitional",
+            "turns": 2,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "refusal",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "threshold-lookup",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 0.75,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 1,
+        "turns": 12,
+        "rate": 0.08333333333333333,
+        "totalClaims": 6,
+        "met": false
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "acronym-ntu-fnu",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a refusal and does not state that NTU and FNU are not interchangeable does not identify NTU as white-light and FNU as infrared nor recommend standardizing on one unit missing all required rubric points."
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer adds an extra turbidity criterion (10% for >100 TU) that was not in the rubric violating the 'must not invent numeric criteria' rule."
+        },
+        {
+          "fixtureId": "definitional-orp",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a refusal and provides none of the required content about ORP failing all must‑contain points."
+        },
+        {
+          "fixtureId": "precedence-conductivity-range",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to provide the required explanation missing both required points about freshwater input and EC change direction."
+        },
+        {
+          "fixtureId": "threshold-do-hypoxia",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to provide the required mg/L thresholds and does not cite the source missing all rubric points"
+        },
+        {
+          "fixtureId": "deepmanual-stabilization-criteria",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "6: Thermal equilibrium requires at least 60 seconds. — The supplied documents mention allowing 5 to 10 minutes for thermal equilibrium (doc [4]) and do not specify a 60‑second minimum.; Temperature stabilization criterion is ± 0.2 °C. — No temperature tolerance of ± 0.2 °C is found in any supplied document.; pH stabilization criterion is ± 0.1 pH units. — The supplied documents do not provide a pH stabilization tolerance.; Conductivity stabilization criterion is ± 5 µS cm⁻¹ for ≤ 100 µS cm⁻¹ or ± 3 % for > 100 µS cm⁻¹. — No conductivity stabilization tolerances are present in the supplied material.; Turbidity stabilization criterion is ± 0.5 TU or 5 % for ≤ 100 TU and 10 % for > 100 TU. — The supplied documents do not contain any turbidity stabilization criteria.; Only after both the thermal equilibrium and the stabilization criteria are met should you record the value. — While the documents advise waiting for readings to stabilize they do not state this exact procedural rule linking thermal equilibrium and the listed stabilization criteria."
+        }
+      ]
+    }
+  ]
+}
