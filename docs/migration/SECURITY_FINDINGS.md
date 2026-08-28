@@ -189,9 +189,10 @@ Theirs to fix, ours to raise. Bundled with the two already-known items so it goe
 2. **Unauthenticated water-data routes** (`/water-data`, `/device`, `/duration/*`,
    `POST /water/check-alerts`) expose sensor data with no auth and no scoping, and enumerate device
    labels for §1 (`DEVICE_API.md` §4).
-3. **Shifted metric-code table in `DevicesService.checkWaterDataAndSendAlerts`** — every key
-   displaced, so customer threshold alerts compare each metric against a *different* metric's
-   limits. Advertised, customer-facing behavior (`DEVICE_API.md` §7, §14b).
+3. ~~**Shifted metric-code table in `DevicesService.checkWaterDataAndSendAlerts`**~~ — **FIXED
+   upstream**, verified 2026-08-25 on `origin/develop` (`62993fe`, "fix and consolidate threshold
+   alerting"). The table now reads 99=pH, 98=ORP, 97=DO, 100=Conductivity, 102=Temperature, which
+   matches our canonical table in `src/devices/metrics.ts`. Nothing to report; do not raise it.
 4. **Dangling organization references** on `Marina Park` and `CWA Old` (§2).
 5. **Tokens are minted with no expiry** (`DEVICE_API.md` §4), so every issue above has an
    unbounded blast radius once a token leaks.
@@ -256,3 +257,42 @@ not a feature. It now shows a `caller_token_required` message telling the user t
 
 This was **not** papered over with a `?token=` URL parameter: that puts a non-expiring bearer
 credential into browser history, referrer headers, and server logs.
+
+
+---
+
+## 7. Upstream re-check, 2026-08-25 — `origin/develop` @ `62993fe`
+
+Our reference checkout (`a3cc25d`) is **86 commits behind**, but the whole diff is 8 files.
+Read from fetched remote refs only; nothing was fetched, checked out, or written.
+
+**No auth changes whatsoever.** `middleware/auth.ts`, `middleware/roles.ts`, `AuthService.ts`,
+`assignOrganization.ts`, `waterRoutes.ts`, `devicesRoutes.ts` and `WaterAnalyticsController.ts`
+are all **byte-identical**. Still no token scoping, no expiry, no service account;
+`account_device_list` still inert. **§1 stands unchanged** — the `else if` at
+`WaterAnalyticsService.findPeriodWaterData` is still there (line ~896 on develop).
+
+**They shipped merge continuity — everywhere except our endpoint.** New
+`src/utils/deviceLabels.ts` exposes `expandLabel()` / `resolveDeviceLabels()`, and seven query
+sites moved from `.where("device", "==", x)` to `.where("device", "in", await
+this.deviceLabelsFor(x))`: `findAverageWaterData`, `findLastDataByDevice`,
+`findLastValidGPSDataByDevice`, `findLastPositionByDevice`, `findDeviceWaterDataExportCSV`,
+`getDeviceLatestCoords`, `findChartWaterData`.
+
+**`findPeriodWaterData` is not among them.** It still takes caller labels raw and `slice(0, 10)`s
+them. So that endpoint is now the outlier *twice over* — no org check **and** no merge expansion —
+while every sibling has both. This is strong evidence the §1 gap is an oversight, and it gives the
+fix an exact shape: **call `deviceLabelsFor` and AND the org filter, as the seven siblings do.**
+
+**The cross-org question in §3 has been answered implicitly, and the answer is "yes".**
+`expandLabel` resolves purely by label, with **no organization filter at all**. Fetching PCH Public
+Dock Buoy's last reading now returns East Anchorage's rows — a City of Newport Beach pod. That is
+shipped behavior, not a proposal. `POD_AUTHORIZATION.md`'s default of denying cross-org
+predecessors is now *stricter than upstream*, which is a defensible place to be but should be a
+conscious choice rather than an accident.
+
+**Cap mismatch:** `deviceLabels.ts` documents the Firestore `in` cap as **30**;
+`findPeriodWaterData` still slices at **10**. Match 30 when we fan out.
+
+**`user-dashboard` is unchanged** — local `main` equals `origin/main` (`ec2b283`, 2026-08-19),
+and its `origin/develop` is *behind* main. Nothing to re-read there.
