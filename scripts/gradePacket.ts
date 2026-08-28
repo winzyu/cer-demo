@@ -11,6 +11,11 @@
  *   npm run grade:packet                 # build from eval/transcripts/warm
  *   npm run grade:packet -- --pass=cold
  *   npm run grade:packet -- --sample=6   # only the calibration subset
+ *   npm run grade:packet -- --arm=firestore-vector,hybrid-slice-vector --only=definitional-orp \
+ *     --out=eval/grading/rounds/2026-08-27
+ *                                        # a top-up round: only the arms and fixtures that still
+ *                                        # need human grades, written where it cannot overwrite
+ *                                        # the graded sheet
  *
  * Outputs under `eval/grading/<pass>/`:
  *
@@ -44,12 +49,29 @@ import { loadFixtures } from "../src/eval/fixtures";
  * transcripts, so it still gets graded — the packet grades *captured* answers, and whether an
  * arm's runtime code is live is a separate question from whether its transcripts exist.
  */
-const armsOnDisk = async (transcriptRoot: string, pass: string): Promise<string[]> => {
+const armsOnDisk = async (
+  transcriptRoot: string,
+  pass: string,
+  only?: string[],
+): Promise<string[]> => {
   const dir = path.join(transcriptRoot, pass);
   const entries = await fs.readdir(dir, { withFileTypes: true }).catch(() => {
     throw new Error(`No transcripts at ${dir}. Capture a pass first (npm run bakeoff).`);
   });
-  const arms = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
+  const found = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
+
+  // `--arm` exists for top-up rounds: an arm re-captured after grading, or one never graded at
+  // all, needs human rows without re-grading the arms that already have them. Naming a missing
+  // arm is a typo worth failing on — silently grading fewer arms than asked for is the failure
+  // this script's own history is about.
+  const missing = (only ?? []).filter((arm) => !found.includes(arm));
+  if (missing.length > 0) {
+    throw new Error(
+      `No transcripts for arm(s) ${missing.join(", ")} in ${dir}. Found: ${found.join(", ")}.`,
+    );
+  }
+  const arms = only && only.length > 0 ? found.filter((arm) => only.includes(arm)) : found;
+
   if (arms.length < 2) {
     throw new Error(`Found ${arms.length} arm(s) in ${dir}; a blind packet needs at least 2.`);
   }
@@ -74,7 +96,16 @@ const hasFilledScores = (csv: string): boolean => csv
   .slice(1)
   .some((row) => row.trim() !== "" && row.split(",").slice(4, 7).some((cell) => cell.trim() !== ""));
 
-interface Args { pass: string; sample?: number; outRoot: string; force: boolean; }
+interface Args {
+  pass: string;
+  sample?: number;
+  /** Restrict to these arms — a top-up round for arms that still need human grades. */
+  arms?: string[];
+  /** Restrict to these fixture ids, by name rather than by alphabetical prefix. */
+  only?: string[];
+  outRoot: string;
+  force: boolean;
+}
 
 const parseArgs = (argv: string[]): Args => {
   const args: Args = {
@@ -86,6 +117,8 @@ const parseArgs = (argv: string[]): Args => {
     const [flag, value] = [arg.split("=")[0], arg.split("=").slice(1).join("=")];
     if (flag === "--pass") args.pass = value;
     else if (flag === "--sample") args.sample = Number(value);
+    else if (flag === "--arm") args.arms = value.split(",").map((a) => a.trim()).filter(Boolean);
+    else if (flag === "--only") args.only = value.split(",").map((f) => f.trim()).filter(Boolean);
     else if (flag === "--out") args.outRoot = path.resolve(value);
     else if (flag === "--force") args.force = true;
     else throw new Error(`Unknown argument: ${arg}`);
@@ -174,7 +207,7 @@ const main = async (): Promise<void> => {
   const packetDir = path.join(outRoot, "packet");
   const contextDir = path.join(outRoot, "context");
 
-  const arms = await armsOnDisk(transcriptRoot, args.pass);
+  const arms = await armsOnDisk(transcriptRoot, args.pass, args.arms);
   const labels = labelsFor(arms.length);
 
   // Read before anything is written. A rebuild that changes the arm set re-labels every answer,
@@ -191,9 +224,22 @@ const main = async (): Promise<void> => {
   }
 
   const fixtures = loadFixtures().filter((f) => f.runnable);
+  if (args.only) {
+    const known = new Set(fixtures.map((f) => f.id));
+    const unknown = args.only.filter((id) => !known.has(id));
+    if (unknown.length > 0) {
+      throw new Error(`Unknown fixture(s): ${unknown.join(", ")}.`);
+    }
+  }
+  // `--only` names the fixtures outright, which is what extending an existing sample needs: that
+  // sample was picked one-per-class, not taken off the top of an alphabetical list, so `--sample`
+  // cannot reproduce it.
+  const chosen = args.only
+    ? fixtures.filter((f) => args.only?.includes(f.id))
+    : fixtures;
   // Sorted so --sample takes a stable subset rather than a different one each run.
-  const selected = [...fixtures].sort((a, b) => a.id.localeCompare(b.id))
-    .slice(0, args.sample ?? fixtures.length);
+  const selected = [...chosen].sort((a, b) => a.id.localeCompare(b.id))
+    .slice(0, args.sample ?? chosen.length);
 
   await fs.mkdir(packetDir, { recursive: true });
 

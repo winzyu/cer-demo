@@ -13,7 +13,7 @@
  *
  *   npm run gate:check
  *   npm run gate:check -- --pass=cold --arm=firestore-direct
- *   npm run gate:check -- --tolerance=0 --out=data/gate-check/warm.json
+ *   npm run gate:check -- --tolerance=0 --out=data/results/gate-check/warm.json
  */
 import fs from "fs";
 import path from "path";

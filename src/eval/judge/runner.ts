@@ -31,7 +31,22 @@ import {
 } from "./prompts";
 
 export const TRANSCRIPT_ROOT = path.join(process.cwd(), "eval", "transcripts");
-export const JUDGE_ROOT = path.join(process.cwd(), "data", "judge");
+
+/**
+ * Where paid verdicts live — under `data/results/`, which is **committed**, not under the ignored
+ * part of `data/`.
+ *
+ * This ledger is the audit trail behind every quality number in `RETRIEVAL_COMPARISON.md` and it
+ * cost real money to produce. While it sat under the blanket `data/*` ignore rule it was one
+ * `rm -rf` from unreproducible, and §9's exit criteria — which say grades are committed —
+ * disagreed with the repository. `data/results/` is the exception carved out for exactly this:
+ * derived evaluation output that a reader must be able to check.
+ *
+ * **Nothing confidential goes here.** Sensor pulls and backend captures stay in the ignored
+ * subtrees (`data/backend-surface/`, `data/device-fields/`), and the ignore rule is written to
+ * keep it that way — an allow-list of one directory, not a deny-list of many.
+ */
+export const JUDGE_ROOT = path.join(process.cwd(), "data", "results", "judge");
 
 /**
  * The default judge — chosen 2026-08-26, with a caveat that must survive into the report.

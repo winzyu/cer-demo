@@ -13,9 +13,9 @@
  *   npm run judge -- --report                     # summarize what is already judged, no calls
  *   npm run judge -- --calibrate                  # judge-vs-human agreement, no calls
  *
- * **Every verdict is appended to `data/judge/<pass>.jsonl` as it arrives**, and a re-run skips
- * what is already there. An interrupted pass resumes; it is not repaid. Delete lines from that
- * file to force a re-judge of specific turns.
+ * **Every verdict is appended to `data/results/judge/<pass>.jsonl` as it arrives**, and a re-run
+ * skips what is already there. An interrupted pass resumes; it is not repaid. Delete lines from
+ * that file to force a re-judge of specific turns.
  */
 import fs from "fs";
 import path from "path";
@@ -134,8 +134,28 @@ const printArm = (result: ArmJudgeResult): void => {
 const printCalibration = (pass: string, records: JudgeRecord[]): void => {
   const report = calibrate(pass, records);
   log.info("");
-  log.info(`Judge vs human — ${path.relative(process.cwd(), report.scoresPath)}`);
+  const sheets = report.scoresPaths.map((p) => path.relative(process.cwd(), p));
+  log.info(`Judge vs human — ${sheets.join(" + ")}`);
   log.info(`  ${report.humanRows} graded row(s); ${report.unmatched} not yet judged`);
+
+  // Printed before the numbers, not after: a reader who sees an agreement rate first has already
+  // formed a view of it by the time a footnote tells them what it was computed over.
+  if (report.stale.length > 0) {
+    log.warn(
+      `  ${report.stale.length} row(s) EXCLUDED — the arm was re-captured after grading, so the `
+      + "human and the judge scored different answers:",
+    );
+    const arms = [...new Set(report.stale.map((row) => row.arm))].sort();
+    arms.forEach((arm) => {
+      const rows = report.stale.filter((row) => row.arm === arm);
+      log.warn(`    ${arm}: ${rows.length} row(s) — re-grade this arm, or exclude it deliberately`);
+    });
+    const sample = report.stale[0];
+    log.warn(`    e.g. ${sample.fixtureId} t${sample.turn} (${sample.arm})`);
+    log.warn(`      human graded: ${sample.gradedExcerpt}`);
+    log.warn(`      on disk now : ${sample.currentExcerpt}`);
+    log.warn("    The numbers below are computed WITHOUT these rows.");
+  }
   report.dimensions.forEach((d) => {
     log.info("");
     log.info(

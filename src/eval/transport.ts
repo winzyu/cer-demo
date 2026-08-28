@@ -76,6 +76,32 @@ const postJson = async (
 };
 
 /**
+ * A clock that only moves forward, for measuring how long something took.
+ *
+ * **`Date.now()` is the wrong clock for a duration and it produced wrong data here.** It reports
+ * civil time, which the OS is free to *step* — NTP correction, a host resume, a VM clock
+ * resynchronising. When that step lands between two `Date.now()` reads, their difference is the
+ * elapsed time plus the step, and a backward step yields a negative duration for an event that
+ * plainly took time. Nine turns across the 2026-08-11 sweeps carry exactly that:
+ * `ttftMs: -1379`, `wallMs: -482`. Later sweeps are clean, which is the giveaway — the bug is
+ * real but only fires when a step happens to land inside a capture, so a clean run proves nothing
+ * and re-running was never going to settle it.
+ *
+ * `performance.now()` is monotonic: it counts from an arbitrary origin and is not affected by
+ * clock adjustments. Differences between two readings are therefore always >= 0, which makes a
+ * negative duration unrepresentable rather than merely unlikely.
+ *
+ * Absolute timestamps (`startedAt` on a run) correctly stay on `Date.now()`/`toISOString` — those
+ * *want* civil time. The rule is per use: monotonic for elapsed, civil for "when".
+ */
+export const monotonicNowMs = (): number => performance.now();
+
+/** Whole milliseconds elapsed since a `monotonicNowMs()` reading. Never negative. */
+export const elapsedMsSince = (startedMs: number): number => Math.round(
+  monotonicNowMs() - startedMs,
+);
+
+/**
  * Streaming transport — **the default**, because it is the only one that yields
  * time-to-first-token, and TTFT is a reported metric (§6). Usage arrives on the `done` event
  * when the provider sends it.
@@ -84,7 +110,7 @@ export const createSseTransport = (options: TransportOptions): AskFn => {
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 
   return async (request: AskRequest): Promise<AskResult> => {
-    const started = Date.now();
+    const started = monotonicNowMs();
     const response = await postJson(
       `${options.baseUrl}/chat`,
       { ...request, stream: true },
@@ -127,7 +153,7 @@ export const createSseTransport = (options: TransportOptions): AskFn => {
         } else if (event === "token") {
           // First visible token, not first byte: `meta` always precedes it, so timing from
           // the response start would measure retrieval, not generation latency.
-          if (ttftMs === undefined) ttftMs = Date.now() - started;
+          if (ttftMs === undefined) ttftMs = elapsedMsSince(started);
           answer += String(payload.text ?? "");
         } else if (event === "done") {
           model = payload.model as string | undefined;
@@ -143,7 +169,7 @@ export const createSseTransport = (options: TransportOptions): AskFn => {
     }
 
     return {
-      answer, mode, context, model, usage, ttftMs, wallMs: Date.now() - started,
+      answer, mode, context, model, usage, ttftMs, wallMs: elapsedMsSince(started),
     };
   };
 };
@@ -156,9 +182,9 @@ export const createJsonTransport = (options: TransportOptions): AskFn => {
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 
   return async (request: AskRequest): Promise<AskResult> => {
-    const started = Date.now();
+    const started = monotonicNowMs();
     const response = await postJson(`${options.baseUrl}/chat`, request, timeoutMs);
-    const wallMs = Date.now() - started;
+    const wallMs = elapsedMsSince(started);
 
     if (!response.ok) {
       const detail = await response.text().catch(() => "");

@@ -26,6 +26,7 @@
  */
 import fs from "fs";
 import path from "path";
+import { normalizeForMatch } from "../gates/normalize";
 import type { JudgeDimension } from "./prompts";
 import type { JudgeRecord } from "./runner";
 
@@ -46,7 +47,48 @@ export interface HumanRow {
   ungrounded?: number;
   citations?: number;
   notes: string;
+  /**
+   * The packet this row was graded from. Carried per row rather than derived from the pass,
+   * because a sample can span several rounds and **labels mean different things in each** — a
+   * two-arm top-up's `A` is not the base packet's `A`. It is also what the staleness check needs
+   * in order to read back the answer the human actually saw.
+   */
+  packetDir: string;
 }
+
+/**
+ * Every graded sheet for a pass: the original packet, plus any top-up round.
+ *
+ * **Rounds exist because a sample is not built once.** An arm gets re-captured and its rows go
+ * stale; an arm is added and has no rows at all. Re-grading everything to fix either would throw
+ * away good human judgement, and rebuilding the original packet in place re-labels answers that
+ * grades were already written against — the failure `gradePacket.ts` guards against. So a round is
+ * a separate packet under `rounds/<name>/`, with its own labels and its own key, and this function
+ * is the only place that knows they compose.
+ */
+export const gradingSets = (
+  gradingRoot: string,
+  pass: string,
+): { scoresPath: string; keyPath: string; packetDir: string }[] => {
+  const roots = [path.join(gradingRoot, pass)];
+
+  const roundsDir = path.join(gradingRoot, "rounds");
+  if (fs.existsSync(roundsDir)) {
+    fs.readdirSync(roundsDir)
+      .sort()
+      .map((name) => path.join(roundsDir, name, pass))
+      .filter((dir) => fs.existsSync(dir))
+      .forEach((dir) => roots.push(dir));
+  }
+
+  return roots
+    .map((root) => ({
+      scoresPath: path.join(root, "scores.csv"),
+      keyPath: path.join(root, "KEY.json"),
+      packetDir: path.join(root, "packet"),
+    }))
+    .filter((set) => fs.existsSync(set.scoresPath) && fs.existsSync(set.keyPath));
+};
 
 /**
  * Reads the graded rows out of a `scores.csv`, resolving each label to its arm.
@@ -57,6 +99,7 @@ export interface HumanRow {
 export const readHumanRows = (
   scoresPath: string,
   keyPath: string,
+  packetDir = path.join(path.dirname(scoresPath), "packet"),
 ): HumanRow[] => {
   const { key } = JSON.parse(fs.readFileSync(keyPath, "utf8")) as {
     key: Record<string, Record<string, string>>;
@@ -85,11 +128,171 @@ export const readHumanRows = (
         ungrounded: cell(fields[HUMAN_COLUMN.ungrounded]),
         citations: cell(fields[HUMAN_COLUMN.citations]),
         notes: fields.slice(7).join(",").trim(),
+        packetDir,
       };
     })
     .filter((row) => row.correctness !== undefined
       || row.ungrounded !== undefined
       || row.citations !== undefined);
+};
+
+/**
+ * One human row whose answer no longer exists.
+ *
+ * **A grading packet is pinned to the transcripts it was built from, and nothing used to enforce
+ * that.** `firestore-vector` was re-captured 2026-08-26, after a human had graded it; 12 of the
+ * 36 rows in `scores.csv` then described answers that had been replaced. The join below is on
+ * `(fixture, turn, arm)`, which all three still matched, so the comparison silently scored the
+ * judge's verdict on a *new* answer against a human's verdict on an *old* one.
+ *
+ * It is not a small effect and it is not self-announcing. Measured over the full 36 rows, the
+ * 2026-08-26 refusal-rubric fix looked like a regression — correctness kappa 0.87 → 0.83. Over
+ * the 24 rows where both sides had seen the same text, the same change read 0.81 → **0.94**. The
+ * stale rows inverted the sign, and the wrong version was written into a report before this check
+ * existed (`RETRIEVAL_COMPARISON.md` §6.4a).
+ */
+export interface StaleRow {
+  fixtureId: string;
+  turn: number;
+  label: string;
+  arm: string;
+  /** First point of divergence, trimmed — enough to see *that* it is a different answer. */
+  gradedExcerpt: string;
+  currentExcerpt: string;
+}
+
+const ANSWER_HEADING = /^### Answer (\S+)\s*$/;
+const TURN_HEADING = /^## Turn (\d+)\s*$/;
+
+/**
+ * The answers a human actually read, keyed `<turn>|<label>` with 1-based turns.
+ *
+ * Parses the packet markdown rather than re-deriving from transcripts, because the packet **is**
+ * the artifact the human graded — re-deriving would compare the transcripts to themselves and
+ * never detect anything. `gradePacket.ts` writes the answer verbatim between the `### Answer X`
+ * heading and the `<sub>Context supplied:` footer, so that is the extent taken here.
+ */
+export const readPacketAnswers = (sheet: string): Map<string, string> => {
+  const answers = new Map<string, string>();
+  let turn = 0;
+  let label: string | undefined;
+  let buffer: string[] = [];
+
+  const flush = (): void => {
+    if (label !== undefined && turn > 0) {
+      answers.set(`${turn}|${label}`, buffer.join("\n").trim());
+    }
+    label = undefined;
+    buffer = [];
+  };
+
+  sheet.split("\n").forEach((line) => {
+    const turnMatch = TURN_HEADING.exec(line);
+    if (turnMatch) {
+      flush();
+      turn = Number(turnMatch[1]);
+      return;
+    }
+    const answerMatch = ANSWER_HEADING.exec(line);
+    if (answerMatch) {
+      flush();
+      [, label] = answerMatch;
+      return;
+    }
+    // The context dump that follows an answer opens with this footer; everything after it belongs
+    // to the chunks, not to the answer.
+    if (label !== undefined && line.startsWith("<sub>Context supplied:")) {
+      flush();
+      return;
+    }
+    if (label !== undefined) {
+      buffer.push(line);
+    }
+  });
+  flush();
+
+  return answers;
+};
+
+/** Where the two sides first diverge, so a report can show it rather than assert it. */
+const excerptAround = (text: string, other: string): string => {
+  let at = 0;
+  while (at < text.length && at < other.length && text[at] === other[at]) {
+    at += 1;
+  }
+  const from = Math.max(0, at - 20);
+  return `${from > 0 ? "…" : ""}${text.slice(from, from + 90).replace(/\s+/g, " ")}`;
+};
+
+/**
+ * Human rows whose graded answer no longer matches the transcript on disk.
+ *
+ * Compared through `normalizeForMatch` for the same reason the refusal gate uses it: the captured
+ * text carries typographic dashes and non-breaking spaces that survive a round trip differently,
+ * and flagging a row as stale over a U+2011 would be worse than not checking at all.
+ *
+ * Rows whose packet sheet or transcript is missing are **not** flagged — absence is not
+ * divergence, and `unmatched` already counts the rows the judge has no verdict for.
+ */
+export const findStaleRows = (
+  rows: HumanRow[],
+  pass: string,
+  transcriptRoot: string,
+): StaleRow[] => {
+  const sheets = new Map<string, Map<string, string>>();
+  const packetAnswers = (packetDir: string, fixtureId: string): Map<string, string> => {
+    const file = path.join(packetDir, `${fixtureId}.md`);
+    const cached = sheets.get(file);
+    if (cached) {
+      return cached;
+    }
+    const parsed = fs.existsSync(file)
+      ? readPacketAnswers(fs.readFileSync(file, "utf8"))
+      : new Map<string, string>();
+    sheets.set(file, parsed);
+    return parsed;
+  };
+
+  const transcripts = new Map<string, string | undefined>();
+  const currentAnswer = (arm: string, fixtureId: string, turn: number): string | undefined => {
+    const cacheKey = `${arm}|${fixtureId}|${turn}`;
+    if (transcripts.has(cacheKey)) {
+      return transcripts.get(cacheKey);
+    }
+    const file = path.join(transcriptRoot, pass, arm, `${fixtureId}.json`);
+    let answer: string | undefined;
+    if (fs.existsSync(file)) {
+      const parsed = JSON.parse(fs.readFileSync(file, "utf8")) as {
+        turns?: { index: number; answer?: string }[];
+      };
+      // scores.csv and the packet number turns from 1; a transcript indexes them from 0.
+      answer = parsed.turns?.find((t) => t.index === turn - 1)?.answer;
+    }
+    transcripts.set(cacheKey, answer);
+    return answer;
+  };
+
+  const stale: StaleRow[] = [];
+  rows.forEach((row) => {
+    const graded = packetAnswers(row.packetDir, row.fixtureId).get(`${row.turn}|${row.label}`);
+    const current = currentAnswer(row.arm, row.fixtureId, row.turn);
+    if (!graded || !current) {
+      return;
+    }
+    if (normalizeForMatch(graded) === normalizeForMatch(current)) {
+      return;
+    }
+    stale.push({
+      fixtureId: row.fixtureId,
+      turn: row.turn,
+      label: row.label,
+      arm: row.arm,
+      gradedExcerpt: excerptAround(graded, current),
+      currentExcerpt: excerptAround(current, graded),
+    });
+  });
+
+  return stale;
 };
 
 export interface Disagreement {
@@ -215,10 +418,17 @@ export const agreementFor = (
 };
 
 export interface CalibrationReport {
-  scoresPath: string;
+  /** Every graded sheet that contributed rows — the base packet plus any top-up round. */
+  scoresPaths: string[];
   humanRows: number;
   /** Rows the human graded that the judge has no verdict for — the pass is incomplete. */
   unmatched: number;
+  /**
+   * Rows excluded because the arm was re-captured after grading, so the two sides scored
+   * different text. **Excluded, not merely reported** — see `StaleRow`. A number computed over
+   * them is not an agreement rate, and leaving them in once inverted the sign of a result.
+   */
+  stale: StaleRow[];
   dimensions: DimensionAgreement[];
 }
 
@@ -226,22 +436,41 @@ export const calibrate = (
   pass: string,
   judged: JudgeRecord[],
   gradingRoot = path.join(process.cwd(), "eval", "grading"),
+  transcriptRoot = path.join(process.cwd(), "eval", "transcripts"),
 ): CalibrationReport => {
-  const scoresPath = path.join(gradingRoot, pass, "scores.csv");
-  const keyPath = path.join(gradingRoot, pass, "KEY.json");
-  if (!fs.existsSync(scoresPath) || !fs.existsSync(keyPath)) {
-    throw new Error(`No graded sample at ${path.relative(process.cwd(), scoresPath)}.`);
+  const sets = gradingSets(gradingRoot, pass);
+  if (sets.length === 0) {
+    throw new Error(
+      `No graded sample at ${path.relative(process.cwd(), path.join(gradingRoot, pass))}.`,
+    );
   }
 
-  const human = readHumanRows(scoresPath, keyPath);
+  // A later round supersedes an earlier one for the same (arm, fixture, turn): that is what a
+  // re-grade *is*. Keyed without the label on purpose — the label is a property of the packet,
+  // not of the answer, and the whole reason a round exists is that the labels moved.
+  const merged = new Map<string, HumanRow>();
+  sets.forEach((set) => {
+    readHumanRows(set.scoresPath, set.keyPath, set.packetDir).forEach((row) => {
+      merged.set(`${row.arm}|${row.fixtureId}|${row.turn}`, row);
+    });
+  });
+  const human = [...merged.values()];
   const judgedKeys = new Set(judged.map((r) => `${r.arm}|${r.fixtureId}|${r.turn}`));
 
+  const stale = findStaleRows(human, pass, transcriptRoot);
+  const staleKeys = new Set(stale.map((row) => `${row.arm}|${row.fixtureId}|${row.turn}`));
+  const comparable = human.filter(
+    (row) => !staleKeys.has(`${row.arm}|${row.fixtureId}|${row.turn}`),
+  );
+
   return {
-    scoresPath,
+    scoresPaths: sets.map((set) => set.scoresPath),
     humanRows: human.length,
-    unmatched: human.filter((row) => !judgedKeys.has(`${row.arm}|${row.fixtureId}|${row.turn}`))
-      .length,
+    unmatched: comparable.filter(
+      (row) => !judgedKeys.has(`${row.arm}|${row.fixtureId}|${row.turn}`),
+    ).length,
+    stale,
     dimensions: (["correctness", "ungrounded", "citations"] as JudgeDimension[])
-      .map((dimension) => agreementFor(dimension, human, judged)),
+      .map((dimension) => agreementFor(dimension, comparable, judged)),
   };
 };

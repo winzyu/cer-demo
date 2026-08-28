@@ -13,7 +13,7 @@
       "content": "What's the tide schedule for tomorrow, and will it rain?",
       "rubric": {
         "must_contain": [
-          "refuses using the exact refusal sentence",
+          "refuses to answer, in any wording",
           "adds one short sentence naming what was missing"
         ],
         "must_not": [

@@ -7,6 +7,8 @@
  * defaults a missing score, or a gate that averages a non-servable class into an arm's mean,
  * would move a pre-registered threshold without anyone seeing it happen.
  */
+import fs from "fs";
+import os from "os";
 import path from "path";
 import {
   citationsPrompt,
@@ -24,7 +26,15 @@ import {
   summarize,
   type JudgeRecord,
 } from "../../src/eval/judge/runner";
-import { agreementFor, cohensKappa, readHumanRows } from "../../src/eval/judge/calibrate";
+import {
+  agreementFor,
+  calibrate,
+  cohensKappa,
+  findStaleRows,
+  gradingSets,
+  readHumanRows,
+  readPacketAnswers,
+} from "../../src/eval/judge/calibrate";
 
 const evidence = (overrides: Partial<JudgeEvidence> = {}): JudgeEvidence => ({
   question: "What is the hypoxia threshold?",
@@ -98,6 +108,36 @@ describe("judge prompts — blinding", () => {
     }));
     expect(prompt).toContain("The threshold is 9.9 mg/L.");
     expect(prompt).toMatch(/ASSISTANT answer is NOT grounding/);
+  });
+});
+
+describe("refusals are graded on behaviour, not phrasing", () => {
+  it("tells the judge that a paraphrased refusal satisfies a refusal rubric in full", () => {
+    // The judge scored correctness 1 where the human scored 2, on a refusal that named the
+    // missing information without using REFUSAL_SENTENCE verbatim. Tier 1 already passes that
+    // answer (§8b vetoes on answering, not on wording), so the judge was stricter than the
+    // pre-registration it implements.
+    const prompt = correctnessPrompt(evidence({
+      rubric: {
+        must_contain: ["refuses to answer, in any wording"],
+        must_not: ["gives a CFU/100 mL threshold"],
+      },
+    }));
+
+    expect(prompt).toMatch(/Wording is not part of a refusal rubric/);
+    expect(prompt).toMatch(/service's standard refusal sentence/);
+  });
+
+  it("leaves no live fixture demanding the exact refusal sentence", () => {
+    // The rule above and the rubric text the judge is shown have to agree. A rubric still saying
+    // "the exact refusal sentence" would contradict the instruction in the same prompt, and the
+    // judge would be entitled to follow either.
+    const raw = fs.readdirSync("eval/fixtures")
+      .filter((name) => name.endsWith(".json"))
+      .map((name) => fs.readFileSync(path.join("eval/fixtures", name), "utf8"));
+
+    raw.forEach((text) => expect(text).not.toContain("exact refusal sentence"));
+    expect(raw.some((text) => text.includes("refuses to answer"))).toBe(true);
   });
 });
 
@@ -378,5 +418,228 @@ describe("cohensKappa", () => {
 
   it("goes negative when the raters do worse than chance", () => {
     expect(cohensKappa([[0, 1], [1, 0], [0, 1], [1, 0]])).toBeLessThan(0);
+  });
+});
+
+/**
+ * The stale-grade guard. A grading packet is pinned to the transcripts it was built from; when an
+ * arm is re-captured, its human rows describe answers that no longer exist. Scoring them anyway
+ * once inverted the sign of a real result (`RETRIEVAL_COMPARISON.md` §6.4a), which is why this is
+ * an exclusion rather than a warning.
+ */
+describe("stale human grades", () => {
+  const sheet = [
+    "# demo",
+    "",
+    "## Turn 1",
+    "",
+    "### Rubric",
+    "",
+    "### Answer A",
+    "",
+    "The original answer, as graded.",
+    "",
+    "<sub>Context supplied: 2 chunk(s) from 1 document(s) — x.pdf. Full text: `context/x.txt`</sub>",
+    "",
+    "### some-source.pdf (chunk abc, score 0.9)",
+    "",
+    "Chunk text that must NOT be read as part of the answer.",
+    "",
+    "### Answer B",
+    "",
+    "A second answer.",
+    "",
+    "<sub>Context supplied: 0 chunk(s) from 0 document(s) — none. Full text: `context/y.txt`</sub>",
+    "",
+  ].join("\n");
+
+  it("reads each answer and stops at the context footer", () => {
+    const answers = readPacketAnswers(sheet);
+
+    expect(answers.get("1|A")).toBe("The original answer, as graded.");
+    expect(answers.get("1|B")).toBe("A second answer.");
+    // The chunk dump uses "### <source>" headings too; swallowing it would make every row look
+    // stale, which is worse than not checking at all.
+    expect(answers.get("1|A")).not.toContain("must NOT be read");
+  });
+
+  describe("against transcripts on disk", () => {
+    let root: string;
+    // Built per test rather than once: a row carries the packet it was graded from, and that
+    // path only exists after `beforeEach` has made the temp tree.
+    const rows = () => [{
+      fixtureId: "demo",
+      fixtureClass: "definitional",
+      turn: 1,
+      label: "A",
+      arm: "some-arm",
+      correctness: 2,
+      notes: "",
+      packetDir: path.join(root, "grading", "warm", "packet"),
+    }];
+
+    const writeTranscript = (answer: string): void => {
+      const dir = path.join(root, "transcripts", "warm", "some-arm");
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(
+        path.join(dir, "demo.json"),
+        JSON.stringify({ turns: [{ index: 0, answer }] }),
+        "utf8",
+      );
+    };
+
+    beforeEach(() => {
+      root = fs.mkdtempSync(path.join(os.tmpdir(), "stale-grades-"));
+      const packet = path.join(root, "grading", "warm", "packet");
+      fs.mkdirSync(packet, { recursive: true });
+      fs.writeFileSync(path.join(packet, "demo.md"), sheet, "utf8");
+    });
+
+    const find = () => findStaleRows(
+      rows(),
+      "warm",
+      path.join(root, "transcripts"),
+    );
+
+    it("flags a row whose answer was replaced by a re-capture", () => {
+      writeTranscript("A completely different answer after re-capturing.");
+
+      const stale = find();
+      expect(stale).toHaveLength(1);
+      expect(stale[0]).toMatchObject({ fixtureId: "demo", turn: 1, arm: "some-arm" });
+      // The excerpts exist so a report can show the divergence rather than assert it.
+      expect(stale[0].gradedExcerpt).toContain("original");
+      expect(stale[0].currentExcerpt).toContain("different");
+    });
+
+    it("does not flag typographic drift — that would be worse than not checking", () => {
+      // A non-breaking space where the packet has an ordinary one — the class of difference that
+      // made the refusal gate need normalizeForMatch in the first place.
+      writeTranscript("The original\u00a0answer, as graded.");
+
+      expect(find()).toHaveLength(0);
+    });
+
+    it("does not flag a row it cannot check", () => {
+      // No transcript written at all. Absence is not divergence — `unmatched` counts that case.
+      expect(find()).toHaveLength(0);
+    });
+
+    it("leaves an unchanged answer alone", () => {
+      writeTranscript("The original answer, as graded.");
+
+      expect(find()).toHaveLength(0);
+    });
+  });
+});
+
+/**
+ * Top-up grading rounds. A sample is not built once: arms get re-captured, and arms get added.
+ * Re-grading everything to absorb either would throw away good human judgement, and rebuilding the
+ * original packet in place re-labels answers that grades were already written against.
+ */
+describe("grading rounds", () => {
+  let root: string;
+
+  const sheetFor = (answer: string): string => [
+    "# demo", "", "## Turn 1", "", "### Answer A", "", answer, "",
+    "<sub>Context supplied: 0 chunk(s) from 0 document(s) — none. Full text: `context/x.txt`</sub>",
+    "",
+  ].join("\n");
+
+  const writeSet = (dir: string, answer: string, score: string, label = "A"): void => {
+    fs.mkdirSync(path.join(dir, "packet"), { recursive: true });
+    fs.writeFileSync(path.join(dir, "packet", "demo.md"), sheetFor(answer), "utf8");
+    fs.writeFileSync(
+      path.join(dir, "KEY.json"),
+      JSON.stringify({ key: { demo: { [label]: "some-arm" } } }),
+      "utf8",
+    );
+    fs.writeFileSync(
+      path.join(dir, "scores.csv"),
+      "fixture,class,turn,label,correctness_0_1_2,ungrounded_claims,invalid_citations,notes\n"
+      + `demo,definitional,1,${label},${score},0,0,\n`,
+      "utf8",
+    );
+  };
+
+  const writeTranscript = (answer: string): void => {
+    const dir = path.join(root, "transcripts", "warm", "some-arm");
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, "demo.json"),
+      JSON.stringify({ turns: [{ index: 0, answer }] }),
+      "utf8",
+    );
+  };
+
+  const judged = [{
+    arm: "some-arm",
+    fixtureId: "demo",
+    fixtureClass: "definitional",
+    turn: 1,
+    dimension: "correctness" as const,
+    score: 2,
+    note: "",
+    items: [],
+    promptTokens: 1,
+    completionTokens: 1,
+    model: "m",
+    judgedAt: "2026-08-27T00:00:00.000Z",
+  }];
+
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), "grading-rounds-"));
+  });
+
+  const gradingRoot = () => path.join(root, "grading");
+  const run = () => calibrate(
+    "warm",
+    judged,
+    gradingRoot(),
+    path.join(root, "transcripts"),
+  );
+
+  it("finds the base packet and every round, base first", () => {
+    writeSet(path.join(gradingRoot(), "warm"), "original", "1");
+    writeSet(path.join(gradingRoot(), "rounds", "2026-08-27", "warm"), "replacement", "2");
+
+    const sets = gradingSets(gradingRoot(), "warm");
+    expect(sets).toHaveLength(2);
+    expect(sets[0].scoresPath).toContain(path.join("grading", "warm"));
+    expect(sets[1].scoresPath).toContain(path.join("rounds", "2026-08-27"));
+  });
+
+  it("lets a round supersede the base row it re-grades", () => {
+    // Same arm, fixture and turn — a re-grade. The label differs between packets, which is exactly
+    // why the merge key cannot include it.
+    writeSet(path.join(gradingRoot(), "warm"), "replacement", "0");
+    writeSet(path.join(gradingRoot(), "rounds", "2026-08-27", "warm"), "replacement", "2", "B");
+    writeTranscript("replacement");
+
+    const report = run();
+    expect(report.humanRows).toBe(1);
+    expect(report.stale).toHaveLength(0);
+    // The judge said 2; the round says 2 and the base said 0. Agreement proves the round won.
+    expect(report.dimensions[0].exact).toBe(1);
+  });
+
+  it("clears a stale row once a round re-grades it against the current answer", () => {
+    // The base graded text that no longer exists — the firestore-vector situation.
+    writeSet(path.join(gradingRoot(), "warm"), "the old answer", "2");
+    writeTranscript("the new answer after a re-capture");
+    expect(run().stale).toHaveLength(1);
+
+    // A round built from the current transcripts restores the row to the sample.
+    writeSet(
+      path.join(gradingRoot(), "rounds", "2026-08-27", "warm"),
+      "the new answer after a re-capture",
+      "2",
+      "B",
+    );
+
+    const report = run();
+    expect(report.stale).toHaveLength(0);
+    expect(report.dimensions[0].pairs).toBe(1);
   });
 });

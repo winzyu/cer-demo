@@ -12,7 +12,7 @@
 > | **The comparison ◆G7 asked, answered anyway** | On correctness **`firestore-direct` wins**: 1.08/2 vs 0.88 and 0.86 — the arm with the *least* retrieval. Lexical fusion buys nothing at the answer layer (0.86 vs 0.88). |
 > | **Arms judged** | `firestore-direct`, `hybrid-slice-lexvec`, `hybrid-slice-vector` — all captured on the current 15-document corpus, all Tier-1 survivors |
 > | **Eliminated** | `firestore-vector` — **fails Tier 1 on fresh evidence**, 2 fabricated figures (§1c). `pgvector-rag` — dropped by decision 2026-08-26: archived, never deployed, already lost on cost. |
-> | **Written** | 2026-08-26, against `npm run cost`, `data/gate-check/warm.json`, `data/judge/warm.json`, `npm run retrieval:eval`, and `eval/transcripts/warm/` |
+> | **Written** | 2026-08-26, against `npm run cost`, `data/results/gate-check/warm.json`, `data/results/judge/warm.json`, `npm run retrieval:eval`, and `eval/transcripts/warm/` |
 
 **Three things a skim must not miss.**
 
@@ -44,10 +44,10 @@ result rather than a gap in it.
 
 | method | cost/answer (warm) | cache hit (warm) | idle $/mo | 12-mo TCO @ 10k/mo | coverage | **correctness** | **ungrounded** | Tier 1 | p95 TTFT (warm) |
 |---|---:|---:|---:|---:|---:|---:|---:|---|---:|
-| **`firestore-direct`** | $0.000612 | **99.0%** | **$0** | $73.80 | 25/28 = **89.3%** | **1.08** FAIL | **53.4%** FAIL | PASS | 15.2s † |
-| **`hybrid-slice-vector`** | $0.000623 | 86.9% | **$0** | ~$74.8 ‡ | 28/28 = **100%** | **0.88** FAIL | **58.6%** FAIL | PASS | 5.1s |
-| **`hybrid-slice-lexvec`** | $0.000828 | 81.4% | **$0** | ~$99.4 ‡ | 28/28 = **100%** | **0.86** FAIL | **58.6%** FAIL | PASS | 32.4s |
-| ~~`firestore-vector`~~ | $0.000336 | 30.8% | **$0** | ~$40.3 ‡ | 28/28 = 100% | — not judged | — not judged | **FAIL** | 4.4s |
+| **`firestore-direct`** | $0.000612 | **99.0%** | **$0** | $73.44 | 25/28 = **89.3%** | **1.08** FAIL | **53.4%** FAIL | PASS | 15.2s † |
+| **`hybrid-slice-vector`** | $0.000624 | 86.9% | **$0** | $74.88 | 28/28 = **100%** | **0.88** FAIL | **58.6%** FAIL | PASS | 5.1s |
+| **`hybrid-slice-lexvec`** | $0.000828 | 81.4% | **$0** | $99.36 | 28/28 = **100%** | **0.86** FAIL | **58.6%** FAIL | PASS | 32.4s |
+| ~~`firestore-vector`~~ | $0.000339 | 30.8% | **$0** | $40.68 | 28/28 = 100% | — not judged | — not judged | **FAIL** | 4.4s |
 | ~~`pgvector-rag`~~ | — dropped | — | $7.67 | — | — | — | — | FAIL | — |
 
 **Floors, for reading the two quality columns:** correctness **≥1.30/2 overall and ≥1.00 in every
@@ -56,15 +56,19 @@ moved. **Nothing passes.** The best correctness on offer is 0.22 short, and the 
 is **26× over** its ceiling.
 
 Cost is per answer at each arm's own measured warm-pass means (prompt tokens, cache hit and
-completion length all differ per arm), against the 2026-08-03 price sheet.
+completion length all differ per arm), against the price sheet dated in §4. **Reproduce this
+column with `npm run cost -- --completion=measured`** — it is no longer hand arithmetic, and
+`test/unit/cost.test.ts` asserts these four figures so the table cannot drift away from the model
+that produces it.
 
 † `firestore-direct`'s p95 is computed over 54 of 58 turns — four carry negative timings (§1a).
 The three arms captured on 2026-08-26 have **zero** bad rows, so latency is finally measurable for
-them; the older captures are not.
+them; the older captures are not. **The cause is now known and fixed** — see §1a.
 
-‡ Hand-derived. `src/eval/costScenarios.ts` still prices only the three arms swept on 2026-08-11,
-so `npm run cost` does not reproduce these and they omit Firestore read charges. Indicative until
-the arms are added to `scenarioArms()`.
+The `‡` hand-arithmetic marks are **gone as of 2026-08-26.** All five arms are in `scenarioArms()`
+and priced from their own transcripts, and the Firestore read charge that the hand figures omitted
+has been quantified: it is **zero** for both hybrids, which is a finding rather than an omission
+(§2).
 
 **Two columns that changed the shape of the result:**
 
@@ -76,10 +80,26 @@ the arms are added to `scenarioArms()`.
   and no ranking beats both hybrids, and beats them on 8 of 11 classes (§6.7). That is the single
   most decision-relevant number in this document.
 
-### 1a. Latency — the instrumentation is broken and the numbers are not yet usable
+### 1a. Latency — the clock was broken, is fixed, and the old captures are still unusable
 
 The captured `timing` blocks contain **negative** values — `ttftMs` of −748, `wallMs` of −482 —
-which are not slow responses, they are a broken clock. The rate per arm/pass, counting a turn
+which are not slow responses, they are a broken clock.
+
+**Root cause, found 2026-08-26: `src/eval/transport.ts` measured elapsed time with `Date.now()`.**
+That is civil time, which the OS may *step* — an NTP correction, a host resume, a VM clock
+resynchronising. When a backward step lands between the two reads, their difference is the elapsed
+time minus the step, and the result is negative for an event that plainly took time. It is fixed:
+the transport now uses `performance.now()`, which is monotonic, so a negative duration is
+unrepresentable rather than merely unlikely. `test/unit/bakeoffRunner.test.ts` steps `Date.now()`
+back an hour and asserts the measurement does not follow it.
+
+**This also explains why re-running proved nothing.** All nine bad rows are in the 2026-08-11
+sweeps; the 2026-08-13 and 2026-08-25/26 sweeps are clean. That looked like evidence the problem
+had gone away. It was not — the bug only fires when a clock step happens to land inside a capture,
+so a clean run was always compatible with the defect still being there. The fix was made on the
+mechanism, not on the symptom's apparent absence.
+
+**What it does not do is repair the existing transcripts.** The rate per arm/pass, counting a turn
 unusable if either field is negative:
 
 | arm | pass | turns | unusable | p50 TTFT | p95 TTFT | p50 wall | p95 wall |
@@ -96,6 +116,9 @@ Percentiles above are computed **over the surviving rows only**, with the negati
 rather than averaged in. That is the least-wrong thing to do and it is still wrong: the arms lose
 different numbers of rows (0 to 4), so they are not compared over the same denominator, and a
 clock that can produce −748ms has no claim to accuracy on the rows it did *not* make negative.
+**The fix does not retroactively clean these numbers** — a clock step corrupts every row it lands
+near, not only the ones it pushes below zero, so the 2026-08-11 and 2026-08-13 latency figures stay
+unusable until those arms are re-captured.
 
 **Consequence for the pre-registration: §8a's latency veto cannot be applied.** The veto is
 "no arm may add more than 1.5s p95 TTFT over the fastest arm, judged separately cold and warm."
@@ -150,7 +173,7 @@ entirely.
 
 ### 1c. Tier 1 — the machine-checked hard gates
 
-`npm run gate:check`, results in `data/gate-check/warm.json`, **re-run 2026-08-26 over the fresh
+`npm run gate:check`, results in `data/results/gate-check/warm.json`, **re-run 2026-08-26 over the fresh
 captures**. Deterministic, no LLM, no network, seconds. These are §8a's three *hard* gates,
 unchanged in threshold and re-ordered by §8b to run first, so no money is spent grading an arm
 already eliminated — which is exactly what happened here.
@@ -316,7 +339,13 @@ are pinned to `gpt-oss-20b` (§4). **This must not be allowed to quietly decide 
 
 §10 item 4. An undated cost table is worthless in six months, so every figure above traces to here.
 
-**Price sheet: `src/eval/prices.ts`, `PRICES_READ_ON = "2026-08-03"`.**
+**Price sheet: `src/eval/prices.ts`. Every source re-read 2026-08-26.**
+
+`PRICES_READ_ON` is now **one date per source, not one date for the file**, because the three
+sources cannot be checked the same way. The two Fireworks pages are machine-readable and were
+re-read directly. The Firestore page is too long to retrieve in full and was confirmed by hand.
+Collapsing that into a single date would let one unchecked source hide behind two checked ones —
+the exact failure the constant exists to prevent.
 
 | source | URL |
 |---|---|
@@ -329,12 +358,21 @@ are pinned to `gpt-oss-20b` (§4). **This must not be allowed to quietly decide 
 | model | input | cached input | output | cache discount |
 |---|---:|---:|---:|---:|
 | `accounts/fireworks/models/gpt-oss-20b` (**under test**) | $0.070 | $0.035 | $0.300 | 50.0% |
-| `accounts/fireworks/models/gpt-oss-120b` (not run) | $0.150 | $0.014 | $0.600 | 90.7% |
+| `accounts/fireworks/models/gpt-oss-120b` (**the judge**) | $0.150 | $0.015 | $0.600 | 90.0% |
 | `nomic-ai/nomic-embed-text-v1.5` (137M → ≤150M tier) | $0.008 | — | — | — |
 
 Fireworks documents 50% only as a *default*; per-model rates are authoritative, and the two models
-we might plausibly run differ by a factor of 2.5 on that one line — which is why they are recorded
+we might plausibly run differ by a factor of 2.3 on that one line — which is why they are recorded
 individually rather than derived.
+
+**One figure moved between the 2026-08-03 and 2026-08-26 reads:** `gpt-oss-120b` cached input,
+$0.014 → **$0.015**. The page now prints a flat 90% off where the older figure implied 90.7%. It
+is a small number attached to a real bill — 120b is the Tier-2 judge, so this rate prices every
+grading pass in §6 — and it is the concrete answer to "does re-reading the sheet ever change
+anything?" It does.
+
+**Firestore rates were confirmed unchanged**, by hand: reads $0.03/100k, writes $0.09/100k,
+deletes $0.01/100k.
 
 **Firestore Standard, us-central1:** reads $0.03/100k, writes $0.09/100k, deletes $0.01/100k.
 Always Free is **50,000 reads/day**, applying to **one database per project** — `(default)`,
@@ -359,10 +397,10 @@ entries scanned plus one per document returned.
 
 ### Open items on this section — read before quoting a price
 
-1. **`PRICES_READ_ON` is 2026-08-03 and this document is dated 2026-08-26.** `prices.ts` says
-   explicitly: *"Re-read the sources and bump `PRICES_READ_ON` before publishing
-   `RETRIEVAL_COMPARISON.md`."* **That has not been done.** Every cost figure above is priced at a
-   sheet three weeks old, on a catalogue documented to rotate.
+1. ~~**`PRICES_READ_ON` is 2026-08-03 and this document is dated 2026-08-26.**~~ **Done
+   2026-08-26.** All three sources re-read or confirmed; one rate moved (above). The remaining
+   caveat is narrow: the Firestore page cannot be fetched programmatically, so its line depends on
+   a human having looked. It is dated as such rather than blended into the others.
 2. **The judge model is priced, and that is why it was chosen — see the caveat in §6.3.**
    `src/eval/judge/runner.ts` defaults to `accounts/fireworks/models/gpt-oss-120b`, settled
    2026-08-26. It is the only chat model in `prices.ts` that is not the model under test and
@@ -370,12 +408,24 @@ entries scanned plus one per document returned.
    A cross-family judge would have meant an unverified model id **and** an invented rate — trading
    a stated, bounded bias for an unstated one in the cost table. The price is still the 2026-08-03
    sheet, so open item 1 above applies to the judge's budget line as much as to the arms'.
-3. **`hybrid-slice-lexvec` is not in `scenarioArms()`**, so `npm run cost` does not price it and
-   the † figures above are hand arithmetic. Its Firestore read charge is unquantified.
+3. ~~**`hybrid-slice-lexvec` is not in `scenarioArms()`**~~ **Done 2026-08-26.** Both hybrids are
+   priced from their own transcripts, and their Firestore read charge is quantified at **zero**
+   (§2). `firestore-vector`'s entry was also found stale in the same pass — it still carried the
+   superseded 2026-08-11 profile (3,498 prompt / 1,207 cached) against the 3,342 / 1,030 in the
+   transcripts on disk, which is why its per-answer figure in §1 moved $0.000336 → $0.000339.
 4. **`RETRIEVAL_BAKEOFF.md` §1b quotes `firestore-direct` at $0.000503/answer at 400 completion
-   tokens; `npm run cost` reproduces $0.000507 today.** A $0.000004 discrepancy that changes
-   nothing, recorded because a cost table that cannot be reproduced from its own repo is the thing
-   this section exists to prevent.
+   tokens; `npm run cost` reproduces $0.000510 today.** The gap widened from $0.000004 to
+   $0.000007 for a stated reason: the model now caps each arm's cached tokens at what its sweep
+   actually measured (10,910 of 11,023 for direct-feed) instead of applying the swept rate
+   unbounded. The default `--cache-rate` of 0.996 is above every arm's measured rate, so the old
+   behaviour credited each arm with slightly more cache than was observed — in the direction that
+   flatters the arms being priced. Recorded because a cost table that cannot be reproduced from
+   its own repo is the thing this section exists to prevent.
+5. **`--cache-rate` is now `sliceCacheRate` internally and applies to all three slice-carrying
+   arms**, not to `firestore-direct` alone. Both hybrids prepend the same operator slice, so they
+   face the same eviction risk; sweeping the rate for one of them would have priced the cold case
+   with direct-feed at 0% cache and the hybrids still at ~87%, producing a ranking that is an
+   artifact of the model rather than a property of the arms.
 
 ---
 
@@ -588,6 +638,11 @@ dimensions, and — after the two defects it exposed were fixed — a re-run of 
 whose prompts changed. The `ungrounded` verdicts were left untouched and carried forward, so its
 row below is the same measurement in both columns rather than a re-rolled one.
 
+> **Read this table with §6.4a's correction in hand.** 12 of these 36 rows grade `firestore-vector`
+> answers that were replaced when that arm was re-captured on 2026-08-26, so the kappa below is not
+> a measurement of the current system. On the 24 rows where the human and the judge saw the same
+> answer, correctness is **0.81 → 0.94** once the refusal rubric is fixed.
+
 | dimension | n | exact | within-1 | any / none | **Cohen's kappa** |
 |---|---:|---:|---:|---:|---:|
 | **correctness** | 36 | 83.3% → **91.7%** | 94.4% → **100%** | 94.4% → **100%** | 0.75 → **0.87** |
@@ -597,7 +652,7 @@ row below is the same measurement in both columns rather than a re-rolled one.
 **Cost, which §7b requires be counted:** 84 calls / 335,892 in / 45,499 out = **$0.0777** for the
 first pass, plus 48 calls / 193,247 in / 21,246 out = **$0.0417** for the re-run. **$0.1194 total**
 at the 2026-08-03 `gpt-oss-120b` rate. The pre-fix ledger is kept at
-`data/judge/warm.pre-fix-2026-08-26.jsonl` so the before column is auditable and not just asserted.
+`data/results/judge/warm.pre-fix-2026-08-26.jsonl` so the before column is auditable and not just asserted.
 
 Read the kappa column, not the percentages. Raw agreement is inflated wherever one value
 dominates: `invalid_citations` is 0 in 33 of the human's 36 rows, so a judge answering "0"
@@ -640,7 +695,7 @@ all one shape: the judge scores 1 where the human scored 2 on a refusal that nam
 information but did not use the pinned `REFUSAL_SENTENCE` verbatim. That is a genuine rubric
 ambiguity — Tier 1 already decided the same behaviour *passes* the refusal gate (§8b: the gate
 vetoes on answering, not on wording), so the judge is arguably being stricter than the
-pre-registration. Worth settling before the full pass; it is not a defect.
+pre-registration. **Settled 2026-08-26 — see §6.4a.**
 
 **Citation support at kappa 0.52 is moderate, and n=12 is thin.** It moved from worse-than-chance
 to usable, but it gates nothing — §8a's citation threshold is spent on the resolution half, which
@@ -657,6 +712,146 @@ stricter, not the judge, so the residual gap is the judge splitting claims more 
 enumerates "ORP responds to electron availability" and "ORP responds faster than DO" as two claims
 where the human wrote one line covering both. **It does not change the finding in §6.6**, because
 that turns on whether a turn carries *any* claim, where the two agree 86.1% of the time.
+
+### 6.4a The refusal rubric, settled — and what settling it accidentally measured
+
+**The decision (2026-08-26, the gate owner's):** a refusal that declines and names what is missing
+scores full marks, whatever words it uses. Whether the service *should* emit a fixed sentence is a
+system-prompt question, and enforcing it is Tier 1's job, where it is free and deterministic.
+Paying a judge to re-check a string match would be the wrong instrument even if the answer were
+yes.
+
+Implemented as a change to the instrument rather than to a threshold, per §7b's rule: the two live
+refusal fixtures now say `"refuses to answer, in any wording"` where they said `"refuses using the
+exact refusal sentence"`, `correctnessPrompt` carries the matching rule, and `GRADING_GUIDE.md` §3
+tells the human the same thing. Defensible without reference to the number it produces: Tier 1's
+`refusalOutcome` already classifies an off-contract refusal as **passing** — *"refused without the
+pinned sentence and stated no figure — passes the gate"* — so before this change the two tiers
+were applying different definitions of the same word and reporting one result.
+
+**It did exactly what it was meant to.** On `refusal-pathogens` turn 2 the judge moved 1 → **2**
+for both `firestore-direct` and `pgvector-rag`, matching the human, who scored all three arms 2.
+Both of the rows this was aimed at now agree.
+
+The re-judge cost **$0.0898** (83 calls, 417,574 in / 45,314 out) and its ledger is kept separately
+at `data/results/judge/warm.refusal-fix-2026-08-26.jsonl`, with the summary at
+`warm.calibration-2026-08-26.json`. **It is deliberately not merged into `warm.jsonl`**: it covers
+6 fixtures, not 28, and a partial ledger sitting under the full pass's filename is how a
+calibration subset gets mistaken for a result — the trap §6.6 already records once.
+
+#### The accident: the judge does not reproduce itself
+
+Re-judging the calibration set produced this, against the ledger that produced the table above —
+same turns, same fixtures, same model, **temperature 0**:
+
+| dimension | verdicts compared | identical | changed |
+|---|---:|---:|---:|
+| correctness | 36 | 30 (83.3%) | 6 |
+| ungrounded claims | 36 | 25 (**69.4%**) | 11 |
+| citation support | 9 | 5 (**55.6%**) | 4 |
+
+**An earlier draft of this section read that table as "the judge does not reproduce itself" and
+concluded that every kappa here is noise. That conclusion was wrong, and the correction is worth
+more than the original claim.** Two follow-up experiments, 2026-08-27:
+
+**Correctness is deterministic.** Two identical correctness-only runs over the calibration set
+agreed **36/36**. Five identical runs over the three refusal fixtures agreed **30/30**, with a
+per-arm mean spread of exactly 0.00. So the six correctness rows that "changed" above did not
+change by chance. Broken down, they are:
+
+| rows | cause |
+|---:|---|
+| 2 | the intended refusal fix — `refusal-pathogens` t2 moved 1 → **2**, matching the human |
+| 3 | **stale human grades** — see below |
+| 1 | genuinely flaky (`deepmanual-stabilization-criteria` t1, `pgvector-rag`: 0 once in four) |
+
+#### The stale-grade trap, which cost more than the noise did
+
+All three of the "regression" rows are `firestore-vector`, **and that arm was re-captured on
+2026-08-26 — after the human graded it.** The human's packet for `acronym-ntu-fnu` reads *"FNU
+(field nephelometric units) … using a calibration curve"*; the transcript on disk now reads
+*"FNU (formazin nephelometric units) … a conversion validated for the specific instruments"*. They
+are different answers to the same question. The human's score describes text that no longer exists,
+and `npm run judge -- --calibrate` joins on `(fixture, turn, arm)` — it has no way to notice.
+
+**12 of the 36 human rows are stale on exactly this basis**, and they invert the sign of the result:
+
+| rows scored | pre-fix | with the refusal fix |
+|---|---:|---:|
+| all 36 (12 of them stale) | exact 91.7%, kappa **0.87** | exact 88.9%, kappa **0.83** |
+| **the 24 valid rows** | exact 87.5%, kappa **0.81** | exact 95.8%, kappa **0.94** |
+
+Read the top row and the refusal fix made the judge worse. Read the bottom row — the only one where
+the human and the judge saw the same answer — and it moved agreement from *moderate* to *near
+perfect*. **The published 0.87 in §6.4 is itself computed over those 12 stale rows** and is not a
+measurement of the current system.
+
+**This generalises past this one arm.** A human grading packet is pinned to the transcripts it was
+generated from. Re-capturing an arm silently invalidates every human row for it — the same class of
+failure as §6.6's optimistic subset.
+
+**Built 2026-08-27.** `--calibrate` now reads the answer text out of the grading packet — the
+artifact the human actually read — compares it to the transcript on disk, and **excludes** the rows
+that no longer match, printing them before the numbers rather than after. Comparison goes through
+`normalizeForMatch`, so typographic drift is not mistaken for a re-capture; a row whose packet or
+transcript is missing is left alone, because absence is not divergence. On the current sample it
+reports:
+
+```
+12 row(s) EXCLUDED — the arm was re-captured after grading, so the human
+and the judge scored different answers:
+  firestore-vector: 12 row(s) — re-grade this arm, or exclude it deliberately
+  e.g. acronym-ntu-fnu t1 (firestore-vector)
+    human graded: No. NTU (nephelometric turbidity units) and FNU (field nephelometric units)…
+    on disk now : No. NTU (nephelometric turbidity units) and FNU (formazin nephelometric units)…
+```
+
+**Excluded rather than warned about, deliberately.** A warning above a number does not stop the
+number being quoted, and this one had already been quoted. The effect of the exclusion on every
+dimension, measured over the same ledger:
+
+| dimension | over all 36 rows | over the 24 comparable rows |
+|---|---:|---:|
+| correctness | kappa 0.83 | **0.87** |
+| ungrounded claims | kappa 0.33 | **0.57** |
+| citation support | kappa 0.17 | **0.44** |
+
+The stale rows were depressing every dimension, not just the one that exposed them — `ungrounded`
+and `citations` never had a rubric change to blame, and both nearly doubled. **The judge was always
+this much better than §6.4 reported; a third of the sample was scoring it against answers it never
+saw.**
+
+#### What is actually noisy
+
+Not correctness. The instability is confined to the two dimensions that ask the judge to **emit a
+list** rather than a score: `ungrounded` (69.4% of raw counts reproduce) and `citations` (55.6%).
+Counts swing hard — `definitional-orp` turn 2 went 8 → 7 on one arm and 3 → 0 on another. The
+plausible mechanism is output length: correctness emits one digit and a sentence, while groundedness
+enumerates claims at ~545 completion tokens a call, and one early divergence cascades. Temperature 0
+constrains sampling; it does not make a long generation bit-reproducible.
+
+**The gate metric is much steadier than the raw counts.** §8a gates on *whether a turn carries any
+ungrounded claim*, not on how many:
+
+| ungrounded, measured two ways | reproducibility |
+|---|---:|
+| raw claim count | 25/36 = 69.4% |
+| **the any/none flag the gate actually uses** | **31/36 = 86.1%** |
+
+and 4 of the 5 flips are on `firestore-vector`, an eliminated arm. On `firestore-direct` the gate
+metric reproduced **exactly** — 50.0% of turns in both runs, zero flips.
+
+**What survives.** Everything in §7. The Tier-2 conclusions are gross — correctness 0.86–1.08
+against a 1.30 floor, groundedness 53–59% against a 2% ceiling — and an instrument that reproduces
+its gate metric 86% of the time still cannot turn 53% into 2%. What does *not* survive is any
+argument resting on **differences between arms** in the groundedness column: the 5.2-point spread is
+inside the noise, which is one more reason §7's finding is "systemic, not per-arm".
+
+**What it would take to sharpen it**, in cost order: fix the stale-grade join (free, deterministic);
+move citations into Tier 1 via quote-based citations (§6.5, free once the prompt work happens);
+and only then consider judging each turn *k* times, which multiplies the Tier-2 bill by *k* (a full
+pass is ~$0.67, so k=3 is ~$2). The last one is not recommended before the groundedness work in
+§7.4 changes the answers being judged.
 
 ### 6.5 A model-behaviour finding the citation fix deliberately stops measuring
 
@@ -712,15 +907,20 @@ result, are labelled as such above, and are superseded by §6.7.
 ### 6.7 Tier 2 — the full pass, 2026-08-26
 
 `npm run judge --arm=firestore-direct,hybrid-slice-lexvec,hybrid-slice-vector`, verdicts in
-`data/judge/warm.jsonl`, summary in `data/judge/warm.json`. 398 calls on top of the calibration's
+`data/results/judge/warm.jsonl`, summary in `data/results/judge/warm.json`. 398 calls on top of the calibration's
 84, 0 failed. Judge `gpt-oss-120b`, calibrated at kappa 0.87 / 0.52 / 0.46 (§6.4). Cumulative judge
 budget **$0.8082** — 4,122,348 input / 316,454 output tokens over 429 recorded calls.
 
-| arm | correctness (floor **1.30**) | worst servable class | ungrounded turns (ceiling **2%**) | coverage | **Tier 2** |
-|---|---:|---|---:|---:|---|
-| `firestore-direct` | **1.08** | `cross-document` 0.67 | **53.4%** (31/58) | 89.3% | **FAIL** |
-| `hybrid-slice-vector` | **0.88** | `cross-document` 0.17 | **58.6%** (34/58) | 100% | **FAIL** |
-| `hybrid-slice-lexvec` | **0.86** | `cross-document` 0.50 | **58.6%** (34/58) | 100% | **FAIL** |
+| arm | correctness (floor **1.30**) | servable classes **< 1.00** (floor: none) | worst servable class | ungrounded turns (ceiling **2%**) | coverage | **Tier 2** |
+|---|---:|---:|---|---:|---:|---|
+| `firestore-direct` | **1.08** | **2 of 10** | `cross-document` 0.67 | **53.4%** (31/58) | 89.3% | **FAIL** |
+| `hybrid-slice-vector` | **0.88** | **7 of 11** | `cross-document` 0.17 | **58.6%** (34/58) | 100% | **FAIL** |
+| `hybrid-slice-lexvec` | **0.86** | **6 of 11** | `cross-document` 0.50 | **58.6%** (34/58) | 100% | **FAIL** |
+
+**Read the per-class column, not just the overall mean.** §8a gates *every* servable class at
+≥1.00, so an arm fails the floor twice over. `firestore-direct` misses on `cross-document` (0.67)
+and `fouling-drift` (0.75); the hybrids miss on most of the set. Quoting only the overall 1.08
+understates the gap — even a system that reached 1.30 overall would still have to lift two classes.
 
 Per class, out of 2. Starred entries sit outside that arm's servable set (§8a) and are counted as
 coverage, not correctness:
@@ -761,7 +961,9 @@ differ at the retrieval layer, and it does not survive into what the user reads.
 least one unsupported claim, against a 2% ceiling — a **26× breach on the best arm**. The spread
 between arms is 5 points; the distance to the floor is 51. It cannot be attributed to a strict
 judge: a human, grading blind before this harness existed, independently flagged 25% of the turns
-they graded (§6.4). No retrieval strategy is going to move a number that behaves this way.
+they graded — **9 of the 36 filled rows** in `eval/grading/warm/scores.csv`. (Derived from that
+file, not from §6.4, which reports judge/human *agreement* and never states the human's own rate.
+An earlier draft cited §6.4 here; the number is right, the cross-reference was not.) No retrieval strategy is going to move a number that behaves this way.
 
 **4. Every arm fails every gate that matters, and the arms are closer to each other than any of
 them is to the floor.** Correctness spread 0.22, distance to floor 0.22 on the *best* arm.
@@ -789,7 +991,7 @@ cheaper."* Step 1 has now been executed in full and **it eliminated the entire f
 That is the operative instruction and this document is the record it asks for. **No threshold in
 §8a has been changed, softened, or reinterpreted.**
 
-### 7.1a The reframe this forces — a decision that is not ours to make silently
+### 7.1a The reframe this forces — **decided 2026-08-26: split it**
 
 There is a structural problem with simply "re-running", and it should be surfaced rather than
 discovered later:
@@ -818,12 +1020,23 @@ than something the numbers settle:
   lets the actual problem be worked, at the cost of re-capturing to re-verify the arm choice once
   the system changes.
 
-**Recommendation: split it**, with the floor carried forward verbatim and re-run before deploy.
-The alternative spends the project's remaining time protecting a comparison the data has already
-made, while the defect that actually blocks shipping goes untouched. But this is a
-pre-registration, so the decision belongs to whoever owns the gate and belongs in
-[`timeline.md`](timeline.md) with its reasoning — not in a commit message, and not implied by a
-document quietly proceeding as though it had been made.
+**Recommendation was: split it**, with the floor carried forward verbatim and re-run before
+deploy. The alternative spends the project's remaining time protecting a comparison the data has
+already made, while the defect that actually blocks shipping goes untouched.
+
+> **Decided 2026-08-26 by the gate owner: split.** The retrieval-strategy half of ◆G7 closes on
+> the evidence in this document. The quality floor is re-filed as a **system-level deploy
+> blocker**, carrying §8a's thresholds forward verbatim — correctness ≥1.30/2 overall and ≥1.00
+> per servable class, ungrounded turns ≤2%. **No threshold moved, and none may.**
+>
+> Two consequences take effect immediately. **The system prompt is unpinned**, which unblocks the
+> groundedness work in §7.4 and N5's personality item. And **the arm comparison is now dated
+> evidence**: any prompt change invalidates it, so a passing groundedness number on a changed
+> prompt does not retroactively confirm `firestore-direct` as the winner. That has to be re-earned
+> by re-capturing, which is precisely the cost the split was accepted in order to pay.
+
+The reasoning belongs in [`timeline.md`](timeline.md), where it is recorded — not in a commit
+message, and not implied by a document quietly proceeding as though the decision had been made.
 
 ### 7.2 What is actually established
 
@@ -835,7 +1048,9 @@ document quietly proceeding as though it had been made.
 | **Direct-feed wins correctness** | 1.08/2, and 8 of 11 classes, against arms with full-corpus retrieval |
 | **Lexical fusion buys nothing at the answer layer** | 0.86 vs 0.88 — same slice, same dense arm, one adds BM25 |
 | **The slice prevents the empty-context failure** | the eliminated arm invented figures after a retrieval miss handed it irrelevant chunks; arms carrying the ◆G9 slice never face an empty context |
-| Cost at realistic volume is a **non-issue** | $73.80–$99.40 per year at 10k/month; the whole spread is ~$26 |
+| Cost at realistic volume is a **non-issue** | $73.44–$99.36 per year at 10k/month; the whole spread is ~$26 |
+| **Composing retrieval onto the slice is a cost surcharge, not a saving** | `hybrid-slice-vector` sends 12,671 prompt tokens/turn against direct-feed's 11,023 — it sends the whole slice *and* five retrieved chunks. Direct-feed is cheaper than both hybrids at every volume in the modelled range |
+| **Neither hybrid costs a single Firestore read per query** | both compose `DirectFeedAdapter` (slice cached once per process) with `LocalVectorAdapter` (local embedding cache); no kNN query reaches Firestore, so `firestore-vector`'s 9 reads/query have no counterpart |
 | Both surviving shapes have **zero fixed cost** | vs the legacy stack's $7.67/month floor at zero traffic |
 | The break-even that matters | **45,613 requests/month**, direct-feed vs a deployed pgvector arm |
 | `firestore-direct` is **structurally blind** on `deep-in-manual` | 0.33/2 there vs the hybrids' 0.50 and 0.83; 2.4% chunk recall against a 20.2% floor. Its one real weakness, and §8a charges it as coverage |
@@ -843,6 +1058,32 @@ document quietly proceeding as though it had been made.
 
 ### 7.3 What is not established
 
+- **Whether the fixture set is representative of real questions, and this one is load-bearing.**
+  Measured 2026-08-27: the ◆G9 slice is **37,660 of the corpus's 851,611 chars — 4.4%** — and
+  **only 3 of the 30 fixtures require material outside it.** All three are `deep-in-manual`, the
+  one class `firestore-direct` cannot reach, where it scores **0.33/2** against
+  `hybrid-slice-vector`'s 0.83 and a 1.0 per-class floor.
+
+  So 90% of the evaluation is answerable from 4.4% of the corpus, and direct-feed's headline win —
+  8 of 11 classes — is a win on a question mix that is overwhelmingly slice-answerable. **That is
+  not a rigged test**: the slice was curated to be the authoritative tier and §8a charges the gap
+  as coverage — direct-feed scores **89.3% (25 of the 28 runnable fixtures)**. Coverage is *not* a
+  gate: §8a makes it a headline-table column and an input to the split-outcome decision, and sets
+  no threshold on it, so "fails coverage" is a category error an earlier draft of this line made.
+  But it does mean the margin is a function of
+  the fixture mix. If real usage skews toward manual-depth questions, direct-feed's advantage
+  shrinks toward its worst class rather than its average, and the split outcome §8a names —
+  direct-feed for the authoritative tier, retrieval for the long manuals — becomes the answer on
+  quality grounds alone.
+
+  **What would settle it:** fixtures drawn from real user questions rather than authored against
+  the corpus, or simply more `deep-in-manual` coverage. Three fixtures is too thin to carry the
+  weight this class is now bearing.
+
+  Note the mechanism, because it is easy to state wrongly: direct-feed does **not** degrade by
+  being handed a large context. It never sees one — its prompt is ~9,415 tokens and fixed. The
+  whole corpus is ~213,000 tokens and is not feedable by any arm at any price. The exposure is
+  blindness to the 95.6% it never sees, not dilution within what it does.
 - **Whether the quality floor is reachable at all** on this prompt, this `max_tokens`, and this
   model. Nothing here bounds how much of the 53% groundedness rate a prompt change recovers.
 - **Whether the arm ranking survives a system change.** Correctness was measured against a pinned
@@ -851,38 +1092,57 @@ document quietly proceeding as though it had been made.
   price for direct-feed — its captured cold pass still measured 95.5% cached.
 - **The §8a latency veto**, which is not reached: step 1 eliminated the field, and the older
   captures' timings remain untrustworthy in any case.
-- **`hybrid-slice-vector` and `hybrid-slice-lexvec` in `scenarioArms()`**, so their costs are hand
-  arithmetic and omit Firestore reads.
+- ~~**`hybrid-slice-vector` and `hybrid-slice-lexvec` in `scenarioArms()`**~~ — **done
+  2026-08-26**; both are priced from their own transcripts and §1 is reproducible with
+  `npm run cost -- --completion=measured`.
+- **The reproducibility of the judge's *count* dimensions.** Re-judging the same turns at
+  temperature 0 changed 11 of 36 groundedness verdicts and 4 of 9 citation verdicts on prompts that
+  did not change (§6.4a). Correctness, by contrast, is deterministic — 36/36 and 30/30 across
+  repeated runs. So *differences between arms* in the groundedness column are inside the
+  instrument's noise; the gross conclusions, and the correctness column, are not.
+- **An agreement rate that describes the current system.** 12 of the 36 human grading rows were
+  written against `firestore-vector` answers that no longer exist (§6.4a). Until those are re-graded
+  or excluded, `npm run judge -- --calibrate` reports a number that is part measurement and part
+  archaeology.
 
 ### 7.4 What has to happen, in order
 
 Steps 0–6 of the previous plan are **done** — judge defects fixed, both pending arms captured,
 Tier 1 re-run, Tier 2 run in full. What remains:
 
-1. **Make the ◆G7 scoping decision in §7.1a** and record it, with its reasoning, in
-   [`timeline.md`](timeline.md). Everything below branches on it.
-2. **Settle the off-contract-refusal rubric question.** The judge scores 1 where the human scored
-   2 on a refusal that names the missing information but does not use `REFUSAL_SENTENCE` verbatim;
-   Tier 1 already treats that behaviour as *passing* (§8b). It is the only known systematic
-   judge/human divergence left on correctness, and it is worth 0.1–0.2 on the arm means.
-3. **Attack groundedness, which is the deploy blocker.** The failure mode is consistent across
+1. ~~**Make the ◆G7 scoping decision in §7.1a**~~ — **done 2026-08-26: split.** Recorded with its
+   reasoning in [`timeline.md`](timeline.md). The system prompt is unpinned.
+2. ~~**Settle the off-contract-refusal rubric question.**~~ — **done 2026-08-26.** A correct
+   refusal scores full marks in any wording (§6.4a).
+3. ~~**Bump `PRICES_READ_ON`**~~ — **done 2026-08-26**, per source rather than per file; one rate
+   moved (§4).
+4. ~~**Add `hybrid-slice-lexvec` and `hybrid-slice-vector` to `scenarioArms()`**~~ — **done
+   2026-08-26**; §1 is reproducible with `npm run cost -- --completion=measured`.
+5. ~~**Fix the timing instrumentation**~~ — **root cause found and fixed 2026-08-26** (`Date.now()`
+   is not a monotonic clock; §1a). **A re-capture is still outstanding**: the fix does not repair
+   transcripts already on disk, so `firestore-direct`'s and `firestore-vector`'s latency figures
+   stay unusable, and neither hybrid has a cold pass at all.
+
+**Now the top of the list:**
+
+6. **Attack groundedness, which is the deploy blocker.** The failure mode is consistent across
    every arm: the model volunteers mechanism the documents do not support — *"dilution with
    low-mineral water lowers conductivity"*, *"ORP responds faster than DO"*. That is a generation
-   behaviour, addressable in the prompt, and **not addressable by retrieval**. Requires the prompt
-   to be unpinned, hence step 1 first.
-4. **Bump `PRICES_READ_ON`** — re-read the three source pages and update `src/eval/prices.ts` (§4),
-   `gpt-oss-120b` included, since it is now the judge as well as a candidate model. The file's own
-   doc comment makes this a precondition of publishing this document.
-5. **Add `hybrid-slice-lexvec` and `hybrid-slice-vector` to `scenarioArms()`** so `npm run cost`
-   prices them and the ‡ figures stop being hand arithmetic.
-6. **Fix the timing instrumentation on the older captures** and take a cold pass for the two hybrid
-   arms. The 2026-08-26 captures are clean; `firestore-direct`'s and `hybrid-slice-lexvec`'s are
-   not (§1a).
-7. **Grade a hybrid arm into the human sample.** Neither hybrid has any human judgement, so the
-   calibration join is one-sided on exactly the arms the comparison now turns on.
-8. **Re-verify after any system change.** §8a's floor carries forward unchanged onto whatever
+   behaviour, addressable in the prompt, and **not addressable by retrieval**. Unblocked by the
+   split; the prompt is no longer pinned.
+7. **Quote-based citations**, which move citation support out of a paid, noisy Tier 2 into free
+   deterministic Tier 1 — see §6.5. §6.4a strengthens the case: the citation dimension reproduces
+   itself only 5 times in 9, so the thing it measures is currently being measured with an
+   unreliable instrument for money.
+8. ~~**Make `--calibrate` detect stale human rows.**~~ — **done 2026-08-27** (§6.4a). The remaining
+   work it exposes is data, not code: **re-grade `firestore-vector`**, or accept a 24-row sample.
+9. **Grade a hybrid arm into the human sample.** Neither hybrid has any human judgement, so the
+   calibration join is one-sided on exactly the arms the comparison now turns on. Doing this at the
+   same time as re-grading `firestore-vector` shares the cost of one packet.
+10. **Re-verify after any system change.** §8a's floor carries forward unchanged onto whatever
    prompt or model configuration follows; a passing groundedness number on a changed system does
-   not retroactively validate an arm choice made on this one.
+   not retroactively validate an arm choice made on this one. **This is now load-bearing** — the
+   split was accepted on exactly this condition.
 
 ### 7.5 What would reverse the decision, once there is one
 
@@ -891,7 +1151,7 @@ Written now, while there is no result to rationalise:
 - **Cached-input pricing.** Direct-feed's entire cost case rests on the 50% discount at
   `gpt-oss-20b`. If cached input rises toward uncached, direct-feed's ~11K static tokens per
   request stop being nearly free and it loses on cost outright. **Re-run this report.**
-- **A model change.** At `gpt-oss-120b`'s 90.7% discount the ranking inverts and direct-feed
+- **A model change.** At `gpt-oss-120b`'s 90% discount the ranking inverts and direct-feed
   becomes cheaper on input than the smaller model. **A model swap invalidates the cost conclusion
   entirely**, not marginally.
 - **Corpus growth.** The ◆G9 slice is ~9.4K tokens. Grow it past the context window, or past the
@@ -922,25 +1182,31 @@ point twice over: the arm with the *least* retrieval scored the best answers.
 
 | § | blank | what fills it |
 |---|---|---|
-| 1 | `hybrid-slice-*` costs via `npm run cost` | add them to `scenarioArms()` in `src/eval/costScenarios.ts` |
+| 1 | ~~`hybrid-slice-*` costs via `npm run cost`~~ | **filled 2026-08-26** — all five arms in `scenarioArms()`; `npm run cost -- --completion=measured` reproduces §1 |
 | 1 | cold pass for either hybrid arm | a cold capture — both were swept warm-only |
 | 1 | genuinely-cold `firestore-direct` cost | `npm run cost -- --cache-rate=0`; the captured cold pass still measured 95.5% cached |
-| 1a | trustworthy latency for the 2026-08-11/25 captures | fix the negative-timing instrumentation, re-capture. The 2026-08-26 captures are already clean |
+| 1a | trustworthy latency for the 2026-08-11/13 captures | **the clock is fixed** (monotonic since 2026-08-26); those transcripts still need re-capturing, since the fix is not retroactive |
 | 1a | §8a's 1.5s p95 TTFT veto | never reached — step 1 of the decision rule eliminated the field |
-| 2 | `hybrid-slice-*` Firestore read charges | measure reads per query for the composed adapters |
-| 4 | prices newer than 2026-08-03 | re-read the three sources, bump `PRICES_READ_ON` |
+| 2 | ~~`hybrid-slice-*` Firestore read charges~~ | **filled 2026-08-26 — they are zero.** Neither hybrid issues a Firestore query per request |
+| 4 | ~~prices newer than 2026-08-03~~ | **filled 2026-08-26**, dated per source; `gpt-oss-120b` cached input moved $0.014 → $0.015 |
 | 5 | sample outputs for `hybrid-slice-vector` | it postdates §5, which was written against three arms |
 | 6 | whether a cross-family judge changes the scores | re-run with `JUDGE_MODEL=` set to another family, once its rate is priced |
 | 6 | a citation format a string match can verify | quote-based citations, post-◆G7 (§6.5) — moves the dimension into Tier 1 |
 | 6 | anything measuring the 47% line-1 citation rate | nothing does, by design, after the §6.4 fix — see §6.5 |
-| 6 | whether an off-contract refusal is a correctness 1 or 2 | settle it against §8b's refusal-gate scope (§7.4 step 2) |
+| 6 | ~~whether an off-contract refusal is a correctness 1 or 2~~ | **filled 2026-08-26 — a 2, in any wording** (§6.4a) |
+| 6 | **an error bar on the groundedness and citation kappas** | judge each turn *k* times and report median + spread; re-judging changed 11 of 36 groundedness verdicts at temperature 0. Correctness needs no error bar — it is deterministic (§6.4a) |
+| 6 | ~~**a calibration join that notices stale human rows**~~ | **filled 2026-08-27** — `--calibrate` excludes and prints them |
+| 6 | **human grades for `firestore-vector` on its current answers** | 12 rows excluded as stale; re-grade that arm, or state that the sample is 24 rows |
 | 6 | human grading for either hybrid arm | neither has any, so the calibration join is one-sided on the arms that now matter |
 | 6 | 138 of 174 human grading rows | human grading; the judge now covers the full set on its own |
-| 7 | **the ◆G7 scoping decision** | §7.1a — yours to make, and to record in `timeline.md` |
+| 7 | ~~**the ◆G7 scoping decision**~~ | **filled 2026-08-26 — split**, recorded in `timeline.md` (§7.1a) |
 | 7 | **a deployable system** | groundedness at 53–59% of turns against a 2% ceiling (§7.4 step 3) |
+| 7 | **evidence that the fixture mix reflects real questions** | only 3 of 30 fixtures need material outside the 4.4% slice, and all 3 are the class direct-feed fails (§7.3) |
 
 ---
 
-*Draft — ◆G7 open. Re-run this report, don't rewrite the plan, whenever `LLM_MODEL` changes
-materially, Fireworks pricing changes, or the corpus grows substantially
-([`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §10).*
+*◆G7's retrieval-strategy half is **closed** as of 2026-08-26 (§7.1a); its quality floor is now a
+system-level deploy blocker and remains **unmet**. Re-run this report, don't rewrite the plan,
+whenever `LLM_MODEL` changes materially, Fireworks pricing changes, the corpus grows substantially,
+or the system prompt changes — which, now that the prompt is unpinned, is the one most likely to
+happen next ([`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §10).*

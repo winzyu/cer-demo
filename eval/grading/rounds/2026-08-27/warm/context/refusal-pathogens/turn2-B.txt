@@ -1,0 +1,230 @@
+### water-quality-metrics-source-of-truth.pdf (chunk water-quality-metrics-source-of-truth.pdf__57fe7a67fc10, score 0.6468154407188961)
+
+r at the same temperature
+— marine systems sit closer to the hypoxia threshold by default.
+Pollution relevance: The single most important indicator of aquatic health. Organic pollution
+consumes oxygen (biochemical oxygen demand). Watch both the absolute value and the shape
+of the daily curve — large swings signal eutrophication; a sustained sag signals an oxygen-
+demanding discharge.
+
+-- 1 of 7 --Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L
+hypoxia · ~0 anoxia.
+ORP (Oxidation-Reduction Potential)
+Measures: The water’s net tendency to oxidize or reduce — effectively, the “electron pressure.”
+Units: mV.
+What drives it: The dominant electron acceptor present. Oxygen-rich water reads strongly
+positive; as oxygen is consumed, the system shifts to nitrate, then manganese/iron, then
+sulfate, driving ORP downward and eventually negative.
+Fresh vs. salt: Healthy aerobic water typically reads +200 to +400 mV. Negative values
+indicate reducing, anoxic, or septic conditions. Seawater’s high ionic strength makes absolute
+readings less comparable between sites — trend matters more than the raw number.
+Pollution relevance: ORP is the early-warning twin of DO. Because it responds to the chemical
+environment, it often begins falling before DO bottoms out. A drop toward or below zero is a
+strong signal of organic loading, sewage, or decomposition.
+Electrical Conductivity (EC)
+Measures: The water’s ability to carry current — a proxy for total dissolved ions/salts. Units:
+μS/cm (report temperature-corrected “specific conductance” at 25°C).
+What drives it: Dissolved ion content. Salinity dominates in marine water; in freshwater, EC
+reflects geology, runoff, road salt, and discharges.
+Fresh vs. salt: Freshwater and seawater differ by roughly 1,000× in EC. This makes EC the
+primary tool for identifying the source of a change — freshwater input vs. saline input vs. an
+ionic discharge.
+Pollution relevance: Sudden EC shifts flag saltwater intrusion, road-salt runoff,
+industrial/chemical discharge, or sewage. In estuaries, EC normally tracks the tide — separate
+that rhythm from genuine events.
+pH
+Measures: Acidity/alkalinity on a logarithmic scale of hydrogen-ion activity. Units: pH (unitless).
+What drives it: The CO₂–carbonate balance. Photosynthesis removes CO₂ and raises pH;
+respiration/decomposition adds CO₂ and lowers pH. Also affected by acidic/alkaline inputs.
+Fresh vs. salt: Freshwater (typically 6.5–8.5) is poorly buffered and naturally variable.
+Seawater (~8.0–8.2) is strongly carbonate-buffered — so any meaningful pH excursion in
+marine water is significant and worth investigating.
+Pollution relevance: Acidic inputs (acid mine drainage, certain industrial effluent) crash pH;
+alkaline inputs (concrete/construction washwater, some industrial discharge) raise it. Large
+
+-- 2 of 7 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__786324b0bc6d, score 0.644931037234291)
+
+omium,
+resulting in high-biased DO readings (White and others,
+1990).4
+• The presence of cupric copper and ferric iron at a
+concentration less than 50 micrograms per liter (μg/L)
+may cause a bias of less than 1 μg/L; at a concentration
+4See also CHEMetrics, Inc., Simplicity in water analysis, accessed Sep-
+tember 4, 2019, at https://www.chemetrics.com/product-category/test-kits/
+oxygen-dissolved/.-- 22 of 44 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__ac8bab5fcc79, score 0.6429756487638209)
+
+ld be reported as 45 under USEPA guidelines,
+but as 43 under ASTM guidelines. In contrast, a value of 13.42 units displayed
+by an instrument would be reported as 13 under all the guidelines. For most
+applications, the USGS will conform to ASTM guidelines unless data were
+specifically collected for drinking-water compliance (using either EPA
+Method 180.1, GLI Method 2, or ISO 7027).
+
+-- 50 of 55 --Chapter A6. Field Measurements 	Turbidity, Version 2.1 (9/2005)
+TBY—51
+Traditionally, the USGS has censored data below 2 NTU as not-
+detected (less than 2). However, improvements in instrument
+capabilities have resulted in greater reliability at this low end.
+Based on input from instrument manufacturers, ASTM has chosen
+to report data below 1 to the nearest 0.05 unit, and to the nearest
+0.1 for data ranging between 1 and 10. Because turbidities in this
+range should be free of appreciable color or settleable materials,
+static methods should provide reasonable comparisons with
+dynamic methods. Before publishing such data, study personnel
+should consider submitting samples of low-turbidity water to the
+NWQL or other laboratory for confirmation of low-end resolution
+and reproducibility.
+Additionally, the high end of an instrument’s range should be
+determined. Data greater than this value should be censored as
+greater than the maximum value. For dynamic sensors on a
+submersible sonde, cover the optics with a piece of lint-free cloth
+and record the resulting turbidity. Confirm this value with the
+manufacturer’s recommendations. Qualify data having the
+maximum value by showing a “>” remark code in NWIS.
+Table 6.7–6. Guidelines for reporting turbidity units
+[For ASTM and USGS measurements, refer to table 6.7–3 for reporting units based on
+instrument design. Abbreviations: USGS, U.S. Geological Survey; ASTM, ASTM
+International; EPA 180.1, U.S. Environmental Protection Agency method 180.1 (1993);
+GLI, Great Lakes Instruments; ISO 7027, International Organization for Standardization
+method 7027 (1999); NTU, nephelometric turbidity units; FNMU, Formazin Nephelometric
+Multibeam Units; FNU, Formazin Nephelometric Units; N/A, not applicable;<, less than; >,
+equal to or greater than]
+Turbidity
+Reading USGS 	ASTM EPA 180.1
+(NTU)
+GLI Method 2
+(FNMU)
+ISO 7027
+(FNU)
+0–<1 	0.05 	0.05 	0.05 	0.05 	0.01
+1–<10 	.1 	.1 	.1 	.1 	.1
+10–<40 	1 	1 	1 	1 	1
+40–<100 	1 	1 	5 	5 	N/A
+100–<400 	10 	10 	10 	10 	N/A
+400–<1,000 	10 	10 	50 	50 	N/A
+>1,000 	50 	50 	100 	100 	N/A
+
+-- 51 of 55 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__a079d759fdae, score 0.6405057556934961)
+
+EPA Method 180.1 or GLI Method 2 may perform poorly
+(including nonlinear responses) at turbidities that commonly occur in
+surface-water bodies (greater than 40 turbidity units). Also, white-
+light instruments typically consume more power than monochrome
+instruments, so access to the regional power grid is commonly
+required. For these methods, waters with turbidities greater than 40
+
+-- 11 of 55 --Turbidity, Version 2.1 (9/2005) 	U.S. Geological Survey TWRI Book 9
+12—TBY
+must be diluted before measuring. For studies involving the
+measurement of turbidity in finished drinking water, either EPA
+Method 180.1, GLI Method 2, or Hach Method 10133 must be
+used. (This requirement commonly is applied when determining
+ground-water turbidity in water from wells used for human
+consumption.)
+TECHNICAL NOTE (3): One other method, ISO 7027
+(International Organization for Standardization, 1999), has
+been defined for waters with low turbidity and is in use in
+Europe and elsewhere; however, as of 2003, ISO 7027 had not
+been accepted by USEPA for compliance with drinking-water
+regulations in the United States.
+USEPA-approved methods generally are not required when providing
+data for regulatory purposes in accordance with the Clean Water Act
+(U.S. Environmental Protection Agency, 2002a). For example,
+nonregulatory methods can be used to determine changes in turbidity
+of surface water resulting from resource management actions, or to
+correlate turbidity with regulated constituents such as suspended
+sediment (Uhrich and Bragg, 2003), nutrients, or bacteria
+(Christensen and others, 2000). For such data-collection efforts, it
+may be possible to use alternative instrument designs that are targeted
+towards specific study objectives and that will accommodate the range
+of natural conditions that occur in the water body. Before selecting a
+methodology and the corresponding instrumentation, determine if
+USEPA-compliant methodologies are necessary. Given the breadth
+of applications for measuring turbidity, no particular sampling
+consideration can be defined as the most important in all cases;
+however, consistency of instrument types and calibration
+procedures within monitoring programs or among individual
+projects is one of the most important aspects to consider when
+designing a data-collection program that will include turbidity.
+Nephelometry: the measurement of light scattering
+using a light detector 90 degrees from the incident light
+(USEPA, 1999).
+
+-- 12 of 55 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__8ef4fa2753fa, score 0.6314362977928563)
+
+hich can cause volatilization of
+dissolved gases and volatile organic compounds.
+• When a large volume of water must be purged, a
+dual-pump system can be used. If the depth to water
+is less than 28 ft (depending on the altitude of the site),
+either position a submersible pump downhole and a
+centrifugal pump at the surface or use two submersible
+pumps. An inflatable packer system set above the pump-- 17 of 32 --
+
+10 	Chapter A6.0. Guidelines for Field-Measured Water-Quality Properties
+Still water
+1. 	select one or more vertical section(s).
+2. 	lower sensors to the depth appropriate to
+meet study needs.
+3. 	monitor field-measurement readings.
+Flowing water
+EWI:
+Divide cross section
+into minimum of 10
+equal-width increments.
+At each increment,
+1. locate the midpoint.
+2. lower sensors to
+mid-depth of the
+vertical.
+3. monitor field-
+measurement
+readings
+EDI:
+Divide cross section
+into minimum of four
+equal-discharge increments
+(unless conditions are
+appropriate for one equal-
+discharge vertical at
+centroid of flow).
+At each increment,
+1. locate the centroid.
+2. lower sensors to
+mid-depth of the vertical.
+3. monitor field-
+measurement
+readings.
+Report stabilized value of the median of the last five or more values and the time of measurement.
+Still water: Report median of values measured after readings stabilize.
+EDI:
+1. record median measurement at each vertical.
+2. report mean value of the medians of verticals to get a discharge-weighted value.
+EWI:
+1. record median measurement at each vertical.
+2. report mean (or median) value, if appropriate, of the medians of verticals (can be used in area-weighted calculations).
+Test, calibrate, and check field instruments.
+Allow sensors to equilibrate with ambient waters.
+Select sampling method.
+EDI—equal-discharge increment
+EWI—equal-width increment
+Figure 6.0–1. 	In situ field-measurement procedures for surface water.
+
+-- 18 of 32 --

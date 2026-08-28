@@ -32,9 +32,17 @@ generated_reports/
 # on a fresh clone requires re-running OCR or being handed the .txt (documents/README.md).
 .ocr_cache/
 
-# Sensor data — confidential per CLAUDE.md privacy posture
+# Sensor data — confidential per CLAUDE.md privacy posture.
+#
+# `data/*` stays a blanket ignore and `data/results/` is the single exception, because the two
+# kinds of thing under `data/` have opposite defaults. Confidential pulls (`backend-surface/`,
+# `device-fields/`) and large derived caches (`corpus/`, `embeddings/`) must never be committed;
+# evaluation results must be, since the reports cite them as evidence and re-earning them costs
+# money. An allow-list keeps a new confidential subdirectory ignored by default — a deny-list
+# would leak it the day someone adds one and forgets this file.
 data/*
 !data/.gitkeep
+!data/results/
 
 # Source documents — public EPA/USGS but bulky
 documents/*

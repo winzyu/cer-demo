@@ -127,6 +127,19 @@ export const needsGroundingForCorrectness = (rubric: EvalRubric): boolean => (
  * measurement — and it would triple the input tokens of a dimension that mostly does not need
  * them.
  *
+ * **Refusals are graded on behaviour, not phrasing** (2026-08-26). A rubric point asking for a
+ * refusal is satisfied by an answer that declines and names what it lacks, in any wording. The
+ * judge previously read "refuses using the exact refusal sentence" literally and scored such
+ * answers 1 where the human scored 2 — but Tier 1's refusal gate vetoes on *answering*, not on
+ * wording (`RETRIEVAL_BAKEOFF.md` §8b), so the judge was stricter than the pre-registration it
+ * was supposed to implement. Two tiers measuring different things and reporting one number is the
+ * defect; the fixture rubrics now say "any wording" so the instrument and the rule agree.
+ *
+ * Note what this is *not*: it is not a decision that wording does not matter. Whether the service
+ * should emit a fixed sentence is a system-prompt question, and enforcing it is Tier 1's job,
+ * where it is free and deterministic. Paying a judge to re-check a string match would be the
+ * wrong instrument even if the answer were yes.
+ *
  * The exception, added 2026-08-26 after the first calibration: a `must_not` phrased as an
  * invention check is *unjudgeable* without the material (see `needsGroundingForCorrectness`). For
  * those turns the source documents are supplied and the judge is told what they are for — deciding
@@ -146,6 +159,9 @@ RULES:
 - If any "must not" item appears in the answer, the score is 0 regardless of everything else.
 - Judge each "must not" item on its own terms. Do not invent additional ones.
 - A refusal scores 0 when the rubric expected content, and 2 when the rubric asked for a refusal.
+- Wording is not part of a refusal rubric. When a rubric asks for a refusal, an answer that
+  declines and says what it lacks satisfies that point in full, whether or not it uses the
+  service's standard refusal sentence.
 - Ignore style, tone, formatting and length. A blunt correct answer and an elegant correct answer
   score the same.
 
