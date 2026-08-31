@@ -107,7 +107,7 @@ A question answerable inside the slice cannot discriminate between retrieval str
 
 ---
 
-## 2b. Chunking — FROZEN 2026-08-31, confirmed by the user
+## 2b. Chunking — FROZEN 2026-08-31, alpha-ratio filter removed
 
 Recorded here because chunk ids are content-derived SHA-256 (`src/ingestion/chunk.ts`), so
 **changing any value below voids every retrieval label written against it.** Adding documents is
@@ -119,54 +119,70 @@ safe forever; re-chunking is not.
 | Overlap | **400 chars**, prepended from the previous chunk | `OVERLAP_CHARS` |
 | Splitter | recursive, separators `\n\n` → `\n` → `. ` → ` ` → hard cut | `SEPARATORS` |
 | Minimum chunk | **100 chars** | `MIN_QUALITY_CHARS` |
-| Alphabetic-ratio filter | **0.5**, applied when extraction method ≠ `text` | `MIN_ALPHA_RATIO`, `ingest.ts:61` |
+| Alphabetic-ratio filter | **OFF for every document** | `ingest.ts:61` |
 | Boilerplate drop | `adobe acrobat`, `acrobat reader`, `click here to download` | `BOILERPLATE` |
 | Chunk id | `<filenameSlug>__<sha256(text)[0:12]>` | `chunkIdOf` |
 
-**Corpus fingerprint at freeze** — `data/corpus/corpus.json`, generated 2026-08-25:
-15 documents, **851,891 chars**, **393 chunks** kept of **452** before the quality filter.
-Extraction: 14 `pdf`, 1 `ocr-cache` — **no `.md`/`.txt` document exists in the corpus.**
+**Corpus fingerprint at freeze** — `data/corpus/corpus.json`, re-ingested 2026-08-31:
+15 documents, **851,891 chars**, **451 chunks**. Extraction: 14 `pdf`, 1 `ocr-cache`.
 ◆G9 direct-feed slice: 5 documents, 37,660 chars, **4.4%**.
 
-### The alpha-ratio filter is dropping 42 numeric tables
+### Why the filter came out — reversed after the first freeze
 
-The `checkAlphaRatio` escape hatch documented in `chunk.ts` — "disabled for `.md`/`.txt`, where a
-low ratio means structure rather than noise" — **matches zero documents**, because every document
-in the corpus is a PDF. The confound that hatch was written to prevent is therefore live:
+The first freeze on 2026-08-31 kept the filter and recorded 393 chunks. That was reversed the same
+day, before any label existed, once the cost of keeping it was measured concretely.
 
-| what the filter drops | chunks |
+`chunk.ts` documented an escape hatch: skip the alphabetic-ratio test for `.md`/`.txt`, where a low
+ratio means a table rather than OCR noise. The reasoning was right and **the condition matched
+nothing** — every document in this corpus is a PDF, so the exemption was dead code and the filter
+ran on all fifteen. What it removed:
+
+| dropped by the filter | chunks |
 |---|---:|
-| Numeric tables (>12% digits) | **42** |
+| Numeric tables | **42** |
 | Table-of-contents dot leaders | 17 |
-| **Total** | **59** |
+| Genuine OCR noise — the only thing it exists to catch | **0** |
 
-36 of the 59 come from `usgs-nfm-a6.2-dissolved-oxygen.pdf` alone — 34 of them the oxygen-solubility
-tables, which are the corpus's authoritative source for DO threshold lookups. All 59 are recoverable
-by turning the filter off; none are OCR noise.
+34 of the 42 were the oxygen-solubility tables in `usgs-nfm-a6.2`, the corpus's authoritative
+source for DO threshold lookups. Direct-feed consumes whole document text and kept them; every
+vector arm could not retrieve them at all. A `threshold-lookup` question about oxygen solubility
+would have scored as "feeding beats retrieving" when it was a filter setting — one more instance of
+exactly the confound §0 describes.
 
-**This is a live confound, not a curiosity.** Direct-feed consumes whole document text and keeps
-every table. The vector arms embed chunks and cannot retrieve any of them. A `threshold-lookup` or
-`deep-in-manual` question about oxygen solubility is unanswerable by every retrieval arm and
-answerable by direct-feed — which reads as "feeding beats retrieving" and is actually a filter
-setting. §0 already notes the previous bake-off could not be trusted; this is one more reason.
+**The reversal was nearly free, and measurement is why we know that.** Chunk ids are derived from
+chunk text, and the filter runs *after* chunking, so turning it off cannot alter a surviving
+chunk's text. Verified rather than assumed: re-ingest kept **393 of 393 existing ids, zero lost**,
+and added 58. All 1,023 claims already extracted stayed valid; only `index` moved, and it was
+re-derived from `chunkId`.
 
-**DECIDED 2026-08-31: keep the filter as-is. The frozen chunk set is 393.** The 42 table chunks
-stay outside retrieval's reach, so **no fixture may be authored that depends on them** — in
-particular, nothing keyed to the oxygen-solubility tables in `usgs-nfm-a6.2`. Phase 1a's claim
-inventory must be built from the 393 kept chunks, not from document text, or it will promise claims
-the vector arms cannot reach.
+**The 17 dot-leader chunks now survive too.** They are inert — no real question ranks them — and an
+inert chunk is a better failure than a silently deleted table.
 
-**The corpus is expected to be adjusted later.** That is safe on one condition, and destructive
-otherwise:
+### The recovered tables are retrievable, but 11 of them are headerless
 
-- **Adding or removing a document is safe.** Chunk ids are content-derived, so existing chunks keep
-  their ids and their labels. A removed document's labels simply go dead and are visible as such.
-- **Re-chunking is not.** Changing any parameter in the table above — including turning the
-  alpha-ratio filter off — re-derives every id and voids every label written against it.
+Confirmed after re-ingest: BM25 returns `usgs-nfm-a6.2` chunks at rank 1 for solubility and
+salinity-correction queries, where before the material did not exist in the index. 30 of the 36 new
+a6.2 chunks carry real numeric cells.
 
-This is exactly why Phase 1e stores a **human locator** (document + section + short quote) beside
-each chunk hash. If the filter decision is ever revisited, the locators let labels be re-resolved
-against the new chunk set instead of re-authored from nothing. Do not skip that column.
+**But of the 35 recovered numeric-table chunks corpus-wide, only 24 are self-describing.** The
+other 11 are bare number grids whose caption and column header fell on the far side of a chunk
+boundary — a retrieval arm handed one of those gets a value with no way to know which pressure or
+salinity column it belongs to. **Do not build a fixture whose answer requires a value from a
+headerless grid**; it is not honestly answerable from retrieval even now. Phase 1a records which
+chunks these are.
+
+### What is safe to change later, and what is not
+
+- **Adding or removing a document is safe.** Ids are content-derived, so existing chunks keep their
+  ids and their labels. A removed document's labels go dead and are visible as dead.
+- **Editing a document is nearly safe.** Measured: a one-word edit invalidates **0–2 chunks**, never
+  the document and never the corpus, because the splitter breaks on `\n\n` first and an edit stays
+  inside its own paragraph's chunk.
+- **Changing a parameter in the table above is destructive.** All 451 ids re-derive at once.
+
+Phase 1e's **human locator** (document + section + short quote) is the mitigation for all three. It
+lets a label be re-resolved against a new chunk instead of re-authored. Phase 1a is already
+capturing locators, so the protection is in place before any label exists.
 
 ---
 
@@ -613,6 +629,7 @@ completely meaningless dataset.
   `wip-restore-pgvector-2026-08-31` (preserved worktree WIP — `restore-pgvector` un-archives an arm
   the project has decided against; it needs a keep-or-drop decision).
 - `main` is 2 ahead of `origin/main`, and was before this work started.
-- Corpus: **15 documents, 851,611 chars, 393 chunks.** ◆G9 slice is 37,660 chars (4.4%).
+- Corpus: **15 documents, 851,891 chars, 451 chunks** (re-ingested 2026-08-31 without the
+  alpha-ratio filter; was 393). ◆G9 slice is 37,660 chars (4.4%).
 - Uncommitted: `docs/migration/DEVICE_API.md`, `src/eval/judge/{prompts,runner}.ts`,
   `src/eval/prices.ts`, four `data/results/judge/warm.schema-*.jsonl`, `.env.example.tmp` (empty).
