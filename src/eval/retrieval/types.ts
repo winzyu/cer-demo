@@ -9,7 +9,8 @@
  * is answerable offline, deterministically, in seconds, with no model in the loop.
  *
  * It measures something narrower than answer quality and must not be confused for it
- * (`HANDOFF.md` §4 makes the same point about the sweep's retrieval-miss rate). A perfect recall
+ * (`RETRIEVAL_EVAL.md` §3 makes the same point about the N2 sweep's retrieval-miss
+ * rate). A perfect recall
  * score says the material was available, not that the answer was good. It is a *necessary*
  * condition, which is exactly what makes it a useful fast signal: retrieval failures are
  * unrecoverable downstream, so ruling them out first is the cheapest possible ordering.

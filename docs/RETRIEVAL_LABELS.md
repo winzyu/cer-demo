@@ -19,7 +19,7 @@ Companion docs: [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md) (what a fixture is, the t
 It answers one question: **given a query, did the adapter put the right chunks in front of the
 model?** That is a *necessary* condition for a good answer, not a sufficient one. A perfect recall
 score says the material was available; it says nothing about what the model then did with it. The
-same caution `HANDOFF.md` §4 attaches to the sweep's retrieval-miss rate applies here.
+same caution `RETRIEVAL_EVAL.md` §3 attaches to the N2 sweep's retrieval-miss rate applies here.
 
 The point is the ordering: retrieval failures are unrecoverable downstream, so ruling them out
 first is the cheapest thing to check. Today the only alternative is replaying 58 conversations
