@@ -3,9 +3,16 @@
    HTTP-shaped errors. Same exemption .eslintrc.js already grants that file. */
 import { config } from "../config";
 import { DeviceApiClient } from "../devices/DeviceApiClient";
+import { mergeByTimestamp, resolveChain } from "../devices/mergeChains";
+import type { DeviceChain } from "../devices/mergeChains";
 import { METRIC_BY_KEY, METRICS } from "../devices/metrics";
 import { implausibilityReason, isPlausible } from "../devices/plausibility";
-import type { DeviceReading, DeviceSummary, MetricKey } from "../types/device.types";
+import type {
+  DeviceReading,
+  DeviceSummary,
+  MetricKey,
+  PeriodUnit,
+} from "../types/device.types";
 import { codedError, resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
@@ -332,6 +339,42 @@ export class QuerySensorData {
   }
 
   /**
+   * One window, read across every label in the device's continuity chain.
+   *
+   * There is no fan-out endpoint: repeating `device=` on `/water/period` returns **0 rows**, the
+   * param is not a list there (`BACKEND_FIELDS.md` §4a). So it is one request per label, issued
+   * sequentially rather than in parallel because this is someone else's production API
+   * (`DEVICE_API.md` §9) and the chain is at most three labels long today.
+   *
+   * The survivor is queried first and `mergeByTimestamp` drops only what a *later* label
+   * repeats, so an unmerged pod's series is exactly what it was before chains existed.
+   */
+  private async getPeriodChain(
+    labels: string[],
+    duration: number,
+    unit: PeriodUnit,
+    token?: string,
+  ): Promise<DeviceReading[]> {
+    const client = this.client(token);
+    if (labels.length === 0) {
+      // Not reachable today — `execute` refuses a device with no label first — but an empty list
+      // here would call `/water/period` with no `device` at all, which is an *unfiltered* query
+      // across everything the token can see. Fail to nothing rather than to everything.
+      return [];
+    }
+    if (labels.length === 1) {
+      return client.getPeriod(duration, unit, labels[0]);
+    }
+
+    const batches: DeviceReading[][] = [];
+    for (let index = 0; index < labels.length; index += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      batches.push(await client.getPeriod(duration, unit, labels[index]));
+    }
+    return mergeByTimestamp(batches);
+  }
+
+  /**
    * Fetches a raw window, widening it when it comes back empty.
    *
    * An empty window is not an answer: the reference instant that anchors every relative range
@@ -339,12 +382,12 @@ export class QuerySensorData {
    * day" can mean anything at all.
    */
   private async fetchWindow(
-    label: string,
+    labels: string[],
     lookbackMs: number,
     token?: string,
   ): Promise<{ readings: DeviceReading[]; window: FetchWindow }> {
     let window = fetchWindowFor(lookbackMs);
-    let readings = await this.client(token).getPeriod(window.duration, window.unit, label);
+    let readings = await this.getPeriodChain(labels, window.duration, window.unit, token);
     let escalations = 0;
 
     while (readings.length === 0 && escalations < MAX_ESCALATIONS) {
@@ -354,7 +397,7 @@ export class QuerySensorData {
       }
       window = wider;
       // eslint-disable-next-line no-await-in-loop
-      readings = await this.client(token).getPeriod(window.duration, window.unit, label);
+      readings = await this.getPeriodChain(labels, window.duration, window.unit, token);
       escalations += 1;
     }
 
@@ -524,12 +567,22 @@ export class QuerySensorData {
       );
     }
 
+    // The site's history, not just this Notecard's. A merge moves the registry row and leaves
+    // the readings behind under the old label, so a survivor can hold under 4 % of its own
+    // site's record (`BACKEND_FIELDS.md` §4a). Resolved off the caller's own device list, which
+    // `resolveDevice` has already fetched and cached, so this costs no extra request.
+    const chain = resolveChain(device, await this.devices(token));
+
     const single = metricKeys.length === 1 ? metricKeys[0] : undefined;
     const identity = {
       device: {
         name: device.name ?? label,
         label,
         operating_environment: device.operatingEnvironment ?? null,
+        // Disclosed rather than silent: the numbers below come from these labels and not from
+        // the withheld ones, and a reader cannot tell that from the values alone.
+        ...(chain.labels.length > 1 ? { history_labels: chain.labels } : {}),
+        ...(chain.withheld.length > 0 ? { history_withheld: chain.withheld } : {}),
       },
       metric: single ? NAME_BY_METRIC_KEY.get(single) : "all",
       ...(single ? { unit: unitFor(single) } : {}),
@@ -555,7 +608,7 @@ export class QuerySensorData {
     if (referenceIso === null) {
       // `/water/last` drops readings with no GPS fix, so a null here is not proof of silence.
       // Fall back to widening period windows, which do not filter, to find any data at all.
-      const probe = await this.fetchWindow(label, lookbackMsFor(parsed, this.now()), token);
+      const probe = await this.fetchWindow(chain.labels, lookbackMsFor(parsed, this.now()), token);
       readings = probe.readings;
       probeSpanMs = probe.window.spanMs;
       referenceIso = QuerySensorData.newestObservedAt(readings);
@@ -584,7 +637,7 @@ export class QuerySensorData {
     const neededLookback = Math.max(this.now() - range.startMs, MIN_LOOKBACK_MS);
     const window = fetchWindowFor(neededLookback);
     if (readings.length === 0 || window.spanMs > probeSpanMs) {
-      readings = await this.client(token).getPeriod(window.duration, window.unit, label);
+      readings = await this.getPeriodChain(chain.labels, window.duration, window.unit, token);
     }
 
     if (readings.length === 0) {
@@ -660,6 +713,7 @@ export class QuerySensorData {
     const notes = this.notes(
       metricKeys,
       device,
+      chain,
       totalSamples,
       referenceMs,
       range.start,
@@ -803,12 +857,43 @@ export class QuerySensorData {
   private notes(
     metricKeys: MetricKey[],
     device: DeviceSummary,
+    chain: DeviceChain,
     nSamples: number,
     referenceMs: number,
     rangeStart: string,
     implausible: Array<[MetricKey, number]> = [],
   ): Record<string, unknown> {
     const notes: string[] = [];
+
+    if (chain.labels.length > 1) {
+      // Said out loud because the alternative is a number whose provenance is invisible: these
+      // are the same physical site under successive Notecards, and a reader comparing this
+      // against a single-label export needs to know why the counts differ.
+      notes.push(
+        `This site's readings are spread across ${chain.labels.length} device labels — a `
+        + "replaced Notecard mints a new label and the older readings keep the old one. This "
+        + `answer covers all of them (${chain.labels.join(", ")}), de-duplicated where their `
+        + "spans overlap.",
+      );
+    }
+
+    if (chain.withheld.length > 0) {
+      // A withheld predecessor is not absent data, and the difference matters: the site has that
+      // history, this account may not read it. Reported as a limit on the answer, never as a
+      // statement that the readings do not exist.
+      const parts = chain.withheld.map((entry) => `${entry.label} (${entry.reason})`);
+      notes.push(
+        `Earlier readings from this site were NOT included: ${parts.join("; ")}. `
+        + "Say that the history shown may start later than the site's first reading.",
+      );
+    }
+
+    if (chain.mergedInto) {
+      notes.push(
+        `This device was retired and merged into ${chain.mergedInto}, so its readings stop at `
+        + "the merge. Current data for the site is under that label.",
+      );
+    }
 
     if (implausible.length > 0) {
       // Said out loud rather than silently dropped: a probe that rails without setting its

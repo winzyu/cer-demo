@@ -668,6 +668,33 @@ Behavior worth knowing, each guarding a documented silent-failure mode in `DEVIC
 | turbidity results carry a provisional/uncalibrated note | it is a derived voltage index expressed in NTU, not a measurement |
 | a device whose `operatingEnvironment` disagrees with `WATER_TYPE` is flagged in the result | one global env var cannot serve both pods — N4 work, an input to ◆G3 |
 
+### 10.3c Device continuity — merge chains (`src/devices/mergeChains.ts`)
+
+A replaced Notecard mints a new device id, and the registry ties old to new with `mergedInto` on
+the retired row and `labels[]` on the survivor. **The rows do not follow.** Historical readings
+keep the retired label forever, so a survivor can hold under 4 % of its own site's record
+(`BACKEND_FIELDS.md` §4a). Answered off the survivor label alone, "the trend at Marina Park over
+two years" is a real statistic over six weeks that says nothing about the other 94 % — the
+confident-wrong-answer class.
+
+Upstream shipped chain expansion for seven query sites but **not** for `/water/period`, the only
+endpoint this tool reads (`SECURITY_FINDINGS.md` §7), so the fan-out happens here.
+
+| rule | why |
+|---|---|
+| every `/water/period` read goes out once per chain label, survivor first, sequentially | repeating `device=` on that route returns **0 rows** — the param is not a list there — and this is someone else's production API |
+| rows a **later** label repeats are dropped, matched on `timestamp` | chains overlap (New Trinidad and Trinidad Island share five months); naive concatenation double-counts and reweights every mean. The first batch is never filtered, so an unmerged pod's series is byte-identical to before |
+| a predecessor is read only when it is in the caller's **own** `/devices` response | that response is org-scoped upstream and is the only trustworthy statement of what this caller may see; `/water/period` itself authorizes nothing (`SECURITY_FINDINGS.md` §1) |
+| a predecessor whose `organization` differs from the survivor's is **withheld** | three of the four live chains cross organizations. Whether inheriting a buoy inherits its data is the operator's call (`POD_AUTHORIZATION.md` §11 Q1); deny is the documented default until they answer, and it is the reversible error |
+| an organization is compared as an opaque string, never resolved | two live devices point at organizations that do not exist; a lookup either throws or silently returns nothing. A survivor with no organization inherits nothing |
+| `mergedInto` is never followed **forward** | a question about a retired pod is about that pod's own span; following it would widen the read into a device the caller never named. The result says the pod was retired instead |
+| what was read and what was withheld are **named in the result** (`device.history_labels`, `device.history_withheld`, plus a note) | silent expansion is the bug; disclosed expansion is the feature. A withheld predecessor is a limit on the answer, not a statement that the history does not exist |
+
+Expansion cannot widen what the caller could otherwise reach, so it needs no flag of its own; the
+`PodScope` grant layer (`POD_AUTHORIZATION.md` §10 P0) is where a narrowing switch belongs. The
+report's **Data scope** block (§8c there) is still open — the report inherits the fan-out through
+`QuerySensorData.query()` but does not yet print which labels it used.
+
 ### 10.4 Responses
 
 **Default (JSON):** `{ answer, model, mode, citations, usage }`, plus `tool_calls` when any tool ran
