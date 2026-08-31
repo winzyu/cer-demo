@@ -108,3 +108,47 @@ number of checkable, self-contained claims over many fragments.
 
 When you finish, report back: per document, the claim count, the metric spread, the `high`
 specificity count, and your gaps list. Keep the report compact — the JSON is the deliverable.
+
+---
+
+## Addendum, 2026-08-31 — read this too
+
+### If your assignment says TOP UP an existing file
+
+The file already holds validated claims for chunks that are **not** in your list. **Read it, add
+your chunks to its `chunks` array, and write it back.** Do not overwrite it, do not re-extract a
+chunk already present, and do not renumber anything. Losing those claims means losing work that
+cannot be cheaply redone.
+
+Two files also carry `"notes": "PARTIAL — agent terminated..."` in their summary. If your
+assignment completes that document, replace the whole `summary` block with the real one —
+`totalClaims`, `byMetric`, `byType`, and above all `gaps`.
+
+### Newly recovered chunks
+
+The corpus was re-ingested without the alphabetic-ratio filter, so 58 chunks that never existed
+before are now present. They are marked `| NEWLY RECOVERED` in the chunk header. Most are numeric
+tables; some are front matter, table-of-contents dot leaders, or reference lists.
+
+- **Front matter, dot leaders and reference lists get `"claims": []`.** That is the correct answer
+  for them. Do not manufacture filler.
+- **Numeric tables are the valuable ones.** Capture the rows as `numeric` claims with the exact
+  values and units quoted verbatim, and put the table number in the locator.
+
+### Headerless table grids — flag these explicitly
+
+A table often spans several chunks, and only the first carries the caption and column header. The
+continuation chunks are bare number grids: a reader sees `12.13 12.21 12.29 …` with no way to know
+which column is which pressure or salinity.
+
+When a chunk is one of these, say so in its `locator` (e.g. `Table 6.2-2 continuation — no header
+in this chunk`) and list the chunk in `summary.notes`. **A claim from a headerless grid must not
+assert what a specific cell means** unless the chunk itself gives you the row and column labels.
+This matters: a fixture built on such a chunk is not honestly answerable from retrieval, and we
+need to know which chunks are in that state before questions are written.
+
+### Scratchpad hygiene
+
+If you write a helper script, **name it after your own assignment** (e.g. `verify_a62.py`), never a
+generic name. Agents share one scratchpad directory and the previous run had them overwrite each
+other mid-task.
