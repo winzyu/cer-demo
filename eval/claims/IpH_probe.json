@@ -1,0 +1,428 @@
+{
+  "filename": "IpH_probe.pdf",
+  "title": "Atlas Scientific Industrial pH Probe — Datasheet",
+  "inSlice": true,
+  "chunkCount": 3,
+  "chunks": [
+    {
+      "chunkId": "IpH_probe.pdf__d3fc1e169fc7",
+      "index": 0,
+      "locator": "Front spec table through the Specifications block — \"Range \t0 − 14\"",
+      "claims": [
+        {
+          "id": "ph-range-01",
+          "claim": "The Atlas Scientific Industrial pH Probe has a measurement range of 0 to 14 pH.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "Range \t0 − 14",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-response-time-01",
+          "claim": "The Industrial pH Probe reaches 95% of its response in 1 second.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "95% in 1s\tResponse time",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-resolution-01",
+          "claim": "The Industrial pH Probe has a resolution of +/- 0.001 pH.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "+/- 0.001\tResolution",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-accuracy-01",
+          "claim": "The Industrial pH Probe has a stated accuracy of +/- 0.002 pH.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "+/– 0.002\tAccuracy",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-max-pressure-01",
+          "claim": "The Industrial pH Probe is rated to a maximum pressure of 100 PSI.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "100 PSI\tMax pressure",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-max-depth-01",
+          "claim": "The Industrial pH Probe has a maximum depth rating of 70 meters (230 feet).",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "70m (230’)\tMax depth",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-cable-length-01",
+          "claim": "The Industrial pH Probe ships with a 3 meter (9.8 foot) cable.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "3 meters (9.8’)\tCable length",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-temp-range-01",
+          "claim": "The Industrial pH Probe has an operating temperature range of -5 to 99 degrees Celsius.",
+          "metrics": ["ph", "temperature"],
+          "type": "numeric",
+          "quote": "-5 − 99 °C\tTemperature range °C",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-no-internal-temp-01",
+          "claim": "This Industrial pH Probe variant is the No Temp version and contains no internal temperature probe.",
+          "metrics": ["ph", "temperature"],
+          "type": "definitional",
+          "quote": "Internal temp. probe\nConnector",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-junction-01",
+          "claim": "The Industrial pH Probe uses a double junction silver / silver chloride reference.",
+          "metrics": ["ph"],
+          "type": "definitional",
+          "quote": "Double junction silver / silver chloride",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-recal-interval-01",
+          "claim": "The Industrial pH Probe spec table gives the time before recalibration as approximately 1 year.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "~1 Year\tTime before recalibration",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-life-expectancy-01",
+          "claim": "The Industrial pH Probe has a stated life expectancy of approximately 4 years or more.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "~4 Years +\tLife expectancy",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-connector-01",
+          "claim": "The Industrial pH Probe is available with either an SMA connector or tinned leads.",
+          "metrics": ["ph"],
+          "type": "definitional",
+          "quote": "SMA or Tinned leads\tConnector",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-principle-01",
+          "claim": "A pH probe measures hydrogen ion activity in a liquid via a glass membrane at its tip that lets hydrogen ions diffuse into the outer layer of the glass while larger ions stay in solution, and the resulting difference in hydrogen ion concentration inside versus outside creates a very small current proportional to the hydrogen ion concentration.",
+          "metrics": ["ph"],
+          "type": "conceptual",
+          "quote": "This glass membrane permits hydrogen\nions from the liquid being measured to defuse into the outer layer of the glass, while\nlarger ions remain in the solution.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-expansion-01",
+          "claim": "pH is the abbreviation for potential of Hydrogen.",
+          "metrics": ["ph"],
+          "type": "definitional",
+          "quote": "A pH (potential of Hydrogen) probe measures the hydrogen ion activity in a liquid.",
+          "specificity": "low"
+        },
+        {
+          "id": "ph-scale-def-01",
+          "claim": "On the pH scale a value above 7 is a base, exactly 7 is neutral, and below 7 is an acid.",
+          "metrics": ["ph"],
+          "type": "definitional",
+          "quote": "Base: pH > 7\tNeutral: pH = 7\tAcid: pH < 7",
+          "specificity": "low"
+        },
+        {
+          "id": "ph-min-immersion-01",
+          "claim": "The Industrial pH Probe ships with a soaker cap holding solution of approximately 3 to 4 pH, and the drawing marks a minimum immersion depth.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "Soaker cap\n~3 – 4 pH",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-storage-working-life-01",
+          "claim": "The Industrial pH Probe has a storage life of approximately 5 years and a working life of approximately 4 or more years.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "Storage Life \t~5 Years\nWorking Life \t~4+ Years",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-dimensions-01",
+          "claim": "The Industrial pH Probe is 197mm (7.7 in) long overall, carries a 3/4 NPT thread, and ships with a 10ml soaker bottle.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "197mm\n(7.7”)",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-serial-01",
+          "claim": "Each Industrial pH Probe carries a unique 12-digit serial number.",
+          "metrics": ["ph"],
+          "type": "definitional",
+          "quote": "Unique\n12-digit\nserial #",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-nsf51-01",
+          "claim": "The Gen 3 Industrial pH Probe - No Temp, part number ENV-50-pH-NT, is certified by Atlas Scientific as meeting NSF/ANSI Standard 51 and is food safe.",
+          "metrics": ["ph"],
+          "type": "definitional",
+          "quote": "Part # ENV-50-pH-NT\nmeets the NSF/ANSI Std. 51,",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-reference-electrode-01",
+          "claim": "The reference electrode of the Industrial pH Probe is silver / silver chloride.",
+          "metrics": ["ph"],
+          "type": "definitional",
+          "quote": "Silver / Silver Chloride\nDelrin® thermoplastic",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-body-material-01",
+          "claim": "The Industrial pH Probe body is made of Delrin thermoplastic and its wetted materials are glass, Teflon, PVC, EPDM, polyethylene and titanium nitride, each listed as NSF-51 compliant.",
+          "metrics": ["ph"],
+          "type": "definitional",
+          "quote": "Glass\nTeflon\nPVC\nEPDM\nDelrin ®\n(body) Polyethylene\nTitanium\nNitride",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-weight-01",
+          "claim": "The Industrial pH Probe weighs 155 grams.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "155 grams",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-threading-01",
+          "claim": "The Industrial pH Probe uses a 3/4 inch NPT thread and can be sterilized by chemical means only.",
+          "metrics": ["ph"],
+          "type": "definitional",
+          "quote": "(3/4\") NPT\nChemical only",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-submerge-indefinitely-01",
+          "claim": "The Industrial pH Probe can be fully submerged in fresh or salt water up to the SMA connector or tinned leads indefinitely.",
+          "metrics": ["ph"],
+          "type": "definitional",
+          "quote": "This pH probe can be fully submerged\nin fresh or salt water, up to the SMA\nconnector or tinned leads indefinitely.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "IpH_probe.pdf__b92bb7e17008",
+      "index": 1,
+      "locator": "Passive-device / Nernst discussion through \"Long term storage\" — \"A pH electrode is a passive device\"",
+      "claims": [
+        {
+          "id": "ph-passive-weak-current-01",
+          "claim": "A pH electrode is a passive device whose current from hydrogen ion activity is too weak to be detected with a multimeter or an analog-to-digital converter, so only proper connectors and cables should be used.",
+          "metrics": ["ph"],
+          "type": "conceptual",
+          "quote": "This current (which can be positive or negative) is very weak and cannot be\ndetected with a multimeter, or an analog to digital converter.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-nernst-variables-01",
+          "claim": "The current generated by hydrogen ion activity is the reciprocal of that activity and can be predicted by an equation whose terms are R the ideal gas constant, T the temperature in Kelvin, and F the Faraday constant.",
+          "metrics": ["ph", "temperature"],
+          "type": "conceptual",
+          "quote": "Where R is the ideal gas constant.\nT is the temperature in Kelvin.\nF is the Faraday constant.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-isolation-required-01",
+          "claim": "Because a pH probe is passive it can pick up voltages transmitted through the solution being measured, which produces incorrect readings and slowly damages the probe over time, so proper isolation is required in that case.",
+          "metrics": ["ph"],
+          "type": "conceptual",
+          "quote": "This will result in incorrect readings and will\nslowly damage the pH probe over time. In this instance, proper isolation is required.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-connection-options-01",
+          "claim": "The Gen 3 Industrial pH probe - No Temp connects either to the EZO Complete-pH via its SMA connector or to the Industrial pH Transmitter, powered at 9-36 VDC, via its tinned leads.",
+          "metrics": ["ph"],
+          "type": "procedural",
+          "quote": "9 - 36VDC",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-cap-removal-01",
+          "claim": "The Industrial pH probe cap is removed by turning it clockwise and pulling the probe out.",
+          "metrics": ["ph"],
+          "type": "procedural",
+          "quote": "Remove the Industrial pH probe cap by turning it clockwise, and pulling the probe out.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-dry-3-weeks-01",
+          "claim": "Once installed, the Industrial pH probe can be left dry for up to 3 weeks without damaging the probe.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "the pH probe can be left dry for up to 3 weeks\nwithout damaging the probe",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-storage-cap-01",
+          "claim": "Every Industrial pH probe ships with a plastic cap containing pH probe storage solution which should remain on the probe until it is used, and for long-term storage the cap should be topped up from the storage solution bottle and tightened back on by turning counterclockwise.",
+          "metrics": ["ph"],
+          "type": "procedural",
+          "quote": "If not, just add some from the pH probe storage solution bottle. Tighten\nthe cap back onto the probe by turning it counterclockwise.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "IpH_probe.pdf__950607bd1cfd",
+      "index": 2,
+      "locator": "\"Probe can dry out\" through \"Probe reconditioning\" and the KCl creep page — \"Unlike most pH probes, this probe can dry out\"",
+      "claims": [
+        {
+          "id": "ph-repeated-dry-cycles-01",
+          "claim": "Repeated wetting and drying cycles will eventually damage the Industrial pH probe, so it should be kept wet at all times, though a probe left out to dry should not be considered damaged and only needs rehydrating.",
+          "metrics": ["ph"],
+          "type": "conceptual",
+          "quote": "However, repeated wetting and drying cycles will eventually damage\nthe probe. For best results, keep the probe wet at all times.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-kcl-creep-shipping-01",
+          "claim": "If a pH probe is kept in a hot environment during shipping, KCl creep may form a salt channel that wicks water out of the probe's soaker bottle and dries it out.",
+          "metrics": ["ph"],
+          "type": "conceptual",
+          "quote": "KCl will form a salt channel that wicks the water out of the probe's soaker\nbottle.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-rehydration-procedure-01",
+          "claim": "To rehydrate the Industrial pH probe: place it in a beaker of tap water, let it sit 3 to 5 minutes, add a scoop of KCl (best) or NaCl (good) to the beaker, then let it sit in the salt water 15 to 20 minutes.",
+          "metrics": ["ph"],
+          "type": "procedural",
+          "quote": "1. Place the probe into a beaker of tap water.\n2. Let the probe sit in the water for 3 – 5 mins.\n3. Add a scoop of KCL (best) or NaCl (good) to the beaker.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-rehydration-salt-soak-01",
+          "claim": "The salt-water soak step of the pH probe rehydration procedure lasts 15 to 20 minutes, after which the probe is ready to use.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "4. Let the probe sit in the salt water for 15 – 20 mins.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-coating-span-01",
+          "claim": "Coating of the pH bulb leads to erroneous readings including a shortened span (slope), and the type of coating determines the cleaning technique.",
+          "metrics": ["ph"],
+          "type": "conceptual",
+          "quote": "Coating of the pH bulb can lead to erroneous readings including shortened span (slope).",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-clean-soft-01",
+          "claim": "Soft coatings on a pH probe can be removed by vigorous stirring or with a squirt bottle.",
+          "metrics": ["ph"],
+          "type": "procedural",
+          "quote": "Soft coatings can be removed\nby vigorous stirring or by the use of a squirt bottle.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-clean-hard-01",
+          "claim": "Organic chemical or hard coatings on a pH probe should be removed chemically using a light bleach solution, and if cleaning does not restore performance, reconditioning may be tried.",
+          "metrics": ["ph"],
+          "type": "procedural",
+          "quote": "should be chemically removed using a light bleach solution. If cleaning does not restore\nperformance, reconditioning may be tried.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-no-abrasives-01",
+          "claim": "A brush or abrasive materials must not be used on the pH probe.",
+          "metrics": ["ph"],
+          "type": "procedural",
+          "quote": "Do not use a brush or abrasive materials\non the pH probe.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-no-set-recal-schedule-01",
+          "claim": "Atlas Scientific states there is no set recalibration schedule for a pH probe because every use case is different.",
+          "metrics": ["ph"],
+          "type": "procedural",
+          "quote": "Because every use case is different, there is no set schedule for recalibration.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-recal-weak-env-01",
+          "claim": "In a fish tank, hydroponic system or any environment with generally weak levels of acids and bases, the pH probe needs recalibration once per year for the first two years and approximately every six months after that.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "once per year for the first two years. After that every ~six months.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-recal-industrial-01",
+          "claim": "In batch chemical manufacturing, industrial process, or solutions known to have strong acids and bases, the pH probe should be calibrated monthly or in extreme cases after each batch.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "then calibration should be\ndone monthly or in extreme cases after each batch.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-recondition-kit-01",
+          "claim": "When reconditioning of a pH probe is required due to aging, Atlas Scientific recommends its own pH probe reconditioning kit.",
+          "metrics": ["ph"],
+          "type": "procedural",
+          "quote": "we recommend you use\nthe Atlas Scientific pH probe reconditioning kit.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-kcl-creep-not-damaged-01",
+          "claim": "If dried KCl residue from pH storage solution appears (\"KCl creep\") or the pH probe dried out during shipping, the probe is not damaged and only needs to be rinsed off with water.",
+          "metrics": ["ph"],
+          "type": "procedural",
+          "quote": "Simply rinse off your probe with water, and carry on.\nYour probe is not damaged.",
+          "specificity": "high"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalClaims": 46,
+    "byMetric": {
+      "ph": 46,
+      "temperature": 3,
+      "orp": 0,
+      "dissolvedOxygen": 0,
+      "conductivity": 0,
+      "turbidity": 0
+    },
+    "byType": {
+      "numeric": 18,
+      "procedural": 10,
+      "definitional": 11,
+      "conceptual": 7
+    },
+    "gaps": [
+      "Gives no calibration procedure and names no calibration buffers: pH 4.00, 7.00 and 10.00 never appear, and there is no single-, two- or three-point sequence, no order of operations, and no rinse-between-buffers instruction.",
+      "Gives no slope or mV-per-pH figure, no isopotential point, and no acceptance criterion for a passing calibration — yet it repeatedly warns about 'shortened span (slope)' as a failure mode.",
+      "Gives no temperature compensation guidance and no coefficient, even though this is explicitly the No Temp variant with no internal temperature probe and a -5 to 99 C range.",
+      "The Nernst-type equation is referenced and its variables are defined (R, T, F) but the equation itself is an image and does not survive text extraction, so the corpus holds the variable list without the formula.",
+      "States accuracy as +/- 0.002 pH and resolution as +/- 0.001 pH with no dependence on temperature or position in the 0-14 range, and no distinction between the two figures' meaning.",
+      "Gives no drift rate and no criterion for deciding a reading has drifted enough to require recalibration or reconditioning.",
+      "Gives no composition for pH probe storage solution and no substitute if the bottle runs out; the rehydration procedure uses tap water plus KCl or NaCl, not storage solution.",
+      "Gives no pH values that indicate any water-quality condition — no healthy range for fresh or salt water, no environmental interpretation of any kind.",
+      "Gives no flow or stirring requirement for taking a reading and no settling or stabilization time before recording a value.",
+      "Names the 'Atlas Scientific pH probe reconditioning kit' but gives no reconditioning steps, no chemicals, and no part number.",
+      "Gives no maintenance interval distinct from the recalibration intervals; unlike the DO datasheet there is no consumable to replace and no '~18 months maintenance' figure."
+    ],
+    "notes": "Three-chunk document. Chunk 1 opens with ~400 characters of overlap repeating the Specifications block from chunk 0, and chunk 2 opens with overlap repeating the long-term-storage paragraph from chunk 1; claims are recorded only on the originating chunk. Two internal tensions: the spec table gives '~1 Year Time before recalibration' while the body says there is no set schedule, and the body both instructs 'keep the probe wet at all times' and allows up to 3 weeks dry. The front spec table's 'No Temp' label is a variant name, not a table row, so the no-internal-temperature-probe claim is anchored on the Specifications block instead. The operating-principle page ends in a long run of stray bullet and box glyphs, and 'defuse' (for diffuse) is a source spelling error preserved verbatim in the quote. Dimension figures on page 3 arrive as bare numbers with labels detached. This is the only probe datasheet in the set that states a tolerated dry-out period; the ORP datasheet says its probe must never be allowed to dry out."
+  }
+}

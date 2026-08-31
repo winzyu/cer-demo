@@ -1,0 +1,1365 @@
+{
+  "filename": "usgs-nfm-a6.5-orp.pdf",
+  "title": "USGS NFM 6.5 — Reduction-Oxidation Potential, electrode method (version 1.2, 9/2005)",
+  "inSlice": false,
+  "chunkCount": 18,
+  "chunks": [
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__dcd192573a81",
+      "index": 1,
+      "locator": "Section 6.5 opening — \"should not be considered a routine determination\"",
+      "claims": [
+        {
+          "id": "orp-not-routine-01",
+          "claim": "USGS NFM 6.5 states that determination of the reduction-oxidation potential of water should not be considered a routine determination and that Eh measurement is not recommended in general, because of difficulties inherent in its theoretical concept and its practical measurement.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "potential, described here as Eh measurement, is not recommended in",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-eh-definition-01",
+          "claim": "Reduction-oxidation potential (as Eh) is defined as a measure of the equilibrium potential, relative to the standard hydrogen electrode, developed at the interface between a noble metal electrode and an aqueous solution containing electroactive redox species.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "measure of the equilibrium potential, relative to",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-qualitative-trends-01",
+          "claim": "Eh measurements may show qualitative trends but generally cannot be interpreted as equilibrium values.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "Eh measurement may show qualitative trends but generally",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-electroactive-1e-5-molal-01",
+          "claim": "Redox determinations by the platinum (or other noble metal) electrode method are valid only when the redox species are electroactive and present in solution at concentrations of about 10-5 molal and higher.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "concentrations of about 10-5 molal and higher. Redox species in",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-no-equilibrium-natural-waters-01",
+          "claim": "Redox species in natural waters generally do not reach equilibrium with metal electrodes.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "natural waters generally do not reach equilibrium with metal",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-platinum-only-scope-01",
+          "claim": "The calibration (equipment test) and measurement procedures in NFM 6.5 are written for the platinum electrode only; the general guidance applies to gold and glassy carbon redox electrodes but the manufacturer's instructions must be consulted for those.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "measurement are described in this section for the platinum electrode",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-chemical-analysis-alternative-01",
+          "claim": "Concentrations of redox species can be determined by direct chemical analysis instead of using the electrode method.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "determined by direct chemical analysis instead of using the electrode",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__c38c9f5d26ef",
+      "index": 2,
+      "locator": "Section 6.5.1 Equipment and Supplies, incl. Table 6.5-1 — \"EQUIPMENT AND SUPPLIES USED FOR Eh MEASUREMENTS\"",
+      "claims": [
+        {
+          "id": "orp-no-orp-sensor-guidance-01",
+          "claim": "NFM 6.5 explicitly does not provide guidance or instructions for redox determination using an oxidation-reduction-potential (ORP) sensor connected to a multiparameter instrument; it covers only the stand-alone millivolt/pH meter with platinum electrode.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "This report does not provide guidance or instructions for redox determi-",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-test-each-trip-01",
+          "claim": "Eh equipment must be tested before each field trip and cleaned soon after use.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "field trip and cleaned soon after use. Every instrument system used for Eh",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-logbook-01",
+          "claim": "Every instrument system used for Eh measurement must have a log book recording all equipment repairs and calibrations or equipment tests, along with the manufacturer make and model numbers and serial or property number.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "measurement must have a log book in which all the equipment repairs",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-table651-tubing-oxygen-01",
+          "claim": "Table 6.5-1 requires that pump tubing in the sampling system be \"impermeable\" to oxygen, and lists a flowthrough cell with valves, tubing, and accessories impermeable to air for use with a pump system.",
+          "metrics": [
+            "orp",
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "hIMPERMEABLEv",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+      "index": 3,
+      "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+      "claims": [
+        {
+          "id": "orp-she-not-field-01",
+          "claim": "The standard hydrogen reference electrode (SHE) can be dangerous and is not recommended for field use.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "electrode (SHE) can be dangerous",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-electrode-selection-01",
+          "claim": "For Eh measurement, select either a redox-sensing combination electrode or an electrode pair consisting of a platinum electrode and a reference electrode.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "Select either a redox-sensing combination electrode or an electrode pair",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-filling-solution-ionic-strength-01",
+          "claim": "Use of the correct electrolyte filling solution is essential to proper measurement and is specified by the electrode manufacturer; Orion, for example, recommends choosing a filling solution that best matches the ionic strength of the sample solution in order to minimize junction potentials.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "mends selection of a filling solution to best match the ionic strength of",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-common-reference-electrodes-01",
+          "claim": "Silver:silver-chloride and calomel reference electrodes are the redox reference electrodes in common use, and Orion combination electrodes contain a platinum redox and a silver:silver-chloride reference electrode in one body.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "Silver:silver-chloride or calomel reference electrodes are the",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-zobells-standard-01",
+          "claim": "ZoBell's solution is the standard solution used for testing redox instruments.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "ZoBell’s is the standard solution for testing redox instruments.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-quinhydrone-30c-01",
+          "claim": "Quinhydrone solution is sometimes used for redox instrument testing but is not recommended because it is significantly less stable above 30 degrees Celsius and its temperature dependence is not as well defined as that of ZoBell's solution.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "not recommended because it is significantly less stable above 30°C and",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-zobells-composition-01",
+          "claim": "ZoBell's solution consists of a 0.1 molal KCl solution containing equimolal amounts of K4Fe(CN)6 and K3Fe(CN)6.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "ZoBell’s solution consists of a 0.1 molal KCl solution containing",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-zobells-shelf-life-01",
+          "claim": "ZoBell's solution is reported stable for at least 90 days if kept chilled at 4 degrees Celsius.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "stable for at least 90 days if kept chilled at 4°C.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-zobells-recipe-01",
+          "claim": "Preparing ZoBell's solution requires weighing 1.4080 g of potassium ferrocyanide K4Fe(CN)6*3H2O, 1.0975 g of potassium ferricyanide K3Fe(CN)6, and 7.4557 g of potassium chloride.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "1.4080 g K4Fe(CN)6•3H20 (Potassium ferrocyanide)",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-zobells-desiccator-01",
+          "claim": "Dry chemicals for ZoBell's solution should be stored overnight in a desiccator before use.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "1. Weigh the chemicals (dry chemicals should be stored overnight in a",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+      "index": 4,
+      "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+      "claims": [
+        {
+          "id": "orp-zobells-dilute-1000ml-01",
+          "claim": "The weighed ZoBell's chemicals are dissolved in deionized water and the solution is diluted to 1,000 mL.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "2. Dissolve these chemicals in deionized water and dilute solution to",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-zobells-storage-01",
+          "claim": "ZoBell's solution must be stored chilled in a dark bottle clearly labeled with its chemical contents, preparation date, and expiration date.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-zobells-toxic-01",
+          "claim": "ZoBell's solution is toxic and must be handled with care.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "CAUTION: ZoBell’s solution is toxic—handle with care.",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-maintenance-ref-nfm64-01",
+          "claim": "General guidelines for meter and electrode maintenance, cleaning, and storage for Eh equipment are given in section 6.4.1 of NFM 6.4 on pH.",
+          "metrics": [
+            "orp",
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Refer to 6.4.1 of NFM 6.4 on pH for general guidelines on meter and",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-polished-surface-01",
+          "claim": "The surface of noble electrodes must be kept clean of coatings or mineral deposits because a brightly polished metal surface prevents deterioration of electrode response.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "A brightly polished metal surface prevents deterioration of electrode",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-billet-tip-01",
+          "claim": "The billet tip of a platinum electrode is more easily cleaned than the wire tip.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "The billet tip is more easily cleaned than the wire tip on the",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-oring-moist-01",
+          "claim": "The O-ring on Eh electrodes must be kept moist during cleaning procedures.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "Keep the O-ring on electrodes moist during cleaning procedures.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-rinse-precipitate-01",
+          "claim": "Precipitate that forms on the outside wall or tip of the reference or combination electrode is removed by rinsing the outside of the electrode with deionized water.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "To remove precipitate that forms on the outside wall or tip of the",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__6f2a42da31d4",
+      "index": 5,
+      "locator": "Section 6.5.1.C Electrode Cleaning / Aqua regia / Electrode storage",
+      "claims": [
+        {
+          "id": "orp-oily-residue-abrasive-01",
+          "claim": "Oily residues are removed from the electrode with a liquid nonphosphate detergent solution and the surface is polished with a mild abrasive such as coarse cloth, a hard eraser, or 400- to 600-grit wet/dry Carborundum paper.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "cloth, a hard eraser, or 400- to 600-grit wet/dry Carborundum™",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-aqua-regia-70c-1min-01",
+          "claim": "To recondition the Eh electrode, immerse it in warm aqua regia at 70 degrees Celsius for about 1 minute; longer immersion dissolves the noble metal as well as foreign matter and leads to erratic electrode response.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "aqua regia (70°C) for about 1 minute. Do not immerse the",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-soak-tap-water-01",
+          "claim": "After reconditioning in aqua regia, the electrode must be soaked several hours in tap water before use.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "hours in tap water before use.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-no-disassembly-01",
+          "claim": "Disassembly of the Eh electrode is not recommended for routine cleaning and should only be done when absolutely needed.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "TECHNICAL NOTE: Disassembly of the electrode is not",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-aqua-regia-recipe-01",
+          "claim": "Aqua regia for electrode cleaning is prepared at the time of use, and never stored, by mixing 1 volume of concentrated nitric acid with 3 volumes of concentrated hydrochloric acid.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "trated nitric acid with 3 volumes of concentrated hydrochloric acid.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-short-term-storage-01",
+          "claim": "For short-term storage the Eh electrode is immersed in deionized water to above the electrode junction with the fill hole kept plugged to reduce evaporation of the filling solution.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "For short-term storage, immerse the electrode in deionized water to",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-orion-dry-storage-01",
+          "claim": "Orion combination redox electrodes are stored dry after rinsing precipitates from the outside of the electrode, draining the filling solution from the chamber, and flushing it with water.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "The Orion™ combination electrodes are stored dry after",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-connector-clean-01",
+          "claim": "The ends of the electrode connector must be kept clean, cleaned with alcohol if necessary, and stored in a plastic bag when not in use.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "must be kept clean. Clean them with alcohol, if necessary. Store the con-",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+      "index": 6,
+      "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+      "claims": [
+        {
+          "id": "orp-cannot-adjust-01",
+          "claim": "Eh measuring systems can be tested for accuracy but they cannot be adjusted.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "Eh measuring systems can be tested for accuracy but they cannot be",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-test-before-field-01",
+          "claim": "Eh equipment must be tested against a ZoBell's standard solution, in the laboratory or in the field, before making field measurements, and the equipment should be tested with ZoBell's both before and after field use.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "Test the Eh equipment using the ZoBell’s solution before and",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-field-test-not-required-01",
+          "claim": "In general, field testing of Eh equipment with ZoBell's solution is not required, although the protocol used depends on study needs.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "In general, field testing with ZoBell’s is not required,",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-check-shelf-life-01",
+          "claim": "Before using ZoBell's solution, check that it has not exceeded its shelf life.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "Before using, check that the ZoBell’s solution has not exceeded",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-zobells-iron-reactive-01",
+          "claim": "ZoBell's solution reacts readily with minute particles of iron, dust, and other substances, which makes its field use potentially difficult and messy.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-measurement-principle-01",
+          "claim": "Eh is measured by inserting a platinum electrode coupled with a reference electrode into the solution, reading the resulting potential directly in millivolts from a potentiometer such as a pH meter, and correcting it for the difference between the standard potential of the reference electrode at the solution temperature and the potential of the standard hydrogen electrode.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "The Eh measurements are made by inserting a platinum electrode cou-",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-eref-definition-01",
+          "claim": "Eref is defined as the whole-cell potential of the reference electrode in ZoBell's solution.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "TECHNICAL NOTE: Eref is the whole-cell potential of the",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-eref-agagcl-238-01",
+          "claim": "Eref = 238 mV is the measured potential of the silver:silver-chloride (Ag:AgCl) electrode with saturated KCl, immersed with the platinum electrode in ZoBell's solution at 25 degrees Celsius.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "Eref = 238 mV (saturated KCl, immersed with the platinum",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-eref-calomel-1855-01",
+          "claim": "Eref = 185.5 mV is the measured potential of the calomel (Hg:HgCl2) electrode with saturated KCl, immersed with the platinum electrode in ZoBell's solution at 25 degrees Celsius.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "Eref = 185.5 mV (saturated KCl, immersed with the platinum",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-zobells-e0-430-01",
+          "claim": "E0 = 430 mV is the standard electrode potential of ZoBell's solution measured against the hydrogen electrode at 25 degrees Celsius.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "E° = 430 mV is the standard electrode potential of ZoBell’s",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-interpolate-tables-01",
+          "claim": "For temperatures not shown in tables 6.5-2 and 6.5-3, the values are interpolated, and the value corresponding to the solution temperature is added to the measured electromotive force.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "those temperatures not shown on tables 6.5–2 and 6.5–3, interpolate",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__5d571cf4d09e",
+      "index": 7,
+      "locator": "Table 6.5-2 (half-cell potentials) and Table 6.5-3 (Eh of ZoBell's vs temperature)",
+      "claims": [
+        {
+          "id": "orp-table652-units-01",
+          "claim": "Table 6.5-2 gives standard half-cell potentials of selected reference electrodes as a function of temperature and potassium chloride reference-solution concentration in volts, with the liquid-junction potential included; multiply volts by 1,000 to convert to millivolts.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "[Liquid-junction potential included—multiply volts by 1,000 to convert to millivolts; KCl, potassium",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-table652-25c-01",
+          "claim": "In table 6.5-2 at 25 degrees Celsius the half-cell potentials are 0.209, 0.205, and 0.199 V for calomel with 3M, 3.5M, and saturated KCl; 0.255, 0.250, 0.246, and 0.244 V for silver:silver chloride with 3M, 3.5M, 4M, and saturated KCl; and 0.246 V for the Orion 96-78 combination electrode.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "25 \t0.209 \t0.205 \t0.199 \t0.255 \t0.250 \t0.246 \t0.244 \t0.246",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-table652-range-01",
+          "claim": "Table 6.5-2 tabulates reference half-cell potentials at 10, 15, 20, 25, 30, 35, and 40 degrees Celsius, with the calomel 3M KCl value falling from 0.220 V at 10 degrees C to 0.198 V at 40 degrees C.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "40 \t0.198 \t0.193 \t0.184 \t0.249 \t0.244 \t0.239 \t0.234 \t0.234",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-table652-nordstrom-preferred-01",
+          "claim": "The half-cell potentials calculated from Nordstrom (1977) are recommended over the Chateau (1954) values cited in the Orion instrument manual because Nordstrom's values were developed specifically for the Orion 96-78 redox electrode and provide greater accuracy and precision.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "potentials calculated from Nordstrom (1977) are recommended rather than the values from Chateau (1954)",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-orion-seawater-4m-01",
+          "claim": "Orion recommends that for sample solutions with total ionic strength exceeding 0.2 molar, such as seawater, a 4M KCl-saturated filling solution be used together with the half-cell potentials shown for the silver:silver chloride saturated KCl reference electrode.",
+          "metrics": [
+            "orp",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "4OrionTM manufacturer recommends that for sample solutions with total ionic strength exceeding 0.2 molar",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-table653-values-01",
+          "claim": "Table 6.5-3 gives the theoretical Eh of ZoBell's solution as a function of temperature, including 467 mV at 10 degrees Celsius, 443 mV at 20 degrees C, 430 mV at 25 degrees C, 418 mV at 30 degrees C, and 393 mV at 40 degrees C.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "10 \t467 \t26 \t428",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-table653-25c-430-01",
+          "claim": "Table 6.5-3 lists the theoretical Eh of ZoBell's solution at 25 degrees Celsius as 430 mV, and the table is taken from Nordstrom (1977).",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "[From Nordstrom (1977); O C, degrees Celsius; mV, millivolts]",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__0fc2879a5e90",
+      "index": 8,
+      "locator": "Section 6.5.2 seven-step equipment test and worked EXAMPLE",
+      "claims": [
+        {
+          "id": "orp-test-7-steps-01",
+          "claim": "The Eh equipment test consists of seven steps whose results are recorded on the Eh data record form for the equipment test procedure (figure 6.5-1).",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "To test Eh equipment, complete the following 7 steps and record",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-filling-level-1in-01",
+          "claim": "During the equipment test the electrode filling solution level must be at least 1 inch above the level of the solution being measured, and only the filling solution specified by the manufacturer may be used.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "The filling solution level must be at least 1 in. above the level",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-blot-not-wipe-01",
+          "claim": "The electrode, thermometer, and measurement beaker are rinsed with deionized water, and excess moisture is blotted, not wiped, from the electrode.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "deionized water. Blot (do not wipe) excess moisture from the",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-equilibrate-15-30-01",
+          "claim": "In the equipment test, 15 to 30 minutes are allowed for the ZoBell's solution and sensors to equilibrate to ambient temperature.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Allow 15 to 30 minutes for the solution and sensors to equili-",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-no-touch-container-01",
+          "claim": "During the equipment test the Eh electrode must not touch the bottom or side of the container, and enough ZoBell's solution must be added to cover the reference junction.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "The Eh electrode must not touch the bottom or side of the con-",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-stabilize-5mv-01",
+          "claim": "During the equipment test the solution is stirred slowly with a magnetic stirrer or swirled manually, the meter is switched to the millivolt function, and the reading is allowed to stabilize to within plus or minus 5 mV before the temperature and millivolt value are recorded.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "meter to the millivolt function, allow the reading to stabilize (±5",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-pass-criterion-5mv-01",
+          "claim": "The equipment passes the Eh test and is ready for field use if the calculated Eh of ZoBell's is within 5 mV of the ZoBell Eh given in table 6.5-3; otherwise section 6.5.4 (troubleshooting) applies.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "If the value is within 5 mV of the ZoBell Eh given on table",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-store-test-solution-01",
+          "claim": "After the equipment test, the electrodes and thermometer are rinsed thoroughly with deionized water and the test solution is stored temporarily for possible verification.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "deionized water. Store the test solution temporarily for possible",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-eh-equation-01",
+          "claim": "Eh is calculated as Eh = emf + Eref, where Eh is the potential in millivolts of the sample solution relative to the standard hydrogen electrode, emf is the measured electromotive force of the water at the sample temperature, and Eref is the reference electrode potential corrected for the sample temperature.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "Eh = emf + Eref",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-example-22c-01",
+          "claim": "In the worked example, a measured temperature of 22 degrees Celsius and an emf of 238 mV with an interpolated Ag:AgCl saturated-KCl reference potential of 202 mV give Eh of ZoBell's = 440 mV, which is within plus or minus 5 mV of the 438 mV table 6.5-3 value, so the equipment is functioning well.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "potential = 202 mV for Ag:AgCl−saturated KCl at 22°C.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-expiration-01",
+          "claim": "ZoBell's solution must not be used past its expiration date.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "Check the date on Zobell’s solution—do not use",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__58b0a2a90e37",
+      "index": 9,
+      "locator": "Figure 6.5-1 Eh data record form and Section 6.5.3 Measurement preamble",
+      "claims": [
+        {
+          "id": "orp-form-delta-5mv-01",
+          "claim": "The Eh equipment-test data record form requires subtracting the calculated Eh from the theoretical Eh of ZoBell's and checking whether the difference is within plus or minus 5 mV.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "7. Check: is 'Eh within ± 5 mV?",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-form-fields-01",
+          "claim": "The Eh equipment-test data record captures the ZoBell's solution lot number, preparation and expiration dates, and both a before-sample and an after-sample Eh determination.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "ZoBell’s solution: Lot # ____________ Date: prepared ___________ expired ___________",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-nfm62-flowthrough-ref-01",
+          "claim": "NFM 6.5 directs the reader to NFM 6.0 for sample-collection precautions and to NFM 6.2 for a description of the flowthrough cell used in the spectrophotometric dissolved-oxygen determination.",
+          "metrics": [
+            "orp",
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "NFM 6.2 for a description of the flowthrough cell used in dissolved-",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-eh-changes-minutes-01",
+          "claim": "Chemical, physical, and biological reactions can cause the Eh of water to change significantly within minutes or even seconds after collection of a sample.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "water to change significantly within minutes or even seconds",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-no-preservation-01",
+          "claim": "Water samples cannot be preserved and stored for the Eh measurement.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "Water samples cannot be preserved and stored for the Eh",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-in-situ-or-airtight-01",
+          "claim": "Eh must be measured in situ with a submersible instrument or with an airtight flowthrough system, using equipment that eliminates sample aeration.",
+          "metrics": [
+            "orp",
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "submersible instrument or use an airtight flowthrough system.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-purge-oxygen-01",
+          "claim": "When a flowthrough chamber or cell is used for Eh, the tubing must be relatively impermeable to oxygen, all connections and fittings must be airtight, and atmospheric oxygen must be purged from the sample tubing and associated flow channels before measuring Eh.",
+          "metrics": [
+            "orp",
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Purge atmospheric oxygen from the sample tubing and associ-",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-no-gas-lift-pumps-01",
+          "claim": "Pumping systems in which inert gas contacts and lifts the sample to the surface must not be used for Eh measurement because the gas could strip gaseous redox species from the water.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "Do not use pumping systems in which inert gas",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-hot-water-daily-fill-01",
+          "claim": "When working in very hot or boiling waters, the reference electrode filling solution must be changed daily.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "hot or boiling waters, change the reference electrode filling solu-",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__79b5d6c04cc9",
+      "index": 10,
+      "locator": "Section 6.5.3 Measurement steps 1-4 and thermal-equilibrium technical note",
+      "claims": [
+        {
+          "id": "orp-temp-effects-01",
+          "claim": "Temperature determines the Eh reference potential for a particular solution and electrode pair and may affect the reversibility of the redox reactions, the magnitude of the exchange current, and the stability of the apparent redox potential reading.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "TECHNICAL NOTE: Temperature determines the Eh reference potential for a",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-thermal-equilibrium-30min-01",
+          "claim": "The observed potential of an Eh system drifts until thermal equilibrium is established, and thermal equilibrium can take longer than 30 minutes but is essential before beginning the measurements.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "take longer than 30 minutes but it is essential before beginning the",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-closed-system-check-01",
+          "claim": "When a closed-system flow cell is used for Eh, the connections and sensor grommets must be checked for leaks and the pumped water must fill the flowthrough cell.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "Closed-system flow cell—Check that the connections and sensor grom-",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-flush-platinum-01",
+          "claim": "It is essential that platinum electrodes be flushed with large volumes of sample water to obtain reproducible Eh values.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "It is essential that platinum electrodes be flushed with large volumes of",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-record-ph-temp-01",
+          "claim": "The pH and temperature of the sample water must be recorded as part of the Eh field measurement.",
+          "metrics": [
+            "orp",
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Record the pH and temperature of the sample water.",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-stabilize-30min-01",
+          "claim": "During field Eh measurement the reading is allowed to stabilize to within plus or minus 5 mV, and stabilization should occur within 30 minutes.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "Stabilization should occur within 30 minutes.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-reading-cadence-01",
+          "claim": "Sample temperature and potential are read every few minutes for the first 15 to 20 minutes of an Eh measurement, then about every 10 minutes until 30 minutes have passed from the initial measurement and the measurements indicate a constant potential.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "4. Take readings of the sample temperature and potential (in millivolts) every few",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-stop-flow-streaming-01",
+          "claim": "It is best to stop the flow of the sample while an Eh reading is being taken, to prevent streaming-potential effects.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "It is best to stop the flow of the sample while the reading is being taken to",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__b575099996ac",
+      "index": 11,
+      "locator": "Figure 6.5-2 Eh data record: field measurements, and field-calibration steps",
+      "claims": [
+        {
+          "id": "orp-field-agreement-10mv-01",
+          "claim": "Duplicate field Eh measurements should agree within about 10 mV, and a second measurement is necessary for quality control.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "6. Field measurements should agree within about 10 mV.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-field-form-fields-01",
+          "claim": "The field Eh data record captures the temperature and pH of the system measured, the time to thermal equilibration, the measured emf, the ZoBell's reference electrode potential at sample temperature, and the sample Eh calculated as emf + Eref.",
+          "metrics": [
+            "orp",
+            "ph",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "5. Calculate sample Eh: emf + E ref",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-field-cal-equilibrate-01",
+          "claim": "If field calibration is required for a study, the electrodes are placed in ZoBell's solution equilibrated to the temperature of the aqueous system to be measured, without touching the container and with the solution covering the reference junction, and are allowed 15 to 30 minutes to reach thermal equilibrium.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Allow the electrode to reach thermal equilibrium (15 to 30",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-rinse-after-day-01",
+          "claim": "After the day's Eh measurements are completed, the electrodes are rinsed thoroughly with deionized water.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "5. After the measurements have been completed for the day, rinse the",
+          "specificity": "low"
+        },
+        {
+          "id": "orp-qc-repeat-01",
+          "claim": "Quality control for a field Eh measurement requires repeating the measurement.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "7. Quality control—Repeat the measurement.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__d38f4e5fb14d",
+      "index": 12,
+      "locator": "Section 6.5.3.A Interferences and Limitations",
+      "claims": [
+        {
+          "id": "orp-slow-asymmetric-01",
+          "claim": "The response of the Eh measurement system may be considerably slower than that of the pH system and may be asymmetrical, with stabilization taking longer when moving from an oxidizing to a reducing environment or vice versa.",
+          "metrics": [
+            "orp",
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "system may be considerably slower than that of the pH system",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-no-stabilize-30min-01",
+          "claim": "If Eh readings do not stabilize within about 30 minutes, the operator records the potential and its drift and assumes that a single quantitative value is not possible.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "stabilize within about 30 minutes, record the potential and its",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-drift-estimate-refs-01",
+          "claim": "An estimate of the asymptotic final potential of a drifting Eh measurement can be obtained by the method of Whitfield (1974) and Thorstenson and others (1979).",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "Whitfield (1974) and Thorstenson and others (1979).",
+          "specificity": "low"
+        },
+        {
+          "id": "orp-organic-sulfide-contamination-01",
+          "claim": "Organic matter and sulfide may contaminate the electrode surface, salt bridge, or internal electrolyte, causing drift or erratic performance when reference electrodes are used.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "Organic matter and sulfide may cause contamination of the",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-h2s-coating-01",
+          "claim": "Hydrogen sulfide can produce a coating on the platinum electrode that interferes with the measurement if the electrode is left in sulfide-rich water for several hours.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "Hydrogen sulfide can produce a coating on the platinum",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-unstable-ions-01",
+          "claim": "Platinum single and combination redox electrodes may yield unstable readings in solutions containing chromium, uranium, vanadium, or titanium ions and other ions that are stronger reducing agents than hydrogen or platinum.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "unstable readings in solutions containing chromium, uranium,",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-iron-blue-precipitate-01",
+          "claim": "Redox electrodes must not be inserted into iron-rich waters directly after contacting ZoBell's solution, because an immediate reaction between ferro- and ferricyanide ions in ZoBell's and ferrous and ferric ions in the sample coats the electrode with an insoluble blue precipitate and causes erratic readings.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "Do not insert redox electrodes into iron-rich waters directly after",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-mixed-potentials-01",
+          "claim": "Many elements with more than one oxidation state do not exhibit reversible behavior at the platinum electrode surface, and some systems give mixed potentials depending on the presence of several different redox couples.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "Many elements with more than one oxidation state do not exhibit",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-not-equilibrium-species-01",
+          "claim": "Methane, bicarbonate, nitrogen gas, sulfate, and dissolved oxygen generally are not in equilibrium with platinum electrodes.",
+          "metrics": [
+            "orp",
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "not in equilibrium with platinum electrodes (Berner, 1981).",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__81469991785c",
+      "index": 13,
+      "locator": "Technical note on Eh/pH misconceptions and Section 6.5.3.B Interpretation",
+      "claims": [
+        {
+          "id": "orp-hydrated-electrons-01",
+          "claim": "Hydrated electrons do not exist in meaningful concentrations in most aqueous systems, in contrast to pH which represents real activities of hydrated protons; Eh may be expressed as pe, the negative logarithm of electron activity, but conversion to pe offers no advantage when dealing with measured potentials.",
+          "metrics": [
+            "orp",
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "(1) Hydrated electrons do not exist in meaningful concentrations",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-do-h2s-coexist-01",
+          "claim": "Redox species must not be assumed to coexist in equilibrium; many situations have been documented in which dissolved oxygen coexists with hydrogen sulfide, methane, and ferrous iron.",
+          "metrics": [
+            "orp",
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "oxygen coexists with hydrogen sulfide, methane, and ferrous",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-practical-limits-01",
+          "claim": "The practicality of Eh measurements is limited to iron in acidic mine waters and sulfide in waters undergoing sulfate reduction, because other redox species are not sufficiently electroactive to establish an equilibrium potential at the surface of the conducting electrode.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "The practicality of Eh measurements is limited to iron in",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-single-potential-invalid-01",
+          "claim": "A single redox potential cannot be assigned to a disequilibrium system, nor to a water sample without specifying the particular redox species to which it refers, and because different redox elements such as iron, manganese, sulfur, selenium, and arsenic tend not to reach overall equilibrium in most natural waters, a single Eh measurement generally does not represent the system.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "(3) A single redox potential cannot be assigned to a",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-speciation-code-01",
+          "claim": "A rigorous quantitative interpretation of an Eh measurement requires interactive access to an aqueous speciation code, and caution must be exercised when interpreting a measured Eh with the Nernst equation.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "A rigorous quantitative interpretation of an Eh measurement requires",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-nernst-equation-01",
+          "claim": "For the simple half-cell reaction MI(aq) = MII(aq) + e-, the Nernst equation is Eh = Eo + (2.303RT/nF) log (aIIM(aq)/aIM(aq)), where R is the gas constant, T is temperature in degrees kelvin, n is the number of electrons in the half-cell reaction, F is the Faraday constant, and the a terms are thermodynamic activities of the free ions rather than analytical concentrations.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Eh = Eo + 2.303RT/nF log (aIIM(aq) / aIM(aq) )",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-uses-speciation-models-01",
+          "claim": "Measurements of Eh are used to test and evaluate geochemical speciation models, particularly for suboxic and anoxic ground-water systems, and can support insights on the evolution of water chemistry and the equilibrium behavior of multivalent elements relative to pH.",
+          "metrics": [
+            "orp",
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Measurements of Eh are used to test and evaluate geochemical specia-",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-gradients-01",
+          "claim": "Eh can qualitatively delineate strong redox gradients such as those in stratified lakes and rivers with an anaerobic zone, in an oxidized surface flow that becomes anaerobic after passing through stagnant organic-rich systems, and in mine-drainage discharges.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "qualitatively strong redox gradients; for example, those found in strati-",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+      "index": 14,
+      "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+      "claims": [
+        {
+          "id": "orp-batteries-01",
+          "claim": "Eh troubleshooting begins with checking the voltage of the batteries, always starting with good batteries and carrying spares, and the instrument manufacturer should be contacted if the suggestions in table 6.5-4 fail to resolve the problem.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "Contact the instrument manufacturer if the suggestions in table 6.5–4",
+          "specificity": "low"
+        },
+        {
+          "id": "orp-table654-symptoms-01",
+          "claim": "Table 6.5-4 lists the symptoms Eh of ZoBell's solution exceeding theoretical by plus or minus 5 mV, excessive drift, erratic performance, and poor response when using paired electrodes.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "Eh of ZoBell's solution \tCheck meter operation:",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-table654-shorting-lead-01",
+          "claim": "To check meter operation during Eh troubleshooting, use a shorting lead to establish a meter reading at zero mV.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "• Use shorting lead to establish meter reading at zero mV.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-fill-hole-level-01",
+          "claim": "When checking electrode operation during Eh troubleshooting, verify that the electrode reference solution level is up to the fill hole.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "• Check that electrode reference solution level is to the",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-two-ref-electrodes-0mv-01",
+          "claim": "With a questionable reference electrode in the reference jack and a known-good reference electrode of the same type in the indicator jack, immersed first in potassium chloride solution and then in ZoBell's, the two millivolt readings should be 0 plus or minus 5 mV; if the two electrodes are of different types (Ag:AgCl and Hg:HgCl2) the reading should be 44 plus or minus 5 mV for a good reference electrode.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "trodes (Ag:AgCl and Hg:HgCl2), reading should be 44 ±",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-polish-tip-troubleshoot-01",
+          "claim": "Troubleshooting a poorly responding platinum electrode includes polishing the platinum tip with a mild abrasive (crocus cloth, hard eraser, or 400-600-grit wet/dry Carborundum paper) and rinsing thoroughly with deionized water, using a Kimwipe if these abrasives are not available.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "Kimwipe™ if these abrasives are not available.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-fresh-zobells-troubleshoot-01",
+          "claim": "Eh troubleshooting includes reading the emf with a fresh aliquot of ZoBell's solution and preparing fresh ZoBell's solution if possible.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-aqua-regia-last-resort-01",
+          "claim": "Reconditioning the electrode by cleaning it with aqua regia and renewing the filling solution is a last resort in Eh troubleshooting.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "Recondition electrode by cleaning with aqua regia and",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__def2994c3f8f",
+      "index": 15,
+      "locator": "Section 6.5.5 Reporting and start of Selected References",
+      "claims": [
+        {
+          "id": "orp-report-two-sig-figs-01",
+          "claim": "The calculated Eh is reported in millivolts to two significant figures.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "Report the calculated Eh in mV to two significant figures.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-report-nearest-10mv-01",
+          "claim": "Eh potentials are reported to the nearest 10 mV, along with the temperature at which the measurement was made, the electrode system employed, and the pH at the time of measurement.",
+          "metrics": [
+            "orp",
+            "temperature",
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Potentials are reported to the nearest 10 mV, along with the tempera-",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-apha-reference-01",
+          "claim": "The selected references for NFM 6.5 cite Standard Methods for the Examination of Water and Wastewater (20th ed., 2001) pages 2-60 to 2-63 as a source on redox measurement.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Washington, D.C., American Public Health Association, p. 2–60 to",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__8948d0575685",
+      "index": 16,
+      "locator": "Selected References, Bricker through Pankow — \"Bricker, O.P., 1965, Some stability relations\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__45eb7f7b8b87",
+      "index": 17,
+      "locator": "Selected References, Sato through Whitfield — \"Sato, Michiaki, 1960, Dissolved oxygen in aqueous systems\"",
+      "claims": [
+        {
+          "id": "orp-nfm-online-01",
+          "claim": "The USGS National Field Manual for the Collection of Water-Quality Data is Techniques of Water-Resources Investigations book 9, chapters A1-A9, available online at http://pubs.water.usgs.gov/twri9A.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "A1-A9, available online at http://pubs.water.usgs.gov/twri9A.",
+          "specificity": "low"
+        },
+        {
+          "id": "orp-whitfield-limitation-ref-01",
+          "claim": "The thermodynamic limitations on the use of the platinum electrode in Eh measurements are set out in Whitfield (1974) in Limnology and Oceanography volume 19, pages 857-865.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "Whitfield, M.S., 1974, Thermodynamic limitations on the use of the",
+          "specificity": "low"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalClaims": 118,
+    "byMetric": {
+      "orp": 116,
+      "temperature": 20,
+      "ph": 7,
+      "dissolvedOxygen": 6,
+      "conductivity": 1,
+      "turbidity": 0
+    },
+    "byType": {
+      "procedural": 39,
+      "numeric": 32,
+      "conceptual": 31,
+      "definitional": 16
+    },
+    "gaps": [
+      "Gives no guidance at all for redox measurement with an ORP sensor on a multiparameter sonde — the exact configuration a rover carries. Section 6.5.1 states outright that the report does not cover it, so no calibration interval, no drift tolerance, and no maintenance schedule for a sonde ORP sensor exists anywhere in this document.",
+      "States no acceptable ORP/Eh range or threshold for any natural water type: no expected mV window for oxic surface water, for anoxic ground water, or for stream monitoring, and no action level at which a reading should be rejected.",
+      "Gives no ORP calibration frequency in the sense a continuous-monitoring program needs (before each field trip, and before/after field use, is the only cadence stated); nothing on how often a deployed sensor must be re-checked, nor on allowable drift per day of deployment.",
+      "Provides no conversion or offset table for reporting ORP as raw sensor millivolts rather than Eh — the document assumes the operator adds a reference half-cell potential by hand and reports Eh, and never addresses instruments that report ORP directly.",
+      "Half-cell table 6.5-2 stops at 40 degrees Celsius and starts at 10 degrees Celsius, so no reference potential is given for water below 10 or above 40 degrees C; the only remedy offered is interpolation, which cannot extrapolate.",
+      "Gives no accuracy or precision specification for the Eh measurement itself (only agreement criteria: plus or minus 5 mV against ZoBell's, about 10 mV between duplicate field readings). There is no stated method detection limit or uncertainty budget.",
+      "Says nothing about ORP sensor fouling in continuous deployment (biofouling, sediment), cleaning intervals for a deployed sensor, or how a fouled ORP reading manifests in a time series.",
+      "Names no field data-quality codes, qualifiers, or flags for rejecting an unstable Eh record beyond 'assume a single quantitative value is not possible'.",
+      "Contains no cross-metric interpretation guidance: no Eh-pH stability diagram, no rule relating an ORP reading to dissolved-oxygen concentration, and no numeric ORP value associated with the onset of anoxia."
+    ],
+    "notes": "Corpus/OCR damage: this document's text file contains NUL bytes and other C0 control characters, all of them inside Table 6.5-1 (equipment and supplies). That table was extracted through a shifted font encoding — every character sits 0x20 below its true value (T stored as '4', E as '%', space as NUL, '.' as 0x0e), so the table reads as 'ILLIVOLT METER OR P( METER...' in the corpus. It is decodable by hand (it resolves to 'millivolt meter or pH meter with millivolt reading capability... 0.1 mV sensitivity; scale to at least +/-1,400 mV; BNC connector... deionized water (maximum conductivity of 1.0 uS/cm)'), but no retrieval arm will ever match a plain-text query against it and no fixture should be built on it. Only one low-specificity claim (orp-table651-tubing-oxygen-01) is recorded from it, quoting the one control-character-free span in the table.\nTable 6.5-2 arrives with its data rows intact but its COLUMN HEADERS PRINTED AFTER THE TABLE BODY: the numeric rows (10 through 40 degrees C) appear first, then the footnotes, then the header block ('Calomel', 'Orion 96-78 combination electrode', 'Temp o C', '3 M KCl', '3.5 M KCl', 'Saturated KCl', ... 'Silver:silver chloride'). Column-to-value mapping is therefore recoverable only by reading the header block in order and matching it to the eight numeric columns; a fixture asking 'what is the Ag:AgCl saturated-KCl half-cell potential at 25 C' is answerable from this chunk but only by a reader who reconstructs that ordering. Values are in volts, not millivolts.\nTable 6.5-3 (Eh of ZoBell's vs temperature) survives intact and is the cleanest numeric table in the document, but it is laid out in two side-by-side column pairs on one line (e.g. '10\\t467\\t26\\t428' means 467 mV at 10 C and 428 mV at 26 C). A naive reader could mis-parse the third column as an Eh value. It is also duplicated in full in chunk 7's 400-character overlap; claims are attributed to chunk 6 where it originates.\nTable 6.5-4 (troubleshooting) survives with symptom and corrective-action columns interleaved, so symptoms ('Excessive drift', 'Erratic performance') sit on the same lines as unrelated corrective actions.\nInternal tension worth knowing: chunk 5 says 'Eh equipment must be tested ... before making field measurements' and then immediately says 'In general, field testing with ZoBell's is not required' — these are reconcilable (lab test required, field test optional) but read as contradictory if either sentence is retrieved alone.\nChunk 15 is pure bibliography and yields no extractable claim; chunks 14 and 16 are mostly bibliography. Chunk 0 opens mid-list-of-tables (document front matter).\nThe document's own framing is a strong negative: it says redox measurement 'is not recommended in general' and that a single Eh value 'generally does not represent the system'. Any fixture that treats this manual as endorsing routine ORP monitoring will be wrong."
+  }
+}

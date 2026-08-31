@@ -1,0 +1,379 @@
+{
+  "filename": "IORP_probe.pdf",
+  "title": "Atlas Scientific Industrial ORP Probe — Datasheet",
+  "inSlice": true,
+  "chunkCount": 3,
+  "chunks": [
+    {
+      "chunkId": "IORP_probe.pdf__5554782eea67",
+      "index": 0,
+      "locator": "Front spec table through NSF/ANSI 51 certification page — \"Range \t-2000mV – 2000mV\"",
+      "claims": [
+        {
+          "id": "orp-range-01",
+          "claim": "The Atlas Scientific Industrial ORP Probe has a measurement range of -2000 mV to 2000 mV.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "Range \t-2000mV – 2000mV",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-response-time-01",
+          "claim": "The Industrial ORP Probe reaches 95% of its response in 1 second.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "95% in 1s\tResponse time",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-accuracy-01",
+          "claim": "The Industrial ORP Probe has a stated accuracy of +/- 1 mV.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "+/– 1mV\tAccuracy",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-max-pressure-01",
+          "claim": "The Industrial ORP Probe is rated to a maximum pressure of 100 PSI.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "100 PSI\tMax pressure",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-max-depth-01",
+          "claim": "The Industrial ORP Probe has a maximum depth rating of 70 meters (230 feet).",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "70m (230’)\tMax depth",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-cable-length-01",
+          "claim": "The Industrial ORP Probe ships with a 3 meter (9.8 foot) cable.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "3 meters (9.8’)\tCable length",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-temp-range-01",
+          "claim": "The Industrial ORP Probe has an operating temperature range of 1 to 99 degrees Celsius.",
+          "metrics": ["orp", "temperature"],
+          "type": "numeric",
+          "quote": "1 − 99 °C\tTemperature range °C",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-no-internal-temp-01",
+          "claim": "The Industrial ORP Probe has no internal temperature sensor.",
+          "metrics": ["orp", "temperature"],
+          "type": "definitional",
+          "quote": "No\tInternal temperature sensor",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-recal-interval-01",
+          "claim": "The Industrial ORP Probe spec table gives the time before recalibration as approximately 1 year.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "~1 Year\tTime before recalibration",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-life-expectancy-01",
+          "claim": "The Industrial ORP Probe has a stated life expectancy of approximately 4 years or more.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "~4 Years +\tLife expectancy",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-sensing-element-01",
+          "claim": "The sensing element of the Industrial ORP Probe is platinum.",
+          "metrics": ["orp"],
+          "type": "definitional",
+          "quote": "Platinum\tSensing element",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-connector-01",
+          "claim": "The Industrial ORP Probe is available with either an SMA connector or tinned leads.",
+          "metrics": ["orp"],
+          "type": "definitional",
+          "quote": "SMA or Tinned leads\tConnector",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-definition-01",
+          "claim": "ORP stands for oxidation/reduction potential, where oxidation is the loss of electrons and reduction is the gain of electrons, and the probe output is expressed in millivolts that can be positive or negative.",
+          "metrics": ["orp"],
+          "type": "definitional",
+          "quote": "ORP stands for oxidation/reduction potential. Oxidation is the loss of electrons and\nreduction is the gain of electrons.",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-measures-electron-activity-01",
+          "claim": "An ORP probe measures electron activity in a liquid — how strongly electrons are transferred to or from substances — and does not indicate the amount of electrons available for transfer.",
+          "metrics": ["orp", "ph"],
+          "type": "conceptual",
+          "quote": "Keeping in mind that the readings do not\nindicate the amount of electrons available for transfer.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-construction-01",
+          "claim": "An ORP probe has a platinum tip connected to a silver wire surrounded by silver chloride, which is in turn connected to a KCL reference solution.",
+          "metrics": ["orp"],
+          "type": "definitional",
+          "quote": "An ORP probe has a platinum tip that is connected to a silver wire, surrounded by\nsilver chloride. That silver wire is then connected to a KCL reference solution.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-platinum-inert-01",
+          "claim": "Platinum is used as the ORP sensing element because it is unreactive and can observe the electron activity of the liquid without becoming part of the reaction occurring in it.",
+          "metrics": ["orp"],
+          "type": "conceptual",
+          "quote": "Because\nplatinum is an unreactive metal it can “silently observe” the electron activity of the\nliquid without becoming apart of whatever reaction is occurring in the liquid.",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-low-electron-inconsistent-01",
+          "claim": "When reading the ORP of a liquid with very few electrons available for transfer, ORP readings can appear inconsistent, comparable to the readings of an unconnected multimeter.",
+          "metrics": ["orp"],
+          "type": "conceptual",
+          "quote": "When reading the ORP of a liquid that has very few electrons available for\ntransfer, ORP readings can appear to be inconsistent.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-bleach-demo-01",
+          "claim": "The datasheet illustrates ORP response by adding a drop of bleach, an oxidizing agent, to unreactive tap water, with paired example readings of 606.9 / 605.3 and -234.6 / 24.2.",
+          "metrics": ["orp"],
+          "type": "conceptual",
+          "quote": "Add just a drop of bleach\n(which is an oxidizing agent)",
+          "specificity": "low"
+        },
+        {
+          "id": "orp-storage-working-life-01",
+          "claim": "The Industrial ORP Probe has a storage life of approximately 5 years and a working life of approximately 4 or more years.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "Storage Life \t~5 Years\nWorking Life \t~4+ Years",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-dimensions-01",
+          "claim": "The Industrial ORP Probe is 197mm (7.7 in) long overall, carries a 3/4 NPT thread, and ships with a 10ml soaker bottle.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "197mm\n(7.7”)",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-serial-01",
+          "claim": "Each Industrial ORP Probe carries a unique 12-digit serial number.",
+          "metrics": ["orp"],
+          "type": "definitional",
+          "quote": "Unique\n12-digit\nserial #",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-nsf51-01",
+          "claim": "The Industrial Grade ORP Probe, part number ENV-50-ORP, is certified by Atlas Scientific as complying with NSF/ANSI Standard 51 and is food safe.",
+          "metrics": ["orp"],
+          "type": "definitional",
+          "quote": "Part # ENV-50-ORP\nComplies with NSF/ANSI Standard 51",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-materials-01",
+          "claim": "The Industrial ORP Probe is built from platinum, Teflon, PVC, EPDM, Delrin, polyethylene and titanium nitride, each listed as NSF-51 compliant.",
+          "metrics": ["orp"],
+          "type": "definitional",
+          "quote": "Platinum\nTeflon\nPVC\nEPDM\nDelrin ®\n(body)\nPolyethylene\nTitanium\nNitride",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "IORP_probe.pdf__566989019e52",
+      "index": 1,
+      "locator": "Specifications block through \"Long term storage\" — \"How often do you need to recalibrate an ORP probe?\"",
+      "claims": [
+        {
+          "id": "orp-body-material-01",
+          "claim": "The Industrial ORP Probe body is made of Delrin thermoplastic.",
+          "metrics": ["orp"],
+          "type": "definitional",
+          "quote": "Delrin® thermoplastic\n70m (230 ft)",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-weight-01",
+          "claim": "The Industrial ORP Probe weighs 155 grams.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "155 grams",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-threading-01",
+          "claim": "The Industrial ORP Probe uses a 3/4 inch NPT thread and can be sterilized by chemical means only.",
+          "metrics": ["orp"],
+          "type": "definitional",
+          "quote": "(3/4\") NPT\nChemical only",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-submerge-indefinitely-01",
+          "claim": "The Industrial ORP Probe can be fully submerged in fresh or salt water up to the SMA connector or tinned leads indefinitely.",
+          "metrics": ["orp"],
+          "type": "definitional",
+          "quote": "This ORP probe can be fully submerged\nin fresh or salt water, up to the SMA\nconnector or tinned leads indefinitely.",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-passive-weak-current-01",
+          "claim": "An ORP probe is a passive device whose generated current is too weak to be detected with a multimeter or an analog-to-digital converter.",
+          "metrics": ["orp"],
+          "type": "conceptual",
+          "quote": "This current (which can be positive or negative)\nis very weak and cannot be detected with a multimeter, or an analog to digital converter.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-no-set-recal-schedule-01",
+          "claim": "Atlas Scientific states there is no set recalibration schedule for an ORP probe because every use case is different.",
+          "metrics": ["orp"],
+          "type": "procedural",
+          "quote": "Because every use case is different, there is no set schedule for recalibration.",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-recal-weak-env-01",
+          "claim": "In a fish tank, hydroponic system or any environment with generally weak levels of chemical reactions, the ORP probe needs recalibration once per year for the first 2 years and approximately every 6 months after that.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "you will only need to recalibrate your probe\nonce per year for the first 2 years. After that every ~6 months.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-recal-industrial-01",
+          "claim": "In batch chemical manufacturing, industrial process, or solutions known to have strong chemical reactions, the ORP probe should be calibrated monthly or in extreme cases after each batch.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "then calibration should be\ndone monthly or in extreme cases after each batch.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-connection-options-01",
+          "claim": "The Gen 3 Industrial ORP probe connects either to the EZO Complete-ORP via its SMA connector or to the Industrial ORP Transmitter via its tinned leads.",
+          "metrics": ["orp"],
+          "type": "procedural",
+          "quote": "For industrial purposes, the Gen 3 Industrial ORP probe, can\nbe easily connected to our Industrial ORP Transmitter via\nthe probes tinned leads.",
+          "specificity": "medium"
+        },
+        {
+          "id": "orp-cap-removal-01",
+          "claim": "The Industrial ORP probe cap is removed by turning it clockwise and pulling the probe out.",
+          "metrics": ["orp"],
+          "type": "procedural",
+          "quote": "Remove the Industrial ORP probe cap by turning it clockwise, and pulling the probe out.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-must-stay-wet-01",
+          "claim": "Once installed, the Industrial ORP probe must stay wet and cannot be allowed to dry out, which is why each probe ships with a plastic cap containing ORP probe storage solution that should remain on until use.",
+          "metrics": ["orp"],
+          "type": "procedural",
+          "quote": "the ORP probe must stay wet and cannot be\nallowed to dry out, this is why every Industrial ORP probe is shipped with a plastic cap\ncontaining ORP probe storage solution.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-long-term-storage-01",
+          "claim": "To store the Industrial ORP probe long term, confirm the probe cap still holds ORP probe storage solution, topping it up from the storage solution bottle if needed, then tighten the cap back on by turning it counterclockwise.",
+          "metrics": ["orp"],
+          "type": "procedural",
+          "quote": "First, make sure the probe cap still has ORP probe storage\nsolution within it. If not, just add some from the ORP probe storage solution bottle.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "IORP_probe.pdf__d79583029faf",
+      "index": 2,
+      "locator": "\"Probe cleaning\" and the KCl creep page — \"Coating of the platinum tip can lead to erroneous readings\"",
+      "claims": [
+        {
+          "id": "orp-coating-span-01",
+          "claim": "Coating of the platinum tip of an ORP probe leads to erroneous readings including a shortened span (slope), and the type of coating determines the cleaning technique.",
+          "metrics": ["orp"],
+          "type": "conceptual",
+          "quote": "Coating of the platinum tip can lead to erroneous readings including shortened span\n(slope). The type of coating will determine the cleaning technique.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-clean-soft-01",
+          "claim": "Soft coatings on an ORP probe can be removed by vigorous stirring or with a squirt bottle.",
+          "metrics": ["orp"],
+          "type": "procedural",
+          "quote": "Soft coatings can\nbe removed by vigorous stirring or by the use of a squirt bottle.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-clean-hard-01",
+          "claim": "Organic chemical or hard coatings on an ORP probe should be removed chemically, and a light bleach solution or a 5 to 10 percent hydrochloric acid soak for a few minutes often removes many coatings.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "A light bleach solution or even a 5 – 10%\nhydrochloric acid (HCl) soak for a few minutes, often removes many coatings.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-no-abrasives-01",
+          "claim": "Abrasive materials must not be used on the ORP probe.",
+          "metrics": ["orp"],
+          "type": "procedural",
+          "quote": "Do not use\nabrasive materials on the ORP probe.",
+          "specificity": "high"
+        },
+        {
+          "id": "orp-kcl-creep-01",
+          "claim": "If dried KCl residue from storage solution appears (\"KCl creep\") or the ORP probe dried out during shipping, the probe is not damaged and only needs to be rinsed off with water.",
+          "metrics": ["orp"],
+          "type": "procedural",
+          "quote": "Simply rinse off your probe with water, and carry on.\nYour probe is not damaged.",
+          "specificity": "high"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalClaims": 40,
+    "byMetric": {
+      "orp": 40,
+      "temperature": 2,
+      "ph": 1,
+      "conductivity": 0,
+      "dissolvedOxygen": 0,
+      "turbidity": 0
+    },
+    "byType": {
+      "numeric": 15,
+      "procedural": 8,
+      "definitional": 11,
+      "conceptual": 6
+    },
+    "gaps": [
+      "Gives no calibration procedure: no ORP calibration standard is named, no value (e.g. Zobell's solution or 225 mV / 475 mV standards) is stated, and no single- or two-point sequence is given. The '225' visible on the transmitter graphic is a display illustration, not a calibration figure.",
+      "States recalibration intervals but never a maintenance interval; unlike the DO datasheet there is no '~18 months maintenance' figure and no consumable to replace.",
+      "Gives no reference-electrode offset and no way to convert its Ag/AgCl-referenced millivolts to the standard hydrogen electrode scale, even though the probe is explicitly Ag/AgCl-based.",
+      "States accuracy as +/- 1 mV with no dependence on temperature, ionic strength, or position within the -2000 to +2000 mV range.",
+      "Gives no drift rate and no criterion for deciding when a reading has drifted enough to require recalibration.",
+      "Contradicts itself on dry-out: says the probe 'must stay wet and cannot be allowed to dry out' but the final page says a probe that dried out during shipping is not damaged and just needs rinsing. It never states how long the probe may be left dry (unlike the pH datasheet's 3 weeks).",
+      "Gives no composition or substitute for ORP probe storage solution and no rehydration procedure (the pH datasheet gives a five-step one; this one does not).",
+      "Gives no ORP values that indicate any water-quality condition — no aerobic/anoxic thresholds, no healthy range, no interpretation of positive vs negative beyond the general definition.",
+      "Gives no temperature compensation guidance despite having no internal temperature sensor and a 1-99 C operating range.",
+      "Gives no flow or stirring requirement for taking a reading and no settling/stabilization time before recording a value."
+    ],
+    "notes": "Three-chunk document. Chunk 1 opens with ~400 characters of overlap repeating the NSF-51 materials list from chunk 0, and chunk 2 opens with overlap repeating the long-term-storage paragraph from chunk 1; in both cases the claims are recorded only on the originating chunk. The ORP demonstration page is OCR-scrambled: the four example readings (606.9, 605.3, -234.6, 24.2) and the labels 'Reading A' / 'Reading B' / 'Tap water' are interleaved so it is not recoverable which number goes with which panel, and the page ends in a long run of stray bullet and box glyphs. The 'Theoretical value' caption is orphaned from whatever it labelled. Dimension figures on page 4 arrive as bare numbers with labels detached."
+  }
+}

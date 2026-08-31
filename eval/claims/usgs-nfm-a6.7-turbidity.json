@@ -1,0 +1,1773 @@
+{
+  "filename": "usgs-nfm-a6.7-turbidity.pdf",
+  "title": "USGS NFM 6.7 — Turbidity (version 2.1, 9/2005)",
+  "inSlice": false,
+  "chunkCount": 51,
+  "chunks": [
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__4b93f831d4bd",
+      "index": 2,
+      "locator": "Section 6.7 opening and ASTM definition box — \"an expression of the optical properties of a liquid\"",
+      "claims": [
+        {
+          "id": "tby-definition-astm-01",
+          "claim": "Turbidity is defined by ASTM as an expression of the optical properties of a liquid that causes light rays to be scattered and absorbed rather than transmitted in straight lines through a sample.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "optical properties of a liquid that",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-causes-01",
+          "claim": "Turbidity is caused by suspended and dissolved matter such as clay, silt, finely divided organic matter, plankton and other microscopic organisms, organic acids, and dyes.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "by the presence of suspended and dissolved matter, such as clay, silt,",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-color-affects-01",
+          "claim": "The color of water, whether from dissolved compounds or suspended particles, can affect a turbidity measurement.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "color of water, whether resulting from dissolved compounds or",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-not-inherent-property-01",
+          "claim": "Turbidity is not an inherent property of water in the way that temperature or pH are.",
+          "metrics": [
+            "turbidity",
+            "temperature",
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Although turbidity is not an inherent property of water, as is",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-uses-01",
+          "claim": "Turbidity data are used for disparate purposes including regulating drinking water clarity, determining water clarity for aquatic organisms, indicating visual impairment, real-time watershed monitoring, and developing surrogates for suspended-sediment concentration.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Developing surrogates for concentration of suspended sediment",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+      "index": 3,
+      "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+      "claims": [
+        {
+          "id": "tby-designs-not-equivalent-01",
+          "claim": "Turbidity instruments of different designs commonly do not yield identical or equivalent results.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "commonly do not yield identical or equivalent results.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dilution-nonlinear-01",
+          "claim": "Mixing different source waters or diluting environmental samples may not produce linear results when measuring turbidity.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "samples may not produce linear results when measuring for turbidity",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-instrument-selection-factors-01",
+          "claim": "Selecting an appropriate turbidity instrument requires consideration of project objectives, data requirements, and the physical and chemical properties of the water body.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "requires, therefore, consideration of project objectives, data",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-report-by-design-01",
+          "claim": "USGS guidance is to report turbidity on the basis of the individual instrument design, use identically prepared calibration solutions, and use consistent techniques and instrumentation throughout a data-collection program.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Report turbidity on the basis of the individual",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-wagner-continuous-ref-01",
+          "claim": "For procedures related to continuous, dynamic monitoring of environmental waters, this section refers the reader to Wagner and others (2000) rather than covering it itself.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "environmental waters, refer to Wagner and others (2000).",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+      "index": 4,
+      "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+      "claims": [
+        {
+          "id": "tby-interference-properties-01",
+          "claim": "Water properties that affect a turbidity measurement include the color of dissolved constituents in the water matrix, particulate materials, particle size, and particle density.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "water matrix and particulate materials, particle size, and density.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-fouling-bias-01",
+          "claim": "Sensor fouling such as biological growth or scratches on the optical surface tends to produce a negative bias when light beams are blocked, but can produce a positive bias if the scratches increase scatter of the sensor's light beam.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "surface of the instrument, tends to produce a negative bias when light",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-bubbles-positive-01",
+          "claim": "Bubbles or gases in the water can cause apparent turbidity (a positive bias) and might require special sample preparation or handling to eliminate without changing the particle characteristics of the original sample.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-stray-light-positive-01",
+          "claim": "Stray light can cause a positive bias in turbidity measurement through apparent additional reflectance, and many newer instruments, particularly those used for dynamic monitoring, are designed to minimize stray light.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "although stray light can cause a positive bias in turbidity measurement",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-identical-config-comparison-01",
+          "claim": "For a valid comparison of turbidity data over time, between sites, and among projects, instruments with identical optical and data-processing configurations must be used.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "with identical optical and data-processing",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__a791412fa404",
+      "index": 5,
+      "locator": "Table 6.7-1 and Table 6.7-2 — \"Properties of water matrices and their expected effect on turbidity measurement\"",
+      "claims": [
+        {
+          "id": "tby-t1-dissolved-color-negative-01",
+          "claim": "Table 6.7-1 states that dissolved color in the water matrix absorbs the light beam and produces a negative (disproportionately low) effect when the incident light wavelengths overlap the absorptive spectra within the sample matrix.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Absorption of light beam (if the incident\nlight wavelengths overlap the absorptive\nspectra within the sample matrix)",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t1-colored-particles-nearir-01",
+          "claim": "Table 6.7-1 lists a near-infrared (780-900 nm) light source and multiple detectors as the instrument designs that compensate for absorption of the light beam by colored particles and dissolved color.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "nm) light source\n• Multiple detectors",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t1-large-particles-01",
+          "claim": "Large particles scatter long wavelengths of light more readily than small particles, producing a positive effect for near-infrared light sources of approximately 820-900 nm, which is compensated for with a white-light (broad spectrum) source.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Scatter long wavelengths of light more\nreadily than small particles",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t1-small-particles-01",
+          "claim": "Small particles scatter short wavelengths of light more efficiently than long wavelengths, producing a positive effect for broad-spectrum sources such as white light, which is compensated for with a near-infrared (780-900 nm) light source.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Scatter short wavelengths of light more\nefficiently than long wavelengths",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t1-particle-density-01",
+          "claim": "High particle density increases forward and backward scattering of light and produces a negative effect on the measurement, compensated for by multiple detectors and backscattering designs.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Increases forward and backward scattering",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t2-interferences-positive-01",
+          "claim": "Table 6.7-2 lists stray light, bubbles from entrained gases, contamination of calibrants, and scratches on cuvette glass as sampling interferences that all increase apparent light scatter and bias turbidity positively.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Contamination of\ncalibrants\nIncreases apparent light scatter Positive",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t2-fouling-both-01",
+          "claim": "Optical sensor fouling or scratching, particularly with dynamic instruments, can produce either a negative effect through beam blockage or a positive effect through scratches on optical surfaces.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "• Possible beam blockage\n• Possible scratches on optical",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__afd427c4795e",
+      "index": 6,
+      "locator": "Table 6.7-3 Summary of instrument designs and capabilities — \"Complies with ISO 7027\"",
+      "claims": [
+        {
+          "id": "tby-t3-neph-nonratio-white-01",
+          "claim": "Nephelometric non-ratiometric white-light turbidimeters comply with EPA Method 180.1 for low-level monitoring, with a typical capability and suggested application range of 0 to 40 turbidity units for regulatory use.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "White light turbidimeters – Complies\nwith EPA 180.1 for low-level\nmonitoring.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t3-ratiometric-white-01",
+          "claim": "Ratiometric white-light turbidimeters comply with EPA Method 180.1, use a nephelometric detector as the primary detector plus other detectors to minimize the effects of color and noise, and have a capability range of 0 to 4,000 turbidity units with regulatory application from 0 to 40.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "detector as the primary detector, but\ncontains other detectors to minimize\neffects of color and noise.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t3-nearir-nonratio-01",
+          "claim": "Non-ratiometric nephelometric near-infrared turbidimeters comply with ISO 7027, use a 780-900 nm wavelength that is less susceptible to the effects of color, and have a capability range of 0 to 1,000 turbidity units with a suggested non-US regulatory range of 0 to 11.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Complies with ISO 7027 – The\nwavelength (780-900 nm) is less\nsusceptible to effects of color.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t3-nearir-ratio-01",
+          "claim": "Ratiometric nephelometric near-infrared turbidimeters comply with ISO 7027 and contain a ratio algorithm to monitor and compensate for variability and color, with a capability range of 0 to 4,000 turbidity units.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Complies with ISO 7027. Contains a\nratio algorithm to monitor and\ncompensate for variability and color.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t3-surface-scatter-01",
+          "claim": "Surface-scatter turbidimeters determine turbidity through light scatter from or near the surface of a sample, are not applicable for regulatory purposes, and are used primarily for high-level turbidity applications in the 10 to 10,000 range.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Turbidity is determined through light\nscatter from or near the surface of a\nsample.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t3-backscatter-01",
+          "claim": "Backscatter/ratiometric technology uses backscatter detection for high turbidity levels and nephelometric detection for low levels, is common with probe technology, is not applicable for regulatory purposes, and applies over the 10 to 10,000 range.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Backscatter detection for high levels\nand nephelometric detection for low\nlevels.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t3-attenuation-01",
+          "claim": "Light attenuation (spectrophotometric) instruments operate at a wavelength of 860 nm, are highly susceptible to interferences, are best applied at low to medium turbidity levels over a 20 to 1,000 range, and are not applicable for regulatory purposes.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Wavelength 860 nm. Highly",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t3-multibeam-01",
+          "claim": "Multiple-beam turbidimeters use multiple light sources and multiple detectors to provide reference and active signals with at least four independent measurements combined by a ratio algorithm, with a regulatory range of 0 to 40 and capability to 1,000 turbidity units.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "detectors are used to provide both\nreference and active signals, with at\nleast four independent measurements",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__10c1b495aa2d",
+      "index": 7,
+      "locator": "Figure 6.7-1 and Technical Note (1) — \"can differ by factors of two or more for the same environmental sample\"",
+      "claims": [
+        {
+          "id": "tby-fig1-detectors-01",
+          "claim": "In the single-beam photoelectric nephelometer design of figure 6.7-1, the 90-degree detector is required while the transmitted, backscatter, and forward-scatter detectors are optional.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "90° DETECTOR\n(Required)",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-factor-of-two-01",
+          "claim": "Turbidity measured with instruments of different optical designs can differ by factors of two or more for the same environmental sample even when the instruments are identically calibrated.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "designs can differ by factors of two or more for the same",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-not-interchangeable-01",
+          "claim": "Raw turbidity data from differently designed instruments should not be considered directly interchangeable and are inherently incomparable without additional work to establish relations between the instruments over the range of environmental conditions present.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "should not be considered directly interchangeable—the resultant data",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ratiometric-note-01",
+          "claim": "Ratiometric instruments use multiple detectors at different angles and compute the turbidity value from a ratio of the light received by the different detectors, reducing variability caused by light-source instability, high particle densities, or color.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Such “ratiometric” instruments compute the turbidity value",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-color-nearir-mitigation-01",
+          "claim": "Absorption of light by colored particles or a colored matrix reduces apparent turbidity, and this negative effect is minimized by using near-infrared light frequencies as the light source or by ratiometric techniques.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "from color is minimized by using near-infrared light frequencies",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__f9ac2c6ac6c1",
+      "index": 8,
+      "locator": "§6.7.1.B Data Storage and Technical Note (2) — \"The designations NTU, NTRU, BU, AU, and NTMU\"",
+      "claims": [
+        {
+          "id": "tby-nwis-units-by-instrument-01",
+          "claim": "USGS turbidity data from each instrument type are stored and reported in the National Water Information System using parameter codes and measurement reporting units specific to the instrument type, with specific instruments designated by the method code.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "reported in the National Water Information System (NWIS) using",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ntu-family-wavelength-01",
+          "claim": "The reporting-unit designations NTU, NTRU, BU, AU, and NTMU signify the use of a broad spectrum incident light in the wavelength range 400-680 nanometers.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "The designations NTU, NTRU, BU, AU, and NTMU signify the\nuse of a broad spectrum incident light in the wavelength range\n400-680 nanometers (nm).",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-fnu-family-wavelength-01",
+          "claim": "The reporting-unit designations FNU, FNRU, FBU, FAU, and FNMU generally signify an incident light in the range between 780 and 900 nanometers.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "The designations FNU, FNRU, FBU, FAU, and FNMU",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-units-equivalent-on-calibrant-01",
+          "claim": "The turbidity reporting units are equivalent when measuring a calibration solution such as formazin or polymer beads, but their respective instruments may not produce equivalent results for environmental samples.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "These reporting units are equivalent when measuring a calibration",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-turbidity-unit-generic-01",
+          "claim": "The term turbidity unit as used in this manual refers generically to turbidity measured by instruments of undefined design, and manufacturers might retain the general use of the unit NTU when referring to calibrants and equipment.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "The term “turbidity unit,” as used in this manual, refers generically to",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-jtu-ftu-obsolete-01",
+          "claim": "Jackson Turbidity Units (JTU) and Formazin Turbidity Units (FTU) were historical reporting units and neither is still in common use, due to lack of precision for JTU and lack of specificity about instrumentation type for FTU.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "precision (JTU) and lack of specificity about instrumentation",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-iso7027-860-60-90pm25-01",
+          "claim": "ISO 7027 specifically defines the light source for FNU measurements as having a wavelength of 860 nm with a bandwidth of 60 nm, and requires the detector angle to be 90 degrees from the incident light plus or minus 2.5 degrees.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "of 860 nm, with a bandwidth of 60 nm. The angle of the detector must be 90 degrees from",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-codes-spreadsheet-01",
+          "claim": "Information for specific turbidity instruments is maintained by the USGS at http://water.usgs.gov/owq/turbidity_codes.xls.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "http://water.usgs.gov/owq/turbidity_codes.xls",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__0663ce0e133d",
+      "index": 9,
+      "locator": "Table 6.7-4 Reporting units corresponding to turbidity instrument designs — \"(NTU)1 (P63675)\"",
+      "claims": [
+        {
+          "id": "tby-t4-ntu-fnu-90deg-01",
+          "claim": "For a single illumination beam with the detector at 90 degrees to the incident beam, a white or broadband source (peak spectral output 400-680 nm) reports Nephelometric Turbidity Units (NTU, parameter code P63675) and a monochrome near-infrared source (780-900 nm) reports Formazin Nephelometric Units (FNU, parameter code P63680).",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Nephelometric Turbidity Unit\n(NTU)1 (P63675)",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t4-ratio-units-01",
+          "claim": "Instruments with detectors at 90 degrees and other angles whose algorithm combines detector readings report Nephelometric Turbidity Ratio Units (NTRU, P63676) for white light and Formazin Nephelometric Ratio Units (FNRU, P63681) for near-infrared light.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Nephelometric Turbidity Ratio\nUnit (NTRU) (P63676)",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t4-backscatter-30deg-01",
+          "claim": "Backscatter instruments, with the detector at 30 degrees plus or minus 15 to the incident beam, report Backscatter Units (BU, P63677) for white light and Formazin Backscatter Units (FBU, P63682) for near-infrared light.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "At 30o ± 15 to incident beam",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t4-attenuation-180deg-01",
+          "claim": "Attenuation instruments, with the detector at 180 degrees to the incident beam, report Attenuation Units (AU, P63678) for white light and Formazin Attenuation Units (FAU, P63683) for near-infrared light.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "At 180o to incident beam",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t4-multibeam-01",
+          "claim": "Multiple illumination beam instruments report Nephelometric Turbidity Multibeam Units (NTMU, P63679) for white light and Formazin Nephelometric Multibeam Units (FNMU, P63684) for near-infrared light.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Nephelometric Turbidity\nMultibeam Unit (NTMU)",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t4-ntu-geometry-01",
+          "claim": "EPA Method 180.1 defines the optical geometry for NTU measurements as a detector angle of 90 degrees plus or minus 30 to the incident light beam with a tungsten lamp light source of color temperature 2,200 to 3,000 K.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "angle must be 90o ± 30 to the incident light beam. The light source must be a tungsten",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t4-fnu-geometry-01",
+          "claim": "ISO 7027 defines the optical geometry for FNU measurements as a detector angle of 90 degrees plus or minus 2.5 to the incident light beam with a light-emitting diode source of wavelength 860 plus or minus 60 nm.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "be 90o ± 2.5 to the incident light beam. The light source must be a light-emitting diode",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t4-column-definitions-01",
+          "claim": "Table 6.7-4 splits reporting units by light wavelength into a white or broadband column with a peak spectral output of 400-680 nm and a monochrome column with spectral output typically near infrared at 780-900 nm.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "White or broadband\n(with a peak\nspectral output\nof 400-680 nm)",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d26b4baa6e12",
+      "index": 10,
+      "locator": "§6.7.1.C Instrument Selection and Maintenance — \"the USEPA has approved the following three methods\"",
+      "claims": [
+        {
+          "id": "tby-selection-considerations-01",
+          "claim": "Turbidimeter selection considerations include whether the program is regulatory in nature, the expected turbidity range and the portions needing accuracy, the need for comparability with other sites or historical data, and which interferences matter most.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Whether the program will be regulatory in nature (typically",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-epa-regulates-drinking-only-01",
+          "claim": "Within the United States the USEPA regulates turbidity only for water intended for use as drinking water, though some states use turbidity in regulations associated with the Clean Water Act.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Environmental Protection Agency (USEPA) only for water that is",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-three-approved-methods-01",
+          "claim": "The USEPA has approved three methods to measure turbidity in drinking water: EPA Method 180.1 based on white-light nephelometric instrument designs, GLI Method 2, and Hach Method 10133.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Environmental Protection\nAgency, 1993), based on white-light nephelometric instrument",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-gli-method2-860led-01",
+          "claim": "GLI Method 2 uses dual-beam and dual-detector technology with an 860 nm light-emitting diode light source to compensate for color and reduce erratic readings.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "beam and dual detector technology with an 860 nm light-emitting",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-hach-10133-inline-01",
+          "claim": "Hach Method 10133 is an inline process-stream method that is unlikely to be used within the USGS.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Agency, 2002b), an inline process-stream method that is unlikely to",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-drinking-range-0-40-01",
+          "claim": "Because of a nonlinear response of these technologies at high turbidities, the applicable range of the USEPA-approved drinking-water methods is from 0 to 40 turbidity units.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "water is from 0 to 40 turbidity units.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-1801-poor-above-40-01",
+          "claim": "Instrument designs conforming to EPA Method 180.1 or GLI Method 2 may perform poorly, including nonlinear responses, at turbidities greater than 40 turbidity units, which commonly occur in surface-water bodies.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "(including nonlinear responses) at turbidities that commonly occur in",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-white-light-power-01",
+          "claim": "White-light turbidity instruments typically consume more power than monochrome instruments, so access to the regional power grid is commonly required.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "light instruments typically consume more power than monochrome",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__a079d759fdae",
+      "index": 11,
+      "locator": "§6.7.1.C continued and Technical Note (3) — \"ISO 7027 had not been accepted by USEPA\"",
+      "claims": [
+        {
+          "id": "tby-dilute-above-40-01",
+          "claim": "For the USEPA-approved drinking-water methods, waters with turbidities greater than 40 units must be diluted before measuring.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "must be diluted before measuring.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-drinking-water-method-required-01",
+          "claim": "For studies involving the measurement of turbidity in finished drinking water, EPA Method 180.1, GLI Method 2, or Hach Method 10133 must be used, a requirement commonly applied to ground water from wells used for human consumption.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Method 180.1, GLI Method 2, or Hach Method 10133 must be",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-iso7027-not-usepa-01",
+          "claim": "ISO 7027 has been defined for waters with low turbidity and is in use in Europe and elsewhere, but as of 2003 it had not been accepted by the USEPA for compliance with drinking-water regulations in the United States.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "been defined for waters with low turbidity and is in use in",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-cwa-no-approved-methods-01",
+          "claim": "USEPA-approved methods generally are not required when providing turbidity data for regulatory purposes under the Clean Water Act, so alternative instrument designs targeted at specific study objectives may be used.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "USEPA-approved methods generally are not required when providing",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-consistency-most-important-01",
+          "claim": "Consistency of instrument types and calibration procedures within monitoring programs or among individual projects is one of the most important aspects of designing a turbidity data-collection program.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "however, consistency of instrument types and calibration",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-nephelometry-definition-01",
+          "claim": "Nephelometry is the measurement of light scattering using a light detector 90 degrees from the incident light.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Nephelometry: the measurement of light scattering",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2b7bfe2e5921",
+      "index": 12,
+      "locator": "Decision Considerations for Instrument Selection — \"static or dynamic conditions\"",
+      "claims": [
+        {
+          "id": "tby-static-dynamic-definition-01",
+          "claim": "Water samples removed from the source and measured with benchtop meters are considered static, whereas submersible sensors allow turbidity measurement under dynamic water conditions using instantaneous profiling or a deployed instrument for continuous monitoring.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "samples that are removed from the source and are measured with\nbenchtop",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-static-settling-difference-01",
+          "claim": "Static measurement techniques do not completely account for particle settling whereas dynamic techniques more accurately reflect particle movement within the water body, a difference that is particularly pronounced when coarse silt or sand-sized particles are present.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "measurement techniques do not completely account for particle",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-transport-temp-difference-01",
+          "claim": "Temperature changes in the sample during transport from source water to laboratory can cause differences between static benchtop measurements and dynamic in situ or pumped measurements.",
+          "metrics": [
+            "turbidity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "sample during transport from source water to laboratory can cause",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-benchtop-flowthrough-01",
+          "claim": "Some benchtop instruments provide flowthrough chambers that keep the sample in motion to approximate the dynamic conditions in the original water body.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "provide flowthrough chambers that keep the sample in motion to",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__a3d7c61431a3",
+      "index": 13,
+      "locator": "Figure 6.7-2 decision tree — \"wavelength = 860±30nm\"",
+      "claims": [
+        {
+          "id": "tby-fig2-fnu-iso-01",
+          "claim": "The decision tree assigns FNU reporting units to ISO 7027 near-infrared LED light sources with a wavelength of 860 plus or minus 30 nm.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "FNU\nISO 7027\nnear infrared\nLED light source,\nwavelength = 860±30nm",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-fig2-ntru-01",
+          "claim": "The decision tree assigns NTRU reporting units to white-light instruments with a tungsten filament or LED light source in the 400-900 nm wavelength range.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "NTRU\nWhite light,\ntungsten filament or\nLED light source,\nwavelength = 400-900 nm",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-fig2-fnmu-gli-01",
+          "claim": "The decision tree assigns FNMU reporting units to GLI Method 2 near-infrared multiple-beam LED instruments with ratiometric data correction at 860 plus or minus 30 nm.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "FNMU\nGLI Method 2\nnear infrared\nLED light source,\nmultiple beam,\nratiometric data correction,\nwavelength =860±30nm",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-fig2-bu-ntmu-01",
+          "claim": "The decision tree assigns BU and NTMU reporting units to backscatter or multibeam white-light instruments using a tungsten filament or LED source over 400-900 nm.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "BU, NTMU\nBackscatter or multibeam\nwhite light,",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-fig2-ranges-01",
+          "claim": "The decision tree branches on expected turbidity range, distinguishing 0-1,000 where ratiometric correction is not required, 0-4,000 where ratiometric data correction is needed, and 10-10,000 where color is assumed predominant and alternative technologies are suggested.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Turbidity 0-1,000\nratiometric\nnot required",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-fig2-ntu-2200-3000k-01",
+          "claim": "The decision tree's NTU branch specifies a 90 degree detection angle with a white light tungsten filament of color temperature 2200-3000 K, per EPA 180.1 or Standard Method 2130/B.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "90 degree detection angle\nWhite light,\ntungsten filament,\ncolor temperature\n2200-3000K,\nEPA 180.1 or Std. Meth 2130/B",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__a1fdf98ea6a7",
+      "index": 14,
+      "locator": "Decision Considerations 1 and 2 — \"For turbidities in the range of 0-1,000 units\"",
+      "claims": [
+        {
+          "id": "tby-decision-regulatory-01",
+          "claim": "If a study involves regulation of drinking water the instrument choices are limited to the methods accepted by the USEPA, while state regulations may require specific instrument designs that this protocol cannot anticipate.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If the study involves regulation of drinking water, the instrument",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-decision-range-single-detector-01",
+          "claim": "For turbidities in the range of 0-1,000 units, single-detector nephelometric measurement may work adequately if the instrument is calibrated in the same range as the sample.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "For turbidities in the range of 0-1,000 units, single-detector",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-backscatter-interference-01",
+          "claim": "As particle densities increase, backward scattering of light increases to the point that it interferes with single-detector nephelometry, producing a negative effect on the measurement or an unstable reading.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "light particles increases to the point that it can cause interference",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ratio-reduces-noise-01",
+          "claim": "Ratioing the light received by detectors at different angles helps reduce noise in the turbidity signal, especially at ultra-low turbidities or when particle densities are high.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Ratioing helps to reduce noise in the turbidity\nsignal, especially at",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-backscatter-above-1000-01",
+          "claim": "Backscatter detection is particularly important above 1,000 turbidity units.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Backscatter is particularly important above 1,000 units.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__a8e30bddcdef",
+      "index": 15,
+      "locator": "Decision Considerations 3, 4 and 5 — \"Dynamic measurement is preferred to static measurement\"",
+      "claims": [
+        {
+          "id": "tby-color-instrument-choice-01",
+          "claim": "When the decrease in turbidity caused by color should be quantified, an instrument with a broad-spectrum or white-light source sensitive to color changes is desirable, whereas measuring turbidity changes unrelated to color calls for a near-infrared light source.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "to color, instruments with a near-infrared light source should be used.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dynamic-preferred-01",
+          "claim": "In most cases it is preferable to measure turbidity directly within the water source or in a pumped sample rather than by benchtop measurement, because of problems with representative subsampling, settling of solids, temperature changes in static samples, and interferences such as condensation or scratches on sample cuvettes.",
+          "metrics": [
+            "turbidity",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Dynamic measurement is preferred to static measure-",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dynamic-required-continuous-01",
+          "claim": "Dynamic techniques usually are required for continuous monitoring, and the turbidity sensors often can be combined with sensors measuring temperature, specific conductance, dissolved oxygen, and pH.",
+          "metrics": [
+            "turbidity",
+            "temperature",
+            "conductivity",
+            "dissolvedOxygen",
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "additional properties, such as temperature, specific conductance,",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-static-instrument-limitation-01",
+          "claim": "Most instruments used for static turbidity measurements are not capable of being used for dynamic measurements, whereas some dynamic instruments can be immersed in a water sample and read statically.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "for static measurements are not capable of being used for dynamic",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-resolution-requirement-01",
+          "claim": "For turbidity data primarily in the low (less than 5 turbidity units) or ultra-low (less than 1 unit) ranges the necessary resolution may be to the 100th or 10th decimal place, whereas above 40 units resolution to the nearest 5, 10, or even 100 reporting units might be adequate.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "For turbidity data that primarily will be in the low (less than 5 turbidity",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__a550c4c49eae",
+      "index": 16,
+      "locator": "Instrument model selection and dynamic-measurement guidance box — \"simulates dynamic measurement using a flowthrough chamber\"",
+      "claims": [
+        {
+          "id": "tby-codes-model-list-01",
+          "claim": "The turbidity parameter and methods codes spreadsheet provides a partial list of available instrument models according to instrument design and reporting units, which can be used with figure 6.7-2 to narrow the choice of instrument.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "provides a partial list of available models according to",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-nwql-duplicates-01",
+          "claim": "When turbidity data are to be compared among different programs or studies, sending duplicate samples to a laboratory such as the National Water Quality Laboratory is recommended as a quality-assurance reference, and the NWQL simulates dynamic measurement using a flowthrough chamber with its benchtop meters.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "NWQL, for example, simulates dynamic measurement using a",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dynamic-preferred-box-01",
+          "claim": "Dynamic measurement is the preferred method for determining the turbidity of a water body because it more accurately reflects surface-water conditions than static determination, in which particle settling in cuvettes occurs.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "static determination because particle settling in",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6ac94521d98b",
+      "index": 17,
+      "locator": "Signal-Processing Options, Maintenance, and Table 6.7-5 Equipment and supplies — \"Turbidity-free water, deiononized water filtered\"",
+      "claims": [
+        {
+          "id": "tby-signal-processing-stats-01",
+          "claim": "Some turbidity instruments can provide statistics such as the maximum, minimum, mean, median, range, and variance of many readings taken over a timespan of a few seconds, useful for reducing variability in recorded turbidities and for diagnostics.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "minimum, mean, median, range, and variance of many readings over",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-proprietary-algorithms-caution-01",
+          "claim": "Instruments using proprietary spike-reduction algorithms, sometimes with user-defined time constants and spike thresholds, provide a smoother signal, but because the algorithms may not be published these data must be used with care and in consideration of study data-quality objectives.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "algorithms can provide a smoother signal than simple instantaneous",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-signal-averaging-slows-response-01",
+          "claim": "If the instrument uses signal averaging to smooth the data output, the instrument response to changes in turbidity readings can be slowed.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "uses signal averaging to smooth the data output, the instrument",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-maintenance-critical-01",
+          "claim": "Routine maintenance of turbidity instrumentation is critical, particularly for continuously deployed dynamic applications.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Routine maintenance of turbidity instrumentation is",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-supplies-turbidity-free-water-01",
+          "claim": "Turbidity-free water is defined in the equipment table as deionized water filtered through a filter membrane of 0.2 or less with precision-sized pores.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "• Turbidity-free water, deiononized water filtered through a ≤ 0.2 mm filter membrane with",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-supplies-calibrants-01",
+          "claim": "Calibration turbidity stock solutions are either formazin stock suspension, commercially obtained or prepared from scratch with hydrazine sulfate and hexamethelenetetramine, or instrument-specific polymer solutions containing styrene divinylbenzene beads.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "- Instrument-specific polymer solutions containing styrene divinylbenzene beads.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-supplies-silicon-oil-01",
+          "claim": "The equipment list requires optical-grade silicon oil with the same index of refraction as the sample cells, supplied by the instrument manufacturer.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "• Silicon oil, optical grade (with same index of refraction as sample cells; supplied by instrument",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-supplies-glassware-01",
+          "claim": "The equipment list specifies Class A volumetric flasks of 100 mL or 500 mL and a Class A 5.0 mL volumetric pipet with filler.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "• Volumetric flask, Class A, 100 mL or 500 mL.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-supplies-inert-gas-01",
+          "claim": "The equipment list includes an inert dry gas such as nitrogen with a gas-delivery apparatus, with tanks fitted with regulators and a filter, and a preferably amber sample bottle that does not sorb suspended material.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "• Inert (dry) gas (for example, nitrogen) and gas-delivery apparatus; tanks must be fitted with",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__0670bbdf7a56",
+      "index": 18,
+      "locator": "Maintenance of Turbidity Instruments bullet list — \"approximately every 2 to 4 weeks\"",
+      "claims": [
+        {
+          "id": "tby-clean-optics-01",
+          "claim": "Optical surfaces are cleaned regularly with a lint-free cloth, soft toothbrush, or paintbrush and deionized water, with care taken not to damage the surfaces.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Regular cleaning of optical surfaces. Use a lint-free cloth,",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-clean-frequency-2-4-weeks-01",
+          "claim": "For deployed, dynamic turbidity monitoring the cleaning frequency should be approximately every 2 to 4 weeks, with more frequent cleaning where biofouling is particularly apparent.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "should be approximately every 2 to 4 weeks. More frequent",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-wiper-verification-01",
+          "claim": "The maintenance program must include verifying that wipers are operational and changing wiper pads when excessively dirty or worn, while avoiding hindering or forcing wiper movement or scratching optical surfaces.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Verification that wipers are operational. Change wiper pads",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-wash-cuvettes-01",
+          "claim": "Sample cuvettes must be washed after each use while wearing powderless disposable laboratory gloves and using a lint-free cloth.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Washing sample cuvettes after each use (wear powderless,",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-maintenance-data-review-01",
+          "claim": "The maintenance program must include regular calibration or verification against secondary calibration solutions and examination of collected data for indications of instrument malfunction.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Examination of collected data for indication of instrument",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-test-before-field-01",
+          "claim": "All field instruments must be tested in an office or laboratory before use, and all maintenance and repairs recorded in the instrument logbook.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Test all field instruments in an office or laboratory before use.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__b805af1cc383",
+      "index": 19,
+      "locator": "§6.7.2 Calibration and ASTM calibrant levels — \"three levels of calibration solutions (calibrants)\"",
+      "claims": [
+        {
+          "id": "tby-cal-identical-differ-native-01",
+          "claim": "Even identically calibrated turbidimeters of different designs can produce significantly different readings of native-water sources.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "turbidimeters can produce significantly different readings of native-",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-cal-scratch-formazin-reference-01",
+          "claim": "All turbidity instruments are designed to produce equivalent responses to scratch formazin prepared in the office laboratory, which is the accepted reference solution and provides a common point for standardization despite design differences.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "formazin (prepared in the office laboratory), the accepted reference",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-cal-formazin-vs-environment-01",
+          "claim": "The varying particle and color characteristics of environmental waters differ fundamentally from formazin crystals, which has led manufacturers to develop calibration solutions tailored to specific instruments and potentially increases error if the solutions are used improperly.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "characteristics of environmental waters differ fundamentally from",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-astm-three-levels-01",
+          "claim": "The USGS follows ASTM International conventions defining three levels of calibrants: Reference Turbidity solutions, Calibration Turbidity solutions, and Calibration Verification solutions or solids.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "levels of calibration solutions (calibrants): “Reference Turbidity”",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-reference-turbidity-formazin-01",
+          "claim": "The Reference Turbidity solution is a calibrant synthesized reproducibly from traceable raw materials to which all other calibrants trace back, and the reference standard for turbidity is scratch formazin, a polymer with repeating units of C2H4N2.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "reference standard for turbidity is formazin made from scratch",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-calibration-turbidity-solutions-01",
+          "claim": "Calibration Turbidity solutions are those used to adjust instrument readout and must be traceable and equivalent to the reference turbidity calibrant to within accepted statistical errors.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Calibration Turbidity solutions are those that are used to",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__658190966eb0",
+      "index": 20,
+      "locator": "Technical Note (4) and Calibration Verification calibrants — \"styrene divinylbenzene beads (SDVB)\"",
+      "claims": [
+        {
+          "id": "tby-acceptable-calibrants-01",
+          "claim": "Acceptable calibration turbidity solutions include dilutions of scratch formazin, commercially prepared stabilized formazin such as StablCal in formulations of 4,000 turbidity units and lower, and styrene divinylbenzene beads such as AMCO-AEPA-1 polymer.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "solutions include dilutions of formazin made from scratch",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-stablcal-settling-01",
+          "claim": "Stabilized formazin calibrants have a much longer shelf life than solutions diluted from scratch formazin, but settling of formazin crystals can still be observed when they sit unused.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "longer shelf life than solutions diluted from scratch formazin,",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-sdvb-uniform-01",
+          "claim": "Calibrants made from styrene divinylbenzene beads have a more uniform grain size than formazin and tend to settle less over time, but often are custom developed for specific instruments and must be purchased accordingly.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "size than formazin and tend to settle less over time, but often are",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-verification-calibrants-01",
+          "claim": "Calibration Verification calibrants are used to perform instrument checks in the field and may include calibration turbidity solutions, but sealed or solid materials must not be used to adjust instrument performance.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Sealed or solid materials should not be used to adjust",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-formazin-safety-01",
+          "claim": "Formazin and stabilized formazin are safe to use as primary turbidity standards when good laboratory practices are followed, with laboratory coats, glasses, and gloves considered adequate protection, and the primary hazard being physical irritation.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "including wearing laboratory coats, glasses, and gloves, are",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-calibrant-instrument-specific-01",
+          "claim": "Calibration turbidity solutions and calibration verification calibrants can be instrument specific, and using calibrants with instruments for which they were not designed can introduce significant errors.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "instruments for which they are not designed can introduce",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__3be5261a4074",
+      "index": 21,
+      "locator": "Technical Note (5) formazin synthesis hazards — \"4,000 turbidity-unit formazin suspension, contains 3.2 parts per million hydrazine sulfate\"",
+      "claims": [
+        {
+          "id": "tby-formaldehyde-below-risk-01",
+          "claim": "Only formaldehyde evaporates from the formazin mixture and its concentration is well below what is considered a health risk, with exposure reduced further in formazin solutions diluted below 4,000 turbidity units.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Concentrations in formazin solutions diluted below 4,000 turbidity",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-hydrazine-hexamine-hazard-01",
+          "claim": "The raw materials for scratch formazin, hydrazine sulfate and hexamethylenetetramine, were listed as of 2004 as a suspected carcinogen and an experimental mutagen respectively, and hydrazine sulfate is a strong reducing agent requiring work in a fume hood.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "hexamethylenetetramine (hexamine), are currently (2004)",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-formazin-chemistry-01",
+          "claim": "In water hydrazine sulfate separates into free hydrazine and sulfuric acid, an excess of hexamethylenetetramine reacts with acid to produce formaldehyde at neutral pH, and the formaldehyde then reacts with dissolved hydrazine to produce the formazin polymer.",
+          "metrics": [
+            "turbidity",
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "hexamethylenetetramine reacts with acid to produce",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-formazin-composition-01",
+          "claim": "The final 4,000 turbidity-unit formazin suspension contains 3.2 parts per million hydrazine sulfate, 0.1 percent formaldehyde, 0.2 percent formazin, 0.5 percent ammonium sulfate, and 4.7 percent hexamethylenetetramine.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "contains 3.2 parts per million hydrazine sulfate, 0.1 percent",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-formazin-rat-tox-01",
+          "claim": "Laboratory rats fed 4,000-NTU formazin at 5,000 mg/kg body weight showed no toxic effect.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "rats were fed 4,000-NTU formazin at 5,000 mg/kg body weight",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__8e84ac907e15",
+      "index": 22,
+      "locator": "§6.7.2.A Calibration Solution: Use, Preparation, and Dilution — \"To prepare a 4,000 turbidity-unit formazin stock suspension\"",
+      "claims": [
+        {
+          "id": "tby-commercial-recommended-01",
+          "claim": "Commercially prepared calibration turbidity solutions are recommended for routine instrument calibration to avoid safety and quality-assurance concerns.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "calibration turbidity solutions are recommended for routine",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-turbidity-free-water-temp-01",
+          "claim": "Turbidity-free water, deionized water passed through a filter media of less than or equal to 0.2 micrometers, must always be used at 20-25 degrees C for mixing dilutions or suspensions.",
+          "metrics": [
+            "turbidity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "through a filter media of less than or equal to 0.2 μm) at",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-stock-monthly-01",
+          "claim": "The stock turbidity suspension is prepared monthly and calibrant dilutions are prepared immediately prior to instrument calibration.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Prepare the stock turbidity suspension monthly and calibrant",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-scratch-dilution-stability-01",
+          "claim": "Calibrant solutions made from diluted scratch formazin are stable for only a few hours to a few days, depending on the concentration.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "solutions made from diluted scratch formazin are stable for",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-no-dilute-commercial-01",
+          "claim": "With the exception of 4,000 NTU formazin, commercial calibration solutions such as StablCal or AMCO-AEPA-1 must not be diluted because changes in the suspension matrix will render the dilutions nonlinear.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "NTU formazin, commercial calibration solutions such as",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-store-dust-free-01",
+          "claim": "Reagents are stored as appropriate in a dust-free cabinet or refrigerator, and inconsistent dilution techniques and variable temperatures can add significant measurement error.",
+          "metrics": [
+            "turbidity",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Store reagents, as appropriate, in a dust-free cabinet or",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-formazin-recipe-hydrazine-01",
+          "claim": "The 4,000 turbidity-unit formazin stock suspension starts by transferring 5.0 g of reagent-grade hydrazine sulfate into approximately 400 mL of turbidity-free water in a 1-L volumetric flask.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "transfer 5.0 g of reagent-grade hydrazine sulfate",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-formazin-recipe-hexamine-01",
+          "claim": "50.0 g of reagent-grade hexamethylenetetramine is dissolved in approximately 400 mL of turbidity-free water in a separate flask and filtered through a 0.2 micrometer filter before being combined with the hydrazine sulfate.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Quantitatively transfer 50.0 g of reagent-grade",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-formazin-mix-time-01",
+          "claim": "After dilution to the 1-L mark with turbidity-free water the formazin solution is stoppered and mixed for at least 5 minutes but no more than 10 minutes.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "mix for at least 5 minutes, but no more than 10 minutes.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-formazin-develop-24h-01",
+          "claim": "The formazin mixture must stand for 24 hours at 25 plus or minus 1 degree C to develop the 4,000 turbidity-unit suspension.",
+          "metrics": [
+            "turbidity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Let stand for 24 hours at 25º ± 1ºC to develop the",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-formazin-stock-shelf-life-01",
+          "claim": "The 4,000 turbidity-unit formazin stock suspension is transferred to an opaque light-blocking polyethylene bottle and stored refrigerated, and is stable for about a year if stored at 20 to 25 degrees C in amber polyethylene bottles.",
+          "metrics": [
+            "turbidity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "suspension is stable for about a year, if stored at 20 to 25ºC in",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-400-unit-dilution-01",
+          "claim": "A 500 mL batch of 400 turbidity-unit calibrant is made by diluting the 4,000 turbidity-unit stock 1:10, mixing 50 mL of stock in a 500-mL flask, and the resulting solution is stable only for about one day.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Mix 50 mL of the 4,000 turbidity-unit stock solution in a",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__29a459b07785",
+      "index": 23,
+      "locator": "40 turbidity-unit dilution, labeling, and §6.7.2.B Calibration Procedures — \"15- to 25-mL sample holding cell\"",
+      "claims": [
+        {
+          "id": "tby-40-unit-dilution-01",
+          "claim": "A 40 turbidity-unit calibrant is made by diluting the 400 turbidity-unit solution 1:10, mixing 10 mL of stock in a 100-mL flask, and it must be prepared on the day needed, used immediately, and any unused calibrant discarded because it is stable only about 1 day.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Mix 10 mL of the 400 turbidity-unit stock solution in a 100-mL",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-calibrant-labeling-01",
+          "claim": "Chemical containers are marked with dates of receipt and expiration when received, and prepared calibrants are labeled with the contents, date of preparation, expiration date, and the preparer's initials.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "calibrant is prepared, label the container with the contents, date of",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-formazin-storage-disposal-01",
+          "claim": "Formazin is stored in a cool, dark place such as a storage cabinet or frost-free refrigerator, and waste calibration solutions are poured into a labeled glass or plastic container for proper disposal.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "a cool, dark place (a storage cabinet or frost-free refrigerator). After",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-shelf-life-box-01",
+          "claim": "Reagents and calibrants must not exceed their shelf life.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Reagents and calibrants must not exceed their shelf life.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-benchtop-cuvette-volume-01",
+          "claim": "Benchtop turbidity meters use a small 15- to 25-mL sample holding cell, or cuvette, inserted into the measurement chamber, which results in a static measurement unless additional flowthrough equipment is used.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Benchtop meters use a small, 15- to 25-mL sample holding cell,",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-read-before-settling-01",
+          "claim": "Values must be read from a benchtop meter before particle settling can affect the measured turbidity.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Values must be read from the meter before particle settling",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__af6c9f365e31",
+      "index": 24,
+      "locator": "Benchtop (static) turbidimeter calibration steps 1-2 — \"inverting the calibrant 25 times (1-second inversion cycle)\"",
+      "claims": [
+        {
+          "id": "tby-settling-e-code-01",
+          "claim": "If particle settling of sand or silt occurs before a static measurement can be completed, the sample result must be recorded in the database to reflect the possible bias, coded with an E remark in USGS NWIS indicating the value is an estimate only.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "data. (For input to the USGS NWIS database, the results",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-cal-cuvettes-identical-01",
+          "claim": "The cuvettes used for calibrating static turbidimeters are identical to those used in the meter when taking a turbidity reading.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "The cuvettes used for calibrating static turbidimeters are",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-submersible-separate-chamber-01",
+          "claim": "Submersible meters collect data by immersing the turbidity sensor in the sample media but are calibrated using a separate chamber that allows the sensor to be immersed in the calibrant.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "but are calibrated using a separate chamber",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-benchtop-two-cal-points-01",
+          "claim": "Each benchtop instrument range is calibrated using at least two calibrant concentrations, and three or more if the instrument allows, with calibrant solutions that bracket the range of turbidity anticipated in the sample.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Calibrate each instrument range using at least two calibrant",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-fresh-dilute-calibrant-01",
+          "claim": "Dilute calibrant is prepared fresh from the stock at the time of use because after dilution the stock suspension is stable only for a few hours.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "use—after dilution, the stock suspension is stable only for a",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-resuspend-25-inversions-01",
+          "claim": "Formazin-based calibrants are resuspended by inverting the calibrant 25 times on a 1-second inversion cycle, followed by a 2- to 10-minute wait to allow bubble removal.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "inverting the calibrant 25 times (1-second inversion cycle),",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-suspension-30-minutes-01",
+          "claim": "Calibrants of 40 turbidity units or less will remain suspended for up to 30 minutes, while calibrants greater than 40 turbidity units may require more frequent resuspension.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "removal. Calibrants of 40 turbidity units or less will remain",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-no-flocculated-calibrants-01",
+          "claim": "Calibrants with flocculated suspensions must not be used.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Do not use calibrants with flocculated suspensions.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__383bf1e6348d",
+      "index": 25,
+      "locator": "Benchtop calibration steps 3-6 — \"Index-mark the cell to ensure consistent orientation\"",
+      "claims": [
+        {
+          "id": "tby-cal-range-high-value-01",
+          "claim": "The desired turbidity range is selected using a calibration range equal to the high value of the calibrant for the range of interest.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Select the desired turbidity range. Use a calibration range to",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-index-mark-cell-01",
+          "claim": "The calibration cell is rinsed with the highest concentration of calibrant for the range and index-marked to ensure consistent orientation within the instrument, and the calibration cell and sample cell must have identical orientation in the measurement chamber.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "range of interest. Index-mark the cell to ensure consistent",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-hold-cell-rim-01",
+          "claim": "The sample cell must be held by the rim (top lip), not beneath the lip.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Hold the sample cell by the rim (top lip), not beneath the",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-silicon-oil-purpose-01",
+          "claim": "A thin, uniform layer of silicon oil is applied to the exterior of the cell to reduce condensation and to mask slight scratches and nicks, and is applied to the blank cell as well if that cell will be used.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Apply a thin layer of silicon oil onto the exterior of the cell",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-degas-before-insert-01",
+          "claim": "Before inserting the calibrant-filled cell into the instrument, no air bubbles may be present and the sample is degassed if necessary, because air bubbles cause significant positive bias in turbidity measurements.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "instrument, ensure that no air bubbles are present in the",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-record-calibrant-values-01",
+          "claim": "The instrument value for each calibrant is recorded in the instrument logbook during calibration.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "In the instrument logbook, record the instrument value for each",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__e68c1232a638",
+      "index": 26,
+      "locator": "Calibration curve steps and Submersible (dynamic) turbidity sensor calibration — \"Check calibrants in the 1 to 5 turbidity-unit (low-level) range\"",
+      "claims": [
+        {
+          "id": "tby-cal-curve-procedure-01",
+          "claim": "A turbidity calibration curve is built by recording instrument response to a range of bracketing calibration solutions, graphing instrument response on the x-axis against calibration solution turbidity on the y-axis, and fitting a line by linear regression from which corrected sample turbidity is read.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Using linear regression, plot a line that encompasses the",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-adjust-to-calibrant-01",
+          "claim": "The calibration control is adjusted until the value on the meter equals the value of the calibrant used.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Adjust the calibration control until the value on the meter equals",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-two-calibrants-min-max-01",
+          "claim": "Benchtop calibration uses calibrants representing at least two different turbidities including the expected maximum and minimum, and the calibrants must be within the linear portion of the instrument's operating range.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "different turbidities, including the expected maximum and\nminimum.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dynamic-microprocessor-01",
+          "claim": "Most dynamic turbidimeters and multiparameter instruments with turbidity sensors are microprocessor based with calibration parameters stored in instrument memory, and calibrant turbidity values are user selectable in some instruments while others have internally established calibration ranges that cannot be changed.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "turbidity sensors are microprocessor based, with the calibration",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-low-level-1-5-check-01",
+          "claim": "Calibrants in the 1 to 5 turbidity-unit low-level range are checked to assess actual instrument performance near the detection limit, because instrument reliability often decreases at turbidities less than 2 turbidity units.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Check calibrants in the 1 to 5 turbidity-unit (low-level) range to",
+          "specificity": "high"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalClaims": 0,
+    "byMetric": {},
+    "byType": {},
+    "gaps": [],
+    "notes": "PARTIAL — agent terminated by an account spend limit mid-write. Chunk coverage is incomplete and summary/gaps were never produced."
+  }
+}

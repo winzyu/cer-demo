@@ -56,9 +56,22 @@ const ingestDocument = async (
   const { text, method, pages } = await extractText(path.join(documentsDir, filename));
 
   const raw = chunkText(text);
-  // `.md`/`.txt` are authored, structured text: a low alphabetic ratio there means a table,
-  // not OCR noise. See QualityOptions.checkAlphaRatio.
-  const kept = filterChunks(raw, { checkAlphaRatio: method !== "text" });
+  // Off for every document, 2026-08-31. This used to read `method !== "text"`, sparing `.md`/`.txt`
+  // on the theory that a low alphabetic ratio there means a table rather than OCR noise. The theory
+  // was right and the condition matched nothing: every document in this corpus is a PDF, so the
+  // exemption was dead and the filter ran on all of them.
+  //
+  // Measured over the 15-document corpus, it dropped 59 chunks: 42 numeric tables and 17
+  // table-of-contents dot-leader blocks. Zero were OCR noise, which is the only thing it exists to
+  // catch. 34 of the 42 were the oxygen-solubility tables in `usgs-nfm-a6.2` — the corpus's
+  // authoritative source for DO threshold lookups, and unreachable by every vector arm while
+  // direct-feed, which consumes whole document text, kept them. That reads as "feeding beats
+  // retrieving" in a bake-off and is actually a filter setting. See `docs/EVAL_REBUILD.md` §2b.
+  //
+  // The 17 dot-leader chunks now survive too. They are inert — no real question ranks them — and
+  // that is a better failure than silently deleting tables. `checkAlphaRatio` stays on
+  // `QualityOptions` for a genuinely OCR-noisy document; nothing in this corpus is one.
+  const kept = filterChunks(raw, { checkAlphaRatio: false });
 
   // Identity is assigned after filtering, from content. `index` is the position among *surviving*
   // chunks, which is what a reader browsing the store expects to see.
