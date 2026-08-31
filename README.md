@@ -649,6 +649,7 @@ reporting still answers "the last day" about its last day of data.
 | `npm run embed:cache` | build the local embedding cache the `local-*` and `hybrid-slice-*` arms read |
 | `npm run compare:vector-arms` | prove `local-vector` and `firestore-vector` rank identically |
 | **`npm run verify:sensor`** | **live read-only check that the sensor tool reads real pods (no LLM, no cost)** |
+| `npm run report:render` | render a report PDF offline — no server, no LLM (`--device=`, `--range=`, `--out=`); uses `DEVICE_API_TOKEN` like `verify:sensor` |
 | `npm run explore:devices` | discover the fleet and record raw responses to `data/device-api/` |
 | `npm run explore:fields` / `explore:surface` | read-only backend census: per-device field coverage / route surface (`docs/migration/BACKEND_FIELDS.md`) |
 | `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a run; `--spot-check`, `--only`, `--dry-run` |
