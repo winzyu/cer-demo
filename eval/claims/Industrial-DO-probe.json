@@ -1,0 +1,396 @@
+{
+  "filename": "Industrial-DO-probe.pdf",
+  "title": "Atlas Scientific Industrial Dissolved Oxygen Probe — Datasheet",
+  "inSlice": true,
+  "chunkCount": 3,
+  "chunks": [
+    {
+      "chunkId": "Industrial-DO-probe.pdf__610532812499",
+      "index": 0,
+      "locator": "Front spec table through the Specifications block — \"Range \t0 − 100 mg/L\"",
+      "claims": [
+        {
+          "id": "do-range-01",
+          "claim": "The Atlas Scientific Industrial Dissolved Oxygen Probe has a measurement range of 0 to 100 mg/L.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "Range \t0 − 100 mg/L",
+          "specificity": "high"
+        },
+        {
+          "id": "do-response-time-01",
+          "claim": "The Industrial Dissolved Oxygen Probe has a response time of approximately 0.1 mg/L per second.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "~0.1 mg/L/per sec\tResponse time",
+          "specificity": "high"
+        },
+        {
+          "id": "do-accuracy-01",
+          "claim": "The Industrial Dissolved Oxygen Probe has a stated accuracy of +/- 0.05 mg/L.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "+/– 0.05 mg/L\tAccuracy",
+          "specificity": "high"
+        },
+        {
+          "id": "do-max-pressure-01",
+          "claim": "The Industrial Dissolved Oxygen Probe is rated to a maximum pressure of 300 PSI.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "300 PSI\tMax pressure",
+          "specificity": "high"
+        },
+        {
+          "id": "do-max-depth-01",
+          "claim": "The Industrial Dissolved Oxygen Probe has a maximum depth rating of 212 meters (694 feet).",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "212m (694 ft)\tMax depth",
+          "specificity": "high"
+        },
+        {
+          "id": "do-cable-length-01",
+          "claim": "The Industrial Dissolved Oxygen Probe ships with a 3 meter (10 foot) cable.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "3 Meters\tCable length",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-temp-range-01",
+          "claim": "The Industrial Dissolved Oxygen Probe has an operating temperature range of 1 to 99 degrees Celsius.",
+          "metrics": ["dissolvedOxygen", "temperature"],
+          "type": "numeric",
+          "quote": "1 − 99 °C\tTemperature range °C",
+          "specificity": "high"
+        },
+        {
+          "id": "do-internal-temp-sensor-01",
+          "claim": "The Industrial Dissolved Oxygen Probe contains an internal PT-1000 temperature sensor.",
+          "metrics": ["dissolvedOxygen", "temperature"],
+          "type": "definitional",
+          "quote": "Yes (PT-1000)\tInternal temperature sensor",
+          "specificity": "high"
+        },
+        {
+          "id": "do-temp-probe-accuracy-01",
+          "claim": "The Industrial Dissolved Oxygen Probe's internal temperature probe is a Class A platinum RTD with accuracy of +/- (0.15 + (0.002*t)).",
+          "metrics": ["temperature", "dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "Class A platinum, RTD\n+/- (0.15 + (0.002*t))",
+          "specificity": "high"
+        },
+        {
+          "id": "do-recal-interval-01",
+          "claim": "The Industrial Dissolved Oxygen Probe spec table gives the time before recalibration as approximately 1 year.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "~1 Year\tTime before recalibration",
+          "specificity": "high"
+        },
+        {
+          "id": "do-life-expectancy-01",
+          "claim": "The Industrial Dissolved Oxygen Probe has a stated life expectancy of approximately 4 years.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "~ 4 Years\tLife expectancy",
+          "specificity": "high"
+        },
+        {
+          "id": "do-maintenance-interval-01",
+          "claim": "The Industrial Dissolved Oxygen Probe spec table gives a maintenance interval of approximately 18 months.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "~18 Months\tMaintenance",
+          "specificity": "high"
+        },
+        {
+          "id": "do-connector-01",
+          "claim": "The Industrial Dissolved Oxygen Probe is available with either an SMA connector or tinned leads.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "definitional",
+          "quote": "SMA or Tinned leads\tConnector",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-applications-01",
+          "claim": "The Industrial Dissolved Oxygen Probe is intended for wastewater treatment, food production, chemical production and environmental monitoring, and must not be used with organic solvents.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "definitional",
+          "quote": "Envriomental\nMonitoring\n(No Organic Solvents)",
+          "specificity": "high"
+        },
+        {
+          "id": "do-galvanic-principle-01",
+          "claim": "This galvanic dissolved oxygen probe consists of an HDPE membrane, an anode bathed in electrolyte and a cathode, and oxygen diffuses through the membrane at a constant rate before being reduced at the cathode to produce a small voltage.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "This galvanic dissolved oxygen probe consists of a HDPE membrane, an anode bathed\nin an electrolyte and a cathode.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-membrane-purpose-01",
+          "claim": "The membrane exists to slow oxygen diffusion, because without it the reaction at the cathode happens too quickly.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "(without the membrane the reaction happens too quickly)",
+          "specificity": "high"
+        },
+        {
+          "id": "do-zero-mv-01",
+          "claim": "With no oxygen present the dissolved oxygen probe outputs 0 mV, output rises as oxygen increases, and while each probe outputs a different voltage in the presence of oxygen, the constant across all probes is that 0 mV equals zero oxygen.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "The only thing that is constant is that\n0mV = 0 Oxygen.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-flow-requirement-01",
+          "claim": "Because a galvanic probe consumes a very small amount of the oxygen it reads, approximately 60 ml/min of water movement is necessary to take accurate readings.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "a small amount\nof water movement is necessary to take accurate\nreadings. Approximately 60 ml/min.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-electrode-materials-01",
+          "claim": "The dissolved oxygen probe's cathode is a pure silver rod and its anode is zinc.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "definitional",
+          "quote": "Cathode (Pure silver rod)\nMembrane\nAnode (Zinc)",
+          "specificity": "high"
+        },
+        {
+          "id": "do-dimensions-01",
+          "claim": "The Industrial Dissolved Oxygen Probe is 175.5mm (6.9 in) long overall with a 3/4 NPT thread and a 3m (10 ft) cable.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "175.5mm\n(6.9”)",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-storage-working-life-01",
+          "claim": "The Industrial Dissolved Oxygen Probe has a storage life of approximately 5 years and a working life of approximately 4 or more years.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "Storage Life \t~5 Years\nWorking Life \t~4+ Years",
+          "specificity": "high"
+        },
+        {
+          "id": "do-serial-01",
+          "claim": "Each Industrial Dissolved Oxygen Probe carries a unique 12-digit serial number.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "definitional",
+          "quote": "Unique\n12-digit\nserial #",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-nsf51-01",
+          "claim": "The Industrial Dissolved Oxygen Probe, part number ENV-50-DO, is certified by Atlas Scientific as meeting NSF/ANSI Standard 51 and is food safe.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "definitional",
+          "quote": "Part # ENV-50-DO\nmeets the NSF/ANSI Std. 51,",
+          "specificity": "high"
+        },
+        {
+          "id": "do-body-material-01",
+          "claim": "The Industrial Dissolved Oxygen Probe body is made of Delrin thermoplastic.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "definitional",
+          "quote": "Delrin® thermoplastic\n212m (694 ft)",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-weight-01",
+          "claim": "The Industrial Dissolved Oxygen Probe weighs 195 grams.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "195 grams",
+          "specificity": "high"
+        },
+        {
+          "id": "do-threading-01",
+          "claim": "The Industrial Dissolved Oxygen Probe uses a 3/4 inch NPT thread and can be sterilized by chemical means only.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "definitional",
+          "quote": "(3/4\") NPT\nChemical only",
+          "specificity": "high"
+        },
+        {
+          "id": "do-submerge-indefinitely-01",
+          "claim": "The Industrial Dissolved Oxygen Probe can be fully submerged in fresh or salt water up to the SMA connector or tinned leads indefinitely.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "definitional",
+          "quote": "This Dissolved Oxygen probe can be\nfully submerged in fresh or salt water,\nup to the SMA connector or Tinned\nleads indefinitely.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "Industrial-DO-probe.pdf__cc6df5ba5474",
+      "index": 1,
+      "locator": "\"How often do you need to recalibrate a dissolved oxygen probe?\" through the reconditioning procedure — \"0mv – 60+ mv depending on the oxygen saturation\"",
+      "claims": [
+        {
+          "id": "do-voltage-output-range-01",
+          "claim": "The galvanic dissolved oxygen probe is a passive device that generates 0 mV to more than 60 mV depending on the oxygen saturation of the sensing membrane, and this voltage can easily be read by a multimeter or an analog-to-digital converter.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "generates a small voltage\nfrom 0mv – 60+ mv depending on the oxygen saturation of the sensing membrane. This\nvoltage can easily be read by a multimeter or an analog to digital converter.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-no-set-recal-schedule-01",
+          "claim": "Atlas Scientific states there is no set recalibration schedule for a dissolved oxygen probe because every use case is different.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "procedural",
+          "quote": "Because every use case is different, there is no set schedule for recalibration.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-electrolyte-depletion-01",
+          "claim": "The dissolved oxygen probe consumes its electrolyte solution as it reacts with oxygen, and an industrial dissolved oxygen probe will typically last 2 years before the electrolyte is depleted.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "Typically an industrial\ndissolved oxygen probe will last 2 years before the electrolyte is depleted (results will\nvary).",
+          "specificity": "high"
+        },
+        {
+          "id": "do-depleted-reads-low-01",
+          "claim": "When the electrolyte in a dissolved oxygen probe is depleted, the probe reads very low numbers.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "When the electrolyte is depleted, the probe will read very low numbers.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-replace-electrolyte-membrane-interval-01",
+          "claim": "Best practice is to replace the electrolyte solution and membrane of the dissolved oxygen probe every 1 to 2 years.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "Best practice is\nto replace the electrolyte solution and membrane every 1 – 2 years.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-connection-options-01",
+          "claim": "The Gen 3 Industrial DO probe connects either to the EZO Complete-DO and EZO Complete-TMP via its SMA connectors or to the Industrial DO Transmitter, powered at 9-36 VDC, via its tinned leads.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "procedural",
+          "quote": "9 - 36VDC",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-add-electrolyte-procedure-01",
+          "claim": "To add electrolyte solution, unscrew the probe's membrane cap, drain any remaining solution, use the supplied syringe to inject solution into the membrane cap until it is filled half way, screw the cap back on, and rinse the probe.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "procedural",
+          "quote": "Using the supplied syringe, inject solution into\nthe membrane cap until it's filled half way. Screw the membrane cap back onto probe.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-anode-corrosion-01",
+          "claim": "During usage a small amount of zinc oxide corrosion may build up around the anode of the dissolved oxygen probe, causing irregular readings.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "a small amount of corrosion (zinc oxide) may build up around the anode of\nthe probe, this will cause irregular readings.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-recondition-procedure-01",
+          "claim": "To recondition the dissolved oxygen probe, unscrew and drain the membrane cap, file the corrosion buildup off the anode with a small file without filing the cathode, rinse the anode, refill the membrane cap half way with electrolyte and reassemble.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "procedural",
+          "quote": "Using a small file, carefully file off the corrsion buildup\naround the anode of the probe. Do not file the cathode, as this will damage the probe.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "Industrial-DO-probe.pdf__11072467484a",
+      "index": 2,
+      "locator": "\"How to replace the membrane cap\" through the KCl creep page — \"Over time, the membrane can wear out\"",
+      "claims": [
+        {
+          "id": "do-membrane-wear-01",
+          "claim": "Over time the dissolved oxygen probe's membrane wears out, leading to irregular readings, and correcting this requires replacing the membrane cap.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "Over time, the membrane can wear out, this will lead to irregular readings from\nthe probe. To correct this issue, the probes membrane cap must be replaced.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-replace-membrane-cap-procedure-01",
+          "claim": "To replace the membrane cap, unscrew it, drain any remaining electrolyte solution, discard the damaged cap, fill a new membrane cap half way with electrolyte solution and screw it back onto the probe body.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "procedural",
+          "quote": "With a new membrane cap ready, fill the new membrane cap half way with electrolyte\nsolution and screw back on to probe body.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-clean-soft-coating-01",
+          "claim": "Soft coatings on a dissolved oxygen probe can be removed by lightly brushing around the sides of the probe and the membrane cap.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "procedural",
+          "quote": "Soft coatings can be removed by lightly brushing around the sides of the probe and\nmembrane cap.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-clean-membrane-bleach-01",
+          "claim": "If the dissolved oxygen probe's membrane needs cleaning, use a mild bleach mixture to gently wash away deposits, and never use a brush on the membrane.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "procedural",
+          "quote": "use a mild bleach mixture\nto gently wash away any deposits.\nDO NOT USE A BRUSH TO CLEAN THE MEMBRANE",
+          "specificity": "high"
+        },
+        {
+          "id": "do-ripped-membrane-01",
+          "claim": "A ripped membrane on the dissolved oxygen probe must be replaced because it causes irregular readings.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "procedural",
+          "quote": "If the probes membrane is ripped it must be replaced, as it will cause irregular readings.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-kcl-creep-01",
+          "claim": "If dried KCl residue from the electrolyte solution appears (\"KCl creep\") or the dissolved oxygen probe dried out during shipping, the probe is not damaged and only needs to be rinsed off with water.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "procedural",
+          "quote": "Simply rinse off your probe with water, and carry on.\nYour probe is not damaged.",
+          "specificity": "high"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalClaims": 42,
+    "byMetric": {
+      "dissolvedOxygen": 42,
+      "temperature": 3,
+      "orp": 0,
+      "ph": 0,
+      "conductivity": 0,
+      "turbidity": 0
+    },
+    "byType": {
+      "numeric": 18,
+      "procedural": 9,
+      "definitional": 9,
+      "conceptual": 6
+    },
+    "gaps": [
+      "Gives no calibration procedure whatsoever: no air/saturated-air calibration step, no zero-solution step, no single- vs two-point sequence, and no calibration standard is named.",
+      "States output only in mg/L; gives no percent-saturation output, and no conversion between mg/L and % saturation.",
+      "Gives no oxygen solubility table and no barometric-pressure or altitude correction, despite stating that temperature affects the reading.",
+      "Gives no salinity correction, even though the probe is rated for salt water and salinity changes oxygen solubility.",
+      "States accuracy as +/- 0.05 mg/L with no dependence on temperature, on position in the 0-100 mg/L range, or on membrane age.",
+      "Gives no drift rate and no criterion for deciding a reading has drifted; the only failure signal offered is 'reads very low numbers' once electrolyte is depleted.",
+      "Names a 60 ml/min flow requirement but gives no method of achieving or verifying it, and no stated error if flow is absent.",
+      "Gives no part number or specification for the replacement membrane cap or electrolyte solution, and no volume for a refill beyond 'half way'.",
+      "Gives no storage instruction for a probe taken out of service (no storage solution, no wet-storage rule) unlike the pH and ORP datasheets in this set.",
+      "Gives no dissolved oxygen values that indicate any water-quality condition — no hypoxia threshold, no healthy range, no environmental interpretation of any kind.",
+      "Lists 'No Organic Solvents' as the only chemical contraindication and gives no interference list (e.g. hydrogen sulfide, chlorine) for a galvanic sensor."
+    ],
+    "notes": "Three-chunk document. Chunk 1 opens with ~400 characters of overlap repeating the Specifications/materials block from chunk 0, and chunk 2 opens with overlap repeating the tail of the reconditioning procedure from chunk 1; claims are recorded only on the originating chunk. Two internal tensions worth noting: the spec table gives '~18 Months Maintenance' while the body recommends replacing electrolyte and membrane 'every 1 - 2 years'; and the spec table gives '~1 Year Time before recalibration' while the body says there is no set schedule. This is also the only probe in the set that says its output CAN be read by a multimeter or ADC — the pH and ORP datasheets say the opposite of their own probes. 'Envriomental' and 'corrsion' are spelling errors present in the source text and are preserved verbatim in the quotes. The response-time figure is expressed as a rate (~0.1 mg/L per second), not as a percentage-of-final-value time like the other three probes. The dimensions page arrives as bare numbers with labels detached."
+  }
+}

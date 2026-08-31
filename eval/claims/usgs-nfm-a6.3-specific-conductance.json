@@ -1,0 +1,984 @@
+{
+  "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+  "title": "USGS TM 9-A6.3 — Specific Conductance (2019)",
+  "inSlice": false,
+  "chunkCount": 44,
+  "chunks": [
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__92d60a77bcc5",
+      "index": 0,
+      "locator": "Cover and title page — \"Techniques and Methods 9-A6.3\"",
+      "claims": [
+        {
+          "id": "sc-doc-identity-01",
+          "claim": "This document is USGS Techniques and Methods book 9 chapter A6.3, Specific Conductance (2019), which supersedes USGS Techniques of Water-Resources Investigations book 9 chapter A6.3 version 1.2.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Supersedes USGS Techniques of Water-Resources Investigations,",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-revision-history-01",
+          "claim": "The specific conductance chapter was first released in April 1998 as TWRI book 9 chapter A6.3 version 1.0, revised in August 2005 as version 1.2, and revised in February 2019 as Techniques and Methods book 9 chapter A6.3.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "First release: April 1998, online as Techniques of Water-Resources Investigations",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-cover-flowthrough-01",
+          "claim": "The cover photograph shows a researcher measuring specific conductance, pH, and temperature using a flow-through cell to isolate the water from the atmosphere and preserve measurement integrity.",
+          "metrics": [
+            "conductivity",
+            "ph",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "Photograph of researcher measuring specific conductance, pH, and temperature by using a",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__298c8c9bd3bf",
+      "index": 3,
+      "locator": "Conversion Factors and Abbreviations and Symbols — \"Specific conductance is reported in microsiemens per centimeter\"",
+      "claims": [
+        {
+          "id": "sc-reporting-unit-01",
+          "claim": "Specific conductance is reported in microsiemens per centimeter at 25 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Specific conductance is reported in microsiemens per centimeter at 25 degrees Celsius (μS/cm",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-siemens-mhos-equivalence-01",
+          "claim": "Siemens per centimeter are the equivalent of mhos per centimeter.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Siemens per centimeter are the equivalent of mhos per centimeter.",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-celsius-fahrenheit-01",
+          "claim": "Temperature in degrees Celsius is converted to degrees Fahrenheit by the relation degrees F equals 1.8 times degrees C plus 32.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "°F=(1.8×°C)+32",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-molality-definition-01",
+          "claim": "Molality of a solution is the number of moles of a constituent per kilogram of solution, reported in mol/kg.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Molality of a solution is the number of moles (mol) of a constituent per kilogram (kg) of solution.",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-diw-resistance-spec-01",
+          "claim": "In this chapter DIW means quality-assured deionized water with resistance greater than or equal to 18 megaohms.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "quality-assured deionized water with resistance greater than or equal to 18",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-alpha-symbol-01",
+          "claim": "In this chapter the symbol alpha denotes the temperature-compensation factor, kappa denotes electrical conductivity, G denotes electrical conductance, and R denotes electrical resistance.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "temperature-compensation factor",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__0635a458648f",
+      "index": 4,
+      "locator": "Requirements and Recommendations — \"the terms 'required' and 'recommended' have the USGS-specific meanings\"",
+      "claims": [
+        {
+          "id": "sc-required-definition-01",
+          "claim": "In the NFM, 'required' means USGS Water Mission Area policy established on the basis of research or consensus and reviewed by water-quality specialists, and any departure from a requirement must be independently quality assured and documented.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "indicate that USGS Water Mission Area (WMA) policy has been established on the",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-recommended-definition-01",
+          "claim": "In the NFM, 'recommended' indicates that several acceptable alternatives exist for a procedure or equipment selection, the reasons for the selection must be documented, and departures must be independently quality assured and documented.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "the basis of research or consensus, there are several acceptable alternatives to a given",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__8407c56c9542",
+      "index": 5,
+      "locator": "Abstract and Section 1.0 Introduction — \"This chapter, NFM A6.3, provides guidance and protocols\"",
+      "claims": [
+        {
+          "id": "sc-chapter-scope-01",
+          "claim": "NFM A6.3 provides guidance and protocols for measuring the specific conductance of a water sample, covering the scientific basis of the measurement, selection and maintenance of equipment, calibration, troubleshooting, and procedures for measurement and reporting.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "ductance of a water sample, which include the scientific basis",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-routine-measurement-01",
+          "claim": "Specific conductance is routinely measured when water samples are collected, is often measured continually at USGS streamgages, and is regularly measured during laboratory and field experiments.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "Specific conductance is routinely measured when water",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-field-method-applicability-01",
+          "claim": "The field method for measuring specific conductance described in this chapter is applicable to most natural waters.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "ing specific conductance described in this chapter is applicable",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-nfm-mandate-01",
+          "claim": "USGS national program and project personnel who collect water-quality data, including Water Science Center staff and Cooperative program projects, are mandated to use the protocols provided in the NFM per Office of Water Quality Technical Memorandum 2002.13.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "use protocols provided in the NFM (USGS Office of Water-",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__44e31b0d70fa",
+      "index": 6,
+      "locator": "Section 1.0 Introduction continued — \"Specific conductance, also called electrical conductivity\"",
+      "claims": [
+        {
+          "id": "sc-proportional-to-ions-01",
+          "claim": "Specific conductance, also called electrical conductivity, is a water-quality property whose value is proportional to the collective concentration of ions in solution.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "tivity, is a water-quality property whose value is proportional",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-depends-on-ions-and-temperature-01",
+          "claim": "The specific conductance measurement depends on the concentration of ions and on the temperature of the solution.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "conductance measurement depends on the concentration of",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__20b52df4b728",
+      "index": 7,
+      "locator": "Overlap fragment of Section 1.0 — \"applicable to most natural waters\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__fc9b0488e3d3",
+      "index": 8,
+      "locator": "Section 1.1 Overview of Specific Conductance — \"defined as the electrical conductance of 1 cubic centimeter\"",
+      "claims": [
+        {
+          "id": "sc-definition-1cm3-25c-01",
+          "claim": "Specific conductance is defined as the electrical conductance of 1 cubic centimeter of a solution at 25 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "as the electrical conductance of 1 cubic centimeter (cm³) of a",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-terms-interchangeable-01",
+          "claim": "The terms specific conductance, specific electrical conductance, and electrical conductivity have been used interchangeably in the literature to report the same measurement.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "“specific conductance,” “specific electrical conductance,” and",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-reference-temperature-required-01",
+          "claim": "Because the term electrical conductivity is not always referenced to a standard temperature, the measurement or reference temperature must be reported with that parameter.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "term “electrical conductivity” is not always referenced to a",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-nwis-25c-correction-01",
+          "claim": "The USGS National Water Information System reports the measurement of electrical conductance as specific conductance at 25 degrees Celsius, meaning that a value measured at any temperature is corrected to what it would be at 25 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "of electrical conductance as specific conductance at 25 °C,",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-meters-auto-compensate-01",
+          "claim": "Most modern specific conductance meters are temperature compensated and report the temperature-corrected value automatically.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "ductance meters are temperature compensated and report the",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-conductance-inverse-resistance-01",
+          "claim": "In aqueous solutions electrical conductance G, measured in siemens, is the inverse of electrical resistance R, measured in ohms, and is the capacity of water to conduct an electric current as a result of the movement of ions through the solution.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "in siemens [S]) is the inverse of electrical resistance (R,",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-conductivity-normalized-01",
+          "claim": "Electrical conductivity is a measure of the electrical conductance of a substance normalized to a unit length and cross-sectional area.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Electrical conductivity (κ) is a measure of the",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-cell-constant-definition-01",
+          "claim": "Electrical conductivity equals the cell constant times the conductance (equation 1), where the cell constant, in units of per centimeter, is the ratio of the distance between two electrode plates and their area.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "where 𝐾cell is the cell constant (in units of cm-1). The cell con-",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-units-mhos-pre1971-01",
+          "claim": "The units of electrical conductivity are siemens per centimeter, equivalent to mhos per centimeter, and most values reported prior to 1971 were in units of mhos per centimeter.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "mhos per centimeter (mhos/cm). Most values reported prior to",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__361ef9509206",
+      "index": 9,
+      "locator": "Section 1.1 temperature dependence and equation 2 — \"Electrical conductivity increases by 0.5 to 3 percent per degree Celsius\"",
+      "claims": [
+        {
+          "id": "sc-temperature-coefficient-01",
+          "claim": "Electrical conductivity increases by 0.5 to 3 percent per degree Celsius and varies depending on the ionic species present.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Electrical conductivity increases by 0.5 to 3 percent per",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-report-at-25-for-tds-01",
+          "claim": "For natural waters conductometric measurements are typically used to estimate total dissolved solids, so electrical conductivity is reported at 25 degrees Celsius to facilitate that estimation by removing the effects of temperature.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "used to estimate the concentrations of total dissolved solids",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-equation2-compensation-01",
+          "claim": "Equation 2 computes conductivity at 25 degrees Celsius by dividing the measured conductivity by one plus alpha times the quantity measured temperature minus 25, where alpha is the temperature-compensation factor and t is the measured temperature in degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "where α is the temperature-compensation factor and t is the",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-preprogrammed-alpha-01",
+          "claim": "Modern specific conductance field meters typically have preprogrammed temperature-compensation factors and report specific conductance or electrical conductivity at 25 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "temperature-compensation factors (α) and report specific",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-linear-nonlinear-alpha-01",
+          "claim": "Most specific conductance meters use either a linear temperature-compensation algorithm with a factor of 0.019 to 0.020 per degree Celsius or a nonlinear algorithm from International Organization for Standardization (1985), both applicable for most natural waters.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Most specific conductance meters utilize either linear",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-compensation-accuracy-5pct-01",
+          "claim": "Temperature compensation is typically accurate to plus or minus 5 percent for water in the range from 5 to 35 degrees Celsius whose pH is between 4 and 11.",
+          "metrics": [
+            "conductivity",
+            "temperature",
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "is typically accurate to ±5 percent for water in the range from",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-low-ph-50pct-error-01",
+          "claim": "For low-pH waters below pH 4, using the standard temperature-compensation factors can result in conductivity-at-25-degrees errors as large as 50 percent, because the transport properties of the hydrogen ion differ from those of most other ions and hydrogen contributes substantially to electrical conductance at low pH.",
+          "metrics": [
+            "conductivity",
+            "temperature",
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "factors can result in κ25 °C errors as large as 50 percent, because",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-low-ph-largest-error-source-01",
+          "claim": "For low-pH waters temperature corrections may represent the largest source of error, and a temperature-compensation method applicable to low-pH waters is described in section 4.3 and by McCleskey (2013).",
+          "metrics": [
+            "conductivity",
+            "temperature",
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "For low-pH waters, temperature corrections may",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-no-method-above-ph11-01",
+          "claim": "No temperature-compensation method is available for waters with pH greater than 11, so specific conductance in high-pH waters should be checked by measuring at ambient temperature and again at 25 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature",
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "compensation method is available for waters with pH greater",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__4c8cc53480b4",
+      "index": 10,
+      "locator": "Overlap fragment of Section 1.1 — \"No temperature-compensation method is available for waters with pH greater than 11\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__d06365e8c6fd",
+      "index": 11,
+      "locator": "Section 2.0 Equipment and Supplies and Table 6.3-1 — \"High-quality specific conductance meters, including multiparameter sondes\"",
+      "claims": [
+        {
+          "id": "sc-uncertainty-sources-list-01",
+          "claim": "Additional sources of uncertainty when measuring specific conductance include calibration, preparation of standard solutions, fouling or contamination of the conductivity cell, and improper maintenance of the meter and probe.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "tion of standard solutions, fouling or contamination of the",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-usgs-reporting-units-01",
+          "claim": "The USGS typically reports the electrical conductivity of water as specific conductance in units of microsiemens per centimeter at 25 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "The USGS typically reports the electrical conductivity of",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-meter-builtin-accuracy-01",
+          "claim": "Most modern specific conductance meters have built-in temperature compensation and are accurate typically within plus or minus 5 percent for waters with a pH between 4 and 11 and in the temperature range from 5 to 35 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature",
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "modern specific conductance meters have built-in temperature",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-sop-requirement-01",
+          "claim": "Users must be familiar with the manufacturer's instructions and develop a standard operating procedure for calibration and measurement for each meter that combines the requirements of this NFM chapter with the manufacturer's recommendations.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "dure (SOP) for calibration and measurement for each meter.",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-instrument-log-01",
+          "claim": "Every specific conductance meter should be accompanied by a log for recording calibrations, cell constants, and repairs.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "conductance meter should be accompanied by a log for record-",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-equipment-list-01",
+          "claim": "Table 6.3-1 lists the field equipment for specific conductance as a meter with probe, thermistor, and built-in temperature compensation, instruction manual, log book, standards, deionized water, flow-through cell, cleaning tissue, gloves and glasses, flasks or beakers, waste container, sonde sensor guard and calibration cup, spare probe, and spare batteries.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "• Specific conductance meter with probe, thermistor, and built-",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-dip-cell-01",
+          "claim": "A dip-style conductivity cell is integrated into a probe, is adaptable to many measurement situations, and is commonly used in modern field specific conductance meters and multiparameter sondes.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "style conductivity cell is integrated into a probe, is adaptable",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__e49322bacce3",
+      "index": 12,
+      "locator": "Section 2.1 Electrical Conductivity Cells and Specific Conductance Meters — \"Other less commonly used conductivity cells\"",
+      "claims": [
+        {
+          "id": "sc-other-cell-types-01",
+          "claim": "Less commonly used conductivity cells include a cup with built-in electrodes that holds the sample during measurement and a flow-through conductivity cell connected to a fluid line that maintains a closed system during measurement.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "used conductivity cells include a cup with built-in electrodes",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-cell-materials-01",
+          "claim": "Conductivity cell bodies are made of epoxy or plastic such as acrylonitrile butadiene styrene or polyvinylidene fluoride, stainless steel, or Pyrex glass, with electrodes of graphite, platinum, or platinum-iridium.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "dene fluoride [PVDF]), stainless steel, or Pyrex glass) and",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-field-vs-lab-probes-01",
+          "claim": "Probes constructed of epoxy, plastic, or stainless steel with graphite electrodes are well suited for field use, whereas Pyrex glass probes with platinum-iridium electrodes are more fragile and better suited for laboratory use.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "of epoxy, plastic, or stainless steel with graphite electrodes",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-thermistor-check-01",
+          "claim": "Modern conductivity cells generally contain thermistors used for automatic temperature compensation, and those thermistors should be checked on a regular basis because a malfunctioning thermistor will produce erroneous specific conductance values.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "tain thermistors used for automatic temperature compensation.",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-autoranging-01",
+          "claim": "Specific conductance meters have an optimal range for measurement of conductance, which can be large for modern meters because of built-in auto-ranging capabilities.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "can be large because of built-in auto-ranging capabilities.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__b616630e7511",
+      "index": 13,
+      "locator": "Section 2.2 Equipment Maintenance and 2.2.1 Probe Cleaning — \"Accurate and precise measurement of specific conductance requires a well-maintained and clean conductivity probe\"",
+      "claims": [
+        {
+          "id": "sc-cell-constant-selection-01",
+          "claim": "A conductivity probe with a cell constant suitable for the types of waters being measured should be used, and figure 6.3-1 shows the approximate specific conductance ranges for a variety of water types with the cell constants most likely to produce accurate results.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "ity probe with a suitable cell constant for the types of waters",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-verify-meter-range-01",
+          "claim": "The user should check the meter specifications to verify that the meter and probe can be used to measure the entire range of expected specific conductance in the field.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "can be used to measure the entire range of expected specific",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-maintenance-protect-01",
+          "claim": "To keep a specific conductance meter in good operating condition, protect the meter and probe from excessive heat and cold, keep the equipment free from dust and transport it in a designated case, keep all cable connectors dry and free from dirt and salts, and ensure the batteries are adequately charged and corrosion free.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Protect the meter and probe from excessive heat",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-probe-contamination-bias-01",
+          "claim": "A conductivity probe that is dirty or wet with a solution other than the sample may contaminate the measured solution and bias the specific conductance measurement, and probes must be clean with electrodes free from scratches to produce accurate results.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "may contaminate the measured solution and bias the mea-",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-rinse-diw-01",
+          "claim": "Conductivity probes are cleaned by rinsing thoroughly with copious amounts of deionized water before and after making a measurement, which is sufficient cleaning in most cases.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Clean the probe thoroughly by rinsing with copious",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-never-scour-platinum-01",
+          "claim": "Epoxy and graphite conductivity probes can be gently wiped with a clean laboratory tissue to remove residues, but platinum-coated electrodes must never be wiped or scoured.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Never wipe or scour platinum-coated electrodes.",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-detergent-soak-01",
+          "claim": "Oily or other chemical residues are removed from a conductivity probe with a detergent solution followed by thorough deionized-water rinsing, and probes can soak in detergents for many hours without damage.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "with DIW. Probes can soak in detergents for many",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__2cade3723a66",
+      "index": 14,
+      "locator": "Section 2.2.1 cleaning and storage and Section 3.0 Calibration — \"Specific conductance measurements are only as good as the calibration itself\"",
+      "claims": [
+        {
+          "id": "sc-hcl-soak-01",
+          "claim": "When additional cleaning is required, the conductivity probe may be soaked in 5-percent volume-per-volume hydrochloric acid for as long as 2 hours and then rinsed thoroughly with deionized water, after checking the manufacturer's recommendations.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "in 5-percent volume per volume (v/v) hydrochloric",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-no-nitric-acid-01",
+          "claim": "Platinum and platinum-iridium electrodes must not be cleaned in nitric acid, aqua regia, or any other solution known to etch platinum or gold.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "should not be cleaned in nitric acid (HNO3), aqua",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-probe-storage-01",
+          "claim": "Most conductivity probes, including probes with graphite electrodes, can be stored clean and dry, but probes on multiparameter sondes are required to be stored in water, typically tap water, to prevent the other sensors from drying out.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "probes on multiparameter sondes are required to be stored",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-cell-constant-thermal-stability-01",
+          "claim": "Thermal expansion of the conductivity cell can affect the cell constant, but the cell constants of modern field probes are generally stable from 0 to 100 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "constants (𝐾cell) of modern field probes are generally stable",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-kcl-standards-alpha-range-01",
+          "claim": "Most conductivity standards are potassium chloride solutions, and the linear temperature-compensation factor of 0.019 to 0.020 and the nonlinear ISO (1985) factor produce reliable calibrations from 5 to 35 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "chloride (KCl) solutions, and the linear (0.019–0.020) and",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-caution-above-35c-01",
+          "claim": "Caution should be used when calibrating at temperatures greater than 35 degrees Celsius because the commonly used nonlinear ISO (1985) temperature compensation deviates substantially when applied to KCl solutions.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "used when calibrating at temperatures greater than 35 °C,",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-calibration-temperature-not-significant-01",
+          "claim": "If a modern conductivity probe that expands minimally with temperature is used and the temperature of the water to be measured is between 5 and 35 degrees Celsius, the temperature of the calibration solutions is not expected to significantly affect the field measurement of specific conductance.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "water to be measured is between 5 and 35 °C, the temperature",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-low-conductivity-standard-contamination-01",
+          "claim": "Conductivity standards are susceptible to contamination or dilution from residual solutions including rinse water, and low-conductivity standards below 200 microsiemens per centimeter are especially susceptible to contamination.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "standards (<200 μS/cm) are especially susceptible to con-",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-lab-calibration-recommended-01",
+          "claim": "Calibration in the laboratory prior to field measurement, for both specific conductance meters and multiparameter sondes, is recommended because the temperature is regulated and the standard solutions are less susceptible to contamination.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Calibration in the laboratory prior to field",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-check-before-field-trip-01",
+          "claim": "Specific conductance meters must be checked or calibrated before every field trip to ensure that the meter and probe are working properly, and accuracy should be checked in the laboratory and in the field with standards near the expected specific conductance of the sample.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Specific conductance meters must be checked or calibrated",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-accuracy-criteria-01",
+          "claim": "Measurements of specific conductance standards within plus or minus 5 microsiemens per centimeter of the certified values for measurements of 100 microsiemens per centimeter or less, or within plus or minus 3 percent of the certified values for measurements above 100 microsiemens per centimeter, are considered accurate and do not warrant recalibration.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "are within ±5 μS/cm of the certified values for measurements",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-recalibration-unnecessary-01",
+          "claim": "Because specific conductance meters typically maintain their calibration, frequent recalibration is generally unnecessary and may not improve data accuracy.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "maintain their calibration, frequent recalibration is generally",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__f9d002693709",
+      "index": 15,
+      "locator": "Section 3.0 Calibration and 3.1 One-Point Calibration — \"To verify that the specific conductance meter is responding properly at low values\"",
+      "claims": [
+        {
+          "id": "sc-field-calibration-temperature-01",
+          "claim": "If calibration in the field is required, the temperature of the standards must be stable and between 5 and 35 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "in the field is required, make certain the temperature of the",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-record-cell-constant-or-slope-01",
+          "claim": "The cell constant for a one-point calibration or the slope for a multipoint calibration must be recorded and tracked, because deviations can be used to identify inaccurate calibrations or faulty equipment.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Record and track the cell constant (one-point",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-diw-zero-check-01",
+          "claim": "To verify that the meter is responding properly at low values of specific conductance, check the zero response of the dry conductivity cell in air or in deionized water; the measured specific conductance of deionized water should be less than 3 microsiemens per centimeter.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "sured specific conductance of DIW should be <3 μS/cm.",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-nist-traceable-standards-01",
+          "claim": "Specific conductance meters are typically calibrated with potassium chloride solutions of known concentration traceable to the National Institute of Standards and Technology, and NIST-traceable standards with values between 50 and 50,000 microsiemens per centimeter are available from USGS One Stop.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "(NIST traceable) with values between 50 and 50,000 μS/cm",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-triple-rinse-required-01",
+          "claim": "Extreme care must be used when calibrating with dilute standards below 200 microsiemens per centimeter because small amounts of contaminants or minor dilution can substantially affect the calibration, and triple rinsing with deionized water and calibration standards is required.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Triple rinsing with DIW",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-qsb-srs-01",
+          "claim": "The USGS Quality Systems Branch provides a variety of standard reference samples prepared from natural waters for quality-assurance testing and measurements of specific conductance.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "provides a variety of standard reference samples (SRSs),",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-one-point-cell-constant-01",
+          "claim": "A one-point calibration determines the cell constant by measuring the conductance of a standard solution whose conductivity is known.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "of the cell constant (𝐾cell) by measuring the conductance (G)",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__209c652e3a45",
+      "index": 16,
+      "locator": "Overlap fragment with One Stop footnote — \"Equipment and supplies that are tested and quality assured\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__b3064a2bd728",
+      "index": 17,
+      "locator": "Table 6.3-2 and Sections 3.1-3.2 — \"Electrical conductivity of molality-based primary KCl standards\"",
+      "claims": [
+        {
+          "id": "sc-table632-25c-values-01",
+          "claim": "Table 6.3-2 gives the electrical conductivity of molality-based primary KCl standards at 25 degrees Celsius as 1409.3 microsiemens per centimeter for 0.01 mol/kg, 12826 for 0.1 mol/kg, and 108620 for 1.0 mol/kg.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "25 \t1409.3 \t12826 \t108620",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-table632-temperature-series-01",
+          "claim": "Table 6.3-2 tabulates KCl standard conductivities from 0 to 50 degrees Celsius, with the 0.01 mol/kg standard reading 773.50 microsiemens per centimeter at 0 degrees Celsius and 2125.0 at 50 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "0 \t773.50 \t7117.4 \t63489",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-table632-source-01",
+          "claim": "The tabulated KCl standard conductivity values are from Pratt and others (2001) and represent carbon-dioxide-saturated water.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "1Data from Pratt and others (2001). Values represent CO2-saturated H2O.",
+          "specificity": "medium"
+        },
+        {
+          "id": "sc-one-point-standard-values-01",
+          "claim": "Meters using a one-point calibration typically require calibration with standard solutions having specific conductance values of 500, 1,413, or 12,900 microsiemens per centimeter, and the standard closest to the expected sample value is selected.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "standard solutions having specific conductance values of 500,",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-cell-constant-2-percent-01",
+          "claim": "The cell constant of many modern specific conductance probes is nearly constant within plus or minus 2 percent over a wide range of concentration and temperature, and a change in the cell constant exceeding 2 percent may result from a contaminated standard or a dirty probe.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "modern specific conductance probes is nearly constant (±2",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-post-calibration-check-01",
+          "claim": "After the meter is calibrated, the accuracy of the calibration is checked by measuring at least one additional specific conductance standard that brackets the expected range of environmental values to be measured.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "tion by measuring at least one additional specific conductance",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-multipoint-definition-01",
+          "claim": "In a multipoint calibration the conductance is determined for several standards and the conductivity of the sample is determined by interpolation to a standard curve, with standards chosen to bracket the expected specific conductance of the samples.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "tance is determined for standards, and the conductivity of the",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-multipoint-record-slope-intercept-01",
+          "claim": "For a multipoint calibration the slope and intercept are recorded and tracked with each calibration, as substantial changes may result from contaminated standards or a dirty probe.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Record and track the slope and intercept",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__d8ae5e803001",
+      "index": 18,
+      "locator": "Section 3.2 and 3.3 Meter Calibration Procedure — \"it is recommended to calibrate specific conductance with standards with values that are greater than 200\"",
+      "claims": [
+        {
+          "id": "sc-calibrate-above-200-01",
+          "claim": "Deionized water and calibration standards with specific conductance less than 200 microsiemens per centimeter are susceptible to bias from dilution or contamination and are difficult to measure accurately, so calibration with standards greater than 200 microsiemens per centimeter is recommended.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "recommended to calibrate specific conductance with stan-",
+          "specificity": "high"
+        },
+        {
+          "id": "sc-procedure-applicability-01",
+          "claim": "The calibration procedure of section 3.3 applies to most field specific conductance meters equipped with a probe containing a dip-style conductivity cell and built-in temperature compensation.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "applies to most field specific conductance meters equipped",
+          "specificity": "medium"
+        }
+      ]
+    }
+  ],
+  "summary": {}
+}

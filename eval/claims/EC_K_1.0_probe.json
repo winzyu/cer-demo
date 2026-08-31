@@ -1,0 +1,309 @@
+{
+  "filename": "EC_K_1.0_probe.pdf",
+  "title": "Atlas Scientific Conductivity Probe K 1.0 — Datasheet",
+  "inSlice": true,
+  "chunkCount": 2,
+  "chunks": [
+    {
+      "chunkId": "EC_K_1.0_probe.pdf__e602012341c1",
+      "index": 0,
+      "locator": "Front spec table through \"How often do you need to recalibrate a conductivity probe?\" — \"Range \t5 − 200,000 μS/cm\"",
+      "claims": [
+        {
+          "id": "ec-range-01",
+          "claim": "The Atlas Scientific Conductivity Probe K 1.0 has a measurement range of 5 to 200,000 microsiemens per centimeter.",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "Range \t5 − 200,000 μS/cm",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-response-time-01",
+          "claim": "The Conductivity Probe K 1.0 reaches 90% of its response in 1 second.",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "90% in 1s\tResponse time",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-max-pressure-01",
+          "claim": "The Conductivity Probe K 1.0 is rated to a maximum pressure of 3,447 kPa (500 PSI).",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "3,447 kPa (500 PSI)\tMax pressure",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-max-depth-01",
+          "claim": "The Conductivity Probe K 1.0 has a maximum depth rating of 352 meters (1,157 feet).",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "352m (1,157 ft)\tMax depth",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-accuracy-01",
+          "claim": "The Conductivity Probe K 1.0 has a stated accuracy of +/- 2%.",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "+/ – 2%\tAccuracy",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-temp-range-01",
+          "claim": "The Conductivity Probe K 1.0 has an operating temperature range of 1 to 110 degrees Celsius.",
+          "metrics": ["conductivity", "temperature"],
+          "type": "numeric",
+          "quote": "1 − 110 °C\tTemperature range °C",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-no-internal-temp-01",
+          "claim": "The Conductivity Probe K 1.0 has no internal temperature sensor.",
+          "metrics": ["conductivity", "temperature"],
+          "type": "definitional",
+          "quote": "No\tInternal temperature sensor",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-recal-interval-01",
+          "claim": "The Conductivity Probe K 1.0 spec table gives the time before recalibration as approximately 10 years.",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "~10 years\tTime before recalibration",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-life-expectancy-01",
+          "claim": "The Conductivity Probe K 1.0 has a stated life expectancy of approximately 10 years.",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "~10 years\tLife expectancy",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-connector-01",
+          "claim": "The Conductivity Probe K 1.0 terminates in a Male SMA connector, with a Male BNC option.",
+          "metrics": ["conductivity"],
+          "type": "definitional",
+          "quote": "Male SMA / Male BNC\tConnector",
+          "specificity": "medium"
+        },
+        {
+          "id": "ec-cable-length-01",
+          "claim": "The Conductivity Probe K 1.0 ships with a 1 meter (3.2 foot) cable.",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "1 meter\tCable length",
+          "specificity": "medium"
+        },
+        {
+          "id": "ec-weight-01",
+          "claim": "The Conductivity Probe K 1.0 weighs 43 grams.",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "43 grams",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-dimensions-01",
+          "claim": "The Conductivity Probe K 1.0 measures 12mm x 145.5mm (0.47 in x 5.7 in).",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "12mm x 145.5mm (0.47\" x 5.7\")",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-measuring-surface-01",
+          "claim": "The measuring surface of the Conductivity Probe K 1.0 is graphite.",
+          "metrics": ["conductivity"],
+          "type": "definitional",
+          "quote": "90% in 1 second\nGraphite",
+          "specificity": "medium"
+        },
+        {
+          "id": "ec-operating-principle-01",
+          "claim": "An electrical conductivity probe works by applying an AC voltage across two opposed electrodes, causing cations to migrate to the negatively charged electrode and anions to the positively charged one; the more free electrolyte the liquid holds, the higher the conductivity.",
+          "metrics": ["conductivity"],
+          "type": "conceptual",
+          "quote": "an AC voltage is applied to the electrodes causing cations to move to the negatively\ncharged electrode, while the anions move to the positively electrode.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ec-full-submersion-required-01",
+          "claim": "The entire conducting area of the conductivity probe must be submerged to obtain accurate readings.",
+          "metrics": ["conductivity"],
+          "type": "procedural",
+          "quote": "submerged in order to get accurate\nreadings.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ec-submerge-indefinitely-01",
+          "claim": "The Conductivity Probe K 1.0 can be fully submerged in fresh or salt water up to the SMA connector indefinitely.",
+          "metrics": ["conductivity"],
+          "type": "definitional",
+          "quote": "in fresh or salt water, up\nto the SMA connector indefinitely.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ec-k-constant-def-01",
+          "claim": "The fixed distance and surface area between a conductivity probe's two conductors form the conductivity cell, and that geometry is quantified as the cell's K constant.",
+          "metrics": ["conductivity"],
+          "type": "definitional",
+          "quote": "The cells distance and surface area is quantified as the conductivity cells\nK constant.",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-no-recal-needed-01",
+          "claim": "Atlas Scientific states that a conductivity probe's graphite plates do not go bad or change, so recalibration is not necessary after the first calibration.",
+          "metrics": ["conductivity"],
+          "type": "conceptual",
+          "quote": "The plates do not go bad, or change, so recalibration is not necessary. After\nthe first calibration your conductivity probe is good to go.",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-nsf51-01",
+          "claim": "The Conductivity Probe K 1.0, part number ENV-40-EC-K1.0, is certified by Atlas Scientific as complying with NSF/ANSI Standard 51 and is food safe.",
+          "metrics": ["conductivity"],
+          "type": "definitional",
+          "quote": "Part # ENV-40-EC-K1.0\nComplies with NSF/ANSI Standard 51",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-materials-01",
+          "claim": "The Conductivity Probe K 1.0 is built from PVC, ABS, polyethylene, graphite and titanium nitride, each listed as NSF-51 compliant.",
+          "metrics": ["conductivity"],
+          "type": "definitional",
+          "quote": "Graphite\nNSF-51 Compliant\nPVC\nNSF-51 Compliant",
+          "specificity": "medium"
+        },
+        {
+          "id": "ec-sterilization-01",
+          "claim": "The Conductivity Probe K 1.0 may be sterilized by chemical means only.",
+          "metrics": ["conductivity"],
+          "type": "definitional",
+          "quote": "Chemical only",
+          "specificity": "medium"
+        },
+        {
+          "id": "ec-applications-01",
+          "claim": "The datasheet's typical-applications page lists standard lab use, field use, aquarium, hydroponics and fish keeping alongside mixed aqueous/organic solutions, samples containing heavy metals, soil samples and strong reducing agents, without labelling which group is supported and which is excluded.",
+          "metrics": ["conductivity"],
+          "type": "definitional",
+          "quote": "Samples containing Heavy metals",
+          "specificity": "low"
+        },
+        {
+          "id": "ec-use-domains-01",
+          "claim": "Atlas Scientific describes the E.C. probe as commonly used in hydroponics, aquaculture and freshwater systems to monitor nutrients, salts or impurities in the water.",
+          "metrics": ["conductivity"],
+          "type": "conceptual",
+          "quote": "It is commonly used in hydroponics, aquaculture and freshwater systems to monitor the\namount of nutrients, salts or impurities in the water.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "index": 1,
+      "locator": "\"Extending the probe cable length\" through \"Probe cleaning\" — \"You can extend the cable to greater than 100 meters\"",
+      "claims": [
+        {
+          "id": "ec-cable-extend-100m-01",
+          "claim": "The conductivity probe cable can be extended to greater than 100 meters with no loss of signal, and Atlas Scientific has tested up to 300 meters without a problem.",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "You can extend the cable to greater than 100 meters with no loss of signal. Atlas Scientific\nhas tested up to 300 meters without a problem",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-cable-antenna-risk-01",
+          "claim": "Extending the conductivity probe cable risks turning the E.C. probe into an antenna that picks up noise along the cable length.",
+          "metrics": ["conductivity"],
+          "type": "conceptual",
+          "quote": "you run the risk of turning your\nE.C. probe into an antenna, picking up noise along the length of your cable.",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-extend-isolation-01",
+          "claim": "For an extended conductivity probe cable Atlas Scientific recommends proper isolation such as the Basic EZO Inline Voltage Isolator or an i2 InterLink, and calibrating the probe with the extended cable attached.",
+          "metrics": ["conductivity"],
+          "type": "procedural",
+          "quote": "we recommend that you use proper isolation, such as\nthe Basic EZO TM Inline Voltage Isolator, or an i2 InterLink. Be sure to calibrate your\nprobe with the extended cable.",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-sma-waterproof-01",
+          "claim": "To waterproof an SMA connection on the conductivity probe, Atlas Scientific recommends a product such as Coax-Seal.",
+          "metrics": ["conductivity"],
+          "type": "procedural",
+          "quote": "If you need to water proof a SMA connection, we highly recommend using a product like\nCoax-Seal",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-bubbles-01",
+          "claim": "Air bubbles caught between the two graphite plates throw off conductivity results and should be dislodged by lightly tapping the probe.",
+          "metrics": ["conductivity"],
+          "type": "procedural",
+          "quote": "Lightly tap your conductivity probe to\nknock out any bubbles caught in the probe.",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-fouling-effect-01",
+          "claim": "Deposits that accumulate on a conductivity probe change the probe's basic electrical properties and cause inaccurate readings.",
+          "metrics": ["conductivity"],
+          "type": "conceptual",
+          "quote": "covered in deposits, which can\nchange the basic electrical properties of the probe and cause inaccurate readings.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ec-clean-soft-coating-01",
+          "claim": "Soft coatings on a conductivity probe can be removed by lightly brushing around the conducting area.",
+          "metrics": ["conductivity"],
+          "type": "procedural",
+          "quote": "Soft coatings can be removed by lightly brushing around the conducting area.",
+          "specificity": "high"
+        },
+        {
+          "id": "ec-clean-hard-coating-01",
+          "claim": "Hard coatings on a conductivity probe should be removed chemically, and Atlas Scientific recommends its own conductivity probe cleaner.",
+          "metrics": ["conductivity"],
+          "type": "procedural",
+          "quote": "Hard coatings should be chemically removed. We highly recommend you use the\nAtlas Scientific conductivity probe cleaner.",
+          "specificity": "high"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalClaims": 32,
+    "byMetric": {
+      "conductivity": 32,
+      "temperature": 2,
+      "dissolvedOxygen": 0,
+      "orp": 0,
+      "ph": 0,
+      "turbidity": 0
+    },
+    "byType": {
+      "numeric": 12,
+      "procedural": 6,
+      "definitional": 9,
+      "conceptual": 5
+    },
+    "gaps": [
+      "Gives no calibration procedure at all: no dry/single/dual/triple-point sequence, no calibration standard values (e.g. 12,880 or 80,000 uS/cm), no order of operations.",
+      "Never states the numeric K value of the 'K 1.0' cell constant in body text; K 1.0 appears only in the product name and headings.",
+      "Gives no temperature-compensation coefficient and no method for converting raw EC to specific conductance at 25 C, despite having no internal temperature sensor.",
+      "States accuracy as a single +/- 2% figure with no breakdown by range, by temperature, or at the extremes of 5 uS/cm and 200,000 uS/cm.",
+      "Gives no storage instructions, no storage solution, and no storage-life figure (unlike the pH, ORP and DO datasheets which state ~5 years).",
+      "Gives no maintenance interval: cleaning is described as a technique, never as a schedule.",
+      "Gives no conversion to salinity, TDS or PSU, and no ppm conversion factor.",
+      "Gives no drift rate, no expected reading stability over time, and no acceptance criteria for deciding a reading is bad.",
+      "Gives no guidance on what conductivity values are normal or abnormal for any water body; it is a hardware document with no environmental interpretation.",
+      "Names the 'Basic EZO Inline Voltage Isolator' and 'i2 InterLink' but gives no wiring diagram, voltage, or connection procedure for them.",
+      "Lists 'Mixed aqueous/organic', 'Samples containing Heavy metals', 'Soil Samples' and 'Strong reducing agents' with no label saying whether these are supported applications or contraindications."
+    ],
+    "notes": "Two-chunk document; chunk 1's first ~400 characters are overlap repeating the K-constant and recalibration text that originates in chunk 0, so those claims are recorded only on chunk 0. The document contradicts itself on recalibration: the front spec table states '~10 years  Time before recalibration' while the body states flatly that 'recalibration is not necessary' after the first calibration. The applications page is OCR-scrambled: bullets for supported uses and bullets for apparent contraindications are interleaved with no separating heading. The dimension and materials pages arrive as bare numbers and material names with their labels detached, so several figures (Ø 8mm, Ø 2.6mm, 15.5mm, 16mm, 29mm, 37.6mm, 112.7mm, 150.3mm) cannot be reliably attached to a named feature and were not extracted as claims. This is the only one of the four probe datasheets that claims recalibration is unnecessary."
+  }
+}

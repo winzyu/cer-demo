@@ -1,0 +1,1593 @@
+{
+  "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+  "title": "USGS NFM 6.6 — Alkalinity and Acid Neutralizing Capacity (version 4.0, 9/2012)",
+  "inSlice": false,
+  "chunkCount": 42,
+  "chunks": [
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__e2d6bf031f75",
+      "index": 3,
+      "locator": "Section 6.6 opening — \"Alkalinity and Acid Neutralizing Capacity\"",
+      "claims": [
+        {
+          "id": "alk-doc-identity-01",
+          "claim": "This document is section 6.6 of the USGS National Field Manual, published as TWRI Book 9 Chapter A6, version 4.0 dated September 2012.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "6.6 Alkalinity, version 4.0 (9/2012)",
+          "specificity": "medium"
+        },
+        {
+          "id": "alk-anc-filter-difference-01",
+          "claim": "Alkalinity and ANC are determined by identical electrometric acidimetric titration procedures; the only difference is that the alkalinity sample is filtered and the ANC sample is not.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "the acidimetric titration of a sample; the only difference is that the alkalinity sample is filtered,",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-definition-01",
+          "claim": "Alkalinity is the acid neutralizing capacity of solutes in a water sample, consisting of the sum of titratable carbonate and noncarbonate chemical species in a filtered sample.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "ALKALINITY: the capacity of solutes in an aqueous system to neutralize acid.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-filter-pore-size-01",
+          "claim": "The alkalinity sample must be filtered through a membrane of 0.45-micrometer pore size or smaller.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "of 0.45-micrometer (μm) pore size or smaller)",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-anc-definition-01",
+          "claim": "ANC is the acid-neutralizing capacity of solutes plus particulates in an unfiltered water sample and is equivalent to alkalinity for samples without titratable particulate matter.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "ANC is equivalent to\nalkalinity for samples without titratable particulate matter.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-carbonate-alkalinity-def-01",
+          "claim": "Carbonate alkalinity is the acid-neutralizing capacity attributable to carbonate solutes (bicarbonate and carbonate), titrated on a filtered water sample and reported in equivalents per liter or in milligrams per liter as a carbonate species.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "► Carbonate alkalinity is the acid-neutralizing capacity attributable to carbonate solutes",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-carbonate-dominant-01",
+          "claim": "In many aqueous systems alkalinity is controlled primarily by carbonate chemistry and is most commonly attributable to bicarbonate and less frequently to carbonate.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "chemistry and most commonly is attributable to bicarbonate (HCO3– ) and less frequently",
+          "specificity": "medium"
+        },
+        {
+          "id": "alk-usgs-filtered-definition-01",
+          "claim": "In standard USGS practice a filtered sample is operationally defined as one that has passed through a 0.45-micrometer pore filter membrane without clogging the filter.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "In standard USGS practice, a filtered sample is operationally defined as having passed through a 0.45-μm",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__d9ad85b55061",
+      "index": 4,
+      "locator": "Section 6.6 contributors list and 6.6.1 Equipment and Supplies — \"Important noncarbonate contributors may include\"",
+      "claims": [
+        {
+          "id": "alk-noncarbonate-contributors-01",
+          "claim": "Important noncarbonate contributors to alkalinity may include organic ligands (especially acetate and propionate), hydroxide, silicate, borate, and less commonly ammonia and sulfide; phosphate and arsenate can contribute at unusually high concentrations.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "► Important noncarbonate contributors may include organic ligands (especially acetate and",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-noncarbonate-usually-minor-01",
+          "claim": "Except for unusual natural waters and waters substantially affected by human activity, noncarbonate ionized contributors generally are not present in quantities large enough to affect alkalinity or ANC determinations.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "noncarbonate ionized contributors generally are not present in large enough quantities to",
+          "specificity": "medium"
+        },
+        {
+          "id": "alk-particulate-filter-before-titration-01",
+          "claim": "Particulate matter can be an important contributor to acid neutralizing capacity and must be removed by filtration before titrating a sample for an alkalinity determination.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "► Particulate matter can be an important contributor and must be removed by filtration",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-co2-independence-01",
+          "claim": "Alkalinity and ANC are measured relative to a solution of carbon dioxide in water and are therefore independent of any exchange of carbon dioxide or other common gases between the sample and the atmosphere, although such exchange can alter individual species concentrations such as bicarbonate.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "they are independent of any exchange of carbon dioxide or other common gases between the sample and the",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-aeration-precipitation-01",
+          "claim": "Aeration of a sample during filtration can cause mineral precipitation on the filter, which may alter the alkalinity, especially in water systems closed to the atmosphere under ambient conditions.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "aeration of a sample during filtration can cause mineral precipitation on the filter—this may alter",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-micrometer-buret-increment-01",
+          "claim": "Micrometer burets provide better accuracy and precision than ordinary burets because acid can be delivered in increments to 0.0001 milliliter.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "delivered in increments to 0.0001 milliliter (mL) and are available commercially",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__f40be219b74c",
+      "index": 5,
+      "locator": "Section 6.6.1 — \"Volumetric pipet, graduated cylinder, and digital balance\" and \"Sulfuric acid titrant\"",
+      "claims": [
+        {
+          "id": "alk-class-a-td-pipet-01",
+          "claim": "Only class A \"TD\" (To Deliver) volumetric pipets are to be used to dispense the filtered sample volume for an alkalinity determination.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Use only class A “TD” pipets. TD is a calibration designation meaning “To Deliver”",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-class-a-no-particles-01",
+          "claim": "Class A pipets should not be used to aspirate or dispense solutions containing suspended particles because the small bore rejects particles during aspiration and retains them during delivery.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "► Class A pipets should not be used to aspirate or dispense solutions containing suspended",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-anc-volume-measurement-01",
+          "claim": "The graduated cylinder and digital balance are used only for measuring the volume of unfiltered sample for the ANC determination, and the digital balance yields higher precision than the graduated cylinder.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "unfiltered sample for the ANC determination. The digital balance yields higher precision than",
+          "specificity": "medium"
+        },
+        {
+          "id": "alk-reagent-storage-01",
+          "claim": "Reagents should be stored in a cool place below 25 to 30 degrees Celsius, dry and dark, to ensure maximum shelf life.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "acid titrant are essential. Reagents should be stored in a cool (less than 25–30 degrees Celsius",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-hach-cartridge-normalities-01",
+          "claim": "USGS personnel obtain 0.1600 Normal or 1.600 Normal sulfuric acid solutions in prefilled cartridges for the Hach digital titrator from the National Field Supply Services One-Stop Shopping Web site.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "► 0.1600 Normal (N) or 1.600N sulfuric acid solutions in prefilled cartridges for the Hach ®",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-nwql-correction-factor-01",
+          "claim": "The National Water Quality Laboratory calculated a correction factor of 1.01 to compensate for Hach cartridge manufacturing anomalies and variations in reported acid normality.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "(NWQL) has calculated a correction factor of 1.01 (see section 6.6.5.A) necessary to",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-buret-titrant-normality-01",
+          "claim": "The buret system uses a 0.01639N sulfuric acid solution whose normality must be checked each month.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "► 0.01639N sulfuric acid solution for the buret system is available from a vendor of",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-berzelius-headspace-01",
+          "claim": "For samples vulnerable to precipitation reactions, a Berzelius beaker sized to minimize headspace and fitted with a two- or three-hole stopper for the electrodes, thermometer, and titrator can help minimize gas exchange.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "For samples vulnerable to precipitation reactions, a Berzelius beaker can help minimize gas",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__36ada05bd4dc",
+      "index": 6,
+      "locator": "Table 6.6-1 — \"Equipment and supplies used for alkalinity or ANC titrations\"",
+      "claims": [
+        {
+          "id": "alk-ph-meter-atc-01",
+          "claim": "The equipment list for alkalinity or ANC titration calls for a pH meter, preferably with an automatic temperature compensator, selected per NFM 6.4.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "pH meter, preferably with automatic temperature compensator (see NFM 6.4 for selection and associated",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-thermometer-nfm61-01",
+          "claim": "A calibrated thermometer is required for alkalinity or ANC titrations, with selection and calibration criteria given in NFM 6.1.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Thermometer, calibrated (see NFM 6.1 for selection and calibration criteria)",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-microsiemens-25c-01",
+          "claim": "In this manual the unit μS/cm means microsiemens per centimeter at 25 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "μS/cm, microsiemens per centimeter at\n25 degrees Celsius",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-diw-conductivity-max-01",
+          "claim": "Deionized water used for alkalinity or ANC titrations must have a maximum conductivity of 1 microsiemen per centimeter.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Deionized water (DIW) (maximum conductivity of 1 μS/cm)",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-balance-spec-01",
+          "claim": "For higher-precision ANC volume measurement the listed digital balance is pocket-sized and battery operated with 0.1-gram accuracy and 200-gram capacity.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Graduated cylinder (for ANC). For higher precision, use a digital balance, 0.1-g accuracy, 200-g capacity,",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-buret-graduations-table-01",
+          "claim": "Table 6.6-1 lists a calibrated 25-mL buret with 0.05-mL graduations and a calibrated 10-mL buret with 0.02-mL graduations, both with Teflon stopcocks.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Calibrated buret, 25-mL capacity with 0.05-mL graduations and Teflon® stopcock",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__89206750b75d",
+      "index": 7,
+      "locator": "Section 6.6.1.A — \"Maintenance, Cleaning, and Storage\"",
+      "claims": [
+        {
+          "id": "alk-ph-instrument-maintenance-01",
+          "claim": "Proper maintenance, cleaning, and storage of the pH instrument are critical for ensuring the accuracy of alkalinity or ANC determinations, and guidance is given in NFM 6.4.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Proper maintenance, cleaning, and storage of the pH instrument are critical for ensuring the",
+          "specificity": "medium"
+        },
+        {
+          "id": "alk-glassware-cleaning-01",
+          "claim": "Alkalinity glassware is cleaned with hot water and nonphosphate detergent and rinsed copiously with tap water then deionized water; stubborn oily or chemical residues are removed by soaking in a mild 5 percent by volume hydrochloric acid solution followed by a repeat detergent wash.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "a mild (5 percent by volume) hydrochloric acid solution (see Horowitz and others, 1994), and",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-titrant-storage-01",
+          "claim": "The 0.01639N standard sulfuric acid solution and filled Hach titrant cartridges are stored in a cool dark place such as a storage cabinet or frost-free refrigerator, with cartridges sealed in plastic bags to avoid moisture loss or gain.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Seal the filled cartridges in plastic bags\nto avoid moisture loss or gain.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-digital-titrator-annual-check-01",
+          "claim": "A digital titrator must have its accuracy and precision calibration-checked at least annually, using either reference samples or by comparing an alkalinity or ANC result with a buret titration of the same sample.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "If using a digital titrator, perform a calibration check of its accuracy and precision at least\nannually",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__75b805d9828d",
+      "index": 8,
+      "locator": "Section 6.6.2 Calibration and Standardization — \"Prepare a sulfuric acid titrant solution\"",
+      "claims": [
+        {
+          "id": "alk-ph-calibration-required-01",
+          "claim": "Calibration of the pH instrument is required for alkalinity and ANC work and must follow the instructions in NFM 6.4.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Calibration is required for the pH instrument—follow the instructions in NFM 6.4.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-titrant-monthly-standardization-01",
+          "claim": "The normality of locally prepared titrant or of the 0.01639N solution must be tested once a month against a fresh standard solution of sodium carbonate.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "► The normality of locally prepared titrant or 0.01639N solution must be tested once a",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-titrant-recipe-01",
+          "claim": "A buret-system acid titrant is prepared by cautiously adding 0.5 mL of concentrated sulfuric acid of specific gravity 1.84 grams per milliliter to about 950 mL of fresh deionized water and diluting to 1 liter, giving roughly 0.018N acid.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Cautiously add 0.5 mL concentrated H2 SO4 (specific gravity 1.84 grams per milliliter) to",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-titrant-must-standardize-01",
+          "claim": "The prepared roughly 0.018N acid must be standardized to determine its actual concentration, and may be diluted with deionized water and restandardized if exactly 0.01639N is wanted.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "This recipe results in an acid concentration of roughly 0.018N.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-na2co3-drying-01",
+          "claim": "Primary standard sodium carbonate is dried at 150 to 160 degrees Celsius for 2 hours before use in preparing the standard solution.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Dry 1.0 gram (g) primary standard Na2 CO3 at 150 to 160 °C for 2 hours.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-na2co3-mass-01",
+          "claim": "A 0.01639N sodium carbonate standard is made by weighing 0.8686 gram of dried Na2CO3 into a 1-liter volumetric flask and diluting to the mark with deionized water.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Cool in a desiccator; weigh out 0.8686 g Na2 CO3 ; add to a 1-L volumetric flask.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__c6690a868363",
+      "index": 9,
+      "locator": "Section 6.6.2 \"Standardize the sulfuric acid\" and 6.6.3 Collection and Processing",
+      "claims": [
+        {
+          "id": "alk-standardization-25ml-01",
+          "claim": "To standardize the sulfuric acid, 25 mL of sodium carbonate standard solution is pipetted into a 100-mL beaker and titrated with the sulfuric acid while recording pH and titrant volume.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Pipet 25 mL of sodium carbonate standard solution into a 100-mL beaker, and titrate with",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-equivalence-point-definition-01",
+          "claim": "The equivalence point is the point at which the change in pH per volume of titrant added is maximized, and it generally is found near pH 4.5.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "added is maximized, and generally will be found near pH 4.5.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-acid-normality-equation-01",
+          "claim": "Acid normality Ca is computed as 25 mL times 0.01639 equivalents per liter divided by Va, the volume of sulfuric acid added to reach the equivalence point.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "is \tvolume of sulfuric acid added to reach the equivalence point, in",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__7061480ad187",
+      "index": 10,
+      "locator": "Section 6.6.3 — \"To collect and process the sample\"",
+      "claims": [
+        {
+          "id": "alk-field-rinse-01",
+          "claim": "Sample bottles are field rinsed three times with the water to be sampled, but deionized water may be substituted for the first two rinses if the sample is limited or the triple rinse would exceed 100 mL of total field rinse volume.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "field rinse volume to exceed 100 mL, DIW of appropriate quality may be substituted for",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-no-rinse-vessels-01",
+          "claim": "Measurement vessels are not field rinsed; volumetric pipets and graduated cylinders should be clean and dry before use.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "► Do not field rinse the measurement vessels. Volumetric pipets and graduated cylinders",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-filter-capsule-standard-01",
+          "claim": "The 0.45-micrometer flowthrough disposable filter capsule is the standard filtration unit used by the USGS for alkalinity, and use of a different unit or membrane must be recorded on field forms because it can affect the determination.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "flowthrough disposable filter capsule is the standard unit used by the USGS. Record on",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-two-250ml-bottles-01",
+          "claim": "Two 250-mL sample bottles are filled instead of one 500-mL bottle so that the titration can be repeated, the second aliquot stays intact after the first is opened, and spillage losses are covered.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Fill and securely cap two 250-mL sample bottles (instead of one 500-mL bottle) with the",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-avoid-agitation-01",
+          "claim": "Agitation of the sample and prolonged exposure to air must be prevented to avoid oxidation of hydrogen sulfide, ferrous iron, and manganous manganese and to prevent precipitation of mineral phases.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "hydrogen sulfide, ferrous iron, and manganous manganese, and to prevent precipitation of",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-co2-loss-no-effect-01",
+          "claim": "Loss of carbon dioxide from the sample or addition of carbon dioxide to it will not change the alkalinity or ANC determination, but chemical or physical reactions can change bicarbonate and carbonate concentrations within minutes.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "not change the alkalinity or ANC determination, but chemical or physical reactions can",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-delayed-titration-temperature-01",
+          "claim": "If the titration is delayed, the samples must be maintained at the temperature of their ambient environment.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "If the titration is delayed, maintain the samples at the\ntemperature of their ambient environment.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__6d69289a742e",
+      "index": 11,
+      "locator": "Section 6.6.4 Measurement — \"The Gran function plot (Gran) method is recommended\"",
+      "claims": [
+        {
+          "id": "alk-groundwater-inline-filter-01",
+          "claim": "For groundwater the well is purged and the filter unit is connected in-line with the pump, and the sample lines and filter unit are flushed and filled with sample water so as to exclude air.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "► Purge the well (NFM 4.2) and connect the filter unit in-line with the pump.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-two-analysis-methods-01",
+          "claim": "Alkalinity, ANC, and bicarbonate, carbonate, and hydroxide concentrations are most commonly determined by analyzing acidimetric-titration data with either the inflection point titration method or the Gran function plot method.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "commonly determined by analyzing acidimetric-titration data with either the inflection point",
+          "specificity": "medium"
+        },
+        {
+          "id": "alk-ipt-adequacy-01",
+          "claim": "The inflection point titration method is adequate for most waters and study needs, but difficulty in identifying inflection points increases as the ratio of organic acids to carbonate species increases or as the alkalinity decreases.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "inflection points using the IPT method increases as the ratio of organic acids to carbonate",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-selection-threshold-01",
+          "claim": "The Gran function plot method is recommended when alkalinity or ANC is expected to be less than about 0.4 milliequivalents per liter (20 mg/L as CaCO3), when conductivity is less than 100 microsiemens per centimeter, or when there are appreciable noncarbonate contributors or measurable organic acids.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "or in which conductivity is less than\n100 microsiemens per centimeter (μS/cm)",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-fixed-endpoint-not-recommended-01",
+          "claim": "The Fixed Endpoint method, titration to pH 4.5, rarely is used and is no longer recommended by the USGS for determining alkalinity because it is less accurate than the IPT and Gran methods.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "The Fixed Endpoint method (titration to pH 4.5) rarely is used and is no longer recommended",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__03a8f0fc11d2",
+      "index": 12,
+      "locator": "Section 6.6.4.A Titration Systems and Procedures, Table 6.6-2 — \"Suggested sample volume and titrant normality\"",
+      "claims": [
+        {
+          "id": "alk-digital-vs-buret-precision-01",
+          "claim": "The digital titration system is convenient but may be less precise and less accurate than the buret system because of mechanical inadequacies, while the buret system is cumbersome and fragile in the field and requires experience.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "► The digital titration system is convenient but may be less precise and less accurate than the",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-micrometer-buret-accuracy-01",
+          "claim": "A micrometer buret can achieve accuracy to 0.1 mg/L, and determinations are reported to whole numbers if the result is 100 mg/L as CaCO3 or greater.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "► A micrometer buret can achieve accuracy to 0.1 mg/L (determinations are reported to",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-1600n-threshold-01",
+          "claim": "1.600N acid is too strong for most samples and is used only when alkalinity or ANC is greater than 4.0 meq/L (200 mg/L as CaCO3); the more dilute 0.01639N acid is commonly used with the buret system.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "used when alkalinity or ANC is greater than 4.0 meq/L (200 mg/L as CaCO3 )",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-beaker-volume-selection-01",
+          "claim": "50 mL of sample in a 100-mL beaker is typical for routine work, 100 mL or more in a 150-mL or larger beaker is used for low alkalinity or ANC, and 25 mL or less in a 50-mL beaker is used for high alkalinity or ANC.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "► 50 mL of sample in a 100-mL beaker is typical for most routine work.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-table662-volumes-01",
+          "claim": "Table 6.6-2 pairs alkalinity or ANC of 0-1.0 meq/L with 100 mL sample and 0.1600N titrant, 1.0-4.0 meq/L with 50 mL and 0.1600N, 4.0-20 meq/L with 100 mL and 1.600N, and greater than 20 meq/L with 50 mL and 1.600N.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "0–1.0 \t0–50 \t100 (or larger) \t0.1600 (or lower)",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__528584e7b44c",
+      "index": 13,
+      "locator": "Section 6.6.4.A — \"To pipet the sample for alkalinity determination\" and \"Stirring method\"",
+      "claims": [
+        {
+          "id": "alk-pipet-technique-01",
+          "claim": "A small volume of sample remains in the tip of a class A \"TD\" volumetric pipet and must not be blown or shaken out; the pipet tip is held against the beaker wall for an additional 10 seconds after flow stops.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "contact with the beaker wall for an additional 10 seconds after the flow stops.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-stirring-vortex-01",
+          "claim": "When a magnetic stirrer is used the sample is stirred slowly and continuously with a small stir bar, avoiding creation of a vortex and large streaming potentials.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "bar; avoid creating a vortex and large streaming potentials",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-delivery-tube-immersion-01",
+          "claim": "With a digital titrator the delivery tube is kept immersed throughout the procedure but its aperture is kept away from the stir bar to avoid bleeding acid into the sample between titrant additions.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "away from the stir bar to avoid bleeding acid from the tube to the sample between titrant",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-splash-restart-01",
+          "claim": "Droplets splashed onto the beaker wall can be rinsed down with deionized water, but if sample is splashed out of the beaker the titration must be started over.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "beaker, you must start over.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-titrant-interval-15-30-01",
+          "claim": "Emphasis is placed on a consistent technique of titrant additions every 15 to 30 seconds rather than waiting for the pH instrument to lock on to a particular value.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "technique (titrant additions every 15 to 30 seconds) rather than waiting for the instrument",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__4c21b7d997a6",
+      "index": 14,
+      "locator": "Section 6.6.4.A \"Titration methods\" — \"Titrate cautiously on both sides of the expected equivalence points\"",
+      "claims": [
+        {
+          "id": "alk-ipt-above-81-01",
+          "claim": "With the IPT method, if carbonate species will be determined and the initial pH is greater than 8.1, the sample is titrated carefully in small acid increments to a pH of about 8.0 because the data to pH 8.0 determine the carbonate equivalence point.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "of about 8.0. The data to pH 8.0 are important in determining the carbonate",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-ipt-rapid-to-55-01",
+          "claim": "With the IPT method, if carbonate species will not be determined, the sample is titrated rapidly with relatively large acid increments to bring the pH to about 5.5, without skipping the pH range above 5.5.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "rapidly at first, adding relatively large acid increments to bring the pH to about 5.5. Do",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-ipt-below-55-01",
+          "claim": "Below pH 5.5 the titration proceeds slowly in small acid increments to a pH of 4.0 or lower, or 3.5 if the alkalinity or ANC range is unknown or the sample contains high concentrations of noncarbonate contributors such as organic acids.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "high concentrations of noncarbonate contributors, such as organic acids)",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-point-spacing-01",
+          "claim": "For the Gran method a good rule of thumb is to collect data along the titration curve roughly every 0.2 to 0.3 pH units throughout the entire pH range of the titration.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "to collect data along the titration curve roughly every 0.2 to 0.3 pH units",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-no-points-above-55-01",
+          "claim": "With the Gran method, if contributing carbonate species will not be determined it is not necessary to develop incremental titration points above a pH of about 5.5.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "not necessary to develop incremental titration points above a pH of about 5.5.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__139ee53bc519",
+      "index": 15,
+      "locator": "Section 6.6.4.A \"Quality-control (QC) procedures\" — \"RULE OF THUMB\"",
+      "claims": [
+        {
+          "id": "alk-qc-every-tenth-01",
+          "claim": "Quality-control samples for alkalinity or ANC should be collected and titrated no less than every tenth sample.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "QC samples should be collected and titrated no less than every tenth sample.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-qc-filtered-5pct-01",
+          "claim": "An alkalinity determination on a filtered sample should be reproducible within plus or minus 5 percent when titrating a duplicate aliquot from the same batch of sample filtrate.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "determination on a filtered sample should be reproducible within ±5 percent when",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-qc-low-alkalinity-5-10-01",
+          "claim": "For filtered samples with alkalinity less than 0.4 meq/L (20 mg/L as CaCO3), reproducibility should be between 5 and 10 percent.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "- For filtered samples with alkalinity less than 0.4 meq/L (20 mg/L as CaCO3 ),",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-qc-rounding-002-01",
+          "claim": "If the alkalinity is about 0.02 meq/L or less, differences between duplicate samples are likely to exceed 10 percent from rounding errors alone, which can be reduced by using a larger sample volume or a lower normality of titrant.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "- If the alkalinity is about 0.02 meq/L or less, differences between duplicate samples are",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-qc-anc-vs-alkalinity-01",
+          "claim": "When interferences are absent, titration of an unfiltered sample may give a result identical to or within 5 percent of the filtered sample and can serve as a QC check, but the criterion is extended to plus or minus 10 percent when the sample has large amounts of particulate matter.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "extend the quality-assurance criterion to ±10 percent.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__5963449464cb",
+      "index": 16,
+      "locator": "Section 6.6.4.A \"Digital titrator\" — \"To use the digital titrator\"",
+      "claims": [
+        {
+          "id": "alk-digital-counts-per-ml-01",
+          "claim": "On the Hach digital titrator, 800 digital counts equals 1 milliliter of titrant delivered.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "counter (800 counts = 1 mL)",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-equilibrate-titrant-temperature-01",
+          "claim": "The first step in using the digital titrator is to equilibrate the titrant temperature to the sample temperature.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Equilibrate titrant temperature to sample temperature.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-delivery-tube-single-use-01",
+          "claim": "A new delivery tube is used for each assembly of the titrator and discarded after use; if reuse is necessary it must be rinsed with deionized water, stored in a clean sealable bag, reused only with the same titrant normality, and never reused if it shows wear.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Use a new delivery tube for each assembly of the titrator. Discard the tube after use.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-no-magnetic-stirrer-below-100-01",
+          "claim": "A magnetic stirrer must not be used if the sample conductivity is less than 100 microsiemens per centimeter.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "magnetic stirrer if sample conductivity is less than 100 μS/cm",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-rinse-ph-temp-sensors-01",
+          "claim": "Before the titration the pH and temperature sensors are rinsed with deionized water and any adhering droplets are gently blotted with lint-free paper.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Rinse the pH and temperature sensors with DIW. Gently blot with lint-free paper any water",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__3bb23c4082d6",
+      "index": 17,
+      "locator": "Section 6.6.4.A digital titrator steps 8-11 — \"Measure the initial pH and temperature\"",
+      "claims": [
+        {
+          "id": "alk-sensor-immersion-depth-01",
+          "claim": "The amount of sample in the beaker must be sufficient to cover the junction of the reference electrode, the electrode bulb, and the temperature sensor, and sensors must not touch the bottom or wall of the beaker.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "The amount of sample in the beaker must be sufficient to cover the junction of the",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-record-initial-readings-01",
+          "claim": "Before titrating, the field form records the initial pH and temperature values, the initial counter reading of 0000, the titrant normality, the time, the sample volume, and the sample conductivity if available.",
+          "metrics": [
+            "ph",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "available, record the sample conductivity.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-digital-three-count-minimum-01",
+          "claim": "Above pH 8.1 the IPT carbonate equivalence point is approached by adding titrant in small increments of no less than three digital counts until sample pH is less than 8.0.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "slowly add the titrant in small (but no less than three digital-count) increments until",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-mid-region-target-55-01",
+          "claim": "Between pH 8.1 and 5.0 the IPT titration uses larger increments to about pH 5.0, or to pH 5.5 when the sample alkalinity or ANC is below 0.4 meq/L (20 mg/L as CaCO3) or the sample conductivity is below 100 microsiemens per centimeter.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "~5.0 (5.5 for sample alkalinity or ANC <0.4 meq/L (<20 mg/L as CaCO3 ) or sample",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-most-sensitive-region-01",
+          "claim": "For many natural waters the most sensitive part of the alkalinity titration curve is between pH 4.8 and 4.3.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "(The most sensitive part of the titration curve is between pH 4.8 and",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__40605640c19e",
+      "index": 18,
+      "locator": "Section 6.6.4.A \"Buret titrator\" — \"To titrate with a buret\"",
+      "claims": [
+        {
+          "id": "alk-buret-titrant-temperature-01",
+          "claim": "The titrant temperature should be equilibrated to the sample temperature before use with a buret.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "The titrant temperature should be equilibrated",
+          "specificity": "medium"
+        },
+        {
+          "id": "alk-semimicroburet-selection-01",
+          "claim": "A 10-mL semimicroburet with 0.05-mL graduations and a Teflon stopcock is used for samples with alkalinity or ANC less than 4 meq/L (200 mg/L as CaCO3).",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Use a 10-mL semimicroburet with 0.05-mL graduations and a Teflon ® stopcock for",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-25ml-buret-selection-01",
+          "claim": "A 25-mL buret with 0.1-mL graduations and a Teflon stopcock is used for samples with alkalinity or ANC of 4 meq/L (200 mg/L as CaCO3) or greater and when the sample pH exceeds 8.1.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Use a 25-mL buret with 0.1-mL graduations and a Teflon ® stopcock for samples with",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__b2c7efc72249",
+      "index": 19,
+      "locator": "Section 6.6.4.A buret steps 4-7 and TECHNICAL NOTE — \"0.01 mL of a standard 0.05-mL drop\"",
+      "claims": [
+        {
+          "id": "alk-buret-drop-increment-carbonate-01",
+          "claim": "With a buret at pH 8.1 or above, titrant is added drop by drop in 0.01-mL increments until the pH is less than 8.0 to locate the carbonate equivalence point.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "the titrant drop by drop in 0.01-mL increments until the pH is less than 8.0. Larger",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-buret-drop-increment-bicarbonate-01",
+          "claim": "With a buret below pH 5.0, titrant is added drop by drop in 0.01-mL increments from pH 5.0 down to pH 4.0 or lower to locate the bicarbonate equivalence point.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "cautiously add the titrant drop by drop in 0.01-mL increments from pH 5.0 to ≤4.0.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-buret-tip-drop-technique-01",
+          "claim": "About 0.01 mL of a standard 0.05-mL drop of titrant tends to remain on the buret tip, so a 0.01-mL drop is dispensed by rotating the stopcock quickly through 180 degrees and rinsing the titrant from the buret tip into the beaker with a small quantity of deionized water.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "TECHNICAL NOTE: 0.01 mL of a standard 0.05-mL drop of titrant tends to remain on the buret tip.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-residual-diw-harmless-01",
+          "claim": "Residual deionized water left on the pH and temperature sensors after blotting will not affect the alkalinity determination.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "sensors with lint-free paper (residual DIW will not affect the determination).",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__359e7fac7286",
+      "index": 20,
+      "locator": "Section 6.6.4.B Inflection Point Titration Method — \"Inflection points are the points of maximum rate of change\"",
+      "claims": [
+        {
+          "id": "alk-ipt-typical-equivalence-ph-01",
+          "claim": "For many natural water samples the alkalinity titration equivalence points are near pH 8.3 and 4.5, but it is more accurate to calculate their exact locations from the titration data.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "natural water samples, these equivalence points are near pHs of 8.3 and 4.5, but it is more",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-inflection-point-definition-01",
+          "claim": "Inflection points are the points of maximum rate of change in pH per volume of titrant added.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Inflection points are the points of maximum rate of change in pH per volume of titrant added.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-ipt-relative-error-01",
+          "claim": "The relative error of an inflection point titration determination can be within plus or minus 4 percent if the equivalence point is recognizable within plus or minus 0.3 pH unit of the true equivalence point.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "determinations can be within ±4 percent if the equivalence point is recognizable within ±0.3 pH",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-ipt-curve-construction-01",
+          "claim": "The titration curve for inflection point analysis can be constructed by plotting change in pH divided by change in titrant volume against titrant volume, by calculating those values in a table or spreadsheet, or by using a titration-curve analyzer such as the USGS Alkalinity Calculator or PCFF program.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "analyzer such as the USGS Alkalinity Calculator or PCFF program (see section 6.6.5.C).",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-multiple-inflection-points-01",
+          "claim": "More than one inflection point in close proximity indicates that the true inflection point has been missed, calling for a duplicate titration with smaller acid increments or a Gran plot, although increments that are too small can mask the inflection points in data noise.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "► More than one inflection point in close proximity indicates that the true inflection point",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-tied-maximum-midpoint-01",
+          "claim": "When the maximum rate of change in pH per volume of titrant is tied at two or more points near an equivalence point, the equivalence point is taken as the middle of the tied range, for example digital count 123 for ties at counts 120, 122, and 126.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "then the calculated location of the equivalence point is at digital count 123.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-no-inflection-use-gran-01",
+          "claim": "If no clear inflection points can be determined easily, interferences from weak organic acids are likely and the Gran method should be used.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "► If no clear inflection point(s) can be determined easily, interferences from weak organic",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__3a5ec061f8c6",
+      "index": 21,
+      "locator": "Example IPT-1A and Table 6.6-3 — \"South Diamond Canal inflow to the Donner und Blitzen River\"",
+      "claims": [
+        {
+          "id": "alk-example-ipt1a-01",
+          "claim": "In Example IPT-1A the maximum rates of change of pH per volume of titrant occur at pH 8.27 and 4.50 at counts 186 and 1014, so the actual inflection points lie between counts 183 and 186 and between 1011 and 1014, giving calculated inflection points of 184.5 (185) and 1012.5 (1013).",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "occur at pH 8.27 and 4.50 (at counts 186 and 1014). Because these slopes represent changes",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-example-ipt2-single-inflection-01",
+          "claim": "Example IPT-2 applies the inflection point method to a low alkalinity sample that has only one inflection point.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Example IPT–2 shows the results of the IPT method applied to a low alkalinity sample. Note",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__1c4a75a5c1a3",
+      "index": 24,
+      "locator": "Section 6.6.4.C Gran Function Plot Method — \"Gran function plots commonly are used\"",
+      "claims": [
+        {
+          "id": "alk-gran-applicability-01",
+          "claim": "Gran function plots are commonly used to determine alkalinity and ANC in low ionic-strength water, water with low carbonate concentrations, and water with measurable concentrations of titratable organic compounds, and do not rely on the presence of inflection points in the titration curve.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Gran function plots commonly are used to determine alkalinity and ANC in low ionic-strength",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-linearization-01",
+          "claim": "Gran's method uses the known chemistry of carbonic acid and simplifying assumptions to linearize functions describing parts of the titration curve, and those linearizing assumptions are valid only for data some distance away from the equivalence points.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "linearizes a set of functions that describe parts of the titration curve (Gran, 1952). The",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-f1-meaning-01",
+          "claim": "The F1 Gran function plot identifies the point at which all alkalinity has been titrated and hydrogen ions begin to be in excess.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "The F1 Gran function plot identifies the point at which all alkalinity has been",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-six-functions-01",
+          "claim": "Two Gran functions can be calculated for each equivalence point, giving six functions F1 through F6 for the hydroxide, carbonate, and bicarbonate equivalence points, although the hydroxide functions commonly are not used.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "equivalence points for hydroxide, carbonate, and bicarbonate, six Gran functions (F1 through",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__179397948260",
+      "index": 25,
+      "locator": "Section 6.6.4.C Gran function equations — \"For an acidimetric titration, the six Gran functions are\"",
+      "claims": [
+        {
+          "id": "alk-gran-variable-definitions-01",
+          "claim": "In the Gran functions Vo is the initial sample volume, Vt the volume of acid titrant added, Vs the titrant volume at the bicarbonate equivalence point, Vw at the carbonate equivalence point, Vx at the hydroxide equivalence point, Ca the normality of the acid titrant, and gamma the activity coefficient for hydrogen ion.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Vs \tis \ttitrant volume at the bicarbonate equivalence point;",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-extrapolate-to-zero-01",
+          "claim": "If the Gran functions are calculated in the correct sequence the left side of each equation consists of known values, and extrapolating those values to zero lets the right side be set to zero and solved for a previously unknown equivalence point.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "By extrapolating these function values to\nzero, the right side of each equation can be set to zero",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-function-pairing-01",
+          "claim": "Gran functions F1 and F3 determine the bicarbonate equivalence point because they are zero when Vt equals Vs, F2 and F4 determine the carbonate equivalence point, and F5 and F6 determine the hydroxide equivalence point.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "► The Gran functions F1 and F3 are useful in determining the bicarbonate equivalence point",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__74f6c6ff0b67",
+      "index": 26,
+      "locator": "Section 6.6.4.C \"Gran Function Plots\" — \"The F1 function is valid for the pH range just below\"",
+      "claims": [
+        {
+          "id": "alk-gran-f1-ph-range-01",
+          "claim": "The F1 Gran function is valid for the pH range just below the bicarbonate equivalence point and its data become linear only somewhat beyond that point, so the sample often must be titrated down to a pH between 3.5 and 3.0, or to pH 2.5 for systems with measurable concentrations of organic acids.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "therefore, it is often necessary to titrate the sample down to a pH between 3.5 and 3.0. For",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-function-valid-ranges-01",
+          "claim": "Gran functions F2 and F3 are valid between the carbonate and bicarbonate endpoints, F4 and F5 between the carbonate and hydroxide endpoints, and F6 above the hydroxide endpoint.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "► Functions F2 and F3 are valid in the pH range between the carbonate and bicarbonate",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-calculation-order-01",
+          "claim": "F1 must be calculated first because F2 needs the bicarbonate equivalence point Vs from F1, F3 needs Vw from F2, F4 needs both Vs and Vw, and F5 needs Vw from either F2 or F4.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "The F1 function must be calculated first. In order to calculate F2, one needs to know the",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__baad7d52221a",
+      "index": 27,
+      "locator": "Section 6.6.4.C \"To prepare a Gran function plot\" — \"Skip steps 5 and 6\"",
+      "claims": [
+        {
+          "id": "alk-gran-f1-gamma-one-01",
+          "claim": "The practical F1 Gran plot of (Vo + Vt) times 10 to the minus pH against titrant volume ignores activity corrections by setting the activity coefficient gamma to 1.0.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "volume, Vt. (This formulation ignores activity corrections, setting γ = 1.0.)",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-skip-f5-f6-01",
+          "claim": "The F5 and F6 Gran function steps are skipped if the initial sample pH is less than approximately 10.3.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Skip steps 5 and 6 (F5 and F6 Gran functions) if the initial sample pH is less than",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__b3d400a36f68",
+      "index": 28,
+      "locator": "Section 6.6.4.C optional Gran steps 7-12 — \"you can either stop, or try to verify your values\"",
+      "claims": [
+        {
+          "id": "alk-gran-verification-plots-01",
+          "claim": "Optional Gran steps plot F3 as (Vt - Vw) times 10 to the pH between the carbonate and bicarbonate equivalence points, F4 as (Vs - 2Vw + Vt) times 10 to the pH between the carbonate and hydroxide equivalence points, and F6 as (Vo + Vt) times 10 to the pH above the hydroxide equivalence point, each extrapolated to the x-axis for a second estimate of an equivalence point.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "In the region between the carbonate and bicarbonate equivalence points, plot (Vt – Vw) 10pH",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-gran-pair-reconciliation-01",
+          "claim": "When the two Gran functions of a pair give different equivalence points, the estimates are averaged if both fit well and use enough points, but the estimate from the better-fitting function is chosen if one function fits poorly or uses far fewer points.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "average the estimates for that equivalence point.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__a47e0346ce3d",
+      "index": 29,
+      "locator": "Example Gran-1 — \"Little Abiqua Creek near Scotts Mills, Oregon\"",
+      "claims": [
+        {
+          "id": "alk-example-gran1-01",
+          "claim": "In Example Gran-1 the extrapolated F1 straight line intercepts zero at 139.5 digital counts of titrant, corresponding to a bicarbonate equivalence point near pH 5.18 and a calculated alkalinity of 7.0 mg/L as CaCO3, in agreement with 6.8 mg/L as CaCO3 from the inflection point method.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "is at 139.5 digital counts of titrant added, corresponding to a bicarbonate equivalence point at a",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__886151fcb3d2",
+      "index": 31,
+      "locator": "Example Gran-2 — \"Gran function plot using F1 through F4\"",
+      "claims": [
+        {
+          "id": "alk-example-gran2-equivalence-01",
+          "claim": "In Example Gran-2 the Gran analysis gives a bicarbonate equivalence point of 1005 counts from F3 and a carbonate equivalence point of about 209 counts, with F2 estimating 214 and F4 estimating 204.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "about 209 counts (F2 estimated the equivalence point at 214, F4 at 204).",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-example-gran2-agreement-01",
+          "claim": "In Example Gran-2 a bicarbonate equivalence point of 1005 counts with 0.16N titrant and a 100-mL sample gives 100.5 mg/L as CaCO3 versus 101.3 mg/L from the inflection point method at 1013 counts, a discrepancy of less than 1 percent, and either result is reported as 101 mg/L as CaCO3.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "acid titrant normality of 0.16N, and a sample volume of 100 mL, the calculated alkalinity of this",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-example-gran2-ph-too-low-for-f5f6-01",
+          "claim": "In Example Gran-2 the sample pH of 9.35 was not high enough to justify the use of Gran functions F5 and F6.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "The sample pH (9.35) was not high enough to justify the",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__d6c853e90b3e",
+      "index": 32,
+      "locator": "Section 6.6.5.A Alkalinity or ANC — \"a simple accounting of the amount of acid used\"",
+      "claims": [
+        {
+          "id": "alk-calculation-principle-01",
+          "claim": "Calculation of alkalinity or ANC is a simple accounting of the amount of acid used to neutralize the sample to the bicarbonate equivalence point, and the equations are valid for buret or digital titration equipment and any acid concentration and sample volume.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Calculation of alkalinity or ANC is a simple accounting of the amount of acid used to neutralize",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-b-variable-definition-01",
+          "claim": "In the alkalinity equations B is the volume of acid titrant in milliliters added from the initial pH to the bicarbonate equivalence point near pH 4.5, and digital counts are converted to milliliters by dividing by 800.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "To convert from digital counts to milliliters, divide by 800 (1.00 mL = 800",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-mgl-conversion-constant-01",
+          "claim": "Alkalinity in milligrams per liter as CaCO3 is computed as 50044 times B times Ca times CF divided by Vs, using 100.087 mg CaCO3 per millimole and 2 meq per millimole.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "= 50044(𝐵)(𝐶𝑎)(𝐶𝐹)/𝑉𝑠",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-correction-factor-values-01",
+          "claim": "The correction factor CF equals 1.01 when using Hach digital titrator cartridges, because of a bias caused by the configuration of those cartridges, and equals 1.0 for other titration methods.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "The correction factor CF is equal to 1.01 when using the Hach digital titrator cartridges,",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__5260ade8b428",
+      "index": 33,
+      "locator": "Section 6.6.5.B Carbonate-Speciation Equations — \"determined directly from the sample's pH and alkalinity\"",
+      "claims": [
+        {
+          "id": "alk-speciation-from-ph-01",
+          "claim": "For samples in which alkalinity or ANC is due primarily to bicarbonate, carbonate, and hydroxide, the concentrations of those constituents can be determined directly from the sample's pH and its alkalinity or ANC.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "determined directly from the sample’s pH and alkalinity or ANC with the following equations:",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-speciation-inputs-units-01",
+          "claim": "In the carbonate-speciation equations the pH used is the initial sample pH and the alkalinity must be in equivalents per liter, obtained by dividing the meq/L value by 1000.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "divide value in meq/L by 1000 to obtain eq/L;",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-meq-to-mgl-factors-01",
+          "claim": "To convert species concentrations from meq/L to mg/L, multiply the bicarbonate result by 61.0171, the carbonate result by 30.0046, and the hydroxide result by 17.0073.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "To convert concentrations in meq/L to mg/L, multiply the bicarbonate result by 61.0171, the",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__8c175e831ce2",
+      "index": 34,
+      "locator": "Section 6.6.5.B and Table 6.6-7 — \"Coefficients to compute the temperature dependence of acid dissociation constants\"",
+      "claims": [
+        {
+          "id": "alk-dilute-neglect-activity-01",
+          "claim": "In dilute freshwater systems activity corrections may be neglected, allowing the activity coefficients to be set to 1.0 and infinite-dilution acid dissociation constants to be used in place of activity-corrected values.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "In dilute freshwater systems, activity corrections may be neglected, allowing the activity",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-dissociation-constants-25c-01",
+          "claim": "The nominal acid dissociation constants in dilute freshwater at 25 degrees Celsius are Kw = 10 to the -14.0, K1 = 10 to the -6.35, and K2 = 10 to the -10.3.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "values of these constants in dilute freshwater at 25 °C are K w = 10–14.0 , K1 = 10–6.35 , and K2 =",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-constants-temperature-equation-01",
+          "claim": "Acid dissociation constants at temperatures other than 25 degrees Celsius are computed from log10(K) = a1 + a2*T + a3/T + a4*log10(T) + a5/T^2, where T is the absolute water temperature in Kelvin equal to the Celsius temperature plus 273.15.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "where T is the absolute water temperature in Kelvin (T = t(°C)+273.15) and the coefficients are",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-table667-coefficients-01",
+          "claim": "Table 6.6-7 gives the coefficients for the temperature dependence of the acid dissociation constants tabulated by Stumm and Morgan (1996), with Kw coefficients a1 = -283.971, a2 = -0.05069842, a3 = 13323.0, a4 = 102.24447, and a5 = -1119669.0.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Kw \t-283.971 \t-0.05069842 \t13323.0 \t102.24447 \t-1119669.0",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-simple-speciation-discontinued-01",
+          "claim": "The pre-2012 simple speciation method has been discontinued because it did not account for hydroxide, producing significant errors for samples with pH higher than 9.2, and ignored the small concentrations of bicarbonate above and carbonate below the carbonate equivalence point.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "First, the method did not account for the effects of hydroxide, which resulted in significant errors for samples with",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__be5187c6c236",
+      "index": 35,
+      "locator": "Section 6.6.5.C \"Important points to remember\" and Alkalinity Calculator",
+      "claims": [
+        {
+          "id": "alk-speciation-validity-limits-01",
+          "claim": "The bicarbonate and carbonate equations no longer apply if the sample contains other titratable species such as ammonia, borate, silicic acid, or humic and fulvic acids that contribute significantly to alkalinity or ANC, and a full geochemical model such as PHREEQC is then recommended.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "only valid if these three species are the only significant contributors to the sample",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-calculator-methods-01",
+          "claim": "The USGS Alkalinity Calculator analyzes titration data using the inflection point method, the Gran function plot method, and a theoretical carbonate titration curve method, and its methods are valid for the full range of pH measured in natural waters including activity corrections and temperature adjustments.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "The Calculator’s methods are valid for the full range of pH measured in natural waters and",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__35c7cade122c",
+      "index": 36,
+      "locator": "Section 6.6.5.C and 6.6.6 Troubleshooting — \"The major difficulties with equipment\"",
+      "claims": [
+        {
+          "id": "alk-carbonate-curve-fit-diagnostic-01",
+          "claim": "The carbonate titration curve method fits the titration data with a theoretical curve derived solely from carbonic acid chemistry, so a poor fit indicates that more than bicarbonate, carbonate, and hydroxide were titrated while an excellent fit is evidence the curve is dominated by bicarbonate and carbonate.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "If the fit is poor, it is likely that more than just bicarbonate, carbonate, and hydroxide",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-troubleshooting-same-as-ph-01",
+          "claim": "The major difficulties with equipment used to measure alkalinity or ANC are the same as those for pH measurement, and the reader is referred to NFM 6.4.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "The major difficulties with equipment used to measure alkalinity or ANC are the same as for",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-particulates-interfere-with-ph-01",
+          "claim": "Particulate materials including algae or other biota can interfere with the stability and reproducibility of pH readings, and such difficulties normally are eliminated by filtering the sample.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "interfere with the stability and reproducibility of pH readings. Such difficulties normally are",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-low-ionic-strength-use-gran-01",
+          "claim": "When the sample has low ionic strength or contains dissolved organic compounds or noncarbonate inorganic species that can interfere with the titration, the Gran function determination is recommended.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "When the sample has low ionic strength, or when dissolved organic compounds or",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__091cd5bdd180",
+      "index": 37,
+      "locator": "Section 6.6.7 Reporting — \"Report and publish results from filtered samples as alkalinity\"",
+      "claims": [
+        {
+          "id": "alk-report-filtered-vs-unfiltered-01",
+          "claim": "Results from filtered samples are reported and published as alkalinity while titration values from unfiltered samples are entered and published as ANC.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Report and publish results from filtered samples as alkalinity. Titration values from unfiltered",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-report-preferred-units-01",
+          "claim": "Alkalinity and ANC should be reported in milliequivalents or microequivalents per liter if possible, and otherwise in milligrams per liter with all neutralizing capacity assigned to the carbonate system, typically as mg/L as CaCO3.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Alkalinity and ANC should be reported in milliequivalents per liter (or microequivalents per",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-report-significant-figures-01",
+          "claim": "Alkalinity results are reported to whole numbers when at or above 100 mg/L and below 1,000 mg/L, to the tenths place when below 100 mg/L, and to three significant figures at 1,000 mg/L and above.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "► Less than (<) 1,000 mg/L and equal to (=) or greater than (>) 100 mg/L to whole numbers;",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-report-no-zero-species-01",
+          "claim": "Hydroxide, carbonate, and bicarbonate concentrations are never reported as 0.0 mg/L but as less than 0.1 mg/L, and these species concentrations cannot be negative.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "► Do not report hydroxide, carbonate, or bicarbonate concentration as 0.0 mg/L; instead,",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-negative-values-allowed-01",
+          "claim": "Alkalinity and ANC values may be negative and negative values are reported with the same number of significant figures that would be used if the values were positive.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "► Alkalinity and ANC values may be negative; report negative values with the same number",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-asm-method-codes-01",
+          "claim": "The carbonate speciation equations of section 6.6.5.B are collectively called the advanced speciation method, whose method codes are ASM01 through ASM12.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "method are ASM01 through ASM12.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-turbidity-codes-pointer-01",
+          "claim": "Turbidity parameter and method codes are not given in this alkalinity section but are accessed at http://water.usgs.gov/owq/turbidity_codes.xls.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "4 For turbidity, parameter and method codes can be accessed at http://water.usgs.gov/owq/turbidity_codes.xls.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__57c181e36c22",
+      "index": 38,
+      "locator": "Section 6.6.7 conversion factors table — \"Multiply / By / To obtain\"",
+      "claims": [
+        {
+          "id": "alk-conversion-hco3-to-caco3-01",
+          "claim": "Alkalinity in mg/L as HCO3- is converted to mg/L as CaCO3 by multiplying by 0.8202 and to mg/L as CO3 2- by multiplying by 0.4917.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Alkalinity (mg/L as HCO3– ) \t0.8202 \tAlkalinity (mg/L as CaCO3 )",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-conversion-caco3-to-meq-01",
+          "claim": "Alkalinity in mg/L as CaCO3 is converted to meq/L by multiplying by 0.01998.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Alkalinity (mg/L as CaCO3 ) \t0.01998 \tAlkalinity (meq/L)",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-conversion-species-meq-01",
+          "claim": "Bicarbonate in mg/L as HCO3- is converted to meq/L by multiplying by 0.01639 and to microequivalents per liter by 16.389, carbonate in mg/L as CO3 2- to meq/L by 0.03333, and hydroxide in mg/L as OH- to meq/L by 0.05880.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Bicarbonate (mg/L as HCO3– ) \t0.01639 \tBicarbonate (meq/L)",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-report-average-or-median-01",
+          "claim": "The average value is reported for duplicate samples, or the median when more than two replicate samples are used for quality control and the value falls within the appropriate quality-assurance criterion for variability.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Report the average value for duplicate samples or the median when more than two replicate",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__1b64e01da095",
+      "index": 39,
+      "locator": "Selected References — \"Roberson, C.E., Feth, J.H., Seaber, P.R., and Anderson, Peter, 1963\"",
+      "claims": [
+        {
+          "id": "alk-ref-field-vs-lab-01",
+          "claim": "This section cites Roberson and others (1963), USGS Professional Paper 475-C, on differences between field and laboratory determinations of pH, alkalinity, and specific conductance of natural water, but does not reproduce its findings.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "and laboratory determinations of pH, alkalinity, and specific conductance of natural water:",
+          "specificity": "low"
+        },
+        {
+          "id": "alk-ref-continuous-monitors-01",
+          "claim": "This section cites Wagner and others (2006), USGS Techniques and Methods 1-D3, on guidelines and standard procedures for continuous water-quality monitors, as a reference only.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "standard procedures for continuous water-quality monitors—Station operation, record",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__9528eb78ae36",
+      "index": 40,
+      "locator": "Selected References continued — \"Wells, F.C., Gibbons, W.J., and Dorsey, M.E., 1990\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__69033d8d3e3b",
+      "index": 41,
+      "locator": "Selected References end and Acknowledgments — \"This National Field Manual responds to advances in technology\"",
+      "claims": []
+    }
+  ],
+  "summary": {
+    "totalClaims": 148,
+    "byMetric": {
+      "conductivity": 7,
+      "ph": 43,
+      "temperature": 14,
+      "turbidity": 1
+    },
+    "byType": {
+      "conceptual": 27,
+      "definitional": 17,
+      "numeric": 55,
+      "procedural": 49
+    },
+    "gaps": [
+      "Alkalinity and ANC are not among the six metrics this system measures, and the document gives no way to infer alkalinity or ANC from any sonde-measurable parameter. Every value it produces comes from a bench acidimetric titration of a grab sample.",
+      "Gives no pH calibration procedure at all. It requires a calibrated pH electrode and meter but refers all calibration, buffer selection, buffer values, slope and offset acceptance criteria, and electrode maintenance to NFM 6.4. An operator asking 'how do I calibrate pH' will retrieve alkalinity chunks that say only 'follow the instructions in NFM 6.4'.",
+      "The many pH numbers in this document (8.3 and 4.5 equivalence points, the 4.8-4.3 sensitive region, the 8.1 and 5.5 titration thresholds, the 10.3 Gran cutoff) are titration-curve landmarks, not pH measurement specifications. It states no pH measurement accuracy, resolution, or drift tolerance, so a question about acceptable pH accuracy retrieves plausible-looking numbers that answer a different question.",
+      "Gives no temperature measurement procedure or accuracy criterion. It requires a calibrated thermometer but defers selection and calibration criteria entirely to NFM 6.1. Temperature appears here only as reagent storage limits (below 25-30 degrees C), the instruction to equilibrate titrant to sample temperature, the Na2CO3 drying temperature (150-160 degrees C), and the Kelvin conversion in the acid-dissociation-constant equation.",
+      "Uses conductivity as a decision threshold in at least four places (Gran method when conductivity is below 100 microsiemens per centimeter, no magnetic stirrer below 100 microsiemens per centimeter, titrate to pH 5.5 below 100 microsiemens per centimeter, deionized water at 1 microsiemen per centimeter maximum) but gives no method for measuring specific conductance: no cell constant, no calibration standard values, no measurement procedure. It defines the unit as microsiemens per centimeter at 25 degrees C without stating the temperature-compensation relationship.",
+      "Gives no turbidity content. Turbidity appears once, as a footnote URL to a parameter-code spreadsheet. Particulate matter is handled by 0.45-micrometer filtration, not by measuring or thresholding turbidity, so there is no turbidity value, unit, or interference threshold here.",
+      "Dissolved oxygen is never mentioned. The document warns against aeration and against oxidation of hydrogen sulfide, ferrous iron, and manganous manganese during sample handling, and describes anoxic and suboxic sampling by cross-reference, but contains no DO measurement, no saturation values, no air-calibration procedure, and no altitude or salinity correction.",
+      "ORP and redox potential are never mentioned as measured quantities. The oxidation and inert-gas cautions are sample-preservation instructions, not redox measurement guidance; there is no Eh, no millivolt reading, no ZoBell's solution, and no reference-electrode offset table.",
+      "Gives no continuous or in-situ monitoring guidance. Every procedure is a discrete bench titration. It cites Wagner and others (2006), TM 1-D3, for continuous water-quality monitors but reproduces none of its content, so sensor fouling, drift, field-audit criteria, and record-correction rules are absent.",
+      "The quality-control criteria here (duplicate titrations no less than every tenth sample, plus or minus 5 percent reproducibility, plus or minus 10 percent for low alkalinity or high particulate matter) apply to a titration on split aliquots. They are not sensor accuracy or calibration-drift criteria, and cannot answer a question about acceptable drift for a deployed probe.",
+      "Gives no relationship between alkalinity and specific conductance and no way to estimate either from the other, despite citing Roberson and others (1963) on differences between field and laboratory determinations of pH, alkalinity, and specific conductance.",
+      "Gives no salinity or estuarine correction. It states only that the titration procedures apply to 'fresh to saline' samples, with no ionic-strength correction procedure; activity corrections are declared out of scope and pushed to PHREEQC or the Alkalinity Calculator.",
+      "Gives no field-measurable interference thresholds for the six metrics. Interference guidance is qualitative (note color, odor, or previous chemical analysis) or defined by alkalinity magnitude, never by a measured DO, ORP, conductivity, or turbidity value."
+    ],
+    "notes": "Equations are badly mangled by PDF text extraction: sections 6.6.2, 6.6.5.A, and 6.6.5.B render formulas in mathematical-alphanumeric Unicode with the layout destroyed, and the six Gran function equations in chunk 20 are only partly readable. Tables arrive as tab-separated bare numbers with their column headers stacked as separate lines (Tables 6.6-1, 6.6-2, 6.6-3, 6.6-7). All figure content (figures 6.6-1 through 6.6-7) is lost; only captions and axis tick values survive, so the summary flowchart of titration procedures in figure 6.6-1 is unavailable. The corpus quality filter removed intervening chunks: content jumps from page 24 at chunk 18 to page 28 at chunk 19, so Example IPT-2's narrative and Tables 6.6-4 and 6.6-5 are absent, and chunks 19 and 25 open with orphaned rows of titration data whose headers no longer exist in the corpus. Internal inconsistency: Table 6.6-1 (chunk 3) lists a 25-mL buret with 0.05-mL graduations and a 10-mL buret with 0.02-mL graduations, while section 6.6.4.A 'Buret titrator' (chunk 15) specifies a 10-mL semimicroburet with 0.05-mL graduations and a 25-mL buret with 0.1-mL graduations. The 400-character overlap duplicates several rules across consecutive chunks (minimum three digital counts, Gran titration to pH 3.5 or lower, the F1-followed-by-F2 note); each is attributed to the chunk where it originates. Chunks 34 and 35 are pure reference list and acknowledgments and carry no extractable claim."
+  }
+}

@@ -1,0 +1,659 @@
+{
+  "filename": "water-quality-metrics-source-of-truth.pdf",
+  "title": "Water Quality Metrics — Source of Truth (DataPod)",
+  "inSlice": true,
+  "chunkCount": 5,
+  "chunks": [
+    {
+      "chunkId": "water-quality-metrics-source-of-truth.pdf__c823e6132551",
+      "index": 0,
+      "locator": "Scope and Core principle through section 1 Parameter Reference, Temperature and Dissolved Oxygen entries — \"Water Quality Metrics — Source of Truth\"",
+      "claims": [
+        {
+          "id": "sot-scope-01",
+          "claim": "This document is the reference for the six core parameters measured by the DataPod — Temperature, ORP, Dissolved Oxygen, Electrical Conductivity, pH and Turbidity — across both freshwater and saltwater systems.",
+          "metrics": ["temperature", "orp", "dissolvedOxygen", "conductivity", "ph", "turbidity"],
+          "type": "definitional",
+          "quote": "Reference for the six core parameters measured by the DataPod — Temperature, ORP,\nDissolved Oxygen (DO), Electrical Conductivity (EC), pH, and Turbidity",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-core-principle-01",
+          "claim": "No single parameter diagnoses a pollution event; diagnosis comes from the pattern of correlated change across multiple parameters and from separating that pattern from the water body's normal daily, tidal and seasonal rhythms.",
+          "metrics": ["temperature", "orp", "dissolvedOxygen", "conductivity", "ph", "turbidity"],
+          "type": "conceptual",
+          "quote": "Core principle: No single parameter diagnoses a pollution event. Diagnosis comes from the\npattern of correlated change across multiple parameters",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-temp-units-01",
+          "claim": "Temperature measures the thermal energy of the water and is reported in degrees Celsius.",
+          "metrics": ["temperature"],
+          "type": "definitional",
+          "quote": "Measures: Thermal energy of the water. Units: °C.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-temp-drivers-01",
+          "claim": "Water temperature is driven by solar input, air temperature, depth and stratification, tidal and current mixing, freshwater inflow, and discharges.",
+          "metrics": ["temperature"],
+          "type": "conceptual",
+          "quote": "Solar input, air temperature, depth/stratification, tidal and current mixing,\nfreshwater inflow, discharges.",
+          "specificity": "medium"
+        },
+        {
+          "id": "sot-temp-fresh-vs-salt-01",
+          "claim": "Freshwater bodies are smaller and respond faster to air temperature and runoff, while coastal and marine water is more thermally buffered but driven by tidal exchange and upwelling.",
+          "metrics": ["temperature"],
+          "type": "conceptual",
+          "quote": "Freshwater bodies are smaller and respond faster to air temperature and runoff.\nCoastal/marine water is more thermally buffered but driven by tidal exchange and upwelling.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-temp-master-variable-01",
+          "claim": "Temperature is the master variable: it sets DO capacity, accelerates biological and chemical rates, and shifts EC readings, so the other five parameters should always be interpreted relative to temperature.",
+          "metrics": ["temperature", "dissolvedOxygen", "conductivity"],
+          "type": "conceptual",
+          "quote": "Temperature is the master variable — it sets DO capacity, accelerates\nbiological and chemical rates, and shifts EC readings.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-thermal-pollution-01",
+          "claim": "Thermal pollution, such as power-plant cooling water and hot-pavement stormwater, is itself an event type.",
+          "metrics": ["temperature"],
+          "type": "conceptual",
+          "quote": "Thermal pollution (power-plant cooling\nwater, hot-pavement stormwater) is itself an event type.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-do-units-01",
+          "claim": "Dissolved oxygen measures oxygen dissolved in the water and available to aquatic life, reported in mg/L as concentration and in percent saturation.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "definitional",
+          "quote": "Oxygen dissolved in the water, available to aquatic life. Units: mg/L (concentration)\nand % saturation.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-do-drivers-01",
+          "claim": "Dissolved oxygen is driven by temperature and salinity, which set the saturation ceiling, by photosynthesis which adds oxygen by day, by respiration and decomposition which remove it, and by atmospheric exchange and turbulence.",
+          "metrics": ["dissolvedOxygen", "temperature"],
+          "type": "conceptual",
+          "quote": "Temperature and salinity (set the saturation ceiling), photosynthesis (adds O₂\nby day), respiration/decomposition (removes O₂), atmospheric exchange, turbulence.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-do-salt-20pct-01",
+          "claim": "Saltwater holds roughly 20 percent less dissolved oxygen than freshwater at the same temperature, so marine systems sit closer to the hypoxia threshold by default.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "Saltwater holds roughly 20% less DO than freshwater at the same temperature\n— marine systems sit closer to the hypoxia threshold by default.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-do-most-important-01",
+          "claim": "Dissolved oxygen is the single most important indicator of aquatic health, and organic pollution consumes oxygen through biochemical oxygen demand.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "The single most important indicator of aquatic health. Organic pollution\nconsumes oxygen (biochemical oxygen demand).",
+          "specificity": "medium"
+        },
+        {
+          "id": "sot-do-curve-shape-01",
+          "claim": "For dissolved oxygen, large swings in the daily curve signal eutrophication while a sustained sag signals an oxygen-demanding discharge, so both the absolute value and the shape of the daily curve must be watched.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "large swings signal eutrophication; a sustained sag signals an oxygen-\ndemanding discharge.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
+      "index": 1,
+      "locator": "DO thresholds through section 1 entries for ORP, EC and pH — \"Thresholds (general): >6 mg/L healthy\"",
+      "claims": [
+        {
+          "id": "sot-do-thresholds-01",
+          "claim": "The general dissolved oxygen thresholds are: greater than 6 mg/L healthy, 4 to 6 mg/L stress, 2 to 4 mg/L hypoxic stress, less than 2 mg/L hypoxia, and approximately 0 anoxia.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L\nhypoxia · ~0 anoxia.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-orp-def-01",
+          "claim": "ORP measures the water's net tendency to oxidize or reduce — effectively its electron pressure — and is reported in millivolts.",
+          "metrics": ["orp"],
+          "type": "definitional",
+          "quote": "The water’s net tendency to oxidize or reduce — effectively, the “electron pressure.”\nUnits: mV.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-orp-drivers-01",
+          "claim": "ORP is set by the dominant electron acceptor present: oxygen-rich water reads strongly positive, and as oxygen is consumed the system shifts to nitrate, then manganese/iron, then sulfate, driving ORP downward and eventually negative.",
+          "metrics": ["orp", "dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "as oxygen is consumed, the system shifts to nitrate, then manganese/iron, then\nsulfate, driving ORP downward and eventually negative.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-orp-healthy-range-01",
+          "claim": "Healthy aerobic water typically reads +200 to +400 mV ORP, and negative values indicate reducing, anoxic or septic conditions.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "Healthy aerobic water typically reads +200 to +400 mV. Negative values\nindicate reducing, anoxic, or septic conditions.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-orp-seawater-comparability-01",
+          "claim": "Seawater's high ionic strength makes absolute ORP readings less comparable between sites, so trend matters more than the raw number.",
+          "metrics": ["orp"],
+          "type": "conceptual",
+          "quote": "Seawater’s high ionic strength makes absolute\nreadings less comparable between sites — trend matters more than the raw number.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-orp-early-warning-01",
+          "claim": "ORP is the early-warning twin of dissolved oxygen: because it responds to the chemical environment it often begins falling before DO bottoms out, and a drop toward or below zero is a strong signal of organic loading, sewage or decomposition.",
+          "metrics": ["orp", "dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "it often begins falling before DO bottoms out. A drop toward or below zero is a\nstrong signal of organic loading, sewage, or decomposition.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-ec-def-01",
+          "claim": "Electrical conductivity measures the water's ability to carry current as a proxy for total dissolved ions and salts, is reported in microsiemens per centimeter, and should be reported as temperature-corrected specific conductance at 25 degrees Celsius.",
+          "metrics": ["conductivity", "temperature"],
+          "type": "definitional",
+          "quote": "μS/cm (report temperature-corrected “specific conductance” at 25°C).",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-ec-drivers-01",
+          "claim": "Electrical conductivity is driven by dissolved ion content: salinity dominates in marine water while in freshwater EC reflects geology, runoff, road salt and discharges.",
+          "metrics": ["conductivity"],
+          "type": "conceptual",
+          "quote": "Salinity dominates in marine water; in freshwater, EC\nreflects geology, runoff, road salt, and discharges.",
+          "specificity": "medium"
+        },
+        {
+          "id": "sot-ec-1000x-01",
+          "claim": "Freshwater and seawater differ by roughly 1,000 times in electrical conductivity, which makes EC the primary tool for identifying whether a change came from freshwater input, saline input, or an ionic discharge.",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "Freshwater and seawater differ by roughly 1,000× in EC. This makes EC the\nprimary tool for identifying the source of a change",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-ec-pollution-01",
+          "claim": "Sudden EC shifts flag saltwater intrusion, road-salt runoff, industrial or chemical discharge, or sewage, and in estuaries EC normally tracks the tide so that rhythm must be separated from genuine events.",
+          "metrics": ["conductivity"],
+          "type": "conceptual",
+          "quote": "Sudden EC shifts flag saltwater intrusion, road-salt runoff,\nindustrial/chemical discharge, or sewage. In estuaries, EC normally tracks the tide",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-ph-def-01",
+          "claim": "pH measures acidity and alkalinity on a logarithmic scale of hydrogen-ion activity and is unitless.",
+          "metrics": ["ph"],
+          "type": "definitional",
+          "quote": "Acidity/alkalinity on a logarithmic scale of hydrogen-ion activity. Units: pH (unitless).",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-ph-drivers-01",
+          "claim": "pH is driven by the CO2-carbonate balance: photosynthesis removes CO2 and raises pH while respiration and decomposition add CO2 and lower it, and pH is also affected by acidic and alkaline inputs.",
+          "metrics": ["ph"],
+          "type": "conceptual",
+          "quote": "The CO₂–carbonate balance. Photosynthesis removes CO₂ and raises pH;\nrespiration/decomposition adds CO₂ and lowers pH.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-ph-fresh-range-01",
+          "claim": "Freshwater pH is typically 6.5 to 8.5, poorly buffered and naturally variable.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "Freshwater (typically 6.5–8.5) is poorly buffered and naturally variable.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-ph-sea-range-01",
+          "claim": "Seawater pH is approximately 8.0 to 8.2 and is strongly carbonate-buffered, so any meaningful pH excursion in marine water is significant and worth investigating.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "Seawater (~8.0–8.2) is strongly carbonate-buffered — so any meaningful pH excursion in\nmarine water is significant and worth investigating.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-ph-pollution-01",
+          "claim": "Acidic inputs such as acid mine drainage and certain industrial effluent crash pH, while alkaline inputs such as concrete and construction washwater and some industrial discharge raise it.",
+          "metrics": ["ph"],
+          "type": "conceptual",
+          "quote": "Acidic inputs (acid mine drainage, certain industrial effluent) crash pH;\nalkaline inputs (concrete/construction washwater, some industrial discharge) raise it.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "water-quality-metrics-source-of-truth.pdf__19b15475035b",
+      "index": 2,
+      "locator": "Turbidity entry and section 2 Baseline Reference Ranges table — \"2. Baseline Reference Ranges\"",
+      "claims": [
+        {
+          "id": "sot-ph-daily-swings-01",
+          "claim": "Large daily pH swings indicate biological productivity, not a discharge.",
+          "metrics": ["ph"],
+          "type": "conceptual",
+          "quote": "daily pH swings indicate biological productivity, not a discharge.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-turb-def-01",
+          "claim": "Turbidity measures water clarity as light scattered by suspended particles such as sediment, plankton and organic matter, and is reported in NTU or FNU.",
+          "metrics": ["turbidity"],
+          "type": "definitional",
+          "quote": "Water clarity — light scattered by suspended particles (sediment, plankton, organic\nmatter). Units: NTU or FNU.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-turb-drivers-01",
+          "claim": "Turbidity is driven by sediment runoff, shoreline erosion, bottom resuspension by currents, waves and dredging, and algal cells.",
+          "metrics": ["turbidity"],
+          "type": "conceptual",
+          "quote": "Sediment runoff, shoreline erosion, bottom resuspension by\ncurrents/waves/dredging, and algal cells.",
+          "specificity": "medium"
+        },
+        {
+          "id": "sot-turb-fresh-vs-salt-01",
+          "claim": "Rivers and estuaries are naturally more turbid and event-driven, while open coastal water is clearer and its resuspension peaks at maximum tidal current.",
+          "metrics": ["turbidity"],
+          "type": "conceptual",
+          "quote": "Rivers and estuaries are naturally more turbid and event-driven (storms,\ndredging). Open coastal water is clearer; resuspension peaks at maximum tidal current.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-turb-contaminant-carrier-01",
+          "claim": "A turbidity spike flags storm runoff, construction erosion or dredging, and because particles carry adsorbed pollutants — phosphorus, metals, hydrocarbons and pathogens — a turbidity spike is also a proxy for contaminant loading.",
+          "metrics": ["turbidity"],
+          "type": "conceptual",
+          "quote": "particles carry adsorbed pollutants — phosphorus, metals, hydrocarbons,\npathogens — so a turbidity spike is also a proxy for contaminant loading.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-turb-light-01",
+          "claim": "High turbidity suppresses photosynthesis by blocking light.",
+          "metrics": ["turbidity"],
+          "type": "conceptual",
+          "quote": "High turbidity also\nsuppresses photosynthesis by blocking light.",
+          "specificity": "medium"
+        },
+        {
+          "id": "sot-baseline-table-columns-01",
+          "claim": "The Baseline Reference Ranges table gives, for each of the six parameters, a healthy freshwater column, a brackish/estuarine column, and a healthy seawater column.",
+          "metrics": ["temperature", "dissolvedOxygen", "orp", "conductivity", "ph", "turbidity"],
+          "type": "definitional",
+          "quote": "Parameter \tHealthy Freshwater \tBrackish / Estuarine \tHealthy Seawater",
+          "specificity": "medium"
+        },
+        {
+          "id": "sot-baseline-temp-01",
+          "claim": "The Baseline Reference Ranges table gives no numeric temperature range for any water type, listing temperature as climate and season dependent in all three columns.",
+          "metrics": ["temperature"],
+          "type": "definitional",
+          "quote": "Temperature Climate/season-\ndependent\nClimate/season-\ndependent Climate/season-dependent",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-baseline-do-01",
+          "claim": "Baseline dissolved oxygen is 6 to 11 mg/L (greater than 80 percent saturation) in healthy freshwater, 5 to 9 mg/L in brackish or estuarine water, and 5 to 8 mg/L in healthy seawater (about 7 to 8 at 100 percent saturation).",
+          "metrics": ["dissolvedOxygen"],
+          "type": "numeric",
+          "quote": "Oxygen 6–11 mg/L (>80% sat.) \t5–9 mg/L 5–8 mg/L (~7–8 at 100%\nsat.)",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-baseline-orp-01",
+          "claim": "Baseline ORP is +200 to +400 mV in healthy freshwater, +150 to +350 mV in brackish or estuarine water, and +200 to +400 mV in healthy seawater.",
+          "metrics": ["orp"],
+          "type": "numeric",
+          "quote": "ORP \t+200 to +400 mV \t+150 to +350 mV \t+200 to +400 mV",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-baseline-ec-01",
+          "claim": "Baseline conductivity is 50 to 1,500 microsiemens per centimeter in healthy freshwater, about 1,000 to 35,000 in brackish or estuarine water, and about 45,000 to 55,000 in healthy seawater (about 35 PSU).",
+          "metrics": ["conductivity"],
+          "type": "numeric",
+          "quote": "(EC) 50–1,500 μS/cm \t~1,000–35,000 μS/cm ~45,000–55,000 μS/cm (~35\nPSU)",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-baseline-ph-01",
+          "claim": "Baseline pH is 6.5 to 8.5 in healthy freshwater, 7.0 to 8.3 in brackish or estuarine water, and 7.8 to 8.3 in healthy seawater.",
+          "metrics": ["ph"],
+          "type": "numeric",
+          "quote": "pH \t6.5–8.5 \t7.0–8.3 \t7.8–8.3",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-baseline-turbidity-01",
+          "claim": "Baseline turbidity is less than 5 to 25 NTU in healthy freshwater, 5 to over 100 NTU in brackish or estuarine water, and less than 5 to 10 NTU in healthy seawater.",
+          "metrics": ["turbidity"],
+          "type": "numeric",
+          "quote": "Turbidity \t<5–25 NTU \t5–100+ NTU \t<5–10 NTU",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-baseline-caveat-01",
+          "claim": "The baseline ranges are general guidance only and a site-specific baseline must be established before deviations are treated as events, because local geology, season and tidal stage shift what counts as normal substantially.",
+          "metrics": ["temperature", "dissolvedOxygen", "orp", "conductivity", "ph", "turbidity"],
+          "type": "procedural",
+          "quote": "Ranges are general guidance. Establish a site-specific baseline before treating deviations as events",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-interrelate-intro-01",
+          "claim": "Understanding the couplings between the six parameters is what turns six independent readings into a diagnostic system.",
+          "metrics": ["temperature", "dissolvedOxygen", "orp", "conductivity", "ph", "turbidity"],
+          "type": "conceptual",
+          "quote": "Understanding these couplings is what turns six independent readings into a diagnostic system.",
+          "specificity": "medium"
+        },
+        {
+          "id": "sot-temp-do-inverse-01",
+          "claim": "Temperature affects dissolved oxygen inversely in two ways, the first being that warmer water physically holds less oxygen.",
+          "metrics": ["temperature", "dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "Temperature → DO (inverse, two ways): Warmer water physically holds less oxygen and",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "water-quality-metrics-source-of-truth.pdf__3ad84c74c7db",
+      "index": 3,
+      "locator": "Section 3 parameter couplings and section 4 Pollution Event Signature Matrix — \"4. Pollution Event Signature Matrix\"",
+      "claims": [
+        {
+          "id": "sot-temp-do-pairing-01",
+          "claim": "Warmer water also speeds the respiration and decomposition that consume oxygen, so a temperature rise should always be paired with an expected dissolved oxygen decline.",
+          "metrics": ["temperature", "dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "A temperature rise should always be\npaired with an expected DO decline.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-temp-ec-2pct-01",
+          "claim": "Ion mobility rises with temperature so raw electrical conductivity increases approximately 2 percent per degree Celsius, and temperature-corrected specific conductance must always be reported so EC changes reflect chemistry rather than warming.",
+          "metrics": ["temperature", "conductivity"],
+          "type": "numeric",
+          "quote": "Ion mobility rises with temperature; raw EC increases ~2% per °C.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-do-orp-coupling-01",
+          "claim": "Dissolved oxygen and ORP are tightly coupled: abundant DO drives ORP strongly positive, ORP declines as DO is consumed, ORP goes negative once oxygen is exhausted, and ORP often moves before DO hits bottom, giving lead time.",
+          "metrics": ["dissolvedOxygen", "orp"],
+          "type": "conceptual",
+          "quote": "once oxygen is exhausted, ORP goes\nnegative. ORP often moves before DO hits bottom, giving lead time.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-ph-do-coupling-01",
+          "claim": "pH and dissolved oxygen rise and fall together on the daily cycle because photosynthesis removes CO2 and releases O2 while respiration adds CO2 and consumes O2, and in-phase daily swings of pH and DO are the fingerprint of biological productivity.",
+          "metrics": ["ph", "dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "In-phase daily swings of pH and DO are the fingerprint\nof biological productivity.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-turb-do-ph-coupling-01",
+          "claim": "Suspended particles block light, suppressing photosynthesis and dampening daytime DO and pH gains, and organic-rich turbidity also adds direct oxygen demand.",
+          "metrics": ["turbidity", "dissolvedOxygen", "ph"],
+          "type": "conceptual",
+          "quote": "Suspended particles block light, suppressing photosynthesis and\ndampening daytime DO/pH gains. Organic-rich turbidity also adds direct oxygen demand.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-turb-carrier-coupling-01",
+          "claim": "Because sediment transports adsorbed nutrients, metals and pathogens, a turbidity spike can stand in for a loading event even when the chemistry looks stable.",
+          "metrics": ["turbidity"],
+          "type": "conceptual",
+          "quote": "a turbidity spike can stand in for a loading event even when chemistry looks\nstable.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-ec-source-fingerprint-01",
+          "claim": "Because fresh and salt water differ about 1,000 times in EC, the direction of an EC change tells you whether freshwater input such as rain, runoff or groundwater, or saline and ionic input such as tide, intrusion or discharge, is driving the event.",
+          "metrics": ["conductivity"],
+          "type": "conceptual",
+          "quote": "the direction of\nan EC change tells you whether freshwater (rain, runoff, groundwater) or saline/ionic input",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-matrix-notation-01",
+          "claim": "In the Pollution Event Signature Matrix, arrows show the expected direction of change relative to baseline, where double up or double down arrows mean strong, single arrows mean moderate, and a right arrow means little change.",
+          "metrics": ["temperature", "dissolvedOxygen", "orp", "conductivity", "ph", "turbidity"],
+          "type": "definitional",
+          "quote": "Arrows show the expected direction of change relative to baseline. ↑↑ / ↓↓ = strong, ↑ / ↓ =\nmoderate,",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-sig-sewage-01",
+          "claim": "The sewage or sanitary discharge signature is temperature flat to rising, DO strongly down, ORP strongly down, EC up, pH down and turbidity up.",
+          "metrics": ["temperature", "dissolvedOxygen", "orp", "conductivity", "ph", "turbidity"],
+          "type": "numeric",
+          "quote": "→/↑ \t↓↓ \t↓↓ \t↑ \t↓ \t↑",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-sig-sewage-primary-01",
+          "claim": "The primary signature of a sewage or sanitary discharge is a DO crash plus an ORP crash plus an EC rise plus a turbidity rise, not tied to time of day.",
+          "metrics": ["dissolvedOxygen", "orp", "conductivity", "turbidity"],
+          "type": "conceptual",
+          "quote": "DO crash +\nORP crash +\nEC rise +\nturbidity rise,\nnot tied to\ntime of day",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-sig-algal-01",
+          "claim": "The primary signature of an algal bloom or eutrophication is large in-phase daily DO and pH oscillations, with supersaturation midday and a crash pre-dawn, and the pre-dawn DO minimum is the danger window.",
+          "metrics": ["dissolvedOxygen", "ph"],
+          "type": "conceptual",
+          "quote": "pre-dawn DO\nminimum is\nthe danger\nwindow",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-sig-stormwater-01",
+          "claim": "The primary signature of stormwater or urban runoff is a sharp turbidity spike coincident with rainfall, with EC shifts that drop in marine water and may spike in freshwater from road salt.",
+          "metrics": ["turbidity", "conductivity", "temperature", "dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "Sharp\nturbidity spike\ncoincident\nwith rainfall;\nEC shifts\n(drops in\nmarine, may\nspike in fresh\nfrom road salt)",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-sig-industrial-01",
+          "claim": "The primary signature of an industrial or chemical discharge is abrupt step-changes in EC and/or pH and/or ORP with no diel or tidal explanation.",
+          "metrics": ["conductivity", "ph", "orp"],
+          "type": "conceptual",
+          "quote": "Abrupt step-\nchanges in EC\nand/or pH\nand/or ORP\nwith no diel or\ntidal\nexplanation",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-sig-thermal-01",
+          "claim": "The thermal discharge signature is temperature strongly up, DO moderately down, and ORP, EC, pH and turbidity all little changed.",
+          "metrics": ["temperature", "dissolvedOxygen", "orp", "conductivity", "ph", "turbidity"],
+          "type": "numeric",
+          "quote": "discharge ↑↑ \t↓ \t→ \t→ \t→ \t→",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-sig-thermal-primary-01",
+          "claim": "The primary signature of a thermal discharge is a temperature rise with a proportional DO decline while other chemistry stays flat.",
+          "metrics": ["temperature", "dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "Temperature\nrise with\nproportional\nDO decline;\nother\nchemistry flat",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-sig-saltwater-intrusion-01",
+          "claim": "The saltwater intrusion signature is EC strongly up with temperature, DO, ORP and turbidity little changed and pH flat to slightly up, with the EC rise correlated with tidal phase, drought, or sea-level conditions.",
+          "metrics": ["conductivity", "temperature", "dissolvedOxygen", "orp", "ph", "turbidity"],
+          "type": "numeric",
+          "quote": "intrusion → \t→ \t→ \t↑↑ \t→/↑ \t→",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-sig-acidic-01",
+          "claim": "The primary signature of an acidic input such as acid mine drainage or a spill is a pH crash paired with an EC rise from dissolved metals and sulfate.",
+          "metrics": ["ph", "conductivity"],
+          "type": "conceptual",
+          "quote": "pH crash\npaired with EC\nrise (dissolved\nmetals/sulfate)",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-sig-hypoxia-01",
+          "claim": "The primary signature of hypoxia or fish-kill conditions is DO and ORP both bottoming out together, with DO approaching zero and ORP going strongly negative.",
+          "metrics": ["dissolvedOxygen", "orp"],
+          "type": "conceptual",
+          "quote": "DO and ORP\nboth\nbottoming out\ntogether",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "water-quality-metrics-source-of-truth.pdf__5c7643fce7a3",
+      "index": 4,
+      "locator": "\"Reading the matrix\" through section 5 Natural Cycles and section 6 Sensor & Data-Quality Caveats — \"Reading the matrix: The diagnostic value is in the combination\"",
+      "claims": [
+        {
+          "id": "sot-matrix-reading-01",
+          "claim": "The diagnostic value of the signature matrix is in the combination: DO falling alone could be warm weather, but DO and ORP falling together while EC and turbidity rise is a far more specific signal pointing to an organic or sewage source.",
+          "metrics": ["dissolvedOxygen", "orp", "conductivity", "turbidity"],
+          "type": "conceptual",
+          "quote": "DO and ORP falling together while EC and turbidity rise is a far more specific signal\npointing to an organic/sewage source.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-diel-cycle-01",
+          "claim": "DO, pH and ORP swing predictably each day, peaking mid-afternoon and bottoming pre-dawn, driven by photosynthesis and respiration, while temperature follows the sun; a smooth repeating daily oscillation is biology, not pollution.",
+          "metrics": ["dissolvedOxygen", "ph", "orp", "temperature"],
+          "type": "conceptual",
+          "quote": "DO, pH, and ORP swing predictably each day — peaking mid-afternoon,\nbottoming pre-dawn",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-tidal-cycle-01",
+          "claim": "In estuarine and coastal water EC, temperature and turbidity oscillate with the tide, turbidity often peaks at maximum current from resuspension, and an EC change that repeats on the tidal clock is mixing, not a discharge.",
+          "metrics": ["conductivity", "temperature", "turbidity"],
+          "type": "conceptual",
+          "quote": "An EC change that repeats on the tidal clock is\nmixing, not a discharge.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-seasonal-cycle-01",
+          "claim": "Temperature, stratification, runoff and bloom potential shift across the year, so any reading must be compared to the same season's baseline.",
+          "metrics": ["temperature"],
+          "type": "procedural",
+          "quote": "Compare any reading to the same season’s baseline.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-event-test-01",
+          "claim": "The test for a real pollution event is that it appears as a step-change or sustained excursion breaking the expected diel or tidal rhythm rather than a smooth oscillation, confirmed as a correlated shift across multiple parameters matching one of the signatures.",
+          "metrics": ["temperature", "dissolvedOxygen", "orp", "conductivity", "ph", "turbidity"],
+          "type": "procedural",
+          "quote": "A pollution event typically appears as a step-change or sustained\nexcursion that breaks the expected diel/tidal rhythm — not a smooth oscillation.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-cal-drift-01",
+          "claim": "pH, DO and ORP probes drift over time, so a slow one-directional trend across weeks may be calibration drift rather than water chemistry and should be cross-checked against calibration history.",
+          "metrics": ["ph", "dissolvedOxygen", "orp"],
+          "type": "conceptual",
+          "quote": "Calibration drift: pH, DO, and ORP probes drift over time. A slow one-directional trend across\nweeks may be drift, not water chemistry",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-orp-reference-offset-01",
+          "claim": "ORP values depend on the electrode's reference type, Ag/AgCl versus standard hydrogen electrode, so the reference used must be recorded for values to be comparable across DataPods and over time, and ORP trend should be treated as more reliable than absolute value.",
+          "metrics": ["orp"],
+          "type": "procedural",
+          "quote": "ORP values depend on the electrode’s reference type (Ag/AgCl vs.\nstandard hydrogen electrode). Record which reference is used",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-ec-temp-comp-01",
+          "claim": "Specific conductance corrected to 25 degrees Celsius must always be reported, because uncorrected EC will track temperature and produce false signals.",
+          "metrics": ["conductivity", "temperature"],
+          "type": "procedural",
+          "quote": "Always report specific conductance (25°C-corrected).\nUncorrected EC will track temperature and produce false signals.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-turbidity-units-01",
+          "claim": "NTU, which is white-light based, and FNU, which is infrared based, are not interchangeable turbidity units and one must be standardized on across the fleet.",
+          "metrics": ["turbidity"],
+          "type": "definitional",
+          "quote": "NTU (white-light) and FNU (infrared) are not interchangeable. Standardize on\none across the fleet.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-do-fouling-01",
+          "claim": "Optical DO sensors drift with biofilm growth, so DO trends should be paired with the antifouling and cleaning schedule.",
+          "metrics": ["dissolvedOxygen"],
+          "type": "conceptual",
+          "quote": "Optical DO sensors drift with biofilm growth. Pair DO trends with the\nantifouling/cleaning schedule.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-biofouling-01",
+          "claim": "All submerged sensors foul, so a gradual multi-parameter drift after a long deployment is a fouling and maintenance flag first and an environmental signal second.",
+          "metrics": ["temperature", "dissolvedOxygen", "orp", "conductivity", "ph", "turbidity"],
+          "type": "conceptual",
+          "quote": "A gradual multi-parameter drift after a long\ndeployment is a fouling/maintenance flag first, an environmental signal second.",
+          "specificity": "high"
+        },
+        {
+          "id": "sot-living-doc-01",
+          "claim": "This document is to be maintained as a living document, with local normal ranges and site-specific event signatures appended as DataPod deployments build site-specific baselines.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Maintain this as a living document. As DataPod deployments build site-specific baselines, append\nlocal “normal” ranges",
+          "specificity": "medium"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalClaims": 73,
+    "byMetric": {
+      "dissolvedOxygen": 35,
+      "orp": 25,
+      "ph": 25,
+      "conductivity": 26,
+      "temperature": 28,
+      "turbidity": 24
+    },
+    "byType": {
+      "numeric": 15,
+      "procedural": 6,
+      "definitional": 11,
+      "conceptual": 41
+    },
+    "gaps": [
+      "Gives no calibration procedure for any of the six sensors — it warns about calibration drift and tells the reader to 'cross-check against calibration history' but never says how to calibrate, with what standard, or how often.",
+      "States no calibration or maintenance interval for any probe; the only maintenance language is 'pair DO trends with the antifouling/cleaning schedule', with no schedule given.",
+      "Gives no numeric temperature baseline at all: every cell of the temperature row in the Baseline Reference Ranges table reads 'Climate/season-dependent'.",
+      "Gives no sampling or measurement methodology: no depth of measurement, no sensor placement, no purge or equilibration time, no averaging window, no logging interval.",
+      "Gives no QA/QC acceptance criteria: no replicate tolerance, no allowable difference between readings, no criterion for rejecting a value, and no definition of what magnitude of change counts as a 'step-change'.",
+      "Cites no regulatory or statutory criteria — no EPA, state, or WQS numbers — so its ranges cannot be traced to an authority and are presented only as 'general guidance'.",
+      "Gives no conversion factors: DO mg/L to percent saturation, EC μS/cm to PSU or salinity (beyond the parenthetical '~35 PSU'), and NTU to FNU are all left undefined even though it warns the units are not interchangeable.",
+      "Names no sensor make, model, or accuracy specification, so its guidance cannot be checked against the actual DataPod hardware.",
+      "Gives no numeric threshold for turbidity, ORP, EC or pH tied to any event severity — DO is the only parameter with a graded threshold ladder (healthy/stress/hypoxic/hypoxia/anoxia).",
+      "Gives no procedure for correcting or compensating a reading; it says to report temperature-corrected specific conductance but supplies no correction equation or coefficient.",
+      "Covers only the six DataPod parameters; nutrients, alkalinity, hardness, bacteria and BOD are referenced as concepts but never as measurable parameters with ranges.",
+      "Gives no alert or escalation guidance: no rule for when a detected event should be reported, to whom, or with what confidence."
+    ],
+    "notes": "Five-chunk operator-facing definition document. Each of chunks 1 through 4 opens with ~400 characters of overlap from the previous chunk; claims are recorded only on the originating chunk (the DO 'pollution relevance' paragraph, the freshwater/seawater pH ranges, the start of the Temperature-to-DO coupling, and the tail of the signature matrix are all attributed upstream). The Pollution Event Signature Matrix survives extraction badly: the header row and the arrow rows for Sewage, Thermal discharge and Saltwater intrusion align cleanly to the six parameter columns, but the Algal bloom, Stormwater, Industrial discharge, Acidic input and Hypoxia rows have arrow cells missing or reflowed out of column order (the Acidic input row shows only five arrow cells for six columns), so for those rows only the prose 'Primary Signature' text was extracted as a claim and the per-column direction was not asserted. A '(super-sat. midday, ... crash pre-dawn)' fragment for the algal bloom row is split across the page 4/5 break. One substantive internal tension worth flagging for precedence work: section 6 warns that 'Optical DO sensors drift with biofilm growth', but the DataPod's own DO probe (Atlas Scientific Industrial DO, also in this slice) is galvanic, not optical. Several ranges in this document are stated as operational guidance and are likely to conflict with the USGS NFM manuals, which give the same quantities with different bounds and different derivations — in particular the DO thresholds, the ORP +200 to +400 mV healthy band, the pH 6.5-8.5 freshwater band, and the ~2% per degree C EC temperature coefficient."
+  }
+}

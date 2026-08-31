@@ -1,0 +1,1277 @@
+{
+  "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+  "title": "EPA SOP — Calibration of Field Instruments (Temperature, pH, DO, Conductivity, ORP, Turbidity), January 2010",
+  "inSlice": false,
+  "chunkCount": 12,
+  "chunks": [
+    {
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__c9cd6c7a28ab",
+      "index": 0,
+      "locator": "Cover page and Table of Contents — \"STANDARD OPERATING PROCEDURE\"",
+      "claims": [
+        {
+          "id": "epa-doc-identity-01",
+          "claim": "The EPA Region 1 Quality Assurance Unit SOP for Calibration of Field Instruments is Revision 2, originally dated June 3, 1998 and revised January 19, 2010.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Revised January 19, 2010",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-scope-six-params-01",
+          "claim": "The SOP covers calibration of field instruments for six parameters: temperature, pH, dissolved oxygen, conductivity/specific conductance, oxidation/reduction potential (ORP), and turbidity.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "(temperature, pH, dissolved oxygen, conductivity/specific conductance,",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-guidance-not-enforceable-01",
+          "claim": "The SOP is guidance for EPA personnel only; EPA may adopt different approaches case by case and the procedures create no rights enforceable at law.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "EPA retains the discretion to adopt approaches that differ\nfrom these procedures on a case-by-case basis.",
+          "specificity": "low"
+        },
+        {
+          "id": "epa-controlled-version-01",
+          "claim": "Only the electronic version viewed on-line is the controlled version of this SOP; a printed copy is uncontrolled and may not be the current version.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "controlled version of this document is the electronic version viewed on-line only.",
+          "specificity": "low"
+        },
+        {
+          "id": "epa-toc-structure-01",
+          "claim": "The SOP is organized as scope, health and safety, general requirements, frequency of calibration, per-parameter calibration procedures (sections 5.1 through 5.6), a post calibration check, and data/records management.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "4.0 FREQUENCY OF CALIBRATION .0...cccccesessescesesesecesvsvscececevecerseneesecete 5",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__91b16d25fd4a",
+      "index": 1,
+      "locator": "§1.0 Scope and Application through §3.0 General — \"This SOP supplements, but does not replace\"",
+      "claims": [
+        {
+          "id": "epa-supplements-cfr-01",
+          "claim": "This SOP supplements but does not replace the EPA analytical methods listed in 40 CFR 136 and 40 CFR 141 for temperature, dissolved oxygen, conductivity/specific conductance, pH, and turbidity.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "EPA analytical methods listed in 40 CFR 136 and 40 CFR 141 for temperature, dissolved",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-auto-temp-correction-01",
+          "claim": "The SOP assumes instruments whose pH, dissolved oxygen, and specific conductance probe readings are automatically corrected for temperature.",
+          "metrics": [
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "pH, dissolved oxygen, and specific conductance are automatically corrected for temperature.",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-flow-cell-required-gw-01",
+          "claim": "For groundwater monitoring the instrument must be equipped with a flow-through-cell, and the display must be large enough to show the readouts of every probe simultaneously.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "the instrument must be equipped with a flow-through-cell and the",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turbidity-separate-instrument-01",
+          "claim": "Turbidity must be measured with a separate instrument and must not be measured in a flow-through-cell, because the flow-through-cell acts as a sediment trap.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Turbidity is measured using a separate instrument. It\nmust not be measured in a flow-through-cell because the flow-through-cell acts as a sediment\ntrap.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-ppe-msds-01",
+          "claim": "Operators must read all standard labels, wear appropriate personal protection equipment such as gloves and eye shields when handling calibration standards, and consult the MSDS if needed.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "protection equipment (e.g., gloves, eye shields, etc.) when handling the standards.",
+          "specificity": "low"
+        },
+        {
+          "id": "epa-calibrate-before-use-01",
+          "claim": "All monitoring instruments must be calibrated before they are used to measure environmental samples.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "All monitoring instruments must be calibrated before they are used to measure environmental",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-nist-temp-check-01",
+          "claim": "Because the pH, dissolved oxygen, specific conductance, and ORP probes rely on the temperature sensor, each temperature sensor must be checked for accuracy against a thermometer traceable to NIST.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "be checked for accuracy against a thermometer that is traceable to the National Institute of",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-warmup-no-bubbles-01",
+          "claim": "Before calibration or environmental measurement the instrument must be allowed to stabilize (warm up) per the manufacturer's instructions and must have no air bubbles lodged between the probe and the probe guard.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "must have no air bubbles lodged between the probe and probe",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-bracket-two-standards-01",
+          "claim": "Most projects require at least two calibration standards that bracket the expected measurement range, one below the expected value and one above it.",
+          "metrics": [
+            "ph",
+            "conductivity",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Most projects will require at least two standards to bracket the expected measurement range.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-outside-range-qualify-01",
+          "claim": "When an environmental sample measurement falls outside the calibration range the instrument must be recalibrated to bracket the new range before measurements continue, otherwise the out-of-range measurements must be qualified.",
+          "metrics": [
+            "ph",
+            "conductivity",
+            "turbidity",
+            "dissolvedOxygen",
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "environmental sample measurement falls outside the calibration range, the instrument must be re-",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-manual-in-field-01",
+          "claim": "The manufacturer's instruction manual, including the instrument specifications, must accompany the instrument into the field.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "This SOP requires that the manufacturer's instruction manual (including the instrument",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__a94d853fd809",
+      "index": 2,
+      "locator": "§4.0 Frequency of Calibration and §5.1 Temperature — \"At a minimum, the instrument is calibrated prior to use\"",
+      "claims": [
+        {
+          "id": "epa-cal-frequency-daily-01",
+          "claim": "At a minimum the instrument is calibrated prior to use on the day the measurements are to be performed.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "At a minimum, the instrument is calibrated prior to use on the day the measurements are to be",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-post-cal-end-of-day-01",
+          "claim": "A post calibration check is performed at the end of the day to determine whether the instrument drifted out of calibration.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "A post calibration check at the end of the day is performed to determine if the",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-midday-check-qualify-01",
+          "claim": "If a mid-day check shows drift the instrument can be recalibrated during the day and only the data measured prior to that check needs to be qualified.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "instrument can be recalibrated during the day if the instrument drifted out of calibration and only",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-sonde-deploy-cal-01",
+          "claim": "Instruments such as sondes that monitor continuously are calibrated before deployment, and their calibration is checked when they are recovered to determine whether they drifted.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Instruments (e.g., sonde) that monitor continuously over a period of time are calibrated before",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-power-loss-cal-01",
+          "claim": "Instruments that lose their calibration when turned off may either be left on all day (battery permitting) or calibrated at each sampling location, and if calibrated at each location no post calibration check is needed.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "either be left on all day (battery dependent) or calibrated at each sampling location.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-standard-temp-match-01",
+          "claim": "The temperature of the calibration standards should ideally be close to the temperature of the ambient water being measured.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Ideally, the temperature of the standards should be close to the temperature of the ambient water",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-preclean-probes-01",
+          "claim": "Prior to calibration all instrument probes and cable connections must be cleaned and the battery checked, because failing to perform this maintenance can lead to erratic measurements.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Prior to calibration, all instrument probes and cable connections must be cleaned and the battery",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-solution-volume-01",
+          "claim": "The volume of calibration solution must be sufficient to cover both the probe and the temperature sensor.",
+          "metrics": [
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "The volume of the calibration solutions must be sufficient to cover both the probe and",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-no-expired-standards-01",
+          "claim": "The expiration date of every calibration standard must be checked and expired standards must not be used.",
+          "metrics": [
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Check the expiration date of the standards. Do not use expired standards.",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-temp-no-calibration-01",
+          "claim": "Most instrument manuals state that the temperature sensor is not calibrated, but the sensor must still be checked to determine its accuracy.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "Most instrument manuals state there is no calibration of the temperature sensor, but the",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-temp-annual-check-01",
+          "claim": "The temperature sensor accuracy check is performed at least once per year and the check date/information is kept with the instrument.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "at least once per year and the accuracy check date/information is kept with the instrument.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-temp-stale-check-01",
+          "claim": "If no accuracy check documentation accompanies the instrument, or the last check was more than a year ago, the temperature sensor accuracy must be checked at the beginning of the sampling event.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "year, the temperature sensor accuracy needs to be checked at the beginning of the sampling event.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-temp-multi-sensor-01",
+          "claim": "If an instrument contains multiple temperature sensors, each sensor must be checked individually.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "If the instrument contains multiple temperature sensors, each sensor must be checked.",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-temp-rental-01",
+          "claim": "The temperature accuracy check is not normally performed in the field, and for a rented instrument the rental company should perform the check and supply documentation that it was performed.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "company, the rental company should performed the calibration check and include with the",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-temp-verify-cold-bath-01",
+          "claim": "The temperature verification begins by filling a container with water adjusted, using ice or warm water, to below the temperature of the water body to be measured.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "1. Fill a container with water and adjust the water temperature to below the water body’s",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__86e2872125d1",
+      "index": 3,
+      "locator": "§5.1 Temperature verification steps 2-5 and §5.2 pH — \"within the accuracy of the sensor\"",
+      "claims": [
+        {
+          "id": "epa-temp-verify-nist-both-01",
+          "claim": "A NIST-traceable thermometer and the instrument's temperature sensor are placed in the same water and both readings are allowed to stabilize before they are compared.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Technology (NIST) and the instrument’s temperature sensor into the water. Wait for",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-temp-tolerance-02c-01",
+          "claim": "The instrument's temperature sensor must agree with the NIST-traceable reference thermometer within the accuracy of the sensor, given as an example of plus or minus 0.2 degrees C.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "the reference thermometer measurement within the accuracy of the sensor (e.g.,\n+0.2°C)",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-temp-disagree-manufacturer-01",
+          "claim": "If the instrument temperature reading and the reference thermometer do not agree, the instrument may not be working properly and the manufacturer must be consulted.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "+0.2°C). Ifthe measurements do not agree, the instrument may not be working",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-temp-verify-warm-bath-01",
+          "claim": "The temperature check is a two-point verification: after the cold comparison, the water temperature is adjusted to above the water body temperature to be measured and the two readings are compared again.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "4, Adjust the water temperature to a temperature higher than the water body to be",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-ph-glass-electrode-01",
+          "claim": "The pH of a sample is determined electrometrically using a glass electrode.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "The pH of a sample is determined electrometrically using a glass electrode.",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-ph-three-standards-01",
+          "claim": "If the water body's pH is unknown, three buffered standards are needed: one close to seven, one at least two pH units below seven, and one at least two pH units above seven.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "one close to seven, one at least two pH units below seven, and the other at least two pH units",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-ph-two-standard-recal-01",
+          "claim": "Instruments that will not accept three pH standards must be recalibrated whenever a water sample's pH falls outside the initial calibration range described by the two standards.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Instruments that will not accept three standards will need to be re-calibrated if the",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-ph-equilibrate-standards-01",
+          "claim": "The pH buffered standards are allowed to equilibrate to ambient temperature and are poured deep enough to cover both the pH probe and the temperature sensor before calibration begins.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "1, Allow the buffered standards to equilibrate to the ambient temperature.",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-ph-stabilize-30s-01",
+          "claim": "During pH calibration the operator waits for the reading to stabilize, and if the reading does not change within 30 seconds the calibration mode is selected and the buffer value entered.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "5. Wait until the readings stabilize. If the reading does not change within 30 seconds,",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-ph-rinse-di-01",
+          "claim": "Between pH standards the probe is removed, rinsed with deionized water, and the excess water removed.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "6. Remove probe from the initial standard, rinse with deionized water, and remove",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-ph-standard-sequence-01",
+          "claim": "The pH calibration sequence runs from the initial standard (e.g. pH 7) to a second standard (e.g. pH 4) and then, for instruments accepting three, a third standard (e.g. pH 10).",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "9. Immerse probe in third buffered standard (e.g., pH 10) and repeat step 5.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__79fe9d98c188",
+      "index": 4,
+      "locator": "§5.2 pH steps 11-13 and §5.3 Dissolved Oxygen setup — \"Create a 100 percent water-saturated air environment\"",
+      "claims": [
+        {
+          "id": "epa-ph-recheck-initial-01",
+          "claim": "After pH calibration the probe is re-immersed in the initial standard, which must read its stated value within the manufacturer's specifications or the instrument is recalibrated.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "standard value within the manufacturer's specifications. If not, re-calibrate the",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-ph-narrow-range-01",
+          "claim": "If recalibration does not fix a failed pH back-check, the calibration range may be too great and must be reduced by using standards that are closer together.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Reduce calibration range by using standards that are closer together.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-membrane-electrode-01",
+          "claim": "Dissolved oxygen content in water is measured using a membrane electrode.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "Dissolved oxygen (DO) content in water is measured using a membrane electrode.",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-do-membrane-replace-01",
+          "claim": "The dissolved oxygen probe's membrane and electrolyte should be replaced prior to the calibration for the sampling event.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "the DO probe’s membrane and electrolyte should be replaced prior to",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-membrane-condition-01",
+          "claim": "A new dissolved oxygen membrane may need to be conditioned before use per the manufacturer's manual, and failing to condition it may lead to erratic measurements.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "The new membrane may need to be conditioned before it is",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-inspect-membrane-01",
+          "claim": "Before dissolved oxygen calibration or measurement the membrane is inspected for air bubbles and nicks.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "calibration/measurements, inspect the membrane for air bubbles and nicks.",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-do-altitude-correction-01",
+          "claim": "Some dissolved oxygen instrument manufacturers require an altitude correction to be entered instead of a barometric pressure correction.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Note: some manufacturers require an altitude correction instead of a barometric correction. In",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-builtin-barometer-01",
+          "claim": "Some dissolved oxygen instruments have a built-in barometer, in which case the manufacturer's instructions govern how the barometric value is entered.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Note: some instruments have a built-in barometer.",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-do-dry-sensor-01",
+          "claim": "The temperature sensor is gently dried and water droplets are removed from the DO membrane before calibration, because evaporating moisture on either can influence the readings.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "evaporation of moisture on the temperature sensor or DO probe may influence the",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-water-saturated-air-01",
+          "claim": "Dissolved oxygen calibration uses a 100 percent water-saturated air environment created by placing a wet sponge or wet paper towel in the bottom of the calibration container.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "2. Create a 100 percent water-saturated air environment by placing a wet sponge or a",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-probe-loose-fit-01",
+          "claim": "The DO probe is fitted loosely into the calibration container so evaporated moisture cannot escape while ambient pressure is maintained, and neither the probe nor the temperature sensor may touch the wet sponge or towel.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "and the temperature sensor must not come in contact with these wet items.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-saturation-time-01",
+          "claim": "The confined air in the DO calibration container becomes saturated with water vapor in approximately 10 to 15 minutes, during which the instrument warms up.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "approximately 10 to 15 minutes). During this time, turn on the instrument to allow",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__bff7518da28e",
+      "index": 5,
+      "locator": "§5.3 Dissolved Oxygen steps 5-11 and §5.4 Specific Conductance intro — \"The instrument should read less than 0.5 mg/L\"",
+      "claims": [
+        {
+          "id": "epa-do-baro-onsite-01",
+          "claim": "The local barometric pressure entered during DO calibration must be determined from an on-site barometer, not from local weather services unless that pressure is corrected for the elevation of the sampling location.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "barometer. Do not use barometric pressure obtained from the local weather services",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-inhg-conversion-01",
+          "claim": "Inches of mercury are converted to millimeters of mercury by multiplying by 25.4 mm per inch.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "inches of mercury times 25.4 mm/inch equals mm of mercury or consult Oxygen",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-do-compare-chart-02-01",
+          "claim": "After DO calibration the mg/L reading is compared to the attached Oxygen Solubility at Indicated Pressure chart and must agree within the instrument's accuracy, usually plus or minus 0.2 mg/L, or the calibration is repeated.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "accuracy of the instrument (usually + 0.2 mg/L), repeat calibration.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-zero-check-05-01",
+          "claim": "In a 0.0 mg/L DO solution the instrument should read less than 0.5 mg/L assuming an accuracy of plus or minus 0.2 mg/L; a reading above 0.5 mg/L or a negative reading requires cleaning the probe and changing the membrane and electrolyte.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "than 0.5 mg/L (assuming an accuracy of + 0.2 mg/L). If the instrument reads above",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-zero-escalation-01",
+          "claim": "If changing the membrane and electrolyte does not fix a failing zero-DO check, a new 0.0 mg/L DO solution is tried, and if that fails the manufacturer is contacted.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "solution. If these changes do not work, contact the manufacturer.",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-do-zero-project-adjust-01",
+          "claim": "The 0.5 mg/L zero-solution acceptance value may need to be adjusted based on the accuracy requirements of the project or the instrument.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "value may need to be adjusted based on the accuracy requirements of the project or",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-zero-solution-prep-01",
+          "claim": "A 0.0 mg/L DO solution can be purchased or prepared per Standard Methods Method 4500-O G by adding excess sodium sulfite until no more dissolves plus a trace amount of cobalt chloride to water.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Standard Methods (Method 4500-O G). The method basically states to add excess",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-zero-no-cobalt-01",
+          "claim": "The zero-DO solution can be made without cobalt chloride, but the probe will then take longer to respond to the low DO concentration.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "this solution can be made without cobalt chloride, but the probe will take",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-do-rinse-zero-01",
+          "claim": "All of the 0.0 mg/L DO solution must be rinsed off the probe with tap or deionized water so it does not affect the measurement of environmental samples.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "the 0.0 mg/L DO solution be rinsed off the probe so as not to effect the measurement",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-spc-definition-25c-01",
+          "claim": "Conductivity measures an aqueous solution's ability to carry an electrical current, and specific conductance is the conductivity value corrected to 25 degrees C.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Specific conductance is the conductivity value corrected to 25°C.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__62a25e54a62a",
+      "index": 6,
+      "locator": "§5.4 Specific Conductance calibration procedure — \"A second standard is used to check the linearity\"",
+      "claims": [
+        {
+          "id": "epa-spc-single-standard-01",
+          "claim": "Most instruments are calibrated for specific conductance against a single standard near the specific conductance of the environmental samples, and that standard may be either below or above the sample value.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Most instruments are calibrated against a single standard which is near the specific conductance",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-spc-linearity-standard-01",
+          "claim": "A second specific conductance standard is used to check the linearity of the instrument across the range of measurements.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "A second standard is used to check the linearity of",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-spc-recal-outside-range-01",
+          "claim": "If a groundwater or surface water specific conductance measurement falls outside the initial calibration range defined by the two standards, the instrument must be recalibrated with appropriate standards.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "measurement is outside the initial calibration range defined by the two standards, the instrument",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-spc-rinse-standard-01",
+          "claim": "Before specific conductance calibration the probe is rinsed with deionized water or a small amount of the standard, with the rinsate discarded.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "deionized water or a small amount of the standard (discard the rinsate), and place the",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-spc-units-match-01",
+          "claim": "When entering the specific conductance standard value the operator must confirm the units on the standard match the units used by the instrument and convert them if they do not.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "standard value. Make sure that the units on the standard are the same as the units used",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-spc-linearity-fail-01",
+          "claim": "If the second specific conductance standard does not compare within instrument specifications after recalibration, it may lie outside the instrument's linear range and a standard closer to the first must be used.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "not compare, then the second standard may be outside the linear range of the",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-spc-one-standard-noncritical-01",
+          "claim": "For projects where specific conductance is not a critical measurement it may be possible to calibrate with a single standard in the expected measurement range.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Note: for projects where specific conductance is not a critical measurement it may be possible to",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__dc5fead69969",
+      "index": 7,
+      "locator": "§5.5 ORP and §5.6 Turbidity intro — \"a nephelometer with a visible light source\"",
+      "claims": [
+        {
+          "id": "epa-orp-definition-01",
+          "claim": "ORP is the electrometric difference measured in a solution between an inert indicator electrode and a suitable reference electrode, expressed in millivolts and temperature dependent.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "measured in millivolts and is temperature dependent.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-orp-zobell-01",
+          "claim": "ORP calibration or verification uses a Zobell solution as the calibration standard, equilibrated to ambient temperature.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "1. Allow the calibration standard (a Zobell solution: read the warning on the label before",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-orp-temp-table-01",
+          "claim": "The ORP millivolt value entered during calibration is looked up at the measured temperature from the millivolt-versus-temperature correction table found on the standard bottle or its instruction sheet.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "temperature correction table usually found on the standard bottle or on the standard",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-orp-interpolate-01",
+          "claim": "The operator may need to interpolate the ORP millivolt value between the temperatures listed in the correction table.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "instruction sheet. You may need to interpolate millivolt value between temperatures.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-orp-factory-cal-verify-01",
+          "claim": "If the manual states the ORP instrument is factory calibrated, that factory calibration is verified against the Zobell solution, and if it still does not agree within instrument specifications the instrument must be recalibrated by the manufacturer.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "8. If the instrument instruction manual states that the instrument is factory calibrated, then",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-method-basis-01",
+          "claim": "The turbidity method compares the intensity of light scattered by a sample under defined conditions with the intensity of light scattered by a standard reference suspension.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "The turbidity method is based upon a comparison of intensity of light scattered by a sample under",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-nephelometer-visible-01",
+          "claim": "A turbidimeter is defined here as a nephelometer with a visible light source for illuminating the sample.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "turbidimeter is a nephelometer with a visible light source for illuminating the sample and one or",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-detector-90deg-01",
+          "claim": "The turbidimeter's one or more photo-electric detectors are placed ninety degrees to the path of the light source.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "more photo-electric detectors placed ninety degrees to the path of the light source.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-cuvette-scope-01",
+          "claim": "The turbidity calibration procedure in this SOP applies to a turbidimeter in which the sample is placed into a cuvette.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "below calibration procedure is for a turbidimeter which the sample is placed into a cuvette.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-one-standard-checkpoints-01",
+          "claim": "For turbidimeters that accept only one calibration standard, the second, third and further standards serve as check points rather than calibration points.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Some instruments will only accept one standard. For those instruments, the second, third, etc.,",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-amco-preferred-01",
+          "claim": "Commercially available polymer primary turbidity standards (AMCO-AEPA-1) are preferred for calibration.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "commercially available polymer primary standards (AMCO-AEPA-1) is preferred;",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-formazin-1801-01",
+          "claim": "Turbidity standards may alternatively be prepared using Formazin according to EPA analytical Method 180.1, and other standards may be used if shown equivalent.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "before use) according to the EPA analytical Method 180,1. Other standards may be",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__80b3b684098e",
+      "index": 8,
+      "locator": "§5.6 Turbidity steps 2-6 and §6.0 Post Calibration Check — \"a zero or 0.02 NTU\"",
+      "claims": [
+        {
+          "id": "epa-turb-cuvette-no-wipe-01",
+          "claim": "An unsealed cuvette is rinsed with deionized water and shaken out, but the inside must not be wiped dry because lint from the wipe may remain in the cuvette.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Do not wipe dry the inside of the cuvette",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-cuvette-condition-01",
+          "claim": "Before turbidity calibration the cuvettes must be unscratched and their outside surfaces dry and free from fingerprints and dust, otherwise the cuvette is discarded or cleaned.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "and the outside surfaces are dry and free from fingerprints and dust.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-cuvette-orientation-01",
+          "claim": "Some turbidimeter manufacturers require the cuvette to be oriented in the instrument in a particular direction for an accurate reading.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "manufacturers require the cuvette to be orientated in the instrument in a particular",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-low-standard-002ntu-01",
+          "claim": "Turbidity calibration starts with a low value standard such as a zero or 0.02 NTU standard, calibrated according to the manufacturer's instructions.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Select a low value standard such as a zero or 0.02 NTU and calibrate according to",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-zero-prep-045um-01",
+          "claim": "An approximately 0 NTU zero turbidity standard can be prepared by passing distilled water through a 0.45 micron pore size membrane filter.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "prepared by passing distilled water through a 0.45 micron pore size membrane filter.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-high-standard-verify-01",
+          "claim": "A high turbidity standard is then used to calibrate, or to verify the calibration if the instrument will not accept a second standard, in which case the instrument must read the standard value within instrument specifications.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "5. Select a high standard and calibrate according to manufacturer’s instructions or verify",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-turb-check-each-range-01",
+          "claim": "If the turbidimeter has a range of scales, each range that will be used during the sampling event must be checked with a standard that falls within that range.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If the instrument has range of scales, check each range that will be used",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-postcal-drift-rationale-01",
+          "claim": "The instrument's calibration may drift during the measurement period after the initial calibration, so the amount of drift must be determined after the measurements are collected.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "After the initial calibration is performed, the instrument’s calibration may drift during the",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-postcal-procedure-01",
+          "claim": "The post calibration check is performed in measurement mode, not calibration mode, by placing the probe in one or more of the standards used for the initial calibration; for turbidity the standard is placed in a cuvette and read in the turbidimeter.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "initial calibration; for turbidity place the standard in a cuvette and then into the turbidimeter.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-postcal-qapp-criteria-01",
+          "claim": "The difference between the post calibration reading and the initial calibration value is compared to the drift or post calibration criteria in the project's quality assurance project plan or sampling and analysis plan, and data outside those criteria must be qualified.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "the drift criteria or post calibration criteria described in the quality assurance project plan or the",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-postcal-do-steps-01",
+          "claim": "The dissolved oxygen post calibration check follows calibration steps one through three with the instrument in measurement mode, recording DO in mg/L, temperature, and barometric pressure for comparison against the Oxygen Solubility chart.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "For the dissolved oxygen calibration check, follow the calibration instructions steps one through",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-postcal-defaults-apply-when-01",
+          "claim": "The SOP's tabulated post calibration criteria apply only when the quality assurance project plan or sampling and analysis plan does not list drift or post-calibration criteria of its own.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "or the post-calibration criteria, use the criteria below.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__2d02065fcb50",
+      "index": 9,
+      "locator": "§6.0 post calibration criteria table, §7.0 Records, §8.0 References, Table 1 — \"Measurement Post Calibration Criteria\"",
+      "claims": [
+        {
+          "id": "epa-postcal-do-criteria-01",
+          "claim": "The default post calibration criterion for dissolved oxygen is plus or minus 0.5 mg/L of the saturated value.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Dissolved Oxygen + (.5 mg/L of sat. value*",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-postcal-do-zero-criteria-01",
+          "claim": "The default post calibration criterion for the 0 mg/L dissolved oxygen solution is a reading below 0.5 mg/L that is not negative.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "<0.5 mg/L for the 0 mg/L solution, but not a negative value",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-postcal-spc-criteria-01",
+          "claim": "The default post calibration criterion for specific conductance is plus or minus 5 percent of the standard or plus or minus 10 microsiemens per centimeter, whichever is greater.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Specific Conductance +5% of standard or + 10 uS/om (whichever is greater)",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-postcal-ph-criteria-01",
+          "claim": "The default post calibration criterion for pH is plus or minus 0.3 pH unit measured with the pH 7 buffer.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "pH + 0.3 pH unit with pH 7 buffer*",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-postcal-turb-criteria-01",
+          "claim": "The default post calibration criterion for turbidity is plus or minus 5 percent of the standard.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Turbidity , + 5% of standard",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-postcal-orp-criteria-01",
+          "claim": "The default post calibration criterion for ORP is plus or minus 10 millivolts.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "ORP © . +10 mv*",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-postcal-criteria-source-01",
+          "claim": "The dissolved oxygen, pH and ORP post calibration criteria are taken from Table 8.1 of the USEPA Region 1 YSI 6-Series Sondes and Data Logger SOP, January 30, 2007, revision 9.",
+          "metrics": [
+            "dissolvedOxygen",
+            "ph",
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "Note: * Table 8.1, USEPA Region 1 YST 6-Series Sondes and Data Logger SOP, January 30,",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-records-minimum-01",
+          "claim": "Calibration records in the project log book or calibration log sheet must at minimum include instrument manufacturer, model number, instrument identification number, the standards used and their source, the calibration date, the instrument readings, the post calibration check, and the name of the person who calibrated.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "sheet. At a minimum, include the instrument manufacturer, model number, instrument",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-ref-turbidity-method-01",
+          "claim": "The SOP cites EPA/600/R-93/100, August 1993, Turbidity - Methods for the Determination of Inorganic Substances in Environmental Samples, as a reference.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "EPA/600/R-93/100, August 1993.",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-ref-usgs-tm1d3-01",
+          "claim": "The SOP cites the USGS Guidelines and Standard Procedures for Continuous Water-Quality Monitors (Techniques and Methods 1-D3) as a reference.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "USGS Guidelines and Standard Procedures for Continuous Water-Quality Monitors: Station",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-table1-structure-01",
+          "claim": "The Table 1 instrument calibration log records, for each parameter, a morning calibration and morning temperature plus an end-of-day calibration check and end-of-day temperature.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Parameters Morning Morning End of Day | End of Day",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-table1-turbidity-three-standards-01",
+          "claim": "The Table 1 calibration log provides rows for three turbidity standards and two specific conductance standards, pH 7, 4 and 10 buffers, an ORP Zobell solution, and both the 100 percent water saturated air and zero dissolved oxygen readings.",
+          "metrics": [
+            "turbidity",
+            "conductivity",
+            "ph",
+            "orp",
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Turbidity\nStandard #1",
+          "specificity": "medium"
+        },
+        {
+          "id": "epa-table1-check-standard-01",
+          "claim": "For each parameter one standard is chosen as the check standard, and if possible it should be the one closest to the ambient measurement value.",
+          "metrics": [
+            "temperature",
+            "ph",
+            "dissolvedOxygen",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "For each Parameter, chose one standard as your check standard.",
+          "specificity": "high"
+        },
+        {
+          "id": "epa-oxygen-solubility-chart-01",
+          "claim": "The SOP attaches an Oxygen Solubility at Indicated Pressure chart tabulating oxygen solubility against temperature for barometric pressures from 760 down to 730 mm Hg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "760 755 750 TAS 740 735 730 mm",
+          "specificity": "high"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalClaims": 0,
+    "byMetric": {},
+    "byType": {},
+    "gaps": [],
+    "notes": ""
+  }
+}
