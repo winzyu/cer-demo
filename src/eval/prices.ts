@@ -82,6 +82,14 @@ export const CHAT_PRICES: Record<string, TokenPrices> = {
   "accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b": {
     input: 0.05, cachedInput: 0.01, output: 0.20,
   },
+  // Judge candidates priced 2026-08-28 so a calibration run reports a budget instead of a blank.
+  // Both are cross-family and both cost MORE than `gpt-oss-120b` in this workload despite lower
+  // headline output rates, because a judge call is input-dominated — ~420K prompt tokens against
+  // ~42K completion across the 83-call calibration set. Input rate is what decides a judge's bill.
+  "accounts/fireworks/models/minimax-m3": { input: 0.30, cachedInput: 0.06, output: 1.20 },
+  "accounts/fireworks/models/deepseek-v4-flash-0731": {
+    input: 0.22, cachedInput: 0.007, output: 0.66,
+  },
 };
 
 /**

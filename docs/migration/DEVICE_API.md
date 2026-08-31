@@ -302,6 +302,21 @@ after the operator answers whether `0-25` was ever meant to apply to the derived
 then the chat and the report describe turbidity differently -- a known, temporary inconsistency
 rather than an oversight.
 
+### 8c. ON HOLD — the two turbidity blockers, and what unblocks each (2026-08-28)
+
+Parked deliberately rather than worked around. Both are waiting on a person, neither is waiting on
+code, and nothing else in the turbidity story can move until they land.
+
+| blocked on | who | what it unblocks | where the change goes |
+|---|---|---|---|
+| **The conversion curve.** The supervisor confirmed the four band labels and is supplying a voltage→turbidity curve. | supervisor | `TURBIDITY_BAND_EDGES` in `src/report/referenceRanges.ts` — the current cut points (250 / 600 / 1005) are marked PROVISIONAL and were fitted to five observed fleet means, not to a calibration | `src/report/referenceRanges.ts`, then the deferred prompt change in §8b |
+| **Does `0-25 NTU` apply to the derived index?** | operator | the chat/report inconsistency in §8b. Until answered, `query_sensor_data` returns a numeric index while the report bands it | `src/prompt/systemPrompt.ts` (pinned — see §8b) |
+| **Which pods carry the Turner Designs "Turbidity Pro"?** An optional higher-accuracy sensor exists; the registry has **no sensor-type field at all** (`BACKEND_FIELDS.md` §2 census — 16 fields, none of them sensor model). | operator | per-device turbidity accuracy. Today every pod is treated as carrying the standard voltage-derived sensor | either upstream adds a registry field (UPSTREAM), or we keep a local `label → sensor model` map beside `plausibility.ts`. **Do not guess from the data** — a Turbidity Pro and a raw voltage index are not distinguishable from their values |
+
+Until all three land, the shipped behaviour is the one described in §8b and it is correct: bands in
+the report, index plus a provisional caveat in chat, and no operator threshold anywhere because the
+registry has no `minTurbidity`/`maxTurbidity` (`BACKEND_FIELDS.md` §3b).
+
 ---
 
 ## 9. The exploration and recording plan
@@ -660,3 +675,6 @@ Short list, each of which a person has to answer:
 4. **Does the public "5 sensors / 6 sensors / 7 metrics" inconsistency reflect a hardware
    revision?** Our decoder implements six. If a seventh code exists on newer firmware,
    `METRICS` in `src/devices/metrics.ts` is where it would land.
+5. **Which pods carry the Turner Designs "Turbidity Pro"**, and does the operator's `0-25 NTU`
+   range apply to the voltage-derived index? Both are turbidity blockers and are tracked with
+   their landing sites in **§8c**, not here.
