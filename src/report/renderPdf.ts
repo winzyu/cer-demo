@@ -11,9 +11,11 @@
 
 import PDFDocument from "pdfkit";
 import type {
-  ReportInput, WQEvent, Flag, ReportStatus, ParameterStats,
+  ReportInput, WQEvent, Flag, ReportStatus, ParameterStats, Severity,
 } from "./types";
-import { coordinatesStr, flagFor, isRelativeIndex } from "./types";
+import {
+  coordinatesStr, flagFor, isRelativeIndex, outOfRangeShare, statValue,
+} from "./types";
 import { clarityBandFor, TURBIDITY_NO_BASELINE_TEXT } from "./referenceRanges";
 import type { NarrativeSections } from "./narrative";
 
@@ -21,6 +23,13 @@ const STATUS_COLORS: Record<ReportStatus, string> = {
   Normal: "#1a7f37",
   Watch: "#b35900",
   "Action Required": "#c0392b",
+};
+/** Severity's own scale, kept apart from FLAG_COLORS: a Moderate event and an Elevated
+ * parameter are different claims and should not borrow each other's colour by accident. */
+const SEVERITY_COLORS: Record<Severity, string> = {
+  Low: "#4a5a6a",
+  Moderate: "#b35900",
+  High: "#c0392b",
 };
 const FLAG_COLORS: Record<Flag, string> = {
   Normal: "#1a7f37",
@@ -53,7 +62,38 @@ const NOT_ASSESSED = "Not assessed";
 
 export const MARGIN = 54; // 0.75in
 const PAGE_WIDTH = 612; // US Letter, points
+const PAGE_HEIGHT = 792;
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
+
+/** One dark ink and one accent, used for every heading, rule and table header. */
+const INK = "#1f3a4d";
+const ACCENT = "#2f7d8c";
+const MUTED = "#6b7780";
+const HAIRLINE = "#dfe4e8";
+const BAND_FILL = "#e6f0ea"; // the in-baseline band behind a sparkline
+/** Right-hand strip a sparkline leaves free for its high/low labels. */
+const AXIS_GUTTER = 34;
+const HEADER_HEIGHT = 96;
+
+/** Pill background for the cover status and for each parameter card's flag. */
+const drawPill = (
+  doc: PDFKit.PDFDocument,
+  text: string,
+  opts: { right: number; top: number; color: string; size?: number },
+): void => {
+  const size = opts.size ?? 10;
+  doc.font("Helvetica-Bold").fontSize(size);
+  const width = doc.widthOfString(text) + size * 2;
+  const height = size * 2;
+  doc.roundedRect(opts.right - width, opts.top, width, height, height / 2).fill(opts.color);
+  doc.fillColor("#ffffff").font("Helvetica-Bold").fontSize(size)
+    .text(text, opts.right - width, opts.top + height / 2 - size * 0.62, {
+      width,
+      align: "center",
+      lineBreak: false,
+    });
+  doc.x = MARGIN;
+};
 
 const ensureSpace = (doc: PDFKit.PDFDocument, height: number): void => {
   const bottom = doc.page.height - doc.page.margins.bottom;
@@ -63,10 +103,18 @@ const ensureSpace = (doc: PDFKit.PDFDocument, height: number): void => {
 };
 
 const sectionHeader = (doc: PDFKit.PDFDocument, text: string): void => {
-  ensureSpace(doc, 30);
-  doc.moveDown(0.6);
-  doc.font("Helvetica-Bold").fontSize(13).fillColor("#000000").text(text);
-  doc.moveDown(0.3);
+  ensureSpace(doc, 34);
+  doc.moveDown(0.7);
+  const top = doc.y;
+  // A short accent bar rather than a heavier font: it separates sections at a glance without
+  // making every heading shout, and it survives the greyscale printing these get in the field.
+  doc.rect(MARGIN, top + 2.5, 3, 12).fill(ACCENT);
+  doc.font("Helvetica-Bold").fontSize(12.5).fillColor(INK)
+    .text(text, MARGIN + 10, top, { width: CONTENT_WIDTH - 10 });
+  // Same cursor-parking hazard drawKeyValueTable documents: an explicit-x .text() leaves doc.x
+  // there, and the next unqualified paragraph would flow from the indent.
+  doc.x = MARGIN;
+  doc.moveDown(0.35);
 };
 
 const bodyText = (
@@ -89,7 +137,7 @@ export const drawKeyValueTable = (
   const labelWidth = 130;
   const valueWidth = CONTENT_WIDTH - labelWidth;
   rows.forEach((row) => {
-    doc.font("Helvetica-Bold").fontSize(10).fillColor("#000000");
+    doc.font("Helvetica-Bold").fontSize(9).fillColor(MUTED);
     const labelHeight = doc.heightOfString(row.label, { width: labelWidth });
     doc.font(row.color ? "Helvetica-Bold" : "Helvetica").fontSize(10).fillColor(row.color ?? "#000000");
     const valueHeight = doc.heightOfString(row.value, { width: valueWidth });
@@ -97,12 +145,13 @@ export const drawKeyValueTable = (
     ensureSpace(doc, rowHeight);
 
     const top = doc.y;
-    doc.font("Helvetica-Bold").fontSize(10).fillColor("#000000")
+    doc.font("Helvetica-Bold").fontSize(9).fillColor(MUTED)
       .text(row.label, MARGIN, top + 6, { width: labelWidth });
     doc.font(row.color ? "Helvetica-Bold" : "Helvetica").fontSize(10).fillColor(row.color ?? "#000000")
       .text(row.value, MARGIN + labelWidth, top + 6, { width: valueWidth });
     doc.y = top + rowHeight;
-    doc.moveTo(MARGIN, doc.y).lineTo(MARGIN + CONTENT_WIDTH, doc.y).strokeColor("#dddddd").lineWidth(0.5)
+    doc.moveTo(MARGIN, doc.y).lineTo(MARGIN + CONTENT_WIDTH, doc.y)
+      .strokeColor(HAIRLINE).lineWidth(0.5)
       .stroke();
   });
   // Each row above calls `.text(str, x, y, opts)` with an explicit x -- pdfkit leaves `doc.x`
@@ -119,7 +168,7 @@ export const drawKeyValueTable = (
 interface GridColumn {
   header: string;
   width: number;
-  align?: "left" | "center";
+  align?: "left" | "center" | "right";
 }
 
 /** A bordered grid table with a dark header row and zebra-striped body rows -- used for both
@@ -150,7 +199,7 @@ export const drawGridTable = (
     if (bg) {
       doc.rect(MARGIN, top, CONTENT_WIDTH, rowHeight).fill(bg);
     }
-    doc.strokeColor("#cccccc").lineWidth(0.5).rect(MARGIN, top, CONTENT_WIDTH, rowHeight).stroke();
+    doc.strokeColor(HAIRLINE).lineWidth(0.5).rect(MARGIN, top, CONTENT_WIDTH, rowHeight).stroke();
 
     x = MARGIN;
     cells.forEach((cell, i) => {
@@ -160,7 +209,7 @@ export const drawGridTable = (
         .text(cell, x + rowPad, top + rowPad, { width: col.width - 2 * rowPad, align: col.align ?? "left" });
       // internal vertical gridlines
       if (i > 0) {
-        doc.moveTo(x, top).lineTo(x, top + rowHeight).strokeColor("#cccccc").lineWidth(0.5)
+        doc.moveTo(x, top).lineTo(x, top + rowHeight).strokeColor(HAIRLINE).lineWidth(0.5)
           .stroke();
       }
       x += col.width;
@@ -175,10 +224,97 @@ export const drawGridTable = (
     doc.x = MARGIN;
   };
 
-  drawRow(columns.map((c) => c.header), { header: true, bg: "#2c3e50" });
+  drawRow(columns.map((c) => c.header), { header: true, bg: INK });
   rows.forEach((row, i) => {
-    drawRow(row, { bg: i % 2 === 1 ? "#f5f5f5" : undefined, rowIndex: i });
+    drawRow(row, { bg: i % 2 === 1 ? "#f4f7f8" : undefined, rowIndex: i });
   });
+};
+
+/**
+ * A sparkline of one parameter's series, with its in-baseline band shaded behind the line and
+ * the period's high and low marked.
+ *
+ * This is the one thing the numbers alone cannot say: whether a flagged parameter drifted for
+ * weeks or spiked once. Section 2's Min/Max make those two identical, and the flag column made
+ * them identical too until `outOfRangeShare` landed -- the chart is the version a reader takes
+ * in without arithmetic.
+ *
+ * Draws nothing (and reports so) for a parameter with fewer than two series points: the report
+ * renders happily without a chart, and a one-point "trend" would be a fabricated line. The
+ * points are `buildReportInput`'s bucket means, so the line is bucket-resolution, not
+ * reading-resolution -- Section 3's caption says so once rather than on every chart.
+ *
+ * Exported for `reportRenderPdf.test.ts`, which cannot read text out of a rendered PDF and so
+ * pins the guard (`false` for a seriesless parameter) directly.
+ */
+export const drawSparkline = (
+  doc: PDFKit.PDFDocument,
+  p: ParameterStats,
+  box: { x: number; y: number; width: number; height: number },
+): boolean => {
+  const points = [...(p.series ?? [])].sort((a, b) => a[0] - b[0]);
+  if (points.length < 2) {
+    return false;
+  }
+  const b = p.baseline;
+  const banded = b.hasFixedBaseline && !isRelativeIndex(b);
+  const values = points.map(([, v]) => v);
+  const lo = Math.min(...values, banded ? b.baselineMin : Infinity);
+  const hi = Math.max(...values, banded ? b.baselineMax : -Infinity);
+  const pad = (hi - lo || Math.abs(hi) || 1) * 0.1;
+  const yLo = lo - pad;
+  const ySpan = (hi + pad) - yLo || 1;
+  const t0 = points[0][0];
+  const tSpan = points[points.length - 1][0] - t0 || 1;
+  const px = (t: number): number => box.x + ((t - t0) / tSpan) * box.width;
+  const py = (v: number): number => box.y + box.height - ((v - yLo) / ySpan) * box.height;
+  const clamp = (v: number): number => Math.min(box.y + box.height, Math.max(box.y, v));
+
+  doc.save();
+  doc.rect(box.x, box.y, box.width, box.height).fill("#fafbfc");
+  if (banded) {
+    const bandTop = clamp(py(b.baselineMax));
+    const bandBottom = clamp(py(b.baselineMin));
+    doc.rect(box.x, bandTop, box.width, Math.max(bandBottom - bandTop, 0.75)).fill(BAND_FILL);
+  }
+  doc.strokeColor(HAIRLINE).lineWidth(0.5).rect(box.x, box.y, box.width, box.height).stroke();
+
+  doc.strokeColor(INK).lineWidth(0.9);
+  points.forEach(([t, v], i) => {
+    const X = px(t);
+    const Y = clamp(py(v));
+    if (i === 0) {
+      doc.moveTo(X, Y);
+    } else {
+      doc.lineTo(X, Y);
+    }
+  });
+  doc.stroke();
+
+  // High and low of the plotted series, not of the period: these mark the line the reader can
+  // see, and Section 2 already carries the exact period extremes.
+  const hiPoint = points.reduce((a, c) => (c[1] > a[1] ? c : a));
+  const loPoint = points.reduce((a, c) => (c[1] < a[1] ? c : a));
+  doc.circle(px(hiPoint[0]), clamp(py(hiPoint[1])), 1.9).fill("#c0392b");
+  doc.circle(px(loPoint[0]), clamp(py(loPoint[1])), 1.9).fill(ACCENT);
+
+  // The plotted high and low, printed in the gutter to the right of the plot. Without them the
+  // line has no scale at all and two charts of very different magnitude look the same shape.
+  // These are bucket-mean extremes, which is why they can differ from Section 2's Min/Max --
+  // the section caption says the charts are bucket means.
+  doc.font("Helvetica").fontSize(6.5).fillColor(MUTED)
+    .text(statValue(hiPoint[1]), box.x + box.width + 4, box.y + 1, {
+      width: AXIS_GUTTER - 6, lineBreak: false,
+    })
+    .text(statValue(loPoint[1]), box.x + box.width + 4, box.y + box.height - 8, {
+      width: AXIS_GUTTER - 6, lineBreak: false,
+    });
+  doc.restore();
+  // Every text and path call above moved the cursor; the caller lays out around `box`, so hand
+  // it back exactly where it was rather than wherever the last axis label landed.
+  doc.x = MARGIN;
+  doc.y = box.y;
+  return true;
 };
 
 const formatTs = (ms: number): string => new Date(ms).toISOString().slice(0, 16).replace("T", " ");
@@ -215,6 +351,40 @@ export const resolveSectionNumbers = (
   return result;
 };
 
+/**
+ * Site, period and "Page n of m" along the bottom of every page.
+ *
+ * Runs last, over `bufferedPages`, because the page count is not known until the content is
+ * laid out. The bottom margin is dropped to zero for the duration: pdfkit adds a page whenever
+ * a `.text()` call would cross the bottom margin, so writing into the footer strip would
+ * otherwise append a blank page per page, forever.
+ */
+const drawFooters = (doc: PDFKit.PDFDocument, report: ReportInput): void => {
+  const range = doc.bufferedPageRange();
+  const marginBottom = doc.page.margins.bottom;
+  const y = PAGE_HEIGHT - 36;
+  const half = CONTENT_WIDTH / 2;
+  for (let i = 0; i < range.count; i += 1) {
+    doc.switchToPage(range.start + i);
+    doc.page.margins.bottom = 0;
+    doc.moveTo(MARGIN, y - 9).lineTo(MARGIN + CONTENT_WIDTH, y - 9)
+      .strokeColor(HAIRLINE).lineWidth(0.5)
+      .stroke();
+    doc.font("Helvetica").fontSize(8).fillColor(MUTED)
+      .text(
+        `${report.site.siteName} · ${report.site.startDate} to ${report.site.endDate}`,
+        MARGIN,
+        y,
+        { width: half, lineBreak: false },
+      )
+      .text(`Page ${i + 1} of ${range.count}`, MARGIN + half, y, {
+        width: half, align: "right", lineBreak: false,
+      });
+    doc.page.margins.bottom = marginBottom;
+  }
+  doc.x = MARGIN;
+};
+
 export interface RenderPdfOptions {
   probeAccuracy: (key: string, reading: number) => number;
   status: ReportStatus;
@@ -234,15 +404,24 @@ export const buildReportPdf = (
     bufferPages: true,
   });
 
-  doc.font("Helvetica-Bold").fontSize(20).fillColor("#000000").text("Water Quality Report");
-  doc.moveDown(0.2);
-  doc.font("Helvetica").fontSize(11).fillColor("#333333").text(
-    `${report.site.siteName}  Reporting Period: ${report.site.startDate} to ${report.site.endDate}`,
-  );
-  doc.moveDown(0.5);
-  doc.moveTo(MARGIN, doc.y).lineTo(MARGIN + CONTENT_WIDTH, doc.y).strokeColor("#333333").lineWidth(1)
-    .stroke();
-  doc.moveDown(0.4);
+  // Full-bleed masthead. The status is a pill up here rather than the last row of the metadata
+  // table: it is the one thing a reader looks for first, and it was previously the least
+  // prominent line on the page.
+  doc.rect(0, 0, PAGE_WIDTH, HEADER_HEIGHT).fill(INK);
+  doc.fillColor("#ffffff").font("Helvetica-Bold").fontSize(21)
+    .text("Water Quality Report", MARGIN, 30, { width: CONTENT_WIDTH - 150 });
+  doc.font("Helvetica").fontSize(10.5).fillColor("#b9c8d2")
+    .text(
+      `${report.site.siteName} · ${report.site.startDate} to ${report.site.endDate}`,
+      MARGIN,
+      60,
+      { width: CONTENT_WIDTH - 150 },
+    );
+  drawPill(doc, status, {
+    right: PAGE_WIDTH - MARGIN, top: 36, color: STATUS_COLORS[status], size: 10,
+  });
+  doc.x = MARGIN;
+  doc.y = HEADER_HEIGHT + 16;
 
   drawKeyValueTable(doc, [
     { label: "Coordinates", value: coordinatesStr(report.site) },
@@ -258,13 +437,9 @@ export const buildReportPdf = (
     { label: "Client / Contract", value: report.site.clientName },
     { label: "Report Date", value: report.site.reportDate },
     { label: "Prepared By", value: "Clean Earth Rovers" },
-    { label: "Status", value: status, color: STATUS_COLORS[status] },
   ]);
 
-  doc.moveDown(0.3);
-  doc.moveTo(MARGIN, doc.y).lineTo(MARGIN + CONTENT_WIDTH, doc.y).strokeColor("#333333").lineWidth(1)
-    .stroke();
-  doc.moveDown(0.6);
+  doc.moveDown(0.4);
 
   // 1. Summary
   sectionHeader(doc, "1. Summary");
@@ -278,14 +453,19 @@ export const buildReportPdf = (
 
   // 2. Parameter Data
   sectionHeader(doc, "2. Parameter Data");
+  // Numeric columns are right-aligned so decimal points line up: centered, "68425.00" and
+  // "550.35" in the same column read as unrelated magnitudes.
   const paramColumns: GridColumn[] = [
-    { header: "Parameter", width: 130 },
-    { header: "Site Baseline", width: 90, align: "center" },
-    { header: "Min", width: 52, align: "center" },
-    { header: "Max", width: 52, align: "center" },
-    { header: "Mean", width: 52, align: "center" },
-    { header: "Median", width: 55, align: "center" },
-    { header: "Flag", width: 73, align: "center" },
+    { header: "Parameter", width: 120 },
+    { header: "Site Baseline", width: 74, align: "center" },
+    { header: "Min", width: 44, align: "right" },
+    { header: "Max", width: 48, align: "right" },
+    { header: "Mean", width: 48, align: "right" },
+    { header: "Median", width: 48, align: "right" },
+    { header: "Out of range", width: 50, align: "center" },
+    // Wide enough for "Exceedance" on one line: the word wrapping mid-column was the first
+    // thing the eye caught in a table whose whole job is to be scanned.
+    { header: "Flag", width: 72, align: "center" },
   ];
   const paramFlags = report.parameters.map((p) => flagFor(p, probeAccuracy));
   const paramCells = report.parameters.map((p) => flagCellText(p, probeAccuracy));
@@ -301,19 +481,23 @@ export const buildReportPdf = (
       // scale, so no site-specific range would help.
       return isRelativeIndex(b) ? TURBIDITY_NO_BASELINE_TEXT : "Not established (site-specific)";
     })();
+    // A flag says only "this left the range at some point in 30 days". One bad reading in 1,382
+    // and a month-long offset produce the same word. The share says which.
+    const share = outOfRangeShare(p);
     return [
       b.label,
       baselineText,
-      p.min.toFixed(2),
-      p.max.toFixed(2),
-      p.mean.toFixed(2),
-      p.median.toFixed(2),
+      statValue(p.min),
+      statValue(p.max),
+      statValue(p.mean),
+      statValue(p.median),
+      share === null ? "—" : `${(share * 100).toFixed(0)}%`,
       paramCells[i],
     ];
   });
   drawGridTable(doc, paramColumns, paramRows, {
     cellColor: (rowIdx, colIdx) => (
-      colIdx === 6 && rowIdx >= 0 ? FLAG_COLORS[paramFlags[rowIdx]] : undefined
+      colIdx === 7 && rowIdx >= 0 ? FLAG_COLORS[paramFlags[rowIdx]] : undefined
     ),
   });
   doc.moveDown(0.15);
@@ -325,8 +509,11 @@ export const buildReportPdf = (
       + "out of range; its Min/Max/Mean/Median are shown for period-to-period comparison only. A "
       + "reading of 0 is a real reading."
     : "";
-  doc.font("Helvetica").fontSize(8).fillColor("#777777").text(
-    `Flag values: Normal, Elevated, Low, or Exceedance relative to the site baseline.${clarityFootnote}`,
+  doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
+    "Flag values: Normal, Elevated, Low, or Exceedance relative to the site baseline. Out of "
+    + "range is the share of the period's series buckets whose average sat outside that "
+    + "baseline — approximate, at bucket resolution, and shown because a flag alone cannot "
+    + `separate a single stray reading from a sustained offset.${clarityFootnote}`,
     { width: CONTENT_WIDTH },
   );
   // Provenance, because the Site Baseline column mixes two sources of different authority: a
@@ -338,7 +525,7 @@ export const buildReportPdf = (
     .filter((p) => p.baseline.baselineSource === "operator-threshold")
     .map((p) => p.baseline.label);
   if (operatorSourced.length > 0) {
-    doc.font("Helvetica").fontSize(8).fillColor("#777777").text(
+    doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
       `Site Baseline for ${operatorSourced.join(", ")} is this device's operator-set threshold `
       + "from the device registry, not a fixed reference range. Every other baseline above comes "
       + `from the Water Quality Metrics source-of-truth table for ${report.site.waterBodyType} `
@@ -347,12 +534,59 @@ export const buildReportPdf = (
     );
   }
 
-  // 3. Parameter Analysis
+  // 3. Parameter Analysis — one card per parameter: heading, flag, chart, prose. The chart is
+  // the section's reason for existing in this form; the same prose under a shared paragraph
+  // stack made every parameter look alike.
+  // The heading, its caption and the first card travel together: a section that opens with a
+  // title and 90 points of blank page reads as a rendering fault.
+  ensureSpace(doc, 150);
   sectionHeader(doc, "3. Parameter Analysis");
   if (narrative.parameterAnalysis.size > 0) {
+    doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
+      "Each chart plots the period's series bucket means, oldest to newest. The shaded band is "
+      + "the site baseline where one exists; the dots mark the plotted high and low.",
+      MARGIN,
+      doc.y,
+      { width: CONTENT_WIDTH },
+    );
+    doc.x = MARGIN;
+    doc.moveDown(0.5);
+
+    const byLabel = new Map(report.parameters.map((p) => [p.baseline.label, p]));
     [...narrative.parameterAnalysis].forEach(([label, text]) => {
-      bodyText(doc, `${label} — ${text}`);
-      doc.moveDown(0.25);
+      const p = byLabel.get(label);
+      const chartHeight = p && p.series && p.series.length >= 2 ? 40 : 0;
+      doc.font("Helvetica").fontSize(9.5);
+      const textHeight = doc.heightOfString(text, { width: CONTENT_WIDTH });
+      // Enough for the heading, the chart and the first two lines of prose -- the rest may flow
+      // onto the next page. Requiring the whole card left a third of page one blank whenever a
+      // long paragraph did not fit.
+      ensureSpace(doc, Math.min(textHeight, 26) + chartHeight + 34);
+
+      const top = doc.y;
+      doc.font("Helvetica-Bold").fontSize(10).fillColor(INK)
+        .text(label, MARGIN, top, { width: CONTENT_WIDTH - 130 });
+      if (p) {
+        drawPill(doc, flagCellText(p, probeAccuracy), {
+          right: MARGIN + CONTENT_WIDTH,
+          top: top - 2,
+          color: FLAG_COLORS[flagFor(p, probeAccuracy)],
+          size: 7,
+        });
+      }
+      doc.x = MARGIN;
+      doc.y = top + 16;
+
+      if (p && chartHeight > 0) {
+        drawSparkline(doc, p, {
+          x: MARGIN, y: doc.y, width: CONTENT_WIDTH - AXIS_GUTTER, height: chartHeight,
+        });
+        doc.y += chartHeight + 6;
+      }
+      doc.font("Helvetica").fontSize(9.5).fillColor("#22282c")
+        .text(text, MARGIN, doc.y, { width: CONTENT_WIDTH });
+      doc.x = MARGIN;
+      doc.moveDown(0.6);
     });
   } else {
     bodyText(doc, "All parameters held steady within the site baseline.");
@@ -365,12 +599,30 @@ export const buildReportPdf = (
   if (report.events.length > 0) {
     sectionHeader(doc, `${sectionNumbers.eventDetection}. Event Detection`);
     report.events.forEach((e: WQEvent, i: number) => {
-      ensureSpace(doc, 20);
-      doc.font("Helvetica-Bold").fontSize(10).fillColor("#000000").text(`Event ${i + 1}`);
-      bodyText(doc, `Type: ${e.type}`);
-      bodyText(doc, `Window: ${formatTs(e.windowStartMs)} to ${formatTs(e.windowEndMs)}`);
-      bodyText(doc, `Severity: ${e.severity}`);
-      doc.moveDown(0.15);
+      // Enough room for the heading, the window line and the first lines of the movements --
+      // "Event 1" alone at the foot of a page is the split this prevents.
+      ensureSpace(doc, 90);
+      const top = doc.y;
+      doc.font("Helvetica-Bold").fontSize(10).fillColor(INK)
+        .text(`Event ${i + 1} — ${e.type}`, MARGIN, top, { width: CONTENT_WIDTH - 130 });
+      drawPill(doc, e.severity, {
+        right: MARGIN + CONTENT_WIDTH,
+        top: top - 2,
+        color: SEVERITY_COLORS[e.severity],
+        size: 7,
+      });
+      doc.x = MARGIN;
+      doc.y = top + 16;
+      doc.font("Helvetica").fontSize(8.5).fillColor(MUTED)
+        .text(
+          `${formatTs(e.windowStartMs)} to ${formatTs(e.windowEndMs)}  ·  confidence `
+          + `${Math.round(e.confidence * 100)}%`,
+          MARGIN,
+          doc.y,
+          { width: CONTENT_WIDTH },
+        );
+      doc.x = MARGIN;
+      doc.moveDown(0.35);
       bodyText(doc, `Parameter movements: ${e.parameterMovements}`);
       doc.moveDown(0.15);
       bodyText(doc, `Interpretation: ${e.interpretation}`);
@@ -411,5 +663,6 @@ export const buildReportPdf = (
   doc.moveDown(0.15);
   bodyText(doc, `Stakeholder: ${narrative.recommendationsStakeholder}`);
 
+  drawFooters(doc, report);
   return doc;
 };

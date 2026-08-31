@@ -207,6 +207,54 @@ export interface ReportInput {
   dataQuality?: DataQualityCheck;
 }
 
+/**
+ * A value with its unit, or the bare value when the parameter has none.
+ *
+ * pH and the turbidity index have `unit: ""`, and every call site used to interpolate it
+ * unconditionally -- producing "8.90  against the 7.8-8.3  site baseline" in Section 3 and a
+ * trailing space on every event movement clause. Cosmetic in isolation, but these strings go
+ * into a customer deliverable.
+ */
+export const withUnit = (value: string, unit: string): string => (unit ? `${value} ${unit}` : value);
+
+/**
+ * Below this, a classification is too weak to assert -- `events.ts` downgrades the event's type
+ * to "Inconclusive", and `overallStatus` refuses to let it escalate the report past "Watch".
+ *
+ * It lives here rather than in events.ts because both of those consumers need it and types.ts is
+ * the module events.ts already imports; the reverse direction would be a cycle.
+ */
+export const CONFIDENCE_FLOOR = 0.5;
+
+/**
+ * Two decimals below 1,000, none above.
+ *
+ * Conductivity runs in the tens of thousands and pH in single digits. Two decimals on both
+ * overflowed the Parameter Data column ("68425.00" wrapped mid-number) and implied a precision
+ * seawater conductivity does not have. The threshold is about column width and honest
+ * significant figures -- nothing here is metric-aware.
+ */
+export const statValue = (v: number): string => (Math.abs(v) >= 1000 ? v.toFixed(0) : v.toFixed(2));
+
+/**
+ * Share of the reporting period a parameter spent outside its baseline, 0-1, or `null` when the
+ * question does not apply (no series, or no range to be outside of).
+ *
+ * Reported alongside the flag because a flag alone answers only "did this ever leave the range",
+ * and min/max make one bad reading in 1,382 look identical to a month-long offset. Resolution is
+ * the series bucket, not the reading: `buildReportInput` hands over bucket means, so this is
+ * "share of buckets whose mean sat outside baseline" and must be labelled as approximate rather
+ * than presented as exact time out of range.
+ */
+export const outOfRangeShare = (p: ParameterStats): number | null => {
+  const b = p.baseline;
+  if (isRelativeIndex(b) || !b.hasFixedBaseline || !p.series || p.series.length === 0) {
+    return null;
+  }
+  const outside = p.series.filter(([, v]) => v < b.baselineMin || v > b.baselineMax).length;
+  return outside / p.series.length;
+};
+
 /** probeAccuracy is injected rather than imported to keep this module free of the
  * reference-data import cycle. */
 export const flagFor = (
@@ -268,13 +316,18 @@ export const overallStatus = (
   if (report.parameters.some((p) => flagOf(p) === "Exceedance")) {
     return "Action Required";
   }
-  if (report.events.some((e) => e.severity === "High")) {
+  // Severity alone used to escalate here, and severity is computed from duration alone. A
+  // 30%-confidence window that events.ts had already downgraded to "Inconclusive" therefore put
+  // "Action Required" on the cover and made narrative.ts recommend notifying an authority -- the
+  // report telling someone to escalate on evidence the same report calls too weak to name. An
+  // event below the floor can still reach "Watch" below; it just cannot demand action.
+  if (report.events.some((e) => e.severity === "High" && e.confidence >= CONFIDENCE_FLOOR)) {
     return "Action Required";
   }
   if (report.parameters.some((p) => ["Elevated", "Low"].includes(flagOf(p)))) {
     return "Watch";
   }
-  if (report.events.some((e) => ["Low", "Moderate"].includes(e.severity))) {
+  if (report.events.length > 0) {
     return "Watch";
   }
   return "Normal";

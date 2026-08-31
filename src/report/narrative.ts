@@ -11,7 +11,9 @@
  */
 
 import type { ParameterStats, ReportInput, ReportStatus } from "./types";
-import { flagFor, heldSteady, isRelativeIndex } from "./types";
+import {
+  flagFor, heldSteady, isRelativeIndex, outOfRangeShare, statValue, withUnit,
+} from "./types";
 import { clarityBandFor, TURBIDITY_SCALE_CAVEAT } from "./referenceRanges";
 
 export interface NarrativeSections {
@@ -135,18 +137,34 @@ const paramAnalysisLine = (
     text = `${sentenceCase(phrase)}. No baseline is established for this parameter -- reported `
       + "for reference only, not flagged against a range.";
   } else if (flag === "Normal") {
-    text = `${sentenceCase(phrase)}, remaining within the ${b.baselineMin}-${b.baselineMax} ${b.unit} ${baselineTerm}.`;
+    text = `${sentenceCase(phrase)}, remaining within the `
+      + `${withUnit(`${b.baselineMin}-${b.baselineMax}`, b.unit)} ${baselineTerm}.`;
   } else {
-    const above = (flag === "Elevated" || flag === "Exceedance") && p.max > b.baselineMax;
-    const direction = above ? "above" : "below";
-    const extreme = above ? p.max : p.min;
-    const edge = above ? b.baselineMax : b.baselineMin;
     const width = b.baselineMax - b.baselineMin;
-    const magnitude = magnitudeWord(extreme, edge, width);
+    // BOTH directions, not the one the flag happened to be derived from. This used to pick a
+    // single side -- so dissolved oxygen printed its 23.32 mg/L peak and never mentioned the
+    // 1.72 mg/L minimum in the same period, which is the near-hypoxic number a reader would
+    // actually act on. A parameter that left the range at both ends says so at both ends.
+    const excursions = [
+      p.max > b.baselineMax
+        ? `${magnitudeWord(p.max, b.baselineMax, width)} above it to `
+          + `${withUnit(statValue(p.max), b.unit)}`
+        : null,
+      p.min < b.baselineMin
+        ? `${magnitudeWord(p.min, b.baselineMin, width)} below it to `
+          + `${withUnit(statValue(p.min), b.unit)}`
+        : null,
+    ].filter((clause): clause is string => clause !== null);
     const article = "aeiou".includes(flag.toLowerCase()[0]) ? "an" : "a";
-    text = `${sentenceCase(phrase)}; moved ${magnitude} ${direction} baseline, recording ${article} `
-      + `${flag.toLowerCase()} reading of ${extreme.toFixed(2)} ${b.unit} against the `
-      + `${b.baselineMin}-${b.baselineMax} ${b.unit} ${baselineTerm}.`;
+    text = `${sentenceCase(phrase)}; against the `
+      + `${withUnit(`${b.baselineMin}-${b.baselineMax}`, b.unit)} ${baselineTerm} it moved `
+      + `${excursions.join(" and ")}, recorded as ${article} ${flag.toLowerCase()}.`;
+    // How much of the period, not just whether it ever happened: min/max alone make one bad
+    // reading in 1,382 read exactly like a month-long offset.
+    const share = outOfRangeShare(p);
+    if (share !== null) {
+      text += ` Outside baseline in ${(share * 100).toFixed(0)}% of the period's series buckets.`;
+    }
     const excursionTime = firstExcursionTimestamp(p);
     if (excursionTime) {
       text += ` First left baseline at ${excursionTime}.`;
