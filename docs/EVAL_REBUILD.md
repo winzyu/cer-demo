@@ -49,6 +49,7 @@ retrieval existing in this system. A three-sample class mean has a standard erro
 | Shipping generator is `gpt-oss-120b` | **Settled 2026-08-31 — final production model.** Cost-cleared, §4. Phase 3 is a single-model baseline, not a sweep. |
 | The `restore-pgvector` work is dropped | **Settled 2026-08-31.** Not pursued. The tag `wip-restore-pgvector-2026-08-31` stays as the record — it costs nothing and matches the archive-don't-delete pattern used throughout. Do not spend time on it. |
 | Fixture-set sizing: two-wave, wave 1 = 88 turns | **Settled 2026-08-31**, §2 |
+| Judge is `deepseek-v4-flash-0731` on Fireworks | **Settled 2026-08-31.** Highest measured human agreement, cross-family, already wired and priced. §3a. |
 | Judge must not be in the `gpt-oss` family | **Settled** |
 | Fixture author, judge, and generator must be three different families | **Settled** |
 
@@ -174,7 +175,7 @@ against the new chunk set instead of re-authored from nothing. Do not skip that 
 | role | model | why |
 |---|---|---|
 | **Fixture author** | Claude (this tooling, human-supervised) | One-time, non-reproducible work where a human checks every output. A CLI agent is the right surface. |
-| **Judge** | **Gemini via API**, or `minimax-m3` / `deepseek-v4-flash-0731` on Fireworks | Must not be Claude (it authored the fixtures) and must not be gpt-oss (it generates). |
+| **Judge** | **`deepseek-v4-flash-0731`** on Fireworks — decided, §3a | Must not be Claude (it authored the fixtures) and must not be gpt-oss (it generates). |
 | **Generator** | `gpt-oss-120b` | The product. |
 
 **The judge must be called through an API, never through a CLI.** A judge is an instrument: it
@@ -189,32 +190,53 @@ OpenAI-compatible and would need `@anthropic-ai/sdk` plus a small adapter in `ju
 
 Add a `CHAT_PRICES` entry for whatever judge is chosen or the budget line prints blank.
 
-### 3a. Judge selection — status 2026-08-31
+### 3a. Judge — DECIDED 2026-08-31: `deepseek-v4-flash-0731`
 
-**Direction given: Gemini.** Gemini is already the plan's first-listed judge and is compatible —
-**via its OpenAI-compatible API endpoint, not via the Gemini CLI**, for the reasons stated above.
-Claude Code is not available for this role: §1 settles that fixture author, judge, and generator
-must be three different families, and Claude authors the fixtures.
+**The evidence.** Judge-vs-human on the 24 comparable rows of `eval/grading/warm/scores.csv`
+(12 of 36 excluded as stale — the arm was re-captured after grading), computed from the four
+ledgers in `data/results/judge/`. No API calls; reproduce with `calibrate()` over each ledger.
 
-**Not yet wired.** `scripts/judge.ts:272-278` hardcodes the Fireworks key and base URL. Pointing at
-Gemini needs a base-URL/key pair selected from the judge model id — small, but it is Phase 2b work,
-and there is **no agreement evidence for Gemini at all**. Getting some costs one real API pass.
+| candidate | correctness κ | ungrounded κ | citations κ | signed bias | family |
+|---|---:|---:|---:|---:|---|
+| **`deepseek-v4-flash-0731`** | **0.937** | **0.577** | **0.440** | −0.042 | cross |
+| `nemotron-lightning-3p5-30b-a3b` | 0.898 | 1.000 (n=11) | 0.250 | −0.067 | cross |
+| `gpt-oss-120b` | 0.874 | 0.320 | 0.045 | −0.083 | **same as generator** |
+| `minimax-m3` | 0.747 | 0.459 | 0.000 | −0.083 | cross |
 
-**The standing measurement, for whatever Gemini is compared against.** Judge-vs-human on the 24
-comparable rows of `eval/grading/warm/scores.csv` (12 of 36 excluded as stale — the arm was
-re-captured after grading), from the four ledgers in `data/results/judge/`:
+The only candidate clearing κ 0.70 on all three dimensions. Cross-family — not Claude (fixture
+author), not gpt-oss (generator), so §1's three-families rule is met in intent and not only in
+letter. Already reachable through the existing Fireworks client and already priced in `prices.ts`,
+so Phase 2b is a one-line change to `DEFAULT_JUDGE_MODEL` (`runner.ts:72`, currently
+`gpt-oss-120b`) rather than new transport code.
 
-| candidate | correctness κ | ungrounded κ | citations κ | family | 83-call pass |
-|---|---:|---:|---:|---|---:|
-| `deepseek-v4-flash-0731` | **0.937** | **0.577** | **0.440** | cross | $0.130 |
-| `nemotron-lightning-3p5-30b-a3b` | 0.898 | 1.000 (n=11) | 0.250 | cross | $0.054 |
-| `gpt-oss-120b` | 0.874 | 0.320 | 0.045 | same as generator | $0.088 |
-| `minimax-m3` | 0.747 | 0.459 | 0.000 | cross | $0.130 |
+**Gemini was evaluated and not chosen.** It is a fine judge on paper and remains the fallback if
+deepseek fails re-calibration, but it needs base-URL/key selection at `scripts/judge.ts:272-278`,
+a `CHAT_PRICES` entry, and one paid pass to get any agreement number at all — against a candidate
+that already has one. The AI Studio free tier was considered and rejected on two grounds: Google no
+longer publishes free-tier RPM/TPM/RPD (they are per-account in AI Studio, so the workload cannot
+be planned against them), and free-tier content is used to improve Google products, which would
+send the hand-authored fixture set to a third party. Neither risk buys anything — see §4a, the
+whole project runs at $8–11 on deepseek.
 
-`deepseek-v4-flash-0731` is the only candidate clearing κ 0.70 on all three dimensions, and it is
-the fallback if Gemini does not. **Both bars are §2's exit criterion 2 (κ ≥ 0.70 on correctness),
-re-measured in Phase 2c against the new 30-row stratified set** — 24 rows on 6 fixtures calibrates
-an instrument, it does not conclude anything.
+**A CLI judge is out, permanently.** Gemini CLI, Claude Code, or any other: no `temperature: 0`, no
+`response_format` schema, no per-call token accounting for `JudgeRecord`, no pinned model id, and —
+worst — a CLI agent's working directory is this repo, so it can read *this file*, which states the
+thresholds and the expected per-class results. That is not a judge, it is a recital.
+
+**Two rules pre-registered now, before any number exists.**
+
+1. **Signed bias is reported alongside κ, always.** κ is symmetric and hides a judge sitting a
+   uniform point off in either direction. On current evidence every candidate is slightly *harsher*
+   than the human, not more lenient — the opposite of the usual concern — but n=24 and the check
+   stays two-sided.
+2. **No judge swapping after seeing results.** If a second judge is ever run alongside, the primary
+   score stands, the disagreement *rate* is reported next to every result, and turns where the two
+   differ by 2 go into the human sample. Picking the judge whose numbers look better is not a
+   measurement.
+
+**This is provisional until Phase 2c.** 24 rows on 6 fixtures calibrates an instrument; it does not
+conclude anything. §2's exit criterion 2 (κ ≥ 0.70 on correctness) is re-measured against the new
+30-row stratified sample, and that is the number that decides whether this judge survives.
 
 Two smaller facts from the same comparison: the `deepseek` ledger is 82 rows, not 83 — one
 `ungrounded` call on `firestore-direct | deepmanual-stabilization-criteria | turn 2` was never made.
@@ -241,15 +263,53 @@ completion tokens**. Below that, 120b is *cheaper* (at 400 tokens: $0.000421 vs 
 measured mean is 740 — six percent past the crossover. `max_tokens` moves this number more than
 the model does, and shorter answers independently help groundedness.
 
-**Judge cost is input-dominated** — ~5K prompt tokens per call against ~500 completion. Input rate
-decides a judge's bill, not output rate. A full pass runs ~$0.30 on `gpt-oss-120b`, ~$4 on a
-mid-tier frontier model, ~$10 on a top-tier one. Always run `npm run judge -- --dry-run` first.
+**Judge cost is input-dominated** — the prompt dwarfs the completion on every dimension, so the
+input rate decides a judge's bill. Always run `npm run judge -- --dry-run` first. Sized properly
+in §4a.
 
 **Two caveats that would invalidate the generator figures.** Completion length is assumed to carry
 from 20b to 120b and will not — 120b has its own reasoning budget, and break-even sits only 6%
 below the assumed length. Cache hit rate is likewise assumed to carry; cold (`--cache-rate=0`),
 120b is 2.1× worse. **One real capture at ~$0.02–0.05 resolves both** and simultaneously gives the
 first honest read on whether 120b moves the 53% ungrounded number. Do that early.
+
+---
+
+## 4a. Judge volume and cost — sized 2026-08-31
+
+Per-call means measured over `data/results/judge/warm.jsonl` (482 calls, 198 turns), not estimated:
+
+| dimension | calls/turn | prompt | completion |
+|---|---:|---:|---:|
+| correctness | 1.00 | 4,939 | 503 |
+| ungrounded | 1.00 | **11,648** | 940 |
+| citations | 0.43 | 11,447 | 681 |
+| **total per turn** | **2.43** | **21,555** | **1,739** |
+
+Wave 1 is six passes — gold-context 120b, the 20b comparison, and four retrieval arms (pgvector is
+dropped, §1). 528 turns, ~1,285 calls, 11.4M prompt tokens.
+
+| scope | calls | deepseek-v4 | Gemini 2.5 Flash | gpt-oss-120b |
+|---|---:|---:|---:|---:|
+| one 88-turn pass | 214 | $0.52 | $0.95 | $0.38 |
+| wave 1 — 6 passes | 1,285 | **$3.11** | $5.71 | $2.26 |
+| wave 1 + one full redo | 2,570 | $6.22 | $11.42 | $4.52 |
+| + wave 2, whole project | 4,498 | **$10.88** | $19.98 | $7.90 |
+
+**Cost does not constrain any judge decision.** The spread between the cheapest and the most
+expensive credible option, across the entire project, is about $12.
+
+**§2a is a bigger cost lever than the model choice.** Moving groundedness into Tier 1 removes the
+11,648-token `ungrounded` call — 54% of all prompt tokens:
+
+| after 2a | calls/turn | wave 1 (deepseek) | whole project |
+|---|---:|---:|---:|
+| drop `ungrounded` | 1.43 | $1.43 | $5.00 |
+| correctness only | 1.00 | $0.75 | $2.62 |
+
+That is a 4x reduction on top of an already trivial bill, which is not the reason to do 2a — the
+reason is that the instrument cannot currently read as fine as the 2% threshold requires — but it
+does mean there is no cost argument for keeping groundedness in the paid tier.
 
 ---
 
