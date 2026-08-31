@@ -220,3 +220,60 @@ describe("detectEvents — algal bloom", () => {
     expect(events.every((e) => e.type !== "Algal bloom")).toBe(true);
   });
 });
+
+describe("detectEvents — a window covering the whole period", () => {
+  /** pH sitting below baseline for every point in the period, as the Algalita Pod's does
+   * against a seawater 7.8-8.3 range. */
+  const persistentReport = (): ReportInput => report([
+    statsFor(
+      fixedBaseline("ph", "pH", "", 7.8, 8.3),
+      [0, 4, 8, 12, 16, 20, 24].map((h): [number, number] => [at(h), 7.0]),
+    ),
+  ]);
+
+  it("caps severity at Moderate instead of calling the whole period a High-severity event", () => {
+    const [event] = detectEvents(persistentReport());
+    expect(event.severity).toBe("Moderate");
+  });
+
+  it("says the readings never returned to baseline, and points at the baseline itself", () => {
+    const [event] = detectEvents(persistentReport());
+    expect(event.interpretation).toContain("sustained offset spanning the whole reporting period");
+    expect(event.interpretation).toContain("baseline that does not fit this site");
+  });
+
+  it("still calls a short excursion a discrete event", () => {
+    const short = report([
+      statsFor(
+        fixedBaseline("ph", "pH", "", 7.8, 8.3),
+        [0, 4, 8, 12, 16, 20, 24].map((h): [number, number] => [at(h), h >= 4 && h <= 8 ? 7.0 : 8.0]),
+      ),
+    ]);
+    const [event] = detectEvents(short);
+    expect(event.interpretation).not.toContain("sustained offset spanning");
+  });
+});
+
+describe("detectEvents — movement clauses", () => {
+  it("names the bucket-mean peak and the period extreme, so Section 4 cannot contradict Section 2", () => {
+    const stats = statsFor(
+      fixedBaseline("dissolved_oxygen", "Dissolved Oxygen (mg/L)", "mg/L", 5, 8),
+      [0, 1, 2, 3, 4].map((h): [number, number] => [at(h), 11.91]),
+    );
+    // The table's Max is an exact per-bucket extreme; the series carries bucket means.
+    stats.max = 23.32;
+    const [event] = detectEvents(report([stats]));
+    expect(event.parameterMovements).toContain("11.91 mg/L on bucket averages");
+    expect(event.parameterMovements).toContain("period max 23.32 mg/L");
+  });
+
+  it("leaves no trailing space on a parameter with no unit", () => {
+    const stats = statsFor(
+      fixedBaseline("ph", "pH", "", 7.8, 8.3),
+      [0, 1, 2, 3, 4].map((h): [number, number] => [at(h), 6.18]),
+    );
+    const [event] = detectEvents(report([stats]));
+    expect(event.parameterMovements).toContain("fell to 6.18 on bucket averages");
+    expect(event.parameterMovements).not.toMatch(/ {2}/);
+  });
+});

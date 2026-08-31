@@ -135,6 +135,34 @@ describe("deterministicNarrative — parameter analysis", () => {
     expect(parameterAnalysis.get("pH")).toContain("baseline");
   });
 
+  it("names BOTH excursion directions when a parameter left the range at each end", () => {
+    // The Algalita Pod's dissolved oxygen: a 23.32 mg/L peak and a 1.72 mg/L trough in the same
+    // 30 days. The old wording printed the peak only, dropping the near-hypoxic number a reader
+    // would actually act on.
+    const do_ = param(fixedBaseline("dissolved_oxygen", "Dissolved Oxygen (mg/L)", "mg/L", 5, 8), {
+      min: 1.72, max: 23.32, mean: 8.78, median: 8.68, pattern: "unknown",
+    });
+    const text = deterministicNarrative(report([do_]), noAccuracy, "Action Required")
+      .parameterAnalysis.get("Dissolved Oxygen (mg/L)")!;
+    expect(text).toContain("above it to 23.32 mg/L");
+    expect(text).toContain("below it to 1.72 mg/L");
+  });
+
+  it("reports how much of the period a parameter spent outside baseline", () => {
+    const ph = param(fixedBaseline("ph", "pH", "", 6.5, 8.5), {
+      min: 6.0, max: 8.0, series: hourly([6.0, 6.2, 7.0, 7.0]), pattern: "unknown",
+    });
+    const text = deterministicNarrative(report([ph]), noAccuracy, "Watch").parameterAnalysis.get("pH")!;
+    expect(text).toContain("50% of the period");
+  });
+
+  it("prints no stray space around a value whose parameter has no unit", () => {
+    const ph = param(fixedBaseline("ph", "pH", "", 6.5, 8.5), { max: 9.0, pattern: "unknown" });
+    const text = deterministicNarrative(report([ph]), noAccuracy, "Watch").parameterAnalysis.get("pH")!;
+    expect(text).toContain("above it to 9.00,");
+    expect(text).not.toMatch(/ {2}/);
+  });
+
   it("gives temperature its own N/A explanation instead of comparing it to a range", () => {
     const temp = param(noFixedBaseline("temperature", "Temperature (°F)", "°F"), { min: 60, max: 90, pattern: "unknown" });
     const { parameterAnalysis } = deterministicNarrative(report([temp]), noAccuracy, "Normal");

@@ -641,6 +641,29 @@ answers complete; every sensor answer shows which pod, which window, and how fre
 > `narrative`, `renderPdf`), reached through the `generate_report` tool and gated on **`REPORT_TOOL`,
 > default off** — same pinned-prompt reason `SENSOR_TOOL` is. Still open in this phase: document
 > upload/delete, and §4 event detection behind ◆G4.
+>
+> **Amended 2026-08-28, after the first 30-day report off live Algalita data** (rendered with
+> `npm run report:render`, which drives the pipeline with no server and no LLM). Five decisions
+> the report layer now carries, all of them visible in that PDF before they were fixed:
+>
+> - **Severity no longer escalates alone.** `overallStatus` requires `confidence >= 0.5`
+>   (`CONFIDENCE_FLOOR`, types.ts) before a High-severity event can reach "Action Required".
+>   Severity is computed from duration only, so a 30%-confidence window already downgraded to
+>   "Inconclusive" was putting "Action Required" on the cover and making the recommendations
+>   tell the reader to notify an authority.
+> - **A window covering ≥80% of the period is a persistent offset, not an event.** It is capped
+>   at Moderate and worded as a baseline that may not fit the site — the honest reading of pH
+>   averaging 7.00 for 30 days against a seawater 7.8–8.3 range.
+> - **Section 2 gains an "Out of range" column** (`outOfRangeShare`): the share of series buckets
+>   outside baseline. A flag alone cannot separate one stray reading from a month-long offset,
+>   and on this pod it separated ORP at 3% from pH at 100%.
+> - **Section 3 reports both excursion directions.** It printed only one, so dissolved oxygen
+>   showed its 23.32 mg/L peak and hid the 1.72 mg/L trough.
+> - **Section 4 movement clauses name their basis** — bucket-mean peak *and* the period extreme
+>   — because the two sections were printing different numbers for the same parameter.
+>
+> The renderer itself was reworked at the same time (masthead with a status pill, per-parameter
+> sparkline with the baseline band shaded, page footers). No new dependency: it is still pdfkit.
 
 - ~~**Faulty / erroneous sensor-data handling**~~ **— built.** Per-metric physical-plausibility
   rails in `src/devices/plausibility.ts` catch the probe rails the hardware's own error flags miss

@@ -22,10 +22,27 @@
 import type {
   ParameterStats, ReportInput, WQEvent, EventType, Severity,
 } from "./types";
-import { isRelativeIndex } from "./types";
+import {
+  CONFIDENCE_FLOOR, isRelativeIndex, statValue, withUnit,
+} from "./types";
 
 const MIN_EVENT_DURATION_MS = 60 * 60_000; // 1 hour
-export const CONFIDENCE_FLOOR_FOR_CLASSIFICATION = 0.5;
+/** Re-exported under its original name: the constant moved to types.ts, which `overallStatus`
+ * needs it in too (importing events.ts from there would be a cycle). */
+export const CONFIDENCE_FLOOR_FOR_CLASSIFICATION = CONFIDENCE_FLOOR;
+
+/**
+ * A window covering at least this share of the reporting period is reported as a persistent
+ * offset rather than as a discrete event.
+ *
+ * Not a detection change -- the window is still found, classified and printed. What changes is
+ * the wording, because "the excursion lasted 720.0 hours" over a 30-day report is not an event
+ * anyone can investigate; it is the whole period sitting off-range, which on the Algalita Pod
+ * meant a pH mean of 7.00 against a seawater baseline of 7.8-8.3. The likelier cause is a
+ * baseline that does not fit the site, and the report has to say so rather than describe a
+ * month-long pollution incident.
+ */
+const PERSISTENT_WINDOW_SHARE = 0.8;
 
 type Window = [number, number]; // [startMs, endMs]
 
@@ -318,8 +335,9 @@ const detectAlgalBloom = (report: ReportInput): WQEvent | null => {
     windowEndMs: dayEnd,
     severity: "Moderate",
     parameterMovements:
-      `Dissolved oxygen swung from ${minV.toFixed(2)} to ${maxV.toFixed(2)} ${b.unit} `
-      + `within a single day (baseline ${b.baselineMin}-${b.baselineMax} ${b.unit})${
+      `Dissolved oxygen swung from ${minV.toFixed(2)} to `
+      + `${withUnit(maxV.toFixed(2), b.unit)} within a single day (baseline `
+      + `${withUnit(`${b.baselineMin}-${b.baselineMax}`, b.unit)})${
         phConfirms ? "; pH showed a matching in-phase swing" : ""}`,
     interpretation:
       "Dissolved oxygen supersaturated at one point in the day and crashed below baseline "
@@ -401,12 +419,22 @@ const movementsIn = (
       return acc;
     }
 
+    // Both numbers, and what each one is. `windowVals` are series bucket means, so the peak here
+    // is smaller than Section 2's Min/Max, which are exact per-bucket extremes over the whole
+    // period -- printing the bucket-mean peak alone put "rose to 11.91 mg/L" in Section 4 next to
+    // a table saying 23.32 mg/L, with nothing in the document explaining the difference.
     if (avg > b.baselineMax) {
       acc.moved[b.key] = "up";
-      acc.movementDesc.push(`${b.label} rose to ${Math.max(...windowVals).toFixed(2)} ${b.unit}`);
+      acc.movementDesc.push(
+        `${b.label} rose to ${withUnit(statValue(Math.max(...windowVals)), b.unit)} on bucket `
+        + `averages (period max ${withUnit(statValue(p.max), b.unit)})`,
+      );
     } else if (avg < b.baselineMin) {
       acc.moved[b.key] = "down";
-      acc.movementDesc.push(`${b.label} fell to ${Math.min(...windowVals).toFixed(2)} ${b.unit}`);
+      acc.movementDesc.push(
+        `${b.label} fell to ${withUnit(statValue(Math.min(...windowVals)), b.unit)} on bucket `
+        + `averages (period min ${withUnit(statValue(p.min), b.unit)})`,
+      );
     }
     return acc;
   }, { moved: {}, movementDesc: [] });
@@ -414,7 +442,11 @@ const movementsIn = (
 /** Builds one classified WQEvent for a merged candidate window, or null if nothing inside it
  * actually cleared any parameter's baseline (a merged window can outlive the excursion that
  * produced it once other parameters' windows are folded in). */
-const eventForWindow = (parameters: ParameterStats[], window: Window): WQEvent | null => {
+const eventForWindow = (
+  parameters: ParameterStats[],
+  window: Window,
+  periodMs: number,
+): WQEvent | null => {
   const [wStart, wEnd] = window;
   const { moved, movementDesc } = movementsIn(parameters, window);
   if (Object.keys(moved).length === 0) {
@@ -432,14 +464,27 @@ const eventForWindow = (parameters: ParameterStats[], window: Window): WQEvent |
   }
 
   const durationHrs = (wEnd - wStart) / 3_600_000;
+  const persistent = periodMs > 0 && (wEnd - wStart) / periodMs >= PERSISTENT_WINDOW_SHARE;
   const severity: Severity = (() => {
+    // A persistent offset is capped: duration is what pushes an event to High, and a window
+    // covering the whole report is long by definition -- it would otherwise be the most severe
+    // finding in every report where the baseline simply does not fit the site.
+    if (persistent) return "Moderate";
     if (durationHrs > 12) return "High";
     if (durationHrs > 3) return "Moderate";
     return "Low";
   })();
-  const departureClause = durationHrs > 1
-    ? "a step departure from the baseline rather than normal variation"
-    : "a brief excursion, borderline against normal variation";
+  const departureClause = (() => {
+    if (persistent) {
+      return "a sustained offset spanning the whole reporting period rather than a discrete "
+        + "event -- readings that never return to baseline point at a baseline that does not fit "
+        + "this site (check the water body type and the operator thresholds in the header) at "
+        + "least as strongly as they point at a month-long incident";
+    }
+    return durationHrs > 1
+      ? "a step departure from the baseline rather than normal variation"
+      : "a brief excursion, borderline against normal variation";
+  })();
 
   return {
     type: eventType,
@@ -450,6 +495,10 @@ const eventForWindow = (parameters: ParameterStats[], window: Window): WQEvent |
     interpretation:
       `${rationale} The excursion lasted ${durationHrs.toFixed(1)} hours, read here as `
       + `${departureClause}. Classification confidence: ${Math.round(confidence * 100)}%.${
+        confidence < CONFIDENCE_FLOOR
+          ? " Below the confidence floor for a named cause, so this event does not on its own "
+            + "raise the report to Action Required."
+          : ""}${
         confidence < 0.6 ? " Treat as tentative pending grab-sample confirmation." : ""}`,
     followUp: confidence < 0.6 ? "Grab sample" : "Notify stakeholder",
     confidence,
@@ -477,8 +526,14 @@ export const detectEvents = (report: ReportInput): WQEvent[] => {
       return acc;
     }, []);
 
+  // The reporting period as the series actually covers it -- the site's start/end dates are
+  // day-resolution strings, and this only has to be good enough to tell "most of the report"
+  // from "an afternoon".
+  const allTimes = report.parameters.flatMap((p) => (p.series ?? []).map(([t]) => t));
+  const periodMs = allTimes.length > 0 ? Math.max(...allTimes) - Math.min(...allTimes) : 0;
+
   const events = merged
-    .map((window) => eventForWindow(report.parameters, window))
+    .map((window) => eventForWindow(report.parameters, window, periodMs))
     .filter((e): e is WQEvent => e !== null);
 
   return algalBloom ? [...events, algalBloom] : events;

@@ -1,6 +1,7 @@
 import PDFDocument from "pdfkit";
 import {
-  buildReportPdf, resolveSectionNumbers, drawGridTable, drawKeyValueTable, flagCellText, MARGIN,
+  buildReportPdf, resolveSectionNumbers, drawGridTable, drawKeyValueTable, drawSparkline,
+  flagCellText, MARGIN,
 } from "../../src/report/renderPdf";
 import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent, DataQualityCheck,
@@ -322,5 +323,54 @@ describe("drawKeyValueTable / drawGridTable — text cursor reset", () => {
     // Pre-fix this was ~MARGIN + 130 (the Flag column's x), not the margin itself -- a value
     // greater than MARGIN here means the next section will render squeezed again.
     expect(doc.x).toBe(MARGIN);
+  });
+});
+
+/**
+ * The Section 3 sparkline. Its pixels cannot be asserted on from Jest (see this file's
+ * docstring on text extraction), so what is pinned here is the contract the surrounding layout
+ * depends on: whether it drew anything, and that it hands the cursor back untouched. Getting
+ * the second one wrong does not throw -- it silently opens a gap between every chart and its
+ * paragraph, which is how it was caught.
+ */
+describe("drawSparkline", () => {
+  const newDoc = (): PDFKit.PDFDocument => new PDFDocument({
+    size: "LETTER",
+    margins: {
+      top: MARGIN, bottom: MARGIN, left: MARGIN, right: MARGIN,
+    },
+  });
+
+  const box = {
+    x: MARGIN, y: 200, width: 400, height: 40,
+  };
+
+  const withSeries = (series: Array<[number, number]>): ParameterStats => ({
+    ...param, series,
+  });
+
+  it("draws nothing for a parameter with no series", () => {
+    expect(drawSparkline(newDoc(), param, box)).toBe(false);
+  });
+
+  it("draws nothing for a single point -- a one-point trend line would be invented", () => {
+    expect(drawSparkline(newDoc(), withSeries([[0, 7.1]]), box)).toBe(false);
+  });
+
+  it("draws a line once there are two points", () => {
+    expect(drawSparkline(newDoc(), withSeries([[0, 7.1], [3_600_000, 7.4]]), box)).toBe(true);
+  });
+
+  it("leaves the cursor where it found it, so the caller's layout arithmetic holds", () => {
+    const doc = newDoc();
+    doc.y = box.y;
+    drawSparkline(doc, withSeries([[0, 7.1], [3_600_000, 7.4], [7_200_000, 7.2]]), box);
+    expect(doc.x).toBe(MARGIN);
+    expect(doc.y).toBe(box.y);
+  });
+
+  it("renders a flat series without dividing by a zero range", () => {
+    const doc = newDoc();
+    expect(drawSparkline(doc, withSeries([[0, 7.2], [3_600_000, 7.2]]), box)).toBe(true);
   });
 });

@@ -1,5 +1,5 @@
 import {
-  flagFor, heldSteady, overallStatus, coordinatesStr,
+  flagFor, heldSteady, overallStatus, coordinatesStr, outOfRangeShare, withUnit, statValue,
 } from "../../src/report/types";
 import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent,
@@ -162,8 +162,17 @@ describe("overallStatus", () => {
     expect(overallStatus(report({ parameters: [param({ max: 9.0 })] }), noAccuracy)).toBe("Action Required");
   });
 
-  it("is Action Required when any event is High severity, even with clean parameters", () => {
-    expect(overallStatus(report({ events: [event({ severity: "High" })] }), noAccuracy)).toBe("Action Required");
+  it("is Action Required when a confident High-severity event lands, even with clean parameters", () => {
+    const e = event({ severity: "High", confidence: 0.7 });
+    expect(overallStatus(report({ events: [e] }), noAccuracy)).toBe("Action Required");
+  });
+
+  it("keeps a High-severity event below the confidence floor at Watch", () => {
+    // Severity is computed from duration alone, so a long window classified "Inconclusive" at
+    // 30% confidence used to put "Action Required" on the cover and make narrative.ts recommend
+    // notifying an authority -- escalation on evidence the same report calls too weak to name.
+    const e = event({ severity: "High", confidence: 0.3, type: "Inconclusive" });
+    expect(overallStatus(report({ events: [e] }), noAccuracy)).toBe("Watch");
   });
 
   it("is Watch when a parameter is Elevated or Low but nothing is a full Exceedance", () => {
@@ -216,5 +225,41 @@ describe("coordinatesStr", () => {
       latitude: 33.7496725, longitude: -118.11551953, locationName: "Seal Beach CA",
     } as SiteMetadata;
     expect(coordinatesStr(site)).toBe("33.7497° N, 118.1155° W  (Seal Beach CA)");
+  });
+});
+
+describe("outOfRangeShare", () => {
+  const hourly = (values: number[]): Array<[number, number]> => (
+    values.map((v, i): [number, number] => [i * 3_600_000, v])
+  );
+
+  it("is the share of series points sitting outside the baseline", () => {
+    // The distinction the Flag column cannot draw on its own: one stray point and a sustained
+    // offset both read "Exceedance".
+    const p = param({ series: hourly([7, 7, 7, 9.5]) });
+    expect(outOfRangeShare(p)).toBeCloseTo(0.25);
+  });
+
+  it("is 1 when every point is outside", () => {
+    expect(outOfRangeShare(param({ series: hourly([9, 9.5]) }))).toBe(1);
+  });
+
+  it("is null without a series, and null for a parameter with no range to be outside of", () => {
+    expect(outOfRangeShare(param())).toBeNull();
+    expect(outOfRangeShare(param({
+      baseline: turbidityBaseline(), series: hourly([900, 2_000]),
+    }))).toBeNull();
+  });
+});
+
+describe("withUnit / statValue", () => {
+  it("omits the space for a parameter with no unit", () => {
+    expect(withUnit("8.90", "")).toBe("8.90");
+    expect(withUnit("8.90", "mg/L")).toBe("8.90 mg/L");
+  });
+
+  it("drops the decimals above 1,000", () => {
+    expect(statValue(7.0499)).toBe("7.05");
+    expect(statValue(68_425.0001)).toBe("68425");
   });
 });
