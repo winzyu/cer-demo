@@ -44,17 +44,18 @@ Two things to keep straight about this track:
 
 - It deliberately restored a **dev-only** pgvector sidecar as the legacy-parity baseline — a measuring
   stick, not a reversal of ◆G1. It never entered the deployed path.
-  **Executed as archival on 2026-08-19** — the *evidence* (transcripts, scores, the `pgvector-rag`
-  cost scenario) is what makes ◆G7 auditable later and stays; the *runtime code* (adapter, seeder,
-  schema, compose file, the `pg` dependency) is what costs upkeep and went, to
-  `archive/pgvector-rag/` at its original paths.
-  **This happened ahead of ◆G7 by decision, not because ◆G7 closed** — the gate is still open on
-  grading and on `RETRIEVAL_COMPARISON.md` (see ◆G7 below). It was safe to do early *because* of the
-  split above: grading, `npm run cost` and `npm run grade:packet` all read captured evidence, none of
-  them the arm's code. The price paid is that the arm **cannot be re-run or re-captured** without
-  restoring it from the archive — so if grading ever demands a fresh `pgvector-rag` capture, that
-  restore is the first step, and any re-capture must re-run every arm (the prompt is a pinned
-  control).
+  **Executed as archival on 2026-08-19, and reversed on 2026-08-21** — the *evidence* (transcripts,
+  scores, the `pgvector-rag` cost scenario) is what makes ◆G7 auditable later and never moved; the
+  *runtime code* (adapter, seeder, schema, compose file, the `pg` dependency) is what costs upkeep,
+  and it went to `archive/pgvector-rag/` at its original paths before coming back to those same
+  paths two days later.
+  **Neither move was ◆G7 closing** — the gate is still open on grading and on
+  `RETRIEVAL_COMPARISON.md` (see ◆G7 below). Archiving was safe to do early *because* of the split
+  above: grading, `npm run cost` and `npm run grade:packet` all read captured evidence, none of them
+  the arm's code. The restore reverses the one price archival paid — the arm could not be re-run or
+  re-captured — because the document corpus is expected to grow and the team wants that baseline
+  live; `archive/pgvector-rag/` is deleted with it. The standing constraint holds either way: any
+  re-capture must re-run every arm, because the prompt is a pinned control.
 - **It is built and swept.** All three arms are implemented, seeded and captured cold + warm on
   `feat/bakeoff-sweep`. What remains is grading — see ◆G7 below.
 
@@ -177,8 +178,12 @@ method costs**, not by arguing. Full experiment design:
 > **2026-08-19: `pgvector-rag`'s runtime code archived** to `archive/pgvector-rag/`, ahead of ◆G7
 > and by decision — the gate did **not** close. Nothing grading needs was touched: the 56
 > transcripts, `eval/grading/warm/KEY.json`, the arm's cost scenario and its row in
-> `scripts/gradePacket.ts` are all live, so `npm run grade:packet` and `npm run cost` still cover
+> `scripts/gradePacket.ts` stayed live, so `npm run grade:packet` and `npm run cost` still covered
 > three arms.
+>
+> **2026-08-21: restored.** The arm is back at its original paths, registered and runnable, and
+> `archive/pgvector-rag/` is deleted — a growing corpus wants a hybrid baseline that can be re-run.
+> Also not ◆G7 closing. The evidence above was involved in neither move.
 
 **◆ G7 — Retrieval store & method (the pgvector replacement gate). Resolved *by* this phase**, not
 before it. Each candidate becomes an adapter behind the N1 interface and is graded on the same eval
@@ -187,7 +192,7 @@ set; the winner closes the gate.
 | arm | what it does | infra |
 |---|---|---|
 | `firestore-direct` ✅ built | **Direct feed** — read the corpus slice from Firestore, put it in the prompt whole. No embedding, no ranking, no top-k, structurally no retrieval miss. | none |
-| `pgvector-rag` ✅ built, swept, **archived 2026-08-19** | **Legacy-parity RAG** — hybrid dense + Postgres full-text fused with RRF, exactly `MIGRATION_SPEC.md` §7 (with the §4a lexical caveat). Graded from its captured transcripts; the code is in `archive/pgvector-rag/` and the mode is no longer selectable. | Postgres+pgvector sidecar, **dev-only**, archived ahead of G7 |
+| `pgvector-rag` ✅ built, swept, archived 2026-08-19, **restored 2026-08-21** | **Legacy-parity RAG** — hybrid dense + Postgres full-text fused with RRF, exactly `MIGRATION_SPEC.md` §7 — but ⚠️ **not a strict legacy port**: the 2026-08-12 lexical repair (`RETRIEVAL_BAKEOFF.md` §4a) changed what it measures. Graded from its captured transcripts; selectable and re-runnable again. | Postgres+pgvector sidecar, **dev-only** |
 | `firestore-vector` ✅ built | RAG on Firestore native `findNearest`, dense-only unless a lexical path is built | Firestore vector index |
 
 **The corpus does not fit in context.** After the 2026-07-29 rescoping: 716,603 chars ≈ **179K
@@ -212,7 +217,7 @@ Build work in this phase:
   preserve chunking (3200 chars / 400 overlap), the quality filter, and OCR for the one scanned PDF.
   Idempotent by filename. Direct-feed needs the document text but not the embeddings.
 - **`pgvector-rag` sidecar** — `docker-compose.bakeoff.yml`, never in the deployed image. ✅ built and
-  swept; archived 2026-08-19 to `archive/pgvector-rag/`.
+  swept; archived 2026-08-19, restored 2026-08-21.
 - **Eval fixtures** — ✅ **done**: 30 conversations / 62 turns in `eval/fixtures/`, with per-turn
   rubrics, committed before any arm runs. See [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md).
 - **Eval harness (programmatic)** — ✅ **done**: `npm run bakeoff`. Replays the fixed **multi-turn conversations** over
@@ -250,10 +255,10 @@ a veto, not a tiebreaker.
 
 *Exit: every selected arm selectable via config and verified; eval set, rubrics, and raw per-question
 results committed; **`RETRIEVAL_COMPARISON.md` written**; ◆G7 resolved with the numbers that resolved
-it; ◆G9/◆G10 closed; ~~pgvector sidecar removed~~ **done 2026-08-19, ahead of the decision** — the
-sidecar, adapter, seeder and `pg` dependency are archived to `archive/pgvector-rag/` and the mode is
-unregistered, with the transcripts, grading key and cost scenario retained so the remaining criteria
-above are all still reachable. A **split outcome is a legitimate result** —
+it; ◆G9/◆G10 closed; pgvector sidecar removed — **deferred**: archived 2026-08-19 ahead of the
+decision and restored 2026-08-21, so this criterion comes due again when ◆G7 actually closes. The
+transcripts, grading key and cost scenario stayed live throughout, so the remaining criteria above
+were reachable the whole time. A **split outcome is a legitimate result** —
 direct-feed the small authoritative tier, RAG the long manuals — and the adapter registry composes
 that without a rewrite.*
 

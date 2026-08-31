@@ -1,7 +1,9 @@
 import { config } from "../config";
+import { pgVectorQueryClient } from "../config/pgvector";
 import { RetrievalRegistry } from "./RetrievalRegistry";
 import { StubAdapter } from "./adapters/StubAdapter";
 import { DirectFeedAdapter } from "./adapters/DirectFeedAdapter";
+import { PgVectorRagAdapter } from "./adapters/PgVectorRagAdapter";
 import { FirestoreVectorAdapter } from "./adapters/FirestoreVectorAdapter";
 import { ArtifactCorpusSource } from "./sources/ArtifactCorpusSource";
 import { FirestoreCorpusSource } from "./sources/FirestoreCorpusSource";
@@ -15,8 +17,8 @@ export const createCorpusSource = (name = config.retrieval.corpusSource): Corpus
 /**
  * The process-wide registry, with the built-in adapters registered.
  *
- * Registration happens here — one place — so adding a bake-off arm (Firestore vector) is a
- * single line next to the others rather than a side effect scattered through module imports.
+ * Registration happens here — one place — so adding a bake-off arm (pgvector, Firestore vector)
+ * is a single line next to the others rather than a side effect scattered through module imports.
  */
 export const retrievalRegistry = new RetrievalRegistry();
 
@@ -24,9 +26,25 @@ retrievalRegistry.register(new StubAdapter());
 retrievalRegistry.register(new DirectFeedAdapter(createCorpusSource()));
 
 /**
- * Bake-off arm ◆G10. Unlike the pgvector arm — now archived under `archive/pgvector-rag/` — this
- * one survives ◆G7: it runs on the store the service already uses, so keeping it costs no
- * infrastructure even if direct-feed wins.
+ * ⚠️ Bake-off arm — the legacy-parity hybrid. **Dev/experiment only**, and it carries the whole
+ * Postgres stack ◆G1 migrated away from: `src/config/pgvector.ts`, the `pg` dependency,
+ * `db/bakeoff/schema.sql` and `docker-compose.bakeoff.yml`.
+ *
+ * ⚠️ **Not a strict legacy port** — see the 2026-08-12 lexical-branch repair documented on
+ * `LEXICAL_SQL` in the adapter and in `docs/RETRIEVAL_BAKEOFF.md` §4a/§4b. Results from this arm
+ * are a *repaired* baseline, not the legacy behaviour.
+ *
+ * Registered unconditionally rather than only when `PGVECTOR_URL` is set. A conditional
+ * registration would make `DEFAULT_RETRIEVAL=pgvector-rag` fail as "unknown retrieval mode",
+ * which reads as a typo; this way it fails as "PGVECTOR_URL is not configured", which is the
+ * actual problem. The pool is lazy, so registering costs nothing — no Postgres, no `PGVECTOR_URL`,
+ * no connection — when the arm is unused.
+ */
+retrievalRegistry.register(new PgVectorRagAdapter(pgVectorQueryClient));
+
+/**
+ * Bake-off arm ◆G10. Unlike the pgvector arm this one survives ◆G7: it runs on the store the
+ * service already uses, so keeping it costs no infrastructure even if direct-feed wins.
  *
  * The Firestore client is constructed lazily and holds no connection, so registering this needs
  * no credentials — same reason the direct-feed arm can be registered with a Firestore source in a
@@ -37,6 +55,7 @@ retrievalRegistry.register(new FirestoreVectorAdapter());
 export { RetrievalRegistry } from "./RetrievalRegistry";
 export { StubAdapter } from "./adapters/StubAdapter";
 export { DirectFeedAdapter } from "./adapters/DirectFeedAdapter";
+export { PgVectorRagAdapter } from "./adapters/PgVectorRagAdapter";
 export {
   CHUNK_COLLECTION,
   DISTANCE_FIELD,
@@ -50,6 +69,7 @@ export { ArtifactCorpusSource } from "./sources/ArtifactCorpusSource";
 export { FirestoreCorpusSource, CORPUS_COLLECTION } from "./sources/FirestoreCorpusSource";
 export type { CorpusDocument, CorpusSource } from "./sources/corpusSource";
 export { DEFAULT_TOP_K, MAX_TOP_K, resolveTopK } from "./options";
+export { HYBRID_FETCH, RRF_K, fuseRrf } from "./rrf";
 export type {
   Chunk,
   GetContextOptions,

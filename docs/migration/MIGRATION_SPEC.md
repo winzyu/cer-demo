@@ -267,9 +267,13 @@ Index: `idx_sensor_measured_at` — B-tree on `measured_at`.
 > ([`../RETRIEVAL_BAKEOFF.md`](../RETRIEVAL_BAKEOFF.md)). That arm reproduced the behavior below
 > exactly — same fetch depth, same `RRF_K`, same top-k — as the legacy baseline the direct-feed and
 > Firestore-vector arms are measured against. Reimplementing it "close enough" would invalidate the
-> comparison. The arm's code was archived on 2026-08-19 (`../SPECS.md` §14); **this section is
-> unaffected** — it describes the legacy FastAPI/Postgres system, which is history either way, and
-> it stays the parity target for any future re-implementation.
+> comparison. ⚠️ **Step 4 below is the one place the arm knowingly departs from this spec**: the
+> 2026-08-12 lexical-branch repair replaced `websearch_to_tsquery` with an OR of `to_tsvector`
+> lexemes, so the arm is a *repaired* hybrid rather than a strict port
+> (`../RETRIEVAL_BAKEOFF.md` §4a/§4b, `../SPECS.md` §14). The arm's code was archived on 2026-08-19
+> and restored on 2026-08-21; **this section is unaffected by either** — it describes the legacy
+> FastAPI/Postgres system, which is history regardless, and it stays the parity target for any
+> future re-implementation.
 
 Hybrid retrieval fusing dense vector search and Postgres full-text search.
 

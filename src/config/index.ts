@@ -191,6 +191,19 @@ export interface RetrievalConfig {
   corpusSource: CorpusSourceName;
 }
 
+/**
+ * Postgres + pgvector sidecar for the `pgvector-rag` arm.
+ *
+ * ⚠️ Dev/experiment only. **Optional in every deployment** — unset is the normal state, and the
+ * service boots, passes `/health` and serves the other arms exactly as if this block did not
+ * exist. Only selecting `pgvector-rag` reaches for the URL, and the adapter then fails with a
+ * clear 503 naming the variable rather than the process refusing to boot. Same treatment a
+ * missing Fireworks key gets.
+ */
+export interface PgVectorConfig {
+  url?: string;
+}
+
 export interface Config {
   nodeEnv: NodeEnv;
   isProduction: boolean;
@@ -203,6 +216,7 @@ export interface Config {
   chat: ChatConfig;
   quota: QuotaConfig;
   retrieval: RetrievalConfig;
+  pgvector: PgVectorConfig;
   waterType: WaterType;
 }
 
@@ -397,6 +411,9 @@ const load = (): Config => {
         ["artifact", "firestore"],
         "artifact",
       ),
+    },
+    pgvector: {
+      url: readString("PGVECTOR_URL"),
     },
     waterType: readEnum<WaterType>("WATER_TYPE", ["freshwater", "saltwater"], "freshwater"),
   };

@@ -15,8 +15,10 @@ import {
  * bug where omitting `encoding_format` returns a corrupt 192-element all-zero vector with no
  * error — all of which degrade retrieval while looking healthy.
  *
- * Carved out of `pgvectorRag.test.ts` when the pgvector arm was archived
- * (`archive/pgvector-rag/`); the arm went, this did not.
+ * Carved out of `pgvectorRag.test.ts` when the pgvector arm was archived on 2026-08-19; the arm
+ * went, this did not. Kept separate after the arm was restored on 2026-08-21 — `EmbeddingService`
+ * serves `firestore-vector` and `seedFirestoreChunks.ts` too, and these guards must never again be
+ * able to leave the tree with one arm.
  */
 
 describe("EmbeddingService", () => {

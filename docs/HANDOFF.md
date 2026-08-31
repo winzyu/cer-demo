@@ -122,30 +122,33 @@ npm run grade:packet -- --sample=6   # 6-sheet calibration subset
 Then: write `docs/RETRIEVAL_COMPARISON.md` (§10 lists required contents; most inputs already
 exist), close ◆G7 in `timeline.md`'s gate table. ~~Delete the pgvector sidecar per §9.~~
 
-> **Update 2026-08-19 — the pgvector work is done, out of order.** The arm's runtime code was
-> **archived** (not deleted) to `archive/pgvector-rag/` **ahead of ◆G7, by decision**; the gate is
-> still open on exactly the two items above. Grading is unaffected: the transcripts,
-> `eval/grading/warm/KEY.json`, the arm's cost scenario and its row in `scripts/gradePacket.ts` all
-> stayed live, so `npm run grade:packet` and `npm run cost` are unchanged and still cover three arms.
-> `SPECS.md` §14 holds the arm's findings and what restoring it would take.
+> **Update 2026-08-19 → reversed 2026-08-21.** The arm's runtime code was **archived** (not
+> deleted) to `archive/pgvector-rag/` ahead of ◆G7 by decision, and then **restored** to its
+> original paths two days later, because the document corpus is expected to grow and the team wants
+> a hybrid baseline that can be re-run rather than only re-read. `archive/pgvector-rag/` is gone;
+> the sidecar deletion above is therefore **still outstanding** and comes due when ◆G7 closes.
+> Grading was unaffected throughout: the transcripts, `eval/grading/warm/KEY.json`, the arm's cost
+> scenario and its row in `scripts/gradePacket.ts` never moved, so `npm run grade:packet` and
+> `npm run cost` still cover three arms. `SPECS.md` §14 holds the arm's findings — including the
+> ⚠️ **not-a-strict-legacy-port** caveat, which the restore does not change.
 
 ## 6. Runbook
 
-> **Stale since 2026-08-19 in one respect:** the pgvector sidecar lines below no longer run — the
-> arm is archived to `archive/pgvector-rag/` and `PGVECTOR_URL` is not a configuration variable any
-> more. They are kept struck through because they are what the captured sweep ran under. Everything
-> else in this runbook still applies to the two live arms.
+> The pgvector sidecar lines below were dead between 2026-08-19 and 2026-08-21 while the arm was
+> archived. **They run again** — the arm is restored, `PGVECTOR_URL` is a configuration variable
+> again, and all three arms are live. ⚠️ Its numbers still carry the §4b not-a-strict-legacy-port
+> caveat.
 
 ```bash
-# pgvector sidecar — ARCHIVED 2026-08-19; needs the files restored from archive/pgvector-rag/ first
-# (dev-only; NOT `docker compose` — the plugin is not installed)
-# docker-compose -f docker-compose.bakeoff.yml up -d
+# pgvector sidecar (dev-only; NOT `docker compose` — the plugin is not installed)
+docker-compose -f docker-compose.bakeoff.yml up -d
+npm run seed:pgvector
 # docker-compose -f docker-compose.bakeoff.yml down
 
 # service with every bake-off setting (do NOT rely on .env — it lacks these)
 DEBUG_RETRIEVAL=true CORPUS_SOURCE=firestore \
 LLM_MAX_TOKENS=16384 LLM_TEMPERATURE=0 PORT=8000 npm run dev
-# the sweep also passed PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff — archived
+# the sweep also passed PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff
 
 npm run bakeoff -- --arm=<mode> --spot-check
 npm run bakeoff -- --arm=<mode> --pass=<cold|warm>
@@ -197,12 +200,14 @@ git commit -m "docs: refresh stale corpus, eval, and status documentation"
    uncommitted list are both stale from that point on.
 3. **Does `pgvector-rag` stay in the comparison?** It worked at capture time but is no longer a
    strict legacy port (§4b), so its role as "what we had before" is compromised.
-   **Partly settled 2026-08-19:** the arm is **archived**, and its captured results **stay in the
-   comparison** — transcripts, grading key and cost scenario are all live, and `npm run cost` still
-   prices three arms. What is settled is that it will not be re-run: re-capturing it now requires
-   restoring `archive/pgvector-rag/`, and the pinned prompt means a re-capture would void the other
-   two arms unless they are re-run as well. What is still open is **how much weight** the §4a
-   dead-lexical-branch caveat leaves its numbers in `RETRIEVAL_COMPARISON.md`.
+   **Partly settled 2026-08-19, and re-opened in one respect 2026-08-21:** its captured results
+   **stay in the comparison** — transcripts, grading key and cost scenario are all live, and
+   `npm run cost` still prices three arms. Archiving looked like it also settled that the arm would
+   not be re-run; the 2026-08-21 restore takes that back, so re-capture is possible again — though
+   the pinned prompt still means a re-capture voids the other two arms unless they are re-run as
+   well. What remains open is **how much weight** the §4a dead-lexical-branch caveat leaves its
+   numbers in `RETRIEVAL_COMPARISON.md`. Restoring the code does not repair that: the arm is a
+   *repaired* hybrid, not the legacy one, whether or not it is runnable.
 4. **Commit or git-ignore `eval/grading/`?** 4.1 MB, regenerable. Currently committed, on the
    argument that the packet a human graded against should be recoverable exactly.
 5. **◆G11** — does `search_documents` return as a tool? The dead-lexical-branch finding (§4a)
@@ -244,6 +249,6 @@ pkill -f "[t]s-node-dev"
 ```
 
 At the time of writing a pgvector sidecar could also be up, cleaned with
-`docker-compose -f docker-compose.bakeoff.yml down`. **Since 2026-08-19 that compose file lives in
-`archive/pgvector-rag/`**; if a container from an old session is still running, stop it by name with
-`docker ps` / `docker stop` rather than restoring the archive.
+`docker-compose -f docker-compose.bakeoff.yml down`. That compose file moved to
+`archive/pgvector-rag/` on 2026-08-19 and came back to the repo root on 2026-08-21, so the command
+works as written again.

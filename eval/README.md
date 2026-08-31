@@ -19,15 +19,21 @@ re-run a paid sweep to make an arm look better.
 | `transcripts/<pass>/<arm>/` | the captured sweep — 2026-08-11/12, 3 arms × cold+warm × 28 files, **zero failed turns** |
 | `grading/<pass>/` | the blind grading packet built from those transcripts by `npm run grade:packet` |
 
-> **One of the three arms no longer exists in the live tree.** `pgvector-rag`'s runtime code was
-> archived to `archive/pgvector-rag/` on 2026-08-19, **ahead of ◆G7 and by decision — the gate did
-> not close.** Everything in this directory that names the arm is **retained evidence and is meant to
-> stay**: `transcripts/{cold,warm}/pgvector-rag/` (56 files) and `grading/warm/KEY.json`, which still
-> maps a blind label to it. `npm run grade:packet` and `npm run cost` are unchanged and still cover
-> three arms, because both read captured evidence rather than the adapter. What is gone is the
-> ability to **capture more**: `npm run bakeoff -- --arm=pgvector-rag` cannot run without restoring
-> the archive. Do not delete or regenerate these files to "match" the code — they are what makes ◆G7
-> auditable. Background: [`docs/SPECS.md`](../docs/SPECS.md) §14.
+> **Nothing in this directory tracks the code.** `pgvector-rag`'s runtime code was archived on
+> 2026-08-19 and restored on 2026-08-21 — neither move was ◆G7 closing, and **neither move touched
+> anything here.** Everything in this directory that names the arm is **retained evidence and is
+> meant to stay**: `transcripts/{cold,warm}/pgvector-rag/` (56 files) and `grading/warm/KEY.json`,
+> which maps a blind label to it. `npm run grade:packet` and `npm run cost` were unchanged
+> throughout and still cover three arms, because both read captured evidence rather than the
+> adapter. Do not delete or regenerate these files to "match" the code — they are what makes ◆G7
+> auditable.
+>
+> ⚠️ **The arm is runnable again**, so `npm run bakeoff -- --arm=pgvector-rag` works. Two cautions
+> before you use it: the system prompt is a pinned control, so a re-capture of one arm voids the
+> other two unless they are re-captured too; and the arm is **not a strict legacy port** since the
+> 2026-08-12 lexical repair, so anything captured from it measures a *repaired* hybrid.
+> Background: [`docs/SPECS.md`](../docs/SPECS.md) §14,
+> [`docs/RETRIEVAL_BAKEOFF.md`](../docs/RETRIEVAL_BAKEOFF.md) §4a/§4b.
 
 **Transcripts are the graded artifact and are captured, not derived.** They hold the exact context
 supplied to the model, the cached/uncached token split, TTFT and wall time — none of which can be

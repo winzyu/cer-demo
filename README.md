@@ -20,7 +20,7 @@ decisions, and the traps that cost time.
 | Get credentials (Fireworks / Firestore / device API) | [§2 Credentials](#2-credentials) |
 | **Run the server a particular way** (sensor tool on/off, pick a retrieval arm, debug mode) | **[§4 Run recipes](#4-run-recipes)** ← *the copy-paste section* |
 | Look up one environment variable | [§5 Configuration reference](#5-configuration-reference) |
-| Set up a retrieval arm (direct-feed / vector) | [§6 Retrieval arms](#6-retrieval-arms) |
+| Set up a retrieval arm (direct-feed / vector / pgvector) | [§6 Retrieval arms](#6-retrieval-arms) |
 | Turn on sensor querying and check it reads real pods | [§7 Sensor querying](#7-sensor-querying) |
 | Query sensor data by hand with `curl` | [§7c Query the device API directly](#7c-query-the-device-api-directly) |
 | Call the sensor layer from my own code (e.g. report generation) | [§7d Programmatic access](#7d-programmatic-access) |
@@ -54,7 +54,7 @@ the real device API** via `query_sensor_data` and a tool-round loop.
 | phase | state |
 |---|---|
 | **N1** — chat spine + retrieval seam | ✅ complete |
-| **N2** — retrieval bake-off | ⏳ all three arms built, sweep captured, **awaiting grading** (◆G7 open). `pgvector-rag`'s runtime code was archived 2026-08-19 ahead of ◆G7; its captured evidence stays ([§6](#6-retrieval-arms)) |
+| **N2** — retrieval bake-off | ⏳ all three arms built, sweep captured, **awaiting grading** (◆G7 open). `pgvector-rag` was archived 2026-08-19 and **restored 2026-08-21** — all three arms are live and runnable again ([§6](#6-retrieval-arms)) |
 | **N3** — sensor querying + tool loop | ✅ built, **behind `SENSOR_TOOL`, default off** |
 | **N4+** — per-device water type, reports, UI | not started |
 
@@ -97,7 +97,7 @@ Firestore (`@google-cloud/firestore`) · Fireworks via the `openai` SDK · Jest 
 | **Node.js** | 18+ | everything |
 | **npm** | ships with Node | everything |
 | **Google Cloud SDK** (`gcloud`) | latest | Firestore auth **and creating the two indexes** ([§2b](#2b-google-cloud--firestore)) |
-| **Docker** | latest | *optional* — the container run path ([§3](#3-quick-start)) |
+| **Docker** | latest | *optional* — the container run path ([§3](#3-quick-start)) and the dev-only `pgvector-rag` sidecar ([§6](#6-retrieval-arms)) |
 
 ### 2a. Fireworks AI
 
@@ -320,9 +320,10 @@ every problem, missing secrets are warnings only.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `DEFAULT_RETRIEVAL` | `stub` | `stub` \| `firestore-direct` \| `firestore-vector`. **`pgvector-rag` is no longer a selectable value** — the arm was archived 2026-08-19 ([§6](#6-retrieval-arms)). A stale `.env` still naming it throws on the **first chat request**, not at startup — see [§11](#11-troubleshooting). |
+| `DEFAULT_RETRIEVAL` | `stub` | `stub` \| `firestore-direct` \| `pgvector-rag` \| `firestore-vector`. |
 | `DEBUG_RETRIEVAL` | `false` | When `true`, a request's `"retrieval"` field is honoured. Required by the bake-off runner. |
 | `CORPUS_SOURCE` | `artifact` | Where `firestore-direct` reads text: `artifact` (local file, no credentials) or `firestore`. Explicit rather than auto-detected — a silent fallback would measure the wrong source. |
+| `PGVECTOR_URL` | *(unset)* | Dev-only sidecar DSN for `pgvector-rag` ([§6](#6-retrieval-arms)). **Optional everywhere.** Unset is the normal state: the service boots, `/health` passes and the other arms are unaffected; only *selecting* `pgvector-rag` reaches for it, and that fails with a 503 naming this variable. |
 
 ### Query quota (`POST /api/v1/chat`)
 
@@ -386,20 +387,21 @@ surface as answer-quality differences and be misread as one strategy beating ano
 | `stub` | three lines of placeholder text | nothing |
 | **`firestore-direct`** ⭐ | feeds the whole ◆G9 slice, no embeddings, no ranking | the artifact |
 | `firestore-vector` | dense RAG on Firestore vector search | Fireworks key + vector index |
+| `pgvector-rag` | legacy-parity hybrid RAG (⚠️ dev only, see the caveat below) | Docker + Fireworks key |
 
 ⭐ = the provisional working choice (7.1% retrieval miss vs 33.9%). See
 [`docs/HANDOFF.md`](docs/HANDOFF.md) §3.
 
-> **Where did `pgvector-rag` go?** The dev-only legacy-parity arm's **runtime code was archived on
-> 2026-08-19** to `archive/pgvector-rag/`, which mirrors the original paths (adapter, `rrf.ts`,
-> seeder, `db/bakeoff/schema.sql`, `docker-compose.bakeoff.yml`, `src/config/pgvector.ts`). This was
-> done **ahead of ◆G7 by decision, not because ◆G7 closed** — it is still open on grading.
-> Its **evidence stays live and untouched**: the 56 transcripts under `eval/transcripts/*/pgvector-rag/`,
-> the label→arm mapping in `eval/grading/warm/KEY.json`, the arm's cost scenario (so `npm run cost`
-> still prices all three), and its entry in `scripts/gradePacket.ts` (so `npm run grade:packet`
-> still works). What archiving gave up is the ability to **re-run or re-capture** the arm: that now
-> requires restoring the files from `archive/pgvector-rag/`, re-adding the `pg` dependency, and
-> re-registering the mode. See [`docs/SPECS.md`](docs/SPECS.md) §14 for the arm's findings.
+> **`pgvector-rag` was archived on 2026-08-19 and restored on 2026-08-21.** The corpus is expected
+> to grow, so the team wanted a runnable hybrid baseline rather than a frozen one. Its files are
+> back at their original paths (`src/config/pgvector.ts`, `src/retrieval/rrf.ts`,
+> `src/retrieval/adapters/PgVectorRagAdapter.ts`, `scripts/seedPgvector.ts`,
+> `db/bakeoff/schema.sql`, `docker-compose.bakeoff.yml`), the `pg` dependency and `PGVECTOR_URL`
+> are back, and the mode is registered again. The `archive/pgvector-rag/` tree is gone — the arm is
+> live, so a frozen snapshot of it has nothing left to preserve. Its captured evidence never moved:
+> the 56 transcripts under `eval/transcripts/*/pgvector-rag/`, the label→arm mapping in
+> `eval/grading/warm/KEY.json`, the cost scenario in `src/eval/costScenarios.ts`, and its entry in
+> `scripts/gradePacket.ts`. See [`docs/SPECS.md`](docs/SPECS.md) §14 for the arm's findings.
 
 <details>
 <summary><b><code>firestore-direct</code></b></summary>
@@ -437,14 +439,27 @@ Idempotency is checked *before* embedding, so a re-run costs nothing. Expect
 </details>
 
 <details>
-<summary><b><code>pgvector-rag</code></b> ⚠️ archived 2026-08-19 — not runnable</summary>
+<summary><b><code>pgvector-rag</code></b> ⚠️ dev only · ⚠️ <b>not a strict legacy port</b></summary>
 
-Re-introduced the stack ◆G1 moved away from, as the only honest "what we had before" baseline. Its
-runtime code now lives in `archive/pgvector-rag/`; nothing in the live tree registers the mode, and
-`PGVECTOR_URL` is no longer a configuration variable.
+Re-introduces the stack ◆G1 moved away from, as the only honest "what we had before" baseline.
+Needs the sidecar in `docker-compose.bakeoff.yml`; **never deploy it.**
 
-The commands below are the ones the captured sweep ran under. They are recorded so the transcripts
-can be interpreted, **not so they can be pasted** — they need the archived files restored first:
+> ### ⚠️ Known caveat: this is not a strict legacy port
+>
+> After the **2026-08-12 lexical-branch repair**, this arm stopped being a faithful port of the
+> legacy behaviour. The original used `websearch_to_tsquery('english', $1)`, which **ANDs every
+> content word**. Fed a whole user question — retrieval runs up front here rather than as a
+> model-composed tool call — it matched nothing on **36 of the eval's 46 questions (78%)**, so the
+> "hybrid" arm ran **dense-only through an entire sweep while looking healthy**. The repair
+> replaced it with an **OR of `to_tsvector` lexemes**, ranked by `ts_rank_cd`.
+>
+> That fixed the arm but **changed what it measures**: a legacy-parity baseline that no longer
+> matches legacy. **Read any result from this arm with that in mind** — including the captured
+> transcripts and the numbers in the cost comparison. See
+> [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) §4a and §4b, and the `LEXICAL_SQL`
+> comment in `src/retrieval/adapters/PgVectorRagAdapter.ts`.
+
+**Runbook** — three steps, in order:
 
 ```bash
 docker-compose -f docker-compose.bakeoff.yml up -d      # NOT `docker compose` — plugin may be absent
@@ -452,6 +467,17 @@ npm run seed:pgvector
 PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff \
   DEFAULT_RETRIEVAL=pgvector-rag npm run dev
 ```
+
+`docker-compose`, not `docker compose` — the compose plugin may not be installed, and the
+standalone binary is what the captured sweep ran with. The sidecar listens on **5433**, not 5432,
+so it cannot collide with a Postgres you already run locally. `schema.sql` is applied only on the
+**first** boot of an empty data directory: after changing it, `docker-compose -f
+docker-compose.bakeoff.yml down -v` to drop the volume, or the old schema silently survives.
+
+`npm run seed:pgvector` reads `data/corpus/corpus.json` — the same artifact every other arm loads,
+never the PDFs — and is idempotent by filename, so a re-run skips documents already present and
+costs no embeddings. It builds the IVFFlat index *after* loading, since IVFFlat clusters existing
+rows and an index built on an empty table is useless.
 </details>
 
 **Step 3 — capture a bake-off run** ([`eval/README.md`](eval/README.md)):
@@ -610,6 +636,7 @@ reporting still answers "the last day" about its last day of data.
 | `npm run ingest` | parse `documents/` → `data/corpus/corpus.json` ([§6](#6-retrieval-arms)) |
 | `npm run seed:firestore` | upload the corpus to `corpus_documents` |
 | `npm run seed:firestore-chunks` | embed + upload to `corpus_chunks` for `firestore-vector` |
+| `npm run seed:pgvector` | embed and load the dev-only `pgvector-rag` sidecar ([§6](#6-retrieval-arms)) |
 | **`npm run verify:sensor`** | **live read-only check that the sensor tool reads real pods (no LLM, no cost)** |
 | `npm run explore:devices` | discover the fleet and record raw responses to `data/device-api/` |
 | `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a run; `--spot-check`, `--only`, `--dry-run` |
@@ -625,12 +652,13 @@ reporting still answers "the last day" about its last day of data.
 src/
   index.ts              # entry: load config, start the server
   app.ts                # express assembly, exported for tests
-  config/               # index.ts (env loading + validation), database.ts
+  config/               # index.ts (env loading + validation), database.ts, pgvector.ts
   routes/               # /api/v1 aggregator, healthRoutes, chatRoutes, deviceRoutes
   controllers/          # HealthController, ChatController, DeviceController
   retrieval/            # the retrieval seam — SPECS.md §9
     RetrievalRegistry.ts  #   mode -> adapter, selected by DEFAULT_RETRIEVAL
-    adapters/           #   Stub, DirectFeed, FirestoreVector
+    adapters/           #   Stub, DirectFeed, PgVectorRag, FirestoreVector
+    rrf.ts              #   Reciprocal Rank Fusion — pure, testable without a database
     sources/            #   ArtifactCorpusSource | FirestoreCorpusSource
   devices/              # DeviceApiClient (read-only), metrics.ts (codes, flags, decoding)
   tools/                # the sensor tool — SPECS.md §10.3a
@@ -652,10 +680,9 @@ data/                   # corpus artifact + device recordings (git-ignored)
 documents/              # source corpus. NOTE: `.gitignore` has a documents/* rule, but several
                         #   PDFs predate it and ARE tracked — check `git status` before assuming
                         #   a deleted one is gone.
-eval/                   # fixtures/ (committed questions), transcripts/, grading/. The
-                        #   pgvector-rag transcripts and KEY.json stay — they are ◆G7's evidence.
-archive/                # retired code kept for the record, at its original paths.
-  pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
+eval/                   # fixtures/ (committed questions), transcripts/, grading/
+db/bakeoff/schema.sql   # dev-only pgvector sidecar schema (§6); docker-compose.bakeoff.yml is
+                        #   at the repo root. Neither reaches the deployed image.
 docs/                   # HANDOFF.md (start here), SPECS.md, timeline.md, RETRIEVAL_BAKEOFF.md,
                         #   EVAL_FIXTURES.md, GRADING_GUIDE.md, migration/
 ```
@@ -699,11 +726,6 @@ name one itself (the model's own choice wins).
 - **Server exits with "Invalid configuration"** — a `.env` value failed validation; the message
   lists each bad variable.
 - **`[Config] FIREWORKS_API_KEY is not set`** — expected until you add the key; `/health` still passes.
-- **`Configured DEFAULT_RETRIEVAL="pgvector-rag" is not registered`** — expected since 2026-08-19:
-  the arm is archived and the mode is gone ([§6](#6-retrieval-arms)). **Note where this surfaces.**
-  The registry resolves per request, not at boot, so the server starts normally and `/health`
-  passes; the first `POST /api/v1/chat` is what 500s. Throwing is deliberate — falling back to
-  `stub` would answer from placeholder text and read as a model problem.
 - **`npm run dev` looks hung** — `ts-node` cold start is ~80s. It isn't hung.
 - **Port already in use** — change `PORT`, or `pkill -f "[t]s-node-dev"`.
 
@@ -719,6 +741,9 @@ name one itself (the model's own choice wins).
 - **Answers are empty, but the API call succeeded** — `LLM_MAX_TOKENS` too low. gpt-oss spends the
   budget on reasoning tokens and truncates the visible answer to nothing. Use `16384`.
 - **A request ignored the `"retrieval"` field** — `DEBUG_RETRIEVAL` is not `true`. Check `mode`.
+- **`PGVECTOR_URL is not configured`** — expected unless the dev-only sidecar is up ([§6](#6-retrieval-arms)).
+  Note where it surfaces: the registry resolves per request, not at boot, so the server starts
+  normally and `/health` passes; the first `POST /api/v1/chat` is what 503s.
 
 ### Sensor data
 

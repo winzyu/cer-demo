@@ -302,16 +302,18 @@ Phase 0 wrote `{ "prompts": [string] }`, so WS-3's loader must read `.prompts[].
 | Next.js chatbot page | **◆G5** (responsive scope) and **◆G6** (redesign vs. match dashboard style). Both are decisions, not work — resolving them is the cheapest unblock available. |
 | Token streaming with tools on | Not blocked, but needs incremental `delta.tool_calls` assembly. Sized for N7. |
 
-**Done 2026-08-19 — archiving the pgvector arm.** Taken off this list by decision rather than by
-◆G7, which is still open. The coupled set was indeed wider than the docs listed, and the split fell
-along the evidence/runtime line: **archived** to `archive/pgvector-rag/` — the adapter,
-`src/retrieval/rrf.ts`, the seeder, `db/bakeoff/schema.sql`, `docker-compose.bakeoff.yml`,
-`src/config/pgvector.ts`, plus the `pg` dependency, the `seed:pgvector` script and `PGVECTOR_URL`;
-**kept live** — `scripts/gradePacket.ts`'s `ARMS` and the `pgvector-rag` entry in
-`src/eval/costScenarios.ts`, because both operate on captured evidence, not on the arm. One item the
-original note missed: `test/unit/pgvectorRag.test.ts` also tested `EmbeddingService`, which the
-`firestore-vector` arm still uses, so it was **split** rather than moved —
-`test/unit/embeddingService.test.ts` is the live half. Detail in `SPECS.md` §14.
+**Done 2026-08-19, undone 2026-08-21 — archiving, then restoring, the pgvector arm.** Both moves
+were decisions rather than ◆G7, which is still open. The exercise was worth it for what it mapped:
+the coupled set was wider than the docs listed, and it splits along the evidence/runtime line.
+**Runtime** — the adapter, `src/retrieval/rrf.ts`, the seeder, `db/bakeoff/schema.sql`,
+`docker-compose.bakeoff.yml`, `src/config/pgvector.ts`, plus the `pg` dependency, the
+`seed:pgvector` script and `PGVECTOR_URL`; these moved out and back. **Evidence** —
+`scripts/gradePacket.ts`'s `ARMS` and the `pgvector-rag` entry in `src/eval/costScenarios.ts` —
+never moved, because both operate on captured evidence, not on the arm. One item the original note
+missed: `test/unit/pgvectorRag.test.ts` also tested `EmbeddingService`, which the `firestore-vector`
+arm uses too, so it was **split** rather than moved; `test/unit/embeddingService.test.ts` stayed
+split out after the restore. So the arm is live again and this item is back on the list, due when
+◆G7 closes. Detail in `SPECS.md` §14.
 
 ---
 

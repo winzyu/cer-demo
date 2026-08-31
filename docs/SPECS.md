@@ -19,10 +19,12 @@ current codebase.
 > with 168 transcripts under `eval/transcripts/` and the cost model running on measured numbers
 > (§14a). `DEFAULT_RETRIEVAL` still ships as `stub`, so a fresh checkout needs no credentials.
 >
-> **Amended 2026-08-19: `pgvector-rag`'s runtime code is archived** to `archive/pgvector-rag/` and
-> the mode is no longer selectable (§14). This happened **ahead of ◆G7 by decision — ◆G7 did not
-> close.** Two live arms remain; the archived arm's transcripts, grading key and cost scenario are
-> untouched, so the gate stays auditable and gradeable.
+> **Amended 2026-08-19, reversed 2026-08-21: `pgvector-rag` was archived and is now restored** to
+> its original paths, registered and selectable again (§14). The 2026-08-19 archival happened
+> **ahead of ◆G7 by decision — ◆G7 did not close**, and the restore likewise reflects a decision
+> (a growing corpus wants a runnable hybrid baseline), not a gate. All three arms are live; the
+> transcripts, grading key and cost scenario were untouched throughout, so the gate stayed
+> auditable and gradeable the whole time.
 >
 > **What remains in N2 is grading, not building.** ◆G7 is open until the blind packet
 > (`eval/grading/`, [`GRADING_GUIDE.md`](GRADING_GUIDE.md)) is scored and
@@ -173,8 +175,8 @@ clean-earth-rag/
 ├── frontend/index.html       static chat UI, wired to POST /api/v1/chat (streaming)
 ├── data/                     sensor CSV + corpus artifact (git-ignored)
 ├── documents/                corpus PDFs (git-ignored)
-├── archive/pgvector-rag/     the archived bake-off arm at its original paths (§14) —
-│                             not compiled, not tested, not imported; excluded from the image
+├── db/bakeoff/schema.sql     dev-only pgvector sidecar schema (§14); the compose file sits at
+│                             the repo root. Neither reaches the deployed image.
 └── docs/                     SPECS.md, timeline.md, EVAL_FIXTURES.md, migration/
 ```
 
@@ -435,10 +437,12 @@ tests construct isolated instances instead of depending on import order.
   an automatic fallback** — a silent switch could have a run measured against the wrong source.
 - **`firestore-vector`** (`FirestoreVectorAdapter`) — dense RAG on Firestore's own vector search
   (§14b), the surviving RAG arm.
+- **`pgvector-rag`** (`PgVectorRagAdapter`) — the legacy-parity hybrid, dev-only (§14).
 - Registration happens in one place (`src/retrieval/index.ts`), so adding a bake-off arm is a single
   line rather than an import side effect — and **removing one is a single line too**: that is how
-  `pgvector-rag` stopped being selectable on 2026-08-19 when its code was archived (§14). The seam
-  is what made archiving an arm cheap; nothing outside that file knew the mode existed.
+  `pgvector-rag` stopped being selectable when it was archived on 2026-08-19, and how it became
+  selectable again when it was restored on 2026-08-21 (§14). The seam is what made both moves
+  cheap; nothing outside that file knew the mode existed.
 
 ### Shared guards (`options.ts`)
 
@@ -835,18 +839,36 @@ holding up exactly as the cost case requires.
 
 ---
 
-## 14. `pgvector-rag` arm — **archived 2026-08-19** (`archive/pgvector-rag/`)
+## 14. `pgvector-rag` arm — live (archived 2026-08-19, **restored 2026-08-21**)
 
-⚠️ **Dev/experiment only, and no longer part of the running service.** It deliberately re-introduced
-the stack ◆G1 resolved away from, as the only honest baseline for "what we had before". Its runtime
-code — adapter, `rrf.ts`, seeder, `db/bakeoff/schema.sql`, `docker-compose.bakeoff.yml`,
-`src/config/pgvector.ts` — moved to **`archive/pgvector-rag/`**, mirroring the original paths. The
-mode is unregistered, the `pg` and `@types/pg` dependencies and the `seed:pgvector` script are gone,
-`PGVECTOR_URL` is no longer a configuration variable at all, and `archive` is in `.dockerignore`.
+⚠️ **Dev/experiment only.** It deliberately re-introduces the stack ◆G1 resolved away from, as the
+only honest baseline for "what we had before". It must never reach the deployed image or the Cloud
+Run path.
 
-**This was done ahead of ◆G7, by decision — ◆G7 did not close.** The gate is still open on grading
-and on `RETRIEVAL_COMPARISON.md` (`timeline.md`, `RETRIEVAL_BAKEOFF.md` §9). The split followed
-`timeline.md`'s rule: the *evidence* stays, the *runtime code* goes.
+⚠️ **Not a strict legacy port.** See the caveat below — the 2026-08-12 lexical-branch repair changed
+what this arm measures, and every number quoted from it must carry that label.
+
+**Archived 2026-08-19, restored 2026-08-21.** Neither move was ◆G7 closing; the gate is still open
+on grading and on `RETRIEVAL_COMPARISON.md` (`timeline.md`, `RETRIEVAL_BAKEOFF.md` §9). It was
+archived because it was upkeep with no consumer; it was restored because the document corpus is
+expected to grow and the team wants a hybrid baseline that can actually be re-run rather than only
+re-read. The archival followed `timeline.md`'s rule — the *evidence* stays, the *runtime code*
+goes — which is precisely why the restore was a file move plus five wiring edits: the evidence had
+never left.
+
+The runtime code is back at its original paths: `src/config/pgvector.ts`, `src/retrieval/rrf.ts`,
+`src/retrieval/adapters/PgVectorRagAdapter.ts`, `scripts/seedPgvector.ts`, `db/bakeoff/schema.sql`,
+`docker-compose.bakeoff.yml`, `test/unit/pgvectorRag.test.ts`. `pg` / `@types/pg`, the
+`seed:pgvector` script, `PGVECTOR_URL`, the registry line and the `rrf` re-exports are all back.
+The `archive/pgvector-rag/` tree is gone: a snapshot of a live arm preserves nothing.
+
+**`PGVECTOR_URL` is optional, and a deployment without it is unaffected.** The adapter is registered
+*unconditionally* — a conditional registration would make `DEFAULT_RETRIEVAL=pgvector-rag` fail as
+"unknown retrieval mode", which reads as a typo, where this way it fails as "PGVECTOR_URL is not
+configured", which is the actual problem. The `Pool` is memoized and lazy and opens no socket until
+the first query, so importing the module, booting the service and serving the other three arms all
+cost nothing and require no database. Selecting the arm without the variable throws a **503** naming
+the variable and the compose command; nothing else in the service notices.
 
 | what | where it is now | why |
 |---|---|---|
@@ -854,22 +876,22 @@ and on `RETRIEVAL_COMPARISON.md` (`timeline.md`, `RETRIEVAL_BAKEOFF.md` §9). Th
 | Blind label→arm mapping | live — `eval/grading/warm/KEY.json` | the packet is still gradeable, and it still names the arm |
 | Cost scenario + its assertions | live — `src/eval/costScenarios.ts`, `test/unit/cost.test.ts` | `npm run cost` still prices **all three** arms; a two-arm cost table would not answer ◆G7 |
 | `"pgvector-rag"` in the packet builder | live — `scripts/gradePacket.ts` `ARMS` | the packet grades captured evidence, so `npm run grade:packet` is unchanged |
-| Adapter, fusion, seeder, schema, compose | archived — `archive/pgvector-rag/` | upkeep with no consumer: a dependency, a container, and a config surface |
-| Its unit suite's `fuseRrf` / adapter blocks | archived with the arm | they test archived code |
+| Adapter, fusion, seeder, schema, compose | live — restored to their original paths | a growing corpus wants a re-runnable hybrid baseline, not a frozen one |
+| Its unit suite's `fuseRrf` / adapter blocks | live — `test/unit/pgvectorRag.test.ts` | they need no database: the `QueryClient` seam is injected and the embedder is faked |
 | Its `EmbeddingService` blocks | live — split out into `test/unit/embeddingService.test.ts` | `EmbeddingService` still serves `firestore-vector` and `seedFirestoreChunks.ts` (§16) |
 
-**What archiving gave up:** the arm cannot be re-run or re-captured as it stands. Doing so means
-restoring the files from `archive/pgvector-rag/`, re-adding `pg`, re-registering the mode and
-re-reading `PGVECTOR_URL`. Everything below is therefore a **record of a completed experiment**, not
-a runbook — and it is kept in full because the findings are what the archive exists to preserve.
-
-The commands the captured sweep ran under, recorded so the transcripts can be interpreted:
+**Runbook.** These are the commands the captured sweep ran under, and they work again:
 
 ```
 docker-compose -f docker-compose.bakeoff.yml up -d
 npm run seed:pgvector
-PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff npm run dev
+PGVECTOR_URL=postgresql://cer:cer@localhost:5433/cer_bakeoff DEFAULT_RETRIEVAL=pgvector-rag npm run dev
 ```
+
+`docker-compose`, not `docker compose` — the compose plugin may not be installed, and the
+standalone binary is what this was run with. Port **5433** so the sidecar cannot collide with a
+local Postgres. `schema.sql` is applied only on the first boot of an empty data directory, so
+`down -v` after changing it or the old schema silently survives.
 
 A faithful port of `MIGRATION_SPEC.md` §7. Every constant was pinned to the legacy value rather than
 tuned — a tuned reimplementation would be a different system and would not answer the question:
@@ -886,12 +908,12 @@ tuned — a tuned reimplementation would be a different system and would not ans
 > **The lexical row is the legacy value, not what the arm finally ran.** `websearch_to_tsquery`
 > **ANDs** every content word, which matched nothing on 78% of the eval's questions once retrieval
 > moved up-front onto the raw user question (◆G11). It was repaired 2026-08-12 to OR the lexemes
-> derived by `to_tsvector` — so **the archived arm is an approximation of the legacy hybrid, not a
-> strict port**, and its numbers must be labelled that way wherever they are quoted.
+> derived by `to_tsvector` — so **this arm is an approximation of the legacy hybrid, not a strict
+> port**, and its numbers must be labelled that way wherever they are quoted. This is the single
+> most important thing to know about the arm; it survives every archive and restore of the code.
 > `RETRIEVAL_BAKEOFF.md` §4a/§4b carry the measurement and the repaired SQL.
 
-`fuseRrf` was a pure function in `rrf.ts` (now `archive/pgvector-rag/src/retrieval/rrf.ts`),
-separate from the adapter, because it is the one piece whose correctness can be established without
+`fuseRrf` is a pure function in `src/retrieval/rrf.ts`, separate from the adapter, because it is the one piece whose correctness can be established without
 a database — and a subtly wrong fusion returns plausible-but-worse chunks, which would read as "RAG
 loses" rather than as a bug. `RETRIEVAL_BAKEOFF.md` §4a is what happened when the *query* rather
 than the fusion was wrong, and it is the reason that separation was worth having.
@@ -908,10 +930,11 @@ constant across arms.
 > retrieval built on zero vectors ranks arbitrarily, so the RAG arms would have lost the bake-off to
 > a bug rather than to retrieval. `EmbeddingService` always sends `encoding_format: "float"` and
 > rejects both wrong dimensions **and** all-zero vectors, since a degenerate vector of the right
-> shape would otherwise pass every check. The finding was made on the archived arm but the code is
-> not archived: `EmbeddingService` still serves `firestore-vector` and `scripts/seedFirestoreChunks.ts`,
-> and `test/unit/embeddingService.test.ts` exists so these guards keep a suite of their own now that
-> the arm's own suite is gone (§16).
+> shape would otherwise pass every check. The finding was made on this arm, but the guard was never
+> tied to it: `EmbeddingService` also serves `firestore-vector` and `scripts/seedFirestoreChunks.ts`,
+> and `test/unit/embeddingService.test.ts` keeps these guards in a suite of their own — carved out
+> when the arm was archived, and deliberately left there after the restore so the coverage cannot
+> follow the arm anywhere again (§16).
 
 **Verified live** on 2026-07-30 against the seeded sidecar (8 documents, 305 chunks, IVFFlat
 lists=17): answered ORP correctly on ~4,400 prompt tokens against direct-feed's ~10,900, **answered
@@ -938,7 +961,7 @@ auditing the decision can re-run it for free.
 | piece | role |
 |---|---|
 | `src/eval/prices.ts` | the price sheet, **with the date and source URL it was read from** |
-| `src/eval/costScenarios.ts` | the measured token counts per arm, and the fixed-cost figures. **Still carries `pgvector-rag`** — its deployed counterfactual is the whole "what we had before costs this" line, and dropping it when the code was archived (§14) would have removed a number ◆G7 is decided on |
+| `src/eval/costScenarios.ts` | the measured token counts per arm, and the fixed-cost figures. **Carries `pgvector-rag`** — its deployed counterfactual is the whole "what we had before costs this" line, and it stayed put through the arm's archival and restore (§14) because it is a number ◆G7 is decided on |
 | `src/eval/cost.ts` | pure functions: `perRequestCost`, `monthlyCost`, `breakEven`, `costCurve` |
 | `scripts/cost.ts` | the CLI — per-answer table, monthly curve over 1k-100k, pairwise break-evens |
 
@@ -971,7 +994,7 @@ DEBUG_RETRIEVAL=true npm run dev        # then send retrieval=firestore-vector
 ```
 
 Dense RAG on Firestore's own vector search — ◆G10. Unlike `pgvector-rag`, which was always a
-measuring stick and was archived on 2026-08-19 (§14), this arm **is meant to survive ◆G7**: it runs
+measuring stick (§14), this arm **is meant to survive ◆G7**: it runs
 on the store the service already uses, so keeping it registered costs no infrastructure even if
 direct-feed wins.
 
@@ -1070,7 +1093,7 @@ branch at `fa299ef` (279), and Phase N3's tool layer added the suites marked N3 
 | `unit/chatValidators.test.ts` | history ordering, newest-kept trimming, the `system`-role rejection, per-index error messages |
 | `unit/evalFixtures.test.ts` | the committed eval set (ids, class coverage, multi-turn, slice consistency) and every rule the fixture loader claims to enforce |
 | `unit/bakeoffRunner.test.ts` | history assembly across turns, the arm-mismatch abort, failed-turn handling, cached-token accounting, the sweep warnings, SSE frame buffering, and CLI parsing |
-| `unit/embeddingService.test.ts` | the nomic `search_query:` / `search_document:` task prefixes, embedding batching, and the dimension **and** all-zero guards that the 2026-07-30 `encoding_format` provider bug exists to catch (§14). **Carved out of the archived arm's suite on 2026-08-19**, because `EmbeddingService` outlived it — it still serves `firestore-vector` and `seedFirestoreChunks.ts`, and those guards must not lose their coverage along with the arm |
+| `unit/embeddingService.test.ts` | the nomic `search_query:` / `search_document:` task prefixes, embedding batching, and the dimension **and** all-zero guards that the 2026-07-30 `encoding_format` provider bug exists to catch (§14). **Carved out of `pgvectorRag.test.ts` on 2026-08-19** because `EmbeddingService` outlived the arm's archival — it also serves `firestore-vector` and `seedFirestoreChunks.ts`. Kept separate after the 2026-08-21 restore: these guards must never again be able to leave with one arm |
 | `unit/cost.test.ts` | per-request billing with cached/uncached split, the cache-split guard, monthly totals, break-even including the negative-crossover and parallel-line cases, and the ◆G7 conclusions pinned to the recorded prices |
 | `unit/firestoreCorpus.test.ts` | the written field set matches what `loadSlice` reads, `chunks` stays out, and the document size guard |
 | `unit/firestoreVector.test.ts` | the `FieldValue.vector()` wrapper, the distance→score inversion, and the zero-result guard |
@@ -1086,8 +1109,9 @@ branch at `fa299ef` (279), and Phase N3's tool layer added the suites marked N3 
 | **N3** `integration/sensorChat.test.ts` | `query_sensor_data` end to end through `POST /chat` — scripted model, recorded device bodies, real loop/client/decoder in between — and the flag-off path making one tool-free call that never touches the device API |
 
 **`unit/pgvectorRag.test.ts` is gone from the live suite** (2026-08-19). Its `fuseRrf` and
-`PgVectorRagAdapter` blocks went to `archive/pgvector-rag/` with the code they test — a suite whose
-subject is archived proves nothing and costs a run on every `npm test`. Its `EmbeddingService` blocks
+`PgVectorRagAdapter` blocks moved to `archive/pgvector-rag/` with the code they test on 2026-08-19
+and came back with it on 2026-08-21, as `test/unit/pgvectorRag.test.ts`. They need no database: the
+adapter takes its `QueryClient` by injection and the embedder is faked. Its `EmbeddingService` blocks
 did **not** go: they are `unit/embeddingService.test.ts` above. Splitting rather than deleting was
 the point — the all-zero-vector guard is a live guard on a live provider bug (§14).
 
@@ -1115,7 +1139,7 @@ conventions this codebase follows, rather than disabled globally:
 | Area | Legacy reference | Target |
 |---|---|---|
 | ~~Tool-calling orchestration loop~~ | `MIGRATION_SPEC.md` §3 | **Built (N3, §10.3a).** 16 tool rounds + 1 forced-text round, `role:"tool"` messages, round-cap fallback. Gated on `SENSOR_TOOL`, default off |
-| Corpus ingestion + real adapters | `MIGRATION_SPEC.md` §5 | N2 bake-off: `firestore-direct` (small tier, ◆G9), `pgvector-rag` (**archived 2026-08-19**, §14), `firestore-vector` (◆G10 → all three built and swept) |
+| Corpus ingestion + real adapters | `MIGRATION_SPEC.md` §5 | N2 bake-off: `firestore-direct` (small tier, ◆G9), `pgvector-rag` (archived 2026-08-19, **restored 2026-08-21**, §14), `firestore-vector` (◆G10 → all three built and swept) |
 | Embedding calls | `MIGRATION_SPEC.md` §4.4 | only needed if the bake-off selects a vector arm |
 | Document context strategy | `MIGRATION_SPEC.md` §6–7 (pgvector) | **open gate ◆G7** — decided by the [direct-feed vs RAG bake-off](RETRIEVAL_BAKEOFF.md) over the three captured arms: `firestore-direct` vs `pgvector-rag` vs `firestore-vector`. Two are still selectable; `pgvector-rag` is graded from its transcripts (§14) |
 | ~~`query_sensor_data`~~ | `MIGRATION_SPEC.md` §8 | **Built (N3, §10.3a)** on the device API (◆G8 resolved). Remaining: per-device water type (N4/◆G3) and token streaming with tools on (N7) |
