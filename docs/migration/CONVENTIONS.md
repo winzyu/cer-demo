@@ -1,12 +1,17 @@
 # Canonical Conventions — new Node/Express + Firestore service
 
-Reconciled from two reverse-engineered sources in this folder:
+Reconciled from two reverse-engineered sources, both **archived 2026-08-30** — they described the
+reference repos rather than this one. Retrieve either with
+`git show docs-archive-2026-08-30:docs/migration/<file>` (see [`../ARCHIVED.md`](../ARCHIVED.md)):
 
 - **`CONVENTIONS.server.md`** — from `../clean-earth-rovers-server`, an **actual Node/Express +
   Firestore backend** (this is the `cer-api` service). TypeScript, strict, class-based.
 - **`CONVENTIONS.dashboard.md`** — from `../user-dashboard` (`cer-ui`), a **Next.js frontend** that
   *consumes* that backend. It has no Firestore/validation/test code, so much of its "backend"
   guidance is inferred from how it calls the API.
+
+**This file is the one that governs code written here.** The two above are its inputs, kept only
+as provenance.
 
 **How they relate (important):** the server repo *is* the backend the dashboard talks to. The routes,
 the login-key drift, and the `/auth` namespace that the dashboard reverse-engineered from its client

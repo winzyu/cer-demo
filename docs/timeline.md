@@ -7,7 +7,7 @@ the work downstream of them starts.
 This is the successor to the original migration timeline. The single biggest change: the target-stack
 gate (◆G1) is now **resolved** — see below — which re-anchors every phase that depended on it.
 
-> **Current state and how to resume: [`HANDOFF.md`](HANDOFF.md) (2026-08-13).** The N2 sweep is
+> **Current state and how to resume: [`HANDOFF_2026-08-27.md`](HANDOFF_2026-08-27.md).** The N2 sweep is
 > captured and valid; what remains is grading. Read that first if you are picking this up cold.
 
 Companion docs: [`SPECS.md`](SPECS.md) (what's built today), [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md)
@@ -796,7 +796,7 @@ conversations that survive a page reload.*
 
 ## Session handoffs
 
-Current state, open decisions, and how to resume: **[`HANDOFF.md`](HANDOFF.md)**.
+Current state, open decisions, and how to resume: **[`HANDOFF_2026-08-27.md`](HANDOFF_2026-08-27.md)**.
 
 The 2026-07-31 / 2026-08-04 handoff that used to sit here has been removed — every item it listed as
 pending has since happened, and it had begun to contradict the phases above. The findings it carried

@@ -34,7 +34,7 @@ status block below says which phase each piece belongs to.
 > captured arms ran against while ◆G7 is open — see
 > [`migration/DEVICE_API.md`](migration/DEVICE_API.md).
 >
-> **Current state and how to resume: [`HANDOFF.md`](HANDOFF.md).**
+> **Current state and how to resume: [`HANDOFF_2026-08-27.md`](HANDOFF_2026-08-27.md).**
 
 ---
 
@@ -1268,7 +1268,7 @@ conventions this codebase follows, rather than disabled globally:
 | Document context strategy | `MIGRATION_SPEC.md` §6–7 (pgvector) | **open gate ◆G7** — decided by the [direct-feed vs RAG bake-off](RETRIEVAL_BAKEOFF.md) over the three captured arms: `firestore-direct` vs `pgvector-rag` vs `firestore-vector`. Two are still selectable; `pgvector-rag` is graded from its transcripts (§14) |
 | ~~`query_sensor_data`~~ | `MIGRATION_SPEC.md` §8 | **Built (N3, §10.3a)** on the device API (◆G8 resolved). Remaining: per-device water type (N4/◆G3) and token streaming with tools on (N7) |
 | ~~Ingestion (docs + CSV)~~ | `MIGRATION_SPEC.md` §5 | **Documents: built** (§11) — `npm run ingest` → `data/corpus/corpus.json`, seeded to `corpus_documents` / `corpus_chunks`. **The CSV half is retired, not pending:** ◆G8 resolved to the live device API, the synthetic 766-row CSV was never ported, and nothing reads it (`timeline.md`, "Confirmed decisions") |
-| Document upload / delete | — | N6. Also the first of the two things `HANDOFF.md` §3 says would reverse the provisional `firestore-direct` choice: direct-feed's slice grows unbounded as documents are added |
+| Document upload / delete | — | N6. Also the first of the two things `HANDOFF_2026-08-27.md` §1 says would reverse the provisional `firestore-direct` choice: direct-feed's slice grows unbounded as documents are added |
 
 
 ---

@@ -7,6 +7,20 @@ require modifying a reference repo, stop and tell me instead.
 
 All migration planning artifacts go in docs/migration/.
 
+# Docs
+
+docs/ holds current state only. Superseded session handoffs and the reference-repo
+convention docs are **not in the tree** — they live in git history under the tag
+`docs-archive-2026-08-30`. docs/ARCHIVED.md lists what moved and why.
+
+Never grep for, read, or cite an archived doc unprompted. If a question seems to
+need one, ask me first — usually the archived doc is stale and a current doc
+already answers it. Retrieve with `git show <tag>:<path>`, never by restoring the
+file to the tree.
+
+docs/HANDOFF_2026-08-27.md is the current handoff. Do not treat any other
+handoff as current.
+
 # Testing
 
 Run only the tests relevant to what you changed. Never run the full suite — it is
