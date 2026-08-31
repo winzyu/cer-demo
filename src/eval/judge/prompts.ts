@@ -372,3 +372,62 @@ export const parseVerdict = (dimension: JudgeDimension, reply: string): JudgeVer
     note: items.map((item) => `${item.text} — ${item.why}`).join("; "),
   };
 };
+
+/**
+ * The reply shape each dimension must produce, as a JSON schema the API enforces during
+ * generation rather than a request the prompt makes politely.
+ *
+ * **Why this exists.** `parseVerdict` above is defensive because the judge used to be asked for
+ * JSON in prose and frequently answered with something else. Measured on
+ * `nemotron-lightning-3p5-30b-a3b`, 2026-08-28: **19 of 83 calls (22.9%) were unusable** — replies
+ * opening `Here's a thinking process:` or restating the prompt — against 0 of 429 for
+ * `gpt-oss-120b`. The retry in `judgeOnce` adds a JSON-only nudge and still lost them.
+ *
+ * Fireworks documents that `response_format: json_schema` **disables reasoning output**, which is
+ * the same defect from the other end: that model spent 3,350 completion tokens per call against
+ * `gpt-oss-120b`'s 542, and the 6.2x verbosity cancelled its 3x cheaper rate exactly. Constraining
+ * the shape therefore buys parse reliability *and* the cost saving the rate card advertised.
+ *
+ * `parseVerdict` stays exactly as strict. A schema is enforced by the provider, so it is a claim
+ * about the provider's behaviour, not a guarantee this code should lean on — and the checks it
+ * performs (`score` an integer in 0..2, `claims`/`invalid` an array) are the ones a pre-registered
+ * gate depends on. Belt and braces on purpose.
+ */
+export const JUDGE_SCHEMAS: Record<JudgeDimension, Record<string, unknown>> = {
+  correctness: {
+    type: "object",
+    properties: {
+      score: { type: "integer", enum: [0, 1, 2] },
+      reason: { type: "string" },
+    },
+    required: ["score", "reason"],
+  },
+  ungrounded: {
+    type: "object",
+    properties: {
+      claims: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: { claim: { type: "string" }, why: { type: "string" } },
+          required: ["claim", "why"],
+        },
+      },
+    },
+    required: ["claims"],
+  },
+  citations: {
+    type: "object",
+    properties: {
+      invalid: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: { marker: { type: "string" }, why: { type: "string" } },
+          required: ["marker", "why"],
+        },
+      },
+    },
+    required: ["invalid"],
+  },
+};

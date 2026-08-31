@@ -24,6 +24,7 @@ import { checkCitations } from "../gates/checks";
 import { CHAT_PRICES } from "../prices";
 import {
   JUDGE_DIMENSIONS,
+  JUDGE_SCHEMAS,
   PROMPT_BUILDERS,
   parseVerdict,
   type JudgeDimension,
@@ -295,6 +296,13 @@ export const judgeOnce = async (
       max_tokens: options.maxTokens,
       // Pinned, like the sweep itself. A sampled judge measures the sampler.
       temperature: 0,
+      // Enforced during generation, not requested in prose — see JUDGE_SCHEMAS. This also
+      // suppresses reasoning preambles, which is what made a cheaper judge unusable and, worse,
+      // no cheaper: the tokens it spent thinking out loud cost exactly what the rate card saved.
+      response_format: {
+        type: "json_schema",
+        json_schema: { name: `${task.dimension}_verdict`, schema: JUDGE_SCHEMAS[task.dimension] },
+      },
     });
 
     promptTokens += response.usage?.prompt_tokens ?? 0;
