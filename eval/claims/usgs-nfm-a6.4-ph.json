@@ -1124,24 +1124,2133 @@
       "index": 19,
       "locator": "Table 6.4–3 continuation — rows 75 to 90 °C and footnotes, no column header in this chunk; content is entirely prior-chunk overlap (NEWLY RECOVERED)",
       "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__35d0f93e82e8",
+      "index": 20,
+      "locator": "Section 2.3 buffer precautions and section 3.0 / 3.1 Electrode Care and Cleaning — \"Do not insert an electrode or other material into a bottle\"",
+      "claims": [
+        {
+          "id": "ph-buffer-no-electrode-in-stock-01",
+          "claim": "Buffers must never be measured in the stock bottle: an electrode or other material must not be inserted into a bottle containing stock buffer solution, and buffer must be poured into a separate container and the used solution discarded after use.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Do not insert an electrode or other material into a bottle\ncontaining stock buffer solution",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-triple-rinse-rule-01",
+          "claim": "Before every pH measurement the electrode is rinsed with the solution to be measured by pouring the sample or buffer over it, immersing it, removing it and discarding the solution, repeated for a total of three times, after which fresh solution is added to the same vessel for the measurement.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Repeat this procedure for a total\nof three times every time a measurement is made.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-temp-protection-01",
+          "claim": "pH buffers must be protected against wide temperature variations in transit, in use and in storage, and must never be exposed to extreme heat or freezing; buffers that experience those conditions can no longer be assumed to have valid pH values and should be discarded.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Protect buffers against wide temperature variations,\nwhether they are in transit, in use, or in storage. Never\nexpose buffers to extreme heat or freezing tempera-",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-perf-check-frequency-01",
+          "claim": "pH-meter and electrode performance is required to be checked before each water-quality field trip and at each field site.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "pH-meter and electrode performance is required to be\nchecked before each water-quality field trip and at each\nfield site.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-no-bare-fingers-01",
+          "claim": "The glass bulb of a pH electrode must never be handled with bare fingers, because oily film or scratches on the bulb interfere with the design characteristics of the glass bulb membrane and affect pH measurements.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Never handle the glass bulb with bare fingers. Oily film\nor scratches on the bulb will interfere with the design\ncharacteristics of the glass bulb membrane",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-electrode-inspection-list-01",
+          "claim": "Routine inspection of a pH electrode and its cable covers cut or frayed cables, broken connectors and mismatched or missing parts, a visibly scratched or broken glass bulb, a cracked electrode body, broken or damaged internal electrodes, a visibly contaminated reference junction, and low filling solution.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "• a visibly scratched or broken glass bulb, cracked\nelectrode body, and broken or damaged internal\nelectrodes (reference and measurement electrodes)",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-gel-not-in-diw-01",
+          "claim": "Gel-filled pH electrodes must not be stored in low-ionic-strength water, including deionized water, even temporarily, because ions leach from the gel into the dilute water, diluting the filling gel and causing errors in pH measurements.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Do not store gel-filled electrodes in low-ionic-\nstrength water, including DIW, even temporarily,\nas ions will leach from the gel into the dilute water,",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__1de98534a725",
+      "index": 21,
+      "locator": "Section 3.1 Electrode Care and Cleaning, \"To prepare pH electrodes for use\"",
+      "claims": [
+        {
+          "id": "ph-gel-irreversible-01",
+          "claim": "There is no easy way to recondition or replace the ionic gel of a gel-filled pH electrode once it has been diluted.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "There is no easy way to recondition or\nreplace the ionic gel.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-no-extreme-storage-01",
+          "claim": "pH meters and electrodes must not be stored in extreme heat or cold.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Do not store pH meters and electrodes in extreme heat\nor cold.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-fill-level-bottom-of-hole-01",
+          "claim": "When preparing a refillable pH electrode for use, the filling solution level should reach the bottom of the fill hole; the electrode is then gently swirled and allowed a few minutes for equilibration after adding solution.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "The\nsolution should reach the bottom of the fill hole. Gently\nswirl the electrode and allow a few minutes after\nadding solution for equilibration.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-filling-solution-match-01",
+          "claim": "Filling solutions differ in concentration and composition, so the operator must always check that the correct filling solution required by the manufacturer for that particular electrode is being used.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Filling solutions\ndiffer in concentration and composition—always\ncheck that the correct filling solution required\nby the manufacturer for a particular electrode is\nbeing used.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-drain-flush-reequilibrate-01",
+          "claim": "The reference chamber of refillable electrodes should be drained, flushed and routinely refilled with the correct filling solution, and the probe allowed to re-equilibrate before calibration.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Drain and flush the reference chamber of refill-\nable electrodes, and routinely refill them with the\ncorrect filling solution",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__f7d859ebd110",
+      "index": 22,
+      "locator": "Section 3.1 end of \"prepare pH electrodes for use\" list and page break — \"-- 16 of 32 --\" (content is entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__6e70ac8e24a4",
+      "index": 23,
+      "locator": "Section 3.1 logbook and routine cleaning — \"For routine cleaning of the pH electrode\"",
+      "claims": [
+        {
+          "id": "ph-logbook-per-serial-01",
+          "claim": "The pH-meter/electrode logbook is used to record the operational history of each pH electrode identified by serial number, including calibration slope, isopotential point and conditions of use.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Record in the pH-meter/electrode logbook the\noperational history, including calibration slope,\nisopotential point, and conditions of use, of each pH\nelectrode identified by serial number.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-slope-acceptance-95-101-01",
+          "claim": "A properly working pH electrode should yield 95 to 101 percent of the response expected from the theoretical Nernst equation, equivalent to 56.2 to 59.8 millivolts per pH unit at 25 degrees Celsius.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Properly working electrodes\nshould yield 95 to 101 percent (56.2 to 59.8 mV/pH\nunit at 25 °C) of the response expected according\nto the theoretical Nernst equation",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-stabilization-2-3-min-01",
+          "claim": "When measuring pH buffers, stabilization of the electrode taking more than 2 to 3 minutes may indicate reduced electrode performance or a clogged reference junction.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "note whether stabilization\nof the electrode requires more than 2 to 3 minutes.\nSlow response times may indicate reduced electrode\nperformance or a clogged reference junction.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-rinse-diw-only-01",
+          "claim": "Before and after each use the pH electrode body is rinsed thoroughly using only deionized water.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Before and after each use, rinse the electrode body\nthoroughly, using only DIW.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-no-paper-wipe-01",
+          "claim": "Moisture must not be wiped or wicked from pH electrodes with paper towels or other paper-based wipes, because they can scratch the glass bulb membrane and can put a static charge (polarization) on the electrode exterior that adversely affects the measurement; gently shaking the electrode to remove drops is recommended instead.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Do not wipe or wick moisture from electrodes with\npaper towels or other paper-based wipes, as they can\nscratch the glass bulb membrane.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-air-suspend-15-min-01",
+          "claim": "A liquid-filled electrode that has been in storage solution for weeks to months should have its fill hole uncapped and be suspended in air for about 15 minutes so the filling solution flushes residual storage solution through the porous reference junction and wets it thoroughly.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "uncap the fill hole and suspend the electrode\nin the air for about 15 minutes.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-hcl-soak-01",
+          "claim": "To remove solid precipitates fouling the reference junction, soak the electrode (gel- or liquid-filled) in 0.1-molar hydrochloric acid for 30 minutes, then rinse thoroughly with deionized water before use or storage.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Soak the electrode (whether gel- or liquid-filled) in\n0.1-M HCl for 30 minutes.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-detergent-soak-01",
+          "claim": "An electrode contaminated with oil or grease is soaked in a 0.5-percent mild liquid dishwashing detergent solution for 3 minutes, then rinsed thoroughly with deionized water.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "soak\nit in 0.5-percent mild liquid dishwashing detergent\nsolution for 3 minutes.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-bleach-soak-01",
+          "claim": "To clean bacterial contaminants, soak the electrode in a dilute 1:10 volume-per-volume solution of bleach (sodium hypochlorite) for 30 minutes, then rinse thoroughly with deionized water.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "soak the electrode\nin a dilute (1:10 volume per volume) solution of bleach\n(sodium hypochlorite) for 30 minutes.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__b9b676eac883",
+      "index": 24,
+      "locator": "Section 3.2 Reconditioning (Flushing and Refilling) of Liquid-Filled Electrodes — \"If problems persist during calibration\"",
+      "claims": [
+        {
+          "id": "ph-recondition-triggers-01",
+          "claim": "Reconditioning of a liquid-filled electrode should be implemented if its slope response has deteriorated to less than 95 percent or greater than 101 percent, if the meter no longer recognizes the pH buffers because the isopotential point has shifted, or if the response time is longer than expected.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Reconditioning\nprocedures should be implemented if the electrode’s slope\nresponse has deteriorated to less than 95 percent or greater\nthan 101 percent",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-recondition-logbook-01",
+          "claim": "The date, serial number and action must be documented in the pH-meter/electrode logbook whenever an electrode is reconditioned or replaced.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Document the date,\nserial number, and action in the pH-meter/electrode logbook if\nthe electrode has been reconditioned or replaced.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-salt-crystals-cause-01",
+          "claim": "Salt crystal deposits in the reference electrode or reference junction commonly cause pH electrodes to malfunction.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Salt crystal\ndeposits in the reference electrode or reference junction com-\nmonly cause pH electrodes to malfunction.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-recondition-step1-2-01",
+          "claim": "Renewing the filling solution begins by removing the old filling solution through the filling hole with a small pipet or syringe (or wicking it out with a laboratory wipe), then flushing the pH electrode by partially filling the chamber with deionized water and removing it the same way.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Use a small pipet or syringe to remove the filling\nsolution through the filling hole.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__b126d7a81459",
+      "index": 25,
+      "locator": "Section 3.2 reconditioning steps 1-2 continuation and page break — \"-- 17 of 32 --\" (content is entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__6f4fa660b169",
+      "index": 26,
+      "locator": "Section 3.2 reconditioning steps 3-4 and section 3.3 Electrode Storage — \"Flush and fill the electrode with fresh filling solution\"",
+      "claims": [
+        {
+          "id": "ph-crystals-flush-01",
+          "claim": "If visible crystals have formed in the pH electrode as a result of changes in pressure or temperature or evaporation of the filling solution, flushing with deionized water continues until all crystals are dissolved and removed, and deionized water must not be left in the reference electrode after cleaning.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "continue to flush with DIW until all the\ncrystals have been dissolved and removed from the\npH electrode.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-refill-level-01",
+          "claim": "After reconditioning, the electrode chamber is refilled with fresh filling solution until the filling-solution level is just below the fill hole, and excess filling solution is rinsed off the outside of the electrode with deionized water.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Refill the electrode chamber with fresh filling\nsolution until the filling-solution level is just below\nthe fill hole.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-post-recondition-reject-01",
+          "claim": "After reconditioning, the electrode is tested by performing a calibration and recording the slope and isopotential point; if the slope falls outside 95 to 101 percent (56.2 to 59.8 mV/pH unit at 25 degrees Celsius) of the theoretical Nernst response, the electrode must not be used.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "If the slope\nfalls outside this range, do not use the electrode.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-storage-terms-01",
+          "claim": "Short-term electrode storage means the electrode is used daily or weekly, and long-term storage means months.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "the proper short-term (used daily or weekly) and long-term\n(months) storage requirements of the electrode",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-no-diw-storage-01",
+          "claim": "pH electrodes must not be stored in deionized water unless the manufacturer instructs otherwise, and storage solutions are specific to the type of electrode.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Do not store pH electrodes in DIW unless instructed\nto do so by the manufacturer.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-storage-solution-expiry-01",
+          "claim": "Storage solutions have a limited shelf life; their containers must be labeled with the expiration date and expired solutions discarded appropriately.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Storage solutions have a limited shelf life. Label\nstorage-solution containers with the expiration date and\ndiscard expired solutions in an appropriate manner.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-no-cotton-in-cap-01",
+          "claim": "Cotton or paper towel must not be placed in the electrode cap to keep the bulb moist, because that practice can scratch the glass bulb membrane.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Do not place cotton or paper towel in the electrode cap\nto help keep it moist, as this practice can scratch the\nglass bulb membrane.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-store-upright-wet-01",
+          "claim": "pH electrodes are stored upright so the filling solution or gel stays in contact with the reference junction, and are stored wet between uses to maximize accuracy and response time, with the glass bulb membrane fully immersed in the proper storage solution.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Store pH electrodes upright so the filling solution or gel\nis always in contact with the reference junction.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-short-term-buffer-storage-01",
+          "claim": "Storing the electrode in either pH-4 or pH-7 buffer may be recommended for short-term storage of less than 1 day, but unless the manufacturer recommends it the electrode should not be stored in buffer solution for a long period.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Storing the electrode in either pH-4 or -7 buffer may be\nrecommended for short-term storage (less than 1 day).",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__9fd4fb61c959",
+      "index": 27,
+      "locator": "Section 3.3 long-term storage and section 4.0 Calibration of the pH Instrument System — \"A calibration curve is created by measurement of two or more standard pH buffers\"",
+      "claims": [
+        {
+          "id": "ph-longterm-parafilm-01",
+          "claim": "For long-term storage the electrode cap and filling-hole plug are wrapped with lab plastic wrap (Parafilm) to prevent formation of excess salts or evaporation of the reference solution, and liquid-filled electrodes may need to be drained of filling solution.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "For long-term storage, wrap the electrode cap and\nfilling-hole plug with lab plastic wrap (Parafilm) to",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-longterm-cable-01",
+          "claim": "For long-term storage the electrode cable contacts and connector are cleaned (with alcohol if necessary), dried thoroughly, and sealed and stored in a plastic bag.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Clean the electrode cable contacts and connector\n(with alcohol, if necessary). Allow the contacts to dry\nthoroughly, and seal and store them in a plastic bag.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-storage-environment-01",
+          "claim": "Every component of the pH-measuring system is stored in an area that is clean, dry and protected from extreme hot or cold temperatures.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Store every component of the pH-measuring system in\nan area that is clean, dry, and protected from extreme\nhot or cold temperatures.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-cal-curve-brackets-01",
+          "claim": "A pH calibration curve is created by measuring two or more standard pH buffers that bracket the pH of the water being measured.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "A calibration curve is created by measurement of two or\nmore standard pH buffers that bracket the pH of the water\nbeing measured.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-ideal-cal-slope-01",
+          "claim": "The ideal slope of the pH calibration curve at 25 degrees Celsius, based on the Nernst equation, is 59.16 millivolts per pH unit.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "The ideal slope of the calibration curve\nat 25 °C, based on the Nernst equation (see section 2.2), is\n59.16 mV/pH unit.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__854f1ead5e7e",
+      "index": 28,
+      "locator": "Section 4.0 opening paragraph continuation and page break — \"-- 18 of 32 --\" (content is entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__b1653e60dd01",
+      "index": 29,
+      "locator": "Section 4.0 Calibration of the pH Instrument System — \"A properly working pH system has—\"",
+      "claims": [
+        {
+          "id": "ph-isopotential-0mv-01",
+          "claim": "Almost all pH electrodes are designed to have an isopotential point at pH 7, the pH at which the electromotive force is equal to 0 millivolts.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "have an isopotential point at pH 7 (the pH at which e.m.f. is\nequal to 0 mV)",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-cal-three-conditions-01",
+          "claim": "Successful calibration of pH instrumentation requires that the meter and electrode function properly, that the system be calibrated with buffers so the pH of the solution being measured falls within the calibrated range, and that the buffer temperature during calibration be stable and within 10 degrees Celsius of the temperature of the solution being measured.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "(3) the temperature of the pH buffers\nduring calibration needs be stable and similar to (within 10 °C\nof) the temperature of the solution being measured.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-working-system-checklist-01",
+          "claim": "A properly working pH system has new or adequately charged batteries, a properly functioning and accurate thermistor, an electrode slope of 95 to 101 percent of the theoretical Nernstian slope, an isopotential point near pH 7, and a quick response time in standard buffer solutions.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "a pH electrode with an accurate Nernstian response\n(slope of 95–101 percent of the theoretical\nNernstian slope)",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-response-time-1-2-min-01",
+          "claim": "A properly working pH system has a quick response time of 1 to 2 minutes in standard buffer solutions.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "a quick response time (1–2 minutes) in standard\nbuffer solutions.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-indicator-paper-01",
+          "claim": "pH indicator paper may be used onsite as a gross indicator of site pH when no data are available to estimate sample pH, but under no circumstances may a pH value from indicator paper be recorded as the site pH.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "under no circumstances should a pH value from indica-\ntor paper be recorded as the site pH.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-two-point-recommended-01",
+          "claim": "For most modern meters a two-point calibration is recommended, typically with buffers selected from pH 10.01, 7.00, 4.01 or 1.68; a two- or three-point calibration can be performed.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "For most modern meters, a two-point calibration,\ntypically with buffers selected from pH 10.01, 7.00, 4.01, or\n1.68, is recommended.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-linear-cal-curve-01",
+          "claim": "Most manufacturers use a linear calibration curve for all pH calibrations, including multipoint calibrations, and pH meters that use either a point-to-point calibration or a nonlinear function are not recommended.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "pH meters that use either a point-to-\npoint calibration or a nonlinear function are not recommended.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-example-7-to-8-01",
+          "claim": "When stream pH values are expected to be between 7 and 8, the standard pH-7 and pH-10.01 buffers should be selected at a minimum.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "If pH values are expected to be between 7 and 8,\nthen the standard pH-7 and pH-10.01 buffers (at a\nminimum) should be selected.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-example-below-7-01",
+          "claim": "When stream pH values are expected to be less than 7, the standard pH-7 and pH-4.01 buffers should be selected at a minimum.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "If pH values are expected to be less than 7, then the\nstandard pH-7 and pH-4.01 buffers (at a minimum)\nshould be selected.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-three-point-option-01",
+          "claim": "A three-point calibration using the pH-4.01, pH-7.00 and pH-10.01 buffers can be used instead of a two-point calibration to allow measurement over a larger range of pH.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "a three-point calibration\nusing pH-4.01, -7.00, and -10.01 buffers could also be used to\nallow measurement of a larger range of pH.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-estimate-before-cal-01",
+          "claim": "Before calibrating the pH instrument system it is useful to estimate, or anticipate from historical site data, the pH and conductivity of the waters to be encountered at the field sites.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "it is useful to estimate (or anticipate from historical\nsite data, if available) the pH and conductivity of the waters to\nbe encountered at the field sites.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__ff61308669d5",
+      "index": 30,
+      "locator": "Section 4.0 temperature guidance and general calibration guidelines — \"Calibrating a pH meter and electrode with buffers that are within ±10 °C\"",
+      "claims": [
+        {
+          "id": "ph-buffer-within-10c-01",
+          "claim": "Calibrating a pH meter and electrode with buffers that are within plus or minus 10 degrees Celsius of the sample temperature is recommended.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "brating a pH meter and electrode with buffers that are within±10 °C of the sample temperature is recommended.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-mesh-bag-equilibrate-01",
+          "claim": "Buffers can be brought within the recommended temperature window by placing them in a mesh bag and equilibrating them to the temperature of the water at the sampling location before calibration.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "This task\ncan be accomplished by placing the buffers in a mesh bag and\nequilibrating them to the temperature of the water at the sam-\npling location before calibration.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-lab-cal-envelope-01",
+          "claim": "For most sampling situations, where water temperature is between 5 and 35 degrees Celsius and pH is between 4.0 and 9.5, the recommended procedure is to calibrate the meter in the controlled environment of the office laboratory and then let the meter compensate for temperature differences at the sampling site.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "for most sampling\nsituations, where the temperature of the water is between 5 and\n35 °C and the pH is between 4.0 and 9.5, the recommended\nprocedure is to calibrate the meter in the more controlled",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-field-check-005-tolerance-01",
+          "claim": "If a buffer checked at the field site within plus or minus 10 degrees Celsius of the environmental sample temperature reads more than plus or minus 0.05 pH unit from the value that buffer should return at that temperature, the meter and electrode must be recalibrated at a temperature within 10 degrees Celsius of the field-measurement temperature.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "more than ±0.05 pH unit different\nfrom the value the buffer should return at that temperature, the\nmeter and electrode should be recalibrated",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-sonde-lab-cal-field-check-01",
+          "claim": "For multiparameter sondes deployed for continuous field measurements, the recommended procedure is to calibrate in the laboratory and then check in the field at ambient temperatures, with recalibration necessary if the initial check is more than plus or minus 0.05 pH unit from the value the buffer should return.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Recalibration\nmay be necessary if the initial check is more than ±0.05 pH\nunit different from the value the buffer should return.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-sonde-10c-fail-risk-01",
+          "claim": "If the measurement temperature is more than plus or minus 10 degrees Celsius different from the laboratory calibration temperature, field checks are more likely to fail and recalibration may be necessary.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "If the\nmeasurement temperature is more than ±10 °C different from\nthe laboratory calibration temperature, checks in the field are\nmore likely to fail and recalibration may be necessary.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-logbook-precheck-01",
+          "claim": "Before each field trip and site visit the pH-meter/electrode logbook records are checked for electrode performance; a noted calibration slope of less than 95 percent or greater than 101 percent indicates probable electrode deterioration and the electrode should be cleaned, reconditioned or replaced.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "any noted calibration slope of less\nthan 95 percent or greater than 101 percent indicates\nprobable electrode deterioration.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-no-shortcuts-01",
+          "claim": "When using modern pH meters that compensate for buffer temperatures automatically, the operator follows the manufacturer's calibration instructions together with the manual's general procedures and does not take shortcuts.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "follow the manufacturer’s\ncalibration instructions and the more general instructions in\nthe following procedures—do not take shortcuts.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__7abc0fdf01b2",
+      "index": 31,
+      "locator": "Section 4.0 slope-check bullet continuation and page break — \"-- 19 of 32 --\" (content is entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__434fe1dc3109",
+      "index": 32,
+      "locator": "Section 4.0 calibration guidelines and section 4.1 Calibration Procedure — \"Use at least two pH buffer solutions with documented, NIST-traceable pH values\"",
+      "claims": [
+        {
+          "id": "ph-two-nist-brackets-01",
+          "claim": "At least two pH buffer solutions with documented, NIST-traceable pH values that bracket the sample pH must be used for accurate calibration of the pH instrument system.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Use at least two pH buffer solutions with documented,\nNIST-traceable pH values that bracket the sample pH\nfor accurate calibration of the pH instrument system.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-secondary-bottle-01",
+          "claim": "Buffer for field use is poured from the source container into a clean polyethylene bottle dedicated to that buffer and labeled with the buffer's pH value, lot number and expiration date, to minimize the chance of contaminating the main buffer source.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "label the bottle with the buffer’s pH value,\nlot number, and expiration date.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-temp-sensor-annual-cal-01",
+          "claim": "A calibration check of the pH meter's temperature sensor is required to be performed at least annually, per NFM A6.1.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "A calibration check of the pH meter’s temperature\nsensor is required to be performed at least annually\n(NFM A6.1).",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-sensor-location-difference-01",
+          "claim": "Most single-analyte pH meters use a thermistor built into the electrode, whereas multiparameter instruments typically place the temperature sensor in a different part of the instrument system than the pH electrode.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "Multiparameter\ninstruments typically have the temperature sensor\nin a different part of the instrument system than the\npH electrode.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-daily-cal-and-recal-01",
+          "claim": "pH instrumentation should be calibrated daily and recalibrated if a check of either of the two pH buffers nearest the sample pH, at a temperature within 10 degrees Celsius of the sample, deviates by more than plus or minus 0.05 pH units.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "calibrated daily\nand recalibrated if a check of either of the two pH\nbuffers nearest to the pH of the sample at a temperature\nthat is ± 10 °C of the sample deviates by more than\n± 0.05 pH units.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-isopotential-15mv-test-01",
+          "claim": "A new pH electrode is tested by placing it in pH-7.00 buffer and recording the voltage; the test is repeated regularly and the value must remain within plus or minus 15 millivolts of the original, otherwise the electrode is cleaned, reconditioned or replaced.",
+          "metrics": [
+            "ph",
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "Test the electrode when it is new by placing it\nin pH-7.00 buffer and record the voltage. Repeat this\ntest regularly and verify that the value is ±15 mV of\nthe original value.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-secondary-refresh-01",
+          "claim": "Buffers transferred to a secondary bottle for field use should be refreshed before every field trip, and buffers past their expiration date must not be used.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Buffers that have been transferred to a second-\nary bottle for use while in the field should be refreshed\nbefore every field trip.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-cal-procedure-envelope-01",
+          "claim": "The section 4.1 calibration procedure is expected to yield accurate sample-pH measurements for waters with specific conductance less than 60,000 microsiemens per centimeter, temperatures from 0 to 90 degrees Celsius, and pH from 1.68 to 10.",
+          "metrics": [
+            "ph",
+            "conductivity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "accurate sample-pH measurements for waters with specific\nconductance less than 60,000 μS/cm, temperatures from 0 to\n90 °C, and pH in the range from 1.68 to 10.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-lab-cal-recommended-01",
+          "claim": "Under most situations it is recommended to calibrate the pH meter and electrode in a controlled environment such as a laboratory rather than in the field, because modern meters' automatic temperature corrections are usually accurate within 5 to 35 degrees Celsius and for pH between 4.0 and 9.5.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "these corrections are usually\naccurate within a temperature range of 5 to 35 °C and for\npH measurements between 4.0 and 9.5.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__81a49713cf5a",
+      "index": 33,
+      "locator": "Section 4.1.1 Calibration of a Single-Parameter Meter, steps 2-5 — \"place the buffer bottles in a mesh bag and suspend them in the ambient water\"",
+      "claims": [
+        {
+          "id": "ph-field-buffer-equilibration-01",
+          "claim": "When calibrating or testing buffers in the field, the buffer bottles are placed in a mesh bag and suspended in the ambient water long enough to reach temperature equilibrium, or alternatively placed in an insulated cooler filled with ambient water.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "place\nthe buffer bottles in a mesh bag and suspend them in the\nambient water long enough to allow them to equilibrate\nto temperature equilibrium.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-bottle-capped-immersion-01",
+          "claim": "When immersing buffer bottles in water to equilibrate them, the bottle must be firmly capped so water cannot enter and contaminate the buffer.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "ensure that\nthe bottle is firmly capped so that water cannot enter\nthe bottle and contaminate the buffer.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-equilibrate-all-components-01",
+          "claim": "For calibration in either the laboratory or the field, the buffers, temperature sensor, measurement vessel and electrode are all allowed to equilibrate to the same temperature.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "allow the\nbuffers, temperature sensor, measurement vessel, and\nelectrode to equilibrate to the same temperature.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-no-submerge-fill-hole-01",
+          "claim": "Liquid-filled electrodes must not be fully submerged; the fill hole is kept above the water surface to prevent sample water from mixing with the filling solution.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Be careful not to fully submerge liquid-filled electrodes\n(keep the fill hole above the water surface) to prevent\nsample water from mixing with the filling solution.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-fill-hole-open-01",
+          "claim": "During calibration the fill hole is uncovered and kept open to equalize the pressure inside and outside the electrode and to allow flow across the reference junction, with the filling-solution level just below the fill hole.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Keep the\nfill hole open to equalize the pressure inside and\noutside the electrode and to allow flow across the\nreference junction.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-dislodge-bubbles-01",
+          "claim": "If small bubbles are visible within the electrode solution, as typically occurs in a gel-filled electrode, the electrode body is gently shaken to dislodge them, because bubbles trapped in the sensing tip affect the physical conditions needed for correct electrode operation.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "If you can see small bubbles within the electrode\nsolution (as typically occurs in a gel-filled elec-\ntrode), gently shake the electrode body to dislodge\nthem.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__3614bdb8985e",
+      "index": 34,
+      "locator": "Section 4.1.1 steps 5c-5e continuation and page break — \"-- 20 of 32 --\" (content is entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__a03e15a87724",
+      "index": 35,
+      "locator": "Section 4.1.1 steps 6-10 — \"Begin calibration procedures\" and the pour-swirl-discard rinse sequence",
+      "claims": [
+        {
+          "id": "ph-no-wipe-bulb-01",
+          "claim": "Moisture must not be wiped from the glass bulb of the pH electrode.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Do not wipe\nmoisture from the glass bulb.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-startup-errors-logbook-01",
+          "claim": "Any error messages or unusual startup information displayed by the pH meter at power-on are recorded in the pH-meter/electrode logbook and corrected; malfunctioning meters may require manufacturer attention.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Note any error messages\ndisplayed by the meter during startup and record them\nin the pH-meter/electrode logbook.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-cal-log-required-01",
+          "claim": "A calibration log may be paper or electronic but is required for all calibrations and helps track electrode performance over time.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "A calibration log may be paper or electronic, but\nis required for all calibrations and is helpful in tracking\nthe performance of the electrode over time.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-usgs-two-or-three-point-01",
+          "claim": "Standard USGS procedure for pH calibration requires a two- or three-point calibration.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Standard USGS procedure for\ncalibration requires a two- or three-point calibration.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-single-point-unacceptable-01",
+          "claim": "A single-point calibration, though recommended by some manufacturers, is not acceptable for USGS field measurement of pH.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "A single-point calibration, recommended by some\nmanufacturers, is not acceptable for USGS field\nmeasurement of pH.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-record-buffer-lot-temp-01",
+          "claim": "The temperature and the value of the pH buffers used at that temperature, with lot numbers and expiration dates, are recorded in the pH-meter/electrode logbook.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Record the temperature and value of pH buffers used at\nthat temperature, with lot numbers and expiration dates,\nin the pH-meter/electrode logbook.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-diw-rinse-three-times-01",
+          "claim": "The electrode and thermistor must be rinsed three times with deionized water initially and between uses of each buffer, and the calibration beaker is rinsed with deionized water three times.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Note that the electrode and thermistor must be rinsed\nthree times with DIW initially and between uses of\neach buffer.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-begin-with-ph7-01",
+          "claim": "If the meter does not specify a calibration order, calibration begins with pH 7.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "If the meter does not specify a calibration order,\nbegin with pH 7.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-dedicated-beaker-01",
+          "claim": "Calibration of the electrode should be performed in a small plastic or glass beaker dedicated to pH calibration.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "The calibration of the electrode should be performed\nin a small plastic or glass beaker that is dedicated to\nthe pH calibration.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-pour-swirl-discard-01",
+          "claim": "In the first and second rinse (pour swirl discard), enough buffer is poured into the dedicated beaker to cover the electrode reference junction and part of the electrode body but not the fill hole, the electrode is immersed and the buffer swirled to rinse the body from above the reference junction to the bottom of the bulb, then discarded, repeated a total of two times.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "pour swirl discard—Pour\nenough buffer into the dedicated beaker so that it\ncovers the electrode reference junction and some of\nthe electrode body but does not cover the fill hole.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-pour-sit-discard-01",
+          "claim": "In the third rinse (pour sit discard), the next aliquot of buffer is poured into the beaker and the electrode immersed in it for 1 minute before the buffer is discarded.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Third rinse, pour sit discard—Pour the next\naliquot of buffer into the beaker and immerse the\nelectrode in the buffer for 1 minute.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-pour-sit-measure-01",
+          "claim": "In the pour sit measure step, fresh buffer is poured into the beaker, the electrode immersed and gently swirled to remove all surrounding air bubbles, and allowed to sit for 1 minute before calibration on that buffer begins.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Pour sit measure—Pour fresh buffer into the beaker.\nImmerse the electrode, gently swirl to remove all\nair bubbles surrounding it, and allow it to sit for 1\nminute.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__823654fb151f",
+      "index": 36,
+      "locator": "Section 4.1.1 steps 10j-12, the slope test — \"Properly working electrodes should have slopes that are 56.2 to 59.8 mV/pH unit at 25 °C\"",
+      "claims": [
+        {
+          "id": "ph-record-stabilized-reading-01",
+          "claim": "Once the reading on a buffer has stabilized, the pH measurement and millivolts are recorded in the pH meter/electrode logbook along with the buffer temperature reading and the pH value taken from the buffer and temperature table.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "record the pH measurement\n(and [or] millivolts) in the pH meter/electrode log-\nbook, along with the buffer temperature reading and\nthe pH value from the buffer and temperature table.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-repeat-for-bracketing-buffer-01",
+          "claim": "Step 10 is repeated for each additional pH buffer needed to bracket the expected measurement, and all calibration data including millivolt and slope readings are recorded in the pH meter/electrode logbook.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "For calibration with the additional pH buffer or buf-\nfers necessary to bracket the expected measurement,\nrepeat step 10 above.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-slope-test-definition-01",
+          "claim": "The slope test checks that a properly working electrode has a slope of 56.2 to 59.8 millivolts per pH unit at 25 degrees Celsius, which is 95 to 101 percent of the slope expected from the theoretical Nernst relation.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "The slope test—Properly working electrodes should\nhave slopes that are 56.2 to 59.8 mV/pH unit at\n25 °C, which is 95 to 101 percent of the expected\nslope from the theoretical Nernst relation",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-slope-out-of-range-action-01",
+          "claim": "If the slope or percent value is outside the acceptable range, the electrode is first cleaned and the filling-solution level, an open fill hole and a free-flowing junction are checked, then the system is recalibrated.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "first clean the electrode and\ncheck: the level of the filling solution, that the fill\nhole is open, and that the junction is free flowing;\nthen, recalibrate.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__d5d4ef0c3955",
+      "index": 37,
+      "locator": "Section 4.1.1 slope-test bullet continuation and page break — \"-- 21 of 32 --\" (content is entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__147ba11e0c62",
+      "index": 38,
+      "locator": "Section 4.1.1 step 12 slope and millivolt tests, technical note, and section 4.1.2 — \"The millivolt test\"",
+      "claims": [
+        {
+          "id": "ph-nernst-slope-vs-temp-01",
+          "claim": "The theoretical Nernstian slope varies with temperature: it is 55.18 millivolts per pH unit at 5 degrees Celsius and 64.12 millivolts per pH unit at 50 degrees Celsius, compared with 59.16 at 25 degrees Celsius.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "the Nernstian slope\nis 55.18 mv/pH unit at 5 °C and 64.12 mV/pH unit\nat 50 °C (Bates, 1965).",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-relative-slope-25c-only-01",
+          "claim": "The straightforward calculation of slope and relative slope is valid only at 25 degrees Celsius, and to calculate relative slope at another temperature the theoretical Nernst response for that temperature must be substituted for 59.16 in the equation.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "This straightforward calculation of slope and relative\nslope is valid only at 25 °C because the expected\nslope from the theoretical Nernst relation varies\nwith temperature.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-mv-test-1001-01",
+          "claim": "In the millivolt test, the pH 10.01 buffer should give readings between −192 and −162 millivolts.",
+          "metrics": [
+            "ph",
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "pH 10.01 buffer: readings between −192 and\n−162 mV",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-mv-test-700-01",
+          "claim": "In the millivolt test, the pH 7.00 buffer should give readings between −15 and 15 millivolts.",
+          "metrics": [
+            "ph",
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "pH 7.00 buffer: readings between −15 and 15 mV",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-mv-test-401-01",
+          "claim": "In the millivolt test, the pH 4.01 buffer should give readings between 162 and 192 millivolts.",
+          "metrics": [
+            "ph",
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "pH 4.01 buffer: readings between 162 and 192 mV",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-mv-test-168-01",
+          "claim": "In the millivolt test, the pH 1.68 buffer should give readings between 300 and 330 millivolts.",
+          "metrics": [
+            "ph",
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "pH 1.68 buffer: readings between 300 and 330 mV",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-mv-out-of-range-recognition-01",
+          "claim": "A meter may fail to recognize a pH buffer, or may identify it incorrectly, if the millivolt response is outside the acceptable range, and that acceptable range may vary with the manufacturer.",
+          "metrics": [
+            "ph",
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "The meter may not recognize the pH buffer or\nmay incorrectly identify the pH buffer if the mil-\nlivolt response is outside the acceptable range.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-nonstandard-buffers-01",
+          "claim": "Buffers other than pH 1.68, 4.01, 7.00 and 10.01 should be used for calibration only when the expected measured pH is less than 1.68 or greater than 10, or when the pH meter specifically requires them, in which case the temperature-compensated pH value must be taken from the information supplied with that buffer lot.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Buffers other than pH 1.68, 4.01, 7.00,\nand 10.01 should be used for calibration only in\ncases where expected measured pH is less than 1.68\nor greater than 10",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-replace-after-recal-fail-01",
+          "claim": "The electrode must be cleaned, reconditioned or replaced if, after recalibration, the slope remains outside 95 to 101 percent or the acceptable millivolt response is not met at any calibration point.",
+          "metrics": [
+            "ph",
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "Clean, recondition, or replace the electrode if, after reca-\nlibration, the slope remains outside the acceptable range\nof 95 to 101 percent",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-post-cal-check-005-01",
+          "claim": "After calibration, the pH of the final pH buffer is measured and must be within 0.05 pH units of the certified value at the calibration temperature (table 6.4-3) before sample measurement proceeds.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "After calibration, measure the pH of the final pH buffer and\ncheck that the measured pH at the calibration temperature is\nwithin 0.05 pH units of the certified value (table 6.4–3).",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-post-cal-fail-action-01",
+          "claim": "If the measured pH of the final buffer is more than plus or minus 0.05 pH units from the certified value, the pH electrode is recalibrated or evaluated for reconditioning or replacement.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "If the measured pH is more than ±0.05 pH units\nfrom the certified value, recalibrate the pH electrode",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-sonde-crossref-a68-01",
+          "claim": "Guidelines incorporating USGS protocols for pH calibration and measurement using multiparameter sondes are also described in NFM A6.8.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Guidelines that incorporate USGS proto-\ncols for pH calibration and measurement using multiparameter\nsondes also are described in NFM A6.8.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__3dad515d4597",
+      "index": 39,
+      "locator": "Section 4.1.2 Calibration of the pH Sensor in Multiparameter Sondes, steps 1-5 — \"General procedures for calibration of the pH sensor on a multiparameter sonde\"",
+      "claims": [
+        {
+          "id": "ph-sonde-accuracy-envelope-01",
+          "claim": "Most modern multiparameter sondes automatically compensate for temperature differences and have acceptable accuracy under normal field conditions for temperatures from 5 to 35 degrees Celsius and pH measurements from 4.0 to 9.5.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "have acceptable accuracy under normal field conditions\nfor temperatures ranging from 5 to 35 °C and for pH\nmeasurements ranging from 4.0 to 9.5.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-sonde-verify-ambient-01",
+          "claim": "Sonde calibration is verified with measurements of buffers at ambient field temperatures, done regularly to verify temperature compensation over the range of temperatures at the site.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Verify the calibration with measurements of buffers\nat ambient field temperatures.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-sonde-buffer-selection-01",
+          "claim": "For a multiparameter sonde, the pH-7 buffer plus one or two additional buffer solutions (depending on the meter) that bracket the anticipated sample pH are selected, and the buffers and sonde probes are allowed to equilibrate in temperature.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Select the pH-7 buffer and one or two (depending on the\nmeter) additional buffer solutions that will bracket the\nanticipated pH of the sample.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-sonde-rinse-01",
+          "claim": "The sonde, calibration cup and electrode are rinsed thoroughly three times with deionized water before calibration and three times with deionized water and buffer solution between measurement of each buffer solution.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Rinse the sonde, calibration cup, and electrode\nthoroughly three times with DIW before the calibration\nand three times with DIW and buffer solution between\nmeasurement of each buffer solution.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-sonde-rinse-method-01",
+          "claim": "Sonde calibration uses the same pour-swirl-discard twice, pour-sit-discard, pour-sit-measure rinse method described in section 4.1.1 step 10, applied to the calibration cup and the pH and temperature sensors with separate aliquots of each buffer.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "using the “pour-swirl-discard twice, pour-\nsit-discard, pour-sit-measure” method described in\nsection 4.1.1, step 10.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-sonde-third-buffer-check-01",
+          "claim": "Depending on site conditions and study objectives it may be useful to check the calibration range of the sonde pH sensor with an additional buffer and, if appropriate, lock in the third buffer value.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "it might be useful to check the calibra-\ntion range of the pH sensor by using an additional buffer;\nif appropriate, lock in the third buffer value.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__c64e9feccc13",
+      "index": 40,
+      "locator": "Section 4.1.2 sonde calibration steps 4-5 continuation and page break — \"-- 22 of 32 --\" (content is entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__164de423e5e7",
+      "index": 41,
+      "locator": "Section 4.1.2 step 6 and section 5.0 Measurement of pH — \"Standard procedures for pH measurement are expected to yield accurate sample pH measurements\"",
+      "claims": [
+        {
+          "id": "ph-sonde-record-lot-01",
+          "claim": "Temperature, buffer lot numbers and expiration dates are always recorded with the calibration information in the pH meter/electrode logbook.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Always record temperature, buffer lot numbers, and\nexpiration dates with calibration information in the pH\nmeter/electrode logbook.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-measurement-envelope-01",
+          "claim": "Standard pH measurement procedures are expected to yield accurate sample pH for waters with specific conductance between 100 and 60,000 microsiemens per centimeter, temperature from 0 to 90 degrees Celsius, and pH from 1.68 to 10.",
+          "metrics": [
+            "ph",
+            "conductivity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "to yield accurate sample pH measurements for waters with\nspecific conductance between 100 and 60,000 μS/cm, tem-\nperature from 0 to 90 °C, and pH from 1.68 to 10.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-outside-envelope-modifications-01",
+          "claim": "Studies of low-ionic-strength waters or waters with pH less than 1.68 or greater than 10 require further modifications of the pH calibration or measurement procedures.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "waters with pH less\nthan 1.68 or greater than 10) require further modifications of\npH calibration or measurement procedures.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-measure-immediately-01",
+          "claim": "The pH of sample water should be measured in situ or as soon as possible after the sample is removed from its environmental source.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "The pH of sample water should be measured in situ or as\nsoon as possible after removal of the sample from its environ-\nmental source.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-sample-changes-fast-01",
+          "claim": "The pH of a water sample can change substantially within hours or even minutes after collection because of temperature change, changes in dissolved gas concentrations (carbon dioxide, hydrogen sulfide, ammonia), changes in redox conditions, mineral precipitation, microbial respiration, and other chemical, physical and biological activity.",
+          "metrics": [
+            "ph",
+            "temperature",
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "The pH of a water sample can change substan-\ntially within hours or even minutes after sample collection\nas a result of temperature change",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-field-conditions-interference-01",
+          "claim": "Field conditions including rain, wind, cold, heat, dust, direct sunlight and direct exposure to vehicle exhaust can cause pH measurement problems, so the instrument system and measurement process must always be protected from harsh weather and transportation damage.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "Field conditions, including rain, wind, cold, heat, dust, direct\nsunlight, and direct exposure to vehicle exhaust, can cause\nmeasurement problems.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-electrode-limits-accuracy-01",
+          "claim": "The physical limitations and characteristics of the electrode, including response time, liquid junction potentials and drift, can affect the accuracy of the pH measurement, along with the accuracy of the calibration and of the temperature measurement.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "The physical limitations and characteristics of the electrode,\nincluding response time, liquid junction potentials, and drift,\ncan affect the accuracy of the pH measurement.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-calibrate-day-of-use-01",
+          "claim": "Single-parameter pH meters and electrodes, and multiparameter instruments used for discrete sampling, are required to be calibrated on the day of use and checked at each field site to ensure the calibration is stable.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "are required\nto be calibrated on the day of use and to be checked at each\nfield site to ensure that the calibration is stable.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__54b040d83f83",
+      "index": 42,
+      "locator": "Section 5.1 Step 2, determining measurement location and method — \"It is not advisable to immerse the pH electrode into fast-flowing surface water\"",
+      "claims": [
+        {
+          "id": "ph-surface-methods-01",
+          "claim": "Surface-water pH can be determined in situ from a single point or a cross-sectional measurement, from a sample withdrawn from a churn or cone splitter or other approved sample-compositing device, or by using a pumping system with a flow-through cell or chamber.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "from a sample that is withdrawn from a churn\nor cone splitter or other approved sample-\ncompositing device.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-no-fast-flow-immersion-01",
+          "claim": "It is not advisable to immerse the pH electrode into fast-flowing surface water.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "It is not advisable to immerse the pH electrode into fast-\nflowing surface water for the following reasons—",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-fast-flow-bulb-damage-01",
+          "claim": "Placing a pH electrode into fast-flowing water risks damaging the delicate glass bulb by scratching, pitting or coating, which inhibits correct functioning of the electrode.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Placing the pH electrode into fast-flowing water\nrisks damage to the delicate glass bulb (scratching,\npitting, coating), which will inhibit the correct\nfunctioning of the electrode.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-fast-flow-equilibrium-01",
+          "claim": "Proper functioning of the glass bulb membrane is affected when equilibrium is not achieved with the surrounding sample solution, especially if cavitation occurs around the electrode, and reference-junction equilibrium can be affected by rapidly moving water.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Reference-junction equilibrium can be affected by\nrapidly moving water.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__9a564b07047f",
+      "index": 43,
+      "locator": "Section 5.1 Step 2 bullet continuation and figure 6.4-3 caption — \"-- 23 of 32 --\" (content is entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__1b0cee4a12d5",
+      "index": 44,
+      "locator": "Section 5.1 Step 2 points 3-5, groundwater and flow-through cell guidance — \"If a flow-through cell system is used to measure pH\"",
+      "claims": [
+        {
+          "id": "ph-composite-representative-01",
+          "claim": "If a sample is collected with depth/width-integrated methods, the reported pH should be representative of the composited sample rather than a point measurement, and the range and variability of physical parameter values across the cross section should be determined first with an in situ method such as a multiparameter sonde.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "If a sample is collected with depth/width-integrated\nmethods, the pH should be representative of the\ncomposited sample, not a point measurement.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-groundwater-quiescent-01",
+          "claim": "The final reported pH of groundwater should be measured under quiescent sample conditions with equipment that minimizes aeration and changes in chemical composition and temperature, operated so as to minimize exchange of dissolved gases between sample and atmosphere.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "The final reported pH of groundwater should be mea-\nsured under quiescent sample conditions with equipment\nthat minimizes aeration and changes in chemical compo-\nsition and temperature.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-flowcell-placement-01",
+          "claim": "A flow-through cell used for pH should be kept as close to the source water as possible, with the cell and tubing shielded from direct sunlight and precipitation.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Keep the cell as close to the source water as possible\nand shield the cell and tubing from direct sunlight\nand precipitation.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-flowcell-fill-hole-01",
+          "claim": "In a flow-through cell the electrode fill hole must be open and not submerged while the reference junction is entirely submerged, and any back-pressure condition in the cell must be found and eliminated.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Check that the electrode fill hole is open and\nnot submerged and that the reference junction is\nentirely submerged.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-purge-flow-rate-01",
+          "claim": "During purging the flow to the cell is kept constant and fast enough to keep sediment in suspension but not so fast that the sample is aerated or cavitation occurs around the electrode.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "The flow should be fast enough to keep sediment in\nsuspension, but not so fast that the sample is aerated\nor cavitation occurs around the electrode.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-purge-monitor-01",
+          "claim": "pH stability is monitored during well purging, with pH values recorded at regularly spaced time intervals throughout purging.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Monitor pH stability during well purging. Record\npH values at regularly spaced time intervals\nthroughout purging.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-divert-flow-final-01",
+          "claim": "When purging has ended and the final pH measurement is made, flow is diverted away from the flow-through cell so pH is measured in a quiescent condition.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "When purging has ended and the final pH measure-\nment is made, divert flow away from the flow-\nthrough cell to measure pH in a quiescent condition.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-ground-loop-01",
+          "claim": "A static electrical charge on the inside of a well casing or borehole can transfer to the pH electrode as a ground loop, which is rare but makes the electrode read accurately in buffers while giving erroneous, fluctuating readings in the flow-through cell or chamber.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Ground loops are rare. When they\nexist, electrodes commonly read accurately in buf-\nfers but give erroneous, fluctuating readings in the\nflow-through cell/chamber.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__1c516651a452",
+      "index": 45,
+      "locator": "Figure 6.4-4 caption and photograph credits — \"Photographs of (A) a flow-through cell/chamber\" (content is entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__cfb82b42df82",
+      "index": 46,
+      "locator": "Section 5.1 Step 3 Measure pH — \"A pH value is assumed to be stable when three to five readings\"",
+      "claims": [
+        {
+          "id": "ph-document-method-01",
+          "claim": "The sampling method used to obtain pH measurements must be documented on field forms.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Document the sampling method used to obtain\nmeasurements of pH on field forms.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-vessel-fill-01",
+          "claim": "The sample vessel is filled with enough sample that the electrode reference junction is fully immersed without submerging the fill hole, taking care not to aerate the sample, and only clean measurement vessels are used.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "ensure that the electrode reference junction can be\nfully immersed without submerging the fill hole,\ntaking care not to aerate the sample.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-sample-rinse-sequence-01",
+          "claim": "Sample measurement uses the same rinse sequence as calibration: two rinses immersing and swirling the electrode and thermistor in sample, a third rinse holding the electrode in a fresh aliquot for 1 minute, then a final aliquot in which the electrode is swirled gently to equilibrate before the reading.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Third rinse—Pour the next aliquot of sample into\nthe vessel and immerse and swirl the electrode\nin the sample for 1 minute.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-no-bulb-contact-01",
+          "claim": "During measurement no bubbles may be trapped against the pH bulb and the glass bulb must not contact the sides or bottom of the measurement vessel; swirling is stopped and the sample allowed to become quiescent before pH is recorded.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "making sure that no bubbles are\ntrapped against the pH bulb and the glass bulb of the\nelectrode does not contact the sides or bottom of the\nmeasurement vessel.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-flowcell-purge-5min-01",
+          "claim": "For measurements in a flow-through cell or chamber, the system is purged and the sensors allowed to equilibrate with the water for 5 minutes or more before the pump is stopped or flow diverted to record the final quiescent pH.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Allow the system to purge and the sensors to equili-\nbrate with the water for 5 minutes or more.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-insitu-1min-01",
+          "claim": "For an in situ measurement in still water, the electrode is gently swirled and the electrode and water allowed to equilibrate for at least 1 minute and until the reading stabilizes, after which swirling stops and the sample is allowed to become quiescent to record pH.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "gently swirl the electrode and allow\nthe electrode and water to equilibrate for at least\n1 minute and until the reading stabilizes.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-stability-criterion-01",
+          "claim": "A pH value is assumed to be stable when three to five readings made at regularly spaced intervals are within plus or minus 0.1 pH units.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "A pH value is assumed to be stable when three to\nfive readings made at regularly spaced intervals are\nwithin ±0.1 pH units.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-variable-site-median-01",
+          "claim": "If measurements keep fluctuating outside the acceptable range and site conditions are demonstrably variable, such as degassing or rapid thermal changes from mixing of water at depth, the median of three or more measurements made within about 60 seconds is selected as the value to record.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "select the median of three or\nmore measurements made within about 60 seconds\nas the value to record.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__0e110421fb39",
+      "index": 47,
+      "locator": "Section 5.1 Step 3 point 5 recording rules — \"Record the final pH value of the sample to the nearest 0.01 pH unit\"",
+      "claims": [
+        {
+          "id": "ph-drift-record-final-01",
+          "claim": "If the pH measurement does not stabilize but continually drifts in one direction, the final measurement is recorded; if it does not stabilize but varies around a single value, the median of three or more separate measurements from a quiescent sample is recorded if possible.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "If the pH measurement does not stabilize\nand varies around a single value, record the median\nof three or more separate measurements from a qui-\nescent sample if possible.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-record-001-01",
+          "claim": "The final pH value of the sample is recorded to the nearest 0.01 pH unit, with rounding depending on the accuracy and precision of the equipment.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Record the final pH value of the sample to the\nnearest 0.01 pH unit.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-record-temp-concurrent-01",
+          "claim": "The temperature of the sample must always be recorded concurrently with the pH measurement.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Always record the temperature of the sample concur-\nrently with the pH measurement.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-asr-form-01",
+          "claim": "The sample pH is recorded on the analytical service request forms accompanying samples shipped to the laboratory, because that value is used in many analyses.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Record the sample pH on the analytical service\nrequest forms that will accompany the samples being\nshipped to the laboratory, as this value is used in\nmany analyses.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-rinse-between-solutions-01",
+          "claim": "Between calibrations and measurements of different samples the electrode and thermistor are rinsed with deionized water and then again with the new sample or buffer, and this step must always be completed between different solutions.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Between calibrations and measurements of different\nsamples, rinse the electrode and thermistor with DIW\nand then again with the new sample or buffer.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__883476eb822b",
+      "index": 48,
+      "locator": "Section 5.1 Step 3 point 6 continuation and page break — \"-- 25 of 32 --\" (content is entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__82b12bdb95cd",
+      "index": 49,
+      "locator": "Section 5.1 Step 4 and section 5.2 Measurement of pH in Waters with Low Specific Conductance — \"adding a small amount of potassium chloride (KCl)\"",
+      "claims": [
+        {
+          "id": "ph-field-recheck-nearest-buffer-01",
+          "claim": "Meter and electrode stability is rechecked in the field by measuring the pH of the buffer whose pH is nearest that of the samples.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Check the stability of the pH meter and electrode in the\nfield by measuring the pH of the buffer whose pH is nearest\nto that of the samples.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-recheck-005-recal-01",
+          "claim": "If the field-checked buffer differs by more than 0.05 pH units from its certified value at the measured temperature (table 6.4-3), the pH system is recalibrated and the sample pH remeasured.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "If the pH of the buffer differs by more\nthan 0.05 pH units from the certified value at the measured\ntemperature (table 6.4–3), recalibrate the pH system",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-low-sc-threshold-01",
+          "claim": "Accurate and precise measurement of pH in low-specific-conductance waters, meaning less than 100 microsiemens per centimeter, is challenging.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Accurate and precise measurement of pH in low-specific-\nconductance waters (less than 100 μS/cm) is challenging",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-low-sc-causes-01",
+          "claim": "Low-specific-conductance water is difficult to measure because the water is not sufficiently conductive to complete the electrical circuit for a stable reading with a combination electrode, the ionic-strength difference between sample and buffers is large, and the liquid junction potential is larger than normal.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "the water is not sufficiently conductive to complete\nthe electrical circuit and allow for a stable pH reading using\na combination pH electrode",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-low-resistance-electrodes-01",
+          "claim": "Low-resistance glass pH electrodes or reference junctions with a fast, continuous leak rate can measure pH accurately in low-ionic-strength waters, but they are expensive, generally not designed for fieldwork, and work well only in dilute waters, so they do not replace traditional electrodes.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "Low-resistance glass pH electrodes\nor reference junctions with a fast, continuous leak rate can\nbe used to make accurate measurements of pH in low-ionic-\nstrength waters",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-low-ionic-buffers-avoid-01",
+          "claim": "Calibrating with low-ionic-strength buffers to minimize liquid junction potential errors is recommended by some methods, but such buffers are easily contaminated and should be avoided in field settings.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "but these\nbuffers are easily contaminated and should be avoided in\nfield settings.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-kcl-method-01",
+          "claim": "The recommended method for low-specific-conductance water lets normal field electrodes and standard buffers be used by adding a small amount of potassium chloride to a subsample to raise the specific conductance by approximately 150 microsiemens per centimeter.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "adding a small amount of potassium chloride (KCl) to a\nsubsample of water to increase the specific conductance by\napproximately 150 μS/cm.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-kcl-bias-01",
+          "claim": "Increasing specific conductance by approximately 150 microsiemens per centimeter has little effect on the hydrogen ion activity coefficient, and the pH is expected to be affected by less than 0.01 pH units.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "the pH is expected to be affected by less\nthan 0.01 pH units (Busenberg and Plummer, 1987).",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-kcl-vials-01",
+          "claim": "Before going to the field, small glass vials each containing 20 milligrams of dry crystalline, American Chemical Society-certified potassium chloride are prepared, in greater number than the expected number of pH measurements.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "prepare small glass vials\ncontaining 20 milligrams (mg) of dry potassium chlo-\nride (KCl—crystalline, American Chemical Society-\ncertified).",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-kcl-procedure-01",
+          "claim": "At the sample site a 250-milliliter polyethylene bottle is filled with raw sample water, 20 milligrams of potassium chloride is immediately transferred in, the bottle is capped to minimize gas transfer and gently swirled to dissolve the salt, and the sample is maintained at ambient temperature.",
+          "metrics": [
+            "ph",
+            "conductivity",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "At the sample site, fill a 250-mL polyethylene bottle with\nraw sample water. Immediately transfer 20 mg KCl to\nthe sample solution, cap the solution to minimize trans-\nfer of gases",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-kcl-other-salts-01",
+          "claim": "Adding other salts such as sodium chloride will also increase specific conductance, but potassium chloride is recommended to minimize effects on the liquid junction potential.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "Addition of other salts [for\nexample, sodium chloride] also will increase the specific\nconductance, but KCl is recommended to minimize\neffects on the liquid junction potential.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-kcl-trigger-01",
+          "claim": "The potassium chloride procedure is used only after first determining pH by the section 5.1 procedure and finding that the sample pH does not stabilize and the specific conductance is less than 100 microsiemens per centimeter.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "If the sample pH does not stabilize,\nand the specific conductance is less than 100 μS/cm, then the\nfollowing procedure is recommended:",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__ae221608e1e8",
+      "index": 50,
+      "locator": "Section 5.2 step 3 and section 6.0 Quality Assurance/Quality Control for Measurements of pH — \"Replicates for pH measurement should be collected at least annually\"",
+      "claims": [
+        {
+          "id": "ph-kcl-field-notes-01",
+          "claim": "The addition of potassium chloride to the sample must be recorded in the field notes.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "record the addition of KCl to the\nsample in the field notes.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-qa-elements-01",
+          "claim": "Quality assurance for pH measurement includes documentation of meter calibration and performance, proficiency testing of technicians, collection and measurement of replicate samples to estimate variability, and timely review of results to validate the data.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "quality\nassurance includes documentation of meter calibration and\nperformance, proficiency testing of technicians, collection and\nmeasurement of replicate samples to estimate variability",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-replicate-annual-01",
+          "claim": "Replicates for pH measurement should be collected at least annually, and more frequently if needed, on a schedule specified in the project data-management plan.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Replicates for pH measurement should\nbe collected at least annually, and more frequently if needed.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-replicate-types-01",
+          "claim": "Field replicates for pH can be sequential, where multiple samples are collected and each measured for pH, or concurrent, where the pH of one sample is measured and measured again after the instrument is checked and recalibrated if needed.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Replicates in the field can be sequential, whereby multiple\nsamples are collected in the field and measured for pH, or can\nbe concurrent",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-nwql-split-01",
+          "claim": "Another check for pH measurements is to send a split sample to the USGS National Water-Quality Laboratory and compare its pH to the field measurement, which still provides useful information about sample stability even though temperature, gas composition and redox changes could alter the chemistry.",
+          "metrics": [
+            "ph",
+            "temperature",
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "Another check for pH measurements is to send a split\nsample to the USGS National Water-Quality Laboratory\n(NWQL) to compare its pH to that measured in the field.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-nfqa-required-01",
+          "claim": "USGS field personnel are required to participate in the National Field Quality Assurance program.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "USGS field personnel are required to participate in the\nNational Field Quality Assurance (NFQA) program.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-nfqa-blind-samples-01",
+          "claim": "The National Field Quality Assurance program, conducted annually by the USGS Quality Systems Branch, provides blind samples for measurement of pH, specific conductance and alkalinity to field personnel, who compare their results with most probable values.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "program, conducted annually by the USGS Quality Systems\nBranch (QSB), provides blind samples for measurement of\npH, specific conductance, and alkalinity",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-nfqa-out-of-control-01",
+          "claim": "When National Field Quality Assurance measurements fall outside established control limits, the tests are repeated, possible reasons for the errors are investigated, and the technicians are retrained to improve their techniques.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "When measurements are outside\nestablished control limits, the tests are repeated, possible\nreasons for the errors are investigated, and the technicians are\nretrained",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__047ef0db67e3",
+      "index": 51,
+      "locator": "Section 7.0 Reporting and section 8.0 Troubleshooting — \"pH should be recorded on field sheets to ±0.01 pH units\"",
+      "claims": [
+        {
+          "id": "ph-qc-stored-nwis-01",
+          "claim": "Results of measurements made on quality-control samples are stored in the USGS National Water Information System database.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Results of measurements made on quality-control\nsamples are stored in the USGS National Water Information\nSystem (NWIS) database.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-record-at-site-required-01",
+          "claim": "Because of the reactions that change pH in environmental samples, the effect of temperature on the instrument system, and easily changed chemical and microbiological equilibria, pH measurements are required to be completed and recorded at the field site in situ or as soon as possible after removing the sample from the environmental medium.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "ments are required to be completed and recorded at the field\nsite in situ or as soon as possible after removing the sample\nfrom the environmental medium.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-meter-precision-001-01",
+          "claim": "Most pH meters measure with precision in the range of plus or minus 0.01 units, and modern meters and multiparameter sondes can sometimes discern environmental patterns within this range, so pH should be recorded on field sheets to plus or minus 0.01 pH units.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Most meters measure with precision in the range of ±0.01\nunits.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-accuracy-vs-ph-01",
+          "claim": "Accuracy of pH measurements is greater at lower pH values because hydrogen ion activity is greater, and poorer at higher pH values because hydrogen ion activity is lower.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Accuracy of pH measurements is greater at lower values of pH\nbecause hydrogen ion activity is greater.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-record-meter-identity-01",
+          "claim": "The method used to make the pH measurement, along with the date and the serial numbers or other identifiers for the meter and electrode, must be recorded.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Record the method that was used to make the pH\nmeasurement, as well as the date and serial numbers or\nother identifiers for the meter and electrode.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-nwis-001-01",
+          "claim": "Environmental pH measurements are recorded on field sheets and in NWIS to plus or minus 0.01 standard pH units if the meter provides that level of precision.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Record environmental measurements on field sheets\nand in NWIS to ±0.01 standard pH units, if the meter\nprovides this level of precision.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-rounding-rule-01",
+          "claim": "Rounding for reporting depends on the accuracy and precision of the equipment and is typically to three significant figures, with rounding to plus or minus 0.01 units at low and neutral pH and to plus or minus 0.1 units for pH values equal to or greater than 10.0 recommended.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Rounding to ±0.01\nunits at low and neutral ranges of pH, and to ±0.1 units\nfor pH values equal to or greater than 10.0, is recom-\nmended.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-always-record-temp-01",
+          "claim": "Temperature must always be recorded with measurements of pH.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Always record temperature with measurements of pH.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-electrode-life-12-18-restated-01",
+          "claim": "Depending on use, the typical useful life expectancy of pH electrodes in environmental field operation is approximately 12 to 18 months, and with time electrodes need to be evaluated more frequently for slope deviation outside 95 to 101 percent of the ideal response slope in NIST-traceable buffers.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "the typical useful life expec-\ntancy of pH electrodes used in environmental field operation\nis approximately 12 to 18 months.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-replace-criterion-01",
+          "claim": "The pH electrode is replaced when its response falls outside the acceptable range for the response slope and the deviation cannot be corrected through cleaning or reconditioning.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Replace the pH electrode\nwhen the response falls outside the acceptable range for the\nresponse slope and the deviation cannot be corrected through\ncleaning or reconditioning.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-batteries-first-check-01",
+          "claim": "For any problem encountered, the first check is that the instrument batteries are fully charged, and spare fresh batteries should be kept on hand.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "for any problem encountered,\nfirst check that the instrument batteries are fully charged, and\nkeep spare fresh batteries on hand.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__c4d565e70268",
+      "index": 52,
+      "locator": "Table 6.4-4 Troubleshooting guide for pH measurement — \"Symptom / Possible cause—corrective action\"",
+      "claims": [
+        {
+          "id": "ph-table644-caption-01",
+          "claim": "Table 6.4-4 is a troubleshooting guide for pH measurement, modified from Ritz and Collins (2008), organized as symptom and possible cause with corrective action.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Troubleshooting guide for pH measurement.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-table644-no-calibrate-01",
+          "claim": "Table 6.4-4 lists the causes of an instrument system that will not calibrate satisfactorily as contaminated or old buffers (use fresh buffers), buffers that are not the correct NIST standards for that meter, a faulty electrode (clean, recondition or replace), and weak batteries.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "• Buffers may be contaminated or old—use fresh buffers.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table644-slow-liquid-01",
+          "claim": "For slow response in liquid-filled electrodes, Table 6.4-4 lists weak or incorrect filling solution (change to correct molarity), no or low filling solution, a contaminated electrode, and a clogged or partially clogged junction.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Weak or incorrect filling solution—change filling solution to correct molarity.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table644-cold-lowionic-01",
+          "claim": "Table 6.4-4 attributes slow electrode response to water that is cold or of low ionic strength, directing the operator to section 5.2, to allow more time for equilibration, and to consider a different electrode per table 6.4-2.",
+          "metrics": [
+            "ph",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Water is cold or of low ionic strength—see section 5.2. Allow more time for equilibration; con-\nsider using a different electrode—refer to table 6.4–2.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table644-slow-gel-01",
+          "claim": "For slow response in gel-filled electrodes, Table 6.4-4 lists a dirty glass bulb (rinse carefully with deionized water), a clogged junction, and cold or low-ionic-strength water.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Dirty glass bulb—rinse bulb carefully with DIW.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-table644-erratic-01",
+          "claim": "Table 6.4-4 attributes erratic pH readings to loose or defective connections, broken or defective cables, a loose battery connection, air bubbles in the electrode bulb, pressure in the flow-through chamber, and weak batteries.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "• Air bubbles in the electrode bulb—shake electrode gently.\n• Pressure in flow-through chamber—reduce pressure.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table644-slope-out-01",
+          "claim": "When the electrode voltage potential or the millivolt-versus-pH slope is outside the acceptable range, Table 6.4-4 directs the operator to clean, recondition or replace the electrode and to replace calibration buffers that yield inaccurate results with fresh NIST-traceable buffers.",
+          "metrics": [
+            "ph",
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "Replace calibration buffers that yield inaccurate results with fresh NIST-traceable buffers.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__32214136fa02",
+      "index": 53,
+      "locator": "Acknowledgments and Selected References — \"Bates, R.G., 1973, Determination of pH, theory and practice\" (acknowledgments and reference list)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__86a9170acc84",
+      "index": 54,
+      "locator": "Selected References continuation — \"Nordstrom, D.K., and Alpers, C.N., 1999, Negative pH\" (reference list)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__f664397f8c58",
+      "index": 55,
+      "locator": "Selected References end and back cover — \"ISSN 2328-7055 (online)\" (reference list and back matter)",
+      "claims": []
     }
   ],
   "summary": {
-    "totalClaims": 96,
+    "totalClaims": 274,
     "byMetric": {
-      "ph": 88,
-      "temperature": 35,
-      "(none)": 5,
-      "conductivity": 3,
-      "orp": 1
+      "ph": 266,
+      "temperature": 84,
+      "conductivity": 19,
+      "orp": 11,
+      "(none)": 5
     },
     "byType": {
-      "numeric": 32,
-      "procedural": 24,
-      "definitional": 22,
-      "conceptual": 18
+      "procedural": 139,
+      "numeric": 71,
+      "conceptual": 36,
+      "definitional": 28
     },
-    "gaps": [],
-    "notes": ""
+    "gaps": [
+      "States no acceptance criterion, water-quality standard, or 'normal' pH range for freshwater. The only ranges given are descriptive observations of what natural waters happen to do (rivers not affected by contamination 'generally' 6.5 to 8.5; most U.S. groundwaters 6.0 to 8.5) and instrument-envelope statements (automatic temperature compensation accurate for pH 4.0-9.5; standard procedures valid for pH 1.68 to 10). Nothing in a6.4 makes 6.5-8.5 a threshold, a tolerance, or a pass/fail band, and the document never says what pH value indicates impaired water.",
+      "Gives no way to correct a measured SAMPLE pH from field temperature to a reference temperature. Table 6.4-3 gives buffer values from 0 to 90 degrees Celsius, and ATC is described as compensating the electrode/buffer response, but there is no equation, table, or coefficient for normalizing a sample reading (e.g., pH 7.4 measured at 12 degrees Celsius) to 25 degrees Celsius. The document instead requires that temperature be recorded alongside pH and reported as measured.",
+      "Table 6.4-3 is tabulated only in 5-degree Celsius steps and only for the pH 1.68, 4.01, 7.00 and 10.01 buffers. No interpolation rule is given for intermediate temperatures, and for any other buffer the manual defers entirely to 'the information provided with the specific buffer lot'.",
+      "Gives no shelf life or post-opening expiration interval for pH buffers. It requires labeling the date opened and the expiration date, forbids expired buffers, and says field secondary bottles must be refreshed before every field trip, but never states how long an opened stock bottle remains valid.",
+      "Gives no filling-solution composition or molarity. It repeatedly requires 'the correct type and concentration' and 'the manufacturer-recommended concentration', and describes filling solutions only as 'a chloride salt, commonly silver or potassium, at a known concentration'. No number appears anywhere, in contrast to the cleaning solutions, which are specified exactly (0.1-M HCl, 0.5-percent detergent, 1:10 bleach).",
+      "Gives no storage-solution composition. It forbids storing electrodes in deionized water, requires the bulb to be immersed in 'the proper electrode-storage solution', and allows pH-4 or pH-7 buffer for storage under 1 day, but never names what a storage solution is or what it contains.",
+      "Does not reconcile its three different numeric tolerances, and never states an overall accuracy for a reported field pH. Meter precision is given as plus or minus 0.01 units and reporting is to 0.01; the buffer-check/recalibration trigger is plus or minus 0.05 pH unit; the stability criterion for successive sample readings is plus or minus 0.1 pH unit. No claim in the document tells an operator what uncertainty to attach to the value they report.",
+      "Gives no quantitative drift criterion. Step 3 says to record the final measurement if the reading 'continually drifts in one direction', but no drift rate (pH units per minute, or millivolts per minute) is defined that separates acceptable settling from a failing electrode.",
+      "Gives no recalibration interval for a continuously deployed sonde. Discrete measurement is pinned to 'calibrated on the day of use' and 'calibrated daily', but for unattended deployment the document only says to calibrate in the laboratory and check in the field; there is no maximum deployment duration, no fouling-check interval, and no procedure for drift-correcting a continuous record. It defers to NFM A6.8.",
+      "Covers only glass-bulb combination electrodes. Non-glass pH sensors (ISFET, solid-state, and other ion-selective designs) are named as existing but are explicitly not discussed, so an operator with a solid-state pH probe gets no calibration sequence, no acceptance criterion, and no maintenance guidance from this chapter.",
+      "Gives no procedure for seawater or estuarine water. Specific conductance is capped at 60,000 microsiemens per centimeter and Table 6.4-2 has no brackish or estuarine row; seawater appears once, only as an example of activity differing from molar concentration. There is no mention of the seawater pH scales (NBS versus total hydrogen ion) or of buffers formulated at seawater ionic strength.",
+      "Says nothing about interference from the other water-quality metrics measured on the same instrument. Turbidity and dissolved oxygen are never mentioned in the chapter, so there is no statement of whether suspended sediment, biofouling, or dissolved-gas content biases a pH reading, even though Table 6.4-2 does treat specific ionic interferences (sodium above pH 11.0, sulfide, cyanide, ferric chloride, silica, iron).",
+      "Gives no acceptance limits for the National Field Quality Assurance blind samples. It requires participation and says tests are repeated and technicians retrained when results fall 'outside established control limits', but never states what those control limits are for pH.",
+      "Table 6.4-4 troubleshooting entries are qualitative only. No symptom row carries a numeric diagnostic threshold, so 'slow response', 'erratic readings' and 'contaminated electrode' cannot be decided from a number."
+    ],
+    "notes": "COMPLETE - all 56 chunks extracted. Chunks 0-19 were extracted in a previous session and are unmodified here; chunks 20-55 were added in this top-up and the summary is computed over all 56. Specificity spread: 205 high, 64 medium, 5 low. Structural observations: (1) 18 chunks carry no claims. Chunks 1, 2 and 19 are table-of-contents dot leaders and a Table 6.4-3 continuation (NEWLY RECOVERED); chunks 53, 54 and 55 are acknowledgments, the reference list and back-cover matter; the remaining twelve (7, 16, 22, 25, 28, 31, 34, 37, 40, 43, 45, 48) are short page-break fragments whose entire content is the 400-character overlap prepended from the previous chunk, so every claim in them originates one chunk earlier and is recorded there. (2) Headerless table grids: chunk 15 is a Table 6.4-2 continuation that keeps its row labels but loses the column header, and chunk 19 is a Table 6.4-3 continuation (rows 75-90 degrees Celsius plus footnotes) with no column header - the 75-90 degree buffer values are attributed to chunk 18, which carries the caption and the column header. No claim asserts a cell meaning from a chunk that lacks its own labels. (3) OCR damage: the two-point slope equation and the percent-slope equation in chunk 38 arrive as scrambled fragments ('slope ( ) ( millivolts of buffer ... 59 16 100'), so the formula itself is not recoverable from the corpus text; the acceptance ranges around it (56.2-59.8 mV/pH unit, 95-101 percent) survive intact and are captured. (4) Line-internal hyphenation from the two-column PDF is preserved verbatim in every quote, and several chunk boundaries fuse two words across the overlap seam (for example 'errors in pHmeasurements', 'Once thereading has stabilized', 'liquid-filledelectrode') - quotes were chosen to avoid asserting anything about those seams. (5) The 12-to-18-month electrode life and the 95-101 percent slope window each appear twice in the document (sections 2.2 and 8.0, and sections 3.1, 3.2, 4.0 and 4.1.1 respectively); the restatements are recorded on their own chunks with distinct ids and lower specificity. No internal contradiction was found - the repeated figures agree. (6) The manual's calibration method (two- or three-point, NIST-traceable 1.68/4.01/7.00/10.01 buffers, begin with pH 7 when the meter allows, pour-swirl-discard twice then pour-sit-discard then pour-sit-measure with 1-minute soaks, slope 56.2-59.8 mV/pH unit at 25 degrees Celsius, isopotential within 15 mV of the new-electrode value, final buffer within 0.05 pH units) exists nowhere else in this corpus; the four Atlas Scientific probe datasheets give recalibration intervals but no procedure."
   }
 }

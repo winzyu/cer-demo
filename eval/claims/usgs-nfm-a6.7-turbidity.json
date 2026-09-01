@@ -5,6 +5,18 @@
   "chunkCount": 51,
   "chunks": [
     {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__4322fa9ae659",
+      "index": 0,
+      "locator": "Front matter, contents page TBY-1 — \"TURBIDITY 6.7 By Chauncey W. Anderson\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__259fb9f4def4",
+      "index": 1,
+      "locator": "Front matter, contents continued plus Illustrations and Tables lists, page 2-TBY",
+      "claims": []
+    },
+    {
       "chunkId": "usgs-nfm-a6.7-turbidity.pdf__4b93f831d4bd",
       "index": 2,
       "locator": "Section 6.7 opening and ASTM definition box — \"an expression of the optical properties of a liquid\"",
@@ -1761,6 +1773,1638 @@
           "specificity": "high"
         }
       ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__bde5db3720f7",
+      "index": 27,
+      "locator": "§6.7.2.B Submersible (dynamic) turbidity sensor calibration, preliminary bullets and steps 1-3 — \"a minimum of two, but three is preferred\"",
+      "claims": [
+        {
+          "id": "tby-wagner-tolerances-recordkeeping-01",
+          "claim": "For continuously deployed turbidity instruments, NFM 6.7 refers the operator to Wagner and others (2000) for record-keeping instructions and acceptable tolerances rather than stating them itself.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Refer to Wagner and others (2000) for instructions on record\nkeeping when cleaning and calibrating continuously deployed\ninstruments, and for acceptable tolerances.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-cal-before-field-check-01",
+          "claim": "A turbidity instrument is calibrated with calibration turbidity solutions before leaving for the field, and its performance is then checked periodically while in the field using a calibration or verification calibrant and turbidity-free water.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Calibrate the instrument using calibration turbidity\nsolutions before leaving for the field. While in the field, check\ninstrument performance periodically using a calibration or\nverification calibrant",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-sensor-optics-clean-precal-01",
+          "claim": "The optical surface of a submersible turbidity sensor must be clean before the calibration procedure begins, and in continuous-monitoring deployments the pipes or structures housing the sensor may also require periodic cleaning.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "The optical surface of the sensor must be clean before beginning\nthe calibration procedure.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-sub-cal-volume-500ml-01",
+          "claim": "Calibrating a submersible turbidity sensor can require as much as 500 mL of calibrant for some instruments, particularly when the entire sonde bundle is immersed.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "The volume of cali-\nbrant required could be 500 mL for some instruments, particularly\nif the entire sonde bundle will be immersed.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-sub-cal-proc-a-b-01",
+          "claim": "Submersible turbidity calibration offers two procedures: Procedure A immerses the entire sonde bundle, requiring larger calibrant volumes and risking contamination and dilution, while Procedure B immerses only the turbidity sensor, minimizing calibrant volume but making sensor isolation and a bubble-free optical surface harder.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Immersion of the entire sonde (bundle of field-\nmeasurement sensors, including the turbidity sensor) requires\nlarger volumes of calibrant; calibrant is vulnerable to contam-\nination and dilution.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-sub-cal-points-2-3-01",
+          "claim": "A submersible turbidity sensor calibration uses a minimum of two calibration points, with three preferred.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Determine the number of calibration points to be used (a minimum\nof two, but three is preferred)",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-sub-cal-same-procedure-future-01",
+          "claim": "Once a submersible calibration procedure (A or B) has been tested and selected, the same procedure should also be applied to instruments used in future studies whose data could be compared against it.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "The same procedure, once tested\nand selected, also should be applied to instruments used in future\nstudies against which the data could be compared.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__cd4dfb5fb149",
+      "index": 28,
+      "locator": "§6.7.2.B Submersible sensor calibration steps 4-6 — \"Monitor turbidity readings for 1 to 2 minutes or longer\"",
+      "claims": [
+        {
+          "id": "tby-sub-cal-zero-steps-01",
+          "claim": "For the zero-turbidity calibration point on a submersible sensor, the sonde is rinsed with deionized water then with calibrant, immersed, and agitated repeatedly (or the mechanical wiper is activated) to remove bubbles from the optical surface, then set vertically on a flat surface or held in a ringstand.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Agitate the sonde/sensor repeatedly to remove bubbles from\nthe optical surface (activate mechanical wiper, if present).",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-sub-cal-stabilize-1-2min-01",
+          "claim": "During submersible turbidity calibration, readings are monitored for 1 to 2 minutes or longer to confirm stability, and the pre-calibration value is recorded in the instrument logbook or on the field sheet before the calibration is confirmed or adjusted.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Monitor turbidity readings for 1 to 2 minutes or longer to\nensure that readings are stable",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-sub-cal-dry-between-01",
+          "claim": "Between calibration points the sonde or sensor is removed and dried thoroughly to minimize dilution or contamination of the next calibrant, and the spent calibrant is discarded into a labeled waste container held for proper disposal.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Remove the sonde/sensor and dry thoroughly to minimize\ndilution or contamination of the next calibrant.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-sub-cal-filter-02um-01",
+          "claim": "If measurement of color-derived turbidity is not desired, an aliquot of the sample water filtered through a 0.2-micrometer pore-size filter is used in place of turbidity-free water.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If measurement of color-derived turbidity is not desired, filter\n(using a 0.2-μm pore-size filter) an aliquot of the sample\nwater and use the filtered water in place of turbidity-free\nwater.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-sub-cal-second-third-01",
+          "claim": "After the zero point, a submersible sensor is calibrated with a second calibrant near the maximum of the expected turbidity range, and optionally a third near the middle of the expected range; if the software does not permit three-point calibration the third calibrant is still used to document accuracy at mid-range.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Using a second calibrant with a value near the maximum of the\nexpected turbidity range, repeat steps 4(a-i). Repeat again with a\nthird calibrant near the middle of the expected range",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-sub-cal-out-of-range-01",
+          "claim": "If an \"out of range\" error appears during submersible turbidity calibration, the operator verifies the intended calibrant value and starts again with the first (zero) calibrant solution, repeating the calibration if the measurement is not within specification.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If an “out of range” error is displayed, verify the intended\ncalibrant value and start again with the first (zero) calibrant\nsolution.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-max-reportable-cloth-01",
+          "claim": "On a one-time basis the maximum turbidity value an instrument can report is determined by holding a lint-free cloth over the optical sensor and recording the turbidity, and that value is then used as an indicator that in-stream turbidity may have exceeded the instrument range.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "determine the maximum value that can be\nreported by the instrument by holding a lint-free cloth over the\noptical sensor and recording the turbidity.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__444f4d5ae2d0",
+      "index": 29,
+      "locator": "§6.7.2.B Spectrophotometric turbidimeter calibration — \"measure light transmission (rather than light scattering)\"",
+      "claims": [
+        {
+          "id": "tby-spec-attenuation-defn-01",
+          "claim": "Spectrophotometric turbidity measurements, also called absorbtometric or attenuation turbidity, are useful to indicate relative values or to monitor changes in turbidity over time.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Spectrophotometric turbidity measurements, sometimes referred to as\nabsorbtometric or attenuation turbidity, are useful to indicate relative\nvalues or to monitor changes in turbidity with time.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-spec-transmission-limits-01",
+          "claim": "Spectrophotometers measure light transmission rather than light scattering using a narrow, short-wavelength light source, are inaccurate for absolute turbidity measurement, and are unrated for instrument sensitivity.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "measure light transmission (rather than light scattering) using\na narrow, short-wavelength light source, are inaccurate for absolute\nturbidity measurement, and are unrated for instrument sensitivity.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-spec-negative-response-01",
+          "claim": "A spectrophotometric turbidity instrument's response is negative, meaning detector response decreases as turbidity increases, which is the opposite of traditional nephelometric and backscatter instrument responses.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Instrument response is negative (that is, the detector response\ndecreases) with increasing turbidity, which is the opposite of\ntraditional turbidity and backscatter instrument responses.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-spec-units-au-fau-01",
+          "claim": "Spectrophotometric turbidity results are reported in Attenuation Units (AU) or Formazin Attenuation Units (FAU) depending on the light source, and the overwhelming majority of available spectrophotometric turbidity instruments use FAU.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Report\nresults in Attenuation Units (AU) or Formazin Attenuation Units\n(FAU), depending on the light source",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-spec-factory-cal-check-01",
+          "claim": "A spectrophotometer's stored turbidity program is factory calibrated and can be verified but not adjusted, so its output should be checked against a different instrument every few weeks while in use.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "has been factory calibrated and that can be verified but not adjusted.\nCheck the instrument output against that of a different instrument every\nfew weeks while the instrument is in use.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-spec-cal-same-as-static-01",
+          "claim": "Apart from the change in reporting units, the calibration steps for spectrophotometric turbidity determination are identical to steps 1 through 8 of benchtop (static) turbidimeter calibration, including the possible need to construct a calibration curve.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "calibration steps for\nspectrophotometric determination are identical to those for static\nmeasurement of turbidity",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__449b5d2a0b80",
+      "index": 30,
+      "locator": "§6.7.3 Measurement introduction — \"The holding time must not exceed 24 hours\"",
+      "claims": [
+        {
+          "id": "tby-three-measurement-methods-01",
+          "claim": "NFM 6.7 describes three field-measurement methods for turbidity: static (benchtop) determination in 6.7.3.A, dynamic (submersible) determination in 6.7.3.B, and spectrophotometric (absorptometric) determination in 6.7.3.C.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "static (or benchtop) determination (6.7.3.A);\ndynamic (submersible) determination (6.7.3.B); and\nspectrophotometric (absorptometric) determination (6.7.3.C).",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-meas-precheck-01",
+          "claim": "Before making a turbidity determination the operator must ensure the instrument has been cleaned and calibrated properly and that the calibration process has been accurately documented.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "ensure that the\ninstrument to be used has been cleaned and calibrated properly,\nand that the calibration process has been accurately documented",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-bias-factors-condensation-01",
+          "claim": "Biased or erroneous turbidity readings can result from unmatched cell orientation, colored sample solutions, gas bubbles, condensation, and scratched or dirty sample cells, and condensation on the sample cell commonly occurs when the water sample is much colder than the air temperature.",
+          "metrics": [
+            "turbidity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "Condensation on the sample cell\ncommonly occurs when the water sample is much colder than\nthe air temperature.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-time-sensitive-onsite-01",
+          "claim": "Turbidity measurement is time sensitive and should be completed on-site, preferably in situ, to avoid biodegradation, growth, settling or sorption of particulates and precipitation of humic acids and minerals caused by changes in sample pH during transport and holding.",
+          "metrics": [
+            "turbidity",
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Turbidity measurement is time sensitive and therefore\nshould be completed on-site (preferably in situ)",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ph-change-precipitation-01",
+          "claim": "Changes in sample pH during transport and holding can cause precipitation of humic acids and minerals such as carbonates and hydroxides, altering the turbidity of a stored sample.",
+          "metrics": [
+            "turbidity",
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "precipitation of humic acids\nand minerals (carbonates and hydroxides, for example) caused\nby changes in sample pH during transport and holding.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-storage-amber-4c-24h-01",
+          "claim": "If temporary storage of turbidity samples is necessary they are collected in clean amber bottles, kept out of sunlight, chilled at or below 4 degrees Celsius, and held no longer than 24 hours.",
+          "metrics": [
+            "turbidity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "collect samples in\nclean amber bottles, keep out of sunlight, and chill at or below\n4°C to prevent biodegradation of solids or biological growth.\nThe holding time must not exceed 24 hours",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+      "index": 31,
+      "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+      "claims": [
+        {
+          "id": "tby-drinking-background-lt1-01",
+          "claim": "Drinking-water sources often have background turbidities of less than 1 turbidity unit, but it is not unusual to measure turbidities of 1,000 or greater depending on stream and weather conditions.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Although drinking-water\nsources often have background turbidities of less than 1 turbidity unit,\nit is not unusual to measure turbidities of 1,000 or greater",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-protocols-orders-magnitude-01",
+          "claim": "Surface-water turbidity protocols typically must account for reliable measurements spanning one to three orders of magnitude.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "account for making reliable measurements that span turbidities over\none to three orders of magnitude.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-repeat-3-5-times-01",
+          "claim": "A turbidity measurement is repeated three to five times to ensure accuracy and replication within the precision of the instrument.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Repeat the measurement three to five\ntimes to ensure accuracy and replication within the precision of the\ninstrument.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-epa1801-range-with-dilution-01",
+          "claim": "EPA Method 180.1 is applicable from 0 to 40 NTU without dilution and from about 40 to 1,000 NTU with dilution.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "EPA Method 180.1 is applicable in the range\nof turbidity from 0 to 40 NTU without dilution, and from about 40 to\n1,000 NTU with dilution",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dilution-discouraged-01",
+          "claim": "Dilution of environmental samples that contain particulate materials or exhibit nonlinearity can introduce significant errors from subsampling, so dilution is discouraged.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "dilution of environmental samples that contain\nparticulate materials or exhibit other nonlinearity properties can\nintroduce significant errors from subsampling; therefore, dilution\nis discouraged.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-static-settling-3-5s-01",
+          "claim": "If particles in an agitated sample rapidly settle to the bottom within 3 to 5 seconds, coarse materials such as sand or coarse silt are present and the sample cannot be measured accurately using the static method.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-coarse-material-e-code-01",
+          "claim": "Static turbidity measurements made on samples containing coarse material must be coded as qualified in the database, entered with an \"E\" remark code in the USGS NWIS database.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "the results should be entered\nwith an “E” remark code.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__95357f36ac1b",
+      "index": 32,
+      "locator": "§6.7.3.A Preliminary steps and \"For samples with turbidity less than 40 turbidity units\" step 1 — \"invert the bottle 25 times using a 1-second inversion cycle\"",
+      "claims": [
+        {
+          "id": "tby-benchtop-warmup-gloves-01",
+          "claim": "Benchtop turbidity determination begins by warming up the turbidimeter according to the manufacturer's instructions and putting on powderless laboratory gloves.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Warm up the turbidimeter according to the manufacturer’s\ninstructions. Put on powderless laboratory gloves.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-benchtop-prelim-rinse-01",
+          "claim": "As a preliminary check the operator rinses a clean, dry, scratch-free, index-marked cell with a turbidity calibrant within the range of interest, agitates the calibrant gently, fills to the fill mark, and dries the cell exterior with a lint-free cloth.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Rinse a clean, dry, scratch-free, index marked cell with a\nturbidity calibrant within the range of interest.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-prelim-recalibrate-if-off-01",
+          "claim": "If the preliminary calibrant check readings are not within specifications for the indicated range, the turbidimeter must be recalibrated using accepted calibration turbidity solutions, and the calibrant value and measured value are recorded in the calibration logbook.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If readings\nare not within specifications for the indicated range, recalibrate\nthe instrument for the turbidimeter using accepted calibration\nturbidity solutions.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-lt40-measure-immediately-01",
+          "claim": "For samples with turbidity less than 40 turbidity units, sample turbidity is measured immediately or as soon as possible upon sample withdrawal.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Measure sample turbidity immediately or as soon as possible upon\nsample withdrawal.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-bottle-invert-25-1s-01",
+          "claim": "Pouring a turbidity sample into a cuvette from a bottle should be avoided; when unavoidable, the bottle is inverted 25 times using a 1-second inversion cycle and the sample poured off immediately to capture suspended particles.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "invert the bottle 25 times using\na 1-second inversion cycle and pour off the sample\nimmediately to capture suspended particles.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-cal-curve-fallback-01",
+          "claim": "Most turbidimeters convert initial sample readings directly into a final reading using the stored calibration; if the meter lacks this capability the operator takes values from a previously constructed calibration curve.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Most turbidimeters will correct initial sample readings\ndirectly into a final reading based on the stored\ncalibration. If the meter does not have this capability,",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__deff04ad4ab8",
+      "index": 33,
+      "locator": "§6.7.3.A steps 1b-3e for samples below 40 turbidity units — \"Gently invert—do not shake—the sample 25 times\"",
+      "claims": [
+        {
+          "id": "tby-drinking-instrument-units-01",
+          "claim": "For drinking water the operator must use an instrument that complies with EPA Method 180.1, reporting in NTU or NTRU, or with GLI Method 2, reporting in FNMU.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "For drinking water, use an instrument that complies with EPA\nMethod 180.1 or GLI Method 2. Measurements are reported\nin NTU or NTRU for EPA 180.1, or in FNMU for GLI\nMethod 2.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-static-no-hesitation-01",
+          "claim": "For a discrete (static) sample the sequence of steps from inverting the sample through recording the first reading must be completed without hesitation.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "complete the following sequence of\nsteps (through step 4a) without hesitation",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-static-invert-25-no-shake-01",
+          "claim": "A turbidity sample is gently inverted 25 times, not shaken, to completely disperse the solids without entraining air bubbles, and any bubbles are allowed to disappear before the sample cell is filled.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Gently invert—do not shake—the sample 25 times (ASTM,\nwritten commun., undated) to completely disperse the solids,\ntaking care not to entrain air bubbles.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-silicon-oil-every-third-01",
+          "claim": "If condensation persists on a sample cell, a thin coating of silicon oil is applied to the outside of the cell about every third time the cell is wiped dry of moisture.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "apply a thin\ncoating of silicon oil to the outside of the cell about every\nthird time the cell is wiped dry of moisture.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-equilibrate-ambient-warning-01",
+          "claim": "Samples may be allowed to equilibrate to ambient temperature before subsampling to minimize condensation problems, but warming the sample may change particle associations in the water matrix.",
+          "metrics": [
+            "turbidity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "equilibrate to ambient temperature, if necessary, before\nsubsampling to help minimize condensation problems. Note:\nwarming the sample may change particle associations in the\nwater matrix.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-degas-no-bubbles-static-01",
+          "claim": "Before the sample cell is inserted into the meter the operator must ensure no air bubbles are present, degassing the sample per the manufacturer's instructions if necessary, because air bubbles cause significant positive bias in turbidity measurements.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Before inserting the sample cell into the meter, ensure that no\nair bubbles are present in the cell.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-cell-orientation-identical-01",
+          "claim": "The calibration cell and the sample cell must be oriented identically in the instrument measurement chamber according to their index marks, so the cells yield the same value when light passes through.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "the calibration cell and sample cell must have\nidentical orientation when in the instrument measurement\nchamber.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__967bc8728d56",
+      "index": 34,
+      "locator": "§6.7.3.A step 4 and TECHNICAL NOTE (6) — \"three or more sample values fall within ±10 percent\"",
+      "claims": [
+        {
+          "id": "tby-first-readings-settling-01",
+          "claim": "The very first readings after placing the sample cell in the measurement chamber are recorded; unstable readings indicate particle settling, in which case the cell is gently re-inverted 25 times and at least three readings are recorded over a short defined interval such as 30 seconds to 1 minute.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "gently re-invert\nthe cell 25 times and record at least three readings over a\nshort, defined time interval (for example, 30 seconds to\n1 minute).",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-three-within-10pct-static-01",
+          "claim": "A static turbidity determination is repeated at least twice with fresh sample until three or more sample values fall within plus or minus 10 percent.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Repeat at least twice with fresh sample, until three or more\nsample values fall within ±10 percent.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-report-median-10pct-01",
+          "claim": "The reported turbidity is the median of the three or more sequential readings that fall within plus or minus 10 percent.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Report the median of the three or more sequential readings\nthat fall within ±10 percent.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-diluted-d-qualifier-01",
+          "claim": "Samples containing significant color should be diluted if EPA Method 180.1 is used, and results of diluted samples must be qualified with a \"d\" in the \"Value Qualifier Code\" field when entered into the USGS NWIS database.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Results of diluted samples must be qualified with a “d” in\nthe “Value Qualifier Code” field for data entered into the\nUSGS NWIS database.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-stray-light-correction-hach-01",
+          "claim": "On low-level reporting scales a stray-light correction factor may need to be subtracted from the reading; Hach reports the correction for the 0.2-NTU scale as about 0.04 NTU for the Hach 2100P, determined by reading turbidity from an empty instrument without a cuvette.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "the correction for the 0.2-NTU scale to be on\nthe order of 0.04 NTU for the Hach 2100P. The stray-light\ncorrection is determined by reading turbidity from an empty\ninstrument",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-settling-e-code-qwdata-01",
+          "claim": "If particle settling or instability in initial readings was a problem, the turbidity result must be qualified as an estimate with an \"E\" remark code when entered into NWIS QWDATA.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If particle settling or instability in initial readings was\na problem, the results must be qualified as an estimate by using an\n“E” remark code for data entered into NWIS QWDATA.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5035686828b0",
+      "index": 35,
+      "locator": "§6.7.3.A \"For samples, including drinking water, with turbidity greater than 40 turbidity units\" steps 1-4 — \"place a cell riser (if available) into the cell holder\"",
+      "claims": [
+        {
+          "id": "tby-gt40-e-code-01",
+          "claim": "For drinking-water turbidities greater than 40 units measured by EPA Method 180.1 or GLI Method 2, the reported units must be remarked with an \"E\" code in NWIS.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Reporting units for these methods must be\nremarked with an “E” code in NWIS for turbidities greater\nthan 40.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-gt40-drinking-dilution-required-01",
+          "claim": "For drinking-water samples above 40 turbidity units, dilution is required to comply with USEPA regulations: the sample is diluted with one or more equal volumes of turbidity-free water until turbidity is less than 40 units after mixing and degassing, and the volume of turbidity-free water used is recorded.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Dilute the sample with one or more equal volumes of\nturbidity-free water until turbidity is less than 40 turbidity\nunits after mixing and degassing.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-cell-riser-100-1000-01",
+          "claim": "For non-drinking-water samples in the 100 and 1,000 turbidity-unit ranges only, a cell riser is placed in the cell holder to shorten the light path and improve measurement linearity, and it must not be used for lower turbidity ranges.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "This decreases the length of the light\npath in order to improve the linearity of measurements. Do not\nuse the cell riser for the lower turbidity ranges.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ratio-mode-high-density-01",
+          "claim": "For turbidimeters with adjustable ranges and signal-processing capabilities such as ratio mode to compensate for high particle densities, the operator selects the desired configuration; some instruments switch modes or light sources automatically, and the instrument mode must be recorded on field sheets.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Record instrument mode\non field sheets.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__dc86120e6eaf",
+      "index": 36,
+      "locator": "§6.7.3.A steps 5-6 and dilution guidance box — \"perform at least three at approximately 80, 50, and 20 percent\"",
+      "claims": [
+        {
+          "id": "tby-hold-cell-rim-fill-01",
+          "claim": "The sample cell is held by the rim (top lip) rather than beneath the lip, the sample is gently agitated 25 times, and the water is poured rapidly into the cell to the fill mark without hesitation.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Gently agitate the sample 25 times. Without hesitation,\ncarefully but rapidly pour sample water into the cell to the fill\nmark.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-silicon-oil-mask-scratches-01",
+          "claim": "A thin layer of silicon oil applied to the exterior of the sample cell reduces condensation and masks slight scratches and nicks.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "apply a thin layer of silicon oil (table 6.7–1) onto\nthe exterior of the cell to reduce condensation on the cell and\nmask slight scratches and nicks.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-dilution-series-80-50-20-01",
+          "claim": "When making dilutions for turbidity, at least three dilutions are performed at approximately 80, 50, and 20 percent of the original concentration.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "When making dilutions, perform at\nleast three at approximately 80, 50, and 20 percent of\nthe original concentration.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dilution-linearity-check-01",
+          "claim": "The turbidity of each dilution is recorded and checked to see whether the values are linear and correlate positively with the percentage diluted; a nonlinear response means alternative instrument designs that better compensate for interferences should be considered.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If the response\nis nonlinear, alternative instrument designs that better\ncompensate for interferences should be considered.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dilution-example-180-01",
+          "claim": "Turbidity of a diluted sample is corrected by the dilution factor: adding five volumes of turbidity-free water to one volume of sample that then reads 30 units gives an original sample turbidity of 180 units.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "If five volumes of turbidity-free water were added\nto one volume of sample, and the diluted sample showed a\nturbidity of 30 units, then the turbidity of the original sample is\ncomputed as 180 units.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-gt40-three-within-10pct-01",
+          "claim": "For samples above 40 turbidity units the measurement is likewise repeated at least twice with fresh sample until three or more values fall within plus or minus 10 percent, and the median of those readings is reported.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Repeat at least twice with fresh sample until three or more\nsample values fall within ±10 percent.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+      "index": 37,
+      "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+      "claims": [
+        {
+          "id": "tby-report-units-by-method-01",
+          "claim": "Turbidity is reported in NTU or NTRU for EPA Method 180.1, in FNMU for GLI Method 2, and in the table 6.7-4 units for non-diluted, non-USEPA-compliant measurements.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "• For EPA Method 180.1, use NTU or NTRU.\n• For GLI Method 2, use FNMU.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-groundwater-lt5-19-01",
+          "claim": "Natural turbidity in ground water is generally less than 5 turbidity units, with values up to 19 turbidity units reported for some environmental settings, while contaminated ground-water systems can be considerably higher.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "natural turbidity in ground water\ngenerally is less than 5 turbidity units. Natural ground-water turbidity\nof up to 19 turbidity units has been reported for some environmental",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-effervescent-degassing-01",
+          "claim": "Measuring turbidity in effervescent ground water may require a degassing apparatus, used according to the manufacturer's instructions.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "For effervescent ground water, a\ndegassing apparatus may be required",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-well-development-monitor-01",
+          "claim": "During well development, turbidity caused by well installation is monitored by recording consecutive measurements documenting the decrease in turbidity as development proceeds.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "During well development—Monitor turbidity caused by well\ninstallation, recording consecutive measurements to document\ndecreases in turbidity as development proceeds.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-well-purging-final-value-01",
+          "claim": "During well purging, the final stabilized turbidity value should be equal to or less than the value recorded at the end of well development.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "The final stabilized turbidity value should be equal to or less\nthan the value recorded at the end of well development.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dynamic-median-10pct-01",
+          "claim": "For dynamic turbidity measurement, the reported value is the median of the three or more sequential measurements meeting the plus or minus 10-percent stability criterion.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-no-bailers-01",
+          "claim": "Bailers are not recommended for collecting turbidity samples because bailer deployment can increase turbidity.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Bailers are not recommended for collecting turbidity\nsamples, as bailer deployment can increase turbidity.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-not-flowthrough-discharge-01",
+          "claim": "A discrete turbidity sample must not be collected from the discharge passing through the flowthrough chamber in which pH, conductivity, or other field-measurement sensors are installed.",
+          "metrics": [
+            "turbidity",
+            "ph",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Do not collect the discharge passing through the\nflowthrough chamber in which pH, conductivity, or other\nfield-measurement sensors are installed.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2db3b29c7433",
+      "index": 38,
+      "locator": "§6.7.3.B Dynamic (submersible-sensor) determination opening — \"the YSI 6026 can be factory adjusted to read turbidities up to 4,000 FNU\"",
+      "claims": [
+        {
+          "id": "tby-gw-pump-direct-bottle-01",
+          "claim": "A ground-water turbidity sample is pumped directly from the sample discharge line into a precleaned glass or polyethylene sample-collection bottle, then subsampled into a cuvette and measured by the static determination steps.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Pump the ground-water sample directly from the sample\ndischarge line into a precleaned glass or polyethylene\nsample-collection bottle.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dynamic-uses-01",
+          "claim": "Submersible-sensor turbidity data are used for watershed investigations including determination of visual impairment, correlation with concentrations of suspended sediment, total phosphorus, other chemical constituents and indicator bacteria, and long-term monitoring.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "for correlation with concentrations of suspended\nsediment, total phosphorus, or other chemical constituents, and\nindicator bacteria",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-longterm-deployment-batteries-01",
+          "claim": "Multiparameter instruments with internal batteries and memory can be used in surface-water studies requiring long-term deployment.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Multiparameter instruments with internal batteries and memory can\nbe used in surface-water studies that require long-term deployment.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-continuous-out-of-scope-01",
+          "claim": "Guidelines for long-term turbidity instrument deployment fall under the topic of continuous monitors and are explicitly beyond the scope of NFM 6.7, which defers to manufacturer instructions and to Wagner and others (2000).",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Guidelines for long-term instrument deployment fall under the topic\nof continuous monitors, and are beyond the scope of this section",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ysi6026-1000-4000-fnu-01",
+          "claim": "The YSI 6026 turbidity sensor reads just over 1,000 FNU at factory settings and can be factory adjusted to read up to 4,000 FNU, an adjustment specific to the individual instrument with non-linear calibration between 1,000 and 4,000 FNU.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "although the maximum\nturbidity based on factory settings is just over 1,000 FNU, the YSI\n6026 can be factory adjusted to read turbidities up to 4,000 FNU",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-multiparam-flowthrough-gw-01",
+          "claim": "Multiparameter instruments can be used with a flowthrough chamber instead of being deployed in situ for monitoring ground-water field measurements.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Multiparameter instruments can be used with a flowthrough chamber\n(instead of being deployed in situ) for monitoring ground-water field\nmeasurements.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+      "index": 39,
+      "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+      "claims": [
+        {
+          "id": "tby-high-range-not-reproducible-01",
+          "claim": "Turbidity readings in the extended 1,000 to 4,000 FNU range are not reproducible between instruments, and any adjustment made to an instrument's operating range must be documented in the instrument logbook and in applicable field notes.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "readings in this high range are not reproducible between instruments",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-range-adjustment-documented-01",
+          "claim": "Any adjustment made to a turbidity instrument's operating range must be documented in the instrument's logbook and in applicable field notes.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Any\nsuch adjustments made to an instrument’s operating range must be\ndocumented in the instrument’s logbook and in applicable field notes.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-field-verify-5-percent-01",
+          "claim": "At the field site the operator verifies that the turbidity instrument has retained its calibration within 5 percent, and the instrument must be recalibrated if it fails that verification.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "At the field site, verify that the instrument has retained its\ncalibration within 5 percent. If it fails verification, then the\ninstrument must be recalibrated.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-procedure-b-flowthrough-seal-01",
+          "claim": "For flowthrough-chamber turbidity measurement (ground water only), the chamber cover is secured over the sonde or sensor to form an air-tight and water-tight seal and the first sample aliquot is discharged to waste before the chamber connection is opened.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Procedure B: Flowthrough chamber (ground water\nonly)—Secure chamber cover over sonde/sensor to form an\nair-tight and water-tight seal. Discharge the first sample ali-\nquot to waste",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dynamic-avoids-settling-01",
+          "claim": "Dynamic determination generally reflects conditions in a water body more accurately than static measurement of discrete samples because it avoids problems of particle settling.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dynamic-not-epa-approved-01",
+          "claim": "Submersible-sensor (dynamic) turbidity instrumentation is not approved by the USEPA for evaluating drinking water.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Instrumentation of this\ntype, however, is not approved by the USEPA for\nevaluating drinking water.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+      "index": 40,
+      "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+      "claims": [
+        {
+          "id": "tby-dynamic-agitate-bubbles-01",
+          "claim": "Before a dynamic turbidity reading the sensor is agitated to remove bubbles from the optical surface by moving it up and down or in a circular pattern and by activating the wiper mechanism if available.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dynamic-2min-warmup-10-20-01",
+          "claim": "At least 2 minutes must elapse before recording the required sequential dynamic turbidity readings, and some instruments may require as much as 10 to 20 minutes of warmup time.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Allow at least 2 minutes before recording the required number\nof sequential readings. Some instruments may require as\nmuch as 10-20 minutes warmup time.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dynamic-stability-3-or-5-01",
+          "claim": "Dynamic turbidity stability is reached when three sequential readings for the in situ procedure, or five for the flowthrough-chamber procedure, spaced at regular time increments, are within 10 percent.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Stability is reached if values for three (for in situ procedure)\nto five (for flowthrough-chamber procedure) or more\nsequential readings, spaced at regular time increments, are\nwithin 10 percent.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-record-manufacturer-model-01",
+          "claim": "Turbidity readings are recorded on the field form and in field notes together with the instrument manufacturer and model, using reporting units appropriate for that instrument.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Record turbidity readings on the field form and in field notes,\nincluding the instrument manufacturer and model.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-repeat-each-vertical-01",
+          "claim": "At surface-water sites the dynamic measurement steps are repeated at each vertical to be measured.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Repeat steps 5–7 for dynamic\nmeasurements (Procedure A) at each vertical to be measured.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-storage-di-water-vessel-01",
+          "claim": "Before leaving the field the sonde or sensor is rinsed thoroughly with deionized water and placed in its storage vessel, which for most instruments holds a small amount of deionized water with the sensors.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Before leaving the field, clean the sonde/sensor with a thorough\nrinse of deionized water and place it in the storage vessel.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-over-range-dilute-static-01",
+          "claim": "If turbidities exceed the instrument range, the sample must be diluted and measured with static methods, with the resulting data qualified by a \"d\" in the \"Value Qualifier Code\" field in NWIS.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If turbidities are higher than the instrument range, dilutions will\nbe necessary. Turbidity will need to be measured with static\nmethods.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-qc-standard-in-storage-vessel-01",
+          "claim": "As quality control, instrument performance is checked periodically by placing a primary or secondary calibration solution in the instrument storage vessel and comparing the standard's value with the displayed reading, recording all readings in the maintenance logbook.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Periodically check instrument performance by\nplacing a primary or secondary calibration solution in the\ninstrument storage vessel and comparing the standard value with\nthe reading displayed.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+      "index": 41,
+      "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+      "claims": [
+        {
+          "id": "tby-spec-attenuation-mechanism-01",
+          "claim": "A spectrophotometer directs a beam of light through the sample at a specific wavelength and measures the transmitted light reaching the transmitted detector; the decrease in detected intensity from absorption or scattering is calibrated against accepted calibration turbidity solutions.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "The spectrophotometer directs a beam of light through the\nsample at a specific wavelength and measures the amount of\ntransmitted light reaching the “transmitted” detector",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-spec-not-epa-approved-01",
+          "claim": "The spectrophotometric attenuation method for turbidity is not approved by the USEPA and is subject to many interferences, but is useful as an indicator of ambient or stabilized conditions during well development or purging.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "This method is not approved by the USEPA and is subject to\nmany interferences.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-spec-lt50-fau-inaccurate-01",
+          "claim": "Turbidity values less than 50 FAU, which is the range of most surface water and ground water, are inaccurate by the spectrophotometric method, which is recommended only as a measure of relative turbidity among different samples.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Turbidity values less than 50 FAU—the range for most\nsurface water and ground water—are inaccurate using this\nmethod and the procedure is recommended only as a measure of",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-fau-ntu-formazin-only-01",
+          "claim": "An FAU is equivalent to an NTU when measuring formazin, but the two are not necessarily equivalent when measuring water samples or other types of standards.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "An FAU is equivalent to an NTU when measuring\nformazin, but they are not necessarily equivalent when\nmeasuring water samples or other types of standards.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-instrument-relations-site-specific-01",
+          "claim": "Relations among different turbidity instrument types are site specific.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Relations among different instrument types are site\nspecific.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-spec-860nm-60bw-fau-01",
+          "claim": "ISO 7027 specifies a wavelength of 860 nm with a bandwidth of 60 nm for spectrophotometric turbidity reporting in FAU.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "A wavelength of 860 nm (bandwidth\n60 nm) is specified by ISO 7027 for reporting in FAU.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-spec-10ml-matched-cells-01",
+          "claim": "Spectrophotometric turbidity determination uses a set of clean, matched 10-mL sample cells, one filled to the 10-mL mark with turbidity-free water as a blank and one filled to the mark with sample water and inverted 25 times.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Use a set of clean, matched 10-mL sample cells.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-spec-blank-zero-01",
+          "claim": "The blank sample is placed in the cell holder with the light shield closed and a zero reading is verified before the sample is read in AU or FAU.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Place blank sample into the cell holder, close the light shield,\nand verify a zero reading.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-spec-bracket-check-01",
+          "claim": "If the spectrophotometer was recently calibrated, check measurements are taken using calibration solutions that bracket the range anticipated in the sample solution.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If recently calibrated, take check measurements using\ncalibration solutions that bracket the range anticipated in the\nsample solution.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__b884e4f0d360",
+      "index": 42,
+      "locator": "§6.7.4 Quality-assurance procedures and §6.7.4.A Variability — \"the use of consistent procedures, instrumentation, and supplies is critical\"",
+      "claims": [
+        {
+          "id": "tby-qa-consistency-critical-01",
+          "claim": "Where turbidity from one water source will be compared with turbidity from another source or against a numerical criterion, consistent procedures, instrumentation, and supplies are critical.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Where turbidity from one water source will be compared\nwith turbidity from another source or against a numerical\ncriterion, the use of consistent procedures, instrumentation, and",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-variability-sources-01",
+          "claim": "Sources of turbidity variability include different instruments even of similar models, differing subsampling techniques, different operators, spatial and temporal variation in the water body, and different sampling procedures.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Sources of variability include the different instruments in use (even\nsimilar models), differing subsampling techniques, different\noperators",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-static-negative-bias-settling-01",
+          "claim": "Data from static turbidity determinations can be negatively biased by particle settling.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "The data\nresulting from static turbidity determinations also can be negatively\nbiased from particle settling.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-sample-degrade-transit-01",
+          "claim": "Sample properties that affect turbidity can degrade during sample transit and storage, which limits comparison of a field turbidity measurement with a laboratory-analyzed sample.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "sample\nproperties that affect turbidity can degrade during sample transit and\nstorage",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-static-measurement-variability-test-01",
+          "claim": "The static measurement-variability test measures and removes the same cuvette at least three times, recording each reading and computing the standard deviation, and may not adequately characterize variability caused by particle settling.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Repeat at least three times, using the same cuvette. Record\neach reading and determine the standard deviation of the\nmeasurements.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-variability-test-settling-caveat-01",
+          "claim": "The repeated-cuvette measurement-variability procedure may not adequately characterize measurement variability caused by particle settling.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "These procedures may not adequately\ncharacterize measurement variability that is caused by\nparticle settling.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+      "index": 43,
+      "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+      "claims": [
+        {
+          "id": "tby-subsampling-variability-test-01",
+          "claim": "The subsampling-variability test agitates one water sample, withdraws an aliquot into the cuvette, measures turbidity, discards the sample and cleans the cuvette, repeating at least three times and computing the standard deviation.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Subsampling variability: For one water sample, agitate the\nsample, then withdraw an aliquot into the cuvette, measure\nturbidity, discard the sample, and clean the cuvette. Repeat\nat least three times.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-operator-variability-test-01",
+          "claim": "The operator-variability test splits one water sample into two or more subsamples using a churn splitter and has different operators prepare cuvettes and measure turbidity on the subsamples.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Operator variability: Split one water sample into two or\nmore subsamples using a churn splitter. Have different\noperators prepare cuvettes and measure turbidity on the\nsubsamples.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-sampling-variability-test-01",
+          "claim": "The sampling-variability test collects at least two independent samples from the source using standard techniques and measures turbidity on a cuvette prepared from each.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Sampling variability: Collect at least two independent\nsamples from the source using standard techniques.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-cross-sectional-variability-01",
+          "claim": "The cross-sectional variability test measures turbidity at a number of verticals across the stream width and compares them against the centroid, stream margins, continuous-monitor locations, different depths, or a static measurement from a composite sample using an optically compatible meter.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Cross-sectional variability: At a field site, measure\nturbidity at a number of verticals across the stream width",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-static-biased-low-coarse-01",
+          "claim": "A static turbidity measurement will likely be biased low if sand or coarse silt are present in the sample.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-dynamic-measurement-variability-01",
+          "claim": "The dynamic measurement-variability test repeats turbidity measurement three or more times at the same field location with the same instrument, recording each value after removing the meter from the water.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "At a field site, repeat turbidity\nmeasurements three or more times at the same location, one\nafter another. Record these values after removing the meter\nfrom the water.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-e-code-sand-coarse-silt-01",
+          "claim": "Static-determination turbidity data must be qualified with an \"E\" remark code when entered into NWIS if sand or coarse silt are present in the sample.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If sand or coarse silt are present in the sample, qualify your\nstatic-determination data being entered into NWIS with an\n\"E\" remark code.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5b8340b4b614",
+      "index": 44,
+      "locator": "§6.7.4.B Bias — \"Bias is computed as the percent difference between readings before calibration\"",
+      "claims": [
+        {
+          "id": "tby-bias-sources-01",
+          "claim": "Sources of bias in turbidity include water properties, interferences, sampling and subsampling techniques, instrument drift, biofouling, sensor damage, different operators, and different protocols.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Sources of bias can include effects on measurements from various\nproperties of water (table 6.7–1), interferences (table 6.7–2),\nsampling and subsampling techniques, instrument drift, biofouling,",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-bias-quantified-cal-solutions-01",
+          "claim": "Bias in turbidity is quantified through measurements against known calibration solutions at different times, using different instrumentation or different methods, and is particularly important before and after a measurement series or when servicing a continuous monitor in the field.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Bias in turbidity is quantified through measurements of\nturbidity against known calibration solutions, at different times, using\ndifferent instrumentation, or with different methods.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-drift-test-procedure-01",
+          "claim": "The instrument-drift test measures turbidity after a series of measurements and prior to calibration using known calibrants, including turbidity-free water or zero-turbidity calibration solution and a check solution near the maximum calibrated range, recording readings before any calibration adjustment.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "measure turbidity using known calibrants, including\nturbidity-free water or zero-turbidity calibration solution and a\ncalibration (or “check”) solution near the maximum calibrated\nrange.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-drift-bias-percent-diff-01",
+          "claim": "Instrument-drift bias is computed as the percent difference between readings taken before calibration and readings at the same range after calibration.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Bias is computed as the percent\ndifference between readings before calibration and readings at\nthe same range after calibration.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-drift-continuous-monitoring-01",
+          "claim": "Documenting instrument drift is most important in continuous monitoring applications.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Instrument drift is most\nimportant to document in continuous monitoring applications.",
+          "specificity": "medium"
+        },
+        {
+          "id": "tby-fouling-bias-percent-diff-01",
+          "claim": "Fouling bias is calculated as the percent difference between the calibrant reading of the uncleaned sensor and that of the cleaned sensor, measured before and after cleaning the cuvette or submersible sensor.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Calculate bias as the percent\ndifference between the calibrant reading of the uncleaned sensor\nand the cleaned sensor.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-operator-bias-percent-diff-01",
+          "claim": "Operator bias is calculated as the percent difference between the turbidity readings obtained by different operators on split subsamples.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Calculate bias as the\npercent difference between the turbidity readings obtained by\nthe different operators.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+      "index": 45,
+      "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+      "claims": [
+        {
+          "id": "tby-store-by-design-units-01",
+          "claim": "To minimize comparison of data derived from substantially different instrument designs, USGS turbidity data are stored according to the instrument designs and reporting units in table 6.7-4, with method codes describing the specific instrument used.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-multi-mode-multiple-listings-01",
+          "claim": "Instruments designed to operate in different modes such as ratiometric or non-ratiometric are listed multiple times in the USGS turbidity codes spreadsheet under different parameter codes to distinguish their settings.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "In some cases, instruments are designed to operate in different modes (for\nexample ratiometric or non-ratiometric). Such instruments are listed multiple",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-nwis-e-and-d-codes-01",
+          "claim": "For NWIS storage, samples with noticeable sand or coarse materials measured by static techniques must be qualified as estimates with an \"E\" in the Remark code, and diluted samples must be entered with a \"d\" in the Value Qualifier Code field.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "must be qualified as Estimates with an “E” in the Remark code, and diluted\nsamples must be entered with a “d” in the Value Qualifier Code field.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-no-p00076-p61028-01",
+          "claim": "USGS personnel must not use turbidity parameter codes P00076 and P61028, which are reserved for historical turbidity data for which an equipment method cannot be assigned.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "USGS personnel: Do not use parameter codes P00076 and P61028.\nThese codes are reserved for historical turbidity data for which an\nequipment method cannot be assigned.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-reporting-digit-guidelines-01",
+          "claim": "Table 6.7-6 lists guidelines for reporting turbidity to the nearest acceptable digit under EPA Method 180.1, GLI Method 2, ASTM, and ISO 7027, with the tabulated values representing the least significant digit to which values should be rounded.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Guidelines for reporting turbidity measurements to the nearest acceptable\ndigit according to EPA Method 180.1, GLI Method 2, ASTM, and ISO 7027\nmethods are listed in table 6.7–6.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-rounding-43-12-example-01",
+          "claim": "A displayed turbidity of 43.12 units would be reported as 45 under USEPA guidelines but as 43 under ASTM guidelines, whereas 13.42 units would be reported as 13 under all the guidelines.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "For example, a value of 43.12 units\ndisplayed by an instrument would be reported as 45 under USEPA guidelines,\nbut as 43 under ASTM guidelines.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-usgs-conforms-astm-01",
+          "claim": "For most applications the USGS conforms to ASTM reporting guidelines unless the data were specifically collected for drinking-water compliance using EPA Method 180.1, GLI Method 2, or ISO 7027.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "the USGS will conform to ASTM guidelines unless data were\nspecifically collected for drinking-water compliance",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__ac8bab5fcc79",
+      "index": 46,
+      "locator": "§6.7.5 low-end and high-end censoring plus Table 6.7-6 Guidelines for reporting turbidity units — \"censored data below 2 NTU as not-detected\"",
+      "claims": [
+        {
+          "id": "tby-censor-below-2ntu-history-01",
+          "claim": "The USGS traditionally censored turbidity data below 2 NTU as not-detected (less than 2), but improvements in instrument capabilities have resulted in greater reliability at that low end.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Traditionally, the USGS has censored data below 2 NTU as not-\ndetected (less than 2). However, improvements in instrument\ncapabilities have resulted in greater reliability at this low end.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-astm-low-end-resolution-01",
+          "claim": "Based on input from instrument manufacturers, ASTM reports turbidity data below 1 to the nearest 0.05 unit and data between 1 and 10 to the nearest 0.1.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "ASTM has chosen\nto report data below 1 to the nearest 0.05 unit, and to the nearest\n0.1 for data ranging between 1 and 10.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-low-turbidity-static-dynamic-comparable-01",
+          "claim": "Because turbidities in the low range should be free of appreciable color or settleable materials, static methods should provide reasonable comparisons with dynamic methods there.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Because turbidities in this\nrange should be free of appreciable color or settleable materials,\nstatic methods should provide reasonable comparisons with\ndynamic methods.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-lowend-lab-confirmation-01",
+          "claim": "Before publishing low-turbidity data, study personnel should consider submitting samples of low-turbidity water to the NWQL or another laboratory to confirm low-end resolution and reproducibility.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Before publishing such data, study personnel\nshould consider submitting samples of low-turbidity water to the\nNWQL or other laboratory for confirmation of low-end resolution\nand reproducibility.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-high-end-censoring-cloth-01",
+          "claim": "The high end of an instrument's turbidity range should be determined and data above it censored as greater than the maximum value; for dynamic sensors this is done by covering the optics with a piece of lint-free cloth and recording the resulting turbidity.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "For dynamic sensors on a\nsubmersible sonde, cover the optics with a piece of lint-free cloth\nand record the resulting turbidity.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-max-value-gt-remark-01",
+          "claim": "Turbidity data at the instrument's maximum value are qualified with a \">\" remark code in NWIS.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Qualify data having the\nmaximum value by showing a “>” remark code in NWIS.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t6-fnmu-fnu-expansion-01",
+          "claim": "Table 6.7-6 expands FNMU as Formazin Nephelometric Multibeam Units and FNU as Formazin Nephelometric Units.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "FNMU, Formazin Nephelometric\nMultibeam Units; FNU, Formazin Nephelometric Units",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t6-low-rows-01",
+          "claim": "In Table 6.7-6, turbidity readings from 0 to less than 1 are reported to the nearest 0.05 unit under USGS, ASTM, EPA 180.1 and GLI Method 2 but to the nearest 0.01 under ISO 7027, and readings from 1 to less than 10 are reported to the nearest 0.1 under all five.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "0–<1 \t0.05 \t0.05 \t0.05 \t0.05 \t0.01\n1–<10 \t.1 \t.1 \t.1 \t.1 \t.1",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t6-40-100-row-01",
+          "claim": "In Table 6.7-6, turbidity readings from 40 to less than 100 are reported to the nearest 1 unit under USGS and ASTM but to the nearest 5 under EPA 180.1 and GLI Method 2, with ISO 7027 not applicable.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "40–<100 \t1 \t1 \t5 \t5 \tN/A",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t6-high-rows-01",
+          "claim": "In Table 6.7-6, turbidity readings from 400 to less than 1,000 are reported to the nearest 10 units under USGS and ASTM but 50 under EPA 180.1 and GLI Method 2, and readings above 1,000 to the nearest 50 under USGS and ASTM but 100 under EPA 180.1 and GLI Method 2.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "400–<1,000 \t10 \t10 \t50 \t50 \tN/A\n>1,000 \t50 \t50 \t100 \t100 \tN/A",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-t6-iso-na-above-40-01",
+          "claim": "Table 6.7-6 lists no ISO 7027 reporting guideline (N/A) for any turbidity reading of 40 units or greater.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "100–<400 \t10 \t10 \t10 \t10 \tN/A",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5bf774f777a4",
+      "index": 47,
+      "locator": "§6.7.6 Troubleshooting and Table 6.7-7 Troubleshooting guide for field turbidity measurement — \"Wiper mechanism is \"parking\" on optical surfaces\"",
+      "claims": [
+        {
+          "id": "tby-ts-erratic-reading-01",
+          "claim": "Table 6.7-7 attributes an erratic turbidity reading to weak batteries, condensation on the cell wall of a static turbidimeter, or bubbles in the sampling system or on the optical surface of the sensor.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Erratic reading \t• Check voltage of the batteries: replace weak batteries with new\nbatteries.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ts-bubble-remedy-01",
+          "claim": "Bubbles causing erratic turbidity readings are remedied by tapping the sample line to the flowthrough cell or chamber to dislodge them, adjusting the degassing apparatus, or agitating the sonde repeatedly or activating the wiper mechanism.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "tap\nsample line to flowthrough cell or chamber systems to dislodge\nbubbles; adjust degassing apparatus; remove bubbles on\nsonde/sensor system by agitating the unit repeatedly",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ts-high-low-fouling-01",
+          "claim": "Unusually high or low turbidity readings are attributed to bubbles, fouling of optical surfaces (cleaned with a lint-free cloth or toothbrush), a wiper mechanism parking on the optical surfaces, or an inappropriate turbidimeter for the environmental conditions.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "• Fouling of optical surfaces. Clean with lint-free cloth or\ntoothbrush.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ts-wiper-parking-01",
+          "claim": "A wiper mechanism parking on the optical surfaces is corrected by using software to reset the wiper or replacing the wiper mechanism, which may require factory repair.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "• Wiper mechanism is \"parking\" on optical surfaces. Use software\nto reset wiper, or replace wiper mechanism (may require factory\nrepair).",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ts-out-of-range-01",
+          "claim": "A calibration value reading \"out of range\" indicates a contaminated calibrant solution or a value entered incorrectly; the operator verifies the intended calibrant value and starts over, and tries a different batch of calibrant if the problem persists.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "• Contaminated calibrant solution or value entered incorrectly.\nVerify intended calibrant value and start over. If problem\npersists, try using a different batch of calibrant solution.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ts-moisture-condensation-01",
+          "claim": "Moisture condensation on the cell wall of a static turbidimeter or spectrophotometer is remedied by wiping the cell dry with a soft lint-free cloth, applying a thin veneer of silicon oil, or adding a gas sweep to the system.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "• Wipe cell dry with soft, lint-free cloth.\n• Apply a thin veneer of silicon oil (first check instrument\nmanufacturer’s instructions).\n• Add gas sweep to system.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ts-readings-increase-01",
+          "claim": "Turbidity readings that first appear stable and then begin to increase inexplicably indicate moisture on the cell wall.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Readings first appear stable,\nthen begin to increase\ninexplicably\n• Check for moisture on cell wall",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ts-blank-inaccurate-01",
+          "claim": "When blank samples or reference material standards do not read accurately, the operator checks that the cells are oriented as instructed, checks the age or expiration of the calibrant solutions, and checks accuracy against another instrument.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "• Check that the cells are oriented as instructed.\n• Check age/expiration of calibrant solutions.\n• Check accuracy against that of another instrument.",
+          "specificity": "high"
+        },
+        {
+          "id": "tby-ts-consult-manufacturer-01",
+          "claim": "If the suggestions in table 6.7-7 do not remedy the problem, the operator is directed to consult the instrument manufacturer for additional guidance.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Consult the instrument manufacturer for additional guidance if the\nsuggestions shown on table 6.7–7 do not remedy the problem\nencountered.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__00b7d127a256",
+      "index": 48,
+      "locator": "Selected references, first page — \"ASTM International, 2003a, D1889-00 Standard test method\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__fa6a70a8931e",
+      "index": 49,
+      "locator": "Selected references, second page — \"International Organization for Standardization, 1999\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.7-turbidity.pdf__52afbc5103e2",
+      "index": 50,
+      "locator": "Selected references, final page and footnote on the revised Wagner report — \"National field manual for the collection of water-quality data\"",
+      "claims": []
     }
   ],
   "summary": {

@@ -1,13 +1,19 @@
 {
   "filename": "usgs-nfm-a6.5-orp.pdf",
-  "title": "USGS NFM 6.5 — Reduction-Oxidation Potential, electrode method (version 1.2, 9/2005)",
+  "title": "USGS NFM 6.5 \u2014 Reduction-Oxidation Potential, electrode method (version 1.2, 9/2005)",
   "inSlice": false,
   "chunkCount": 18,
   "chunks": [
     {
+      "chunkId": "usgs-nfm-a6.5-orp.pdf__a324c6c0f54c",
+      "index": 0,
+      "locator": "Title page and Contents / Illustrations / Tables lists - \"REDUCTION- OXIDATION POTENTIAL (ELECTRODE METHOD) By D.K. Nordstrom and F.D. Wilde\"",
+      "claims": []
+    },
+    {
       "chunkId": "usgs-nfm-a6.5-orp.pdf__dcd192573a81",
       "index": 1,
-      "locator": "Section 6.5 opening — \"should not be considered a routine determination\"",
+      "locator": "Section 6.5 opening \u2014 \"should not be considered a routine determination\"",
       "claims": [
         {
           "id": "orp-not-routine-01",
@@ -84,7 +90,7 @@
     {
       "chunkId": "usgs-nfm-a6.5-orp.pdf__c38c9f5d26ef",
       "index": 2,
-      "locator": "Section 6.5.1 Equipment and Supplies, incl. Table 6.5-1 — \"EQUIPMENT AND SUPPLIES USED FOR Eh MEASUREMENTS\"",
+      "locator": "Section 6.5.1 Equipment and Supplies, incl. Table 6.5-1 \u2014 \"EQUIPMENT AND SUPPLIES USED FOR Eh MEASUREMENTS\"",
       "claims": [
         {
           "id": "orp-no-orp-sensor-guidance-01",
@@ -181,7 +187,7 @@
             "orp"
           ],
           "type": "definitional",
-          "quote": "ZoBell’s is the standard solution for testing redox instruments.",
+          "quote": "ZoBell\u2019s is the standard solution for testing redox instruments.",
           "specificity": "high"
         },
         {
@@ -192,7 +198,7 @@
             "temperature"
           ],
           "type": "numeric",
-          "quote": "not recommended because it is significantly less stable above 30°C and",
+          "quote": "not recommended because it is significantly less stable above 30\u00b0C and",
           "specificity": "high"
         },
         {
@@ -202,7 +208,7 @@
             "orp"
           ],
           "type": "numeric",
-          "quote": "ZoBell’s solution consists of a 0.1 molal KCl solution containing",
+          "quote": "ZoBell\u2019s solution consists of a 0.1 molal KCl solution containing",
           "specificity": "high"
         },
         {
@@ -213,7 +219,7 @@
             "temperature"
           ],
           "type": "numeric",
-          "quote": "stable for at least 90 days if kept chilled at 4°C.",
+          "quote": "stable for at least 90 days if kept chilled at 4\u00b0C.",
           "specificity": "high"
         },
         {
@@ -223,7 +229,7 @@
             "orp"
           ],
           "type": "numeric",
-          "quote": "1.4080 g K4Fe(CN)6•3H20 (Potassium ferrocyanide)",
+          "quote": "1.4080 g K4Fe(CN)6\u20223H20 (Potassium ferrocyanide)",
           "specificity": "high"
         },
         {
@@ -241,7 +247,7 @@
     {
       "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
       "index": 4,
-      "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+      "locator": "Section 6.5.1.C Equipment Maintenance \u2014 \"Dissolve these chemicals in deionized water\"",
       "claims": [
         {
           "id": "orp-zobells-dilute-1000ml-01",
@@ -270,7 +276,7 @@
             "orp"
           ],
           "type": "conceptual",
-          "quote": "CAUTION: ZoBell’s solution is toxic—handle with care.",
+          "quote": "CAUTION: ZoBell\u2019s solution is toxic\u2014handle with care.",
           "specificity": "medium"
         },
         {
@@ -338,7 +344,7 @@
             "orp"
           ],
           "type": "numeric",
-          "quote": "cloth, a hard eraser, or 400- to 600-grit wet/dry Carborundum™",
+          "quote": "cloth, a hard eraser, or 400- to 600-grit wet/dry Carborundum\u2122",
           "specificity": "high"
         },
         {
@@ -349,7 +355,7 @@
             "temperature"
           ],
           "type": "numeric",
-          "quote": "aqua regia (70°C) for about 1 minute. Do not immerse the",
+          "quote": "aqua regia (70\u00b0C) for about 1 minute. Do not immerse the",
           "specificity": "high"
         },
         {
@@ -399,7 +405,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "The Orion™ combination electrodes are stored dry after",
+          "quote": "The Orion\u2122 combination electrodes are stored dry after",
           "specificity": "medium"
         },
         {
@@ -417,7 +423,7 @@
     {
       "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
       "index": 6,
-      "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+      "locator": "Section 6.5.2 Equipment Test Procedure \u2014 \"Eh measuring systems can be tested for accuracy\"",
       "claims": [
         {
           "id": "orp-cannot-adjust-01",
@@ -436,7 +442,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "Test the Eh equipment using the ZoBell’s solution before and",
+          "quote": "Test the Eh equipment using the ZoBell\u2019s solution before and",
           "specificity": "high"
         },
         {
@@ -446,7 +452,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "In general, field testing with ZoBell’s is not required,",
+          "quote": "In general, field testing with ZoBell\u2019s is not required,",
           "specificity": "high"
         },
         {
@@ -456,7 +462,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "Before using, check that the ZoBell’s solution has not exceeded",
+          "quote": "Before using, check that the ZoBell\u2019s solution has not exceeded",
           "specificity": "medium"
         },
         {
@@ -466,7 +472,7 @@
             "orp"
           ],
           "type": "conceptual",
-          "quote": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "quote": "ZoBell\u2019s reacts readily with minute particles of iron, dust, and",
           "specificity": "high"
         },
         {
@@ -516,7 +522,7 @@
             "orp"
           ],
           "type": "numeric",
-          "quote": "E° = 430 mV is the standard electrode potential of ZoBell’s",
+          "quote": "E\u00b0 = 430 mV is the standard electrode potential of ZoBell\u2019s",
           "specificity": "high"
         },
         {
@@ -527,7 +533,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "those temperatures not shown on tables 6.5–2 and 6.5–3, interpolate",
+          "quote": "those temperatures not shown on tables 6.5\u20132 and 6.5\u20133, interpolate",
           "specificity": "high"
         }
       ]
@@ -545,7 +551,7 @@
             "temperature"
           ],
           "type": "definitional",
-          "quote": "[Liquid-junction potential included—multiply volts by 1,000 to convert to millivolts; KCl, potassium",
+          "quote": "[Liquid-junction potential included\u2014multiply volts by 1,000 to convert to millivolts; KCl, potassium",
           "specificity": "high"
         },
         {
@@ -678,7 +684,7 @@
             "orp"
           ],
           "type": "numeric",
-          "quote": "meter to the millivolt function, allow the reading to stabilize (±5",
+          "quote": "meter to the millivolt function, allow the reading to stabilize (\u00b15",
           "specificity": "high"
         },
         {
@@ -719,7 +725,7 @@
             "temperature"
           ],
           "type": "numeric",
-          "quote": "potential = 202 mV for Ag:AgCl−saturated KCl at 22°C.",
+          "quote": "potential = 202 mV for Ag:AgCl\u2212saturated KCl at 22\u00b0C.",
           "specificity": "high"
         },
         {
@@ -729,7 +735,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "Check the date on Zobell’s solution—do not use",
+          "quote": "Check the date on Zobell\u2019s solution\u2014do not use",
           "specificity": "medium"
         }
       ]
@@ -746,7 +752,7 @@
             "orp"
           ],
           "type": "numeric",
-          "quote": "7. Check: is 'Eh within ± 5 mV?",
+          "quote": "7. Check: is 'Eh within \u00b1 5 mV?",
           "specificity": "high"
         },
         {
@@ -756,7 +762,7 @@
             "orp"
           ],
           "type": "definitional",
-          "quote": "ZoBell’s solution: Lot # ____________ Date: prepared ___________ expired ___________",
+          "quote": "ZoBell\u2019s solution: Lot # ____________ Date: prepared ___________ expired ___________",
           "specificity": "medium"
         },
         {
@@ -869,7 +875,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "Closed-system flow cell—Check that the connections and sensor grom-",
+          "quote": "Closed-system flow cell\u2014Check that the connections and sensor grom-",
           "specificity": "medium"
         },
         {
@@ -982,7 +988,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "7. Quality control—Repeat the measurement.",
+          "quote": "7. Quality control\u2014Repeat the measurement.",
           "specificity": "medium"
         }
       ]
@@ -1189,7 +1195,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "Contact the instrument manufacturer if the suggestions in table 6.5–4",
+          "quote": "Contact the instrument manufacturer if the suggestions in table 6.5\u20134",
           "specificity": "low"
         },
         {
@@ -1209,7 +1215,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "• Use shorting lead to establish meter reading at zero mV.",
+          "quote": "\u2022 Use shorting lead to establish meter reading at zero mV.",
           "specificity": "high"
         },
         {
@@ -1219,7 +1225,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "• Check that electrode reference solution level is to the",
+          "quote": "\u2022 Check that electrode reference solution level is to the",
           "specificity": "medium"
         },
         {
@@ -1229,7 +1235,7 @@
             "orp"
           ],
           "type": "numeric",
-          "quote": "trodes (Ag:AgCl and Hg:HgCl2), reading should be 44 ±",
+          "quote": "trodes (Ag:AgCl and Hg:HgCl2), reading should be 44 \u00b1",
           "specificity": "high"
         },
         {
@@ -1239,7 +1245,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "Kimwipe™ if these abrasives are not available.",
+          "quote": "Kimwipe\u2122 if these abrasives are not available.",
           "specificity": "high"
         },
         {
@@ -1249,7 +1255,7 @@
             "orp"
           ],
           "type": "procedural",
-          "quote": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "quote": "\u2022 Read emf with fresh aliquot of ZoBell\u2019s solution;",
           "specificity": "medium"
         },
         {
@@ -1296,7 +1302,7 @@
           "claim": "The selected references for NFM 6.5 cite Standard Methods for the Examination of Water and Wastewater (20th ed., 2001) pages 2-60 to 2-63 as a source on redox measurement.",
           "metrics": [],
           "type": "definitional",
-          "quote": "Washington, D.C., American Public Health Association, p. 2–60 to",
+          "quote": "Washington, D.C., American Public Health Association, p. 2\u201360 to",
           "specificity": "low"
         }
       ]
@@ -1304,13 +1310,13 @@
     {
       "chunkId": "usgs-nfm-a6.5-orp.pdf__8948d0575685",
       "index": 16,
-      "locator": "Selected References, Bricker through Pankow — \"Bricker, O.P., 1965, Some stability relations\"",
+      "locator": "Selected References, Bricker through Pankow \u2014 \"Bricker, O.P., 1965, Some stability relations\"",
       "claims": []
     },
     {
       "chunkId": "usgs-nfm-a6.5-orp.pdf__45eb7f7b8b87",
       "index": 17,
-      "locator": "Selected References, Sato through Whitfield — \"Sato, Michiaki, 1960, Dissolved oxygen in aqueous systems\"",
+      "locator": "Selected References, Sato through Whitfield \u2014 \"Sato, Michiaki, 1960, Dissolved oxygen in aqueous systems\"",
       "claims": [
         {
           "id": "orp-nfm-online-01",
@@ -1340,8 +1346,8 @@
       "temperature": 20,
       "ph": 7,
       "dissolvedOxygen": 6,
-      "conductivity": 1,
-      "turbidity": 0
+      "(none)": 2,
+      "conductivity": 1
     },
     "byType": {
       "procedural": 39,
@@ -1350,16 +1356,16 @@
       "definitional": 16
     },
     "gaps": [
-      "Gives no guidance at all for redox measurement with an ORP sensor on a multiparameter sonde — the exact configuration a rover carries. Section 6.5.1 states outright that the report does not cover it, so no calibration interval, no drift tolerance, and no maintenance schedule for a sonde ORP sensor exists anywhere in this document.",
+      "Gives no guidance at all for redox measurement with an ORP sensor on a multiparameter sonde \u2014 the exact configuration a rover carries. Section 6.5.1 states outright that the report does not cover it, so no calibration interval, no drift tolerance, and no maintenance schedule for a sonde ORP sensor exists anywhere in this document.",
       "States no acceptable ORP/Eh range or threshold for any natural water type: no expected mV window for oxic surface water, for anoxic ground water, or for stream monitoring, and no action level at which a reading should be rejected.",
       "Gives no ORP calibration frequency in the sense a continuous-monitoring program needs (before each field trip, and before/after field use, is the only cadence stated); nothing on how often a deployed sensor must be re-checked, nor on allowable drift per day of deployment.",
-      "Provides no conversion or offset table for reporting ORP as raw sensor millivolts rather than Eh — the document assumes the operator adds a reference half-cell potential by hand and reports Eh, and never addresses instruments that report ORP directly.",
+      "Provides no conversion or offset table for reporting ORP as raw sensor millivolts rather than Eh \u2014 the document assumes the operator adds a reference half-cell potential by hand and reports Eh, and never addresses instruments that report ORP directly.",
       "Half-cell table 6.5-2 stops at 40 degrees Celsius and starts at 10 degrees Celsius, so no reference potential is given for water below 10 or above 40 degrees C; the only remedy offered is interpolation, which cannot extrapolate.",
       "Gives no accuracy or precision specification for the Eh measurement itself (only agreement criteria: plus or minus 5 mV against ZoBell's, about 10 mV between duplicate field readings). There is no stated method detection limit or uncertainty budget.",
       "Says nothing about ORP sensor fouling in continuous deployment (biofouling, sediment), cleaning intervals for a deployed sensor, or how a fouled ORP reading manifests in a time series.",
       "Names no field data-quality codes, qualifiers, or flags for rejecting an unstable Eh record beyond 'assume a single quantitative value is not possible'.",
       "Contains no cross-metric interpretation guidance: no Eh-pH stability diagram, no rule relating an ORP reading to dissolved-oxygen concentration, and no numeric ORP value associated with the onset of anoxia."
     ],
-    "notes": "Corpus/OCR damage: this document's text file contains NUL bytes and other C0 control characters, all of them inside Table 6.5-1 (equipment and supplies). That table was extracted through a shifted font encoding — every character sits 0x20 below its true value (T stored as '4', E as '%', space as NUL, '.' as 0x0e), so the table reads as 'ILLIVOLT METER OR P( METER...' in the corpus. It is decodable by hand (it resolves to 'millivolt meter or pH meter with millivolt reading capability... 0.1 mV sensitivity; scale to at least +/-1,400 mV; BNC connector... deionized water (maximum conductivity of 1.0 uS/cm)'), but no retrieval arm will ever match a plain-text query against it and no fixture should be built on it. Only one low-specificity claim (orp-table651-tubing-oxygen-01) is recorded from it, quoting the one control-character-free span in the table.\nTable 6.5-2 arrives with its data rows intact but its COLUMN HEADERS PRINTED AFTER THE TABLE BODY: the numeric rows (10 through 40 degrees C) appear first, then the footnotes, then the header block ('Calomel', 'Orion 96-78 combination electrode', 'Temp o C', '3 M KCl', '3.5 M KCl', 'Saturated KCl', ... 'Silver:silver chloride'). Column-to-value mapping is therefore recoverable only by reading the header block in order and matching it to the eight numeric columns; a fixture asking 'what is the Ag:AgCl saturated-KCl half-cell potential at 25 C' is answerable from this chunk but only by a reader who reconstructs that ordering. Values are in volts, not millivolts.\nTable 6.5-3 (Eh of ZoBell's vs temperature) survives intact and is the cleanest numeric table in the document, but it is laid out in two side-by-side column pairs on one line (e.g. '10\\t467\\t26\\t428' means 467 mV at 10 C and 428 mV at 26 C). A naive reader could mis-parse the third column as an Eh value. It is also duplicated in full in chunk 7's 400-character overlap; claims are attributed to chunk 6 where it originates.\nTable 6.5-4 (troubleshooting) survives with symptom and corrective-action columns interleaved, so symptoms ('Excessive drift', 'Erratic performance') sit on the same lines as unrelated corrective actions.\nInternal tension worth knowing: chunk 5 says 'Eh equipment must be tested ... before making field measurements' and then immediately says 'In general, field testing with ZoBell's is not required' — these are reconcilable (lab test required, field test optional) but read as contradictory if either sentence is retrieved alone.\nChunk 15 is pure bibliography and yields no extractable claim; chunks 14 and 16 are mostly bibliography. Chunk 0 opens mid-list-of-tables (document front matter).\nThe document's own framing is a strong negative: it says redox measurement 'is not recommended in general' and that a single Eh value 'generally does not represent the system'. Any fixture that treats this manual as endorsing routine ORP monitoring will be wrong."
+    "notes": "Corpus/OCR damage: this document's text file contains NUL bytes and other C0 control characters, all of them inside Table 6.5-1 (equipment and supplies). That table was extracted through a shifted font encoding \u2014 every character sits 0x20 below its true value (T stored as '4', E as '%', space as NUL, '.' as 0x0e), so the table reads as 'ILLIVOLT METER OR P( METER...' in the corpus. It is decodable by hand (it resolves to 'millivolt meter or pH meter with millivolt reading capability... 0.1 mV sensitivity; scale to at least +/-1,400 mV; BNC connector... deionized water (maximum conductivity of 1.0 uS/cm)'), but no retrieval arm will ever match a plain-text query against it and no fixture should be built on it. Only one low-specificity claim (orp-table651-tubing-oxygen-01) is recorded from it, quoting the one control-character-free span in the table.\nTable 6.5-2 arrives with its data rows intact but its COLUMN HEADERS PRINTED AFTER THE TABLE BODY: the numeric rows (10 through 40 degrees C) appear first, then the footnotes, then the header block ('Calomel', 'Orion 96-78 combination electrode', 'Temp o C', '3 M KCl', '3.5 M KCl', 'Saturated KCl', ... 'Silver:silver chloride'). Column-to-value mapping is therefore recoverable only by reading the header block in order and matching it to the eight numeric columns; a fixture asking 'what is the Ag:AgCl saturated-KCl half-cell potential at 25 C' is answerable from this chunk but only by a reader who reconstructs that ordering. Values are in volts, not millivolts.\nTable 6.5-3 (Eh of ZoBell's vs temperature) survives intact and is the cleanest numeric table in the document, but it is laid out in two side-by-side column pairs on one line (e.g. '10\\t467\\t26\\t428' means 467 mV at 10 C and 428 mV at 26 C). A naive reader could mis-parse the third column as an Eh value. It is also duplicated in full in chunk 7's 400-character overlap; claims are attributed to chunk 6 where it originates.\nTable 6.5-4 (troubleshooting) survives with symptom and corrective-action columns interleaved, so symptoms ('Excessive drift', 'Erratic performance') sit on the same lines as unrelated corrective actions.\nInternal tension worth knowing: chunk 5 says 'Eh equipment must be tested ... before making field measurements' and then immediately says 'In general, field testing with ZoBell's is not required' \u2014 these are reconcilable (lab test required, field test optional) but read as contradictory if either sentence is retrieved alone.\nChunk 15 is pure bibliography and yields no extractable claim; chunks 14 and 16 are mostly bibliography. Chunk 0 (newly recovered) is pure front matter - title page, authorship, and the Contents, Illustrations and Tables dot-leader lists - and carries an empty claim array; the substantive content it indexes (tables 6.5-1 through 6.5-4) is extracted from the chunks where those tables appear. The document is now complete at 18/18 chunks.\nThe document's own framing is a strong negative: it says redox measurement 'is not recommended in general' and that a single Eh value 'generally does not represent the system'. Any fixture that treats this manual as endorsing routine ORP monitoring will be wrong."
   }
 }

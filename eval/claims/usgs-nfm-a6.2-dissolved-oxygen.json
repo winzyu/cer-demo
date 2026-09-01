@@ -1314,6 +1314,1462 @@
       "index": 34,
       "locator": "Section 2.3.2, page break — \"air when transferred to a measurement or analysis vessel\" (overlap text only)",
       "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__0059a6d641b9",
+      "index": 35,
+      "locator": "Section 2.3 Measurement / 2.3.2 Groundwater — \"applying optical sensor methods for groundwater DO measurements in the concentration range less than 2 mg/L is reliable\"",
+      "claims": [
+        {
+          "id": "do-optical-003-field-verified-01",
+          "claim": "USGS field-methods training class instructors have field verified the accuracy of optical-sensor DO measurements to 0.03 mg/L against Rhodazine D and Indigo Carmine spectrophotometric measurements.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "The accuracy of DO measurements to 0.03 mg/L with an\noptical sensor has been field verified against Rhodazine D and\nIndigo Carmine spectrophotometric measurements on many\noccasions",
+          "specificity": "high"
+        },
+        {
+          "id": "do-optical-below-2-reliable-01",
+          "claim": "Applying optical sensor methods for groundwater dissolved-oxygen measurements in the concentration range less than 2 mg/L is considered reliable.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "applying optical sensor methods for groundwater DO\nmeasurements in the concentration range less than 2 mg/L is\nreliable",
+          "specificity": "high"
+        },
+        {
+          "id": "do-rating-disagreement-action-01",
+          "claim": "If the optical instrument and the spectrophotometric method do not agree within 0.03 mg/L, the optical instrument should be checked and, if necessary, calibrated to the zero-DO point.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "measurements do not agree within 0.03 mg/L, the optical\ninstrument should be checked and, if necessary, calibrated to\nthe zero-DO point.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-below-2-zero-check-required-01",
+          "claim": "For dissolved-oxygen concentrations less than 2 mg/L, a zero-DO calibration check or calibration of the DO instrument is required.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "For DO concentration less than 2 mg/L, a zero-DO cali-\nbration check or calibration of the DO instrument is required.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-perf-test-before-field-01",
+          "claim": "DO instruments are required to be performance tested before field use as described in section 2.1.2, Field-Trip Preparations.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Instruments are required to be performance tested before field\nuse as described in section 2.1.2, Field-Trip Preparations.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-downhole-definition-01",
+          "claim": "Downhole (in situ) measurement means submersible multiparameter sondes and single-parameter sensors are deployed downhole to the targeted depth interval.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "Downhole (in situ) measurement: Submersible multi-\nparameter sondes and single-parameter sensors are deployed\ndownhole to the targeted depth interval.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-inline-cell-definition-01",
+          "claim": "Inline flow-through cell/chamber (ex situ) measurement means the sample is pumped directly inline to an airtight, transparent chamber or manufacturer-provided cell fitted with leakproof compression-fitting ports or a sonde.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "Inline flow-through cell/chamber (ex situ) measurement:\nSample is pumped directly (inline) to an airtight, transparent\nchamber or manufacturer-provided cell",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-positive-displacement-pump-01",
+          "claim": "Sample transfer for ex situ DO measurement uses a positive-displacement submersible pump fitted with high-density plastic or fluorocarbon-polymer tubing that is relatively gas impermeable.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "The sample is transferred by using a positive-displacement\nsubmersible pump fitted with high-density plastic or fluorocar-\nbon-polymer tubing that is relatively gas impermeable.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__b6db5500055f",
+      "index": 36,
+      "locator": "Section 2.3.2 Groundwater, measurement steps 1-2 — \"Air bubbles introduced through leaking fittings can add substantial error\"",
+      "claims": [
+        {
+          "id": "do-leaking-fittings-error-01",
+          "claim": "Air bubbles introduced through leaking fittings can add substantial error to low-level DO measurements and should be excluded.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Air bubbles intro-\nduced through leaking fittings can add substantial\nerror to low-level DO measurements and should be\nexcluded.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-shield-tubing-sunlight-01",
+          "claim": "Exposed sample tubing and the flow-through cell or chamber must be protected from direct sunlight.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Protect exposed sample tubing and the flow-through\ncell or chamber from direct sunlight.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-gw-thermistor-cert-01",
+          "claim": "Before measuring groundwater DO, check that the thermistor is accurate and that its calibration has been certified according to NFM 6.1, Temperature.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Check that the thermistor is accurate and that\nits calibration has been certified according to\nNFM 6.1, Temperature.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-gw-check-sat-and-zero-01",
+          "claim": "Before measuring groundwater DO, check the performance of the DO sensor at saturation and at zero DO.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Check the performance of the DO sensor at satura-\ntion and zero DO (refer to sections 2.1 and 2.2).",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-downhole-sensor-before-pump-01",
+          "claim": "In a downhole groundwater system the DO and temperature sensors are lowered to the measuring point first, followed by the pump, so DO variation can be monitored during purging.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Downhole system—Lower the DO and temperature\nsensors to the measuring point, followed by the\npump, to monitor DO variation during purging.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-airtight-grommet-01",
+          "claim": "If a flow-through chamber is instrumented with single-parameter sensors, the DO sensor is installed through an air-tight grommet and the seal around it must be checked.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Install the DO sensor through an air-tight grom-\nmet if the chamber is instrumented with single-\nparameter sensors.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__afb1d2a6fba9",
+      "index": 37,
+      "locator": "Section 2.3.2 page break — \"install the sonde in the flow-through cell provided by the manufacturer\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c92c42a01570",
+      "index": 38,
+      "locator": "Section 2.3.2 steps 3-6, Technical Note 4, and Section 3.0 opening — \"The stability criterion is met when five consecutive measurements\"",
+      "claims": [
+        {
+          "id": "do-tap-tubing-blunt-tool-01",
+          "claim": "Entrained gas bubbles are dislodged and flushed from the tubing walls and flow-through chamber by tapping the tubing with a blunt tool.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Dislodge and flush entrained gas bubbles from\nthe tubing walls and flow-through chamber by\ntapping the tubing with a blunt tool",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-no-back-pressure-01",
+          "claim": "Back pressure in the flow-through chamber must be checked for and eliminated; the chamber outlet should be free flowing.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Check for and eliminate back pressure in the\nflow-through chamber. The outlet of the chamber\nshould be free flowing.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-gw-equilibrate-5min-01",
+          "claim": "Sensors must be allowed to equilibrate with groundwater for a minimum of 5 minutes before the first DO measurement is made during purging.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Allow the sensors to equili-\nbrate with groundwater for a minimum of 5 minutes\nbefore making the first measurement.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-gw-stability-5x02-01",
+          "claim": "The groundwater DO stability criterion is met when five consecutive measurements made at regularly spaced intervals of 3 to 5 minutes or more are within plus or minus 0.2 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "The stability\ncriterion is met when five consecutive measurements\nmade at regularly spaced intervals of 3 to 5 minutes or\nmore are within ±0.2 mg/L.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-gw-monitor-30-60s-01",
+          "claim": "For each groundwater DO reading, fluctuations are monitored for 30 to 60 seconds and the median value recorded if necessary.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "(For each reading, monitor\nfluctuations for 30 to 60 seconds and record the median\nvalue, if necessary.)",
+          "specificity": "high"
+        },
+        {
+          "id": "do-gw-report-median-five-01",
+          "claim": "Groundwater DO concentration is reported as the median of the final five DO readings recorded.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Report DO concentration as the median of the final\nfive DO readings recorded.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-anomalous-high-aeration-01",
+          "claim": "Anomalously high DO measurements in groundwater commonly are caused by aeration of groundwater during pumping, from air leakage through loose fittings or drawdown introducing air into well-screen perforations.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Anomalously high DO measurements commonly are caused\nby aeration of groundwater during pumping.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-spectro-scope-2to0-01",
+          "claim": "The Rhodazine D and Indigo Carmine spectrophotometric guidance in this chapter is limited to relatively oxygen-deficient waters, that is, DO concentration from about 2 to 0 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "DO concentrations in relatively oxygen-deficient waters—that\nis, DO concentration from about 2 to 0 mg/L.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-reagent-colors-01",
+          "claim": "The reduced form of indigo carmine, an organic salt made by sulfonating indigo dye, reacts with dissolved oxygen to form a blue product, while reduced Rhodazine D (a phenazone dye) reacts with DO to form a bright pink product.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "The\nreduced form of indigo carmine reacts with DO to form a\nblue product. The Rhodazine D (phenzone dye) compound, in\nreduced form, reacts with DO to form a bright pink reaction\nproduct.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__ff1a1c1d09ab",
+      "index": 39,
+      "locator": "Section 3.0 and Technical Note 5 — \"Photometry measures only in the visible spectral region from 360 nanometers\"",
+      "claims": [
+        {
+          "id": "do-photometry-360-830-01",
+          "claim": "Photometry measures only in the visible spectral region from 360 nanometers to 830 nanometers, the range in which human eyes are sensitive.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Photometry measures only in the visible spectral region from\n360 nanometers (nm) to 830 nm, the range in which human\neyes are sensitive.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-nist-250-2500-01",
+          "claim": "NIST maintains the national scales for reflectance and transmittance in the ultraviolet, visible, and near-infrared spectral regions, that is, 250 to 2,500 nanometers.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "the national scales for reflectance and transmittance in the\nultraviolet, visible, and near-infrared spectral regions—that is,\n250 to 2,500 nm",
+          "specificity": "high"
+        },
+        {
+          "id": "do-rhodazine-origin-1990-01",
+          "claim": "The Rhodazine D spectrophotometric method for determining DO concentrations in groundwater was introduced by White and others (1990), when sensor methods were not capable of in situ measurement.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "The Rhodazine D spectrophotomet-\nric method for determining DO concentrations in groundwater\nwas introduced by White and others (1990)",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-spectro-lakes-adapt-01",
+          "claim": "Spectrophotometric DO methods have been used in USGS fieldwork for oxygen-depleted groundwater and can be adapted for work in oxygen-depleted zones of lakes and reservoirs.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "been used in USGS fieldwork for measuring DO in oxygen-\ndepleted groundwater and can be adapted for work in oxygen-\ndepleted zones of lakes and reservoirs",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__3dacebd1adf3",
+      "index": 40,
+      "locator": "Section 3.0 page break — \"Comparisons between optical\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__a2b58928d95a",
+      "index": 41,
+      "locator": "Table 6.2-3 and Section 3.1 Equipment and Supplies — \"hypoxic to anoxic (concentration less than 1.0 mg/L)\"",
+      "claims": [
+        {
+          "id": "do-hypoxic-anoxic-1mgl-01",
+          "claim": "This chapter defines hypoxic to anoxic conditions as a dissolved-oxygen concentration less than 1.0 mg/L, and requires the capability and accuracy of an optical sensor in that range to be documented by side-by-side onsite comparison with a spectrophotometric method before such data are reported.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "hypoxic to anoxic (concentration\nless than 1.0 mg/L) DO-concentration data from optical sen-\nsors, the capability and accuracy of the optical sensor in this\nlow-DO concentration range is required",
+          "specificity": "high"
+        },
+        {
+          "id": "do-rhodazine-range-0025-10-01",
+          "claim": "The Rhodazine D spectrophotometric method is applicable to a range of DO concentrations from 0.025 to 1.0 mg/L in aqueous environments.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "The Rhodazine D spectrophotometric method is appli-\ncable to a range of DO concentrations from 0.025 to 1.0\nmg/L in aqueous environments.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-indigo-ranges-01",
+          "claim": "The low-level Indigo Carmine spectrophotometric methods are applicable to DO concentration ranges of either 0.006 to 0.8 mg/L or 0.2 to 2.0 mg/L, depending on the specific method used.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "The low-level Indigo Car-\nmine spectrophotometric methods are applicable to a range\nof DO concentrations from either 0.006 to 0.8 mg/L or 0.2 to\n2.0 mg/L",
+          "specificity": "high"
+        },
+        {
+          "id": "do-table623-diw-1uscm-01",
+          "claim": "Table 6.2-3 specifies deionized water of maximum conductivity 1 microsiemen per centimeter among the supplies for the spectrophotometric DO method.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Deionized water (maximum conductivity 1 μS/cm)",
+          "specificity": "high"
+        },
+        {
+          "id": "do-table623-blank-ampule-01",
+          "claim": "Table 6.2-3 lists the equipment and supplies for the spectrophotometric DO method, including a portable spectrophotometer or photometer and a blank ampule (zero DO) included in each Rhodazine D kit.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "Blank ampule (zero DO), included in each Rhodazine D kit",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-comparison-rdo-sonde-01",
+          "claim": "The USGS comparisons between optical sensors and spectrophotometric methods were made using an In-Situ, Inc. multiparameter sonde with a rugged dissolved oxygen (RDO) optical sensor.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "an In-Situ, Inc., multiparameter sonde (various models) with\na rugged dissolved oxygen (RDO) optical sensor",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-selffilling-ampule-01",
+          "claim": "The Rhodazine D and Indigo Carmine sampling system uses a self-filling ampule with the reagent vacuum sealed inside, and DO concentration is then determined instrumentally on the resulting solution with a spectrophotometer or photometer.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "The sampling system is configured to use a self-filling\nampule with the Rhodazine D or Indigo Carmine reagent vac-\nuum sealed inside.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__32d783e072ad",
+      "index": 42,
+      "locator": "Section 3.2 Calibration and Interferences — \"not subject to salinity or dissolved-gas interferences\"",
+      "claims": [
+        {
+          "id": "do-percent-absorbance-01",
+          "claim": "For the Rhodazine D and Indigo Carmine methods, DO is measured by the spectrophotometer as percent absorbance, with a calibration chart and regression formula typically supplied with each reagent kit.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "For the Rhodazine D and Indigo Carmine methods, DO\nis measured by the spectrophotometer as percent absorbance.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-blank-ampule-zero-01",
+          "claim": "An appropriate blank ampule must be used to zero the spectrophotometer or photometer.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Ensure that an appropriate blank ampule is used to zero\nthe spectrophotometer (or photometer).",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-advanced-calibration-partial-pressure-01",
+          "claim": "Advanced calibration for heavily contaminated or acidic waters can be done by equilibrating a water sample with known partial pressures of atmospheric oxygen.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Advanced calibration can be done by equilibrat-\ning a water sample with known partial pressures of atmo-\nspheric oxygen (White and others, 1990).",
+          "specificity": "high"
+        },
+        {
+          "id": "do-reagents-no-salinity-interference-01",
+          "claim": "Rhodazine D and Indigo Carmine chemical reagent-based methods are not subject to salinity or dissolved-gas interferences, and interferences from total salinity, major dissolved inorganic species, dissolved gases, or temperature are typically negligible.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "Rhodazine D and Indigo Carmine chemical reagent-based\nmethods are not subject to salinity or dissolved-gas interfer-\nences",
+          "specificity": "high"
+        },
+        {
+          "id": "do-turbidity-affects-reagents-01",
+          "claim": "Turbidity may affect the Indigo Carmine method, and color and turbidity may affect the Rhodazine D method, so the amount of bias must be assessed before using these methods in colored or turbid water.",
+          "metrics": [
+            "dissolvedOxygen",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "However, turbidity may affect the Indigo\nCarmine method, and color and turbidity may affect the\nRhodazine D method.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-rhodazine-oxidizer-bias-01",
+          "claim": "The Rhodazine D spectrophotometric method is affected by oxidizing agents including chlorine, ferric and cupric ions, and hexavalent chromium, which produce high-biased DO readings.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "reagent is affected by the presence of oxidizing agents, includ-\ning chlorine, ferric and cupric ions, and hexavalent chromium,\nresulting in high-biased DO readings",
+          "specificity": "high"
+        },
+        {
+          "id": "do-copper-iron-50ugl-bias-01",
+          "claim": "Cupric copper and ferric iron at a concentration less than 50 micrograms per liter may cause a bias of less than 1 microgram per liter in the Rhodazine D method.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "The presence of cupric copper and ferric iron at a\nconcentration less than 50 micrograms per liter (μg/L)\nmay cause a bias of less than 1 μg/L",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__786324b0bc6d",
+      "index": 43,
+      "locator": "Section 3.2 page break — \"concentration less than 50 micrograms per liter\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__16c67c3eeaaf",
+      "index": 44,
+      "locator": "Section 3.2 interferences and Section 3.3 Measurement — \"A sample pH of 2 or less may cause erroneous results\"",
+      "claims": [
+        {
+          "id": "do-copper-iron-100ugl-bias-01",
+          "claim": "At a concentration of 100 micrograms per liter, cupric copper may cause a bias of 5 micrograms per liter and ferric iron a bias of 7 micrograms per liter in the Rhodazine D method.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "of 100 μg/L, cupric copper may cause a bias of 5 μg/L,\nand ferric iron may cause a bias of 7 μg/L.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-rhodazine-ph2-error-01",
+          "claim": "A sample pH of 2 or less may cause erroneous results with the Rhodazine D spectrophotometric method.",
+          "metrics": [
+            "dissolvedOxygen",
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "A sample pH of 2 or less may cause erroneous results.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-hydroquinone-200ugl-01",
+          "claim": "A hydroquinone concentration greater than 200 micrograms per liter is a positive interferent in the Rhodazine D method, and its oxidation byproduct benzoquinone causes a false positive result.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "A hydroquinone concentration greater than 200 μg/L\nis a positive interferent and its oxidation byproduct,\nbenzoquinone, causes a false positive result.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-indigo-interferents-10mgl-01",
+          "claim": "The Indigo Carmine spectrophotometric method is affected by ferric iron, hypochlorite (chlorine), and chromate, which can cause a false positive at concentrations equal to or greater than 10 mg/L each.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "reagent is affected by ferric iron, hypochlorite (chlorine), and\nchromate, which can cause a false positive at concentrations\nequal to or greater than 10 mg/L each.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-indigo-copper-100mgl-01",
+          "claim": "Cupric copper interferes positively with the Indigo Carmine method at a concentration equal to or greater than 100 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Cupric copper interferes positively at a concentration\nequal to or greater than 100 mg/L.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-indigo-seawater-precipitate-01",
+          "claim": "Seawater may cause the Indigo Carmine reagent to precipitate.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Seawater may cause the reagent to precipitate.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-no-extend-waiting-times-01",
+          "claim": "The waiting times specified in the Rhodazine D and Indigo Carmine methods must not be extended and must be adhered to strictly.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Do not extend the waiting times specified in the Rho-\ndazine D and Indigo Carmine methods. Adhere to them\nstrictly.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-color-development-continues-01",
+          "claim": "Color development continues after the specified time interval because oxygen from the atmosphere continuously diffuses into the sample through the broken ampule tip.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Color development continues after the time\ninterval specified for these methods because oxygen from the\natmosphere continuously diffuses into the sample through the\nbroken ampule tip.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-spectro-flow-500mlmin-01",
+          "claim": "A pumping flow rate of about 500 milliliters per minute is used for spectrophotometric sample collection, with the sampling device allowed to overflow.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Use a pumping flow rate of about 500 milliliters per\nminute for sample collection.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-excessive-mixing-bias-01",
+          "claim": "Excessive mixing of the ampule before placing it into the spectrophotometer may introduce atmospheric oxygen and bias the results.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Excessive mixing of the ampule before placing it into the\nspectrophotometer also may introduce atmospheric oxygen,\nwhich can bias the results.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__a55e3c82493d",
+      "index": 45,
+      "locator": "Section 3.3 Measurement steps 1-7 — \"break the scored tip of the ampule by using a sharp upward tugging motion\"",
+      "claims": [
+        {
+          "id": "do-set-wavelength-01",
+          "claim": "The spectrophotometer must be set to an appropriate wavelength for the kit being used, and the user should verify whether inserting the kit ampule automatically triggers the correct wavelength setting.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Set the spectrophotometer to an appropriate wavelength\nfor the kit being used.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-zero-spectro-blank-01",
+          "claim": "The spectrophotometer is zeroed by using the blank provided in the kit or native water, according to the manufacturer’s instructions.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "the spectrophotometer by using the blank pro-\nvided in the kit or native water according to the manu-\nfacturer’s instructions.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-downhole-break-tip-01",
+          "claim": "In the downhole spectrophotometric method the scored tip of the reagent ampule is broken at the desired sample depth by a sharp upward tugging motion on the sampling tool.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "break the scored tip of the\nampule by using a sharp upward tugging motion on\nthe sampling tool.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-spectro-prevent-aeration-01",
+          "claim": "Sample aeration must be prevented during spectrophotometric sample collection by using a positive-displacement submersible pump and gas-impermeable high-density plastic or fluorocarbon polymer tubing throughout the measurement system.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Prevent sample aeration. Use a positive-displace-\nment submersible pump and high-density plastic or\nfluorocarbon polymer sample tubing that is relatively\ngas impermeable",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__fa2413681e5b",
+      "index": 46,
+      "locator": "Section 3.3 page break — \"A downhole sampling tool is described by White and others (1990)\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__e29ac514a50f",
+      "index": 47,
+      "locator": "Section 3.3 Measurement steps 7c-8 — \"gas-impermeable tubing 1 meter or less in length\"",
+      "claims": [
+        {
+          "id": "do-decreasing-pressure-no-crosscontam-01",
+          "claim": "During the sample’s transit to the surface the progressively decreasing pressure surrounding the ampule prevents cross contamination from overlying water through the ampule tip.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "During the sample’s\ntransit to the surface, the progressively decreasing\npressure surrounding the ampule prevents cross\ncontamination from overlying water through the\nampule tip.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-vigorous-mixing-bias-01",
+          "claim": "USGS field observations indicate that vigorous or repeated mixing of the filled ampule can introduce atmospheric oxygen and bias the measurement.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "observations indicate that vigorous or repeated mix-\ning of the filled ampule can introduce atmospheric\noxygen and bias the measurement.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-ampule-transit-time-01",
+          "claim": "The time required to bring the ampule to the surface must not exceed the waiting times specified by the method.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Ensure that the time required to bring the ampule\nto the surface does not exceed the waiting times\nspecified by the method.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-overflow-tubing-1m-01",
+          "claim": "The plastic overflow-sampling device is connected to the pump tubing outlet with gas-impermeable tubing 1 meter or less in length.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "the outlet of the pump tubing with gas-impermeable\ntubing 1 meter or less in length.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-indigo-funnel-250ml-01",
+          "claim": "For the Indigo Carmine method the USGS supplements the manufacturer instructions by using a plastic funnel of approximately 250 milliliters adapted to the end of gas-impermeable tubing.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Obtain a plastic funnel with a funnel size of\napproximately 250 milliliters.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-indigo-cap-protection-01",
+          "claim": "The flexible rubber-like cap supplied with Hach Indigo Carmine ampules can be filled with sample water and inverted over the broken, downward-facing ampule tip to protect it from atmospheric oxygen diffusion during transport and drying.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "The flexible rubber-like cap supplied with the\nHach Indigo Carmine ampules can be filled with\nsample water and inverted to cover the broken\ntip of the ampule",
+          "specificity": "high"
+        },
+        {
+          "id": "do-ampule-tip-first-01",
+          "claim": "The glass ampule is inserted tip first into the overflowing sampling device so the tip is at the bottom near the point of water inflow, then snapped by gently pressing its upper end toward the device wall.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Insert the glass ampule, tip first, into the overflow-\ning sampling device so that the tip is at the bottom\nof the device, near the point of water inflow.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__fe20716686ef",
+      "index": 48,
+      "locator": "Section 3.3 Measurement steps 8d-11 — \"within 30 seconds when using the CHEMetrics ampule kit\"",
+      "claims": [
+        {
+          "id": "do-ampule-full-01",
+          "claim": "The ampule must be full before proceeding, to prevent entraining excess atmospheric oxygen and producing erroneous readings.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Ensure that the ampule is full before proceeding to\nprevent entraining excess atmospheric oxygen and\nthereby producing erroneous readings.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-insert-cell-holder-01",
+          "claim": "The ampule is inserted directly into the spectrophotometer cell holder either immediately after retrieval or as specified in the kit-specific instructions.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Insert the ampule directly into the spectrophotometer cell\nholder, either immediately after retrieval or as specified\nin the kit-specific instructions.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-rhodazine-30s-01",
+          "claim": "For Rhodazine D the measurement is recorded within the time interval directed by the kit manufacturer, for example within 30 seconds when using the CHEMetrics ampule kit.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Rhodazine D—Record the measurement within the\ntime interval directed by the kit manufacturer (for\nexample, within 30 seconds when using the CHE-\nMetrics ampule kit).",
+          "specificity": "high"
+        },
+        {
+          "id": "do-absorbance-conversion-01",
+          "claim": "If the spectrophotometer does not convert absorbance values to milligrams per liter for the kit being used, regression equations or the chart provided in the kit are used to convert the units.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "use\nregression equations (or the chart provided in the kit)\nto convert the units",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__b037520dc3b0",
+      "index": 49,
+      "locator": "Section 3.3 page break — \"Quality control: It is recommended to make multiple measurements\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__2d5d863cf1da",
+      "index": 50,
+      "locator": "Section 3.3 step 11-12, Section 4.0 Reporting, and Section 5.0 opening — \"reported to the nearest 0.1 mg/L and stored to the nearest 0.01 mg/L\"",
+      "claims": [
+        {
+          "id": "do-spectro-three-measurements-01",
+          "claim": "To document spectrophotometric measurement precision, steps 9 and 10 are repeated twice in rapid succession for a total of three measurements.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Repeat\nsteps 9 and 10 twice in rapid succession to document\nmeasurement precision. Make a total of three measure-\nments to document the precision of the method.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-spectro-three-samples-01",
+          "claim": "To document the variability of DO concentrations within the water system being measured, the measurement is repeated on three sequentially collected samples.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "To document the variability of DO concentrations within\nthe water system being measured, repeat the measure-\nment on three sequentially collected samples.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-method-code-reporting-01",
+          "claim": "USGS personnel enter the DO value on field forms or into electronic records with the method code (optical, spectrophotometric, other) appropriate for the method used.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "field forms or into electronic records indicating the method\ncode (optical, spectrophotometric, other) appropriate for the\nmethod used for DO measurement.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-optical-report-01-store-001-01",
+          "claim": "DO concentrations measured by the optical-sensor method are reported to the nearest 0.1 mg/L and stored to the nearest 0.01 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "DO concentrations for the optical-sensor method are\nreported to the nearest 0.1 mg/L and stored to the nearest\n0.01 mg/L.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-spectro-report-001-01",
+          "claim": "DO concentrations measured by the spectrophotometric Rhodazine D and Indigo Carmine methods are both reported and stored to the nearest 0.01 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "DO concentrations for the spectrophotometric/Rhodazine\nD and Indigo Carmine methods are reported and stored to the\nnearest 0.01 mg/L.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-saturation-above-100-01",
+          "claim": "The percentage of DO saturation in water can be greater than 100 as a result of nonequilibrium conditions induced by photosynthesis and oxygen exchange with the atmosphere.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Note that the percentage of DO saturation in water can\nbe greater than 100 as a result of nonequilibrium conditions\ninduced by photosynthesis and oxygen exchange with the\natmosphere.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-exceeds-20mgl-01",
+          "claim": "When the DO concentration exceeds 20 mg/L the sensor manufacturer’s specifications must be checked, and the result reported as greater than the listed numerical limit if the concentration exceeds the specified sensor range.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "When the concentration exceeds 20 mg/L, check\nthe sensor manufacturer’s specifications",
+          "specificity": "high"
+        },
+        {
+          "id": "do-tables-benson-krause-01",
+          "claim": "The oxygen-solubility values of table 6.2-2 and the salinity correction factors of table 6.2-4 were generated from the equations of Benson and Krause (1980, 1984).",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "were generated\nfrom the equations of Benson and Krause (1980, 1984)",
+          "specificity": "high"
+        },
+        {
+          "id": "do-dotables-software-01",
+          "claim": "DOTABLES, the interactive USGS software at https://water.usgs.gov/software/DOTABLES/, generated tables 6.2-2 and 6.2-4 and lets a user self-generate individual values or tables of oxygen solubility and salinity correction factors.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "usgs.gov/software/DOTABLES/, the interactive software that\ngenerated tables 6.2–2 and 6.2–4",
+          "specificity": "high"
+        },
+        {
+          "id": "do-auto-salinity-multiparameter-01",
+          "claim": "Most multiparameter instruments that include DO and specific-conductance sensors automatically correct the DO reading for salinity if needed, unless the feature is turned off by the user.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "Most multiparameter instruments that\ninclude DO and specific-conductance sensors automatically\ncorrect the DO reading for salinity if needed, unless the fea-\nture is turned off by the user.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-saline-above-2000-01",
+          "claim": "Correcting DO solubility for saline waters, defined here as specific conductance greater than 2,000 microsiemens per centimeter, varies with instrument type, calibration method, and the salts in solution.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Correcting DO solubility for saline waters (specific\nconductance greater than 2,000 μS/cm) varies with instru-\nment type, calibration method, and the salts in solution.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__af19876f2172",
+      "index": 51,
+      "locator": "Section 5.0 worked examples — \"8.97 mg/L x 0.9733 = 8.73 mg/L\"",
+      "claims": [
+        {
+          "id": "do-example-897-09733-01",
+          "claim": "In the worked example for water at 20.0 degrees Celsius, 750 millimeters of mercury, and specific conductance 8,000 microsiemens per centimeter, table 6.2-2 gives a freshwater oxygen solubility of 8.97 mg/L and table 6.2-4 gives a salinity correction factor of 0.9733.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "freshwater oxygen solubility from table 6.2–2 (at end of chap-\nter) is 8.97 mg/L for that temperature and pressure; the salinity\ncorrection factor from table 6.2–4 (at end of chapter) is 0.9733",
+          "specificity": "high"
+        },
+        {
+          "id": "do-example-873-product-01",
+          "claim": "Applying the salinity correction in the worked example gives 8.97 mg/L multiplied by 0.9733, which equals 8.73 mg/L.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "8.97 mg/L x 0.9733 = 8.73 mg/L",
+          "specificity": "high"
+        },
+        {
+          "id": "do-ions-decrease-solubility-01",
+          "claim": "The presence of dissolved ions in the water decreases the oxygen solubility.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "The presence of dissolved ions in the water decreases the\noxygen solubility.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-example-calibrate-873-01",
+          "claim": "When calibrating an instrument that lacks an internal salinity-compensation algorithm, the user could elect to adjust the DO instrument to read 8.73 mg/L for the 100-percent saturation condition in the worked example.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "compensation algorithm, the user could elect to adjust the\nDO instrument to read 8.73 mg/L for a 100-percent saturation\ncondition.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-example-750-to-730-01",
+          "claim": "If a sensor without internal salinity compensation read 7.50 mg/L under the worked-example conditions, the actual DO concentration should be reported as 7.50 mg/L multiplied by 0.9733, or 7.30 mg/L.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "the actual DO concentration should be reported as 7.50 mg/L\nmultiplied by 0.9733, or 7.30 mg/L.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-example-836-percent-01",
+          "claim": "Percent DO saturation is the measured DO divided by the DO at 100 percent saturation times 100; for 7.30 mg/L measured against 8.73 mg/L solubility the result is 83.6 percent.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "saturation would be the dividend of 7.30 divided by 8.73,\nmultiplied by 100, which equals 83.6 percent.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-no-salinity-correction-spectro-01",
+          "claim": "Salinity-correction factors are not applied to concentrations measured by the spectrophotometric method because salinity does not interfere with spectrophotometric DO analyses.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "salinity-correction factors are not applied to the measured\nconcentration because salinity does not interfere with spectro-\nphotometric DO analyses.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__0111392fff05",
+      "index": 52,
+      "locator": "Section 5.0 page break — \"which equals 83.6 percent\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__8a7d06079471",
+      "index": 53,
+      "locator": "Acknowledgments and References Cited — \"Authors of previous versions of NFM chapter A6.2\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__072c8e8d2f1e",
+      "index": 54,
+      "locator": "References Cited — \"Fishman, M.J., and Friedman, L.C., eds., 1989\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__41fcd80a2341",
+      "index": 55,
+      "locator": "References Cited (end) — \"YSI, Inc., 2019, Dissolved oxygen measurement in water\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__44dccd598c09",
+      "index": 56,
+      "locator": "Table 6.2-2 (first block, 700-795 mmHg), caption and column header present — \"Solubility of oxygen in freshwater at various temperatures and pressures.\"",
+      "claims": [
+        {
+          "id": "do-t622-block1-header-01",
+          "claim": "Table 6.2-2 gives the solubility of oxygen in freshwater in milligrams per liter as a function of temperature in degrees Celsius and atmospheric pressure in millimeters of mercury, with the first block of columns running from 700 to 795 mmHg in 5-mmHg steps.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Atmospheric pressure, in millimeters of mercury\n700\n \n705\n \n710",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-0c-760-1462-01",
+          "claim": "At 0.0 degrees Celsius the freshwater oxygen solubility of table 6.2-2 is 13.46 mg/L at 700 mmHg, 14.62 mg/L at 760 mmHg, and 15.30 mg/L at 795 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "0.0\n \n13.46\n \n13.56\n \n13.65\n \n13.75\n \n13.85\n \n13.94\n \n14.04\n \n14.14\n \n14.23\n \n14.33\n \n14.43\n \n14.52\n \n14.62\n \n14.72\n \n14.81\n \n14.91\n \n15.01\n \n15.10\n \n15.20\n \n15.30",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-5c-760-1277-01",
+          "claim": "At 5.0 degrees Celsius the freshwater oxygen solubility of table 6.2-2 is 12.77 mg/L at 760 mmHg, ranging from 11.75 mg/L at 700 mmHg to 13.36 mg/L at 795 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "5.0\n \n11.75\n \n11.84\n \n11.92\n \n12.01\n \n12.09\n \n12.18\n \n12.26\n \n12.35\n \n12.43\n \n12.52\n \n12.60\n \n12.69\n \n12.77\n \n12.86\n \n12.94\n \n13.03\n \n13.11\n \n13.19\n \n13.28\n \n13.36",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-halfdegree-steps-01",
+          "claim": "Table 6.2-2 tabulates freshwater oxygen solubility at half-degree Celsius temperature increments, the first block covering 0.0 through 7.5 degrees Celsius before the table continues on later pages.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "7.0\n \n11.17\n \n11.25\n \n11.33\n \n11.41\n \n11.49\n \n11.58\n \n11.66\n \n11.74\n \n11.82\n \n11.90\n \n11.98\n \n12.06\n \n12.14\n \n12.22\n \n12.30\n \n12.38\n \n12.46\n \n12.54\n \n12.62\n \n12.70",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__30d220919d41",
+      "index": 57,
+      "locator": "Table 6.2-2 continuation — no caption and no column header in this chunk; bare grid with temperature row labels 7.0 to 14.5",
+      "claims": [
+        {
+          "id": "do-t622-cont-70-145-01",
+          "claim": "This continuation grid lists 20 oxygen-solubility values per temperature row for temperatures 7.0 through 14.5 degrees Celsius in 0.5-degree steps, but carries no column header, so the atmospheric pressure each value belongs to is not identifiable from this chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "10.0\n \n10.39\n \n10.46\n \n10.54\n \n10.61\n \n10.69\n \n10.76\n \n10.84\n \n10.91\n \n10.99\n \n11.06\n \n11.14\n \n11.21\n \n11.29\n \n11.36\n \n11.44\n \n11.51\n \n11.59\n \n11.66\n \n11.74\n \n11.81",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__eeda34aaa204",
+      "index": 58,
+      "locator": "Table 6.2-2 continuation tail — no caption and no column header in this chunk; rows 14.0 and 14.5 only",
+      "claims": [
+        {
+          "id": "do-t622-cont-140-145-01",
+          "claim": "This fragment holds only the oxygen-solubility rows for 14.0 and 14.5 degrees Celsius with no column header, so the pressure column for each of its values cannot be determined from this chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "14.0\n \n9.48\n \n9.55\n \n9.62\n \n9.69\n \n9.76\n \n9.82\n \n9.89\n \n9.96\n \n10.03\n \n10.10\n \n10.17\n \n10.24\n \n10.31\n \n10.37\n \n10.44\n \n10.51\n \n10.58\n \n10.65\n \n10.72\n \n10.79",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__b2afa57c2372",
+      "index": 59,
+      "locator": "Table 6.2-2 —Continued (700-795 mmHg), caption and column header present — \"Solubility of oxygen in freshwater at various temperatures and pressures.—Continued\"",
+      "claims": [
+        {
+          "id": "do-t622-cont-header-15-235-01",
+          "claim": "This continuation page of table 6.2-2 repeats the 700 to 795 millimeters-of-mercury column header and covers temperatures 15.0 through 23.5 degrees Celsius.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Atmospheric pressure, in millimeters of mercury\n700\n \n705\n \n710",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-20c-750-897-01",
+          "claim": "At 20.0 degrees Celsius table 6.2-2 gives a freshwater oxygen solubility of 8.97 mg/L at 750 mmHg and 9.09 mg/L at 760 mmHg, the 8.97 value being the one used in the chapter’s worked salinity-correction example.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "20.0\n \n8.36\n \n8.42\n \n8.48\n \n8.54\n \n8.60\n \n8.66\n \n8.73\n \n8.79\n \n8.85\n \n8.91\n \n8.97\n \n9.03\n \n9.09\n \n9.15\n \n9.21\n \n9.28\n \n9.34\n \n9.40\n \n9.46\n \n9.52",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-15c-760-1008-01",
+          "claim": "At 15.0 degrees Celsius table 6.2-2 gives a freshwater oxygen solubility of 10.08 mg/L at 760 mmHg, ranging from 9.27 mg/L at 700 mmHg to 10.56 mg/L at 795 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "15.0\n \n9.27\n \n9.34\n \n9.41\n \n9.48\n \n9.54\n \n9.61\n \n9.68\n \n9.75\n \n9.81\n \n9.88\n \n9.95\n \n10.02\n \n10.08\n \n10.15\n \n10.22\n \n10.29\n \n10.35\n \n10.42\n \n10.49\n \n10.56",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-23c-760-858-01",
+          "claim": "At 23.0 degrees Celsius table 6.2-2 gives a freshwater oxygen solubility of 8.58 mg/L at 760 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "23.0\n \n7.88\n \n7.94\n \n8.00\n \n8.06\n \n8.11\n \n8.17\n \n8.23\n \n8.29\n \n8.35\n \n8.40\n \n8.46\n \n8.52\n \n8.58\n \n8.64\n \n8.69\n \n8.75\n \n8.81\n \n8.87\n \n8.93\n \n8.98",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__0fe5a93f369c",
+      "index": 60,
+      "locator": "Table 6.2-2 continuation — no caption and no column header in this chunk; bare grid with temperature row labels 23.0 to 29.5",
+      "claims": [
+        {
+          "id": "do-t622-cont-230-295-01",
+          "claim": "This continuation grid lists oxygen-solubility rows for temperatures 23.0 through 29.5 degrees Celsius with 20 values each, but no column header appears in the chunk, so the pressure for each column is not recoverable here.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "25.0\n \n7.59\n \n7.65\n \n7.70\n \n7.76\n \n7.81\n \n7.87\n \n7.93\n \n7.98\n \n8.04\n \n8.10\n \n8.15\n \n8.21\n \n8.26\n \n8.32\n \n8.38\n \n8.43\n \n8.49\n \n8.54\n \n8.60\n \n8.66",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__193f7bf4ba20",
+      "index": 61,
+      "locator": "Table 6.2-2 continuation tail — no caption and no column header in this chunk; rows 29.0 and 29.5 only",
+      "claims": [
+        {
+          "id": "do-t622-cont-290-295-01",
+          "claim": "This fragment holds only the oxygen-solubility rows for 29.0 and 29.5 degrees Celsius with no column header present in the chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "29.0\n \n7.06\n \n7.11\n \n7.16\n \n7.22\n \n7.27\n \n7.32\n \n7.38\n \n7.43\n \n7.48\n \n7.53\n \n7.59\n \n7.64\n \n7.69\n \n7.74\n \n7.80\n \n7.85\n \n7.90\n \n7.95\n \n8.01\n \n8.06",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__01e0280e31f9",
+      "index": 62,
+      "locator": "Table 6.2-2 —Continued (700-795 mmHg), caption and column header present — rows 30.0 to 38.5",
+      "claims": [
+        {
+          "id": "do-t622-cont-header-30-385-01",
+          "claim": "This continuation page of table 6.2-2 repeats the 700 to 795 millimeters-of-mercury column header and covers temperatures 30.0 through 38.5 degrees Celsius.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Atmospheric pressure, in millimeters of mercury\n700\n \n705\n \n710",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-35c-760-695-01",
+          "claim": "At 35.0 degrees Celsius table 6.2-2 gives a freshwater oxygen solubility of 6.95 mg/L at 760 mmHg, ranging from 6.37 mg/L at 700 mmHg to 7.29 mg/L at 795 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "35.0\n \n6.37\n \n6.42\n \n6.47\n \n6.51\n \n6.56\n \n6.61\n \n6.66\n \n6.71\n \n6.76\n \n6.80\n \n6.85\n \n6.90\n \n6.95\n \n7.00\n \n7.05\n \n7.09\n \n7.14\n \n7.19\n \n7.24\n \n7.29",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-30c-760-756-01",
+          "claim": "At 30.0 degrees Celsius table 6.2-2 gives a freshwater oxygen solubility of 7.56 mg/L at 760 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "30.0\n \n6.94\n \n6.99\n \n7.04\n \n7.09\n \n7.14\n \n7.20\n \n7.25\n \n7.30\n \n7.35\n \n7.40\n \n7.46\n \n7.51\n \n7.56\n \n7.61\n \n7.66\n \n7.71\n \n7.77\n \n7.82\n \n7.87\n \n7.92",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__186ccbafc94f",
+      "index": 63,
+      "locator": "Table 6.2-2 continuation — no caption and no column header in this chunk; bare grid with temperature row labels 38.0 to 40.0",
+      "claims": [
+        {
+          "id": "do-t622-cont-380-400-01",
+          "claim": "This continuation grid holds the last oxygen-solubility rows of the 700-795 mmHg block, temperatures 38.0 through 40.0 degrees Celsius, with no column header in the chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "39.0\n \n5.96\n \n6.01\n \n6.05\n \n6.10\n \n6.15\n \n6.19\n \n6.24\n \n6.29\n \n6.33\n \n6.38\n \n6.42\n \n6.47\n \n6.52\n \n6.56\n \n6.61\n \n6.65\n \n6.70\n \n6.75\n \n6.79\n \n6.84",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__2d9bc795a8fd",
+      "index": 64,
+      "locator": "Table 6.2-2 continuation tail — no caption and no column header in this chunk; rows 39.5 and 40.0 only",
+      "claims": [
+        {
+          "id": "do-t622-cont-395-400-01",
+          "claim": "This fragment holds only the oxygen-solubility rows for 39.5 and 40.0 degrees Celsius, the highest temperatures tabulated, with no column header present in the chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "40.0\n \n5.87\n \n5.91\n \n5.96\n \n6.00\n \n6.05\n \n6.09\n \n6.14\n \n6.19\n \n6.23\n \n6.28\n \n6.32\n \n6.37\n \n6.41\n \n6.46\n \n6.50\n \n6.55\n \n6.59\n \n6.64\n \n6.69\n ",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__bff422358156",
+      "index": 65,
+      "locator": "Table 6.2-2 second pressure block (600-695 mmHg), column header present but caption on the preceding page — \"Atmospheric pressure, in millimeters of mercury 600\"",
+      "claims": [
+        {
+          "id": "do-t622-block2-header-01",
+          "claim": "The second block of table 6.2-2 tabulates freshwater oxygen solubility for atmospheric pressures from 600 to 695 millimeters of mercury in 5-mmHg steps, restarting the temperature rows at 0.0 degrees Celsius.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Atmospheric pressure, in millimeters of mercury\n600\n \n605\n \n610",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-0c-600-1153-01",
+          "claim": "At 0.0 degrees Celsius the freshwater oxygen solubility of table 6.2-2 is 11.53 mg/L at 600 mmHg and 13.36 mg/L at 695 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "0.0\n \n11.53\n \n11.62\n \n11.72\n \n11.82\n \n11.91\n \n12.01\n \n12.11\n \n12.20\n \n12.30\n \n12.40\n \n12.49\n \n12.59\n \n12.69\n \n12.78\n \n12.88\n \n12.98\n \n13.07\n \n13.17\n \n13.27\n \n13.36",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-5c-600-1006-01",
+          "claim": "At 5.0 degrees Celsius the freshwater oxygen solubility of table 6.2-2 is 10.06 mg/L at 600 mmHg, rising to 11.67 mg/L at 695 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "5.0\n \n10.06\n \n10.15\n \n10.23\n \n10.32\n \n10.40\n \n10.48\n \n10.57\n \n10.65\n \n10.74\n \n10.82\n \n10.91\n \n10.99\n \n11.08\n \n11.16\n \n11.25\n \n11.33\n \n11.42\n \n11.50\n \n11.59\n \n11.67",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__051b549b36c8",
+      "index": 66,
+      "locator": "Table 6.2-2 —Continued, caption present at the page foot but no column header in this chunk; bare grid rows 8.0 to 15.0",
+      "claims": [
+        {
+          "id": "do-t622-cont-80-150-01",
+          "claim": "This chunk carries the table 6.2-2 caption but no column header, so its oxygen-solubility rows for temperatures 8.0 through 15.0 degrees Celsius cannot be tied to a specific atmospheric pressure from the chunk alone.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "10.0\n \n8.88\n \n8.96\n \n9.03\n \n9.11\n \n9.18\n \n9.26\n \n9.33\n \n9.41\n \n9.49\n \n9.56\n \n9.64\n \n9.71\n \n9.79\n \n9.86\n \n9.94\n \n10.01\n \n10.09\n \n10.16\n \n10.24\n \n10.31",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__4bf55cc017c6",
+      "index": 67,
+      "locator": "Table 6.2-2 —Continued, caption present but neither column header nor a temperature row label in this chunk — a single unlabeled run of 20 values",
+      "claims": [
+        {
+          "id": "do-t622-cont-orphan-row-01",
+          "claim": "This chunk contains one unlabeled run of 20 oxygen-solubility values followed by the table 6.2-2 caption, with neither a temperature row label nor a pressure column header, so no individual value can be located in the table from this chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Solubility of oxygen in freshwater at various temperatures and pressures.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__19114e26b548",
+      "index": 68,
+      "locator": "Table 6.2-2 —Continued (600-695 mmHg), column header present — rows 15.5 to 25.5",
+      "claims": [
+        {
+          "id": "do-t622-block2-cont-header-01",
+          "claim": "This continuation page repeats the 600 to 695 millimeters-of-mercury column header of table 6.2-2 and covers temperatures 15.5 through 25.5 degrees Celsius.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Atmospheric pressure, in millimeters of mercury\n600\n \n605\n \n610",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-20c-650-775-01",
+          "claim": "At 20.0 degrees Celsius table 6.2-2 gives a freshwater oxygen solubility of 7.75 mg/L at 650 mmHg, ranging from 7.13 mg/L at 600 mmHg to 8.30 mg/L at 695 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "20.0\n \n7.13\n \n7.20\n \n7.26\n \n7.32\n \n7.38\n \n7.44\n \n7.50\n \n7.56\n \n7.62\n \n7.68\n \n7.75\n \n7.81\n \n7.87\n \n7.93\n \n7.99\n \n8.05\n \n8.11\n \n8.17\n \n8.24\n \n8.30",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-25c-650-706-01",
+          "claim": "At 25.0 degrees Celsius table 6.2-2 gives a freshwater oxygen solubility of 7.03 mg/L at 650 mmHg and 6.47 mg/L at 600 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "25.0\n \n6.47\n \n6.52\n \n6.58\n \n6.64\n \n6.69\n \n6.75\n \n6.81\n \n6.86\n \n6.92\n \n6.97\n \n7.03\n \n7.09\n \n7.14\n \n7.20\n \n7.25\n \n7.31\n \n7.37\n \n7.42\n \n7.48\n \n7.53",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__ecd5c52f2887",
+      "index": 69,
+      "locator": "Table 6.2-2 —Continued, caption present at the page foot but no column header in this chunk; bare grid rows 24.5 to 30.5",
+      "claims": [
+        {
+          "id": "do-t622-cont-245-305-01",
+          "claim": "This chunk carries the table 6.2-2 caption but no column header, so its oxygen-solubility rows for temperatures 24.5 through 30.5 degrees Celsius cannot be assigned to a pressure column from the chunk alone.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "26.0\n \n6.35\n \n6.40\n \n6.46\n \n6.51\n \n6.57\n \n6.62\n \n6.68\n \n6.73\n \n6.79\n \n6.84\n \n6.90\n \n6.95\n \n7.01\n \n7.07\n \n7.12\n \n7.18\n \n7.23\n \n7.29\n \n7.34\n \n7.40",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c961f1779356",
+      "index": 70,
+      "locator": "Table 6.2-2 —Continued, caption present but neither column header nor a temperature row label in this chunk — a single unlabeled run of 20 values",
+      "claims": [
+        {
+          "id": "do-t622-cont-orphan-row-02",
+          "claim": "This chunk contains one unlabeled run of 20 oxygen-solubility values followed by the table 6.2-2 caption, with no temperature row label and no pressure column header.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Solubility of oxygen in freshwater at various temperatures and pressures.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__5eec7fdae2c7",
+      "index": 71,
+      "locator": "Table 6.2-2 —Continued (600-695 mmHg), caption and column header present — rows 31.0 to 40.0",
+      "claims": [
+        {
+          "id": "do-t622-block2-end-header-01",
+          "claim": "The final continuation page of table 6.2-2 repeats the 600 to 695 millimeters-of-mercury column header and covers temperatures 31.0 through 40.0 degrees Celsius, the highest temperature tabulated.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Atmospheric pressure, in millimeters of mercury\n600\n \n605\n \n610",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-40c-600-496-01",
+          "claim": "At 40.0 degrees Celsius, the highest temperature in table 6.2-2, the freshwater oxygen solubility is 4.96 mg/L at 600 mmHg and 5.82 mg/L at 695 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "40.0\n \n4.96\n \n5.00\n \n5.05\n \n5.09\n \n5.14\n \n5.18\n \n5.23\n \n5.28\n \n5.32\n \n5.37\n \n5.41\n \n5.46\n \n5.50\n \n5.55\n \n5.59\n \n5.64\n \n5.69\n \n5.73\n \n5.78\n \n5.82",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t622-35c-650-583-01",
+          "claim": "At 35.0 degrees Celsius table 6.2-2 gives a freshwater oxygen solubility of 5.88 mg/L at 650 mmHg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "35.0\n \n5.40\n \n5.45\n \n5.50\n \n5.55\n \n5.59\n \n5.64\n \n5.69\n \n5.74\n \n5.79\n \n5.84\n \n5.88\n \n5.93\n \n5.98\n \n6.03\n \n6.08\n \n6.13\n \n6.18\n \n6.22\n \n6.27\n \n6.32",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__93ea159aeade",
+      "index": 72,
+      "locator": "Table 6.2-2 —Continued, caption present but no column header in this chunk; rows 39.5 and 40.0 of the 600-695 mmHg block",
+      "claims": [
+        {
+          "id": "do-t622-cont-395-400-02",
+          "claim": "This fragment repeats the 39.5 and 40.0 degree Celsius rows at the end of the 600-695 mmHg block of table 6.2-2 followed by the table caption, with no column header in the chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "40.0\n \n4.96\n \n5.00\n \n5.05\n \n5.09\n \n5.14\n \n5.18\n \n5.23\n \n5.28\n \n5.32\n \n5.37\n \n5.41\n \n5.46\n \n5.50\n \n5.55\n \n5.59\n \n5.64\n \n5.69\n \n5.73\n \n5.78\n \n5.82",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__b6b107103480",
+      "index": 73,
+      "locator": "Table 6.2-2 stranded footnote fragment — \"[Solubility shown in milligrams per liter; values are based on equations published by Benson and Krause\"",
+      "claims": []
     }
   ],
   "summary": {
