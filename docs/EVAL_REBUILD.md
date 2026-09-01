@@ -102,6 +102,40 @@ Do **not** allocate uniformly across classes:
 - `definitional`, `follow-up`, `precedence` — **6–8.** All arms tie here.
 - `refusal` — **6–8.** Near-binary, reproduces cleanly (measured 30/30).
 
+### Wave 1 class allocation — DECIDED 2026-09-01
+
+Seven classes, 88 turns, 44 two-turn fixtures. `EVAL_CLASSES` in `src/eval/types.ts` still lists
+twelve; the five unused ones stay in the type and are simply not populated for wave 1.
+
+| class | fixtures | turns | why |
+|---|---:|---:|---|
+| `deep-in-manual` | 10 | 20 | Separates the arms. **Absorbs `threshold-lookup`** — same question shape, and it is what the recovered solubility tables serve. |
+| `cross-document` | 10 | 20 | Separates the arms. 411 candidate claims tie 2+ metrics. |
+| `probe-calibration` | 8 | 16 | Separates the arms, and is forced outside the slice by construction — see below. |
+| `precedence` | 4 | 8 | Three verified conflicts already found in Phase 1a. |
+| `definitional` | 4 | 8 | All arms tie here. |
+| `follow-up` | 4 | 8 | All arms tie here. |
+| `refusal` | 4 | 8 | Near-binary, reproduces cleanly. Drawn from the 168 recorded gaps. |
+
+**Dropped for wave 1, with reasons:**
+
+- `acronym-exact-token` — **slice-answerable and therefore structurally unable to discriminate.**
+  NTU/FNU and the rest sit in the datasheets and the source-of-truth. Three of the old set's
+  fixtures were this class, and that is part of why the old set failed.
+- `event-signature`, `sensor-combined` — both depend on the source-of-truth signature matrix, which
+  **extraction damaged**: several rows lost cells and one shows five arrows for six columns. A
+  fixture on mangled text is wrong, not hard.
+- `fouling-drift` — thin support. `a6.0` has zero occurrences of "fouling"; essentially one
+  operator-document claim backs the whole class.
+- `threshold-lookup` — folded into `deep-in-manual` rather than dropped.
+
+**`probe-calibration` is the structurally strongest class and worth stating why.** The four probe
+datasheets give recalibration *intervals* and specifications but contain **no calibration procedure
+at all** — no buffer values, no Zobell standard, no air-saturation step. The methods live only in
+the USGS manuals, outside the slice. So a question of the form *"the datasheet says recalibrate
+yearly — how do I actually do it?"* is forced outside the slice **by construction** rather than by
+hoping. That is exit criterion 3 satisfied structurally.
+
 **At least 25–30% of turns must be answerable ONLY outside the ◆G9 slice.** Today it is 3 of 28.
 A question answerable inside the slice cannot discriminate between retrieval strategies.
 
