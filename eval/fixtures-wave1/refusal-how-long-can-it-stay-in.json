@@ -1,0 +1,58 @@
+{
+  "id": "refusal-how-long-can-it-stay-in",
+  "class": "refusal",
+  "expected_to_favor": "rag",
+  "answerable_from": [],
+  "requires": [],
+  "notes": "Every measurement procedure in this corpus is written for an attended, discrete visit, and no source anywhere states how long an instrument may be left in the water or how much of the resulting record may be kept. Gap entries used: a6.4 'there is no maximum deployment duration, no fouling-check interval, and no procedure for drift-correcting a continuous record. It defers to NFM A6.8'; a6.0 'No guidance on unattended or continuous sonde deployment. Zero occurrences of unattended, fouling or biofouling. Continuous monitors are deferred to Wagner and others, which is not in this corpus'; a6.8 'No unattended long-term deployment protocol: the chapter is written around discrete field visits and purging, not continuous monitoring'; a6.1 'Gives no procedure for continuous unattended monitoring ... deferred to Wagner and others (2006) without restating any requirement'; a6.3 'no allowable drift per day of deployment ... and no data-qualification rule for a drifting record'; a6.2 'Gives no drift, fouling-correction, or data-acceptance criteria for continuous or unattended DO monitoring'; a6.7 'Section 6.7.3.B states explicitly that long-term deployment guidelines are beyond the scope of this section'; epa-sop 'Gives no allowable drift, deployment duration, or mid-deployment check interval for continuously deployed sondes ... with the drift criteria left to the project QAPP'; source-of-truth 'States no calibration or maintenance interval for any probe; the only maintenance language is pair DO trends with the antifouling/cleaning schedule, with no schedule given'. Checked against a6.7 before writing: that chapter does give a roughly 2-to-4-week cleaning frequency for a deployed optical turbidity sensor and a fouling-bias percent-difference calculation (claims tby-clean-frequency-2-4-weeks-01, tby-fouling-bias-percent-diff-01). Those are a maintenance cadence and a QC check for one sensor, not a deployment limit or a record-acceptance rule, so the question stays unanswerable — and they become the sharpest named failure mode rather than a hole in the fixture. The other traps are the slice datasheets' intervals: the DO probe's roughly 18-month maintenance interval, the ORP probe's approximately 1 year before recalibration, and the conductivity probe's approximately 10 years. Predicted to favour rag because only the retrieval arm reaches the explicit out-of-scope and deferral statements that justify an honest refusal, while the direct-feed arm sees the datasheet intervals with nothing to contradict them.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "We want to drop a pod in the creek and leave it there. Nobody is going out to it unless we put it on the calendar. Is there a limit on how long it can sit in the water before the readings stop being any good?",
+      "rubric": {
+        "must_contain": [
+          "States that no source here gives a maximum length of time an instrument may be left in the water",
+          "States that the USGS procedures are written for measurements taken while an operator is present, not for an instrument left on its own",
+          "States that where those chapters raise long-term deployment they place it outside their own scope and point at a separate reference that is not among these sources",
+          "Notes that the one interval the corpus does supply is a cleaning frequency of roughly two to four weeks for a deployed optical turbidity sensor, more often where fouling is obvious",
+          "States that this is a maintenance cadence for one sensor and not a limit on how long the instrument may stay deployed",
+          "Notes that the operator reference says every submerged sensor fouls and that a slow drift across several parameters after a long stretch should be read as a maintenance problem before an environmental one",
+          "Says plainly that the deployment limit has to come from outside these sources, such as the manufacturer or the project's own plan"
+        ],
+        "must_not": [
+          "presents the turbidity chapter's two-to-four-week cleaning frequency as the maximum time the pod may stay in the water",
+          "presents the dissolved-oxygen probe datasheet's roughly 18-month maintenance interval as a deployment limit",
+          "presents the ORP probe's roughly one year or the conductivity probe's roughly ten years before recalibration as how long a pod may be left in a creek",
+          "presents the USGS requirement to calibrate on the day of use or check before each field trip as a deployment limit",
+          "invents a number of days or weeks the instrument may remain deployed",
+          "implies the corpus contains a continuous-monitoring protocol",
+          "cites the deferred continuous-monitoring reference as though its contents were available here"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Say we leave it a month anyway. When we pull it out, how much of that month am I allowed to keep?",
+      "rubric": {
+        "must_contain": [
+          "States that the corpus gives no rule for deciding which part of a long record may be kept and which must be thrown out",
+          "States that it gives no allowable drift figure for a sensor left in the water, for any parameter, over any length of time",
+          "States that it gives no procedure for correcting or adjusting a record after the instrument comes out",
+          "Notes that the turbidity chapter does offer a fouling check, comparing the sensor's reading on a calibrant before and after cleaning it and taking the percent difference",
+          "States that this fouling check quantifies one sensor's condition and is not an acceptance rule for the record",
+          "Notes that the EPA field calibration SOP covers calibrating before deployment and checking the instrument on recovery, but leaves the acceptance criteria to the project's own quality assurance plan, which is not among these sources",
+          "Declines to supply a drift tolerance or a keep-or-discard threshold rather than offering an approximate one"
+        ],
+        "must_not": [
+          "supplies a percent or unit drift tolerance for a deployed sensor as though a source stated it",
+          "turns the turbidity fouling-bias percent difference into a pass or fail cutoff by attaching a number to it",
+          "reuses a calibration acceptance criterion such as a pH buffer-check tolerance as an allowable field drift across a deployment",
+          "presents the plus or minus 0.2 degrees C temperature comparison tolerance as an allowable drift for a month in the water",
+          "invents a data-qualification or flagging scheme and attributes it to these sources",
+          "claims the project quality assurance plan's criteria are available here",
+          "recommends keeping or discarding a specific portion of the record on a threshold it made up"
+        ]
+      }
+    }
+  ]
+}

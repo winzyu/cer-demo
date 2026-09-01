@@ -1,0 +1,45 @@
+{
+  "id": "deepmanual-diluting-clarity-standards",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": ["usgs-nfm-a6.7-turbidity.pdf"],
+  "requires": [],
+  "notes": "Replaces deepmanual-ph-slope-check, which duplicated probecal-ph-slope-acceptance (0.26 term overlap, the only collision in the set). Built on claims tby-no-dilute-commercial-01, tby-commercial-recommended-01, tby-cal-range-high-value-01 (turn 1) and tby-no-flocculated-calibrants-01, tby-calibrant-labeling-01, tby-formazin-storage-disposal-01 (turn 2), all from usgs-nfm-a6.7-turbidity.pdf sections 6.7.2.A and 6.7.2.B. Chosen because turbidity was under-used in this class (only deepmanual-turbidity-rounding) and because the corpus contains no turbidity probe datasheet at all, so a6.7 is the sole source anywhere for this material. The question is adversarial in a realistic way: diluting an expensive high standard to make a cheap low one is the obvious thing a budget-conscious operator would try, and the manual specifically forbids it for everything except 4,000-unit formazin. Predicted rag because the answer sits deep in section 6.7.2.A of a chapter the direct-feed slice does not contain, and no probe datasheet carries any calibration-solution guidance.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "The clarity standards we buy are expensive and we mostly work in fairly clean water. Can we just buy the strong one and water it down to make the weaker points we actually need?",
+      "rubric": {
+        "must_contain": [
+          "states that commercial calibration solutions must not be diluted",
+          "gives 4,000-unit formazin as the one exception that may be diluted",
+          "explains that diluting changes the suspension matrix so the dilutions are no longer linear",
+          "recommends buying commercially prepared solutions at the values needed rather than preparing them by dilution"
+        ],
+        "must_not": [
+          "approves diluting a commercial standard to reach a lower value",
+          "invents a dilution ratio or a formula for preparing intermediate standards",
+          "presents the 4,000-unit formazin exception as though it applied to all commercial standards",
+          "cites a probe datasheet, since no turbidity datasheet exists in the corpus"
+        ],
+        "cite": ["usgs-nfm-a6.7-turbidity.pdf"]
+      }
+    },
+    {
+      "role": "user",
+      "content": "One bottle has been in the truck since spring and there is a layer settled at the bottom. Shake it back up and use it, or bin it?",
+      "rubric": {
+        "must_contain": [
+          "states that calibrants with flocculated suspensions must not be used",
+          "does not endorse remixing a flocculated standard back into service"
+        ],
+        "must_not": [
+          "advises shaking or remixing the settled standard and using it",
+          "invents a shelf life in months or a number of inversions that would make it usable again",
+          "confuses this with the routine inversion step used to mix a sound calibrant before measurement"
+        ],
+        "cite": ["usgs-nfm-a6.7-turbidity.pdf"]
+      }
+    }
+  ]
+}
