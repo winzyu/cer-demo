@@ -2770,22 +2770,665 @@
       "index": 73,
       "locator": "Table 6.2-2 stranded footnote fragment — \"[Solubility shown in milligrams per liter; values are based on equations published by Benson and Krause\"",
       "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__dcddd06f1651",
+      "index": 74,
+      "locator": "Table 6.2-4 (first block, 0-14,000 microsiemens per centimeter), caption and column header present — \"Salinity correction factors for dissolved oxygen in water (based on specific conductance).\"",
+      "claims": [
+        {
+          "id": "do-t624-identity-01",
+          "claim": "Table 6.2-4 gives dimensionless salinity correction factors for dissolved oxygen based on specific conductance, with rows by temperature in degrees Celsius and columns of specific conductance in microsiemens per centimeter at 25 degrees Celsius, the first block running from 0 to 14,000 microsiemens per centimeter in 1,000-unit steps.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Specific conductance, in microsiemens per centimeter at 25 degrees Celsius\n0 \n1,000\n \n2,000",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-0uscm-unity-01",
+          "claim": "In table 6.2-4 the salinity correction factor at 0 microsiemens per centimeter is exactly 1.0000 at every temperature, so freshwater needs no salinity correction.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "0.0\n \n1.0000\n \n0.9961\n \n0.9922\n \n0.9882\n \n0.9843\n \n0.9804\n \n0.9764\n \n0.9724\n \n0.9684\n \n0.9644\n \n0.9604\n \n0.9564\n \n0.9524\n \n0.9483\n \n0.9443",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-0c-14000-09443-01",
+          "claim": "At 0.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.9961 at 1,000 microsiemens per centimeter and 0.9443 at 14,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "0.0\n \n1.0000\n \n0.9961\n \n0.9922\n \n0.9882\n \n0.9843\n \n0.9804\n \n0.9764\n \n0.9724\n \n0.9684\n \n0.9644\n \n0.9604\n \n0.9564\n \n0.9524\n \n0.9483\n \n0.9443",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-15c-14000-09510-01",
+          "claim": "At 15.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.9510 at 14,000 microsiemens per centimeter and 0.9966 at 1,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "15.0\n \n1.0000\n \n0.9966\n \n0.9931\n \n0.9897\n \n0.9862\n \n0.9827\n \n0.9793\n \n0.9758\n \n0.9723\n \n0.9687\n \n0.9652\n \n0.9617\n \n0.9581\n \n0.9545\n \n0.9510",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-1degree-rows-01",
+          "claim": "Table 6.2-4 tabulates salinity correction factors at whole-degree Celsius steps, unlike table 6.2-2 which uses half-degree steps, and its first page covers 0 through 19 degrees Celsius.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "19.0\n \n1.0000\n \n0.9967\n \n0.9933\n \n0.9900\n \n0.9866\n \n0.9833",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__66fd59d82292",
+      "index": 75,
+      "locator": "Table 6.2-4 continuation — no caption and no column header in this chunk; bare factor grid with temperature row labels 17.0 to 29.0",
+      "claims": [
+        {
+          "id": "do-t624-cont-170-290-01",
+          "claim": "This continuation grid lists salinity correction factors for temperatures 17.0 through 29.0 degrees Celsius with no column header in the chunk, so the specific conductance each factor belongs to cannot be determined from this chunk alone; the 0.9733 factor used in the chapter’s worked example falls in this headerless grid.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "20.0\n \n1.0000\n \n0.9967\n \n0.9934\n \n0.9901\n \n0.9867\n \n0.9834\n \n0.9800\n \n0.9767\n \n0.9733\n \n0.9699\n \n0.9665\n \n0.9631\n \n0.9597\n \n0.9562\n \n0.9528",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__9bfec7651dd3",
+      "index": 76,
+      "locator": "Table 6.2-4 continuation tail — no caption and no column header in this chunk; rows 28.0 and 29.0 only",
+      "claims": [
+        {
+          "id": "do-t624-cont-280-290-01",
+          "claim": "This fragment holds only the salinity correction factor rows for 28.0 and 29.0 degrees Celsius, with no column header present in the chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "28.0\n \n1.0000\n \n0.9969\n \n0.9938\n \n0.9906\n \n0.9875\n \n0.9843\n \n0.9812\n \n0.9780\n \n0.9748\n \n0.9716\n \n0.9684\n \n0.9651\n \n0.9619\n \n0.9586\n \n0.9554",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__830344222be3",
+      "index": 77,
+      "locator": "Table 6.2-4 —Continued (15,000-29,000 microsiemens per centimeter), caption and column header present — rows 0.0 to 19.0",
+      "claims": [
+        {
+          "id": "do-t624-block2-header-01",
+          "claim": "The second block of table 6.2-4 covers specific conductance from 15,000 to 29,000 microsiemens per centimeter in 1,000-unit steps, restarting the temperature rows at 0.0 degrees Celsius.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Specific conductance, in microsiemens per centimeter at 25 degrees Celsius\n15,000\n \n16,000",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-0c-15000-09402-01",
+          "claim": "At 0.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.9402 at 15,000 microsiemens per centimeter and 0.8826 at 29,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "0.0\n \n0.9402\n \n0.9361\n \n0.9321\n \n0.9280\n \n0.9239\n \n0.9198\n \n0.9157\n \n0.9116\n \n0.9074\n \n0.9033\n \n0.8992\n \n0.8950\n \n0.8909\n \n0.8867\n \n0.8826",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-15c-20000-09293-01",
+          "claim": "At 15.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.9293 at 20,000 microsiemens per centimeter and 0.8962 at 29,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "15.0\n \n0.9474\n \n0.9438\n \n0.9402\n \n0.9366\n \n0.9329\n \n0.9293\n \n0.9257\n \n0.9220\n \n0.9183\n \n0.9147\n \n0.9110\n \n0.9073\n \n0.9036\n \n0.8999\n \n0.8962",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__d1292a6976c8",
+      "index": 78,
+      "locator": "Table 6.2-4 continuation — no caption and no column header in this chunk; bare factor grid with temperature row labels 17.0 to 29.0",
+      "claims": [
+        {
+          "id": "do-t624-cont-170-290-02",
+          "claim": "This continuation grid lists salinity correction factors for temperatures 17.0 through 29.0 degrees Celsius with 15 values per row and no column header in the chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "20.0\n \n0.9493\n \n0.9459\n \n0.9424\n \n0.9389\n \n0.9354\n \n0.9319\n \n0.9284\n \n0.9249\n \n0.9214\n \n0.9178\n \n0.9143\n \n0.9107\n \n0.9071\n \n0.9036\n \n0.9000",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__6f4dc27133a8",
+      "index": 79,
+      "locator": "Table 6.2-4 continuation tail — no caption and no column header in this chunk; rows 28.0 and 29.0 only",
+      "claims": [
+        {
+          "id": "do-t624-cont-280-290-02",
+          "claim": "This fragment holds only the salinity correction factor rows for 28.0 and 29.0 degrees Celsius, with no column header present in the chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "28.0\n \n0.9521\n \n0.9488\n \n0.9455\n \n0.9422\n \n0.9389\n \n0.9356\n \n0.9323\n \n0.9289\n \n0.9256\n \n0.9222\n \n0.9189\n \n0.9155\n \n0.9121\n \n0.9087\n \n0.9053",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__0d6e124c4181",
+      "index": 80,
+      "locator": "Table 6.2-4 third block (30,000-44,000 microsiemens per centimeter), column header present but caption on the preceding page — \"Specific conductance, in microsiemens per centimeter at 25 degrees Celsius 30,000\"",
+      "claims": [
+        {
+          "id": "do-t624-block3-header-01",
+          "claim": "The third block of table 6.2-4 covers specific conductance from 30,000 to 44,000 microsiemens per centimeter in 1,000-unit steps.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Specific conductance, in microsiemens per centimeter at 25 degrees Celsius\n30,000\n \n31,000",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-0c-30000-08784-01",
+          "claim": "At 0.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.8784 at 30,000 microsiemens per centimeter and 0.8197 at 44,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "0.0\n \n0.8784\n \n0.8742\n \n0.8701\n \n0.8659\n \n0.8617\n \n0.8575\n \n0.8533\n \n0.8491\n \n0.8449\n \n0.8407\n \n0.8365\n \n0.8323\n \n0.8281\n \n0.8239\n \n0.8197",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-20c-30000-08964-01",
+          "claim": "At 20.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.8964 at 30,000 microsiemens per centimeter, 0.8784 at 35,000, and 0.8456 at 44,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "20.0\n \n0.8964\n \n0.8928\n \n0.8892\n \n0.8856\n \n0.8820\n \n0.8784\n \n0.8748\n \n0.8711\n \n0.8675\n \n0.8639\n \n0.8602\n \n0.8566\n \n0.8529\n \n0.8493\n \n0.8456",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__80dee1a6ad25",
+      "index": 81,
+      "locator": "Table 6.2-4 —Continued, caption present at the page foot but no column header in this chunk; bare factor grid rows 19.0 to 29.0",
+      "claims": [
+        {
+          "id": "do-t624-cont-190-290-01",
+          "claim": "This chunk carries the table 6.2-4 caption but no column header, so its salinity correction factors for temperatures 19.0 through 29.0 degrees Celsius cannot be tied to a specific conductance column from the chunk alone.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "20.0\n \n0.8964\n \n0.8928\n \n0.8892\n \n0.8856\n \n0.8820\n \n0.8784\n \n0.8748\n \n0.8711\n \n0.8675\n \n0.8639\n \n0.8602\n \n0.8566\n \n0.8529\n \n0.8493\n \n0.8456",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__99e7bbab1267",
+      "index": 82,
+      "locator": "Table 6.2-4 —Continued, caption present but no column header in this chunk; a single labeled row at 29.0 degrees Celsius",
+      "claims": [
+        {
+          "id": "do-t624-cont-290-only-01",
+          "claim": "This fragment holds one salinity correction factor row labeled 29.0 degrees Celsius followed by the table 6.2-4 caption, with no column header in the chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "29.0\n \n0.9026\n \n0.8992\n \n0.8958\n \n0.8924\n \n0.8890\n \n0.8856\n \n0.8821\n \n0.8787\n \n0.8753\n \n0.8718\n \n0.8684\n \n0.8649\n \n0.8615\n \n0.8580\n \n0.8545",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__af61f5c3c21e",
+      "index": 83,
+      "locator": "Table 6.2-4 fourth block (45,000-59,000 microsiemens per centimeter), column header present but caption on the preceding page — \"Specific conductance, in microsiemens per centimeter at 25 degrees Celsius 45,000\"",
+      "claims": [
+        {
+          "id": "do-t624-block4-header-01",
+          "claim": "The fourth and last block of table 6.2-4 covers specific conductance from 45,000 to 59,000 microsiemens per centimeter in 1,000-unit steps, which is the highest specific conductance the table tabulates.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Specific conductance, in microsiemens per centimeter at 25 degrees Celsius\n45,000\n \n46,000",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-20c-50000-08235-01",
+          "claim": "At 20.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.8235 at 50,000 microsiemens per centimeter, 0.8419 at 45,000, and 0.7902 at 59,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "20.0\n \n0.8419\n \n0.8383\n \n0.8346\n \n0.8309\n \n0.8272\n \n0.8235\n \n0.8198\n \n0.8161\n \n0.8124\n \n0.8087\n \n0.8050\n \n0.8013\n \n0.7976\n \n0.7939\n \n0.7902",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-0c-45000-08155-01",
+          "claim": "At 0.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.8155 at 45,000 microsiemens per centimeter and 0.7564 at 59,000 microsiemens per centimeter, the smallest factor in the table.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "0.0\n \n0.8155\n \n0.8112\n \n0.8070\n \n0.8028\n \n0.7986\n \n0.7944\n \n0.7901\n \n0.7859\n \n0.7817\n \n0.7775\n \n0.7733\n \n0.7691\n \n0.7648\n \n0.7606\n \n0.7564",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__798b54679259",
+      "index": 84,
+      "locator": "Table 6.2-4 —Continued, caption present at the page foot but no column header in this chunk; bare factor grid rows 19.0 to 29.0",
+      "claims": [
+        {
+          "id": "do-t624-cont-190-290-02",
+          "claim": "This chunk carries the table 6.2-4 caption but no column header, so its salinity correction factors for temperatures 19.0 through 29.0 degrees Celsius cannot be assigned to a specific conductance column from the chunk alone.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "20.0\n \n0.8419\n \n0.8383\n \n0.8346\n \n0.8309\n \n0.8272\n \n0.8235\n \n0.8198\n \n0.8161\n \n0.8124\n \n0.8087\n \n0.8050\n \n0.8013\n \n0.7976\n \n0.7939\n \n0.7902",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__71e88151ebfe",
+      "index": 85,
+      "locator": "Table 6.2-4 —Continued, caption present but no column header in this chunk; a single labeled row at 29.0 degrees Celsius",
+      "claims": [
+        {
+          "id": "do-t624-cont-290-only-02",
+          "claim": "This fragment holds one salinity correction factor row labeled 29.0 degrees Celsius followed by the table 6.2-4 caption, with no column header in the chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "29.0\n \n0.8510\n \n0.8476\n \n0.8441\n \n0.8406\n \n0.8371\n \n0.8336\n \n0.8301\n \n0.8266\n \n0.8231\n \n0.8196\n \n0.8160\n \n0.8125\n \n0.8090\n \n0.8055\n \n0.8019",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__ecb87b09bba0",
+      "index": 86,
+      "locator": "Table 6.2-4 final temperature rows 30-35 degrees Celsius, three column-header blocks on one page (0-14,000; 15,000-29,000; 30,000-44,000) — the middle block repeats the first block’s values",
+      "claims": [
+        {
+          "id": "do-t624-30c-14000-09560-01",
+          "claim": "At 30.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.9969 at 1,000 microsiemens per centimeter and 0.9560 at 14,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "30.0\n \n1.0000\n \n0.9969\n \n0.9939\n \n0.9908\n \n0.9877\n \n0.9845\n \n0.9814\n \n0.9783\n \n0.9751\n \n0.9720\n \n0.9688\n \n0.9656\n \n0.9624\n \n0.9592\n \n0.9560",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-35c-14000-09573-01",
+          "claim": "At 35.0 degrees Celsius, the highest temperature in table 6.2-4, the salinity correction factor is 0.9970 at 1,000 microsiemens per centimeter and 0.9573 at 14,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "35.0\n \n1.0000\n \n0.9970\n \n0.9940\n \n0.9911\n \n0.9880\n \n0.9850\n \n0.9820\n \n0.9790\n \n0.9759\n \n0.9728\n \n0.9698\n \n0.9667\n \n0.9636\n \n0.9605\n \n0.9573",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-30c-30000-09032-01",
+          "claim": "At 30.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.9032 at 30,000 microsiemens per centimeter and 0.8554 at 44,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "30.0\n \n0.9032\n \n0.8998\n \n0.8964\n \n0.8931\n \n0.8897\n \n0.8863\n \n0.8829\n \n0.8795\n \n0.8760\n \n0.8726\n \n0.8692\n \n0.8658\n \n0.8623\n \n0.8589\n \n0.8554",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-35c-30000-09061-01",
+          "claim": "At 35.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.9061 at 30,000 microsiemens per centimeter and 0.8630 at 43,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "35.0\n \n0.9061\n \n0.9028\n \n0.8996\n \n0.8963\n \n0.8930\n \n0.8897\n \n0.8864\n \n0.8830\n \n0.8797\n \n0.8764\n \n0.8731\n \n0.8697\n \n0.8664\n \n0.8630",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-dup-block-artifact-01",
+          "claim": "On this page the column block headed 15,000 to 29,000 microsiemens per centimeter carries factors identical value for value to those printed under the 0 to 14,000 header, including a leading 1.0000, which cannot be correct for 15,000 microsiemens per centimeter and marks the block as a text-extraction artifact.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Specific conductance, in microsiemens per centimeter at 25 degrees Celsius\n15,000\n \n16,000",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-t624-max-temp-35-01",
+          "claim": "Table 6.2-4 stops at 35 degrees Celsius, whereas table 6.2-2 tabulates oxygen solubility up to 40 degrees Celsius.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "35.0\n \n1.0000\n \n0.9970\n \n0.9940\n \n0.9911\n \n0.9880\n \n0.9850\n \n0.9820\n \n0.9790\n \n0.9759\n \n0.9728\n \n0.9698\n \n0.9667\n \n0.9636\n \n0.9605\n \n0.9573",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__2b95a05c9d32",
+      "index": 87,
+      "locator": "Table 6.2-4 —Continued, caption present but no column header in this chunk; rows 34.0 and 35.0 only",
+      "claims": [
+        {
+          "id": "do-t624-cont-340-350-01",
+          "claim": "This fragment holds only the salinity correction factor rows for 34.0 and 35.0 degrees Celsius, with no column header present in the chunk.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "34.0\n \n0.9056\n \n0.9023\n \n0.8990\n \n0.8957\n \n0.8923\n \n0.8890\n \n0.8857\n \n0.8824\n \n0.8790\n \n0.8757\n \n0.8723\n \n0.8690\n \n0.8656\n \n0.8622\n \n0.8588",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__0ddfd02c5ab4",
+      "index": 88,
+      "locator": "Table 6.2-4 —Continued (45,000-59,000 microsiemens per centimeter), caption and column header present — rows 30.0 to 35.0",
+      "claims": [
+        {
+          "id": "do-t624-block4-hot-header-01",
+          "claim": "The last page of table 6.2-4 repeats the 45,000 to 59,000 microsiemens per centimeter column header for temperatures 30.0 through 35.0 degrees Celsius.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Specific conductance, in microsiemens per centimeter at 25 degrees Celsius\n45,000\n \n46,000",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-30c-50000-08346-01",
+          "claim": "At 30.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.8520 at 45,000 microsiemens per centimeter, 0.8346 at 50,000, and 0.8031 at 59,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "30.0\n \n0.8520\n \n0.8485\n \n0.8450\n \n0.8416\n \n0.8381\n \n0.8346\n \n0.8311\n \n0.8276\n \n0.8241\n \n0.8207\n \n0.8172\n \n0.8137\n \n0.8102\n \n0.8066\n \n0.8031",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-35c-50000-08394-01",
+          "claim": "At 35.0 degrees Celsius the table 6.2-4 salinity correction factor is 0.8563 at 45,000 microsiemens per centimeter, 0.8394 at 50,000, and 0.8087 at 59,000 microsiemens per centimeter.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "35.0\n \n0.8563\n \n0.8529\n \n0.8496\n \n0.8462\n \n0.8428\n \n0.8394\n \n0.8360\n \n0.8326\n \n0.8292\n \n0.8258\n \n0.8224\n \n0.8190\n \n0.8156\n \n0.8122\n \n0.8087",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__ee2a9c0cd0a9",
+      "index": 89,
+      "locator": "Table 6.2-4 headerless tail followed by Appendix A and Table 6.2-A1 — \"Data for comparison between spectrophotometric and optical dissolved-oxygen meter methods.\"",
+      "claims": [
+        {
+          "id": "do-appendix-a-purpose-01",
+          "claim": "Appendix A of this chapter is an example comparison between spectrophotometric and optical dissolved-oxygen meter data, presented as table 6.2-A1.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "Appendix A. \tExample comparison between spectrophotometric and optical\ndissolved-oxygen meter data",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t62a1-columns-01",
+          "claim": "Table 6.2-A1 records, for each date and time at a single well, the optical meter reading in mg/L alongside the Hach Indigo Carmine and CHEMetrics Rhodazine D spectrophotometric results in mg/L, with ND meaning no data.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "[DO, dissolved-oxygen concentration; mg/L, milligrams per liter; ND, no data]\nDate \tTime \tWell Meter reading,\nDO in mg/L\nHach Indigo\nCarmine,\nDO in mg/L\nCHEMetrics\nRhodazine D,\nDO in mg/L",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t62a1-well-gsa167-01",
+          "claim": "All comparison data in table 6.2-A1 come from a single well designated GSA 167, sampled on 6/21/2016, 6/23/2016, 7/26/2016, and 7/28/2016.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "6/21/2016 \t12:56 \tGSA 167 \t0.01 \t0.05 \tND\n6/21/2016 \t12:57 \tGSA 167 \t0.01 \tND \t0.05",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t62a1-june21-01",
+          "claim": "On 6/21/2016 at well GSA 167 the optical meter read 0.01 mg/L while the paired spectrophotometric results ranged from 0.02 to 0.09 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "6/21/2016 \t13:03 \tGSA 167 \t0.01 \t0.02 \tND\n6/21/2016 \t13:03 \tGSA 167 \t0.01 \tND \t0.09",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t62a1-june23-01",
+          "claim": "On 6/23/2016 at well GSA 167 the optical meter readings fell from 0.07 to 0.04 mg/L over about 20 minutes while paired spectrophotometric results ranged from 0.03 to 0.1 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "6/23/2016 \t11:02 \tGSA 167 \t0.07 \tND \t0.07\n6/23/2016 \t11:06 \tGSA 167 \t0.06 \t0.07 \tND",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t624-cont-tail-89-01",
+          "claim": "The chunk opens with an unlabeled run of salinity correction factors ending 0.8087, carrying neither a temperature row label nor a specific-conductance column header.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Salinity correction factors for dissolved oxygen in water (based on specific conductance).",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__582d132aa902",
+      "index": 90,
+      "locator": "Table 6.2-A1 continuation and Table 6.2-A2 calibration data, then the back cover — \"Calibration data for readings in table 6.2-A1.\"",
+      "claims": [
+        {
+          "id": "do-t62a2-columns-01",
+          "claim": "Table 6.2-A2 gives the calibration data behind the readings in table 6.2-A1: date, barometric pressure in mm of Hg, temperature in degrees Celsius, 100 percent DO saturation in mg/L, initial and adjusted concentration in mg/L, meter reading in zero solution in mg/L, whether a 2-point calibration was done, and the in situ meter type.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Table 6.2–A2. \tCalibration data for readings in table 6.2–A1.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t62a2-621-2016-01",
+          "claim": "For the 6/21/2016 comparison the calibration was made at a barometric pressure of 622.5 mm of Hg and 21.58 degrees Celsius, giving a 100 percent DO saturation of 7.18 mg/L, with a zero-solution meter reading of 0.02 mg/L and no 2-point calibration, using an AT600 sonde (serial 449415).",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "6/21/2016 \t622.5 \t21.58 \t7.18 \t7.18 \t7.18 \t0.02 \tno \tAT600 serial\n449415",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t62a2-623-2016-adjusted-01",
+          "claim": "For the 6/23/2016 comparison the barometric pressure was 621.8 mm of Hg at 22.75 degrees Celsius, the 100 percent DO saturation was 7.01 mg/L, and the initial concentration of 6.88 mg/L was adjusted to 7.02 mg/L with a zero-solution reading of 0.01 mg/L.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "6/23/2016 \t621.8 \t22.75 \t7.01 \t6.88 \t7.02 \t0.01 \tno \tAT600 serial\n449680",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t62a2-smarttroll-01",
+          "claim": "The 7/26/2016 and 7/28/2016 comparisons used a Smart Troll meter at barometric pressures of 623.5 and 623.0 mm of Hg and temperatures of 22.80 and 22.25 degrees Celsius, with 100 percent DO saturation values of 6.99 and 7.10 mg/L.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "7/26/2016 \t623.5 \t22.80 \t6.99 \t6.98 \t6.98 \t0.02 \tno \tSmart Troll\n7/28/2016 \t623.0 \t22.25 \t7.10 \t7.10 \t7.08 \t0.02 \tno \tSmart Troll",
+          "specificity": "high"
+        },
+        {
+          "id": "do-t62a2-no-two-point-01",
+          "claim": "None of the four calibrations recorded in table 6.2-A2 used a 2-point calibration, and every zero-solution meter reading was 0.01 or 0.02 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "0.02 \tno \tAT600 serial",
+          "specificity": "high"
+        },
+        {
+          "id": "do-doc-series-id-01",
+          "claim": "This chapter is published as U.S. Geological Survey Techniques and Methods 9-A6.2, Dissolved Oxygen, with online ISSN 2328-7055 and DOI https://doi.org/10.3133/tm9A6.2.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "U.S. Geological Survey—\nDissolved Oxygen\n—Techniques and Methods 9–A6.2\nISSN 2328-7055 (online)\nhttps://doi.org/10.3133/tm9A6.2",
+          "specificity": "medium"
+        }
+      ]
     }
   ],
   "summary": {
-    "gaps": [],
-    "notes": "PARTIAL — extraction in progress.",
-    "totalClaims": 106,
+    "totalClaims": 265,
     "byMetric": {
-      "dissolvedOxygen": 97,
-      "temperature": 18,
-      "conductivity": 13
+      "dissolvedOxygen": 252,
+      "temperature": 90,
+      "conductivity": 57,
+      "turbidity": 1,
+      "ph": 1
     },
     "byType": {
-      "procedural": 37,
-      "numeric": 32,
-      "conceptual": 22,
-      "definitional": 15
-    }
+      "numeric": 120,
+      "procedural": 67,
+      "conceptual": 43,
+      "definitional": 35
+    },
+    "gaps": [
+      "States no ecological or regulatory dissolved-oxygen threshold of any kind. The document never uses the phrases 'aquatic life', 'water-quality criteria', 'fish kill', 'eutrophication' or 'stress', and gives no minimum DO concentration for a healthy waterbody, for a fishery, or for any designated use.",
+      "Its single hypoxia statement — 'hypoxic to anoxic (concentration less than 1.0 mg/L)' in section 3.1 — is a QA trigger requiring an optical sensor to be verified against a spectrophotometric method before such data are reported, not an ecological threshold. It directly conflicts with operator documents that place hypoxia at less than 2 mg/L, and nothing in this chapter reconciles the two.",
+      "Gives no numeric turbidity or color limit at which the Rhodazine D or Indigo Carmine method becomes unusable; it says only to 'first conduct an assessment of the amount of bias' in colored or turbid water, with no NTU or color-unit cutoff.",
+      "Table 6.2-2 covers atmospheric pressures only from 600 to 795 mmHg and temperatures only from 0.0 to 40.0 degrees Celsius; no oxygen-solubility value is given for pressures above 795 or below 600 mmHg, for sub-zero (ice-covered or supercooled) water, or above 40 degrees Celsius.",
+      "Table 6.2-4 stops at 59,000 microsiemens per centimeter and at 35 degrees Celsius, so it gives no salinity correction factor for hypersaline water above 59,000 microsiemens per centimeter, and none between 36 and 40 degrees Celsius even though table 6.2-2 tabulates solubility up to 40 degrees.",
+      "Provides no percent-saturation table and only one worked percent-saturation calculation (83.6 percent); supersaturation above 100 percent is acknowledged but no procedure, correction, or reporting rule is given for it beyond the 20 mg/L sensor-range note.",
+      "Gives no maximum calibration interval in time units. It requires a calibration check before each field trip and at every field site, and annual to biannual luminophore-module replacement, but never states how many days or measurements may pass between full calibrations.",
+      "Gives no drift, fouling-correction, or data-acceptance criteria for continuous or unattended DO monitoring; it defers entirely to NFM A6.8 and Wagner and others (2006) without repeating a single numeric limit.",
+      "Offers no guidance for measuring DO under ice cover, in wastewater or effluent, or in an outfall mixing zone.",
+      "Gives no accuracy or bias figure for optical sensors above about 20 mg/L; above that the only instruction is to report '> the listed numerical limit' from the manufacturer's specified range.",
+      "Names the reporting method codes only as words ('optical, spectrophotometric, other') and never maps them to NWIS parameter or method codes, so the chapter cannot be used to determine what code to enter.",
+      "The Appendix A comparison dataset (table 6.2-A1) is a single well, GSA 167, on four dates in 2016, with every reading below 0.1 mg/L; the document therefore provides no optical-versus-spectrophotometric comparison data at mid-range or high DO concentrations.",
+      "Although the chapter corrects DO for temperature and specific conductance, it defines no measurement procedure of its own for temperature, specific conductance, pH, turbidity, or oxidation-reduction potential, deferring each to another NFM chapter."
+    ],
+    "notes": "COMPLETE — all 91 chunks extracted. 34 chunks are newly recovered numeric-table pages (indices 56-72 and 74-90) holding table 6.2-2 (oxygen solubility) and table 6.2-4 (salinity correction factors). HEADERLESS TABLE GRIDS — these chunks are bare number grids whose column (pressure or specific-conductance) labels fell on the other side of a chunk boundary, so no individual cell in them can be located in the table from the chunk alone; their claims deliberately assert only the temperature row range: 57, 58, 60, 61, 63, 64, 66, 67, 69, 70, 72, 75, 76, 78, 79, 81, 82, 84, 85, 87, and the opening run of 89. Of these, 66, 67, 69, 70, 72, 81, 82, 84, 85 and 87 carry the table caption at the page foot but still no column header; 67 and 70 carry neither a column header nor a temperature row label, so nothing in them is locatable at all. The 0.9733 salinity correction factor used in the chapter's own worked example (20.0 degrees Celsius, 8,000 microsiemens per centimeter) falls inside headerless chunk 75, so the worked example cannot be verified against the table by retrieval. EXTRACTION ARTIFACT — on chunk 86 the column block headed '15,000 ... 29,000 microsiemens per centimeter' repeats, value for value, the factors printed under the '0 ... 14,000' header on the same page, including a leading 1.0000. Those duplicated values are wrong for 15,000-29,000 microsiemens per centimeter and were not extracted as factor claims. Table 6.2-2 is printed as two pressure blocks (700-795 mmHg first, then 600-695 mmHg), each restarting the temperature rows at 0.0 degrees Celsius, so a retrieved row of solubility numbers is ambiguous unless the chunk also carries the column header. Chunks 37, 40, 43, 46, 49 and 52 are page-break fragments carrying only text that originates in the preceding chunk; they were recorded with no claims. Chunks 53, 54 and 55 are acknowledgments and the reference list, and chunk 73 is a stranded table-footnote fragment; all four are correctly empty. The passage about the instrument-specific rating (five simultaneous measurements, agreement within 0.03 mg/L, the less-than-1.0 mg/L requirement) is printed twice in the document, in section 2.3.1 and again in section 2.3.2; it was attributed to the earlier chunks (30 and 32) and chunk 35 records only what that second printing adds. Chunk 90 ends with the back-cover matter (ISSN 2328-7055, DOI 10.3133/tm9A6.2) and two blank page markers."
   }
 }

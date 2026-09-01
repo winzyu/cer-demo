@@ -5,6 +5,24 @@
   "chunkCount": 42,
   "chunks": [
     {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__fb8a314a5d1d",
+      "index": 0,
+      "locator": "Front matter, page ALK-1 — title, \"Revised by S.A. Rounds\" and contents dot leaders",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__aad1bdc45ba2",
+      "index": 1,
+      "locator": "Front matter — end of contents and the Figures list, \"6.6-1. Summary of alkalinity or ANC titration procedures\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__bee0c9c206d4",
+      "index": 2,
+      "locator": "Front matter, page 2-ALK — the Tables list, \"6.6-1. Equipment and supplies used for alkalinity or ANC titrations\"",
+      "claims": []
+    },
+    {
       "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__e2d6bf031f75",
       "index": 3,
       "locator": "Section 6.6 opening — \"Alkalinity and Acid Neutralizing Capacity\"",
@@ -1010,6 +1028,202 @@
       ]
     },
     {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__042b53077899",
+      "index": 22,
+      "locator": "Example IPT-1B and Table 6.6-4 (buret system) — \"the maximum rates of change of pH per volume of titrant added occur at pH 8.27 and 4.50\"; the chunk OPENS with a headerless continuation grid of Table 6.6-3 carried in as overlap",
+      "claims": [
+        {
+          "id": "alk-ipt1b-same-sample-buret-01",
+          "claim": "Example IPT-1B repeats the Example IPT-1A sample as if it had been titrated with the buret system, plotting the data in figure 6.6-3 and tabulating it in table 6.6-4.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "If the sample in Example IPT–1A had been titrated with the buret system, the titration data\nwould be similar to that plotted in figure 6.6–3 and given in table 6.6–4.",
+          "specificity": "medium"
+        },
+        {
+          "id": "alk-ipt1b-max-slope-ph-01",
+          "claim": "In the buret titration of Example IPT-1B the maximum rates of change of pH per volume of titrant added occur at pH 8.27 and pH 4.50, at 1.86 and 10.14 mL of acid added.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "maximum rates of change of pH per volume of titrant added occur at pH 8.27 and 4.50 (at\n1.86 and 10.14 mL of acid added)",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-ipt1b-inflection-bracket-01",
+          "claim": "Because the computed slopes are changes between two points, the true inflection points of Example IPT-1B lie between 1.83 and 1.86 mL for the carbonate equivalence point and between 10.11 and 10.14 mL for the bicarbonate equivalence point.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "actual inflection points are located between 1.83 and 1.86 mL for the carbonate equivalence\npoint, and between 10.11 and 10.14 mL for the bicarbonate equivalence point.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-ipt1b-calculated-volumes-01",
+          "claim": "The titrant volumes taken as the inflection points in Example IPT-1B are the midpoints of those brackets, 1.85 and 10.13 mL.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "The calculated\ntitrant volumes for the inflection points, therefore, are 1.85 and 10.13 mL.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t64-columns-01",
+          "claim": "Table 6.6-4 records a buret inflection-point titration in six columns: pH in standard units, change in pH, buret reading in mL, titrant volume in mL, change in volume in mL, and change in pH per change in volume.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Buret reading\n(mL)\nTitrant volume\n(mL)\nChange in\nvolume\n(mL)\nChange in pH\nper change in\nvolume",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t64-shaded-rows-01",
+          "claim": "The shaded rows of table 6.6-4 mark where the maximum rates of change of pH per volume of titrant occur, at pH 8.27 and 4.50 in that sample.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "The shaded rows indicate where the maximum rates of change of pH per volume of titrant occur (at\npH 8.27 and 4.50 in this sample); mL, milliliter]",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t64-start-end-01",
+          "claim": "The Example IPT-1B titration starts at pH 9.35 with a buret reading of 1.20 mL and zero titrant volume, and ends at pH 3.99 after 10.70 mL of titrant.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "9.35 \t— \t1.20 \t0.00 \t— \t—",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t64-max-slope-values-01",
+          "claim": "In table 6.6-4 the change in pH per change in volume peaks at 2.667 at pH 8.27 (1.86 mL) and at 3.333 at pH 4.50 (10.14 mL), both computed over 0.03-mL titrant increments.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "8.27 \t.08 \t3.06 \t1.86 \t.03 \t2.667",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t64-bicarb-peak-row-01",
+          "claim": "The bicarbonate-equivalence row of table 6.6-4 reads pH 4.50 at a buret reading of 11.34 mL and titrant volume 10.14 mL, giving a change in pH per change in volume of 3.333.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "4.50 \t.10 \t11.34 \t10.14 \t.03 \t3.333",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t64-increment-size-01",
+          "claim": "Table 6.6-4 shows the buret titration using 1.00-mL titrant increments through the flat mid-curve region but 0.03-mL increments near the equivalence points.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "7.17 \t.63 \t4.70 \t3.50 \t1.00 \t.630",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__9444ee68dc62",
+      "index": 23,
+      "locator": "Example IPT-2 and Table 6.6-5 (low-alkalinity sample) — \"a calculated alkalinity of 6.8 mg/L as CaCO3\"; the chunk OPENS with a headerless continuation grid of Table 6.6-4 carried in as overlap",
+      "claims": [
+        {
+          "id": "alk-ipt2-site-01",
+          "claim": "Example IPT-2 uses a water sample from Little Abiqua Creek near Scotts Mills, Oregon, as a low-alkalinity titration example.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "A water sample collected from Little Abiqua Creek near Scotts Mills, Oregon, provides a good\nexample for a low-alkalinity titration.",
+          "specificity": "medium"
+        },
+        {
+          "id": "alk-ipt2-volume-normality-01",
+          "claim": "In Example IPT-2, 200 mL of filtered sample were titrated with 0.16N titrant and analyzed by the inflection point titration method.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "In this titration, 200 mL of filtered sample were titrated\nwith 0.16N titrant and analyzed by the IPT method.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-ipt2-equivalence-ph525-01",
+          "claim": "In the low-alkalinity Example IPT-2 the bicarbonate equivalence point was found near pH 5.25, between digital counts 134 and 137.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "The bicarbonate equivalence point was found near a pH of 5.25, between digital\ncounts 134 and 137.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-ipt2-counter-136-01",
+          "claim": "The digital-counter value taken as the inflection point in Example IPT-2 is 136 counts, the rounded midpoint of 135.5.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "The correct digital-counter value at the inflection point, therefore, is 136\n(135.5) counts.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-ipt2-result-68-01",
+          "claim": "Example IPT-2 yields a calculated alkalinity of 6.8 mg/L as CaCO3 from 200 mL of sample titrated with 0.16N acid to 136 digital counts.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "This results in a calculated alkalinity of 6.8 mg/L as CaCO3",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t65-columns-01",
+          "claim": "Table 6.6-5 records a low-alkalinity digital-titrator inflection-point analysis in five columns: pH in standard units, change in pH, counter reading in counts, change in counter in counts, and change in pH per change in counter.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Counter reading\n(counts)\nChange in\ncounter\n(counts)\nChange in pH per\nchange in counter",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t65-single-shaded-row-01",
+          "claim": "Table 6.6-5 marks a single shaded row, where the maximum rate of change of pH per digital count occurs at pH 5.25 in that sample.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "The shaded row indicates where the maximum rate of change of pH per digital count occurs (at pH\n5.25 in this sample)]",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t65-start-end-01",
+          "claim": "The Example IPT-2 titration runs from pH 7.12 at zero counts to pH 4.13 at 212 counts.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "7.12 \t— \t0 \t— \t—",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t65-peak-row-01",
+          "claim": "The maximum change in pH per change in counter in table 6.6-5 is 0.0300, at pH 5.25 and counter reading 137 over a 3-count increment.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "5.25 \t.09 \t137 \t3 \t.0300",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t65-fine-counts-01",
+          "claim": "Table 6.6-5 shows the low-alkalinity titration stepping in 20-count increments early in the curve, tightening to 3-count increments through the equivalence-point region, and relaxing to 10-count increments afterward.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "6.83 \t0.29 \t20 \t20 \t0.0145",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
       "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__1c4a75a5c1a3",
       "index": 24,
       "locator": "Section 6.6.4.C Gran Function Plot Method — \"Gran function plots commonly are used\"",
@@ -1180,6 +1394,73 @@
           "type": "numeric",
           "quote": "is at 139.5 digital counts of titrant added, corresponding to a bicarbonate equivalence point at a",
           "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__92160ad4ac60",
+      "index": 30,
+      "locator": "Figure 6.6-6 and Table 6.6-6 Gran function plot analysis for Example Gran-1 — \"calculation of Gran function F1\"",
+      "claims": [
+        {
+          "id": "alk-t66-purpose-01",
+          "claim": "Table 6.6-6 is the worked calculation of Gran function F1 for the low-alkalinity sample of Example Gran-1.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Gran function plot analysis for a low-alkalinity sample—calculation of Gran function F1 for\nExample Gran–1.",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t66-vo-vt-notation-01",
+          "claim": "In table 6.6-6, Vo denotes the volume of sample and Vt the volume of titrant, both in milliliters.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "[V o, volume of sample; V t, volume of titrant; mL, milliliters]",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t66-f1-columns-01",
+          "claim": "Table 6.6-6 builds Gran function F1 column by column from pH, counter reading, titrant volume Vt, the sum Vo+Vt, the quantity 10 to the power of negative pH, and the product (Vo+Vt) times 10 to the power of negative pH.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Titrant\nvolume, Vt\n(mL)\nVo+Vt\n(mL) 10 –pH \t(Vo+Vt)10–pH",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t66-vo-200ml-01",
+          "claim": "In Example Gran-1 the sample volume Vo is 200.000 mL, shown by the Vo+Vt column reading 200.000 mL at zero titrant, matching the 200-mL sample of Example IPT-2.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "7.12 \t0 \t0.000 \t200.000 \t7.586x10-08 1.517x10-05",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t66-counts-to-volume-01",
+          "claim": "In table 6.6-6 the digital-titrator counter readings convert to titrant volumes of 0.025 mL at 20 counts, 0.125 mL at 100 counts, and 0.265 mL at 212 counts.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "5.97 \t100 \t.125 \t200.125 \t1.072x10-06 2.144x10-04",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-t66-f1-range-01",
+          "claim": "Across the Example Gran-1 titration the Gran function F1 rises from 1.517x10-05 mL at pH 7.12 to 1.485x10-02 mL at pH 4.13, with 10 to the power of negative pH rising from 7.586x10-08 to 7.413x10-05.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "4.13 \t212 \t.265 \t200.265 \t7.413x10-05 1.485x10-02",
+          "specificity": "high"
+        },
+        {
+          "id": "alk-fig66-fitted-line-01",
+          "claim": "Figure 6.6-6 plots the F1 data together with an F1 fitted line against titrant volume in digital counts over the range 100 to 220 counts.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "F1 Data\nF1 Fitted Line",
+          "specificity": "medium"
         }
       ]
     },
