@@ -1,13 +1,13 @@
 {
   "filename": "usgs-nfm-a6.1-temperature.pdf",
-  "title": "USGS TM 9-A6.1 — Temperature (2024)",
+  "title": "USGS TM 9-A6.1 \u2014 Temperature (2024)",
   "inSlice": false,
   "chunkCount": 40,
   "chunks": [
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__df467d78041f",
       "index": 0,
-      "locator": "Cover and publication front matter — 'Supersedes USGS Techniques of Water-Resources Investigations'",
+      "locator": "Cover and publication front matter \u2014 'Supersedes USGS Techniques of Water-Resources Investigations'",
       "claims": [
         {
           "id": "t-pub-supersedes-01",
@@ -36,23 +36,35 @@
       ]
     },
     {
+      "chunkId": "usgs-nfm-a6.1-temperature.pdf__1dc14aca715c",
+      "index": 1,
+      "locator": "Publication front matter and Contents - \"Suggested citation:\" through section 6.0 dot leaders",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.1-temperature.pdf__61284a0e9483",
+      "index": 2,
+      "locator": "Contents tail, Figures and Tables lists - \"6.1-1. Troubleshooting guide for temperature measurements.\"",
+      "claims": []
+    },
+    {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__93f8f71b20ed",
       "index": 3,
-      "locator": "Conversion Factors / Abbreviations / Requirements and Recommendations — 'Temperature in degrees Celsius'",
+      "locator": "Conversion Factors / Abbreviations / Requirements and Recommendations \u2014 'Temperature in degrees Celsius'",
       "claims": [
         {
           "id": "t-conv-c-to-f-01",
-          "claim": "Temperature in degrees Celsius is converted to degrees Fahrenheit with the formula °F=(1.8×°C)+32.",
+          "claim": "Temperature in degrees Celsius is converted to degrees Fahrenheit with the formula \u00b0F=(1.8\u00d7\u00b0C)+32.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "°F=(1.8×°C)+32",
+          "quote": "\u00b0F=(1.8\u00d7\u00b0C)+32",
           "specificity": "high"
         },
         {
           "id": "t-abbrev-uscm-01",
-          "claim": "In NFM A6.1 the abbreviation μS/cm stands for microsiemen per centimeter.",
+          "claim": "In NFM A6.1 the abbreviation \u03bcS/cm stands for microsiemen per centimeter.",
           "metrics": [
             "conductivity"
           ],
@@ -99,7 +111,7 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__7c2690ee8659",
       "index": 4,
-      "locator": "Abstract and section 1.0 Introduction — 'provides guidance and protocols for the measurement of temperature'",
+      "locator": "Abstract and section 1.0 Introduction \u2014 'provides guidance and protocols for the measurement of temperature'",
       "claims": [
         {
           "id": "t-scope-chapter-01",
@@ -152,7 +164,7 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__b313ab374232",
       "index": 5,
-      "locator": "Section 1.0 Introduction — 'Temperature is an important variable in aquatic systems'",
+      "locator": "Section 1.0 Introduction \u2014 'Temperature is an important variable in aquatic systems'",
       "claims": [
         {
           "id": "t-temp-basis-other-attributes-01",
@@ -187,13 +199,13 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__49cdd9b58400",
       "index": 6,
-      "locator": "Section 1.0 Introduction, overlap fragment — 'hod described in this chapter is applicable to air'",
+      "locator": "Section 1.0 Introduction, overlap fragment \u2014 'hod described in this chapter is applicable to air'",
       "claims": []
     },
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__b94bbf9a9ecf",
       "index": 7,
-      "locator": "Section 1.1 Overview of Temperature and 2.0 Equipment and Supplies — 'TEMPERATURE: a measure of warmth or coldness'",
+      "locator": "Section 1.1 Overview of Temperature and 2.0 Equipment and Supplies \u2014 'TEMPERATURE: a measure of warmth or coldness'",
       "claims": [
         {
           "id": "t-temp-definition-01",
@@ -293,7 +305,7 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__62bf6a13ee7f",
       "index": 8,
-      "locator": "Section 2.0 Equipment and Supplies — 'Liquid-in-glass thermometers containing mercury'",
+      "locator": "Section 2.0 Equipment and Supplies \u2014 'Liquid-in-glass thermometers containing mercury'",
       "claims": [
         {
           "id": "t-signal-conditioning-01",
@@ -302,7 +314,7 @@
             "temperature"
           ],
           "type": "definitional",
-          "quote": "a sensor—either thermistor or thermocouple—is connected to",
+          "quote": "a sensor\u2014either thermistor or thermocouple\u2014is connected to",
           "specificity": "medium"
         },
         {
@@ -370,13 +382,13 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__43a1a2c5329c",
       "index": 9,
-      "locator": "Section 2.0, overlap fragment — 'for determining relative temperature differences'",
+      "locator": "Section 2.0, overlap fragment \u2014 'for determining relative temperature differences'",
       "claims": []
     },
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__ade231e44788",
       "index": 10,
-      "locator": "Section 2.0 and Box 6.1-1 Equipment and supplies — 'Required accuracy of less than or equal to ±0.05°C'",
+      "locator": "Section 2.0 and Box 6.1-1 Equipment and supplies \u2014 'Required accuracy of less than or equal to \u00b10.05\u00b0C'",
       "claims": [
         {
           "id": "t-ir-not-routine-01",
@@ -415,57 +427,57 @@
             "temperature"
           ],
           "type": "numeric",
-          "quote": "Temperature range, at least –5 to 45 degrees",
+          "quote": "Temperature range, at least \u20135 to 45 degrees",
           "specificity": "high"
         },
         {
           "id": "t-certified-accuracy-01",
-          "claim": "A certified digital thermometer or sensor is required to have accuracy of less than or equal to ±0.05°C and a readout resolution of at least 0.001°C.",
+          "claim": "A certified digital thermometer or sensor is required to have accuracy of less than or equal to \u00b10.05\u00b0C and a readout resolution of at least 0.001\u00b0C.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "• Required accuracy of less than or equal to ±0.05°C\n• Required readout resolution of at least 0.001°C",
+          "quote": "\u2022 Required accuracy of less than or equal to \u00b10.05\u00b0C\n\u2022 Required readout resolution of at least 0.001\u00b0C",
           "specificity": "high"
         },
         {
           "id": "t-traceable-accuracy-01",
-          "claim": "A sensor classified as traceable is required to have a range of at least -5 to 45°C and accuracy of less than or equal to ±0.2°C.",
+          "claim": "A sensor classified as traceable is required to have a range of at least -5 to 45\u00b0C and accuracy of less than or equal to \u00b10.2\u00b0C.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "• Required accuracy of less than or equal to ±0.2°C",
+          "quote": "\u2022 Required accuracy of less than or equal to \u00b10.2\u00b0C",
           "specificity": "high"
         },
         {
           "id": "t-traceable-5pt-annual-01",
-          "claim": "A traceable sensor is required to be compared directly to a certified sensor with a valid certificate, using a refrigerated water bath, at no less than five points between 0 and 40°C, annually.",
+          "claim": "A traceable sensor is required to be compared directly to a certified sensor with a valid certificate, using a refrigerated water bath, at no less than five points between 0 and 40\u00b0C, annually.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "ated water bath, at no less than five points, between\n0 and 40°C, annually and at two points bracketing",
+          "quote": "ated water bath, at no less than five points, between\n0 and 40\u00b0C, annually and at two points bracketing",
           "specificity": "high"
         },
         {
           "id": "t-traceable-2pt-6mo-01",
-          "claim": "In addition to the annual five-point comparison, a traceable sensor must be compared at two points bracketing the expected range of use no more than 6 months from the five-point comparison, and each comparison point is required to agree with the certified sensor within ±0.2°C.",
+          "claim": "In addition to the annual five-point comparison, a traceable sensor must be compared at two points bracketing the expected range of use no more than 6 months from the five-point comparison, and each comparison point is required to agree with the certified sensor within \u00b10.2\u00b0C.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "from the five-point comparison. Each point in the\ncomparison is required to agree with the certified\nsensor by less than or equal to ±0.2°C.",
+          "quote": "from the five-point comparison. Each point in the\ncomparison is required to agree with the certified\nsensor by less than or equal to \u00b10.2\u00b0C.",
           "specificity": "high"
         },
         {
           "id": "t-verified-correct-other-param-01",
-          "claim": "If a verified temperature sensor's data are used to correct another water-quality parameter, the accuracy of that temperature sensor is required to be less than or equal to ±0.2°C.",
+          "claim": "If a verified temperature sensor's data are used to correct another water-quality parameter, the accuracy of that temperature sensor is required to be less than or equal to \u00b10.2\u00b0C.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "• If the sensor data are used to correct another water-\nquality parameter, the accuracy of the sensor is\nrequired to be less than or equal to ±0.2°C.",
+          "quote": "\u2022 If the sensor data are used to correct another water-\nquality parameter, the accuracy of the sensor is\nrequired to be less than or equal to \u00b10.2\u00b0C.",
           "specificity": "high"
         },
         {
@@ -475,7 +487,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "• If the sensor data are NOT used to correct another\nwater-quality parameter, the accuracy of the sensor\nis determined by project objectives.",
+          "quote": "\u2022 If the sensor data are NOT used to correct another\nwater-quality parameter, the accuracy of the sensor\nis determined by project objectives.",
           "specificity": "high"
         },
         {
@@ -493,16 +505,16 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__9411dbabecbc",
       "index": 11,
-      "locator": "Box 6.1-1 supplies list — 'Soap solution, 0.1–0.2%, non-phosphate'",
+      "locator": "Box 6.1-1 supplies list \u2014 'Soap solution, 0.1\u20130.2%, non-phosphate'",
       "claims": [
         {
           "id": "t-soap-solution-conc-01",
-          "claim": "The soap solution listed for temperature-measurement supplies is 0.1–0.2 percent non-phosphate laboratory detergent.",
+          "claim": "The soap solution listed for temperature-measurement supplies is 0.1\u20130.2 percent non-phosphate laboratory detergent.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "• Soap solution, 0.1–0.2%, non-phosphate",
+          "quote": "\u2022 Soap solution, 0.1\u20130.2%, non-phosphate",
           "specificity": "high"
         },
         {
@@ -512,7 +524,7 @@
             "temperature"
           ],
           "type": "numeric",
-          "quote": "• Deionized water (1 liter), ASTM type 2 or better",
+          "quote": "\u2022 Deionized water (1 liter), ASTM type 2 or better",
           "specificity": "high"
         },
         {
@@ -522,7 +534,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "• Flowthrough chamber (for groundwater applications",
+          "quote": "\u2022 Flowthrough chamber (for groundwater applications",
           "specificity": "medium"
         },
         {
@@ -532,7 +544,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "• Dewar flask and (or) plastic beakers (assorted",
+          "quote": "\u2022 Dewar flask and (or) plastic beakers (assorted",
           "specificity": "low"
         }
       ]
@@ -540,13 +552,13 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__51e9de758232",
       "index": 12,
-      "locator": "Box 6.1-1, overlap fragment — 'erated water bath'",
+      "locator": "Box 6.1-1, overlap fragment \u2014 'erated water bath'",
       "claims": []
     },
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__6c3145b44cb4",
       "index": 13,
-      "locator": "Section 2.1 Definitions — 'Certified Temperature Sensor', 'Traceable', 'Verified'",
+      "locator": "Section 2.1 Definitions \u2014 'Certified Temperature Sensor', 'Traceable', 'Verified'",
       "claims": [
         {
           "id": "t-certified-sensor-def-01",
@@ -570,12 +582,12 @@
         },
         {
           "id": "t-certified-spec-01",
-          "claim": "Certified sensors and digital thermometers used in NFM A6.1 procedures are required to have a range of at least -5°C to 45°C, a certified accuracy of less than or equal to ±0.05°C, and a readout resolution of at least 0.001°C.",
+          "claim": "Certified sensors and digital thermometers used in NFM A6.1 procedures are required to have a range of at least -5\u00b0C to 45\u00b0C, a certified accuracy of less than or equal to \u00b10.05\u00b0C, and a readout resolution of at least 0.001\u00b0C.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "required to have a range of at least -5°C to 45°C, and a\ncertified accuracy of less than or equal to ±0.05°C with\na readout resolution of at least 0.001°C.",
+          "quote": "required to have a range of at least -5\u00b0C to 45\u00b0C, and a\ncertified accuracy of less than or equal to \u00b10.05\u00b0C with\na readout resolution of at least 0.001\u00b0C.",
           "specificity": "high"
         },
         {
@@ -590,7 +602,7 @@
         },
         {
           "id": "t-traceable-sensor-def-01",
-          "claim": "A traceable temperature sensor is one compared to a certified sensor every 6 months in an unbroken chain of comparison measurements leading back to NIST standards, with a range of at least -5°C to 45°C and a manufacturer's stated accuracy of less than or equal to ±0.2°C.",
+          "claim": "A traceable temperature sensor is one compared to a certified sensor every 6 months in an unbroken chain of comparison measurements leading back to NIST standards, with a range of at least -5\u00b0C to 45\u00b0C and a manufacturer's stated accuracy of less than or equal to \u00b10.2\u00b0C.",
           "metrics": [
             "temperature"
           ],
@@ -630,14 +642,14 @@
         },
         {
           "id": "t-verified-multiparam-accuracy-01",
-          "claim": "An accuracy specification for a verified temperature sensor is required only if the sensor is bundled onto a multiparameter instrument and used to correct another water-quality parameter such as dissolved oxygen or specific conductance, in which case its accuracy is required to be less than or equal to ±0.2°C.",
+          "claim": "An accuracy specification for a verified temperature sensor is required only if the sensor is bundled onto a multiparameter instrument and used to correct another water-quality parameter such as dissolved oxygen or specific conductance, in which case its accuracy is required to be less than or equal to \u00b10.2\u00b0C.",
           "metrics": [
             "temperature",
             "dissolvedOxygen",
             "conductivity"
           ],
           "type": "numeric",
-          "quote": "another water-quality parameter (such as dissolved\noxygen or specific conductance). The accuracy of such\na sensor is required to be less than or equal to ±0.2°C.",
+          "quote": "another water-quality parameter (such as dissolved\noxygen or specific conductance). The accuracy of such\na sensor is required to be less than or equal to \u00b10.2\u00b0C.",
           "specificity": "high"
         },
         {
@@ -675,16 +687,16 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__b4799b81c761",
       "index": 14,
-      "locator": "Section 2.2 Establishing and Maintaining a Traceable Sensor — 'no less than five points between 0°C and 40°C annually'",
+      "locator": "Section 2.2 Establishing and Maintaining a Traceable Sensor \u2014 'no less than five points between 0\u00b0C and 40\u00b0C annually'",
       "claims": [
         {
           "id": "t-traceable-5pt-0-40-02",
-          "claim": "A traceable sensor must be compared with a certified sensor or digital thermometer at no less than five points between 0°C and 40°C annually.",
+          "claim": "A traceable sensor must be compared with a certified sensor or digital thermometer at no less than five points between 0\u00b0C and 40\u00b0C annually.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "at no less than five points between 0°Cand 40°C annually",
+          "quote": "at no less than five points between 0\u00b0Cand 40\u00b0C annually",
           "specificity": "high"
         },
         {
@@ -699,22 +711,22 @@
         },
         {
           "id": "t-traceable-above40-01",
-          "claim": "If the expected range of use of a traceable sensor is greater than 40°C, additional comparison points are required.",
+          "claim": "If the expected range of use of a traceable sensor is greater than 40\u00b0C, additional comparison points are required.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "of use is greater than 40°C, additional comparison points are",
+          "quote": "of use is greater than 40\u00b0C, additional comparison points are",
           "specificity": "high"
         },
         {
           "id": "t-traceable-agree-02",
-          "claim": "All comparison points between a traceable sensor and a certified sensor must agree within ±0.2°C.",
+          "claim": "All comparison points between a traceable sensor and a certified sensor must agree within \u00b10.2\u00b0C.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "All comparison points must agree within ±0.2°C.",
+          "quote": "All comparison points must agree within \u00b10.2\u00b0C.",
           "specificity": "high"
         },
         {
@@ -749,12 +761,12 @@
         },
         {
           "id": "t-bath-0c-step1-01",
-          "claim": "The traceable-sensor comparison begins by immersing the traceable and certified sensors in a refrigerated bath with a water temperature of approximately 0°C that is equilibrated and stable with no positive or negative trends.",
+          "claim": "The traceable-sensor comparison begins by immersing the traceable and certified sensors in a refrigerated bath with a water temperature of approximately 0\u00b0C that is equilibrated and stable with no positive or negative trends.",
           "metrics": [
             "temperature"
           ],
           "type": "procedural",
-          "quote": "refrigerated bath with a water temperature of approxi-\nmately 0°C.",
+          "quote": "refrigerated bath with a water temperature of approxi-\nmately 0\u00b0C.",
           "specificity": "high"
         },
         {
@@ -769,12 +781,12 @@
         },
         {
           "id": "t-record-001-resolution-01",
-          "claim": "Sensor measurements during comparison are recorded to the nearest 0.01°C or the maximum resolution of the displays, without removing the sensors from the bath.",
+          "claim": "Sensor measurements during comparison are recorded to the nearest 0.01\u00b0C or the maximum resolution of the displays, without removing the sensors from the bath.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "record the sensor measurements to the near-\nest 0.01°C or the maximum resolution of the displays.",
+          "quote": "record the sensor measurements to the near-\nest 0.01\u00b0C or the maximum resolution of the displays.",
           "specificity": "high"
         },
         {
@@ -792,16 +804,16 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__c7ca7bed2501",
       "index": 15,
-      "locator": "Figure 6.1-1 caption and legend — 'Relations of the sensor types defined in section 2.1'",
+      "locator": "Figure 6.1-1 caption and legend \u2014 'Relations of the sensor types defined in section 2.1'",
       "claims": [
         {
           "id": "t-fig-traceable-summary-01",
-          "claim": "Figure 6.1-1 summarizes that a traceable sensor has a documented comparison against a certified sensor at no less than five points between 0 and 40°C annually plus two points no more than 6 months from the five-point verification.",
+          "claim": "Figure 6.1-1 summarizes that a traceable sensor has a documented comparison against a certified sensor at no less than five points between 0 and 40\u00b0C annually plus two points no more than 6 months from the five-point verification.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "points between 0 and 40°C annually and two points no more than 6 months from the five-point",
+          "quote": "points between 0 and 40\u00b0C annually and two points no more than 6 months from the five-point",
           "specificity": "high"
         },
         {
@@ -819,26 +831,26 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__e9e6c8742d58",
       "index": 16,
-      "locator": "Sections 2.2 steps 6-7 and 2.3 Maintenance, Cleaning, and Storage — 'Repeat steps 1–5 in 15°C, 25°C, 30°C, and 40°C'",
+      "locator": "Sections 2.2 steps 6-7 and 2.3 Maintenance, Cleaning, and Storage \u2014 'Repeat steps 1\u20135 in 15\u00b0C, 25\u00b0C, 30\u00b0C, and 40\u00b0C'",
       "claims": [
         {
           "id": "t-bath-points-15-25-30-40-01",
-          "claim": "The traceable-sensor comparison repeats the 0°C bath procedure in 15°C, 25°C, 30°C, and 40°C water baths.",
+          "claim": "The traceable-sensor comparison repeats the 0\u00b0C bath procedure in 15\u00b0C, 25\u00b0C, 30\u00b0C, and 40\u00b0C water baths.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "Repeat steps 1–5 in 15°C, 25°C, 30°C, and 40°C",
+          "quote": "Repeat steps 1\u20135 in 15\u00b0C, 25\u00b0C, 30\u00b0C, and 40\u00b0C",
           "specificity": "high"
         },
         {
           "id": "t-traceable-label-fail-01",
-          "claim": "A sensor that does not check to within ±0.2°C of the certified sensor at all points checked cannot be labeled and used as a traceable sensor.",
+          "claim": "A sensor that does not check to within \u00b10.2\u00b0C of the certified sensor at all points checked cannot be labeled and used as a traceable sensor.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "not check to within ±0.2°C of the certified sensor for all\npoints checked, it cannot be labeled and used as a trace-",
+          "quote": "not check to within \u00b10.2\u00b0C of the certified sensor for all\npoints checked, it cannot be labeled and used as a trace-",
           "specificity": "high"
         },
         {
@@ -878,7 +890,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "sensor’s depth limit, if it has one, and compatibility",
+          "quote": "sensor\u2019s depth limit, if it has one, and compatibility",
           "specificity": "medium"
         },
         {
@@ -946,7 +958,7 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__aa7664732370",
       "index": 17,
-      "locator": "Sections 2.3 logbooks and 3.0 Calibration Verification — 'differ from the process by which a pH or conductivity sensor is adjusted'",
+      "locator": "Sections 2.3 logbooks and 3.0 Calibration Verification \u2014 'differ from the process by which a pH or conductivity sensor is adjusted'",
       "claims": [
         {
           "id": "t-logbook-required-each-equip-01",
@@ -955,7 +967,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "sensor that stores calibration information within the sensor’s",
+          "quote": "sensor that stores calibration information within the sensor\u2019s",
           "specificity": "medium"
         },
         {
@@ -1021,13 +1033,13 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__befd357b2b1f",
       "index": 18,
-      "locator": "Section 3.0, overlap fragment — 'nst a certified or traceable sensor at points'",
+      "locator": "Section 3.0, overlap fragment \u2014 'nst a certified or traceable sensor at points'",
       "claims": []
     },
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__1d1da8dd9efb",
       "index": 19,
-      "locator": "Sections 3.0 Methods 1-2 and 3.1 Determination of Points — 'The minimum number of verification points is two'",
+      "locator": "Sections 3.0 Methods 1-2 and 3.1 Determination of Points \u2014 'The minimum number of verification points is two'",
       "claims": [
         {
           "id": "t-method1-lab-01",
@@ -1081,42 +1093,42 @@
         },
         {
           "id": "t-unknown-range-full-01",
-          "claim": "If the range of expected temperature measurements is not known, the full range of the sensor, 0–40°C, should be checked during calibration verification.",
+          "claim": "If the range of expected temperature measurements is not known, the full range of the sensor, 0\u201340\u00b0C, should be checked during calibration verification.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "not known, the full range of the sensor (0–40°C) should be",
+          "quote": "not known, the full range of the sensor (0\u201340\u00b0C) should be",
           "specificity": "high"
         },
         {
           "id": "t-min-two-points-01",
-          "claim": "The minimum number of calibration verification points is two, and the verification points must be within ±2°C of the minimum and maximum and within ±4°C of the mean of the annual range.",
+          "claim": "The minimum number of calibration verification points is two, and the verification points must be within \u00b12\u00b0C of the minimum and maximum and within \u00b14\u00b0C of the mean of the annual range.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "The minimum number of verification points is two.\nThe verification points must be ±2°C of the minimum and\nmaximum and ±4°C of the mean of the annual range.",
+          "quote": "The minimum number of verification points is two.\nThe verification points must be \u00b12\u00b0C of the minimum and\nmaximum and \u00b14\u00b0C of the mean of the annual range.",
           "specificity": "high"
         },
         {
           "id": "t-points-2c-apart-01",
-          "claim": "Verification points must be at least 2°C apart for sensors measuring small annual ranges.",
+          "claim": "Verification points must be at least 2\u00b0C apart for sensors measuring small annual ranges.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "verification points must be at least 2°C apart for sensors",
+          "quote": "verification points must be at least 2\u00b0C apart for sensors",
           "specificity": "high"
         },
         {
           "id": "t-points-4c-apart-01",
-          "claim": "Verification points should be no more than ±4°C apart unless the sensor measures or will measure large annual ranges.",
+          "claim": "Verification points should be no more than \u00b14\u00b0C apart unless the sensor measures or will measure large annual ranges.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "than ±4°C apart unless the sensor measures or will measure",
+          "quote": "than \u00b14\u00b0C apart unless the sensor measures or will measure",
           "specificity": "high"
         }
       ]
@@ -1124,16 +1136,16 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__18b2d83e251e",
       "index": 20,
-      "locator": "Section 3.1 examples and 3.2 intro — 'The maximum number of points required is five'",
+      "locator": "Section 3.1 examples and 3.2 intro \u2014 'The maximum number of points required is five'",
       "claims": [
         {
           "id": "t-points-10c-large-range-01",
-          "claim": "For sensors measuring large annual ranges, verification points could be as much as ±10°C apart, and the maximum number of verification points required is five.",
+          "claim": "For sensors measuring large annual ranges, verification points could be as much as \u00b110\u00b0C apart, and the maximum number of verification points required is five.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "be as much as ±10°C apart. The maximum number of points\nrequired is five.",
+          "quote": "be as much as \u00b110\u00b0C apart. The maximum number of points\nrequired is five.",
           "specificity": "high"
         },
         {
@@ -1148,32 +1160,32 @@
         },
         {
           "id": "t-example-4-12-01",
-          "claim": "For a site with an annual range of 4°C to 12°C and a mean of 8°C, two verification points at 6°C and 10°C satisfy the requirements.",
+          "claim": "For a site with an annual range of 4\u00b0C to 12\u00b0C and a mean of 8\u00b0C, two verification points at 6\u00b0C and 10\u00b0C satisfy the requirements.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "12°C, the mean is 8°C. Two points verified at 6°C and\n10°C satisfy the requirements",
+          "quote": "12\u00b0C, the mean is 8\u00b0C. Two points verified at 6\u00b0C and\n10\u00b0C satisfy the requirements",
           "specificity": "high"
         },
         {
           "id": "t-example-2-14-01",
-          "claim": "For a site with an annual range of 2°C to 14°C and a mean of 8°C, verification points at 4°C, 8°C, and 12°C satisfy the requirements.",
+          "claim": "For a site with an annual range of 2\u00b0C to 14\u00b0C and a mean of 8\u00b0C, verification points at 4\u00b0C, 8\u00b0C, and 12\u00b0C satisfy the requirements.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "14°C, the mean is 8°C. Points verified at 4°C, 8°C and\n12°C satisfy the requirements",
+          "quote": "14\u00b0C, the mean is 8\u00b0C. Points verified at 4\u00b0C, 8\u00b0C and\n12\u00b0C satisfy the requirements",
           "specificity": "high"
         },
         {
           "id": "t-example-6-38-01",
-          "claim": "For a site with an annual range of 6°C to 38°C, a mean of 22°C, and a measurement range of 32°C, five verification points at 8°C, 18°C, 26°C, 30°C, and 36°C satisfy the requirements.",
+          "claim": "For a site with an annual range of 6\u00b0C to 38\u00b0C, a mean of 22\u00b0C, and a measurement range of 32\u00b0C, five verification points at 8\u00b0C, 18\u00b0C, 26\u00b0C, 30\u00b0C, and 36\u00b0C satisfy the requirements.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "Points verified at 8°C, 18°C, 26°C, 30°C, and\n36°C satisfy the requirements",
+          "quote": "Points verified at 8\u00b0C, 18\u00b0C, 26\u00b0C, 30\u00b0C, and\n36\u00b0C satisfy the requirements",
           "specificity": "high"
         },
         {
@@ -1201,13 +1213,13 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__0c91eabc0b9c",
       "index": 21,
-      "locator": "Section 3.2, overlap fragment — 'n Verification in a Laboratory Using a Water Bath'",
+      "locator": "Section 3.2, overlap fragment \u2014 'n Verification in a Laboratory Using a Water Bath'",
       "claims": []
     },
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__a69ab8527908",
       "index": 22,
-      "locator": "Sections 3.2.1, 3.2.2, and 3.2.2.1 — 'limited to points of 0°C (ice and deionized water [DIW] bath), room temperature (20–25°C)'",
+      "locator": "Sections 3.2.1, 3.2.2, and 3.2.2.1 \u2014 'limited to points of 0\u00b0C (ice and deionized water [DIW] bath), room temperature (20\u201325\u00b0C)'",
       "claims": [
         {
           "id": "t-321-first-point-01",
@@ -1231,27 +1243,27 @@
         },
         {
           "id": "t-322-limited-points-01",
-          "claim": "Without a refrigerated water bath, calibration verification is limited to 0°C using an ice and deionized-water bath, room temperature of 20–25°C, and points above room temperature using a circulated heated water bath.",
+          "claim": "Without a refrigerated water bath, calibration verification is limited to 0\u00b0C using an ice and deionized-water bath, room temperature of 20\u201325\u00b0C, and points above room temperature using a circulated heated water bath.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "This procedure is limited to points of 0°C (ice and deion-\nized water [DIW] bath), room temperature (20–25°C), and",
+          "quote": "This procedure is limited to points of 0\u00b0C (ice and deion-\nized water [DIW] bath), room temperature (20\u201325\u00b0C), and",
           "specificity": "high"
         },
         {
           "id": "t-322-inadequate-01",
-          "claim": "If a sensor is used mainly in the range between 0°C and 25°C, checking it in a laboratory without a refrigerated water bath will not adequately represent the range of expected use and in situ verification procedures must be used instead.",
+          "claim": "If a sensor is used mainly in the range between 0\u00b0C and 25\u00b0C, checking it in a laboratory without a refrigerated water bath will not adequately represent the range of expected use and in situ verification procedures must be used instead.",
           "metrics": [
             "temperature"
           ],
           "type": "conceptual",
-          "quote": "between 0°C and 25°C, checking in a laboratory without a\nrefrigerated water bath will not be adequate to represent the",
+          "quote": "between 0\u00b0C and 25\u00b0C, checking in a laboratory without a\nrefrigerated water bath will not be adequate to represent the",
           "specificity": "high"
         },
         {
           "id": "t-0c-diw-ice-01",
-          "claim": "A verification at a true reading of 0°C requires ice made with deionized water in a bath of deionized water; for a verification near but not at 0°C, ice and a bath made with tap water may be substituted.",
+          "claim": "A verification at a true reading of 0\u00b0C requires ice made with deionized water in a bath of deionized water; for a verification near but not at 0\u00b0C, ice and a bath made with tap water may be substituted.",
           "metrics": [
             "temperature"
           ],
@@ -1261,7 +1273,7 @@
         },
         {
           "id": "t-0c-container-fill-01",
-          "claim": "For the 0°C verification, the container is filled about three-quarters full of deionized ice and then topped with chilled deionized water, and may be as small as a 1,000-milliliter Dewar flask.",
+          "claim": "For the 0\u00b0C verification, the container is filled about three-quarters full of deionized ice and then topped with chilled deionized water, and may be as small as a 1,000-milliliter Dewar flask.",
           "metrics": [
             "temperature"
           ],
@@ -1274,11 +1286,11 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__9e93dc503af6",
       "index": 23,
-      "locator": "Section 3.2.2.1 Calibration Verification at 0°C, steps 3-9 — 'Do not use the sensor to stir the bath'",
+      "locator": "Section 3.2.2.1 Calibration Verification at 0\u00b0C, steps 3-9 \u2014 'Do not use the sensor to stir the bath'",
       "claims": [
         {
           "id": "t-0c-stir-uniform-01",
-          "claim": "During the 0°C verification the bath temperature must be made uniform by stirring and checking at several locations with the certified or traceable sensor, and the sensor must not be used to stir the bath.",
+          "claim": "During the 0\u00b0C verification the bath temperature must be made uniform by stirring and checking at several locations with the certified or traceable sensor, and the sensor must not be used to stir the bath.",
           "metrics": [
             "temperature"
           ],
@@ -1311,22 +1323,22 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__61a80f9e5890",
       "index": 24,
-      "locator": "Section 3.2.2.1, overlap fragment — 'the mean of the three temperature measurements'",
+      "locator": "Section 3.2.2.1, overlap fragment \u2014 'the mean of the three temperature measurements'",
       "claims": []
     },
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__607c227d0afe",
       "index": 25,
-      "locator": "Sections 3.2.2.2 and 3.3 — 'For a “room temperature” verification (about 20–25°C)'",
+      "locator": "Sections 3.2.2.2 and 3.3 \u2014 'For a \u201croom temperature\u201d verification (about 20\u201325\u00b0C)'",
       "claims": [
         {
           "id": "t-room-temp-def-01",
-          "claim": "A room temperature calibration verification is performed at about 20–25°C and is recommended to be done indoors in a climate-controlled or temperature-stable area.",
+          "claim": "A room temperature calibration verification is performed at about 20\u201325\u00b0C and is recommended to be done indoors in a climate-controlled or temperature-stable area.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "For a “room temperature” verification (about 20–25°C),",
+          "quote": "For a \u201croom temperature\u201d verification (about 20\u201325\u00b0C),",
           "specificity": "high"
         },
         {
@@ -1374,7 +1386,7 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__09a7f331e5eb",
       "index": 26,
-      "locator": "Sections 3.3 and 3.3.1 Surface Water In Situ Calibration Verification — 'spaced at quarterly intervals'",
+      "locator": "Sections 3.3 and 3.3.1 Surface Water In Situ Calibration Verification \u2014 'spaced at quarterly intervals'",
       "claims": [
         {
           "id": "t-quarterly-visits-range-01",
@@ -1411,13 +1423,13 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__15dd619633a9",
       "index": 27,
-      "locator": "Section 3.3.1, overlap fragment — 'he mean of the three temperature measurements'",
+      "locator": "Section 3.3.1, overlap fragment \u2014 'he mean of the three temperature measurements'",
       "claims": []
     },
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__ea9841ed69fe",
       "index": 28,
-      "locator": "Sections 3.3.2, 3.3.2.1, and 3.3.2.2 — 'Place a 1-gallon bucket in a box packed with insulation'",
+      "locator": "Sections 3.3.2, 3.3.2.1, and 3.3.2.2 \u2014 'Place a 1-gallon bucket in a box packed with insulation'",
       "claims": [
         {
           "id": "t-gw-removal-disruption-01",
@@ -1474,7 +1486,7 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__f11ee93c4e07",
       "index": 29,
-      "locator": "Sections 3.3.2.2 steps and 4.0 Measurement — 'change less than 0.2°C every 5 minutes'",
+      "locator": "Sections 3.3.2.2 steps and 4.0 Measurement \u2014 'change less than 0.2\u00b0C every 5 minutes'",
       "claims": [
         {
           "id": "t-downhole-offset-01",
@@ -1488,12 +1500,12 @@
         },
         {
           "id": "t-downhole-stability-01",
-          "claim": "During downhole groundwater verification, the operator waits until temperature measurements change less than 0.2°C every 5 minutes in both the certified or traceable sensor and the sensor being verified.",
+          "claim": "During downhole groundwater verification, the operator waits until temperature measurements change less than 0.2\u00b0C every 5 minutes in both the certified or traceable sensor and the sensor being verified.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "Wait until the temperature measurements change less\nthan 0.2°C every 5 minutes in both the certified or",
+          "quote": "Wait until the temperature measurements change less\nthan 0.2\u00b0C every 5 minutes in both the certified or",
           "specificity": "high"
         },
         {
@@ -1521,13 +1533,13 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__448c8d9032ae",
       "index": 30,
-      "locator": "Section 4.0, overlap fragment — 'water-quality samples are collected'",
+      "locator": "Section 4.0, overlap fragment \u2014 'water-quality samples are collected'",
       "claims": []
     },
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__123dac009ada",
       "index": 31,
-      "locator": "Sections 4.0, 4.1 Air, and 4.2.1 Surface Water — 'Place or hang the sensor about 5 feet above the ground'",
+      "locator": "Sections 4.0, 4.1 Air, and 4.2.1 Surface Water \u2014 'Place or hang the sensor about 5 feet above the ground'",
       "claims": [
         {
           "id": "t-sensor-class-usable-01",
@@ -1581,17 +1593,17 @@
         },
         {
           "id": "t-air-equil-3-5min-01",
-          "claim": "The air temperature sensor is allowed 3–5 minutes to equilibrate before the temperature and time of day are recorded.",
+          "claim": "The air temperature sensor is allowed 3\u20135 minutes to equilibrate before the temperature and time of day are recorded.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "Allow 3–5 minutes for the sensor to equilibrate, then",
+          "quote": "Allow 3\u20135 minutes for the sensor to equilibrate, then",
           "specificity": "high"
         },
         {
           "id": "t-air-median-01",
-          "claim": "Air temperature is recorded to the nearest 0.01°C or the maximum display resolution, as three measurements at least 1 minute apart within a 5-minute span, and the median of those measurements is taken for reporting.",
+          "claim": "Air temperature is recorded to the nearest 0.01\u00b0C or the maximum display resolution, as three measurements at least 1 minute apart within a 5-minute span, and the median of those measurements is taken for reporting.",
           "metrics": [
             "temperature"
           ],
@@ -1601,12 +1613,12 @@
         },
         {
           "id": "t-air-report-01deg-01",
-          "claim": "Routine air temperature measurements are reported to the nearest 0.1°C.",
+          "claim": "Routine air temperature measurements are reported to the nearest 0.1\u00b0C.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "Report routine air temperature measurements to the\nnearest 0.1°C.",
+          "quote": "Report routine air temperature measurements to the\nnearest 0.1\u00b0C.",
           "specificity": "high"
         },
         {
@@ -1616,7 +1628,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "sured in situ—do not measure temperature on subsamples\nfrom a sample compositing device.",
+          "quote": "sured in situ\u2014do not measure temperature on subsamples\nfrom a sample compositing device.",
           "specificity": "high"
         },
         {
@@ -1664,7 +1676,7 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__3ffda440df3d",
       "index": 32,
-      "locator": "Section 4.2.1 Surface Water steps 3-6 — 'hold for no less than 60 seconds'",
+      "locator": "Section 4.2.1 Surface Water steps 3-6 \u2014 'hold for no less than 60 seconds'",
       "claims": [
         {
           "id": "t-sw-deep-lower-01",
@@ -1683,7 +1695,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "Still-water conditions.—Measure temperature at\nmultiple depths at several points in the cross section",
+          "quote": "Still-water conditions.\u2014Measure temperature at\nmultiple depths at several points in the cross section",
           "specificity": "medium"
         },
         {
@@ -1698,12 +1710,12 @@
         },
         {
           "id": "t-sw-stabilize-02-median5-01",
-          "claim": "When using a digital thermometer or multiparameter instrument in surface water, wait until the readings stabilize to within 0.2°C, then record the median of approximately the last five values at the maximum resolution of the display.",
+          "claim": "When using a digital thermometer or multiparameter instrument in surface water, wait until the readings stabilize to within 0.2\u00b0C, then record the median of approximately the last five values at the maximum resolution of the display.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "the readings stabilize to within 0.2°C, then record the\nmedian of approximately the last five values.",
+          "quote": "the readings stabilize to within 0.2\u00b0C, then record the\nmedian of approximately the last five values.",
           "specificity": "high"
         },
         {
@@ -1721,13 +1733,13 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__3baa5eab74a8",
       "index": 33,
-      "locator": "Section 4.2.1, overlap fragment — 'ast five values. Record the readings'",
+      "locator": "Section 4.2.1, overlap fragment \u2014 'ast five values. Record the readings'",
       "claims": []
     },
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__467806dee8a0",
       "index": 34,
-      "locator": "Sections 4.2.1 reporting values, 4.2.2 Groundwater, 5.0 Troubleshooting, 6.0 Reporting — 'stable within the 0.2°C criterion'",
+      "locator": "Sections 4.2.1 reporting values, 4.2.2 Groundwater, 5.0 Troubleshooting, 6.0 Reporting \u2014 'stable within the 0.2\u00b0C criterion'",
       "claims": [
         {
           "id": "t-sw-stillwater-median3-01",
@@ -1736,7 +1748,7 @@
             "temperature"
           ],
           "type": "numeric",
-          "quote": "In still water.—Median of three or more sequential",
+          "quote": "In still water.\u2014Median of three or more sequential",
           "specificity": "high"
         },
         {
@@ -1746,7 +1758,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "For equal-discharge increments (EDI).—Mean\nvalue of subsections measured",
+          "quote": "For equal-discharge increments (EDI).\u2014Mean\nvalue of subsections measured",
           "specificity": "high"
         },
         {
@@ -1756,7 +1768,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "For equal-width increments (EWI).—Mean or\nmedian value of subsections measured.",
+          "quote": "For equal-width increments (EWI).\u2014Mean or\nmedian value of subsections measured.",
           "specificity": "high"
         },
         {
@@ -1776,7 +1788,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "Downhole system.—Lower the sensor in the well\nto just below the pump intake",
+          "quote": "Downhole system.\u2014Lower the sensor in the well\nto just below the pump intake",
           "specificity": "medium"
         },
         {
@@ -1811,12 +1823,12 @@
         },
         {
           "id": "t-gw-stability-02-report-01",
-          "claim": "If the groundwater temperature is stable within the 0.2°C criterion, the median of the final five measurements is reported to the nearest 0.1°C.",
+          "claim": "If the groundwater temperature is stable within the 0.2\u00b0C criterion, the median of the final five measurements is reported to the nearest 0.1\u00b0C.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "If the temperature is stable within the 0.2°C\ncriterion, report the median of the final five\nmeasurements to the nearest 0.1°C",
+          "quote": "If the temperature is stable within the 0.2\u00b0C\ncriterion, report the median of the final five\nmeasurements to the nearest 0.1\u00b0C",
           "specificity": "high"
         },
         {
@@ -1854,7 +1866,7 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__c4c215ab7bd4",
       "index": 35,
-      "locator": "Table 6.1-1 Troubleshooting guide — 'The sensor does not read accurately'",
+      "locator": "Table 6.1-1 Troubleshooting guide \u2014 'The sensor does not read accurately'",
       "claims": [
         {
           "id": "t-table-inaccurate-causes-01",
@@ -1863,7 +1875,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "• Weak batteries—replace with new batteries.\n• Calibration expired—verify or recertify.",
+          "quote": "\u2022 Weak batteries\u2014replace with new batteries.\n\u2022 Calibration expired\u2014verify or recertify.",
           "specificity": "high"
         },
         {
@@ -1873,7 +1885,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "• Break in the cables—replace cables, which may require recertification.",
+          "quote": "\u2022 Break in the cables\u2014replace cables, which may require recertification.",
           "specificity": "high"
         },
         {
@@ -1883,7 +1895,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "• Dirty sensor—clean the sensor to remove dirt and oily film.",
+          "quote": "\u2022 Dirty sensor\u2014clean the sensor to remove dirt and oily film.",
           "specificity": "medium"
         }
       ]
@@ -1891,13 +1903,13 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__39a5287b84ed",
       "index": 36,
-      "locator": "Table 6.1-1, overlap fragment — 's—replace with new batteries'",
+      "locator": "Table 6.1-1, overlap fragment \u2014 's\u2014replace with new batteries'",
       "claims": []
     },
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__57056df6e032",
       "index": 37,
-      "locator": "Section 6.0 Reporting and Acknowledgments — 'only data that are verified as accurate to less than or equal to ±0.2°C'",
+      "locator": "Section 6.0 Reporting and Acknowledgments \u2014 'only data that are verified as accurate to less than or equal to \u00b10.2\u00b0C'",
       "claims": [
         {
           "id": "t-negative-values-01",
@@ -1911,22 +1923,22 @@
         },
         {
           "id": "t-nwis-uncertainty-metadata-01",
-          "claim": "When NWIS can store uncertainty, the uncertainty is to be stored with the data as metadata such as ±0.2°C, or as the manufacturer's stated accuracy verified through the section 3.0 calibration verification procedures.",
+          "claim": "When NWIS can store uncertainty, the uncertainty is to be stored with the data as metadata such as \u00b10.2\u00b0C, or as the manufacturer's stated accuracy verified through the section 3.0 calibration verification procedures.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "stored with the data in the form of metadata (like ±0.2°C) or",
+          "quote": "stored with the data in the form of metadata (like \u00b10.2\u00b0C) or",
           "specificity": "high"
         },
         {
           "id": "t-nwis-only-02-01",
-          "claim": "Until NWIS can store uncertainty, only temperature data verified as accurate to less than or equal to ±0.2°C should be stored in NWIS, and data not verified to that accuracy should be published as a USGS data release with its associated verified uncertainty.",
+          "claim": "Until NWIS can store uncertainty, only temperature data verified as accurate to less than or equal to \u00b10.2\u00b0C should be stored in NWIS, and data not verified to that accuracy should be published as a USGS data release with its associated verified uncertainty.",
           "metrics": [
             "temperature"
           ],
           "type": "numeric",
-          "quote": "can store the uncertainty of the data, only data that are verified\nas accurate to less than or equal to ±0.2°C should be stored\nin NWIS.",
+          "quote": "can store the uncertainty of the data, only data that are verified\nas accurate to less than or equal to \u00b10.2\u00b0C should be stored\nin NWIS.",
           "specificity": "high"
         },
         {
@@ -1954,7 +1966,7 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__7406ba571b19",
       "index": 38,
-      "locator": "Selected References — 'NIST, 2023, Definition of Traceability'",
+      "locator": "Selected References \u2014 'NIST, 2023, Definition of Traceability'",
       "claims": [
         {
           "id": "t-refs-list-01",
@@ -1969,14 +1981,14 @@
     {
       "chunkId": "usgs-nfm-a6.1-temperature.pdf__8f1a88bfa6a9",
       "index": 39,
-      "locator": "Selected References and back cover — 'ISSN 2328-7055 (online)'",
+      "locator": "Selected References and back cover \u2014 'ISSN 2328-7055 (online)'",
       "claims": [
         {
           "id": "t-ref-wagner-01",
           "claim": "NFM A6.1 cites Wagner and others (2006), USGS Techniques and Methods book 1 chapter D3, for guidelines and standard procedures for continuous water-quality monitors.",
           "metrics": [],
           "type": "definitional",
-          "quote": "continuous water-quality monitors—station operation,",
+          "quote": "continuous water-quality monitors\u2014station operation,",
           "specificity": "low"
         },
         {
@@ -2017,6 +2029,6 @@
       "Gives no numeric criterion for the 'one-point comparison immediately before the field trip' - it never states how closely that single point must agree with the certified sensor, unlike the +/-0.2 degrees C stated for the five-point comparison.",
       "Contains no procedure, threshold, or definition for turbidity, ORP, or pH measurement itself; the chapter is single-parameter and treats other metrics only as consumers of temperature data."
     ],
-    "notes": "Chunks 4, 7, 10, 16, 19, 22, 25, 28, 31, and 34 are pure 400-character overlap from the preceding chunk plus a page marker and carry no original text; they are recorded with empty claim arrays. Chunk 13 (figure 6.1-1 legend) is OCR-damaged: the 'ti' ligature is replaced by a replacement character throughout ('Cer?fied', 'verifica?on', 'defini?ons'), so quotes were taken only from the undamaged lines, and the figure body itself extracts as a bare grid of C/T/V letters with no readable structure. Table 6.1-1 is split across chunks 32/33/34; chunk 34 carries table rows with the 'Symptom / Possible cause and corrective action' header lost. Chunk 12 contains the page-break seam artifact 'five points between 0°Cand 40°C' with no space, quoted verbatim. Chunk 14 contains the source typo 'should not be submerged in wat' (missing 'er'), quoted verbatim per the no-fixing rule. Chunk 15 carries a section heading broken across a page boundary as '3.0. Calibration Verification of / er Temperature Sensors'. The traceable-sensor five-point 0-40 °C annual comparison is stated three separate times in different wording (box 6.1-1 in chunk 8, section 2.2 in chunks 11-12, figure 6.1-1 in chunk 13), so retrieval for that requirement has three legitimate supporting chunks. Figure 6.1-1 adds a requirement not stated in identical form in the body text: that a traceable sensor must undergo a one-point verification with a certified sensor immediately prior to data collection. Claim count (175) runs above the 60-150 band in the brief because this chapter is unusually requirement-dense: box 6.1-1, section 2.1 definitions, and sections 3.0-4.2 each carry many independently checkable numeric requirements."
+    "notes": "Chunks 4, 7, 10, 16, 19, 22, 25, 28, 31, and 34 are pure 400-character overlap from the preceding chunk plus a page marker and carry no original text; they are recorded with empty claim arrays. Chunk 13 (figure 6.1-1 legend) is OCR-damaged: the 'ti' ligature is replaced by a replacement character throughout ('Cer?fied', 'verifica?on', 'defini?ons'), so quotes were taken only from the undamaged lines, and the figure body itself extracts as a bare grid of C/T/V letters with no readable structure. Table 6.1-1 is split across chunks 32/33/34; chunk 34 carries table rows with the 'Symptom / Possible cause and corrective action' header lost. Chunk 12 contains the page-break seam artifact 'five points between 0\u00b0Cand 40\u00b0C' with no space, quoted verbatim. Chunk 14 contains the source typo 'should not be submerged in wat' (missing 'er'), quoted verbatim per the no-fixing rule. Chunk 15 carries a section heading broken across a page boundary as '3.0. Calibration Verification of / er Temperature Sensors'. The traceable-sensor five-point 0-40 \u00b0C annual comparison is stated three separate times in different wording (box 6.1-1 in chunk 8, section 2.2 in chunks 11-12, figure 6.1-1 in chunk 13), so retrieval for that requirement has three legitimate supporting chunks. Figure 6.1-1 adds a requirement not stated in identical form in the body text: that a traceable sensor must undergo a one-point verification with a certified sensor immediately prior to data collection. Claim count (175) runs above the 60-150 band in the brief because this chapter is unusually requirement-dense: box 6.1-1, section 2.1 definitions, and sections 3.0-4.2 each carry many independently checkable numeric requirements. Chunks 1 and 2 (newly recovered) are pure front matter - the suggested citation, ISSN, and the table-of-contents dot leaders plus the Figures and Tables lists - and carry empty claim arrays. Their only checkable content (the supersession statement and citation, and the one-figure/one-table inventory) was already extracted from chunks 0 and 3, where it also appears; nothing was duplicated into them. The document is now complete at 40/40 chunks."
   }
 }
