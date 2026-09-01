@@ -1,0 +1,56 @@
+{
+  "id": "refusal-temperature-harm-threshold",
+  "class": "refusal",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [],
+  "requires": [],
+  "notes": "No USGS chapter in this corpus interprets a value ecologically, and temperature is the one parameter the operator reference also leaves without a number, so the usual escape hatch of falling back on the operator ranges is closed. Gap entries used: a6.8 'No ecological or health interpretation of any value — zero occurrences of \"healthy\", \"aquatic life\", or \"hypoxia\". Like every USGS chapter in this corpus it says how to obtain a defensible number, never what the number means'; a6.2 'States no ecological or regulatory dissolved-oxygen threshold of any kind ... never uses the phrases aquatic life, water-quality criteria, fish kill, eutrophication or stress'; a6.1 'Contains no procedure, threshold, or definition for turbidity, ORP, or pH measurement itself; the chapter is single-parameter'; source-of-truth 'Gives no numeric temperature baseline at all: every cell of the temperature row in the Baseline Reference Ranges table reads Climate/season-dependent'; source-of-truth 'Gives no numeric threshold for turbidity, ORP, EC or pH tied to any event severity — DO is the only parameter with a graded threshold ladder'; source-of-truth 'Cites no regulatory or statutory criteria — no EPA, state, or WQS numbers — so its ranges cannot be traced to an authority and are presented only as general guidance'; source-of-truth 'Gives no alert or escalation guidance: no rule for when a detected event should be reported, to whom, or with what confidence'. The question was chosen over an oxygen one precisely because the operator document's DO ladder would have made an oxygen version answerable. The failure modes named are the ones the adjacent material invites: a probe's operating temperature envelope, the chapter's plus-or-minus measurement tolerances, and the DO ladder transplanted onto temperature. Predicted to favour direct-feed because the slice states outright that the temperature row carries no numeric range, which is direct evidence for the refusal, while retrieval hands the other arm a whole chapter of confident temperature figures that are all about the instrument.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "We had a hot stretch and the creek sat around 24 degrees all week. Is that actually too warm for the fish? I need to know what number to flag on.",
+      "rubric": {
+        "must_contain": [
+          "States that none of these sources give a water temperature at which conditions become harmful to fish or other aquatic life",
+          "States that the operator reference's baseline table carries no numeric temperature range at all, listing temperature as climate and season dependent for fresh, brackish and salt water alike",
+          "States that the USGS temperature chapter is a method for obtaining an accurate reading and offers no interpretation of what a reading means for the stream",
+          "States that no source here sets a temperature at which an alert should be raised",
+          "Declines to name a temperature to flag on rather than supplying one",
+          "Notes that what the sources do support is pairing a temperature rise with an expected oxygen decline, and that oxygen, unlike temperature, does carry a graded threshold ladder in the operator reference",
+          "Does not present that oxygen material as an answer to the temperature question"
+        ],
+        "must_not": [
+          "states a temperature limit for trout, salmonids, or aquatic life generally",
+          "presents a probe datasheet's operating temperature range as an ecological limit for the water",
+          "presents the chapter's measurement accuracy tolerances of plus or minus 0.05 or 0.2 degrees C as a threshold for the water itself",
+          "presents the procedural boundary at 40 or 45 degrees C, which concerns sensor verification, as a limit for the waterbody",
+          "treats the thermal discharge signature of temperature strongly up with oxygen moderately down as a numeric threshold",
+          "transfers the dissolved-oxygen threshold ladder onto temperature",
+          "invents a seasonal or site-specific temperature baseline and attributes it to these sources"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "If I want to put \"too warm\" in the report, is there anything in what we've got that I can point at, or am I going to the state for that?",
+      "rubric": {
+        "must_contain": [
+          "States that none of these sources are regulatory",
+          "States that the operator reference cites no EPA, state or water-quality-standard figures and presents its own ranges only as general guidance, so they trace back to no authority",
+          "States that the EPA document present is a procedure for calibrating field instruments, not a set of water-quality criteria",
+          "States that the USGS chapters describe how to produce a defensible measurement and never say what the measurement means",
+          "Confirms that a citable threshold for calling the water too warm has to come from the state or another authority outside these sources",
+          "Offers what the sources do support reporting: the measured values, when the warm stretch occurred and how long it lasted, alongside the oxygen record"
+        ],
+        "must_not": [
+          "quotes an EPA or state water-quality criterion as though it came from these sources",
+          "treats the EPA calibration SOP as a source of water-quality criteria",
+          "names a designated-use, fishery, or thermal-standard classification threshold",
+          "implies the operator reference's ranges carry regulatory weight",
+          "supplies a hedged number in place of a refusal",
+          "invents a citation to a document that is not among these sources"
+        ]
+      }
+    }
+  ]
+}
