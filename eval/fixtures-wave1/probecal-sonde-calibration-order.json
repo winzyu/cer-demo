@@ -1,0 +1,54 @@
+{
+  "id": "probecal-sonde-calibration-order",
+  "class": "probe-calibration",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+    "usgs-nfm-a6.3-specific-conductance.pdf",
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+    "usgs-nfm-a6.4-ph.pdf"
+  ],
+  "requires": [],
+  "notes": "Four datasheets sit in the slice, one per probe, and each states its own recalibration interval independently. None of them knows the others exist, so nothing in the slice can say what happens when all four are on one instrument and all four are due. The sequencing rule and its reason, and the rinse practice that makes the sequence work, are outside the slice. Drawn from mp-calibration-order-08, mp-ionic-strength-rationale-09, sc-calibrate-sc-before-ph-01, do-two-point-order-01 (turn 1) and mp-triple-rinse-10, mp-t6-rushed-calibration-08, sc-diw-rinse-three-times-01, sc-standard-rinse-three-times-01, ph-sonde-rinse-01, ph-pour-swirl-discard-01, ph-pour-sit-measure-01 (turn 2). Predicted to favour rag: a direct-feed arm has four unrelated interval statements and no basis at all for an ordering, so it will either decline or invent one.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "We have got the acidity, conductivity, oxygen and redox sensors all hanging off one instrument and they are all due at once. Does it matter what order I work through them in, or can I just start anywhere?",
+      "rubric": {
+        "must_contain": [
+          "States that the order does matter and gives a recommended sequence",
+          "Places temperature first in the sequence",
+          "Places specific conductance before pH",
+          "Places dissolved oxygen and then oxidation-reduction potential after pH",
+          "Explains that the sequence runs from lower to higher ionic strength so carryover from one standard does not bias the next",
+          "Notes specifically that pH buffers and electrode filling solutions are high in ionic strength and would contaminate a conductivity calibration"
+        ],
+        "must_not": [
+          "Tells the operator the order is arbitrary",
+          "Places pH before specific conductance",
+          "Invents an ordering rationale not stated in the manuals",
+          "Derives the sequence from the individual probe datasheets' recalibration intervals"
+        ],
+        "cite": ["usgs-nfm-a6.8-multiparameter-instruments.pdf", "usgs-nfm-a6.3-specific-conductance.pdf"]
+      }
+    },
+    {
+      "role": "user",
+      "content": "What do I need to do to the sensors in between each one so nothing carries over?",
+      "rubric": {
+        "must_contain": [
+          "States that rinsing three times with deionized water between different solutions is required practice",
+          "States that after the deionized-water rinses the sensors are also rinsed with the next standard or buffer itself before it is used",
+          "Describes rinsing the calibration cup as well as the sensors",
+          "Notes that a rushed calibration with inadequate rinsing is a recognised cause of unstable or inaccurate readings"
+        ],
+        "must_not": [
+          "Describes a single rinse as sufficient",
+          "Recommends returning used standard or buffer to its stock bottle",
+          "Invents a rinse count not stated in the manuals"
+        ],
+        "cite": ["usgs-nfm-a6.8-multiparameter-instruments.pdf", "usgs-nfm-a6.4-ph.pdf"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": "crossdoc-do-calibrated-dry-deployed-brackish",
+  "class": "cross-document",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+    "epa-sop-field-instrument-calibration-2010.pdf"
+  ],
+  "requires": [],
+  "notes": "A DO calibration whose inputs are three other metrics — temperature, barometric pressure and conductivity — and whose governing document changes in turn 2. USGS side: do-one-point-goal-01 (create a 100 percent saturated environment with sensor and thermistor at the same temperature), do-proc1-read-precision-01 (pressure to the nearest 1 mmHg, temperature to 0.1 C), do-water-droplets-01 and do-wet-towel-bag-shade-01, do-calibration-corrections-01 and do-auto-salinity-correction-01 / do-auto-salinity-multiparameter-01 (ionic strength estimated from the conductivity sensor, corrected automatically unless switched off), do-salinity-correction-after-01 (the preferred USGS method applies salinity factors AFTER calibration and measurement), do-manual-salinity-recalibration-01 (a manual salinity correction at calibration forces recalibration for every field salinity change), do-temp-controls-solubility-01. A6.8 supplies the record: mp-form-do-columns-05 lists exactly what the DO calibration block captures — calibration temperature, barometric pressure in mm Hg, table reading, salinity correction factor, DO before and after adjustment; mp-t4-nist-thermometer-02 makes the barometer NIST-traceable. Turn 2 moves to the EPA SOP, which prescribes a different cadence and a different check: epa-cal-frequency-daily-01, epa-post-cal-end-of-day-01, epa-midday-check-qualify-01 (only data before a failed midday check needs qualifying), epa-sonde-deploy-cal-01 (deployed sondes are calibrated before deployment and checked on recovery), epa-postcal-do-steps-01 and epa-oxygen-solubility-chart-01 / epa-do-solubility-20c-01 (the post-calibration DO check is read against an oxygen-solubility chart at the measured temperature and barometric pressure), epa-do-dry-sensor-01, epa-postcal-defaults-apply-when-01 (the SOP's tabulated criteria apply only if the project QAPP has none). Neither file answers both turns. Predicted rag: the slice has no calibration content at all for any metric."
+  ,
+  "turns": [
+    {
+      "role": "user",
+      "content": "I calibrate the oxygen sensor in air at the truck and then the pod goes into brackish water. What do I actually have to have right at the truck for that calibration to mean anything once it's in the water?",
+      "rubric": {
+        "must_contain": [
+          "states the goal of the one-point calibration is a 100 percent oxygen-saturated environment with the DO sensor and its temperature sensor at the same temperature",
+          "states barometric pressure must be read at the time of calibration, to the nearest 1 mm Hg, from a calibration-checked barometer",
+          "states temperature must be read to the nearest 0.1 C",
+          "states the reported concentration is computed from the sensor signal together with temperature and ionic strength, so the sensor is not measuring mg/L directly",
+          "states ionic strength for the salinity correction is estimated from the conductivity measurement",
+          "warns to check for water droplets on the optical module and on the temperature sensor after calibrating, and to recalibrate if any were present",
+          "states the USGS preference is to apply salinity correction factors after calibration and measurement rather than during calibration",
+          "notes that entering a manual salinity correction at calibration forces recalibration for each change in field salinity"
+        ],
+        "must_not": [
+          "invents a barometric pressure or temperature reading precision not in the manual",
+          "treats the DO sensor as reading mg/L directly with no computation from temperature and ionic strength",
+          "ignores salinity entirely at a brackish site",
+          "cites a probe datasheet accuracy figure in place of the calibration procedure"
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The contract we're working under says follow the EPA field SOP, not the USGS one. Does that change how often I calibrate and what I do at the end of the day?",
+      "rubric": {
+        "must_contain": [
+          "states the EPA SOP requires calibration at minimum before use on the day the measurements are made",
+          "states the EPA SOP requires a post-calibration check at the end of the day to determine whether the instrument drifted",
+          "states that if a midday check shows drift the instrument can be recalibrated and only data taken before that check needs qualifying",
+          "states a continuously deployed sonde is calibrated before deployment and its calibration checked on recovery",
+          "states the DO post-calibration check is done in measurement mode, recording DO, temperature and barometric pressure for comparison against an oxygen-solubility chart",
+          "states the SOP's own drift criteria apply only when the project quality assurance plan does not specify its own"
+        ],
+        "must_not": [
+          "presents the EPA SOP as replacing the analytical methods it supplements",
+          "invents a numeric drift criterion not present in the SOP",
+          "answers the cadence question from the USGS chapters instead of the EPA SOP",
+          "claims the two documents disagree without support"
+        ],
+        "cite": [
+          "epa-sop-field-instrument-calibration-2010.pdf"
+        ]
+      }
+    }
+  ]
+}

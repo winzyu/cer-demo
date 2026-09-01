@@ -1,0 +1,48 @@
+{
+  "id": "probecal-ph-what-solutions",
+  "class": "probe-calibration",
+  "expected_to_favor": "rag",
+  "answerable_from": ["usgs-nfm-a6.4-ph.pdf"],
+  "requires": [],
+  "notes": "Setup comes from the slice, answer does not. The pH probe datasheet in the diamond-G9 slice states a recalibration interval (ph-recal-interval, slice) but contains no calibration procedure at all - no buffer values, no number of points, no bracketing rule. The operator has that sheet in hand and asks how to actually perform the calibration it tells them to do, which forces the answer into usgs-nfm-a6.4-ph.pdf. Drawn from ph-usgs-two-or-three-point-01, ph-single-point-unacceptable-01, ph-two-nist-brackets-01, ph-cal-curve-brackets-01, ph-buffer-common-values-01, ph-buffer-nist-required-01, ph-buffer-no-expired-01 (turn 1) and ph-example-7-to-8-01, ph-begin-with-ph7-01, ph-buffer-within-10c-01, ph-buffer-temp-adjust-entry-01, ph-buffer-temp-dependence-01 (turn 2). Predicted to favour rag because every element of the answer lives in a manual the direct-feed slice does not contain; a direct-feed arm can only restate the interval or invent a procedure.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "The sheet that came with our pH probe says it is about due for a recalibration, but it never says how to do one. What do I actually dunk it in, and how many different solutions do I need?",
+      "rubric": {
+        "must_contain": [
+          "States that at least two standard solutions are required, not one",
+          "States that a single-point calibration is not acceptable under standard USGS procedure",
+          "Names standard buffer values used for calibration, drawn from 1.68, 4.01, 7.00 and 10.01",
+          "States that the solutions chosen must bracket the pH expected in the water being measured",
+          "States that the buffers must be traceable to a NIST standard and must not be past their expiration date"
+        ],
+        "must_not": [
+          "Tells the operator that a one-point calibration is sufficient",
+          "Invents buffer values that are not standard NIST-traceable buffers",
+          "Answers only with the datasheet's recalibration interval and supplies no procedure",
+          "Attributes the calibration procedure to a probe datasheet"
+        ],
+        "cite": ["usgs-nfm-a6.4-ph.pdf"]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Our creek sits around 7.5 most of the year. Which of those should I pick, and does it matter how cold the bottles are when I pour them out?",
+      "rubric": {
+        "must_contain": [
+          "Selects the pH 7 buffer together with the pH 10.01 buffer for water expected between 7 and 8",
+          "States that calibration begins with the pH 7 buffer when the meter does not dictate an order",
+          "States that buffer temperature should be within about 10 degrees Celsius of the sample temperature",
+          "States that a buffer's pH value shifts with temperature, so the temperature-corrected value must be used rather than the nominal value"
+        ],
+        "must_not": [
+          "Treats the nominal 25 degree Celsius label value as correct at any temperature",
+          "Recommends the pH 4.01 buffer for water expected above pH 7",
+          "Invents a temperature tolerance the manual does not state"
+        ],
+        "cite": ["usgs-nfm-a6.4-ph.pdf"]
+      }
+    }
+  ]
+}

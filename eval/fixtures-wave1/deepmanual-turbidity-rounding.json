@@ -1,0 +1,50 @@
+{
+  "id": "deepmanual-turbidity-rounding",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.7-turbidity.pdf"
+  ],
+  "requires": [],
+  "notes": "Numeric lookup in NFM A6.7 table 6.7-6 (reporting resolution by turbidity range and method). Claims: tby-t6-low-rows-01 (0 to <1 reported to nearest 0.05 under USGS, ASTM, EPA 180.1 and GLI Method 2, nearest 0.01 under ISO 7027; 1 to <10 nearest 0.1 under all five), tby-t6-40-100-row-01 (40 to <100: nearest 1 under USGS/ASTM, nearest 5 under EPA 180.1 and GLI, ISO 7027 not applicable), tby-usgs-conforms-astm-01 (USGS follows ASTM unless the data are for drinking-water compliance under EPA 180.1, GLI Method 2 or ISO 7027). Table 6.7-6 is complete with caption and column header inside chunk 46 — the headerless repeat at the top of chunk 47 is not used. A6.7 is the corpus's only turbidity source; there is no turbidity probe datasheet in the slice, so expected to favor rag is near-certain here.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "The turbidity meter showed 0.42 at one site and 63.7 at another. How many decimal places do we actually keep when we log those?",
+      "rubric": {
+        "must_contain": [
+          "States 0.42 is logged to the nearest 0.05 unit under the USGS convention",
+          "States 63.7 is logged to the nearest 1 unit under the USGS convention",
+          "Attributes the resolutions to the reporting-guidelines table in the USGS NFM turbidity chapter (table 6.7-6)"
+        ],
+        "must_not": [
+          "Invents a reporting resolution not in the table",
+          "Applies one blanket number of decimal places across all turbidity ranges",
+          "Rounds 0.42 to a whole number or keeps 63.7 to two decimals"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "One of those sites feeds a drinking-water intake and that data goes out under EPA Method 180.1. Does the same rounding apply there?",
+      "rubric": {
+        "must_contain": [
+          "States EPA Method 180.1 also uses the nearest 0.05 unit below 1 turbidity unit, the same as USGS",
+          "States EPA Method 180.1 rounds to the nearest 5 units in the 40 to under 100 range, coarser than the USGS nearest 1",
+          "Notes USGS follows ASTM guidelines unless the data were collected for drinking-water compliance under EPA 180.1, GLI Method 2, or ISO 7027"
+        ],
+        "must_not": [
+          "Claims the EPA and USGS resolutions are identical across every range",
+          "Gives an ISO 7027 value for the 40 to 100 range, which the table marks not applicable",
+          "Invents an EPA resolution not in the table"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "id": "definitional-what-a-bare-tu-label-tells-us",
+  "class": "definitional",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "usgs-nfm-a6.7-turbidity.pdf",
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+  ],
+  "requires": [],
+  "notes": "Built from tby-turbidity-unit-generic-01, tby-jtu-ftu-obsolete-01 and a60-tbl601-units-01 (turn 1); tby-nephelometry-definition-01, tby-fnu-family-wavelength-01, tby-ntu-family-wavelength-01, tby-t4-ntu-fnu-90deg-01, tby-t6-fnmu-fnu-expansion-01 (turn 2). Definitional control - what an abbreviation denotes and how a reporting unit is chosen - so 'tie' is expected: the answer is a naming convention stated plainly in one chapter, with no threshold to look up and no reconciliation between documents. Slice check: the operator source-of-truth only says turbidity is reported in NTU or FNU and that NTU is white-light based, FNU infrared based, and the two are not interchangeable (SLICE-EXCLUSION lines 195, 236). It carries nothing on a bare 'TU' label, nothing on JTU or FTU, nothing on what the letters expand to, and - the point of turn 2 - nothing on the second half of the naming rule, the detector geometry, which is what separates the nephelometric labels from the backscatter, attenuation and ratio ones. A slice-only arm can produce the wavelength half and will look partly right while missing the rule.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "We inherited a folder of old clarity readings and the column is just headed 'TU'. What does a bare label like that actually tell us about those numbers?",
+      "rubric": {
+        "must_contain": [
+          "states that TU stands for turbidity units",
+          "states that it is a generic label, used for turbidity measured on instruments whose design is not specified",
+          "states that because the instrument design is unknown, the label does not tell you what light source or optical arrangement produced the number",
+          "warns that older data can also carry historical labels - Jackson turbidity units (JTU) or formazin turbidity units (FTU) - which are no longer in normal use"
+        ],
+        "must_not": [
+          "treats TU as equivalent to NTU or to FNU",
+          "invents a conversion factor between TU and any modern turbidity unit",
+          "assumes the old readings came from a particular manufacturer or instrument"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "So for our own gear, what decides which of those labels we're supposed to write on the readings? Is it just a house style we pick once?",
+      "rubric": {
+        "must_contain": [
+          "states that the label is not a matter of preference - it is determined by the instrument's optical design",
+          "states that the colour of the light source sets one half of the label: a broad-spectrum white light in roughly the 400-680 nm range gives the N-prefixed family, and a near-infrared source in roughly the 780-900 nm range gives the F-prefixed formazin family",
+          "states that the detector arrangement sets the other half: a detector at 90 degrees to the beam is nephelometry and gives the plain nephelometric labels, while backscatter, attenuation, ratio and multibeam arrangements each have their own distinct labels",
+          "gives what the letters expand to for at least the two common cases - NTU as nephelometric turbidity units and FNU as formazin nephelometric units"
+        ],
+        "must_not": [
+          "says the unit can be chosen freely as long as the fleet is consistent",
+          "stops at 'infrared means FNU' and never mentions that the detector geometry is part of the rule",
+          "invents a parameter code or a wavelength figure not supported by the source",
+          "answers from the operator range table's NTU baselines instead of the naming rule"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    }
+  ]
+}

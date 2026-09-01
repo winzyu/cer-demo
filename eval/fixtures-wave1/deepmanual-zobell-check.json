@@ -1,0 +1,51 @@
+{
+  "id": "deepmanual-zobell-check",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.5-orp.pdf"
+  ],
+  "requires": [],
+  "notes": "Numeric acceptance criteria plus timing for the ORP equipment test, deep in NFM A6.5. Claims: orp-test-before-field-01 (tested against ZoBell's before field measurements), orp-pass-criterion-5mv-01 (calculated Eh of ZoBell's within 5 mV of the table 6.5-3 value), orp-table653-25c-430-01 (430 mV theoretical Eh at 25 °C), orp-stabilize-5mv-01 (reading allowed to stabilize to within ±5 mV before recording), orp-equilibrate-15-30-01 (15 to 30 minutes to equilibrate to ambient temperature), orp-stabilize-30min-01 (field reading should stabilize within about 30 minutes), orp-no-stabilize-30min-01 (record the potential and its drift and assume no single quantitative value). Table 6.5-1 and table 6.5-2 are avoided: A6.5's summary notes record 6.5-1 as control-character damaged and 6.5-2 as having its column headers printed after the body. Table 6.5-3 survives intact. Expected to favor rag: the Atlas ORP datasheet in the slice gives recalibration frequencies by application but no verification test and no tolerance, so the slice produces a confident answer to a different question.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Before we trust the ORP numbers from a deployment, how do we prove the electrode is reading right, and what counts as passing?",
+      "rubric": {
+        "must_contain": [
+          "States the check is made against ZoBell's solution before field measurements",
+          "States the calculated Eh of ZoBell's must come within 5 mV of the table value for the solution's temperature",
+          "Gives 430 mV as the theoretical Eh of ZoBell's at 25 °C",
+          "States the reading must stabilize to within ±5 mV before the temperature and millivolt value are recorded"
+        ],
+        "must_not": [
+          "Invents a pass tolerance",
+          "Substitutes the Atlas Scientific ORP datasheet's recalibration schedule for the acceptance test",
+          "Confuses the reference electrode's half-cell potential with the Eh of ZoBell's"
+        ],
+        "cite": [
+          "usgs-nfm-a6.5-orp.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "How long should that take, and what do we do if the reading just never settles?",
+      "rubric": {
+        "must_contain": [
+          "States 15 to 30 minutes are allowed for the ZoBell's solution and the sensors to equilibrate to ambient temperature",
+          "States a field Eh reading should stabilize within about 30 minutes",
+          "States that if it does not stabilize within about 30 minutes, the potential and its drift are recorded and a single quantitative value is assumed not to be possible"
+        ],
+        "must_not": [
+          "Invents a waiting time",
+          "Tells the operator to report a settled Eh value anyway",
+          "Recommends discarding the measurement without recording the drift"
+        ],
+        "cite": [
+          "usgs-nfm-a6.5-orp.pdf"
+        ]
+      }
+    }
+  ]
+}

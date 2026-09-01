@@ -1,0 +1,51 @@
+{
+  "id": "definitional-required-versus-recommended",
+  "class": "definitional",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+    "usgs-nfm-a6.3-specific-conductance.pdf"
+  ],
+  "requires": [],
+  "notes": "Built from a60-required-meaning-01 and a60-recommended-meaning-01 (turn 1) and sc-required-definition-01, sc-recommended-definition-01, sc-nfm-mandate-01 (turn 2). Definitional control: the question is what two words mean as terms of art, not what any single procedure is. Both chapters carry the same front-matter definition, so the answer is short, redundant across the corpus and easy for any arm that retrieves either chapter - hence 'tie'. Slice check: this is the strongest slice-immune definitional topic available. The operator source-of-truth and the four probe datasheets contain no notion of 'required' versus 'recommended' as graded obligations, and no notion of documenting a departure - grep of SLICE-EXCLUSION for 'required'/'recommend' returns only Atlas Scientific product suggestions (cable isolators, probe cleaner, reconditioning kit), which is a different sense of the word entirely. An arm restricted to the slice cannot answer either turn.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Reading through these chapters, some steps are flagged as required and others as recommended. Practically speaking, what's the difference in what we have to do?",
+      "rubric": {
+        "must_contain": [
+          "states that 'required' marks established policy, settled by research or by technical consensus among specialists, and is to be followed as written",
+          "states that 'recommended' means more than one acceptable way of doing it exists",
+          "states that when a recommended step is involved, the reason for picking the option you picked has to be written down"
+        ],
+        "must_not": [
+          "treats the two words as interchangeable emphasis or as stylistic wording",
+          "claims 'recommended' means optional and needs no record",
+          "invents a third category or a numeric grading scheme"
+        ],
+        "cite": [
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "And if a site just won't let us do the required one - no room for the gear, say - is it enough to note it in the log and move on?",
+      "rubric": {
+        "must_contain": [
+          "states that a departure from a required procedure has to be documented",
+          "states that documenting is not sufficient on its own - the departure also has to be independently quality assured",
+          "notes that the same documentation-plus-independent-quality-assurance expectation applies to departures from recommended procedures"
+        ],
+        "must_not": [
+          "says a note in the field log by itself closes the matter",
+          "invents a specific USGS form, approval chain, or sign-off role for the departure",
+          "claims required procedures can never be departed from under any circumstances"
+        ],
+        "cite": [
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ]
+      }
+    }
+  ]
+}

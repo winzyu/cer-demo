@@ -1,0 +1,48 @@
+{
+  "id": "probecal-ec-never-recalibrate",
+  "class": "probe-calibration",
+  "expected_to_favor": "rag",
+  "answerable_from": ["EC_K_1.0_probe.pdf", "usgs-nfm-a6.3-specific-conductance.pdf"],
+  "requires": [],
+  "notes": "This is the deliberately adversarial one in the class. The slice can answer the surface question and answer it wrongly: the conductivity datasheet states an approximately 10 year interval and that the graphite plates do not change, so recalibration is not necessary after the first calibration (ec-recal-interval-01, ec-no-recal-needed-01, both in SLICE-EXCLUSION). A direct-feed arm that stops there tells the operator to never check the sensor again. The governing field practice - check or calibrate before every trip, verify against a check standard at each site, and the numeric pass criterion - is only in usgs-nfm-a6.3-specific-conductance.pdf, which also concedes the manufacturer's point that frequent recalibration is generally unnecessary. Drawn from sc-check-before-field-trip-01, sc-recalibration-unnecessary-01, sc-field-site-check-standard-01, sc-accuracy-criteria-01 (turn 1) and sc-nist-traceable-standards-01, sc-one-point-standard-values-01, sc-bracket-or-near-standards-01, sc-calibrate-above-200-01, sc-check-standard-criterion-01, sc-cell-constant-2-percent-01 (turn 2). Predicted to favour rag because the correct answer requires the distinction between recalibration and verification, which only the manual supplies.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "The vendor sheet for our conductivity sensor says the plates do not change and it never really needs recalibrating after the first time. Is that how we should be running it on a station that reports data, or is there something we still have to do?",
+      "rubric": {
+        "must_contain": [
+          "Acknowledges the manufacturer's position that these sensors hold their calibration and frequent recalibration is generally unnecessary",
+          "States that the sensor must still be checked or calibrated before every field trip",
+          "States that accuracy must be verified at the field site against a standard before measurements are made",
+          "Gives the acceptance criterion as within plus or minus 5 microsiemens per centimetre at or below 100 microsiemens per centimetre, or plus or minus 3 percent above that",
+          "States that the meter is recalibrated when the check fails"
+        ],
+        "must_not": [
+          "Concludes that no recalibration or field verification is ever needed after the first calibration",
+          "Treats the datasheet's approximately 10 year figure as the governing field practice for a reporting station",
+          "Invents an acceptance criterion not stated in the manual"
+        ],
+        "cite": ["usgs-nfm-a6.3-specific-conductance.pdf"]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Fine - so what do I carry to check it with? Our water runs somewhere around 700 in the summer.",
+      "rubric": {
+        "must_contain": [
+          "States that potassium chloride solutions traceable to NIST are the standards used",
+          "States that the standard should be near, or bracket, the expected value in the water being measured",
+          "Recommends staying above 200 microsiemens per centimetre because dilute standards are easily contaminated or diluted",
+          "Identifies a standard appropriate to roughly 700 microsiemens per centimetre from the common values such as 500 or 1,413",
+          "Repeats the same plus or minus 5 microsiemens per centimetre or plus or minus 3 percent criterion for the check standard"
+        ],
+        "must_not": [
+          "Recommends deionized water as a calibration standard",
+          "Recommends a dilute standard below 200 microsiemens per centimetre for this water",
+          "Invents a standard value not discussed in the manual"
+        ],
+        "cite": ["usgs-nfm-a6.3-specific-conductance.pdf"]
+      }
+    }
+  ]
+}

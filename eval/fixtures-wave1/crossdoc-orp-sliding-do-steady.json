@@ -1,0 +1,63 @@
+{
+  "id": "crossdoc-orp-sliding-do-steady",
+  "class": "cross-document",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.5-orp.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+  ],
+  "requires": [],
+  "notes": "The DO-ORP coupling, but pushed past the qualitative statement the slice already carries and onto the question of whether either channel can be believed. ORP verification is A6.5: orp-zobells-shelf-life-01 (90 days chilled at 4 C), orp-table653-25c-430-01 and orp-table653-values-01 (theoretical ZoBell Eh by temperature, 430 mV at 25 C, 443 at 20, 418 at 30), orp-example-22c-01 (the worked check passes within plus/minus 5 mV of the table value), orp-field-cal-equilibrate-01 and orp-equilibrate-15-30-01 (15-30 minutes to thermal equilibrium in the ZoBell), orp-interpolate-tables-01, orp-quinhydrone-30c-01. A6.8 supplies the troubleshooting hook that makes the temperature dependence the first thing to suspect when the check fails (mp-t6-zobell-temperature-11) and the routing of a bad ORP reading back to A6.5 (mp-t6-parameter-chapter-map-06). The DO half of turn 2 is A6.0: a60-xcut-tbl601-all-01 (plus/minus 0.2 mg/L for optical DO) and a60-xcut-sw-60s-median3-01 / a60-xcut-gw-median5-01 (median of the final three or five readings). ORP has no criterion in that table, so A6.5's own constant-potential cadence (orp-reading-cadence-01, orp-thermal-equilibrium-30min-01) is what governs it — a distinction no single file states. Predicted rag: the slice has the DO/ORP coupling and 'trend beats absolute value', but no ZoBell values, no temperature table, and no stabilisation numbers."
+  ,
+  "turns": [
+    {
+      "role": "user",
+      "content": "ORP at one of our pods has slid about 120 mV over two weeks while oxygen has barely moved — still sitting near 6. Before I go tell anyone there's something organic going in upstream, how do I prove the ORP probe itself isn't the thing that's drifting?",
+      "rubric": {
+        "must_contain": [
+          "tells the operator to check the probe against ZoBell's solution rather than judging drift from the trace alone",
+          "states the expected ZoBell value is temperature dependent and must be read from the temperature table, not taken as a single number",
+          "gives the theoretical ZoBell Eh at 25 C as about 430 mV",
+          "states values for temperatures between table rows are interpolated",
+          "states the solution and sensors must be left to reach thermal equilibrium, on the order of 15 to 30 minutes, before the check is read",
+          "gives the pass window for the check as agreement within roughly 5 mV of the table value",
+          "warns that the ZoBell solution has a limited shelf life (about 90 days kept chilled near 4 C), so an old bottle can fail the check on its own"
+        ],
+        "must_not": [
+          "gives a single ZoBell millivolt value with no temperature attached",
+          "invents a ZoBell value or tolerance not in the manual",
+          "answers only that ORP falls as oxygen is consumed and never gives a probe check",
+          "recommends quinhydrone without noting it is not recommended and is unstable above 30 C"
+        ],
+        "cite": [
+          "usgs-nfm-a6.5-orp.pdf",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "And the oxygen side — it moves about 0.3 mg/L between readings at that site. Is that noise or is that a real change I should be logging?",
+      "rubric": {
+        "must_contain": [
+          "gives the USGS stabilisation criterion for optical dissolved oxygen as about plus or minus 0.2 mg/L across five or more consecutive readings",
+          "concludes a spread of about 0.3 mg/L exceeds that criterion, so the sensor has not stabilised and the reading is not yet reportable",
+          "tells the operator to allow longer equilibration and take further readings, then report the median of the final readings",
+          "gives the median rule as the final three or more readings in surface water, or the final five or more in groundwater",
+          "notes that ORP is not covered by that stabilisation table and is instead judged by the potential holding constant over the reading sequence"
+        ],
+        "must_not": [
+          "invents a dissolved-oxygen stabilisation threshold other than the manual's",
+          "treats a 0.3 mg/L spread as within criteria",
+          "reports a mean instead of the median",
+          "applies the dissolved-oxygen criterion to the ORP channel"
+        ],
+        "cite": [
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "usgs-nfm-a6.5-orp.pdf"
+        ]
+      }
+    }
+  ]
+}

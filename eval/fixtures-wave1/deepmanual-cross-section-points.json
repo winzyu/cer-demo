@@ -1,0 +1,52 @@
+{
+  "id": "deepmanual-cross-section-points",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+  ],
+  "requires": [],
+  "notes": "Procedural depth in NFM A6.0 on whether one fixed measurement point represents a stream cross section — directly relevant to a fixed-position pod. Claims: a60-xcut-well-mixed-5pct-01 (profile values of pH, conductivity, temperature and DO differing by less than 5 percent across and top to bottom allow a single centroid point), a60-small-stream-centroid-01 (a well-mixed stream under about 5 feet wide), a60-edi-min-four-01 (EDI minimum four increments), a60-ewi-min-10-increments-01 (EWI minimum 10 equal-width increments in streams 5 feet or wider), a60-xcut-edi-60s-median-01 and a60-xcut-ewi-60s-median-01 (median of values observed within about 60 seconds after equilibration), a60-xcut-sw-60s-median3-01 (at least 60 seconds to equilibrate, median of the final three or more readings). Expected to favor rag: the slice describes what each metric means and how it behaves but says nothing about cross-section representativeness or increment counts.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our pod sits at one fixed spot mid-channel. How do we know that one spot speaks for the whole stream, and if it doesn't, how many spots do we need?",
+      "rubric": {
+        "must_contain": [
+          "States a single point at the centroid of flow is acceptable only after a profile shows the stream is well mixed",
+          "Gives the criterion that profile values of pH, conductivity, temperature and dissolved oxygen differ by less than 5 percent, both across the section and top to bottom",
+          "States a small well-mixed stream under about 5 feet wide can be represented by a single centroid point",
+          "States the equal-discharge-increment method needs a minimum of four increments",
+          "States the equal-width-increment method recommends a minimum of 10 increments in streams 5 feet wide or wider"
+        ],
+        "must_not": [
+          "Invents a percentage criterion for calling a stream well mixed",
+          "Claims a single mid-channel point is always representative",
+          "Invents an increment count the manual does not give"
+        ],
+        "cite": [
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Say we do have to work across the section. How long do we hold at each vertical, and what number goes in the log?",
+      "rubric": {
+        "must_contain": [
+          "States sensors need at least 60 seconds to equilibrate, or the manufacturer's stated time",
+          "States the value recorded at each vertical is the median of the values observed within about 60 seconds after the sensors have equilibrated",
+          "States the reported value for a measurement point is the median of the final three or more readings once the stabilization criteria are met"
+        ],
+        "must_not": [
+          "Says to log a single instantaneous reading at each vertical",
+          "Says to average the readings when the manual calls for the median",
+          "Invents an equilibration time"
+        ],
+        "cite": [
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+        ]
+      }
+    }
+  ]
+}

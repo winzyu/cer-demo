@@ -1,0 +1,53 @@
+{
+  "id": "deepmanual-sonde-settle-time",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+  ],
+  "requires": [],
+  "notes": "Procedural depth plus the stabilization table in NFM A6.8. Claims: mp-60s-surface-water-06 and mp-60s-groundwater-03 (minimum 60 seconds at each new measurement location for the sensors and sonde body to reach thermal equilibrium), mp-60s-longer-manufacturer-07 (the 60 seconds is a minimum only), mp-equilibrium-range-04 (60 seconds to several minutes depending on instrument and temperature difference), mp-stabilize-to-table-01 and mp-t5-temperature-03 / -sc-04 / -do-05 / -ph-06 / -turbidity-07 (table 6.8-5 criteria). Turn 2 is the follow-up an operator asks once told to wait: how do I know it is done. Expected to favor rag: the slice's probe datasheets give sensor response times (1 second to 90 or 95 percent of reading), which is a plausible-looking wrong answer to turn 1, and give no stabilization criteria at all for turn 2.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "When we shift the sonde to a new spot in the creek, how long do we have to leave it there before the readings are worth writing down?",
+      "rubric": {
+        "must_contain": [
+          "States a minimum of 60 seconds at each new measurement location",
+          "Explains the wait is for the sensors and the sonde body to reach the water's temperature",
+          "States the 60 seconds is a floor and some instruments need longer per the manufacturer",
+          "Notes equilibration can run from 60 seconds to several minutes depending on the temperature difference"
+        ],
+        "must_not": [
+          "Invents a shorter wait such as 30 seconds",
+          "Presents 60 seconds as always sufficient rather than a minimum",
+          "Uses a probe datasheet's 1-second response time as the settling time"
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Once we've waited, how do I know the numbers have actually settled and aren't still creeping?",
+      "rubric": {
+        "must_contain": [
+          "States temperature must be stable within ±0.2 °C",
+          "States dissolved oxygen must be stable within ±0.2 mg/L",
+          "States pH must be stable within ±0.1 unit",
+          "States specific conductance must be within ±5 µS/cm at or below 100 µS/cm, and ±3 percent above 100 µS/cm",
+          "States turbidity must be within ±0.5 turbidity units or 5 percent, whichever is greater"
+        ],
+        "must_not": [
+          "Invents a stabilization tolerance not in the table",
+          "Gives the operator baseline healthy ranges instead of stabilization criteria",
+          "Gives criteria for only one or two of the parameters when asked about the sonde as a whole"
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    }
+  ]
+}

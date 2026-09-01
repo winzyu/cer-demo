@@ -1,0 +1,58 @@
+{
+  "id": "crossdoc-cold-water-hot-day-turbidity",
+  "class": "cross-document",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.7-turbidity.pdf",
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+  ],
+  "requires": [],
+  "notes": "A temperature-turbidity coupling that is a measurement artefact rather than a water-quality signal. A6.7 explains the physics and the sampling prohibition: tby-bias-factors-condensation-01 (condensation on the sample cell, common when the water is much colder than the air, biases the reading, alongside cell orientation, colour, bubbles and scratches), tby-transport-temp-difference-01 (temperature change in transport separates benchtop from in-situ values), tby-dynamic-preferred-01 (in-situ or pumped measurement preferred over benchtop because of subsampling, settling, temperature change and cuvette interferences), tby-equilibrate-ambient-warning-01 (equilibrating to ambient reduces condensation but warming can change particle associations), tby-not-flowthrough-discharge-01 (a discrete turbidity sample must NOT be taken from the discharge of the flow-through chamber holding the pH and conductivity sensors), tby-time-sensitive-onsite-01 and tby-ph-change-precipitation-01, tby-storage-amber-4c-24h-01 (amber bottle, out of sunlight, at or below 4 C, no longer than 24 hours). A6.0 supplies the reporting rule the turbidity chapter does not state: fm-subsample-forbidden-params-01 — subsamples must not be used for reported turbidity, temperature, DO or Eh without value qualifiers and comments marking them estimated and subsample-derived; fm-subsample-bias-01 and a60-bailer-turbidity-bias-01. An answer from A6.7 alone explains the condensation and never tells the operator what has to go on the record. Predicted rag: the slice treats turbidity only as an event signature and has nothing on measurement bias or qualifiers."
+  ,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Snowmelt creek, water is about 4 C and it was 30 C and sunny on the bank. My bench readings on grab samples came out consistently higher than what the pod in the water was showing. Which one is lying?",
+      "rubric": {
+        "must_contain": [
+          "identifies condensation on the sample cell as the likely cause, and states it commonly occurs when the water sample is much colder than the air",
+          "names the other bench-measurement biases in the same family: cell orientation, coloured water, gas bubbles, and scratched or dirty sample cells",
+          "states that temperature change during transport from the source water is itself a reason benchtop and in-situ values differ",
+          "concludes the in-situ or pumped measurement is the one to prefer, not the bench value",
+          "notes that letting the sample equilibrate to ambient temperature reduces condensation but warming the sample can change particle associations in the water"
+        ],
+        "must_not": [
+          "attributes the difference to a real turbidity change in the creek",
+          "invents a temperature correction for turbidity",
+          "treats the bench measurement as the reference the sonde should be adjusted to",
+          "answers from turbidity event signatures instead of measurement bias"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "If I do end up having to report a bench number off a grab sample, what has to go with it? And can I just fill the bottle off the outlet of the flow cell while I'm there?",
+      "rubric": {
+        "must_contain": [
+          "states a turbidity value measured on a subsample must not be reported without a value qualifier and a comment marking it as estimated and made on a subsample",
+          "states the same restriction applies to temperature, dissolved oxygen and Eh measured on a subsample",
+          "states plainly that a discrete turbidity sample must not be collected from the discharge passing through the flow-through chamber holding the other sensors",
+          "gives the storage limits if the sample cannot be read on site: clean amber bottle, kept out of sunlight, chilled at or below 4 C, held no longer than 24 hours",
+          "notes turbidity is time sensitive and should be measured on site, preferably in situ"
+        ],
+        "must_not": [
+          "permits sampling turbidity from the flow-cell discharge",
+          "invents a holding time or storage temperature not in the manual",
+          "omits the qualifier requirement for a reported subsample measurement"
+        ],
+        "cite": [
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    }
+  ]
+}

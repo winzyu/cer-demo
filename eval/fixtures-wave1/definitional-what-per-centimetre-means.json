@@ -1,0 +1,52 @@
+{
+  "id": "definitional-what-per-centimetre-means",
+  "class": "definitional",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "usgs-nfm-a6.3-specific-conductance.pdf"
+  ],
+  "requires": [],
+  "notes": "Built from sc-definition-1cm3-25c-01, sc-conductance-inverse-resistance-01, sc-conductivity-normalized-01, sc-usgs-reporting-units-01 (turn 1) and sc-siemens-mhos-equivalence-01, sc-units-mhos-pre1971-01, sc-terms-interchangeable-01 (turn 2). This is the control class: a plain unit-and-terminology question that every retrieval arm should get right, so expected_to_favor is 'tie'. The material sits in one chapter, needs no cross-document reasoning and no deep procedural lookup, so RAG has no advantage and the direct-feed slice, if it could answer at all, would answer identically. Slice check: the operator source-of-truth says only that EC is reported in uS/cm and must be temperature-corrected to 25 C (SLICE-EXCLUSION lines 185, 211, 235). It never says what the quantity is - that conductance is the inverse of resistance in siemens, that conductivity is that conductance normalised to unit length and area, or that specific conductance is the conductance of one cubic centimetre - and it has nothing at all on mhos. Turn 2 in particular is unanswerable inside the slice.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our sonde spits out a number in uS/cm for salt. I get the microsiemens part, but what is the 'per centimetre' actually doing there - is that a reading divided by something, or a property of the water itself?",
+      "rubric": {
+        "must_contain": [
+          "explains that the raw electrical reading, conductance, is the inverse of the water's electrical resistance and is measured in siemens",
+          "explains that dividing through by the electrode geometry - the length and cross-sectional area between the plates - is what turns that raw conductance into a property of the water rather than of the instrument",
+          "states that the resulting quantity is defined as the conductance of one cubic centimetre of the solution",
+          "states that the value is referenced to 25 degrees Celsius, so the same water gives the same number regardless of the temperature it was measured at"
+        ],
+        "must_not": [
+          "claims the unit is a raw meter output with no normalisation, i.e. treats uS/cm as just 'microsiemens, per centimetre of probe'",
+          "invents a numeric cell constant or a conversion factor for this operator's probe",
+          "answers only from the operator range table (50-1,500 uS/cm freshwater etc.) instead of defining the quantity",
+          "confuses the 25 degrees Celsius reference with an instruction to warm or cool the sample"
+        ],
+        "cite": [
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Someone dug up a survey of the same creek from decades back and every salt number in it is written in micromhos per centimetre. Do we have to convert those before we can put them next to ours?",
+      "rubric": {
+        "must_contain": [
+          "states that no conversion is needed because a mho per centimetre and a siemens per centimetre are the same unit under two names",
+          "notes that mhos were the normal reporting unit for older data, with the changeover around 1971",
+          "notes that specific conductance, specific electrical conductance and electrical conductivity are all used in the literature for this same measurement, so a difference in wording is not a difference in quantity"
+        ],
+        "must_not": [
+          "invents a numeric conversion factor between mhos and siemens",
+          "claims micromhos and microsiemens measure different properties",
+          "treats the old values as unusable without saying why they are or are not comparable"
+        ],
+        "cite": [
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ]
+      }
+    }
+  ]
+}

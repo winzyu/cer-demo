@@ -1,0 +1,60 @@
+{
+  "id": "precedence-ph-band-asserted-vs-described",
+  "class": "precedence",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf",
+    "usgs-nfm-a6.4-ph.pdf"
+  ],
+  "requires": [],
+  "notes": "Built from sot-ph-fresh-range-01 and sot-baseline-ph-01 (the operator document asserts 6.5 to 8.5 as the healthy freshwater band) against ph-river-range-6p5-8p5-01 (the USGS pH chapter gives the same numbers only as a description of what uncontaminated river water generally reads) and ph-groundwater-range-01 (6.0 to 8.5 for most US groundwater), with ph-sonde-accuracy-envelope-01 as the distractor. The tension is not a numeric clash: the numbers match. It is asserted band versus described range, and the failure mode is an answer that reports 6.5-8.5 as a USGS criterion because a USGS chapter happens to contain those digits. Turn 2 forces the river-versus-groundwater distinction that the operator band does not make. Direct-feed has only the asserted band and cannot see that the manual never sets it.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "We flag any freshwater site that comes in outside 6.5 to 8.5. Is that a limit somebody official actually set, or is it just a rule of thumb we inherited?",
+      "rubric": {
+        "must_contain": [
+          "States that the operator document is where the 6.5 to 8.5 band comes from, as its healthy freshwater baseline",
+          "States that the USGS pH chapter gives 6.5 to 8.5 only as a description of what river water not affected by contamination generally reads",
+          "Makes clear that the USGS chapter does not set 6.5 to 8.5 as a criterion, limit, or pass/fail threshold",
+          "Notes that the same chapter describes normal daily pH swings driven by photosynthesis, respiration, and temperature changing dissolved carbon dioxide",
+          "Concludes that the flag is a reasonable operating band but is not backed by a threshold the manual established"
+        ],
+        "must_not": [
+          "states that USGS sets, requires, or specifies 6.5 to 8.5 as a pH criterion or standard",
+          "states the operator band as though the USGS manual established it",
+          "treats the sonde accuracy envelope of pH 4.0 to 9.5 as an acceptable-water-quality range",
+          "invents a regulatory pH limit that appears in neither source",
+          "answers only from the operator ranges without checking what the manual actually says"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf",
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "One of our well sites came back at 6.2 last week and it tripped the flag. Should it have?",
+      "rubric": {
+        "must_contain": [
+          "States that the USGS pH chapter puts most groundwater in the United States between 6.0 and 8.5",
+          "States that 6.2 sits inside the range the chapter describes for groundwater",
+          "Distinguishes the described river range from the described groundwater range rather than applying one band to both",
+          "States that the operator band of 6.5 to 8.5 is a surface freshwater baseline, not a groundwater one",
+          "States that neither source sets a limit that a reading of 6.2 breaches"
+        ],
+        "must_not": [
+          "applies the operator's 6.5 to 8.5 freshwater band to a well without qualification",
+          "reports 6.2 as an exceedance of a USGS threshold",
+          "invents a separate groundwater pH criterion not present in either source",
+          "silently drops the distinction between an asserted operator band and a described range"
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf",
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

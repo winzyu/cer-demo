@@ -1,0 +1,61 @@
+{
+  "id": "crossdoc-bailed-orp-jumping",
+  "class": "cross-document",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+    "usgs-nfm-a6.5-orp.pdf"
+  ],
+  "requires": [],
+  "notes": "The verdict that the operator's method is invalid is A6.0 and only A6.0: a60-xcut-bailer-no-do-eh-temp-01 (water subsampled from a bailed sample may not be used for DO, Eh or temperature, because decanting exposes it to the atmosphere), a60-xcut-subsample-valid-params-01 and fm-subsample-forbidden-params-01, a60-anoxic-insitu-required-01 and fm-subsample-anoxic-forbidden-01 (measurements in anoxic or reducing water are required to be in situ unless made under inert gas), a60-xcut-insitu-required-01 (temperature, DO and Eh required in situ; pH, conductivity and turbidity only recommended), a60-xcut-peristaltic-no-do-eh-01 (no suction-lift pump for DO or Eh, because negative pressure volatilises dissolved gases), a60-gw-recommended-pump-cell-01, a60-bailer-turbidity-bias-01. What to do instead, and how long it takes, is A6.5 and only A6.5: orp-in-situ-or-airtight-01 (in situ with a submersible instrument or an airtight flowthrough system that eliminates aeration), orp-purge-oxygen-01 (oxygen-impermeable tubing, airtight fittings, atmospheric oxygen purged from the flow channels), orp-thermal-equilibrium-30min-01 (the potential drifts until thermal equilibrium, which can take longer than 30 minutes), orp-reading-cadence-01 (read every few minutes for the first 15-20 minutes then about every 10 minutes to 30 minutes, until the potential is constant), orp-slow-asymmetric-01 (Eh response is slower than pH and asymmetric between oxidising and reducing directions), orp-report-nearest-10mv-01 (report to the nearest 10 mV with the temperature, the electrode system, and the pH at the time of measurement). Neither file answers both turns. Predicted rag: the slice covers ORP interpretation and the Ag/AgCl-versus-SHE recording point but nothing about how the measurement must be made."
+  ,
+  "turns": [
+    {
+      "role": "user",
+      "content": "We've been pulling water up out of a monitoring well with a bailer, tipping it into a beaker and reading ORP off that. Numbers jump all over the place between samples. Is the probe bad or is our method bad?",
+      "rubric": {
+        "must_contain": [
+          "states the method is the problem: a bailed and decanted subsample must not be used for ORP",
+          "gives the reason as exposure to the atmosphere during decanting",
+          "states the same restriction applies to dissolved oxygen and temperature measured on that subsample",
+          "states ORP, dissolved oxygen and temperature are required to be measured in situ where possible, while pH, conductivity and turbidity are only recommended to be",
+          "states that in anoxic or reducing groundwater, subsample procedures must not be used at all unless the sample is handled under an inert gas",
+          "warns that a peristaltic or other suction-lift pump also must not be used for ORP or dissolved oxygen, because negative pressure volatilises dissolved gases"
+        ],
+        "must_not": [
+          "diagnoses a failed ORP probe as the primary cause",
+          "suggests reading the beaker faster or covering it as an acceptable fix",
+          "invents a tolerance for beaker-measured ORP",
+          "treats the bailer method as acceptable with a qualifier"
+        ],
+        "cite": [
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Right, so we put it in a flow cell instead. How long before the number is actually real, and what do I have to log alongside it?",
+      "rubric": {
+        "must_contain": [
+          "states the measurement must be made in situ with a submersible instrument or through an airtight flowthrough system that eliminates aeration",
+          "states the tubing must be relatively impermeable to oxygen, the fittings airtight, and atmospheric oxygen purged from the tubing and flow channels before measuring",
+          "states the reading drifts until thermal equilibrium is reached and that this can take longer than 30 minutes",
+          "gives the reading cadence: every few minutes for the first 15 to 20 minutes, then roughly every 10 minutes out to about 30 minutes, until the potential holds constant",
+          "notes the ORP system responds more slowly than pH and asymmetrically, taking longer in one direction than the other",
+          "states the value is reported to the nearest 10 mV",
+          "states the temperature, the electrode system used, and the pH at the time of measurement must be recorded with the value"
+        ],
+        "must_not": [
+          "gives a settling time shorter than the manual's without saying it is a minimum",
+          "reports ORP to a precision finer than the nearest 10 mV",
+          "omits the requirement to record temperature and pH alongside the ORP value",
+          "invents a stabilisation criterion in millivolts"
+        ],
+        "cite": [
+          "usgs-nfm-a6.5-orp.pdf"
+        ]
+      }
+    }
+  ]
+}

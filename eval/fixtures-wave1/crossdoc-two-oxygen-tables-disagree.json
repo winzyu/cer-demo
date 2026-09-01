@@ -1,0 +1,63 @@
+{
+  "id": "crossdoc-two-oxygen-tables-disagree",
+  "class": "cross-document",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+    "epa-sop-field-instrument-calibration-2010.pdf",
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+  ],
+  "requires": [],
+  "notes": "Deliberately impossible from one file: the operator has two saturation tables and wants to know which number to hold the sensor to. USGS table 6.2-2 gives 9.09 mg/L at 20.0 C and 760 mmHg (do-t622-20c-750-897-01, which also gives 8.97 at 750) and is generated from the Benson and Krause equations (do-tables-benson-krause-01); the EPA SOP's attached Oxygen Solubility at Indicated Pressure chart gives 9.06 mg/L at 20 C and 760 mmHg and 8.69 at 730 mmHg (epa-do-solubility-20c-01, epa-oxygen-solubility-chart-01, epa-do-solubility-units-mgl-01). That few-hundredths difference is real and small, and A6.0's stabilisation criterion for optical DO of plus/minus 0.2 mg/L (a60-xcut-tbl601-all-01) is what puts it in perspective — a third file, needed to answer 'does it matter'. Turn 2 turns on coverage rather than values: the EPA chart runs 0 to 45 C (epa-do-solubility-range-45c-01) and down to 690 mmHg (epa-do-solubility-lowpressure-block-01, epa-do-solubility-0c-725-01), while USGS table 6.2-2 runs to 40 C at most (do-t622-40c-600-496-01) but down to 600 mmHg (do-t622-block2-header-01, do-t622-block1-header-01 for the 700-795 block), and only the USGS chapter carries salinity correction factors (do-table624-title-01, do-t624-identity-01, do-saline-above-2000-01). An arm holding only one of these documents cannot compare them and will present its single table as the answer. Predicted rag: the slice has no solubility values at all."
+  ,
+  "turns": [
+    {
+      "role": "user",
+      "content": "I've got two oxygen saturation tables in front of me — the USGS one and the one stapled to the back of the EPA field SOP. At 20 degrees and standard pressure they don't give me quite the same number. Which one am I supposed to hold the sensor to?",
+      "rubric": {
+        "must_contain": [
+          "gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L",
+          "gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L",
+          "states the difference is a few hundredths of a mg/L, not a meaningful disagreement",
+          "notes the USGS values are generated from the Benson and Krause equations",
+          "puts the difference against the USGS stabilisation criterion for optical dissolved oxygen of about plus or minus 0.2 mg/L, which is far larger",
+          "advises using the table belonging to whichever protocol the work is being done under, consistently, rather than mixing them"
+        ],
+        "must_not": [
+          "presents one table's value without acknowledging the other",
+          "describes the two documents as contradicting each other",
+          "invents a solubility value for either table",
+          "recommends averaging the two values"
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "epa-sop-field-instrument-calibration-2010.pdf",
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "We're going up to a high-desert site — thin air, and the water can push past 40 in the shallows in August. Will either table still cover me up there?",
+      "rubric": {
+        "must_contain": [
+          "states the EPA chart's temperature coverage runs to 45 C and gives no value above that",
+          "states the USGS solubility table stops at 40.0 C, its highest tabulated temperature",
+          "states the USGS table extends down to 600 mmHg, lower than the EPA chart",
+          "states the EPA chart bottoms out around 690 mmHg",
+          "concludes the two tables cover different corners, so the choice depends on whether low pressure or high temperature is the binding constraint at that site",
+          "notes only the USGS chapter supplies salinity correction factors, which the EPA chart does not carry"
+        ],
+        "must_not": [
+          "invents a table value outside the tabulated range",
+          "extrapolates either table past its stated limits without saying it is doing so",
+          "claims either table covers the full range of both temperature and pressure"
+        ],
+        "cite": [
+          "epa-sop-field-instrument-calibration-2010.pdf",
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    }
+  ]
+}

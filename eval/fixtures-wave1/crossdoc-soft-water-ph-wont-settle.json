@@ -1,0 +1,62 @@
+{
+  "id": "crossdoc-soft-water-ph-wont-settle",
+  "class": "cross-document",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.4-ph.pdf",
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+  ],
+  "requires": [],
+  "notes": "A pH problem whose cause and whose acceptance criterion both live outside the pH chapter's own answer. Cause and fix are A6.4: ph-low-sc-threshold-01 and ph-table642-low-ionic-01 (below 100 microsiemens per centimetre the water is not conductive enough to complete the circuit and the reading is unstable), ph-low-sc-causes-01 (ionic-strength mismatch with the buffers, larger liquid-junction potential), ph-table642-low-ionic-electrode-01 (fast-responding liquid-filled, Ross combination, or double-junction electrode), ph-kcl-method-01 / ph-kcl-procedure-01 / ph-kcl-bias-01 / ph-kcl-trigger-01 (20 mg KCl into 250 mL raises SC by about 150 microsiemens per centimetre and shifts pH by under 0.01 unit, used only after the normal procedure fails), ph-kcl-other-salts-01. A6.0 carries a handling rule the pH chapter does not: fm-no-stir-below-100-01 / a60-xcut-ph-no-stir-below-100-01 — do not stir a subsample below 100 microsiemens per centimetre. A6.8 carries the acceptance criterion that is itself conditioned on conductivity: mp-form-ph-criteria-06 — plus/minus 0.1 pH unit, relaxed to plus/minus 0.3 when specific conductance is below 75 microsiemens per centimetre. Answer from A6.4 alone and the operator stirs the beaker and holds the wrong tolerance. Predicted rag: the slice's only relevant content is a freshwater pH band of 6.5-8.5 and a baseline conductivity range, neither of which touches low-ionic-strength pH measurement."
+  ,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Headwater stream, very soft water, conductivity sits around 55. The pH reading never settles — it wanders half a unit and keeps creeping. Probe is new. What's actually going on and what do I do about it?",
+      "rubric": {
+        "must_contain": [
+          "identifies water below about 100 microsiemens per centimetre as low ionic strength, which is the cause rather than a faulty probe",
+          "explains that the water is not conductive enough to complete the electrical circuit for a stable reading with a combination electrode",
+          "names the large ionic-strength difference between sample and buffers and the enlarged liquid-junction potential as contributing causes",
+          "recommends a different electrode type for such water (fast-responding liquid-filled, Ross combination, or double-junction)",
+          "describes the potassium chloride addition as the sanctioned fix, raising specific conductance by roughly 150 microsiemens per centimetre",
+          "states the KCl addition changes the measured pH by less than about 0.01 unit",
+          "states the KCl procedure is used only after the normal procedure has been tried and the reading would not stabilise",
+          "warns that a subsample below 100 microsiemens per centimetre must not be stirred"
+        ],
+        "must_not": [
+          "tells the operator to stir or use a magnetic stirrer to speed stabilisation",
+          "invents a KCl mass or a resulting conductivity increase not in the manual",
+          "attributes the instability to probe failure and stops there",
+          "recommends low-ionic-strength buffers for field use without noting they are easily contaminated"
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf",
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "So when I do my buffer check at this site, how close does it have to land before I stop fiddling with it? Same number as at our estuary pod?",
+      "rubric": {
+        "must_contain": [
+          "states the normal pH calibration acceptance criterion is about plus or minus 0.1 pH unit",
+          "states that the criterion is relaxed to about plus or minus 0.3 pH unit when specific conductance is below about 75 microsiemens per centimetre",
+          "makes clear the tolerance is conditioned on the conductivity of the water, so the soft-water site and the estuary site are not held to the same bar",
+          "notes separately that a post-calibration buffer check should read within about 0.05 pH unit of that buffer's certified value at the calibration temperature"
+        ],
+        "must_not": [
+          "applies a single pH tolerance to both sites",
+          "invents a conductivity threshold other than the one in the manual",
+          "confuses the calibration acceptance criterion with the stabilisation criterion for recording a reading"
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    }
+  ]
+}

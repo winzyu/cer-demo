@@ -1,0 +1,52 @@
+{
+  "id": "followup-mixing-the-clarity-bottle",
+  "class": "follow-up",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.7-turbidity.pdf"
+  ],
+  "requires": [],
+  "notes": "Built from tby-static-invert-25-no-shake-01, tby-bottle-invert-25-1s-01 and tby-first-readings-settling-01 (turn 1) and tby-storage-amber-4c-24h-01 (turn 2). Conversational dependency is the point: turn 2 is 'And if we can't get to it until the next morning?' - no subject noun at all. Dropped into a fresh conversation it is meaningless; it only resolves because turn 1 established a filled sample bottle waiting to be read on a bench meter. Shape is procedure-then-its-awkward-case. expected_to_favor is 'rag' rather than 'tie' because the answer is a set of small handling specifics - the inversion count and cycle, the do-not-shake instruction, the amber bottle, the 4 degree ceiling and the 24-hour limit - buried in the sample-handling sections of one chapter, which is exactly what retrieval is supposed to reach and what a fixed context slice cannot. Slice check: the operator source-of-truth carries turbidity ranges and the NTU/FNU distinction and nothing whatsoever on grab-sample handling or hold times, so neither turn is slice-answerable.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "We fill a bottle at the creek and read it on the bench meter back at the truck. How are we supposed to mix it before it goes into the little glass tube - is a good shake fine?",
+      "rubric": {
+        "must_contain": [
+          "says not to shake the sample, because shaking beats air into it",
+          "says to mix by turning the bottle end over end about 25 times, roughly one turn per second",
+          "says to let the bubbles clear before filling the measurement cell",
+          "notes that reading straight from the bottle into the cell is best avoided, and that if it cannot be avoided the sample is poured off immediately after mixing so the particles do not settle out"
+        ],
+        "must_not": [
+          "recommends shaking, vortexing or stirring the sample",
+          "invents a settling or rest time not supported by the source",
+          "answers with the operator turbidity ranges instead of the handling procedure"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "And if we can't get to it until the next morning?",
+      "rubric": {
+        "must_contain": [
+          "states that the sample must be held no longer than 24 hours",
+          "states that it has to be chilled, at or below 4 degrees Celsius",
+          "states that it goes in a clean amber bottle and is kept out of sunlight",
+          "frames holding the sample as a fallback for when immediate measurement is not possible, not as normal practice"
+        ],
+        "must_not": [
+          "invents a longer hold time or a different storage temperature",
+          "says the sample can simply be refrigerated indefinitely",
+          "loses the thread and answers about sensor storage or calibration-standard shelf life instead of the water sample"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "id": "refusal-buffering-capacity-not-measured",
+  "class": "refusal",
+  "expected_to_favor": "direct-feed",
+  "answerable_from": [],
+  "requires": [],
+  "notes": "The richest gap in the pool: usgs-nfm-a6.6-alkalinity.pdf is a complete, confident USGS manual on a metric this system does not measure. The six metrics are dissolvedOxygen, orp, ph, conductivity, temperature and turbidity; alkalinity and ANC are not among them. Gap entries used: a6.6 'Alkalinity and ANC are not among the six metrics this system measures, and the document gives no way to infer alkalinity or ANC from any sonde-measurable parameter. Every value it produces comes from a bench acidimetric titration of a grab sample'; a6.6 'Gives no relationship between alkalinity and specific conductance and no way to estimate either from the other'; a6.6 'The many pH numbers in this document ... are titration-curve landmarks, not pH measurement specifications'; source-of-truth 'Covers only the six DataPod parameters; nutrients, alkalinity, hardness, bacteria and BOD are referenced as concepts but never as measurable parameters with ranges.' The question is asked in plain operator language (how much acid the water can soak up) so it retrieves a6.6 semantically without borrowing its vocabulary. Predicted to favour direct-feed: the slice contains no alkalinity material at all, so that arm has nothing to be tempted by, while retrieval hands the RAG arm a whole manual of relevant-looking procedure for a metric the system cannot produce.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Before we call a pH drop at the mill creek a real event, I want to know how much acid that creek can soak up before the pH actually moves. Can our pods tell me that?",
+      "rubric": {
+        "must_contain": [
+          "States that the water's capacity to absorb acid is not one of the parameters this system measures",
+          "States plainly that the question cannot be answered from what the system measures",
+          "Notes that the corpus does contain a USGS chapter covering alkalinity and acid neutralizing capacity",
+          "States that every value that chapter produces comes from a bench acid titration of a collected sample, not from a deployed sensor",
+          "States that the chapter gives no way to infer that capacity from any sensor-measurable parameter",
+          "Offers what the system can genuinely contribute instead, such as the measured pH record itself, without presenting it as a substitute"
+        ],
+        "must_not": [
+          "answers using the alkalinity titration procedure as though it applied to a measured metric",
+          "reports an alkalinity or acid-neutralizing-capacity value, range, or typical figure as if the system could produce one",
+          "presents the alkalinity chapter's titration-curve pH landmarks such as 8.3, 4.5 or 5.5 as thresholds for the measured pH reading",
+          "invents a relationship converting a measured parameter into buffering capacity",
+          "silently substitutes the pH reading for the thing that was asked about"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Those pods are already logging pH and conductivity every fifteen minutes. Is there really no way to work it out from those two?",
+      "rubric": {
+        "must_contain": [
+          "States that no source in the corpus gives a relationship between the water's acid-absorbing capacity and specific conductance",
+          "States that no source gives a way to estimate one from the other",
+          "States that the alkalinity chapter uses conductivity only as a decision threshold for how to run the titration, never as an input to the result",
+          "States that the measured pH alone does not yield it either",
+          "Declines to produce an estimate rather than offering an approximate conversion"
+        ],
+        "must_not": [
+          "supplies a formula, ratio, or rule of thumb converting conductivity or pH into buffering capacity",
+          "treats the conductivity thresholds in the alkalinity chapter as an alkalinity-conductivity relationship",
+          "cites an external calculator or model as though its contents were available in the corpus",
+          "offers a hedged numeric estimate in place of a refusal"
+        ]
+      }
+    }
+  ]
+}
