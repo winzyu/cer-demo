@@ -3408,10 +3408,34 @@
     }
   ],
   "summary": {
-    "totalClaims": 0,
-    "byMetric": {},
-    "byType": {},
-    "gaps": [],
-    "notes": "PARTIAL — agent terminated by an account spend limit mid-write. Chunk coverage is incomplete and summary/gaps were never produced."
+    "totalClaims": 303,
+    "byMetric": {
+      "conductivity": 2,
+      "dissolvedOxygen": 1,
+      "ph": 6,
+      "temperature": 11,
+      "turbidity": 303
+    },
+    "byType": {
+      "conceptual": 71,
+      "definitional": 42,
+      "numeric": 75,
+      "procedural": 115
+    },
+    "gaps": [
+      "States no accuracy, precision, or resolution specification for any turbidity instrument. Every question of the form 'what accuracy must a turbidity sensor meet' is deferred to the manufacturer ('consult the manufacturer's specification for the expected accuracy of the measurement'). The only numeric acceptance criteria in the whole document are the field check that calibration has been retained within 5 percent and the plus-or-minus 10-percent agreement required among three sequential readings.",
+      "Gives no calibration interval. It says to calibrate before leaving for the field and to check performance 'periodically' in the field, but never states how often a turbidity sensor must be recalibrated in days, weeks, or deployments; that is referred to Wagner and others (2000) and to manufacturer instructions. The only interval it does give, approximately every 2 to 4 weeks, is an optics-cleaning frequency for deployed sensors, not a calibration interval.",
+      "Gives no conversion factor, regression, or correction between NTU and FNU, or between any other pair of reporting units. It states the opposite repeatedly (units are equivalent only when measuring a formazin calibrant; readings from different designs can differ by factors of two or more on the same environmental sample; relations among instrument types are site specific) but supplies no method for reconciling values from two designs.",
+      "Gives no ambient turbidity criterion or threshold for any water use other than drinking water. There is no aquatic-life, estuarine, recreational, or Clean Water Act numeric turbidity limit anywhere in the document; the only numbers of that shape are instrument method ranges (EPA 180.1 applicable 0 to 40 NTU without dilution) and typical background observations (drinking-water sources often below 1 turbidity unit, ground water generally below 5).",
+      "Contains no procedure for continuous-monitor record computation, drift correction, or data correction over a deployment. Section 6.7.3.B states explicitly that long-term deployment guidelines 'are beyond the scope of this section' and refers the reader to Wagner and others (2000). An operator asking how to correct a fouled continuous turbidity record retrieves only the pointer.",
+      "Says nothing about whether or how a turbidity reading depends on water temperature. Temperature appears only as a sample-handling variable (chill at or below 4 degrees C, holding time not to exceed 24 hours; condensation when the sample is much colder than air; warming may change particle associations; turbidity-free water at 20-25 degrees C for dilutions). There is no temperature-compensation coefficient, no statement that turbidity is or is not temperature-compensated, and no temperature range of operation for any sensor.",
+      "Gives no probe-level hardware specification: no depth rating, cable length, power draw figure, wiper duty cycle, sensor response time, warranty, or service life. Instrument-specific facts are pushed to the manufacturer and to an external spreadsheet (http://water.usgs.gov/owq/turbidity_codes.xls) that is not part of this corpus, so any question naming a specific instrument model, parameter code, or method code beyond the handful in tables 6.7-3 and 6.7-4 is unanswerable from retrieval.",
+      "States no method detection limit. It says instrument reliability often decreases below 2 turbidity units and that USGS traditionally censored data below 2 NTU as not-detected, and table 6.7-6 gives reporting resolution down to 0.05 (0.01 for ISO 7027), but it never gives a detection limit for any instrument design and directs the operator to have low-turbidity samples confirmed by the NWQL instead.",
+      "Says nothing about turbidity in estuarine or saline water. Salinity is never mentioned as a matrix property, an interference, or a calibration consideration; tables 6.7-1 and 6.7-2 cover color, particle size, particle density, bubbles, fouling and stray light but not ionic strength or salinity.",
+      "Gives no acceptance tolerance for a prepared calibrant. It requires Calibration Turbidity solutions to be 'traceable and equivalent to the reference turbidity calibrant to within accepted statistical errors' and gives a full scratch-formazin recipe, but never states what percent agreement against the nominal value makes a prepared or commercial calibrant acceptable.",
+      "Gives no sonde-level or cross-sensor guidance even though it acknowledges turbidity sensors are commonly bundled with temperature, specific conductance, dissolved oxygen, and pH sensors. There is no calibration order for a multiparameter bundle, no statement of whether immersing a whole sonde in turbidity calibrant affects the other sensors, and no combined QC procedure; the one cross-sensor instruction is negative (do not sample the discharge from the flowthrough chamber holding the pH and conductivity sensors).",
+      "Provides no ORP or dissolved-oxygen content of any kind, and no pH or conductivity measurement procedure. pH and conductivity appear only incidentally (sample pH shifts causing precipitation during holding; the flowthrough-chamber sampling prohibition), so retrieval on those metrics against this document returns near-misses rather than answers."
+    ],
+    "notes": "Complete: all 51 chunks extracted (chunks 2-26 in an earlier pass, chunks 0-1 and 27-50 in this one). This document is the corpus's only source of turbidity method; there is no turbidity probe datasheet, so its NTU/FNU material in chunks 8, 9, 13 and 41 is unique and unduplicated. Empty-claim chunks: 0 and 1 are contents/illustration-list front matter with dot leaders, and 48, 49 and 50 are the Selected References list; all five are correctly empty rather than filler. Table 6.7-6 (reporting-resolution guidelines) appears complete with its caption and column header inside chunk 46; the same grid then reappears as the 400-character prepended overlap at the top of chunk 47, where it is a bare headerless number grid, so a retrieval hit on chunk 47's opening alone cannot tell which column is USGS, ASTM, EPA 180.1, GLI Method 2 or ISO 7027 -- the table rows are attributed to chunk 46 only. Chunk 36 carries the dilution equation as scrambled OCR layout ('T s \\tT d / V o \\tV s + ( ) / V s ----------- x =') so the formula itself is not retrievable as text; only the worked example (30 units at a 5:1 dilution equals 180 units) and the variable definitions are usable. Internal inconsistency worth knowing before questions are written: technical note (2) in chunk 8 defines the white/broadband NTU family as 400-680 nm, but the figure 6.7-2 decision tree in chunk 13 describes white-light instruments as 400-900 nm. A second inconsistency: section 6.7.5 in chunk 45 cites the turbidity codes spreadsheet as 'accessed 6/15/2012' in one sentence and 'accessed 9/30/2005' in the next, inside a document dated version 2.1 (9/2005). Two well-known reference works that would answer several of the gaps above (Wagner and others, 2000, for continuous monitors, and ASTM D6855-03 for turbidity below 5 NTU in static mode) exist in this document only as reference-list entries, which are recorded with no claims."
   }
 }

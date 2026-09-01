@@ -1942,6 +1942,460 @@
           "specificity": "medium"
         }
       ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__a038c4c76937",
+      "index": 32,
+      "locator": "Section 3.2 well-type bullets and section 3.2.1 Summary of Well-Purging Protocols - \"The standard USGS well-purging protocol is to remove three or more well casing volumes\"",
+      "claims": [
+        {
+          "id": "a60-inline-before-tanks-01",
+          "claim": "The field-measurement system at a supply well should be connected to the supply plumbing inline before, or as it bypasses, holding tanks, back-flow pressure tanks, flow meters, or chemical treatment systems.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "nected to the supply plumbing inline before or as it\nbypasses holding tanks, back-flow pressure tanks,\nflow meters, or chemical treatment systems.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-monitor-well-depth-interval-01",
+          "claim": "At monitor wells that allow downhole access the depth interval at which measurements will be made or from which water will be withdrawn must be determined from the well construction and study design, and the depth at which the pump intake is set within the screened or open interval must be recorded.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Record the depth at which the pump intake is set within\na given screened or open interval.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-monitor-well-three-volume-01",
+          "claim": "At monitor wells the standard three-volume purging protocol typically is appropriate, in contrast to supply wells where it may not be.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "The standard three-volume purging protocol typi-\ncally is appropriate.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-monitor-well-flowcell-preferred-01",
+          "claim": "Either direct-measurement or subsample procedures can be used at monitor wells, but if samples for laboratory analysis will also be collected the flow-through cell/chamber inline-flow system is recommended to avoid possible sample contamination from a downhole sensor system or bailer.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If samples for\nlaboratory analysis will be collected, use of the flow-\nthrough cell/chamber system (inline-flow procedure)\nis recommended in order to avoid possible sample",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-purge-standard-protocol-01",
+          "claim": "The standard USGS well-purging protocol is to remove three or more well casing volumes of water while monitoring the water level and the stabilization of field parameters as a function of time, pumping rate, and volume of water removed.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "The standard USGS well-purging protocol is to remove\nthree or more well casing volumes of water while monitoring\nthe water level and the stabilization of field parameters as a",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-routine-gw-params-01",
+          "claim": "The routine field measurements made during well purging are pH, temperature, conductivity, dissolved-oxygen concentration, and turbidity; Eh is not among them.",
+          "metrics": [
+            "ph",
+            "temperature",
+            "conductivity",
+            "dissolvedOxygen",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Routine field measurements include\npH, temperature, conductivity, DO concentration, and turbid-\nity.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-purge-stabilization-assumption-01",
+          "claim": "The purging procedure assumes that stabilization of the field parameters indicates the water discharged from the well represents ambient formation water, and field personnel should examine that assumption for each well using their knowledge of the well and aquifer hydraulics.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Inherent in the purging procedure is an assumption that\nstabilization of field parameters indicates that the water being\ndischarged from the well represents ambient formation water.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-purge-setup-options-01",
+          "claim": "Before purging, the field-measurement system is chosen from four options: a transparent air-tight flow-through chamber holding single-parameter sensors or a multiparameter sonde, a multiparameter instrument deployed downhole without the chamber, single-parameter meters with sensors that can be submerged downhole, or meters with sensors immersed in subsamples from a discrete-volume sampler.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "A transparent, air-tight flow-through chamber, hold-\ning the sensors of single-parameter instruments or\na multiparameter sonde.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-option-a-preferred-01",
+          "claim": "Option (a), the flow-through chamber, is generally preferred and constitutes the inline-flow procedure, while options (b) and (c), downhole deployment of a multiparameter instrument or of submergible single-parameter sensors, constitute the downhole (in situ) procedure.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Option (a) is generally preferred and constitutes what\nis termed in this report the \u201cinline-flow procedure.\u201d\nOptions (b) and (c) constitute what is termed in this\nreport the \u201cdownhole (in situ)",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__45f7d881636c",
+      "index": 33,
+      "locator": "Section 3.2.1 Summary of Well-Purging Protocols, \"Before purging begins\" steps 3-5 and \"To purge a monitor well\" step 1",
+      "claims": [
+        {
+          "id": "a60-subsample-procedure-term-01",
+          "claim": "Option (d), measuring with sensors immersed in subsamples from a discrete-volume sampler, is termed the subsample procedure in NFM A6.0.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "termed in this report the \u201csubsample procedure.\u201d",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-purge-prep-verify-well-01",
+          "claim": "Before purging, the well identification number and well depth are checked to verify the well is the intended one, the record of water levels, pumping history and field-measurement variability is reviewed, the necessary field forms are prepared, and the type of equipment being used is recorded.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Check the identification number of the well and the well\ndepth to verify that the well is the correct one intended\nfor data collection or sampling.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-purge-sensor-sequence-01",
+          "claim": "When setting up the field-measurement system, attention must be paid to the sequence in which sensors are inserted into the flow-through chamber with respect to water flow, although the sensor configuration may not be important depending on the sensors used.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "to the sequence in which sensors are inserted into the\nflow-through chamber with respect to water flow. The\nsensor configuration may not be important depending\non the sensors used.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-manifold-flow-paths-01",
+          "claim": "The typical flow system in figure 6.0-3 includes a sample-collection manifold through which water is directed either to waste, to the flow-through cell/chamber, or to the sample-collection chamber.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "flow system, including a sample-collection manifold,\nthrough which water is directed either to waste, to the\nflow-through cell/chamber, or to the sample-collection\nchamber.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-valve-full-on-off-01",
+          "claim": "The flow-regulating needle valve or ball valve should be kept either full on or full off and must not be used to adjust the proportion or rate of flow during purging; adjusting the pump speed controls is the preferred way to change flow during purging of a monitor well.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "ing needle valve or ball valve should be kept either full\non or full off, and should not be used to adjust either the\nproportion or rate of flow during purging.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-purge-history-review-01",
+          "claim": "The purging history of the well, particularly the field-measurement data previously recorded, should be reviewed because it can save time and help determine the appropriate procedures and the length of time over which the well should be purged.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Review the purging history of the well, particularly\nthe field-measurement data previously recorded. This\npractice can save time and help determine the appropri-",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-purge-step1-static-level-01",
+          "claim": "Purging a monitor well begins by measuring and recording the depth to the static water level, for which the instructions are given in NFM 4.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Measure and record the depth to static water level\n(fig. 6.0\u20134). Instructions for water-level measurement are\ngiven in NFM 4.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__9468990c7428",
+      "index": 34,
+      "locator": "Page break at page 23 - overlap-only chunk ending \"-- 23 of 32 --\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__a2964184526e",
+      "index": 35,
+      "locator": "Section 3.2.1 \"To purge a monitor well\" steps 2-6 - \"limit drawdown to between 0.5 and 1.0 ft\"",
+      "claims": [
+        {
+          "id": "a60-well-volume-calc-01",
+          "claim": "The well volume is calculated from the depth to the static water level, the well depth and the inside casing diameter: the casing volume uses the height of the water column from the static water level to the bottom of the well plus the casing diameter, and an estimate of the water stored in the annular space between casing and borehole wall is added using the borehole diameter.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "static water level, the well depth, and the inside casing\ndiameter must be known to calculate the well volume.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-pump-lower-slowly-01",
+          "claim": "The submersible pump and then the water-level sensor are lowered slowly and smoothly to avoid stirring up particulate matter, and the final pump-intake position is always located at the point of sample collection.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Lower the equipment slowly and\nsmoothly to avoid stirring up particulate matter.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-pump-intake-position-01",
+          "claim": "If the sample is to be integrated over the entire screened or open area of the aquifer, the pump intake is positioned between 3 feet (about 0.9 meter) below the static water surface and a minimum distance above the top of the open or screened interval equal to 10 times the well diameter, for example 20 inches for a 2-inch well.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Position the pump intake between 3 ft (about\n0.9 meter (m)) below the static water surface and\na minimum distance above the top of the open/\nscreened interval of 10 times the well diameter (for",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-intake-in-screen-integrates-01",
+          "claim": "Unless the intended sampling interval can be adequately isolated, locating the pump intake at a point within a well screen or open borehole results in extracting a sample that includes water from the entire screened or open interval.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "ing the intake at a point within a well screen or\nopen borehole will result in extracting a sample\nthat includes water from the entire screened or\nopen interval",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-water-level-sensor-1ft-01",
+          "claim": "The water-level sensor should be a maximum of 1 foot (about 0.3 meter) below the static water surface.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "The water-level sensor should be a maximum of 1 ft\n(about 0.3 m) below the static water surface.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-drawdown-0.5-1ft-01",
+          "claim": "After the pump is started the pumping rate is gradually increased or adjusted to limit drawdown to between 0.5 and 1.0 foot (about 0.15 to about 0.3 meter), or as determined by project objectives and well dynamics.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Gradually increase and (or) adjust the\npumping rate to limit drawdown to between 0.5 and\n1.0 ft (about 0.15 to about 0.3 m,",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-pumping-rate-500-01",
+          "claim": "If the final pump-intake position is above the screened or open interval, the final pumping rate should be about 500 milliliters per minute and drawdown should be kept to a maximum of 1 foot.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "the final pumping rate should be about\n500 milliliters per minute (mL/min). Try to keep\ndrawdown to a maximum of 1 ft.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-fixed-pump-flow-splitting-01",
+          "claim": "Where the pump speed and intake position are fixed, as in a well with a dedicated pump, the rate of flow for the field measurements is controlled through the flow-splitting valves.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "in a well with a dedicated pump, control the rate\nof flow for field measurements through the flow-\nsplitting valve(s).",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-drawdown-steady-state-01",
+          "claim": "The water level is monitored as purging progresses, and ideally drawdown reaches a steady state of less than 1 foot with the water level remaining above the top of the open or screened interval.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Ideally, drawdown will be at a steady state, ideally\nless than 1 ft, with the water level remaining above\nthe top of the open or screened interval.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-purge-three-volumes-min-01",
+          "claim": "A minimum of three well volumes must be purged, or the purge volume dictated by the study objectives, with exceptions to the standard three-well-volume procedure given in NFM A4.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Purge a minimum of three well volumes or the purge\nvolume dictated by study objectives (consult NFM A4 for\ndetailed guidance on exceptions to the standard three-\nwell-volume purging procedure).",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-monitor-params-sequentially-01",
+          "claim": "Values for the field parameters are monitored sequentially and at regular time intervals throughout purging, and the frequency of those measurements depends on the purging rate, which is itself a function of well depth, well diameter, and aquifer transmissivity.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Monitor values for field parameters sequentially\nand at regular time intervals throughout purging\n(fig. 6.0\u20134). The frequency of these measure-\nments depends on the purging rate, which in turn",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-contain-purge-water-01",
+          "claim": "Purge water must be contained as directed if Federal, State, or local regulations require it.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "If required by Federal, State, or local regulations,\ncontain purge water as directed.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__7d1038810f32",
+      "index": 36,
+      "locator": "Section 3.2.1 \"To purge a monitor well\" step 6 and \"To purge a supply well\" - \"Record field measurements at regular time intervals, about 3 to 5 minutes apart\"",
+      "claims": [
+        {
+          "id": "a60-final-purge-rate-500-01",
+          "claim": "As the third or last well volume is purged the purge rate is slowly adjusted to the sampling pumping rate of 500 milliliters per minute, and the pumping or flow rate must not be halted or suddenly changed during the final phase of purging or while sampling.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "pling (500 mL/min). Do not halt or suddenly change the\npumping or flow rate during the final phase of purging or\nwhile sampling.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-record-3-5-min-01",
+          "claim": "During the final phase of purging, field measurements are recorded at regular time intervals about 3 to 5 minutes apart.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Record field measurements at regular time intervals,\nabout 3 to 5 minutes apart.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-check-last-3-5-vs-tbl601-01",
+          "claim": "The last three to five or more measurement values for each field parameter are checked against the field-measurement stabilization criteria in table 6.0-1, which is where the per-parameter criteria for temperature, conductivity, dissolved oxygen, pH and turbidity are given.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Check the last three to five or more measurement\nvalues for each field parameter against the criteria\nfor field-measurement stabilization in table 6.0",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-stabilization-met-median-01",
+          "claim": "If the stabilization criteria are met, the median value is reported as the final field-measurement value.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If the stabilization criteria are met\u2014report the\nmedian value.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-stabilization-not-met-01",
+          "claim": "If the stabilization criteria are not met the study requirements and objectives are consulted, the purging time is extended if readings still do not stabilize, the median value of the last five or more sequential measurements is reported, and the problems encountered and how they were resolved are documented.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If the stabilization criteria are not met\u2014consult\nthe study requirements and objectives. Extend the\npurging time if readings still do not stabilize; report",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-supply-well-no-three-volumes-01",
+          "claim": "A supply well in regular service that is pumped continuously, or that has had three casing volumes of water removed within several hours of sample collection, does not require removal of three well volumes; instead three tubing volumes of sample water are flushed through the tubing while measurement values are monitored before a sample is withdrawn or field parameters are measured.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "several hours of sample collection does not require removal of\nthree well volumes. Before withdrawing a sample or measur-\ning field parameters in this case, flush three tubing volumes",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-supply-well-purge-steps-01",
+          "claim": "For a supply well that is not in continuous use, purging begins by determining or estimating and recording the depth to static water level if access is possible, then calculating and recording the well volume, which requires the depth to static water level, the well depth and the inside casing diameter.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "If access is possible, determine or estimate and record\nthe depth to static water level (fig. 6.0\u20134). Instructions\nfor water-level measurement are given in NFM 4.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__6ce950d1b439",
+      "index": 37,
+      "locator": "Page break at page 24 - overlap-only chunk ending \"-- 24 of 32 --\"",
+      "claims": []
     }
   ],
   "summary": {
