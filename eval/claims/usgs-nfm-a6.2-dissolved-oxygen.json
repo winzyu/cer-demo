@@ -1,0 +1,1335 @@
+{
+  "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+  "title": "USGS TM 9-A6.2 — Dissolved Oxygen (2020)",
+  "inSlice": false,
+  "chunkCount": 91,
+  "chunks": [
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__55dad993d0c7",
+      "index": 0,
+      "locator": "Cover and title page — \"Techniques and Methods 9–A6.2\"",
+      "claims": [
+        {
+          "id": "do-doc-identity-01",
+          "claim": "This document is USGS Techniques and Methods book 9, chapter A6.2, \"Dissolved Oxygen\" (2020), which supersedes USGS Techniques of Water-Resources Investigations book 9, chapter A6.2, version 3.0.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "U.S. Geological Survey, 2020, Dissolved oxygen: U.S. Geological Survey Techniques and Methods, book 9, chap. A6.2,",
+          "specificity": "low"
+        },
+        {
+          "id": "do-doc-revision-history-01",
+          "claim": "The dissolved-oxygen chapter was first released in April 1998 and revised in May 2006 (v2.0), June 2006 (v2.1), September 2013 (v3.0), and October 2020.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "First Release: April 1998, as Techniques of Water-Resources Investigations",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__b0fe42c85b71",
+      "index": 1,
+      "locator": "Table of contents dot leaders — \"Contents\" / \"2.0 Optical (Luminescence) Sensor Method\" (NEWLY RECOVERED; front matter only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__4ca2d16f1916",
+      "index": 2,
+      "locator": "List of tables — \"Tables\" (NEWLY RECOVERED; front matter, but names the two data tables)",
+      "claims": [
+        {
+          "id": "do-table622-title-01",
+          "claim": "Table 6.2–2 of USGS TM 9-A6.2 is titled \"Solubility of oxygen in freshwater at various temperatures and pressures\".",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Solubility of oxygen in freshwater at various temperatures and pressures",
+          "specificity": "high"
+        },
+        {
+          "id": "do-table624-title-01",
+          "claim": "Table 6.2–4 of USGS TM 9-A6.2 is titled \"Salinity correction factors for dissolved oxygen in water\".",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Salinity correction factors for dissolved oxygen in water",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__408268caf86c",
+      "index": 3,
+      "locator": "Conversion Factors / Abbreviations and Symbols — \"Specific conductance is reported in microsiemens\"",
+      "claims": [
+        {
+          "id": "do-spc-unit-25c-01",
+          "claim": "Specific conductance is reported in microsiemens per centimeter at 25 degrees Celsius, and siemens per centimeter are the equivalent of mhos per centimeter.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Specific conductance is reported in microsiemens per centimeter at 25 degrees Celsius (μS/cm\nat 25 °C). Siemens per centimeter are the equivalent of mhos per centimeter.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-diw-definition-01",
+          "claim": "In this manual DIW means deionized water with a resistance greater than or equal to 18 megaohms that has been quality assured.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "deionized water with resistance greater than or equal to 18 megaohms (MΩ), and\nthat has been quality assured",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-temp-conversion-01",
+          "claim": "Temperature in degrees Celsius is converted to degrees Fahrenheit by °F=(1.8×°C)+32.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "°F=(1.8×°C)+32",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c75dffa2eccd",
+      "index": 4,
+      "locator": "Requirements and Recommendations — \"the terms “required” and “recommended” have the USGS-specific meanings\"",
+      "claims": [
+        {
+          "id": "do-required-vs-recommended-01",
+          "claim": "In the USGS National Field Manual, \"required\" means Water Mission Area policy has been established and field personnel are instructed to use that equipment or procedure, while \"recommended\" means several acceptable alternatives exist; departures from either must be independently quality assured and documented.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "The terms “recommend,” “recommended,” and “recommendation” indicate that, on\nthe basis of research or consensus, there are several acceptable alternatives to a given\nprocedure",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__3d044a03f3b2",
+      "index": 5,
+      "locator": "Abstract and section 1.0 Introduction — \"the official and citable protocol\"",
+      "claims": [
+        {
+          "id": "do-nfm-authority-01",
+          "claim": "The National Field Manual is the official and citable protocol for the collection of water-quality data by the USGS Water Mission Area.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "(NFM) is the official and citable protocol for\nthe collection of water-quality data by the Water Mission Area",
+          "specificity": "low"
+        },
+        {
+          "id": "do-nfm-mandate-01",
+          "claim": "USGS program and project personnel, Water Science Center staff, and Cooperative-program projects are mandated to use the protocols provided in the NFM.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "are mandated to use protocols provided in the NFM",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-method-applicability-01",
+          "claim": "The field method for measuring dissolved oxygen described in this chapter is applicable to most natural waters.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "The field method for measuring dis-\nsolved oxygen described in this chapter is applicable to most\nnatural waters.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__113b5e13ff6a",
+      "index": 6,
+      "locator": "Section 1.0 Introduction — \"DO ... is best measured in the field\"",
+      "claims": [
+        {
+          "id": "do-measure-in-field-01",
+          "claim": "Dissolved oxygen is best measured in the field because DO concentration can change rapidly as a result of several factors that affect a sample after it is removed from a water body or aquifer.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "DO concentration can change\nrapidly as a result of several factors that can affect a sample\nafter removal from a water body or aquifer.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__10578c443992",
+      "index": 7,
+      "locator": "Section 1.0 Introduction, page break — \"Before 2017, the USGS NFM chapters were released\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__a014e07168d9",
+      "index": 8,
+      "locator": "Section 1.0 Introduction / 1.1 Overview — \"The primary USGS field procedure for determination of DO\"",
+      "claims": [
+        {
+          "id": "do-optical-primary-method-01",
+          "claim": "The primary USGS field procedure for determining dissolved oxygen is the luminescence-based (optical) sensor, which is more robust in the field, is not flow dependent, and gives higher quality data than amperometric sensors especially at low DO concentrations below 2 milligrams per liter.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "are not\nflow dependent, and are generally easier to use while provid-\ning higher quality data, especially at low DO concentrations\n(<2 milligrams per liter [mg/L]).",
+          "specificity": "high"
+        },
+        {
+          "id": "do-spectrophotometric-range-01",
+          "claim": "Spectrophotometric (colorimetric) instrumental methods can be used to report dissolved-oxygen concentrations from about 2.0 mg/L down to as little as 0.025 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "can\nbe used to report DO concentrations from about 2.0 mg/L to\nas little as 0.025 mg/L.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-noninstrumental-not-reportable-01",
+          "claim": "Noninstrumental colorimetric methods for visually determining dissolved-oxygen concentrations may be used for quick reconnaissance or an accuracy check but must not be used to report DO concentrations.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Noninstrumental colorimetric methods that are available for\nvisually determining DO concentrations should not be used to\nreport DO concentrations.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-winkler-not-sanctioned-01",
+          "claim": "Standard USGS practice no longer sanctions onsite Winkler (iodometric) titrations or the transport of field samples offsite for dissolved-oxygen determination by the Winkler method.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Standard USGS practice\nno longer sanctions onsite Winkler titrations or the transport\nof field samples offsite for DO determination by the Winkler\nmethod.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-factors-affecting-01",
+          "claim": "The concentration of dissolved oxygen in water is affected by many factors, including ambient temperature, atmospheric pressure, and ion activity (the ionic strength of the water body).",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "The concentration of DO in water is affected by many\nfactors, including ambient temperature, atmospheric pressure,\nand ion activity (ionic strength of the water body).",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__4c5e9d344235",
+      "index": 9,
+      "locator": "Section 1.1 Overview of Dissolved Oxygen — \"DISSOLVED OXYGEN: Molecular oxygen (oxygen gas)\"",
+      "claims": [
+        {
+          "id": "do-definition-01",
+          "claim": "Dissolved oxygen is defined as molecular oxygen (oxygen gas) dissolved in water.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "DISSOLVED OXYGEN: Molecular oxygen (oxygen gas)\ndissolved in water.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-sources-01",
+          "claim": "Sources of dissolved oxygen in water include atmospheric aeration and the photosynthetic activities of aquatic plants.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Sources\nof DO in water include atmospheric aeration and photo-\nsynthetic activities of aquatic plants.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-sinks-01",
+          "claim": "Sinks of dissolved oxygen in water include respiration, aerobic decomposition processes, ammonia nitrification, and other chemical and biological reactions.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Sinks of DO in water\ninclude respiration, aerobic decomposition processes, ammo-\nnia nitrification, and other chemical and biological reactions.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-ecological-indicator-01",
+          "claim": "Dissolved oxygen is necessary for the survival and growth of many aquatic organisms and is used as an indicator of the health and geochemical quality of surface-water and groundwater systems; the manual gives no numeric concentration for that role.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "The presence of DO in aquatic systems is necessary for the\nsurvival and growth of many aquatic organisms and is used as\nan indicator of the health and geochemical quality",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-optical-replaced-amperometric-01",
+          "claim": "Optical sensors have replaced the amperometric (Clark cell) sensor, and barring project-specific requirements optical sensors should be considered the standard USGS field method.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Optical sensors have replaced\nthe amperometric type of sensor.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-winkler-verification-role-01",
+          "claim": "The iodometric (Winkler) method is no longer used by the USGS for routine field measurement of dissolved oxygen but remains an acceptable method for verifying results obtained with other methods.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "iodometric (Winkler) method is no longer used by the USGS\nfor routine measurement of DO at field sites, but remains an\nacceptable method for verifying the results",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__9038191849a5",
+      "index": 10,
+      "locator": "Section 1.1 Overview, page break — \"lection of field equipment and measurement\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__ee8ef893f4bc",
+      "index": 11,
+      "locator": "Section 2.0 Optical (Luminescence) Sensor Method / Technical Note 1 — \"Some characteristics of the optical DO method\"",
+      "claims": [
+        {
+          "id": "do-optical-no-consumption-01",
+          "claim": "The optical dissolved-oxygen sensor does not consume oxygen at the sensor-water interface and is not dependent on water flow, so no stirring mechanism is required at sites with slowly flowing or still water.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "The optical sensor is not dependent on water flow;\nconsequently, no stirring mechanism is required at sites\nwith slowly flowing or still waters.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-optical-no-interference-01",
+          "claim": "There are no known sources of interference to the luminescence method in natural aquatic systems; optical sensors measure accurately in the presence of hydrogen sulfide and in fresh, brackish, and mildly contaminated waters, but contact with organic solvents can compromise sensor integrity or performance.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Optical sensors will measure accurately in the pres-\nence of hydrogen sulfide (H2S) and also when deployed\nin fresh, brackish, and mildly contaminated waters.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-optical-no-consumables-01",
+          "claim": "The optical sensor contains no anode or cathode to service and uses no electrolyte solution, membranes, or O-rings.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "The optical sensor contains no anode or cathode to\nservice, and uses no electrolyte solution, membranes,\nor O-rings.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-luminophore-replacement-interval-01",
+          "claim": "Manufacturers generally recommend annual to biannual replacement of the luminophore-containing module, and sensors should be calibrated or undergo a calibration check after module replacement.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Manufacturers generally recommend annual to bian-\nnual replacement of the luminophore-containing\nmodule (also called “lumiphore”).",
+          "specificity": "high"
+        },
+        {
+          "id": "do-luminescence-mechanism-01",
+          "claim": "In a luminescence dissolved-oxygen sensor an LED excites a luminescent-dye molecule and oxygen quenches the fluorescence, so higher DO concentrations produce greater quenching and a decreased fluorescence response, with the strongest detector signal at the lowest DO concentrations.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Higher DO concentrations result in greater quench-\ning and a decreased fluorescence response. The signal to the\nfluorescence detector is greatest at lowest DO concentrations.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__632e22bc5d2f",
+      "index": 12,
+      "locator": "Section 2.1.1 Equipment Description and Maintenance — \"Guidance on when to replace the luminophore-containing cap\"",
+      "claims": [
+        {
+          "id": "do-temp-controls-solubility-01",
+          "claim": "Temperature stability during calibration and measurement is extremely important because temperature controls the solubility of oxygen in water.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "Temperature stability during calibration and\nmeasurement is extremely important, as temperature controls\nthe solubility of oxygen in water.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-cap-life-hach-ysi-01",
+          "claim": "Hach specifies a 2-year life for the sensor cap of its LDO sensor, and YSI Environmental (EXO) specifies annual replacement of the sensor cap for its optical DO sensor.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "• Hach specifies a 2-year life of the sensor cap of its\nLDO (Luminescent Dissolved Oxygen) sensor.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-cap-life-insitu-thermo-01",
+          "claim": "In-Situ, Inc., advises that the RDO sensor cap has a 2-year life, and Thermo Scientific specifies a 365-day lifespan for the RDO cap once it is installed on the RDO sensor.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "• Thermo Scientific specifies a 365-day lifespan for the\nRDO cap once it is installed on the RDO sensor.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__116a7989b64e",
+      "index": 13,
+      "locator": "Table 6.2–1, Equipment and supplies for the optical sensor method — \"DO instrument should have a digital temperature and DO readout display\"",
+      "claims": [
+        {
+          "id": "do-instrument-range-01",
+          "claim": "Table 6.2–1 requires the DO instrument to have automatic temperature compensation, an operating range in water of at least –5 to 45 °C, and the capability to measure DO concentrations from 0.01 to 20 mg/L.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "• An operating range in water with a temperature range of at least –5 to 45 °C\n• Capability to measure DO concentrations from 0.01 to 20 mg/L (instrument capability can range to 50 mg/L)",
+          "specificity": "high"
+        },
+        {
+          "id": "do-instrument-resolution-accuracy-01",
+          "claim": "Table 6.2–1 requires the DO instrument to have a minimum display resolution of 0.01 mg/L DO and calibrated accuracy within ±0.1 mg/L DO.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "• Minimum display resolution of 0.01 mg/L DO\n• Calibrated accuracy within ±0.1 mg/L DO",
+          "specificity": "high"
+        },
+        {
+          "id": "do-barometer-requirement-01",
+          "claim": "Table 6.2–1 requires a barometer that measures to the nearest 1 millimeter of mercury and whose calibration has been checked before use or at least annually against a NIST-traceable barometer or against uncorrected National Weather Service pressure from a location at the same altitude.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "barometer measures to nearest 1 millimeter of mercury and its\ncalibration has been checked before use or at least annually against a NIST-traceable barometer",
+          "specificity": "high"
+        },
+        {
+          "id": "do-zero-solution-recipe-01",
+          "claim": "The zero-DO solution is made by dissolving approximately 2 grams of sodium sulfite in 1 liter of deionized water, giving a 0.016-molar solution, prepared fresh just before the field trip or during the week of use.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Zero-DO solution. Dissolve approximately 2 grams sodium sulfite in 1 liter of deionized water (0.016–M solution, prepared fresh just\nbefore the field trip or during week of use)",
+          "specificity": "high"
+        },
+        {
+          "id": "do-spc-sensor-for-saline-01",
+          "claim": "A calibrated specific-conductance sensor is listed as required equipment if the dissolved-oxygen measurement is being made in a saline or brackish system.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Calibrated specific-conductance sensor, if measurement is being made in a saline or brackish system",
+          "specificity": "high"
+        },
+        {
+          "id": "do-flowthrough-chamber-01",
+          "claim": "A flow-through chamber is listed as equipment for determining groundwater dissolved-oxygen concentration when downhole sensor deployment is impractical.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Flow-through chamber for determining groundwater DO concentration, if downhole sensor deployment is impractical",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__83a54c2ad6f3",
+      "index": 14,
+      "locator": "Section 2.1.2 Field-Trip Preparations / 2.2 Calibration of Optical Sensors — \"A calibration check is required at each field site\"",
+      "claims": [
+        {
+          "id": "do-rinse-sulfite-01",
+          "claim": "After a zero-DO check the sensor and wiper must be rinsed multiple times with deionized water to remove the sodium sulfite, or subsequent measurements will be biased.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Multiple, thorough\nrinses with deionized water are necessary to remove\nthe sodium sulfite and restore the sensor to proper\noperating condition",
+          "specificity": "high"
+        },
+        {
+          "id": "do-module-replace-idle-01",
+          "claim": "Depending on the instrument, luminophore sensor modules are replaced annually or at least every 2 years even if the sensor is idle.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Depending on the instrument, sensor modules are\nreplaced annually or at least every 2 years, even if\nthe sensor is idle.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-lab-calibrate-field-check-01",
+          "claim": "It is recommended to calibrate DO instruments in the controlled atmosphere of the laboratory before going to the field, and a calibration check is required at each field site, followed by recalibration as needed.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "A calibration\ncheck is required at each field site, followed by recalibration\nas needed to meet the specific data-quality requirements of\nthe project.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-one-vs-two-point-choice-01",
+          "claim": "Whether a one-point calibration is sufficient or a two-point calibration should be used is governed by the accuracy the project requires and by the capabilities of the selected instrument.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "The accuracy required by the project for sites at which\nDO will be determined and the capabilities of the selected\ninstrument will govern whether a one-point calibration will be\nsufficient",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-log-book-service-01",
+          "claim": "All service performed on the instrument — full calibration, calibration check, or replacement or repair of parts, whether done in the office, laboratory, or field — must be accurately recorded and dated in the instrument or sensor log book.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "must be accurately recorded and dated in\nthe instrument or sensor log book.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__aed72e2efaab",
+      "index": 15,
+      "locator": "Section 2.1.2 Field-Trip Preparations, performance-test steps — \"Perform a zero-DO sensor-performance check\"",
+      "claims": [
+        {
+          "id": "do-pretrip-sat-check-tolerance-01",
+          "claim": "The pre-field-use 100-percent oxygen-saturation calibration check should agree within +/- 0.2 mg/L of the 100-percent saturated concentration determined from the DO solubility tables, and it does not negate the need for an onsite sensor-calibration check at oxygen saturation.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "The result of the check should be\nwithin +/- 0.2 mg/L of the 100-percent saturated concen-\ntration determined from the DO solubility tables found at\nhttps://water.usgs.gov/software/DOTABLES.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-zero-check-stabilize-time-01",
+          "claim": "In the zero-DO performance check the sensor is immersed in the zero-DO solution and the reading is allowed to stabilize, usually within 5 to 10 minutes, before being recorded.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Immerse the sensor into the zero-DO solution,\nwait for reading to stabilize (usually within\n5–10 minutes), record reading.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-zero-check-fail-threshold-01",
+          "claim": "If the instrument reads more than 0.2 mg/L in the zero-DO solution the check is repeated with freshly prepared solution, and if a reading greater than 0.2 mg/L persists the manufacturer should be asked whether the luminophore module needs replacement.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "If the instrument reading exceeds 0.2 mg/L in the\nzero-DO solution, check DO again with a freshly\nprepared zero-DO solution; if a reading greater than\n0.2 mg/L persists",
+          "specificity": "high"
+        },
+        {
+          "id": "do-remove-wiper-before-zero-01",
+          "claim": "Before immersing the sensor in the zero-DO solution the wiper or sponge must be removed from the unit to avoid saturating it with sodium sulfite solution.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "remove the wiper (or sponge) from the unit to\navoid saturating it with the sodium sulfite solution.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-thermistor-check-nfm61-01",
+          "claim": "Thermistors and thermometers must be calibrated and field checked before use as described in NFM chapter 6.1, Temperature.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Thermistors/thermometers must be calibrated\nand field checked before use, as described in\nNFM 6.1, Temperature.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c536dd79ec6f",
+      "index": 16,
+      "locator": "Section 2.1.2, page break — \"Immerse the sensor into the zero-DO solution\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__25b8f6270fca",
+      "index": 17,
+      "locator": "Section 2.2 Calibration of Optical Sensors — \"One-point calibration\" / \"Two-point calibration\"",
+      "claims": [
+        {
+          "id": "do-one-point-goal-01",
+          "claim": "The main goal of the one-point DO calibration is to create a 100-percent saturated oxygen environment in which the DO sensor and its thermistor are at the same temperature, achieved either by calibration in air (Procedure 1) or calibration in air-saturated water (Procedure 2).",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "The main goal of the one-point\nDO calibration procedure is to create a 100-percent saturated\noxygen environment in which the DO sensor and its thermistor\nare at the same temperature.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-two-point-when-01",
+          "claim": "A two-point calibration (100-percent saturation plus zero DO) should be considered when project data-quality objectives require it, when oxygen concentrations less than 2 mg/L are likely to be encountered and zero-DO performance checks fail, or when experienced field personnel deem it necessary.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "(2) oxygen concentrations\nless than 2 mg/L are likely to be encountered and\nzero-DO performance checks fail",
+          "specificity": "high"
+        },
+        {
+          "id": "do-two-point-order-01",
+          "claim": "If a two-point DO calibration is used, the DO sensor must be calibrated only after the other field-measurement sensors, to prevent sodium sulfite interference, and the 100-percent saturation calibration must be completed before the zero calibration unless the manufacturer specifies otherwise.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "calibrate the\nDO sensor only after calibrating other field-measure-\nment sensors to prevent possible interference of the\nsodium sulfite (zero-DO) solution",
+          "specificity": "high"
+        },
+        {
+          "id": "do-prefer-zero-check-over-zero-cal-01",
+          "claim": "For routine applications it is advisable to rely on a zero-DO performance check rather than a zero-DO calibration, which would risk corrupting the manufacturer's zero-DO calibration.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "it is advisable to rely on a\nzero-DO performance check rather than a zero-DO calibration,\nwhich would risk corrupting the manufacturer’s zero-DO\ncalibration.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-perf-check-tolerance-01",
+          "claim": "The result of a DO instrument performance check should be within +/- 0.2 mg/L of the 100-percent saturated concentration from the DO solubility tables, or within 0.2 mg/L of zero if checking at the zero point.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "should be within +/- 0.2 mg/L of the 100-percent\nsaturated concentration determined from the DO\nsolubility tables found at https://water.usgs.gov/\nsoftware/DOTABLES or, if checking at the zero\npoint",
+          "specificity": "high"
+        },
+        {
+          "id": "do-low-do-two-point-value-01",
+          "claim": "Verifying instrument performance at zero DO and using a two-point calibration is particularly important for data accuracy when the instrument will be used to measure low DO concentrations, meaning less than 2 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "will be used to measure low DO concentrations (less\nthan 2 mg/L).",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__940ba0bb0a8a",
+      "index": 18,
+      "locator": "Section 2.2.1 Correction for Atmospheric Pressure and Salinity / Technical Note 2 — \"DO sensors do not directly measure oxygen in milligrams per liter\"",
+      "claims": [
+        {
+          "id": "do-fail-check-recalibrate-01",
+          "claim": "Recalibration and additional troubleshooting are warranted if an instrument fails the DO performance checks, and an instrument that fails to calibrate properly or fails performance checks must not be used.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Do not use an instrument that fails to calibrate properly\nor fails performance checks.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-calibration-corrections-01",
+          "claim": "DO calibration procedures include corrections for atmospheric pressure and ionic strength, where ionic strength is estimated from the conductivity measurement for routine field applications.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "DO calibration procedures include corrections for\natmospheric pressure and ionic strength. (Ionic strength is\nestimated from the conductivity measurement for routine field\napplications.)",
+          "specificity": "high"
+        },
+        {
+          "id": "do-sensor-signal-partial-pressure-01",
+          "claim": "DO sensors do not directly measure oxygen in milligrams per liter or parts per million; the sensor signal is proportional to the ambient partial pressure of oxygen and reported concentrations are calculated from that signal together with the temperature and ionic strength of the sample water.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "DO sensors do not directly measure oxygen in milligrams\nper liter or parts per million. Expressed concentrations are\nbased on calculations that relate instrument sensor data",
+          "specificity": "high"
+        },
+        {
+          "id": "do-ambient-not-sealevel-01",
+          "claim": "Ambient atmospheric pressure means the true atmospheric pressure at the measurement site, not pressure adjusted to sea level; National Weather Service pressure readings are typically adjusted to sea level and must be adjusted back to the station altitude to give ambient values.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Ambient atmospheric pressure is true atmospheric\npressure at the measurement site, not the pressure that has\nbeen adjusted to sea level.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__ee1f5e3cc31b",
+      "index": 19,
+      "locator": "Section 2.2.1, page break — \"ng weather stations and must be\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__dc51eae3cee7",
+      "index": 20,
+      "locator": "Section 2.2.1 Correction for Atmospheric Pressure and Salinity / 2.2.2 Selection of Calibration Method — \"It is required that the barometric pressure be measured at the altitude of the DO calibration\"",
+      "claims": [
+        {
+          "id": "do-barometer-at-altitude-01",
+          "claim": "Correcting a barometric pressure reading not measured at the DO calibration altitude is no longer recommended; the barometric pressure is required to be measured at the altitude of the DO calibration or check.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "It is required that the barometric pressure be\nmeasured at the altitude of the DO calibration or check.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-pressure-nearest-mm-01",
+          "claim": "For DO calibrations the ambient atmospheric pressure must be determined to the nearest 1 millimeter of mercury.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "For DO calibrations, the ambient atmospheric pressure\nmust be determined to the nearest 1 millimeter (mm) of\nmercury.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-barometer-check-interval-01",
+          "claim": "The accuracy of all field barometers, including barometers built into instrument systems, must be checked before each field trip or at least annually against a NIST-traceable barometer or at an official weather station, with readings and adjustments recorded in the instrument log book.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Check the accuracy of all field barometers (including\nbarometers built into instrument systems) before each field trip\nor at least annually",
+          "specificity": "high"
+        },
+        {
+          "id": "do-auto-salinity-correction-01",
+          "claim": "Most modern multiparameter instruments incorporate a pressure-temperature and salinity compensation algorithm in firmware and use a built-in conductivity sensor to correct DO data for salinity automatically; for instruments without a conductivity sensor, manual salinity correction of the DO data is required.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "instruments have a built-in conductivity sensor that is used\nto correct the DO-concentration data for salinity automatically.\nFor instruments that are not equipped with a conductivity\nsensor",
+          "specificity": "high"
+        },
+        {
+          "id": "do-salinity-correction-after-01",
+          "claim": "When a user-specified salinity correction is needed, the preferred USGS method is to apply the salinity-correction factors after calibrating and measuring the DO concentration of the environmental water body.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "the\npreferred USGS method is to apply salinity-correction factors\nafter calibrating and measuring the DO concentration of the\nenvironmental water body",
+          "specificity": "high"
+        },
+        {
+          "id": "do-manual-salinity-recalibration-01",
+          "claim": "If the user makes a manual salinity correction during calibration, the instrument requires recalibration for each measured field variation in salinity.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "When a manual salinity correction is made by the user\nduring calibration, the instrument requires recalibration for\neach measured field variation in salinity",
+          "specificity": "high"
+        },
+        {
+          "id": "do-wet-towel-recommended-field-01",
+          "claim": "The air calibration or check with a wet-towel method, a variation of Procedure 1, is the recommended method to be performed at the field site.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "The air calibration or check with a wet-towel method\n(variation of Procedure 1) is the recommended method to\nbe performed at the field site.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__aa1374c14e21",
+      "index": 21,
+      "locator": "Section 2.2.3 Optical (Luminescence) DO Sensors—Calibration Procedures / Technical Note 3 — \"accuracy specifications of ±0.1 mg/L or 1 percent\"",
+      "claims": [
+        {
+          "id": "do-optical-accuracy-spec-01",
+          "claim": "Optical DO sensors generally have accuracy specifications of ±0.1 mg/L or 1 percent after calibration, best achieved by calibrating under controlled laboratory or simulated-laboratory conditions.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Optical\nDO sensors generally have accuracy specifications of ±0.1\nmg/L or 1 percent after calibration.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-check-every-site-01",
+          "claim": "Because factory calibrations do not necessarily satisfy USGS data-quality objectives, users are required to check the calibration at every field site or as often as necessary to meet specific data-quality objectives.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "users are required to check the\ncalibration at every field site or as often as is necessary to meet\nspecific data-quality objectives.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-optical-drift-01",
+          "claim": "Optical DO sensors are subject to very little drift after a successful calibration and a laboratory-performed calibration is likely to remain stable after transport to the field, but calibrations are still required to be verified at the field site.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Optical DO sensors are subject to very little drift after a\nsuccessful calibration. A laboratory-performed calibration is\nlikely to remain stable after transport to the field.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-rhodazine-corroboration-01",
+          "claim": "USGS field scientists have corroborated the accuracy of the optical sensor to 0.03 mg/L DO by repeated comparison of results with the Rhodazine D spectrophotometric method.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "USGS field scien-\ntists have corroborated the accuracy of the optical sensor to\n0.03 mg/L DO by using repeated comparisons of results with\nthe Rhodazine D spectrophotometric method",
+          "specificity": "high"
+        },
+        {
+          "id": "do-air-saturated-water-lab-01",
+          "claim": "The air-saturated water method (Procedure 2) is preferred by some manufacturers and is generally favored for laboratory calibrations because of the equipment required.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "This procedure is generally favored for labora-\ntory calibrations because of the equipment required.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__27c7b76540a0",
+      "index": 22,
+      "locator": "Section 2.2.3, page break — \"hotometric method for\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__7609693093b6",
+      "index": 23,
+      "locator": "Procedure 1—Calibration in Air — \"Wet the inside of the calibration chamber\"",
+      "claims": [
+        {
+          "id": "do-proc1-chamber-humidity-01",
+          "claim": "In Procedure 1 the inside of the calibration chamber is wetted and the water poured out, leaving a few drops or a layer of water in the bottom, and the sensor is inserted per the manufacturer's instructions to ensure 100-percent humidity.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Insert the sensor into the chamber per manufacturer’s\ninstructions to ensure 100-percent humidity.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-proc1-no-airtight-seal-01",
+          "claim": "A screw-on calibration chamber must be left loose so it does not make an airtight seal, in order to maintain ambient barometric pressure inside the chamber.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "If using a screw-on calibration chamber, make sure\nit is loose and does not make an airtight seal in order\nto maintain ambient barometric pressure.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-proc1-equilibration-time-01",
+          "claim": "Procedure 1 allows 5 to 10 minutes for the air to saturate with water vapor and for the DO sensor and the air inside the calibration chamber to equilibrate before calibration begins.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Allow 5 to 10 minutes for the air to saturate with water\nvapor and for the DO sensor and the air inside the\ncalibration chamber to equilibrate.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-proc1-read-precision-01",
+          "claim": "During Procedure 1 the ambient atmospheric pressure is read to the nearest 1 mm of mercury with a calibration-checked barometer and the temperature is read to the nearest 0.1 degree Celsius.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Read the temperature to the nearest\n0.1 degree Celsius (°C).",
+          "specificity": "high"
+        },
+        {
+          "id": "do-proc1-use-table-01",
+          "claim": "If calibrating to a given DO concentration rather than to 100-percent saturation, table 6.2–2 or the online DOTABLES software is used to determine DO saturation at the calibration temperature and atmospheric pressure.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "use table 6.2–2\n(at end of chapter) or the online software DOTABLES\n(https://water.usgs.gov/software/DOTABLES/) to deter-\nmine DO saturation at the calibration temperature and\natmospheric pressure.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-nwis-entry-01",
+          "claim": "Results from optical sensor and spectrophotometric methods can be entered into the USGS National Water Information System (NWIS) database.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "Results from optical\nsensor and spectrophotometric methods can be entered into the\nUSGS National Water Information System (NWIS) database.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__10b503e7f3e2",
+      "index": 24,
+      "locator": "Procedure 1—Calibration in Air, steps 7–9 / Variation of Procedure 1 — \"within ±0.2 mg/L or 2 percent of the computed saturation value\"",
+      "claims": [
+        {
+          "id": "do-proc1-verify-tolerance-01",
+          "claim": "After calibration in air the instrument reading must be verified to be within ±0.2 mg/L or 2 percent of the computed saturation value, or against more stringent accuracy criteria reflecting project data-quality requirements.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Verify that the instrument reading is within ±0.2 mg/L or\n2 percent of the computed saturation value, or use more",
+          "specificity": "high"
+        },
+        {
+          "id": "do-water-droplets-01",
+          "claim": "Water droplets on the optical sensor module or on the temperature sensor during calibration can cause improper calibration, so the sensor must be checked for droplets after calibration and recalibrated if any were present.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "water droplets on the\nsensor module or on the temperature sensor can cause\nimproper calibration.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-wet-towel-equipment-01",
+          "claim": "The wet-towel calibration variation requires a towel sized to wrap around the sensor at least two full wraps and one clear or white plastic trash bag.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "1 \tTowel, sized so that it will wrap around the sensor at least\ntwo full wraps\n1 \tTrash bag, clear or white plastic",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__6ac12d7a1ec8",
+      "index": 25,
+      "locator": "Variation of Procedure 1, page break — \"Equipment: Check or calibration with a wet towel\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__4ab23372fa3d",
+      "index": 26,
+      "locator": "Variation of Procedure 1—Air Calibration with a Wet Towel / Procedure 2 introduction — \"Place the wrapped sensor into the plastic bag\"",
+      "claims": [
+        {
+          "id": "do-wet-towel-bag-shade-01",
+          "claim": "In the wet-towel method the wrapped sensor is placed into the plastic bag and kept out of direct sunlight to keep the temperature from changing, and the bag holding the sonde and towel can be placed into a cooler if necessary to attain temperature stability.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Place the wrapped sensor into the plastic bag and\nkeep it out of direct sunlight to keep the temperature\nfrom changing.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-wet-towel-equilibration-01",
+          "claim": "The wet-towel method allows 5 to 10 minutes for the air to saturate with water vapor and for the DO sensor and the air inside the towel to equilibrate.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Allow 5 to 10 minutes for the air to saturate with water\nvapor and for the DO sensor and the air inside the towel\n(calibration chamber) to equilibrate.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-proc2-advantage-01",
+          "claim": "Procedure 2 calibrates the DO sensor in water saturated with oxygen at a known temperature and ambient atmospheric pressure; it ensures all equipment parts equilibrate with water temperature simultaneously and eliminates the need to check for water droplets on the optical module or temperature sensor.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "Procedure 2 has the advantage\nof ensuring that all equipment parts equilibrate with water\ntemperature simultaneously, and eliminates the need to check\nfor water droplets",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__36eaf21615b7",
+      "index": 27,
+      "locator": "Procedure 2—Calibration with Air-Saturated Water — \"Equipment—Calibration with air-saturated water\"",
+      "claims": [
+        {
+          "id": "do-proc2-equipment-01",
+          "claim": "Procedure 2 requires a 5-gallon bucket or manufacturer-provided aeration chamber, a 10-gallon aquarium air pump with two outlets, a 10-foot length of aquarium-pump tubing, and two gas-diffusion air stones.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "1 \t5-gallon bucket or manufacturer-provided aeration chamber\n1 \t10-gallon aquarium air pump with two outlets\n1 \t10-foot length of aquarium-pump tubing\n2 \tGas-diffusion (air) stones",
+          "specificity": "high"
+        },
+        {
+          "id": "do-proc2-aeration-time-01",
+          "claim": "For Procedure 2 the 5-gallon bucket is filled three-quarters full with tap water and the water is aerated for a minimum of 30 minutes.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Turn on the pump and aerate the water for a minimum\nof 30 minutes.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-proc2-evaporation-spc-01",
+          "claim": "Leaving the aeration pump running continuously gives a ready supply of air-saturated water, but water evaporates from the bucket over time and raises the specific conductance of the aerated water, so the water must be replaced periodically.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "However, water will continuously evaporate from\nthe bucket over time, raising the specific conductance\nof the aerated water. Be sure to replace the water in the\nbucket periodically.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-proc2-thermal-equilibrium-01",
+          "claim": "For laboratory calibration by Procedure 2 the sensor is placed in the bucket and allowed 5 to 10 minutes to come to thermal equilibrium with the aerated water, taking care not to place the sensor over or in the bubbles from the air stone.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "place the DO sensor (or\nmultiparameter sonde) in the bucket and allow 5 to\n10 minutes for the sensor to come to thermal equi-\nlibrium with the aerated water.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-proc2-temp-precision-01",
+          "claim": "The temperature of the Procedure 2 calibration water is read and recorded to the nearest 0.1 °C.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Read and record the temperature of the calibration water\nto the nearest 0.1 °C.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__134a0ec7aa9e",
+      "index": 28,
+      "locator": "Procedure 2, page break — \"place the DO sensor (or\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__aef58b3384c0",
+      "index": 29,
+      "locator": "Procedure 2 steps 6–11 / Section 2.3 Measurement — \"The solubility of oxygen in water depends on the temperature and ionic strength\"",
+      "claims": [
+        {
+          "id": "do-tapwater-no-salinity-01",
+          "claim": "Salinity corrections should not be necessary for tap water used as Procedure 2 calibration water.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "salinity corrections should not be necessary for\ntap water.)",
+          "specificity": "high"
+        },
+        {
+          "id": "do-solubility-drivers-01",
+          "claim": "The solubility of oxygen in water depends on the temperature and ionic strength of the water: the higher the atmospheric pressure at the water surface and the lower the temperature and conductivity of the water, the more oxygen will be dissolved.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "The higher the\natmospheric pressure on the water’s surface and the lower the\ntemperature and conductivity of the water, the more oxygen\nwill be dissolved in the water.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-sample-change-minutes-01",
+          "claim": "Degassing, mineral precipitation, and other chemical, physical, and biological reactions can cause the dissolved-oxygen concentration of a water sample to change substantially within minutes after collection, especially for water originally isolated from the atmosphere such as groundwater or deep lake water.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "other chemical,\nphysical, and biological reactions can cause the DO concentra-\ntion of a water sample to change substantially within minutes\nafter sample collection",
+          "specificity": "high"
+        },
+        {
+          "id": "do-salinity-decreases-solubility-01",
+          "claim": "The solubility of oxygen in water decreases as salinity increases, and correction factors for salinity are typically applied after measuring DO for single-point samples.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "The solubility of oxygen in water decreases as salinity\nincreases. Correction factors for salinity typically are applied\nafter measuring DO for single-point samples",
+          "specificity": "high"
+        },
+        {
+          "id": "do-surfacewater-representative-01",
+          "claim": "Standard determinations of dissolved oxygen in riverine surface water represent the cross-sectional median or mean DO concentration at the time of observation.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "Standard determinations of DO in riverine surface water\nrepresent the cross-sectional median or mean DO concentra-\ntion at the time of observation.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__f3c3c9519851",
+      "index": 30,
+      "locator": "Section 2.3.1 Surface Water — \"cross-sectional DO variation less than 0.5 mg/L\"",
+      "claims": [
+        {
+          "id": "do-single-point-validity-05-01",
+          "claim": "Measuring the dissolved-oxygen concentration at one distinct point in a stream cross section is valid only for flowing water whose cross-sectional DO variation is less than 0.5 mg/L, and discerning that variation requires a reconnaissance cross-section measurement.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Measuring the DO concentration at one distinct point in\na cross section is valid only for flowing water with a cross-\nsectional DO variation less than 0.5 mg/L.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-where-not-to-measure-01",
+          "claim": "Dissolved oxygen must not be measured in or directly below sections with turbulent flow, in still water, or from the bank, unless those conditions represent most of the stream reach or are required to fulfill project objectives.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Do not measure DO in or directly below sections with\nturbulent flow, in still water, or from the bank unless these\nconditions represent most of the stream reach",
+          "specificity": "high"
+        },
+        {
+          "id": "do-below-1mgL-spectro-required-01",
+          "claim": "If the anticipated dissolved-oxygen concentration is less than 1.0 mg/L, spectrophotometric methods are required to develop an instrument-specific rating before measurements made with a field instrument can be reported.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "If the anticipated DO concentration is less than 1.0 mg/L,\nuse of spectrophotometric methods (section 3.0) is required\nto develop an instrument-specific rating",
+          "specificity": "high"
+        },
+        {
+          "id": "do-rating-five-measurements-01",
+          "claim": "An instrument-specific rating should consist of at least five measurements made as nearly simultaneously as possible with the optical instrument and the spectrophotometric method, and the medians of those measurements should agree within 0.03 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "measurements made as nearly\nsimultaneously as possible with the optical instrument and\nthe spectrophotometric method. When compared, the median\nof these measurements should agree within 0.03 mg/L.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__34bf109d6e10",
+      "index": 31,
+      "locator": "Section 2.3.1, page break — \"metric methods. The instrument-specific rating\" (overlap text only)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__6dda12cce4f6",
+      "index": 32,
+      "locator": "Section 2.3.1 Surface Water, measurement steps — \"DO must be measured in situ\"",
+      "claims": [
+        {
+          "id": "do-report-above-003-01",
+          "claim": "Once an instrument-specific rating has been developed, an optical DO instrument may be used to report dissolved-oxygen concentrations greater than 0.03 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Once an instrument-specific rating has been developed, an\noptical DO instrument may be used to report DO concentra-\ntions greater than 0.03 mg/L.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-in-situ-only-01",
+          "claim": "Dissolved oxygen must be measured in situ and never in subsamples taken from a sample splitter or other vessel, because the chemistry of derived samples changes quickly and such measurements are not representative.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "DO must be measured in situ. Never measure DO in\nsubsamples from a sample splitter or other vessel; DO\nmeasurements will not be representative",
+          "specificity": "high"
+        },
+        {
+          "id": "do-equilibrate-60s-01",
+          "claim": "The DO and temperature sensors are immersed directly into the water body and allowed to equilibrate to the water temperature for no less than 60 seconds.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "allow the sensors to equilibrate to the\nwater temperature (no less than 60 seconds).",
+          "specificity": "high"
+        },
+        {
+          "id": "do-stabilize-02-median-01",
+          "claim": "After the instrument reading has stabilized to within ±0.2 mg/L the median DO concentration is recorded, and in still water the median of three or more sequential values is recorded.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "The reading should stabilize to within ±0.2\nmg/L.\n• In still water, record the median of three or more\nsequential values.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-edi-ewi-reporting-01",
+          "claim": "For Equal Discharge Increment sampling the mean value of all subsections measured is recorded (or the median at the centroid of flow if there is only one vertical section), and for Equal Width Increment sampling the mean or median of all subsections is recorded.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Equal Discharge Increment (EDI)—Record the mean\nvalue of all subsections measured.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-spectro-not-epa-approved-01",
+          "claim": "Spectrophotometric methods for determining dissolved-oxygen concentration generally are not approved by the U.S. Environmental Protection Agency for regulatory assessments.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "spectrophotometric methods for determining DO concentration\ngenerally are not approved by the U.S. Environmental Protection Agency for\nregulatory assessments.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-deep-swift-stream-01",
+          "claim": "In a flowing stream too deep or swift to wade, a weighted DO sensor is lowered from a bridge, cableway, or boat, and the weight must not be attached directly to the sensors or sensor cables.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Do not attach the weight directly to the sensors\nor sensor cables to avoid damaging the sensors or\nsensor cables.",
+          "specificity": "medium"
+        },
+        {
+          "id": "do-lake-profile-01",
+          "claim": "In lakes and reservoirs dissolved oxygen is measured at a series of specific depths to determine a vertical profile at each location of interest, and in still-water conditions at multiple depths at several points in the cross section.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Lakes and reservoirs—Measure DO at a series of\nspecific depths to determine a vertical profile at each\nlocation of interest.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__04be5245e4a6",
+      "index": 33,
+      "locator": "Section 2.3.2 Groundwater — \"standing water must be evacuated from the well\"",
+      "claims": [
+        {
+          "id": "do-well-purge-01",
+          "claim": "Before the concentration of dissolved oxygen in groundwater can be determined, standing water must be evacuated from the well so that the measurement is representative of formation-water concentration; an adequate well purge ensures the flow of freshwater from the aquifer formation into the well.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "standing water must be evacuated from the well\nto ensure that measurements of DO concentration in the well\nwill be representative of formation-water concentration.",
+          "specificity": "high"
+        },
+        {
+          "id": "do-no-bailed-sample-01",
+          "claim": "A bailed sample is not recommended for dissolved-oxygen measurement because the field sample-decanting process exposes the sample to the atmosphere, and the same applies to any sampling device from which the sample contacts air during transfer.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "A bailed sample, for\nexample, is not recommended for DO measurement because\nthe field sample-decanting process exposes the sample to the\natmosphere",
+          "specificity": "high"
+        },
+        {
+          "id": "do-insitu-exsitu-choice-01",
+          "claim": "Project data-quality requirements, site characteristics, and equipment availability dictate whether groundwater DO measurements are made in situ (downhole) or ex situ above land surface by the inline-flow procedure, and whether optical or spectrophotometric methods are used.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "(1) measurements will be made in situ (DO measured down-\nhole) or ex situ (DO measured above land surface, the inline-\nflow procedure)",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__1179467c7c4c",
+      "index": 34,
+      "locator": "Section 2.3.2, page break — \"air when transferred to a measurement or analysis vessel\" (overlap text only)",
+      "claims": []
+    }
+  ],
+  "summary": {
+    "gaps": [],
+    "notes": "PARTIAL — extraction in progress.",
+    "totalClaims": 106,
+    "byMetric": {
+      "dissolvedOxygen": 97,
+      "temperature": 18,
+      "conductivity": 13
+    },
+    "byType": {
+      "procedural": 37,
+      "numeric": 32,
+      "conceptual": 22,
+      "definitional": 15
+    }
+  }
+}
