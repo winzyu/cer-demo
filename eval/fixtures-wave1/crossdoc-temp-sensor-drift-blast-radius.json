@@ -9,8 +9,7 @@
     "usgs-nfm-a6.8-multiparameter-instruments.pdf"
   ],
   "requires": [],
-  "notes": "The temperature sensor as the shared dependency of every other channel. The blast radius is stated most directly in the EPA SOP (epa-nist-temp-check-01: because the pH, dissolved oxygen, specific conductance and ORP probes all rely on the temperature sensor, each temperature sensor must be checked against a NIST-traceable thermometer; epa-solution-volume-01: the calibration solution must cover both the probe and the temperature sensor; epa-do-dry-sensor-01: evaporating moisture on the temperature sensor or DO membrane influences readings). The accuracy bar and the fact that temperature 'calibration' is verification rather than adjustment are only in A6.1 (t-verified-multiparam-accuracy-01: plus/minus 0.2 C when the sensor corrects another parameter; t-temp-cal-differs-01; t-temp-master-variable-01). The cadence is in A6.4 (ph-temp-sensor-annual-cal-01: at least annually, per A6.1) and the traceability requirement in A6.8 (mp-t4-nist-thermometer-02, which ties the same thermometer to the barometer used for DO calibration). Turn 2 cannot be answered from the EPA SOP and turn 1's dependency list is not stated in one place in the USGS chapters, so the pair needs both bodies. Also picks up the sensor-location point from A6.4 (ph-sensor-location-difference-01): on a multiparameter instrument the temperature sensor usually sits somewhere other than the pH electrode. Predicted rag: the slice says temperature is the master variable but says nothing about sensor verification, tolerance, or which readings a drifting thermistor corrupts."
-  ,
+  "notes": "The temperature sensor as the shared dependency of every other channel. The blast radius is stated most directly in the EPA SOP (epa-nist-temp-check-01: because the pH, dissolved oxygen, specific conductance and ORP probes all rely on the temperature sensor, each temperature sensor must be checked against a NIST-traceable thermometer; epa-solution-volume-01: the calibration solution must cover both the probe and the temperature sensor; epa-do-dry-sensor-01: evaporating moisture on the temperature sensor or DO membrane influences readings). The accuracy bar and the fact that temperature 'calibration' is verification rather than adjustment are only in A6.1 (t-verified-multiparam-accuracy-01: plus/minus 0.2 C when the sensor corrects another parameter; t-temp-cal-differs-01; t-temp-master-variable-01). The cadence is in A6.4 (ph-temp-sensor-annual-cal-01: at least annually, per A6.1) and the traceability requirement in A6.8 (mp-t4-nist-thermometer-02, which ties the same thermometer to the barometer used for DO calibration). Turn 2 cannot be answered from the EPA SOP and turn 1's dependency list is not stated in one place in the USGS chapters, so the pair needs both bodies. Also picks up the sensor-location point from A6.4 (ph-sensor-location-difference-01): on a multiparameter instrument the temperature sensor usually sits somewhere other than the pH electrode. Predicted rag: the slice says temperature is the master variable but says nothing about sensor verification, tolerance, or which readings a drifting thermistor corrupts.",
   "turns": [
     {
       "role": "user",
@@ -53,7 +52,9 @@
         ],
         "cite": [
           "usgs-nfm-a6.1-temperature.pdf",
-          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+          "usgs-nfm-a6.4-ph.pdf",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "epa-sop-field-instrument-calibration-2010.pdf"
         ]
       }
     }

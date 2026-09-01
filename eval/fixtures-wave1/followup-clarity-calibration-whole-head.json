@@ -1,0 +1,51 @@
+{
+  "id": "followup-clarity-calibration-whole-head",
+  "class": "follow-up",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.7-turbidity.pdf"
+  ],
+  "requires": [],
+  "notes": "Built from tby-sub-cal-proc-a-b-01 and tby-submersible-separate-chamber-01 (turn 1) and tby-sub-cal-zero-steps-01 with the Procedure B trade-offs from tby-sub-cal-proc-a-b-01 (turn 2). Turn 2 - 'We've been doing the second one to save standard. What are we trading away?' - is pure back-reference: 'the second one' names nothing on its own and is unrecoverable without turn 1's two options. Shape is choice-then-the-cost-of-the-choice. expected_to_favor is 'rag' because the two procedures and their opposing trade-offs sit in the submersible calibration subsection of one chapter and are not the sort of thing a fixed context slice carries. Slice check: the probe datasheets cover calibration intervals and general handling; nothing in the slice describes calibrating a submersible turbidity sensor at all, let alone the whole-bundle versus single-sensor split, so neither turn is slice-answerable.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "When we calibrate the clarity sensor on the sonde, are we meant to sink the whole sensor head into the standard, or just that one sensor on its own?",
+      "rubric": {
+        "must_contain": [
+          "states that both are accepted ways of doing it - immersing the whole sonde bundle, or immersing only the turbidity sensor",
+          "states that either way the calibration is done in a separate vessel with the sensor sitting in the calibration standard, not in the water body being monitored",
+          "gives the trade-off for putting the whole head in: it takes a lot more standard, and brings a risk of contaminating or diluting that standard"
+        ],
+        "must_not": [
+          "presents one of the two as the only permitted method",
+          "invents a required volume of calibration standard",
+          "describes benchtop cuvette calibration as if it were the submersible procedure"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "We've been doing the second one to save standard. What are we trading away?",
+      "rubric": {
+        "must_contain": [
+          "states that isolating just the one sensor is the harder part of that approach",
+          "states that it is harder to keep the sensor's optical face free of air bubbles when only the sensor is immersed",
+          "notes the practical steps that go with it - rinsing with deionized water and then with the standard itself, and working the bubbles off the optical surface by agitating the sonde or running the wiper before the reading is taken",
+          "notes that the sonde is then set steady - stood vertically on a flat surface or held in a stand - rather than being hand-held during the calibration"
+        ],
+        "must_not": [
+          "claims the single-sensor approach has no downside",
+          "invents a bubble-removal time or an agitation count not supported by the source",
+          "answers about the whole-bundle procedure instead, losing the back-reference"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    }
+  ]
+}

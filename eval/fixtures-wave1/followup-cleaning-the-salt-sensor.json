@@ -1,0 +1,53 @@
+{
+  "id": "followup-cleaning-the-salt-sensor",
+  "class": "follow-up",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.3-specific-conductance.pdf"
+  ],
+  "requires": [],
+  "notes": "Built from sc-t633-electrode-cleaning-01, sc-no-nitric-acid-01 (turn 1) and sc-hcl-soak-01 (turn 2). Turn 2 - 'How long can it sit in that before we are doing more harm than good, and then what?' - has no standalone subject: both 'it' and 'that' are bare back-references to the probe and the acid named only in turn 1, so the turn is dead on its own. Shape is procedure-then-its-limit. expected_to_favor is 'rag': the vendor datasheet is inside the slice and says only that hard coatings should be removed chemically using the manufacturer's own cleaner (SLICE-EXCLUSION line 38), so a slice-bound arm will produce a fluent, useless answer and will not have the strength, the excluded reagents, the soak ceiling or the rinse. That partial-but-wrong failure is what this fixture is meant to expose. Turn 1 is written to assume the vendor answer has already run out, so the fixture cannot be satisfied from the slice.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our salt sensor has been reading low and a soft brush around the electrodes didn't bring it back. The vendor sheet just says to clean it chemically without saying what with. What do the field manuals put you in?",
+      "rubric": {
+        "must_contain": [
+          "says to start with a detergent solution and only escalate to acid if that fails",
+          "names dilute hydrochloric acid, at about 5 percent, as the acid to escalate to",
+          "says to check the instrument manufacturer's own guidance before putting any acid on the probe",
+          "warns that nitric acid, aqua regia and anything else that etches platinum or gold must not be used, because they will attack platinum and platinum-iridium electrodes"
+        ],
+        "must_not": [
+          "recommends an acid or concentration the sources do not give",
+          "recommends abrasive mechanical cleaning of the electrode surfaces",
+          "answers only with the vendor's proprietary probe cleaner and stops there",
+          "omits the check-the-manufacturer-first step"
+        ],
+        "cite": [
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "How long can it sit in that before we're doing more harm than good, and then what?",
+      "rubric": {
+        "must_contain": [
+          "gives 2 hours as the maximum soak",
+          "states that the probe is rinsed thoroughly with deionized water afterwards",
+          "repeats or upholds that the manufacturer's recommendations govern, so a shorter limit from the instrument maker wins"
+        ],
+        "must_not": [
+          "invents a soak time longer than the source gives",
+          "says an overnight or open-ended soak is acceptable",
+          "omits the deionized-water rinse after the soak",
+          "answers about calibration-standard soak or storage instead of the acid clean"
+        ],
+        "cite": [
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ]
+      }
+    }
+  ]
+}

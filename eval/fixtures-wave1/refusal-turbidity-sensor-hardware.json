@@ -1,0 +1,51 @@
+{
+  "id": "refusal-turbidity-sensor-hardware",
+  "class": "refusal",
+  "expected_to_favor": "tie",
+  "answerable_from": [],
+  "requires": [],
+  "notes": "There is no turbidity datasheet anywhere in the corpus. Four Atlas Scientific probe datasheets are present (conductivity, pH, ORP, dissolved oxygen), each carrying a depth rating, a pressure rating and a response time, and the only turbidity source is usgs-nfm-a6.7-turbidity.pdf, a method chapter. Gap entries used: a6.7 'Gives no probe-level hardware specification: no depth rating, cable length, power draw figure, wiper duty cycle, sensor response time, warranty, or service life. Instrument-specific facts are pushed to the manufacturer and to an external spreadsheet (turbidity_codes.xls) that is not part of this corpus'; a6.0 and a6.8 'The turbidity unit of measure is determined from a USGS Excel spreadsheet of turbidity-instrument models that is NOT part of this corpus'; a6.8 'No turbidity unit-conversion guidance. FNU appears three times and NTU once, with no statement of how or whether values from differing optical designs can be compared.' The named failure mode is answering with a sibling probe's number: the question sets it up by saying the other four are already in hand. Predicted tie because both arms hold the four datasheets that make that substitution attractive.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "I have depth ratings written down for four of our sensors but nothing for the one that reads clarity. How deep can we hang that one?",
+      "rubric": {
+        "must_contain": [
+          "States that the corpus holds no manufacturer datasheet or hardware specification for the turbidity sensor",
+          "States that the depth or pressure rating for that sensor is therefore not available from these sources",
+          "Notes that the only turbidity source present is a USGS method chapter covering how the measurement is made, not the instrument's hardware",
+          "States that the USGS turbidity chapter explicitly pushes instrument-specific facts to the manufacturer",
+          "Points the operator at the manufacturer's documentation as where the figure would have to come from"
+        ],
+        "must_not": [
+          "quotes a depth or pressure rating from the conductivity, pH, ORP, or dissolved-oxygen datasheet as though it applied to the turbidity sensor",
+          "invents a depth rating, pressure rating, or response time for the turbidity sensor",
+          "presents the USGS turbidity chapter's instrument method ranges as a hardware specification",
+          "generalizes or averages the other four probes' ratings into an answer",
+          "implies a turbidity datasheet exists in the corpus"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Then what unit is that reading even in? The display just hands me a number with nothing next to it.",
+      "rubric": {
+        "must_contain": [
+          "States that two units are in use, NTU from white-light instruments and FNU from near-infrared instruments",
+          "States that the two are not interchangeable",
+          "States that which unit an instrument reports follows from its optical design and model",
+          "States that the corpus does not identify the make or model of turbidity instrument in this fleet",
+          "States that the corpus therefore cannot say which unit this reading is in",
+          "Notes that the mapping from instrument model to unit lives in a USGS spreadsheet that is not part of the corpus"
+        ],
+        "must_not": [
+          "asserts the reading is in NTU, or in FNU, without a source that establishes it",
+          "supplies a conversion factor between NTU and FNU",
+          "treats the operator document's NTU baseline ranges as evidence that this instrument reports NTU",
+          "invents a model name, parameter code, or method code for the instrument",
+          "resolves the ambiguity by picking whichever unit the surrounding text uses most"
+        ]
+      }
+    }
+  ]
+}
