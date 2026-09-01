@@ -1935,7 +1935,16 @@
     "totalClaims": 0,
     "byMetric": {},
     "byType": {},
-    "gaps": [],
-    "notes": ""
+    "gaps": [
+      "No ecological or health interpretation of any value — zero occurrences of \"healthy\", \"aquatic life\", or \"hypoxia\". Like every USGS chapter in this corpus it says how to obtain a defensible number, never what the number means.",
+      "No full calibration procedure per metric. Buffers and Zobell solution are mentioned in passing but the methods live in A6.1-A6.7; an operator cannot calibrate a probe from this chapter alone.",
+      "No sensor replacement or end-of-life guidance — zero occurrences of \"replacement\". Table 6.8-6 troubleshoots unstable readings but never says when a sensor is finished.",
+      "No sample holding times or preservation guidance — zero occurrences of \"holding time\".",
+      "Salinity appears only three times and barometric pressure once, so DO salinity and barometric correction — which A6.2 treats at length with tables — is not settled here despite this being the multiparameter-sonde chapter.",
+      "No turbidity unit-conversion guidance. FNU appears three times and NTU once, with no statement of how or whether values from differing optical designs can be compared. A6.7 is the only source for that.",
+      "No guidance on instrument cost, procurement, or model selection beyond generic sensor categories, so \"which sonde should we buy\" is unanswerable.",
+      "No unattended long-term deployment protocol: the chapter is written around discrete field visits and purging, not continuous monitoring."
+    ],
+    "notes": "COMPLETE — all 34 chunks extracted. CROSS-DOCUMENT FINDING: Table 6.8-5 here and Table 6.0-1 in NFM A6.0 state the SAME stabilization criteria numerically — temperature ±0.2 °C, specific conductance ±5 μS/cm at or below 100 μS/cm and ±3 percent above, dissolved oxygen ±0.2 mg/L, pH ±0.1 unit, turbidity ±0.5 turbidity units or 5 percent whichever is greater. The two chapters agree; this is redundancy across documents, NOT a precedence conflict. A cross-document fixture can legitimately require both sources, but a fixture premised on them disagreeing would be false. The 60-second minimum thermal-equilibrium wait at each new depth is stated for both surface water and groundwater, with the note that some instruments need longer and manufacturer guidance governs."
   }
 }
