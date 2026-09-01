@@ -1,0 +1,1444 @@
+{
+  "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+  "title": "USGS TM 9-A6.0 — Guidelines for Field-Measured Water-Quality Properties (2023)",
+  "inSlice": false,
+  "chunkCount": 47,
+  "chunks": [
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__0020cd97321e",
+      "index": 0,
+      "locator": "Title page and citation page — \"Techniques and Methods 9–A6.0\"",
+      "claims": [
+        {
+          "id": "a60-doc-version-01",
+          "claim": "This document is USGS Techniques and Methods book 9, chapter A6.0, Version 1.1, dated July 17, 2023, and it supersedes USGS Techniques of Water-Resources Investigations book 9, chapter A6.0, Version 2.0.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Version 1.1, July 17, 2023\nSupersedes USGS Techniques of Water-Resources Investigations,\nBook 9, Chapter A6.0, Version 2.0",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-doc-citation-02",
+          "claim": "The suggested citation for this chapter gives it as 22 pages with DOI https://doi.org/10.3133/tm9A6.0 and ISSN 2328-7055 (online).",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Techniques and Methods, book 9, chap. A6.0 (version 1.1, July 17, 2023), 22 p., https://doi.org/10.3133/tm9A6.0.",
+          "specificity": "low"
+        },
+        {
+          "id": "a60-doc-revision-history-03",
+          "claim": "Chapter A6.0 was first released in April 1998 as TWRI book 9 chapter A6.0 version 1.0 and was revised in July 2003, August 2005, October 2008, and twice in July 2023.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "First Release: April 1998, online as Techniques of Water-Resources Investigations\n(TWRI), book 9, chapter A6.0, Version 1.0",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__25ccb3b851b4",
+      "index": 1,
+      "locator": "Front matter — citation block and table of contents dot leaders, \"Contents\" through \"6.0–6.\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__2534bf899a0f",
+      "index": 2,
+      "locator": "Front matter — list of figures and tables dot leaders, \"6.0–7. Subsample field-measurement procedures\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__ca460547d41b",
+      "index": 3,
+      "locator": "Conversion Factors and Abbreviations and Symbols — \"Temperature is reported in degrees Celsius\"",
+      "claims": [
+        {
+          "id": "a60-temp-unit-conv-01",
+          "claim": "Temperature is reported in degrees Celsius (°C) and is converted to degrees Fahrenheit with the equation °F = 1.8(°C) + 32.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "°F = 1.8(°C) + 32",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-sc-unit-01",
+          "claim": "Specific conductance is reported in microsiemens per centimeter at 25 degrees Celsius (μS/cm at 25 °C).",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Specific conductance is reported in microsiemens per centimeter at 25 degrees Celsius\n(μS/cm at 25 °C).",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-ph-definition-01",
+          "claim": "pH is defined as the negative base-10 logarithm of the hydrogen ion activity and is unitless.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "negative base-10 logarithm of the hydrogen ion activity (unitless)",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-eh-definition-01",
+          "claim": "Eh is defined in this chapter as a measure of the oxidation-reduction potential of a solution.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "measure of the oxidation-reduction potential of a solution",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-mgl-ppm-01",
+          "claim": "The unit mg/L (milligram per liter) is stated to be equivalent to parts per million (ppm).",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "milligram per liter (equivalent to parts per million [ppm])",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-anc-abbrev-01",
+          "claim": "In this chapter ANC abbreviates acid-neutralizing capacity, NFQA the USGS National Field Quality Assurance program, and QWDATA the USGS NWIS database for discrete water data.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "QWDATA \tQuality of Water Database (USGS NWIS database for discrete water data)",
+          "specificity": "low"
+        },
+        {
+          "id": "a60-volume-conv-01",
+          "claim": "The conversion factors table gives 1 gallon = 3.785 liters and 1 liter = 0.2642 gallon.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "gallon (gal) \t3.785 \tliter (L)",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__bf7814090774",
+      "index": 4,
+      "locator": "Requirements and Recommendations — \"the terms “required” and “recommended” have the USGS-specific meanings\"",
+      "claims": [
+        {
+          "id": "a60-required-meaning-01",
+          "claim": "In the USGS National Field Manual, \"required\" means USGS Water Mission Area policy established on research or technical consensus, and field personnel are instructed to use the required equipment and procedures as described in the NFM.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "USGS field personnel are instructed to use required equipment and procedures\nas described in the NFM.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-departure-qa-01",
+          "claim": "Any departure from or modification to a stipulated NFM requirement must be independently quality assured and documented, per Office of Water Quality Technical Memorandum 2002.13.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Departure from or modifications to stipulated requirements,\nif necessary for accomplishing specific data-quality requirements or study objectives,\nmust be independently quality assured and documented",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-recommended-meaning-01",
+          "claim": "In the NFM, \"recommended\" means there are several acceptable alternatives to a given procedure or equipment selection, and the reasons for choosing among them must be documented.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "there are several acceptable alternatives to a given\nprocedure or equipment selection in the NFM",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__f70208a35e84",
+      "index": 5,
+      "locator": "Abstract and section 1.0 Introduction — \"applicable to most\\nnatural waters\"",
+      "claims": [
+        {
+          "id": "a60-scope-natural-waters-01",
+          "claim": "The field methods for measuring field parameters described in NFM chapter A6.0 are stated to be applicable to most natural waters.",
+          "metrics": [
+            "dissolvedOxygen",
+            "orp",
+            "ph",
+            "conductivity",
+            "temperature",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "The field methods for measuring field\nparameters described in this chapter are applicable to most\nnatural waters.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-nfm-mandate-01",
+          "claim": "USGS national program, project, and Water Science Center personnel who collect water-quality data, including those on USGS Cooperative program projects, are mandated to use the protocols in the NFM under Office of Water-Quality Technical Memorandum 2002.13.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "are mandated to use\nprotocols provided in the NFM (USGS Office of Water-\nQuality Technical Memorandum 2002.13",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-series-change-01",
+          "claim": "NFM chapters were released in the USGS Techniques of Water-Resources Investigations series before 2017, and effective in 2018 new and revised chapters are released in the Techniques and Methods series without any change to content or format.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Effective in 2018, new and revised NFM chapters are being\nreleased in the USGS Techniques and Methods series; this\nseries change does not affect the content and format of the\nNFM.",
+          "specificity": "low"
+        },
+        {
+          "id": "a60-training-course-01",
+          "claim": "Formal training in the USGS class \"Field Water-Quality Methods for Groundwater and Surface Water\" plus field apprenticeships are stated to be needed to collect unbiased, high-quality data, supplementing the NFM.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "“Field Water-Quality Methods for Groundwater and Surface\nWater,” and field apprenticeships supplement the information\nprovided in the NFM and are needed to collect unbiased, high-\nquality data.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-supersedes-wilde-01",
+          "claim": "Chapter A6.0 updates and supersedes USGS Techniques of Water-Resources Investigations book 9 chapter A6.0 version 2.0 by Franceska D. Wilde.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "It\nupdates and supersedes USGS Techniques of Water-Resources\nInvestigations, book 9, chapter A6.0, version 2.0, by Franceska\nD. Wilde.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__a2adeb6a5922",
+      "index": 6,
+      "locator": "Section 1.0 Introduction, boxed definition — \"FIELD MEASUREMENTS1: Determinations of physical\"",
+      "claims": [
+        {
+          "id": "a60-field-meas-definition-01",
+          "claim": "A field measurement is defined as a determination of a physical or chemical property that must be measured on site, as close as possible in time and space to the sampling of the medium.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "FIELD MEASUREMENTS1: Determinations of physical\nor chemical properties that must be measured on site,\nas close as possible in time and space to the sampling of\nthe medium.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-onsite-integrity-01",
+          "claim": "On-site measurement is necessary to preserve sample integrity and ensure data accuracy for field measurements, a list the chapter begins with water temperature and dissolved-oxygen concentration.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "On-site measurement is necessary to preserve sample\nintegrity and ensure data accuracy for the following field\nmeasurements: water temperature, dissolved-oxygen (DO)",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-terminology-synonyms-01",
+          "claim": "In the National Field Manual the term \"field measurements\" is synonymous with \"field properties\" and \"field parameters\".",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "synonymous with “field properties” and “field parameters,” terms that are used\ncommonly in environmental water-quality literature.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-routine-contexts-01",
+          "claim": "Field parameters are routinely measured when water samples are collected, are often measured continually at USGS streamgages, and are regularly measured during laboratory and field experiments.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Field parameters are rou-\ntinely measured when water samples are collected, are often\nmeasured continually at USGS streamgages, and are regularly\nmeasured during laboratory and field experiments.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__dd82a61e816c",
+      "index": 7,
+      "locator": "Page break between pages 9 and 10 — overlap-only chunk ending \"-- 9 of 32 --\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__91f856db8d42",
+      "index": 8,
+      "locator": "End of section 1.0 and section 2.0 Quality Assurance / 2.1 Records — \"Adherence to standard U.S. Geological Survey (USGS)\\nquality-assurance protocols is required\"",
+      "claims": [
+        {
+          "id": "a60-xcut-field-param-list-01",
+          "claim": "The seven properties requiring on-site measurement to preserve sample integrity and data accuracy are water temperature, dissolved-oxygen concentration, specific electrical conductance, pH, reduction-oxidation potential (redox/ORP), alkalinity and acid-neutralizing capacity, and turbidity.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "orp",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "concentration, specific electrical conductance (SC), pH,\nreduction-oxidation potential (redox/ORP), alkalinity and\nacid-neutralizing capacity (ANC)2, and turbidity.3",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-chapter-map-01",
+          "claim": "Each field measurement has its own NFM chapter: temperature in A6.1, dissolved oxygen in A6.2, specific electrical conductance in A6.3, pH in A6.4, reduction-oxidation potential in A6.5, alkalinity and acid-neutralizing capacity in A6.6, and turbidity in A6.7.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "orp",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "temperature (NFM A6.1), dissolved\noxygen (NFM A6.2), specific electrical conductance (NFM A6.3), pH\n(NFM A6.4), reduction-oxidation potential (NFM A6.5)",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-alkalinity-not-direct-01",
+          "claim": "Alkalinity/acid-neutralizing capacity is a field analysis rather than a direct field measurement, although it is performed routinely on the same field trip as the other field measurements.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Alkalinity/acid-neutralizing capacity (ANC) is a field analysis, not a\ndirect field measurement; however, the analysis is performed routinely during\nthe same field trip",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-sonde-guidance-pointer-01",
+          "claim": "Guidance for multiparameter instruments, in which individual field-measurement sensors are combined into a sonde and deployed to the water body for in situ measurement, is provided in NFM A6.8, and guidelines for continuous monitoring are in Wagner and others (2006).",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "is provided in NFM A6.8",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-qa-required-01",
+          "claim": "Adherence to standard USGS quality-assurance protocols is required, and quality-controlled procedures are to be incorporated into every USGS water-quality data-collection effort.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Adherence to standard U.S. Geological Survey (USGS)\nquality-assurance protocols is required, and quality-controlled\nprocedures are to be incorporated into every USGS data-",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-qa-audit-replicates-01",
+          "claim": "Quality assurance of collected data includes timely and accurate documentation of field information in electronic and (or) paper records plus second- or third-party auditing of those records, and the quality-control records for field measurements include records of replicate measurements.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "as well as second- or third-party auditing of such\nrecords. Included in these records of quality-control data for\nfield measurements are the records of replicate measurements.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-records-per-location-01",
+          "claim": "Electronic and (or) paper records must be established and maintained for each uniquely identified sampling location to permanently document field activities, measurement readings, instrument calibration, and any other information needed to meet programmatic or regulatory requirements.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Electronic and (or) paper records must be established and\nmaintained for each uniquely identified sampling location to",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__eaeeab44453d",
+      "index": 9,
+      "locator": "Section 2.1 Records, bullet list — \"A separate paper or electronic log book must be main-tained for each field instrument\"",
+      "claims": [
+        {
+          "id": "a60-records-transcribe-01",
+          "claim": "For every field visit the data collector transcribes instrument-performance information and field-measurement data onto paper and (or) electronic field and analytical request forms, and those records should be checked independently by a field partner and (or) data administrator.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "tion and the field-measurement data are transcribed\nonto paper and (or) electronic field and analytical\nrequest forms by the data collector.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-electronic-records-01",
+          "claim": "Office of Water Quality Technical Memorandum 2016.09 recommends that all water-quality records be collected electronically wherever feasible and specifies requirements for electronic records.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Office of Water Quality\nTechnical Memorandum 2016.09 recommends that\nall water-quality records be collected electronically\nwherever feasible",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-logbook-required-01",
+          "claim": "A separate paper or electronic log book must be maintained for each field instrument or replaceable sensor recording repair, maintenance, and calibration history, and the log book travels with the instrument.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "A separate paper or electronic log book must be main-\ntained for each field instrument or replaceable sensor\nwhere instrument repair, maintenance, and calibration\nhistory information is recorded.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-logbook-pages-01",
+          "claim": "Instrument log book pages should be prenumbered consecutively, pages must not be skipped or torn out, and water-resistant paper is recommended.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "The pages of the instrument log\nbook should be prenumbered consecutively. Do not\nskip or tear out pages. Water-resistant paper is recom-\nmended.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-pen-requirement-01",
+          "claim": "Field forms and log books must be written with a blue or black indelible ballpoint pen; pencil is not acceptable and felt-tipped pens such as Sharpie markers should not be used because they could compromise data quality for volatile organic compound samples.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Use a blue or black indelible ballpoint pen to write on\npaper forms and in log books. Use of a pencil is not\nacceptable; felt-tipped pens (for example, Sharpie®\nmarkers) should not be used",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-error-correction-01",
+          "claim": "Erroneous or mistaken entries on field forms should be crossed out with a single line and initialed.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Erroneous\nor mistaken entries should be crossed out with one line\nand initialed.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-reporting-conventions-01",
+          "claim": "The conventions used to report field-measurement data are given at the end of each individual field-measurement chapter of the NFM rather than in chapter A6.0, while the stabilization criteria for recording direct field measurements are given in table 6.0-1 of A6.0.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "The conventions used to report field-measurement data\nare described at the end of each field-measurement\nchapter of the NMF. Stabilization criteria for recording",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-nwis-entry-01",
+          "claim": "Final or reported field-measurement values for USGS studies are to be entered into the National Water Information System, with QWDATA holding discrete (noncontinuous) field-measurement data in addition to laboratory analysis results.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "QWDATA: Contains discrete (noncontinuous) field-\nmeasurement data in addition to results of laboratory\nanalyses.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-logbook-supply-01",
+          "claim": "Instrument log books are available to USGS personnel through One-Stop Shopping at https://1stop.usgs.gov as item Q609FLD.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "website https://1stop.usgs.gov (item Q609FLD).",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__ab206848465b",
+      "index": 10,
+      "locator": "Page break at page 10 — overlap-only chunk ending \"-- 10 of 32 --\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__47bda63fa730",
+      "index": 11,
+      "locator": "Section 3.0 Performing Field Measurements and start of table 6.0–1 — \"Properties of temperature, DO concentration, and Eh are\\nrequired to be measured directly (in situ)\"",
+      "claims": [
+        {
+          "id": "a60-xcut-insitu-required-01",
+          "claim": "Temperature, dissolved-oxygen concentration, and Eh are required to be measured directly (in situ) in the water body where possible, whereas pH, conductivity, and turbidity are only recommended to be measured in situ and may instead be measured on a sample withdrawn from the source.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "orp",
+            "ph",
+            "conductivity",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Properties of temperature, DO concentration, and Eh are\nrequired to be measured directly (in situ) in the water body\nwhere possible. Other properties such as pH, conductivity,\nand turbidity are",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-field-site-required-01",
+          "claim": "All of these properties, including alkalinity which requires titration of a measured volume of subsample, are required to be measured at the field site.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "orp",
+            "ph",
+            "conductivity",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Alkalinity\ndetermination requires titration on a measured volume of\nsubsample. These properties are required to be measured at the\nfield site.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-training-qw1028-01",
+          "claim": "Fundamental training for USGS water-quality field activities includes a two-week Field Water-Quality Methods class (QW1028), with other foundational courses QW1022, USGS-W-16-322, QW1075, QW2034, and QW1297.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "includes a two-\nweek Field Water-Quality Methods class (QW1028)",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-nfqa-annual-01",
+          "claim": "All field personnel, including non-USGS employees, who collect field-measurement data entered into NWIS are required to participate annually in the National Field Quality Assurance Program, which evaluates proficiency in measuring pH, specific conductance, and alkalinity (or ANC) only.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "are required to participate\nannually in the NFQA Program",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-nfqa-scope-01",
+          "claim": "The NFQA Program evaluates personnel proficiency in measuring pH, specific conductance, and alkalinity (or ANC), and does not cover dissolved oxygen, temperature, turbidity, or ORP.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "conceptual",
+          "quote": "which evaluates the proficiency of per-\nsonnel in measuring pH, SC, and alkalinity (or ANC).",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-single-param-instruments-01",
+          "claim": "Single-parameter instruments include stand-alone temperature sensors; dissolved-oxygen, specific-conductance, and pH meters; and turbidimeters.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Single-parameter\ninstruments include, for example, stand-alone tem-\nperature sensors; DO, SC, and pH meters; and\nturbidimeters.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-tbl601-caption-01",
+          "claim": "Table 6.0-1 is titled \"Stabilization criteria for recording direct field measurements\" and defines the criteria as the range within which variability should fall for five or more measurements.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "(Variability should be within the range shown for five or more\nmeasurements)",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl601-temp-01",
+          "claim": "Table 6.0-1 gives the stabilization criterion for a thermistor temperature measurement as ±0.2 °C.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Temperature\nThermistor \t±0.2 °C",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl601-sc-01",
+          "claim": "Table 6.0-1 gives the specific electrical conductance stabilization criterion as ±5 μS/cm for values ≤100 μS/cm and ±3 percent for values >100 μS/cm.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Specific electrical conductance\n≤100 μS/cm\n>100 μS/cm\n±5 μS/cm\n±3%",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-aquarius-01",
+          "claim": "AQUARIUS is the NWIS component that contains automated continuous water data, all groundwater level data, and information for discrete samples.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "AQUARIUS: Contains automated, continuous water\ndata, all groundwater level data, and information for\ndiscrete samples.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-representativeness-01",
+          "claim": "Field measurements should represent, as closely as possible, the ambient physical and chemical properties of the surface-water or groundwater system at the time of sampling.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "orp",
+            "ph",
+            "conductivity",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Field measurements should represent, as closely as pos-\nsible, the ambient physical and chemical properties of the\nsurface-water or groundwater system at the time of sampling.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__1b7e9852e841",
+      "index": 12,
+      "locator": "Table 6.0–1 remainder and its footnotes — \"Dissolved oxygen\\nOptical/luminescent sensors\"",
+      "claims": [
+        {
+          "id": "a60-tbl601-do-01",
+          "claim": "Table 6.0-1 gives the stabilization criterion for dissolved oxygen measured with optical/luminescent sensors as ±0.2 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Dissolved oxygen\nOptical/luminescent sensors \t±0.2 mg/L",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl601-ph-01",
+          "claim": "Table 6.0-1 gives the stabilization criterion for pH, for a meter that displays to 0.01, as ±0.1 standard pH unit.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "pH:\nMeter displays to 0.01 \t±0.1 unit",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl601-turb-01",
+          "claim": "Table 6.0-1 gives the turbidity stabilization criterion as ±0.5 turbidity units or ±5 percent, whichever is greater, for values ≤100 FNU, and ±10 percent for values >100 FNU.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Turbidity3\n≤100 FNU (or other TU)\n>100 FNU (or other TU)\n±0.5 TU or ±5%, whichever is greater\n±10%",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-tbl601-all-01",
+          "claim": "Table 6.0-1 sets stabilization criteria across metrics in one table: ±0.2 °C for a thermistor, ±5 μS/cm or ±3 percent for specific conductance, ±0.2 mg/L for optical dissolved oxygen, ±0.1 unit for pH, and ±0.5 TU/±5 percent or ±10 percent for turbidity.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "dissolvedOxygen",
+            "ph",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "±3%Dissolved oxygen\nOptical/luminescent sensors \t±0.2 mg/L\npH:\nMeter displays to 0.01 \t±0.1 unit",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-eh-not-direct-01",
+          "claim": "Eh is not considered to be a routine or direct field measurement and is therefore absent from the table 6.0-1 stabilization criteria, with details deferred to NFM A6.5.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "Eh is not considered to be a routine or direct field measurement (see National Field Manual (NFM) A6.5).",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-alk-not-direct-02",
+          "claim": "Alkalinity and acid-neutralizing capacity determinations require a titration procedure and are not considered direct measurements, so they carry no table 6.0-1 stabilization criterion.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Alkalinity and acid-neutralizing capacity determi-\nnations require a titration procedure and are not considered direct measurements.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl601-multiparam-01",
+          "claim": "For multiparameter instruments the reader is referred to NFM A6.8 for criteria similar to table 6.0-1, and for continuous monitors to Wagner and others (2006).",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "dissolvedOxygen",
+            "ph",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Refer to NFM A6.8 for similar criteria when using multiparameter instruments. For continuous monitors, consult Wagner and others (2006).",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-turb-fnu-sensor-01",
+          "claim": "Multiparameter instruments used for most in situ turbidity applications contain single-beam infrared wavelength turbidity sensors and their results are reported in FNU.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Multiparameter instruments used for most in situ turbidity applications contain single-beam infrared wavelength turbidity sensors and are reported in FNU.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-turb-unit-lookup-01",
+          "claim": "The appropriate turbidity unit of measure is determined from a USGS Excel spreadsheet of turbidity codes at https://pubs.usgs.gov//twri/twri9a6/twri9a67/twri9a_turbidity_codes_5-2012.xlsx, with detailed guidance in NFM A6.7.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Check the Excel spreadsheet at https://pubs.usgs.gov//twri/twri9a6/twri9a67/twri9a_turbidity_codes_5-2012.xlsx to determine the appropriate turbidity unit of\nmeasure",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl601-units-01",
+          "claim": "The table 6.0-1 unit key defines FNU as formazin nephelometric units, TU as turbidity units, and \"unit\" as standard pH unit.",
+          "metrics": [
+            "turbidity",
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "unit, standard pH unit; mg/L, mil-\nligrams per liter; FNU, formazin nephelometric units; TU, turbidity units; %, percent]",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__f36cc71d771b",
+      "index": 13,
+      "locator": "Page break at page 11 — overlap-only chunk (table 6.0–1 footnote 3) ending \"-- 11 of 32 --\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__e6bf97d975ce",
+      "index": 14,
+      "locator": "Section 3.0, Equipment and Performance bullets — \"Make field measurements only with properly calibrated\\ninstruments\"",
+      "claims": [
+        {
+          "id": "a60-multiparam-definition-01",
+          "claim": "Multiparameter instruments have measurement sensors that fit into the body of a sonde, and measurements can be made either by submerging the sonde sensors in surface water or groundwater or by pumping a sample in line from its source to an air-tight cell/chamber into which the sonde fits.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Multiparameter instru-\nments have measurement sensors that fit into the body\nof a sonde.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-xcut-calibrate-before-trip-01",
+          "claim": "Field measurements are to be made only with properly calibrated instruments; instruments are required to be calibrated before each field trip, and calibration checks are required at field sites for most instruments.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "orp",
+            "ph",
+            "conductivity",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Make field measurements only with properly calibrated\ninstruments. Instruments are required to be calibrated\nbefore each field trip and checks are required at field\nsites for most instruments.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-manufacturer-conflict-01",
+          "claim": "Apparent conflicts between USGS protocols and a manufacturer's instructions should be identified and resolved by consulting a water-quality specialist.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "orp",
+            "ph",
+            "conductivity",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Apparent\nconflicts between USGS protocols and a manufac-\nturer’s instructions should be identified and resolved by\nconsulting a water-quality specialist.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-logbook-review-01",
+          "claim": "Field personnel should review the instrument log books before leaving for the field site to confirm that previously encountered problems have been resolved and that the appropriate instrument and site maintenance were performed.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Review the instrument log book(s) before leav-\ning for the field site to ensure that problems previ-\nously encountered have been resolved",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-backup-instruments-01",
+          "claim": "Backup instruments and batteries should be readily available and in good working condition.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Backup instruments and batteries should be readily\navailable and in good working condition.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-precision-accuracy-check-01",
+          "claim": "Instrument precision and accuracy (variability and bias) should be checked periodically while at a field site because they may vary with the instrument used, sampling conditions, and the expertise of personnel.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "orp",
+            "ph",
+            "conductivity",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Check instrument precision and accuracy (variability\nand bias) periodically while at a field site",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-mentor-practice-01",
+          "claim": "If the instrument or measurement is new to the operator, they should practice the measurement technique with a mentor who has current experience and is up to date with USGS field-method protocol.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "practice your measurement technique with a mentor\nwho has current experience and is up to date with\nUSGS field-method protocol and procedures.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-fitness-for-purpose-01",
+          "claim": "Field teams must determine whether the instruments and methods to be used will produce data of the type and quality required to fulfill both study needs and USGS requirements.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Field teams must determine whether the instruments and\nmethods to be used will produce data of the type and quality\nrequired to fulfill study needs as well as USGS requirements.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__e157e31940ab",
+      "index": 15,
+      "locator": "Section 3.0 Performance bullets — \"Surface water: Allow at least 60 seconds\" and \"Groundwater: Begin recording measurements\"",
+      "claims": [
+        {
+          "id": "a60-xcut-equilibrate-01",
+          "claim": "Long-standing USGS standard procedure is to let sensors equilibrate to the temperature of the water being monitored before making field measurements, and sensors have equilibrated adequately when the variability among consecutive measurements does not exceed the criterion in table 6.0-1 for about five or more consecutive measurements.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Sensors have equilibrated adequately\nwhen instrument readings have stabilized—that is,\nwhen the variability among consecutive measurements\ndoes not exceed an established criterion.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-sw-60s-median3-01",
+          "claim": "For surface water, allow at least 60 seconds (or follow the manufacturer's guidelines) for sensors to equilibrate, take readings until the table 6.0-1 stabilization criteria are met, and record the median of the final three or more readings as the reported value for that measurement point.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Surface water: Allow at least 60 seconds (or follow\nthe manufacturer’s guidelines) for sensors to equilibrate\nwith sample water.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-gw-median5-01",
+          "claim": "For groundwater, begin recording after sensors have equilibrated with purge water, take readings until the table 6.0-1 stabilization criteria are met and the required number of well volumes have been purged, and record the median of the final five or more readings as the reported value for that site.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "6.0–1 are met and the required number of well volumes\nof groundwater have been purged. Record the median\nof the final five or more readings",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-exceeds-criteria-01",
+          "claim": "When variability at a site exceeds the table 6.0-1 criteria, the operator must allow a longer equilibration time and record additional measurements, then either use the median of the final five or more measurements or apply site knowledge and professional judgment to select the most representative reading and document in field notes how the decision was made.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "either use the median of the final five or\nmore measurements recorded, or apply knowledge of\nthe site and professional judgment to select the most\nrepresentative of the final readings",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-natural-variability-01",
+          "claim": "The natural variability inherent in surface water or groundwater at the time of sampling generally falls within the table 6.0-1 stability criteria, which reflect the accuracy attainable with a properly calibrated instrument.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "The natural variability inherent in surface water or\ngroundwater at the time of sampling generally falls within the\nstability criteria given in table 6.0–1",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__80961835fb6c",
+      "index": 16,
+      "locator": "Page break at page 12 — overlap-only chunk ending \"-- 12 of 32 --\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__087812759f2e",
+      "index": 17,
+      "locator": "Section 3.1 Surface Water and 3.1.1 Summary of Surface-Water Sampling Methods — \"Measurements made at discrete depths through the\\nwater column must not be averaged\"",
+      "claims": [
+        {
+          "id": "a60-xcut-sw-insitu-01",
+          "claim": "For surface water specifically, water temperature, dissolved-oxygen concentration, and Eh are required to be measured directly within the water body where possible, while pH, conductivity, and turbidity are recommended to be measured in situ but may be measured in a subsample of a composite or grab sample.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "orp",
+            "ph",
+            "conductivity",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Water temperature, DO concen-\ntration, and Eh are required to be measured directly within\nthe water body (in situ) where possible. Other properties,\nsuch as pH, conductivity, and turbidity",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-nfm-a4-a2-pointer-01",
+          "claim": "Standard USGS procedures for locating points of sample collection and for surface-water sample collection are detailed in NFM A4, and guidance for equipment selection is detailed in NFM A2.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Standard USGS procedures for locating points of sample\ncollection and sample-collection methods for surface-water\nsampling are detailed in NFM A4.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-still-water-01",
+          "claim": "Still-water conditions are found in storage pools, lakes, and reservoirs, where field measurements typically are made in situ at multiple locations and depths determined by study objectives.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Still-water conditions are found in storage pools,\nlakes, and reservoirs. Field measurements typically are\nmade in situ at multiple locations and depths.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-xcut-no-vertical-average-01",
+          "claim": "Measurements made at discrete depths through the water column must not be averaged or reported as a median value representing the entire vertical section.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "orp",
+            "ph",
+            "conductivity",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Measurements made at discrete depths through the\nwater column must not be averaged or reported as\na median value that represents the entire vertical\nsection (vertical).",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-unique-time-01",
+          "claim": "The value selected to represent each point measured in a vertical must be reported individually, with a unique time assigned to each measurement in the vertical.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "orp",
+            "ph",
+            "conductivity",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Report the value selected to represent each point\nmeasured in the vertical individually by assigning a\nunique time to each measurement in the vertical.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-flowing-water-single-set-01",
+          "claim": "In flowing-water conditions a single set of field-measurement data is generally used to represent an entire stream cross section at a sampling site, a practice useful when calculating chemical loads.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Generally, a single set of field-measurement\ndata is used to represent an entire stream cross section\nat a sampling site. This practice can be useful when\ncalculating chemical loads.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-cross-section-variability-01",
+          "claim": "To obtain data representative of a stream cross section, the variability of discharge and of field measurements across the stream must be known, and an exploratory field-measurement profile across the section can be used to estimate the magnitude of that variation.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "To obtain data representative of the section, the vari-\nability of discharge and field measurements across the\nstream must be known.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-grab-vs-isokinetic-01",
+          "claim": "The decision to use grab-sampling methods or isokinetic sampling methods is based on the characteristics of the water body to be sampled or monitored and on study objectives.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "The decision to\nuse grab-sampling methods or isokinetic sampling methods is\nbased on the characteristics of the water body to be sampled or\nmonitored and on study objectives.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__d2c6ff539118",
+      "index": 18,
+      "locator": "Section 3.1.1, \"To locate measurement points\" steps 1–2 — \"Field-measurement profiles of stream variability are\\nneeded for low- and high-flow conditions\"",
+      "claims": [
+        {
+          "id": "a60-profile-method-choice-01",
+          "claim": "A field-measurement profile, especially at new or poorly documented sites, is used to determine which isokinetic method — equal-discharge increment (EDI) or equal-width increment (EWI) — should be used for sampling.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "determine which isokinetic method (equal-discharge\nincrement (EDI) or equal-width increment (EWI))\nshould be used for sampling.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-profile-biennial-01",
+          "claim": "Field-measurement profiles of stream variability are needed for both low- and high-flow conditions and should be verified at least every 2 years or as study objectives dictate.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Field-measurement profiles of stream variability are\nneeded for low- and high-flow conditions and should\nbe verified at least every 2 years or as study objec-\ntives dictate.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-ewi-vs-edi-choice-01",
+          "claim": "Use the EWI method when stream depth and velocities along the cross section are relatively uniform, and use the EDI method when depth and velocities are highly variable.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "If stream depth and velocities along the cross section\nare relatively uniform, use EWI.\n• If stream depth and velocities along the cross section\nare highly variable, use EDI.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-small-stream-centroid-01",
+          "claim": "In a small, well-mixed stream typically less than 5 feet in width, a single point at the centroid of flow may be used to represent the entire cross section.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "In a small stream, typically less than 5 feet (ft)\nin width, that is well mixed, a single point at the\ncentroid of flow may be used to represent the cross\nsection.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-profile-insitu-01",
+          "claim": "Measurements for a cross-sectional profile are made in situ at several equally spaced verticals along the cross section and at multiple depths within each vertical, or historical records for the site may be consulted instead.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Make in situ field measurements for the profile.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__dd271a1312da",
+      "index": 19,
+      "locator": "Page break at page 13 — overlap-only chunk ending \"-- 13 of 32 --\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__19b41bfb8c9f",
+      "index": 20,
+      "locator": "Section 3.1.1 Equal-Discharge Increments (EDI) — \"If profile values of pH, conductivity, temperature,\\nand DO concentration differ by less than 5 percent\"",
+      "claims": [
+        {
+          "id": "a60-xcut-well-mixed-5pct-01",
+          "claim": "If profile values of pH, conductivity, temperature, and dissolved-oxygen concentration differ by less than 5 percent and show the stream is well mixed both across the section and from top to bottom, a single measurement point at the centroid of flow can be used to represent field-measurement values for the whole cross section.",
+          "metrics": [
+            "ph",
+            "conductivity",
+            "temperature",
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "If profile values of pH, conductivity, temperature,\nand DO concentration differ by less than 5 percent\nand show that the stream is well mixed both across\nthe section and from top to bottom",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-well-mixed-criteria-01",
+          "claim": "A stream is considered well mixed when the variability of field-measurement values noted in the cross-sectional profile is negligible — for example, within the stabilization criteria given in table 6.0-1 — combined with best professional judgment for the site.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "variability of field-measurement values noted in the\ncross-sectional profile is negligible—for example,\nwithin the stabilization criteria given in table 6.0–1",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-centroid-definition-01",
+          "claim": "The centroid of flow is defined as the point in the increment at which discharge in that increment is equal on both sides of the point.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "The centroid of flow\nis defined as the point in the increment at which\ndischarge in that increment is equal on both sides of\nthe point.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-edi-definition-01",
+          "claim": "In the equal-discharge increment (EDI) method the stream cross section is divided into increments of equal discharge and measurements are made at the centroid of each increment, producing discharge-weighted results.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "The stream cross section is divided into increments of\nequal discharge.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-edi-min-four-01",
+          "claim": "For the EDI method the stream must be divided into a minimum of four increments, with additional increments possibly needed for a poorly mixed stream site.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Divide the stream into a minimum of four increments.\nAdditional increments could be needed for a stream site that is\npoorly mixed.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-edi-streamflow-knowledge-01",
+          "claim": "The EDI method requires knowledge of streamflow distribution in the cross section, based either on the long-term discharge record for the site or on a discharge measurement made just prior to sample collection.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Knowledge of streamflow distribution in the cross section\nis required to select verticals at which measurements will be\nmade or subsamples collected.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-edi-inspection-01",
+          "claim": "Applying the EDI method begins with a visual inspection of the stream from bank to bank, noting velocity, width, depth distribution, sediment and biota distribution, and the location of stagnant water, eddies, backwater, reverse flows, fast-flow areas, and piers or other obstructions.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Note the location of stagnant water, eddies,\nbackwater, reverse flows, areas of faster than normal\nflow, and piers or other obstructions.",
+          "specificity": "medium"
+        },
+        {
+          "id": "a60-edi-five-increments-01",
+          "claim": "In the worked EDI example, using five increments makes each equal-discharge increment 20 percent of the total discharge, found by dividing total stream discharge by 5.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "EXAMPLE: If five increments will be used, select points\nof measurement by dividing the total stream discharge by 5 to\ndetermine increment discharge",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__74a385b04ce6",
+      "index": 21,
+      "locator": "Section 3.1.1 EDI, \"When making field measurements\" — \"Use a median value for pH\"",
+      "claims": [
+        {
+          "id": "a60-edi-centroid-percentiles-01",
+          "claim": "With five equal-discharge increments the EDI centroids fall at the points along the stream cross section where 10, 30, 50, 70, and 90 percent of the total discharge are accounted for.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "The EDI cen-\ntroids will correspond to points along the stream cross section\nwhere 10, 30, 50, 70, and 90 percent of the total discharge are\naccounted for.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-edi-60s-median-01",
+          "claim": "For the EDI in situ method the value recorded at each vertical should be the median of the values observed within approximately 60 seconds after the sensors have equilibrated with streamwater.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "The value recorded at each vertical should\nbe the median of values observed within approxi-\nmately 60 seconds after sensor(s) have equilibrated\nwith streamwater.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-mean-except-ph-01",
+          "claim": "The final EDI field-measurement value is the mean of the in situ or individual increment-sample values for all verticals in the section, except for pH, for which a median value is used instead.",
+          "metrics": [
+            "ph",
+            "conductivity",
+            "temperature",
+            "dissolvedOxygen",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "The final field-measurement value is the mean of the\nin situ or individual increment-sample value for all the\nEDI verticals in the section",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-ph-median-rationale-01",
+          "claim": "A median is used for pH because it ensures the reported pH represents a true measurement rather than a computed one, and it avoids the logarithmic operations required to compute a mean pH.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "pH, recording a median value ensures that the reported\npH value represents a true measurement rather than a\ncomputed measurement, and avoids the mathematical",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-edi-subsample-01",
+          "claim": "In the EDI subsample method an isokinetic, depth-integrated sample is collected at the centroid of each increment and emptied into a compositing device, and field parameters are measured either in each increment sample or in a subsample taken from the composite.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Subsample method—Collect an isokinetic, depth-\nintegrated sample at the centroid of each EDI,\nemptying the increment sample into a compositing\ndevice.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-edi-insitu-middepth-01",
+          "claim": "In the EDI in situ method the operator goes to the centroid of the first EDI and uses submersible sensors to measure at mid-depth or at multiple depths within the vertical, repeating at each vertical.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "In situ method—Go to the centroid of the first EDI.\nUsing submersible sensors, measure at mid-depth (or\nmultiple depths) within the vertical. Repeat at each\nvertical.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__1e3d2efc7ac5",
+      "index": 22,
+      "locator": "Page break at page 14 — overlap-only chunk ending \"-- 14 of 32 --\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__3d34fa1943f9",
+      "index": 23,
+      "locator": "Section 3.1.1 end of EDI example and Equal-Width Increments (EWI) — \"the correct value for the discharge-weighted mean conductivity is 163 μS/cm\"",
+      "claims": [
+        {
+          "id": "a60-edi-example-163-01",
+          "claim": "In the table 6.0-2 EDI example the discharge-weighted mean conductivity is 163 μS/cm, calculated as 815 divided by 5, and this mean is to be entered into the QWDATA database as a calculated value.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "as 815 divided by 5 (the sum of the recorded median\nvalues divided by the number of median measure-\nments). This mean value should be entered into the\nQWDATA database as a calculated value.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-edi-example-single-point-error-01",
+          "claim": "In the table 6.0-2 EDI example, measuring only at the center centroid of flow (increment 3) would have reported conductivity as 155 μS/cm and measuring near the left edge of water (increment 1) would have reported 185 μS/cm, versus the correct cross-section value of 163 μS/cm.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Note that the median conductivity at the midpoint of\nthe center centroid of flow (increment 3) would have\nbeen reported as 155 μS/cm",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-ewi-definition-01",
+          "claim": "In the equal-width increment (EWI) method the stream cross section is divided into increments of equal width and in situ field measurements are made at the midpoint of each increment, from which area-weighted concentrations can be computed.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "The stream cross section is divided into increments of\nequal width. In situ field measurements are made at the mid-\npoint of each increment.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-ewi-no-flow-knowledge-01",
+          "claim": "The EWI method does not require knowledge of the streamflow distribution in the cross section, but the volume of the isokinetic sample must be proportional to the discharge in each increment so that composite subsample measurements are discharge weighted.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Knowledge of the streamflow distribution in\nthe cross section is not required.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-ewi-example-60ft-01",
+          "claim": "In the EWI example a 60-foot-wide stream divided into 15 increments of 4 feet each places the first measurement vertical 2 feet from the water's edge and subsequent verticals at 6, 10, and 14 feet, and so on.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "EXAMPLE: In a stream 60 ft wide that has been divided\ninto 15 increments of 4 ft each, the first measurement vertical\nwould be 2 ft from the water’s edge",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-ewi-min-10-increments-01",
+          "claim": "In streams 5 feet wide or greater a minimum of 10 equal-width increments is recommended.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "In streams 5 ft wide or greater, a minimum of 10 equal-\nwidth increments is recommended.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-ewi-narrow-stream-01",
+          "claim": "In streams less than 5 feet wide, use as many increments as is practical, but they must be equally spaced and a minimum of 3 inches apart.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "In streams less than 5 ft wide, use as many increments\nas is practical, but they must be equally spaced and a\nminimum of 3 inches (in.) apart.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-ewi-first-vertical-rule-01",
+          "claim": "The midpoint of the first EWI vertical is located at a distance of one-half the selected increment width from the edge of the water, with the other verticals at the centers of the remaining increments.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Locate the midpoint of the first vertical at a distance\nof one-half the selected increment width from the edge\nof the water.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-ewi-width-determination-01",
+          "claim": "Stream width for the EWI method is determined by using a tagline or from station markings on bridge railings or cableways, and the chosen increment width also applies to streams with divided flow such as a braided channel.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Determine stream width by using a tagline or from sta-\ntion markings on bridge railings or cableways.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__caa584355467",
+      "index": 24,
+      "locator": "Table 6.0–2 with full caption and column headers — \"Example of field notes for a discharge-weighted conductivity measurement\"",
+      "claims": [
+        {
+          "id": "a60-tbl602-caption-01",
+          "claim": "Table 6.0-2 is titled \"Example of field notes for a discharge-weighted conductivity measurement\" and its columns are equal discharge increment, percent of flow in increment, mean velocity (ft/s), width (ft), depth (ft), area (ft2), increment discharge (ft3/s), and median conductivity (μS/cm).",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Table 6.0–2. \tExample of field notes for a discharge-weighted conductivity measurement.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl602-rows-01",
+          "claim": "In table 6.0-2 the five equal-discharge increments each carry 20 percent of flow and 250 ft3/s of increment discharge, with median conductivities of 185, 170, 155, 155, and 150 μS/cm respectively.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "1 \t20 \t2.0 \t22 \t5.7 \t125 \t250 \t185\n2 \t20 \t2.2 \t11 \t10.4 \t114 \t250 \t170\n3 \t20 \t2.3 \t9 \t12.0 \t109 \t250 \t155\n4 \t20 \t3.9 \t5 \t12.8 \t64 \t250 \t155\n5 \t20 \t3.4 \t10 \t7.4 \t74 \t250 \t150",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl602-geometry-01",
+          "claim": "In table 6.0-2 the five increments have widths of 22, 11, 9, 5, and 10 feet, depths of 5.7, 10.4, 12.0, 12.8, and 7.4 feet, and areas of 125, 114, 109, 64, and 74 square feet, showing that equal-discharge increments are not equal in width.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "1 \t20 \t2.0 \t22 \t5.7 \t125 \t250 \t185",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl602-footnote-01",
+          "claim": "The table 6.0-2 footnote states the conductivity calculation as the mean of the median conductivity measurements, 815 divided by 5, equal to 163 μS/cm.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "1Calculation of conductivity: mean of median conductivity measurements ( 815\n5 ) = 163 μS/cm",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl602-lew-rew-01",
+          "claim": "In tables 6.0-2 and 6.0-3, LEW denotes left edge of water and REW denotes right edge of water, and both carry 0 percent of flow with no measured values.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "LEW, left edge of water;\n–, not available; REW, right edge of water]",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__4eb25a3b143b",
+      "index": 25,
+      "locator": "Section 3.1.1 EWI worked example and table 6.0–3 with full caption and headers — \"the area-weighted median conductivity\\nequals 130 μS/cm\"",
+      "claims": [
+        {
+          "id": "a60-ewi-example-130-01",
+          "claim": "In the table 6.0-3 EWI example the area-weighted median conductivity equals 130 μS/cm.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "In the example, the area-weighted median conductivity\nequals 130 μS/cm.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-area-weighted-method-01",
+          "claim": "An area-weighted median is calculated by multiplying the area of each increment by its corresponding field measurement, summing the products of all increments, and dividing by the total cross-sectional area.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "To calculate an area-weighted median, multiply the\narea of each increment by its corresponding field mea-\nsurement, sum the products of all the increments, and\ndivide by total cross-sectional area.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-ewi-single-point-error-01",
+          "claim": "In the table 6.0-3 EWI example, reporting conductivity from mid-depth at the vertical of the centroid of flow (section 10) would have given 125 μS/cm and reporting near the left edge of water would have given 150 μS/cm, versus the correct area-weighted value of 130 μS/cm.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Note that if the conductivity reported were selected at\nmid-depth of the vertical of centroid of flow (section\n10), it would have been reported as 125 μS/cm",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-ewi-mean-except-ph-01",
+          "claim": "The final EWI field-measurement value is typically calculated as the mean of the values recorded at all EWI increments, producing an area-weighted mean, except for pH where a median value is used.",
+          "metrics": [
+            "ph",
+            "conductivity",
+            "temperature",
+            "dissolvedOxygen",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "The final field-measurement value typically is calcu-\nlated as the mean of the values recorded at all EWI\nincrements, resulting in an area-weighted mean. Use a\nmedian value for pH.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-xcut-ewi-60s-median-01",
+          "claim": "For the EWI in situ method the value recorded at each vertical should be the median of the values observed within approximately 60 seconds after the sensors have equilibrated with streamwater.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "The value recorded at each\nvertical should be the median of values observed\nwithin approximately 60 seconds after the sensor(s)\nhave equilibrated with streamwater.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl603-caption-01",
+          "claim": "Table 6.0-3 is titled \"Example of field notes for an area-weighted conductivity measurement\" and its columns are section number, cumulative percent of flow, vertical location in feet from LEW, width of section, depth of vertical, area of section, median SC in μS/cm, and product of median SC and area.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "Table 6.0–3. \tExample of field notes for an area-weighted conductivity measurement.",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl603-rows-01",
+          "claim": "In table 6.0-3 the 15 equal-width sections are each 4 feet wide, with median specific conductance falling from 150 μS/cm at section 1 to a minimum of 125 μS/cm across sections 8 through 13 and rising to 140 μS/cm at section 15.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "1 \t2 \t2 \t4 \t1.0 \t4.0 \t150 \t600\n2 \t4 \t6 \t4 \t2.0 \t8.0 \t145 \t1,160\n3 \t6 \t10 \t4 \t2.6 \t10.4 \t145 \t1,508",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl603-total-area-01",
+          "claim": "The table 6.0-3 footnote gives the specific-conductance calculation as the sum of the median-SC-times-area products (27,836) divided by the total cross-sectional area (214), equal to 130 μS/cm.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "1Calculation of SC: sum of values in last column divided by the total cross-sectional area ( 27 836\n214",
+          "specificity": "high"
+        },
+        {
+          "id": "a60-tbl603-sc-abbrev-01",
+          "claim": "In table 6.0-3 the abbreviation SC denotes conductivity (specific electrical conductance) reported in microsiemens per centimeter at 25 degrees Celsius.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "definitional",
+          "quote": "SC, conductivity (specific electrical conductance); μS/cm, microsiemens per centimeter at 25 degrees Celsius;",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__f04b915896ed",
+      "index": 26,
+      "locator": "Table 6.0–3 continuation — no caption or column header in this chunk; bare number grid rows 9–15 plus the calculation footnote",
+      "claims": [
+        {
+          "id": "a60-tbl603-cont-footnote-01",
+          "claim": "The calculation footnote carried in this table 6.0-3 continuation states that specific conductance is the sum of the last-column values divided by the total cross-sectional area, 27,836 divided by 214, equal to 130 μS/cm.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "1Calculation of SC: sum of values in last column divided by the total cross-sectional area ( 27 836",
+          "specificity": "high"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalClaims": 123,
+    "byMetric": {
+      "conductivity": 46,
+      "dissolvedOxygen": 32,
+      "orp": 15,
+      "ph": 35,
+      "temperature": 32,
+      "turbidity": 32
+    },
+    "byType": {
+      "conceptual": 9,
+      "definitional": 34,
+      "numeric": 32,
+      "procedural": 48
+    },
+    "gaps": [],
+    "notes": "PARTIAL — extraction in progress; chunks 27-46 not yet extracted."
+  }
+}

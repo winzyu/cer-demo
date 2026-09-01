@@ -1,0 +1,1941 @@
+{
+  "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+  "title": "USGS TM 9-A6.8 — Use of Multiparameter Instruments for Routine Field Measurements (version 1.1, 6/2025)",
+  "inSlice": false,
+  "chunkCount": 34,
+  "chunks": [
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__2e87689ee1a9",
+      "index": 0,
+      "locator": "Cover and title/citation page — \"Techniques and Methods 9–A6.8\"",
+      "claims": [
+        {
+          "id": "mp-doc-identity-01",
+          "claim": "This document is USGS Techniques and Methods book 9, chapter A6.8, version 1.1 (June 2025), \"Use of Multiparameter Instruments for Routine Field Measurements\", and it supersedes USGS Techniques of Water-Resources Investigations book 9, chapter A6.8, version 1.1.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Techniques and Methods 9–A6.8\nVersion 1.1, June 2025\nSupersedes USGS Techniques of Water-Resources Investigations,\nBook 9, Chapter A6.8, Version 1.1",
+          "specificity": "low"
+        },
+        {
+          "id": "mp-doc-citation-02",
+          "claim": "The suggested citation for this chapter gives it as 13 pages with DOI https://doi.org/10.3133/tm9A6.8, first released August 2007 as TWRI book 9 chapter A6.8 version 1.0.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "U.S. Geological Survey Techniques and Methods, book 9, chap. A6.8, 13 p., https://doi.org/10.3133/tm9A6.8.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__d2c2a81d95a1",
+      "index": 1,
+      "locator": "Contents (page iii) — table-of-contents dot leaders and list of tables, NEWLY RECOVERED",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__0cb02afacac1",
+      "index": 2,
+      "locator": "Conversion Factors / Abbreviations and Symbols (page iv) — \"Conversion Factors\"",
+      "claims": [
+        {
+          "id": "mp-temp-c-to-f-01",
+          "claim": "Temperature in this manual is reported in degrees Celsius and is converted to degrees Fahrenheit with the equation °F = 1.8(°C) + 32.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Temperature is reported in degrees Celsius (°C), which can be converted to degrees\nFahrenheit (°F) by use of the following equation: °F = 1.8(°C) + 32",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-sc-unit-25c-02",
+          "claim": "Specific conductance is reported in microsiemens per centimeter at 25 degrees Celsius (μS/cm at 25 °C), which ties every reported conductivity value to a reference temperature of 25 °C.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Specific conductance is reported in microsiemens per centimeter at 25 degrees\nCelsius (μS/cm at 25 °C).",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-eh-definition-03",
+          "claim": "In this manual Eh is defined as a measure of the oxidation-reduction potential of a solution.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "definitional",
+          "quote": "Eh \tmeasure of the oxidation-reduction potential of a solution",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-ph-definition-04",
+          "claim": "pH is defined as the negative base-10 logarithm of the hydrogen ion activity and is unitless.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "pH \tnegative base-10 logarithm of the hydrogen ion activity (unitless)",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-mgl-ppm-05",
+          "claim": "Milligrams per liter (mg/L), the unit used for dissolved-oxygen concentration in this manual, is equivalent to parts per million (ppm).",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "mg/L \tmilligrams per liter (equivalent to parts per million [ppm])",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-conversion-factors-06",
+          "claim": "The conversion-factor table gives 1 gallon = 3.785 liters, 1 pound avoirdupois = 0.4536 kilogram, 1 liter = 0.2642 gallon, and 1 liter = 61.02 cubic inches.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "gallon (gal) \t3.785 \tliter (L)\npound, avoirdupois (lb) \t0.4536 \tkilogram (kg)",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__84f44ac08d64",
+      "index": 3,
+      "locator": "Requirements and Recommendations (page v) — \"the terms “required” and “recommended”\"",
+      "claims": [
+        {
+          "id": "mp-required-meaning-01",
+          "claim": "In the NFM, \"required\" means USGS Water Mission Area policy established on the basis of research or technical consensus, and USGS field personnel are instructed to use required equipment and procedures as described in the NFM.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "USGS field personnel are\ninstructed to use required equipment and procedures as described in the NFM.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-departure-documented-02",
+          "claim": "Any departure from or modification to a stipulated NFM requirement must be independently quality assured and documented, per Office of Water Quality Technical Memorandum 2002.13.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Departure from\nor modifications to stipulated requirements, if necessary for accomplishing specific data-quality\nrequirements or study objectives, must be independently quality assured and documented",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-recommended-meaning-03",
+          "claim": "In the NFM, \"recommended\" means there are several acceptable alternatives to a procedure or equipment selection, and the reasons for selecting among them must be documented.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "there are several acceptable alternatives to a given procedure or\nequipment selection in the NFM",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__db856881c4eb",
+      "index": 4,
+      "locator": "Abstract and section 1.0 Introduction — \"This chapter, NFM A6.8, provides guidance and protocols\"",
+      "claims": [
+        {
+          "id": "mp-scope-abstract-01",
+          "claim": "NFM chapter A6.8 provides guidance and protocols for the use of multiparameter instruments for routine field measurements, covering storage and maintenance of equipment, calibration, troubleshooting, and procedures for measurement and reporting.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "provides guidance and protocols for the use of multi-\nparameter instruments for routine field measurements, which\nincludes storage and maintenance of equipment, calibration,\ntroubleshooting, and",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-supersedes-authors-02",
+          "claim": "This chapter updates and supersedes USGS Techniques of Water-Resources Investigations book 9 chapter A6.8 version 1.1 by Jacob Gibs, Franceska D. Wilde, and Heather A. Heckathorn.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "It updates and supersedes USGS Techniques of\nWater-Resources Investigations, book 9, chapter A6.8, ver-\nsion 1.1, by Jacob Gibs, Franceska D. Wilde, and Heather\nA. Heckathorn.",
+          "specificity": "low"
+        },
+        {
+          "id": "mp-applicable-natural-waters-03",
+          "claim": "The field methods described in this chapter are applicable to most natural waters.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "The field methods described in\nthis chapter are applicable to most natural waters.",
+          "specificity": "low"
+        },
+        {
+          "id": "mp-nfm-mandated-04",
+          "claim": "USGS personnel who collect water-quality data, including Water Science Center and Cooperative program staff, are mandated to use the protocols provided in the NFM under USGS Office of Water-Quality Technical Memorandum 2002.13.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "are mandated to use pro-\ntocols provided in the NFM (USGS Office of Water-Quality\nTechnical Memorandum 2002.13—U.S. Geological Survey,\n2002)",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-training-required-05",
+          "claim": "Formal training in the USGS class \"Field Water-Quality Methods for Groundwater and Surface Water\" plus field apprenticeships supplement the NFM and are needed to collect unbiased, high-quality data.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Formal training, as provided in the USGS class “Field\nWater-Quality Methods for Groundwater and Surface Water,”\nand field apprenticeships supplement the information provided\nin the NFM and are needed",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-series-change-06",
+          "claim": "NFM chapters were released in the USGS Techniques of Water-Resources Investigations series before 2017 and, effective 2018, new and revised chapters are released in the Techniques and Methods series without any change to content or format.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Effective in 2018, new and revised NFM chapters are being\nreleased in the USGS Techniques and Methods series; this\nseries change does not affect the content and format of the",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__44db614235c7",
+      "index": 5,
+      "locator": "Section 1.0 Introduction — \"Additional information on measuring specific water-quality parameters\"",
+      "claims": [
+        {
+          "id": "mp-parameter-chapters-01",
+          "claim": "Additional information on measuring the individual water-quality parameters — temperature, dissolved-oxygen concentration, specific conductance, pH, oxidation-reduction potential, alkalinity, and turbidity — is in the other chapters of NFM chapter A6, not in A6.8 itself.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "orp",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Additional information on measuring specific\nwater-quality parameters (temperature, dissolved-oxygen\nconcentration, specific conductance, pH, oxidation-reduction\npotential, alkalinity, turbidity) is",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__0c14a1acef00",
+      "index": 6,
+      "locator": "Overlap-only chunk at end of section 1.0 — \"series change does not affect the content and format\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__49d32acc0fa5",
+      "index": 7,
+      "locator": "Section 1.1 Overview of Multiparameter Instruments and start of 2.0 Equipment and Supplies — \"MULTIPARAMETER INSTRUMENT\"",
+      "claims": [
+        {
+          "id": "mp-instrument-definition-01",
+          "claim": "A multiparameter instrument is defined as an electronic instrument containing sensors, each specific to a given physical, chemical, or biological property, bundled in a single housing called a sonde.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "MULTIPARAMETER INSTRUMENT: An electronic\ninstrument that contains sensors (each specific to the\nmeasurement of a given physical, chemical, or biological\nproperty) that are bundled in a single housing",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-time-saving-02",
+          "claim": "Multiparameter instruments make simultaneous readings of several field measurements and therefore determine field measurements in considerably less time than using multiple single-parameter instruments.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "field measurements can be determined in\nconsiderably less time than that generally required when using\nmultiple single-parameter instruments",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-discrete-scope-03",
+          "claim": "Chapter A6.8 addresses short-term or discrete-measurement use of portable multiparameter instruments; for long-term or continuous-monitor deployment the reader is referred to Wagner and others (2006).",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "addresses the short-term or discrete-mea-\nsurement use of portable multiparameter instruments. Refer to\nWagner and others (2006) for information about long-term or\ncontinuous-monitor deployment.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-manufacturer-primary-04",
+          "claim": "The instrument manufacturer is the primary source of information about maintenance and use of a specific instrument, and where NFM requirements and the manufacturer's instructions differ, the more stringent procedure typically should be used.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "The more stringent procedures typi-\ncally should be used.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-sonde-diameter-05",
+          "claim": "Multiparameter sonde housings are available in diameters from about 4 inches (10 centimeters) to less than 2 inches (5.1 centimeters), and small-diameter sondes usable for downhole measurements in wells may have more limited wiper and sensor capability because fewer sensor ports are available.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "diameters from about 4 inches (in.) (10 centimeters [cm]) to\nless than 2 in. (5.1 cm)",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-water-types-06",
+          "claim": "Multiparameter sondes are suitable for use in water that is fresh, brackish, saline, or contaminated, and are available for discrete site-visit measurements or for deployment at a stream, lake, reservoir, or well.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "their sondes or bodies are suitable for use in water that is\nfresh, brackish, saline, or contaminated",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__e8a33e86d4b3",
+      "index": 8,
+      "locator": "Section 2.0 and table 6.8–1 (Advantages and limitations of multiparameter instruments for field use)",
+      "claims": [
+        {
+          "id": "mp-power-comms-01",
+          "claim": "Multiparameter instruments may be operated by applications on tablets or cell phones using wireless communication protocols, and may be powered by internal batteries or through cables to external devices such as wireless communicators, hand-held displays, or laptop computers.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Instruments may be\npowered by their own internal batteries or through cables con-\nnected to external devices",
+          "specificity": "low"
+        },
+        {
+          "id": "mp-stay-current-02",
+          "claim": "Because maintenance, calibration, and use procedures for multiparameter instruments can change as technology changes, users must stay current on how their instrument operates and is maintained.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Users must stay current with respect\nto how their instrument operates and is maintained.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t1-single-point-failure-03",
+          "claim": "Table 6.8–1 lists as a limitation that one system inside the sonde is responsible for recording all parameters, so a failure of that system causes the loss of all parameter values at once — temperature, dissolved oxygen, pH, specific conductance, ORP, and turbidity together.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "One system (inside the sonde) is responsible for recording all\nparameters, which would cause the loss of all parameter values\nupon failure.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t1-backup-instruments-04",
+          "claim": "Table 6.8–1 states that backup field instruments, either single parameter or multiparameter, are recommended to prevent data loss.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Backup field instruments (single parameter or multiparameter) are\nrecommended to prevent data loss.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t1-insitu-representative-05",
+          "claim": "Table 6.8–1 states that measurements made in situ are likely more representative than measurements made in samples removed from their source.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Measurements made in situ are likely more representative than\nmeasurements made in samples removed from their source.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t1-cost-and-rinse-volume-06",
+          "claim": "Table 6.8–1 lists two further limitations of multiparameter instruments: purchase costs are higher than for single-parameter instruments, and calibration may require a greater volume of standards for rinsing.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Calibration may require use of a greater volume of standards for\nrinsing than that needed for single-parameter instruments.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__4e2d2050f1d7",
+      "index": 9,
+      "locator": "Overlap-only chunk repeating the tail of table 6.8–1 — \"greater volume of standards for rinsing\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__715b5374f700",
+      "index": 10,
+      "locator": "Section 2.0 Equipment and Supplies and 2.1 Equipment Transport — \"commonly bundled in sondes used for USGS\"",
+      "claims": [
+        {
+          "id": "mp-common-sensors-01",
+          "claim": "Sensors for water temperature, specific electrical conductance, pH, dissolved-oxygen concentration, and turbidity are the ones commonly bundled together in sondes used for USGS water-quality studies.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "for the determination of water temperature, specific electrical\nconductance (SC), pH, dissolved-oxygen (DO) concentration\nand turbidity are commonly bundled in sondes used for USGS\nwater-quality",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-permanent-sensors-02",
+          "claim": "Permanent sensors for barometric pressure (for use with a DO sensor), water depth (vented or unvented), and location (GPS) are either standard equipment with many multiparameter instruments or can be added at extra cost, which ties dissolved-oxygen measurement to an onboard barometric-pressure sensor.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "Permanent sensors for measuring baro-\nmetric pressure (for use with a DO sensor), water depth (either\nvented or unvented), and location (global positioning systems)",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-nonpermanent-sensors-03",
+          "claim": "Oxidation-reduction potential (Eh) is a nonpermanent sensor that, along with fluorescence, velocity, nitrate, ammonia, ammonium, chloride, and chlorophyll sensors, can be added to many sondes through sensor ports rather than being standard.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "conceptual",
+          "quote": "Nonpermanent\nsensors for measuring oxidation-reduction potential (Eh), fluo-\nrescence1, velocity, and concentrations of nitrate, ammonia,\nammonium, chloride, and chlorophyll can be added to",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-port-count-04",
+          "claim": "The number of sensors that can be bundled in a given sonde depends on the number of ports available in the instrument model, typically four to seven.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "number of ports available in an instrument model, typically\nfour to seven",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-sensor-selection-05",
+          "claim": "When selecting a sensor, consult the manufacturer's recommendations and specifications while considering the environmental conditions to be encountered, the study's data-quality objectives, and the specific benefit of the sensor technology for the anticipated field conditions.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "taking into consideration the environmental conditions to be\nencountered, the data-quality objectives of the study, and the\nspecific benefit of a particular sensor technology",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-tables-modifiable-06",
+          "claim": "Table 6.8–2 lists the equipment specifications required for field measurements with a multiparameter instrument and table 6.8–3 lists the required calibration-solution specifications, and the requirements in both tables may be modified to fit specific project needs.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "The requirements in tables 6.8–2 and 6.8–3 may be modified\nto fit specific project needs.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-fluorescence-footnote-07",
+          "claim": "Fluorescence sensors indicate different algal pigment concentrations, with additional information in NFM chapter A7.4 and Booth and others (2023).",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "1Fluorescence sensors indicate different algal pigment concentrations; see\nNFM chapter A7.4 and Booth and others (2023) for additional information.",
+          "specificity": "low"
+        },
+        {
+          "id": "mp-transport-case-08",
+          "claim": "For transportation and storage a padded case that protects the sonde from shock is required, the padding must be of a type that will not absorb water, and hard-sided cases should be equipped with a vent so internal pressure can equalize with the atmosphere.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "use a padded case that protects the sonde from\nshock. The padding should be of a type that will not absorb\nwater. Hard-sided cases should be equipped with a vent so\nthat internal pressure can",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-transport-heat-09",
+          "claim": "Sondes should not be exposed to extreme heat or cold, and the transport case must not be exposed to direct sunlight in order to avoid solar heating of the equipment inside.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Do not expose the case to direct sunlight in order to avoid\nsolar heating of the equipment inside.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-sensor-wet-storage-10",
+          "claim": "Sensors can easily be damaged if handled improperly, and some sensors require storage and transportation in a wet or moist environment while others do not, so the manufacturer's recommendations must be checked.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Some sensors require storage and transporta-\ntion in a wet/moist environment, whereas others do not,\ncheck the manufacturer’s recommendations.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__e0ef163ad4b2",
+      "index": 11,
+      "locator": "Table 6.8–2. Specifications for multiparameter instruments — \"Sensor1 \tSpecifications\"",
+      "claims": [
+        {
+          "id": "mp-t2-ph-spec-01",
+          "claim": "Table 6.8–2 requires a pH sensor with a range of at least 2 to 12 (preferably 0 to 14) pH units, accuracy of ±0.1 pH units, and resolution of ±0.01 pH units.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "pH and millivolt \tRange of at least 2 to 12, preferably 0 to 14, pH units. Accuracy, ±0.1 pH units. Resolution, ±0.01 pH units.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t2-mv-readout-02",
+          "claim": "Table 6.8–2 requires the millivolt readout of the pH/millivolt sensor to have an accuracy of ±0.1 mV.",
+          "metrics": [
+            "ph",
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "Millivolt readout—accuracy, ±0.1 mV.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t2-temperature-spec-03",
+          "claim": "Table 6.8–2 requires a temperature sensor with a range of at least –5 to +45 °C and an accuracy of ±0.2 °C.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Temperature \tRange, of at least –5 to +45 °C. Accuracy, ±0.2 °C.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t2-sc-spec-04",
+          "claim": "Table 6.8–2 requires specific electrical conductance accuracy of the greater of ±5 percent of reading or ±2 μS/cm.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "SC \tAccuracy, the greater of ±5 percent of reading or ±2 μS/cm.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t2-do-spec-05",
+          "claim": "Table 6.8–2 requires an optical (luminescent-sensor method) dissolved-oxygen sensor with a range of 0.01 to 20 mg/L and accuracy of ±0.1 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "DO \tOptical sensor (luminescent-sensor method)—range 0.01 to 20 mg/L. Accuracy, ±0.1 mg/L.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t2-turbidity-spec-06",
+          "claim": "Table 6.8–2 states that turbidity range and accuracy depend on the instrument type, manufacturer, and field conditions rather than being fixed, and refers the reader to NFM A6.7.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Turbidity \tRange and accuracy depend on the instrument type, manufacturer, and field conditions (see NFM A6.7).",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t2-turbidity-optics-07",
+          "claim": "Most multiparameter-instrument turbidity sensors use a monochrome light source with spectral output typically near infrared (780–900 nm), typically a light-emitting diode, and one detector at 90-degree orientation to the light source.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "monochrome light source with a spectral output typically near infrared (780–900 nm), typically a light-\nemitting diode, and one detector at 90-degree orientation to the light source.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t2-orp-spec-08",
+          "claim": "Table 6.8–2 requires ORP accuracy of ±5 mV and refers the reader to NFM A6.5 and the manufacturer's instructions for Eh measurements using the platinum electrode.",
+          "metrics": [
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "ORP \tAccuracy, ±5 mV. For guidance on Eh measurements using the platinum electrode, refer to NFM A6.5 and",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t2-air-pressure-spec-09",
+          "claim": "Table 6.8–2 requires selecting instruments that incorporate an altimeter/barometer measuring air pressure to at least the nearest 1 mm Hg, the barometric input a dissolved-oxygen sensor depends on.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Air pressure \tSelect instruments that incorporate an altimeter/barometer that measures to at least the nearest 1 mm Hg.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t2-modify-list-10",
+          "claim": "The sensor list in table 6.8–2 is to be modified to meet the specific needs of the field effort.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "1 Modify this list to meet the specific needs of the field effort",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__40490e0e9a9d",
+      "index": 12,
+      "locator": "Table 6.8–2 continuation — overlap-only chunk repeating the ORP and Air pressure rows, no caption or column header in this chunk",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__81332f744656",
+      "index": 13,
+      "locator": "Table 6.8–4 (Ancillary supplies) and start of table 6.8–3 (Specifications for calibration solutions)",
+      "claims": [
+        {
+          "id": "mp-t4-flow-cell-01",
+          "claim": "Table 6.8–4 specifies a standard flow-through cell/chamber obtained from the instrument manufacturer, commonly used for groundwater or other water pumped from the source into the airtight cell for measurement.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Standard flow-through cell/chamber, obtained from the manufacturer of the instrument.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t4-nist-thermometer-02",
+          "claim": "Table 6.8–4 requires the calibration thermometer and barometer to be NIST-certified or NIST-traceable, which governs both the temperature calibration and the barometric pressure used for dissolved-oxygen calibration (see NFM A6.1 and A6.2).",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Calibration thermometer and barometer \tNIST-certified or NIST-traceable. (see NFM A6.1 and A6.2 for USGS standard",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t4-carrying-case-03",
+          "claim": "Table 6.8–4 specifies a protective, insulated, vented carrying case that is white or another reflective color for transport and storage.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Carrying case \tProtective, insulated, case, vented, white or other reflective color, for transport and storage.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t4-logbook-04",
+          "claim": "Table 6.8–4 requires one logbook per instrument or interchangeable sensor for recording calibrations, maintenance, and repairs, travelling with the instrument or sensor or being digitally accessible.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "One per instrument or interchangeable sensor, for recording calibrations, maintenance, and\nrepairs.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t4-diw-conductivity-05",
+          "claim": "Deionized water used for rinsing sensors must have a maximum conductivity of 1 μS/cm (ASTM Type 2) and be dispensed from a plastic bottle.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Maximum conductivity of 1 μS/cm (ASTM Type 2) for rinsing sensors, dispensed from a\nplastic bottle.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t4-tissues-towels-06",
+          "claim": "Table 6.8–4 specifies laboratory-grade lint-free paper tissues (for example Kimwipes) and cloth or paper towels for DO sensor calibration and checks and general cleanup.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "Towels, cloth or paper \tFor DO sensor calibration and checks, and general cleanup.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t4-brushes-07",
+          "claim": "Cleaning brushes should be of various sizes but generally small and soft to prevent scratching the sensors or other surfaces.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Brushes of various sizes, but generally small and soft to prevent scratching the sensor(s) or\nother surfaces.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t4-waste-containers-08",
+          "claim": "Waste-disposal containers must be appropriate for safe containment of regulated substances and dedicated to their respective waste material, with ZoBell's solution, acid, and turbidity calibration solutions given as examples.",
+          "metrics": [
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "respective waste material (examples: ZoBell’s solution, acid, and turbidity calibration\nsolutions).",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t3-sds-09",
+          "claim": "For all sensor-calibration solutions, the respective Safety Data Sheet must be kept on hand in the laboratory and in the field, and waste disposed of according to local regulations using a licensed disposal company if necessary.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Keep the respective SDS guidance on hand in the laboratory and in the field. Dispose of waste\naccording to local regulations, using a licensed disposal company, if necessary.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t3-ph-buffers-10",
+          "claim": "The standard pH buffers are pH 4, 7, and 10, and temperature-correction charts supplied by the buffer manufacturer or distributor are required, tying pH calibration to the buffer temperature (see NFM A6.4).",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Standard buffers are pH 4, 7, and 10. Temperature-correction chart(s) supplied by the buffer\nmanufacturer or distributor are required.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t3-sc-standards-11",
+          "claim": "Specific-conductance standards must be chosen nearest to and/or bracketing the expected measurement or range, with additional bracketing standards selected to field check the calibration (see NFM A6.3).",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Choose the SC standard(s) nearest to and/or that bracket(s) the expected measurement or range. To\nfield check the calibration, select additional standard(s) that bracket the expected sample SC.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t4-batteries-gloves-12",
+          "claim": "Table 6.8–4 requires checking that batteries are fully charged and bringing spares, and specifies disposable nonpowdered nitrile gloves available from USGS One-Stop Shopping.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Batteries and (or) battery pack(s) \tCheck that batteries are fully charged; bring spares.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__07fe9c0e1117",
+      "index": 14,
+      "locator": "Table 6.8–3. Specifications for calibration solutions — \"DO standard \tZero-DO solution\"",
+      "claims": [
+        {
+          "id": "mp-t3-zero-do-01",
+          "claim": "The DO standard is a zero-DO solution made by dissolving 2 grams of sodium sulfite in 1 liter of deionized water, prepared onsite or during the week of use, and it can also be obtained commercially (see NFM A6.2).",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Zero-DO solution. Dissolve 2 g of sodium sulfite in 1 L of DIW (prepared onsite or during the week of\nuse).",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t3-zobell-02",
+          "claim": "The ORP standard is ZoBell's solution, which contains cyanide and may be harmful if absorbed through skin, inhaled, or swallowed, so the Safety Data Sheet must be checked for safe handling (see NFM A6.5).",
+          "metrics": [
+            "orp"
+          ],
+          "type": "procedural",
+          "quote": "ZoBell’s solution. This solution contains cyanide and may be harmful if absorbed through skin,\ninhaled, or swallowed.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t3-turbidity-standards-03",
+          "claim": "Most turbidity sensor manufacturers recommend either formazin-based or SDVB-polymer standards for calibration, and gel or solid verification standards must not be used for calibrating instruments (see NFM A6.7).",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Most sensor manufacturers recommend either formazin-based or SDVB-\npolymer standards for calibration. Do not use gel or solid verification standards for calibrating\ninstruments.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t3-turbidity-free-water-04",
+          "claim": "Turbidity-free water is deionized water filtered through a membrane filter of 0.2 micrometer or smaller pore size.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Turbidity-free water which is DIW filtered through a ≤0.2-μm membrane filter.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__e70f22af8716",
+      "index": 15,
+      "locator": "Table 6.8–3 continuation — overlap-only chunk repeating the turbidity standard rows, no caption or column header in this chunk",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__dbea57f43cf5",
+      "index": 16,
+      "locator": "Section 2.2 Instrument Maintenance and Storage — \"Each instrument requires a dedicated logbook\"",
+      "claims": [
+        {
+          "id": "mp-logbook-required-01",
+          "claim": "A separate logbook recording instrument repair, maintenance, and calibration history is required to be maintained for each field instrument or replaceable sensor that stores calibration information in the sensor's internal processor.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "A separate logbook in which instrument repair, mainte-\nnance, and calibration history information is recorded\nis required to be maintained for each field instrument\nor replaceable sensor",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-logbook-pages-02",
+          "claim": "Pages of a paper instrument logbook should be prenumbered consecutively and must not be skipped or torn out, water-resistant paper is recommended, and paper logbooks are available to USGS personnel through One-Stop shopping as item Q609FLD.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "The pages of a paper instru-\nment logbook should be prenumbered consecutively.\nDo not skip or tear out pages. Water-resistant paper\nis recommended.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-electronic-records-03",
+          "claim": "Office of Water Quality Technical Memorandum 2016.09 recommends that all water-quality records, including logbooks, be collected electronically wherever feasible and specifies requirements for electronic records.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Technical Memorandum 2016.09 recommends that all\nwater-quality records, including logbooks, be collected\nelectronically wherever feasible",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-pen-requirement-04",
+          "claim": "Blue or black indelible ballpoint pen must be used on paper forms and in logbooks; pencil is not acceptable and felt-tipped pens such as Sharpie markers should not be used because they could compromise data quality for samples collected for volatile organic compound analysis.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Use of a pencil is\nnot acceptable; felt-tipped pens (for example, Sharpie\nmarkers) should not be used",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-vehicle-storage-05",
+          "claim": "Instruments must not be left in vehicles during temperature extremes, and it is good practice to transport and store them in an insulated case or cooler.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Do not leave instruments in vehicles during extremes\nin temperature.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-oring-annual-06",
+          "claim": "Cable connection and sensor O-rings must be inspected and cleaned annually at a minimum, lubricated lightly with silicone grease or Krytox, and any damaged ones replaced.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Inspect and clean the cable connection and sensor\nO-rings annually, at a minimum. Lubricate them\nlightly with silicone grease or Krytox.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-cable-coil-07",
+          "claim": "Cables must be stored clean, dry, and neatly coiled in coils no tighter than 6 inches in diameter, with protective plugs used on connectors when not in use.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "clean, dry, and neatly coiled (no tighter than 6-in-\ndiameter coils)",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-firmware-6-months-08",
+          "claim": "Instrument software and firmware must be kept up to date, with a check for manufacturer updates every 6 months at a minimum, following the manufacturer's installation instructions.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Check for updates from\nthe manufacturer every 6 months at a minimum and\nfollow the manufacturer’s installation instructions.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-rinse-after-use-09",
+          "claim": "Sensors must be rinsed with deionized water immediately after each use.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Rinse the sensors immediately after each use with\ndeionized water (DIW).",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-sonde-cleaning-10",
+          "claim": "A dirty sonde body or hand-held display (not the sensors themselves) is cleaned with a mild, nonphosphate detergent solution using a small nonabrasive brush, cotton swab, or cloth, followed by a thorough water rinse.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "clean it with a mild, nonphosphate detergent solution\nby using a small, nonabrasive brush or cotton swab\nor cloth, and follow with a thorough water rinse.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-inspect-cables-11",
+          "claim": "Cables must be routinely inspected for damage and electronic connectors and sensor ports inspected for corrosion.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Routinely inspect cables for damage, and electronic\nconnectors and sensor ports for corrosion.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-long-term-deployment-ref-12",
+          "claim": "The maintenance recommendations in section 2.2 pertain to instruments used over discrete or short attended intervals; for long-term or unattended deployment the reader is referred to Wagner and others (2006) and the manufacturer's instructions.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "For maintenance of instruments\nintended for long-term or unattended instrument deployment,\nrefer to Wagner and others (2006)",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__5854e428dee9",
+      "index": 17,
+      "locator": "Section 2.2, sensor/sonde care and wiper maintenance bullets — \"Wiper and wiper-brush maintenance\"",
+      "claims": [
+        {
+          "id": "mp-no-solvents-01",
+          "claim": "Organic solvents and other corrosive solutions must be avoided for cleaning sensors unless indicated in guidance given by the manufacturer.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Avoid using organic solvents or other corrosive solu-\ntions to clean the sensors unless indicated in guid-",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-no-antifouling-paint-02",
+          "claim": "The sonde and sensors must not be coated with protective or anti-fouling paint except as specifically instructed by the manufacturer.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Do not coat the sonde or sensors with protective or\nanti-fouling paint, except as specifically instructed\nby the manufacturer.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-wiper-inspect-03",
+          "claim": "The wiper pad and wiper brush must be inspected for dirt, deterioration, and damage after each use of the instrument, noting that not all instruments have a wiper or wiper-brush mechanism.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Inspect the wiper pad and (or) wiper brush for dirt,\ndeterioration, and damage after each use of the\ninstrument.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-wiper-pad-wear-04",
+          "claim": "Wiper pads must be checked for wear, excessive discoloration, and particle accumulation and changed as needed, and the wiper arm must be checked to confirm it is parking properly.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Check wiper pads for wear, excessive discoloration,\nand particle accumulation, and change the pads\nas needed. Check that the wiper arm is parking\nproperly.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-wiper-brush-clean-05",
+          "claim": "Wiper-brush bristles can be cleaned with warm soapy water and a soft toothbrush followed by a deionized-water rinse, and the wiper brush is replaced or reconditioned when it shows excessive splaying.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Warm soapy water and a soft toothbrush can be used\nto clean wiper-brush bristles. Rinse with DIW.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-short-term-storage-06",
+          "claim": "For short-term storage some sensors need a small amount of storage solution added to the protective (transport) cap or calibration cup, per the manufacturer's instructions.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "For short-term storage, some sensors need a small\namount of the storage solution added to the protec-\ntive (transport) cap or calibration cup",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-manufacturer-manual-07",
+          "claim": "Manufacturers may have instructions specific to their sensors, so the manufacturer's operating manual must be checked for each instrument in use.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Manufacturers may have instructions specific to their\nsensors—check the manufacturer’s operating manual\nfor each instrument that will be in use.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__420b66dc4067",
+      "index": 18,
+      "locator": "Overlap-only chunk repeating the wiper-brush and short-term storage bullets — \"Replace or recondition the wiper brush\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__01d6f39b352b",
+      "index": 19,
+      "locator": "Section 2.2 storage bullets and section 3.0 Calibration — \"The following order is recommended for performing parameter calibrations\"",
+      "claims": [
+        {
+          "id": "mp-long-term-storage-batteries-01",
+          "claim": "For long-term storage, defined as longer than 1 week, the internal batteries are removed, after checking the instrument manual for guidance before removing them.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "For long-term storage (longer than 1 week), remove\nthe internal batteries",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-storage-case-foam-02",
+          "claim": "Multiparameter instruments are stored in a carrying case or plastic container with closed-cell nonabsorbent foam cushion for shock protection, kept out of direct sunlight and protected against extremely hot or cold temperatures.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Store multiparameter instruments in a carrying case\nor plastic container with closed-cell (nonabsorbent)\nfoam cushion (for shock protection).",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-temp-sensor-not-removed-03",
+          "claim": "Sensors not routinely collecting data can be removed from the sonde for safe storage, but the temperature sensor should not be removed, and empty sensor ports must be sealed with an appropriate plug with all electrical connections clean, dry, waterproof, and protected from dust.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "The tem-\nperature sensor should not be removed.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-calibrate-before-each-use-04",
+          "claim": "Multiparameter instruments are required to be tested and their sensors calibrated or checked before each field use, which applies to the temperature, specific conductance, pH, dissolved oxygen, ORP, and turbidity sensors alike.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Multiparameter instruments are required to be tested\nand the sensors calibrated or checked before each field\nuse.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-calibrate-indoors-05",
+          "claim": "Calibrations are preferably done under laboratory or indoor conditions and then checked and verified in the field; if laboratory or indoor conditions are not available, instruments may be calibrated in the field.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Preferably, calibrations are done under laboratory or\nindoor conditions and are checked and verified in the field.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-a61-a67-definitive-06",
+          "claim": "NFM chapters A6.1 through A6.7 are the definitive information for calibration of instruments and are not replaced by the general guidance in chapter A6.8 or by guidance in previous versions of that chapter.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "orp",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "The information in chapters\nA6.1 through A6.7 is the definitive information for calibration\nof instruments and is not replaced by the general guidance\ngiven here",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-warmup-07",
+          "claim": "Multiparameter instruments may require warm-up before calibration, per the manufacturer's recommendations.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Multiparameter instruments may require warm-up\nbefore calibration.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-calibration-order-08",
+          "claim": "The recommended order for calibrating or checking a multiparameter instrument is temperature first, then specific electrical conductance, pH, dissolved oxygen, oxidation-reduction potential, turbidity, and finally ion-selective electrodes followed by chlorophyll-fluorescence and other sensors.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "The following order is recommended for performing\nparameter calibrations or checks of multiparameter\ninstruments.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-ionic-strength-rationale-09",
+          "claim": "The recommended calibration order is generally in order of increasing ionic strength of the standards because calibrating from low to high ionic strength reduces the possibility that residual standards will bias subsequent calibrations if rinses between solution changes are not thorough.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "orp",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Calibrat-\ning from low to high ionic strength should reduce the\npossibility that residual standards will bias subsequent\ncalibrations if rinses between changes in solutions are\nnot thorough.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-triple-rinse-10",
+          "claim": "Rinsing the sensors three times with deionized water between different standard solutions is required standard practice.",
+          "metrics": [
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "orp",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Rinsing the sensors three times with\nDIW between different standard solutions is required\nstandard practice.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-temp-cal-thermometer-11",
+          "claim": "Temperature calibration uses a NIST-certified or NIST-traceable digital thermometer or thermistor, with specific procedures in NFM A6.1.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Temperature—Use a NIST-certified or\nNIST-traceable digital thermometer or thermistor.\nSee NFM A6.1 for specific procedures.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-chapter-map-12",
+          "claim": "Calibration procedures for each parameter live in a different NFM chapter: specific electrical conductance in A6.3, pH in A6.4, dissolved oxygen in A6.2, oxidation-reduction potential in A6.5, and turbidity in A6.7.",
+          "metrics": [
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "orp",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "Specific electrical conductance (SC)—See\nNFM A6.3 for specific procedures.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__75d13350deef",
+      "index": 20,
+      "locator": "Section 3.0 Calibration, record-keeping bullets — \"Calibration records must be maintained\"",
+      "claims": [
+        {
+          "id": "mp-cal-records-01",
+          "claim": "Calibration records must be maintained and entered into the appropriate instrument or sensor logbook and field form at the time of calibration or verification.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Calibration records must be maintained and entered\ninto the appropriate instrument or sensor logbook and",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-past-measurements-02",
+          "claim": "A hard or electronic copy of past field measurements is kept in the field or site folder because those records contain vital information that can be referenced if instrument performance questions arise.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Keep a hard or electronic copy of past field measure-\nments in the field or site folder.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-units-setup-03",
+          "claim": "Field personnel must follow the manufacturer's instructions for the instrument model and sensors in use and make sure the units of measurement are set correctly in the instrument's software setup.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Make sure the units of measurement are set correctly\nin the instrument’s software setup.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-bracket-standards-04",
+          "claim": "Standards are generally chosen to bracket the expected measurement or deployment range of measurements, following NFM chapters A6.1 through A6.7 for selection of standards, temperature ranges, and rinsing procedures.",
+          "metrics": [
+            "conductivity",
+            "ph",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Note that generally standards are chosen\nthat bracket the expected measurement or deployment\nrange of measurements.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__85db7e026099",
+      "index": 21,
+      "locator": "Overlap-only chunk repeating the sensor-port bullet — \"empty ports are sealed\"",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__fea0c27e3094",
+      "index": 22,
+      "locator": "Sections 4.0 Measurement and 4.1 Surface Water — \"Wait a minimum of 60 seconds for the sensors\"",
+      "claims": [
+        {
+          "id": "mp-stabilize-to-table-01",
+          "claim": "Readings on the display must be allowed to stabilize within the criteria shown in table 6.8–5 before the measurement is used, which covers temperature, specific conductance, dissolved oxygen, pH, and turbidity together.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "dissolvedOxygen",
+            "ph",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Allow time for the readings on the display to stabilize\nwithin the criteria shown in table 6.8–5.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-a60-a67-definitive-measure-02",
+          "claim": "NFM chapters A6.0 through A6.7 are the definitive information for making measurements of individual parameters and are not replaced by the general guidance in chapter A6.8.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "orp",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "The information in\nchapters A6.0 through A6.7 is the definitive information for\nmaking measurements",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-record-conditions-03",
+          "claim": "All required field measurements are recorded on the appropriate paper or electronic field forms, laboratory analytical request forms, logbooks, and chain-of-custody logs, and any onsite conditions that could have affected data quality must be noted on those forms.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Note on the appropriate form(s) any onsite conditions\nthat could have affected the quality of the data.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-cross-section-purpose-04",
+          "claim": "Field parameters are commonly measured within a cross section of a surface-water body to help determine how well mixed the stream or river is (and therefore the sampling method to use) and to determine the field-parameter values of the water body at the selected site.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "help determine how well\nmixed the stream or river is, and consequently the sampling\nmethod to be used",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-depth-transducer-05",
+          "claim": "Many instruments include a pressure transducer that produces sonde depth or water level; for instruments without one, approximate sonde depth can be tracked with incremental marks along the instrument cable or by connecting the sonde to a pressure transducer, and the sonde might need to be weighted depending on site conditions.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "the\napproximate depth of the sonde as it is lowered through\nthe water column can be noted by placing incremental\nmarks along the instrument cable",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-60s-surface-water-06",
+          "claim": "In surface water, a minimum of 60 seconds must be allowed at each new measurement location for the sensors and sonde body to reach thermal equilibrium with the water, a wait that governs every sensor in the sonde — temperature, dissolved oxygen, pH, specific conductance, ORP, and turbidity.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Wait a minimum of 60 seconds for the sensors and\nsonde body to reach thermal equilibrium with the water\nat each new measurement location.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-60s-longer-manufacturer-07",
+          "claim": "The 60-second thermal-equilibrium wait is a minimum only: some instruments require a longer equilibration time and the manufacturer's recommendations must be checked.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Some instruments\nrequire a longer equilibration time; check the manufac-\nturer’s recommendations.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-plants-debris-08",
+          "claim": "Plants or debris in the water can interfere with sensors or the guard around sensors and adversely affect sensor readings, so measurement locations along the cross section or transect should be adjusted to avoid areas that require stopping to clean plant growth, sediment, or debris from the sensors.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Plants or debris in the water can interfere with sensors\nor the guard around sensors, which can adversely\naffect sensor readings.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-purge-stability-09",
+          "claim": "In groundwater sampling, the stability of field-parameter values is monitored toward the end of well purging to help indicate when the water being withdrawn represents fresh formation water and when sample collection should begin.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "orp",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "The stability of field-parameter values is monitored\ntoward the end of well purging to help indicate when the water\nbeing withdrawn represents fresh formation water and when",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__4e9dfc809f8a",
+      "index": 23,
+      "locator": "Section 4.2 Groundwater and table 6.8–5. Stabilization criteria for common field parameters",
+      "claims": [
+        {
+          "id": "mp-three-well-volumes-01",
+          "claim": "Final field-parameter values in groundwater sampling typically are recorded after three or more well volumes have been purged and stability criteria have been met.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "orp",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "The final field-parameter values typically are recorded after\nthree or more well volumes have been purged and stability\ncriteria have been met.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-gw-deployment-methods-02",
+          "claim": "If only field measurements are needed, a multiparameter sonde can be deployed into the well followed by a submersible pump drawing water upward; if water-quality samples will also be collected, pumping well water through a flow-through cell containing the instrument's sensors collects field-parameter data without removing and redeploying sampling equipment.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "these data can be obtained in situ by deploying a\nmultiparameter sonde into the well, followed by a submersible\npump to draw water upward.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t5-temperature-03",
+          "claim": "Table 6.8–5 sets the standard stabilization criterion for temperature at ± 0.2 °C.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Temperature \t± 0.2 °C",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t5-sc-04",
+          "claim": "Table 6.8–5 sets the standard stabilization criterion for specific electrical conductance at ± 5 μS/cm for SC of 100 μS/cm or less, or ± 3 percent for SC greater than 100 μS/cm.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Specific electrical conductance (SC) \t± 5 μS/cm for SC ≤100 μS/cm, or ± 3% for SC >100 μS/cm",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t5-do-05",
+          "claim": "Table 6.8–5 sets the standard stabilization criterion for dissolved oxygen at ± 0.2 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "DO \t± 0.2 mg/L",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t5-ph-06",
+          "claim": "Table 6.8–5 sets the standard stabilization criterion for pH at ± 0.1 pH units.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "pH \t± 0.1 pH units",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t5-turbidity-07",
+          "claim": "Table 6.8–5 sets the standard stabilization criterion for turbidity at ± 0.5 turbidity units or 5 percent of the measured value, whichever is greater, for turbidity of 100 TU or less, and at 10 percent of the measured value for turbidity greater than 100 TU.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Turbidity \t± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or\n10% of the measured value for turbidity >100 TU",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t5-accuracy-caveat-08",
+          "claim": "Table 6.8–5's stabilization criteria are standard sensor stabilization criteria, and the table notes that the actual accuracy of the sensor varies depending on sensor model and manufacturer.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "dissolvedOxygen",
+            "ph",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__66feebbcbcec",
+      "index": 24,
+      "locator": "Table 6.8–5 continuation — headerless grid, no caption or table number in this chunk, rows repeat as prepended overlap from chunk 23",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+      "index": 25,
+      "locator": "Section 4.2 Groundwater bullets and section 5.0 Troubleshooting — \"Field-measurement sensors must first be allowed to reach thermal equilibrium\"",
+      "claims": [
+        {
+          "id": "mp-gw-no-air-01",
+          "claim": "All sampling-pump discharge-tubing fittings must be connected securely so that air does not enter the flow-through cell, because air can affect the accuracy and stability of the field measurements.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "securely so that air does not enter the flow-through\ncell, as air can affect the accuracy and stability of the\nmeasurements.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-gw-shield-sunlight-02",
+          "claim": "The flow-through cell must be shielded from direct sunlight to minimize temperature changes in the groundwater as it is withdrawn, because temperature changes affect the accuracy of other field-parameter measurements that rely on temperature corrections conducted within the sonde.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "Changes in tempera-\nture can affect the accuracy of other field-parameter\nmeasurements that rely on temperature corrections\nconducted within the sonde.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-60s-groundwater-03",
+          "claim": "In groundwater work, a minimum of 60 seconds must be allowed for the sensors and sonde body to reach thermal equilibrium with the water before monitoring field-parameter values, and some instruments require a longer equilibration time per the manufacturer's recommendations.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Wait a minimum of 60 seconds for the sensors and\nsonde body to reach thermal equilibrium with the water\nbefore monitoring field-parameter values.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-equilibrium-range-04",
+          "claim": "Field-measurement sensors must first reach thermal equilibrium with the water body being sampled or monitored, a process that can take from 60 seconds to several minutes or more depending on the instrument and the initial and final temperature range.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity",
+            "orp",
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "This process can take from 60\nseconds to several minutes or more, depending on the\ninstrument and the initial and final temperature range.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-gw-sediment-05",
+          "claim": "Sediment accumulated in the flow-through cell can adversely affect the sensors, so fittings and flows must be oriented to minimize sediment build-up in the cell.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Sediment accumulated in the flow-through cell can\nadversely affect the sensors of multiparameter instru-\nments.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-troubleshoot-order-06",
+          "claim": "Troubleshooting complexity increases with the number of sensors installed on the sonde, and troubleshooting tests should be performed in a prescribed order depending on the types of sensors in use and the potential for sensor contamination.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Troubleshooting tests should be per-\nformed in a prescribed order depending on the types of sensors\nin use and the potential for sensor contamination.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-warning-message-07",
+          "claim": "If the display shows a warning message, the instrument system must not be used until the error has been identified, understood, and corrected.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "If the display shows a warning message, do not use the\ninstrument system until the error has been identified,\nunderstood, and corrected.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-dry-ports-08",
+          "claim": "Unless otherwise specified, sensor ports on the sonde body should be dry before sensors are replaced, using compressed air or isopropyl alcohol that has been confirmed compatible with the sonde, shaking out excess liquid and allowing sufficient evaporation time before installing the sensor.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "sensor ports on the sonde\nbody should be dry before sensors are replaced. Use\ncompressed air or isopropyl alcohol to dry the ports.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-solvent-do-warning-09",
+          "claim": "Alcohol and other solvents can damage certain types of plastics and o-rings and can destroy the sensing surface of the optical dissolved-oxygen sensor.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "conceptual",
+          "quote": "WARNING: Alcohol and other solvents can damage\ncertain types of plastics and o-rings and can destroy\nthe sensing surface of the optical DO sensor.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-reporting-forms-10",
+          "claim": "USGS personnel are instructed to record all field-parameter values on electronic or paper field forms and to complete and submit information on Analytical Services Request forms of the USGS National Water Quality Laboratory or other receiving laboratories.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "USGS personnel are instructed to record all field-param-\neter values on electronic or paper field forms",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__3cf6be833c6a",
+      "index": 26,
+      "locator": "Section 6.0 Reporting — \"Field-parameter values are required to be entered into NWIS\"",
+      "claims": [
+        {
+          "id": "mp-record-method-01",
+          "claim": "The method used to make each field measurement must be recorded where applicable.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Record\nthe method (where applicable) that was used to make field\nmeasurements.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-second-party-qc-02",
+          "claim": "Quality-control checks of field data should be made by a second party and compared for accuracy and consistency.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Quality-control checks of the data should be\nmade by a second party and compared for accuracy and con-\nsistency.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-nwis-required-03",
+          "claim": "Field-parameter values are required to be entered into the USGS National Water Information System (NWIS), and recording and storage guidelines for field measurements are summarized in table 6.8–7.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Field-parameter values are required to be entered into\nNWIS.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+      "index": 27,
+      "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+      "claims": [
+        {
+          "id": "mp-t6-unstable-readings-01",
+          "claim": "Table 6.8–6 attributes unstable readings to loose connections, low battery, or an unstable wireless connection, and advises moving the sonde and handheld device closer together or resetting the connection.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "Unstable readings \t• Check for loose connections, low battery, or unstable wireless connection.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t6-display-off-02",
+          "claim": "Table 6.8–6 advises that if the display does not turn on, batteries should be checked for proper installation and full charge, noting that battery performance decreases with decreasing temperature so spare batteries should be carried.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "Battery performance decreases with decreasing temperature. Carry spare batteries.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t6-scrambled-03",
+          "claim": "Table 6.8–6 advises that readings that seem wrong or are scrambled call for checking that the correct units are selected and inspecting all connectors for moisture, dirt, damage, and loose connections.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "• Check that the correct units are selected.\n• Inspect all connectors for moisture, dirt, damage, and loose connections.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t6-initial-drift-04",
+          "claim": "Table 6.8–6 attributes initial drifting of readings to sensors not equilibrated to the water temperature, sensors not appropriately submerged or at the required angle, or air bubbles on sensor surfaces that must be dislodged.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "Initial drifting of the readings \t• Sensors not equilibrated to the water temperature.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t6-temperature-check-05",
+          "claim": "For an unstable or inaccurate temperature reading, table 6.8–6 directs checking for water in the port connector and checking the temperature reading against a NIST-certified or NIST-traceable digital thermometer, replacing the sensor if it does not meet accuracy standards — and notes that in some cases only the manufacturer can replace a faulty temperature sensor.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Check the temperature reading with a NIST-certified or NIST-traceable digital thermometer and\nreplace the sensor if it does not meet accuracy standards.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t6-parameter-chapter-map-06",
+          "claim": "Table 6.8–6 routes unstable or inaccurate readings for individual parameters to their own NFM chapters: DO to A6.2, SC to A6.3, pH to A6.4, ORP to A6.5, and turbidity to A6.7.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "orp",
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "DO (see also NFM A6.2), SC\n(see also NFM A6.3), pH (see\nalso NFM A6.4), ORP (see also\nNFM A6.5), turbidity (see also\nNFM A6.7)",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t6-clean-replace-07",
+          "claim": "For an unstable or inaccurate parameter reading, table 6.8–6 directs examining the sensor for dirt or damage, cleaning it per the manufacturer's instructions, and replacing damaged sensors and recalibrating.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-t6-rushed-calibration-08",
+          "claim": "Table 6.8–6 lists rushed calibrations with inadequate rinsing of sensors, and calibration solutions that were inappropriate, expired, or contaminated, as causes of unstable or inaccurate readings.",
+          "metrics": [
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "orp",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "• Calibrations may have been rushed with inadequate rinsing of sensors. Check sensors and\nrecalibrate if necessary.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t6-equilibrate-temp-09",
+          "claim": "Table 6.8–6 directs allowing sufficient time for the temperature sensor to equilibrate to the water temperature as a fix for unstable or inaccurate readings of the other parameters.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "conductivity",
+            "ph",
+            "orp",
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "• Allow sufficient time for the temperature sensor to equilibrate to the water temperature.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t6-ph-junction-10",
+          "claim": "For a bad pH reading, table 6.8–6 directs checking the pH reference junction and following the manufacturer's instructions for cleaning it, and replacing the junction — which may be part of a replaceable cap — if possible.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "• Check pH reference junction; follow manufacturer’s instructions for cleaning. If possible,\nreplace the junction which may be part of a replaceable cap.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t6-zobell-temperature-11",
+          "claim": "If the ZoBell solution ORP check fails, table 6.8–6 asks whether the temperature dependence of the ZoBell solution was accounted for, tying the ORP check to the solution's temperature.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "• If the ZoBell solution check fails, was temperature dependence of the ZoBell solution accounted\nfor?",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t6-sc-immersion-12",
+          "claim": "The specific-conductance sensor must be fully immersed for proper calibration and sample measurement, with no bubbles in the cell compartment.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "• The SC sensor must be fully immersed for proper calibration and sample measurement. There\nmust be no bubbles in the cell compartment if present.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t6-turbidity-wiper-13",
+          "claim": "The turbidity sensor wiper must be clean, activated, and rotating properly for a stable and accurate turbidity reading.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "• The turbidity sensor wiper must be clean, activated, and rotating properly.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t6-do-cap-14",
+          "claim": "The age and condition of the dissolved-oxygen sensor cap must be checked and the cap replaced according to the manufacturer's instructions if necessary.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "procedural",
+          "quote": "• Check the age and condition of the DO sensor cap and replace according to manufacturer’s\ninstructions if necessary.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6326d8ed3061",
+      "index": 28,
+      "locator": "Acknowledgments, Selected References, and table 6.8–7 (USGS guidelines for recording and storing field parameter values), first rows",
+      "claims": [
+        {
+          "id": "mp-astm-turbidity-ref-01",
+          "claim": "The chapter's reference list cites ASTM D6855–17, a standard test method for determination of turbidity below 5 NTU in static mode.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "D6855–17—Standard test method\nfor determination of turbidity below 5 NTU in static mode",
+          "specificity": "low"
+        },
+        {
+          "id": "mp-t7-temperature-report-02",
+          "claim": "Table 6.8–7 gives the USGS reporting convention for temperature in NWIS as the nearest 0.01, depending on instrument precision, in degrees Celsius.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Temperature \tNearest 0.01 depending on instrument precision \t°C",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t7-sc-report-03",
+          "claim": "Table 6.8–7 gives the USGS reporting convention for specific electrical conductance as three significant figures for SC of 100 or greater and two significant figures for SC less than 100, in μS/cm at 25 °C.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "SC \tThree significant figures for SC ≥100, two significant figures for SC <100 \tμS/cm at 25 °C",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t7-do-report-04",
+          "claim": "Table 6.8–7 gives the USGS reporting convention for dissolved oxygen as the nearest 0.01 mg/L.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "DO \tNearest 0.01 \tmg/L",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t7-ph-report-05",
+          "claim": "Table 6.8–7 gives the USGS reporting convention for pH as the nearest 0.01, depending on instrument precision, in pH standard units.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "pH \tNearest 0.01, depending on instrument precision \tpH standard units",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-acknowledgments-06",
+          "claim": "The authors of previous versions of NFM chapter A6.8 were Jacob Gibs, Franceska D. Wilde, and Heather A. Heckathorn, and Franceska Wilde led the NFM effort from its inception until her retirement in 2014.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Authors of previous\nversions of NFM chapter A6.8 were Jacob Gibs, Franceska D.\nWilde, and Heather A. Heckathorn.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__0ea3a40e6484",
+      "index": 29,
+      "locator": "Table 6.8–7 continuation — ORP, turbidity, and salinity rows plus footnotes; the table caption and column header sit in chunk 28 and are only partly carried in the prepended overlap",
+      "claims": [
+        {
+          "id": "mp-t7-orp-report-01",
+          "claim": "Table 6.8–7 requires ORP to be reported to two significant figures in millivolts calculated relative to the standard hydrogen electrode, with raw data not reported, and requires recording the temperature of the sample at the time of measurement alongside the ORP value.",
+          "metrics": [
+            "orp",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "ORP \tTwo significant figures, calculated relative to the SHE (do not report raw data). Record the\ntemperature of the sample at the time of measurement.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t7-turbidity-report-02",
+          "claim": "Table 6.8–7 sets a stepped turbidity reporting resolution in FNU: 0 to <1 to the nearest 0.05, 1 to <10 to the nearest 0.1, 10 to <100 to the nearest 1, 100 to <1,000 to the nearest 10, and ≥1,000 to the nearest 50.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Turbidity \t0 to <1, nearest 0.05\n1 to <10, nearest 0.1\n10 to <100, nearest 1\n100 to <1,000, nearest 10\n≥1,000, nearest 50",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t7-salinity-report-03",
+          "claim": "Table 6.8–7 requires salinity to be reported to the nearest 0.1 for values <1 to <10 and to the nearest 1 for values ≥10, in ppt or in practical salinity units calculated from specific electrical conductance at 25 degrees Celsius.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Salinity \t<1 to <10, nearest 0.1\n≥10, nearest 1\nppt or psu",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t7-nwis-sigfigs-04",
+          "claim": "It is USGS practice to enter values into NWIS with more significant figures than are standard for reporting because the NWIS database has rounding built in for reporting, which eliminates user errors from reporting rounded values.",
+          "metrics": [
+            "temperature",
+            "conductivity",
+            "ph",
+            "dissolvedOxygen",
+            "orp",
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "It is USGS practice to enter values into NWIS that have more significant figures than are standard for reporting. The NWIS database has rounding built in for\nreporting.",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-t7-fnu-footnote-05",
+          "claim": "Most multiparameter instruments used for USGS turbidity measurement contain single-beam infrared wavelength turbidity sensors and are therefore reported in FNU, with the appropriate turbidity unit determined from the USGS turbidity_codes spreadsheet and NFM A6.7.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "definitional",
+          "quote": "2Most multiparameter instruments used for USGS turbidity measurement contain single-beam infrared wavelength turbidity sensors and are reported in FNU.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__84548d1886c3",
+      "index": 30,
+      "locator": "Selected References list and Appendix 6.8–1 opening note — \"use the most recent available version of the form\"",
+      "claims": [
+        {
+          "id": "mp-appendix-form-note-01",
+          "claim": "Appendix 6.8–1 advises USGS personnel to use the most recent available version of the field form shown in figure 6.8–01.01 and of other field forms.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "NOTE: U.S. Geological Survey personnel are advised to use the most recent available version of the form shown in\nfigure 6.8–01.01 and other field forms.",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-refs-manufacturer-manuals-02",
+          "claim": "The Selected References cite manufacturer manuals for the instruments this chapter covers, including the Hach LDO sensor manual (2022), Hydrolab HL Series sonde and sensor manuals (2017, 2019), the In-Situ Aqua TROLL 600 operator's manual (2023), and the Xylem/YSI EXO user manual (2020).",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Hach, 2022, User manual for HACH LDO sensor, ed. 4, 16\np., accessed November 2, 2023",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__4d253f9f732f",
+      "index": 31,
+      "locator": "Appendix 6.8–1, figure 6.8–01.01 USGS GW Form version 9.1 — \"METER CALIBRATIONS and FIELD MEASUREMENTS\"",
+      "claims": [
+        {
+          "id": "mp-form-version-01",
+          "claim": "The example field form reproduced in appendix 6.8–1 is the October 2023 USGS GW Form version 9.1 for meter calibrations and field measurements.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "October 2023 \t5 \tGW Form version 9.1\nMETER CALIBRATIONS and FIELD MEASUREMENTS",
+          "specificity": "medium"
+        },
+        {
+          "id": "mp-form-temp-criteria-02",
+          "claim": "The USGS GW field form states a temperature calibration criterion of ± 0.2 °C for thermistors.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Calibration criteria: ± 0.2 ˚C for thermistors",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-do-criteria-03",
+          "claim": "The USGS GW field form states a dissolved-oxygen calibration criterion of ± 0.2 mg/L and provides fields for DO saturation percent and a zero-DO check value.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "numeric",
+          "quote": "Calibration Criteria: ± 0.2 mg/L DO saturation _______ %",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-do-sensor-types-04",
+          "claim": "The USGS GW field form lists three dissolved-oxygen sensor types — amperometric, luminescent, and spectrophotometer — and two calibration methods, air-saturated water and water-saturated air.",
+          "metrics": [
+            "dissolvedOxygen"
+          ],
+          "type": "definitional",
+          "quote": "Sensor Type: Amperometric Luminescent \tSpectrophotometer",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-do-columns-05",
+          "claim": "The dissolved-oxygen calibration block of the GW form records calibration temperature in °C, barometric pressure in mm Hg, the DO table reading in mg/L, a salinity correction factor, and DO before and after adjustment in mg/L, tying a DO calibration to temperature, air pressure, and salinity (specific conductance).",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Calibration\nTemperature\nºC\nBarometric\nPressure\nmm Hg\nDO Table\nReading\nmg/L\nSalinity\nCorrec-\ntion\nFactor",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-ph-criteria-06",
+          "claim": "The USGS GW field form states a pH calibration criterion of ± 0.1 pH units, relaxed to ± 0.3 if specific conductance is less than 75 μS/cm — a pH tolerance that is conditioned on the conductivity of the water.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Calibration Criteria: ± 0.1 pH units, ± 0.3 if SC <75us/cm",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-ph-millivolts-07",
+          "claim": "The USGS GW field form gives acceptable pH electrode millivolt readings of –10 to +10 mV in pH 7 buffer, +165 to +195 mV in pH 4 buffer, and –165 to –195 mV in pH 10 buffer.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Millivolts: pH 7 –10 to +10 , pH4 +165 to +195 mV, pH 10 –165 to –195 mV",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-ph-slope-08",
+          "claim": "The USGS GW field form gives a pH slope acceptance criterion of 95 percent to 102 percent.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Slope Acceptance Criteria: 95% to 102%",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-ph-buffer-lots-09",
+          "claim": "The USGS GW field form identifies NWIS lot-number parameter codes for the pH buffers: pH 7 is 99173, pH 10 is 99171, and pH 4 is 99172.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "pH 7\n(99173)\npH 10\n(99171)\npH 4\n(99172)",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-sc-criteria-10",
+          "claim": "The USGS GW field form states a specific-conductance calibration criterion of ± 5 percent for SC below 100 or 3 percent for SC above 100, with the form printing the unit as mS/cm.",
+          "metrics": [
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Calibration Criteria: ± 5 % for SC <100 mS/cm or 3% for SC >100 mS/cm",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-five-readings-median-11",
+          "claim": "The USGS GW field form records five field readings and their median for each of temperature, dissolved oxygen, pH, and specific conductance, along with a method code, remark, and qualifier for each parameter.",
+          "metrics": [
+            "temperature",
+            "dissolvedOxygen",
+            "ph",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Field Readings # 1 ______ #2 ______ #3 ______ #4 ______ #5 ______ MEDIAN:_______ ºC Method Code ______ Remark ___ ___ Qualifier __",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-nist-check-12",
+          "claim": "The temperature block of the USGS GW field form records whether the thermistor was lab tested against a NIST thermometer or thermistor and the date, together with the meter make/model, serial numbers, and thermometer ID.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Lab Tested against NIST Thermometer/Thermistor? \tY \tN \tDate: ___________________",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-sc-standard-block-13",
+          "claim": "The specific-conductance calibration block of the GW form records the standard value in mmS/cm, the standard temperature, and SC before and after adjustment along with vendor lot number, NWIS parameter code, and expiration date.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Std Value\nmmS/cm\nStd\nTemp\nSC\nBefore Adj.\nSC\nAfter Adj.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__b57ff430a218",
+      "index": 32,
+      "locator": "Appendix 6.8–1, specific conductance block of the GW form and figure caption — \"AUTO TEMP COMPENSATED METER?\"",
+      "claims": [
+        {
+          "id": "mp-form-sc-temp-compensation-01",
+          "claim": "The specific-conductance block of the USGS GW field form asks whether the meter is automatically temperature compensated and whether a correction factor applies, making temperature compensation an explicit recorded attribute of a conductivity measurement.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "AUTO TEMP COMPENSATED METER? Y N CORRECTION FACTOR APPLIES? Y N",
+          "specificity": "high"
+        },
+        {
+          "id": "mp-form-figure-caption-02",
+          "claim": "Figure 6.8–01.01 is an example of a blank U.S. Geological Survey GW Form (version 9.1).",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "Figure 6.8–01.01 \tExample of a blank U.S. Geological Survey GW Form (version 9.1).",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__cc9344524539",
+      "index": 33,
+      "locator": "Back cover — \"U.S. Geological Survey— Use of Multiparameter Instruments\"",
+      "claims": []
+    }
+  ],
+  "summary": {
+    "totalClaims": 0,
+    "byMetric": {},
+    "byType": {},
+    "gaps": [],
+    "notes": ""
+  }
+}

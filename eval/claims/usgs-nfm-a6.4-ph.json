@@ -1,0 +1,1147 @@
+{
+  "filename": "usgs-nfm-a6.4-ph.pdf",
+  "title": "USGS TM 9-A6.4 — Measurement of pH (2021)",
+  "inSlice": false,
+  "chunkCount": 56,
+  "chunks": [
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__fe87a0aabd3f",
+      "index": 0,
+      "locator": "Cover and citation page — \"Techniques and Methods 9–A6.4\"",
+      "claims": [
+        {
+          "id": "ph-doc-supersedes-01",
+          "claim": "USGS Techniques and Methods book 9 chapter A6.4, \"Measurement of pH\" (released February 2021), supersedes USGS Techniques of Water-Resources Investigations book 9, chapter A6.4, version 2.0.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Revised: February 2021, online as Techniques and Methods, book 9, chapter A6.4",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__732c1a9790a3",
+      "index": 1,
+      "locator": "Table of contents dot leaders — \"Contents ... 1.0 Introduction\" (NEWLY RECOVERED)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__92492b70338c",
+      "index": 2,
+      "locator": "Table of contents, list of figures and tables — \"Figures ... Tables\" (NEWLY RECOVERED)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__a3e8b0d2b725",
+      "index": 3,
+      "locator": "Front matter, Conversion Factors and Abbreviations and Symbols — \"Abbreviations and Symbols\"",
+      "claims": [
+        {
+          "id": "ph-unit-definition-01",
+          "claim": "In USGS NFM A6.4, pH is defined as the negative base-10 logarithm of the hydrogen ion activity and is unitless.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "pH \tnegative base-10 logarithm of the hydrogen ion activity (unitless)",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-diw-spec-01",
+          "claim": "In this manual, DIW means deionized water with resistance greater than or equal to 18 megaohms that has been quality assured.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "deionized water with resistance greater than or equal to 18 megaohms (MΩ), and\nthat has been quality assured",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-atc-abbrev-01",
+          "claim": "ATC in this manual stands for automatic temperature compensation.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "ATC \tautomatic temperature compensation",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-celsius-fahrenheit-01",
+          "claim": "Temperature is reported in degrees Celsius and converts to degrees Fahrenheit by the equation °F = 1.8(°C) + 32.",
+          "metrics": [
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "°F = 1.8(°C) + 32",
+          "specificity": "low"
+        },
+        {
+          "id": "ph-sc-units-01",
+          "claim": "Specific conductance is reported in microsiemens per centimeter referenced to 25 degrees Celsius.",
+          "metrics": [
+            "conductivity",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Specific conductance is reported in microsiemens per centimeter at 25 degrees Celsius",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__589e245008dd",
+      "index": 4,
+      "locator": "Front matter, Requirements and Recommendations — \"the terms “required” and “recommended”\"",
+      "claims": [
+        {
+          "id": "ph-required-term-01",
+          "claim": "In the USGS National Field Manual, \"required\" means USGS Water Mission Area policy has been established and field personnel are instructed to use the required equipment and procedures as described in the NFM.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "USGS field personnel are instructed to use required equipment and procedures\nas described in the NFM.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-recommended-term-01",
+          "claim": "In the USGS National Field Manual, \"recommended\" means there are several acceptable alternatives to a given procedure or equipment selection, and the reason for the selection must be documented.",
+          "metrics": [],
+          "type": "definitional",
+          "quote": "there are several acceptable alternatives to a given\nprocedure or equipment selection in the NFM",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-departure-qa-01",
+          "claim": "Any departure from or modification to the NFM's stipulated requirements or recommended procedures must be independently quality assured and documented.",
+          "metrics": [],
+          "type": "procedural",
+          "quote": "must be independently quality assured and documented (Office of Water Quality",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__21dcdfdaf623",
+      "index": 5,
+      "locator": "Abstract and section 1.0 Introduction — \"provides guidance and protocols for the measurement of pH\"",
+      "claims": [
+        {
+          "id": "ph-chapter-scope-01",
+          "claim": "NFM chapter A6.4 covers the scientific basis of the pH measurement, selection and maintenance of equipment, calibration, procedures for measurement and reporting, and troubleshooting.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "guidance and protocols for the measurement of pH of a water\nsample, which include the scientific basis of the measurement,\nselection and maintenance of equipment, calibration",
+          "specificity": "low"
+        },
+        {
+          "id": "ph-method-applicability-01",
+          "claim": "The field methods for measuring pH described in NFM A6.4 are applicable to most natural waters.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "The field\nmethods for measuring pH described in this chapter are appli-\ncable to most natural waters.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-nfm-mandate-01",
+          "claim": "USGS personnel who collect water-quality data, including those on Cooperative program projects, are mandated to use the protocols provided in the NFM.",
+          "metrics": [],
+          "type": "conceptual",
+          "quote": "are mandated to use\nprotocols provided in the NFM (USGS Office of Water-\nQuality Technical Memorandum 2002.13",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__7f727185cb8b",
+      "index": 6,
+      "locator": "Section 1.1 Overview of pH — \"vary as a function of pH\"",
+      "claims": [
+        {
+          "id": "ph-processes-vary-01",
+          "claim": "Many aquatic chemical processes—chemical speciation, solubility of minerals and gases, ion exchange on mineral surfaces, and reaction kinetics—vary as a function of pH.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Many aquatic\nchemical processes, such as chemical speciation, solubility\nof minerals and gases, ion exchange on mineral surfaces, and\nthe kinetics or rate of reactions, vary as a function of pH.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-importance-01",
+          "claim": "Accurate measurements of pH are the basis for describing other attributes of aquatic systems.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "pH is an important variable in\naquatic systems, and accurate measurements of this property\nare the basis for describing other attributes of those systems.",
+          "specificity": "low"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__5fe973615c6a",
+      "index": 7,
+      "locator": "Section 1.1 Overview of pH, page break — \"vary as a function of pH. The-- 9 of 32 --\" (entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__d69cb303fc10",
+      "index": 8,
+      "locator": "Section 1.1 Overview of pH, \"Information on pH—\" bullet list",
+      "claims": [
+        {
+          "id": "ph-diurnal-surface-01",
+          "claim": "The pH of surface waters is affected diurnally by photosynthesis and respiration of algae and rooted macrophytes.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "pH of surface waters is affected diurnally by photosynthe-\nsis and respiration of algae and rooted macrophytes (Hem,\n1989).",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-definition-log-01",
+          "claim": "pH is defined as the negative base-10 logarithm of the hydrogen ion activity {H+}.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "The pH of water is defined as the negative base-10 loga-\nrithm of the hydrogen ion activity {H+}.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-measures-activity-01",
+          "claim": "pH electrodes, like other ion-selective electrodes, measure hydrogen ion activity rather than the actual concentration of ions.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "similar to other ion-selective electrodes (ISE), pH elec-\ntrodes measure hydrogen ion activity.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-activity-ionic-strength-01",
+          "claim": "In dilute waters ion activity values are similar to molar concentrations, but in high-ionic-strength waters such as brackish water or seawater activities can differ substantially from molar concentrations.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "For waters with high ionic strength—\nfor example, brackish water or seawater—activities\ncan differ substantially from molar concentrations.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-unitless-01",
+          "claim": "Because activity is dimensionless, pH values are unitless.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Activity is dimensionless; therefore, pH values are\nunitless.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-log-decade-01",
+          "claim": "A change of 1 pH unit corresponds to a 10-fold change in hydrogen ion activity.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Because pH is based on a logarithmic scale, a change\nof 1 pH unit is a 10-fold change in the hydrogen ion\nactivity.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-temp-affects-equilibria-01",
+          "claim": "Temperature and dissolved gases affect the chemical equilibria of ionic activities in aqueous solutions, including that of the hydrogen ion.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "Temperature and dissolved gases affect the chemi-\ncal equilibria of ionic activities in aqueous solutions,\nincluding that of H+ (Hem, 1989).",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-neutral-vs-temp-01",
+          "claim": "The neutral pH of pure water is defined as 7.00 at 25 degrees Celsius, but is 6.92 at 30 degrees Celsius and 7.48 at 0 degrees Celsius.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "neutral pH of pure water at 25 degrees Celsius (°C) is\ndefined as 7.00, but the value is 6.92 at 30 °C and 7.48\nat 0 °C",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-pure-water-co2-01",
+          "claim": "Pure water in equilibrium with the atmosphere at 25 degrees Celsius has a pH of 5.7 because of the dissolution and dissociation of atmospheric carbon dioxide.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "pure water in equilibrium with the\natmosphere at 25 °C has a pH of 5.7 because of the\ndissolution and dissociation of carbon dioxide (CO2)\nfrom the atmosphere.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-groundwater-range-01",
+          "claim": "Most groundwaters in the United States have pH values generally ranging from 6.0 to 8.5.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Most groundwaters in the United States\nhave pH values generally ranging from 6.0 to 8.5\n(Hem, 1989).",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-groundwater-degassing-01",
+          "claim": "Groundwater may be supersaturated with carbon dioxide before it reaches the land surface, and degassing can increase its pH, so care must be taken when measuring groundwater pH.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "the water may be super-\nsaturated with CO2 before it reaches the land surface,\nand degassing can increase pH.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-river-range-6p5-8p5-01",
+          "claim": "River waters not affected by contamination generally have a pH in the range of 6.5 to 8.5 and commonly show diel fluctuations caused by photosynthesis, respiration, and temperature varying the dissolved carbon dioxide.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "River waters not affected by contamination generally\nhave a pH in the range of 6.5 to 8.5 and commonly\nexhibit diel fluctuations in pH as a result of photosyn-\nthesis, respiration, and temperature",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-extreme-low-01",
+          "claim": "An extreme low field pH measurement of -3.6 has been reported for hyperacidic mine waters.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Some extreme pH\nmeasurements of waters in the field include -3.6 for\nhyperacidic mine waters (Nordstrom and Alpers, 1999),",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__592946fe84a5",
+      "index": 9,
+      "locator": "Section 1.1 Overview of pH, extreme pH examples — \"12.5 for pore water ascending through serpentinite\"",
+      "claims": [
+        {
+          "id": "ph-extreme-high-01",
+          "claim": "An extreme high field pH measurement of 12.5 has been reported for pore water ascending through serpentinite mud volcanoes in the Mariana forearc.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "and 12.5 for pore water ascending through serpentinite\nmud volcanoes in the Marian forearc (Mottl, 2009).",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__2b8bbd14f32f",
+      "index": 10,
+      "locator": "Section 2.0 Equipment and Supplies and 2.1 pH Meters — \"Field personnel are required to—\"",
+      "claims": [
+        {
+          "id": "ph-instrument-components-01",
+          "claim": "Modern instrumentation for measuring pH in environmental waters consists of a pH meter, a pH electrode, and a thermistor, and the meter and electrode are calibrated using standard pH buffers.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Modern instrumentation used to measure pH in envi-\nronmental waters consists of a pH meter, a pH electrode, and\na thermistor (table 6.4–1).",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-req-lab-cal-before-trip-01",
+          "claim": "Field personnel are required to test the pH meter and electrode before each field trip by calibrating in the laboratory and recording the calibration information in a pH-meter/electrode logbook.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Test the meter and electrode before each field trip by\ncalibrating in the laboratory and recording calibration\ninformation in a pH-meter/electrode logbook.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-req-field-check-01",
+          "claim": "Field personnel are required to check the pH meter and electrode in the field and record the information in a pH-meter/electrode logbook.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Check the pH meter and electrode in the field\nand record the information in a pH-meter/\nelectrode logbook.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-req-buffer-atc-match-01",
+          "claim": "Field personnel are required to ensure that the pH buffers used for calibration are matched to the meter's built-in automatic temperature compensation (ATC) in its calibration software, and that the buffers have not expired.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Ensure that pH buffers used for calibration are matched\nto the built-in automatic temperature compensation\n(ATC) in the calibration software of the meter, and that\nthe buffers have not expired.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-req-record-temperature-01",
+          "claim": "Field personnel are required to record temperature with each measurement of pH, because temperature affects the operation of pH meters, electrodes, and buffer solutions.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Record temperature with each measurement of pH,\nbecause temperature affects the operation of pH meters,\nelectrodes, and buffer solutions.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-req-sds-01",
+          "claim": "Chemical Safety Data Sheets (SDS) for pH buffers and other chemicals are required to be kept readily available in the field and referred to so the chemicals are handled safely.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "CAUTION: Keep Chemical Safety\nData Sheets (SDS) readily available",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-meter-definition-01",
+          "claim": "A pH meter is a high-impedance voltmeter that measures the very small electrical potential, in millivolts, generated between a glass bulb pH electrode and a pH reference electrode.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "A pH meter is a high-impedance voltmeter that measures\nthe very small electrical potential (in millivolts [mV]) gener-\nated between a glass bulb pH electrode and a pH reference\nelectrode",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-combination-electrode-usage-01",
+          "claim": "Combination electrodes, which contain both a pH electrode and a reference electrode in one body, are used in most USGS field studies.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Combination electrodes are used in most\nUSGS field studies. They contain both a pH electrode and a\nreference electrode in one body",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-interpolation-preferred-01",
+          "claim": "The potentiometric measurement is converted to a pH value by interpolation or extrapolation with a standard calibration curve, and interpolation is preferred.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "The potentiometric measurement is converted\nto a pH value either by interpolation or extrapolation with a\nstandard calibration curve (interpolation is preferred).",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__1d9450892586",
+      "index": 11,
+      "locator": "Section 2.1 pH Meters requirements, 2.2 pH Electrodes, and Table 6.4–1 — \"obtained and used for pH measurements ... are required to:\"",
+      "claims": [
+        {
+          "id": "ph-meter-req-power-atc-01",
+          "claim": "pH meters used for groundwater, surface-water, or alkalinity-titration measurements are required to be battery powered, solid state, and equipped with automatic temperature compensation.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Be battery powered, solid state, with ATC.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-meter-req-range-01",
+          "claim": "A pH meter used for USGS measurements is required to have a pH range of at least 2 to 12, preferably 0 to 14.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Have a pH range of at least 2 to 12, preferably 0 to 14.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-meter-req-accuracy-01",
+          "claim": "A pH meter used for USGS measurements is required to have an accuracy of at least plus or minus 0.1 pH unit with a resolution of 0.01 pH unit.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Have an accuracy of at least ±0.1 pH units or greater\nwith resolution of 0.01 pH units.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-meter-req-temp-range-01",
+          "claim": "A pH meter used for USGS measurements is required to have a temperature range of at least 0 to +45 degrees Celsius, which is adequate for most surface and groundwaters.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Have a temperature range of at least 0 to +45 °C\n(adequate for most surface and groundwaters).",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-meter-req-mv-01",
+          "claim": "A pH meter used for USGS measurements is required to have a millivolt readout with an accuracy of plus or minus 0.1 mV.",
+          "metrics": [
+            "ph",
+            "orp"
+          ],
+          "type": "numeric",
+          "quote": "Have a millivolt readout with accuracy of ±0.1 mV.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-electrode-life-01",
+          "claim": "The typical useful life expectancy of a pH electrode used in environmental field operation is approximately 12 to 18 months.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "useful life expectancy of pH electrodes used in environmental\nfield operation is approximately 12 to 18 months.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-electrode-glass-bulb-01",
+          "claim": "pH measurements of natural waters are most commonly made with glass bulb electrodes, and other types of pH electrode are not discussed in this chapter.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "pH measurements of natural waters are most commonly made\nwith glass bulb electrodes, other types of pH electrodes are\nnot discussed.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-electrode-mechanism-01",
+          "claim": "In a combination electrode the pH electrode generates an electrical potential proportional to the hydrogen ion concentration in the sample, while the reference electrode generates a constant potential.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "The pH electrode gener-\nates an electrical potential that is proportional to the concen-\ntration of hydrogen ions in the sample solution",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-table641-buffers-01",
+          "claim": "Table 6.4–1 lists standard pH buffer solutions 4, 7, and 10 labeled with expiration date as required supplies, with pH 1.68 or 2 buffer also needed if acidic waters are measured, plus temperature correction charts for the buffers.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Standard pH buffer solutions 4, 7, and 10, labeled with expiration date (standard buffer solutions pH 1.68 or 2 are also needed if\nacidic waters are measured)",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table641-beakers-01",
+          "claim": "Table 6.4–1 specifies beakers or measurement vessels, preferably polyethylene or Teflon, in assorted volumes of 50 to 150 mL, clean but not acid rinsed.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Beakers or measurement vessels (preferably polyethylene or Teflon), assorted volumes of 50 to 150 mL, clean but not acid rinsed",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table641-buffer-equilibration-01",
+          "claim": "Table 6.4–1 lists a bucket, cooler, or minnow bucket (or mesh bag) with tether, used for temperature equilibration of buffer solutions.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Bucket, cooler, or minnow bucket (or mesh bag) with tether, used for temperature equilibration of buffer solutions",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table641-thermistor-01",
+          "claim": "Table 6.4–1 requires a calibrated thermistor or thermometer as part of the pH measurement equipment, along with electrode filling solution of appropriate composition and molarity and electrode storage solution.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Thermistor (or thermometer), calibrated",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__875e66b3fb78",
+      "index": 12,
+      "locator": "Table 6.4–1 continuation — \"pH-meter/electrode logbook, either paper or digital\"",
+      "claims": [
+        {
+          "id": "ph-table641-logbook-01",
+          "claim": "Table 6.4–1 lists a pH-meter/electrode logbook, either paper or digital, for recording calibrations, maintenance, and repairs, as well as spare batteries and Safety Data Sheets for all pH buffers and reagents.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "pH-meter/electrode logbook, either paper or digital, for recording calibrations, maintenance, and repairs",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__54d8135ca69b",
+      "index": 13,
+      "locator": "Section 2.2.1 How a Combination pH Electrode Works — \"defined by the Nernst equation\"",
+      "claims": [
+        {
+          "id": "ph-isopotential-ph7-01",
+          "claim": "The internal solution of a pH electrode is typically a pH-7 buffer, so most pH electrodes have an isopotential point (e.m.f. = 0 mV) at pH 7.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "The internal solution is typically a pH-7\nbuffer solution and, therefore, most pH electrodes have an\nisopotential point (e.m.f.=0 mV) at pH 7 (pHiso).",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-nernst-slope-01",
+          "claim": "In the Nernst equation as applied to a pH electrode, the slope constant k equals 59.16 mV at 25 degrees Celsius and is equal to 2.3RT/F, where R is the gas constant, T the temperature, and F Faraday's constant.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "and k=59.16 mV at 25 °C=2.3RT/F,\nwhere R is the gas constant, T is the temperature, and F is\nFaraday’s constant.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-nernst-dependence-01",
+          "claim": "The voltage potential across the glass membrane during sample measurement is pH dependent and is defined by the Nernst equation.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "The voltage potential across the glass membrane\nduring sample measurement is pH dependent and is defined by\nthe Nernst equation.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-reference-electrode-types-01",
+          "claim": "Reference electrodes are usually silver wire coated in silver chloride, though calomel (mercury-mercury chloride) and ROSS (platinum-iodine/iodine) reference electrodes are also commonly used.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Most manufacturers make reference electrodes using silver\nwire coated in silver chloride (silver-silver chloride); however,\ncalomel (mercury-mercury chloride) and ROSS (platinum-",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-filling-solution-composition-01",
+          "claim": "Reference-electrode filling solutions typically contain a chloride salt, commonly silver or potassium, at a known and specific concentration.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Typically, these ionic\nsolutions contain a chloride salt (commonly silver or potas-\nsium) of a known and specific concentration.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-filling-solution-required-01",
+          "claim": "For liquid-filled electrodes, maintaining a sufficient volume and the manufacturer-recommended concentration of filling solution inside the electrode is required to obtain accurate measurements.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "maintaining a sufficient volume and the correct\nconcentration of the filling solution, as recommended by the\nelectrode manufacturer, within the electrode is required",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__17e96af99482",
+      "index": 14,
+      "locator": "Section 2.2.1 and Table 6.4–2 (first rows) — \"Recommended pH electrodes for a variety of water types\"",
+      "claims": [
+        {
+          "id": "ph-junction-material-01",
+          "claim": "The reference junction of a combination pH electrode is typically made of a porous material such as ceramic, Teflon, or glass fiber, and a properly functioning junction is important for accurate pH measurements.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "Typically, this junction is made of a porous material\nsuch as ceramic, Teflon, or glass fiber.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-epoxy-body-01",
+          "claim": "Epoxy-body construction is recommended over glass for pH combination electrodes used in field applications, for durability.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Epoxy construction is recommended for field\napplications for durability.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-thermistor-atc-location-01",
+          "claim": "Most pH systems as of 2020 include a thermistor for automatic temperature compensation, which may be a separate probe, built into the pH electrode, or incorporated into a different part of a multiparameter sonde.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "Most systems today (2020) include\na thermistor for ATC.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-track-slope-isopotential-01",
+          "claim": "Electrode performance degrades with normal use and is required to be tracked in the pH-meter/electrode logbook by changes in the calibration slope and isopotential point.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Electrode performance degrades with normal use and\nis required to be tracked in the pH-meter/electrode logbook\nby changes in the calibration slope and isopotential point.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table642-low-ionic-01",
+          "claim": "Table 6.4–2 identifies water of low ionic strength as specific conductance less than 100 microsiemens per centimeter, where the water is not sufficiently conductive to complete the electrical circuit and the pH reading is unstable.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "numeric",
+          "quote": "Specific conductance <100 μS/\ncm\nWater is not sufficiently\nconductive to complete the\nelectrical circuit, causing an\nunstable pH reading.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table642-low-ionic-electrode-01",
+          "claim": "For low-ionic-strength water Table 6.4–2 recommends a fast-responding (liquid-filled) electrode, a Ross combination glass electrode, or a double junction electrode.",
+          "metrics": [
+            "ph",
+            "conductivity"
+          ],
+          "type": "procedural",
+          "quote": "Fast-responding (liquid-filled)\nelectrode, Ross combination\nglass electrode, double\njunction electrode",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table642-hyperacidic-01",
+          "claim": "Table 6.4–2 states that hyperacidic water of pH less than 0 contaminates the glass electrode and produces a non-Nernstian response, and recommends a Ross combination glass electrode.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Hyperacidic (pH <0) \tContamination of the glass\nelectrode; non-Nernstian\nresponse",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table642-geothermal-01",
+          "claim": "For geothermal waters (high temperature and elevated silica), Table 6.4–2 warns that silica polymerizes and precipitates in the reference junction as the probe cools and recommends a Ross combination glass electrode soaked in 80 degree Celsius deionized water for 30 minutes after use.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Ross combination glass elec-\ntrode (soak in 80 °C DIW for\n30 minutes after use)",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table642-acid-mine-01",
+          "claim": "For acid-mine waters (low pH and elevated iron), Table 6.4–2 warns that iron and aluminum hydroxides precipitate in the reference junction and recommends a glass pH electrode soaked in dilute 0.1 molar hydrochloric acid after use.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Glass pH electrode (soak in\ndilute hydrochloric acid\n[0.1 M] after use)",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table642-basic-01",
+          "claim": "Table 6.4–2 states that when basic ions dominate the solution at high pH (greater than 10), the low hydrogen ion activity lets the electrode measure other monovalent ions and the electrode responds sluggishly because of dehydration of the glass bulb membrane.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "High pH (>10); low H+ activity\nresults in measurement of\nother monovalent ions in\nsolution",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__0c50be7f7720",
+      "index": 15,
+      "locator": "Table 6.4–2 continuation — \"Elevated Na+ activity at pH >11.0\" (row labels present, column header not in this chunk)",
+      "claims": [
+        {
+          "id": "ph-table642-sodium-error-01",
+          "claim": "Table 6.4–2 states that at pH greater than 11.0 elevated sodium ion activity causes the electrode to sense Na+ as if it were H+, negatively biasing the pH measurement, and recommends a glass pH electrode designed for measuring high values of pH.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "numeric",
+          "quote": "Elevated Na+ activity at\npH >11.0; H+ activity is\nlow. The electrode senses\nNa+ activity as if it were H+\nactivity",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table642-sulfide-cyanide-01",
+          "claim": "Table 6.4–2 states that elevated sulfide or cyanide concentrations contaminate the reference electrode and recommends double-junction or plasticized reference electrodes.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Sulfide or cyanide contamination\nof the reference electrode\nDouble-junction electrodes,\nplasticized reference\nelectrodes",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table642-ferric-chloride-01",
+          "claim": "Table 6.4–2 states that ferric chloride, used as a flocculating agent in wastewater treatment, attacks the glass bulb membrane and deactivates many of its sensing sites, and directs the user to consult the manufacturer about electrode selection or cleaning.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Ferric chloride affects the glass\nbulb membrane of the pH\nelectrode, deactivating many\nof the sensing sites on the\nglass surface.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__bf409c014f85",
+      "index": 16,
+      "locator": "Table 6.4–2 end of ferric-chloride row and page break — \"-- 14 of 32 --\" (entirely prior-chunk overlap)",
+      "claims": []
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__463363d709a0",
+      "index": 17,
+      "locator": "Section 2.3 Standard pH Buffer Solutions — \"Measurements of pH are only as accurate as the buffers\"",
+      "claims": [
+        {
+          "id": "ph-buffer-definition-01",
+          "claim": "Standard pH buffer solutions are ionic solutions used to calibrate the pH meter and electrodes, and they hold a constant pH value at a single temperature.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "Standard pH buffer solutions (buffers) are ionic solutions\nthat are used to calibrate the pH meter and electrodes.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-buffer-temp-dependence-01",
+          "claim": "The pH of a buffer solution is affected by temperature because the calibration slope, which is related to the Nernst equation, and the isopotential point both change with temperature.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "conceptual",
+          "quote": "However, the pH of solutions is\naffected by temperature, because the calibration slope (which\nis related to the Nernst equation) and the isopotential point\nchange with temperature.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-common-values-01",
+          "claim": "Most pH meters recognize the e.m.f. range of the commonly used pH 1.68, 4.01, 7.00, and 10.01 buffers and can automatically compensate for temperature during calibration.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "Most pH meters recognize\nthe e.m.f. range of certain pH buffers (commonly pH 1.68,\n4.01, 7.00, and 10.01 buffers) and are able to automatically\ncompensate for temperature during calibration.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-verify-atc-01",
+          "claim": "The user must verify that the buffers in use are NIST-traceable, that their values are recognized correctly by the meter, and that they are compatible with the meter's automatic temperature compensation.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "Verify that\nthe buffers you are using are NIST-traceable, that the values\nare recognized correctly by the meter, and that the buffers are\ncompatible with the ATC for your meter.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-temp-adjust-entry-01",
+          "claim": "Depending on the meter, the user may be responsible for entering the temperature-adjusted buffer pH value from a chart, or the meter may generate the temperature-adjusted buffer value automatically.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "procedural",
+          "quote": "user may be responsible for entering the temperature-adjusted\nbuffer pH value into the meter for calibration from a chart or\nthe meter may automatically generate a temperature-adjusted",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-accuracy-ceiling-01",
+          "claim": "Measurements of pH are only as accurate as the buffers used to calibrate the meter and electrodes.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "conceptual",
+          "quote": "Measurements of pH are only as accurate as the buffers\nused to calibrate the meter and electrodes.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-buffer-primary-standards-01",
+          "claim": "The pH 1.68, 4.01, and 10.01 buffers are primary standards whose pH values were determined using the standard hydrogen-gas electrode, so their variation of pH with temperature is well known and similar across manufacturers.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "The pH buffers 1.68, 4.01, and 10.01 are primary standards\n(pH values determined by using the standard hydrogen-gas\nelectrode).",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-7-secondary-01",
+          "claim": "The pH 7.00 buffer is a secondary standard whose pH values are determined by interpolation to primary standards, and its composition and temperature dependence may differ between manufacturers.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "definitional",
+          "quote": "The pH-7.00 buffer is a secondary\nstandard (pH values determined by interpolation to primary\nstandards)",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-7-formulations-01",
+          "claim": "The two common pH 7.00 buffer formulations (potassium dihydrogen phosphate with sodium hydroxide, or with sodium hydrogen phosphate) give pH values comparable to within 0.02 pH unit from 0 to 90 degrees Celsius.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "the pH values of both buffer formulations are comparable to\nwithin 0.02 pH units from 0 to 90 °C.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-nist-required-01",
+          "claim": "Only buffers certified traceable to a NIST standard reference material may be used for pH calibration.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Use only buffers that have been certified traceable to a\nNIST standard reference material.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-labeling-01",
+          "claim": "pH buffer containers must be labeled with the date opened and the expiration date, and the expiration date and lot number must be copied onto any container the buffer is transferred into and recorded in the pH-meter/electrode logbook.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Label pH buffer containers with the date opened and\nthe expiration date.",
+          "specificity": "medium"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__a5e101e3271a",
+      "index": 18,
+      "locator": "Section 2.3 buffer precautions and Table 6.4–3 — \"Values of pH from 0 to 90 degrees Celsius\"",
+      "claims": [
+        {
+          "id": "ph-buffer-no-expired-01",
+          "claim": "Expired pH buffers must not be used.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Do not use expired buffers.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-cap-bottles-01",
+          "claim": "Buffer bottles must be capped firmly after use to prevent evaporation and contamination.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Cap buffer bottles firmly after use to prevent\nevaporation and contamination.",
+          "specificity": "medium"
+        },
+        {
+          "id": "ph-buffer-no-return-01",
+          "claim": "Used buffer must never be poured back into a bottle containing stock buffer solution.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "procedural",
+          "quote": "Never pour used buffer back into a bottle containing the\nstock buffer solution.",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table643-caption-01",
+          "claim": "Table 6.4–3 tabulates the pH of the commonly used standard pH buffers from 0 to 90 degrees Celsius in 5-degree steps, with columns for the buffers nominally 1.68, 4.01, 7.00, and 10.01 at 25 degrees Celsius.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "pH buffer at 25 °C\n1.681 \t4.012 \t7.003 \t10.014",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table643-row-0c-01",
+          "claim": "At 0 degrees Celsius, Table 6.4–3 gives buffer values of 1.67, 4.00, 7.12, and 10.32 for the 1.68, 4.01, 7.00, and 10.01 buffers.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "0 \t1.67 \t4.00 \t7.12 \t10.32",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table643-row-10c-01",
+          "claim": "At 10 degrees Celsius, Table 6.4–3 gives buffer values of 1.67, 4.00, 7.06, and 10.18.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "10 \t1.67 \t4.00 \t7.06 \t10.18",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table643-row-20c-01",
+          "claim": "At 20 degrees Celsius, Table 6.4–3 gives buffer values of 1.68, 4.00, 7.02, and 10.06.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "20 \t1.68 \t4.00 \t7.02 \t10.06",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table643-row-25c-01",
+          "claim": "At 25 degrees Celsius, Table 6.4–3 gives the nominal buffer values 1.68, 4.01, 7.00, and 10.01.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "25 \t1.68 \t4.01 \t7.00 \t10.01",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table643-row-30c-01",
+          "claim": "At 30 degrees Celsius, Table 6.4–3 gives buffer values of 1.68, 4.01, 6.99, and 9.97.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "30 \t1.68 \t4.01 \t6.99 \t9.97",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table643-row-40c-01",
+          "claim": "At 40 degrees Celsius, Table 6.4–3 gives buffer values of 1.69, 4.03, 6.97, and 9.89.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "40 \t1.69 \t4.03 \t6.97 \t9.89",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table643-row-90c-01",
+          "claim": "At 90 degrees Celsius, Table 6.4–3 gives buffer values of 1.79, 4.21, 7.09, and 9.72.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "90 \t1.79 \t4.21 \t7.09 \t9.72",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-table643-1001-drift-01",
+          "claim": "The nominal pH 10.01 buffer changes more with temperature than the other standard buffers, falling from 10.32 at 0 degrees Celsius to 9.72 at 90 degrees Celsius.",
+          "metrics": [
+            "ph",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "0 \t1.67 \t4.00 \t7.12 \t10.32\n5 \t1.67 \t4.00 \t7.09 \t10.25",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-comp-168-01",
+          "claim": "The pH 1.68 buffer is 0.05 mole per kilogram potassium tetroxalate.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "1pH 1.68 buffer: 0.05 mole per kilogram (mol/kg) potassium tetroxalate",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-comp-401-01",
+          "claim": "The pH 4.01 buffer is 0.05 mol/kg potassium biphthalate.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "2pH 4.01 buffer: 0.05 mol/kg potassium biphthalate",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-comp-700-01",
+          "claim": "The pH 7.00 buffer used for Table 6.4–3 is 0.063 mol/kg potassium dihydrogen phosphate and 0.037 mol/kg sodium hydroxide.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "3pH 7.00 buffer: 0.063 mol/kg potassium dihydrogen phosphate and 0.037\nmol/kg sodium hydroxide",
+          "specificity": "high"
+        },
+        {
+          "id": "ph-buffer-comp-1001-01",
+          "claim": "The pH 10.01 buffer is 0.025 mol/kg sodium bicarbonate and 0.025 mol/kg sodium carbonate.",
+          "metrics": [
+            "ph"
+          ],
+          "type": "definitional",
+          "quote": "4pH 10.01 buffer: 0.025 mol/kg sodium bicarbonate and 0.025 mol/kg\nsodium carbonate",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "usgs-nfm-a6.4-ph.pdf__814de97329a0",
+      "index": 19,
+      "locator": "Table 6.4–3 continuation — rows 75 to 90 °C and footnotes, no column header in this chunk; content is entirely prior-chunk overlap (NEWLY RECOVERED)",
+      "claims": []
+    }
+  ],
+  "summary": {
+    "totalClaims": 96,
+    "byMetric": {
+      "ph": 88,
+      "temperature": 35,
+      "(none)": 5,
+      "conductivity": 3,
+      "orp": 1
+    },
+    "byType": {
+      "numeric": 32,
+      "procedural": 24,
+      "definitional": 22,
+      "conceptual": 18
+    },
+    "gaps": [],
+    "notes": ""
+  }
+}
