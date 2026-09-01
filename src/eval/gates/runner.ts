@@ -110,14 +110,40 @@ const readTranscripts = (dir: string): { file: string; body: Record<string, unkn
     : []
 );
 
-/** `fixtureId` -> zero-based turn index -> whether that turn's rubric demands a refusal. */
+/**
+ * `fixtureId` -> zero-based turn index -> whether that turn's rubric demands a refusal.
+ *
+ * **Throws when a `refusal`-class fixture yields no refusal-required turn.** The refusal gate is
+ * absolute (§8a: 100%), and a detector that finds nothing reports `required: 0` and `met: true` —
+ * an arm that answered every unanswerable question would clear a pre-registered gate. That is a
+ * worse failure than not running, so it is loud.
+ *
+ * The wave 1 set trips this: it phrases the same requirement as "Declines to..." and "States that
+ * no source here gives...", so `REFUSAL_REQUIRED` matches 0 of its 8 refusal turns where it
+ * matched 3 of the archived set's 6. Widening the pattern is not the fix — it caught only 3 of 8
+ * with "declines" added, and picked up two false positives elsewhere. The fix is a per-turn
+ * `requires_refusal` boolean on the fixture, which `EVAL_FIXTURES.md` §7 previously ruled out
+ * because the fixtures were a pinned control while ◆G7 was open. That reason is gone.
+ */
 const refusalMap = (): Map<string, boolean[]> => {
   const map = new Map<string, boolean[]>();
-  loadFixtures().forEach((fixture) => {
+  const fixtures = loadFixtures();
+  fixtures.forEach((fixture) => {
     map.set(fixture.id, fixture.turns.map((turn) => (
       (turn.rubric?.must_contain ?? []).some((claim) => REFUSAL_REQUIRED.test(claim))
     )));
   });
+
+  const refusalFixtures = fixtures.filter((fixture) => fixture.class === "refusal");
+  const detected = refusalFixtures
+    .reduce((total, fixture) => total + (map.get(fixture.id) ?? []).filter(Boolean).length, 0);
+  if (refusalFixtures.length > 0 && detected === 0) {
+    throw new Error(
+      `${refusalFixtures.length} refusal-class fixture(s) loaded but no turn's rubric matches `
+      + `${REFUSAL_REQUIRED} in must_contain, so the refusal gate would pass on zero turns. `
+      + "Add a per-turn requires_refusal flag to the fixtures rather than widening the pattern.",
+    );
+  }
   return map;
 };
 

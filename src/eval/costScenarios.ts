@@ -29,7 +29,7 @@ export type Provenance = "indicative" | "measured";
 
 /** Where the token counts below came from, printed alongside every result. */
 export const TOKEN_PROVENANCE: Provenance = "measured";
-export const TOKEN_SOURCE = "warm-pass sweep means, 2026-08-11..2026-08-26: 5 arms x 58 turns, 0 failed (eval/transcripts/warm/)";
+export const TOKEN_SOURCE = "warm-pass sweep means, 2026-08-11..2026-08-26: 5 arms x 58 turns, 0 failed (eval/transcripts/warm/, archived 2026-09-01 under the tag eval-archive-2026-09-01)";
 
 const CHAT_MODEL = "accounts/fireworks/models/gpt-oss-20b";
 const EMBEDDING_MODEL = "nomic-ai/nomic-embed-text-v1.5";

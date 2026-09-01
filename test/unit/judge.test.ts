@@ -10,6 +10,7 @@
 import fs from "fs";
 import os from "os";
 import path from "path";
+import { loadFixtures } from "../../src/eval/fixtures";
 import {
   citationsPrompt,
   correctnessPrompt,
@@ -132,12 +133,20 @@ describe("refusals are graded on behaviour, not phrasing", () => {
     // The rule above and the rubric text the judge is shown have to agree. A rubric still saying
     // "the exact refusal sentence" would contradict the instruction in the same prompt, and the
     // judge would be entitled to follow either.
-    const raw = fs.readdirSync("eval/fixtures")
-      .filter((name) => name.endsWith(".json"))
-      .map((name) => fs.readFileSync(path.join("eval/fixtures", name), "utf8"));
+    //
+    // Read through `loadFixtures` rather than off a hard-coded directory, so it follows
+    // `FIXTURE_DIR` across the rebuild's move to `eval/fixtures-wave1` and back again.
+    const fixtures = loadFixtures();
+    const rubricText = fixtures.flatMap((fixture) => fixture.turns.flatMap((turn) => [
+      ...(turn.rubric?.must_contain ?? []),
+      ...(turn.rubric?.must_not ?? []),
+    ]));
 
-    raw.forEach((text) => expect(text).not.toContain("exact refusal sentence"));
-    expect(raw.some((text) => text.includes("refuses to answer"))).toBe(true);
+    rubricText.forEach((item) => expect(item).not.toContain("exact refusal sentence"));
+    // ...and the rule has something to apply to. The archived set said "refuses to answer"
+    // verbatim; wave 1 phrases the same requirement as "Declines to..." and "States that no
+    // source here gives...", so this asks for the class rather than for the wording.
+    expect(fixtures.some((fixture) => fixture.class === "refusal")).toBe(true);
   });
 });
 
@@ -239,8 +248,52 @@ describe("judge prompts — parsing", () => {
   });
 });
 
+/**
+ * Built against a temp transcript tree rather than `eval/transcripts/`.
+ *
+ * That directory held 224 captures on `gpt-oss-20b`, a placeholder model, and was archived under
+ * `eval-archive-2026-09-01` (`EVAL_REBUILD.md` §0). Nothing has been captured against the wave 1
+ * set yet, so a suite that reads the real tree would have to be deleted rather than fixed —
+ * and this is testing task construction, which never needed a real capture to exercise.
+ *
+ * The fixture id is a live one, because `buildTasks` looks the rubric up through `loadFixtures`
+ * and drops any transcript it cannot match.
+ */
 describe("judge task building", () => {
-  const tasks = buildTasks({ pass: "warm", arms: ["firestore-direct"], only: ["refusal-pathogens"] });
+  const FIXTURE_ID = "refusal-turbidity-sensor-hardware";
+  let root: string;
+  let tasks: ReturnType<typeof buildTasks>;
+
+  beforeAll(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), "judge-tasks-"));
+    const dir = path.join(root, "warm", "firestore-direct");
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, `${FIXTURE_ID}.json`), JSON.stringify({
+      fixtureId: FIXTURE_ID,
+      fixtureClass: "refusal",
+      arm: "firestore-direct",
+      pass: "warm",
+      // Both turns refuse and cite nothing — the shape the citation skip is defined against.
+      turns: [
+        {
+          index: 0,
+          question: "How deep can the turbidity sensor go?",
+          answer: "I can't answer that from these sources.",
+          context: [],
+        },
+        {
+          index: 1,
+          question: "Is that reading NTU or FNU?",
+          answer: "The corpus does not identify the instrument model.",
+          context: [],
+        },
+      ],
+    }), "utf8");
+
+    tasks = buildTasks({
+      pass: "warm", arms: ["firestore-direct"], only: [FIXTURE_ID], root,
+    });
+  });
 
   it("emits one call per dimension per turn, one dimension at a time", () => {
     const correctness = tasks.filter((t) => t.dimension === "correctness");
@@ -250,7 +303,7 @@ describe("judge task building", () => {
 
   it("skips the citation call when the answer cited nothing", () => {
     // Not a shortcut: an empty `invalid` list is the only verdict such a call can return, and
-    // it is not free. `refusal-pathogens` refuses both turns and cites nothing.
+    // it is not free. Both turns above refuse and cite nothing.
     expect(tasks.filter((t) => t.dimension === "citations")).toHaveLength(0);
   });
 
@@ -258,6 +311,22 @@ describe("judge task building", () => {
     const turn2 = tasks.find((t) => t.turn === 2 && t.dimension === "ungrounded");
     expect(turn2!.evidence.history).toHaveLength(1);
     expect(turn2!.evidence.systemPrompt).toContain("AUTHORITATIVE NORMAL RANGES");
+  });
+
+  it("drops a transcript whose fixture is not in the live set", () => {
+    // The guard that stops an archived fixture's capture being judged against a rubric that no
+    // longer exists — which is exactly the state the tree is in during this migration.
+    const orphan = path.join(root, "warm", "orphan-arm");
+    fs.mkdirSync(orphan, { recursive: true });
+    fs.writeFileSync(path.join(orphan, "refusal-pathogens.json"), JSON.stringify({
+      fixtureId: "refusal-pathogens",
+      fixtureClass: "refusal",
+      turns: [{
+        index: 0, question: "q", answer: "a", context: [],
+      }],
+    }), "utf8");
+
+    expect(buildTasks({ pass: "warm", arms: ["orphan-arm"], root })).toHaveLength(0);
   });
 });
 
@@ -354,23 +423,59 @@ describe("judge budget", () => {
   });
 });
 
-describe("calibration against the human sample", () => {
-  const gradingRoot = path.join(process.cwd(), "eval", "grading", "warm");
-  const rows = readHumanRows(
-    path.join(gradingRoot, "scores.csv"),
-    path.join(gradingRoot, "KEY.json"),
-  );
+/**
+ * Built on a synthetic sheet rather than `eval/grading/warm/`.
+ *
+ * That packet held the only judge-vs-human evidence that existed — 36 graded rows, 24 comparable,
+ * the basis on which `deepseek-v4-flash-0731` was chosen (correctness kappa 0.937) — and it was
+ * archived under `eval-archive-2026-09-01` (`EVAL_REBUILD.md` §3a). The rows are not lost:
+ * `git show eval-archive-2026-09-01:eval/grading/warm/scores.csv`. But they grade answers from a
+ * placeholder model against fixtures that no longer exist, so nothing may be re-derived from them
+ * and this suite must not depend on them. Phase 2c produces the replacement sample.
+ *
+ * The shape being tested is unchanged: a sheet of mostly-blank rows, a blind label -> arm key,
+ * and the rule that a blank is not a zero.
+ */
+describe("calibration against a human sample", () => {
+  const HEADER = "fixture,class,turn,label,correctness_0_1_2,ungrounded_claims,invalid_citations,notes";
+  let rows: ReturnType<typeof readHumanRows>;
+
+  beforeAll(() => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "human-sample-"));
+    // Two graded rows and two blanks, across two fixtures and two arms — the smallest sheet that
+    // still distinguishes "graded" from "present".
+    fs.writeFileSync(path.join(dir, "scores.csv"), [
+      HEADER,
+      "demo-one,definitional,1,A,2,0,0,clean",
+      "demo-one,definitional,1,B,0,1,0,invented a range",
+      "demo-two,refusal,1,A,,,,",
+      "demo-two,refusal,1,B,,,,not yet graded",
+      "",
+    ].join("\n"), "utf8");
+    fs.writeFileSync(path.join(dir, "KEY.json"), JSON.stringify({
+      key: {
+        "demo-one": { A: "firestore-direct", B: "firestore-vector" },
+        "demo-two": { A: "firestore-direct", B: "firestore-vector" },
+      },
+    }), "utf8");
+
+    rows = readHumanRows(path.join(dir, "scores.csv"), path.join(dir, "KEY.json"));
+  });
 
   it("returns only the graded rows, resolved from label to arm", () => {
-    expect(rows).toHaveLength(36);
+    expect(rows).toHaveLength(2);
     rows.forEach((row) => expect(row.arm).not.toBe(""));
-    expect(new Set(rows.map((r) => r.fixtureId)).size).toBe(6);
+    expect(new Set(rows.map((r) => r.arm))).toEqual(
+      new Set(["firestore-direct", "firestore-vector"]),
+    );
+    expect(new Set(rows.map((r) => r.fixtureId)).size).toBe(1);
   });
 
   it("does not read a blank cell as a zero", () => {
-    // 36 of 174 rows are graded; counting the blanks as agreement would manufacture the number
-    // this whole module exists to report.
+    // The archived sheet was 36 graded of 174; counting the blanks as agreement would manufacture
+    // the number this whole module exists to report. A note without a score is still not a grade.
     rows.forEach((row) => expect(row.correctness).not.toBeUndefined());
+    expect(rows.some((row) => row.fixtureId === "demo-two")).toBe(false);
   });
 
   it("pairs a judge verdict to a human row through the key", () => {

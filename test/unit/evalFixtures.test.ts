@@ -47,15 +47,23 @@ const validFixture = {
 };
 
 const withFixture = (patch: Record<string, unknown>, name = "sample.json"): string => writeFixtureDir(
-  { [name]: { ...validFixture, ...patch } },
+  { [name]: { ...validFixture, id: name.replace(/\.json$/, ""), ...patch } },
 );
+
+/** The seven classes `EVAL_REBUILD.md` §2 allocates wave 1 across. */
+const WAVE1_CLASSES = [
+  "cross-document", "deep-in-manual", "definitional", "follow-up",
+  "precedence", "probe-calibration", "refusal",
+] as const;
 
 describe("committed eval fixtures", () => {
   const fixtures = loadFixtures();
 
   it("loads the whole set without validation errors", () => {
-    expect(fixtures.length).toBeGreaterThanOrEqual(25);
-    expect(fixtures.length).toBeLessThanOrEqual(30);
+    // A floor, not a range. `EVAL_REBUILD.md` §2 sizes wave 1 at 40-45 fixtures (46 landed) and
+    // wave 2 tops the same directory up to ~60, so an upper bound would have to move twice. The
+    // floor is what catches a truncated or half-written directory, which is the real failure.
+    expect(fixtures.length).toBeGreaterThanOrEqual(40);
   });
 
   it("gives every fixture a unique id", () => {
@@ -63,9 +71,16 @@ describe("committed eval fixtures", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("covers every declared question class", () => {
+  it("covers the seven classes wave 1 populates", () => {
+    // `EVAL_CLASSES` still declares twelve. §2 populates seven and records the other five as
+    // deliberately unpopulated — `acronym-exact-token` because it is slice-answerable and cannot
+    // discriminate, `event-signature`/`sensor-combined` because extraction damaged the signature
+    // matrix, `fouling-drift` on thin support, `threshold-lookup` folded into `deep-in-manual`.
+    // So this asserts the wave-1 seven are present, not that all twelve are.
     const covered = new Set(fixtures.map((fixture) => fixture.class));
-    expect([...EVAL_CLASSES].filter((cls) => !covered.has(cls))).toEqual([]);
+    expect([...WAVE1_CLASSES].filter((cls) => !covered.has(cls))).toEqual([]);
+    // Every class still has to be a declared one; the loader rejects anything else.
+    covered.forEach((cls) => expect(EVAL_CLASSES).toContain(cls));
   });
 
   it("makes every conversation multi-turn", () => {
@@ -127,23 +142,25 @@ describe("committed eval fixtures", () => {
   });
 
   describe("the sensor-tool gate", () => {
-    it("holds the two sensor fixtures back when the tool is off", () => {
-      // With the flag off a sweep must replay exactly the 28 fixtures the captured arms ran —
-      // otherwise the new run is not comparable to them.
+    it("gates nothing in wave 1, which declares no requires at all", () => {
+      // The archived set had two `sensor-combined` fixtures and so its runnable count moved with
+      // the flag. Wave 1 drops that class (§2: the source-of-truth signature matrix is damaged),
+      // so every fixture is runnable either way and the whole set replays under both flags.
       const off = loadFixtures(undefined, availableCapabilities(false));
-
-      expect(off.filter((fixture) => fixture.runnable)).toHaveLength(28);
-      expect(off.filter((fixture) => !fixture.runnable).map((fixture) => fixture.id).sort())
-        .toEqual(["sensor-doc-do-normal", "sensor-doc-event-check"]);
-    });
-
-    it("makes all 30 runnable when the tool is on", () => {
-      // The N3 definition of done. `sensor-doc-event-check` additionally needs a raised tool
-      // cap, which is why MAX_TOOL_ROUNDS defaults to 16 rather than the legacy 5.
       const on = loadFixtures(undefined, availableCapabilities(true));
 
-      expect(on).toHaveLength(30);
-      expect(on.every((fixture) => fixture.runnable)).toBe(true);
+      expect(fixtures.every((fixture) => fixture.requires.length === 0)).toBe(true);
+      expect(off.filter((fixture) => fixture.runnable)).toHaveLength(fixtures.length);
+      expect(on.filter((fixture) => fixture.runnable)).toHaveLength(fixtures.length);
+    });
+
+    it("still holds back a fixture that requires the tool", () => {
+      // Kept on a synthetic fixture rather than dropped: wave 1 exercises none of this, and a
+      // gate with no live case is a gate nobody notices breaking before wave 2 needs it.
+      const dir = withFixture({ id: "gated", requires: ["sensor-tool"] }, "gated.json");
+
+      expect(loadFixtures(dir, availableCapabilities(false))[0].runnable).toBe(false);
+      expect(loadFixtures(dir, availableCapabilities(true))[0].runnable).toBe(true);
     });
 
     it("reports the capability set from the flag, not from a hard-coded list", () => {

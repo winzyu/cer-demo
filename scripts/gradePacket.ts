@@ -45,9 +45,12 @@ import { loadFixtures } from "../src/eval/fixtures";
 /**
  * The arms to grade: every directory under `eval/transcripts/<pass>/`, sorted.
  *
- * Read rather than declared. `pgvector-rag` is archived (`archive/pgvector-rag/`) and still has
- * transcripts, so it still gets graded — the packet grades *captured* answers, and whether an
- * arm's runtime code is live is a separate question from whether its transcripts exist.
+ * Read rather than declared, so the packet grades whatever was *captured*. That principle is
+ * why `pgvector-rag` kept being graded after its runtime code moved to `archive/pgvector-rag/`:
+ * whether an arm's code is live is a separate question from whether its transcripts exist.
+ *
+ * The tree is empty as of `eval-archive-2026-09-01` — the 224 `gpt-oss-20b` captures were
+ * archived with the rest of the old eval set — so this throws until Phase 3 captures a pass.
  */
 const armsOnDisk = async (
   transcriptRoot: string,
@@ -176,7 +179,7 @@ const shuffleFor = (fixtureId: string, arms: readonly string[]): readonly string
 };
 
 export const __testing = {
-  shuffleFor, hashSeed, labelsFor, hasFilledScores,
+  shuffleFor, hashSeed, labelsFor, hasFilledScores, armsOnDisk,
 };
 
 interface Turn {

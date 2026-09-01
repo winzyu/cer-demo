@@ -24,8 +24,15 @@ import type {
  * paid for.
  */
 
-/** `src/eval` and `dist/eval` are both one directory below the repo root. */
-const FIXTURE_DIR = path.resolve(__dirname, "../../eval/fixtures");
+/**
+ * `src/eval` and `dist/eval` are both one directory below the repo root.
+ *
+ * **Points at the wave 1 rebuild, not at `eval/fixtures/`** (`EVAL_REBUILD.md` §2). The old
+ * 30-fixture set was archived under `eval-archive-2026-09-01`; the name is deliberately left
+ * free, because the last step of the migration is renaming `eval/fixtures-wave1` back to
+ * `eval/fixtures` and reverting this constant to the plain name.
+ */
+export const FIXTURE_DIR = path.resolve(__dirname, "../../eval/fixtures-wave1");
 
 /**
  * Capabilities the service has today. Fixtures requiring anything absent from this list are
@@ -116,8 +123,13 @@ const sliceCoverageOf = (answerableFrom: string[]): SliceCoverage => {
   return inSlice.length === 0 ? "none" : "partial";
 };
 
-const validateFixture = (raw: unknown, filename: string, errors: string[]): void => {
-  const where = `eval/fixtures/${filename}`;
+const validateFixture = (
+  raw: unknown,
+  filename: string,
+  dir: string,
+  errors: string[],
+): void => {
+  const where = `${path.relative(process.cwd(), dir)}/${filename}`;
   if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
     errors.push(`${where}: must be a JSON object.`);
     return;
@@ -194,7 +206,7 @@ export const loadFixtures = (
 
   const fixtures = filenames.map((filename) => {
     const parsed = JSON.parse(fs.readFileSync(path.join(dir, filename), "utf8")) as unknown;
-    validateFixture(parsed, filename, errors);
+    validateFixture(parsed, filename, dir, errors);
     return parsed as EvalFixture;
   });
 

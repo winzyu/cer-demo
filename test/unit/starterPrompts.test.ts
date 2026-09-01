@@ -54,15 +54,25 @@ describe("starter prompts — generated from the eval fixture set", () => {
     const prompts = selectStarterPrompts(UNCAPPED);
 
     expect(prompts.some((prompt) => prompt.class === "sensor-combined")).toBe(false);
-    expect(prompts.map((p) => p.id)).not.toContain("sensor-doc-do-normal");
+    expect(prompts.every((prompt) => {
+      const fixture = loadFixtures().find((f) => f.id === prompt.id);
+      return !fixture!.requires.includes("sensor-tool");
+    })).toBe(true);
   });
 
-  it("includes them when --sensor is passed", () => {
-    const prompts = selectStarterPrompts({ ...UNCAPPED, sensor: true });
+  it("records the --sensor flag and never narrows the set", () => {
+    // The archived set carried `sensor-doc-do-normal` and `sensor-doc-event-check`, so this used
+    // to assert those two ids appear. Wave 1 drops the `sensor-combined` class entirely
+    // (`EVAL_REBUILD.md` §2) and declares no `requires` at all, so there is nothing for the flag
+    // to unlock. What is still testable is the plumbing: the flag reaches the document, and
+    // turning it on can only ever add.
+    const off = selectStarterPrompts(UNCAPPED);
+    const on = selectStarterPrompts({ ...UNCAPPED, sensor: true });
 
-    expect(prompts.map((p) => p.id)).toContain("sensor-doc-do-normal");
-    expect(prompts.map((p) => p.id)).toContain("sensor-doc-event-check");
-    expect(renderDocument(prompts, true)).toContain("\"sensorTool\": true");
+    expect(on.length).toBeGreaterThanOrEqual(off.length);
+    expect(on.map((p) => p.id)).toEqual(expect.arrayContaining(off.map((p) => p.id)));
+    expect(renderDocument(on, true)).toContain("\"sensorTool\": true");
+    expect(renderDocument(off, false)).toContain("\"sensorTool\": false");
   });
 
   it("defaults to three prompts", () => {

@@ -1,28 +1,67 @@
 import fs from "fs";
+import os from "os";
 import path from "path";
 import { __testing } from "../../scripts/gradePacket";
 import { loadFixtures } from "../../src/eval/fixtures";
 
 const {
-  shuffleFor, labelsFor, hasFilledScores,
+  shuffleFor, labelsFor, hasFilledScores, armsOnDisk,
 } = __testing;
 
 /**
- * The arms actually on disk, which is what the script now grades.
+ * The arms the label maths is exercised over.
  *
- * Read here too, rather than repeating a literal: a hard-coded list in the test would pass while
- * the script silently dropped a captured arm, which is the exact bug this file is meant to catch.
+ * This used to be read from `eval/transcripts/warm/`, so that a hard-coded list could not pass
+ * while the script silently dropped a captured arm. That tree was archived under
+ * `eval-archive-2026-09-01` (224 captures on `gpt-oss-20b`, a placeholder model) and nothing has
+ * been captured against the wave 1 set yet, so there is no longer a disk to read.
+ *
+ * The discovery property it protected did not go with it — it moved down to the `armsOnDisk`
+ * test below, which exercises the script's own reader against a temp tree. What is left here is
+ * the shuffle, which is a pure function of (fixtureId, arms) and never needed a real capture.
+ * Five arms, matching the widest set the bake-off ran.
  */
-const ARMS = fs
-  .readdirSync(path.join(process.cwd(), "eval", "transcripts", "warm"), { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
-  .sort();
+const ARMS = [
+  "firestore-direct",
+  "firestore-vector",
+  "hybrid-slice-lexvec",
+  "hybrid-slice-vector",
+  "pgvector-rag",
+];
 
 describe("blind grading packet — arm discovery", () => {
-  it("finds every captured arm, not a hard-coded three", () => {
-    expect(ARMS.length).toBeGreaterThanOrEqual(3);
-    expect(ARMS).toContain("hybrid-slice-lexvec");
+  const write = (root: string, pass: string, arms: string[]): void => {
+    arms.forEach((arm) => {
+      const dir = path.join(root, pass, arm);
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, "demo.json"), "{}", "utf8");
+    });
+  };
+
+  it("finds every captured arm, not a hard-coded three", async () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "grade-arms-"));
+    write(root, "warm", ["firestore-vector", "firestore-direct", "hybrid-slice-lexvec"]);
+    // A stray file beside the arm directories must not become an arm.
+    fs.writeFileSync(path.join(root, "warm", "notes.txt"), "x", "utf8");
+
+    expect(await armsOnDisk(root, "warm"))
+      .toEqual(["firestore-direct", "firestore-vector", "hybrid-slice-lexvec"]);
+  });
+
+  it("refuses to grade an arm that was never captured, rather than grading fewer", async () => {
+    // Silently grading fewer arms than asked for is the failure this script's history is about.
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "grade-arms-"));
+    write(root, "warm", ["firestore-direct"]);
+
+    await expect(armsOnDisk(root, "warm", ["firestore-direct", "nope"]))
+      .rejects.toThrow(/No transcripts for arm\(s\) nope/);
+  });
+
+  it("says what to do when the pass has not been captured at all", async () => {
+    // The state the tree is in right now, between the archive and Phase 3.
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "grade-arms-"));
+
+    await expect(armsOnDisk(root, "warm")).rejects.toThrow(/Capture a pass first/);
   });
 
   it("issues one label per arm", () => {
@@ -123,8 +162,17 @@ describe("blind grading packet — overwrite guard", () => {
     expect(hasFilledScores(`${header}\nx,y,1,A,,,,refused; looked right\n`)).toBe(false);
   });
 
-  it("blocks on the real committed sheet, which holds the 36-row calibration sample", () => {
-    const csv = fs.readFileSync("eval/grading/warm/scores.csv", "utf8");
-    expect(hasFilledScores(csv)).toBe(true);
+  it("blocks on a part-filled sheet, which is what a live packet looks like", () => {
+    // This read `eval/grading/warm/scores.csv` — the 36-row calibration sample — until that
+    // packet was archived under `eval-archive-2026-09-01`. Its shape is reproduced here: mostly
+    // blank rows with a handful graded, which is the state the guard has to catch.
+    // The original is at `git show eval-archive-2026-09-01:eval/grading/warm/scores.csv`.
+    const sheet = [
+      header,
+      "acronym-ntu-fnu,acronym-exact-token,1,A,2,0,0,",
+      ...Array.from({ length: 40 }, (_, i) => `filler-${i},definitional,1,B,,,,`),
+    ].join("\n");
+
+    expect(hasFilledScores(sheet)).toBe(true);
   });
 });

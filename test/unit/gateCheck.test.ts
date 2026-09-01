@@ -21,7 +21,11 @@ import {
 } from "../../src/eval/gates/normalize";
 import { REFUSAL_SENTENCE } from "../../src/prompt/systemPrompt";
 
-/** Exactly what `eval/transcripts/warm/firestore-direct/refusal-pathogens.json` turn 2 contains. */
+/**
+ * Exactly what `eval/transcripts/warm/firestore-direct/refusal-pathogens.json` turn 2 contained.
+ * That capture was archived on 2026-09-01; it is still readable at
+ * `git show eval-archive-2026-09-01:eval/transcripts/warm/firestore-direct/refusal-pathogens.json`.
+ */
 const NBSP_HYPHEN_REFUSAL = REFUSAL_SENTENCE.replace("water-quality", "water‑quality");
 
 const context = (text: string, id = "doc.pdf"): { id: string; text: string }[] => [{ id, text }];
