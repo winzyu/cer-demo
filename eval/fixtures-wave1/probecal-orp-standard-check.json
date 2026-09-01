@@ -1,0 +1,48 @@
+{
+  "id": "probecal-orp-standard-check",
+  "class": "probe-calibration",
+  "expected_to_favor": "rag",
+  "answerable_from": ["usgs-nfm-a6.5-orp.pdf"],
+  "requires": [],
+  "notes": "The ORP datasheet in the slice carries a tiered recalibration schedule - yearly for the first two years, then roughly every six months, monthly in aggressive chemistry - and nothing whatsoever about what solution to use or what reading to expect. The standard, the temperature-dependent expected value, the arithmetic that converts a meter reading into a comparable number, and the pass window are all in usgs-nfm-a6.5-orp.pdf. Drawn from orp-zobells-standard-01, orp-equilibrate-15-30-01, orp-eh-equation-01, orp-eref-agagcl-238-01, orp-table653-values-01, orp-pass-criterion-5mv-01 (turn 1) and orp-table654-symptoms-01, orp-two-ref-electrodes-0mv-01, orp-iron-blue-precipitate-01 (turn 2). Predicted to favour rag because both the standard solution and the plus-or-minus 5 millivolt acceptance rule are outside the slice; the direct-feed arm has the interval and nothing to do with it.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "The paperwork on our redox probe says to recalibrate it about once a year and we are past that. It does not say what to put it in. What solution do I use for the check, and what reading tells me it passed?",
+      "rubric": {
+        "must_contain": [
+          "Names ZoBell's solution as the standard used to test redox equipment",
+          "States that the solution and the sensors are allowed roughly 15 to 30 minutes to reach the same temperature before reading",
+          "States that the measured millivolt reading must be corrected by adding the reference electrode potential to get a comparable value",
+          "States that the expected value depends on temperature, giving about 430 millivolts at 25 degrees Celsius",
+          "Gives the pass criterion as agreement within plus or minus 5 millivolts of the expected value for that temperature"
+        ],
+        "must_not": [
+          "Treats the raw meter millivolt reading as directly comparable to the standard's expected value",
+          "Gives a single expected millivolt value with no temperature dependence",
+          "Invents a tolerance other than the plus or minus 5 millivolt criterion",
+          "Recommends quinhydrone solution as the preferred standard"
+        ],
+        "cite": ["usgs-nfm-a6.5-orp.pdf"]
+      }
+    },
+    {
+      "role": "user",
+      "content": "We came out about 20 millivolts high and the reading would not settle. What does that point at, and is there a way to work out whether it is the probe or the reference half?",
+      "rubric": {
+        "must_contain": [
+          "States that being outside plus or minus 5 millivolts, along with drift and erratic readings, is a recognised failure symptom",
+          "Describes swapping in a known-good reference electrode of the same type to isolate the faulty half",
+          "States that two same-type reference electrodes read against each other should agree within about 0 plus or minus 5 millivolts",
+          "Notes that a pair of dissimilar reference electrodes should read about 44 plus or minus 5 millivolts instead"
+        ],
+        "must_not": [
+          "Tells the operator a 20 millivolt discrepancy is within tolerance",
+          "Invents a diagnostic threshold not given in the manual",
+          "Attributes the troubleshooting steps to a probe datasheet"
+        ],
+        "cite": ["usgs-nfm-a6.5-orp.pdf"]
+      }
+    }
+  ]
+}

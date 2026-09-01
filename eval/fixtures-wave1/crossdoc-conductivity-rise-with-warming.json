@@ -1,0 +1,58 @@
+{
+  "id": "crossdoc-conductivity-rise-with-warming",
+  "class": "cross-document",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.3-specific-conductance.pdf",
+    "usgs-nfm-a6.1-temperature.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+  ],
+  "requires": [],
+  "notes": "The correction machinery is in A6.3 (sc-temperature-coefficient-01: 0.5-3 percent per degree C depending on ionic species; sc-equation2-compensation-01 and sc-alpha-typical-value-01: divide by 1 + alpha(t - 25) with alpha 0.019-0.020 or the nonlinear ISO 1985 factor; sc-compensation-accuracy-5pct-01: plus/minus 5 percent for pH 4-11 and 5-35 C; sc-thermistor-check-01: a bad thermistor produces erroneous SC). But the question turn 2 asks — how accurate does the temperature reading itself have to be for that correction to be trustworthy — is answered nowhere in A6.3. It is in A6.1 (t-verified-multiparam-accuracy-01: a bundled temperature sensor used to correct another parameter is required to be accurate to within plus/minus 0.2 C; t-temp-cal-differs-01: temperature 'calibration' means verifying accuracy, not adjusting the sensor to a standard) and in A6.8 (mp-t4-nist-thermometer-02: the calibration thermometer must be NIST-certified or NIST-traceable). An A6.3-only answer gives the formula and no accuracy bar; an A6.1-only answer gives the bar with nothing to apply it to. Predicted rag: the slice offers only the flat 'EC rises about 2 percent per degree C' line and 'always report specific conductance at 25 C', neither of which is the temperature-sensor accuracy requirement or the compensation range."
+  ,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our conductivity climbed through a warm spell and I can't tell whether the water actually changed or the pod is just reacting to the heat. How does the correction work, and how much per degree are we talking about?",
+      "rubric": {
+        "must_contain": [
+          "states that conductivity rises with temperature because ion mobility rises",
+          "gives the per-degree change as a range of roughly 0.5 to 3 percent per degree Celsius depending on the ions present, not a single fixed number",
+          "describes the correction as dividing the measured conductivity by one plus a compensation factor times (measured temperature minus 25)",
+          "gives the typical linear compensation factor as about 0.019 to 0.020 per degree Celsius, or names the nonlinear ISO alternative",
+          "states the corrected value is specific conductance referenced to 25 C, which is what should be reported and trended",
+          "states the compensation is only reliable over roughly 5 to 35 C and pH 4 to 11"
+        ],
+        "must_not": [
+          "gives a single flat per-degree percentage as if it were exact for all waters",
+          "invents a compensation factor not in the manual",
+          "says the temperature correction removes the need to record temperature"
+        ],
+        "cite": [
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "That correction leans entirely on the temperature reading. How good does our temperature sensor have to be before I trust the corrected number, and how do I check it?",
+      "rubric": {
+        "must_contain": [
+          "states that when a temperature sensor is bundled on a multiparameter instrument and used to correct another parameter, it is required to be accurate to within about plus or minus 0.2 C",
+          "states that checking a temperature sensor means verifying its accuracy across the range of use, not adjusting it to a standard the way a pH or conductivity sensor is adjusted",
+          "states the check is made against a NIST-certified or NIST-traceable thermometer",
+          "states that a faulty or drifting thermistor in the conductivity cell produces wrong specific conductance values"
+        ],
+        "must_not": [
+          "invents a temperature accuracy figure other than the manual's requirement",
+          "describes temperature calibration as adjusting the sensor until it matches a standard",
+          "answers only from the conductivity chapter and never gives an accuracy requirement"
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    }
+  ]
+}

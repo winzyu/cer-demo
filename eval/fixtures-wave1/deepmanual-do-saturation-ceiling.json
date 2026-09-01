@@ -1,0 +1,50 @@
+{
+  "id": "deepmanual-do-saturation-ceiling",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+  ],
+  "requires": [],
+  "notes": "Numeric lookup deep inside NFM A6.2's freshwater oxygen-solubility table (table 6.2-2). Claims: do-t622-20c-750-897-01 (8.97 mg/L at 750 mmHg, 9.09 at 760, 20.0 C), do-t622-35c-760-695-01 (6.95 mg/L at 760 mmHg, 35.0 C). Both claims sit on caption- and column-header-bearing chunks (indices 59 and 62), not on the headerless continuation grids listed in the a6.2 summary notes, so the row/column pairing is honestly retrievable. Nothing in the direct-feed slice tabulates solubility against temperature and pressure — the operator source-of-truth only gives healthy-range bands (6-11 mg/L freshwater), which is the wrong kind of answer. Expected to favor rag: the value exists in exactly one place in the corpus, ~65 percent of the way through a 91-chunk document, and no amount of the slice or general knowledge produces 9.09 and 6.95 from the same table.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Water at one of our sites was 20 °C this morning and the barometer on the pod read 760 mm. If that water were fully saturated with air, what should the DO sensor be showing?",
+      "rubric": {
+        "must_contain": [
+          "Gives 9.09 mg/L for 20.0 °C at 760 mmHg",
+          "Attributes the value to the freshwater table in the USGS NFM chapter on dissolved oxygen (table 6.2-2)",
+          "States the figure is for fresh water, before any salinity correction"
+        ],
+        "must_not": [
+          "Invents a value for 20 °C at 760 mmHg that is not the table's",
+          "Answers with the operator baseline band (6-11 mg/L healthy freshwater) instead of the manual's table value",
+          "Cites the Atlas Scientific Industrial DO probe datasheet, which contains no solubility table"
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "By late afternoon the same spot was up to 35 °C and the barometer hadn't moved. How much does that change the number?",
+      "rubric": {
+        "must_contain": [
+          "Gives 6.95 mg/L for 35.0 °C at 760 mmHg",
+          "States the ceiling falls by roughly 2 mg/L compared with the 20 °C value",
+          "Takes both figures from the same USGS table rather than mixing sources"
+        ],
+        "must_not": [
+          "Interpolates or estimates instead of reading the 35.0 °C row",
+          "States or implies that warmer water can hold more oxygen",
+          "Invents a barometric correction the question did not ask for"
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    }
+  ]
+}

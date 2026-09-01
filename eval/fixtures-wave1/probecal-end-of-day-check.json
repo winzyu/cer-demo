@@ -1,0 +1,51 @@
+{
+  "id": "probecal-end-of-day-check",
+  "class": "probe-calibration",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "epa-sop-field-instrument-calibration-2010.pdf",
+    "usgs-nfm-a6.4-ph.pdf"
+  ],
+  "requires": [],
+  "notes": "The slice datasheets talk in years - about a year between recalibrations, six months in a busy application, monthly in aggressive chemistry - which is the wrong unit entirely for a sampling week. The daily cadence, the end-of-day drift check, the data-qualification consequence and the default numeric drift criteria are in epa-sop-field-instrument-calibration-2010.pdf, and the tighter USGS field tolerance sits in usgs-nfm-a6.4-ph.pdf. Drawn from epa-cal-frequency-daily-01, epa-post-cal-end-of-day-01, epa-midday-check-qualify-01, epa-sonde-deploy-cal-01, epa-postcal-procedure-01 (turn 1) and epa-postcal-defaults-apply-when-01, epa-postcal-ph-criteria-01, epa-postcal-do-criteria-01, epa-postcal-spc-criteria-01, epa-postcal-orp-criteria-01, ph-daily-cal-and-recal-01, ph-recheck-005-recal-01 (turn 2). This is also the cross-source tension case for the class: the EPA default of plus or minus 0.3 pH unit and the USGS field recheck tolerance of plus or minus 0.05 pH unit are both real and differ by six times. Predicted to favour rag because both sources are outside the slice and the answer needs numbers from each.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "All our probe paperwork talks in years between calibrations, but we are out sampling four days straight next week under a project plan. What is the real cadence for a week like that, and is there anything we have to do at the end of each day?",
+      "rubric": {
+        "must_contain": [
+          "States that at a minimum the instrument is calibrated before use on each day measurements are taken",
+          "States that a check is performed at the end of the day to see whether the instrument drifted",
+          "States that the end-of-day check is done in measurement mode, not calibration mode, by reading one of the standards used that morning",
+          "States that data falling outside the drift criteria must be qualified",
+          "Notes that if a mid-day check catches drift, only the data taken before that check needs qualifying"
+        ],
+        "must_not": [
+          "Applies the datasheet's yearly or six-monthly interval as the sampling-week cadence",
+          "Says no end-of-day check is needed",
+          "Describes the end-of-day check as being performed in calibration mode"
+        ],
+        "cite": ["epa-sop-field-instrument-calibration-2010.pdf"]
+      }
+    },
+    {
+      "role": "user",
+      "content": "What is the number that check has to land inside for acidity and for oxygen? And does that match what the federal water-survey guidance wants?",
+      "rubric": {
+        "must_contain": [
+          "Gives the default end-of-day criterion for pH as plus or minus 0.3 pH unit measured in the pH 7 buffer",
+          "Gives the default end-of-day criterion for dissolved oxygen as plus or minus 0.5 milligrams per litre of the saturated value",
+          "States that these defaults apply only when the project's quality assurance plan does not specify its own drift criteria",
+          "States that USGS field practice for pH is tighter, requiring recalibration when a checked buffer is off by more than plus or minus 0.05 pH unit",
+          "Flags that the two sources differ and that the stricter project-governing criterion should be applied"
+        ],
+        "must_not": [
+          "Presents a single pH tolerance as though both sources agreed on it",
+          "Invents a numeric drift criterion not stated in either source",
+          "Attributes the plus or minus 0.05 pH unit figure to the EPA procedure or the plus or minus 0.3 figure to the USGS manual"
+        ],
+        "cite": ["epa-sop-field-instrument-calibration-2010.pdf", "usgs-nfm-a6.4-ph.pdf"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "probecal-do-saturation-target",
+  "class": "probe-calibration",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+  ],
+  "requires": [],
+  "notes": "The oxygen probe datasheet inside the slice gives a recalibration interval of about a year and a maintenance interval of about 18 months, and says nothing about how the calibration is performed. The whole method - what the 100 percent saturation environment is, how it is created, how long it takes to equilibrate, what pressure reading it needs, and the verification tolerance - is in usgs-nfm-a6.2-dissolved-oxygen.pdf. Drawn from do-one-point-goal-01, do-proc1-chamber-humidity-01, do-proc1-no-airtight-seal-01, do-proc1-equilibration-time-01, do-pressure-nearest-mm-01, do-barometer-at-altitude-01, do-proc1-verify-tolerance-01, do-water-droplets-01 (turn 1) and do-salinity-correction-after-01, do-spc-sensor-for-saline-01, do-saline-above-2000-01, do-manual-salinity-recalibration-01 (turn 2). Predicted to favour rag: none of it is retrievable from the slice, and the tempting wrong answer - submerging the sensor in water and calling that the reference - is exactly what a direct-feed arm is likely to guess.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our oxygen sensor is coming up on its yearly recalibration per the vendor sheet, which gives no steps at all. What am I calibrating it against out here, and how do I set that up?",
+      "rubric": {
+        "must_contain": [
+          "States the goal is a 100 percent oxygen-saturated environment at a known temperature, reached either in air or in aerated water",
+          "Describes wetting the calibration chamber and leaving a little water in the bottom so the air inside is fully humid",
+          "States that a screw-on chamber must be left loose so it does not seal and ambient pressure is preserved",
+          "Gives an equilibration period of roughly 5 to 10 minutes before calibrating",
+          "States that ambient atmospheric pressure must be read to the nearest millimetre of mercury",
+          "States that the barometric pressure must be measured at the altitude where the calibration is done rather than corrected from elsewhere"
+        ],
+        "must_not": [
+          "Describes submerging the sensor in ordinary water as the saturation reference without aeration",
+          "Omits the barometric pressure input entirely",
+          "Invents an equilibration time or pressure precision not given in the manual",
+          "Attributes the procedure to a probe datasheet",
+          "Substitutes the datasheet's membrane and electrolyte replacement steps for a calibration procedure"
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "How do I know it took? And one of our sites is brackish - does that change anything?",
+      "rubric": {
+        "must_contain": [
+          "States that after calibrating, the reading is verified against the computed saturation value within about plus or minus 0.2 milligrams per litre or 2 percent",
+          "States that the sensor and temperature probe must be checked for water droplets, and the calibration repeated if any were present",
+          "States that a calibrated conductivity sensor is needed when working in saline or brackish water",
+          "States that the preferred approach is to apply the salinity correction after calibrating and measuring, rather than entering a salinity value at calibration time",
+          "Notes that entering a manual salinity correction during calibration forces recalibration for every change in field salinity"
+        ],
+        "must_not": [
+          "Invents a verification tolerance the manual does not state",
+          "Recommends manual salinity entry at calibration as the preferred method",
+          "Ignores the brackish half of the question"
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    }
+  ]
+}

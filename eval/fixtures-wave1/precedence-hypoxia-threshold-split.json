@@ -1,0 +1,60 @@
+{
+  "id": "precedence-hypoxia-threshold-split",
+  "class": "precedence",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf",
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+  ],
+  "requires": [],
+  "notes": "Built from sot-do-thresholds-01 (operator ladder: >6 healthy, 4-6 stress, 2-4 hypoxic stress, <2 hypoxia, ~0 anoxia) against do-hypoxic-anoxic-1mgl-01 (the USGS DO chapter defines hypoxic-to-anoxic as less than 1.0 mg/L), with do-below-1mgL-spectro-required-01 and do-rhodazine-range-0025-10-01 carrying turn 2. A real numeric divergence where neither source is wrong: the operator figure is an ecological threshold, the USGS figure is a data-quality trigger governing when an optical sensor's readings may be reported at all. Tests whether the answer holds both and explains why they differ, rather than silently promoting the manual's number over the operator's because it came from USGS. Direct-feed sees only the operator ladder and has no way to know the 1.0 mg/L figure exists.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "The card taped inside our case says oxygen under 2 mg/L means the water has gone hypoxic. Somebody from the state told my crew chief the federal number is 1. Do we need to change what we are telling people, or is one of us wrong?",
+      "rubric": {
+        "must_contain": [
+          "Reports that the operator source places hypoxia below 2 mg/L",
+          "Reports that the operator source gives a graded scale around it: above 6 mg/L healthy, 4 to 6 stress, 2 to 4 hypoxic stress, near 0 anoxia",
+          "Reports that the USGS dissolved-oxygen chapter uses less than 1.0 mg/L for hypoxic-to-anoxic conditions",
+          "States that the two figures are not a contradiction because they answer different questions",
+          "Explains that the USGS 1.0 mg/L figure is a sensor data-quality trigger, not an ecological threshold",
+          "Keeps the 2 mg/L figure as the threshold the crew should brief and report against"
+        ],
+        "must_not": [
+          "presents the 1.0 mg/L figure as USGS overruling or correcting the operator's 2 mg/L threshold",
+          "states the operator's 2 mg/L threshold as though the USGS manual established it",
+          "picks one of the two numbers and answers with it without acknowledging the other source",
+          "invents a dissolved-oxygen threshold that appears in neither source",
+          "claims the USGS chapter offers an ecological or aquatic-health interpretation of dissolved oxygen"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf",
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "So when our sonde is sitting down in that bottom range, near zero, is the number it hands us even good enough to put in a report?",
+      "rubric": {
+        "must_contain": [
+          "States that below 1.0 mg/L the USGS chapter does not accept a field instrument's reading on its own",
+          "States that an instrument-specific rating must first be developed using a spectrophotometric method before field-instrument values in that range are reported",
+          "States that the optical sensor's capability and accuracy in that range must be documented by a side-by-side onsite comparison",
+          "Notes that the Rhodazine D spectrophotometric method covers roughly 0.025 to 1.0 mg/L",
+          "Ties this back to why the manual draws its line at 1.0 mg/L rather than at the operator's 2 mg/L"
+        ],
+        "must_not": [
+          "says the sonde reading can be reported as-is at concentrations below 1.0 mg/L",
+          "invents an accuracy specification for the deployed dissolved-oxygen probe in this range",
+          "confuses the operator's ecological ladder with the manual's reporting requirement",
+          "invents a numeric verification interval or tolerance not stated in either source"
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    }
+  ]
+}

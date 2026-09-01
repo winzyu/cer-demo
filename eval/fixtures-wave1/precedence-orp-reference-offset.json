@@ -1,0 +1,62 @@
+{
+  "id": "precedence-orp-reference-offset",
+  "class": "precedence",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf",
+    "usgs-nfm-a6.5-orp.pdf"
+  ],
+  "requires": [],
+  "notes": "Built from sot-orp-healthy-range-01 and sot-baseline-orp-01 (the operator document gives +200 to +400 mV as the healthy aerobic band, with no statement of what the millivolts are measured against) versus the USGS redox chapter, which works exclusively in Eh and requires the reference-electrode potential to be added to the measured reading: orp-eref-agagcl-238-01 (238 mV for silver/silver-chloride with saturated KCl at 25 degrees Celsius), orp-eref-calomel-1855-01 (185.5 mV for calomel) and orp-table652-25c-01 (half-cell potentials of 0.199 to 0.255 V at 25 degrees Celsius). The correction is the same magnitude as the band itself, so a raw sonde number and the operator band are not the same quantity. Turn 2 rests on orp-report-nearest-10mv-01 and orp-field-agreement-10mv-01, against the operator document's own sot-orp-seawater-comparability-01. The USGS chapter sets no healthy or unhealthy ORP range anywhere, so an answer that claims it does has invented one. Direct-feed knows the probe has a silver/silver-chloride reference but has no access to the offset or the Eh convention.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our card says healthy water reads +200 to +400 millivolts and we have been signing sites off against it. Is that band solid enough to be doing that with, or is there something about these readings that makes an absolute number like that shaky?",
+      "rubric": {
+        "must_contain": [
+          "States that the +200 to +400 mV healthy band comes from the operator document",
+          "States that the USGS redox chapter works in Eh, which is the measured reading plus the potential of the probe's own reference electrode",
+          "Gives the size of that correction: roughly 200 mV for a silver/silver-chloride saturated-KCl reference and about 185.5 mV for a calomel reference",
+          "States that the correction is about as large as the operator band itself, so the two numbers are not directly comparable",
+          "States that the operator document does not say which convention its band uses",
+          "States that the USGS chapter sets no healthy or unhealthy ORP range of its own"
+        ],
+        "must_not": [
+          "declares the sonde reading in or out of range by comparing it directly to the operator band without addressing the reference-electrode offset",
+          "states that USGS defines a healthy ORP or Eh range",
+          "states the operator's +200 to +400 mV band as though the USGS manual established it",
+          "invents an ORP threshold or offset value that appears in neither source",
+          "assumes a reference electrode type the sources do not attribute to this deployment"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf",
+          "usgs-nfm-a6.5-orp.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Alright, so we stop signing off on the bare number. What should the crew actually be writing down at each site so the readings are worth something later?",
+      "rubric": {
+        "must_contain": [
+          "States that Eh is reported to the nearest 10 mV",
+          "States that the temperature at the time of measurement must be recorded with it",
+          "States that the electrode system used must be recorded with it",
+          "States that the pH at the time of measurement must be recorded with it",
+          "States that duplicate field measurements should agree within about 10 mV",
+          "Supports the operator document's own point that the trend at a site is more usable than the absolute value, given that high ionic strength makes absolute readings less comparable between sites"
+        ],
+        "must_not": [
+          "recommends comparing raw millivolt readings between sites without qualification",
+          "invents a recording precision, stabilization time, or duplicate tolerance not stated in either source",
+          "presents the reporting requirements as coming from the operator document",
+          "reintroduces the +200 to +400 mV band as a pass/fail check on the raw reading"
+        ],
+        "cite": [
+          "usgs-nfm-a6.5-orp.pdf",
+          "water-quality-metrics-source-of-truth.pdf"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id": "deepmanual-ec-standard-choice",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.3-specific-conductance.pdf"
+  ],
+  "requires": [],
+  "notes": "Procedural depth in NFM A6.3 on choosing conductivity calibration standards, plus the deionized-water check. Claims: sc-diw-below-3-uscm-01 (DI must not be used to calibrate; DI rinse water should read less than 3 µS/cm), sc-diw-zero-check-01 (zero response checked with the dry cell in air or in DI water), sc-calibrate-above-200-01 (calibrate with standards greater than 200 µS/cm because lower ones are biased by dilution or contamination), sc-low-conductivity-standard-contamination-01, sc-one-point-standard-values-01 (500, 1,413 or 12,900 µS/cm, nearest the expected value). Deliberately avoids the ±5 µS/cm / ±3 percent criterion, which A6.3's own summary notes flag as restated in at least six distinct roles. Expected to favor rag: the slice's conductivity datasheet asserts recalibration is unnecessary after the first calibration, which is an attractive and wrong answer here.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "We're setting up conductivity calibration for a creek that sits around 300 µS/cm. Which standard should we use, and can we zero the meter in distilled water first?",
+      "rubric": {
+        "must_contain": [
+          "States deionized or distilled water must not be used to calibrate the meter",
+          "States calibration standards greater than 200 µS/cm are recommended because lower ones are easily biased by dilution or contamination",
+          "States the standard should be the one nearest to or bracketing the expected sample value",
+          "Names a standard the manual lists for that range, such as 500 µS/cm"
+        ],
+        "must_not": [
+          "Says to calibrate the meter with deionized or distilled water",
+          "Invents a standard value the manual does not list",
+          "Uses the Atlas Scientific conductivity datasheet's claim that recalibration is unnecessary as a reason to skip calibration"
+        ],
+        "cite": [
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Our rinse bottle of deionized water reads 6 µS/cm on the meter. Is that a problem?",
+      "rubric": {
+        "must_contain": [
+          "States the deionized water used for rinsing should read less than 3 µS/cm",
+          "States 6 µS/cm therefore fails that check",
+          "Explains this is the meter's low-end zero-response check, made with the dry cell in air or in deionized water"
+        ],
+        "must_not": [
+          "Invents a different threshold for the deionized-water check",
+          "Treats 6 µS/cm as acceptable",
+          "Recommends calibrating against the deionized water to correct the offset"
+        ],
+        "cite": [
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "deepmanual-thermistor-annual-check",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.1-temperature.pdf"
+  ],
+  "requires": [],
+  "notes": "Numeric lookup for how a yearly temperature-sensor verification is designed, deep in NFM A6.1 section 3. Claims: t-min-two-points-01 (minimum two points, within ±2 °C of the annual minimum and maximum and ±4 °C of the mean), t-points-2c-apart-01, t-points-10c-large-range-01 (maximum of five points), t-example-4-12-01 (6 °C and 10 °C satisfy a 4-12 °C range with an 8 °C mean), t-cal-verif-12mo-01 and t-321-verify-12mo-01 (every 12 months), t-method1-lab-01 and t-method2-insitu-01 (both acceptable, neither preferred), t-onepoint-pre-trip-01 (one-point check against a certified sensor immediately before the field trip). Turn 2 is the operator's natural next question — can we skip the lab. Expected to favor rag: the slice's probe datasheets carry no temperature-verification programme at all, only recalibration intervals.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "It's time for the yearly check on our temperature sensor. That site runs about 4 to 12 °C over the year — how many check points do we need, and at what temperatures?",
+      "rubric": {
+        "must_contain": [
+          "States a minimum of two verification points",
+          "States the points must be within ±2 °C of the annual minimum and maximum",
+          "States the points must be within ±4 °C of the annual mean",
+          "Gives 6 °C and 10 °C as points that satisfy a 4-12 °C range with an 8 °C mean",
+          "Notes at most five verification points are ever required"
+        ],
+        "must_not": [
+          "Invents a fixed number of points for this range",
+          "Says a single-point check is enough for annual verification",
+          "Recommends points outside the site's annual range without saying why"
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Do we have to do that in a lab water bath, or does checking against our reference thermometer in the stream on each visit count?",
+      "rubric": {
+        "must_contain": [
+          "States both a laboratory water-bath comparison and an in situ comparison are acceptable, with neither preferred",
+          "States the in situ route meets the annual requirement by verifying against a certified or traceable sensor during each site visit over the year",
+          "States verification is required at least once every 12 months",
+          "States a one-point check against a certified sensor is also required immediately before a field trip"
+        ],
+        "must_not": [
+          "Claims the laboratory water bath is the only acceptable method",
+          "Invents a verification interval other than 12 months",
+          "Drops the pre-trip one-point check"
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    }
+  ]
+}

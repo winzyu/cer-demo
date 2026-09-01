@@ -1,0 +1,60 @@
+{
+  "id": "precedence-ec-temperature-coefficient",
+  "class": "precedence",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "water-quality-metrics-source-of-truth.pdf",
+    "usgs-nfm-a6.3-specific-conductance.pdf"
+  ],
+  "requires": [],
+  "notes": "Built from sot-temp-ec-2pct-01 (the operator document states bare that raw conductivity rises about 2 percent per degree Celsius, with no derivation) against sc-temperature-coefficient-01 (the USGS chapter gives 0.5 to 3 percent per degree Celsius, varying with the ionic species present), sc-linear-nonlinear-alpha-01 and sc-alpha-typical-value-01 (0.019 to 0.020 per degree Celsius is the compensation factor meters apply through equation 2 to reach 25 degrees Celsius, not a measured universal constant), and sc-equation2-compensation-01 for the 25 degrees Celsius reference. Turn 2 rests on sc-compensation-accuracy-5pct-01 and sc-low-ph-50pct-error-01. The operator figure is not wrong, it is a rounded compensation factor presented as a physical fact with its envelope stripped off; the fixture tests whether the answer restores the envelope instead of either repeating the bare 2 percent or declaring it contradicted.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our notes say conductivity climbs about 2 percent for every degree the water warms. Where does that number come from, and can I lean on it at a creek that swings ten degrees between dawn and afternoon?",
+      "rubric": {
+        "must_contain": [
+          "States that the roughly 2 percent per degree Celsius figure comes from the operator document",
+          "States that the USGS specific-conductance chapter gives a wider figure of 0.5 to 3 percent per degree Celsius",
+          "States that the USGS figure varies depending on the ionic species present in the water",
+          "Explains that the value near 2 percent (a factor of 0.019 to 0.020 per degree Celsius) is the linear compensation factor meters apply, not a universal physical constant",
+          "States that the compensation converts the reading to a value at a 25 degrees Celsius reference",
+          "Concludes that the operator figure is a workable rule of thumb but the manual does not present it as fixed"
+        ],
+        "must_not": [
+          "states the 2 percent per degree Celsius figure as though the USGS manual established it",
+          "invents a temperature coefficient or reference temperature that appears in neither source",
+          "presents 0.019 to 0.020 per degree Celsius as contradicting the operator figure rather than as the same rounded value carrying a stated envelope",
+          "omits that the coefficient depends on which ions are present",
+          "answers only from the operator figure without consulting what the manual says"
+        ],
+        "cite": [
+          "water-quality-metrics-source-of-truth.pdf",
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Where does that correction stop being trustworthy? We run one site below an old mine and the water there is properly acidic.",
+      "rubric": {
+        "must_contain": [
+          "States that the standard compensation is typically accurate to about plus or minus 5 percent",
+          "States that this accuracy holds for water between 5 and 35 degrees Celsius and pH between 4 and 11",
+          "States that below pH 4 the standard compensation factors can produce errors as large as 50 percent in the conductivity reported at 25 degrees Celsius",
+          "Gives the reason: the transport properties of the hydrogen ion differ from other ions and hydrogen contributes substantially to conductance at low pH",
+          "Identifies the acidic mine-drainage site as the case where the temperature correction cannot be trusted"
+        ],
+        "must_not": [
+          "applies the plus or minus 5 percent accuracy figure to the low-pH site without noting the pH 4 to 11 limit",
+          "invents an alternative compensation factor for acidic water that neither source provides",
+          "invents a numeric error figure other than the ones the manual states",
+          "treats the operator document as the authority on when compensation fails"
+        ],
+        "cite": [
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ]
+      }
+    }
+  ]
+}

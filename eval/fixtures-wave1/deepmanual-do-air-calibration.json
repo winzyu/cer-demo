@@ -1,0 +1,52 @@
+{
+  "id": "deepmanual-do-air-calibration",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "epa-sop-field-instrument-calibration-2010.pdf"
+  ],
+  "requires": [],
+  "notes": "Procedural depth in the EPA field-calibration SOP for the water-saturated-air DO calibration, which no USGS chapter in the corpus lays out step by step. Claims: epa-do-water-saturated-air-01 (wet sponge or wet paper towel in the bottom of the container), epa-do-probe-loose-fit-01 (loose fit, no contact between probe or temperature sensor and the wet sponge or towel), epa-do-saturation-time-01 (about 10 to 15 minutes to saturate while the instrument warms up), epa-do-baro-onsite-01 (on-site barometer, not a weather service unless corrected for site elevation), epa-do-compare-chart-02-01 (compare the mg/L reading to the Oxygen Solubility at Indicated Pressure chart, agree within about ±0.2 mg/L or repeat), epa-do-zero-check-05-01 and epa-do-zero-project-adjust-01 for turn 2. The attached solubility chart itself is OCR-damaged and its chunk 11 is a headerless continuation, so no fixture value is taken from the chart's cells — only the ±0.2 mg/L agreement rule, which is body text. Expected to favor rag: the Atlas DO datasheet in the slice covers membrane, electrolyte and reconditioning but gives no calibration procedure at all.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our DO calibration is done in air rather than in a solution. What does the SOP actually require for the setup, and how do we tell it worked?",
+      "rubric": {
+        "must_contain": [
+          "States the calibration uses a 100 percent water-saturated air environment made with a wet sponge or wet paper towel in the bottom of the container",
+          "States neither the probe nor the temperature sensor may touch the wet sponge or towel",
+          "States roughly 10 to 15 minutes are needed for the confined air to saturate while the instrument warms up",
+          "States the barometric pressure entered must come from an on-site barometer, not a weather service unless corrected for the site's elevation",
+          "States the mg/L reading is then compared with the oxygen solubility chart and must agree within about ±0.2 mg/L or the calibration is repeated"
+        ],
+        "must_not": [
+          "Invents a warm-up time or an agreement tolerance",
+          "Says the probe should sit in water or in a solution for this calibration",
+          "Accepts a barometric pressure taken from a weather service with no elevation correction"
+        ],
+        "cite": [
+          "epa-sop-field-instrument-calibration-2010.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "We also carry a zero-oxygen solution. What should the meter read in it, and what does it mean if it doesn't?",
+      "rubric": {
+        "must_contain": [
+          "States the instrument should read less than 0.5 mg/L in a 0.0 mg/L DO solution",
+          "States a reading above 0.5 mg/L, or any negative reading, calls for cleaning the probe and changing the membrane and electrolyte",
+          "Notes the 0.5 mg/L value assumes an instrument accuracy of about ±0.2 mg/L and may be adjusted to the project's or instrument's accuracy requirements"
+        ],
+        "must_not": [
+          "Invents a zero-solution acceptance value",
+          "Treats a negative reading as acceptable",
+          "Presents 0.5 mg/L as a fixed universal limit with no dependence on instrument accuracy or project requirements"
+        ],
+        "cite": [
+          "epa-sop-field-instrument-calibration-2010.pdf"
+        ]
+      }
+    }
+  ]
+}

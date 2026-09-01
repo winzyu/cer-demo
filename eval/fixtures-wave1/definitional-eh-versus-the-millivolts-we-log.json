@@ -1,0 +1,52 @@
+{
+  "id": "definitional-eh-versus-the-millivolts-we-log",
+  "class": "definitional",
+  "expected_to_favor": "tie",
+  "answerable_from": [
+    "usgs-nfm-a6.5-orp.pdf",
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+  ],
+  "requires": [],
+  "notes": "Built from orp-eh-definition-01, orp-eh-equation-01, orp-eref-definition-01 and a60-eh-definition-01 (turn 1); a60-eh-not-direct-01, a60-xcut-routine-gw-params-01, a60-xcut-field-param-list-01 (turn 2). Definitional control: what a term means and what the quantity is referenced to. Every arm that can see either chapter should tie, so expected_to_favor is 'tie' - the answer is a definition and a scoping statement, not a buried number or a multi-hop inference. Slice check: the ORP datasheet defines ORP as oxidation/reduction potential and as electron activity in millivolts, and the source-of-truth notes that values depend on whether the reference is Ag/AgCl or the standard hydrogen electrode (SLICE-EXCLUSION line 234). Neither says what Eh is as a defined quantity - an equilibrium potential referenced to the standard hydrogen electrode, obtained as the measured emf plus the reference-electrode potential - and neither carries turn 2 at all: nothing in the slice says Eh is excluded from the routine field measurements. Turn 1 deliberately avoids the manual's own phrasing; turn 2 is the question an operator asks next once they learn the two are not the same number.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "The USGS chapters keep saying Eh where our kit just says ORP in millivolts. Is Eh the same number our probe is giving us, or something else?",
+      "rubric": {
+        "must_contain": [
+          "states that Eh is defined relative to the standard hydrogen electrode",
+          "states that Eh is an equilibrium potential developed at the boundary between a noble-metal electrode and the water, and reflects the redox-active species in solution",
+          "states that the millivolts the probe reads are not Eh on their own, because that raw reading is against the probe's own reference electrode",
+          "states that getting Eh means adding the reference electrode's own potential to the measured reading"
+        ],
+        "must_not": [
+          "asserts that Eh and the probe's raw ORP output are interchangeable",
+          "invents a numeric offset between the probe reading and Eh for this operator's hardware",
+          "answers only from the probe datasheet's electron-activity description and never reaches the standard hydrogen electrode reference"
+        ],
+        "cite": [
+          "usgs-nfm-a6.5-orp.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Then why isn't it in the list of things we're told to watch settle down before we take a reading? Everything else is on there.",
+      "rubric": {
+        "must_contain": [
+          "states that Eh is not treated as a routine or direct field measurement",
+          "states that because of this it has no entry in the stabilisation criteria that the other field measurements have",
+          "names the properties that are treated as routine on-site measurements - water temperature, dissolved oxygen, specific conductance, pH and turbidity"
+        ],
+        "must_not": [
+          "invents a stabilisation criterion or a settling time for Eh",
+          "claims Eh is excluded because the equipment cannot measure it",
+          "conflates 'not a routine field measurement' with 'not worth recording'"
+        ],
+        "cite": [
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+        ]
+      }
+    }
+  ]
+}

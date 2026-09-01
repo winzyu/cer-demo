@@ -1,0 +1,62 @@
+{
+  "id": "crossdoc-how-steady-before-i-write-it-down",
+  "class": "cross-document",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+  ],
+  "requires": [],
+  "notes": "The one legitimate two-chapter question about stabilisation. A6.0 supplies the criteria and the reporting rule: a60-tbl601-caption-01 and a60-xcut-tbl601-all-01 (table 6.0-1 across all five metrics), a60-xcut-equilibrate-01 (equilibrated when five or more consecutive readings stay inside the criterion), a60-xcut-sw-60s-median3-01 (surface water: 60 s minimum, median of the final three or more), a60-xcut-gw-median5-01 (groundwater: median of the final five or more, after the required well volumes), a60-xcut-exceeds-criteria-01, a60-tbl601-multiparam-01 (which explicitly routes multiparameter users to A6.8). A6.8 supplies the sonde-specific half: mp-stabilize-to-table-01 (table 6.8-5), mp-60s-surface-water-06 and mp-60s-groundwater-03 and mp-60s-longer-manufacturer-07 (60 s is a minimum, some instruments need longer), mp-equilibrium-range-04 (60 s to several minutes depending on the temperature step), mp-t5-accuracy-caveat-08 (these are stabilisation criteria, not sensor accuracy, which varies by model), mp-t6-equilibrate-temp-09. VERIFIED AND DELIBERATE: table 6.0-1 and table 6.8-5 state the SAME criteria numerically and the rubric asserts they AGREE — this fixture tests whether an arm can bring two chapters together without inventing a conflict, and must_not names fabricating a discrepancy as the failure mode. Predicted rag: the slice has no stabilisation criteria for any parameter."
+  ,
+  "turns": [
+    {
+      "role": "user",
+      "content": "When I drop the sonde in, the numbers wobble for a bit. How steady do they need to get before the reading is worth writing down, and how long am I meant to stand there?",
+      "rubric": {
+        "must_contain": [
+          "gives the temperature criterion as about plus or minus 0.2 C",
+          "gives the specific conductance criterion as about plus or minus 5 microsiemens per centimetre at or below 100, and about plus or minus 3 percent above that",
+          "gives the dissolved oxygen criterion as about plus or minus 0.2 mg/L",
+          "gives the pH criterion as about plus or minus 0.1 unit",
+          "gives the turbidity criterion as about plus or minus 0.5 turbidity units or 5 percent, whichever is greater",
+          "states the criterion is judged over five or more consecutive readings, not a single pair",
+          "gives the minimum wait in surface water as at least 60 seconds for the sensors and sonde body to reach thermal equilibrium",
+          "states 60 seconds is a minimum and some instruments need longer per the manufacturer, up to several minutes depending on the temperature step"
+        ],
+        "must_not": [
+          "invents a stabilisation threshold for any parameter",
+          "gives a single tolerance covering all parameters",
+          "presents the 60-second wait as a maximum or as sufficient in all cases",
+          "confuses the stabilisation criteria with sensor accuracy specifications"
+        ],
+        "cite": [
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Someone on the team says the multiparameter chapter has its own numbers and they're stricter than the general ones. Is that right, and which do I follow?",
+      "rubric": {
+        "must_contain": [
+          "states plainly that the two tables give the same stabilisation criteria and do not conflict",
+          "states the general field-measurement chapter itself points multiparameter users to the multiparameter chapter for criteria of the same kind",
+          "states the criteria are standard sensor stabilisation criteria and that actual sensor accuracy varies by model and manufacturer, which is a separate matter",
+          "tells the operator what to do when the readings will not come inside the criteria: extend equilibration, take more readings, and report the median of the final five or more, documenting how the value was chosen"
+        ],
+        "must_not": [
+          "invents a discrepancy between the two tables",
+          "claims one chapter is stricter than the other",
+          "changes any of the numeric criteria given in the first answer",
+          "resolves an imagined conflict by picking a document instead of stating that they agree"
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+        ]
+      }
+    }
+  ]
+}
