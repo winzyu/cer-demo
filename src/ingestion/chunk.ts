@@ -101,26 +101,40 @@ const alphaRatio = (text: string): number => {
 
 export interface QualityOptions {
   /**
-   * Whether to apply the alphabetic-ratio test.
+   * Whether to apply the alphabetic-ratio test. **Off by default** — see below.
    *
    * **Deliberate deviation from legacy parity** (`MIGRATION_SPEC.md` §5.1 step 4). The ratio test
-   * exists to drop OCR noise and PDF furniture, but it cannot tell those apart from a *table* —
-   * markdown tables in this corpus score 0.07–0.14 against a 0.5 threshold, so the legacy filter
-   * discarded 15 of 23 chunks of the aquatic-life criteria table, the corpus's most authoritative
-   * source of numeric thresholds.
+   * exists to drop OCR noise and PDF furniture, but it cannot tell those apart from a *table*: a
+   * numeric grid is mostly digits, pipes and separators and scores far under the 0.5 threshold.
    *
-   * That matters beyond data loss: direct-feed consumes whole documents and keeps the table, while
-   * the vector arms embed chunks and would lose most of it. Threshold questions would then be won
-   * by direct-feed because of a filter bug, not because feeding beats retrieving — a confound
-   * invisible in the final numbers. Disabled for `.md`/`.txt`, where a low ratio means structure
-   * rather than noise; still applied to extracted and OCR'd PDF text, which is what it was for.
+   * **Measured on this corpus 2026-08-31, which is why the default is now `false`.** Running it
+   * over all fifteen documents removed 42 numeric-table chunks and 17 table-of-contents dot
+   * leaders, and **zero chunks of genuine OCR noise — the only thing it exists to catch**. 34 of
+   * the 42 were the oxygen-solubility tables in `usgs-nfm-a6.2`, the corpus's authoritative source
+   * for dissolved-oxygen threshold lookups.
+   *
+   * That matters beyond data loss: direct-feed consumes whole document text and kept those tables,
+   * while every vector arm could not retrieve them at all. A threshold question about oxygen
+   * solubility would then have scored as "feeding beats retrieving" when it was a filter setting —
+   * a confound invisible in the final numbers (`EVAL_REBUILD.md` §2b).
+   *
+   * An earlier version exempted `.md`/`.txt`, where a low ratio means structure rather than noise.
+   * The reasoning was right and **the condition matched nothing** — every document here is a PDF —
+   * so the exemption was dead code and the filter ran on all fifteen. It is gone.
+   *
+   * The option survives as a deliberate escape hatch for a genuinely OCR-noisy document, should one
+   * ever be added. **Nothing in this corpus is one**, so no caller sets it. It defaults to `false`
+   * rather than `true` on purpose: the destructive state has to be asked for, because turning the
+   * filter back on silently re-deletes those tables and re-derives nothing — chunk ids are content
+   * derived, so the ids survive, and every retrieval label keyed to a dropped chunk goes dead
+   * without a single test failing.
    */
   checkAlphaRatio?: boolean;
 }
 
 export const isQualityChunk = (
   text: string,
-  { checkAlphaRatio = true }: QualityOptions = {},
+  { checkAlphaRatio = false }: QualityOptions = {},
 ): boolean => {
   if (text.length < MIN_QUALITY_CHARS) {
     return false;

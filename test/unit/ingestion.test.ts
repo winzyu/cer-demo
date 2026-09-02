@@ -61,22 +61,25 @@ describe("isQualityChunk", () => {
     const table = `| Pollutant | CMC | CCC | Year |\n${
       "| ---- | 0.0123 | 0.0456 | 1980 |\n".repeat(20)}`;
 
-    it("drops low-ratio text by default (OCR noise, PDF furniture)", () => {
-      expect(isQualityChunk(table)).toBe(false);
+    it("KEEPS low-ratio text by default, which is what the corpus is ingested with", () => {
+      // The default is `false` and `src/ingestion/ingest.ts` is the only production caller.
+      // Measured 2026-08-31: turning the filter on removes 42 numeric-table chunks (34 of them
+      // the `usgs-nfm-a6.2` oxygen-solubility tables) and zero chunks of genuine OCR noise.
+      // Direct-feed consumes whole documents and keeps those tables; every vector arm loses
+      // them — so a threshold question would be decided by the filter, not by the retrieval
+      // strategy (`EVAL_REBUILD.md` §2b).
+      expect(isQualityChunk(table)).toBe(true);
     });
 
-    it("KEEPS low-ratio text when the ratio check is disabled (structured sources)", () => {
-      // The confound this prevents: without the exemption the vector arms lose most of the
-      // criteria table while direct-feed keeps it, so threshold questions would be decided
-      // by the filter rather than by the retrieval strategy.
-      expect(isQualityChunk(table, { checkAlphaRatio: false })).toBe(true);
+    it("drops low-ratio text only when the escape hatch is switched on", () => {
+      // `checkAlphaRatio` survives for a genuinely OCR-noisy document, should one be added.
+      // Nothing in this corpus is one, so no caller sets it.
+      expect(isQualityChunk(table, { checkAlphaRatio: true })).toBe(false);
     });
 
-    it("still applies length and boilerplate rules when the ratio check is off", () => {
-      expect(isQualityChunk("short", { checkAlphaRatio: false })).toBe(false);
-      expect(
-        isQualityChunk(`${table} click here to download`, { checkAlphaRatio: false }),
-      ).toBe(false);
+    it("still applies length and boilerplate rules with the ratio check off", () => {
+      expect(isQualityChunk("short")).toBe(false);
+      expect(isQualityChunk(`${table} click here to download`)).toBe(false);
     });
   });
 });
@@ -85,8 +88,8 @@ describe("filterChunks", () => {
   it("passes options through to every chunk", () => {
     const table = `| a | 1 |\n${"| b | 2.34 |\n".repeat(20)}`;
 
-    expect(filterChunks([table])).toHaveLength(0);
-    expect(filterChunks([table], { checkAlphaRatio: false })).toHaveLength(1);
+    expect(filterChunks([table])).toHaveLength(1);
+    expect(filterChunks([table], { checkAlphaRatio: true })).toHaveLength(0);
   });
 });
 

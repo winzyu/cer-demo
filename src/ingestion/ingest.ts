@@ -71,6 +71,9 @@ const ingestDocument = async (
   // The 17 dot-leader chunks now survive too. They are inert — no real question ranks them — and
   // that is a better failure than silently deleting tables. `checkAlphaRatio` stays on
   // `QualityOptions` for a genuinely OCR-noisy document; nothing in this corpus is one.
+  // Passed explicitly even though `false` is now the default (`chunk.ts`). This is the one call
+  // site that decides whether the corpus keeps its numeric tables, and it should say so rather
+  // than rely on a default someone could flip without seeing this line.
   const kept = filterChunks(raw, { checkAlphaRatio: false });
 
   // Identity is assigned after filtering, from content. `index` is the position among *surviving*
