@@ -19,7 +19,10 @@ import {
   ungroundedPrompt,
   type JudgeEvidence,
 } from "../../src/eval/judge/prompts";
+import { CHAT_PRICES } from "../../src/eval/prices";
 import {
+  DEFAULT_JUDGE_MODEL,
+  PRODUCTION_GENERATOR,
   budgetOf,
   buildTasks,
   isServable,
@@ -160,12 +163,32 @@ describe("correctness grounding predicate", () => {
   });
 
   it("does not fire on must_not items decidable from the answer alone", () => {
-    // 85 of the fixtures' 110 distinct must_not items are these, and they stay cheap.
+    // These stay cheap: nothing about them needs the retrieved text to decide.
     ["declares the reading normal", "concludes saltwater intrusion", "asserts one cause with certainty",
       "answers only in % saturation with no mg/L figure",
     ].forEach((item) => {
       expect(needsGroundingForCorrectness({ must_contain: [], must_not: [item] })).toBe(false);
     });
+  });
+
+  it("still fires on the live rubric set, on a substantial minority of it", () => {
+    // The literals above are hand-written and **none of them appear in wave 1** — so on their own
+    // they prove the predicate works on strings nothing sends it. This binds it to what the judge
+    // is actually handed. If a rubric rephrasing silenced the predicate, correctness would be
+    // scored without the context every invention check needs, and only this fails.
+    const items = new Set(loadFixtures().flatMap((fixture) => fixture.turns.flatMap(
+      (turn) => turn.rubric?.must_not ?? [],
+    )));
+    const firing = [...items].filter(
+      (item) => needsGroundingForCorrectness({ must_contain: [], must_not: [item] }),
+    );
+
+    expect(items.size).toBeGreaterThan(100);
+    // Measured 91 of 332 on 2026-09-02. Bounded both ways: zero means the predicate has gone
+    // deaf to the rubric vocabulary, and near-everything means it has stopped discriminating
+    // and every correctness call now ships ~11K tokens of slice it must not use.
+    expect(firing.length / items.size).toBeGreaterThan(0.05);
+    expect(firing.length / items.size).toBeLessThan(0.60);
   });
 
   it("is false when there is no must_not list at all", () => {
@@ -391,10 +414,23 @@ describe("Tier-2 gate arithmetic", () => {
 });
 
 describe("judge family caveat", () => {
-  it("spots that the chosen judge shares a family with the model under test", () => {
-    // gpt-oss-120b was picked over a cross-family judge because it is the only non-under-test
-    // model in prices.ts with a dated rate. That is a limitation of the quality claim, so the
-    // run has to say it out loud rather than leave it to whoever writes the report.
+  it("keeps the shipped judge out of the generator's family", () => {
+    // The assertion that was missing while it mattered. `DEFAULT_JUDGE_MODEL` sat at
+    // `gpt-oss-120b` after that model became the production generator (`EVAL_REBUILD.md` §1), so
+    // the default judge was grading its own output and nothing in 944 tests said a word. This is
+    // the check, on the live constants rather than on an archived pair.
+    expect(judgesOwnFamily(DEFAULT_JUDGE_MODEL, PRODUCTION_GENERATOR)).toBe(false);
+  });
+
+  it("prices the judge it ships, or the budget line prints blank", () => {
+    // §3a: "Add a CHAT_PRICES entry for whatever judge is chosen or the budget line prints
+    // blank." A judge with no rate produces a cost report with a hole in it.
+    expect(CHAT_PRICES[DEFAULT_JUDGE_MODEL]).toBeDefined();
+  });
+
+  it("spots a judge that shares a family with the model under test", () => {
+    // The predicate itself, on the pair that made it necessary: 120b judging 20b clears §7b as
+    // written and fails its intent — same family, same training lineage.
     expect(judgesOwnFamily(
       "accounts/fireworks/models/gpt-oss-120b",
       "accounts/fireworks/models/gpt-oss-20b",

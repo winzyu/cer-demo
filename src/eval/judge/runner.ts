@@ -50,26 +50,38 @@ export const TRANSCRIPT_ROOT = path.join(process.cwd(), "eval", "transcripts");
 export const JUDGE_ROOT = path.join(process.cwd(), "data", "results", "judge");
 
 /**
- * The default judge — chosen 2026-08-26, with a caveat that must survive into the report.
+ * The model the generator under test belongs to. Kept beside the judge so the two are read
+ * together — §1 requires the fixture author, the judge and the generator to be three different
+ * families, and `judgesOwnFamily` can only enforce that if it knows what to compare against.
+ */
+export const PRODUCTION_GENERATOR = "accounts/fireworks/models/gpt-oss-120b";
+
+/**
+ * The default judge — **`deepseek-v4-flash-0731`, settled 2026-08-31** (`EVAL_REBUILD.md` §3a).
  *
- * §7b requires a different model than the one under test (`gpt-oss-20b`), because a model grading
- * its own output has a documented self-preference bias. `gpt-oss-120b` is a different model and
- * clears that rule as written. It does **not** clear the rule's intent: same family, same
- * training lineage, so some of the self-preference §7b is guarding against plausibly survives.
+ * §7b requires a model different from the one under test, because a model grading its own output
+ * has a documented self-preference bias. The previous default was `gpt-oss-120b`, which cleared
+ * that rule as written and failed its intent — and then became the *production generator*, so it
+ * would have been grading its own output outright.
  *
- * It was picked anyway, deliberately, over a cross-family judge: it is the only non-under-test
- * chat model in `prices.ts` with a rate read on a known date (2026-08-03), and §10.4 requires
- * every price in the comparison report to carry the date it was read. A cross-family judge would
- * have meant an unverified model id and an invented rate — trading a stated, bounded bias for an
- * unstated one in the cost table.
+ * The reason it was kept — that it was the only non-under-test chat model in `prices.ts` carrying
+ * a rate read on a known date, and §10.4 forbids an invented rate in the cost table — no longer
+ * holds: `deepseek-v4-flash-0731` is priced (`prices.ts`) and reachable through the existing
+ * Fireworks client, so this is a one-line change rather than new transport code.
  *
- * **This is a limitation of the quality claim, not a detail of the harness**, and belongs in
- * `RETRIEVAL_COMPARISON.md` §10.6 next to the agreement rate. `judgesOwnFamily` below makes the
- * run say so out loud rather than leaving it to whoever writes the report to remember.
+ * **The evidence.** Judge-vs-human over the 24 comparable rows of the archived calibration sample
+ * (`git show eval-archive-2026-09-01:eval/grading/warm/scores.csv`): correctness κ **0.937**,
+ * ungrounded 0.577, citations 0.440, signed bias −0.042. The only candidate clearing κ 0.70 on
+ * all three dimensions, and cross-family against both Claude (fixture author) and gpt-oss
+ * (generator), so §1's three-families rule is met in intent and not only in letter.
+ *
+ * **Provisional until Phase 2c.** 24 rows on 6 fixtures calibrates an instrument; it does not
+ * conclude anything. §2's exit criterion 2 re-measures κ against a new 30-row stratified sample
+ * and that is the number that decides whether this judge survives.
  *
  * Override with `JUDGE_MODEL` or `--judge-model=`. Whatever is used ends up in the run manifest.
  */
-export const DEFAULT_JUDGE_MODEL = "accounts/fireworks/models/gpt-oss-120b";
+export const DEFAULT_JUDGE_MODEL = "accounts/fireworks/models/deepseek-v4-flash-0731";
 
 /**
  * Do these two ids look like the same model family?
