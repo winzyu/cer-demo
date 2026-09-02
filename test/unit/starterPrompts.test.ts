@@ -13,6 +13,9 @@ const OUTPUT_FILE = path.resolve(__dirname, "../../frontend/starter-prompts.json
 /** `limit: 0` is the explicit "no cap" — the default is a real cap now, not zero. */
 const UNCAPPED = { sensor: false, perClass: 99, limit: 0 };
 
+/** Live, runnable, non-excluded fixtures — the generator's actual input. */
+const eligible = eligibleFixtures(loadFixtures(undefined, availableCapabilities(false)));
+
 describe("starter prompts — generated from the eval fixture set", () => {
   it("emits a non-empty list of first user turns", () => {
     const prompts = selectStarterPrompts({ sensor: false });
@@ -46,18 +49,23 @@ describe("starter prompts — generated from the eval fixture set", () => {
 
     expect(prompts.some((prompt) => prompt.class === "refusal")).toBe(false);
     expect(prompts.some((prompt) => prompt.id.startsWith("refusal-"))).toBe(false);
-    // The fixtures are still there — the exclusion is in the generator, not the corpus.
-    expect(loadFixtures().some((fixture) => fixture.class === "refusal")).toBe(true);
+    // Not vacuous: there are refusal fixtures for the generator to have excluded, and it saw
+    // them. The exclusion is in the generator, not in the fixture set.
+    const refusals = loadFixtures().filter((fixture) => fixture.class === "refusal");
+    expect(refusals.length).toBeGreaterThan(0);
+    expect(eligibleFixtures(loadFixtures()).some((f) => f.class === "refusal")).toBe(false);
   });
 
-  it("excludes requires: sensor-tool fixtures by default", () => {
-    const prompts = selectStarterPrompts(UNCAPPED);
+  it("drops a fixture the service cannot run, whatever its class", () => {
+    // Exercised on a synthetic gated fixture. Over the live set this asserted that no prompt
+    // was `sensor-combined` and none required `sensor-tool` — both impossible in wave 1, which
+    // populates neither, so it passed over an empty condition and proved nothing.
+    const gated = {
+      ...eligible[0], id: "gated-sample", requires: ["sensor-tool" as const], runnable: false,
+    };
 
-    expect(prompts.some((prompt) => prompt.class === "sensor-combined")).toBe(false);
-    expect(prompts.every((prompt) => {
-      const fixture = loadFixtures().find((f) => f.id === prompt.id);
-      return !fixture!.requires.includes("sensor-tool");
-    })).toBe(true);
+    expect(eligibleFixtures([gated])).toHaveLength(0);
+    expect(eligibleFixtures([gated, eligible[0]]).map((f) => f.id)).toEqual([eligible[0].id]);
   });
 
   it("records the --sensor flag and never narrows the set", () => {

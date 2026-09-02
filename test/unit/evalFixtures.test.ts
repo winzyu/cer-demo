@@ -101,44 +101,50 @@ describe("committed eval fixtures", () => {
     });
   });
 
-  it("keeps slice coverage consistent with the ◆G9 slice", () => {
-    fixtures.forEach((fixture) => {
-      const inSlice = fixture.answerable_from
-        .filter((filename) => DIRECT_FEED_SLICE.includes(filename));
-      if (fixture.sliceCoverage === "full") {
-        expect(inSlice.length).toBe(fixture.answerable_from.length);
-      }
-      if (fixture.sliceCoverage === "none") {
-        expect(inSlice).toEqual([]);
-      }
-    });
+  it("meets exit criterion 3 — a quarter of the set is answerable only outside the slice", () => {
+    // `EVAL_REBUILD.md` §2, wave-1 exit criterion 3: **at least 25%** of turns must be
+    // answerable ONLY outside the ◆G9 direct-feed slice. A question the slice can answer cannot
+    // discriminate between retrieval strategies, and the archived set failed exactly here — 27
+    // of its 30 fixtures were answerable from 4.4% of the corpus.
+    //
+    // This replaced an assertion that merely *some* fixture was not fully slice-answerable.
+    // With 0 fixtures at `full` that read `46 > 0` and could never fail; the real criterion
+    // both passes today (measured 89%) and would bite if generation drifted toward easy
+    // questions, which is the failure mode §2 says to watch for.
+    const outsideOnly = fixtures.filter((fixture) => fixture.sliceCoverage === "none");
+
+    expect(outsideOnly.length / fixtures.length).toBeGreaterThanOrEqual(0.25);
   });
 
-  it("includes fixtures the direct-feed slice cannot answer", () => {
-    // Without these the eval would flatter direct-feed by construction — the long manuals
-    // are outside the slice and questions needing them are expected to fail there.
-    const outOfSlice = fixtures.filter((fixture) => fixture.sliceCoverage !== "full");
-    expect(outOfSlice.length).toBeGreaterThan(0);
+  it("derives slice coverage from the ◆G9 slice, checked against a hand-worked case", () => {
+    // Checked against fixtures built here rather than by re-running `sliceCoverageOf`'s own
+    // logic over its own output, which is what this used to do — a tautology that held for any
+    // data. `DIRECT_FEED_SLICE` is read live so adding a document to the slice moves the test.
+    const inSlice = DIRECT_FEED_SLICE[0];
+    const outside = Object.keys(DOC_META).find((doc) => !DIRECT_FEED_SLICE.includes(doc))!;
+
+    const coverageOf = (answerableFrom: string[]): string => loadFixtures(
+      withFixture({ answerable_from: answerableFrom, expected_to_favor: "tie" }),
+    )[0].sliceCoverage;
+
+    expect(coverageOf([inSlice])).toBe("full");
+    expect(coverageOf([outside])).toBe("none");
+    expect(coverageOf([inSlice, outside])).toBe("partial");
   });
 
   it("marks fixtures that depend on capabilities the service lacks", () => {
     // Stated as an equivalence rather than a hard-coded list, so landing a capability
     // (turbidity in N4, the sensor tool in N3) flips the fixtures without editing this test.
+    //
+    // Wave 1 declares no `requires`, so over the live set this only ever confirms that all 46
+    // are runnable. The equivalence is exercised properly against a gated fixture in "the
+    // sensor-tool gate" below; the tautological `runnableFixtures(...).every(f => f.runnable)`
+    // that used to sit here — filter-then-test-the-filter-predicate — was dropped.
     fixtures.forEach((fixture) => {
       const satisfied = fixture.requires.every((req) => AVAILABLE_CAPABILITIES.includes(req));
       expect(fixture.runnable).toBe(satisfied);
     });
-    expect(runnableFixtures(fixtures).every((fixture) => fixture.runnable)).toBe(true);
-  });
-
-  it("blocks only sensor-tool fixtures, and only while the flag is off", () => {
-    // N3 built `query_sensor_data`, but it is gated on SENSOR_TOOL so the bake-off's pinned
-    // prompt stays byte-identical while ◆G7 is open. Anything blocked must therefore be
-    // blocked on that one capability and nothing else.
-    const blocked = fixtures.filter((fixture) => !fixture.runnable);
-    blocked.forEach((fixture) => {
-      expect(fixture.requires).toContain("sensor-tool");
-    });
+    expect(runnableFixtures(fixtures)).toHaveLength(fixtures.length);
   });
 
   describe("the sensor-tool gate", () => {

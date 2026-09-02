@@ -130,8 +130,13 @@ describe("blind grading packet — label assignment", () => {
 
   it("gives different fixtures different orders", () => {
     const orders = new Set(fixtureIds.map((id) => shuffleFor(id, ARMS).join(",")));
-    // 3 arms => 6 permutations; a shuffle collapsing to one or two is broken.
-    expect(orders.size).toBeGreaterThanOrEqual(4);
+    // Scaled to the arm count rather than fixed at 4. The old bound was written for 3 arms (6
+    // permutations); against 5 arms and 46 fixtures it demanded 4 distinct orders out of a
+    // possible 120 and would have passed a shuffle that had collapsed almost completely.
+    const reachable = Math.min(fixtureIds.length, [...Array(ARMS.length)]
+      .reduce((product, _, i) => product * (i + 1), 1));
+
+    expect(orders.size).toBeGreaterThan(reachable * 0.5);
   });
 });
 
