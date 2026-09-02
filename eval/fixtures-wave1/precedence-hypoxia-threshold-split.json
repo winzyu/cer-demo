@@ -26,7 +26,7 @@
           "states the operator's 2 mg/L threshold as though the USGS manual established it",
           "picks one of the two numbers and answers with it without acknowledging the other source",
           "invents a dissolved-oxygen threshold that appears in neither source",
-          "claims the USGS chapter offers an ecological or aquatic-health interpretation of dissolved oxygen"
+          "claims the USGS chapter supplies a numeric ecological or aquatic-health threshold for dissolved oxygen"
         ],
         "cite": [
           "water-quality-metrics-source-of-truth.pdf",
@@ -47,7 +47,7 @@
         ],
         "must_not": [
           "says the sonde reading can be reported as-is at concentrations below 1.0 mg/L",
-          "invents an accuracy specification for the deployed dissolved-oxygen probe in this range",
+          "invents an accuracy specification for the deployed dissolved-oxygen probe in this range that is not present in the context",
           "confuses the operator's ecological ladder with the manual's reporting requirement",
           "invents a numeric verification interval or tolerance not stated in either source"
         ],

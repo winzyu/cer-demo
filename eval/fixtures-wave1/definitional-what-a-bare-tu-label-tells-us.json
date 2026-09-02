@@ -25,7 +25,8 @@
           "assumes the old readings came from a particular manufacturer or instrument"
         ],
         "cite": [
-          "usgs-nfm-a6.7-turbidity.pdf"
+          "usgs-nfm-a6.7-turbidity.pdf",
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
         ]
       }
     },
@@ -41,7 +42,6 @@
         ],
         "must_not": [
           "says the unit can be chosen freely as long as the fleet is consistent",
-          "stops at 'infrared means FNU' and never mentions that the detector geometry is part of the rule",
           "invents a parameter code or a wavelength figure not supported by the source",
           "answers from the operator range table's NTU baselines instead of the naming rule"
         ],

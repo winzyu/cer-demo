@@ -33,7 +33,7 @@
       "rubric": {
         "must_contain": [
           "States no correction is needed in fresh water",
-          "Gives 1.0000 as the factor at 0 µS/cm at every temperature in the table",
+          "Gives 1.0000 as the factor at 0 microsiemens per centimetre",
           "States the manual treats water as saline only above about 2,000 µS/cm specific conductance"
         ],
         "must_not": [

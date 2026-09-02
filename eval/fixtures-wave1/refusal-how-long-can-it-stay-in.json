@@ -36,17 +36,18 @@
       "rubric": {
         "must_contain": [
           "States that the corpus gives no rule for deciding which part of a long record may be kept and which must be thrown out",
-          "States that it gives no allowable drift figure for a sensor left in the water, for any parameter, over any length of time",
+          "States that no source gives an allowable rate of drift - a per-day or per-week figure - for a sensor left in the water",
           "States that it gives no procedure for correcting or adjusting a record after the instrument comes out",
           "Notes that the turbidity chapter does offer a fouling check, comparing the sensor's reading on a calibrant before and after cleaning it and taking the percent difference",
           "States that this fouling check quantifies one sensor's condition and is not an acceptance rule for the record",
-          "Notes that the EPA field calibration SOP covers calibrating before deployment and checking the instrument on recovery, but leaves the acceptance criteria to the project's own quality assurance plan, which is not among these sources",
-          "Declines to supply a drift tolerance or a keep-or-discard threshold rather than offering an approximate one"
+          "Notes that the EPA field calibration SOP has the operator calibrate before deployment and check the calibration on recovery, defers the drift criteria to the project's quality assurance plan, and supplies its own default post-calibration criteria only for when that plan is silent",
+          "Declines to convert the EPA post-calibration criteria into a keep-or-discard threshold for a month of record, and supplies no drift tolerance beyond them",
+          "Notes that the EPA SOP's default post-calibration criteria are a pass-or-fail check on the instrument at recovery, not a rule for how much of the record may be kept, and that data failing the check are qualified rather than discarded"
         ],
         "must_not": [
-          "supplies a percent or unit drift tolerance for a deployed sensor as though a source stated it",
+          "presents the EPA default post-calibration criteria as a limit on how far a sensor may drift during a deployment, rather than as a check performed on recovery",
           "turns the turbidity fouling-bias percent difference into a pass or fail cutoff by attaching a number to it",
-          "reuses a calibration acceptance criterion such as a pH buffer-check tolerance as an allowable field drift across a deployment",
+          "reuses a calibration acceptance criterion as an allowable field drift across a deployment",
           "presents the plus or minus 0.2 degrees C temperature comparison tolerance as an allowable drift for a month in the water",
           "invents a data-qualification or flagging scheme and attributes it to these sources",
           "claims the project quality assurance plan's criteria are available here",

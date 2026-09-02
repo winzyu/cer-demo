@@ -4,7 +4,8 @@
   "expected_to_favor": "tie",
   "answerable_from": [
     "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
-    "usgs-nfm-a6.3-specific-conductance.pdf"
+    "usgs-nfm-a6.3-specific-conductance.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
   ],
   "requires": [],
   "notes": "Built from a60-required-meaning-01 and a60-recommended-meaning-01 (turn 1) and sc-required-definition-01, sc-recommended-definition-01, sc-nfm-mandate-01 (turn 2). Definitional control: the question is what two words mean as terms of art, not what any single procedure is. Both chapters carry the same front-matter definition, so the answer is short, redundant across the corpus and easy for any arm that retrieves either chapter - hence 'tie'. Slice check: this is the strongest slice-immune definitional topic available. The operator source-of-truth and the four probe datasheets contain no notion of 'required' versus 'recommended' as graded obligations, and no notion of documenting a departure - grep of SLICE-EXCLUSION for 'required'/'recommend' returns only Atlas Scientific product suggestions (cable isolators, probe cleaner, reconditioning kit), which is a different sense of the word entirely. An arm restricted to the slice cannot answer either turn.",
@@ -24,7 +25,8 @@
           "invents a third category or a numeric grading scheme"
         ],
         "cite": [
-          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "usgs-nfm-a6.3-specific-conductance.pdf"
         ]
       }
     },
@@ -43,7 +45,8 @@
           "claims required procedures can never be departed from under any circumstances"
         ],
         "cite": [
-          "usgs-nfm-a6.3-specific-conductance.pdf"
+          "usgs-nfm-a6.3-specific-conductance.pdf",
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
         ]
       }
     }

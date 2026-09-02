@@ -3,7 +3,8 @@
   "class": "deep-in-manual",
   "expected_to_favor": "rag",
   "answerable_from": [
-    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
   ],
   "requires": [],
   "notes": "Procedural depth plus the stabilization table in NFM A6.8. Claims: mp-60s-surface-water-06 and mp-60s-groundwater-03 (minimum 60 seconds at each new measurement location for the sensors and sonde body to reach thermal equilibrium), mp-60s-longer-manufacturer-07 (the 60 seconds is a minimum only), mp-equilibrium-range-04 (60 seconds to several minutes depending on instrument and temperature difference), mp-stabilize-to-table-01 and mp-t5-temperature-03 / -sc-04 / -do-05 / -ph-06 / -turbidity-07 (table 6.8-5 criteria). Turn 2 is the follow-up an operator asks once told to wait: how do I know it is done. Expected to favor rag: the slice's probe datasheets give sensor response times (1 second to 90 or 95 percent of reading), which is a plausible-looking wrong answer to turn 1, and give no stabilization criteria at all for turn 2.",
@@ -24,7 +25,8 @@
           "Uses a probe datasheet's 1-second response time as the settling time"
         ],
         "cite": [
-          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
         ]
       }
     },
@@ -45,7 +47,8 @@
           "Gives criteria for only one or two of the parameters when asked about the sonde as a whole"
         ],
         "cite": [
-          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
         ]
       }
     }

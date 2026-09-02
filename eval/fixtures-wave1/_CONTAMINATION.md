@@ -12,6 +12,13 @@ Date: 2026-09-01. Corpus `data/corpus/corpus.json`, 451 chunks, 11,197 index ter
 Retriever: `src/retrieval/lexical/Bm25Index.ts` at defaults (`k1 = 1.2`, `b = 0.75`), offline, no
 API calls. Fixture set: `eval/fixtures-wave1/`, 46 fixtures / 92 turns as committed at `92438f3`.
 
+> **Re-measured 2026-09-02, after the Phase 1d qualification edits.** Those edits added missing
+> files to `answerable_from` on 12 fixtures, and the document-level metric is computed against that
+> field, so the number moved by construction: **25.0 % (23/92)**, or **27.4 % (23/84)** excluding
+> the refusal turns. Both still clear the < 40 % bar comfortably. **Chunk level is unchanged at
+> 11.6 %** — gold chunks are resolved from each fixture's `notes`, which the edits did not touch.
+> No question text was changed, so the wording being measured is identical to the original pass.
+
 ---
 
 ## What was measured

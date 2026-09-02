@@ -2,7 +2,10 @@
   "id": "probecal-buffer-handling",
   "class": "probe-calibration",
   "expected_to_favor": "rag",
-  "answerable_from": ["usgs-nfm-a6.4-ph.pdf"],
+  "answerable_from": [
+    "usgs-nfm-a6.4-ph.pdf",
+    "epa-sop-field-instrument-calibration-2010.pdf"
+  ],
   "requires": [],
   "notes": "The slice datasheets cover storage of the probe - the wetted cap, the storage solution, topping it up - but say nothing about handling the calibration solutions themselves, because they describe no calibration. The rules against measuring in the stock bottle, against returning used solution, the labelled secondary bottle, the refresh-before-every-trip rule and the heat and freezing caveat are all in usgs-nfm-a6.4-ph.pdf. Drawn from ph-buffer-no-electrode-in-stock-01, ph-buffer-no-return-01, ph-secondary-bottle-01 (turn 1) and ph-secondary-refresh-01, ph-buffer-temp-protection-01, ph-buffer-no-expired-01, ph-record-buffer-lot-temp-01 (turn 2). Predicted to favour rag because the slice's storage advice is about the probe, not the standards, and a direct-feed arm answering from it will confidently give advice about the wrong object.",
   "turns": [
@@ -21,7 +24,9 @@
           "Tells the operator used solution may be returned to the bottle",
           "Answers about probe storage solution and the transport cap instead of the calibration standards"
         ],
-        "cite": ["usgs-nfm-a6.4-ph.pdf"]
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
       }
     },
     {
@@ -40,7 +45,9 @@
           "Treats a truck as acceptable storage without the temperature caveat",
           "Invents a temperature range for storage"
         ],
-        "cite": ["usgs-nfm-a6.4-ph.pdf"]
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
       }
     }
   ]

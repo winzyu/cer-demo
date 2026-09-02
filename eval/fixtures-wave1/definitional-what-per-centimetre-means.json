@@ -36,7 +36,8 @@
         "must_contain": [
           "states that no conversion is needed because a mho per centimetre and a siemens per centimetre are the same unit under two names",
           "notes that mhos were the normal reporting unit for older data, with the changeover around 1971",
-          "notes that specific conductance, specific electrical conductance and electrical conductivity are all used in the literature for this same measurement, so a difference in wording is not a difference in quantity"
+          "notes that specific conductance, specific electrical conductance and electrical conductivity are all used in the literature for this same measurement",
+          "notes that because electrical conductivity is not always referenced to a standard temperature, the measurement or reference temperature has to be reported and checked against the older values"
         ],
         "must_not": [
           "invents a numeric conversion factor between mhos and siemens",

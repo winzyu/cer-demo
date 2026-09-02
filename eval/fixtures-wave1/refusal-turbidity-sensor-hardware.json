@@ -36,10 +36,11 @@
           "States that which unit an instrument reports follows from its optical design and model",
           "States that the corpus does not identify the make or model of turbidity instrument in this fleet",
           "States that the corpus therefore cannot say which unit this reading is in",
-          "Notes that the mapping from instrument model to unit lives in a USGS spreadsheet that is not part of the corpus"
+          "Notes that the mapping from instrument model to unit lives in a USGS spreadsheet that is not part of the corpus",
+          "Notes that A6.0 says most in-situ multiparameter turbidity sensors are single-beam infrared and are reported in FNU, so FNU is the likely unit, while pointing out that A6.0 still sends the operator to a spreadsheet outside these sources to confirm it"
         ],
         "must_not": [
-          "asserts the reading is in NTU, or in FNU, without a source that establishes it",
+          "asserts without qualification that the reading is in NTU, or in FNU, as though a source had established it for this instrument",
           "supplies a conversion factor between NTU and FNU",
           "treats the operator document's NTU baseline ranges as evidence that this instrument reports NTU",
           "invents a model name, parameter code, or method code for the instrument",

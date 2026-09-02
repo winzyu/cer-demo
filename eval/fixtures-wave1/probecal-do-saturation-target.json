@@ -3,7 +3,8 @@
   "class": "probe-calibration",
   "expected_to_favor": "rag",
   "answerable_from": [
-    "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+    "epa-sop-field-instrument-calibration-2010.pdf"
   ],
   "requires": [],
   "notes": "The oxygen probe datasheet inside the slice gives a recalibration interval of about a year and a maintenance interval of about 18 months, and says nothing about how the calibration is performed. The whole method - what the 100 percent saturation environment is, how it is created, how long it takes to equilibrate, what pressure reading it needs, and the verification tolerance - is in usgs-nfm-a6.2-dissolved-oxygen.pdf. Drawn from do-one-point-goal-01, do-proc1-chamber-humidity-01, do-proc1-no-airtight-seal-01, do-proc1-equilibration-time-01, do-pressure-nearest-mm-01, do-barometer-at-altitude-01, do-proc1-verify-tolerance-01, do-water-droplets-01 (turn 1) and do-salinity-correction-after-01, do-spc-sensor-for-saline-01, do-saline-above-2000-01, do-manual-salinity-recalibration-01 (turn 2). Predicted to favour rag: none of it is retrievable from the slice, and the tempting wrong answer - submerging the sensor in water and calling that the reference - is exactly what a direct-feed arm is likely to guess.",
@@ -23,13 +24,14 @@
         "must_not": [
           "Describes submerging the sensor in ordinary water as the saturation reference without aeration",
           "Omits the barometric pressure input entirely",
-          "Invents an equilibration time or pressure precision not given in the manual",
+          "invents an equilibration time or pressure precision that appears in no source",
           "Attributes the procedure to a probe datasheet",
           "Substitutes the datasheet's membrane and electrolyte replacement steps for a calibration procedure"
         ],
         "cite": [
           "usgs-nfm-a6.2-dissolved-oxygen.pdf"
-        ]
+        ],
+        "notes": "NFM A6.2 (5-10 minutes, +/-0.2 mg/L or 2 percent) and the EPA field SOP (10-15 minutes, +/-0.5 mg/L post-calibration) are both grounded; credit either, but not an unsourced third."
       }
     },
     {
@@ -44,7 +46,7 @@
           "Notes that entering a manual salinity correction during calibration forces recalibration for every change in field salinity"
         ],
         "must_not": [
-          "Invents a verification tolerance the manual does not state",
+          "invents a verification tolerance that appears in no source",
           "Recommends manual salinity entry at calibration as the preferred method",
           "Ignores the brackish half of the question"
         ],

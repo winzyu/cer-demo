@@ -3,7 +3,8 @@
   "class": "deep-in-manual",
   "expected_to_favor": "rag",
   "answerable_from": [
-    "usgs-nfm-a6.1-temperature.pdf"
+    "usgs-nfm-a6.1-temperature.pdf",
+    "epa-sop-field-instrument-calibration-2010.pdf"
   ],
   "requires": [],
   "notes": "Numeric lookup for how a yearly temperature-sensor verification is designed, deep in NFM A6.1 section 3. Claims: t-min-two-points-01 (minimum two points, within ±2 °C of the annual minimum and maximum and ±4 °C of the mean), t-points-2c-apart-01, t-points-10c-large-range-01 (maximum of five points), t-example-4-12-01 (6 °C and 10 °C satisfy a 4-12 °C range with an 8 °C mean), t-cal-verif-12mo-01 and t-321-verify-12mo-01 (every 12 months), t-method1-lab-01 and t-method2-insitu-01 (both acceptable, neither preferred), t-onepoint-pre-trip-01 (one-point check against a certified sensor immediately before the field trip). Turn 2 is the operator's natural next question — can we skip the lab. Expected to favor rag: the slice's probe datasheets carry no temperature-verification programme at all, only recalibration intervals.",
@@ -22,10 +23,11 @@
         "must_not": [
           "Invents a fixed number of points for this range",
           "Says a single-point check is enough for annual verification",
-          "Recommends points outside the site's annual range without saying why"
+          "Recommends verification points that do not satisfy the +/-2 degrees C of minimum and maximum and +/-4 degrees C of mean rules"
         ],
         "cite": [
-          "usgs-nfm-a6.1-temperature.pdf"
+          "usgs-nfm-a6.1-temperature.pdf",
+          "epa-sop-field-instrument-calibration-2010.pdf"
         ]
       }
     },
@@ -45,7 +47,8 @@
           "Drops the pre-trip one-point check"
         ],
         "cite": [
-          "usgs-nfm-a6.1-temperature.pdf"
+          "usgs-nfm-a6.1-temperature.pdf",
+          "epa-sop-field-instrument-calibration-2010.pdf"
         ]
       }
     }

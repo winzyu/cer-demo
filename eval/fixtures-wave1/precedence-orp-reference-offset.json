@@ -16,7 +16,7 @@
         "must_contain": [
           "States that the +200 to +400 mV healthy band comes from the operator document",
           "States that the USGS redox chapter works in Eh, which is the measured reading plus the potential of the probe's own reference electrode",
-          "Gives the size of that correction: roughly 200 mV for a silver/silver-chloride saturated-KCl reference and about 185.5 mV for a calomel reference",
+          "Gives the size of that correction: about 238 mV for a silver/silver-chloride saturated-KCl reference and 185.5 mV for a calomel reference, both as measured in ZoBell's solution at 25 degrees Celsius",
           "States that the correction is about as large as the operator band itself, so the two numbers are not directly comparable",
           "States that the operator document does not say which convention its band uses",
           "States that the USGS chapter sets no healthy or unhealthy ORP range of its own"

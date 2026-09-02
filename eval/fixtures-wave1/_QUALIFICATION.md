@@ -214,3 +214,49 @@ Every finding in §2 was independently re-verified against `corpus.json` before 
 Two agent claims did not survive that check and were corrected: the ORP diagnosis in §2.2 (the
 200 mV figure is the 22 °C worked example, not a mis-assigned calomel value), and the
 required-vs-recommended front matter, reported as six documents and actually three.
+
+---
+
+## 7. Edits applied — 2026-09-02
+
+All 33 `KEEP-WITH-EDIT` fixtures were edited: **80 changes across 33 files.** The 13 `KEEP-AS-IS`
+fixtures were not touched. Edits were applied by exact-text match so a moved target fails loudly
+rather than mis-editing silently; three did, and were resolved individually against the file.
+
+| change | count | effect |
+|---|---:|---|
+| `answerable_from` entries added | 14, across 13 fixtures | A correct answer citing the second source is no longer scored an invalid citation. |
+| `rubric.cite` entries added | 17 | The same fix at turn granularity. |
+| `must_not` lines reworded | 21 | Stops a `must_not` forbidding a corpus-grounded answer. |
+| `must_not` lines deleted | 3 | Removed omission-shaped lines that double-punished a `must_contain` miss. |
+| `must_contain` lines reworded | 17 | Corrected the NOT_SUPPORTED lines and softened over-reaching ones. |
+| `must_contain` lines added | 4 | Including the two that convert a falsified silence into a graded requirement. |
+| `must_contain` lines deleted | 1 | `crossdoc-sonde-sensor-order` T2.MC2, which duplicated its own `must_not`. |
+| `rubric.notes` added | 3 turns | Records where two corpus values are both grounded, so a grader credits either. |
+
+The systematic `probe-calibration` defect is closed: no `must_not` line anywhere in the set now
+reads *"…the manual does not state"*. Every such line is now scoped to *"…appears in no source"*,
+which is what a grader can actually check.
+
+**Verification.** All 46 fixtures load clean through `loadFixtures()` — 92 turns, class counts
+unchanged (12 / 10 / 8 / 4 / 4 / 4 / 4). Contamination was re-measured because `answerable_from`
+feeds the document-level metric: **25.0 %** (27.4 % excluding refusals), chunk level unchanged at
+**11.6 %**. Both clear the < 40 % bar. See [`_CONTAMINATION.md`](_CONTAMINATION.md).
+
+### Two recommendations deliberately not applied
+
+1. **No question text was changed.** Two reports proposed question rewrites — adding the noun
+   "turbidity" to `definitional-what-a-bare-tu-label-tells-us` turn 2, and naming flocculation in
+   `deepmanual-diluting-clarity-standards` turn 2. Both are sound, but a question edit invalidates
+   the Phase 1c contamination measurement for that turn and changes what the human reviewer reads.
+   For the clarity-standards fixture the report's own stated alternative — rewording `T2.MN1` — was
+   applied instead and closes the same defect. The TU turn-2 issue is left open: **that turn
+   contains no turbidity vocabulary at all, so it is not answerable standing alone and BM25 finds
+   nothing.** If the RAG arm retrieves on the raw user turn rather than a rewritten query, that
+   fixture measures the query rewriter rather than retrieval. It is a one-noun fix whenever wanted.
+
+2. **The `eval/claims/` gap entry is not fixed here.** §2.1's root cause is an incorrect gap
+   statement in `eval/claims/epa-sop-field-instrument-calibration-2010.json`, which sits outside the
+   `eval/fixtures-wave1/**` write boundary this pass was given. The fixture that inherited it has
+   been corrected; **the inventory entry has not**, and any future fixture built on that gap will
+   inherit the same falsification.

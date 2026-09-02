@@ -42,7 +42,8 @@
           "invents a soak time longer than the source gives",
           "says an overnight or open-ended soak is acceptable",
           "omits the deionized-water rinse after the soak",
-          "answers about calibration-standard soak or storage instead of the acid clean"
+          "answers about calibration-standard soak or storage instead of the acid clean",
+          "gives the ORP probe datasheet's few-minute hydrochloric acid soak as the conductivity probe's soak limit"
         ],
         "cite": [
           "usgs-nfm-a6.3-specific-conductance.pdf"

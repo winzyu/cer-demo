@@ -8,8 +8,7 @@
     "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
   ],
   "requires": [],
-  "notes": "Deliberately impossible from one file: the operator has two saturation tables and wants to know which number to hold the sensor to. USGS table 6.2-2 gives 9.09 mg/L at 20.0 C and 760 mmHg (do-t622-20c-750-897-01, which also gives 8.97 at 750) and is generated from the Benson and Krause equations (do-tables-benson-krause-01); the EPA SOP's attached Oxygen Solubility at Indicated Pressure chart gives 9.06 mg/L at 20 C and 760 mmHg and 8.69 at 730 mmHg (epa-do-solubility-20c-01, epa-oxygen-solubility-chart-01, epa-do-solubility-units-mgl-01). That few-hundredths difference is real and small, and A6.0's stabilisation criterion for optical DO of plus/minus 0.2 mg/L (a60-xcut-tbl601-all-01) is what puts it in perspective — a third file, needed to answer 'does it matter'. Turn 2 turns on coverage rather than values: the EPA chart runs 0 to 45 C (epa-do-solubility-range-45c-01) and down to 690 mmHg (epa-do-solubility-lowpressure-block-01, epa-do-solubility-0c-725-01), while USGS table 6.2-2 runs to 40 C at most (do-t622-40c-600-496-01) but down to 600 mmHg (do-t622-block2-header-01, do-t622-block1-header-01 for the 700-795 block), and only the USGS chapter carries salinity correction factors (do-table624-title-01, do-t624-identity-01, do-saline-above-2000-01). An arm holding only one of these documents cannot compare them and will present its single table as the answer. Predicted rag: the slice has no solubility values at all."
-  ,
+  "notes": "Deliberately impossible from one file: the operator has two saturation tables and wants to know which number to hold the sensor to. USGS table 6.2-2 gives 9.09 mg/L at 20.0 C and 760 mmHg (do-t622-20c-750-897-01, which also gives 8.97 at 750) and is generated from the Benson and Krause equations (do-tables-benson-krause-01); the EPA SOP's attached Oxygen Solubility at Indicated Pressure chart gives 9.06 mg/L at 20 C and 760 mmHg and 8.69 at 730 mmHg (epa-do-solubility-20c-01, epa-oxygen-solubility-chart-01, epa-do-solubility-units-mgl-01). That few-hundredths difference is real and small, and A6.0's stabilisation criterion for optical DO of plus/minus 0.2 mg/L (a60-xcut-tbl601-all-01) is what puts it in perspective — a third file, needed to answer 'does it matter'. Turn 2 turns on coverage rather than values: the EPA chart runs 0 to 45 C (epa-do-solubility-range-45c-01) and down to 690 mmHg (epa-do-solubility-lowpressure-block-01, epa-do-solubility-0c-725-01), while USGS table 6.2-2 runs to 40 C at most (do-t622-40c-600-496-01) but down to 600 mmHg (do-t622-block2-header-01, do-t622-block1-header-01 for the 700-795 block), and only the USGS chapter carries salinity correction factors (do-table624-title-01, do-t624-identity-01, do-saline-above-2000-01). An arm holding only one of these documents cannot compare them and will present its single table as the answer. Predicted rag: the slice has no solubility values at all.",
   "turns": [
     {
       "role": "user",
@@ -25,7 +24,7 @@
         ],
         "must_not": [
           "presents one table's value without acknowledging the other",
-          "describes the two documents as contradicting each other",
+          "treats the roughly 0.03 mg/L difference as a substantive conflict that must be resolved before measuring",
           "invents a solubility value for either table",
           "recommends averaging the two values"
         ],

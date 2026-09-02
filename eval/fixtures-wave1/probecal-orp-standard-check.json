@@ -2,7 +2,10 @@
   "id": "probecal-orp-standard-check",
   "class": "probe-calibration",
   "expected_to_favor": "rag",
-  "answerable_from": ["usgs-nfm-a6.5-orp.pdf"],
+  "answerable_from": [
+    "usgs-nfm-a6.5-orp.pdf",
+    "epa-sop-field-instrument-calibration-2010.pdf"
+  ],
   "requires": [],
   "notes": "The ORP datasheet in the slice carries a tiered recalibration schedule - yearly for the first two years, then roughly every six months, monthly in aggressive chemistry - and nothing whatsoever about what solution to use or what reading to expect. The standard, the temperature-dependent expected value, the arithmetic that converts a meter reading into a comparable number, and the pass window are all in usgs-nfm-a6.5-orp.pdf. Drawn from orp-zobells-standard-01, orp-equilibrate-15-30-01, orp-eh-equation-01, orp-eref-agagcl-238-01, orp-table653-values-01, orp-pass-criterion-5mv-01 (turn 1) and orp-table654-symptoms-01, orp-two-ref-electrodes-0mv-01, orp-iron-blue-precipitate-01 (turn 2). Predicted to favour rag because both the standard solution and the plus-or-minus 5 millivolt acceptance rule are outside the slice; the direct-feed arm has the interval and nothing to do with it.",
   "turns": [
@@ -20,10 +23,12 @@
         "must_not": [
           "Treats the raw meter millivolt reading as directly comparable to the standard's expected value",
           "Gives a single expected millivolt value with no temperature dependence",
-          "Invents a tolerance other than the plus or minus 5 millivolt criterion",
+          "invents a tolerance that appears in no source",
           "Recommends quinhydrone solution as the preferred standard"
         ],
-        "cite": ["usgs-nfm-a6.5-orp.pdf"]
+        "cite": [
+          "usgs-nfm-a6.5-orp.pdf"
+        ]
       }
     },
     {
@@ -41,7 +46,9 @@
           "Invents a diagnostic threshold not given in the manual",
           "Attributes the troubleshooting steps to a probe datasheet"
         ],
-        "cite": ["usgs-nfm-a6.5-orp.pdf"]
+        "cite": [
+          "usgs-nfm-a6.5-orp.pdf"
+        ]
       }
     }
   ]

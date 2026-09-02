@@ -8,8 +8,7 @@
     "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
   ],
   "requires": [],
-  "notes": "Two different orderings that both couple conductivity to pH, stated in different files. The calibration sequence is A6.8: mp-calibration-order-08 (temperature, then specific conductance, pH, dissolved oxygen, ORP, turbidity, then ion-selective and fluorescence sensors), mp-ionic-strength-rationale-09 (the order runs from low to high ionic strength so residual standard cannot bias the next calibration), mp-triple-rinse-10 (three deionized-water rinses between standards), mp-calibrate-before-each-use-04, mp-bracket-standards-04, mp-a61-a67-definitive-06 (the per-parameter chapters remain definitive over A6.8's general guidance). The reason the conductivity-before-pH leg of that order is not optional is stated only in A6.3: sc-calibrate-sc-before-ph-01 — pH buffers and electrode filling solutions are high-ionic-strength contamination sources. Turn 2 asks about the physical order of probes in a flow-through cell, which is a different ordering entirely and is stated in A6.0 (fm-ph-downstream-of-conductivity-01) and A6.3 (sc-probe-upstream-of-ph-01, sc-flowcell-shield-sunlight-01), with A6.7 adjacent (a discrete turbidity sample must not be drawn from the flow-cell discharge). An A6.8-only answer gives the sequence with no rationale and misses the plumbing question; an A6.3-only answer has the pH constraint and not the full order. Predicted rag: nothing in the slice covers calibration order or flow-cell layout."
-  ,
+  "notes": "Two different orderings that both couple conductivity to pH, stated in different files. The calibration sequence is A6.8: mp-calibration-order-08 (temperature, then specific conductance, pH, dissolved oxygen, ORP, turbidity, then ion-selective and fluorescence sensors), mp-ionic-strength-rationale-09 (the order runs from low to high ionic strength so residual standard cannot bias the next calibration), mp-triple-rinse-10 (three deionized-water rinses between standards), mp-calibrate-before-each-use-04, mp-bracket-standards-04, mp-a61-a67-definitive-06 (the per-parameter chapters remain definitive over A6.8's general guidance). The reason the conductivity-before-pH leg of that order is not optional is stated only in A6.3: sc-calibrate-sc-before-ph-01 — pH buffers and electrode filling solutions are high-ionic-strength contamination sources. Turn 2 asks about the physical order of probes in a flow-through cell, which is a different ordering entirely and is stated in A6.0 (fm-ph-downstream-of-conductivity-01) and A6.3 (sc-probe-upstream-of-ph-01, sc-flowcell-shield-sunlight-01), with A6.7 adjacent (a discrete turbidity sample must not be drawn from the flow-cell discharge). An A6.8-only answer gives the sequence with no rationale and misses the plumbing question; an A6.3-only answer has the pH constraint and not the full order. Predicted rag: nothing in the slice covers calibration order or flow-cell layout.",
   "turns": [
     {
       "role": "user",
@@ -42,9 +41,8 @@
       "rubric": {
         "must_contain": [
           "states the pH sensor is installed downstream of the conductivity sensor in the flow-through chamber",
-          "makes clear this is a separate ordering from the calibration sequence, about where the water goes rather than what is calibrated when",
           "states the flow cell should be kept as close to the source water as possible and shielded from direct sunlight",
-          "notes that the sequence in which sensors sit relative to flow has to be considered when the chamber is set up, though it may not matter for every sensor set"
+          "notes the specific-conductance probe position relative to the pH electrode depends on the flow-cell design"
         ],
         "must_not": [
           "repeats the calibration order as if it answered the plumbing question",

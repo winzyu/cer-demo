@@ -24,9 +24,7 @@
         "must_not": [
           "states the 2 percent per degree Celsius figure as though the USGS manual established it",
           "invents a temperature coefficient or reference temperature that appears in neither source",
-          "presents 0.019 to 0.020 per degree Celsius as contradicting the operator figure rather than as the same rounded value carrying a stated envelope",
-          "omits that the coefficient depends on which ions are present",
-          "answers only from the operator figure without consulting what the manual says"
+          "presents 0.019 to 0.020 per degree Celsius as contradicting the operator figure rather than as the same rounded value carrying a stated envelope"
         ],
         "cite": [
           "water-quality-metrics-source-of-truth.pdf",

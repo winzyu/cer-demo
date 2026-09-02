@@ -2,7 +2,10 @@
   "id": "probecal-ph-slope-acceptance",
   "class": "probe-calibration",
   "expected_to_favor": "rag",
-  "answerable_from": ["usgs-nfm-a6.4-ph.pdf"],
+  "answerable_from": [
+    "usgs-nfm-a6.4-ph.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+  ],
   "requires": [],
   "notes": "The slice datasheet tells the operator the probe has a working life and a recalibration interval, and that a coated bulb shortens the span, but it gives no acceptance number for a calibration and no way to decide whether an aging electrode is still usable. That decision rule is entirely inside usgs-nfm-a6.4-ph.pdf. Drawn from ph-slope-test-definition-01, ph-ideal-cal-slope-01, ph-working-system-checklist-01, ph-response-time-1-2-min-01 (turn 1) and ph-slope-out-of-range-action-01, ph-recondition-triggers-01, ph-post-recondition-reject-01, ph-replace-after-recal-fail-01, ph-table644-slope-out-01 (turn 2). Predicted to favour rag: the numeric acceptance window and the escalation sequence exist only outside the slice, so a direct-feed arm must either refuse or fabricate a threshold.",
   "turns": [
@@ -17,11 +20,14 @@
           "Notes that a healthy electrode also responds quickly in buffer, on the order of one to two minutes"
         ],
         "must_not": [
-          "Invents a slope acceptance threshold not stated in the manual",
+          "invents a slope acceptance threshold that appears in no source",
           "Uses the datasheet's stated working life as the criterion for whether the electrode is usable",
           "Presents the 56.2 to 59.8 millivolt window as valid at any temperature without noting it is a 25 degree Celsius figure"
         ],
-        "cite": ["usgs-nfm-a6.4-ph.pdf"]
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ],
+        "notes": "95-101 percent (NFM A6.4) and 95-102 percent (the A6.8 groundwater field form) are both corpus-grounded; credit either."
       }
     },
     {
@@ -40,7 +46,9 @@
           "Recommends replacement without first attempting cleaning and recalibration",
           "Invents a separate numeric replacement threshold distinct from the slope acceptance range"
         ],
-        "cite": ["usgs-nfm-a6.4-ph.pdf"]
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
       }
     }
   ]

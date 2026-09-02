@@ -29,7 +29,11 @@
           "Invents an ordering rationale not stated in the manuals",
           "Derives the sequence from the individual probe datasheets' recalibration intervals"
         ],
-        "cite": ["usgs-nfm-a6.8-multiparameter-instruments.pdf", "usgs-nfm-a6.3-specific-conductance.pdf"]
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ],
+        "notes": "The A6.8 order (temperature, specific conductance, pH, dissolved oxygen, ORP, turbidity) is the target; an answer that additionally notes A6.2's exception - dissolved oxygen last when a two-point zero-DO calibration is used - satisfies the ordering requirement rather than failing it."
       }
     },
     {
@@ -47,7 +51,10 @@
           "Recommends returning used standard or buffer to its stock bottle",
           "Invents a rinse count not stated in the manuals"
         ],
-        "cite": ["usgs-nfm-a6.8-multiparameter-instruments.pdf", "usgs-nfm-a6.4-ph.pdf"]
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
       }
     }
   ]

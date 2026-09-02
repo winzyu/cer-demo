@@ -7,8 +7,7 @@
     "usgs-nfm-a6.4-ph.pdf"
   ],
   "requires": [],
-  "notes": "Turn 1 is pure A6.3: sc-low-ph-50pct-error-01 and sc-compensation-50pct-lowph-error-01 (below pH 4 the standard compensation factors can be 50 percent wrong because hydrogen-ion transport differs and hydrogen carries much of the conductance), sc-low-ph-largest-error-source-01, sc-lowph-compare-to-25c-01 (the in-situ-vs-25 C bench comparison test with the plus/minus 5 microsiemens per centimetre at or below 100 and plus/minus 3 percent above bar), sc-mccleskey-lowph-method-01, sc-report-nonstandard-compensation-01. Turn 2 flips to the other side of the same coupling and is answerable only from A6.4: whether the pH number that triggered all this is itself trustworthy at pH ~3 — ph-table641-buffers-01 (a pH 1.68 or 2 buffer is required if acidic waters are measured), ph-cal-three-conditions-01 and ph-buffer-within-10c-01 (buffers within 10 C of sample), ph-measurement-envelope-01 / ph-cal-procedure-envelope-01 (the procedure is good for pH 1.68 to 10), ph-mv-test-168-01 (300-330 mV for the 1.68 buffer). Each turn is unanswerable from the other chapter, so the pair needs both files. Predicted rag: the slice has an acid-mine-drainage event signature and a freshwater pH band but nothing on compensation error below pH 4 or on acidic-range buffers."
-  ,
+  "notes": "Turn 1 is pure A6.3: sc-low-ph-50pct-error-01 and sc-compensation-50pct-lowph-error-01 (below pH 4 the standard compensation factors can be 50 percent wrong because hydrogen-ion transport differs and hydrogen carries much of the conductance), sc-low-ph-largest-error-source-01, sc-lowph-compare-to-25c-01 (the in-situ-vs-25 C bench comparison test with the plus/minus 5 microsiemens per centimetre at or below 100 and plus/minus 3 percent above bar), sc-mccleskey-lowph-method-01, sc-report-nonstandard-compensation-01. Turn 2 flips to the other side of the same coupling and is answerable only from A6.4: whether the pH number that triggered all this is itself trustworthy at pH ~3 — ph-table641-buffers-01 (a pH 1.68 or 2 buffer is required if acidic waters are measured), ph-cal-three-conditions-01 and ph-buffer-within-10c-01 (buffers within 10 C of sample), ph-measurement-envelope-01 / ph-cal-procedure-envelope-01 (the procedure is good for pH 1.68 to 10), ph-mv-test-168-01 (300-330 mV for the 1.68 buffer). Each turn is unanswerable from the other chapter, so the pair needs both files. Predicted rag: the slice has an acid-mine-drainage event signature and a freshwater pH band but nothing on compensation error below pH 4 or on acidic-range buffers.",
   "turns": [
     {
       "role": "user",
@@ -39,7 +38,8 @@
       "rubric": {
         "must_contain": [
           "states that the usual 4 / 7 / 10 buffer set is not sufficient for acidic water and a pH 1.68 (or 2) buffer is needed when acidic waters are measured",
-          "states the standard pH procedure is expected to be accurate over roughly pH 1.68 to 10, so pH 3.2 is inside the envelope only if the acidic buffer is used",
+          "states the standard pH procedure is expected to be accurate over roughly pH 1.68 to 10",
+          "states the sample pH must fall inside the calibrated range, so a 4 / 7 / 10 set does not bracket pH 3.2",
           "states the calibration buffers must be within about 10 C of the sample temperature",
           "states that a check of the buffer nearest the sample pH should be within about 0.05 pH unit of its value at that temperature, or the system is recalibrated"
         ],

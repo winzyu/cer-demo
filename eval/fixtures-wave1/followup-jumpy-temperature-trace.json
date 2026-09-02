@@ -34,7 +34,7 @@
       "rubric": {
         "must_contain": [
           "warns that swapping the cable is not necessarily a free repair, because changing cables can require the sensor to be recertified",
-          "states that the sensor must be verified or recertified before its readings are trusted again rather than being put straight back into service",
+          "Notes that until the sensor is verified its readings do not meet the chapter's condition for storage as verified data",
           "notes that until that is done the readings from that sensor should not be treated as good data"
         ],
         "must_not": [

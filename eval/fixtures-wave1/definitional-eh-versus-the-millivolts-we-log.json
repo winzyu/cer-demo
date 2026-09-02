@@ -39,12 +39,13 @@
           "names the properties that are treated as routine on-site measurements - water temperature, dissolved oxygen, specific conductance, pH and turbidity"
         ],
         "must_not": [
-          "invents a stabilisation criterion or a settling time for Eh",
+          "invents a table 6.0-1 stabilization criterion for Eh, or a settling time not present in the context",
           "claims Eh is excluded because the equipment cannot measure it",
           "conflates 'not a routine field measurement' with 'not worth recording'"
         ],
         "cite": [
-          "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+          "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "usgs-nfm-a6.5-orp.pdf"
         ]
       }
     }

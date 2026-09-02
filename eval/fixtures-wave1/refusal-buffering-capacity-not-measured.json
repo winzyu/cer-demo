@@ -14,7 +14,7 @@
           "States that the water's capacity to absorb acid is not one of the parameters this system measures",
           "States plainly that the question cannot be answered from what the system measures",
           "Notes that the corpus does contain a USGS chapter covering alkalinity and acid neutralizing capacity",
-          "States that every value that chapter produces comes from a bench acid titration of a collected sample, not from a deployed sensor",
+          "Contrasts the sensor reading with a manual acid titration of a collected sample, which is the method the corpus does describe",
           "States that the chapter gives no way to infer that capacity from any sensor-measurable parameter",
           "Offers what the system can genuinely contribute instead, such as the measured pH record itself, without presenting it as a substitute"
         ],
@@ -42,7 +42,8 @@
           "supplies a formula, ratio, or rule of thumb converting conductivity or pH into buffering capacity",
           "treats the conductivity thresholds in the alkalinity chapter as an alkalinity-conductivity relationship",
           "cites an external calculator or model as though its contents were available in the corpus",
-          "offers a hedged numeric estimate in place of a refusal"
+          "offers a hedged numeric estimate in place of a refusal",
+          "cites the specific-conductance chapter's statement that conductivity has been used to estimate major solute concentrations as a route to buffering capacity"
         ]
       }
     }

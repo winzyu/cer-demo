@@ -3,7 +3,8 @@
   "class": "deep-in-manual",
   "expected_to_favor": "rag",
   "answerable_from": [
-    "usgs-nfm-a6.7-turbidity.pdf"
+    "usgs-nfm-a6.7-turbidity.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
   ],
   "requires": [],
   "notes": "Numeric lookup in NFM A6.7 table 6.7-6 (reporting resolution by turbidity range and method). Claims: tby-t6-low-rows-01 (0 to <1 reported to nearest 0.05 under USGS, ASTM, EPA 180.1 and GLI Method 2, nearest 0.01 under ISO 7027; 1 to <10 nearest 0.1 under all five), tby-t6-40-100-row-01 (40 to <100: nearest 1 under USGS/ASTM, nearest 5 under EPA 180.1 and GLI, ISO 7027 not applicable), tby-usgs-conforms-astm-01 (USGS follows ASTM unless the data are for drinking-water compliance under EPA 180.1, GLI Method 2 or ISO 7027). Table 6.7-6 is complete with caption and column header inside chunk 46 — the headerless repeat at the top of chunk 47 is not used. A6.7 is the corpus's only turbidity source; there is no turbidity probe datasheet in the slice, so expected to favor rag is near-certain here.",
@@ -15,7 +16,7 @@
         "must_contain": [
           "States 0.42 is logged to the nearest 0.05 unit under the USGS convention",
           "States 63.7 is logged to the nearest 1 unit under the USGS convention",
-          "Attributes the resolutions to the reporting-guidelines table in the USGS NFM turbidity chapter (table 6.7-6)"
+          "Attributes the resolutions to a USGS reporting-guidelines table (NFM A6.7 table 6.7-6 or NFM A6.8 table 6.8-7)"
         ],
         "must_not": [
           "Invents a reporting resolution not in the table",
@@ -23,7 +24,8 @@
           "Rounds 0.42 to a whole number or keeps 63.7 to two decimals"
         ],
         "cite": [
-          "usgs-nfm-a6.7-turbidity.pdf"
+          "usgs-nfm-a6.7-turbidity.pdf",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
         ]
       }
     },
