@@ -105,8 +105,9 @@ const groupedContextBlock = (context: JudgeEvidence["context"]): string => {
  * row of Table 6.8-5, which is verbatim in the source. Both of the calibration's distance-2
  * correctness disagreements were this one defect.
  *
- * 25 of the fixtures' 110 distinct `must_not` items match. The other 85 — "declares the reading
- * normal", "concludes saltwater intrusion" — are decidable from the answer alone and stay cheap,
+ * 91 of the wave 1 set's 332 distinct `must_not` items match (measured 2026-09-02; it was 25 of
+ * 110 on the archived set). The rest — "declares the reading normal", "concludes saltwater
+ * intrusion" — are decidable from the answer alone and stay cheap,
  * which is why this is a predicate rather than a blanket "always send the context": on direct-feed
  * the slice is ~11K tokens a call, and `GRADING_GUIDE.md` §3's rule that correctness is scored
  * against the rubric and not the source text is right everywhere it applies.

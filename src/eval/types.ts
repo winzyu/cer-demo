@@ -1,13 +1,25 @@
 /**
  * The eval-fixture contract for the Phase N2 bake-off (`RETRIEVAL_BAKEOFF.md` §5).
  *
- * Fixtures are **data, not code**: one JSON file per conversation under `eval/fixtures/`,
- * committed before any arm runs. The types here exist so the capture runner and the offline
- * grader read the same shape, and so a malformed rubric fails at load rather than halfway
+ * Fixtures are **data, not code**: one JSON file per conversation, committed before any arm
+ * runs. The loader's `FIXTURE_DIR` decides where — `eval/fixtures-wave1/` during the rebuild,
+ * `eval/fixtures/` before it and again after. The types here exist so the capture runner and the
+ * offline grader read the same shape, and so a malformed rubric fails at load rather than halfway
  * through a paid sweep.
  */
 
-/** Question classes from `RETRIEVAL_BAKEOFF.md` §5, extended for the rescoped corpus. */
+/**
+ * Question classes from `RETRIEVAL_BAKEOFF.md` §5, extended for the rescoped corpus.
+ *
+ * **Twelve are declared; wave 1 populates seven** — `deep-in-manual`, `cross-document`,
+ * `probe-calibration`, `precedence`, `definitional`, `follow-up`, `refusal`. The other five are
+ * deliberately unpopulated rather than removed (`EVAL_REBUILD.md` §2): `acronym-exact-token` is
+ * slice-answerable and so cannot discriminate between retrieval strategies; `event-signature` and
+ * `sensor-combined` depend on a source-of-truth signature matrix that extraction damaged;
+ * `fouling-drift` has one operator-document claim behind it; `threshold-lookup` was folded into
+ * `deep-in-manual`, which is the same question shape. They stay in the type so a wave 2 or a
+ * repaired document can populate them without a schema change.
+ */
 export const EVAL_CLASSES = [
   "definitional",
   "acronym-exact-token",

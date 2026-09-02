@@ -42,12 +42,15 @@ export const FIXTURE_DIR = path.resolve(__dirname, "../../eval/fixtures-wave1");
  * carries an operator range for it (`src/prompt/systemPrompt.ts`).
  *
  * **`sensor-tool` is conditional, not permanent.** `query_sensor_data` and the tool loop are
- * built (Phase N3) but gated on `SENSOR_TOOL`, which defaults off so the bake-off's pinned
- * system prompt stays byte-identical while ◆G7 is open. Deriving the capability from that same
- * flag keeps the eval honest in both directions: with the flag off the two sensor fixtures stay
- * unrunnable and a sweep is reproducibly the same 28 the captured arms ran, and with it on all
- * 30 are runnable. Hard-coding `sensor-tool` here would let a default-configured sweep "run"
- * two fixtures against a tool the model was never offered, and grade the refusals as answers.
+ * built (Phase N3) but gated on `SENSOR_TOOL`, which defaults off. Deriving the capability from
+ * that same flag keeps the eval honest in both directions: a fixture needing the tool is
+ * unrunnable while the flag is off, and runnable when it is on. Hard-coding `sensor-tool` here
+ * would let a default-configured sweep "run" a fixture against a tool the model was never
+ * offered, and grade the refusal as an answer.
+ *
+ * **Wave 1 exercises none of this.** It declares no `requires` at all (§2 drops the
+ * `sensor-combined` class), so all 46 fixtures are runnable under either setting and the flag
+ * changes nothing. The archived 30-fixture set is where the 28-of-30 split came from.
  */
 export const availableCapabilities = (
   sensorTool: boolean = config.tools.sensorTool,
