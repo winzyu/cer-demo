@@ -1,10 +1,9 @@
-import crypto from "crypto";
 import { buildMessages, formatContext } from "../../src/prompt/promptBuilder";
-import { REFUSAL_SENTENCE, TOOL_BLOCK, buildSystemPrompt } from "../../src/prompt/systemPrompt";
+import {
+  REFUSAL_SENTENCE, REPORT_TOOL_BLOCK, TOOL_BLOCK, buildSystemPrompt,
+} from "../../src/prompt/systemPrompt";
 import type { Chunk } from "../../src/types/retrieval.types";
 import type { ChatMessage } from "../../src/types/chat.types";
-
-const sha256 = (value: string): string => crypto.createHash("sha256").update(value, "utf8").digest("hex");
 
 const chunks: Chunk[] = [
   { id: "c1", text: "DO below 5 mg/L stresses aquatic life.", source: "doc://epa-do" },
@@ -68,52 +67,91 @@ describe("buildSystemPrompt", () => {
   });
 });
 
-describe("the pinned bake-off prompt (SENSOR_TOOL off)", () => {
-  /**
-   * The system prompt is a **pinned control** for the Phase N2 bake-off (`RETRIEVAL_BAKEOFF.md`
-   * §4), and ◆G7 is still open on ungraded quality. Three arms were swept against the exact
-   * bytes below; changing them voids all three and forces a paid re-run.
-   *
-   * Hashed rather than eyeballed because the failure this guards is invisible in review — a
-   * trailing space or a swapped newline reads as identical on screen and produces a different
-   * cache prefix and a different prompt. These digests were taken from the prompt as it stood
-   * at the merge commit `fa299ef`, immediately before the N3 tool block was added, and verified
-   * equal to the pre-change function's output for both water types.
-   *
-   * **If this fails, do not update the hash to make it pass.** Either the change is unintended
-   * and belongs reverted, or ◆G7 has closed and the arms are being deliberately re-run — in
-   * which case update the digest *and* say so in `RETRIEVAL_BAKEOFF.md`.
-   */
-  it("is byte-identical to the prompt the captured arms ran against", () => {
-    expect(sha256(buildSystemPrompt("freshwater", false)))
-      .toBe("5c00189b647d59b552027d2bc16835de02ba63a9e6ddcbfea6c3ef12b87eb39a");
-    expect(sha256(buildSystemPrompt("saltwater", false)))
-      .toBe("01eb2effc857d3a26ec2b972c86d501be657dd83201a5cb0ede52acb103d3503");
+/**
+ * The tool flags are **purely additive** to the base prompt.
+ *
+ * This block used to pin two sha256 digests of the base prompt, under an instruction not to
+ * update them, because the prompt was a pinned control for the Phase N2 bake-off. **That control
+ * was released on 2026-08-26** when ◆G7 was split and its retrieval half closed
+ * (`docs/timeline.md`, `HANDOFF_2026-08-27.md` §"the system prompt is unpinned"), and every
+ * transcript captured against those bytes was archived out of the tree on 2026-09-01 under
+ * `eval-archive-2026-09-01`. There is nothing left for a digest to protect, and `EVAL_REBUILD.md`
+ * Phase 2a's whole job is to rewrite this prompt to ask for verbatim quotes — so the pin had
+ * become a test that fails the next sanctioned change while telling the author not to touch it.
+ *
+ * What replaces it is the property that actually has to hold and is not a snapshot: **a flag may
+ * only append.** Turning a tool on must leave the base prompt a byte-exact prefix, so operator
+ * ranges and refusal contract cannot shift underneath it and the cacheable prefix stays stable.
+ * That catches a stray edit above the tool blocks, which is what the digest was really for,
+ * without going stale every time the prompt is legitimately revised.
+ *
+ * **Every call here passes all three arguments.** They default to `config.tools.*`, so a
+ * two-argument call silently reads ambient `REPORT_TOOL` — and `.env` sets it to `true`. The
+ * digests only ever passed because `test/setupEnv.ts` neutralises `.env` under jest; exporting
+ * `REPORT_TOOL=true` in the shell (which `setupEnv.ts` documents as still working) would have
+ * failed the pin for a reason that had nothing to do with the prompt text.
+ */
+describe("the tool flags are additive", () => {
+  const base = buildSystemPrompt("freshwater", false, false);
+
+  it("says nothing about tools when both flags are off", () => {
+    expect(base).not.toContain("query_sensor_data");
+    expect(base).not.toContain("generate_report");
+    expect(base).not.toContain("TOOLS:");
   });
 
-  it("says nothing about tools when the flag is off", () => {
-    const prompt = buildSystemPrompt("freshwater", false);
-
-    expect(prompt).not.toContain("query_sensor_data");
-    expect(prompt).not.toContain("TOOLS:");
+  it("carries the operator ranges and the refusal contract regardless of the flags", () => {
+    // The content the flags must never disturb, asserted on all four combinations.
+    [[false, false], [true, false], [false, true], [true, true]].forEach(([sensor, report]) => {
+      const prompt = buildSystemPrompt("freshwater", sensor, report);
+      expect(prompt).toContain("AUTHORITATIVE NORMAL RANGES");
+      expect(prompt).toContain(REFUSAL_SENTENCE);
+    });
   });
 
-  it("appends the tool block, and only the tool block, when the flag is on", () => {
-    // The flag must be purely additive: an arm's prompt is a prefix of the tool-enabled one,
-    // so nothing above the appended block can have shifted.
-    const off = buildSystemPrompt("freshwater", false);
-    const on = buildSystemPrompt("freshwater", true);
+  it("appends the sensor tool block, and only that, when SENSOR_TOOL is on", () => {
+    const on = buildSystemPrompt("freshwater", true, false);
 
-    expect(on.startsWith(off)).toBe(true);
-    expect(on.slice(off.length)).toBe(`\n\n${TOOL_BLOCK}`);
+    expect(on.startsWith(base)).toBe(true);
+    expect(on.slice(base.length)).toBe(`\n\n${TOOL_BLOCK}`);
   });
 
-  it("keeps the authoritative ranges above the tool block", () => {
-    // Ordering is the reason the flag-off prompt stays a prefix: ranges are static content and
-    // must not move below anything added later.
-    const on = buildSystemPrompt("freshwater", true);
+  it("appends the report tool block, and only that, when REPORT_TOOL is on alone", () => {
+    // REPORT_TOOL does not require SENSOR_TOOL — a deployment can turn it on by itself, and the
+    // block is written to read correctly in that case. Untested until now.
+    const on = buildSystemPrompt("freshwater", false, true);
 
-    expect(on.indexOf("AUTHORITATIVE NORMAL RANGES")).toBeLessThan(on.indexOf("TOOLS:"));
+    expect(on.startsWith(base)).toBe(true);
+    expect(on.slice(base.length)).toBe(`\n\n${REPORT_TOOL_BLOCK}`);
+  });
+
+  it("appends sensor then report, in that order, when both are on", () => {
+    // Both blocks open with their own "TOOLS:" header, so `indexOf("TOOLS:")` and
+    // `not.toContain("TOOLS:")` cannot tell them apart. Slicing is what distinguishes them.
+    const both = buildSystemPrompt("freshwater", true, true);
+    const sensorOnly = buildSystemPrompt("freshwater", true, false);
+
+    expect(both.startsWith(sensorOnly)).toBe(true);
+    expect(both.slice(sensorOnly.length)).toBe(`\n\n${REPORT_TOOL_BLOCK}`);
+    expect(both.indexOf(TOOL_BLOCK)).toBeLessThan(both.indexOf(REPORT_TOOL_BLOCK));
+  });
+
+  it("keeps the authoritative ranges above both tool blocks", () => {
+    const both = buildSystemPrompt("freshwater", true, true);
+
+    expect(both.indexOf("AUTHORITATIVE NORMAL RANGES")).toBeLessThan(both.indexOf(TOOL_BLOCK));
+    expect(both.indexOf("AUTHORITATIVE NORMAL RANGES"))
+      .toBeLessThan(both.indexOf(REPORT_TOOL_BLOCK));
+  });
+
+  it("keeps the two water types different only in their ranges block", () => {
+    // What the saltwater digest was really asserting: the two prompts are the same document
+    // with one substituted section, not two independently drifting texts.
+    const salt = buildSystemPrompt("saltwater", false, false);
+
+    expect(salt).not.toBe(base);
+    expect(salt).toContain("AUTHORITATIVE NORMAL RANGES");
+    expect(salt).toContain(REFUSAL_SENTENCE);
   });
 });
 
