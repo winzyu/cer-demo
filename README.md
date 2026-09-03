@@ -420,12 +420,13 @@ surface as answer-quality differences and be misread as one strategy beating ano
 > 2026-08-19** to `archive/pgvector-rag/`, which mirrors the original paths (adapter, `rrf.ts`,
 > seeder, `db/bakeoff/schema.sql`, `docker-compose.bakeoff.yml`, `src/config/pgvector.ts`). This was
 > done **ahead of ◆G7 by decision, not because ◆G7 closed** — it is still open on grading.
-> Its **evidence stays live and untouched**: the 56 transcripts under `eval/transcripts/*/pgvector-rag/`,
-> the label→arm mapping in `eval/grading/warm/KEY.json`, the arm's cost scenario (so `npm run cost`
-> still prices all three), and its entry in `scripts/gradePacket.ts` (so `npm run grade:packet`
-> still works). What archiving gave up is the ability to **re-run or re-capture** the arm: that now
-> requires restoring the files from `archive/pgvector-rag/`, re-adding the `pg` dependency, and
-> re-registering the mode. See [`docs/SPECS.md`](docs/SPECS.md) §14 for the arm's findings.
+> **Amended 2026-09-01.** The arm is permanently dropped, and its captured evidence — the 56
+> transcripts and the `eval/grading/warm/KEY.json` label mapping — was archived out of the tree with
+> the rest of the pre-rebuild eval set under the tag `eval-archive-2026-09-01`
+> (`git show eval-archive-2026-09-01:eval/grading/warm/KEY.json`). What stays live is the arm's
+> **cost scenario**, so `npm run cost` still prices it: a comparison that drops its losers is
+> unauditable. See [`docs/ARCHIVED.md`](docs/ARCHIVED.md) for what moved and
+> [`docs/EVAL_REBUILD.md`](docs/EVAL_REBUILD.md) §1 for why the arm is not being restored.
 
 <details>
 <summary><b><code>firestore-direct</code></b></summary>

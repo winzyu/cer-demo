@@ -1,5 +1,13 @@
 # Qualifying the 30 committed fixtures against the 2026-08-21 corpus
 
+> ## ⚠ HISTORICAL — both the fixtures and the corpus it checks are gone
+>
+> This qualified the archived 30-fixture set against an 18-document / 1,254,899-char corpus. The
+> corpus is now 15 documents / 851,891 chars / 451 chunks, and the fixtures were archived on
+> 2026-09-01 under `eval-archive-2026-09-01`. **The equivalent pass for the live set is
+> `eval/fixtures-wave1/_QUALIFICATION.md`.** Kept as the record of a method that worked.
+
+
 A per-fixture re-examination of `eval/fixtures/`, run **2026-08-24** against the corpus artifact
 `data/corpus/corpus.json` (generated `2026-08-22T01:14:04Z`, 18 documents, 1,254,899 chars) and the
 code as it stands on `dev`.

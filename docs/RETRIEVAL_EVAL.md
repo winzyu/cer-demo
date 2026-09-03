@@ -3,6 +3,17 @@
 `npm run retrieval:eval` scores a retrieval adapter against a labelled query set. **No LLM, no
 network for the corpus, deterministic, seconds per run.**
 
+> ## ⚠ The harness is live; its label set is not, as of 2026-09-01
+>
+> **`npm run retrieval:eval` currently throws** `No retrieval labels at eval/retrieval-labels`. The
+> 48 label files were archived under `eval-archive-2026-09-01` and **Phase 1e** of
+> [`EVAL_REBUILD.md`](EVAL_REBUILD.md) rebuilds them — see [`RETRIEVAL_LABELS.md`](RETRIEVAL_LABELS.md)
+> for what 1e must do differently.
+>
+> Every measured number below (99 queries, 48 fixtures, the 20.2% stub floor, the per-arm recall)
+> describes the archived label set against a **393-chunk** corpus. The corpus is now **451 chunks**.
+> The harness, the metrics and the traps are unchanged and still correct.
+
 Companion docs: [`RETRIEVAL_LABELS.md`](RETRIEVAL_LABELS.md) (how the ground truth was built),
 [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md) (the question set), [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md)
 (the Phase N2 LLM sweep this does **not** replace).
@@ -25,8 +36,8 @@ The LLM sweep remains the only word on answer quality.
 ## 2. Running it
 
 ```bash
-npm run ingest                 # 15 docs -> data/corpus/corpus.json (393 chunks)
-npm run embed:cache            # embeds 393 chunks once; incremental afterwards
+npm run ingest                 # 15 docs -> data/corpus/corpus.json (451 chunks)
+npm run embed:cache            # embeds 451 chunks once; incremental afterwards
 npm run retrieval:eval                                   # every registered adapter
 npm run retrieval:eval -- --adapter=local-vector --k=10
 npm run retrieval:eval -- --adapter=stub,firestore-direct,local-vector --out=data/retrieval-eval/run.json
@@ -37,7 +48,7 @@ exactly what a change moved, **including what quietly got worse**, which a summa
 
 ## 3. Baseline — 2026-08-24
 
-99 labelled queries across 48 fixtures, 15-document corpus, 393 chunks.
+99 labelled queries across 48 fixtures, 15-document corpus, 393 chunks — the **archived** label set (see the banner above).
 
 | adapter | recall | precision | MRR | nDCG | chunks in context |
 |---|---:|---:|---:|---:|---:|

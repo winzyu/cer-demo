@@ -1,5 +1,16 @@
 # Retrieval Comparison — ◆G7
 
+> ## ⚠ SUPERSEDED 2026-09-01 — every number here was measured on a placeholder model
+>
+> This reported a result that did not survive scrutiny. See [`EVAL_REBUILD.md`](EVAL_REBUILD.md) §0.
+> The oracle-router ceiling of 1.155, the dilution finding and the per-class results are all
+> properties of `gpt-oss-20b`, which is not the shipping model. The transcripts and grading rows
+> behind every figure were archived on 2026-09-01 under `eval-archive-2026-09-01`.
+>
+> **Treat every retrieval arm as unranked.** Whether ◆G7 should be formally re-opened and re-closed
+> on new evidence is a Phase 4 decision (`timeline.md`).
+
+
 > **STATUS: ◆G7 IS OPEN, AND THE DATA IS WHY.** This is the deliverable specified in
 > [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §10. Both tiers have now run on admissible
 > evidence. **Every arm fails the §8a quality floor**, so no retrieval strategy is selected and

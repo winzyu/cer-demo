@@ -1,16 +1,27 @@
-# Grading Guide — Retrieval Bake-off
+# Grading Guide
 
-Instructions for a **human judge** scoring the captured bake-off answers. No technical background
-is needed: you are reading answers about water quality and deciding whether each one does what its
-rubric asks.
+Instructions for a **human judge** scoring captured answers. No technical background is needed:
+you are reading answers about water quality and deciding whether each one does what its rubric
+asks.
 
-This closes the half of Phase N2 that a machine cannot do. The capture is finished — three
-retrieval strategies each answered the same 28 conversations, and the token, latency and cost
-numbers are already measured. **What is unmeasured is whether the answers are any good**, and
-until that exists, decision gate ◆G7 stays open.
+> **Status 2026-09-02 — there is nothing to grade yet, and the packet this guide was written
+> against no longer exists.** The 2026-08 bake-off packet (28 conversations, three arms, 174 rows
+> of which 36 were filled) was archived on 2026-09-01 under the tag `eval-archive-2026-09-01`; see
+> [`ARCHIVED.md`](ARCHIVED.md). Those rows graded a placeholder model against fixtures that have
+> since been replaced.
+>
+> **The next grading round is Phase 2c** of [`EVAL_REBUILD.md`](EVAL_REBUILD.md): 30 rows,
+> stratified across classes and arms, ~1.5–2 hours, and it needs a capture to exist first
+> (Phase 3). The mechanics below are unchanged and still correct — only the counts and paths in
+> §1 will differ, and `npm run grade:packet` prints the real ones.
+>
+> Two rules that cost real work when they were learned: use `--out=<dir>`, **never `--force`**
+> (that flag destroyed 36 completed rows once), and **do not open `KEY.json`** until `scores.csv`
+> is filled in.
 
 Design this implements: [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §7b (grading) and §8a (the
-thresholds). Question set: [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md).
+thresholds), with the thresholds carried forward verbatim in `EVAL_REBUILD.md` §1. Question set:
+`eval/fixtures-wave1/`, planned in [`EVAL_REBUILD.md`](EVAL_REBUILD.md) §2.
 
 ---
 
@@ -21,12 +32,15 @@ npm run grade:packet          # rebuild if needed; safe to re-run, labels don't 
 ```
 
 ```
-eval/grading/warm/
-├── packet/<fixture>.md    ← 28 sheets. This is what you read.
+eval/grading/<pass>/
+├── packet/<fixture>.md    ← one sheet per fixture. This is what you read.
 ├── context/<fixture>/     ← the source text each answer was given
-├── scores.csv             ← 174 rows. This is what you fill in.
+├── scores.csv             ← one row per fixture x turn x arm. This is what you fill in.
 └── KEY.json               ← which letter was which system. DO NOT OPEN YET.
 ```
+
+(The archived 2026-08 packet was 28 sheets and 174 rows. The Phase 2c packet will be sized from
+whatever Phase 3 captures — `npm run grade:packet` reports the counts when it builds.)
 
 Each sheet holds one conversation: the question, the rubric it is graded against, and **three
 answers labelled A, B and C**. Three different systems produced them.

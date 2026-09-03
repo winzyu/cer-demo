@@ -1,5 +1,18 @@
 # Retrieval Bake-off — Direct-Feed vs RAG
 
+> ## ⚠ COMPLETED EXPERIMENT — its conclusions are superseded
+>
+> **Do not read this to learn the current state.** [`EVAL_REBUILD.md`](EVAL_REBUILD.md) §0 explains
+> why this experiment's result did not hold: every capture ran on `gpt-oss-20b`, a placeholder
+> model; the arms were compared on a system where 53–59% of turns carried an ungrounded claim; and
+> the fixture set was 90% slice-answerable. All its captures and grading packets were archived on
+> 2026-09-01 under `eval-archive-2026-09-01`. **Treat every retrieval arm as unranked.**
+>
+> **What is still in force:** §8a's pre-registered thresholds, carried forward verbatim into
+> `EVAL_REBUILD.md` §1, and the harness design in §7b/§8b. The instruments were kept; the numbers
+> were not.
+
+
 The experiment design for comparing a **direct-feeding brain** (put the source text in the prompt,
 let the model read it) against a **RAG brain** (embed, search, inject only the top matches) for the
 Clean Earth chatbot.

@@ -1,5 +1,13 @@
 # Eval fixtures — the next question set (2026-08-24)
 
+> ## ⚠ ARCHIVED AND NEVER MERGED — superseded by the wave 1 rebuild
+>
+> These 18 fixtures were an expansion of a set that has since been replaced wholesale. They were
+> **archived on 2026-09-01** under `eval-archive-2026-09-01` without ever being merged, and they
+> were written against an 18-document corpus that no longer exists (the corpus is 15 documents /
+> 451 chunks). **The live set is `eval/fixtures-wave1/`** — see [`EVAL_REBUILD.md`](EVAL_REBUILD.md).
+
+
 Eighteen new conversations, thirty-seven turns, written for the **18-document corpus** the
 2026-08-21 expansion produced. They live in `eval/fixtures-next/`, **not** in `eval/fixtures/`,
 and they are not part of any sweep that has run.

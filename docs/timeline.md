@@ -794,9 +794,46 @@ conversations that survive a page reload.*
 
 ---
 
+## Eval rebuild — 2026-09-01
+
+**The evaluation apparatus was rebuilt from scratch, and ◆G7's retrieval half should be treated as
+re-opened in substance even though it is recorded above as CLOSED.**
+
+The 2026-08 result did not survive scrutiny for three independent reasons: every capture ran on
+`gpt-oss-20b`, a placeholder model being replaced by `gpt-oss-120b`; the arms were compared on a
+system where 53–59% of turns carried an ungrounded claim, so the headline "extra chunks dilute"
+finding was measured on a model ignoring its grounding instructions half the time; and 27 of the 30
+fixtures were answerable from 4.4% of the corpus, with three fixtures carrying the whole
+`deep-in-manual` class. The plan, the pre-registered thresholds carried forward verbatim, and the
+five wave-1 exit criteria are in **[`EVAL_REBUILD.md`](EVAL_REBUILD.md)**, which is the file a cold
+start should read first.
+
+**Whether ◆G7 is formally re-opened and re-closed on new evidence is a Phase 4 decision**, with the
+entry to be written here at that point. Until then: **treat every retrieval arm as unranked.**
+
+| decision | date | record |
+|---|---|---|
+| Corpus re-ingested without the alpha-ratio filter — **393 → 451 chunks** | 2026-08-31 | The filter removed 42 numeric tables (34 of them the `usgs-nfm-a6.2` oxygen-solubility tables) and **zero** chunks of OCR noise, the only thing it exists to catch. All 393 existing content-derived ids survived. `EVAL_REBUILD.md` §2b, `SPECS.md` §"chunking" |
+| Chunking parameters **frozen** | 2026-08-31 | Changing any voids every retrieval label; ids are content-derived SHA-256. `EVAL_REBUILD.md` §2b |
+| Judge settled: **`deepseek-v4-flash-0731`** | 2026-08-31 | Correctness κ 0.937 on the 24 comparable human rows; the only candidate clearing κ 0.70 on all three dimensions, and cross-family against both the fixture author and the generator. Provisional until Phase 2c re-measures κ. `EVAL_REBUILD.md` §3a |
+| Fixture set rebuilt: **46 fixtures / 92 turns**, seven classes | 2026-09-01 | Five of the twelve `EVAL_CLASSES` deliberately unpopulated. `EVAL_REBUILD.md` §2 |
+| **Old eval artifacts archived** — 556 files, ~20MB | 2026-09-01 | Tag `eval-archive-2026-09-01`. Covers `eval/{fixtures,fixtures-next,retrieval-labels,transcripts,grading}/`. Breaks `--calibrate` until Phase 2c, deliberately. [`ARCHIVED.md`](ARCHIVED.md) |
+| Wave-1 **exit criterion 1 passes** — contamination 22.8% document-level, 11.6% chunk-level, against a < 40% bar | 2026-09-01 | `eval/fixtures-wave1/_CONTAMINATION.md` |
+| Phase 2b done: judge repointed | 2026-09-02 | `DEFAULT_JUDGE_MODEL` had still been `gpt-oss-120b`, which had become the production generator — the default judge was set to grade its own output. Guarded by a test that fails if it is put back |
+| Alpha-ratio filter defaulted **off** | 2026-09-02 | It defaulted *on* while the sole production caller passed `false` and no test covered the ingest path, so deleting one argument would have silently re-filtered the corpus to 393 chunks with the suite green |
+
+**Known blocker on Phase 3.** The Tier 1 refusal gate detects refusal-required turns by
+regex-matching rubric prose, and matches **0 of wave 1's 8 refusal turns** — the new set phrases the
+requirement as "Declines to…" rather than "refuses to answer". `refusalMap()` now throws rather than
+reporting a vacuous 100% pass. The fix is a per-turn `requires_refusal` flag on the fixtures.
+
+---
+
 ## Session handoffs
 
-Current state, open decisions, and how to resume: **[`HANDOFF_2026-08-27.md`](HANDOFF_2026-08-27.md)**.
+Current state, open decisions, and how to resume: **[`EVAL_REBUILD.md`](EVAL_REBUILD.md)** for all
+eval work, then [`HANDOFF_2026-08-27.md`](HANDOFF_2026-08-27.md) for everything else. The handoff
+carries a banner marking which of its sections the rebuild superseded.
 
 The 2026-07-31 / 2026-08-04 handoff that used to sit here has been removed — every item it listed as
 pending has since happened, and it had begun to contradict the phases above. The findings it carried

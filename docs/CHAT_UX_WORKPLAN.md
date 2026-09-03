@@ -38,9 +38,11 @@ Phase 0 creates the seam first.
    ```
 
    N7's Next.js page is served anyway, so this is the direction of travel rather than a detour.
-7. **Do not touch** `eval/transcripts/**` (captured evidence), `eval/grading/**` (a live blind packet
-   — `KEY.json` un-blinds it and must not be read), or `test/fixtures/device-api/**` (frozen
-   recordings; the trap-preserving duplicates and mixed temperature units are deliberate).
+7. **Do not touch** `eval/fixtures-wave1/**` (the live eval set) or `test/fixtures/device-api/**`
+   (frozen recordings; the trap-preserving duplicates and mixed temperature units are deliberate).
+   `eval/transcripts/**` and `eval/grading/**` were archived on 2026-09-01 and no longer exist in
+   the tree — see [`ARCHIVED.md`](ARCHIVED.md). When Phase 3 refills them the same rule applies:
+   captured evidence is not edited, and `KEY.json` un-blinds a packet and must not be read.
 8. **Write only inside this repo.** `../user-dashboard` and `../backend` are read-only references —
    and the real brand assets and tokens live there: `public/cer-light-transparent.png`,
    `public/gilligan-icon.png`, `src/app/globals.css` (`#12182b`, Work Sans 300 / Poppins 600),
@@ -256,7 +258,7 @@ pass-through would have published errnos.
 **Owns:** `scripts/starterPrompts.ts` *(new)*, `test/unit/starterPrompts.test.ts` *(new)*, the
 `starter:prompts` entry in `package.json`, and regenerating `frontend/starter-prompts.json`
 
-Generate the starter prompts from `eval/fixtures/` rather than hand-writing them — the question set is
+Generate the starter prompts from the eval fixture set rather than hand-writing them — the question set is
 already curated, and generated prompts stay in sync for free.
 
 - Emit the **first user turn** of a spread of fixtures across classes.

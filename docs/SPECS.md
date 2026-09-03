@@ -10,9 +10,18 @@ status block below says which phase each piece belongs to.
 - The **direct-feed vs RAG experiment** that decides how document context is retrieved — on cost —
   is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). Deferred: it runs on its own branch after
   Phase N1, and produces `RETRIEVAL_COMPARISON.md`.
-- The **question set every arm is graded against** is in [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md)
-  (§12), committed before any arm runs.
+- The **question set every arm is graded against** is described in §12 and planned in
+  [`EVAL_REBUILD.md`](EVAL_REBUILD.md), committed before any arm runs. (`EVAL_FIXTURES.md`
+  describes the set archived on 2026-09-01.)
 
+> **Status (2026-09-02): the eval apparatus is being rebuilt — see
+> [`EVAL_REBUILD.md`](EVAL_REBUILD.md), which supersedes the N2 status below.** The 2026-08 bake-off
+> result did not survive scrutiny: every capture ran on `gpt-oss-20b`, a placeholder model, against
+> a fixture set that was 90% slice-answerable, on a system where 53–59% of turns carried an
+> ungrounded claim. All captures, grading packets and labels were archived on 2026-09-01 under the
+> tag `eval-archive-2026-09-01`. **Treat every retrieval arm as unranked.** The paragraphs below
+> record what was built and are accurate as history; their conclusions are not current.
+>
 > **Status (2026-08-13): Phase N1 complete; Phase N2 captured but ungraded.** Service bootstrap,
 > the retrieval seam (§9), and a working `POST /api/v1/chat` (§10). **All three retrieval arms were
 > built, seeded and swept** — `firestore-direct`, `pgvector-rag`, `firestore-vector` (§14, §14b) —
@@ -186,10 +195,11 @@ clean-earth-rag/
 │   ├── integration/  health.test.ts, chat.test.ts, sensorChat.test.ts, quotaChat.test.ts,
 │   │                 devices.test.ts
 │   ├── fixtures/device-api/  recorded production bodies + provenance README (§16)
-│   └── unit/         31 suites — see the table in §16
-├── eval/fixtures/            30 committed bake-off conversations (§12)
-├── eval/transcripts/         captured sweeps, <pass>/<arm>/<fixture>.json (§13)
-├── eval/grading/             blind grading packet, <pass>/{packet,context,scores.csv,KEY.json}
+│   └── unit/         40 suites — see the table in §16
+├── eval/fixtures-wave1/      46 committed eval conversations, 92 turns (§12)
+├── eval/claims/              Phase 1a claim inventory, one file per document
+│                             eval/{fixtures,transcripts,grading,retrieval-labels}/ were archived
+│                             2026-09-01 — tag `eval-archive-2026-09-01`, see ARCHIVED.md
 ├── frontend/index.html       static chat UI, wired to POST /api/v1/chat (streaming)
 ├── data/                     corpus artifact + device-API recordings (git-ignored)
 ├── documents/                corpus PDFs — `documents/*` is git-ignored, but the five Tier 1
@@ -830,11 +840,12 @@ retrieval-strategy differences.
 | Extract | `.md`/`.txt` read as UTF-8; PDFs via `pdf-parse` (v2 class API, not the v1 function form) |
 | OCR | If a PDF averages < 50 chars/page it is scanned. **OCR is not performed** — the legacy cache at `.ocr_cache/<filename>.txt` is reused, which keeps an OCR toolchain out of the service and guarantees byte-identical text across arms. Missing cache ⇒ hard error, never silent partial text. |
 | Chunk | 3200 chars / 400 overlap, recursive splitter over `["\n\n", "\n", ". ", " ", ""]` |
-| Filter | length ≥ 100, no PDF boilerplate, and an alphabetic-ratio ≥ 0.5 test **skipped for `.md`/`.txt`** — see below |
+| Filter | length ≥ 100 and no PDF boilerplate. The alphabetic-ratio ≥ 0.5 test is **off for every document** and off by default — see below |
 | Output | per document: full `text` (direct-feed) and filtered `chunks` (vector arms), plus the ◆G9 slice flag |
 
-Current run, **corpus trimmed 2026-08-24**: **15 documents, 851,891 chars (~213K tokens),
-393 chunks**; direct-feed slice unchanged at **37,660 chars (~9.4K tokens)**. It was 18 documents /
+Current run, **re-ingested 2026-08-31 without the alpha-ratio filter**: **15 documents,
+851,891 chars (~213K tokens), 451 chunks** (was 393 with the filter on); direct-feed slice
+unchanged at **37,660 chars (~9.4K tokens)**. It was 18 documents /
 1,254,899 chars / 558 chunks after the 2026-08-21 expansion, and 8 documents / 716,603 chars /
 305 chunks before that. The trim cut three documents that carried no number or procedure for any
 measured parameter — 32% of the characters, and nothing that answers a question
@@ -860,12 +871,33 @@ a fixed baseline rather than a fourth candidate.
 - **`epa-sop-field-instrument-calibration-2010.pdf` is scanned** (18 chars/page) and ingests only
   via `.ocr_cache/`, which is git-ignored. Missing cache is a hard error, not silent partial text.
 
-**The alpha-ratio exemption is a deliberate break from legacy parity.** The 0.5 threshold cannot tell
-OCR noise from a table — markdown tables here score 0.07–0.14, so the legacy rule discarded 15 of 23
-chunks of the aquatic-life criteria table, the corpus's authoritative threshold source. Because
-direct-feed uses whole documents and the vector arms use chunks, leaving it alone would have handed
-direct-feed the threshold questions for reasons unrelated to retrieval. Full reasoning in
-[`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §4.
+**The alpha-ratio filter is off entirely, and off by default.** The 0.5 threshold cannot tell OCR
+noise from a table: a numeric grid is mostly digits and separators and scores far under it. Because
+direct-feed uses whole documents and the vector arms use chunks, leaving it on handed direct-feed
+the threshold questions for reasons unrelated to retrieval.
+
+**Measured 2026-08-31, over all fifteen documents**, the filter removed:
+
+| dropped | chunks |
+|---|---:|
+| Numeric tables | **42** |
+| Table-of-contents dot leaders | 17 |
+| Genuine OCR noise — the only thing it exists to catch | **0** |
+
+34 of the 42 were the oxygen-solubility tables in `usgs-nfm-a6.2`, the corpus's authoritative
+source for DO threshold lookups. An earlier version exempted `.md`/`.txt`; the reasoning was right
+and **the condition matched nothing**, because every document here is a PDF, so the exemption was
+dead code and the filter ran on all fifteen.
+
+The reversal was near-free and verified rather than assumed: the filter runs *after* chunking and
+chunk ids are content-derived, so re-ingest kept **393 of 393 existing ids, zero lost**, and added
+58. Only `index` moved, and it is re-derived from `chunkId`.
+
+`checkAlphaRatio` survives on `QualityOptions` as a deliberate escape hatch for a genuinely
+OCR-noisy document, should one ever be added. **It defaults to `false` as of 2026-09-02** — the
+destructive state has to be asked for, because turning it back on silently re-deletes those tables
+and kills every retrieval label keyed to them without a single test failing. Full reasoning in
+[`EVAL_REBUILD.md`](EVAL_REBUILD.md) §2b.
 
 `data/` is git-ignored, so the artifact is rebuilt locally rather than committed.
 
@@ -898,12 +930,22 @@ back in stable filename order.
 
 ---
 
-## 12. Eval fixtures (`eval/fixtures/`, `src/eval/`)
+## 12. Eval fixtures (`eval/fixtures-wave1/`, `src/eval/`)
 
-The Phase N2 bake-off's question set: **30 conversations, 62 turns**, one JSON file per
-conversation, committed **before any arm runs** (`RETRIEVAL_BAKEOFF.md` §5). Full design —
-classes, grading scales, per-fixture predictions, and the two blockers — in
-[`EVAL_FIXTURES.md`](EVAL_FIXTURES.md).
+The question set every arm is graded against: **46 conversations, 92 turns**, one JSON file per
+conversation, committed **before any arm runs**. Seven classes — `cross-document` 12,
+`deep-in-manual` 10, `probe-calibration` 8, and 4 each of `definitional`, `follow-up`,
+`precedence` and `refusal`. No fixture declares a `requires`, so all 46 are runnable under any
+flag setting. Slice coverage: 41 none / 5 partial / 0 full.
+
+**This replaced the 30-conversation / 62-turn bake-off set on 2026-09-01.** The old set is archived
+under the tag `eval-archive-2026-09-01`; 27 of its 30 fixtures were answerable from 4.4% of the
+corpus and three carried the entire `deep-in-manual` class. The rebuild's plan, the wave-1 exit
+criteria and the class allocation are in [`EVAL_REBUILD.md`](EVAL_REBUILD.md) — **read that rather
+than `EVAL_FIXTURES.md`, which describes the archived set.**
+
+`FIXTURE_DIR` in `src/eval/fixtures.ts` points at `eval/fixtures-wave1/`. Renaming that directory
+back to `eval/fixtures/` is the last step of the migration; the name is deliberately left free.
 
 ```ts
 EvalFixture = { id, class, expected_to_favor, answerable_from, requires, notes, turns }
@@ -945,7 +987,9 @@ in-process — so the latency and token counts recorded are the ones production 
 | `scripts/bakeoff.ts` | wiring, spot-check mode, transcript writing |
 
 Transcripts land at `eval/transcripts/<pass>/<arm>/<fixture-id>.json` — the path separates passes
-and arms so cold and warm can never be blended by accident.
+and arms so cold and warm can never be blended by accident. **The directory is empty as of
+2026-09-01**: the 224 `gpt-oss-20b` captures were archived (`ARCHIVED.md`) and Phase 3 of the
+rebuild refills it. `npm run gate:check` throws `No transcripts at ...` until then, by design.
 
 **Four things it is built to prevent**, each of which otherwise produces a dataset that *looks*
 fine:
@@ -1120,7 +1164,7 @@ it is the weakness the legacy hybrid existed to cover, and the eval's exact-toke
 
 | element | value | why |
 |---|---|---|
-| Collection | `corpus_chunks`, one per chunk (**393** since the 2026-08-24 corpus trim; 305 when the arms were swept), id `<filename-slug>__<12 hex chars of sha256(chunk text)>` since 2026-08-24 — **positional before that**, which is why re-seeding never repaired the stale collection and `--wipe` exists | **Separate from `corpus_documents` by necessity** — Firestore will not index a vector inside an array element |
+| Collection | `corpus_chunks`, one per chunk (**451** since the 2026-08-31 re-ingest without the alpha-ratio filter; 393 before that, 305 when the arms were swept), id `<filename-slug>__<12 hex chars of sha256(chunk text)>` since 2026-08-24 — **positional before that**, which is why re-seeding never repaired the stale collection and `--wipe` exists | **Separate from `corpus_documents` by necessity** — Firestore will not index a vector inside an array element |
 | Vector field | `embedding`, `Vector(768)` via `FieldValue.vector()` | must match the index |
 | Distance | `COSINE`, to match pgvector's `<=>` | a different measure would mean the two RAG arms no longer compare the same similarity |
 | Fetch depth | `limit = topK` (5), not the pgvector arm's fetch-20 | depth 20 exists to give RRF something to fuse; with one branch it would only pay for discarded reads |
@@ -1208,7 +1252,7 @@ it is not the full list — `npx jest --listTests` is.
 | `unit/prompt.test.ts` | ranges, `REFUSAL_SENTENCE` pinned verbatim, block ordering, cacheable-prefix stability |
 | `unit/llmService.test.ts` | request params (`max_tokens`, `user`, no tools), empty-answer 502, streaming deltas, abort signal, usage handling |
 | `unit/directFeed.test.ts` | slice loading, once-per-process memoization, topK ignored, failure not cached, Firestore query shape |
-| `unit/ingestion.test.ts` | chunk sizing and overlap, the quality filter, the alpha-ratio exemption, corpus metadata |
+| `unit/ingestion.test.ts` | chunk sizing and overlap, the quality filter, the alpha-ratio escape hatch (off by default), corpus metadata |
 | `unit/chatValidators.test.ts` | history ordering, newest-kept trimming, the `system`-role rejection, per-index error messages |
 | `unit/evalFixtures.test.ts` | the committed eval set (ids, class coverage, multi-turn, slice consistency) and every rule the fixture loader claims to enforce |
 | `unit/bakeoffRunner.test.ts` | history assembly across turns, the arm-mismatch abort, failed-turn handling, cached-token accounting, the sweep warnings, SSE frame buffering, and CLI parsing |

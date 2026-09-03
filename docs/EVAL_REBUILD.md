@@ -49,7 +49,7 @@ retrieval existing in this system. A three-sample class mean has a standard erro
 | Shipping generator is `gpt-oss-120b` | **Settled 2026-08-31 — final production model.** Cost-cleared, §4. Phase 3 is a single-model baseline, not a sweep. |
 | The `restore-pgvector` work is dropped | **Settled 2026-08-31.** Not pursued. The tag `wip-restore-pgvector-2026-08-31` stays as the record — it costs nothing and matches the archive-don't-delete pattern used throughout. Do not spend time on it. |
 | Fixture-set sizing: two-wave, wave 1 = 88 turns | **Settled 2026-08-31**, §2 |
-| Judge is `deepseek-v4-flash-0731` on Fireworks | **Settled 2026-08-31.** Highest measured human agreement, cross-family, already wired and priced. §3a. |
+| Judge is `deepseek-v4-flash-0731` on Fireworks | **Settled 2026-08-31, shipped 2026-09-02.** Highest measured human agreement, cross-family, already wired and priced. §3a. `DEFAULT_JUDGE_MODEL` now carries it, and `test/unit/judge.test.ts` fails if it is put back into the generator's family. |
 | Judge must not be in the `gpt-oss` family | **Settled** |
 | Fixture author, judge, and generator must be three different families | **Settled** |
 
@@ -153,7 +153,7 @@ safe forever; re-chunking is not.
 | Overlap | **400 chars**, prepended from the previous chunk | `OVERLAP_CHARS` |
 | Splitter | recursive, separators `\n\n` → `\n` → `. ` → ` ` → hard cut | `SEPARATORS` |
 | Minimum chunk | **100 chars** | `MIN_QUALITY_CHARS` |
-| Alphabetic-ratio filter | **OFF for every document** | `ingest.ts:61` |
+| Alphabetic-ratio filter | **OFF for every document** — and off by *default* since 2026-09-02, so the destructive state has to be asked for | `chunk.ts` `isQualityChunk`, set explicitly at `ingest.ts` |
 | Boilerplate drop | `adobe acrobat`, `acrobat reader`, `click here to download` | `BOILERPLATE` |
 | Chunk id | `<filenameSlug>__<sha256(text)[0:12]>` | `chunkIdOf` |
 
@@ -256,8 +256,8 @@ ledgers in `data/results/judge/`. No API calls; reproduce with `calibrate()` ove
 The only candidate clearing κ 0.70 on all three dimensions. Cross-family — not Claude (fixture
 author), not gpt-oss (generator), so §1's three-families rule is met in intent and not only in
 letter. Already reachable through the existing Fireworks client and already priced in `prices.ts`,
-so Phase 2b is a one-line change to `DEFAULT_JUDGE_MODEL` (`runner.ts:72`, currently
-`gpt-oss-120b`) rather than new transport code.
+so Phase 2b was a one-line change to `DEFAULT_JUDGE_MODEL` rather than new transport code.
+**Done 2026-09-02** — see §5 Phase 2b.
 
 **Gemini was evaluated and not chosen.** It is a fine judge on paper and remains the fallback if
 deepseek fails re-calibration, but it needs base-URL/key selection at `scripts/judge.ts:272-278`,
@@ -371,7 +371,7 @@ does mean there is no cost argument for keeping groundedness in the paid tier.
 > hours of their time. Surprising them with work they did not know was coming is the main way
 > this plan fails.
 
-### Phase 0 — Lock the slate (sequential, main thread, no agents)
+### Phase 0 — Lock the slate (sequential, main thread, no agents) — ✅ **COMPLETE 2026-09-01**
 
 1. **Settle the uncommitted work.** `src/eval/judge/{prompts,runner}.ts` and `src/eval/prices.ts`
    carry the `response_format: json_schema` enforcement plus two judge price entries. This is
@@ -390,6 +390,13 @@ does mean there is no cost argument for keeping groundedness in the paid tier.
    tree, then leave a row in `docs/ARCHIVED.md`. Covers `eval/fixtures/`, `eval/fixtures-next/`,
    `eval/retrieval-labels/`, `eval/transcripts/`, `eval/grading/`. Nothing is lost — every one is
    committed and retrievable via `git show <tag>:<path>`.
+
+   **Done 2026-09-01** under the tag **`eval-archive-2026-09-01`** (pointing at `92438f3`, the last
+   commit containing them): 556 files, ~20MB. `docs/ARCHIVED.md` carries the per-directory table and
+   the warning that `--calibrate` is broken until Phase 2c. The directory *names* were left free —
+   new captures, packets and labels land back at `eval/transcripts/`, `eval/grading/` and
+   `eval/retrieval-labels/`, so none of those constants moved. `FIXTURE_DIR` points at
+   `eval/fixtures-wave1/`; renaming it back to `eval/fixtures/` is the last step of the migration.
 
 > ### → STOP. Hand back to the user with:
 >
@@ -483,7 +490,13 @@ instrument cannot read as fine as the threshold requires.* `checkQuotes` already
 `src/eval/gates/checks.ts` and currently measures 0 quoted citations on every arm, because the model
 has never been asked to emit one.
 
-**2b. Repoint the judge** to the cross-family model chosen in Phase 0.
+**2b. Repoint the judge** to the cross-family model chosen in Phase 0. — ✅ **DONE 2026-09-02.**
+`DEFAULT_JUDGE_MODEL` is `accounts/fireworks/models/deepseek-v4-flash-0731`. It had still been
+`gpt-oss-120b`, which had meanwhile become the *production generator* (§1), so the default judge
+was set to grade its own output and nothing in the suite objected. `test/unit/judge.test.ts` now
+asserts `judgesOwnFamily(DEFAULT_JUDGE_MODEL, PRODUCTION_GENERATOR) === false`, and that the
+shipped judge carries a `CHAT_PRICES` entry so the budget line cannot print blank. No API calls
+were made and nothing was spent.
 
 **2c. Re-calibrate** against the human-graded sample. Rows must be **stratified across classes and
 arms**, not concentrated — the previous 24 rows sat on 6 fixtures and scored 1.50/2 where the full
@@ -624,6 +637,19 @@ npm run ingest                          # documents/ -> data/corpus/corpus.json
 npm run embed:cache                     # incremental
 ```
 
+**Three of those throw right now, by design** — the archive emptied what they read, and each
+refills at a named phase. A clear "nothing captured yet" error is the correct output; the
+alternative was `gate:check` grading `gpt-oss-20b` transcripts and printing a PASS/FAIL that
+means nothing for the new set.
+
+| command | state as of 2026-09-02 | refilled by |
+|---|---|---|
+| `npm run gate:check` | `No transcripts at .../eval/transcripts/warm.` | Phase 3 |
+| `npm run judge -- --calibrate` | same message — it builds the task list before reading grades | Phase 3, then 2c |
+| `npm run retrieval:eval` | `No retrieval labels at .../eval/retrieval-labels.` | Phase 1e |
+
+`npm run cost`, `npm run ingest` and `npm run embed:cache` are unaffected.
+
 **Capturing an arm** (~$0.02–0.05). The user often runs a server on port 8000 with different env —
 **use another port, do not kill it.**
 
@@ -654,16 +680,52 @@ completely meaningless dataset.
 
 ---
 
-## 9. Repo state at the time of writing (2026-08-31)
+## 9. Repo state (2026-09-02)
 
-- Branch `dev` at `403f39b`, level with `origin/dev`. Working tree otherwise clean.
-- **2 local branches** (`dev`, `main`), **1 worktree**. 34 branches and 6 worktrees were cleaned up;
-  all were merged into `dev` first, and nothing was lost.
-- Tags: `docs-archive-2026-08-30` (six archived docs), `wip-merge-chain-fanout-2026-08-31`,
-  `wip-restore-pgvector-2026-08-31` (preserved worktree WIP — `restore-pgvector` un-archives an arm
-  the project has decided against; it needs a keep-or-drop decision).
-- `main` is 2 ahead of `origin/main`, and was before this work started.
+- Branch `dev`, level with `origin/dev`. Working tree clean.
 - Corpus: **15 documents, 851,891 chars, 451 chunks** (re-ingested 2026-08-31 without the
   alpha-ratio filter; was 393). ◆G9 slice is 37,660 chars (4.4%).
-- Uncommitted: `docs/migration/DEVICE_API.md`, `src/eval/judge/{prompts,runner}.ts`,
-  `src/eval/prices.ts`, four `data/results/judge/warm.schema-*.jsonl`, `.env.example.tmp` (empty).
+- Fixture set: **46 fixtures / 92 turns** in `eval/fixtures-wave1/`, seven classes, all runnable
+  (no fixture declares a `requires`). Slice coverage 41 none / 5 partial / 0 full.
+- Tags: `docs-archive-2026-08-30` (six archived docs), **`eval-archive-2026-09-01`** (the whole
+  pre-rebuild eval set, 556 files), `wip-merge-chain-fanout-2026-08-31`,
+  `wip-restore-pgvector-2026-08-31` (an arm the project has decided against — §1, do not pursue).
+- Full test suite: **46 suites / 949 tests, green, zero skipped** (2026-09-02).
+
+### Phase status
+
+| phase | state |
+|---|---|
+| 0 — lock the slate | ✅ complete 2026-09-01 |
+| 1a — claim inventory | ✅ 2,250 claims, 1,685 high-specificity, 168 gaps, 451/451 chunks |
+| 1b — question generation | ✅ 46 fixtures / 92 turns |
+| 1c — decontaminate | ✅ 22.8% document-level, 11.6% chunk-level, against the < 40% bar — **exit criterion 1 passes**. `eval/fixtures-wave1/_CONTAMINATION.md` |
+| 1d — human verification | ⬜ **the user's, ~4–6 h.** Do not start before the fixture text is frozen |
+| 1e — labels + hard negatives | ⬜ refills `eval/retrieval-labels/` |
+| 2a — quote-based citations | ⬜ **the highest-leverage item in the plan.** Unblocked: the pinned-prompt digest that would have fought it was removed 2026-09-02 |
+| 2b — repoint the judge | ✅ done 2026-09-02 |
+| 2c — re-calibrate | ⬜ needs captured answers to grade — see the sequencing note below |
+| 3 — generation baseline | ⬜ costs money, needs approval |
+| 4 — retrieval | ⬜ |
+
+**A sequencing gap this plan does not settle.** 2c grades 30 stratified rows, but grading needs
+captured answers and the only capture in the plan is Phase 3. Either Phase 3 runs first and 2c
+grades its output, or a separate cheap capture is made for calibration. Running Phase 3 first is
+one capture (~$0.02–0.05) for both the generation baseline and the calibration rows, and that is
+the recommendation — but it inverts the numbering, so it is the user's call.
+
+### Known blocker — the refusal gate reads zero on this set
+
+`gates/runner.ts` decides "this turn must refuse" by regex-matching rubric prose for
+`\brefus(e|es|al|ing)\b`. The archived set wrote *"refuses to answer"*; wave 1 writes
+*"Declines to…"* and *"States that no source here gives…"*, so the pattern matches **0 of wave 1's
+8 refusal turns** where it matched 3 of the archived set's 6.
+
+Left unguarded, `gate:check` would report `required: 0, met: true` at Phase 3 — a clean pass on an
+absolute pre-registered gate that measured nothing. `refusalMap()` therefore **throws** when
+refusal-class fixtures load and no turn is detected.
+
+Widening the pattern is not the fix: adding `declines` catches only 3 of 8 and picks up two false
+positives in the archived set. **The fix is a per-turn `requires_refusal` boolean on the fixture**,
+which `EVAL_FIXTURES.md` §7 previously ruled out because the fixtures were a pinned control while
+◆G7 was open — a reason that no longer exists. This blocks Phase 3.

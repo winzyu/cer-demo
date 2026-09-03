@@ -1,5 +1,21 @@
 # Eval fixtures — the Phase N2 bake-off question set
 
+> ## ⚠ ARCHIVED SET — this describes fixtures that are no longer in the tree
+>
+> The 30-fixture / 62-turn set this document specifies was **archived on 2026-09-01** under the tag
+> `eval-archive-2026-09-01` (`git show eval-archive-2026-09-01:eval/fixtures/<id>.json`). It was
+> replaced because 27 of its 30 fixtures were answerable from 4.4% of the corpus and three carried
+> the entire `deep-in-manual` class — a three-sample class mean cannot support a conclusion.
+>
+> **The live set is 46 fixtures / 92 turns in `eval/fixtures-wave1/`.** For the current design, the
+> seven populated classes and the wave-1 exit criteria, read
+> [`EVAL_REBUILD.md`](EVAL_REBUILD.md) §2 instead of this file.
+>
+> Kept because §7's reasoning about rubric wording, the class taxonomy and the pinned-control
+> constraint is still cited elsewhere — including by the open question of how a refusal turn should
+> be marked, which §7 answers in a way the rebuild has now outgrown.
+
+
 The fixed conversation set every retrieval arm is graded against, written to
 [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §5 and **committed before any arm runs**. Thirty
 conversations, sixty-two turns, one JSON file per conversation in `eval/fixtures/`.
