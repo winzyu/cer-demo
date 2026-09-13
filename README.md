@@ -643,7 +643,8 @@ reporting still answers "the last day" about its last day of data.
 | `npm run build` / `npm start` | compile to `dist/` / run compiled |
 | `npm test` | full Jest suite (42 suites, none touching the network) |
 | `npm run test:coverage` / `test:watch` | coverage / watch mode |
-| `npm run lint` / `npm run typecheck` | ESLint `--fix` over `src` / `tsc --noEmit` |
+| `npm run lint` / `npm run typecheck` | ESLint (check-only) over `src` / `tsc --noEmit` |
+| `npm run lint:fix` | ESLint `--fix` over `src` `.ts` files, writes files |
 | `npm run ingest` | parse `documents/` → `data/corpus/corpus.json` ([§6](#6-retrieval-arms)) |
 | `npm run seed:firestore` | upload the corpus to `corpus_documents` |
 | `npm run seed:firestore-chunks` | embed + upload to `corpus_chunks` for `firestore-vector`; `--wipe` clears stale chunks first |

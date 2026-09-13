@@ -24,8 +24,10 @@ generated_reports/
 .DS_Store
 .vscode/
 
-# claude worktrees / local agent state
-.claude/
+# claude worktrees / local agent state — shared settings and project skills are tracked, local state is not
+.claude/*
+!.claude/settings.json
+!.claude/skills/
 
 # OCR transcripts for scanned PDFs. NOT a legacy artifact — `src/ingestion/extract.ts` reads
 # `.ocr_cache/<filename>.txt` and hard-errors when it is missing, so ingesting a scanned document

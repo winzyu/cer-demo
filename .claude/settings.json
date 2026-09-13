@@ -1,0 +1,63 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(//mnt/c/Users/winsy/OneDrive/Documents/work_and_school/coding/project/aic/clean-earth-rovers/repo/user-dashboard/**)",
+      "Edit(//mnt/c/Users/winsy/OneDrive/Documents/work_and_school/coding/project/aic/clean-earth-rovers/repo/backend/**)",
+      "Read(//home/winsy/.config/gcloud/**)",
+      "Read(./serviceAccountKey.json)"
+    ],
+    "ask": [
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(git fetch *)",
+      "Bash(git switch *)",
+      "Bash(git checkout *)",
+      "Bash(git restore *)",
+      "Bash(git reset *)",
+      "Bash(git stash *)",
+      "Bash(git branch *)",
+      "Bash(git tag *)",
+      "Bash(git merge *)",
+      "Bash(git rebase *)",
+      "Bash(git cherry-pick *)",
+      "Bash(git revert *)",
+      "Bash(git rm *)",
+      "Bash(git mv *)",
+      "Bash(git clean *)",
+      "Bash(git worktree *)",
+      "Bash(npm test)",
+      "Bash(npx jest)",
+      "Bash(npm run lint:fix *)",
+      "Bash(npm run bakeoff *)",
+      "Bash(npm run judge *)",
+      "Bash(npm run embed:cache *)",
+      "Bash(npm run compare:vector-arms *)",
+      "Bash(npm run seed:firestore *)",
+      "Bash(npm run seed:firestore-chunks *)",
+      "Bash(npm run explore:devices *)",
+      "Bash(npm run explore:fields *)",
+      "Bash(npm run explore:surface *)",
+      "Bash(npm run verify:sensor *)",
+      "Bash(npm run report:render *)"
+    ],
+    "allow": [
+      "Bash(git status *)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git show *)",
+      "Bash(git ls-files *)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run lint)",
+      "Bash(npx eslint src *)",
+      "Bash(npx jest test/*)"
+    ]
+  },
+  "enabledPlugins": {
+    "caveman@caveman": false,
+    "ponytail@ponytail": false,
+    "andrej-karpathy-skills@karpathy-skills": false,
+    "agent-skills@addy-agent-skills": false
+  }
+}
