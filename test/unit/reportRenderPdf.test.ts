@@ -98,17 +98,22 @@ describe("flagCellText — the Flag column", () => {
 
   it("prints a clarity band for turbidity instead of a range verdict", () => {
     expect(flagCellText(turbidityParam(0), noAccuracy)).toBe("Clear"); // 0 is a real reading
-    expect(flagCellText(turbidityParam(400), noAccuracy)).toBe("Slightly turbid");
+    expect(flagCellText(turbidityParam(400), noAccuracy)).toBe("Moderate");
     expect(flagCellText(turbidityParam(800), noAccuracy)).toBe("Turbid");
-    expect(flagCellText(turbidityParam(2_042), noAccuracy)).toBe("Very turbid");
   });
 
   it("never prints an excursion verdict for turbidity, however large the index", () => {
     // The Flag column is where an "Exceedance" would appear; for turbidity it never can.
     [0, 25, 456, 1_006, 2_042, 4_550].forEach((mean) => {
-      expect(["Clear", "Slightly turbid", "Turbid", "Very turbid"])
+      expect(["Clear", "Moderate", "Turbid", "Turbid (off-scale)"])
         .toContain(flagCellText(turbidityParam(mean), noAccuracy));
     });
+  });
+
+  it("appends '(off-scale)' at and above the 1005 ceiling, and not below it", () => {
+    expect(flagCellText(turbidityParam(1_004), noAccuracy)).toBe("Turbid");
+    expect(flagCellText(turbidityParam(1_005), noAccuracy)).toBe("Turbid (off-scale)");
+    expect(flagCellText(turbidityParam(2_042), noAccuracy)).toBe("Turbid (off-scale)");
   });
 });
 

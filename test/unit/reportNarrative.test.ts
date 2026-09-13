@@ -220,14 +220,15 @@ describe("deterministicNarrative — parameter analysis", () => {
   });
 
   it("gives turbidity a clarity band and supporting context, never an in/out-of-range verdict", () => {
-    // mean 650 -> "Turbid"; the second half averages 200 above the first, clearing the trend
-    // deadband (10% of the period mean) so the direction of change is reported.
+    // mean 650 -> "Moderate" (operator band [345, 795)); the second half averages 200 above the
+    // first, clearing the trend deadband (10% of the period mean) so the direction of change is
+    // reported.
     const turbidity = turbidityParam([500, 550, 600, 700, 750, 800]);
     const { parameterAnalysis } = deterministicNarrative(report([turbidity]), noAccuracy, "Normal");
 
     expect(parameterAnalysis.has("Turbidity (Relative)")).toBe(true);
     const text = parameterAnalysis.get("Turbidity (Relative)")!;
-    expect(text).toContain("Turbid");
+    expect(text).toContain("Moderate");
     expect(text).toContain("relative index mean 650.0");
     expect(text).toContain("rising across the period"); // the legitimate relative claim
     expect(text).toContain("provisional, uncalibrated conversion");
@@ -253,17 +254,35 @@ describe("deterministicNarrative — parameter analysis", () => {
     const { parameterAnalysis } = deterministicNarrative(report([turbidity]), noAccuracy, "Normal");
 
     const text = parameterAnalysis.get("Turbidity (Relative)")!;
-    expect(text).toContain("Very turbid");
+    expect(text).toContain("Turbid");
     expect(text).toContain("falling across the period");
     expect(text).not.toMatch(/[Ee]xceedance/);
   });
 
   it("names the bands a period spanned when min and max fall in different ones", () => {
-    const turbidity = turbidityParam([0, 100, 900, 1_400]); // Clear -> Very turbid
+    const turbidity = turbidityParam([0, 100, 900, 1_400]); // Clear -> Turbid
     const { parameterAnalysis } = deterministicNarrative(report([turbidity]), noAccuracy, "Normal");
 
     expect(parameterAnalysis.get("Turbidity (Relative)")!)
-      .toContain("The period spanned clear to very turbid conditions.");
+      .toContain("The period spanned clear to turbid conditions.");
+  });
+
+  it("appends the off-scale sentence to the analysis line when the mean is at or beyond 1005, "
+    + "and omits it otherwise", () => {
+    const offScale = turbidityParam([1_006, 1_006, 1_006]);
+    const { parameterAnalysis: offScaleAnalysis } = deterministicNarrative(
+      report([offScale]), noAccuracy, "Normal",
+    );
+    const offScaleText = offScaleAnalysis.get("Turbidity (Relative)")!;
+    expect(offScaleText).toContain("beyond the top of the conversion's scale");
+    expect(offScaleText).toContain("turbVolt");
+
+    const onScale = turbidityParam([900, 900, 900]);
+    const { parameterAnalysis: onScaleAnalysis } = deterministicNarrative(
+      report([onScale]), noAccuracy, "Normal",
+    );
+    const onScaleText = onScaleAnalysis.get("Turbidity (Relative)")!;
+    expect(onScaleText).not.toContain("beyond the top of the conversion's scale");
   });
 
   it("keeps turbidity out of the excursion list, however turbid, and gives it its own bullet", () => {
@@ -277,9 +296,28 @@ describe("deterministicNarrative — parameter analysis", () => {
 
     const clarity = summaryBullets.find((b) => b.startsWith("Turbidity (Relative):"))!;
     expect(clarity).toBeDefined();
-    expect(clarity).toContain("Very turbid");
+    expect(clarity).toContain("Turbid");
     expect(clarity).toContain("no");
     expect(clarity).toContain("operator range");
+  });
+
+  it("appends the off-scale clause to its own summary bullet when the mean is off-scale, "
+    + "and omits it otherwise", () => {
+    const ph = param(fixedBaseline("ph", "pH", "", 6.5, 8.5), { pattern: "flat" });
+    const offScale = turbidityParam([1_006, 1_006, 1_006]);
+    const { summaryBullets: offScaleBullets } = deterministicNarrative(
+      report([ph, offScale]), noAccuracy, "Normal",
+    );
+    const offScaleClarity = offScaleBullets.find((b) => b.startsWith("Turbidity (Relative):"))!;
+    expect(offScaleClarity).toContain("Off-scale");
+    expect(offScaleClarity).toContain("turbVolt");
+
+    const onScale = turbidityParam([10, 10, 10]);
+    const { summaryBullets: onScaleBullets } = deterministicNarrative(
+      report([ph, onScale]), noAccuracy, "Normal",
+    );
+    const onScaleClarity = onScaleBullets.find((b) => b.startsWith("Turbidity (Relative):"))!;
+    expect(onScaleClarity).not.toContain("Off-scale");
   });
 
   it("still reports turbidity in the all-clear summary -- silence would read as unmeasured", () => {

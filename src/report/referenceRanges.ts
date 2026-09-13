@@ -99,22 +99,29 @@ export const BASELINE_RANGES: Record<string, RangeByTier> = {
  * none, so there is nothing to compare a reading against even if the scale were trustworthy.
  * See docs/migration/BACKEND_FIELDS.md §3b and DEVICE_API.md §8.
  *
- * **Where the cut points come from.** ⚠️ They are PROVISIONAL -- as provisional as the
- * conversion that feeds them. They are chosen to be defensible, not precise, and they should be
- * revisited the moment a lab-calibrated reading or an operator-set range exists. Two anchors:
+ * **The edges below are operator-authoritative.** The operator supplied his own three clarity
+ * bands on 2026-09-10 (finding 5, docs/HANDOFF_2026-09-10.md section 5), replacing this
+ * project's own provisional 250 / 600 / 1005 cut points -- those had no operator backing at all,
+ * only the two justifications this docstring used to carry here. Adopting his bands is a settled
+ * decision, not one to relitigate. He also independently confirmed the conversion formula as
+ * `NTU = (3.35 - V) * 300`, matching what this file had already reverse-engineered from the
+ * backend source above -- worth recording, since it means the reverse-engineering was right.
  *
- * 1. *The conversion's own scale.* `3.35 V x 300 = 1005` is the largest index the documented
- *    conversion can produce from a non-negative input voltage. An index at or above 1005 means
- *    the input went below 0 V relative to the conversion's assumptions -- the reading is off the
- *    end of the scale it was derived on. That makes 1005 a real, non-arbitrary top edge rather
- *    than a round number picked to look tidy.
- * 2. *The observed fleet distribution.* Sampled 1-day means across live pods came in at 456,
- *    555, 1006, 1385 and 2042 -- against a system-prompt "authoritative range" of 0-25 NTU
- *    freshwater / 0-10 saltwater. Every one of them is one to two orders of magnitude outside
- *    that range, which is the clearest evidence that the index is not comparable to a calibrated
- *    NTU scale. The lower edges split the sub-1005 part of that spread: 250 sits below the
- *    lowest observed pod mean (456), so "Clear" means cleaner than anything we have sampled
- *    rather than "typical"; 600 sits just above the 456/555 cluster, separating it from 1006.
+ * His bands, given in both units because the conversion is inverse (clearer water = higher
+ * voltage = LOWER index) and a one-unit description invites exactly that inversion -- an earlier
+ * draft of the handoff that recorded these bands had the voltage direction backwards on one edge
+ * for precisely this reason:
+ *
+ *   - Clear:    above 2.2 V   -> index below 345    ((3.35 - 2.2) * 300 = 345)
+ *   - Moderate: 0.7 V-2.2 V   -> index 345-795       ((3.35 - 0.7) * 300 = 795)
+ *   - Turbid:   below 0.7 V   -> index above 795
+ *
+ * **Edge convention.** `clarityBandFor` keeps this file's existing convention unchanged:
+ * descending edges, first one an index clears wins, which makes every band half-open
+ * `[min, next)`. So Clear is `[0, 345)`, Moderate is `[345, 795)`, Turbid is `[795, Infinity)`.
+ * That puts the exact value 795 in Turbid, where the operator's own phrasing ("Turbid below
+ * 0.7 V") would put it in Moderate -- a one-value difference, accepted so this file keeps a
+ * single comparison convention instead of adding a second one just for this edge.
  *
  * **0 is a real reading and lives in the bottom band.** A `turbVolt` above the 3.35 V reference
  * yields a negative drop, which clamps to 0 -- observed live at `turbVolt = 4.20 V`. So 0 can
@@ -122,15 +129,34 @@ export const BASELINE_RANGES: Record<string, RangeByTier> = {
  * never missing data (plausibility.ts and aggregate.ts carry the same carve-out), and it must
  * never be filtered out or treated as absent.
  *
- * Reviewer note: the observed 1006 mean sits one unit above the 1005 edge, i.e. essentially at
- * `turbVolt = 0`. That pod may be sitting on its sensor rail rather than reading very turbid
- * water. Worth checking against `turbVolt` directly before reading its band as water quality.
+ * **The off-scale flag.** `3.35 V x 300 = 1005` is the largest index the documented conversion
+ * can produce from a non-negative input voltage -- it is not one of the operator's three bands.
+ * An index at or above 1005 means the input went below 0 V relative to the conversion's
+ * assumptions: the reading is off the end of the scale the conversion was derived on, which is a
+ * data-quality signal about the sensor or its wiring, not a claim about water clarity. One
+ * recorded pod's 1-day mean sits at 1006 -- essentially `turbVolt = 0` -- and that pod may be
+ * sitting on its sensor rail rather than reading very turbid water. `isOffScaleTurbidity` below
+ * flags exactly this case. It is deliberately not a fourth band: an off-scale reading is still,
+ * correctly, `Turbid`, it is just also suspect.
+ *
+ * Sampled 1-day means across live pods came in at 456, 555, 1006, 1385 and 2042, against a
+ * system-prompt "authoritative range" of 0-25 NTU freshwater / 0-10 saltwater -- one to two
+ * orders of magnitude outside it. That spread no longer justifies the band edges (the operator's
+ * bands do), but it is still the clearest evidence that this index is not comparable to a
+ * calibrated NTU scale, and it is what makes the 1006 pod's off-scale reading concrete rather
+ * than hypothetical.
+ *
+ * **What is, and is not, settled by this.** The three bands above are operator-authoritative and
+ * no longer provisional. The *conversion* that feeds them -- the 3.35 V reference, the 300
+ * units/volt scale factor -- remains exactly as uncalibrated as before: the operator confirmed
+ * the formula, not a lab calibration of it. That distinction is why `TURBIDITY_SCALE_CAVEAT`
+ * below still calls the conversion uncalibrated even though the bands themselves are not.
  */
 export const TURBIDITY_BAND_EDGES: ReadonlyArray<{ band: ClarityBand; min: number }> = [
-  // Descending, so the first edge a value clears is its band.
-  { band: "Very turbid", min: 1005 },
-  { band: "Turbid", min: 600 },
-  { band: "Slightly turbid", min: 250 },
+  // Descending, so the first edge a value clears is its band. Operator-authoritative as of
+  // 2026-09-10 -- see the docstring above.
+  { band: "Turbid", min: 795 },
+  { band: "Moderate", min: 345 },
   { band: "Clear", min: 0 },
 ];
 
@@ -138,6 +164,21 @@ export const TURBIDITY_BAND_EDGES: ReadonlyArray<{ band: ClarityBand; min: numbe
 export const clarityBandFor = (index: number): ClarityBand => (
   TURBIDITY_BAND_EDGES.find((edge) => index >= edge.min)?.band ?? "Clear"
 );
+
+/**
+ * `3.35 V x 300 = 1005`, the largest index the documented conversion can produce from a
+ * non-negative input voltage -- see the "off-scale flag" paragraph in the docstring above
+ * `TURBIDITY_BAND_EDGES`. It is not one of the operator's three bands.
+ */
+export const OFF_SCALE_INDEX = 1005;
+
+/**
+ * True once a turbidity index is at or beyond the conversion's own scale limit, meaning the
+ * input voltage went below 0 V relative to the conversion's assumptions -- a data-quality signal
+ * about the sensor or its wiring, not a water-clarity claim. Not a `ClarityBand`: an off-scale
+ * reading is still `Turbid` by `clarityBandFor`, this just flags that it is also suspect.
+ */
+export const isOffScaleTurbidity = (index: number): boolean => index >= OFF_SCALE_INDEX;
 
 /**
  * One sentence saying what the turbidity number is, printed wherever a turbidity value appears

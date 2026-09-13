@@ -1,6 +1,6 @@
 import {
   baselineFor, probeAccuracy, temperatureAccuracyC, rangeForTier, WATER_BODY_TO_TIER, BASELINE_RANGES,
-  clarityBandFor, TURBIDITY_BAND_EDGES,
+  clarityBandFor, TURBIDITY_BAND_EDGES, isOffScaleTurbidity, OFF_SCALE_INDEX,
 } from "../../src/report/referenceRanges";
 
 /**
@@ -64,29 +64,23 @@ describe("clarityBandFor", () => {
     expect(clarityBandFor(0)).toBe("Clear");
   });
 
-  it("bands each cut point on its lower edge, inclusive", () => {
-    expect(clarityBandFor(249)).toBe("Clear");
-    expect(clarityBandFor(250)).toBe("Slightly turbid");
-    expect(clarityBandFor(599)).toBe("Slightly turbid");
-    expect(clarityBandFor(600)).toBe("Turbid");
-    expect(clarityBandFor(1_004)).toBe("Turbid");
-    expect(clarityBandFor(1_005)).toBe("Very turbid");
+  it("bands the Clear/Moderate edge on its lower bound, inclusive (operator: above 2.2 V / below 345)", () => {
+    expect(clarityBandFor(344)).toBe("Clear");
+    expect(clarityBandFor(345)).toBe("Moderate");
+  });
+
+  it("bands the Moderate/Turbid edge on its lower bound, inclusive -- the one value that differs "
+    + "from the operator's own phrasing (\"Turbid below 0.7 V\" would put 795 in Moderate)", () => {
+    expect(clarityBandFor(794)).toBe("Moderate");
+    expect(clarityBandFor(795)).toBe("Turbid");
   });
 
   it("handles a reading in the thousands without falling off the top of the scale", () => {
-    // 1005 = 3.35 V x 300, the most the documented conversion can produce from a non-negative
-    // input voltage. Live 1-day means of 1385 and 2042 sit well past it, which is precisely why
-    // the index is not treated as calibrated NTU.
-    expect(clarityBandFor(1_385)).toBe("Very turbid");
-    expect(clarityBandFor(2_042)).toBe("Very turbid");
-    expect(clarityBandFor(4_550)).toBe("Very turbid"); // the conversion's own ceiling
-  });
-
-  it("bands the observed fleet distribution the way the cut points were derived to", () => {
-    // The five sampled 1-day means the edges were chosen against.
-    expect([456, 555].map(clarityBandFor)).toEqual(["Slightly turbid", "Slightly turbid"]);
-    expect(clarityBandFor(1_006)).toBe("Very turbid");
-    expect([1_385, 2_042].map(clarityBandFor)).toEqual(["Very turbid", "Very turbid"]);
+    // Live 1-day means of 1385 and 2042 sit well past the conversion's own 1005 ceiling, which is
+    // precisely why the index is not treated as calibrated NTU -- but they are still Turbid.
+    expect(clarityBandFor(1_385)).toBe("Turbid");
+    expect(clarityBandFor(2_042)).toBe("Turbid");
+    expect(clarityBandFor(4_550)).toBe("Turbid"); // the conversion's own ceiling
   });
 
   it("degrades to the bottom band rather than throwing on a negative index", () => {
@@ -99,6 +93,30 @@ describe("clarityBandFor", () => {
     const mins = TURBIDITY_BAND_EDGES.map((e) => e.min);
     expect(mins).toEqual([...mins].sort((a, b) => b - a));
     expect(mins[mins.length - 1]).toBe(0); // the bottom band must admit 0
+  });
+
+  it("matches the operator's confirmed conversion at each of his three edges", () => {
+    // NTU = (3.35 - V) * 300, confirmed by the operator 2026-09-10 and unchanged from what this
+    // file had already reverse-engineered.
+    expect((3.35 - 2.2) * 300).toBeCloseTo(345, 10);
+    expect((3.35 - 0.7) * 300).toBeCloseTo(795, 10);
+  });
+});
+
+describe("isOffScaleTurbidity", () => {
+  it("is false just below the conversion's own ceiling, true at and above it", () => {
+    expect(isOffScaleTurbidity(1_004)).toBe(false);
+    expect(isOffScaleTurbidity(1_005)).toBe(true);
+    expect(isOffScaleTurbidity(1_006)).toBe(true); // the recorded pod mean sitting on its rail
+  });
+
+  it("uses the same 1005 = 3.35 V x 300 ceiling as OFF_SCALE_INDEX", () => {
+    expect(OFF_SCALE_INDEX).toBe(1_005);
+  });
+
+  it("does not change the band -- an off-scale reading is still Turbid, just also suspect", () => {
+    expect(clarityBandFor(1_006)).toBe("Turbid");
+    expect(isOffScaleTurbidity(1_006)).toBe(true);
   });
 });
 

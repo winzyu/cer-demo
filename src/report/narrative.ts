@@ -14,7 +14,7 @@ import type { ParameterStats, ReportInput, ReportStatus } from "./types";
 import {
   CONFIDENCE_FLOOR, flagFor, heldSteady, isRelativeIndex, outOfRangeShare, statValue, withUnit,
 } from "./types";
-import { clarityBandFor, TURBIDITY_SCALE_CAVEAT } from "./referenceRanges";
+import { clarityBandFor, isOffScaleTurbidity, TURBIDITY_SCALE_CAVEAT } from "./referenceRanges";
 
 export interface NarrativeSections {
   /** Rendered as a bulleted list, not a paragraph. */
@@ -101,7 +101,10 @@ const trendWord = (p: ParameterStats): string => {
  *
  * Says three things and no more than three: which band the period sits in, the supporting
  * numbers so a reader can compare this report against the next one, and what the number
- * actually is. It deliberately makes no in/out-of-range claim -- there is no range.
+ * actually is. It deliberately makes no in/out-of-range claim -- there is no range. When the
+ * period mean is off-scale (see `isOffScaleTurbidity`), it adds a fourth, conditional sentence:
+ * the reading is at or beyond the top of the conversion's own scale, which points at the sensor
+ * or its wiring at least as readily as it points at turbid water.
  */
 const relativeIndexAnalysisLine = (p: ParameterStats): string => {
   const band = clarityBandFor(p.mean);
@@ -110,9 +113,14 @@ const relativeIndexAnalysisLine = (p: ParameterStats): string => {
   const spread = minBand === maxBand
     ? ""
     : ` The period spanned ${minBand.toLowerCase()} to ${maxBand.toLowerCase()} conditions.`;
+  const offScale = isOffScaleTurbidity(p.mean)
+    ? " This reading is at or beyond the top of the conversion's scale, which indicates a "
+      + "sensor or wiring problem as readily as it indicates turbid water -- worth checking "
+      + "against turbVolt directly."
+    : "";
   return `Water clarity read as ${band} for the period (relative index mean `
     + `${p.mean.toFixed(1)}, range ${p.min.toFixed(1)}-${p.max.toFixed(1)}), `
-    + `${trendWord(p)}.${spread} ${TURBIDITY_SCALE_CAVEAT}`;
+    + `${trendWord(p)}.${spread} ${TURBIDITY_SCALE_CAVEAT}${offScale}`;
 };
 
 const paramAnalysisLine = (
@@ -201,9 +209,15 @@ export const deterministicNarrative = (
   // metric, and silence would read as "not measured" rather than "measured and clear".
   const clarityBullets = report.parameters
     .filter((p) => isRelativeIndex(p.baseline))
-    .map((p) => `${p.baseline.label}: ${clarityBandFor(p.mean)} (relative index mean `
-      + `${p.mean.toFixed(1)}, ${trendWord(p)}) — provisional, uncalibrated scale with no `
-      + "operator range; reported as a band, not judged against one.");
+    .map((p) => {
+      const offScale = isOffScaleTurbidity(p.mean)
+        ? " Off-scale: check against turbVolt directly."
+        : "";
+      return `${p.baseline.label}: ${clarityBandFor(p.mean)} (relative index mean `
+        + `${p.mean.toFixed(1)}, ${trendWord(p)}) — operator-authoritative bands over an `
+        + "uncalibrated scale with no operator range; reported as a band, not judged "
+        + `against one.${offScale}`;
+    });
 
   let summaryBullets: string[];
   if (report.events.length === 0 && status === "Normal") {

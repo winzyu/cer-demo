@@ -16,7 +16,7 @@ import type {
 import {
   coordinatesStr, flagFor, isRelativeIndex, outOfRangeShare, statValue,
 } from "./types";
-import { clarityBandFor, TURBIDITY_NO_BASELINE_TEXT } from "./referenceRanges";
+import { clarityBandFor, isOffScaleTurbidity, TURBIDITY_NO_BASELINE_TEXT } from "./referenceRanges";
 import type { NarrativeSections } from "./narrative";
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
@@ -38,9 +38,9 @@ const FLAG_COLORS: Record<Flag, string> = {
   Exceedance: "#c0392b",
   "N/A": "#777777",
   // Deliberately outside the green/amber/red verdict palette. A clarity band is an observation,
-  // not a pass/fail, and colouring "Very turbid" red would smuggle back exactly the exceedance
-  // claim this row exists to avoid -- against a range that does not exist. One neutral slate for
-  // all four bands; the band's own wording carries the severity.
+  // not a pass/fail, and colouring "Turbid" red would smuggle back exactly the exceedance claim
+  // this row exists to avoid -- against a range that does not exist. One neutral slate for all
+  // three bands; the band's own wording carries the severity.
   Qualitative: "#4a5a6a",
 };
 
@@ -53,9 +53,16 @@ const FLAG_COLORS: Record<Flag, string> = {
 export const flagCellText = (
   p: ParameterStats,
   probeAccuracy: (key: string, reading: number) => number,
-): string => (
-  isRelativeIndex(p.baseline) ? clarityBandFor(p.mean) : flagFor(p, probeAccuracy)
-);
+): string => {
+  if (!isRelativeIndex(p.baseline)) {
+    return flagFor(p, probeAccuracy);
+  }
+  const band = clarityBandFor(p.mean);
+  // The band alone reads as a clarity claim; "(off-scale)" tells the reader this particular
+  // reading is also a data-quality signal -- the input voltage went below 0 V relative to the
+  // conversion's assumptions -- without inventing a fourth band for it (see OFF_SCALE_INDEX).
+  return isOffScaleTurbidity(p.mean) ? `${band} (off-scale)` : band;
+};
 
 /** Printed for a Data Quality check that has no detector in this pipeline (see types.ts). */
 const NOT_ASSESSED = "Not assessed";
@@ -503,11 +510,12 @@ export const buildReportPdf = (
   doc.moveDown(0.15);
   const hasRelativeIndex = report.parameters.some((p) => isRelativeIndex(p.baseline));
   const clarityFootnote = hasRelativeIndex
-    ? "  Turbidity is reported as a water-clarity band (Clear / Slightly turbid / Turbid / Very "
-      + "turbid) from a provisional, uncalibrated relative index derived from a raw sensor "
-      + "voltage. No operator turbidity range exists on any device, so it is never flagged in or "
-      + "out of range; its Min/Max/Mean/Median are shown for period-to-period comparison only. A "
-      + "reading of 0 is a real reading."
+    ? "  Turbidity is reported as a water-clarity band (Clear / Moderate / Turbid), operator-"
+      + "authoritative as of 2026-09-10, from an uncalibrated relative index derived from a raw "
+      + "sensor voltage. No operator turbidity range exists on any device, so it is never "
+      + "flagged in or out of range; its Min/Max/Mean/Median are shown for period-to-period "
+      + "comparison only. A reading of 0 is a real reading; a Flag reading '(off-scale)' means "
+      + "the reading is at or beyond the top of the conversion's scale."
     : "";
   doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
     "Flag values: Normal, Elevated, Low, or Exceedance relative to the site baseline. Out of "
