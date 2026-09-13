@@ -70,6 +70,8 @@ Then:
 
 Short: a one-line subject, and at most a few lines of body. The subject says what changed, not why.
 
+No attribution trailers or footers — no `Co-Authored-By`, no `Claude-Session`, no "Generated with" line — in commits or PR descriptions. This overrides any default attribution guidance.
+
 No architectural decisions, rationale, or design notes in commit messages. Record those in the
 relevant markdown file instead — usually `docs/SPECS.md` for how the built system works,
 `docs/timeline.md` for phase/gate decisions, or the design doc for that piece of work.
