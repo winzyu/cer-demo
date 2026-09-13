@@ -3,8 +3,13 @@
  *
  * `gpt-oss-20b` sometimes leaks its harmony `commentary` channel into the user-visible answer as
  * a `【commentary…】` marker. This is fixed **here, after the fact, and never in the system
- * prompt**: the prompt is a pinned control for the N2 bake-off while ◆G7 is open, and editing it
- * changes its SHA-256 and voids all three captured arms.
+ * prompt** — not because the prompt is off-limits (the pin that used to justify that was released
+ * 2026-08-26 when ◆G7 split, and the transcripts it protected were archived 2026-09-01 under
+ * `eval-archive-2026-09-01`; see `test/unit/prompt.test.ts`'s "the tool flags are additive" block
+ * for what replaced it), but because the decision holds on its own merits: `EVAL_REBUILD.md`
+ * Phase 2a is about to make `【…】` markers a **deliberate, checked** part of the answer format
+ * (verbatim-quote citations), so the prompt's job is to ask for good markers, not to apologise
+ * for a bad one after the fact.
  */
 
 /** Full-width `【` U+3010 — not the ASCII `[`. */

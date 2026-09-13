@@ -372,7 +372,14 @@ export const checkFigures = (turn: TurnEvidence): FigureResult => {
  * pre-registered gate whose per-arm numbers are published (§1c); editing it risks moving them.
  * The two schemes already coexist by construction: `CITATION_PATTERN`'s line-span group is
  * optional and its trailing `[^】]*` swallows a quote, so a quote-style marker still resolves as a
- * plain `【n】` there. That is what lets the prompt change land without a flag day.
+ * plain `【n】` there. That compatibility is real and worth having, but it is not evidence of an
+ * existing scheme to extend: the system prompt has never asked for a `【n】` marker at all — it
+ * says only "Always cite the document source when you use information from the context"
+ * (`src/prompt/systemPrompt.ts` line 207), and `promptBuilder.ts` labels context excerpts with
+ * ASCII `[1]`, not `【1】` (`src/prompt/promptBuilder.ts` line 13). The 198 markers measured above
+ * are `gpt-oss-20b` emitting them **unprompted** — a placeholder model since replaced as the
+ * production generator by `gpt-oss-120b`, which may emit none. Phase 2a has to *introduce* the
+ * quote-citation scheme, not extend one that was already instructed.
  *
  * The quote delimiters are a character class because the model emits typographic quotes — the same
  * defect family as the U+2011 hyphen, and the reason `normalize.ts` folds them.

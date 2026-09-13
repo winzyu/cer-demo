@@ -67,11 +67,15 @@ export interface DeviceApiConfig {
 /**
  * The tool-calling layer restored in Phase N3 (`MIGRATION_SPEC.md` §3).
  *
- * ⚠️ `sensorTool` gates a change to the **system prompt**, which is a pinned control for the
- * Phase N2 retrieval bake-off (`RETRIEVAL_BAKEOFF.md` §4). It defaults to **false** so the
- * default prompt stays byte-identical to the one all three captured arms ran against, and so
- * no `tools` array is attached to a chat request. ◆G7 is still open on ungraded quality; turning
- * this on during a capture run makes that run incomparable to the captured three.
+ * ⚠️ `sensorTool` gates a change to the **system prompt** (`TOOL_BLOCK` in
+ * `src/prompt/systemPrompt.ts`) and attaches a `tools` array to the chat request. It defaults to
+ * **false** because the eval harness requires `SENSOR_TOOL=false` on both the server and the
+ * runner, so every capture runs the same base prompt (`docs/HANDOFF_2026-09-10.md` §7). The prompt
+ * is no longer a pinned control for the Phase N2 bake-off — that pin was released 2026-08-26 when
+ * ◆G7 split, and the transcripts it protected were archived 2026-09-01 under
+ * `eval-archive-2026-09-01`. What guarantees captures stay comparable now is
+ * `test/unit/prompt.test.ts`'s "the tool flags are additive" property: a flag may only append, so
+ * the base prompt stays a byte-exact prefix no matter which flags are on.
  */
 export interface ToolsConfig {
   /** Master switch for `query_sensor_data` — the prompt block, the tools array, and the loop. */
@@ -150,8 +154,9 @@ export type QuotaDimension = "requests" | "tokens";
  * `QUERY_QUOTA_WINDOW=7d`, `QUERY_QUOTA_SCOPE=caller`) without being limited to it, and adds the
  * token dimension the team wants to weigh against a request count.
  *
- * **Defaults to fully off.** This repo is mid-experiment with pinned controls; a gate that
- * silently began refusing requests would invalidate a capture run and look like a product bug.
+ * **Defaults to fully off.** Eval captures need every request to go through untouched; a quota
+ * that silently began refusing requests mid-capture would invalidate the run and look like a
+ * product bug rather than a deliberate policy change.
  */
 export interface QuotaConfig {
   /**
@@ -437,12 +442,15 @@ const load = (): Config => {
     log.warn("LLM_MODEL is not set — set it before enabling the chat endpoint.");
   }
   if (config.tools.sensorTool) {
-    // Loud on purpose. This is the switch that un-pins the N2 bake-off's system prompt, and a
-    // capture run made with it on is not comparable to the three already captured
-    // (RETRIEVAL_BAKEOFF.md §4). Better a line in every startup log than a silently voided sweep.
+    // Loud on purpose. The eval harness requires SENSOR_TOOL=false on both the server and the
+    // runner (`docs/HANDOFF_2026-09-10.md` §7), so a capture made with it on is not comparable to
+    // the rest of its own set. The N2 pin this warning was first written for is gone — released
+    // 2026-08-26 when ◆G7 split, transcripts archived 2026-09-01 — but the comparability problem
+    // it guarded is not: a mixed-flag capture set is still unusable. Better a line in every
+    // startup log than a silently voided sweep.
     log.warn(
       `SENSOR_TOOL is ON — the system prompt carries a tool block and ${config.tools.maxToolRounds} tool rounds are enabled. `
-      + "Bake-off arms captured with it OFF are not comparable to runs made with it ON.",
+      + "Captures made with it ON are not comparable to captures made with it OFF; the eval harness expects OFF.",
     );
     if (!config.deviceApi.baseUrl) {
       log.warn("SENSOR_TOOL is on but DEVICE_API_BASE_URL is not set — query_sensor_data will fail at call time.");

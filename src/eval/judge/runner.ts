@@ -205,8 +205,12 @@ export const buildTasks = (options: BuildOptions = {}): JudgeTask[] => {
   const arms = options.arms ?? armsOnDisk(root, pass);
   const dimensions = options.dimensions ?? JUDGE_DIMENSIONS;
 
-  // Built once with the sweep's flags — SENSOR_TOOL and REPORT_TOOL off — because that is the
-  // prompt the captured arms actually ran under, and it is a pinned control while ◆G7 is open.
+  // Built once with the eval harness's flags — SENSOR_TOOL and REPORT_TOOL off — because the
+  // harness requires SENSOR_TOOL=false on both the server and the runner
+  // (`docs/HANDOFF_2026-09-10.md` §7), so this is the prompt every capture actually runs under. It
+  // is no longer a pinned control for a specific bake-off — that pin was released 2026-08-26 when
+  // ◆G7 split, and the transcripts it protected were archived 2026-09-01 under
+  // `eval-archive-2026-09-01`.
   const systemPrompt = buildSystemPrompt(undefined, false, false);
 
   const rubrics = new Map(loadFixtures().map((fixture) => [fixture.id, fixture]));

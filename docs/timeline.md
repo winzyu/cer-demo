@@ -7,8 +7,10 @@ the work downstream of them starts.
 This is the successor to the original migration timeline. The single biggest change: the target-stack
 gate (◆G1) is now **resolved** — see below — which re-anchors every phase that depended on it.
 
-> **Current state and how to resume: [`HANDOFF_2026-08-27.md`](HANDOFF_2026-08-27.md).** The N2 sweep is
-> captured and valid; what remains is grading. Read that first if you are picking this up cold.
+> **Current state and how to resume: [`HANDOFF_2026-09-10.md`](HANDOFF_2026-09-10.md).** The eval
+> apparatus has been rebuilt — fixtures, retrieval labels, and the gold-context arm all exist — but
+> nothing has been captured since the N2 transcripts were archived on 2026-09-01; the next milestone
+> is the Phase 3 generation baseline. Read that handoff first if you are picking this up cold.
 
 Companion docs: [`SPECS.md`](SPECS.md) (what's built today), [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md)
 (coding conventions), [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md) (legacy FastAPI
