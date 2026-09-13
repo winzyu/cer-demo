@@ -701,8 +701,8 @@ completely meaningless dataset.
 | 1b — question generation | ✅ 46 fixtures / 92 turns |
 | 1c — decontaminate | ✅ 22.8% document-level, 11.6% chunk-level, against the < 40% bar — **exit criterion 1 passes**. `eval/fixtures-wave1/_CONTAMINATION.md` |
 | 1d — human verification | ⬜ **the user's, ~4–6 h.** Do not start before the fixture text is frozen |
-| 1e — labels + hard negatives | ⬜ refills `eval/retrieval-labels/` |
-| 2a — quote-based citations | ⬜ **the highest-leverage item in the plan.** Unblocked: the pinned-prompt digest that would have fought it was removed 2026-09-02 |
+| 1e — labels + hard negatives | 🟡 partial — `eval/retrieval-labels/` regenerated (46 files, `scripts/resolveRetrievalLabels.ts`), but provisional: flat grade 2, no hard negatives, per-fixture not per-turn. Adequate for the gold-context arm; the remainder blocks Phase 4, not Phase 3 (`HANDOFF_2026-09-10.md` §4) |
+| 2a — quote-based citations | 🟡 **in code 2026-09-13** — the prompt asks for `【n†"quote"】`, `formatContext` labels excerpts `【n】`, and `QUOTE_CITATION_PATTERN` accepts a non-dagger separator. **Not yet demonstrated:** the Phase 2 STOP block wants a non-zero quoted-citation rate on real answers, which needs a small paid smoke capture |
 | 2b — repoint the judge | ✅ done 2026-09-02 |
 | 2c — re-calibrate | ⬜ needs captured answers to grade — see the sequencing note below |
 | 3 — generation baseline | ⬜ costs money, needs approval |
@@ -713,7 +713,13 @@ grading needs captured answers that only Phase 3 produces. One capture (~$0.02�
 serves both the generation baseline and the calibration rows. The numbering is inverted and stays
 that way; read the phases in the order 0, 1, 2a, 2b, **3, 2c**, 4.
 
-### Known blocker — the refusal gate reads zero on this set
+### Known blocker — the refusal gate reads zero on this set (resolved by `a72c3b5`)
+
+**Resolved by `a72c3b5`** ("Detect refusal-required turns from a fixture flag, not rubric prose"):
+the regex below was deleted with no fallback and replaced by a per-turn `requires_refusal` flag on
+the fixtures; `refusalMap()` still throws if a refusal-class fixture has no flagged turn. Five turns
+are flagged across three fixtures. The rest of this section is kept as the record of what the
+blocker was.
 
 `gates/runner.ts` decides "this turn must refuse" by regex-matching rubric prose for
 `\brefus(e|es|al|ing)\b`. The archived set wrote *"refuses to answer"*; wave 1 writes
@@ -727,4 +733,4 @@ refusal-class fixtures load and no turn is detected.
 Widening the pattern is not the fix: adding `declines` catches only 3 of 8 and picks up two false
 positives in the archived set. **The fix is a per-turn `requires_refusal` boolean on the fixture**,
 which `EVAL_FIXTURES.md` §7 previously ruled out because the fixtures were a pinned control while
-◆G7 was open — a reason that no longer exists. This blocks Phase 3.
+◆G7 was open — a reason that no longer exists. This had blocked Phase 3.

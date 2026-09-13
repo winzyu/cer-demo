@@ -14,10 +14,13 @@ hedging on a borderline-but-not-empty retrieval.
 **Missing:** a middle state — "the context partially supports this, treated as uncertain" —
 distinct from a clean answer or an outright refusal.
 
-**Effort: 0.5–1 day** for the prompt wording itself, **but** `buildSystemPrompt()` is a pinned
-control for the active retrieval bake-off (`RETRIEVAL_BAKEOFF.md` §4, hash-pinned in
-`test/unit/prompt.test.ts`) — changing it voids the three captured arms and requires re-running
-the sweep. Best sequenced after ◆G7 closes; done now, add ~1 day of eval rework.
+**Effort: 0.5–1 day** for the prompt wording itself. `buildSystemPrompt()` is no longer a pinned
+control: the pin was released 2026-08-26 when ◆G7 split, and the hash pin in
+`test/unit/prompt.test.ts` was replaced by the flag-additivity contract in `9d71113` (a tool flag
+may only append to the base prompt). There are no captured arms left to void — every transcript
+captured against the old pinned bytes was archived 2026-09-01. The real sequencing constraint: land
+this prompt change before the Phase 3 generation-baseline capture (`EVAL_REBUILD.md`), not after,
+since a prompt edit invalidates any capture made before it.
 
 ## 2. Source citation in-product
 

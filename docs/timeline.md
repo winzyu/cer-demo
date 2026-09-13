@@ -55,8 +55,10 @@ Two things to keep straight about this track:
   split above: grading, `npm run cost` and `npm run grade:packet` all read captured evidence, none of
   them the arm's code. The price paid is that the arm **cannot be re-run or re-captured** without
   restoring it from the archive — so if grading ever demands a fresh `pgvector-rag` capture, that
-  restore is the first step, and any re-capture must re-run every arm (the prompt is a pinned
-  control).
+  restore is the first step. Any re-capture must still re-run every arm it is compared against — not
+  because the prompt is pinned (it no longer is), but because arms are only comparable when captured
+  under the same prompt, model and fixtures. Phase 4 of `EVAL_REBUILD.md` captures every arm fresh
+  against the gold-context ceiling for exactly that reason.
 - **It is built and swept.** All three arms are implemented, seeded and captured cold + warm on
   `feat/bakeoff-sweep`. What remains is a re-capture on the current corpus, then the gate passes —
   see ◆G7 below and [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8b.
@@ -111,7 +113,8 @@ default and RAG would be moot.
 - **Sensor access:** **backend-mediated tool call** — `query_sensor_data` fetches data (user token
   forwarded), so the LLM queries on demand.
 - **LLM:** Fireworks (OpenAI-compatible), model id **from config, never inlined** (serverless catalogue
-  rotates). Current default `accounts/fireworks/models/gpt-oss-20b`; embeddings
+  rotates). `.env.example` still ships `accounts/fireworks/models/gpt-oss-20b` as the default, but the
+  settled production generator is `gpt-oss-120b` (`EVAL_REBUILD.md` §1); embeddings
   `nomic-ai/nomic-embed-text-v1.5` (768-dim).
 - **Deployment:** local/demo for now; **Cloud Run** is the promotion target (per conventions §13).
 - **Report:** template-based, six fixed sections, no visualizations in v1. **Compute vs. narrate** —
@@ -439,7 +442,8 @@ implemented and tested offline against recorded production responses. They are g
 **`SENSOR_TOOL`, which defaults off**, because the tool block changes the system prompt and the
 prompt is a pinned control for the N2 bake-off while ◆G7 is open (`RETRIEVAL_BAKEOFF.md` §4). With
 the flag off the prompt is byte-identical to the one all three captured arms ran against — pinned by
-a hash in `test/unit/prompt.test.ts` — and no `tools` array is attached to a request.
+a hash in `test/unit/prompt.test.ts` — and no `tools` array is attached to a request. (Since released:
+the pin was lifted 2026-08-26 and replaced by the flag-additivity contract in `9d71113`.)
 
 What landed:
 
@@ -529,13 +533,14 @@ an input to **◆G3**.
 *Goal: get the data model to where features need it.*
 
 > **Status, partial.** Turbidity is end to end (metric code `72`, decoded, ranged in the prompt,
-> and expressed as clarity bands in the report — `migration/DEVICE_API.md` §8b). The metadata this
-> phase wanted a store for turns out to already exist in the **backend's device registry**, so
+> and expressed as clarity bands in the report — now the operator's three bands, Clear/Moderate/Turbid,
+> since `f751932` replaced the four provisional ones — `migration/DEVICE_API.md` §8b). The metadata
+> this phase wanted a store for turns out to already exist in the **backend's device registry**, so
 > nothing new was built to hold it: the report reads `operatingEnvironment` for water-body type and
 > `thresholds.min/maxTemperature` for the site baseline, both per device
 > (`src/report/buildReportInput.ts`, `src/report/operatorThresholds.ts`, `migration/BACKEND_FIELDS.md`).
-> **The chat path is unchanged** — it still reads the single global `WATER_TYPE`, because moving it
-> per-device means editing the pinned system prompt. ◆G3 stays open: what the report calls a
+> **The chat path is unchanged** — it still reads the single global `WATER_TYPE`. Per-device water
+> type in chat is now simply unbuilt, not blocked. ◆G3 stays open: what the report calls a
 > baseline is the operator's registry range, adopted as a working interpretation, not a decision.
 
 - **Add `turbidity` (NTU) end-to-end** — ingestion unit detection and the metric enum. The
@@ -569,10 +574,11 @@ an input to **◆G3**.
   because the six-parameter eval fixture cannot run at 5. Still a **hard dependency for reports**;
   re-check the number once a report actually exercises it.
 - System-prompt personality (friendly; steers toward water-quality topics). ~~**Blocked by ◆G7**~~
-  — **unblocked 2026-08-26** when ◆G7 split and the prompt was unpinned. Note the new constraint
-  that replaces the old one: prompt changes now invalidate the captured arm comparison, so
-  personality work and the groundedness fix should land together and be re-captured once, not
-  separately and re-captured twice. Historically: the
+  — **unblocked 2026-08-26** when ◆G7 split and the prompt was unpinned. Note the constraint that
+  replaces the old one: the captured arms are archived, so there is no comparison left to
+  invalidate — but a prompt edit still invalidates any capture made before it, so prompt changes
+  (personality included) should land before the Phase 3 generation-baseline capture, not after.
+  Historically: the
   prompt was a pinned control while the bake-off was ungraded, and a personality edit voided all
   three captured arms — which is why this was the one N5 item that could not start.
 - Strip `gpt-oss-20b`'s `【commentary…】` markers. **Post-processing on the answer, never a prompt
@@ -641,8 +647,9 @@ answers complete; every sensor answer shows which pod, which window, and how fre
 > **Status: report generation and the faulty-data foundation are built.** The pipeline is
 > `src/report/` (`buildReportInput`, `events`, `referenceRanges`, `operatorThresholds`,
 > `narrative`, `renderPdf`), reached through the `generate_report` tool and gated on **`REPORT_TOOL`,
-> default off** — same pinned-prompt reason `SENSOR_TOOL` is. Still open in this phase: document
-> upload/delete, and §4 event detection behind ◆G4.
+> default off** — the eval harness requires the tool flags off on both server and runner so every
+> capture runs the same base prompt, same reason `SENSOR_TOOL` is default off. Still open in this
+> phase: document upload/delete, and §4 event detection behind ◆G4.
 >
 > **Amended 2026-08-28, after the first 30-day report off live Algalita data** (rendered with
 > `npm run report:render`, which drives the pipeline with no server and no LLM). Five decisions
@@ -782,7 +789,7 @@ conversations that survive a page reload.*
 | Gate | Decision | Status | Blocks |
 |---|---|---|---|
 | ◆ G1 | Target stack (A/B/C) | **Resolved → C (Node/Express + Firestore)** | — (unblocked all) |
-| ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | **Split 2026-08-26.** Retrieval half **CLOSED**: `firestore-direct` on the evidence in `RETRIEVAL_COMPARISON.md` §7. Quality floor **re-filed as a system-level deploy blocker**, thresholds carried forward verbatim and still **unmet** (§8c). The system prompt is **unpinned**, which releases N5's personality item and ◆G11. Historical blocker, revised 2026-08-25 (`RETRIEVAL_BAKEOFF.md` §8b): re-capture on the 15-document corpus → automated pass on the three hard gates → LLM judge on the survivors → `RETRIEVAL_COMPARISON.md`. Only `firestore-direct`'s transcripts survived the corpus change. The offline retrieval harness and its four new arms **do not advance this gate** — §8a's targets are all answer-quality and recall/MRR are diagnostics with no target | Phases N2→N6; the pinned system prompt, which blocks N5's personality item. **No longer blocks pgvector archival** — that was taken ahead of the gate on 2026-08-19 (see "Where we are now"), with the evidence retained so grading is unaffected |
+| ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | **Split 2026-08-26.** Retrieval half **CLOSED**: `firestore-direct` on the evidence in `RETRIEVAL_COMPARISON.md` §7. Quality floor **re-filed as a system-level deploy blocker**, thresholds carried forward verbatim and still **unmet** (§8c). The system prompt is **unpinned**, which releases N5's personality item and ◆G11. Historical blocker, revised 2026-08-25 (`RETRIEVAL_BAKEOFF.md` §8b): re-capture on the 15-document corpus → automated pass on the three hard gates → LLM judge on the survivors → `RETRIEVAL_COMPARISON.md`. Only `firestore-direct`'s transcripts survived the corpus change. The offline retrieval harness and its four new arms **do not advance this gate** — §8a's targets are all answer-quality and recall/MRR are diagnostics with no target | Phases N2→N6. **No longer blocks pgvector archival** — that was taken ahead of the gate on 2026-08-19 (see "Where we are now"), with the evidence retained so grading is unaffected |
 | ◆ G9 | Direct-feed corpus slice | **Resolved → operator source-of-truth + 4 probe datasheets (~9.4K tokens)**. Revised 2026-07-29: the original small tier was 83% a structurally shredded criteria table covering pollutants this sensor cannot measure | — |
 | ◆ G10 | Third bake-off arm | **Resolved → yes, three arms**: `firestore-direct`, `pgvector-rag`, `firestore-vector`. Also answers whether Firestore's own vector search is good enough if RAG wins | — |
 | ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open — **cheaper now**: N3 built the loop, so adding it is one entry in `buildToolRegistry` plus a prompt line, not new machinery | multi-part answer quality |
@@ -823,11 +830,17 @@ entry to be written here at that point. Until then: **treat every retrieval arm 
 | Wave-1 **exit criterion 1 passes** — contamination 22.8% document-level, 11.6% chunk-level, against a < 40% bar | 2026-09-01 | `eval/fixtures-wave1/_CONTAMINATION.md` |
 | Phase 2b done: judge repointed | 2026-09-02 | `DEFAULT_JUDGE_MODEL` had still been `gpt-oss-120b`, which had become the production generator — the default judge was set to grade its own output. Guarded by a test that fails if it is put back |
 | Alpha-ratio filter defaulted **off** | 2026-09-02 | It defaulted *on* while the sole production caller passed `false` and no test covered the ingest path, so deleting one argument would have silently re-filtered the corpus to 393 chunks with the suite green |
+| **Prompt range block deleted**; per-pod thresholds come from the device registry through `get_pod_thresholds`, turbidity interpretation through `get_turbidity_info` | 2026-09-13 | Supervisor directive: the operator source-of-truth document's ranges are vetoed and ranges come from each pod's registry. Two of the block's six numbers had also drifted from the operator material (DO 5–14 mg/L, saltwater conductivity 40,000–50,000 µS/cm). No fallback table — a registry value that fails validation is reported as "no threshold configured". The registry values are operator-set **alert limits**, not ecological ranges, and the tool says so. Still open: whether the veto extends to the report pipeline's `BASELINE_RANGES`, the corpus document itself, and the four `precedence` fixtures built on it. `src/prompt/systemPrompt.ts` docstring |
+| **Quote-carrying citations** (`EVAL_REBUILD.md` 2a in code): the prompt asks for `【n†"quote"】`, context excerpts are labelled `【n】` | 2026-09-13 | The quote exists for deterministic grading (`checkQuotes`); the interface is to render the marker as a source link and not show the quote text. Not yet demonstrated on a capture. `src/prompt/promptBuilder.ts`, `src/eval/gates/checks.ts` |
 
-**Known blocker on Phase 3.** The Tier 1 refusal gate detects refusal-required turns by
+**Known blocker on Phase 3 (resolved by `a72c3b5`, see below).** The Tier 1 refusal gate detects refusal-required turns by
 regex-matching rubric prose, and matches **0 of wave 1's 8 refusal turns** — the new set phrases the
 requirement as "Declines to…" rather than "refuses to answer". `refusalMap()` now throws rather than
 reporting a vacuous 100% pass. The fix is a per-turn `requires_refusal` flag on the fixtures.
+**Resolved by `a72c3b5`** ("Detect refusal-required turns from a fixture flag, not rubric prose"),
+which replaced the rubric-prose regex with exactly that flag — the regex was deleted with no
+fallback, so `refusalMap()` still throws if a refusal-class fixture has no flagged turn. Five turns
+are flagged across three fixtures.
 
 ---
 
