@@ -322,6 +322,24 @@ describe("checkQuotes", () => {
   });
 
   /**
+   * The separator is widened on purpose: a model that writes a colon or a space instead of U+2020
+   * has still quoted its source, and a literal-only pattern would count zero markers — which reads
+   * as "ignored the instruction" rather than as the formatting slip it is.
+   */
+  it("parses a quote marker whose separator is not a dagger", () => {
+    [`【1:"${QUOTED}"】`, `【1 "${QUOTED}"】`, `【1 — "${QUOTED}"】`].forEach((marker) => {
+      const result = checkQuotes({ answer: `Temperature matters ${marker}.`, context: context(QUOTED) });
+      expect(result.total).toBe(1);
+      expect(result.supported).toBe(1);
+    });
+  });
+
+  it("does not read a plain citation with no quote as a quote marker", () => {
+    const result = checkQuotes({ answer: "Temperature matters 【1】 and 【2†L3-L9】.", context: context(QUOTED) });
+    expect(result.total).toBe(0);
+  });
+
+  /**
    * The check that stops this instrument reporting full support while measuring nothing: "pH"
    * occurs in nearly every chunk, so a two-character quote matches whatever it is pointed at.
    */

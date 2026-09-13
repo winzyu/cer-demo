@@ -1,16 +1,23 @@
 import type { ChatMessage } from "../types/chat.types";
 import type { Chunk } from "../types/retrieval.types";
-import type { WaterType } from "../config";
 import { buildSystemPrompt } from "./systemPrompt";
 
 /**
  * Renders chunks as a context block. Each excerpt is labelled with its source so the model
  * can cite it — the system prompt requires citation, which is only possible if the source
  * survives into the prompt text.
+ *
+ * **The label uses the full-width `【n】` brackets the citation marker uses**, not ASCII `[n]`.
+ * The system prompt asks for `【n†"quote"】`, and both citation checks in
+ * `src/eval/gates/checks.ts` parse U+3010/U+3011 only. A model copies the delimiter it is shown,
+ * so labelling in one bracket style and asking for another invites a translation step, and a
+ * translation step is where a wrong excerpt number gets in. `n` is 1-based and indexes the same
+ * `chunks` array `ChatController` returns as `citations`, which is what lets both the checker and
+ * the interface resolve a marker back to its source.
  */
 export const formatContext = (chunks: Chunk[]): string => {
   const excerpts = chunks
-    .map((chunk, index) => `[${index + 1}] (source: ${chunk.source})\n${chunk.text}`)
+    .map((chunk, index) => `【${index + 1}】 (source: ${chunk.source})\n${chunk.text}`)
     .join("\n\n");
 
   return `CONTEXT — excerpts from the water-quality corpus:\n\n${excerpts}`;
@@ -21,7 +28,6 @@ export interface BuildMessagesInput {
   chunks: Chunk[];
   /** Prior turns, oldest first. Passed through unchanged. */
   history?: ChatMessage[];
-  waterType?: WaterType;
 }
 
 /**
@@ -48,10 +54,9 @@ export const buildMessages = ({
   query,
   chunks,
   history = [],
-  waterType,
 }: BuildMessagesInput): ChatMessage[] => {
   const messages: ChatMessage[] = [
-    { role: "system", content: buildSystemPrompt(waterType) },
+    { role: "system", content: buildSystemPrompt() },
   ];
 
   // Omitted entirely when empty: an empty "CONTEXT:" heading reads to the model as

@@ -169,8 +169,8 @@ RULES:
 ${needsGroundingForCorrectness(evidence.rubric) ? `SOURCE DOCUMENTS SUPPLIED TO THE ANSWER
 These are here for ONE purpose: this turn's "must not" list asks whether the answer made
 something up, and that cannot be decided without them. A figure, range, procedure or statement
-that appears anywhere below — or in the operator-provided normal ranges the assistant is
-instructed to apply — was NOT invented, even if the rubric does not mention it. Do not otherwise
+that appears anywhere below — or in the service rules the assistant was given —
+was NOT invented, even if the rubric does not mention it. Do not otherwise
 grade the answer against these documents: an answer can be entirely true and still miss the
 rubric's points, and that is still not a 2.
 
@@ -212,8 +212,9 @@ fact.
 
 WHAT COUNTS AS GROUNDED — any one of these three is enough:
 - The RETRIEVED DOCUMENTS section.
-- The SERVICE RULES section. The operator-provided normal ranges in it are legitimate grounding;
-  an answer quoting them back is grounded, not inventing.
+- The SERVICE RULES section. Anything it states is legitimate grounding; an answer quoting it
+  back is grounded, not inventing. It carries NO normal or acceptable ranges, so a range the
+  answer applies as the pod's limit must appear in another section to be grounded.
 - A figure the user supplied in their own question, in this turn or an earlier one.
 Arithmetic on supplied numbers is grounded, including a degC/degF conversion of a supplied
 temperature. A previous ASSISTANT answer is NOT grounding — an earlier invention does not become

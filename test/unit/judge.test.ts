@@ -333,7 +333,8 @@ describe("judge task building", () => {
   it("carries the captured context and the earlier turns into the evidence", () => {
     const turn2 = tasks.find((t) => t.turn === 2 && t.dimension === "ungrounded");
     expect(turn2!.evidence.history).toHaveLength(1);
-    expect(turn2!.evidence.systemPrompt).toContain("AUTHORITATIVE NORMAL RANGES");
+    // The real base prompt: what a capture runs under, and grounding for anything it states.
+    expect(turn2!.evidence.systemPrompt).toContain("This prompt carries no normal or acceptable ranges.");
   });
 
   it("drops a transcript whose fixture is not in the live set", () => {

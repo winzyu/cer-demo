@@ -1,34 +1,47 @@
 import { config } from "../config";
-import type { WaterType } from "../config";
 
 /**
  * The system prompt, ported from the legacy service (`backend/main.py::build_system_prompt`,
  * recovered from git history at 7e2b09e^). `MIGRATION_SPEC.md` §4.2 describes its structure
- * but never recorded its text, so the wording here is the original.
+ * but never recorded its text, so the wording here began as the original.
  *
  * REFUSAL_SENTENCE is reproduced **verbatim** because behavior depends on its exact text; the
  * migration checklist calls it out specifically (`MIGRATION_SPEC.md` §11).
  *
- * The authoritative normal ranges were verbatim too until 2026-07-29, when **turbidity was added
- * and the scope lines were corrected**. The legacy prompt declared turbidity unmeasured, which is
- * no longer true: it is one of the six parameters the DataPod reads, the corpus was rescoped
- * around it, and it is in the ◆G9 direct-feed slice. Leaving it would have made every turbidity
- * question refuse before retrieval was consulted — which in the N2 bake-off means all three arms
- * score identically and the eval measures this prompt instead of the retrieval strategy.
+ * **No normal ranges live here, as of 2026-09-13.** The legacy prompt carried an
+ * `AUTHORITATIVE NORMAL RANGES` block — one global set for pH, ORP, dissolved oxygen, temperature,
+ * conductivity by `WATER_TYPE`, and (from 2026-07-29) turbidity. It was deleted for three
+ * reasons, in order of weight:
  *
- * This block is a **pinned control** for that experiment (`RETRIEVAL_BAKEOFF.md` §4). Changing it
- * once arms have run voids their results; re-run every arm instead.
+ * 1. **The project supervisor directed that ranges come from each pod's device registry**, not
+ *    from a document or a hard-coded table. Per-pod thresholds reach the model through the
+ *    `get_pod_thresholds` tool (`TOOL_BLOCK`), which validates them before exposing them.
+ * 2. **Two of its six numbers had drifted from the operator material they claimed to represent**
+ *    — dissolved oxygen 5-14 mg/L and saltwater conductivity 40,000-50,000 µS/cm, against the
+ *    6-11 / 5-9 / 5-8 and 45,000-55,000 in `src/report/referenceRanges.ts` — and its turbidity line
+ *    (0-25 NTU) contradicted live readings running to 1,689 and the caveat in `TOOL_BLOCK`.
+ * 3. **It cannot be per-pod and cacheable at once.** Fireworks caches on a byte-identical prefix
+ *    (`promptBuilder.ts`), so a per-request range block would void the cache. A tool result arrives
+ *    after the static prefix and costs nothing there.
  *
- * One block is deliberately *not* reproduced: the legacy tool inventory and routing rules.
- * The legacy model fetched documents itself via a `search_documents` tool; here retrieval runs
- * before the call and the text arrives as context. Promising tools that do not exist would
- * invite the model to announce lookups it cannot perform.
+ * With ranges gone, this function no longer takes a water type: nothing in the text depends on it.
  *
- * **Phase N3 adds half of it back, behind a flag.** `SENSOR_TOOL=true` appends the
- * `query_sensor_data` inventory and routing rules (`TOOL_BLOCK`). `search_documents` stays out —
- * that is ◆G11, still open. With the flag **off** this function returns exactly the string the
- * three captured bake-off arms ran against, byte for byte; `test/unit/prompt.test.ts` pins that
- * with a hash rather than trusting the reader to notice a stray newline.
+ * **Citations carry a verbatim quote** (`EVAL_REBUILD.md` Phase 2a). The model is asked for
+ * `【n†"quote"】`, where `n` is the excerpt number `formatContext` prints. A quote is checkable by
+ * normalised substring match (`checkQuotes` in `src/eval/gates/checks.ts`), which moves citation
+ * support out of the paid judge tier into deterministic Tier 1. Before this, the prompt said only
+ * "cite the document source" and defined no marker at all. The quote is for grading; the interface
+ * is expected to render the marker as a source link and not show the quote text.
+ *
+ * **This prompt is not a pinned control.** It was one for the Phase N2 bake-off until ◆G7 split on
+ * 2026-08-26; the transcripts it protected were archived 2026-09-01 (`eval-archive-2026-09-01`).
+ * What `test/unit/prompt.test.ts` enforces now is that the tool flags only *append*, so the base
+ * text stays a byte-exact prefix. Any edit here does invalidate captures made before it, so prompt
+ * changes land before a capture, not after.
+ *
+ * One legacy block is deliberately *not* reproduced: the tool inventory for `search_documents`.
+ * Retrieval runs before the call and the text arrives as context; whether it returns as a tool is
+ * ◆G11, still open.
  */
 
 /**
@@ -37,23 +50,6 @@ import type { WaterType } from "../config";
  * and breaks parity with the eval fixtures.
  */
 export const REFUSAL_SENTENCE = "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that.";
-
-const conductivityRangeText = (waterType: WaterType): string => (waterType === "saltwater" ? "40,000 to 50,000" : "0 to 1,500");
-
-/**
- * Turbidity, added 2026-07-29. Unlike the other five ranges this one is **derived from the
- * operator's own source-of-truth reference** (§2 baseline table: healthy freshwater <5–25 NTU,
- * healthy seawater <5–10 NTU) rather than supplied separately, because no separate operator
- * range exists yet. It still sits in the authoritative block: the reference is operator-written,
- * so it outranks the general field manuals the same way the other five do.
- *
- * The low end is 0, not 5 — **0 is a valid turbidity reading and must never be flagged as
- * erroneous** (same rule as ORP; see `timeline.md`).
- *
- * The fleet reports **NTU** (white-light). NTU and FNU are not interchangeable, so a pod
- * reporting FNU cannot be compared against this range without re-deriving it.
- */
-const turbidityRangeText = (waterType: WaterType): string => (waterType === "saltwater" ? "0 to 10" : "0 to 25");
 
 /**
  * The tool inventory and routing rules, appended only when `SENSOR_TOOL` is on.
@@ -71,6 +67,11 @@ export const TOOL_BLOCK = `TOOLS:
 - query_sensor_data — reads this deployment's real sensor readings from the device
   API. It is the ONLY source of actual measurements. The CONTEXT documents explain
   what metrics mean; they never contain this deployment's readings.
+- get_pod_thresholds — returns the alert thresholds the operator configured for a
+  pod: minimum and maximum for temperature, pH, dissolved oxygen, ORP and
+  conductivity. These are configured alert limits, not an ecological standard.
+- get_turbidity_info — explains how the turbidity index is derived and gives the
+  operator's three clarity bands. Takes no arguments.
 
 Tool routing:
 - Any question about what a reading IS, was, or did — current values, averages,
@@ -78,8 +79,11 @@ Tool routing:
   Do not answer such a question from CONTEXT or from prior turns' numbers.
 - Questions about what a metric MEANS, why it matters, how it is measured, or what a
   document says are answered from CONTEXT, with no tool call.
-- To judge whether a reading is normal, call the tool for the value and compare it
-  against the AUTHORITATIVE NORMAL RANGES above — not against a document.
+- To say whether a reading is within this pod's limits, call query_sensor_data for
+  the value and get_pod_thresholds for the limits, then compare them. Call the limits
+  "configured thresholds", never a "normal range". If a threshold is rejected or
+  absent, say no threshold is configured for that metric — never substitute a
+  number from a document.
 - To cover several metrics at once, ask for metric "all" in a single call rather than
   making one call per metric.
 - For "what was the first/earliest reading", use aggregation "earliest". Do NOT use
@@ -122,7 +126,8 @@ Reading a tool result:
   "observed_at". The window start is not the first reading.
 - Turbidity is a PROVISIONAL, uncalibrated index derived from a voltage and expressed
   in NTU. Treat it as a relative indicator; do not present it as a calibrated
-  measurement.
+  measurement. Call get_turbidity_info before characterising a turbidity value, and
+  describe it by its clarity band.
 - Report the value the tool returned, with its units and its timestamp. Never adjust,
   round away, or re-derive it.`;
 
@@ -180,39 +185,40 @@ Report vs. single-stat routing:
  * exercise every combination without reloading the module registry.
  */
 export const buildSystemPrompt = (
-  waterType: WaterType = config.waterType,
   sensorTool: boolean = config.tools.sensorTool,
   reportTool: boolean = config.tools.reportTool,
 ): string => `You are a water-quality assistant for a single sensor deployment. You answer
 questions about the sensor's readings and about authoritative water-quality
 documents.
 
-AUTHORITATIVE NORMAL RANGES (operator-provided, take precedence over documents):
-- pH: 6.5 to 8.5
-- ORP: 200 to 400 mV
-- Dissolved oxygen: 5 to 14 mg/L
-- Temperature: 32 to 95 °F
-- Conductivity (this deployment is ${waterType}): ${conductivityRangeText(waterType)} µS/cm
-- Turbidity: ${turbidityRangeText(waterType)} NTU
-
 Rules:
 - Relevant excerpts from the water-quality corpus are provided to you as CONTEXT
   below. Use them for questions about what a metric means, why it matters, how
   it's measured, or regulatory context.
-- If the question is about whether a reading is normal, use the AUTHORITATIVE
-  NORMAL RANGES above rather than the context.
-- If a context excerpt disagrees with the AUTHORITATIVE NORMAL RANGES, prefer the
-  operator-provided ranges and note the discrepancy if it's relevant to the
-  user's question.
-- Always cite the document source when you use information from the context.
+- This prompt carries no normal or acceptable ranges. Never say a reading is
+  normal, abnormal, in range or out of range unless a tool result gives you this
+  pod's configured thresholds. A range described in a CONTEXT excerpt is general
+  background, not this pod's threshold: you may report what the excerpt says,
+  cited to it, but never apply it as this pod's limit. If no threshold is
+  available, say that no threshold is configured for this pod.
+- Turbidity is a relative, uncalibrated index. You may report the number, but
+  characterise it only qualitatively — a clarity band or a direction of change —
+  and never judge it against a numeric range or present it as a calibrated
+  measurement.
+- Cite every claim you take from the CONTEXT as 【n†"quote"】, where n is the
+  number of the excerpt it came from and the quote is copied character-for-
+  character from that excerpt: roughly 5 to 20 words, in straight double quotes.
+  Copy it exactly. Do not paraphrase it, reword it, or shorten it with an
+  ellipsis. Place one marker at the end of the sentence it supports.
+- Do not put a citation marker on a sensor reading or a tool result; those are
+  not CONTEXT excerpts. A refusal carries no marker.
 - The sensor measures dissolved oxygen, ORP, pH, conductivity, temperature, and
   turbidity (in NTU). It does NOT measure pathogens, bacteria, nutrients, or
   chemicals. If asked whether water is safe to swim in or drink, say plainly
   that the sensor cannot answer that and the user should consult local
   public-health authorities.
 - IN-SCOPE topics are ONLY: this sensor's readings (dissolved oxygen, ORP,
-  pH, conductivity, temperature, turbidity) and the CONTEXT provided below. The
-  AUTHORITATIVE NORMAL RANGES above are also in-scope.
+  pH, conductivity, temperature, turbidity) and the CONTEXT provided below.
 - If a question is outside that scope, or if the provided context contains
   nothing relevant, DO NOT answer from prior knowledge. Respond with exactly:
     "${REFUSAL_SENTENCE}"
@@ -220,4 +226,4 @@ Rules:
 - Never use general world knowledge to fill gaps. If the context does not
   support the answer, refuse using the line above.
 - Do not fabricate readings or citations.
-- Keep answers short and direct. Cite specific numbers from the data.${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}${reportTool ? `\n\n${REPORT_TOOL_BLOCK}` : ""}`;
+- Keep answers short and direct. Give specific numbers from the data.${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}${reportTool ? `\n\n${REPORT_TOOL_BLOCK}` : ""}`;

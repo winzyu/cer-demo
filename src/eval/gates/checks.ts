@@ -31,8 +31,9 @@ export interface TurnEvidence {
    * `AUTHORITATIVE NORMAL RANGES` block — pH 6.5-8.5, DO 5-14 mg/L, conductivity 0-1,500 µS/cm —
    * quoted back correctly. A transcript's `context` field holds *retrieval* context only, so a
    * checker that treats it as the whole grounding accuses an arm of inventing the operator ranges
-   * it was told to apply. Question text belongs here too: a user who says "pH 8.4" has supplied
-   * that figure.
+   * it was told to apply. That block was deleted from the prompt on 2026-09-13, but the principle
+   * stands for anything the prompt still supplies. Question text belongs here too: a user who says
+   * "pH 8.4" has supplied that figure.
    */
   grounding?: string[];
 }
@@ -372,19 +373,23 @@ export const checkFigures = (turn: TurnEvidence): FigureResult => {
  * pre-registered gate whose per-arm numbers are published (§1c); editing it risks moving them.
  * The two schemes already coexist by construction: `CITATION_PATTERN`'s line-span group is
  * optional and its trailing `[^】]*` swallows a quote, so a quote-style marker still resolves as a
- * plain `【n】` there. That compatibility is real and worth having, but it is not evidence of an
- * existing scheme to extend: the system prompt has never asked for a `【n】` marker at all — it
- * says only "Always cite the document source when you use information from the context"
- * (`src/prompt/systemPrompt.ts` line 207), and `promptBuilder.ts` labels context excerpts with
- * ASCII `[1]`, not `【1】` (`src/prompt/promptBuilder.ts` line 13). The 198 markers measured above
- * are `gpt-oss-20b` emitting them **unprompted** — a placeholder model since replaced as the
- * production generator by `gpt-oss-120b`, which may emit none. Phase 2a has to *introduce* the
- * quote-citation scheme, not extend one that was already instructed.
+ * plain `【n】` there. That compatibility is real and worth having, but until 2026-09-13 it was not
+ * evidence of a scheme to extend: the prompt defined no marker at all ("Always cite the document
+ * source") and context excerpts were labelled ASCII `[1]`. The 198 markers measured above were
+ * `gpt-oss-20b` emitting them **unprompted**. The prompt now asks for `【n†"quote"】` and
+ * `formatContext` labels excerpts `【n】`, so this pattern parses an instructed format.
  *
  * The quote delimiters are a character class because the model emits typographic quotes — the same
  * defect family as the U+2011 hyphen, and the reason `normalize.ts` folds them.
+ *
+ * **The separator is a small optional class, not a literal `†`.** U+2020 DAGGER is an unusual
+ * character to ask a model for, and a model that writes `【3:"…"】` or `【3 "…"】` has still quoted
+ * its source. A literal-only pattern would count those as zero quote markers — which reads exactly
+ * like "the model ignored the instruction", a silent failure on the one number Phase 2a exists to
+ * produce. Widening it here cannot move a published figure: this pattern is not the pre-registered
+ * citation gate, and the quote delimiters immediately after the number still anchor the match.
  */
-const QUOTE_CITATION_PATTERN = /【\s*(\d+)\s*†\s*["“”„‟″]([^】]*?)["“”„‟″]\s*】/g;
+const QUOTE_CITATION_PATTERN = /【\s*(\d+)\s*(?:[†‡:|,;–—-]\s*)?["“”„‟″]([^】]*?)["“”„‟″]\s*】/g;
 
 /**
  * Below this a quote stops being evidence. "pH" occurs in nearly every chunk in the corpus, so a

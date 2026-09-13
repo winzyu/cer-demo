@@ -211,7 +211,7 @@ export const buildTasks = (options: BuildOptions = {}): JudgeTask[] => {
   // is no longer a pinned control for a specific bake-off — that pin was released 2026-08-26 when
   // ◆G7 split, and the transcripts it protected were archived 2026-09-01 under
   // `eval-archive-2026-09-01`.
-  const systemPrompt = buildSystemPrompt(undefined, false, false);
+  const systemPrompt = buildSystemPrompt(false, false);
 
   const rubrics = new Map(loadFixtures().map((fixture) => [fixture.id, fixture]));
   const tasks: JudgeTask[] = [];

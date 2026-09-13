@@ -11,34 +11,48 @@ const chunks: Chunk[] = [
 ];
 
 describe("buildSystemPrompt", () => {
-  it("states the authoritative normal ranges", () => {
-    const prompt = buildSystemPrompt("freshwater");
+  it("carries no normal ranges of its own", () => {
+    // Deleted 2026-09-13: ranges come from each pod's device registry via get_pod_thresholds.
+    // Two of the six hard-coded numbers had drifted from the operator material they claimed to
+    // represent (see systemPrompt.ts), so a stray reinstatement is worth catching.
+    const prompt = buildSystemPrompt(false, false);
 
-    expect(prompt).toContain("pH: 6.5 to 8.5");
-    expect(prompt).toContain("ORP: 200 to 400 mV");
-    expect(prompt).toContain("Dissolved oxygen: 5 to 14 mg/L");
-    expect(prompt).toContain("Temperature: 32 to 95 °F");
-    expect(prompt).toContain("Turbidity: 0 to 25 NTU");
+    expect(prompt).not.toContain("AUTHORITATIVE NORMAL RANGES");
+    ["6.5 to 8.5", "200 to 400", "5 to 14", "32 to 95", "0 to 1,500", "40,000 to 50,000", "0 to 25"]
+      .forEach((range) => expect(prompt).not.toContain(range));
+    expect(prompt).toContain("This prompt carries no normal or acceptable ranges.");
   });
 
-  it("interpolates the conductivity range from water type", () => {
-    expect(buildSystemPrompt("freshwater")).toContain("0 to 1,500");
-    expect(buildSystemPrompt("saltwater")).toContain("40,000 to 50,000");
+  it("forbids applying a document's range as the pod's limit", () => {
+    const prompt = buildSystemPrompt(false, false);
+
+    expect(prompt).toContain("not this pod's threshold");
+    expect(prompt).toContain("say that no threshold is configured for this pod");
   });
 
-  it("interpolates the turbidity range from water type", () => {
-    expect(buildSystemPrompt("freshwater")).toContain("Turbidity: 0 to 25 NTU");
-    expect(buildSystemPrompt("saltwater")).toContain("Turbidity: 0 to 10 NTU");
+  it("keeps turbidity qualitative without naming any sensor hardware", () => {
+    // Finding 12 (HANDOFF_2026-09-10.md): naming an instrument while fixture text is frozen would
+    // turn refusal-turbidity-sensor-hardware into a refusal for something answerable.
+    const prompt = buildSystemPrompt(true, true);
+
+    expect(prompt).toContain("characterise it only qualitatively");
+    ["Turner", "Keystudio", "Keyestudio", "KS0414"].forEach((name) => expect(prompt).not.toContain(name));
   });
 
-  it("keeps 0 inside the turbidity range", () => {
-    // 0 is a valid turbidity reading and must never be flagged as erroneous
-    // (same rule as ORP — see timeline.md).
-    expect(buildSystemPrompt("freshwater")).toContain("Turbidity: 0 to");
+  it("defines the quote-carrying citation marker checkQuotes parses", () => {
+    // EVAL_REBUILD.md Phase 2a. The marker, the verbatim requirement and the no-ellipsis rule are
+    // each load-bearing: checkQuotes is a normalised substring match, so a paraphrase or an elided
+    // clause reads as unsupported.
+    const prompt = buildSystemPrompt(false, false);
+
+    expect(prompt).toContain("【n†\"quote\"】");
+    expect(prompt).toContain("character-for-\n  character");
+    expect(prompt).toContain("ellipsis");
+    expect(prompt).toContain("A refusal carries no marker.");
   });
 
   it("embeds the refusal sentence verbatim", () => {
-    expect(buildSystemPrompt("freshwater")).toContain(REFUSAL_SENTENCE);
+    expect(buildSystemPrompt()).toContain(REFUSAL_SENTENCE);
   });
 
   it("keeps the refusal sentence character-for-character stable", () => {
@@ -53,7 +67,7 @@ describe("buildSystemPrompt", () => {
     // Corrected 2026-07-29: the legacy prompt declared turbidity unmeasured. It is one of the
     // six parameters the DataPod reads, so leaving it out refused every turbidity question
     // before retrieval ran — see systemPrompt.ts.
-    const prompt = buildSystemPrompt("freshwater");
+    const prompt = buildSystemPrompt();
 
     expect(prompt).toContain("does NOT measure pathogens, bacteria, nutrients, or");
     expect(prompt).not.toContain("or turbidity.");
@@ -61,9 +75,9 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("public-health authorities");
   });
 
-  it("is identical across calls for the same water type", () => {
+  it("is identical across calls", () => {
     // The cacheability precondition: nothing per-request may leak into this block.
-    expect(buildSystemPrompt("freshwater")).toBe(buildSystemPrompt("freshwater"));
+    expect(buildSystemPrompt()).toBe(buildSystemPrompt());
   });
 });
 
@@ -80,8 +94,8 @@ describe("buildSystemPrompt", () => {
  * become a test that fails the next sanctioned change while telling the author not to touch it.
  *
  * What replaces it is the property that actually has to hold and is not a snapshot: **a flag may
- * only append.** Turning a tool on must leave the base prompt a byte-exact prefix, so operator
- * ranges and refusal contract cannot shift underneath it and the cacheable prefix stays stable.
+ * only append.** Turning a tool on must leave the base prompt a byte-exact prefix, so the range
+ * rule and refusal contract cannot shift underneath it and the cacheable prefix stays stable.
  * That catches a stray edit above the tool blocks, which is what the digest was really for,
  * without going stale every time the prompt is legitimately revised.
  *
@@ -92,25 +106,28 @@ describe("buildSystemPrompt", () => {
  * failed the pin for a reason that had nothing to do with the prompt text.
  */
 describe("the tool flags are additive", () => {
-  const base = buildSystemPrompt("freshwater", false, false);
+  const base = buildSystemPrompt(false, false);
 
   it("says nothing about tools when both flags are off", () => {
     expect(base).not.toContain("query_sensor_data");
     expect(base).not.toContain("generate_report");
     expect(base).not.toContain("TOOLS:");
+    expect(base).not.toContain("get_pod_thresholds");
+    expect(base).not.toContain("get_turbidity_info");
   });
 
-  it("carries the operator ranges and the refusal contract regardless of the flags", () => {
+  it("carries the range rule, citation contract and refusal contract regardless of the flags", () => {
     // The content the flags must never disturb, asserted on all four combinations.
     [[false, false], [true, false], [false, true], [true, true]].forEach(([sensor, report]) => {
-      const prompt = buildSystemPrompt("freshwater", sensor, report);
-      expect(prompt).toContain("AUTHORITATIVE NORMAL RANGES");
+      const prompt = buildSystemPrompt(sensor, report);
+      expect(prompt).toContain("This prompt carries no normal or acceptable ranges.");
+      expect(prompt).toContain("【n†\"quote\"】");
       expect(prompt).toContain(REFUSAL_SENTENCE);
     });
   });
 
   it("appends the sensor tool block, and only that, when SENSOR_TOOL is on", () => {
-    const on = buildSystemPrompt("freshwater", true, false);
+    const on = buildSystemPrompt(true, false);
 
     expect(on.startsWith(base)).toBe(true);
     expect(on.slice(base.length)).toBe(`\n\n${TOOL_BLOCK}`);
@@ -119,7 +136,7 @@ describe("the tool flags are additive", () => {
   it("appends the report tool block, and only that, when REPORT_TOOL is on alone", () => {
     // REPORT_TOOL does not require SENSOR_TOOL — a deployment can turn it on by itself, and the
     // block is written to read correctly in that case. Untested until now.
-    const on = buildSystemPrompt("freshwater", false, true);
+    const on = buildSystemPrompt(false, true);
 
     expect(on.startsWith(base)).toBe(true);
     expect(on.slice(base.length)).toBe(`\n\n${REPORT_TOOL_BLOCK}`);
@@ -128,30 +145,20 @@ describe("the tool flags are additive", () => {
   it("appends sensor then report, in that order, when both are on", () => {
     // Both blocks open with their own "TOOLS:" header, so `indexOf("TOOLS:")` and
     // `not.toContain("TOOLS:")` cannot tell them apart. Slicing is what distinguishes them.
-    const both = buildSystemPrompt("freshwater", true, true);
-    const sensorOnly = buildSystemPrompt("freshwater", true, false);
+    const both = buildSystemPrompt(true, true);
+    const sensorOnly = buildSystemPrompt(true, false);
 
     expect(both.startsWith(sensorOnly)).toBe(true);
     expect(both.slice(sensorOnly.length)).toBe(`\n\n${REPORT_TOOL_BLOCK}`);
     expect(both.indexOf(TOOL_BLOCK)).toBeLessThan(both.indexOf(REPORT_TOOL_BLOCK));
   });
 
-  it("keeps the authoritative ranges above both tool blocks", () => {
-    const both = buildSystemPrompt("freshwater", true, true);
+  it("keeps the range and citation rules above both tool blocks", () => {
+    const both = buildSystemPrompt(true, true);
+    const rule = both.indexOf("This prompt carries no normal or acceptable ranges.");
 
-    expect(both.indexOf("AUTHORITATIVE NORMAL RANGES")).toBeLessThan(both.indexOf(TOOL_BLOCK));
-    expect(both.indexOf("AUTHORITATIVE NORMAL RANGES"))
-      .toBeLessThan(both.indexOf(REPORT_TOOL_BLOCK));
-  });
-
-  it("keeps the two water types different only in their ranges block", () => {
-    // What the saltwater digest was really asserting: the two prompts are the same document
-    // with one substituted section, not two independently drifting texts.
-    const salt = buildSystemPrompt("saltwater", false, false);
-
-    expect(salt).not.toBe(base);
-    expect(salt).toContain("AUTHORITATIVE NORMAL RANGES");
-    expect(salt).toContain(REFUSAL_SENTENCE);
+    expect(rule).toBeLessThan(both.indexOf(TOOL_BLOCK));
+    expect(both.indexOf("【n†\"quote\"】")).toBeLessThan(both.indexOf(REPORT_TOOL_BLOCK));
   });
 });
 
@@ -178,6 +185,16 @@ describe("TOOL_BLOCK", () => {
     expect(TOOL_BLOCK).toContain("PROVISIONAL, uncalibrated");
   });
 
+  it("routes a limits question to get_pod_thresholds, never to a document", () => {
+    expect(TOOL_BLOCK).toContain("get_pod_thresholds for the limits");
+    expect(TOOL_BLOCK).toContain("never substitute a\n  number from a document");
+    expect(TOOL_BLOCK).toContain("never a \"normal range\"");
+  });
+
+  it("sends turbidity interpretation through get_turbidity_info", () => {
+    expect(TOOL_BLOCK).toContain("Call get_turbidity_info before characterising a turbidity value");
+  });
+
   it("does not promise a document-search tool", () => {
     // ◆G11 is open. Retrieval still runs before the call and arrives as CONTEXT; naming a
     // search tool here would invite the model to announce lookups it cannot perform.
@@ -196,7 +213,9 @@ describe("formatContext", () => {
 
   it("numbers excerpts in the order given", () => {
     const block = formatContext(chunks);
-    expect(block.indexOf("[1]")).toBeLessThan(block.indexOf("[2]"));
+    // Full-width brackets, matching the 【n†"quote"】 marker the system prompt asks for.
+    expect(block.indexOf("【1】")).toBeLessThan(block.indexOf("【2】"));
+    expect(block).not.toContain("[1]");
   });
 });
 
@@ -211,7 +230,7 @@ describe("buildMessages", () => {
 
     expect(messages).toHaveLength(5);
     expect(messages[0].role).toBe("system");
-    expect(messages[0].content).toContain("AUTHORITATIVE NORMAL RANGES");
+    expect(messages[0].content).toContain(REFUSAL_SENTENCE);
     expect(messages[1].role).toBe("system");
     expect(messages[1].content).toContain("CONTEXT");
     expect(messages[2]).toEqual(history[0]);
