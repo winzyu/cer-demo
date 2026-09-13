@@ -507,6 +507,28 @@ export class QuerySensorData {
     }
   }
 
+  /**
+   * Public passthrough onto the private `resolveDevice()`, for other model-facing tools that need
+   * the *same* device resolution and the *same* failure text `query_sensor_data` produces --
+   * ambiguous match, no match, no devices for this token's organization -- rather than
+   * `deviceRecord()`'s null-on-failure collapse (built for report generation, which needs to
+   * degrade a document gracefully instead of surfacing a message to reword).
+   *
+   * `get_pod_thresholds` (`getPodThresholds.ts`) is the first caller: it needs the registry row,
+   * not a reading, but a caller asking about the wrong device deserves the same "which pod did
+   * you mean" error a sensor question would get, not a second, differently-worded one.
+   *
+   * Same cache as everything else here: `resolveDevice` calls `devices(token)`, which is the TTL
+   * cache keyed by token, so a request that already called `query_sensor_data` costs this no
+   * extra `/devices` call.
+   */
+  async resolveDeviceForTool(
+    requested?: string,
+    token?: string,
+  ): Promise<{ device: DeviceSummary } | { error: SensorToolResult }> {
+    return this.resolveDevice(requested, token);
+  }
+
   private async execute(args: Record<string, unknown>, token?: string): Promise<SensorToolResult> {
     const metricName = typeof args.metric === "string" ? normalize(args.metric) : "";
     // "all" fetches one window and reads every metric out of it — one API call, not six, and
@@ -928,8 +950,8 @@ export class QuerySensorData {
     if (environment && deviceWaterType !== this.waterType) {
       notes.push(
         `This device operates in ${environment}, but the deployment's configured water type is `
-        + `${this.waterType}. The normal ranges in your instructions are for ${this.waterType}; `
-        + "say so if you compare this reading against them.",
+        + `${this.waterType}. Your instructions carry no ranges; to judge this reading against `
+        + "limits, use this pod's configured thresholds from get_pod_thresholds.",
       );
     }
 

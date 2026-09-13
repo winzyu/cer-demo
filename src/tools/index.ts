@@ -2,6 +2,8 @@ import { config } from "../config";
 import type { ToolHandler } from "../types/tool.types";
 import { QuerySensorData, SensorQueryError, querySensorDataDefinition } from "./querySensorData";
 import { GenerateReport, generateReportDefinition } from "./generateReport";
+import { GetPodThresholds, getPodThresholdsDefinition } from "./getPodThresholds";
+import { getTurbidityInfo, getTurbidityInfoDefinition } from "./getTurbidityInfo";
 
 /**
  * The tool inventory offered to the model.
@@ -36,6 +38,10 @@ export const buildToolRegistry = (
   const handlers: ToolHandler[] = [];
 
   if (sensorTool) {
+    // One instance, shared by every handler below that needs device data: `QuerySensorData`
+    // caches the registry row per token (`deviceCache` in querySensorData.ts), and sharing the
+    // instance is what makes that cache actually shared across tools in the same request instead
+    // of each tool re-fetching `/devices` on its own.
     const sensor = new QuerySensorData();
     handlers.push({
       definition: querySensorDataDefinition,
@@ -44,6 +50,17 @@ export const buildToolRegistry = (
       // fall back to the deployment's `DEVICE_API_TOKEN` instead, which on an organization-scoped
       // API answered out of the wrong fleet rather than failing.
       run: (args, context) => sensor.run(args, context),
+    });
+
+    const podThresholds = new GetPodThresholds({ sensor });
+    handlers.push({
+      definition: getPodThresholdsDefinition,
+      run: (args, context) => podThresholds.run(args, context),
+    });
+
+    handlers.push({
+      definition: getTurbidityInfoDefinition,
+      run: (args, context) => getTurbidityInfo(args, context),
     });
   }
 
@@ -60,4 +77,6 @@ export const buildToolRegistry = (
 
 export { QuerySensorData, SensorQueryError, querySensorDataDefinition };
 export { GenerateReport, generateReportDefinition };
+export { GetPodThresholds, getPodThresholdsDefinition };
+export { getTurbidityInfo, getTurbidityInfoDefinition };
 export type { SensorQueryParams } from "./querySensorData";

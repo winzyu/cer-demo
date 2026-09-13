@@ -30,6 +30,7 @@
  * Pure and offline: it takes a plain record and returns a verdict. Nothing here touches the
  * device API.
  */
+import { PLAUSIBLE_RANGES } from "../devices/plausibility";
 
 /**
  * Sanity rail for an operator-entered temperature **baseline edge**, in °F.
@@ -56,9 +57,61 @@
  */
 export const TEMPERATURE_BASELINE_RAIL_F: readonly [number, number] = [25, 110];
 
-/** Registry field names. Exact spellings from the live documents — see BACKEND_FIELDS.md §3. */
-const MIN_KEY = "minTemperature";
-const MAX_KEY = "maxTemperature";
+/**
+ * The five metrics the registry carries an operator threshold pair for (`BACKEND_FIELDS.md` §1).
+ * Turbidity has no threshold key on any device and is deliberately absent -- see
+ * `getTurbidityInfo.ts`. Spelled to match `MetricKey` in `types/device.types.ts` so a caller
+ * holding one already has the other.
+ */
+export type MetricThresholdKey = "temperature" | "ph" | "dissolvedOxygen" | "orp" | "conductivity";
+
+/** Registry field names, exact spellings from the live documents (`BACKEND_FIELDS.md` §1, §3). */
+const FIELD_KEYS: Record<MetricThresholdKey, { min: string; max: string }> = {
+  temperature: { min: "minTemperature", max: "maxTemperature" },
+  ph: { min: "minPH", max: "maxPH" },
+  dissolvedOxygen: { min: "minDissolvedOxygen", max: "maxDissolvedOxygen" },
+  orp: { min: "minORP", max: "maxORP" },
+  conductivity: { min: "minConductivity", max: "maxConductivity" },
+};
+
+/** Human label for a metric, used only in generated rejection sentences. */
+const METRIC_LABELS: Record<MetricThresholdKey, string> = {
+  temperature: "temperature",
+  ph: "pH",
+  dissolvedOxygen: "dissolved oxygen",
+  orp: "ORP",
+  conductivity: "conductivity",
+};
+
+/**
+ * Sanity rails per metric, in the registry's own unit. Both edges of a pair must lie inside the
+ * rail (see `withinRail` below). These catch data-entry garbage -- pH "100", ORP "-2200", the
+ * all-zero "never configured" rows -- not operator judgement, and every threshold pair observed
+ * live on the fleet on 2026-09-13 clears all five rails with room to spare.
+ *
+ * `temperature`'s rail is `TEMPERATURE_BASELINE_RAIL_F`, unchanged from before this table existed
+ * -- see its own docstring for why 25-110 °F was chosen, and why it is deliberately tighter than
+ * the probe can report: the report uses it as a site baseline, and that behaviour must not move.
+ *
+ * **The other four reuse the probe's own plausibility rails** (`PLAUSIBLE_RANGES` in
+ * `src/devices/plausibility.ts`) rather than a second set of invented numbers. The test is the
+ * same one that file applies to a reading: a configured limit the probe can never report is not a
+ * limit, it is a placeholder. pH 0-14 is the scale itself; dissolved oxygen 0-30 mg/L allows ~200%
+ * supersaturation; ORP -2,000 to 2,000 mV; conductivity 0-100,000 µS/cm. Both edges are inclusive.
+ *
+ * What these rails reject: `maxPH=100`, `maxDissolvedOxygen=100`, `minORP=-2200`. What they
+ * deliberately **accept**: an operator's generous or odd-but-physical choice, such as Balboa Yacht
+ * Basin Buoy's `maxDissolvedOxygen=27` or Old Woman Creek's `maxConductivity=100000`. Those are
+ * reported to the model as configured alert limits, which is what they literally are; whether they
+ * are *good* limits is the operator's data to fix, not this validator's to overrule.
+ */
+const RAILS: Record<MetricThresholdKey, readonly [number, number]> = {
+  temperature: TEMPERATURE_BASELINE_RAIL_F,
+  ph: [PLAUSIBLE_RANGES.ph.min, PLAUSIBLE_RANGES.ph.max],
+  dissolvedOxygen: [PLAUSIBLE_RANGES.dissolvedOxygen.min, PLAUSIBLE_RANGES.dissolvedOxygen.max],
+  orp: [PLAUSIBLE_RANGES.orp.min, PLAUSIBLE_RANGES.orp.max],
+  conductivity: [PLAUSIBLE_RANGES.conductivity.min, PLAUSIBLE_RANGES.conductivity.max],
+};
 
 /**
  * Why a threshold pair was not usable. Carried out of the validator rather than collapsed to
@@ -106,29 +159,33 @@ const toNumber = (value: unknown): number | undefined => {
   return Number.isFinite(parsed) ? parsed : undefined;
 };
 
-const withinRail = (value: number): boolean => {
-  const [lo, hi] = TEMPERATURE_BASELINE_RAIL_F;
+const withinRail = (value: number, rail: readonly [number, number]): boolean => {
+  const [lo, hi] = rail;
   return value >= lo && value <= hi;
 };
 
 /**
- * The device's operator-set temperature range, in °F, or the reason there isn't a usable one.
+ * The device's operator-set range for one metric, in the registry's own unit, or the reason there
+ * isn't a usable one.
  *
- * Units: °F, matching what this codebase's temperature metric is normalized to (`metrics.ts`
- * converts code 102 to Fahrenheit) and what the report's "Temperature (°F)" row prints. The
- * registry stores these thresholds in the same unit the dashboard displays, so no conversion
- * happens here — and none should be added without re-checking the dashboard, because a silent
- * C/F mix-up here would produce a plausible-looking wrong range rather than an obvious one.
+ * Generalised from what was originally `temperatureThreshold`'s body alone -- same five rules,
+ * now parameterised by `FIELD_KEYS`/`RAILS` instead of hard-coding the temperature pair. Units:
+ * whatever the registry itself stores (°F for temperature, matching what `metrics.ts` normalizes
+ * code 102 to) -- no conversion happens here, and none should be added without re-checking the
+ * dashboard, because a silent unit mix-up here would produce a plausible-looking wrong range
+ * rather than an obvious one.
  */
-export const temperatureThreshold = (
+export const metricThreshold = (
   thresholds: Record<string, string | number> | null | undefined,
+  metric: MetricThresholdKey,
 ): ThresholdVerdict => {
   if (!thresholds || typeof thresholds !== "object" || Object.keys(thresholds).length === 0) {
     return { usable: false, reason: "no-thresholds" };
   }
 
-  const rawMin = (thresholds as Record<string, unknown>)[MIN_KEY];
-  const rawMax = (thresholds as Record<string, unknown>)[MAX_KEY];
+  const { min: minKey, max: maxKey } = FIELD_KEYS[metric];
+  const rawMin = (thresholds as Record<string, unknown>)[minKey];
+  const rawMax = (thresholds as Record<string, unknown>)[maxKey];
   if (rawMin === undefined || rawMax === undefined || rawMin === null || rawMax === null) {
     return { usable: false, reason: "missing" };
   }
@@ -148,11 +205,60 @@ export const temperatureThreshold = (
   if (min > max) {
     return { usable: false, reason: "inverted" };
   }
-  if (!withinRail(min) || !withinRail(max)) {
+  const rail = RAILS[metric];
+  if (!withinRail(min, rail) || !withinRail(max, rail)) {
     return { usable: false, reason: "implausible" };
   }
 
   return { usable: true, min, max };
+};
+
+/**
+ * The device's operator-set temperature range, in °F, or the reason there isn't a usable one.
+ *
+ * Thin wrapper kept for every existing caller (`buildReportInput.ts`, this file's own
+ * `thresholdRejectionNote`, `test/unit/operatorThresholds.test.ts`) -- behaviour is byte-for-byte
+ * unchanged, since `RAILS.temperature` is `TEMPERATURE_BASELINE_RAIL_F` and
+ * `FIELD_KEYS.temperature` is the same `minTemperature`/`maxTemperature` pair this always read.
+ */
+export const temperatureThreshold = (
+  thresholds: Record<string, string | number> | null | undefined,
+): ThresholdVerdict => metricThreshold(thresholds, "temperature");
+
+/**
+ * One line for the tool result explaining why a metric's threshold pair was rejected, for any of
+ * the five metrics `metricThreshold` validates. Generic counterpart to `thresholdRejectionNote`
+ * below, which stays temperature-only and unchanged for the report.
+ *
+ * Never echoes the raw registry value -- only the reason and, for "implausible", the sanity rail
+ * itself (a fixed fact about this codebase, not the operator's data).
+ */
+export const metricThresholdRejectionReason = (
+  reason: ThresholdRejection,
+  metric: MetricThresholdKey,
+): string => {
+  const label = METRIC_LABELS[metric];
+  switch (reason) {
+    case "no-thresholds":
+      return "No operator thresholds are configured for this device.";
+    case "missing":
+      return `This device's thresholds do not include a ${label} range.`;
+    case "non-numeric":
+      return `This device's ${label} thresholds are not readable as numbers.`;
+    case "unset":
+      return `This device's ${label} thresholds have an identical minimum and maximum, which is `
+        + "the registry's unconfigured state rather than a range.";
+    case "inverted":
+      return `This device's ${label} thresholds have a minimum above the maximum, so they cannot `
+        + "be read as a range.";
+    case "implausible": {
+      const [lo, hi] = RAILS[metric];
+      return `This device's ${label} thresholds fall outside a plausible range (${lo} to ${hi}), `
+        + "so they read as a placeholder rather than a configured limit.";
+    }
+    default:
+      return "This device's thresholds for this metric could not be used.";
+  }
 };
 
 /**

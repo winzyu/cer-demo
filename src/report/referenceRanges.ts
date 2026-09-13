@@ -160,6 +160,19 @@ export const TURBIDITY_BAND_EDGES: ReadonlyArray<{ band: ClarityBand; min: numbe
   { band: "Clear", min: 0 },
 ];
 
+/**
+ * The conversion's clear-water reference voltage, `V_CLEAR` in the backend's `turbVoltToNTU.ts`.
+ * Exported so callers deriving a band's voltage bound from `TURBIDITY_BAND_EDGES` (e.g.
+ * `get_turbidity_info`) compute it from this one constant instead of re-typing 3.35.
+ */
+export const TURBIDITY_CLEAR_VOLT = 3.35;
+
+/**
+ * Index units gained per volt of drop below `TURBIDITY_CLEAR_VOLT` -- `NTU_PER_VOLT_DROP` in the
+ * backend's `turbVoltToNTU.ts`. Exported for the same reason as `TURBIDITY_CLEAR_VOLT`.
+ */
+export const TURBIDITY_INDEX_PER_VOLT = 300;
+
 /** The band a relative turbidity index falls in. `0` is a real reading and returns "Clear". */
 export const clarityBandFor = (index: number): ClarityBand => (
   TURBIDITY_BAND_EDGES.find((edge) => index >= edge.min)?.band ?? "Clear"

@@ -166,7 +166,10 @@ describe("POST /api/v1/chat with the sensor tool enabled", () => {
     await chat(app).send({ query: "what is ORP?" }).expect(200);
 
     const tools = sent[0].tools as Array<{ function: { name: string } }>;
-    expect(tools.map((tool) => tool.function.name)).toEqual(["query_sensor_data"]);
+    // SENSOR_TOOL registers the reading tool plus the two interpretation tools that replaced the
+    // prompt's deleted range block: per-pod registry thresholds and the turbidity bands.
+    expect(tools.map((tool) => tool.function.name))
+      .toEqual(["query_sensor_data", "get_pod_thresholds", "get_turbidity_info"]);
 
     const system = (sent[0].messages as Array<{ content: string }>)[0].content;
     expect(system).toContain("query_sensor_data");
