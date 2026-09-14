@@ -5,6 +5,8 @@ description: How to hand implementation work in cer-demo to a Sonnet subagent â€
 
 # Delegating to a Sonnet subagent
 
+Make an edit inline when it takes a couple of tool calls; delegate larger or multi-file mechanical work.
+
 ## Route it, then prove it routed
 
 - Pass `model: "sonnet"` on the Agent call itself. Do not rely on agent-frontmatter `model:` or an

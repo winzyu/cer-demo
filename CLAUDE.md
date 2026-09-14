@@ -36,11 +36,7 @@ than a long block of terminal text.
 
 This project runs an Opus orchestrator with Sonnet subagents.
 
-- **Delegate implementation.** File edits, test writing, mechanical refactors and
-  scoped features go to a Sonnet subagent — use the `delegate` skill for the brief
-  and the routing check. Write code directly only when the task needs cross-cutting
-  judgment — retrieval strategy, eval methodology, prompt or gate design, anything
-  spanning `src/`, `eval/` and `docs/` at once.
+- **Delegate by size.** Make an edit inline when it takes a couple of tool calls; delegate larger or multi-file mechanical work to a Sonnet subagent via the `delegate` skill.
 - **Review subagent output before treating it as done.** Read the actual diff, not
   the agent's summary. Mandatory for retrieval accuracy, numeric data handling,
   gate logic or judge logic.
