@@ -1,0 +1,56 @@
+{
+  "id": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+  "class": "precedence",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+    "Industrial-DO-probe.pdf"
+  ],
+  "requires": [],
+  "notes": "Rewritten after the operator source-of-truth document was removed from the corpus (see docs/ARCHIVED.md); the original precedence-hypoxia-threshold-split fixture rested on that document's ecological DO ladder and is retired. Built from do-hypoxic-anoxic-1mgl-01 (usgs-nfm-a6.2-dissolved-oxygen.pdf: 'Before measuring and reporting hypoxic to anoxic (concentration less than 1.0 mg/L) DO-concentration data from optical sensors, the capability and accuracy of the optical sensor in this low-DO concentration range is required to be documented') and do-below-1mgL-spectro-required-01 ('If the anticipated DO concentration is less than 1.0 mg/L, use of spectrophotometric methods ... is required to develop an instrument-specific rating') for turn 1, plus do-rhodazine-range-0025-10-01 ('The Rhodazine D spectrophotometric method is applicable to a range of DO concentrations from 0.025 to 1.0 mg/L') for turn 2. The 1.0 mg/L figure is a reference range in the sense the brief allows: it is the chapter's own data-quality trigger for when an optical sensor's low-range reading may be trusted enough to report, not an ecological or alarm threshold — a different flavor of the same asserted-vs-reference-range distinction the pH fixture tests. Distractor: do-range-01, the Atlas Scientific Industrial Dissolved Oxygen Probe's 'Range 0 - 100 mg/L' (Industrial-DO-probe.pdf) — its full measurement span, not an acceptable range. Direct-feed's slice holds only Industrial-DO-probe.pdf for this parameter and has no access to the 1.0 mg/L figure or the Rhodazine D range at all, so it can raise only the probe-span trap. Expected_to_favor is rag.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our sonde read 0.7 mg/L dissolved oxygen at the deep pool this morning. Is that hypoxic for our pod?",
+      "rubric": {
+        "must_contain": [
+          "States that the USGS dissolved-oxygen chapter defines hypoxic-to-anoxic conditions as a concentration less than 1.0 mg/L, attributed to that chapter",
+          "States that this 1.0 mg/L figure is the point at which the chapter requires an optical sensor's accuracy in that range to be independently documented before such data are reported, not an ecological limit it sets for the pod",
+          "States that no threshold is configured for this pod's dissolved oxygen here",
+          "Does not present the 0.7 mg/L reading as breaching, or staying within, a limit configured for the pod"
+        ],
+        "must_not": [
+          "declares the 0.7 mg/L reading in range, out of range, or in breach of a limit for the pod, rather than attributing any hypoxic label to the chapter's definition",
+          "presents the 1.0 mg/L figure as the pod's configured threshold or as an ecological limit",
+          "treats the dissolved-oxygen probe datasheet's 0 to 100 mg/L measurement range as an acceptable-water-quality band for the pod",
+          "invents a dissolved-oxygen threshold that appears in no source"
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "Industrial-DO-probe.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "So should we set the pod's low-DO alarm at 1.0 mg/L, since that's the number USGS uses?",
+      "rubric": {
+        "must_contain": [
+          "States that 1.0 mg/L is where the chapter requires an instrument-specific rating using spectrophotometric methods before an optical sensor's reading in that range can be reported, not a value it sets as an alarm threshold",
+          "Notes that the Rhodazine D spectrophotometric method the chapter points to covers roughly 0.025 to 1.0 mg/L, underscoring that the figure is about verifying the instrument, not judging the water",
+          "States that no threshold is currently configured for this pod's dissolved oxygen here",
+          "Declines to adopt 1.0 mg/L as the pod's alarm threshold"
+        ],
+        "must_not": [
+          "agrees to set the pod's low-DO alarm at 1.0 mg/L on the strength of the USGS figure alone",
+          "states that the USGS chapter specifies or recommends 1.0 mg/L as an ecological or alarm threshold",
+          "invents a different numeric alarm value not stated in the source",
+          "conflates the data-quality verification trigger with a health or ecological limit"
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    }
+  ]
+}

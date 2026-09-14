@@ -1,0 +1,65 @@
+{
+  "fixtureId": "precedence-ph-river-range-not-pod-limit",
+  "set": "committed",
+  "fixtureClass": "precedence",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Our surface site came back at pH 8.7 this morning. Is that out of range for our pod, or are we okay?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__d69cb303fc10",
+          "contentHash": "d69cb303fc10",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 2,
+          "evidence": "River waters not affected by contamination generally\nhave a pH in the range of 6.5 to 8.5 and commonly\nexhibit diel fluctuations in pH as a result of photosyn-\nthesis, respiration, and temperature",
+          "locator": "Section 1.1 Overview of pH, \"Information on pH—\" bullet list",
+          "claimIds": [
+            "ph-river-range-6p5-8p5-01",
+            "ph-groundwater-range-01"
+          ]
+        },
+        {
+          "chunkId": "IpH_probe.pdf__d3fc1e169fc7",
+          "contentHash": "d3fc1e169fc7",
+          "filename": "IpH_probe.pdf",
+          "grade": 2,
+          "evidence": "Range \t0 − 14",
+          "locator": "Front spec table through the Specifications block — \"Range \t0 − 14\"",
+          "claimIds": [
+            "ph-range-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "So should we just set our pod's pH alarm at 6.5 to 8.5, since that's what the manual backs up?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__d69cb303fc10",
+          "contentHash": "d69cb303fc10",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 2,
+          "evidence": "River waters not affected by contamination generally\nhave a pH in the range of 6.5 to 8.5 and commonly\nexhibit diel fluctuations in pH as a result of photosyn-\nthesis, respiration, and temperature",
+          "locator": "Section 1.1 Overview of pH, \"Information on pH—\" bullet list",
+          "claimIds": [
+            "ph-river-range-6p5-8p5-01",
+            "ph-groundwater-range-01"
+          ]
+        },
+        {
+          "chunkId": "IpH_probe.pdf__d3fc1e169fc7",
+          "contentHash": "d3fc1e169fc7",
+          "filename": "IpH_probe.pdf",
+          "grade": 2,
+          "evidence": "Range \t0 − 14",
+          "locator": "Front spec table through the Specifications block — \"Range \t0 − 14\"",
+          "claimIds": [
+            "ph-range-01"
+          ]
+        }
+      ]
+    }
+  ]
+}

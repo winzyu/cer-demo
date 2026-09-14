@@ -25,8 +25,7 @@
         "must_not": [
           "invents a solubility figure that is not tabulated in any of the source solubility tables",
           "answers only with the qualitative rule that warm water holds less oxygen and gives no numbers",
-          "treats the brackish site as freshwater and skips the salinity correction entirely",
-          "quotes the source-of-truth healthy/stress DO bands as if they answered the question"
+          "treats the brackish site as freshwater and skips the salinity correction entirely"
         ],
         "cite": [
           "usgs-nfm-a6.2-dissolved-oxygen.pdf",

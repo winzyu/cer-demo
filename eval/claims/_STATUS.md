@@ -31,6 +31,19 @@ The 10 documents outside the slice hold 2017 (1505 high-specificity) across 435 
 **89.3% of high-specificity claims sit outside the diamond-G9 slice** — see the Phase 1a
 handback for what that means for exit criterion 3.
 
+> **Updated 2026-09-13.** `water-quality-metrics-source-of-truth.pdf` and its claim file were
+> removed from the corpus and from `eval/claims/` (docs/ARCHIVED.md, tag
+> `corpus-archive-2026-09-13`) — the ranges it asserted were vetoed in favor of per-pod
+> device-registry thresholds. Its row above is struck from the live counts, not from this
+> table, so the original 2026-09-01 inventory stays legible as a historical record:
+>
+> **446/446 chunks. 2177 claims, 1621 high-specificity. 156 recorded gaps.**
+>
+> The diamond-G9 slice is now 4 documents (the probe datasheets only), holding 160 claims
+> (116 high-specificity) across 11 chunks. The 10 documents outside the slice are unchanged at
+> 2017 claims (1505 high-specificity) across 435 chunks. **92.8% of high-specificity claims sit
+> outside the slice**, up from 89.3%.
+
 ## Verified cross-document findings
 
 - **A6.0 Table 6.0-1 and A6.8 Table 6.8-5 AGREE numerically** on all five stabilization criteria

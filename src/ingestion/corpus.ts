@@ -22,12 +22,14 @@ export interface DocMeta {
 }
 
 export const DOC_META: Record<string, DocMeta> = {
-  // === Tier 1 — company-specific. Operator-written or vendor datasheets for the probes this
-  // deployment actually carries, so they outrank any general reference. This is the ◆G9 slice. ===
-
-  "water-quality-metrics-source-of-truth.pdf": {
-    title: "Water Quality Metrics — Source of Truth (DataPod)",
-  },
+  // === Tier 1 — company-specific. Vendor datasheets for the probes this deployment actually
+  // carries, so they outrank any general reference. This is the ◆G9 slice.
+  //
+  // The operator's "Water Quality Metrics — Source of Truth" document was removed on 2026-09-13
+  // and moved to `documents/_excluded/`. The project supervisor vetoed its ranges — pod ranges now
+  // come only from each device's registry thresholds (`get_pod_thresholds`) — and its ranges were
+  // woven through the prose of every chunk rather than kept in one table, so dropping the whole
+  // document is the only way to guarantee a vetoed range is never retrieved. ===
   "EC_K_1.0_probe.pdf": {
     title: "Atlas Scientific Conductivity Probe K 1.0 — Datasheet",
   },
@@ -136,9 +138,11 @@ export const DOC_META: Record<string, DocMeta> = {
  * Revised after the original slice proved unusable: it was 83% a pandoc grid table whose cells
  * were shredded across 8-character columns, covering pollutants this sensor cannot measure.
  *
- * The replacement is the operator's source-of-truth reference plus the four probe datasheets —
- * ~9.4K tokens, every one of them about a parameter the DataPod actually reads. Smaller than the
- * document it replaced, and it covers all six metrics rather than none of them.
+ * The replacement was the operator's source-of-truth reference plus the four probe datasheets.
+ * **Since 2026-09-13 it is the four probe datasheets alone**: the source-of-truth document left the
+ * corpus under the supervisor's range veto (see `DOC_META`). The slice no longer carries any
+ * document about turbidity or temperature — those parameters reach a direct-feed answer only
+ * through the system prompt and, with `SENSOR_TOOL` on, the tools.
  *
  * **Left alone by the 2026-08-21 corpus expansion, on purpose.** Direct-feed's cost is its slice
  * size, so growing the slice with the new reference tier would not make it a better arm — it
@@ -147,7 +151,6 @@ export const DOC_META: Record<string, DocMeta> = {
  * everything added above is reachable only by a RAG arm.
  */
 export const DIRECT_FEED_SLICE = [
-  "water-quality-metrics-source-of-truth.pdf",
   "EC_K_1.0_probe.pdf",
   "IORP_probe.pdf",
   "IpH_probe.pdf",

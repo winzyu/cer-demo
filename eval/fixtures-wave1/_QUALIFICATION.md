@@ -260,3 +260,62 @@ feeds the document-level metric: **25.0 %** (27.4 % excluding refusals), chunk l
    `eval/fixtures-wave1/**` write boundary this pass was given. The fixture that inherited it has
    been corrected; **the inventory entry has not**, and any future fixture built on that gap will
    inherit the same falsification.
+
+---
+
+## 8. Precedence class rebuilt — 2026-09-13
+
+The finding in §4 that **"all four `precedence` conflicts are real"** and that
+`precedence-ph-band-asserted-vs-described` was the only fixture in the whole 46-fixture set with
+no finding at all is now historical. It describes fixtures that no longer exist.
+
+**Why.** The project supervisor vetoed every range in `water-quality-metrics-source-of-truth.pdf`
+(the "operator" document every original `precedence` fixture was built against); the user then
+removed that document from the corpus entirely. It is preserved in git history under the tag
+`corpus-archive-2026-09-13` (`docs/ARCHIVED.md`), along with its claim inventory
+(`eval/claims/water-quality-metrics-source-of-truth.json`, also deleted). Pod ranges now come only
+from each pod's device-registry thresholds via the `get_pod_thresholds` tool
+(`src/prompt/systemPrompt.ts`), which wave-1 fixtures never see — they run with `SENSOR_TOOL=false`.
+
+**What changed.** All four original `precedence` fixtures —
+`precedence-ph-band-asserted-vs-described`, `precedence-orp-reference-offset`,
+`precedence-hypoxia-threshold-split`, `precedence-ec-temperature-coefficient` — were deleted.
+Three replacements were written, all against documents still in the corpus, under the class's
+new premise: *a range a remaining document describes as typical or generally observed is
+background, not this pod's configured limit, and when no threshold is available (which is always,
+with tools off) the assistant must say so rather than substitute the document's range.*
+
+| new fixture | parameter | source claim | distractor |
+|---|---|---|---|
+| `precedence-ph-river-range-not-pod-limit` | pH | `ph-river-range-6p5-8p5-01`, `ph-groundwater-range-01` (`usgs-nfm-a6.4-ph.pdf`) | `ph-range-01`, the pH probe's 0-14 measurement span (`IpH_probe.pdf`) |
+| `precedence-do-hypoxia-qa-trigger-not-pod-limit` | dissolved oxygen | `do-hypoxic-anoxic-1mgl-01`, `do-below-1mgL-spectro-required-01`, `do-rhodazine-range-0025-10-01` (`usgs-nfm-a6.2-dissolved-oxygen.pdf`) | `do-range-01`, the DO probe's 0-100 mg/L measurement span (`Industrial-DO-probe.pdf`) |
+| `precedence-turbidity-groundwater-background-not-pod-limit` | turbidity | `tby-groundwater-lt5-19-01` (`usgs-nfm-a6.7-turbidity.pdf`) | none — no turbidity probe datasheet exists in the corpus |
+
+**Shortfall: 3 fixtures, not 4.** The class covers six DataPod parameters in principle (pH, DO,
+ORP, specific conductance/conductivity, temperature, turbidity). A genuine claim — a non-SOT
+document describing a typical, generally-observed, or reference range for the parameter's
+*reading*, of the kind an operator could plausibly mistake for a pass/fail band — was found for
+only three of them. ORP's only ranges in `usgs-nfm-a6.5-orp.pdf` are reference-electrode
+calibration potentials (Eref, ZoBell half-cell tables), not a description of what a water body's
+ORP reading typically looks like; specific conductance's only comparable claim
+(`sc-temperature-coefficient-01`, 0.5-3%/°C) is a temperature-compensation coefficient, not a
+reading range, so it cannot support a "is my reading normal" turn 1; temperature has no described
+ambient range anywhere outside the removed document, only sensor calibration and verification
+specs. Per the brief's own instruction, no fixture was forced for these three — the class now
+holds 3 fixtures (a temporary reduction from the prior 4; total wave-1 fixture count is 45, down
+from 46) pending either a real claim surfacing in a future corpus addition or a supervisor decision
+to accept a weaker (e.g., coefficient-based) premise for EC.
+
+**Not re-verified.** This addendum is authored alongside the three new fixtures, not as an
+independent review pass. Quote-vs-corpus substring checks were run for every claim used (see the
+fixture `notes` fields), but the full same-family / cross-family review method of §6 above was not
+repeated. Retrieval contamination for the three new fixtures has **not been re-measured** — see
+`_CONTAMINATION.md` §"Precedence class rebuilt" below; it needs the offline BM25 method in
+`_EXIT_CRITERIA.md` "Reproducing", which was not run as part of this pass.
+
+Six Task B fixtures (`refusal-temperature-harm-threshold`, `refusal-how-long-can-it-stay-in`,
+`refusal-buffering-capacity-not-measured`, `crossdoc-warm-week-oxygen-drop`,
+`deepmanual-do-saturation-ceiling`, `refusal-turbidity-sensor-hardware`) had rubric lines or
+`must_not` guards removed because they asserted something about, or guarded against quoting, the
+now-removed document. Those edits are mechanical removals/rewrites of specific named items, not a
+qualification re-pass, and are not re-verified here either.

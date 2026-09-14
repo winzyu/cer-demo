@@ -95,7 +95,6 @@ describe("filterChunks", () => {
 
 describe("corpus metadata", () => {
   it("resolves known documents to their titles", () => {
-    expect(metaFor("water-quality-metrics-source-of-truth.pdf").title).toMatch(/Source of Truth/);
     expect(metaFor("IORP_probe.pdf").title).toMatch(/ORP Probe/);
   });
 
@@ -107,11 +106,12 @@ describe("corpus metadata", () => {
     expect(EXCLUDED_FILES).toContain("README.md");
   });
 
-  it("scopes the direct-feed slice to the operator reference and the probe datasheets", () => {
+  it("scopes the direct-feed slice to the four probe datasheets", () => {
     // Every entry must be about a parameter the DataPod actually measures — the previous
-    // slice was 83% a mangled table covering pollutants this sensor cannot detect.
-    expect(DIRECT_FEED_SLICE).toHaveLength(5);
-    expect(DIRECT_FEED_SLICE).toContain("water-quality-metrics-source-of-truth.pdf");
+    // slice was 83% a mangled table covering pollutants this sensor cannot detect. The operator
+    // source-of-truth document left on 2026-09-13 under the supervisor's range veto.
+    expect(DIRECT_FEED_SLICE).toHaveLength(4);
+    expect(DIRECT_FEED_SLICE).not.toContain("water-quality-metrics-source-of-truth.pdf");
     expect(DIRECT_FEED_SLICE.filter((f) => f.includes("probe"))).toHaveLength(4);
   });
 });

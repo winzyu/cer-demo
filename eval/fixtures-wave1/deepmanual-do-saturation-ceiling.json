@@ -19,7 +19,6 @@
         ],
         "must_not": [
           "Invents a value for 20 °C at 760 mmHg that is not the table's",
-          "Answers with the operator baseline band (6-11 mg/L healthy freshwater) instead of the manual's table value",
           "Cites the Atlas Scientific Industrial DO probe datasheet, which contains no solubility table"
         ],
         "cite": [

@@ -29,7 +29,7 @@ const validFixture = {
   id: "sample",
   class: "definitional",
   expected_to_favor: "tie",
-  answerable_from: ["water-quality-metrics-source-of-truth.pdf"],
+  answerable_from: ["IORP_probe.pdf"],
   requires: [],
   notes: "A minimal valid fixture used to isolate one validation rule at a time.",
   turns: [

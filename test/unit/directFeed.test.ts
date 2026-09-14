@@ -90,8 +90,8 @@ describe("ArtifactCorpusSource", () => {
     // Depends on `npm run ingest` having been run; that is the documented prerequisite.
     const slice = await new ArtifactCorpusSource().loadSlice();
 
-    expect(slice).toHaveLength(5);
-    expect(slice.map((d) => d.filename)).toContain("water-quality-metrics-source-of-truth.pdf");
+    expect(slice).toHaveLength(4);
+    expect(slice.map((d) => d.filename)).not.toContain("water-quality-metrics-source-of-truth.pdf");
     slice.forEach((document) => expect(document.text.length).toBeGreaterThan(0));
   });
 

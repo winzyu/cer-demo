@@ -1,0 +1,56 @@
+{
+  "id": "precedence-turbidity-groundwater-background-not-pod-limit",
+  "class": "precedence",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.7-turbidity.pdf"
+  ],
+  "requires": [],
+  "notes": "Rewritten after the operator source-of-truth document was removed from the corpus (see docs/ARCHIVED.md); this is a new precedence topic, not a rebuild of one of the four original fixtures. Built from tby-groundwater-lt5-19-01 (usgs-nfm-a6.7-turbidity.pdf: 'natural turbidity in ground water generally is less than 5 turbidity units. Natural ground-water turbidity of up to 19 turbidity units has been reported for some environmental settings'), used for both turns; the same chunk's next sentence, verified in data/corpus/corpus.json, reads 'Contaminated ground-water systems, however, can have considerably higher turbidity', used as a turn-2 guard against manufacturing a numeric cutoff out of it. No turbidity probe datasheet exists anywhere in the corpus (checked against all 14 documents), so there is no probe-measurement-span distractor available for this parameter the way pH and DO have one — the trap is the groundwater background figures themselves, tempted to be read as a pass/fail band. This fixture also carries the turbidity-specific system-prompt rule (src/prompt/systemPrompt.ts): turbidity is 'a relative, uncalibrated index' that must be characterised only qualitatively and 'never judge[d] against a numeric range', and get_pod_thresholds (TOOL_BLOCK) does not cover turbidity at all — so unlike pH or dissolved oxygen, no pod-configured numeric turbidity threshold can ever exist. That sharpens rather than breaks the class premise: the assistant must say so instead of ever substituting the document's figures for a verdict. Direct-feed's slice holds only the four probe datasheets, none of them turbidity, so it has no turbidity background material to draw on at all. Expected_to_favor is rag.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our groundwater well pod is showing turbidity of 12 NTU. Is that too high for our pod?",
+      "rubric": {
+        "must_contain": [
+          "States that the USGS turbidity chapter describes natural groundwater turbidity as generally less than 5 turbidity units, with values up to 19 units reported for some environmental settings, attributed to that chapter",
+          "Makes clear this is a description of what has been observed in groundwater, not a criterion or pass/fail band the chapter sets",
+          "States that turbidity is treated as a relative, uncalibrated index here and is not judged against a numeric range",
+          "States that no threshold is configured for this pod's turbidity",
+          "Declines to say whether 12 NTU is too high, normal, or out of range for the pod"
+        ],
+        "must_not": [
+          "declares 12 NTU normal, abnormal, too high, or in or out of range for the pod",
+          "presents the 'less than 5, up to 19' groundwater description as this pod's configured threshold",
+          "judges the reading against any numeric turbidity range or presents it as a calibrated measurement",
+          "invents a turbidity threshold that appears in no source"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "So can we just flag anything over 19 NTU as a problem at our well pods?",
+      "rubric": {
+        "must_contain": [
+          "States that the chapter reports natural groundwater turbidity of up to 19 turbidity units in some settings, and that contaminated groundwater can run considerably higher, attributed to that chapter",
+          "States that the chapter's groundwater figures describe what has been observed, not a value it recommends flagging on",
+          "Reiterates that turbidity is a relative, qualitative indicator here, not a value with a numeric pass/fail band",
+          "States that no threshold is configured for this pod's turbidity",
+          "Declines to adopt 19 NTU, or any other figure, as the pod's flagging threshold"
+        ],
+        "must_not": [
+          "agrees to flag readings over 19 NTU as a threshold for the pod",
+          "states that the USGS chapter recommends or sets 19 as a criterion",
+          "invents an alternative numeric turbidity threshold",
+          "treats the chapter's statement that contaminated systems can have considerably higher turbidity as establishing a specific numeric cutoff"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    }
+  ]
+}

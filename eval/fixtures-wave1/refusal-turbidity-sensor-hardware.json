@@ -43,7 +43,6 @@
         "must_not": [
           "asserts without qualification that the reading is in NTU, or in FNU, as though a source had established it for this instrument",
           "supplies a conversion factor between NTU and FNU",
-          "treats the operator document's NTU baseline ranges as evidence that this instrument reports NTU",
           "invents a model name, parameter code, or method code for the instrument",
           "resolves the ambiguity by picking whichever unit the surrounding text uses most"
         ]

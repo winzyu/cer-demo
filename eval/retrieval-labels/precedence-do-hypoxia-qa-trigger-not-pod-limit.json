@@ -1,23 +1,12 @@
 {
-  "fixtureId": "precedence-hypoxia-threshold-split",
+  "fixtureId": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
   "set": "committed",
   "fixtureClass": "precedence",
   "turns": [
     {
       "turn": 1,
-      "query": "The card taped inside our case says oxygen under 2 mg/L means the water has gone hypoxic. Somebody from the state told my crew chief the federal number is 1. Do we need to change what we are telling people, or is one of us wrong?",
+      "query": "Our sonde read 0.7 mg/L dissolved oxygen at the deep pool this morning. Is that hypoxic for our pod?",
       "relevant": [
-        {
-          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
-          "contentHash": "57fe7a67fc10",
-          "filename": "water-quality-metrics-source-of-truth.pdf",
-          "grade": 2,
-          "evidence": "Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L\nhypoxia · ~0 anoxia.",
-          "locator": "DO thresholds through section 1 entries for ORP, EC and pH — \"Thresholds (general): >6 mg/L healthy\"",
-          "claimIds": [
-            "sot-do-thresholds-01"
-          ]
-        },
         {
           "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__a2b58928d95a",
           "contentHash": "a2b58928d95a",
@@ -39,25 +28,25 @@
           "locator": "Section 2.3.1 Surface Water — \"cross-sectional DO variation less than 0.5 mg/L\"",
           "claimIds": [
             "do-below-1mgL-spectro-required-01"
+          ]
+        },
+        {
+          "chunkId": "Industrial-DO-probe.pdf__610532812499",
+          "contentHash": "610532812499",
+          "filename": "Industrial-DO-probe.pdf",
+          "grade": 2,
+          "evidence": "Range \t0 − 100 mg/L",
+          "locator": "Front spec table through the Specifications block — \"Range \t0 − 100 mg/L\"",
+          "claimIds": [
+            "do-range-01"
           ]
         }
       ]
     },
     {
       "turn": 2,
-      "query": "So when our sonde is sitting down in that bottom range, near zero, is the number it hands us even good enough to put in a report?",
+      "query": "So should we set the pod's low-DO alarm at 1.0 mg/L, since that's the number USGS uses?",
       "relevant": [
-        {
-          "chunkId": "water-quality-metrics-source-of-truth.pdf__57fe7a67fc10",
-          "contentHash": "57fe7a67fc10",
-          "filename": "water-quality-metrics-source-of-truth.pdf",
-          "grade": 2,
-          "evidence": "Thresholds (general): >6 mg/L healthy · 4–6 mg/L stress · 2–4 mg/L hypoxic stress · <2 mg/L\nhypoxia · ~0 anoxia.",
-          "locator": "DO thresholds through section 1 entries for ORP, EC and pH — \"Thresholds (general): >6 mg/L healthy\"",
-          "claimIds": [
-            "sot-do-thresholds-01"
-          ]
-        },
         {
           "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__a2b58928d95a",
           "contentHash": "a2b58928d95a",
@@ -79,6 +68,17 @@
           "locator": "Section 2.3.1 Surface Water — \"cross-sectional DO variation less than 0.5 mg/L\"",
           "claimIds": [
             "do-below-1mgL-spectro-required-01"
+          ]
+        },
+        {
+          "chunkId": "Industrial-DO-probe.pdf__610532812499",
+          "contentHash": "610532812499",
+          "filename": "Industrial-DO-probe.pdf",
+          "grade": 2,
+          "evidence": "Range \t0 − 100 mg/L",
+          "locator": "Front spec table through the Specifications block — \"Range \t0 − 100 mg/L\"",
+          "claimIds": [
+            "do-range-01"
           ]
         }
       ]

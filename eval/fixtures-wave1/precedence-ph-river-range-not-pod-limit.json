@@ -1,0 +1,57 @@
+{
+  "id": "precedence-ph-river-range-not-pod-limit",
+  "class": "precedence",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.4-ph.pdf",
+    "IpH_probe.pdf"
+  ],
+  "requires": [],
+  "notes": "Rewritten after the operator source-of-truth document was removed from the corpus and the ranges it asserted (see docs/ARCHIVED.md; eval/claims/water-quality-metrics-source-of-truth.json deleted). New class premise: a range a remaining corpus document describes as typical or generally observed is background, not this pod's configured limit, and with wave-1 running SENSOR_TOOL=false no get_pod_thresholds result is ever available, so the system prompt (src/prompt/systemPrompt.ts) requires saying no threshold is configured rather than substituting the document's range. Built from ph-river-range-6p5-8p5-01 (usgs-nfm-a6.4-ph.pdf: 'River waters not affected by contamination generally have a pH in the range of 6.5 to 8.5...') and ph-groundwater-range-01 (same document: 'Most groundwaters in the United States have pH values generally ranging from 6.0 to 8.5'), both descriptive statements the chapter never converts into a criterion. Distractor: ph-range-01, the Atlas Scientific Industrial pH Probe datasheet's 'Range 0 - 14' figure (IpH_probe.pdf) — the probe's full measurement span, not an acceptable-water range. The failure mode is treating either the 6.5-8.5 river description or the probe's 0-14 span as though it were this pod's configured limit. Direct-feed's slice now holds only the four probe datasheets (the source-of-truth document was the fifth slice member and is gone), so it sees only IpH_probe.pdf and has no access to the river or groundwater descriptions at all — it can raise only the probe-span trap, never the correct background material. Expected_to_favor is rag.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our surface site came back at pH 8.7 this morning. Is that out of range for our pod, or are we okay?",
+      "rubric": {
+        "must_contain": [
+          "States that the USGS pH chapter describes river waters not affected by contamination as generally reading pH 6.5 to 8.5, attributed to that chapter",
+          "Makes clear this is a description of what such waters generally read, not a criterion or limit the chapter sets",
+          "States that no threshold is configured for this pod's pH here, since no tool result gives this pod's configured limits",
+          "Declines to say whether 8.7 is in or out of range for the pod"
+        ],
+        "must_not": [
+          "declares 8.7 normal, abnormal, in range, or out of range for the pod",
+          "presents the 6.5 to 8.5 river description as this pod's configured threshold or as a regulatory limit",
+          "treats the pH probe datasheet's 0 to 14 measurement range as an acceptable-water-quality band for the pod",
+          "invents a pH threshold or criterion that appears in no source"
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf",
+          "IpH_probe.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "So should we just set our pod's pH alarm at 6.5 to 8.5, since that's what the manual backs up?",
+      "rubric": {
+        "must_contain": [
+          "States that 6.5 to 8.5 is the chapter's description of what uncontaminated river water generally reads, not a limit it recommends configuring",
+          "States that most groundwaters in the United States instead run 6.0 to 8.5, so a single freshwater figure does not necessarily fit both surface and groundwater sites",
+          "States that no threshold is currently configured for this pod's pH here",
+          "Distinguishes the range the chapter describes from a limit configured for the pod",
+          "Declines to adopt 6.5 to 8.5, or any other figure, as the pod's alarm band"
+        ],
+        "must_not": [
+          "agrees to set the pod's alarm at 6.5 to 8.5 on the strength of the chapter's description",
+          "states that the USGS chapter specifies, requires, or recommends 6.5 to 8.5 as an alarm or criterion",
+          "invents a pH alarm figure not stated in either source",
+          "collapses the river and groundwater descriptions into one band without noting they differ"
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    }
+  ]
+}

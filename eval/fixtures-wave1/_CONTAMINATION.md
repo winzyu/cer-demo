@@ -155,3 +155,25 @@ manufacturing a rewrite to justify the phase would only move a number that is al
 
 The slice-exclusion regeneration described in the phase brief was a contingency for a failed
 measurement — a list to check rewrites against. There were no rewrites, so it was not generated.
+
+---
+
+## Precedence class rebuilt — 2026-09-13, not re-measured
+
+`water-quality-metrics-source-of-truth.pdf` — the document behind three of the four chunk-level
+`precedence` hits recorded above, and the reason that class cleared the bar "structurally rather
+than by wording" — was removed from the corpus (preserved under git tag
+`corpus-archive-2026-09-13`; see `docs/ARCHIVED.md`). The four original `precedence` fixtures were
+retired and three replacements written against documents still in the corpus:
+`precedence-ph-river-range-not-pod-limit`, `precedence-do-hypoxia-qa-trigger-not-pod-limit`,
+`precedence-turbidity-groundwater-background-not-pod-limit`. Six other fixtures had rubric lines
+or `must_not` guards touching that document removed or rewritten (see
+`_QUALIFICATION.md` §8 for the full list and the per-fixture detail).
+
+**Every number in this document above is stale for the `precedence` row and for the two
+document-level and chunk-level totals**, both because a document left the corpus (changing what
+BM25 has to rank against) and because the fixture set changed shape (46 fixtures / 92 turns is now
+45 / 90). Re-running the measurement in this document's "Reproducing" method
+(`_EXIT_CRITERIA.md`) is free and offline and was not run as part of this pass — this note exists
+so a reader does not mistake the untouched numbers above for current ones. Until it is re-run,
+treat the `precedence` row, and the two overall percentages, as **not current**.

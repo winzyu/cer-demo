@@ -19,7 +19,6 @@
         ],
         "must_not": [
           "Invents a correction factor not in the table",
-          "Substitutes the operator reference's rough 'saltwater holds about 20 percent less oxygen' for the manual's factor",
           "Adds or divides by the factor rather than multiplying"
         ],
         "cite": [
