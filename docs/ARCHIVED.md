@@ -7,6 +7,7 @@ in git history under the tag named in its section.
 |---|---|---|
 | `docs-archive-2026-08-30` | 2026-08-30 | six superseded documents |
 | `eval-archive-2026-09-01` | 2026-09-01 | the whole pre-rebuild eval set — 556 files |
+| `corpus-archive-2026-09-13` | 2026-09-13 | the operator source-of-truth document and its claim inventory — 2 files |
 
 Retrieve one by path:
 
@@ -96,6 +97,32 @@ The directory **names** are deliberately left free. New captures, packets and la
 `eval/transcripts/`, `eval/grading/` and `eval/retrieval-labels/`, so none of those constants
 moved. `eval/fixtures/` is the exception: it is free but not yet occupied, because renaming
 `eval/fixtures-wave1/` into it is the last step of the migration.
+
+## `corpus-archive-2026-09-13` — the operator source-of-truth document
+
+Removed from the corpus on 2026-09-13, preserved under the tag `corpus-archive-2026-09-13` (which
+points at `774b152`, the last commit that contains both files).
+
+| file | what it was | why it went |
+|---|---|---|
+| `documents/water-quality-metrics-source-of-truth.pdf` | The operator's reference for the six DataPod parameters: per-water-type range tables, a DO threshold ladder, a pollution-event signature matrix, and sensor caveats. 5 chunks, and one of the five ◆G9 direct-feed slice documents. | The project supervisor vetoed its ranges: pod ranges come only from each device's registry thresholds (`get_pod_thresholds`). Its ranges were woven through the prose of every chunk rather than kept in one table, so removing the whole document was the only way to guarantee a vetoed range is never retrieved. The file itself sits in `documents/_excluded/`, which ingestion never reads. |
+| `eval/claims/water-quality-metrics-source-of-truth.json` | Its claim inventory: 73 claims, 15 numeric. | Its chunks no longer exist, and `scripts/resolveRetrievalLabels.ts` reads every file in `eval/claims/`. |
+
+What moved with it, deliberately: the direct-feed slice is now the four probe datasheets (26,096
+chars); the report's `BASELINE_RANGES` table, transcribed from this document, was replaced by
+registry thresholds; the four `precedence` fixtures were rewritten around document ranges versus
+the pod's configured threshold; and the fixtures whose rubrics cited it were edited to stand on the
+remaining corpus. The event-classification rules in `src/report/events.ts` still encode the
+document's signature-matrix *patterns* (directions of movement, not ranges), and advice-catalogue
+entries in `docs/advice/` cite its claims as evidence — both are recorded as open follow-ups in
+`docs/timeline.md`.
+
+Retrieve:
+
+```bash
+git show corpus-archive-2026-09-13:eval/claims/water-quality-metrics-source-of-truth.json
+git show corpus-archive-2026-09-13:documents/water-quality-metrics-source-of-truth.pdf > /tmp/sot.pdf
+```
 
 ## Rules
 

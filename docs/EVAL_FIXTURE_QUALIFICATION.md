@@ -3,7 +3,7 @@
 > ## ⚠ HISTORICAL — both the fixtures and the corpus it checks are gone
 >
 > This qualified the archived 30-fixture set against an 18-document / 1,254,899-char corpus. The
-> corpus is now 15 documents / 851,891 chars / 451 chunks, and the fixtures were archived on
+> corpus is now 14 documents / 840,327 chars / 446 chunks, and the fixtures were archived on
 > 2026-09-01 under `eval-archive-2026-09-01`. **The equivalent pass for the live set is
 > `eval/fixtures-wave1/_QUALIFICATION.md`.** Kept as the record of a method that worked.
 

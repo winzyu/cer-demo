@@ -7,7 +7,7 @@
 > replaced because 27 of its 30 fixtures were answerable from 4.4% of the corpus and three carried
 > the entire `deep-in-manual` class — a three-sample class mean cannot support a conclusion.
 >
-> **The live set is 46 fixtures / 92 turns in `eval/fixtures-wave1/`.** For the current design, the
+> **The live set is 45 fixtures / 90 turns in `eval/fixtures-wave1/`.** For the current design, the
 > seven populated classes and the wave-1 exit criteria, read
 > [`EVAL_REBUILD.md`](EVAL_REBUILD.md) §2 instead of this file.
 >

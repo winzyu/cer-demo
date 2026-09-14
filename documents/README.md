@@ -7,59 +7,72 @@ The source documents `npm run ingest` parses into `data/corpus/corpus.json`.
 > is what actually runs, and it cannot drift from the pipeline the way a hand-maintained list here
 > did. Rewritten 2026-08-13; expanded 2026-08-21 (below).
 
-## The five Tier 1 files are present and tracked
+## The four Tier 1 probe datasheets are present and tracked
 
-`documents/*` is git-ignored, but the five Tier 1 PDFs are **tracked anyway** — `git add -f`
-overrides the rule, and `git ls-files documents/` lists them:
+`documents/*` is git-ignored, but the four Tier 1 probe datasheets are **tracked anyway** —
+`git add -f` overrides the rule, and `git ls-files documents/` lists them:
 
 ```
-water-quality-metrics-source-of-truth.pdf
 EC_K_1.0_probe.pdf
 IORP_probe.pdf
 IpH_probe.pdf
 Industrial-DO-probe.pdf
 ```
 
-They are tracked because those five **are** the ◆G9 direct-feed slice, and the failure when they
+They are tracked because those four **are** the ◆G9 direct-feed slice, and the failure when they
 are absent is silent: `npm run ingest` still **exits 0** and prints `direct-feed slice: 0 chars`,
 and the `firestore-direct` arm then answers every question ungrounded — it warns at load, but only
 once, into the server log. **Check the `direct-feed slice:` line ingest prints** before trusting a
 run. Everything else in `documents/` is untracked and does not survive a fresh clone.
 
-## Current corpus — 15 documents, 851,891 chars (~213K tokens), 393 chunks
+**2026-09-13 — the fifth tracked Tier 1 file, `water-quality-metrics-source-of-truth.pdf`, was
+removed from this list.** Every range it stated was vetoed by the supervisor (pod ranges now come
+only from each pod's device-registry thresholds, read through the backend device API — no fallback
+table), and because its ranges were woven into every chunk's prose, the whole document left the
+corpus rather than just its numbers. It was moved to [`_excluded/`](#_excluded) and archived under
+tag `corpus-archive-2026-09-13` (`../docs/ARCHIVED.md`); its claim inventory
+`eval/claims/water-quality-metrics-source-of-truth.json` was deleted. See
+[`../docs/timeline.md`](../docs/timeline.md) "Eval rebuild" for the full record.
+
+## Current corpus — 14 documents, 840,327 chars (~210K tokens), 446 chunks
 
 Expanded 2026-08-21 from 8 documents (~716K chars) to 18 as the retrieval posture moved toward
 RAG-first, then **trimmed to 15 on 2026-08-24** by cutting three documents that carried no number
-or procedure for any measured parameter (32% of the corpus; see [`_excluded/`](#_excluded)). The
-corpus is **scoped to the six parameters the DataPod measures** — temperature, dissolved oxygen,
-ORP, conductivity, pH, turbidity — and the reference tier carries one authoritative chapter per
+or procedure for any measured parameter (32% of the corpus; see [`_excluded/`](#_excluded)), then
+**to 14 on 2026-09-13** by removing the operator source-of-truth document above. The corpus is
+**scoped to the six parameters the DataPod measures** — temperature, dissolved oxygen, ORP,
+conductivity, pH, turbidity — and the reference tier carries one authoritative chapter per
 parameter.
 
 The expand-then-trim is not indecision: the expansion bought per-parameter depth, and the trim
 removed bulk that was competing for top-k slots without contributing. Net against 2026-08-21,
-the corpus lost 32% of its characters and kept every document that answers a question.
+the corpus has lost roughly a third of its characters (32% at the 2026-08-24 trim, a further
+11,564 chars at the 2026-09-13 removal) and kept every document whose numbers are not vetoed.
 
-Every row below was measured by the **2026-08-24** ingest run and matches `data/corpus/corpus.json`.
-The direct-feed slice is unchanged at 37,660 chars (~9,415 tokens).
+Every row below matches `data/corpus/corpus.json` as of the **2026-09-13** re-ingest, except where
+marked. The direct-feed slice is now **26,096 chars (~6,524 tokens), 3.1% of the corpus** (was
+37,660 chars / 4.4% with the source-of-truth document included), and no longer covers turbidity or
+temperature.
 
 ### Tier 1 — company-specific ⟵ the direct-feed slice
 
 | file | chars | chunks | in slice |
 |---|---:|---:|---|
-| `water-quality-metrics-source-of-truth.pdf` | 11,564 | 5 | **yes** |
 | `IpH_probe.pdf` | 7,451 | 3 | **yes** |
 | `Industrial-DO-probe.pdf` | 7,433 | 3 | **yes** |
 | `IORP_probe.pdf` | 6,440 | 3 | **yes** |
 | `EC_K_1.0_probe.pdf` | 4,772 | 2 | **yes** |
 
-Operator-written and vendor material for the probes this deployment actually carries, so it
-outranks any general reference. The probe datasheets are **ORP's only vendor-level coverage**.
+Vendor material for the probes this deployment actually carries, so it outranks any general
+reference. The probe datasheets are **ORP's only vendor-level coverage**, and — since the
+source-of-truth document's removal — the corpus's only Tier 1 material of any kind.
 
 **Still missing from Tier 1** (operator has not supplied them): a **turbidity probe datasheet**
 and a **temperature probe datasheet**. Turbidity is the gap that matters — the fleet's NTU value
 is derived from a raw voltage by a provisional, uncalibrated conversion
 ([`../docs/migration/DEVICE_API.md`](../docs/migration/DEVICE_API.md) §8), and no document in the
-corpus describes *this* sensor's optics.
+corpus describes *this* sensor's optics. With the source-of-truth document gone, no document in the
+corpus describes a typical range for ORP, conductivity or temperature either.
 
 ### Tier 2 — USGS National Field Manual, Chapter A6
 
@@ -194,15 +207,26 @@ Nothing in `_excluded/` is parsed by `npm run ingest`.
   more durable behaviour (no legal limit exists anywhere in the corpus; several plausible DO
   numbers do; do not promote one into the other). No fixture in `eval/fixtures/` referenced any of
   the three, so the committed set and its captured transcripts are untouched.
+- **Removed 2026-09-13** — `water-quality-metrics-source-of-truth.pdf`, **11,564 chars / 5 chunks**.
+  Every range it stated was vetoed by the supervisor: pod ranges now come only from each pod's
+  device-registry thresholds, read through the backend device API. Unlike the other rows in this
+  section, this was not a retrieval-quality cut — the document's ranges were woven into every
+  chunk's prose, so no partial retrieval could avoid quoting a vetoed number, and the whole document
+  moved rather than just its numeric claims. Archived under tag `corpus-archive-2026-09-13`
+  (`../docs/ARCHIVED.md`). Its claim inventory
+  (`eval/claims/water-quality-metrics-source-of-truth.json`) was deleted rather than moved. The
+  `precedence` fixture class was rewritten around its absence (`../docs/timeline.md` "Eval
+  rebuild").
 
 ## Git
 
 **These files are large and mostly untracked.** `.gitignore` has a `documents/*` rule. Tracked
-anyway, by exception: this README, and the five Tier 1 PDFs that make up the ◆G9 direct-feed slice
+anyway, by exception: this README, and the four Tier 1 PDFs that make up the ◆G9 direct-feed slice
 (above). The two USGS chapters that predate the rule are also tracked, renamed in place on
 2026-08-21. Everything else — the other seven USGS chapters, both EPA documents, both situational
-documents — is untracked and absent from a fresh clone. `git ls-files documents/` is the answer;
-check it before assuming a file is or is not in the repo.
+documents, and the removed source-of-truth PDF (now under `_excluded/`) — is untracked and absent
+from a fresh clone. `git ls-files documents/` is the answer; check it before assuming a file is or
+is not in the repo.
 
 ## Changing the corpus
 

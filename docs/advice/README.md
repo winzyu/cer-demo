@@ -72,3 +72,20 @@ verbatim in a customer-facing answer.
 Sourcing candidates listed in the individual files are **not** part of this approval. They are
 possible future corpus additions, unverified against the sourcing protocol, recorded so they are not
 lost.
+
+## 2026-09-13 — source-of-truth document and its claim inventory removed
+
+The operator's "Water Quality Metrics — Source of Truth" document was removed from the corpus (its
+ranges were vetoed by the supervisor and woven into every chunk's prose), and
+`eval/claims/water-quality-metrics-source-of-truth.json` was deleted with it. **16 candidate entries
+across the four files above cite a claim from that inventory as their evidence, 2 of them range
+claims**, and need re-sourcing against a claim that still exists before they can be approved —
+approving on a citation to a deleted claim is approving unverified wording. This does not touch the
+approval criteria in "What approval means" above, only what evidence a reviewer can check against.
+
+Separately, event triggers now depend on registry limits rather than document ranges: an event type
+like `Hypoxia` or `Algal bloom` fires (or fails to fire, see "Trigger reachability" above) off the
+pod's device-registry thresholds, not off any range a corpus document describes. The "Trigger
+reachability" table above is unaffected by the document's removal — it already described live-data
+reachability, not document-sourced ranges — but an entry drafted with a document's typical range in
+mind should be re-checked against what its trigger condition actually measures now.

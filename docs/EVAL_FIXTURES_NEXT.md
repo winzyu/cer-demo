@@ -4,8 +4,8 @@
 >
 > These 18 fixtures were an expansion of a set that has since been replaced wholesale. They were
 > **archived on 2026-09-01** under `eval-archive-2026-09-01` without ever being merged, and they
-> were written against an 18-document corpus that no longer exists (the corpus is 15 documents /
-> 451 chunks). **The live set is `eval/fixtures-wave1/`** — see [`EVAL_REBUILD.md`](EVAL_REBUILD.md).
+> were written against an 18-document corpus that no longer exists (the corpus is 14 documents /
+> 446 chunks). **The live set is `eval/fixtures-wave1/`** — see [`EVAL_REBUILD.md`](EVAL_REBUILD.md).
 
 
 Eighteen new conversations, thirty-seven turns, written for the **18-document corpus** the

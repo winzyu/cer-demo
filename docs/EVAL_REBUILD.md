@@ -112,7 +112,7 @@ twelve; the five unused ones stay in the type and are simply not populated for w
 | `deep-in-manual` | 10 | 20 | Separates the arms. **Absorbs `threshold-lookup`** — same question shape, and it is what the recovered solubility tables serve. |
 | `cross-document` | 10 | 20 | Separates the arms. 411 candidate claims tie 2+ metrics. |
 | `probe-calibration` | 8 | 16 | Separates the arms, and is forced outside the slice by construction — see below. |
-| `precedence` | 4 | 8 | Three verified conflicts already found in Phase 1a. |
+| `precedence` | 3 | 6 | Three verified conflicts already found in Phase 1a. **Revised 2026-09-13**: rewritten around a new premise — a range a corpus document describes is background, not the pod's configured limit — after the source-of-truth document (one of the three original conflicts) left the corpus; one fixture dropped. |
 | `definitional` | 4 | 8 | All arms tie here. |
 | `follow-up` | 4 | 8 | All arms tie here. |
 | `refusal` | 4 | 8 | Near-binary, reproduces cleanly. Drawn from the 168 recorded gaps. |
@@ -160,6 +160,11 @@ safe forever; re-chunking is not.
 **Corpus fingerprint at freeze** — `data/corpus/corpus.json`, re-ingested 2026-08-31:
 15 documents, **851,891 chars**, **451 chunks**. Extraction: 14 `pdf`, 1 `ocr-cache`.
 ◆G9 direct-feed slice: 5 documents, 37,660 chars, **4.4%**.
+
+**(Superseded 2026-09-13:** the operator source-of-truth document was removed from the corpus when
+its ranges were vetoed. Current corpus: 14 documents, 840,327 chars, 446 chunks — exactly the
+document's 5 chunks dropped, no other chunk id changed. ◆G9 slice: the 4 remaining probe
+datasheets, 26,096 chars, 3.1%. See `timeline.md` "Eval rebuild".)
 
 ### Why the filter came out — reversed after the first freeze
 
@@ -212,7 +217,9 @@ chunks these are.
 - **Editing a document is nearly safe.** Measured: a one-word edit invalidates **0–2 chunks**, never
   the document and never the corpus, because the splitter breaks on `\n\n` first and an edit stays
   inside its own paragraph's chunk.
-- **Changing a parameter in the table above is destructive.** All 451 ids re-derive at once.
+- **Changing a parameter in the table above is destructive.** Every existing chunk id re-derives at
+  once, whatever the current chunk count (446 as of 2026-09-13; it was 451 at the freeze — that
+  drop is the removed source-of-truth document, not a re-chunk).
 
 Phase 1e's **human locator** (document + section + short quote) is the mitigation for all three. It
 lets a label be re-resolved against a new chunk instead of re-authored. Phase 1a is already
@@ -684,9 +691,12 @@ completely meaningless dataset.
 
 - Branch `dev`, level with `origin/dev`. Working tree clean.
 - Corpus: **15 documents, 851,891 chars, 451 chunks** (re-ingested 2026-08-31 without the
-  alpha-ratio filter; was 393). ◆G9 slice is 37,660 chars (4.4%).
+  alpha-ratio filter; was 393). ◆G9 slice is 37,660 chars (4.4%). **(Superseded 2026-09-13:** now
+  14 documents, 840,327 chars, 446 chunks; ◆G9 slice is the 4 remaining probe datasheets, 26,096
+  chars, 3.1% — the source-of-truth document was removed, see `timeline.md` "Eval rebuild".)
 - Fixture set: **46 fixtures / 92 turns** in `eval/fixtures-wave1/`, seven classes, all runnable
-  (no fixture declares a `requires`). Slice coverage 41 none / 5 partial / 0 full.
+  (no fixture declares a `requires`). Slice coverage 41 none / 5 partial / 0 full. **(Superseded
+  2026-09-13:** now 45 fixtures / 90 turns — the `precedence` class was rewritten to 3 fixtures.)
 - Tags: `docs-archive-2026-08-30` (six archived docs), **`eval-archive-2026-09-01`** (the whole
   pre-rebuild eval set, 556 files), `wip-merge-chain-fanout-2026-08-31`,
   `wip-restore-pgvector-2026-08-31` (an arm the project has decided against — §1, do not pursue).
@@ -701,8 +711,8 @@ completely meaningless dataset.
 | 1b — question generation | ✅ 46 fixtures / 92 turns |
 | 1c — decontaminate | ✅ 22.8% document-level, 11.6% chunk-level, against the < 40% bar — **exit criterion 1 passes**. `eval/fixtures-wave1/_CONTAMINATION.md` |
 | 1d — human verification | ⬜ **the user's, ~4–6 h.** Do not start before the fixture text is frozen |
-| 1e — labels + hard negatives | 🟡 partial — `eval/retrieval-labels/` regenerated (46 files, `scripts/resolveRetrievalLabels.ts`), but provisional: flat grade 2, no hard negatives, per-fixture not per-turn. Adequate for the gold-context arm; the remainder blocks Phase 4, not Phase 3 (`HANDOFF_2026-09-10.md` §4) |
-| 2a — quote-based citations | 🟡 **in code 2026-09-13** — the prompt asks for `【n†"quote"】`, `formatContext` labels excerpts `【n】`, and `QUOTE_CITATION_PATTERN` accepts a non-dagger separator. **Not yet demonstrated:** the Phase 2 STOP block wants a non-zero quoted-citation rate on real answers, which needs a small paid smoke capture |
+| 1e — labels + hard negatives | 🟡 partial — `eval/retrieval-labels/` regenerated (**45 files**, `scripts/resolveRetrievalLabels.ts`), but provisional: flat grade 2, no hard negatives, per-fixture not per-turn. Adequate for the gold-context arm, which resolves every label at 100% offline; the remainder blocks Phase 4, not Phase 3 (`HANDOFF_2026-09-10.md` §4) |
+| 2a — quote-based citations | 🟡 **demonstrated, not measured, 2026-09-13** — the prompt asks for `【n†"quote"】`, `formatContext` labels excerpts `【n】`, and `QUOTE_CITATION_PATTERN` accepts a non-dagger separator. A same-day smoke capture ($0.0075, `gpt-oss-120b`, gold-context arm, three runs) showed the closing-bracket and quote rules produce a non-zero quoted-citation rate (10/10 markers closed correctly across two runs; 4/4 citations quoted in one answer, 1 supported and 3 too short) — a smoke check, not the Phase 2 STOP block's measured rate |
 | 2b — repoint the judge | ✅ done 2026-09-02 |
 | 2c — re-calibrate | ⬜ needs captured answers to grade — see the sequencing note below |
 | 3 — generation baseline | ⬜ costs money, needs approval |

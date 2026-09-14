@@ -3,16 +3,18 @@
 `npm run retrieval:eval` scores a retrieval adapter against a labelled query set. **No LLM, no
 network for the corpus, deterministic, seconds per run.**
 
-> ## ⚠ The harness is live; its label set is not, as of 2026-09-01
+> ## ⚠ The harness is live; its label set is partial, as of 2026-09-13
 >
-> **`npm run retrieval:eval` currently throws** `No retrieval labels at eval/retrieval-labels`. The
-> 48 label files were archived under `eval-archive-2026-09-01` and **Phase 1e** of
-> [`EVAL_REBUILD.md`](EVAL_REBUILD.md) rebuilds them — see [`RETRIEVAL_LABELS.md`](RETRIEVAL_LABELS.md)
-> for what 1e must do differently.
+> **Labels exist again.** Phase 1e of [`EVAL_REBUILD.md`](EVAL_REBUILD.md) regenerated
+> `eval/retrieval-labels/` — **45 files**, one per wave-1 fixture — replacing the label set that
+> was archived under `eval-archive-2026-09-01`. They are provisional (flat grade 2, no hard
+> negatives, per-fixture not per-turn) but adequate for the gold-context arm, which resolves every
+> label at 100% offline; see [`RETRIEVAL_LABELS.md`](RETRIEVAL_LABELS.md) for what 1e still owes.
 >
 > Every measured number below (99 queries, 48 fixtures, the 20.2% stub floor, the per-arm recall)
-> describes the archived label set against a **393-chunk** corpus. The corpus is now **451 chunks**.
-> The harness, the metrics and the traps are unchanged and still correct.
+> describes the now-archived label set against a **393-chunk** corpus that no longer exists — the
+> corpus is now **446 chunks** across 14 documents. The harness, the metrics and the traps are
+> unchanged and still correct; re-run against the current labels and corpus for current numbers.
 
 Companion docs: [`RETRIEVAL_LABELS.md`](RETRIEVAL_LABELS.md) (how the ground truth was built),
 [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md) (the question set), [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md)
@@ -36,8 +38,8 @@ The LLM sweep remains the only word on answer quality.
 ## 2. Running it
 
 ```bash
-npm run ingest                 # 15 docs -> data/corpus/corpus.json (451 chunks)
-npm run embed:cache            # embeds 451 chunks once; incremental afterwards
+npm run ingest                 # 14 docs -> data/corpus/corpus.json (446 chunks)
+npm run embed:cache            # embeds 446 chunks once; incremental afterwards
 npm run retrieval:eval                                   # every registered adapter
 npm run retrieval:eval -- --adapter=local-vector --k=10
 npm run retrieval:eval -- --adapter=stub,firestore-direct,local-vector --out=data/retrieval-eval/run.json
@@ -133,9 +135,14 @@ composing it cost one adapter that delegates to two existing ones.
 
 Two properties worth keeping:
 
-- **The operator source-of-truth is always in the prompt.** Several `precedence` fixtures turn on
-  the model seeing the operator reference next to a manual that disagrees with it. A top-k arm can
-  rank that reference out; this one structurally cannot.
+- **The ◆G9 slice is always in the prompt.** At the time this was measured, several `precedence`
+  fixtures turned on the model seeing the operator source-of-truth reference next to a manual that
+  disagreed with it, and a top-k arm could rank that reference out where this one structurally
+  could not. **The source-of-truth document was removed from the corpus 2026-09-13** (its ranges
+  were vetoed), and the `precedence` fixtures were rewritten around a different premise — a
+  document's range is background, not the pod's configured limit. The slice-always-included
+  property itself is unchanged; what it now guarantees is exposure to the four probe datasheets,
+  not to any operator range.
 - **The slice is emitted first**, so the cacheable prompt prefix stays byte-identical across
   requests. Reversing the order would quietly destroy direct-feed's ~99% prompt-cache hit rate.
 

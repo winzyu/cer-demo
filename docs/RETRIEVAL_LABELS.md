@@ -3,20 +3,23 @@
 Chunk-level relevance judgements for every user turn, so retrieval quality can be measured offline,
 deterministically, in seconds, with no LLM in the loop.
 
-> **Status 2026-09-02 — the label set described below was archived and has not been rebuilt yet.**
-> The 48 label files were built 2026-08-25 against the 393-chunk corpus and the fixture sets that
-> were replaced on 2026-09-01; they were archived under the tag `eval-archive-2026-09-01`
-> ([`ARCHIVED.md`](ARCHIVED.md)). `npm run retrieval:eval` throws `No retrieval labels at
-> eval/retrieval-labels` until **Phase 1e** of [`EVAL_REBUILD.md`](EVAL_REBUILD.md) refills it.
+> **Status 2026-09-13 — Phase 1e has refilled the label set, provisionally.** The 48 files
+> described below were archived under the tag `eval-archive-2026-09-01`
+> ([`ARCHIVED.md`](ARCHIVED.md)). `eval/retrieval-labels/` now holds **45 files**, one per wave-1
+> fixture, built by `scripts/resolveRetrievalLabels.ts` — but they remain provisional: flat grade
+> 2, no hard negatives, per-fixture rather than per-turn. Adequate for the gold-context arm, which
+> resolves every label at 100% offline; the gaps below still block Phase 4, not Phase 3.
 >
-> **What Phase 1e must do differently**, and why the old set could not simply be re-pointed:
+> **What Phase 1e still owes**, and why the old set could not simply be re-pointed:
 >
-> - The corpus is now **451 chunks**, re-ingested 2026-08-31 without the alpha-ratio filter. Chunk
->   ids are content-derived, so all 393 old ids survive — but 58 chunks that did not previously
->   exist are now labellable, and 34 of them are the `usgs-nfm-a6.2` oxygen-solubility tables.
+> - The corpus is now **446 chunks** across 14 documents (the operator source-of-truth document
+>   was removed 2026-09-13 when its ranges were vetoed; before that it was 451 chunks across 15
+>   documents, re-ingested 2026-08-31 without the alpha-ratio filter). Chunk ids are
+>   content-derived, so removing a document only drops its own chunks' labels, never renumbers the
+>   rest.
 > - Each label must carry a **human locator** (document + section + short quote) alongside the
 >   chunk hash, so a future re-chunk can re-resolve it instead of voiding it.
-> - **Do not assume "source chunk = the only relevant chunk."** With 400-char overlap across 15
+> - **Do not assume "source chunk = the only relevant chunk."** With 400-char overlap across 14
 >   documents covering six overlapping metrics, labelling only the source produces false negatives
 >   in ground truth. Run a separate pass over candidates.
 > - Salt in **hard negatives** — the wrong probe's datasheet, the right metric in the wrong water
@@ -57,7 +60,7 @@ Of the **archived** set (both fixture sets are now under `eval-archive-2026-09-0
 | `eval/fixtures-next/` (the proposed 18) | 18 | 37 |
 | **total** | **48** | **99** |
 
-For scale, Phase 1e labels **46 fixtures / 92 turns** against 451 chunks.
+For scale, Phase 1e labels **45 fixtures / 90 turns** against 446 chunks.
 
 **259 chunk labels** across those turns: 118 at grade 2, 128 at grade 1, 13 at grade 0.
 **20 turns carry `noRelevantChunks`** instead (§5).

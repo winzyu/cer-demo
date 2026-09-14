@@ -7,10 +7,13 @@ the work downstream of them starts.
 This is the successor to the original migration timeline. The single biggest change: the target-stack
 gate (◆G1) is now **resolved** — see below — which re-anchors every phase that depended on it.
 
-> **Current state and how to resume: [`HANDOFF_2026-09-10.md`](HANDOFF_2026-09-10.md).** The eval
-> apparatus has been rebuilt — fixtures, retrieval labels, and the gold-context arm all exist — but
-> nothing has been captured since the N2 transcripts were archived on 2026-09-01; the next milestone
-> is the Phase 3 generation baseline. Read that handoff first if you are picking this up cold.
+> **Current state and how to resume: [`HANDOFF_2026-09-13.md`](HANDOFF_2026-09-13.md).** The
+> operator's ranges document was vetoed and removed from the corpus (14 documents, 446 chunks); pod
+> thresholds now come from the device registry via `get_pod_thresholds`, the report's baselines
+> switched to the same source, and the wave-1 set is now 45 fixtures / 90 turns (`precedence` rebuilt). A
+> same-day smoke capture demonstrated the new citation format without measuring it; the next
+> milestone is still the Phase 3 generation baseline. Read that handoff first if you are picking
+> this up cold.
 
 Companion docs: [`SPECS.md`](SPECS.md) (what's built today), [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md)
 (coding conventions), [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md) (legacy FastAPI
@@ -551,8 +554,9 @@ an input to **◆G3**.
   system-prompt range already starts at 0 for turbidity.
 - **Site/device metadata store** — coordinates, water-body type, client/contract, per-sensor
   calibration dates (needed for the report header + §5).
-- **◆ G3 — Site-baseline definition** (carried forward): is the report's "Site Baseline" the
-  operator-provided normal range, or computed from historical per-site data? Gates the flag logic.
+- **◆ G3 — Site-baseline definition** — **resolved 2026-09-13**: the report's "Site Baseline" is
+  the pod's operator-configured registry threshold, by supervisor direction (see the open-gates
+  table). Computing it from historical per-site data remains a possible later refinement.
 - **Site baseline + flag logic** — per-site, per-parameter min–max + deterministic Flag
   (Normal/Elevated/Low/Exceedance).
 
@@ -767,16 +771,17 @@ conversations that survive a page reload.*
 1. **Sensor time-series** — per device, per timestamp: DO, ORP, pH, conductivity, temperature,
    turbidity. **Live since N3**: numeric-keyed from the production API, decoded in
    `src/devices/metrics.ts`. *0 is valid for turbidity and ORP.*
-2. **Operator normal-ranges / site baseline** — per metric, per site; authoritative over documents.
-   Add a turbidity range. See ◆G3.
+2. **Pod thresholds / site baseline** — per pod, from the device registry (`get_pod_thresholds`),
+   read through the backend device API with the caller's token. **Resolved 2026-09-13 (◆G3):** no
+   document or system-prompt range is authoritative — the registry threshold is. See ◆G3.
 3. **Site/device metadata** — coordinates, water-body type, client/contract, calibration dates.
-4. **Source-of-truth corpus** — **15 active docs since 2026-08-24** (operator source-of-truth, 4
-   Atlas Scientific probe datasheets, the 9-chapter USGS National Field Manual A6 set, and 1 EPA
-   field-calibration SOP; **851,891 chars / 393 chunks**, expanded to 18 docs / ~1.25M chars on
-   2026-08-21 and trimmed back on 2026-08-24 — the EPA standards handbook and the two
-   pollution-event references carried no numeric criteria for any measured parameter). No public
-   links. Breakdown, the USGS edition-currency check, and the two ingest traps:
-   [`../documents/README.md`](../documents/README.md).
+4. **Reference corpus** — **14 active docs since 2026-09-13** (4 Atlas Scientific probe datasheets,
+   the 9-chapter USGS National Field Manual A6 set, and 1 EPA field-calibration SOP); **840,327
+   chars / 446 chunks**. Was 15 docs / 851,891 chars / 451 chunks before the operator
+   source-of-truth document was removed when its ranges were vetoed (see "Eval rebuild" below) — the
+   451 figure itself followed the 2026-08-31 alpha-ratio-filter reversal from an original 393 at the
+   2026-08-24 trim. No public links. Breakdown, the USGS edition-currency check, and the two ingest
+   traps: [`../documents/README.md`](../documents/README.md).
    *Still missing from Tier 1: turbidity and temperature probe datasheets.*
 5. **Unit confirmations** — turbidity (NTU vs FNU) before answers quote it as fact.
 6. **Auth context** — the user's JWT, forwarded for backend-mediated sensor calls, scoped so the bot
@@ -790,11 +795,11 @@ conversations that survive a page reload.*
 |---|---|---|---|
 | ◆ G1 | Target stack (A/B/C) | **Resolved → C (Node/Express + Firestore)** | — (unblocked all) |
 | ◆ G7 | Retrieval strategy: direct-feed vs RAG (and, if RAG, vector method + lexical arm) — **decided on cost**, with quality as a floor | **Split 2026-08-26.** Retrieval half **CLOSED**: `firestore-direct` on the evidence in `RETRIEVAL_COMPARISON.md` §7. Quality floor **re-filed as a system-level deploy blocker**, thresholds carried forward verbatim and still **unmet** (§8c). The system prompt is **unpinned**, which releases N5's personality item and ◆G11. Historical blocker, revised 2026-08-25 (`RETRIEVAL_BAKEOFF.md` §8b): re-capture on the 15-document corpus → automated pass on the three hard gates → LLM judge on the survivors → `RETRIEVAL_COMPARISON.md`. Only `firestore-direct`'s transcripts survived the corpus change. The offline retrieval harness and its four new arms **do not advance this gate** — §8a's targets are all answer-quality and recall/MRR are diagnostics with no target | Phases N2→N6. **No longer blocks pgvector archival** — that was taken ahead of the gate on 2026-08-19 (see "Where we are now"), with the evidence retained so grading is unaffected |
-| ◆ G9 | Direct-feed corpus slice | **Resolved → operator source-of-truth + 4 probe datasheets (~9.4K tokens)**. Revised 2026-07-29: the original small tier was 83% a structurally shredded criteria table covering pollutants this sensor cannot measure | — |
+| ◆ G9 | Direct-feed corpus slice | **Resolved → the four probe datasheets only** (`EC_K_1.0_probe.pdf`, `IORP_probe.pdf`, `IpH_probe.pdf`, `Industrial-DO-probe.pdf`), 26,096 chars (~6,524 tokens), 3.1% of the corpus. **Revised 2026-09-13**: the operator source-of-truth document was removed from the slice and the corpus when its ranges were vetoed (see "Eval rebuild" below); the slice no longer carries any document about turbidity or temperature. Earlier, revised 2026-07-29: the original small tier was 83% a structurally shredded criteria table covering pollutants this sensor cannot measure | — |
 | ◆ G10 | Third bake-off arm | **Resolved → yes, three arms**: `firestore-direct`, `pgvector-rag`, `firestore-vector`. Also answers whether Firestore's own vector search is good enough if RAG wins | — |
 | ◆ G11 | Does `search_documents` return as a **tool** after ◆G7 settles, or is up-front retrieval permanent? A hybrid — up-front retrieval for the first pass, an optional follow-up search tool for multi-part questions — is plausible. Decide **after** N2, so the bake-off measures strategies rather than tool-calling behavior | Open — **cheaper now**: N3 built the loop, so adding it is one entry in `buildToolRegistry` plus a prompt line, not new machinery | multi-part answer quality |
 | ◆ G8 | Sensor-data store (Firestore port vs device-API) | **Resolved → device API** (most direct path to the real codebase) | — |
-| ◆ G3 | Site-baseline definition (operator range vs. computed) | Open. An operator meeting restated it as "pull ranges from the registry, refine per site from history" — decoded, with the prompt-caching and `precedence`-fixture constraints that shape any implementation, in [`RESPONSIBILITY.md`](RESPONSIBILITY.md) | Phase N4 flag logic |
+| ◆ G3 | Site-baseline definition (operator range vs. computed) | **Resolved 2026-09-13 → the pod's operator-configured registry threshold**, by supervisor direction (see "Eval rebuild" below). Computing a site baseline from history remains a possible later refinement, not a gate. Earlier, an operator meeting had restated the open question as "pull ranges from the registry, refine per site from history" — decoded, with the prompt-caching and `precedence`-fixture objections re-checked against this resolution, in [`RESPONSIBILITY.md`](RESPONSIBILITY.md) | Phase N4 flag logic — unblocked |
 | ◆ G4 | Event-detection context source | Open | Phase N6 §4 |
 | ◆ G5 | Frontend responsiveness (mobile/tablet) | Open | Phase N7 UI |
 | ◆ G6 | Redesign vs. match existing style | Open | Phase N7 UI |
@@ -830,8 +835,13 @@ entry to be written here at that point. Until then: **treat every retrieval arm 
 | Wave-1 **exit criterion 1 passes** — contamination 22.8% document-level, 11.6% chunk-level, against a < 40% bar | 2026-09-01 | `eval/fixtures-wave1/_CONTAMINATION.md` |
 | Phase 2b done: judge repointed | 2026-09-02 | `DEFAULT_JUDGE_MODEL` had still been `gpt-oss-120b`, which had become the production generator — the default judge was set to grade its own output. Guarded by a test that fails if it is put back |
 | Alpha-ratio filter defaulted **off** | 2026-09-02 | It defaulted *on* while the sole production caller passed `false` and no test covered the ingest path, so deleting one argument would have silently re-filtered the corpus to 393 chunks with the suite green |
-| **Prompt range block deleted**; per-pod thresholds come from the device registry through `get_pod_thresholds`, turbidity interpretation through `get_turbidity_info` | 2026-09-13 | Supervisor directive: the operator source-of-truth document's ranges are vetoed and ranges come from each pod's registry. Two of the block's six numbers had also drifted from the operator material (DO 5–14 mg/L, saltwater conductivity 40,000–50,000 µS/cm). No fallback table — a registry value that fails validation is reported as "no threshold configured". The registry values are operator-set **alert limits**, not ecological ranges, and the tool says so. Still open: whether the veto extends to the report pipeline's `BASELINE_RANGES`, the corpus document itself, and the four `precedence` fixtures built on it. `src/prompt/systemPrompt.ts` docstring |
-| **Quote-carrying citations** (`EVAL_REBUILD.md` 2a in code): the prompt asks for `【n†"quote"】`, context excerpts are labelled `【n】` | 2026-09-13 | The quote exists for deterministic grading (`checkQuotes`); the interface is to render the marker as a source link and not show the quote text. Not yet demonstrated on a capture. `src/prompt/promptBuilder.ts`, `src/eval/gates/checks.ts` |
+| **Prompt range block deleted**; per-pod thresholds come from the device registry through `get_pod_thresholds`, turbidity interpretation through `get_turbidity_info` | 2026-09-13 | Supervisor directive: the operator source-of-truth document's ranges are vetoed and ranges come from each pod's registry. Two of the block's six numbers had also drifted from the operator material (DO 5–14 mg/L, saltwater conductivity 40,000–50,000 µS/cm). No fallback table — a registry value that fails validation is reported as "no threshold configured". The registry values are operator-set **alert limits**, not ecological ranges, and the tool says so. The veto's open questions are now settled, see the rows below: the document left the corpus, the report's baselines switched to the same registry source, and the `precedence` fixtures were rewritten. `src/prompt/systemPrompt.ts` docstring |
+| Source-of-truth document removed from the corpus | 2026-09-13 | Its ranges were woven into every chunk's prose, so partial retrieval could not avoid them (user's choice). Moved to `documents/_excluded/`; archived under tag `corpus-archive-2026-09-13` (`ARCHIVED.md`). Its claim inventory `eval/claims/water-quality-metrics-source-of-truth.json` was deleted. Corpus: 14 documents, 840,327 chars, 446 chunks (was 15 / 851,891 / 451) — exactly the document's 5 chunks were removed, no other chunk id changed. ◆G9 direct-feed slice now the four probe datasheets only, 26,096 chars (~6,524 tokens), 3.1% of the corpus (was 5 documents / 37,660 chars / 4.4%), and no longer covers turbidity or temperature. Claims inventory: 2,177 claims, 1,621 high-specificity, 156 gaps across 446 chunks (`eval/claims/_STATUS.md`) |
+| Report baselines switched to registry thresholds; ◆G3 resolved | 2026-09-13 | Temperature, pH, DO, ORP and conductivity baselines now all come from the pod's registry thresholds; `BASELINE_RANGES` and `DO_ABSOLUTE_THRESHOLDS` were deleted. A metric with no usable threshold shows no baseline. When a configured limit sits at the probe's plausibility floor or ceiling, the report adds a blind-spot note that excursions in that direction cannot be detected. `generate_report` returns `baseline_provenance`, replacing `temperature_baseline`. ◆G3 is resolved as "the pod's operator-configured registry threshold" by supervisor direction; computing a site baseline from history remains a possible later refinement, not a gate. Consequence on the 5 pods visible to the configured token: Old Woman Creek 2026's 0-minimums make Hypoxia/Sewage/Acidic-input/Algal-bloom undetectable there, Balboa Yacht Basin Buoy's 27 mg/L DO ceiling makes an algal bloom practically undetectable, and the saltwater pods' 75,000 µS/cm conductivity ceiling desensitises Saltwater intrusion — these are operator-set alert limits, not ecological ranges, and operator review of them is an open follow-up |
+| `precedence` class rewritten; wave-1 set now **45 fixtures / 90 turns** | 2026-09-13 | New premise: a range a corpus document describes is background, not the pod's configured limit; with no configured threshold available the assistant says so rather than substituting the document's range. New ids: `precedence-ph-river-range-not-pod-limit`, `precedence-do-hypoxia-qa-trigger-not-pod-limit`, `precedence-turbidity-groundwater-background-not-pod-limit` — three fixtures, down from four. Rubric lines citing the removed document were removed from `refusal-temperature-harm-threshold`, `refusal-how-long-can-it-stay-in`, `crossdoc-warm-week-oxygen-drop`, `deepmanual-do-saturation-ceiling`, `deepmanual-brackish-do-correction`, `refusal-turbidity-sensor-hardware`. Shortfall: no remaining document describes a typical range for ORP, conductivity or temperature. Contamination for the three new fixtures has not been re-measured. Retrieval labels: 45 files, gold-context arm resolves every label at 100% offline |
+| Citation marker rendering shipped in the frontend | 2026-09-13 | Markers render as a numbered superscript whose tooltip is the source name; the quote never reaches the DOM; a half-streamed marker is hidden; a marker the model closes with `"}` still renders |
+| Smoke capture demonstrates quote-carrying citations, does not measure them | 2026-09-13 | $0.0075 total, `gpt-oss-120b`, gold-context arm, 2–3 turns per run, three runs. Run 1: the model closed every marker with `"}`, so the checker read zero; after adding the closing-bracket rule, markers closed correctly (10/10 across the next two runs); after tightening the quote rule, 4/4 citations in one answer carried a quote — 1 supported, 3 too short (9-character table cells, under the 12-character minimum); one earlier quote joined two passages with an ellipsis; one turn answered in one run and refused in another. The quoted-citation rate is non-zero; this is a smoke check, not a measurement. Phase 2a is in code and demonstrated, not yet measured |
+| **Quote-carrying citations** (`EVAL_REBUILD.md` 2a in code): the prompt asks for `【n†"quote"】`, context excerpts are labelled `【n】` | 2026-09-13 | The quote exists for deterministic grading (`checkQuotes`); the interface is to render the marker as a source link and not show the quote text. **Demonstrated by the same-day smoke capture below**, not yet measured. `src/prompt/promptBuilder.ts`, `src/eval/gates/checks.ts` |
 
 **Known blocker on Phase 3 (resolved by `a72c3b5`, see below).** The Tier 1 refusal gate detects refusal-required turns by
 regex-matching rubric prose, and matches **0 of wave 1's 8 refusal turns** — the new set phrases the
@@ -846,9 +856,12 @@ are flagged across three fixtures.
 
 ## Session handoffs
 
-**The current handoff is [`HANDOFF_2026-09-10.md`](HANDOFF_2026-09-10.md).** Read it first for
+**The current handoff is [`HANDOFF_2026-09-13.md`](HANDOFF_2026-09-13.md).** Read it first for
 session state, open blockers and who owns each one, then **[`EVAL_REBUILD.md`](EVAL_REBUILD.md)**
 for the eval plan and its phase order.
+
+[`HANDOFF_2026-09-10.md`](HANDOFF_2026-09-10.md) is **superseded for session state** by the entry
+above.
 
 [`HANDOFF_2026-08-27.md`](HANDOFF_2026-08-27.md) is **superseded for session state** but still
 current for the device-API and report work it describes; its eval sections were superseded earlier

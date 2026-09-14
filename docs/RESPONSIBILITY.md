@@ -105,11 +105,11 @@ cleanly with the options above. Qualified against what's actually in the codebas
 **Phase 1 — Education only, no reference to the user's own sensor data.**
 Closer to already-built than it looks: `SENSOR_TOOL` (default **off**, `src/config/index.ts`)
 already means the model has no access to this deployment's live readings at all — it can only
-answer from document CONTEXT and the `REFUSAL_SENTENCE`. The gap to a clean Phase 1 is narrower
-than a new feature: mainly making sure the "is this reading normal" framing in the system prompt
-(the AUTHORITATIVE NORMAL RANGES block) doesn't leak in while the flag is off, since that block is
-written assuming a reading exists to judge. **Effort: under a day** — mostly prompt-scoping and a
-fixture or two, not new infrastructure.
+answer from document CONTEXT and the `REFUSAL_SENTENCE`. This has since gone further than this
+paragraph anticipated: the prompt's `AUTHORITATIVE NORMAL RANGES` block was deleted outright on
+2026-09-13 (see the reconciliation note below), so the "is this reading normal" framing this
+paragraph worried about leaking is no longer in the prompt to leak. **Effort: under a day** —
+mostly prompt-scoping and a fixture or two, not new infrastructure.
 
 **Phase 2 — Diagnosis + escalation, no DIY fixes.**
 This is options 1 and 3 above, combined, plus one explicit new constraint: the current prompt has
@@ -205,11 +205,41 @@ surface the device's registry thresholds in its result, flagging disagreement �
 already uses for the `WATER_TYPE`-vs-`operatingEnvironment` mismatch. It lands after the generation
 baseline is captured, batched with the other prompt work.
 
+**Overtaken 2026-09-13 — the supervisor directed exactly the implementation above, and it was
+built.** The prompt's `AUTHORITATIVE NORMAL RANGES` block is deleted outright rather than kept as a
+default: every range in the operator's source-of-truth document is vetoed, and a limit may now be
+stated only from a tool result (`get_pod_thresholds`, reading validated registry thresholds through
+the backend device API with the caller's token; rejected values return a reason, never the number;
+no fallback table). The three objections raised above were re-checked against the built version, not
+waived:
+
+- **Prompt caching.** Static-first, dynamic-last prompt assembly is unaffected — the range block is
+  removed, not replaced by a per-request block. A tool result is not part of the cached prompt
+  prefix at all, so caching is not a consideration here; there is no static content this change
+  makes dynamic.
+- **Grounding.** Still satisfied — a tool result is one of the defined grounding sources alongside
+  retrieval context, the system prompt and the user's question, and it is grounded only when the
+  tool actually ran, exactly the caveat noted above.
+- **The `precedence` fixture class.** Rewritten rather than left dependent on a capability the
+  default configuration lacks: the class no longer tests "operator range outranks a document" — it
+  now tests that a range a corpus document describes is background, not the pod's configured limit,
+  and that with no configured threshold available the assistant says so rather than substituting the
+  document's range. Three fixtures, down from four (`EVAL_REBUILD.md`, `timeline.md` "Eval
+  rebuild").
+
+The consequence not previously anticipated in this reconciliation: the operator source-of-truth
+document's ranges were woven into its prose, so the document itself left the corpus rather than
+just the prompt block, and the registry values it displaced are operator-set **alert limits**, not
+ecological ranges — several pods have limits that make a real event undetectable in one direction
+(`timeline.md` "Eval rebuild", 2026-09-13 rows). Operator review of those limits is an open
+follow-up, tracked there, not here.
+
 **"Generalized ranges could stay, with what is normal for this location derived from historical
-data."** This is ◆G3's open question stated precisely: is the site baseline the operator-provided
-range or computed from history. The instinct — keep the rule of thumb, refine per site — is the
-right shape, and rolling-percentile baselines from historical data are unbuilt. It stays a gate, not
-a task.
+data."** This is ◆G3's question stated precisely: is the site baseline the operator-provided range
+or computed from history. **◆G3 was resolved 2026-09-13** — the pod's registry threshold, by
+supervisor direction (see the reconciliation note above) — but the instinct here, refine per site
+from history, is not thereby closed off: rolling-percentile baselines from historical data remain a
+possible later refinement to the registry-threshold answer, unbuilt and not a gate.
 
 **"Educational tool — explain what this data means."** This is the `education` tier, and it is
 approximately what ships today.

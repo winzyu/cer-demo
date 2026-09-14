@@ -112,13 +112,16 @@ and a fabricated zero is an automatic disqualification in evaluation.
 ## 4. What the corpus is, right now
 
 Documents are parsed once into a single artifact that all retrieval strategies read from, chunked
-at 3,200 characters with 400 overlap. **~213K tokens across 15 documents** (851,891 chars, 393
-chunks, measured 2026-08-24) — still far larger than any context window, which is the point:
-retrieval has to choose.
+at 3,200 characters with 400 overlap. **~210K tokens across 14 documents** (840,327 chars, 446
+chunks, measured 2026-09-13, after the operator source-of-truth document was removed — see below) —
+still far larger than any context window, which is the point: retrieval has to choose.
 
-### Tier 1 — company-specific (5 docs, ~9.4K tokens) — do not source, we have these
-Operator-written source-of-truth document plus the four Atlas Scientific probe datasheets. These
-are fed to the model *whole* on every request in one retrieval mode.
+### Tier 1 — company-specific (4 docs, ~6.5K tokens) — do not source, we have these
+The four Atlas Scientific probe datasheets. These are fed to the model *whole* on every request in
+one retrieval mode. **The operator-written source-of-truth document that used to sit in this tier
+was removed from the corpus 2026-09-13** — every range it stated was vetoed by the supervisor, and
+because its ranges were woven into every chunk's prose, the whole document left rather than just
+its numbers. See [`timeline.md`](timeline.md) "Eval rebuild".
 
 ### Tier 2 — USGS National Field Manual, Chapter A6 (9 docs) — the method backbone
 One chapter per parameter: 6.0 general guidelines, 6.1 temperature, 6.2 dissolved oxygen,
