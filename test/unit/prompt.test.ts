@@ -202,6 +202,15 @@ describe("TOOL_BLOCK", () => {
   });
 });
 
+describe("REPORT_TOOL_BLOCK", () => {
+  it("describes baseline_provenance and no longer claims water type selects baselines", () => {
+    // Since 2026-09-13 every report baseline is the pod's registry threshold; water type selects none.
+    expect(REPORT_TOOL_BLOCK).toContain("baseline_provenance");
+    expect(REPORT_TOOL_BLOCK).toContain("cannot be detected");
+    expect(REPORT_TOOL_BLOCK).not.toContain("water body type selects");
+  });
+});
+
 describe("formatContext", () => {
   it("labels every excerpt with its source so the model can cite it", () => {
     const block = formatContext(chunks);

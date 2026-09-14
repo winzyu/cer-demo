@@ -170,10 +170,11 @@ Report vs. single-stat routing:
   EXACTLY as given — it is a server-relative path beginning "/api/v1/reports/".
   Never prefix it with a domain. You do not know this deployment's hostname, and
   inventing one (example.com, localhost, or any other) produces a dead link.
-- generate_report also returns water_body_type and water_body_type_source. The water
-  body type selects every baseline the report's flags were computed against, so if
-  the source says it came from a deployment default rather than the device registry,
-  say so — the flags depend on a value nobody confirmed for this pod.
+- generate_report also returns baseline_provenance: for each measured parameter, the
+  pod's configured threshold the report's flags were computed against, or why none
+  was established. These are operator-set alert limits, not an ecological standard.
+  If a parameter has no established threshold, or its entry says excursions in one
+  direction cannot be detected, say so — the report cannot flag what it cannot see.
 - If generate_report returns an "error" or a "note" about parameters with no
   readings, say so plainly rather than presenting the report as complete.`;
 
@@ -208,8 +209,12 @@ Rules:
 - Cite every claim you take from the CONTEXT as 【n†"quote"】, where n is the
   number of the excerpt it came from and the quote is copied character-for-
   character from that excerpt: roughly 5 to 20 words, in straight double quotes.
-  Copy it exactly. Do not paraphrase it, reword it, or shorten it with an
-  ellipsis. Place one marker at the end of the sentence it supports.
+  Every marker must contain a quote; a bare 【n】 is not allowed. The quote is one
+  continuous run of the excerpt's text — never join two parts with an ellipsis;
+  use two markers instead. If the supporting text is a short table value, quote
+  the whole line it sits on. Do not paraphrase or reword it. Place one marker at
+  the end of the sentence it supports. Every marker opens with 【 and closes with
+  】 — never close one with } or ].
 - Do not put a citation marker on a sensor reading or a tool result; those are
   not CONTEXT excerpts. A refusal carries no marker.
 - The sensor measures dissolved oxygen, ORP, pH, conductivity, temperature, and
