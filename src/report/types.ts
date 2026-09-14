@@ -29,7 +29,7 @@ export type Flag = "Normal" | "Elevated" | "Low" | "Exceedance" | "N/A" | "Quali
 
 /**
  * Qualitative water-clarity bands for turbidity. The three cut points are operator-authoritative
- * -- supplied by the operator on 2026-09-10 (finding 5, docs/HANDOFF_2026-09-10.md section 5),
+ * -- supplied by the operator on 2026-09-10 (docs/timeline.md decision log),
  * replacing this project's own provisional 250 / 600 / 1005 edges. That is the opposite of
  * provisional: these are no longer a guess this project made in the absence of operator data,
  * they are the operator's own bands. The full derivation, both-units edge values, and the

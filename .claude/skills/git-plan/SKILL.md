@@ -9,8 +9,10 @@ description: Write the git plan for cer-demo at a verified checkpoint, and the c
 
 The sequence is always: you show the plan, the user confirms it, and the confirmation says who
 runs it — the user runs it, or tells you to. Both are normal. Until that confirmation arrives, run
-nothing: no commit, push, branch, tag, stash, or checkout. (`.claude/settings.json` puts these
-behind a permission prompt; the prompt is a backstop, not the confirmation.)
+nothing: no commit, push, branch, tag, stash, or checkout. `.claude/settings.json` lets plan
+commands run without a permission prompt, so the user's confirmation in chat is the only gate.
+History-destroying commands (force push, reset, restore, clean, rebase, branch or tag deletion)
+still prompt.
 
 When told to run it, run exactly the commands in the approved plan — not a variation, not an extra
 step, and nothing the plan did not list. If you discover partway through that the plan was wrong,

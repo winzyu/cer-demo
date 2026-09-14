@@ -1,12 +1,11 @@
 {
   "permissions": {
-    "deny": [
-      "Edit(//mnt/c/Users/winsy/OneDrive/Documents/work_and_school/coding/project/aic/clean-earth-rovers/repo/user-dashboard/**)",
-      "Edit(//mnt/c/Users/winsy/OneDrive/Documents/work_and_school/coding/project/aic/clean-earth-rovers/repo/backend/**)",
-      "Read(//home/winsy/.config/gcloud/**)",
-      "Read(./serviceAccountKey.json)"
-    ],
-    "ask": [
+    "allow": [
+      "Bash(git status *)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git show *)",
+      "Bash(git ls-files *)",
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git push *)",
@@ -14,19 +13,40 @@
       "Bash(git fetch *)",
       "Bash(git switch *)",
       "Bash(git checkout *)",
-      "Bash(git restore *)",
-      "Bash(git reset *)",
       "Bash(git stash *)",
       "Bash(git branch *)",
       "Bash(git tag *)",
       "Bash(git merge *)",
-      "Bash(git rebase *)",
-      "Bash(git cherry-pick *)",
       "Bash(git revert *)",
+      "Bash(git cherry-pick *)",
       "Bash(git rm *)",
       "Bash(git mv *)",
-      "Bash(git clean *)",
       "Bash(git worktree *)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run lint)",
+      "Bash(npx eslint src *)",
+      "Bash(npx jest test/*)"
+    ],
+    "deny": [
+      "Edit(//mnt/c/Users/winsy/OneDrive/Documents/work_and_school/coding/project/aic/clean-earth-rovers/repo/user-dashboard/**)",
+      "Edit(//mnt/c/Users/winsy/OneDrive/Documents/work_and_school/coding/project/aic/clean-earth-rovers/repo/backend/**)",
+      "Read(//home/winsy/.config/gcloud/**)",
+      "Read(./serviceAccountKey.json)"
+    ],
+    "ask": [
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git push --force-with-lease *)",
+      "Bash(git reset *)",
+      "Bash(git restore *)",
+      "Bash(git clean *)",
+      "Bash(git rebase *)",
+      "Bash(git checkout -- *)",
+      "Bash(git checkout .)",
+      "Bash(git branch -D *)",
+      "Bash(git tag -d *)",
+      "Bash(git stash drop *)",
+      "Bash(git stash clear)",
       "Bash(npm test)",
       "Bash(npx jest)",
       "Bash(npm run lint:fix *)",
@@ -41,23 +61,9 @@
       "Bash(npm run explore:surface *)",
       "Bash(npm run verify:sensor *)",
       "Bash(npm run report:render *)"
-    ],
-    "allow": [
-      "Bash(git status *)",
-      "Bash(git log *)",
-      "Bash(git diff *)",
-      "Bash(git show *)",
-      "Bash(git ls-files *)",
-      "Bash(npm run typecheck)",
-      "Bash(npm run lint)",
-      "Bash(npx eslint src *)",
-      "Bash(npx jest test/*)"
     ]
   },
   "enabledPlugins": {
-    "caveman@caveman": false,
-    "ponytail@ponytail": false,
-    "andrej-karpathy-skills@karpathy-skills": false,
     "agent-skills@addy-agent-skills": false
   }
 }

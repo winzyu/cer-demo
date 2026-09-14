@@ -10,8 +10,8 @@ Firestore**.
 
 ## Where do I go?
 
-**If you read one thing first:** [`docs/HANDOFF_2026-08-27.md`](docs/HANDOFF_2026-08-27.md) — current state, open
-decisions, and the traps that cost time.
+**If you read one thing first:** [`docs/STATUS.md`](docs/STATUS.md) - current state, open work,
+and the traps that cost time.
 
 | I want to… | Go to |
 |---|---|
@@ -34,7 +34,7 @@ decisions, and the traps that cost time.
 
 | doc | what it covers |
 |---|---|
-| [`docs/HANDOFF_2026-08-27.md`](docs/HANDOFF_2026-08-27.md) | **Start here.** State, open decisions, silent-failure traps. |
+| [`docs/STATUS.md`](docs/STATUS.md) | **Start here.** Current state, open work, active traps. Rewritten every session. |
 | [`docs/SPECS.md`](docs/SPECS.md) | Architecture as built today, section by section. |
 | [`docs/timeline.md`](docs/timeline.md) | Phased plan, and the **◆ decision gates** that block work. |
 | [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) | The direct-feed vs RAG cost experiment (◆G7). |
@@ -407,7 +407,7 @@ surface as answer-quality differences and be misread as one strategy beating ano
 | `hybrid-slice-lexvec` | the slice plus dense + BM25 fusion | the artifact + the cache |
 
 ⭐ = the provisional working choice (7.1% retrieval miss vs 33.9%). See
-[`docs/HANDOFF_2026-08-27.md`](docs/HANDOFF_2026-08-27.md) §1.
+[`docs/timeline.md`](docs/timeline.md), the 2026-08-26 ◆G7 split.
 
 > **The four arms below the line were added 2026-08-24/25 and are measured, not graded.** Offline
 > recall at k=10: `local-vector` 54.3%, `local-hybrid` 59.5%, `firestore-direct` 74.9%,
@@ -710,7 +710,7 @@ eval/                   # fixtures/ (committed questions), transcripts/, grading
                         #   pgvector-rag transcripts and KEY.json stay — they are ◆G7's evidence.
 archive/                # retired code kept for the record, at its original paths.
   pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
-docs/                   # HANDOFF_2026-08-27.md (start here), ARCHIVED.md, SPECS.md, timeline.md, RETRIEVAL_BAKEOFF.md,
+docs/                   # STATUS.md (start here), ARCHIVED.md, SPECS.md, timeline.md, RETRIEVAL_BAKEOFF.md,
                         #   EVAL_FIXTURES.md, GRADING_GUIDE.md, CHAT_UX_WORKPLAN.md,
                         #   CORPUS_SOURCING_BRIEF.md, migration/
 ```

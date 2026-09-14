@@ -711,7 +711,7 @@ completely meaningless dataset.
 | 1b — question generation | ✅ 46 fixtures / 92 turns |
 | 1c — decontaminate | ✅ 22.8% document-level, 11.6% chunk-level, against the < 40% bar — **exit criterion 1 passes**. `eval/fixtures-wave1/_CONTAMINATION.md` |
 | 1d — human verification | ⬜ **the user's, ~4–6 h.** Do not start before the fixture text is frozen |
-| 1e — labels + hard negatives | 🟡 partial — `eval/retrieval-labels/` regenerated (**45 files**, `scripts/resolveRetrievalLabels.ts`), but provisional: flat grade 2, no hard negatives, per-fixture not per-turn. Adequate for the gold-context arm, which resolves every label at 100% offline; the remainder blocks Phase 4, not Phase 3 (`HANDOFF_2026-09-10.md` §4) |
+| 1e — labels + hard negatives | 🟡 partial — `eval/retrieval-labels/` regenerated (**45 files**, `scripts/resolveRetrievalLabels.ts`), but provisional: flat grade 2, no hard negatives, per-fixture not per-turn. Adequate for the gold-context arm, which resolves every label at 100% offline; the remainder blocks Phase 4, not Phase 3 |
 | 2a — quote-based citations | 🟡 **demonstrated, not measured, 2026-09-13** — the prompt asks for `【n†"quote"】`, `formatContext` labels excerpts `【n】`, and `QUOTE_CITATION_PATTERN` accepts a non-dagger separator. A same-day smoke capture ($0.0075, `gpt-oss-120b`, gold-context arm, three runs) showed the closing-bracket and quote rules produce a non-zero quoted-citation rate (10/10 markers closed correctly across two runs; 4/4 citations quoted in one answer, 1 supported and 3 too short) — a smoke check, not the Phase 2 STOP block's measured rate |
 | 2b — repoint the judge | ✅ done 2026-09-02 |
 | 2c — re-calibrate | ⬜ needs captured answers to grade — see the sequencing note below |

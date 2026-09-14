@@ -31,8 +31,8 @@ describe("buildSystemPrompt", () => {
   });
 
   it("keeps turbidity qualitative without naming any sensor hardware", () => {
-    // Finding 12 (HANDOFF_2026-09-10.md): naming an instrument while fixture text is frozen would
-    // turn refusal-turbidity-sensor-hardware into a refusal for something answerable.
+    // docs/timeline.md decision log, 2026-09-10: naming an instrument while fixture text is
+    // frozen would turn refusal-turbidity-sensor-hardware into a refusal for something answerable.
     const prompt = buildSystemPrompt(true, true);
 
     expect(prompt).toContain("characterise it only qualitatively");
@@ -87,7 +87,7 @@ describe("buildSystemPrompt", () => {
  * This block used to pin two sha256 digests of the base prompt, under an instruction not to
  * update them, because the prompt was a pinned control for the Phase N2 bake-off. **That control
  * was released on 2026-08-26** when ◆G7 was split and its retrieval half closed
- * (`docs/timeline.md`, `HANDOFF_2026-08-27.md` §"the system prompt is unpinned"), and every
+ * (`docs/timeline.md`, the 2026-08-26 ◆G7 split), and every
  * transcript captured against those bytes was archived out of the tree on 2026-09-01 under
  * `eval-archive-2026-09-01`. There is nothing left for a digest to protect, and `EVAL_REBUILD.md`
  * Phase 2a's whole job is to rewrite this prompt to ask for verbatim quotes — so the pin had

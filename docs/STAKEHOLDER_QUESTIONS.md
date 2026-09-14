@@ -82,8 +82,7 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-0
 
 - [ ] **9. Audit-log retention and access, before `AUDIT_LOG` is ever switched on.**
   Records hold the question, the full answer (which can contain customer sensor readings) and a
-  caller identity. No retention period or access rule is set. Recorded in
-  `docs/HANDOFF_2026-09-10.md` §5, finding 10.
+  caller identity. No retention period or access rule is set (`src/services/auditLog.ts`).
   *Answer:*
 
 ---
@@ -102,5 +101,6 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-0
 
 - [ ] **12. Who creates the Firestore composite index for audit-log lookups?**
   `findAuditLogRecords` filters on `caller`, ranges on `timestamp` and orders by it. With no index the
-  first real query fails with `FAILED_PRECONDITION` (`docs/HANDOFF_2026-09-10.md` §5, finding 9).
+  first real query fails with `FAILED_PRECONDITION` (`src/services/auditLog.ts`; there is no
+  `firestore.indexes.json` in the repo).
   *Answer:*

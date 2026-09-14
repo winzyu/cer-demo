@@ -8,6 +8,7 @@ in git history under the tag named in its section.
 | `docs-archive-2026-08-30` | 2026-08-30 | six superseded documents |
 | `eval-archive-2026-09-01` | 2026-09-01 | the whole pre-rebuild eval set — 556 files |
 | `corpus-archive-2026-09-13` | 2026-09-13 | the operator source-of-truth document and its claim inventory — 2 files |
+| `handoffs-archive-2026-09-13` | 2026-09-13 | the last three dated session handoffs, retired for a single living `docs/STATUS.md` |
 
 Retrieve one by path:
 
@@ -122,6 +123,32 @@ Retrieve:
 ```bash
 git show corpus-archive-2026-09-13:eval/claims/water-quality-metrics-source-of-truth.json
 git show corpus-archive-2026-09-13:documents/water-quality-metrics-source-of-truth.pdf > /tmp/sot.pdf
+```
+
+## `handoffs-archive-2026-09-13` - dated session handoffs, retired
+
+Removed on 2026-09-13, preserved under the tag `handoffs-archive-2026-09-13` (which points at
+`71855e6`, the last commit that contains all three).
+
+Dated handoffs were replaced by one living `docs/STATUS.md`, rewritten in place at the end of each
+session by the `/handoff` skill, with its history in `git log -p docs/STATUS.md`. They only
+mattered to the next session but accumulated, stayed linked as "start here" after going stale, and
+collected durable reasoning that code comments then cited.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/HANDOFF_2026-08-27.md` | 540 | Session record, 2026-08-27: the ◆G7 split, timing and cost-model fixes, the retrieval ceiling | Superseded twice. The ◆G7 decision and the prompt unpinning it cited are in `timeline.md`. |
+| `docs/HANDOFF_2026-09-10.md` | 256 | Session record, 2026-09-10: the Tier 1 refusal gate, regenerated labels, gold-context arm, advice candidates, 13 findings | Superseded. The turbidity-band adoption and the instrument-agnostic prompt rule it held became `timeline.md` decision-log rows; its still-open findings moved to `STATUS.md`. |
+| `docs/HANDOFF_2026-09-13.md` | 188 | Session record, 2026-09-13: the source-of-truth range veto, quote citations | Replaced by `STATUS.md`. Its final uncommitted edits (the stakeholder-question pointers and traps) were folded into `STATUS.md` rather than committed, so the tagged copy is the `71855e6` version. |
+
+Code, test and doc references were repointed to `timeline.md` or `STATUS.md` in the same change.
+
+Retrieve:
+
+```bash
+git show handoffs-archive-2026-09-13:docs/HANDOFF_2026-09-13.md
+git show handoffs-archive-2026-09-13:docs/HANDOFF_2026-09-10.md
+git show handoffs-archive-2026-09-13:docs/HANDOFF_2026-08-27.md
 ```
 
 ## Rules

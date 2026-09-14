@@ -70,7 +70,7 @@ export interface DeviceApiConfig {
  * ⚠️ `sensorTool` gates a change to the **system prompt** (`TOOL_BLOCK` in
  * `src/prompt/systemPrompt.ts`) and attaches a `tools` array to the chat request. It defaults to
  * **false** because the eval harness requires `SENSOR_TOOL=false` on both the server and the
- * runner, so every capture runs the same base prompt (`docs/HANDOFF_2026-09-10.md` §7). The prompt
+ * runner, so every capture runs the same base prompt (`docs/timeline.md`, Phase N6). The prompt
  * is no longer a pinned control for the Phase N2 bake-off — that pin was released 2026-08-26 when
  * ◆G7 split, and the transcripts it protected were archived 2026-09-01 under
  * `eval-archive-2026-09-01`. What guarantees captures stay comparable now is
@@ -443,7 +443,7 @@ const load = (): Config => {
   }
   if (config.tools.sensorTool) {
     // Loud on purpose. The eval harness requires SENSOR_TOOL=false on both the server and the
-    // runner (`docs/HANDOFF_2026-09-10.md` §7), so a capture made with it on is not comparable to
+    // runner (`docs/timeline.md`, Phase N6), so a capture made with it on is not comparable to
     // the rest of its own set. The N2 pin this warning was first written for is gone — released
     // 2026-08-26 when ◆G7 split, transcripts archived 2026-09-01 — but the comparability problem
     // it guarded is not: a mixed-flag capture set is still unusable. Better a line in every

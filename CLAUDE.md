@@ -7,6 +7,12 @@ require modifying a reference repo, stop and tell me instead.
 
 All migration planning artifacts go in docs/migration/.
 
+Never hand-edit generated or captured artifacts. Eval transcripts (`eval/transcripts/`) are
+captured runs that cannot be reconstructed. Regenerate the rest from their source:
+`eval/grading/` with `npm run grade:packet`, `eval/retrieval-labels/` with
+`scripts/resolveRetrievalLabels.ts`, `data/corpus/` with `npm run ingest`, `dist/` with
+`npm run build`, `package-lock.json` with npm.
+
 # Docs
 
 docs/ holds current state only. Superseded session handoffs and the reference-repo
@@ -18,10 +24,10 @@ need one, ask me first — usually the archived doc is stale and a current doc
 already answers it. Retrieve with `git show <tag>:<path>`, never by restoring the
 file to the tree.
 
-**Start at the top of `docs/timeline.md`** — read only its opening "Current state"
-blockquote (the first ~15 lines). It names which handoff is current and which doc
-carries current eval state. Several handoffs may exist; only the one it names is
-live. Open the rest of timeline.md, and other docs, only when the task needs them.
+**Start at `docs/STATUS.md`**: current state, open work and active traps. Open other
+docs only when the task needs them. STATUS.md is rewritten at the end of every
+session by `/handoff`, so never cite it from code or other docs; durable reasoning
+goes in `docs/SPECS.md`, `docs/EVAL_REBUILD.md` or the `docs/timeline.md` decision log.
 
 When we are weighing options or design choices, publish an Artifact page rather
 than a long block of terminal text.

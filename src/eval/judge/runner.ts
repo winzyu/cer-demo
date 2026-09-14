@@ -207,7 +207,7 @@ export const buildTasks = (options: BuildOptions = {}): JudgeTask[] => {
 
   // Built once with the eval harness's flags — SENSOR_TOOL and REPORT_TOOL off — because the
   // harness requires SENSOR_TOOL=false on both the server and the runner
-  // (`docs/HANDOFF_2026-09-10.md` §7), so this is the prompt every capture actually runs under. It
+  // (`docs/timeline.md`, Phase N6), so this is the prompt every capture actually runs under. It
   // is no longer a pinned control for a specific bake-off — that pin was released 2026-08-26 when
   // ◆G7 split, and the transcripts it protected were archived 2026-09-01 under
   // `eval-archive-2026-09-01`.

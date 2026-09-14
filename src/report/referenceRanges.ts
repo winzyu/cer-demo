@@ -55,7 +55,7 @@ import type { ClarityBand } from "./types";
  * See docs/migration/BACKEND_FIELDS.md §3b and DEVICE_API.md §8.
  *
  * **The edges below are operator-authoritative.** The operator supplied his own three clarity
- * bands on 2026-09-10 (finding 5, docs/HANDOFF_2026-09-10.md section 5), replacing this
+ * bands on 2026-09-10 (docs/timeline.md decision log), replacing this
  * project's own provisional 250 / 600 / 1005 cut points -- those had no operator backing at all,
  * only the two justifications this docstring used to carry here. Adopting his bands is a settled
  * decision, not one to relitigate. He also independently confirmed the conversion formula as

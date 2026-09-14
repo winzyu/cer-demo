@@ -7,13 +7,8 @@ the work downstream of them starts.
 This is the successor to the original migration timeline. The single biggest change: the target-stack
 gate (◆G1) is now **resolved** — see below — which re-anchors every phase that depended on it.
 
-> **Current state and how to resume: [`HANDOFF_2026-09-13.md`](HANDOFF_2026-09-13.md).** The
-> operator's ranges document was vetoed and removed from the corpus (14 documents, 446 chunks); pod
-> thresholds now come from the device registry via `get_pod_thresholds`, the report's baselines
-> switched to the same source, and the wave-1 set is now 45 fixtures / 90 turns (`precedence` rebuilt). A
-> same-day smoke capture demonstrated the new citation format without measuring it; the next
-> milestone is still the Phase 3 generation baseline. Read that handoff first if you are picking
-> this up cold.
+> **Current state and next steps: [`STATUS.md`](STATUS.md).** It is rewritten at the end of every
+> session. This file records phases, gates and decisions.
 
 Companion docs: [`SPECS.md`](SPECS.md) (what's built today), [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md)
 (coding conventions), [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md) (legacy FastAPI
@@ -842,6 +837,10 @@ entry to be written here at that point. Until then: **treat every retrieval arm 
 | Citation marker rendering shipped in the frontend | 2026-09-13 | Markers render as a numbered superscript whose tooltip is the source name; the quote never reaches the DOM; a half-streamed marker is hidden; a marker the model closes with `"}` still renders |
 | Smoke capture demonstrates quote-carrying citations, does not measure them | 2026-09-13 | $0.0075 total, `gpt-oss-120b`, gold-context arm, 2–3 turns per run, three runs. Run 1: the model closed every marker with `"}`, so the checker read zero; after adding the closing-bracket rule, markers closed correctly (10/10 across the next two runs); after tightening the quote rule, 4/4 citations in one answer carried a quote — 1 supported, 3 too short (9-character table cells, under the 12-character minimum); one earlier quote joined two passages with an ellipsis; one turn answered in one run and refused in another. The quoted-citation rate is non-zero; this is a smoke check, not a measurement. Phase 2a is in code and demonstrated, not yet measured |
 | **Quote-carrying citations** (`EVAL_REBUILD.md` 2a in code): the prompt asks for `【n†"quote"】`, context excerpts are labelled `【n】` | 2026-09-13 | The quote exists for deterministic grading (`checkQuotes`); the interface is to render the marker as a source link and not show the quote text. **Demonstrated by the same-day smoke capture below**, not yet measured. `src/prompt/promptBuilder.ts`, `src/eval/gates/checks.ts` |
+| Operator's three turbidity clarity bands adopted | 2026-09-10 | Supplied by the operator on 2026-09-10: `NTU = (3.35 - V) × 300`, which runs inverse (clearer water is a higher voltage). Clear above 2.2 V (NTU below 345), Moderate 0.7-2.2 V (NTU 345-795), Turbid below 0.7 V (NTU above 795). They replace this project's provisional 250 / 600 / 1005 edges, which had no operator backing; ≥1005 NTU stays as an off-scale data-quality flag (input below 0 V), not a band. `f751932`, `src/report/referenceRanges.ts` |
+| The turbidity prompt rule stays instrument-agnostic while fixture text is frozen | 2026-09-10 | The operator named two turbidity sensors (Turner, quantitative; Keystudio, qualitative only), but `refusal-turbidity-sensor-hardware` demands the assistant say the corpus cannot identify the instrument. Naming either sensor in the prompt would turn that fixture into a refusal for something answerable, and fixture text is frozen for the Phase 1d review. So the rule says "qualitative only, all pods" and names no hardware until the fixture is unfrozen and revised. Guarded by `test/unit/prompt.test.ts` |
+| Advice ships in reports first; chat and fixtures after the allowlist is approved | 2026-09-13 | Advice in reports follows supervisor approval of the catalogue. Advice in chat and in fixtures comes after that, and also needs tool results recorded in transcripts (`TranscriptTurn` has no field for them, so the judge would never see the advice's source). `RESPONSIBILITY.md`, `docs/advice/` |
+| Dated session handoffs retired for one living `STATUS.md` | 2026-09-13 | Handoffs were only relevant to the next session but accumulated, went stale while still linked as "start here", and collected durable reasoning that code comments then cited. `STATUS.md` is rewritten in place by the `/handoff` skill; durable reasoning goes to `SPECS.md`, `EVAL_REBUILD.md` or this log. The three dated handoffs are under `handoffs-archive-2026-09-13` (`ARCHIVED.md`) |
 
 **Known blocker on Phase 3 (resolved by `a72c3b5`, see below).** The Tier 1 refusal gate detects refusal-required turns by
 regex-matching rubric prose, and matches **0 of wave 1's 8 refusal turns** — the new set phrases the
@@ -854,18 +853,11 @@ are flagged across three fixtures.
 
 ---
 
-## Session handoffs
+## Session state
 
-**The current handoff is [`HANDOFF_2026-09-13.md`](HANDOFF_2026-09-13.md).** Read it first for
-session state, open blockers and who owns each one, then **[`EVAL_REBUILD.md`](EVAL_REBUILD.md)**
-for the eval plan and its phase order.
-
-[`HANDOFF_2026-09-10.md`](HANDOFF_2026-09-10.md) is **superseded for session state** by the entry
-above.
-
-[`HANDOFF_2026-08-27.md`](HANDOFF_2026-08-27.md) is **superseded for session state** but still
-current for the device-API and report work it describes; its eval sections were superseded earlier
-by the rebuild, and it carries a banner marking which.
+Session state lives in [`STATUS.md`](STATUS.md), rewritten at the end of every session. Dated
+handoffs were retired on 2026-09-13; the last three are under the tag `handoffs-archive-2026-09-13`
+([`ARCHIVED.md`](ARCHIVED.md)).
 
 The 2026-07-31 / 2026-08-04 handoff that used to sit here has been removed — every item it listed as
 pending has since happened, and it had begun to contradict the phases above. The findings it carried
