@@ -5,7 +5,17 @@
  * into a message without editing this file's callers. Empty slots render nothing.
  */
 
+import { collapseCitationQuotes, stripOpenMarker, splitCitations } from "./citations.js";
+
 let messagesEl = null;
+
+/**
+ * Citations for a message, keyed by its `wrap` element rather than a property on the DOM node —
+ * a WeakMap lets the entry go away with the message instead of leaking for the life of the page.
+ * `updateMessageBody` reads this to resolve a `【n†"quote"】` marker's source name; the quote text
+ * itself is never stored here or anywhere else in memory the DOM can reach.
+ */
+const citationsByWrap = new WeakMap();
 
 /** Called once by main.js with the #messages container. */
 export function initRender(container) {
@@ -87,21 +97,91 @@ const REFUSAL_SENTENCE = "I can only answer questions grounded in this sensor's 
 /** A refusal is a legitimate answer, but it is not a finding — app.css styles it apart. */
 const isRefusal = (text) => typeof text === "string" && text.trim().startsWith(REFUSAL_SENTENCE);
 
+/** The source name for marker index `n` (1-based), or null when it can't be resolved. */
+function citationSource(citations, index) {
+  if (!citations || index < 1 || index > citations.length) return null;
+  return citations[index - 1].source;
+}
+
+/**
+ * Replaces every `【n†"quote"】`-style marker found in one text node with a `<sup class="cite">`,
+ * built with `createElement`/`textContent` — never string-built HTML. The quote itself is
+ * discarded by `splitCitations` before it ever reaches here, so it cannot appear in the DOM.
+ */
+function replaceMarkersInTextNode(node, citations) {
+  const segments = splitCitations(node.nodeValue);
+  if (segments.length === 1 && segments[0].type === "text") return; // no marker in this node
+  const frag = document.createDocumentFragment();
+  for (const seg of segments) {
+    if (seg.type === "text") {
+      if (seg.value) frag.appendChild(document.createTextNode(seg.value));
+      continue;
+    }
+    const sup = document.createElement("sup");
+    sup.className = "cite";
+    const source = citationSource(citations, seg.index);
+    sup.textContent = String(seg.index);
+    sup.title = source || "Source not available";
+    sup.setAttribute("aria-label", source ? `Source ${seg.index}: ${source}` : "Source not available");
+    frag.appendChild(sup);
+  }
+  node.parentNode.replaceChild(frag, node);
+}
+
+/**
+ * Walks `root`'s text nodes and turns citation markers into `<sup>` elements, skipping anything
+ * inside `<code>`/`<pre>` (a quoted marker in a code sample is literal text, not a citation).
+ *
+ * This runs *after* `target.body.innerHTML` is set, on the sanitized DOM — never by building an
+ * HTML string and re-parsing it. That's what keeps it XSS-safe: DOMPurify has already run (or the
+ * plain-text path never produced HTML at all), so every text node visited here is trusted content,
+ * and the only elements this function itself introduces are made with `createElement`/`textContent`.
+ */
+function insertCitationMarkers(root, citations) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  let node = walker.nextNode();
+  while (node) {
+    let el = node.parentElement;
+    let inCode = false;
+    while (el && el !== root) {
+      if (el.tagName === "CODE" || el.tagName === "PRE") { inCode = true; break; }
+      el = el.parentElement;
+    }
+    if (!inCode) nodes.push(node);
+    node = walker.nextNode();
+  }
+  // Collect first, mutate after: replacing nodes mid-walk would disturb the TreeWalker's traversal.
+  nodes.forEach((n) => replaceMarkersInTextNode(n, citations));
+}
+
 export function updateMessageBody(target, text, markdownRenderer) {
+  // Cut a marker that is still streaming in before it ever reaches the renderer or the DOM.
+  // Hide a marker still streaming in, then drop every quote from the raw text before markdown can
+  // split it across nodes (see collapseCitationQuotes).
+  const safeText = collapseCitationQuotes(stripOpenMarker(text));
   // Never route a user turn through the markdown renderer, whatever the caller passes.
-  const html = markdownRenderer && !isUserTarget(target) ? markdownRenderer(text) : null;
-  target.body.classList.toggle("body--refusal", !isUserTarget(target) && isRefusal(text));
+  const html = markdownRenderer && !isUserTarget(target) ? markdownRenderer(safeText) : null;
+  target.body.classList.toggle("body--refusal", !isUserTarget(target) && isRefusal(safeText));
   if (html === null || html === undefined) {
     target.body.classList.remove("body--md");
-    target.body.textContent = text;
-    return;
+    target.body.textContent = safeText;
+  } else {
+    target.body.classList.add("body--md");
+    target.body.innerHTML = html;
   }
-  target.body.classList.add("body--md");
-  target.body.innerHTML = html;
+  // A user turn is never cited — WS-1's markdown affordance is assistant-only for the same reason.
+  if (!isUserTarget(target)) {
+    insertCitationMarkers(target.body, citationsByWrap.get(target.wrap) || null);
+  }
 }
 
 // Chunk shape is { id, text, source, score? } — see docs/SPECS.md §9.
 export function renderCitations(wrap, citations) {
+  // Remembered even when empty/absent, so a later `updateMessageBody` for this message can tell
+  // "no citations for this turn" apart from "meta hasn't arrived yet" — both currently render the
+  // same "Source not available" sup, but the distinction is what a richer hover will need later.
+  citationsByWrap.set(wrap, citations || null);
   if (!citations || !citations.length) return;
   const seen = new Set();
   const ul = document.createElement("ul"); ul.className = "citations";
