@@ -1,76 +1,31 @@
 /**
- * Baseline ranges and probe accuracy, transcribed from the two source documents Michael
- * approved sharing: "Water Quality Metrics -- Source of Truth" and the four Atlas Scientific
- * probe spec sheets (EC K1.0, Industrial D.O., Industrial ORP, Industrial pH). Ported from the
- * Python prototype's `reference_ranges.py`, numbers unchanged.
+ * Probe accuracy and turbidity clarity bands. Ported from the Python prototype's
+ * `reference_ranges.py`, numbers unchanged for what remains here.
  *
- * Two things worth knowing before trusting a number out of this file:
+ * **Every numeric baseline range this file used to carry is gone.** It used to transcribe the
+ * "Water Quality Metrics -- Source of Truth" doc's per-water-type ranges for pH, dissolved
+ * oxygen, ORP and conductivity (`BASELINE_RANGES`, `baselineFor`) plus that doc's DO clinical
+ * scale (`DO_ABSOLUTE_THRESHOLDS`, itself already dead -- nothing read it). The project supervisor
+ * vetoed the entire source document as a range source on 2026-09-13 (see docs/timeline.md):
+ * every number in it is discarded, not just the ones this file already excluded. There is no
+ * fallback table. A metric's baseline now comes only from this device's own registry threshold
+ * (`operatorThresholds.ts`'s `metricThreshold`), the same path temperature always used -- and
+ * when a pod has no usable threshold for a metric, that metric has no baseline, exactly as
+ * temperature already behaved before this change. See `buildReportInput.ts` §5 for how all five
+ * numeric metrics now resolve their baseline.
  *
- * 1. Three water-body tiers, not two. The source-of-truth doc gives Freshwater /
- *    Brackish-Estuarine / Seawater ranges -- the template's "Brackish" and "Estuarine" options
- *    both map to the middle tier.
- * 2. Temperature has NO fixed baseline. The source doc is explicit: "Climate/season-dependent"
- *    for all three water types, closing with "Establish a site-specific baseline before treating
- *    deviations as events." So temperature is deliberately absent from BASELINE_RANGES -- it
- *    must be supplied per deployment once one exists, not looked up here. This is also this
- *    port's answer to cer-demo's own open ◆G3 ("what does the report's Site Baseline mean"):
- *    start from these reference ranges, then refine toward a measured site-specific baseline
- *    over time, per the source document's own closing instruction. That is a working
- *    interpretation carried over from the prototype, not a finalized team decision -- ◆G3 is
- *    still open in docs/timeline.md as of this port.
+ * Two things that remain true and worth knowing:
  *
- *    **The site-specific baseline the doc asks for now has a source.** It is the operator's own
- *    `minTemperature`/`maxTemperature` on the backend's device document, read and validated by
- *    `operatorThresholds.ts` and attached by `buildReportInput.ts`. It lives in that file rather
- *    than this one on purpose: everything here is transcribed from two approved documents and is
- *    identical for every pod in a tier, while a registry threshold is hand-entered, per-device,
- *    and has to be validated before it can be believed. Do not add a temperature entry to
- *    BASELINE_RANGES to "fill the gap" -- the gap is the source document's finding.
- * 3. Turbidity has NO numeric baseline either, for an entirely different reason: the value is
- *    not a measurement. It is a relative index derived from a raw voltage (see
- *    TURBIDITY_CLARITY_BANDS below). It is reported as a qualitative clarity band, never
- *    compared against a numeric range, and is therefore also absent from BASELINE_RANGES.
+ * 1. Water body type still exists (`WaterBodyType`, `operatingEnvironment`) and still matters --
+ *    event classification and narrative text still read it -- but it no longer selects a
+ *    baseline table, because there is no longer a table to select from.
+ * 2. Turbidity has NO numeric baseline, for the reason it never had one even before the veto: the
+ *    value is not a measurement. It is a relative index derived from a raw voltage (see
+ *    TURBIDITY_CLARITY_BANDS below). It is reported as a qualitative clarity band, never compared
+ *    against a numeric range, and no device carries an operator turbidity threshold either.
  */
 
 import type { ClarityBand } from "./types";
-
-export type RangeTier = "freshwater" | "brackish_estuarine" | "seawater";
-
-export const WATER_BODY_TO_TIER: Record<string, RangeTier> = {
-  Freshwater: "freshwater",
-  Brackish: "brackish_estuarine",
-  Estuarine: "brackish_estuarine",
-  Marine: "seawater",
-};
-
-export interface RangeByTier {
-  freshwater: [number, number];
-  brackish_estuarine: [number, number];
-  seawater: [number, number];
-}
-
-export const rangeForTier = (range: RangeByTier, tier: RangeTier): [number, number] => range[tier];
-
-/**
- * Source-of-truth doc, section 2 "Baseline Reference Ranges". Temperature intentionally omitted.
- */
-export const BASELINE_RANGES: Record<string, RangeByTier> = {
-  dissolved_oxygen: {
-    freshwater: [6, 11], brackish_estuarine: [5, 9], seawater: [5, 8],
-  },
-  orp: {
-    freshwater: [200, 400], brackish_estuarine: [150, 350], seawater: [200, 400],
-  },
-  conductivity: {
-    freshwater: [50, 1_500], brackish_estuarine: [1_000, 35_000], seawater: [45_000, 55_000],
-  },
-  ph: {
-    freshwater: [6.5, 8.5], brackish_estuarine: [7.0, 8.3], seawater: [7.8, 8.3],
-  },
-  // turbidity is deliberately absent -- see TURBIDITY_CLARITY_BANDS below. It has no numeric
-  // baseline in this pipeline, so `baselineFor("turbidity", ...)` returns undefined and the
-  // report never flags it in or out of a range.
-};
 
 /* -------------------------------------------------------------------------------------------
  * Turbidity: qualitative clarity bands, not a numeric range
@@ -205,21 +160,6 @@ export const TURBIDITY_SCALE_CAVEAT = "Relative index derived from a raw sensor 
 /** Column value where a numeric baseline would otherwise print. */
 export const TURBIDITY_NO_BASELINE_TEXT = "No range (relative index)";
 
-/**
- * Source-of-truth doc, DO section: absolute thresholds independent of site baseline.
- *
- * ⚠️ Defined but NOT currently consulted anywhere in this pipeline -- DO severity today is
- * judged only against the site baseline (BASELINE_RANGES above), never against this absolute
- * clinical scale. Kept here, sourced, so wiring it into event severity is a decision to make
- * rather than data to go find.
- */
-export const DO_ABSOLUTE_THRESHOLDS = {
-  healthy: 6.0, // > 6 mg/L
-  stress: 4.0, // 4-6 mg/L
-  hypoxicStress: 2.0, // 2-4 mg/L
-  hypoxia: 0.0, // < 2 mg/L is hypoxia, ~0 is anoxia
-};
-
 export interface ProbeSpec {
   accuracyAbs?: number;
   /** Fraction of reading -- used for EC, specified as +/-2%. */
@@ -266,38 +206,6 @@ export const PROBE_SPECS: Record<string, ProbeSpec> = {
   // No turbidity probe spec sheet was provided among the four uploaded -- leave unset rather
   // than inventing a number.
   turbidity: { source: "No turbidity probe spec supplied" },
-};
-
-/**
- * Builds a fixed-baseline ParameterBaseline from the source-of-truth reference table, for any
- * metric except temperature (which has none -- see module docstring). Returns undefined for
- * temperature and for an unknown water body type rather than throwing, since a report can still
- * be produced with that one row marked "no fixed baseline" (see buildReportInput.ts and
- * types.ts's Flag = "N/A").
- */
-export interface FixedBaseline {
-  key: string;
-  label: string;
-  unit: string;
-  baselineMin: number;
-  baselineMax: number;
-}
-
-export const baselineFor = (
-  key: string,
-  label: string,
-  unit: string,
-  waterBodyType: string,
-): FixedBaseline | undefined => {
-  const range = BASELINE_RANGES[key];
-  const tier = WATER_BODY_TO_TIER[waterBodyType];
-  if (!range || !tier) {
-    return undefined;
-  }
-  const [lo, hi] = rangeForTier(range, tier);
-  return {
-    key, label, unit, baselineMin: lo, baselineMax: hi,
-  };
 };
 
 /** PT-1000 Class A accuracy formula from the D.O. probe spec sheet. Input MUST be Celsius. */

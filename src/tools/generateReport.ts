@@ -37,7 +37,8 @@ import { buildReportPdf } from "../report/renderPdf";
 import { recordReportOwner } from "../report/reportOwnership";
 import { overallStatus } from "../report/types";
 import { probeAccuracy } from "../report/referenceRanges";
-import type { ReportInput, WaterBodyType } from "../report/types";
+import { metricBlindSpotNote, WIRE_KEY_TO_METRIC } from "../report/operatorThresholds";
+import type { ReportInput, WaterBodyType, ParameterStats } from "../report/types";
 
 const log = createLogger("GenerateReport");
 
@@ -75,27 +76,38 @@ export const generateReportDefinition: ToolDefinition = {
 const failure = (message: string): SensorToolResult => ({ error: message });
 
 /**
- * One line describing where the temperature row's baseline came from.
+ * One compact line per numeric metric describing where its baseline came from, keyed by the
+ * same wire metric names `query_sensor_data`/`get_pod_thresholds` use.
  *
- * Surfaced for the same reason `water_body_type_source` is: temperature is the only parameter
- * judged against a **per-device operator threshold** rather than the source-of-truth reference
- * table, and a reader who disagrees with the range needs to know it lives in the device registry
- * rather than in an approved document. The numbers here have already passed
- * `operatorThresholds.ts` validation, so unlike the raw `thresholds` object this is safe to put
- * in front of the model.
+ * Every numeric parameter is now judged against this device's own **operator-configured
+ * registry threshold** -- the "Water Quality Metrics -- Source of Truth" table was vetoed in
+ * full (project supervisor, 2026-09-13; see docs/timeline.md) and no longer feeds any baseline.
+ * A reader who disagrees with a range needs to know it lives in the device registry, not in an
+ * approved document, and a metric with no usable threshold has no baseline at all rather than a
+ * fallback. The numbers here have already passed `operatorThresholds.ts` validation, so unlike
+ * the raw `thresholds` object this is safe to put in front of the model.
+ *
+ * The blind-spot clause (`metricBlindSpotNote`) is recomputed here rather than read off
+ * `ParameterBaseline.baselineNote`, so this summary's wording does not depend on what the PDF's
+ * prose happens to say for the same row.
  */
-const temperatureBaselineSummary = (report: ReportInput): string => {
-  const temp = report.parameters.find((p) => p.baseline.key === "temperature");
-  if (!temp) {
-    return "no temperature readings in this period";
-  }
-  const b = temp.baseline;
-  if (!b.hasFixedBaseline) {
-    return "not established — this device has no usable temperature threshold in the registry, "
-      + "so the row is reported for reference only";
-  }
-  return `${b.baselineMin}-${b.baselineMax} ${b.unit} (operator-set threshold for this device, `
-    + "from the device registry)";
+const baselineProvenance = (report: ReportInput): Record<string, string> => {
+  const byKey = new Map(
+    report.parameters.map((p): [string, ParameterStats] => [p.baseline.key, p]),
+  );
+  return Object.fromEntries(Object.entries(WIRE_KEY_TO_METRIC).map(([wireKey, metricKey]) => {
+    const p = byKey.get(wireKey);
+    if (!p) {
+      return [wireKey, "no readings in this period"];
+    }
+    const b = p.baseline;
+    if (!b.hasFixedBaseline) {
+      return [wireKey, `not established${b.baselineNote ? ` — ${b.baselineNote}` : ""}`];
+    }
+    const range = `${b.baselineMin}-${b.baselineMax}${b.unit ? ` ${b.unit}` : ""}`;
+    const blindSpot = metricBlindSpotNote(metricKey, b.baselineMin, b.baselineMax);
+    return [wireKey, blindSpot ? `${range} (configured; ${blindSpot})` : `${range} (configured)`];
+  }));
 };
 
 export interface GenerateReportOptions {
@@ -192,15 +204,17 @@ export class GenerateReport {
       status,
       site_name: report.site.siteName,
       time_range_resolved: { start: report.site.startDate, end: report.site.endDate },
-      // Surfaced because it selects the baseline table every flag was computed against, and a
-      // reader who disagrees with it should be told rather than have to open the PDF to find out.
+      // Surfaced because event classification and narrative text still read it, and a reader who
+      // disagrees with it should be told rather than have to open the PDF to find out. It no
+      // longer selects any baseline -- see baseline_provenance below for where baselines come
+      // from now.
       water_body_type: report.site.waterBodyType,
       water_body_type_source: report.site.waterBodyTypeSource === "device"
         ? "device registry"
         : "deployment default (registry did not specify)",
-      // The source-of-truth doc gives temperature no fixed range, so this row alone is judged
-      // against the operator's own threshold -- or against nothing at all. Either way, say so.
-      temperature_baseline: temperatureBaselineSummary(report),
+      // Every numeric metric is judged against this device's own operator-configured registry
+      // threshold now, or against nothing at all if it has no usable one. Either way, say so.
+      baseline_provenance: baselineProvenance(report),
       events_flagged: events.length,
       event_types: events.map((e) => e.type),
       report_url: `/api/v1/reports/${filename}`,

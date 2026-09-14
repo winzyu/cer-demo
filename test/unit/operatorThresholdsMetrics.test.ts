@@ -1,6 +1,7 @@
 import {
   metricThreshold,
   metricThresholdRejectionReason,
+  metricBlindSpotNote,
   temperatureThreshold,
 } from "../../src/report/operatorThresholds";
 
@@ -135,5 +136,66 @@ describe("metricThresholdRejectionReason", () => {
     expect(metricThresholdRejectionReason("missing", "orp")).toContain("ORP");
     expect(metricThresholdRejectionReason("missing", "dissolvedOxygen")).toContain("dissolved oxygen");
     expect(metricThresholdRejectionReason("missing", "conductivity")).toContain("conductivity");
+  });
+});
+
+/**
+ * `metricBlindSpotNote`: a configured limit sitting at the probe's own physical floor or ceiling
+ * (`PLAUSIBLE_RANGES`) can never be crossed in that direction, because `events.ts` only opens a
+ * window on a crossing. Real registry rows from the live fleet (2026-09-13):
+ *
+ *   Old Woman Creek 2026     fresh-water Temp 30-100 pH 0-10 DO 0-12  ORP 0-800  Cond 0-100000
+ *   Marina Park              salt-water  Temp 40-95  pH 4-10 DO 3-10  ORP 100-400 Cond 40000-75000
+ *   Algalita Pod             salt-water  Temp 50-80  pH 6-10 DO 4-15  ORP 50-400  Cond 40000-75000
+ *   Balboa Yacht Basin Buoy  salt-water  Temp 50-95  pH 4-10 DO 3-27  ORP 100-400 Cond 40024-75000
+ */
+describe("metricBlindSpotNote", () => {
+  it("flags the low direction when dissolved oxygen's minimum sits at the probe's floor (Old Woman Creek 2026, DO 0-12)", () => {
+    const note = metricBlindSpotNote("dissolvedOxygen", 0, 12);
+    expect(note).toBeDefined();
+    expect(note).toContain("below");
+    expect(note).not.toContain("above");
+  });
+
+  it("produces no note for a dissolved oxygen range clear of both edges (Marina Park, DO 3-10)", () => {
+    expect(metricBlindSpotNote("dissolvedOxygen", 3, 10)).toBeUndefined();
+  });
+
+  it("produces no note for a dissolved oxygen range clear of both edges (Balboa, DO 3-27)", () => {
+    // 27 is close to the probe's 30 mg/L ceiling but does not sit at or beyond it.
+    expect(metricBlindSpotNote("dissolvedOxygen", 3, 27)).toBeUndefined();
+  });
+
+  it("does NOT flag an ORP minimum of 0 -- the probe's floor is -2000 mV, nowhere near 0", () => {
+    // Old Woman Creek 2026's ORP threshold is 0-800. 0 is a real, unremarkable operator choice
+    // for this metric, not a blind spot -- unlike DO, where 0 IS the probe's floor.
+    expect(metricBlindSpotNote("orp", 0, 800)).toBeUndefined();
+  });
+
+  it("flags both directions when a range spans the metric's entire plausible scale (Old Woman Creek, conductivity 0-100000)", () => {
+    // 0 is conductivity's plausible floor and 100000 is its plausible ceiling, so this pod can
+    // never register a conductivity excursion in either direction.
+    const note = metricBlindSpotNote("conductivity", 0, 100_000);
+    expect(note).toBeDefined();
+    expect(note).toContain("below");
+    expect(note).toContain("above");
+  });
+
+  it("flags the low direction for a pH threshold pinned to the scale's own floor (Old Woman Creek, pH 0-10)", () => {
+    // pH 0 is also the scale's own rail (plausibility.ts), so a threshold minimum of 0 is a
+    // blind spot for the same structural reason DO's 0 is.
+    const note = metricBlindSpotNote("ph", 0, 10);
+    expect(note).toBeDefined();
+    expect(note).toContain("below");
+  });
+
+  it("produces no note for a pH range clear of both edges (Algalita Pod, pH 6-10)", () => {
+    expect(metricBlindSpotNote("ph", 6, 10)).toBeUndefined();
+  });
+
+  it("produces no note for temperature -- its validation rail (25-110 °F) is tighter than its "
+    + "plausible range (-40-140 °F), so a validated threshold can never reach the probe's edge", () => {
+    expect(metricBlindSpotNote("temperature", 30, 100)).toBeUndefined();
+    expect(metricBlindSpotNote("temperature", 25, 110)).toBeUndefined();
   });
 });

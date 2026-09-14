@@ -155,25 +155,130 @@ describe("buildReportInput", () => {
       expect(temp.baseline.baselineNote).toContain("Operator-set threshold for this device");
     });
 
-    it("leaves the other reference-table parameters on the reference table", async () => {
-      // Temperature only. The reference-table metrics come from the approved source-of-truth
-      // document and an operator threshold must never displace one.
+    it("takes every non-turbidity parameter's baseline from this device's own registry threshold", async () => {
+      // The reference table (BASELINE_RANGES) is gone -- vetoed in full by the project
+      // supervisor, 2026-09-13 (docs/timeline.md). All five numeric metrics, not just
+      // temperature, now take their baseline from operatorThresholds.ts's metricThreshold.
       //
-      // Turbidity is excluded from BOTH sources: it left the reference table when it became a
-      // qualitative clarity band (referenceRanges.ts), and no device carries a turbidity
-      // threshold to put in its place -- so it carries no baselineSource at all, which is
-      // asserted separately below rather than folded into this loop.
+      // The recorded /devices fixture's Algalita Pod row matches the brief's live registry
+      // table exactly: pH 6-10, DO 4-15, ORP 50-400, conductivity 40000-75000, temp 50-80.
+      //
+      // Turbidity is excluded: it has no numeric baseline at all (a qualitative clarity band)
+      // and no device carries a turbidity threshold -- asserted separately below.
       const sensor = makeSensor();
       const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
 
       report!.parameters
-        .filter((p) => p.baseline.key !== "temperature" && p.baseline.key !== "turbidity")
-        .forEach((p) => expect(p.baseline.baselineSource).toBe("reference-table"));
+        .filter((p) => p.baseline.key !== "turbidity")
+        .forEach((p) => expect(p.baseline.baselineSource).toBe("operator-threshold"));
+
+      const ph = report!.parameters.find((p) => p.baseline.key === "ph")!;
+      expect(ph.baseline.baselineMin).toBe(6);
+      expect(ph.baseline.baselineMax).toBe(10);
+
+      const dissolvedOxygen = report!.parameters.find((p) => p.baseline.key === "dissolved_oxygen")!;
+      expect(dissolvedOxygen.baseline.baselineMin).toBe(4);
+      expect(dissolvedOxygen.baseline.baselineMax).toBe(15);
+
+      const orp = report!.parameters.find((p) => p.baseline.key === "orp")!;
+      expect(orp.baseline.baselineMin).toBe(50);
+      expect(orp.baseline.baselineMax).toBe(400);
+
+      const conductivity = report!.parameters.find((p) => p.baseline.key === "conductivity")!;
+      expect(conductivity.baseline.baselineMin).toBe(40_000);
+      expect(conductivity.baseline.baselineMax).toBe(75_000);
 
       const turbidity = report!.parameters.find((p) => p.baseline.key === "turbidity")!;
       expect(turbidity.baseline.scale).toBe("relative-index");
       expect(turbidity.baseline.hasFixedBaseline).toBe(false);
       expect(turbidity.baseline.baselineSource).toBeUndefined();
+    });
+
+    it("rejects a bad threshold for one metric while the other four still resolve normally", async () => {
+      // A registry row can have one placeholder field (maxPH=100, the CER Conference Pod's real
+      // value) without the rest of the row being junk. pH alone should fall back to no baseline,
+      // with a rejection note -- everything else on this device keeps its own threshold.
+      const sensor = makeSensor({
+        devices: [{
+          id: "bad-ph-pod",
+          data: {
+            name: "Algalita Pod",
+            operatingEnvironment: "salt-water",
+            label: "dev:351077454569099",
+            thresholds: {
+              minPH: "0", maxPH: "100",
+              minORP: "50", maxORP: "400",
+              minDissolvedOxygen: "4", maxDissolvedOxygen: "15",
+              minConductivity: "40000", maxConductivity: "75000",
+              minTemperature: "50", maxTemperature: "80",
+            },
+          },
+        }],
+      });
+      const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
+
+      const ph = report!.parameters.find((p) => p.baseline.key === "ph")!;
+      expect(ph.baseline.hasFixedBaseline).toBe(false);
+      expect(ph.baseline.baselineSource).toBeUndefined();
+      expect(ph.baseline.baselineNote).toContain("pH");
+
+      const orp = report!.parameters.find((p) => p.baseline.key === "orp")!;
+      expect(orp.baseline.hasFixedBaseline).toBe(true);
+      expect(orp.baseline.baselineMin).toBe(50);
+      expect(orp.baseline.baselineMax).toBe(400);
+    });
+
+    describe("blind-spot note: a limit at the probe's own physical floor or ceiling", () => {
+      // Old Woman Creek 2026's real registry row (docs/timeline.md's live-fleet table,
+      // 2026-09-13). Built the same way `sensorWithThresholds` builds temperature-only fixtures
+      // above -- a hand-rolled series per metric -- rather than through the recorded /devices
+      // fixture, because that fixture's OWC period-day data is deliberately empty (it backs the
+      // "no readings in the window" test) and would make every parameter here skip instead of
+      // exercising the baseline path.
+      const OWC_THRESHOLDS = {
+        minPH: "0", maxPH: "10",
+        minORP: "0", maxORP: "800",
+        minDissolvedOxygen: "0", maxDissolvedOxygen: "12",
+        minConductivity: "0", maxConductivity: "100000",
+        minTemperature: "30", maxTemperature: "100",
+      };
+
+      const seriesFor = (mean: number, min: number, max: number) => ([
+        { start: "2026-08-01T00:00:00.000Z", end: "2026-08-01T12:00:00.000Z", mean, min, max, n: 20 },
+        { start: "2026-08-02T00:00:00.000Z", end: "2026-08-02T12:00:00.000Z", mean, min, max, n: 20 },
+      ]);
+
+      const owcSensor = (): QuerySensorData => ({
+        query: async () => ({
+          device: { name: "Old Woman Creek 2026", label: "dev:owc", operating_environment: "fresh-water" },
+          time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
+          metrics: {
+            dissolved_oxygen: { value: 8, n_samples: 40, series: seriesFor(8, 6, 10) },
+            orp: { value: 300, n_samples: 40, series: seriesFor(300, 250, 350) },
+          },
+        }),
+        deviceRecord: async () => registryRow(OWC_THRESHOLDS),
+      } as unknown as QuerySensorData);
+
+      it("notes dissolved oxygen 0-12 as a blind spot -- 0 is the probe's own floor, so a "
+        + "low-DO excursion can never be detected", async () => {
+        const { report } = await buildReportInput(owcSensor(), { timeRange: "last week" });
+        const dissolvedOxygen = report!.parameters.find((p) => p.baseline.key === "dissolved_oxygen")!;
+
+        expect(dissolvedOxygen.baseline.hasFixedBaseline).toBe(true);
+        expect(dissolvedOxygen.baseline.baselineMin).toBe(0);
+        expect(dissolvedOxygen.baseline.baselineNote).toContain("below");
+        expect(dissolvedOxygen.baseline.baselineNote).toContain("cannot be detected");
+      });
+
+      it("does NOT note ORP 0-800 as a blind spot -- ORP's floor is -2000 mV, nowhere near 0", async () => {
+        const { report } = await buildReportInput(owcSensor(), { timeRange: "last week" });
+        const orp = report!.parameters.find((p) => p.baseline.key === "orp")!;
+
+        expect(orp.baseline.hasFixedBaseline).toBe(true);
+        expect(orp.baseline.baselineMin).toBe(0);
+        expect(orp.baseline.baselineNote).toBeUndefined();
+      });
     });
 
     it("reads the real recorded registry fixture, not just a hand-built row", async () => {
@@ -238,8 +343,56 @@ describe("buildReportInput", () => {
 
         expectNoBaseline(temp);
         // A registry lookup that finds nothing must not fail the whole report -- the readings
-        // are still real and the other rows still have their reference-table baselines.
+        // are still real, even though every numeric metric on this device now has no baseline.
         expect(report!.parameters.length).toBeGreaterThan(0);
+        // Distinct from "not configured": `deviceRecord() === null` means the lookup itself
+        // failed (unresolvable device, network or auth error), not that the row was read and
+        // found empty. Reporting "not configured" here would send an operator to fix a
+        // configuration that was never actually read during an outage.
+        expect(temp.baseline.baselineNote).toContain("could not be read");
+        expect(temp.baseline.baselineNote).not.toContain("No operator thresholds are configured");
+      });
+
+      it("gives every numeric metric, not just temperature, the 'could not be read' note when "
+        + "deviceRecord() returns null", async () => {
+        const seriesFor = (mean: number, min: number, max: number) => ([
+          { start: "2026-08-01T00:00:00.000Z", end: "2026-08-01T12:00:00.000Z", mean, min, max, n: 20 },
+        ]);
+        const stubSensor = {
+          query: async () => ({
+            device: { name: "Stub Pod", label: "dev:stub", operating_environment: "salt-water" },
+            time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
+            metrics: {
+              temperature: { value: 68, n_samples: 20, series: seriesFor(68, 64, 72) },
+              ph: { value: 7.2, n_samples: 20, series: seriesFor(7.2, 7.0, 7.4) },
+              dissolved_oxygen: { value: 8, n_samples: 20, series: seriesFor(8, 6, 10) },
+              orp: { value: 300, n_samples: 20, series: seriesFor(300, 250, 350) },
+              conductivity: { value: 50_000, n_samples: 20, series: seriesFor(50_000, 48_000, 52_000) },
+              turbidity: { value: 100, n_samples: 20, series: seriesFor(100, 80, 120) },
+            },
+          }),
+          deviceRecord: async () => null,
+        } as unknown as QuerySensorData;
+
+        const { report } = await buildReportInput(stubSensor, { timeRange: "last week" });
+
+        report!.parameters
+          .filter((p) => p.baseline.key !== "turbidity")
+          .forEach((p) => {
+            expect(p.baseline.hasFixedBaseline).toBe(false);
+            expect(p.baseline.baselineNote).toContain("could not be read");
+          });
+      });
+
+      it("keeps the existing 'not configured' wording when the record resolves with no thresholds "
+        + "object -- distinct from a failed lookup", async () => {
+        // registryRow(undefined) -- a real record, just with no `thresholds` field -- must not be
+        // confused with `deviceRecord()` returning `null` outright.
+        const temp = await temperatureOf(undefined);
+
+        expectNoBaseline(temp);
+        expect(temp.baseline.baselineNote).toContain("No operator thresholds are configured");
+        expect(temp.baseline.baselineNote).not.toContain("could not be read");
       });
 
       it("never lets the internal 0-0 placeholder reach a printed flag", async () => {
@@ -398,17 +551,27 @@ describe("buildReportInput", () => {
       expect(report!.site.waterBodyTypeSource).toBe("device");
     });
 
-    it("selects the seawater baseline table for a salt-water pod", async () => {
+    it("no longer selects a baseline table by water body type -- conductivity's baseline is "
+      + "this device's own registry threshold either way", async () => {
+      // This test used to pin the fix for a real regression: a freshwater deployment default
+      // overriding the registry's "salt-water" classification produced a 45x conductivity
+      // "Exceedance" by judging seawater against the freshwater reference range. That reference
+      // table is gone now (vetoed in full, 2026-09-13) -- conductivity's baseline is the
+      // Algalita Pod's own registry threshold (40000-75000) regardless of water body type, so a
+      // wrong water body type can no longer manufacture a baseline mismatch this way. Water body
+      // type itself still comes from the registry over the fallback -- see "takes the device
+      // registry's operating_environment over the deployment fallback" above.
       const sensor = makeSensor();
       const { report } = await buildReportInput(
         sensor,
         { timeRange: "last day", device: "Algalita", waterBodyTypeFallback: "Freshwater" },
       );
 
+      expect(report!.site.waterBodyType).toBe("Marine");
       const ec = report!.parameters.find((p) => p.baseline.key === "conductivity")!;
-      // Seawater: 45,000-55,000. The freshwater bug produced 50-1500 here.
-      expect(ec.baseline.baselineMin).toBe(45_000);
-      expect(ec.baseline.baselineMax).toBe(55_000);
+      expect(ec.baseline.baselineSource).toBe("operator-threshold");
+      expect(ec.baseline.baselineMin).toBe(40_000);
+      expect(ec.baseline.baselineMax).toBe(75_000);
     });
 
     it("falls back to the deployment value only when the registry says nothing usable", async () => {

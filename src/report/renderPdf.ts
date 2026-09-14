@@ -23,6 +23,10 @@ const STATUS_COLORS: Record<ReportStatus, string> = {
   Normal: "#1a7f37",
   Watch: "#b35900",
   "Action Required": "#c0392b",
+  // Deliberately outside the green/amber/red verdict palette, same neutral slate FLAG_COLORS uses
+  // for Qualitative below: "Not assessed" is not a verdict, it is the absence of one, and
+  // colouring it like a real result would misstate what the report checked.
+  "Not assessed": "#4a5a6a",
 };
 /** Severity's own scale, kept apart from FLAG_COLORS: a Moderate event and an Elevated
  * parameter are different claims and should not borrow each other's colour by accident. */
@@ -524,20 +528,29 @@ export const buildReportPdf = (
     + `separate a single stray reading from a sustained offset.${clarityFootnote}`,
     { width: CONTENT_WIDTH },
   );
-  // Provenance, because the Site Baseline column mixes two sources of different authority: a
-  // reviewed reference table that is the same for every pod in this water body type, and one
-  // device's operator-entered thresholds. A reader deciding whether to act on a flag needs to
-  // know which of the two produced it -- and, for the operator-set rows, that the range is
-  // theirs to correct. Same reasoning as the "(from device registry)" tag on Water Body Type.
+  // Provenance, because every Site Baseline number above is a configured alert limit an operator
+  // typed into the device registry for this specific pod -- not a scientifically reviewed range.
+  // A reader deciding whether to act on a flag needs to know that, and that a row with no number
+  // is not missing data but a metric with no usable registry threshold on this device.
   const operatorSourced = report.parameters
     .filter((p) => p.baseline.baselineSource === "operator-threshold")
     .map((p) => p.baseline.label);
   if (operatorSourced.length > 0) {
     doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
-      `Site Baseline for ${operatorSourced.join(", ")} is this device's operator-set threshold `
-      + "from the device registry, not a fixed reference range. Every other baseline above comes "
-      + `from the Water Quality Metrics source-of-truth table for ${report.site.waterBodyType} `
-      + "water.",
+      `Site Baseline for ${operatorSourced.join(", ")} is this device's operator-configured `
+      + "threshold from the device registry — an alert limit the operator set, not a "
+      + "scientifically reviewed range. A parameter with no usable registry threshold shows no "
+      + "baseline at all (\"Not established\") rather than falling back to a fixed table.",
+      { width: CONTENT_WIDTH },
+    );
+  } else if (status === "Not assessed") {
+    // No row above is registry-sourced, which is exactly why the cover reads "Not assessed"
+    // instead of "Normal" -- say so here too, since this is the footnote a reader checking Section
+    // 2 would otherwise miss (the ordinary provenance line only renders when a row has a source).
+    doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
+      "No numeric parameter on this device has a usable registry threshold, so no Site Baseline "
+      + "could be established for any row above and the report status reads \"Not assessed\" "
+      + "rather than \"Normal.\" See each row's baseline note for the specific reason.",
       { width: CONTENT_WIDTH },
     );
   }

@@ -65,6 +65,20 @@ export const TEMPERATURE_BASELINE_RAIL_F: readonly [number, number] = [25, 110];
  */
 export type MetricThresholdKey = "temperature" | "ph" | "dissolvedOxygen" | "orp" | "conductivity";
 
+/**
+ * Wire metric name (`QuerySensorData`'s names, also `ParameterBaseline.key`) -> registry
+ * threshold key. `buildReportInput.ts` and `generateReport.ts` both need this mapping to go from
+ * a report row to the registry field pair backing it; kept here, next to `MetricThresholdKey`
+ * itself, rather than copied in both places.
+ */
+export const WIRE_KEY_TO_METRIC: Record<string, MetricThresholdKey> = {
+  temperature: "temperature",
+  ph: "ph",
+  dissolved_oxygen: "dissolvedOxygen",
+  orp: "orp",
+  conductivity: "conductivity",
+};
+
 /** Registry field names, exact spellings from the live documents (`BACKEND_FIELDS.md` §1, §3). */
 const FIELD_KEYS: Record<MetricThresholdKey, { min: string; max: string }> = {
   temperature: { min: "minTemperature", max: "maxTemperature" },
@@ -291,4 +305,50 @@ export const thresholdRejectionNote = (reason: ThresholdRejection): string => {
     default:
       return tail;
   }
+};
+
+/**
+ * Warns when a usable threshold's edge sits at or beyond the probe's own physical floor or
+ * ceiling (`PLAUSIBLE_RANGES`, `src/devices/plausibility.ts` -- the same rails `metricThreshold`
+ * validates against for every metric but temperature).
+ *
+ * Why this matters: `events.ts` only opens an event window when a reading crosses OUTSIDE
+ * `baselineMin`/`baselineMax`. A limit configured at the metric's own physical edge can never be
+ * crossed in that direction, because no reading can physically get there -- the probe would have
+ * to report something implausible first. Live example: Old Woman Creek 2026's registry carries
+ * dissolved oxygen 0-12 mg/L. 0 is also `PLAUSIBLE_RANGES.dissolvedOxygen.min`, so no reading can
+ * ever fall below this baseline's minimum -- Hypoxia, Sewage and Algal bloom, which all require
+ * DO to cross below baseline, are silently undetectable on that pod, and the report would
+ * otherwise print "no events" with no hint why.
+ *
+ * Deliberately checked against the plausible rail, not the validation rail (`RAILS` above):
+ * temperature's validation rail (`TEMPERATURE_BASELINE_RAIL_F`, 25-110 °F) is tighter than its
+ * plausible range (-40-140 °F) specifically so a validated temperature threshold can never sit at
+ * the probe's physical edge -- which is why this note never fires for temperature in practice,
+ * without needing a special case here to make it so.
+ *
+ * Returns `undefined` when neither edge is blind, which is the common case -- e.g. ORP's
+ * plausible floor is -2,000 mV, so a configured ORP minimum of 0 is nowhere near it and produces
+ * no note.
+ */
+export const metricBlindSpotNote = (
+  metric: MetricThresholdKey,
+  min: number,
+  max: number,
+): string | undefined => {
+  const plausible = PLAUSIBLE_RANGES[metric];
+  const label = METRIC_LABELS[metric];
+  const clauses = [
+    min <= plausible.min
+      ? `Excursions below the configured ${label} minimum (${min}) cannot be detected on this `
+        + "pod: that limit sits at the edge of what the probe can report, so a reading can never "
+        + "cross it from below."
+      : null,
+    max >= plausible.max
+      ? `Excursions above the configured ${label} maximum (${max}) cannot be detected on this `
+        + "pod: that limit sits at the edge of what the probe can report, so a reading can never "
+        + "cross it from above."
+      : null,
+  ].filter((c): c is string => c !== null);
+  return clauses.length > 0 ? clauses.join(" ") : undefined;
 };

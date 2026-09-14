@@ -220,7 +220,22 @@ export const deterministicNarrative = (
     });
 
   let summaryBullets: string[];
-  if (report.events.length === 0 && status === "Normal") {
+  if (status === "Not assessed") {
+    // overallStatus only returns this when no non-relative-index parameter has a fixed baseline
+    // and no event fired -- say so plainly rather than let the reader mistake this for "Normal"
+    // with nothing to report. Turbidity's clarity bullets still print: it was measured, even
+    // though it never had a baseline to be "not assessed" about.
+    summaryBullets = [
+      `Overall status: ${status} — no numeric parameter could be compared against a baseline `
+        + "this period, because this device has no usable registry thresholds.",
+      `This is not a clean result; it means nothing was checked for the ${report.site.startDate} `
+        + `to ${report.site.endDate} reporting period. See each parameter's note in Section 3 for `
+        + "which registry field is missing or invalid.",
+      ...clarityBullets,
+      "Recommendation: set operator minimum/maximum thresholds for this device in the registry "
+        + "so future reports can compare readings against a baseline.",
+    ];
+  } else if (report.events.length === 0 && status === "Normal") {
     summaryBullets = [
       `Overall status: ${status} — no action required at this time.`,
       `Every parameter with a site baseline held within it for the ${report.site.startDate} to `
@@ -254,7 +269,14 @@ export const deterministicNarrative = (
   let operational: string;
   let investigative: string;
   let stakeholder: string;
-  if (nonNormal.length > 0 || report.events.length > 0) {
+  if (status === "Not assessed") {
+    operational = "Set operator minimum/maximum thresholds for this device in the registry; "
+      + "no baseline is currently established for any numeric parameter.";
+    investigative = "None required this period -- there is no baseline to confirm a reading "
+      + "against.";
+    stakeholder = "Notify client that this device has no usable registry thresholds, so no "
+      + "parameter could be compared against a baseline this period.";
+  } else if (nonNormal.length > 0 || report.events.length > 0) {
     operational = "Recalibrate and inspect sensors on flagged parameters at next service window.";
     investigative = `Collect grab samples to confirm flagged readings${
       report.events.length > 0 ? " and corroborate event classification." : "."}`;

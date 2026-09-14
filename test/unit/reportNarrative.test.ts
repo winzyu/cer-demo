@@ -121,6 +121,39 @@ describe("deterministicNarrative — summary is a bulleted list", () => {
   });
 });
 
+describe("deterministicNarrative — Not assessed status", () => {
+  it("says plainly that nothing could be compared, rather than reading like a clean result", () => {
+    const temp = param(noFixedBaseline("temperature", "Temperature (°F)", "°F"));
+    const { summaryBullets } = deterministicNarrative(report([temp]), noAccuracy, "Not assessed");
+
+    expect(summaryBullets[0]).toContain("Overall status: Not assessed");
+    expect(summaryBullets.join(" ")).toContain("no usable registry thresholds");
+    // Must not read as an all-clear -- the whole point of this status.
+    expect(summaryBullets.join(" ").toLowerCase()).not.toContain("no action required");
+  });
+
+  it("still reports a turbidity clarity band under Not assessed -- it was measured, just never "
+    + "judged against a baseline", () => {
+    const temp = param(noFixedBaseline("temperature", "Temperature (°F)", "°F"));
+    const turbidity = turbidityParam([10, 10, 10]);
+    const { summaryBullets } = deterministicNarrative(
+      report([temp, turbidity]), noAccuracy, "Not assessed",
+    );
+
+    expect(summaryBullets.join(" ")).toContain("Turbidity (Relative): Clear");
+  });
+
+  it("recommends setting operator thresholds rather than routine or escalation language", () => {
+    const temp = param(noFixedBaseline("temperature", "Temperature (°F)", "°F"));
+    const { recommendationsOperational, recommendationsStakeholder } = deterministicNarrative(
+      report([temp]), noAccuracy, "Not assessed",
+    );
+
+    expect(recommendationsOperational).toContain("threshold");
+    expect(recommendationsStakeholder).toContain("no usable registry thresholds");
+  });
+});
+
 describe("deterministicNarrative — parameter analysis", () => {
   it("omits a parameter from the analysis map when it held steady", () => {
     const ph = param(fixedBaseline("ph", "pH", "", 6.5, 8.5), { pattern: "flat" }); // Normal + flat -> held steady
@@ -207,11 +240,11 @@ describe("deterministicNarrative — parameter analysis", () => {
     expect(text).not.toContain("site baseline");
   });
 
-  it("still calls a reference-table range a site baseline", () => {
-    const baseline: ParameterBaseline = {
-      ...fixedBaseline("ph", "pH", "", 7.8, 8.3),
-      baselineSource: "reference-table",
-    };
+  it("still calls a baseline with no operator-threshold source a site baseline", () => {
+    // baselineSource is only ever "operator-threshold" now (the reference-table source was
+    // vetoed in full, 2026-09-13) -- this pins the ternary's other branch, which stays reachable
+    // for any row that somehow carries no source at all.
+    const baseline: ParameterBaseline = fixedBaseline("ph", "pH", "", 7.8, 8.3);
     const { parameterAnalysis } = deterministicNarrative(
       report([param(baseline, { pattern: "irregular" })]), noAccuracy, "Normal",
     );

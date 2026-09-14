@@ -13,9 +13,9 @@
 
 /**
  * "N/A" is for a parameter with no baseline at all -- distinct from "Normal", which means
- * "compared to a real baseline and found within it". In practice this is temperature on a
- * device whose registry thresholds are absent or fail validation (`operatorThresholds.ts`);
- * temperature has no entry in the source-of-truth reference table by design.
+ * "compared to a real baseline and found within it". This is any of the five numeric parameters
+ * on a device whose registry thresholds are absent or fail validation
+ * (`operatorThresholds.ts`) -- there is no reference-table fallback for any of them.
  *
  * "Qualitative" is for a parameter that is not judged against a numeric range at all
  * (turbidity -- see ParameterScale below). It is deliberately NOT the same as "N/A":
@@ -48,7 +48,16 @@ export type ClarityBand = "Clear" | "Moderate" | "Turbid";
  *   statements do not. Turbidity is the only parameter on this scale today.
  */
 export type ParameterScale = "numeric" | "relative-index";
-export type ReportStatus = "Normal" | "Watch" | "Action Required";
+/**
+ * "Not assessed" is distinct from "Normal": "Normal" means every numeric parameter was compared
+ * against a real baseline and stayed inside it. A pod with no usable registry threshold for any
+ * numeric parameter (no `thresholds` object, or every pair rejected by `operatorThresholds.ts`)
+ * has nothing to compare -- printing "Normal" on its cover is a silent all-clear over a report
+ * that checked nothing. `overallStatus` returns this only where it would otherwise have said
+ * "Normal"; an Exceedance, a qualifying High event, an Elevated/Low flag, or any event (including
+ * a turbidity-driven one, since turbidity has no baseline to be "not assessed" about) still wins.
+ */
+export type ReportStatus = "Normal" | "Watch" | "Action Required" | "Not assessed";
 export type WaterBodyType = "Freshwater" | "Brackish" | "Estuarine" | "Marine";
 export type Pattern = "diel" | "tidal" | "event-driven" | "flat" | "irregular" | "unknown";
 
@@ -122,18 +131,18 @@ export interface ParameterBaseline {
    * False leaves the row at Flag "N/A" with no numbers printed. */
   hasFixedBaseline: boolean;
   /**
-   * Where the numbers in `baselineMin`/`baselineMax` came from. Printed with them, same reason
-   * `SiteMetadata.waterBodyTypeSource` is: the two sources carry different authority and a
-   * reader must not have to guess which one a row used.
+   * Where the numbers in `baselineMin`/`baselineMax` came from. Printed alongside them so a
+   * reader knows this is a configured alert limit and, since it is this device's own registry
+   * row, whose to go correct.
    *
-   * - `"reference-table"` — the "Water Quality Metrics — Source of Truth" doc's baseline table
-   *   for this site's water body type (`referenceRanges.ts`). Fixed, reviewed, identical for
-   *   every device in that tier.
-   * - `"operator-threshold"` — this specific device's `minTemperature`/`maxTemperature` from the
-   *   backend's device registry, typed in by whoever deployed the pod and validated by
-   *   `operatorThresholds.ts` before it is trusted. Temperature only: it is the one parameter
-   *   the source-of-truth doc refuses to give a fixed range for, telling the reader to
-   *   "establish a site-specific baseline" instead — this is that baseline.
+   * - `"operator-threshold"` — this specific device's threshold pair from the backend's device
+   *   registry (`minTemperature`/`maxTemperature`, `minPH`/`maxPH`, etc.), typed in by whoever
+   *   deployed the pod and validated by `operatorThresholds.ts` before it is trusted. This is now
+   *   the only source any numeric parameter's baseline can have — the "Water Quality Metrics —
+   *   Source of Truth" document's reference-table ranges were vetoed in full by the project
+   *   supervisor (2026-09-13, see docs/timeline.md) and no longer feed a baseline at all. There
+   *   is no fallback: a parameter with no usable registry threshold has no baseline, exactly as
+   *   temperature already behaved before the veto.
    *
    * Absent when `hasFixedBaseline` is false; there is no source for a baseline that does not
    * exist.
@@ -153,7 +162,7 @@ export interface ParameterBaseline {
   scale?: ParameterScale;
 }
 
-export type BaselineSource = "reference-table" | "operator-threshold";
+export type BaselineSource = "operator-threshold";
 
 /** True for a parameter whose value is monotonic but uncalibrated -- turbidity today. */
 export const isRelativeIndex = (b: Pick<ParameterBaseline, "scale">): boolean => (
@@ -312,6 +321,10 @@ export const heldSteady = (
  * scale (turbidity) cannot raise or lower the report's status, because neither can be shown to
  * have left a range. Turbidity still reaches the status indirectly and legitimately, through
  * events.ts, which reads its *relative movement* rather than a range crossing.
+ *
+ * One more branch sits below the escalation ladder: a device with no usable baseline for any
+ * numeric parameter returns "Not assessed" rather than falling through to "Normal" -- see
+ * ReportStatus's docstring for why a silent all-clear there is the wrong default.
  */
 export const overallStatus = (
   report: ReportInput,
@@ -334,6 +347,18 @@ export const overallStatus = (
   }
   if (report.events.length > 0) {
     return "Watch";
+  }
+  // Every escalation above wins first. Only what would otherwise be a silent "Normal" gets
+  // downgraded here: if not one non-relative-index parameter has a real baseline, nothing was
+  // actually compared, and "Normal" would claim a clean bill of health this report never checked
+  // for. Turbidity is excluded via isRelativeIndex because it never has a baseline to begin with
+  // -- its absence must not, by itself, produce "Not assessed" on a device where every numeric
+  // metric is fine.
+  const anyNumericBaseline = report.parameters.some(
+    (p) => !isRelativeIndex(p.baseline) && p.baseline.hasFixedBaseline,
+  );
+  if (!anyNumericBaseline) {
+    return "Not assessed";
   }
   return "Normal";
 };

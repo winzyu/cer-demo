@@ -39,28 +39,46 @@
  *    and no numeric baseline, so downstream it renders as a clarity band plus a direction of
  *    change instead of a pass/fail against a range. See referenceRanges.ts's
  *    TURBIDITY_BAND_EDGES for the cut points and why there is no range to compare against.
- * 5. **Temperature's baseline comes from the device registry, not from the reference table.**
- *    The source-of-truth doc gives temperature no fixed range on purpose ("Climate/season-
- *    dependent"; "Establish a site-specific baseline before treating deviations as events"), so
- *    `referenceRanges.ts` has no temperature entry and never will. The site-specific baseline it
- *    asks for is the operator's own `thresholds.minTemperature`/`maxTemperature` on the device
- *    document, which this function reads via `sensor.deviceRecord()` -- a second registry lookup
- *    that costs nothing, because it hits the device cache `sensor.query()` just primed.
+ * 5. **Every numeric parameter's baseline comes from the device registry, never from a reference
+ *    table.** Temperature always worked this way, because the source-of-truth doc gave it no
+ *    fixed range on purpose ("Climate/season-dependent"; "Establish a site-specific baseline
+ *    before treating deviations as events"). The other four numeric metrics (pH, dissolved
+ *    oxygen, ORP, conductivity) used to read a fixed range out of `referenceRanges.ts`'s
+ *    `BASELINE_RANGES` -- that table is gone. The project supervisor vetoed the entire
+ *    "Water Quality Metrics -- Source of Truth" document as a range source on 2026-09-13 (see
+ *    docs/timeline.md): every range in it is discarded, not just temperature's. There is no
+ *    fallback table for any metric now -- a pod with no usable registry threshold for a metric
+ *    has no baseline for it, exactly what already happened for temperature.
  *
- *    Those numbers are hand-entered and partly junk, so they go through
- *    `operatorThresholds.ts` first; anything that fails validation leaves temperature exactly as
- *    it was before this existed -- Flag "N/A", baseline "Not established". The row also carries
- *    `baselineSource` so the PDF can distinguish an operator threshold from a reviewed reference
- *    range, the same way `waterBodyTypeSource` marks where the water type came from.
+ *    The site-specific baseline the source doc asked for, for temperature, and the only baseline
+ *    any metric can have now, is the operator's own `thresholds.min<Metric>`/`max<Metric>` on the
+ *    device document, which this function reads via `sensor.deviceRecord()` -- a second registry
+ *    lookup that costs nothing, because it hits the device cache `sensor.query()` just primed.
  *
- *    ⚠️ Knock-on worth knowing: `events.ts` skips any parameter with `hasFixedBaseline: false`,
- *    so on a device with a usable threshold temperature now participates in event detection for
- *    the first time, and the signature matrix's two Thermal rules can fire. That is the behavior
- *    those rules were written for, but an operator threshold is an *alert* line, not a
- *    seasonally-corrected baseline -- a pod whose summer water genuinely runs above the range
- *    someone set in spring will now raise Thermal candidates. Section 4 already frames every
- *    event as a candidate for investigation, and the alternative (a real baseline the report
- *    refuses to act on) is worse, but this is the row to look at first if event counts jump.
+ *    Those numbers are hand-entered and partly junk, so they go through `operatorThresholds.ts`
+ *    first (`metricThreshold`); anything that fails validation leaves that metric with no
+ *    baseline -- Flag "N/A", "Not established", plus a rejection note built from
+ *    `metricThresholdRejectionReason` saying why. Every usable row carries
+ *    `baselineSource: "operator-threshold"` -- there is nothing else it could be now -- the same
+ *    way `waterBodyTypeSource` marks where the water type came from.
+ *
+ *    ⚠️ Knock-on worth knowing, now true of all five metrics rather than temperature alone:
+ *    `events.ts` skips any parameter with `hasFixedBaseline: false`, so a device with a usable
+ *    threshold has that metric participate in event detection, and the signature matrix's rules
+ *    for it can fire. That is the behavior those rules were written for, but an operator
+ *    threshold is an *alert* line, not a seasonally-corrected or scientifically reviewed
+ *    baseline -- a pod whose summer water genuinely runs above a range someone set in spring will
+ *    now raise candidates against it. Section 4 already frames every event as a candidate for
+ *    investigation, and the alternative (a real baseline the report refuses to act on) is worse,
+ *    but this is the row to look at first if event counts jump.
+ *
+ *    ⚠️ A second, sharper knock-on: because `events.ts` only opens a window on a crossing, a
+ *    threshold configured at the metric's own physical floor or ceiling (`PLAUSIBLE_RANGES`,
+ *    `src/devices/plausibility.ts`) can never be crossed in that direction -- no reading can
+ *    physically get there. A pod with dissolved oxygen 0-12 mg/L, for example, can never register
+ *    a low-DO excursion, silently disabling Hypoxia, Sewage and Algal bloom detection on it. See
+ *    `operatorThresholds.ts`'s `metricBlindSpotNote`, which this function attaches to the row's
+ *    `baselineNote` when it applies.
  */
 
 import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorData";
@@ -69,8 +87,10 @@ import type { ToolContext } from "../types/tool.types";
 import type {
   DataQualityCheck, ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WaterBodyType,
 } from "./types";
-import { baselineFor } from "./referenceRanges";
-import { temperatureThreshold, thresholdRejectionNote } from "./operatorThresholds";
+import {
+  metricThreshold, metricThresholdRejectionReason, metricBlindSpotNote,
+  temperatureThreshold, thresholdRejectionNote, WIRE_KEY_TO_METRIC,
+} from "./operatorThresholds";
 import type { ThresholdVerdict } from "./operatorThresholds";
 
 /** Wire name -> template row label + unit. Labels match the DataPod report template. */
@@ -315,6 +335,16 @@ export const buildReportInput = async (
   const deviceRecord = await sensor.deviceRecord(resolvedLabel, context?.token);
   const temperatureVerdict: ThresholdVerdict = temperatureThreshold(deviceRecord?.thresholds);
 
+  /**
+   * Distinct from `metricThresholdRejectionReason("no-thresholds", ...)` on purpose: that reason
+   * means the registry row was read and genuinely carries no `thresholds` object. This note fires
+   * only when the registry lookup itself failed (`deviceRecord === null`) -- a resolvable
+   * condition (retry, or the outage clearing), not a configuration gap the operator needs to fix.
+   */
+  const REGISTRY_UNREADABLE_NOTE = "This device's registry thresholds could not be read, so no "
+    + "baseline was established. This is a registry lookup failure, not a missing configuration "
+    + "-- retry the report rather than editing this device's thresholds.";
+
   // Newest in-window GPS fix, carried on the readings themselves -- see file docstring §3.
   const position = asRecord(seriesResult.position);
   const latitude = typeof position.latitude === "number" ? position.latitude : undefined;
@@ -351,52 +381,75 @@ export const buildReportInput = async (
   });
 
   /**
-   * Source-of-truth reference table, for the four metrics that have an entry in it.
-   *
-   * Turbidity is intercepted first: `BASELINE_RANGES` no longer carries a turbidity entry, so the
-   * lookup would miss regardless -- the explicit guard states the intent rather than relying on a
-   * lookup miss, and tags the row `relative-index` so nothing downstream range-compares it.
-   * See file docstring §4.
+   * Turbidity: no baseline of any kind, tagged `relative-index` so nothing downstream
+   * range-compares it. See file docstring §4.
    */
-  const fixedBaseline = (meta: Meta): ParameterBaseline => {
-    if (RELATIVE_INDEX_KEYS.has(meta.key)) {
-      return { ...absentBaseline(meta), scale: "relative-index" as const };
-    }
-    const fixed = baselineFor(meta.key, meta.label, meta.unit, waterBodyType);
-    return fixed
-      ? {
-        ...fixed,
-        exceedanceMargin: 0.15,
-        hasFixedBaseline: true,
-        baselineSource: "reference-table",
-      }
-      : absentBaseline(meta);
-  };
+  const relativeIndexBaseline = (meta: Meta): ParameterBaseline => (
+    { ...absentBaseline(meta), scale: "relative-index" as const }
+  );
 
   /**
-   * Temperature only: this device's validated operator threshold, or no baseline at all.
+   * This device's validated operator threshold for one of the five numeric metrics, or no
+   * baseline at all -- see file docstring §5 for why every numeric metric now takes this path
+   * (the reference-table alternative was vetoed in full, 2026-09-13).
    *
-   * There is deliberately no fallback to a reference range here. The source-of-truth doc's
-   * position is that no fixed temperature range is defensible for any water type, so inventing
-   * one when the registry is unconfigured would contradict the document this report cites.
+   * Checked first, before any metric-specific logic: `deviceRecord === null` means
+   * `sensor.deviceRecord()` failed to read the registry row at all (unresolvable device, network
+   * or auth error -- see its docstring in querySensorData.ts), not that the row exists with no
+   * `thresholds` object. Feeding `undefined` into `metricThreshold`/`temperatureThreshold` in that
+   * case collapses both into the same "no-thresholds" rejection and the same "No operator
+   * thresholds are configured for this device" wording -- true for an empty row, false during an
+   * outage, and it sends the operator to fix a configuration that was never read. Every numeric
+   * metric, temperature included, gets the distinct "could not be read" note instead; a record
+   * that resolves but genuinely has no `thresholds` object still reaches `metricThreshold` below
+   * and keeps the existing "not configured" wording.
+   *
+   * Temperature is special-cased below to reuse `temperatureVerdict`/`thresholdRejectionNote`
+   * verbatim rather than `metricThreshold`/`metricThresholdRejectionReason`: it already took this
+   * path before this change, and its rendered output (including the exact rejection wording) must
+   * stay byte-identical for the same registry inputs. The other four metrics are new to this path
+   * and get parallel treatment built from the generic validator and its generic rejection reasons.
    */
-  const temperatureBaseline = (meta: Meta): ParameterBaseline => {
-    if (!temperatureVerdict.usable) {
-      return absentBaseline(meta, thresholdRejectionNote(temperatureVerdict.reason));
+  const registryBaseline = (meta: Meta): ParameterBaseline => {
+    if (deviceRecord === null) {
+      return absentBaseline(meta, REGISTRY_UNREADABLE_NOTE);
     }
+    if (meta.key === "temperature") {
+      if (!temperatureVerdict.usable) {
+        return absentBaseline(meta, thresholdRejectionNote(temperatureVerdict.reason));
+      }
+      const blindSpot = metricBlindSpotNote("temperature", temperatureVerdict.min, temperatureVerdict.max);
+      const provenance = `Operator-set threshold for this device (${temperatureVerdict.min}-`
+        + `${temperatureVerdict.max} ${meta.unit}, from the device registry).`;
+      return {
+        key: meta.key,
+        label: meta.label,
+        unit: meta.unit,
+        baselineMin: temperatureVerdict.min,
+        baselineMax: temperatureVerdict.max,
+        exceedanceMargin: 0.15,
+        hasFixedBaseline: true,
+        baselineSource: "operator-threshold",
+        baselineNote: blindSpot ? `${provenance} ${blindSpot}` : provenance,
+      };
+    }
+
+    const thresholdKey = WIRE_KEY_TO_METRIC[meta.key];
+    const verdict: ThresholdVerdict = metricThreshold(deviceRecord?.thresholds, thresholdKey);
+    if (!verdict.usable) {
+      return absentBaseline(meta, metricThresholdRejectionReason(verdict.reason, thresholdKey));
+    }
+    const blindSpot = metricBlindSpotNote(thresholdKey, verdict.min, verdict.max);
     return {
       key: meta.key,
       label: meta.label,
       unit: meta.unit,
-      baselineMin: temperatureVerdict.min,
-      baselineMax: temperatureVerdict.max,
+      baselineMin: verdict.min,
+      baselineMax: verdict.max,
       exceedanceMargin: 0.15,
       hasFixedBaseline: true,
       baselineSource: "operator-threshold",
-      baselineNote: `Operator-set threshold for this device (${temperatureVerdict.min}-`
-        + `${temperatureVerdict.max} ${meta.unit}, from the device registry), not a fixed `
-        + "reference range — the source-of-truth document gives temperature none, and asks for a "
-        + "site-specific baseline instead.",
+      ...(blindSpot ? { baselineNote: blindSpot } : {}),
     };
   };
 
@@ -421,13 +474,13 @@ export const buildReportInput = async (
     const mean = buckets.reduce((s, b) => s + b.mean * b.n, 0) / totalN;
     const median = medianEntry?.value ?? mean; // falls back to mean if the median call had no data
 
-    // Two sources, and which one applies is decided by the metric, not by availability:
-    // temperature is always the operator threshold (the reference table has no entry for it and
-    // will not get one), every other metric is always the reference table (an operator threshold
-    // must never quietly displace a reviewed range). See file docstring §5.
-    const baseline = meta.key === "temperature"
-      ? temperatureBaseline(meta)
-      : fixedBaseline(meta);
+    // Every numeric metric takes its baseline from this device's own registry threshold now --
+    // the reference-table alternative was vetoed in full (project supervisor, 2026-09-13; see
+    // docs/timeline.md). There is no fallback: a metric with no usable registry threshold has no
+    // baseline, exactly what already happened for temperature. See file docstring §5.
+    const baseline = RELATIVE_INDEX_KEYS.has(meta.key)
+      ? relativeIndexBaseline(meta)
+      : registryBaseline(meta);
 
     // Thin buckets are dropped from the trend series only -- see MIN_BUCKET_SAMPLES. The floor
     // is skipped entirely when it would empty the series (a genuinely sparse pod), since a

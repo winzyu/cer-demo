@@ -83,14 +83,16 @@ describe("GenerateReport.run", () => {
     const result = await tool.run({ time_range: "last day", device: "Algalita" }, CALLER);
 
     expect(result.error).toBeUndefined();
-    expect(["Normal", "Watch", "Action Required"]).toContain(result.status);
+    expect(["Normal", "Watch", "Action Required", "Not assessed"]).toContain(result.status);
     expect(typeof result.events_flagged).toBe("number");
     expect(Array.isArray(result.event_types)).toBe(true);
     expect(result.report_url).toMatch(/^\/api\/v1\/reports\/report_[a-f0-9]{8}\.pdf$/);
 
     // The tool result is JSON.stringify'd straight into a chat message (ChatOrchestrator.ts) --
-    // it must not carry the underlying readings, only the summary fields.
-    expect(JSON.stringify(result)).not.toMatch(/dissolved_oxygen|"value":|"mean":/);
+    // it must not carry the underlying readings, only the summary fields. "dissolved_oxygen" is
+    // no longer a clean stand-in for "a raw metric dump leaked": baseline_provenance legitimately
+    // uses it as a label key now, so this checks for the raw series/sample shape instead.
+    expect(JSON.stringify(result)).not.toMatch(/"value":|"mean":|"n_samples":|"series":/);
 
     const filename = (result.report_url as string).split("/").pop()!;
     const pdfPath = path.join(tmpDir, filename);
@@ -130,16 +132,23 @@ describe("GenerateReport.run", () => {
     expect(fs.readdirSync(tmpDir)).toHaveLength(0);
   });
 
-  it("names the temperature baseline's source, since it is the one row not from the doc's table", async () => {
-    // The source-of-truth document gives temperature no fixed range and asks for a site-specific
-    // baseline instead; that baseline is this device's operator-set registry threshold. The
-    // recorded /devices fixture has the Algalita Pod at 50-80 °F.
+  it("names each numeric metric's baseline source, since all five now come from the device "
+    + "registry rather than any reference table", async () => {
+    // The reference table was vetoed in full (2026-09-13, docs/timeline.md); every numeric
+    // baseline is this device's own operator-configured registry threshold now, or nothing at
+    // all. The recorded /devices fixture has the Algalita Pod at pH 6-10, DO 4-15, ORP 50-400,
+    // conductivity 40000-75000, temperature 50-80 °F -- none of which sit at a probe's physical
+    // floor or ceiling, so none carry a blind-spot clause.
     const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
     const result = await tool.run({ time_range: "last day", device: "Algalita" }, CALLER);
 
-    expect(result.temperature_baseline).toBe(
-      "50-80 °F (operator-set threshold for this device, from the device registry)",
-    );
+    expect(result.baseline_provenance).toEqual({
+      temperature: "50-80 °F (configured)",
+      ph: "6-10 (configured)",
+      dissolved_oxygen: "4-15 mg/L (configured)",
+      orp: "50-400 mV (configured)",
+      conductivity: "40000-75000 µS/cm (configured)",
+    });
   });
 
   it("surfaces an error from buildReportInput rather than throwing", async () => {
@@ -148,5 +157,37 @@ describe("GenerateReport.run", () => {
 
     expect(result.error).toBeDefined();
     expect(fs.readdirSync(tmpDir)).toHaveLength(0); // no partial PDF left behind on failure
+  });
+
+  it("reports Not assessed, not Normal, for a device with no usable registry threshold on any "
+    + "numeric parameter", async () => {
+    // A device whose registry row cannot be read (deviceRecord() -> null) or carries no
+    // thresholds at all leaves every numeric row with no baseline -- flagFor never returns
+    // Elevated/Low/Exceedance, so the old overallStatus fell through to "Normal". The model-
+    // facing status must say "Not assessed" instead, and baseline_provenance must not claim the
+    // ordinary "not configured" wording when the failure was a registry lookup, not an empty row.
+    const seriesFor = (mean: number, min: number, max: number) => ([
+      { start: "2026-08-01T00:00:00.000Z", end: "2026-08-01T12:00:00.000Z", mean, min, max, n: 20 },
+    ]);
+    const stubSensor = {
+      query: async () => ({
+        device: { name: "Unreachable Pod", label: "dev:unreachable", operating_environment: "salt-water" },
+        time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
+        metrics: {
+          temperature: { value: 68, n_samples: 20, series: seriesFor(68, 64, 72) },
+          ph: { value: 7.2, n_samples: 20, series: seriesFor(7.2, 7.0, 7.4) },
+        },
+      }),
+      deviceRecord: async () => null,
+    } as unknown as QuerySensorData;
+    const tool = new GenerateReport({ sensor: stubSensor, reportsDir: tmpDir });
+    const result = await tool.run({ time_range: "last week" }, CALLER);
+
+    expect(result.error).toBeUndefined();
+    expect(result.status).toBe("Not assessed");
+    expect(result.baseline_provenance).toMatchObject({
+      temperature: expect.stringContaining("could not be read"),
+      ph: expect.stringContaining("could not be read"),
+    });
   });
 });

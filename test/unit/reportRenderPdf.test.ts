@@ -4,7 +4,7 @@ import {
   flagCellText, MARGIN,
 } from "../../src/report/renderPdf";
 import type {
-  ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent, DataQualityCheck,
+  ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent, DataQualityCheck, ReportStatus,
 } from "../../src/report/types";
 import type { NarrativeSections } from "../../src/report/narrative";
 
@@ -249,7 +249,11 @@ describe("buildReportPdf — smoke test", () => {
       site,
       parameters: [
         param,
-        { ...operatorTemp, baseline: { ...operatorTemp.baseline, baselineSource: "reference-table" } },
+        // No baselineSource at all -- "reference-table" no longer exists as a value
+        // (BaselineSource is "operator-threshold" only, since that vetoed table's ranges are
+        // gone). This still exercises the footnote's gating condition: a row whose source is not
+        // "operator-threshold" must not be counted into it.
+        { ...operatorTemp, baseline: { ...operatorTemp.baseline, baselineSource: undefined } },
       ],
       events: [],
     };
@@ -284,6 +288,47 @@ describe("buildReportPdf — smoke test", () => {
     // No operator-sourced row, so no provenance footnote either.
     const withoutRow: ReportInput = { site, parameters: [param], events: [] };
     expect(buffer.length).toBeGreaterThan((await render(withoutRow)).length);
+  });
+
+  it("renders a Not assessed status without throwing, and adds the no-baseline footnote no "
+    + "ordinary N/A row triggers", async () => {
+    // Not assessed reuses the same rendering path as any other status, but its footnote branch
+    // (renderPdf.ts) fires only for this status, not merely for "some row has no baseline" --
+    // pin that distinction by comparing against status: "Normal" with the identical report.
+    const renderWithStatus = async (
+      reportInput: ReportInput, status: ReportStatus,
+    ): Promise<Buffer> => {
+      const doc = buildReportPdf(reportInput, narrative, { probeAccuracy: noAccuracy, status });
+      const chunks: Buffer[] = [];
+      return new Promise<Buffer>((resolve, reject) => {
+        doc.on("data", (chunk: Buffer) => chunks.push(chunk));
+        doc.on("end", () => resolve(Buffer.concat(chunks)));
+        doc.on("error", reject);
+        doc.end();
+      });
+    };
+    const noBaselineParam: ParameterStats = {
+      baseline: {
+        key: "temperature",
+        label: "Temperature (°F)",
+        unit: "°F",
+        baselineMin: 0,
+        baselineMax: 0,
+        exceedanceMargin: 0.15,
+        hasFixedBaseline: false,
+        baselineNote: "No operator thresholds are configured for this device.",
+      },
+      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown",
+    };
+    const report: ReportInput = { site, parameters: [noBaselineParam], events: [] };
+
+    const [notAssessed, normal] = await Promise.all([
+      renderWithStatus(report, "Not assessed"),
+      renderWithStatus(report, "Normal"),
+    ]);
+    expect(notAssessed.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+    // The extra explanatory paragraph only renders for "Not assessed".
+    expect(notAssessed.length).toBeGreaterThan(normal.length);
   });
 });
 

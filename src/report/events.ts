@@ -140,7 +140,7 @@ const classify = (moved: Partial<Record<string, Movement>>): ClassifyResult => {
         confidence: 0.7,
         rationale:
           "Dissolved oxygen and ORP fell together while conductivity and turbidity both rose "
-          + "-- all four match the source-of-truth matrix's sewage/sanitary-discharge signature. "
+          + "-- all four match the sewage/sanitary-discharge signature. "
           + "This is preferred over plain hypoxia because hypoxia alone would not be expected to "
           + "also lift conductivity and turbidity.",
       };
@@ -271,9 +271,8 @@ const classify = (moved: Partial<Record<string, Movement>>): ClassifyResult => {
     type: "Inconclusive",
     confidence: 0.2,
     rationale:
-      "The combination of parameter movements did not match any of the signatures in the "
-      + "source-of-truth Pollution Event Signature Matrix closely enough to support a specific "
-      + "classification.",
+      "The combination of parameter movements did not match any known pollution-event "
+      + "signature closely enough to support a specific classification.",
   };
 };
 
@@ -341,7 +340,7 @@ const detectAlgalBloom = (report: ReportInput): WQEvent | null => {
         phConfirms ? "; pH showed a matching in-phase swing" : ""}`,
     interpretation:
       "Dissolved oxygen supersaturated at one point in the day and crashed below baseline "
-      + "at another point within the same 24 hours, matching the source-of-truth matrix's "
+      + "at another point within the same 24 hours, matching the "
       + `algal-bloom/eutrophication signature: large in-phase daily DO${
         phConfirms ? " and pH" : ""
       } oscillations, with the pre-dawn DO minimum as the danger window. This is a `

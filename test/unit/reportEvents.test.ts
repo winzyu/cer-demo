@@ -74,6 +74,24 @@ describe("detectEvents — no excursions", () => {
   });
 });
 
+describe("detectEvents — blind spot at a threshold's physical floor", () => {
+  it("never opens a low-DO window when the registry threshold's minimum is the probe's own "
+    + "floor (Old Woman Creek 2026's real dissolved oxygen threshold, 0-12 mg/L)", () => {
+    // events.ts is unchanged here -- this pins the consequence, not a new rule. outsideBaselineWindows
+    // only opens a window when a reading falls OUTSIDE [baselineMin, baselineMax]. When
+    // baselineMin is 0 (the DO probe's own plausible floor, src/devices/plausibility.ts), no
+    // reading can ever be below it, so a low-DO excursion -- and everything downstream of one
+    // (Hypoxia, Sewage, Algal bloom) -- is silently undetectable on this pod. See
+    // operatorThresholds.ts's metricBlindSpotNote, which buildReportInput.ts surfaces as a note
+    // on this row precisely because events.ts itself has no way to say so.
+    const doBaseline = fixedBaseline("dissolved_oxygen", "Dissolved Oxygen (mg/L)", "mg/L", 0, 12);
+    // Even a near-anoxic reading (0.1 mg/L, well into fish-kill territory) sits inside [0, 12].
+    const do_ = statsFor(doBaseline, seriesWithExcursion(8, 0.1, [1, 1.5, 2]));
+
+    expect(detectEvents(report([do_]))).toEqual([]);
+  });
+});
+
 describe("detectEvents — classification", () => {
   it("classifies a DO/ORP crash with rising conductivity and turbidity as Sewage", () => {
     const window = [1, 1.5, 2]; // h=1 to h=2, a 1-hour sustained window

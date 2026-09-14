@@ -183,14 +183,17 @@ describe("overallStatus", () => {
     expect(overallStatus(report({ events: [event({ severity: "Moderate" })] }), noAccuracy)).toBe("Watch");
   });
 
-  it("is Normal for a very turbid relative index alone -- a band is not an excursion", () => {
+  it("is Not assessed for a very turbid relative index alone -- a band is not an excursion, and "
+    + "turbidity is never a baseline", () => {
     // The whole point of the qualitative treatment: turbidity cannot move the report status on
     // its own, because it cannot be shown to have left a range. It still reaches the status
-    // legitimately through events.ts, which reads its relative movement instead.
+    // legitimately through events.ts, which reads its relative movement instead. And because
+    // turbidity is the only parameter here and it never has a fixed baseline (isRelativeIndex
+    // excludes it), nothing was actually compared -- "Normal" would be a silent all-clear.
     const turbidity = param({
       baseline: turbidityBaseline(), min: 900, max: 3_000, mean: 2_042, median: 2_000,
     });
-    expect(overallStatus(report({ parameters: [turbidity] }), noAccuracy)).toBe("Normal");
+    expect(overallStatus(report({ parameters: [turbidity] }), noAccuracy)).toBe("Not assessed");
   });
 
   it("lets an Exceedance parameter override a merely Watch-level event", () => {
@@ -199,6 +202,45 @@ describe("overallStatus", () => {
       events: [event({ severity: "Low" })],
     });
     expect(overallStatus(r, noAccuracy)).toBe("Action Required");
+  });
+
+  describe("Not assessed -- a pod with no usable baseline for any numeric parameter", () => {
+    const noBaseline = (overrides: Partial<ParameterStats> = {}): ParameterStats => param({
+      baseline: baseline({ hasFixedBaseline: false, baselineMin: 0, baselineMax: 0 }),
+      ...overrides,
+    });
+
+    it("is Not assessed, not Normal, when every numeric parameter has no baseline and nothing fired", () => {
+      // The defect this guards: every numeric row N/A means flagFor never returns
+      // Elevated/Low/Exceedance, so nothing here escalates -- overallStatus must not fall through
+      // to "Normal" and print a silent all-clear over a report that compared nothing.
+      const r = report({ parameters: [noBaseline(), noBaseline({ baseline: baseline({ key: "orp", hasFixedBaseline: false }) })] });
+      expect(overallStatus(r, noAccuracy)).toBe("Not assessed");
+    });
+
+    it("stays Watch when a turbidity-driven event fires despite no numeric parameter having a baseline", () => {
+      // Turbidity never has a baseline (isRelativeIndex excludes it from the check), but its
+      // event can still legitimately move the status -- events.ts reads relative movement, not
+      // a range crossing. Any event outranks "Not assessed".
+      const turbidity = param({ baseline: turbidityBaseline(), min: 900, max: 3_000, mean: 2_042 });
+      const r = report({
+        parameters: [noBaseline(), turbidity],
+        events: [event({ severity: "Moderate" })],
+      });
+      expect(overallStatus(r, noAccuracy)).toBe("Watch");
+    });
+
+    it("returns to Normal once even one numeric parameter has a real baseline and nothing is flagged", () => {
+      // A report is only "Not assessed" when NOT ONE numeric parameter was comparable. One usable
+      // baseline with nothing flagged is a real "Normal" result, not a partial "Not assessed".
+      const r = report({ parameters: [param(), noBaseline()] });
+      expect(overallStatus(r, noAccuracy)).toBe("Normal");
+    });
+
+    it("still escalates to Action Required when the one baselined parameter is an Exceedance", () => {
+      const r = report({ parameters: [param({ max: 9.0 }), noBaseline()] });
+      expect(overallStatus(r, noAccuracy)).toBe("Action Required");
+    });
   });
 });
 
