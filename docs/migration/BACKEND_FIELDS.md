@@ -191,6 +191,70 @@ buoys do I have?" off a raw device count says **15** when 5 are reporting and 4 
 Filter on `archived !== true` for "current fleet" questions, and on `mergedInto == null` to avoid
 listing the same physical buoy under three names.
 
+### 4d. ⚠️ Pods **move**, and a merged history can span two water bodies (2026-09-03)
+
+Continuity assumes a chain describes one site. Read the recordings and that assumption does not
+survive. Merging is still right — the readings are the same physical instrument — but a merged
+series is **not automatically a single site's record**, and several downstream choices key on site
+rather than instrument.
+
+**The direct evidence, from `data/backend-surface/20260821T012515Z/` (read-only recordings).**
+Every claim below is re-derivable with the commands in
+[`POD_RELOCATION_EVIDENCE.md`](POD_RELOCATION_EVIDENCE.md).
+
+1. **One label reported from two states in one month.** `Marina Park` `dev:351077454591408`, a
+   1-month `/water/period` window, 703 rows:
+
+   | block | rows | span | position | conductivity |
+   |---|---:|---|---|---|
+   | `Francisville KY` | 34 | 2026-07-22 01:32 → 07-24 18:50 | 39.101 N, -84.674 | **362-391 µS/cm** |
+   | *(11-day gap — no rows)* | | 07-24 → 08-04 | | |
+   | `Newport Beach CA` | 669 | 2026-08-04 00:31 → 08-21 01:00 | 33.608 N, -117.924 | **~40,000 µS/cm** |
+
+   Same device id, ~2,000 miles apart, freshwater then seawater. The pod was evidently
+   commissioned or bench-tested inland and then shipped to its deployment. The Kentucky block also
+   carries **pH 14.00** — the top of the scale, a rail, not a measurement.
+
+2. **A pod can leave the water without leaving its location.** Still at Newport Beach, on 08-11
+   between 18:02 and 19:56, conductivity falls 3,387 → 362 across seven readings and returns.
+   Position is unchanged throughout. Servicing or a lift, not an estuary event — so
+   `best_location` alone cannot tell you whether a reading was taken in water.
+
+3. **A chain that changes water type in the registry.** `Old Woman Creek 2026` is
+   `fresh-water`; the two labels it absorbs are both registered **`salt-water`**
+   (`CWA 2025 testbed`, `CWA Old`). Old Woman Creek is a Lake Erie estuary. Either those pods
+   previously sat somewhere saline, or their `operatingEnvironment` is stale — and the field
+   selects the **entire baseline table** (conductivity 0-1,500 µS/cm freshwater versus
+   40,000-50,000 saltwater, `DEVICE_API.md` §12c).
+
+4. **Two pods 2,300 miles apart share a tide station.** `noaaTidesId` `9087057` appears on both
+   `Trinidad Island DataPod™` (City of Huntington Beach) and `CWA 2025 testbed` (Cleveland Water
+   Alliance). One of those rows is wrong, and a tide correlation drawn from it is meaningless.
+
+5. **The names themselves record relocation.** `East Anchorage DataPod™` merges into
+   `PCH Public Dock Buoy`; `Marina Park DataPod™` into `Marina Park`. These are place names, and
+   they changed at the merge.
+
+6. **Three of the four chains change organization** (§5b), which is ownership transfer on top of
+   any physical move.
+
+**Why this matters beyond authorization.**
+
+- **Baselines.** Water type is per device, not per chain. A merged series can contain both types,
+  and no single baseline table is correct for all of it.
+- **Statistics.** A mean conductivity over Marina Park's month is arithmetic over Kentucky tap
+  water and Pacific seawater. It will not look like an error — it will look like a number.
+- **Narration.** `best_location` varies *within* a label, so "readings from Newport Beach CA" can
+  be true of 95% of a window and false of the rest.
+- **Event detection.** A relocation looks exactly like a step change in every parameter at once.
+
+**What follows, and what does not.** This is **not** a reason to stop merging: the merge fields are
+explicit and unambiguous about which device ids are one instrument. It *is* a reason to treat
+"same buoy" and "same site" as different claims. The cheap guard is positional: readings already
+carry `best_lat`/`best_lon`, so a window whose fixes span more than a few kilometres, or whose
+`best_location` changes, can be flagged and disclosed the way withheld history already is. Not
+built yet — recorded here first.
+
 ---
 
 ## 5. Organizations & auth scoping

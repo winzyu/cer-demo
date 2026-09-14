@@ -1,0 +1,143 @@
+[
+  {
+    "id": "doc-harbor-pier-a",
+    "data": {
+      "label": "dev:100000000000001",
+      "name": "Harbor Pier Buoy",
+      "organization": "org-harbor-000000001",
+      "operatingEnvironment": "salt-water",
+      "nextCalibrationDate": "2026-11-30T00:00:00.000Z",
+      "notificationFrequency": "1x/day",
+      "displayed": true,
+      "color": "#2f6f8f",
+      "labels": ["dev:100000000000001", "dev:100000000000002"],
+      "thresholds": {
+        "minTemperature": "50", "maxTemperature": "80",
+        "minPH": "7.5", "maxPH": "8.5",
+        "minDissolvedOxygen": "5", "maxDissolvedOxygen": "14",
+        "minORP": "-200", "maxORP": "400",
+        "minConductivity": "40000", "maxConductivity": "50000"
+      }
+    }
+  },
+  {
+    "id": "doc-harbor-pier-duplicate",
+    "data": {
+      "label": "dev:100000000000001",
+      "name": "Harbor Pier Buoy",
+      "organization": "org-cer-0000000000001",
+      "operatingEnvironment": "salt-water",
+      "notificationFrequency": "1x/day"
+    }
+  },
+  {
+    "id": "doc-harbor-pier-old",
+    "data": {
+      "label": "dev:100000000000002",
+      "name": "Harbor Pier DataPod™",
+      "organization": "org-harbor-000000001",
+      "operatingEnvironment": "salt-water",
+      "nextCalibrationDate": { "_seconds": 1750000000, "_nanoseconds": 0 },
+      "mergedInto": "dev:100000000000001",
+      "noaaTidesId": "9410660",
+      "thresholds": {
+        "minTemperature": "0", "maxTemperature": "0",
+        "minPH": "0", "maxPH": "0",
+        "minDissolvedOxygen": "0", "maxDissolvedOxygen": "0",
+        "minORP": "0", "maxORP": "0",
+        "minConductivity": "0", "maxConductivity": "0"
+      }
+    }
+  },
+  {
+    "id": "doc-lakeside-2026",
+    "data": {
+      "label": "dev:100000000000003",
+      "name": "Lakeside Buoy 2026",
+      "organization": "org-lake-00000000001",
+      "operatingEnvironment": "fresh-water",
+      "nextCalibrationDate": "2026-10-15T00:00:00.000Z",
+      "notificationFrequency": "1x/week",
+      "labels": [
+        "dev:100000000000003",
+        "dev:100000000000004",
+        "dev:100000000000005"
+      ],
+      "thresholds": {
+        "minTemperature": "30", "maxTemperature": "100",
+        "minPH": "6.5", "maxPH": "8.5",
+        "minDissolvedOxygen": "5", "maxDissolvedOxygen": "14",
+        "minORP": "-200", "maxORP": "400",
+        "minConductivity": "0", "maxConductivity": "1500"
+      }
+    }
+  },
+  {
+    "id": "doc-lakeside-testbed",
+    "data": {
+      "label": "dev:100000000000004",
+      "name": "Lakeside Testbed",
+      "organization": "org-lake-00000000001",
+      "operatingEnvironment": "salt-water",
+      "mergedInto": "dev:100000000000003",
+      "noaaTidesId": "9087057"
+    }
+  },
+  {
+    "id": "doc-lakeside-legacy",
+    "data": {
+      "label": "dev:100000000000005",
+      "name": "Lakeside Legacy Pod",
+      "organization": "org-ghost-0000000001",
+      "operatingEnvironment": "salt-water",
+      "mergedInto": "dev:100000000000003"
+    }
+  },
+  {
+    "id": "doc-demo-public-dock",
+    "data": {
+      "label": "dev:100000000000006",
+      "name": "Demo Public Dock Buoy",
+      "organization": "org-cer-0000000000001",
+      "operatingEnvironment": "salt-water",
+      "labels": ["dev:100000000000006", "dev:100000000000007"],
+      "thresholds": {
+        "minTemperature": "45", "maxTemperature": "95",
+        "minPH": "0", "maxPH": "100",
+        "minDissolvedOxygen": "0", "maxDissolvedOxygen": "100",
+        "minORP": "0", "maxORP": "1000",
+        "minConductivity": "0", "maxConductivity": "100000"
+      }
+    }
+  },
+  {
+    "id": "doc-old-anchorage",
+    "data": {
+      "label": "dev:100000000000007",
+      "name": "Old Anchorage DataPod™",
+      "organization": "org-harbor-000000001",
+      "operatingEnvironment": "salt-water",
+      "mergedInto": "dev:100000000000006",
+      "lastCalibrationData": "2025-04-01T00:00:00.000Z"
+    }
+  },
+  {
+    "id": "doc-retired-conference",
+    "data": {
+      "label": "dev:100000000000008",
+      "name": "Retired Conference Pod",
+      "organization": "org-cer-0000000000001",
+      "operatingEnvironment": "fresh-water",
+      "archived": true
+    }
+  },
+  {
+    "id": "doc-unnamed-idle",
+    "data": {
+      "label": "dev:100000000000009",
+      "name": "dev:100000000000009",
+      "organization": "org-cer-0000000000001",
+      "operatingEnvironment": "salt-water"
+    }
+  }
+]

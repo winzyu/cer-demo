@@ -30,6 +30,7 @@
  */
 
 import { getDevices } from "./api.js";
+import { promptForAccount } from "./accountbar.js";
 
 /** One pod for a whole session, so the choice outlives a reload. */
 const STORAGE_KEY = "gilligan.pod";
@@ -280,13 +281,23 @@ function populate() {
 }
 
 /** One honest dead end: the select stays disabled and says why beside it. */
-function renderUnavailable(optionText, badgeText) {
+function renderUnavailable(optionText, badgeText, action) {
   clearOptions();
   selectEl.appendChild(placeholder(optionText));
   selectEl.value = "";
   selectEl.disabled = true;
   clearStatus();
-  if (statusEl) appendBadge(badge("muted", badgeText));
+  if (!statusEl) return;
+  appendBadge(badge("muted", badgeText));
+
+  // "Sign in" is only offered for the one failure a person here can actually fix. A timeout or
+  // an unreachable backend gets no button, because there is nothing for it to do.
+  if (action === "sign-in") {
+    const button = el("button", "btn--ghost", "Add an account");
+    button.type = "button";
+    button.onclick = () => promptForAccount();
+    statusEl.appendChild(button);
+  }
 }
 
 /* ------------------------------- failure classification ------------------------------- */
@@ -306,10 +317,12 @@ const FAILURE_TEXT = {
   caller_token_required: {
     option: "Pods unavailable",
     badge: "Pod list unavailable · sign in to see your organization's pods",
+    action: "sign-in",
   },
   device_auth_expired: {
     option: "Pods unavailable",
     badge: "Pod list unavailable · the device session expired",
+    action: "sign-in",
   },
   device_timeout: {
     option: "Pods unavailable",
@@ -386,12 +399,14 @@ export async function initPodBar(ctx) {
   clearStatus();
   if (statusEl) statusEl.setAttribute("aria-live", "polite");
 
-  selectEl.addEventListener("change", () => {
+  // Assigned rather than added: `initPodBar` re-runs on every account switch, and
+  // `addEventListener` would stack one handler per switch — each writing the stored pod again.
+  selectEl.onchange = () => {
     const value = selectEl.value;
     current = value === "" || !findDevice(value) ? null : value;
     writeStored(current);
     renderStatus();
-  });
+  };
 
   const load = context.fetchDevices || getDevices;
   let payload;
@@ -399,7 +414,7 @@ export async function initPodBar(ctx) {
     payload = await withTimeout(Promise.resolve().then(() => load()));
   } catch (err) {
     const text = classifyFailure(err);
-    renderUnavailable(text.option, text.badge);
+    renderUnavailable(text.option, text.badge, text.action);
     return;
   }
 

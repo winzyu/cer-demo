@@ -221,15 +221,21 @@ verified from the server side:
 | 102 | Temperature | **°F** | `rtdError` |
 | 72 | Turbidity | NTU (see §8) | `turbError` |
 
-**A third mapping exists in the backend and it is wrong.**
-`DevicesService.checkWaterDataAndSendAlerts` uses a shifted table — it calls 100 "pH", 97 "ORP",
-102 "Dissolved Oxygen", 98 "Conductivity", 99 "Temperature". Every key is displaced, so that
-feature compares each metric against a different metric's thresholds and emails customers alerts
-about the wrong parameter. It looks like a genuine bug rather than an alternate convention, and
-it is theirs to fix, but it matters to us twice: **do not port it**, and do not read a
-disagreement with it as ambiguity about the real codes. `test/unit/deviceApi.test.ts` pins our
-table for exactly this reason — a silent "reconciliation" would turn every reading into another
-metric while still producing plausible numbers.
+**A third mapping existed in the backend and it was wrong — now fixed upstream.**
+`DevicesService.checkWaterDataAndSendAlerts` used a shifted table — it called 100 "pH", 97 "ORP",
+102 "Dissolved Oxygen", 98 "Conductivity", 99 "Temperature". Every key was displaced, so that
+feature compared each metric against a different metric's thresholds and emailed customers alerts
+about the wrong parameter.
+
+**Fixed upstream in `62993fe`** ("Device merge via label sets; archive devices; fix and
+consolidate threshold alerting", 2026-08-19), verified on `origin/develop` 2026-08-25. The table
+now reads 99=pH, 98=ORP, 97=DO, 100=Conductivity, 102=Temperature, matching the canonical table
+above and `src/devices/metrics.ts`. Do not re-report it (`SECURITY_FINDINGS.md` item 3).
+
+It still matters to us in one way: any deployment predating that commit is emitting displaced
+alerts, so a disagreement with an older instance is not ambiguity about the real codes.
+`test/unit/deviceApi.test.ts` pins our table for exactly this reason — a silent "reconciliation"
+would turn every reading into another metric while still producing plausible numbers.
 
 ---
 
@@ -613,11 +619,12 @@ invalidates all 168 captured transcripts.
 > "If your readings are unhealthy, the DataPod™ will send you an alert that there may be a
 > pollution event taking place."
 
-That is `DevicesService.checkWaterDataAndSendAlerts` — **the function whose metric-code table is
-shifted** (§7). Finding it advertised raises the stakes on that report considerably: it is not
-dormant code, it is a feature customers are sold, and while the table is displaced every alert
-compares each metric against a different metric's thresholds. Still theirs to fix, still must not
-be ported. Worth raising explicitly rather than leaving in a document they may not read.
+That is `DevicesService.checkWaterDataAndSendAlerts` — **the function whose metric-code table was
+shifted** (§7). Finding it advertised is why that report mattered: it is not dormant code, it is a
+feature customers are sold, and while the table was displaced every alert compared each metric
+against a different metric's thresholds. **They fixed it in `62993fe` (2026-08-19)**, along with
+consolidating one email per recipient and skipping the `1000000000` sensor-failure sentinel.
+Alerts sent before that commit were wrong; alerts sent after are not.
 
 ### 14c. The existing Gilligan — parity facts for Phase N7
 

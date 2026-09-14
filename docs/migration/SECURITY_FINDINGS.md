@@ -294,5 +294,8 @@ conscious choice rather than an accident.
 **Cap mismatch:** `deviceLabels.ts` documents the Firestore `in` cap as **30**;
 `findPeriodWaterData` still slices at **10**. Match 30 when we fan out.
 
-**`user-dashboard` is unchanged** — local `main` equals `origin/main` (`ec2b283`, 2026-08-19),
-and its `origin/develop` is *behind* main. Nothing to re-read there.
+**`user-dashboard` has moved since — re-read 2026-09-04.** `main` is now `c55f65d`, two commits
+past the `ec2b283` this section was written against: `1f81f87` ("Neumorphic light theme
+conversion; expandable device pills; mobile layout fixes", 2026-08-26) and a `.gitignore` commit.
+No security surface changed — it is a repaint plus one new component — but the palette our
+`frontend/theme.css` was lifted from is now light, not dark. See `INTEGRATION_PLAN.md` §3.

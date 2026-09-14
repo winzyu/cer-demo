@@ -122,6 +122,33 @@ a:hover { text-decoration: underline; }
 .contextbar .badge { font-size: var(--fs-sm); }
 .contextbar__spacer { flex-grow: 1; }
 
+/* Account form — hidden until "Add an account…" is chosen. Same tokens as the context bar,
+   so it inverts with the theme like everything else. `hidden` is honoured by the reset. */
+.accountform {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  padding: var(--sp-3) var(--sp-7);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.accountform__field { display: inline-flex; align-items: center; gap: var(--sp-2); }
+.accountform__field--wide { flex: 1 1 22rem; }
+.accountform__input {
+  font: inherit;
+  font-size: var(--fs-md);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-3);
+  width: 100%;
+  min-width: 10rem;
+}
+.accountform__input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.accountform__hint { font-size: var(--fs-sm); color: var(--text-3); }
+
 /* ============================= transcript ============================= */
 
 #messages {

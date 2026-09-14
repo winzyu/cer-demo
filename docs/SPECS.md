@@ -755,6 +755,23 @@ only the offline scripts do). The same requirement applies to the sensor and rep
 through `POST /api/v1/chat`, which is where the identical fallback used to answer a chat question
 out of the wrong fleet.
 
+**How the demo page holds that token (2026-09-03).** `frontend/` has no sign-in of its own, so it
+keeps a set of **named accounts** in `localStorage` (`frontend/js/auth.js`, switched from the context
+bar by `frontend/js/accountbar.js`) and sends the active one on `/devices`, on `POST /chat`, and on
+the report fetch. Three properties are load-bearing rather than incidental, and
+`test/unit/frontendAuth.test.ts` pins each:
+
+- **Several accounts, not one.** A token's organization is fixed upstream at login and cannot be
+  requested, so *switching accounts is the only way to see another organization's fleet* — and the
+  only way to watch org scoping actually scope. Switching re-runs the pod load, because a stale list
+  would be the previous account's pods.
+- **Never in a URL, never served by the backend.** A query parameter writes a non-expiring bearer
+  credential into history, `Referer` headers and proxy logs; a token served to the page would put a
+  deployment credential in front of every visitor, re-creating the hole this section describes. The
+  user pastes it, including for superadmin.
+- **The report link is a `fetch`, not a navigation.** `GET /reports/:filename` requires the header and
+  a browser navigation cannot carry one, so the click fetches with the header and opens a blob URL.
+
 **Deliberately not gated on `SENSOR_TOOL`.** That flag governs whether the *model* is handed a tool;
 listing pods for a person to pick from is a different act. But an unconfigured `DEVICE_API_BASE_URL`
 returns the coded 503 rather than an empty list — an empty `devices` array must mean "this token sees
@@ -1261,7 +1278,7 @@ it is not the full list — `npx jest --listTests` is.
 | `unit/firestoreCorpus.test.ts` | the written field set matches what `loadSlice` reads, `chunks` stays out, and the document size guard |
 | `unit/firestoreVector.test.ts` | the `FieldValue.vector()` wrapper, the distance→score inversion, and the zero-result guard |
 | `unit/gradePacket.test.ts` | the blind packet's label shuffle: every arm once per fixture, deterministic across rebuilds, and **balanced across the set** — a shuffle can look right per sheet while the set leaks the mapping |
-| `unit/deviceApi.test.ts` | the metric-code table pinned against the backend's shifted third mapping, epoch-seconds decoding, the per-endpoint temperature unit, the all-zero empty-average flag, 401 and timeout handling |
+| `unit/deviceApi.test.ts` | the metric-code table pinned as canonical (it outlived the backend's shifted third mapping, fixed upstream 2026-08-19), epoch-seconds decoding, the per-endpoint temperature unit, the all-zero empty-average flag, 401 and timeout handling |
 | **N3** `unit/timeRange.test.ts` | every accepted phrase, the rejections (unparseable, `2026-02-30`, backwards spans), reference-time anchoring, the fetch-window ladder, and whether the endpoint belongs to the range |
 | **N3** `unit/aggregate.test.ts` | the six aggregations, `null`-never-`0` on an empty window, `0` kept as a real reading, faulted-sample exclusion and its count, the raw cap keeping the newest rows |
 | **N3** `unit/querySensorData.test.ts` | the tool against recorded production bodies: Celsius→Fahrenheit on `/water/period`, the OWC acronym match, duplicate-row dedupe, empty-window escalation, `/water/average` never called, the caveat notes, and every error path |

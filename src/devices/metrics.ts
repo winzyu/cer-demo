@@ -14,11 +14,12 @@ import type {
  * `clean-earth-rovers-server`, cross-checked against the dashboard's `MetricsDictionary`
  * (`user-dashboard/src/app/services/device-data.js`). The two agree.
  *
- * ⚠️ A third mapping exists in the backend's `DevicesService.checkWaterDataAndSendAlerts`, and it
- * is **wrong** — its codes are shifted (it calls 100 "pH", 97 "ORP", 102 "Dissolved Oxygen"), so
- * its threshold alerts compare each metric against another metric's limits. Do not port it, and
- * do not treat a disagreement with it as ambiguity about the real codes. Reported in
- * `docs/migration/DEVICE_API.md` §7.
+ * A third mapping used to exist in the backend's `DevicesService.checkWaterDataAndSendAlerts`,
+ * shifted one position (it called 100 "pH", 97 "ORP", 102 "Dissolved Oxygen"), so every threshold
+ * alert compared a metric against another metric's limits. **Fixed upstream** in `62993fe`
+ * (2026-08-19), verified on `origin/develop` 2026-08-25: it now reads the same codes as this
+ * table. The note stays because a deployment older than that fix is still out there, and a
+ * disagreement with one is not ambiguity about the real codes. `docs/migration/DEVICE_API.md` §7.
  */
 export const METRICS: readonly MetricDefinition[] = [
   {

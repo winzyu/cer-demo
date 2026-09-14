@@ -6,6 +6,8 @@
 // Exported so other modules can resolve a server-relative path (e.g. generate_report's
 // `report_url`) against the same backend this page is actually talking to, rather than
 // `location.origin` — the frontend's static server and the API are different origins in dev.
+import { authHeaders } from "./auth.js";
+
 export const BACKEND = (new URLSearchParams(location.search)).get("backend") || "http://localhost:8000";
 const API_PATH = "/api/v1/chat";
 
@@ -16,7 +18,11 @@ const API_PATH = "/api/v1/chat";
 export function postChat(query, history, options = {}) {
   return fetch(BACKEND + API_PATH, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    // The caller's own credential, not the deployment's. `/chat` itself is not gated — a
+    // corpus-only question answers without one — but `query_sensor_data` and `generate_report`
+    // both refuse with `caller_token_required`, so a signed-out page can still ask about
+    // documents and simply cannot read this organization's sensors.
+    headers: { "Content-Type": "application/json", ...authHeaders() },
     // `device` is omitted when no pod is selected, so the server keeps its existing behaviour
     // of asking rather than guessing between pods on opposite coasts.
     body: JSON.stringify({
@@ -32,23 +38,20 @@ export function postChat(query, history, options = {}) {
 /**
  * The pod list for the context bar. Returns { devices: [...], water_type } or throws.
  *
- * ⚠️ **This page has no token, and the endpoint now requires one.** As of 2026-08-21
- * `GET /api/v1/devices` refuses a request with no `Authorization: Bearer` header (401,
- * `code: "caller_token_required"`), so from this demo client the pod picker reports that error
- * instead of a fleet.
+ * **Requires a caller token.** As of 2026-08-21 this endpoint refuses a request with no
+ * `Authorization: Bearer` header (401, `code: "caller_token_required"`), and the fleet it returns
+ * is scoped to that token holder's organization. The header comes from `auth.js`, whose accounts
+ * the user manages in the context bar; signed out, this reports the error rather than a fleet.
  *
- * That is the fix working, not a regression to route around. The route is scoped to the caller's
- * organization; what used to make it "work" from here was `DeviceApiClient` silently falling back
- * to the deployment's `DEVICE_API_TOKEN` — a superadmin credential in practice — so this page was
- * being shown every organization's pods. Restoring the picker means giving this client a real
- * token to send, which needs a sign-in this demo does not have. Do **not** re-add it as a URL
- * parameter: that puts a non-expiring bearer credential into browser history, referrers and
- * server logs.
+ * What used to make this "work" with no credential was `DeviceApiClient` silently falling back to
+ * the deployment's `DEVICE_API_TOKEN` — superadmin in practice — so the page was shown every
+ * organization's pods. Do **not** re-add a token as a URL parameter: that puts a non-expiring
+ * bearer credential into browser history, referrers and server logs.
  *
  * The `code` is carried through below precisely so the UI can tell this apart from an outage.
  */
 export async function getDevices() {
-  const r = await fetch(BACKEND + "/api/v1/devices");
+  const r = await fetch(BACKEND + "/api/v1/devices", { headers: authHeaders() });
   if (!r.ok) {
     // Carry the server's machine-readable `code` through to the caller. Throwing a bare
     // status string forces the UI to re-derive the reason by parsing text, and loses the

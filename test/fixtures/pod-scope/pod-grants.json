@@ -1,0 +1,41 @@
+[
+  {
+    "subject": { "kind": "role", "id": "superadmin" },
+    "objects": [{ "kind": "pod", "label": "*" }],
+    "capabilities": ["read_current", "read_history", "report"],
+    "note": "Bootstrap grant — without it an empty store locks out every caller on day one.",
+    "grantedBy": "user:user-super-0000000001",
+    "grantedAt": "2026-09-01T00:00:00.000Z"
+  },
+  {
+    "subject": { "kind": "user", "id": "user-harbor-cust-01" },
+    "objects": [
+      { "kind": "chain", "label": "dev:100000000000001", "history": "same-org" }
+    ],
+    "capabilities": ["read_current", "read_history", "report"],
+    "note": "QA account — one pod plus its own predecessor. Must NOT see Lakeside or the dock.",
+    "grantedBy": "user:user-super-0000000001",
+    "grantedAt": "2026-09-01T00:00:00.000Z",
+    "expiresAt": "2026-12-01T00:00:00.000Z"
+  },
+  {
+    "subject": { "kind": "org", "id": "org-lake-00000000001" },
+    "objects": [
+      { "kind": "chain", "label": "dev:100000000000003", "history": "same-org" }
+    ],
+    "capabilities": ["read_current", "read_history", "report"],
+    "note": "Org-wide grant. same-org history reaches the testbed but not the dangling-org legacy pod.",
+    "grantedBy": "user:user-super-0000000001",
+    "grantedAt": "2026-09-01T00:00:00.000Z"
+  },
+  {
+    "subject": { "kind": "user", "id": "user-lake-cust-0001" },
+    "objects": [
+      { "kind": "pod", "label": "dev:100000000000006" }
+    ],
+    "capabilities": ["read_current"],
+    "note": "Deliberate trap: grants a pod this user's own token cannot see. Narrow-only means the intersection is empty, so it must yield nothing rather than widening access.",
+    "grantedBy": "user:user-super-0000000001",
+    "grantedAt": "2026-09-01T00:00:00.000Z"
+  }
+]

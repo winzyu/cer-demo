@@ -10,6 +10,12 @@
  * screenshot: #12182b field and Work Sans/Poppins from src/app/globals.css, #2D77A6
  * message bubble and #a89748 / #f5cd19 from the components. Do not invent new brand hues.
  *
+ * Upstream repainted on 2026-08-26 (1f81f87): the dashboard is now a LIGHT neumorphic surface,
+ * and #12182b is its ink rather than its field. Direction B (dark) is ours alone now; Direction A
+ * should track their tokens -- surf #e9edf3, surf-2 #f2f5f9, hi #ffffff, lo #c5ccd9, line #d5dbe6,
+ * mut #4e596e -- plus the AA-safe text pair they added because brand gold fails contrast on light:
+ * gold-txt #766a33, sea-txt #2b719e. Repaint plan: docs/migration/INTEGRATION_PLAN.md §3.
+ *
  * Resolution order: OS preference by default, an explicit choice wins and persists.
  * js/theme.js stamps data-theme on <html>; the media query only applies when it has not.
  */

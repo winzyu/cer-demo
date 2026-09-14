@@ -1,0 +1,46 @@
+[
+  {
+    "id": "user-super-0000000001",
+    "name": "Demo Superadmin",
+    "email": "superadmin@example.invalid",
+    "role": "superadmin",
+    "organization": "org-cer-0000000000001",
+    "account_device_list": [],
+    "customerId": "cus_demo_super"
+  },
+  {
+    "id": "user-harbor-admin-01",
+    "name": "Harbor Admin",
+    "email": "admin@harbor.example.invalid",
+    "role": "admin",
+    "organization": "org-harbor-000000001",
+    "account_device_list": [],
+    "customerId": "cus_demo_harbor"
+  },
+  {
+    "id": "user-harbor-cust-01",
+    "name": "Harbor Customer",
+    "email": "customer@harbor.example.invalid",
+    "role": "customer",
+    "organization": "org-harbor-000000001",
+    "account_device_list": ["dev:100000000000001"],
+    "customerId": "cus_demo_harbor"
+  },
+  {
+    "id": "user-lake-cust-0001",
+    "name": "Lakeside Customer",
+    "email": "customer@lakeside.example.invalid",
+    "role": "customer",
+    "organization": "org-lake-00000000001",
+    "account_device_list": [],
+    "customerId": "cus_demo_lake"
+  },
+  {
+    "id": "user-orphan-000001",
+    "name": "Orphan Account",
+    "email": "orphan@example.invalid",
+    "role": "customer",
+    "organization": "",
+    "account_device_list": []
+  }
+]

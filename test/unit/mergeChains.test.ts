@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import { mergeByTimestamp, resolveChain } from "../../src/devices/mergeChains";
 import { QuerySensorData } from "../../src/tools/querySensorData";
@@ -230,5 +232,59 @@ describe("query_sensor_data over a merge chain", () => {
     }) as { note: string };
 
     expect(result.note).toContain(`merged into ${SURVIVOR}`);
+  });
+});
+
+/**
+ * The dummy fleet in `test/fixtures/pod-scope/` stands in for a narrowed account, which the
+ * superadmin `DEVICE_API_TOKEN` cannot impersonate (see that directory's README). These assert
+ * the fixture still encodes the live hazards it was built from — a fixture that quietly drifts
+ * into a tidy registry stops testing anything.
+ */
+describe("pod-scope fixture fleet", () => {
+  const FIXTURE = path.join(__dirname, "../fixtures/pod-scope/devices.json");
+  const raw = JSON.parse(fs.readFileSync(FIXTURE, "utf8")) as Array<{
+    id: string; data: Record<string, unknown>;
+  }>;
+
+  const fleet: DeviceSummary[] = raw.map((entry) => ({
+    id: entry.id,
+    name: entry.data.name as string | undefined,
+    label: entry.data.label as string | undefined,
+    organization: entry.data.organization as string | undefined,
+    operatingEnvironment: entry.data.operatingEnvironment as string | undefined,
+    raw: entry.data,
+  }));
+
+  const by = (label: string): DeviceSummary => fleet
+    .find((device) => device.label === label) as DeviceSummary;
+
+  it("merges a same-organization chain", () => {
+    const chain = resolveChain(by("dev:100000000000001"), fleet);
+    expect(chain.labels).toEqual(["dev:100000000000001", "dev:100000000000002"]);
+    expect(chain.withheld).toEqual([]);
+  });
+
+  it("withholds the dangling-organization leg of a three-label chain", () => {
+    const chain = resolveChain(by("dev:100000000000003"), fleet);
+    expect(chain.labels).toEqual(["dev:100000000000003", "dev:100000000000004"]);
+    expect(chain.withheld.map((entry) => entry.label)).toEqual(["dev:100000000000005"]);
+  });
+
+  it("withholds a cross-organization predecessor", () => {
+    const chain = resolveChain(by("dev:100000000000006"), fleet);
+    expect(chain.labels).toEqual(["dev:100000000000006"]);
+    expect(chain.withheld[0].reason).toMatch(/different organization/);
+  });
+
+  it("still carries the duplicate registry row a label-keyed resolver must collapse", () => {
+    const duplicates = fleet.filter((device) => device.label === "dev:100000000000001");
+    expect(duplicates).toHaveLength(2);
+    expect(new Set(duplicates.map((entry) => entry.organization)).size).toBe(2);
+  });
+
+  it("still carries a chain whose predecessor is registered as a different water type", () => {
+    expect(by("dev:100000000000003").operatingEnvironment).toBe("fresh-water");
+    expect(by("dev:100000000000004").operatingEnvironment).toBe("salt-water");
   });
 });

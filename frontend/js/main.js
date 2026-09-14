@@ -22,6 +22,7 @@ import { renderChart } from "./chart.js";             // WS-4 · series chart
 import { renderReport } from "./report.js";           // generate_report · report link
 import { initTheme } from "./theme.js";               // light / dark toggle
 import { initPodBar, selectedDevice } from "./podbar.js"; // Wave 2 · pod selector + status
+import { initAccountBar } from "./accountbar.js";     // caller credential · org scoping
 
 const messagesEl = document.getElementById("messages");
 const inputEl = document.getElementById("input");
@@ -36,10 +37,28 @@ let inflight = null;  // AbortController for the request in flight, or null
 
 initRender(messagesEl);
 initTheme(document.getElementById("theme-toggle"));
-initPodBar({
+const podBarContext = {
   select: document.getElementById("pod-select"),
   status: document.getElementById("pod-status"),
+};
+
+// Order matters: the account bar is wired first so the pod load below already carries whichever
+// credential was active last session. Switching accounts re-runs that load, because the fleet
+// `/devices` returns is scoped to the token holder's organization — a different account is a
+// different fleet, and a stale list would be the previous organization's pods.
+initAccountBar({
+  select: document.getElementById("account-select"),
+  panel: document.getElementById("account-panel"),
+  name: document.getElementById("account-name"),
+  token: document.getElementById("account-token"),
+  save: document.getElementById("account-save"),
+  cancel: document.getElementById("account-cancel"),
+  forget: document.getElementById("account-forget"),
+  hint: document.getElementById("account-hint"),
+  onChange: () => { initPodBar(podBarContext); },
 });
+
+initPodBar(podBarContext);
 
 async function send(msg) {
   // One turn at a time. Disabling #send is not enough on its own: the composer's Enter handler

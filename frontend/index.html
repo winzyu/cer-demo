@@ -63,6 +63,38 @@
     <!-- podbar.js renders status / mismatch badges here -->
     <div id="pod-status"></div>
     <span class="contextbar__spacer"></span>
+
+    <!--
+      Account switcher (js/accountbar.js). The API scopes every pod and every reading to the
+      caller's organization, and a token's organization is fixed upstream at login — so
+      switching accounts is the only way to look at a different organization's fleet.
+      Tokens live in localStorage, never in the URL: they are minted without an expiry.
+    -->
+    <label class="podpicker" for="account-select">
+      <span class="podpicker__label">Account</span>
+      <select class="podpicker__select" id="account-select">
+        <option value="">Signed out</option>
+      </select>
+    </label>
+    <button type="button" class="btn--ghost" id="account-forget">Forget</button>
+  </div>
+
+  <!-- Hidden until "Add an account…" is chosen, or the pod bar's signed-out badge is clicked. -->
+  <div class="accountform" id="account-panel" hidden>
+    <label class="accountform__field" for="account-name">
+      <span class="podpicker__label">Label</span>
+      <input class="accountform__input" id="account-name" type="text"
+             placeholder="e.g. Superadmin, or Harbor QA" autocomplete="off">
+    </label>
+    <label class="accountform__field accountform__field--wide" for="account-token">
+      <span class="podpicker__label">Bearer token</span>
+      <input class="accountform__input" id="account-token" type="password"
+             placeholder="Paste the JWT — dashboard DevTools → Local Storage → token"
+             autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="btn--ghost" id="account-save">Save &amp; use</button>
+    <button type="button" class="btn--ghost" id="account-cancel">Cancel</button>
+    <span class="accountform__hint" id="account-hint"></span>
   </div>
 
   <!--

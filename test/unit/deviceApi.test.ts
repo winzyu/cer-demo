@@ -36,8 +36,9 @@ const client = (fetchImpl: FetchLike, token = "test-token"): DeviceApiClient => 
 );
 
 describe("metric codes", () => {
-  // Pinned deliberately. The backend carries a THIRD, shifted mapping in
-  // DevicesService.checkWaterDataAndSendAlerts (100="pH", 97="ORP", 102="Dissolved Oxygen").
+  // Pinned deliberately. The backend once carried a THIRD, shifted mapping in
+  // DevicesService.checkWaterDataAndSendAlerts (100="pH", 97="ORP", 102="Dissolved Oxygen"),
+  // fixed upstream 2026-08-19 (62993fe). Any deployment older than that still emits it.
   // If anyone ever "reconciles" our table against that one, every reading silently becomes
   // another metric — a failure that produces plausible numbers, not an error.
   it("match the backend's WaterAnalyticsService mapping", () => {
