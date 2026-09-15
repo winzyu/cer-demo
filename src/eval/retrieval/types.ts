@@ -35,6 +35,13 @@ export interface RelevantChunk {
   grade: RelevanceGrade;
   /** Verbatim snippet from the chunk justifying the grade. Keeps a label auditable. */
   evidence: string;
+  /**
+   * The human locator the claim was resolved from (section, table, quoted line), so a re-chunk
+   * can re-resolve the label rather than void it. Written by `scripts/resolveRetrievalLabels.ts`.
+   */
+  locator?: string;
+  /** Named claim ids that resolved to this chunk, for traceability back to the claim inventory. */
+  claimIds?: string[];
 }
 
 export interface LabelledQuery {
