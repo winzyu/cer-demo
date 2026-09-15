@@ -1,0 +1,59 @@
+{
+  "fixtureId": "refusal-temperature-harm-threshold",
+  "fixtureClass": "refusal",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-14T09:31:57.251Z",
+    "gitSha": "cdcbac1feb13af89a0fb844f71bfe13b6ed60df1",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8010/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "We had a hot stretch and the creek sat around 24 degrees all week. Is that actually too warm for the fish? I need to know what number to flag on.",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. I’m missing a document‑based temperature guideline for fish.",
+      "context": [],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 776,
+        "completionTokens": 266,
+        "totalTokens": 1042,
+        "cachedPromptTokens": 739
+      },
+      "timing": {
+        "ttftMs": 1210,
+        "wallMs": 1400
+      }
+    },
+    {
+      "index": 1,
+      "question": "If I want to put \"too warm\" in the report, is there anything in what we've got that I can point at, or am I going to the state for that?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. I don’t have a temperature guideline document to cite.",
+      "context": [],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 862,
+        "completionTokens": 169,
+        "totalTokens": 1031,
+        "cachedPromptTokens": 775
+      },
+      "timing": {
+        "ttftMs": 910,
+        "wallMs": 1069
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 1638,
+    "cachedPromptTokens": 1514,
+    "completionTokens": 435,
+    "wallMs": 2469
+  }
+}

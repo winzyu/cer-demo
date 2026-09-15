@@ -1,0 +1,59 @@
+{
+  "fixtureId": "refusal-buffering-capacity-not-measured",
+  "fixtureClass": "refusal",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-14T09:31:57.251Z",
+    "gitSha": "cdcbac1feb13af89a0fb844f71bfe13b6ed60df1",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8010/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "Before we call a pH drop at the mill creek a real event, I want to know how much acid that creek can soak up before the pH actually moves. Can our pods tell me that?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. I lack any information on the creek’s buffering capacity or acid neutralization potential.",
+      "context": [],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 782,
+        "completionTokens": 277,
+        "totalTokens": 1059,
+        "cachedPromptTokens": 736
+      },
+      "timing": {
+        "ttftMs": 1146,
+        "wallMs": 1296
+      }
+    },
+    {
+      "index": 1,
+      "question": "Those pods are already logging pH and conductivity every fifteen minutes. Is there really no way to work it out from those two?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. I lack any document or data linking pH and conductivity to the creek’s buffering capacity.",
+      "context": [],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 862,
+        "completionTokens": 272,
+        "totalTokens": 1134,
+        "cachedPromptTokens": 781
+      },
+      "timing": {
+        "ttftMs": 1061,
+        "wallMs": 1221
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 1644,
+    "cachedPromptTokens": 1517,
+    "completionTokens": 549,
+    "wallMs": 2517
+  }
+}

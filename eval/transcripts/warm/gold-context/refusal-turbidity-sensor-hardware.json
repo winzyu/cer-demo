@@ -1,0 +1,59 @@
+{
+  "fixtureId": "refusal-turbidity-sensor-hardware",
+  "fixtureClass": "refusal",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-14T09:31:57.251Z",
+    "gitSha": "cdcbac1feb13af89a0fb844f71bfe13b6ed60df1",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8010/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "I have depth ratings written down for four of our sensors but nothing for the one that reads clarity. How deep can we hang that one?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water‑quality documents, and I don't have enough information to answer that. I’m missing the specific document excerpt that provides the depth rating for the turbidity (clarity) sensor.",
+      "context": [],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 769,
+        "completionTokens": 232,
+        "totalTokens": 1001,
+        "cachedPromptTokens": 738
+      },
+      "timing": {
+        "ttftMs": 1273,
+        "wallMs": 1508
+      }
+    },
+    {
+      "index": 1,
+      "question": "Then what unit is that reading even in? The display just hands me a number with nothing next to it.",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water‑quality documents, and I don't have enough information to answer that. I need the specific document excerpt that states the unit used for the turbidity sensor.",
+      "context": [],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 852,
+        "completionTokens": 317,
+        "totalTokens": 1169,
+        "cachedPromptTokens": 768
+      },
+      "timing": {
+        "ttftMs": 1587,
+        "wallMs": 1767
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 1621,
+    "cachedPromptTokens": 1506,
+    "completionTokens": 549,
+    "wallMs": 3275
+  }
+}

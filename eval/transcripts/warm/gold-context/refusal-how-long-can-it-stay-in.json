@@ -1,0 +1,59 @@
+{
+  "fixtureId": "refusal-how-long-can-it-stay-in",
+  "fixtureClass": "refusal",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-14T09:31:57.251Z",
+    "gitSha": "cdcbac1feb13af89a0fb844f71bfe13b6ed60df1",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8010/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "We want to drop a pod in the creek and leave it there. Nobody is going out to it unless we put it on the calendar. Is there a limit on how long it can sit in the water before the readings stop being any good?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. I need documentation on the sensor’s deployment time limits.",
+      "context": [],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 790,
+        "completionTokens": 206,
+        "totalTokens": 996,
+        "cachedPromptTokens": 738
+      },
+      "timing": {
+        "ttftMs": 810,
+        "wallMs": 936
+      }
+    },
+    {
+      "index": 1,
+      "question": "Say we leave it a month anyway. When we pull it out, how much of that month am I allowed to keep?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. I need information about data retention policies for the sensor.",
+      "context": [],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 864,
+        "completionTokens": 98,
+        "totalTokens": 962,
+        "cachedPromptTokens": 736
+      },
+      "timing": {
+        "ttftMs": 449,
+        "wallMs": 555
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 1654,
+    "cachedPromptTokens": 1474,
+    "completionTokens": 304,
+    "wallMs": 1491
+  }
+}

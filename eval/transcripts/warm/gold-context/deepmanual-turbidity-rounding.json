@@ -1,0 +1,81 @@
+{
+  "fixtureId": "deepmanual-turbidity-rounding",
+  "fixtureClass": "deep-in-manual",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-14T09:31:57.251Z",
+    "gitSha": "cdcbac1feb13af89a0fb844f71bfe13b6ed60df1",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8010/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "The turbidity meter showed 0.42 at one site and 63.7 at another. How many decimal places do we actually keep when we log those?",
+      "answer": "For turbidity values below 1 NTU the reporting guideline is to round to the nearest 0.05 unit, which requires two decimal places【2†\"0–<1 0.05 0.05 0.05 0.05 0.01\"】.  \nFor values from 40 to < 100 NTU the guideline is to round to the nearest 1 unit, so no decimal places are kept【2†\"40–<100 1 1 5 5 N/A\"】.  \n\nTherefore, you would log 0.42 with two decimal places (rounded to the nearest 0.05) and 63.7 as an integer (rounded to the nearest 1).",
+      "context": [
+        {
+          "id": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "text": " from inconsistencies in methods among different\noperators. Split one water sample into two or more subsamples\nusing a churn splitter. Have different operators prepare cuvettes\nand measure turbidity on the subsamples. Consider submitting\nsamples to a laboratory for analysis. Calculate bias as the\npercent difference between the turbidity readings obtained by\nthe different operators.\n\n-- 49 of 55 --Turbidity, Version 2.1 (9/2005) \tU.S. Geological Survey TWRI Book 9\n50—TBY\n6.7.5 \tDATA REPORTING AND\nINTERPRETATION\nTo minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4, with the\nmethod codes describing the specific instrument used. Parameter codes\nassociated with instrument design and reporting units, and method codes\nassociated with individual instruments are detailed in the Excel\nspreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls (accessed\n6/15/2012). Method codes are used with these data to provide information that\ncan be used to understand potential differences in turbidity data.\nIn some cases, instruments are designed to operate in different modes (for\nexample ratiometric or non-ratiometric). Such instruments are listed multiple\ntimes in the spreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls\n(accessed 9/30/2005), corresponding to different parameter codes to\ndistinguish their different settings. Be careful to document all instrument\nsettings and dilution factors, and use parameter codes and method codes\nappropriate for instrument settings. For data storage in NWIS, samples with\nnoticeable sand or coarse materials that were measured by static techniques\nmust be qualified as Estimates with an “E” in the Remark code, and diluted\nsamples must be entered with a “d” in the Value Qualifier Code field.\nX \tUSGS personnel: Do not use parameter codes P00076 and P61028.\nThese codes are reserved for historical turbidity data for which an\nequipment method cannot be assigned.\nGuidelines for reporting turbidity measurements to the nearest acceptable\ndigit according to EPA Method 180.1, GLI Method 2, ASTM, and ISO 7027\nmethods are listed in table 6.7–6. The indicated values represent the least\nsignificant digit in the measurement. Reported turbidity values should be\nrounded to this level of precision. For example, a value of 43.12 units\ndisplayed by an instrument would be reported as 45 under USEPA guidelines,\nbut as 43 under ASTM guidelines. In contrast, a value of 13.42 units displayed\nby an instrument would be reported as 13 under all the guidelines. For most\napplications, the USGS will conform to ASTM guidelines unless data were\nspecifically collected for drinking-water compliance (using either EPA\nMethod 180.1, GLI Method 2, or ISO 7027).\n\n-- 50 of 55 --",
+          "source": "https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf"
+        },
+        {
+          "id": "usgs-nfm-a6.7-turbidity.pdf__ac8bab5fcc79",
+          "text": "ld be reported as 45 under USEPA guidelines,\nbut as 43 under ASTM guidelines. In contrast, a value of 13.42 units displayed\nby an instrument would be reported as 13 under all the guidelines. For most\napplications, the USGS will conform to ASTM guidelines unless data were\nspecifically collected for drinking-water compliance (using either EPA\nMethod 180.1, GLI Method 2, or ISO 7027).\n\n-- 50 of 55 --Chapter A6. Field Measurements \tTurbidity, Version 2.1 (9/2005)\nTBY—51\nTraditionally, the USGS has censored data below 2 NTU as not-\ndetected (less than 2). However, improvements in instrument\ncapabilities have resulted in greater reliability at this low end.\nBased on input from instrument manufacturers, ASTM has chosen\nto report data below 1 to the nearest 0.05 unit, and to the nearest\n0.1 for data ranging between 1 and 10. Because turbidities in this\nrange should be free of appreciable color or settleable materials,\nstatic methods should provide reasonable comparisons with\ndynamic methods. Before publishing such data, study personnel\nshould consider submitting samples of low-turbidity water to the\nNWQL or other laboratory for confirmation of low-end resolution\nand reproducibility.\nAdditionally, the high end of an instrument’s range should be\ndetermined. Data greater than this value should be censored as\ngreater than the maximum value. For dynamic sensors on a\nsubmersible sonde, cover the optics with a piece of lint-free cloth\nand record the resulting turbidity. Confirm this value with the\nmanufacturer’s recommendations. Qualify data having the\nmaximum value by showing a “>” remark code in NWIS.\nTable 6.7–6. Guidelines for reporting turbidity units\n[For ASTM and USGS measurements, refer to table 6.7–3 for reporting units based on\ninstrument design. Abbreviations: USGS, U.S. Geological Survey; ASTM, ASTM\nInternational; EPA 180.1, U.S. Environmental Protection Agency method 180.1 (1993);\nGLI, Great Lakes Instruments; ISO 7027, International Organization for Standardization\nmethod 7027 (1999); NTU, nephelometric turbidity units; FNMU, Formazin Nephelometric\nMultibeam Units; FNU, Formazin Nephelometric Units; N/A, not applicable;<, less than; >,\nequal to or greater than]\nTurbidity\nReading USGS \tASTM EPA 180.1\n(NTU)\nGLI Method 2\n(FNMU)\nISO 7027\n(FNU)\n0–<1 \t0.05 \t0.05 \t0.05 \t0.05 \t0.01\n1–<10 \t.1 \t.1 \t.1 \t.1 \t.1\n10–<40 \t1 \t1 \t1 \t1 \t1\n40–<100 \t1 \t1 \t5 \t5 \tN/A\n100–<400 \t10 \t10 \t10 \t10 \tN/A\n400–<1,000 \t10 \t10 \t50 \t50 \tN/A\n>1,000 \t50 \t50 \t100 \t100 \tN/A\n\n-- 51 of 55 --",
+          "source": "https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf"
+        }
+      ],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 2263,
+        "completionTokens": 547,
+        "totalTokens": 2810,
+        "cachedPromptTokens": 795
+      },
+      "timing": {
+        "ttftMs": 1735,
+        "wallMs": 2287
+      }
+    },
+    {
+      "index": 1,
+      "question": "One of those sites feeds a drinking-water intake and that data goes out under EPA Method 180.1. Does the same rounding apply there?",
+      "answer": "Yes. When the data are reported under EPA Method 180.1 you follow the EPA rounding rules shown in the same table—e.g., round to the nearest 0.05 unit for values < 1 NTU and to the nearest 1 unit for the 40–<100 NTU range【2†\"0–<1 0.05 0.05 0.05 0.05 0.01\"】【2†\"40–<100 1 1 5 5 N/A\"】. The guidance notes that USGS uses ASTM rounding “unless data were specifically collected for drinking‑water compliance (using either EPA Method 180.1, GLI Method 2, or ISO 7027)”【1†\"unless data were specifically collected for drinking-water compliance (using either EPA Method 180.1, GLI Method 2, or ISO 7027)\"】.",
+      "context": [
+        {
+          "id": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "text": " from inconsistencies in methods among different\noperators. Split one water sample into two or more subsamples\nusing a churn splitter. Have different operators prepare cuvettes\nand measure turbidity on the subsamples. Consider submitting\nsamples to a laboratory for analysis. Calculate bias as the\npercent difference between the turbidity readings obtained by\nthe different operators.\n\n-- 49 of 55 --Turbidity, Version 2.1 (9/2005) \tU.S. Geological Survey TWRI Book 9\n50—TBY\n6.7.5 \tDATA REPORTING AND\nINTERPRETATION\nTo minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4, with the\nmethod codes describing the specific instrument used. Parameter codes\nassociated with instrument design and reporting units, and method codes\nassociated with individual instruments are detailed in the Excel\nspreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls (accessed\n6/15/2012). Method codes are used with these data to provide information that\ncan be used to understand potential differences in turbidity data.\nIn some cases, instruments are designed to operate in different modes (for\nexample ratiometric or non-ratiometric). Such instruments are listed multiple\ntimes in the spreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls\n(accessed 9/30/2005), corresponding to different parameter codes to\ndistinguish their different settings. Be careful to document all instrument\nsettings and dilution factors, and use parameter codes and method codes\nappropriate for instrument settings. For data storage in NWIS, samples with\nnoticeable sand or coarse materials that were measured by static techniques\nmust be qualified as Estimates with an “E” in the Remark code, and diluted\nsamples must be entered with a “d” in the Value Qualifier Code field.\nX \tUSGS personnel: Do not use parameter codes P00076 and P61028.\nThese codes are reserved for historical turbidity data for which an\nequipment method cannot be assigned.\nGuidelines for reporting turbidity measurements to the nearest acceptable\ndigit according to EPA Method 180.1, GLI Method 2, ASTM, and ISO 7027\nmethods are listed in table 6.7–6. The indicated values represent the least\nsignificant digit in the measurement. Reported turbidity values should be\nrounded to this level of precision. For example, a value of 43.12 units\ndisplayed by an instrument would be reported as 45 under USEPA guidelines,\nbut as 43 under ASTM guidelines. In contrast, a value of 13.42 units displayed\nby an instrument would be reported as 13 under all the guidelines. For most\napplications, the USGS will conform to ASTM guidelines unless data were\nspecifically collected for drinking-water compliance (using either EPA\nMethod 180.1, GLI Method 2, or ISO 7027).\n\n-- 50 of 55 --",
+          "source": "https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf"
+        },
+        {
+          "id": "usgs-nfm-a6.7-turbidity.pdf__ac8bab5fcc79",
+          "text": "ld be reported as 45 under USEPA guidelines,\nbut as 43 under ASTM guidelines. In contrast, a value of 13.42 units displayed\nby an instrument would be reported as 13 under all the guidelines. For most\napplications, the USGS will conform to ASTM guidelines unless data were\nspecifically collected for drinking-water compliance (using either EPA\nMethod 180.1, GLI Method 2, or ISO 7027).\n\n-- 50 of 55 --Chapter A6. Field Measurements \tTurbidity, Version 2.1 (9/2005)\nTBY—51\nTraditionally, the USGS has censored data below 2 NTU as not-\ndetected (less than 2). However, improvements in instrument\ncapabilities have resulted in greater reliability at this low end.\nBased on input from instrument manufacturers, ASTM has chosen\nto report data below 1 to the nearest 0.05 unit, and to the nearest\n0.1 for data ranging between 1 and 10. Because turbidities in this\nrange should be free of appreciable color or settleable materials,\nstatic methods should provide reasonable comparisons with\ndynamic methods. Before publishing such data, study personnel\nshould consider submitting samples of low-turbidity water to the\nNWQL or other laboratory for confirmation of low-end resolution\nand reproducibility.\nAdditionally, the high end of an instrument’s range should be\ndetermined. Data greater than this value should be censored as\ngreater than the maximum value. For dynamic sensors on a\nsubmersible sonde, cover the optics with a piece of lint-free cloth\nand record the resulting turbidity. Confirm this value with the\nmanufacturer’s recommendations. Qualify data having the\nmaximum value by showing a “>” remark code in NWIS.\nTable 6.7–6. Guidelines for reporting turbidity units\n[For ASTM and USGS measurements, refer to table 6.7–3 for reporting units based on\ninstrument design. Abbreviations: USGS, U.S. Geological Survey; ASTM, ASTM\nInternational; EPA 180.1, U.S. Environmental Protection Agency method 180.1 (1993);\nGLI, Great Lakes Instruments; ISO 7027, International Organization for Standardization\nmethod 7027 (1999); NTU, nephelometric turbidity units; FNMU, Formazin Nephelometric\nMultibeam Units; FNU, Formazin Nephelometric Units; N/A, not applicable;<, less than; >,\nequal to or greater than]\nTurbidity\nReading USGS \tASTM EPA 180.1\n(NTU)\nGLI Method 2\n(FNMU)\nISO 7027\n(FNU)\n0–<1 \t0.05 \t0.05 \t0.05 \t0.05 \t0.01\n1–<10 \t.1 \t.1 \t.1 \t.1 \t.1\n10–<40 \t1 \t1 \t1 \t1 \t1\n40–<100 \t1 \t1 \t5 \t5 \tN/A\n100–<400 \t10 \t10 \t10 \t10 \tN/A\n400–<1,000 \t10 \t10 \t50 \t50 \tN/A\n>1,000 \t50 \t50 \t100 \t100 \tN/A\n\n-- 51 of 55 --",
+          "source": "https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf"
+        }
+      ],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 2461,
+        "completionTokens": 563,
+        "totalTokens": 3024,
+        "cachedPromptTokens": 2262
+      },
+      "timing": {
+        "ttftMs": 1723,
+        "wallMs": 2477
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 4724,
+    "cachedPromptTokens": 3057,
+    "completionTokens": 1110,
+    "wallMs": 4764
+  }
+}
