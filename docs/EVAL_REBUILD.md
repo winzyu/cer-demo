@@ -682,7 +682,7 @@ completely meaningless dataset.
 - `npm run typecheck` and `npx eslint src --ext .ts` are cheap — use `npx eslint`, not
   `npm run lint` (that script writes files).
 - **Pass both rules to any agent you dispatch.**
-- Write only inside this repository. `../user-dashboard` and `../backend` are read-only references.
+- Write only inside this repository. `../user-dashboard` and `../clean-earth-rovers-server` are read-only references.
 - **Ask before spending.** Captures and judge passes cost real money.
 
 ---

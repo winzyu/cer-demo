@@ -36,7 +36,7 @@ does not fit the repo is an under-specified brief. Every task prompt carries:
    prompt; the device API is production with no QA mirror; `test/setupEnv.ts` blocks `.env` in
    jest).
 6. **House rules**, verbatim:
-   - Write only inside cer-demo; `../user-dashboard` and `../backend` are read-only.
+   - Write only inside cer-demo; `../user-dashboard` and `../clean-earth-rovers-server` are read-only.
    - Run no git commands.
    - Never run the full jest suite. Run only the suites for what you touched
      (`npx jest test/unit/foo.test.ts`, or `npx jest -t "<name>"`), and report which ones.

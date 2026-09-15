@@ -309,7 +309,7 @@ export const authenticateToken = (req: AuthenticatedRequest, _res, next): void =
 > **Recommendation: emit ONE stable pair — `{ token, user }`** (the shape the client normalizes *to*).
 > It's the cleanest and drops three legacy aliases. Only keep an `accessToken`/`access_token` alias if
 > a not-yet-updated client build still needs it, and mark it legacy. Confirm the signing secret/claims
-> against `../backend` before finalizing.
+> against `../clean-earth-rovers-server` before finalizing.
 
 ---
 
@@ -319,7 +319,7 @@ export const authenticateToken = (req: AuthenticatedRequest, _res, next): void =
 
 - Read `process.env` through **small getter functions** with sensible fallback defaults; load via
   `import "dotenv/config"`. **No config-schema library** (neither repo uses zod/convict/joi for
-  config, and introducing one would be new — check `../backend` first if you want it).
+  config, and introducing one would be new — check `../clean-earth-rovers-server` first if you want it).
 - `NEXT_PUBLIC_`-style client/server env split is a frontend concern; for the backend just keep
   server-only vars unprefixed.
 
@@ -341,7 +341,7 @@ family, mail creds.
 - Ad-hoc diagnostics: **`console.*`** — *both* repos use it, no structured logger (no pino/winston).
   Prefix with a bracketed subsystem tag, e.g. `[DB Config] …` (server style).
 - A structured logger would be a **new** practice for this team — reasonable, but flag it as a
-  deviation and check `../backend` first.
+  deviation and check `../clean-earth-rovers-server` first.
 
 ---
 
@@ -429,6 +429,6 @@ Target **Google Cloud Run**, Docker multi-stage (`node:18` → `node:18-alpine`)
 12. Jest + supertest, `unit/`+`integration/` mirroring `src/`; clean jest config. *(server)*
 13. Class + constructor-DI for controllers/services/repositories. *(server; #5)*
 
-*Open items to confirm against `../backend` before finalizing: JWT signing secret/claims, whether a
+*Open items to confirm against `../clean-earth-rovers-server` before finalizing: JWT signing secret/claims, whether a
 config-schema or structured logger is already in use, and the exact success envelope the currently
 deployed dashboard requires per endpoint.*

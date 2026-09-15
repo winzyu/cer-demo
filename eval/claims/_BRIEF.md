@@ -10,7 +10,7 @@ wrong task.
 - **Never run the test suite**, full or partial. You are not changing code.
 - **Spend no money.** No API calls, no network.
 - **Write only inside the cer-demo repo**, and only to the output path named below.
-  `../user-dashboard` and `../backend` are read-only reference repos — do not touch them.
+  `../user-dashboard` and `../clean-earth-rovers-server` are read-only reference repos — do not touch them.
 
 ## Your input
 

@@ -29,7 +29,7 @@
     ],
     "deny": [
       "Edit(//mnt/c/Users/winsy/OneDrive/Documents/work_and_school/coding/project/aic/clean-earth-rovers/repo/user-dashboard/**)",
-      "Edit(//mnt/c/Users/winsy/OneDrive/Documents/work_and_school/coding/project/aic/clean-earth-rovers/repo/backend/**)",
+      "Edit(//mnt/c/Users/winsy/OneDrive/Documents/work_and_school/coding/project/aic/clean-earth-rovers/repo/clean-earth-rovers-server/**)",
       "Read(//home/winsy/.config/gcloud/**)",
       "Read(./serviceAccountKey.json)"
     ],
