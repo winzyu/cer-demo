@@ -210,19 +210,38 @@ describe("detectEvents — pattern and baseline exclusions", () => {
 });
 
 describe("detectEvents — algal bloom", () => {
-  it("flags a DO series tagged diel that swings above and below baseline within one day", () => {
-    const baseline = fixedBaseline("dissolved_oxygen", "Dissolved Oxygen (mg/L)", "mg/L", 6, 11);
-    // Supersaturated at midday, crashed pre-dawn -- both inside the same calendar day.
-    const series: Array<[number, number]> = [
+  // Supersaturated at midday, crashed pre-dawn -- both inside the same calendar day.
+  const bloomDo = (): ParameterStats => statsFor(
+    fixedBaseline("dissolved_oxygen", "Dissolved Oxygen (mg/L)", "mg/L", 6, 11),
+    [
       [at(0), 7.0],
       [at(4), 4.5], // pre-dawn crash, below baselineMin
       [at(12), 13.0], // midday supersaturation, above baselineMax
       [at(20), 7.5],
-    ];
-    const doStats = statsFor(baseline, series, "diel");
+    ],
+    "diel",
+  );
 
-    const events = detectEvents(report([doStats]));
-    expect(events.some((e) => e.type === "Algal bloom")).toBe(true);
+  it("flags a diel DO swing above and below baseline within one day when pH confirms it", () => {
+    const ph = statsFor(
+      fixedBaseline("ph", "pH", "", 6.5, 8.5),
+      [[at(0), 7.5], [at(4), 7.0], [at(12), 9.2], [at(20), 7.6]],
+      "diel",
+    );
+
+    const bloom = detectEvents(report([bloomDo(), ph])).find((e) => e.type === "Algal bloom");
+    expect(bloom).toBeDefined();
+    expect(bloom!.confidence).toBeGreaterThanOrEqual(CONFIDENCE_FLOOR_FOR_CLASSIFICATION);
+  });
+
+  it("downgrades an unconfirmed diel DO swing to Inconclusive, like every other below-floor type", () => {
+    // DO alone matches the bloom signature at 0.45, below the floor -- the same floor that turns
+    // an isolated conductivity rise into Inconclusive instead of "Saltwater intrusion".
+    const events = detectEvents(report([bloomDo()]));
+    expect(events).toHaveLength(1);
+    expect(events[0].type).toBe("Inconclusive");
+    expect(events[0].confidence).toBeLessThan(CONFIDENCE_FLOOR_FOR_CLASSIFICATION);
+    expect(events[0].interpretation).toContain("downgraded to");
   });
 
   it("does not run the algal-bloom check on a DO series that isn't tagged diel", () => {

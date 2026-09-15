@@ -276,6 +276,27 @@ const classify = (moved: Partial<Record<string, Movement>>): ClassifyResult => {
   };
 };
 
+/**
+ * The one gate between a signature match and a named cause. Every detector's classification
+ * passes through here, so no event type -- threshold-window or algal bloom -- can assert a cause
+ * on evidence the report itself calls too weak to name.
+ */
+const applyConfidenceFloor = (
+  type: EventType,
+  confidence: number,
+  rationale: string,
+): { type: EventType; rationale: string } => {
+  if (confidence >= CONFIDENCE_FLOOR_FOR_CLASSIFICATION || type === "Inconclusive") {
+    return { type, rationale };
+  }
+  return {
+    type: "Inconclusive",
+    rationale: `${rationale} Confidence (${Math.round(confidence * 100)}%) falls short of the floor for `
+      + `asserting '${type}' outright, so the classification below is downgraded to `
+      + "Inconclusive pending confirmation.",
+  };
+};
+
 const fmtTs = (ms: number): string => new Date(ms).toISOString();
 
 /**
@@ -328,18 +349,10 @@ const detectAlgalBloom = (report: ReportInput): WQEvent | null => {
   const ph = byKey.get("ph");
   const phConfirms = Boolean(ph && ph.pattern === "diel" && ph.max > ph.baseline.baselineMax);
   const confidence = phConfirms ? 0.6 : 0.45;
-  return {
-    type: "Algal bloom",
-    windowStartMs: dayStart,
-    windowEndMs: dayEnd,
-    severity: "Moderate",
-    parameterMovements:
-      `Dissolved oxygen swung from ${minV.toFixed(2)} to `
-      + `${withUnit(maxV.toFixed(2), b.unit)} within a single day (baseline `
-      + `${withUnit(`${b.baselineMin}-${b.baselineMax}`, b.unit)})${
-        phConfirms ? "; pH showed a matching in-phase swing" : ""}`,
-    interpretation:
-      "Dissolved oxygen supersaturated at one point in the day and crashed below baseline "
+  const { type, rationale } = applyConfidenceFloor(
+    "Algal bloom",
+    confidence,
+    "Dissolved oxygen supersaturated at one point in the day and crashed below baseline "
       + "at another point within the same 24 hours, matching the "
       + `algal-bloom/eutrophication signature: large in-phase daily DO${
         phConfirms ? " and pH" : ""
@@ -350,6 +363,20 @@ const detectAlgalBloom = (report: ReportInput): WQEvent | null => {
           ? ""
           : " pH did not show a matching swing here, which is the matrix's second "
           + "confirming signal, so confidence stays moderate rather than high."}`,
+  );
+  return {
+    type,
+    windowStartMs: dayStart,
+    windowEndMs: dayEnd,
+    // Not the duration rule the threshold windows use: a bloom's window is one calendar day by
+    // construction, so its length says nothing about how bad the day was.
+    severity: "Moderate",
+    parameterMovements:
+      `Dissolved oxygen swung from ${minV.toFixed(2)} to `
+      + `${withUnit(maxV.toFixed(2), b.unit)} within a single day (baseline `
+      + `${withUnit(`${b.baselineMin}-${b.baselineMax}`, b.unit)})${
+        phConfirms ? "; pH showed a matching in-phase swing" : ""}`,
+    interpretation: rationale,
     followUp: "Grab sample",
     confidence,
   };
@@ -454,13 +481,11 @@ const eventForWindow = (
 
   const classified = classify(moved);
   const { confidence } = classified;
-  let { type: eventType, rationale } = classified;
-  if (confidence < CONFIDENCE_FLOOR_FOR_CLASSIFICATION && eventType !== "Inconclusive") {
-    rationale += ` Confidence (${Math.round(confidence * 100)}%) falls short of the floor for `
-      + `asserting '${eventType}' outright, so the classification below is downgraded to `
-      + "Inconclusive pending confirmation.";
-    eventType = "Inconclusive";
-  }
+  const { type: eventType, rationale } = applyConfidenceFloor(
+    classified.type,
+    confidence,
+    classified.rationale,
+  );
 
   const durationHrs = (wEnd - wStart) / 3_600_000;
   const persistent = periodMs > 0 && (wEnd - wStart) / periodMs >= PERSISTENT_WINDOW_SHARE;
