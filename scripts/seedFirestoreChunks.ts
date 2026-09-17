@@ -13,8 +13,17 @@
  * file, no embeddings, no cost); this one calls the embedding API. Folding them together would
  * make every corpus re-seed pay for vectors the direct-feed arm never uses.
  *
- * Idempotent by filename, checked **before** embedding, so a re-run costs nothing rather than
- * re-paying for vectors it would then overwrite with identical ones.
+ * Idempotent per file, checked **before** embedding, so a re-run costs nothing rather than
+ * re-paying for vectors it would then overwrite with identical ones. A file counts as seeded only
+ * when every one of its chunk ids is already present; a file with some chunks missing is embedded
+ * again in full, which rewrites the present ids unchanged and adds the missing ones.
+ *
+ *   npm run seed:firestore-chunks -- --prune
+ *
+ * `--prune` deletes every chunk document whose id the current corpus does not contain, then seeds.
+ * Chunk ids are content-derived, so this is exact: it removes a dropped document's chunks and a
+ * changed chunk's old version, and re-embeds nothing that survived. `--wipe` remains for starting
+ * over from nothing, at the cost of re-embedding the whole corpus.
  */
 import { getFirestore } from "../src/config/database";
 import { readCorpus } from "../src/ingestion/ingest";
@@ -64,6 +73,23 @@ const wipeChunks = async (db: FirebaseFirestore.Firestore): Promise<number> => {
   return deleted;
 };
 
+/** Deletes every chunk document whose id is not in `keep`, in batches, naming each one. */
+const pruneChunks = async (
+  db: FirebaseFirestore.Firestore,
+  keep: ReadonlySet<string>,
+): Promise<number> => {
+  const refs = await db.collection(CHUNK_COLLECTION).listDocuments();
+  const stale = refs.filter((ref) => !keep.has(ref.id));
+  for (let start = 0; start < stale.length; start += MAX_BATCH_WRITES) {
+    const batch = db.batch();
+    stale.slice(start, start + MAX_BATCH_WRITES).forEach((ref) => batch.delete(ref));
+    // eslint-disable-next-line no-await-in-loop
+    await batch.commit();
+  }
+  stale.forEach((ref) => log.info(`  pruned ${ref.id}`));
+  return stale.length;
+};
+
 const main = async (): Promise<void> => {
   const corpus = readCorpus();
   const db = getFirestore();
@@ -73,6 +99,11 @@ const main = async (): Promise<void> => {
     log.warn(`--wipe: deleting every document in "${CHUNK_COLLECTION}" before seeding.`);
     const deleted = await wipeChunks(db);
     log.info(`Wiped ${deleted} chunk documents.`);
+  } else if (process.argv.includes("--prune")) {
+    const keep = new Set(corpus.documents.flatMap((d) => d.chunks.map((c) => chunkDocumentId(c))));
+    log.info(`--prune: deleting chunk documents not among the corpus's ${keep.size} ids.`);
+    const pruned = await pruneChunks(db, keep);
+    log.info(`Pruned ${pruned} chunk documents.`);
   }
 
   log.info(`Artifact: ${corpus.documents.length} documents.`);
@@ -84,15 +115,17 @@ const main = async (): Promise<void> => {
     const document = corpus.documents[i];
 
     // eslint-disable-next-line no-await-in-loop
-    const existing = await db
-      .collection(CHUNK_COLLECTION)
-      .where("filename", "==", document.filename)
-      .limit(1)
-      .get();
+    // By id, not by counting the file's documents: a stale chunk left from an earlier version of
+    // the file would pad a count up to "complete" while a current chunk is still missing.
+    const refs = document.chunks
+      .map((chunk) => db.collection(CHUNK_COLLECTION).doc(chunkDocumentId(chunk)));
+    // eslint-disable-next-line no-await-in-loop
+    const snapshots = refs.length > 0 ? await db.getAll(...refs) : [];
+    const missing = snapshots.filter((snapshot) => !snapshot.exists).length;
 
     let skipReason: string | undefined;
-    if (!existing.empty) {
-      skipReason = "already seeded";
+    if (document.chunks.length > 0 && missing === 0) {
+      skipReason = `already seeded (all ${document.chunks.length} chunks present)`;
     } else if (document.chunks.length === 0) {
       skipReason = "no surviving chunks";
     } else if (document.chunks.length > MAX_BATCH_WRITES) {

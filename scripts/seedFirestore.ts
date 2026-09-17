@@ -5,6 +5,15 @@
  *
  * Idempotent — document ids are derived from the filename, so re-running overwrites rather than
  * duplicating. Requires Firestore credentials; `npm run ingest` alone does not.
+ *
+ *   npm run seed:firestore -- --prune
+ *
+ * **Overwriting never removes a document that left the corpus.** A plain seed after a document is
+ * deleted from `documents/` leaves its Firestore copy in place, still flagged `inDirectFeedSlice`,
+ * and the `firestore-direct` arm keeps feeding it to the model -- which is how the vetoed
+ * source-of-truth document outlived its removal. `--prune` deletes every document in the
+ * collection that the current corpus does not contain, in the same batch as the writes, and names
+ * each one.
  */
 import { getFirestore } from "../src/config/database";
 import { readCorpus } from "../src/ingestion/ingest";
@@ -30,7 +39,8 @@ const main = async (): Promise<void> => {
   // Size-check every document BEFORE writing anything. Firestore rejects an oversized document at
   // commit time with an error that names the batch, not the file — and because the writes are
   // batched, one bad document fails the whole seed. Checking up front names the culprit.
-  const oversized = shaped.filter(({ fields }) => corpusDocumentBytes(fields) > CORPUS_DOCUMENT_WARN_BYTES);
+  const oversized = shaped
+    .filter(({ fields }) => corpusDocumentBytes(fields) > CORPUS_DOCUMENT_WARN_BYTES);
 
   if (oversized.length > 0) {
     const detail = oversized
@@ -42,15 +52,28 @@ const main = async (): Promise<void> => {
     );
   }
 
+  const prune = process.argv.includes("--prune");
+  const collection = db.collection(CORPUS_COLLECTION);
+  const corpusIds = new Set(shaped.map(({ document }) => documentId(document.filename)));
+  const existing = prune ? await collection.listDocuments() : [];
+  const stale = existing.filter((ref) => !corpusIds.has(ref.id));
+
   // Batched: one write per document, committed together, so a partial failure does not leave
-  // the slice half-populated — which would silently degrade the arm rather than fail it.
+  // the slice half-populated — which would silently degrade the arm rather than fail it. Prune
+  // deletes ride in the same batch for the same reason: never a moment with both sets gone.
   const batch = db.batch();
 
   shaped.forEach(({ document, fields }) => {
-    batch.set(db.collection(CORPUS_COLLECTION).doc(documentId(document.filename)), fields);
+    batch.set(collection.doc(documentId(document.filename)), fields);
   });
+  stale.forEach((ref) => batch.delete(ref));
 
   await batch.commit();
+
+  stale.forEach((ref) => log.info(`Pruned "${ref.id}" -- not in the current corpus.`));
+  if (!prune) {
+    log.info("Documents removed from the corpus were left in place; re-run with --prune to delete them.");
+  }
 
   const slice = corpus.documents.filter((d) => d.inDirectFeedSlice);
   const largest = Math.max(...shaped.map(({ fields }) => corpusDocumentBytes(fields)));
