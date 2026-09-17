@@ -1,10 +1,10 @@
-# Open questions for the operator, supervisor and backend owner
+# Open questions for the operator, supervisor, backend owner and dashboard owner
 
 A checklist of answers the project needs from people outside the codebase. Tick the box when an
 item is resolved, write the answer and the date on its **Answer** line, and record any decision it
 settles in `docs/timeline.md`. Delete an item only when its answer is recorded somewhere else.
 
-Items are ordered by what they unblock, most blocking first. Last updated 2026-09-13.
+Items are ordered by what they unblock, most blocking first. Last updated 2026-09-14.
 
 ---
 
@@ -103,4 +103,40 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-0
   `findAuditLogRecords` filters on `caller`, ranges on `timestamp` and orders by it. With no index the
   first real query fails with `FAILED_PRECONDITION` (`src/services/auditLog.ts`; there is no
   `firestore.indexes.json` in the repo).
+  *Answer:*
+
+---
+
+## Dashboard owner (`user-dashboard`)
+
+Found in a read-only pass on 2026-09-14.
+The Gilligan page itself (`src/app/gilligan/page.js`, `components/gilligan-answer.js`) is left out on purpose: it is known to be broken, and this project is building its replacement.
+
+- [ ] **13. Can the "Ask Gilligan" box on the home, charts, dials and map pages send the whole question?**
+  The box opens the Gilligan page with the question in the address, but it does not encode it (`src/app/components/gilligan-widget.js:35`).
+  Anything after an `&` or `#` is lost, so "Is pH above 8 & rising?" arrives as "Is pH above 8 ".
+  The fix is to wrap the question in `encodeURIComponent`.
+  *Unblocks:* the replacement page receiving full questions from the box, which it will keep reading from `?question=`.
+  *Answer:*
+
+- [ ] **14. Which turbidity band edges are right: 345/795 NTU or 350/800?**
+  The dials page calls a reading Clear below 350 NTU and Turbid from 800 (`src/app/datahub-dial/page.js:117-118`).
+  The operator's voltage edges from 2026-09-10 (2.2 V and 0.7 V, through NTU = (3.35 - V) × 300) work out to 345 and 795, and this project's report uses those.
+  So a reading of 347 NTU shows as Clear on the dial and Moderate in a report.
+  If 350/800 was deliberate rounding, the report should change instead; confirm with the operator either way.
+  *Unblocks:* the dashboard and reports agreeing on a reading's clarity band.
+  *Answer:*
+
+- [ ] **15. Can the shared form-field style be moved onto the light palette?**
+  `src/app/shared/text-field-style.js` still carries the colours from before the 2026-08-26 repaint: grey `#888` labels and borders, and a bright blue `#23A5EB` focus ring.
+  Grey `#888` on the page background is about 3:1 contrast, below the 4.5:1 minimum for readable text.
+  It is used on the login, register and password-reset pages, the team, device, account and card dialogs, the date picker and the "Ask Gilligan" box.
+  *Unblocks:* nothing for this project; the replacement page will sit beside these fields and should not look different from them.
+  *Answer:*
+
+- [ ] **16. Can small gold labels use the readable gold?**
+  The device list's Battery, Water Score and Calibration labels are 12px text in brand gold (`src/app/components/device-pill.js:100`), about 2.5:1 on the page background.
+  `globals.css` already defines `--gold-txt` for exactly this case.
+  Smaller: in the phone menu, the "Home" item has no text colour of its own, so it looks different from the items below it (`src/app/components/header.js:121-124`).
+  *Unblocks:* nothing for this project.
   *Answer:*
