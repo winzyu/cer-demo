@@ -325,8 +325,8 @@ describe("POST /api/v1/chat with a device on the request", () => {
 
 describe("POST /api/v1/chat with the sensor tool disabled", () => {
   it("makes one tool-free call and returns the pre-N3 response shape", async () => {
-    // The default. This path must stay identical to what the three captured bake-off arms ran
-    // against while ◆G7 is open (RETRIEVAL_BAKEOFF.md §4).
+    // The default. With the flag off the tool block must add nothing, so a capture made without
+    // SENSOR_TOOL sees the base prompt only (test/unit/prompt.test.ts, "the tool flags are additive").
     script = [{ content: "Answered from context.", toolCalls: [] }];
 
     const app = loadAppWith({ ...SENSOR_ENV, SENSOR_TOOL: "false" });

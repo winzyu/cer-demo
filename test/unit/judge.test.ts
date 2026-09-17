@@ -553,8 +553,8 @@ describe("judge budget", () => {
     // §10.4 requires the date a price was read. A guessed rate in a cost report is worse than
     // a gap in one.
     expect(budgetOf([record({})], "accounts/fireworks/models/not-priced").usd).toBeUndefined();
-    expect(budgetOf([record({})], "accounts/fireworks/models/gpt-oss-20b").usd)
-      .toBeCloseTo((100 / 1e6) * 0.07 + (10 / 1e6) * 0.3);
+    expect(budgetOf([record({})], "accounts/fireworks/models/gpt-oss-120b").usd)
+      .toBeCloseTo((100 / 1e6) * 0.15 + (10 / 1e6) * 0.6);
   });
 });
 
@@ -664,7 +664,7 @@ describe("cohensKappa", () => {
 /**
  * The stale-grade guard. A grading packet is pinned to the transcripts it was built from; when an
  * arm is re-captured, its human rows describe answers that no longer exist. Scoring them anyway
- * once inverted the sign of a real result (`RETRIEVAL_COMPARISON.md` §6.4a), which is why this is
+ * once inverted the sign of a real result (`EVAL_REBUILD.md` §6), which is why this is
  * an exclusion rather than a warning.
  */
 describe("stale human grades", () => {

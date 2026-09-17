@@ -870,11 +870,12 @@ export class QuerySensorData {
   /**
    * Caveats that belong with the number rather than in a doc nobody reads at answer time.
    *
-   * The water-type note is a **flag, not a fix**. `WATER_TYPE` is one global env var selecting
-   * the conductivity and turbidity ranges in the system prompt, and the two cleared pods are
-   * different water types — one deployment cannot serve both. Making it per-device is Phase N4
-   * work and an input to ◆G3 (`DEVICE_API.md` §12c). Surfacing the disagreement here at least
-   * stops the model comparing a saltwater pod against freshwater limits in silence.
+   * The water-type note is a **flag, not a fix**. `WATER_TYPE` is one global env var, while pods
+   * differ in water type — one deployment cannot describe both. The system prompt no longer carries
+   * ranges (deleted 2026-09-13; pod limits come from `get_pod_thresholds`), so the global value now
+   * only frames the answer. Reading water type per device in chat is unbuilt Phase N4 work, no
+   * longer gated by ◆G3, which resolved 2026-09-13 (`DEVICE_API.md` §12c). Surfacing the
+   * disagreement here at least stops the model describing a saltwater pod as freshwater in silence.
    */
   private notes(
     metricKeys: MetricKey[],

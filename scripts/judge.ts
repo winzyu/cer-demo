@@ -2,7 +2,7 @@
  * `npm run judge` — the Tier-2 LLM judge from `RETRIEVAL_BAKEOFF.md` §7b, over captured
  * transcripts.
  *
- * The paid half of the ◆G7 decision. Tier 1 (`npm run gate:check`) is deterministic and free and
+ * The paid half of the evaluation. Tier 1 (`npm run gate:check`) is deterministic and free and
  * runs first; this decides the two gates a string match cannot — correctness against the fixture
  * rubrics, and claims the answer had no grounds to make — and it only ever runs on Tier-1
  * survivors, because grading an arm that is already out costs money and changes nothing.
@@ -271,8 +271,8 @@ const main = async (): Promise<void> => {
     );
   }
 
-  // Passes §7b's rule and not its intent — recorded here so the caveat reaches §10.6 of the
-  // report rather than being remembered, or not, by whoever writes it.
+  // Passes §7b's rule and not its intent — recorded here so the caveat reaches the report's
+  // grading section (§10, item 6) rather than being remembered, or not, by whoever writes it.
   const sameFamily = underTest.filter((model) => judgesOwnFamily(judgeModel, model));
 
   const estimated = estimatePromptTokens(tasks);
@@ -282,7 +282,7 @@ const main = async (): Promise<void> => {
   log.info(`Judge model: ${judgeModel}`);
   if (sameFamily.length > 0) {
     log.info(`  CAVEAT: same family as ${sameFamily.join(", ")} — §7b's rule is met, its intent`);
-    log.info("  is not. Record this next to the agreement rate in RETRIEVAL_COMPARISON.md §10.6.");
+    log.info("  is not. Record this next to the agreement rate in the evaluation report.");
   }
   log.info(`Dimensions:  ${dimensions.join(", ")}`);
   if (only) {

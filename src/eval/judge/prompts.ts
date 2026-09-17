@@ -278,10 +278,10 @@ An answer with nothing unsupported returns {"claims": []}.`;
  *
  * The line spans are unreliable and separately known to be so: across the warm sweep, 48 of the
  * 103 spans start at line 1 while the median chunk is 77 lines. That is a real model-behaviour
- * finding, recorded in `RETRIEVAL_COMPARISON.md` — it is simply not this gate's business, and it
- * is not decidable by judgement anyway. The durable fix is quote-based citations, which a string
- * match can verify and which would move this dimension into Tier 1 for free. That needs a system
- * prompt change, so it waits for ◆G7 to close.
+ * finding (measured on the archived 20b sweep) — it is simply not this gate's business, and it is
+ * not decidable by judgement anyway. The durable fix is quote-based citations, which a string match
+ * can verify: the prompt has asked for them since 2026-09-13, and Tier 1's `checkQuotes` checks
+ * them (`EVAL_REBUILD.md` Phase 2a).
  */
 export const citationsPrompt = (evidence: JudgeEvidence): string => `You are checking whether this
 answer's citations support what they are attached to.

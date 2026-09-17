@@ -4,12 +4,14 @@
  * `RETRIEVAL_BAKEOFF.md` §7b: *"Calibrate against a human on ~20% of transcripts and report the
  * agreement rate. If agreement is poor, fix the rubric — do not quietly keep the judge's
  * scores."* This module computes that number. It does not decide anything; it exists so the
- * quality claim in §10.6 is falsifiable, and so a judge that disagrees with people is caught
- * before its scores are used to close ◆G7.
+ * report's quality claim (`RETRIEVAL_BAKEOFF.md` §10, item 6) is falsifiable, and so a judge that
+ * disagrees with people is caught before its scores are trusted. The bar is κ ≥ 0.70 on
+ * correctness (`EVAL_REBUILD.md` §2, exit criterion 2).
  *
- * The sample is the 36 rows already in `eval/grading/warm/scores.csv` — six fixtures, two turns,
- * three arms, graded by a human against `GRADING_GUIDE.md` with the arms blinded. Blind on both
- * sides and independently collected, which is what makes the comparison worth anything.
+ * The sample is read from `eval/grading/warm/scores.csv`, graded by a human against
+ * `GRADING_GUIDE.md` with the arms blinded. Blind on both sides and independently collected, which
+ * is what makes the comparison worth anything. The original 36-row sample was archived 2026-09-01
+ * (`eval-archive-2026-09-01`); Phase 2c builds its 30-row replacement.
  *
  * **The join goes through `KEY.json`, and it has to.** The human scored labels (`A`/`B`/`C`);
  * the judge scores arms. The key is the only record of which was which for that packet build,
@@ -149,7 +151,7 @@ export const readHumanRows = (
  * 2026-08-26 refusal-rubric fix looked like a regression — correctness kappa 0.87 → 0.83. Over
  * the 24 rows where both sides had seen the same text, the same change read 0.81 → **0.94**. The
  * stale rows inverted the sign, and the wrong version was written into a report before this check
- * existed (`RETRIEVAL_COMPARISON.md` §6.4a).
+ * existed (`EVAL_REBUILD.md` §6, "A grading packet is pinned to its transcripts").
  */
 export interface StaleRow {
   fixtureId: string;

@@ -37,7 +37,7 @@ export const TRANSCRIPT_ROOT = path.join(process.cwd(), "eval", "transcripts");
  * Where paid verdicts live — under `data/results/`, which is **committed**, not under the ignored
  * part of `data/`.
  *
- * This ledger is the audit trail behind every quality number in `RETRIEVAL_COMPARISON.md` and it
+ * This ledger is the audit trail behind every quality number the evaluation reports, and it
  * cost real money to produce. While it sat under the blanket `data/*` ignore rule it was one
  * `rm -rf` from unreproducible, and §9's exit criteria — which say grades are committed —
  * disagreed with the repository. `data/results/` is the exception carved out for exactly this:

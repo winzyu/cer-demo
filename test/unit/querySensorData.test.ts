@@ -408,10 +408,9 @@ describe("query_sensor_data — caveats that travel with the number", () => {
   });
 
   it("flags a device whose water type disagrees with the deployment's", async () => {
-    // WATER_TYPE is one global env var selecting the conductivity and turbidity ranges in the
-    // system prompt, and the two cleared pods are different water types — one deployment cannot
-    // serve both. This is a flag, not a fix: making it per-device is N4 work and an input to
-    // ◆G3 (DEVICE_API.md §12c).
+    // WATER_TYPE is one global env var, and pods differ in water type — one deployment cannot
+    // describe both. This is a flag, not a fix: reading water type per device in chat is unbuilt
+    // N4 work (◆G3 resolved 2026-09-13; DEVICE_API.md §12c).
     const { tool } = makeTool(undefined, { waterType: "freshwater" });
     const result = await tool.run({
       metric: "conductivity", time_range: "last day", aggregation: "mean", device: "Algalita",

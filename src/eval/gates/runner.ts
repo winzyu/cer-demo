@@ -1,9 +1,9 @@
 /**
  * Walks captured transcripts and decides `RETRIEVAL_BAKEOFF.md` §8a's three hard gates per arm.
  *
- * Deliberately offline and free: it reads `eval/transcripts/**` and `eval/fixtures/**`, calls no
- * model and opens no socket, so it is re-runnable after every corpus change — the property that
- * made the retrieval harness useful, applied one layer up (§8b).
+ * Deliberately offline and free: it reads `eval/transcripts/**` and the fixture set
+ * (`FIXTURE_DIR`), calls no model and opens no socket, so it is re-runnable after every corpus
+ * change — the property that made the retrieval harness useful, applied one layer up (§8b).
  *
  * **It admits nothing about answer quality.** Clearing these three gates means an arm has not
  * invented a figure, has refused where it must, and has not cited a source it was never given. It

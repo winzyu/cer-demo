@@ -166,7 +166,7 @@ export class ChatOrchestrator {
         offerTools ? this.definitions : undefined,
       );
 
-      // The one place `gpt-oss-20b`'s leaked `【commentary…】` markers are stripped (WS-5).
+      // The one place gpt-oss's leaked `【commentary…】` markers are stripped (WS-5).
       // Every way out of this loop reads `content`, so both the JSON and SSE paths and the
       // round-cap fallback get the cleaned text from a single call. The raw `answer.content`
       // is kept for the assistant turn replayed to the provider below — that has to go back

@@ -363,7 +363,7 @@ export const checkFigures = (turn: TurnEvidence): FigureResult => {
  * `【3†"conductivity varies with temperature"】` — a citation carrying a short verbatim quote
  * instead of a predicted line span.
  *
- * **Why this exists.** Measured over `eval/transcripts/warm/` (`RETRIEVAL_COMPARISON.md` §6.5):
+ * **Why this exists.** Measured over the archived 20b warm sweep (`eval-archive-2026-09-01`):
  * 198 citation markers, 103 with a line span, **48 of those starting at line 1** against a median
  * chunk of 77 lines. The model points at the top of the chunk about half the time regardless of
  * where the fact sits, because it processes tokens, not lines. A quote is the thing it *can*

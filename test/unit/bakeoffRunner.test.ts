@@ -300,7 +300,7 @@ describe("transcriptPath", () => {
 
 /**
  * The regression guard for the negative `ttftMs`/`wallMs` values in the 2026-08-11 transcripts
- * (`RETRIEVAL_COMPARISON.md` §1a). Those came from measuring elapsed time with `Date.now()`,
+ * (`EVAL_REBUILD.md` §6, the `Date.now()` trap). Those came from measuring elapsed time with `Date.now()`,
  * which the OS may step backwards; the fix is a monotonic clock, and this locks it in.
  */
 describe("elapsed-time measurement", () => {

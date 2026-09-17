@@ -6,17 +6,21 @@
  * check needs a `dissolved_oxygen` series tagged "diel" specifically.
  *
  * Classification follows the "Pollution Event Signature Matrix" (source-of-truth doc section 4)
- * instead of an invented heuristic -- each rule below matches that document's "Primary Signature"
- * description for Sewage, Hypoxia, Thermal discharge, Acidic input, Saltwater intrusion,
- * Stormwater, and Industrial/chemical discharge. Two honest limits carried over from the doc
- * itself: (1) six parameters still under-determine some calls -- the doc's own matrix has several
- * events sharing overlapping signatures (Industrial is explicitly a catch-all "abrupt step-change
- * ... with no diel or tidal explanation"), and (2) confirming Saltwater intrusion or Stormwater
- * properly needs tidal-stage/rainfall context this pipeline doesn't have, so those stay capped at
- * moderate confidence even on a clean pattern match. Low confidence always degrades to
- * "Inconclusive" rather than asserting a specific cause. Anything this flags should go through
- * the Investigative recommendation (grab sample / source tracing) before being treated as a
- * real finding.
+ * instead of an invented heuristic. **Provenance caveat:** that operator document left the corpus
+ * on 2026-09-13 after the supervisor vetoed its ranges (archived under `corpus-archive-2026-09-13`,
+ * `docs/ARCHIVED.md`). The rules here encode only its directions of movement, never its ranges;
+ * whether the veto covers them too is open (`docs/STAKEHOLDER_QUESTIONS.md` item 8). Every
+ * "source-of-truth doc" reference below points at that archived document. Each rule below matches
+ * that document's "Primary Signature" description for Sewage, Hypoxia, Thermal discharge, Acidic
+ * input, Saltwater intrusion, Stormwater, and Industrial/chemical discharge. Two honest limits
+ * carried over from the doc itself: (1) six parameters still under-determine some calls -- the
+ * doc's own matrix has several events sharing overlapping signatures (Industrial is explicitly a
+ * catch-all "abrupt step-change ... with no diel or tidal explanation"), and (2) confirming
+ * Saltwater intrusion or Stormwater properly needs tidal-stage/rainfall context this pipeline
+ * doesn't have, so those stay capped at moderate confidence even on a clean pattern match. Low
+ * confidence always degrades to "Inconclusive" rather than asserting a specific cause. Anything
+ * this flags should go through the Investigative recommendation (grab sample / source tracing)
+ * before being treated as a real finding.
  */
 
 import type {
