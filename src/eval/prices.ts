@@ -6,7 +6,8 @@
  * A cost conclusion computed from an undated price sheet cannot be audited later, and ◆G7 is
  * supposed to be decided by numbers someone can check.
  *
- * Re-read the sources and bump `PRICES_READ_ON` before publishing `RETRIEVAL_COMPARISON.md`.
+ * Re-read the sources and bump `PRICES_READ_ON` before publishing any cost figure in an evaluation
+ * read-out.
  */
 
 /**
@@ -51,16 +52,18 @@ export interface TokenPrices {
  * Chat models, USD per 1M tokens.
  *
  * **The cached-input column is the whole ballgame** and it is *not* a uniform discount:
- * `gpt-oss-20b` caches at 50% off, `gpt-oss-120b` at 90% off. Direct-feed's entire cost case
- * rests on that discount, so the two models rank the arms differently — see
- * `RETRIEVAL_BAKEOFF.md` §1b. Fireworks documents 50% only as a *default*; per-model rates are
- * authoritative, which is why they are recorded individually here rather than derived.
+ * `gpt-oss-120b`, the production generator, caches at 90% off, and direct-feed's cost case rests on
+ * that discount (`RETRIEVAL_BAKEOFF.md` §1b, `EVAL_REBUILD.md` §4). Fireworks documents 50% only as
+ * a *default*; per-model rates are authoritative, which is why they are recorded individually here
+ * rather than derived.
+ *
+ * `gpt-oss-20b` was removed 2026-09-15: nothing runs on it any more, so pricing it would only let
+ * a stale default go unnoticed. Asking for it now throws "No price recorded".
  */
 export const CHAT_PRICES: Record<string, TokenPrices> = {
-  "accounts/fireworks/models/gpt-oss-20b": { input: 0.07, cachedInput: 0.035, output: 0.30 },
   // Cached input moved 0.014 -> 0.015 between the 2026-08-03 and 2026-08-26 reads: the page now
   // prints a flat 90% off rather than the 90.7% the older figure implied. This model is the
-  // Tier-2 judge as well as a costed candidate, so the rate bills real spend either way.
+  // production generator (and was the Tier-2 judge until 2026-09-02), so the rate bills real spend.
   "accounts/fireworks/models/gpt-oss-120b": { input: 0.15, cachedInput: 0.015, output: 0.60 },
   // Judge candidate, evaluated and REJECTED 2026-08-28. Listed on rate alone it looks 3x cheaper
   // than `gpt-oss-120b` and, unlike either gpt-oss model, satisfies §7b's *intent* rather than only
@@ -119,7 +122,7 @@ export const FIRESTORE_PRICES = {
 
 /**
  * A kNN query bills **one read per batch of up to 100 vector index entries scanned**, plus one
- * read per document returned. With 393 chunks indexed that is `ceil(393/100) = 4` index reads
+ * read per document returned. With 446 chunks indexed that is `ceil(446/100) = 5` index reads
  * plus `topK` document reads — the figure the `firestore-vector` arm's cost depends on, and the
  * reason its read volume is a small multiple of its query volume rather than equal to it.
  */

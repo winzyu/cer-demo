@@ -15,7 +15,7 @@ const fakeClient = (
 
 const okResponse = (content: string) => ({
   choices: [{ message: { content } }],
-  model: "accounts/fireworks/models/gpt-oss-20b",
+  model: "accounts/fireworks/models/gpt-oss-120b",
   usage: { prompt_tokens: 100, completion_tokens: 20, total_tokens: 120 },
 });
 

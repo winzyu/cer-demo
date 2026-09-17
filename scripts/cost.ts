@@ -4,7 +4,7 @@
  *   npm run cost
  *   npm run cost -- --model=accounts/fireworks/models/gpt-oss-120b
  *   npm run cost -- --cache-rate=0
- *   npm run cost -- --completion=measured   # each arm at its own answer length (§1's table)
+ *   npm run cost -- --completion=measured   # each arm at its own measured answer length
  *
  * Reads no network and calls no provider — it is arithmetic over the recorded price sheet
  * (`src/eval/prices.ts`) and the recorded token measurements (`src/eval/costScenarios.ts`), so it
@@ -24,7 +24,7 @@ import { createLogger } from "../src/utils/logger";
 
 const log = createLogger("Cost");
 
-const DEFAULT_MODEL = "accounts/fireworks/models/gpt-oss-20b";
+const DEFAULT_MODEL = "accounts/fireworks/models/gpt-oss-120b";
 const DEFAULT_CACHE_RATE = 0.996;
 
 interface Options {
@@ -32,8 +32,8 @@ interface Options {
   cacheRate: number;
   /**
    * `undefined` sweeps `COMPLETION_TOKEN_CASES` with one length for every arm — the comparison
-   * view. `"measured"` gives each arm its own measured length, which is what §1's per-answer
-   * column reports and the only way to reproduce it from this script.
+   * view. `"measured"` gives each arm its own measured length, which is what a per-answer cost
+   * table reports and the only way to reproduce one from this script.
    */
   completion?: "measured";
 }

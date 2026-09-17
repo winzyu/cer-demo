@@ -7,19 +7,19 @@ import {
 } from "../../src/eval/costScenarios";
 import { CHAT_PRICES, EMBEDDING_PRICES } from "../../src/eval/prices";
 
-const GPT_OSS_20B = CHAT_PRICES["accounts/fireworks/models/gpt-oss-20b"];
-const GPT_OSS_120B = CHAT_PRICES["accounts/fireworks/models/gpt-oss-120b"];
+const GPT_OSS_120B_ID = "accounts/fireworks/models/gpt-oss-120b";
+const GPT_OSS_120B = CHAT_PRICES[GPT_OSS_120B_ID];
 
 const arm = (overrides: Partial<ArmCostInputs> = {}): ArmCostInputs => ({
   arm: "test",
   tokens: { promptTokens: 1_000_000, cachedPromptTokens: 0, completionTokens: 0 },
-  chatPrices: GPT_OSS_20B,
+  chatPrices: GPT_OSS_120B,
   ...overrides,
 });
 
 describe("perRequestCost", () => {
   it("bills exactly the per-million rate for one million uncached prompt tokens", () => {
-    expect(perRequestCost(arm()).totalUsd).toBeCloseTo(GPT_OSS_20B.input, 10);
+    expect(perRequestCost(arm()).totalUsd).toBeCloseTo(GPT_OSS_120B.input, 10);
   });
 
   it("bills cached and uncached input on separate lines", () => {
@@ -27,8 +27,8 @@ describe("perRequestCost", () => {
       tokens: { promptTokens: 1_000_000, cachedPromptTokens: 600_000, completionTokens: 0 },
     }));
 
-    expect(cost.inputUsd).toBeCloseTo(0.4 * GPT_OSS_20B.input, 10);
-    expect(cost.cachedInputUsd).toBeCloseTo(0.6 * GPT_OSS_20B.cachedInput, 10);
+    expect(cost.inputUsd).toBeCloseTo(0.4 * GPT_OSS_120B.input, 10);
+    expect(cost.cachedInputUsd).toBeCloseTo(0.6 * GPT_OSS_120B.cachedInput, 10);
     expect(cost.totalUsd).toBeCloseTo(cost.inputUsd + cost.cachedInputUsd, 10);
   });
 
@@ -45,7 +45,7 @@ describe("perRequestCost", () => {
   it("includes the datastore line in the total", () => {
     const cost = perRequestCost(arm({ datastoreUsdPerRequest: 0.5 }));
     expect(cost.datastoreUsd).toBe(0.5);
-    expect(cost.totalUsd).toBeCloseTo(GPT_OSS_20B.input + 0.5, 10);
+    expect(cost.totalUsd).toBeCloseTo(GPT_OSS_120B.input + 0.5, 10);
   });
 });
 
@@ -53,7 +53,7 @@ describe("monthlyCost", () => {
   it("adds the fixed cost once, not once per request", () => {
     const subject = arm({ fixed: { usdPerMonth: 10, note: "database" } });
     expect(monthlyCost(subject, 0)).toBe(10);
-    expect(monthlyCost(subject, 2)).toBeCloseTo(2 * GPT_OSS_20B.input + 10, 10);
+    expect(monthlyCost(subject, 2)).toBeCloseTo(2 * GPT_OSS_120B.input + 10, 10);
   });
 });
 
@@ -74,8 +74,8 @@ describe("breakEven", () => {
     expect(result.kind).toBe("crossover");
     if (result.kind !== "crossover") { throw new Error("expected a crossover"); }
 
-    // marginal gap = (1M - 100k) tokens x $0.07/1M = $0.063/request; $10 fixed / $0.063.
-    expect(result.requestsPerMonth).toBeCloseTo(10 / 0.063, 6);
+    // marginal gap = (1M - 100k) tokens x $0.15/1M = $0.135/request; $10 fixed / $0.135.
+    expect(result.requestsPerMonth).toBeCloseTo(10 / 0.135, 6);
     expect(result.cheaperBelow).toBe("direct");
     expect(result.cheaperAbove).toBe("rag");
   });
@@ -143,50 +143,20 @@ describe("the ◆G7 cost conclusion", () => {
     expect(EMBEDDING_PRICES["nomic-ai/nomic-embed-text-v1.5"]).toBe(0.008);
   });
 
-  it("gpt-oss-20b caches at 50% off but gpt-oss-120b caches at ~90%", () => {
-    expect(GPT_OSS_20B.cachedInput / GPT_OSS_20B.input).toBeCloseTo(0.5, 6);
+  it("gpt-oss-120b caches at ~90% off, the discount direct-feed's cost case rests on", () => {
     expect(GPT_OSS_120B.cachedInput / GPT_OSS_120B.input).toBeLessThan(0.12);
   });
 
-  it("on gpt-oss-20b the 50% discount does NOT invert the story — RAG stays cheaper per answer", () => {
-    const arms = armsFor("accounts/fireworks/models/gpt-oss-20b");
-    const direct = perRequestCost(byName(arms, "firestore-direct")).totalUsd;
-    const rag = perRequestCost(byName(arms, "pgvector-rag")).totalUsd;
-
-    expect(rag).toBeLessThan(direct);
-  });
-
   it("on gpt-oss-120b the ~90% discount DOES invert it — direct-feed becomes cheaper per answer", () => {
-    const arms = armsFor("accounts/fireworks/models/gpt-oss-120b");
+    const arms = armsFor(GPT_OSS_120B_ID);
     const direct = perRequestCost(byName(arms, "firestore-direct")).totalUsd;
     const rag = perRequestCost(byName(arms, "pgvector-rag")).totalUsd;
 
     expect(direct).toBeLessThan(rag);
   });
 
-  it("direct-feed beats a deployed pgvector arm across the low end of the 1k-100k range", () => {
-    const arms = armsFor("accounts/fireworks/models/gpt-oss-20b");
-    const result = breakEven(byName(arms, "firestore-direct"), byName(arms, "pgvector-rag"));
-
-    expect(result.kind).toBe("crossover");
-    if (result.kind !== "crossover") { throw new Error("expected a crossover"); }
-    expect(result.cheaperBelow).toBe("firestore-direct");
-
-    // **This bound moved when the sweep replaced the spot-check inputs (2026-08-11).** It was
-    // `> 50_000` — a conclusion drawn from an estimated pgvector profile of 4,446 prompt tokens
-    // at a 12.8% cache rate. The 58-turn sweep measured 3,584 tokens at 38.4%: RAG is cheaper
-    // per request than the estimate assumed, so the crossover fell from ~84k to ~41.6k and
-    // direct-feed's cheaper-than-pgvector window roughly halved.
-    //
-    // The direction matters for the report: measurement made the RAG arm look *better*, not
-    // worse. Direct-feed still wins at the realistic 10k/month, but no longer across "most" of
-    // the range — it loses above ~42k, which sits inside the 100k ceiling rather than beyond it.
-    expect(result.requestsPerMonth).toBeGreaterThan(35_000);
-    expect(result.requestsPerMonth).toBeLessThan(50_000);
-  });
-
   it("firestore-vector beats pgvector-rag everywhere inside the modelled range", () => {
-    const arms = armsFor("accounts/fireworks/models/gpt-oss-20b");
+    const arms = armsFor(GPT_OSS_120B_ID);
     const vector = byName(arms, "firestore-vector");
     const pg = byName(arms, "pgvector-rag");
     const result = breakEven(vector, pg);
@@ -218,10 +188,10 @@ describe("the ◆G7 cost conclusion", () => {
   });
 
   it("prices every captured arm, so the report never has to hand-compute one", () => {
-    const arms = armsFor("accounts/fireworks/models/gpt-oss-20b").map((a) => a.arm);
+    const arms = armsFor(GPT_OSS_120B_ID).map((a) => a.arm);
 
-    // The two hybrids were priced by hand (marked ‡ in RETRIEVAL_COMPARISON.md §1) until they
-    // were added here. Hand arithmetic in a report cannot be re-run by an auditor.
+    // The two hybrids were once priced by hand in the bake-off report until they were added here.
+    // Hand arithmetic in a report cannot be re-run by an auditor.
     expect(arms.sort()).toEqual([
       "firestore-direct", "firestore-vector", "hybrid-slice-lexvec", "hybrid-slice-vector",
       "pgvector-rag",
@@ -229,7 +199,7 @@ describe("the ◆G7 cost conclusion", () => {
   });
 
   it("charges the hybrids nothing per query for Firestore, because they issue no query to it", () => {
-    const arms = armsFor("accounts/fireworks/models/gpt-oss-20b");
+    const arms = armsFor(GPT_OSS_120B_ID);
 
     // Composed from DirectFeedAdapter (slice cached once per process) and LocalVectorAdapter
     // (local embedding cache). The kNN reads firestore-vector pays have no counterpart.
@@ -242,7 +212,7 @@ describe("the ◆G7 cost conclusion", () => {
   });
 
   it("prices the hybrids ABOVE direct-feed per answer — composing retrieval is a surcharge", () => {
-    const arms = armsFor("accounts/fireworks/models/gpt-oss-20b");
+    const arms = armsFor(GPT_OSS_120B_ID);
     const direct = perRequestCost(byName(arms, "firestore-direct")).totalUsd;
 
     // Both hybrids send the whole operator slice AND retrieved chunks. Their case is the ◆G9
@@ -272,21 +242,23 @@ describe("the ◆G7 cost conclusion", () => {
     });
   });
 
-  it("reproduces §1's per-answer column, so the report is no longer hand arithmetic", () => {
+  it("pins each arm's measured per-answer cost at gpt-oss-120b rates", () => {
     const arms = scenarioArms({
       completionTokens: "measured",
-      chatModel: "accounts/fireworks/models/gpt-oss-20b",
+      chatModel: GPT_OSS_120B_ID,
       sliceCacheRate: 0.996,
     });
     const perAnswer = (name: string) => perRequestCost(byName(arms, name)).totalUsd;
 
-    // These are the figures printed in RETRIEVAL_COMPARISON.md §1. They were computed by hand for
-    // the two hybrids (marked ‡) because nothing priced them; if this test fails, either the
-    // transcripts moved or the price sheet did, and §1 is stale — that is the point of the test.
-    expect(perAnswer("firestore-direct")).toBeCloseTo(0.000612, 6);
-    expect(perAnswer("hybrid-slice-vector")).toBeCloseTo(0.000624, 6);
-    expect(perAnswer("hybrid-slice-lexvec")).toBeCloseTo(0.000828, 6);
-    expect(perAnswer("firestore-vector")).toBeCloseTo(0.000339, 6);
+    // Repinned 2026-09-15 when 20b pricing was removed: the archived 20b sweep's token counts at
+    // 120b rates, with firestore-vector at 10 Firestore reads per query on the 446-chunk corpus.
+    // firestore-direct matches EVAL_REBUILD.md §4's $0.000625. If this fails, the token counts or
+    // the price sheet moved, and every cost figure quoted from `npm run cost` is stale.
+    expect(perAnswer("firestore-direct")).toBeCloseTo(0.0006246, 7);
+    expect(perAnswer("pgvector-rag")).toBeCloseTo(0.00072427, 8);
+    expect(perAnswer("hybrid-slice-vector")).toBeCloseTo(0.000661645, 9);
+    expect(perAnswer("hybrid-slice-lexvec")).toBeCloseTo(0.00109837, 8);
+    expect(perAnswer("firestore-vector")).toBeCloseTo(0.00064141, 8);
   });
 
   it("refuses to price an arm at a measured length it has no measurement for", () => {
@@ -294,7 +266,7 @@ describe("the ◆G7 cost conclusion", () => {
     // lengths under a heading that says "measured".
     expect(() => scenarioArms({
       completionTokens: "measured",
-      chatModel: "accounts/fireworks/models/gpt-oss-20b",
+      chatModel: GPT_OSS_120B_ID,
       sliceCacheRate: 1,
     })).not.toThrow();
 

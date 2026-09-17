@@ -2,8 +2,8 @@
  * The measured inputs the cost model runs on, with their provenance attached.
  *
  * **These are sweep means, taken from `eval/transcripts/warm/`** — 58 turns per arm, zero failed
- * (`RETRIEVAL_COMPARISON.md`). They replace the single-run spot-checks this file previously
- * carried.
+ * (the archived bake-off sweep, `TOKEN_SOURCE`). They replace the single-run spot-checks this
+ * file previously carried.
  *
  * **The five arms were not captured on one date**, because the corpus and the arm set moved:
  * `firestore-direct` 2026-08-11, `pgvector-rag` 2026-08-13, `hybrid-slice-lexvec` 2026-08-25/26,
@@ -29,9 +29,15 @@ export type Provenance = "indicative" | "measured";
 
 /** Where the token counts below came from, printed alongside every result. */
 export const TOKEN_PROVENANCE: Provenance = "measured";
-export const TOKEN_SOURCE = "warm-pass sweep means, 2026-08-11..2026-08-26: 5 arms x 58 turns, 0 failed (eval/transcripts/warm/, archived 2026-09-01 under the tag eval-archive-2026-09-01)";
+export const TOKEN_SOURCE = "warm-pass sweep means, 2026-08-11..2026-08-26: 5 arms x 58 turns, 0 failed (eval/transcripts/warm/, archived 2026-09-01 under the tag eval-archive-2026-09-01); "
+  + "captured on gpt-oss-20b and priced at gpt-oss-120b rates, assuming prompt size, cache split and completion length carry over (EVAL_REBUILD.md §4) until the retrieval arms are re-captured on 120b";
 
-const CHAT_MODEL = "accounts/fireworks/models/gpt-oss-20b";
+/**
+ * The production generator. The token counts above were captured on `gpt-oss-20b`, which is no
+ * longer used or priced, so they are priced here at this model's rates: an estimate, labelled as
+ * such by `TOKEN_SOURCE`, until Phase 4 of the eval rebuild re-captures the retrieval arms.
+ */
+const CHAT_MODEL = "accounts/fireworks/models/gpt-oss-120b";
 const EMBEDDING_MODEL = "nomic-ai/nomic-embed-text-v1.5";
 
 /**
@@ -68,9 +74,9 @@ export const MEASURED_COMPLETION_TOKENS = 760;
  * Recorded **in addition to** the swept constant above, not instead of it, because the two answer
  * different questions. The sweep asks "how do these arms compare when answer length is held
  * still?" — the right question for a retrieval comparison. This map answers "what does each arm
- * actually cost today?", which is the question `RETRIEVAL_COMPARISON.md` §1 puts in its table.
+ * actually cost today?", which is the question the bake-off report's per-answer column asked.
  *
- * Without it §1's per-answer column could not be reproduced by `npm run cost` at all, and it was
+ * Without it that column could not be reproduced by `npm run cost` at all, and the report was
  * carrying hand arithmetic marked `‡` for exactly that reason. Hand arithmetic in a report is
  * unauditable: nobody can re-run it, and nobody notices when the transcripts move underneath it.
  */
@@ -84,10 +90,11 @@ export const MEASURED_COMPLETION_TOKENS_BY_ARM: Record<string, number> = {
 
 /**
  * One kNN query bills `ceil(chunks / 100)` index reads plus one read per document returned.
- * 393 chunks and top-k 5 → 4 + 5 = 9 reads. (Was written against a 305-chunk corpus; the count
- * is now 393 and the billed figure is unchanged, since both land in the same 100-entry batch.)
+ * 446 chunks and top-k 5 → 5 + 5 = 10 reads. (The corpus was 305 chunks, then 393, then 451;
+ * since the 2026-09-13 source-of-truth removal and the 2026-09-15 Firestore prune it is 446, which
+ * crosses into a fifth 100-entry batch.)
  */
-const FIRESTORE_VECTOR_READS_PER_QUERY = Math.ceil(393 / 100) + 5;
+const FIRESTORE_VECTOR_READS_PER_QUERY = Math.ceil(446 / 100) + 5;
 
 const firestoreReadUsd = (reads: number): number => (
   (reads * FIRESTORE_PRICES.readsPer100k) / 100_000
@@ -129,7 +136,7 @@ export interface ScenarioOptions {
   /**
    * A single length applied to every arm, or `"measured"` to give each arm its own
    * (`MEASURED_COMPLETION_TOKENS_BY_ARM`). Use a number to compare arms; use `"measured"` to
-   * reproduce §1's table of what each arm costs as it stands.
+   * price what each arm costs as it stands.
    */
   completionTokens: number | "measured";
   chatModel?: string;
