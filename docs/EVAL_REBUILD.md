@@ -718,7 +718,7 @@ A plain seed only overwrites, so after any corpus change re-run both with `--pru
 |---|---|
 | 0 — lock the slate | ✅ complete 2026-09-01 |
 | 1a — claim inventory | ✅ 2,250 claims, 1,685 high-specificity, 168 gaps, 451/451 chunks |
-| 1b — question generation | ✅ 46 fixtures / 92 turns |
+| 1b — question generation | ✅ 46 fixtures / 92 turns (superseded 2026-09-13: now 45 / 90) |
 | 1c — decontaminate | ✅ 22.8% document-level, 11.6% chunk-level, against the < 40% bar — **exit criterion 1 passes**. `eval/fixtures-wave1/_CONTAMINATION.md` |
 | 1d — human verification | ⬜ **the user's, ~4–6 h.** Do not start before the fixture text is frozen |
 | 1e — labels + hard negatives | 🟡 partial — `eval/retrieval-labels/` regenerated (**45 files**, `scripts/resolveRetrievalLabels.ts`), but provisional: flat grade 2, no hard negatives, per-fixture not per-turn. Adequate for the gold-context arm, which resolves every label at 100% offline; the remainder blocks Phase 4, not Phase 3 |

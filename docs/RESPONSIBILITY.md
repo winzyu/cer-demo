@@ -38,11 +38,14 @@ would need that added at ingestion time. **Effort: 0.5–1 day** if wanted; skip
 
 **Partially exists:** the prompt already refuses drink/swim safety questions and tells the user to
 consult local public-health authorities (`systemPrompt.ts`). Out-of-range readings are detected
-(`src/report/events.ts`, `src/devices/plausibility.ts`) but the report narrative and chat answers
-don't currently append a "consult a professional" line for those cases.
+(`src/report/events.ts`, `src/devices/plausibility.ts`). The report narrative already escalates:
+for any High-severity event above the confidence floor it tells the reader to notify the client and
+relevant authority and to consider a qualified water-quality professional (`src/report/narrative.ts`).
+Chat answers carry no such line yet.
 
-**Effort: 0.5–1 day** — a prompt rule for out-of-range chat answers (~1 hr), plus a template
-addition in `src/report/narrative.ts` for excursions the report already detects (~half a day).
+**Effort: ~1 hr** — a prompt rule for out-of-range chat answers, batched with the other prompt work
+(the `escalation` tier below). When advice reaches reports, the generic referral should become the
+catalogue's Clean Earth Rovers referral (see "Adopted, reworded — the referral").
 
 ## 4. Human-in-the-loop review for high-stakes answers
 

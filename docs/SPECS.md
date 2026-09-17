@@ -13,36 +13,16 @@ status block below says which phase each piece belongs to.
 - The **question set every arm is graded against** is described in §12 and planned in
   [`EVAL_REBUILD.md`](EVAL_REBUILD.md), committed before any arm runs.
 
-> **Status (2026-09-02): the eval apparatus is being rebuilt — see
-> [`EVAL_REBUILD.md`](EVAL_REBUILD.md), which supersedes the N2 status below.** The 2026-08 bake-off
-> result did not survive scrutiny: every capture ran on `gpt-oss-20b`, a placeholder model, against
-> a fixture set that was 90% slice-answerable, on a system where 53–59% of turns carried an
-> ungrounded claim. All captures, grading packets and labels were archived on 2026-09-01 under the
-> tag `eval-archive-2026-09-01`. **Treat every retrieval arm as unranked.** The paragraphs below
-> record what was built and are accurate as history; their conclusions are not current.
+> **Status (2026-09-15).** The eval apparatus is being rebuilt ([`EVAL_REBUILD.md`](EVAL_REBUILD.md)).
+> The 2026-08 bake-off ran on `gpt-oss-20b` against a fixture set archived on 2026-09-01, so **treat
+> every retrieval arm as unranked**; the sections below describe what was built and stay accurate as
+> history. ◆G7 split on 2026-08-26, and the system prompt has not been a pinned control since.
 >
-> **Status (2026-08-13): Phase N1 complete; Phase N2 captured but ungraded.** Service bootstrap,
-> the retrieval seam (§9), and a working `POST /api/v1/chat` (§10). **All three retrieval arms were
-> built, seeded and swept** — `firestore-direct`, `pgvector-rag`, `firestore-vector` (§14, §14b) —
-> with 168 transcripts under `eval/transcripts/` and the cost model running on measured numbers
-> (§14a). `DEFAULT_RETRIEVAL` still ships as `stub`, so a fresh checkout needs no credentials.
->
-> **Amended 2026-08-19: `pgvector-rag`'s runtime code is archived** to `archive/pgvector-rag/` and
-> the mode is no longer selectable (§14). This happened **ahead of ◆G7 by decision — ◆G7 did not
-> close.** Two live arms remain; the archived arm's transcripts, grading key and cost scenario are
-> untouched, so the gate stays auditable and gradeable.
->
-> **What remains in N2 is grading, not building.** ◆G7 is open until the blind packet
-> (`eval/grading/`, [`GRADING_GUIDE.md`](GRADING_GUIDE.md)) is scored and
-> `RETRIEVAL_COMPARISON.md` (now archived) is written.
->
-> **Phase N3 is built:** the device-API client, `query_sensor_data`, and the tool-calling loop
-> (§10.3a) are all in the tree and covered by tests. They are **gated on `SENSOR_TOOL`, which
-> defaults off**, precisely so the system prompt stays byte-identical to the one all three
-> captured arms ran against while ◆G7 is open — see
-> [`migration/DEVICE_API.md`](migration/DEVICE_API.md).
->
-> **Current state and next steps: [`STATUS.md`](STATUS.md).**
+> Built: the chat spine and retrieval seam (§9, §10), the retrieval arms (§9, §14b; `pgvector-rag`
+> archived and dropped, §14), and Phase N3's device-API client, `query_sensor_data`,
+> `get_pod_thresholds`, `get_turbidity_info` and tool loop (§10.3a), all **gated on `SENSOR_TOOL`,
+> default off**. Report generation is gated on `REPORT_TOOL`. `DEFAULT_RETRIEVAL` ships as `stub`, so
+> a fresh checkout needs no credentials. The roadmap is in [`timeline.md`](timeline.md).
 
 ---
 
@@ -108,7 +88,8 @@ clean-earth-rag/
 │   ├── middleware/
 │   │   ├── errorHandler.ts   terminal error handler
 │   │   ├── quotaGuard.ts     429 gate on POST /chat, before SSE opens (§4a)
-│   │   └── notFound.ts       404 → http-errors NotFound
+│   │   ├── notFound.ts       404 → http-errors NotFound
+│   │   └── requireCallerToken.ts  401 unless the caller sends a bearer token (§10.5)
 │   ├── quota/
 │   │   ├── index.ts          composition root: the process-wide `quotaService`
 │   │   ├── QuotaService.ts   policy: check / recordRequest / recordTokens
@@ -121,11 +102,14 @@ clean-earth-rag/
 │   │   ├── options.ts        top-k bounds + resolveTopK()
 │   │   ├── adapters/
 │   │   │   ├── StubAdapter.ts
+│   │   │   ├── GoldContextAdapter.ts     the labelled-relevant chunks only: the generation ceiling
 │   │   │   ├── DirectFeedAdapter.ts
 │   │   │   ├── FirestoreVectorAdapter.ts
 │   │   │   ├── LocalVectorAdapter.ts     in-process dense, over the embedding cache
 │   │   │   ├── RrfHybridAdapter.ts       dense + BM25, fused with RRF
 │   │   │   └── HybridSliceVectorAdapter.ts  the ◆G9 slice + a ranked arm
+│   │   ├── lexical/
+│   │   │   └── Bm25Index.ts          in-process BM25 for the hybrid arms
 │   │   └── sources/
 │   │       ├── corpusSource.ts        CorpusSource contract
 │   │       ├── ArtifactCorpusSource.ts
@@ -135,15 +119,21 @@ clean-earth-rag/
 │   │   ├── extract.ts / chunk.ts / ingest.ts
 │   ├── eval/
 │   │   ├── types.ts          EvalFixture / EvalTurn / EvalRubric
-│   │   ├── fixtures.ts       loader + strict validation of eval/fixtures/
+│   │   ├── fixtures.ts       loader + strict validation of FIXTURE_DIR (eval/fixtures-wave1/)
 │   │   ├── cli.ts            bakeoff argument parsing
 │   │   ├── transport.ts      SSE + JSON HTTP transports
 │   │   ├── runner.ts         replay engine + sweep summary
 │   │   ├── transcript.ts     transcript shape and totals
 │   │   ├── gates/            §8a hard-gate checker — npm run gate:check
 │   │   │   ├── normalize.ts  NFKC + dash/quote folding, edit distance, similarity
-│   │   │   ├── checks.ts     refusal / citations / figures, per turn
+│   │   │   ├── checks.ts     refusal / citations / figures / quotes, per turn
 │   │   │   └── runner.ts     walks transcripts, aggregates per arm
+│   │   ├── judge/            Tier 2 LLM judge — npm run judge
+│   │   │   ├── prompts.ts    one prompt per graded dimension
+│   │   │   ├── runner.ts     task list, verdict ledger, budget
+│   │   │   └── calibrate.ts  judge-vs-human agreement
+│   │   ├── retrieval/        offline retrieval harness — npm run retrieval:eval
+│   │   │   ├── labels.ts / metrics.ts / runner.ts / types.ts
 │   │   ├── prices.ts         dated price sheet + sources
 │   │   ├── costScenarios.ts  measured token counts + fixed costs
 │   │   └── cost.ts           per-request / monthly / break-even math
@@ -153,26 +143,31 @@ clean-earth-rag/
 │   │   └── promptBuilder.ts  static-first message assembly
 │   ├── devices/
 │   │   ├── DeviceApiClient.ts  read-only client for the Clean Earth backend
+│   │   ├── mergeChains.ts    device continuity across re-registered pods (§10.3c)
 │   │   ├── metrics.ts        metric codes, error flags, reading/average decoding
 │   │   └── plausibility.ts   per-metric physical rails the hardware error flags miss
 │   ├── tools/
 │   │   ├── index.ts          tool registry, gated on SENSOR_TOOL and REPORT_TOOL
 │   │   ├── querySensorData.ts  the sensor tool: device match, fetch, caveats (§10.3a)
 │   │   ├── generateReport.ts   the report tool, gated on REPORT_TOOL
+│   │   ├── getPodThresholds.ts  the pod's registry alert limits, validated, no fallback
+│   │   ├── getTurbidityInfo.ts  turbidity clarity bands and sensor caveats
 │   │   ├── timeRange.ts      NL range parsing + reference-time anchoring
 │   │   └── aggregate.ts      min/max/mean/median/latest/earliest/raw/series, null-never-zero
 │   ├── report/              the deterministic report pipeline (compute, then narrate)
 │   │   ├── buildReportInput.ts  assembles the report model from sensor + registry data
 │   │   ├── events.ts         period-relative event detection
-│   │   ├── referenceRanges.ts   transcribed baselines + TURBIDITY_BAND_EDGES
-│   │   ├── operatorThresholds.ts  validated per-device temperature baseline
+│   │   ├── referenceRanges.ts   registry-threshold baselines + TURBIDITY_BAND_EDGES
+│   │   ├── operatorThresholds.ts  validated per-device registry thresholds
+│   │   ├── reportOwnership.ts  binds a generated PDF to the credential that generated it
 │   │   ├── narrative.ts      LLM narration over pre-computed facts
 │   │   ├── renderPdf.ts      pdfkit layout
 │   │   └── types.ts
 │   ├── services/
 │   │   ├── LlmService.ts     Fireworks chat completion + streaming + tool calls
 │   │   ├── ChatOrchestrator.ts  the tool-round loop, dispatch, cap fallback
-│   │   └── EmbeddingService.ts  nomic embeddings + dimension/all-zero guards
+│   │   ├── EmbeddingService.ts  nomic embeddings + dimension/all-zero guards
+│   │   └── auditLog.ts       optional Firestore audit trail of answers, off unless AUDIT_LOG is set
 │   ├── validators/
 │   │   └── chatValidators.ts parseChatRequest
 │   ├── types/
@@ -187,21 +182,25 @@ clean-earth-rag/
 │       ├── logger.ts         createLogger(tag)
 │       └── sse.ts            Server-Sent Events helpers
 ├── scripts/                  ingest.ts, seedFirestore.ts, seedFirestoreChunks.ts,
-│                             bakeoff.ts, cost.ts, gradePacket.ts,
-│                             exploreDeviceApi.ts, verifySensorTool.ts,
+│                             buildEmbeddingCache.ts, bakeoff.ts, gateCheck.ts, judge.ts,
+│                             cost.ts, gradePacket.ts, retrievalEval.ts,
+│                             resolveRetrievalLabels.ts, compareVectorArms.ts,
+│                             renderReport.ts, exploreDeviceApi.ts, verifySensorTool.ts,
 │                             exploreDeviceFields.sh, exploreBackendSurface.sh
 ├── test/
 │   ├── integration/  health.test.ts, chat.test.ts, sensorChat.test.ts, quotaChat.test.ts,
-│   │                 devices.test.ts
+│   │                 devices.test.ts, reports.test.ts
 │   ├── fixtures/device-api/  recorded production bodies + provenance README (§16)
-│   └── unit/         40 suites — see the table in §16
-├── eval/fixtures-wave1/      46 committed eval conversations, 92 turns (§12)
+│   ├── fixtures/pod-scope/   synthetic fleet for pod-authorization work
+│   └── unit/         46 suites — see the table in §16
+├── eval/fixtures-wave1/      45 committed eval conversations, 90 turns (§12)
 ├── eval/claims/              Phase 1a claim inventory, one file per document
-│                             eval/{fixtures,transcripts,grading,retrieval-labels}/ were archived
-│                             2026-09-01 — tag `eval-archive-2026-09-01`, see ARCHIVED.md
-├── frontend/index.html       static chat UI, wired to POST /api/v1/chat (streaming)
+├── eval/retrieval-labels/    wave-1 retrieval ground truth (generated)
+├── eval/transcripts/         captured runs, starting with the Phase 3 gold-context baseline
+│                             (the pre-rebuild set is under tag `eval-archive-2026-09-01`)
+├── frontend/                 static demo chat UI (index.html + js/), wired to POST /api/v1/chat
 ├── data/                     corpus artifact + device-API recordings (git-ignored)
-├── documents/                corpus PDFs — `documents/*` is git-ignored, but the five Tier 1
+├── documents/                corpus PDFs — `documents/*` is git-ignored, but the four Tier 1
 │                             files (the ◆G9 slice) are force-tracked; see documents/README.md
 ├── archive/pgvector-rag/     the archived bake-off arm at its original paths (§14) —
 │                             not compiled, not tested, not imported; excluded from the image
@@ -538,13 +537,15 @@ from git history at `7e2b09e^` — `MIGRATION_SPEC.md` §4.2 described its struc
 its text. `REFUSAL_SENTENCE` is **verbatim** because behavior depends on its exact wording (pinned
 by a test; `MIGRATION_SPEC.md` §11 calls it out specifically).
 
-**The authoritative ranges are no longer verbatim.** Turbidity was added 2026-07-29 — `0-25 NTU`
-freshwater, `0-10 NTU` saltwater, derived from §2 of the operator source-of-truth reference — and
-the scope lines were corrected to stop declaring turbidity unmeasured. It is one of the six
-parameters the DataPod reads and it is in the ◆G9 slice, so the legacy wording refused every
-turbidity question before retrieval ran. The low end is 0, not 5: **0 is a valid turbidity reading**
-and must never be flagged as erroneous (same rule as ORP). This block is a pinned control for the
-N2 bake-off (`RETRIEVAL_BAKEOFF.md` §4) — changing it once arms have run voids their results.
+**The prompt carries no ranges.** The legacy `AUTHORITATIVE NORMAL RANGES` block was deleted on
+2026-09-13, when the supervisor vetoed the operator source-of-truth document's ranges. A pod's
+limits may be stated only from a tool result: `get_pod_thresholds` returns the pod's validated,
+operator-configured registry alert limits, or a reason when none is usable, with no fallback
+table. Turbidity is described through `get_turbidity_info` (the operator's three clarity bands)
+and stays qualitative for every pod. Both tools are gated on `SENSOR_TOOL`. The scope lines still
+name turbidity as one of the six measured parameters, and **0 is a valid turbidity reading** that
+must never be flagged as erroneous (same rule as ORP). The reasoning is in the
+`src/prompt/systemPrompt.ts` docstring and the `timeline.md` decision log.
 
 The legacy **tool inventory and routing rules were deliberately not ported.** The legacy model
 fetched documents itself via a `search_documents` tool; here retrieval runs before the call and
@@ -599,12 +600,11 @@ Phase N3, **gated on `SENSOR_TOOL` (default off)**. Restores `MIGRATION_SPEC.md`
 `MAX_TOOL_ROUNDS` tool-enabled rounds, then one final round with tools omitted to force a text
 answer. A round with no tool calls ends the loop and its content is the answer.
 
-**Why it is behind a flag.** The tool block changes the system prompt, and the prompt is a pinned
-control for the N2 bake-off (`RETRIEVAL_BAKEOFF.md` §4) while ◆G7 is open on ungraded quality. With
-the flag off the prompt is byte-identical to the one all three captured arms ran against — pinned by
-a SHA-256 in `test/unit/prompt.test.ts`, because a stray newline is invisible in review and produces
-a different cache prefix. Three things move together on that flag and must never move apart: the
-prompt block, the `tools` array, and the tool registry.
+**Why it is behind a flag.** The tools read production pod data, and the tool block changes the
+system prompt. The prompt was a pinned control for the N2 bake-off until ◆G7 split on 2026-08-26;
+`test/unit/prompt.test.ts` now guards that the tool blocks are purely additive, so with the flag off
+the model sees the base prompt only and no `tools` array is attached. Three things move together on
+that flag and must never move apart: the prompt block, the `tools` array, and the tool registry.
 
 - **`MAX_TOOL_ROUNDS` defaults to 16**, not the legacy 5. `sensor-doc-event-check` asks for six
   parameters and then reasons over them. N5's "raise the cap" item, landed early.
@@ -675,7 +675,7 @@ Behavior worth knowing, each guarding a documented silent-failure mode in `DEVIC
 | `0` is never falsy-checked | it is a real reading for ORP and turbidity |
 | a device must be named when several are visible | the two cleared pods are different water bodies on opposite coasts |
 | turbidity results carry a provisional/uncalibrated note | it is a derived voltage index expressed in NTU, not a measurement |
-| a device whose `operatingEnvironment` disagrees with `WATER_TYPE` is flagged in the result | one global env var cannot serve both pods — N4 work, an input to ◆G3 |
+| a device whose `operatingEnvironment` disagrees with `WATER_TYPE` is flagged in the result | one global env var cannot describe both pods; per-device water type in chat is unbuilt N4 work |
 
 ### 10.3c Device continuity — merge chains (`src/devices/mergeChains.ts`)
 
@@ -859,17 +859,19 @@ retrieval-strategy differences.
 | Filter | length ≥ 100 and no PDF boilerplate. The alphabetic-ratio ≥ 0.5 test is **off for every document** and off by default — see below |
 | Output | per document: full `text` (direct-feed) and filtered `chunks` (vector arms), plus the ◆G9 slice flag |
 
-Current run, **re-ingested 2026-08-31 without the alpha-ratio filter**: **15 documents,
-851,891 chars (~213K tokens), 451 chunks** (was 393 with the filter on); direct-feed slice
-unchanged at **37,660 chars (~9.4K tokens)**. It was 18 documents /
+Current run, **since the source-of-truth document left the corpus on 2026-09-13**: **14
+documents, 840,327 chars, 446 chunks**; direct-feed slice **26,096 chars (~6.5K tokens), the four
+probe datasheets**. Before that it was 15 documents / 851,891 chars / 451 chunks, re-ingested
+2026-08-31 without the alpha-ratio filter (393 chunks with it on), with a 37,660-char slice. It was
+18 documents /
 1,254,899 chars / 558 chunks after the 2026-08-21 expansion, and 8 documents / 716,603 chars /
 305 chunks before that. The trim cut three documents that carried no number or procedure for any
 measured parameter — 32% of the characters, and nothing that answers a question
 ([`../documents/README.md`](../documents/README.md)).
 
 The corpus is scoped to the six parameters the DataPod measures. Documents about undetectable
-analytes live in `documents/_excluded/` — see `timeline.md`. Active set: the operator
-source-of-truth, four Atlas Scientific probe datasheets, **the whole USGS National Field Manual
+analytes live in `documents/_excluded/` — see `timeline.md`. Active set: four Atlas Scientific
+probe datasheets, **the whole USGS National Field Manual
 Chapter A6 (nine chapters, one per parameter)**, and one EPA field-calibration SOP. The two
 situational pollution-event references and the EPA standards handbook were cut on 2026-08-24. Full breakdown and the edition-currency check in
 [`documents/README.md`](../documents/README.md).
@@ -880,7 +882,7 @@ a fixed baseline rather than a fourth candidate.
 
 **Two traps this expansion introduced**, both documented in `documents/README.md`:
 
-- **The five Tier 1 files are the entire direct-feed slice**, so they are force-tracked past the
+- **The four Tier 1 files are the entire direct-feed slice**, so they are force-tracked past the
   `documents/*` ignore rule. If they ever go missing, ingest **exits 0** and prints
   `direct-feed slice: 0 chars`; the arm then answers ungrounded, warning once at load. Read the
   number ingest prints.
@@ -948,10 +950,10 @@ back in stable filename order.
 
 ## 12. Eval fixtures (`eval/fixtures-wave1/`, `src/eval/`)
 
-The question set every arm is graded against: **46 conversations, 92 turns**, one JSON file per
+The question set every arm is graded against: **45 conversations, 90 turns**, one JSON file per
 conversation, committed **before any arm runs**. Seven classes — `cross-document` 12,
 `deep-in-manual` 10, `probe-calibration` 8, and 4 each of `definitional`, `follow-up`,
-`precedence` and `refusal`. No fixture declares a `requires`, so all 46 are runnable under any
+`refusal`, and 3 `precedence`. No fixture declares a `requires`, so all 45 are runnable under any
 flag setting. Slice coverage: 41 none / 5 partial / 0 full.
 
 **This replaced the 30-conversation / 62-turn bake-off set on 2026-09-01.** The old set is archived
@@ -974,11 +976,9 @@ EvalTurn    = { role: "user", content, rubric: { must_contain, must_not, cite?, 
   the multi-turn format exists to test.
 - **`sliceCoverage` and `runnable` are derived at load time, never stored**, so they cannot drift
   from `DIRECT_FEED_SLICE` or from what the service can actually do.
-- **`requires` marks fixtures that depend on capabilities that don't exist yet** — `sensor-tool`
-  (N3). `turbidity-in-scope` was resolved 2026-07-29 by the prompt change in §10.2, taking the
-  runnable set from 22 to **28 of 30 fixtures (58 of 62 turns)**. Without the flag those fixtures
-  would produce clean-looking transcripts that grade a missing feature identically across all
-  three arms.
+- **`requires` marks fixtures that depend on a capability that is off by default** (`sensor-tool`,
+  N3), so they are skipped rather than graded against a missing feature, which would look identical
+  across every arm. Wave 1 declares none.
 
 ---
 
@@ -1040,8 +1040,8 @@ code — adapter, `rrf.ts`, seeder, `db/bakeoff/schema.sql`, `docker-compose.bak
 mode is unregistered, the `pg` and `@types/pg` dependencies and the `seed:pgvector` script are gone,
 `PGVECTOR_URL` is no longer a configuration variable at all, and `archive` is in `.dockerignore`.
 
-**This was done ahead of ◆G7, by decision — ◆G7 did not close.** The gate is still open on grading
-and on `RETRIEVAL_COMPARISON.md` (`timeline.md`, `RETRIEVAL_BAKEOFF.md` §9). The split followed
+**This was done ahead of ◆G7, by decision**, and the arm was dropped for good on 2026-08-31
+(`EVAL_REBUILD.md` §1). The split followed
 `timeline.md`'s rule: the *evidence* stays, the *runtime code* goes.
 
 | what | where it is now | why |
@@ -1252,9 +1252,8 @@ for local demo, to be tightened before deploy.
 
 ## 16. Testing
 
-Jest + `ts-jest` + `supertest`. **42 suites** on `dev` (counted 2026-08-25 with
-`npx jest --listTests`). The last recorded full run was **720 tests in 36 suites, all passing**,
-measured 2026-08-24 — before the retrieval-harness and hybrid-arm suites landed, so the test total
+Jest + `ts-jest` + `supertest`. **52 suites** (46 unit, 6 integration; counted 2026-09-15 from
+`test/`). The last recorded full run was 949 tests in 46 suites on 2026-09-02, so the test total
 is due a re-measure. The table below names the suites that carry a design decision worth reading;
 it is not the full list — `npx jest --listTests` is.
 
@@ -1323,8 +1322,8 @@ conventions this codebase follows, rather than disabled globally:
 | ~~Tool-calling orchestration loop~~ | `MIGRATION_SPEC.md` §3 | **Built (N3, §10.3a).** 16 tool rounds + 1 forced-text round, `role:"tool"` messages, round-cap fallback. Gated on `SENSOR_TOOL`, default off |
 | Corpus ingestion + real adapters | `MIGRATION_SPEC.md` §5 | N2 bake-off: `firestore-direct` (small tier, ◆G9), `pgvector-rag` (**archived 2026-08-19**, §14), `firestore-vector` (◆G10 → all three built and swept) |
 | ~~Embedding calls~~ | `MIGRATION_SPEC.md` §4.4 | **Built.** `EmbeddingService` (nomic task prefixes, dimension and all-zero guards, §14) serves `firestore-vector` and `scripts/seedFirestoreChunks.ts`. It becomes dead code only if ◆G7 resolves to direct-feed alone |
-| Document context strategy | `MIGRATION_SPEC.md` §6–7 (pgvector) | **open gate ◆G7** — decided by the [direct-feed vs RAG bake-off](RETRIEVAL_BAKEOFF.md) over the three captured arms: `firestore-direct` vs `pgvector-rag` vs `firestore-vector`. Two are still selectable; `pgvector-rag` is graded from its transcripts (§14) |
-| ~~`query_sensor_data`~~ | `MIGRATION_SPEC.md` §8 | **Built (N3, §10.3a)** on the device API (◆G8 resolved). Remaining: per-device water type (N4/◆G3) and token streaming with tools on (N7) |
+| Document context strategy | `MIGRATION_SPEC.md` §6–7 (pgvector) | **Unranked.** ◆G7 split on 2026-08-26, but its comparison ran on a placeholder model and was superseded; `EVAL_REBUILD.md` Phase 4 re-measures the live arms against the gold-context ceiling. `pgvector-rag` is dropped (§14) |
+| ~~`query_sensor_data`~~ | `MIGRATION_SPEC.md` §8 | **Built (N3, §10.3a)** on the device API (◆G8 resolved). Remaining: per-device water type in chat (N4) and token streaming with tools on (N7) |
 | ~~Ingestion (docs + CSV)~~ | `MIGRATION_SPEC.md` §5 | **Documents: built** (§11) — `npm run ingest` → `data/corpus/corpus.json`, seeded to `corpus_documents` / `corpus_chunks`. **The CSV half is retired, not pending:** ◆G8 resolved to the live device API, the synthetic 766-row CSV was never ported, and nothing reads it (`timeline.md`, "Confirmed decisions") |
 | Document upload / delete | — | N6. Also a condition that would reopen the provisional `firestore-direct` choice (`timeline.md`, the 2026-08-26 ◆G7 split): direct-feed's slice grows unbounded as documents are added |
 
@@ -1337,7 +1336,7 @@ Unchanged in intent from the legacy build: once chat lands, all prompts (system 
 retrieved chunks + user message) are sent to Fireworks AI, and confidentiality rests on a
 contractual DPA with Fireworks, not on data residency. For the skeleton, no data flows to any LLM.
 Sensor data (`data/`) is git-ignored and treated as confidential per `CLAUDE.md`; `documents/` is
-git-ignored too, with the five Tier 1 corpus files force-tracked as the exception (§11).
+git-ignored too, with the four Tier 1 corpus files force-tracked as the exception (§11).
 
 Two holes of this service's own — an unauthenticated `GET /api/v1/devices` served out of the
 deployment's superadmin token, and an unauthenticated `GET /api/v1/reports/:filename` over

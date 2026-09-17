@@ -42,13 +42,12 @@ defect — but a first release should not depend on them.
 
 ## Three defects this exercise surfaced
 
-Found while drafting, verified in code, none fixed:
+Found while drafting and verified in code. The first is fixed; the other two are open:
 
-1. **`detectAlgalBloom` bypasses the confidence-floor downgrade.** Every other event type below
-   `CONFIDENCE_FLOOR` is rewritten to `Inconclusive`; the bloom detector returns `"Algal bloom"` at
-   confidence 0.45 directly. It cannot fire on live data today for the separate reason above, but
-   the asymmetry is live in any hand-built input — and it applies to the single most
-   liability-exposed label in the system.
+1. **`detectAlgalBloom` bypassed the confidence-floor downgrade.** Fixed 2026-09-15 (`dd6a31d`): an
+   unconfirmed bloom day at confidence 0.45 now downgrades to `Inconclusive` like every other type
+   below `CONFIDENCE_FLOOR`, and `test/unit/reportEvents.test.ts` locks that in. It still cannot
+   fire on live data, for the separate reason above.
 2. **Two event types are dead** (`Industrial`, `Saltwater intrusion`), classified below a floor they
    can never clear. Either the signatures deserve higher confidence, or these conditions are only
    honestly reportable as `Inconclusive` — in which case the catalogue wants one `Inconclusive`

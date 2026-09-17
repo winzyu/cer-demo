@@ -256,6 +256,8 @@ So the value is a **monotonic relative index expressed in NTU**, not a calibrate
 Comparing it against `0-25 NTU` is defensible for "is this rising?" and much weaker for "is this
 within the operator's normal range?".
 
+*(Superseded: the prompt's range block was deleted on 2026-09-13; see the note on §8b.)*
+
 **This does not change anything yet, and must not.** The system prompt is a pinned control for the
 N2 bake-off (`RETRIEVAL_BAKEOFF.md` §4) — editing it now voids every arm that has run. The correct
 sequence is: finish N2, then take this to the operator as a question (is the `0-25` range meant to
@@ -281,6 +283,12 @@ puts in a brochure. That reinforces the open question above about which range ap
 index. It changes nothing about whether the metric belongs.
 
 ### 8b. The report pipeline now bands turbidity; the prompt is still pinned (2026-08-20)
+
+> **Superseded.** On 2026-09-10 the operator's three bands (Clear / Moderate / Turbid, edges 345
+> and 795 NTU, with 1005 as an off-scale flag) replaced the four provisional bands below, and on
+> 2026-09-13 the prompt's range block was deleted; chat now uses `get_turbidity_info`. The current
+> values and their provenance are in `src/report/referenceRanges.ts`. This section and §8c are
+> kept as the record of how the design got there.
 
 Acted on, in `src/report/` only. Turbidity is reported **qualitatively**: the numeric baseline is
 gone from `BASELINE_RANGES`, the parameter is built with `scale: "relative-index"`, and the report
@@ -309,6 +317,10 @@ then the chat and the report describe turbidity differently -- a known, temporar
 rather than an oversight.
 
 ### 8c. ON HOLD — the two turbidity blockers, and what unblocks each (2026-08-28)
+
+> **Mostly resolved; see the note on §8b.** The conversion curve arrived on 2026-09-10 and the
+> prompt question went away with the range block. Which pods carry which sensor is still open
+> (`docs/STAKEHOLDER_QUESTIONS.md` items 3 and 11).
 
 Parked deliberately rather than worked around. Both are waiting on a person, neither is waiting on
 code, and nothing else in the turbidity story can move until they land.
@@ -599,8 +611,8 @@ for is (a) hardware and deployment facts we had no other source for, and (b) evi
 
 The guide PDF is **image-only — no text layer**. If it is ever wanted in the corpus it needs an
 OCR transcript first (`npm run ingest` deliberately does not OCR; it reuses `.ocr_cache/` and hard
--errors on a miss). It should not be added while ◆G7 is open in any case: a corpus change
-invalidates all 168 captured transcripts.
+-errors on a miss). Adding it is a deliberate corpus change: re-chunking voids every retrieval
+label (`EVAL_REBUILD.md` §6).
 
 ### 14a. Hardware and deployment facts — new, and consistent with what we see
 

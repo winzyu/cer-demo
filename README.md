@@ -56,7 +56,7 @@ the real device API** via `query_sensor_data` and a tool-round loop.
 | phase | state |
 |---|---|
 | **N1** — chat spine + retrieval seam | ✅ complete |
-| **N2** — retrieval bake-off | ⏳ all three arms built, sweep captured, **awaiting re-capture then grading** (◆G7 open; sequence amended 2026-08-25 in [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) §8b — only `firestore-direct`'s transcripts survived the corpus change). `pgvector-rag`'s runtime code was archived 2026-08-19 ahead of ◆G7; its captured evidence stays ([§6](#6-retrieval-arms)). Four further arms and an offline retrieval harness landed 2026-08-24/25 — **retrieval measured, answers still not** ([`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md)) |
+| **N2** — retrieval bake-off | ✅ built and swept on `gpt-oss-20b`, then **superseded**: the eval is being rebuilt ([`docs/EVAL_REBUILD.md`](docs/EVAL_REBUILD.md)) and every arm is unranked until its Phase 4 re-measures them. `pgvector-rag` was archived 2026-08-19 and dropped ([§6](#6-retrieval-arms)); the offline retrieval harness is in [`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) |
 | **N3** — sensor querying + tool loop | ✅ built, **behind `SENSOR_TOOL`, default off** |
 | **N4+** — reports, chat UX | ⏳ report generation built, **behind `REPORT_TOOL`, default off** ([§5](#5-configuration-reference), [§10](#10-endpoints)); N5's chat-UX streams have landed ([`docs/CHAT_UX_WORKPLAN.md`](docs/CHAT_UX_WORKPLAN.md)). Per-device water type is live in the **report** path only — chat still reads the global `WATER_TYPE` ([§7e](#7e-known-limits)) |
 
@@ -67,12 +67,11 @@ the real device API** via `query_sensor_data` and a tool-round loop.
 - `SENSOR_TOOL=false` → the bot has **no access to sensor readings at all** and will refuse to
   answer questions about them. Turn it on in [§7](#7-sensor-querying).
 
-> **Why is the sensor tool off by default?** Enabling it appends a tool block to the system prompt,
-> and that prompt is a **pinned control** for the Phase N2 bake-off. ◆G7 is still open — the sweep is
-> captured but ungraded — so changing the default prompt would void all three arms. With the flag
-> off the prompt is byte-identical to the one they ran against (pinned by a SHA-256 in
-> `test/unit/prompt.test.ts`). Turning it on for normal use is fine. **Do not capture bake-off arms
-> with it on.**
+> **Why is the sensor tool off by default?** With it on, the service reads production pod data and
+> the system prompt gains a tool block. `test/unit/prompt.test.ts` guards that the block is purely
+> additive, so with the flag off the model sees the base prompt only. Turning it on for normal use is
+> fine. **Capture eval runs with it off** unless the phase being captured calls for tools
+> ([`docs/EVAL_REBUILD.md`](docs/EVAL_REBUILD.md)).
 
 ### Stack
 
@@ -244,7 +243,7 @@ npm run dev
 ```
 
 Startup should print `SENSOR_TOOL is ON …` and, on the first request,
-`[DirectFeed] Loaded 5 documents …`. Needs `npm run ingest` once ([§6](#6-retrieval-arms)) and a
+`[DirectFeed] Loaded 4 documents …`. Needs `npm run ingest` once ([§6](#6-retrieval-arms)) and a
 device token ([§2c](#2c-clean-earth-device-api)).
 
 ### 4b. By what you're doing
@@ -311,7 +310,7 @@ every problem, missing secrets are warnings only.
 | `PORT` | `8000` | HTTP port. |
 | `LOG_LEVEL` | `info` | Log verbosity label. |
 | `MAX_HISTORY_MESSAGES` | `20` | Cap on prior turns per request. Oldest dropped, not rejected. |
-| `WATER_TYPE` | `freshwater` | `freshwater` \| `saltwater`. Selects conductivity + turbidity normal ranges in the prompt. **Global — see the caveat in [§7e](#7e-known-limits).** |
+| `WATER_TYPE` | `freshwater` | `freshwater` \| `saltwater`. A deployment-wide label that frames chat answers; the prompt carries no ranges since 2026-09-13 (pod limits come from `get_pod_thresholds`), and reports read each pod's registry `operatingEnvironment` instead. **Global — see the caveat in [§7e](#7e-known-limits).** |
 
 ### LLM (Fireworks)
 
@@ -321,7 +320,7 @@ every problem, missing secrets are warnings only.
 | `FIREWORKS_BASE_URL` | `https://api.fireworks.ai/inference/v1` | OpenAI-compatible endpoint. |
 | `LLM_MODEL` | *(unset)* | e.g. `accounts/fireworks/models/gpt-oss-120b`. |
 | `LLM_MAX_TOKENS` | `4096` | **Raise to 16384 for tool use or capture runs.** gpt-oss emits reasoning tokens and returns an *empty answer* if starved — the API call still succeeds. |
-| `LLM_TEMPERATURE` | `0` | **Leave at 0 for the bake-off** — sampling variance would measure the sampler, not retrieval. |
+| `LLM_TEMPERATURE` | `0` | **Leave at 0 for eval captures** — sampling variance would measure the sampler, not the change under test. |
 | `FIREWORKS_USER` | `clean-earth-rag` | Sent as the OpenAI `user` field; drives serverless prompt-cache affinity. |
 | `EMBEDDING_MODEL` | `nomic-ai/nomic-embed-text-v1.5` | 768-dim. |
 
@@ -329,8 +328,9 @@ every problem, missing secrets are warnings only.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `DEFAULT_RETRIEVAL` | `stub` | `stub` \| `firestore-direct` \| `firestore-vector` \| `local-vector` \| `local-hybrid` \| `hybrid-slice-vector` \| `hybrid-slice-lexvec` ([§6](#6-retrieval-arms)). **`pgvector-rag` is no longer a selectable value** — the arm was archived 2026-08-19 ([§6](#6-retrieval-arms)). A stale `.env` still naming it throws on the **first chat request**, not at startup — see [§11](#11-troubleshooting). |
+| `DEFAULT_RETRIEVAL` | `stub` | `stub` \| `firestore-direct` \| `firestore-vector` \| `local-vector` \| `local-hybrid` \| `hybrid-slice-vector` \| `hybrid-slice-lexvec` \| `gold-context` ([§6](#6-retrieval-arms)). `gold-context` is eval-only: it answers only fixture questions that have retrieval labels. **`pgvector-rag` is no longer a selectable value** — the arm was archived 2026-08-19 ([§6](#6-retrieval-arms)). A stale `.env` still naming it throws on the **first chat request**, not at startup — see [§11](#11-troubleshooting). |
 | `DEBUG_RETRIEVAL` | `false` | When `true`, a request's `"retrieval"` field is honoured. Required by the bake-off runner. |
+| `AUDIT_LOG` | `false` | When `true`, every chat response is persisted to Firestore for dispute reconstruction (`docs/RESPONSIBILITY.md` §6). Keep off until the retention and access policy is settled. |
 | `CORPUS_SOURCE` | `artifact` | Where `firestore-direct` reads text: `artifact` (local file, no credentials) or `firestore`. Explicit rather than auto-detected — a silent fallback would measure the wrong source. |
 
 ### Query quota (`POST /api/v1/chat`)
@@ -399,27 +399,27 @@ surface as answer-quality differences and be misread as one strategy beating ano
 | arm | what it does | needs |
 |---|---|---|
 | `stub` | three lines of placeholder text | nothing |
-| **`firestore-direct`** ⭐ | feeds the whole ◆G9 slice, no embeddings, no ranking | the artifact |
+| **`firestore-direct`** | feeds the whole ◆G9 slice, no embeddings, no ranking | the artifact |
 | `firestore-vector` | dense RAG on Firestore vector search | Fireworks key + vector index |
 | `local-vector` | the same dense retrieval, in process against `npm run embed:cache` | the artifact + the cache |
 | `local-hybrid` | dense + BM25, fused with RRF | the artifact + the cache |
 | `hybrid-slice-vector` | the ◆G9 slice **plus** dense retrieval over everything else | the artifact + the cache |
 | `hybrid-slice-lexvec` | the slice plus dense + BM25 fusion | the artifact + the cache |
+| `gold-context` | eval only: exactly the labelled-relevant chunks for a fixture question, the generation ceiling | the artifact + `eval/retrieval-labels/` |
 
-⭐ = the provisional working choice (7.1% retrieval miss vs 33.9%). See
-[`docs/timeline.md`](docs/timeline.md), the 2026-08-26 ◆G7 split.
+No arm is currently ranked: the 2026-08 comparison ran on a placeholder model and was superseded
+([`docs/EVAL_REBUILD.md`](docs/EVAL_REBUILD.md) §0). Phase 4 of the rebuild re-measures them.
 
 > **The four arms below the line were added 2026-08-24/25 and are measured, not graded.** Offline
-> recall at k=10: `local-vector` 54.3%, `local-hybrid` 59.5%, `firestore-direct` 74.9%,
+> recall at k=10, on the archived 393-chunk corpus and label set: `local-vector` 54.3%, `local-hybrid` 59.5%, `firestore-direct` 74.9%,
 > `hybrid-slice-vector` 80.8%, `hybrid-slice-lexvec` 81.8% — against a **20.2% floor**, not zero
-> ([`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) §3). Those are retrieval numbers only. ◆G7's
-> pre-registered targets are all **answer**-quality and remain unmeasured, so none of this changes
-> which arm passes.
+> ([`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) §3). Those are retrieval numbers only. The
+> pre-registered targets are all **answer**-quality, so none of this ranks the arms.
 
 > **Where did `pgvector-rag` go?** The dev-only legacy-parity arm's **runtime code was archived on
 > 2026-08-19** to `archive/pgvector-rag/`, which mirrors the original paths (adapter, `rrf.ts`,
 > seeder, `db/bakeoff/schema.sql`, `docker-compose.bakeoff.yml`, `src/config/pgvector.ts`). This was
-> done **ahead of ◆G7 by decision, not because ◆G7 closed** — it is still open on grading.
+> done **ahead of ◆G7 by decision**.
 > **Amended 2026-09-01.** The arm is permanently dropped, and its captured evidence — the 56
 > transcripts and the `eval/grading/warm/KEY.json` label mapping — was archived out of the tree with
 > the rest of the pre-rebuild eval set under the tag `eval-archive-2026-09-01`
@@ -445,13 +445,14 @@ npm run seed:firestore
 CORPUS_SOURCE=firestore DEFAULT_RETRIEVAL=firestore-direct npm run dev
 ```
 
-Re-running the seeder overwrites by filename rather than duplicating.
+Re-running the seeder overwrites by filename rather than duplicating; add `--prune` after a
+corpus change so documents that left the corpus are deleted too.
 </details>
 
 <details>
 <summary><b><code>firestore-vector</code></b></summary>
 
-Requires `FIREWORKS_API_KEY` (it embeds 393 chunks) and the **vector index** from
+Requires `FIREWORKS_API_KEY` (it embeds the corpus's 446 chunks) and the **vector index** from
 [§2b](#2b-google-cloud--firestore).
 
 ```bash
@@ -459,14 +460,13 @@ npm run seed:firestore-chunks
 DEFAULT_RETRIEVAL=firestore-vector npm run dev
 ```
 
-Idempotency is checked *before* embedding, so a re-run costs nothing. Expect
-`393 chunks in "corpus_chunks"`.
+Idempotency is checked per chunk id *before* embedding, so a re-run costs nothing. After the
+2026-09-15 prune the collection holds 446 chunks.
 
-**Re-seeding does not remove stale chunks.** The seeder is idempotent by filename and never
-deletes, so chunks from documents that have left the corpus survive every re-seed — that is how
-the collection came to hold 305 chunks of a corpus that no longer existed
-([`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) §4b). Use `npm run seed:firestore-chunks -- --wipe`
-after any corpus change.
+**Re-seed with `--prune` after any corpus change.** A plain seed never deletes, which is how the
+collection once held 305 chunks of a corpus that no longer existed
+([`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) §4b). `npm run seed:firestore-chunks -- --prune`
+deletes chunk ids the corpus no longer has and re-embeds nothing that survived; `--wipe` starts over.
 </details>
 
 <details>
@@ -624,14 +624,14 @@ reporting still answers "the last day" about its last day of data.
   The API's window ladder tops out at one year, so a longer range comes back `complete: false`.
 - **`WATER_TYPE` is one global variable and the two test pods disagree.** One deployment cannot
   serve both correctly *in chat*. The tool *flags* the mismatch in its result rather than silently
-  comparing a saltwater pod against freshwater limits. Reports already read the device's own
-  `operatingEnvironment` (`src/report/buildReportInput.ts`); moving the **prompt** to per-device is
-  still N4 work, gated by ◆G3, and blocked meanwhile by the pinned system prompt.
+  describing a saltwater pod as freshwater. Reports already read the device's own
+  `operatingEnvironment` (`src/report/buildReportInput.ts`); reading it per device in chat is
+  unbuilt N4 work. The prompt no longer carries ranges, and ◆G3 resolved on 2026-09-13.
 - **A pod's first-ever reading may be a boot artifact** (Algalita's is pH 13.58, −1809 °F) whose
   hardware error flags are **not** set. It is now excluded by the per-metric plausibility rails in
   `src/devices/plausibility.ts` — the count comes back as `excluded_implausible`. Those are rails,
-  not quality thresholds: judging whether a *plausible* reading is normal is the site baseline's
-  job (◆G3).
+  not quality thresholds: whether a *plausible* reading is a concern is judged against the pod's
+  registry thresholds (`get_pod_thresholds`).
 
 ---
 
@@ -641,13 +641,13 @@ reporting still answers "the last day" about its last day of data.
 |---|---|
 | `npm run dev` | live-reload dev server (`ts-node-dev`) |
 | `npm run build` / `npm start` | compile to `dist/` / run compiled |
-| `npm test` | full Jest suite (42 suites, none touching the network) |
+| `npm test` | full Jest suite (52 suites: 46 unit, 6 integration; none touching the network) |
 | `npm run test:coverage` / `test:watch` | coverage / watch mode |
 | `npm run lint` / `npm run typecheck` | ESLint (check-only) over `src` / `tsc --noEmit` |
 | `npm run lint:fix` | ESLint `--fix` over `src` `.ts` files, writes files |
 | `npm run ingest` | parse `documents/` → `data/corpus/corpus.json` ([§6](#6-retrieval-arms)) |
-| `npm run seed:firestore` | upload the corpus to `corpus_documents` |
-| `npm run seed:firestore-chunks` | embed + upload to `corpus_chunks` for `firestore-vector`; `--wipe` clears stale chunks first |
+| `npm run seed:firestore` | upload the corpus to `corpus_documents`; `--prune` deletes documents that left the corpus |
+| `npm run seed:firestore-chunks` | embed + upload to `corpus_chunks` for `firestore-vector`; `--prune` deletes stale chunk ids, `--wipe` starts over |
 | `npm run embed:cache` | build the local embedding cache the `local-*` and `hybrid-slice-*` arms read |
 | `npm run compare:vector-arms` | prove `local-vector` and `firestore-vector` rank identically |
 | **`npm run verify:sensor`** | **live read-only check that the sensor tool reads real pods (no LLM, no cost)** |
@@ -655,7 +655,8 @@ reporting still answers "the last day" about its last day of data.
 | `npm run explore:devices` | discover the fleet and record raw responses to `data/device-api/` |
 | `npm run explore:fields` / `explore:surface` | read-only backend census: per-device field coverage / route surface (`docs/migration/BACKEND_FIELDS.md`) |
 | `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a run; `--spot-check`, `--only`, `--dry-run` |
-| `npm run cost` | price the arms and compute break-even |
+| `npm run cost` | price the arms at `gpt-oss-120b` rates and compute break-even |
+| `npm run judge` | the paid Tier 2 LLM judge over captured transcripts; `--dry-run` first, `--calibrate` for judge-vs-human agreement |
 | `npm run grade:packet` | build the blind grading packet (`--pass=`, `--sample=`) |
 | `npm run retrieval:eval` | score adapters against the labelled query set — no LLM, free, ~10s (`--adapter=`, `--k=`, `--out=`) |
 | `npm run gate:check` | decide §8a's three hard gates over captured transcripts — no LLM, free (`--pass=`, `--arm=`, `--tolerance=`, `--out=`) |
@@ -675,38 +676,44 @@ src/
                         #   ReportController
   retrieval/            # the retrieval seam — SPECS.md §9
     RetrievalRegistry.ts  #   mode -> adapter, selected by DEFAULT_RETRIEVAL
-    adapters/           #   Stub, DirectFeed, FirestoreVector
+    adapters/           #   Stub, DirectFeed, FirestoreVector, LocalVector, RrfHybrid,
+                        #   HybridSliceVector, GoldContext
+    lexical/            #   Bm25Index
     sources/            #   ArtifactCorpusSource | FirestoreCorpusSource
   devices/              # DeviceApiClient (read-only), metrics.ts (codes, flags, decoding),
-                        #   plausibility.ts (per-metric rails the hardware flags miss)
+                        #   plausibility.ts (per-metric rails), mergeChains.ts
   tools/                # the model-facing tools — SPECS.md §10.3a
     querySensorData.ts  #   the sensor tool + typed query(); timeRange.ts; aggregate.ts
+    getPodThresholds.ts #   the pod's registry alert limits; getTurbidityInfo.ts
     generateReport.ts   #   the report tool, gated on REPORT_TOOL
   report/               # the deterministic report pipeline: buildReportInput, events,
-                        #   referenceRanges, operatorThresholds, narrative, renderPdf
+                        #   referenceRanges, operatorThresholds, narrative, renderPdf,
+                        #   reportOwnership
   quota/                # QuotaService + QuotaStore seam — SPECS.md §4a
-  services/             # LlmService, ChatOrchestrator (tool loop), EmbeddingService
-  prompt/               # systemPrompt.ts (pinned control + TOOL_BLOCK / REPORT_TOOL_BLOCK),
+  services/             # LlmService, ChatOrchestrator (tool loop), EmbeddingService, auditLog
+  prompt/               # systemPrompt.ts (base prompt + TOOL_BLOCK / REPORT_TOOL_BLOCK),
                         #   promptBuilder.ts
   ingestion/            # extract, chunk, corpus, ingest
-  eval/                 # bake-off runner, fixtures, cost model
+  eval/                 # capture runner, fixtures, cost model, gates/, judge/, retrieval/
   validators/ types/ middleware/ utils/
-scripts/                # ingest, bakeoff, cost, seed*, exploreDeviceApi, verifySensorTool,
-                        #   gradePacket, exploreDeviceFields.sh,
-                        #   exploreBackendSurface.sh
+scripts/                # ingest, seed*, embed cache, bakeoff, gateCheck, judge, cost,
+                        #   gradePacket, retrievalEval, resolveRetrievalLabels,
+                        #   compareVectorArms, renderReport, exploreDeviceApi,
+                        #   verifySensorTool, exploreDeviceFields.sh, exploreBackendSurface.sh
 test/
-  integration/          # health, chat, sensorChat, devices, quotaChat
+  integration/          # health, chat, sensorChat, devices, quotaChat, reports
   unit/                 # per-module suites
   fixtures/device-api/  # recorded production bodies + provenance README
+  fixtures/pod-scope/   # synthetic fleet for pod-authorization work
 frontend/               # chat UI (manual test surface, not the product). Served, not file://
   index.html            #   markup + mount points; app.css; js/ modules; vendor/ for third-party
 data/                   # corpus artifact + device recordings (git-ignored)
-documents/              # source corpus, 15 docs since 2026-08-24. NOTE: `.gitignore` has a
-                        #   documents/* rule and MOST FILES ARE UNTRACKED. The five Tier 1
+documents/              # source corpus, 14 docs since 2026-09-13. NOTE: `.gitignore` has a
+                        #   documents/* rule and MOST FILES ARE UNTRACKED. The four Tier 1
                         #   docs are force-tracked because they are the whole direct-feed
                         #   slice. Read documents/README.md before ingesting.
-eval/                   # fixtures/ (committed questions), transcripts/, grading/. The
-                        #   pgvector-rag transcripts and KEY.json stay — they are ◆G7's evidence.
+eval/                   # fixtures-wave1/ (committed questions), claims/, retrieval-labels/,
+                        #   transcripts/. The pre-rebuild set is archived (docs/ARCHIVED.md).
 archive/                # retired code kept for the record, at its original paths.
   pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
 docs/                   # STATUS.md (start here), ARCHIVED.md, SPECS.md, timeline.md, RETRIEVAL_BAKEOFF.md,

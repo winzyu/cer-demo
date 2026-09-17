@@ -59,16 +59,10 @@ industrial dissolved oxygen. Temperature comes with the Atlas suite. **Turbidity
 part** — it is a bolt-on from an unidentified vendor, which is why its behavior is the least
 documented thing on the pod.
 
-**Operator-authoritative normal ranges** (these outrank any document — see §3):
-
-| parameter | freshwater | saltwater |
-|---|---|---|
-| pH | 6.5 – 8.5 | 6.5 – 8.5 |
-| ORP | 200 – 400 mV | 200 – 400 mV |
-| Dissolved oxygen | 5 – 14 mg/L | 5 – 14 mg/L |
-| Temperature | 32 – 95 °F | 32 – 95 °F |
-| Conductivity | 0 – 1,500 µS/cm | 40,000 – 50,000 µS/cm |
-| Turbidity | 0 – 25 NTU | 0 – 10 NTU |
+**Pod limits come from the device registry, not from this brief.**
+Each pod's alert limits are configured by the operator in the device registry and reach the assistant only through the `get_pod_thresholds` tool.
+The operator's reference range table was vetoed on 2026-09-13 and is deliberately not reproduced here (`timeline.md`, decision log).
+Registry values are alert limits, not ecological ranges.
 
 ---
 
@@ -77,9 +71,11 @@ documented thing on the pod.
 **Must answer:**
 
 - *Definitional* — what a parameter is, what it indicates.
-- *Threshold* — at what value something is a concern.
-- *Precedence* — when a document disagrees with the operator ranges above, **the operator range
-  wins** and the discrepancy is noted.
+- *Threshold* — what a document says about when a value is a concern, kept distinct from the pod's
+  configured limits.
+- *Precedence* — a range a document describes is background, not the pod's configured limit. The
+  configured limit comes only from a tool result, and with none available the assistant says so
+  rather than substituting the document's range.
 - *Event signature* — what a combination of movements across parameters suggests (sewage,
   stormwater runoff, saltwater intrusion, hypoxia, algal bloom).
 - *Instrument behavior* — calibration intervals, drift, biofouling, "is the probe broken or is the

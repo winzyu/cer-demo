@@ -48,8 +48,8 @@ Two things to keep straight about this track:
   cost scenario) is what makes ◆G7 auditable later and stays; the *runtime code* (adapter, seeder,
   schema, compose file, the `pg` dependency) is what costs upkeep and went, to
   `archive/pgvector-rag/` at its original paths.
-  **This happened ahead of ◆G7 by decision, not because ◆G7 closed** — the gate is still open on
-  grading and on `RETRIEVAL_COMPARISON.md` (see ◆G7 below). It was safe to do early *because* of the
+  **This happened ahead of ◆G7 by decision.** (◆G7 split on 2026-08-26; see ◆G7 below.) It was
+  safe to do early *because* of the
   split above: grading, `npm run cost` and `npm run grade:packet` all read captured evidence, none of
   them the arm's code. The price paid is that the arm **cannot be re-run or re-captured** without
   restoring it from the archive — so if grading ever demands a fresh `pgvector-rag` capture, that
@@ -57,9 +57,10 @@ Two things to keep straight about this track:
   because the prompt is pinned (it no longer is), but because arms are only comparable when captured
   under the same prompt, model and fixtures. Phase 4 of `EVAL_REBUILD.md` captures every arm fresh
   against the gold-context ceiling for exactly that reason.
-- **It is built and swept.** All three arms are implemented, seeded and captured cold + warm on
-  `feat/bakeoff-sweep`. What remains is a re-capture on the current corpus, then the gate passes —
-  see ◆G7 below and [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8b.
+- **It was built and swept, then superseded.** The arms were captured on `gpt-oss-20b`, a
+  placeholder model, against a fixture set archived on 2026-09-01. The eval is being rebuilt
+  ([`EVAL_REBUILD.md`](EVAL_REBUILD.md)), every arm is unranked until its Phase 4 re-measures them,
+  and the current state is in "Eval rebuild — 2026-09-01" below.
 
 ### Corpus scoped to what the DataPod measures (2026-07-29)
 
@@ -402,7 +403,8 @@ Three findings from the live run that bear on later phases (`DEVICE_API.md` §12
   is otherwise indistinguishable from anoxic water at pH 0. Guarded; this is a hard requirement
   for `query_sensor_data`, since reporting it would be a fabricated figure.
 - **The two test pods are different water types**, so `WATER_TYPE` as a global env var cannot serve
-  both. Water type must move to per-device metadata — **Phase N4, and an input to ◆G3**.
+  both. Water type must move to per-device metadata — **Phase N4** (◆G3 has since resolved;
+  reports read it per device, chat does not yet).
   Separately, Algalita reads **54,100-60,200 µS/cm against a stated saltwater range of
   40,000-50,000** — an operator question, not a code fix.
 
@@ -538,15 +540,15 @@ an input to **◆G3**.
 > `thresholds.min/maxTemperature` for the site baseline, both per device
 > (`src/report/buildReportInput.ts`, `src/report/operatorThresholds.ts`, `migration/BACKEND_FIELDS.md`).
 > **The chat path is unchanged** — it still reads the single global `WATER_TYPE`. Per-device water
-> type in chat is now simply unbuilt, not blocked. ◆G3 stays open: what the report calls a
-> baseline is the operator's registry range, adopted as a working interpretation, not a decision.
+> type in chat is now simply unbuilt, not blocked. ◆G3 resolved on 2026-09-13: the baseline is
+> the pod's operator-configured registry threshold, by supervisor direction (decision log below).
 
 - **Add `turbidity` (NTU) end-to-end** — ingestion unit detection and the metric enum. The
   **operator normal-range and system-prompt range block landed early (2026-07-29)** — `0-25 NTU`
   freshwater / `0-10 NTU` saltwater — because the N2 eval could not measure retrieval while the
-  prompt still declared turbidity unmeasured. See the session handoff.
-- **Encode the "0 is valid" rule** for turbidity *and* ORP into the faulty-data foundation. The
-  system-prompt range already starts at 0 for turbidity.
+  prompt still declared turbidity unmeasured. **The range block was deleted on 2026-09-13**; chat
+  now describes turbidity through `get_turbidity_info` (decision log below).
+- **Encode the "0 is valid" rule** for turbidity *and* ORP into the faulty-data foundation.
 - **Site/device metadata store** — coordinates, water-body type, client/contract, per-sensor
   calibration dates (needed for the report header + §5).
 - **◆ G3 — Site-baseline definition** — **resolved 2026-09-13**: the report's "Site Baseline" is

@@ -12,7 +12,7 @@ its report and fixture spec are archived too (`docs/ARCHIVED.md`).
 
 | path | what it is |
 |---|---|
-| `fixtures-wave1/` | the wave 1 rebuild — **46 conversations, 92 turns**, all runnable (no fixture declares a `requires`). Seven classes; slice coverage 41 none / 5 partial / 0 full. `FIXTURE_DIR` points here. |
+| `fixtures-wave1/` | the wave 1 rebuild — **45 conversations, 90 turns**, all runnable (no fixture declares a `requires`). Seven classes; slice coverage 41 none / 5 partial / 0 full. `FIXTURE_DIR` points here. |
 | `claims/` | the Phase 1a claim inventory — what each chunk supports, which drives the class quotas and the refusal fixtures |
 
 ## What is not here
