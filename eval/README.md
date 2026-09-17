@@ -5,8 +5,8 @@ The evaluation set. **Data, not code** — one JSON file per conversation, loade
 
 **The apparatus is being rebuilt.** The plan, and the only context a fresh session needs, is
 [`docs/EVAL_REBUILD.md`](../docs/EVAL_REBUILD.md). Read that before anything else in `docs/` that
-describes an eval — `EVAL_FIXTURES.md`, `RETRIEVAL_BAKEOFF.md` and `RETRIEVAL_COMPARISON.md` all
-describe the set that was archived on 2026-09-01.
+describes an eval — `RETRIEVAL_BAKEOFF.md` describes the set that was archived on 2026-09-01, and
+its report and fixture spec are archived too (`docs/ARCHIVED.md`).
 
 ## What is here
 

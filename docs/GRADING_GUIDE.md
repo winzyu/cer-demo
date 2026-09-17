@@ -81,6 +81,8 @@ How well the answer satisfies that turn's **Must contain** list.
 | **1** | Partially there — some points made, or the right idea stated vaguely or incompletely. |
 | **0** | Misses the point, is wrong, or refuses when the rubric expected a real answer. |
 
+- **Each "must contain" point is one atomic, independently checkable claim**, not a paraphrase of
+  a model answer, so an answer that makes some of them is a 1 without argument.
 - **Score against the rubric, not against your own knowledge.** If an answer is true but does not
   make the points the rubric lists, it is not a 2.
 - **A "must not" item that appears makes the turn a 0**, regardless of everything else. Those are
@@ -167,7 +169,7 @@ So: do not try to guess what an AI would say. Your disagreement is the signal.
 
 1. Save `scores.csv`.
 2. **Now** open `KEY.json` and map letters back to systems.
-3. Results go into `docs/RETRIEVAL_COMPARISON.md`.
+3. Results go into the evaluation read-out for the phase being graded (`docs/EVAL_REBUILD.md` §5).
 
 The scores feed four hard gates, fixed in `RETRIEVAL_BAKEOFF.md` §8a **before any answer was
 generated** so the data decides rather than the preference:

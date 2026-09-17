@@ -11,6 +11,9 @@
 > **What is still in force:** §8a's pre-registered thresholds, carried forward verbatim into
 > `EVAL_REBUILD.md` §1, and the harness design in §7b/§8b. The instruments were kept; the numbers
 > were not.
+>
+> Its results report `RETRIEVAL_COMPARISON.md` and fixture spec `EVAL_FIXTURES.md`, both cited below,
+> were archived 2026-09-15 under `eval-docs-archive-2026-09-15` (`ARCHIVED.md`).
 
 
 The experiment design for comparing a **direct-feeding brain** (put the source text in the prompt,
@@ -932,7 +935,7 @@ gate was vetoing on wording rather than on behaviour.
 > **Superseded for two arms — this table is the 2026-08-25 run and is kept as the record of it.**
 > `firestore-vector` and `hybrid-slice-vector` were re-captured on the 15-document corpus and Tier 1
 > re-run; the current numbers are in `data/results/gate-check/warm.json` and in
-> [`RETRIEVAL_COMPARISON.md`](RETRIEVAL_COMPARISON.md) §1c. What changed: `firestore-vector` now
+> `RETRIEVAL_COMPARISON.md` §1c (archived). What changed: `firestore-vector` now
 > reads **97.8% citations (44/45)** and **2 unexplained figures of 122**, not the 100% (61/61) and
 > 5 of 132 above — it still **fails**, on figures, and the failure is now re-earned on the current
 > corpus rather than indicative. `hybrid-slice-vector` did not exist in this run and passes at

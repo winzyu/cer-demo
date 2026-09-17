@@ -4,8 +4,9 @@ The evaluation apparatus is being rebuilt from scratch. This file is the working
 only context a fresh session needs. It replaces reading the bake-off documents.
 
 **Read this, then `CLAUDE.md` (house rules), then start at Phase 0.** Do not read
-`RETRIEVAL_BAKEOFF.md` or `RETRIEVAL_COMPARISON.md` unless a task here sends you there — they
-document a completed experiment whose conclusions are superseded by §1 below.
+`RETRIEVAL_BAKEOFF.md` unless a task here sends you there — it documents a completed experiment
+whose conclusions are superseded by §1 below. Its results report and fixture spec are archived
+(`docs/ARCHIVED.md`).
 
 ---
 
@@ -687,11 +688,9 @@ A plain seed only overwrites, so after any corpus change re-run both with `--pru
 
 ## 8. House rules — these bind, see `CLAUDE.md`
 
-- **The user runs every git command.** Do not commit, push, branch, or tag unless explicitly
-  authorized in the conversation.
+- **Git mutations need a plan the user approved in chat** (`git-plan` skill); read-only git is free.
 - **Never run the full test suite.** Target specific suites and say which you ran.
-- `npm run typecheck` and `npx eslint src --ext .ts` are cheap — use `npx eslint`, not
-  `npm run lint` (that script writes files).
+- `npm run typecheck` and `npm run lint` are cheap and read-only; `npm run lint:fix` writes files.
 - **Pass both rules to any agent you dispatch.**
 - Write only inside this repository. `../user-dashboard` and `../clean-earth-rovers-server` are read-only references.
 - **Ask before spending.** Captures and judge passes cost real money.
@@ -753,5 +752,5 @@ refusal-class fixtures load and no turn is detected.
 
 Widening the pattern is not the fix: adding `declines` catches only 3 of 8 and picks up two false
 positives in the archived set. **The fix is a per-turn `requires_refusal` boolean on the fixture**,
-which `EVAL_FIXTURES.md` §7 previously ruled out because the fixtures were a pinned control while
+which the bake-off's fixture rules previously ruled out because the fixtures were a pinned control while
 ◆G7 was open — a reason that no longer exists. This had blocked Phase 3.

@@ -13,7 +13,7 @@ gate (◆G1) is now **resolved** — see below — which re-anchors every phase 
 Companion docs: [`SPECS.md`](SPECS.md) (what's built today), [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md)
 (coding conventions), [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md) (legacy FastAPI
 behavior being ported), [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) (the Phase N2 direct-feed vs
-RAG experiment design), [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md) (the committed bake-off question set),
+RAG experiment design), [`EVAL_REBUILD.md`](EVAL_REBUILD.md) (the eval rebuild and its question set),
 [`CHAT_UX_WORKPLAN.md`](CHAT_UX_WORKPLAN.md) (N5's startable work, cut into parallel workstreams),
 `report/…report-template.pdf` (the report template a later phase builds toward).
 
@@ -208,7 +208,7 @@ method costs**, not by arguing. Full experiment design:
 > had already made while the defect that actually blocks shipping went untouched.
 >
 > Recorded in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §8c and
-> [`RETRIEVAL_COMPARISON.md`](RETRIEVAL_COMPARISON.md) §7.1a. **Two N5/N-series items unblock
+> `RETRIEVAL_COMPARISON.md` §7.1a (archived, `eval-docs-archive-2026-09-15`). **Two N5/N-series items unblock
 > immediately:** system-prompt personality, and ◆G11's `search_documents`-as-a-tool question.
 >
 > **Two caveats to carry forward, both about the grading instrument rather than the result.**
@@ -308,7 +308,7 @@ Build work in this phase:
 - **`pgvector-rag` sidecar** — `docker-compose.bakeoff.yml`, never in the deployed image. ✅ built and
   swept; archived 2026-08-19 to `archive/pgvector-rag/`.
 - **Eval fixtures** — ✅ **done**: 30 conversations / 62 turns in `eval/fixtures/`, with per-turn
-  rubrics, committed before any arm runs. See [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md).
+  rubrics, committed before any arm runs. Spec: `EVAL_FIXTURES.md` (archived, `eval-docs-archive-2026-09-15`).
 - **Eval harness (programmatic)** — ✅ **done**: `npm run bakeoff`. Replays the fixed **multi-turn conversations** over
   HTTP against each arm in a set order, and saves full transcripts: responses, **the exact context
   supplied to the model** (without it groundedness can't be graded), tool calls, cached/uncached token

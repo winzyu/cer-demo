@@ -9,10 +9,9 @@ status block below says which phase each piece belongs to.
 - The **roadmap / next steps** are in [`timeline.md`](timeline.md).
 - The **direct-feed vs RAG experiment** that decides how document context is retrieved — on cost —
   is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). Deferred: it runs on its own branch after
-  Phase N1, and produces `RETRIEVAL_COMPARISON.md`.
+  Phase N1; its report `RETRIEVAL_COMPARISON.md` is archived (`ARCHIVED.md`).
 - The **question set every arm is graded against** is described in §12 and planned in
-  [`EVAL_REBUILD.md`](EVAL_REBUILD.md), committed before any arm runs. (`EVAL_FIXTURES.md`
-  describes the set archived on 2026-09-01.)
+  [`EVAL_REBUILD.md`](EVAL_REBUILD.md), committed before any arm runs.
 
 > **Status (2026-09-02): the eval apparatus is being rebuilt — see
 > [`EVAL_REBUILD.md`](EVAL_REBUILD.md), which supersedes the N2 status below.** The 2026-08 bake-off
@@ -35,7 +34,7 @@ status block below says which phase each piece belongs to.
 >
 > **What remains in N2 is grading, not building.** ◆G7 is open until the blind packet
 > (`eval/grading/`, [`GRADING_GUIDE.md`](GRADING_GUIDE.md)) is scored and
-> `RETRIEVAL_COMPARISON.md` is written.
+> `RETRIEVAL_COMPARISON.md` (now archived) is written.
 >
 > **Phase N3 is built:** the device-API client, `query_sensor_data`, and the tool-calling loop
 > (§10.3a) are all in the tree and covered by tests. They are **gated on `SENSOR_TOOL`, which
@@ -206,7 +205,7 @@ clean-earth-rag/
 │                             files (the ◆G9 slice) are force-tracked; see documents/README.md
 ├── archive/pgvector-rag/     the archived bake-off arm at its original paths (§14) —
 │                             not compiled, not tested, not imported; excluded from the image
-└── docs/                     SPECS.md, timeline.md, EVAL_FIXTURES.md, migration/
+└── docs/                     SPECS.md, timeline.md, EVAL_REBUILD.md, migration/
 ```
 
 ---
@@ -958,8 +957,7 @@ flag setting. Slice coverage: 41 none / 5 partial / 0 full.
 **This replaced the 30-conversation / 62-turn bake-off set on 2026-09-01.** The old set is archived
 under the tag `eval-archive-2026-09-01`; 27 of its 30 fixtures were answerable from 4.4% of the
 corpus and three carried the entire `deep-in-manual` class. The rebuild's plan, the wave-1 exit
-criteria and the class allocation are in [`EVAL_REBUILD.md`](EVAL_REBUILD.md) — **read that rather
-than `EVAL_FIXTURES.md`, which describes the archived set.**
+criteria and the class allocation are in [`EVAL_REBUILD.md`](EVAL_REBUILD.md).
 
 `FIXTURE_DIR` in `src/eval/fixtures.ts` points at `eval/fixtures-wave1/`. Renaming that directory
 back to `eval/fixtures/` is the last step of the migration; the name is deliberately left free.

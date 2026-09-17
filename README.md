@@ -43,7 +43,7 @@ and the traps that cost time.
 | [`docs/migration/MIGRATION_SPEC.md`](docs/migration/MIGRATION_SPEC.md) | Behaviour of the legacy FastAPI system being ported. |
 | [`docs/migration/CONVENTIONS.md`](docs/migration/CONVENTIONS.md) | Coding conventions this repo follows. |
 | [`docs/migration/SECURITY_FINDINGS.md`](docs/migration/SECURITY_FINDINGS.md) | Device-authorization findings — upstream, **and two still open in this service** (§6). |
-| [`docs/EVAL_FIXTURES.md`](docs/EVAL_FIXTURES.md) · [`eval/README.md`](eval/README.md) | The committed question set and captured sweeps. |
+| [`docs/EVAL_REBUILD.md`](docs/EVAL_REBUILD.md) · [`eval/README.md`](eval/README.md) | The eval rebuild plan, the committed question set and captured runs. |
 
 ---
 
@@ -105,7 +105,7 @@ Firestore (`@google-cloud/firestore`) · Fireworks via the `openai` SDK · Jest 
 
 1. Create an account at **https://fireworks.ai**.
 2. **API Keys** → generate a key → put it in `.env` as `FIREWORKS_API_KEY`.
-3. Model ids are already in `.env.example` (`accounts/fireworks/models/gpt-oss-20b`,
+3. Model ids are already in `.env.example` (`accounts/fireworks/models/gpt-oss-120b`,
    `nomic-ai/nomic-embed-text-v1.5`). **Confirm the exact id in the console first** — the serverless
    catalogue rotates.
 
@@ -319,7 +319,7 @@ every problem, missing secrets are warnings only.
 |---|---|---|
 | `FIREWORKS_API_KEY` | *(unset)* | Required before any chat works. |
 | `FIREWORKS_BASE_URL` | `https://api.fireworks.ai/inference/v1` | OpenAI-compatible endpoint. |
-| `LLM_MODEL` | *(unset)* | e.g. `accounts/fireworks/models/gpt-oss-20b`. |
+| `LLM_MODEL` | *(unset)* | e.g. `accounts/fireworks/models/gpt-oss-120b`. |
 | `LLM_MAX_TOKENS` | `4096` | **Raise to 16384 for tool use or capture runs.** gpt-oss emits reasoning tokens and returns an *empty answer* if starved — the API call still succeeds. |
 | `LLM_TEMPERATURE` | `0` | **Leave at 0 for the bake-off** — sampling variance would measure the sampler, not retrieval. |
 | `FIREWORKS_USER` | `clean-earth-rag` | Sent as the OpenAI `user` field; drives serverless prompt-cache affinity. |
@@ -710,7 +710,7 @@ eval/                   # fixtures/ (committed questions), transcripts/, grading
 archive/                # retired code kept for the record, at its original paths.
   pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
 docs/                   # STATUS.md (start here), ARCHIVED.md, SPECS.md, timeline.md, RETRIEVAL_BAKEOFF.md,
-                        #   EVAL_FIXTURES.md, GRADING_GUIDE.md, CHAT_UX_WORKPLAN.md,
+                        #   GRADING_GUIDE.md, CHAT_UX_WORKPLAN.md,
                         #   CORPUS_SOURCING_BRIEF.md, migration/
 ```
 

@@ -9,6 +9,7 @@ in git history under the tag named in its section.
 | `eval-archive-2026-09-01` | 2026-09-01 | the whole pre-rebuild eval set — 556 files |
 | `corpus-archive-2026-09-13` | 2026-09-13 | the operator source-of-truth document and its claim inventory — 2 files |
 | `handoffs-archive-2026-09-13` | 2026-09-13 | the last three dated session handoffs, retired for a single living `docs/STATUS.md` |
+| `eval-docs-archive-2026-09-15` | 2026-09-15 | the bake-off results report and the two fixture specs for the archived eval set — 3 files |
 
 Retrieve one by path:
 
@@ -39,6 +40,10 @@ accurate when written and is wrong now in at least one material way.
 describes is finished. It stays because **21 source files cite it by section** as the reason
 their behaviour is what it is (`systemPrompt.ts`, `ChatOrchestrator.ts`, `chunk.ts`,
 `querySensorData.ts`, and others). Archiving it would leave those comments pointing at nothing.
+
+`docs/RETRIEVAL_BAKEOFF.md` was considered on 2026-09-15 alongside the three eval docs archived that day, and kept.
+It is the pre-registration: its §8a thresholds carry forward verbatim into `EVAL_REBUILD.md` §1, and its §7b/§8b harness design is still in force.
+About 45 code, test and script comments cite it by section, and several of the rules they cite (the servable-set rule, why the hard gates are absolute, the transcript capture table, the refusal-scope ruling) live nowhere else.
 
 ## `eval-archive-2026-09-01` — the pre-rebuild eval set
 
@@ -149,6 +154,31 @@ Retrieve:
 git show handoffs-archive-2026-09-13:docs/HANDOFF_2026-09-13.md
 git show handoffs-archive-2026-09-13:docs/HANDOFF_2026-09-10.md
 git show handoffs-archive-2026-09-13:docs/HANDOFF_2026-08-27.md
+```
+
+## `eval-docs-archive-2026-09-15` - the bake-off report and fixture specs
+
+Removed on 2026-09-15, preserved under the tag `eval-docs-archive-2026-09-15`, which points at the last commit that contains all three.
+Each describes the eval set archived on 2026-09-01 (`eval-archive-2026-09-01`), and each carried a banner saying so.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/RETRIEVAL_COMPARISON.md` | 1,223 | The ◆G7 results report: cost, quality and judge-agreement numbers for the retrieval arms | Every number was measured on `gpt-oss-20b`, a placeholder model, over the archived fixtures (`EVAL_REBUILD.md` §0). The findings code cited from it already live in `EVAL_REBUILD.md` §5 (Phase 2a) and §6 (traps), or inline in the citing comment; the per-answer cost figures are recomputed by `npm run cost` and pinned in `test/unit/cost.test.ts`. |
+| `docs/EVAL_FIXTURES.md` | 280 | The spec of the 30-fixture / 62-turn bake-off question set | Superseded by `EVAL_REBUILD.md` §2 and `SPECS.md` §12. Its one rule still in use, that a `must_not` hit outranks a `must_contain` miss, is in `GRADING_GUIDE.md` §3, together with the atomic-claim rule it carried. |
+| `docs/EVAL_FIXTURES_NEXT.md` | 418 | A proposed expansion of that set, never merged | Its own banner already marked it archived; nothing cited it. |
+
+**1,921 lines.**
+
+Code, test and doc references were repointed to `EVAL_REBUILD.md` or `GRADING_GUIDE.md` in the same change.
+Historical mentions in `RETRIEVAL_BAKEOFF.md`, `EVAL_FIXTURE_QUALIFICATION.md` and dated `timeline.md` entries were left as text, marked archived.
+`data/results/judge/repro-2026-08-27/README.md` still cites `RETRIEVAL_COMPARISON.md` §6.4a; it sits beside captured judge ledgers and was not edited.
+
+Retrieve:
+
+```bash
+git show eval-docs-archive-2026-09-15:docs/RETRIEVAL_COMPARISON.md
+git show eval-docs-archive-2026-09-15:docs/EVAL_FIXTURES.md
+git show eval-docs-archive-2026-09-15:docs/EVAL_FIXTURES_NEXT.md
 ```
 
 ## Rules

@@ -436,9 +436,8 @@ no prompt change, no chat-pipeline change, no new dependency, and every new test
 the half of N3 that can safely land before the bake-off runs, and it removes the "needs a person,
 not code" blocker that `timeline.md` flagged.
 
-**Recommended sequence:** finish the N2 sweep and `RETRIEVAL_COMPARISON.md` → close ◆G7 → then
-wire the tool loop and the prompt block in one deliberate change, re-running arms only if the
-comparison is still open.
+**Superseded:** the tool loop and its prompt block shipped in N3 behind `SENSOR_TOOL`, ◆G7 split on
+2026-08-26, and the bake-off report is archived (`ARCHIVED.md`).
 
 ---
 

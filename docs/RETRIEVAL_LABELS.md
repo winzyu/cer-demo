@@ -290,7 +290,7 @@ None of these is a fixture bug; they are stale or conservative document lists.
   48 files, but these labels have never been used to score a retrieval run. No number produced by
   `npm run retrieval:eval` has been sanity-checked against them.
 - **The `answerable_from` disagreements in §6 were not fixed.** Changing a fixture changes the
-  question set, and `EVAL_FIXTURES.md` §8 forbids that while ◆G7 is open.
+  question set, and the bake-off's fixture rules forbade that while ◆G7 was open.
 
 ## 8. What would invalidate this set
 

@@ -28,10 +28,10 @@ code as it stands on `dev`.
 The 30 fixtures are a pinned control — three arms were captured against them
 ([`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) §4b). **Nothing in `eval/fixtures/` was edited to
 produce this document.** Everything below is a recommendation for whoever re-derives the set for
-the next sweep, per [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md) §7's rule that a corpus change is
+the next sweep, per `EVAL_FIXTURES.md` §7's rule (archived, `eval-docs-archive-2026-09-15`) that a corpus change is
 grounds for re-derivation rather than reinterpretation.
 
-Companion docs: [`EVAL_FIXTURES.md`](EVAL_FIXTURES.md) (what a fixture is),
+Companion docs: `EVAL_FIXTURES.md` (what a fixture is; archived),
 [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md) (the experiment),
 [`../documents/README.md`](../documents/README.md) (the corpus tiers).
 

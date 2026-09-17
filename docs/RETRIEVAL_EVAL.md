@@ -17,7 +17,7 @@ network for the corpus, deterministic, seconds per run.**
 > unchanged and still correct; re-run against the current labels and corpus for current numbers.
 
 Companion docs: [`RETRIEVAL_LABELS.md`](RETRIEVAL_LABELS.md) (how the ground truth was built),
-[`EVAL_FIXTURES.md`](EVAL_FIXTURES.md) (the question set), [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md)
+[`EVAL_REBUILD.md`](EVAL_REBUILD.md) (the question set), [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md)
 (the Phase N2 LLM sweep this does **not** replace).
 
 ---

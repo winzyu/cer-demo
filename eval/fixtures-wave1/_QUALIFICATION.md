@@ -30,7 +30,7 @@ That produces two defects, both of which punish a *correct* answer:
 | defect | what it does |
 |---|---|
 | **`answerable_from` under-specified** | A RAG arm retrieves a legitimate second source, answers correctly, cites it, and is scored an **invalid citation**. |
-| **`must_not` forbids a corpus-grounded answer** | Worse. A `must_not` hit **outranks** a `must_contain` miss (`EVAL_FIXTURES.md` §2), so a correct grounded answer is scored as the *worst* failure mode. |
+| **`must_not` forbids a corpus-grounded answer** | Worse. A `must_not` hit **outranks** a `must_contain` miss (`GRADING_GUIDE.md` §3), so a correct grounded answer is scored as the *worst* failure mode. |
 
 Both were the top two findings of the August pass as well. The rebuild did not inherit the old
 set's defects, but it reproduced this one — which suggests it is a property of authoring a fixture
