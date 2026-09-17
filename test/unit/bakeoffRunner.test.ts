@@ -1,4 +1,7 @@
-import { parseArgs } from "../../src/eval/cli";
+import {
+  GOLD_CONTEXT_ARM, SPOT_CHECK_QUERIES, parseArgs, spotCheckQueriesFor,
+} from "../../src/eval/cli";
+import type { LabelledQuery } from "../../src/eval/retrieval/types";
 import {
   ArmMismatchError,
   replayAll,
@@ -331,5 +334,49 @@ describe("elapsed-time measurement", () => {
     // Loose lower bound: timers fire late, never early, and a tight one would be flaky on a
     // loaded machine. The point is that the clock advances at all.
     expect(elapsedMsSince(started)).toBeGreaterThanOrEqual(10);
+  });
+});
+
+describe("spotCheckQueriesFor", () => {
+  const relevant: LabelledQuery["relevant"] = [{
+    chunkId: "doc.pdf__abc", contentHash: "abc", filename: "doc.pdf", grade: 2, evidence: "x",
+  }];
+  const entry = (
+    fixtureId: string, fixtureClass: string, turn: number, labelled = true,
+  ): { fixtureId: string; fixtureClass: string; label: LabelledQuery } => ({
+    fixtureId,
+    fixtureClass,
+    label: { turn, query: `${fixtureId} t${turn}`, relevant: labelled ? relevant : [] },
+  });
+
+  it("keeps the fixed probe questions for every arm except gold-context", () => {
+    expect(spotCheckQueriesFor("firestore-direct", [])).toEqual(SPOT_CHECK_QUERIES);
+  });
+
+  it("probes gold-context with labelled turns, first fixture id then first turn, per class", () => {
+    const labelled = [
+      entry("deepmanual-b", "deep-in-manual", 1),
+      entry("deepmanual-a", "deep-in-manual", 2),
+      entry("deepmanual-a", "deep-in-manual", 1),
+      entry("crossdoc-a", "cross-document", 1),
+      entry("probecal-a", "probe-calibration", 1),
+    ];
+    expect(spotCheckQueriesFor(GOLD_CONTEXT_ARM, labelled))
+      .toEqual(["deepmanual-a t1", "crossdoc-a t1", "probecal-a t1"]);
+  });
+
+  it("skips turns labelled with no chunks, which would trip the empty-context warning", () => {
+    const labelled = [
+      entry("deepmanual-a", "deep-in-manual", 1, false),
+      entry("deepmanual-a", "deep-in-manual", 2),
+      entry("crossdoc-a", "cross-document", 1),
+      entry("probecal-a", "probe-calibration", 1),
+    ];
+    expect(spotCheckQueriesFor(GOLD_CONTEXT_ARM, labelled)[0]).toBe("deepmanual-a t2");
+  });
+
+  it("throws rather than probing with fewer questions when a class has no labelled turn", () => {
+    expect(() => spotCheckQueriesFor(GOLD_CONTEXT_ARM, [entry("crossdoc-a", "cross-document", 1)]))
+      .toThrow(/No labelled deep-in-manual turn/);
   });
 });

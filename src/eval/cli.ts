@@ -1,3 +1,4 @@
+import type { LabelledQuery } from "./retrieval/types";
 import type { EvalPass } from "./transcript";
 
 /**
@@ -92,3 +93,39 @@ export const SPOT_CHECK_QUERIES = [
   "What stabilization criteria should a sonde reading meet before it is recorded?",
   "What is the fecal coliform count right now?",
 ];
+
+/** The arm that looks context up by verbatim labelled query, so it answers labelled turns only. */
+export const GOLD_CONTEXT_ARM = "gold-context";
+
+/**
+ * The classes the gold-context spot check draws from: an answer deep in one manual, one that spans
+ * documents, and a calibration question. Refusal turns are left out on purpose -- they are labelled
+ * with no chunks, so on a healthy arm they would still trip the empty-context warning.
+ */
+const GOLD_CONTEXT_SPOT_CHECK_CLASSES = ["deep-in-manual", "cross-document", "probe-calibration"];
+
+/**
+ * The probe questions for `--spot-check` on `arm`.
+ *
+ * `SPOT_CHECK_QUERIES` cannot probe the gold-context arm: it has no label for them and throws on
+ * any query it has none for, which would turn the "spot-check first, always" step into an error.
+ * That arm is probed with real labelled turns instead, picked deterministically (first fixture id,
+ * then first turn) so two spot checks of the same label set ask the same three questions.
+ */
+export const spotCheckQueriesFor = (
+  arm: string,
+  labelled: ReadonlyArray<{ fixtureId: string; fixtureClass: string; label: LabelledQuery }>,
+): string[] => {
+  if (arm !== GOLD_CONTEXT_ARM) {
+    return [...SPOT_CHECK_QUERIES];
+  }
+  return GOLD_CONTEXT_SPOT_CHECK_CLASSES.map((fixtureClass) => {
+    const [first] = labelled
+      .filter((entry) => entry.fixtureClass === fixtureClass && entry.label.relevant.length > 0)
+      .sort((a, b) => a.fixtureId.localeCompare(b.fixtureId) || a.label.turn - b.label.turn);
+    if (first === undefined) {
+      throw new Error(`No labelled ${fixtureClass} turn to spot-check the ${GOLD_CONTEXT_ARM} arm with.`);
+    }
+    return first.label.query;
+  });
+};

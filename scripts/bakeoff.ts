@@ -2,8 +2,11 @@ import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import { config } from "../src/config";
-import { SPOT_CHECK_QUERIES, USAGE, parseArgs } from "../src/eval/cli";
+import {
+  GOLD_CONTEXT_ARM, USAGE, parseArgs, spotCheckQueriesFor,
+} from "../src/eval/cli";
 import { loadFixtures, runnableFixtures } from "../src/eval/fixtures";
+import { loadLabels } from "../src/eval/retrieval/labels";
 import { ArmMismatchError, replayAll, summarize } from "../src/eval/runner";
 import type { AskFn } from "../src/eval/runner";
 import { createJsonTransport, createSseTransport } from "../src/eval/transport";
@@ -34,10 +37,11 @@ const gitSha = (): string => {
 const fmt = (n: number): string => n.toLocaleString("en-US");
 
 const spotCheck = async (ask: AskFn, arm: string): Promise<void> => {
-  log.info(`Spot-checking "${arm}" on ${SPOT_CHECK_QUERIES.length} queries.`);
+  const queries = spotCheckQueriesFor(arm, arm === GOLD_CONTEXT_ARM ? loadLabels().queries : []);
+  log.info(`Spot-checking "${arm}" on ${queries.length} queries.`);
 
-  for (let i = 0; i < SPOT_CHECK_QUERIES.length; i += 1) {
-    const query = SPOT_CHECK_QUERIES[i];
+  for (let i = 0; i < queries.length; i += 1) {
+    const query = queries[i];
     // eslint-disable-next-line no-await-in-loop
     const result = await ask({ query, retrieval: arm, history: [] });
 
