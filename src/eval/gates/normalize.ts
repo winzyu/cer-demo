@@ -167,3 +167,39 @@ export const firstDivergence = (a: string, b: string): number => {
 export const describeChar = (ch: string | undefined): string => (
   ch === undefined ? "(end of string)" : `U+${ch.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")} ${JSON.stringify(ch)}`
 );
+
+/**
+ * A hyphen a PDF extractor left at a line break, captured with the word char on each side.
+ *
+ * Restricted to true hyphens - `-`, U+2010, U+2011, U+00AD soft hyphen - the same class
+ * `normalizeForMatch`'s `DASH_CLASS` folds, minus the en/em dashes and maths minus: those separate
+ * clauses rather than split a word, so joining across one of them would glue two words that were
+ * never one. Only horizontal whitespace is allowed around the newline; a blank line either side
+ * means a paragraph break, not a hyphenated word.
+ */
+const LINE_BREAK_HYPHEN = /(\w)([-\u2010\u2011\u00AD])[ \t]*\n[ \t]*(\w)/g;
+
+/**
+ * The haystacks worth checking a quote against, given the chunk's RAW text (before
+ * `normalizeForMatch`).
+ *
+ * **Why more than one string.** A PDF that hyphenates `re-` / `calibrated` across a line break
+ * hands the model a word it has no single correct way to quote back: `re-calibrated` (keep the
+ * hyphen, drop the break) and `recalibrated` (drop both) are equally faithful transcriptions of the
+ * same source word. Checking only the literal chunk text - which, after `normalizeForMatch`'s
+ * whitespace folding, reads `re- calibrated` - matches neither. So this returns three normalized
+ * variants to try in turn: the chunk as captured, every line-break hyphen closed up without the
+ * hyphen, and every line-break hyphen closed up keeping it. A quote need only match one.
+ *
+ * Deduplicated (via `Set`) because a chunk with no line-break hyphens produces the same string
+ * three times, and there is no reason to search it three times.
+ */
+export const haystackVariants = (rawText: string): string[] => {
+  const variants = [
+    rawText,
+    rawText.replace(LINE_BREAK_HYPHEN, "$1$3"),
+    rawText.replace(LINE_BREAK_HYPHEN, "$1$2$3"),
+  ].map(normalizeForMatch);
+
+  return Array.from(new Set(variants));
+};

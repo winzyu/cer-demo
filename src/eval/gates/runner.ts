@@ -72,6 +72,9 @@ export interface ArmGateResult {
   quotes: {
     total: number;
     supported: number;
+    /** Of `supported`, the ones supported only via ellipsis elision (`checkQuotes` rule 3) - a
+     * subset, kept visible so "verbatim" and "elided" don't collapse into one opaque number. */
+    elided: number;
     short: number;
     /** `supported / total`, or 1 when the arm produced no quotes at all. */
     rate: number;
@@ -170,7 +173,7 @@ export const runGateCheck = (options: GateRunOptions = {}): ArmGateResult[] => {
         total: 0, unexplained: 0, conversions: 0, met: true,
       },
       quotes: {
-        total: 0, supported: 0, short: 0, rate: 1,
+        total: 0, supported: 0, elided: 0, short: 0, rate: 1,
       },
       gatesMet: true,
       findings: [],
@@ -230,6 +233,7 @@ export const runGateCheck = (options: GateRunOptions = {}): ArmGateResult[] => {
         const quotes = checkQuotes(evidence);
         result.quotes.total += quotes.total;
         result.quotes.supported += quotes.supported;
+        result.quotes.elided += quotes.elided;
         result.quotes.short += quotes.short;
         quotes.issues.forEach((issue) => result.findings.push({
           ...label, gate: "quotes", detail: `${issue.marker} ${issue.reason}`,

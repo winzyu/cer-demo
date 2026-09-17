@@ -385,4 +385,187 @@ describe("checkQuotes", () => {
     expect(citations.total).toBe(1);
     expect(citations.issues).toHaveLength(0);
   });
+
+  /**
+   * Measured on the Phase 3 capture: 12 of 58 misses were this artifact, not a bad quote. A PDF
+   * that hyphenates a word across a line break gives the model no single correct transcription -
+   * `re-calibrated` and `recalibrated` are equally faithful - so both must pass against a chunk
+   * whose literal text, even folded, reads `re- calibrated`.
+   */
+  describe("PDF line-break hyphenation", () => {
+    const chunkWithBreak = context("The instrument must be re-\ncalibrated to bracket the new range.");
+
+    it("accepts the quote with the hyphen kept", () => {
+      const result = checkQuotes({
+        answer: `【1†"the instrument must be re-calibrated to bracket the new range"】`,
+        context: chunkWithBreak,
+      });
+      expect(result.supported).toBe(1);
+      expect(result.elided).toBe(0);
+      expect(result.issues).toHaveLength(0);
+    });
+
+    it("accepts the quote with the hyphen dropped", () => {
+      const result = checkQuotes({
+        answer: `【1†"the instrument must be recalibrated to bracket the new range"】`,
+        context: chunkWithBreak,
+      });
+      expect(result.supported).toBe(1);
+      expect(result.issues).toHaveLength(0);
+    });
+
+    it("does not join a hyphen that sits mid-line, not at a line break", () => {
+      // "re-calibrated" here is one line, not a PDF break - collapsing it would launder a quote
+      // that genuinely dropped a hyphen the source has.
+      const result = checkQuotes({
+        answer: `【1†"the instrument must be recalibrated"】`,
+        context: context("The instrument must be re-calibrated before use."),
+      });
+      expect(result.supported).toBe(0);
+      expect(result.issues[0].reason).toContain("not found verbatim");
+    });
+  });
+
+  /**
+   * 3 of 58 misses: the model closes its sentence with the source's words but its own trailing
+   * period, at a point the source has none yet.
+   */
+  describe("trailing punctuation", () => {
+    const chunk = context("The gauge is being used (fig. 3) to record stage.");
+
+    it("accepts a quote with a trailing period the source doesn't have at that point", () => {
+      const result = checkQuotes({
+        answer: `【1†"the gauge is being used."】`,
+        context: chunk,
+      });
+      expect(result.supported).toBe(1);
+      expect(result.issues).toHaveLength(0);
+    });
+
+    it("still rejects a quote that changes a word, trailing period or not", () => {
+      const result = checkQuotes({
+        answer: `【1†"the gauge is being run."】`,
+        context: chunk,
+      });
+      expect(result.supported).toBe(0);
+      expect(result.issues[0].reason).toContain("not found verbatim");
+    });
+  });
+
+  /**
+   * 10 of 58 misses: `A … C` for source `A B C` is every fragment verbatim, in order - a
+   * deliberate compression, not a fabrication. But elision only forgives what the model left out,
+   * never what it changed or reordered.
+   */
+  describe("ellipsis elision", () => {
+    const chunk = context(
+      "Bailers are not recommended for purging because of potential degassing. "
+      + "Subsamples from a bailer may not be used for measurements of DO concentration, Eh, and "
+      + "water temperature.",
+    );
+
+    it("supports an elided quote whose fragments are all verbatim and in order", () => {
+      const result = checkQuotes({
+        answer: '【1†"bailers are not recommended for purging because … may not be used for '
+          + 'measurements of DO concentration, Eh, and water temperature."】',
+        context: chunk,
+      });
+      expect(result.supported).toBe(1);
+      expect(result.elided).toBe(1);
+      expect(result.issues).toHaveLength(0);
+    });
+
+    it("also accepts a literal triple-dot in place of the ellipsis character", () => {
+      const result = checkQuotes({
+        answer: '【1†"bailers are not recommended for purging because ... may not be used for '
+          + 'measurements of DO concentration, Eh, and water temperature."】',
+        context: chunk,
+      });
+      expect(result.supported).toBe(1);
+      expect(result.elided).toBe(1);
+    });
+
+    it("rejects fragments that are verbatim but out of order", () => {
+      const result = checkQuotes({
+        answer: '【1†"measurements of DO concentration, Eh, and water temperature … bailers are '
+          + 'not recommended for purging"】',
+        context: chunk,
+      });
+      expect(result.supported).toBe(0);
+      expect(result.elided).toBe(0);
+      expect(result.issues[0].reason).toContain("not found in order");
+    });
+
+    it("rejects an elided quote when one fragment is paraphrased", () => {
+      const result = checkQuotes({
+        answer: '【1†"bailers are not recommended for purging because … may not be used for '
+          + 'readings of temperature and pressure."】',
+        context: chunk,
+      });
+      expect(result.supported).toBe(0);
+      expect(result.elided).toBe(0);
+      expect(result.issues[0].reason).toContain("not found in order");
+    });
+
+    it("rejects an elided quote whose short fragment was changed", () => {
+      // The long fragment is verbatim; the short one says "degassed" where the source says
+      // "degassing". Skipping short fragments would have let this pass.
+      const result = checkQuotes({
+        answer: '【1†"bailers are not recommended for purging … degassed"】',
+        context: chunk,
+      });
+      expect(result.supported).toBe(0);
+      expect(result.issues[0].reason).toContain("not found in order");
+    });
+
+    it("still supports an elided quote whose short fragment is verbatim", () => {
+      const result = checkQuotes({
+        answer: '【1†"bailers are not recommended for purging … degassing"】',
+        context: chunk,
+      });
+      expect(result.supported).toBe(1);
+      expect(result.elided).toBe(1);
+    });
+
+    it("reads a bracketed ellipsis as elision", () => {
+      const result = checkQuotes({
+        answer: '【1†"bailers are not recommended for purging [...] may not be used for '
+          + 'measurements of DO concentration"】',
+        context: chunk,
+      });
+      expect(result.supported).toBe(1);
+      expect(result.elided).toBe(1);
+    });
+
+    it("reports every fragment too short to be evidence as short, not unsupported", () => {
+      const result = checkQuotes({
+        answer: '【1†"purging … DO, Eh"】',
+        context: chunk,
+      });
+      expect(result.supported).toBe(0);
+      expect(result.elided).toBe(0);
+      expect(result.short).toBe(1);
+      expect(result.issues[0].reason).toContain("too short to be evidence");
+    });
+  });
+
+  it("still supports an exact verbatim quote through the new matching path", () => {
+    const result = checkQuotes({
+      answer: `Temperature matters 【1†"${QUOTED}"】.`,
+      context: context(`Section 4. ${QUOTED}, so readings are compensated.`),
+    });
+    expect(result.supported).toBe(1);
+    expect(result.elided).toBe(0);
+    expect(result.issues).toHaveLength(0);
+  });
+
+  it("still rejects a plain paraphrase, not just a changed word", () => {
+    const result = checkQuotes({
+      answer: '【1†"conductivity depends heavily on water temperature"】',
+      context: context(`Section 4. ${QUOTED}, so readings are compensated.`),
+    });
+    expect(result.supported).toBe(0);
+    expect(result.elided).toBe(0);
+    expect(result.issues[0].reason).toContain("not found verbatim");
+  });
 });

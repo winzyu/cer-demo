@@ -14,6 +14,7 @@ import {
   closestWindow,
   describeChar,
   firstDivergence,
+  haystackVariants,
   normalizeForMatch,
   tokenSimilarity,
 } from "./normalize";
@@ -410,8 +411,13 @@ export interface QuoteIssue {
 export interface QuoteResult {
   /** Quote-carrying markers seen. **Zero on every arm captured before the prompt change.** */
   total: number;
-  /** Quotes found verbatim, after folding, in the chunk they cite. */
+  /** Quotes found supported, after folding, in the chunk they cite - verbatim or elided (rule 3
+   * below). A superset of `elided`. */
   supported: number;
+  /** Of `supported`, the ones supported only because every fragment either side of an ellipsis
+   * matched, in order - not because the quote is a single verbatim span. Reported separately so
+   * "fully verbatim" stays a legible number even as elision brings more quotes into `supported`. */
+  elided: number;
   /** Quotes too short to be evidence. A subset of `issues`, split out because it wants a
    * different response: trivial quoting is a prompt-wording problem, a missing quote is a
    * fabrication. */
@@ -419,6 +425,72 @@ export interface QuoteResult {
   /** Everything that is not `supported`, with the reason. */
   issues: QuoteIssue[];
 }
+
+/** Trailing `.`, `,`, `;` or `:` - punctuation a model tacks onto a quote that the source, read at
+ * that exact point, does not have (e.g. source `being used (fig.`, quote `being used.`). Stripped
+ * only from the end, and only on retry, so a real mid-quote comma still has to match. */
+const TRAILING_PUNCTUATION = /[.,;:]+$/;
+
+/**
+ * `[...]` or `(...)`, the scholarly way to mark an elision. Matched after NFKC, which has already
+ * turned `…` into `...`.
+ */
+const BRACKETED_ELLIPSIS = /[[(]\s*\.\.\.\s*[\])]/g;
+
+/** Does `normalizedQuote` (or its trailing punctuation stripped) sit verbatim in any haystack
+ * variant? Trying the stripped form only on top of, never instead of, the literal one keeps a quote
+ * that legitimately ends the source's punctuation from needing a second attempt. */
+const matchesVerbatim = (haystacks: string[], normalizedQuote: string): boolean => {
+  const withoutTrailing = normalizedQuote.replace(TRAILING_PUNCTUATION, "");
+  return haystacks.some((hay) => hay.includes(normalizedQuote) || hay.includes(withoutTrailing));
+};
+
+/**
+ * Splits an ellipsis-elided quote into its fragments and asks whether every fragment worth trusting
+ * is present, in order, in some haystack variant.
+ *
+ * `normalizeForMatch` NFKC-folds `…` (U+2026) to `...`, so both spellings land here as `...`,
+ * and a bracketed ellipsis (`[...]`, `(...)`) is read as a plain one. Each fragment is trimmed and
+ * has its own trailing punctuation stripped (a fragment boundary is exactly where a model is likely
+ * to drop a comma).
+ *
+ * **Every fragment must match, short ones included.** At least one fragment must reach
+ * `MIN_QUOTE_CHARS` to count as evidence at all, but a short fragment is never skipped: skipping it
+ * would let `"calibrate the dissolved oxygen sensor ... weekly"` pass against a source that says
+ * monthly, because the one fragment that changed is the short one.
+ *
+ * "In order" is enforced by advancing the search past the previous fragment's end before looking
+ * for the next: that is what stops `"C ... A"` from passing against source `"A B C"` just because
+ * both letters happen to be in there somewhere.
+ */
+const matchesElided = (
+  haystacks: string[],
+  normalizedQuote: string,
+): "elided" | "short" | "not-found" => {
+  const fragments = normalizedQuote
+    .replace(BRACKETED_ELLIPSIS, "...")
+    .split("...")
+    .map((fragment) => fragment.trim().replace(TRAILING_PUNCTUATION, ""))
+    .filter((fragment) => fragment.length > 0);
+
+  if (!fragments.some((fragment) => fragment.length >= MIN_QUOTE_CHARS)) {
+    return "short";
+  }
+
+  const foundInOrder = (haystack: string): boolean => {
+    let cursor = 0;
+    return fragments.every((fragment) => {
+      const index = haystack.indexOf(fragment, cursor);
+      if (index === -1) {
+        return false;
+      }
+      cursor = index + fragment.length;
+      return true;
+    });
+  };
+
+  return haystacks.some(foundInOrder) ? "elided" : "not-found";
+};
 
 /**
  * Does every quoted citation actually appear in the chunk it points at?
@@ -432,14 +504,33 @@ export interface QuoteResult {
  * from PDFs and the answer comes from a model, so they disagree on hyphens, quotes, µ vs μ and
  * whitespace without disagreeing on a single word.
  *
- * ponytail: substring containment, so a quote the model silently elides a clause from
- * ("A ... C" for "A B C") reads as unsupported. Upgrade path if that becomes the dominant finding:
- * reuse `closestWindow` with a small cutoff, the way `checkRefusal` already does.
+ * **Three rules stand between "not `===`" and "accepts a paraphrase," and each is here because a
+ * captured miss turned out to be a checker artifact, not a bad quote (25 of 58 misses on the Phase
+ * 3 capture):**
+ *
+ * 1. **Line-break joins** (`haystackVariants`, in `normalize.ts`). A PDF that hyphenates
+ *    `re-` / `calibrated` across a line break gives the model no single correct transcription - it
+ *    may write `re-calibrated` or `recalibrated` - while the literal chunk text, even folded, reads
+ *    `re- calibrated`. Tried as a haystack variant, not folded into `normalizeForMatch` itself,
+ *    because it is a PDF-extraction artifact specific to matching against a chunk, not a general
+ *    text-equivalence rule.
+ * 2. **Trailing punctuation** (`matchesVerbatim`). A model closes its sentence with the source's
+ *    own words but its own final `.`; the source at that exact point has none yet (`being used
+ *    (fig.` in the source, `being used.` in the quote). Stripped only on retry, and only from the
+ *    end.
+ * 3. **Ellipsis elision** (`matchesElided`). A quote like `"A … C"` for source `"A B C"` is every
+ *    fragment verbatim, in order - deliberate compression, not fabrication. Tracked in `elided`
+ *    rather than folded silently into "verbatim", because a paraphrased fragment must still fail:
+ *    elision only forgives *what the model left out*, never *changes what it kept in*.
+ *
+ * None of the three excuses a changed word, a reordered fragment, or an invented clause - that is
+ * still `paraphrase or wrong chunk` territory and stays in `issues`.
  */
 export const checkQuotes = (turn: TurnEvidence): QuoteResult => {
   const issues: QuoteIssue[] = [];
   let total = 0;
   let supported = 0;
+  let elided = 0;
   let short = 0;
 
   Array.from(turn.answer.matchAll(QUOTE_CITATION_PATTERN)).forEach((match) => {
@@ -465,8 +556,34 @@ export const checkQuotes = (turn: TurnEvidence): QuoteResult => {
       return;
     }
 
-    if (normalizeForMatch(chunk.text).includes(normalizeForMatch(quote))) {
+    const haystacks = haystackVariants(chunk.text);
+    const normalizedQuote = normalizeForMatch(quote);
+
+    if (matchesVerbatim(haystacks, normalizedQuote)) {
       supported += 1;
+      return;
+    }
+
+    if (normalizedQuote.includes("...")) {
+      const outcome = matchesElided(haystacks, normalizedQuote);
+
+      if (outcome === "elided") {
+        supported += 1;
+        elided += 1;
+        return;
+      }
+
+      if (outcome === "short") {
+        short += 1;
+        issues.push({
+          marker,
+          reason: `every fragment of the elided quote is under ${MIN_QUOTE_CHARS} chars - `
+            + "too short to be evidence",
+        });
+        return;
+      }
+
+      issues.push({ marker, reason: `elided quote's fragments not found in order in "${chunk.id}"` });
       return;
     }
 
@@ -474,6 +591,6 @@ export const checkQuotes = (turn: TurnEvidence): QuoteResult => {
   });
 
   return {
-    total, supported, short, issues,
+    total, supported, elided, short, issues,
   };
 };
