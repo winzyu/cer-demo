@@ -10,8 +10,11 @@
 import fs from "fs";
 import os from "os";
 import path from "path";
+import type OpenAI from "openai";
 import { loadFixtures } from "../../src/eval/fixtures";
 import {
+  DEFAULT_JUDGE_DIMENSIONS,
+  JUDGE_DIMENSIONS,
   citationsPrompt,
   correctnessPrompt,
   needsGroundingForCorrectness,
@@ -21,11 +24,14 @@ import {
 } from "../../src/eval/judge/prompts";
 import { CHAT_PRICES } from "../../src/eval/prices";
 import {
+  DEFAULT_JUDGE_MAX_TOKENS,
   DEFAULT_JUDGE_MODEL,
   PRODUCTION_GENERATOR,
   budgetOf,
   buildTasks,
+  filterToCurrentFixtures,
   isServable,
+  judgeOnce,
   judgesOwnFamily,
   summarize,
   type JudgeRecord,
@@ -447,6 +453,98 @@ describe("judge family caveat", () => {
       "accounts/fireworks/models/deepseek-v3",
       "accounts/fireworks/models/gpt-oss-20b",
     )).toBe(false);
+  });
+});
+
+describe("default judge dimensions", () => {
+  it("excludes citations from a bare run, while JUDGE_DIMENSIONS still knows it exists", () => {
+    // Tier 1 owns the citation gate; citations is reported but never gated (§8a), so it should
+    // not spend money on every default pass. --dimension=citations must still be able to ask
+    // for it explicitly, which is why JUDGE_DIMENSIONS keeps the full list rather than dropping
+    // the dimension outright.
+    expect(DEFAULT_JUDGE_DIMENSIONS).toEqual(["correctness", "ungrounded"]);
+    expect(DEFAULT_JUDGE_DIMENSIONS).not.toContain("citations");
+    expect(JUDGE_DIMENSIONS).toEqual(["correctness", "ungrounded", "citations"]);
+    expect(JUDGE_DIMENSIONS).toContain("citations");
+  });
+});
+
+/**
+ * The fixture-set filter behind the stale-ledger fix. `warm.jsonl` mixes 482 rows from the
+ * archived pre-rebuild fixture set with the current `gold-context` rows, keyed only by
+ * `arm|fixtureId|turn|dimension` - filtering by arm alone would let a re-used arm name pull
+ * archived verdicts into a current summary. Pure inputs (no disk, no `loadFixtures()`) so the
+ * "current set" is whatever the test says it is, independent of what `eval/fixtures-wave1`
+ * happens to hold on the day the suite runs.
+ */
+describe("filterToCurrentFixtures - dropping stale ledger rows", () => {
+  const CURRENT = new Set(["gold-context-fixture"]);
+
+  it("keeps every row whose fixture is in the current set", () => {
+    const rows = [
+      record({ fixtureId: "gold-context-fixture" }),
+      record({ fixtureId: "gold-context-fixture", turn: 2 }),
+    ];
+    const result = filterToCurrentFixtures(rows, CURRENT);
+    expect(result.records).toEqual(rows);
+    expect(result.ignored).toBe(0);
+  });
+
+  it("drops rows from a fixture outside the current set and counts them", () => {
+    const rows = [
+      record({ fixtureId: "gold-context-fixture" }),
+      record({ arm: "firestore-direct", fixtureId: "archived-fixture-one" }),
+      record({ arm: "firestore-vector", fixtureId: "archived-fixture-two", turn: 2 }),
+    ];
+    const result = filterToCurrentFixtures(rows, CURRENT);
+    expect(result.records).toEqual([rows[0]]);
+    expect(result.ignored).toBe(2);
+  });
+
+  it("does not mutate the rows it is given - the ledger file is never rewritten", () => {
+    const rows = [record({ fixtureId: "archived-fixture-one" })];
+    const before = JSON.stringify(rows);
+    filterToCurrentFixtures(rows, CURRENT);
+    expect(JSON.stringify(rows)).toBe(before);
+  });
+});
+
+/**
+ * The truncation fix. `scripts/judge.ts`'s own `--max-tokens` arg parsing lives only in `main`,
+ * which this suite does not call - `main` spends real money on a live pass. What is testable
+ * offline is the constant it falls back to, and that `maxTokens` is carried from the call options
+ * onto the record `judgeOnce` returns, the way `promptTokens`/`completionTokens` already are.
+ */
+describe("judge call - max-tokens budget", () => {
+  const fakeClient = (create: jest.Mock): OpenAI => (
+    { chat: { completions: { create } } } as unknown as OpenAI
+  );
+
+  it("defaults to a budget well clear of the 4,096-token cap that truncated verdicts", () => {
+    // Measured on the Phase 3 gold-context capture: 7 `ungrounded` calls hit 4,096 and came back
+    // empty or cut off mid-JSON; 2 still failed after judgeOnce's one retry.
+    expect(DEFAULT_JUDGE_MAX_TOKENS).toBe(16384);
+    expect(DEFAULT_JUDGE_MAX_TOKENS).toBeGreaterThan(4096);
+  });
+
+  it("records the maxTokens a call was actually made with", async () => {
+    const create = jest.fn().mockResolvedValue({
+      choices: [{ message: { content: '{"score": 2, "reason": "fine"}' } }],
+      model: "judge-model",
+      usage: { prompt_tokens: 50, completion_tokens: 5 },
+    });
+
+    const result = await judgeOnce(fakeClient(create), { model: "judge-model", maxTokens: DEFAULT_JUDGE_MAX_TOKENS }, {
+      arm: "gold-context",
+      fixtureId: "demo",
+      fixtureClass: "definitional",
+      turn: 1,
+      dimension: "correctness",
+      evidence: evidence(),
+    });
+
+    expect(result.maxTokens).toBe(DEFAULT_JUDGE_MAX_TOKENS);
+    expect(create.mock.calls[0][0].max_tokens).toBe(DEFAULT_JUDGE_MAX_TOKENS);
   });
 });
 

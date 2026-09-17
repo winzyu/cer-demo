@@ -84,6 +84,22 @@ export const PRODUCTION_GENERATOR = "accounts/fireworks/models/gpt-oss-120b";
 export const DEFAULT_JUDGE_MODEL = "accounts/fireworks/models/deepseek-v4-flash-0731";
 
 /**
+ * Default reply budget for a judge call, in completion tokens.
+ *
+ * `deepseek-v4-flash-0731` is a reasoning model: its completion spends tokens on hidden
+ * reasoning before the JSON payload, and the two together must fit under `max_tokens` or the
+ * reply comes back empty or truncated mid-object - `parseVerdict` then throws "no JSON object in
+ * judge reply" and the call is wasted rather than merely expensive. Measured on the Phase 3
+ * `gold-context` capture: 7 of the `ungrounded` calls hit the previous 4,096-token budget, and 2
+ * still failed after `judgeOnce`'s one retry. 16,384 is four times that budget - enough headroom
+ * for the reasoning preamble plus the verdict on the longest observed reply, without being an
+ * unbounded allowance on a metered API.
+ *
+ * Override with `--max-tokens=`.
+ */
+export const DEFAULT_JUDGE_MAX_TOKENS = 16384;
+
+/**
  * Do these two ids look like the same model family?
  *
  * ponytail: the id's last path segment minus a trailing size/version suffix — `gpt-oss-120b` and
@@ -141,6 +157,13 @@ export interface JudgeRecord {
   note: string;
   promptTokens: number;
   completionTokens: number;
+  /**
+   * The `max_tokens` budget the call was made with. Optional because the 729 rows already on
+   * disk predate this field - they were judged before the token cap was recorded at all, not
+   * under a known one, so leaving it undefined here is honest and defaulting it would fabricate
+   * history.
+   */
+  maxTokens?: number;
   model: string;
   judgedAt: string;
 }
@@ -338,6 +361,7 @@ export const judgeOnce = async (
         note: verdict.note,
         promptTokens,
         completionTokens,
+        maxTokens: options.maxTokens,
         model: response.model ?? options.model,
         judgedAt: new Date().toISOString(),
       };
@@ -366,6 +390,39 @@ export const readLedger = (pass: string, root = JUDGE_ROOT): Map<string, JudgeRe
 export const appendLedger = (pass: string, record: JudgeRecord, root = JUDGE_ROOT): void => {
   fs.mkdirSync(root, { recursive: true });
   fs.appendFileSync(path.join(root, `${pass}.jsonl`), `${JSON.stringify(record)}\n`, "utf8");
+};
+
+export interface FixtureFilterResult {
+  /** The rows whose `fixtureId` is in `fixtureIds`. */
+  records: JudgeRecord[];
+  /** How many rows were dropped - the count the caller logs. */
+  ignored: number;
+}
+
+/**
+ * Drops ledger rows left over from a fixture set that no longer exists.
+ *
+ * `warm.jsonl` mixes 482 verdicts from the archived pre-rebuild fixtures (`firestore-direct`,
+ * `firestore-vector`, `hybrid-slice-lexvec`, `hybrid-slice-vector`, `pgvector-rag` under the old
+ * fixture ids) with the current `gold-context` rows. The ledger is keyed `arm|fixtureId|turn|
+ * dimension`, not by fixture *set*, so filtering by arm alone lets a re-used arm name pull in
+ * verdicts scored against a rubric that no longer exists - a future `--report` on
+ * `firestore-direct` would silently average old-fixture and new-fixture turns into one number.
+ *
+ * Pure and independent of `loadFixtures()` on purpose: the caller decides what "current" means
+ * (the live fixture set in production use, a fixed list in a test) and this just applies it,
+ * which is what makes it testable without touching disk.
+ *
+ * **The ledger file itself is never rewritten.** This filters what the script reads from it, not
+ * what is stored - `warm.jsonl` is captured data (`CLAUDE.md`) and deleting or editing its lines
+ * is a human's call (the jsonl's own resume contract), not this filter's.
+ */
+export const filterToCurrentFixtures = (
+  records: JudgeRecord[],
+  fixtureIds: ReadonlySet<string>,
+): FixtureFilterResult => {
+  const kept = records.filter((r) => fixtureIds.has(r.fixtureId));
+  return { records: kept, ignored: records.length - kept.length };
 };
 
 // ---------------------------------------------------------------------------------------------

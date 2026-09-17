@@ -22,8 +22,12 @@ import path from "path";
 import OpenAI from "openai";
 import { config } from "../src/config";
 import { createLogger } from "../src/utils/logger";
-import { JUDGE_DIMENSIONS, type JudgeDimension } from "../src/eval/judge/prompts";
+import { loadFixtures } from "../src/eval/fixtures";
 import {
+  DEFAULT_JUDGE_DIMENSIONS, JUDGE_DIMENSIONS, type JudgeDimension,
+} from "../src/eval/judge/prompts";
+import {
+  DEFAULT_JUDGE_MAX_TOKENS,
   DEFAULT_JUDGE_MODEL,
   JUDGE_ROOT,
   TRANSCRIPT_ROOT,
@@ -32,6 +36,7 @@ import {
   budgetOf,
   buildTasks,
   estimatePromptTokens,
+  filterToCurrentFixtures,
   judgeOnce,
   judgesOwnFamily,
   modelsUnderTest,
@@ -114,10 +119,16 @@ const printArm = (result: ArmJudgeResult): void => {
     + `${ungrounded.turnsWithClaims}/${ungrounded.turns} turns carry one `
     + `(${pct(ungrounded.rate)}, ceiling 2.0%) — ${ungrounded.totalClaims} claim(s) total`,
   );
+  // Zero `turnsChecked` is ambiguous between "not judged" (citations dropped from the default
+  // dimension list) and "judged, nothing cited" - and printing "0 unsupported" reads as the
+  // clean case either way, which is the misleading version. Say plainly that there is nothing to
+  // report rather than let a zero imply a clean citation record that was never checked.
   log.info(
-    "  citation support    ----  "
-    + `${citationSupport.unsupported} unsupported across ${citationSupport.turnsChecked} `
-    + "cited turn(s) — reported, not gated (Tier 1 owns the citation gate)",
+    citationSupport.turnsChecked === 0
+      ? "  citation support    ----  not judged (no citations dimension rows for this arm)"
+      : "  citation support    ----  "
+        + `${citationSupport.unsupported} unsupported across ${citationSupport.turnsChecked} `
+        + "cited turn(s) — reported, not gated (Tier 1 owns the citation gate)",
   );
 
   if (result.findings.length > 0) {
@@ -203,13 +214,30 @@ const main = async (): Promise<void> => {
   const arms = arg("arm")?.split(",")
     ?? (calibrating ? calibrationArms(pass) : armsOnDisk(TRANSCRIPT_ROOT, pass));
   const dimensions = (arg("dimension")?.split(",") as JudgeDimension[] | undefined)
-    ?? [...JUDGE_DIMENSIONS];
+    // A calibration pass judges every dimension: `calibrate()` reports agreement for all three,
+    // and a dimension left out would print an empty agreement with no warning.
+    ?? [...(calibrating ? JUDGE_DIMENSIONS : DEFAULT_JUDGE_DIMENSIONS)];
   const judgeModel = arg("judge-model") ?? process.env.JUDGE_MODEL ?? DEFAULT_JUDGE_MODEL;
   const concurrency = Number(arg("concurrency") ?? 4);
   const only = calibrating ? calibrationFixtures(pass) : arg("only")?.split(",");
 
-  const ledger = readLedger(pass);
-  const existing = [...ledger.values()].filter((r) => arms.includes(r.arm));
+  // Everywhere below reads `currentLedger`/`existing`, never the raw ledger off disk - a row
+  // whose fixture predates the current set (the archived pre-rebuild fixtures still sitting in
+  // warm.jsonl) is judged data for a rubric that no longer exists, and mixing it into a summary,
+  // a budget or the already-judged skip would be silently wrong in three different ways at once.
+  // The file on disk is untouched; only what this run reads from it is filtered.
+  const fixtureIds = new Set(loadFixtures().map((f) => f.id));
+  const rawLedger = readLedger(pass);
+  const filtered = filterToCurrentFixtures([...rawLedger.values()], fixtureIds);
+  const { records: currentRecords, ignored } = filtered;
+  if (ignored > 0) {
+    log.info(
+      `Ignored ${ignored} ledger row(s) from a fixture outside the current set `
+      + "(archived pre-rebuild fixtures) - not summarized, reported, calibrated or budgeted.",
+    );
+  }
+  const currentLedger = new Map(currentRecords.map((r) => [recordKey(r), r]));
+  const existing = currentRecords.filter((r) => arms.includes(r.arm));
 
   if (flag("calibrate")) {
     printCalibration(pass, existing);
@@ -226,7 +254,7 @@ const main = async (): Promise<void> => {
 
   const tasks = buildTasks({
     pass, arms, only, dimensions,
-  }).filter((task) => !ledger.has(recordKey(task)));
+  }).filter((task) => !currentLedger.has(recordKey(task)));
 
   if (tasks.length === 0) {
     log.info(`Nothing left to judge for the "${pass}" pass. Run with --report or --calibrate.`);
@@ -260,7 +288,7 @@ const main = async (): Promise<void> => {
   if (only) {
     log.info(`Fixtures:    ${only.length} — ${only.join(", ")}`);
   }
-  log.info(`Calls:       ${tasks.length} (${ledger.size} already on disk, skipped)`);
+  log.info(`Calls:       ${tasks.length} (${currentLedger.size} already on disk, skipped)`);
   log.info(`Input est.:  ~${estimated.toLocaleString()} tokens at ~4 chars/token`);
 
   if (flag("dry-run")) {
@@ -277,7 +305,7 @@ const main = async (): Promise<void> => {
     apiKey: config.fireworks.apiKey,
     baseURL: config.fireworks.baseUrl,
   });
-  const options = { model: judgeModel, maxTokens: Number(arg("max-tokens") ?? 4096) };
+  const options = { model: judgeModel, maxTokens: Number(arg("max-tokens") ?? DEFAULT_JUDGE_MAX_TOKENS) };
 
   const fresh: JudgeRecord[] = [];
   const failures: string[] = [];

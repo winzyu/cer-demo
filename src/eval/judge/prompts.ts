@@ -21,7 +21,19 @@ import type { EvalRubric } from "../types";
 
 export type JudgeDimension = "correctness" | "ungrounded" | "citations";
 
+/** Every dimension the judge knows how to score. `--dimension=citations` still runs it. */
 export const JUDGE_DIMENSIONS: readonly JudgeDimension[] = ["correctness", "ungrounded", "citations"];
+
+/**
+ * What a bare `npm run judge` runs when `--dimension` is not passed.
+ *
+ * `citations` is excluded. It is reported in the Tier 2 summary but never gated - §8a's citation
+ * gate is owned by Tier 1's deterministic resolution check (`src/eval/gates/checks.ts`), and the
+ * judgement half here exists only to feed calibration evidence. Running it by default spent money
+ * on every default pass for a dimension most callers were not asking to gate on; `--dimension=
+ * citations` (or a list that includes it) still runs it explicitly.
+ */
+export const DEFAULT_JUDGE_DIMENSIONS: readonly JudgeDimension[] = ["correctness", "ungrounded"];
 
 /** What one turn of one arm looks like to the judge. Arm identity is deliberately absent. */
 export interface JudgeEvidence {
