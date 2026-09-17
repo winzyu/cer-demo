@@ -8,7 +8,7 @@
  *
  * **Every colour comes from a class in `frontend/app.css`** — `.chart__line`, `.chart__band`,
  * `.chart__grid`, `.chart__dot`, `.chart__dot--last` — which resolve to `--chart-*` tokens.
- * A literal `stroke="#2d77a6"` on an SVG element would not invert with the theme, so this
+ * A literal `stroke="#2d77a6"` on an SVG element would bypass the theme tokens, so this
  * module never sets a presentation attribute.
  *
  * **The SVG is built with `document.createElementNS`, never `innerHTML`.** The numbers,
@@ -417,8 +417,8 @@ function hideLabel(count) {
 
 /**
  * Icons are `stroke="currentColor"`, never a literal — `currentColor` resolves to the
- * button's `color`, which `.btn--ghost` takes from a token, so the glyph inverts with the
- * theme exactly like the chart does. `.btn--ghost svg` in app.css sizes them.
+ * button's `color`, which `.btn--ghost` takes from a token, so the glyph follows the
+ * palette exactly like the chart does. `.btn--ghost svg` in app.css sizes them.
  */
 function iconChart() {
   const node = svg("svg", {

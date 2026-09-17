@@ -657,7 +657,6 @@ reporting still answers "the last day" about its last day of data.
 | `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a run; `--spot-check`, `--only`, `--dry-run` |
 | `npm run cost` | price the arms and compute break-even |
 | `npm run grade:packet` | build the blind grading packet (`--pass=`, `--sample=`) |
-| `npm run starter:prompts` | generate the composer's starter prompts (`--limit=`, `--sensor`) |
 | `npm run retrieval:eval` | score adapters against the labelled query set — no LLM, free, ~10s (`--adapter=`, `--k=`, `--out=`) |
 | `npm run gate:check` | decide §8a's three hard gates over captured transcripts — no LLM, free (`--pass=`, `--arm=`, `--tolerance=`, `--out=`) |
 
@@ -693,7 +692,7 @@ src/
   eval/                 # bake-off runner, fixtures, cost model
   validators/ types/ middleware/ utils/
 scripts/                # ingest, bakeoff, cost, seed*, exploreDeviceApi, verifySensorTool,
-                        #   gradePacket, starterPrompts, exploreDeviceFields.sh,
+                        #   gradePacket, exploreDeviceFields.sh,
                         #   exploreBackendSurface.sh
 test/
   integration/          # health, chat, sensorChat, devices, quotaChat

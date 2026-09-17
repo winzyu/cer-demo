@@ -36,12 +36,12 @@ export function postChat(query, history, options = {}) {
 }
 
 /**
- * The pod list for the context bar. Returns { devices: [...], water_type } or throws.
+ * The pod list for the left column. Returns { devices: [...], water_type } or throws.
  *
  * **Requires a caller token.** As of 2026-08-21 this endpoint refuses a request with no
  * `Authorization: Bearer` header (401, `code: "caller_token_required"`), and the fleet it returns
  * is scoped to that token holder's organization. The header comes from `auth.js`, whose accounts
- * the user manages in the context bar; signed out, this reports the error rather than a fleet.
+ * the user manages in the left column; signed out, this reports the error rather than a fleet.
  *
  * What used to make this "work" with no credential was `DeviceApiClient` silently falling back to
  * the deployment's `DEVICE_API_TOKEN` — superadmin in practice — so the page was shown every

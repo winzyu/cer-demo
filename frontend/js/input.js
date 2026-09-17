@@ -3,7 +3,6 @@
  *
  * Owns everything inside #input-region except the composer markup itself:
  *
- *   - starter prompts   → #starter-prompts, from starter-prompts.json (.prompts[].text)
  *   - multi-line composer → the <input> is upgraded to a <textarea> at runtime
  *   - stop / copy / regenerate → #response-controls
  *
@@ -23,19 +22,18 @@
  *    nothing here needs to fake a clean end-of-stream any more.
  *
  * No literal colours and no inline styles: every class name here already exists in
- * app.css (.chip / .chip--starter / .btn--ghost / .composer__hint), and the composer
+ * app.css (.btn--ghost / .composer__hint), and the composer
  * autosizes by setting `rows`, not a height.
  */
 
 const SVG_NS = "http://www.w3.org/2000/svg";
-const PROMPTS_URL = "starter-prompts.json";
 const FALLBACK_MAX_ROWS = 8;
 const FEEDBACK_MS = 1600;
 
 /* ============================= icons ============================= */
 
 /**
- * Inline SVG in the same stroke idiom as the theme toggle in index.html:
+ * Inline SVG in the one stroke idiom used across the page:
  * 24×24, no fill, currentColor, 2px round strokes. `shapes` is [tag, attrs] pairs.
  */
 function icon(shapes) {
@@ -85,43 +83,6 @@ function ghostButton(makeIcon, label, onClick) {
 function flash(labelEl, message, original) {
   labelEl.textContent = message;
   window.setTimeout(() => { labelEl.textContent = original; }, FEEDBACK_MS);
-}
-
-/* ============================= starter prompts ============================= */
-
-/**
- * Pulls the prompt strings out of a parsed starter-prompts.json.
- *
- * The generated shape (scripts/starterPrompts.ts) is
- *   { "prompts": [ { "id", "class", "text" }, … ] }
- * so the text lives at `.prompts[].text`. Phase 0's placeholder file was a flat array of
- * strings; that shape is deliberately NOT accepted, so a stale placeholder shows no chips
- * rather than half-working. Anything malformed degrades to [] and never throws.
- *
- * **Every prompt in the file is rendered — there is no cap here.** How many chips appear is
- * the generator's decision (`--limit`, default 3) and the committed file is the single
- * source of truth; a second ceiling in this module would silently disagree with it.
- *
- * @param {unknown} data parsed JSON
- * @returns {string[]}
- */
-function readStarterPrompts(data) {
-  if (!data || typeof data !== "object" || !Array.isArray(data.prompts)) return [];
-  return data.prompts
-    .filter((p) => p && typeof p === "object" && typeof p.text === "string")
-    .map((p) => p.text.trim())
-    .filter((t) => t.length > 0);
-}
-
-/** Fetches and parses the prompt file. A missing or broken file yields no chips. */
-async function loadStarterPrompts(url) {
-  try {
-    const r = await fetch(url, { cache: "no-store" });
-    if (!r.ok) return [];
-    return readStarterPrompts(await r.json());
-  } catch (e) {
-    return []; // offline, 404, or invalid JSON — the composer still works without chips
-  }
 }
 
 /* ============================= composer ============================= */
@@ -201,7 +162,7 @@ function upgradeComposer(form, legacy) {
 
 /** The body slot of the newest assistant message, or null. render.js owns the markup. */
 function lastAnswerEl() {
-  const bodies = document.querySelectorAll('.msg.assistant [data-slot="body"]');
+  const bodies = document.querySelectorAll('.msg.assistant:not([data-greeting]) [data-slot="body"]');
   return bodies.length ? bodies[bodies.length - 1] : null;
 }
 
@@ -259,7 +220,7 @@ async function copyAnswer(labelEl, original) {
 /**
  * @param {object} ctx wiring handed in by main.js:
  *   {
- *     form, input, sendButton, promptsEl, controlsEl,
+ *     form, input, sendButton, controlsEl,
  *     submit(text),          // run one turn, exactly as the composer would
  *     getLastUserTurn(),     // {role, content} | string | null
  *     abort(),               // abort the request in flight; a no-op when idle
@@ -269,17 +230,12 @@ async function copyAnswer(labelEl, original) {
  */
 export function initInput(ctx) {
   const {
-    form, input, sendButton, promptsEl, controlsEl,
+    form, input, sendButton, controlsEl,
     submit, getLastUserTurn, abort, dropLastExchange,
   } = ctx || {};
 
-  const field = upgradeComposer(form, input);
+  upgradeComposer(form, input);
   let busy = false;
-
-  function clearStarters() {
-    // app.css collapses #starter-prompts:empty, so emptying it removes the row.
-    if (promptsEl) promptsEl.textContent = "";
-  }
 
   function renderControls() {
     if (!controlsEl) return;
@@ -320,7 +276,6 @@ export function initInput(ctx) {
   function setBusy(next) {
     if (busy === next) return;
     busy = next;
-    if (busy) clearStarters();
     renderControls();
   }
 
@@ -334,7 +289,6 @@ export function initInput(ctx) {
 
   if (form) {
     form.addEventListener("submit", () => {
-      clearStarters();
       // main.js registered its submit handler first and has already flipped #send by now,
       // so this shows Stop on the same tick instead of waiting for the observer — and is
       // the only path to it where MutationObserver does not exist.
@@ -342,21 +296,4 @@ export function initInput(ctx) {
     });
   }
 
-  if (promptsEl) {
-    loadStarterPrompts(PROMPTS_URL).then((prompts) => {
-      if (!prompts.length || busy || document.querySelector(".msg")) return;
-      prompts.forEach((text) => {
-        const chip = document.createElement("button");
-        chip.type = "button";
-        chip.className = "chip chip--starter";
-        chip.textContent = text;
-        chip.addEventListener("click", () => {
-          if (field) field.value = text;
-          if (field) autosize(field);
-          submitForm(form); // main.js's submit handler reads the field and clears it
-        });
-        promptsEl.appendChild(chip);
-      });
-    });
-  }
 }

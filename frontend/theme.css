@@ -1,29 +1,101 @@
 /*
- * Design tokens — the whole palette, in one place, twice.
+ * Design tokens — ONE light palette, mirroring the production dashboard's neumorphic system.
  *
- * Direction A (light) and Direction B (dark) from the design canvas are the SAME layout
- * with a swapped token set, so every component below styles itself from these variables
- * and never hardcodes a colour. Adding a component means using tokens, not picking hexes:
- * a literal colour in a component rule is a bug, because it will not invert.
+ * There is no dark mode: the product has none (decided; see docs/timeline.md). Every value
+ * below is lifted verbatim from ../user-dashboard/src/app/globals.css (brand tokens, `.nm-*`
+ * shadow primitives) and ../user-dashboard/src/app/layout.js (the MUI theme — gold gradient
+ * button, Poppins/Work Sans, 14px MUI radius). Do not invent new brand hues; if a colour is
+ * needed that is not here, go find it in the dashboard first.
  *
- * Colours are lifted from the real dashboard (../user-dashboard), not sampled from a
- * screenshot: #12182b field and Work Sans/Poppins from src/app/globals.css, #2D77A6
- * message bubble and #a89748 / #f5cd19 from the components. Do not invent new brand hues.
+ * app.css builds every component from the semantic tokens at the bottom of this file, and
+ * must not contain a literal hex itself (the gold button gradient stops are tokens for exactly
+ * that reason). This file is the one place literal colours belong.
  *
- * Upstream repainted on 2026-08-26 (1f81f87): the dashboard is now a LIGHT neumorphic surface,
- * and #12182b is its ink rather than its field. Direction B (dark) is ours alone now; Direction A
- * should track their tokens -- surf #e9edf3, surf-2 #f2f5f9, hi #ffffff, lo #c5ccd9, line #d5dbe6,
- * mut #4e596e -- plus the AA-safe text pair they added because brand gold fails contrast on light:
- * gold-txt #766a33, sea-txt #2b719e. Repaint plan: docs/migration/INTEGRATION_PLAN.md §3.
+ * Surfaces separate by SHADOW, not colour or border: raised = --nm / --nm-sm, recessed =
+ * --nm-in / --nm-in-sm, both painted on the same --surf background. A hairline (--line) is
+ * used only where it carries real structure — a markdown table row, mainly — never as a panel
+ * edge.
  *
- * Resolution order: OS preference by default, an explicit choice wins and persists.
- * js/theme.js stamps data-theme on <html>; the media query only applies when it has not.
+ * Fonts are self-hosted under vendor/fonts/ (latin subset, woff2), so the page needs no
+ * third-party request and a missing @font-face cannot silently fall back to the system font.
+ * Licence text sits alongside the font files, the same convention as vendor/LICENSE-marked.txt.
  */
 
+@font-face {
+  font-family: "Work Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/work-sans-v24-latin-400.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Work Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("vendor/fonts/work-sans-v24-latin-600.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("vendor/fonts/poppins-v24-latin-600.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
+  /* ---- brand tokens — verbatim from user-dashboard/src/app/globals.css ---- */
+  --midnight: #12182b;
+  --gold: #a89748;
+  --sea: #2d77a6;
+  --gold-lt: #c0ad5c;
+  --gold-dk: #7d6f34;
+
+  /* Brand gold and sea fail AA as TEXT on light surfaces — these tints are the only colours
+     allowed on gold/sea text. The raw hues above stay fine for dots, icons and line strokes. */
+  --gold-txt: #766a33;
+  --sea-txt: #2b719e;
+
+  --surf: #e9edf3;
+  --surf-2: #f2f5f9;
+  --hi: #ffffff;
+  --lo: #c5ccd9;
+
+  --navy: #12182b;
+  --ink: #12182b;
+  --mut: #4e596e;
+  --line: #d5dbe6;
+
+  /* Neumorphic elevation. Raised = nm, recessed = nm-in. */
+  --nm: 8px 8px 18px var(--lo), -8px -8px 18px var(--hi);
+  --nm-sm: 4px 4px 10px var(--lo), -4px -4px 10px var(--hi);
+  --nm-in: inset 6px 6px 13px var(--lo), inset -6px -6px 13px var(--hi);
+  --nm-in-sm: inset 3px 3px 8px var(--lo), inset -3px -3px 8px var(--hi);
+
+  /* Gold gradient contained button — user-dashboard/src/app/layout.js's MUI `containedPrimary`.
+     Tokenised so app.css never needs the literal hex. */
+  --gold-grad-1: #b5a455;
+  --gold-grad-2: #9c8c3f;
+
+  /* Status hues — the same three the fleet dials use (datahub-dial/page.js). The raw hue is
+     for dots/icons only; *-text is the same hue darkened until it reaches 4.5:1 on --surf
+     (#e9edf3): 4.63, 4.62 and 4.59 respectively. */
+  --ok: #5c9e6b;
+  --ok-text: #44744f;
+  --warn: #c9a227;
+  --warn-text: #806719;
+  --err: #b4544a;
+  --err-text: #a94f46;
+
   /* ---- type ---- */
   --font-body: "Work Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-head: "Poppins", "Work Sans", system-ui, sans-serif;
+  --font-head: "Poppins", "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   --fs-xs: 11.5px;
   --fs-sm: 12.5px;
@@ -32,7 +104,7 @@
   --fs-lg: 17px;
   --lh-body: 1.6;
 
-  /* ---- spacing: a 4px scale, so nothing lands on an arbitrary value ---- */
+  /* ---- spacing: a 4px scale ---- */
   --sp-1: 4px;
   --sp-2: 8px;
   --sp-3: 12px;
@@ -41,173 +113,34 @@
   --sp-6: 26px;
   --sp-7: 32px;
 
-  --radius-sm: 6px;
-  --radius: 10px;
-  --radius-lg: 14px;
-  --radius-pill: 999px;
+  /* ---- radii ---- */
+  --radius-sm: 14px;     /* small recessed wells: notice, chart frame, details */
+  --radius: 16px;        /* wells generally */
+  --radius-lg: 20px;     /* cards / message bubbles */
+  --radius-pill: 999px;  /* chips, badges, citations — fully round */
+  --radius-input: 50px;  /* composer, native selects — the dashboard's MUI "50px" pill */
+  --radius-btn: 13px;    /* ghost buttons — the dashboard's MUI shape.borderRadius */
 
-  /* Column width. Relative, not a fixed pixel cap: tables, charts and six-metric reads
-     were cramped at 74ch. Grows to half the viewport, with a floor so it stays readable on
-     a small laptop and a ceiling so prose does not run to 200 characters on an ultrawide.
-     Under 900px the media query in app.css overrides this to 100%. */
-  --measure: clamp(32rem, 50vw, 66rem);
+  /* Column width for a message body. Grows to a fraction of the viewport, with a floor so it
+     stays readable on a small laptop and a ceiling so prose does not run to 200 characters on
+     an ultrawide. The two-column layout in app.css caps the right column itself; this only
+     keeps one message from stretching edge-to-edge inside it. */
+  --measure: clamp(28rem, 46vw, 58rem);
 
-  /* ---- light palette (Direction A) ---- */
-  --bg: #f4f6f9;
-  --surface: #ffffff;
-  --surface-2: #f7f8fa;
-  --surface-3: #f1f3f7;
+  /* ---- semantic tokens — all defined in terms of the brand tokens above ---- */
+  --bg: var(--surf);
+  --text: var(--ink);
+  --text-2: var(--mut);
+  /* Same as --text-2 on purpose: the dashboard has one secondary text colour, and any lighter
+     tint of --mut on --surf drops below 4.5:1 (a 60% mix measured 2.6:1). Tier by size instead. */
+  --text-3: var(--mut);
 
-  --text: #1b2233;
-  --text-2: #4a5468;
-  --text-3: #8a93a6;
+  /* what the model actually queried */
+  --tool-text: var(--sea-txt);
+  --tool-icon: var(--sea);
 
-  --border: #e3e7ee;
-  --border-strong: #d8dde6;
-
-  --accent: #a89748;
-  --accent-hover: #96863f;
-  --accent-text: #ffffff;
-
-  --nav-bg: #12182b;
-  --nav-text: #aab3c5;
-
-  --bubble-user-bg: #2d77a6;
-  --bubble-user-text: #ffffff;
-
-  /* tool-call chip */
-  --tool-bg: #eef4f8;
-  --tool-border: #d5e3ec;
-  --tool-text: #2b5a76;
-  --tool-icon: #2d77a6;
-
-  /* caveat / stale / warning */
-  --warn-bg: #fdf6e3;
-  --warn-border: #ecdcae;
-  --warn-text: #7a6320;
-  --warn-icon: #b28c1e;
-
-  /* error */
-  --err-bg: #fdeeec;
-  --err-border: #f2c4bd;
-  --err-text: #8f2c1f;
-  --err-icon: #c0392b;
-
-  /* healthy / reporting */
-  --ok-bg: #edf7ee;
-  --ok-text: #2f6b3a;
-  --ok-dot: #43a047;
-
-  --chart-line: #2d77a6;
-  --chart-fill: rgba(45, 119, 166, 0.10);
-  --chart-grid: #e8ebf1;
-  --chart-last: #a89748;
-
-  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
-}
-
-/* ---- dark palette (Direction B) ---- */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #12182b;
-    --surface: #182034;
-    --surface-2: #0f1425;
-    --surface-3: #1b2340;
-
-    --text: #e6eaf2;
-    --text-2: #b9c1d3;
-    --text-3: #7d879f;
-
-    --border: #24304f;
-    --border-strong: #2a3350;
-
-    --accent: #f5cd19;
-    --accent-hover: #ffd93a;
-    --accent-text: #12182b;
-
-    --nav-bg: #0d1220;
-    --nav-text: #8892a8;
-
-    --bubble-user-bg: #2d77a6;
-    --bubble-user-text: #ffffff;
-
-    --tool-bg: #16203a;
-    --tool-border: #24304f;
-    --tool-text: #9fc0d8;
-    --tool-icon: #5aa4d0;
-
-    --warn-bg: #3a2a12;
-    --warn-border: #6b4f1c;
-    --warn-text: #f0c869;
-    --warn-icon: #e0a92b;
-
-    --err-bg: #3a1a17;
-    --err-border: #6e2f26;
-    --err-text: #f2a99e;
-    --err-icon: #e0685a;
-
-    --ok-bg: #16301c;
-    --ok-text: #8fd39b;
-    --ok-dot: #43a047;
-
-    --chart-line: #5aa4d0;
-    --chart-fill: rgba(90, 164, 208, 0.12);
-    --chart-grid: #242e48;
-    --chart-last: #f5cd19;
-
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.30);
-  }
-}
-
-/* Explicit choice beats the OS in both directions. Duplicated rather than shared with the
-   media query on purpose: a token defined ONLY inside a media block has no value when the
-   toggle forces the other way. */
-:root[data-theme="dark"] {
-  --bg: #12182b;
-  --surface: #182034;
-  --surface-2: #0f1425;
-  --surface-3: #1b2340;
-
-  --text: #e6eaf2;
-  --text-2: #b9c1d3;
-  --text-3: #7d879f;
-
-  --border: #24304f;
-  --border-strong: #2a3350;
-
-  --accent: #f5cd19;
-  --accent-hover: #ffd93a;
-  --accent-text: #12182b;
-
-  --nav-bg: #0d1220;
-  --nav-text: #8892a8;
-
-  --bubble-user-bg: #2d77a6;
-  --bubble-user-text: #ffffff;
-
-  --tool-bg: #16203a;
-  --tool-border: #24304f;
-  --tool-text: #9fc0d8;
-  --tool-icon: #5aa4d0;
-
-  --warn-bg: #3a2a12;
-  --warn-border: #6b4f1c;
-  --warn-text: #f0c869;
-  --warn-icon: #e0a92b;
-
-  --err-bg: #3a1a17;
-  --err-border: #6e2f26;
-  --err-text: #f2a99e;
-  --err-icon: #e0685a;
-
-  --ok-bg: #16301c;
-  --ok-text: #8fd39b;
-  --ok-dot: #43a047;
-
-  --chart-line: #5aa4d0;
-  --chart-fill: rgba(90, 164, 208, 0.12);
-  --chart-grid: #242e48;
-  --chart-last: #f5cd19;
-
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.30);
+  --chart-line: var(--sea);
+  --chart-fill: rgba(45, 119, 166, 0.12);
+  --chart-grid: var(--line);
+  --chart-last: var(--gold);
 }

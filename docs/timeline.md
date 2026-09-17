@@ -564,7 +564,7 @@ an input to **◆G3**.
 
 > **Status: most of the list below has landed.** Markdown rendering + XSS hardening, provenance
 > surfacing, the input/response controls, the series chart, `【commentary…】` stripping, the error
-> taxonomy, the generated starter prompts and the pod picker are all in the tree.
+> taxonomy and the pod picker are all in the tree (the generated starter prompts were removed 2026-09-15).
 > [`CHAT_UX_WORKPLAN.md`](CHAT_UX_WORKPLAN.md) is the home for what each stream delivered and what
 > is still open; the list here is kept as the phase's scope, not as a to-do.
 
@@ -704,8 +704,9 @@ answers complete; every sensor answer shows which pod, which window, and how fre
 - Build the **Next.js dedicated chatbot page** (replaces the demo's single-file `frontend/index.html`).
 - Re-point the dashboard's `services/gilligan.js` from `/gilligan/*` to the new `/chat`; match
   request/response shapes; retire/re-map `askGilligan`/`getChats`/`checkQuota`.
-- **◆ G5 responsiveness** (mobile/tablet) and **◆ G6 redesign vs. match existing style** — both gate
-  the UI build. **Neither is blocked by anything; they are the cheapest way to unblock this phase.**
+- **◆ G5 responsiveness** (mobile/tablet) gates the UI build. **◆ G6 is resolved (2026-09-14): match
+  the dashboard's existing style.** The demo frontend was repainted first so the design is proven
+  against real answers before it is ported to React inside the dashboard.
 
 ### Persisted chat history
 
@@ -797,7 +798,7 @@ conversations that survive a page reload.*
 | ◆ G3 | Site-baseline definition (operator range vs. computed) | **Resolved 2026-09-13 → the pod's operator-configured registry threshold**, by supervisor direction (see "Eval rebuild" below). Computing a site baseline from history remains a possible later refinement, not a gate. Earlier, an operator meeting had restated the open question as "pull ranges from the registry, refine per site from history" — decoded, with the prompt-caching and `precedence`-fixture objections re-checked against this resolution, in [`RESPONSIBILITY.md`](RESPONSIBILITY.md) | Phase N4 flag logic — unblocked |
 | ◆ G4 | Event-detection context source | Open | Phase N6 §4 |
 | ◆ G5 | Frontend responsiveness (mobile/tablet) | Open | Phase N7 UI |
-| ◆ G6 | Redesign vs. match existing style | Open | Phase N7 UI |
+| ◆ G6 | Redesign vs. match existing style | **Resolved 2026-09-14 → match the dashboard's light neumorphic style**, dark mode dropped (see "Eval rebuild" decision log) | — |
 | — | Turbidity metric **code** | **Resolved → `72`** (from `user-dashboard` `MetricsDictionary`) | — |
 | — | Turbidity **unit** (NTU vs FNU) | **Resolved → the fleet reports NTU** (white-light). NTU and FNU are not interchangeable (FNU = infrared), so a pod reporting FNU is not comparable without re-deriving the range. Source: operator source-of-truth §6; unit confirmed by operator 2026-07-29 | — |
 
@@ -839,6 +840,8 @@ entry to be written here at that point. Until then: **treat every retrieval arm 
 | **Quote-carrying citations** (`EVAL_REBUILD.md` 2a in code): the prompt asks for `【n†"quote"】`, context excerpts are labelled `【n】` | 2026-09-13 | The quote exists for deterministic grading (`checkQuotes`); the interface is to render the marker as a source link and not show the quote text. **Demonstrated by the same-day smoke capture below**, not yet measured. `src/prompt/promptBuilder.ts`, `src/eval/gates/checks.ts` |
 | Operator's three turbidity clarity bands adopted | 2026-09-10 | Supplied by the operator on 2026-09-10: `NTU = (3.35 - V) × 300`, which runs inverse (clearer water is a higher voltage). Clear above 2.2 V (NTU below 345), Moderate 0.7-2.2 V (NTU 345-795), Turbid below 0.7 V (NTU above 795). They replace this project's provisional 250 / 600 / 1005 edges, which had no operator backing; ≥1005 NTU stays as an off-scale data-quality flag (input below 0 V), not a band. `f751932`, `src/report/referenceRanges.ts` |
 | The turbidity prompt rule stays instrument-agnostic while fixture text is frozen | 2026-09-10 | The operator named two turbidity sensors (Turner, quantitative; Keystudio, qualitative only), but `refusal-turbidity-sensor-hardware` demands the assistant say the corpus cannot identify the instrument. Naming either sensor in the prompt would turn that fixture into a refusal for something answerable, and fixture text is frozen for the Phase 1d review. So the rule says "qualitative only, all pods" and names no hardware until the fixture is unfrozen and revised. Guarded by `test/unit/prompt.test.ts` |
+| Starter prompts removed | 2026-09-15 | A nice-to-have that tied the frontend to fixture churn: the 2026-09-13 fixture rewrite left the generated file stale and its drift test failing. Deleted `scripts/starterPrompts.ts`, its test, `frontend/starter-prompts.json`, the `starter:prompts` script and the chips in `input.js` |
+| ◆G6 resolved: the demo frontend matches the dashboard's Gilligan page; dark mode dropped | 2026-09-14 | User decision after a read-only survey of `user-dashboard`. Tokens copied verbatim from its `globals.css`; surfaces separate by paired shadows, not borders; two-column layout with device, starter prompts and the demo account switcher on the left, where chat history lands once conversations persist. Dark mode was removed because the product has none and the shadow style depends on a light ground. Work Sans and Poppins are now self-hosted (they had been named but never loaded). Order: repaint the vanilla frontend first and verify it end to end, then port to React for the dashboard. The dashboard's own Gilligan page is being replaced, so its defects are not raised; the others are `STAKEHOLDER_QUESTIONS.md` items 13-16 |
 | Advice ships in reports first; chat and fixtures after the allowlist is approved | 2026-09-13 | Advice in reports follows supervisor approval of the catalogue. Advice in chat and in fixtures comes after that, and also needs tool results recorded in transcripts (`TranscriptTurn` has no field for them, so the judge would never see the advice's source). `RESPONSIBILITY.md`, `docs/advice/` |
 | Dated session handoffs retired for one living `STATUS.md` | 2026-09-13 | Handoffs were only relevant to the next session but accumulated, went stale while still linked as "start here", and collected durable reasoning that code comments then cited. `STATUS.md` is rewritten in place by the `/handoff` skill; durable reasoning goes to `SPECS.md`, `EVAL_REBUILD.md` or this log. The three dated handoffs are under `handoffs-archive-2026-09-13` (`ARCHIVED.md`) |
 

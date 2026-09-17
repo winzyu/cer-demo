@@ -1,5 +1,5 @@
 /**
- * Account switcher for the context bar — which credential this page talks to the API with.
+ * Account switcher for the left column — which credential this page talks to the API with.
  *
  * The store and the reasoning behind it live in `auth.js`. This file is only the UI: a select
  * of saved accounts, a form to add one, and a "forget" button.

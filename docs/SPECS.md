@@ -188,7 +188,7 @@ clean-earth-rag/
 │       ├── logger.ts         createLogger(tag)
 │       └── sse.ts            Server-Sent Events helpers
 ├── scripts/                  ingest.ts, seedFirestore.ts, seedFirestoreChunks.ts,
-│                             bakeoff.ts, cost.ts, gradePacket.ts, starterPrompts.ts,
+│                             bakeoff.ts, cost.ts, gradePacket.ts,
 │                             exploreDeviceApi.ts, verifySensorTool.ts,
 │                             exploreDeviceFields.sh, exploreBackendSurface.sh
 ├── test/
@@ -1292,7 +1292,6 @@ it is not the full list — `npx jest --listTests` is.
 | `unit/operatorThresholds.test.ts` | every rejection reason for an operator-entered temperature baseline — the all-zero "never configured" registry state, an inverted range, a typed-in placeholder magnitude — each falling back to "no baseline established" rather than to a wrong range, and never printing the rejected numbers |
 | `unit/answerFormat.test.ts` | `【commentary…】` stripping anchored to the channel name, **citation markers in the same brackets left untouched** (~160 of them across the captured transcripts), the marker-only answer coming out empty so the existing 502 guard fires, and the streaming filter agreeing with the batch stripper however the text is chopped up |
 | `unit/generateReport.test.ts`, `unit/buildReportInput.test.ts`, `unit/reportModel.test.ts`, `unit/reportEvents.test.ts`, `unit/reportReferenceRanges.test.ts`, `unit/reportNarrative.test.ts`, `unit/reportRenderPdf.test.ts` | the report pipeline: the tool's arguments and flag gating, the computed model assembled from sensor + registry data, event detection, the transcribed baselines and turbidity bands, narration confined to pre-computed facts, and the PDF layout |
-| `unit/starterPrompts.test.ts` | deterministic output, and the two exclusions (`refusal` class, `requires: sensor-tool` without `--sensor`) |
 
 **`unit/pgvectorRag.test.ts` is gone from the live suite** (2026-08-19). Its `fuseRrf` and
 `PgVectorRagAdapter` blocks went to `archive/pgvector-rag/` with the code they test — a suite whose

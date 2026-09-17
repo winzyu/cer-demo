@@ -25,7 +25,6 @@
     "compare:vector-arms": "ts-node scripts/compareVectorArms.ts",
     "cost": "ts-node scripts/cost.ts",
     "grade:packet": "ts-node scripts/gradePacket.ts",
-    "starter:prompts": "ts-node scripts/starterPrompts.ts",
     "explore:fields": "bash scripts/exploreDeviceFields.sh",
     "explore:surface": "bash scripts/exploreBackendSurface.sh",
     "retrieval:eval": "ts-node scripts/retrievalEval.ts",

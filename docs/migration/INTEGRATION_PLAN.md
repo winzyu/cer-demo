@@ -201,8 +201,8 @@ file.** What ports is behaviour, and it is worth being blunt about which parts a
 | `js/report.js` | Port with the report route (Phase 3). |
 | `js/chart.js` | Evaluate — the dashboard already has ApexCharts and gauges. Prefer theirs. |
 | `js/markdown.js` (`marked` + `dompurify`) | **Drop.** They already render with `react-markdown` in `gilligan-answer.js`. |
-| `js/theme.js`, `theme.css` | Drop the toggle; keep the token discipline (§3b). |
-| `starter-prompts.json` | Port — cheap, and it teaches the scope the system prompt enforces. |
+| `theme.css` | Already mirrors their `globals.css` tokens (repainted 2026-09-14); keep the token discipline (§3b). `js/theme.js` and dark mode are gone. |
+| `starter-prompts.json` | **Gone.** Removed 2026-09-15 (`timeline.md`). |
 
 ### 3b. The repaint — upstream went light on 2026-08-26
 
@@ -226,8 +226,9 @@ Two things to take rather than re-derive:
   `1px solid`. Our `app.css` separates with `--border`. Inside the dashboard, a bordered panel
   will read as foreign.
 
-Direction B (dark) is now **ours alone** — upstream has no dark mode. Keep it here for this demo;
-do not ship a theme toggle into their app without asking.
+**Done in the demo, 2026-09-14.** `frontend/` now uses these tokens verbatim, separates surfaces by
+shadow, and follows their Gilligan page's two-column layout. Dark mode was dropped: upstream has
+none, and the shadow pairs depend on a light ground.
 
 ### 3c. The new component that overlaps ours
 
@@ -285,7 +286,7 @@ Phases 1 and 2 are where the value is. Everything after is additive and independ
 5. **Chat history ownership:** their `chats` collection stays authoritative and we stay stateless?
    That is the assumption in §2b and it should be confirmed, because it decides whether our
    history trimming or their full transcript is what the model sees.
-6. **Does the dashboard want a dark mode at all?** It has none today; we have a full token set.
+6. ~~**Does the dashboard want a dark mode at all?**~~ Settled 2026-09-14: no; ours was removed.
 
 ---
 

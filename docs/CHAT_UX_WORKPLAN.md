@@ -11,10 +11,10 @@ Phase 0 creates the seam first.
 
 ## Guardrails — apply to every workstream, without exception
 
-1. **Never edit `src/prompt/systemPrompt.ts`.** The system prompt is a pinned control for the N2
-   bake-off while ◆G7 is open. A stray newline changes its SHA-256, voids all three captured arms,
-   and throws away 168 transcripts. `test/unit/prompt.test.ts` pins it — if that test fails, the
-   change is wrong, not the test.
+1. **Never edit `src/prompt/systemPrompt.ts` from a UX workstream.** The prompt stopped being a
+   pinned control on 2026-08-26, when ◆G7 split, but any prompt change still invalidates every
+   capture made before it, so it is made deliberately and never as a side effect
+   (`timeline.md`, N5). `test/unit/prompt.test.ts` now guards flag additivity rather than a hash.
 2. **Never change the defaults** of `SENSOR_TOOL` (`false`), `DEFAULT_RETRIEVAL` (`stub`), or
    `DEBUG_RETRIEVAL` (`false`) in `src/config/index.ts`. A fresh checkout must stay credential-free.
 3. **The whole suite stays green.** No test may touch the network, need an API key, or cost money. New
@@ -43,7 +43,7 @@ Phase 0 creates the seam first.
    `eval/transcripts/**` and `eval/grading/**` were archived on 2026-09-01 and no longer exist in
    the tree — see [`ARCHIVED.md`](ARCHIVED.md). When Phase 3 refills them the same rule applies:
    captured evidence is not edited, and `KEY.json` un-blinds a packet and must not be read.
-8. **Write only inside this repo.** `../user-dashboard` and `../backend` are read-only references —
+8. **Write only inside this repo.** `../user-dashboard` and `../clean-earth-rovers-server` are read-only references —
    and the real brand assets and tokens live there: `public/cer-light-transparent.png`,
    `public/gilligan-icon.png`, `src/app/globals.css` (`#12182b`, Work Sans 300 / Poppins 600),
    `#2D77A6` bubble, `#a89748` gold, `#f5cd19` nav active. Match them; do not invent new ones.
@@ -255,6 +255,9 @@ pass-through would have published errnos.
 
 ### WS-7 · Starter prompts from the eval set *(server/tooling)*
 
+> **Removed 2026-09-15.** The generator, its test, `frontend/starter-prompts.json` and the chips in
+> `input.js` are gone (`timeline.md` decision log). What follows records what the stream built.
+
 **Owns:** `scripts/starterPrompts.ts` *(new)*, `test/unit/starterPrompts.test.ts` *(new)*, the
 `starter:prompts` entry in `package.json`, and regenerating `frontend/starter-prompts.json`
 
@@ -309,7 +312,7 @@ Phase 0 wrote `{ "prompts": [string] }`, so WS-3's loader must read `.prompts[].
 |---|---|
 | System-prompt personality | **◆G7.** The prompt is pinned until the bake-off is graded. |
 | Persisted chat history, per-user quota | **Authentication**, which does not exist in this service. Lands with N7, where the dashboard's JWT arrives. |
-| Next.js chatbot page | **◆G5** (responsive scope) and **◆G6** (redesign vs. match dashboard style). Both are decisions, not work — resolving them is the cheapest unblock available. |
+| Next.js chatbot page | **◆G5** (responsive scope). ◆G6 resolved 2026-09-14: match the dashboard style; the demo frontend was repainted first (`timeline.md`). |
 | Token streaming with tools on | Not blocked, but needs incremental `delta.tool_calls` assembly. Sized for N7. |
 
 **Done 2026-08-19 — archiving the pgvector arm.** Taken off this list by decision rather than by

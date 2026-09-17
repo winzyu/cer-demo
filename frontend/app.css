@@ -1,22 +1,32 @@
 /*
  * Gilligan chat — layout and components.
  *
- * Every colour comes from theme.css. A literal hex in this file is a bug: it will not
- * invert between light and dark. Wave 1 streams produce MARKUP using the class names
- * documented here; the styling lives here so the two directions stay coherent.
+ * Repainted to match the production dashboard's light neumorphic system (Gilligan page):
+ * a two-column layout (session controls left, transcript + composer right), raised/recessed
+ * shadow surfaces instead of borders, and the dashboard's token names. There is no dark mode.
  *
- * There is deliberately no chat-history rail. Persisted conversations need authentication,
- * which this service does not have (timeline.md, N7) — a non-functional sidebar would be
- * decoration pretending to be a feature.
+ * Every colour comes from theme.css — this file must contain no literal hex, except the gold
+ * button gradient stops, which are themselves tokens (--gold-grad-1/2) so even those are not
+ * hex literals here. A literal colour in a component rule is a bug: theme.css is the one place
+ * to add a new one.
+ *
+ * The left column carries session controls today (device and the demo account switcher) and reserves a spot for a chat-history rail once conversations persist — see the
+ * HTML comment in index.html where that will mount. There is no such rail yet because this
+ * service has no auth model to key saved conversations on, not because a sidebar was rejected.
  */
 
 *, *::before, *::after { box-sizing: border-box; }
+
+/* `.accountform { display: flex }` below has the same specificity as the UA's `[hidden]` rule
+   and would otherwise win by cascade order, showing the add-account form before anyone asked
+   for it. Toggle visibility with `el.hidden`, never `style.display`, and this stays authoritative. */
+[hidden] { display: none !important; }
 
 html, body { height: 100%; margin: 0; }
 
 body {
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   font-size: var(--fs-base);
   line-height: var(--lh-body);
   color: var(--text);
@@ -25,136 +35,180 @@ body {
   flex-direction: column;
 }
 
-a { color: var(--accent); text-decoration: none; }
+h1, h2, h3, h4 {
+  font-family: var(--font-head);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+a { color: var(--gold-txt); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* ============================= app bar ============================= */
+/* Every interactive element gets the same visible keyboard-focus ring, so no component below
+   needs its own :focus-visible rule. */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible,
+select:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--sea-txt);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+}
+
+/* ============================= shell & header ============================= */
+
+.shell {
+  width: 80%;
+  margin: 0 auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
 
 .appbar {
   flex-shrink: 0;
-  background: var(--nav-bg);
   display: flex;
   align-items: center;
   gap: var(--sp-3);
-  padding: var(--sp-2) var(--sp-4);
+  padding: var(--sp-5) 0;
 }
 
-.appbar__logo { height: 30px; width: auto; display: block; }
+.appbar__logo { height: 40px; width: auto; display: block; }
 
+/* Styled like the dashboard's active nav link: uppercase, gold-txt (brand gold fails AA as
+   text), underlined to read as "you are here" rather than a clickable link to nowhere. */
 .appbar__title {
   font-family: var(--font-head);
   font-weight: 600;
-  font-size: var(--fs-base);
-  color: #ffffff;              /* on the navy bar in BOTH themes, so it is not a token */
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--gold-txt);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
-
-.appbar__meta { font-size: var(--fs-sm); color: var(--nav-text); }
 
 .appbar__spacer { flex-grow: 1; }
+.appbar__meta { font-size: var(--fs-sm); color: var(--text-3); }
 
-/* Pod + freshness live here; WS-2 may also render freshness per message. */
-.appbar__status {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
+/* ============================= two-column layout ============================= */
+
+.layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+  padding-bottom: var(--sp-4);
 }
 
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: transparent;
-  color: var(--nav-text);
-  cursor: pointer;
-  padding: 0;
-}
-.theme-toggle:hover { color: #ffffff; border-color: rgba(255, 255, 255, 0.34); }
-.theme-toggle svg { width: 17px; height: 17px; }
-/* Show the icon for the theme you would switch TO. */
-.theme-toggle .icon-dark { display: none; }
-:root[data-theme="dark"] .theme-toggle .icon-dark { display: block; }
-:root[data-theme="dark"] .theme-toggle .icon-light { display: none; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .theme-toggle .icon-dark { display: block; }
-  :root:not([data-theme="light"]) .theme-toggle .icon-light { display: none; }
+@media (min-width: 768px) {
+  .layout { grid-template-columns: 1fr 2fr; }
 }
 
-/* ============================= context bar =============================
- * Session-level facts live here, not in the transcript: which pod is selected, whether it
- * is reporting, and whether its water type disagrees with the deployment's. These are
- * identical on every answer, so repeating them per message trains the reader to skip the
- * line where a caveat finally matters. See docs/CHAT_UX_WORKPLAN.md, "Wave 2".
- */
-
-.contextbar {
-  flex-shrink: 0;
+/* Padding with a matching negative margin, as the dashboard's device list does (`px-3 py-3
+   -mx-3`): a scroll container clips its children's box-shadows at its edge, so the raised
+   controls need room inside it to cast theirs. */
+.col-left {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: var(--sp-5);
+  min-height: 0;
+  padding: var(--sp-3);
+  margin: calc(-1 * var(--sp-3));
+}
+@media (min-width: 768px) {
+  .col-left { overflow-y: auto; }
+}
+
+.col-right {
+  display: flex;
+  flex-direction: column;
   gap: var(--sp-3);
-  flex-wrap: wrap;
-  padding: var(--sp-2) var(--sp-7);
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  min-height: 0;
 }
 
-.podpicker { display: inline-flex; align-items: center; gap: var(--sp-2); }
+/* ============================= left column: session controls ============================= */
+
+.panel-group { display: flex; flex-direction: column; gap: var(--sp-2); }
+
+/* Demo-only scaffolding (the account switcher): visually quiet, and a real <details> so it
+   collapses out of the way — on its own, no JS, no breakpoint logic needed. */
+.panel-group--quiet .podpicker__select,
+.panel-group--quiet .btn--ghost { font-size: var(--fs-sm); }
+
+details.panel-group > summary {
+  cursor: pointer;
+  list-style: none;
+}
+details.panel-group > summary::-webkit-details-marker { display: none; }
+details.panel-group[open] > summary { margin-bottom: var(--sp-1); }
+details.panel-group > *:not(summary) { margin-top: var(--sp-2); }
+
+.panel-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-txt);
+}
+
+/* A real <select>: native keyboard behaviour and mobile pickers for free. Raised pill, no
+   border — depth comes from the neumorphic shadow. */
+.podpicker { display: flex; flex-direction: column; gap: var(--sp-1); }
 .podpicker__label { font-size: var(--fs-sm); color: var(--text-3); }
 
-/* A real <select>: native keyboard behaviour and mobile pickers for free. */
 .podpicker__select {
   font: inherit;
   font-size: var(--fs-md);
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
-  padding: var(--sp-2) var(--sp-3);
-  max-width: 18rem;
+  color: var(--ink);
+  background: var(--surf);
+  border: none;
+  border-radius: var(--radius-input);
+  box-shadow: var(--nm-sm);
+  padding: var(--sp-3) var(--sp-4);
+  width: 100%;
   cursor: pointer;
 }
-.podpicker__select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.podpicker__select:disabled { opacity: 0.6; cursor: default; }
+.podpicker__select:disabled { opacity: 0.6; cursor: default; box-shadow: var(--nm-in-sm); }
 
-.contextbar .badge { font-size: var(--fs-sm); }
-.contextbar__spacer { flex-grow: 1; }
+#pod-status { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-1); }
 
-/* Account form — hidden until "Add an account…" is chosen. Same tokens as the context bar,
-   so it inverts with the theme like everything else. `hidden` is honoured by the reset. */
+/* Account form — same tokens as everything else, deliberately unshowy. */
 .accountform {
   display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  flex-wrap: wrap;
-  padding: var(--sp-3) var(--sp-7);
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-2);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
 }
-.accountform__field { display: inline-flex; align-items: center; gap: var(--sp-2); }
-.accountform__field--wide { flex: 1 1 22rem; }
+.accountform__field { display: flex; flex-direction: column; gap: var(--sp-1); width: 100%; }
 .accountform__input {
   font: inherit;
   font-size: var(--fs-md);
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
-  padding: var(--sp-2) var(--sp-3);
+  color: var(--ink);
+  background: var(--surf);
+  border: none;
+  border-radius: var(--radius-input);
+  box-shadow: var(--nm-in-sm);
+  padding: var(--sp-2) var(--sp-4);
   width: 100%;
-  min-width: 10rem;
 }
-.accountform__input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .accountform__hint { font-size: var(--fs-sm); color: var(--text-3); }
 
-/* ============================= transcript ============================= */
+/* ============================= right column: transcript ============================= */
 
 #messages {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding: var(--sp-6) var(--sp-7);
+  background: var(--surf);
+  box-shadow: var(--nm-in-sm);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6) var(--sp-5);
   display: flex;
   flex-direction: column;
   gap: var(--sp-6);
@@ -167,51 +221,59 @@ a:hover { text-decoration: underline; }
   flex-direction: column;
   gap: var(--sp-2);
 }
-.msg.user { align-self: flex-end; align-items: flex-end; max-width: 560px; }
-.msg.assistant { align-self: flex-start; }
+.msg.user { align-self: flex-end; align-items: flex-end; max-width: 70%; }
+.msg.assistant { align-self: flex-start; position: relative; margin-top: var(--sp-2); }
 
-/* The old uppercase role label is gone: the bubble side and colour already say who spoke,
-   and a "ASSISTANT" caption above every answer is noise at this density. */
+/* The bubble side and colour already say who spoke; an "ASSISTANT" caption above every answer
+   would be noise at this density. */
 .msg .role { display: none; }
 
 .msg .body {
-  border-radius: var(--radius-sm) var(--radius-lg) var(--radius-lg) var(--radius-lg);
+  border-radius: var(--radius-lg);
   padding: var(--sp-4) var(--sp-5);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
+  background: var(--surf);
+  box-shadow: var(--nm-sm);
+  color: var(--ink);
   overflow-wrap: anywhere;
 }
 
-.msg.user .body {
-  background: var(--bubble-user-bg);
-  color: var(--bubble-user-text);
-  border-color: transparent;
-  border-radius: var(--radius-lg) var(--radius-sm) var(--radius-lg) var(--radius-lg);
-  box-shadow: none;
+/* Gilligan's avatar overhangs the assistant bubble's top-left corner — a pseudo-element on the
+   bubble itself, so render.js never needs to know the avatar exists. Sized down from the
+   dashboard's 100px (our answers run denser) and the bubble gets extra top padding so the
+   avatar's lower edge never reaches the first line of text. */
+.msg.assistant .body {
+  position: relative;
+  padding-top: 30px;
+}
+.msg.assistant .body::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: -12px;
+  width: 58px;
+  height: 58px;
+  background: url("assets/gilligan-icon.png") center / contain no-repeat;
+  pointer-events: none;
 }
 
-/* Streaming plain text still needs its newlines; markdown output must not be pre-wrapped
-   or every block element inherits collapsed whitespace. WS-1 adds .body--md when it wins. */
+/* Streaming plain text still needs its newlines; markdown output must not be pre-wrapped or
+   every block element inherits collapsed whitespace. render.js adds .body--md when the
+   markdown renderer wins. */
 .msg .body { white-space: pre-wrap; }
 .msg .body.body--md { white-space: normal; }
 
-/* A refusal is pinned behaviour, not a failure. Grey and calm — if it renders red, it gets
-   reported as a bug. WS-1/WS-2 add .body--refusal. */
+/* A refusal is pinned behaviour, not a failure — calm and recessed, never red. */
 .msg .body--refusal {
-  background: var(--surface-2);
-  border-left: 3px solid var(--text-3);
+  box-shadow: var(--nm-in-sm);
   color: var(--text-2);
 }
 
-/* ---------- markdown inside an answer (WS-1 emits these tags) ---------- */
+/* ---------- markdown inside an answer ---------- */
 
 .body--md > *:first-child { margin-top: 0; }
 .body--md > *:last-child { margin-bottom: 0; }
 .body--md p { margin: 0 0 var(--sp-3); }
 .body--md h1, .body--md h2, .body--md h3 {
-  font-family: var(--font-head);
-  font-weight: 600;
   line-height: 1.3;
   margin: var(--sp-4) 0 var(--sp-2);
 }
@@ -220,17 +282,18 @@ a:hover { text-decoration: underline; }
 .body--md h3 { font-size: var(--fs-md); }
 .body--md ul, .body--md ol { margin: 0 0 var(--sp-3); padding-left: var(--sp-5); }
 .body--md li { margin: var(--sp-1) 0; }
-.body--md li::marker { color: var(--accent); }
+.body--md li::marker { color: var(--gold); }
 .body--md strong { font-weight: 600; }
 .body--md code {
   font-family: var(--font-mono);
   font-size: 0.92em;
-  background: var(--surface-3);
-  border-radius: var(--radius-sm);
+  background: var(--surf-2);
+  border-radius: 4px;
   padding: 1px 5px;
 }
 .body--md pre {
-  background: var(--surface-3);
+  background: var(--surf);
+  box-shadow: var(--nm-in-sm);
   border-radius: var(--radius-sm);
   padding: var(--sp-3);
   overflow-x: auto;                /* code must scroll itself, never the page */
@@ -240,34 +303,53 @@ a:hover { text-decoration: underline; }
 .body--md blockquote {
   margin: 0 0 var(--sp-3);
   padding-left: var(--sp-3);
-  border-left: 3px solid var(--border-strong);
+  border-left: 3px solid var(--line);
   color: var(--text-2);
 }
 
-/* A six-metric table is the common case and must not blow out the layout. */
+/* A six-metric table is the common case and must not blow out the layout. Hairlines carry the
+   row structure; header cells read like the rest of the chrome's eyebrow labels. */
 .body--md .table-wrap { overflow-x: auto; margin: 0 0 var(--sp-3); }
 .body--md table {
   border-collapse: collapse;
   width: 100%;
   font-size: var(--fs-md);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
 }
 .body--md th, .body--md td {
   text-align: left;
   padding: var(--sp-2) var(--sp-3);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--line);
 }
 .body--md thead th {
-  background: var(--surface-2);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--fs-sm);
-  letter-spacing: 0.04em;
-  color: var(--text-2);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-txt);
 }
 .body--md tbody tr:last-child td { border-bottom: none; }
 
-/* ============================= provenance (WS-2) ============================= */
+/* Citation markers, built by render.js as <sup class="cite">. */
+sup.cite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  margin: 0 1px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: super;
+  border-radius: var(--radius-pill);
+  background: var(--surf);
+  box-shadow: var(--nm-sm);
+  color: var(--sea-txt);
+  cursor: default;
+}
+
+/* ============================= provenance ============================= */
 
 .provenance:empty, .chart:empty, .report:empty { display: none; }
 
@@ -288,29 +370,22 @@ a:hover { text-decoration: underline; }
   align-items: center;
   gap: var(--sp-2);
   font-size: var(--fs-sm);
-  border-radius: var(--radius-sm);
+  border: none;                    /* in case a chip is a <button>: drop the UA border */
+  border-radius: var(--radius-pill);
   padding: var(--sp-2) var(--sp-3);
-  border: 1px solid var(--border-strong);
+  background: var(--surf);
+  box-shadow: var(--nm-sm);
   color: var(--text-2);
-  background: var(--surface);
 }
 .chip svg { width: 14px; height: 14px; flex-shrink: 0; }
 .chip b { font-weight: 600; }
 
 /* what the model actually queried */
-.chip--tool {
-  background: var(--tool-bg);
-  border-color: var(--tool-border);
-  color: var(--tool-text);
-}
+.chip--tool { color: var(--tool-text); }
 .chip--tool svg { color: var(--tool-icon); }
 
-/* a repeated identical call, served from the per-request cache */
-.chip--deduped {
-  background: var(--surface-2);
-  border-style: dashed;
-  color: var(--text-3);
-}
+/* a repeated identical call, served from the per-request cache — pressed in, muted */
+.chip--deduped { box-shadow: var(--nm-in-sm); color: var(--text-3); }
 
 .badge {
   display: inline-flex;
@@ -319,25 +394,28 @@ a:hover { text-decoration: underline; }
   font-size: var(--fs-xs);
   border-radius: var(--radius-pill);
   padding: var(--sp-1) var(--sp-3);
-  border: 1px solid transparent;
+  background: var(--surf);
+  box-shadow: var(--nm-sm);
+  color: var(--text-2);
 }
 .badge svg { width: 13px; height: 13px; flex-shrink: 0; }
 
-.badge--ok { background: var(--ok-bg); color: var(--ok-text); }
-.badge--ok .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok-dot); }
+.badge--ok { color: var(--ok-text); }
+.badge--ok .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
 
-/* stale pod, provisional turbidity, water-type mismatch, complete:false */
-.badge--warn { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn-text); }
-.badge--warn svg { color: var(--warn-icon); }
+/* stale pod, provisional turbidity, water-type mismatch, complete:false — the icon carries the
+   raw hue, the text stays AA-safe. */
+.badge--warn { color: var(--warn-text); }
+.badge--warn svg { color: var(--warn); }
 
-.badge--muted { border-color: var(--border-strong); color: var(--text-3); }
+.badge--muted { color: var(--text-3); }
 
-/* Collapsed provenance. Closed by default: auditable for anyone checking the work, silent
-   for everyone else. Only answer-specific caveats sit outside it, as loose .badge--warn. */
+/* Collapsed provenance. Closed by default: auditable for anyone checking the work, silent for
+   everyone else. Only answer-specific caveats sit outside it, as loose .badge--warn. */
 .details {
-  border: 1px solid var(--border);
+  background: var(--surf);
+  box-shadow: var(--nm-in-sm);
   border-radius: var(--radius-sm);
-  background: var(--surface-2);
   font-size: var(--fs-sm);
   max-width: 100%;
 }
@@ -374,36 +452,33 @@ a:hover { text-decoration: underline; }
   display: flex;
   gap: var(--sp-3);
   align-items: flex-start;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   padding: var(--sp-3) var(--sp-4);
-  border: 1px solid var(--border);
-  background: var(--surface-2);
+  background: var(--surf);
+  box-shadow: var(--nm-in-sm);
   max-width: var(--measure);
 }
 .notice svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px; }
 .notice__body { display: flex; flex-direction: column; gap: var(--sp-1); }
-.notice__title { font-family: var(--font-head); font-weight: 600; font-size: var(--fs-md); }
+.notice__title { font-family: var(--font-head); font-weight: 600; font-size: var(--fs-md); color: var(--text); }
 .notice__text { font-size: var(--fs-sm); color: var(--text-2); }
 .notice__code { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-3); }
 
-.notice--error { background: var(--err-bg); border-color: var(--err-border); }
-.notice--error .notice__title { color: var(--err-text); }
-.notice--error .notice__text { color: var(--err-text); }
-.notice--error svg { color: var(--err-icon); }
+.notice--error .notice__title, .notice--error .notice__text { color: var(--err-text); }
+.notice--error svg { color: var(--err); }
 
-.notice--warn { background: var(--warn-bg); border-color: var(--warn-border); }
 .notice--warn .notice__title, .notice--warn .notice__text { color: var(--warn-text); }
-.notice--warn svg { color: var(--warn-icon); }
+.notice--warn svg { color: var(--warn); }
 
 /* Legacy hook from Phase 0's error path. */
 .error { color: var(--err-text); }
 
-/* ============================= chart (WS-4) ============================= */
+/* ============================= chart ============================= */
 
 .chart__frame {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  background: var(--surf);
+  box-shadow: var(--nm-in-sm);
+  border-radius: var(--radius-sm);
   padding: var(--sp-4) var(--sp-4) var(--sp-3);
 }
 .chart__head {
@@ -442,7 +517,8 @@ a:hover { text-decoration: underline; }
   list-style: none;
 }
 .citations li {
-  border: 1px solid var(--border);
+  background: var(--surf);
+  box-shadow: var(--nm-sm);
   border-radius: var(--radius-pill);
   padding: var(--sp-1) var(--sp-3);
 }
@@ -456,15 +532,16 @@ a:hover { text-decoration: underline; }
   gap: var(--sp-2);
   font-size: var(--fs-sm);
   color: var(--text-2);
-  background: var(--surface-2);
-  border-radius: var(--radius-sm);
+  background: var(--surf);
+  box-shadow: var(--nm-in-sm);
+  border-radius: var(--radius-pill);
   padding: var(--sp-2) var(--sp-3);
   align-self: flex-start;
 }
 .thinking__dots { display: flex; gap: var(--sp-1); }
 .thinking__dots span {
   width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent);
+  background: var(--gold);
   animation: thinking-pulse 1.2s infinite ease-in-out;
 }
 .thinking__dots span:nth-child(2) { animation-delay: 0.15s; }
@@ -478,40 +555,22 @@ a:hover { text-decoration: underline; }
 
 #input-region {
   flex-shrink: 0;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  padding: var(--sp-3) var(--sp-7) var(--sp-4);
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
+  gap: var(--sp-2);
 }
-
-/* Starter prompts (WS-3). Horizontally scrollable so they never wrap into a wall. */
-#starter-prompts { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
-#starter-prompts:empty { display: none; }
-
-.chip--starter {
-  cursor: pointer;
-  background: var(--surface-2);
-  border-color: var(--border);
-  color: var(--text-2);
-  border-radius: var(--radius-pill);
-  font-size: var(--fs-sm);
-}
-.chip--starter:hover { border-color: var(--accent); color: var(--text); }
 
 #composer {
   display: flex;
   align-items: flex-end;
   gap: var(--sp-3);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-4);
+  background: var(--surf);
+  box-shadow: var(--nm-in-sm);
+  border-radius: var(--radius-input);
+  padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-5);
 }
-#composer:focus-within { border-color: var(--accent); }
 
-/* WS-3 swaps the input for a textarea; both inherit this. */
+/* input.js swaps the input for a textarea; both inherit this. */
 #composer #input {
   flex: 1;
   border: none;
@@ -523,24 +582,32 @@ a:hover { text-decoration: underline; }
   max-height: 160px;
   padding: var(--sp-2) 0;
 }
-#composer #input::placeholder { color: var(--text-3); }
+/* The placeholder must never wrap to a second line and stretch a 1-row composer — real typed
+   text still wraps normally, this only truncates the hint sentence. */
+#composer #input::placeholder {
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .composer__hint { font-size: var(--fs-xs); color: var(--text-3); white-space: nowrap; }
 
 button { font: inherit; cursor: pointer; }
 
 #send {
-  width: 38px; height: 38px;
+  width: 40px; height: 40px;
   flex-shrink: 0;
   border: none;
-  border-radius: var(--radius);
-  background: var(--accent);
-  color: var(--accent-text);
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--gold-grad-1), var(--gold-grad-2));
+  color: var(--ink);
+  box-shadow: var(--nm-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  font-size: 0;                      /* hides the Phase 0 "Send" label; the arrow says it */
+  font-size: 0;                      /* hides the "Send" label; the arrow says it */
 }
 #send::after {
   content: "";
@@ -552,10 +619,10 @@ button { font: inherit; cursor: pointer; }
 :root {
   --icon-send: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13 6l6 6-6 6"/></svg>');
 }
-#send:hover { background: var(--accent-hover); }
+#send:hover { filter: brightness(1.06); }
 #send:disabled { opacity: 0.5; cursor: progress; }
 
-/* Secondary actions: stop, copy, regenerate (WS-3). */
+/* Secondary actions: stop, copy, regenerate. */
 #response-controls { display: flex; gap: var(--sp-2); }
 #response-controls:empty { display: none; }
 
@@ -565,12 +632,14 @@ button { font: inherit; cursor: pointer; }
   gap: var(--sp-2);
   font-size: var(--fs-sm);
   color: var(--text-2);
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  background: var(--surf);
+  border: none;
+  border-radius: var(--radius-btn);
+  box-shadow: var(--nm-sm);
   padding: var(--sp-2) var(--sp-3);
 }
-.btn--ghost:hover { border-color: var(--accent); color: var(--text); }
+.btn--ghost:hover { color: var(--text); }
+.btn--ghost:active { box-shadow: var(--nm-in-sm); }
 .btn--ghost svg { width: 14px; height: 14px; }
 
 /* generate_report link. An <a>, not a <button> — it opens the PDF, it doesn't act on this
@@ -581,34 +650,37 @@ button { font: inherit; cursor: pointer; }
 
 /* ============================= responsive ============================= */
 
-/* Tablet */
+/* Tablet: still two columns down to 768px (the grid switch above), tighten the well padding. */
 @media (max-width: 900px) {
-  #messages { padding: var(--sp-4) var(--sp-4); }
-  #input-region { padding: var(--sp-3) var(--sp-4) var(--sp-4); }
-  .contextbar { padding: var(--sp-2) var(--sp-4); }
+  #messages { padding: var(--sp-4); }
   .msg { max-width: 100%; }
+}
+
+/* Single column below the grid's own 768px switch. The well gets a bounded height so the
+   page can scroll normally with the left column's groups above it, rather than pinning the
+   whole app to the viewport the way the desktop two-column layout does. */
+@media (max-width: 767px) {
+  .shell { width: 100%; padding: 0 var(--sp-4); min-height: 100vh; }
+  /* Grid's default `align-content: normal` stretches auto rows to fill the shell's leftover
+     height — harmless in the two-column desktop layout (one row, meant to fill the viewport),
+     but on a single column it was stretching the shorter left column and leaving a gap before
+     the well. Rows should just stack at their content height and let the page scroll. */
+  .layout { align-content: start; }
+  #messages { max-height: 50vh; }
+  .msg.user { max-width: 88%; }
 }
 
 /* Phone. Hit targets go to 44px; the composer hint is dropped for room. */
 @media (max-width: 620px) {
   body { font-size: 14.5px; }
-  .appbar { padding: var(--sp-2) var(--sp-3); gap: var(--sp-2); }
-  .appbar__meta { display: none; }
-  .appbar__logo { height: 26px; }
+  .appbar { padding: var(--sp-3) 0; gap: var(--sp-2); }
+  .appbar__logo { height: 30px; }
 
-  #messages { padding: var(--sp-4) var(--sp-3); gap: var(--sp-5); }
-  .contextbar { padding: var(--sp-2) var(--sp-3); gap: var(--sp-2); }
-  .podpicker__select { max-width: 11rem; }
-  .podpicker__label { display: none; }
-  .msg.user { max-width: 88%; }
+  #messages { padding: var(--sp-3); gap: var(--sp-5); }
 
   .composer__hint { display: none; }
   #composer { border-radius: 24px; padding: var(--sp-1) var(--sp-1) var(--sp-1) var(--sp-4); }
-  #send { width: 44px; height: 44px; border-radius: 50%; }
-  .theme-toggle { width: 44px; height: 44px; }
+  #send { width: 44px; height: 44px; }
   .btn--ghost { min-height: 44px; }
-
-  /* Chips scroll on one line instead of stacking into a wall of pills. */
-  #starter-prompts { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--sp-1); }
-  .chip--starter { flex-shrink: 0; }
+  .podpicker__select { min-height: 44px; }
 }

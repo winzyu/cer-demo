@@ -1,5 +1,5 @@
 /**
- * Wave 2 · pod selector + pod status (context bar).
+ * Wave 2 · pod selector + pod status (left column).
  *
  * Session-level facts live in the chrome, not in the transcript: which pod is selected,
  * whether it is reporting, and whether its water type disagrees with the deployment's.
@@ -26,7 +26,7 @@
  *
  * Device names come off someone else's production API, so every node below is
  * `createElement` + `textContent` — never `innerHTML`. No literal colours: every class is
- * defined in app.css against theme.css tokens, so it inverts with the theme.
+ * defined in app.css against theme.css tokens.
  */
 
 import { getDevices } from "./api.js";
@@ -68,7 +68,7 @@ function el(tag, className, text) {
 }
 
 /**
- * Inline SVG only, no emoji — same stroke style as the theme toggle in index.html.
+ * Inline SVG only, no emoji — one stroke style across the page.
  * Size comes from `.badge svg` in app.css, colour from `currentColor`.
  */
 function icon(shapes) {
@@ -267,7 +267,7 @@ function populate() {
   clearOptions();
   // The empty-value option is how a user gets *back* to no selection, which is a real
   // choice: it asks the server rather than pinning the question to one pod.
-  selectEl.appendChild(placeholder("No pod selected"));
+  selectEl.appendChild(placeholder("No device selected"));
   devices.forEach((device) => {
     if (!device || typeof device.label !== "string" || device.label === "") return;
     const option = el("option", null, typeof device.name === "string" && device.name !== ""
@@ -315,28 +315,28 @@ const FAILURE_TEXT = {
   // the reader looking for a session that never existed. Both arrive as a 401, which is exactly
   // why the `code` branch above exists rather than a status check.
   caller_token_required: {
-    option: "Pods unavailable",
-    badge: "Pod list unavailable · sign in to see your organization's pods",
+    option: "Devices unavailable",
+    badge: "Device list unavailable · sign in to see your organization's devices",
     action: "sign-in",
   },
   device_auth_expired: {
-    option: "Pods unavailable",
-    badge: "Pod list unavailable · the device session expired",
+    option: "Devices unavailable",
+    badge: "Device list unavailable · the device session expired",
     action: "sign-in",
   },
   device_timeout: {
-    option: "Pods unavailable",
-    badge: "Pod list unavailable · the device API did not answer in time",
+    option: "Devices unavailable",
+    badge: "Device list unavailable · the device API did not answer in time",
   },
   device_unavailable: {
-    option: "Pods unavailable",
-    badge: "Pod list unavailable · the device service is unreachable or not configured",
+    option: "Devices unavailable",
+    badge: "Device list unavailable · the device service is unreachable or not configured",
   },
 };
 
 const UNKNOWN_FAILURE = {
-  option: "Pods unavailable",
-  badge: "Pod list unavailable · could not reach the backend",
+  option: "Devices unavailable",
+  badge: "Device list unavailable · could not reach the backend",
 };
 
 function classifyFailure(err) {
@@ -424,7 +424,7 @@ export async function initPodBar(ctx) {
 
   if (devices.length === 0) {
     // Genuinely empty, which is a different statement from "the list would not load".
-    renderUnavailable("No pods available", "No pods in this deployment");
+    renderUnavailable("No devices available", "No devices in this deployment");
     return;
   }
 

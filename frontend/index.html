@@ -4,137 +4,125 @@
   <meta charset="utf-8">
   <title>Gilligan — water quality assistant</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="light dark">
+  <!-- No dark mode: the product has none. See theme.css. -->
+  <meta name="color-scheme" content="light">
 
-  <!--
-    Theme must be stamped BEFORE first paint. js/theme.js is an ES module and therefore
-    deferred, so doing it there would flash the wrong palette on every load.
-  -->
-  <script>
-    (function () {
-      try {
-        var t = localStorage.getItem("gilligan.theme");
-        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
-      } catch (e) { /* storage disabled: fall through to prefers-color-scheme */ }
-    })();
-  </script>
+  <link rel="preload" href="vendor/fonts/work-sans-v24-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="vendor/fonts/poppins-v24-latin-600.woff2" as="font" type="font/woff2" crossorigin>
 
   <link rel="stylesheet" href="theme.css">
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <header class="appbar">
-    <img class="appbar__logo" src="assets/cer-logo.png" alt="Clean Earth Rovers">
-    <span class="appbar__title">Gilligan</span>
-    <span class="appbar__meta">water quality assistant</span>
-
-    <span class="appbar__spacer"></span>
-
-    <!-- Health text from api.js. WS-2 may add a pod/freshness badge alongside it. -->
-    <div class="appbar__status">
+  <div class="shell">
+    <header class="appbar">
+      <img class="appbar__logo" src="assets/cer-dark-transparent.png" alt="Clean Earth Rovers">
+      <span class="appbar__title">Gilligan</span>
+      <span class="appbar__spacer"></span>
+      <!-- Health text from api.js. -->
       <span class="appbar__meta" id="health"></span>
-    </div>
+    </header>
 
-    <button type="button" class="theme-toggle" id="theme-toggle"
-            aria-label="Switch to dark theme" aria-pressed="false" title="Toggle light / dark">
-      <svg class="icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
-      </svg>
-      <svg class="icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="4.2"/>
-        <path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
-      </svg>
-    </button>
-  </header>
+    <div class="layout">
+      <!--
+        Left column — session controls, not the transcript. Owned by js/podbar.js (device) and
+        js/accountbar.js (demo account). These are constant across answers, so they live in the chrome rather than repeating
+        per message.
+      -->
+      <div class="col-left">
+        <section class="panel-group">
+          <span class="panel-label">Device</span>
+          <select class="podpicker__select" id="pod-select" disabled>
+            <option value="">Loading devices…</option>
+          </select>
+          <!-- podbar.js renders status / mismatch badges here -->
+          <div id="pod-status"></div>
+        </section>
 
-  <!--
-    Context bar — session-level facts, deliberately OUT of the transcript.
-    Owned by js/podbar.js (Wave 2). It fills #pod-select from GET /api/v1/devices and renders
-    the selected pod's status and any water-type mismatch beside it. These are constant across
-    answers; repeating them per message is what made the chat unreadable.
-  -->
-  <div class="contextbar" id="context-bar">
-    <label class="podpicker" for="pod-select">
-      <span class="podpicker__label">Pod</span>
-      <select class="podpicker__select" id="pod-select" disabled>
-        <option value="">Loading pods…</option>
-      </select>
-    </label>
-    <!-- podbar.js renders status / mismatch badges here -->
-    <div id="pod-status"></div>
-    <span class="contextbar__spacer"></span>
+        <!--
+          Demo-only scaffolding: which credential this page talks to the API with. Kept working,
+          styled quiet — a real deployment authenticates once, not through a token picker. A
+          native <details> so it can be collapsed out of the way without any JS.
+        -->
+        <details class="panel-group panel-group--quiet" id="account-group" open>
+          <summary class="panel-label">Demo account</summary>
+          <label class="podpicker" for="account-select">
+            <span class="podpicker__label">Account</span>
+            <select class="podpicker__select" id="account-select">
+              <option value="">Signed out</option>
+            </select>
+          </label>
+          <button type="button" class="btn--ghost" id="account-forget">Forget</button>
 
-    <!--
-      Account switcher (js/accountbar.js). The API scopes every pod and every reading to the
-      caller's organization, and a token's organization is fixed upstream at login — so
-      switching accounts is the only way to look at a different organization's fleet.
-      Tokens live in localStorage, never in the URL: they are minted without an expiry.
-    -->
-    <label class="podpicker" for="account-select">
-      <span class="podpicker__label">Account</span>
-      <select class="podpicker__select" id="account-select">
-        <option value="">Signed out</option>
-      </select>
-    </label>
-    <button type="button" class="btn--ghost" id="account-forget">Forget</button>
-  </div>
+          <!-- Hidden until "Add an account…" is chosen, or the pod bar's signed-out badge is clicked. -->
+          <div class="accountform" id="account-panel" hidden>
+            <label class="accountform__field" for="account-name">
+              <span class="podpicker__label">Label</span>
+              <input class="accountform__input" id="account-name" type="text"
+                     placeholder="e.g. Superadmin, or Harbor QA" autocomplete="off">
+            </label>
+            <label class="accountform__field accountform__field--wide" for="account-token">
+              <span class="podpicker__label">Bearer token</span>
+              <input class="accountform__input" id="account-token" type="password"
+                     placeholder="Paste the JWT — dashboard DevTools → Local Storage → token"
+                     autocomplete="off" spellcheck="false">
+            </label>
+            <button type="button" class="btn--ghost" id="account-save">Save &amp; use</button>
+            <button type="button" class="btn--ghost" id="account-cancel">Cancel</button>
+            <span class="accountform__hint" id="account-hint"></span>
+          </div>
+        </details>
 
-  <!-- Hidden until "Add an account…" is chosen, or the pod bar's signed-out badge is clicked. -->
-  <div class="accountform" id="account-panel" hidden>
-    <label class="accountform__field" for="account-name">
-      <span class="podpicker__label">Label</span>
-      <input class="accountform__input" id="account-name" type="text"
-             placeholder="e.g. Superadmin, or Harbor QA" autocomplete="off">
-    </label>
-    <label class="accountform__field accountform__field--wide" for="account-token">
-      <span class="podpicker__label">Bearer token</span>
-      <input class="accountform__input" id="account-token" type="password"
-             placeholder="Paste the JWT — dashboard DevTools → Local Storage → token"
-             autocomplete="off" spellcheck="false">
-    </label>
-    <button type="button" class="btn--ghost" id="account-save">Save &amp; use</button>
-    <button type="button" class="btn--ghost" id="account-cancel">Cancel</button>
-    <span class="accountform__hint" id="account-hint"></span>
-  </div>
-
-  <!--
-    Message list. Every message element is built by js/render.js, which gives each one
-    these named slots so Wave 1 streams can mount into a message without editing this file:
-
-      <div class="msg {user|assistant}">
-        <div class="role">…</div>                                 (hidden by CSS)
-        <div class="body"        data-slot="body">…</div>          WS-1 markdown target
-        <div class="provenance"  data-slot="provenance"></div>     WS-2, assistant only
-        <div class="chart"       data-slot="chart"></div>          WS-4, assistant only
-        <div class="report"      data-slot="report"></div>         generate_report link, assistant only
-        …citations appended here by renderCitations()
+        <!-- Chat history will render here once conversations persist. No backing store yet, so
+             no placeholder UI: an empty rail pretending to be a feature would be worse than
+             nothing. -->
       </div>
 
-    The provenance, chart, and report slots start empty and are absent from user messages.
-    Empty slots are display:none, so they cost no space until something mounts.
+      <div class="col-right">
+        <!--
+          Message list. Every message element is built by js/render.js, which gives each one
+          these named slots so Wave 1 streams can mount into a message without editing this file:
 
-    Class vocabulary lives in app.css — .chip / .chip--tool / .chip--deduped /
-    .badge--ok / .badge--warn / .notice--error / .chart__* / .btn--ghost / .btn--report.
-    Use those names rather than new ones, and never a literal colour: it will not invert.
+            <div class="msg {user|assistant}">
+              <div class="role">…</div>                                 (hidden by CSS)
+              <div class="body"        data-slot="body">…</div>          WS-1 markdown target
+              <div class="provenance"  data-slot="provenance"></div>     WS-2, assistant only
+              <div class="chart"       data-slot="chart"></div>          WS-4, assistant only
+              <div class="report"      data-slot="report"></div>         generate_report link, assistant only
+              …citations appended here by renderCitations()
 
-    Wave 2: routine provenance collapses into <details class="details"> (closed by default).
-    Only answer-specific caveats stay loose in the slot.
-  -->
-  <div id="messages" aria-live="polite"></div>
+          The provenance, chart, and report slots start empty and are absent from user messages.
+          Empty slots are display:none, so they cost no space until something mounts.
 
-  <!-- Input / controls region. WS-3 owns everything inside it except the composer form. -->
-  <div id="input-region">
-    <!-- Starter prompts (WS-3). Read frontend/starter-prompts.json → .prompts[].text -->
-    <div id="starter-prompts"></div>
+          Class vocabulary lives in app.css — .chip / .chip--tool / .chip--deduped /
+          .badge--ok / .badge--warn / .notice--error / .chart__* / .btn--ghost / .btn--report.
+          Use those names rather than new ones, and never a literal colour.
 
-    <form id="composer">
-      <input type="text" id="input" placeholder="Ask about a reading, a threshold, or a site…" autocomplete="off" autofocus required>
-      <span class="composer__hint">Shift + Enter for a new line</span>
-      <button type="submit" id="send" aria-label="Send">Send</button>
-    </form>
+          Provenance collapses into <details class="details"> (closed by default). Only
+          answer-specific caveats stay loose in the slot.
+        -->
+        <div id="messages" aria-live="polite">
+          <!-- Static greeting, not built by render.js. `data-greeting` keeps it out of input.js's
+               "last answer" lookup, so Copy answer never copies it. -->
+          <div class="msg assistant" data-role="assistant" data-greeting>
+            <div class="role">assistant</div>
+            <div class="body" data-slot="body">Hi I&rsquo;m Gilligan&trade;, your AI water quality assistant. Feel free to ask me anything about your waters!</div>
+          </div>
+        </div>
 
-    <!-- Response controls: stop / copy / regenerate (WS-3). Empty today. -->
-    <div id="response-controls"></div>
+        <!-- Input / controls region. js/input.js owns everything inside it except the composer form. -->
+        <div id="input-region">
+          <form id="composer">
+            <input type="text" id="input" placeholder="Ask about a reading, a threshold, or a site…" autocomplete="off" autofocus required>
+            <span class="composer__hint">Shift + Enter for a new line</span>
+            <button type="submit" id="send" aria-label="Send">Send</button>
+          </form>
+
+          <!-- Response controls: stop / copy / regenerate. Empty today. -->
+          <div id="response-controls"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!--

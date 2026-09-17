@@ -20,7 +20,6 @@ import { renderProvenance } from "./provenance.js";   // WS-2 · provenance surf
 import { initInput } from "./input.js";               // WS-3 · input & response controls
 import { renderChart } from "./chart.js";             // WS-4 · series chart
 import { renderReport } from "./report.js";           // generate_report · report link
-import { initTheme } from "./theme.js";               // light / dark toggle
 import { initPodBar, selectedDevice } from "./podbar.js"; // Wave 2 · pod selector + status
 import { initAccountBar } from "./accountbar.js";     // caller credential · org scoping
 
@@ -29,14 +28,12 @@ const inputEl = document.getElementById("input");
 const sendBtn = document.getElementById("send");
 const healthEl = document.getElementById("health");
 const formEl = document.getElementById("composer");
-const promptsEl = document.getElementById("starter-prompts");
 const controlsEl = document.getElementById("response-controls");
 
 const history = []; // [{role, content}]
 let inflight = null;  // AbortController for the request in flight, or null
 
 initRender(messagesEl);
-initTheme(document.getElementById("theme-toggle"));
 const podBarContext = {
   select: document.getElementById("pod-select"),
   status: document.getElementById("pod-status"),
@@ -151,7 +148,6 @@ initInput({
   form: formEl,
   input: inputEl,
   sendButton: sendBtn,
-  promptsEl,
   controlsEl,
   submit: send,
   getLastUserTurn: () => [...history].reverse().find((m) => m.role === "user") || null,

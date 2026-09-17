@@ -19,7 +19,7 @@
  *   - Only qualifications that change how you read *this* number stay loose in the slot:
  *     an empty window, `complete: false`, provisional turbidity when turbidity is in the
  *     answer, a window anchored to a stale pod, and a recoverable tool error.
- *   - Gone from the message entirely, because `podbar.js` now owns them in the context bar:
+ *   - Gone from the message entirely, because `podbar.js` now owns them in the left column:
  *     the healthy-pod freshness badge ("Reporting — 8 min ago") and the water-type mismatch.
  *     The mismatch is a config fact about the deployment, not a finding about a reading.
  *
@@ -62,7 +62,7 @@ function el(tag, className, text) {
 }
 
 /**
- * Inline SVG only, no emoji — same stroke style as the theme toggle in index.html.
+ * Inline SVG only, no emoji — one stroke style across the page.
  * Size comes from `.chip svg` / `.badge svg` in app.css, colour from `currentColor`.
  * Nothing outside those two classes gets an icon: a bare inline SVG with no CSS rule sizing
  * it falls back to 300×150, and `.details > summary` has no such rule.
@@ -278,7 +278,7 @@ function coversTurbidity(invocation) {
 /**
  * The loose badges: qualifications that change how you read THIS answer.
  *
- * Deliberately absent, because `podbar.js` renders them once in the context bar instead of
+ * Deliberately absent, because `podbar.js` renders them once in the left column instead of
  * once per message: the healthy-pod freshness badge, and the `WATER_TYPE`-vs-
  * `operatingEnvironment` mismatch. Both are properties of the deployment, identical on every
  * answer, and repeating them trains the reader to skip the line where a caveat finally matters.
@@ -314,7 +314,7 @@ function resultNotices(invocation, now) {
   } else if (stale) {
     // Not a status line — an anchoring warning. Ranges resolve against the device's newest
     // reading, so on a silent pod "last 24 h" is *its* last 24 h and every number here reads
-    // as current unless something says otherwise. The context bar reports that the pod is
+    // as current unless something says otherwise. The left column reports that the pod is
     // stale; only this message can say the numbers in it are from then.
     found.push(badge(
       "warn",
