@@ -9,8 +9,10 @@ Work inline by default; delegate only independent work whose parallelism or isol
 Read-only research needs no worktree; every delegated edit needs its own worktree.
 Worktrees start from committed HEAD; do not assume they contain the user's uncommitted changes.
 
-Use `model: "sonnet"` and `isolation: "worktree"` on Claude Agent calls that edit files.
-Confirm routing from available session metadata; do not scan historical transcripts by default.
+Use the `cer-worker` custom agent (`gpt-5.6-sol`, medium) for bounded implementation work.
+Do not assume spawning a Codex subagent creates a worktree: it normally shares the filesystem.
+Create an approved worktree first and use a verified worktree-scoped worker; if this client cannot scope it, use a separate Codex session rooted there or keep the task inline.
+Never fabricate Claude `isolation` or `EnterWorktree` parameters in Codex.
 
 Give the worker the goal, exact editable/off-limits paths, settled decisions, relevant conventions from `docs/migration/CONVENTIONS.md`, production traps, and required verification.
 For runtime setup, point to `../run-local/references/worktree.md`; do not load it for read-only research.

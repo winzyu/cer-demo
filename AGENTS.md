@@ -31,5 +31,3 @@ Keep small edits inline; use worktrees for multi-step or overlapping work and al
 Before delegating, use `delegate`; delegate only when parallel work materially helps.
 Subagents must not spawn subagents, and their actual diffs require review.
 Use `handoff` only when explicitly requested.
-
-Claude native `EnterWorktree`/Agent worktree creation retains its no-plan exception; Git-based creation still needs a plan.

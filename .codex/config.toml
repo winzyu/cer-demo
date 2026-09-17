@@ -1,0 +1,13 @@
+default_permissions = "cer-demo"
+
+[permissions.cer-demo]
+description = "CER workspace edits with read-only reference repositories and protected credentials."
+extends = ":workspace"
+
+[permissions.cer-demo.filesystem]
+"/home/winsy/.config/gcloud" = "deny"
+"/mnt/c/Users/winsy/OneDrive/Documents/work_and_school/coding/project/aic/clean-earth-rovers/repo/user-dashboard" = "read"
+"/mnt/c/Users/winsy/OneDrive/Documents/work_and_school/coding/project/aic/clean-earth-rovers/repo/clean-earth-rovers-server" = "read"
+
+[permissions.cer-demo.filesystem.":workspace_roots"]
+"serviceAccountKey.json" = "deny"

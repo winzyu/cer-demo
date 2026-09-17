@@ -1,12 +1,11 @@
 ---
 name: handoff
 description: Update CER durable docs and session status when the user explicitly requests a handoff.
-disable-model-invocation: true
 ---
 
 # Handoff
 
-Run only when explicitly requested with `/handoff`; an optional argument identifies the workstream.
+Run only when explicitly requested with `$handoff`; an optional argument identifies the workstream.
 If `docs/STATUS.md` is missing, stop and report it.
 
 1. Gather fresh Git status, relevant commits since the last STATUS update, and this session's checks, decisions, spend, defects, and open questions.
