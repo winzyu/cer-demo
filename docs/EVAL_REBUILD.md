@@ -319,6 +319,9 @@ Reproduce any of it with `npm run cost -- --model=<id> --completion=measured` (f
 completion tokens**. Below that, 120b is *cheaper* (at 400 tokens: $0.000421 vs $0.000618). The
 measured mean is 740 — six percent past the crossover. `max_tokens` moves this number more than
 the model does, and shorter answers independently help groundedness.
+**(Superseded 2026-09-14:** the Phase 3 gold-context capture measured 120b itself at 52,840 completion tokens over 90 turns, a mean of 587, below the crossover.
+Its cache hit rate was 55.5%, not the 99.0% measured on 20b.
+Both figures come from one capture on the pre-refusal-contract prompt, so re-measure on the recapture.)
 
 **Judge cost is input-dominated** — the prompt dwarfs the completion on every dimension, so the
 input rate decides a judge's bill. Always run `npm run judge -- --dry-run` first. Sized properly
@@ -345,6 +348,9 @@ Per-call means measured over `data/results/judge/warm.jsonl` (482 calls, 198 tur
 
 Wave 1 is six passes — gold-context 120b, the 20b comparison, and four retrieval arms (pgvector is
 dropped, §1). 528 turns, ~1,285 calls, 11.4M prompt tokens.
+**(Superseded 2026-09-15:** the 20b comparison is dropped, so wave 1 is five passes.
+120b is settled, and at the measured 587-token completion mean it is also the cheaper model.
+The harness keys transcripts and judge verdicts by arm, not model, so a 20b pass would need a model dimension added first.)
 
 | scope | calls | deepseek-v4 | Gemini 2.5 Flash | gpt-oss-120b |
 |---|---:|---:|---:|---:|
@@ -551,7 +557,7 @@ lever, which is the cheapest remaining generation knob.
 >    - **In between** — quantify the gap and name which lever you would pull, with a cost.
 > 2. **The 20b → 120b delta on the same fixtures**, if a 20b baseline is cheap to run. This is the
 >    first real evidence on whether the model upgrade fixes groundedness on its own, and it costs
->    one extra capture.
+>    one extra capture. **Dropped 2026-09-15** (§4a).
 > 3. **The measured completion mean**, and what it does to the §4 cost table.
 > 4. **All five wave-1 exit criteria from §2, checked and reported.** Recommend wave 2 or a fix,
 >    and say which.
@@ -671,6 +677,11 @@ SENSOR_TOOL=false REPORT_TOOL=false DEBUG_RETRIEVAL=true CORPUS_SOURCE=firestore
 
 `--spot-check` first, always. An adapter returning empty context produces a clean-looking and
 completely meaningless dataset.
+On `gold-context` the spot check asks three labelled turns (deep-in-manual, cross-document, probe-calibration) instead of the fixed probes, which that arm has no labels for.
+
+`CORPUS_SOURCE=firestore` reads project `cer-demo-2026`.
+It was reseeded 2026-09-15 with `npm run seed:firestore -- --prune` and `npm run seed:firestore-chunks -- --prune`: 14 documents, 446 chunks, no removed document left.
+A plain seed only overwrites, so after any corpus change re-run both with `--prune`, or the removed document stays in the direct-feed slice.
 
 ---
 
@@ -715,7 +726,7 @@ completely meaningless dataset.
 | 2a — quote-based citations | 🟡 **demonstrated, not measured, 2026-09-13** — the prompt asks for `【n†"quote"】`, `formatContext` labels excerpts `【n】`, and `QUOTE_CITATION_PATTERN` accepts a non-dagger separator. A same-day smoke capture ($0.0075, `gpt-oss-120b`, gold-context arm, three runs) showed the closing-bracket and quote rules produce a non-zero quoted-citation rate (10/10 markers closed correctly across two runs; 4/4 citations quoted in one answer, 1 supported and 3 too short) — a smoke check, not the Phase 2 STOP block's measured rate |
 | 2b — repoint the judge | ✅ done 2026-09-02 |
 | 2c — re-calibrate | ⬜ needs captured answers to grade — see the sequencing note below |
-| 3 — generation baseline | ⬜ costs money, needs approval |
+| 3 — generation baseline | 🟡 captured and judged 2026-09-14 (`gpt-oss-120b`, 90 turns, judge ~$0.55): Tier 1 passes; correctness 0.91 against 1.30 and 43.2% ungrounded against 2%, both provisional until 2c. The refusal class is not measurable on this capture: the prompt's all-or-nothing refusal contradicts the rewritten rubrics, and gold context sends no chunks to the unlabelled refusal turns. Recapture after that contract changes |
 | 4 — retrieval | ⬜ |
 
 **Sequencing — SETTLED 2026-09-09: Phase 3 runs before 2c.** 2c grades 30 stratified rows, and
