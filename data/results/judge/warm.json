@@ -4,12 +4,12 @@
   "modelsUnderTest": [
     "accounts/fireworks/models/gpt-oss-120b"
   ],
-  "judgedAt": "2026-09-14T10:21:34.655Z",
+  "judgedAt": "2026-09-15T08:45:28.731Z",
   "budget": {
-    "calls": 252,
-    "promptTokens": 1380686,
-    "completionTokens": 366387,
-    "usd": 0.54556634
+    "calls": 254,
+    "promptTokens": 1394234,
+    "completionTokens": 393103,
+    "usd": 0.5661794600000001
   },
   "results": [
     {
@@ -73,10 +73,10 @@
         "met": false
       },
       "ungrounded": {
-        "turnsWithClaims": 38,
-        "turns": 88,
-        "rate": 0.4318181818181818,
-        "totalClaims": 70,
+        "turnsWithClaims": 40,
+        "turns": 90,
+        "rate": 0.4444444444444444,
+        "totalClaims": 77,
         "met": false
       },
       "citationSupport": {
@@ -408,6 +408,18 @@
           "turn": 2,
           "dimension": "ungrounded",
           "detail": "2: If after thorough cleaning and re-conditioning the slope still remains outside the 95 %–101 % range the electrode should be replaced — The supplied material only lists 'Clean recondition or replace electrode' as a corrective action for an out-of-range slope but does not state that replacement is the required next step after cleaning and re-conditioning fail to bring the slope into range.; order a new probe only if the slope does not improve to the acceptable range — The supplied material does not specify that replacement is the only option after cleaning and re-conditioning fail; it only lists cleaning reconditioning or replacement as options."
+        },
+        {
+          "fixtureId": "crossdoc-orp-sliding-do-steady",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: if the probe’s reading differs by more than 5 mV from the expected ZoBell’s Eh the probe is drifting and should be serviced or replaced. — The supplied material says to refer to section 6.5.4 if the value is not within 5 mV of the ZoBell Eh but does not state that the probe is drifting or that it should be serviced or replaced.; you can demonstrate that the observed 120 mV field shift is not due to probe drift. — The supplied material describes the equipment test procedure and the ±5 mV tolerance but does not state that a passing test demonstrates that a field shift is not due to probe drift."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-rounding",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "5: the reporting guideline is to round to the nearest 0.05 unit — Searched the retrieved documents for a single reporting guideline for turbidity below 1 NTU; table 6.7-6 gives different rounding increments for different methods (0.05 for USGS ASTM EPA GLI; 0.01 for ISO 7027) so the claim that 'the reporting guideline' is 0.05 without specifying the method is not supported.; which requires two decimal places — Searched for a statement that two decimal places are required for turbidity below 1 NTU; the table only gives rounding increments not the number of decimal places and the increment is not uniform across methods so this claim is not supported.; the guideline is to round to the nearest 1 unit — Searched for a single guideline for 40 to <100 NTU; table 6.7-6 gives 1 for USGS and ASTM 5 for EPA 180.1 and GLI Method 2 and N/A for ISO 7027 so the claim that 'the guideline' is 1 without specifying the method is not supported.; so no decimal places are kept — Searched for a statement that no decimal places are kept for 40 to <100 NTU; the table gives different rounding increments for different methods so the claim that no decimal places are kept is not supported without specifying the method.; you would log 0.42 with two decimal places (rounded to the nearest 0.05) and 63.7 as an integer (rounded to the nearest 1) — Searched for a guideline that applies to these specific values; the answer does not specify which method's guideline is being used and the table gives different rounding increments for different methods so this application is not supported."
         },
         {
           "fixtureId": "crossdoc-bailed-orp-jumping",
