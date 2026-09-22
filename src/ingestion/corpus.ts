@@ -43,6 +43,21 @@ export const DOC_META: Record<string, DocMeta> = {
     title: "Atlas Scientific Industrial Dissolved Oxygen Probe — Datasheet",
   },
 
+  // Turbidity vendor material, added 2026-09-17 from the two sensors the operator named
+  // (`docs/STAKEHOLDER_QUESTIONS.md`). Both are transcriptions of public vendor documentation, not
+  // PDFs, because neither vendor publishes a datasheet covering what the corpus was missing — the
+  // optical basis of the reading. **Deliberately not in DIRECT_FEED_SLICE:** the device registry
+  // has no sensor-model field, so which pod carries which of these is unknown, and injecting an
+  // unattributed datasheet into every answer would assert hardware this deployment cannot confirm.
+  "keyestudio-ks0414-turbidity-sensor.md": {
+    title: "Keyestudio KS0414 Turbidity Sensor V1.0 — Vendor Documentation",
+    sourceUrl: "https://wiki.keyestudio.com/KS0414_Keyestudio_Turbidity_Sensor_V1.0",
+  },
+  "turner-turbidity-plus-sensor.md": {
+    title: "Turner Designs Turbidity Plus Submersible Sensor — Vendor Documentation (User's Manual 998-2187 Rev. J, 2020)",
+    sourceUrl: "https://docs.turnerdesigns.com/t2/doc/manuals/998-2187.pdf",
+  },
+
   // === Tier 2 — USGS National Field Manual, Chapter A6 (field measurements). The authoritative
   // method reference: one chapter per parameter, each covering calibration, interferences,
   // troubleshooting and reporting conventions.
