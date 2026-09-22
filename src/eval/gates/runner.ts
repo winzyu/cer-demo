@@ -198,10 +198,10 @@ export const runGateCheck = (options: GateRunOptions = {}): ArmGateResult[] => {
           // The system prompt carries the service rules the answers are told to follow (no ranges
           // since 2026-09-13), and prior questions carry figures the user supplied. Both are
           // legitimate grounding and neither is in `context`. Built with the sweep's flags —
-          // SENSOR_TOOL and REPORT_TOOL off — because that is the prompt the captured arms ran
-          // against.
+          // SENSOR_TOOL, REPORT_TOOL and CATALOGUE_PROMPT off — because that is the prompt the
+          // captured arms ran against.
           grounding: [
-            buildSystemPrompt(false, false),
+            buildSystemPrompt(false, false, null),
             ...turns.slice(0, position + 1).map((prior) => prior.question ?? ""),
           ],
         };

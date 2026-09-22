@@ -6,6 +6,7 @@
  * Same pipeline `generate_report` runs (buildReportInput -> events -> narrative -> renderPdf),
  * but driven by `DEVICE_API_TOKEN` the way `verify:sensor` is, so the layout can be iterated on
  * without a chat round-trip. Writes to `generated_reports/` and prints the input it rendered.
+ * Wording follows `CATALOGUE_DRAFTS`, as the server's does.
  * Live read-only calls against production — one pod at a time.
  */
 
@@ -19,6 +20,7 @@ import { deterministicNarrative } from "../src/report/narrative";
 import { buildReportPdf } from "../src/report/renderPdf";
 import { overallStatus } from "../src/report/types";
 import { probeAccuracy } from "../src/report/referenceRanges";
+import { guidance } from "../src/catalogue";
 
 const arg = (name: string, fallback: string): string => {
   const hit = process.argv.slice(2).find((a) => a.startsWith(`--${name}=`));
@@ -43,7 +45,7 @@ const run = async (): Promise<void> => {
 
   report.events = detectEvents(report);
   const status = overallStatus(report, probeAccuracy);
-  const narrative = deterministicNarrative(report, probeAccuracy, status);
+  const narrative = deterministicNarrative(report, probeAccuracy, status, guidance);
 
   fs.mkdirSync(path.dirname(out), { recursive: true });
   await new Promise<void>((resolve, reject) => {

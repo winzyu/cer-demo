@@ -1,4 +1,5 @@
 import { config } from "../config";
+import { buildCatalogueBlock, guidance } from "../catalogue";
 
 /**
  * The system prompt, ported from the legacy service (`backend/main.py::build_system_prompt`,
@@ -182,12 +183,16 @@ Report vs. single-stat routing:
  * Builds the system message. Depends only on deployment-level config, never on the request —
  * that is what keeps it byte-identical across calls and therefore cacheable (see promptBuilder).
  *
- * `sensorTool`/`reportTool` are parameters rather than direct `config` reads so tests can
- * exercise every combination without reloading the module registry.
+ * `sensorTool`/`reportTool`/`catalogueBlock` are parameters rather than direct `config` reads so
+ * tests can exercise every combination without reloading the module registry. The catalogue
+ * block (`src/catalogue/promptBlock.ts`) appends last, after both tool blocks, so turning it on
+ * leaves every earlier byte unchanged.
  */
 export const buildSystemPrompt = (
   sensorTool: boolean = config.tools.sensorTool,
   reportTool: boolean = config.tools.reportTool,
+  // `null`, not `undefined`, means off: an explicit `undefined` would fall back to this default.
+  catalogueBlock: string | null = config.catalogue.prompt ? buildCatalogueBlock(guidance) : null,
 ): string => `You are a water-quality assistant for a single sensor deployment. You answer
 questions about the sensor's readings and about authoritative water-quality
 documents.
@@ -231,4 +236,4 @@ Rules:
 - Never use general world knowledge to fill gaps. If the context does not
   support the answer, refuse using the line above.
 - Do not fabricate readings or citations.
-- Keep answers short and direct. Give specific numbers from the data.${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}${reportTool ? `\n\n${REPORT_TOOL_BLOCK}` : ""}`;
+- Keep answers short and direct. Give specific numbers from the data.${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}${reportTool ? `\n\n${REPORT_TOOL_BLOCK}` : ""}${catalogueBlock ? `\n\n${catalogueBlock}` : ""}`;

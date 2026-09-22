@@ -620,12 +620,14 @@ export const buildReportPdf = (
   if (report.events.length > 0) {
     sectionHeader(doc, `${sectionNumbers.eventDetection}. Event Detection`);
     report.events.forEach((e: WQEvent, i: number) => {
+      // Wording comes from the narrative, which names a cause only when the catalogue approves it.
+      const wording = narrative.events[i];
       // Enough room for the heading, the window line and the first lines of the movements --
       // "Event 1" alone at the foot of a page is the split this prevents.
       ensureSpace(doc, 90);
       const top = doc.y;
       doc.font("Helvetica-Bold").fontSize(10).fillColor(INK)
-        .text(`Event ${i + 1} — ${e.type}`, MARGIN, top, { width: CONTENT_WIDTH - 130 });
+        .text(`Event ${i + 1} — ${wording.heading}`, MARGIN, top, { width: CONTENT_WIDTH - 130 });
       drawPill(doc, e.severity, {
         right: MARGIN + CONTENT_WIDTH,
         top: top - 2,
@@ -636,8 +638,9 @@ export const buildReportPdf = (
       doc.y = top + 16;
       doc.font("Helvetica").fontSize(8.5).fillColor(MUTED)
         .text(
-          `${formatTs(e.windowStartMs)} to ${formatTs(e.windowEndMs)}  ·  confidence `
-          + `${Math.round(e.confidence * 100)}%`,
+          `${formatTs(e.windowStartMs)} to ${formatTs(e.windowEndMs)}${
+            // A confidence with no named cause would be confidence in nothing the reader can see.
+            wording.causeNamed ? `  ·  confidence ${Math.round(e.confidence * 100)}%` : ""}`,
           MARGIN,
           doc.y,
           { width: CONTENT_WIDTH },
@@ -646,9 +649,9 @@ export const buildReportPdf = (
       doc.moveDown(0.35);
       bodyText(doc, `Parameter movements: ${e.parameterMovements}`);
       doc.moveDown(0.15);
-      bodyText(doc, `Interpretation: ${e.interpretation}`);
+      bodyText(doc, `Interpretation: ${wording.interpretation}`);
       doc.moveDown(0.15);
-      bodyText(doc, `Follow-up: ${e.followUp}`);
+      bodyText(doc, `Follow-up: ${wording.followUp}`);
       doc.moveDown(0.5);
     });
   }

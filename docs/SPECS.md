@@ -154,13 +154,19 @@ clean-earth-rag/
 │   │   ├── getTurbidityInfo.ts  turbidity clarity bands and sensor caveats
 │   │   ├── timeRange.ts      NL range parsing + reference-time anchoring
 │   │   └── aggregate.ts      min/max/mean/median/latest/earliest/raw/series, null-never-zero
+│   ├── catalogue/           the guidance catalogue shared by chat and reports (§4b)
+│   │   ├── catalogue.json    the single source: entries, referrals, review status
+│   │   ├── parseCatalogue.ts  validator, run at import
+│   │   ├── select.ts         usable entries, water class, per-finding selection
+│   │   ├── promptBlock.ts    the chat prompt's APPROVED GUIDANCE block
+│   │   └── reviewPage.ts     the supervisor review page (docs/catalogue/review.html)
 │   ├── report/              the deterministic report pipeline (compute, then narrate)
 │   │   ├── buildReportInput.ts  assembles the report model from sensor + registry data
 │   │   ├── events.ts         period-relative event detection
 │   │   ├── referenceRanges.ts   registry-threshold baselines + TURBIDITY_BAND_EDGES
 │   │   ├── operatorThresholds.ts  validated per-device registry thresholds
 │   │   ├── reportOwnership.ts  binds a generated PDF to the credential that generated it
-│   │   ├── narrative.ts      LLM narration over pre-computed facts
+│   │   ├── narrative.ts      rule-based prose; causes and next steps only from the catalogue
 │   │   ├── renderPdf.ts      pdfkit layout
 │   │   └── types.ts
 │   ├── services/
@@ -233,6 +239,8 @@ config = {
   quota:      { enabled, requests, tokens, windowMs, windowLabel, scope },
   retrieval:  { defaultMode, debug, corpusSource },
   waterType,
+  audit:      { enabled },
+  catalogue:  { prompt, includeDrafts },
 }
 ```
 
@@ -243,6 +251,10 @@ separate flag rather than a fold into `sensorTool`, because `generate_report` ca
 on **logs a warning at startup**, deliberately: both un-pin the bake-off's system prompt, and a
 capture run made with one on is not comparable to the three already captured. Better a line in
 every startup log than a silently voided sweep.
+
+`catalogue.prompt` (`CATALOGUE_PROMPT`, default `false`) appends the guidance block to the system
+prompt and warns at startup for the same capture-comparability reason. `catalogue.includeDrafts`
+(`CATALOGUE_DRAFTS`, default `false`) shows unapproved entries, for the supervisor's review only (§4b).
 
 Environment variables and defaults are documented in `README.md` §5 and `.env.example`.
 
@@ -341,6 +353,41 @@ tier. The `QuotaStore` interface is where a Firestore or Redis implementation la
 (`QuotaService`) and counting (`QuotaStore`) are already separate, and swapping the store is a
 new file plus one line in `src/quota/index.ts`. Every method takes `nowMs` explicitly so window
 rollover is testable without faking the clock.
+
+---
+
+## 4b. Guidance catalogue (`src/catalogue/`)
+
+Every possible cause, next step and referral a customer can see comes from one versioned file, `src/catalogue/catalogue.json`, reviewed by the supervisor.
+The decision and the content sources are in `migration/GILLIGAN_TARGET_ARCHITECTURE.md` §2d; the allowlist reasoning is in `RESPONSIBILITY.md`.
+
+**Entries.**
+Each entry has an id, a kind (`explanation`, `limitation` or `next-step`), approved text, the conditions and evidence it needs, a limitation, sources, an optional referral and a review record.
+A `next-step` that reports can select names its recommendation slot (`operational`, `investigative` or `stakeholder`).
+An entry without `appliesTo.triggers` is for chat only.
+`parseCatalogue` validates the file at import and lists every problem at once; an approval must record who and when.
+
+**What is usable.**
+Only `approved` entries whose referral (if any) is also approved reach customers.
+`CATALOGUE_DRAFTS=true` adds drafts for the supervisor's own review; rejected entries are never used.
+The `version` string is bumped on every content change and is recorded with each report (`catalogue_version`, `guidance_ids` in the `generate_report` result).
+
+**Reports** (`report/narrative.ts`).
+An event's cause is named only when a usable `explanation` matches its type, water class, confidence and severity.
+Otherwise the PDF heads it "Threshold crossing", prints no classification confidence, and selects every other entry as if the event were `Inconclusive`, so a next step cannot imply the unnamed cause.
+The detection rule's own rationale (`WQEvent.interpretation`) is never printed.
+Recommendations for a flagged period are the matching `next-step` texts per slot, deduplicated in catalogue order; an empty slot says no approved recommendation covers the findings.
+The routine and "not assessed" lines are about monitoring and configuration and do not come from the catalogue.
+Water class: `Freshwater` pods use the freshwater signatures; `Marine`, `Brackish` and `Estuarine` pods use the marine ones (source-of-truth v2 §0 rule 2).
+
+**Chat** (`catalogue/promptBlock.ts`).
+With `CATALOGUE_PROMPT=true` the system prompt ends with an `APPROVED GUIDANCE` block: rules, then one record per usable entry.
+With nothing approved, the block forbids causes, actions, services and contacts outright.
+The block appends after both tool blocks, so the earlier prompt stays a byte-exact prefix (`test/unit/prompt.test.ts`).
+The eval runners build their grounding prompt with the block off.
+
+**Review page.**
+`npm run catalogue:review` regenerates `docs/catalogue/review.html` from the file; never edit the page by hand.
 
 ---
 

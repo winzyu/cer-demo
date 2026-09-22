@@ -1,0 +1,645 @@
+{
+  "version": "2026-09-19.1",
+  "sources": {
+    "sot-v2": "DataPod Water Quality Source of Truth, version 2.0, 2026-09-16 (water-quality-source-of-truth-v2.pdf)",
+    "advice-drafts": "Draft advice candidates, 2026-09-10 (archived, tag advice-archive-2026-09-17)",
+    "event-rules": "Report event rules and recommendation wording before the catalogue (src/report/events.ts, src/report/narrative.ts)",
+    "product": "Product decisions (docs/migration/GILLIGAN_PRODUCT_DIRECTION.md)",
+    "general": "General water-quality practice, drafted 2026-09-19 for supervisor review; not grounded in the corpus"
+  },
+  "referrals": [
+    {
+      "id": "cer-algal-bloom",
+      "provider": "Clean Earth Rovers",
+      "service": "Algal bloom cleanup",
+      "contact": "info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6",
+      "review": {
+        "status": "draft",
+        "notes": "Contact taken from the public CER website on 2026-09-17; confirmation is supervisor item 20."
+      }
+    },
+    {
+      "id": "cer-fish-kill",
+      "provider": "Clean Earth Rovers",
+      "service": "Fish kill cleanup",
+      "contact": "info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6",
+      "review": {
+        "status": "draft",
+        "notes": "Contact taken from the public CER website on 2026-09-17; confirmation is supervisor item 20."
+      }
+    },
+    {
+      "id": "cer-debris",
+      "provider": "Clean Earth Rovers",
+      "service": "Debris capture",
+      "contact": "info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6",
+      "review": {
+        "status": "draft",
+        "notes": "Contact taken from the public CER website on 2026-09-17; confirmation is supervisor item 20."
+      }
+    },
+    {
+      "id": "cer-oil-spill",
+      "provider": "Clean Earth Rovers",
+      "service": "Oil spill response",
+      "contact": "info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6",
+      "review": {
+        "status": "draft",
+        "notes": "Contact taken from the public CER website on 2026-09-17; confirmation is supervisor item 20."
+      }
+    },
+    {
+      "id": "professional",
+      "service": "Review by a qualified water-quality professional",
+      "review": {
+        "status": "draft",
+        "notes": "Neutral referral for every problem outside the four CER services; names no third party."
+      }
+    }
+  ],
+  "entries": [
+    {
+      "id": "sewage-marine",
+      "title": "Sewage-like pattern in coastal water",
+      "kind": "explanation",
+      "text": "Conductivity fell while turbidity rose and dissolved oxygen and ORP declined. In coastal water this combination is consistent with fresh water carrying organic material, such as a sewage release. Stormwater runoff looks similar but coincides with rain. Sensor data alone cannot confirm the source.",
+      "appliesTo": {
+        "triggers": ["Sewage"],
+        "water": ["marine"],
+        "minConfidence": 0.7,
+        "conditions": "A report event, or tool results, show the full marine sewage pattern at a marine, brackish or estuarine pod."
+      },
+      "requiredEvidence": "In the same window: dissolved oxygen down, ORP down, turbidity up and conductivity down.",
+      "limitations": "Cannot tell sewage from stormwater without a rainfall record, and cannot detect bacteria.",
+      "sources": ["sot-v2 §6.2 (raw sewage spill row)", "sot-v2 §6.4 (Raw Sewage Spill, Marine)", "advice-drafts disc-sewage-edu-01"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "sewage-freshwater",
+      "title": "Sewage-like pattern in fresh water",
+      "kind": "explanation",
+      "text": "Conductivity and turbidity rose while dissolved oxygen and ORP declined. In fresh water this combination is consistent with an organic input, such as a sewage release. Industrial discharges can also raise conductivity. Sensor data alone cannot confirm the source.",
+      "appliesTo": {
+        "triggers": ["Sewage"],
+        "water": ["freshwater"],
+        "minConfidence": 0.7,
+        "conditions": "A report event, or tool results, show the full freshwater sewage pattern at a freshwater pod."
+      },
+      "requiredEvidence": "In the same window: dissolved oxygen down, ORP down, turbidity up and conductivity up.",
+      "limitations": "Cannot tell sewage from other organic or industrial inputs, and cannot detect bacteria.",
+      "sources": ["sot-v2 §6.3 (raw sewage)", "sot-v2 §6.4 (Raw Sewage Spill)", "advice-drafts disc-sewage-edu-01"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "hypoxia",
+      "title": "Low-oxygen pattern",
+      "kind": "explanation",
+      "text": "Dissolved oxygen and ORP fell together while conductivity and turbidity held steady. This is consistent with oxygen being used up faster than it is replaced, a condition that can stress or kill fish.",
+      "appliesTo": {
+        "triggers": ["Hypoxia"],
+        "minConfidence": 0.5,
+        "conditions": "A report event, or tool results, show dissolved oxygen and ORP falling together with no rise in conductivity or turbidity."
+      },
+      "requiredEvidence": "Dissolved oxygen and ORP both below this pod's configured thresholds in the same window; conductivity and turbidity not rising.",
+      "limitations": "A worn or fouled dissolved-oxygen sensor, or still water around it, can produce falsely low readings.",
+      "sources": ["sot-v2 §6.2 (hypoxia or fish-kill row)", "sot-v2 §6.4 (Hypoxia or Fish-Kill Conditions)", "advice-drafts hyp-edu-01"],
+      "review": {
+        "status": "draft",
+        "notes": "v2's signature is dissolved oxygen near zero with negative ORP; the report rule fires on crossing the pod's configured thresholds, which may be well above zero."
+      }
+    },
+    {
+      "id": "upwelling-caution",
+      "title": "Natural cold-water events in coastal water",
+      "kind": "limitation",
+      "text": "In coastal water, cold, low-oxygen water rising from depth (upwelling) or arriving with internal tides can lower dissolved oxygen and pH naturally. If temperature fell at the same time, that natural explanation is more likely than pollution.",
+      "appliesTo": {
+        "triggers": ["Hypoxia"],
+        "water": ["marine"],
+        "conditions": "Dissolved oxygen fell at a marine, brackish or estuarine pod, or the user asks whether low oxygen in coastal water means pollution."
+      },
+      "requiredEvidence": "A dissolved-oxygen decline at a coastal pod.",
+      "limitations": "Upwelling usually affects several nearby sites at once; one pod cannot show that.",
+      "sources": ["sot-v2 §5.3", "sot-v2 §5.4", "sot-v2 §11 (temperature and DO coupling)"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "stormwater",
+      "title": "Runoff-like pattern",
+      "kind": "explanation",
+      "text": "Turbidity rose together with a change in conductivity, a pattern consistent with runoff after rain. Comparing the timing with a local rainfall record is the main way to tell runoff from other inputs.",
+      "appliesTo": {
+        "triggers": ["Stormwater"],
+        "minConfidence": 0.5,
+        "conditions": "A report event, or tool results, show a turbidity rise together with a conductivity change."
+      },
+      "requiredEvidence": "Turbidity up and conductivity changed in the same window, without a dissolved-oxygen and ORP decline.",
+      "limitations": "Without a rainfall record, runoff cannot be told apart from dredging, construction or other discharges.",
+      "sources": ["sot-v2 §6.2 (stormwater runoff row)", "sot-v2 §6.3 (stormwater runoff)", "sot-v2 §6.4 (Stormwater Runoff)", "advice-drafts disc-storm-edu-01"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "thermal",
+      "title": "Warming with falling oxygen",
+      "kind": "explanation",
+      "text": "Temperature rose while dissolved oxygen fell and the other readings held steady. Warmer water holds less oxygen, so this pattern is consistent with a warm-water discharge or with regional warming such as a marine heatwave.",
+      "appliesTo": {
+        "triggers": ["Thermal"],
+        "minConfidence": 0.6,
+        "conditions": "A report event, or tool results, show temperature up and dissolved oxygen down with no other reading moving."
+      },
+      "requiredEvidence": "Temperature up and dissolved oxygen down in the same window; conductivity, pH, ORP and turbidity steady.",
+      "limitations": "One pod cannot tell a local discharge from regional warming; a heatwave affects a wide area and lasts days to weeks.",
+      "sources": ["sot-v2 §6.2 (thermal discharge and marine heatwave rows)", "sot-v2 §6.4 (Thermal Discharge)", "sot-v2 §5.6", "advice-drafts thermal-escalation-sustained-signature"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "acidic-input-freshwater",
+      "title": "Acid-like pattern in fresh water",
+      "kind": "explanation",
+      "text": "pH fell while conductivity rose. In fresh water this pairing is consistent with an acidic input, such as acid drainage or a chemical spill.",
+      "appliesTo": {
+        "triggers": ["Acidic input"],
+        "water": ["freshwater"],
+        "minConfidence": 0.55,
+        "conditions": "A report event, or tool results, show pH down and conductivity up at a freshwater pod."
+      },
+      "requiredEvidence": "pH down and conductivity up in the same window at a freshwater pod.",
+      "limitations": "Sensor data cannot identify the substance or its source.",
+      "sources": ["sot-v2 §6.3 (acidic input)", "advice-drafts disc-acid-edu-01"],
+      "review": {
+        "status": "draft",
+        "notes": "No marine entry on purpose: v2 §6.3 says acidic input is unlikely to be detectable in seawater unless near the source, so a marine report leaves this cause unnamed."
+      }
+    },
+    {
+      "id": "saltwater-intrusion",
+      "title": "Saltier water reaching the pod",
+      "kind": "explanation",
+      "text": "Conductivity rose while the other readings held steady. This is consistent with saltier water reaching the pod, for example on a high tide, during a dry spell, or with a storm surge. At coastal sites, tides can cause this routinely.",
+      "appliesTo": {
+        "triggers": ["Saltwater intrusion"],
+        "minConfidence": 0.45,
+        "conditions": "A report event, or tool results, show conductivity rising with no change in dissolved oxygen, ORP, pH or turbidity."
+      },
+      "requiredEvidence": "Conductivity up in the same window, with dissolved oxygen, ORP, pH and turbidity steady.",
+      "limitations": "Without tide or rainfall records, cannot be told apart from a discharge that only raises conductivity.",
+      "sources": ["general", "event-rules (saltwater intrusion rule, src/report/events.ts)"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "industrial-unclear",
+      "title": "Abrupt change with no clear pattern",
+      "kind": "explanation",
+      "text": "Conductivity, pH or ORP changed abruptly without matching a natural pattern. Possible causes include a discharge from a nearby outfall or site, a spill, or a sensor fault. The data cannot tell which.",
+      "appliesTo": {
+        "triggers": ["Industrial"],
+        "minConfidence": 0.3,
+        "conditions": "A report event, or tool results, show an abrupt step change in conductivity, pH or ORP that matches no more specific pattern."
+      },
+      "requiredEvidence": "An abrupt change in conductivity, pH or ORP in the same window.",
+      "limitations": "This is a low-confidence, catch-all pattern; it does not show that a discharge happened.",
+      "sources": ["general", "event-rules (industrial fallback rule, src/report/events.ts)"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "algal-bloom",
+      "title": "Daily oxygen swings consistent with algae",
+      "kind": "explanation",
+      "text": "Dissolved oxygen swung from a daytime high to a low before dawn, with pH moving in step. This daily pattern is consistent with heavy algal growth. The low point before dawn is when fish are most at risk.",
+      "appliesTo": {
+        "triggers": ["Algal bloom"],
+        "minConfidence": 0.6,
+        "conditions": "A report event, or tool results, show large in-phase daily swings in dissolved oxygen and pH."
+      },
+      "requiredEvidence": "Within one day, dissolved oxygen above and below this pod's configured thresholds, with pH swinging in phase.",
+      "limitations": "The sensors cannot identify algae species or detect toxins, and toxin-producing blooms may show no oxygen pattern.",
+      "sources": ["sot-v2 §6.2 (algal bloom row)", "sot-v2 §6.4 (Active Algal Bloom)", "sot-v2 §10", "advice-drafts bloom-edu-01"],
+      "review": {
+        "status": "draft",
+        "notes": "The report cannot raise this event on live data yet: it needs a daily-cycle classifier that does not exist."
+      }
+    },
+    {
+      "id": "sensor-limits",
+      "title": "What the sensors cannot detect",
+      "kind": "limitation",
+      "text": "These sensors cannot detect bacteria, viruses, nutrients, metals, oil or algal toxins, so they cannot show whether the water is safe for swimming, fishing or shellfish harvest. Only laboratory testing can.",
+      "appliesTo": {
+        "triggers": ["Sewage", "Stormwater", "Algal bloom"],
+        "conditions": "A sewage, runoff or algae pattern was found, or the user asks whether the water is safe or contaminated."
+      },
+      "requiredEvidence": "None beyond the trigger or question.",
+      "limitations": "None.",
+      "sources": ["sot-v2 §10 (including the public health rule)"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "fault-first",
+      "title": "Rule out the instrument first",
+      "kind": "limitation",
+      "text": "A sensor problem can look like a water-quality change. A real event usually moves several readings gradually, while a fault often moves one reading alone or all readings at the same moment.",
+      "appliesTo": {
+        "triggers": ["threshold-crossing", "Inconclusive", "Hypoxia", "Thermal", "Acidic input", "Industrial", "Saltwater intrusion"],
+        "conditions": "A reading crossed a configured threshold, or the user asks why a reading changed suddenly."
+      },
+      "requiredEvidence": "A threshold crossing or an unexplained change.",
+      "limitations": "The report does not yet run automatic fault checks, so this is a caution, not a finding.",
+      "sources": ["sot-v2 §0 rule 1", "sot-v2 §7.2 rules 1-2", "advice-drafts INST-12"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "turbidity-relative",
+      "title": "Turbidity is a relative clarity level",
+      "kind": "limitation",
+      "text": "Turbidity is shown as a relative clarity level (Clear, Moderate or Turbid), not a calibrated measurement, so it shows whether the water became cloudier but not by exactly how much. A missing turbidity reading can also appear as 0, which looks like clear water.",
+      "appliesTo": {
+        "triggers": ["Sewage", "Stormwater"],
+        "conditions": "A pattern involving turbidity was found, or the user asks what a turbidity value means."
+      },
+      "requiredEvidence": "A turbidity reading or a turbidity change.",
+      "limitations": "None.",
+      "sources": ["general", "product"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "limits-not-healthy-range",
+      "title": "Alert limits are not healthy ranges",
+      "kind": "limitation",
+      "text": "This pod's alert limits are set by its operator. A reading inside them is not necessarily healthy for aquatic life, and a limit set wider than the sensor can read will never raise an alert.",
+      "appliesTo": {
+        "conditions": "The user asks whether a reading within the pod's limits is safe or normal, or why no alert was raised."
+      },
+      "requiredEvidence": "The pod's configured thresholds.",
+      "limitations": "None.",
+      "sources": ["general", "product"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "mixed-sites",
+      "title": "Readings from more than one location",
+      "kind": "limitation",
+      "text": "Pods are sometimes moved between sites. Readings taken before a move describe a different body of water and should not be compared directly with the current site.",
+      "appliesTo": {
+        "conditions": "The readings in the requested period come from more than one location, or the user asks about the pod's long-term history."
+      },
+      "requiredEvidence": "Readings whose recorded location changes within the period.",
+      "limitations": "The pod's records do not note when it moved, so a move is inferred from its reported position.",
+      "sources": ["general"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "inspect-sensors",
+      "title": "Inspect the pod",
+      "kind": "next-step",
+      "slot": "operational",
+      "text": "Inspect and clean the sensors on the affected readings, and check the pod's battery and position in the water, before treating the change as a water-quality event.",
+      "appliesTo": {
+        "triggers": ["threshold-crossing", "Sewage", "Stormwater", "Hypoxia", "Thermal", "Acidic input", "Industrial", "Saltwater intrusion", "Algal bloom", "Inconclusive"],
+        "conditions": "A reading crossed a configured threshold or changed unexpectedly."
+      },
+      "requiredEvidence": "A threshold crossing or an unexplained change.",
+      "limitations": "Cleaning resets fouling, so compare readings before and after.",
+      "sources": ["sot-v2 §7.1", "sot-v2 §7.2 rules 4-7", "advice-drafts INST-08"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "check-power-connection",
+      "title": "Check power and connection",
+      "kind": "next-step",
+      "text": "If readings stop arriving or stay flat, check the pod's battery, power and connection before assuming the water changed.",
+      "appliesTo": {
+        "conditions": "The user asks about missing, delayed or unchanging readings."
+      },
+      "requiredEvidence": "A gap in readings, or readings that do not change.",
+      "limitations": "None.",
+      "sources": ["general"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "calibration-schedule",
+      "title": "Keep sensors calibrated",
+      "kind": "next-step",
+      "text": "Clean and calibrate the sensors on the manufacturer's recommended schedule. Readings drift between calibrations, so a slow change over weeks can be drift rather than a real trend.",
+      "appliesTo": {
+        "conditions": "The user asks whether readings can be trusted, or about drift or calibration."
+      },
+      "requiredEvidence": "None beyond the question.",
+      "limitations": "None.",
+      "sources": ["general"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "verify-do-sensor",
+      "title": "Check the dissolved-oxygen sensor",
+      "kind": "next-step",
+      "slot": "operational",
+      "text": "Before acting on low dissolved oxygen, confirm the sensor is working: clean it, and check that its reading changes when the water around it moves.",
+      "appliesTo": {
+        "triggers": ["Hypoxia"],
+        "conditions": "Dissolved oxygen is low, or the user asks what to do about low oxygen."
+      },
+      "requiredEvidence": "Dissolved oxygen below this pod's configured minimum.",
+      "limitations": "Applies to the flow-dependent sensor type v2 describes; the pod's sensor type is not recorded in the registry.",
+      "sources": ["sot-v2 §6.4 (Hypoxia, urgent response)", "sot-v2 §7.1 (galvanic DO faults)"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "confirm-readings",
+      "title": "Confirm with an independent measurement",
+      "kind": "next-step",
+      "slot": "investigative",
+      "text": "Confirm the flagged readings with an independent measurement, such as a calibrated handheld meter or a laboratory sample, before drawing conclusions.",
+      "appliesTo": {
+        "triggers": ["threshold-crossing", "Sewage", "Stormwater", "Hypoxia", "Thermal", "Acidic input", "Industrial", "Saltwater intrusion", "Algal bloom", "Inconclusive"],
+        "conditions": "A reading crossed a configured threshold, or the user asks how to check a reading."
+      },
+      "requiredEvidence": "A threshold crossing.",
+      "limitations": "None.",
+      "sources": ["sot-v2 §9.1 step 8", "sot-v2 §9.2", "advice-drafts INST-12"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "bacteria-testing",
+      "title": "Arrange bacteria testing",
+      "kind": "next-step",
+      "slot": "investigative",
+      "text": "Ask your local health or environmental agency, or a qualified sampler, to test the water for fecal indicator bacteria such as Enterococcus. Avoid contact with the water until results are available.",
+      "appliesTo": {
+        "triggers": ["Sewage", "Stormwater"],
+        "minConfidence": 0.5,
+        "conditions": "A sewage or runoff pattern was found."
+      },
+      "requiredEvidence": "A sewage or stormwater event in the report, or the same pattern in tool results.",
+      "limitations": "Bacteria results take time; the sensors cannot stand in for them.",
+      "sources": ["sot-v2 §6.4 (Raw Sewage Spill, confirmation)", "sot-v2 §10 (public health rule)"],
+      "review": {
+        "status": "draft",
+        "notes": "Reworks the rejected draft 'sewage grab-sample': sampling is handed to a qualified sampler because of the exposure risk."
+      }
+    },
+    {
+      "id": "compare-rainfall",
+      "title": "Compare with rainfall",
+      "kind": "next-step",
+      "slot": "investigative",
+      "text": "Compare the time of the change with a local rainfall record. Runoff usually arrives within hours of rain.",
+      "appliesTo": {
+        "triggers": ["Stormwater", "Sewage"],
+        "conditions": "A runoff or sewage pattern was found, or the user asks how to tell the two apart."
+      },
+      "requiredEvidence": "A stormwater or sewage event.",
+      "limitations": "Rain earlier upstream can still arrive later; a dry day on site does not rule runoff out.",
+      "sources": ["sot-v2 §6.4 (Stormwater Runoff, timing)", "advice-drafts disc-storm-diy-01"],
+      "review": {
+        "status": "draft",
+        "notes": "The limitation reflects the v2 review concern (supervisor item 19) that Example 2's 'no rain rules out stormwater' goes beyond its observations."
+      }
+    },
+    {
+      "id": "compare-tides",
+      "title": "Compare with tides",
+      "kind": "next-step",
+      "slot": "investigative",
+      "text": "Compare the time of the change with local tide tables and recent rainfall. A rise that follows high tides or a dry spell points to saltwater rather than a discharge.",
+      "appliesTo": {
+        "triggers": ["Saltwater intrusion"],
+        "conditions": "A saltier-water pattern was found, or the user asks what caused a conductivity rise."
+      },
+      "requiredEvidence": "A Saltwater intrusion event or a conductivity rise.",
+      "limitations": "Tide tables describe the nearest station, which may differ from the pod's site.",
+      "sources": ["general"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "regional-temperature",
+      "title": "Compare with regional temperatures",
+      "kind": "next-step",
+      "slot": "investigative",
+      "text": "Compare with water temperatures from nearby monitoring stations or regional sea-surface temperature reports. Warming across a wide area points to weather or a heatwave rather than a local discharge.",
+      "appliesTo": {
+        "triggers": ["Thermal"],
+        "conditions": "A warming pattern was found, or the user asks whether warm water is local."
+      },
+      "requiredEvidence": "A Thermal event or a temperature rise.",
+      "limitations": "Nearby stations may measure different depths or water.",
+      "sources": ["general"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "check-nearby-activity",
+      "title": "Check for nearby activity",
+      "kind": "next-step",
+      "slot": "investigative",
+      "text": "Check for activity near or upstream of the pod at the time of the change, such as construction, dredging, pumping, outfall discharges or heavy boat traffic.",
+      "appliesTo": {
+        "triggers": ["Industrial", "Acidic input", "Thermal", "Saltwater intrusion", "Inconclusive"],
+        "conditions": "An unexplained or discharge-like change was found, or the user asks what could have caused it."
+      },
+      "requiredEvidence": "An event without a confirmed cause.",
+      "limitations": "None.",
+      "sources": ["general"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "record-observations",
+      "title": "Record what you see",
+      "kind": "next-step",
+      "slot": "investigative",
+      "text": "Note what you can see at the site, such as water color, odor, dead fish, debris or nearby work, with times and photos. These notes help explain the readings later.",
+      "appliesTo": {
+        "triggers": ["Sewage", "Stormwater", "Hypoxia", "Thermal", "Acidic input", "Industrial", "Saltwater intrusion", "Algal bloom", "Inconclusive"],
+        "conditions": "An event was found, or the user asks what to do next."
+      },
+      "requiredEvidence": "An event in the report, or the user's question.",
+      "limitations": "None.",
+      "sources": ["general"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "keep-monitoring",
+      "title": "Keep watching the readings",
+      "kind": "next-step",
+      "slot": "investigative",
+      "text": "Keep watching the readings over the following days. A real change usually persists or recovers gradually, while a one-off spike often points to the sensor.",
+      "appliesTo": {
+        "triggers": ["threshold-crossing", "Inconclusive"],
+        "conditions": "A reading crossed a threshold without a clear cause."
+      },
+      "requiredEvidence": "A threshold crossing or an Inconclusive event.",
+      "limitations": "None.",
+      "sources": ["general"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "notify-agency",
+      "title": "Notify the responsible agency",
+      "kind": "next-step",
+      "slot": "stakeholder",
+      "text": "Notify your local sewer or water utility, or the agency named in your site protocol, and share the times and readings from this report.",
+      "appliesTo": {
+        "triggers": ["Sewage"],
+        "minConfidence": 0.7,
+        "conditions": "A full sewage pattern was found."
+      },
+      "requiredEvidence": "A sewage event at full-pattern confidence.",
+      "limitations": "The report does not know the site protocol or the responsible agency.",
+      "sources": ["sot-v2 §6.4 (Raw Sewage Spill, confirmation)", "advice-drafts disc-sewage-esc-01"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "low-oxygen-priority",
+      "title": "Treat very low oxygen as a priority",
+      "kind": "next-step",
+      "slot": "stakeholder",
+      "text": "Treat sustained low dissolved oxygen as a priority whatever its cause, and follow your site protocol for notifying others.",
+      "appliesTo": {
+        "triggers": ["Hypoxia"],
+        "minSeverity": "Moderate",
+        "conditions": "Dissolved oxygen stayed low for more than a few hours."
+      },
+      "requiredEvidence": "A Hypoxia event lasting more than three hours.",
+      "limitations": "Check the sensor first (see verify-do-sensor).",
+      "sources": ["sot-v2 §6.4 (Hypoxia, urgent response)", "advice-drafts hyp-esc-01"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "bloom-precautions",
+      "title": "Precautions for a suspected bloom",
+      "kind": "next-step",
+      "slot": "stakeholder",
+      "text": "Keep people and pets out of discolored or scummy water, and report a suspected bloom to your local environmental or health agency, which can test for toxins.",
+      "appliesTo": {
+        "triggers": ["Algal bloom"],
+        "minConfidence": 0.6,
+        "conditions": "A report found the algae pattern, or the user describes a visible bloom."
+      },
+      "requiredEvidence": "An Algal bloom event, or the user's description of a visible bloom.",
+      "limitations": "The sensors cannot detect toxins.",
+      "sources": ["general", "sot-v2 §10"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "report-pollution",
+      "title": "Report a suspected discharge",
+      "kind": "next-step",
+      "slot": "stakeholder",
+      "text": "If a spill or illegal discharge is suspected, report it to your local environmental agency with the times and readings from this report.",
+      "appliesTo": {
+        "triggers": ["Acidic input", "Industrial"],
+        "minConfidence": 0.3,
+        "minSeverity": "Moderate",
+        "conditions": "A discharge-like pattern of at least Moderate severity was found, or the user suspects a spill."
+      },
+      "requiredEvidence": "An Acidic input or Industrial event of at least Moderate severity.",
+      "limitations": "The data cannot confirm a discharge; the agency decides whether to investigate.",
+      "sources": ["general"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "report-dead-fish",
+      "title": "Report dead fish",
+      "kind": "next-step",
+      "text": "If you see dead or struggling fish, note the time, place and number, and report it to your state fish and wildlife agency.",
+      "appliesTo": {
+        "conditions": "The user reports dead or struggling fish."
+      },
+      "requiredEvidence": "The user's own report of dead fish.",
+      "limitations": "The sensors cannot detect a fish kill.",
+      "sources": ["general"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "share-report",
+      "title": "Share the report",
+      "kind": "next-step",
+      "slot": "stakeholder",
+      "text": "Share this report with the people responsible for the site, such as your site manager or monitoring team.",
+      "appliesTo": {
+        "triggers": ["threshold-crossing", "Sewage", "Stormwater", "Hypoxia", "Thermal", "Acidic input", "Industrial", "Saltwater intrusion", "Algal bloom", "Inconclusive"],
+        "conditions": "A report flagged a reading or an event."
+      },
+      "requiredEvidence": "A flagged reading or event in a report.",
+      "limitations": "None.",
+      "sources": ["event-rules (existing stakeholder line)"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "professional-review",
+      "title": "Professional review for long events",
+      "kind": "next-step",
+      "slot": "stakeholder",
+      "text": "Consider asking a qualified water-quality professional to review this period.",
+      "appliesTo": {
+        "triggers": ["Sewage", "Stormwater", "Hypoxia", "Thermal", "Acidic input", "Industrial", "Saltwater intrusion", "Inconclusive"],
+        "minSeverity": "High",
+        "minConfidence": 0.5,
+        "conditions": "An event lasted more than 12 hours, or the user asks who can investigate a problem outside the four CER services."
+      },
+      "requiredEvidence": "A High-severity event at or above the report's confidence floor.",
+      "limitations": "None.",
+      "referral": "professional",
+      "sources": ["event-rules (existing escalation line)", "advice-drafts hyp-esc-01"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "cer-algal-bloom-referral",
+      "title": "CER algal bloom cleanup",
+      "kind": "next-step",
+      "slot": "stakeholder",
+      "text": "Clean Earth Rovers offers algal bloom cleanup.",
+      "appliesTo": {
+        "triggers": ["Algal bloom"],
+        "minConfidence": 0.6,
+        "conditions": "A report found the algae pattern, or the user describes a visible bloom (discolored water, scum or mats) and asks for help removing it."
+      },
+      "requiredEvidence": "An algal bloom event, or the user's own description of a visible bloom.",
+      "limitations": "The sensors cannot confirm a bloom; this is a service offer, not a diagnosis.",
+      "referral": "cer-algal-bloom",
+      "sources": ["product 2026-09-17 decision on CER referrals"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "cer-fish-kill-referral",
+      "title": "CER fish kill cleanup",
+      "kind": "next-step",
+      "text": "Clean Earth Rovers offers fish kill cleanup.",
+      "appliesTo": {
+        "conditions": "The user reports dead fish and asks for help."
+      },
+      "requiredEvidence": "The user's own report of dead fish.",
+      "limitations": "The sensors cannot detect a fish kill.",
+      "referral": "cer-fish-kill",
+      "sources": ["product 2026-09-17 decision on CER referrals"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "cer-debris-referral",
+      "title": "CER debris capture",
+      "kind": "next-step",
+      "text": "Clean Earth Rovers offers debris capture for floating trash.",
+      "appliesTo": {
+        "conditions": "The user asks about floating trash or debris in the water."
+      },
+      "requiredEvidence": "The user's own description of debris.",
+      "limitations": "The sensors cannot detect debris.",
+      "referral": "cer-debris",
+      "sources": ["product 2026-09-17 decision on CER referrals"],
+      "review": { "status": "draft" }
+    },
+    {
+      "id": "cer-oil-spill-referral",
+      "title": "Oil spills and CER response",
+      "kind": "next-step",
+      "text": "The pod's sensors largely cannot detect oil or fuel, so its readings cannot confirm or rule out a spill. Clean Earth Rovers offers oil spill response.",
+      "appliesTo": {
+        "conditions": "The user reports an oil sheen, a fuel smell or a spill, or asks whether the pod can detect oil."
+      },
+      "requiredEvidence": "The user's own report or question about oil.",
+      "limitations": "Oil barely changes the six measured readings.",
+      "referral": "cer-oil-spill",
+      "sources": ["sot-v2 §6.2 (oil or fuel spill row)", "sot-v2 §10", "product 2026-09-17 decision on CER referrals"],
+      "review": { "status": "draft" }
+    }
+  ]
+}

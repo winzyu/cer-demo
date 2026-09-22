@@ -33,6 +33,7 @@ import { QuerySensorData, type SensorToolResult } from "./querySensorData";
 import { buildReportInput } from "../report/buildReportInput";
 import { detectEvents } from "../report/events";
 import { deterministicNarrative } from "../report/narrative";
+import { guidance } from "../catalogue";
 import { buildReportPdf } from "../report/renderPdf";
 import { recordReportOwner } from "../report/reportOwnership";
 import { overallStatus } from "../report/types";
@@ -175,7 +176,7 @@ export class GenerateReport {
     const events = detectEvents(report);
     report.events = events;
     const status = overallStatus(report, probeAccuracy);
-    const narrative = deterministicNarrative(report, probeAccuracy, status);
+    const narrative = deterministicNarrative(report, probeAccuracy, status, guidance);
 
     fs.mkdirSync(this.reportsDir, { recursive: true });
     const filename = `report_${randomUUID().slice(0, 8)}.pdf`;
@@ -216,7 +217,11 @@ export class GenerateReport {
       // threshold now, or against nothing at all if it has no usable one. Either way, say so.
       baseline_provenance: baselineProvenance(report),
       events_flagged: events.length,
-      event_types: events.map((e) => e.type),
+      // The PDF's headings, not the raw classifications: a cause the catalogue does not approve
+      // is not named in the report, so it must not reach the model either.
+      event_types: narrative.events.map((e) => e.heading),
+      catalogue_version: narrative.catalogueVersion,
+      guidance_ids: narrative.guidanceIds,
       report_url: `/api/v1/reports/${filename}`,
       ...(skippedParameters && skippedParameters.length > 0
         ? { note: `No readings for: ${skippedParameters.join(", ")}. Report covers the remaining parameters only.` }

@@ -367,6 +367,8 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | Variable | Default | Purpose |
 |---|---|---|
 | `REPORT_TOOL` | `false` | **The gate.** Enables `generate_report`, its entry in the tool registry, and the prompt's report-vs-stat routing rule. Separate from `SENSOR_TOOL` because `generate_report` calls `QuerySensorData.query()` directly rather than through the model's tool loop — but it needs `DEVICE_API_BASE_URL` all the same. Same pinned-prompt caveat as `SENSOR_TOOL`. |
+| `CATALOGUE_PROMPT` | `false` | Appends the approved-guidance block (`src/catalogue/`) to the system prompt. Same pinned-prompt caveat as `SENSOR_TOOL`. Reports use the catalogue regardless. |
+| `CATALOGUE_DRAFTS` | `false` | Also shows catalogue entries no supervisor has approved. For supervisor review only; never set it for customers. |
 
 ### Device API ([§2c](#2c-clean-earth-device-api))
 
