@@ -124,7 +124,7 @@ A referral is only offered when the observed evidence matches the entry's applic
 | Tool loop | `src/services/ChatOrchestrator.ts` | keep | add the concurrency limiter and 429/503 retry |
 | Sensor tools | `src/tools/{querySensorData,timeRange,aggregate,getPodThresholds,getTurbidityInfo}.ts`, `src/devices/*` | keep | none; they already resolve pods against the caller's registry and merge chains stay strict |
 | LLM client | `src/services/LlmService.ts` | keep | model and key from config, as now |
-| Retrieval | `src/retrieval/*` | keep | production runs `firestore-direct` on the upstream Firestore; the other adapters stay for evaluation only |
+| Retrieval | `src/retrieval/*` | keep | production runs `hybrid-slice-vector` (D7): the authoritative tier direct, dense retrieval over the long manuals. Deploying it needs `data/embeddings/` shipped or a Firestore vector index; the other adapters stay for evaluation only |
 | Prompt and citations | `src/prompt/*` | modify | add the catalogue and referral blocks; resolve the v2 conflicts before any v2 wording enters |
 | Chat route | `src/routes/chatRoutes.ts`, `src/controllers/ChatController.ts` | modify | add the internal `/gilligan/answer` contract and the cer-api identity check; keep `/chat` for the demo and evaluation |
 | Usage limits | `src/quota/*`, `src/middleware/quotaGuard.ts` | modify | Firestore store, several windows at once, report counter, identity keys, status endpoint |
@@ -157,10 +157,10 @@ Working days are counted from Thursday, September 17.
 | R0 Setup | Sep 17-18 | user, Claude | user sets up the WSL sandbox ([`WSL_SANDBOX.md`](WSL_SANDBOX.md)); send the three v2 questions and the referral contacts to the supervisor; confirm a Fireworks payment method and read the rate-limit headers | the demo runs in the sandbox; supervisor has items 17-20 |
 | R1 Service contract | Sep 18-22 | Claude | `/gilligan/answer`, identity check, history mapping, report bytes, usage store and status endpoint, concurrency limiter; unit and supertest coverage | contract tests green; the demo still works |
 | R2 Catalogue | Sep 18-24 | Claude, then supervisor | structured catalogue from v2 and the advice drafts, generated review page, prompt and narrative wiring, sewage rule fix | supervisor has approved an entry set; reports and chat cite only approved entries |
-| R3 Upstream relay and page | Sep 21-25 | user, in the WSL sandbox | controller relay and report route; React page; local run of dashboard + server + cer-rag together | a question, a report download and the usage count work end to end locally |
+| R3 Upstream relay and page | Sep 21-25 | Claude, in the `local` checkouts | controller relay and report route; React page; local run of dashboard + server + cer-rag together | **done 2026-09-21 except the report route**, which waits on R1 (D8). A question, history and the usage count work end to end locally: [`GILLIGAN_R3_PORT.md`](GILLIGAN_R3_PORT.md) |
 | R4 Quality | Sep 23-28 | separate session, Claude | Phase 3 capture (approved spend); fix what it finds; where a class of question stays weak, add a caveat or a refusal (D3); organization-isolation tests with the pod-scope fixtures | every weak class is either fixed, caveated or refused; isolation tests pass |
 | R5 Demo and merge | Sep 28-29 | user, supervisor | supervisor demo; merge approval; upstream owners create the Fireworks key; corpus seeded into their Firestore; cer-rag deployed | cer-rag healthy in their project; relay switched on with `GILLIGAN_BACKEND=rag` |
-| R6 Release | Sep 30 | user, upstream owners | production smoke on one pod per test organization; rollback is `GILLIGAN_BACKEND=gemini` | release |
+| R6 Release | Sep 30 | user, upstream owners | production smoke on one pod per test organization. **There is no working rollback**: `GILLIGAN_BACKEND=gemini` restores a backend that fails every question (D9), so the cutover is one-way and the gate is R4's quality bar | release |
 
 Critical path: supervisor catalogue approval by Sep 25 (`STAKEHOLDER_QUESTIONS.md` items 17-20) and upstream IAM for deploy and Firestore seeding by Sep 28.
 Upstream changes are written by the user in the WSL sandbox (D1), from R3 on.
@@ -185,6 +185,8 @@ Earlier estimates excluded integration and supervisor turnaround, so R3 and R5 c
 | Fireworks account without a payment method | 10 requests per minute (third-party figure) | confirm before R3 |
 | Phase 3 shows a quality gap | launch on known-weak answers | caveat or refuse the weak classes (D3) |
 | Upstream remote moved past `b221702` | relay written against stale code | fetch and re-read before R3 |
+| No rollback (D9) | a bad cutover cannot be reverted to a working assistant | fix the `gemini-pro` model id as separate work, or accept a one-way cutover gated on R4 |
+| `hybrid-slice-vector` needs an embedding cache (D7) | cer-rag cannot answer in the upstream project until embeddings are shipped or a Firestore vector index exists | add it to the R5 handover runbook alongside the corpus seed |
 
 ## 7. Open decisions
 
@@ -196,6 +198,12 @@ Settled 2026-09-17:
 - **D3. Launch quality bar:** aim for all Phase 3 checks; on best effort, caveat or refuse weak question classes rather than delay.
 
 - **D4. Audit trail:** the relay stores an `audit` field on each saved chat message; `AUDIT_LOG` stays off. The chat history's retention and access rules therefore govern audit data (`STAKEHOLDER_QUESTIONS.md` item 21).
+
+Settled 2026-09-21:
+
+- **D7. Production retrieval is `hybrid-slice-vector`,** not `firestore-direct`: the authoritative tier is served direct and always present, and dense retrieval covers the long manuals. Measured on a dissolved-oxygen question it returns the 4 direct documents plus 5 scored USGS chunks, where the direct arm alone can only reach its own 4-document, 26,096-char slice. The cost is an embedding cache: `data/embeddings/` is 7.1 MB, git-ignored, and rebuilding it is a paid run (446 chunks, ~245,671 tokens).
+- **D8. R3 relays to the existing `POST /api/v1/chat`** rather than waiting for R1's `/gilligan/answer`. R1 was gated on approval to start implementing and the release date is itself undecided, so R3 could not depend on it. Every contract difference is confined to `ANSWER_PATH` and the request body in `CerRagService.ts`, and the verified identity fields are already threaded through unused, so R1 is an edit to that one file. The report route is the part of R3 this defers, because returning report bytes is R1 work and the disk-and-sidecar design it would otherwise relay to is already scheduled for replacement.
+- **D9. The Gemini backend is not a fallback.** `askQuestionGemini` calls the retired `gemini-pro` id; live-confirmed 2026-09-21 against the deployed API, which answered `404 models/gemini-pro is not found for API version v1beta`. Production Gilligan therefore fails every question today, and `GILLIGAN_BACKEND=gemini` restores that, not a working assistant. The default stays `gemini` so the relay is inert when merged upstream, which is a merge-safety property and not a safety net.
 
 Open:
 

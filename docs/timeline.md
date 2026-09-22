@@ -705,6 +705,15 @@ answers complete; every sensor answer shows which pod, which window, and how fre
 ## Phase N7 — Frontend migration & integration `⟵ was Phase 5`
 *Goal: replace the existing Gilligan feature with the new bot.*
 
+> **Roadmap R3 landed 2026-09-21** and covers most of the first two bullets below, by a route the
+> plan did not anticipate: the dashboard keeps calling `/gilligan/*` and the upstream server relays
+> to this service, rather than the dashboard being re-pointed at `/chat`. Decisions D7, D8 and D9
+> in [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md) §7;
+> what was built and verified is [`migration/GILLIGAN_R3_PORT.md`](migration/GILLIGAN_R3_PORT.md).
+> Persisted history below is satisfied upstream by the existing Firestore `chats` collection,
+> filtered to `assistant: "cer-rag"` (D2), so this service stays stateless about conversations and
+> the auth prerequisite is met by the dashboard's JWT rather than by new auth here.
+
 - Build the **Next.js dedicated chatbot page** (replaces the demo's single-file `frontend/index.html`).
 - Re-point the dashboard's `services/gilligan.js` from `/gilligan/*` to the new `/chat`; match
   request/response shapes; retire/re-map `askGilligan`/`getChats`/`checkQuota`.

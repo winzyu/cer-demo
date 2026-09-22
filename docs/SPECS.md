@@ -79,7 +79,8 @@ clean-earth-rag/
 │   │   ├── healthRoutes.ts   GET /health
 │   │   ├── chatRoutes.ts     POST /api/v1/chat
 │   │   ├── deviceRoutes.ts   GET /api/v1/devices (§10.5)
-│   │   └── reportRoutes.ts   GET /api/v1/reports/:filename — not gated on REPORT_TOOL
+│   │   ├── reportRoutes.ts   GET /api/v1/reports/:filename — not gated on REPORT_TOOL
+│   │   └── usageRoutes.ts    GET /api/v1/usage — read-only allowance, outside quotaGuard
 │   ├── controllers/
 │   │   ├── HealthController.ts
 │   │   ├── ChatController.ts   retrieve → assemble → answer (JSON or SSE)
@@ -274,6 +275,11 @@ last week, under 10 by their organization this month, any active Stripe subscrip
 `role === "superadmin"`. Whatever replaces Gilligan inherits that contract, and those numbers are
 exactly what the team is still deciding. This block makes the policy an `.env` edit, and adds the
 **token** dimension so a request count and a spend cap can be compared on one deployment.
+
+Since the R3 relay, that upstream route is served from this service's `GET /api/v1/usage` when the
+upstream backend is `rag`, so the policy is read from here rather than hard-coded there. The
+endpoint reports standing and the gate refuses; `QuotaService.status` is the read and
+`quotaGuard` the refusal, and neither calls the other.
 
 | variable | default | meaning |
 |---|---|---|
@@ -1238,6 +1244,7 @@ turn (against 11 for `pgvector-rag`). It also wins `deep-in-manual` outright at 
 | `GET` | `/api/v1` | `{ "message": "Clean Earth RAG API v1" }` |
 | `GET` | `/api/v1/devices` | `{ devices: [{ label, name, operating_environment, last_reported }], water_type }` (§10.5). **Requires `Authorization: Bearer`** — 401 `caller_token_required` without one |
 | `GET` | `/api/v1/reports/:filename` | the generated PDF. **Requires `Authorization: Bearer`**, and the token must be the one `generate_report` ran under (§10.7); 404 otherwise |
+| `GET` | `/api/v1/usage` | `{ enabled, questions: { used, limit, remaining }, tokens: {...}, window, resetsAt }` (§4a). `limit` and `remaining` are `null` for an unlimited dimension and while the quota is off, so "no ceiling" is distinguishable from "nothing left" by type. Read-only: it never records, so polling it cannot spend the allowance it reports |
 | `POST` | `/api/v1/chat` | `{ answer, model, mode, citations, usage }`, or SSE when `stream: true` (§10). **429** with `code: quota_requests_exceeded` / `quota_tokens_exceeded` plus `Retry-After` when the quota gate refuses — as JSON, before any stream opens (§4a) |
 
 `/health` does **no** network I/O (no Firestore/Fireworks calls), so it always succeeds while the
@@ -1281,6 +1288,7 @@ it is not the full list — `npx jest --listTests` is.
 | **N3** `unit/querySensorData.test.ts` | the tool against recorded production bodies: Celsius→Fahrenheit on `/water/period`, the OWC acronym match, duplicate-row dedupe, empty-window escalation, `/water/average` never called, the caveat notes, and every error path |
 | **N3** `unit/chatOrchestrator.test.ts` | the round loop: tool dispatch and `tool_call_id` replay, multi-call rounds, summed usage, unknown-tool and malformed-argument recovery, the forced final round, the cap fallback, and call dedupe |
 | `unit/quota.test.ts` | the quota policy in isolation: unlimited (both off and on), the count and token ceilings biting at `>=` rather than `>`, each dimension enforced while the other is unlimited, request-before-token precedence, window rollover in both directions, the `Retry-After` boundary, per-key isolation, and what `quotaKeyFor` derives — token hashed never raw, IPv4-mapped normalization, the shared `anonymous` bucket |
+| `unit/usageStatus.test.ts` | `GET /api/v1/usage` (§4a): remaining against a finite ceiling, `null` limits for an unlimited dimension and while the quota is off, remaining floored at 0 when retrospective token accounting overshoots, window rollover, per-token bucketing, and — the defect the endpoint could easily have — that repeated status reads do not themselves spend the allowance |
 | `unit/quotaConfig.test.ts` | the `QUERY_QUOTA*` parsing rules: the off-and-unlimited default, `unlimited` accepted case-insensitively, `none`/`off`/`-1` **rejected** rather than guessed, the required duration unit suffix, `org` rejected as a scope this service cannot key on, and Gilligan's free tier expressed without a code change |
 | `integration/quotaChat.test.ts` | the gate over HTTP: the disabled default answering past tiny limits, the 429 body and `Retry-After`, a validation 400 not consuming an allowance, per-token vs global bucketing, tokens counted on the streamed path, and a refused `stream: true` request arriving as JSON with no SSE frames |
 | **N3** `integration/sensorChat.test.ts` | `query_sensor_data` end to end through `POST /chat` — scripted model, recorded device bodies, real loop/client/decoder in between — and the flag-off path making one tool-free call that never touches the device API |

@@ -78,8 +78,26 @@ The dashboard calls, from `user-dashboard/src/app/services/gilligan.js` through 
 - `GET /gilligan/chats`
 - `GET /gilligan/check-quota`
 
-cer-demo answers on `POST /api/v1/chat` with `{ query, history?, device?, stream?, retrieval? }` and returns `{ answer, model, citations, usage, tool_calls?, tool_round_cap_reached? }`.
+cer-demo answers on `POST /api/v1/chat` with `{ query, history?, device?, stream?, retrieval? }` and returns `{ answer, model, citations, usage, tool_calls?, tool_round_cap_reached? }`, plus `GET /api/v1/usage` for the remaining allowance.
 It reads the caller's bearer token for the sensor tool and applies its own quota guard.
-The shapes do not line up, which is what the R1 service contract in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §3 exists to settle.
 
-Note that locally served Gilligan routes hit the authentication boundary described above, because the live token cannot be verified here.
+The shapes are mapped by the relay added in R3, so this no longer waits on R1: see [`GILLIGAN_R3_PORT.md`](GILLIGAN_R3_PORT.md) for the relay, the swap seam and what was verified.
+
+Both servers read these at boot only.
+`ts-node-dev` watches source files and not `.env`, so a change here needs a real restart, and a server left running from before an edit will silently keep proxying Gilligan to the live API.
+
+`clean-earth-rovers-server/.env`, all local-development only:
+
+```
+DEV_LOCAL_PATHS=/api/v1/gilligan
+GILLIGAN_BACKEND=rag
+CER_RAG_BASE_URL=http://localhost:8010
+DEV_UNVERIFIED_AUTH=true
+DEV_CHAT_STORE=memory
+```
+
+`DEV_UNVERIFIED_AUTH=true` accepts a token's claims without verifying its signature, which is how the authentication boundary above is crossed; it is refused in production, refuses a non-JWT, and warns on every request it serves.
+`DEV_CHAT_STORE=memory` serves the chat collections from process memory, so no Firestore credentials are needed and history resets on restart.
+
+`cer-demo/.env` needs `DEFAULT_RETRIEVAL=hybrid-slice-vector` with `CORPUS_SOURCE=artifact`.
+An empty `DEFAULT_RETRIEVAL` resolves to `stub`, and `data/embeddings/` must exist (`npm run embed:cache`) or every request fails.
