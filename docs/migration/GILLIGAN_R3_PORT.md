@@ -83,6 +83,7 @@ yarn dev -p 3000
 ```
 
 `SENSOR_TOOL=true` makes pod questions work and turns every such question into a live production device read.
+**Running it `false`, as this verification did, is why a stack exercised end to end still refused every question about a reading**: see [`GILLIGAN_TOOL_ACCESS.md`](GILLIGAN_TOOL_ACCESS.md), and D10, which settles the value the release runs with.
 
 ### The two local-only gates
 
@@ -109,6 +110,7 @@ All three services running together, questions asked through the dashboard's own
 
 Two questions were spent against Fireworks, 17,249 tokens in total.
 No live device reads were made: `SENSOR_TOOL` was off throughout.
+That is also the gap in this verification: with the flag off the model is offered no tools at all, so nothing here exercised a sensor question.
 
 ## Not done in R3
 
