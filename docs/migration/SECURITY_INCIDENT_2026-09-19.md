@@ -17,7 +17,7 @@ Obfuscated JavaScript appended to three tooling config files in the upstream rep
 | `clean-earth-rovers-server/test/setup/jest.config.js` | 8907 B | 454 B | `0c91404` |
 
 The payload sits on the same line as the real config, after several hundred spaces, so it renders off-screen in an editor and in a GitHub diff.
-The clean blobs are byte-exact prefixes of the infected files, confirmed with `cmp`, so restoring them loses no legitimate change.
+The clean blobs match the infected files up to the final byte, verified with `cmp` on 2026-09-21: bytes 1-81, 1-56 and 1-453 are identical, and at the last byte the clean file has a newline where the infected file has `;` (postcss) or a space (both jest configs) before the padding and the payload. Restoring them therefore loses no legitimate change.
 
 These files are loaded automatically by Next.js (`next dev`, `next build`) and Jest (`npm test`, and `npm run predeploy` which calls it).
 Execution needs no install step and no unusual command.
@@ -89,7 +89,7 @@ Done:
 
 Outstanding:
 
-- The three files are still infected at HEAD upstream. Local cleanup on a branch is planned; nothing is to be pushed without explicit consent.
+- The three files are still infected at HEAD upstream, and on every branch listed above. Local cleanup was executed 2026-09-21 in both checkouts and **not pushed**: branch `security/remove-payload` holds the one cleanup commit (user-dashboard `5dff5fd` off `main` `9ce674b`; clean-earth-rovers-server `693fc96` off `develop` `500ceac`), and branch `local` is cut from it in each repo as the base for local development. Both branches are created with `--no-track` and have no upstream, so nothing can be pushed by accident; pushing still needs explicit consent.
 - Whether the payload ever ran on a build machine (Cloud Build, App Engine) is unchecked. A `next build` there would trigger it identically.
 - Google Cloud ADC (`adc-tapout-backup.json`) and GitHub recovery codes sit in plaintext on the 2026-09-19 backup drive, which was written by the compromised machine.
 
@@ -102,6 +102,7 @@ grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .
 ```
 
 Re-run it after any clone, fetch, pull or branch switch in the two upstream repositories, because upstream still serves the payload on every branch.
+A branch sweep on 2026-09-21 (`git grep -lE ' {200,}'` against every `origin/*` head) reproduced the infected list above; `CER-35-forgot-password`, `login_fixes_server` and `migration-to-nestjs` in the server repo were the only clean remote branches.
 A reusable Python scanner with a `--fix` mode was written on 2026-09-19 and lost before it was committed; it has not been rebuilt.
 
 ## Evidence

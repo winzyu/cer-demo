@@ -1,7 +1,8 @@
 # CER Demo
 
-Write only within this repository; `../user-dashboard` and `../clean-earth-rovers-server` are read-only references.
-If a task requires changing a reference repository, stop and tell the user.
+`../user-dashboard` and `../clean-earth-rovers-server` are writable for local development, on branch `local` or a branch cut from it, and only there.
+Their `main` and `develop` carry malware at HEAD: never check those branches out, never run `npm install`, `next dev`, `next build` or `npm test` while on them, and re-run `grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .` after any clone, fetch, pull or branch switch.
+Never push, force-push or merge in either repository; pushing needs explicit consent in chat.
 Do not read `~/.config/gcloud/` or `serviceAccountKey.json`, or print credentials.
 The device API is production with no QA mirror; announce live reads and obtain approval for live writes or paid evaluation runs.
 Migration planning artifacts belong in `docs/migration/`.

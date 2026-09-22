@@ -116,6 +116,8 @@ default and RAG would be moot.
   settled production generator is `gpt-oss-120b` (`EVAL_REBUILD.md` §1); embeddings
   `nomic-ai/nomic-embed-text-v1.5` (768-dim).
 - **Deployment:** local/demo for now; **Cloud Run** is the promotion target (per conventions §13).
+- **Upstream development (revised 2026-09-21, supersedes D1's sandbox):** the two upstream repositories are writable on branch `local` only, cleaned of the committed malware;
+  nothing is pushed without explicit consent. The local stack that replaces the sandbox is [`migration/LOCAL_STACK.md`](migration/LOCAL_STACK.md).
 - **Report:** template-based, six fixed sections, no visualizations in v1. **Compute vs. narrate** —
   every number/flag/status is computed deterministically in code; the LLM only narrates pre-computed
   facts.

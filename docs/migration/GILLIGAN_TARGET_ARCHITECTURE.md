@@ -191,6 +191,7 @@ Earlier estimates excluded integration and supervisor turnaround, so R3 and R5 c
 Settled 2026-09-17:
 
 - **D1. Where upstream code is written before the merge:** a native WSL2 sandbox the user creates, holding copies of both upstream repositories with this service's implementation moved in to test compatibility. The user works there; Claude keeps working in this repository (evaluation and the service itself), and the upstream repositories stay read-only to Claude. The user demos the result and the supervisor approves the transfer.
+  *Revised 2026-09-21.* The WSL sandbox was lost with the machine rebuild and is not coming back. Upstream code is now written directly in the two checkouts on branch `local`, cut from the cleanup branch that removed the malware, and Claude may write there; see [`LOCAL_STACK.md`](LOCAL_STACK.md) and [`SECURITY_INCIDENT_2026-09-19.md`](SECURITY_INCIDENT_2026-09-19.md). Nothing is pushed: the branches have no upstream and the merge still needs supervisor approval.
 - **D2. Gemini-era conversations:** ignored entirely.
 - **D3. Launch quality bar:** aim for all Phase 3 checks; on best effort, caveat or refuse weak question classes rather than delay.
 
