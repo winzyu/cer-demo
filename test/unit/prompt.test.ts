@@ -75,6 +75,38 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("public-health authorities");
   });
 
+  it("carves greetings and capability questions out of the refusal rule", () => {
+    // Added 2026-09-21 from a real session whose FIRST turn, "hello", was answered with the
+    // refusal sentence: the scope rule fired on anything that was not a groundable question.
+    // A greeting asks for nothing, so there is nothing to ground and nothing to refuse.
+    const prompt = buildSystemPrompt(false, false);
+
+    expect(prompt).toContain("A greeting, a thank-you, or a question about what you are and what");
+    expect(prompt).toContain("Never answer one of these with the refusal");
+    expect(prompt).toContain("never refuse a message that asks nothing at all");
+  });
+
+  it("keeps the carve-out narrow enough that it cannot license an ungrounded answer", () => {
+    // The carve-out's risk is being read as general permission. These three rules are what
+    // bound it, and all of them have to survive alongside it.
+    const prompt = buildSystemPrompt(false, false);
+
+    expect(prompt).toContain("DO NOT answer from prior knowledge");
+    expect(prompt).toContain("Never use general world knowledge to fill gaps.");
+    expect(prompt).toContain("Do not fabricate readings or citations.");
+  });
+
+  it("asks a refusal to name the closest thing the system genuinely can do", () => {
+    // Every wave-1 refusal-* fixture rubric already requires this ("Offers what the system can
+    // genuinely contribute instead ... without presenting it as a substitute") and the prompt
+    // did not ask for it. The must_not half -- no silent substitution -- is pinned with it.
+    const prompt = buildSystemPrompt(false, false);
+
+    expect(prompt).toContain("one short sentence naming the closest thing you genuinely can do");
+    expect(prompt).toContain("never as an answer to what was\n  asked");
+    expect(prompt).toContain("never in place of saying plainly that you cannot answer it");
+  });
+
   it("is identical across calls", () => {
     // The cacheability precondition: nothing per-request may leak into this block.
     expect(buildSystemPrompt()).toBe(buildSystemPrompt());
@@ -199,6 +231,29 @@ describe("TOOL_BLOCK", () => {
     // ◆G11 is open. Retrieval still runs before the call and arrives as CONTEXT; naming a
     // search tool here would invite the model to announce lookups it cannot perform.
     expect(TOOL_BLOCK).not.toContain("search_documents");
+  });
+
+  it("routes a question about which pods exist to list_pods", () => {
+    expect(TOOL_BLOCK).toContain("list_pods — names the pods this user's account can see");
+    expect(TOOL_BLOCK).toContain("Any question about WHICH pods exist");
+  });
+
+  it("forbids a bare \"no data for your pods\" without a list_pods call", () => {
+    // The observed failure was not a missing call, it was a confident negative: "I have no
+    // sensor data for your pods", asserted about a fleet the model had never looked at.
+    expect(TOOL_BLOCK).toContain("Never answer \"I have no\n  data for your pods\" without having called it");
+  });
+
+  it("states that the pod list is scoped to the caller, not to the deployment", () => {
+    // Why it has to be a tool: a per-caller list cannot live in a prompt that must stay
+    // byte-identical to stay cacheable.
+    expect(TOOL_BLOCK).toContain("property of WHO IS ASKING");
+  });
+
+  it("marks list_pods' last_reported as not proof of silence", () => {
+    // Same class of trap as the null-is-not-zero rule above: /water/last drops readings with
+    // no GPS fix, so "not confirmed recently" and "stopped reporting" look identical here.
+    expect(TOOL_BLOCK).toContain("never that the pod is silent");
   });
 });
 

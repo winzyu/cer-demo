@@ -529,6 +529,31 @@ export class QuerySensorData {
     return this.resolveDevice(requested, token);
   }
 
+  /**
+   * Public passthrough onto the private `devices()` TTL cache, for `list_pods` (`listPods.ts`),
+   * which needs the whole fleet rather than one resolved row.
+   *
+   * Deliberately **not** `resolveDevice`: that collapses to exactly one pod and turns "more than
+   * one device is visible" into an error, which is precisely the case `list_pods` exists to
+   * answer. It returns the same `dedupeByLabel`'d list every other tool resolves against, so the
+   * names it prints are the strings `device` accepts, and it shares the per-token cache, so
+   * listing then reading costs one `/devices` round trip rather than two.
+   */
+  async listDevicesForTool(token?: string): Promise<DeviceSummary[]> {
+    return this.devices(token);
+  }
+
+  /**
+   * Public passthrough onto the private `lastReportedAt()`, for `list_pods`'s freshness column.
+   *
+   * Keeps that tool's best-effort semantics intact: this returns `null` both when the pod has
+   * genuinely gone quiet and when `/water/last` filtered its readings for want of a GPS fix, so
+   * a caller may report it as "not confirmed recently" and never as proof of silence.
+   */
+  async lastReportedForTool(label: string, token?: string): Promise<string | null> {
+    return this.lastReportedAt(label, token);
+  }
+
   private async execute(args: Record<string, unknown>, token?: string): Promise<SensorToolResult> {
     const metricName = typeof args.metric === "string" ? normalize(args.metric) : "";
     // "all" fetches one window and reads every metric out of it — one API call, not six, and

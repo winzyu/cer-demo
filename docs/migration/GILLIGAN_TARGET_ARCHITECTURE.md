@@ -205,6 +205,24 @@ Settled 2026-09-21:
 - **D8. R3 relays to the existing `POST /api/v1/chat`** rather than waiting for R1's `/gilligan/answer`. R1 was gated on approval to start implementing and the release date is itself undecided, so R3 could not depend on it. Every contract difference is confined to `ANSWER_PATH` and the request body in `CerRagService.ts`, and the verified identity fields are already threaded through unused, so R1 is an edit to that one file. The report route is the part of R3 this defers, because returning report bytes is R1 work and the disk-and-sidecar design it would otherwise relay to is already scheduled for replacement.
 - **D9. The Gemini backend is not a fallback.** `askQuestionGemini` calls the retired `gemini-pro` id; live-confirmed 2026-09-21 against the deployed API, which answered `404 models/gemini-pro is not found for API version v1beta`. Production Gilligan therefore fails every question today, and `GILLIGAN_BACKEND=gemini` restores that, not a working assistant. The default stays `gemini` so the relay is inert when merged upstream, which is a merge-safety property and not a safety net.
 
+- **D10. Gilligan runs with `SENSOR_TOOL=true`; `REPORT_TOOL` stays off until R1.** Both flags
+  default off, which is right for the eval harness and wrong for the product, and nothing had
+  said which value the release runs with. With them off the model is handed no tools at all, so
+  every question about a reading falls through to `REFUSAL_SENTENCE` — a real session refused
+  "can you tell me what my past 2 weeks of turbidity look like" and "do you have data on any of
+  my pods?" for that reason alone, and R3's verification never caught it because it was
+  conducted with `SENSOR_TOOL=false` throughout. `SENSOR_TOOL=true` is therefore a release
+  requirement, not a tuning knob: it is what makes Gilligan a sensor assistant rather than a
+  document search. It turns every reading question into a live production device read, scoped to
+  the asking user's own token (`2b`). `REPORT_TOOL` stays off because `generate_report` returns
+  a disk path guarded by the bearer-token-hash sidecar that R1 replaces with returned bytes;
+  turning it on before R1 would ship the defect, not the feature.
+
+  Consequences to hold together, since the flag moves three things at once (the prompt block, the
+  `tools` array, the registry): every eval capture must set `SENSOR_TOOL=false` explicitly on both
+  server and runner rather than relying on the default, and the deployment runbook for R5 has to
+  carry the flag or cer-rag will come up in production answering nothing.
+
 Open:
 
 - **D5, D6. Supervisor answers** on referral contacts and the three v2 questions: `STAKEHOLDER_QUESTIONS.md` items 17-20.

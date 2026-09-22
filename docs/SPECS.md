@@ -153,6 +153,7 @@ clean-earth-rag/
 │   │   ├── generateReport.ts   the report tool, gated on REPORT_TOOL
 │   │   ├── getPodThresholds.ts  the pod's registry alert limits, validated, no fallback
 │   │   ├── getTurbidityInfo.ts  turbidity clarity bands and sensor caveats
+│   │   ├── listPods.ts       the caller's own fleet, with best-effort freshness (§10.3a)
 │   │   ├── timeRange.ts      NL range parsing + reference-time anchoring
 │   │   └── aggregate.ts      min/max/mean/median/latest/earliest/raw/series, null-never-zero
 │   ├── report/              the deterministic report pipeline (compute, then narrate)
@@ -553,6 +554,16 @@ name turbidity as one of the six measured parameters, and **0 is a valid turbidi
 must never be flagged as erroneous (same rule as ORP). The reasoning is in the
 `src/prompt/systemPrompt.ts` docstring and the `timeline.md` decision log.
 
+**Greetings and capability questions are carved out of the refusal rule** (2026-09-21). They were
+not before: the scope rule fired on anything that was not a groundable question, so "hello" was
+answered with `REFUSAL_SENTENCE`, which is how a real session opened. A greeting asks for nothing,
+so there is nothing to ground and nothing to refuse. The carve-out names only greetings, thanks and
+"what can you do", so it cannot be read as licence to answer a substantive question unsupported,
+and the three rules that bound it — no prior knowledge, no world knowledge, no fabricated readings
+— are asserted alongside it. The same edit asks a refusal to name the closest thing the system
+genuinely can do, offered as a different next step and never as the answer: every wave-1
+`refusal-*` fixture rubric already required that and the prompt text did not ask for it.
+
 The legacy **tool inventory and routing rules were deliberately not ported.** The legacy model
 fetched documents itself via a `search_documents` tool; here retrieval runs before the call and
 arrives as context, so advertising tools that do not exist would invite the model to announce lookups
@@ -627,10 +638,25 @@ that flag and must never move apart: the prompt block, the `tools` array, and th
 - **Round-cap fallback:** the last prose the model produced, or `ROUND_CAP_PLACEHOLDER` if it never
   produced any.
 
-`query_sensor_data` (`src/tools/querySensorData.ts`) and `generate_report`
-(`src/tools/generateReport.ts`) are the registered tools, each behind its own flag.
+`query_sensor_data` (`src/tools/querySensorData.ts`), `list_pods` (`src/tools/listPods.ts`),
+`get_pod_thresholds` and `get_turbidity_info` are the `SENSOR_TOOL` registrations;
+`generate_report` (`src/tools/generateReport.ts`) is the `REPORT_TOOL` one.
 `search_documents` is **not** a tool — ◆G11 is open, and retrieval still runs before the call as
 CONTEXT.
+
+**`list_pods` answers "which pods do I have", and exists because nothing else could.** The fleet is
+scoped to the caller's organization by the device API, so it is not a property of the deployment:
+it cannot live in the system prompt, which must stay byte-identical across requests to stay
+cacheable, and it is not in CONTEXT, which holds corpus text. Before this tool the model's only
+route to a pod name was the failure text `resolveDevice` emits when more than one device is
+visible, which reads as an error — so a question about the user's own fleet drew the refusal
+sentence. It takes no arguments, prints the deduped registry rows under the same names `device`
+accepts, and shares the per-token `/devices` TTL cache with every other tool in the request. Its
+`last_reported` column is **best effort and not proof of silence**: it comes from `/water/last`,
+which drops readings with no GPS fix, so a null there means "not confirmed recently" and the
+question "has this pod stopped" is a `query_sensor_data` call. Freshness probing is capped at 20
+pods (the listing itself is never truncated); beyond that, pods carry
+`"last_reported": "not_checked"`.
 
 **Arguments:** `metric` (six names, or `all`), `time_range`, `aggregation`, optional `device`, and
 optional `bucket` for `series`.
