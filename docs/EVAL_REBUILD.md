@@ -221,6 +221,20 @@ chunks these are.
 - **Changing a parameter in the table above is destructive.** Every existing chunk id re-derives at
   once, whatever the current chunk count (446 as of 2026-09-13; it was 451 at the freeze — that
   drop is the removed source-of-truth document, not a re-chunk).
+- **Re-OCRing a scanned document is destructive to that document, and only to it.** New in the
+  2026-09-21 rebuild: the OCR cache was lost with the machine and had to be regenerated with
+  tesseract 4.1.1 instead of the 5.3.4 that produced the original, which moved
+  `epa-sop-field-instrument-calibration-2010.pdf` by +86 chars. Because ids are `sha256(text)`,
+  a changed OCR pass is not an edit — it replaces the whole document's text. Measured against
+  `eval/claims/`: **434 of 446 chunk ids still resolve, and the 12 that do not are exactly that
+  document's.** Chunk *count* was unaffected (12 before, 12 after), so only the hashes moved.
+
+  This is the first case where the **human locator** has to earn its keep rather than being
+  insurance. Every one of those 12 claims carries a `locator` (document + section + short quote),
+  so the fix is to **re-resolve** them against the new chunks, not re-extract the claims. Doing it
+  by re-extraction would also discard the corrected drift/QAPP gap statement in that document's
+  inventory, which was wrong at the 2026-09-01 qualification pass
+  (`eval/fixtures-wave1/_QUALIFICATION.md` §2.1) and has since been fixed.
 
 Phase 1e's **human locator** (document + section + short quote) is the mitigation for all three. It
 lets a label be re-resolved against a new chunk instead of re-authored. Phase 1a is already

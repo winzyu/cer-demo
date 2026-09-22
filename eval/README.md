@@ -26,6 +26,15 @@ Their names are deliberately free. New captures, packets and labels land back at
 `transcripts/`, `grading/` and `retrieval-labels/`. `fixtures/` stays empty until the last step
 of the migration renames `fixtures-wave1/` into it.
 
+**`grading/` now holds one file again**, recovered 2026-09-21 after the incident:
+`phase-1d-wave1-fixture-review.html`, the Phase 1d human-verification sheet. It is the review
+*tool plus its fixture data*, *not* the review's results — the page saves decisions to
+`localStorage` in whichever browser they were made, so the decisions themselves are not in this
+file and are not in the repository. The page is still live and owned by the user at
+`https://claude.ai/code/artifact/9ee30967-633b-42ca-86b4-418cff7858e6`, which is the copy that
+holds any decisions already recorded.
+**It describes the superseded 46-fixture / 92-turn set**, not the current 45 / 90 above.
+
 ## Rules that did not change
 
 **Fixtures are committed before any arm runs, and the rubrics are not revised after seeing an
