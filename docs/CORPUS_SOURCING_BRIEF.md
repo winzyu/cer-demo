@@ -217,8 +217,10 @@ HTTP 200 and looked fine.
 2. **Confirm it is not superseded.** *Five of nine* USGS chapter links in circulation pointed at
    retired editions, which USGS still serves at their original URLs. For USGS, the publications API
    records this explicitly:
-   `https://pubs.usgs.gov/pubs-services/publication/?q=<indexId>&mimetype=json` — look for a
-   `SUPERSEDED_BY` relation. The stakes are real: the 1998 turbidity chapter contains the string
+   `https://pubs.usgs.gov/pubs-services/publication/?indexId=<indexId>&mimetype=json` — look for a
+   `SUPERSEDED_BY` relation. **Corrected 2026-09-21:** the form recorded here until now was
+   `?q=<indexId>`, which returns `recordCount: 0` for every chapter and so silently looks like
+   "no supersession recorded" rather than like a failed query. `?indexId=` returns the record. The stakes are real: the 1998 turbidity chapter contains the string
    "FNU" **zero** times; the 2005 edition has it ten times.
 3. **Confirm text extracts.** `pdftotext file.pdf -` returning nothing means scanned images.
 4. **Confirm it is not a landing page.** Several agency "documents" are HTML pages whose actual PDF

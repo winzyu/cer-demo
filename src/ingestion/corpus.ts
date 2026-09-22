@@ -48,7 +48,8 @@ export const DOC_META: Record<string, DocMeta> = {
   // troubleshooting and reporting conventions.
   //
   // **Every chapter here is the current edition, verified against the USGS publications API
-  // 2026-08-21** (`pubs-services/publication/?q=tm9A6.x`), which records `SUPERSEDED_BY` links
+  // 2026-08-21, re-verified 2026-09-21** (`pubs-services/publication/?indexId=tm9A6.x`; the
+  // `?q=` form returns zero records), which records `SUPERSEDED_BY` links
   // explicitly. Six chapters have been reissued in the newer **Techniques and Methods (TM 9-A6.x)**
   // series; 6.5, 6.6 and 6.7 have not and their current TWRI Book 9 editions are used. The title
   // is what the model cites, so the edition named in the title has to match the file on disk —

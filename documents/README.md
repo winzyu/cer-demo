@@ -92,7 +92,8 @@ One chapter per measured parameter, each covering calibration, interferences, tr
 reporting conventions. This is the tier that answers "what does the procedure actually say".
 
 **Every chapter is the current edition, verified 2026-08-21** against the USGS publications API
-(`pubs.usgs.gov/pubs-services/publication/?q=tm9A6.x`), which records `SUPERSEDED_BY` links
+(`pubs.usgs.gov/pubs-services/publication/?indexId=tm9A6.x` — the `?q=` form recorded here
+until 2026-09-21 returns zero records for every chapter), which records `SUPERSEDED_BY` links
 explicitly. That check was not ceremony — **five of the nine chapter links in circulation point at
 superseded editions**, and USGS keeps the old PDFs served at their original URLs, so a stale link
 returns 200 and looks fine:
