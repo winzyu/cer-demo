@@ -1,7 +1,7 @@
 # Gilligan tool access and refusal quality
 
 Why the assistant refused three consecutive questions in a real session, what was wrong, and what changed.
-Written 2026-09-21, after R3.
+Written 2026-09-21, after R3; verified live 2026-09-22.
 Decision: [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) D10.
 Behaviour: [`../SPECS.md`](../SPECS.md) §10.2 and §10.3a.
 
@@ -86,6 +86,26 @@ The tool flags stay purely additive to the base prompt, which `test/unit/prompt.
 
 Offline, 2026-09-21: `npm run typecheck` and `npm run lint` clean; `listPods` (11) and `prompt` (36) pass, as do the adjacent `querySensorData` (59), `getPodThresholds` (9) and `chatOrchestrator` (27) suites.
 
-**Not yet verified live.**
-The three questions above have not been re-asked against the running stack, because doing so spends Fireworks tokens and makes live production device reads.
-That run is the remaining step: with all three services up and `SENSOR_TOOL=true`, ask "hello", the turbidity question and the pod question, and confirm each is answered rather than refused.
+Live, 2026-09-22, with `SENSOR_TOOL=true` on `:8010` and the relay on `:5001` pointed at it.
+All three questions from the session above were re-asked and all three are now answered.
+
+| turn | tools called | result |
+|---|---|---|
+| "hello" | none | A one-sentence description of what it covers, and an invitation to ask. No refusal, and no tool call wasted on a greeting. |
+| "do you have data on any of my pods?" | `list_pods` | Named all five pods with water type and last-reported date, then asked which one. Previously "I have no sensor data for your pods." |
+| "can you tell me what my past 2 weeks of turbidity look like" (pod selected, as the dashboard's picker does) | `get_turbidity_info`, then `query_sensor_data` | 14 days of turbidity as a 30-bucket series: 108 samples, 16 excluded as faulted, all zero, window `complete: true`. Reported the zeros in the Clear band *and* the caveat that zero can equally mean an offline sensor. |
+
+The turbidity answer was checked against the tool result rather than read for plausibility: the sample count, the faulted-exclusion count, the window and the all-zero series all match what `query_sensor_data` returned.
+The routing rules were followed exactly — `get_turbidity_info` before characterising the value, `series` for the trend, and `list_pods` before any claim about the fleet.
+
+The same pod question was then asked through the relay at `:5001`, which returned the same answer with `"toolCalls": ["list_pods"]` in its `audit`.
+That is the part R3 could not exercise: it confirms the caller's bearer token reaches cer-demo and on to the device API, which only matters once tools are on.
+
+Spend: 4 chat questions, 106,158 Fireworks tokens (`gpt-oss-120b`), and live production device reads against the account's own pods. No writes.
+
+## Defects observed while doing this
+
+Both are pre-existing and neither is caused by this change.
+
+- **A citation marker was attached to a claim that came from a tool result, with a quote that does not support it.** The turbidity answer ends its caveat sentence — whose substance came from `get_turbidity_info` — with `【5†"Turbidity, which can make water appear cloudy or muddy, is caused by the presence of suspended and dissolved matter"}】`. The system prompt already forbids this in as many words ("Do not put a citation marker on a sensor reading or a tool result; those are not CONTEXT excerpts"), so the fix is not another rule: the existing one was ignored, and why is worth knowing before Phase 3 treats citation placement as a graded property.
+- **The `"}】` closer leaves a doubled bracket in the rendered text.** `MARKER_PATTERN` (`frontend/js/citations.js:23`, and its copy in the dashboard's `gilligan-citations.js`) accepts `}` as a marker closer, so on `..."}】` it consumes the `}` and leaves the real `】` behind: `collapseCitationQuotes` renders the marker above as `【5】】`. The quote text itself is stripped correctly and does not leak, so this is cosmetic, and it is the same shared pattern as the recorded `}]` defect rather than a new one.
