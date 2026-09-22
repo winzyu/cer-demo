@@ -1,0 +1,115 @@
+{
+  "corpus_sha256": "50f86326b020f7057e93a24a1c1f0d5f0a76a96deb75ecdd768d45a9f10707e6",
+  "batches": [
+    [
+      "deepmanual-do-air-calibration",
+      "probecal-do-saturation-target",
+      "deepmanual-do-saturation-ceiling",
+      "deepmanual-brackish-do-correction",
+      "crossdoc-do-calibrated-dry-deployed-brackish"
+    ],
+    [
+      "deepmanual-diluting-clarity-standards",
+      "deepmanual-turbidity-rounding",
+      "followup-mixing-the-clarity-bottle",
+      "followup-clarity-calibration-whole-head",
+      "definitional-what-a-bare-tu-label-tells-us"
+    ],
+    [
+      "probecal-ph-what-solutions",
+      "probecal-ph-slope-acceptance",
+      "probecal-buffer-handling",
+      "crossdoc-soft-water-ph-wont-settle",
+      "crossdoc-acid-drainage-conductivity-suspect"
+    ],
+    [
+      "deepmanual-ec-standard-choice",
+      "followup-cleaning-the-salt-sensor",
+      "probecal-ec-never-recalibrate",
+      "definitional-what-per-centimetre-means",
+      "crossdoc-conductivity-rise-with-warming"
+    ],
+    [
+      "definitional-eh-versus-the-millivolts-we-log",
+      "deepmanual-zobell-check",
+      "probecal-orp-standard-check",
+      "crossdoc-orp-sliding-do-steady",
+      "crossdoc-bailed-orp-jumping"
+    ],
+    [
+      "crossdoc-temp-sensor-drift-blast-radius",
+      "followup-jumpy-temperature-trace",
+      "deepmanual-thermistor-annual-check",
+      "crossdoc-cold-water-hot-day-turbidity",
+      "crossdoc-warm-week-oxygen-drop"
+    ],
+    [
+      "deepmanual-cross-section-points",
+      "crossdoc-how-steady-before-i-write-it-down",
+      "deepmanual-sonde-settle-time",
+      "probecal-sonde-calibration-order",
+      "crossdoc-sonde-sensor-order"
+    ],
+    [
+      "precedence-ph-river-range-not-pod-limit",
+      "precedence-turbidity-groundwater-background-not-pod-limit",
+      "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+      "crossdoc-two-oxygen-tables-disagree",
+      "probecal-end-of-day-check"
+    ],
+    [
+      "refusal-buffering-capacity-not-measured",
+      "refusal-how-long-can-it-stay-in",
+      "refusal-temperature-harm-threshold",
+      "refusal-turbidity-sensor-hardware",
+      "definitional-required-versus-recommended"
+    ]
+  ],
+  "fixture_sha256": {
+    "crossdoc-acid-drainage-conductivity-suspect.json": "c91e60520a8c9dcda14f91e64ebb5a331970fc215392e31c4e5387efbdc22441",
+    "crossdoc-bailed-orp-jumping.json": "483be740e5d7b28aa81df742979c067f28772b09a2244248bfa7cc5b6de4c32f",
+    "crossdoc-cold-water-hot-day-turbidity.json": "4a1412cd44dacf243dd7a660133694dec8ba38e434dff84f500aeaf47f13e867",
+    "crossdoc-conductivity-rise-with-warming.json": "76c64525dd395854da7ea90a96e243337ec3b27b2934fded15116b259b9dea58",
+    "crossdoc-do-calibrated-dry-deployed-brackish.json": "6b6ca2d7ae2aef840374185123df117afac81c2430fbfda5c92d3b1d02b3c06e",
+    "crossdoc-how-steady-before-i-write-it-down.json": "1d4daa343d0920819387110b77fd5e231cde170a197961fbba1ff7052095bf30",
+    "crossdoc-orp-sliding-do-steady.json": "910f5e6cfdf5f20a64c74b914d4a96ea6ad74ddafad6d4809c5fd37b4f5d87e7",
+    "crossdoc-soft-water-ph-wont-settle.json": "19df77a53dc703c691fd7c0d170847b3f894fdb77db0e117f8a2552174157578",
+    "crossdoc-sonde-sensor-order.json": "7f540ffe24925d918d889d345e8c911fed6afe3a47493f376b8a4d63f8feb618",
+    "crossdoc-temp-sensor-drift-blast-radius.json": "2bb38240a345eee8c3d8161eb56348fd4e9aa5346abe8e488c36616c9af92c7d",
+    "crossdoc-two-oxygen-tables-disagree.json": "92ce0f6a0ad3943228786848471ca87b3eaf42c7fca7aef676856403402e168f",
+    "crossdoc-warm-week-oxygen-drop.json": "ff597c9a3ebf5d2e2abed5a9ce464f7e218e94f215ea7a173fb6367fb16e32e5",
+    "deepmanual-brackish-do-correction.json": "3f1077d9a127fc4c41977930d95441b0e7d8146059bf987854e33d55b201a79c",
+    "deepmanual-cross-section-points.json": "4795697630f2d5c6535af3d96be4a70b64b1216dc836ad517a26964f64d1f198",
+    "deepmanual-diluting-clarity-standards.json": "cfd7b7d7b3cae7d772e7221af537fd7f87b7b62bd083a022f5fa8a10cf7e8b10",
+    "deepmanual-do-air-calibration.json": "a96e568a31be4bbe718eb234ce9bc0a2ebfa3e042d20d52be899b6a810f9ba53",
+    "deepmanual-do-saturation-ceiling.json": "4a8e20bd364b89f8402793287321842a5d360cd3ef1080b304a374d1f28c75e9",
+    "deepmanual-ec-standard-choice.json": "e110133538670602583fafbe6f0f339d041d82f2fc75161bc60e4467f324f47a",
+    "deepmanual-sonde-settle-time.json": "4bdfff209ac224d4d80d760cb06ba1f80254ddbcf9f0f927f8cd4a86d3688ac4",
+    "deepmanual-thermistor-annual-check.json": "f76f537a9b649a117ac7a8092a55b007ac432c7368b200cec389e9106f8c9753",
+    "deepmanual-turbidity-rounding.json": "29b9afbdc7756ef9da45d3cc1a4ff0bb1662051e7719a7d05f1f532cbf92af35",
+    "deepmanual-zobell-check.json": "a7122d9ea7399d4fb79715faef1edb0f6729ef9f19cddd7c7d8359bd4e4ef312",
+    "definitional-eh-versus-the-millivolts-we-log.json": "25e1a9263acae8f4573ba5609fb2e1e47e505af20df12218aa51fa70fde646ea",
+    "definitional-required-versus-recommended.json": "a70daa92664deeeb0dce93dc014fe7fc2a644fd4213301646eed4eb41df90805",
+    "definitional-what-a-bare-tu-label-tells-us.json": "69e812137793eeb964af4ebf35b5bcf918b91cfc4eed19a133a2e5909ac235d2",
+    "definitional-what-per-centimetre-means.json": "1262ffd0fc10ffc7b45384f0e4cadd709724d7380da7772b548b878dab20041a",
+    "followup-clarity-calibration-whole-head.json": "6025dc782866b28cbba837d7b637c0bad5b529459d5e06257a2bf128cd01c251",
+    "followup-cleaning-the-salt-sensor.json": "169b8de4086a426792bb6b8d698e089e02d8941ef4f319237addcea8a3627813",
+    "followup-jumpy-temperature-trace.json": "9421fbcdc6feea7bc60228c2d46bf0e618efe8ffebf14186c90413d9a0a294cc",
+    "followup-mixing-the-clarity-bottle.json": "e8ca3456f99ebd7e6508f1339e414293c0bc7a6b17978eee917a0b9a8431da8f",
+    "precedence-do-hypoxia-qa-trigger-not-pod-limit.json": "48749203d138e91536491b891e312c2c0a19a29c522f52d84c5fd2afe8f71afc",
+    "precedence-ph-river-range-not-pod-limit.json": "5ff8fc5da00a42f24d6d203218c9f6acb26f6aa27de7cf2f3b1d4fcb8a9773b4",
+    "precedence-turbidity-groundwater-background-not-pod-limit.json": "7b8272e269c88496db305eb94926724e4a79b887d119f3cafb367ffb3777ed13",
+    "probecal-buffer-handling.json": "43bfcb8802fedb589729e75fffb5c7072af3dcdaaa496d83dc4c028ac834ae2c",
+    "probecal-do-saturation-target.json": "184a4fdcb71b857917ebfc284c5aa089908f1f1744f5f673cb0ea8f12bf81a95",
+    "probecal-ec-never-recalibrate.json": "a1904696ef30a8080a7c7444f82a22fe15ded20d894785853d084972f8dbb750",
+    "probecal-end-of-day-check.json": "36774156aa33e4f4d1df166eed2b9ffa63a604375d42df1fbed34bd2a21fe2d0",
+    "probecal-orp-standard-check.json": "f391e4ac58518b105179f1b2abfcd669ed0a2ed4fd6b68b97917c9f81d368e99",
+    "probecal-ph-slope-acceptance.json": "4504293ec2cdb74ec95ef7fb93dfeeba74840c26b4d32caf57fbd43b6c667505",
+    "probecal-ph-what-solutions.json": "f21de90e792bccfaa21b68bc7e802c4b772a8c3101993518c82a06355e1b4540",
+    "probecal-sonde-calibration-order.json": "d355d8ec6e958bb0ef90f82cf8aa00604fd13ed7f13f7ed91b9014a8d527f03c",
+    "refusal-buffering-capacity-not-measured.json": "8f842cba00f954ffbc2485e6350008c937c49cc6e335c5feb9d19a2c0bb6f012",
+    "refusal-how-long-can-it-stay-in.json": "008f9d73d6d0a6eced5d899315589f47fe5b0e6be36e54d999370909e763ee75",
+    "refusal-temperature-harm-threshold.json": "c27ca56e5fdc60ae3dc886c2f352cf64b4ddee44f183f077c5b26fb687b9781e",
+    "refusal-turbidity-sensor-hardware.json": "027b565c2d4467ef4ffe133db3c7d46e9534bd2bb9bc75da403df57656d7158a"
+  }
+}

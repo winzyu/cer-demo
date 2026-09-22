@@ -1,0 +1,317 @@
+[
+  {
+    "id": "deepmanual-do-air-calibration",
+    "batch": 1,
+    "verdict": "KEEP",
+    "turns": 2,
+    "conditions": 14
+  },
+  {
+    "id": "probecal-do-saturation-target",
+    "batch": 1,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 19
+  },
+  {
+    "id": "deepmanual-do-saturation-ceiling",
+    "batch": 1,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 11
+  },
+  {
+    "id": "deepmanual-brackish-do-correction",
+    "batch": 1,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 10
+  },
+  {
+    "id": "crossdoc-do-calibrated-dry-deployed-brackish",
+    "batch": 1,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 22
+  },
+  {
+    "id": "deepmanual-diluting-clarity-standards",
+    "batch": 2,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 13
+  },
+  {
+    "id": "deepmanual-turbidity-rounding",
+    "batch": 2,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 12
+  },
+  {
+    "id": "followup-mixing-the-clarity-bottle",
+    "batch": 2,
+    "verdict": "KEEP",
+    "turns": 2,
+    "conditions": 14
+  },
+  {
+    "id": "followup-clarity-calibration-whole-head",
+    "batch": 2,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 13
+  },
+  {
+    "id": "definitional-what-a-bare-tu-label-tells-us",
+    "batch": 2,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 14
+  },
+  {
+    "id": "probecal-ph-what-solutions",
+    "batch": 3,
+    "verdict": "KEEP",
+    "turns": 2,
+    "conditions": 16
+  },
+  {
+    "id": "probecal-ph-slope-acceptance",
+    "batch": 3,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 15
+  },
+  {
+    "id": "probecal-buffer-handling",
+    "batch": 3,
+    "verdict": "KEEP",
+    "turns": 2,
+    "conditions": 15
+  },
+  {
+    "id": "crossdoc-soft-water-ph-wont-settle",
+    "batch": 3,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 19
+  },
+  {
+    "id": "crossdoc-acid-drainage-conductivity-suspect",
+    "batch": 3,
+    "verdict": "KEEP",
+    "turns": 2,
+    "conditions": 18
+  },
+  {
+    "id": "deepmanual-ec-standard-choice",
+    "batch": 4,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 13
+  },
+  {
+    "id": "followup-cleaning-the-salt-sensor",
+    "batch": 4,
+    "verdict": "KEEP",
+    "turns": 2,
+    "conditions": 16
+  },
+  {
+    "id": "probecal-ec-never-recalibrate",
+    "batch": 4,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 16
+  },
+  {
+    "id": "definitional-what-per-centimetre-means",
+    "batch": 4,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 15
+  },
+  {
+    "id": "crossdoc-conductivity-rise-with-warming",
+    "batch": 4,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 16
+  },
+  {
+    "id": "definitional-eh-versus-the-millivolts-we-log",
+    "batch": 5,
+    "verdict": "KEEP",
+    "turns": 2,
+    "conditions": 13
+  },
+  {
+    "id": "deepmanual-zobell-check",
+    "batch": 5,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 13
+  },
+  {
+    "id": "probecal-orp-standard-check",
+    "batch": 5,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 16
+  },
+  {
+    "id": "crossdoc-orp-sliding-do-steady",
+    "batch": 5,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 20
+  },
+  {
+    "id": "crossdoc-bailed-orp-jumping",
+    "batch": 5,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 21
+  },
+  {
+    "id": "crossdoc-temp-sensor-drift-blast-radius",
+    "batch": 6,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 17
+  },
+  {
+    "id": "followup-jumpy-temperature-trace",
+    "batch": 6,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 13
+  },
+  {
+    "id": "deepmanual-thermistor-annual-check",
+    "batch": 6,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 15
+  },
+  {
+    "id": "crossdoc-cold-water-hot-day-turbidity",
+    "batch": 6,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 17
+  },
+  {
+    "id": "crossdoc-warm-week-oxygen-drop",
+    "batch": 6,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 17
+  },
+  {
+    "id": "deepmanual-cross-section-points",
+    "batch": 7,
+    "verdict": "KEEP",
+    "turns": 2,
+    "conditions": 14
+  },
+  {
+    "id": "crossdoc-how-steady-before-i-write-it-down",
+    "batch": 7,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 20
+  },
+  {
+    "id": "deepmanual-sonde-settle-time",
+    "batch": 7,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 15
+  },
+  {
+    "id": "probecal-sonde-calibration-order",
+    "batch": 7,
+    "verdict": "KEEP",
+    "turns": 2,
+    "conditions": 17
+  },
+  {
+    "id": "crossdoc-sonde-sensor-order",
+    "batch": 7,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 17
+  },
+  {
+    "id": "precedence-ph-river-range-not-pod-limit",
+    "batch": 8,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 17
+  },
+  {
+    "id": "precedence-turbidity-groundwater-background-not-pod-limit",
+    "batch": 8,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 18
+  },
+  {
+    "id": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+    "batch": 8,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 16
+  },
+  {
+    "id": "crossdoc-two-oxygen-tables-disagree",
+    "batch": 8,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 19
+  },
+  {
+    "id": "probecal-end-of-day-check",
+    "batch": 8,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 16
+  },
+  {
+    "id": "refusal-buffering-capacity-not-measured",
+    "batch": 9,
+    "verdict": "KEEP",
+    "turns": 2,
+    "conditions": 21
+  },
+  {
+    "id": "refusal-how-long-can-it-stay-in",
+    "batch": 9,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 28
+  },
+  {
+    "id": "refusal-temperature-harm-threshold",
+    "batch": 9,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 20
+  },
+  {
+    "id": "refusal-turbidity-sensor-hardware",
+    "batch": 9,
+    "verdict": "EDIT",
+    "turns": 2,
+    "conditions": 21
+  },
+  {
+    "id": "definitional-required-versus-recommended",
+    "batch": 9,
+    "verdict": "KEEP",
+    "turns": 2,
+    "conditions": 12
+  }
+]
