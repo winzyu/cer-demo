@@ -5,6 +5,7 @@ import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import { QuerySensorData } from "../../src/tools/querySensorData";
 import { GenerateReport, generateReportDefinition } from "../../src/tools/generateReport";
 import { isReportOwner } from "../../src/report/reportOwnership";
+import { catalogue } from "../../src/catalogue";
 
 /**
  * generate_report end to end: builds a real PDF on disk from recorded device-api fixtures (same
@@ -86,6 +87,9 @@ describe("GenerateReport.run", () => {
     expect(["Normal", "Watch", "Action Required", "Not assessed"]).toContain(result.status);
     expect(typeof result.events_flagged).toBe("number");
     expect(Array.isArray(result.event_types)).toBe(true);
+    // The audit trail needs to know which approved wording the report used.
+    expect(result.catalogue_version).toBe(catalogue.version);
+    expect(Array.isArray(result.guidance_ids)).toBe(true);
     expect(result.report_url).toMatch(/^\/api\/v1\/reports\/report_[a-f0-9]{8}\.pdf$/);
 
     // The tool result is JSON.stringify'd straight into a chat message (ChatOrchestrator.ts) --

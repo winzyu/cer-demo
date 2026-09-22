@@ -3,7 +3,7 @@
 Draft, 2026-09-17, for the September 30, 2026 dashboard release.
 Built on the decisions in [`GILLIGAN_PRODUCT_DIRECTION.md`](GILLIGAN_PRODUCT_DIRECTION.md); the integration background is [`INTEGRATION_PLAN.md`](INTEGRATION_PLAN.md).
 This is a plan for review, not an approved implementation specification.
-Nothing here has been built yet.
+Built so far: R2's catalogue code (`docs/SPECS.md` §4b, flags off, supervisor approval pending), R3's relay and page (`GILLIGAN_R3_PORT.md`) and the tool-access fix (`GILLIGAN_TOOL_ACCESS.md`).
 
 Code evidence was read at cer-demo `1a8c744`, `user-dashboard` `c55f65d` and `clean-earth-rovers-server` `origin/develop` `b221702`.
 The local server checkout is behind its remote, so upstream claims come from `origin/develop` and may still be stale against the real remote.
@@ -222,6 +222,11 @@ Settled 2026-09-21:
   `tools` array, the registry): every eval capture must set `SENSOR_TOOL=false` explicitly on both
   server and runner rather than relying on the default, and the deployment runbook for R5 has to
   carry the flag or cer-rag will come up in production answering nothing.
+
+- **D11. R2 before R1** (2026-09-17): the catalogue was built first because supervisor approval is on the critical path.
+  Its commits were lost with the old machine and recovered on 2026-09-22 at tag `old-machine-recovery-2026-09-19`.
+- **D12. Identity check inside cer-rag** (2026-09-17): cer-rag verifies the Google-signed ID token itself (audience and cer-api's service-account email) with `google-auth-library`, in addition to Cloud Run invoker IAM, so a deployment accidentally left public still refuses forged identity.
+  The check sits behind a flag that is off for local development and the demo.
 
 Open:
 

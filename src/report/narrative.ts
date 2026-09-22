@@ -10,11 +10,29 @@
  * point rather than resurrecting it speculatively now.
  */
 
-import type { ParameterStats, ReportInput, ReportStatus } from "./types";
+import type {
+  ParameterStats, ReportInput, ReportStatus, WQEvent,
+} from "./types";
 import {
-  CONFIDENCE_FLOOR, flagFor, heldSteady, isRelativeIndex, outOfRangeShare, statValue, withUnit,
+  flagFor, heldSteady, isRelativeIndex, outOfRangeShare, statValue, withUnit,
 } from "./types";
 import { clarityBandFor, isOffScaleTurbidity, TURBIDITY_SCALE_CAVEAT } from "./referenceRanges";
+import { entriesFor, entryText, waterClassFor } from "../catalogue/select";
+import type { Finding, UsableGuidance } from "../catalogue/select";
+import type { CatalogueEntry, RecommendationSlot, WaterClass } from "../catalogue/types";
+
+/**
+ * Section 4's wording for one event. The event itself (`events.ts`) says what was detected; this
+ * says what the report may claim about it, which is only what the guidance catalogue approves.
+ */
+export interface EventNarrative {
+  /** The event type when an approved explanation names it, otherwise a neutral heading. */
+  heading: string;
+  /** False when no approved explanation matched, so no cause (or confidence in one) is shown. */
+  causeNamed: boolean;
+  interpretation: string;
+  followUp: string;
+}
 
 export interface NarrativeSections {
   /** Rendered as a bulleted list, not a paragraph. */
@@ -24,7 +42,87 @@ export interface NarrativeSections {
   recommendationsOperational: string;
   recommendationsInvestigative: string;
   recommendationsStakeholder: string;
+  /** One per `report.events` entry, in the same order. */
+  events: EventNarrative[];
+  /** The catalogue version and every entry id this report used, for the audit trail. */
+  catalogueVersion: string;
+  guidanceIds: string[];
 }
+
+/** The heading for an event whose cause the catalogue does not let the report name. */
+export const UNEXPLAINED_HEADING = "Threshold crossing";
+
+/** A recommendation slot with no approved entry for this report's findings. */
+export const NO_APPROVED_STEP = "No approved recommendation covers these findings yet.";
+
+const UNEXPLAINED_INTERPRETATION = "Readings crossed this pod's configured thresholds. No approved "
+  + "explanation covers this pattern, so the report does not name a cause.";
+
+const byKind = (entries: CatalogueEntry[], kind: CatalogueEntry["kind"]): CatalogueEntry[] => (
+  entries.filter((e) => e.kind === kind)
+);
+
+/**
+ * The finding an event is selected under. An event with no approved explanation is treated as
+ * `Inconclusive` for every other entry too: recommending, say, bacteria testing next to a heading
+ * that names no cause would state the unapproved cause by implication.
+ */
+const eventFinding = (
+  event: WQEvent,
+  water: WaterClass,
+  guidance: UsableGuidance,
+): { finding: Finding; causeNamed: boolean } => {
+  const finding: Finding = {
+    trigger: event.type,
+    water,
+    confidence: event.confidence,
+    severity: event.severity,
+  };
+  const causeNamed = event.type !== "Inconclusive"
+    && byKind(entriesFor(guidance.entries, finding), "explanation").length > 0;
+  return {
+    finding: causeNamed ? finding : { ...finding, trigger: "Inconclusive" },
+    causeNamed,
+  };
+};
+
+const eventNarrative = (
+  event: WQEvent,
+  matched: CatalogueEntry[],
+  causeNamed: boolean,
+  guidance: UsableGuidance,
+): EventNarrative => {
+  const hours = (event.windowEndMs - event.windowStartMs) / 3_600_000;
+  const duration = event.persistent
+    ? "Readings stayed outside the configured thresholds for most of the period, which points at "
+      + "thresholds that do not fit this site at least as strongly as at a single incident."
+    : `The change lasted ${hours.toFixed(1)} hours.`;
+  const explanations = byKind(matched, "explanation")
+    .map((e) => `${entryText(e, guidance)} ${e.limitations}`);
+  const limitations = byKind(matched, "limitation").map((e) => entryText(e, guidance));
+  const interpretation = [
+    ...(causeNamed ? explanations : [UNEXPLAINED_INTERPRETATION]),
+    ...limitations,
+    duration,
+  ].join(" ");
+  const steps = byKind(matched, "next-step").map((e) => e.title);
+  return {
+    heading: causeNamed ? event.type : UNEXPLAINED_HEADING,
+    causeNamed,
+    interpretation,
+    followUp: steps.length > 0 ? `${steps.join("; ")} (see Recommendations).` : NO_APPROVED_STEP,
+  };
+};
+
+/** Next steps for a slot, deduplicated, in catalogue order, or the no-approved-step line. */
+const slotText = (
+  slot: RecommendationSlot,
+  matched: CatalogueEntry[],
+  guidance: UsableGuidance,
+): string => {
+  const steps = guidance.entries.filter((e) => e.slot === slot && matched.includes(e));
+  return steps.length > 0 ? steps.map((e) => entryText(e, guidance)).join(" ") : NO_APPROVED_STEP;
+};
 
 const patternPhrase: Record<ParameterStats["pattern"], string> = {
   diel: "followed a clear diel rhythm",
@@ -189,10 +287,16 @@ const paramAnalysisLine = (
   return text;
 };
 
+/**
+ * `guidance` is the catalogue content this deployment may show (`src/catalogue/index.ts`).
+ * Possible causes and every recommendation for a flagged period come only from it; the routine
+ * and "not assessed" lines below are about monitoring and configuration, not about the water.
+ */
 export const deterministicNarrative = (
   report: ReportInput,
   probeAccuracy: (key: string, reading: number) => number,
   status: ReportStatus,
+  guidance: UsableGuidance,
 ): NarrativeSections => {
   // "N/A" is excluded alongside "Normal": it means the parameter has no baseline to be outside
   // of (temperature on a device with no usable registry threshold -- see operatorThresholds.ts),
@@ -266,9 +370,19 @@ export const deterministicNarrative = (
     .filter((p) => !heldSteady(p, flagFor(p, probeAccuracy)))
     .forEach((p) => parameterAnalysis.set(p.baseline.label, paramAnalysisLine(p, probeAccuracy)));
 
+  const water = waterClassFor(report.site.waterBodyType);
+  const selections = report.events.map((event) => {
+    const { finding, causeNamed } = eventFinding(event, water, guidance);
+    return { event, causeNamed, matched: entriesFor(guidance.entries, finding) };
+  });
+  const events = selections.map(({ event, causeNamed, matched }) => (
+    eventNarrative(event, matched, causeNamed, guidance)
+  ));
+
   let operational: string;
   let investigative: string;
   let stakeholder: string;
+  let used: CatalogueEntry[] = [];
   if (status === "Not assessed") {
     operational = "Set operator minimum/maximum thresholds for this device in the registry; "
       + "no baseline is currently established for any numeric parameter.";
@@ -277,20 +391,13 @@ export const deterministicNarrative = (
     stakeholder = "Notify client that this device has no usable registry thresholds, so no "
       + "parameter could be compared against a baseline this period.";
   } else if (nonNormal.length > 0 || report.events.length > 0) {
-    operational = "Recalibrate and inspect sensors on flagged parameters at next service window.";
-    investigative = `Collect grab samples to confirm flagged readings${
-      report.events.length > 0 ? " and corroborate event classification." : "."}`;
-    // Escalation, not remediation: this names who to involve (client, authority, a
-    // water-quality professional) and never what to do about the reading. Gated on
-    // CONFIDENCE_FLOOR -- same floor overallStatus uses to keep a low-confidence finding off
-    // "Action Required" -- so an event events.ts already downgraded toward Inconclusive
-    // can't still push a call-an-authority line onto the page.
-    const escalate = report.events.some((e) => e.severity === "High" && e.confidence >= CONFIDENCE_FLOOR);
-    stakeholder = `Notify client${
-      escalate
-        ? " and relevant authority given event severity. Consider referring this excursion to "
-          + "a qualified water-quality professional for review."
-        : "."}`;
+    const crossing = nonNormal.length > 0
+      ? entriesFor(guidance.entries, { trigger: "threshold-crossing", water })
+      : [];
+    used = [...crossing, ...selections.flatMap(({ matched }) => matched)];
+    operational = slotText("operational", used, guidance);
+    investigative = slotText("investigative", used, guidance);
+    stakeholder = slotText("stakeholder", used, guidance);
   } else {
     operational = "No action needed; maintain routine calibration schedule.";
     investigative = "None required this period.";
@@ -303,5 +410,9 @@ export const deterministicNarrative = (
     recommendationsOperational: operational,
     recommendationsInvestigative: investigative,
     recommendationsStakeholder: stakeholder,
+    events,
+    catalogueVersion: guidance.version,
+    // Catalogue order, so the same findings always record the same list.
+    guidanceIds: guidance.entries.filter((e) => used.includes(e)).map((e) => e.id),
   };
 };

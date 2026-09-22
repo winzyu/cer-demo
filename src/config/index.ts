@@ -190,6 +190,20 @@ export interface AuditConfig {
   enabled: boolean;
 }
 
+/**
+ * The guidance catalogue (`src/catalogue/`).
+ *
+ * `prompt` defaults to **off** for the same reason as `SENSOR_TOOL`: the block changes the system
+ * prompt, and eval captures must not mix prompt states. Reports use the catalogue regardless.
+ *
+ * `includeDrafts` also defaults to off. On, customers see wording no supervisor has approved,
+ * so it exists only for the supervisor's own review of a running demo.
+ */
+export interface CatalogueConfig {
+  prompt: boolean;
+  includeDrafts: boolean;
+}
+
 export type CorpusSourceName = "artifact" | "firestore";
 
 export interface RetrievalConfig {
@@ -220,6 +234,7 @@ export interface Config {
   retrieval: RetrievalConfig;
   waterType: WaterType;
   audit: AuditConfig;
+  catalogue: CatalogueConfig;
 }
 
 // Validation errors are collected so the process fails once, with every problem listed.
@@ -418,6 +433,10 @@ const load = (): Config => {
     audit: {
       enabled: readBool("AUDIT_LOG", false),
     },
+    catalogue: {
+      prompt: readBool("CATALOGUE_PROMPT", false),
+      includeDrafts: readBool("CATALOGUE_DRAFTS", false),
+    },
   };
 
   // A cap of 0 would offer tools and then never let the model use a result, which reads as
@@ -464,6 +483,19 @@ const load = (): Config => {
     if (!config.deviceApi.baseUrl) {
       log.warn("REPORT_TOOL is on but DEVICE_API_BASE_URL is not set — generate_report will fail at call time.");
     }
+  }
+
+  if (config.catalogue.prompt) {
+    log.warn(
+      "CATALOGUE_PROMPT is ON: the system prompt carries the approved-guidance block. "
+      + "Same capture-comparability caveat as SENSOR_TOOL above.",
+    );
+  }
+  if (config.catalogue.includeDrafts) {
+    log.warn(
+      "CATALOGUE_DRAFTS is ON: chat and reports show catalogue entries no supervisor has "
+      + "approved. For supervisor review only; never set it for customers.",
+    );
   }
 
   // Quota state is logged on **every** boot, in both directions. An operator's first question

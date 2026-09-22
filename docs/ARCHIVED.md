@@ -10,6 +10,7 @@ in git history under the tag named in its section.
 | `corpus-archive-2026-09-13` | 2026-09-13 | the operator source-of-truth document and its claim inventory — 2 files |
 | `handoffs-archive-2026-09-13` | 2026-09-13 | the last three dated session handoffs, retired for a single living `docs/STATUS.md` |
 | `eval-docs-archive-2026-09-15` | 2026-09-15 | the bake-off results report and the two fixture specs for the archived eval set — 3 files |
+| `old-machine-recovery-2026-09-19` | 2026-09-22 | work from 2026-09-17 to 2026-09-19 that was committed on the old machine but never pushed, rebuilt from session transcripts - 5 planning docs not restored to the tree |
 
 Retrieve one by path:
 
@@ -179,6 +180,28 @@ Retrieve:
 git show eval-docs-archive-2026-09-15:docs/RETRIEVAL_COMPARISON.md
 git show eval-docs-archive-2026-09-15:docs/EVAL_FIXTURES.md
 git show eval-docs-archive-2026-09-15:docs/EVAL_FIXTURES_NEXT.md
+```
+
+## `old-machine-recovery-2026-09-19` - lost old-machine work, rebuilt
+
+The old machine made about 12 commits on `dev` after `05ef730` (2026-09-17 to 2026-09-19) and never pushed them, so the 2026-09-19 wipe lost them, along with the tags `advice-archive-2026-09-17` and `docs-archive-2026-09-19`.
+On 2026-09-22 they were rebuilt from the Claude session transcripts and file-history snapshots onto `05ef730` and tagged `old-machine-recovery-2026-09-19`.
+The R2 catalogue, the turbidity transcriptions, the payload scanner and four planning docs were merged into `dev`; the files below were not, because later work superseded them.
+The doc cleanup of 2026-09-19 (`5b36ae7`, `49e7386`) ran from scratch scripts that no longer exist and could not be rebuilt; the lost tags have no replacement beyond this one.
+
+| file | what it was | why it went |
+|---|---|---|
+| `docs/migration/SUPERVISOR_QUESTIONS_FINAL.md` | Draft of the supervisor questions | Superseded by the sent version, `SUPERVISOR_QUESTIONS_SEND.md`. |
+| `docs/migration/SUPPORTING_DOCS_TASKS.md` | Task packets C1-C8 for the corpus, catalogue and v2 | C1-C4 were done; C5-C8 are covered by STATUS and its gates. |
+| `docs/migration/WSL_SANDBOX_TASKS.md` | Task packets W1-W11 for the sandbox and dashboard | Done or overtaken by R3 on the cleaned upstream `local` branches. |
+| `docs/migration/DOC_CLEANUP.md` | The 2026-09-19 documentation cleanup plan | Its commits were lost, and the docs have been rewritten since. |
+| `docs/migration/RECOVERY_AFTER_RESET.md` | Pre-wipe backup and rebuild guide | Superseded by `WSL_SANDBOX.md` and `SECURITY_INCIDENT_2026-09-19.md`. |
+
+Retrieve:
+
+```bash
+git show old-machine-recovery-2026-09-19:docs/migration/WSL_SANDBOX_TASKS.md
+git show old-machine-recovery-2026-09-19:docs/migration/RELEASE_GOAL_AND_PLAN.md   # the untrimmed plan
 ```
 
 ## Rules

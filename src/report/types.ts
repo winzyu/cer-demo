@@ -191,6 +191,11 @@ export interface WQEvent {
   followUp: string;
   /** 0-1; low confidence should lean toward "Inconclusive". */
   confidence: number;
+  /**
+   * The window covers most of the reporting period (`events.ts` PERSISTENT_WINDOW_SHARE), so it
+   * reads as an offset from the configured thresholds rather than a discrete event.
+   */
+  persistent?: boolean;
 }
 
 /**

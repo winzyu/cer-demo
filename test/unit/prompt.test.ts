@@ -3,6 +3,7 @@ import {
   REFUSAL_SENTENCE, REPORT_TOOL_BLOCK, TOOL_BLOCK, buildSystemPrompt,
 } from "../../src/prompt/systemPrompt";
 import type { Chunk } from "../../src/types/retrieval.types";
+import { buildCatalogueBlock, catalogue, usableGuidance } from "../../src/catalogue";
 import type { ChatMessage } from "../../src/types/chat.types";
 
 const chunks: Chunk[] = [
@@ -15,7 +16,7 @@ describe("buildSystemPrompt", () => {
     // Deleted 2026-09-13: ranges come from each pod's device registry via get_pod_thresholds.
     // Two of the six hard-coded numbers had drifted from the operator material they claimed to
     // represent (see systemPrompt.ts), so a stray reinstatement is worth catching.
-    const prompt = buildSystemPrompt(false, false);
+    const prompt = buildSystemPrompt(false, false, null);
 
     expect(prompt).not.toContain("AUTHORITATIVE NORMAL RANGES");
     ["6.5 to 8.5", "200 to 400", "5 to 14", "32 to 95", "0 to 1,500", "40,000 to 50,000", "0 to 25"]
@@ -24,7 +25,7 @@ describe("buildSystemPrompt", () => {
   });
 
   it("forbids applying a document's range as the pod's limit", () => {
-    const prompt = buildSystemPrompt(false, false);
+    const prompt = buildSystemPrompt(false, false, null);
 
     expect(prompt).toContain("not this pod's threshold");
     expect(prompt).toContain("say that no threshold is configured for this pod");
@@ -33,7 +34,7 @@ describe("buildSystemPrompt", () => {
   it("keeps turbidity qualitative without naming any sensor hardware", () => {
     // docs/timeline.md decision log, 2026-09-10: naming an instrument while fixture text is
     // frozen would turn refusal-turbidity-sensor-hardware into a refusal for something answerable.
-    const prompt = buildSystemPrompt(true, true);
+    const prompt = buildSystemPrompt(true, true, null);
 
     expect(prompt).toContain("characterise it only qualitatively");
     ["Turner", "Keystudio", "Keyestudio", "KS0414"].forEach((name) => expect(prompt).not.toContain(name));
@@ -43,7 +44,7 @@ describe("buildSystemPrompt", () => {
     // EVAL_REBUILD.md Phase 2a. The marker, the verbatim requirement and the no-ellipsis rule are
     // each load-bearing: checkQuotes is a normalised substring match, so a paraphrase or an elided
     // clause reads as unsupported.
-    const prompt = buildSystemPrompt(false, false);
+    const prompt = buildSystemPrompt(false, false, null);
 
     expect(prompt).toContain("【n†\"quote\"】");
     expect(prompt).toContain("character-for-\n  character");
@@ -131,14 +132,14 @@ describe("buildSystemPrompt", () => {
  * That catches a stray edit above the tool blocks, which is what the digest was really for,
  * without going stale every time the prompt is legitimately revised.
  *
- * **Every call here passes all three arguments.** They default to `config.tools.*`, so a
- * two-argument call silently reads ambient `REPORT_TOOL` — and `.env` sets it to `true`. The
+ * **Every call here passes all three arguments.** They default to `config.tools.*` and
+ * `config.catalogue.prompt`, so a shorter call silently reads ambient `REPORT_TOOL` — and `.env` sets it to `true`. The
  * digests only ever passed because `test/setupEnv.ts` neutralises `.env` under jest; exporting
  * `REPORT_TOOL=true` in the shell (which `setupEnv.ts` documents as still working) would have
  * failed the pin for a reason that had nothing to do with the prompt text.
  */
 describe("the tool flags are additive", () => {
-  const base = buildSystemPrompt(false, false);
+  const base = buildSystemPrompt(false, false, null);
 
   it("says nothing about tools when both flags are off", () => {
     expect(base).not.toContain("query_sensor_data");
@@ -151,7 +152,7 @@ describe("the tool flags are additive", () => {
   it("carries the range rule, citation contract and refusal contract regardless of the flags", () => {
     // The content the flags must never disturb, asserted on all four combinations.
     [[false, false], [true, false], [false, true], [true, true]].forEach(([sensor, report]) => {
-      const prompt = buildSystemPrompt(sensor, report);
+      const prompt = buildSystemPrompt(sensor, report, null);
       expect(prompt).toContain("This prompt carries no normal or acceptable ranges.");
       expect(prompt).toContain("【n†\"quote\"】");
       expect(prompt).toContain(REFUSAL_SENTENCE);
@@ -159,7 +160,7 @@ describe("the tool flags are additive", () => {
   });
 
   it("appends the sensor tool block, and only that, when SENSOR_TOOL is on", () => {
-    const on = buildSystemPrompt(true, false);
+    const on = buildSystemPrompt(true, false, null);
 
     expect(on.startsWith(base)).toBe(true);
     expect(on.slice(base.length)).toBe(`\n\n${TOOL_BLOCK}`);
@@ -168,7 +169,7 @@ describe("the tool flags are additive", () => {
   it("appends the report tool block, and only that, when REPORT_TOOL is on alone", () => {
     // REPORT_TOOL does not require SENSOR_TOOL — a deployment can turn it on by itself, and the
     // block is written to read correctly in that case. Untested until now.
-    const on = buildSystemPrompt(false, true);
+    const on = buildSystemPrompt(false, true, null);
 
     expect(on.startsWith(base)).toBe(true);
     expect(on.slice(base.length)).toBe(`\n\n${REPORT_TOOL_BLOCK}`);
@@ -177,8 +178,8 @@ describe("the tool flags are additive", () => {
   it("appends sensor then report, in that order, when both are on", () => {
     // Both blocks open with their own "TOOLS:" header, so `indexOf("TOOLS:")` and
     // `not.toContain("TOOLS:")` cannot tell them apart. Slicing is what distinguishes them.
-    const both = buildSystemPrompt(true, true);
-    const sensorOnly = buildSystemPrompt(true, false);
+    const both = buildSystemPrompt(true, true, null);
+    const sensorOnly = buildSystemPrompt(true, false, null);
 
     expect(both.startsWith(sensorOnly)).toBe(true);
     expect(both.slice(sensorOnly.length)).toBe(`\n\n${REPORT_TOOL_BLOCK}`);
@@ -186,11 +187,53 @@ describe("the tool flags are additive", () => {
   });
 
   it("keeps the range and citation rules above both tool blocks", () => {
-    const both = buildSystemPrompt(true, true);
+    const both = buildSystemPrompt(true, true, null);
     const rule = both.indexOf("This prompt carries no normal or acceptable ranges.");
 
     expect(rule).toBeLessThan(both.indexOf(TOOL_BLOCK));
     expect(both.indexOf("【n†\"quote\"】")).toBeLessThan(both.indexOf(REPORT_TOOL_BLOCK));
+  });
+});
+
+describe("the catalogue block", () => {
+  const drafts = buildCatalogueBlock(usableGuidance(catalogue, true));
+  const none = buildCatalogueBlock(usableGuidance(catalogue, false));
+
+  it("appends last, after both tool blocks, leaving every earlier byte unchanged", () => {
+    const tools = buildSystemPrompt(true, true, null);
+    const withBlock = buildSystemPrompt(true, true, drafts);
+
+    expect(withBlock.startsWith(tools)).toBe(true);
+    expect(withBlock.slice(tools.length)).toBe(`\n\n${drafts}`);
+  });
+
+  it("names the catalogue version, so a capture records which wording it ran under", () => {
+    expect(drafts.startsWith(`APPROVED GUIDANCE (catalogue ${catalogue.version}):`)).toBe(true);
+    expect(none.startsWith(`APPROVED GUIDANCE (catalogue ${catalogue.version}):`)).toBe(true);
+  });
+
+  it("forbids causes, actions and contacts outright while nothing is approved", () => {
+    // The shipped catalogue has no approved entries yet (supervisor items 17-20).
+    expect(none).toContain("No guidance is approved yet.");
+    expect(none).not.toContain("Clean Earth Rovers");
+    expect(none).not.toContain("[");
+  });
+
+  it("lists every usable entry with the evidence it needs and its limitation", () => {
+    usableGuidance(catalogue, true).entries.forEach((entry) => {
+      expect(drafts).toContain(`[${entry.id}] ${entry.kind}`);
+      expect(drafts).toContain(`Requires: ${entry.requiredEvidence}`);
+      expect(drafts).toContain(`Limitation: ${entry.limitations}`);
+    });
+    expect(drafts).toContain("Never add a referral as a default closing line.");
+    expect(drafts).toContain("do not put a citation marker on them");
+  });
+
+  it("prints a referral's contact only through its entry", () => {
+    const contact = catalogue.referrals.find((r) => r.id === "cer-oil-spill")!.contact!;
+    expect(drafts).toContain(`Contact: ${contact}`);
+    expect(drafts.split(contact).length - 1)
+      .toBe(catalogue.entries.filter((e) => e.referral?.startsWith("cer-")).length);
   });
 });
 

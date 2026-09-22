@@ -65,6 +65,15 @@ const narrative: NarrativeSections = {
   recommendationsOperational: "No action needed.",
   recommendationsInvestigative: "None required this period.",
   recommendationsStakeholder: "Routine report distribution to client only.",
+  // Wording for the one `event` below; reports without events never read it.
+  events: [{
+    heading: "Threshold crossing",
+    causeNamed: false,
+    interpretation: "Test interpretation.",
+    followUp: "No approved recommendation covers these findings yet.",
+  }],
+  catalogueVersion: "test",
+  guidanceIds: [],
 };
 
 const event: WQEvent = {

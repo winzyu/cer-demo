@@ -67,12 +67,44 @@ Vendor material for the probes this deployment actually carries, so it outranks 
 reference. The probe datasheets are **ORP's only vendor-level coverage**, and — since the
 source-of-truth document's removal — the corpus's only Tier 1 material of any kind.
 
-**Still missing from Tier 1** (operator has not supplied them): a **turbidity probe datasheet**
-and a **temperature probe datasheet**. Turbidity is the gap that matters — the fleet's NTU value
-is derived from a raw voltage by a provisional, uncalibrated conversion
-([`../docs/migration/DEVICE_API.md`](../docs/migration/DEVICE_API.md) §8), and no document in the
-corpus describes *this* sensor's optics. With the source-of-truth document gone, no document in the
-corpus describes a typical range for ORP, conductivity or temperature either.
+### Tier 1 — turbidity vendor documentation (added 2026-09-17, not yet ingested)
+
+| file | source | in slice |
+|---|---|---|
+| `_excluded/keyestudio-ks0414-turbidity-sensor.md` | [Keyestudio wiki, KS0414 V1.0](https://wiki.keyestudio.com/KS0414_Keyestudio_Turbidity_Sensor_V1.0) | no |
+| `_excluded/turner-turbidity-plus-sensor.md` | [Turner Designs product page](https://www.turnerdesigns.com/turbidity-plus-submersible-sensor), [datasheet](https://www.turnerdesigns.com/_files/ugd/9a5dca_6d195f5834d74ab3b52623350504c0ac.pdf), [User's Manual 998-2187 Rev. J](https://docs.turnerdesigns.com/t2/doc/manuals/998-2187.pdf) | no |
+
+Transcriptions of public vendor documentation for the two turbidity sensors the operator named
+(`../docs/STAKEHOLDER_QUESTIONS.md`), written as `.md` because neither vendor publishes a datasheet
+PDF covering the corpus's actual gap: the optical basis of the reading. Each file carries the
+vendor's own text plus an explicit list of what that vendor never states.
+
+**They sit in `_excluded/`, outside the ingest path, and are not in `DOC_META`,** so neither file is
+retrievable. Ingesting them re-chunks the corpus and voids every retrieval label
+(`../docs/STATUS.md`, "Active traps"), which is a decision for after the Phase 1d fixture freeze;
+the `DOC_META` entries to add then are at tag `old-machine-recovery-2026-09-19`
+(`src/ingestion/corpus.ts`). The registry has no sensor-model field either, so which pod carries
+which sensor is unknown; injecting an unattributed datasheet into every answer would assert hardware
+this deployment cannot confirm.
+
+What they do and do not settle: **neither vendor states a numeric wavelength or a detection angle.**
+Turner states "Light Source: Light Emitting Diode", "Excitation Wavelength: IR", "Detector:
+Photodiode" and reports the result in NTU; Keyestudio states no optical property at all. So the
+NTU-versus-FNU question is now *grounded* rather than *answered*: the corpus can cite that the unit
+label is the vendor's own choice and that the infrared basis of the Turner instrument is what ISO
+7027 associates with FNU, instead of having nothing to cite. Keyestudio publishes no
+voltage-to-NTU equation — only an empirical 0.13 NTU per mg/L mass conversion and an unlabelled
+characteristic curve — so this project's provisional `NTU = (3.35 - V) × 300` remains
+operator-supplied and vendor-unsupported.
+
+**Still missing from Tier 1**: a **temperature probe datasheet** (operator has not supplied it), and
+a per-pod record of which turbidity sensor is fitted. Both are asked together in
+`../docs/STAKEHOLDER_QUESTIONS.md` item 22. The fleet's NTU value is still derived from a
+raw voltage by a provisional, uncalibrated conversion
+([`../docs/migration/DEVICE_API.md`](../docs/migration/DEVICE_API.md) §8); the two files above
+describe the candidate sensors but neither vendor publishes the optics that would justify the unit.
+With the source-of-truth document gone, no document in the corpus describes a typical range for ORP,
+conductivity or temperature either.
 
 ### Tier 2 — USGS National Field Manual, Chapter A6
 

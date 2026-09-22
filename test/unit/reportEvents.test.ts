@@ -1,6 +1,6 @@
 import { detectEvents, CONFIDENCE_FLOOR_FOR_CLASSIFICATION } from "../../src/report/events";
 import type {
-  ParameterBaseline, ParameterStats, ReportInput, SiteMetadata,
+  ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WaterBodyType,
 } from "../../src/report/types";
 
 /**
@@ -54,8 +54,12 @@ const statsFor = (baseline: ParameterBaseline, series: Array<[number, number]>, 
   };
 };
 
-const report = (parameters: ParameterStats[]): ReportInput => ({
-  site: {} as SiteMetadata,
+/** Freshwater by default: the conductivity fixtures below are freshwater-scale values. */
+const report = (
+  parameters: ParameterStats[],
+  waterBodyType: WaterBodyType = "Freshwater",
+): ReportInput => ({
+  site: { waterBodyType } as SiteMetadata,
   parameters,
   events: [],
 });
@@ -127,6 +131,60 @@ describe("detectEvents — classification", () => {
     expect(events[0].type).toBe("Inconclusive");
     expect(events[0].confidence).toBeLessThan(CONFIDENCE_FLOOR_FOR_CLASSIFICATION);
     expect(events[0].interpretation).toContain("downgraded to");
+  });
+});
+
+describe("detectEvents — sewage depends on the receiving water", () => {
+  // Source-of-truth v2: fresh sewage lowers conductivity in the sea (§6.2) and raises it in
+  // fresh water (§6.3). Brackish and estuarine pods take the marine signature (§0 rule 2).
+  const window = [1, 1.5, 2];
+  const sewageLike = (conductivity: ParameterStats | null): ParameterStats[] => [
+    statsFor(fixedBaseline("dissolved_oxygen", "Dissolved Oxygen (mg/L)", "mg/L", 5, 9), seriesWithExcursion(7, 3, window)),
+    statsFor(fixedBaseline("orp", "ORP (mV)", "mV", 150, 350), seriesWithExcursion(250, 50, window)),
+    statsFor(relativeIndexBaseline(), seriesWithExcursion(10, 40, window)),
+    ...(conductivity ? [conductivity] : []),
+  ];
+  const seawaterConductivity = (abnormal: number): ParameterStats => statsFor(
+    fixedBaseline("conductivity", "Conductivity (µS/cm)", "µS/cm", 45_000, 55_000),
+    seriesWithExcursion(50_000, abnormal, window),
+  );
+
+  it.each(["Marine", "Brackish", "Estuarine"] as const)(
+    "names Sewage at full confidence when conductivity falls in %s water",
+    (waterBodyType) => {
+      const events = detectEvents(report(sewageLike(seawaterConductivity(38_000)), waterBodyType));
+      expect(events).toHaveLength(1);
+      expect(events[0].type).toBe("Sewage");
+      expect(events[0].confidence).toBeCloseTo(0.7, 10);
+      expect(events[0].interpretation).toContain("coastal water");
+    },
+  );
+
+  it("rejects Sewage in marine water when conductivity rises instead", () => {
+    const events = detectEvents(report(sewageLike(seawaterConductivity(60_000)), "Marine"));
+    expect(events).toHaveLength(1);
+    expect(events[0].type).toBe("Inconclusive");
+    expect(events[0].confidence).toBeLessThan(CONFIDENCE_FLOOR_FOR_CLASSIFICATION);
+    expect(events[0].interpretation).toContain("the opposite of the sewage signature");
+  });
+
+  it("rejects Sewage in fresh water when conductivity falls instead", () => {
+    const conductivity = statsFor(
+      fixedBaseline("conductivity", "Conductivity (µS/cm)", "µS/cm", 50, 1_500),
+      seriesWithExcursion(500, 20, window),
+    );
+    const events = detectEvents(report(sewageLike(conductivity), "Freshwater"));
+    expect(events).toHaveLength(1);
+    expect(events[0].type).toBe("Inconclusive");
+  });
+
+  it("keeps the partial match at the floor when conductivity does not move, in either water", () => {
+    (["Marine", "Freshwater"] as const).forEach((waterBodyType) => {
+      const events = detectEvents(report(sewageLike(null), waterBodyType));
+      expect(events).toHaveLength(1);
+      expect(events[0].type).toBe("Sewage");
+      expect(events[0].confidence).toBeCloseTo(0.5, 10);
+    });
   });
 });
 
