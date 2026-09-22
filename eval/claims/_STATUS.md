@@ -68,3 +68,21 @@ handback for what that means for exit criterion 3.
   unaltered against commit `11bbc07`.
 - Read-only git is permitted for agents verifying they have not destroyed prior work. Only mutating
   git commands are off limits.
+
+> **Updated 2026-09-21 - re-resolved after the corpus rebuild.**
+> The environment rebuild re-OCR'd `epa-sop-field-instrument-calibration-2010.pdf` with tesseract
+> 4.1.1 instead of the lost 5.3.4, which changed that document's text and therefore all 12 of its
+> content-derived chunk ids; the other 13 documents were byte-stable.
+> The 12 entries were **re-resolved, not re-extracted**: each was mapped onto the corpus chunk of the
+> same index, confirmed by exact-quote evidence (every entry's quotes match its mapped chunk and no
+> other), and 11 `quote` values were refreshed to the new OCR of the same passage.
+> Claim ids, claim text, `type`, `metrics`, `specificity`, `locator` and the summary blocks are
+> untouched, so the corrected drift/QAPP gap statement is preserved.
+>
+> **446/446 chunk ids now resolve. 2177 claims, no duplicate ids, no quote over 200 chars.**
+>
+> One claim is knowingly left failing the verbatim-quote invariant and needs a human decision:
+> `epa-oxygen-solubility-chart-01` (chunk index 9) quotes the solubility chart's pressure header
+> row, which the +86-char OCR shift moved past the chunk 9/10 boundary. Its evidence now sits wholly
+> in chunk index 10, whose `locator` already describes that chart block. Re-parenting a claim to a
+> different chunk changes the per-chunk counts above, so it was flagged rather than applied.

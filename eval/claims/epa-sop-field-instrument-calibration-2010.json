@@ -5,7 +5,7 @@
   "chunkCount": 12,
   "chunks": [
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__c9cd6c7a28ab",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__f66fdaabcc55",
       "index": 0,
       "locator": "Cover page and Table of Contents \u2014 \"STANDARD OPERATING PROCEDURE\"",
       "claims": [
@@ -53,13 +53,13 @@
           "claim": "The SOP is organized as scope, health and safety, general requirements, frequency of calibration, per-parameter calibration procedures (sections 5.1 through 5.6), a post calibration check, and data/records management.",
           "metrics": [],
           "type": "definitional",
-          "quote": "4.0 FREQUENCY OF CALIBRATION .0...cccccesessescesesesecesvsvscececevecerseneesecete 5",
+          "quote": "4.0 FREQUENCY OF CALIBRATION .0...ccccccsessessesesesecesvsvscscecevecersaneveecete 5",
           "specificity": "low"
         }
       ]
     },
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__91b16d25fd4a",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__443c31100934",
       "index": 1,
       "locator": "\u00a71.0 Scope and Application through \u00a73.0 General \u2014 \"This SOP supplements, but does not replace\"",
       "claims": [
@@ -196,13 +196,13 @@
           "claim": "The manufacturer's instruction manual, including the instrument specifications, must accompany the instrument into the field.",
           "metrics": [],
           "type": "procedural",
-          "quote": "This SOP requires that the manufacturer's instruction manual (including the instrument",
+          "quote": "This SOP requires that the manufacturer\u2019s instruction manual (including the instrument",
           "specificity": "medium"
         }
       ]
     },
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__a94d853fd809",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__dd989c168d7e",
       "index": 2,
       "locator": "\u00a74.0 Frequency of Calibration and \u00a75.1 Temperature \u2014 \"At a minimum, the instrument is calibrated prior to use\"",
       "claims": [
@@ -402,7 +402,7 @@
       ]
     },
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__86e2872125d1",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__9e97901d9432",
       "index": 3,
       "locator": "\u00a75.1 Temperature verification steps 2-5 and \u00a75.2 pH \u2014 \"within the accuracy of the sensor\"",
       "claims": [
@@ -463,7 +463,7 @@
             "ph"
           ],
           "type": "numeric",
-          "quote": "one close to seven, one at least two pH units below seven, and the other at least two pH units",
+          "quote": "oneclose to seven, one at least two pH units below seven, and the other at least two pH units",
           "specificity": "high"
         },
         {
@@ -520,7 +520,7 @@
       ]
     },
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__79fe9d98c188",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__738f644915c9",
       "index": 4,
       "locator": "\u00a75.2 pH steps 11-13 and \u00a75.3 Dissolved Oxygen setup \u2014 \"Create a 100 percent water-saturated air environment\"",
       "claims": [
@@ -531,7 +531,7 @@
             "ph"
           ],
           "type": "procedural",
-          "quote": "standard value within the manufacturer's specifications. If not, re-calibrate the",
+          "quote": "standard value within the manufacturer\u2019s specifications. If not, re-calibrate the",
           "specificity": "high"
         },
         {
@@ -601,7 +601,7 @@
             "dissolvedOxygen"
           ],
           "type": "procedural",
-          "quote": "Note: some instruments have a built-in barometer.",
+          "quote": "Note: | some instruments have a built-in barometer.",
           "specificity": "medium"
         },
         {
@@ -648,7 +648,7 @@
       ]
     },
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__bff7518da28e",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__8498757732be",
       "index": 5,
       "locator": "\u00a75.3 Dissolved Oxygen steps 5-11 and \u00a75.4 Specific Conductance intro \u2014 \"The instrument should read less than 0.5 mg/L\"",
       "claims": [
@@ -756,7 +756,7 @@
       ]
     },
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__62a25e54a62a",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__591e8ba6ee04",
       "index": 6,
       "locator": "\u00a75.4 Specific Conductance calibration procedure \u2014 \"A second standard is used to check the linearity\"",
       "claims": [
@@ -833,7 +833,7 @@
       ]
     },
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__dc5fead69969",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__f0cdaf07e71e",
       "index": 7,
       "locator": "\u00a75.5 ORP and \u00a75.6 Turbidity intro \u2014 \"a nephelometer with a visible light source\"",
       "claims": [
@@ -964,7 +964,7 @@
       ]
     },
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__80b3b684098e",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__6bf0e3b82a75",
       "index": 8,
       "locator": "\u00a75.6 Turbidity steps 2-6 and \u00a76.0 Post Calibration Check \u2014 \"a zero or 0.02 NTU\"",
       "claims": [
@@ -1112,7 +1112,7 @@
       ]
     },
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__2d02065fcb50",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__63eb942808c2",
       "index": 9,
       "locator": "\u00a76.0 post calibration criteria table, \u00a77.0 Records, \u00a78.0 References, Table 1 \u2014 \"Measurement Post Calibration Criteria\"",
       "claims": [
@@ -1143,7 +1143,7 @@
             "conductivity"
           ],
           "type": "numeric",
-          "quote": "Specific Conductance +5% of standard or + 10 uS/om (whichever is greater)",
+          "quote": "Specific Conductance +5% of standard or + 10 yS/em (whichever is greater)",
           "specificity": "high"
         },
         {
@@ -1221,7 +1221,7 @@
             "temperature"
           ],
           "type": "procedural",
-          "quote": "Parameters Morning Morning End of Day | End of Day",
+          "quote": "Parameters Morning Morning Bnd of Day | End of Day",
           "specificity": "high"
         },
         {
@@ -1267,7 +1267,7 @@
       ]
     },
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__6f26a0f9a8d0",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__0647560e9eed",
       "index": 10,
       "locator": "Attachment, \"Oxygen Solubility at Indicated Pressure\" chart, 760-730 mm Hg block plus the head of the 725-690 mm Hg block (tail of the Table 1 calibration log precedes it)",
       "claims": [
@@ -1279,7 +1279,7 @@
             "temperature"
           ],
           "type": "numeric",
-          "quote": "OO OnAIN A PWwWDH | \u00a9\u00b0C 29.92 29.72 29.53 29.33 29.13, 28.94 28.74 in",
+          "quote": "730 mm\n\u00b0C 29.92 29.72 29.53 29.33 29,13 28.94 28.74 in",
           "specificity": "high"
         },
         {
@@ -1312,7 +1312,7 @@
             "temperature"
           ],
           "type": "numeric",
-          "quote": "14.57 14.47 14.38 14.28 14.18 14.09 13.99 mg/l",
+          "quote": "14.57 14.47 1438 14.28 14.18 14.09 13.99 mg/l",
           "specificity": "high"
         },
         {
@@ -1323,7 +1323,7 @@
             "temperature"
           ],
           "type": "numeric",
-          "quote": "45 5.94 5.90 5.85 5.81 5.77\u00b0. 5.72 5.68",
+          "quote": "45 5.94 5.90 5.85 5.81 $.77\u00b0. 5.72 5.68",
           "specificity": "high"
         },
         {
@@ -1356,7 +1356,7 @@
             "temperature"
           ],
           "type": "conceptual",
-          "quote": "10 11.28 11.19 J1d1 11.04 10.96 10.89 10.81",
+          "quote": "10 11.28 11.19 11.11 11.04 10.96 10.89 10.81",
           "specificity": "medium"
         },
         {
@@ -1372,7 +1372,7 @@
       ]
     },
     {
-      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__3f53d7f6f8c2",
+      "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__a4a0c9b79ec8",
       "index": 11,
       "locator": "Attachment, \"Oxygen Solubinty at Indicated Pressure (continued)\" 725-690 mm Hg block, temperature rows 10-45 - continuation grid, no column header in this chunk",
       "claims": [
