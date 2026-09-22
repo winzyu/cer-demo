@@ -48,10 +48,11 @@ Also blocking: item 1, the operator's review of pod alert limits (they drive eve
 
 1. Roadmap R1 and R2 in this repo, once the user confirms implementation may start. Where: `migration/GILLIGAN_TARGET_ARCHITECTURE.md` §3-4.
 2. Phase 3 capture in its own session, once the fixture freeze lands; then measure quote quality (`MIN_QUOTE_CHARS` weakness in `src/eval/gates/checks.ts`).
-3. Re-measure contamination for the three new `precedence` fixtures (`_EXIT_CRITERIA.md` "Reproducing").
-4. Add tool results to transcripts: `TranscriptTurn` has no field for them, so the judge never sees them.
+3. Turbidity vendor documentation is transcribed into `documents/*.md` and registered in `DOC_META`, but `npm run ingest` has not run, so it is not retrievable. Re-ingesting re-chunks the corpus and voids every retrieval label, so it waits for the user's call after the Phase 1d freeze; decide then whether either file joins `DIRECT_FEED_SLICE` (◆G9).
+4. Re-measure contamination for the three new `precedence` fixtures (`_EXIT_CRITERIA.md` "Reproducing").
+5. Add tool results to transcripts: `TranscriptTurn` has no field for them, so the judge never sees them.
 5. Browser check of the citation chip (unit-tested only); use the `run-local` skill.
-6. Phase 1e remainder: per-turn label splits, candidate sweep, hard negatives, grade differentiation. Blocks Phase 4, not Phase 3.
+7. Phase 1e remainder: per-turn label splits, candidate sweep, hard negatives, grade differentiation. Blocks Phase 4, not Phase 3.
 
 ## Unfixed defects
 

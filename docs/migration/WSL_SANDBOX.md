@@ -3,6 +3,7 @@
 Checklist for the native WSL2 sandbox where the user tests this service against copies of the upstream dashboard and server (decision D1 in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md)).
 The OneDrive checkout stays the primary copy of cer-demo, where evaluation and service work continue; the sandbox is a second copy for integration testing.
 Written 2026-09-17 from the state of the OneDrive checkout at that date.
+The work that follows this checklist is split into one-per-session packets in [`WSL_SANDBOX_TASKS.md`](WSL_SANDBOX_TASKS.md).
 
 ## 1. Layout
 

@@ -3,7 +3,7 @@
 Draft, 2026-09-17, for the September 30, 2026 dashboard release.
 Built on the decisions in [`GILLIGAN_PRODUCT_DIRECTION.md`](GILLIGAN_PRODUCT_DIRECTION.md); the integration background is [`INTEGRATION_PLAN.md`](INTEGRATION_PLAN.md).
 This is a plan for review, not an approved implementation specification.
-Nothing here has been built yet.
+Step R2's code was built on 2026-09-17 (`docs/SPECS.md` §4b); the supervisor's approval of the entries is still pending, and nothing else here has been built yet.
 
 Code evidence was read at cer-demo `1a8c744`, `user-dashboard` `c55f65d` and `clean-earth-rovers-server` `origin/develop` `b221702`.
 The local server checkout is behind its remote, so upstream claims come from `origin/develop` and may still be stale against the real remote.
@@ -71,6 +71,7 @@ Enforcement stays in cer-rag, so the upstream quota predicate (`GilliganService.
 
 cer-rag must only accept identity from cer-api.
 Recommended: Cloud Run invoker IAM, with cer-api's service account as the only invoker and a Google-signed ID token on each call; no shared secret to rotate or leak.
+cer-rag also verifies that ID token itself (audience and cer-api's service-account email) with `google-auth-library` as a direct dependency, behind a flag that is off for local development and the demo (D7), so a deployment accidentally left public still refuses forged identity.
 cer-rag then trusts the `userId` and `organizationId` fields for quota keys only.
 Data access still rests on the forwarded user JWT, which the device API checks on every call, so a forged identity field cannot widen data access.
 
@@ -157,7 +158,7 @@ Working days are counted from Thursday, September 17.
 | R0 Setup | Sep 17-18 | user, Claude | user sets up the WSL sandbox ([`WSL_SANDBOX.md`](WSL_SANDBOX.md)); send the three v2 questions and the referral contacts to the supervisor; confirm a Fireworks payment method and read the rate-limit headers | the demo runs in the sandbox; supervisor has items 17-20 |
 | R1 Service contract | Sep 18-22 | Claude | `/gilligan/answer`, identity check, history mapping, report bytes, usage store and status endpoint, concurrency limiter; unit and supertest coverage | contract tests green; the demo still works |
 | R2 Catalogue | Sep 18-24 | Claude, then supervisor | structured catalogue from v2 and the advice drafts, generated review page, prompt and narrative wiring, sewage rule fix | supervisor has approved an entry set; reports and chat cite only approved entries |
-| R3 Upstream relay and page | Sep 21-25 | user, in the WSL sandbox | controller relay and report route; React page; local run of dashboard + server + cer-rag together | a question, a report download and the usage count work end to end locally |
+| R3 Upstream relay and page (packets in [`WSL_SANDBOX_TASKS.md`](WSL_SANDBOX_TASKS.md)) | Sep 21-25 | user, in the WSL sandbox | controller relay and report route; React page; local run of dashboard + server + cer-rag together | a question, a report download and the usage count work end to end locally |
 | R4 Quality | Sep 23-28 | separate session, Claude | Phase 3 capture (approved spend); fix what it finds; where a class of question stays weak, add a caveat or a refusal (D3); organization-isolation tests with the pod-scope fixtures | every weak class is either fixed, caveated or refused; isolation tests pass |
 | R5 Demo and merge | Sep 28-29 | user, supervisor | supervisor demo; merge approval; upstream owners create the Fireworks key; corpus seeded into their Firestore; cer-rag deployed | cer-rag healthy in their project; relay switched on with `GILLIGAN_BACKEND=rag` |
 | R6 Release | Sep 30 | user, upstream owners | production smoke on one pod per test organization; rollback is `GILLIGAN_BACKEND=gemini` | release |
@@ -195,6 +196,9 @@ Settled 2026-09-17:
 - **D3. Launch quality bar:** aim for all Phase 3 checks; on best effort, caveat or refuse weak question classes rather than delay.
 
 - **D4. Audit trail:** the relay stores an `audit` field on each saved chat message; `AUDIT_LOG` stays off. The chat history's retention and access rules therefore govern audit data (`STAKEHOLDER_QUESTIONS.md` item 21).
+
+- **D7. Identity check inside cer-rag** (2026-09-17): verify the Google-signed ID token in middleware in addition to Cloud Run invoker IAM, rather than trusting the platform alone.
+- **R2 before R1** (2026-09-17): the catalogue was built first because supervisor approval is on the critical path.
 
 Open:
 
