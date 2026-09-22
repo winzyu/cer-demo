@@ -27,6 +27,28 @@ export interface QuotaRefusal {
 
 export type QuotaDecision = QuotaAllowed | QuotaRefusal;
 
+/** One dimension's standing. `limit`/`remaining` are `null` when nothing constrains it. */
+export interface QuotaDimensionStatus {
+  used: number;
+  limit: number | null;
+  remaining: number | null;
+}
+
+/**
+ * A key's current standing, for `GET /usage`.
+ *
+ * Distinct from `QuotaDecision` on purpose: a decision answers "may this request run", which is
+ * a yes/no a gate acts on, while a status answers "how much is left", which is a number a UI
+ * renders. Collapsing them would make the gate's hot path compute display values it never uses.
+ */
+export interface QuotaStatus {
+  enabled: boolean;
+  requests: QuotaDimensionStatus;
+  tokens: QuotaDimensionStatus;
+  windowLabel: string;
+  resetAtMs: number;
+}
+
 /** Distinct codes per dimension so a client can tell "too many questions" from "too expensive". */
 const CODE_BY_DIMENSION: Readonly<Record<QuotaDimension, ErrorCode>> = {
   requests: "quota_requests_exceeded",
@@ -151,6 +173,34 @@ export class QuotaService {
   /** Current usage for a key. Exposed for diagnostics and tests, not used by the gate. */
   usage(key: string, nowMs: number = Date.now()): QuotaUsage {
     return this.store.read(key, nowMs);
+  }
+
+  /**
+   * The same numbers `check` decides on, shaped for a client to display.
+   *
+   * Read-only and side-effect free: it never records, so polling the status endpoint cannot
+   * consume an allowance. `remaining` is floored at 0 because the token dimension is enforced
+   * retrospectively - the answer that crosses the ceiling is allowed to finish, which can leave
+   * `used` above `limit`, and a negative "remaining" is not a thing a UI can render.
+   *
+   * `limit` and `remaining` are `null` for an unlimited dimension and while the quota is off,
+   * so a client tells "no ceiling" from "you have 0 left" by type rather than by sentinel.
+   */
+  status(key: string, nowMs: number = Date.now()): QuotaStatus {
+    const usage = this.store.read(key, nowMs);
+    const describe = (limit: QuotaLimit, used: number): QuotaDimensionStatus => (
+      !this.policy.enabled || limit === UNLIMITED
+        ? { used, limit: null, remaining: null }
+        : { used, limit, remaining: Math.max(0, limit - used) }
+    );
+
+    return {
+      enabled: this.policy.enabled,
+      requests: describe(this.policy.requests, usage.requests),
+      tokens: describe(this.policy.tokens, usage.tokens),
+      windowLabel: this.policy.windowLabel,
+      resetAtMs: usage.windowEndMs,
+    };
   }
 
   /** Clears every counter. */

@@ -2,7 +2,9 @@ import { QuotaService } from "./QuotaService";
 
 export { QuotaService } from "./QuotaService";
 export { quotaErrorCode, quotaErrorMessage } from "./QuotaService";
-export type { QuotaAllowed, QuotaDecision, QuotaRefusal } from "./QuotaService";
+export type {
+  QuotaAllowed, QuotaDecision, QuotaDimensionStatus, QuotaRefusal, QuotaStatus,
+} from "./QuotaService";
 export { InMemoryQuotaStore } from "./InMemoryQuotaStore";
 export { windowStartFor } from "./QuotaStore";
 export type { QuotaDelta, QuotaStore, QuotaUsage } from "./QuotaStore";

@@ -2,6 +2,7 @@ import { Router } from "express";
 import chatRoutes from "./chatRoutes";
 import deviceRoutes from "./deviceRoutes";
 import reportRoutes from "./reportRoutes";
+import usageRoutes from "./usageRoutes";
 
 /** API v1 aggregator. Resource routers mount here. */
 const router = Router();
@@ -16,5 +17,8 @@ router.use("/devices", deviceRoutes);
 // fetchable even if the flag is later turned off, same reasoning DeviceController's
 // route uses for not gating on SENSOR_TOOL.
 router.use("/reports", reportRoutes);
+// Read-only allowance status, deliberately outside `quotaGuard`: a client must still be able to
+// ask how long it is refused for *after* it has been refused.
+router.use("/usage", usageRoutes);
 
 export default router;
