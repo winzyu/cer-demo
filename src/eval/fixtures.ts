@@ -96,6 +96,22 @@ const validateTurn = (
     errors.push(`${where}.requires_refusal must be a boolean when present.`);
   }
 
+  const { retrieval_evidence: evidence } = turn as Record<string, unknown>;
+  if (evidence !== undefined) {
+    if (!Array.isArray(evidence) || evidence.length === 0) {
+      errors.push(`${where}.retrieval_evidence must be a non-empty array when present.`);
+    } else {
+      evidence.forEach((entry: unknown) => {
+        const item = entry as { filename?: string; quote?: string } | null;
+        if (!item || typeof item.filename !== "string"
+          || !answerableFrom.includes(item.filename)
+          || typeof item.quote !== "string" || item.quote.trim() === "") {
+          errors.push(`${where}.retrieval_evidence requires a source in answerable_from and a quote.`);
+        }
+      });
+    }
+  }
+
   // An empty must_contain would grade to "pass" for any answer at all, including silence.
   if (!isStringArray(must_contain) || must_contain.length === 0) {
     errors.push(`${where}.rubric.must_contain must be a non-empty array of strings.`);

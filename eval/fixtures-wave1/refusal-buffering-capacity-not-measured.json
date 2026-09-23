@@ -1,10 +1,12 @@
 {
   "id": "refusal-buffering-capacity-not-measured",
   "class": "refusal",
-  "expected_to_favor": "direct-feed",
-  "answerable_from": [],
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.6-alkalinity.pdf"
+  ],
   "requires": [],
-  "notes": "The richest gap in the pool: usgs-nfm-a6.6-alkalinity.pdf is a complete, confident USGS manual on a metric this system does not measure. The six metrics are dissolvedOxygen, orp, ph, conductivity, temperature and turbidity; alkalinity and ANC are not among them. Gap entries used: a6.6 'Alkalinity and ANC are not among the six metrics this system measures, and the document gives no way to infer alkalinity or ANC from any sonde-measurable parameter. Every value it produces comes from a bench acidimetric titration of a grab sample'; a6.6 'Gives no relationship between alkalinity and specific conductance and no way to estimate either from the other'; a6.6 'The many pH numbers in this document ... are titration-curve landmarks, not pH measurement specifications'. The question is asked in plain operator language (how much acid the water can soak up) so it retrieves a6.6 semantically without borrowing its vocabulary. Predicted to favour direct-feed: the slice contains no alkalinity material at all, so that arm has nothing to be tempted by, while retrieval hands the RAG arm a whole manual of relevant-looking procedure for a metric the system cannot produce.",
+  "notes": "The requested buffering-capacity value is unavailable from the six pod metrics. Positive explanatory evidence is supplied per turn: alkalinity/ANC require acidimetric sample titration, and conductivity used for procedural choices is not a conversion to capacity. RAG is expected to support these explanations beyond the probe-only slice. Corpus absence conclusions are bounded to supplied sources; no live readings are promised.",
   "turns": [
     {
       "role": "user",
@@ -16,7 +18,7 @@
           "Notes that the corpus does contain a USGS chapter covering alkalinity and acid neutralizing capacity",
           "Contrasts the sensor reading with a manual acid titration of a collected sample, which is the method the corpus does describe",
           "States that the chapter gives no way to infer that capacity from any sensor-measurable parameter",
-          "Offers what the system can genuinely contribute instead, such as the measured pH record itself, without presenting it as a substitute"
+          "Offers to describe the measured pH record if supplied, without inventing access or treating pH as a substitute for buffering capacity"
         ],
         "must_not": [
           "answers using the alkalinity titration procedure as though it applied to a measured metric",
@@ -24,9 +26,26 @@
           "presents the alkalinity chapter's titration-curve pH landmarks such as 8.3, 4.5 or 5.5 as thresholds for the measured pH reading",
           "invents a relationship converting a measured parameter into buffering capacity",
           "silently substitutes the pH reading for the thing that was asked about"
+        ],
+        "cite": [
+          "usgs-nfm-a6.6-alkalinity.pdf"
         ]
       },
-      "requires_refusal": true
+      "requires_refusal": true,
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "quote": "the acidimetric titration of a sample; the only difference is that the alkalinity sample is filtered,"
+        },
+        {
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "quote": "Calculation of alkalinity or ANC is a simple accounting of the amount of acid used to neutralize"
+        },
+        {
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "quote": "Vs \tis \tthe volume of sample, in milliliters."
+        }
+      ]
     },
     {
       "role": "user",
@@ -35,7 +54,7 @@
         "must_contain": [
           "States that no source in the corpus gives a relationship between the water's acid-absorbing capacity and specific conductance",
           "States that no source gives a way to estimate one from the other",
-          "States that the alkalinity chapter uses conductivity only as a decision threshold for how to run the titration, never as an input to the result",
+          "Distinguishes conductivity used for titration-method selection and recordkeeping from the acid-volume, acid-concentration and sample-volume inputs used to calculate alkalinity",
           "States that the measured pH alone does not yield it either",
           "Declines to produce an estimate rather than offering an approximate conversion"
         ],
@@ -45,9 +64,30 @@
           "cites an external calculator or model as though its contents were available in the corpus",
           "offers a hedged numeric estimate in place of a refusal",
           "cites the specific-conductance chapter's statement that conductivity has been used to estimate major solute concentrations as a route to buffering capacity"
+        ],
+        "cite": [
+          "usgs-nfm-a6.6-alkalinity.pdf"
         ]
       },
-      "requires_refusal": true
+      "requires_refusal": true,
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "quote": "alkalinity or ANC is expected to be less than about 0.4 milliequivalents per liter (meq/L)"
+        },
+        {
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "quote": "available, record the sample conductivity."
+        },
+        {
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "quote": "Calculation of alkalinity or ANC is a simple accounting of the amount of acid used to neutralize"
+        },
+        {
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "quote": "Vs \tis \tthe volume of sample, in milliliters."
+        }
+      ]
     }
   ]
 }

@@ -27,7 +27,7 @@ describe("buildSystemPrompt", () => {
     const prompt = buildSystemPrompt(false, false);
 
     expect(prompt).toContain("not this pod's threshold");
-    expect(prompt).toContain("say that no threshold is configured for this pod");
+    expect(prompt).toContain("say the configured threshold is unavailable here");
   });
 
   it("keeps turbidity qualitative without naming any sensor hardware", () => {
@@ -48,7 +48,16 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("【n†\"quote\"】");
     expect(prompt).toContain("character-for-\n  character");
     expect(prompt).toContain("ellipsis");
-    expect(prompt).toContain("A refusal carries no marker.");
+    expect(prompt).toContain("The refusal sentence itself carries no marker; cite any supported explanation separately.");
+  });
+
+  it("permits cited partial answers while refusing the unsupported request", () => {
+    const prompt = buildSystemPrompt(false, false);
+    expect(prompt).toContain("When only part of a request is supported");
+    expect(prompt).toContain("Then answer the supported part");
+    expect(prompt).toContain("when nothing relevant is available");
+    expect(TOOL_BLOCK).toContain("A failed or unavailable lookup leaves configuration unknown");
+    expect(TOOL_BLOCK).toContain("If a threshold is rejected, report it as unusable");
   });
 
   it("embeds the refusal sentence verbatim", () => {
@@ -187,7 +196,7 @@ describe("TOOL_BLOCK", () => {
 
   it("routes a limits question to get_pod_thresholds, never to a document", () => {
     expect(TOOL_BLOCK).toContain("get_pod_thresholds for the limits");
-    expect(TOOL_BLOCK).toContain("never substitute a\n  number from a document");
+    expect(TOOL_BLOCK).toContain("Never substitute a\n  number from a document");
     expect(TOOL_BLOCK).toContain("never a \"normal range\"");
   });
 

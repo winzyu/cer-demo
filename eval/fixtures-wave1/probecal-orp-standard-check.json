@@ -7,7 +7,7 @@
     "epa-sop-field-instrument-calibration-2010.pdf"
   ],
   "requires": [],
-  "notes": "The ORP datasheet in the slice carries a tiered recalibration schedule - yearly for the first two years, then roughly every six months, monthly in aggressive chemistry - and nothing whatsoever about what solution to use or what reading to expect. The standard, the temperature-dependent expected value, the arithmetic that converts a meter reading into a comparable number, and the pass window are all in usgs-nfm-a6.5-orp.pdf. Drawn from orp-zobells-standard-01, orp-equilibrate-15-30-01, orp-eh-equation-01, orp-eref-agagcl-238-01, orp-table653-values-01, orp-pass-criterion-5mv-01 (turn 1) and orp-table654-symptoms-01, orp-two-ref-electrodes-0mv-01, orp-iron-blue-precipitate-01 (turn 2). Predicted to favour rag because both the standard solution and the plus-or-minus 5 millivolt acceptance rule are outside the slice; the direct-feed arm has the interval and nothing to do with it.",
+  "notes": "Tests probecal orp standard check. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: orp-zobells-standard-01, orp-equilibrate-15-30-01, orp-eh-equation-01, orp-eref-agagcl-238-01, orp-table653-values-01, orp-pass-criterion-5mv-01, orp-table654-symptoms-01, orp-two-ref-electrodes-0mv-01, orp-iron-blue-precipitate-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -37,9 +37,9 @@
       "rubric": {
         "must_contain": [
           "States that being outside plus or minus 5 millivolts, along with drift and erratic readings, is a recognised failure symptom",
-          "Describes swapping in a known-good reference electrode of the same type to isolate the faulty half",
+          "For accessible, compatible reference-electrode hardware, describes comparing the questionable reference with a known-good reference of the same type; follows manufacturer guidance for sealed or incompatible hardware.",
           "States that two same-type reference electrodes read against each other should agree within about 0 plus or minus 5 millivolts",
-          "Notes that a pair of dissimilar reference electrodes should read about 44 plus or minus 5 millivolts instead"
+          "Specifies that the 44 plus or minus 5 mV diagnostic applies to the Ag:AgCl and Hg:HgCl2 pair, not arbitrary dissimilar electrodes."
         ],
         "must_not": [
           "Tells the operator a 20 millivolt discrepancy is within tolerance",

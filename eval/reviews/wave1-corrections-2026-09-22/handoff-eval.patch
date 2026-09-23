@@ -1,0 +1,24 @@
+--- a/docs/EVAL_REBUILD.md
++++ b/docs/EVAL_REBUILD.md
+@@ -791,3 +791,21 @@
+ positives in the archived set. **The fix is a per-turn `requires_refusal` boolean on the fixture**,
+ which the bake-off's fixture rules previously ruled out because the fixtures were a pinned control while
+ ◆G7 was open — a reason that no longer exists. This had blocked Phase 3.
++
++
++### Wave 1 correction handoff - 2026-09-22
++
++The completed historical review at `c41ffb5` is agent verification, not Phase 1d human sign-off.
++Implemented corrections are on `eval/wave1-corrections` in `.claude/worktrees/wave1-corrections`, pending commit/push approval and later integration with `dev`.
++Read `eval/reviews/wave1-corrections-2026-09-22/README.md` and `HANDOFF.md` on that branch for the source checks, correction rationale, limitations and reproduction commands.
++The correction set has 45 fixtures, 90 turns and 738 conditions: all 34 EDIT fixtures plus the buffering-capacity KEEP fixture were changed, including 13 question turns.
++It includes the two verified EPA claim files from `5d269a3`, regenerated labels, explicit per-turn refusal evidence and the partial-answer/threshold-policy corrections.
++The eight refusal turns carry positive explanatory context and explicit refusal flags; this supersedes the five-flag state recorded above only once the correction branch lands.
++All 446 claim chunk IDs resolve on that branch, with the known chart-header quote exception still awaiting a decision and excluded from affected fixture label inputs.
++Validation passed: 181 tests across six individually run Jest suites, typecheck, lint, the generator failure checks and the offline correction audit.
++Contamination is 9/82 (10.98%) by notes-derived source chunks, 9/90 (10.00%) by current labelled chunks, and 26/90 (28.89%) by source document.
++Historical review hashes, corpus and captured transcripts are preserved; the old checker deliberately fails against the changed prompt, while the new audit records the corrected inputs separately.
++No paid captures or live reads ran in this correction work.
++At handoff, `dev` is `eaba51c` and includes later Gilligan and recovered catalogue changes that overlap the correction branch's prompt and prompt tests.
++The proposed push preserves the correction branch separately; merged behavior has not been tested, and integration must retain greetings, `list_pods` routing and catalogue behavior before rerunning focused checks.
++Human verification/freeze, judge calibration, broader label refinement and the chart-header decision remain open.

@@ -6,14 +6,41 @@
     {
       "turn": 1,
       "query": "We had a hot stretch and the creek sat around 24 degrees all week. Is that actually too warm for the fish? I need to know what number to flag on.",
-      "relevant": [],
-      "noRelevantChunks": "refusal fixture (answerable_from empty) — no corpus chunk answers this query. Mechanically labelled by scripts/resolveRetrievalLabels.ts; not human-verified."
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__b94bbf9a9ecf",
+          "contentHash": "b94bbf9a9ecf",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 1,
+          "evidence": "site are essential for water-quality data collection. Determina-",
+          "locator": "usgs-nfm-a6.1-temperature.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        }
+      ]
     },
     {
       "turn": 2,
       "query": "If I want to put \"too warm\" in the report, is there anything in what we've got that I can point at, or am I going to the state for that?",
-      "relevant": [],
-      "noRelevantChunks": "refusal fixture (answerable_from empty) — no corpus chunk answers this query. Mechanically labelled by scripts/resolveRetrievalLabels.ts; not human-verified."
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__b94bbf9a9ecf",
+          "contentHash": "b94bbf9a9ecf",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 1,
+          "evidence": "site are essential for water-quality data collection. Determina-",
+          "locator": "usgs-nfm-a6.1-temperature.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__443c31100934",
+          "contentHash": "443c31100934",
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "grade": 1,
+          "evidence": "The purpose of this standard operating procedure (SOP) is to provide a framework for calibrating",
+          "locator": "epa-sop-field-instrument-calibration-2010.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        }
+      ]
     }
   ]
 }

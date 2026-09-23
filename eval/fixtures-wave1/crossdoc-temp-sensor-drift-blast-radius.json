@@ -8,36 +8,80 @@
     "usgs-nfm-a6.4-ph.pdf",
     "usgs-nfm-a6.8-multiparameter-instruments.pdf",
     "usgs-nfm-a6.3-specific-conductance.pdf",
-    "usgs-nfm-a6.5-orp.pdf"
+    "usgs-nfm-a6.5-orp.pdf",
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf"
   ],
   "requires": [],
-  "notes": "The temperature sensor as the shared dependency of every other channel. The blast radius is stated most directly in the EPA SOP (epa-nist-temp-check-01: because the pH, dissolved oxygen, specific conductance and ORP probes all rely on the temperature sensor, each temperature sensor must be checked against a NIST-traceable thermometer; epa-solution-volume-01: the calibration solution must cover both the probe and the temperature sensor; epa-do-dry-sensor-01: evaporating moisture on the temperature sensor or DO membrane influences readings). The accuracy bar and the fact that temperature 'calibration' is verification rather than adjustment are only in A6.1 (t-verified-multiparam-accuracy-01: plus/minus 0.2 C when the sensor corrects another parameter; t-temp-cal-differs-01; t-temp-master-variable-01). The cadence is in A6.4 (ph-temp-sensor-annual-cal-01: at least annually, per A6.1) and the traceability requirement in A6.8 (mp-t4-nist-thermometer-02, which ties the same thermometer to the barometer used for DO calibration). Turn 2 cannot be answered from the EPA SOP and turn 1's dependency list is not stated in one place in the USGS chapters, so the pair needs both bodies. Also picks up the sensor-location point from A6.4 (ph-sensor-location-difference-01): on a multiparameter instrument the temperature sensor usually sits somewhere other than the pH electrode. Predicted rag: the slice says temperature is the master variable but says nothing about sensor verification, tolerance, or which readings a drifting thermistor corrupts.",
+  "notes": "Tests crossdoc temp sensor drift blast radius. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: epa-nist-temp-check-01, epa-solution-volume-01, epa-do-dry-sensor-01, t-verified-multiparam-accuracy-01, t-temp-cal-differs-01, t-temp-master-variable-01, ph-temp-sensor-annual-cal-01, mp-t4-nist-thermometer-02, ph-sensor-location-difference-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
       "content": "If the temperature sensor on one of our pods has gone off by half a degree and nobody noticed, which of the other readings are wrong because of it?",
       "rubric": {
         "must_contain": [
-          "states that the pH, dissolved oxygen, specific conductance and ORP channels all depend on the temperature sensor, so all of them are affected",
+          "Identifies pH, dissolved oxygen, specific conductance and corrected Eh as potentially affected where their calculations or calibration rely on that temperature sensor; does not assume the pod wiring or compensation configuration.",
           "explains for specific conductance that the reported value is a temperature-corrected number computed from the measured temperature",
           "explains for dissolved oxygen that the reported concentration is computed from the sensor signal together with temperature",
           "explains for pH that temperature affects the electrode slope and the buffer values used to calibrate it",
-          "explains for ORP that the reference potential the reading is set against is itself temperature dependent",
+          "Explains temperature dependence of reference-electrode potential used to calculate Eh, distinguishing corrected Eh from raw ORP voltage.",
           "notes that on a multiparameter instrument the temperature sensor typically sits in a different part of the instrument from the pH electrode"
         ],
         "must_not": [
-          "says only the temperature channel is affected",
+          "Claims temperature errors can never affect other channels that use the sensor for calibration or compensation.",
           "invents a numeric error propagated into a specific channel",
-          "answers from the probe datasheets instead of the field manuals"
+          "Uses datasheet operating ranges as a substitute for explaining temperature dependencies."
         ],
         "cite": [
           "epa-sop-field-instrument-calibration-2010.pdf",
           "usgs-nfm-a6.4-ph.pdf",
           "usgs-nfm-a6.3-specific-conductance.pdf",
           "usgs-nfm-a6.5-orp.pdf",
-          "usgs-nfm-a6.1-temperature.pdf"
+          "usgs-nfm-a6.1-temperature.pdf",
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
         ]
-      }
+      },
+      "retrieval_evidence": [
+        {
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "quote": "be checked for accuracy against a thermometer that is traceable to the National Institute of"
+        },
+        {
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "quote": "The volume of the calibration solutions must be sufficient to cover both the probe and"
+        },
+        {
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "quote": "evaporation of moisture on the temperature sensor or DO probe may influence the"
+        },
+        {
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "quote": "another water-quality parameter (such as dissolved\noxygen or specific conductance). The accuracy of such\na sensor is required to be less than or equal to ±0.2°C."
+        },
+        {
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "quote": "differ from the process by which a pH or conductivity sensor\nis adjusted until the accuracy of its performance conforms"
+        },
+        {
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "quote": "tion of dissolved-oxygen concentrations, conductivity, pH,\nrate and equilibria of chemical reactions, biological activity,\nand fluid properties relies on accurate temperature measure-"
+        },
+        {
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "quote": "A calibration check of the pH meter’s temperature\nsensor is required to be performed at least annually\n(NFM A6.1)."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Calibration thermometer and barometer \tNIST-certified or NIST-traceable. (see NFM A6.1 and A6.2 for USGS standard"
+        },
+        {
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "quote": "sensor signal is proportional to the ambient partial pressure of"
+        },
+        {
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "quote": "adjusted back to the altitude of the weather station in order to"
+        }
+      ]
     },
     {
       "role": "user",
@@ -48,7 +92,7 @@
           "states the check is made against a NIST-certified or NIST-traceable thermometer",
           "gives the required accuracy as within about plus or minus 0.2 C where the sensor is bundled on a multiparameter instrument and used to correct another parameter",
           "gives the minimum cadence as at least annually",
-          "notes that the calibration solution must cover both the probe and the temperature sensor, and that moisture left on the temperature sensor can influence readings"
+          "States calibration solution must cover probe and temperature sensor; identifies evaporation of moisture as a DO air-calibration concern."
         ],
         "must_not": [
           "describes adjusting the temperature sensor until it matches a reference",

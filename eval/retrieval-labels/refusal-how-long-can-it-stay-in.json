@@ -6,14 +6,95 @@
     {
       "turn": 1,
       "query": "We want to drop a pod in the creek and leave it there. Nobody is going out to it unless we put it on the calendar. Is there a limit on how long it can sit in the water before the readings stop being any good?",
-      "relevant": [],
-      "noRelevantChunks": "refusal fixture (answerable_from empty) — no corpus chunk answers this query. Mechanically labelled by scripts/resolveRetrievalLabels.ts; not human-verified."
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__0670bbdf7a56",
+          "contentHash": "0670bbdf7a56",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "— \tFor deployed, dynamic monitoring, the cleaning frequency",
+          "locator": "usgs-nfm-a6.7-turbidity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2db3b29c7433",
+          "contentHash": "2db3b29c7433",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "refer to the manufacturer’s instructions and recommendations, and to",
+          "locator": "usgs-nfm-a6.7-turbidity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__1dc14aca715c",
+          "contentHash": "1dc14aca715c",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 1,
+          "evidence": "Determination of Points for Sensor Calibration Verification",
+          "locator": "usgs-nfm-a6.1-temperature.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__1d1da8dd9efb",
+          "contentHash": "1d1da8dd9efb",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 1,
+          "evidence": "bration verifications. In situ verifications must be within the",
+          "locator": "usgs-nfm-a6.1-temperature.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__dd989c168d7e",
+          "contentHash": "dd989c168d7e",
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "grade": 1,
+          "evidence": "either be left on all day (battery dependent) or calibrated at each sampling location. If they are",
+          "locator": "epa-sop-field-instrument-calibration-2010.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        }
+      ]
     },
     {
       "turn": 2,
       "query": "Say we leave it a month anyway. When we pull it out, how much of that month am I allowed to keep?",
-      "relevant": [],
-      "noRelevantChunks": "refusal fixture (answerable_from empty) — no corpus chunk answers this query. Mechanically labelled by scripts/resolveRetrievalLabels.ts; not human-verified."
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5b8340b4b614",
+          "contentHash": "5b8340b4b614",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "X \tFouling: After a series of measurements and before calibration,",
+          "locator": "usgs-nfm-a6.7-turbidity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__dd989c168d7e",
+          "contentHash": "dd989c168d7e",
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "grade": 1,
+          "evidence": "Instruments (e.g., sonde) that monitor continuously over a period of time are calibrated before",
+          "locator": "epa-sop-field-instrument-calibration-2010.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__6bf0e3b82a75",
+          "contentHash": "6bf0e3b82a75",
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "grade": 1,
+          "evidence": "If the quality assurance project plan or the sampling and analysis plan do not list the drift criteria",
+          "locator": "epa-sop-field-instrument-calibration-2010.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__63eb942808c2",
+          "contentHash": "63eb942808c2",
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "grade": 1,
+          "evidence": "If the quality assurance project plan or the sampling and analysis plan do not list the drift criteria",
+          "locator": "epa-sop-field-instrument-calibration-2010.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        }
+      ]
     }
   ]
 }

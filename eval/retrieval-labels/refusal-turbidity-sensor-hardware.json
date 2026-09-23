@@ -6,14 +6,41 @@
     {
       "turn": 1,
       "query": "I have depth ratings written down for four of our sensors but nothing for the one that reads clarity. How deep can we hang that one?",
-      "relevant": [],
-      "noRelevantChunks": "refusal fixture (answerable_from empty) — no corpus chunk answers this query. Mechanically labelled by scripts/resolveRetrievalLabels.ts; not human-verified."
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2db3b29c7433",
+          "contentHash": "2db3b29c7433",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "refer to the manufacturer’s instructions and recommendations, and to",
+          "locator": "usgs-nfm-a6.7-turbidity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        }
+      ]
     },
     {
       "turn": 2,
       "query": "Then what unit is that reading even in? The display just hands me a number with nothing next to it.",
-      "relevant": [],
-      "noRelevantChunks": "refusal fixture (answerable_from empty) — no corpus chunk answers this query. Mechanically labelled by scripts/resolveRetrievalLabels.ts; not human-verified."
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__f9ac2c6ac6c1",
+          "contentHash": "f9ac2c6ac6c1",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "6.7.2), but their respective instruments may not produce equivalent",
+          "locator": "usgs-nfm-a6.7-turbidity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 1,
+          "evidence": "6/15/2012). Method codes are used with these data to provide information that",
+          "locator": "usgs-nfm-a6.7-turbidity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        }
+      ]
     }
   ]
 }

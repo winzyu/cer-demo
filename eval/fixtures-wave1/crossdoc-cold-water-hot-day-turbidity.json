@@ -7,22 +7,21 @@
     "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
   ],
   "requires": [],
-  "notes": "A temperature-turbidity coupling that is a measurement artefact rather than a water-quality signal. A6.7 explains the physics and the sampling prohibition: tby-bias-factors-condensation-01 (condensation on the sample cell, common when the water is much colder than the air, biases the reading, alongside cell orientation, colour, bubbles and scratches), tby-transport-temp-difference-01 (temperature change in transport separates benchtop from in-situ values), tby-dynamic-preferred-01 (in-situ or pumped measurement preferred over benchtop because of subsampling, settling, temperature change and cuvette interferences), tby-equilibrate-ambient-warning-01 (equilibrating to ambient reduces condensation but warming can change particle associations), tby-not-flowthrough-discharge-01 (a discrete turbidity sample must NOT be taken from the discharge of the flow-through chamber holding the pH and conductivity sensors), tby-time-sensitive-onsite-01 and tby-ph-change-precipitation-01, tby-storage-amber-4c-24h-01 (amber bottle, out of sunlight, at or below 4 C, no longer than 24 hours). A6.0 supplies the reporting rule the turbidity chapter does not state: fm-subsample-forbidden-params-01 — subsamples must not be used for reported turbidity, temperature, DO or Eh without value qualifiers and comments marking them estimated and subsample-derived; fm-subsample-bias-01 and a60-bailer-turbidity-bias-01. An answer from A6.7 alone explains the condensation and never tells the operator what has to go on the record. Predicted rag: the slice treats turbidity only as an event signature and has nothing on measurement bias or qualifiers."
-  ,
+  "notes": "Tests crossdoc cold water hot day turbidity. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: tby-bias-factors-condensation-01, tby-transport-temp-difference-01, tby-dynamic-preferred-01, tby-equilibrate-ambient-warning-01, tby-not-flowthrough-discharge-01, tby-time-sensitive-onsite-01, tby-ph-change-precipitation-01, tby-storage-amber-4c-24h-01, fm-subsample-forbidden-params-01, fm-subsample-bias-01, a60-bailer-turbidity-bias-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
-      "content": "Snowmelt creek, water is about 4 C and it was 30 C and sunny on the bank. My bench readings on grab samples came out consistently higher than what the pod in the water was showing. Which one is lying?",
+      "content": "Groundwater from a monitoring well is about 4 C and it was 30 C and sunny beside the well. My bench readings on grab samples came out consistently higher than the in-situ sensor was showing. Which one is lying?",
       "rubric": {
         "must_contain": [
-          "identifies condensation on the sample cell as the likely cause, and states it commonly occurs when the water sample is much colder than the air",
+          "Identifies condensation on the sample cell as a plausible source of bias when sample water is much colder than air, without establishing it as the actual cause.",
           "names the other bench-measurement biases in the same family: cell orientation, coloured water, gas bubbles, and scratched or dirty sample cells",
           "states that temperature change during transport from the source water is itself a reason benchtop and in-situ values differ",
-          "concludes the in-situ or pumped measurement is the one to prefer, not the bench value",
+          "Explains the preference for in-situ or pumped dynamic measurement while requiring checks of both methods before deciding which reading is reliable.",
           "notes that letting the sample equilibrate to ambient temperature reduces condensation but warming the sample can change particle associations in the water"
         ],
         "must_not": [
-          "attributes the difference to a real turbidity change in the creek",
+          "Asserts real water-quality change or a particular instrument failure as the established explanation without supporting evidence.",
           "invents a temperature correction for turbidity",
           "treats the bench measurement as the reference the sonde should be adjusted to",
           "answers from turbidity event signatures instead of measurement bias"

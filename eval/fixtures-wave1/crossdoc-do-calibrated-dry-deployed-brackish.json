@@ -8,7 +8,7 @@
     "epa-sop-field-instrument-calibration-2010.pdf"
   ],
   "requires": [],
-  "notes": "A DO calibration whose inputs are three other metrics — temperature, barometric pressure and conductivity — and whose governing document changes in turn 2. USGS side: do-one-point-goal-01 (create a 100 percent saturated environment with sensor and thermistor at the same temperature), do-proc1-read-precision-01 (pressure to the nearest 1 mmHg, temperature to 0.1 C), do-water-droplets-01 and do-wet-towel-bag-shade-01, do-calibration-corrections-01 and do-auto-salinity-correction-01 / do-auto-salinity-multiparameter-01 (ionic strength estimated from the conductivity sensor, corrected automatically unless switched off), do-salinity-correction-after-01 (the preferred USGS method applies salinity factors AFTER calibration and measurement), do-manual-salinity-recalibration-01 (a manual salinity correction at calibration forces recalibration for every field salinity change), do-temp-controls-solubility-01. A6.8 supplies the record: mp-form-do-columns-05 lists exactly what the DO calibration block captures — calibration temperature, barometric pressure in mm Hg, table reading, salinity correction factor, DO before and after adjustment; mp-t4-nist-thermometer-02 makes the barometer NIST-traceable. Turn 2 moves to the EPA SOP, which prescribes a different cadence and a different check: epa-cal-frequency-daily-01, epa-post-cal-end-of-day-01, epa-midday-check-qualify-01 (only data before a failed midday check needs qualifying), epa-sonde-deploy-cal-01 (deployed sondes are calibrated before deployment and checked on recovery), epa-postcal-do-steps-01 and epa-oxygen-solubility-chart-01 / epa-do-solubility-20c-01 (the post-calibration DO check is read against an oxygen-solubility chart at the measured temperature and barometric pressure), epa-do-dry-sensor-01, epa-postcal-defaults-apply-when-01 (the SOP's tabulated criteria apply only if the project QAPP has none). Neither file answers both turns. Predicted rag: the slice has no calibration content at all for any metric.",
+  "notes": "Tests crossdoc do calibrated dry deployed brackish. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: do-one-point-goal-01, do-proc1-read-precision-01, do-water-droplets-01, do-wet-towel-bag-shade-01, do-calibration-corrections-01, do-auto-salinity-correction-01, do-auto-salinity-multiparameter-01, do-salinity-correction-after-01, do-manual-salinity-recalibration-01, do-temp-controls-solubility-01, mp-form-do-columns-05, mp-t4-nist-thermometer-02, epa-cal-frequency-daily-01, epa-post-cal-end-of-day-01, epa-midday-check-qualify-01, epa-sonde-deploy-cal-01, epa-postcal-do-steps-01, epa-do-solubility-20c-01, epa-do-dry-sensor-01, epa-postcal-defaults-apply-when-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -20,8 +20,8 @@
           "states temperature must be read to the nearest 0.1 C",
           "states the reported concentration is computed from the sensor signal together with temperature and ionic strength, so the sensor is not measuring mg/L directly",
           "states ionic strength for the salinity correction is estimated from the conductivity measurement",
-          "warns to check for water droplets on the optical module and on the temperature sensor after calibrating, and to recalibrate if any were present",
-          "states the USGS preference is to apply salinity correction factors after calibration and measurement rather than during calibration",
+          "Checks for droplets on the optical module and temperature sensor when using an optical DO instrument, and recalibrates if present; does not assume an unidentified probe is optical",
+          "When manual user-specified salinity correction is needed, states USGS prefers applying it after calibration and measurement; distinguishes automatic conductivity-based compensation",
           "notes that entering a manual salinity correction at calibration forces recalibration for each change in field salinity"
         ],
         "must_not": [
@@ -43,11 +43,12 @@
       "rubric": {
         "must_contain": [
           "states the EPA SOP requires calibration at minimum before use on the day the measurements are made",
-          "states the EPA SOP requires a post-calibration check at the end of the day to determine whether the instrument drifted",
-          "states that if a midday check shows drift the instrument can be recalibrated and only data taken before that check needs qualifying",
+          "States the EPA normal spot-sampling cadence includes an end-of-day calibration check, except when the instrument is calibrated at each sampling location under the stated exemption",
+          "If a midday check finds drift, successfully recalibrates before treating later data as unaffected; data preceding that check are qualified",
           "states a continuously deployed sonde is calibrated before deployment and its calibration checked on recovery",
           "states the DO post-calibration check is done in measurement mode, recording DO, temperature and barometric pressure for comparison against an oxygen-solubility chart",
-          "states the SOP's own drift criteria apply only when the project quality assurance plan does not specify its own"
+          "states the SOP's own drift criteria apply only when the project quality assurance plan does not specify its own",
+          "Allows EPA's per-location recalibration exception to post-checks, while distinguishing deployment/recovery checks for continuous sondes"
         ],
         "must_not": [
           "presents the EPA SOP as replacing the analytical methods it supplements",

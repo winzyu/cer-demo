@@ -7,7 +7,7 @@
     "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
   ],
   "requires": [],
-  "notes": "Procedural depth plus the stabilization table in NFM A6.8. Claims: mp-60s-surface-water-06 and mp-60s-groundwater-03 (minimum 60 seconds at each new measurement location for the sensors and sonde body to reach thermal equilibrium), mp-60s-longer-manufacturer-07 (the 60 seconds is a minimum only), mp-equilibrium-range-04 (60 seconds to several minutes depending on instrument and temperature difference), mp-stabilize-to-table-01 and mp-t5-temperature-03 / -sc-04 / -do-05 / -ph-06 / -turbidity-07 (table 6.8-5 criteria). Turn 2 is the follow-up an operator asks once told to wait: how do I know it is done. Expected to favor rag: the slice's probe datasheets give sensor response times (1 second to 90 or 95 percent of reading), which is a plausible-looking wrong answer to turn 1, and give no stabilization criteria at all for turn 2.",
+  "notes": "Tests deepmanual sonde settle time. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: mp-60s-surface-water-06, mp-60s-groundwater-03, mp-60s-longer-manufacturer-07, mp-equilibrium-range-04, mp-stabilize-to-table-01, mp-t5-temperature-03. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -39,18 +39,41 @@
           "States dissolved oxygen must be stable within ±0.2 mg/L",
           "States pH must be stable within ±0.1 unit",
           "States specific conductance must be within ±5 µS/cm at or below 100 µS/cm, and ±3 percent above 100 µS/cm",
-          "States turbidity must be within ±0.5 turbidity units or 5 percent, whichever is greater"
+          "Gives turbidity stabilization as ±0.5 TU or ±5 percent, whichever is greater, at or below 100 TU; above 100 TU uses ±10 percent",
+          "Assesses stabilization over about five or more consecutive readings"
         ],
         "must_not": [
           "Invents a stabilization tolerance not in the table",
           "Gives the operator baseline healthy ranges instead of stabilization criteria",
-          "Gives criteria for only one or two of the parameters when asked about the sonde as a whole"
+          "Omits applicable installed channels when assessing the sonde; does not require sensors the sonde lacks"
         ],
         "cite": [
           "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
         ]
-      }
+      },
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Wait a minimum of 60 seconds for the sensors and\nsonde body to reach thermal equilibrium with the water\nat each new measurement location."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Wait a minimum of 60 seconds for the sensors and\nsonde body to reach thermal equilibrium with the water\nbefore monitoring field-parameter values."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Temperature \t± 0.2 °C"
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Turbidity \t± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or"
+        },
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "criteria for stabilized field readings are defined opera-"
+        }
+      ]
     }
   ]
 }

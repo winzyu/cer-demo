@@ -6,11 +6,11 @@
     "usgs-nfm-a6.2-dissolved-oxygen.pdf"
   ],
   "requires": [],
-  "notes": "Numeric lookup in NFM A6.2 table 6.2-4 (salinity correction factors) plus the chapter's own definition of saline water. Claims: do-t624-20c-50000-08235-01 (0.8235 at 20.0 C and 50,000 uS/cm), do-t624-0uscm-unity-01 (factor is exactly 1.0000 at 0 uS/cm at every temperature), do-saline-above-2000-01 (saline defined as specific conductance greater than 2,000 uS/cm), do-example-873-product-01 (the correction is applied by multiplication). The factor claim sits on chunk 83, which carries its column header; the 0.9733 factor from the chapter's own worked example falls inside a headerless continuation chunk and is deliberately not used here. Expected to favor rag: the slice's only salinity statement is the qualitative 'saltwater holds roughly 20 percent less oxygen', which cannot produce a factor or a threshold.",
+  "notes": "Tests deepmanual brackish do correction. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: do-t624-20c-50000-08235-01, do-t624-0uscm-unity-01, do-saline-above-2000-01, do-example-873-product-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
-      "content": "We just moved a pod into a tidal creek. Conductivity is running about 50,000 µS/cm and the water is around 20 °C. The DO sensor has no salt compensation — how do we fix its readings?",
+      "content": "We moved a pod into a tidal creek. Specific conductance normalized to 25 °C is about 50,000 µS/cm, water temperature is 20 °C, and the DO reading has no salinity compensation. Using USGS table 6.2-4, how do we correct it?",
       "rubric": {
         "must_contain": [
           "States the measured DO must be multiplied by a salinity correction factor",
@@ -31,8 +31,8 @@
       "content": "We have three more pods upstream in fresh water. Do those need the same treatment?",
       "rubric": {
         "must_contain": [
-          "States no correction is needed in fresh water",
-          "Gives 1.0000 as the factor at 0 microsiemens per centimetre",
+          "Explains the manual's operational saline-water correction applies above 2,000 µS/cm and asks for the upstream specific conductance before deciding; freshwater does not imply zero conductivity or mathematically zero salinity effect",
+          "Gives 1.0000 at zero specific conductance without extending that exact factor to all freshwater",
           "States the manual treats water as saline only above about 2,000 µS/cm specific conductance"
         ],
         "must_not": [

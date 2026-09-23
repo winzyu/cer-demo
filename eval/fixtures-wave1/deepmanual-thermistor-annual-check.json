@@ -7,7 +7,7 @@
     "epa-sop-field-instrument-calibration-2010.pdf"
   ],
   "requires": [],
-  "notes": "Numeric lookup for how a yearly temperature-sensor verification is designed, deep in NFM A6.1 section 3. Claims: t-min-two-points-01 (minimum two points, within ±2 °C of the annual minimum and maximum and ±4 °C of the mean), t-points-2c-apart-01, t-points-10c-large-range-01 (maximum of five points), t-example-4-12-01 (6 °C and 10 °C satisfy a 4-12 °C range with an 8 °C mean), t-cal-verif-12mo-01 and t-321-verify-12mo-01 (every 12 months), t-method1-lab-01 and t-method2-insitu-01 (both acceptable, neither preferred), t-onepoint-pre-trip-01 (one-point check against a certified sensor immediately before the field trip). Turn 2 is the operator's natural next question — can we skip the lab. Expected to favor rag: the slice's probe datasheets carry no temperature-verification programme at all, only recalibration intervals.",
+  "notes": "Tests deepmanual thermistor annual check. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: t-min-two-points-01, t-points-2c-apart-01, t-points-10c-large-range-01, t-example-4-12-01, t-cal-verif-12mo-01, t-321-verify-12mo-01, t-method1-lab-01, t-method2-insitu-01, t-onepoint-pre-trip-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -17,13 +17,13 @@
           "States a minimum of two verification points",
           "States the points must be within ±2 °C of the annual minimum and maximum",
           "States the points must be within ±4 °C of the annual mean",
-          "Gives 6 °C and 10 °C as points that satisfy a 4-12 °C range with an 8 °C mean",
-          "Notes at most five verification points are ever required"
+          "Gives a point set satisfying the range and spacing rules, with 6 C and 10 C as one valid example for an assumed 8 C annual mean.",
+          "Notes this range-verification procedure requires at most five points, without generalizing to every certification procedure"
         ],
         "must_not": [
-          "Invents a fixed number of points for this range",
+          "Requires an unsupported fixed number of points; accepts two points here when all placement and spacing rules are met.",
           "Says a single-point check is enough for annual verification",
-          "Recommends verification points that do not satisfy the +/-2 degrees C of minimum and maximum and +/-4 degrees C of mean rules"
+          "Recommends points violating the extrema/mean rules or the small-range spacing of at least 2 C and no more than 4 C."
         ],
         "cite": [
           "usgs-nfm-a6.1-temperature.pdf",
@@ -43,7 +43,7 @@
         ],
         "must_not": [
           "Claims the laboratory water bath is the only acceptable method",
-          "Invents a verification interval other than 12 months",
+          "Invents a mandatory verification interval or permits annual verification less frequently than every 12 months; does not reject legitimate additional checks.",
           "Drops the pre-trip one-point check"
         ],
         "cite": [

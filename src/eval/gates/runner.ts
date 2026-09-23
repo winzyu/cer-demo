@@ -132,7 +132,7 @@ export const refusalMap = (): Map<string, boolean[]> => {
     throw new Error(
       `${refusalFixtures.length} refusal-class fixture(s) loaded but no turn sets `
       + "requires_refusal: true, so the refusal gate would pass on zero turns. "
-      + "Flag the turns whose rubric admits no substantive answer.",
+      + "Flag turns whose requested value must be refused, even with supported explanations.",
     );
   }
   return map;

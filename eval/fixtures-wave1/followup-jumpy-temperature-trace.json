@@ -6,7 +6,7 @@
     "usgs-nfm-a6.1-temperature.pdf"
   ],
   "requires": [],
-  "notes": "Built from t-table-erratic-01 (turn 1) and t-table-inaccurate-causes-01 plus the recertification note in t-table-erratic-01 (turn 2). Turn 2 - 'If it turns out to be that one, can we just swap it ourselves and carry on?' - carries no subject: 'that one' picks out the cable from the causes listed in turn 1 and nothing else identifies it. Shape is failure-mode-then-its-hidden-consequence, and the consequence is the interesting part: a cable swap is not a free repair because it can pull the sensor's certification with it. expected_to_favor is 'rag' - this lives in a troubleshooting table deep in the temperature chapter. Slice check: the source-of-truth and the four probe datasheets have nothing on erratic temperature causes and no notion of sensor certification or recertification at all, so a slice-bound arm has to guess, and the plausible guess (yes, just swap it) is the wrong answer.",
+  "notes": "Tests followup jumpy temperature trace. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: t-table-erratic-01, t-table-inaccurate-causes-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -16,7 +16,7 @@
           "points at the connections at the meter and at the sensor, either loose or dirty, as a first thing to check",
           "points at a break somewhere in the cable",
           "points at weak batteries",
-          "distinguishes this jumpy behaviour from a sensor that reads steadily but wrong, which points instead at a dirty sensor or an out-of-date calibration"
+          "Distinguishes the erratic-reading checks from dirty-sensor and expired-verification causes of inaccurate readings, noting weak batteries can cause either."
         ],
         "must_not": [
           "attributes the jumpiness to real changes in the water without checking the instrument first",
@@ -30,12 +30,12 @@
     },
     {
       "role": "user",
-      "content": "If it turns out to be that one, can we just swap it ourselves and carry on?",
+      "content": "If it turns out to be the cable, can we just swap it ourselves and carry on?",
       "rubric": {
         "must_contain": [
           "warns that swapping the cable is not necessarily a free repair, because changing cables can require the sensor to be recertified",
-          "Notes that until the sensor is verified its readings do not meet the chapter's condition for storage as verified data",
-          "notes that until that is done the readings from that sensor should not be treated as good data"
+          "Attributes the conditional NWIS uncertainty rule to the temperature chapter, rather than asserting current platform capability; requires re-verification after repair.",
+          "Requires verified accuracy before treating repaired-sensor data as verified; checks whether cable replacement invalidates certification and requires recertification."
         ],
         "must_not": [
           "says a cable swap is a simple field fix with no follow-up",

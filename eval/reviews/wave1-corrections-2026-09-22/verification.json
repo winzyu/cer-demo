@@ -1,0 +1,1196 @@
+{
+  "base": "c41ffb5",
+  "historicalReview": "eval/reviews/wave1-agent-2026-09-21",
+  "historicalFilesAndTranscriptsUnchanged": true,
+  "corpusSha256": "50f86326b020f7057e93a24a1c1f0d5f0a76a96deb75ecdd768d45a9f10707e6",
+  "documents": 14,
+  "chunks": 446,
+  "fixtures": 45,
+  "turns": 90,
+  "conditions": 738,
+  "humanVerificationComplete": false,
+  "paidCaptures": 0,
+  "changedFixtures": [
+    "crossdoc-bailed-orp-jumping",
+    "crossdoc-cold-water-hot-day-turbidity",
+    "crossdoc-conductivity-rise-with-warming",
+    "crossdoc-do-calibrated-dry-deployed-brackish",
+    "crossdoc-how-steady-before-i-write-it-down",
+    "crossdoc-orp-sliding-do-steady",
+    "crossdoc-soft-water-ph-wont-settle",
+    "crossdoc-sonde-sensor-order",
+    "crossdoc-temp-sensor-drift-blast-radius",
+    "crossdoc-two-oxygen-tables-disagree",
+    "crossdoc-warm-week-oxygen-drop",
+    "deepmanual-brackish-do-correction",
+    "deepmanual-diluting-clarity-standards",
+    "deepmanual-do-saturation-ceiling",
+    "deepmanual-ec-standard-choice",
+    "deepmanual-sonde-settle-time",
+    "deepmanual-thermistor-annual-check",
+    "deepmanual-turbidity-rounding",
+    "deepmanual-zobell-check",
+    "definitional-what-a-bare-tu-label-tells-us",
+    "definitional-what-per-centimetre-means",
+    "followup-clarity-calibration-whole-head",
+    "followup-jumpy-temperature-trace",
+    "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+    "precedence-ph-river-range-not-pod-limit",
+    "precedence-turbidity-groundwater-background-not-pod-limit",
+    "probecal-do-saturation-target",
+    "probecal-ec-never-recalibrate",
+    "probecal-end-of-day-check",
+    "probecal-orp-standard-check",
+    "probecal-ph-slope-acceptance",
+    "refusal-buffering-capacity-not-measured",
+    "refusal-how-long-can-it-stay-in",
+    "refusal-temperature-harm-threshold",
+    "refusal-turbidity-sensor-hardware"
+  ],
+  "changedQuestions": [
+    "crossdoc-cold-water-hot-day-turbidity:T1",
+    "crossdoc-orp-sliding-do-steady:T2",
+    "crossdoc-soft-water-ph-wont-settle:T1",
+    "crossdoc-soft-water-ph-wont-settle:T2",
+    "deepmanual-brackish-do-correction:T1",
+    "deepmanual-do-saturation-ceiling:T1",
+    "deepmanual-ec-standard-choice:T1",
+    "deepmanual-turbidity-rounding:T1",
+    "deepmanual-zobell-check:T2",
+    "followup-clarity-calibration-whole-head:T2",
+    "followup-jumpy-temperature-trace:T2",
+    "probecal-do-saturation-target:T1",
+    "probecal-ec-never-recalibrate:T2"
+  ],
+  "fixtureHashes": {
+    "crossdoc-acid-drainage-conductivity-suspect": "c91e60520a8c9dcda14f91e64ebb5a331970fc215392e31c4e5387efbdc22441",
+    "crossdoc-bailed-orp-jumping": "c3c9dec36fa5adb0ee7d6e2c9f3d72e04d16bbaf62de628e63686279c4af1098",
+    "crossdoc-cold-water-hot-day-turbidity": "a130ebcfc80fef150d813d7c86bf2534b2d449ee5e337c89d24a2b4390e11f07",
+    "crossdoc-conductivity-rise-with-warming": "55811ce69ff0e3839eac9d20042db9061006c75086db8ddfdd8f37525c8179c5",
+    "crossdoc-do-calibrated-dry-deployed-brackish": "5296e2baec63abb45a6593f6df0f35b7c3e6aaf7cb67f049cca22887dcae2d79",
+    "crossdoc-how-steady-before-i-write-it-down": "5f311e4797ac4a15358255503eb326ee68d09faf62ea39cb6cd5f2a6f183bcac",
+    "crossdoc-orp-sliding-do-steady": "b04423b80c19028af422dea3598fceeb9dd0e6ce9c9a4d52591d580e224fb4d0",
+    "crossdoc-soft-water-ph-wont-settle": "2fc54396b51616496ce7fd647134475f019cd99736ff5a4c1efb4ecb761f1880",
+    "crossdoc-sonde-sensor-order": "56360ccac87ffeae274d90fe9ece719545095c3d098f4e3a4a23aa034cb77e11",
+    "crossdoc-temp-sensor-drift-blast-radius": "7bfcc3cb8a224ce8aaa9c2b1c184b1f90075b335ba3d310e0e949e405679bc01",
+    "crossdoc-two-oxygen-tables-disagree": "7d1635f1462f8b5d520247b8cbd8294a674fe8d2799ac70db774cc4ca128c9af",
+    "crossdoc-warm-week-oxygen-drop": "3a7d6d801d2ebb8aec73155433b53d7823b13bede3e5da03f621ed4fce2be9e9",
+    "deepmanual-brackish-do-correction": "eacc4e8a281f27137e866dee4ed690142993ef795ab65291d3d6456ccfbef95d",
+    "deepmanual-cross-section-points": "4795697630f2d5c6535af3d96be4a70b64b1216dc836ad517a26964f64d1f198",
+    "deepmanual-diluting-clarity-standards": "2c7a5f174497a99a86b107b230ebdc339ff1f2b2c9540d9d52f55707505a6356",
+    "deepmanual-do-air-calibration": "a96e568a31be4bbe718eb234ce9bc0a2ebfa3e042d20d52be899b6a810f9ba53",
+    "deepmanual-do-saturation-ceiling": "ec02f6a137237ddc46ffc805480765d02c99342712447378bbdd09c7a19ffefc",
+    "deepmanual-ec-standard-choice": "90a4d464ed7ce7b9c6f8c17cf58ef9b455b4c9a9a69e65c8c282d42bf79cecd0",
+    "deepmanual-sonde-settle-time": "708fc37a25289aabd898693a9da23271816e3a2fee9b980552d188d39b8c4384",
+    "deepmanual-thermistor-annual-check": "4d856e6ccae11cfccc0ef33afb0e9b0ba5754c17cbbb08e3a86baeb969da42e7",
+    "deepmanual-turbidity-rounding": "fa9a84d456b397ae77059c666a5a843e3bfbe78fba0add7a7f52c946b6397b0b",
+    "deepmanual-zobell-check": "7adacb6b7a4e206c81ff9fd985636e33937ec47dd5e1eeb7dfe43971463f49a5",
+    "definitional-eh-versus-the-millivolts-we-log": "25e1a9263acae8f4573ba5609fb2e1e47e505af20df12218aa51fa70fde646ea",
+    "definitional-required-versus-recommended": "a70daa92664deeeb0dce93dc014fe7fc2a644fd4213301646eed4eb41df90805",
+    "definitional-what-a-bare-tu-label-tells-us": "3c2bbd2fc33ccce687b343d84749836dffba641991ba238b5e055715aff182eb",
+    "definitional-what-per-centimetre-means": "b8f36bab483dc31a0f3e5c39b39ce6e8c8eb764cbb262e18c347640f2a267f0f",
+    "followup-clarity-calibration-whole-head": "ce088b2998ca81baed8acfe2b3c50aecffce61a84f9b3ef486cf1f35e6448919",
+    "followup-cleaning-the-salt-sensor": "169b8de4086a426792bb6b8d698e089e02d8941ef4f319237addcea8a3627813",
+    "followup-jumpy-temperature-trace": "1bd0f4a9be27c967971d8a13e86f53a406683d229831c63d12d94fde16568fa5",
+    "followup-mixing-the-clarity-bottle": "e8ca3456f99ebd7e6508f1339e414293c0bc7a6b17978eee917a0b9a8431da8f",
+    "precedence-do-hypoxia-qa-trigger-not-pod-limit": "9bbaf4e91b24a3a9ad3e92d232d7b1c031d93a4feb9b8ccfd35c362f4f1e09f6",
+    "precedence-ph-river-range-not-pod-limit": "5f9c6078b15eb05e081218239e3e0302225dd5e9fd617cbb2b86daa57dc50ce6",
+    "precedence-turbidity-groundwater-background-not-pod-limit": "c8cce9cbf0bdc7514b700382a25dd994ae9506ba19cd49398de46a5e1eb980a1",
+    "probecal-buffer-handling": "43bfcb8802fedb589729e75fffb5c7072af3dcdaaa496d83dc4c028ac834ae2c",
+    "probecal-do-saturation-target": "b9ce207f153740c085bb7085660353c50612ffb0a251ac820d7b264391cc462d",
+    "probecal-ec-never-recalibrate": "04349cc70672a32b04df34e1da296d7c5f0995f2d68977946e69cb8e960eaca9",
+    "probecal-end-of-day-check": "a10b5e1d71744a4e51edeb60255507a67ab2b6be0cc1227dbe57fc6c1b7b0db1",
+    "probecal-orp-standard-check": "f0920be27ffad1d7c745c132fcf85397d8270157c050450831326d6f8367da94",
+    "probecal-ph-slope-acceptance": "181574a271d376fc1a69e615b6a998c027213532842429a7ac0d000d15b69ab1",
+    "probecal-ph-what-solutions": "f21de90e792bccfaa21b68bc7e802c4b772a8c3101993518c82a06355e1b4540",
+    "probecal-sonde-calibration-order": "d355d8ec6e958bb0ef90f82cf8aa00604fd13ed7f13f7ed91b9014a8d527f03c",
+    "refusal-buffering-capacity-not-measured": "19d2d596766a86dc4fbf75c5b361baea44c6b612405d8b16cf045d8d97385f9b",
+    "refusal-how-long-can-it-stay-in": "87a45e210e5b37d65cc9e27606b9f69a669a9f7ef93b16deb7025a4ce6d06811",
+    "refusal-temperature-harm-threshold": "92bafd648a15463575d5c12cd5fe1df14038ac8c5c00fefb7d3ceb98820fd3dc",
+    "refusal-turbidity-sensor-hardware": "b90666be174156d8836c432db0b2199c9f5848848673c940f95e6dbbdef977b6"
+  },
+  "inputHashes": {
+    "src/prompt/systemPrompt.ts": "a2860e3bc86ff94eb11ee0b684a7c31d6b01981c1843c3a460931c3b673cdf49",
+    "src/eval/judge/prompts.ts": "855ca0ff4088d289d3b8c305ea15ec4eb705bfd607b00283e6dba6add0387e4f",
+    "scripts/resolveRetrievalLabels.ts": "1dc69b1ae899397f87e3aa1b9bbd28d3412d6e262c8b014e670db8fc62bbb221",
+    "scripts/verifyWave1Corrections.ts": "efbbbfd7dcd170960d9f003634a9bde5e84d00925ca2f9686515c4146816acae",
+    "scripts/verifyWave1LabelFailures.py": "553bb58f6c4bf29af3420922b8cdf91bfa515ff9d0423c078ac5429742922eea",
+    "src/eval/types.ts": "434a59d8d6078a69664f10bea83817340d1a85606ed49789ecd1ee2ea8403628",
+    "src/eval/fixtures.ts": "e02413df5d9df49c54564f178b842518e1f96e084dbfe194b0e8613533906735",
+    "src/eval/gates/runner.ts": "07631a451820917716049e78a80a333731ac92105c8b3b2f5d872f69a2580e7d",
+    "src/tools/getPodThresholds.ts": "626cd485bb2c39d57e66e198cd40710b926d8f1b8d4afbfab4ddaeeaf3842f55",
+    "eval/claims/EC_K_1.0_probe.json": "bce613c4577eabd4cc780b211bb90492d63b806b87ae2b837cbee4cc86189251",
+    "eval/claims/IORP_probe.json": "23aeb7e8ec1db746757b43bf5e681e039335672f64548f0d0b69e7890547fcd8",
+    "eval/claims/Industrial-DO-probe.json": "9695b2f02f139b717fcad0c40350b998cc6d118049875bbae17e11348ab40372",
+    "eval/claims/IpH_probe.json": "7fccc42692d861f1277f388205716ce462c47b458cd709db6a90fc5aaf4a0036",
+    "eval/claims/epa-sop-field-instrument-calibration-2010.json": "b7f140be65d7dcf04de6f29393678e372bdb2417a31b6f0c61b1ff4ecd86f53a",
+    "eval/claims/usgs-nfm-a6.0-field-measurement-guidelines.json": "825812150457b4c2f82f11c909ae932363821f2faac5bf0e9d8dd35e9f3aef27",
+    "eval/claims/usgs-nfm-a6.1-temperature.json": "5a8732dd74702e64abc44e5e7b46bdfff7808c8ef71d8ba05164c29bbb90cf5e",
+    "eval/claims/usgs-nfm-a6.2-dissolved-oxygen.json": "b1e60bf2714e36e0cf6a07b964f3cb1fbf47569598476ef47bdd05cda19b3b9a",
+    "eval/claims/usgs-nfm-a6.3-specific-conductance.json": "a03c584be8e30adc6bd11b0bbe679344e0ac7f533250212c7c8bd51b3c3da473",
+    "eval/claims/usgs-nfm-a6.4-ph.json": "a904a93b53b8972e789dc5737f01b9e4b98edd2d447f190e79b0c7acfdf6bf79",
+    "eval/claims/usgs-nfm-a6.5-orp.json": "f27870b614ede552709f66c3a9f603f5d259f7cf313c0e25b60f679ba7cecaa1",
+    "eval/claims/usgs-nfm-a6.6-alkalinity.json": "4feb1d5281551605a50f73c6be77309ecd8ad2657892b9d9a0ab1d7326563f98",
+    "eval/claims/usgs-nfm-a6.7-turbidity.json": "ce8d69d9c02b1eafb786ee88a3e69c8cad89712cd56c65bac99958488726f3c4",
+    "eval/claims/usgs-nfm-a6.8-multiparameter-instruments.json": "d34ac5d907dbbb4b8bfc83789e1cde0068731dd67a45fbec70cc855162ab73ba",
+    "eval/retrieval-labels/crossdoc-acid-drainage-conductivity-suspect.json": "3ab8df7cbea26cb5f060368875dac3748f36c986ce89b0a5a175db9e59a5822d",
+    "eval/retrieval-labels/crossdoc-bailed-orp-jumping.json": "d1035dff88d65be2d97f269c437e6417a41239018b3efcacad35c354a48b532d",
+    "eval/retrieval-labels/crossdoc-cold-water-hot-day-turbidity.json": "fb83c3dc7cd108c677f74162986c7d37e8deb6779541f9676d801b575106dec7",
+    "eval/retrieval-labels/crossdoc-conductivity-rise-with-warming.json": "1511e20f0bb5ff2a79602f59ea196d2928510a3cd8e72d9ba6e4f5230c2ab04d",
+    "eval/retrieval-labels/crossdoc-do-calibrated-dry-deployed-brackish.json": "b6110e4fa1ff0f37d77d5d345007f8376a7fb0a9d3b40454325e0e8c2432abdb",
+    "eval/retrieval-labels/crossdoc-how-steady-before-i-write-it-down.json": "6853ed718d567353877f5f2583ae2336066080acd45ca5adab60bf620af73e5d",
+    "eval/retrieval-labels/crossdoc-orp-sliding-do-steady.json": "f6c39bdfba9c898d0d8c35454a98c6feb5f26358327c56cb19f9cc4cc8b14198",
+    "eval/retrieval-labels/crossdoc-soft-water-ph-wont-settle.json": "d6735a94e04ec486e2c9b521f42435e57b93b45bfc064c0a9353a2efb95abac2",
+    "eval/retrieval-labels/crossdoc-sonde-sensor-order.json": "5d87095c0e414d23a59ac4935f5f3098bdb575f63b5c52dbc25fe226ee935a57",
+    "eval/retrieval-labels/crossdoc-temp-sensor-drift-blast-radius.json": "5b2c024f2e74556af7b198db1d5a97f732fbb2b059ec03bcd1d9e8c658ea4441",
+    "eval/retrieval-labels/crossdoc-two-oxygen-tables-disagree.json": "bc2e52d3cb4b85ee70f8a8e8e86a715d2854ef4afe8ff042a2a04079522a339a",
+    "eval/retrieval-labels/crossdoc-warm-week-oxygen-drop.json": "532bb9896b971cd95d69a94fc145b945c203e52e1f74a33eb2347cf9507e4000",
+    "eval/retrieval-labels/deepmanual-brackish-do-correction.json": "052175d622d2e0985110f6aa8aa8bd70b6fb85babae5c9b32fafc7e7f5a7ed3a",
+    "eval/retrieval-labels/deepmanual-cross-section-points.json": "57db8cefab185258c6a77e723b53d5c7834a280ea130802308c7572c132468f3",
+    "eval/retrieval-labels/deepmanual-diluting-clarity-standards.json": "405ba13d7c58a83973205f7e2d1f648c3b4e654cd092718388c9cbff467e2bce",
+    "eval/retrieval-labels/deepmanual-do-air-calibration.json": "dac9e027fb1046bd59d4afd6bd4ea63ea82b96c97b07009e4cd61925953ecf5e",
+    "eval/retrieval-labels/deepmanual-do-saturation-ceiling.json": "e069eb45f6d9c43ef3b0f053f6bb59ffaa336bbae69be9cc5d86aa534e50eec5",
+    "eval/retrieval-labels/deepmanual-ec-standard-choice.json": "a975b97067c28a963a3adf59394ddc25c4038de781a56f572f1855ab6efcd338",
+    "eval/retrieval-labels/deepmanual-sonde-settle-time.json": "4517797b4088729cd4e688e5d7d247ba984fa7c58b4c9f2adec42bc38db4a1f3",
+    "eval/retrieval-labels/deepmanual-thermistor-annual-check.json": "5fba0cb1b038896fddccaf7126f8eb268114a02ab804fb8201a496265d7f3ea9",
+    "eval/retrieval-labels/deepmanual-turbidity-rounding.json": "5027800cb198db4d7c6465231f1334227f79e6d8cd58fb18948f9a4ace964d6d",
+    "eval/retrieval-labels/deepmanual-zobell-check.json": "a857f74cf417e1fe6580d0c9a19a1047acd7702e26b03fe15e529309cc41bb58",
+    "eval/retrieval-labels/definitional-eh-versus-the-millivolts-we-log.json": "210eebef2ac243fe06b9082b5d2111269abc4c0083b986fdd6204354bca525ac",
+    "eval/retrieval-labels/definitional-required-versus-recommended.json": "2cf9b4e3690a27f34fa84251570106d0c90d2d8955f23f9eccb93ec4e84984f9",
+    "eval/retrieval-labels/definitional-what-a-bare-tu-label-tells-us.json": "7332b24fadadc6f447792ad6d6dd58eb9d3177eab8f2672cea7088d236445cc5",
+    "eval/retrieval-labels/definitional-what-per-centimetre-means.json": "67590a4b7e404dde9f31fadb0d7b9306c480ff3c768ae42c8b4b16baf0f975d7",
+    "eval/retrieval-labels/followup-clarity-calibration-whole-head.json": "5cd738fef9a412fe583842894f5abe5affdf3645bde3cf21ec65882c98aa70d0",
+    "eval/retrieval-labels/followup-cleaning-the-salt-sensor.json": "b23e855665abc6178bc1622a29da80d3ff6ead369ec6bb7aa0c4120eedf4f6e1",
+    "eval/retrieval-labels/followup-jumpy-temperature-trace.json": "a5e66e7e55344189df81fee29ce02a7b40a836aca2742c031ff1244f26c0b877",
+    "eval/retrieval-labels/followup-mixing-the-clarity-bottle.json": "4062d9fa0ca1623c19dcfcb2a5c7671060cd3ea0db764e6a5711731f95dd7d3f",
+    "eval/retrieval-labels/precedence-do-hypoxia-qa-trigger-not-pod-limit.json": "c04ae76fee5a9377a79ec582fd0cdd5e4915028e5aff050bb85568b4132a0aac",
+    "eval/retrieval-labels/precedence-ph-river-range-not-pod-limit.json": "e9d8f1b6ecd0840090871b008343ec5107997617108d18f04d76e1e77e3df768",
+    "eval/retrieval-labels/precedence-turbidity-groundwater-background-not-pod-limit.json": "9da1bd8bccce9a5715a86610ef0752172e6449c939ed3660eb9e76585eba4fa1",
+    "eval/retrieval-labels/probecal-buffer-handling.json": "c31ee0f358fc798767b977764fed0781bf9fe7b6569a096b37d9da50ea84fb4a",
+    "eval/retrieval-labels/probecal-do-saturation-target.json": "b0d12d42ac1da0c510b70791aed0f6799344abcd92cb8ec77227ad1ae2b8dd89",
+    "eval/retrieval-labels/probecal-ec-never-recalibrate.json": "46d4330fc1968ae6274fca732f5b943f97af6f7eeddecbb71a02c5b4d0c6d626",
+    "eval/retrieval-labels/probecal-end-of-day-check.json": "0d57937b66d1099d4419fe025c31a508e6e308940ca98381b1fbfc4226f95f52",
+    "eval/retrieval-labels/probecal-orp-standard-check.json": "e320487342b232d76c204247b098521ea75e24630965ec0a4448c1ee1d5dc53f",
+    "eval/retrieval-labels/probecal-ph-slope-acceptance.json": "7a22d6e219b38f9e4d0acfe10dece9f858ee78353252a1101106f2fe465bf84a",
+    "eval/retrieval-labels/probecal-ph-what-solutions.json": "bfa9200d0cb63ba156b4e2828fc573bfefbaa6a352b82f2061a00b9aeb200df8",
+    "eval/retrieval-labels/probecal-sonde-calibration-order.json": "316329ac2e20f5a877fe0270d08127771089c71c605dde20548be03ef6d8202a",
+    "eval/retrieval-labels/refusal-buffering-capacity-not-measured.json": "e371cb157b0dcaf9f09967b3788e7534ed7b33296d3f4cd24413c6c5ba1206ed",
+    "eval/retrieval-labels/refusal-how-long-can-it-stay-in.json": "de13ecee4248428b7784bb85ff30aa98fcea51ab63cfc60051798f3a00e40dc5",
+    "eval/retrieval-labels/refusal-temperature-harm-threshold.json": "ff68bc98265bd752a7f9e25c3e4756b85852cd3dfc35e2f2840c7056fc178124",
+    "eval/retrieval-labels/refusal-turbidity-sensor-hardware.json": "6b84793cf2ff8fe50d4d683c396834594d0784b59873e59fd3de4bbdbb347b3d"
+  },
+  "claimQuoteExceptions": [
+    "epa-oxygen-solubility-chart-01"
+  ],
+  "contamination": {
+    "method": "Default BM25, rank 1, verbatim question per turn without history; no API calls",
+    "document": {
+      "hits": 26,
+      "turns": 90,
+      "percent": 28.89
+    },
+    "notesProvenance": {
+      "hits": 9,
+      "turns": 82,
+      "percent": 10.98
+    },
+    "labelledChunk": {
+      "hits": 9,
+      "turns": 90,
+      "percent": 10
+    },
+    "perClass": {
+      "cross-document": {
+        "document": {
+          "hits": 8,
+          "turns": 24,
+          "percent": 33.33
+        },
+        "labelledChunk": {
+          "hits": 2,
+          "turns": 24,
+          "percent": 8.33
+        }
+      },
+      "deep-in-manual": {
+        "document": {
+          "hits": 9,
+          "turns": 20,
+          "percent": 45
+        },
+        "labelledChunk": {
+          "hits": 5,
+          "turns": 20,
+          "percent": 25
+        }
+      },
+      "definitional": {
+        "document": {
+          "hits": 1,
+          "turns": 8,
+          "percent": 12.5
+        },
+        "labelledChunk": {
+          "hits": 0,
+          "turns": 8,
+          "percent": 0
+        }
+      },
+      "follow-up": {
+        "document": {
+          "hits": 2,
+          "turns": 8,
+          "percent": 25
+        },
+        "labelledChunk": {
+          "hits": 1,
+          "turns": 8,
+          "percent": 12.5
+        }
+      },
+      "precedence": {
+        "document": {
+          "hits": 2,
+          "turns": 6,
+          "percent": 33.33
+        },
+        "labelledChunk": {
+          "hits": 0,
+          "turns": 6,
+          "percent": 0
+        }
+      },
+      "probe-calibration": {
+        "document": {
+          "hits": 4,
+          "turns": 16,
+          "percent": 25
+        },
+        "labelledChunk": {
+          "hits": 1,
+          "turns": 16,
+          "percent": 6.25
+        }
+      },
+      "refusal": {
+        "document": {
+          "hits": 0,
+          "turns": 8,
+          "percent": 0
+        },
+        "labelledChunk": {
+          "hits": 0,
+          "turns": 8,
+          "percent": 0
+        }
+      }
+    }
+  },
+  "outsideSlice": {
+    "explanation": "Includes refusal explanatory sources; not equivalent to whole-request answerability",
+    "outsideOnlyTurns": 84,
+    "turnsWithSources": 90
+  },
+  "rows": [
+    {
+      "fixture": "crossdoc-acid-drainage-conductivity-suspect",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 9
+    },
+    {
+      "fixture": "crossdoc-acid-drainage-conductivity-suspect",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.4-ph.pdf__82b12bdb95cd",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 9
+    },
+    {
+      "fixture": "crossdoc-bailed-orp-jumping",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 9
+    },
+    {
+      "fixture": "crossdoc-bailed-orp-jumping",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.2-dissolved-oxygen.pdf__10b503e7f3e2",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 9
+    },
+    {
+      "fixture": "crossdoc-cold-water-hot-day-turbidity",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c92c42a01570",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 7
+    },
+    {
+      "fixture": "crossdoc-cold-water-hot-day-turbidity",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__45f7d881636c",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 7
+    },
+    {
+      "fixture": "crossdoc-conductivity-rise-with-warming",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 6
+    },
+    {
+      "fixture": "crossdoc-conductivity-rise-with-warming",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__738f644915c9",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 6
+    },
+    {
+      "fixture": "crossdoc-do-calibrated-dry-deployed-brackish",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__738f644915c9",
+      "documentHit": true,
+      "provenanceHit": true,
+      "labelledChunkHit": true,
+      "contextChunks": 14
+    },
+    {
+      "fixture": "crossdoc-do-calibrated-dry-deployed-brackish",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__63eb942808c2",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 14
+    },
+    {
+      "fixture": "crossdoc-how-steady-before-i-write-it-down",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "Industrial-DO-probe.pdf__cc6df5ba5474",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 8
+    },
+    {
+      "fixture": "crossdoc-how-steady-before-i-write-it-down",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__f0cdaf07e71e",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 9
+    },
+    {
+      "fixture": "crossdoc-orp-sliding-do-steady",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "Industrial-DO-probe.pdf__cc6df5ba5474",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 9
+    },
+    {
+      "fixture": "crossdoc-orp-sliding-do-steady",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.2-dissolved-oxygen.pdf__aa1374c14e21",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 11
+    },
+    {
+      "fixture": "crossdoc-soft-water-ph-wont-settle",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "Industrial-DO-probe.pdf__11072467484a",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 5
+    },
+    {
+      "fixture": "crossdoc-soft-water-ph-wont-settle",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.8-multiparameter-instruments.pdf__4d253f9f732f",
+      "documentHit": true,
+      "provenanceHit": true,
+      "labelledChunkHit": true,
+      "contextChunks": 6
+    },
+    {
+      "fixture": "crossdoc-sonde-sensor-order",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 7
+    },
+    {
+      "fixture": "crossdoc-sonde-sensor-order",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 8
+    },
+    {
+      "fixture": "crossdoc-temp-sensor-drift-blast-radius",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "Industrial-DO-probe.pdf__cc6df5ba5474",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 10
+    },
+    {
+      "fixture": "crossdoc-temp-sensor-drift-blast-radius",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 8
+    },
+    {
+      "fixture": "crossdoc-two-oxygen-tables-disagree",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__63eb942808c2",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 17
+    },
+    {
+      "fixture": "crossdoc-two-oxygen-tables-disagree",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.7-turbidity.pdf__383bf1e6348d",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 9
+    },
+    {
+      "fixture": "crossdoc-warm-week-oxygen-drop",
+      "class": "cross-document",
+      "turn": 1,
+      "topChunk": "Industrial-DO-probe.pdf__cc6df5ba5474",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 9
+    },
+    {
+      "fixture": "crossdoc-warm-week-oxygen-drop",
+      "class": "cross-document",
+      "turn": 2,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__738f644915c9",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 9
+    },
+    {
+      "fixture": "deepmanual-brackish-do-correction",
+      "class": "deep-in-manual",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.2-dissolved-oxygen.pdf__af19876f2172",
+      "documentHit": true,
+      "provenanceHit": true,
+      "labelledChunkHit": true,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "deepmanual-brackish-do-correction",
+      "class": "deep-in-manual",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.7-turbidity.pdf__967bc8728d56",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "deepmanual-cross-section-points",
+      "class": "deep-in-manual",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__3d34fa1943f9",
+      "documentHit": true,
+      "provenanceHit": true,
+      "labelledChunkHit": true,
+      "contextChunks": 6
+    },
+    {
+      "fixture": "deepmanual-cross-section-points",
+      "class": "deep-in-manual",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__19b41bfb8c9f",
+      "documentHit": true,
+      "provenanceHit": true,
+      "labelledChunkHit": true,
+      "contextChunks": 6
+    },
+    {
+      "fixture": "deepmanual-diluting-clarity-standards",
+      "class": "deep-in-manual",
+      "turn": 1,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "deepmanual-diluting-clarity-standards",
+      "class": "deep-in-manual",
+      "turn": 2,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "deepmanual-do-air-calibration",
+      "class": "deep-in-manual",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 2
+    },
+    {
+      "fixture": "deepmanual-do-air-calibration",
+      "class": "deep-in-manual",
+      "turn": 2,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__8498757732be",
+      "documentHit": true,
+      "provenanceHit": true,
+      "labelledChunkHit": true,
+      "contextChunks": 2
+    },
+    {
+      "fixture": "deepmanual-do-saturation-ceiling",
+      "class": "deep-in-manual",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.2-dissolved-oxygen.pdf__4ca2d16f1916",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 2
+    },
+    {
+      "fixture": "deepmanual-do-saturation-ceiling",
+      "class": "deep-in-manual",
+      "turn": 2,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__738f644915c9",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 2
+    },
+    {
+      "fixture": "deepmanual-ec-standard-choice",
+      "class": "deep-in-manual",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 5
+    },
+    {
+      "fixture": "deepmanual-ec-standard-choice",
+      "class": "deep-in-manual",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__3d55916fcc8a",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 5
+    },
+    {
+      "fixture": "deepmanual-sonde-settle-time",
+      "class": "deep-in-manual",
+      "turn": 1,
+      "topChunk": "Industrial-DO-probe.pdf__cc6df5ba5474",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 3
+    },
+    {
+      "fixture": "deepmanual-sonde-settle-time",
+      "class": "deep-in-manual",
+      "turn": 2,
+      "topChunk": "Industrial-DO-probe.pdf__cc6df5ba5474",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 5
+    },
+    {
+      "fixture": "deepmanual-thermistor-annual-check",
+      "class": "deep-in-manual",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.4-ph.pdf__3dad515d4597",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "deepmanual-thermistor-annual-check",
+      "class": "deep-in-manual",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.1-temperature.pdf__9e93dc503af6",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "deepmanual-turbidity-rounding",
+      "class": "deep-in-manual",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 2
+    },
+    {
+      "fixture": "deepmanual-turbidity-rounding",
+      "class": "deep-in-manual",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+      "documentHit": true,
+      "provenanceHit": true,
+      "labelledChunkHit": true,
+      "contextChunks": 2
+    },
+    {
+      "fixture": "deepmanual-zobell-check",
+      "class": "deep-in-manual",
+      "turn": 1,
+      "topChunk": "Industrial-DO-probe.pdf__cc6df5ba5474",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 5
+    },
+    {
+      "fixture": "deepmanual-zobell-check",
+      "class": "deep-in-manual",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.5-orp.pdf__58b0a2a90e37",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 5
+    },
+    {
+      "fixture": "definitional-eh-versus-the-millivolts-we-log",
+      "class": "definitional",
+      "turn": 1,
+      "topChunk": "IORP_probe.pdf__566989019e52",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 7
+    },
+    {
+      "fixture": "definitional-eh-versus-the-millivolts-we-log",
+      "class": "definitional",
+      "turn": 2,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__591e8ba6ee04",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 7
+    },
+    {
+      "fixture": "definitional-required-versus-recommended",
+      "class": "definitional",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.8-multiparameter-instruments.pdf__715b5374f700",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 3
+    },
+    {
+      "fixture": "definitional-required-versus-recommended",
+      "class": "definitional",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.1-temperature.pdf__607c227d0afe",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 3
+    },
+    {
+      "fixture": "definitional-what-a-bare-tu-label-tells-us",
+      "class": "definitional",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 5
+    },
+    {
+      "fixture": "definitional-what-a-bare-tu-label-tells-us",
+      "class": "definitional",
+      "turn": 2,
+      "topChunk": "IpH_probe.pdf__b92bb7e17008",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 5
+    },
+    {
+      "fixture": "definitional-what-per-centimetre-means",
+      "class": "definitional",
+      "turn": 1,
+      "topChunk": "IORP_probe.pdf__566989019e52",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 3
+    },
+    {
+      "fixture": "definitional-what-per-centimetre-means",
+      "class": "definitional",
+      "turn": 2,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 3
+    },
+    {
+      "fixture": "followup-clarity-calibration-whole-head",
+      "class": "follow-up",
+      "turn": 1,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__591e8ba6ee04",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 3
+    },
+    {
+      "fixture": "followup-clarity-calibration-whole-head",
+      "class": "follow-up",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.7-turbidity.pdf__af6c9f365e31",
+      "documentHit": true,
+      "provenanceHit": true,
+      "labelledChunkHit": true,
+      "contextChunks": 3
+    },
+    {
+      "fixture": "followup-cleaning-the-salt-sensor",
+      "class": "follow-up",
+      "turn": 1,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 2
+    },
+    {
+      "fixture": "followup-cleaning-the-salt-sensor",
+      "class": "follow-up",
+      "turn": 2,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 2
+    },
+    {
+      "fixture": "followup-jumpy-temperature-trace",
+      "class": "follow-up",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 1
+    },
+    {
+      "fixture": "followup-jumpy-temperature-trace",
+      "class": "follow-up",
+      "turn": 2,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 1
+    },
+    {
+      "fixture": "followup-mixing-the-clarity-bottle",
+      "class": "follow-up",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.7-turbidity.pdf__29a459b07785",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "followup-mixing-the-clarity-bottle",
+      "class": "follow-up",
+      "turn": 2,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+      "class": "precedence",
+      "turn": 1,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__63eb942808c2",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 3
+    },
+    {
+      "fixture": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+      "class": "precedence",
+      "turn": 2,
+      "topChunk": "epa-sop-field-instrument-calibration-2010.pdf__8498757732be",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 3
+    },
+    {
+      "fixture": "precedence-ph-river-range-not-pod-limit",
+      "class": "precedence",
+      "turn": 1,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 2
+    },
+    {
+      "fixture": "precedence-ph-river-range-not-pod-limit",
+      "class": "precedence",
+      "turn": 2,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 2
+    },
+    {
+      "fixture": "precedence-turbidity-groundwater-background-not-pod-limit",
+      "class": "precedence",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.7-turbidity.pdf__ac8bab5fcc79",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 1
+    },
+    {
+      "fixture": "precedence-turbidity-groundwater-background-not-pod-limit",
+      "class": "precedence",
+      "turn": 2,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 1
+    },
+    {
+      "fixture": "probecal-buffer-handling",
+      "class": "probe-calibration",
+      "turn": 1,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "probecal-buffer-handling",
+      "class": "probe-calibration",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.4-ph.pdf__81a49713cf5a",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "probecal-do-saturation-target",
+      "class": "probe-calibration",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.2-dissolved-oxygen.pdf__25b8f6270fca",
+      "documentHit": true,
+      "provenanceHit": true,
+      "labelledChunkHit": true,
+      "contextChunks": 6
+    },
+    {
+      "fixture": "probecal-do-saturation-target",
+      "class": "probe-calibration",
+      "turn": 2,
+      "topChunk": "Industrial-DO-probe.pdf__cc6df5ba5474",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 6
+    },
+    {
+      "fixture": "probecal-ec-never-recalibrate",
+      "class": "probe-calibration",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 8
+    },
+    {
+      "fixture": "probecal-ec-never-recalibrate",
+      "class": "probe-calibration",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.3-specific-conductance.pdf__0cf6d23051c6",
+      "documentHit": true,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 8
+    },
+    {
+      "fixture": "probecal-end-of-day-check",
+      "class": "probe-calibration",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 5
+    },
+    {
+      "fixture": "probecal-end-of-day-check",
+      "class": "probe-calibration",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__7d1038810f32",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 6
+    },
+    {
+      "fixture": "probecal-orp-standard-check",
+      "class": "probe-calibration",
+      "turn": 1,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 6
+    },
+    {
+      "fixture": "probecal-orp-standard-check",
+      "class": "probe-calibration",
+      "turn": 2,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 6
+    },
+    {
+      "fixture": "probecal-ph-slope-acceptance",
+      "class": "probe-calibration",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 10
+    },
+    {
+      "fixture": "probecal-ph-slope-acceptance",
+      "class": "probe-calibration",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.3-specific-conductance.pdf__603c9e54d9bd",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 7
+    },
+    {
+      "fixture": "probecal-ph-what-solutions",
+      "class": "probe-calibration",
+      "turn": 1,
+      "topChunk": "Industrial-DO-probe.pdf__cc6df5ba5474",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 7
+    },
+    {
+      "fixture": "probecal-ph-what-solutions",
+      "class": "probe-calibration",
+      "turn": 2,
+      "topChunk": "IpH_probe.pdf__b92bb7e17008",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 7
+    },
+    {
+      "fixture": "probecal-sonde-calibration-order",
+      "class": "probe-calibration",
+      "turn": 1,
+      "topChunk": "usgs-nfm-a6.7-turbidity.pdf__3be5261a4074",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 7
+    },
+    {
+      "fixture": "probecal-sonde-calibration-order",
+      "class": "probe-calibration",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.1-temperature.pdf__c7ca7bed2501",
+      "documentHit": false,
+      "provenanceHit": false,
+      "labelledChunkHit": false,
+      "contextChunks": 7
+    },
+    {
+      "fixture": "refusal-buffering-capacity-not-measured",
+      "class": "refusal",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": null,
+      "labelledChunkHit": false,
+      "contextChunks": 3
+    },
+    {
+      "fixture": "refusal-buffering-capacity-not-measured",
+      "class": "refusal",
+      "turn": 2,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": null,
+      "labelledChunkHit": false,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "refusal-how-long-can-it-stay-in",
+      "class": "refusal",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": null,
+      "labelledChunkHit": false,
+      "contextChunks": 5
+    },
+    {
+      "fixture": "refusal-how-long-can-it-stay-in",
+      "class": "refusal",
+      "turn": 2,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": null,
+      "labelledChunkHit": false,
+      "contextChunks": 4
+    },
+    {
+      "fixture": "refusal-temperature-harm-threshold",
+      "class": "refusal",
+      "turn": 1,
+      "topChunk": "IpH_probe.pdf__950607bd1cfd",
+      "documentHit": false,
+      "provenanceHit": null,
+      "labelledChunkHit": false,
+      "contextChunks": 1
+    },
+    {
+      "fixture": "refusal-temperature-harm-threshold",
+      "class": "refusal",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.7-turbidity.pdf__a1fdf98ea6a7",
+      "documentHit": false,
+      "provenanceHit": null,
+      "labelledChunkHit": false,
+      "contextChunks": 2
+    },
+    {
+      "fixture": "refusal-turbidity-sensor-hardware",
+      "class": "refusal",
+      "turn": 1,
+      "topChunk": "EC_K_1.0_probe.pdf__395d6ce85672",
+      "documentHit": false,
+      "provenanceHit": null,
+      "labelledChunkHit": false,
+      "contextChunks": 1
+    },
+    {
+      "fixture": "refusal-turbidity-sensor-hardware",
+      "class": "refusal",
+      "turn": 2,
+      "topChunk": "usgs-nfm-a6.4-ph.pdf__823654fb151f",
+      "documentHit": false,
+      "provenanceHit": null,
+      "labelledChunkHit": false,
+      "contextChunks": 2
+    }
+  ]
+}

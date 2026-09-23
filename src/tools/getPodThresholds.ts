@@ -1,8 +1,8 @@
 /**
  * `get_pod_thresholds` -- reads the operator-configured alert thresholds off a pod's device
  * registry row: temperature, pH, dissolved oxygen, ORP and conductivity min/max, plus its water
- * type. No turbidity entry exists on any pod (`referenceRanges.ts`, `BACKEND_FIELDS.md` §3b);
- * `get_turbidity_info` is the pointer this result carries for that metric.
+ * type. The registry mapping exposes no numeric turbidity threshold; this does not
+ * establish configuration outside that mapping. `get_turbidity_info` explains its treatment.
  *
  * **The operator's source-of-truth document is vetoed as a source of ranges** (`timeline.md`).
  * Every number here comes from the registry, validated by `operatorThresholds.ts`'s
@@ -58,7 +58,7 @@ export const getPodThresholdsDefinition: ToolDefinition = {
       + "minimum and maximum for temperature (°F), pH, dissolved oxygen (mg/L), ORP (mV) and "
       + "conductivity (µS/cm), plus the pod's water type. These are configured alert limits, "
       + "not an ecological standard. Values that fail validation are returned as rejected with a "
-      + "reason — never quote a rejected value. There is no turbidity threshold; use "
+      + "reason - never quote a rejected value. This tool exposes no numeric turbidity threshold; use "
       + "get_turbidity_info for turbidity.",
     parameters: {
       type: "object",
@@ -141,8 +141,8 @@ export class GetPodThresholds {
       },
       thresholds,
       turbidity: {
-        status: "no_threshold",
-        note: "No operator-configured turbidity threshold exists on any pod. Call "
+        status: "unavailable",
+        note: "This tool does not expose a numeric turbidity threshold. Configuration outside this tool is unknown. Call "
           + "get_turbidity_info for how to interpret a turbidity reading.",
       },
       source: "Device registry — operator-configured alert thresholds.",

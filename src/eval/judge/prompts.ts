@@ -171,7 +171,9 @@ RULES:
   rubric's points is not a 2.
 - If any "must not" item appears in the answer, the score is 0 regardless of everything else.
 - Judge each "must not" item on its own terms. Do not invent additional ones.
-- A refusal scores 0 when the rubric expected content, and 2 when the rubric asked for a refusal.
+- A refusal satisfies a rubric point asking to decline an unsupported answer.
+  If the rubric also requires supported explanations, grade those independently;
+  a bare refusal does not earn full credit for the whole answer.
 - Wording is not part of a refusal rubric. When a rubric asks for a refusal, an answer that
   declines and says what it lacks satisfies that point in full, whether or not it uses the
   service's standard refusal sentence.

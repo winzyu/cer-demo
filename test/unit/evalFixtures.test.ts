@@ -224,6 +224,15 @@ describe("fixture validation", () => {
       .toThrow(/at least 2 user turns/);
   });
 
+  it("rejects empty, blank or undeclared per-turn evidence", () => {
+    [[], [{ filename: "IORP_probe.pdf", quote: " " }],
+      [{ filename: "absent.pdf", quote: "some source text" }]].forEach((retrievalEvidence) => {
+      const turns = [{ ...validFixture.turns[0], retrieval_evidence: retrievalEvidence },
+        validFixture.turns[1]];
+      expect(() => loadFixtures(withFixture({ turns }))).toThrow(/retrieval_evidence/);
+    });
+  });
+
   it("rejects a non-boolean requires_refusal", () => {
     const turns = [
       { ...validFixture.turns[0], requires_refusal: "yes" },

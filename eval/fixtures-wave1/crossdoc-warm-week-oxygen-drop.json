@@ -8,7 +8,7 @@
     "epa-sop-field-instrument-calibration-2010.pdf"
   ],
   "requires": [],
-  "notes": "Two-source by construction. The size of the expected oxygen fall comes from the freshwater solubility table in A6.2 (claims do-t622-15c-760-1008-01: 10.08 mg/L at 15 C / 760 mmHg; do-t622-20c-750-897-01 and do-t622-23c-760-858-01 for the 20-23 C rows; do-solubility-drivers-01 for the pressure and ionic-strength dependence), and the brackish site means the freshwater number has to be scaled by the salinity factor of table 6.2-4 (do-t624-identity-01, do-example-897-09733-01, do-example-873-product-01, do-saline-above-2000-01). But table 6.2-4's columns are indexed on specific conductance AT 25 C, so the operator's raw field conductivity number is the wrong input until it is temperature-corrected — that rule lives only in A6.3 (sc-reporting-unit-01, sc-nwis-25c-correction-01, sc-equation2-compensation-01, sc-meters-auto-compensate-01, sc-alpha-typical-value-01). An answer from A6.2 alone silently uses a raw conductivity as if it were specific conductance and lands on the wrong correction factor; an answer from A6.3 alone cannot produce any expected DO number at all. Predicted to favour rag because neither manual is in the diamond-G9 slice, which carries only the qualitative 'warmer water holds less oxygen' and 'saltwater holds about 20 percent less' statements and no solubility or correction-factor numbers.",
+  "notes": "Tests crossdoc warm week oxygen drop. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: do-t622-15c-760-1008-01, do-t622-20c-750-897-01, do-t622-23c-760-858-01, do-solubility-drivers-01, do-t624-identity-01, do-example-897-09733-01, do-example-873-product-01, do-saline-above-2000-01, sc-reporting-unit-01, sc-nwis-25c-correction-01, sc-equation2-compensation-01, sc-meters-auto-compensate-01, sc-alpha-typical-value-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -17,13 +17,13 @@
         "must_contain": [
           "gives the freshwater oxygen solubility at about 15 C from the USGS solubility table (roughly 10.0-10.1 mg/L near 760 mmHg)",
           "gives the freshwater oxygen solubility at about 20 C from the same table (roughly 9.0-9.1 mg/L near 760 mmHg)",
-          "states the saturation ceiling itself falls by roughly 1 mg/L across that 15-to-20 C change",
-          "states that the ceiling also depends on barometric pressure, so the site's actual pressure changes the number",
+          "States freshwater equilibrium solubility at 760 mmHg falls by 0.99 mg/L from 15 C to 20 C as a conditional benchmark, not a ceiling on measured DO.",
+          "States equilibrium saturation also depends on barometric pressure, so the site's actual pressure changes the benchmark",
           "states that in brackish water the freshwater value must be reduced by a salinity correction factor before it is compared with the reading",
-          "concludes that a drop of roughly 1 mg/L is accounted for by warming and the remainder is not"
+          "States the actual warming contribution and remaining site-specific drop cannot be quantified from these readings alone without pressure, salinity and initial saturation assumptions; does not assign 1 mg/L of the measured drop to warming."
         ],
         "must_not": [
-          "invents a solubility figure that is not tabulated in any of the source solubility tables",
+          "Invents unsupported solubility values; permits supported tabulated, interpolated or calculated values with stated assumptions.",
           "answers only with the qualitative rule that warm water holds less oxygen and gives no numbers",
           "treats the brackish site as freshwater and skips the salinity correction entirely"
         ],

@@ -5,7 +5,7 @@
   "turns": [
     {
       "turn": 1,
-      "query": "Snowmelt creek, water is about 4 C and it was 30 C and sunny on the bank. My bench readings on grab samples came out consistently higher than what the pod in the water was showing. Which one is lying?",
+      "query": "Groundwater from a monitoring well is about 4 C and it was 30 C and sunny beside the well. My bench readings on grab samples came out consistently higher than the in-situ sensor was showing. Which one is lying?",
       "relevant": [
         {
           "chunkId": "usgs-nfm-a6.7-turbidity.pdf__449b5d2a0b80",

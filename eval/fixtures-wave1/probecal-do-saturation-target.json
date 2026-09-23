@@ -7,11 +7,11 @@
     "epa-sop-field-instrument-calibration-2010.pdf"
   ],
   "requires": [],
-  "notes": "The oxygen probe datasheet inside the slice gives a recalibration interval of about a year and a maintenance interval of about 18 months, and says nothing about how the calibration is performed. The whole method - what the 100 percent saturation environment is, how it is created, how long it takes to equilibrate, what pressure reading it needs, and the verification tolerance - is in usgs-nfm-a6.2-dissolved-oxygen.pdf. Drawn from do-one-point-goal-01, do-proc1-chamber-humidity-01, do-proc1-no-airtight-seal-01, do-proc1-equilibration-time-01, do-pressure-nearest-mm-01, do-barometer-at-altitude-01, do-proc1-verify-tolerance-01, do-water-droplets-01 (turn 1) and do-salinity-correction-after-01, do-spc-sensor-for-saline-01, do-saline-above-2000-01, do-manual-salinity-recalibration-01 (turn 2). Predicted to favour rag: none of it is retrievable from the slice, and the tempting wrong answer - submerging the sensor in water and calling that the reference - is exactly what a direct-feed arm is likely to guess.",
+  "notes": "Tests probecal do saturation target. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: do-one-point-goal-01, do-proc1-chamber-humidity-01, do-proc1-no-airtight-seal-01, do-proc1-equilibration-time-01, do-pressure-nearest-mm-01, do-barometer-at-altitude-01, do-proc1-verify-tolerance-01, do-water-droplets-01, do-salinity-correction-after-01, do-spc-sensor-for-saline-01, do-saline-above-2000-01, do-manual-salinity-recalibration-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
-      "content": "Our oxygen sensor is coming up on its yearly recalibration per the vendor sheet, which gives no steps at all. What am I calibrating it against out here, and how do I set that up?",
+      "content": "Our oxygen sensor is coming up on its yearly recalibration per the vendor sheet, which gives no steps at all. What am I calibrating it against out here, and how do I set that up? Use USGS A6.2's water-saturated-air calibration-chamber Procedure 1.",
       "rubric": {
         "must_contain": [
           "States the goal is a 100 percent oxygen-saturated environment at a known temperature, reached either in air or in aerated water",
@@ -31,7 +31,7 @@
         "cite": [
           "usgs-nfm-a6.2-dissolved-oxygen.pdf"
         ],
-        "notes": "NFM A6.2 (5-10 minutes, +/-0.2 mg/L or 2 percent) and the EPA field SOP (10-15 minutes, +/-0.5 mg/L post-calibration) are both grounded; credit either, but not an unsourced third."
+        "notes": "The question selects USGS Procedure 1. Its timing and verification tolerance differ from EPA initial verification and EPA default end-of-day checks; do not conflate those procedures."
       }
     },
     {
@@ -40,14 +40,14 @@
       "rubric": {
         "must_contain": [
           "States that after calibrating, the reading is verified against the computed saturation value within about plus or minus 0.2 milligrams per litre or 2 percent",
-          "States that the sensor and temperature probe must be checked for water droplets, and the calibration repeated if any were present",
+          "For optical hardware, checks the optical module and temperature-sensor surfaces and repeats calibration if water droplets were present during calibration",
           "States that a calibrated conductivity sensor is needed when working in saline or brackish water",
-          "States that the preferred approach is to apply the salinity correction after calibrating and measuring, rather than entering a salinity value at calibration time",
+          "When user-specified manual salinity correction is needed, prefers applying correction after calibration and measurement; automatic compensation is a separate supported method",
           "Notes that entering a manual salinity correction during calibration forces recalibration for every change in field salinity"
         ],
         "must_not": [
           "invents a verification tolerance that appears in no source",
-          "Recommends manual salinity entry at calibration as the preferred method",
+          "Recommends manual salinity entry during calibration as the generally preferred USGS approach",
           "Ignores the brackish half of the question"
         ],
         "cite": [
