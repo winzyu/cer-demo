@@ -79,13 +79,13 @@ clean-earth-rag/
 │   │   ├── healthRoutes.ts   GET /health
 │   │   ├── chatRoutes.ts     POST /api/v1/chat
 │   │   ├── deviceRoutes.ts   GET /api/v1/devices (§10.5)
-│   │   ├── reportRoutes.ts   GET /api/v1/reports/:filename — not gated on REPORT_TOOL
+│   │   ├── reportRoutes.ts   POST /api/v1/reports - PDF bytes, off while REPORT_TOOL is off
 │   │   └── usageRoutes.ts    GET /api/v1/usage — read-only allowance, outside quotaGuard
 │   ├── controllers/
 │   │   ├── HealthController.ts
 │   │   ├── ChatController.ts   retrieve → assemble → answer (JSON or SSE)
 │   │   ├── DeviceController.ts pod list for the UI selector
-│   │   └── ReportController.ts serves a generated PDF off local disk
+│   │   └── ReportController.ts renders a report PDF in memory and returns it (§10.7)
 │   ├── middleware/
 │   │   ├── errorHandler.ts   terminal error handler
 │   │   ├── quotaGuard.ts     429 gate on POST /chat, before SSE opens (§4a)
@@ -167,7 +167,8 @@ clean-earth-rag/
 │   │   ├── events.ts         period-relative event detection
 │   │   ├── referenceRanges.ts   registry-threshold baselines + TURBIDITY_BAND_EDGES
 │   │   ├── operatorThresholds.ts  validated per-device registry thresholds
-│   │   ├── reportOwnership.ts  binds a generated PDF to the credential that generated it
+│   │   ├── patterns.ts       diel / tidal / trend classification from an hourly series
+│   │   ├── produceReport.ts  the whole pipeline, shared by generate_report and POST /reports
 │   │   ├── narrative.ts      rule-based prose; causes and next steps only from the catalogue
 │   │   ├── renderPdf.ts      pdfkit layout
 │   │   └── types.ts
@@ -299,10 +300,15 @@ endpoint reports standing and the gate refuses; `QuotaService.status` is the rea
 | `QUERY_QUOTA` | `false` | master switch |
 | `QUERY_QUOTA_REQUESTS` | `unlimited` | chat requests per key per window, or `unlimited`; `0` = refuse everything |
 | `QUERY_QUOTA_TOKENS` | `unlimited` | `usage.totalTokens` per key per window, summed across tool rounds |
+| `QUERY_QUOTA_REPORTS` | `unlimited` | report PDFs per key per window (`POST /api/v1/reports`); refuses with `quota_reports_exceeded` |
 | `QUERY_QUOTA_WINDOW` | `30d` | window length; **unit suffix required** (`s`/`m`/`h`/`d`/`w`) |
 | `QUERY_QUOTA_SCOPE` | `caller` | `caller` (per identity) or `global` (whole deployment) |
 
-The two dimensions are independent — either, neither, or both. `requests` is evaluated first, so
+Reports are a third, separate dimension: a report runs several device reads and a render but no model call, so it is gated by `quotaGuard(…, "report")` on `POST /api/v1/reports` against `reports` only, and chat is gated against `requests` and `tokens` only.
+All three share `QUERY_QUOTA_WINDOW`; a per-day report limit beside a per-month token limit needs R1's multi-window store.
+A report is recorded only after its PDF renders, so a bad range or an empty window costs nothing.
+
+The two chat dimensions are independent — either, neither, or both. `requests` is evaluated first, so
 when both are simultaneously spent the refusal names the request count: it is the cheaper, more
 legible ceiling for an operator to raise. Upstream's `OR` is deliberately **not** reproduced; its
 semantics mean the effective limit is the *maximum* of its clauses, which is almost certainly not
@@ -847,8 +853,8 @@ the report fetch. Three properties are load-bearing rather than incidental, and
   credential into history, `Referer` headers and proxy logs; a token served to the page would put a
   deployment credential in front of every visitor, re-creating the hole this section describes. The
   user pastes it, including for superadmin.
-- **The report link is a `fetch`, not a navigation.** `GET /reports/:filename` requires the header and
-  a browser navigation cannot carry one, so the click fetches with the header and opens a blob URL.
+- **The report button is a `fetch`, not a navigation.** `POST /reports` requires the header, so the
+  click posts the tool result's `report_request` with it and saves the returned PDF from a blob.
 
 **Deliberately not gated on `SENSOR_TOOL`.** That flag governs whether the *model* is handed a tool;
 listing pods for a person to pick from is a different act. But an unconfigured `DEVICE_API_BASE_URL`
@@ -889,36 +895,36 @@ the process — a device stored on any of them would be handed to whichever requ
 per-request dedupe cache keys on the *effective* arguments for the same reason: otherwise one pod's
 reading could be served as the answer for another.
 
-### 10.7 Report download (`GET /api/v1/reports/:filename`)
+### 10.7 Reports (`generate_report`, `POST /api/v1/reports`)
 
-Serves a PDF `generate_report` already wrote to `generated_reports/`. Three guards, answering three
-different questions, in this order:
+Both run one pipeline, `report/produceReport.ts`: sensor data, report model, events, status, narrative, and for the route only the PDF.
+No LLM call is made and nothing is written to disk.
 
-1. **`SAFE_FILENAME`** (`/^[a-zA-Z0-9_-]+\.pdf$/`) — is this a name at all? Rejects a `..`-laden
-   request with a 400 before it can become a filesystem path. Unchanged; it was always correct.
-2. **`requireCallerToken`** — is anybody asking? Until 2026-08-21 there was nothing here. Filenames
-   are `report_<8 hex>.pdf` (~32 bits) with no expiry, so a document containing a named customer's
-   coordinates and readings was an unauthenticated, guessable capability URL.
-3. **Ownership** (`report/reportOwnership.ts`) — is it the *same* somebody? Every other route is
-   org-scoped by the caller's token; a report gate that accepted any valid token would be the one
-   place organization A could read organization B's data by guessing eight characters.
+**The tool renders no PDF.** `generate_report` returns the summary the model narrates (status, event headings, baseline provenance, catalogue version) plus `report_request: { time_range, device? }`, the arguments it ran with.
+It never returns a URL, and the prompt tells the model to point at the interface's download button instead of writing a link.
 
-Ownership is a sha256 of the bearer token, written to a `.pdf.owner` sidecar beside the PDF when the
-report is generated. It is the token and not a user id because this service cannot verify a JWT — it
-has no `ACCESS_TOKEN_SECRET` — and binding to an unverified `sub` would bind to a claim any caller
-can forge, the same conclusion `quotaKey.ts` reached (§4a). It is a file and not a process-memory map
-because the PDF outlives the process; a map would forget owners on restart and leave reports on disk
-that nobody could ever fetch.
+**The route renders the PDF on request.** `POST /api/v1/reports` takes that `report_request` as its body and answers `200 application/pdf` with `Content-Disposition: attachment; filename="cer-report-<site>-<start>-to-<end>.pdf"` and `Cache-Control: no-store`.
+Guards, in order: `requireCallerToken` (401), the report quota (429, §4a), `REPORT_TOOL` (404 while off), body validation (400: `time_range` required, at most 100 characters; `device` optional, at most 200), then the pipeline's own refusal as 422 (a phrase the grammar does not read, a pod the caller cannot see, an empty window).
+Every reading is fetched with the caller's token, which the device API scopes to their organization, so a report can only describe the caller's own pods.
 
-"Not found" and "not yours" both answer **404**, deliberately: a distinguishable 403 would confirm a
-filename guess and turn the route into an enumeration oracle.
+This replaced a design that wrote PDFs to `generated_reports/` and served them from `GET /api/v1/reports/:filename` behind a sha256-of-token ownership sidecar.
+That design lost every report on redeploy, bound access to one exact token string so a re-login lost it, and needed the ownership check only because a stored file could be asked for by someone else; with no stored file there is nothing to guard.
 
-**Accepted residual risk.** A re-login mints a different token string, so the same human loses access
-to reports generated under the previous one — acceptable while reports are generated and linked
-inside a single conversation and already do not survive a redeploy. Anyone holding the token holds
-the report, which is what a bearer credential means. There is still no expiry; a TTL sweeper is a
-reasonable follow-up, not a prerequisite. Real per-user report history needs the identity work
-§4a is also waiting on.
+**Recomputed at download.** The PDF is built from the same `time_range` phrase when the user clicks, and relative phrases anchor to the pod's newest reading (§10.3b).
+A pod that reported again in between yields a window shifted by those minutes; the PDF prints its own resolved period, which is the authority.
+
+**Pattern tags** (`report/patterns.ts`).
+Each parameter is tagged `diel`, `tidal`, `trend` or `unknown` from a third, hourly series query (`maxBuckets` raised to 62 days, a programmatic-only option).
+Periodicity is read from the autocorrelation of the series minus a centered 25-hour moving mean: a diel cycle repeats at 24 h and inverts at 12 h, a semidiurnal tide repeats at 12 h and inverts at 6 h.
+A trend is daily means on a straight line (R² ≥ 0.7) over at least 14 days.
+At least 72 hours and 60% hourly coverage are required, and `unknown` means unclassified, not steady.
+A diel or tidal tag stops threshold windows opening on that parameter and enables the algal-bloom detector; a diurnal tide is indistinguishable from a diel rhythm on these lags and is tagged diel.
+Hourly buckets are not thinned by `MIN_BUCKET_SAMPLES`: the Newport pods report about once an hour, so one reading per bucket is their cadence.
+
+**Downgraded events keep their signature.** An event below the 0.5 confidence floor is `Inconclusive`, and `WQEvent.signature` records what it matched.
+The heading still names no cause and next steps are still chosen as `Inconclusive`, but an explanation the catalogue approves at that lower confidence is shown, hedged (`narrative.ts`).
+Today that is `saltwater-intrusion` (from 0.45) and `industrial-unclear` (from 0.3), the two classifications that previously could never reach a reader.
+Saltwater intrusion is named outright (0.55) only for an isolated conductivity rise in marine water whose series is tagged `trend`, the drought or sea-level shape; a discharge is a step, not a weeks-long creep.
 
 ---
 
@@ -1316,8 +1322,8 @@ turn (against 11 for `pgvector-rag`). It also wins `deep-in-manual` outright at 
 | `GET` | `/health` | `{ status, service, environment, timestamp, uptime, checks: { fireworksConfigured, firestoreProjectConfigured } }` |
 | `GET` | `/api/v1` | `{ "message": "Clean Earth RAG API v1" }` |
 | `GET` | `/api/v1/devices` | `{ devices: [{ label, name, operating_environment, last_reported }], water_type }` (§10.5). **Requires `Authorization: Bearer`** — 401 `caller_token_required` without one |
-| `GET` | `/api/v1/reports/:filename` | the generated PDF. **Requires `Authorization: Bearer`**, and the token must be the one `generate_report` ran under (§10.7); 404 otherwise |
-| `GET` | `/api/v1/usage` | `{ enabled, questions: { used, limit, remaining }, tokens: {...}, window, resetsAt }` (§4a). `limit` and `remaining` are `null` for an unlimited dimension and while the quota is off, so "no ceiling" is distinguishable from "nothing left" by type. Read-only: it never records, so polling it cannot spend the allowance it reports |
+| `POST` | `/api/v1/reports` | body `{ time_range, device? }`; the report PDF as an attachment (§10.7). **Requires `Authorization: Bearer`**. 400 bad body, 404 while `REPORT_TOOL` is off, 422 no report for that range or pod, 429 `quota_reports_exceeded` |
+| `GET` | `/api/v1/usage` | `{ enabled, questions: { used, limit, remaining }, tokens: {...}, reports: {...}, window, resetsAt }` (§4a). `limit` and `remaining` are `null` for an unlimited dimension and while the quota is off, so "no ceiling" is distinguishable from "nothing left" by type. Read-only: it never records, so polling it cannot spend the allowance it reports |
 | `POST` | `/api/v1/chat` | `{ answer, model, mode, citations, usage }`, or SSE when `stream: true` (§10). **429** with `code: quota_requests_exceeded` / `quota_tokens_exceeded` plus `Retry-After` when the quota gate refuses — as JSON, before any stream opens (§4a) |
 
 `/health` does **no** network I/O (no Firestore/Fireworks calls), so it always succeeds while the
@@ -1419,8 +1425,6 @@ contractual DPA with Fireworks, not on data residency. For the skeleton, no data
 Sensor data (`data/`) is git-ignored and treated as confidential per `CLAUDE.md`; `documents/` is
 git-ignored too, with the four Tier 1 corpus files force-tracked as the exception (§11).
 
-Two holes of this service's own — an unauthenticated `GET /api/v1/devices` served out of the
-deployment's superadmin token, and an unauthenticated `GET /api/v1/reports/:filename` over
-customer water-quality PDFs — are written up in
-[`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md) §6. **Both are still open on
-`dev`**; the fix lives on `fix/unauthenticated-endpoints`.
+Two holes of this service's own were found and fixed on 2026-08-21, and are written up in [`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md) §6.
+`GET /api/v1/devices` served unauthenticated callers out of the deployment's superadmin token; it now requires the caller's token (§10.5).
+`GET /api/v1/reports/:filename` served stored customer PDFs with no authentication; it was first gated by a token-hash ownership check and was removed on 2026-09-22, when reports moved to `POST /api/v1/reports` with nothing stored (§10.7).

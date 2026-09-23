@@ -166,13 +166,27 @@ describe("POST /api/v1/chat with the sensor tool enabled", () => {
     await chat(app).send({ query: "what is ORP?" }).expect(200);
 
     const tools = sent[0].tools as Array<{ function: { name: string } }>;
-    // SENSOR_TOOL registers the reading tool plus the two interpretation tools that replaced the
-    // prompt's deleted range block: per-pod registry thresholds and the turbidity bands.
+    // SENSOR_TOOL registers the reading tool, `list_pods` (the model's only route to a pod name),
+    // and the two interpretation tools that replaced the prompt's deleted range block: per-pod
+    // registry thresholds and the turbidity bands.
     expect(tools.map((tool) => tool.function.name))
-      .toEqual(["query_sensor_data", "get_pod_thresholds", "get_turbidity_info"]);
+      .toEqual(["query_sensor_data", "list_pods", "get_pod_thresholds", "get_turbidity_info"]);
 
     const system = (sent[0].messages as Array<{ content: string }>)[0].content;
     expect(system).toContain("query_sensor_data");
+    expect(system).toContain("list_pods");
+  }, RELOAD_TIMEOUT_MS);
+
+  it("tells the model which pod the request selected, just before the question", async () => {
+    script = [{ content: "Answered.", toolCalls: [] }];
+
+    const app = loadAppWith(NO_DEFAULT_ENV);
+    await chat(app).send({ query: "how is the pH?", device: OWC }).expect(200);
+
+    const messages = sent[0].messages as Array<{ role: string; content: string }>;
+    expect(messages[messages.length - 1]).toEqual({ role: "user", content: "how is the pH?" });
+    expect(messages[messages.length - 2].role).toBe("system");
+    expect(messages[messages.length - 2].content).toContain(`SELECTED POD: the user has selected the pod "${OWC}"`);
   }, RELOAD_TIMEOUT_MS);
 
   it("feeds a tool result back and runs a second round", async () => {

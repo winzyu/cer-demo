@@ -4,6 +4,7 @@ const QUOTA_VARS = [
   "QUERY_QUOTA",
   "QUERY_QUOTA_REQUESTS",
   "QUERY_QUOTA_TOKENS",
+  "QUERY_QUOTA_REPORTS",
   "QUERY_QUOTA_WINDOW",
   "QUERY_QUOTA_SCOPE",
 ];
@@ -40,6 +41,7 @@ describe("quota configuration defaults", () => {
     expect(quota.enabled).toBe(false);
     expect(quota.requests).toBe("unlimited");
     expect(quota.tokens).toBe("unlimited");
+    expect(quota.reports).toBe("unlimited");
     expect(quota.scope).toBe("caller");
     expect(quota.windowMs).toBe(30 * 86_400_000);
     expect(quota.windowLabel).toBe("30d");
@@ -73,10 +75,12 @@ describe("quota limit parsing", () => {
     const { quota } = loadConfigWith({
       QUERY_QUOTA_REQUESTS: "2",
       QUERY_QUOTA_TOKENS: "0",
+      QUERY_QUOTA_REPORTS: "3",
     });
 
     expect(quota.requests).toBe(2);
     expect(quota.tokens).toBe(0);
+    expect(quota.reports).toBe(3);
   });
 
   it("REJECTS other spellings of `no limit` instead of guessing", () => {
@@ -86,6 +90,7 @@ describe("quota limit parsing", () => {
     expectLoadFailure({ QUERY_QUOTA_REQUESTS: "off" }, /QUERY_QUOTA_REQUESTS/);
     expectLoadFailure({ QUERY_QUOTA_REQUESTS: "-1" }, /QUERY_QUOTA_REQUESTS/);
     expectLoadFailure({ QUERY_QUOTA_TOKENS: "1.5" }, /QUERY_QUOTA_TOKENS/);
+    expectLoadFailure({ QUERY_QUOTA_REPORTS: "none" }, /QUERY_QUOTA_REPORTS/);
   });
 });
 

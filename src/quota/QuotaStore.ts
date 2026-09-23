@@ -17,16 +17,19 @@ export interface QuotaUsage {
   requests: number;
   /** LLM tokens (`usage.totalTokens`) recorded in this window. */
   tokens: number;
+  /** Report PDFs rendered and recorded in this window. */
+  reports: number;
   /** Inclusive start of the window, epoch ms. */
   windowStartMs: number;
   /** Exclusive end of the window — the instant the counters reset, epoch ms. */
   windowEndMs: number;
 }
 
-/** An increment. Both fields are optional so the two dimensions can be recorded separately. */
+/** An increment. Every field is optional so each dimension can be recorded separately. */
 export interface QuotaDelta {
   requests?: number;
   tokens?: number;
+  reports?: number;
 }
 
 export interface QuotaStore {

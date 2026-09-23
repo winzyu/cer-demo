@@ -1,17 +1,16 @@
 import fs from "fs";
-import os from "os";
 import path from "path";
 import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import { QuerySensorData } from "../../src/tools/querySensorData";
 import { GenerateReport, generateReportDefinition } from "../../src/tools/generateReport";
-import { isReportOwner } from "../../src/report/reportOwnership";
 import { catalogue } from "../../src/catalogue";
 
 /**
- * generate_report end to end: builds a real PDF on disk from recorded device-api fixtures (same
- * ones querySensorData.test.ts and buildReportInput.test.ts use), offline throughout. Confirms
- * the tool's contract with the model -- what JSON comes back, since that (not the PDF bytes)
- * is what gets JSON-stringified into the chat's tool message (ChatOrchestrator.ts).
+ * generate_report end to end: runs the real report pipeline over recorded device-api fixtures
+ * (same ones querySensorData.test.ts and buildReportInput.test.ts use), offline throughout.
+ * Confirms the tool's contract with the model -- what JSON comes back, since that is what gets
+ * JSON-stringified into the chat's tool message (ChatOrchestrator.ts). The PDF itself is
+ * rendered by `POST /api/v1/reports` (test/integration/reports.test.ts).
  */
 
 const FIXTURES = path.join(__dirname, "../fixtures/device-api");
@@ -48,22 +47,8 @@ const makeSensor = (): QuerySensorData => {
   });
 };
 
-/**
- * The caller's bearer token, which a report is now *bound* to: `reportOwnership.ts` records a
- * hash of it beside the PDF so `GET /api/v1/reports/:filename` can refuse a token that did not
- * generate the document. Without it `run()` throws rather than writing a PDF nobody could read.
- */
+/** The caller's bearer token: every reading behind a report is fetched with it. */
 const CALLER = { token: "caller-jwt" };
-
-let tmpDir: string;
-
-beforeEach(() => {
-  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "generate-report-test-"));
-});
-
-afterEach(() => {
-  fs.rmSync(tmpDir, { recursive: true, force: true });
-});
 
 describe("generate_report — tool definition", () => {
   it("is named generate_report and requires only time_range", () => {
@@ -74,13 +59,13 @@ describe("generate_report — tool definition", () => {
 
 describe("GenerateReport.run", () => {
   it("rejects a call with no time_range instead of guessing one", async () => {
-    const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
+    const tool = new GenerateReport({ sensor: makeSensor() });
     const result = await tool.run({});
     expect(result.error).toContain("time_range");
   });
 
-  it("produces a PDF on disk and returns a status, event count, and report_url -- no raw numbers", async () => {
-    const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
+  it("returns a status, event count and report_request -- no raw numbers, no file", async () => {
+    const tool = new GenerateReport({ sensor: makeSensor() });
     const result = await tool.run({ time_range: "last day", device: "Algalita" }, CALLER);
 
     expect(result.error).toBeUndefined();
@@ -90,50 +75,54 @@ describe("GenerateReport.run", () => {
     // The audit trail needs to know which approved wording the report used.
     expect(result.catalogue_version).toBe(catalogue.version);
     expect(Array.isArray(result.guidance_ids)).toBe(true);
-    expect(result.report_url).toMatch(/^\/api\/v1\/reports\/report_[a-f0-9]{8}\.pdf$/);
+    // What the page posts to POST /api/v1/reports: the arguments, never a URL to a stored file.
+    expect(result.report_request).toEqual({ time_range: "last day", device: "Algalita" });
+    expect(result).not.toHaveProperty("report_url");
 
     // The tool result is JSON.stringify'd straight into a chat message (ChatOrchestrator.ts) --
     // it must not carry the underlying readings, only the summary fields. "dissolved_oxygen" is
     // no longer a clean stand-in for "a raw metric dump leaked": baseline_provenance legitimately
     // uses it as a label key now, so this checks for the raw series/sample shape instead.
     expect(JSON.stringify(result)).not.toMatch(/"value":|"mean":|"n_samples":|"series":/);
-
-    const filename = (result.report_url as string).split("/").pop()!;
-    const pdfPath = path.join(tmpDir, filename);
-    expect(fs.existsSync(pdfPath)).toBe(true);
-    expect(fs.statSync(pdfPath).size).toBeGreaterThan(0);
   });
 
-  it("binds the PDF to the token that generated it, and to no other", async () => {
-    // The filename is eight hex characters and the route has no expiry, so without this the URL
-    // is a guessable capability onto a named customer's readings. The bound token is the only
-    // identity this service has: it cannot verify a JWT, so it cannot bind to a user id.
-    const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
-    const result = await tool.run({ time_range: "last day", device: "Algalita" }, CALLER);
-    const filename = (result.report_url as string).split("/").pop()!;
+  it("gives the period as the exact string the PDF prints, for the model to copy", async () => {
+    const result = await new GenerateReport({ sensor: makeSensor() })
+      .run({ time_range: "last day", device: "Algalita" }, CALLER);
+    const resolved = result.time_range_resolved as { start: string; end: string };
 
-    expect(isReportOwner(tmpDir, filename, CALLER.token)).toBe(true);
-    // A different organization's perfectly valid token is still not this report's owner.
-    expect(isReportOwner(tmpDir, filename, "some-other-orgs-jwt")).toBe(false);
+    expect(result.report_period).toBe(`${resolved.start} to ${resolved.end}`);
+    expect(result.report_period).toMatch(/^\d{4}-\d{2}-\d{2} to \d{4}-\d{2}-\d{2}$/);
   });
 
-  it("fails closed for a report that has no ownership record at all", () => {
-    // A PDF written before this existed, or one whose sidecar was removed. "Cannot establish who
-    // this belongs to" must not read as "anyone".
-    fs.writeFileSync(path.join(tmpDir, "report_deadbeef.pdf"), "%PDF-1.4");
+  it("omits device from report_request when the call named none", async () => {
+    // A single-pod caller need not name one; the download resolves the same default.
+    const stubSensor = {
+      query: async () => ({
+        device: { name: "Only Pod", label: "dev:only", operating_environment: "salt-water" },
+        time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
+        metrics: {
+          ph: {
+            value: 7.2,
+            n_samples: 20,
+            series: [{ start: "2026-08-01T00:00:00.000Z", end: "2026-08-01T12:00:00.000Z", mean: 7.2, min: 7, max: 7.4, n: 20 }],
+          },
+        },
+      }),
+      deviceRecord: async () => null,
+    } as unknown as QuerySensorData;
+    const result = await new GenerateReport({ sensor: stubSensor }).run({ time_range: "last week" }, CALLER);
 
-    expect(isReportOwner(tmpDir, "report_deadbeef.pdf", CALLER.token)).toBe(false);
+    expect(result.report_request).toEqual({ time_range: "last week" });
   });
 
   it("refuses to generate a report for a caller who sent no token", async () => {
     // Thrown, not returned as `{ error }`: the model cannot reword its way out of the request
-    // having had no credentials. And a report generated anonymously would have nobody to bind
-    // to, so it would be written and then be unreadable by everyone, forever.
-    const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
+    // having had no credentials, and the readings are only ever fetched as the caller.
+    const tool = new GenerateReport({ sensor: makeSensor() });
 
     await expect(tool.run({ time_range: "last day", device: "Algalita" }))
       .rejects.toMatchObject({ status: 401, code: "caller_token_required" });
-    expect(fs.readdirSync(tmpDir)).toHaveLength(0);
   });
 
   it("names each numeric metric's baseline source, since all five now come from the device "
@@ -143,7 +132,7 @@ describe("GenerateReport.run", () => {
     // all. The recorded /devices fixture has the Algalita Pod at pH 6-10, DO 4-15, ORP 50-400,
     // conductivity 40000-75000, temperature 50-80 °F -- none of which sit at a probe's physical
     // floor or ceiling, so none carry a blind-spot clause.
-    const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
+    const tool = new GenerateReport({ sensor: makeSensor() });
     const result = await tool.run({ time_range: "last day", device: "Algalita" }, CALLER);
 
     expect(result.baseline_provenance).toEqual({
@@ -156,11 +145,11 @@ describe("GenerateReport.run", () => {
   });
 
   it("surfaces an error from buildReportInput rather than throwing", async () => {
-    const tool = new GenerateReport({ sensor: makeSensor(), reportsDir: tmpDir });
+    const tool = new GenerateReport({ sensor: makeSensor() });
     const result = await tool.run({ time_range: "since the storm", device: "Algalita" }, CALLER);
 
     expect(result.error).toBeDefined();
-    expect(fs.readdirSync(tmpDir)).toHaveLength(0); // no partial PDF left behind on failure
+    expect(result).not.toHaveProperty("report_request");
   });
 
   it("reports Not assessed, not Normal, for a device with no usable registry threshold on any "
@@ -184,7 +173,7 @@ describe("GenerateReport.run", () => {
       }),
       deviceRecord: async () => null,
     } as unknown as QuerySensorData;
-    const tool = new GenerateReport({ sensor: stubSensor, reportsDir: tmpDir });
+    const tool = new GenerateReport({ sensor: stubSensor });
     const result = await tool.run({ time_range: "last week" }, CALLER);
 
     expect(result.error).toBeUndefined();

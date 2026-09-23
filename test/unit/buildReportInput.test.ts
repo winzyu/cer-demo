@@ -526,7 +526,7 @@ describe("buildReportInput", () => {
 
     await buildReportInput(stubSensor, { timeRange: "last day" }, { token: "caller-token" });
 
-    expect(calls).toHaveLength(2); // series + median
+    expect(calls).toHaveLength(3); // series + median + hourly pattern series
     expect(calls.every((c) => c.token === "caller-token")).toBe(true);
     expect(registryCalls).toEqual([{ token: "caller-token" }]);
   });
@@ -684,5 +684,70 @@ describe("buildReportInput", () => {
     // ...but it still counted toward the exact extremes.
     expect(ph.max).toBe(8.9);
     expect(ph.min).toBe(7.0);
+  });
+});
+
+describe("buildReportInput - pattern tags", () => {
+  const HOUR_MS = 3_600_000;
+  const START = Date.parse("2026-09-16T00:00:00.000Z");
+  /** One reading per hourly bucket, the live cadence of the Newport pods. */
+  const hourlyBuckets = (hours: number, valueAt: (h: number) => number) => Array.from(
+    { length: hours },
+    (_, h) => {
+      const value = valueAt(h);
+      return {
+        start: new Date(START + h * HOUR_MS).toISOString(),
+        end: new Date(START + (h + 1) * HOUR_MS).toISOString(),
+        mean: value,
+        min: value,
+        max: value,
+        n: 1,
+      };
+    },
+  );
+
+  const stubSensor = (hourly: ReturnType<typeof hourlyBuckets>) => ({
+    query: async (params: { aggregation: string; bucket?: string }) => {
+      const series = params.bucket === "hour"
+        ? hourly
+        : [{
+          start: hourly[0].start, end: hourly[hourly.length - 1].end, mean: 8, min: 5, max: 11, n: hourly.length,
+        }];
+      return {
+        device: { name: "Stub", label: "dev:stub", operating_environment: "salt-water" },
+        time_range_resolved: { start: hourly[0].start, end: hourly[hourly.length - 1].end },
+        metrics: {
+          dissolved_oxygen: {
+            value: params.aggregation === "median" ? 8 : null, n_samples: hourly.length, series,
+          },
+        },
+      };
+    },
+    deviceRecord: async () => null,
+  } as unknown as QuerySensorData);
+
+  it("classifies a pod reporting once an hour, rather than dropping every thin bucket", async () => {
+    const diel = hourlyBuckets(7 * 24, (h) => 8 + 3 * Math.sin((2 * Math.PI * h) / 24));
+
+    const { report } = await buildReportInput(stubSensor(diel), { timeRange: "last 7 days" }, { token: "t" });
+
+    expect(report!.parameters.find((p) => p.baseline.key === "dissolved_oxygen")!.pattern).toBe("diel");
+  });
+
+  it("asks for the hourly series with a raised bucket cap, so a long window is not cut to 60 hours", async () => {
+    const seen: Array<Record<string, unknown>> = [];
+    const hourly = hourlyBuckets(7 * 24, () => 8);
+    const sensor = stubSensor(hourly);
+    const original = sensor.query.bind(sensor);
+    (sensor as unknown as { query: unknown }).query = async (params: Record<string, unknown>, token?: string) => {
+      seen.push(params);
+      return original(params as never, token);
+    };
+
+    await buildReportInput(sensor, { timeRange: "last 30 days" }, { token: "t" });
+
+    const hourlyCall = seen.find((p) => p.bucket === "hour");
+    expect(hourlyCall).toMatchObject({ aggregation: "series" });
+    expect(hourlyCall!.maxBuckets as number).toBeGreaterThanOrEqual(30 * 24);
   });
 });

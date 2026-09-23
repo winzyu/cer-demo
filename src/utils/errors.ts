@@ -50,6 +50,8 @@ export const ERROR_CODES = [
   "quota_requests_exceeded",
   /** The caller's LLM-token allowance for the current quota window is spent (429). */
   "quota_tokens_exceeded",
+  /** The caller's report allowance for the current quota window is spent (429). */
+  "quota_reports_exceeded",
 ] as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[number];

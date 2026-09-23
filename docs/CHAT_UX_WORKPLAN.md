@@ -303,6 +303,29 @@ Phase 0 wrote `{ "prompts": [string] }`, so WS-3's loader must read `.prompts[].
   on opposite coasts is unsafe, and the picker removes the guess rather than defaulting it.
 - **Feedback loop** (thumbs up/down → new eval fixture) — needs a decision on where feedback is
   stored, which is the same persistence question as chat history.
+- **Empty citation marker `【】` in answers** - *open, recorded 2026-09-22, deliberately not hidden
+  yet.*
+  Seen live on a `generate_report` answer through the upstream relay: "shows **3 flagged events**
+  (...)【】".
+  The claim came from a tool result, which has no excerpt number, and the model still reached for
+  a citation marker, the same failure as the recorded tool-result citation defect.
+  `MARKER_PATTERN` (`frontend/js/citations.js:23`, copied into the dashboard's
+  `gilligan-citations.js`) requires a digit, so the empty marker is shown to the user as literal
+  brackets.
+  Stripping `【\s*】` on display would hide the symptom and lose the signal, so prefer, in order:
+  1. **Give tool results a citable handle.** Label each tool result in the conversation (for
+     example `【T1】`) and let the interface render it as a provenance chip that opens that tool
+     call (WS-2), so the model has a legitimate marker for a tool-derived claim instead of an
+     empty or wrong one. Needs the relay to carry tool results (Task C's first item).
+  2. **Detect it server-side.** Flag an answer containing an empty or out-of-range marker in the
+     saved `audit`, and count it as `invalid_citations` in the eval gate, so the rate is measured
+     rather than guessed.
+  3. Only then, as a fallback, strip empty markers on display, with the flag above still recorded.
+  A second live report answer the same evening, after the report-period fix, cited each
+  configured threshold with `【?】`: the same tool-derived claims, a different non-numeric marker,
+  so any detector should treat every non-numeric marker alike.
+  The same answer copied the report period's digits correctly but typed its hyphens as U+2011
+  (non-breaking hyphen); an exact-match check on `report_period` should normalise hyphens first.
 
 ---
 

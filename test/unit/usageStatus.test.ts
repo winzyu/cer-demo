@@ -12,6 +12,7 @@ const policy = (over: Partial<QuotaConfig> = {}): QuotaConfig => ({
   enabled: true,
   requests: "unlimited",
   tokens: "unlimited",
+  reports: "unlimited",
   windowMs: HOUR_MS,
   windowLabel: "1h",
   scope: "caller",
@@ -127,6 +128,20 @@ describe("UsageController", () => {
       window: "1h",
     });
     expect(Number.isNaN(Date.parse((body.value as { resetsAt: string }).resetsAt))).toBe(false);
+  });
+
+  it("reports the report allowance beside the question allowance", () => {
+    const service = serviceFor({ requests: 20, reports: 3 });
+    const controller = new UsageController(service);
+    service.recordReport(quotaKeyOf("abc"));
+
+    const { res, body } = responseSpy();
+    controller.getUsage(requestWithToken("abc"), res);
+
+    expect(body.value).toMatchObject({
+      questions: { used: 0, limit: 20, remaining: 20 },
+      reports: { used: 1, limit: 3, remaining: 2 },
+    });
   });
 
   it("buckets two different tokens separately", () => {

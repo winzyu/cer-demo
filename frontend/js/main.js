@@ -19,7 +19,7 @@ import { renderMarkdown } from "./markdown.js";       // WS-1 · markdown + XSS 
 import { renderProvenance } from "./provenance.js";   // WS-2 · provenance surfacing
 import { initInput } from "./input.js";               // WS-3 · input & response controls
 import { renderChart } from "./chart.js";             // WS-4 · series chart
-import { renderReport } from "./report.js";           // generate_report · report link
+import { renderReport } from "./report.js";           // generate_report · report download
 import { initPodBar, selectedDevice } from "./podbar.js"; // Wave 2 · pod selector + status
 import { initAccountBar } from "./accountbar.js";     // caller credential · org scoping
 
