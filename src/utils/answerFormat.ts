@@ -1,5 +1,5 @@
 /**
- * Post-processing for the visible answer text (`CHAT_UX_WORKPLAN.md` WS-5).
+ * Post-processing for the visible answer text (`SPECS.md` §10.4).
  *
  * gpt-oss (seen on `gpt-oss-20b`) sometimes leaks its harmony `commentary` channel into the
  * user-visible answer as a `【commentary…】` marker. This is fixed **here, after the fact, and never

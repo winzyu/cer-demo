@@ -59,7 +59,7 @@ the real device API** via `query_sensor_data` and a tool-round loop.
 | **N1** — chat spine + retrieval seam | ✅ complete |
 | **N2** — retrieval bake-off | ✅ built and swept on `gpt-oss-20b`, then **superseded**: the eval is being rebuilt ([`docs/EVAL_REBUILD.md`](docs/EVAL_REBUILD.md)) and every arm is unranked until its Phase 4 re-measures them. `pgvector-rag` was archived 2026-08-19 and dropped ([§6](#6-retrieval-arms)); the offline retrieval harness is in [`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) |
 | **N3** — sensor querying + tool loop | ✅ built, **behind `SENSOR_TOOL`, default off** |
-| **N4+** — reports, chat UX | ⏳ report generation built, **behind `REPORT_TOOL`, default off** ([§5](#5-configuration-reference), [§10](#10-endpoints)); N5's chat-UX streams have landed ([`docs/CHAT_UX_WORKPLAN.md`](docs/CHAT_UX_WORKPLAN.md)). Per-device water type is live in the **report** path only — chat still reads the global `WATER_TYPE` ([§7e](#7e-known-limits)) |
+| **N4+** — reports, chat UX | ⏳ report generation built, **behind `REPORT_TOOL`, default off** ([§5](#5-configuration-reference), [§10](#10-endpoints)); N5's chat-UX streams have landed in the demo frontend ([`docs/SPECS.md`](docs/SPECS.md) §15a). Per-device water type is live in the **report** path only — chat still reads the global `WATER_TYPE` ([§7e](#7e-known-limits)) |
 
 **Two defaults will surprise you on a fresh checkout:**
 

@@ -8,7 +8,7 @@
  * tool ran (`SENSOR_TOOL=false`, the default), so the meta call and every flag-off answer must
  * leave the slot untouched and empty — `.provenance:empty` in app.css keeps it collapsed.
  *
- * WHAT CHANGED IN WAVE 2 (docs/CHAT_UX_WORKPLAN.md, "Wave 2 — where things belong"):
+ * WHAT CHANGED IN WAVE 2 (docs/SPECS.md §15a, "Where things belong"):
  * live testing found one routine answer carrying a tool chip, a freshness badge, a water-type
  * warning and a chart nobody asked for. Individually defensible, collectively unreadable. The
  * rule that sorts them: **a message carries what qualifies THAT answer; the chrome carries what

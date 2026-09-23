@@ -230,6 +230,8 @@ All environment reading and validation happens **once**, at import, producing a 
 - **Malformed** values (non-integer `PORT`, unknown `WATER_TYPE`/`NODE_ENV`) are fatal.
 - **Missing** secrets/models (`FIREWORKS_API_KEY`, `LLM_MODEL`, and `FIRESTORE_PROJECT_ID` in
   production) are **warnings only** — the skeleton must boot and pass `/health` without them.
+- The defaults of `SENSOR_TOOL` (`false`), `DEFAULT_RETRIEVAL` (`stub`) and `DEBUG_RETRIEVAL`
+  (`false`) stay as they are, so a fresh checkout is credential-free and makes no live reads.
 
 Shape:
 
@@ -784,15 +786,18 @@ endpoint this tool reads (`SECURITY_FINDINGS.md` §7), so the fan-out happens he
 | every `/water/period` read goes out once per chain label, survivor first, sequentially | repeating `device=` on that route returns **0 rows** — the param is not a list there — and this is someone else's production API |
 | rows a **later** label repeats are dropped, matched on `timestamp` | chains overlap (New Trinidad and Trinidad Island share five months); naive concatenation double-counts and reweights every mean. The first batch is never filtered, so an unmerged pod's series is byte-identical to before |
 | a predecessor is read only when it is in the caller's **own** `/devices` response | that response is org-scoped upstream and is the only trustworthy statement of what this caller may see; `/water/period` itself authorizes nothing (`SECURITY_FINDINGS.md` §1) |
-| a predecessor whose `organization` differs from the survivor's is **withheld** | three of the four live chains cross organizations. Whether inheriting a buoy inherits its data is the operator's call (`POD_AUTHORIZATION.md` §11 Q1); deny is the documented default until they answer, and it is the reversible error |
-| an organization is compared as an opaque string, never resolved | two live devices point at organizations that do not exist; a lookup either throws or silently returns nothing. A survivor with no organization inherits nothing |
+| a predecessor whose `organization` differs from the survivor's is **withheld** | access follows organization membership, and history is read only where same-organization ownership is known (decided 2026-09-23). Three of the four chains in the August census crossed organizations; whether those merges transferred the site is open with the operator, and withholding is the reversible error |
+| an organization is compared as an opaque string, never resolved | the August census found two devices pointing at organizations that do not exist; a lookup either throws or silently returns nothing. A survivor with no organization inherits nothing |
 | `mergedInto` is never followed **forward** | a question about a retired pod is about that pod's own span; following it would widen the read into a device the caller never named. The result says the pod was retired instead |
 | what was read and what was withheld are **named in the result** (`device.history_labels`, `device.history_withheld`, plus a note) | silent expansion is the bug; disclosed expansion is the feature. A withheld predecessor is a limit on the answer, not a statement that the history does not exist |
 
-Expansion cannot widen what the caller could otherwise reach, so it needs no flag of its own; the
-`PodScope` grant layer (`POD_AUTHORIZATION.md` §10 P0) is where a narrowing switch belongs. The
-report's **Data scope** block (§8c there) is still open — the report inherits the fan-out through
+Expansion cannot widen what the caller could otherwise reach, so it needs no flag of its own.
+The report's **Data scope** block is still open — the report inherits the fan-out through
 `QuerySensorData.query()` but does not yet print which labels it used.
+
+**Live state, 2026-09-23.** `/devices` no longer returns retired predecessors, even to a superadmin
+token, so today every predecessor is withheld as "not visible to this account" and each pod's
+history starts at its own label. That is the fail-closed outcome the rules above intend.
 
 ### 10.4 Responses
 
@@ -801,6 +806,15 @@ and `tool_round_cap_reached` when the loop hit the cap. Both are **omitted** whe
 the flag-off response shape is unchanged from N1. Tool results are traced there, never turned into
 citations (§3 rule 4) — a sensor reading is this deployment's own measurement, not a claim
 attributable to a corpus document.
+
+**Answer text post-processing (`src/utils/answerFormat.ts`).** gpt-oss sometimes leaks its harmony
+`commentary` channel into the answer as a `【commentary…】` marker. It is stripped after the fact,
+on the JSON path, the round-cap fallback and (through `createStreamingCommentaryFilter`) the
+non-tool SSE branch. The matcher is anchored to the channel name because the same full-width
+brackets carry the citation markers: about 160 of them across the captured transcripts, which
+`GRADING_GUIDE.md` scores as `invalid_citations`. A strip-anything-in-brackets rule would have
+deleted graded evidence. An answer that is only markers comes out empty and hits the empty-answer
+guard.
 
 > **Streaming limitation with tools on.** The answer is not token-streamed: the loop cannot know a
 > round is the last until it returns without tool calls, by which point the text exists. Re-issuing
@@ -1343,12 +1357,52 @@ for local demo, to be tightened before deploy.
 
 ---
 
+## 15a. Demo frontend (`frontend/`)
+
+A static page with no build step and no bundler.
+
+- **No CDN and no remote assets.** Third-party code is vendored into `frontend/vendor/` with its
+  license header intact (`marked` and `DOMPurify`, used by `js/markdown.js`).
+- **Served, never opened as a file** (decided 2026-08-17). The scripts are ES modules, which are
+  fetched with CORS, and a `file://` page has an opaque origin, so every browser blocks
+  `<script type="module">` there. Serve it with `python3 -m http.server 5173` from `frontend/` and
+  point it at the API with `?backend=http://localhost:8010`.
+
+**Where things belong** (decided 2026-08-18, from live testing). Wave 1 put every piece of
+provenance into the message, and a routine question came back with a tool chip, a freshness badge,
+a water-type warning, an auto-drawn chart and fifteen starter prompts: each defensible, the whole
+unreadable. The rule: **a message carries what qualifies that answer; the chrome carries what is
+true of the session.** Anything constant across answers is chrome, because repeating it per message
+trains the reader to skip the line where it finally matters.
+
+| surface | what lives there | why |
+|---|---|---|
+| **Context bar** (persistent, `js/podbar.js`) | pod selector, pod status and last reading, water-type mismatch | properties of the deployment, identical on every answer; the mismatch is a config fact, not a finding about a reading |
+| **Message** (always) | the answer, and qualifications specific to it: an empty window ("silent since Aug 7"), `complete: false`, turbidity-provisional when turbidity is in the answer | these change how this particular number reads; dropping them would be dishonest |
+| **Message** (collapsed, `js/provenance.js`) | which tool ran, its arguments, sample counts, citations | auditable on demand, closed by default |
+| **On request** (`js/chart.js`) | the series chart | a chart answers "show me the trend"; it is not a decoration on every series result |
+
+Consequences:
+
+- The pod selector replaces the model asking which pod. `SENSOR_DEVICE_LABEL` is deliberately
+  unset because guessing between pods on opposite coasts is unsafe; the picker removes the guess
+  rather than defaulting it.
+- Freshness moves but does not disappear: "silent since Aug 7" stays in the message when it
+  explains an empty result, because there it is the answer. The routine "reporting, 8 minutes ago"
+  on a healthy pod moves to the bar.
+- Starter prompts were cut to three, then removed on 2026-09-15.
+
+---
+
 ## 16. Testing
 
 Jest + `ts-jest` + `supertest`. **57 suites** (51 unit, 6 integration; counted 2026-09-23 from
 `test/`). The last recorded full run was 949 tests in 46 suites on 2026-09-02, so the test total
 is due a re-measure. The table below names the suites that carry a design decision worth reading;
 it is not the full list — `npx jest --listTests` is.
+
+No test touches the network, needs an API key or costs money, and new tests keep to that: mock
+`LlmService`, and serve recorded bodies through a stubbed `fetch`.
 
 | suite | covers |
 |---|---|

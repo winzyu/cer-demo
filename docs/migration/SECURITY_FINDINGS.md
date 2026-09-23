@@ -42,6 +42,11 @@ sensor history of any device whose label they can name, by asking for
 `GET /api/v1/water/period/5/fiveYears?device=dev:<label>`. Org scoping on this route is
 effectively advisory.
 
+**The same function also fails open for an organization with no devices.** When `organizationId`
+is set but that organization has no devices, the label list is empty, no `where` is added, and the
+query returns **every organization's** rows in the window. A freshly created organization, which
+public `POST /users/create` produces, hits this path.
+
 ### It is an outlier, which is why it reads as an oversight rather than a decision
 
 Every sibling device-scoped route performs the membership check that this one omits:
@@ -83,6 +88,12 @@ answer for an authorized one. It is a reason to **enforce authorization ourselve
 
 ## 2. Two devices reference organizations that do not exist
 
+> **Re-read 2026-09-23** (live `GET /devices` and `GET /organizations`, superadmin token): all five
+> pods `/devices` now returns point at organizations that exist, and `Marina Park` belongs to City
+> of Newport Beach. `CWA Old` is retired, and `/devices` no longer returns retired pods, so its
+> organization cannot be re-checked through the API. The table below is the August state; the rule
+> at the end of this section stands either way.
+
 | device | `organization` | present in `GET /organizations`? | reporting? |
 |---|---|---|---|
 | `Marina Park` | `MWv7vOvPOL2xwNINk4eV` | ❌ no | ✅ **actively reporting** |
@@ -108,6 +119,12 @@ not as "no organization", and never as a wildcard.
 ---
 
 ## 3. Merge chains cross organization boundaries
+
+> **Re-read 2026-09-23.** The survivors' organizations are now: `Marina Park` and
+> `PCH Public Dock Buoy`, City of Newport Beach; `Old Woman Creek 2026`, Cleveland Water Alliance.
+> `/devices` no longer returns any retired predecessor, even to a superadmin token, so no
+> predecessor's organization can be confirmed and `src/devices/mergeChains.ts` currently withholds
+> every one as not visible. The table below is the August census.
 
 Device continuity is expressed by `mergedInto` (on the retired device) and `labels[]` (on the
 survivor). Three of the four live chains change organization partway along:
@@ -149,8 +166,13 @@ Continuity and org scoping are in genuine tension:
 
 **Does inheriting a buoy inherit its data?** That is the operator's call, not a default we should
 pick. It is genuinely arguable both ways — the physical asset and its record moved, but the
-readings describe a site under another customer's stewardship. **This is blocking for continuity
-work**, and it is the single most important question to take back to them.
+readings describe a site under another customer's stewardship.
+
+**Decided 2026-09-23:** access follows organization membership, and a predecessor's history is read
+only where same-organization ownership is known from the caller's own `/devices` response;
+everything else is withheld and named (`SPECS.md` §10.3c). Whether the three cross-organization
+merges transferred the site stays open with the operator (`STAKEHOLDER_QUESTIONS.md`); an answer
+could widen the history, never narrow it.
 
 ---
 
@@ -172,8 +194,9 @@ work**, and it is the single most important question to take back to them.
 6. **Cap the fan-out.** Firestore's `in` operator caps at 10 (`devices.slice(0, 10)`), and the
    backend **silently truncates** rather than erroring. A chain or multi-pod report that expands
    past 10 labels gets a quietly partial answer. Chunk deliberately, or refuse.
-7. **This is the foundation the pod-level permission model has to sit on**
-   (`POD_AUTHORIZATION.md`). Pod-granular grants are strictly finer than org grants, so every
+7. **This is the foundation any pod-level permission model would have to sit on** (a design
+   was drafted and not scheduled: `POD_AUTHORIZATION.md`, archived under tag
+   `docs-tier2-archive-2026-09-23`). Pod-granular grants are strictly finer than org grants, so every
    issue above applies to them a fortiori: if the org boundary isn't enforced on the data path,
    a pod boundary certainly isn't.
 
@@ -193,9 +216,12 @@ Theirs to fix, ours to raise. Bundled with the two already-known items so it goe
    upstream**, verified 2026-08-25 on `origin/develop` (`62993fe`, "fix and consolidate threshold
    alerting"). The table now reads 99=pH, 98=ORP, 97=DO, 100=Conductivity, 102=Temperature, which
    matches our canonical table in `src/devices/metrics.ts`. Nothing to report; do not raise it.
-4. **Dangling organization references** on `Marina Park` and `CWA Old` (§2).
+4. **Dangling organization references** on `Marina Park` and `CWA Old` (§2). `Marina Park` was
+   fixed by 2026-09-23; `CWA Old` cannot be checked through the API.
 5. **Tokens are minted with no expiry** (`DEVICE_API.md` §4), so every issue above has an
    unbounded blast radius once a token leaks.
+6. **The zero-device fail-open** in `findPeriodWaterData` (§1): an organization with no devices
+   must match nothing, not everything.
 
 ---
 
@@ -220,8 +246,8 @@ offline (`scripts/exploreDeviceApi.ts`, `scripts/verifySensorTool.ts`) and now s
 `requireCallerToken` middleware returns 401 + `WWW-Authenticate: Bearer` with code
 `caller_token_required`.
 
-Deliberately **not** gated on `NODE_ENV === "production"` (the shape `POD_AUTHORIZATION.md` §10
-P0(1) originally proposed): that leaves the hole open in exactly the environment developers
+Deliberately **not** gated on `NODE_ENV === "production"` (the shape the archived pod-authorization
+design's P0(1) originally proposed): that leaves the hole open in exactly the environment developers
 exercise, so the security-relevant behaviour would differ from the one that matters.
 
 `/chat` is **not** gated wholesale — a corpus-only question reads nothing org-scoped, so refusing
@@ -243,8 +269,7 @@ Both "no such file" and "not yours" answer **404**: a distinguishable 403 confir
 guess and turns 32 bits of entropy into an enumeration oracle.
 
 The owner key is a **token hash, not a user id** — with no `ACCESS_TOKEN_SECRET` an unverified
-`sub` claim is forgeable, the same constraint `quotaKey.ts` and `POD_AUTHORIZATION.md` §9 both
-run into. A sidecar rather than an in-memory map because the PDF outlives the process.
+`sub` claim is forgeable, the same constraint `quotaKey.ts` runs into. A sidecar rather than an in-memory map because the PDF outlives the process.
 
 **Residual risk, accepted and documented:** re-login mints a different token string, so a user
 loses access to reports generated under a previous one. No revocation, no expiry.
@@ -292,9 +317,8 @@ fix an exact shape: **call `deviceLabelsFor` and AND the org filter, as the seve
 **The cross-org question in §3 has been answered implicitly, and the answer is "yes".**
 `expandLabel` resolves purely by label, with **no organization filter at all**. Fetching PCH Public
 Dock Buoy's last reading now returns East Anchorage's rows — a City of Newport Beach pod. That is
-shipped behavior, not a proposal. `POD_AUTHORIZATION.md`'s default of denying cross-org
-predecessors is now *stricter than upstream*, which is a defensible place to be but should be a
-conscious choice rather than an accident.
+shipped behavior, not a proposal. Our default of denying cross-org predecessors is therefore
+*stricter than upstream*; it was made a conscious choice on 2026-09-23 (§3).
 
 **Cap mismatch:** `deviceLabels.ts` documents the Firestore `in` cap as **30**;
 `findPeriodWaterData` still slices at **10**. Match 30 when we fan out.

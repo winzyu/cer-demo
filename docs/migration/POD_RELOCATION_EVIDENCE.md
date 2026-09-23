@@ -127,7 +127,7 @@ name-keyed lookup happens to hit decides the baseline table. This is why every l
 `UC Davis` and `Cape Fear River Watch` appear in `GET /organizations` and on no device. That trips
 upstream's zero-device fail-open in `findPeriodWaterData`: an empty label list adds no `where`
 clause, so the query returns **every organization's** rows
-([`POD_AUTHORIZATION.md`](POD_AUTHORIZATION.md) §2d(4)). The most restricted accounts that exist
+([`SECURITY_FINDINGS.md`](SECURITY_FINDINGS.md) §1). The most restricted accounts that exist
 would read the whole fleet's history. Two live instances, not a hypothetical — raise it upstream.
 
 ## 6. ⚠️ The decisive one: a merged chain is the *instrument's* history, not the site's (2026-09-03)

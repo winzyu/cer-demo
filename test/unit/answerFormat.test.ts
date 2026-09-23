@@ -8,7 +8,7 @@ import type { ChatMessage } from "../../src/types/chat.types";
 import type { ToolDefinition, ToolHandler } from "../../src/types/tool.types";
 
 /**
- * `【commentary…】` stripping (`CHAT_UX_WORKPLAN.md` WS-5). Offline: a pure function, plus a
+ * `【commentary…】` stripping (`SPECS.md` §10.4). Offline: a pure function, plus a
  * scripted LLM for the orchestrator wiring. Nothing here needs a key or a network.
  *
  * The brackets throughout are the full-width U+3010 / U+3011 pair, not ASCII `[` / `]`.

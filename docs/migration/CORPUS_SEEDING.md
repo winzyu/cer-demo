@@ -6,7 +6,7 @@ It is written so an upstream owner with IAM on their project, but no context on 
 
 Everything below was checked against the code as of `1a8c744`; re-check the file paths and script names if this runbook is used much later.
 Recovered on 2026-09-22 after the old machine's commits were lost (tag `old-machine-recovery-2026-09-19`).
-The corpus was rebuilt on 2026-09-21, so check the document list below against `WSL_SANDBOX.md` §4 and `../../documents/README.md` before seeding.
+The corpus was rebuilt on 2026-09-21, so check the document list below against `LOCAL_STACK.md` ("What git does not carry") and `../../documents/README.md` before seeding.
 
 ## 0. What is being seeded, and what is not
 
@@ -42,7 +42,7 @@ A fresh `git clone` of this repository does not carry everything `npm run seed:f
 
 **Two ways to get `data/corpus/corpus.json` onto the seeding machine, in order of preference:**
 
-1. **Copy the artifact directly**, the same way `WSL_SANDBOX.md` §4 copies it into the sandbox.
+1. **Copy the artifact directly.**
    `seed:firestore` never touches `documents/` or `.ocr_cache/`, so if you already trust an existing `data/corpus/corpus.json` (built and reviewed in this checkout, or handed over by the user), copying that one file plus a clone of this repository is enough to run `npm run seed:firestore`.
    This is the faster and lower-risk path because it carries no dependency on OCR cache or PDF availability on the seeding machine.
 2. **Regenerate it from source** with `npm run ingest`, if the corpus has changed since the last known-good artifact, or if you have no artifact you trust.
