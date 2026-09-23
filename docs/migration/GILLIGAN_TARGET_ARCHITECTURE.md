@@ -60,7 +60,8 @@ This service stays stateless about conversations.
 A new upstream route, `POST /gilligan/report`, relays to `POST cer-rag /api/v1/reports` and streams the PDF back with `Content-Disposition: attachment`.
 The dashboard downloads it immediately.
 Nothing is written to disk, which removes the token-hash ownership sidecars (`src/report/reportOwnership.ts`) and the lost-on-redeploy problem.
-A report asked for in chat returns a report action in `provenance`, which the page turns into the same download call, so chat never hands out a file URL.
+A report asked for in chat returns a report offer, which the page turns into the same download call, so chat never hands out a file URL.
+*Built 2026-09-22:* the offer travels as a top-level `reports: [{ request: { time_range, device? }, siteName, status }]` on the relay's answer and is saved with the chat message, pending the `provenance` block (`SPECS.md` §10.7).
 
 **Usage status.**
 `GET /gilligan/check-quota` relays to `GET cer-rag /api/v1/usage`, which returns remaining questions and reports and the reset time, not a bare boolean.
@@ -128,7 +129,7 @@ A referral is only offered when the observed evidence matches the entry's applic
 | Prompt and citations | `src/prompt/*` | modify | add the catalogue and referral blocks; resolve the v2 conflicts before any v2 wording enters |
 | Chat route | `src/routes/chatRoutes.ts`, `src/controllers/ChatController.ts` | modify | add the internal `/gilligan/answer` contract and the cer-api identity check; keep `/chat` for the demo and evaluation |
 | Usage limits | `src/quota/*`, `src/middleware/quotaGuard.ts` | modify | Firestore store, several windows at once, report counter, identity keys, status endpoint |
-| Reports | `src/tools/generateReport.ts`, `src/report/{renderPdf,reportOwnership}.ts`, `src/routes/reportRoutes.ts` | modify | return bytes; delete disk storage and ownership sidecars |
+| Reports | `src/tools/generateReport.ts`, `src/report/{renderPdf,produceReport}.ts`, `src/routes/reportRoutes.ts` | modify | **done 2026-09-22**: `POST /api/v1/reports` returns bytes; disk storage and ownership sidecars deleted |
 | Report prose | `src/report/narrative.ts` | modify | causes and actions only from approved catalogue entries |
 | Event rules | `src/report/events.ts`, `src/report/types.ts` | modify | minimum for launch: make the sewage rule depend on water type (v2 §6.2 vs §6.3); otherwise report threshold crossings without naming a cause |
 | Audit log | `src/services/auditLog.ts` | keep off | superseded at launch by the `audit` field saved with each chat message (D4) |
@@ -143,7 +144,7 @@ A referral is only offered when the observed evidence matches the entry's applic
 | Gilligan page | `user-dashboard/src/app/gilligan/page.js`, `components/gilligan-answer.js` | replace | React rebuild: device picker, history list, markdown answers with citation chips and provenance, report download, usage count; no fake typing animation |
 | Gilligan transport | `user-dashboard/src/app/services/gilligan.js` | modify | pass the device, add the report download (`responseType: blob`) and the richer usage status |
 | Ask box | `user-dashboard/src/app/components/gilligan-widget.js` | modify | encode the question (STAKEHOLDER_QUESTIONS item 13) |
-| Controller | `clean-earth-rovers-server/src/controllers/GilliganController.ts` | modify | relay to cer-rag behind `GILLIGAN_BACKEND`, map history, add the report route |
+| Controller | `clean-earth-rovers-server/src/controllers/GilliganController.ts` | modify | relay to cer-rag behind `GILLIGAN_BACKEND`, map history, add the report route (report route built 2026-09-22 on `local`, uncommitted) |
 | Model call and quota | `src/services/GilliganService.ts` | replace | `askQuestionGemini` (a retired `gemini-pro` id) and `checkQuota` retire; chat storage methods stay |
 | Period query authorization | `src/services/WaterAnalyticsService.ts` | modify | membership check on explicit device filters (`SECURITY_FINDINGS.md` §1); cer-rag already validates pods, but the endpoint is reachable directly |
 
@@ -155,9 +156,9 @@ Working days are counted from Thursday, September 17.
 | step | dates | owner | work | done when |
 |---|---|---|---|---|
 | R0 Setup | Sep 17-18 | user, Claude | user sets up the WSL sandbox ([`WSL_SANDBOX.md`](WSL_SANDBOX.md)); send the three v2 questions and the referral contacts to the supervisor; confirm a Fireworks payment method and read the rate-limit headers | the demo runs in the sandbox; supervisor has items 17-20 |
-| R1 Service contract | Sep 18-22 | Claude | `/gilligan/answer`, identity check, history mapping, report bytes, usage store and status endpoint, concurrency limiter; unit and supertest coverage | contract tests green; the demo still works |
-| R2 Catalogue | Sep 18-24 | Claude, then supervisor | structured catalogue from v2 and the advice drafts, generated review page, prompt and narrative wiring, sewage rule fix | supervisor has approved an entry set; reports and chat cite only approved entries |
-| R3 Upstream relay and page | Sep 21-25 | Claude, in the `local` checkouts | controller relay and report route; React page; local run of dashboard + server + cer-rag together | **done 2026-09-21 except the report route**, which waits on R1 (D8). A question, history and the usage count work end to end locally: [`GILLIGAN_R3_PORT.md`](GILLIGAN_R3_PORT.md) |
+| R1 Service contract | Sep 18-22 | Claude | `/gilligan/answer`, identity check, history mapping, report bytes, usage store and status endpoint, concurrency limiter; unit and supertest coverage | contract tests green; the demo still works. **Report half done 2026-09-22** (report bytes, report counter); the rest has not started |
+| R2 Catalogue | Sep 18-24 | Claude, then supervisor | structured catalogue from v2 and the advice drafts, generated review page, prompt and narrative wiring, sewage rule fix | supervisor has approved an entry set; reports and chat cite only approved entries. **Code done 2026-09-17** (recovered 2026-09-22, `SPECS.md` §4b); approval pending |
+| R3 Upstream relay and page | Sep 21-25 | Claude, in the `local` checkouts | controller relay and report route; React page; local run of dashboard + server + cer-rag together | **done 2026-09-21; report route added 2026-09-22** (D8). A question, history and the usage count work end to end locally: [`GILLIGAN_R3_PORT.md`](GILLIGAN_R3_PORT.md) |
 | R4 Quality | Sep 23-28 | separate session, Claude | Phase 3 capture (approved spend); fix what it finds; where a class of question stays weak, add a caveat or a refusal (D3); organization-isolation tests with the pod-scope fixtures | every weak class is either fixed, caveated or refused; isolation tests pass |
 | R5 Demo and merge | Sep 28-29 | user, supervisor | supervisor demo; merge approval; upstream owners create the Fireworks key; corpus seeded into their Firestore; cer-rag deployed | cer-rag healthy in their project; relay switched on with `GILLIGAN_BACKEND=rag` |
 | R6 Release | Sep 30 | user, upstream owners | production smoke on one pod per test organization. **There is no working rollback**: `GILLIGAN_BACKEND=gemini` restores a backend that fails every question (D9), so the cutover is one-way and the gate is R4's quality bar | release |
@@ -205,7 +206,7 @@ Settled 2026-09-21:
 - **D8. R3 relays to the existing `POST /api/v1/chat`** rather than waiting for R1's `/gilligan/answer`. R1 was gated on approval to start implementing and the release date is itself undecided, so R3 could not depend on it. Every contract difference is confined to `ANSWER_PATH` and the request body in `CerRagService.ts`, and the verified identity fields are already threaded through unused, so R1 is an edit to that one file. The report route is the part of R3 this defers, because returning report bytes is R1 work and the disk-and-sidecar design it would otherwise relay to is already scheduled for replacement.
 - **D9. The Gemini backend is not a fallback.** `askQuestionGemini` calls the retired `gemini-pro` id; live-confirmed 2026-09-21 against the deployed API, which answered `404 models/gemini-pro is not found for API version v1beta`. Production Gilligan therefore fails every question today, and `GILLIGAN_BACKEND=gemini` restores that, not a working assistant. The default stays `gemini` so the relay is inert when merged upstream, which is a merge-safety property and not a safety net.
 
-- **D10. Gilligan runs with `SENSOR_TOOL=true`; `REPORT_TOOL` stays off until R1.** Both flags
+- **D10. Gilligan runs with `SENSOR_TOOL=true`; `REPORT_TOOL` stays off until R1** (revised 2026-09-22: on, see below). Both flags
   default off, which is right for the eval harness and wrong for the product, and nothing had
   said which value the release runs with. With them off the model is handed no tools at all, so
   every question about a reading falls through to `REFUSAL_SENTENCE` — a real session refused
@@ -217,6 +218,14 @@ Settled 2026-09-21:
   the asking user's own token (`2b`). `REPORT_TOOL` stays off because `generate_report` returns
   a disk path guarded by the bearer-token-hash sidecar that R1 replaces with returned bytes;
   turning it on before R1 would ship the defect, not the feature.
+
+  *Revised 2026-09-22.* R1's report half has landed: `generate_report` returns a `report_request`,
+  `POST /api/v1/reports` renders the PDF into the response, and the sidecar is gone
+  (`SPECS.md` §10.7). The reason above for keeping `REPORT_TOOL` off no longer holds, and the
+  user decided on 2026-09-22 that **the release runs `REPORT_TOOL=true`**; the local `.env` now
+  sets it. The flag also opens `POST /api/v1/reports`, so the R5 runbook must carry it beside
+  `SENSOR_TOOL`, and must set `QUERY_QUOTA=true` with a finite `QUERY_QUOTA_REPORTS`, or reports
+  are unlimited. Eval captures still set both flags `false` explicitly.
 
   Consequences to hold together, since the flag moves three things at once (the prompt block, the
   `tools` array, the registry): every eval capture must set `SENSOR_TOOL=false` explicitly on both

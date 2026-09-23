@@ -249,6 +249,8 @@ run into. A sidecar rather than an in-memory map because the PDF outlives the pr
 **Residual risk, accepted and documented:** re-login mints a different token string, so a user
 loses access to reports generated under a previous one. No revocation, no expiry.
 
+**Superseded 2026-09-22.** The route and the ownership sidecar are gone: `POST /api/v1/reports` renders the PDF into the response with the caller's token and stores nothing, so there is no file left to guard and the residual risks above no longer apply (`SPECS.md` §10.7).
+
 ### 6c. Knock-on: the bundled demo frontend's pod picker now fails closed
 
 `frontend/js/api.js` sends no `Authorization` header. That page only ever worked because it was

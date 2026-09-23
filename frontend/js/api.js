@@ -3,8 +3,8 @@
  * Moved out of index.html in Phase 0 — behavior is unchanged.
  */
 
-// Exported so other modules can resolve a server-relative path (e.g. generate_report's
-// `report_url`) against the same backend this page is actually talking to, rather than
+// Exported so other modules can reach other API routes (e.g. `POST /api/v1/reports`) on
+// the same backend this page is actually talking to, rather than
 // `location.origin` — the frontend's static server and the API are different origins in dev.
 import { authHeaders } from "./auth.js";
 

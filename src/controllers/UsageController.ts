@@ -34,6 +34,7 @@ export class UsageController {
       // renaming either side does not silently reshape the other.
       questions: status.requests,
       tokens: status.tokens,
+      reports: status.reports,
       window: status.windowLabel,
       resetsAt: new Date(status.resetAtMs).toISOString(),
     });

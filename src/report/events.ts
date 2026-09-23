@@ -17,14 +17,18 @@
  * doc's own matrix has several events sharing overlapping signatures (Industrial is explicitly a
  * catch-all "abrupt step-change ... with no diel or tidal explanation"), and (2) confirming
  * Saltwater intrusion or Stormwater properly needs tidal-stage/rainfall context this pipeline
- * doesn't have, so those stay capped at moderate confidence even on a clean pattern match. Low
- * confidence always degrades to "Inconclusive" rather than asserting a specific cause. Anything
+ * doesn't have, so those stay capped at moderate confidence even on a clean pattern match (the
+ * one exception: a conductivity rise the pattern classifier tags as a multi-week `trend`, in
+ * marine water, is the drought/sea-level shape and clears the floor as Saltwater intrusion). Low
+ * confidence always degrades to "Inconclusive" rather than asserting a specific cause; the
+ * downgraded event keeps the signature it matched in `signature`, so a catalogue explanation
+ * approved at that lower confidence can still be shown without the heading naming it. Anything
  * this flags should go through the Investigative recommendation (grab sample / source tracing)
  * before being treated as a real finding.
  */
 
 import type {
-  ParameterStats, ReportInput, WQEvent, EventType, Severity,
+  ParameterStats, Pattern, ReportInput, WQEvent, EventType, Severity,
 } from "./types";
 import {
   CONFIDENCE_FLOOR, isRelativeIndex, statValue, withUnit,
@@ -138,6 +142,7 @@ interface ClassifyResult {
 const classify = (
   moved: Partial<Record<string, Movement>>,
   water: WaterClass,
+  patterns: Partial<Record<string, Pattern>> = {},
 ): ClassifyResult => {
   const do_ = moved.dissolved_oxygen;
   const { orp } = moved;
@@ -241,8 +246,23 @@ const classify = (
 
   // Saltwater intrusion: "EC rise correlated with tidal phase, drought, or sea-level conditions"
   // -- isolated EC movement, everything else flat. Capped below the sewage/hypoxia ceiling
-  // because confirming the tidal/drought correlation needs context this pipeline doesn't have.
+  // because confirming the tidal/drought correlation needs context this pipeline doesn't have,
+  // except where the conductivity series itself carries the drought/sea-level shape: a sustained
+  // multi-week rise (`trend`, `patterns.ts`) in marine water. A discharge is a step, not a
+  // weeks-long creep, and the flat turbidity already rules out the storm-surge/runoff reading.
   if (cond === "up" && do_ === undefined && orp === undefined && ph === undefined && turb === undefined) {
+    if (water === "marine" && patterns.conductivity === "trend") {
+      return {
+        type: "Saltwater intrusion",
+        confidence: 0.55,
+        rationale:
+          "Conductivity rose in isolation as part of a sustained, multi-week upward trend, with no "
+          + "accompanying DO, ORP, pH, or turbidity shift -- the slow shape expected from drought or "
+          + "sea-level-driven saltwater intrusion in coastal water, not the abrupt step a discharge "
+          + "produces. Tidal timing and rainfall records were not checked, so confidence stays "
+          + "moderate.",
+      };
+    }
     return {
       type: "Saltwater intrusion",
       confidence: 0.45,
@@ -315,12 +335,13 @@ const applyConfidenceFloor = (
   type: EventType,
   confidence: number,
   rationale: string,
-): { type: EventType; rationale: string } => {
+): { type: EventType; rationale: string; signature?: EventType } => {
   if (confidence >= CONFIDENCE_FLOOR_FOR_CLASSIFICATION || type === "Inconclusive") {
     return { type, rationale };
   }
   return {
     type: "Inconclusive",
+    signature: type,
     rationale: `${rationale} Confidence (${Math.round(confidence * 100)}%) falls short of the floor for `
       + `asserting '${type}' outright, so the classification below is downgraded to `
       + "Inconclusive pending confirmation.",
@@ -379,7 +400,7 @@ const detectAlgalBloom = (report: ReportInput): WQEvent | null => {
   const ph = byKey.get("ph");
   const phConfirms = Boolean(ph && ph.pattern === "diel" && ph.max > ph.baseline.baselineMax);
   const confidence = phConfirms ? 0.6 : 0.45;
-  const { type, rationale } = applyConfidenceFloor(
+  const { type, rationale, signature } = applyConfidenceFloor(
     "Algal bloom",
     confidence,
     "Dissolved oxygen supersaturated at one point in the day and crashed below baseline "
@@ -409,6 +430,7 @@ const detectAlgalBloom = (report: ReportInput): WQEvent | null => {
     interpretation: rationale,
     followUp: "Grab sample",
     confidence,
+    ...(signature ? { signature } : {}),
   };
 };
 
@@ -510,9 +532,10 @@ const eventForWindow = (
     return null;
   }
 
-  const classified = classify(moved, water);
+  const patterns = Object.fromEntries(parameters.map((p) => [p.baseline.key, p.pattern]));
+  const classified = classify(moved, water, patterns);
   const { confidence } = classified;
-  const { type: eventType, rationale } = applyConfidenceFloor(
+  const { type: eventType, rationale, signature } = applyConfidenceFloor(
     classified.type,
     confidence,
     classified.rationale,
@@ -557,6 +580,7 @@ const eventForWindow = (
         confidence < 0.6 ? " Treat as tentative pending grab-sample confirmation." : ""}`,
     followUp: confidence < 0.6 ? "Grab sample" : "Notify stakeholder",
     confidence,
+    ...(signature ? { signature } : {}),
     persistent,
   };
 };

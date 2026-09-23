@@ -59,7 +59,11 @@ export type ParameterScale = "numeric" | "relative-index";
  */
 export type ReportStatus = "Normal" | "Watch" | "Action Required" | "Not assessed";
 export type WaterBodyType = "Freshwater" | "Brackish" | "Estuarine" | "Marine";
-export type Pattern = "diel" | "tidal" | "event-driven" | "flat" | "irregular" | "unknown";
+/**
+ * `diel`, `tidal` and `trend` are assigned from the series by `patterns.ts`; the other values
+ * are only ever set by hand-built inputs (tests, the offline prototype data).
+ */
+export type Pattern = "diel" | "tidal" | "trend" | "event-driven" | "flat" | "irregular" | "unknown";
 
 export type EventType =
   | "Sewage"
@@ -100,6 +104,15 @@ export interface SiteMetadata {
    * buildReportInput.ts. */
   clientName: string;
 }
+
+/**
+ * The reporting period exactly as the PDF prints it. `generate_report` hands the model this
+ * string to quote, so the answer and the document cannot disagree about the dates: a model
+ * asked to restate an ISO range has been seen to change the year.
+ */
+export const reportPeriod = (site: Pick<SiteMetadata, "startDate" | "endDate">): string => (
+  `${site.startDate} to ${site.endDate}`
+);
 
 export const coordinatesStr = (site: SiteMetadata): string => {
   if (site.latitude === undefined || site.longitude === undefined) {
@@ -191,6 +204,12 @@ export interface WQEvent {
   followUp: string;
   /** 0-1; low confidence should lean toward "Inconclusive". */
   confidence: number;
+  /**
+   * The signature an `Inconclusive` event matched before the confidence floor downgraded it.
+   * The heading never names it; a catalogue explanation approved at this confidence
+   * (`minConfidence` below the floor) may still describe it, hedged (`narrative.ts`).
+   */
+  signature?: EventType;
   /**
    * The window covers most of the reporting period (`events.ts` PERSISTENT_WINDOW_SHARE), so it
    * reads as an offset from the configured thresholds rather than a discrete event.

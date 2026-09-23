@@ -21,6 +21,7 @@ const policy = (over: Partial<QuotaConfig> = {}): QuotaConfig => ({
   enabled: true,
   requests: "unlimited",
   tokens: "unlimited",
+  reports: "unlimited",
   windowMs: HOUR_MS,
   windowLabel: "1h",
   scope: "caller",
@@ -188,6 +189,45 @@ describe("QuotaService — dimensions are independent", () => {
   });
 });
 
+describe("QuotaService - report limit", () => {
+  it("admits exactly `limit` reports, then refuses with the report dimension", () => {
+    const service = serviceFor({ reports: 2 });
+    service.recordReport(KEY, 0);
+    expect(service.checkReport(KEY, 0).allowed).toBe(true);
+    service.recordReport(KEY, 0);
+
+    const decision = service.checkReport(KEY, 0);
+    expect(decision).toMatchObject({ allowed: false, dimension: "reports", limit: 2, used: 2 });
+    if (!decision.allowed) {
+      expect(quotaErrorCode(decision)).toBe("quota_reports_exceeded");
+      expect(quotaErrorMessage(decision)).toMatch(/^Report quota exceeded: 2 of 2 reports used/);
+    }
+  });
+
+  it("keeps reports and chat independent in both directions", () => {
+    const service = serviceFor({ requests: 1, reports: 1 });
+
+    // Questions spent: a report still downloads, and recording it charges no question.
+    spendRequests(service, 1, 0);
+    expect(service.check(KEY, 0).allowed).toBe(false);
+    expect(service.checkReport(KEY, 0).allowed).toBe(true);
+
+    const other = serviceFor({ requests: 1, reports: 1 });
+    other.recordReport(KEY, 0);
+    expect(other.checkReport(KEY, 0).allowed).toBe(false);
+    expect(other.check(KEY, 0).allowed).toBe(true);
+    expect(other.usage(KEY, 0)).toMatchObject({ requests: 0, reports: 1 });
+  });
+
+  it("counts nothing while QUERY_QUOTA is off", () => {
+    const service = serviceFor({ enabled: false, reports: 0 });
+    service.recordReport(KEY, 0);
+
+    expect(service.checkReport(KEY, 0).allowed).toBe(true);
+    expect(service.usage(KEY, 0).reports).toBe(0);
+  });
+});
+
 describe("QuotaService — window rollover", () => {
   it("resets both dimensions at the window boundary", () => {
     const service = serviceFor({ requests: 2, tokens: 100, windowMs: HOUR_MS });
@@ -228,6 +268,7 @@ describe("InMemoryQuotaStore", () => {
     expect(usage).toEqual({
       requests: 0,
       tokens: 0,
+      reports: 0,
       windowStartMs: HOUR_MS * 4,
       windowEndMs: HOUR_MS * 5,
     });

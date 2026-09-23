@@ -6,6 +6,7 @@ interface Bucket {
   windowStartMs: number;
   requests: number;
   tokens: number;
+  reports: number;
 }
 
 /**
@@ -52,6 +53,7 @@ export class InMemoryQuotaStore implements QuotaStore {
     return {
       requests: live?.requests ?? 0,
       tokens: live?.tokens ?? 0,
+      reports: live?.reports ?? 0,
       windowStartMs,
       windowEndMs: windowStartMs + this.windowMs,
     };
@@ -62,10 +64,13 @@ export class InMemoryQuotaStore implements QuotaStore {
     const existing = this.buckets.get(key);
     const bucket = existing && existing.windowStartMs === windowStartMs
       ? existing
-      : { windowStartMs, requests: 0, tokens: 0 };
+      : {
+        windowStartMs, requests: 0, tokens: 0, reports: 0,
+      };
 
     bucket.requests += delta.requests ?? 0;
     bucket.tokens += delta.tokens ?? 0;
+    bucket.reports += delta.reports ?? 0;
     this.buckets.set(key, bucket);
 
     if (this.buckets.size > InMemoryQuotaStore.SWEEP_THRESHOLD) {

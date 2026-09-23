@@ -1,3 +1,4 @@
+import { config } from "../config";
 import type { ChatMessage } from "../types/chat.types";
 import type { Chunk } from "../types/retrieval.types";
 import { buildSystemPrompt } from "./systemPrompt";
@@ -23,11 +24,30 @@ export const formatContext = (chunks: Chunk[]): string => {
   return `CONTEXT — excerpts from the water-quality corpus:\n\n${excerpts}`;
 };
 
+/**
+ * Tells the model which pod the user picked in the interface.
+ *
+ * Without it the model only learns the pod once a tool runs (`ChatOrchestrator` fills a tool's
+ * missing `device` from the request), so with several pods visible it asked "which pod?" instead
+ * of calling the tool at all, even though the answer was already on the request. The name is
+ * reduced to one line with no quotes, so a pod name cannot close the sentence it sits in.
+ */
+export const formatSelectedDevice = (device: string): string => {
+  const name = device.replace(/["“”\s]+/g, " ").trim();
+  return `SELECTED POD: the user has selected the pod "${name}" in the interface. For a `
+    + "question about readings or a report, use this pod unless the user names a different "
+    + "one; do not ask which pod they mean.";
+};
+
 export interface BuildMessagesInput {
   query: string;
   chunks: Chunk[];
   /** Prior turns, oldest first. Passed through unchanged. */
   history?: ChatMessage[];
+  /** The pod chosen in the interface, if any (`device` on the chat request). */
+  selectedDevice?: string;
+  /** Whether a device tool is offered; the pod line is noise to a model with no tools. */
+  toolsEnabled?: boolean;
 }
 
 /**
@@ -38,7 +58,8 @@ export interface BuildMessagesInput {
  *   1. system prompt   — identical on every request for a given deployment
  *   2. document context — identical per corpus slice (direct-feed) or per query (RAG)
  *   3. history          — grows over a conversation
- *   4. the user question — different every time
+ *   4. selected pod     - per request, only when one was sent and a device tool is on
+ *   5. the user question — different every time
  *
  * Fireworks prompt caching matches on a **prefix**, so a cache hit only extends as far as the
  * first byte that differs. Interleaving anything dynamic earlier — a timestamp in the system
@@ -54,6 +75,8 @@ export const buildMessages = ({
   query,
   chunks,
   history = [],
+  selectedDevice,
+  toolsEnabled = config.tools.sensorTool || config.tools.reportTool,
 }: BuildMessagesInput): ChatMessage[] => {
   const messages: ChatMessage[] = [
     { role: "system", content: buildSystemPrompt() },
@@ -66,6 +89,12 @@ export const buildMessages = ({
   }
 
   messages.push(...history);
+  // Per request, so it goes after everything cacheable and just before the question. Eval
+  // captures send no device and run with the tools off, so their prompt is unchanged.
+  const pod = selectedDevice?.trim();
+  if (pod && toolsEnabled) {
+    messages.push({ role: "system", content: formatSelectedDevice(pod) });
+  }
   messages.push({ role: "user", content: query });
 
   return messages;

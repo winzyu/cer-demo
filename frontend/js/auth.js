@@ -4,7 +4,7 @@
  * ## Why this exists
  *
  * Every org-scoped route now refuses a request with no `Authorization: Bearer` header —
- * `GET /api/v1/devices`, `GET /api/v1/reports/:filename`, and both tools reached through
+ * `GET /api/v1/devices`, `POST /api/v1/reports`, and both tools reached through
  * `/chat`. Before that fix this page "worked" because `DeviceApiClient` silently fell back to
  * the deployment's `DEVICE_API_TOKEN`, a superadmin credential, so the pod picker was showing
  * every organization's fleet to an unauthenticated visitor. The 401 is the fix working; this

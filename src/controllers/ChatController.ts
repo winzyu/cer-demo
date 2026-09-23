@@ -75,7 +75,9 @@ export class ChatController {
       const chunks = await adapter.getContext(query);
 
       // Ordering is load-bearing for prompt caching — see promptBuilder.
-      const messages = buildMessages({ query, chunks, history });
+      const messages = buildMessages({
+        query, chunks, history, selectedDevice: device,
+      });
 
       // The device API scopes every response to the token holder's organization, so the caller's
       // own token has to reach the tool. Falling back to `DEVICE_API_TOKEN` — which is what

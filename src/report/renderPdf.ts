@@ -14,7 +14,7 @@ import type {
   ReportInput, WQEvent, Flag, ReportStatus, ParameterStats, Severity,
 } from "./types";
 import {
-  coordinatesStr, flagFor, isRelativeIndex, outOfRangeShare, statValue,
+  coordinatesStr, flagFor, isRelativeIndex, outOfRangeShare, reportPeriod, statValue,
 } from "./types";
 import { clarityBandFor, isOffScaleTurbidity, TURBIDITY_NO_BASELINE_TEXT } from "./referenceRanges";
 import type { NarrativeSections } from "./narrative";
@@ -383,7 +383,7 @@ const drawFooters = (doc: PDFKit.PDFDocument, report: ReportInput): void => {
       .stroke();
     doc.font("Helvetica").fontSize(8).fillColor(MUTED)
       .text(
-        `${report.site.siteName} · ${report.site.startDate} to ${report.site.endDate}`,
+        `${report.site.siteName} · ${reportPeriod(report.site)}`,
         MARGIN,
         y,
         { width: half, lineBreak: false },
@@ -423,7 +423,7 @@ export const buildReportPdf = (
     .text("Water Quality Report", MARGIN, 30, { width: CONTENT_WIDTH - 150 });
   doc.font("Helvetica").fontSize(10.5).fillColor("#b9c8d2")
     .text(
-      `${report.site.siteName} · ${report.site.startDate} to ${report.site.endDate}`,
+      `${report.site.siteName} · ${reportPeriod(report.site)}`,
       MARGIN,
       60,
       { width: CONTENT_WIDTH - 150 },

@@ -13,9 +13,7 @@ router.get("/", (_req, res) => {
 
 router.use("/chat", chatRoutes);
 router.use("/devices", deviceRoutes);
-// Not gated on REPORT_TOOL: a PDF generate_report already wrote to disk should stay
-// fetchable even if the flag is later turned off, same reasoning DeviceController's
-// route uses for not gating on SENSOR_TOOL.
+// `POST /reports` renders a PDF on request; `ReportController` refuses it while REPORT_TOOL is off.
 router.use("/reports", reportRoutes);
 // Read-only allowance status, deliberately outside `quotaGuard`: a client must still be able to
 // ask how long it is refused for *after* it has been refused.

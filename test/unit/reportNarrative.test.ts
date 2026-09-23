@@ -603,6 +603,43 @@ describe("deterministicNarrative — shipped catalogue", () => {
     expect(sections.events[0].heading).toBe(UNEXPLAINED_HEADING);
   });
 
+  it("shows the hedged saltwater explanation under an unnamed heading below the floor", () => {
+    // The saltwater entry is approved from 0.45, under the 0.5 floor that decides naming. The
+    // heading stays unnamed; the approved, hedged wording still reaches the reader.
+    const salt = event({ type: "Inconclusive", signature: "Saltwater intrusion", confidence: 0.45 });
+    const sections = deterministicNarrative(report([flaggedPh()], [salt], "Marine"), noAccuracy, "Watch", drafts);
+
+    expect(sections.events[0].heading).toBe(UNEXPLAINED_HEADING);
+    expect(sections.events[0].causeNamed).toBe(false);
+    expect(sections.events[0].interpretation).toContain("too weak for the report to name a cause");
+    expect(sections.events[0].interpretation).toContain("saltier water reaching the pod");
+    expect(sections.guidanceIds).toContain("saltwater-intrusion");
+  });
+
+  it("shows the hedged industrial explanation for the catch-all, and no industrial next step", () => {
+    const industrial = event({
+      type: "Inconclusive", signature: "Industrial", confidence: 0.3, severity: "High",
+    });
+    const sections = deterministicNarrative(report([flaggedPh()], [industrial]), noAccuracy, "Watch", drafts);
+
+    expect(sections.events[0].heading).toBe(UNEXPLAINED_HEADING);
+    expect(sections.events[0].interpretation).toContain("The data cannot tell which");
+    expect(sections.guidanceIds).toContain("industrial-unclear");
+    // Next steps are still selected as Inconclusive, so no Industrial-only step appears.
+    const industrialOnlySteps = drafts.entries.filter((e) => e.kind === "next-step"
+      && e.appliesTo.triggers?.includes("Industrial") && !e.appliesTo.triggers.includes("Inconclusive"));
+    industrialOnlySteps.forEach((e) => expect(sections.guidanceIds).not.toContain(e.id));
+  });
+
+  it("adds nothing for a signature whose entry is not approved at that confidence", () => {
+    // Thermal's entry needs 0.6; a 0.4 partial match gets the plain unexplained wording.
+    const thermal = event({ type: "Inconclusive", signature: "Thermal", confidence: 0.4 });
+    const sections = deterministicNarrative(report([flaggedPh()], [thermal]), noAccuracy, "Watch", drafts);
+
+    expect(sections.events[0].interpretation).toContain("No approved explanation covers this pattern");
+    expect(sections.guidanceIds).not.toContain("thermal");
+  });
+
   it("never emits remediation phrasing -- next steps inspect, confirm and notify", () => {
     const events = (["Sewage", "Stormwater", "Hypoxia", "Thermal", "Acidic input", "Algal bloom"] as const)
       .map((type) => event({ type, severity: "High" }));

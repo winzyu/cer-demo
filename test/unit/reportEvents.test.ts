@@ -131,6 +131,68 @@ describe("detectEvents — classification", () => {
     expect(events[0].type).toBe("Inconclusive");
     expect(events[0].confidence).toBeLessThan(CONFIDENCE_FLOOR_FOR_CLASSIFICATION);
     expect(events[0].interpretation).toContain("downgraded to");
+    // The matched signature survives the downgrade, for a hedged catalogue explanation.
+    expect(events[0].signature).toBe("Saltwater intrusion");
+  });
+
+  it("leaves signature unset on an event that cleared the floor", () => {
+    const window = [1, 1.5, 2];
+    const events = detectEvents(report([
+      statsFor(fixedBaseline("dissolved_oxygen", "Dissolved Oxygen (mg/L)", "mg/L", 5, 9), seriesWithExcursion(7, 3, window)),
+      statsFor(fixedBaseline("orp", "ORP (mV)", "mV", 150, 350), seriesWithExcursion(250, 50, window)),
+    ]));
+    expect(events[0].type).toBe("Hypoxia");
+    expect(events[0]).not.toHaveProperty("signature");
+  });
+
+  it("keeps the Industrial fallback below the floor, with its signature recorded", () => {
+    // pH alone, falling: matches nothing more specific, so the catch-all at 0.3.
+    const window = [1, 1.5, 2];
+    const ph = statsFor(fixedBaseline("ph", "pH", "", 6.5, 8.5), seriesWithExcursion(7.2, 5.0, window));
+
+    const events = detectEvents(report([ph]));
+    expect(events[0].type).toBe("Inconclusive");
+    expect(events[0].signature).toBe("Industrial");
+  });
+});
+
+describe("detectEvents - saltwater intrusion needs the drought/sea-level shape", () => {
+  const window = [1, 1.5, 2];
+  const seawaterRise = (pattern: ParameterStats["pattern"]): ParameterStats => statsFor(
+    fixedBaseline("conductivity", "Conductivity (µS/cm)", "µS/cm", 45_000, 55_000),
+    seriesWithExcursion(50_000, 58_000, window),
+    pattern,
+  );
+
+  it("names Saltwater intrusion for an isolated rise on a multi-week trend in marine water", () => {
+    const events = detectEvents(report([seawaterRise("trend")], "Marine"));
+    expect(events).toHaveLength(1);
+    expect(events[0].type).toBe("Saltwater intrusion");
+    expect(events[0].confidence).toBeGreaterThanOrEqual(CONFIDENCE_FLOOR_FOR_CLASSIFICATION);
+    expect(events[0].interpretation).toContain("multi-week upward trend");
+  });
+
+  it("does not name it for the same rise without a trend", () => {
+    const events = detectEvents(report([seawaterRise("unknown")], "Marine"));
+    expect(events[0].type).toBe("Inconclusive");
+    expect(events[0].signature).toBe("Saltwater intrusion");
+  });
+
+  it("does not name it in fresh water, even on a trend", () => {
+    const conductivity = statsFor(
+      fixedBaseline("conductivity", "Conductivity (µS/cm)", "µS/cm", 50, 1_500),
+      seriesWithExcursion(500, 2_000, window),
+      "trend",
+    );
+    expect(detectEvents(report([conductivity], "Freshwater"))[0].type).toBe("Inconclusive");
+  });
+
+  it("does not name it when turbidity rose too: that is the runoff or surge shape", () => {
+    const events = detectEvents(report([
+      seawaterRise("trend"),
+      statsFor(relativeIndexBaseline(), seriesWithExcursion(10, 40, window)),
+    ], "Marine"));
+    expect(events[0].type).toBe("Stormwater");
   });
 });
 

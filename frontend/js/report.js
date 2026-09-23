@@ -1,35 +1,21 @@
 /**
- * generate_report link — mounts into a message's `.report` slot.
+ * generate_report download - mounts into a message's `.report` slot.
  *
- * `generate_report` (REPORT_TOOL, defaults off) does not stream a file; it returns a summary
- * plus a path to a PDF already written to disk, on `tool_calls[].result.report_url`
- * (`src/tools/generateReport.ts:131-141`) — the exact same `done` SSE payload shape
- * `provenance.js` and `chart.js` already read (`ToolInvocation`, `src/types/tool.types.ts:47`).
+ * `generate_report` (REPORT_TOOL, defaults off) renders no file. Its result, on
+ * `tool_calls[].result` in the `done` SSE payload (`ToolInvocation`, `src/types/tool.types.ts`),
+ * carries a summary plus `report_request: { time_range, device? }` - the arguments to send to
+ * `POST /api/v1/reports`, which renders the PDF and returns its bytes (`ReportController.ts`).
  * With REPORT_TOOL off, `tool_calls` is omitted entirely, this returns false having done
  * nothing, and `.report:empty` in app.css keeps the slot collapsed — same contract as
  * `renderChart`.
  *
- * The model's own answer text may already say "The report is ready: /api/v1/reports/….pdf" —
- * this does not replace that sentence, it makes it clickable instead of a reader having to
- * copy a path out of prose.
+ * **The control is a button, not a link.** There is no URL to navigate to: the route is a POST
+ * that needs the `Authorization` header, so the click is a `fetch` into a blob that is saved as
+ * a download. The token stays out of every URL.
  *
- * `report_url` is a *server-relative path*, not a full URL, and it is not necessarily on the
- * same origin as this page: the frontend is a static file server (`frontend/`, no build step)
- * while the API is `BACKEND` (see `api.js`), which can be a different host/port entirely in
- * dev. So it is resolved against `BACKEND`, never `location.origin`.
- *
- * **The link cannot be a plain navigation.** `GET /api/v1/reports/:filename` requires a bearer
- * token and binds the PDF to the credential that generated it, and a browser navigation carries
- * no `Authorization` header — so an `href` straight to the path 404s (the route answers 404 for
- * both "no such file" and "not yours", so a filename guess is not confirmable). The click is
- * therefore a `fetch` with the header, into a blob URL. That keeps the token out of the URL,
- * which is the whole reason `?token=` was rejected.
- *
- * Re-validated here against the exact filename grammar `ReportController.ts`'s `SAFE_FILENAME`
- * accepts (`/api/v1/reports/<safe-chars>.pdf`) before it becomes an `href` — a malformed or
- * unexpected string is dropped rather than trusted, same rule WS-1 applies to markdown output
- * and provenance.js applies to device names: nothing off an API response becomes markup or a
- * navigation target unchecked.
+ * `report_request` is re-validated here before it is sent back - strings of bounded length and
+ * nothing else - the same rule WS-1 applies to markdown output and provenance.js applies to
+ * device names: nothing off an API response is trusted unchecked. The server validates again.
  */
 
 import { BACKEND } from "./api.js";
@@ -37,8 +23,9 @@ import { authHeaders } from "./auth.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-/** Mirrors `ReportController.ts`'s SAFE_FILENAME, applied to the full path the tool returns. */
-const SAFE_REPORT_PATH = /^\/api\/v1\/reports\/[a-zA-Z0-9_-]+\.pdf$/;
+/** Mirrors `ReportController.ts`'s bounds on the two fields. */
+const MAX_TIME_RANGE_CHARS = 100;
+const MAX_DEVICE_CHARS = 200;
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -74,20 +61,37 @@ function asObject(value) {
 }
 
 /**
- * One `generate_report` invocation worth showing a link for, or null.
+ * One `generate_report` invocation worth showing a download for, or null.
  *
- * Skips deduped calls (a repeat served from the per-request cache — the same URL a sibling
- * call already surfaced, so a second identical button would be noise, matching chart.js's rule
- * for series charts) and any call whose result carries `error` instead of a `report_url`.
+ * Skips deduped calls (a repeat served from the per-request cache - a second identical button
+ * would be noise, matching chart.js's rule for series charts) and any call whose result carries
+ * `error` instead of a `report_request`.
  */
 function reportFromCall(call) {
   if (!call || typeof call !== "object" || call.deduped) return null;
   if (call.name !== "generate_report") return null;
   const result = asObject(call.result);
   if (typeof result.error === "string") return null;
-  const url = result.report_url;
-  if (typeof url !== "string" || !SAFE_REPORT_PATH.test(url)) return null;
-  return { url, siteName: typeof result.site_name === "string" ? result.site_name : null };
+  const req = asObject(result.report_request);
+  const timeRange = req.time_range;
+  if (typeof timeRange !== "string" || !timeRange || timeRange.length > MAX_TIME_RANGE_CHARS) {
+    return null;
+  }
+  const device = req.device;
+  if (device !== undefined && (typeof device !== "string" || device.length > MAX_DEVICE_CHARS)) {
+    return null;
+  }
+  return {
+    body: device ? { time_range: timeRange, device } : { time_range: timeRange },
+    siteName: typeof result.site_name === "string" ? result.site_name : null,
+  };
+}
+
+/** The server's `attachment; filename="…"`, or a generic name. */
+function filenameFrom(response) {
+  const header = response.headers.get("Content-Disposition") || "";
+  const match = /filename="([^"]+)"/.exec(header);
+  return match ? match[1] : "cer-report.pdf";
 }
 
 function clearSlot(slot) {
@@ -95,9 +99,9 @@ function clearSlot(slot) {
 }
 
 /**
- * Fills an assistant message's report slot with one "View report" link per generate_report
- * call in this turn. Contract matches `renderChart`: idempotent (safe to call again on a
- * re-render), returns whether it filled the slot.
+ * Fills an assistant message's report slot with one "Download report" button per
+ * generate_report call in this turn. Contract matches `renderChart`: idempotent (safe to call
+ * again on a re-render), returns whether it filled the slot.
  *
  * @param {HTMLElement} slot the message's `.report` element
  * @param {object} payload the SSE `done` data for that message
@@ -112,45 +116,52 @@ export function renderReport(slot, payload) {
   const reports = calls.map(reportFromCall).filter(Boolean);
   if (reports.length === 0) return false;
 
-  reports.forEach(({ url, siteName }) => {
-    const link = document.createElement("a");
-    link.className = "btn--ghost btn--report";
-    // Kept as an href so the control is a real link — right-click, focus and keyboard
-    // activation all behave — but the default navigation is prevented below, because it would
-    // arrive without the Authorization header this route now requires.
-    link.href = BACKEND + url;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.appendChild(iconDoc());
-    const label = el("span", null, siteName ? `View report — ${siteName} (PDF)` : "View report (PDF)");
-    link.appendChild(label);
+  reports.forEach(({ body, siteName }) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn--ghost btn--report";
+    button.appendChild(iconDoc());
+    const original = siteName ? `Download report - ${siteName} (PDF)` : "Download report (PDF)";
+    const label = el("span", null, original);
+    button.appendChild(label);
 
-    link.onclick = async (event) => {
-      event.preventDefault();
-      const original = label.textContent;
-      label.textContent = "Opening report…";
+    button.onclick = async () => {
+      button.disabled = true;
+      label.textContent = "Preparing report…";
       try {
-        const response = await fetch(BACKEND + url, { headers: authHeaders() });
+        const response = await fetch(`${BACKEND}/api/v1/reports`, {
+          method: "POST",
+          headers: { ...authHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
         if (!response.ok) {
-          // 404 covers both "no such file" and "generated by a different account" — the route
-          // refuses to distinguish them, so neither may this message.
+          const problem = await response.json().catch(() => ({}));
           label.textContent = response.status === 401
-            ? "Sign in to open this report"
-            : "Report unavailable for this account";
+            ? "Sign in to download this report"
+            : response.status === 429
+              ? "Report limit reached - try again later"
+              : (typeof problem.error === "string" && problem.error) || "Report unavailable";
           return;
         }
         const blobUrl = URL.createObjectURL(await response.blob());
-        window.open(blobUrl, "_blank", "noopener");
-        // Revoked on a timer rather than immediately: the new tab needs the URL to still
-        // resolve when it loads, and there is no load event to hang this on across tabs.
+        const save = document.createElement("a");
+        save.href = blobUrl;
+        save.download = filenameFrom(response);
+        document.body.appendChild(save);
+        save.click();
+        save.remove();
+        // Revoked on a timer rather than immediately: some browsers start the save
+        // asynchronously and need the URL to still resolve.
         setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
         label.textContent = original;
       } catch (e) {
         label.textContent = "Could not reach the report service";
+      } finally {
+        button.disabled = false;
       }
     };
 
-    slot.appendChild(link);
+    slot.appendChild(button);
   });
 
   return true;

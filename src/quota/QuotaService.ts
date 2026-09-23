@@ -45,6 +45,7 @@ export interface QuotaStatus {
   enabled: boolean;
   requests: QuotaDimensionStatus;
   tokens: QuotaDimensionStatus;
+  reports: QuotaDimensionStatus;
   windowLabel: string;
   resetAtMs: number;
 }
@@ -53,17 +54,24 @@ export interface QuotaStatus {
 const CODE_BY_DIMENSION: Readonly<Record<QuotaDimension, ErrorCode>> = {
   requests: "quota_requests_exceeded",
   tokens: "quota_tokens_exceeded",
+  reports: "quota_reports_exceeded",
 };
 
 export const quotaErrorCode = (refusal: QuotaRefusal): ErrorCode => (
   CODE_BY_DIMENSION[refusal.dimension]
 );
 
+const NOUN_BY_DIMENSION: Readonly<Record<QuotaDimension, string>> = {
+  requests: "chat requests",
+  tokens: "LLM tokens",
+  reports: "reports",
+};
+
 /** Human prose for the refusal. Names the dimension, both numbers, the window, and the reset. */
 export const quotaErrorMessage = (refusal: QuotaRefusal): string => {
-  const noun = refusal.dimension === "requests" ? "chat requests" : "LLM tokens";
+  const noun = NOUN_BY_DIMENSION[refusal.dimension];
   return (
-    `Query quota exceeded: ${refusal.used} of ${refusal.limit} ${noun} used in the current `
+    `${refusal.dimension === "reports" ? "Report" : "Query"} quota exceeded: ${refusal.used} of ${refusal.limit} ${noun} used in the current `
     + `${refusal.windowLabel} window. Quota resets at ${new Date(refusal.resetAtMs).toISOString()}.`
   );
 };
@@ -122,13 +130,30 @@ export class QuotaService {
    * count — the cheaper, more legible thing for an operator to raise.
    */
   check(key: string, nowMs: number = Date.now()): QuotaDecision {
+    return this.decide(key, ["requests", "tokens"], nowMs);
+  }
+
+  /**
+   * Decides whether `key` may download another report.
+   *
+   * Only the report ceiling applies. A report makes no model call, so a caller who has spent
+   * their questions can still fetch the report an earlier answer offered, and the reverse.
+   */
+  checkReport(key: string, nowMs: number = Date.now()): QuotaDecision {
+    return this.decide(key, ["reports"], nowMs);
+  }
+
+  /** The first exhausted dimension, in the order given, refuses. */
+  private decide(key: string, dimensions: QuotaDimension[], nowMs: number): QuotaDecision {
     if (!this.policy.enabled) {
       return { allowed: true, key };
     }
 
     const usage = this.store.read(key, nowMs);
-    const refusal = exceeded("requests", this.policy.requests, usage.requests)
-      ?? exceeded("tokens", this.policy.tokens, usage.tokens);
+    const refusal = dimensions.reduce<ReturnType<typeof exceeded>>(
+      (found, dimension) => found ?? exceeded(dimension, this.policy[dimension], usage[dimension]),
+      undefined,
+    );
 
     if (!refusal) {
       return { allowed: true, key };
@@ -156,6 +181,14 @@ export class QuotaService {
       return;
     }
     this.store.record(key, { requests: 1 }, nowMs);
+  }
+
+  /** Counts one rendered report. Called after the PDF exists, so a failed render is free. */
+  recordReport(key: string, nowMs: number = Date.now()): void {
+    if (!this.policy.enabled) {
+      return;
+    }
+    this.store.record(key, { reports: 1 }, nowMs);
   }
 
   /**
@@ -198,6 +231,7 @@ export class QuotaService {
       enabled: this.policy.enabled,
       requests: describe(this.policy.requests, usage.requests),
       tokens: describe(this.policy.tokens, usage.tokens),
+      reports: describe(this.policy.reports, usage.reports),
       windowLabel: this.policy.windowLabel,
       resetAtMs: usage.windowEndMs,
     };

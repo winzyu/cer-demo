@@ -58,6 +58,10 @@ export const NO_APPROVED_STEP = "No approved recommendation covers these finding
 const UNEXPLAINED_INTERPRETATION = "Readings crossed this pod's configured thresholds. No approved "
   + "explanation covers this pattern, so the report does not name a cause.";
 
+/** Leads a hedged explanation: one approved below the floor for naming a cause. */
+const HEDGED_INTERPRETATION = "Readings crossed this pod's configured thresholds. The evidence is "
+  + "too weak for the report to name a cause, but one approved explanation fits the pattern:";
+
 const byKind = (entries: CatalogueEntry[], kind: CatalogueEntry["kind"]): CatalogueEntry[] => (
   entries.filter((e) => e.kind === kind)
 );
@@ -66,12 +70,18 @@ const byKind = (entries: CatalogueEntry[], kind: CatalogueEntry["kind"]): Catalo
  * The finding an event is selected under. An event with no approved explanation is treated as
  * `Inconclusive` for every other entry too: recommending, say, bacteria testing next to a heading
  * that names no cause would state the unapproved cause by implication.
+ *
+ * `hedged` is the one exception, and it adds explanations only: an `Inconclusive` event whose
+ * matched `signature` fell below the confidence floor may still show an explanation the catalogue
+ * approves at that confidence (`minConfidence` under the floor, for example the saltwater and
+ * industrial entries). The heading still names no cause and next steps are still chosen as
+ * `Inconclusive`, so only the hedged wording the supervisor approved for that confidence appears.
  */
 const eventFinding = (
   event: WQEvent,
   water: WaterClass,
   guidance: UsableGuidance,
-): { finding: Finding; causeNamed: boolean } => {
+): { finding: Finding; causeNamed: boolean; hedged: CatalogueEntry[] } => {
   const finding: Finding = {
     trigger: event.type,
     water,
@@ -80,9 +90,13 @@ const eventFinding = (
   };
   const causeNamed = event.type !== "Inconclusive"
     && byKind(entriesFor(guidance.entries, finding), "explanation").length > 0;
+  const hedged = !causeNamed && event.signature
+    ? byKind(entriesFor(guidance.entries, { ...finding, trigger: event.signature }), "explanation")
+    : [];
   return {
     finding: causeNamed ? finding : { ...finding, trigger: "Inconclusive" },
     causeNamed,
+    hedged,
   };
 };
 
@@ -90,6 +104,7 @@ const eventNarrative = (
   event: WQEvent,
   matched: CatalogueEntry[],
   causeNamed: boolean,
+  hedged: CatalogueEntry[],
   guidance: UsableGuidance,
 ): EventNarrative => {
   const hours = (event.windowEndMs - event.windowStartMs) / 3_600_000;
@@ -100,8 +115,11 @@ const eventNarrative = (
   const explanations = byKind(matched, "explanation")
     .map((e) => `${entryText(e, guidance)} ${e.limitations}`);
   const limitations = byKind(matched, "limitation").map((e) => entryText(e, guidance));
+  const unnamed = hedged.length > 0
+    ? [HEDGED_INTERPRETATION, ...hedged.map((e) => `${entryText(e, guidance)} ${e.limitations}`)]
+    : [UNEXPLAINED_INTERPRETATION];
   const interpretation = [
-    ...(causeNamed ? explanations : [UNEXPLAINED_INTERPRETATION]),
+    ...(causeNamed ? explanations : unnamed),
     ...limitations,
     duration,
   ].join(" ");
@@ -127,6 +145,7 @@ const slotText = (
 const patternPhrase: Record<ParameterStats["pattern"], string> = {
   diel: "followed a clear diel rhythm",
   tidal: "tracked the tidal cycle",
+  trend: "drifted steadily in one direction across the period rather than cycling",
   "event-driven": "was flat outside a discrete excursion window",
   flat: "held steady",
   irregular: "showed irregular, non-periodic variation",
@@ -372,12 +391,14 @@ export const deterministicNarrative = (
 
   const water = waterClassFor(report.site.waterBodyType);
   const selections = report.events.map((event) => {
-    const { finding, causeNamed } = eventFinding(event, water, guidance);
-    return { event, causeNamed, matched: entriesFor(guidance.entries, finding) };
+    const { finding, causeNamed, hedged } = eventFinding(event, water, guidance);
+    return {
+      event, causeNamed, hedged, matched: [...entriesFor(guidance.entries, finding), ...hedged],
+    };
   });
-  const events = selections.map(({ event, causeNamed, matched }) => (
-    eventNarrative(event, matched, causeNamed, guidance)
-  ));
+  const events = selections.map(({
+    event, causeNamed, hedged, matched,
+  }) => eventNarrative(event, matched, causeNamed, hedged, guidance));
 
   let operational: string;
   let investigative: string;

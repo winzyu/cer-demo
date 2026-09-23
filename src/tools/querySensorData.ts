@@ -167,6 +167,12 @@ export interface SensorQueryParams {
   device?: string;
   /** `series` only. Omit for an auto width derived from the window's span. */
   bucket?: "auto" | "hour" | "day" | "week";
+  /**
+   * `series` only, and programmatic only: the model's tool schema does not offer it. Raises the
+   * bucket cap for a caller that needs a fine series over a long window, such as the report's
+   * hourly pattern classification. Defaults to `DEFAULT_MAX_BUCKETS`.
+   */
+  maxBuckets?: number;
 }
 
 export interface QuerySensorDataOptions {
@@ -462,7 +468,7 @@ export class QuerySensorData {
       aggregation: params.aggregation,
       ...(params.device !== undefined ? { device: params.device } : {}),
       ...(params.bucket !== undefined ? { bucket: params.bucket } : {}),
-    }, token);
+    }, token, params.maxBuckets);
 
     if (typeof result.error === "string") {
       throw new SensorQueryError(result.error);
@@ -554,7 +560,11 @@ export class QuerySensorData {
     return this.lastReportedAt(label, token);
   }
 
-  private async execute(args: Record<string, unknown>, token?: string): Promise<SensorToolResult> {
+  private async execute(
+    args: Record<string, unknown>,
+    token?: string,
+    maxBuckets?: number,
+  ): Promise<SensorToolResult> {
     const metricName = typeof args.metric === "string" ? normalize(args.metric) : "";
     // "all" fetches one window and reads every metric out of it — one API call, not six, and
     // six fewer chances for the model to drop a parameter while reassembling them.
@@ -707,7 +717,7 @@ export class QuerySensorData {
         QuerySensorData.samplesInRange(readings, key, range),
         aggregation,
         this.rawLimit,
-        { bucketMs },
+        { bucketMs, ...(maxBuckets !== undefined ? { maxBuckets } : {}) },
       ),
     }));
 

@@ -6,19 +6,12 @@
  *
  * ⚠️ Known, deliberate scope limits in this first cut -- read before trusting a generated report:
  *
- * 1. **No real diel/tidal pattern detection.** Every parameter's `pattern` is set to "unknown".
- *    The Python prototype never had a pattern classifier either -- its demo data set `pattern`
- *    directly on fabricated test fixtures, it was never computed from real readings. Detecting
- *    a genuine ~24h diel rhythm or tidal correlation from a bucketed series is a real
- *    signal-processing task (autocorrelation, or comparing same-time-of-day buckets across
- *    days) that deserves its own scoped effort and testing, not a guessed heuristic bolted on
- *    here under time pressure. Consequence: `events.ts`'s diel/tidal exclusion never triggers
- *    on live data today (every parameter goes through the generic threshold detector), and the
- *    algal-bloom detector (which requires a DO series tagged "diel") never fires. Both still
- *    work correctly for anyone who constructs a ReportInput by hand with a real pattern tag
- *    (as the unit tests for events.ts do) -- this limitation is specifically about data pulled
- *    from `QuerySensorData`.
- * 2. **Series is bucketed, not raw.** `event`/pattern detection here runs against
+ * 1. **Patterns come from an hourly series.** Each parameter's `pattern` (diel, tidal, trend or
+ *    unknown) is classified by `patterns.ts` from a third query at hourly resolution, capped at
+ *    `MAX_HOURLY_BUCKETS`. That tag is what switches on `events.ts`'s diel/tidal exclusion and
+ *    the algal-bloom detector (which needs a DO series tagged "diel"); the classifier's own
+ *    limits (a diurnal tide reads as diel; `unknown` is not "steady") are documented there.
+ * 2. **Series is bucketed, not raw.** Event detection here runs against
  *    `aggregation: "series"` buckets (bucket means at each bucket's midpoint), not the sensor's
  *    native ~15min cadence. This is coarser than what the Python prototype's demo data
  *    simulated. Min/max are still exact (a bucket's min/max are real per-bucket extremes, not
@@ -92,6 +85,7 @@ import {
   temperatureThreshold, thresholdRejectionNote, WIRE_KEY_TO_METRIC,
 } from "./operatorThresholds";
 import type { ThresholdVerdict } from "./operatorThresholds";
+import { classifyPattern, type HourlySeries } from "./patterns";
 
 /** Wire name -> template row label + unit. Labels match the DataPod report template. */
 const PARAMETER_META: Array<{ key: string; label: string; unit: string }> = [
@@ -163,6 +157,26 @@ interface MetricEntry {
  * same fabrication in the other direction.
  */
 const MIN_BUCKET_SAMPLES = 3;
+
+/**
+ * Hourly buckets the pattern classifier may receive: 62 days, enough for any "last N days"
+ * report up to two months. A longer window keeps its newest 62 days (`bucketize`), which is
+ * still far more than the classifier needs to see a rhythm or a trend.
+ */
+const MAX_HOURLY_BUCKETS = 62 * 24;
+
+/**
+ * An hourly series as `[bucket midpoint ms, mean]`.
+ *
+ * `MIN_BUCKET_SAMPLES` deliberately does not apply here. That floor stops one reading standing in
+ * for a 12-hour bucket; at hourly resolution one reading per bucket is simply the pod's cadence
+ * (verified live 2026-09-22: 144 readings in 7 days on Balboa Yacht Basin Buoy), and dropping
+ * those buckets left every live series empty and every pattern `unknown`. Gaps are handled by
+ * the classifier's own coverage floor.
+ */
+const hourlySeries = (entry: MetricEntry | undefined): HourlySeries => (entry?.series ?? [])
+  .map((b): [number, number] => [(Date.parse(b.start) + Date.parse(b.end)) / 2, b.mean])
+  .filter(([t]) => Number.isFinite(t));
 
 const asRecord = (v: unknown): Record<string, unknown> => (
   v && typeof v === "object" ? v as Record<string, unknown> : {}
@@ -289,13 +303,22 @@ export const buildReportInput = async (
 
   let seriesResult: Record<string, unknown>;
   let medianResult: Record<string, unknown>;
+  let hourlyResult: Record<string, unknown>;
   try {
     // `sensor.query` is the typed programmatic path QuerySensorData exposes specifically for
     // report generation (see querySensorData.ts's module docstring) -- it does not go through
     // the model's tool-calling loop, this handler calls it directly.
-    [seriesResult, medianResult] = await Promise.all([
+    [seriesResult, medianResult, hourlyResult] = await Promise.all([
       sensor.query({ ...baseArgs, aggregation: "series", bucket: "auto" }, context?.token),
       sensor.query({ ...baseArgs, aggregation: "median" }, context?.token),
+      // Pattern classification only (`patterns.ts`): diel and tidal rhythms need hourly
+      // resolution, which the auto-width series above does not have past a couple of days.
+      sensor.query(
+        {
+          ...baseArgs, aggregation: "series", bucket: "hour", maxBuckets: MAX_HOURLY_BUCKETS,
+        },
+        context?.token,
+      ),
     ]);
   } catch (error) {
     if (error instanceof SensorQueryError) {
@@ -306,6 +329,7 @@ export const buildReportInput = async (
 
   const seriesMetrics = metricsOf(seriesResult);
   const medianMetrics = metricsOf(medianResult);
+  const hourlyMetrics = metricsOf(hourlyResult);
 
   const timeRangeResolved = asRecord(seriesResult.time_range_resolved);
   const startDate = typeof timeRangeResolved.start === "string" ? timeRangeResolved.start.slice(0, 10) : "unknown";
@@ -503,8 +527,8 @@ export const buildReportInput = async (
         max,
         mean,
         median,
-        // See file docstring §1 -- no real pattern classifier yet.
-        pattern: "unknown",
+        // See file docstring §1.
+        pattern: classifyPattern(hourlySeries(hourlyMetrics[meta.key])),
         series,
       },
     };
