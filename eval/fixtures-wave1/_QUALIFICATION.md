@@ -8,7 +8,7 @@ This is the Phase 1d companion to [`_CONTAMINATION.md`](_CONTAMINATION.md). Cont
 whether the *questions* leak their sources. This asks whether the *rubrics* are grounded — a
 different failure, and the one that decides whether a grader's verdict means anything.
 
-Method follows [`../../docs/EVAL_FIXTURE_QUALIFICATION.md`](../../docs/EVAL_FIXTURE_QUALIFICATION.md),
+Method follows `docs/EVAL_FIXTURE_QUALIFICATION.md` (archived, `git show docs-archive-2026-09-23:docs/EVAL_FIXTURE_QUALIFICATION.md`),
 the August pass over the superseded 30-fixture set. Same taxonomy, same verdicts.
 
 **Nothing in `eval/fixtures-wave1/` was edited to produce this document.** Every item below is a

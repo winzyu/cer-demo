@@ -1,7 +1,7 @@
 # Gilligan target architecture, gap analysis and roadmap
 
 Draft, 2026-09-17, for the September 30, 2026 dashboard release.
-Built on the decisions in [`GILLIGAN_PRODUCT_DIRECTION.md`](GILLIGAN_PRODUCT_DIRECTION.md); the integration background is [`INTEGRATION_PLAN.md`](INTEGRATION_PLAN.md).
+Built on the decisions in [`GILLIGAN_PRODUCT_DIRECTION.md`](GILLIGAN_PRODUCT_DIRECTION.md); the integration background was `INTEGRATION_PLAN.md` (archived, tag `docs-archive-2026-09-23`).
 This is a plan for review, not an approved implementation specification.
 Built so far: R2's catalogue code (`docs/SPECS.md` §4b, flags off, supervisor approval pending), R3's relay and page (`GILLIGAN_R3_PORT.md`), the tool-access fix (`GILLIGAN_TOOL_ACCESS.md`) and R1's report half (`docs/SPECS.md` §10.7).
 
@@ -133,7 +133,7 @@ A referral is only offered when the observed evidence matches the entry's applic
 | Report prose | `src/report/narrative.ts` | modify | causes and actions only from approved catalogue entries |
 | Event rules | `src/report/events.ts`, `src/report/types.ts` | modify | minimum for launch: make the sewage rule depend on water type (v2 §6.2 vs §6.3); otherwise report threshold crossings without naming a cause |
 | Audit log | `src/services/auditLog.ts` | keep off | superseded at launch by the `audit` field saved with each chat message (D4) |
-| Advice drafts | `docs/advice/` | replace | becomes the structured catalogue; drafts that rely on removed evidence or missing detectors are dropped |
+| Advice drafts | `docs/advice/` (archived, tag `advice-archive-2026-09-17`) | replace | becomes the structured catalogue; drafts that rely on removed evidence or missing detectors are dropped |
 | Demo frontend | `frontend/` | keep as a dev harness | not shipped; pasted-token accounts stay demo-only |
 | Evaluation | `src/eval/*`, `eval/` | keep | Phase 3 runs separately |
 

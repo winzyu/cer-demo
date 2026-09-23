@@ -30,12 +30,12 @@ Two independent tasks, written to be handed to separate sessions. Neither blocks
 - Fixed the report model: diel/tidal/trend tags from an hourly series, and the two sub-floor classifications shown as hedged catalogue explanations; saltwater is named only on a marine trend.
 - Added the selected-pod message and a deterministic `report_period`; a live re-run answered without asking which pod and with the right year.
 - Checks: 17 cer-demo suites (415 tests), typecheck and lint; upstream 11 tests and `tsc`; dashboard ESLint. Spend: three chat questions and about ten read-only live report builds.
-- Pushed `dev` to `origin` (`c41ffb5..703804d`); the eval-correction handoff edits below stay uncommitted.
+- Pushed `dev` to `origin` (`c41ffb5..703804d`); the eval-correction handoff edits were committed with the 2026-09-23 doc audit.
 
 ## Working tree
 
-- `dev` is `703804d`, equal to `origin/dev`. This handoff's doc edits are uncommitted: `README.md`, `docs/timeline.md`, `docs/migration/GILLIGAN_TOOL_ACCESS.md`, `docs/migration/INTEGRATION_PLAN.md`, and this file.
-- A 2026-09-23 doc audit then corrected stale statements against the code across about 25 docs and both `run-local` skill copies, also uncommitted, including further edits to `README.md`, `docs/EVAL_REBUILD.md` (outside the handoff append) and this file.
+- The Task B handoff edits and a 2026-09-23 doc audit against the code are committed on `dev` (`9b331a8`), followed by the tier-1 doc archive (tags `docs-archive-2026-09-23` and `advice-archive-2026-09-17`, `docs/ARCHIVED.md`).
+- `docs/EVAL_REBUILD.md` still carries one uncommitted 23-line block (the 2026-09-21 claim re-resolve note), deliberately left out because that work lives on `worktree-eval-claims-reresolve`.
 - Eval corrections are uncommitted in `.claude/worktrees/wave1-corrections` on `eval/wave1-corrections`; main-checkout handoff edits touch `docs/STATUS.md` and append to `docs/EVAL_REBUILD.md`, whose pre-existing 23-line edit is excluded from staging by the prepared patch; `_EXIT_CRITERIA.md`, `eval/grading/` and the root v2 PDF remain untracked and excluded.
 - **Upstream repos: R3 and Task B are committed on `local`** (server `d3867ab` then `d87d7f7`, dashboard `3badce7` then `1138c6f`) and not pushed. Task B added the report relay, `Retry-After` in `src/middleware/errorHandler.ts`, and tests under `test/unit/`. The files are: `clean-earth-rovers-server`: new `src/services/CerRagService.ts`, `src/services/DevChatStore.ts`, `src/middleware/devUpstreamProxy.ts`; modified `src/controllers/GilliganController.ts`, `src/services/GilliganService.ts`, `src/middleware/auth.ts`, `src/app.ts`. `user-dashboard`: new `src/app/shared/gilligan-citations.js`; modified `src/app/gilligan/page.js`, `src/app/components/gilligan-answer.js`, `src/app/components/gilligan-widget.js`, `src/app/services/gilligan.js`. Both hold git-ignored `.env` files carrying the R3 variables.
 - Restored and untracked or git-ignored, so invisible to `git status`: `node_modules/`, `.env`, the 8 downloaded corpus PDFs, `documents/_excluded/water-quality-metrics-source-of-truth.pdf`, `.ocr_cache/`, `data/corpus/`, `data/embeddings/cache.json` (7.1 MB). Still missing: `data/retrieval-eval/`, `data/device-fields/`, `data/backend-surface/`, `serviceAccountKey.json` ([`migration/WSL_SANDBOX.md`](migration/WSL_SANDBOX.md) §4).
@@ -53,7 +53,7 @@ Also blocking: item 1, the operator's review of pod alert limits (they drive eve
 1. Run the report browser check, [`migration/REPORT_BROWSER_CHECK.md`](migration/REPORT_BROWSER_CHECK.md); its step 10 also covers the citation-chip check.
 2. Done: the R3 and Task B work is committed on `local` in both upstream checkouts. It still exists only on this machine, and pushing anywhere needs a destination outside the org's infected repositories.
 3. Chase the supervisor: the 38-question email (`migration/SUPERVISOR_QUESTIONS_SEND.md`, which includes items 17-20) was sent 2026-09-19 with a September 21 deadline and has had no reply.
-4. `dev` is pushed; the eval-correction handoff edits (`STATUS.md`, `EVAL_REBUILD.md`) and the correction branch still need their push plan. Then complete prompt integration and Phase 1d human verification before freezing the 45 / 90 set and refreshing the restored exit sheet.
+4. `dev` is pushed, including the eval-correction handoff edits; the correction branch still needs its push plan. Then complete prompt integration and Phase 1d human verification before freezing the 45 / 90 set and refreshing the restored exit sheet.
 5. Decide whether the September 30 date still holds. Only R1's report half is done, R2's content cannot be approved until the supervisor replies, and there is no rollback (D9).
 6. Decide `epa-oxygen-solubility-chart-01` (chunk index 9): the +86-char re-OCR moved its quoted chart header row into chunk index 10, whose `locator` already describes that chart block. Re-parent to chunk 10 (recommended) or re-quote from what chunk 9 still holds. It is the only claim failing the verbatim-quote invariant.
 7. Confirm the Fireworks account has a payment method; a third-party source says accounts without one are held to 10 requests per minute.
@@ -72,6 +72,7 @@ Also blocking: item 1, the operator's review of pod alert limits (they drive eve
 6. Add tool results to transcripts: `TranscriptTurn` has no field for them, so the judge never sees them.
 7. Moved to the user's item 1: the citation-chip browser check is step 10 of the report browser check.
 8. Phase 1e remainder: per-turn label splits, candidate sweep, hard negatives, grade differentiation. Blocks Phase 4, not Phase 3.
+9. Doc consolidation tier 2, in its own session: move `CHAT_UX_WORKPLAN.md`'s open Wave 2 items (the `【】`/`【?】` citation-marker defect and its preferred fixes, time-range chips, feedback loop) into Task C's brief and archive the file (five code comments cite it; repoint them); trim `migration/POD_AUTHORIZATION.md` to the merge-chain and cross-organization policy (§5-§7) that `src/devices/mergeChains.ts` and `test/fixtures/pod-scope/README.md` cite; fold `migration/WSL_SANDBOX.md` into `migration/LOCAL_STACK.md`; and check whether `GILLIGAN_PRODUCT_DIRECTION.md` still earns a place beside the target architecture. Start from the archive practice in `ARCHIVED.md` and the verdicts in `git show old-machine-recovery-2026-09-19:docs/migration/DOC_CLEANUP.md`; archiving needs a Git plan.
 
 ## Unfixed defects
 

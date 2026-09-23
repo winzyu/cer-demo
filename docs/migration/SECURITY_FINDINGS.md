@@ -303,4 +303,4 @@ conscious choice rather than an accident.
 past the `ec2b283` this section was written against: `1f81f87` ("Neumorphic light theme
 conversion; expandable device pills; mobile layout fixes", 2026-08-26) and a `.gitignore` commit.
 No security surface changed — it is a repaint plus one new component — but the palette our
-`frontend/theme.css` was lifted from is now light, not dark. See `INTEGRATION_PLAN.md` §3.
+`frontend/theme.css` was lifted from is now light, not dark. See `INTEGRATION_PLAN.md` §3 (archived, tag `docs-archive-2026-09-23`).
