@@ -12,6 +12,8 @@ export interface BakeoffArgs {
   baseUrl: string;
   transport: "sse" | "json";
   outDir: string;
+  /** Names this capture; its transcripts go to `eval/transcripts/<run>/`. Exclusive with --out. */
+  run?: string;
   /** Ask three probe questions and print the returned context, without writing transcripts. */
   spotCheck: boolean;
   /** Replay a single fixture by id — for debugging a rubric, never for a real sweep. */
@@ -29,6 +31,8 @@ Usage: npm run bakeoff -- --arm=<mode> --pass=<cold|warm> [options]
   --base-url=<url>    Service base URL (default http://localhost:8000/api/v1)
   --transport=<t>     sse (default, gives TTFT) or json (no TTFT, simpler)
   --out=<dir>         Transcript root (default eval/transcripts)
+  --run=<id>          Name this capture: transcripts go to eval/transcripts/<id>/, and
+                      gate:check and judge take the same --run. Exclusive with --out.
   --only=<fixture-id> Replay one fixture. Debugging only — not a sweep.
   --spot-check        Probe the arm with three questions and print the context. Run this
                       before every sweep: an adapter returning empty context produces a
@@ -47,6 +51,23 @@ const valueOf = (argv: string[], name: string): string | undefined => {
 
 const hasFlag = (argv: string[], name: string): boolean => argv.includes(`--${name}`);
 
+const RUN_ID = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+
+/**
+ * Checks a `--run` id before it becomes a path segment under the transcript and judge roots.
+ *
+ * A named run keeps a new capture, and the verdicts on it, apart from every earlier one: the
+ * default root holds captured transcripts that must stay verbatim, and the judge ledger is keyed
+ * `arm|fixtureId|turn|dimension`, so a re-capture judged into the default ledger would silently
+ * inherit the old answers' verdicts.
+ */
+export const parseRunId = (run: string | undefined): string | undefined => {
+  if (run !== undefined && !RUN_ID.test(run)) {
+    throw new Error(`--run must be letters, digits, ".", "_" or "-" (got "${run}").`);
+  }
+  return run;
+};
+
 /** Collects every problem before throwing, so one run surfaces all the typos rather than one. */
 export const parseArgs = (argv: string[]): BakeoffArgs => {
   const errors: string[] = [];
@@ -60,6 +81,14 @@ export const parseArgs = (argv: string[]): BakeoffArgs => {
   if (!spotCheck && !pass) errors.push("--pass is required (cold or warm).");
   if (pass && !PASSES.includes(pass)) {
     errors.push(`--pass must be one of [${PASSES.join(", ")}] (got "${pass}").`);
+  }
+
+  const run = valueOf(argv, "run");
+  if (run !== undefined && !RUN_ID.test(run)) {
+    errors.push(`--run must be letters, digits, ".", "_" or "-" (got "${run}").`);
+  }
+  if (run !== undefined && valueOf(argv, "out") !== undefined) {
+    errors.push("--run and --out are exclusive.");
   }
 
   const transport = (valueOf(argv, "transport") ?? "sse") as BakeoffArgs["transport"];
@@ -76,7 +105,8 @@ export const parseArgs = (argv: string[]): BakeoffArgs => {
     pass: pass ?? "cold",
     baseUrl: valueOf(argv, "base-url") ?? "http://localhost:8000/api/v1",
     transport,
-    outDir: valueOf(argv, "out") ?? "eval/transcripts",
+    outDir: run !== undefined ? `eval/transcripts/${run}` : valueOf(argv, "out") ?? "eval/transcripts",
+    ...(run !== undefined ? { run } : {}),
     spotCheck,
     only: valueOf(argv, "only"),
     dryRun: hasFlag(argv, "dry-run"),

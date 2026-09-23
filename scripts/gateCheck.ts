@@ -14,10 +14,12 @@
  *   npm run gate:check
  *   npm run gate:check -- --pass=cold --arm=firestore-direct
  *   npm run gate:check -- --tolerance=0 --out=data/results/gate-check/warm.json
+ *   npm run gate:check -- --run=<id>        # a capture named with `npm run bakeoff -- --run=<id>`
  */
 import fs from "fs";
 import path from "path";
-import { runGateCheck } from "../src/eval/gates/runner";
+import { TRANSCRIPT_ROOT, runGateCheck } from "../src/eval/gates/runner";
+import { parseRunId } from "../src/eval/cli";
 import type { ArmGateResult } from "../src/eval/gates/runner";
 import { createLogger } from "../src/utils/logger";
 
@@ -76,12 +78,16 @@ const main = (): void => {
   const arms = arg("arm")?.split(",");
   const tolerance = arg("tolerance") ? Number(arg("tolerance")) : undefined;
   const outPath = arg("out");
+  const runId = parseRunId(arg("run"));
+  const root = runId !== undefined ? path.join(TRANSCRIPT_ROOT, runId) : TRANSCRIPT_ROOT;
 
   if (tolerance !== undefined && (!Number.isInteger(tolerance) || tolerance < 0)) {
     throw new Error(`--tolerance must be a non-negative integer, got "${arg("tolerance")}".`);
   }
 
-  const results = runGateCheck({ pass, arms, tolerance });
+  const results = runGateCheck({
+    pass, arms, tolerance, root,
+  });
 
   if (results.length === 0) {
     throw new Error(`No arms found for the "${pass}" pass.`);

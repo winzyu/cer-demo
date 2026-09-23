@@ -11,6 +11,7 @@
  *   npm run judge -- --calibration                # the 6 fixtures a human already graded
  *   npm run judge -- --arm=firestore-direct
  *   npm run judge -- --report                     # summarize what is already judged, no calls
+ *   npm run judge -- --run=<id>                   # a named capture, with its own ledger
  *   npm run judge -- --calibrate                  # judge-vs-human agreement, no calls
  *
  * **Every verdict is appended to `data/results/judge/<pass>.jsonl` as it arrives**, and a re-run
@@ -47,6 +48,7 @@ import {
   type JudgeRecord,
 } from "../src/eval/judge/runner";
 import { calibrate } from "../src/eval/judge/calibrate";
+import { parseRunId } from "../src/eval/cli";
 
 const log = createLogger("Judge");
 
@@ -210,9 +212,14 @@ const runPool = async <T>(
 
 const main = async (): Promise<void> => {
   const pass = arg("pass") ?? "warm";
+  // A named run reads its own transcripts and keeps its own ledger, so no verdict on an earlier
+  // capture of the same arm is reused for it.
+  const runId = parseRunId(arg("run"));
+  const transcriptRoot = runId !== undefined ? path.join(TRANSCRIPT_ROOT, runId) : TRANSCRIPT_ROOT;
+  const judgeRoot = runId !== undefined ? path.join(JUDGE_ROOT, runId) : JUDGE_ROOT;
   const calibrating = flag("calibration");
   const arms = arg("arm")?.split(",")
-    ?? (calibrating ? calibrationArms(pass) : armsOnDisk(TRANSCRIPT_ROOT, pass));
+    ?? (calibrating ? calibrationArms(pass) : armsOnDisk(transcriptRoot, pass));
   const dimensions = (arg("dimension")?.split(",") as JudgeDimension[] | undefined)
     // A calibration pass judges every dimension: `calibrate()` reports agreement for all three,
     // and a dimension left out would print an empty agreement with no warning.
@@ -227,7 +234,7 @@ const main = async (): Promise<void> => {
   // a budget or the already-judged skip would be silently wrong in three different ways at once.
   // The file on disk is untouched; only what this run reads from it is filtered.
   const fixtureIds = new Set(loadFixtures().map((f) => f.id));
-  const rawLedger = readLedger(pass);
+  const rawLedger = readLedger(pass, judgeRoot);
   const filtered = filterToCurrentFixtures([...rawLedger.values()], fixtureIds);
   const { records: currentRecords, ignored } = filtered;
   if (ignored > 0) {
@@ -253,7 +260,7 @@ const main = async (): Promise<void> => {
   }
 
   const tasks = buildTasks({
-    pass, arms, only, dimensions,
+    pass, arms, only, dimensions, root: transcriptRoot,
   }).filter((task) => !currentLedger.has(recordKey(task)));
 
   if (tasks.length === 0) {
@@ -264,7 +271,7 @@ const main = async (): Promise<void> => {
   // §7b: a model grading its own output has a documented self-preference bias. This is the one
   // constraint on the judge that can be checked mechanically, so it is checked rather than
   // trusted to whoever set the env var.
-  const underTest = modelsUnderTest(TRANSCRIPT_ROOT, pass, arms);
+  const underTest = modelsUnderTest(transcriptRoot, pass, arms);
   if (underTest.includes(judgeModel)) {
     throw new Error(
       `Judge model "${judgeModel}" is the model under test. §7b requires a different one.`,
@@ -314,7 +321,7 @@ const main = async (): Promise<void> => {
   await runPool(tasks, concurrency, async (task) => {
     try {
       const record = await judgeOnce(client, options, task);
-      appendLedger(pass, record);
+      appendLedger(pass, record, judgeRoot);
       fresh.push(record);
     } catch (error) {
       failures.push(`${recordKey(task)}: ${(error as Error).message}`);
@@ -353,7 +360,7 @@ const main = async (): Promise<void> => {
     failures.slice(0, 10).forEach((f) => log.info(`  ${f}`));
   }
 
-  const outPath = arg("out") ?? path.join(JUDGE_ROOT, `${pass}.json`);
+  const outPath = arg("out") ?? path.join(judgeRoot, `${pass}.json`);
   const resolved = path.resolve(outPath);
   fs.mkdirSync(path.dirname(resolved), { recursive: true });
   fs.writeFileSync(resolved, `${JSON.stringify({
