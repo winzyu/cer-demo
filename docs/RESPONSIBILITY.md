@@ -73,6 +73,11 @@ dev-time estimate.
 
 ## 6. Logging and audit trails
 
+> **Built since.** `src/services/auditLog.ts` writes one Firestore record per chat response behind
+> `AUDIT_LOG` (default off), and for Gilligan the relay saves an `audit` field on each chat message
+> instead (D4 in `migration/GILLIGAN_TARGET_ARCHITECTURE.md`), so `AUDIT_LOG` stays off. The
+> assessment below is the one made before either existed.
+
 **Does not exist.** Logging today is `morgan` request logs plus a tagged console logger
 (`src/utils/logger.ts`, `docs/SPECS.md` §8) — ephemeral, not queryable, and not tied to what was
 retrieved or why. The `citations` returned to the caller are never persisted server-side.
@@ -92,7 +97,7 @@ litigated — without one, the data exists but isn't retrievable under time pres
 | 3 | Escalation paths | partial | 0.5–1 day |
 | 4 | Human-in-the-loop review | none | 1–2 weeks (MVP); 1–2 days (after-the-fact only) |
 | 5 | Insurance / ToS | none (dev slice only) | 0.25–0.5 day (dev slice); legal work not estimated |
-| 6 | Logging and audit trails | none | 1.5–3 days |
+| 6 | Logging and audit trails | none at the time; built since (§6) | 1.5–3 days |
 
 **Everything except #4 totals roughly 3–6 developer-days.** Item 4 dominates the schedule — a
 real pre-delivery review gate is a new feature, not a hardening pass on what's already built. A
@@ -142,12 +147,16 @@ non-engineering approvals) beyond re-running the existing eval harness once thos
 
 ## Decided 2026-09-09 — advice content comes from a prompt-carried allowlist
 
+> **Implemented as the guidance catalogue** (`src/catalogue/`, `SPECS.md` §4b): one supervisor-approved
+> file shared by chat (behind `CATALOGUE_PROMPT`) and reports. The `ADVICE_TIER` flag recommended
+> below was not built; whether the catalogue keeps tiers is still open.
+
 The product goal widened to answering with broad solutions. Three ways to supply that content were
 considered and the allowlist wins on a technical argument, not a preference.
 
 **Grounding is defined as the union of the retrieval context, the system prompt, the user's
-question and any tool results** — which is why the operator normal ranges are quotable today
-without being scored as fabricated. So an approved-suggestion list carried *in the system prompt*
+question and any tool results** — which is why the operator normal ranges were quotable, while the
+prompt still carried them, without being scored as fabricated. So an approved-suggestion list carried *in the system prompt*
 is grounded by construction, and the pre-registered ≤2% ungrounded-turn ceiling survives untouched.
 
 The two rejected alternatives:

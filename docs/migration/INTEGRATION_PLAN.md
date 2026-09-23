@@ -7,6 +7,16 @@ Written 2026-09-04 against `user-dashboard` `c55f65d` (2026-08-26) and
 `clean-earth-rovers-server` `origin/develop` `b221702` (2026-08-26). **Both reference repos were
 read only.** Every claim below cites a file so it can be re-checked rather than trusted.
 
+> **Background, superseded as a plan (2026-09-17).** The release plan and its decisions are
+> [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md). Shape C below was adopted and
+> R3 built it on 2026-09-21, relaying to the existing `POST /api/v1/chat` rather than a new adapter
+> route (D8). Since this was written: the `GILLIGAN_BACKEND=gemini` "rollback" restores an assistant
+> that fails every question (D9); quota is enforced in this service and `checkQuota` is retired
+> (§2a there); the upstream checkouts are writable on branch `local` (D1, revised); the provider
+> stays Fireworks `gpt-oss-120b` on an upstream-owned key; and their `chats` collection stays
+> authoritative with this service stateless (D2). The contract analysis, dependency table and
+> inherited risks below remain accurate background.
+
 Companions: [`DEVICE_API.md`](DEVICE_API.md) (the sensor contract), [`BACKEND_FIELDS.md`](BACKEND_FIELDS.md)
 (what the registry carries), [`SECURITY_FINDINGS.md`](SECURITY_FINDINGS.md) (what we must not
 inherit quietly), [`../SPECS.md`](../SPECS.md) (what is built here).
@@ -103,7 +113,7 @@ carries role and organization since `8e34299`. Tokens are minted with **no expir
 | **Device scope** | every org device's last reading, dumped into the prompt (`GilliganController.question`) | one pod, chosen by the caller or named by the model, over a real time range | Our `device` field. Their page has no pod selector — port ours (§3c). |
 | **History** | server-side, `chats/{id}.messages` | client-supplied `history[]`, trimmed to `MAX_HISTORY_MESSAGES` | Controller maps `messages[]` → `history[]` before calling us, then appends via `addQuestionAnswer`. Their storage stays authoritative; we stay stateless. |
 | **Citations / provenance** | no field | badges + source list (`frontend/js/provenance.js`) | Additive: a `provenance` key on the response, ignored by the old page until §3 lands. |
-| **Reports** | no route | `GET /api/v1/reports/:filename`, org-checked | New upstream route proxying ours, or a signed URL. Phase 3. |
+| **Reports** | no route | `POST /api/v1/reports`, PDF bytes in the response (was `GET /api/v1/reports/:filename`, replaced 2026-09-22) | Built 2026-09-22: upstream `POST /gilligan/report` relays to it (`GILLIGAN_TARGET_ARCHITECTURE.md` §2a). |
 | **Errors** | `400 {error}` for everything | coded errors (`caller_token_required`, `device_timeout`, …) + `429` | Pass our `code` through in the body. The dashboard already surfaces `error.response?.data.error`; adding `code` breaks nothing. |
 | **Quota** | `checkQuota` returns a bare boolean | `quotaGuard` → `429` with a JSON body | Two systems that must not both be authoritative. Pick theirs for entitlement (it knows about Stripe), keep ours for abuse/cost. See the bug below. |
 

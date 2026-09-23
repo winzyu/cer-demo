@@ -3,7 +3,7 @@
 Written 2026-09-18 and sent to the supervisor on 2026-09-19 as question A1 of [`SUPERVISOR_QUESTIONS_SEND.md`](SUPERVISOR_QUESTIONS_SEND.md); no reply as of 2026-09-22.
 Recovered on 2026-09-22 after the old machine's commits were lost (tag `old-machine-recovery-2026-09-19`).
 Only the goal is kept here.
-The original outcomes, release checklist, task hierarchy and timeline are at that tag; the live task list is `../STATUS.md` and the roadmap in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4.
+The original outcomes, release checklist, task hierarchy and timeline are at that tag; the live roadmap is [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4.
 
 ## Final goal
 

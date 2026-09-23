@@ -7,6 +7,11 @@ Each workstream below is written to be handed to one agent as its whole brief. O
 contract: an agent edits the files it owns and nothing else. Where two streams need the same file,
 Phase 0 creates the seam first.
 
+> **Status (2026-09-23).** Phase 0 and Wave 1 have landed; the open items are in Wave 2 below and in
+> the Gilligan roadmap ([`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md)).
+> The dashboard page rebuilt in R3 now carries these features to the product
+> ([`migration/GILLIGAN_R3_PORT.md`](migration/GILLIGAN_R3_PORT.md)).
+
 ---
 
 ## Guardrails — apply to every workstream, without exception
@@ -40,11 +45,12 @@ Phase 0 creates the seam first.
    N7's Next.js page is served anyway, so this is the direction of travel rather than a detour.
 7. **Do not touch** `eval/fixtures-wave1/**` (the live eval set) or `test/fixtures/device-api/**`
    (frozen recordings; the trap-preserving duplicates and mixed temperature units are deliberate).
-   `eval/transcripts/**` and `eval/grading/**` were archived on 2026-09-01 and no longer exist in
-   the tree — see [`ARCHIVED.md`](ARCHIVED.md). When Phase 3 refills them the same rule applies:
-   captured evidence is not edited, and `KEY.json` un-blinds a packet and must not be read.
-8. **Write only inside this repo.** `../user-dashboard` and `../clean-earth-rovers-server` are read-only references —
-   and the real brand assets and tokens live there: `public/cer-light-transparent.png`,
+   The pre-rebuild `eval/transcripts/**` and `eval/grading/**` were archived on 2026-09-01; see
+   [`ARCHIVED.md`](ARCHIVED.md); Phase 3's gold-context capture is in `eval/transcripts/warm/`. The
+   same rule applies: captured evidence is not edited, and a `KEY.json` un-blinds a packet and must
+   not be read.
+8. **Write only inside this repo.** `../user-dashboard` and `../clean-earth-rovers-server` are outside
+   these streams (writable only on branch `local`, per `CLAUDE.md`) — and the real brand assets and tokens live there: `public/cer-light-transparent.png`,
    `public/gilligan-icon.png`, `src/app/globals.css` (`#12182b`, Work Sans 300 / Poppins 600),
    `#2D77A6` bubble, `#a89748` gold, `#f5cd19` nav active. Match them; do not invent new ones.
 9. **Run no git commands.** The user drives all commits. Leave work in the working tree and report
@@ -58,9 +64,9 @@ Phase 0 creates the seam first.
 > `ln -s <main-checkout>/data/corpus data/corpus`.
 
 ```bash
-npm test                      # 42 suites; last recorded full pass 720 tests / 36 suites, 2026-08-24
+npx jest test/unit/<suite>.test.ts --runInBand   # the suites the stream touched; the user runs npm test
 npm run typecheck             # tsc --noEmit, silent
-npx eslint src --ext .ts      # NOT `npm run lint` — that runs --fix and writes files
+npm run lint                  # check-only; `npm run lint:fix` is the one that writes files
 ```
 
 Frontend streams additionally: start `npm run dev`, open `frontend/index.html`, send one real
@@ -109,7 +115,8 @@ sibling of the form, not a flex child of it, so it cannot steal width from the i
 
 **Status: all seven streams have landed.** `frontend/js/markdown.js`, `provenance.js`, `input.js`
 and `chart.js` are implemented (with `marked` + `DOMPurify` vendored under `frontend/vendor/`), as
-are `src/utils/answerFormat.ts`, the error taxonomy, and `scripts/starterPrompts.ts`. The briefs
+are `src/utils/answerFormat.ts`, the error taxonomy, and `scripts/starterPrompts.ts` (removed
+2026-09-15, WS-7). The briefs
 below are kept as written — they are what each stream was built from, and the findings appended to
 some of them outlast the task.
 
@@ -333,10 +340,10 @@ Phase 0 wrote `{ "prompts": [string] }`, so WS-3's loader must read `.prompts[].
 
 | item | blocked on |
 |---|---|
-| System-prompt personality | **◆G7.** The prompt is pinned until the bake-off is graded. |
-| Persisted chat history, per-user quota | **Authentication**, which does not exist in this service. Lands with N7, where the dashboard's JWT arrives. |
-| Next.js chatbot page | **◆G5** (responsive scope). ◆G6 resolved 2026-09-14: match the dashboard style; the demo frontend was repainted first (`timeline.md`). |
-| Token streaming with tools on | Not blocked, but needs incremental `delta.tool_calls` assembly. Sized for N7. |
+| ~~System-prompt personality~~ | Unblocked 2026-08-26 when ◆G7 split; a prompt edit must land before a capture, not after (`timeline.md` N5). |
+| ~~Persisted chat history~~ | Served upstream by the dashboard's `chats` collection through the R3 relay (D2). Per-user quota keys await R1's verified identity. |
+| ~~Next.js chatbot page~~ | Rebuilt in R3, 2026-09-21. Phone and tablet layout (◆G5) stays a later item. |
+| Token streaming with tools on | Not blocked, but needs incremental `delta.tool_calls` assembly. A later item in the Gilligan roadmap. |
 
 **Done 2026-08-19 — archiving the pgvector arm.** Taken off this list by decision rather than by
 ◆G7, which is still open. The coupled set was indeed wider than the docs listed, and the split fell
@@ -394,4 +401,4 @@ Three consequences that are not obvious:
   it explains an empty result, because there it is the answer. What moves is the routine
   "reporting, 8 minutes ago" on a healthy pod.
 - **Starter prompts: 3, not 10.** They exist to show what the thing can do, not to enumerate
-  the eval set. One line, then they get out of the way.
+  the eval set. One line, then they get out of the way. (Removed altogether on 2026-09-15.)

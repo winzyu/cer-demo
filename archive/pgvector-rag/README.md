@@ -20,7 +20,9 @@ evidence stayed where it was.
 
 ## What is *not* here, because it deliberately stayed live
 
-These are ◆G7's audit trail and are still in the tree:
+These are ◆G7's audit trail. The transcripts and the grading key were later archived with the rest
+of the pre-rebuild eval set under the tag `eval-archive-2026-09-01` (`docs/ARCHIVED.md`); the last
+two items are still in the tree:
 
 - `eval/transcripts/cold/pgvector-rag/` and `eval/transcripts/warm/pgvector-rag/` — the captured
   sweep transcripts, both passes.

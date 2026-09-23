@@ -1,5 +1,12 @@
 # Advice catalogue — candidate entries for operator approval
 
+> **Superseded 2026-09-17 by the guidance catalogue** (`src/catalogue/catalogue.json`, `docs/SPECS.md`
+> §4b, review page `docs/catalogue/review.html`); these drafts are source material it cites as
+> `advice-drafts <id>`. The reachability table below predates the 2026-09-22 pattern tags: algal
+> bloom can now fire on a `diel` tag, and saltwater intrusion and industrial are shown as hedged
+> explanations. They were archived on 2026-09-17 under `advice-archive-2026-09-17`, a tag lost with
+> the old machine (`docs/ARCHIVED.md`), which is why they are back in the tree.
+
 Draft entries for the operator-approved advice allowlist decided in
 [`../RESPONSIBILITY.md`](../RESPONSIBILITY.md). **Nothing here is shipped copy.** Each entry is a
 proposal for a human to approve, edit or reject, and the catalogue only reaches the model once

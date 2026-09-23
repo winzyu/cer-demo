@@ -10,6 +10,14 @@ The corpus was rebuilt on 2026-09-21, so check the document list below against `
 
 ## 0. What is being seeded, and what is not
 
+> **Superseded in part by D7 (2026-09-21).** Production retrieval is now `hybrid-slice-vector`
+> (`GILLIGAN_TARGET_ARCHITECTURE.md` §7), not `firestore-direct`. Its slice half still comes from
+> `corpus_documents` under `CORPUS_SOURCE=firestore`, so this runbook's seed still applies. Its dense
+> half is `LocalVectorAdapter`, which reads `data/embeddings/cache.json` from the deployed image's
+> disk, not Firestore: that file must be built with `npm run embed:cache` (paid) and shipped with
+> the service, and the query path needs `FIREWORKS_API_KEY` to embed each question. The paragraphs
+> below describe the direct-feed-only design this runbook was written for.
+
 Production reads the corpus through `DEFAULT_RETRIEVAL=firestore-direct` (`src/retrieval/adapters/DirectFeedAdapter.ts`), which loads its documents from whichever `CorpusSource` `CORPUS_SOURCE` names.
 With `CORPUS_SOURCE=firestore` that source is `FirestoreCorpusSource` (`src/retrieval/sources/FirestoreCorpusSource.ts`), which reads the **`corpus_documents`** collection.
 That collection is written by exactly one script: `npm run seed:firestore` (`scripts/seedFirestore.ts`).
@@ -38,7 +46,7 @@ A fresh `git clone` of this repository does not carry everything `npm run seed:f
    `seed:firestore` never touches `documents/` or `.ocr_cache/`, so if you already trust an existing `data/corpus/corpus.json` (built and reviewed in this checkout, or handed over by the user), copying that one file plus a clone of this repository is enough to run `npm run seed:firestore`.
    This is the faster and lower-risk path because it carries no dependency on OCR cache or PDF availability on the seeding machine.
 2. **Regenerate it from source** with `npm run ingest`, if the corpus has changed since the last known-good artifact, or if you have no artifact you trust.
-   This needs every row above present at the paths `documents/ingestion` expects, run from the repository root.
+   This needs every row above present at the paths `npm run ingest` expects, run from the repository root.
 
 Either way, confirm which one you did in whatever record this runbook's run gets (a chat message, a ticket, a commit message) — a seed from a copied artifact and a seed from a fresh ingest are different provenance for the same-looking collection.
 

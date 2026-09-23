@@ -260,6 +260,9 @@ not a feature. It now shows a `caller_token_required` message telling the user t
 This was **not** papered over with a `?token=` URL parameter: that puts a non-expiring bearer
 credential into browser history, referrer headers, and server logs.
 
+**Resolved 2026-09-03.** The page now holds pasted named accounts and sends the active one as a
+bearer header (`frontend/js/auth.js`, `SPECS.md` §10.5).
+
 
 ---
 

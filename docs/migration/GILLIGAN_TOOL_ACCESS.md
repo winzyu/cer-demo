@@ -30,6 +30,7 @@ What was missing was any statement of the value the *product* runs with.
 R3 verified the whole relay end to end with the flag off ([`GILLIGAN_R3_PORT.md`](GILLIGAN_R3_PORT.md)), which is why a stack that had been exercised through dashboard, server and cer-demo still could not answer a pod question.
 
 Recorded as D10: Gilligan runs with `SENSOR_TOOL=true`, and `REPORT_TOOL` stays off until R1 returns report bytes instead of the sidecar-guarded disk path.
+R1's report half landed on 2026-09-22 and D10 was revised the same day: the release runs `REPORT_TOOL=true` too.
 
 ## Cause 2: no route to a pod name
 
@@ -66,7 +67,7 @@ The same edit asks a refusal to name the closest thing the system genuinely can 
 That is not new policy: every wave-1 `refusal-*` fixture rubric already requires it ("Offers what the system can genuinely contribute instead ... without presenting it as a substitute") and the prompt text simply never asked for it.
 
 **This is a prompt edit, so it invalidates captures made before it.**
-Landing it now is deliberate — the Phase 3 baseline has not been captured, and prompt changes land before a capture, not after ([`../EVAL_REBUILD.md`](../EVAL_REBUILD.md)).
+The Phase 3 gold-context baseline captured on 2026-09-14 predates it, so that capture no longer describes the current prompt and Phase 3 must be recaptured after this edit; prompt changes land before a capture, not after ([`../EVAL_REBUILD.md`](../EVAL_REBUILD.md)).
 `REFUSAL_SENTENCE` itself is untouched and still pinned character-for-character.
 
 ## What changed

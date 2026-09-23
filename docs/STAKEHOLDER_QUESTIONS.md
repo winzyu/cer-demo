@@ -4,7 +4,7 @@ A checklist of answers the project needs from people outside the codebase. Tick 
 item is resolved, write the answer and the date on its **Answer** line, and record any decision it
 settles in `docs/timeline.md`. Delete an item only when its answer is recorded somewhere else.
 
-Items are ordered by what they unblock, most blocking first. Last updated 2026-09-17.
+Items are ordered by what they unblock, most blocking first. Last updated 2026-09-23.
 
 ---
 
@@ -57,6 +57,7 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-0
 ## Supervisor
 
 Items 17-20 are on the release critical path: the September 30 roadmap needs their answers by about September 25 (`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md` §4).
+They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR_QUESTIONS_SEND.md`, asking for a reply by September 21; none has arrived as of 2026-09-23.
 
 - [ ] **17. Are the generic fallback ranges in source-of-truth v2 for education only?**
   v2 §3, "Fallback Baseline Ranges (Use Only Without a Site Baseline)", gives generic ranges per parameter, and §0 rule 3 says to use them only when a site has no baseline.
@@ -172,7 +173,7 @@ The Gilligan page itself (`src/app/gilligan/page.js`, `components/gilligan-answe
   Anything after an `&` or `#` is lost, so "Is pH above 8 & rising?" arrives as "Is pH above 8 ".
   The fix is to wrap the question in `encodeURIComponent`.
   *Unblocks:* the replacement page receiving full questions from the box, which it will keep reading from `?question=`.
-  *Answer:* 2026-09-17: this project fixes it as part of the Gilligan replacement, developed in a local clone and transferred upstream after the supervisor approves it.
+  *Answer:* 2026-09-17: this project fixes it as part of the Gilligan replacement, developed in a local clone and transferred upstream after the supervisor approves it. Done in R3 on the dashboard's `local` branch (`encodeURIComponent` in `gilligan-widget.js`), not yet transferred.
 
 - [ ] **14. Which turbidity band edges are right: 345/795 NTU or 350/800?**
   The dials page calls a reading Clear below 350 NTU and Turbid from 800 (`src/app/datahub-dial/page.js:117-118`).

@@ -15,7 +15,8 @@ Reproduce a bug through the server or a Supertest integration test before editin
 - `DEBUG_RETRIEVAL=true` echoes `mode`; inspect it to verify which retrieval arm answered.
 - `SENSOR_TOOL`, `REPORT_TOOL`, `verify:sensor`, `report:render`, and `explore:*` touch production pod data.
   Announce live reads and honor configured approval gates; obtain approval for writes or paid evaluations.
-- Never capture evaluation runs with `SENSOR_TOOL` or `REPORT_TOOL` enabled: they change the pinned system prompt.
+- The local `.env` sets `SENSOR_TOOL=true` and `REPORT_TOOL=true`, so a plain `npm run dev` answers reading questions with live reads.
+- Never capture evaluation runs with `SENSOR_TOOL` or `REPORT_TOOL` enabled: they change the system prompt. Set both `false` explicitly on server and runner.
 - Jest's `test/setupEnv.ts` blocks `.env` loading; shell-exported variables still apply.
 - Serve the frontend from `frontend/` with `python3 -m http.server 5173`, then open `http://localhost:5173?backend=http://localhost:8010`.
 

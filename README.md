@@ -36,13 +36,14 @@ and the traps that cost time.
 |---|---|
 | [`docs/STATUS.md`](docs/STATUS.md) | **Start here.** Current state, open work, active traps. Rewritten every session. |
 | [`docs/SPECS.md`](docs/SPECS.md) | Architecture as built today, section by section. |
+| [`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`](docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md) | The Gilligan release: target architecture, roadmap and decisions D1-D12. |
 | [`docs/timeline.md`](docs/timeline.md) | Phased plan, and the **◆ decision gates** that block work. |
 | [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) | The direct-feed vs RAG cost experiment (◆G7). |
 | [`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) · [`docs/RETRIEVAL_LABELS.md`](docs/RETRIEVAL_LABELS.md) | The offline retrieval harness (`npm run retrieval:eval`) and its ground truth. **Read the 20.2% floor in §3 before reading any recall number.** |
 | [`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md) | The sensor API contract, verified live. **Read §12 before trusting any reading.** |
 | [`docs/migration/MIGRATION_SPEC.md`](docs/migration/MIGRATION_SPEC.md) | Behaviour of the legacy FastAPI system being ported. |
 | [`docs/migration/CONVENTIONS.md`](docs/migration/CONVENTIONS.md) | Coding conventions this repo follows. |
-| [`docs/migration/SECURITY_FINDINGS.md`](docs/migration/SECURITY_FINDINGS.md) | Device-authorization findings — upstream, **and two still open in this service** (§6). |
+| [`docs/migration/SECURITY_FINDINGS.md`](docs/migration/SECURITY_FINDINGS.md) | Device-authorization findings — upstream, and two in this service fixed 2026-08-21 (§6). |
 | [`docs/EVAL_REBUILD.md`](docs/EVAL_REBUILD.md) · [`eval/README.md`](eval/README.md) | The eval rebuild plan, the committed question set and captured runs. |
 
 ---
@@ -183,8 +184,9 @@ Getting a token:
 > ⚠️ **Tokens never expire** and are **org-scoped**. A leaked one is valid forever; a wrong-org one
 > returns a short, plausible device list rather than an error.
 >
-> `DEVICE_API_TOKEN` is reachable **only** from `npm run explore:devices` and
-> `npm run verify:sensor`, which pass `useConfiguredToken: true` to `DeviceApiClient`. Every
+> `DEVICE_API_TOKEN` is reachable **only** from `npm run explore:devices`,
+> `npm run verify:sensor` and `npm run report:render`, which pass `useConfiguredToken: true` to
+> `DeviceApiClient`. Every
 > request-scoped path forwards the *caller's* JWT and refuses without one (401
 > `caller_token_required`), so a chat user only ever sees their own devices.
 >
@@ -345,9 +347,10 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 |---|---|---|
 | `QUERY_QUOTA` | `false` | **The gate.** Off ⇒ nothing is counted and nothing is refused, whatever the limits below say. |
 | `QUERY_QUOTA_REQUESTS` | `unlimited` | Chat requests per key per window. `unlimited` is a **literal value**, not a big number — `none`/`off`/`-1` are rejected at boot rather than guessed. `0` refuses everything (kill switch). |
+| `QUERY_QUOTA_REPORTS` | `unlimited` | report PDFs per key per window (`POST /api/v1/reports`); refuses with 429 `quota_reports_exceeded`. |
 | `QUERY_QUOTA_TOKENS` | `unlimited` | `usage.totalTokens` per key per window, summed across tool rounds. **Enforced on tokens already spent**: the request that crosses the line finishes, the next one is refused. |
 | `QUERY_QUOTA_WINDOW` | `30d` | Window length. **Unit suffix required** — `s`/`m`/`h`/`d`/`w`. Windows are fixed and epoch-aligned, so `7d` rolls over on **Thursday** 00:00 UTC and a burst of `2 x limit` is reachable across a boundary. |
-| `QUERY_QUOTA_SCOPE` | `caller` | `caller` (sha256 of the bearer token → client IP → one shared `anonymous` bucket) or `global` (whole deployment). **The bundled frontend sends no `Authorization` header and `trust proxy` is not set**, so today `caller` collapses to one IP bucket behind a proxy — `global` is the scope whose behavior matches its name until real auth lands. |
+| `QUERY_QUOTA_SCOPE` | `caller` | `caller` (sha256 of the bearer token → client IP → one shared `anonymous` bucket) or `global` (whole deployment). **`trust proxy` is not set**, so behind a proxy every anonymous caller shares one IP bucket; the bundled frontend sends a token only when an account is signed in. |
 
 > **Counters are in process memory.** They reset on every redeploy and crash, and each instance
 > enforces its own quota (`limit x instances`). Fine for deciding a policy; not a spend gate for a
@@ -357,7 +360,7 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `SENSOR_TOOL` | `false` | **The gate.** Enables `query_sensor_data`, the tool-round loop, and the prompt's tool block. Off ⇒ the bot cannot read sensors at all. |
+| `SENSOR_TOOL` | `false` | **The gate.** Enables `query_sensor_data`, `list_pods`, `get_pod_thresholds` and `get_turbidity_info`, the tool-round loop, and the prompt's tool block. Off ⇒ the bot cannot read sensors at all. |
 | `MAX_TOOL_ROUNDS` | `16` | Tool-enabled rounds before a forced text-only round. Legacy was 5, which cannot fit a six-parameter question. |
 | `RAW_LIMIT` | `200` | Rows an `aggregation: "raw"` call returns. A cap, not a page size — raw output goes into the next prompt. |
 | `SENSOR_DEVICE_LABEL` | *(unset)* | Default pod when the model names none. **Leave unset unless the deployment truly has one pod** — the token sees a whole fleet (21 → 17 → **15** across three live counts; nothing may hard-code it — `docs/migration/BACKEND_FIELDS.md` §1) and the two cleared test pods are on opposite coasts. Unset means the tool asks. |
@@ -617,8 +620,9 @@ reporting still answers "the last day" about its last day of data.
 
 ### 7e. Known limits
 
-- **No cross-metric or cross-pod comparisons, no trend/slope, no event detection.** `series` gives
-  bucketed means; interpreting them is the model's job. Event detection is N6, gated by ◆G4.
+- **No cross-metric or cross-pod comparisons, no trend/slope, no event detection in chat.** `series`
+  gives bucketed means; interpreting them is the model's job. Event detection and pattern tagging
+  exist only in the report pipeline (`src/report/`, `docs/SPECS.md` §10.7).
 - **Calendar phrases resolve in UTC**, not pod-local time. The two pods are in different timezones.
 - **`raw` drops the OLDEST rows first** when it hits `RAW_LIMIT`. Use `earliest` for first-reading
   questions — `truncated_kept` says which end survived.
@@ -643,7 +647,7 @@ reporting still answers "the last day" about its last day of data.
 |---|---|
 | `npm run dev` | live-reload dev server (`ts-node-dev`) |
 | `npm run build` / `npm start` | compile to `dist/` / run compiled |
-| `npm test` | full Jest suite (52 suites: 46 unit, 6 integration; none touching the network) |
+| `npm test` | full Jest suite (57 suites: 51 unit, 6 integration; none touching the network) |
 | `npm run test:coverage` / `test:watch` | coverage / watch mode |
 | `npm run lint` / `npm run typecheck` | ESLint (check-only) over `src` / `tsc --noEmit` |
 | `npm run lint:fix` | ESLint `--fix` over `src` `.ts` files, writes files |
@@ -654,6 +658,7 @@ reporting still answers "the last day" about its last day of data.
 | `npm run compare:vector-arms` | prove `local-vector` and `firestore-vector` rank identically |
 | **`npm run verify:sensor`** | **live read-only check that the sensor tool reads real pods (no LLM, no cost)** |
 | `npm run report:render` | render a report PDF offline — no server, no LLM (`--device=`, `--range=`, `--out=`); uses `DEVICE_API_TOKEN` like `verify:sensor` |
+| `npm run catalogue:review` | regenerate `docs/catalogue/review.html` from `src/catalogue/catalogue.json` (`docs/SPECS.md` §4b) |
 | `npm run explore:devices` | discover the fleet and record raw responses to `data/device-api/` |
 | `npm run explore:fields` / `explore:surface` | read-only backend census: per-device field coverage / route surface (`docs/migration/BACKEND_FIELDS.md`) |
 | `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a run; `--spot-check`, `--only`, `--dry-run` |
@@ -673,9 +678,9 @@ src/
   app.ts                # express assembly, exported for tests
   config/               # index.ts (env loading + validation), database.ts
   routes/               # /api/v1 aggregator, healthRoutes, chatRoutes, deviceRoutes,
-                        #   reportRoutes
+                        #   reportRoutes, usageRoutes
   controllers/          # HealthController, ChatController, DeviceController,
-                        #   ReportController
+                        #   ReportController, UsageController
   retrieval/            # the retrieval seam — SPECS.md §9
     RetrievalRegistry.ts  #   mode -> adapter, selected by DEFAULT_RETRIEVAL
     adapters/           #   Stub, DirectFeed, FirestoreVector, LocalVector, RrfHybrid,
@@ -686,11 +691,14 @@ src/
                         #   plausibility.ts (per-metric rails), mergeChains.ts
   tools/                # the model-facing tools — SPECS.md §10.3a
     querySensorData.ts  #   the sensor tool + typed query(); timeRange.ts; aggregate.ts
+    listPods.ts         #   the caller's own fleet
     getPodThresholds.ts #   the pod's registry alert limits; getTurbidityInfo.ts
     generateReport.ts   #   the report tool, gated on REPORT_TOOL
+  catalogue/            # catalogue.json (approved guidance) + validator, selection,
+                        #   prompt block, review page - SPECS.md §4b
   report/               # the deterministic report pipeline: buildReportInput, events,
-                        #   referenceRanges, operatorThresholds, narrative, renderPdf,
-                        #   reportOwnership
+                        #   patterns, referenceRanges, operatorThresholds, narrative,
+                        #   renderPdf, produceReport - SPECS.md §10.7
   quota/                # QuotaService + QuotaStore seam — SPECS.md §4a
   services/             # LlmService, ChatOrchestrator (tool loop), EmbeddingService, auditLog
   prompt/               # systemPrompt.ts (base prompt + TOOL_BLOCK / REPORT_TOOL_BLOCK),
@@ -718,9 +726,9 @@ eval/                   # fixtures-wave1/ (committed questions), claims/, retrie
                         #   transcripts/. The pre-rebuild set is archived (docs/ARCHIVED.md).
 archive/                # retired code kept for the record, at its original paths.
   pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
-docs/                   # STATUS.md (start here), ARCHIVED.md, SPECS.md, timeline.md, RETRIEVAL_BAKEOFF.md,
-                        #   GRADING_GUIDE.md, CHAT_UX_WORKPLAN.md,
-                        #   CORPUS_SOURCING_BRIEF.md, migration/
+docs/                   # STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md,
+                        #   ARCHIVED.md, eval and corpus notes; migration/ (Gilligan
+                        #   release, device API, upstream); catalogue/ (generated review page)
 ```
 
 ---
@@ -733,7 +741,8 @@ docs/                   # STATUS.md (start here), ARCHIVED.md, SPECS.md, timelin
 | `GET` | `/health` | liveness + config-presence checks (no external I/O) |
 | `GET` | `/api/v1` | API v1 banner |
 | `GET` | `/api/v1/devices` | pod list for the UI selector (read-only, forwards the caller's token). **Requires `Authorization: Bearer`** |
-| `GET` | `/api/v1/reports/:filename` | a PDF `generate_report` wrote. **Requires `Authorization: Bearer`**, and only the token that generated the report can fetch it. **Not gated on `REPORT_TOOL`** — a PDF already written stays fetchable if the flag is later turned off. |
+| `GET` | `/api/v1/usage` | the caller's quota standing (questions, tokens, reports, window reset). Read-only and outside the quota gate (SPECS.md §4a). |
+| `POST` | `/api/v1/reports` | body `{ time_range, device? }` (a `generate_report` result's `report_request`); returns the report PDF as a download and stores nothing. **Requires `Authorization: Bearer`**; 404 while `REPORT_TOOL` is off; counted against `QUERY_QUOTA_REPORTS` (SPECS.md §10.7). |
 | `POST` | `/api/v1/chat` | JSON, or SSE when `"stream": true`. Not itself gated, but the sensor and report tools require the caller's token |
 
 **Request:** `{ query, retrieval?, stream?, history?, device? }`. `query` required; `retrieval`

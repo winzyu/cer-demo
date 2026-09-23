@@ -8,8 +8,8 @@ status block below says which phase each piece belongs to.
 - The **conventions** this code follows are in [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md).
 - The **roadmap / next steps** are in [`timeline.md`](timeline.md).
 - The **direct-feed vs RAG experiment** that decides how document context is retrieved — on cost —
-  is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). Deferred: it runs on its own branch after
-  Phase N1; its report `RETRIEVAL_COMPARISON.md` is archived (`ARCHIVED.md`).
+  is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). It was swept in 2026-08 and superseded by the
+  eval rebuild; its report `RETRIEVAL_COMPARISON.md` is archived (`ARCHIVED.md`).
 - The **question set every arm is graded against** is described in §12 and planned in
   [`EVAL_REBUILD.md`](EVAL_REBUILD.md), committed before any arm runs.
 
@@ -19,9 +19,10 @@ status block below says which phase each piece belongs to.
 > history. ◆G7 split on 2026-08-26, and the system prompt has not been a pinned control since.
 >
 > Built: the chat spine and retrieval seam (§9, §10), the retrieval arms (§9, §14b; `pgvector-rag`
-> archived and dropped, §14), and Phase N3's device-API client, `query_sensor_data`,
+> archived and dropped, §14), and Phase N3's device-API client, `query_sensor_data`, `list_pods`,
 > `get_pod_thresholds`, `get_turbidity_info` and tool loop (§10.3a), all **gated on `SENSOR_TOOL`,
-> default off**. Report generation is gated on `REPORT_TOOL`. `DEFAULT_RETRIEVAL` ships as `stub`, so
+> default off**. Report generation (§10.7) is gated on `REPORT_TOOL`, and the guidance catalogue (§4b)
+> on `CATALOGUE_PROMPT` for chat. `DEFAULT_RETRIEVAL` ships as `stub`, so
 > a fresh checkout needs no credentials. The roadmap is in [`timeline.md`](timeline.md).
 
 ---
@@ -85,7 +86,8 @@ clean-earth-rag/
 │   │   ├── HealthController.ts
 │   │   ├── ChatController.ts   retrieve → assemble → answer (JSON or SSE)
 │   │   ├── DeviceController.ts pod list for the UI selector
-│   │   └── ReportController.ts renders a report PDF in memory and returns it (§10.7)
+│   │   ├── ReportController.ts renders a report PDF in memory and returns it (§10.7)
+│   │   └── UsageController.ts  read-only quota standing (§4a)
 │   ├── middleware/
 │   │   ├── errorHandler.ts   terminal error handler
 │   │   ├── quotaGuard.ts     429 gate on POST /chat, before SSE opens (§4a)
@@ -201,19 +203,19 @@ clean-earth-rag/
 │   │                 devices.test.ts, reports.test.ts
 │   ├── fixtures/device-api/  recorded production bodies + provenance README (§16)
 │   ├── fixtures/pod-scope/   synthetic fleet for pod-authorization work
-│   └── unit/         46 suites — see the table in §16
+│   └── unit/         51 suites — see the table in §16
 ├── eval/fixtures-wave1/      45 committed eval conversations, 90 turns (§12)
 ├── eval/claims/              Phase 1a claim inventory, one file per document
 ├── eval/retrieval-labels/    wave-1 retrieval ground truth (generated)
-├── eval/transcripts/         captured runs, starting with the Phase 3 gold-context baseline
+├── eval/transcripts/         captured runs: the Phase 3 gold-context baseline (warm/gold-context/)
 │                             (the pre-rebuild set is under tag `eval-archive-2026-09-01`)
-├── frontend/                 static demo chat UI (index.html + js/), wired to POST /api/v1/chat
+├── frontend/                 static demo chat UI (index.html + js/), wired to /chat, /devices, /reports
 ├── data/                     corpus artifact + device-API recordings (git-ignored)
 ├── documents/                corpus PDFs — `documents/*` is git-ignored, but the four Tier 1
 │                             files (the ◆G9 slice) are force-tracked; see documents/README.md
 ├── archive/pgvector-rag/     the archived bake-off arm at its original paths (§14) —
 │                             not compiled, not tested, not imported; excluded from the image
-└── docs/                     SPECS.md, timeline.md, EVAL_REBUILD.md, migration/
+└── docs/                     STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md, migration/
 ```
 
 ---
@@ -239,7 +241,7 @@ config = {
   deviceApi:  { baseUrl?, devToken?, timeoutMs, defaultDeviceLabel? },
   tools:      { sensorTool, reportTool, maxToolRounds, rawLimit },
   chat:       { maxHistoryMessages },
-  quota:      { enabled, requests, tokens, windowMs, windowLabel, scope },
+  quota:      { enabled, requests, tokens, reports, windowMs, windowLabel, scope },
   retrieval:  { defaultMode, debug, corpusSource },
   waterType,
   audit:      { enabled },
@@ -346,11 +348,11 @@ What is **not** available here, stated plainly:
 - **No organization.** Resolving one needs a backend round-trip this service does not make.
   `QUERY_QUOTA_SCOPE=global` is the honest stand-in on a single-tenant deployment; a real per-org
   quota arrives with real auth.
-- **The bundled frontend sends no `Authorization` header** (`frontend/js/api.js`), so today
-  `caller` lands on the IP branch for every browser request.
+- **A signed-out browser sends no `Authorization` header** (`frontend/js/auth.js` sends the active
+  account's token only when one is set, §10.5), so an anonymous request lands on the IP branch.
 - **`trust proxy` is not set** in `app.ts`, so `req.ip` is the socket peer — behind Cloud Run,
-  the proxy. Until the frontend sends a token, `global` is the scope whose behavior matches its
-  name. `config` warns about all of this at startup rather than leaving it to be discovered.
+  the proxy. For anonymous traffic, `global` is the scope whose behavior matches its name.
+  `config` warns about all of this at startup rather than leaving it to be discovered.
 
 ### Storage caveat
 
@@ -412,7 +414,8 @@ the client connects on first read/write. Project id comes from `FIRESTORE_PROJEC
 otherwise Application Default Credentials infer it; database id defaults to `(default)`.
 
 This intentionally differs from the reference server, which created a new client per repository —
-flagged as wasteful in `migration/CONVENTIONS.md`. No repositories consume the client yet.
+flagged as wasteful in `migration/CONVENTIONS.md`. Its consumers are `FirestoreCorpusSource`,
+`FirestoreVectorAdapter` and `auditLog`.
 
 ---
 
@@ -458,15 +461,17 @@ morgan("dev") → helmet(...) → cors() → express.json()
   | `device_auth_expired` | 401 | the device API rejected the token; terminal, never retried |
   | `device_timeout` | 504 | the device API did not answer within `DEVICE_API_TIMEOUT_MS` |
   | `device_unavailable` | 502/503 | the device API is unreachable or `DEVICE_API_BASE_URL` is unset |
+  | `caller_token_required` | 401 | a route or tool that reads org-scoped data got no bearer token (§10.5) |
   | `quota_requests_exceeded` | 429 | this key's `QUERY_QUOTA_REQUESTS` allowance is spent (§4a) |
   | `quota_tokens_exceeded` | 429 | this key's `QUERY_QUOTA_TOKENS` allowance is spent (§4a) |
+  | `quota_reports_exceeded` | 429 | this key's `QUERY_QUOTA_REPORTS` allowance is spent (§4a) |
 
   Clients branch on `code`, never on prose: `frontend/js/podbar.js` maps the four device/LLM codes
   to its badge text, and falls back to `err.status` when a failure carries no code at all.
 
-  The two quota codes are separate rather than one `quota_exceeded` because the dimensions are
-  configured independently: one is fixed by asking fewer questions, the other by asking cheaper
-  ones, and an operator raises a different variable for each. Both carry a `Retry-After` header.
+  The quota codes are separate rather than one `quota_exceeded` because the dimensions are
+  configured independently: one is fixed by asking fewer questions, another by asking cheaper
+  ones, and an operator raises a different variable for each. All carry a `Retry-After` header.
 
 ---
 
@@ -945,7 +950,8 @@ retrieval-strategy differences.
 | Output | per document: full `text` (direct-feed) and filtered `chunks` (vector arms), plus the ◆G9 slice flag |
 
 Current run, **since the source-of-truth document left the corpus on 2026-09-13**: **14
-documents, 840,327 chars, 446 chunks**; direct-feed slice **26,096 chars (~6.5K tokens), the four
+documents, 840,413 chars, 446 chunks** (840,327 until the 2026-09-21 re-OCR added 86 chars to the
+EPA SOP, `EVAL_REBUILD.md` §2b); direct-feed slice **26,096 chars (~6.5K tokens), the four
 probe datasheets**. Before that it was 15 documents / 851,891 chars / 451 chunks, re-ingested
 2026-08-31 without the alpha-ratio filter (393 chunks with it on), with a 37,660-char slice. It was
 18 documents /
@@ -1087,9 +1093,10 @@ in-process — so the latency and token counts recorded are the ones production 
 | `scripts/bakeoff.ts` | wiring, spot-check mode, transcript writing |
 
 Transcripts land at `eval/transcripts/<pass>/<arm>/<fixture-id>.json` — the path separates passes
-and arms so cold and warm can never be blended by accident. **The directory is empty as of
-2026-09-01**: the 224 `gpt-oss-20b` captures were archived (`ARCHIVED.md`) and Phase 3 of the
-rebuild refills it. `npm run gate:check` throws `No transcripts at ...` until then, by design.
+and arms so cold and warm can never be blended by accident. The 224 pre-rebuild `gpt-oss-20b`
+captures were archived on 2026-09-01 (`ARCHIVED.md`); the directory now holds only the Phase 3
+gold-context baseline, `warm/gold-context/` (45 files, captured 2026-09-14). `npm run gate:check`
+throws `No transcripts at ...` for any pass or arm with no captures, by design.
 
 **Four things it is built to prevent**, each of which otherwise produces a dataset that *looks*
 fine:
@@ -1131,8 +1138,8 @@ mode is unregistered, the `pg` and `@types/pg` dependencies and the `seed:pgvect
 
 | what | where it is now | why |
 |---|---|---|
-| 56 captured transcripts | live — `eval/transcripts/{cold,warm}/pgvector-rag/` | the graded artifact; ◆G7 is not auditable without them |
-| Blind label→arm mapping | live — `eval/grading/warm/KEY.json` | the packet is still gradeable, and it still names the arm |
+| 56 captured transcripts | archived 2026-09-01 under tag `eval-archive-2026-09-01`, `eval/transcripts/{cold,warm}/pgvector-rag/` | the graded artifact; ◆G7 is not auditable without them |
+| Blind label→arm mapping | archived 2026-09-01 under the same tag, `eval/grading/warm/KEY.json` | it names the arm in the archived packet |
 | Cost scenario + its assertions | live — `src/eval/costScenarios.ts`, `test/unit/cost.test.ts` | `npm run cost` still prices **all three** arms; a two-arm cost table would not answer ◆G7 |
 | `"pgvector-rag"` in the packet builder | live — `scripts/gradePacket.ts` `ARMS` | the packet grades captured evidence, so `npm run grade:packet` is unchanged |
 | Adapter, fusion, seeder, schema, compose | archived — `archive/pgvector-rag/` | upkeep with no consumer: a dependency, a container, and a config surface |
@@ -1338,7 +1345,7 @@ for local demo, to be tightened before deploy.
 
 ## 16. Testing
 
-Jest + `ts-jest` + `supertest`. **52 suites** (46 unit, 6 integration; counted 2026-09-15 from
+Jest + `ts-jest` + `supertest`. **57 suites** (51 unit, 6 integration; counted 2026-09-23 from
 `test/`). The last recorded full run was 949 tests in 46 suites on 2026-09-02, so the test total
 is due a re-measure. The table below names the suites that carry a design decision worth reading;
 it is not the full list — `npx jest --listTests` is.
@@ -1349,7 +1356,7 @@ it is not the full list — `npx jest --listTests` is.
 | `integration/chat.test.ts` | `POST /chat` happy path, validation, the `DEBUG_RETRIEVAL` override rule end to end, and the SSE wire format (event order, headers, terminator) |
 | `unit/gateCheck.test.ts` | the §8a hard gates. Pins the U+2011 refusal case — an exact comparison scores a *correct* refusal zero, and NFKC alone does not fix it — and the rule that a tolerance match is never counted as an exact pass |
 | `unit/retrieval.test.ts` | `resolveTopK`, `StubAdapter` guards, registry lookup, all five selection rules |
-| `unit/prompt.test.ts` | ranges, `REFUSAL_SENTENCE` pinned verbatim, block ordering, cacheable-prefix stability |
+| `unit/prompt.test.ts` | no ranges in the prompt, `REFUSAL_SENTENCE` pinned verbatim, the tool and catalogue flags only appending, block ordering, cacheable-prefix stability |
 | `unit/llmService.test.ts` | request params (`max_tokens`, `user`, no tools), empty-answer 502, streaming deltas, abort signal, usage handling |
 | `unit/directFeed.test.ts` | slice loading, once-per-process memoization, topK ignored, failure not cached, Firestore query shape |
 | `unit/ingestion.test.ts` | chunk sizing and overlap, the quality filter, the alpha-ratio escape hatch (off by default), corpus metadata |
@@ -1375,7 +1382,8 @@ it is not the full list — `npx jest --listTests` is.
 | `unit/plausibility.test.ts` | the per-metric physical rails, including the verified −1023 °C temperature rail and the pH 0.000/14.000 exclusive bounds, and that `0` stays plausible for ORP and turbidity |
 | `unit/operatorThresholds.test.ts` | every rejection reason for an operator-entered temperature baseline — the all-zero "never configured" registry state, an inverted range, a typed-in placeholder magnitude — each falling back to "no baseline established" rather than to a wrong range, and never printing the rejected numbers |
 | `unit/answerFormat.test.ts` | `【commentary…】` stripping anchored to the channel name, **citation markers in the same brackets left untouched** (~160 of them across the captured transcripts), the marker-only answer coming out empty so the existing 502 guard fires, and the streaming filter agreeing with the batch stripper however the text is chopped up |
-| `unit/generateReport.test.ts`, `unit/buildReportInput.test.ts`, `unit/reportModel.test.ts`, `unit/reportEvents.test.ts`, `unit/reportReferenceRanges.test.ts`, `unit/reportNarrative.test.ts`, `unit/reportRenderPdf.test.ts` | the report pipeline: the tool's arguments and flag gating, the computed model assembled from sensor + registry data, event detection, the transcribed baselines and turbidity bands, narration confined to pre-computed facts, and the PDF layout |
+| `unit/generateReport.test.ts`, `unit/buildReportInput.test.ts`, `unit/reportModel.test.ts`, `unit/reportEvents.test.ts`, `unit/reportPatterns.test.ts`, `unit/reportReferenceRanges.test.ts`, `unit/reportNarrative.test.ts`, `unit/reportRenderPdf.test.ts` | the report pipeline: the tool's arguments and flag gating, the computed model assembled from sensor + registry data, event detection, diel/tidal/trend tagging, the transcribed baselines and turbidity bands, narration confined to pre-computed facts, and the PDF layout |
+| `integration/reports.test.ts` | `POST /api/v1/reports` (§10.7): each guard (token, flag, body, report quota), the PDF returned with nothing written to disk, a 422 refusal that counts nothing, and the removed `GET /reports/:filename` |
 
 **`unit/pgvectorRag.test.ts` is gone from the live suite** (2026-08-19). Its `fuseRrf` and
 `PgVectorRagAdapter` blocks went to `archive/pgvector-rag/` with the code they test — a suite whose
@@ -1419,9 +1427,9 @@ conventions this codebase follows, rather than disabled globally:
 
 ## 18. Privacy posture (carried forward)
 
-Unchanged in intent from the legacy build: once chat lands, all prompts (system + history +
-retrieved chunks + user message) are sent to Fireworks AI, and confidentiality rests on a
-contractual DPA with Fireworks, not on data residency. For the skeleton, no data flows to any LLM.
+Unchanged in intent from the legacy build: every chat prompt (system + history + retrieved chunks +
+tool results, including sensor readings + user message) is sent to Fireworks AI, and confidentiality
+rests on a contractual DPA with Fireworks, not on data residency. Reports make no LLM call.
 Sensor data (`data/`) is git-ignored and treated as confidential per `CLAUDE.md`; `documents/` is
 git-ignored too, with the four Tier 1 corpus files force-tracked as the exception (§11).
 
