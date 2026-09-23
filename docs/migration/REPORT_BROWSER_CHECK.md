@@ -25,7 +25,7 @@ Nothing here writes to production.
 
    If either check fails, stop: do not start the dashboard.
 2. Confirm `clean-earth-rovers-server/.env` still has the five lines under "Serving Gilligan locally" in [`LOCAL_STACK.md`](LOCAL_STACK.md).
-3. Until the report work is merged into `dev`, cer-rag must run from the worktree, which holds the new code and an `.env` with `REPORT_TOOL=true`.
+3. Confirm cer-demo is on `dev` (the report work merged there on 2026-09-22) and that its `.env` sets `REPORT_TOOL=true`.
 
 ## 2. Start the three services
 
@@ -33,7 +33,7 @@ Use three terminals.
 
 ```bash
 # 1. cer-rag on :8010 - a report allowance of 3 per day, so the limit can be tested
-cd ~/code/clean-earth-rovers/repo/cer-demo/.claude/worktrees/report-integration
+cd ~/code/clean-earth-rovers/repo/cer-demo
 PORT=8010 QUERY_QUOTA=true QUERY_QUOTA_REPORTS=3 QUERY_QUOTA_WINDOW=1d npm run dev
 
 # 2. upstream server on :5001
