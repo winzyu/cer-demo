@@ -614,8 +614,8 @@ slice-answerable. Treat every arm as unranked at the start of this phase.
 - **Unicode breaks exact matching.** The model emits U+2011 where `REFUSAL_SENTENCE` has U+002D, and
   NFKC folds U+2011 to U+2010, **not** to U+002D. Use `normalizeForMatch` in
   `src/eval/gates/normalize.ts` for any string comparison.
-- **Grounding is wider than the retrieval context.** The system prompt carries operator ranges and
-  the question may supply figures. A transcript's `context` field is retrieval context ONLY.
+- **Grounding is wider than the retrieval context.** The question may supply figures, tool results
+  carry readings and pod limits, and until 2026-09-13 the system prompt carried operator ranges. A transcript's `context` field is retrieval context ONLY.
   Treating it as the whole grounding produced ~24 false "fabricated figure" findings per arm.
 - **`SENSOR_TOOL=false` must be set on BOTH the server AND the runner.** Server-only yields the
   wrong fixture count and junk answers.
@@ -672,9 +672,9 @@ means nothing for the new set.
 
 | command | state as of 2026-09-02 | refilled by |
 |---|---|---|
-| `npm run gate:check` | `No transcripts at .../eval/transcripts/warm.` | Phase 3 |
-| `npm run judge -- --calibrate` | same message — it builds the task list before reading grades | Phase 3, then 2c |
-| `npm run retrieval:eval` | `No retrieval labels at .../eval/retrieval-labels.` | Phase 1e |
+| `npm run gate:check` | `No transcripts at .../eval/transcripts/warm.` | Phase 3, done 2026-09-14 (`warm/gold-context/`) |
+| `npm run judge -- --calibrate` | same message — it builds the task list before reading grades | Phase 3, then 2c (2c still open) |
+| `npm run retrieval:eval` | `No retrieval labels at .../eval/retrieval-labels.` | Phase 1e, labels regenerated (45 files) |
 
 `npm run cost`, `npm run ingest` and `npm run embed:cache` are unaffected.
 
@@ -697,6 +697,7 @@ On `gold-context` the spot check asks three labelled turns (deep-in-manual, cros
 `CORPUS_SOURCE=firestore` reads project `cer-demo-2026`.
 It was reseeded 2026-09-15 with `npm run seed:firestore -- --prune` and `npm run seed:firestore-chunks -- --prune`: 14 documents, 446 chunks, no removed document left.
 A plain seed only overwrites, so after any corpus change re-run both with `--prune`, or the removed document stays in the direct-feed slice.
+The 2026-09-21 re-OCR changed the EPA SOP's text and all 12 of its chunk ids after that seed, so both collections are stale for that document until they are re-seeded.
 
 ---
 
@@ -706,7 +707,7 @@ A plain seed only overwrites, so after any corpus change re-run both with `--pru
 - **Never run the full test suite.** Target specific suites and say which you ran.
 - `npm run typecheck` and `npm run lint` are cheap and read-only; `npm run lint:fix` writes files.
 - **Pass both rules to any agent you dispatch.**
-- Write only inside this repository. `../user-dashboard` and `../clean-earth-rovers-server` are read-only references.
+- Eval work writes only inside this repository. `../user-dashboard` and `../clean-earth-rovers-server` are writable only on branch `local`, for the Gilligan work (`CLAUDE.md`).
 - **Ask before spending.** Captures and judge passes cost real money.
 
 ---
@@ -768,3 +769,21 @@ Widening the pattern is not the fix: adding `declines` catches only 3 of 8 and p
 positives in the archived set. **The fix is a per-turn `requires_refusal` boolean on the fixture**,
 which the bake-off's fixture rules previously ruled out because the fixtures were a pinned control while
 ◆G7 was open — a reason that no longer exists. This had blocked Phase 3.
+
+
+### Wave 1 correction handoff - 2026-09-22
+
+The completed historical review at `c41ffb5` is agent verification, not Phase 1d human sign-off.
+Implemented corrections are on `eval/wave1-corrections` in `.claude/worktrees/wave1-corrections`, pending commit/push approval and later integration with `dev`.
+Read `eval/reviews/wave1-corrections-2026-09-22/README.md` and `HANDOFF.md` on that branch for the source checks, correction rationale, limitations and reproduction commands.
+The correction set has 45 fixtures, 90 turns and 738 conditions: all 34 EDIT fixtures plus the buffering-capacity KEEP fixture were changed, including 13 question turns.
+It includes the two verified EPA claim files from `5d269a3`, regenerated labels, explicit per-turn refusal evidence and the partial-answer/threshold-policy corrections.
+The eight refusal turns carry positive explanatory context and explicit refusal flags; this supersedes the five-flag state recorded above only once the correction branch lands.
+All 446 claim chunk IDs resolve on that branch, with the known chart-header quote exception still awaiting a decision and excluded from affected fixture label inputs.
+Validation passed: 181 tests across six individually run Jest suites, typecheck, lint, the generator failure checks and the offline correction audit.
+Contamination is 9/82 (10.98%) by notes-derived source chunks, 9/90 (10.00%) by current labelled chunks, and 26/90 (28.89%) by source document.
+Historical review hashes, corpus and captured transcripts are preserved; the old checker deliberately fails against the changed prompt, while the new audit records the corrected inputs separately.
+No paid captures or live reads ran in this correction work.
+At handoff, `dev` is `eaba51c` and includes later Gilligan and recovered catalogue changes that overlap the correction branch's prompt and prompt tests.
+The proposed push preserves the correction branch separately; merged behavior has not been tested, and integration must retain greetings, `list_pods` routing and catalogue behavior before rerunning focused checks.
+Human verification/freeze, judge calibration, broader label refinement and the chart-header decision remain open.

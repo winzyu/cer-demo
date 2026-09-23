@@ -8,8 +8,8 @@ status block below says which phase each piece belongs to.
 - The **conventions** this code follows are in [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md).
 - The **roadmap / next steps** are in [`timeline.md`](timeline.md).
 - The **direct-feed vs RAG experiment** that decides how document context is retrieved — on cost —
-  is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). Deferred: it runs on its own branch after
-  Phase N1; its report `RETRIEVAL_COMPARISON.md` is archived (`ARCHIVED.md`).
+  is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). It was swept in 2026-08 and superseded by the
+  eval rebuild; its report `RETRIEVAL_COMPARISON.md` is archived (`ARCHIVED.md`).
 - The **question set every arm is graded against** is described in §12 and planned in
   [`EVAL_REBUILD.md`](EVAL_REBUILD.md), committed before any arm runs.
 
@@ -19,9 +19,10 @@ status block below says which phase each piece belongs to.
 > history. ◆G7 split on 2026-08-26, and the system prompt has not been a pinned control since.
 >
 > Built: the chat spine and retrieval seam (§9, §10), the retrieval arms (§9, §14b; `pgvector-rag`
-> archived and dropped, §14), and Phase N3's device-API client, `query_sensor_data`,
+> archived and dropped, §14), and Phase N3's device-API client, `query_sensor_data`, `list_pods`,
 > `get_pod_thresholds`, `get_turbidity_info` and tool loop (§10.3a), all **gated on `SENSOR_TOOL`,
-> default off**. Report generation is gated on `REPORT_TOOL`. `DEFAULT_RETRIEVAL` ships as `stub`, so
+> default off**. Report generation (§10.7) is gated on `REPORT_TOOL`, and the guidance catalogue (§4b)
+> on `CATALOGUE_PROMPT` for chat. `DEFAULT_RETRIEVAL` ships as `stub`, so
 > a fresh checkout needs no credentials. The roadmap is in [`timeline.md`](timeline.md).
 
 ---
@@ -79,13 +80,14 @@ clean-earth-rag/
 │   │   ├── healthRoutes.ts   GET /health
 │   │   ├── chatRoutes.ts     POST /api/v1/chat
 │   │   ├── deviceRoutes.ts   GET /api/v1/devices (§10.5)
-│   │   ├── reportRoutes.ts   GET /api/v1/reports/:filename — not gated on REPORT_TOOL
+│   │   ├── reportRoutes.ts   POST /api/v1/reports - PDF bytes, off while REPORT_TOOL is off
 │   │   └── usageRoutes.ts    GET /api/v1/usage — read-only allowance, outside quotaGuard
 │   ├── controllers/
 │   │   ├── HealthController.ts
 │   │   ├── ChatController.ts   retrieve → assemble → answer (JSON or SSE)
 │   │   ├── DeviceController.ts pod list for the UI selector
-│   │   └── ReportController.ts serves a generated PDF off local disk
+│   │   ├── ReportController.ts renders a report PDF in memory and returns it (§10.7)
+│   │   └── UsageController.ts  read-only quota standing (§4a)
 │   ├── middleware/
 │   │   ├── errorHandler.ts   terminal error handler
 │   │   ├── quotaGuard.ts     429 gate on POST /chat, before SSE opens (§4a)
@@ -153,15 +155,23 @@ clean-earth-rag/
 │   │   ├── generateReport.ts   the report tool, gated on REPORT_TOOL
 │   │   ├── getPodThresholds.ts  the pod's registry alert limits, validated, no fallback
 │   │   ├── getTurbidityInfo.ts  turbidity clarity bands and sensor caveats
+│   │   ├── listPods.ts       the caller's own fleet, with best-effort freshness (§10.3a)
 │   │   ├── timeRange.ts      NL range parsing + reference-time anchoring
 │   │   └── aggregate.ts      min/max/mean/median/latest/earliest/raw/series, null-never-zero
+│   ├── catalogue/           the guidance catalogue shared by chat and reports (§4b)
+│   │   ├── catalogue.json    the single source: entries, referrals, review status
+│   │   ├── parseCatalogue.ts  validator, run at import
+│   │   ├── select.ts         usable entries, water class, per-finding selection
+│   │   ├── promptBlock.ts    the chat prompt's APPROVED GUIDANCE block
+│   │   └── reviewPage.ts     the supervisor review page (docs/catalogue/review.html)
 │   ├── report/              the deterministic report pipeline (compute, then narrate)
 │   │   ├── buildReportInput.ts  assembles the report model from sensor + registry data
 │   │   ├── events.ts         period-relative event detection
 │   │   ├── referenceRanges.ts   registry-threshold baselines + TURBIDITY_BAND_EDGES
 │   │   ├── operatorThresholds.ts  validated per-device registry thresholds
-│   │   ├── reportOwnership.ts  binds a generated PDF to the credential that generated it
-│   │   ├── narrative.ts      LLM narration over pre-computed facts
+│   │   ├── patterns.ts       diel / tidal / trend classification from an hourly series
+│   │   ├── produceReport.ts  the whole pipeline, shared by generate_report and POST /reports
+│   │   ├── narrative.ts      rule-based prose; causes and next steps only from the catalogue
 │   │   ├── renderPdf.ts      pdfkit layout
 │   │   └── types.ts
 │   ├── services/
@@ -193,19 +203,19 @@ clean-earth-rag/
 │   │                 devices.test.ts, reports.test.ts
 │   ├── fixtures/device-api/  recorded production bodies + provenance README (§16)
 │   ├── fixtures/pod-scope/   synthetic fleet for pod-authorization work
-│   └── unit/         46 suites — see the table in §16
+│   └── unit/         51 suites — see the table in §16
 ├── eval/fixtures-wave1/      45 committed eval conversations, 90 turns (§12)
 ├── eval/claims/              Phase 1a claim inventory, one file per document
 ├── eval/retrieval-labels/    wave-1 retrieval ground truth (generated)
-├── eval/transcripts/         captured runs, starting with the Phase 3 gold-context baseline
+├── eval/transcripts/         captured runs: the Phase 3 gold-context baseline (warm/gold-context/)
 │                             (the pre-rebuild set is under tag `eval-archive-2026-09-01`)
-├── frontend/                 static demo chat UI (index.html + js/), wired to POST /api/v1/chat
+├── frontend/                 static demo chat UI (index.html + js/), wired to /chat, /devices, /reports
 ├── data/                     corpus artifact + device-API recordings (git-ignored)
 ├── documents/                corpus PDFs — `documents/*` is git-ignored, but the four Tier 1
 │                             files (the ◆G9 slice) are force-tracked; see documents/README.md
 ├── archive/pgvector-rag/     the archived bake-off arm at its original paths (§14) —
 │                             not compiled, not tested, not imported; excluded from the image
-└── docs/                     SPECS.md, timeline.md, EVAL_REBUILD.md, migration/
+└── docs/                     STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md, migration/
 ```
 
 ---
@@ -231,9 +241,11 @@ config = {
   deviceApi:  { baseUrl?, devToken?, timeoutMs, defaultDeviceLabel? },
   tools:      { sensorTool, reportTool, maxToolRounds, rawLimit },
   chat:       { maxHistoryMessages },
-  quota:      { enabled, requests, tokens, windowMs, windowLabel, scope },
+  quota:      { enabled, requests, tokens, reports, windowMs, windowLabel, scope },
   retrieval:  { defaultMode, debug, corpusSource },
   waterType,
+  audit:      { enabled },
+  catalogue:  { prompt, includeDrafts },
 }
 ```
 
@@ -244,6 +256,10 @@ separate flag rather than a fold into `sensorTool`, because `generate_report` ca
 on **logs a warning at startup**, deliberately: both un-pin the bake-off's system prompt, and a
 capture run made with one on is not comparable to the three already captured. Better a line in
 every startup log than a silently voided sweep.
+
+`catalogue.prompt` (`CATALOGUE_PROMPT`, default `false`) appends the guidance block to the system
+prompt and warns at startup for the same capture-comparability reason. `catalogue.includeDrafts`
+(`CATALOGUE_DRAFTS`, default `false`) shows unapproved entries, for the supervisor's review only (§4b).
 
 Environment variables and defaults are documented in `README.md` §5 and `.env.example`.
 
@@ -286,10 +302,15 @@ endpoint reports standing and the gate refuses; `QuotaService.status` is the rea
 | `QUERY_QUOTA` | `false` | master switch |
 | `QUERY_QUOTA_REQUESTS` | `unlimited` | chat requests per key per window, or `unlimited`; `0` = refuse everything |
 | `QUERY_QUOTA_TOKENS` | `unlimited` | `usage.totalTokens` per key per window, summed across tool rounds |
+| `QUERY_QUOTA_REPORTS` | `unlimited` | report PDFs per key per window (`POST /api/v1/reports`); refuses with `quota_reports_exceeded` |
 | `QUERY_QUOTA_WINDOW` | `30d` | window length; **unit suffix required** (`s`/`m`/`h`/`d`/`w`) |
 | `QUERY_QUOTA_SCOPE` | `caller` | `caller` (per identity) or `global` (whole deployment) |
 
-The two dimensions are independent — either, neither, or both. `requests` is evaluated first, so
+Reports are a third, separate dimension: a report runs several device reads and a render but no model call, so it is gated by `quotaGuard(…, "report")` on `POST /api/v1/reports` against `reports` only, and chat is gated against `requests` and `tokens` only.
+All three share `QUERY_QUOTA_WINDOW`; a per-day report limit beside a per-month token limit needs R1's multi-window store.
+A report is recorded only after its PDF renders, so a bad range or an empty window costs nothing.
+
+The two chat dimensions are independent — either, neither, or both. `requests` is evaluated first, so
 when both are simultaneously spent the refusal names the request count: it is the cheaper, more
 legible ceiling for an operator to raise. Upstream's `OR` is deliberately **not** reproduced; its
 semantics mean the effective limit is the *maximum* of its clauses, which is almost certainly not
@@ -327,11 +348,11 @@ What is **not** available here, stated plainly:
 - **No organization.** Resolving one needs a backend round-trip this service does not make.
   `QUERY_QUOTA_SCOPE=global` is the honest stand-in on a single-tenant deployment; a real per-org
   quota arrives with real auth.
-- **The bundled frontend sends no `Authorization` header** (`frontend/js/api.js`), so today
-  `caller` lands on the IP branch for every browser request.
+- **A signed-out browser sends no `Authorization` header** (`frontend/js/auth.js` sends the active
+  account's token only when one is set, §10.5), so an anonymous request lands on the IP branch.
 - **`trust proxy` is not set** in `app.ts`, so `req.ip` is the socket peer — behind Cloud Run,
-  the proxy. Until the frontend sends a token, `global` is the scope whose behavior matches its
-  name. `config` warns about all of this at startup rather than leaving it to be discovered.
+  the proxy. For anonymous traffic, `global` is the scope whose behavior matches its name.
+  `config` warns about all of this at startup rather than leaving it to be discovered.
 
 ### Storage caveat
 
@@ -350,6 +371,41 @@ rollover is testable without faking the clock.
 
 ---
 
+## 4b. Guidance catalogue (`src/catalogue/`)
+
+Every possible cause, next step and referral a customer can see comes from one versioned file, `src/catalogue/catalogue.json`, reviewed by the supervisor.
+The decision and the content sources are in `migration/GILLIGAN_TARGET_ARCHITECTURE.md` §2d; the allowlist reasoning is in `RESPONSIBILITY.md`.
+
+**Entries.**
+Each entry has an id, a kind (`explanation`, `limitation` or `next-step`), approved text, the conditions and evidence it needs, a limitation, sources, an optional referral and a review record.
+A `next-step` that reports can select names its recommendation slot (`operational`, `investigative` or `stakeholder`).
+An entry without `appliesTo.triggers` is for chat only.
+`parseCatalogue` validates the file at import and lists every problem at once; an approval must record who and when.
+
+**What is usable.**
+Only `approved` entries whose referral (if any) is also approved reach customers.
+`CATALOGUE_DRAFTS=true` adds drafts for the supervisor's own review; rejected entries are never used.
+The `version` string is bumped on every content change and is recorded with each report (`catalogue_version`, `guidance_ids` in the `generate_report` result).
+
+**Reports** (`report/narrative.ts`).
+An event's cause is named only when a usable `explanation` matches its type, water class, confidence and severity.
+Otherwise the PDF heads it "Threshold crossing", prints no classification confidence, and selects every other entry as if the event were `Inconclusive`, so a next step cannot imply the unnamed cause.
+The detection rule's own rationale (`WQEvent.interpretation`) is never printed.
+Recommendations for a flagged period are the matching `next-step` texts per slot, deduplicated in catalogue order; an empty slot says no approved recommendation covers the findings.
+The routine and "not assessed" lines are about monitoring and configuration and do not come from the catalogue.
+Water class: `Freshwater` pods use the freshwater signatures; `Marine`, `Brackish` and `Estuarine` pods use the marine ones (source-of-truth v2 §0 rule 2).
+
+**Chat** (`catalogue/promptBlock.ts`).
+With `CATALOGUE_PROMPT=true` the system prompt ends with an `APPROVED GUIDANCE` block: rules, then one record per usable entry.
+With nothing approved, the block forbids causes, actions, services and contacts outright.
+The block appends after both tool blocks, so the earlier prompt stays a byte-exact prefix (`test/unit/prompt.test.ts`).
+The eval runners build their grounding prompt with the block off.
+
+**Review page.**
+`npm run catalogue:review` regenerates `docs/catalogue/review.html` from the file; never edit the page by hand.
+
+---
+
 ## 5. Firestore initialization (`src/config/database.ts`)
 
 `getFirestore()` returns a **memoized singleton** `Firestore` client. Construction is lazy and
@@ -358,7 +414,8 @@ the client connects on first read/write. Project id comes from `FIRESTORE_PROJEC
 otherwise Application Default Credentials infer it; database id defaults to `(default)`.
 
 This intentionally differs from the reference server, which created a new client per repository —
-flagged as wasteful in `migration/CONVENTIONS.md`. No repositories consume the client yet.
+flagged as wasteful in `migration/CONVENTIONS.md`. Its consumers are `FirestoreCorpusSource`,
+`FirestoreVectorAdapter` and `auditLog`.
 
 ---
 
@@ -404,15 +461,17 @@ morgan("dev") → helmet(...) → cors() → express.json()
   | `device_auth_expired` | 401 | the device API rejected the token; terminal, never retried |
   | `device_timeout` | 504 | the device API did not answer within `DEVICE_API_TIMEOUT_MS` |
   | `device_unavailable` | 502/503 | the device API is unreachable or `DEVICE_API_BASE_URL` is unset |
+  | `caller_token_required` | 401 | a route or tool that reads org-scoped data got no bearer token (§10.5) |
   | `quota_requests_exceeded` | 429 | this key's `QUERY_QUOTA_REQUESTS` allowance is spent (§4a) |
   | `quota_tokens_exceeded` | 429 | this key's `QUERY_QUOTA_TOKENS` allowance is spent (§4a) |
+  | `quota_reports_exceeded` | 429 | this key's `QUERY_QUOTA_REPORTS` allowance is spent (§4a) |
 
   Clients branch on `code`, never on prose: `frontend/js/podbar.js` maps the four device/LLM codes
   to its badge text, and falls back to `err.status` when a failure carries no code at all.
 
-  The two quota codes are separate rather than one `quota_exceeded` because the dimensions are
-  configured independently: one is fixed by asking fewer questions, the other by asking cheaper
-  ones, and an operator raises a different variable for each. Both carry a `Retry-After` header.
+  The quota codes are separate rather than one `quota_exceeded` because the dimensions are
+  configured independently: one is fixed by asking fewer questions, another by asking cheaper
+  ones, and an operator raises a different variable for each. All carry a `Retry-After` header.
 
 ---
 
@@ -553,6 +612,16 @@ name turbidity as one of the six measured parameters, and **0 is a valid turbidi
 must never be flagged as erroneous (same rule as ORP). The reasoning is in the
 `src/prompt/systemPrompt.ts` docstring and the `timeline.md` decision log.
 
+**Greetings and capability questions are carved out of the refusal rule** (2026-09-21). They were
+not before: the scope rule fired on anything that was not a groundable question, so "hello" was
+answered with `REFUSAL_SENTENCE`, which is how a real session opened. A greeting asks for nothing,
+so there is nothing to ground and nothing to refuse. The carve-out names only greetings, thanks and
+"what can you do", so it cannot be read as licence to answer a substantive question unsupported,
+and the three rules that bound it — no prior knowledge, no world knowledge, no fabricated readings
+— are asserted alongside it. The same edit asks a refusal to name the closest thing the system
+genuinely can do, offered as a different next step and never as the answer: every wave-1
+`refusal-*` fixture rubric already required that and the prompt text did not ask for it.
+
 The legacy **tool inventory and routing rules were deliberately not ported.** The legacy model
 fetched documents itself via a `search_documents` tool; here retrieval runs before the call and
 arrives as context, so advertising tools that do not exist would invite the model to announce lookups
@@ -627,10 +696,25 @@ that flag and must never move apart: the prompt block, the `tools` array, and th
 - **Round-cap fallback:** the last prose the model produced, or `ROUND_CAP_PLACEHOLDER` if it never
   produced any.
 
-`query_sensor_data` (`src/tools/querySensorData.ts`) and `generate_report`
-(`src/tools/generateReport.ts`) are the registered tools, each behind its own flag.
+`query_sensor_data` (`src/tools/querySensorData.ts`), `list_pods` (`src/tools/listPods.ts`),
+`get_pod_thresholds` and `get_turbidity_info` are the `SENSOR_TOOL` registrations;
+`generate_report` (`src/tools/generateReport.ts`) is the `REPORT_TOOL` one.
 `search_documents` is **not** a tool — ◆G11 is open, and retrieval still runs before the call as
 CONTEXT.
+
+**`list_pods` answers "which pods do I have", and exists because nothing else could.** The fleet is
+scoped to the caller's organization by the device API, so it is not a property of the deployment:
+it cannot live in the system prompt, which must stay byte-identical across requests to stay
+cacheable, and it is not in CONTEXT, which holds corpus text. Before this tool the model's only
+route to a pod name was the failure text `resolveDevice` emits when more than one device is
+visible, which reads as an error — so a question about the user's own fleet drew the refusal
+sentence. It takes no arguments, prints the deduped registry rows under the same names `device`
+accepts, and shares the per-token `/devices` TTL cache with every other tool in the request. Its
+`last_reported` column is **best effort and not proof of silence**: it comes from `/water/last`,
+which drops readings with no GPS fix, so a null there means "not confirmed recently" and the
+question "has this pod stopped" is a `query_sensor_data` call. Freshness probing is capped at 20
+pods (the listing itself is never truncated); beyond that, pods carry
+`"last_reported": "not_checked"`.
 
 **Arguments:** `metric` (six names, or `all`), `time_range`, `aggregation`, optional `device`, and
 optional `bucket` for `series`.
@@ -774,8 +858,8 @@ the report fetch. Three properties are load-bearing rather than incidental, and
   credential into history, `Referer` headers and proxy logs; a token served to the page would put a
   deployment credential in front of every visitor, re-creating the hole this section describes. The
   user pastes it, including for superadmin.
-- **The report link is a `fetch`, not a navigation.** `GET /reports/:filename` requires the header and
-  a browser navigation cannot carry one, so the click fetches with the header and opens a blob URL.
+- **The report button is a `fetch`, not a navigation.** `POST /reports` requires the header, so the
+  click posts the tool result's `report_request` with it and saves the returned PDF from a blob.
 
 **Deliberately not gated on `SENSOR_TOOL`.** That flag governs whether the *model* is handed a tool;
 listing pods for a person to pick from is a different act. But an unconfigured `DEVICE_API_BASE_URL`
@@ -816,36 +900,36 @@ the process — a device stored on any of them would be handed to whichever requ
 per-request dedupe cache keys on the *effective* arguments for the same reason: otherwise one pod's
 reading could be served as the answer for another.
 
-### 10.7 Report download (`GET /api/v1/reports/:filename`)
+### 10.7 Reports (`generate_report`, `POST /api/v1/reports`)
 
-Serves a PDF `generate_report` already wrote to `generated_reports/`. Three guards, answering three
-different questions, in this order:
+Both run one pipeline, `report/produceReport.ts`: sensor data, report model, events, status, narrative, and for the route only the PDF.
+No LLM call is made and nothing is written to disk.
 
-1. **`SAFE_FILENAME`** (`/^[a-zA-Z0-9_-]+\.pdf$/`) — is this a name at all? Rejects a `..`-laden
-   request with a 400 before it can become a filesystem path. Unchanged; it was always correct.
-2. **`requireCallerToken`** — is anybody asking? Until 2026-08-21 there was nothing here. Filenames
-   are `report_<8 hex>.pdf` (~32 bits) with no expiry, so a document containing a named customer's
-   coordinates and readings was an unauthenticated, guessable capability URL.
-3. **Ownership** (`report/reportOwnership.ts`) — is it the *same* somebody? Every other route is
-   org-scoped by the caller's token; a report gate that accepted any valid token would be the one
-   place organization A could read organization B's data by guessing eight characters.
+**The tool renders no PDF.** `generate_report` returns the summary the model narrates (status, event headings, baseline provenance, catalogue version) plus `report_request: { time_range, device? }`, the arguments it ran with.
+It never returns a URL, and the prompt tells the model to point at the interface's download button instead of writing a link.
 
-Ownership is a sha256 of the bearer token, written to a `.pdf.owner` sidecar beside the PDF when the
-report is generated. It is the token and not a user id because this service cannot verify a JWT — it
-has no `ACCESS_TOKEN_SECRET` — and binding to an unverified `sub` would bind to a claim any caller
-can forge, the same conclusion `quotaKey.ts` reached (§4a). It is a file and not a process-memory map
-because the PDF outlives the process; a map would forget owners on restart and leave reports on disk
-that nobody could ever fetch.
+**The route renders the PDF on request.** `POST /api/v1/reports` takes that `report_request` as its body and answers `200 application/pdf` with `Content-Disposition: attachment; filename="cer-report-<site>-<start>-to-<end>.pdf"` and `Cache-Control: no-store`.
+Guards, in order: `requireCallerToken` (401), the report quota (429, §4a), `REPORT_TOOL` (404 while off), body validation (400: `time_range` required, at most 100 characters; `device` optional, at most 200), then the pipeline's own refusal as 422 (a phrase the grammar does not read, a pod the caller cannot see, an empty window).
+Every reading is fetched with the caller's token, which the device API scopes to their organization, so a report can only describe the caller's own pods.
 
-"Not found" and "not yours" both answer **404**, deliberately: a distinguishable 403 would confirm a
-filename guess and turn the route into an enumeration oracle.
+This replaced a design that wrote PDFs to `generated_reports/` and served them from `GET /api/v1/reports/:filename` behind a sha256-of-token ownership sidecar.
+That design lost every report on redeploy, bound access to one exact token string so a re-login lost it, and needed the ownership check only because a stored file could be asked for by someone else; with no stored file there is nothing to guard.
 
-**Accepted residual risk.** A re-login mints a different token string, so the same human loses access
-to reports generated under the previous one — acceptable while reports are generated and linked
-inside a single conversation and already do not survive a redeploy. Anyone holding the token holds
-the report, which is what a bearer credential means. There is still no expiry; a TTL sweeper is a
-reasonable follow-up, not a prerequisite. Real per-user report history needs the identity work
-§4a is also waiting on.
+**Recomputed at download.** The PDF is built from the same `time_range` phrase when the user clicks, and relative phrases anchor to the pod's newest reading (§10.3b).
+A pod that reported again in between yields a window shifted by those minutes; the PDF prints its own resolved period, which is the authority.
+
+**Pattern tags** (`report/patterns.ts`).
+Each parameter is tagged `diel`, `tidal`, `trend` or `unknown` from a third, hourly series query (`maxBuckets` raised to 62 days, a programmatic-only option).
+Periodicity is read from the autocorrelation of the series minus a centered 25-hour moving mean: a diel cycle repeats at 24 h and inverts at 12 h, a semidiurnal tide repeats at 12 h and inverts at 6 h.
+A trend is daily means on a straight line (R² ≥ 0.7) over at least 14 days.
+At least 72 hours and 60% hourly coverage are required, and `unknown` means unclassified, not steady.
+A diel or tidal tag stops threshold windows opening on that parameter and enables the algal-bloom detector; a diurnal tide is indistinguishable from a diel rhythm on these lags and is tagged diel.
+Hourly buckets are not thinned by `MIN_BUCKET_SAMPLES`: the Newport pods report about once an hour, so one reading per bucket is their cadence.
+
+**Downgraded events keep their signature.** An event below the 0.5 confidence floor is `Inconclusive`, and `WQEvent.signature` records what it matched.
+The heading still names no cause and next steps are still chosen as `Inconclusive`, but an explanation the catalogue approves at that lower confidence is shown, hedged (`narrative.ts`).
+Today that is `saltwater-intrusion` (from 0.45) and `industrial-unclear` (from 0.3), the two classifications that previously could never reach a reader.
+Saltwater intrusion is named outright (0.55) only for an isolated conductivity rise in marine water whose series is tagged `trend`, the drought or sea-level shape; a discharge is a step, not a weeks-long creep.
 
 ---
 
@@ -866,7 +950,8 @@ retrieval-strategy differences.
 | Output | per document: full `text` (direct-feed) and filtered `chunks` (vector arms), plus the ◆G9 slice flag |
 
 Current run, **since the source-of-truth document left the corpus on 2026-09-13**: **14
-documents, 840,327 chars, 446 chunks**; direct-feed slice **26,096 chars (~6.5K tokens), the four
+documents, 840,413 chars, 446 chunks** (840,327 until the 2026-09-21 re-OCR added 86 chars to the
+EPA SOP, `EVAL_REBUILD.md` §2b); direct-feed slice **26,096 chars (~6.5K tokens), the four
 probe datasheets**. Before that it was 15 documents / 851,891 chars / 451 chunks, re-ingested
 2026-08-31 without the alpha-ratio filter (393 chunks with it on), with a 37,660-char slice. It was
 18 documents /
@@ -1008,9 +1093,10 @@ in-process — so the latency and token counts recorded are the ones production 
 | `scripts/bakeoff.ts` | wiring, spot-check mode, transcript writing |
 
 Transcripts land at `eval/transcripts/<pass>/<arm>/<fixture-id>.json` — the path separates passes
-and arms so cold and warm can never be blended by accident. **The directory is empty as of
-2026-09-01**: the 224 `gpt-oss-20b` captures were archived (`ARCHIVED.md`) and Phase 3 of the
-rebuild refills it. `npm run gate:check` throws `No transcripts at ...` until then, by design.
+and arms so cold and warm can never be blended by accident. The 224 pre-rebuild `gpt-oss-20b`
+captures were archived on 2026-09-01 (`ARCHIVED.md`); the directory now holds only the Phase 3
+gold-context baseline, `warm/gold-context/` (45 files, captured 2026-09-14). `npm run gate:check`
+throws `No transcripts at ...` for any pass or arm with no captures, by design.
 
 **Four things it is built to prevent**, each of which otherwise produces a dataset that *looks*
 fine:
@@ -1052,8 +1138,8 @@ mode is unregistered, the `pg` and `@types/pg` dependencies and the `seed:pgvect
 
 | what | where it is now | why |
 |---|---|---|
-| 56 captured transcripts | live — `eval/transcripts/{cold,warm}/pgvector-rag/` | the graded artifact; ◆G7 is not auditable without them |
-| Blind label→arm mapping | live — `eval/grading/warm/KEY.json` | the packet is still gradeable, and it still names the arm |
+| 56 captured transcripts | archived 2026-09-01 under tag `eval-archive-2026-09-01`, `eval/transcripts/{cold,warm}/pgvector-rag/` | the graded artifact; ◆G7 is not auditable without them |
+| Blind label→arm mapping | archived 2026-09-01 under the same tag, `eval/grading/warm/KEY.json` | it names the arm in the archived packet |
 | Cost scenario + its assertions | live — `src/eval/costScenarios.ts`, `test/unit/cost.test.ts` | `npm run cost` still prices **all three** arms; a two-arm cost table would not answer ◆G7 |
 | `"pgvector-rag"` in the packet builder | live — `scripts/gradePacket.ts` `ARMS` | the packet grades captured evidence, so `npm run grade:packet` is unchanged |
 | Adapter, fusion, seeder, schema, compose | archived — `archive/pgvector-rag/` | upkeep with no consumer: a dependency, a container, and a config surface |
@@ -1243,8 +1329,8 @@ turn (against 11 for `pgvector-rag`). It also wins `deep-in-manual` outright at 
 | `GET` | `/health` | `{ status, service, environment, timestamp, uptime, checks: { fireworksConfigured, firestoreProjectConfigured } }` |
 | `GET` | `/api/v1` | `{ "message": "Clean Earth RAG API v1" }` |
 | `GET` | `/api/v1/devices` | `{ devices: [{ label, name, operating_environment, last_reported }], water_type }` (§10.5). **Requires `Authorization: Bearer`** — 401 `caller_token_required` without one |
-| `GET` | `/api/v1/reports/:filename` | the generated PDF. **Requires `Authorization: Bearer`**, and the token must be the one `generate_report` ran under (§10.7); 404 otherwise |
-| `GET` | `/api/v1/usage` | `{ enabled, questions: { used, limit, remaining }, tokens: {...}, window, resetsAt }` (§4a). `limit` and `remaining` are `null` for an unlimited dimension and while the quota is off, so "no ceiling" is distinguishable from "nothing left" by type. Read-only: it never records, so polling it cannot spend the allowance it reports |
+| `POST` | `/api/v1/reports` | body `{ time_range, device? }`; the report PDF as an attachment (§10.7). **Requires `Authorization: Bearer`**. 400 bad body, 404 while `REPORT_TOOL` is off, 422 no report for that range or pod, 429 `quota_reports_exceeded` |
+| `GET` | `/api/v1/usage` | `{ enabled, questions: { used, limit, remaining }, tokens: {...}, reports: {...}, window, resetsAt }` (§4a). `limit` and `remaining` are `null` for an unlimited dimension and while the quota is off, so "no ceiling" is distinguishable from "nothing left" by type. Read-only: it never records, so polling it cannot spend the allowance it reports |
 | `POST` | `/api/v1/chat` | `{ answer, model, mode, citations, usage }`, or SSE when `stream: true` (§10). **429** with `code: quota_requests_exceeded` / `quota_tokens_exceeded` plus `Retry-After` when the quota gate refuses — as JSON, before any stream opens (§4a) |
 
 `/health` does **no** network I/O (no Firestore/Fireworks calls), so it always succeeds while the
@@ -1259,7 +1345,7 @@ for local demo, to be tightened before deploy.
 
 ## 16. Testing
 
-Jest + `ts-jest` + `supertest`. **52 suites** (46 unit, 6 integration; counted 2026-09-15 from
+Jest + `ts-jest` + `supertest`. **57 suites** (51 unit, 6 integration; counted 2026-09-23 from
 `test/`). The last recorded full run was 949 tests in 46 suites on 2026-09-02, so the test total
 is due a re-measure. The table below names the suites that carry a design decision worth reading;
 it is not the full list — `npx jest --listTests` is.
@@ -1270,7 +1356,7 @@ it is not the full list — `npx jest --listTests` is.
 | `integration/chat.test.ts` | `POST /chat` happy path, validation, the `DEBUG_RETRIEVAL` override rule end to end, and the SSE wire format (event order, headers, terminator) |
 | `unit/gateCheck.test.ts` | the §8a hard gates. Pins the U+2011 refusal case — an exact comparison scores a *correct* refusal zero, and NFKC alone does not fix it — and the rule that a tolerance match is never counted as an exact pass |
 | `unit/retrieval.test.ts` | `resolveTopK`, `StubAdapter` guards, registry lookup, all five selection rules |
-| `unit/prompt.test.ts` | ranges, `REFUSAL_SENTENCE` pinned verbatim, block ordering, cacheable-prefix stability |
+| `unit/prompt.test.ts` | no ranges in the prompt, `REFUSAL_SENTENCE` pinned verbatim, the tool and catalogue flags only appending, block ordering, cacheable-prefix stability |
 | `unit/llmService.test.ts` | request params (`max_tokens`, `user`, no tools), empty-answer 502, streaming deltas, abort signal, usage handling |
 | `unit/directFeed.test.ts` | slice loading, once-per-process memoization, topK ignored, failure not cached, Firestore query shape |
 | `unit/ingestion.test.ts` | chunk sizing and overlap, the quality filter, the alpha-ratio escape hatch (off by default), corpus metadata |
@@ -1296,7 +1382,8 @@ it is not the full list — `npx jest --listTests` is.
 | `unit/plausibility.test.ts` | the per-metric physical rails, including the verified −1023 °C temperature rail and the pH 0.000/14.000 exclusive bounds, and that `0` stays plausible for ORP and turbidity |
 | `unit/operatorThresholds.test.ts` | every rejection reason for an operator-entered temperature baseline — the all-zero "never configured" registry state, an inverted range, a typed-in placeholder magnitude — each falling back to "no baseline established" rather than to a wrong range, and never printing the rejected numbers |
 | `unit/answerFormat.test.ts` | `【commentary…】` stripping anchored to the channel name, **citation markers in the same brackets left untouched** (~160 of them across the captured transcripts), the marker-only answer coming out empty so the existing 502 guard fires, and the streaming filter agreeing with the batch stripper however the text is chopped up |
-| `unit/generateReport.test.ts`, `unit/buildReportInput.test.ts`, `unit/reportModel.test.ts`, `unit/reportEvents.test.ts`, `unit/reportReferenceRanges.test.ts`, `unit/reportNarrative.test.ts`, `unit/reportRenderPdf.test.ts` | the report pipeline: the tool's arguments and flag gating, the computed model assembled from sensor + registry data, event detection, the transcribed baselines and turbidity bands, narration confined to pre-computed facts, and the PDF layout |
+| `unit/generateReport.test.ts`, `unit/buildReportInput.test.ts`, `unit/reportModel.test.ts`, `unit/reportEvents.test.ts`, `unit/reportPatterns.test.ts`, `unit/reportReferenceRanges.test.ts`, `unit/reportNarrative.test.ts`, `unit/reportRenderPdf.test.ts` | the report pipeline: the tool's arguments and flag gating, the computed model assembled from sensor + registry data, event detection, diel/tidal/trend tagging, the transcribed baselines and turbidity bands, narration confined to pre-computed facts, and the PDF layout |
+| `integration/reports.test.ts` | `POST /api/v1/reports` (§10.7): each guard (token, flag, body, report quota), the PDF returned with nothing written to disk, a 422 refusal that counts nothing, and the removed `GET /reports/:filename` |
 
 **`unit/pgvectorRag.test.ts` is gone from the live suite** (2026-08-19). Its `fuseRrf` and
 `PgVectorRagAdapter` blocks went to `archive/pgvector-rag/` with the code they test — a suite whose
@@ -1340,14 +1427,12 @@ conventions this codebase follows, rather than disabled globally:
 
 ## 18. Privacy posture (carried forward)
 
-Unchanged in intent from the legacy build: once chat lands, all prompts (system + history +
-retrieved chunks + user message) are sent to Fireworks AI, and confidentiality rests on a
-contractual DPA with Fireworks, not on data residency. For the skeleton, no data flows to any LLM.
+Unchanged in intent from the legacy build: every chat prompt (system + history + retrieved chunks +
+tool results, including sensor readings + user message) is sent to Fireworks AI, and confidentiality
+rests on a contractual DPA with Fireworks, not on data residency. Reports make no LLM call.
 Sensor data (`data/`) is git-ignored and treated as confidential per `CLAUDE.md`; `documents/` is
 git-ignored too, with the four Tier 1 corpus files force-tracked as the exception (§11).
 
-Two holes of this service's own — an unauthenticated `GET /api/v1/devices` served out of the
-deployment's superadmin token, and an unauthenticated `GET /api/v1/reports/:filename` over
-customer water-quality PDFs — are written up in
-[`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md) §6. **Both are still open on
-`dev`**; the fix lives on `fix/unauthenticated-endpoints`.
+Two holes of this service's own were found and fixed on 2026-08-21, and are written up in [`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md) §6.
+`GET /api/v1/devices` served unauthenticated callers out of the deployment's superadmin token; it now requires the caller's token (§10.5).
+`GET /api/v1/reports/:filename` served stored customer PDFs with no authentication; it was first gated by a token-hash ownership check and was removed on 2026-09-22, when reports moved to `POST /api/v1/reports` with nothing stored (§10.7).

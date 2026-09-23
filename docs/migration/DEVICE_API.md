@@ -272,7 +272,8 @@ and conductivity". Five parameters. Turbidity is absent, and the FAQ never menti
 **Do not read this as evidence that turbidity is out of scope.** We were directed explicitly, on
 this project, to add turbidity as a measured metric; that direction is the authority, and it is
 already implemented end to end — metric code `72`, decoded in `src/devices/metrics.ts`, ranged in
-the system prompt, and covered by seven eval fixtures. The public copy is simply **behind the
+the system prompt at the time (described through `get_turbidity_info` since 2026-09-13), and covered
+by seven eval fixtures. The public copy is simply **behind the
 product**, which is a normal state for marketing material and a good reason not to grant it
 authority anywhere in this document.
 
@@ -415,8 +416,9 @@ if that is a concern), and build `query_sensor_data` against it. Only then re-ve
 > **Resolved.** The section below is the original reasoning for deferring it, kept because the
 > constraint it describes is still live. What changed is the answer: rather than wait for ◆G7 or
 > re-run the arms, the tool block and the loop landed behind **`SENSOR_TOOL`, default off**, so the
-> default prompt stays byte-identical to the one the three captured arms ran against (pinned by a
-> SHA-256 in `test/unit/prompt.test.ts`) and no `tools` array is attached to a request. The
+> default prompt stays byte-identical to the one the three captured arms ran against (then pinned by
+> a SHA-256 in `test/unit/prompt.test.ts`; since 2026-08-26 the test checks that the flags only
+> append) and no `tools` array is attached to a request. The
 > recommended sequence below still holds for *turning it on* in a measured run.
 >
 > Built: `src/tools/querySensorData.ts`, `src/tools/timeRange.ts`, `src/tools/aggregate.ts`,

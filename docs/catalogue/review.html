@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gilligan Guidance Review</title>
+<style>
+:root { --bg: #fbfbf9; --fg: #1d2327; --muted: #5d6870; --line: #d9dde0; --card: #ffffff;
+  --draft: #8a5a00; --draft-bg: #fff3d6; --ok: #1f6b3a; --ok-bg: #dff3e5; --no: #9b2c2c; --no-bg: #fbe3e3; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #15191c; --fg: #e4e8eb; --muted: #9aa5ad; --line: #2e363c; --card: #1c2226;
+    --draft: #f3c46b; --draft-bg: #3a2f17; --ok: #8fd6a6; --ok-bg: #1a3324; --no: #f0a0a0; --no-bg: #3a1d1d; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; }
+h2 { font-size: 1.25rem; margin: 40px 0 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+h3 { font-size: 1.05rem; margin: 0; }
+p, li { max-width: 70ch; }
+.meta, .note, dt { color: var(--muted); }
+.meta { margin: 2px 0 0; font-size: 0.9rem; }
+.note { font-size: 0.9rem; margin: 4px 0 0; }
+code { font-size: 0.88em; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }
+.entry { background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+  padding: 16px; margin: 16px 0; break-inside: avoid; }
+blockquote { margin: 12px 0; padding: 8px 12px; border-left: 3px solid var(--fg); font-size: 1.02rem; }
+dl { display: grid; grid-template-columns: 9.5rem 1fr; gap: 6px 12px; margin: 0; font-size: 0.93rem; }
+dd { margin: 0; overflow-wrap: anywhere; }
+td { overflow-wrap: break-word; }
+dd p { margin: 0; }
+@media (max-width: 560px) { dl { grid-template-columns: 1fr; } dd { margin-bottom: 6px; } }
+.badge { display: inline-block; white-space: nowrap; padding: 0 8px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; }
+.badge.draft { color: var(--draft); background: var(--draft-bg); }
+.badge.approved { color: var(--ok); background: var(--ok-bg); }
+.badge.rejected { color: var(--no); background: var(--no-bg); }
+.decision { margin: 12px 0 0; font-size: 0.9rem; color: var(--muted); }
+@media print { body { background: #fff; color: #000; } .entry { border-color: #999; } }
+</style>
+</head>
+<body>
+<main>
+<h1>Gilligan guidance review</h1>
+<p class="meta">Catalogue version 2026-09-19.1 · 38 entries: 0 approved, 38 draft, 0 rejected</p>
+
+<p>The Gilligan assistant and its water-quality reports may only suggest possible causes, next steps and referrals that appear here with an approved status.
+Anything not approved stays hidden from customers: reports then show the threshold crossing without naming a cause, and chat describes what was measured and what the sensors cannot tell.</p>
+<p>Approving an entry means the wording is defensible exactly as written, the conditions for showing it are right, and Clean Earth Rovers will stand behind it appearing in a customer-facing answer or report.
+Please mark each entry, and note any edits beside its wording.</p>
+<p>Referrals to Clean Earth Rovers services also need their contact details confirmed.
+An entry with a referral stays hidden until both the entry and the referral are approved.</p>
+
+<h2>Summary</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Entry</th><th>Type</th><th>Used in</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td><a href="#sewage-marine">Sewage-like pattern in coastal water</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#sewage-freshwater">Sewage-like pattern in fresh water</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#hypoxia">Low-oxygen pattern</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#upwelling-caution">Natural cold-water events in coastal water</a></td><td>Limitation</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#stormwater">Runoff-like pattern</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#thermal">Warming with falling oxygen</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#acidic-input-freshwater">Acid-like pattern in fresh water</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#saltwater-intrusion">Saltier water reaching the pod</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#industrial-unclear">Abrupt change with no clear pattern</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#algal-bloom">Daily oxygen swings consistent with algae</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#sensor-limits">What the sensors cannot detect</a></td><td>Limitation</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#fault-first">Rule out the instrument first</a></td><td>Limitation</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#turbidity-relative">Turbidity is a relative clarity level</a></td><td>Limitation</td><td>Report and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#limits-not-healthy-range">Alert limits are not healthy ranges</a></td><td>Limitation</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#mixed-sites">Readings from more than one location</a></td><td>Limitation</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#inspect-sensors">Inspect the pod</a></td><td>Next step</td><td>Report (operational) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#check-power-connection">Check power and connection</a></td><td>Next step</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#calibration-schedule">Keep sensors calibrated</a></td><td>Next step</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#verify-do-sensor">Check the dissolved-oxygen sensor</a></td><td>Next step</td><td>Report (operational) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#confirm-readings">Confirm with an independent measurement</a></td><td>Next step</td><td>Report (investigative) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#bacteria-testing">Arrange bacteria testing</a></td><td>Next step</td><td>Report (investigative) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#compare-rainfall">Compare with rainfall</a></td><td>Next step</td><td>Report (investigative) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#compare-tides">Compare with tides</a></td><td>Next step</td><td>Report (investigative) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#regional-temperature">Compare with regional temperatures</a></td><td>Next step</td><td>Report (investigative) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#check-nearby-activity">Check for nearby activity</a></td><td>Next step</td><td>Report (investigative) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#record-observations">Record what you see</a></td><td>Next step</td><td>Report (investigative) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#keep-monitoring">Keep watching the readings</a></td><td>Next step</td><td>Report (investigative) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#notify-agency">Notify the responsible agency</a></td><td>Next step</td><td>Report (stakeholder) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#low-oxygen-priority">Treat very low oxygen as a priority</a></td><td>Next step</td><td>Report (stakeholder) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#bloom-precautions">Precautions for a suspected bloom</a></td><td>Next step</td><td>Report (stakeholder) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#report-pollution">Report a suspected discharge</a></td><td>Next step</td><td>Report (stakeholder) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#report-dead-fish">Report dead fish</a></td><td>Next step</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#share-report">Share the report</a></td><td>Next step</td><td>Report (stakeholder) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#professional-review">Professional review for long events</a></td><td>Next step</td><td>Report (stakeholder) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#cer-algal-bloom-referral">CER algal bloom cleanup</a></td><td>Next step</td><td>Report (stakeholder) and chat</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#cer-fish-kill-referral">CER fish kill cleanup</a></td><td>Next step</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#cer-debris-referral">CER debris capture</a></td><td>Next step</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#cer-oil-spill-referral">Oil spills and CER response</a></td><td>Next step</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
+</tbody>
+</table></div>
+
+<h2>Referrals</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Service</th><th>Contact</th><th>Review</th></tr></thead>
+<tbody>
+<tr><td>Algal bloom cleanup<br><span class="meta">Clean Earth Rovers</span></td><td>info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6</td><td><p><span class="badge draft">draft</span></p><p class="note">Contact taken from the public CER website on 2026-09-17; confirmation is supervisor item 20.</p></td></tr>
+<tr><td>Fish kill cleanup<br><span class="meta">Clean Earth Rovers</span></td><td>info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6</td><td><p><span class="badge draft">draft</span></p><p class="note">Contact taken from the public CER website on 2026-09-17; confirmation is supervisor item 20.</p></td></tr>
+<tr><td>Debris capture<br><span class="meta">Clean Earth Rovers</span></td><td>info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6</td><td><p><span class="badge draft">draft</span></p><p class="note">Contact taken from the public CER website on 2026-09-17; confirmation is supervisor item 20.</p></td></tr>
+<tr><td>Oil spill response<br><span class="meta">Clean Earth Rovers</span></td><td>info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6</td><td><p><span class="badge draft">draft</span></p><p class="note">Contact taken from the public CER website on 2026-09-17; confirmation is supervisor item 20.</p></td></tr>
+<tr><td>Review by a qualified water-quality professional<br><span class="meta">No named provider</span></td><td>None</td><td><p><span class="badge draft">draft</span></p><p class="note">Neutral referral for every problem outside the four CER services; names no third party.</p></td></tr>
+</tbody>
+</table></div>
+
+<h2>Entries</h2>
+<article class="entry" id="sewage-marine">
+  <header>
+    <h3>Sewage-like pattern in coastal water</h3>
+    <p class="meta"><code>sewage-marine</code> · Possible cause · Report and chat</p>
+  </header>
+  <blockquote>Conductivity fell while turbidity rose and dissolved oxygen and ORP declined. In coastal water this combination is consistent with fresh water carrying organic material, such as a sewage release. Stormwater runoff looks similar but coincides with rain. Sensor data alone cannot confirm the source.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report event, or tool results, show the full marine sewage pattern at a marine, brackish or estuarine pod.</dd>
+    <dt>Report selection</dt><dd>Sewage; marine water only; confidence at least 70%</dd>
+    <dt>Evidence needed</dt><dd>In the same window: dissolved oxygen down, ORP down, turbidity up and conductivity down.</dd>
+    <dt>Limitation</dt><dd>Cannot tell sewage from stormwater without a rainfall record, and cannot detect bacteria.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.2 (raw sewage spill row)<br>sot-v2 §6.4 (Raw Sewage Spill, Marine)<br>advice-drafts disc-sewage-edu-01</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="sewage-freshwater">
+  <header>
+    <h3>Sewage-like pattern in fresh water</h3>
+    <p class="meta"><code>sewage-freshwater</code> · Possible cause · Report and chat</p>
+  </header>
+  <blockquote>Conductivity and turbidity rose while dissolved oxygen and ORP declined. In fresh water this combination is consistent with an organic input, such as a sewage release. Industrial discharges can also raise conductivity. Sensor data alone cannot confirm the source.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report event, or tool results, show the full freshwater sewage pattern at a freshwater pod.</dd>
+    <dt>Report selection</dt><dd>Sewage; freshwater water only; confidence at least 70%</dd>
+    <dt>Evidence needed</dt><dd>In the same window: dissolved oxygen down, ORP down, turbidity up and conductivity up.</dd>
+    <dt>Limitation</dt><dd>Cannot tell sewage from other organic or industrial inputs, and cannot detect bacteria.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.3 (raw sewage)<br>sot-v2 §6.4 (Raw Sewage Spill)<br>advice-drafts disc-sewage-edu-01</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="hypoxia">
+  <header>
+    <h3>Low-oxygen pattern</h3>
+    <p class="meta"><code>hypoxia</code> · Possible cause · Report and chat</p>
+  </header>
+  <blockquote>Dissolved oxygen and ORP fell together while conductivity and turbidity held steady. This is consistent with oxygen being used up faster than it is replaced, a condition that can stress or kill fish.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report event, or tool results, show dissolved oxygen and ORP falling together with no rise in conductivity or turbidity.</dd>
+    <dt>Report selection</dt><dd>Hypoxia; any water; confidence at least 50%</dd>
+    <dt>Evidence needed</dt><dd>Dissolved oxygen and ORP both below this pod's configured thresholds in the same window; conductivity and turbidity not rising.</dd>
+    <dt>Limitation</dt><dd>A worn or fouled dissolved-oxygen sensor, or still water around it, can produce falsely low readings.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.2 (hypoxia or fish-kill row)<br>sot-v2 §6.4 (Hypoxia or Fish-Kill Conditions)<br>advice-drafts hyp-edu-01</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p><p class="note">v2's signature is dissolved oxygen near zero with negative ORP; the report rule fires on crossing the pod's configured thresholds, which may be well above zero.</p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="upwelling-caution">
+  <header>
+    <h3>Natural cold-water events in coastal water</h3>
+    <p class="meta"><code>upwelling-caution</code> · Limitation · Report and chat</p>
+  </header>
+  <blockquote>In coastal water, cold, low-oxygen water rising from depth (upwelling) or arriving with internal tides can lower dissolved oxygen and pH naturally. If temperature fell at the same time, that natural explanation is more likely than pollution.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>Dissolved oxygen fell at a marine, brackish or estuarine pod, or the user asks whether low oxygen in coastal water means pollution.</dd>
+    <dt>Report selection</dt><dd>Hypoxia; marine water only</dd>
+    <dt>Evidence needed</dt><dd>A dissolved-oxygen decline at a coastal pod.</dd>
+    <dt>Limitation</dt><dd>Upwelling usually affects several nearby sites at once; one pod cannot show that.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §5.3<br>sot-v2 §5.4<br>sot-v2 §11 (temperature and DO coupling)</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="stormwater">
+  <header>
+    <h3>Runoff-like pattern</h3>
+    <p class="meta"><code>stormwater</code> · Possible cause · Report and chat</p>
+  </header>
+  <blockquote>Turbidity rose together with a change in conductivity, a pattern consistent with runoff after rain. Comparing the timing with a local rainfall record is the main way to tell runoff from other inputs.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report event, or tool results, show a turbidity rise together with a conductivity change.</dd>
+    <dt>Report selection</dt><dd>Stormwater; any water; confidence at least 50%</dd>
+    <dt>Evidence needed</dt><dd>Turbidity up and conductivity changed in the same window, without a dissolved-oxygen and ORP decline.</dd>
+    <dt>Limitation</dt><dd>Without a rainfall record, runoff cannot be told apart from dredging, construction or other discharges.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.2 (stormwater runoff row)<br>sot-v2 §6.3 (stormwater runoff)<br>sot-v2 §6.4 (Stormwater Runoff)<br>advice-drafts disc-storm-edu-01</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="thermal">
+  <header>
+    <h3>Warming with falling oxygen</h3>
+    <p class="meta"><code>thermal</code> · Possible cause · Report and chat</p>
+  </header>
+  <blockquote>Temperature rose while dissolved oxygen fell and the other readings held steady. Warmer water holds less oxygen, so this pattern is consistent with a warm-water discharge or with regional warming such as a marine heatwave.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report event, or tool results, show temperature up and dissolved oxygen down with no other reading moving.</dd>
+    <dt>Report selection</dt><dd>Thermal; any water; confidence at least 60%</dd>
+    <dt>Evidence needed</dt><dd>Temperature up and dissolved oxygen down in the same window; conductivity, pH, ORP and turbidity steady.</dd>
+    <dt>Limitation</dt><dd>One pod cannot tell a local discharge from regional warming; a heatwave affects a wide area and lasts days to weeks.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.2 (thermal discharge and marine heatwave rows)<br>sot-v2 §6.4 (Thermal Discharge)<br>sot-v2 §5.6<br>advice-drafts thermal-escalation-sustained-signature</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="acidic-input-freshwater">
+  <header>
+    <h3>Acid-like pattern in fresh water</h3>
+    <p class="meta"><code>acidic-input-freshwater</code> · Possible cause · Report and chat</p>
+  </header>
+  <blockquote>pH fell while conductivity rose. In fresh water this pairing is consistent with an acidic input, such as acid drainage or a chemical spill.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report event, or tool results, show pH down and conductivity up at a freshwater pod.</dd>
+    <dt>Report selection</dt><dd>Acidic input; freshwater water only; confidence at least 55%</dd>
+    <dt>Evidence needed</dt><dd>pH down and conductivity up in the same window at a freshwater pod.</dd>
+    <dt>Limitation</dt><dd>Sensor data cannot identify the substance or its source.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.3 (acidic input)<br>advice-drafts disc-acid-edu-01</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p><p class="note">No marine entry on purpose: v2 §6.3 says acidic input is unlikely to be detectable in seawater unless near the source, so a marine report leaves this cause unnamed.</p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="saltwater-intrusion">
+  <header>
+    <h3>Saltier water reaching the pod</h3>
+    <p class="meta"><code>saltwater-intrusion</code> · Possible cause · Report and chat</p>
+  </header>
+  <blockquote>Conductivity rose while the other readings held steady. This is consistent with saltier water reaching the pod, for example on a high tide, during a dry spell, or with a storm surge. At coastal sites, tides can cause this routinely.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report event, or tool results, show conductivity rising with no change in dissolved oxygen, ORP, pH or turbidity.</dd>
+    <dt>Report selection</dt><dd>Saltwater intrusion; any water; confidence at least 45%</dd>
+    <dt>Evidence needed</dt><dd>Conductivity up in the same window, with dissolved oxygen, ORP, pH and turbidity steady.</dd>
+    <dt>Limitation</dt><dd>Without tide or rainfall records, cannot be told apart from a discharge that only raises conductivity.</dd>
+    
+    <dt>Sources</dt><dd>general<br>event-rules (saltwater intrusion rule, src/report/events.ts)</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="industrial-unclear">
+  <header>
+    <h3>Abrupt change with no clear pattern</h3>
+    <p class="meta"><code>industrial-unclear</code> · Possible cause · Report and chat</p>
+  </header>
+  <blockquote>Conductivity, pH or ORP changed abruptly without matching a natural pattern. Possible causes include a discharge from a nearby outfall or site, a spill, or a sensor fault. The data cannot tell which.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report event, or tool results, show an abrupt step change in conductivity, pH or ORP that matches no more specific pattern.</dd>
+    <dt>Report selection</dt><dd>Industrial; any water; confidence at least 30%</dd>
+    <dt>Evidence needed</dt><dd>An abrupt change in conductivity, pH or ORP in the same window.</dd>
+    <dt>Limitation</dt><dd>This is a low-confidence, catch-all pattern; it does not show that a discharge happened.</dd>
+    
+    <dt>Sources</dt><dd>general<br>event-rules (industrial fallback rule, src/report/events.ts)</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="algal-bloom">
+  <header>
+    <h3>Daily oxygen swings consistent with algae</h3>
+    <p class="meta"><code>algal-bloom</code> · Possible cause · Report and chat</p>
+  </header>
+  <blockquote>Dissolved oxygen swung from a daytime high to a low before dawn, with pH moving in step. This daily pattern is consistent with heavy algal growth. The low point before dawn is when fish are most at risk.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report event, or tool results, show large in-phase daily swings in dissolved oxygen and pH.</dd>
+    <dt>Report selection</dt><dd>Algal bloom; any water; confidence at least 60%</dd>
+    <dt>Evidence needed</dt><dd>Within one day, dissolved oxygen above and below this pod's configured thresholds, with pH swinging in phase.</dd>
+    <dt>Limitation</dt><dd>The sensors cannot identify algae species or detect toxins, and toxin-producing blooms may show no oxygen pattern.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.2 (algal bloom row)<br>sot-v2 §6.4 (Active Algal Bloom)<br>sot-v2 §10<br>advice-drafts bloom-edu-01</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p><p class="note">The report cannot raise this event on live data yet: it needs a daily-cycle classifier that does not exist.</p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="sensor-limits">
+  <header>
+    <h3>What the sensors cannot detect</h3>
+    <p class="meta"><code>sensor-limits</code> · Limitation · Report and chat</p>
+  </header>
+  <blockquote>These sensors cannot detect bacteria, viruses, nutrients, metals, oil or algal toxins, so they cannot show whether the water is safe for swimming, fishing or shellfish harvest. Only laboratory testing can.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A sewage, runoff or algae pattern was found, or the user asks whether the water is safe or contaminated.</dd>
+    <dt>Report selection</dt><dd>Sewage, Stormwater, Algal bloom; any water</dd>
+    <dt>Evidence needed</dt><dd>None beyond the trigger or question.</dd>
+    <dt>Limitation</dt><dd>None.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §10 (including the public health rule)</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="fault-first">
+  <header>
+    <h3>Rule out the instrument first</h3>
+    <p class="meta"><code>fault-first</code> · Limitation · Report and chat</p>
+  </header>
+  <blockquote>A sensor problem can look like a water-quality change. A real event usually moves several readings gradually, while a fault often moves one reading alone or all readings at the same moment.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A reading crossed a configured threshold, or the user asks why a reading changed suddenly.</dd>
+    <dt>Report selection</dt><dd>any threshold crossing, Inconclusive, Hypoxia, Thermal, Acidic input, Industrial, Saltwater intrusion; any water</dd>
+    <dt>Evidence needed</dt><dd>A threshold crossing or an unexplained change.</dd>
+    <dt>Limitation</dt><dd>The report does not yet run automatic fault checks, so this is a caution, not a finding.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §0 rule 1<br>sot-v2 §7.2 rules 1-2<br>advice-drafts INST-12</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="turbidity-relative">
+  <header>
+    <h3>Turbidity is a relative clarity level</h3>
+    <p class="meta"><code>turbidity-relative</code> · Limitation · Report and chat</p>
+  </header>
+  <blockquote>Turbidity is shown as a relative clarity level (Clear, Moderate or Turbid), not a calibrated measurement, so it shows whether the water became cloudier but not by exactly how much. A missing turbidity reading can also appear as 0, which looks like clear water.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A pattern involving turbidity was found, or the user asks what a turbidity value means.</dd>
+    <dt>Report selection</dt><dd>Sewage, Stormwater; any water</dd>
+    <dt>Evidence needed</dt><dd>A turbidity reading or a turbidity change.</dd>
+    <dt>Limitation</dt><dd>None.</dd>
+    
+    <dt>Sources</dt><dd>general<br>product</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="limits-not-healthy-range">
+  <header>
+    <h3>Alert limits are not healthy ranges</h3>
+    <p class="meta"><code>limits-not-healthy-range</code> · Limitation · Chat only</p>
+  </header>
+  <blockquote>This pod's alert limits are set by its operator. A reading inside them is not necessarily healthy for aquatic life, and a limit set wider than the sensor can read will never raise an alert.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>The user asks whether a reading within the pod's limits is safe or normal, or why no alert was raised.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>The pod's configured thresholds.</dd>
+    <dt>Limitation</dt><dd>None.</dd>
+    
+    <dt>Sources</dt><dd>general<br>product</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="mixed-sites">
+  <header>
+    <h3>Readings from more than one location</h3>
+    <p class="meta"><code>mixed-sites</code> · Limitation · Chat only</p>
+  </header>
+  <blockquote>Pods are sometimes moved between sites. Readings taken before a move describe a different body of water and should not be compared directly with the current site.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>The readings in the requested period come from more than one location, or the user asks about the pod's long-term history.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>Readings whose recorded location changes within the period.</dd>
+    <dt>Limitation</dt><dd>The pod's records do not note when it moved, so a move is inferred from its reported position.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="inspect-sensors">
+  <header>
+    <h3>Inspect the pod</h3>
+    <p class="meta"><code>inspect-sensors</code> · Next step · Report (operational) and chat</p>
+  </header>
+  <blockquote>Inspect and clean the sensors on the affected readings, and check the pod's battery and position in the water, before treating the change as a water-quality event.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A reading crossed a configured threshold or changed unexpectedly.</dd>
+    <dt>Report selection</dt><dd>any threshold crossing, Sewage, Stormwater, Hypoxia, Thermal, Acidic input, Industrial, Saltwater intrusion, Algal bloom, Inconclusive; any water</dd>
+    <dt>Evidence needed</dt><dd>A threshold crossing or an unexplained change.</dd>
+    <dt>Limitation</dt><dd>Cleaning resets fouling, so compare readings before and after.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §7.1<br>sot-v2 §7.2 rules 4-7<br>advice-drafts INST-08</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="check-power-connection">
+  <header>
+    <h3>Check power and connection</h3>
+    <p class="meta"><code>check-power-connection</code> · Next step · Chat only</p>
+  </header>
+  <blockquote>If readings stop arriving or stay flat, check the pod's battery, power and connection before assuming the water changed.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>The user asks about missing, delayed or unchanging readings.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>A gap in readings, or readings that do not change.</dd>
+    <dt>Limitation</dt><dd>None.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="calibration-schedule">
+  <header>
+    <h3>Keep sensors calibrated</h3>
+    <p class="meta"><code>calibration-schedule</code> · Next step · Chat only</p>
+  </header>
+  <blockquote>Clean and calibrate the sensors on the manufacturer's recommended schedule. Readings drift between calibrations, so a slow change over weeks can be drift rather than a real trend.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>The user asks whether readings can be trusted, or about drift or calibration.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>None beyond the question.</dd>
+    <dt>Limitation</dt><dd>None.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="verify-do-sensor">
+  <header>
+    <h3>Check the dissolved-oxygen sensor</h3>
+    <p class="meta"><code>verify-do-sensor</code> · Next step · Report (operational) and chat</p>
+  </header>
+  <blockquote>Before acting on low dissolved oxygen, confirm the sensor is working: clean it, and check that its reading changes when the water around it moves.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>Dissolved oxygen is low, or the user asks what to do about low oxygen.</dd>
+    <dt>Report selection</dt><dd>Hypoxia; any water</dd>
+    <dt>Evidence needed</dt><dd>Dissolved oxygen below this pod's configured minimum.</dd>
+    <dt>Limitation</dt><dd>Applies to the flow-dependent sensor type v2 describes; the pod's sensor type is not recorded in the registry.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.4 (Hypoxia, urgent response)<br>sot-v2 §7.1 (galvanic DO faults)</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="confirm-readings">
+  <header>
+    <h3>Confirm with an independent measurement</h3>
+    <p class="meta"><code>confirm-readings</code> · Next step · Report (investigative) and chat</p>
+  </header>
+  <blockquote>Confirm the flagged readings with an independent measurement, such as a calibrated handheld meter or a laboratory sample, before drawing conclusions.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A reading crossed a configured threshold, or the user asks how to check a reading.</dd>
+    <dt>Report selection</dt><dd>any threshold crossing, Sewage, Stormwater, Hypoxia, Thermal, Acidic input, Industrial, Saltwater intrusion, Algal bloom, Inconclusive; any water</dd>
+    <dt>Evidence needed</dt><dd>A threshold crossing.</dd>
+    <dt>Limitation</dt><dd>None.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §9.1 step 8<br>sot-v2 §9.2<br>advice-drafts INST-12</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="bacteria-testing">
+  <header>
+    <h3>Arrange bacteria testing</h3>
+    <p class="meta"><code>bacteria-testing</code> · Next step · Report (investigative) and chat</p>
+  </header>
+  <blockquote>Ask your local health or environmental agency, or a qualified sampler, to test the water for fecal indicator bacteria such as Enterococcus. Avoid contact with the water until results are available.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A sewage or runoff pattern was found.</dd>
+    <dt>Report selection</dt><dd>Sewage, Stormwater; any water; confidence at least 50%</dd>
+    <dt>Evidence needed</dt><dd>A sewage or stormwater event in the report, or the same pattern in tool results.</dd>
+    <dt>Limitation</dt><dd>Bacteria results take time; the sensors cannot stand in for them.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.4 (Raw Sewage Spill, confirmation)<br>sot-v2 §10 (public health rule)</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p><p class="note">Reworks the rejected draft 'sewage grab-sample': sampling is handed to a qualified sampler because of the exposure risk.</p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="compare-rainfall">
+  <header>
+    <h3>Compare with rainfall</h3>
+    <p class="meta"><code>compare-rainfall</code> · Next step · Report (investigative) and chat</p>
+  </header>
+  <blockquote>Compare the time of the change with a local rainfall record. Runoff usually arrives within hours of rain.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A runoff or sewage pattern was found, or the user asks how to tell the two apart.</dd>
+    <dt>Report selection</dt><dd>Stormwater, Sewage; any water</dd>
+    <dt>Evidence needed</dt><dd>A stormwater or sewage event.</dd>
+    <dt>Limitation</dt><dd>Rain earlier upstream can still arrive later; a dry day on site does not rule runoff out.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.4 (Stormwater Runoff, timing)<br>advice-drafts disc-storm-diy-01</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p><p class="note">The limitation reflects the v2 review concern (supervisor item 19) that Example 2's 'no rain rules out stormwater' goes beyond its observations.</p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="compare-tides">
+  <header>
+    <h3>Compare with tides</h3>
+    <p class="meta"><code>compare-tides</code> · Next step · Report (investigative) and chat</p>
+  </header>
+  <blockquote>Compare the time of the change with local tide tables and recent rainfall. A rise that follows high tides or a dry spell points to saltwater rather than a discharge.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A saltier-water pattern was found, or the user asks what caused a conductivity rise.</dd>
+    <dt>Report selection</dt><dd>Saltwater intrusion; any water</dd>
+    <dt>Evidence needed</dt><dd>A Saltwater intrusion event or a conductivity rise.</dd>
+    <dt>Limitation</dt><dd>Tide tables describe the nearest station, which may differ from the pod's site.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="regional-temperature">
+  <header>
+    <h3>Compare with regional temperatures</h3>
+    <p class="meta"><code>regional-temperature</code> · Next step · Report (investigative) and chat</p>
+  </header>
+  <blockquote>Compare with water temperatures from nearby monitoring stations or regional sea-surface temperature reports. Warming across a wide area points to weather or a heatwave rather than a local discharge.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A warming pattern was found, or the user asks whether warm water is local.</dd>
+    <dt>Report selection</dt><dd>Thermal; any water</dd>
+    <dt>Evidence needed</dt><dd>A Thermal event or a temperature rise.</dd>
+    <dt>Limitation</dt><dd>Nearby stations may measure different depths or water.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="check-nearby-activity">
+  <header>
+    <h3>Check for nearby activity</h3>
+    <p class="meta"><code>check-nearby-activity</code> · Next step · Report (investigative) and chat</p>
+  </header>
+  <blockquote>Check for activity near or upstream of the pod at the time of the change, such as construction, dredging, pumping, outfall discharges or heavy boat traffic.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>An unexplained or discharge-like change was found, or the user asks what could have caused it.</dd>
+    <dt>Report selection</dt><dd>Industrial, Acidic input, Thermal, Saltwater intrusion, Inconclusive; any water</dd>
+    <dt>Evidence needed</dt><dd>An event without a confirmed cause.</dd>
+    <dt>Limitation</dt><dd>None.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="record-observations">
+  <header>
+    <h3>Record what you see</h3>
+    <p class="meta"><code>record-observations</code> · Next step · Report (investigative) and chat</p>
+  </header>
+  <blockquote>Note what you can see at the site, such as water color, odor, dead fish, debris or nearby work, with times and photos. These notes help explain the readings later.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>An event was found, or the user asks what to do next.</dd>
+    <dt>Report selection</dt><dd>Sewage, Stormwater, Hypoxia, Thermal, Acidic input, Industrial, Saltwater intrusion, Algal bloom, Inconclusive; any water</dd>
+    <dt>Evidence needed</dt><dd>An event in the report, or the user's question.</dd>
+    <dt>Limitation</dt><dd>None.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="keep-monitoring">
+  <header>
+    <h3>Keep watching the readings</h3>
+    <p class="meta"><code>keep-monitoring</code> · Next step · Report (investigative) and chat</p>
+  </header>
+  <blockquote>Keep watching the readings over the following days. A real change usually persists or recovers gradually, while a one-off spike often points to the sensor.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A reading crossed a threshold without a clear cause.</dd>
+    <dt>Report selection</dt><dd>any threshold crossing, Inconclusive; any water</dd>
+    <dt>Evidence needed</dt><dd>A threshold crossing or an Inconclusive event.</dd>
+    <dt>Limitation</dt><dd>None.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="notify-agency">
+  <header>
+    <h3>Notify the responsible agency</h3>
+    <p class="meta"><code>notify-agency</code> · Next step · Report (stakeholder) and chat</p>
+  </header>
+  <blockquote>Notify your local sewer or water utility, or the agency named in your site protocol, and share the times and readings from this report.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A full sewage pattern was found.</dd>
+    <dt>Report selection</dt><dd>Sewage; any water; confidence at least 70%</dd>
+    <dt>Evidence needed</dt><dd>A sewage event at full-pattern confidence.</dd>
+    <dt>Limitation</dt><dd>The report does not know the site protocol or the responsible agency.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.4 (Raw Sewage Spill, confirmation)<br>advice-drafts disc-sewage-esc-01</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="low-oxygen-priority">
+  <header>
+    <h3>Treat very low oxygen as a priority</h3>
+    <p class="meta"><code>low-oxygen-priority</code> · Next step · Report (stakeholder) and chat</p>
+  </header>
+  <blockquote>Treat sustained low dissolved oxygen as a priority whatever its cause, and follow your site protocol for notifying others.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>Dissolved oxygen stayed low for more than a few hours.</dd>
+    <dt>Report selection</dt><dd>Hypoxia; any water; severity Moderate or higher</dd>
+    <dt>Evidence needed</dt><dd>A Hypoxia event lasting more than three hours.</dd>
+    <dt>Limitation</dt><dd>Check the sensor first (see verify-do-sensor).</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §6.4 (Hypoxia, urgent response)<br>advice-drafts hyp-esc-01</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="bloom-precautions">
+  <header>
+    <h3>Precautions for a suspected bloom</h3>
+    <p class="meta"><code>bloom-precautions</code> · Next step · Report (stakeholder) and chat</p>
+  </header>
+  <blockquote>Keep people and pets out of discolored or scummy water, and report a suspected bloom to your local environmental or health agency, which can test for toxins.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report found the algae pattern, or the user describes a visible bloom.</dd>
+    <dt>Report selection</dt><dd>Algal bloom; any water; confidence at least 60%</dd>
+    <dt>Evidence needed</dt><dd>An Algal bloom event, or the user's description of a visible bloom.</dd>
+    <dt>Limitation</dt><dd>The sensors cannot detect toxins.</dd>
+    
+    <dt>Sources</dt><dd>general<br>sot-v2 §10</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="report-pollution">
+  <header>
+    <h3>Report a suspected discharge</h3>
+    <p class="meta"><code>report-pollution</code> · Next step · Report (stakeholder) and chat</p>
+  </header>
+  <blockquote>If a spill or illegal discharge is suspected, report it to your local environmental agency with the times and readings from this report.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A discharge-like pattern of at least Moderate severity was found, or the user suspects a spill.</dd>
+    <dt>Report selection</dt><dd>Acidic input, Industrial; any water; confidence at least 30%; severity Moderate or higher</dd>
+    <dt>Evidence needed</dt><dd>An Acidic input or Industrial event of at least Moderate severity.</dd>
+    <dt>Limitation</dt><dd>The data cannot confirm a discharge; the agency decides whether to investigate.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="report-dead-fish">
+  <header>
+    <h3>Report dead fish</h3>
+    <p class="meta"><code>report-dead-fish</code> · Next step · Chat only</p>
+  </header>
+  <blockquote>If you see dead or struggling fish, note the time, place and number, and report it to your state fish and wildlife agency.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>The user reports dead or struggling fish.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>The user's own report of dead fish.</dd>
+    <dt>Limitation</dt><dd>The sensors cannot detect a fish kill.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="share-report">
+  <header>
+    <h3>Share the report</h3>
+    <p class="meta"><code>share-report</code> · Next step · Report (stakeholder) and chat</p>
+  </header>
+  <blockquote>Share this report with the people responsible for the site, such as your site manager or monitoring team.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report flagged a reading or an event.</dd>
+    <dt>Report selection</dt><dd>any threshold crossing, Sewage, Stormwater, Hypoxia, Thermal, Acidic input, Industrial, Saltwater intrusion, Algal bloom, Inconclusive; any water</dd>
+    <dt>Evidence needed</dt><dd>A flagged reading or event in a report.</dd>
+    <dt>Limitation</dt><dd>None.</dd>
+    
+    <dt>Sources</dt><dd>event-rules (existing stakeholder line)</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="professional-review">
+  <header>
+    <h3>Professional review for long events</h3>
+    <p class="meta"><code>professional-review</code> · Next step · Report (stakeholder) and chat</p>
+  </header>
+  <blockquote>Consider asking a qualified water-quality professional to review this period.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>An event lasted more than 12 hours, or the user asks who can investigate a problem outside the four CER services.</dd>
+    <dt>Report selection</dt><dd>Sewage, Stormwater, Hypoxia, Thermal, Acidic input, Industrial, Saltwater intrusion, Inconclusive; any water; confidence at least 50%; severity High or higher</dd>
+    <dt>Evidence needed</dt><dd>A High-severity event at or above the report's confidence floor.</dd>
+    <dt>Limitation</dt><dd>None.</dd>
+    <dt>Referral</dt><dd>Review by a qualified water-quality professional <span class="badge draft">draft</span></dd>
+    <dt>Sources</dt><dd>event-rules (existing escalation line)<br>advice-drafts hyp-esc-01</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="cer-algal-bloom-referral">
+  <header>
+    <h3>CER algal bloom cleanup</h3>
+    <p class="meta"><code>cer-algal-bloom-referral</code> · Next step · Report (stakeholder) and chat</p>
+  </header>
+  <blockquote>Clean Earth Rovers offers algal bloom cleanup.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A report found the algae pattern, or the user describes a visible bloom (discolored water, scum or mats) and asks for help removing it.</dd>
+    <dt>Report selection</dt><dd>Algal bloom; any water; confidence at least 60%</dd>
+    <dt>Evidence needed</dt><dd>An algal bloom event, or the user's own description of a visible bloom.</dd>
+    <dt>Limitation</dt><dd>The sensors cannot confirm a bloom; this is a service offer, not a diagnosis.</dd>
+    <dt>Referral</dt><dd>Clean Earth Rovers: Algal bloom cleanup (info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6) <span class="badge draft">draft</span></dd>
+    <dt>Sources</dt><dd>product 2026-09-17 decision on CER referrals</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="cer-fish-kill-referral">
+  <header>
+    <h3>CER fish kill cleanup</h3>
+    <p class="meta"><code>cer-fish-kill-referral</code> · Next step · Chat only</p>
+  </header>
+  <blockquote>Clean Earth Rovers offers fish kill cleanup.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>The user reports dead fish and asks for help.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>The user's own report of dead fish.</dd>
+    <dt>Limitation</dt><dd>The sensors cannot detect a fish kill.</dd>
+    <dt>Referral</dt><dd>Clean Earth Rovers: Fish kill cleanup (info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6) <span class="badge draft">draft</span></dd>
+    <dt>Sources</dt><dd>product 2026-09-17 decision on CER referrals</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="cer-debris-referral">
+  <header>
+    <h3>CER debris capture</h3>
+    <p class="meta"><code>cer-debris-referral</code> · Next step · Chat only</p>
+  </header>
+  <blockquote>Clean Earth Rovers offers debris capture for floating trash.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>The user asks about floating trash or debris in the water.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>The user's own description of debris.</dd>
+    <dt>Limitation</dt><dd>The sensors cannot detect debris.</dd>
+    <dt>Referral</dt><dd>Clean Earth Rovers: Debris capture (info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6) <span class="badge draft">draft</span></dd>
+    <dt>Sources</dt><dd>product 2026-09-17 decision on CER referrals</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="cer-oil-spill-referral">
+  <header>
+    <h3>Oil spills and CER response</h3>
+    <p class="meta"><code>cer-oil-spill-referral</code> · Next step · Chat only</p>
+  </header>
+  <blockquote>The pod's sensors largely cannot detect oil or fuel, so its readings cannot confirm or rule out a spill. Clean Earth Rovers offers oil spill response.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>The user reports an oil sheen, a fuel smell or a spill, or asks whether the pod can detect oil.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>The user's own report or question about oil.</dd>
+    <dt>Limitation</dt><dd>Oil barely changes the six measured readings.</dd>
+    <dt>Referral</dt><dd>Clean Earth Rovers: Oil spill response (info@cleanearthrovers.com, or book a call at https://calendar.app.google/b4asoD6b6vuae7Qj6) <span class="badge draft">draft</span></dd>
+    <dt>Sources</dt><dd>sot-v2 §6.2 (oil or fuel spill row)<br>sot-v2 §10<br>product 2026-09-17 decision on CER referrals</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+
+<h2>Sources</h2>
+<ul>
+<li><code>sot-v2</code>: DataPod Water Quality Source of Truth, version 2.0, 2026-09-16 (water-quality-source-of-truth-v2.pdf)</li>
+<li><code>advice-drafts</code>: Draft advice candidates, 2026-09-10 (archived, tag advice-archive-2026-09-17)</li>
+<li><code>event-rules</code>: Report event rules and recommendation wording before the catalogue (src/report/events.ts, src/report/narrative.ts)</li>
+<li><code>product</code>: Product decisions (docs/migration/GILLIGAN_PRODUCT_DIRECTION.md)</li>
+<li><code>general</code>: General water-quality practice, drafted 2026-09-19 for supervisor review; not grounded in the corpus</li>
+</ul>
+</main>
+</body>
+</html>

@@ -4,6 +4,7 @@ import { QuerySensorData, SensorQueryError, querySensorDataDefinition } from "./
 import { GenerateReport, generateReportDefinition } from "./generateReport";
 import { GetPodThresholds, getPodThresholdsDefinition } from "./getPodThresholds";
 import { getTurbidityInfo, getTurbidityInfoDefinition } from "./getTurbidityInfo";
+import { ListPods, listPodsDefinition } from "./listPods";
 
 /**
  * The tool inventory offered to the model.
@@ -52,6 +53,15 @@ export const buildToolRegistry = (
       run: (args, context) => sensor.run(args, context),
     });
 
+    // Shares `sensor` for the same reason `get_pod_thresholds` does: one `/devices` TTL cache
+    // per token across every tool in a request, and one set of pod names for the model to pass
+    // straight back as `device`.
+    const listPods = new ListPods({ sensor });
+    handlers.push({
+      definition: listPodsDefinition,
+      run: (args, context) => listPods.run(args, context),
+    });
+
     const podThresholds = new GetPodThresholds({ sensor });
     handlers.push({
       definition: getPodThresholdsDefinition,
@@ -79,4 +89,5 @@ export { QuerySensorData, SensorQueryError, querySensorDataDefinition };
 export { GenerateReport, generateReportDefinition };
 export { GetPodThresholds, getPodThresholdsDefinition };
 export { getTurbidityInfo, getTurbidityInfoDefinition };
+export { ListPods, listPodsDefinition };
 export type { SensorQueryParams } from "./querySensorData";

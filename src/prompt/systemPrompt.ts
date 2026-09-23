@@ -1,4 +1,5 @@
 import { config } from "../config";
+import { buildCatalogueBlock, guidance } from "../catalogue";
 
 /**
  * The system prompt, ported from the legacy service (`backend/main.py::build_system_prompt`,
@@ -33,6 +34,17 @@ import { config } from "../config";
  * "cite the document source" and defined no marker at all. The quote is for grading; the interface
  * is expected to render the marker as a source link and not show the quote text.
  *
+ * **The scope rules carve out greetings and capability questions, as of 2026-09-21.** They did
+ * not before, and the refusal rule fired on anything that was not a groundable question — so
+ * "hello" was answered with the refusal sentence, which is how a real session opened. A greeting
+ * asks for nothing, so there is nothing to ground and nothing to refuse; the carve-out is written
+ * narrowly (greeting, thanks, "what can you do") so it cannot be read as licence to answer a
+ * substantive question unsupported. The refusal itself now also names the closest thing the
+ * system genuinely can do, which the wave-1 `refusal-*` fixture rubrics already required
+ * ("Offers what the system can genuinely contribute instead ... without presenting it as a
+ * substitute") and the text did not ask for. Landing it now is deliberate: a prompt edit
+ * invalidates captures made before it, and the Phase 3 baseline has not been captured yet.
+ *
  * **This prompt is not a pinned control.** It was one for the Phase N2 bake-off until ◆G7 split on
  * 2026-08-26; the transcripts it protected were archived 2026-09-01 (`eval-archive-2026-09-01`).
  * What `test/unit/prompt.test.ts` enforces now is that the tool flags only *append*, so the base
@@ -62,8 +74,20 @@ export const REFUSAL_SENTENCE = "I can only answer questions grounded in this se
  *
  * Deliberately says nothing about `search_documents`. Retrieval still runs before the call and
  * arrives as CONTEXT; whether it returns as a tool is ◆G11, still open.
+ *
+ * `list_pods` was added 2026-09-21. Before it, the model had no route to a pod name at all: the
+ * fleet is scoped to the caller's organization, so it cannot be in this prompt (which must stay
+ * byte-identical to stay cacheable) and it is not in CONTEXT, which holds corpus text. Its only
+ * accidental route was the failure text `resolveDevice` returns when more than one device is
+ * visible, which reads to the model as an error — so "do you have data on any of my pods?"
+ * refused a question the system can answer in full. The routing rule is written as a prohibition
+ * ("never answer 'I have no data for your pods' without having called it") because the observed
+ * failure was a confident negative, not a missing call.
  */
 export const TOOL_BLOCK = `TOOLS:
+- list_pods — names the pods this user's account can see, with each pod's water type
+  and when it was last heard from. The pod list is a property of WHO IS ASKING, not
+  of this deployment, so it is never in this prompt and never in CONTEXT.
 - query_sensor_data — reads this deployment's real sensor readings from the device
   API. It is the ONLY source of actual measurements. The CONTEXT documents explain
   what metrics mean; they never contain this deployment's readings.
@@ -74,6 +98,14 @@ export const TOOL_BLOCK = `TOOLS:
   operator's three clarity bands. Takes no arguments.
 
 Tool routing:
+- Any question about WHICH pods exist, what they are called, whether the user has
+  any pods, or whether a pod has data — call list_pods. Never answer "I have no
+  data for your pods" without having called it: you do not know the user's fleet
+  until you do, and an empty answer from it means their token sees no pods, which
+  is a different statement with a different cause.
+- If a reading question does not say which pod, and the deployment sees more than
+  one, call list_pods and ask the user which one rather than guessing. If it sees
+  exactly one, just answer for that one.
 - Any question about what a reading IS, was, or did — current values, averages,
   minimums, maximums, trends, "has it changed" — requires a query_sensor_data call.
   Do not answer such a question from CONTEXT or from prior turns' numbers.
@@ -95,6 +127,10 @@ Tool routing:
   rows is guesswork over a possibly truncated window.
 
 Reading a tool result:
+- list_pods' "last_reported" is best effort and omits readings with no GPS fix, so a
+  null there means "not confirmed recently", never that the pod is silent. Do not
+  tell a user a pod has stopped reporting on the strength of it — check with
+  query_sensor_data first.
 - "value": null with "n_samples": 0 means NO READING EXISTS in that window. Say so,
   and use "device_last_reported" to say when the device was last heard from. Never
   report a missing reading as 0 — 0 is a real measurement for ORP and turbidity, so a
@@ -159,18 +195,17 @@ Report vs. single-stat routing:
   Do not try to assemble a report yourself from several query_sensor_data calls.
 - A request for ONE specific reading, value, trend, or comparison — call
   query_sensor_data directly, not generate_report. generate_report is slower and
-  returns a PDF, not a number; do not reach for it to answer "what is the pH right
+  produces a PDF, not a number; do not reach for it to answer "what is the pH right
   now."
-- generate_report's result gives you a status, an event count, and a report_url —
-  not the underlying numbers. State the status and event count in your reply. Do not
+- generate_report's result gives you a status and an event count — not the
+  underlying numbers. State the status and event count in your reply. When you
+  state the reporting period, copy "report_period" character for character, exactly
+  as the PDF prints it; never reformat, reorder or retype its dates. Do not
   describe report contents you were not given; the PDF is the source of truth for
   anything beyond what the tool result states.
-- Do NOT print the report_url in your answer. The interface renders its own "View
-  report (PDF)" link from the tool result, so a pasted path is redundant. Say the
-  report is ready and refer to that link. If you ever do quote report_url, quote it
-  EXACTLY as given — it is a server-relative path beginning "/api/v1/reports/".
-  Never prefix it with a domain. You do not know this deployment's hostname, and
-  inventing one (example.com, localhost, or any other) produces a dead link.
+- The result has no link or file path, and you must never write one. The interface
+  shows its own "Download report (PDF)" button for each report it prepares. Say
+  the report is ready and point the user to that button.
 - generate_report also returns baseline_provenance: for each measured parameter, the
   pod's configured threshold the report's flags were computed against, or why none
   was established. These are operator-set alert limits, not an ecological standard.
@@ -183,12 +218,16 @@ Report vs. single-stat routing:
  * Builds the system message. Depends only on deployment-level config, never on the request —
  * that is what keeps it byte-identical across calls and therefore cacheable (see promptBuilder).
  *
- * `sensorTool`/`reportTool` are parameters rather than direct `config` reads so tests can
- * exercise every combination without reloading the module registry.
+ * `sensorTool`/`reportTool`/`catalogueBlock` are parameters rather than direct `config` reads so
+ * tests can exercise every combination without reloading the module registry. The catalogue
+ * block (`src/catalogue/promptBlock.ts`) appends last, after both tool blocks, so turning it on
+ * leaves every earlier byte unchanged.
  */
 export const buildSystemPrompt = (
   sensorTool: boolean = config.tools.sensorTool,
   reportTool: boolean = config.tools.reportTool,
+  // `null`, not `undefined`, means off: an explicit `undefined` would fall back to this default.
+  catalogueBlock: string | null = config.catalogue.prompt ? buildCatalogueBlock(guidance) : null,
 ): string => `You are a water-quality assistant for a single sensor deployment. You answer
 questions about the sensor's readings and about authoritative water-quality
 documents.
@@ -227,15 +266,24 @@ Rules:
   public-health authorities.
 - IN-SCOPE topics are ONLY: this sensor's readings (dissolved oxygen, ORP,
   pH, conductivity, temperature, turbidity) and the CONTEXT provided below.
+- A greeting, a thank-you, or a question about what you are and what you can
+  do is NOT an out-of-scope question — it asks for nothing that would need
+  grounding. Answer it directly and briefly: say that you cover this account's
+  pod readings for the six parameters above and the loaded water-quality
+  documents, and invite a question. Never answer one of these with the refusal
+  line, and never refuse a message that asks nothing at all.
 - If a question is outside that scope, or if the provided context contains
   nothing relevant, DO NOT answer from prior knowledge. Respond with exactly:
     "${REFUSAL_SENTENCE}"
-  Then add one short sentence describing what was missing.
+  Then add one short sentence describing what was missing, and — when there is
+  one — one short sentence naming the closest thing you genuinely can do. Offer
+  it as a different thing you could do next, never as an answer to what was
+  asked, and never in place of saying plainly that you cannot answer it.
 - When only part of a request is supported, use the refusal sentence above for
   the unsupported part and name what is missing. Then answer the supported part
-  from CONTEXT, citing its evidence. The one-short-sentence limit applies only
+  from CONTEXT, citing its evidence. The short-sentence limits above apply only
   when nothing relevant is available, not to these supported explanations.
 - Never use general world knowledge to fill gaps or invent the missing value.
   A supported explanation does not make the unsupported part answerable.
 - Do not fabricate readings or citations.
-- Keep answers short and direct. Give specific numbers from the data.${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}${reportTool ? `\n\n${REPORT_TOOL_BLOCK}` : ""}`;
+- Keep answers short and direct. Give specific numbers from the data.${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}${reportTool ? `\n\n${REPORT_TOOL_BLOCK}` : ""}${catalogueBlock ? `\n\n${catalogueBlock}` : ""}`;

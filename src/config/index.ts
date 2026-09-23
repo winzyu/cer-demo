@@ -141,8 +141,11 @@ export type QuotaLimit = number | "unlimited";
  */
 export type QuotaScope = "caller" | "global";
 
-/** The dimensions a quota can refuse on. Both are optional and independent. */
-export type QuotaDimension = "requests" | "tokens";
+/**
+ * The dimensions a quota can refuse on. All are optional and independent: `requests` and
+ * `tokens` gate chat, `reports` gates report downloads (`POST /api/v1/reports`).
+ */
+export type QuotaDimension = "requests" | "tokens" | "reports";
 
 /**
  * Chat query quota (`QUERY_QUOTA*`).
@@ -173,6 +176,12 @@ export interface QuotaConfig {
    * allowed to finish and the next one is refused — a prompt's cost is not knowable in advance.
    */
   tokens: QuotaLimit;
+  /**
+   * Report PDFs allowed per key per window, or `"unlimited"`. Counted apart from chat requests
+   * because a report runs several device reads and a full render but no model call, so its
+   * cost has nothing in common with a question's.
+   */
+  reports: QuotaLimit;
   /** Window length in milliseconds, parsed from the suffixed form (`7d`, `24h`, `30m`). */
   windowMs: number;
   /** The literal string the operator wrote (`"7d"`), reused verbatim in logs and error prose. */
@@ -188,6 +197,20 @@ export interface QuotaConfig {
  */
 export interface AuditConfig {
   enabled: boolean;
+}
+
+/**
+ * The guidance catalogue (`src/catalogue/`).
+ *
+ * `prompt` defaults to **off** for the same reason as `SENSOR_TOOL`: the block changes the system
+ * prompt, and eval captures must not mix prompt states. Reports use the catalogue regardless.
+ *
+ * `includeDrafts` also defaults to off. On, customers see wording no supervisor has approved,
+ * so it exists only for the supervisor's own review of a running demo.
+ */
+export interface CatalogueConfig {
+  prompt: boolean;
+  includeDrafts: boolean;
 }
 
 export type CorpusSourceName = "artifact" | "firestore";
@@ -220,6 +243,7 @@ export interface Config {
   retrieval: RetrievalConfig;
   waterType: WaterType;
   audit: AuditConfig;
+  catalogue: CatalogueConfig;
 }
 
 // Validation errors are collected so the process fails once, with every problem listed.
@@ -401,6 +425,7 @@ const load = (): Config => {
       enabled: readBool("QUERY_QUOTA", false),
       requests: readLimit("QUERY_QUOTA_REQUESTS", UNLIMITED),
       tokens: readLimit("QUERY_QUOTA_TOKENS", UNLIMITED),
+      reports: readLimit("QUERY_QUOTA_REPORTS", UNLIMITED),
       windowMs: quotaWindow.ms,
       windowLabel: quotaWindow.label,
       scope: readEnum<QuotaScope>("QUERY_QUOTA_SCOPE", ["caller", "global"], "caller"),
@@ -417,6 +442,10 @@ const load = (): Config => {
     waterType: readEnum<WaterType>("WATER_TYPE", ["freshwater", "saltwater"], "freshwater"),
     audit: {
       enabled: readBool("AUDIT_LOG", false),
+    },
+    catalogue: {
+      prompt: readBool("CATALOGUE_PROMPT", false),
+      includeDrafts: readBool("CATALOGUE_DRAFTS", false),
     },
   };
 
@@ -466,6 +495,19 @@ const load = (): Config => {
     }
   }
 
+  if (config.catalogue.prompt) {
+    log.warn(
+      "CATALOGUE_PROMPT is ON: the system prompt carries the approved-guidance block. "
+      + "Same capture-comparability caveat as SENSOR_TOOL above.",
+    );
+  }
+  if (config.catalogue.includeDrafts) {
+    log.warn(
+      "CATALOGUE_DRAFTS is ON: chat and reports show catalogue entries no supervisor has "
+      + "approved. For supervisor review only; never set it for customers.",
+    );
+  }
+
   // Quota state is logged on **every** boot, in both directions. An operator's first question
   // when a request is refused — or is not — is "what did this deployment think the limits were",
   // and the answer must not require reading the environment of a running container.
@@ -477,18 +519,24 @@ const load = (): Config => {
     );
     log.warn(
       `QUERY_QUOTA is ON — requests=${describe(config.quota.requests)}, `
-      + `tokens=${describe(config.quota.tokens)} per ${config.quota.windowLabel} `
+      + `tokens=${describe(config.quota.tokens)}, reports=${describe(config.quota.reports)} `
+      + `per ${config.quota.windowLabel} `
       + `per ${config.quota.scope}. Counters are in-process: they reset on redeploy and are not `
       + "shared between instances.",
     );
-    if (config.quota.requests === UNLIMITED && config.quota.tokens === UNLIMITED) {
+    if (config.quota.requests === UNLIMITED && config.quota.tokens === UNLIMITED
+      && config.quota.reports === UNLIMITED) {
       log.warn(
-        "QUERY_QUOTA is ON but both dimensions are unlimited — nothing will ever be refused. "
-        + "Set QUERY_QUOTA_REQUESTS and/or QUERY_QUOTA_TOKENS, or set QUERY_QUOTA=false.",
+        "QUERY_QUOTA is ON but every dimension is unlimited — nothing will ever be refused. "
+        + "Set QUERY_QUOTA_REQUESTS, QUERY_QUOTA_TOKENS and/or QUERY_QUOTA_REPORTS, or set "
+        + "QUERY_QUOTA=false.",
       );
     }
     if (config.quota.requests === 0 || config.quota.tokens === 0) {
       log.warn("QUERY_QUOTA has a dimension set to 0 — every chat request will be refused.");
+    }
+    if (config.quota.reports === 0) {
+      log.warn("QUERY_QUOTA_REPORTS is 0 - every report download will be refused.");
     }
     if (config.quota.scope === "caller") {
       // See src/quota/quotaKey.ts. Said out loud because the failure is silent: everyone

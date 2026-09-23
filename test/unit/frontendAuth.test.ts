@@ -150,7 +150,7 @@ describe("frontend credential wiring", () => {
     // query_sensor_data and generate_report behind it are.
     expect(api).toMatch(/getDevices[\s\S]*?headers: authHeaders\(\)/);
     expect(api).toMatch(/"Content-Type": "application\/json", \.\.\.authHeaders\(\)/);
-    expect(read("js/report.js")).toContain("headers: authHeaders()");
+    expect(read("js/report.js")).toContain("headers: { ...authHeaders(), \"Content-Type\": \"application/json\" }");
   });
 
   it("never puts a token in a URL", () => {
@@ -169,11 +169,13 @@ describe("frontend credential wiring", () => {
     });
   });
 
-  it("does not navigate straight to the report route", () => {
-    // A browser navigation carries no Authorization header, so the click has to be a fetch.
+  it("downloads a report through an authenticated POST, never a navigation", () => {
+    // A browser navigation carries no Authorization header, and there is no report URL to
+    // navigate to: the PDF comes back in the POST's response and is saved from a blob.
     const report = read("js/report.js");
-    expect(report).toContain("event.preventDefault()");
+    expect(report).toContain("method: \"POST\"");
     expect(report).toContain("URL.createObjectURL");
+    expect(report).not.toContain("report_url");
   });
 
   it("keeps the token field a password input and clears it after saving", () => {

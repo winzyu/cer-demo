@@ -25,6 +25,11 @@ RAG experiment design), [`EVAL_REBUILD.md`](EVAL_REBUILD.md) (the eval rebuild a
 
 ## Where we are now
 
+> **Since 2026-09-17 the driving track is the Gilligan release** - replacing the dashboard's assistant
+> with this service. Its roadmap (R1-R3) and decisions D1-D12 are in
+> [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md); the phases
+> below remain the record of how the service was built.
+
 **◆ G1 — Target stack & data store: RESOLVED → Option C (full migration to Node/Express + Firestore).**
 
 The original timeline held three options: (A) run the FastAPI/pgvector demo as-is, (B) hybrid — keep
@@ -112,8 +117,8 @@ default and RAG would be moot.
 - **Sensor access:** **backend-mediated tool call** — `query_sensor_data` fetches data (user token
   forwarded), so the LLM queries on demand.
 - **LLM:** Fireworks (OpenAI-compatible), model id **from config, never inlined** (serverless catalogue
-  rotates). `.env.example` still ships `accounts/fireworks/models/gpt-oss-20b` as the default, but the
-  settled production generator is `gpt-oss-120b` (`EVAL_REBUILD.md` §1); embeddings
+  rotates). `.env.example` ships `accounts/fireworks/models/gpt-oss-120b`, the settled production
+  generator (`EVAL_REBUILD.md` §1); embeddings
   `nomic-ai/nomic-embed-text-v1.5` (768-dim).
 - **Deployment:** local/demo for now; **Cloud Run** is the promotion target (per conventions §13).
 - **Upstream development (revised 2026-09-21, supersedes D1's sandbox):** the two upstream repositories are writable on branch `local` only, cleaned of the committed malware;
@@ -534,8 +539,8 @@ an input to **◆G3**.
 ## Phase N4 — Data layer & schema evolution `⟵ was Phase 1`
 *Goal: get the data model to where features need it.*
 
-> **Status, partial.** Turbidity is end to end (metric code `72`, decoded, ranged in the prompt,
-> and expressed as clarity bands in the report — now the operator's three bands, Clear/Moderate/Turbid,
+> **Status, partial.** Turbidity is end to end (metric code `72`, decoded, described in chat through
+> `get_turbidity_info`, and expressed as clarity bands in the report — now the operator's three bands, Clear/Moderate/Turbid,
 > since `f751932` replaced the four provisional ones — `migration/DEVICE_API.md` §8b). The metadata
 > this phase wanted a store for turns out to already exist in the **backend's device registry**, so
 > nothing new was built to hold it: the report reads `operatingEnvironment` for water-body type and
@@ -648,11 +653,13 @@ answers complete; every sensor answer shows which pod, which window, and how fre
 *Goal: the net-new asks, built on the compute/narrate principle.*
 
 > **Status: report generation and the faulty-data foundation are built.** The pipeline is
-> `src/report/` (`buildReportInput`, `events`, `referenceRanges`, `operatorThresholds`,
-> `narrative`, `renderPdf`), reached through the `generate_report` tool and gated on **`REPORT_TOOL`,
-> default off** — the eval harness requires the tool flags off on both server and runner so every
-> capture runs the same base prompt, same reason `SENSOR_TOOL` is default off. Still open in this
-> phase: document upload/delete, and §4 event detection behind ◆G4.
+> `src/report/` (`buildReportInput`, `events`, `patterns`, `referenceRanges`, `operatorThresholds`,
+> `narrative`, `renderPdf`, `produceReport`), reached through the `generate_report` tool and
+> `POST /api/v1/reports`, and gated on **`REPORT_TOOL`, default off** — the eval harness requires the
+> tool flags off on both server and runner so every capture runs the same base prompt, same reason
+> `SENSOR_TOOL` is default off (Gilligan runs with it on, D10). Narration is rule-based and makes no
+> LLM call, and §4 event detection runs on sensor signals alone (`SPECS.md` §10.7). Still open in this
+> phase: document upload/delete, and ◆G4's question of whether external context should feed §4.
 >
 > **Amended 2026-08-28, after the first 30-day report off live Algalita data** (rendered with
 > `npm run report:render`, which drives the pipeline with no server and no LLM). Five decisions
@@ -785,8 +792,8 @@ conversations that survive a page reload.*
    document or system-prompt range is authoritative — the registry threshold is. See ◆G3.
 3. **Site/device metadata** — coordinates, water-body type, client/contract, calibration dates.
 4. **Reference corpus** — **14 active docs since 2026-09-13** (4 Atlas Scientific probe datasheets,
-   the 9-chapter USGS National Field Manual A6 set, and 1 EPA field-calibration SOP); **840,327
-   chars / 446 chunks**. Was 15 docs / 851,891 chars / 451 chunks before the operator
+   the 9-chapter USGS National Field Manual A6 set, and 1 EPA field-calibration SOP); **840,413
+   chars / 446 chunks** since the 2026-09-21 re-OCR (840,327 before it). Was 15 docs / 851,891 chars / 451 chunks before the operator
    source-of-truth document was removed when its ranges were vetoed (see "Eval rebuild" below) — the
    451 figure itself followed the 2026-08-31 alpha-ratio-filter reversal from an original 393 at the
    2026-08-24 trim. No public links. Breakdown, the USGS edition-currency check, and the two ingest
@@ -853,6 +860,7 @@ entry to be written here at that point. Until then: **treat every retrieval arm 
 | **Quote-carrying citations** (`EVAL_REBUILD.md` 2a in code): the prompt asks for `【n†"quote"】`, context excerpts are labelled `【n】` | 2026-09-13 | The quote exists for deterministic grading (`checkQuotes`); the interface is to render the marker as a source link and not show the quote text. **Demonstrated by the same-day smoke capture below**, not yet measured. `src/prompt/promptBuilder.ts`, `src/eval/gates/checks.ts` |
 | Operator's three turbidity clarity bands adopted | 2026-09-10 | Supplied by the operator on 2026-09-10: `NTU = (3.35 - V) × 300`, which runs inverse (clearer water is a higher voltage). Clear above 2.2 V (NTU below 345), Moderate 0.7-2.2 V (NTU 345-795), Turbid below 0.7 V (NTU above 795). They replace this project's provisional 250 / 600 / 1005 edges, which had no operator backing; ≥1005 NTU stays as an off-scale data-quality flag (input below 0 V), not a band. `f751932`, `src/report/referenceRanges.ts` |
 | The turbidity prompt rule stays instrument-agnostic while fixture text is frozen | 2026-09-10 | The operator named two turbidity sensors (Turner, quantitative; Keystudio, qualitative only), but `refusal-turbidity-sensor-hardware` demands the assistant say the corpus cannot identify the instrument. Naming either sensor in the prompt would turn that fixture into a refusal for something answerable, and fixture text is frozen for the Phase 1d review. So the rule says "qualitative only, all pods" and names no hardware until the fixture is unfrozen and revised. Guarded by `test/unit/prompt.test.ts` |
+| Roadmap R2 built: guidance catalogue shared by chat and reports; sewage rule follows water type | 2026-09-17 | `src/catalogue/catalogue.json` holds 23 draft entries from source-of-truth v2 and the usable `docs/advice/` drafts, plus five referrals; nothing is approved yet. A report names an event's cause only when an approved explanation matches its type, water and confidence, otherwise it heads the event "Threshold crossing", hides the classification confidence, and selects other entries as `Inconclusive` so a next step cannot imply the cause. `CATALOGUE_PROMPT` (default off, capture caveat) adds the chat block; `CATALOGUE_DRAFTS` (default off) is for supervisor review only. The sewage rule now expects conductivity to fall in marine, brackish and estuarine water and rise in fresh water; the opposite direction scores 0.4 and downgrades to Inconclusive. The `ADVICE_TIER` flag was not built: entries carry a kind and a report slot instead. `SPECS.md` §4b, `migration/GILLIGAN_TARGET_ARCHITECTURE.md` §2d |
 | Gilligan release plan: integration shape, hosting, usage limits, content | 2026-09-17 | User decisions for the September 30 dashboard release, with the draft architecture and roadmap: `migration/GILLIGAN_PRODUCT_DIRECTION.md`, `migration/GILLIGAN_TARGET_ARCHITECTURE.md`. Event signatures now come from source-of-truth v2 §6 rather than the removed document (`STAKEHOLDER_QUESTIONS.md` item 8); the 38 advice drafts are superseded by a v2-based catalogue awaiting supervisor approval (items 7 and 19) |
 | Starter prompts removed | 2026-09-15 | A nice-to-have that tied the frontend to fixture churn: the 2026-09-13 fixture rewrite left the generated file stale and its drift test failing. Deleted `scripts/starterPrompts.ts`, its test, `frontend/starter-prompts.json`, the `starter:prompts` script and the chips in `input.js` |
 | ◆G6 resolved: the demo frontend matches the dashboard's Gilligan page; dark mode dropped | 2026-09-14 | User decision after a read-only survey of `user-dashboard`. Tokens copied verbatim from its `globals.css`; surfaces separate by paired shadows, not borders; two-column layout with device, starter prompts and the demo account switcher on the left, where chat history lands once conversations persist. Dark mode was removed because the product has none and the shadow style depends on a light ground. Work Sans and Poppins are now self-hosted (they had been named but never loaded). Order: repaint the vanilla frontend first and verify it end to end, then port to React for the dashboard. The dashboard's own Gilligan page is being replaced, so its defects are not raised; the others are `STAKEHOLDER_QUESTIONS.md` items 13-16 |
@@ -860,6 +868,9 @@ entry to be written here at that point. Until then: **treat every retrieval arm 
 | Dated session handoffs retired for one living `STATUS.md` | 2026-09-13 | Handoffs were only relevant to the next session but accumulated, went stale while still linked as "start here", and collected durable reasoning that code comments then cited. `STATUS.md` is rewritten in place by the `/handoff` skill; durable reasoning goes to `SPECS.md`, `EVAL_REBUILD.md` or this log. The three dated handoffs are under `handoffs-archive-2026-09-13` (`ARCHIVED.md`) |
 | Corpus restored from `DOC_META`, not from the sourcing brief | 2026-09-21 | The post-incident rebuild needed 8 corpus PDFs re-sourced, and `CORPUS_SOURCING_BRIEF.md` was written for that job. It was not needed: `DOC_META` in `src/ingestion/corpus.ts` records a `sourceUrl` for every corpus document, all of which still resolve, so the restore was download-and-verify rather than research. The brief's remit is corpus *expansion* (the turbidity gap), which is unchanged. Verified per-document against `documents/README.md`: all 13 non-OCR documents reproduce char-for-char, 806,076 chars, slice 26,096, 446 chunks. The three documents cut on 2026-08-24 were deliberately **not** restored — ingest never reads `_excluded/` and the measurements that justified cutting them are already recorded. `migration/WSL_SANDBOX.md` §4 |
 | Re-OCR accepted with a known 12-chunk-id cost | 2026-09-21 | The OCR cache for the one scanned document died with the machine and is in no backup, so it was regenerated with tesseract 4.1.1 rather than the original 5.3.4 (+86 chars). The alternative was dropping Tier 3 calibration grounding entirely. Cost is bounded and measured: 434 of 446 claim chunk ids still resolve, the 12 that fail are all that document's, and chunk count is unchanged. Closed by **re-resolving** those claims through their `locator` fields, not by re-extraction, which would discard the corrected drift/QAPP gap statement. `EVAL_REBUILD.md` §"What is safe to change later" |
+| Gilligan runs with the sensor tools on, and the prompt stops refusing greetings | 2026-09-22 | `SENSOR_TOOL`/`REPORT_TOOL` default off, which is right for the eval harness and wrong for the product: with them off the model is offered no tools at all, so every question about a reading fell through to `REFUSAL_SENTENCE`. A real session refused a two-week turbidity question and "do you have data on any of my pods?" for that reason alone, and R3's end-to-end verification missed it because it ran with `SENSOR_TOOL=false` throughout. Settled as D10 (`migration/GILLIGAN_TARGET_ARCHITECTURE.md`): the release runs `SENSOR_TOOL=true`, `REPORT_TOOL` stays off until R1 returns report bytes. Two behaviour changes land with it: a `list_pods` tool, because the caller-scoped fleet can live neither in the cacheable prompt nor in CONTEXT, and a scope-rule carve-out so a greeting is answered rather than refused. **The prompt edit invalidates captures made before it** and was landed deliberately ahead of the Phase 3 baseline. `migration/GILLIGAN_TOOL_ACCESS.md` |
+| Reports return bytes, and Gilligan runs with `REPORT_TOOL=true` | 2026-09-22 | R1's report half (Task B). `generate_report` now returns a `report_request` and a `report_period` string instead of a disk URL, and `POST /api/v1/reports` renders the PDF into the response, so the token-hash ownership sidecar and the lost-on-redeploy problem went with the disk. Reports get their own quota dimension because they make no model call. The user then settled D10's open half: the release runs `REPORT_TOOL=true`, with a finite `QUERY_QUOTA_REPORTS`. Two report-model defects were fixed in the same pass: parameters are now tagged diel/tidal/trend from an hourly series, and the two classifications below the confidence floor (saltwater intrusion, industrial) reach the reader as the catalogue's hedged explanations under an unnamed heading, rather than never. The selected pod now reaches the model as a per-request message placed after the cacheable prefix, which leaves eval prompts unchanged. `SPECS.md` §10.7, `migration/GILLIGAN_TARGET_ARCHITECTURE.md` D10 |
+| Old-machine work recovered and R2 ported onto `dev` | 2026-09-22 | About 12 unpushed commits from 2026-09-17 to 2026-09-19 were lost in the wipe. They were rebuilt from session transcripts onto `05ef730`, where the 7 R2 suites passed 158/158 as they had originally, and merged into `dev`. The catalogue's flags stay off by default, so the default prompt is unchanged. The turbidity transcriptions went to `documents/_excluded/` to keep the corpus and chunk ids stable. [`ARCHIVED.md`](ARCHIVED.md) |
 
 **Known blocker on Phase 3 (resolved by `a72c3b5`, see below).** The Tier 1 refusal gate detects refusal-required turns by
 regex-matching rubric prose, and matches **0 of wave 1's 8 refusal turns** — the new set phrases the

@@ -17,18 +17,24 @@
  * doc's own matrix has several events sharing overlapping signatures (Industrial is explicitly a
  * catch-all "abrupt step-change ... with no diel or tidal explanation"), and (2) confirming
  * Saltwater intrusion or Stormwater properly needs tidal-stage/rainfall context this pipeline
- * doesn't have, so those stay capped at moderate confidence even on a clean pattern match. Low
- * confidence always degrades to "Inconclusive" rather than asserting a specific cause. Anything
+ * doesn't have, so those stay capped at moderate confidence even on a clean pattern match (the
+ * one exception: a conductivity rise the pattern classifier tags as a multi-week `trend`, in
+ * marine water, is the drought/sea-level shape and clears the floor as Saltwater intrusion). Low
+ * confidence always degrades to "Inconclusive" rather than asserting a specific cause; the
+ * downgraded event keeps the signature it matched in `signature`, so a catalogue explanation
+ * approved at that lower confidence can still be shown without the heading naming it. Anything
  * this flags should go through the Investigative recommendation (grab sample / source tracing)
  * before being treated as a real finding.
  */
 
 import type {
-  ParameterStats, ReportInput, WQEvent, EventType, Severity,
+  ParameterStats, Pattern, ReportInput, WQEvent, EventType, Severity,
 } from "./types";
 import {
   CONFIDENCE_FLOOR, isRelativeIndex, statValue, withUnit,
 } from "./types";
+import { waterClassFor } from "../catalogue/select";
+import type { WaterClass } from "../catalogue/types";
 
 const MIN_EVENT_DURATION_MS = 60 * 60_000; // 1 hour
 /** Re-exported under its original name: the constant moved to types.ts, which `overallStatus`
@@ -126,8 +132,18 @@ interface ClassifyResult {
  * alternative each pattern was checked against and why it was preferred or rejected, per the
  * template's instruction to justify a classification "and not an alternative" -- not just assert
  * one.
+ *
+ * `water` selects the sewage signature, whose conductivity direction reverses between marine and
+ * fresh receiving water (source-of-truth v2 §6.2 and §6.3). v2 also separates the stormwater,
+ * industrial and acidic-input signatures by water; those rules still read the archived
+ * document's directions, and a report names their causes only where the guidance catalogue has a
+ * matching entry (`src/catalogue/catalogue.json`).
  */
-const classify = (moved: Partial<Record<string, Movement>>): ClassifyResult => {
+const classify = (
+  moved: Partial<Record<string, Movement>>,
+  water: WaterClass,
+  patterns: Partial<Record<string, Pattern>> = {},
+): ClassifyResult => {
   const do_ = moved.dissolved_oxygen;
   const { orp } = moved;
   const cond = moved.conductivity;
@@ -136,27 +152,42 @@ const classify = (moved: Partial<Record<string, Movement>>): ClassifyResult => {
   const temp = moved.temperature;
   const movedCount = Object.keys(moved).length;
 
-  // Sewage: "DO crash + ORP crash + EC rise + turbidity rise, not tied to time of day."
+  // Sewage: dissolved oxygen and ORP fall while turbidity rises, and conductivity moves the way
+  // fresh sewage moves it in this water. Sewage is fresh water, so it lowers conductivity in the
+  // sea ("freshening", v2 §6.2) and raises it in a river or lake (v2 §6.3). The opposite
+  // direction is evidence against sewage, not a partial match, so it falls below the floor.
   if (do_ === "down" && orp === "down" && turb === "up") {
-    if (cond === "up") {
+    const expected: Movement = water === "marine" ? "down" : "up";
+    const waterWords = water === "marine" ? "coastal water" : "fresh water";
+    if (cond === expected) {
       return {
         type: "Sewage",
         confidence: 0.7,
         rationale:
-          "Dissolved oxygen and ORP fell together while conductivity and turbidity both rose "
-          + "-- all four match the sewage/sanitary-discharge signature. "
-          + "This is preferred over plain hypoxia because hypoxia alone would not be expected to "
-          + "also lift conductivity and turbidity.",
+          "Dissolved oxygen and ORP fell together while turbidity rose and conductivity "
+          + `${expected === "down" ? "fell" : "rose"} -- all four match the sewage signature for `
+          + `${waterWords}. This is preferred over plain hypoxia because hypoxia alone would not `
+          + "be expected to also move conductivity and turbidity.",
+      };
+    }
+    if (cond === undefined) {
+      return {
+        type: "Sewage",
+        confidence: 0.5,
+        rationale:
+          "Dissolved oxygen and ORP fell together with a simultaneous turbidity rise, matching "
+          + `most of the sewage signature for ${waterWords} -- conductivity did not clear `
+          + "baseline here, which is the one piece of the signature missing, so this stays a "
+          + "partial match rather than a confident one.",
       };
     }
     return {
       type: "Sewage",
-      confidence: 0.5,
+      confidence: 0.4,
       rationale:
-        "Dissolved oxygen and ORP fell together with a simultaneous turbidity rise, matching "
-        + "most of the sewage/sanitary-discharge signature -- conductivity did not clear "
-        + "baseline here, which is the one piece of the matrix signature missing, so this stays "
-        + "a partial match rather than a confident one.",
+        "Dissolved oxygen and ORP fell together with a simultaneous turbidity rise, but "
+        + `conductivity ${cond === "up" ? "rose" : "fell"}, the opposite of the sewage signature `
+        + `for ${waterWords}, so sewage is not a good match.`,
     };
   }
 
@@ -215,8 +246,23 @@ const classify = (moved: Partial<Record<string, Movement>>): ClassifyResult => {
 
   // Saltwater intrusion: "EC rise correlated with tidal phase, drought, or sea-level conditions"
   // -- isolated EC movement, everything else flat. Capped below the sewage/hypoxia ceiling
-  // because confirming the tidal/drought correlation needs context this pipeline doesn't have.
+  // because confirming the tidal/drought correlation needs context this pipeline doesn't have,
+  // except where the conductivity series itself carries the drought/sea-level shape: a sustained
+  // multi-week rise (`trend`, `patterns.ts`) in marine water. A discharge is a step, not a
+  // weeks-long creep, and the flat turbidity already rules out the storm-surge/runoff reading.
   if (cond === "up" && do_ === undefined && orp === undefined && ph === undefined && turb === undefined) {
+    if (water === "marine" && patterns.conductivity === "trend") {
+      return {
+        type: "Saltwater intrusion",
+        confidence: 0.55,
+        rationale:
+          "Conductivity rose in isolation as part of a sustained, multi-week upward trend, with no "
+          + "accompanying DO, ORP, pH, or turbidity shift -- the slow shape expected from drought or "
+          + "sea-level-driven saltwater intrusion in coastal water, not the abrupt step a discharge "
+          + "produces. Tidal timing and rainfall records were not checked, so confidence stays "
+          + "moderate.",
+      };
+    }
     return {
       type: "Saltwater intrusion",
       confidence: 0.45,
@@ -289,12 +335,13 @@ const applyConfidenceFloor = (
   type: EventType,
   confidence: number,
   rationale: string,
-): { type: EventType; rationale: string } => {
+): { type: EventType; rationale: string; signature?: EventType } => {
   if (confidence >= CONFIDENCE_FLOOR_FOR_CLASSIFICATION || type === "Inconclusive") {
     return { type, rationale };
   }
   return {
     type: "Inconclusive",
+    signature: type,
     rationale: `${rationale} Confidence (${Math.round(confidence * 100)}%) falls short of the floor for `
       + `asserting '${type}' outright, so the classification below is downgraded to `
       + "Inconclusive pending confirmation.",
@@ -353,7 +400,7 @@ const detectAlgalBloom = (report: ReportInput): WQEvent | null => {
   const ph = byKey.get("ph");
   const phConfirms = Boolean(ph && ph.pattern === "diel" && ph.max > ph.baseline.baselineMax);
   const confidence = phConfirms ? 0.6 : 0.45;
-  const { type, rationale } = applyConfidenceFloor(
+  const { type, rationale, signature } = applyConfidenceFloor(
     "Algal bloom",
     confidence,
     "Dissolved oxygen supersaturated at one point in the day and crashed below baseline "
@@ -383,6 +430,7 @@ const detectAlgalBloom = (report: ReportInput): WQEvent | null => {
     interpretation: rationale,
     followUp: "Grab sample",
     confidence,
+    ...(signature ? { signature } : {}),
   };
 };
 
@@ -476,6 +524,7 @@ const eventForWindow = (
   parameters: ParameterStats[],
   window: Window,
   periodMs: number,
+  water: WaterClass,
 ): WQEvent | null => {
   const [wStart, wEnd] = window;
   const { moved, movementDesc } = movementsIn(parameters, window);
@@ -483,9 +532,10 @@ const eventForWindow = (
     return null;
   }
 
-  const classified = classify(moved);
+  const patterns = Object.fromEntries(parameters.map((p) => [p.baseline.key, p.pattern]));
+  const classified = classify(moved, water, patterns);
   const { confidence } = classified;
-  const { type: eventType, rationale } = applyConfidenceFloor(
+  const { type: eventType, rationale, signature } = applyConfidenceFloor(
     classified.type,
     confidence,
     classified.rationale,
@@ -530,6 +580,8 @@ const eventForWindow = (
         confidence < 0.6 ? " Treat as tentative pending grab-sample confirmation." : ""}`,
     followUp: confidence < 0.6 ? "Grab sample" : "Notify stakeholder",
     confidence,
+    ...(signature ? { signature } : {}),
+    persistent,
   };
 };
 
@@ -561,7 +613,12 @@ export const detectEvents = (report: ReportInput): WQEvent[] => {
   const periodMs = allTimes.length > 0 ? Math.max(...allTimes) - Math.min(...allTimes) : 0;
 
   const events = merged
-    .map((window) => eventForWindow(report.parameters, window, periodMs))
+    .map((window) => eventForWindow(
+      report.parameters,
+      window,
+      periodMs,
+      waterClassFor(report.site.waterBodyType),
+    ))
     .filter((e): e is WQEvent => e !== null);
 
   return algalBloom ? [...events, algalBloom] : events;

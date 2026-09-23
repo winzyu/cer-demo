@@ -10,6 +10,9 @@ in git history under the tag named in its section.
 | `corpus-archive-2026-09-13` | 2026-09-13 | the operator source-of-truth document and its claim inventory — 2 files |
 | `handoffs-archive-2026-09-13` | 2026-09-13 | the last three dated session handoffs, retired for a single living `docs/STATUS.md` |
 | `eval-docs-archive-2026-09-15` | 2026-09-15 | the bake-off results report and the two fixture specs for the archived eval set — 3 files |
+| `docs-archive-2026-09-23` | 2026-09-23 | four superseded planning and eval docs, and the advice drafts - 9 files |
+| `advice-archive-2026-09-17` | 2026-09-23 | the advice drafts, re-tagged under the name the catalogue cites - same commit as `docs-archive-2026-09-23` |
+| `old-machine-recovery-2026-09-19` | 2026-09-22 | work from 2026-09-17 to 2026-09-19 that was committed on the old machine but never pushed, rebuilt from session transcripts - 5 planning docs not restored to the tree |
 
 Retrieve one by path:
 
@@ -179,6 +182,48 @@ Retrieve:
 git show eval-docs-archive-2026-09-15:docs/RETRIEVAL_COMPARISON.md
 git show eval-docs-archive-2026-09-15:docs/EVAL_FIXTURES.md
 git show eval-docs-archive-2026-09-15:docs/EVAL_FIXTURES_NEXT.md
+```
+
+## `old-machine-recovery-2026-09-19` - lost old-machine work, rebuilt
+
+The old machine made about 12 commits on `dev` after `05ef730` (2026-09-17 to 2026-09-19) and never pushed them, so the 2026-09-19 wipe lost them, along with the tags `advice-archive-2026-09-17` and `docs-archive-2026-09-19`.
+On 2026-09-22 they were rebuilt from the Claude session transcripts and file-history snapshots onto `05ef730` and tagged `old-machine-recovery-2026-09-19`.
+The R2 catalogue, the turbidity transcriptions, the payload scanner and four planning docs were merged into `dev`; the files below were not, because later work superseded them.
+The doc cleanup of 2026-09-19 (`5b36ae7`, `49e7386`) ran from scratch scripts that no longer exist and could not be rebuilt; the lost tags have no replacement beyond this one.
+
+| file | what it was | why it went |
+|---|---|---|
+| `docs/migration/SUPERVISOR_QUESTIONS_FINAL.md` | Draft of the supervisor questions | Superseded by the sent version, `SUPERVISOR_QUESTIONS_SEND.md`. |
+| `docs/migration/SUPPORTING_DOCS_TASKS.md` | Task packets C1-C8 for the corpus, catalogue and v2 | C1-C4 were done; C5-C8 are covered by STATUS and its gates. |
+| `docs/migration/WSL_SANDBOX_TASKS.md` | Task packets W1-W11 for the sandbox and dashboard | Done or overtaken by R3 on the cleaned upstream `local` branches. |
+| `docs/migration/DOC_CLEANUP.md` | The 2026-09-19 documentation cleanup plan | Its commits were lost, and the docs have been rewritten since. |
+| `docs/migration/RECOVERY_AFTER_RESET.md` | Pre-wipe backup and rebuild guide | Superseded by `WSL_SANDBOX.md` and `SECURITY_INCIDENT_2026-09-19.md`. |
+
+Retrieve:
+
+```bash
+git show old-machine-recovery-2026-09-19:docs/migration/WSL_SANDBOX_TASKS.md
+git show old-machine-recovery-2026-09-19:docs/migration/RELEASE_GOAL_AND_PLAN.md   # the untrimmed plan
+```
+
+## `docs-archive-2026-09-23` - superseded plans and the advice drafts
+
+Removed on 2026-09-23 after a doc audit against the code, preserved under the tag `docs-archive-2026-09-23`, which points at `9b331a8`, the last commit that contains them.
+None is cited by code.
+The same commit is also tagged `advice-archive-2026-09-17`: `src/catalogue/catalogue.json` names that tag as the home of the advice drafts, and the original was lost with the old machine, so the name is re-created rather than the catalogue edited.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/advice/` (README, four `candidates-*.md`, `review.html`) | ~1,490 | The 38 advice candidates of 2026-09-10 and their review page | Replaced by the guidance catalogue (`src/catalogue/`, `SPECS.md` §4b), which cites them as `advice-drafts <id>`; their trigger-reachability table predates the 2026-09-22 pattern tags. |
+| `docs/EVAL_FIXTURE_QUALIFICATION.md` | 620 | Qualification of the archived 30-fixture set against the 2026-08-21 corpus | Already marked historical; the live equivalent is `eval/fixtures-wave1/_QUALIFICATION.md`. |
+| `docs/migration/INTEGRATION_PLAN.md` | ~310 | The 2026-09-04 plan for landing this service in the product | Superseded by `GILLIGAN_TARGET_ARCHITECTURE.md`; Shape C was adopted and built in R3. |
+| `docs/migration/codex-migration-report.md` | 155 | Record of the 2026-09-16 Claude and Codex configuration migration | A tooling record nothing links to; the configuration it describes is in the tree. |
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-09-23:docs/migration/INTEGRATION_PLAN.md
+git show docs-archive-2026-09-23:docs/advice/candidates-oxygen.md
 ```
 
 ## Rules

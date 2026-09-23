@@ -34,7 +34,7 @@ tag `corpus-archive-2026-09-13` (`../docs/ARCHIVED.md`); its claim inventory
 `eval/claims/water-quality-metrics-source-of-truth.json` was deleted. See
 [`../docs/timeline.md`](../docs/timeline.md) "Eval rebuild" for the full record.
 
-## Current corpus — 14 documents, 840,327 chars (~210K tokens), 446 chunks
+## Current corpus — 14 documents, 840,413 chars (~210K tokens), 446 chunks
 
 Expanded 2026-08-21 from 8 documents (~716K chars) to 18 as the retrieval posture moved toward
 RAG-first, then **trimmed to 15 on 2026-08-24** by cutting three documents that carried no number
@@ -49,8 +49,9 @@ removed bulk that was competing for top-k slots without contributing. Net agains
 the corpus has lost roughly a third of its characters (32% at the 2026-08-24 trim, a further
 11,564 chars at the 2026-09-13 removal) and kept every document whose numbers are not vetoed.
 
-Every row below matches `data/corpus/corpus.json` as of the **2026-09-13** re-ingest, except where
-marked. The direct-feed slice is now **26,096 chars (~6,524 tokens), 3.1% of the corpus** (was
+Every row below matches `data/corpus/corpus.json` as rebuilt on **2026-09-21** after the machine
+rebuild: the 13 text PDFs reproduce their 2026-09-13 char counts exactly, and the OCR'd EPA SOP
+grew by 86 chars on re-OCR (see [OCR](#ocr)), which is why the total moved from 840,327. The direct-feed slice is now **26,096 chars (~6,524 tokens), 3.1% of the corpus** (was
 37,660 chars / 4.4% with the source-of-truth document included), and no longer covers turbidity or
 temperature.
 
@@ -67,26 +68,59 @@ Vendor material for the probes this deployment actually carries, so it outranks 
 reference. The probe datasheets are **ORP's only vendor-level coverage**, and — since the
 source-of-truth document's removal — the corpus's only Tier 1 material of any kind.
 
-**Still missing from Tier 1** (operator has not supplied them): a **turbidity probe datasheet**
-and a **temperature probe datasheet**. Turbidity is the gap that matters — the fleet's NTU value
-is derived from a raw voltage by a provisional, uncalibrated conversion
-([`../docs/migration/DEVICE_API.md`](../docs/migration/DEVICE_API.md) §8), and no document in the
-corpus describes *this* sensor's optics. With the source-of-truth document gone, no document in the
-corpus describes a typical range for ORP, conductivity or temperature either.
+### Tier 1 — turbidity vendor documentation (added 2026-09-17, not yet ingested)
+
+| file | source | in slice |
+|---|---|---|
+| `_excluded/keyestudio-ks0414-turbidity-sensor.md` | [Keyestudio wiki, KS0414 V1.0](https://wiki.keyestudio.com/KS0414_Keyestudio_Turbidity_Sensor_V1.0) | no |
+| `_excluded/turner-turbidity-plus-sensor.md` | [Turner Designs product page](https://www.turnerdesigns.com/turbidity-plus-submersible-sensor), [datasheet](https://www.turnerdesigns.com/_files/ugd/9a5dca_6d195f5834d74ab3b52623350504c0ac.pdf), [User's Manual 998-2187 Rev. J](https://docs.turnerdesigns.com/t2/doc/manuals/998-2187.pdf) | no |
+
+Transcriptions of public vendor documentation for the two turbidity sensors the operator named
+(`../docs/STAKEHOLDER_QUESTIONS.md` item 3), written as `.md` because neither vendor publishes a datasheet
+PDF covering the corpus's actual gap: the optical basis of the reading. Each file carries the
+vendor's own text plus an explicit list of what that vendor never states.
+
+**They sit in `_excluded/`, outside the ingest path, and are not in `DOC_META`,** so neither file is
+retrievable. Ingesting them adds chunks the retrieval labels do not cover and changes what every
+arm retrieves (`../docs/EVAL_REBUILD.md` §2b, chunk-id stability), which is a decision for after
+the Phase 1d fixture freeze;
+the `DOC_META` entries to add then are at tag `old-machine-recovery-2026-09-19`
+(`src/ingestion/corpus.ts`). The registry has no sensor-model field either, so which pod carries
+which sensor is unknown; injecting an unattributed datasheet into every answer would assert hardware
+this deployment cannot confirm.
+
+What they do and do not settle: **neither vendor states a numeric wavelength or a detection angle.**
+Turner states "Light Source: Light Emitting Diode", "Excitation Wavelength: IR", "Detector:
+Photodiode" and reports the result in NTU; Keyestudio states no optical property at all. So the
+NTU-versus-FNU question is now *grounded* rather than *answered*: the corpus can cite that the unit
+label is the vendor's own choice and that the infrared basis of the Turner instrument is what ISO
+7027 associates with FNU, instead of having nothing to cite. Keyestudio publishes no
+voltage-to-NTU equation — only an empirical 0.13 NTU per mg/L mass conversion and an unlabelled
+characteristic curve — so this project's provisional `NTU = (3.35 - V) × 300` remains
+operator-supplied and vendor-unsupported.
+
+**Still missing from Tier 1**: a **temperature probe datasheet** (operator has not supplied it), and
+a per-pod record of which turbidity sensor is fitted (`../docs/STAKEHOLDER_QUESTIONS.md` items 3
+and 11). The fleet's NTU value is still derived from a
+raw voltage by a provisional, uncalibrated conversion
+([`../docs/migration/DEVICE_API.md`](../docs/migration/DEVICE_API.md) §8); the two files above
+describe the candidate sensors but neither vendor publishes the optics that would justify the unit.
+With the source-of-truth document gone, no document in the corpus describes a typical range for ORP,
+conductivity or temperature either.
 
 ### Tier 2 — USGS National Field Manual, Chapter A6
 
 | file | chars | chunks | edition |
 |---|---:|---:|---|
-| `usgs-nfm-a6.0-field-measurement-guidelines.pdf` | 87,076 | 44 | TM 9-A6.0 (2023) |
-| `usgs-nfm-a6.1-temperature.pdf` | 69,557 | 38 | TM 9-A6.1 (2024) |
-| `usgs-nfm-a6.2-dissolved-oxygen.pdf` | 153,946 | 55 | TM 9-A6.2 (2020) |
-| `usgs-nfm-a6.3-specific-conductance.pdf` | 74,010 | 42 | TM 9-A6.3 (2019) |
-| `usgs-nfm-a6.4-ph.pdf` | 95,663 | 53 | TM 9-A6.4 (2021) |
-| `usgs-nfm-a6.5-orp.pdf` | 40,301 | 17 | TWRI v1.2 (2005) |
-| `usgs-nfm-a6.6-alkalinity.pdf` | 92,439 | 36 | TWRI v4.0 (2012) |
-| `usgs-nfm-a6.7-turbidity.pdf` | 109,601 | 49 | TWRI v2.1 (2005) |
-| `usgs-nfm-a6.8-multiparameter-instruments.pdf` | 57,387 | 33 | TM 9-A6.8 v1.1 (2025) |
+| `usgs-nfm-a6.0-field-measurement-guidelines.pdf` | 87,076 | 47 | TM 9-A6.0 (2023) |
+| `usgs-nfm-a6.1-temperature.pdf` | 69,557 | 40 | TM 9-A6.1 (2024) |
+| `usgs-nfm-a6.2-dissolved-oxygen.pdf` | 153,946 | 91 | TM 9-A6.2 (2020) |
+| `usgs-nfm-a6.3-specific-conductance.pdf` | 74,010 | 44 | TM 9-A6.3 (2019) |
+| `usgs-nfm-a6.4-ph.pdf` | 95,663 | 56 | TM 9-A6.4 (2021) |
+| `usgs-nfm-a6.5-orp.pdf` | 40,301 | 18 | TWRI v1.2 (2005) |
+| `usgs-nfm-a6.6-alkalinity.pdf` | 92,439 | 42 | TWRI v4.0 (2012) |
+| `usgs-nfm-a6.7-turbidity.pdf` | 109,601 | 51 | TWRI v2.1 (2005) |
+| `usgs-nfm-a6.8-multiparameter-instruments.pdf` | 57,387 | 34 | TM 9-A6.8 v1.1 (2025) |
 
 One chapter per measured parameter, each covering calibration, interferences, troubleshooting and
 reporting conventions. This is the tier that answers "what does the procedure actually say".
@@ -120,7 +154,7 @@ pages of front matter and table of contents** (12,359 chars), not the combined t
 
 | file | chars | chunks | note |
 |---|---:|---:|---|
-| `epa-sop-field-instrument-calibration-2010.pdf` | 34,251 | 10 | **scanned — OCR, see below** |
+| `epa-sop-field-instrument-calibration-2010.pdf` | 34,337 | 12 | **scanned — OCR, see below** |
 
 Covers calibration of exactly the six measured parameters, and is the grounding N6's
 recalibration-guidance feature needs.
@@ -155,8 +189,11 @@ reads `.ocr_cache/<filename>.txt` and **hard-errors if the cache is missing**, s
 cannot be ingested on a machine without it.
 
 The cache was produced 2026-08-21 with `pdftoppm -r 300 -gray` → `tesseract 5.3.4 --psm 1 -l eng`
-(34,349 chars, ~1,908 chars/page). Body text is clean; the signature blocks on the revision pages
-are garbled, which is what OCR does to handwriting and is not worth fixing.
+(34,349 chars, ~1,908 chars/page). That cache died with the old machine and was regenerated on
+2026-09-21 with **tesseract 4.1.1**, the same flags: 34,441 chars in the cache, 34,337 after ingest
+(+86), and still 12 chunks, but every one of this document's chunk ids moved (`../docs/EVAL_REBUILD.md`
+§2b). Body text is clean; the signature blocks on the revision pages are garbled, which is what OCR
+does to handwriting and is not worth fixing.
 
 **`.ocr_cache/` is git-ignored**, so this file does not travel with the repo. Anyone else who needs
 to ingest must re-run OCR or be handed the `.txt`. That is a pre-existing convention, not new here.
@@ -224,7 +261,8 @@ Nothing in `_excluded/` is parsed by `npm run ingest`.
 **These files are large and mostly untracked.** `.gitignore` has a `documents/*` rule. Tracked
 anyway, by exception: this README, and the four Tier 1 PDFs that make up the ◆G9 direct-feed slice
 (above). The two USGS chapters that predate the rule are also tracked, renamed in place on
-2026-08-21. Everything else — the other seven USGS chapters, both EPA documents, both situational
+2026-08-21, as are three files under `_excluded/`: the volunteer methods manual and the two
+turbidity vendor transcriptions. Everything else — the other seven USGS chapters, both EPA documents, both situational
 documents, and the removed source-of-truth PDF (now under `_excluded/`) — is untracked and absent
 from a fresh clone. `git ls-files documents/` is the answer; check it before assuming a file is or
 is not in the repo.
@@ -235,9 +273,13 @@ Adding or removing a file means editing `DOC_META` in `src/ingestion/corpus.ts`,
 
 ```bash
 npm run ingest                 # rebuild data/corpus/corpus.json
+npm run embed:cache            # rebuild data/embeddings/ for the local-* and hybrid-slice-* arms (costs embedding tokens)
 npm run seed:firestore         # re-upload corpus_documents
 npm run seed:firestore-chunks  # re-embed for firestore-vector (costs embedding tokens)
 ```
+
+`hybrid-slice-vector` is the production arm (D7 in `../docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`),
+so `embed:cache` is the step a corpus change cannot skip.
 
 **Check the `direct-feed slice:` line ingest prints.** `0 chars` means the Tier 1 files are missing;
 ingest will not tell you twice and will not fail.

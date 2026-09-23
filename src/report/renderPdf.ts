@@ -14,7 +14,7 @@ import type {
   ReportInput, WQEvent, Flag, ReportStatus, ParameterStats, Severity,
 } from "./types";
 import {
-  coordinatesStr, flagFor, isRelativeIndex, outOfRangeShare, statValue,
+  coordinatesStr, flagFor, isRelativeIndex, outOfRangeShare, reportPeriod, statValue,
 } from "./types";
 import { clarityBandFor, isOffScaleTurbidity, TURBIDITY_NO_BASELINE_TEXT } from "./referenceRanges";
 import type { NarrativeSections } from "./narrative";
@@ -383,7 +383,7 @@ const drawFooters = (doc: PDFKit.PDFDocument, report: ReportInput): void => {
       .stroke();
     doc.font("Helvetica").fontSize(8).fillColor(MUTED)
       .text(
-        `${report.site.siteName} · ${report.site.startDate} to ${report.site.endDate}`,
+        `${report.site.siteName} · ${reportPeriod(report.site)}`,
         MARGIN,
         y,
         { width: half, lineBreak: false },
@@ -423,7 +423,7 @@ export const buildReportPdf = (
     .text("Water Quality Report", MARGIN, 30, { width: CONTENT_WIDTH - 150 });
   doc.font("Helvetica").fontSize(10.5).fillColor("#b9c8d2")
     .text(
-      `${report.site.siteName} · ${report.site.startDate} to ${report.site.endDate}`,
+      `${report.site.siteName} · ${reportPeriod(report.site)}`,
       MARGIN,
       60,
       { width: CONTENT_WIDTH - 150 },
@@ -620,12 +620,14 @@ export const buildReportPdf = (
   if (report.events.length > 0) {
     sectionHeader(doc, `${sectionNumbers.eventDetection}. Event Detection`);
     report.events.forEach((e: WQEvent, i: number) => {
+      // Wording comes from the narrative, which names a cause only when the catalogue approves it.
+      const wording = narrative.events[i];
       // Enough room for the heading, the window line and the first lines of the movements --
       // "Event 1" alone at the foot of a page is the split this prevents.
       ensureSpace(doc, 90);
       const top = doc.y;
       doc.font("Helvetica-Bold").fontSize(10).fillColor(INK)
-        .text(`Event ${i + 1} — ${e.type}`, MARGIN, top, { width: CONTENT_WIDTH - 130 });
+        .text(`Event ${i + 1} — ${wording.heading}`, MARGIN, top, { width: CONTENT_WIDTH - 130 });
       drawPill(doc, e.severity, {
         right: MARGIN + CONTENT_WIDTH,
         top: top - 2,
@@ -636,8 +638,9 @@ export const buildReportPdf = (
       doc.y = top + 16;
       doc.font("Helvetica").fontSize(8.5).fillColor(MUTED)
         .text(
-          `${formatTs(e.windowStartMs)} to ${formatTs(e.windowEndMs)}  ·  confidence `
-          + `${Math.round(e.confidence * 100)}%`,
+          `${formatTs(e.windowStartMs)} to ${formatTs(e.windowEndMs)}${
+            // A confidence with no named cause would be confidence in nothing the reader can see.
+            wording.causeNamed ? `  ·  confidence ${Math.round(e.confidence * 100)}%` : ""}`,
           MARGIN,
           doc.y,
           { width: CONTENT_WIDTH },
@@ -646,9 +649,9 @@ export const buildReportPdf = (
       doc.moveDown(0.35);
       bodyText(doc, `Parameter movements: ${e.parameterMovements}`);
       doc.moveDown(0.15);
-      bodyText(doc, `Interpretation: ${e.interpretation}`);
+      bodyText(doc, `Interpretation: ${wording.interpretation}`);
       doc.moveDown(0.15);
-      bodyText(doc, `Follow-up: ${e.followUp}`);
+      bodyText(doc, `Follow-up: ${wording.followUp}`);
       doc.moveDown(0.5);
     });
   }

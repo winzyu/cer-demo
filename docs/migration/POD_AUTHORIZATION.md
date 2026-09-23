@@ -7,6 +7,12 @@ Three drivers, in the operator's words: *"authorize users or orgs to have access
 pods … creating test users that only have access to certain pods … be able to create reports
 across multiple pods."*
 
+> **Not scheduled (2026-09-16).** The product decision is that organization membership determines
+> pod access and no per-user pod-grant system was requested (`GILLIGAN_PRODUCT_DIRECTION.md`), so the
+> grant model below is not on the release roadmap. Still in force from this document: the merge-chain
+> and cross-organization policies (§5-§7), which `src/devices/mergeChains.ts` implements, and the
+> upstream holes in §2d.
+>
 > **Design document. Nothing here is built.** No code in this change; `docs/migration/` is where
 > planning artifacts live. Every claim about the upstream backend is cited to a file in
 > `../clean-earth-rovers-server`, which was **read only** — nothing outside `cer-demo` was
@@ -139,7 +145,11 @@ report is precisely the artifact this matters for. Ours to fix (P0).
 > record, `labels`/`chains`, `expiresAt`, and fetch-time grant re-checking. Those need `PodScope`
 > (P0 item 3), which does not exist yet — there are no grants to re-check. Revocation is therefore
 > still absent, and a re-login loses access to earlier reports because a new token hashes
-> differently. Both are recorded as accepted residual risk in `src/report/reportOwnership.ts`.
+> differently. Both were recorded as accepted residual risk in `src/report/reportOwnership.ts`.
+>
+> **Superseded 2026-09-22.** Reports are no longer stored: `POST /api/v1/reports` renders the PDF
+> into the response with the caller's token, and the route, sidecar and `reportOwnership.ts` are
+> gone (`SPECS.md` §10.7).
 
 **(3) UPSTREAM — `GET /water/period/:duration/:unit?device=` is not org-scoped.**
 

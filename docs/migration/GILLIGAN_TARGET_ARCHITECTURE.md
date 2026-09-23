@@ -1,9 +1,9 @@
 # Gilligan target architecture, gap analysis and roadmap
 
 Draft, 2026-09-17, for the September 30, 2026 dashboard release.
-Built on the decisions in [`GILLIGAN_PRODUCT_DIRECTION.md`](GILLIGAN_PRODUCT_DIRECTION.md); the integration background is [`INTEGRATION_PLAN.md`](INTEGRATION_PLAN.md).
+Built on the decisions in [`GILLIGAN_PRODUCT_DIRECTION.md`](GILLIGAN_PRODUCT_DIRECTION.md); the integration background was `INTEGRATION_PLAN.md` (archived, tag `docs-archive-2026-09-23`).
 This is a plan for review, not an approved implementation specification.
-Nothing here has been built yet.
+Built so far: R2's catalogue code (`docs/SPECS.md` §4b, flags off, supervisor approval pending), R3's relay and page (`GILLIGAN_R3_PORT.md`), the tool-access fix (`GILLIGAN_TOOL_ACCESS.md`) and R1's report half (`docs/SPECS.md` §10.7).
 
 Code evidence was read at cer-demo `1a8c744`, `user-dashboard` `c55f65d` and `clean-earth-rovers-server` `origin/develop` `b221702`.
 The local server checkout is behind its remote, so upstream claims come from `origin/develop` and may still be stale against the real remote.
@@ -35,7 +35,7 @@ cer-rag (this service, new Cloud Run service in the upstream project)
   ├─ identity check                     accepts calls from cer-api only
   ├─ usage limits                       Firestore counters, per user / org / day / month
   ├─ ChatOrchestrator                   tool loop, whole answers at launch
-  │     ├─ query_sensor_data, get_pod_thresholds, get_turbidity_info, generate_report
+  │     ├─ query_sensor_data, list_pods, get_pod_thresholds, get_turbidity_info, generate_report
   │     ├─ retrieval                    corpus in upstream Firestore (CORPUS_SOURCE=firestore)
   │     └─ catalogue                    supervisor-approved entries, versioned
   ├─ report renderer                    PDF bytes returned in the response, nothing on disk
@@ -59,8 +59,9 @@ This service stays stateless about conversations.
 **Report.**
 A new upstream route, `POST /gilligan/report`, relays to `POST cer-rag /api/v1/reports` and streams the PDF back with `Content-Disposition: attachment`.
 The dashboard downloads it immediately.
-Nothing is written to disk, which removes the token-hash ownership sidecars (`src/report/reportOwnership.ts`) and the lost-on-redeploy problem.
-A report asked for in chat returns a report action in `provenance`, which the page turns into the same download call, so chat never hands out a file URL.
+Nothing is written to disk, which removed the token-hash ownership sidecars (the deleted `src/report/reportOwnership.ts`) and the lost-on-redeploy problem.
+A report asked for in chat returns a report offer, which the page turns into the same download call, so chat never hands out a file URL.
+*Built 2026-09-22:* the offer travels as a top-level `reports: [{ request: { time_range, device? }, siteName, status }]` on the relay's answer and is saved with the chat message, pending the `provenance` block (`SPECS.md` §10.7).
 
 **Usage status.**
 `GET /gilligan/check-quota` relays to `GET cer-rag /api/v1/usage`, which returns remaining questions and reports and the reset time, not a bare boolean.
@@ -122,17 +123,17 @@ A referral is only offered when the observed evidence matches the entry's applic
 | area | files | verdict | what changes |
 |---|---|---|---|
 | Tool loop | `src/services/ChatOrchestrator.ts` | keep | add the concurrency limiter and 429/503 retry |
-| Sensor tools | `src/tools/{querySensorData,timeRange,aggregate,getPodThresholds,getTurbidityInfo}.ts`, `src/devices/*` | keep | none; they already resolve pods against the caller's registry and merge chains stay strict |
+| Sensor tools | `src/tools/{querySensorData,listPods,timeRange,aggregate,getPodThresholds,getTurbidityInfo}.ts`, `src/devices/*` | keep | none; they already resolve pods against the caller's registry and merge chains stay strict |
 | LLM client | `src/services/LlmService.ts` | keep | model and key from config, as now |
 | Retrieval | `src/retrieval/*` | keep | production runs `hybrid-slice-vector` (D7): the authoritative tier direct, dense retrieval over the long manuals. Deploying it needs `data/embeddings/` shipped or a Firestore vector index; the other adapters stay for evaluation only |
 | Prompt and citations | `src/prompt/*` | modify | add the catalogue and referral blocks; resolve the v2 conflicts before any v2 wording enters |
 | Chat route | `src/routes/chatRoutes.ts`, `src/controllers/ChatController.ts` | modify | add the internal `/gilligan/answer` contract and the cer-api identity check; keep `/chat` for the demo and evaluation |
 | Usage limits | `src/quota/*`, `src/middleware/quotaGuard.ts` | modify | Firestore store, several windows at once, report counter, identity keys, status endpoint |
-| Reports | `src/tools/generateReport.ts`, `src/report/{renderPdf,reportOwnership}.ts`, `src/routes/reportRoutes.ts` | modify | return bytes; delete disk storage and ownership sidecars |
+| Reports | `src/tools/generateReport.ts`, `src/report/{renderPdf,produceReport}.ts`, `src/routes/reportRoutes.ts` | modify | **done 2026-09-22**: `POST /api/v1/reports` returns bytes; disk storage and ownership sidecars deleted |
 | Report prose | `src/report/narrative.ts` | modify | causes and actions only from approved catalogue entries |
 | Event rules | `src/report/events.ts`, `src/report/types.ts` | modify | minimum for launch: make the sewage rule depend on water type (v2 §6.2 vs §6.3); otherwise report threshold crossings without naming a cause |
 | Audit log | `src/services/auditLog.ts` | keep off | superseded at launch by the `audit` field saved with each chat message (D4) |
-| Advice drafts | `docs/advice/` | replace | becomes the structured catalogue; drafts that rely on removed evidence or missing detectors are dropped |
+| Advice drafts | `docs/advice/` (archived, tag `advice-archive-2026-09-17`) | replace | becomes the structured catalogue; drafts that rely on removed evidence or missing detectors are dropped |
 | Demo frontend | `frontend/` | keep as a dev harness | not shipped; pasted-token accounts stay demo-only |
 | Evaluation | `src/eval/*`, `eval/` | keep | Phase 3 runs separately |
 
@@ -143,7 +144,7 @@ A referral is only offered when the observed evidence matches the entry's applic
 | Gilligan page | `user-dashboard/src/app/gilligan/page.js`, `components/gilligan-answer.js` | replace | React rebuild: device picker, history list, markdown answers with citation chips and provenance, report download, usage count; no fake typing animation |
 | Gilligan transport | `user-dashboard/src/app/services/gilligan.js` | modify | pass the device, add the report download (`responseType: blob`) and the richer usage status |
 | Ask box | `user-dashboard/src/app/components/gilligan-widget.js` | modify | encode the question (STAKEHOLDER_QUESTIONS item 13) |
-| Controller | `clean-earth-rovers-server/src/controllers/GilliganController.ts` | modify | relay to cer-rag behind `GILLIGAN_BACKEND`, map history, add the report route |
+| Controller | `clean-earth-rovers-server/src/controllers/GilliganController.ts` | modify | relay to cer-rag behind `GILLIGAN_BACKEND`, map history, add the report route (relay and report route committed on `local`, `d3867ab` and `d87d7f7`, not pushed) |
 | Model call and quota | `src/services/GilliganService.ts` | replace | `askQuestionGemini` (a retired `gemini-pro` id) and `checkQuota` retire; chat storage methods stay |
 | Period query authorization | `src/services/WaterAnalyticsService.ts` | modify | membership check on explicit device filters (`SECURITY_FINDINGS.md` §1); cer-rag already validates pods, but the endpoint is reachable directly |
 
@@ -155,15 +156,15 @@ Working days are counted from Thursday, September 17.
 | step | dates | owner | work | done when |
 |---|---|---|---|---|
 | R0 Setup | Sep 17-18 | user, Claude | user sets up the WSL sandbox ([`WSL_SANDBOX.md`](WSL_SANDBOX.md)); send the three v2 questions and the referral contacts to the supervisor; confirm a Fireworks payment method and read the rate-limit headers | the demo runs in the sandbox; supervisor has items 17-20 |
-| R1 Service contract | Sep 18-22 | Claude | `/gilligan/answer`, identity check, history mapping, report bytes, usage store and status endpoint, concurrency limiter; unit and supertest coverage | contract tests green; the demo still works |
-| R2 Catalogue | Sep 18-24 | Claude, then supervisor | structured catalogue from v2 and the advice drafts, generated review page, prompt and narrative wiring, sewage rule fix | supervisor has approved an entry set; reports and chat cite only approved entries |
-| R3 Upstream relay and page | Sep 21-25 | Claude, in the `local` checkouts | controller relay and report route; React page; local run of dashboard + server + cer-rag together | **done 2026-09-21 except the report route**, which waits on R1 (D8). A question, history and the usage count work end to end locally: [`GILLIGAN_R3_PORT.md`](GILLIGAN_R3_PORT.md) |
+| R1 Service contract | Sep 18-22 | Claude | `/gilligan/answer`, identity check, history mapping, report bytes, usage store and status endpoint, concurrency limiter; unit and supertest coverage | contract tests green; the demo still works. **Report half done 2026-09-22** (report bytes, report counter); the rest has not started |
+| R2 Catalogue | Sep 18-24 | Claude, then supervisor | structured catalogue from v2 and the advice drafts, generated review page, prompt and narrative wiring, sewage rule fix | supervisor has approved an entry set; reports and chat cite only approved entries. **Code done 2026-09-17** (recovered 2026-09-22, `SPECS.md` §4b); approval pending |
+| R3 Upstream relay and page | Sep 21-25 | Claude, in the `local` checkouts | controller relay and report route; React page; local run of dashboard + server + cer-rag together | **done 2026-09-21; report route added 2026-09-22** (D8). A question, history and the usage count work end to end locally: [`GILLIGAN_R3_PORT.md`](GILLIGAN_R3_PORT.md) |
 | R4 Quality | Sep 23-28 | separate session, Claude | Phase 3 capture (approved spend); fix what it finds; where a class of question stays weak, add a caveat or a refusal (D3); organization-isolation tests with the pod-scope fixtures | every weak class is either fixed, caveated or refused; isolation tests pass |
 | R5 Demo and merge | Sep 28-29 | user, supervisor | supervisor demo; merge approval; upstream owners create the Fireworks key; corpus seeded into their Firestore; cer-rag deployed | cer-rag healthy in their project; relay switched on with `GILLIGAN_BACKEND=rag` |
 | R6 Release | Sep 30 | user, upstream owners | production smoke on one pod per test organization. **There is no working rollback**: `GILLIGAN_BACKEND=gemini` restores a backend that fails every question (D9), so the cutover is one-way and the gate is R4's quality bar | release |
 
 Critical path: supervisor catalogue approval by Sep 25 (`STAKEHOLDER_QUESTIONS.md` items 17-20) and upstream IAM for deploy and Firestore seeding by Sep 28.
-Upstream changes are written by the user in the WSL sandbox (D1), from R3 on.
+Upstream changes are written in the two `local` checkouts (D1, revised 2026-09-21), from R3 on.
 Earlier estimates excluded integration and supervisor turnaround, so R3 and R5 carry the schedule risk.
 
 ## 5. Later items
@@ -171,7 +172,7 @@ Earlier estimates excluded integration and supervisor turnaround, so R3 and R5 c
 - Streaming answers (needs `fetch` in place of axios for one call, and incremental tool-call assembly).
 - Phone and tablet layout (◆G5).
 - Multi-pod reports and stored PDFs.
-- Daily and tidal pattern classification, v2 site baselines, derived metrics and QC framework.
+- v2 site baselines, derived metrics and QC framework. (Daily and tidal pattern classification landed in reports on 2026-09-22, `SPECS.md` §10.7.)
 - Subscription tiers on top of the usage limits.
 - Moving cer-rag into the upstream server as one deployable.
 - Quantitative turbidity for pods with capable hardware (needs a sensor-model field).
@@ -204,6 +205,37 @@ Settled 2026-09-21:
 - **D7. Production retrieval is `hybrid-slice-vector`,** not `firestore-direct`: the authoritative tier is served direct and always present, and dense retrieval covers the long manuals. Measured on a dissolved-oxygen question it returns the 4 direct documents plus 5 scored USGS chunks, where the direct arm alone can only reach its own 4-document, 26,096-char slice. The cost is an embedding cache: `data/embeddings/` is 7.1 MB, git-ignored, and rebuilding it is a paid run (446 chunks, ~245,671 tokens).
 - **D8. R3 relays to the existing `POST /api/v1/chat`** rather than waiting for R1's `/gilligan/answer`. R1 was gated on approval to start implementing and the release date is itself undecided, so R3 could not depend on it. Every contract difference is confined to `ANSWER_PATH` and the request body in `CerRagService.ts`, and the verified identity fields are already threaded through unused, so R1 is an edit to that one file. The report route is the part of R3 this defers, because returning report bytes is R1 work and the disk-and-sidecar design it would otherwise relay to is already scheduled for replacement.
 - **D9. The Gemini backend is not a fallback.** `askQuestionGemini` calls the retired `gemini-pro` id; live-confirmed 2026-09-21 against the deployed API, which answered `404 models/gemini-pro is not found for API version v1beta`. Production Gilligan therefore fails every question today, and `GILLIGAN_BACKEND=gemini` restores that, not a working assistant. The default stays `gemini` so the relay is inert when merged upstream, which is a merge-safety property and not a safety net.
+
+- **D10. Gilligan runs with `SENSOR_TOOL=true`; `REPORT_TOOL` stays off until R1** (revised 2026-09-22: on, see below). Both flags
+  default off, which is right for the eval harness and wrong for the product, and nothing had
+  said which value the release runs with. With them off the model is handed no tools at all, so
+  every question about a reading falls through to `REFUSAL_SENTENCE` — a real session refused
+  "can you tell me what my past 2 weeks of turbidity look like" and "do you have data on any of
+  my pods?" for that reason alone, and R3's verification never caught it because it was
+  conducted with `SENSOR_TOOL=false` throughout. `SENSOR_TOOL=true` is therefore a release
+  requirement, not a tuning knob: it is what makes Gilligan a sensor assistant rather than a
+  document search. It turns every reading question into a live production device read, scoped to
+  the asking user's own token (`2b`). `REPORT_TOOL` stays off because `generate_report` returns
+  a disk path guarded by the bearer-token-hash sidecar that R1 replaces with returned bytes;
+  turning it on before R1 would ship the defect, not the feature.
+
+  *Revised 2026-09-22.* R1's report half has landed: `generate_report` returns a `report_request`,
+  `POST /api/v1/reports` renders the PDF into the response, and the sidecar is gone
+  (`SPECS.md` §10.7). The reason above for keeping `REPORT_TOOL` off no longer holds, and the
+  user decided on 2026-09-22 that **the release runs `REPORT_TOOL=true`**; the local `.env` now
+  sets it. The flag also opens `POST /api/v1/reports`, so the R5 runbook must carry it beside
+  `SENSOR_TOOL`, and must set `QUERY_QUOTA=true` with a finite `QUERY_QUOTA_REPORTS`, or reports
+  are unlimited. Eval captures still set both flags `false` explicitly.
+
+  Consequences to hold together, since the flag moves three things at once (the prompt block, the
+  `tools` array, the registry): every eval capture must set `SENSOR_TOOL=false` explicitly on both
+  server and runner rather than relying on the default, and the deployment runbook for R5 has to
+  carry the flag or cer-rag will come up in production answering nothing.
+
+- **D11. R2 before R1** (2026-09-17): the catalogue was built first because supervisor approval is on the critical path.
+  Its commits were lost with the old machine and recovered on 2026-09-22 at tag `old-machine-recovery-2026-09-19`.
+- **D12. Identity check inside cer-rag** (2026-09-17): cer-rag verifies the Google-signed ID token itself (audience and cer-api's service-account email) with `google-auth-library`, in addition to Cloud Run invoker IAM, so a deployment accidentally left public still refuses forged identity.
+  The check sits behind a flag that is off for local development and the demo.
 
 Open:
 

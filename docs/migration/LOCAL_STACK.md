@@ -69,7 +69,7 @@ The fix is to construct these services on first use rather than at import; the p
 
 ## Serving Gilligan locally (roadmap R3)
 
-To take the three Gilligan routes away from the live API and serve them from the local server, set `DEV_LOCAL_PATHS=/api/v1/gilligan` and restart.
+To take the Gilligan routes away from the live API and serve them from the local server, set `DEV_LOCAL_PATHS=/api/v1/gilligan` and restart.
 Everything else keeps proxying, so pods, water data, organizations and login still come from live.
 
 The dashboard calls, from `user-dashboard/src/app/services/gilligan.js` through the `/api/v1` axios instance:
@@ -77,6 +77,7 @@ The dashboard calls, from `user-dashboard/src/app/services/gilligan.js` through 
 - `GET /gilligan/question?question=<text>&chatId=<uuid>`
 - `GET /gilligan/chats`
 - `GET /gilligan/check-quota`
+- `POST /gilligan/report` with `{ time_range, device? }`, answered with the PDF (added 2026-09-22; relays to cer-demo's `POST /api/v1/reports`, which needs `REPORT_TOOL=true`)
 
 cer-demo answers on `POST /api/v1/chat` with `{ query, history?, device?, stream?, retrieval? }` and returns `{ answer, model, citations, usage, tool_calls?, tool_round_cap_reached? }`, plus `GET /api/v1/usage` for the remaining allowance.
 It reads the caller's bearer token for the sensor tool and applies its own quota guard.

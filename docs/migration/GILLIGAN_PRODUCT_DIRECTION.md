@@ -3,12 +3,17 @@
 Updated 2026-09-16 following the product interview and source-of-truth v2 review.
 This records user decisions and planning findings, not an approved implementation specification.
 
-## Continue here
+## Reading this now
 
-Continue architecture discovery and the interview, then prepare a target architecture, keep/modify/replace gap analysis, and incremental implementation roadmap.
-Do not begin implementation, refactoring, dependency installation, database/schema changes, infrastructure changes, or corpus ingestion until the target direction is agreed.
-Do not repeat broad reconnaissance or reopen settled product questions without new evidence.
-Treat existing code and documents as evidence of previous decisions, not authoritative requirements.
+This is the discovery record of 2026-09-16 and 2026-09-17; the user decisions below still stand.
+Its "continue discovery, do not implement" instruction was fulfilled by [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md), which is where current plans and decisions D1-D12 live.
+Superseded since:
+
+- **Workspace and D1.** The OneDrive checkout and the WSL2 sandbox are gone; upstream code is written in the two `local` checkouts (D1 revised 2026-09-21, [`LOCAL_STACK.md`](LOCAL_STACK.md)).
+- **Reports.** PDFs are no longer written to disk or guarded by token-hash sidecars; `POST /api/v1/reports` returns the bytes (`docs/SPECS.md` §10.7).
+- **Pattern tags and the sewage rule.** Diel/tidal/trend classification landed on 2026-09-22, and the sewage rule follows water type since R2 (`docs/SPECS.md` §4b, §10.7).
+- **Tools.** `list_pods` was added on 2026-09-21 ([`GILLIGAN_TOOL_ACCESS.md`](GILLIGAN_TOOL_ACCESS.md)).
+- **`gemini-pro`.** Live-confirmed failing on 2026-09-21 (D9).
 
 ## Confirmed user decisions
 
@@ -34,7 +39,7 @@ Treat existing code and documents as evidence of previous decisions, not authori
 Target architecture, gap analysis and roadmap built on these: [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md).
 
 - **Merge path:** build the complete, quality-checked product first, demo it to the supervisor, and the supervisor approves merging it into the upstream repositories. Where that code is written is D1 below.
-- **Integration shape:** the dashboard keeps calling the upstream Gilligan routes; the upstream server calls this service over HTTP (INTEGRATION_PLAN.md Shape C). Moving this code into the upstream server is an option if time allows.
+- **Integration shape:** the dashboard keeps calling the upstream Gilligan routes; the upstream server calls this service over HTTP (`INTEGRATION_PLAN.md` Shape C, archived under tag `docs-archive-2026-09-23`). Moving this code into the upstream server is an option if time allows.
 - **Hosting:** the upstream owners create their own Fireworks API key for `gpt-oss-120b`. The document corpus is expected to live in their Firestore.
 - **Data handling is a launch requirement.** Fireworks documents that it does not log or store prompts or generations for open models unless the account opts in, which covers the serverless models used here (checked below).
 - **Phase 3 capture spend is approved**, to be run in a separate session.
@@ -169,7 +174,7 @@ USGS documents saturation inputs and methods at https://www.usgs.gov/tools/dotab
 Use a small versioned, supervisor-approved catalogue shared by chat and reports.
 Each entry should have an ID, approved text, applicability, required evidence, limitations, source references, optional CER referral, and approval/version metadata.
 Generate the readable review view from the structured source rather than hand-maintaining duplicates.
-Existing `docs/advice/` contains 38 draft candidates, some relying on removed evidence or unavailable detectors; these are not automatically approved.
+Existing `docs/advice/` (archived 2026-09-23, tag `advice-archive-2026-09-17`) contains 38 draft candidates, some relying on removed evidence or unavailable detectors; these are not automatically approved.
 V2 can supply source material for a focused subset rather than a broad new corpus expansion.
 When evidence does not establish a corrective action, state the observed threshold crossing and the limitation instead of asserting that action is required.
 

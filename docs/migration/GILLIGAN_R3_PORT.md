@@ -3,6 +3,7 @@
 Built 2026-09-21, verified end to end locally the same day.
 Roadmap step R3 in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4; the local stack it runs on is [`LOCAL_STACK.md`](LOCAL_STACK.md).
 Nothing is pushed and nothing is deployed.
+This is the record of 2026-09-21; the report relay and download button were added on 2026-09-22 (Task B, `docs/SPECS.md` §10.7), and both upstream changes are now committed on `local`.
 
 ## The decision this step turned on
 
@@ -17,7 +18,7 @@ The verified `userId` and `organizationId` are already threaded into `CerRagServ
 
 ### cer-demo
 
-`GET /api/v1/usage` reports the caller's remaining allowance: `{ enabled, questions: { used, limit, remaining }, tokens: {...}, window, resetsAt }`.
+`GET /api/v1/usage` reports the caller's remaining allowance: `{ enabled, questions: { used, limit, remaining }, tokens: {...}, window, resetsAt }` (a `reports` dimension was added on 2026-09-22).
 It is a read-only view over the quota store that already existed, added because R3's "the usage count works" cannot be shown with a service that can only refuse a request and never report standing.
 `limit` and `remaining` are `null` for an unlimited dimension and while the quota is off, so a client distinguishes "no ceiling" from "nothing left" by type rather than by sentinel.
 R1 replaces the store underneath it with the Firestore one without changing this contract.
@@ -83,6 +84,7 @@ yarn dev -p 3000
 ```
 
 `SENSOR_TOOL=true` makes pod questions work and turns every such question into a live production device read.
+**Running it `false`, as this verification did, is why a stack exercised end to end still refused every question about a reading**: see [`GILLIGAN_TOOL_ACCESS.md`](GILLIGAN_TOOL_ACCESS.md), and D10, which settles the value the release runs with.
 
 ### The two local-only gates
 
@@ -109,17 +111,20 @@ All three services running together, questions asked through the dashboard's own
 
 Two questions were spent against Fireworks, 17,249 tokens in total.
 No live device reads were made: `SENSOR_TOOL` was off throughout.
+That is also the gap in this verification: with the flag off the model is offered no tools at all, so nothing here exercised a sensor question.
 
 ## Not done in R3
 
 **Report download.** R3's done-when includes it, and it is deliberately left out.
 Reports today are written to disk and guarded by a bearer-token hash sidecar, which R1 replaces with bytes returned in the response; two of the recorded defects are about that sidecar.
 Building a relay against a design already scheduled for replacement would be throwaway work, and the honest sequence is R1 first.
+*Done 2026-09-22:* R1's report half landed and the relay gained `POST /gilligan/report`.
 
 **A browser pass over the rebuilt page.** The page compiles and serves, and the citation logic is verified against real answers in Node, which is the stronger check for the quote-leak risk.
-Seeing it rendered still needs a logged-in browser session, which is Claude's item 9.
+Seeing it rendered still needs a logged-in browser session; that check is now [`REPORT_BROWSER_CHECK.md`](REPORT_BROWSER_CHECK.md) step 10.
 
 **Anything upstream is uncommitted.** Both upstream repositories hold these changes in their working trees on branch `local`, matching how the dev passthrough was left.
+*Since committed on `local`* (server `d3867ab`, dashboard `3badce7`), and not pushed.
 
 ## Defects observed while doing this
 

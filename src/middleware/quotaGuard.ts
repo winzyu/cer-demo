@@ -9,7 +9,7 @@ import { createLogger } from "../utils/logger";
 const log = createLogger("Quota");
 
 /**
- * Refuses a chat request whose bucket is spent.
+ * Refuses a chat request, or with `kind: "report"` a report download, whose bucket is spent.
  *
  * ## Why the gate is middleware, and why it sits *before* the controller
  *
@@ -27,10 +27,15 @@ const log = createLogger("Quota");
  * It does not *count*. Recording belongs to `ChatController`, after `parseChatRequest` succeeds
  * and again when the model reports its usage, so a 400 does not consume an allowance and token
  * cost is attributed to the answer that incurred it. The gate reads; the controller writes.
+ * `ReportController` likewise records a report only once its PDF has rendered.
  */
-export const quotaGuard = (service: QuotaService = quotaService) => (
+export const quotaGuard = (
+  service: QuotaService = quotaService,
+  kind: "chat" | "report" = "chat",
+) => (
   (req: Request, res: Response, next: NextFunction): void => {
-    const decision = service.check(quotaKeyFor(req));
+    const key = quotaKeyFor(req);
+    const decision = kind === "report" ? service.checkReport(key) : service.check(key);
     if (decision.allowed) {
       next();
       return;

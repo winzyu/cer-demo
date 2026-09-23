@@ -249,6 +249,8 @@ run into. A sidecar rather than an in-memory map because the PDF outlives the pr
 **Residual risk, accepted and documented:** re-login mints a different token string, so a user
 loses access to reports generated under a previous one. No revocation, no expiry.
 
+**Superseded 2026-09-22.** The route and the ownership sidecar are gone: `POST /api/v1/reports` renders the PDF into the response with the caller's token and stores nothing, so there is no file left to guard and the residual risks above no longer apply (`SPECS.md` §10.7).
+
 ### 6c. Knock-on: the bundled demo frontend's pod picker now fails closed
 
 `frontend/js/api.js` sends no `Authorization` header. That page only ever worked because it was
@@ -257,6 +259,9 @@ not a feature. It now shows a `caller_token_required` message telling the user t
 
 This was **not** papered over with a `?token=` URL parameter: that puts a non-expiring bearer
 credential into browser history, referrer headers, and server logs.
+
+**Resolved 2026-09-03.** The page now holds pasted named accounts and sends the active one as a
+bearer header (`frontend/js/auth.js`, `SPECS.md` §10.5).
 
 
 ---
@@ -298,4 +303,4 @@ conscious choice rather than an accident.
 past the `ec2b283` this section was written against: `1f81f87` ("Neumorphic light theme
 conversion; expandable device pills; mobile layout fixes", 2026-08-26) and a `.gitignore` commit.
 No security surface changed — it is a repaint plus one new component — but the palette our
-`frontend/theme.css` was lifted from is now light, not dark. See `INTEGRATION_PLAN.md` §3.
+`frontend/theme.css` was lifted from is now light, not dark. See `INTEGRATION_PLAN.md` §3 (archived, tag `docs-archive-2026-09-23`).

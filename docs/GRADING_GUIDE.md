@@ -12,7 +12,8 @@ asks.
 >
 > **The next grading round is Phase 2c** of [`EVAL_REBUILD.md`](EVAL_REBUILD.md): 30 rows,
 > stratified across classes and arms, ~1.5–2 hours, and it needs a capture to exist first
-> (Phase 3). The mechanics below are unchanged and still correct — only the counts and paths in
+> (Phase 3). The 2026-09-14 gold-context capture predates the 2026-09-21 prompt edit, so 2c waits
+> for the recapture. The mechanics below are unchanged and still correct — only the counts and paths in
 > §1 will differ, and `npm run grade:packet` prints the real ones.
 >
 > Two rules that cost real work when they were learned: use `--out=<dir>`, **never `--force`**
