@@ -236,6 +236,13 @@ chunks these are.
   inventory, which was wrong at the 2026-09-01 qualification pass
   (`eval/fixtures-wave1/_QUALIFICATION.md` §2.1) and has since been fixed.
 
+  **Done 2026-09-21.** All 12 entries were re-resolved onto the corpus chunk of the same index.
+  The mapping was confirmed by exact-quote evidence rather than assumed from the index: every entry's quotes match its mapped chunk and no other, with the expected spill into index+1 from the 400-char chunk overlap.
+  The re-OCR also broke 12 `quote` values; 11 were the same passage with only OCR characters moved (`14.38` to `1438`, `uS/om` to `yS/em`, straight to curly apostrophes) and were refreshed against the mapped chunk.
+  Claim ids, claim text, `type`, `metrics`, `specificity`, `locator` and the summary blocks are unchanged, so the corrected drift/QAPP gap statement survives.
+  446/446 chunk ids resolve, with 2177 claims, no duplicate ids and no quote over 200 chars; per-claim detail is the 2026-09-21 note in `eval/claims/_STATUS.md`.
+  The twelfth quote, `epa-oxygen-solubility-chart-01`, was re-parented to chunk index 10 on 2026-09-23 (`c85848a`), and `eval/retrieval-labels/` carries none of the 12 old ids.
+
 Phase 1e's **human locator** (document + section + short quote) is the mitigation for all three. It
 lets a label be re-resolved against a new chunk instead of re-authored. Phase 1a is already
 capturing locators, so the protection is in place before any label exists.
@@ -950,6 +957,35 @@ The baseline's recorded strictness examples (adjectives, `±` against OCR `+`) a
 Recall has no knee up to 40; ranking is weak (MRR 0.077 at k=20), so depth is compensating for ordering.
 A chunk is about 800 prompt tokens, about $0.00012 uncached on `gpt-oss-120b`, so k=30 costs about $0.0024 more per request than k=10.
 Choose k on answer correctness, not recall: capture k=20 and k=30 on `hybrid-slice-vector` and stop where correctness gains less than the 0.05 noise band.
+
+### Retrieval depth captures - 2026-09-24, runs `p3-k20-2026-09-23` and `p3-k30-2026-09-24`
+
+`hybrid-slice-vector` captured at k=20 (`9abc8a8`) and k=30 (`fb7314d`) on the frozen 45 / 90 set, with iteration 1's prompt and the same settings as the baseline; k=10 is iteration 1's run `p3-it1-2026-09-23`.
+Both captures predate the `dev` merge that brought Task A's turbidity prompt wording, so they do not reflect it.
+The judge is still uncalibrated and the fixtures are not human-verified, so every number is provisional.
+Recall here is the share of each turn's labelled chunks that were retrieved.
+
+| | k=10 | k=20 | k=30 |
+|---|---|---|---|
+| correctness | 0.51 | **0.60** | 0.52 |
+| recall | 25.9% | 36.6% | 43.3% |
+| turns with no labelled chunk retrieved | 32 | 21 | 16 |
+| correctness on turns with half or more of their labels retrieved | 0.95 (19 turns) | 0.80 (30) | 0.73 (37) |
+| refusal wording on non-refusal turns (of which scored 0) | 21 (17) | 17 (9) | 29 (21) |
+| ungrounded turns / claims | 57.8% / 140 | 62.2% / 188 | 62.2% / 173 |
+| refusal gate | FAIL | FAIL | PASS (0 answered) |
+| fabricated figures | 2 | 2 | 0 |
+| quotes supported | 67.3% | 64.0% | 52.1% |
+| prompt tokens per turn | 13.9K | 19.2K | 24.5K |
+
+**k=20 is the default.** From k=20 to k=30 correctness fell 0.08, more than the 0.05 noise band, with 16 turns falling and 10 rising; follow-up (0.63 to 0.25) and precedence (0.83 to 0.50) fell most, and refusal was the only class to gain.
+More depth makes the model refuse more: recall keeps rising, but the model declines questions the excerpts answer, and scores fall even on well-retrieved turns.
+The gates k=30 passes (refusal, fabricated figures) come from refusing more often, not from better answers.
+The next retrieval lever is order, not depth: the labelled chunks are retrieved but ranked low, so a reranker or dropping the always-on operator slice can be measured offline for almost nothing.
+The ungrounded rate is flat at about 60% at every depth, so it comes from the model elaborating rather than from retrieval; calibrate the judge before trusting that number.
+
+`p3-k30-2026-09-24` has 180 of 180 verdicts: three calls failed on the first pass and were refilled, one of them after the `dev` merge had started; that row is an `ungrounded` verdict on a tools-off turn, whose prompt the merge leaves byte-identical.
+Spend: k=20 $1.37 (capture $0.20, judge $1.18), k=30 $1.73 (capture $0.27, judge $1.46); R4 total about $7.44 of the $20 ceiling the user set on 2026-09-24.
 
 ## Task C provenance inputs - 2026-09-24
 
