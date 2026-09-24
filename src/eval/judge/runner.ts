@@ -19,6 +19,7 @@ import { createHash } from "crypto";
 import fs from "fs";
 import path from "path";
 import OpenAI from "openai";
+import type { ReasoningEffort } from "openai/resources/shared";
 import { loadFixtures } from "../fixtures";
 import { buildSystemPrompt } from "../../prompt/systemPrompt";
 import { checkCitations } from "../gates/checks";
@@ -178,6 +179,8 @@ export interface JudgeRecord {
    * history.
    */
   maxTokens?: number;
+  /** The `reasoning_effort` the call was made with; undefined means the model's default. */
+  reasoningEffort?: string;
   model: string;
   judgedAt: string;
 }
@@ -328,6 +331,11 @@ export const modelsUnderTest = (root: string, pass: string, arms: string[]): str
 export interface JudgeClientOptions {
   model: string;
   maxTokens: number;
+  /**
+   * Fireworks' `reasoning_effort`. Omitted, the model reasons at its default, and on
+   * `deepseek-v4-flash-0731` that hidden reasoning is most of each call's completion tokens.
+   */
+  reasoningEffort?: ReasoningEffort;
 }
 
 /**
@@ -365,6 +373,7 @@ export const judgeOnce = async (
       // Fireworks routes serverless traffic by this key to maximize prompt cache hits. Without
       // it, measured 2026-09-24, a turn's second call landed elsewhere and read 0 cached tokens
       // despite sharing a ~7K-token prefix. Hashed so no arm or fixture name leaves the harness.
+      ...(options.reasoningEffort ? { reasoning_effort: options.reasoningEffort } : {}),
       user: hashPrompt(`${task.arm}|${task.fixtureId}|${task.turn}`).slice(0, 16),
       // Enforced during generation, not requested in prose — see JUDGE_SCHEMAS. This also
       // suppresses reasoning preambles, which is what made a cheaper judge unusable and, worse,
@@ -399,6 +408,7 @@ export const judgeOnce = async (
         completionTokens,
         promptHash: hashPrompt(prompt),
         maxTokens: options.maxTokens,
+        reasoningEffort: options.reasoningEffort ?? undefined,
         model: response.model ?? options.model,
         judgedAt: new Date().toISOString(),
       };

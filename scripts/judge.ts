@@ -21,6 +21,7 @@
 import fs from "fs";
 import path from "path";
 import OpenAI from "openai";
+import type { ReasoningEffort } from "openai/resources/shared";
 import { config } from "../src/config";
 import { createLogger } from "../src/utils/logger";
 import { loadFixtures } from "../src/eval/fixtures";
@@ -58,6 +59,19 @@ const arg = (name: string): string | undefined => process.argv
   .find((a) => a.startsWith(`--${name}=`))?.split("=").slice(1).join("=");
 
 const flag = (name: string): boolean => process.argv.includes(`--${name}`);
+
+const REASONING_EFFORTS = ["none", "minimal", "low", "medium", "high"] as const;
+
+/** Rejects a typo before it is sent, rather than paying for a call the API refuses. */
+const parseReasoningEffort = (value: string | undefined): ReasoningEffort | undefined => {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (!(REASONING_EFFORTS as readonly string[]).includes(value)) {
+    throw new Error(`--reasoning-effort must be one of ${REASONING_EFFORTS.join(", ")} (got "${value}").`);
+  }
+  return value as ReasoningEffort;
+};
 
 const mark = (met: boolean): string => (met ? "PASS" : "FAIL");
 
@@ -328,7 +342,11 @@ const main = async (): Promise<void> => {
     apiKey: config.fireworks.apiKey,
     baseURL: config.fireworks.baseUrl,
   });
-  const options = { model: judgeModel, maxTokens: Number(arg("max-tokens") ?? DEFAULT_JUDGE_MAX_TOKENS) };
+  const options = {
+    model: judgeModel,
+    maxTokens: Number(arg("max-tokens") ?? DEFAULT_JUDGE_MAX_TOKENS),
+    reasoningEffort: parseReasoningEffort(arg("reasoning-effort")),
+  };
 
   const fresh: JudgeRecord[] = [];
   const failures: string[] = [];

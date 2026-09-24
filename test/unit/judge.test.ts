@@ -617,6 +617,25 @@ describe("judge call - max-tokens budget", () => {
     expect(otherTurn).not.toBe(first);
     expect(first).not.toContain("gold-context");
   });
+
+  it("sends reasoning_effort only when one is chosen, and records it", async () => {
+    const create = jest.fn().mockResolvedValue({
+      choices: [{ message: { content: '{"score": 2, "reason": "fine"}' } }],
+      model: "judge-model",
+      usage: { prompt_tokens: 50, completion_tokens: 5 },
+    });
+    const off = await judgeOnce(fakeClient(create), { model: "m", maxTokens: 100 }, judgeTask());
+    const none = await judgeOnce(
+      fakeClient(create),
+      { model: "m", maxTokens: 100, reasoningEffort: "none" },
+      judgeTask(),
+    );
+
+    expect(create.mock.calls[0][0]).not.toHaveProperty("reasoning_effort");
+    expect(create.mock.calls[1][0].reasoning_effort).toBe("none");
+    expect(off.reasoningEffort).toBeUndefined();
+    expect(none.reasoningEffort).toBe("none");
+  });
 });
 
 describe("judge ledger reuse", () => {
