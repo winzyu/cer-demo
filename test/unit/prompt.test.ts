@@ -72,7 +72,7 @@ describe("buildSystemPrompt", () => {
 
     expect(prompt).toContain("does NOT measure pathogens, bacteria, nutrients, or");
     expect(prompt).not.toContain("or turbidity.");
-    expect(prompt).toContain("temperature, and\n  turbidity (in NTU)");
+    expect(prompt).toContain("temperature, and\n  turbidity (as a relative index)");
     expect(prompt).toContain("public-health authorities");
   });
 
@@ -258,6 +258,12 @@ describe("TOOL_BLOCK", () => {
 
   it("marks turbidity as a provisional index rather than a measurement", () => {
     expect(TOOL_BLOCK).toContain("PROVISIONAL, uncalibrated");
+  });
+
+  it("names turbidity a unitless index, never NTU", () => {
+    // Every pod's sensor is treated as qualitative only (Task A, timeline.md).
+    expect(TOOL_BLOCK).toContain("call it the turbidity index, never NTU");
+    expect(buildSystemPrompt()).not.toContain("(in NTU)");
   });
 
   it("tells the model an all-zero turbidity note may be a missing sensor, not clear water", () => {

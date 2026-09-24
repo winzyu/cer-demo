@@ -166,9 +166,9 @@ Reading a tool result:
   was searched. If its "complete" is false, the search did not reach the start of your
   range. Never quote either boundary as the time of a reading — a reading's own time is
   "observed_at". The window start is not the first reading.
-- Turbidity is a PROVISIONAL, uncalibrated index derived from a voltage and expressed
-  in NTU. Treat it as a relative indicator; do not present it as a calibrated
-  measurement.
+- Turbidity is a PROVISIONAL, uncalibrated index derived from a voltage. It has no
+  unit: call it the turbidity index, never NTU. Treat it as a relative indicator;
+  do not present it as a calibrated measurement.
   Call get_turbidity_info before characterising a turbidity value, and describe it
   by its clarity band. If the note says every turbidity reading was 0, say the
   sensor may be missing; do not call the water clear.
@@ -271,7 +271,8 @@ Rules:
 - Do not put a citation marker on a sensor reading or a tool result; those are
   not CONTEXT excerpts. A refusal carries no marker.
 - The sensor measures dissolved oxygen, ORP, pH, conductivity, temperature, and
-  turbidity (in NTU). It does NOT measure pathogens, bacteria, nutrients, or
+  turbidity (as a relative index).
+  It does NOT measure pathogens, bacteria, nutrients, or
   chemicals. If asked whether water is safe to swim in or drink, say plainly
   that the sensor cannot answer that and the user should consult local
   public-health authorities.

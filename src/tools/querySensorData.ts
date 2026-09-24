@@ -992,7 +992,7 @@ export class QuerySensorData {
     if (metricKeys.includes("turbidity")) {
       notes.push(
         "Turbidity is derived from a raw voltage by a provisional, uncalibrated conversion. "
-        + "It is a relative index expressed in NTU, not a calibrated measurement.",
+        + "It is a relative index with no unit, not a calibrated measurement and not NTU.",
       );
     }
 

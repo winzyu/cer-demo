@@ -404,7 +404,9 @@ describe("query_sensor_data — caveats that travel with the number", () => {
     });
 
     expect(result.note).toContain("provisional, uncalibrated");
-    expect(result.unit).toBe("NTU");
+    // Not NTU: every pod's sensor is treated as qualitative only (Task A, timeline.md).
+    expect(result.unit).toBe("unitless");
+    expect(result.note).toContain("not NTU");
   });
 
   it("flags a window in which every turbidity reading is 0 as a possible missing sensor", async () => {

@@ -114,6 +114,7 @@ export const getTurbidityInfo = async (
       + "possible missing sensor, not confirmed clear water, and query_sensor_data says so in "
       + "its note.",
   },
+  unit: "None. The index is not NTU or any calibrated unit; call it the turbidity index.",
   no_operator_range: "No operator-configured turbidity threshold exists for any pod. Never "
     + "judge a turbidity value as in or out of range.",
 });
