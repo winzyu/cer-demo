@@ -841,3 +841,49 @@ The labels are still fixture-wide rather than per turn (1e), which overstates mi
 
 Measured completion mean: 589 tokens on gold context, 619 on `hybrid-slice-vector`; both are under the ~697-token 20b/120b crossover in §4.
 Spend: captures about $0.07 and $0.08, judge passes $0.645 and $0.719, three spot checks about $0.01, about $1.53 in total.
+
+### R4 iteration 1 - 2026-09-23, run `p3-it1-2026-09-23`
+
+Captured at `22d6dd0` (four prompt rules, `DEFAULT_TOP_K` 10) with the baseline's settings; transcripts in `eval/transcripts/p3-it1-2026-09-23/`, gate and judge results under `data/results/*/p3-it1-2026-09-23/`.
+Nine judge calls first failed with "no JSON object" and were filled by a second `judge` pass.
+
+| arm | refusal | citations | fabricated | quotes supported | correctness | ungrounded turns |
+|---|---|---|---|---|---|---|
+| `gold-context` | FAIL, 2 of 8 answered | 90.5% | FAIL, 2 | 71.7% | **1.01** (was 1.01) | **54.4%** (49/90, was 47.8%) |
+| `hybrid-slice-vector`, k=10 | FAIL, 1 answered, 2 off-contract | 100% | FAIL, 2 | 67.3% | **0.51** (was 0.52) | **57.8%** (52/90, was 59.6%) |
+
+Per class on gold context: cross-document 0.92, deep-in-manual 1.20, definitional 1.00, follow-up 1.00, precedence 1.17, probe-calibration 1.00, refusal 0.75.
+On `hybrid-slice-vector`: cross-document 0.46, deep-in-manual 0.60, definitional 0.50, follow-up 0.50, precedence 0.50, probe-calibration 0.56, refusal 0.38.
+
+**The prompt rules did not move correctness, and the citation-number rule made citations worse.**
+Gold-context out-of-range markers rose from 10 to 16 (e.g. 【10】, 【14】, 【16】 with 5 excerpts supplied).
+The numbers are not step or table numbers from the excerpt text: the quotes behind them are verbatim in excerpts 3-5, so the model is inventing marker numbers, not misreading labels, and a prompt rule does not reach that.
+Refusals improved in form (6 of 8 exact after hyphen folding, none off-contract) but two turns still state a figure.
+
+**Depth doubled recall without moving correctness.**
+Measured from the captured context against fixture-wide labels, `hybrid-slice-vector` recall rose from 11.6% to 20.3% and zero-hit turns fell from 49 to 32 of 90, at 13.5 chunks per turn against 8.7.
+Correctness stayed at 0.51 because scores fell within each retrieval bucket while turns moved up between them:
+
+| turns by share of labelled chunks retrieved | baseline, k=5 | iteration 1, k=10 |
+|---|---|---|
+| none | 49 turns, 0.35 | 32 turns, 0.19 |
+| under half | 29 turns, 0.66 | 39 turns, 0.56 |
+| half or more | 12 turns, 0.92 | 19 turns, 0.95 |
+
+Retrieval still decides the score: a turn with half its labels scores like gold context, and one with none scores near zero.
+The within-bucket drop is the prompt: answers got shorter (well-retrieved turns 1,923 to 774 characters), ungrounded claims fell from 180 to 140, and refusal wording appeared on more turns.
+On gold context, refusal wording on non-refusal fixtures rose from 3 turns to 6; two of them score 0 on questions the supplied excerpts answer (`deepmanual-turbidity-rounding` turn 2, `definitional-eh-versus-the-millivolts-we-log` turn 1), so the partial-refusal rule over-refuses.
+
+**Judge variance, run `p3-it1-rejudge-2026-09-23`:** the same gold-context answers judged a second time (the run directory is a symlink to `p3-it1-2026-09-23`, so the transcripts are the same files).
+Correctness 1.01 then 0.98, with 7 of 90 turns scored differently; ungrounded turns 49 then 57 of 90 (54% then 63%), with 16 turns flagged differently.
+So a correctness change under about 0.05 is noise, the baseline-to-iteration-1 rise in ungrounded turns is noise, and the ungrounded rate cannot be read to better than about ±9 points per run with this judge; the 2% ceiling is not measurable with it.
+Cost $0.561, about $3.71 in total.
+
+### R4 iteration 2 - prompt
+
+Two changes, both reversing iteration 1 effects:
+
+- The excerpt-number sentence is dropped: out-of-range markers rose with it. Correcting marker numbers from the quote's location is left to the citation-validation work (Task C), because a prompt rule does not reach invented numbers.
+- The partial-refusal rule now tells the model to check every excerpt before refusing, and counts a value derived by applying an excerpt's rule, table or formula to the user's numbers as supported; the refusal is still required for a specific value no excerpt gives or yields.
+
+Spend: captures and spot check about $0.16, judge $1.463, about $1.62 for the run and about $3.15 in total.
