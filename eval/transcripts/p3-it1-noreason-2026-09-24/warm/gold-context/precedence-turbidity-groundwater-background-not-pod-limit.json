@@ -1,0 +1,71 @@
+{
+  "fixtureId": "precedence-turbidity-groundwater-background-not-pod-limit",
+  "fixtureClass": "precedence",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-24T01:39:56.800Z",
+    "gitSha": "fb8d22d59abd7cf2606ed80b932b273e7c854a15",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8011/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "Our groundwater well pod is showing turbidity of 12 NTU. Is that too high for our pod?",
+      "answer": "I don’t have a configured turbidity threshold for this pod, so I can’t tell you whether 12 NTU is above or below the pod’s limit.  \n\nFor reference, the document notes that “natural turbidity in ground water generally is less than 5 turbidity units”【1†\"natural turbidity in ground water generally is less than 5 turbidity units\"】, and that “natural ground‑water turbidity of up to 19 turbidity units has been reported”【1†\"Natural ground-water turbidity of up to 19 turbidity units has been reported\"】.  \n\nWithout the pod‑specific threshold, I can’t determine if 12 NTU is too high for your well.",
+      "context": [
+        {
+          "id": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "text": "e of\nturbidity-free water in the diluted mixture, and Vs=\nvolume of the environmental sample in the diluted\nmixture.\nEXAMPLE: If five volumes of turbidity-free water were added\nto one volume of sample, and the diluted sample showed a\nturbidity of 30 units, then the turbidity of the original sample is\ncomputed as 180 units.\nT s \tT d\nV o \tV s\t+\t( \t)\nV s\n-----------------------\t×\t= \t,\n\n-- 40 of 55 --Chapter A6. Field Measurements \tTurbidity, Version 2.1 (9/2005)\nTBY—41\ne. \tReport turbidity as follows, using method codes as described\nin http://water.usgs.gov/owq/turbidity_codes.xls (accessed\n9/30/2005)5:\n• For EPA Method 180.1, use NTU or NTRU.\n• For GLI Method 2, use FNMU.\n• For non-diluted, non-USEPA-compliant measurements, use\nthe reporting units described in table 6.7–4.\nIn contrast to surface waters, natural turbidity in ground water\ngenerally is less than 5 turbidity units. Natural ground-water turbidity\nof up to 19 turbidity units has been reported for some environmental\nsettings (Nightingale and Bianchi, 1977; Strausberg, 1983; Puls and\nPowell, 1992). Contaminated ground-water systems, however, can\nhave considerably higher turbidity (Wells and others, 1989;\nGschwend and others, 1990; Puls and Powell, 1992; Backhus and\nothers, 1993). Measuring turbidity in ground water requires special\nconsiderations and procedures. For effervescent ground water, a\ndegassing apparatus may be required; follow manufacturer’s\ninstructions.\nX \tDuring well development—Monitor turbidity caused by well\ninstallation, recording consecutive measurements to document\ndecreases in turbidity as development proceeds.\nX \tDuring well purging—Monitor changes in turbidity by taking\nsequential readings until purging criteria are met (NFM 6.0).\nThe final stabilized turbidity value should be equal to or less\nthan the value recorded at the end of well development. A\ndecrease in turbidity values during purging can indicate\nmitigation of subsurface disturbance caused by well installation\nand by deployment of data-collection equipment in the well.\nX \tFor dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).\nX \tFor discrete-sample measurement using a turbidimeter or\nspectrophotometer:\n— \tBailers are not recommended for collecting turbidity\nsamples, as bailer deployment can increase turbidity.\n— \tDo not collect the discharge passing through the\nflowthrough chamber in which pH, conductivity, or other\nfield-measurement sensors are installed.\n5Diluted samples must be qualified with a “d” in the “Value Qualifier Code” field when entering\ndata into NWIS.\n\n-- 41 of 55 --",
+          "source": "https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf"
+        }
+      ],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 1982,
+        "completionTokens": 389,
+        "totalTokens": 2371,
+        "cachedPromptTokens": 1266
+      },
+      "timing": {
+        "ttftMs": 1486,
+        "wallMs": 2185
+      }
+    },
+    {
+      "index": 1,
+      "question": "So can we just flag anything over 19 NTU as a problem at our well pods?",
+      "answer": "I can’t confirm that “over 19 NTU” should be flagged for your well pods because a pod‑specific turbidity threshold isn’t available here.  \n\nI can tell you that the document notes “natural ground‑water turbidity of up to 19 turbidity units has been reported”【1†\"Natural ground-water turbidity of up to 19 turbidity units has been reported\"】.  \n\nIf you’d like, I can share more details from that source about typical groundwater turbidity ranges.",
+      "context": [
+        {
+          "id": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "text": "e of\nturbidity-free water in the diluted mixture, and Vs=\nvolume of the environmental sample in the diluted\nmixture.\nEXAMPLE: If five volumes of turbidity-free water were added\nto one volume of sample, and the diluted sample showed a\nturbidity of 30 units, then the turbidity of the original sample is\ncomputed as 180 units.\nT s \tT d\nV o \tV s\t+\t( \t)\nV s\n-----------------------\t×\t= \t,\n\n-- 40 of 55 --Chapter A6. Field Measurements \tTurbidity, Version 2.1 (9/2005)\nTBY—41\ne. \tReport turbidity as follows, using method codes as described\nin http://water.usgs.gov/owq/turbidity_codes.xls (accessed\n9/30/2005)5:\n• For EPA Method 180.1, use NTU or NTRU.\n• For GLI Method 2, use FNMU.\n• For non-diluted, non-USEPA-compliant measurements, use\nthe reporting units described in table 6.7–4.\nIn contrast to surface waters, natural turbidity in ground water\ngenerally is less than 5 turbidity units. Natural ground-water turbidity\nof up to 19 turbidity units has been reported for some environmental\nsettings (Nightingale and Bianchi, 1977; Strausberg, 1983; Puls and\nPowell, 1992). Contaminated ground-water systems, however, can\nhave considerably higher turbidity (Wells and others, 1989;\nGschwend and others, 1990; Puls and Powell, 1992; Backhus and\nothers, 1993). Measuring turbidity in ground water requires special\nconsiderations and procedures. For effervescent ground water, a\ndegassing apparatus may be required; follow manufacturer’s\ninstructions.\nX \tDuring well development—Monitor turbidity caused by well\ninstallation, recording consecutive measurements to document\ndecreases in turbidity as development proceeds.\nX \tDuring well purging—Monitor changes in turbidity by taking\nsequential readings until purging criteria are met (NFM 6.0).\nThe final stabilized turbidity value should be equal to or less\nthan the value recorded at the end of well development. A\ndecrease in turbidity values during purging can indicate\nmitigation of subsurface disturbance caused by well installation\nand by deployment of data-collection equipment in the well.\nX \tFor dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).\nX \tFor discrete-sample measurement using a turbidimeter or\nspectrophotometer:\n— \tBailers are not recommended for collecting turbidity\nsamples, as bailer deployment can increase turbidity.\n— \tDo not collect the discharge passing through the\nflowthrough chamber in which pH, conductivity, or other\nfield-measurement sensors are installed.\n5Diluted samples must be qualified with a “d” in the “Value Qualifier Code” field when entering\ndata into NWIS.\n\n-- 41 of 55 --",
+          "source": "https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf"
+        }
+      ],
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 2161,
+        "completionTokens": 240,
+        "totalTokens": 2401,
+        "cachedPromptTokens": 1266
+      },
+      "timing": {
+        "ttftMs": 723,
+        "wallMs": 1149
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 4143,
+    "cachedPromptTokens": 2532,
+    "completionTokens": 629,
+    "wallMs": 3334
+  }
+}
