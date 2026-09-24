@@ -8,7 +8,9 @@ Work on branch `eval/wave1-corrections` in a fresh worktree; landing into `dev` 
 - Branch `eval/wave1-corrections`, pushed to `origin`, with `dev` merged in (Task A turbidity, Task C provenance, and `c55f7cb`, the tools-off correctness prompt newline fix).
 - The prompt is iteration 1's plus Task A's turbidity wording; `DEFAULT_TOP_K` is 20.
 - Every capture so far predates the Task A wording, so the final capture is the first to include it.
-- `eval/judge-cost` (reasoning-off exploratory judging, `--final` for reported runs, prompt-hash-keyed verdict reuse) is deliberately not merged here yet; merge it before calibration, then take `dev` into it for Task A.
+- `eval/judge-cost` is merged in: exploratory judge passes run with reasoning off, any reported or deciding pass runs with `--final`, and a saved verdict is reused only for the same prompt hash and reasoning setting.
+- Every run before this merge was judged at default reasoning; compare only passes judged at the same setting.
+- Task A changed the system prompt the judge rebuilds from source, so re-judging a pre-Task A run no longer reuses its saved verdicts and costs a full pass.
 - Spend about $7.44 of the $20 ceiling the user set on 2026-09-24, approved for R4 through September 28.
 
 ## Results (gold context unless named)
@@ -30,12 +32,11 @@ Work on branch `eval/wave1-corrections` in a fresh worktree; landing into `dev` 
 
 ## Next steps
 
-1. Merge `eval/judge-cost` into this branch (git plan); after that, exploratory judge passes run with reasoning off and reported runs pass `--final`.
-2. Calibration (2c), user-chosen 2026-09-24: 32 rows (8 conversations, 2 turns each, gold context and retrieval answers side by side), graded by the user for correctness and ungrounded claims. Build `--run` support in `npm run grade:packet` and the judge first, then generate the packet; the user grades.
-3. Optional, offline and nearly free: a reranker, or dropping the always-on operator slice in `src/retrieval/adapters/HybridSliceVectorAdapter.ts`, measured with `retrieval:eval`.
-4. About September 27: final two-arm capture at k=20 with the Task A wording, judged twice with `--final`, then a tools-on live smoke check of the three previously failing questions plus one report question (live production reads, so get approval first).
-5. For classes still under 1.00, add a D3 caveat or refusal (`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`) with a prompt test.
-6. Write the R4 report in `eval/reviews/`.
+1. Calibration (2c), user-chosen 2026-09-24: 32 rows (8 conversations, 2 turns each, gold context and retrieval answers side by side), graded by the user for correctness and ungrounded claims. Build `--run` support in `npm run grade:packet` and the judge first, then generate the packet; the user grades.
+2. Optional, offline and nearly free: a reranker, or dropping the always-on operator slice in `src/retrieval/adapters/HybridSliceVectorAdapter.ts`, measured with `retrieval:eval`.
+3. About September 27: final two-arm capture at k=20 with the Task A wording, judged twice with `--final`, then a tools-on live smoke check of the three previously failing questions plus one report question (live production reads, so get approval first).
+4. For classes still under 1.00, add a D3 caveat or refusal (`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`) with a prompt test.
+5. Write the R4 report in `eval/reviews/`.
 
 ## Traps found
 

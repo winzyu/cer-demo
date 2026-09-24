@@ -15,9 +15,11 @@
  * §8a's citation gate. Tier 1 owns the resolution half. Kept here because the human calibration
  * sample scored it, so dropping it would throw away a third of the agreement evidence.
  */
+import { createHash } from "crypto";
 import fs from "fs";
 import path from "path";
 import OpenAI from "openai";
+import type { ReasoningEffort } from "openai/resources/shared";
 import type { CitationEvidence } from "../../utils/citations";
 import { loadFixtures } from "../fixtures";
 import { buildSystemPrompt } from "../../prompt/systemPrompt";
@@ -157,7 +159,20 @@ export interface JudgeRecord {
   items: { text: string; why: string }[];
   note: string;
   promptTokens: number;
+  /**
+   * The part of `promptTokens` served from the provider's prompt cache, as the API reported it.
+   * Undefined on rows judged before 2026-09-24 and on a reply whose usage carried no breakdown -
+   * unknown, not zero, so the budget bills those at the uncached rate.
+   */
+  cachedPromptTokens?: number;
   completionTokens: number;
+  /**
+   * The exact prompt this verdict answers, as `promptHash` computes it. A ledger row is reused
+   * only while the hash matches, so a re-capture, a rubric edit or a prompt change is re-judged
+   * instead of silently inheriting the old verdict. Undefined on rows judged before 2026-09-24,
+   * which therefore never match.
+   */
+  promptHash?: string;
   /**
    * The `max_tokens` budget the call was made with. Optional because the 729 rows already on
    * disk predate this field - they were judged before the token cap was recorded at all, not
@@ -165,9 +180,49 @@ export interface JudgeRecord {
    * history.
    */
   maxTokens?: number;
+  /**
+   * The `reasoning_effort` the call was made with, or `"default"` when none was sent. Undefined on
+   * rows judged before 2026-09-24, which all ran at the model's default.
+   */
+  reasoningEffort?: string;
   model: string;
   judgedAt: string;
 }
+
+const hashPrompt = (prompt: string): string => createHash("sha256").update(prompt).digest("hex");
+
+/** SHA-256 of the prompt a task sends, the identity a ledger row is reused on. */
+export const promptHash = (task: JudgeTask): string => hashPrompt(
+  PROMPT_BUILDERS[task.dimension](task.evidence),
+);
+
+/**
+ * The reasoning effort exploratory judge runs use; `npm run judge -- --final` sends none.
+ *
+ * Measured 2026-09-24 on the `p3-it1` gold-context answers (`EVAL_REBUILD.md`, "Judge cost"):
+ * `none` cut a pass from about $0.52 to $0.23 and failed no calls, with mean correctness and the
+ * ungrounded rate inside the spread of three default-reasoning passes. Turn-level agreement with
+ * those passes fell from 87-92% to 70-72% on correctness, so it is cheap direction-finding, not
+ * the instrument a reported number is measured with.
+ */
+export const EXPLORATORY_REASONING_EFFORT: ReasoningEffort = "none";
+
+/** How a ledger row records the reasoning setting a call was made with. */
+export const reasoningLabel = (effort: ReasoningEffort | undefined): string => effort ?? "default";
+
+/**
+ * Does this ledger row grade exactly the prompt `task` would send, at the same reasoning setting?
+ * A verdict from the cheap exploratory judge must never stand in for a final one, or the reverse.
+ */
+export const answersTask = (
+  record: JudgeRecord | undefined,
+  task: JudgeTask,
+  reasoningEffort?: ReasoningEffort,
+): boolean => (
+  record?.promptHash !== undefined
+  && record.promptHash === promptHash(task)
+  && (record.reasoningEffort ?? "default") === reasoningLabel(reasoningEffort)
+);
 
 export const recordKey = (
   task: { arm: string; fixtureId: string; turn: number; dimension: string },
@@ -309,6 +364,11 @@ export const modelsUnderTest = (root: string, pass: string, arms: string[]): str
 export interface JudgeClientOptions {
   model: string;
   maxTokens: number;
+  /**
+   * Fireworks' `reasoning_effort`. Omitted, the model reasons at its default, and on
+   * `deepseek-v4-flash-0731` that hidden reasoning is most of each call's completion tokens.
+   */
+  reasoningEffort?: ReasoningEffort;
 }
 
 /**
@@ -327,6 +387,7 @@ export const judgeOnce = async (
 ): Promise<JudgeRecord> => {
   const prompt = PROMPT_BUILDERS[task.dimension](task.evidence);
   let promptTokens = 0;
+  let cachedPromptTokens: number | undefined;
   let completionTokens = 0;
   let lastError = "";
 
@@ -342,9 +403,14 @@ export const judgeOnce = async (
       max_tokens: options.maxTokens,
       // Pinned, like the sweep itself. A sampled judge measures the sampler.
       temperature: 0,
-      // Enforced during generation, not requested in prose — see JUDGE_SCHEMAS. This also
-      // suppresses reasoning preambles, which is what made a cheaper judge unusable and, worse,
-      // no cheaper: the tokens it spent thinking out loud cost exactly what the rate card saved.
+      // Fireworks routes serverless traffic by this key to maximize prompt cache hits. Without
+      // it, measured 2026-09-24, a turn's second call landed elsewhere and read 0 cached tokens
+      // despite sharing a ~7K-token prefix. Hashed so no arm or fixture name leaves the harness.
+      ...(options.reasoningEffort ? { reasoning_effort: options.reasoningEffort } : {}),
+      user: hashPrompt(`${task.arm}|${task.fixtureId}|${task.turn}`).slice(0, 16),
+      // Enforced during generation, not requested in prose — see JUDGE_SCHEMAS. This keeps
+      // reasoning preambles out of the reply text, which is what made a cheaper judge unusable;
+      // hidden reasoning is still billed, and `reasoning_effort` above is what limits it.
       response_format: {
         type: "json_schema",
         json_schema: { name: `${task.dimension}_verdict`, schema: JUDGE_SCHEMAS[task.dimension] },
@@ -352,6 +418,10 @@ export const judgeOnce = async (
     });
 
     promptTokens += response.usage?.prompt_tokens ?? 0;
+    const cached = response.usage?.prompt_tokens_details?.cached_tokens;
+    if (cached !== undefined) {
+      cachedPromptTokens = (cachedPromptTokens ?? 0) + cached;
+    }
     completionTokens += response.usage?.completion_tokens ?? 0;
 
     try {
@@ -367,8 +437,11 @@ export const judgeOnce = async (
         items: verdict.items,
         note: verdict.note,
         promptTokens,
+        cachedPromptTokens,
         completionTokens,
+        promptHash: hashPrompt(prompt),
         maxTokens: options.maxTokens,
+        reasoningEffort: reasoningLabel(options.reasoningEffort),
         model: response.model ?? options.model,
         judgedAt: new Date().toISOString(),
       };
@@ -568,6 +641,8 @@ export const summarize = (
 export interface JudgeBudget {
   calls: number;
   promptTokens: number;
+  /** Of `promptTokens`, those the provider reported as cache hits. */
+  cachedPromptTokens: number;
   completionTokens: number;
   /** Undefined when the judge model is absent from the dated price sheet — never guessed. */
   usd?: number;
@@ -575,17 +650,21 @@ export interface JudgeBudget {
 
 export const budgetOf = (records: JudgeRecord[], model: string): JudgeBudget => {
   const promptTokens = records.reduce((sum, r) => sum + r.promptTokens, 0);
+  const cachedPromptTokens = records.reduce((sum, r) => sum + (r.cachedPromptTokens ?? 0), 0);
   const completionTokens = records.reduce((sum, r) => sum + r.completionTokens, 0);
   const price = CHAT_PRICES[model];
   return {
     calls: records.length,
     promptTokens,
+    cachedPromptTokens,
     completionTokens,
     // Left undefined rather than defaulted. `prices.ts` is a dated sheet and a made-up rate in a
     // cost report is worse than a gap in one — §10.4 requires the date the price was read.
     usd: price === undefined
       ? undefined
-      : (promptTokens / 1e6) * price.input + (completionTokens / 1e6) * price.output,
+      : ((promptTokens - cachedPromptTokens) / 1e6) * price.input
+        + (cachedPromptTokens / 1e6) * price.cachedInput
+        + (completionTokens / 1e6) * price.output,
   };
 };
 

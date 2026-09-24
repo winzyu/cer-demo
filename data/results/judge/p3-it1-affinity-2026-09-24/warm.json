@@ -1,0 +1,98 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4-flash-0731",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-24T07:52:18.118Z",
+  "budget": {
+    "calls": 20,
+    "promptTokens": 202375,
+    "cachedPromptTokens": 5671,
+    "completionTokens": 89254,
+    "usd": 0.102222217
+  },
+  "results": [
+    {
+      "arm": "gold-context",
+      "pass": "warm",
+      "turnsJudged": 10,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 10,
+            "mean": 0.9,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 0.9,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 7,
+        "turns": 10,
+        "rate": 0.7,
+        "totalClaims": 17,
+        "met": false
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer claims the EPA and USGS documents disagree without support and it omits several required points (end-of-day exception midday drift handling continuous sonde checks DO post-calibration details and the QA plan drift criteria)."
+        },
+        {
+          "fixtureId": "crossdoc-bailed-orp-jumping",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "3: The large swings you’re seeing are most likely caused by the sampling method not necessarily a faulty probe. — I searched the supplied material for a statement that the bailer-based subsampling method causes large swings or variability in ORP readings and found only that subsamples from a bailed sample may not be used for Eh measurements and are vulnerable to bias but no causal claim about producing erratic readings.; Because ORP (Eh) is highly sensitive to dissolved gases any aeration or gas exchange that occurs when the bailer‑collected water is tipped into a beaker can introduce or remove oxidants/reductants producing the erratic readings you observe. — I searched the supplied material for a statement that aeration or gas exchange introduces or removes oxidants/reductants in ORP measurements and found only general guidance to eliminate sample aeration and that Eh can change significantly after collection but no specific mechanism about introducing or removing oxidants/reductants.; So the variability is most likely a result of the bailer‑based subsampling method rather than a defective probe. — I searched the supplied material for a statement that the bailer-based subsampling method is the cause of variability in ORP readings and found only that such subsamples are not to be used for Eh and are vulnerable to bias but no explicit causal attribution of variability to the method."
+        },
+        {
+          "fixtureId": "crossdoc-bailed-orp-jumping",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: Date and time of the reading — Searched the supplied material for any instruction to record the date of an ORP measurement; the context mentions recording time temperature potential pH and electrode system but never mentions date.; Any field notes about the flow‑cell condition (e.g. any air bubbles removed flow rate whether the cell was airtight) — Searched for any instruction to record field notes about flow-cell condition; the context discusses these conditions as requirements for measurement but does not say to log them.; Collecting these data ensures the ORP value is traceable and meets the USGS reporting requirements for Eh measurements. — Searched for any statement that collecting these data ensures traceability or meets USGS reporting requirements; the context gives reporting requirements (temperature electrode system pH) but does not mention date/time or field notes and does not make a traceability claim."
+        },
+        {
+          "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: Dynamic in‑situ sensors record the water under the actual field conditions and therefore avoid those biases. — I searched the supplied material for any statement that dynamic sensors record water under 'actual field conditions' or that they 'avoid' biases; the material only says dynamic measurement is preferred because of problems with static samples and does not state that dynamic sensors record under actual field conditions or that they avoid biases.; Therefore the higher bench readings are likely a result of the static sampling bias rather than the in‑situ sensor “lying.” — I searched the supplied material for any statement about the cause of higher bench readings in this specific scenario; the material provides general guidance about static vs dynamic measurement but does not address this specific case or attribute the higher readings to static bias."
+        },
+        {
+          "fixtureId": "crossdoc-conductivity-rise-with-warming",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: which means the reading is increased or decreased by roughly 1.9–2.0 % for each degree the water temperature differs from the reference 25 °C — I searched the supplied material for a statement that the temperature-compensation factor corresponds to a percentage change in the reading and found only the factor value 0.019–0.020 per °C not a statement that the reading changes by 1.9–2.0%."
+        },
+        {
+          "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: air bubbles — I searched the supplied material for any requirement that the DO probe be free of air bubbles during calibration and found only instructions to remove water droplets from the temperature and optical DO sensors (e.g. 【9】) with no mention of air bubbles.; before and after the air calibration — I searched the supplied material for any statement that the probe must be free of water droplets before and after calibration and found only a step to remove water droplets during the calibration procedure (【9】) with no instruction about before or after."
+        },
+        {
+          "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: The EPA field SOP specifies a different calibration schedule than the USGS guidance. — I searched the supplied material for any comparison between the EPA and USGS calibration schedules and found no statement that they differ; the excerpts only describe the EPA requirements without contrasting them with USGS.; If a post-check shows the instrument has drifted the SOP requires that you either recalibrate the instrument (and then continue) or qualify the data collected before the check. — I searched the supplied material for a requirement to either recalibrate or qualify data after an end-of-day post-calibration check. The EPA excerpt says for during-the-day checks that 'the instrument can be recalibrated during the day if the instrument drifted out of calibration and only the data measured prior to the check would need to be qualified ' and for the post-calibration check it says 'If the check value is outside the criteria then the measurement data will need to be qualified.' No excerpt states that at the end of the day you may recalibrate as an alternative to qualifying the data."
+        },
+        {
+          "fixtureId": "crossdoc-conductivity-rise-with-warming",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: Perform a calibration verification by comparing your sensor’s readout to the reference at several temperatures that span the range you expect in the field (e.g. five points between 0 °C and the maximum expected temperature) — Searched the supplied material for a calibration-verification procedure that compares the sensor to a reference at several temperatures spanning the expected field range and for a 'maximum expected temperature' specification. The only five-point comparison found is for establishing a traceable sensor ('at no less than five points between 0°C') not for calibration verification and no 'maximum expected temperature' appears.; noting the date reference thermometer ID temperatures measured and any observed deviation — Searched for a requirement to record date reference thermometer ID temperatures measured and observed deviation in the logbook. The excerpt only says the logbook is for 'recording repair maintenance and calibration history information' and does not list those specific fields.; If the difference exceeds that recalibrate or replace the temperature sensor before trusting the conductivity correction. — Searched for a procedure to recalibrate or replace the sensor if deviation exceeds ±0.2 °C and for a statement that the correction should not be trusted until then. No such instruction appears in the supplied material.; Following these steps ensures the temperature reading is accurate enough that the conductivity correction (which adjusts the raw conductivity by about 0.5 %–3 % per °C) is reliable. — Searched for a statement that following these steps ensures the temperature reading is accurate enough for reliable conductivity correction. The material does not make that causal claim."
+        }
+      ]
+    }
+  ]
+}

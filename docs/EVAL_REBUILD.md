@@ -666,6 +666,7 @@ npm run retrieval:eval                  # offline retrieval diagnostics, ~10s, f
 npm run cost                            # sweep completion length across arms
 npm run cost -- --model=<id> --completion=measured
 npm run judge -- --dry-run              # what a pass would cost, without spending
+npm run judge -- --run=<id> --final     # reported numbers: default reasoning (see "Judge cost")
 npm run judge -- --calibrate            # judge-vs-human agreement, no API calls
 npm run judge -- --report               # summarize the ledger, no API calls
 npm run ingest                          # documents/ -> data/corpus/corpus.json
@@ -998,3 +999,27 @@ Legacy captures remain readable without synthesizing missing evidence, and exist
 The wire and display contract is documented in `SPECS.md` section 10.4a.
 Task C's prompt changes are confined to the tools-only blocks; the R4 general prompt and separate evaluation worktree are untouched.
 No paid capture or grading run is part of this verification.
+
+## Judge cost - 2026-09-24
+
+Measured on `eval/judge-cost` by re-judging the `p3-it1` gold-context answers (180 calls each); ledgers are under `data/results/judge/p3-it1-*-2026-09-24/`.
+At the default reasoning setting, hidden reasoning was 45-60% of each pass's bill: a one-sentence correctness verdict cost 1,000-1,700 completion tokens and an ungrounded verdict 3,000-5,000.
+`response_format: json_schema` does not suppress that reasoning on `deepseek-v4-flash-0731`, contrary to the older comment in `prompts.ts`.
+
+| Pass | Cost | Correctness | Ungrounded turns | Failed calls |
+|---|---|---|---|---|
+| it1, default reasoning | $0.57 | 1.011 | 54.4% | 0 |
+| it1 re-judge, default reasoning | $0.56 | 0.978 | 63.3% | 0 |
+| cache-first layout, default reasoning | $0.52 | 0.956 | 55.7% | 2 |
+| cache-first layout, `reasoning_effort: none` | $0.23 | 1.011 | 57.8% | 0 |
+
+Means with reasoning off stay inside the spread of the default passes, but turn-level agreement falls: identical correctness scores on 70-72% of turns against 87-92% between two default passes, and the same ungrounded yes/no on 72-76% against 82-84%.
+Decision: exploratory judge passes run with reasoning off, and any pass whose numbers are reported or decide something runs with `--final`, which sends no `reasoning_effort`.
+That covers the R4 final two-arm capture and its second judging; `--calibration` implies `--final`.
+Compare only passes judged at the same setting: the ledger records `reasoningEffort` per verdict, the output file records it per pass, and a verdict is reused only for the same prompt hash and setting.
+Making reasoning-off the final judge as well would need a human calibration sample first.
+
+Prompt caching did not pay off.
+Judge prompts now open with the service rules and retrieved documents shared by both dimensions of a turn, which raised the cacheable share of input from 14-21% to 50-52% offline, and each call sends a per-turn `user` key, which Fireworks documents as its cache-routing hint.
+Both passes still read under 1% of input from cache on first-time prompts; hits appeared only when the same prompt was resent within minutes.
+The layout stays because grounded correctness prompts now include the service rules their instruction already counted as grounding.
