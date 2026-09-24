@@ -678,7 +678,7 @@ means nothing for the new set.
 
 `npm run cost`, `npm run ingest` and `npm run embed:cache` are unaffected.
 
-**Capturing an arm** (~$0.02–0.05). The user often runs a server on port 8000 with different env —
+**Capturing an arm** (measured 2026-09-23: about $0.07-0.08 per 90-turn arm, plus about $0.65-0.72 to judge it). Name every new capture with `--run=<id>` on `bakeoff`, `gate:check` and `judge`: it writes to `eval/transcripts/<id>/` and `data/results/judge/<id>/`, keeping the old transcripts verbatim and the judge from reusing verdicts keyed only by arm, fixture, turn and dimension; `bakeoff` refuses to overwrite an existing transcript. The user often runs a server on port 8000 with different env —
 **use another port, do not kill it.**
 
 ```
@@ -740,7 +740,7 @@ The 2026-09-21 re-OCR changed the EPA SOP's text and all 12 of its chunk ids aft
 | 2a — quote-based citations | 🟡 **demonstrated, not measured, 2026-09-13** — the prompt asks for `【n†"quote"】`, `formatContext` labels excerpts `【n】`, and `QUOTE_CITATION_PATTERN` accepts a non-dagger separator. A same-day smoke capture ($0.0075, `gpt-oss-120b`, gold-context arm, three runs) showed the closing-bracket and quote rules produce a non-zero quoted-citation rate (10/10 markers closed correctly across two runs; 4/4 citations quoted in one answer, 1 supported and 3 too short) — a smoke check, not the Phase 2 STOP block's measured rate |
 | 2b — repoint the judge | ✅ done 2026-09-02 |
 | 2c — re-calibrate | ⬜ needs captured answers to grade — see the sequencing note below |
-| 3 — generation baseline | 🟡 captured and judged 2026-09-14 (`gpt-oss-120b`, 90 turns, judge ~$0.55): Tier 1 passes; correctness 0.91 against 1.30 and 43.2% ungrounded against 2%, both provisional until 2c. The refusal class is not measurable on this capture: the prompt's all-or-nothing refusal contradicts the rewritten rubrics, and gold context sends no chunks to the unlabelled refusal turns. Recapture after that contract changes |
+| 3 — generation baseline | 🟡 **re-captured 2026-09-23 on the frozen set** (run `p3-2026-09-23`, below): gold context 1.01 correctness and 47.8% ungrounded, `hybrid-slice-vector` 0.52 and 59.6%, Tier 1 failing on both; iteration 1 (four prompt rules, `DEFAULT_TOP_K` 10) is committed at `22d6dd0` and not yet measured. The 2026-09-14 capture predates the corrections and two prompt edits, and no longer counts |
 | 4 — retrieval | ⬜ |
 
 **Sequencing — SETTLED 2026-09-09: Phase 3 runs before 2c.** 2c grades 30 stratified rows, and
