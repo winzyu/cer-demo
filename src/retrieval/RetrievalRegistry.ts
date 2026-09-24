@@ -7,6 +7,18 @@ import { createLogger } from "../utils/logger";
 const log = createLogger("Retrieval");
 
 /**
+ * Aliases accepted for a registered mode name. `DirectFeedAdapter` registers as
+ * "firestore-direct" (eval ledgers and cost scenarios key on that string, so it cannot change),
+ * but `DEFAULT_RETRIEVAL` and the per-request override both also accept "direct-feed".
+ */
+const MODE_ALIASES: Record<string, string> = {
+  "direct-feed": "firestore-direct",
+};
+
+/** Maps an accepted alias to its registered mode name; returns other names unchanged. */
+const resolveAlias = (mode: string): string => MODE_ALIASES[mode] ?? mode;
+
+/**
  * The slice of retrieval config the registry actually reads. Narrower than `RetrievalConfig` on
  * purpose: unrelated additions to that interface should not force every caller and test to supply
  * fields the registry ignores.
@@ -59,7 +71,7 @@ export class RetrievalRegistry {
     const override = this.overrideFor(requestedMode);
 
     if (override !== undefined) {
-      const adapter = this.adapters.get(override);
+      const adapter = this.adapters.get(resolveAlias(override));
       if (!adapter) {
         // Caller-supplied and caller-fixable => 400, not a server fault.
         throw new ValidationError(
@@ -70,7 +82,7 @@ export class RetrievalRegistry {
     }
 
     const { defaultMode } = this.settings;
-    const adapter = this.adapters.get(defaultMode);
+    const adapter = this.adapters.get(resolveAlias(defaultMode));
     if (!adapter) {
       // Misconfiguration, not bad input: DEFAULT_RETRIEVAL names something unregistered.
       throw new Error(
@@ -80,6 +92,16 @@ export class RetrievalRegistry {
       );
     }
     return adapter;
+  }
+
+  /**
+   * Called once, after startup registers the built-in adapters, so a `DEFAULT_RETRIEVAL` naming
+   * an unregistered mode fails at boot instead of on the first request that falls through to it.
+   * Reuses `resolve()` so the failure carries the same "not registered. Available: ..." message
+   * and honors the same alias rules.
+   */
+  assertDefaultModeRegistered(): void {
+    this.resolve();
   }
 
   /** Returns the mode to override with, or undefined to fall through to the default. */

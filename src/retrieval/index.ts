@@ -87,6 +87,12 @@ retrievalRegistry.register(new HybridSliceVectorAdapter(
   "hybrid-slice-lexvec",
 ));
 
+/**
+ * Fail fast if `DEFAULT_RETRIEVAL` names a mode nothing above registered, rather than deferring
+ * the failure to the first request that falls through to the default.
+ */
+retrievalRegistry.assertDefaultModeRegistered();
+
 export { RetrievalRegistry } from "./RetrievalRegistry";
 export { StubAdapter } from "./adapters/StubAdapter";
 export { HybridSliceVectorAdapter } from "./adapters/HybridSliceVectorAdapter";
