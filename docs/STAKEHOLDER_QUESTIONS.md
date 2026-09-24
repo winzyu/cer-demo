@@ -4,13 +4,13 @@ A checklist of answers the project needs from people outside the codebase. Tick 
 item is resolved, write the answer and the date on its **Answer** line, and record any decision it
 settles in `docs/timeline.md`. Delete an item only when its answer is recorded somewhere else.
 
-Items are ordered by what they unblock, most blocking first. Last updated 2026-09-24.
+Items are ordered by what they unblock, most blocking first. Last updated 2026-09-24, after the supervisor's answers.
 
 ---
 
 ## Operator
 
-- [ ] **1. Are these the alert limits the report should trigger on?**
+- [x] **1. Are these the alert limits the report should trigger on?**
   Since 2026-09-13, every report baseline is the pod's registry min/max, with no fallback table. A
   report only opens an event when a reading crosses a limit, so a limit set at the edge of what the
   sensor can read disables detection in that direction:
@@ -22,17 +22,17 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-0
     siblings' 40,000.
 
   *Unblocks:* meaningful event detection, and every advice entry keyed to an event.
-  *Answer:*
+  *Answer:* 2026-09-24 (supervisor): the wide limits, including Old Woman Creek 2026's, were not intentional; the supervisor will correct them in the superadmin view, where limits can change at any time. Until then a limit wider than the sensor's range reads "not assessed" (release plan Q5).
 
-- [ ] **2. Should the pods with unusable thresholds be configured?**
+- [x] **2. Should the pods with unusable thresholds be configured?**
   `docs/migration/BACKEND_FIELDS.md` §3c records `Trinidad Island DataPod™` and `dev:860322068098448`
   with all ten values at 0, `CER Conference Pod` with placeholders (`maxPH=100`,
   `maxDissolvedOxygen=100`), and two devices with no thresholds at all. Reports for those pods now
   read **"Not assessed"** instead of comparing anything.
   *Unblocks:* reports for those pods.
-  *Answer:*
+  *Answer:* 2026-09-24 (supervisor): yes; thresholds are corrected in the superadmin view (see item 1). Reports keep reading "Not assessed" until they are.
 
-- [ ] **3. Which pods carry the Turner turbidity sensor, and which the Keyestudio?**
+- [x] **3. Which pods carry the Turner turbidity sensor, and which the Keyestudio?**
   The software cannot tell them apart: the registry has no sensor-model field. Until it can, chat
   treats turbidity as qualitative for every pod. The backend's conversion
   (`turbVoltToNTU.ts`) is written for the Keyestudio KS0414.
@@ -40,19 +40,19 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-0
   `refusal-turbidity-sensor-hardware`.
   Not needed for the September 30 release: turbidity stays qualitative for every pod (decided 2026-09-16).
   Interim, 2026-09-24 (user, provisional): every pod is treated as qualitative only until further notice (`timeline.md`, Task A).
-  *Answer:*
+  *Answer:* 2026-09-24 (supervisor): every pod is Keyestudio today, and the difference does not matter for the relaunch. A superadmin checkbox in device setup will record the sensor in Firestore later (item 11).
 
-- [ ] **4. Is 0–25 NTU the Turner sensor's range?**
+- [x] **4. Is 0–25 NTU the Turner sensor's range?**
   The deleted prompt range (0–25 NTU freshwater, 0–10 saltwater) contradicted live readings up to
   1,689. If it was the Turner's range, that explains the discrepancy. Lower priority now that the
   range is gone, but it matters once Turner pods are treated quantitatively.
-  *Answer:*
+  *Answer:* 2026-09-24: moot for now; no pod carries the Turner sensor (item 3).
 
 - [ ] **5. Which pods and organisations are in scope for testing?**
   The configured device token sees 5 pods. The August census saw 15; a live read on 2026-09-23
   showed the token is superadmin and `/devices` no longer returns retired or merged pods, which
   accounts for the difference.
-  *Answer:*
+  *Answer:* 2026-09-24 (supervisor): live writes are allowed for test users and test organizations that this project creates and deletes before launch; nothing else is written or deleted without asking first. Which real pods are in scope is still open.
 
 - [ ] **22. Did the three cross-organization merges transfer the site, or only the hardware?**
   Not blocking. `Marina Park`, `PCH Public Dock Buoy` and `Old Woman Creek 2026` each absorbed a
@@ -60,14 +60,14 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-0
   the organization is known to own it, so those predecessors' readings are withheld from answers
   and reports today (`SPECS.md` §10.3c). A "yes, the site transferred" for a named chain would let
   its history be shown; no answer keeps it withheld.
-  *Answer:*
+  *Answer:* 2026-09-24 (supervisor), Old Woman Creek 2026 only: the retired "CWA Old" pod still belongs to Cleveland Water Alliance, its old organization should be null because the pod was merged into the new one, and its readings stay on the merged pod. The pod also served other sites and organizations, so answers and reports default to its current site unless the user asks otherwise (release plan Q3). Marina Park and PCH Public Dock Buoy are unanswered.
 
 ---
 
 ## Supervisor
 
 Items 17-20 are on the release critical path: the September 30 roadmap needs their answers by about September 25 (`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md` §4).
-They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR_QUESTIONS_SEND.md`, asking for a reply by September 21; none has arrived as of 2026-09-23.
+They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR_QUESTIONS_SEND.md`, asking for a reply by September 21; the supervisor answered on 2026-09-24, leaving item 17, the support contact in item 20, and per-entry catalogue sign-off in item 19 open.
 
 - [ ] **17. Are the generic fallback ranges in source-of-truth v2 for education only?**
   v2 §3, "Fallback Baseline Ranges (Use Only Without a Site Baseline)", gives generic ranges per parameter, and §0 rule 3 says to use them only when a site has no baseline.
@@ -76,7 +76,7 @@ They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR
   *Unblocks:* which v2 content enters the catalogue, and whether reports ever compare against v2 ranges.
   *Answer:*
 
-- [ ] **18. Can the current turbidity hardware be exempted from v2's quantitative turbidity content?**
+- [x] **18. Can the current turbidity hardware be exempted from v2's quantitative turbidity content?**
   v2 gives turbidity ranges in FNU (§3), a typical sensor accuracy of ±2 FNU or ±5% (§8.3), and says field readings are FNU unless stated.
   The release treats turbidity as qualitative only, because the current sensors cannot support measured values (item 3), and the fleet reports NTU, not FNU.
   Confirm that v2's turbidity numbers do not apply to the current hardware, so chat and reports keep using the three clarity bands.
@@ -84,7 +84,7 @@ They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR
   Vendor documentation for both sensors the operator named was transcribed on 2026-09-17 (`documents/_excluded/keyestudio-ks0414-turbidity-sensor.md`, `documents/_excluded/turner-turbidity-plus-sensor.md`) and supports the exemption: Turner states only "Excitation Wavelength: IR" with no angle and no ISO 7027 or EPA 180.1 claim, is "not factory calibrated", and has no temperature compensation; Keyestudio states no optical property at all and publishes no voltage-to-NTU equation.
   Two follow-ups for the operator: which sensor is fitted to each pod (the device registry has no sensor-model field), and where this project's `NTU = (3.35 - V) × 300` conversion came from, since neither vendor publishes it.
   *Unblocks:* the turbidity entries in the catalogue.
-  *Answer:*
+  *Answer:* 2026-09-24 (supervisor): granted; every pod is Keyestudio and the turbidity hardware difference need not be handled for the relaunch, so the qualitative bands and caveat stand.
 
 - [ ] **19. Review the v2 worked examples, and approve the recommendations customers may see.**
   Concerns found in the 2026-09-16 review (details in `docs/migration/GILLIGAN_PRODUCT_DIRECTION.md`, "Resolve before adopting v2"):
@@ -100,7 +100,7 @@ They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR
   The entries to review, with their conditions, evidence and sources, are in `docs/catalogue/review.html` (catalogue `2026-09-19.1`, 38 drafts, generated by `npm run catalogue:review`).
   This replaces item 7.
   *Unblocks:* possible causes and recommended actions in reports and chat.
-  *Answer:*
+  *Answer:* 2026-09-24: the supervisor answered the four catalogue questions in the marked-up review (`review-marked-up.html`, untracked): routine cleaning is the customer's job, calibration, power, battery and sensor repair are CER's under the subscription, CER sets the default limits, and a sustained run of 0 or 1005 is a failed sensor that CER replaces. No entry is approved yet; per-entry sign-off is still needed (release plan C1-C3).
 
 - [ ] **20. Confirm the CER referral contacts and wording.**
   Gilligan will suggest CER for four problems: algal bloom cleanup, fish kill cleanup, debris capture and oil spill response.
@@ -113,6 +113,12 @@ They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR
   A third-party listing says CER serves Southern California and Ohio.
   Confirm which contact to show, whether the service area should be mentioned, and the wording of both referral lines.
   *Unblocks:* referrals in chat and reports.
+  *Answer:* 2026-09-24, partial: referral wording is proposed in the marked-up review (Floating algae removal, Oil spill cleanup (small to medium), fish kill cleanup after agency sampling, NRC and Cal OES numbers verified). Which CER support contact to show is still open (release plan O1).
+
+- [ ] **23. Approve the Firestore data framework for Gilligan.**
+  On 2026-09-24 the supervisor allowed new Firestore collections for Gilligan, once they have seen a table of what they hold.
+  The table is `docs/migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
+  *Unblocks:* the persistent usage store, and any Firestore-backed corpus.
   *Answer:*
 
 - [ ] **6. Is "configured thresholds" the right thing for users to hear?**
@@ -149,16 +155,16 @@ They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR
 
 ## Backend owner (`clean-earth-rovers-server`)
 
-- [ ] **10. Can a missing or offline turbidity reading stop arriving as 0?**
+- [x] **10. Can a missing or offline turbidity reading stop arriving as 0?**
   `src/utils/turbVoltToNTU.ts` returns 0 for a missing voltage and for the firmware's offline code
   (`turbVolt > 100`), the same value as clear water. A run of zeros is indistinguishable from clear
   water. A `null` or a flag would let this service tell them apart.
   Interim, 2026-09-24 (user, provisional): this service flags a period in which every turbidity reading is 0 as a possible missing sensor, and leaves a lone 0 as Clear (`timeline.md`, Task A).
-  *Answer:*
+  *Answer:* 2026-09-24 (supervisor): failing devices read a flat 0 or 1005 with no variance, and Gilligan should recognise that as an abnormal pattern (release plan Q4). Returning null from `turbVoltToNTU.ts` stays a Task A upstream follow-up.
 
-- [ ] **11. Can the device registry carry a sensor-model field?**
+- [x] **11. Can the device registry carry a sensor-model field?**
   Same need as item 3, from the data side.
-  *Answer:*
+  *Answer:* 2026-09-24 (supervisor): yes, later: a superadmin checkbox in device setup, stored in Firestore. Not needed for the release (item 3).
 
 - [x] **12. Who creates the Firestore composite index for audit-log lookups?**
   `findAuditLogRecords` filters on `caller`, ranges on `timestamp` and orders by it. With no index the
@@ -171,7 +177,7 @@ They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR
   Chats already hold customer questions and sensor readings.
   Decide a retention period (or confirm "keep indefinitely") and who besides the user may read a chat, for example superadmins handling a disputed answer.
   *Unblocks:* nothing for the release itself; it is the data policy the release inherits.
-  *Answer:*
+  *Answer:* 2026-09-24 (supervisor): keep chats; the supervisor finds old conversations useful, so retention is indefinite. Who besides the author may read a chat is still open (release plan O5).
 
 ---
 
