@@ -8,6 +8,7 @@ Updated 2026-09-24 in an orchestration session that reconciled five overnight se
 
 ## Start here
 
+- **The task list for September 24-30 is [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md)** (task IDs such as Q1, S3, L5), written 2026-09-24 after the supervisor's answers; where this file and the plan disagree, the plan is newer.
 - **Gilligan release (September 30), 6 days left, holds with reduced scope; the user deploys (decided 2026-09-24, `timeline.md`).**
   Read [`migration/GILLIGAN_PRODUCT_DIRECTION.md`](migration/GILLIGAN_PRODUCT_DIRECTION.md) then [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md).
   The user holds owner/editor access to the production Google Cloud project, so upstream IAM is no longer someone else's step.
@@ -41,9 +42,7 @@ Updated 2026-09-24 in an orchestration session that reconciled five overnight se
 - **Conversation quality check - 2026-09-24, 26 live turns through the full local stack.** Plumbing, tool choice and refusals are sound; answer content is not.
   High: the model is never given today's date and `list_pods` gives no reading age, so stale pods read as online; `generate_report` gives a status without the parameter that caused it, so a summary contradicted its own report.
   Record and suggested fixes: [`migration/CONVERSATION_QA_2026-09-24.md`](migration/CONVERSATION_QA_2026-09-24.md).
-- **Catalogue (R2) - built, approval pending; the user is chasing the supervisor this week.**
-  `src/catalogue/catalogue.json` is version `2026-09-19.1`: 38 draft entries and 5 referrals, behind `CATALOGUE_PROMPT` (default off) in chat and wired into reports; `SPECS.md` §4b.
-  Supervisor items 17-20 were sent 2026-09-19 (`migration/SUPERVISOR_QUESTIONS_SEND.md`, `docs/catalogue/review.html`) and are unanswered; without approval by launch, `CATALOGUE_PROMPT` stays off.
+- **Catalogue (R2) - approved 2026-09-24.** `src/catalogue/catalogue.json` `2026-09-24.1`: all 38 entries and 6 referrals approved, the marked-up ones as edited; CER contact is sales@cleanearthrovers.com or the customer's existing CER contact. The release runs `CATALOGUE_PROMPT=true`; the eval harness keeps it off. `SPECS.md` §4b.
 - **Environment - rebuilt.** Corpus byte-reproducible, secrets in, `DEFAULT_RETRIEVAL=hybrid-slice-vector` with `CORPUS_SOURCE=artifact`, and the git-ignored `data/embeddings/cache.json` built; see [`migration/LOCAL_STACK.md`](migration/LOCAL_STACK.md).
   `cer-demo/.env` sets `SENSOR_TOOL=true` and `REPORT_TOOL=true`, so every local boot answers reading questions with live production reads.
 - **Upstream repos - clean `local` branches, not yet pushed; the user has authorization to push (2026-09-24).** Push only to new feature branches by a command named in chat, never to `main` or `develop`.
