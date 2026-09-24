@@ -69,7 +69,7 @@ Independent tasks for separate sessions; the user was given a starting prompt fo
 
 - `dev` is `913ec33`, level with `origin/dev` apart from this handoff.
   `docs/EVAL_REBUILD.md` carries one uncommitted 23-line block (the 2026-09-21 claim re-resolve note), left out on purpose: that work lives on `worktree-eval-claims-reresolve` (`5d269a3`).
-  `.claude/settings.json` has an uncommitted edit from another session; `_EXIT_CRITERIA.md`, `eval/grading/`, the runbook and the root v2 PDF stay untracked.
+  `_EXIT_CRITERIA.md`, `eval/grading/`, the runbook and the root v2 PDF stay untracked.
 - Worktrees: `task-c-provenance` in all three repositories (merged; removable); `wave1-corrections` and `judge-cost` (R4, active); `eval-claims-reresolve`; `agent-a30d6628796794046` on `cloud/explore-turbidity` (its note is on `dev` as `TURBIDITY_EXPLORATION.md`).
 - `.agents/skills/git-plan/SKILL.md` is an older copy that still requires chat approval before git mutations, and differs from `.claude/skills/git-plan/SKILL.md`; reconcile or remove it.
 - Upstream: server `local` is `d12ad6d`, dashboard `local` is `fd103a0`, both with git-ignored `.env` files carrying the R3 variables.
