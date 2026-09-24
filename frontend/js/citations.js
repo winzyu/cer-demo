@@ -18,9 +18,10 @@
  */
 // Two shapes. A quoted marker may close with 】 or — a real gpt-oss-120b habit seen in the
 // 2026-09-13 smoke capture — with } or ] straight after the closing quote: `【1†"90% in 1s"}`.
+// A real 】 may still follow that } or ]; it is consumed too, so it never renders doubled.
 // The quoted span excludes 【, 】 and newlines, so a malformed marker can never reach forward to
 // a later marker's 】 and swallow the ordinary answer text in between into one citation.
-export const MARKER_PATTERN = /【\s*(\d+)\s*(?:[†‡:|,;–—-]\s*)?(?:["“”„‟″][^【】\n]*?["“”„‟″]\s*(?:】|[}\]])|(?:L\d+(?:-L?\d+)?)?\s*】)/g;
+export const MARKER_PATTERN = /【\s*(\d+)\s*(?:[†‡:|,;–—-]\s*)?(?:["“”„‟″][^【】\n]*?["“”„‟″]\s*(?:】|[}\]]\s*】?)|(?:L\d+(?:-L?\d+)?)?\s*】)/g;
 
 /**
  * While streaming, an answer can end mid-marker — e.g. `…warms 【3†"solubility of oxy`. If the
