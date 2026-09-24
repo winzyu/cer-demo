@@ -86,3 +86,8 @@ handback for what that means for exit criterion 3.
 > row, which the +86-char OCR shift moved past the chunk 9/10 boundary. Its evidence now sits wholly
 > in chunk index 10, whose `locator` already describes that chart block. Re-parenting a claim to a
 > different chunk changes the per-chunk counts above, so it was flagged rather than applied.
+>
+> **Closed 2026-09-23 by the user's decision:** the claim moved to chunk index 10 and its quote was
+> refreshed to that chunk's OCR (`74S` where the old text read `TAS`); claim text is unchanged.
+> All 2177 quotes are now verbatim in their chunks. No wave 1 fixture names this claim, so the
+> regenerated labels are byte-identical and the label fingerprint is unchanged.
