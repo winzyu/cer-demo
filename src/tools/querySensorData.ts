@@ -30,6 +30,7 @@ import {
   widerWindow,
 } from "./timeRange";
 import type { FetchWindow, ResolvedRange } from "./timeRange";
+import { readingAge } from "./readingAge";
 
 const log = createLogger("SensorTool");
 
@@ -561,6 +562,25 @@ export class QuerySensorData {
     return this.lastReportedAt(label, token);
   }
 
+  /**
+   * The clock this instance measures against, for the tools that share it (`list_pods`,
+   * `generate_report`), so one injected `now` makes every age in a test deterministic.
+   */
+  clockMs(): number {
+    return this.now();
+  }
+
+  /**
+   * `device_last_reported_age` and `device_last_reported_stale`, beside `device_last_reported`.
+   * Every window here is anchored to the device's newest reading, so without them a pod that went
+   * silent ten days ago answers "now" with a ten-day-old reading that looks current
+   * (`readingAge.ts`).
+   */
+  private lastReportedAge(iso: string): Record<string, unknown> {
+    const age = readingAge(iso, this.now());
+    return age ? { device_last_reported_age: age.age, device_last_reported_stale: age.stale } : {};
+  }
+
   private async execute(
     args: Record<string, unknown>,
     token?: string,
@@ -707,6 +727,7 @@ export class QuerySensorData {
         n_samples: 0,
         excluded_faulted: 0,
         device_last_reported: referenceIso,
+        ...this.lastReportedAge(referenceIso),
         note: `No readings found in this window. This device last reported at ${referenceIso}.`,
       };
     }
@@ -766,6 +787,7 @@ export class QuerySensorData {
           : { complete: true }),
       },
       device_last_reported: new Date(referenceMs).toISOString(),
+      ...this.lastReportedAge(new Date(referenceMs).toISOString()),
     };
 
     const totalSamples = computed.reduce((sum, entry) => sum + entry.result.nSamples, 0);

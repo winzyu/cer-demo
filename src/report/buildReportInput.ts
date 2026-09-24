@@ -378,6 +378,9 @@ export const buildReportInput = async (
     siteName,
     startDate,
     endDate,
+    ...(typeof seriesResult.device_last_reported === "string"
+      ? { lastReadingAt: seriesResult.device_last_reported }
+      : {}),
     reportDate: new Date().toISOString().slice(0, 10),
     waterBodyType,
     waterBodyTypeSource,

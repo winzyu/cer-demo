@@ -650,7 +650,9 @@ it cannot perform. See ◆G11.
 | 1 | system prompt | never, for a given deployment |
 | 2 | document context | per corpus slice (direct-feed) or per query (RAG) |
 | 3 | history | per conversation |
-| 4 | the user question | every request |
+| 4 | `CURRENT TIME` line, only with a device tool on | every request |
+| 5 | `SELECTED POD` line, only with a device tool on and a pod sent | every request |
+| 6 | the user question | every request |
 
 **This ordering is load-bearing, not stylistic.** Fireworks prompt caching matches on a *prefix*, so
 a cache hit extends only to the first differing byte. Anything dynamic placed earlier truncates the
@@ -659,6 +661,15 @@ on this (`RETRIEVAL_BAKEOFF.md` §1); a test asserts two different questions pro
 prefixes. The context block is omitted entirely when there are no chunks, because an empty
 `CONTEXT:` heading reads to the model as "the corpus had nothing" — a different claim from "no
 corpus was consulted".
+
+**With tools on, each request carries the current time and each reading its age** (2026-09-24, Q1).
+In the 2026-09-24 conversation check the model called two pods silent for 10 and 12 days "likely online" and gave a 10-day-old temperature as current, because nothing told it the date (`migration/CONVERSATION_QA_2026-09-24.md` findings 1 and 2).
+`buildMessages` now adds `CURRENT TIME: <UTC, to the minute>` as block 4 above; it cannot go in the system prompt, which must stay byte-identical to be cached.
+The tools state ages themselves, since date arithmetic by the model is unreliable: `list_pods` adds `last_reported_age` and `last_reported_stale`, and `query_sensor_data` and `generate_report` add `device_last_reported_age` and `device_last_reported_stale` (`src/tools/readingAge.ts`).
+Stale means more than six hours without a reading: the pods report about hourly, so six missed reports is well past jitter.
+Ages round down, so a reading is never described as fresher than it is.
+`TOOL_BLOCK` asks the model to state a reading's age and never call a stale pod online, to test a claimed spike or crash with `min`, `max` or `series` rather than `latest` (finding 4), and to relay every tool `note` (finding 5).
+None of this reaches a tools-off prompt, so R4's captures are unchanged.
 
 ### 10.3 LLM call (`src/services/LlmService.ts`)
 
@@ -730,7 +741,8 @@ accepts, and shares the per-token `/devices` TTL cache with every other tool in 
 which drops readings with no GPS fix, so a null there means "not confirmed recently" and the
 question "has this pod stopped" is a `query_sensor_data` call. Freshness probing is capped at 20
 pods (the listing itself is never truncated); beyond that, pods carry
-`"last_reported": "not_checked"`.
+`"last_reported": "not_checked"`. A timestamp comes with `last_reported_age` and
+`last_reported_stale` (§10.2).
 
 **Arguments:** `metric` (six names, or `all`), `time_range`, `aggregation`, optional `device`, and
 optional `bucket` for `series`.
@@ -772,6 +784,7 @@ Behavior worth knowing, each guarding a documented silent-failure mode in `DEVIC
 |---|---|
 | `/water/average` is never called; everything is computed from the raw period series | that endpoint returns zeros on an empty window and drops whole rows when any one probe faults |
 | empty window ⇒ `value: null`, `n_samples: 0`, plus `device_last_reported` | a fabricated `0` is anoxic water at pH 0, and the eval's automatic disqualification |
+| every result with a `device_last_reported` also carries its age and a stale flag (§10.2) | ranges anchor to the newest reading, so a pod silent for days answers "now" with a days-old value that reads as current |
 | `earliest` is its own aggregation, not the first row of `raw` | `raw` drops the **oldest** rows first, so its first row is not the earliest reading — this produced a confidently wrong date on live data |
 | `series` buckets server-side rather than handing over raw rows | a week is ~336 rows; trend-reading from those is arithmetic a 20B model is bad at, over a window `raw` may have truncated |
 | ranges anchor to the device's newest reading, not the wall clock | one cleared pod is stale; a wall-clock "last day" is empty on a pod with a good last day of data |
@@ -981,6 +994,12 @@ No LLM call is made and nothing is written to disk.
 
 **The tool renders no PDF.** `generate_report` returns the summary the model narrates (status, event headings, baseline provenance, catalogue version) plus `report_request: { time_range, device? }`, the arguments it ran with.
 It never returns a URL, and the prompt tells the model to point at the interface's download button instead of writing a link.
+
+**The status comes with its reason** (2026-09-24, Q1).
+`assessStatus` (`src/report/types.ts`) walks the same ladder `overallStatus` always did and also returns the rule that fired and the parameters behind it; `overallStatus` is now its `.status`, so the PDF is unchanged.
+The tool adds `status_reason`, one sentence naming that rule and, for a flag-driven status, each flagged parameter's observed range against its configured threshold in the PDF's number format, and `parameter_flags`, every measured parameter's flag.
+Before this, an ORP Exceedance on Old Woman Creek reached the model as "Action Required" with 0 events and no cause, and the model wrote "no abnormal conditions" beside it (`migration/CONVERSATION_QA_2026-09-24.md` finding 3).
+The period ends on the device's newest reading, so the tool also returns `device_last_reported` with its age, and the prompt asks the model to say when a stale pod's period ended.
 
 **The route renders the PDF on request.** `POST /api/v1/reports` takes that `report_request` as its body and answers `200 application/pdf` with `Content-Disposition: attachment; filename="cer-report-<site>-<start>-to-<end>.pdf"` and `Cache-Control: no-store`.
 Guards, in order: `requireCallerToken` (401), the report quota (429, §4a), `REPORT_TOOL` (404 while off), body validation (400: `time_range` required, at most 100 characters; `device` optional, at most 200), then the pipeline's own refusal as 422 (a phrase the grammar does not read, a pod the caller cannot see, an empty window).

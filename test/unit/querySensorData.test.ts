@@ -372,7 +372,23 @@ describe("query_sensor_data — the stale pod", () => {
     expect(result.value).not.toBe(0);
     expect(result.n_samples).toBe(0);
     expect(result.device_last_reported).toBe("2026-08-07T14:38:49.000Z");
+    expect(result.device_last_reported_age).toBe("5 days");
+    expect(result.device_last_reported_stale).toBe(true);
     expect(result.note).toContain("last reported");
+  });
+
+  it("states the age of the reading a silent pod answers \"now\" with", async () => {
+    // CONVERSATION_QA_2026-09-24 finding 2: every range is anchored to the device's newest
+    // reading, so a pod silent for days answers "now" with a days-old value that looked current.
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "temperature", time_range: "now", aggregation: "latest", device: "OWC",
+    });
+
+    expect(result.value).not.toBeNull();
+    expect(result.device_last_reported).toBe("2026-08-07T14:38:49.000Z");
+    expect(result.device_last_reported_age).toBe("5 days");
+    expect(result.device_last_reported_stale).toBe(true);
   });
 
   it("falls back to widening windows when /water/last gives nothing, and stops", async () => {

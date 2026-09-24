@@ -22,8 +22,10 @@ import { detectEvents } from "./events";
 import { deterministicNarrative, type NarrativeSections } from "./narrative";
 import { probeAccuracy } from "./referenceRanges";
 import { buildReportPdf } from "./renderPdf";
-import { overallStatus } from "./types";
-import type { ReportInput, ReportStatus, WaterBodyType } from "./types";
+import { assessStatus } from "./types";
+import type {
+  ReportInput, ReportStatus, StatusAssessment, WaterBodyType,
+} from "./types";
 
 export interface ReportRequest {
   timeRange: string;
@@ -35,6 +37,8 @@ export interface ReportRequest {
 export interface PreparedReport {
   report: ReportInput;
   status: ReportStatus;
+  /** The rule and parameters behind `status`, for `generate_report`'s tool result. */
+  statusBasis: StatusAssessment;
   narrative: NarrativeSections;
   skippedParameters?: string[];
 }
@@ -55,10 +59,11 @@ export const prepareReport = async (
   }
 
   report.events = detectEvents(report);
-  const status = overallStatus(report, probeAccuracy);
+  const statusBasis = assessStatus(report, probeAccuracy);
+  const { status } = statusBasis;
   const narrative = deterministicNarrative(report, probeAccuracy, status, guidance);
   return {
-    report, status, narrative, ...(skippedParameters ? { skippedParameters } : {}),
+    report, status, statusBasis, narrative, ...(skippedParameters ? { skippedParameters } : {}),
   };
 };
 

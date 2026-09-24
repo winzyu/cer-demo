@@ -167,6 +167,33 @@ describe("list_pods — freshness", () => {
     expect(podsOf(result)[1].last_reported).toBe("2026-08-07T14:38:49.000Z");
   });
 
+  it("states each timestamp's age and flags a pod silent for days as stale", async () => {
+    // CONVERSATION_QA_2026-09-24 finding 1: with absolute timestamps only, two pods ten and twelve
+    // days silent were called "likely online".
+    const stub = makeClient({ "dev:351077454567580": OWC_LAST, "dev:351077454569099": [] });
+    const tenDaysOn = Date.parse("2026-08-17T15:00:00.000Z");
+    const tool = new ListPods({ sensor: new QuerySensorData({ client: stub.client, now: () => tenDaysOn }) });
+
+    const pods = podsOf(await tool.run({}, { token: TOKEN })) as unknown as Array<Record<string, unknown>>;
+    const owc = pods.find((pod) => pod.device === "dev:351077454567580");
+
+    expect(owc).toMatchObject({ last_reported_age: "10 days", last_reported_stale: true });
+    // No timestamp, no age: a null must not acquire a made-up one.
+    expect(pods[0]).not.toHaveProperty("last_reported_age");
+    expect(pods[0]).not.toHaveProperty("last_reported_stale");
+  });
+
+  it("does not flag a pod that reported within the hour", async () => {
+    const stub = makeClient({ "dev:351077454567580": OWC_LAST });
+    const fortyMinutesOn = Date.parse("2026-08-07T15:18:49.000Z");
+    const tool = new ListPods({ sensor: new QuerySensorData({ client: stub.client, now: () => fortyMinutesOn }) });
+
+    const pods = podsOf(await tool.run({}, { token: TOKEN })) as unknown as Array<Record<string, unknown>>;
+
+    expect(pods.find((pod) => pod.device === "dev:351077454567580"))
+      .toMatchObject({ last_reported_age: "40 minutes", last_reported_stale: false });
+  });
+
   it("says in the result that a null last_reported is not proof of silence", async () => {
     // The trap this tool could otherwise walk the model into: null here means "not confirmed",
     // because the route drops readings with no GPS fix, so a pod reporting chemistry without a

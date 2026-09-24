@@ -23,6 +23,9 @@
  * indistinguishable here from one that has stopped. The result says so in its own `note`, and
  * the answer to "is this pod dead" is a `query_sensor_data` call, not this field.
  *
+ * **Each timestamp carries its age.** `last_reported_age` and `last_reported_stale` sit beside
+ * it, so "which pods are online" does not rest on date arithmetic by the model (`readingAge.ts`).
+ *
  * **Device resolution and the `/devices` call are reused, not rebuilt.** This shares the
  * `QuerySensorData` instance `buildToolRegistry` hands every device-reading tool, so it hits the
  * same TTL cache keyed by token: a request that lists pods and then reads one costs a single
@@ -33,6 +36,7 @@ import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import { QuerySensorData, type SensorToolResult } from "./querySensorData";
+import { readingAge } from "./readingAge";
 
 const log = createLogger("ListPods");
 
@@ -119,14 +123,19 @@ export class ListPods {
         + " rest are listed with \"last_reported\": \"not_checked\"."
       : "";
 
-    const pods = devices.map((device, index) => ({
-      name: device.name ?? device.label ?? "(unnamed)",
-      device: device.label ?? null,
-      operating_environment: device.operatingEnvironment ?? null,
-      ...(index < probed.length
-        ? { last_reported: freshness[index] }
-        : { last_reported: "not_checked" }),
-    }));
+    const nowMs = this.sensor.clockMs();
+    const pods = devices.map((device, index) => {
+      const age = index < probed.length ? readingAge(freshness[index], nowMs) : null;
+      return {
+        name: device.name ?? device.label ?? "(unnamed)",
+        device: device.label ?? null,
+        operating_environment: device.operatingEnvironment ?? null,
+        ...(index < probed.length
+          ? { last_reported: freshness[index] }
+          : { last_reported: "not_checked" }),
+        ...(age ? { last_reported_age: age.age, last_reported_stale: age.stale } : {}),
+      };
+    });
 
     return {
       pods,
