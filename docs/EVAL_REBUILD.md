@@ -236,6 +236,19 @@ chunks these are.
   inventory, which was wrong at the 2026-09-01 qualification pass
   (`eval/fixtures-wave1/_QUALIFICATION.md` §2.1) and has since been fixed.
 
+  **Done 2026-09-21, landed on `dev` 2026-09-24.** All 12 entries were re-resolved onto the corpus chunk of the same index.
+  The mapping was not assumed from the index: every entry's quotes match its mapped chunk and no other, apart from the expected spill into index+1 from the 400-char chunk overlap.
+  The re-OCR also broke 12 `quote` values; 11 were the same passage with only OCR characters moved (`14.38` to `1438`, `uS/om` to `yS/em`, straight to curly apostrophes) and were refreshed against the mapped chunk.
+  Claim ids, claim text, `type`, `metrics`, `specificity`, `locator` and the summary blocks are byte-identical to the previous version, so the corrected drift/QAPP gap statement survives.
+  **446/446 chunk ids now resolve, 2177 claims, no duplicate ids, no quote over 200 chars.** Per-claim detail is the 2026-09-21 note in `eval/claims/_STATUS.md`.
+
+  One claim knowingly fails the verbatim-quote invariant: `epa-oxygen-solubility-chart-01` (chunk index 9) quotes the solubility chart's pressure header row, which the +86-char shift moved past the chunk 9/10 boundary.
+  Its evidence now sits wholly in chunk index 10, whose `locator` already describes that chart block.
+  Re-parenting it changes the per-chunk counts in `eval/claims/_STATUS.md`, so it waits for a decision rather than a rewrite.
+
+  `eval/retrieval-labels/` was regenerated with `scripts/resolveRetrievalLabels.ts` on 2026-09-24: the 30 old-id references across 5 files became the new ids, with no other change and no stale label files left.
+  The old ids in `eval/transcripts/warm/gold-context/` (30) and `data/results/judge/warm.*` (6) are historical captures and correctly stay.
+
 Phase 1e's **human locator** (document + section + short quote) is the mitigation for all three. It
 lets a label be re-resolved against a new chunk instead of re-authored. Phase 1a is already
 capturing locators, so the protection is in place before any label exists.
