@@ -146,24 +146,14 @@
           ]
         },
         {
-          "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__63eb942808c2",
-          "contentHash": "63eb942808c2",
-          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
-          "grade": 2,
-          "evidence": "760 755 750 TAS 740 735 730 mm",
-          "locator": "§6.0 post calibration criteria table, §7.0 Records, §8.0 References, Table 1 — \"Measurement Post Calibration Criteria\"",
-          "claimIds": [
-            "epa-oxygen-solubility-chart-01"
-          ]
-        },
-        {
           "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__0647560e9eed",
           "contentHash": "0647560e9eed",
           "filename": "epa-sop-field-instrument-calibration-2010.pdf",
           "grade": 2,
-          "evidence": "20 9.06 9.00 8.94 8.88 8.82 8.75 8.69",
+          "evidence": "760 755 750 74S 740 735 730 mm",
           "locator": "Attachment, \"Oxygen Solubility at Indicated Pressure\" chart, 760-730 mm Hg block plus the head of the 725-690 mm Hg block (tail of the Table 1 calibration log precedes it)",
           "claimIds": [
+            "epa-oxygen-solubility-chart-01",
             "epa-do-solubility-20c-01"
           ]
         },
@@ -323,24 +313,14 @@
           ]
         },
         {
-          "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__63eb942808c2",
-          "contentHash": "63eb942808c2",
-          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
-          "grade": 2,
-          "evidence": "760 755 750 TAS 740 735 730 mm",
-          "locator": "§6.0 post calibration criteria table, §7.0 Records, §8.0 References, Table 1 — \"Measurement Post Calibration Criteria\"",
-          "claimIds": [
-            "epa-oxygen-solubility-chart-01"
-          ]
-        },
-        {
           "chunkId": "epa-sop-field-instrument-calibration-2010.pdf__0647560e9eed",
           "contentHash": "0647560e9eed",
           "filename": "epa-sop-field-instrument-calibration-2010.pdf",
           "grade": 2,
-          "evidence": "20 9.06 9.00 8.94 8.88 8.82 8.75 8.69",
+          "evidence": "760 755 750 74S 740 735 730 mm",
           "locator": "Attachment, \"Oxygen Solubility at Indicated Pressure\" chart, 760-730 mm Hg block plus the head of the 725-690 mm Hg block (tail of the Table 1 calibration log precedes it)",
           "claimIds": [
+            "epa-oxygen-solubility-chart-01",
             "epa-do-solubility-20c-01"
           ]
         },

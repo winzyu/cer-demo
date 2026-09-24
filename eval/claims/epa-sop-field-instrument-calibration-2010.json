@@ -1252,17 +1252,6 @@
           "type": "procedural",
           "quote": "For each Parameter, chose one standard as your check standard.",
           "specificity": "high"
-        },
-        {
-          "id": "epa-oxygen-solubility-chart-01",
-          "claim": "The SOP attaches an Oxygen Solubility at Indicated Pressure chart tabulating oxygen solubility against temperature for barometric pressures from 760 down to 730 mm Hg.",
-          "metrics": [
-            "dissolvedOxygen",
-            "temperature"
-          ],
-          "type": "numeric",
-          "quote": "760 755 750 TAS 740 735 730 mm",
-          "specificity": "high"
         }
       ]
     },
@@ -1271,6 +1260,17 @@
       "index": 10,
       "locator": "Attachment, \"Oxygen Solubility at Indicated Pressure\" chart, 760-730 mm Hg block plus the head of the 725-690 mm Hg block (tail of the Table 1 calibration log precedes it)",
       "claims": [
+        {
+          "id": "epa-oxygen-solubility-chart-01",
+          "claim": "The SOP attaches an Oxygen Solubility at Indicated Pressure chart tabulating oxygen solubility against temperature for barometric pressures from 760 down to 730 mm Hg.",
+          "metrics": [
+            "dissolvedOxygen",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "760 755 750 74S 740 735 730 mm",
+          "specificity": "high"
+        },
         {
           "id": "epa-do-solubility-units-mgl-01",
           "claim": "In the attached Oxygen Solubility at Indicated Pressure chart the barometric pressure columns are labelled in both millimetres and inches of mercury (760 mm Hg corresponds to 29.92 in Hg) and the tabulated solubility values are in milligrams per litre.",

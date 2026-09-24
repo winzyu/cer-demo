@@ -81,8 +81,9 @@ handback for what that means for exit criterion 3.
 >
 > **446/446 chunk ids now resolve. 2177 claims, no duplicate ids, no quote over 200 chars.**
 >
-> One claim is knowingly left failing the verbatim-quote invariant and needs a human decision:
-> `epa-oxygen-solubility-chart-01` (chunk index 9) quotes the solubility chart's pressure header
-> row, which the +86-char OCR shift moved past the chunk 9/10 boundary. Its evidence now sits wholly
-> in chunk index 10, whose `locator` already describes that chart block. Re-parenting a claim to a
-> different chunk changes the per-chunk counts above, so it was flagged rather than applied.
+> **2026-09-23, by the user's decision:** `epa-oxygen-solubility-chart-01` moved from chunk index 9
+> to chunk index 10, whose `locator` already describes the solubility chart, and its quote was
+> refreshed to that chunk's OCR (`74S` where the old text read `TAS`); claim text is unchanged.
+> All 2177 quotes are now verbatim in their chunks. On `dev` two fixtures name this claim
+> (`crossdoc-do-calibrated-dry-deployed-brackish`, `crossdoc-two-oxygen-tables-disagree`); their
+> regenerated labels drop chunk index 9 and keep chunk index 10 at grade 2.

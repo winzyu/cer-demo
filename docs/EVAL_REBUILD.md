@@ -242,11 +242,12 @@ chunks these are.
   Claim ids, claim text, `type`, `metrics`, `specificity`, `locator` and the summary blocks are byte-identical to the previous version, so the corrected drift/QAPP gap statement survives.
   **446/446 chunk ids now resolve, 2177 claims, no duplicate ids, no quote over 200 chars.** Per-claim detail is the 2026-09-21 note in `eval/claims/_STATUS.md`.
 
-  One claim knowingly fails the verbatim-quote invariant: `epa-oxygen-solubility-chart-01` (chunk index 9) quotes the solubility chart's pressure header row, which the +86-char shift moved past the chunk 9/10 boundary.
-  Its evidence now sits wholly in chunk index 10, whose `locator` already describes that chart block.
-  Re-parenting it changes the per-chunk counts in `eval/claims/_STATUS.md`, so it waits for a decision rather than a rewrite.
+  `epa-oxygen-solubility-chart-01` quoted the solubility chart's pressure header row, which the +86-char shift moved from chunk index 9 into chunk index 10.
+  By the user's decision of 2026-09-23 it moved to chunk index 10, whose `locator` already describes that chart, with its quote refreshed to that chunk's OCR, so all 2177 quotes are verbatim again.
+  Chunk index 9 holds only the chart title, not the pressure range the claim states, so keeping it would credit retrieval for a chunk without the answer.
+  The two fixtures that name the claim (`crossdoc-do-calibrated-dry-deployed-brackish`, `crossdoc-two-oxygen-tables-disagree`) lose chunk index 9 from their labels and keep chunk index 10 at grade 2; retrieval scores already computed against the old labels for these two fixtures need re-scoring.
 
-  `eval/retrieval-labels/` was regenerated with `scripts/resolveRetrievalLabels.ts` on 2026-09-24: the 30 old-id references across 5 files became the new ids, with no other change and no stale label files left.
+  `eval/retrieval-labels/` was regenerated with `scripts/resolveRetrievalLabels.ts` on 2026-09-24: the 30 old-id references across 5 files became the new ids, and the chunk move above was regenerated the same way; no stale label files are left.
   The old ids in `eval/transcripts/warm/gold-context/` (30) and `data/results/judge/warm.*` (6) are historical captures and correctly stay.
 
 Phase 1e's **human locator** (document + section + short quote) is the mitigation for all three. It
