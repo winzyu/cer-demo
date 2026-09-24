@@ -6,6 +6,7 @@ import type {
 } from "../../src/report/types";
 import { catalogue, parseCatalogue, usableGuidance } from "../../src/catalogue";
 import type { UsableGuidance } from "../../src/catalogue";
+import { TURBIDITY_ALL_ZERO_CAVEAT } from "../../src/report/referenceRanges";
 
 /**
  * narrative.ts is the rule-based (zero-AI-call) prose writer. Covers the two user-requested
@@ -290,15 +291,31 @@ describe("deterministicNarrative — parameter analysis", () => {
     expect(text).not.toMatch(/[Ee]xceedance|[Ee]levated reading|outside the/);
   });
 
-  it("bands a period of all-zero turbidity as Clear rather than treating 0 as missing data", () => {
+  it("bands all-zero turbidity as Clear but flags it as a possible missing sensor", () => {
+    // The zeros are still reported, never dropped as missing data; the backend's 0 for a missing
+    // voltage just cannot be ruled out when every reading is 0.
     const turbidity = turbidityParam([0, 0, 0, 0]);
-    const { parameterAnalysis } = deterministicNarrative(report([turbidity]), noAccuracy, "Normal");
+    const { parameterAnalysis, summaryBullets } = deterministicNarrative(
+      report([turbidity]), noAccuracy, "Normal",
+    );
 
     const text = parameterAnalysis.get("Turbidity (Relative)")!;
     expect(text).toContain("Clear");
     expect(text).toContain("relative index mean 0.0");
     expect(text).toContain("held steady across the period");
-    expect(text).not.toMatch(/no data|not available|missing/i);
+    expect(text).toContain(TURBIDITY_ALL_ZERO_CAVEAT);
+    expect(text).not.toMatch(/no data|not available/i);
+    expect(summaryBullets.join(" ")).toContain("possibly a missing sensor");
+  });
+
+  it("does not flag a period with a lone 0 among real readings", () => {
+    const turbidity = turbidityParam([0, 120, 140, 130]);
+    const { parameterAnalysis, summaryBullets } = deterministicNarrative(
+      report([turbidity]), noAccuracy, "Normal",
+    );
+
+    expect(parameterAnalysis.get("Turbidity (Relative)")!).not.toContain(TURBIDITY_ALL_ZERO_CAVEAT);
+    expect(summaryBullets.join(" ")).not.toContain("missing sensor");
   });
 
   it("bands a reading in the thousands without inventing an exceedance", () => {

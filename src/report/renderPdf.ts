@@ -16,7 +16,9 @@ import type {
 import {
   coordinatesStr, flagFor, isRelativeIndex, outOfRangeShare, reportPeriod, statValue,
 } from "./types";
-import { clarityBandFor, isOffScaleTurbidity, TURBIDITY_NO_BASELINE_TEXT } from "./referenceRanges";
+import {
+  clarityBandFor, isAllZeroTurbidity, isOffScaleTurbidity, TURBIDITY_NO_BASELINE_TEXT,
+} from "./referenceRanges";
 import type { NarrativeSections } from "./narrative";
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
@@ -65,6 +67,11 @@ export const flagCellText = (
   // The band alone reads as a clarity claim; "(off-scale)" tells the reader this particular
   // reading is also a data-quality signal -- the input voltage went below 0 V relative to the
   // conversion's assumptions -- without inventing a fourth band for it (see OFF_SCALE_INDEX).
+  // "(all zero)" does the same for a period with nothing but zeros, which the backend also
+  // produces for a missing or offline sensor (see isAllZeroTurbidity).
+  if (isAllZeroTurbidity(p.max)) {
+    return `${band} (all zero)`;
+  }
   return isOffScaleTurbidity(p.mean) ? `${band} (off-scale)` : band;
 };
 
@@ -518,8 +525,10 @@ export const buildReportPdf = (
       + "authoritative as of 2026-09-10, from an uncalibrated relative index derived from a raw "
       + "sensor voltage. No operator turbidity range exists on any device, so it is never "
       + "flagged in or out of range; its Min/Max/Mean/Median are shown for period-to-period "
-      + "comparison only. A reading of 0 is a real reading; a Flag reading '(off-scale)' means "
-      + "the reading is at or beyond the top of the conversion's scale."
+      + "comparison only. A Flag reading '(all zero)' means every reading in the period was "
+      + "0, which the backend also reports for a missing or offline sensor, so it is not "
+      + "confirmed clear water; '(off-scale)' means the reading is at or beyond the top of the "
+      + "conversion's scale."
     : "";
   doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
     "Flag values: Normal, Elevated, Low, or Exceedance relative to the site baseline. Out of "

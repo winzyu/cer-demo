@@ -950,3 +950,15 @@ The baseline's recorded strictness examples (adjectives, `±` against OCR `+`) a
 Recall has no knee up to 40; ranking is weak (MRR 0.077 at k=20), so depth is compensating for ordering.
 A chunk is about 800 prompt tokens, about $0.00012 uncached on `gpt-oss-120b`, so k=30 costs about $0.0024 more per request than k=10.
 Choose k on answer correctness, not recall: capture k=20 and k=30 on `hybrid-slice-vector` and stop where correctness gains less than the 0.05 noise band.
+
+## Task C provenance inputs - 2026-09-24
+
+Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
+The audit preserves the answer before citation correction or display removal, along with every correction and invalid marker.
+Deterministic citation assessment shares the HTTP service's interpretation and reads that original answer when present.
+Tool results also reach deterministic figure checks, judge prompts and generated grading-packet context.
+Report-period comparisons normalize Unicode hyphens without modifying answer text.
+Legacy captures remain readable without synthesizing missing evidence, and existing `eval/transcripts/` have not been changed.
+The wire and display contract is documented in `SPECS.md` section 10.4a.
+Task C's prompt changes are confined to the tools-only blocks; the R4 general prompt and separate evaluation worktree are untouched.
+No paid capture or grading run is part of this verification.

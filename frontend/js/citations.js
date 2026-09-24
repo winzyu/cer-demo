@@ -18,9 +18,10 @@
  */
 // Two shapes. A quoted marker may close with 】 or — a real gpt-oss-120b habit seen in the
 // 2026-09-13 smoke capture — with } or ] straight after the closing quote: `【1†"90% in 1s"}`.
+// A real 】 may still follow that } or ]; it is consumed too, so it never renders doubled.
 // The quoted span excludes 【, 】 and newlines, so a malformed marker can never reach forward to
 // a later marker's 】 and swallow the ordinary answer text in between into one citation.
-export const MARKER_PATTERN = /【\s*(\d+)\s*(?:[†‡:|,;–—-]\s*)?(?:["“”„‟″][^【】\n]*?["“”„‟″]\s*(?:】|[}\]])|(?:L\d+(?:-L?\d+)?)?\s*】)/g;
+export const MARKER_PATTERN = /【\s*(T[1-9]\d*|\d+)\s*(?:[†‡:|,;–—-]\s*)?(?:["“”„‟″][^【】\n]*?["“”„‟″]\s*(?:[}\]]*\s*】|[}\]]+)|(?:L\d+(?:-L?\d+)?)?\s*】)/g;
 
 /**
  * While streaming, an answer can end mid-marker — e.g. `…warms 【3†"solubility of oxy`. If the
@@ -59,7 +60,8 @@ export function stripOpenMarker(text) {
  * leaves markdown nothing to split, and the DOM pass only ever has to find `【n】`.
  */
 export function collapseCitationQuotes(text) {
-  return text.replace(MARKER_PATTERN, (_marker, index) => `【${index}】`);
+  return text.replace(MARKER_PATTERN, (_marker, index) => `【${index}】`)
+    .replace(/【(?!\s*(?:T[1-9]\d*|\d+)\s*】|commentary\b)[^【】\n]*】/g, "");
 }
 
 /**
@@ -69,12 +71,15 @@ export function collapseCitationQuotes(text) {
  * rendered text.
  */
 export function splitCitations(text) {
+  text = collapseCitationQuotes(text);
   const segments = [];
   let lastIndex = 0;
   for (const match of text.matchAll(MARKER_PATTERN)) {
     const idx = match.index;
     if (idx > lastIndex) segments.push({ type: "text", value: text.slice(lastIndex, idx) });
-    segments.push({ type: "cite", index: Number(match[1]) });
+    segments.push(match[1].startsWith("T")
+      ? { type: "tool", handle: match[1] }
+      : { type: "cite", index: Number(match[1]) });
     lastIndex = idx + match[0].length;
   }
   if (lastIndex < text.length) segments.push({ type: "text", value: text.slice(lastIndex) });

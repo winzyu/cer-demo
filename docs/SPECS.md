@@ -230,6 +230,8 @@ All environment reading and validation happens **once**, at import, producing a 
 - **Malformed** values (non-integer `PORT`, unknown `WATER_TYPE`/`NODE_ENV`) are fatal.
 - **Missing** secrets/models (`FIREWORKS_API_KEY`, `LLM_MODEL`, and `FIRESTORE_PROJECT_ID` in
   production) are **warnings only** — the skeleton must boot and pass `/health` without them.
+- The defaults of `SENSOR_TOOL` (`false`), `DEFAULT_RETRIEVAL` (`stub`) and `DEBUG_RETRIEVAL`
+  (`false`) stay as they are, so a fresh checkout is credential-free and makes no live reads.
 
 Shape:
 
@@ -612,6 +614,17 @@ name turbidity as one of the six measured parameters, and **0 is a valid turbidi
 must never be flagged as erroneous (same rule as ORP). The reasoning is in the
 `src/prompt/systemPrompt.ts` docstring and the `timeline.md` decision log.
 
+**Turbidity is a unitless relative index, and an all-zero period is flagged** (2026-09-24,
+provisional, Task A). Every pod is treated as qualitative only, so the prompt, the tool results and
+the metric table name no unit and never say NTU. The clarity bands stay at the operator's 345/795
+(2.2 V and 0.7 V); the dashboard dial's 350/800 is the discrepancy to fix upstream. The backend's
+`turbVoltToNTU.ts` returns 0 for a missing voltage and for the offline sentinel as well as for clear
+water, so `isAllZeroTurbidity` (`src/report/referenceRanges.ts`) flags a period in which every
+reading is 0 as a possible missing sensor: `query_sensor_data` adds `TURBIDITY_ALL_ZERO_CAVEAT` to
+its note, the report's Flag column reads "Clear (all zero)", and the narrative says so. A lone 0
+among varied readings stays Clear with no flag. The flag is a data-quality signal like off-scale,
+not a fourth band.
+
 **Greetings and capability questions are carved out of the refusal rule** (2026-09-21). They were
 not before: the scope rule fired on anything that was not a groundable question, so "hello" was
 answered with `REFUSAL_SENTENCE`, which is how a real session opened. A greeting asks for nothing,
@@ -764,7 +777,8 @@ Behavior worth knowing, each guarding a documented silent-failure mode in `DEVIC
 | faulted samples are excluded per metric, and the count is reported | a faulted probe still reports a plausible number |
 | `0` is never falsy-checked | it is a real reading for ORP and turbidity |
 | a device must be named when several are visible | the two cleared pods are different water bodies on opposite coasts |
-| turbidity results carry a provisional/uncalibrated note | it is a derived voltage index expressed in NTU, not a measurement |
+| turbidity results carry a provisional/uncalibrated note and no unit | it is a derived voltage index, not a measurement and not NTU |
+| a window in which every turbidity reading is 0 carries a possible-missing-sensor note | the backend reports a missing or offline voltage as 0, the same as clear water |
 | a device whose `operatingEnvironment` disagrees with `WATER_TYPE` is flagged in the result | one global env var cannot describe both pods; per-device water type in chat is unbuilt N4 work |
 
 ### 10.3c Device continuity — merge chains (`src/devices/mergeChains.ts`)
@@ -784,23 +798,41 @@ endpoint this tool reads (`SECURITY_FINDINGS.md` §7), so the fan-out happens he
 | every `/water/period` read goes out once per chain label, survivor first, sequentially | repeating `device=` on that route returns **0 rows** — the param is not a list there — and this is someone else's production API |
 | rows a **later** label repeats are dropped, matched on `timestamp` | chains overlap (New Trinidad and Trinidad Island share five months); naive concatenation double-counts and reweights every mean. The first batch is never filtered, so an unmerged pod's series is byte-identical to before |
 | a predecessor is read only when it is in the caller's **own** `/devices` response | that response is org-scoped upstream and is the only trustworthy statement of what this caller may see; `/water/period` itself authorizes nothing (`SECURITY_FINDINGS.md` §1) |
-| a predecessor whose `organization` differs from the survivor's is **withheld** | three of the four live chains cross organizations. Whether inheriting a buoy inherits its data is the operator's call (`POD_AUTHORIZATION.md` §11 Q1); deny is the documented default until they answer, and it is the reversible error |
-| an organization is compared as an opaque string, never resolved | two live devices point at organizations that do not exist; a lookup either throws or silently returns nothing. A survivor with no organization inherits nothing |
+| a predecessor whose `organization` differs from the survivor's is **withheld** | access follows organization membership, and history is read only where same-organization ownership is known (decided 2026-09-23). Three of the four chains in the August census crossed organizations; whether those merges transferred the site is open with the operator, and withholding is the reversible error |
+| an organization is compared as an opaque string, never resolved | the August census found two devices pointing at organizations that do not exist; a lookup either throws or silently returns nothing. A survivor with no organization inherits nothing |
 | `mergedInto` is never followed **forward** | a question about a retired pod is about that pod's own span; following it would widen the read into a device the caller never named. The result says the pod was retired instead |
 | what was read and what was withheld are **named in the result** (`device.history_labels`, `device.history_withheld`, plus a note) | silent expansion is the bug; disclosed expansion is the feature. A withheld predecessor is a limit on the answer, not a statement that the history does not exist |
 
-Expansion cannot widen what the caller could otherwise reach, so it needs no flag of its own; the
-`PodScope` grant layer (`POD_AUTHORIZATION.md` §10 P0) is where a narrowing switch belongs. The
-report's **Data scope** block (§8c there) is still open — the report inherits the fan-out through
+Expansion cannot widen what the caller could otherwise reach, so it needs no flag of its own.
+The report's **Data scope** block is still open — the report inherits the fan-out through
 `QuerySensorData.query()` but does not yet print which labels it used.
+
+**Live state, 2026-09-23.** `/devices` no longer returns retired predecessors, even to a superadmin
+token, so today every predecessor is withheld as "not visible to this account" and each pod's
+history starts at its own label. That is the fail-closed outcome the rules above intend.
 
 ### 10.4 Responses
 
-**Default (JSON):** `{ answer, model, mode, citations, usage }`, plus `tool_calls` when any tool ran
-and `tool_round_cap_reached` when the loop hit the cap. Both are **omitted** when no tool ran, so
-the flag-off response shape is unchanged from N1. Tool results are traced there, never turned into
-citations (§3 rule 4) — a sensor reading is this deployment's own measurement, not a claim
-attributable to a corpus document.
+**Default (JSON):** `{ answer, model, mode, citations, usage, audit }`, plus optional `tool_calls` and `tool_round_cap_reached`.
+Every invocation receives an answer-local `handle` (`T1`, `T2`, etc.), including deduplicated calls.
+The model receives `{ handle, result }` in each tool message and can cite it as `【T1】`.
+Numeric document citations remain separate from tool evidence.
+The tools-only prompt blocks describe this exception; the evaluated general prompt is unchanged.
+
+The trace preserves `handle`, `name`, effective `arguments`, `raw_arguments`, `result`, `round`, and optional `deduped`.
+The cap flag is true when the forced final round is used, including when that round successfully returns prose.
+Absent fields remain absent for legacy messages; neither the relay nor the interface assigns handles retrospectively.
+The server relay, chat storage, dashboard state and reopened history preserve these optional fields, document citations, report offers and citation audit data.
+The relay's existing `audit.toolCalls` name list remains available for older clients.
+
+**Answer text post-processing (`src/utils/answerFormat.ts`).** gpt-oss sometimes leaks its harmony
+`commentary` channel into the answer as a `【commentary…】` marker. It is stripped after the fact,
+on the JSON path, the round-cap fallback and (through `createStreamingCommentaryFilter`) the
+non-tool SSE branch. The matcher is anchored to the channel name because the same full-width
+brackets carry the citation markers: about 160 of them across the captured transcripts, which
+`GRADING_GUIDE.md` scores as `invalid_citations`. A strip-anything-in-brackets rule would have
+deleted graded evidence. An answer that is only markers comes out empty and hits the empty-answer
+guard.
 
 > **Streaming limitation with tools on.** The answer is not token-streamed: the loop cannot know a
 > round is the last until it returns without tool calls, by which point the text exists. Re-issuing
@@ -817,7 +849,7 @@ callers should not have to parse SSE. N7's chat UI will likely flip the default 
 |---|---|---|
 | `meta` | `{ mode, citations }` | **Always first.** After the first byte the status code cannot change, so provenance must lead. |
 | `token` | `{ text }` | one per delta |
-| `done` | `{ model, usage?, tool_calls?, tool_round_cap_reached? }` | **always emitted**, on both branches. `usage` is omitted when the provider reports none — `stream_options.include_usage` support varies — and `tool_calls` / `tool_round_cap_reached` appear only on the tool branch, when a tool actually ran. |
+| `done` | `{ answer, audit, model, usage?, tool_calls?, tool_round_cap_reached? }` | **always emitted**, on both branches. `usage` is omitted when the provider reports none — `stream_options.include_usage` support varies — and `tool_calls` / `tool_round_cap_reached` appear only on the tool branch, when a tool actually ran. |
 | `end` | `{}` | terminator |
 | `error` | `{ error, message, code? }` | in-band; headers are already sent, so the central error handler cannot render it. Same shape as the JSON error body above, `code` included, so a client branches identically on either transport. |
 
@@ -826,6 +858,45 @@ error event. A client disconnect aborts the upstream call via `AbortController` 
 tab keeps generating billable tokens. `X-Accel-Buffering: no` is set because a buffering proxy in
 front of Cloud Run would otherwise hold the whole stream and release it at once, which is
 indistinguishable from streaming being broken.
+
+### 10.4a Citation audit and display contract
+
+`src/utils/citations.ts` supplies the same marker assessment to HTTP responses and deterministic evaluation.
+Before validating a numeric quote marker, the service checks the quote against the supplied excerpt verbatim.
+If its current excerpt does not contain the quote and exactly one excerpt does, it changes only the numeric index.
+Ambiguous, case-changed, whitespace-changed and unmatched quotes do not trigger a correction.
+Quote-support measurement remains separate from marker resolution.
+
+The response `audit` contains `original_answer` (before citation edits), `corrections` (original marker, replacement, original character offset, old and new index), and `invalid_citations` (marker, original offset and reason).
+Malformed markers, empty markers, unknown tool handles, out-of-range document numbers and invalid line spans are recorded before removal from displayed text.
+Malformed quote closers such as `"}】` count as invalid; the legacy frontend fallback consumes doubled closers as one marker.
+A tool marker resolves only against an explicit handle in this answer's invocation list.
+This proves that the evidence exists, not that it supports the attached claim.
+The optional audit-log record also retains this citation audit.
+When report results supply `report_period`, `audit.report_periods` records whether the period appears after Unicode hyphens are normalized for comparison only.
+Neither original answers nor captured transcripts are rewritten for this comparison.
+
+JSON `answer` and SSE `done.answer` contain the corrected display text.
+The streaming client replaces accumulated tokens with the authoritative final answer and retains the audit separately.
+This matters on the document-only stream, where validation happens after generation finishes.
+Evaluation assesses `audit.original_answer` when present, so removing an invalid marker from display cannot make an invalid-citation assessment pass.
+Legacy transcripts without an audit are assessed from their stored answer.
+
+Both frontends render tool handles as controls opening evidence within that answer, without colliding with document numbers or another answer's handles.
+The dashboard keeps tool arguments, results, rounds and reuse status in a collapsed disclosure.
+Incomplete searches, stale or empty windows, provisional turbidity, tool errors and exhausted rounds remain visible outside it.
+An empty window or null value is never converted to zero; actual zero measurements remain zero.
+Explicit scope refusals have intentional-outcome styling.
+Turbidity interpretation itself is unchanged.
+
+Future JSON and SSE captures preserve optional tool evidence, cap status and citation audit in `TranscriptTurn`.
+Deterministic figure checks receive tool results; citation checks resolve handles using the trace; judge and grading-packet inputs include the evidence and qualifications.
+Existing `eval/transcripts/` remain verbatim.
+
+Controlled verification uses `scripts/taskCStack.ts` with `TASK_C_SERVER_WORKTREE` pointing at the approved server checkout and `scripts/taskCBrowser.mjs` against the local dashboard.
+The stack injects deterministic model and tool responses and blocks nonlocal fetches.
+The browser harness blocks external requests and checks answer display, tool navigation, saved-history reopening, refusals and legacy messages.
+It uses the development in-memory chat store; this verifies serialization and history paths, not a live Firestore deployment.
 
 ### 10.5 Device list (`GET /api/v1/devices`)
 
@@ -1343,12 +1414,52 @@ for local demo, to be tightened before deploy.
 
 ---
 
+## 15a. Demo frontend (`frontend/`)
+
+A static page with no build step and no bundler.
+
+- **No CDN and no remote assets.** Third-party code is vendored into `frontend/vendor/` with its
+  license header intact (`marked` and `DOMPurify`, used by `js/markdown.js`).
+- **Served, never opened as a file** (decided 2026-08-17). The scripts are ES modules, which are
+  fetched with CORS, and a `file://` page has an opaque origin, so every browser blocks
+  `<script type="module">` there. Serve it with `python3 -m http.server 5173` from `frontend/` and
+  point it at the API with `?backend=http://localhost:8010`.
+
+**Where things belong** (decided 2026-08-18, from live testing). Wave 1 put every piece of
+provenance into the message, and a routine question came back with a tool chip, a freshness badge,
+a water-type warning, an auto-drawn chart and fifteen starter prompts: each defensible, the whole
+unreadable. The rule: **a message carries what qualifies that answer; the chrome carries what is
+true of the session.** Anything constant across answers is chrome, because repeating it per message
+trains the reader to skip the line where it finally matters.
+
+| surface | what lives there | why |
+|---|---|---|
+| **Context bar** (persistent, `js/podbar.js`) | pod selector, pod status and last reading, water-type mismatch | properties of the deployment, identical on every answer; the mismatch is a config fact, not a finding about a reading |
+| **Message** (always) | the answer, and qualifications specific to it: an empty window ("silent since Aug 7"), `complete: false`, turbidity-provisional when turbidity is in the answer | these change how this particular number reads; dropping them would be dishonest |
+| **Message** (collapsed, `js/provenance.js`) | which tool ran, its arguments, sample counts, citations | auditable on demand, closed by default |
+| **On request** (`js/chart.js`) | the series chart | a chart answers "show me the trend"; it is not a decoration on every series result |
+
+Consequences:
+
+- The pod selector replaces the model asking which pod. `SENSOR_DEVICE_LABEL` is deliberately
+  unset because guessing between pods on opposite coasts is unsafe; the picker removes the guess
+  rather than defaulting it.
+- Freshness moves but does not disappear: "silent since Aug 7" stays in the message when it
+  explains an empty result, because there it is the answer. The routine "reporting, 8 minutes ago"
+  on a healthy pod moves to the bar.
+- Starter prompts were cut to three, then removed on 2026-09-15.
+
+---
+
 ## 16. Testing
 
 Jest + `ts-jest` + `supertest`. **57 suites** (51 unit, 6 integration; counted 2026-09-23 from
 `test/`). The last recorded full run was 949 tests in 46 suites on 2026-09-02, so the test total
 is due a re-measure. The table below names the suites that carry a design decision worth reading;
 it is not the full list — `npx jest --listTests` is.
+
+No test touches the network, needs an API key or costs money, and new tests keep to that: mock
+`LlmService`, and serve recorded bodies through a stubbed `fetch`.
 
 | suite | covers |
 |---|---|

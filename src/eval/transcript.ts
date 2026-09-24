@@ -1,3 +1,4 @@
+import type { CitationEvidence } from "../utils/citations";
 import type { LlmUsage } from "../services/LlmService";
 import type { Chunk } from "../types/retrieval.types";
 
@@ -19,7 +20,7 @@ export interface TurnTiming {
   wallMs: number;
 }
 
-export interface TranscriptTurn {
+export interface TranscriptTurn extends CitationEvidence {
   index: number;
   question: string;
   answer: string;

@@ -84,6 +84,15 @@ import type { ClarityBand } from "./types";
  * never missing data (plausibility.ts and aggregate.ts carry the same carve-out), and it must
  * never be filtered out or treated as absent.
  *
+ * **An all-zero period is flagged, not trusted.** The backend's `turbVoltToNTU.ts` also returns 0
+ * for a missing voltage and for the offline sentinel, and nothing downstream can tell those from
+ * a clamped real 0. A lone 0 among varied readings is most likely real, so it stays Clear with no
+ * flag; a period in which *every* reading is 0 is flagged by `isAllZeroTurbidity` as a possible
+ * missing sensor, because that is what a silent pod looks like (a live read on 2026-09-22 returned
+ * 14 days of zeros from a reporting pod). Like the off-scale flag, it is a data-quality signal,
+ * not a fourth band. Provisional (Task A, 2026-09-24, `timeline.md`), pending the backend
+ * returning null for a missing voltage instead of 0.
+ *
  * **The off-scale flag.** `3.35 V x 300 = 1005` is the largest index the documented conversion
  * can produce from a non-negative input voltage -- it is not one of the operator's three bands.
  * An index at or above 1005 means the input went below 0 V relative to the conversion's
@@ -128,7 +137,10 @@ export const TURBIDITY_CLEAR_VOLT = 3.35;
  */
 export const TURBIDITY_INDEX_PER_VOLT = 300;
 
-/** The band a relative turbidity index falls in. `0` is a real reading and returns "Clear". */
+/**
+ * The band a relative turbidity index falls in. `0` is a real reading and returns "Clear"; a
+ * period of nothing but zeros is additionally flagged by `isAllZeroTurbidity`.
+ */
 export const clarityBandFor = (index: number): ClarityBand => (
   TURBIDITY_BAND_EDGES.find((edge) => index >= edge.min)?.band ?? "Clear"
 );
@@ -147,6 +159,22 @@ export const OFF_SCALE_INDEX = 1005;
  * reading is still `Turbid` by `clarityBandFor`, this just flags that it is also suspect.
  */
 export const isOffScaleTurbidity = (index: number): boolean => index >= OFF_SCALE_INDEX;
+
+/**
+ * True when every usable reading in a period is 0, given the period's maximum -- the index is
+ * clamped at 0, so a maximum of 0 means no reading rose above it. See the "all-zero period"
+ * paragraph in the docstring above `TURBIDITY_BAND_EDGES`: a possible missing or offline sensor,
+ * not confirmed clear water. Not a `ClarityBand`, for the same reason `isOffScaleTurbidity` is not.
+ */
+export const isAllZeroTurbidity = (max: number): boolean => max === 0;
+
+/**
+ * Said wherever an all-zero period is reported. Kept here, next to `isAllZeroTurbidity`, so every
+ * surface explains the flag the same way.
+ */
+export const TURBIDITY_ALL_ZERO_CAVEAT = "Every turbidity reading in this period is 0. The "
+  + "backend reports a missing or offline sensor voltage as 0, the same as clear water, so this "
+  + "may be a missing sensor rather than confirmed clear water.";
 
 /**
  * One sentence saying what the turbidity number is, printed wherever a turbidity value appears

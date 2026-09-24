@@ -168,6 +168,59 @@ describe("RetrievalRegistry", () => {
 
       expect(() => registry.resolve()).toThrow(/is not registered/);
     });
+
+    it("accepts 'direct-feed' as an alias for 'firestore-direct' as the configured default", () => {
+      const registry = registryWith("direct-feed", false, [
+        new StubAdapter(),
+        fakeAdapter("firestore-direct"),
+      ]);
+
+      expect(registry.resolve().mode).toBe("firestore-direct");
+    });
+
+    it("accepts 'direct-feed' as an alias for 'firestore-direct' as a per-request override", () => {
+      const registry = registryWith("stub", true, [
+        new StubAdapter(),
+        fakeAdapter("firestore-direct"),
+      ]);
+
+      expect(registry.resolve("direct-feed").mode).toBe("firestore-direct");
+    });
+
+    it("does not register the adapter under the alias itself", () => {
+      const registry = registryWith("stub", false, [
+        new StubAdapter(),
+        fakeAdapter("firestore-direct"),
+      ]);
+
+      expect(registry.get("direct-feed")).toBeUndefined();
+      expect(registry.modes()).not.toContain("direct-feed");
+    });
+  });
+
+  describe("assertDefaultModeRegistered", () => {
+    it("does not throw when the configured default is registered", () => {
+      const registry = registryWith("stub", false);
+
+      expect(() => registry.assertDefaultModeRegistered()).not.toThrow();
+    });
+
+    it("resolves the 'direct-feed' alias before checking registration", () => {
+      const registry = registryWith("direct-feed", false, [
+        new StubAdapter(),
+        fakeAdapter("firestore-direct"),
+      ]);
+
+      expect(() => registry.assertDefaultModeRegistered()).not.toThrow();
+    });
+
+    it("throws the same 'not registered' message an unknown default would hit on first request", () => {
+      const registry = registryWith("does-not-exist", false);
+
+      expect(() => registry.assertDefaultModeRegistered()).toThrow(
+        /Configured DEFAULT_RETRIEVAL="does-not-exist" is not registered/,
+      );
+    });
   });
 });
 

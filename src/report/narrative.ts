@@ -16,7 +16,13 @@ import type {
 import {
   flagFor, heldSteady, isRelativeIndex, outOfRangeShare, statValue, withUnit,
 } from "./types";
-import { clarityBandFor, isOffScaleTurbidity, TURBIDITY_SCALE_CAVEAT } from "./referenceRanges";
+import {
+  clarityBandFor,
+  isAllZeroTurbidity,
+  isOffScaleTurbidity,
+  TURBIDITY_ALL_ZERO_CAVEAT,
+  TURBIDITY_SCALE_CAVEAT,
+} from "./referenceRanges";
 import { entriesFor, entryText, waterClassFor } from "../catalogue/select";
 import type { Finding, UsableGuidance } from "../catalogue/select";
 import type { CatalogueEntry, RecommendationSlot, WaterClass } from "../catalogue/types";
@@ -189,8 +195,9 @@ const magnitudeWord = (extreme: number, edge: number, width: number): string => 
  * a trend.
  *
  * The deadband is a fraction of the period mean, because a relative index has no natural units
- * to set an absolute one in. A period that never moves (including an all-zero one, which is a
- * real reading for turbidity) reports "held steady" rather than a direction.
+ * to set an absolute one in. A period that never moves (including an all-zero one, which
+ * `isAllZeroTurbidity` separately flags as a possible missing sensor) reports "held steady"
+ * rather than a direction.
  */
 const TREND_DEADBAND_FRACTION = 0.1;
 
@@ -221,7 +228,8 @@ const trendWord = (p: ParameterStats): string => {
  * actually is. It deliberately makes no in/out-of-range claim -- there is no range. When the
  * period mean is off-scale (see `isOffScaleTurbidity`), it adds a fourth, conditional sentence:
  * the reading is at or beyond the top of the conversion's own scale, which points at the sensor
- * or its wiring at least as readily as it points at turbid water.
+ * or its wiring at least as readily as it points at turbid water. An all-zero period gets
+ * `TURBIDITY_ALL_ZERO_CAVEAT` instead, for the same reason in the other direction.
  */
 const relativeIndexAnalysisLine = (p: ParameterStats): string => {
   const band = clarityBandFor(p.mean);
@@ -235,9 +243,10 @@ const relativeIndexAnalysisLine = (p: ParameterStats): string => {
       + "sensor or wiring problem as readily as it indicates turbid water -- worth checking "
       + "against turbVolt directly."
     : "";
+  const allZero = isAllZeroTurbidity(p.max) ? ` ${TURBIDITY_ALL_ZERO_CAVEAT}` : "";
   return `Water clarity read as ${band} for the period (relative index mean `
     + `${p.mean.toFixed(1)}, range ${p.min.toFixed(1)}-${p.max.toFixed(1)}), `
-    + `${trendWord(p)}.${spread} ${TURBIDITY_SCALE_CAVEAT}${offScale}`;
+    + `${trendWord(p)}.${spread} ${TURBIDITY_SCALE_CAVEAT}${offScale}${allZero}`;
 };
 
 const paramAnalysisLine = (
@@ -336,10 +345,13 @@ export const deterministicNarrative = (
       const offScale = isOffScaleTurbidity(p.mean)
         ? " Off-scale: check against turbVolt directly."
         : "";
+      const allZero = isAllZeroTurbidity(p.max)
+        ? " All readings were 0: possibly a missing sensor, not confirmed clear water."
+        : "";
       return `${p.baseline.label}: ${clarityBandFor(p.mean)} (relative index mean `
         + `${p.mean.toFixed(1)}, ${trendWord(p)}) — operator-authoritative bands over an `
         + "uncalibrated scale with no operator range; reported as a band, not judged "
-        + `against one.${offScale}`;
+        + `against one.${offScale}${allZero}`;
     });
 
   let summaryBullets: string[];

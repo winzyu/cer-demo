@@ -149,6 +149,14 @@ describe("malformed markers from the 2026-09-13 smoke capture", () => {
     expect(segments.filter((s) => s.type === "cite")).toHaveLength(2);
   });
 
+  it("consumes a real 】 after a \"} or \"] closer so no doubled bracket renders", () => {
+    const text = "Claim【5†\"quote one\"}】 and more【6†\"quote two\"]】.";
+    const segments = splitCitations(text);
+    expect(segments.filter((s) => s.type === "cite").map((s) => (s as { index: number }).index)).toEqual([5, 6]);
+    expect(textOf(segments)).toBe("Claim and more.");
+    expect(collapseCitationQuotes(text)).toBe("Claim【5】 and more【6】.");
+  });
+
   it("does not treat a long unclosed tail as a marker in progress", () => {
     const tail = `Answer【3†"${"word ".repeat(80)}`;
     expect(stripOpenMarker(tail)).toBe(tail);
@@ -182,5 +190,16 @@ describe("render.js wiring", () => {
     expect(render).toContain("collapseCitationQuotes(stripOpenMarker(text))");
     expect(render).toContain("splitCitations(");
     expect(render).toContain('createElement("sup")');
+  });
+});
+
+
+describe("Task C marker compatibility", () => {
+  it("keeps document and tool references distinct and strips invalid marker contents", () => {
+    expect(collapseCitationQuotes('Doc 【5†"sample"}】 Tool 【T1】 Empty 【】 Unknown 【?】'))
+      .toBe("Doc 【5】 Tool 【T1】 Empty  Unknown ");
+    expect(collapseCitationQuotes('Doc 【5†"sample"}  】 Tool 【T1】'))
+      .toBe("Doc 【5】 Tool 【T1】");
+    expect(splitCitations("【T1】")).toEqual([{ type: "tool", handle: "T1" }]);
   });
 });

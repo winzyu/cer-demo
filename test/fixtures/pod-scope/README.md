@@ -6,7 +6,7 @@ in this directory.**
 
 ## Why these exist
 
-Pod-level authorization (`docs/migration/POD_AUTHORIZATION.md`) cannot be demonstrated with the
+Pod-level authorization (`docs/migration/POD_AUTHORIZATION.md`, a design that was not scheduled, archived under tag `docs-tier2-archive-2026-09-23`) cannot be demonstrated with the
 credential we hold. `DEVICE_API_TOKEN` is a **superadmin** token, and superadmin bypasses every
 organization check upstream by design (`assignOrganization` returns `null`, which means *no
 filter*). So it cannot show a narrowed account behaving differently — not because the code is
@@ -23,7 +23,7 @@ they encode the registry's real hazards rather than a clean world that would let
 | `organizations.json` | `GET /organizations` | `{ id, name }` — that is genuinely all the API returns |
 | `devices.json` | `GET /devices` | `{ id, data: {...} }`, the raw Firestore document under `data` |
 | `users.json` | the JWT payload | the whole user record, which is what upstream signs |
-| `pod-grants.json` | our proposed `pod_grants` collection | `POD_AUTHORIZATION.md` §3b |
+| `pod-grants.json` | our proposed `pod_grants` collection | the archived design's §3b |
 
 ## The hazards each fixture encodes
 
@@ -68,7 +68,7 @@ authorization resolver that only works on a tidy registry is not finished.
   token cannot see. Because effective access is `visible ∩ granted`, the result must be empty. A
   resolver that "optimises" by trusting an explicit grant without the `/devices` intersection
   passes every other test and fails this one — which is the exact accident
-  `POD_AUTHORIZATION.md` §12c warns about.
+  the archived design's §12c warns about.
 
 ## Using them
 

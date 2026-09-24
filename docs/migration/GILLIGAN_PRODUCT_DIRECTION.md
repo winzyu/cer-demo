@@ -14,6 +14,7 @@ Superseded since:
 - **Pattern tags and the sewage rule.** Diel/tidal/trend classification landed on 2026-09-22, and the sewage rule follows water type since R2 (`docs/SPECS.md` §4b, §10.7).
 - **Tools.** `list_pods` was added on 2026-09-21 ([`GILLIGAN_TOOL_ACCESS.md`](GILLIGAN_TOOL_ACCESS.md)).
 - **`gemini-pro`.** Live-confirmed failing on 2026-09-21 (D9).
+- **Trimmed 2026-09-23.** The implementation evidence, static findings, proposed approach (built as the catalogue, architecture §2d) and the discovery session's checks and costs were removed as stale; the full text is under tag `docs-tier2-archive-2026-09-23`. One finding from it is still unverified: some event classifications could not clear `CONFIDENCE_FLOOR`, and algal-bloom handling was inconsistent.
 
 ## Confirmed user decisions
 
@@ -50,11 +51,10 @@ Target architecture, gap analysis and roadmap built on these: [`GILLIGAN_TARGET_
 - **Phone and tablet layout (◆G5)** is a later item.
 - **Content:** v2 is source material for a small supervisor-approved catalogue shared by chat and reports, not added to the search corpus. The catalogue may be kept in a light text format to save tokens.
 - **CER referrals:** four CER services are offered for matching problems: algal bloom cleanup, fish kill cleanup, debris capture and oil spill response. Everything else is referred to a separate solution. Contact details below await supervisor confirmation.
-- **Workspace:** the OneDrive checkout stays primary; a native WSL2 sandbox holds copies for integration testing ([`WSL_SANDBOX.md`](WSL_SANDBOX.md)).
 
 Follow-up answers, 2026-09-17:
 
-- **Where upstream code is written (D1):** the user creates a native WSL2 sandbox with copies of the upstream repositories and moves this service's implementation there to test compatibility. Claude does not edit the upstream code; it keeps working in this repository (evaluation and the service). The user demos the result, and the supervisor approves transferring it into the real repositories.
+- **Where upstream code is written (D1):** revised 2026-09-21; see "Reading this now". The user demos the result, and the supervisor approves transferring it into the real repositories.
 - **Gemini-era conversations (D2):** ignored entirely; the replacement neither shows nor continues them.
 - **Launch quality bar (D3):** aim for every Phase 3 check, but launch on best effort: where answers are known to be weak, say so with a caveat or refuse the question rather than delay the release.
 - **Supervisor questions:** the three v2 questions and the referral contacts are items 17-20 in `docs/STAKEHOLDER_QUESTIONS.md`.
@@ -67,64 +67,19 @@ Follow-up answers, 2026-09-17:
 - Fireworks pricing (https://docs.fireworks.ai/serverless/pricing): `gpt-oss-120b` is $0.15 input, $0.015 cached input and $0.60 output per million tokens. No free tier or free credits are documented, so "free tier" should not be assumed.
 - Fireworks rate limits (https://docs.fireworks.ai/serverless/rate-limits): adaptive tokens-per-minute limits per account and model, split into prompt, uncached prompt and generated tokens; 429 when exceeded, 503 when overloaded; current limits are returned in `X-Ratelimit-Limit-Tokens-*` headers. A third-party page (https://www.morphllm.com/fireworks-alternative) says accounts without a payment method are capped at 10 requests per minute; this is not confirmed by Fireworks' own docs.
 - CER public contact (https://www.cleanearthrovers.com/ and /contact): email info@cleanearthrovers.com; a "Schedule a Call" booking link, https://calendar.app.google/b4asoD6b6vuae7Qj6; no phone number or address is listed. The site names oil collection, debris capture, algal bloom spraying and vegetation cutting; a third-party profile (https://bluerobotics.com/service-providers/clean-earth-rovers/) lists oil spill cleanup, fish kill and algae bloom removal and marine debris cleanup, with service in Southern California and Ohio. All unconfirmed by the supervisor.
-- Upstream `GilliganService.askQuestionGemini` still calls `gemini-pro` at `origin/develop` `b221702`, a retired model id, so the current production Gilligan likely fails on every question. Not live-tested.
-- The local `../clean-earth-rovers-server` checkout is 87 commits behind its last-fetched `origin/develop` and carries one local commit (`a3cc25d`) that is not on the remote; read upstream code from `origin/develop`.
 
 ## Tentative and open decisions
 
 Preserve the existing pod-to-Firestore collection process and storage for this release.
 The inspected application code reads telemetry; the physical-device write pipeline was not located, which does not mean it is absent.
 The integration shape is settled for launch (2026-09-17, above): this assistant sits behind the existing Gilligan backend route.
-Upstream changes are made by the user in a native WSL2 sandbox before the supervisor approves the transfer (D1, below); both reference repositories stay read-only to Claude.
 The user requested advance notice before any task warrants a stronger model or higher reasoning effort; no escalation was proposed or performed.
 
 Pending supervisor clarification: distinguish hardware relocation, replacement at the same site, and transfer between organizations.
 Decide whether reports follow the physical pod or the monitoring deployment, who retains earlier readings, and how testing/maintenance periods are excluded.
+Who sees earlier readings was decided on 2026-09-23: only an organization known to own them, so cross-organization history is withheld (`SPECS.md` §10.3c, `STAKEHOLDER_QUESTIONS.md` item 22).
 Historical observations in `POD_RELOCATION_EVIDENCE.md` show hardware histories spanning states and a merged Old Woman Creek chain containing mostly readings from other locations.
 Those observations are not a current database census.
-
-## Current implementation evidence
-
-The demo frontend is static HTML/CSS/JavaScript, with pasted bearer-token accounts, pod selection, chat, citations, charts, and PDF links.
-The backend is one Express/TypeScript package with retrieval adapters, a chat orchestrator, structured tools, and extensive Jest/evaluation infrastructure.
-The existing dashboard is Next.js/React and its backend uses Firestore for application and telemetry data.
-Upstream Gilligan already has authenticated routes and persisted per-user chat history, but uses a different answer-generation implementation.
-
-```text
-Demo browser → Express API → retrieval / orchestration / structured tools
-  ├─ Fireworks: generation and embeddings
-  ├─ Local corpus or Firestore: document/vector retrieval
-  ├─ CER device API → upstream Firestore: sensor data
-  └─ Local disk: report PDFs and ownership sidecars
-```
-
-Tools include `query_sensor_data`, `get_pod_thresholds`, `get_turbidity_info`, and `generate_report`.
-Tools forward the caller's token and resolve pods against the caller-visible registry.
-Merge-chain logic excludes invisible and cross-organization predecessors.
-The selected pod is currently a default that the model can override with another caller-visible pod, not a hard conversation boundary.
-Local conversation history is client-supplied; upstream Gilligan already saves conversations.
-PDF prose is deterministic/rule-based, not LLM-generated, so chat retrieval changes alone cannot ground report recommendations.
-Retrieval includes direct-feed, local/Firestore vectors, lexical/vector hybrids, stub, and gold-context evaluation adapters.
-Previously documented production generator is Fireworks `gpt-oss-120b`; embeddings use Nomic at 768 dimensions.
-These are historical choices, not technologies newly selected during this interview.
-
-Key code: `src/services/ChatOrchestrator.ts`, `src/tools/querySensorData.ts`, `src/tools/generateReport.ts`, `src/report/{events,buildReportInput,narrative,operatorThresholds}.ts`, and `src/devices/{DeviceApiClient,mergeChains}.ts`.
-Dashboard integration points include `src/app/gilligan/page.js`, `src/app/services/gilligan.js`, and `src/app/services/axios.config.js` in the reference frontend.
-Backend integration points include `src/controllers/GilliganController.ts` and `src/services/GilliganService.ts` in the reference server.
-
-## Static findings requiring follow-up
-
-- Upstream `WaterAnalyticsService.findPeriodWaterData` uses explicit device filters without membership validation in that method; an organization with zero matching devices can also leave the query unrestricted.
-- Local PDF ownership is bound to an exact bearer-token hash rather than durable verified identity.
-- Demo quotas are process-local.
-- Dashboard Gilligan checks quota and disables input, but the inspected backend question handler does not itself enforce that quota.
-- Existing upstream quota admits a user if any of these holds: fewer than two user messages that week, fewer than ten organization messages that month, a subscription, or superadmin status; this policy was not adopted for the replacement.
-- Live report inputs use `pattern: "unknown"`; daily/tidal classification is missing.
-- Some event classifications cannot clear the confidence floor, and algal-bloom handling is inconsistent.
-- Deployment, organization isolation, shared usage enforcement, and production integration require verification before general availability.
-
-These findings came from source inspection, not live exploit testing or end-to-end reproduction.
-Re-check affected code before implementation because external commits landed during the conversation.
 
 ## Source-of-truth v2 review
 
@@ -168,36 +123,3 @@ USGS documents saturation inputs and methods at https://www.usgs.gov/tools/dotab
 - Are generic fallback ranges educational only, or intended to change report assessments when configured thresholds are absent?
 - Can the current qualitative turbidity hardware be explicitly exempted from quantitative ranges and assumed units?
 - Can the supervisor review the example concerns and confirm which follow-up recommendations are approved for customers?
-
-## Proposed September approach, not yet approved implementation
-
-Use a small versioned, supervisor-approved catalogue shared by chat and reports.
-Each entry should have an ID, approved text, applicability, required evidence, limitations, source references, optional CER referral, and approval/version metadata.
-Generate the readable review view from the structured source rather than hand-maintaining duplicates.
-Existing `docs/advice/` (archived 2026-09-23, tag `advice-archive-2026-09-17`) contains 38 draft candidates, some relying on removed evidence or unavailable detectors; these are not automatically approved.
-V2 can supply source material for a focused subset rather than a broad new corpus expansion.
-When evidence does not establish a corrective action, state the observed threshold crossing and the limitation instead of asserting that action is required.
-
-Prioritize summaries, configured-threshold crossings, reviewed education/actions, and explicit unassessed results.
-Reconcile existing event rules before describing their causes as supported by v2.
-Do not make September delivery depend on the entire seasonal/tidal baseline, derived-metric, QC, and contextual-data framework.
-
-Earlier rough estimates for one developer were 1–3 days for existing-corpus behavior tightening, 4–7 days for a focused supplement shared by reports/chat with tests, and 10–20+ days for broad educational expansion.
-These excluded supervisor turnaround and dashboard/backend integration and were not delivery commitments.
-General availability by September 30 remains aggressive while integration ownership and security/release work are unresolved.
-
-## Checks, costs, and session boundaries
-
-Discovery involved source/docs/PDF inspection and public pricing/primary-source browsing.
-No application implementation, dependencies, tests, corpus ingestion, live device/Firestore reads, paid evaluations, or Git mutations occurred.
-This handoff request authorized documentation persistence only.
-Prior docs record denied direct Firestore IAM access and a working device API path; that historical access state was not freshly tested.
-Never read the prohibited credential paths.
-
-Fireworks standard `gpt-oss-120b` input/cached-input/output pricing was checked at https://docs.fireworks.ai/serverless/pricing: $0.15/$0.015/$0.60 per million tokens.
-Illustrative 50-user scenarios at 10 questions/day over 30 days yielded $45–$184.50/month for generation using 12,000 input/2,000 output or 50,000 input/8,000 output tokens per completed interaction across all calls.
-These were not measured forecasts and excluded hosting, database usage, evaluation, and development-agent costs.
-
-External commits changed the repository during this conversation.
-At handoff inspection, HEAD was `1a8c744`, branch `dev` tracked `origin/dev` without an ahead/behind indicator, and only `eval/fixtures-wave1/_EXIT_CRITERIA.md` and `water-quality-source-of-truth-v2.pdf` were untracked before these handoff edits.
-Earlier claims of extensive uncommitted frontend/docs work are stale; those external commits were not made by this conversation.

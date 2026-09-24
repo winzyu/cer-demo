@@ -122,9 +122,37 @@ Building a relay against a design already scheduled for replacement would be thr
 
 **A browser pass over the rebuilt page.** The page compiles and serves, and the citation logic is verified against real answers in Node, which is the stronger check for the quote-leak risk.
 Seeing it rendered still needs a logged-in browser session; that check is now [`REPORT_BROWSER_CHECK.md`](REPORT_BROWSER_CHECK.md) step 10.
+*Done 2026-09-23:* see "Browser pass, 2026-09-23" below.
 
 **Anything upstream is uncommitted.** Both upstream repositories hold these changes in their working trees on branch `local`, matching how the dev passthrough was left.
 *Since committed on `local`* (server `d3867ab`, dashboard `3badce7`), and not pushed.
+
+## Browser pass, 2026-09-23
+
+The page was driven in headless Chromium against the local stack, first as built and then after fixes; the results against the checklist are in [`REPORT_BROWSER_CHECK.md`](REPORT_BROWSER_CHECK.md).
+Rendering checks that need no model call (markdown, citations, races, load failures) ran against answers supplied by the browser itself, so they cost nothing and can be repeated.
+The dashboard fixes are on branch `local-gilligan-qa`, cut from `local`; the server fix is on `local`.
+
+Defects found and fixed:
+
+- The home-page widget could not delete the last character of a question, because an empty value was never stored, and it navigated to the chat page with an empty question.
+- A question passed from the widget as `?question=` stayed in the address bar, so every reload asked it again and spent another question. It is now removed once asked.
+- An answer that arrived after "New chat" or after opening another chat was appended to the conversation on screen and took over its `chatId`. Late answers are now dropped from the view; the exchange is still saved and appears in the history list.
+- Markdown was rendered without GFM, so tables arrived as raw pipes, and Tailwind's preflight stripped list markers and heading sizes. `remark-gfm` is added with single-tilde strikethrough off, because answers write "~5 mg/L", and `.gilligan-markdown` has its own styles.
+- Web sources were listed as raw URLs; they are now links labelled host and file name, and only `http(s)` addresses are linked.
+- The allowance label said "left today" whatever the window; it now gives the reset time.
+- A failed pod or history load was silent; the page now says so.
+- At phone width the history and pod picker filled the first screen and the avatar squeezed answers into a narrow column; the chat now comes first, the avatar shrinks, and on desktop the chat uses the window height.
+- Report downloads were always named `cer-report.pdf`: the server's `cors()` did not expose `Content-Disposition`, and production calls the API cross-origin too. `src/app.ts` now exposes it and `Retry-After`.
+
+Checks: ESLint clean on the three changed dashboard files, `next build` passes, and server `tsc --noEmit` passes.
+
+Not fixed, observed during the pass:
+
+- `src/app/confirm-email` imports `confirmEmail`, which `src/app/services/auth` does not export; `next build` reports "Attempted import error". Its runtime effect was not checked.
+- `/gilligan` deopts to client-side rendering because `useSearchParams` is not under a Suspense boundary.
+- Next's image warning for `/gilligan-icon.png` ("width or height modified") on desktop.
+- Citation titles: the contract carries only `source`, so a document shows as its address; titles need a field from cer-demo through the relay.
 
 ## Defects observed while doing this
 

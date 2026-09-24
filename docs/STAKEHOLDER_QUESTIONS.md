@@ -4,7 +4,7 @@ A checklist of answers the project needs from people outside the codebase. Tick 
 item is resolved, write the answer and the date on its **Answer** line, and record any decision it
 settles in `docs/timeline.md`. Delete an item only when its answer is recorded somewhere else.
 
-Items are ordered by what they unblock, most blocking first. Last updated 2026-09-23.
+Items are ordered by what they unblock, most blocking first. Last updated 2026-09-24.
 
 ---
 
@@ -39,6 +39,7 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-0
   *Unblocks:* quantitative turbidity for Turner pods, and the frozen fixture
   `refusal-turbidity-sensor-hardware`.
   Not needed for the September 30 release: turbidity stays qualitative for every pod (decided 2026-09-16).
+  Interim, 2026-09-24 (user, provisional): every pod is treated as qualitative only until further notice (`timeline.md`, Task A).
   *Answer:*
 
 - [ ] **4. Is 0–25 NTU the Turner sensor's range?**
@@ -48,8 +49,17 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-0
   *Answer:*
 
 - [ ] **5. Which pods and organisations are in scope for testing?**
-  The configured device token sees 5 pods. The August census saw 15, because each token is scoped
-  to one organisation.
+  The configured device token sees 5 pods. The August census saw 15; a live read on 2026-09-23
+  showed the token is superadmin and `/devices` no longer returns retired or merged pods, which
+  accounts for the difference.
+  *Answer:*
+
+- [ ] **22. Did the three cross-organization merges transfer the site, or only the hardware?**
+  Not blocking. `Marina Park`, `PCH Public Dock Buoy` and `Old Woman Creek 2026` each absorbed a
+  pod that belonged to another organization in the August census. Pod data is shown only where
+  the organization is known to own it, so those predecessors' readings are withheld from answers
+  and reports today (`SPECS.md` §10.3c). A "yes, the site transferred" for a named chain would let
+  its history be shown; no answer keeps it withheld.
   *Answer:*
 
 ---
@@ -70,6 +80,7 @@ They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR
   v2 gives turbidity ranges in FNU (§3), a typical sensor accuracy of ±2 FNU or ±5% (§8.3), and says field readings are FNU unless stated.
   The release treats turbidity as qualitative only, because the current sensors cannot support measured values (item 3), and the fleet reports NTU, not FNU.
   Confirm that v2's turbidity numbers do not apply to the current hardware, so chat and reports keep using the three clarity bands.
+  Interim, 2026-09-24 (user, provisional): treated as granted, so the bands and the caveat are unchanged (`timeline.md`, Task A).
   Vendor documentation for both sensors the operator named was transcribed on 2026-09-17 (`documents/_excluded/keyestudio-ks0414-turbidity-sensor.md`, `documents/_excluded/turner-turbidity-plus-sensor.md`) and supports the exemption: Turner states only "Excitation Wavelength: IR" with no angle and no ISO 7027 or EPA 180.1 claim, is "not factory calibrated", and has no temperature compensation; Keyestudio states no optical property at all and publishes no voltage-to-NTU equation.
   Two follow-ups for the operator: which sensor is fitted to each pod (the device registry has no sensor-model field), and where this project's `NTU = (3.35 - V) × 300` conversion came from, since neither vendor publishes it.
   *Unblocks:* the turbidity entries in the catalogue.
@@ -142,6 +153,7 @@ They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR
   `src/utils/turbVoltToNTU.ts` returns 0 for a missing voltage and for the firmware's offline code
   (`turbVolt > 100`), the same value as clear water. A run of zeros is indistinguishable from clear
   water. A `null` or a flag would let this service tell them apart.
+  Interim, 2026-09-24 (user, provisional): this service flags a period in which every turbidity reading is 0 as a possible missing sensor, and leaves a lone 0 as Clear (`timeline.md`, Task A).
   *Answer:*
 
 - [ ] **11. Can the device registry carry a sensor-model field?**
@@ -180,6 +192,7 @@ The Gilligan page itself (`src/app/gilligan/page.js`, `components/gilligan-answe
   The operator's voltage edges from 2026-09-10 (2.2 V and 0.7 V, through NTU = (3.35 - V) × 300) work out to 345 and 795, and this project's report uses those.
   So a reading of 347 NTU shows as Clear on the dial and Moderate in a report.
   If 350/800 was deliberate rounding, the report should change instead; confirm with the operator either way.
+  Interim, 2026-09-24 (user, provisional): the report keeps 345/795, which match the operator's voltages, and the dial is the one to change; still to confirm with the operator.
   *Unblocks:* the dashboard and reports agreeing on a reading's clarity band.
   *Answer:*
 

@@ -4,18 +4,18 @@
   "modelsUnderTest": [
     "accounts/fireworks/models/gpt-oss-120b"
   ],
-  "judgedAt": "2026-09-24T08:13:12.096Z",
+  "judgedAt": "2026-09-24T08:17:15.773Z",
   "budget": {
-    "calls": 177,
-    "promptTokens": 4613033,
-    "completionTokens": 562538,
-    "usd": 1.38614234
+    "calls": 180,
+    "promptTokens": 4779604,
+    "completionTokens": 622399,
+    "usd": 1.46229622
   },
   "results": [
     {
       "arm": "hybrid-slice-vector",
       "pass": "warm",
-      "turnsJudged": 89,
+      "turnsJudged": 90,
       "correctness": {
         "perClass": [
           {
@@ -55,8 +55,8 @@
           },
           {
             "class": "probe-calibration",
-            "turns": 15,
-            "mean": 0.7333333333333333,
+            "turns": 16,
+            "mean": 0.75,
             "servable": true,
             "met": false
           },
@@ -68,15 +68,15 @@
             "met": false
           }
         ],
-        "overall": 0.5168539325842697,
+        "overall": 0.5222222222222223,
         "coverage": 1,
         "met": false
       },
       "ungrounded": {
-        "turnsWithClaims": 54,
-        "turns": 88,
-        "rate": 0.6136363636363636,
-        "totalClaims": 165,
+        "turnsWithClaims": 56,
+        "turns": 90,
+        "rate": 0.6222222222222222,
+        "totalClaims": 173,
         "met": false
       },
       "citationSupport": {
@@ -684,6 +684,18 @@
           "turn": 1,
           "dimension": "ungrounded",
           "detail": "2: the pod can remain deployed for the length of time indicated by the shortest‑lived sensor — The supplied material gives individual sensor life expectancies and recalibration intervals but does not state any pod-level deployment limit or that deployment duration is determined by the shortest-lived sensor.; you should schedule a recalibration for the ORP DO and pH sensors at least annually to keep the readings reliable — The supplied material provides recalibration intervals but does not instruct the user to schedule recalibrations or state that doing so keeps readings reliable."
+        },
+        {
+          "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: Standard pH buffers are designed to cover the full range of natural waters — I searched the supplied material for any statement that standard pH buffers are designed to cover the full range of natural waters and found none; the material describes buffers as used for calibration and mentions specific buffers for acidic waters but does not make this claim.; For very acidic samples (pH < 4) the guidance also warns that “low‑pH waters… require special attention because the measurement can be more error‑prone” — I searched the supplied material for the phrase 'low-pH waters require special attention' or 'more error-prone' and did not find it; the material mentions low-pH waters in the context of temperature corrections but does not state that the measurement is more error-prone.; which is specifically intended for acidic waters — I searched the supplied material for a statement that the pH 1.68 or pH 2 buffer is specifically intended for acidic waters and did not find it; the material says these buffers are 'also needed if acidic waters are measured' but does not characterize them as specifically intended for that purpose.; Proper temperature compensation and careful handling are also required to obtain reliable pH readings at this acidity. — I searched the supplied material for a statement that proper temperature compensation and careful handling are required to obtain reliable pH readings at low acidity and did not find it; the material discusses temperature compensation and handling in general but not specifically for this acidity."
+        },
+        {
+          "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: you must perform a full calibration (or at least the required check standards) each morning before you take any water-column readings — The EPA SOP only states 'the instrument is calibrated prior to use on the day the measurements are to be performed' and does not specify a full calibration check standards or a morning timing.; If the check shows drift the instrument must be recalibrated before the next use. — The EPA SOP describes performing a post calibration check to determine drift but does not state that the instrument must be recalibrated before the next use if drift is found.; re-calibrate immediately if the instrument drifts — The EPA SOP requires recalibration only when a measurement falls outside the calibration range not for drift detected at the end-of-day check.; The USGS manual does not impose this exact daily-and-end-of-day routine — The supplied USGS documents do not explicitly state that they do not impose a daily-and-end-of-day calibration routine; no such negative claim is present."
         }
       ]
     }

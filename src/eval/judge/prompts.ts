@@ -1,3 +1,4 @@
+import type { CitationEvidence } from "../../utils/citations";
 /**
  * The judge's prompts — one per dimension, and the parser for what comes back.
  *
@@ -36,7 +37,7 @@ export const JUDGE_DIMENSIONS: readonly JudgeDimension[] = ["correctness", "ungr
 export const DEFAULT_JUDGE_DIMENSIONS: readonly JudgeDimension[] = ["correctness", "ungrounded"];
 
 /** What one turn of one arm looks like to the judge. Arm identity is deliberately absent. */
-export interface JudgeEvidence {
+export interface JudgeEvidence extends CitationEvidence {
   question: string;
   answer: string;
   rubric: EvalRubric;
@@ -47,6 +48,12 @@ export interface JudgeEvidence {
   /** Earlier turns of this conversation, oldest first. */
   history: { question: string; answer: string }[];
 }
+
+const toolEvidenceBlock = (evidence: JudgeEvidence): string => (
+  evidence.tool_calls || evidence.tool_round_cap_reached !== undefined
+    ? `\n\nTOOL EVIDENCE (answer-local T handles, not document excerpts):\n${JSON.stringify(evidence.tool_calls ?? [])}\nTool round cap reached: ${evidence.tool_round_cap_reached ?? "not recorded"}`
+    : ""
+);
 
 const JSON_ONLY = "Reply with one JSON object and nothing else. No prose, no code fences.";
 
@@ -190,7 +197,9 @@ rubric's points, and that is still not a 2.
 
 ${contextBlock(evidence.context)}
 
-` : ""}CONVERSATION SO FAR:
+` : ""}${toolEvidenceBlock(evidence)}
+
+CONVERSATION SO FAR:
 ${historyBlock(evidence.history)}
 
 QUESTION BEING GRADED:
@@ -245,7 +254,7 @@ SERVICE RULES (the standing instructions this answer was generated under):
 ${evidence.systemPrompt}
 
 RETRIEVED DOCUMENTS (the retrieval context supplied for this turn):
-${contextBlock(evidence.context)}
+${contextBlock(evidence.context)}${toolEvidenceBlock(evidence)}
 
 CONVERSATION SO FAR:
 ${historyBlock(evidence.history)}
@@ -310,7 +319,7 @@ RULES:
 
 RETRIEVED DOCUMENTS, grouped by document. Every marker listed under a document points at that
 document, and the whole text shown for it counts as its content:
-${groupedContextBlock(evidence.context)}
+${groupedContextBlock(evidence.context)}${toolEvidenceBlock(evidence)}
 
 ANSWER:
 ${evidence.answer}

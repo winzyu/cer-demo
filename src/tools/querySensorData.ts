@@ -7,6 +7,7 @@ import { mergeByTimestamp, resolveChain } from "../devices/mergeChains";
 import type { DeviceChain } from "../devices/mergeChains";
 import { METRIC_BY_KEY, METRICS } from "../devices/metrics";
 import { implausibilityReason, isPlausible } from "../devices/plausibility";
+import { isAllZeroTurbidity, TURBIDITY_ALL_ZERO_CAVEAT } from "../report/referenceRanges";
 import type {
   DeviceReading,
   DeviceSummary,
@@ -711,15 +712,19 @@ export class QuerySensorData {
     }
 
     // One fetched window, read once per requested metric. The device API is not touched again.
-    const computed = metricKeys.map((key) => ({
-      key,
-      result: aggregate(
-        QuerySensorData.samplesInRange(readings, key, range),
-        aggregation,
-        this.rawLimit,
-        { bucketMs, ...(maxBuckets !== undefined ? { maxBuckets } : {}) },
-      ),
-    }));
+    const computed = metricKeys.map((key) => {
+      const samples = QuerySensorData.samplesInRange(readings, key, range);
+      return {
+        key,
+        samples,
+        result: aggregate(
+          samples,
+          aggregation,
+          this.rawLimit,
+          { bucketMs, ...(maxBuckets !== undefined ? { maxBuckets } : {}) },
+        ),
+      };
+    });
 
     const shape = (key: MetricKey, result: AggregateResult): Record<string, unknown> => ({
       unit: unitFor(key),
@@ -767,6 +772,14 @@ export class QuerySensorData {
     const implausible = computed
       .filter((entry) => entry.result.excludedImplausible > 0)
       .map((entry): [MetricKey, number] => [entry.key, entry.result.excludedImplausible]);
+    // Judged on the samples `aggregate` actually used, so a faulted or implausible reading
+    // cannot hide an otherwise all-zero window, and a window with none left is not "all zero".
+    const turbidityValues = computed
+      .find((entry) => entry.key === "turbidity")
+      ?.samples.filter((sample) => sample.valid && sample.plausible !== false)
+      .map((sample) => sample.value) ?? [];
+    const allZeroTurbidity = turbidityValues.length > 0
+      && isAllZeroTurbidity(turbidityValues.reduce((max, v) => Math.max(max, v), 0));
     const notes = this.notes(
       metricKeys,
       device,
@@ -775,6 +788,7 @@ export class QuerySensorData {
       referenceMs,
       range.start,
       implausible,
+      allZeroTurbidity,
     );
 
     if (single) {
@@ -920,6 +934,7 @@ export class QuerySensorData {
     referenceMs: number,
     rangeStart: string,
     implausible: Array<[MetricKey, number]> = [],
+    allZeroTurbidity = false,
   ): Record<string, unknown> {
     const notes: string[] = [];
 
@@ -977,8 +992,12 @@ export class QuerySensorData {
     if (metricKeys.includes("turbidity")) {
       notes.push(
         "Turbidity is derived from a raw voltage by a provisional, uncalibrated conversion. "
-        + "It is a relative index expressed in NTU, not a calibrated measurement.",
+        + "It is a relative index with no unit, not a calibrated measurement and not NTU.",
       );
+    }
+
+    if (allZeroTurbidity) {
+      notes.push(TURBIDITY_ALL_ZERO_CAVEAT);
     }
 
     const environment = device.operatingEnvironment;

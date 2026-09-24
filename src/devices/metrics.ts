@@ -46,9 +46,9 @@ export const METRICS: readonly MetricDefinition[] = [
     // Not a stored measurement: the backend derives it from `water_data.turbVolt` via
     // `turbVoltToNTU`, whose own source file marks the conversion PROVISIONAL and not
     // lab-calibrated. The dashboard labels it "Turbidity (Relative)" for that reason.
-    // Our system prompt states an authoritative `0-25 NTU` range — see DEVICE_API.md §8,
-    // this is the one place the live feed contradicts a pinned control.
-    key: "turbidity", code: 72, label: "Turbidity", unit: "NTU", errorFlag: "turbError",
+    // No unit, like pH: the backend calls it NTU, but an uncalibrated index is not NTU, and
+    // every pod's sensor is treated as qualitative only (Task A, 2026-09-24, `timeline.md`).
+    key: "turbidity", code: 72, label: "Turbidity", unit: null, errorFlag: "turbError",
   },
 ] as const;
 

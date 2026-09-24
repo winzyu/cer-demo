@@ -106,7 +106,7 @@ describe("flagCellText — the Flag column", () => {
   });
 
   it("prints a clarity band for turbidity instead of a range verdict", () => {
-    expect(flagCellText(turbidityParam(0), noAccuracy)).toBe("Clear"); // 0 is a real reading
+    expect(flagCellText(turbidityParam(10), noAccuracy)).toBe("Clear");
     expect(flagCellText(turbidityParam(400), noAccuracy)).toBe("Moderate");
     expect(flagCellText(turbidityParam(800), noAccuracy)).toBe("Turbid");
   });
@@ -114,7 +114,7 @@ describe("flagCellText — the Flag column", () => {
   it("never prints an excursion verdict for turbidity, however large the index", () => {
     // The Flag column is where an "Exceedance" would appear; for turbidity it never can.
     [0, 25, 456, 1_006, 2_042, 4_550].forEach((mean) => {
-      expect(["Clear", "Moderate", "Turbid", "Turbid (off-scale)"])
+      expect(["Clear", "Clear (all zero)", "Moderate", "Turbid", "Turbid (off-scale)"])
         .toContain(flagCellText(turbidityParam(mean), noAccuracy));
     });
   });
@@ -123,6 +123,13 @@ describe("flagCellText — the Flag column", () => {
     expect(flagCellText(turbidityParam(1_004), noAccuracy)).toBe("Turbid");
     expect(flagCellText(turbidityParam(1_005), noAccuracy)).toBe("Turbid (off-scale)");
     expect(flagCellText(turbidityParam(2_042), noAccuracy)).toBe("Turbid (off-scale)");
+  });
+
+  it("appends '(all zero)' when every reading in the period was 0, and not for a lone 0", () => {
+    // 0 is still a real reading and still Clear; the flag says the backend's missing-voltage 0
+    // cannot be ruled out when nothing in the period rose above it.
+    expect(flagCellText(turbidityParam(0), noAccuracy)).toBe("Clear (all zero)");
+    expect(flagCellText({ ...turbidityParam(1), min: 0 }, noAccuracy)).toBe("Clear");
   });
 });
 

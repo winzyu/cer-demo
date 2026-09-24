@@ -73,7 +73,7 @@ export interface OrchestratorResult {
   model: string;
   /** Summed across every round — this is what a request actually cost, not just its last call. */
   usage: LlmUsage;
-  /** Every tool call executed, in order. Traced, never cited (§3 rule 4). */
+  /** Every invocation in order, including cached repeats with their own evidence handles. */
   invocations: ToolInvocation[];
   /** LLM calls made, including the forced final round. */
   rounds: number;
@@ -191,7 +191,12 @@ export class ChatOrchestrator {
         // An answer that was entirely markers leaves here as `""` rather than as the marker's
         // contents dressed up as prose. Empty is reportable; invented is not.
         return {
-          content, model, usage, invocations, rounds, capped: false,
+          content,
+          model,
+          usage,
+          invocations,
+          rounds,
+          capped: this.hasTools && round > this.maxToolRounds,
         };
       }
 
@@ -214,9 +219,14 @@ export class ChatOrchestrator {
       // `options.device` is passed down rather than stored: two requests running through this
       // shared orchestrator at the same time must not be able to see each other's pod.
       // eslint-disable-next-line no-await-in-loop
-      const results = await this.dispatch(toolCalls, round, resultCache, options.device, {
-        token: options.token,
-      });
+      const results = await this.dispatch(
+        toolCalls,
+        round,
+        resultCache,
+        invocations.length,
+        options.device,
+        { token: options.token },
+      );
       invocations.push(...results.invocations);
       conversation.push(...results.messages);
     }
@@ -245,6 +255,7 @@ export class ChatOrchestrator {
     toolCalls: ToolCall[],
     round: number,
     resultCache: Map<string, unknown>,
+    offset: number,
     requestDevice?: string,
     context?: ToolContext,
   ): Promise<{ messages: ChatMessage[]; invocations: ToolInvocation[] }> {
@@ -258,7 +269,8 @@ export class ChatOrchestrator {
       const { name } = call.function;
       const handler = this.handlers.get(name);
 
-      let args: Record<string, unknown> = {};
+      const parsedArgs = ChatOrchestrator.parseArguments(call.function.arguments);
+      let args: Record<string, unknown> = "args" in parsedArgs ? parsedArgs.args : {};
       let result: unknown;
       let deduped = false;
 
@@ -266,41 +278,45 @@ export class ChatOrchestrator {
         // Fed back rather than raised (§3): an unknown name is usually a near-miss the model
         // can correct on the next round, and killing the request denies it the chance.
         result = { error: `unknown tool '${name}'` };
+      } else if ("error" in parsedArgs) {
+        result = parsedArgs;
       } else {
-        const parsedArgs = ChatOrchestrator.parseArguments(call.function.arguments);
-        if ("error" in parsedArgs) {
-          result = parsedArgs;
+        args = ChatOrchestrator.withRequestDevice(
+          parsedArgs.args,
+          handler.definition,
+          requestDevice,
+        );
+        // Keyed on the *effective* arguments, so the dedupe cache cannot serve a reading from
+        // one pod as the answer for another, and the trace records the pod actually queried.
+        const key = callKey(name, args);
+        if (resultCache.has(key)) {
+          // The stuck-model pattern: re-asking a question it already asked. Serving the
+          // stored answer costs nothing and leaves the round budget for real progress.
+          deduped = true;
+          result = resultCache.get(key);
+          log.warn(`Repeated identical call to ${name}; serving the earlier result.`);
         } else {
-          args = ChatOrchestrator.withRequestDevice(
-            parsedArgs.args,
-            handler.definition,
-            requestDevice,
-          );
-          // Keyed on the *effective* arguments, so the dedupe cache cannot serve a reading from
-          // one pod as the answer for another, and the trace records the pod actually queried.
-          const key = callKey(name, args);
-          if (resultCache.has(key)) {
-            // The stuck-model pattern: re-asking a question it already asked. Serving the
-            // stored answer costs nothing and leaves the round budget for real progress.
-            deduped = true;
-            result = resultCache.get(key);
-            log.warn(`Repeated identical call to ${name}; serving the earlier result.`);
-          } else {
-            // eslint-disable-next-line no-await-in-loop
-            result = await handler.run(args, context);
-            resultCache.set(key, result);
-          }
+          // eslint-disable-next-line no-await-in-loop
+          result = await handler.run(args, context);
+          resultCache.set(key, result);
         }
       }
 
+      const handle = `T${offset + invocations.length + 1}`;
       invocations.push({
-        round, name, arguments: args, result, ...(deduped ? { deduped: true } : {}),
+        handle,
+        raw_arguments: call.function.arguments,
+        round,
+        name,
+        arguments: args,
+        result,
+        ...(deduped ? { deduped: true } : {}),
       });
       messages.push({
         role: "tool",
         tool_call_id: call.id,
         name,
-        content: JSON.stringify(result),
+        content: JSON.stringify({ handle, result }),
       });
     }
 

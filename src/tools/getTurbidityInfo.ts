@@ -109,9 +109,12 @@ export const getTurbidityInfo = async (
   zero_readings: {
     index: 0,
     meaning: "An index of 0 can mean clear water, a voltage above the clear-water reference, "
-      + "or a missing/offline sensor reading -- the backend converts all of them to 0 -- so a "
-      + "run of zeros is not confirmed clear water.",
+      + "or a missing/offline sensor reading -- the backend converts all of them to 0. A lone 0 "
+      + "among varied readings is most likely real; a period in which every reading is 0 is a "
+      + "possible missing sensor, not confirmed clear water, and query_sensor_data says so in "
+      + "its note.",
   },
+  unit: "None. The index is not NTU or any calibrated unit; call it the turbidity index.",
   no_operator_range: "No operator-configured turbidity threshold exists for any pod. Never "
     + "judge a turbidity value as in or out of range.",
 });
