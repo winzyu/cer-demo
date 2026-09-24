@@ -1,6 +1,6 @@
 ---
 name: git-plan
-description: Run CER Demo Git mutations without approval and report them as a command summary; ask first only before losing work or rewriting shared history; also writes commit messages.
+description: Run CER Demo Git mutations without approval and report them as a command summary; irreversible commands need explicit permission first; also writes commit messages.
 ---
 
 # Git plan
@@ -14,13 +14,22 @@ Read-only inspection is always free: status, log, diff, show, ls-files, ls-tree,
 4. Run the commands; if circumstances change mid-way (conflict, unexpected diff, moved upstream), stop and report instead of improvising.
 5. Report briefly: branch, the commands in order with a one-line purpose each, resulting commit hashes, push target, checks and their results, and anything skipped.
 
-## Ask first
+## Irreversible commands: explicit permission required
 
-These commands lose work or rewrite shared history. Name the command and what it would lose, then wait for yes in chat:
-- `reset --hard`, `checkout --` or `restore` over uncommitted changes, `clean`, `stash drop` or `stash clear`
-- deleting an unmerged branch or a worktree with uncommitted changes
-- force-push, rebasing or amending pushed commits, deleting a remote branch other than a `cloud/explore-*` branch whose report has been read
-- anything in `../clean-earth-rovers-server` or `../user-dashboard` beyond committing on `local`: never push, force-push or merge there (CLAUDE.md)
+A command that can destroy work or rewrite history someone else may already have is never run on your own.
+Before running one, ask explicitly in chat. Name the exact command and exactly what it would lose, such as uncommitted files, commits or a remote ref. Run it only after an explicit yes to that command.
+Permission covers only the command it was given for; ask again for the next one.
+
+Examples of irreversible commands:
+- Discarding uncommitted work: `git reset --hard`, `git checkout -- <path>`, `git checkout -f`, `git restore <path>`, `git switch --discard-changes`, `git clean -f`/`-fd`/`-fdx`
+- Dropping stashes: `git stash drop`, `git stash clear`, or `git stash pop` if it conflicts and you plan to reset
+- Deleting local work: `git branch -D` on an unmerged branch, `git worktree remove --force`, `git update-ref -d`
+- Rewriting pushed history: `git push --force` or `--force-with-lease`, and `git rebase`, `git commit --amend`, `git reset` or `git filter-repo`/`filter-branch` on commits already pushed
+- Deleting remote refs: `git push origin --delete <branch>`, `git push origin :<ref>`, deleting a pushed tag. The one exception is a `cloud/explore-*` branch whose report has been read.
+- Destroying recovery data: `git reflog expire`, `git gc --prune=now`
+- Anything in `../clean-earth-rovers-server` or `../user-dashboard` beyond committing on `local`: never push, force-push or merge there (CLAUDE.md)
+
+When unsure whether a command is reversible, treat it as irreversible and ask.
 
 Never stage `.env`, `node_modules`, shared cache links, migration backups, or secrets.
 

@@ -34,7 +34,7 @@ Read `docs/STATUS.md` only if the prompt asks; write results to the prompt's out
 ## Git and delegation
 
 Git in cer-demo runs without approval: follow `git-plan`, then report the commands that ran.
-Ask first only before losing work or rewriting shared history; `git-plan` lists those commands.
+Irreversible commands (discarding uncommitted work, force-push, deleting unmerged branches or remote refs, rewriting pushed history) need explicit permission in chat first, one command at a time; `git-plan` lists examples.
 Commit and push to cer-demo's `origin` when a verified unit of work is done or when asked.
 Keep small edits inline; use worktrees for multi-step or overlapping work and always for delegated edits.
 Before delegating, use `delegate`; delegate only when parallel work materially helps.
