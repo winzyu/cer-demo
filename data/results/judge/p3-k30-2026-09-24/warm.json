@@ -1,0 +1,691 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4-flash-0731",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-24T08:13:12.096Z",
+  "budget": {
+    "calls": 177,
+    "promptTokens": 4613033,
+    "completionTokens": 562538,
+    "usd": 1.38614234
+  },
+  "results": [
+    {
+      "arm": "hybrid-slice-vector",
+      "pass": "warm",
+      "turnsJudged": 89,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.375,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 0.6,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 0.625,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 0.25,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 15,
+            "mean": 0.7333333333333333,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 0.5168539325842697,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 54,
+        "turns": 88,
+        "rate": 0.6136363636363636,
+        "totalClaims": 165,
+        "met": false
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer the question and omits all required points including the qualifier requirement for subsample measurements which is a must-not violation."
+        },
+        {
+          "fixtureId": "crossdoc-bailed-orp-jumping",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer invents a 10% stabilization tolerance instead of the manual's ±5 mV omits the required pH logging and fails to state the ORP-specific thermal-equilibration and reading schedule so it misses the rubric's must-contain points and violates must-not items."
+        },
+        {
+          "fixtureId": "crossdoc-conductivity-rise-with-warming",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer misses all four must-contain points: it does not state the ±0.2°C accuracy requirement for a temperature sensor bundled on a multiparameter instrument does not say verification is not adjustment does not mention a NIST-certified/traceable reference and does not mention a faulty thermistor causing wrong specific conductance."
+        },
+        {
+          "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer ignores salinity entirely at a brackish site which is a must-not violation and also misses required points about barometric pressure precision temperature precision and the computation from temperature and ionic strength."
+        },
+        {
+          "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer violates a must-not by claiming the USGS manual does not impose the same routine without support and it misses several required points (midday drift handling continuous sonde checks DO post-calibration specifics drift criteria applicability and the per-location exemption)."
+        },
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer fails to provide any of the required stabilization criteria (temperature specific conductance DO pH turbidity) does not mention the five-or-more consecutive readings or the 60-second minimum wait and instead invents its own thresholds (e.g. turbidity 10%) and confuses response times with stabilization criteria."
+        },
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer claims the multiparameter chapter is stricter and should be followed inventing a conflict and picking a document instead of stating the two tables agree violating multiple 'must not' items."
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer recommends low-ionic-strength buffers without noting they are easily contaminated violating a must-not and also misses several required points (electrode type pH change stirring warning ionic-strength difference)."
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to address the A6.8 conductivity-dependent criteria and makes none of the required points about ±0.1 pH ±0.3 pH below 75 µS/cm or the distinction from A6.4's 0.05 pH final-buffer check."
+        },
+        {
+          "fixtureId": "crossdoc-sonde-sensor-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and does not make any of the required points about calibration order temperature first specific conductance before pH the remaining order the ionic-strength rationale the three-rinse step or the pre-field calibration check."
+        },
+        {
+          "fixtureId": "crossdoc-sonde-sensor-order",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and makes none of the required points about pH downstream of conductivity shielding/close placement or design-dependent positioning."
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer providing none of the required must-contain points such as the USGS and EPA table values the 0.03 mg/L difference or the advice to use the table for the applicable protocol."
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and makes none of the required points about the EPA and USGS table bounds salinity corrections or the uncovered simultaneous range."
+        },
+        {
+          "fixtureId": "crossdoc-warm-week-oxygen-drop",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives incorrect solubility values (9.27 and 8.36 mg/L instead of ~10.0 and ~9.0) omits the required salinity correction and barometric pressure dependence and quantifies the remaining drop without the required caveats violating multiple must-contain and must-not items."
+        },
+        {
+          "fixtureId": "crossdoc-warm-week-oxygen-drop",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and makes none of the required points about temperature-compensated conductivity for the salinity correction."
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer fails to mention the 2 000 µS/cm threshold does not ask for upstream specific conductance does not give 1.0000 at zero conductance and incorrectly claims the correction must be applied regardless of conductivity."
+        },
+        {
+          "fixtureId": "deepmanual-diluting-clarity-standards",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and does not make any of the required points about not diluting commercial standards the 4000-unit formazin exception non-linearity or recommending commercial solutions."
+        },
+        {
+          "fixtureId": "deepmanual-do-air-calibration",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer uses a ±0.2 mg/L acceptance value instead of the required 0.5 mg/L treats negative readings as acceptable and omits the required cleaning/membrane/electrolyte action and the accuracy-dependence note."
+        },
+        {
+          "fixtureId": "deepmanual-do-saturation-ceiling",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to provide the required value does not give 9.09 mg/L for 20.0 °C at 760 mmHg does not attribute it to USGS table 6.2-2 and does not state it is for fresh water before salinity correction."
+        },
+        {
+          "fixtureId": "deepmanual-do-saturation-ceiling",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to provide the required 6.95 mg/L value or the 2.14 mg/L decrease missing all must-contain points."
+        },
+        {
+          "fixtureId": "deepmanual-ec-standard-choice",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer does not state the required <3 µS/cm threshold does not say 6 µS/cm fails the check does not explain the low-end zero-response check and instead treats 6 µS/cm as acceptable violating a must-not."
+        },
+        {
+          "fixtureId": "deepmanual-ec-standard-choice",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer only mentions using a standard near the expected value but refuses to address the zeroing question and it omits the required points that deionized water must not be used as a calibration standard that standards >200 µS/cm are recommended and that calibration differs from a zero-response check."
+        },
+        {
+          "fixtureId": "deepmanual-sonde-settle-time",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer does not provide the required stabilization criteria for temperature DO pH specific conductance or turbidity and instead gives a generic 10% tolerance from a turbidity source missing all must-contain points."
+        },
+        {
+          "fixtureId": "deepmanual-thermistor-annual-check",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer requires a fixed number of at least five points plus two additional violating the MUST NOT that accepts two points when placement and spacing rules are met and it fails to note the procedure requires at most five points."
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-rounding",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and does not state any of the required EPA Method 180.1 rounding values or the USGS/ASTM compliance note."
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer asserts that the probe's raw ORP output in mV is directly an Eh value violating the must-not rule and it fails to mention the standard hydrogen electrode reference or the need to add the reference electrode potential."
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer misses all must-contain points: it does not state that Eh is not a routine field measurement does not explain that it therefore has no stabilization criteria and does not name the routine properties (temperature DO SC pH turbidity)."
+        },
+        {
+          "fixtureId": "definitional-required-versus-recommended",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and does not make any of the required points about documentation and independent quality assurance for departures from required or recommended procedures."
+        },
+        {
+          "fixtureId": "definitional-what-per-centimetre-means",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer providing none of the required points about mho/siemens equivalence historical usage terminology or temperature reference."
+        },
+        {
+          "fixtureId": "followup-clarity-calibration-whole-head",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer claims only sensor-only immersion is correct missing the rubric's requirement to state both whole-sonde and sensor-only immersion are accepted and it violates the must-not by asserting a universal single method without a manufacturer-specific compatibility restriction."
+        },
+        {
+          "fixtureId": "followup-clarity-calibration-whole-head",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer does not mention the difficulty of isolating the turbidity sensor the challenge of achieving a bubble-free optical surface the rinsing/agitation/wiping steps or the need to set the sonde steady all of which are required by the rubric."
+        },
+        {
+          "fixtureId": "followup-cleaning-the-salt-sensor",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits the check-the-manufacturer-first step (a must-not violation) and also misses the must-contain points about checking manufacturer guidance and warning against nitric acid/aqua regia."
+        },
+        {
+          "fixtureId": "followup-cleaning-the-salt-sensor",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to provide the required 2-hour maximum soak omits the deionized-water rinse and does not uphold manufacturer's recommendations missing all must-contain points."
+        },
+        {
+          "fixtureId": "followup-jumpy-temperature-trace",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer does not warn about recertification or require verified accuracy after cable replacement; it only suggests recalibration missing all must-contain points."
+        },
+        {
+          "fixtureId": "followup-mixing-the-clarity-bottle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and provides none of the required points about sample storage (24-hour limit chilling to ≤4°C clean amber bottle out of sunlight fallback framing)."
+        },
+        {
+          "fixtureId": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal and does not address any of the rubric's must-contain points about the USGS optical-sensor verification discussion the 1.0 mg/L documentation requirement or the pod's configured threshold."
+        },
+        {
+          "fixtureId": "precedence-ph-river-range-not-pod-limit",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer only refuses and offers generic help missing all required points about the chapter's description groundwater range and distinction from configured limits."
+        },
+        {
+          "fixtureId": "precedence-turbidity-groundwater-background-not-pod-limit",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer violates the 'must not' items by judging 12 NTU as 'low-to-moderate' and referencing a numeric band and it misses the required USGS groundwater turbidity description and the relative/uncalibrated index point."
+        },
+        {
+          "fixtureId": "probecal-buffer-handling",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer the question and only mentions labeling and expiration missing all other required points about refreshing before field trips temperature protection discarding frozen/overheated solutions and logbook recording."
+        },
+        {
+          "fixtureId": "probecal-ec-never-recalibrate",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer only acknowledges the manufacturer's position but misses all other required points and violates must-nots by concluding no recalibration is needed and treating the 10-year figure as governing."
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and provides none of the required sequence or explanation missing all must-contain points."
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer does not mention rinsing three times with deionized water rinsing with the next standard rinsing the calibration cup or the rushed-calibration cause so it misses all must-contain points."
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal and does not make any of the required points about the corpus lacking rules for record retention drift rates fouling checks or the EPA SOP."
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer presents recalibration intervals as deployment limits violating the 'must not' items and fails to make any of the required points about the absence of a deployment limit and the turbidity cleaning cadence."
+        },
+        {
+          "fixtureId": "refusal-turbidity-sensor-hardware",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal and does not state that the corpus lacks a turbidity datasheet that the depth rating is unavailable identify USGS A6.7 or point to manufacturer documentation."
+        },
+        {
+          "fixtureId": "refusal-turbidity-sensor-hardware",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer asserts NTU as the unit without the required caveats misses all must-contain points and violates the must-not by claiming a verified unit for the unidentified instrument."
+        },
+        {
+          "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: the conductivity reading can be significantly inflated relative to a laboratory‑measured value — The supplied material states that errors can be large for low-pH waters but does not state that the error is an overestimation (inflated) or that it is relative to a laboratory-measured value."
+        },
+        {
+          "fixtureId": "crossdoc-bailed-orp-jumping",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "4: their readings are very sensitive to air bubbles exposure to air and changes in the sample’s chemistry. — Searched the supplied material for any statement that ORP readings are sensitive to air bubbles exposure to air or changes in sample chemistry; found no such statement. The material mentions air bubbles only for conductivity and DO probes and mentions inconsistent ORP readings only when the liquid has very few electrons available for transfer.; When a bailer‑collected sample is tipped into a beaker bubbles can be introduced and the water can equilibrate with atmospheric gases producing the erratic values you are seeing. — Searched for a mechanism linking tipping a bailer sample into a beaker to bubble introduction and erratic ORP values; found no such statement. The material says subsamples are vulnerable to bias from changes in temperature pressure turbidity and gases but does not describe this specific mechanism or attribute erratic values to it.; ensuring the probe stays fully submerged and free of bubbles — Searched for any instruction that an ORP probe must be fully submerged and free of bubbles; found none. The material requires full submersion for the conductivity probe and warns about bubbles for conductivity and DO probes but gives no such requirement for ORP.; The probe itself is probably fine — Searched for any statement that the ORP probe is not faulty or is probably fine; found none. The material criticizes the sampling method but does not comment on the condition of the probe."
+        },
+        {
+          "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: they can warm up (or cool down) before you read them on the bench — The supplied material states that temperature must be measured in situ and that subsamples must not be used but it does not state that grab samples can warm up or cool down before bench reading."
+        },
+        {
+          "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: any bench (off‑site) reading — I searched the supplied material for any statement that the USGS requires documentation of bench or off-site readings and found no mention of 'bench' or 'off-site' in the retrieved documents; the cited quote only says 'Record field measurement and procedures on field forms' without specifying bench or off-site."
+        },
+        {
+          "fixtureId": "crossdoc-bailed-orp-jumping",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "7: wait at least 2 minutes before you start recording the required series of readings — Searched the ORP excerpts (IORP_probe.pdf and USGS NFM A6.5) for a 2-minute stabilization wait; found no such requirement. The 2-minute wait appears only in the turbidity guidance (NFM A6.7).; five sequential measurements (for a flow‑through‑chamber) that are spaced at regular time intervals and are all within 10 percent of each other — Searched the ORP excerpts for a requirement of five sequential readings within 10 percent; found no such requirement. This criterion is from the turbidity guidance (NFM A6.7).; Instrument make and model (e.g. “Atlas Scientific Industrial ORP Probe part # ENV‑50‑ORP”) — Searched the ORP excerpts for a requirement to log instrument make and model; found none. The only mention of logging instrument make and model is in the turbidity guidance.; Date and time of the measurement — Searched the ORP excerpts for a requirement to log date; found only 'record the time' in NFM A6.5 not date.; Ambient pressure (if you are applying any barometric correction) – record the barometer reading to the nearest 1 mm Hg — Searched the ORP excerpts for barometric pressure logging; found none. The 1 mm Hg barometer reading is from DO calibration guidance.; Calibration status (date of last calibration any verification checks performed) — Searched the ORP excerpts for a requirement to log calibration status; found no specific mention of date of last calibration or verification checks. General log book requirement in NFM A6.0 mentions calibration history but not these specifics.; This ensures the data meet the USGS quality‑control requirements — Searched the ORP excerpts for a statement that logging these items ensures USGS quality-control requirements; found no such statement."
+        },
+        {
+          "fixtureId": "crossdoc-conductivity-rise-with-warming",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: So the pod’s reading will rise by roughly 2 % per °C (or 0.5–3 % depending on water chemistry) unless the instrument’s built‑in temperature compensation has already adjusted the value to the 25 °C reference. — I searched the supplied material for any statement that this specific pod's conductivity reading changes by 2% per °C or that the pod has a temperature coefficient. The USGS excerpts describe general electrical conductivity behavior and specific conductance meter compensation factors and the probe spec sheet [1] does not mention a temperature coefficient or compensation for this pod. No excerpt applies these values to this pod's readings."
+        },
+        {
+          "fixtureId": "crossdoc-conductivity-rise-with-warming",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: The temperature sensor should be accurate enough that its error contributes only a small fraction of the conductivity‑correction factor (≈ 2 % / °C). — Searched the retrieved documents for any statement of a conductivity temperature-compensation factor of about 2% per °C or any relationship between temperature sensor error and conductivity correction error; none was found. The only temperature-compensation discussion in the supplied material is in the previous assistant answer which is not grounding.; a temperature‑sensor error of ±0.2 °C will change the corrected conductivity by about ±0.4 % (0.2 °C × 2 %/°C) — Searched for any basis for the 2%/°C factor or the derived ±0.4% error; the supplied material contains no such figure or calculation. The cited excerpt 14 only gives temperature sensor accuracy specifications not conductivity correction effects.; a certified sensor with accuracy ≤±0.05 °C limits the conductivity‑correction error to about ±0.1 % — Searched for any statement linking certified sensor accuracy to a conductivity-correction error of ±0.1%; not found. The 2%/°C factor used in the calculation is unsupported by the supplied material."
+        },
+        {
+          "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: Optional but recommended — I searched the supplied material for any statement that the zero-DO check is optional or recommended but the only reference is a required step in field-trip preparations: 'Perform a zero-DO sensor-performance check.' No source describes it as optional.; ensuring the sensor’s baseline is correct — I searched the supplied material for any statement that the zero-DO check ensures the sensor's baseline is correct and found no such reason or mechanism; the material only instructs to perform the check and specifies the acceptable reading threshold."
+        },
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "6: The USGS multiparameter‑instrument chapter (A6.8) gives field‑specific stability rules that are meant to be applied when you are using the sonde in the field and they are often tighter than the generic response‑time numbers that appear in the probe data sheets. — I searched the supplied material for any statement that A6.8 provides field-specific stability rules meant to be applied in the field and that they are often tighter than the probe data sheets. No such comparison or attribution is present.; Those figures describe how fast the sensor itself can settle under ideal lab conditions. — I searched the supplied material for any statement that the response times are under ideal lab conditions. No such characterization is present.; The USGS field manual adds a stability criterion for turbidity that requires three‑to‑five consecutive readings to be within 10 % of each other and to be monitored for 1–2 minutes or longer — I searched the supplied material for the quoted text 'Stability is reached if values for three (for in situ procedure) to five (for flowthrough‑chamber procedure) … are within 10 percent.' and 'Monitor turbidity readings for 1 to 2 minutes or longer to ensure that readings are stable'. These statements are not present in any retrieved document.; Similar 'allow the display to stabilize' language appears for all parameters in the multiparameter chapter — I searched the supplied material for any statement that such language applies to all parameters. The material only contains a general instruction to allow readings to stabilize within table 6.8–5 criteria but does not state it applies to all parameters.; Because the USGS guidance is the official field‑measurement protocol for the sonde you are deploying — I searched the supplied material for any statement that the USGS guidance is the official protocol for this specific sonde. No such attribution is present.; the stricter USGS stability rules take precedence for field work — I searched the supplied material for any statement that USGS stability rules are stricter and take precedence over manufacturer response times. No such precedence claim is present."
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "4: which makes the meter drift — The supplied material states that low-specific-conductance waters are challenging because the water is not sufficiently conductive and the liquid-junction potential is larger than normal but it does not state that this causes the meter to drift.; so the pH can be measured more reliably — The supplied material says KCl is recommended to minimize effects on the liquid junction potential but does not state that this makes pH measurement more reliable.; After the KCl amendment calibrate the pH probe with low‑ionic‑strength buffers (or the same KCl‑amended water) before taking the measurement. — The supplied material describes adding KCl to the sample and then measuring pH on an aliquot but does not instruct calibrating the probe with low-ionic-strength buffers or KCl-amended water.; Also be sure the probe is fully submerged free of air bubbles and that the calibration buffers match the sample’s ionic strength as recommended for low‑conductivity water — The supplied material does not contain advice to fully submerge the pH probe remove air bubbles or match calibration buffers to sample ionic strength for low-conductivity water."
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: at the temperature of measurement — Searched the A6.4 excerpt for a temperature qualifier on the recalibration condition; the excerpt says 'at the calibration temperature' for the check but the recalibration condition does not specify temperature.; before proceeding — Searched the A6.4 excerpt for a sequence requirement; the excerpt says 'recalibrate the pH electrode' without specifying 'before proceeding'.; ensures the electrode is still accurate after calibration — Searched the A6.4 excerpt for a statement of purpose; the excerpt only describes the check not its purpose."
+        },
+        {
+          "fixtureId": "crossdoc-sonde-sensor-order",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: The excerpts do not address whether the order of probes in a flow‑through cell matters. — The supplied material does address probe order in a flow-through cell e.g. [5] states 'install the pH sensor downstream from the conductivity sensor' and [12] states 'position the specific conductance probe upstream from the pH electrode.'"
+        },
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "4: Waiting a few seconds (2‑3 s) after the wobble stops is usually enough to be confident the reading is stable. — I searched the supplied material for any guidance on waiting a specific number of seconds after the display stops wobbling and found no such recommendation. The response times (90% in 1s 95% in 1s) are given but no advice on how long to wait after stabilization.; After the numbers stop wobbling watch the display for a few seconds (conductivity ORP pH). — I searched for any instruction to watch the display for a few seconds after the numbers stop wobbling and found no such guidance in the supplied material.; Field practice is to wait until the reading stops drifting often 5–10 minutes — I searched for a statement that field practice is to wait 5-10 minutes for DO readings to stabilize. The only 5-10 minute stabilization time in the supplied material is for the zero-DO solution check (source [5]) not for general DO measurement.; For DO stay until the value no longer drifts for at least a minute and ideally 5‑10 minutes if the water temperature may be changing. — I searched for any duration of 'at least a minute' for DO stabilization and found none. The 5-10 minute figure is from the zero-DO solution check not for general measurement and the condition about water temperature changing is not mentioned in the supplied material."
+        },
+        {
+          "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: in a calibrated water bath — The supplied material describes a 'refrigerated water bath' and 'water bath' but never calls the bath 'calibrated'.; also recommended before each field deployment — The material requires verification at least once every 12 months but does not recommend it before each field deployment.; or whenever the sensor has been out of service for a long period — No excerpt mentions verifying the temperature sensor after a long out-of-service period.; or whenever you suspect drift — No excerpt mentions verifying the temperature sensor when drift is suspected.; a calibrated thermometer — The material refers to a 'certified or traceable sensor' or a 'certified reference thermometer' not a 'calibrated thermometer'."
+        },
+        {
+          "fixtureId": "crossdoc-warm-week-oxygen-drop",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "5: at a typical atmospheric pressure (≈ 760 mm Hg) — The supplied material provides solubility values at various pressures but never states that 760 mm Hg is typical; no excerpt characterizes any pressure as typical.; At 15 °C the maximum dissolved-oxygen concentration is 9.27 mg L⁻¹ — The supplied tables give 9.27 mg/L for 15.0 °C only at 700 mm Hg; at 760 mm Hg the value is 10.08 mg/L so the claim as stated (with the 760 mm Hg context) is not supported.; At 20 °C the maximum dissolved-oxygen concentration is 8.36 mg L⁻¹ — The supplied tables give 8.36 mg/L for 20.0 °C only at 700 mm Hg; at 760 mm Hg the value is 9.09 mg/L so the claim as stated is not supported.; The temperature rise from 15 °C to 20 °C therefore reduces the saturation level by about 0.91 mg L⁻¹ (9.27 – 8.36) — This arithmetic relies on the unsupported 9.27 and 8.36 values; the supported values at 760 mm Hg would yield a different difference.; Subtracting the temperature-driven change leaves an additional ≈ 0.5 mg L⁻¹ decrease — This is derived from the unsupported 0.91 mg/L reduction so the resulting 0.5 mg/L figure is not grounded in the supplied material."
+        },
+        {
+          "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: so a 0.5 °C error will affect the DO value — The supplied material states that temperature must be known to determine the theoretical amount of oxygen but does not state that a 0.5°C error will affect the DO value.; a half‑degree offset will also shift the reported pH — The supplied material states that pH meters automatically compensate for temperature differences but does not state that a half-degree offset will shift the reported pH."
+        },
+        {
+          "fixtureId": "deepmanual-cross-section-points",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: deploy at least four evenly spaced points (or more depending on how heterogeneous the flow is) using an EWI or EDI layout — I searched the supplied material for a statement that a minimum of four evenly spaced measurement points is required for both EWI and EDI methods. The EDI section says 'Divide the stream into a minimum of four increments' but does not say they are evenly spaced and the EWI section says 'a minimum of 10 equal-width increments is recommended' for streams 5 ft or greater and for smaller streams 'use as many increments as is practical but they must be equally spaced and a minimum of 3 inches apart.' No source states a minimum of four evenly spaced points for either method."
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: the same calculation steps (look up the factor for the measured temperature and specific conductance then multiply the raw DO value by that factor) are used for any pod regardless of location — The supplied material does not state that the salinity-correction procedure applies to all pods regardless of location; it only provides the table and its description.; the specific conductance will be much lower than 50 000 µS cm⁻¹ — The supplied material does not provide any specific conductance values for fresh water or state that fresh water has conductance much lower than 50 000 µS/cm.; the factor you retrieve from the table will be close to 1.0 — The supplied table only lists factors for specific conductance values from 45 000 to 59 000 µS/cm; it does not give factors for lower conductance or state that they approach 1.0.; the salinity correction will be minimal — The supplied material does not state that the correction is minimal for fresh water or for low specific conductance.; you still apply the procedure to obtain the properly compensated DO value — The supplied material does not state that the procedure should be applied to all pods or that it is necessary for fresh water; it only describes the table and its use."
+        },
+        {
+          "fixtureId": "deepmanual-cross-section-points",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: the variability among consecutive measurements falls within the limits shown in table 6.0‑1 — The supplied material references 'stabilization criteria in table 6.0–1' but does not state that these criteria concern variability among consecutive measurements or provide the limits."
+        },
+        {
+          "fixtureId": "deepmanual-do-air-calibration",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: The SOP calls for an air-calibration (Procedure 1) rather than a solution calibration. — I searched the supplied material for a statement that the SOP requires air calibration over solution calibration. The documents describe both Procedure 1 (air) and Procedure 2 (air-saturated water) and recommend the wet-towel method for field sites but none state that air calibration is required instead of solution calibration."
+        },
+        {
+          "fixtureId": "deepmanual-diluting-clarity-standards",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: gently inverting or shaking the bottle — The supplied material only instructs to resuspend calibrants by 'inverting the calibrant 25 times' (excerpt 28) and does not mention shaking or the qualifier 'gently'.; If the settled layer can be fully re‑suspended and the solution looks homogeneous you may proceed — The material does not state that a resuspended homogeneous calibrant may be used; it only says to resuspend calibrants and warns against flocculated suspensions.; you must note the potential for bias — The material requires noting bias for turbidity samples when particle settling occurs but not for calibrants.; the risk of degradation or flocculation is high — The material does not discuss degradation or flocculation risk from long storage; it only states that calibrants must not exceed shelf life and that some stock solutions are stable only for about one day.; the safest practice is to discard the old calibrant and prepare a fresh one — The material does not recommend discarding old calibrants; it only says to not use expired calibrants and to prepare fresh calibrants as needed."
+        },
+        {
+          "fixtureId": "deepmanual-do-air-calibration",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: you must contact the instrument manufacturer — I searched the supplied material for any statement that contacting the manufacturer is mandatory but the excerpt only says 'contact the instrument manufacturer' without the word 'must'.; because the sensor may need repair or replacement of the luminophore module — I searched for any statement that the sensor may need repair or replacement but the excerpt only says 'inquire whether the luminophore module should be replaced' and does not mention repair or a 'may need' reason.; confirms the zero-DO calibration succeeded — I searched for any statement that a reading within ±0.2 mg/L confirms calibration success but the excerpt describes a performance check not a calibration and does not say it confirms success.; a higher reading indicates a problem with the sensor that requires further troubleshooting or service — I searched for any statement that a higher reading indicates a problem or requires troubleshooting or service but the excerpt only instructs to contact the manufacturer and does not characterize the reading as indicating a problem or requiring troubleshooting/service."
+        },
+        {
+          "fixtureId": "deepmanual-do-saturation-ceiling",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: The USGS A6.2 table 6.2‑2 does not include the 35 °C solubility value in the provided excerpts. — The supplied material includes a table with a row for 35.0 °C (e.g. in excerpt [7] showing solubility values at 35.0 °C across pressures) so the claim that it is not included is unsupported."
+        },
+        {
+          "fixtureId": "deepmanual-do-saturation-ceiling",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: The specific freshwater equilibrium dissolved‑oxygen saturation value at 20 °C and 760 mm Hg is not present in the provided excerpts. — The supplied excerpts include table 6.2–2 with a value for 20.0 °C at 760 mmHg (9.09 mg/L) in excerpt [10] so the claim of absence is unsupported.; from the example in the document【14】 — The 8.97 mg/L value at 20 °C and 750 mmHg appears in excerpt [24] (the example salinity correction) not in excerpt [14]; the attribution to document [14] is unsupported."
+        },
+        {
+          "fixtureId": "deepmanual-ec-standard-choice",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: so that the standard falls within the ±3 % tolerance required for measurements above 100 µS/cm — I searched the supplied material for any statement that a calibration standard must fall within ±3% of the expected value or that the ±3% tolerance applies to the calibration standard itself. The documents only apply the ±3% tolerance to check standards (e.g. 'Measurements of specific conductance standards that are within ±5 μS/cm of the certified values for measurements ≤100 μS/cm or ±3 percent of the certified values for measurements >100 μS/cm are considered accurate') not to the selection of the calibration standard."
+        },
+        {
+          "fixtureId": "deepmanual-ec-standard-choice",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: A reading of 6 µS/cm in your de-ionized water shows that the water still contains a small amount of dissolved ions. — The supplied material describes the operating principle of conductivity probes but does not state that a specific low reading indicates the presence of dissolved ions nor does it provide any interpretation of a 6 µS/cm reading.; In practice such a low value is typical for de-ionized water — The supplied material does not state any typical conductivity value for de-ionized water.; and does not by itself indicate a fault with the probe — The supplied material does not discuss whether a low conductivity reading indicates a probe fault.; though it does confirm that the water is not completely ion-free — The supplied material does not state that a non-zero conductivity reading confirms the presence of ions or that the water is not ion-free."
+        },
+        {
+          "fixtureId": "deepmanual-sonde-settle-time",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: differ by no more than 10 % of each other — The supplied material states stability is reached when sequential readings are 'within 10 percent' but does not define that as a difference between readings; I searched for any specification that the 10 percent refers to pairwise differences and found none.; the sensor has stopped “creeping” — The supplied material describes stability in terms of readings being within 10 percent but never states that this condition means the sensor has stopped creeping; I searched for any mention of 'creeping' or a causal link between stability and sensor behavior and found none."
+        },
+        {
+          "fixtureId": "deepmanual-thermistor-annual-check",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "3: For a yearly calibration verification you need at least five verification points spread across the temperature range you expect to measure plus two additional points that are taken no more than six months from the five-point set — The supplied material states 'The minimum number of verification points is two' (in [5]) and does not state that five points are required for yearly verification; the five-point requirement appears only for establishing a traceable sensor not for the annual calibration verification of a deployed sensor.; a suitable five-point set could be: 4 °C 6 °C 8 °C 10 °C 12 °C — The supplied material does not support a five-point set for yearly verification; the minimum is two points and the answer's proposed set of five points is not grounded in any excerpt.; The two extra checks taken within six months of the main set can be any temperatures within that range for example 5 °C and 11 °C. — The supplied material does not support that two extra checks are part of the yearly verification; the two-point check within six months is part of the traceable sensor requirement not the annual calibration verification of a deployed sensor."
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: an ORP reading expressed in mV is an Eh value — The supplied material defines Eh as a measure of oxidation-reduction potential and describes Eh measurements using a platinum electrode but nowhere does it state that an ORP probe reading in millivolts is the same as an Eh value. The documents treat ORP sensors and Eh equipment as distinct (e.g. [6] mentions an ORP sensor connected to a multiparameter instrument and separately requires Eh equipment to be tested) so the equivalence claim is not grounded."
+        },
+        {
+          "fixtureId": "deepmanual-zobell-check",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "3: If the reading is within either the ±5 mV manufacturer spec or the +10 mV EPA limit the probe is considered to have passed. — I searched the supplied material for a statement that meeting either the ±5 mV accuracy spec or the +10 mV EPA post-calibration check constitutes passing. The material gives ±5 mV as ORP accuracy (in [7]) and +10 mV as an EPA post-calibration criterion (in [32]) but nowhere does it say that being within either of these means the probe has passed.; Look for drift: repeat the measurement after a short interval; the value should not change by more than a few millivolts — I searched the supplied material for a specific drift tolerance or a statement that the value should not change by more than a few millivolts. The material only says 'If they change re-calibrate' (in [6]) and does not provide any numeric drift limit or instruction to repeat after a short interval.; If the probe meets these steps—reading the ZoBell’s solution within the ±5 mV (or +10 mV) window with stable battery voltage and a clean reference electrode—it is considered calibrated and ready for deployment. — I searched the supplied material for a statement that meeting these conditions (reading within ±5 mV or +10 mV stable battery voltage clean reference electrode) means the probe is considered calibrated and ready for deployment. The material describes procedures and checks but does not define a pass/fail criterion that combines these elements or state that meeting them constitutes calibration readiness."
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: dissolved‑oxygen probes often require 5–10 min — The supplied material only mentions a 5–10 minute stabilization wait in the context of the zero-DO solution check (e.g. 【8†\"wait for reading to stabilize (usually within 5–10 minutes)\"】) not as a general statement about dissolved-oxygen probes requiring that time to reach a steady signal.; the USGS chapters do not list a separate “settle‑down” waiting period for Eh/ORP — I searched the supplied USGS excerpts for any statement about ORP/Eh stabilization or a settle-down waiting period and found none; the material does not address whether such a period is listed or omitted.; the lack of a settle‑time note reflects the probe’s fast response not an omission of the parameter — No supplied excerpt provides a reason for the absence of a settle-time note for ORP/Eh; this causal explanation is not grounded in the retrieved documents."
+        },
+        {
+          "fixtureId": "definitional-required-versus-recommended",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: The request needs guidance on how to handle a required step that cannot be performed which is not covered in the provided excerpts. — I searched the supplied material for any guidance on departing from or modifying a required step when it cannot be performed and found that the excerpts do address this: e.g. [14] states 'Departure from or modifications to stipulated requirements if necessary for accomplishing specific data-quality requirements or study objectives must be independently quality assured and documented' (also in [23] and [28]). Therefore the claim that this is 'not covered in the provided excerpts' is unsupported."
+        },
+        {
+          "fixtureId": "definitional-what-a-bare-tu-label-tells-us",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "5: The label you attach to a turbidity value is not a free-form “house style.” It is dictated by the measurement method and the reporting standard that the instrument follows. — The supplied material does not state that the label is dictated by the measurement method and reporting standard. It only describes how USGS stores turbidity data and lists reporting guidelines but does not attribute the label choice to the method or standard.; The most common reporting units are NTU (nephelometric turbidity units) when the instrument follows EPA Method 180.1 or ISO 7027 and FNU (Formazin Nephelometric Units) when the instrument is calibrated to the ISO 7027 geometry. — The supplied material mentions EPA Method 180.1 ISO 7027 and FNU but does not specify that NTU is used for EPA 180.1 or ISO 7027 nor that FNU is used specifically for ISO 7027 geometry. No excerpt assigns these units to these methods.; If the sensor is calibrated to a different protocol (e.g. a manufacturer-specific method) the instrument’s software will output the result in the unit prescribed by that protocol and the data sheet for the sensor will specify which unit to record. — The supplied material does not describe instrument software output behavior or sensor data sheets specifying units. No excerpt mentions manufacturer-specific protocols or how units are determined for such protocols.; Because turbidity is an optical measurement—the amount of light scattered by particles—different optical geometries (different angles light sources detector designs) produce values that are only comparable when the same unit and method are used. — The supplied material does not state that turbidity is an optical measurement of light scattering nor that different optical geometries affect comparability. The excerpts on turbidity discuss reporting units and calibration standards but do not describe the measurement principle or comparability conditions.; The label is therefore a technical requirement not merely a stylistic choice. — This conclusion is based on the unsupported premises above. The supplied material does not state that the label is a technical requirement or that it is not a stylistic choice."
+        },
+        {
+          "fixtureId": "followup-clarity-calibration-whole-head",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: you should immerse the turbidity sensor itself in the calibration solution not the entire sonde head — The supplied material describes two calibration procedures (Procedure A: immersion of the entire sonde; Procedure B: immersion of turbidity sensor only) and instructs to 'Select Procedure (A) or (B).' It does not state that you should choose Procedure B over Procedure A so the prescriptive claim is unsupported.; This ensures the optical part of the turbidity sensor is fully submerged while the rest of the sonde can remain out of the calibrant. — The supplied material only states that Procedure B 'minimizes the volume of calibrant required for calibration.' It does not state that it ensures the optical part is fully submerged or that the rest of the sonde can remain out of the calibrant so this mechanism/effect claim is unsupported."
+        },
+        {
+          "fixtureId": "followup-clarity-calibration-whole-head",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "6: you give up the most reliable calibration — Searched the supplied material for any statement that partial immersion of the turbidity sensor reduces calibration reliability; found only the instruction to immerse the sensor with no discussion of reliability consequences.; any part of the optical path that extends beyond the tip (housing windows or the surrounding water column) is not exposed to the same standard — Searched the supplied material for any description of an optical path extending beyond the sensor tip or consequences of partial exposure; found no such statement.; Incomplete optical coupling – air gaps or partial coverage can cause stray‑light or bubble artifacts that bias the calibration. — Searched the supplied material for any claim that partial coverage or air gaps cause stray-light or bubble artifacts during calibration; found only general mentions of bubbles and stray light as measurement interferences not in the context of partial immersion.; Temperature mismatch – the part of the probe that remains out of the calibrant may stay at a different temperature affecting the sensor’s response. — Searched the supplied material for any statement that partial immersion causes temperature differences affecting sensor response; found no such claim.; Housing‑related effects – the probe housing can influence scattering; without full immersion you don’t account for those effects during calibration. — Searched the supplied material for any mention of probe housing influencing scattering or the need to account for housing effects during calibration; found no such statement.; reduced calibration accuracy and potential systematic error — Searched the supplied material for any statement that partial immersion leads to reduced accuracy or systematic error; found no such claim."
+        },
+        {
+          "fixtureId": "followup-cleaning-the-salt-sensor",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "6: Field‑manual guidance for a low‑reading conductivity (salt) sensor is to clean the probe in stages — I searched the USGS field manuals in the supplied material (e.g. [33] specific-conductance troubleshooting) and found only detergent and 5% HCl cleaning steps; no field manual describes a staged cleaning with brushing or an Atlas Scientific cleaner.; the manuals note that “over time conductivity probes can become dirty and covered in deposits which can change the basic electrical properties of the probe and cause inaccurate readings” — This quote appears in the vendor sheet [1] (EC_K_1.0_probe.pdf) not in any USGS field manual; no field manual in the supplied material contains this statement.; and that “soft coatings can be removed by lightly brushing around the conducting area” — This quote also comes from the vendor sheet [1] not from a field manual; no field manual in the supplied material mentions brushing the conducting area.; One guide says “hard coatings should be chemically removed. We highly recommend you use the Atlas Scientific conductivity probe cleaner.” — This quote is from the vendor sheet [1] not from a field manual; no field manual in the supplied material recommends the Atlas Scientific probe cleaner.; the field manuals suggest: brush gently — No USGS field manual in the supplied material recommends brushing; the brushing guidance is only in the vendor sheet [1].; the field manuals suggest ... use ... the Atlas Scientific probe cleaner for hard coatings — No USGS field manual in the supplied material mentions the Atlas Scientific probe cleaner; this recommendation appears only in the vendor sheet [1]."
+        },
+        {
+          "fixtureId": "followup-cleaning-the-salt-sensor",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: When brushing does not restore the conductivity reading the field guidance is to use a chemical clean. — I searched the supplied material for any statement that the field guidance says to use a chemical clean when brushing does not restore the reading and found only that soft coatings can be removed by brushing and hard coatings should be chemically removed with no conditional linking.; After the chemical cleaning rinse the probe with clean water and re‑immerse it to verify the reading. — I searched for any instruction to rinse after chemical cleaning or to re-immerse to verify and found none in the supplied material.; If the sensor still reads low consider further cleaning with a mild detergent solution followed by a 5 % HCl rinse as suggested for stubborn deposits — I searched for any mention of a mild detergent solution or a 5% HCl rinse for conductivity probes and found no such guidance; the only HCl mention is for ORP probes (5–10% HCl) and the citation [33] is not in the supplied material.; If performance does not improve the next step is to replace the probe. — I searched for any instruction to replace the probe if cleaning does not improve performance and found none in the supplied material."
+        },
+        {
+          "fixtureId": "definitional-what-a-bare-tu-label-tells-us",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "5: how much light is scattered by particles in the water — The supplied material describes turbidity as an optical measurement and mentions absorption of light but does not state that it measures light scattering by particles.; The label does not specify which exact unit (e.g. NTU FNU or another reporting unit) was used; it only tells you that the values are meant to convey water clarity in a generic way — No excerpt in the supplied material discusses what a bare 'TU' label indicates or whether it specifies a unit.; the reading reflects the amount of light that is absorbed or scattered by suspended material not a concentration of a specific substance — The material mentions absorption of light but does not mention scattering suspended material or that turbidity is not a concentration.; a bare “TU” label does not identify which method was used — No excerpt in the supplied material states anything about what a bare 'TU' label does or does not identify regarding measurement method.; higher values mean cloudier water and lower values mean clearer water — The supplied material does not state that higher turbidity values correspond to cloudier water or that lower values correspond to clearer water."
+        },
+        {
+          "fixtureId": "followup-jumpy-temperature-trace",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: loose contacts — I searched the supplied material for any statement that loose contacts can cause a jumpy temperature reading. The only mention of loose connections is in the general 'Unstable readings' row of [10] which is not specific to temperature; the temperature-specific row only mentions water in the port connector. No document supports loose contacts as a cause of temperature instability.; tighten the connection — I searched the supplied material for any instruction to tighten a connection as a remedy for an unstable temperature reading. The temperature-specific troubleshooting row in [10] only says to check for water in the port connector; no document recommends tightening the connection for temperature issues."
+        },
+        {
+          "fixtureId": "followup-jumpy-temperature-trace",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "9: you can replace the cable yourself — The supplied material does not state that the temperature sensor's cable can be replaced by the user; the only cable replacement instructions are for the conductivity probe.; The cable can be swapped with a proper SMA extension or replacement cable — The supplied material only describes SMA extension cables for the conductivity probe not for the temperature sensor.; the connection should be sealed — The instruction to seal the SMA connection appears only in the conductivity probe document not for the temperature sensor.; After the cable is changed the probe should be recalibrated — The recalibration instruction is from the conductivity probe document not for the temperature sensor.; the probe is rated for up to 100 m without loss of signal — The 100 m figure is from the conductivity probe document not for the temperature sensor.; air bubbles… or water in the port connector” that can cause erratic readings — The 'air bubbles' reference is from the conductivity probe document about graphite plates; 'water in the port connector' is not found in any supplied material.; use a compatible SMA‑type cable — No supplied material states that the temperature sensor uses an SMA-type cable.; seal the connection — No supplied material instructs sealing the connection for a temperature sensor.; recalibrate the sensor — No supplied material instructs recalibrating the temperature sensor after a cable change."
+        },
+        {
+          "fixtureId": "precedence-turbidity-groundwater-background-not-pod-limit",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: which is generally described as low-to-moderate turbidity — I searched the retrieved documents for any description of the 10 to <100 turbidity band as 'low-to-moderate' and found no such characterization; the documents only list reporting precision bands without qualitative labels."
+        },
+        {
+          "fixtureId": "precedence-turbidity-groundwater-background-not-pod-limit",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: 10 to <100 NTU is a low-to-moderate turbidity band — The supplied material contains no qualitative description of turbidity ranges; the only turbidity ranges are reporting increments in the table in [6] which do not label any band as low-to-moderate."
+        },
+        {
+          "fixtureId": "probecal-buffer-handling",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: This avoids contaminating the buffer and ensures a reliable calibration. — The supplied material instructs to pour buffer into a separate container and discard after use but does not state that this avoids contaminating the buffer or that it ensures a reliable calibration; those are added reasons not present in the excerpts."
+        },
+        {
+          "fixtureId": "probecal-do-saturation-target",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: making sure the sensor tip is fully immersed in the humid air space — I searched the supplied material for any instruction that the sensor tip must be fully immersed in the humid air space. The only related text is 'Insert the sensor into the chamber per manufacturer’s instructions to ensure 100‑percent humidity.' (from [5]) which does not mention 'fully immersed' or 'sensor tip'.; Record the temperature pressure saturation value used and the instrument reading in the calibration log — I searched the supplied material for a requirement to record temperature pressure saturation value and instrument reading in the calibration log. The material only says 'Record the calibration information in instrument log books' (from [9]) without specifying these exact items."
+        },
+        {
+          "fixtureId": "probecal-do-saturation-target",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: The USGS Procedure 1 tells you how to confirm that the calibration succeeded — I searched the supplied USGS A6.2 excerpts ([15] [19] [26]) for any statement that Procedure 1 includes a verification step and found no such text.; verify that the reading is within ±0.2 mg/L or 2 % of that value — I searched the supplied material for the threshold '±0.2 mg/L' or '2 percent' in the context of DO calibration verification and found no such value or procedure in any excerpt.; If the reading falls inside that tolerance the calibration is considered successful — I searched the supplied material for any statement defining calibration success based on a tolerance and found no such criterion in the retrieved documents."
+        },
+        {
+          "fixtureId": "probecal-end-of-day-check",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "3: you must recalibrate before the next day’s sampling — The EPA text says the instrument can be recalibrated during the day if it drifted but does not state a requirement to recalibrate before the next day's sampling.; verify against a known standard or buffer — The EPA text only says a post calibration check is performed to determine drift but does not specify that it involves verifying against a known standard or buffer.; are the maximum intervals under normal stable conditions — The manufacturer documents list 'Time before recalibration' values without any qualifier such as 'maximum' or 'under normal stable conditions'."
+        },
+        {
+          "fixtureId": "probecal-end-of-day-check",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: The U.S. Geological Survey (USGS) field manual for dissolved‑oxygen performance checks requires a tighter limit: the instrument’s reading must be within ± 0.2 mg L⁻¹ of the 100 %‑saturation concentration — The supplied USGS excerpt states 'should be within +/- 0.2 mg/L of the 100-percent saturated concentration' — it does not say 'requires' or 'must be within'; the answer strengthens the wording without support."
+        },
+        {
+          "fixtureId": "probecal-ec-never-recalibrate",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: a calibrated conductivity standard — The supplied material refers to a 'check standard' but does not describe it as 'calibrated'."
+        },
+        {
+          "fixtureId": "probecal-orp-standard-check",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "8: the most common causes are: Drift or contamination of the reference electrode — I searched the supplied material for any statement ranking causes of ORP calibration failure or calling these the most common; the material only says contamination can cause drift or erratic performance with no frequency ranking.; If its filling solution is wrong or the electrode surface is fouled the combined reading can shift and wander. — I searched for a statement that a wrong filling solution causes the reading to shift or wander; the material instructs to check the filling solution and to keep the surface polished and separately says contamination can cause drift but does not attribute shift/wander to a wrong filling solution.; a dirty or partially coated platinum tip can also produce a consistently high potential. — I searched for a statement that a coated platinum tip produces a consistently high potential; the material says coating can lead to erroneous readings including shortened span (slope) but does not specify a consistently high potential.; Verify the reference electrode alone by immersing it (with its KCl or Ag/AgCl reference) in a fresh ZoBell’s standard and recording the reference potential. — I searched for a procedure to test the reference electrode in isolation; the material describes testing the whole system (Eh = emf + Eref) and does not describe isolating the reference electrode.; If the reference reads the expected value (within ±5 mV of the table entry for the current temperature e.g. 438 mV at 22 °C) the reference half is likely OK. — I searched for a statement that a reference-only reading within ±5 mV indicates the reference is OK; the material only gives a whole-system check and does not state this conclusion for a reference-only test.; If the reference checks out the measuring electrode is the likely source of the high offset — I searched for a diagnostic rule that a good reference implies the measuring electrode is at fault; not found in the supplied material.; the probe should be cleaned (remove any soft or hard coatings) or the electrode replaced per the probe‑maintenance notes. — I searched for instruction to replace the ORP electrode; the material gives cleaning instructions but does not mention replacing the electrode.; start by confirming the reference electrode’s filling solution and potential then address the measuring electrode if the reference is confirmed correct. — I searched for this diagnostic sequence; the material does not prescribe this order of troubleshooting."
+        },
+        {
+          "fixtureId": "probecal-ph-slope-acceptance",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: The first step is to clean and re‑condition the probe; if the slope is still below 95 % after that the electrode should be replaced — I searched the supplied material for a statement that cleaning/reconditioning is the first step and that replacement is required only if the slope remains below 95% after that. The material says 'the electrode should be cleaned reconditioned or replaced' as alternatives not as a sequence and does not specify a post-cleaning threshold for replacement.; for harder coatings use a light bleach solution (5–10 % NaOCl) for a few minutes then rinse with de‑ionised water — I searched the supplied material for a pH-probe cleaning instruction specifying a 5–10% NaOCl concentration a duration of 'a few minutes' and a rinse with de-ionised water. The pH probe document says only 'a light bleach solution' with no concentration or duration; the 5–10% HCl soak appears in the ORP document not the pH document and no rinse step is given in that context.; If it still reads below 95 % order a new pH probe. — I searched the supplied material for a statement that a slope still below 95% after cleaning should lead to ordering a new probe. The material says 'replace' but does not say 'order' and it does not specify that condition as the trigger for replacement; it lists cleaning reconditioning or replacing as options without a defined sequence."
+        },
+        {
+          "fixtureId": "probecal-ph-what-solutions",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: you should use a pair of buffers that bracket that value – for example a pH 7 buffer and a higher-pH buffer such as pH 10. — The supplied material does not specify which buffer values to use for a given expected pH; the cited quote is not present in the provided excerpts and no procedure for selecting bracketing buffers is given.; This gives the instrument points on either side of the expected reading which is what the calibration procedure requires — The supplied material does not describe a calibration procedure requiring bracketing buffers; the cited quote is not in the provided excerpts."
+        },
+        {
+          "fixtureId": "probecal-ph-slope-acceptance",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: values outside this window indicate the electrode may be deteriorated — I searched the supplied material for any statement that a millivolt reading outside the pH 7.00 buffer range of −15 to 15 mV indicates electrode deterioration. The material only states that the meter may not recognize the buffer or may incorrectly identify it if the response is outside the acceptable range and does not attribute this to electrode deterioration."
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "9: you should clean or “flush” each probe before you move on to the next one so that residues bubbles or coating material from the previous measurement don’t affect the next reading — The supplied material gives cleaning instructions for each probe but does not state that you must clean or flush each probe between measurements to prevent carry-over; no excerpt describes a between-sensor cleaning requirement.; Rinse the probe with clean (de‑ionised) water — The supplied material does not instruct rinsing with de-ionised water between measurements for conductivity ORP or DO probes; only the USGS pH procedure mentions rinsing with DIW between calibrations and measurements but not as a general step for all probes.; gently shake or tap it to remove any water that might be trapped in the sensing area — The supplied material mentions tapping the conductivity probe to knock out air bubbles not to remove water; no excerpt says to shake or tap to remove trapped water.; Inspect and clean the sensing surface if you see any film or deposits — The supplied material says probes can become dirty and covered in deposits and gives cleaning methods but does not instruct inspecting and cleaning the sensing surface between each sensor measurement.; Use the appropriate cleaning method for the next probe before you start its measurement — The supplied material gives cleaning methods for each probe but does not instruct using them before starting each measurement as a between-sensor step.; Rinse again with clean water after any chemical cleaning (bleach acid etc.) — The supplied material does not instruct rinsing with clean water after chemical cleaning; the cleaning instructions for ORP DO and pH do not mention a subsequent rinse.; give the probe a quick dry or let it air-dry before starting the next measurement — The supplied material does not instruct drying the probe before the next measurement; no excerpt mentions air-drying or quick drying between measurements.; Check connections for moisture or residue before powering the next sensor — The supplied material mentions checking sensor connectors for water in a troubleshooting context but does not instruct checking connections for moisture or residue before powering the next sensor as a routine step.; Following these rinse-and-clean steps between each of the four probes will minimise carry-over effects and help keep each reading reliable — The supplied material does not state that following rinse-and-clean steps between probes will minimise carry-over effects; no excerpt makes this claim."
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: the pod can remain deployed for the length of time indicated by the shortest‑lived sensor — The supplied material gives individual sensor life expectancies and recalibration intervals but does not state any pod-level deployment limit or that deployment duration is determined by the shortest-lived sensor.; you should schedule a recalibration for the ORP DO and pH sensors at least annually to keep the readings reliable — The supplied material provides recalibration intervals but does not instruct the user to schedule recalibrations or state that doing so keeps readings reliable."
+        }
+      ]
+    }
+  ]
+}
