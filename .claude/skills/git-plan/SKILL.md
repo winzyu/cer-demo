@@ -25,18 +25,13 @@ Examples of irreversible commands:
 - Dropping stashes: `git stash drop`, `git stash clear`, or `git stash pop` if it conflicts and you plan to reset
 - Deleting local work: `git branch -D` on an unmerged branch, `git worktree remove --force`, `git update-ref -d`
 - Rewriting pushed history: `git push --force` or `--force-with-lease`, and `git rebase`, `git commit --amend`, `git reset` or `git filter-repo`/`filter-branch` on commits already pushed
-- Deleting remote refs: `git push origin --delete <branch>`, `git push origin :<ref>`, deleting a pushed tag. The one exception is a `cloud/explore-*` branch whose report has been read.
+- Deleting remote refs: `git push origin --delete <branch>`, `git push origin :<ref>`, deleting a pushed tag.
 - Destroying recovery data: `git reflog expire`, `git gc --prune=now`
 - Anything in `../clean-earth-rovers-server` or `../user-dashboard` beyond committing on `local`: never push, force-push or merge there (CLAUDE.md)
 
 When unsure whether a command is reversible, treat it as irreversible and ask.
 
 Never stage `.env`, `node_modules`, shared cache links, migration backups, or secrets.
-
-## Cloud branches
-
-Before merging a `cloud/*` branch into `dev`, fetch it, review its actual diff, and rerun its suites plus `npm run typecheck`.
-`cloud/explore-*` branches hold reports only and are never merged; read them with `git show origin/<branch>:<path>`.
 
 ## Landing worktrees
 
