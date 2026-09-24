@@ -13,6 +13,8 @@
  *   npm run judge -- --report                     # summarize what is already judged, no calls
  *   npm run judge -- --run=<id>                   # a named capture, with its own ledger
  *   npm run judge -- --calibrate                  # judge-vs-human agreement, no calls
+ *   npm run judge -- --run=<id> --calibration     # judge a named run's graded packet
+ *   npm run judge -- --run=<id> --calibrate       # agreement on eval/grading/<id>/, no calls
  *   npm run judge -- --run=<id> --final           # a capture whose numbers get reported
  *
  * **Reasoning is off unless `--final` is passed.** Exploratory passes send `reasoning_effort:
@@ -104,8 +106,8 @@ const pct = (value: number): string => `${(value * 100).toFixed(1)}%`;
  * agreement rate, so judging it during calibration is spend with no output — and the packet that
  * produced the 36 rows predates `hybrid-slice-lexvec` entirely.
  */
-const calibrationArms = (pass: string): string[] => {
-  const file = path.join(process.cwd(), "eval", "grading", pass, "KEY.json");
+const calibrationArms = (gradingRoot: string, pass: string): string[] => {
+  const file = path.join(gradingRoot, pass, "KEY.json");
   const { key } = JSON.parse(fs.readFileSync(file, "utf8")) as {
     key: Record<string, Record<string, string>>;
   };
@@ -120,8 +122,8 @@ const calibrationArms = (pass: string): string[] => {
  * rows means the calibration compares the same turns on both sides, which is the only version of
  * it that means anything.
  */
-const calibrationFixtures = (pass: string): string[] => {
-  const file = path.join(process.cwd(), "eval", "grading", pass, "scores.csv");
+const calibrationFixtures = (gradingRoot: string, pass: string): string[] => {
+  const file = path.join(gradingRoot, pass, "scores.csv");
   if (!fs.existsSync(file)) {
     throw new Error(`No graded sheet at ${path.relative(process.cwd(), file)}.`);
   }
@@ -180,8 +182,13 @@ const printArm = (result: ArmJudgeResult): void => {
   }
 };
 
-const printCalibration = (pass: string, records: JudgeRecord[]): void => {
-  const report = calibrate(pass, records);
+const printCalibration = (
+  pass: string,
+  records: JudgeRecord[],
+  gradingRoot: string,
+  transcriptRoot: string,
+): void => {
+  const report = calibrate(pass, records, gradingRoot, transcriptRoot);
   log.info("");
   const sheets = report.scoresPaths.map((p) => path.relative(process.cwd(), p));
   log.info(`Judge vs human — ${sheets.join(" + ")}`);
@@ -253,17 +260,22 @@ const main = async (): Promise<void> => {
   const runId = parseRunId(arg("run"));
   const transcriptRoot = runId !== undefined ? path.join(TRANSCRIPT_ROOT, runId) : TRANSCRIPT_ROOT;
   const judgeRoot = runId !== undefined ? path.join(JUDGE_ROOT, runId) : JUDGE_ROOT;
+  // A named run's human sample lives beside it, as `grade:packet --run` writes it. Reading the
+  // default sheet here would compare this run's verdicts against another capture's answers.
+  const gradingRoot = path.join(
+    process.cwd(), "eval", "grading", ...(runId !== undefined ? [runId] : []),
+  );
   const calibrating = flag("calibration");
   const reasoningEffort = parseReasoningEffort(arg("reasoning-effort"), flag("final") || calibrating);
   const arms = arg("arm")?.split(",")
-    ?? (calibrating ? calibrationArms(pass) : armsOnDisk(transcriptRoot, pass));
+    ?? (calibrating ? calibrationArms(gradingRoot, pass) : armsOnDisk(transcriptRoot, pass));
   const dimensions = (arg("dimension")?.split(",") as JudgeDimension[] | undefined)
     // A calibration pass judges every dimension: `calibrate()` reports agreement for all three,
     // and a dimension left out would print an empty agreement with no warning.
     ?? [...(calibrating ? JUDGE_DIMENSIONS : DEFAULT_JUDGE_DIMENSIONS)];
   const judgeModel = arg("judge-model") ?? process.env.JUDGE_MODEL ?? DEFAULT_JUDGE_MODEL;
   const concurrency = Number(arg("concurrency") ?? 4);
-  const only = calibrating ? calibrationFixtures(pass) : arg("only")?.split(",");
+  const only = calibrating ? calibrationFixtures(gradingRoot, pass) : arg("only")?.split(",");
 
   // Everywhere below reads `currentLedger`/`existing`, never the raw ledger off disk - a row
   // whose fixture predates the current set (the archived pre-rebuild fixtures still sitting in
@@ -284,7 +296,7 @@ const main = async (): Promise<void> => {
   const existing = currentRecords.filter((r) => arms.includes(r.arm));
 
   if (flag("calibrate")) {
-    printCalibration(pass, existing);
+    printCalibration(pass, existing, gradingRoot, transcriptRoot);
     return;
   }
 
