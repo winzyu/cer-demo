@@ -8,6 +8,8 @@ import type { GetContextOptions } from "../types/retrieval.types";
  * wave 1 labels average 5.4 chunks per turn, so k=5 capped recall on the default arm at 18%, and
  * the captured answers scored 0.52 against 1.01 on gold context. k=10 reached 29% offline for
  * about 4K more prompt tokens; the recall and correctness result is in `docs/EVAL_REBUILD.md`.
+ * R4 raises it until correctness stops gaining more than the judge's 0.05 noise band; 20 is
+ * under measurement ("Retrieval depth sweep" in `docs/EVAL_REBUILD.md`).
  *
  * **`MAX_TOP_K` was raised from 10 to 50 on 2026-08-24.** The old ceiling was legacy parity, never
  * a measured choice, and it was silently binding: `retrieval:eval --k=20` returned exactly the
@@ -20,7 +22,7 @@ import type { GetContextOptions } from "../types/retrieval.types";
  * prompt tokens on this corpus, so the cap is what keeps a request from being unbounded rather
  * than what keeps it small.
  */
-export const DEFAULT_TOP_K = 10;
+export const DEFAULT_TOP_K = 20;
 export const MAX_TOP_K = 50;
 
 /**
