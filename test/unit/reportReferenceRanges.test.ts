@@ -1,6 +1,6 @@
 import {
   probeAccuracy, temperatureAccuracyC,
-  clarityBandFor, TURBIDITY_BAND_EDGES, isOffScaleTurbidity, OFF_SCALE_INDEX,
+  clarityBandFor, TURBIDITY_BAND_EDGES, isAllZeroTurbidity, isOffScaleTurbidity, OFF_SCALE_INDEX,
 } from "../../src/report/referenceRanges";
 
 /**
@@ -76,6 +76,18 @@ describe("isOffScaleTurbidity", () => {
   it("does not change the band -- an off-scale reading is still Turbid, just also suspect", () => {
     expect(clarityBandFor(1_006)).toBe("Turbid");
     expect(isOffScaleTurbidity(1_006)).toBe(true);
+  });
+});
+
+describe("isAllZeroTurbidity", () => {
+  it("is true only when the period's maximum is 0, meaning every reading was 0", () => {
+    expect(isAllZeroTurbidity(0)).toBe(true);
+    expect(isAllZeroTurbidity(0.1)).toBe(false);
+    expect(isAllZeroTurbidity(456)).toBe(false);
+  });
+
+  it("does not change the band -- an all-zero period is still Clear, just also suspect", () => {
+    expect(clarityBandFor(0)).toBe("Clear");
   });
 });
 

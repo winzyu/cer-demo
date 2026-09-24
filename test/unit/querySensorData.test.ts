@@ -407,6 +407,31 @@ describe("query_sensor_data — caveats that travel with the number", () => {
     expect(result.unit).toBe("NTU");
   });
 
+  it("flags a window in which every turbidity reading is 0 as a possible missing sensor", async () => {
+    // The backend returns 0 for a missing voltage and for the offline sentinel, the same as for
+    // clear water; a live read on 2026-09-22 returned 14 days of zeros from a reporting pod.
+    const allZero = ALGALITA_PERIOD.map((row) => ({
+      ...row,
+      water_data: { ...(row.water_data as Record<string, unknown>), 72: 0 },
+    }));
+    const { tool } = makeTool({ periodDay: allZero, periodWeek: allZero, periodMonth: allZero });
+    const result = await tool.run({
+      metric: "turbidity", time_range: "last day", aggregation: "mean", device: "Algalita",
+    });
+
+    expect(result.value).toBe(0);
+    expect(result.note).toContain("may be a missing sensor rather than confirmed clear water");
+  });
+
+  it("does not flag turbidity as all zero when any reading rose above 0", async () => {
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "turbidity", time_range: "last day", aggregation: "mean", device: "Algalita",
+    });
+
+    expect(result.note).not.toContain("missing sensor");
+  });
+
   it("flags a device whose water type disagrees with the deployment's", async () => {
     // WATER_TYPE is one global env var, and pods differ in water type — one deployment cannot
     // describe both. This is a flag, not a fix: reading water type per device in chat is unbuilt

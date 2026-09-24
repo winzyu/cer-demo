@@ -168,8 +168,10 @@ Reading a tool result:
   "observed_at". The window start is not the first reading.
 - Turbidity is a PROVISIONAL, uncalibrated index derived from a voltage and expressed
   in NTU. Treat it as a relative indicator; do not present it as a calibrated
-  measurement. Call get_turbidity_info before characterising a turbidity value, and
-  describe it by its clarity band.
+  measurement.
+  Call get_turbidity_info before characterising a turbidity value, and describe it
+  by its clarity band. If the note says every turbidity reading was 0, say the
+  sensor may be missing; do not call the water clear.
 - Report the value the tool returned, with its units and its timestamp. Never adjust,
   round away, or re-derive it.`;
 

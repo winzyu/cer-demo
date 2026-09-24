@@ -260,6 +260,10 @@ describe("TOOL_BLOCK", () => {
     expect(TOOL_BLOCK).toContain("PROVISIONAL, uncalibrated");
   });
 
+  it("tells the model an all-zero turbidity note may be a missing sensor, not clear water", () => {
+    expect(TOOL_BLOCK).toContain("say the\n  sensor may be missing; do not call the water clear");
+  });
+
   it("routes a limits question to get_pod_thresholds, never to a document", () => {
     expect(TOOL_BLOCK).toContain("get_pod_thresholds for the limits");
     expect(TOOL_BLOCK).toContain("never substitute a\n  number from a document");
