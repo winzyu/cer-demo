@@ -47,7 +47,7 @@ describe("buildSystemPrompt", () => {
     const prompt = buildSystemPrompt(false, false, null);
 
     expect(prompt).toContain("【n†\"quote\"】");
-    expect(prompt).toContain("character-for-\n  character");
+    expect(prompt).toContain("copied character-for-character from that excerpt");
     expect(prompt).toContain("ellipsis");
     expect(prompt).toContain("The refusal sentence itself carries no marker; cite any supported explanation separately.");
   });
@@ -59,6 +59,19 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("when nothing relevant is available");
     expect(TOOL_BLOCK).toContain("A failed or unavailable lookup leaves configuration unknown");
     expect(TOOL_BLOCK).toContain("If a threshold is rejected, report it as unusable");
+  });
+
+  it("carries the Phase 3 grounding rules measured on the 2026-09-23 baseline", () => {
+    // Each rule answers a failure seen on that capture: step numbers cited as excerpt numbers,
+    // partial refusals that answered around the gap, general-knowledge rationale, and misread
+    // table rows (docs/EVAL_REBUILD.md).
+    const prompt = buildSystemPrompt(false, false, null);
+
+    expect(prompt).toContain("never a step, table,\n  figure or page number printed inside the excerpt's text");
+    expect(prompt).toContain("Answering only the related parts is not a refusal.");
+    expect(prompt).toContain("Say only what an excerpt states.");
+    expect(prompt).toContain("\"can\" stays \"can\"");
+    expect(prompt).toContain("use the exact row and column that match the\n  question");
   });
 
   it("embeds the refusal sentence verbatim", () => {
