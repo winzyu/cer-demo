@@ -911,3 +911,41 @@ Across three prompt versions correctness stays within 0.92-1.01 while one judge 
 The measured lever left is retrieval: on `hybrid-slice-vector` a turn with half its labels retrieved scores 0.95, like gold context, and one with none scores 0.19.
 
 Spend: capture and spot check about $0.08, judge $0.552, about $4.34 in total.
+
+### Judge strictness audit - 2026-09-24, agent audit of run `p3-it1-2026-09-23`
+
+All 117 ungrounded claims the judge flagged on gold context were read against the supplied excerpts by the agent; no human reviewed them.
+About 6 verdicts are wrong or over-strict, about 5 are borderline general knowledge, and the rest (about 90%) are real: added reasons, consequences, troubleshooting steps and record-keeping items no excerpt gives, strengthened modals ("should" to "must"), and misread tables.
+So judge strictness does not explain the ungrounded rate; the model's elaboration does.
+
+Over-strict verdicts, each checked against the excerpt text:
+
+| fixture, turn | flagged claim | excerpt | why the verdict is too strict |
+|---|---|---|---|
+| `probecal-orp-standard-check` 2 | "Check the reference-solution level and refill if low" | "Check the level of the filling solution and replenish to the bottom of the fill hole." | stated nearly verbatim |
+| `deepmanual-cross-section-points` 1 | "you must 'divide the stream into a minimum of four increments'" | "Divide the stream into a minimum of four increments." | an imperative instruction read as not supporting "must" |
+| `crossdoc-temp-sensor-drift-blast-radius` 2 | "before any measurements are taken" | "needs to be checked at the beginning of the sampling event" | paraphrase with the same meaning |
+| `crossdoc-sonde-sensor-order` 2 | "so that the water passes the conductivity cell first and then the pH cell" | the pH sensor is installed downstream from the conductivity sensor | restates what downstream means |
+| `crossdoc-conductivity-rise-with-warming` 2 | "Confirm the deviation is within the ±0.2 °C limit" | accuracy "required to be less than or equal to ±0.2°C" | applies a stated requirement as a check step |
+| `crossdoc-bailed-orp-jumping` 2 | "the ORP (Eh) reading will not be 'real' until the sensor has come to thermal equilibrium" | allow the sensors to reach thermal equilibrium and the reading to stabilize before recording | paraphrase of the instruction's purpose |
+
+Borderline, general knowledge the rule nonetheless forbids: NTU expanded as "nephelometric turbidity units", "the 500 µS/cm KCl standard", "brackish water has measurable conductivity", "typical atmospheric pressure (≈760 mm Hg)".
+Correctly flagged although it looks harsh: "five points between 0 °C and the maximum expected temperature" - the excerpt is cut at "between 0°C", so the upper bound is the model's.
+The baseline's recorded strictness examples (adjectives, `±` against OCR `+`) are of the same kind and similarly rare.
+
+### Retrieval depth sweep - 2026-09-24, offline
+
+`npm run retrieval:eval -- --arm=hybrid-slice-vector --k=N` on the frozen 90 queries (fixture-wide labels, 5.4 per turn on average); query embeddings only, well under $0.01.
+
+| k | recall | nDCG | gain per +5 |
+|---|---|---|---|
+| 10 | 29.0% | 0.117 | - |
+| 15 | 35.2% | 0.140 | +6.2 |
+| 20 | 39.5% | 0.154 | +4.3 |
+| 25 | 42.5% | 0.165 | +3.0 |
+| 30 | 46.5% | 0.179 | +4.0 |
+| 40 | 51.0% | 0.193 | +2.3 |
+
+Recall has no knee up to 40; ranking is weak (MRR 0.077 at k=20), so depth is compensating for ordering.
+A chunk is about 800 prompt tokens, about $0.00012 uncached on `gpt-oss-120b`, so k=30 costs about $0.0024 more per request than k=10.
+Choose k on answer correctness, not recall: capture k=20 and k=30 on `hybrid-slice-vector` and stop where correctness gains less than the 0.05 noise band.
