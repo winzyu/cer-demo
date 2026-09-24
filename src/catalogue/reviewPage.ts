@@ -41,7 +41,10 @@ const selection = (a: AppliesTo): string => {
     a.triggers.map((t) => (t === "threshold-crossing" ? "any threshold crossing" : t)).join(", "),
     a.water ? `${a.water.join(" or ")} water only` : "any water",
     ...(a.minConfidence !== undefined ? [`confidence at least ${Math.round(a.minConfidence * 100)}%`] : []),
-    ...(a.minSeverity !== undefined ? [`severity ${a.minSeverity} or higher`] : []),
+    ...[[
+      ...(a.minSeverity !== undefined ? [`severity ${a.minSeverity} or higher`] : []),
+      ...(a.minDurationHours !== undefined ? [`duration over ${a.minDurationHours} hours`] : []),
+    ].join(", or ")].filter(Boolean),
   ];
   return parts.join("; ");
 };

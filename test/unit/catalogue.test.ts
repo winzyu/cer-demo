@@ -75,6 +75,12 @@ describe("parseCatalogue", () => {
     expect(error).toContain("must be kebab-case");
     expect(error).toContain(".text must be a non-empty string");
   });
+
+  it("rejects a duration condition that is not a positive number", () => {
+    expect(() => parseCatalogue(minimal({
+      appliesTo: { triggers: ["Hypoxia"], minDurationHours: 0, conditions: "Long events." },
+    }))).toThrow("minDurationHours must be a positive number");
+  });
 });
 
 describe("usableGuidance", () => {
@@ -152,5 +158,16 @@ describe("entriesFor", () => {
         trigger, water, confidence: 1, severity: "High",
       }))));
     chatOnly.forEach((id) => expect(everything).not.toContain(id));
+  });
+
+  it("takes severity or duration as alternatives when an entry sets both", () => {
+    const review = (finding: Partial<Parameters<typeof entriesFor>[1]>) => ids(entriesFor(entries, {
+      trigger: "Algal bloom", water: "freshwater", confidence: 0.6, ...finding,
+    })).includes("professional-review");
+    // A bloom is always Moderate, so only its one-day window can select the professional review.
+    expect(review({ severity: "Moderate", durationHours: 24 })).toBe(true);
+    expect(review({ severity: "Moderate", durationHours: 12 })).toBe(false);
+    expect(review({ trigger: "Hypoxia", severity: "High", durationHours: 2 })).toBe(true);
+    expect(review({ severity: "Moderate" })).toBe(false);
   });
 });

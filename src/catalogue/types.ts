@@ -50,6 +50,12 @@ export interface AppliesTo {
   water?: WaterClass[];
   minConfidence?: number;
   minSeverity?: Severity;
+  /**
+   * An event lasting longer than this many hours qualifies. With `minSeverity` the two are
+   * alternatives ("High severity, or over 12 hours"), so a long event the engine rates below
+   * High, such as a one-day bloom or a capped persistent offset, is still selected.
+   */
+  minDurationHours?: number;
   /** When the entry applies, in words the model and the reviewer both read. */
   conditions: string;
 }

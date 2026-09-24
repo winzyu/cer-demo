@@ -93,6 +93,7 @@ const eventFinding = (
     water,
     confidence: event.confidence,
     severity: event.severity,
+    durationHours: (event.windowEndMs - event.windowStartMs) / 3_600_000,
   };
   const causeNamed = event.type !== "Inconclusive"
     && byKind(entriesFor(guidance.entries, finding), "explanation").length > 0;

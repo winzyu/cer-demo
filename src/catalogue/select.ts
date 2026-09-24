@@ -44,6 +44,8 @@ export interface Finding {
   /** Absent for a bare threshold crossing, which has no classification to be confident in. */
   confidence?: number;
   severity?: Severity;
+  /** The event window's length; absent for a bare threshold crossing. */
+  durationHours?: number;
 }
 
 /** Entries that fit `finding`, in catalogue order. Chat-only entries (no triggers) never match. */
@@ -52,9 +54,12 @@ export const entriesFor = (entries: CatalogueEntry[], finding: Finding): Catalog
     if (!a.triggers?.includes(finding.trigger)) return false;
     if (a.water && !a.water.includes(finding.water)) return false;
     if (a.minConfidence !== undefined && (finding.confidence ?? 0) < a.minConfidence) return false;
-    if (a.minSeverity !== undefined
-      && SEVERITY_RANK[finding.severity ?? "Low"] < SEVERITY_RANK[a.minSeverity]) return false;
-    return true;
+    const severe = a.minSeverity !== undefined
+      && SEVERITY_RANK[finding.severity ?? "Low"] >= SEVERITY_RANK[a.minSeverity];
+    const long = a.minDurationHours !== undefined
+      && (finding.durationHours ?? 0) > a.minDurationHours;
+    if (a.minSeverity === undefined && a.minDurationHours === undefined) return true;
+    return severe || long;
   })
 );
 

@@ -388,9 +388,12 @@ An entry without `appliesTo.triggers` is for chat only.
 Only `approved` entries whose referral (if any) is also approved reach customers.
 `CATALOGUE_DRAFTS=true` adds drafts for the supervisor's own review; rejected entries are never used.
 The `version` string is bumped on every content change and is recorded with each report (`catalogue_version`, `guidance_ids` in the `generate_report` result).
+Version `2026-09-24.1` is the first approved set: all 38 entries and 6 referrals, with the 26 entries marked up in the 2026-09-24 review approved as edited (`timeline.md`, 2026-09-24).
+Entries that send the customer to CER support name the `cer-support` referral, so its contact line travels with them.
 
 **Reports** (`report/narrative.ts`).
 An event's cause is named only when a usable `explanation` matches its type, water class, confidence and severity.
+An entry that sets both `minSeverity` and `minDurationHours` takes either as enough, so "High severity, or over 12 hours" also selects a long event the engine rates below High, such as a one-day bloom or a capped persistent offset.
 Otherwise the PDF heads it "Threshold crossing", prints no classification confidence, and selects every other entry as if the event were `Inconclusive`, so a next step cannot imply the unnamed cause.
 The detection rule's own rationale (`WQEvent.interpretation`) is never printed.
 Recommendations for a flagged period are the matching `next-step` texts per slot, deduplicated in catalogue order; an empty slot says no approved recommendation covers the findings.
