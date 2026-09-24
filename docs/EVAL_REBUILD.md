@@ -872,7 +872,7 @@ Correctness stayed at 0.51 because scores fell within each retrieval bucket whil
 
 Retrieval still decides the score: a turn with half its labels scores like gold context, and one with none scores near zero.
 The within-bucket drop is the prompt: answers got shorter (well-retrieved turns 1,923 to 774 characters), ungrounded claims fell from 180 to 140, and refusal wording appeared on more turns.
-On gold context, refusal wording on non-refusal fixtures rose from 3 turns to 6; two of them score 0 on questions the supplied excerpts answer (`deepmanual-turbidity-rounding` turn 2, `definitional-eh-versus-the-millivolts-we-log` turn 1), so the partial-refusal rule over-refuses.
+On gold context, refusal wording on non-refusal fixtures rose from 3 turns to 6; two of them score 0 on questions the supplied excerpts answer (`deepmanual-turbidity-rounding` turn 2, `definitional-eh-versus-the-millivolts-we-log` turn 1), which was read as the partial-refusal rule over-refusing. **That reading was wrong:** both turns also score 0 in the baseline, before the rule existed (see iteration 2).
 
 **Judge variance, run `p3-it1-rejudge-2026-09-23`:** the same gold-context answers judged a second time (the run directory is a symlink to `p3-it1-2026-09-23`, so the transcripts are the same files).
 Correctness 1.01 then 0.98, with 7 of 90 turns scored differently; ungrounded turns 49 then 57 of 90 (54% then 63%), with 16 turns flagged differently.
@@ -887,3 +887,27 @@ Two changes, both reversing iteration 1 effects:
 - The partial-refusal rule now tells the model to check every excerpt before refusing, and counts a value derived by applying an excerpt's rule, table or formula to the user's numbers as supported; the refusal is still required for a specific value no excerpt gives or yields.
 
 Spend: captures and spot check about $0.16, judge $1.463, about $1.62 for the run and about $3.15 in total.
+
+### R4 iteration 2 - 2026-09-24, run `p3-it2-2026-09-24`, gold context only
+
+Captured at `e2a0761` with the baseline's settings; one judge call failed and was left unfilled (89 of 90 ungrounded rows).
+
+| run | refusal | citations | fabricated | quotes supported | correctness | ungrounded turns |
+|---|---|---|---|---|---|---|
+| baseline `p3-2026-09-23` | 3 of 8 answered | 95.1% | 3 | 77.3% | 1.01 | 47.8% |
+| iteration 1, judged twice | 2 of 8 answered | 90.5% | 2 | 71.7% | 1.01 / 0.98 | 54.4% / 63.3% |
+| iteration 2 | 3 of 8 answered | 91.2% | 3 | 72.9% | **0.92** | 60.7% (54/89) |
+
+Per class: cross-document 0.79, deep-in-manual 1.05, definitional 1.00, follow-up 1.00, precedence 0.83, probe-calibration 1.06, refusal 0.62.
+
+**Iteration 2 is worse and is to be reverted to the iteration 1 prompt.**
+Seven turns scored below both iteration 1 judgements and one above.
+The two target turns did not move: they score 0 in all four judgements, baseline included.
+The new "applying a rule, table or formula to the user's numbers" wording is the likely cause of two of the losses: `precedence-turbidity-groundwater-background-not-pod-limit` turn 1 judged the user's 12 NTU against an excerpt's background range, which the precedence rule forbids, and `refusal-how-long-can-it-stay-in` answered both turns with derived durations instead of refusing.
+Dropping the excerpt-number sentence did not restore citation validity (91.2% against 90.5%), so that sentence was not what lowered it; the out-of-range marker numbers are left to Task C's citation validation.
+
+**Prompt iteration has reached the noise floor on gold context.**
+Across three prompt versions correctness stays within 0.92-1.01 while one judge alone moves 0.03 between passes, and generation variance (a recapture of the same prompt) is still unmeasured.
+The measured lever left is retrieval: on `hybrid-slice-vector` a turn with half its labels retrieved scores 0.95, like gold context, and one with none scores 0.19.
+
+Spend: capture and spot check about $0.08, judge $0.552, about $4.34 in total.
