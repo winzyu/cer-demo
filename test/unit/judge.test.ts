@@ -644,7 +644,7 @@ describe("judge call - max-tokens budget", () => {
 
     expect(create.mock.calls[0][0]).not.toHaveProperty("reasoning_effort");
     expect(create.mock.calls[1][0].reasoning_effort).toBe("none");
-    expect(off.reasoningEffort).toBeUndefined();
+    expect(off.reasoningEffort).toBe("default");
     expect(none.reasoningEffort).toBe("none");
   });
 });
@@ -656,6 +656,15 @@ describe("judge ledger reuse", () => {
     // A re-capture into the same pass: same key, different answer. Reusing it is the silent
     // wrong verdict the hash exists to prevent.
     expect(answersTask(judged, judgeTask({ answer: "Below 5 mg/L is hypoxic." }))).toBe(false);
+  });
+
+  it("never lets an exploratory verdict stand in for a final one, or the reverse", () => {
+    const final = record({ promptHash: promptHash(judgeTask()), reasoningEffort: "default" });
+    const cheap = record({ promptHash: promptHash(judgeTask()), reasoningEffort: "none" });
+    expect(answersTask(final, judgeTask())).toBe(true);
+    expect(answersTask(final, judgeTask(), "none")).toBe(false);
+    expect(answersTask(cheap, judgeTask(), "none")).toBe(true);
+    expect(answersTask(cheap, judgeTask())).toBe(false);
   });
 
   it("re-judges rows from before hashes were recorded, and turns never judged", () => {

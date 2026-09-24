@@ -13,6 +13,14 @@
  *   npm run judge -- --report                     # summarize what is already judged, no calls
  *   npm run judge -- --run=<id>                   # a named capture, with its own ledger
  *   npm run judge -- --calibrate                  # judge-vs-human agreement, no calls
+ *   npm run judge -- --run=<id> --final           # a capture whose numbers get reported
+ *
+ * **Reasoning is off unless `--final` is passed.** Exploratory passes send `reasoning_effort:
+ * none`, which costs well under half as much but agrees with itself less turn by turn
+ * (`EXPLORATORY_REASONING_EFFORT`). A capture whose numbers are reported or gate a decision - the
+ * final two-arm capture and its second judging - passes `--final`, which lets the model reason at
+ * its default. `--calibration` implies `--final`, because calibration measures the final judge.
+ * Compare only passes judged at the same setting; the header and the output file record it.
  *
  * **Every verdict is appended to `data/results/judge/<pass>.jsonl` as it arrives**, and a re-run
  * skips what is already there. An interrupted pass resumes; it is not repaid. Delete lines from
@@ -33,6 +41,7 @@ import {
   DEFAULT_JUDGE_MODEL,
   JUDGE_ROOT,
   TRANSCRIPT_ROOT,
+  EXPLORATORY_REASONING_EFFORT,
   answersTask,
   appendLedger,
   armsOnDisk,
@@ -44,6 +53,7 @@ import {
   judgesOwnFamily,
   modelsUnderTest,
   readLedger,
+  reasoningLabel,
   recordKey,
   summarize,
   type ArmJudgeResult,
@@ -62,10 +72,20 @@ const flag = (name: string): boolean => process.argv.includes(`--${name}`);
 
 const REASONING_EFFORTS = ["none", "minimal", "low", "medium", "high"] as const;
 
-/** Rejects a typo before it is sent, rather than paying for a call the API refuses. */
-const parseReasoningEffort = (value: string | undefined): ReasoningEffort | undefined => {
+/**
+ * The effort to send: `--reasoning-effort` if given, none at all under `--final`, and otherwise
+ * the exploratory setting. Rejects a typo before it is sent, rather than paying for a call the API
+ * refuses.
+ */
+const parseReasoningEffort = (
+  value: string | undefined,
+  final: boolean,
+): ReasoningEffort | undefined => {
   if (value === undefined) {
-    return undefined;
+    return final ? undefined : EXPLORATORY_REASONING_EFFORT;
+  }
+  if (final) {
+    throw new Error("--final uses the model's default reasoning; drop --reasoning-effort.");
   }
   if (!(REASONING_EFFORTS as readonly string[]).includes(value)) {
     throw new Error(`--reasoning-effort must be one of ${REASONING_EFFORTS.join(", ")} (got "${value}").`);
@@ -234,6 +254,7 @@ const main = async (): Promise<void> => {
   const transcriptRoot = runId !== undefined ? path.join(TRANSCRIPT_ROOT, runId) : TRANSCRIPT_ROOT;
   const judgeRoot = runId !== undefined ? path.join(JUDGE_ROOT, runId) : JUDGE_ROOT;
   const calibrating = flag("calibration");
+  const reasoningEffort = parseReasoningEffort(arg("reasoning-effort"), flag("final") || calibrating);
   const arms = arg("arm")?.split(",")
     ?? (calibrating ? calibrationArms(pass) : armsOnDisk(transcriptRoot, pass));
   const dimensions = (arg("dimension")?.split(",") as JudgeDimension[] | undefined)
@@ -282,14 +303,19 @@ const main = async (): Promise<void> => {
   const planned = buildTasks({
     pass, arms, only, dimensions, root: transcriptRoot,
   });
-  const tasks = planned.filter((task) => !answersTask(currentLedger.get(recordKey(task)), task));
+  const tasks = planned.filter((task) => !answersTask(
+    currentLedger.get(recordKey(task)),
+    task,
+    reasoningEffort,
+  ));
   const stale = new Set(
     tasks.map(recordKey).filter((key) => currentLedger.has(key)),
   );
   if (stale.size > 0) {
     log.info(
-      `${stale.size} ledger row(s) graded a different prompt (a re-capture, a rubric or prompt `
-      + "change, or a row from before prompt hashes were recorded) - re-judging them.",
+      `${stale.size} ledger row(s) graded a different prompt or reasoning setting (a re-capture, `
+      + "a rubric or prompt change, --final versus exploratory, or a row from before prompt hashes "
+      + "were recorded) - re-judging them.",
     );
   }
 
@@ -317,6 +343,9 @@ const main = async (): Promise<void> => {
   log.info(`Arms:        ${arms.join(", ")}`);
   log.info(`Under test:  ${underTest.join(", ") || "(not recorded)"}`);
   log.info(`Judge model: ${judgeModel}`);
+  log.info(reasoningEffort === undefined
+    ? "Reasoning:   model default (final)"
+    : `Reasoning:   ${reasoningEffort} (exploratory - pass --final for reported numbers)`);
   if (sameFamily.length > 0) {
     log.info(`  CAVEAT: same family as ${sameFamily.join(", ")} — §7b's rule is met, its intent`);
     log.info("  is not. Record this next to the agreement rate in the evaluation report.");
@@ -345,7 +374,7 @@ const main = async (): Promise<void> => {
   const options = {
     model: judgeModel,
     maxTokens: Number(arg("max-tokens") ?? DEFAULT_JUDGE_MAX_TOKENS),
-    reasoningEffort: parseReasoningEffort(arg("reasoning-effort")),
+    reasoningEffort,
   };
 
   const fresh: JudgeRecord[] = [];
@@ -415,6 +444,7 @@ const main = async (): Promise<void> => {
   fs.writeFileSync(resolved, `${JSON.stringify({
     pass,
     judgeModel,
+    reasoningEffort: reasoningLabel(reasoningEffort),
     modelsUnderTest: underTest,
     judgedAt: new Date().toISOString(),
     budget,

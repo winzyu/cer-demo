@@ -441,6 +441,9 @@ export const parseVerdict = (dimension: JudgeDimension, reply: string): JudgeVer
  * the same defect from the other end: that model spent 3,350 completion tokens per call against
  * `gpt-oss-120b`'s 542, and the 6.2x verbosity cancelled its 3x cheaper rate exactly. Constraining
  * the shape therefore buys parse reliability *and* the cost saving the rate card advertised.
+ * It removes reasoning from the reply text only: on `deepseek-v4-flash-0731` the hidden
+ * reasoning is still billed as completion tokens, and `reasoning_effort` is what turns it off
+ * (2026-09-24, `EXPLORATORY_REASONING_EFFORT` in `runner.ts`).
  *
  * `parseVerdict` stays exactly as strict. A schema is enforced by the provider, so it is a claim
  * about the provider's behaviour, not a guarantee this code should lean on — and the checks it

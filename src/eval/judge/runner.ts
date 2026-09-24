@@ -180,7 +180,10 @@ export interface JudgeRecord {
    * history.
    */
   maxTokens?: number;
-  /** The `reasoning_effort` the call was made with; undefined means the model's default. */
+  /**
+   * The `reasoning_effort` the call was made with, or `"default"` when none was sent. Undefined on
+   * rows judged before 2026-09-24, which all ran at the model's default.
+   */
   reasoningEffort?: string;
   model: string;
   judgedAt: string;
@@ -193,9 +196,32 @@ export const promptHash = (task: JudgeTask): string => hashPrompt(
   PROMPT_BUILDERS[task.dimension](task.evidence),
 );
 
-/** Does this ledger row grade exactly the prompt `task` would send? */
-export const answersTask = (record: JudgeRecord | undefined, task: JudgeTask): boolean => (
-  record?.promptHash !== undefined && record.promptHash === promptHash(task)
+/**
+ * The reasoning effort exploratory judge runs use; `npm run judge -- --final` sends none.
+ *
+ * Measured 2026-09-24 on the `p3-it1` gold-context answers (`EVAL_REBUILD.md`, "Judge cost"):
+ * `none` cut a pass from about $0.52 to $0.23 and failed no calls, with mean correctness and the
+ * ungrounded rate inside the spread of three default-reasoning passes. Turn-level agreement with
+ * those passes fell from 87-92% to 70-72% on correctness, so it is cheap direction-finding, not
+ * the instrument a reported number is measured with.
+ */
+export const EXPLORATORY_REASONING_EFFORT: ReasoningEffort = "none";
+
+/** How a ledger row records the reasoning setting a call was made with. */
+export const reasoningLabel = (effort: ReasoningEffort | undefined): string => effort ?? "default";
+
+/**
+ * Does this ledger row grade exactly the prompt `task` would send, at the same reasoning setting?
+ * A verdict from the cheap exploratory judge must never stand in for a final one, or the reverse.
+ */
+export const answersTask = (
+  record: JudgeRecord | undefined,
+  task: JudgeTask,
+  reasoningEffort?: ReasoningEffort,
+): boolean => (
+  record?.promptHash !== undefined
+  && record.promptHash === promptHash(task)
+  && (record.reasoningEffort ?? "default") === reasoningLabel(reasoningEffort)
 );
 
 export const recordKey = (
@@ -382,9 +408,9 @@ export const judgeOnce = async (
       // despite sharing a ~7K-token prefix. Hashed so no arm or fixture name leaves the harness.
       ...(options.reasoningEffort ? { reasoning_effort: options.reasoningEffort } : {}),
       user: hashPrompt(`${task.arm}|${task.fixtureId}|${task.turn}`).slice(0, 16),
-      // Enforced during generation, not requested in prose — see JUDGE_SCHEMAS. This also
-      // suppresses reasoning preambles, which is what made a cheaper judge unusable and, worse,
-      // no cheaper: the tokens it spent thinking out loud cost exactly what the rate card saved.
+      // Enforced during generation, not requested in prose — see JUDGE_SCHEMAS. This keeps
+      // reasoning preambles out of the reply text, which is what made a cheaper judge unusable;
+      // hidden reasoning is still billed, and `reasoning_effort` above is what limits it.
       response_format: {
         type: "json_schema",
         json_schema: { name: `${task.dimension}_verdict`, schema: JUDGE_SCHEMAS[task.dimension] },
@@ -415,7 +441,7 @@ export const judgeOnce = async (
         completionTokens,
         promptHash: hashPrompt(prompt),
         maxTokens: options.maxTokens,
-        reasoningEffort: options.reasoningEffort ?? undefined,
+        reasoningEffort: reasoningLabel(options.reasoningEffort),
         model: response.model ?? options.model,
         judgedAt: new Date().toISOString(),
       };
