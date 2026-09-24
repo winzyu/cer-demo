@@ -9,6 +9,8 @@ dist/
 .env.local
 .env.*.local
 serviceAccountKey.json
+*.swp
+.env.bak*
 
 # logs
 *.log
