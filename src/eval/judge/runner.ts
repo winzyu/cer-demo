@@ -362,6 +362,10 @@ export const judgeOnce = async (
       max_tokens: options.maxTokens,
       // Pinned, like the sweep itself. A sampled judge measures the sampler.
       temperature: 0,
+      // Fireworks routes serverless traffic by this key to maximize prompt cache hits. Without
+      // it, measured 2026-09-24, a turn's second call landed elsewhere and read 0 cached tokens
+      // despite sharing a ~7K-token prefix. Hashed so no arm or fixture name leaves the harness.
+      user: hashPrompt(`${task.arm}|${task.fixtureId}|${task.turn}`).slice(0, 16),
       // Enforced during generation, not requested in prose — see JUDGE_SCHEMAS. This also
       // suppresses reasoning preambles, which is what made a cheaper judge unusable and, worse,
       // no cheaper: the tokens it spent thinking out loud cost exactly what the rate card saved.

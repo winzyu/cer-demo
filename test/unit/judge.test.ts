@@ -600,6 +600,23 @@ describe("judge call - max-tokens budget", () => {
     const unreported = await judgeOnce(reply(usage), options, task);
     expect(unreported.cachedPromptTokens).toBeUndefined();
   });
+
+  it("routes every dimension of one turn with the same cache-affinity key", async () => {
+    const create = jest.fn().mockResolvedValue({
+      choices: [{ message: { content: '{"score": 2, "reason": "fine", "claims": []}' } }],
+      model: "judge-model",
+      usage: { prompt_tokens: 50, completion_tokens: 5 },
+    });
+    const options = { model: "judge-model", maxTokens: 100 };
+    await judgeOnce(fakeClient(create), options, judgeTask());
+    await judgeOnce(fakeClient(create), options, { ...judgeTask(), dimension: "ungrounded" });
+    await judgeOnce(fakeClient(create), options, { ...judgeTask(), turn: 2 });
+
+    const [first, second, otherTurn] = create.mock.calls.map((call) => call[0].user);
+    expect(first).toBe(second);
+    expect(otherTurn).not.toBe(first);
+    expect(first).not.toContain("gold-context");
+  });
 });
 
 describe("judge ledger reuse", () => {
