@@ -1,12 +1,13 @@
 ---
 name: handoff
-description: Update CER durable docs and session status when the user explicitly requests a handoff.
+description: Update CER durable docs and session status when the user explicitly requests a handoff; `/handoff cloud` also pushes it and prints cloud context-exploration prompts.
 disable-model-invocation: true
 ---
 
 # Handoff
 
-Run only when explicitly requested with `/handoff`; an optional argument identifies the workstream.
+Run only when explicitly requested: `/handoff [cloud] [workstream]`.
+Without `cloud` it is a normal handoff (steps 1-5); with `cloud`, also run step 6.
 If `docs/STATUS.md` is missing, stop and report it.
 
 1. Gather fresh Git status, relevant commits since the last STATUS update, and this session's checks, decisions, spend, defects, and open questions.
@@ -20,4 +21,8 @@ If `docs/STATUS.md` is missing, stop and report it.
    Keep STATUS under 120 lines, Last session at most five lines, and derive numbers from current sources.
 4. Verify edited links, line limits, numbers, and status paths; check that new code/durable docs do not cite STATUS.
 5. Report outcomes and outstanding decisions briefly, plus `Read docs/STATUS.md, then continue <workstream>`.
-   Offer a docs-only Git plan only if requested or needed for an explicitly requested Git mutation.
+6. Cloud only:
+   - Commit this handoff's own paths and push `dev` through `git-plan`, so cloud sessions clone it.
+   - For each "Next conversations" task, print one prompt in chat from [CLOUD_PROMPT.md](CLOUD_PROMPT.md); never write prompts into STATUS.
+   - A task whose files are in the upstream repos, git-ignored data, or untracked files gets "explore locally" instead, because the cloud clone cannot see them.
+   - Give each prompt its local start line from the same file.
