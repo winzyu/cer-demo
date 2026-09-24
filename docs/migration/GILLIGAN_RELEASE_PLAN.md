@@ -33,10 +33,10 @@ Each has a default so work does not wait.
 
 | # | question | who | default if unanswered by |
 |---|---|---|---|
-| O1 | Which CER support contact do referrals and fault messages use (email, in-app, other)? | supervisor | Sep 26: the contact on CER's public site, shown as "Clean Earth Rovers support" plus that address |
-| O2 | How are the dashboard and server deployed today (platform, who merges, who deploys)? | user | Needed by Sep 26 for L6; no safe default |
+| O1 | Which CER support contact do referrals and fault messages use? | supervisor | **Answered 2026-09-24:** sales@cleanearthrovers.com, or the customer's existing CER contact |
+| O2 | How are the dashboard and server deployed today (platform, who merges, who deploys)? | user | **Answered 2026-09-24:** the user merges and deploys; platform details go in the runbook's §2 inputs |
 | O3 | Token cap per user per day. | user | 500,000 tokens, as an environment variable |
-| O4 | Catalogue decisions marked "your decision": report-pollution confidence 30% to 50%, rename "Industrial" to "Unexplained abrupt change", the two referral renames, the optional inland conductivity entry. | user | Recommended: 50%, rename both labels and referrals, no inland entry at launch |
+| O4 | Catalogue decisions marked "your decision". | user | **Answered 2026-09-24:** every entry approved, marked-up ones as edited (50% confidence, both referral renames); the "Industrial" label rename and the inland entry were review notes, not entry edits, and were not applied |
 | O5 | Who may read saved chats (support staff, organization admins)? | supervisor | Only the author; nobody else has an access path at launch |
 | O6 | R1 scope (the last item in STATUS "The user's" list). | user | Section 3 S1-S6 as written, `/gilligan/answer` and identity tokens after launch |
 | O7 | Did the malware ever run on a build machine (Cloud Build, App Engine)? | user | Must be answered before L6 builds anything from the upstream branches |
@@ -66,7 +66,7 @@ All stay inside tools-on prompt blocks and tool results, so R4's tools-off captu
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
 | Q1 | QA findings 1-5 and 7: today's date in the prompt, reading age in `list_pods` and `query_sensor_data`, the parameter behind `generate_report`'s status, guidance to use min or series for claimed spikes and to relay tool notes | Claude | must | none | Sep 25 |
-| Q2 | Record the answers: `STAKEHOLDER_QUESTIONS.md` (items 1-4, 10, 11, 18, 21, 22), decisions in `timeline.md`, quota and deploy changes in `GILLIGAN_TARGET_ARCHITECTURE.md` | Claude | must | none | Sep 25 |
+| Q2 | **done 2026-09-24.** Record the answers: `STAKEHOLDER_QUESTIONS.md` (items 1-4, 10, 11, 18, 21, 22), decisions in `timeline.md`, quota and deploy changes in `GILLIGAN_TARGET_ARCHITECTURE.md` | Claude | must | none | Sep 25 |
 | Q3 | Current-site filtering: split a device's readings into sites by coordinates, default every query and report to the latest site, add an explicit option for earlier sites, and say when earlier sites exist; verify first that `/water/period` rows carry coordinates for every pod | Claude | must | Q1 | Sep 26 |
 | Q4 | Stuck-sensor detection: a sustained zero-variance run at 0 or 1005 is flagged as a likely failed sensor in tool results and reports, and is excluded before report pattern matching (the catalogue's engine check) | Claude | must | Q1 | Sep 26 |
 | Q5 | Limits wider than the sensor's range read "not assessed" in `get_pod_thresholds` and reports, not "within limits" | Claude | should | Q1 | Sep 27 |
@@ -77,12 +77,12 @@ All stay inside tools-on prompt blocks and tool results, so R4's tools-off captu
 
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
-| C1 | Apply the marked-up edits and O4 decisions to `src/catalogue/catalogue.json` as a new version, then regenerate `docs/catalogue/review.html` from its generator | Claude | should | O4, O1 | Sep 25 |
-| C2 | Send the regenerated review for per-entry sign-off (approve as written, with edits, or reject) | user | should | C1 | Sep 25 |
-| C3 | Supervisor signs off | supervisor | should | C2 | Sep 27 |
-| C4 | Record approvals in the catalogue, turn on `CATALOGUE_PROMPT`, rerun catalogue and narrative suites | Claude | should | C3 | Sep 28 |
+| C1 | **done 2026-09-24.** Apply the marked-up edits and O4 decisions to `src/catalogue/catalogue.json` as a new version, then regenerate `docs/catalogue/review.html` from its generator | Claude | should | O4, O1 | Sep 25 |
+| C2 | **not needed: the supervisor approved directly.** Send the regenerated review for per-entry sign-off (approve as written, with edits, or reject) | user | should | C1 | Sep 25 |
+| C3 | **done 2026-09-24.** Supervisor signs off | supervisor | should | C2 | Sep 27 |
+| C4 | **done 2026-09-24 except the deployment flag, which the runbook carries (L1).** Record approvals in the catalogue, turn on `CATALOGUE_PROMPT`, rerun catalogue and narrative suites | Claude | should | C3 | Sep 28 |
 
-Without C3 by Sep 28, launch runs with `CATALOGUE_PROMPT` off: reports keep threshold crossings and limitations, and chat gives no catalogue advice.
+The catalogue is approved (`2026-09-24.1`), so the release runs `CATALOGUE_PROMPT=true`; the block adds about 21,000 characters to every chat prompt.
 
 ### cer-rag service and packaging (R1)
 
@@ -90,7 +90,7 @@ Worktree cut from `dev`; none of these files overlap Q1-Q7.
 
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
-| F1 | Firestore framework table for the supervisor: existing chat collections and the `audit` field, one new usage collection, and the corpus and chunk collections as optional (launch ships the corpus inside the image, so Firestore corpus is not needed) | Claude, then user sends | must | none | Sep 25 |
+| F1 | **done 2026-09-24.** Firestore framework table for the supervisor: existing chat collections and the `audit` field, one new usage collection, and the corpus and chunk collections as optional (launch ships the corpus inside the image, so Firestore corpus is not needed) | Claude, then user sends | must | none | Sep 25 |
 | F2 | Supervisor approves the table | supervisor | must | F1 | Sep 26 |
 | S1 | Image packaging: ship `data/corpus/` and `data/embeddings/cache.json` in the image, `CORPUS_SOURCE=artifact`; build proof without local Docker (Cloud Build or a machine with Docker) | Claude, user builds | must | O7 | Sep 26 |
 | S2 | Service check between cer-api and cer-rag per runbook §5 (Cloud Run invoker IAM, or a shared secret header if §5's forwarding problem bites) | Claude | must | none | Sep 26 |
@@ -104,7 +104,7 @@ Worktree cut from `dev`; none of these files overlap Q1-Q7.
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
 | P1 | Publish: fetch and scan, cherry-pick `local` onto dashboard `origin/main` and server `origin/develop`, secrets and passthrough audit, push feature branches and draft PRs with named commands; propose the malware-rule update (O8) | Claude, user approves pushes | must | none | Sep 25 |
-| P2 | Supervisor or owner merges the PRs, or grants the user merge rights (O2) | supervisor | must | P1, demo | Sep 29 |
+| P2 | The user merges the PRs after the demo (O2) | user | must | P1, L7 | Sep 29 |
 | P3 | Task E (1): membership check in `findPeriodWaterData` with organization-isolation tests from `test/fixtures/pod-scope/` | Codex, Claude reviews | must | P1 | Sep 26 |
 | P4 | Task E (2) lazy `EmailService` and `PaymentService`; (3) ESLint parser if small; `turbVoltToNTU.ts` null; dashboard dial to 345/795 | Codex, Claude reviews | should | P1 | Sep 26 |
 | P5 | Check the dashboard `confirm-email` "Attempted import error" does not break a production build | Claude | must | P1 | Sep 26 |
@@ -123,7 +123,7 @@ Live writes are approved for test data only; each creation is announced in chat 
 
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
-| T1 | Plan the test set (two organizations with members, one with no pods) and a cleanup ledger in `docs/migration/` listing every created ID | Claude | must | none | Sep 25 |
+| T1 | **done 2026-09-24.** Plan the test set (two organizations with members, one with no pods) and a cleanup ledger in `docs/migration/` listing every created ID | Claude | must | none | Sep 25 |
 | T2 | Create the test data; run isolation checks through the local stack: own pods answer, the other organization's pods refuse, the empty organization sees nothing, direct `/water/period` calls are refused once P3 is deployed | Claude, user approves each write batch | must | T1, P3 | Sep 27 |
 | T3 | Delete every ledger entry and confirm none remain | Claude, user confirms | must | L8 smoke | Sep 30, before traffic |
 
