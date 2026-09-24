@@ -102,6 +102,14 @@ describe("judge prompts — blinding", () => {
     expect(prompt).toContain('"value":42');
     expect(prompt).toContain("TOOL EVIDENCE");
     expect(prompt).not.toContain("Hypoxia begins below 2 mg/L");
+    expect(prompt).toMatch(/Tool round cap reached: not recorded\n\nCONVERSATION SO FAR:/);
+  });
+
+  it("keeps tools-off correctness prompts free of an empty tool-evidence gap", () => {
+    const plain = evidence({
+      rubric: { must_contain: ["states the 2 mg/L threshold"], must_not: [] },
+    });
+    expect(correctnessPrompt(plain)).toMatch(/score the same\.\n\nCONVERSATION SO FAR:/);
   });
 
   it("supplies it when a must_not asks whether the answer invented something", () => {

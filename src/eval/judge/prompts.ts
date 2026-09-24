@@ -55,6 +55,12 @@ const toolEvidenceBlock = (evidence: JudgeEvidence): string => (
     : ""
 );
 
+/** The evidence as its own section; empty without any, so tools-off prompts keep their bytes. */
+const toolEvidenceSection = (evidence: JudgeEvidence): string => {
+  const block = toolEvidenceBlock(evidence);
+  return block ? `${block.trimStart()}\n\n` : "";
+};
+
 const JSON_ONLY = "Reply with one JSON object and nothing else. No prose, no code fences.";
 
 const bullets = (items: readonly string[]): string => (
@@ -195,9 +201,7 @@ rubric's points, and that is still not a 2.
 
 ${contextBlock(evidence.context)}
 
-` : ""}${toolEvidenceBlock(evidence)}
-
-CONVERSATION SO FAR:
+` : ""}${toolEvidenceSection(evidence)}CONVERSATION SO FAR:
 ${historyBlock(evidence.history)}
 
 QUESTION BEING GRADED:
