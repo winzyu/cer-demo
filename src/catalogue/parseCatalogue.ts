@@ -142,6 +142,14 @@ const parseAppliesTo = (c: Collector, where: string, value: unknown): AppliesTo 
   if (raw.minSeverity !== undefined) {
     applies.minSeverity = c.oneOf(`${where}.minSeverity`, raw.minSeverity, SEVERITIES);
   }
+  if (raw.minDurationHours !== undefined) {
+    const hours = raw.minDurationHours;
+    if (typeof hours !== "number" || !(hours > 0)) {
+      c.errors.push(`${where}.minDurationHours must be a positive number`);
+    } else {
+      applies.minDurationHours = hours;
+    }
+  }
   return applies;
 };
 

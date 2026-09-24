@@ -91,3 +91,7 @@ handback for what that means for exit criterion 3.
 > refreshed to that chunk's OCR (`74S` where the old text read `TAS`); claim text is unchanged.
 > All 2177 quotes are now verbatim in their chunks. No wave 1 fixture names this claim, so the
 > regenerated labels are byte-identical and the label fingerprint is unchanged.
+>
+> `dev` regenerated the same move against its uncorrected fixtures, two of which name the claim.
+> Merging `dev` into `eval/wave1-corrections` on 2026-09-24 kept the corrected fixtures, so the
+> regenerated labels there still carry neither chunk index 9 nor 10 for this claim.

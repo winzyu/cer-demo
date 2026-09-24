@@ -84,9 +84,9 @@ The goal is that every user gets the same allowance, that no single user or orga
 
 | limit | starting value | why |
 |---|---|---|
-| Questions per user per UTC day | 20 | the visible, easy-to-explain allowance |
-| Reports per user per UTC day | 3 | a report runs several device calls and a long render |
-| Tokens per user per UTC day | 500,000 | catches runaway tool loops; roughly 10 heavy or 40 light questions |
+| Questions per user per UTC day | 20 | the visible, easy-to-explain allowance; confirmed by the supervisor 2026-09-24 |
+| Reports per user per UTC day | 5 | set by the supervisor 2026-09-24; a report runs several device calls and a long render |
+| Tokens per user per UTC day | 500,000 (placeholder; the supervisor's cap is still to be set) | catches runaway tool loops; roughly 10 heavy or 40 light questions |
 | Tokens per organization per month | 10,000,000 | stops one large organization consuming the shared budget |
 | Deployment spend per day | monthly budget ÷ 30 | a daily slice, so early heavy use cannot drain the month |
 | Concurrent model calls | 8 | stays under the adaptive rate limit; extra requests wait up to 20 s, then get "busy, try again" |
@@ -149,6 +149,8 @@ A referral is only offered when the observed evidence matches the entry's applic
 | Period query authorization | `src/services/WaterAnalyticsService.ts` | modify | membership check on explicit device filters (`SECURITY_FINDINGS.md` §1); cer-rag already validates pods, but the endpoint is reachable directly |
 
 ## 4. Roadmap to September 30
+
+Superseded for September 24-30 by [`GILLIGAN_RELEASE_PLAN.md`](GILLIGAN_RELEASE_PLAN.md), written after the supervisor's answers; the table below is the original schedule.
 
 Working days are counted from Thursday, September 17.
 "Upstream" work needs a place to develop it before the supervisor approves the merge (open decision D1).

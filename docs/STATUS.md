@@ -4,10 +4,11 @@ Current state and next steps only.
 Rewritten at the end of every session by `/handoff`; history is `git log -p docs/STATUS.md`.
 Never cite this file from code or other docs: the reasoning lives in the docs under "Where things live".
 
-Updated 2026-09-24 after Task C landed (`dev` `913ec33`, pushed) and a release-planning session with the user; the eval (R4) notes were last verified 2026-09-24 at `eval/wave1-corrections` `e36d3a2` and are older than that branch's head; other workstream notes retain their verification dates.
+Updated 2026-09-24 in an orchestration session that reconciled five overnight sessions (Task A, Task C follow-up, R4 depth captures, judge cost, a conversation quality check); `dev` and `eval/wave1-corrections` were verified that day.
 
 ## Start here
 
+- **The task list for September 24-30 is [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md)** (task IDs such as Q1, S3, L5), written 2026-09-24 after the supervisor's answers; where this file and the plan disagree, the plan is newer.
 - **Gilligan release (September 30), 6 days left, holds with reduced scope; the user deploys (decided 2026-09-24, `timeline.md`).**
   Read [`migration/GILLIGAN_PRODUCT_DIRECTION.md`](migration/GILLIGAN_PRODUCT_DIRECTION.md) then [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md).
   The user holds owner/editor access to the production Google Cloud project, so upstream IAM is no longer someone else's step.
@@ -21,7 +22,7 @@ Updated 2026-09-24 after Task C landed (`dev` `913ec33`, pushed) and a release-p
   Packaging and the cer-demo side of the identity check touch no Task C file and can start now; the rest is cut from the post-Task C heads.
   The recommended minimum is packaging, a shared-secret service check, `max-instances=1` and a Fireworks spending cap, with identity tokens, Firestore quotas, `/gilligan/answer` and the limiter after launch; the user has not chosen yet.
   This machine has no Docker, `gcloud`, Java or Firestore emulator, so neither the image nor a Firestore usage store can be tested end to end locally yet.
-- **Deployment runbook - drafted, untracked, stale.** `docs/migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` was drafted 2026-09-23 against `50adac0` and not touched since.
+- **Deployment runbook - drafted, committed unrevised, stale.** [`migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md`](migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md) was drafted 2026-09-23 against `50adac0`.
   It assumes the upstream owners deploy; rewrite its owner roles and §2 permissions for the user deploying, and let the user fill its §2 inputs table.
   Its §5 finding stands: Cloud Run strips the signature from the forwarded service token, so D12's in-app verification needs a separate header arrangement.
 - **Task C, first slice - done, merged and pushed 2026-09-24.**
@@ -29,48 +30,50 @@ Updated 2026-09-24 after Task C landed (`dev` `913ec33`, pushed) and a release-p
   Tool results and the round cap now reach the relay, the page, saved history, transcripts, the gate and the judge; tool results are citable as `【Tn】`, and citation markers are audited, corrected where unambiguous, and stripped only on display.
   Contract: `SPECS.md` §10.4a; checks: [`migration/TASK_C_VERIFICATION.md`](migration/TASK_C_VERIFICATION.md); after the `dev` merge the citation, audit, health and retrieval suites passed 81/81, with typecheck and lint clean.
   Tools-off transcripts carry no tool fields, so the judge prompt for R4's captures is unchanged.
-- **Eval (R4) - in progress in its own session, on `eval/wave1-corrections` and `eval/judge-cost`, neither in `dev`.**
-  Set frozen at 45 / 90, closed without human verification.
-  Gold context: baseline 1.01, iteration 1 1.01 (0.98 on a second judge pass), iteration 2 0.92 and reverted; the branch carries iteration 1's prompt.
-  Since the last verified note the branch re-parented `epa-oxygen-solubility-chart-01` to chunk 10 (`c85848a`) and raised `DEFAULT_TOP_K` to 20 for a depth capture (`9abc8a8`); a k=30 capture sits uncommitted in its worktree.
-  `eval/judge-cost` (`104ba07`) reorders judge prompts for caching and re-judged iteration 1 under that layout.
-  **Both branches now conflict with `dev`** in the judge prompts and runner, `systemPrompt.ts`, and the bakeoff, gate and judge tests; merge `dev` into them before more captures.
-  Detail: `EVAL_REBUILD.md` and `eval/reviews/phase3-2026-09-23/HANDOFF.md` on that branch.
-- **Catalogue (R2) - built, approval pending; the user is chasing the supervisor this week.**
-  `src/catalogue/catalogue.json` is version `2026-09-19.1`: 38 draft entries and 5 referrals, behind `CATALOGUE_PROMPT` (default off) in chat and wired into reports; `SPECS.md` §4b.
-  Supervisor items 17-20 were sent 2026-09-19 (`migration/SUPERVISOR_QUESTIONS_SEND.md`, `docs/catalogue/review.html`) and are unanswered; without approval by launch, `CATALOGUE_PROMPT` stays off.
+- **Eval (R4) - depth settled at k=20; calibration and the final capture remain.** All on `eval/wave1-corrections` (`3062d3d`, pushed), not in `dev`.
+  `dev` (Task A and Task C) and `eval/judge-cost` are merged in; exploratory judge passes now run with reasoning off and reported passes with `--final`.
+  `hybrid-slice-vector` correctness: 0.51 at k=10, 0.60 at k=20, 0.52 at k=30, where the model refuses answerable questions; gold context 1.01.
+  Spend about $7.44 of the $20 ceiling the user set 2026-09-24, approved through September 28.
+  Next: calibration tooling and a 32-row packet the user grades on correctness and ungrounded, then the final two-arm capture about September 27.
+  Detail: `EVAL_REBUILD.md` "Retrieval depth captures" and `eval/reviews/phase3-2026-09-23/HANDOFF.md`, both on that branch.
+- **Task A, turbidity - done, provisional, pushed 2026-09-24 (`dev` `e7a986b`).** Bands stay at 345/795 (the operator's 2.2 V and 0.7 V thresholds), an all-zero period is flagged as a possible missing sensor, turbidity is a unitless index (never NTU), every pod is treated as qualitative, and item 18 is treated as granted.
+  Record: `timeline.md` 2026-09-24, `STAKEHOLDER_QUESTIONS.md` items 3, 10, 14 and 18, [`migration/TURBIDITY_EXPLORATION.md`](migration/TURBIDITY_EXPLORATION.md).
+  Upstream follow-ups remain: the dashboard dial to 345/795, and `turbVoltToNTU.ts` returning null for a missing voltage.
+- **Conversation quality check - 2026-09-24, 26 live turns through the full local stack.** Plumbing, tool choice and refusals are sound; answer content is not.
+  High: the model is never given today's date and `list_pods` gives no reading age, so stale pods read as online; `generate_report` gives a status without the parameter that caused it, so a summary contradicted its own report.
+  Record and suggested fixes: [`migration/CONVERSATION_QA_2026-09-24.md`](migration/CONVERSATION_QA_2026-09-24.md).
+- **Catalogue (R2) - approved 2026-09-24.** `src/catalogue/catalogue.json` `2026-09-24.1`: all 38 entries and 6 referrals approved, the marked-up ones as edited; CER contact is sales@cleanearthrovers.com or the customer's existing CER contact. The release runs `CATALOGUE_PROMPT=true`; the eval harness keeps it off. `SPECS.md` §4b.
 - **Environment - rebuilt.** Corpus byte-reproducible, secrets in, `DEFAULT_RETRIEVAL=hybrid-slice-vector` with `CORPUS_SOURCE=artifact`, and the git-ignored `data/embeddings/cache.json` built; see [`migration/LOCAL_STACK.md`](migration/LOCAL_STACK.md).
   `cer-demo/.env` sets `SENSOR_TOOL=true` and `REPORT_TOOL=true`, so every local boot answers reading questions with live production reads.
-- **Upstream repos - clean `local` branches, never pushed, now backed up.** `origin` in both points at the live `Clean-Earth-Rovers-Technology` repositories ([`migration/SECURITY_INCIDENT_2026-09-19.md`](migration/SECURITY_INCIDENT_2026-09-19.md)).
+- **Upstream repos - clean `local` branches, not yet pushed; the user has authorization to push (2026-09-24).** Push only to new feature branches by a command named in chat, never to `main` or `develop`.
+  **Upstream removed the payload on `main` and `develop` in both repos on 2026-09-23/24**, byte-identical to our `security/remove-payload` commits; every remote branch tip scanned clean on 2026-09-24 (long-line scan, positive-controlled on the old infected commits). Older history still carries it.
+  `local` merges cleanly onto dashboard `origin/main` and server `origin/develop`; server `origin/main` conflicts. `origin` in both points at the live `Clean-Earth-Rovers-Technology` repositories ([`migration/SECURITY_INCIDENT_2026-09-19.md`](migration/SECURITY_INCIDENT_2026-09-19.md)).
   Bundles of `local`, `task/c-provenance` and `security/remove-payload` are at `~/code/clean-earth-rovers/backups/*-local-2026-09-24.bundle`, verified; they are on this machine only, and `local`'s history still contains the pre-cleanup payload commits.
 
 ## Next conversations
 
 Independent tasks for separate sessions; the user was given a starting prompt for each on 2026-09-24.
 
-- **R1 packaging and service check.** In a new worktree cut from `dev`: ship the corpus and embedding cache in the image with a boot check that fails loudly when either is missing, and the cer-demo side of the service identity check. Blocked on the user's R1 scope choice for the check's form.
-- **Task A - Turbidity information. Interview the user first.** `TURBIDITY_BAND_EDGES` and the voltage conversion in `src/report/referenceRanges.ts` feed `get_turbidity_info`, the report's clarity bands and the prompt's "provisional, uncalibrated index" framing, and nobody has confirmed them.
-  Open questions: which bands are current; whether the v2 turbidity exemption (supervisor item 18) changes them; how to report a 0 index, since `turbVoltToNTU.ts` returns 0 for a missing voltage and for the offline sentinel alike; whether any pod has quantitative hardware; and stakeholder item 14, the dial's 350/800 against the report's 345/795.
-  Exploration notes: [`migration/TURBIDITY_EXPLORATION.md`](migration/TURBIDITY_EXPLORATION.md). The vendor datasheets are in `documents/_excluded/`, not ingested.
-  Start with: `Read docs/STATUS.md, then work Task A, turbidity information - interview me before changing anything.`
-- **Task E - Upstream hardening**, on `../clean-earth-rovers-server` in its own worktree cut from `local`: (1) the device-membership hole in `WaterAnalyticsService.findPeriodWaterData` (`migration/SECURITY_FINDINGS.md` §1) with organization-isolation tests from `test/fixtures/pod-scope/`; (2) construct `EmailService` and `PaymentService` on first use; (3) configure the TypeScript ESLint parser if small, else report; (4) propose the `.claude/settings.json` deny-path fix without editing that file.
-  It must not touch `CerRagService.ts`, `GilliganController.ts` or `GilliganService.ts`, which R1 edits next.
-  Start with: `Read docs/STATUS.md, then work Task E, upstream hardening.`
+- **R4 calibration and final capture**, continuing on `eval/wave1-corrections` in its existing worktree.
+- **Gilligan answer quality**: the high and medium findings in `migration/CONVERSATION_QA_2026-09-24.md`, confined to tools-on prompt blocks and tool results so R4's tools-off captures are unaffected; must reach `eval/wave1-corrections` before the final capture if it touches the general prompt.
+- **Upstream publish**: audit the `local` commits in both upstream repositories, then push them to new branches on `origin` and open pull requests, never to `main` or `develop`.
+- **Task E, upstream hardening, plus Task A's upstream follow-ups**, on `../clean-earth-rovers-server` and `../user-dashboard` in worktrees cut from `local`; it must not touch `CerRagService.ts`, `GilliganController.ts` or `GilliganService.ts`.
+  Task E: (1) the device-membership hole in `WaterAnalyticsService.findPeriodWaterData` (`migration/SECURITY_FINDINGS.md` §1) with organization-isolation tests from `test/fixtures/pod-scope/`; (2) construct `EmailService` and `PaymentService` on first use; (3) configure the TypeScript ESLint parser if small, else report.
+- **R1 packaging and service check**, in a worktree cut from `dev`; blocked on the user's R1 scope choice.
 - **Task C, later slices**, after the release unless descoped in: series chart (`chart.js`), input controls (`input.js`), the pod-status bar (`podbar.js`, `SPECS.md` §15a), error codes and error UX (`SPECS.md` §7), time-range chips (Live / Week / Month / Year / 5 Years), and a feedback loop blocked on where feedback is stored.
   Citations still carry only `source`, so a document shows as its address until a title field runs end to end.
 
 ## Last session
 
-- Task C landed: committed in its three worktrees, `dev` merged in with Task C's citation pattern kept (it subsumes `dev`'s `}】` fix), `dev` and both upstream `local` branches fast-forwarded, `dev` pushed to `origin`. Checks: 4 suites 81/81, typecheck, lint; malware scans clean. No spend, no live reads.
-- Upstream `local` branches bundled to `~/code/clean-earth-rovers/backups/`.
-- Release planning with the user: date held with reduced scope, user deploys, R1 explained part by part with its scope left to the user; decisions in `timeline.md`.
+- Orchestration: reconciled five overnight sessions and cleaned up their worktrees.
+- `dev`: `c55f7cb` removes the two blank lines Task C left in every tools-off correctness judge prompt (regression test added); `c65ea28` commits the conversation quality check and the runbook draft.
+- `eval/wave1-corrections`: finished the abandoned `dev` merge (`7223c36`), completing `p3-k30-2026-09-24` at 180 of 180 verdicts; set `DEFAULT_TOP_K` to 20 and recorded both depth captures (`707e865`); merged `eval/judge-cost` (`3062d3d`). All pushed.
+- Checks: typecheck and lint on both branches; judge, prompt, gateCheck, bakeoffRunner, gradePacket, retrieval and eight more suites run singly, all passing. No spend, no live reads.
 
 ## Working tree
 
-- `dev` is `913ec33`, level with `origin/dev` apart from this handoff.
-  `docs/EVAL_REBUILD.md` carries one uncommitted 23-line block (the 2026-09-21 claim re-resolve note), left out on purpose: that work lives on `worktree-eval-claims-reresolve` (`5d269a3`).
-  `_EXIT_CRITERIA.md`, `eval/grading/`, the runbook and the root v2 PDF stay untracked.
-- Worktrees: `task-c-provenance` in all three repositories (merged; removable); `wave1-corrections` and `judge-cost` (R4, active); `eval-claims-reresolve`; `agent-a30d6628796794046` on `cloud/explore-turbidity` (its note is on `dev` as `TURBIDITY_EXPLORATION.md`).
+- `dev` is level with `origin/dev` after this handoff; `_EXIT_CRITERIA.md`, `eval/grading/` and the root v2 PDF stay untracked on purpose (`migration/LOCAL_STACK.md`).
+- Worktrees: `wave1-corrections` (R4, active); `eval/judge-cost` is merged and deleted locally, its remote branch kept.
 - `.agents/skills/git-plan/SKILL.md` is an older copy that still requires chat approval before git mutations, and differs from `.claude/skills/git-plan/SKILL.md`; reconcile or remove it.
 - Upstream: server `local` is `d12ad6d`, dashboard `local` is `fd103a0`, both with git-ignored `.env` files carrying the R3 variables.
 - Restored and untracked or git-ignored, so invisible to `git status`: `node_modules/`, `.env`, the 8 downloaded corpus PDFs, `documents/_excluded/water-quality-metrics-source-of-truth.pdf`, `.ocr_cache/`, `data/corpus/`, `data/embeddings/cache.json` (7.1 MB). Still missing: `data/retrieval-eval/`, `data/device-fields/`, `data/backend-surface/`, `serviceAccountKey.json` ([`migration/LOCAL_STACK.md`](migration/LOCAL_STACK.md)).
@@ -88,7 +91,7 @@ Also blocking: item 1, the operator's review of pod alert limits (they drive eve
 2. Install Docker Desktop with WSL integration if the image is to be tested locally; the Firestore emulator (Java and `firebase-tools`) likewise for a persistent usage store.
 3. Fill the runbook's §2 inputs: project and region, Firestore database, registry, service names and accounts, the Fireworks secret and budget, capacity, and test identities in two organizations.
 4. Chase the supervisor on items 17-20 (sent 2026-09-19, no reply).
-5. Eval: approve the remaining depth captures and the final two-arm capture judged twice; agree to skip judge calibration (2c) before launch; approve a landing plan for `eval/wave1-corrections` and `eval/judge-cost`.
+5. Eval: grade the 32-row calibration packet once built; approve the final two-arm capture judged twice with `--final`; approve a landing plan for `eval/wave1-corrections`.
 6. Confirm the Fireworks account has a payment method and set a spending cap; a third-party source says accounts without one are held to 10 requests per minute.
 7. Approve re-seeding Firestore (`npm run seed:firestore -- --prune` and the paid `seed:firestore-chunks -- --prune`): the collections predate the 2026-09-21 re-OCR. Blocks any `CORPUS_SOURCE=firestore` capture and a Firestore-backed deployment.
 8. Decide the slice-coverage overshoot before wave 2 spends budget (defects below).
@@ -99,8 +102,8 @@ Also blocking: item 1, the operator's review of pod alert limits (they drive eve
 
 1. R1 packaging and the service check once scoped; then the rest of the chosen R1 on the post-Task C heads.
 2. Rewrite the runbook for the user deploying, then commit it.
-3. Eval R4 in its session: merge `dev`, finish the depth captures, the final two-arm capture judged twice, a tools-on live smoke check (approval needed), D3 caveats for classes under 1.00, and the R4 report; carry top-k into `SPECS.md` and the decisions into `timeline.md`.
-4. Tasks A and E, each in its own session.
+3. Eval R4 in its session: calibration tooling and packet, the final two-arm capture judged twice, a tools-on live smoke check (approval needed), D3 caveats for classes under 1.00, and the R4 report; carry top-k 20 into `SPECS.md` and the decisions into `timeline.md`.
+4. Gilligan answer quality, upstream publish, and Task E with Task A's upstream follow-ups, each in its own session.
 5. Phase 1e remainder: per-turn label splits, candidate sweep, hard negatives, grade differentiation. Blocks Phase 4, not Phase 3.
 
 ## Unfixed defects
@@ -115,7 +118,11 @@ Reported 2026-09-10 to 2026-09-24.
 | `../clean-earth-rovers-server` `WaterAnalyticsService.findPeriodWaterData` | Explicit device filters are not checked against membership (`migration/SECURITY_FINDINGS.md` §1). Task E. | high |
 | `../clean-earth-rovers-server` `GilliganService.askQuestionGemini` | Calls the retired `gemini-pro` model; live-confirmed 2026-09-21, so production Gilligan fails every question today and `GILLIGAN_BACKEND=gemini` is not a rollback (D9). | high |
 | `../clean-earth-rovers-server` ESLint | The TypeScript parser is not configured, so `npm run lint` reports 119 parsing errors. `tsc --noEmit` is the only working gate. Task E. | medium |
-| `../clean-earth-rovers-server` `turbVoltToNTU.ts` | Returns 0 NTU for a missing voltage and for the offline sentinel, same as clear water. Task A. | medium |
+| `../clean-earth-rovers-server` `turbVoltToNTU.ts` | Returns 0 for a missing voltage and for the offline sentinel, same as clear water; cer-demo now flags all-zero periods, but the source should return null. Task A follow-up. | medium |
+| `../user-dashboard` turbidity dial | Uses 350/800 as band edges against the report's 345/795, so a 347 reading is Clear on the dial and Moderate in a report. Task A follow-up. | low |
+| `src/prompt/systemPrompt.ts`, `list_pods`, `query_sensor_data` | No current date in the prompt and no reading age in tool results, so stale pods read as online and old readings as current (`migration/CONVERSATION_QA_2026-09-24.md`). | high |
+| `generate_report` tool result | Carries the status but not the parameter that set it, so the model contradicts its own report. | high |
+| `test/unit/deviceApi.test.ts` | Its list of error codes lacks `quota_reports_exceeded`, so the suite fails. | low |
 | `../clean-earth-rovers-server` `src/routes/userRoutes.ts` | `UserController` is constructed at import, which constructs `EmailService`, whose constructor throws without nodemailer credentials, so the server fails to boot; `PaymentService` does the same with `STRIPE_SECRET_KEY`. Task E. | medium |
 | `../user-dashboard` `src/app/confirm-email` | Imports `confirmEmail`, which `src/app/services/auth` does not export; `next build` reports "Attempted import error". Runtime effect unchecked. | medium |
 | `../user-dashboard` `src/app/gilligan/page.js` | `useSearchParams` outside a Suspense boundary deopts the whole page to client-side rendering. | low |
@@ -124,7 +131,7 @@ Reported 2026-09-10 to 2026-09-24.
 
 ## Active traps
 
-- **The two upstream CER repositories carry malware at HEAD on `main` and `develop`.** It runs on `next dev`, `next build` and `npm test`. The local checkouts are on the clean `local` branch; switching to `main` or `develop` reinfects the working tree. Check with `grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .` after any clone, fetch, pull or branch switch, and read upstream code with `git show origin/develop:<path>`. cer-demo is clean.
+- **The two upstream CER repositories carried malware at HEAD on `main` and `develop` until 2026-09-23/24**, and every earlier commit still does. It runs on `next dev`, `next build` and `npm test`. Branch tips are clean now, but checking out an older commit reinfects the working tree, and `CLAUDE.md` still forbids checking out `main` or `develop` until the user changes that rule. Check with `grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .` after any clone, fetch, pull or branch switch, and read upstream code with `git show origin/develop:<path>`. cer-demo is clean.
 - **`SENSOR_TOOL` matters in both directions.** Off, the assistant has no tools and refuses every reading question. On, every such question is a live production device read. Captures need it and `REPORT_TOOL` explicitly `false` on **both** server and runner; never rely on the default, and never on `.env`, which sets both `true`.
 - **Both servers read their `.env` at boot only**, and `ts-node-dev` watches source, not `.env`. Restart after any env change. An **empty** env var silently takes `readString`'s fallback; `DEFAULT_RETRIEVAL` is now validated at boot. `hybrid-slice-vector` needs the git-ignored `data/embeddings/cache.json`, so a fresh clone, worktree or image fails every request until the paid `npm run embed:cache` runs or the cache is copied in.
 - A fresh worktree has no `node_modules`, `.env` or `data/` caches; link them per the `run-local` skill's worktree reference. `EnterWorktree` cuts from `origin/main`, which is far behind `dev`, so reset the new branch onto `dev` first.
