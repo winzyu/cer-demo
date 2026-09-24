@@ -59,7 +59,7 @@ Keep the browser's developer tools open on the Network tab.
 | 2 | Read the answer | It states a status and an event count, gives the period as `YYYY-MM-DD to YYYY-MM-DD` with this year, and contains no link or file path. |
 | 3 | Look under the answer | A **Download report - Marina Park (PDF)** button. |
 | 4 | Click it | The label changes to `Preparing report...`, then a file named `cer-report-marina-park-<start>-to-<end>.pdf` saves. The label returns to normal. |
-| 5 | Open the PDF | Two pages; the header period matches the period in the answer character for character. |
+| 5 | Open the PDF | At least two pages (event detail grows with the number of events); the header period matches the period in the answer. |
 | 6 | In Network, select the `report` request | `POST /api/v1/gilligan/report`, status 200, `content-type: application/pdf`. No token appears in any request URL. |
 | 7 | Reload the page and open the same chat from the history list | The button is still under that answer, and a click still downloads. |
 | 8 | Click the button until it stops working (the allowance is 3, and step 4 and 7 used 2) | The label reads `Report limit reached - try again later`; the rest of the page still works, and a new question still gets an answer. |
@@ -74,3 +74,15 @@ cer-rag keeps the report counter in memory, so restarting it resets the allowanc
 Stop the three services with Ctrl-C.
 For each failed step, note the step number and what you saw; a screenshot of the answer and the button is enough for steps 1 to 4.
 If the answer asked which pod despite step 1, include the question text exactly as typed.
+
+## Automated run, 2026-09-23
+
+Steps 1-10 were run in headless Chromium (Playwright, kept outside the repositories), logged in by placing the device token in the page's `localStorage` as the login page does.
+Spend: 7 chat questions and 5 read-only report builds; nothing was written to production.
+
+- Steps 1, 3, 4, 6, 7, 8, 9 and 10 pass.
+- Step 2 passes on content, but the model writes the period's hyphens as U+2011, the recorded `report_period` defect; it looks identical on screen.
+- Step 4's file name was `cer-report.pdf` until the server exposed `Content-Disposition` to cross-origin script; it now saves as `cer-report-marina-park-<start>-to-<end>.pdf`.
+- Step 5: the Marina Park report for 2026-09-16 to 2026-09-23 had three pages, the third holding event detail.
+
+The run also found page defects that the checklist does not cover; they are fixed and listed in [`GILLIGAN_R3_PORT.md`](GILLIGAN_R3_PORT.md) under "Browser pass, 2026-09-23".

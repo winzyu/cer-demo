@@ -105,6 +105,17 @@ describe("judge prompts — blinding", () => {
     expect(ungroundedPrompt(plain)).toContain("Hypoxia begins below 2 mg/L");
   });
 
+  it("gives correctness recorded tool evidence without exposing unrelated retrieval context", () => {
+    const toolTurn = evidence({
+      rubric: { must_contain: ["reports the measured value"], must_not: [] },
+      tool_calls: [{ handle: "T1", result: { value: 42 } }],
+    });
+    const prompt = correctnessPrompt(toolTurn);
+    expect(prompt).toContain('"value":42');
+    expect(prompt).toContain("TOOL EVIDENCE");
+    expect(prompt).not.toContain("Hypoxia begins below 2 mg/L");
+  });
+
   it("supplies it when a must_not asks whether the answer invented something", () => {
     // The defect the first calibration found: the judge scored two arms 0 for "inventing" the
     // >100 TU row of Table 6.8-5, which is verbatim in the source it was not shown.

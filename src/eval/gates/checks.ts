@@ -9,6 +9,7 @@
  * Every function returns evidence, not just a boolean. A gate that says "fail" without naming the
  * figure or the citation is unactionable, and a gate nobody can act on gets ignored.
  */
+import { assessCitations, CitationEvidence } from "../../utils/citations";
 import { REFUSAL_SENTENCE } from "../../prompt/systemPrompt";
 import {
   closestWindow,
@@ -20,7 +21,7 @@ import {
 } from "./normalize";
 
 /** One captured turn, as `eval/transcripts/**` stores it. */
-export interface TurnEvidence {
+export interface TurnEvidence extends CitationEvidence {
   answer: string;
   context: { id: string; text: string }[];
   toolResults?: unknown[];
@@ -204,7 +205,6 @@ export const checkRefusal = (
  * `gpt-oss` emits citations as `【4†L1-L8】` or bare `【4】`: a 1-based index into the context it was
  * given, optionally with a line span. 168 of the 348 captured turns carry at least one.
  */
-const CITATION_PATTERN = /【\s*(\d+)\s*(?:†\s*L(\d+)\s*(?:-\s*L?(\d+))?)?[^】]*】/g;
 
 export interface CitationIssue {
   marker: string;
@@ -227,42 +227,12 @@ export interface CitationResult {
  * source, whatever the sentence around it says.
  */
 export const checkCitations = (turn: TurnEvidence): CitationResult => {
-  const issues: CitationIssue[] = [];
-  let total = 0;
-
-  const matches = turn.answer.matchAll(CITATION_PATTERN);
-
-  Array.from(matches).forEach((match) => {
-    total += 1;
-    const marker = match[0];
-    const index = Number(match[1]);
-    const chunk = turn.context[index - 1];
-
-    if (index < 1 || chunk === undefined) {
-      issues.push({
-        marker,
-        reason: `points at context #${index}, but ${turn.context.length} chunk(s) were supplied`,
-      });
-      return;
-    }
-
-    if (match[2] === undefined) {
-      return;
-    }
-
-    const lines = chunk.text.split("\n").length;
-    const from = Number(match[2]);
-    const to = match[3] === undefined ? from : Number(match[3]);
-
-    if (from < 1 || to > lines) {
-      issues.push({
-        marker,
-        reason: `cites lines ${from}-${to} of "${chunk.id}", which has ${lines}`,
-      });
-    }
-  });
-
-  return { total, valid: total - issues.length, issues };
+  const checked = assessCitations(
+    turn.audit?.original_answer ?? turn.answer,
+    turn.context,
+    turn.tool_calls,
+  );
+  return { total: checked.total, valid: checked.valid, issues: checked.audit.invalid_citations };
 };
 
 // ---------------------------------------------------------------------------------------------
@@ -303,7 +273,8 @@ const canonical = (value: string): string => value.replace(/,/g, "").replace(/\.
 export const checkFigures = (turn: TurnEvidence): FigureResult => {
   const source = normalizeForMatch([
     ...turn.context.map((chunk) => chunk.text),
-    ...(turn.toolResults ?? []).map((result) => JSON.stringify(result)),
+    ...(turn.toolResults ?? turn.tool_calls?.map((call) => call.result) ?? [])
+      .map((result) => JSON.stringify(result)),
     ...(turn.grounding ?? []),
   ].join("\n"));
 
@@ -533,7 +504,12 @@ export const checkQuotes = (turn: TurnEvidence): QuoteResult => {
   let elided = 0;
   let short = 0;
 
-  Array.from(turn.answer.matchAll(QUOTE_CITATION_PATTERN)).forEach((match) => {
+  const corrected = assessCitations(
+    turn.audit?.original_answer ?? turn.answer,
+    turn.context,
+    turn.tool_calls,
+  );
+  Array.from(corrected.answer.matchAll(QUOTE_CITATION_PATTERN)).forEach((match) => {
     total += 1;
     const marker = match[0];
     const quote = match[2].trim();

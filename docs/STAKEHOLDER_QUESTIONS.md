@@ -48,8 +48,17 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-0
   *Answer:*
 
 - [ ] **5. Which pods and organisations are in scope for testing?**
-  The configured device token sees 5 pods. The August census saw 15, because each token is scoped
-  to one organisation.
+  The configured device token sees 5 pods. The August census saw 15; a live read on 2026-09-23
+  showed the token is superadmin and `/devices` no longer returns retired or merged pods, which
+  accounts for the difference.
+  *Answer:*
+
+- [ ] **22. Did the three cross-organization merges transfer the site, or only the hardware?**
+  Not blocking. `Marina Park`, `PCH Public Dock Buoy` and `Old Woman Creek 2026` each absorbed a
+  pod that belonged to another organization in the August census. Pod data is shown only where
+  the organization is known to own it, so those predecessors' readings are withheld from answers
+  and reports today (`SPECS.md` §10.3c). A "yes, the site transferred" for a named chain would let
+  its history be shown; no answer keeps it withheld.
   *Answer:*
 
 ---

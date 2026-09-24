@@ -394,3 +394,17 @@ describe("spotCheckQueriesFor", () => {
       .toThrow(/No labelled deep-in-manual turn/);
   });
 });
+
+
+it("captures optional tool evidence and citation audit without inventing legacy fields", async () => {
+  const fields = {
+    tool_calls: [{ handle: "T1", round: 1, name: "fixture", arguments: {}, result: { value: null }, deduped: true }],
+    tool_round_cap_reached: true,
+    audit: { original_answer: "raw 【?】", corrections: [], invalid_citations: [{ marker: "【?】", reason: "malformed", offset: 4 }] },
+  };
+  const captured = await replayFixture(fixture("evidence", ["q"]), answerWith(fields), options);
+  expect(captured.turns[0]).toMatchObject(fields);
+  const legacy = await replayFixture(fixture("legacy", ["q"]), answerWith(), options);
+  expect(legacy.turns[0]).not.toHaveProperty("tool_calls");
+  expect(legacy.turns[0]).not.toHaveProperty("audit");
+});

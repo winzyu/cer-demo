@@ -7,7 +7,7 @@
  * markup until marked turns it into an anchor.
  *
  * Both libraries are vendored under frontend/vendor/ (no build step, no CDN — see
- * docs/CHAT_UX_WORKPLAN.md guardrail 5):
+ * docs/SPECS.md §15a):
  *   - marked 18.0.10       (MIT)
  *   - DOMPurify 3.4.13     (Apache-2.0 OR MPL-2.0)
  *

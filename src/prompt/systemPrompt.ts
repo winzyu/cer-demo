@@ -85,6 +85,12 @@ export const REFUSAL_SENTENCE = "I can only answer questions grounded in this se
  * failure was a confident negative, not a missing call.
  */
 export const TOOL_BLOCK = `TOOLS:
+- Tool evidence is an exception to the general no-tool-marker rule: each tool
+  message wraps its result with an answer-local handle such as T1. Cite claims
+  from that result as 【T1】. Use only handles supplied in this answer, never
+  handles from conversation history. Numeric markers remain CONTEXT citations.
+  Keep incomplete searches, empty or stale windows, provisional measurements,
+  and tool errors explicit; a handle does not make incomplete evidence complete.
 - list_pods — names the pods this user's account can see, with each pod's water type
   and when it was last heard from. The pod list is a property of WHO IS ASKING, not
   of this deployment, so it is never in this prompt and never in CONTEXT.
@@ -184,6 +190,12 @@ Reading a tool result:
  * `generate_report` itself exists unless `REPORT_TOOL` is on.
  */
 export const REPORT_TOOL_BLOCK = `TOOLS:
+- Tool evidence is an exception to the general no-tool-marker rule: each tool
+  message wraps its result with an answer-local handle such as T1. Cite claims
+  from that result as 【T1】. Use only handles supplied in this answer, never
+  handles from conversation history. Numeric markers remain CONTEXT citations.
+  Keep incomplete searches, empty or stale windows, provisional measurements,
+  and tool errors explicit; a handle does not make incomplete evidence complete.
 - generate_report — produces a full water quality report PDF for a reporting
   period: baseline comparison, flagged excursions, candidate pollution events, and
   recommendations, across all six parameters at once. It calls query_sensor_data

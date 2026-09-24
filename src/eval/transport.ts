@@ -126,6 +126,7 @@ export const createSseTransport = (options: TransportOptions): AskFn => {
     const reader = response.body.getReader();
     let buffer = "";
     let answer = "";
+    let evidence: Pick<AskResult, "tool_calls" | "tool_round_cap_reached" | "audit"> = {};
     let mode = "";
     let context: AskResult["context"] = [];
     let model: string | undefined;
@@ -156,6 +157,12 @@ export const createSseTransport = (options: TransportOptions): AskFn => {
           if (ttftMs === undefined) ttftMs = elapsedMsSince(started);
           answer += String(payload.text ?? "");
         } else if (event === "done") {
+          if (typeof payload.answer === "string") answer = payload.answer;
+          evidence = {
+            ...(Array.isArray(payload.tool_calls) ? { tool_calls: payload.tool_calls } : {}),
+            ...(typeof payload.tool_round_cap_reached === "boolean" ? { tool_round_cap_reached: payload.tool_round_cap_reached } : {}),
+            ...(payload.audit ? { audit: payload.audit as AskResult["audit"] } : {}),
+          };
           model = payload.model as string | undefined;
           usage = payload.usage as AskResult["usage"];
         } else if (event === "error") {
@@ -169,7 +176,7 @@ export const createSseTransport = (options: TransportOptions): AskFn => {
     }
 
     return {
-      answer, mode, context, model, usage, ttftMs, wallMs: elapsedMsSince(started),
+      ...evidence, answer, mode, context, model, usage, ttftMs, wallMs: elapsedMsSince(started),
     };
   };
 };
@@ -194,6 +201,9 @@ export const createJsonTransport = (options: TransportOptions): AskFn => {
     const body = await response.json() as Record<string, unknown>;
     return {
       answer: String(body.answer ?? ""),
+      ...(Array.isArray(body.tool_calls) ? { tool_calls: body.tool_calls } : {}),
+      ...(typeof body.tool_round_cap_reached === "boolean" ? { tool_round_cap_reached: body.tool_round_cap_reached } : {}),
+      ...(body.audit ? { audit: body.audit as AskResult["audit"] } : {}),
       mode: String(body.mode ?? ""),
       context: (body.citations ?? []) as AskResult["context"],
       model: body.model as string | undefined,

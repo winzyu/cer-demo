@@ -11,6 +11,7 @@ import { parseChatRequest } from "../validators/chatValidators";
 import { QuotaService, quotaKeyFor, quotaService } from "../quota";
 import { buildAuditLogRecord, writeAuditLog } from "../services/auditLog";
 import { createStreamingCommentaryFilter } from "../utils/answerFormat";
+import { assessCitations } from "../utils/citations";
 import { callerToken } from "../utils/bearerToken";
 import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
@@ -114,11 +115,14 @@ export class ChatController {
       // request that crosses a token ceiling completes; the next one is refused.
       this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
 
+      const checked = assessCitations(answer.content, chunks, answer.invocations);
+
       // Fire-and-forget: `writeAuditLog` never throws and must not delay a response already
       // decided (§ "A logging failure must never fail a user's answer").
       writeAuditLog(buildAuditLogRecord({
         query,
         answer: answer.content,
+        citationAudit: checked.audit,
         chunks,
         model: answer.model,
         mode: adapter.mode,
@@ -126,15 +130,15 @@ export class ChatController {
       }));
 
       res.status(200).json({
-        answer: answer.content,
+        answer: checked.answer,
+        audit: checked.audit,
         model: answer.model,
         mode: adapter.mode,
         // Retrieved context is returned so the caller can show provenance. N5 turns these
         // into inline quote citations.
         citations: chunks,
         usage: answer.usage,
-        // Tool results are traced, never cited (MIGRATION_SPEC §3 rule 4) — a sensor reading is
-        // this deployment's own measurement, not a claim attributable to a corpus document.
+        // Tool handles link to invocation evidence, separately from document citations.
         // Omitted entirely when no tool ran, so the pre-N3 response shape is unchanged.
         ...(answer.invocations.length > 0 ? { tool_calls: answer.invocations } : {}),
         ...(answer.capped ? { tool_round_cap_reached: true } : {}),
@@ -197,8 +201,11 @@ export class ChatController {
           signal: controller.signal,
         });
         this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
-        writeSseEvent(res, "token", { text: answer.content });
+        const checked = assessCitations(answer.content, chunks, answer.invocations);
+        writeSseEvent(res, "token", { text: checked.answer });
         writeSseEvent(res, "done", {
+          answer: checked.answer,
+          audit: checked.audit,
           model: answer.model,
           usage: answer.usage,
           ...(answer.invocations.length > 0 ? { tool_calls: answer.invocations } : {}),
@@ -209,6 +216,7 @@ export class ChatController {
         writeAuditLog(buildAuditLogRecord({
           query,
           answer: answer.content,
+          citationAudit: checked.audit,
           chunks,
           model: answer.model,
           mode,
@@ -257,12 +265,16 @@ export class ChatController {
       // by provider (`LlmService.completeStream`), and gating `done` on it meant that against a
       // provider that omits usage the client saw `meta` → `token`* → `end` and never ran the
       // `done` handler that renders provenance and the series chart.
-      writeSseEvent(res, "done", { model, ...(usage ? { usage } : {}) });
+      const checked = assessCitations(fullAnswer, chunks);
+      writeSseEvent(res, "done", {
+        answer: checked.answer, audit: checked.audit, model, ...(usage ? { usage } : {}),
+      });
       writeSseEvent(res, "end", {});
 
       writeAuditLog(buildAuditLogRecord({
         query,
         answer: fullAnswer,
+        citationAudit: checked.audit,
         chunks,
         // The provider omitting `model` on this path is possible in principle (LlmService's own
         // types allow it) but not observed; "unknown" keeps the record queryable by model rather

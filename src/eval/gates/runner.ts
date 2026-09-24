@@ -11,6 +11,7 @@
  */
 import fs from "fs";
 import path from "path";
+import type { CitationEvidence } from "../../utils/citations";
 import { loadFixtures } from "../fixtures";
 import { buildSystemPrompt } from "../../prompt/systemPrompt";
 import {
@@ -186,6 +187,9 @@ export const runGateCheck = (options: GateRunOptions = {}): ArmGateResult[] => {
         index: number;
         question?: string;
         answer: string;
+        tool_calls?: CitationEvidence["tool_calls"];
+        tool_round_cap_reached?: boolean;
+        audit?: CitationEvidence["audit"];
         context: { id: string; text: string }[];
       }[];
       const requiresRefusal = refusals.get(fixtureId) ?? [];
@@ -194,7 +198,11 @@ export const runGateCheck = (options: GateRunOptions = {}): ArmGateResult[] => {
         result.turns += 1;
         const evidence = {
           answer: turn.answer,
+          tool_calls: turn.tool_calls,
+          tool_round_cap_reached: turn.tool_round_cap_reached,
+          audit: turn.audit,
           context: turn.context ?? [],
+          toolResults: turn.tool_calls?.map((call) => call.result),
           // The system prompt carries the service rules the answers are told to follow (no ranges
           // since 2026-09-13), and prior questions carry figures the user supplied. Both are
           // legitimate grounding and neither is in `context`. Built with the sweep's flags —

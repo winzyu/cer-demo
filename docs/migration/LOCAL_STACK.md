@@ -1,7 +1,73 @@
 # Local stack
 
-How to run the CER dashboard and server locally without the credentials this machine does not hold.
+The WSL2 checkout this service is developed in, what it needs beyond git, and how to run the CER dashboard and server beside it without the credentials this machine does not hold.
 Verified end to end on 2026-09-21.
+
+## Checkout layout
+
+The machine was rebuilt after the 2026-09-19 incident ([`SECURITY_INCIDENT_2026-09-19.md`](SECURITY_INCIDENT_2026-09-19.md)), and this WSL checkout is the only copy; the old OneDrive checkout is gone.
+The repository instructions refer to `../user-dashboard` and `../clean-earth-rovers-server`, so all three stay siblings:
+
+```text
+/home/winsy/code/clean-earth-rovers/
+  repo/
+    cer-demo/                    git@github.com:winzyu/cer-demo.git              (branch dev)
+    user-dashboard/              git@github.com:Clean-Earth-Rovers-Technology/user-dashboard.git
+    clean-earth-rovers-server/   git@github.com:Clean-Earth-Rovers-Technology/clean-earth-rovers-server.git
+  incident-logs/                 recovered Claude transcripts, not a repo
+```
+
+Clone cer-demo with `git clone -b dev git@github.com:winzyu/cer-demo.git`.
+Never clone the two upstream repositories with a checkout: every remote branch carries the malware, and the clean `local` branches exist only on this machine.
+Recreating them means `git clone --no-checkout` and the cleanup in [`SECURITY_INCIDENT_2026-09-19.md`](SECURITY_INCIDENT_2026-09-19.md) before any working tree exists.
+Before running anything in either upstream checkout, and after every clone, fetch, pull or branch switch there, check that this prints nothing:
+
+```bash
+grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .
+```
+
+## What git does not carry
+
+State as of the 2026-09-21 rebuild.
+
+| item | state | detail |
+|---|---|---|
+| `.env` | restored, secrets in | Scaffolded from `.env.example` with `PORT=8010`; the rotated secrets are in, and it sets `DEFAULT_RETRIEVAL=hybrid-slice-vector`, `SENSOR_TOOL=true` and `REPORT_TOOL=true`. Leave an unset secret **empty**, never a placeholder: `/health` reports `fireworksConfigured` as a plain `Boolean()` on the value, and a placeholder also suppresses the missing-key warning at boot. |
+| corpus PDFs in `documents/` | 9 restored, 3 deliberately not | The 8 in-corpus files were downloaded from the `sourceUrl` that `DOC_META` (`src/ingestion/corpus.ts`) records for every document; the vetoed source-of-truth PDF came from tag `corpus-archive-2026-09-13` into `documents/_excluded/`. The three documents cut on 2026-08-24 were not restored. |
+| `data/corpus/` | rebuilt | `npm run ingest`, which never calls Fireworks or Firestore. |
+| `data/embeddings/cache.json` | rebuilt | 7.1 MB, from the paid `npm run embed:cache`; ingest does not touch it. |
+| `.ocr_cache/` | rebuilt, not identical | Re-OCR'd with `pdftoppm -r 300 -gray -png` and `tesseract --psm 1 -l eng` on tesseract **4.1.1**, not the original 5.3.4, so the OCR document's chunk ids moved and anything keyed to them is void. Needs `sudo apt install -y poppler-utils tesseract-ocr`. |
+| `water-quality-source-of-truth-v2.pdf` | restored, untracked | At the repo root, never in `documents/`: ingest reads every file there, and `metaFor` falls back to `{ title: filename }`, so it would silently become a 15th document. |
+| `eval/fixtures-wave1/_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html` | recovered, untracked | From the Claude transcripts. The review sheet's decisions are not in the file: the page kept them in `localStorage`, so the live artifact `https://claude.ai/code/artifact/9ee30967-633b-42ca-86b4-418cff7858e6` is the only place they exist. |
+| `data/retrieval-eval/`, `data/device-fields/`, `data/backend-surface/` | lost | The last two need live device reads to re-record. |
+| `serviceAccountKey.json` | lost | Regenerate in GCP if a Firestore-backed mode is needed; never commit it. |
+| `.claude/settings.local.json` | lost | Re-approve prompts as they come. |
+
+The 2026-09-19 backup drive was written by the compromised machine: copy individual files from it after looking at them, never in bulk.
+Its OneDrive copy of cer-demo is not a checkout: 15 top-level files and empty subdirectories, `.git/` included.
+**The recoverable project history is in the Claude state**, unpacked at `~/code/clean-earth-rovers/incident-logs/` (transcripts) and in `claude-codex-setup.tar.gz` (`file-history/` snapshots, `plans/`).
+Long tool results there are truncated, so check a recovered file for a truncation marker and for line numbers covering every line.
+
+## Claude Code state
+
+- Project memory is keyed by path: `~/.claude/projects/-home-winsy-code-clean-earth-rovers-repo-cer-demo/`.
+- `AGENTS.md`, `CLAUDE.md` and `.claude/skills/` are tracked on `dev`, not on `main`.
+- `.claude/settings.json` denies edits to the upstream repositories, but its deny paths still point at the old OneDrive locations and match nothing, so that guard is inert until they are updated to the layout above.
+- `gcloud` credentials did not survive the rebuild; re-authenticate as needed.
+
+## Verify the checkout
+
+```bash
+npm ci
+npm run typecheck && npm run lint
+npx jest test/unit/frontendAuth.test.ts --runInBand
+npm run ingest                 # 14 documents, 446 chunks, slice 26,096 chars
+PORT=8010 npm run dev          # then: curl -s localhost:8010/health
+```
+
+Trust the ingest output over its exit code, which is 0 even when files are missing.
+Compare each per-document char count with [`../../documents/README.md`](../../documents/README.md); a miss means the wrong edition or file.
+`direct-feed slice: 0 chars` means the four Atlas datasheets are absent.
 
 ## Shape
 

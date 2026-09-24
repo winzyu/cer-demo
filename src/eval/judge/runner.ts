@@ -20,6 +20,7 @@ import fs from "fs";
 import path from "path";
 import OpenAI from "openai";
 import type { ReasoningEffort } from "openai/resources/shared";
+import type { CitationEvidence } from "../../utils/citations";
 import { loadFixtures } from "../fixtures";
 import { buildSystemPrompt } from "../../prompt/systemPrompt";
 import { checkCitations } from "../gates/checks";
@@ -205,6 +206,9 @@ interface CapturedTurn {
   index: number;
   question?: string;
   answer: string;
+  tool_calls?: CitationEvidence["tool_calls"];
+  tool_round_cap_reached?: boolean;
+  audit?: CitationEvidence["audit"];
   context?: { id: string; text: string }[];
 }
 
@@ -285,6 +289,9 @@ export const buildTasks = (options: BuildOptions = {}): JudgeTask[] => {
         const evidence: JudgeEvidence = {
           question: turn.question ?? spec.content,
           answer: turn.answer,
+          tool_calls: turn.tool_calls,
+          tool_round_cap_reached: turn.tool_round_cap_reached,
+          audit: turn.audit,
           rubric: spec.rubric,
           context: turn.context ?? [],
           systemPrompt,
@@ -298,7 +305,7 @@ export const buildTasks = (options: BuildOptions = {}): JudgeTask[] => {
           // Nothing to judge when nothing was cited. Skipping is not a shortcut: an empty
           // `invalid` list is the only verdict this call can return, and it is not free.
           if (dimension === "citations"
-            && checkCitations({ answer: turn.answer, context: evidence.context }).total === 0) {
+            && checkCitations(evidence).total === 0) {
             return;
           }
           tasks.push({

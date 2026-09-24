@@ -4,7 +4,7 @@
  * Session-level facts live in the chrome, not in the transcript: which pod is selected,
  * whether it is reporting, and whether its water type disagrees with the deployment's.
  * All three are identical on every answer, so rendering them per message is the noise that
- * made the chat unreadable (docs/CHAT_UX_WORKPLAN.md, "Wave 2 — where things belong").
+ * made the chat unreadable (docs/SPECS.md §15a, "Where things belong").
  *
  * Contract main.js depends on:
  *   initPodBar({ select, status })  wire the <select id="pod-select"> and the #pod-status slot

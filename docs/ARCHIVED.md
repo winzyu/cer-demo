@@ -12,6 +12,7 @@ in git history under the tag named in its section.
 | `eval-docs-archive-2026-09-15` | 2026-09-15 | the bake-off results report and the two fixture specs for the archived eval set — 3 files |
 | `docs-archive-2026-09-23` | 2026-09-23 | four superseded planning and eval docs, and the advice drafts - 9 files |
 | `advice-archive-2026-09-17` | 2026-09-23 | the advice drafts, re-tagged under the name the catalogue cites - same commit as `docs-archive-2026-09-23` |
+| `docs-tier2-archive-2026-09-23` | 2026-09-23 | the chat UX work plan, the pod-authorization design and the WSL checkout guide - 3 files, plus the untrimmed product-direction doc |
 | `old-machine-recovery-2026-09-19` | 2026-09-22 | work from 2026-09-17 to 2026-09-19 that was committed on the old machine but never pushed, rebuilt from session transcripts - 5 planning docs not restored to the tree |
 
 Retrieve one by path:
@@ -197,7 +198,7 @@ The doc cleanup of 2026-09-19 (`5b36ae7`, `49e7386`) ran from scratch scripts th
 | `docs/migration/SUPPORTING_DOCS_TASKS.md` | Task packets C1-C8 for the corpus, catalogue and v2 | C1-C4 were done; C5-C8 are covered by STATUS and its gates. |
 | `docs/migration/WSL_SANDBOX_TASKS.md` | Task packets W1-W11 for the sandbox and dashboard | Done or overtaken by R3 on the cleaned upstream `local` branches. |
 | `docs/migration/DOC_CLEANUP.md` | The 2026-09-19 documentation cleanup plan | Its commits were lost, and the docs have been rewritten since. |
-| `docs/migration/RECOVERY_AFTER_RESET.md` | Pre-wipe backup and rebuild guide | Superseded by `WSL_SANDBOX.md` and `SECURITY_INCIDENT_2026-09-19.md`. |
+| `docs/migration/RECOVERY_AFTER_RESET.md` | Pre-wipe backup and rebuild guide | Superseded by `WSL_SANDBOX.md` (since folded into `LOCAL_STACK.md`) and `SECURITY_INCIDENT_2026-09-19.md`. |
 
 Retrieve:
 
@@ -224,6 +225,25 @@ Retrieve:
 ```bash
 git show docs-archive-2026-09-23:docs/migration/INTEGRATION_PLAN.md
 git show docs-archive-2026-09-23:docs/advice/candidates-oxygen.md
+```
+
+## `docs-tier2-archive-2026-09-23` - consolidation tier 2
+
+Removed on 2026-09-23, preserved under the tag `docs-tier2-archive-2026-09-23`, which points at `9c783cd`, the last commit that contains them.
+The same tag holds the full text of `docs/migration/GILLIGAN_PRODUCT_DIRECTION.md` before it was trimmed in place.
+Code comments that cited these files now cite `SPECS.md`.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/CHAT_UX_WORKPLAN.md` | 404 | The August N5 chat-UX work plan: guardrails, Phase 0, Wave 1 streams WS-1 to WS-7, Wave 2 | Every stream landed in the demo frontend. The lasting rules moved to `SPECS.md` §4, §10.4, §15a and §16; the open Wave 2 items and the dashboard port moved to the chatbot task brief. |
+| `docs/migration/POD_AUTHORIZATION.md` | 800 | The 2026-08 design for per-pod grants, with the merge-chain and cross-organization policy | The grant system was never scheduled: on 2026-09-16 access was decided to follow organization membership, confirmed 2026-09-23. The policy that is built lives in `SPECS.md` §10.3c, the upstream holes in `SECURITY_FINDINGS.md` §1 and §5, and the operator question as `STAKEHOLDER_QUESTIONS.md` item 22. |
+| `docs/migration/WSL_SANDBOX.md` | 125 | The WSL2 checkout guide and the 2026-09-21 rebuild state | Folded into `LOCAL_STACK.md`, which now covers the checkout, what git does not carry, and running the stack. |
+
+Retrieve:
+
+```bash
+git show docs-tier2-archive-2026-09-23:docs/migration/POD_AUTHORIZATION.md
+git show docs-tier2-archive-2026-09-23:docs/migration/GILLIGAN_PRODUCT_DIRECTION.md
 ```
 
 ## Rules

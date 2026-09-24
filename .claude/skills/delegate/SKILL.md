@@ -19,4 +19,4 @@ Require: edits only in the assigned worktree, reference repositories read-only, 
 Ask for changed paths, actual checks/results, uncertainties, and worktree path/branch.
 
 Review `git -C <worktree> status --short` and the actual diff before accepting the work, especially retrieval, numeric handling, gate, and judge logic.
-Use `git-plan` to propose landing or cleanup; never silently merge or delete a worker's work.
+Land or clean up through `git-plan` and report what ran; never delete a worker's unmerged work without asking.

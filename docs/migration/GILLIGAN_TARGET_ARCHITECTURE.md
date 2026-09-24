@@ -155,7 +155,7 @@ Working days are counted from Thursday, September 17.
 
 | step | dates | owner | work | done when |
 |---|---|---|---|---|
-| R0 Setup | Sep 17-18 | user, Claude | user sets up the WSL sandbox ([`WSL_SANDBOX.md`](WSL_SANDBOX.md)); send the three v2 questions and the referral contacts to the supervisor; confirm a Fireworks payment method and read the rate-limit headers | the demo runs in the sandbox; supervisor has items 17-20 |
+| R0 Setup | Sep 17-18 | user, Claude | user sets up the WSL sandbox ([`LOCAL_STACK.md`](LOCAL_STACK.md)); send the three v2 questions and the referral contacts to the supervisor; confirm a Fireworks payment method and read the rate-limit headers | the demo runs in the sandbox; supervisor has items 17-20 |
 | R1 Service contract | Sep 18-22 | Claude | `/gilligan/answer`, identity check, history mapping, report bytes, usage store and status endpoint, concurrency limiter; unit and supertest coverage | contract tests green; the demo still works. **Report half done 2026-09-22** (report bytes, report counter); the rest has not started |
 | R2 Catalogue | Sep 18-24 | Claude, then supervisor | structured catalogue from v2 and the advice drafts, generated review page, prompt and narrative wiring, sewage rule fix | supervisor has approved an entry set; reports and chat cite only approved entries. **Code done 2026-09-17** (recovered 2026-09-22, `SPECS.md` §4b); approval pending |
 | R3 Upstream relay and page | Sep 21-25 | Claude, in the `local` checkouts | controller relay and report route; React page; local run of dashboard + server + cer-rag together | **done 2026-09-21; report route added 2026-09-22** (D8). A question, history and the usage count work end to end locally: [`GILLIGAN_R3_PORT.md`](GILLIGAN_R3_PORT.md) |

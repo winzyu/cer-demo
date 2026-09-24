@@ -67,12 +67,15 @@ export interface ToolHandler {
   run: (args: Record<string, unknown>, context?: ToolContext) => Promise<unknown>;
 }
 
-/** One executed call, kept for the response trace. Results are traced, never cited (§3 rule 4). */
+/** One invocation, retained as answer-local evidence separately from document citations. */
 export interface ToolInvocation {
   /**
    * 1-based round the call was made in, so a multi-round conversation stays legible
    * after the fact.
    */
+  /** Stable within this answer only; absent in legacy captures. */
+  handle?: string;
+  raw_arguments?: string;
   round: number;
   name: string;
   arguments: Record<string, unknown>;

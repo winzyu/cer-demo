@@ -184,6 +184,9 @@ export const __testing = {
 
 interface Turn {
   index: number; question: string; answer: string;
+  tool_calls?: unknown[];
+  tool_round_cap_reached?: boolean;
+  audit?: unknown;
   context?: Array<{ id: string; source: string; score?: number; text?: string }>;
   usage?: { promptTokens?: number; completionTokens?: number };
 }
@@ -202,6 +205,21 @@ const readTranscript = async (
 const bullets = (items: string[] | undefined, prefix: string): string => (
   (items ?? []).map((i) => `${prefix} ${i}`).join("\n")
 );
+
+/** Render only recorded evidence; absent legacy fields do not imply successful tool work. */
+export const gradingContext = (turn: Turn): string => {
+  const context = (turn.context ?? [])
+    .map((c) => `### ${c.source} (chunk ${c.id}${c.score !== undefined ? `, score ${c.score}` : ""})\n\n${c.text ?? ""}`)
+    .join("\n\n---\n\n");
+  const evidence = {
+    ...(turn.tool_calls !== undefined ? { tool_calls: turn.tool_calls } : {}),
+    ...(turn.tool_round_cap_reached !== undefined
+      ? { tool_round_cap_reached: turn.tool_round_cap_reached } : {}),
+    ...(turn.audit !== undefined ? { audit: turn.audit } : {}),
+  };
+  return Object.keys(evidence).length > 0
+    ? `${context}\n\nANSWER EVIDENCE:\n${JSON.stringify(evidence, null, 2)}` : context;
+};
 
 const main = async (): Promise<void> => {
   const args = parseArgs(process.argv.slice(2));
@@ -304,9 +322,7 @@ const main = async (): Promise<void> => {
             + `Full text: \`context/${ctxName}\`</sub>`,
             "",
           );
-          const body = (turn.context ?? [])
-            .map((c) => `### ${c.source} (chunk ${c.id}${c.score !== undefined ? `, score ${c.score}` : ""})\n\n${c.text ?? ""}`)
-            .join("\n\n---\n\n");
+          const body = gradingContext(turn);
           // eslint-disable-next-line no-await-in-loop
           await fs.mkdir(path.join(contextDir, fixture.id), { recursive: true });
           // eslint-disable-next-line no-await-in-loop

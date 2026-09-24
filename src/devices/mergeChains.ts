@@ -28,9 +28,9 @@ import type { DeviceSummary } from "../types/device.types";
  *   `else` branch, so naming a label *replaces* org scoping rather than narrowing it
  *   (`SECURITY_FINDINGS.md` §1). A fan-out that named a label the caller cannot otherwise see
  *   would succeed, silently, at reading another organization's history.
- * - Three of the four live chains **cross organization boundaries** (`BACKEND_FIELDS.md` §5b).
- *   Whether inheriting a buoy inherits its data is the operator's call
- *   (`POD_AUTHORIZATION.md` §11 Q1), and the documented default until they answer is deny.
+ * - Three of the four chains in the August census **crossed organization boundaries**
+ *   (`BACKEND_FIELDS.md` §5b). History is read only where same-organization ownership is known;
+ *   whether those merges transferred the site is open with the operator (`SPECS.md` §10.3c).
  *
  * So a predecessor is read only when it appears in the caller's own org-scoped `/devices`
  * response **and** carries the same `organization` string as the survivor. Everything else is
@@ -140,9 +140,10 @@ export const resolveChain = (
   };
 
   // The organization is compared as an opaque string and never resolved through the
-  // `organizations` collection: two live devices point at organizations that do not exist, and a
-  // lookup either throws or silently returns nothing (`POD_AUTHORIZATION.md` §7). A survivor with
-  // no organization of its own therefore inherits nothing — the empty set, never a wildcard.
+  // `organizations` collection: the August census found two devices pointing at organizations
+  // that do not exist, and a lookup either throws or silently returns nothing
+  // (`SPECS.md` §10.3c). A survivor with no organization of its own therefore inherits
+  // nothing — the empty set, never a wildcard.
   const org = device.organization;
 
   predecessorsOf(device, visible).forEach((label) => {
