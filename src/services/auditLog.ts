@@ -2,6 +2,7 @@ import type { Firestore, Query } from "@google-cloud/firestore";
 import { getFirestore } from "../config/database";
 import { config } from "../config";
 import { createLogger } from "../utils/logger";
+import type { CitationAudit } from "../utils/citations";
 import type { Chunk } from "../types/retrieval.types";
 
 const log = createLogger("AuditLog");
@@ -22,6 +23,7 @@ export interface AuditLogCitation {
 export interface AuditLogRecord {
   query: string;
   answer: string;
+  citationAudit?: CitationAudit;
   citations: AuditLogCitation[];
   model: string;
   mode: string;
@@ -33,6 +35,7 @@ export interface AuditLogRecord {
 export const buildAuditLogRecord = (input: {
   query: string;
   answer: string;
+  citationAudit?: CitationAudit;
   chunks: Chunk[];
   model: string;
   mode: string;
@@ -41,6 +44,7 @@ export const buildAuditLogRecord = (input: {
 }): AuditLogRecord => ({
   query: input.query,
   answer: input.answer,
+  ...(input.citationAudit ? { citationAudit: input.citationAudit } : {}),
   citations: input.chunks.map((chunk) => ({ id: chunk.id, source: chunk.source })),
   model: input.model,
   mode: input.mode,

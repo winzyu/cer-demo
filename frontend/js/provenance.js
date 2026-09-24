@@ -302,7 +302,7 @@ function resultNotices(invocation, now) {
   const note = typeof result.note === "string" ? result.note : undefined;
   const count = sampleCount(result);
 
-  if (count === 0) {
+  if (count === 0 || result.value === null) {
     // An empty window is a *result*, not an error, and it must never read as a zero reading.
     // This is the one place freshness stays in the message: "silent since Aug 7" is not a
     // status line here, it is the answer to the question that was asked.
@@ -328,14 +328,14 @@ function resultNotices(invocation, now) {
   // pod's first reading. The dates live in the chip inside the disclosure; this says only that
   // the answer does not cover what the question asked for.
   const window = asObject(result.window_actually_searched);
-  if (window.complete === false) {
+  if (window.complete === false || result.complete === false) {
     const searched = isoDate(window.start);
     const asked = isoDate(asObject(result.time_range_resolved).start);
     found.push(badge(
       "warn",
       asked
         ? `Search did not reach that far back — covered ${searched} onward, not ${asked}`
-        : `Search did not reach that far back — covered ${searched} onward`,
+        : searched ? `Search did not reach that far back - covered ${searched} onward` : "Search is incomplete",
       typeof window.reason === "string" ? window.reason : undefined,
     ));
   }
@@ -440,26 +440,15 @@ export function renderProvenance(slot, payload, now) {
     ? payload.tool_calls.filter((call) => call && typeof call === "object") : [];
   // No tool ran: the `meta` event, and every answer with SENSOR_TOOL off. Leave the slot
   // untouched so app.css's `:empty` rule keeps it collapsed.
-  if (calls.length === 0) return;
+  if (calls.length === 0 && !payload?.tool_round_cap_reached) return;
 
   const at = typeof now === "number" ? now : Date.now();
   const executed = calls.filter((call) => !call.deduped);
 
-  // A repeat is served from the per-request cache, so it gets one compact chip rather than a
-  // second copy of the row. Identical repeats collapse into one chip with a count.
-  const repeats = new Map();
-  calls.forEach((call) => {
-    if (!call.deduped) return;
-    const args = asObject(call.arguments);
-    const key = `${call.name}|${JSON.stringify(args, Object.keys(args).sort())}`;
-    const seen = repeats.get(key);
-    if (seen) seen.count += 1;
-    else repeats.set(key, { call, count: 1 });
-  });
-
   // Loose badges come off the executed calls only — a deduped call carries a copy of an
   // earlier result, so reading it again would double every badge it produced.
   const notices = [];
+  if (payload.tool_round_cap_reached) notices.push(badge("warn", "Tool round limit reached - this answer may be incomplete"));
   const shown = new Set();
   executed.forEach((call) => {
     resultNotices(call, at).forEach((node) => {
@@ -473,8 +462,15 @@ export function renderProvenance(slot, payload, now) {
   const details = el("details", "details");
   details.appendChild(el("summary", null, summaryLine(executed, calls)));
   const body = el("div", "details__body");
-  executed.forEach((call) => body.appendChild(toolChip(call)));
-  repeats.forEach((entry) => body.appendChild(dedupedChip(entry.call, entry.count)));
+  calls.forEach((call) => {
+    const entry = el("div", null);
+    if (call.handle) entry.dataset.toolHandle = call.handle;
+    entry.tabIndex = -1;
+    entry.appendChild(el("strong", null, call.handle || "Tool evidence"));
+    entry.appendChild(call.deduped ? dedupedChip(call, 1) : toolChip(call));
+    entry.appendChild(el("pre", null, JSON.stringify({ round: call.round, arguments: call.arguments, result: call.result, deduped: call.deduped === true }, null, 2)));
+    body.appendChild(entry);
+  });
   // Must happen before the slot is cleared: the list may still be parented to it.
   const citations = takeCitations(slot);
   if (citations) body.appendChild(citations);

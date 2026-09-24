@@ -184,3 +184,14 @@ describe("render.js wiring", () => {
     expect(render).toContain('createElement("sup")');
   });
 });
+
+
+describe("Task C marker compatibility", () => {
+  it("keeps document and tool references distinct and strips invalid marker contents", () => {
+    expect(collapseCitationQuotes('Doc 【5†"sample"}】 Tool 【T1】 Empty 【】 Unknown 【?】'))
+      .toBe("Doc 【5】 Tool 【T1】 Empty  Unknown ");
+    expect(collapseCitationQuotes('Doc 【5†"sample"}  】 Tool 【T1】'))
+      .toBe("Doc 【5】 Tool 【T1】");
+    expect(splitCitations("【T1】")).toEqual([{ type: "tool", handle: "T1" }]);
+  });
+});

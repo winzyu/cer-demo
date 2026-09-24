@@ -108,6 +108,9 @@ async function send(msg) {
       } else if (event === "done") {
         // `tool_calls` / `tool_round_cap_reached` are omitted when no tool ran.
         if (target) {
+          if (typeof data.answer === "string") answer = data.answer;
+          target.toolCalls = data.tool_calls;
+          updateMessageBody(target, answer, renderMarkdown);
           renderProvenance(target.slots.provenance, data);
           renderChart(target.slots.chart, data);
           renderReport(target.slots.report, data);

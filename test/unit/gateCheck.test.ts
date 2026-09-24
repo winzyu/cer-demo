@@ -312,13 +312,13 @@ describe("checkQuotes", () => {
     expect(result.issues[0].reason).toContain("not found verbatim");
   });
 
-  it("flags a quote pointing past the end of the supplied context", () => {
+  it("corrects an out-of-range quote when exactly one excerpt matches", () => {
     const result = checkQuotes({
       answer: `See 【7†"${QUOTED}"】.`,
       context: context(QUOTED),
     });
-    expect(result.supported).toBe(0);
-    expect(result.issues[0].reason).toContain("1 chunk(s) were supplied");
+    expect(result.supported).toBe(1);
+    expect(result.issues).toEqual([]);
   });
 
   /**

@@ -1,3 +1,4 @@
+import { gradingContext } from "../../scripts/gradePacket";
 import fs from "fs";
 import os from "os";
 import path from "path";
@@ -180,4 +181,17 @@ describe("blind grading packet — overwrite guard", () => {
 
     expect(hasFilledScores(sheet)).toBe(true);
   });
+});
+
+
+it("retains future tool and audit evidence in grading inputs without inventing legacy evidence", () => {
+  const legacy = { index: 0, question: "q", answer: "a", context: [{ id: "one", source: "doc", text: "excerpt" }] };
+  const fields = {
+    tool_calls: [{ handle: "T1", round: 1, name: "fixture", arguments: {}, result: { value: null }, deduped: true }],
+    tool_round_cap_reached: true,
+    audit: { original_answer: "a 【?】", invalid_citations: [{ marker: "【?】" }] },
+  };
+  const rendered = gradingContext({ ...legacy, ...fields });
+  expect(JSON.parse(rendered.split("ANSWER EVIDENCE:\n")[1])).toEqual(fields);
+  expect(gradingContext(legacy)).toBe("### doc (chunk one)\n\nexcerpt");
 });

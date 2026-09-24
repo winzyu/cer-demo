@@ -108,7 +108,7 @@ function citationSource(citations, index) {
  * built with `createElement`/`textContent` — never string-built HTML. The quote itself is
  * discarded by `splitCitations` before it ever reaches here, so it cannot appear in the DOM.
  */
-function replaceMarkersInTextNode(node, citations) {
+function replaceMarkersInTextNode(node, citations, target) {
   const segments = splitCitations(node.nodeValue);
   if (segments.length === 1 && segments[0].type === "text") return; // no marker in this node
   const frag = document.createDocumentFragment();
@@ -117,6 +117,24 @@ function replaceMarkersInTextNode(node, citations) {
       if (seg.value) frag.appendChild(document.createTextNode(seg.value));
       continue;
     }
+    if (seg.type === "tool") {
+      const call = target.toolCalls?.find((item) => item.handle === seg.handle);
+      if (!call) continue;
+      const button = document.createElement("button");
+      button.className = "cite";
+      button.textContent = seg.handle;
+      button.setAttribute("aria-label", `Tool evidence ${seg.handle}`);
+      button.addEventListener("click", () => {
+        const entry = target.slots.provenance.querySelector(`[data-tool-handle="${seg.handle}"]`);
+        const details = entry?.closest("details");
+        if (details) details.open = true;
+        entry?.scrollIntoView({ block: "nearest" });
+        entry?.focus();
+      });
+      frag.appendChild(button);
+      continue;
+    }
+    if (!citationSource(citations, seg.index)) continue;
     const sup = document.createElement("sup");
     sup.className = "cite";
     const source = citationSource(citations, seg.index);
@@ -137,7 +155,7 @@ function replaceMarkersInTextNode(node, citations) {
  * plain-text path never produced HTML at all), so every text node visited here is trusted content,
  * and the only elements this function itself introduces are made with `createElement`/`textContent`.
  */
-function insertCitationMarkers(root, citations) {
+function insertCitationMarkers(root, citations, target) {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const nodes = [];
   let node = walker.nextNode();
@@ -152,7 +170,7 @@ function insertCitationMarkers(root, citations) {
     node = walker.nextNode();
   }
   // Collect first, mutate after: replacing nodes mid-walk would disturb the TreeWalker's traversal.
-  nodes.forEach((n) => replaceMarkersInTextNode(n, citations));
+  nodes.forEach((n) => replaceMarkersInTextNode(n, citations, target));
 }
 
 export function updateMessageBody(target, text, markdownRenderer) {
@@ -172,7 +190,7 @@ export function updateMessageBody(target, text, markdownRenderer) {
   }
   // A user turn is never cited — WS-1's markdown affordance is assistant-only for the same reason.
   if (!isUserTarget(target)) {
-    insertCitationMarkers(target.body, citationsByWrap.get(target.wrap) || null);
+    insertCitationMarkers(target.body, citationsByWrap.get(target.wrap) || null, target);
   }
 }
 

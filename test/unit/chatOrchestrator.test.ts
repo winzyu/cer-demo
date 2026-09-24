@@ -110,7 +110,7 @@ describe("ChatOrchestrator tool rounds", () => {
     expect(second[second.length - 1]).toMatchObject({
       role: "tool",
       tool_call_id: "call_1",
-      content: JSON.stringify({ value: 7.1, unit: "unitless" }),
+      content: JSON.stringify({ handle: "T1", result: { value: 7.1, unit: "unitless" } }),
     });
   });
 
@@ -174,7 +174,7 @@ describe("ChatOrchestrator tool rounds", () => {
 describe("ChatOrchestrator error recovery", () => {
   it("feeds an unknown tool name back instead of raising", async () => {
     const { llm } = scriptedLlm([
-      answer({ toolCalls: [toolCall("call_1", "search_documents", {})] }),
+      answer({ toolCalls: [toolCall("call_1", "search_documents", { query: "oxygen" })] }),
       answer({ content: "recovered" }),
     ]);
 
@@ -182,6 +182,8 @@ describe("ChatOrchestrator error recovery", () => {
 
     expect(result.content).toBe("recovered");
     expect(result.invocations[0].result).toEqual({ error: "unknown tool 'search_documents'" });
+    expect(result.invocations[0].arguments).toEqual({ query: "oxygen" });
+    expect(result.invocations[0].handle).toBe("T1");
   });
 
   it("feeds malformed tool arguments back instead of raising", async () => {
@@ -292,6 +294,7 @@ describe("ChatOrchestrator round cap", () => {
     expect(result.invocations).toHaveLength(5);
     expect(result.invocations.slice(1).every((entry) => entry.deduped)).toBe(true);
     expect(result.invocations[0].deduped).toBeUndefined();
+    expect(result.invocations.map((entry, i) => entry.handle === `T${i + 1}`)).not.toContain(false);
   });
 
   it("ignores tool calls made on the forced text-only round", async () => {

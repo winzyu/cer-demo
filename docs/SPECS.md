@@ -801,11 +801,17 @@ history starts at its own label. That is the fail-closed outcome the rules above
 
 ### 10.4 Responses
 
-**Default (JSON):** `{ answer, model, mode, citations, usage }`, plus `tool_calls` when any tool ran
-and `tool_round_cap_reached` when the loop hit the cap. Both are **omitted** when no tool ran, so
-the flag-off response shape is unchanged from N1. Tool results are traced there, never turned into
-citations (§3 rule 4) — a sensor reading is this deployment's own measurement, not a claim
-attributable to a corpus document.
+**Default (JSON):** `{ answer, model, mode, citations, usage, audit }`, plus optional `tool_calls` and `tool_round_cap_reached`.
+Every invocation receives an answer-local `handle` (`T1`, `T2`, etc.), including deduplicated calls.
+The model receives `{ handle, result }` in each tool message and can cite it as `【T1】`.
+Numeric document citations remain separate from tool evidence.
+The tools-only prompt blocks describe this exception; the evaluated general prompt is unchanged.
+
+The trace preserves `handle`, `name`, effective `arguments`, `raw_arguments`, `result`, `round`, and optional `deduped`.
+The cap flag is true when the forced final round is used, including when that round successfully returns prose.
+Absent fields remain absent for legacy messages; neither the relay nor the interface assigns handles retrospectively.
+The server relay, chat storage, dashboard state and reopened history preserve these optional fields, document citations, report offers and citation audit data.
+The relay's existing `audit.toolCalls` name list remains available for older clients.
 
 **Answer text post-processing (`src/utils/answerFormat.ts`).** gpt-oss sometimes leaks its harmony
 `commentary` channel into the answer as a `【commentary…】` marker. It is stripped after the fact,
@@ -831,7 +837,7 @@ callers should not have to parse SSE. N7's chat UI will likely flip the default 
 |---|---|---|
 | `meta` | `{ mode, citations }` | **Always first.** After the first byte the status code cannot change, so provenance must lead. |
 | `token` | `{ text }` | one per delta |
-| `done` | `{ model, usage?, tool_calls?, tool_round_cap_reached? }` | **always emitted**, on both branches. `usage` is omitted when the provider reports none — `stream_options.include_usage` support varies — and `tool_calls` / `tool_round_cap_reached` appear only on the tool branch, when a tool actually ran. |
+| `done` | `{ answer, audit, model, usage?, tool_calls?, tool_round_cap_reached? }` | **always emitted**, on both branches. `usage` is omitted when the provider reports none — `stream_options.include_usage` support varies — and `tool_calls` / `tool_round_cap_reached` appear only on the tool branch, when a tool actually ran. |
 | `end` | `{}` | terminator |
 | `error` | `{ error, message, code? }` | in-band; headers are already sent, so the central error handler cannot render it. Same shape as the JSON error body above, `code` included, so a client branches identically on either transport. |
 
@@ -840,6 +846,45 @@ error event. A client disconnect aborts the upstream call via `AbortController` 
 tab keeps generating billable tokens. `X-Accel-Buffering: no` is set because a buffering proxy in
 front of Cloud Run would otherwise hold the whole stream and release it at once, which is
 indistinguishable from streaming being broken.
+
+### 10.4a Citation audit and display contract
+
+`src/utils/citations.ts` supplies the same marker assessment to HTTP responses and deterministic evaluation.
+Before validating a numeric quote marker, the service checks the quote against the supplied excerpt verbatim.
+If its current excerpt does not contain the quote and exactly one excerpt does, it changes only the numeric index.
+Ambiguous, case-changed, whitespace-changed and unmatched quotes do not trigger a correction.
+Quote-support measurement remains separate from marker resolution.
+
+The response `audit` contains `original_answer` (before citation edits), `corrections` (original marker, replacement, original character offset, old and new index), and `invalid_citations` (marker, original offset and reason).
+Malformed markers, empty markers, unknown tool handles, out-of-range document numbers and invalid line spans are recorded before removal from displayed text.
+Malformed quote closers such as `"}】` count as invalid; the legacy frontend fallback consumes doubled closers as one marker.
+A tool marker resolves only against an explicit handle in this answer's invocation list.
+This proves that the evidence exists, not that it supports the attached claim.
+The optional audit-log record also retains this citation audit.
+When report results supply `report_period`, `audit.report_periods` records whether the period appears after Unicode hyphens are normalized for comparison only.
+Neither original answers nor captured transcripts are rewritten for this comparison.
+
+JSON `answer` and SSE `done.answer` contain the corrected display text.
+The streaming client replaces accumulated tokens with the authoritative final answer and retains the audit separately.
+This matters on the document-only stream, where validation happens after generation finishes.
+Evaluation assesses `audit.original_answer` when present, so removing an invalid marker from display cannot make an invalid-citation assessment pass.
+Legacy transcripts without an audit are assessed from their stored answer.
+
+Both frontends render tool handles as controls opening evidence within that answer, without colliding with document numbers or another answer's handles.
+The dashboard keeps tool arguments, results, rounds and reuse status in a collapsed disclosure.
+Incomplete searches, stale or empty windows, provisional turbidity, tool errors and exhausted rounds remain visible outside it.
+An empty window or null value is never converted to zero; actual zero measurements remain zero.
+Explicit scope refusals have intentional-outcome styling.
+Turbidity interpretation itself is unchanged.
+
+Future JSON and SSE captures preserve optional tool evidence, cap status and citation audit in `TranscriptTurn`.
+Deterministic figure checks receive tool results; citation checks resolve handles using the trace; judge and grading-packet inputs include the evidence and qualifications.
+Existing `eval/transcripts/` remain verbatim.
+
+Controlled verification uses `scripts/taskCStack.ts` with `TASK_C_SERVER_WORKTREE` pointing at the approved server checkout and `scripts/taskCBrowser.mjs` against the local dashboard.
+The stack injects deterministic model and tool responses and blocks nonlocal fetches.
+The browser harness blocks external requests and checks answer display, tool navigation, saved-history reopening, refusals and legacy messages.
+It uses the development in-memory chat store; this verifies serialization and history paths, not a live Firestore deployment.
 
 ### 10.5 Device list (`GET /api/v1/devices`)
 

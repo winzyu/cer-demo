@@ -1,3 +1,4 @@
+import type { CitationEvidence } from "../utils/citations";
 import type { ChatMessage } from "../types/chat.types";
 import type { Chunk } from "../types/retrieval.types";
 import type { LlmUsage } from "../services/LlmService";
@@ -24,7 +25,7 @@ export interface AskRequest {
   history: ChatMessage[];
 }
 
-export interface AskResult {
+export interface AskResult extends CitationEvidence {
   answer: string;
   /** The arm the service says answered. Load-bearing — see the mismatch guard below. */
   mode: string;
@@ -89,6 +90,10 @@ export const replayFixture = async (
         question: content,
         answer: result.answer,
         context: result.context,
+        ...(result.tool_calls ? { tool_calls: result.tool_calls } : {}),
+        ...(result.tool_round_cap_reached !== undefined
+          ? { tool_round_cap_reached: result.tool_round_cap_reached } : {}),
+        ...(result.audit ? { audit: result.audit } : {}),
         mode: result.mode,
         usage: result.usage,
         timing: { ttftMs: result.ttftMs, wallMs: result.wallMs },
