@@ -57,3 +57,8 @@ This is input for the Task A interview, not a decision record.
 
 - A pod reporting all zeros reads as 14 days of Clear water, in both chat and reports.
 - The edge disagreement means a 347 reading shows as Clear on the dial and Moderate in a report.
+
+## Outcome (2026-09-24, provisional)
+
+The interview settled the open questions as provisional defaults pending approval; the decisions and reasoning are in the `timeline.md` decision log and `SPECS.md` §10.2.
+In short: the 345/795 edges stay and the dial is the one to change, an all-zero period is flagged as a possible missing sensor, the index has no unit and is never called NTU, every pod is treated as qualitative only, and supervisor item 18 is treated as granted.

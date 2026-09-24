@@ -614,6 +614,17 @@ name turbidity as one of the six measured parameters, and **0 is a valid turbidi
 must never be flagged as erroneous (same rule as ORP). The reasoning is in the
 `src/prompt/systemPrompt.ts` docstring and the `timeline.md` decision log.
 
+**Turbidity is a unitless relative index, and an all-zero period is flagged** (2026-09-24,
+provisional, Task A). Every pod is treated as qualitative only, so the prompt, the tool results and
+the metric table name no unit and never say NTU. The clarity bands stay at the operator's 345/795
+(2.2 V and 0.7 V); the dashboard dial's 350/800 is the discrepancy to fix upstream. The backend's
+`turbVoltToNTU.ts` returns 0 for a missing voltage and for the offline sentinel as well as for clear
+water, so `isAllZeroTurbidity` (`src/report/referenceRanges.ts`) flags a period in which every
+reading is 0 as a possible missing sensor: `query_sensor_data` adds `TURBIDITY_ALL_ZERO_CAVEAT` to
+its note, the report's Flag column reads "Clear (all zero)", and the narrative says so. A lone 0
+among varied readings stays Clear with no flag. The flag is a data-quality signal like off-scale,
+not a fourth band.
+
 **Greetings and capability questions are carved out of the refusal rule** (2026-09-21). They were
 not before: the scope rule fired on anything that was not a groundable question, so "hello" was
 answered with `REFUSAL_SENTENCE`, which is how a real session opened. A greeting asks for nothing,
@@ -766,7 +777,8 @@ Behavior worth knowing, each guarding a documented silent-failure mode in `DEVIC
 | faulted samples are excluded per metric, and the count is reported | a faulted probe still reports a plausible number |
 | `0` is never falsy-checked | it is a real reading for ORP and turbidity |
 | a device must be named when several are visible | the two cleared pods are different water bodies on opposite coasts |
-| turbidity results carry a provisional/uncalibrated note | it is a derived voltage index expressed in NTU, not a measurement |
+| turbidity results carry a provisional/uncalibrated note and no unit | it is a derived voltage index, not a measurement and not NTU |
+| a window in which every turbidity reading is 0 carries a possible-missing-sensor note | the backend reports a missing or offline voltage as 0, the same as clear water |
 | a device whose `operatingEnvironment` disagrees with `WATER_TYPE` is flagged in the result | one global env var cannot describe both pods; per-device water type in chat is unbuilt N4 work |
 
 ### 10.3c Device continuity — merge chains (`src/devices/mergeChains.ts`)
