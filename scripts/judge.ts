@@ -32,6 +32,7 @@ import {
   DEFAULT_JUDGE_MODEL,
   JUDGE_ROOT,
   TRANSCRIPT_ROOT,
+  answersTask,
   appendLedger,
   armsOnDisk,
   budgetOf,
@@ -46,6 +47,7 @@ import {
   summarize,
   type ArmJudgeResult,
   type JudgeRecord,
+  type JudgeTask,
 } from "../src/eval/judge/runner";
 import { calibrate } from "../src/eval/judge/calibrate";
 import { parseRunId } from "../src/eval/cli";
@@ -255,13 +257,27 @@ const main = async (): Promise<void> => {
     summarize(existing, pass).forEach(printArm);
     const budget = budgetOf(existing, judgeModel);
     log.info("");
-    log.info(`Judged so far: ${budget.calls} call(s), ${budget.promptTokens} in / ${budget.completionTokens} out`);
+    log.info(`Judged so far: ${budget.calls} call(s), ${budget.promptTokens} in `
+      + `(${budget.cachedPromptTokens} cached) / ${budget.completionTokens} out`);
     return;
   }
 
-  const tasks = buildTasks({
+  // A row is reused only when it graded the exact prompt this run would send. The ledger is keyed
+  // by arm, fixture, turn and dimension, so without the hash a re-capture into an existing pass
+  // would inherit verdicts for answers the judge never saw.
+  const planned = buildTasks({
     pass, arms, only, dimensions, root: transcriptRoot,
-  }).filter((task) => !currentLedger.has(recordKey(task)));
+  });
+  const tasks = planned.filter((task) => !answersTask(currentLedger.get(recordKey(task)), task));
+  const stale = new Set(
+    tasks.map(recordKey).filter((key) => currentLedger.has(key)),
+  );
+  if (stale.size > 0) {
+    log.info(
+      `${stale.size} ledger row(s) graded a different prompt (a re-capture, a rubric or prompt `
+      + "change, or a row from before prompt hashes were recorded) - re-judging them.",
+    );
+  }
 
   if (tasks.length === 0) {
     log.info(`Nothing left to judge for the "${pass}" pass. Run with --report or --calibrate.`);
@@ -295,7 +311,7 @@ const main = async (): Promise<void> => {
   if (only) {
     log.info(`Fixtures:    ${only.length} — ${only.join(", ")}`);
   }
-  log.info(`Calls:       ${tasks.length} (${currentLedger.size} already on disk, skipped)`);
+  log.info(`Calls:       ${tasks.length} (${planned.length - tasks.length} already on disk, skipped)`);
   log.info(`Input est.:  ~${estimated.toLocaleString()} tokens at ~4 chars/token`);
 
   if (flag("dry-run")) {
@@ -317,8 +333,17 @@ const main = async (): Promise<void> => {
   const fresh: JudgeRecord[] = [];
   const failures: string[] = [];
 
+  // One turn's dimensions run back to back in one worker, not side by side. Their prompts open
+  // with the same grounding material (`prompts.ts`), and the second call can only read it from the
+  // provider's prompt cache once the first has written it.
+  const byTurn = new Map<string, JudgeTask[]>();
+  tasks.forEach((task) => {
+    const turnKey = `${task.arm}|${task.fixtureId}|${task.turn}`;
+    byTurn.set(turnKey, [...(byTurn.get(turnKey) ?? []), task]);
+  });
+
   let done = 0;
-  await runPool(tasks, concurrency, async (task) => {
+  const judgeTask = async (task: JudgeTask): Promise<void> => {
     try {
       const record = await judgeOnce(client, options, task);
       appendLedger(pass, record, judgeRoot);
@@ -332,9 +357,14 @@ const main = async (): Promise<void> => {
     if (done % 25 === 0 || done === tasks.length) {
       log.info(`  ${done}/${tasks.length} judged, ${failures.length} failed`);
     }
-  });
+  };
+  await runPool([...byTurn.values()], concurrency, (turnTasks) => turnTasks.reduce(
+    (previous, task) => previous.then(() => judgeTask(task)),
+    Promise.resolve(),
+  ));
 
-  const all = [...existing, ...fresh];
+  // A re-judged row replaces its stale predecessor in this run's summary, as it does on disk.
+  const all = [...existing.filter((r) => !stale.has(recordKey(r))), ...fresh];
   const results = summarize(all, pass);
   results.forEach(printArm);
 
@@ -346,7 +376,8 @@ const main = async (): Promise<void> => {
   log.info("");
   log.info(
     `Judge budget (§7b): ${budget.calls} call(s), `
-    + `${budget.promptTokens.toLocaleString()} in / ${budget.completionTokens.toLocaleString()} out`,
+    + `${budget.promptTokens.toLocaleString()} in (${budget.cachedPromptTokens.toLocaleString()} cached) / `
+    + `${budget.completionTokens.toLocaleString()} out`,
   );
   log.info(
     budget.usd === undefined

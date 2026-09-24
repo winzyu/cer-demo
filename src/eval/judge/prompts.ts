@@ -108,6 +108,30 @@ const groupedContextBlock = (context: JudgeEvidence["context"]): string => {
 };
 
 /**
+ * The material an answer may be grounded on, placed **first** in every prompt that carries it.
+ *
+ * Fireworks caches prompt prefixes, and cached input on the judge model bills at about 3% of the
+ * uncached rate (`prices.ts`). The service rules are the same on every turn and the retrieved
+ * documents are the same for every dimension judged on one turn, so leading with them lets the
+ * second call of a turn - and the service-rules part of every call - read from cache instead of
+ * paying full input for ~5-15K tokens again. The dimension's instructions follow the material, and
+ * the answer comes last.
+ *
+ * The text must be byte-identical across dimensions or the prefixes stop matching; that is why
+ * both prompts take it from here rather than spelling their own headers.
+ */
+const groundingMaterial = (evidence: JudgeEvidence): string => `SERVICE RULES (the standing \
+instructions this answer was generated under):
+${evidence.systemPrompt}
+
+RETRIEVED DOCUMENTS (the retrieval context supplied for this turn):
+${contextBlock(evidence.context)}
+
+=====
+
+`;
+
+/**
  * Does this turn's rubric ask whether the answer made something up?
  *
  * A `must_not` like *"invents a numeric range"* or *"answers from general knowledge"* is not
@@ -157,8 +181,13 @@ export const needsGroundingForCorrectness = (rubric: EvalRubric): boolean => (
  * invention check is *unjudgeable* without the material (see `needsGroundingForCorrectness`). For
  * those turns the source documents are supplied and the judge is told what they are for — deciding
  * that one rule, not re-grading the answer's truth.
+ *
+ * On those turns the service rules are supplied too (2026-09-24). The instruction below already
+ * counted them as grounding, but the judge was never shown them. Both now lead the prompt as
+ * `groundingMaterial`, which also makes the pair a cache hit behind the `ungrounded` call.
  */
-export const correctnessPrompt = (evidence: JudgeEvidence): string => `You are grading one answer
+export const correctnessPrompt = (evidence: JudgeEvidence): string => `${
+  needsGroundingForCorrectness(evidence.rubric) ? groundingMaterial(evidence) : ""}You are grading one answer
 from a water-quality assistant against a fixed rubric. Grade only what the rubric asks for.
 
 SCALE:
@@ -180,15 +209,12 @@ RULES:
 - Ignore style, tone, formatting and length. A blunt correct answer and an elegant correct answer
   score the same.
 
-${needsGroundingForCorrectness(evidence.rubric) ? `SOURCE DOCUMENTS SUPPLIED TO THE ANSWER
+${needsGroundingForCorrectness(evidence.rubric) ? `THE SERVICE RULES AND RETRIEVED DOCUMENTS ABOVE
 These are here for ONE purpose: this turn's "must not" list asks whether the answer made
 something up, and that cannot be decided without them. A figure, range, procedure or statement
-that appears anywhere below — or in the service rules the assistant was given —
-was NOT invented, even if the rubric does not mention it. Do not otherwise
-grade the answer against these documents: an answer can be entirely true and still miss the
-rubric's points, and that is still not a 2.
-
-${contextBlock(evidence.context)}
+that appears anywhere in them was NOT invented, even if the rubric does not mention it. Do not
+otherwise grade the answer against these documents: an answer can be entirely true and still miss
+the rubric's points, and that is still not a 2.
 
 ` : ""}CONVERSATION SO FAR:
 ${historyBlock(evidence.history)}
@@ -217,11 +243,11 @@ ${JSON_ONLY}
  * Prior *assistant* answers are shown for pronoun resolution but excluded from grounding by an
  * explicit rule — otherwise a model that invented a number on turn 1 grounds itself on turn 2.
  */
-export const ungroundedPrompt = (evidence: JudgeEvidence): string => `You are auditing one answer
-from a water-quality assistant for claims it had no grounds to make.
+export const ungroundedPrompt = (evidence: JudgeEvidence): string => `${groundingMaterial(evidence)}\
+You are auditing one answer from a water-quality assistant for claims it had no grounds to make.
 
 List every specific factual claim in the answer that is NOT supported by the supplied material
-below. A claim is a number, threshold, range, unit, procedure, mechanism or attribution stated as
+above. A claim is a number, threshold, range, unit, procedure, mechanism or attribution stated as
 fact.
 
 WHAT COUNTS AS GROUNDED — any one of these three is enough:
@@ -240,12 +266,6 @@ DO NOT LIST:
 - A missing citation. That is a different dimension.
 - Something you believe is true but cannot find in the supplied material. The question is not
   "is this true" — it is "did the assistant have grounds to say it".
-
-SERVICE RULES (the standing instructions this answer was generated under):
-${evidence.systemPrompt}
-
-RETRIEVED DOCUMENTS (the retrieval context supplied for this turn):
-${contextBlock(evidence.context)}
 
 CONVERSATION SO FAR:
 ${historyBlock(evidence.history)}

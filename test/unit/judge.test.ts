@@ -27,14 +27,17 @@ import {
   DEFAULT_JUDGE_MAX_TOKENS,
   DEFAULT_JUDGE_MODEL,
   PRODUCTION_GENERATOR,
+  answersTask,
   budgetOf,
   buildTasks,
   filterToCurrentFixtures,
   isServable,
   judgeOnce,
+  promptHash,
   judgesOwnFamily,
   summarize,
   type JudgeRecord,
+  type JudgeTask,
 } from "../../src/eval/judge/runner";
 import {
   agreementFor,
@@ -54,6 +57,15 @@ const evidence = (overrides: Partial<JudgeEvidence> = {}): JudgeEvidence => ({
   systemPrompt: "AUTHORITATIVE NORMAL RANGES:\n- pH: 6.5 to 8.5",
   history: [],
   ...overrides,
+});
+
+const judgeTask = (over: Partial<JudgeEvidence> = {}): JudgeTask => ({
+  arm: "gold-context",
+  fixtureId: "demo",
+  fixtureClass: "definitional",
+  turn: 1,
+  dimension: "correctness",
+  evidence: evidence(over),
 });
 
 const record = (over: Partial<JudgeRecord>): JudgeRecord => ({
@@ -103,7 +115,27 @@ describe("judge prompts — blinding", () => {
     expect(prompt).toContain("Hypoxia begins below 2 mg/L");
     expect(prompt).toMatch(/was NOT invented/);
     // ...and is still told not to re-grade truth against them, which is a different measurement.
-    expect(prompt).toMatch(/entirely true and still miss the\s+rubric's points/);
+    expect(prompt).toMatch(/entirely true and still miss\s+the\s+rubric's points/);
+    // The rule counts the service rules as grounding, so the judge has to be shown them.
+    expect(prompt).toContain("AUTHORITATIVE NORMAL RANGES");
+  });
+
+  it("opens both grounded prompts with the same material, so the second call is a cache hit", () => {
+    const invention = evidence({
+      rubric: { must_contain: ["reproduces the table"], must_not: ["invents numeric criteria"] },
+    });
+    const correctness = correctnessPrompt(invention);
+    const ungrounded = ungroundedPrompt(invention);
+    let shared = 0;
+    while (correctness[shared] === ungrounded[shared]) {
+      shared += 1;
+    }
+    const prefix = correctness.slice(0, shared);
+    expect(prefix).toContain("AUTHORITATIVE NORMAL RANGES");
+    expect(prefix).toContain("Hypoxia begins below 2 mg/L");
+    // The answer stays out of the shared part: it is what differs least across dimensions but
+    // most across turns, and it must come after the instructions that say how to read it.
+    expect(prefix).not.toContain(invention.answer);
   });
 
   it("gives groundedness the system prompt, not just the retrieved chunks", () => {
@@ -547,6 +579,42 @@ describe("judge call - max-tokens budget", () => {
     expect(result.maxTokens).toBe(DEFAULT_JUDGE_MAX_TOKENS);
     expect(create.mock.calls[0][0].max_tokens).toBe(DEFAULT_JUDGE_MAX_TOKENS);
   });
+
+  it("records cached input tokens when reported, and leaves them unknown otherwise", async () => {
+    const task = judgeTask();
+    const reply = (usage: Record<string, unknown>) => fakeClient(jest.fn().mockResolvedValue({
+      choices: [{ message: { content: '{"score": 2, "reason": "fine"}' } }],
+      model: "judge-model",
+      usage,
+    }));
+    const options = { model: "judge-model", maxTokens: 100 };
+
+    const usage = { prompt_tokens: 50, completion_tokens: 5 };
+    const cached = await judgeOnce(
+      reply({ ...usage, prompt_tokens_details: { cached_tokens: 40 } }),
+      options,
+      task,
+    );
+    expect(cached.cachedPromptTokens).toBe(40);
+
+    const unreported = await judgeOnce(reply(usage), options, task);
+    expect(unreported.cachedPromptTokens).toBeUndefined();
+  });
+});
+
+describe("judge ledger reuse", () => {
+  it("reuses a verdict only for the exact prompt it graded", () => {
+    const judged = record({ promptHash: promptHash(judgeTask()) });
+    expect(answersTask(judged, judgeTask())).toBe(true);
+    // A re-capture into the same pass: same key, different answer. Reusing it is the silent
+    // wrong verdict the hash exists to prevent.
+    expect(answersTask(judged, judgeTask({ answer: "Below 5 mg/L is hypoxic." }))).toBe(false);
+  });
+
+  it("re-judges rows from before hashes were recorded, and turns never judged", () => {
+    expect(answersTask(record({}), judgeTask())).toBe(false);
+    expect(answersTask(undefined, judgeTask())).toBe(false);
+  });
 });
 
 describe("judge budget", () => {
@@ -556,6 +624,12 @@ describe("judge budget", () => {
     expect(budgetOf([record({})], "accounts/fireworks/models/not-priced").usd).toBeUndefined();
     expect(budgetOf([record({})], "accounts/fireworks/models/gpt-oss-120b").usd)
       .toBeCloseTo((100 / 1e6) * 0.15 + (10 / 1e6) * 0.6);
+  });
+
+  it("bills cached input at the cached rate", () => {
+    const budget = budgetOf([record({ cachedPromptTokens: 80 })], "accounts/fireworks/models/gpt-oss-120b");
+    expect(budget.cachedPromptTokens).toBe(80);
+    expect(budget.usd).toBeCloseTo((20 / 1e6) * 0.15 + (80 / 1e6) * 0.015 + (10 / 1e6) * 0.6);
   });
 });
 

@@ -15,6 +15,7 @@
  * §8a's citation gate. Tier 1 owns the resolution half. Kept here because the human calibration
  * sample scored it, so dropping it would throw away a third of the agreement evidence.
  */
+import { createHash } from "crypto";
 import fs from "fs";
 import path from "path";
 import OpenAI from "openai";
@@ -156,7 +157,20 @@ export interface JudgeRecord {
   items: { text: string; why: string }[];
   note: string;
   promptTokens: number;
+  /**
+   * The part of `promptTokens` served from the provider's prompt cache, as the API reported it.
+   * Undefined on rows judged before 2026-09-24 and on a reply whose usage carried no breakdown -
+   * unknown, not zero, so the budget bills those at the uncached rate.
+   */
+  cachedPromptTokens?: number;
   completionTokens: number;
+  /**
+   * The exact prompt this verdict answers, as `promptHash` computes it. A ledger row is reused
+   * only while the hash matches, so a re-capture, a rubric edit or a prompt change is re-judged
+   * instead of silently inheriting the old verdict. Undefined on rows judged before 2026-09-24,
+   * which therefore never match.
+   */
+  promptHash?: string;
   /**
    * The `max_tokens` budget the call was made with. Optional because the 729 rows already on
    * disk predate this field - they were judged before the token cap was recorded at all, not
@@ -167,6 +181,18 @@ export interface JudgeRecord {
   model: string;
   judgedAt: string;
 }
+
+const hashPrompt = (prompt: string): string => createHash("sha256").update(prompt).digest("hex");
+
+/** SHA-256 of the prompt a task sends, the identity a ledger row is reused on. */
+export const promptHash = (task: JudgeTask): string => hashPrompt(
+  PROMPT_BUILDERS[task.dimension](task.evidence),
+);
+
+/** Does this ledger row grade exactly the prompt `task` would send? */
+export const answersTask = (record: JudgeRecord | undefined, task: JudgeTask): boolean => (
+  record?.promptHash !== undefined && record.promptHash === promptHash(task)
+);
 
 export const recordKey = (
   task: { arm: string; fixtureId: string; turn: number; dimension: string },
@@ -320,6 +346,7 @@ export const judgeOnce = async (
 ): Promise<JudgeRecord> => {
   const prompt = PROMPT_BUILDERS[task.dimension](task.evidence);
   let promptTokens = 0;
+  let cachedPromptTokens: number | undefined;
   let completionTokens = 0;
   let lastError = "";
 
@@ -345,6 +372,10 @@ export const judgeOnce = async (
     });
 
     promptTokens += response.usage?.prompt_tokens ?? 0;
+    const cached = response.usage?.prompt_tokens_details?.cached_tokens;
+    if (cached !== undefined) {
+      cachedPromptTokens = (cachedPromptTokens ?? 0) + cached;
+    }
     completionTokens += response.usage?.completion_tokens ?? 0;
 
     try {
@@ -360,7 +391,9 @@ export const judgeOnce = async (
         items: verdict.items,
         note: verdict.note,
         promptTokens,
+        cachedPromptTokens,
         completionTokens,
+        promptHash: hashPrompt(prompt),
         maxTokens: options.maxTokens,
         model: response.model ?? options.model,
         judgedAt: new Date().toISOString(),
@@ -561,6 +594,8 @@ export const summarize = (
 export interface JudgeBudget {
   calls: number;
   promptTokens: number;
+  /** Of `promptTokens`, those the provider reported as cache hits. */
+  cachedPromptTokens: number;
   completionTokens: number;
   /** Undefined when the judge model is absent from the dated price sheet — never guessed. */
   usd?: number;
@@ -568,17 +603,21 @@ export interface JudgeBudget {
 
 export const budgetOf = (records: JudgeRecord[], model: string): JudgeBudget => {
   const promptTokens = records.reduce((sum, r) => sum + r.promptTokens, 0);
+  const cachedPromptTokens = records.reduce((sum, r) => sum + (r.cachedPromptTokens ?? 0), 0);
   const completionTokens = records.reduce((sum, r) => sum + r.completionTokens, 0);
   const price = CHAT_PRICES[model];
   return {
     calls: records.length,
     promptTokens,
+    cachedPromptTokens,
     completionTokens,
     // Left undefined rather than defaulted. `prices.ts` is a dated sheet and a made-up rate in a
     // cost report is worse than a gap in one — §10.4 requires the date the price was read.
     usd: price === undefined
       ? undefined
-      : (promptTokens / 1e6) * price.input + (completionTokens / 1e6) * price.output,
+      : ((promptTokens - cachedPromptTokens) / 1e6) * price.input
+        + (cachedPromptTokens / 1e6) * price.cachedInput
+        + (completionTokens / 1e6) * price.output,
   };
 };
 
