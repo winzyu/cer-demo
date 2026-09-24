@@ -62,12 +62,14 @@ describe("buildSystemPrompt", () => {
   });
 
   it("carries the Phase 3 grounding rules measured on the 2026-09-23 baseline", () => {
-    // Each rule answers a failure seen on that capture: step numbers cited as excerpt numbers,
-    // partial refusals that answered around the gap, general-knowledge rationale, and misread
-    // table rows (docs/EVAL_REBUILD.md).
+    // Each rule answers a failure seen on that capture: partial refusals that answered around the
+    // gap, general-knowledge rationale, and misread table rows. Iteration 2 dropped the
+    // excerpt-number rule (out-of-range markers rose) and made the partial-refusal rule check every
+    // excerpt first, after it refused answerable turns (docs/EVAL_REBUILD.md).
     const prompt = buildSystemPrompt(false, false, null);
 
-    expect(prompt).toContain("never a step, table,\n  figure or page number printed inside the excerpt's text");
+    expect(prompt).not.toContain("never a step, table");
+    expect(prompt).toContain("Before refusing any part, check every excerpt.");
     expect(prompt).toContain("Answering only the related parts is not a refusal.");
     expect(prompt).toContain("Say only what an excerpt states.");
     expect(prompt).toContain("\"can\" stays \"can\"");
