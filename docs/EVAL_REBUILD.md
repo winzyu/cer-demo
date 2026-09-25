@@ -1143,6 +1143,27 @@ The three correctness disagreements are each one point and run both ways: `prece
 Nine of the twelve human grades are 1, so kappa over this sample is dominated by chance agreement and unstable; exact agreement is the steadier figure.
 Reading: the tuned kappa overstates agreement on unseen fixtures, and single-turn judge scores carry about one point of noise in a quarter of rows, but with no direction in the errors the E3 arm means stand, and the gaps to the 1.30 floor (0.29 on gold context, 0.72 on retrieval) are far wider than this noise.
 
+### Reranker, offline - 2026-09-25
+
+Question: can a cross-encoder reorder a deeper dense candidate pool so the labelled chunks reach the top k, rather than paying for depth.
+Candidate recall of `local-vector` is 38.4% at 20 and 56.8% at 50 (`MAX_TOP_K`), so a perfect reorder of the top 50 has about 18 points to recover.
+Method: `retrieval:eval --arm=local-vector --k=50 --out` saved each of the 90 frozen queries' top 50; Fireworks `/v1/rerank` with `fireworks/qwen3-reranker-8b` scored every candidate once (90 calls, 0 failed, 2.99M prompt tokens, about $0.60 at $0.20 per million); each ordering below was then scored with the harness's own `scoreQuery` and `summarise`, and the slice composition emulates `HybridSliceVectorAdapter` (top k from the dense arm, slice-covered chunks dropped, the slice's chunks in front).
+The emulated `vector k=20` with the slice reproduces the recorded `hybrid-slice-vector` 39.5% recall and nDCG 0.154, so the rows compare like for like.
+
+| with the operator slice | recall | nDCG | manuals-only MRR |
+|---|---|---|---|
+| vector, k=10 | 29.0% | 0.117 | 0.305 |
+| vector, k=20 (today) | 39.5% | 0.154 | 0.314 |
+| rerank top 30, k=20 | 45.5% | 0.186 | 0.495 |
+| rerank top 50, k=10 | 43.3% | 0.178 | 0.523 |
+| rerank top 50, k=15 | 49.8% | 0.200 | 0.527 |
+| rerank top 50, k=20 | 51.9% | 0.209 | 0.527 |
+
+Reranking the top 50 into k=20 adds 12.4 points of recall and recovers about 70% of the pool's headroom; every class gains except refusal, where recall is not the target, and precedence rises from 50% to 86% with the slice kept.
+Reranked k=10 already beats today's k=20, so a reranker could also halve the manual context.
+Launch cost: about 33K reranker tokens per question, about $0.0066, and 0.8-1.4 s per call on three timed requests; the answer call costs about $0.003 at k=20, so reranking roughly triples model spend per question, still under a cent.
+Caveats: the labels are agent-authored and fixture-wide, and recall is not correctness; the next step is a `hybrid-slice-vector` capture with the reranker, correctness-judged against E3's 0.58.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
