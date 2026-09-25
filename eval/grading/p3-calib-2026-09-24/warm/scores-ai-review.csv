@@ -7,7 +7,7 @@ crossdoc-soft-water-ph-wont-settle,cross-document,1,A,1,1,,Partial circuit and K
 crossdoc-soft-water-ph-wont-settle,cross-document,1,B,1,0,,Supported KCl quantities and electrode options; omits junction-potential explanation; <0.01 pH effect; fallback prerequisite and untreated-sample no-stir warning.
 crossdoc-soft-water-ph-wont-settle,cross-document,2,A,0,0,,Refuses expected comparison; no invented criteria.
 crossdoc-soft-water-ph-wont-settle,cross-document,2,B,1,0,,Correct form tolerances and distinct 0.05 final-buffer check; omits calibration-temperature qualification.
-deepmanual-brackish-do-correction,deep-in-manual,1,A,2,2,,All rubric points met; counted added hypothetical 8.0 mg/L input and derived 6.59 mg/L result under the requested strict context-only numeric rule; arithmetic is correct.
+deepmanual-brackish-do-correction,deep-in-manual,1,A,2,0,,All rubric points met; explicitly hypothetical 8.0 mg/L input and correctly derived 6.59 mg/L result are not ungrounded claims.
 deepmanual-brackish-do-correction,deep-in-manual,1,B,0,0,,Explicit refusal of requested factor despite giving multiplication method; refusal scores 0 under guide.
 deepmanual-brackish-do-correction,deep-in-manual,2,A,1,2,,Correct >2000 threshold; omits upstream SC request and zero-SC factor; unsupported typical freshwater below threshold and essentially 1.0/no-adjustment generalization.
 deepmanual-brackish-do-correction,deep-in-manual,2,B,0,0,,Refuses expected freshwater guidance; no factual elaboration.
@@ -25,7 +25,7 @@ precedence-ph-river-range-not-pod-limit,precedence,2,A,1,0,,Appropriate refusal 
 precedence-ph-river-range-not-pod-limit,precedence,2,B,1,0,,Appropriate refusal to adopt alarm band and unavailable configuration; omits river/groundwater distinction and descriptive-not-prescriptive explanation.
 probecal-ec-never-recalibrate,probe-calibration,1,A,0,1,,Must-not: treats ~10-year datasheet figure as governing field practice; unsupported override of before-every-trip verification; maintenance details supported.
 probecal-ec-never-recalibrate,probe-calibration,1,B,1,1,,Omits full tolerance branches and explicit onsite premeasurement check; unsupported factual assertion that many users perform periodic checks.
-probecal-ec-never-recalibrate,probe-calibration,2,A,1,3,,Near/bracket advice and >100 tolerance partly met; omits KCl/NIST and >200 contamination guidance. Unsupported 600-800 band; calculated +/-21 absent from context; separate handheld-meter procedure. User's 700 excluded.
+probecal-ec-never-recalibrate,probe-calibration,2,A,1,3,,Near/bracket advice and >100 tolerance partly met; omits KCl/NIST and >200 contamination guidance. Three unsupported claims: certified 700 uS/cm standard; 600-800 band; separate handheld-meter check presented as verification of the deployed probe. Correct +/-21 arithmetic and the user-supplied 700 are not ungrounded claims.
 probecal-ec-never-recalibrate,probe-calibration,2,B,1,0,,Supported KCl; >200; 500/1413 and 3%; omits NIST traceability; dilute-standard contamination explanation; <=100 tolerance branch.
 refusal-how-long-can-it-stay-in,refusal,1,A,0,3,,Must-not: allows at least one year deployment without checks. Unsupported maintenance-as-drift-limit equivalence; one-year deployment assurance; multi-year functional assurance in creek. Datasheet lifespan numbers supported.
 refusal-how-long-can-it-stay-in,refusal,1,B,1,0,,Correctly refuses deployment maximum and gives supported checks; omits temperature verification; 2-4 week cleaning; turbidity deferral and external deployment plan.
