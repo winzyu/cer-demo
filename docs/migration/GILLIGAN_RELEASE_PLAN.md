@@ -145,15 +145,37 @@ Live writes are approved for test data only; each creation is announced in chat 
 | L8 | Staged smoke: one pod per test organization, a report, the limits, the disclaimer; then T3 | user, Claude | must | L7 | Sep 30 morning |
 | L9 | Route traffic, set `GILLIGAN_BACKEND=rag`, production smoke with a real member account | user | must | L8, T3 | Sep 30 |
 
-L2 answers so far (2026-09-24):
+L2 answers so far (2026-09-24 and 2026-09-25):
 
-- Project and region: the production project is the one whose ID starts `conductive-fold-` (exact ID to confirm); the live CER server is the Cloud Run service `cer-api` in `us-central1`, project number `98242557946`, read from the device API URL.
+- Project and region: the production project is `conductive-fold-343604` (confirmed 2026-09-25), project number `98242557946`; the live CER server is the Cloud Run service `cer-api` in `us-central1`.
 - Cutover: the server is on Cloud Run, so staging is a revision deployed with no traffic, then a traffic switch.
 - Device API: the same production base URL the local stack uses (`DEVICE_API_BASE_URL`, ending `/api/v1`).
 - Image: the user builds the image locally first, then through Cloud Build before anything is pushed to the production project.
 - Service name: `cer-gilligan` (proposed).
 - Capacity, proposed until L5 measures it: 1 vCPU, 1 GiB memory, 300 s request timeout, request concurrency 8 (matching the model-call limit), minimum instances 0 (1 on demo and launch days to avoid a cold start), maximum instances 1 until the Firestore usage store (S3) is verified live, then 2.
-- Still open: the exact project ID, the Firestore database and location, the Artifact Registry repository, the two service accounts, the Fireworks secret name, the test identities, and the release owner and incident contact.
+- Caller identity (confirmed 2026-09-25): `cer-api` runs as the project's default compute account, `98242557946-compute@developer.gserviceaccount.com`, as do `cer-api-qa`, `cer-ui`, `cer-ui-qa` and `triggerendpoint`.
+  Granting that account Cloud Run Invoker on `cer-gilligan` therefore lets all five services call it; accepted for launch because cer-gilligan fetches data with the caller's user token, so the exposure is Fireworks spend, not data.
+  After launch, give `cer-api` a dedicated account and move the grant to it.
+- Runtime identity: `cer-gilligan-runtime@conductive-fold-343604.iam.gserviceaccount.com`, to be created at L5.
+- Operator permissions (checked 2026-09-25 with `testIamPermissions` and the audit log): on 2026-09-23 the project admin, Michael (`michael@cleanearthrovers.com`), replaced the user's Editor role with Cloud Run Developer, Cloud Build Editor, Datastore Viewer and Logs Viewer.
+  The user can therefore build, deploy no-traffic revisions, switch traffic, read Firestore and read logs, but cannot create service accounts, act as one, grant IAM on services, touch Secret Manager, write Firestore or create indexes.
+  Michael does the one-time setup before L5: create `cer-gilligan-runtime` and let the user act as it; store the Fireworks key and grant the runtime account access to it; grant the runtime account its Firestore reads and usage-store writes; seed the corpus and create its index (or grant the user rights to); and, once `cer-gilligan` exists, grant the default compute account Invoker on it.
+  The user also cannot act as the default compute account (`testIamPermissions` on it returned nothing, 2026-09-25), so cannot deploy `cer-api` either; Michael grants the user Service Account User on that account before L6, or deploys the server revision themselves.
+- Firestore (confirmed 2026-09-25): `(default)` and `qa-db`, both Native mode in `us-west3`; Gilligan uses `(default)`.
+  The cross-region hop from `us-central1` adds tens of milliseconds per read, negligible beside a model call.
+- Image registry: past builds push to `gcr.io/conductive-fold-343604/` (the `cer-ui` image); cer-gilligan's image goes to `gcr.io/conductive-fold-343604/cer-gilligan`, pushed by Cloud Build under its own account.
+- Dashboard hosting: users reach it at `https://cleanearthrovers-datahub.app` (the server's `FRONTEND_URL`), a Google-hosted Next.js site; the dashboard's `cloudbuild.yaml` builds the `cer-ui` image and the Cloud Run service `cer-ui` has a continuous-deployment trigger, so the dashboard is `cer-ui` on Cloud Run (domain mapping not yet confirmed).
+- Build trigger (found 2026-09-25): Cloud Build trigger `8ad67b17-5439-4507-9718-5b2b5eb4abe9` (`rmgpgab-cer-ui-us-central1-…`) builds `Clean-Earth-Rovers-Technology/user-dashboard` on every push to `main`, the branch that carries malware at HEAD.
+  Its builds have failed since 2026-08-26, including on 2026-09-15, 09-23 and 09-24, so nothing reached `cer-ui` through it; the last successful `cer-ui` build (2026-08-26) was started by hand.
+  Ask Michael to disable the trigger before launch; the L6 dashboard deploy is a manual Cloud Build from the clean branch, deployed with no traffic, never a push to `main`.
+- Michael's reply (2026-09-25): he will revert the IAM changes so the user has what they need.
+  If that means Editor again, it restores service-account creation, "act as", secrets, Firestore writes and the registry, but not IAM grants; Michael still grants the runtime account its secret and Firestore access and the default account Invoker at L5, and should disable the `cer-ui` trigger.
+- Fireworks: the key is stored in Secret Manager as `cer-gilligan-fireworks-api-key`; `cer-gilligan-runtime` gets Secret Accessor on that one secret, and the service reads a pinned numeric version at startup.
+- Release owner and incident contact: the user runs the release and is first contact; Michael is escalation for IAM and the upstream services.
+- Capacity: the proposal above is accepted until L5 measures it.
+- Test identities: isolation testing moves to the Firestore mirror's personas (`GILLIGAN_E2E_TEST_TICKET.md` on `docs/gcp-test-env`), so no test organizations are created on production and T2 and T3 shrink to nothing; the production smoke (L8, L9) uses the superadmin and one real member account.
+  The identity and secret setup is rehearsed first in the user's project `cer-demo-2026`, then repeated in production.
+- Still open: a structured inventory of every resource and grant, who creates it (the user or Michael) and how each is demonstrated, before anything is created in production.
 
 There is still no working rollback to the Gemini backend (architecture decision D9); rollback means routing traffic back to the previous dashboard revision, which hides the new page.
 
