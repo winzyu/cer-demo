@@ -175,6 +175,9 @@ L2 answers so far (2026-09-24 and 2026-09-25):
 - Capacity: the proposal above is accepted until L5 measures it.
 - Test identities: isolation testing moves to the Firestore mirror's personas (`GILLIGAN_E2E_TEST_TICKET.md` on `docs/gcp-test-env`), so no test organizations are created on production and T2 and T3 shrink to nothing; the production smoke (L8, L9) uses the superadmin and one real member account.
   The identity and secret setup is rehearsed first in the user's project `cer-demo-2026`, then repeated in production.
+- Gilligan's data (decided 2026-09-25): all of it, the corpus and the usage store, lives in a dedicated Firestore database (for example `gilligan`, in `us-central1`), so `cer-gilligan-runtime` has no grant on the customer `(default)` database; it reads pod data only through the server with the caller's token.
+  Firestore IAM stops at the database, so a grant on `(default)` would let the runtime write users and devices.
+  The new database needs Michael and the supervisor (as F1 does for new collections), and cer-demo needs a database setting for the corpus and usage store.
 - Still open: a structured inventory of every resource and grant, who creates it (the user or Michael) and how each is demonstrated, before anything is created in production.
 
 There is still no working rollback to the Gemini backend (architecture decision D9); rollback means routing traffic back to the previous dashboard revision, which hides the new page.
