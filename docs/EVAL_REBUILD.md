@@ -1118,6 +1118,7 @@ Tier 1 (`data/results/gate-check/p3-final-2026-09-25/warm.json`), with earlier r
 | quotes supported | 84.6% | 82.5% | 57.0% | 68.7% |
 
 Refusal wording on turns that do not require a refusal: 3 on gold context (1 scored 0) and 19 on `hybrid-slice-vector` (13 scored 0 in pass 1), so over-refusal accounts for about 13 of the retrieval arm's 90 turns.
+Of those 19 retrieval turns, 13 had no labelled chunk in their context, 5 had under half and 1 had half or more, so most of them decline for want of evidence: they are a retrieval failure, not a generation one.
 
 The judge returned an empty reply ("no JSON object") on 12 call attempts in pass 1 and 22 in pass 2; each was re-run until both passes held 360/360 verdicts.
 `gold-context` `probecal-ph-slope-acceptance` turn 2 correctness failed four times before it answered.
