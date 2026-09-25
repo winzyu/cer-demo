@@ -25,9 +25,15 @@ import { createLogger } from "../utils/logger";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import { QuerySensorData, type SensorToolResult } from "./querySensorData";
 import { prepareReport } from "../report/produceReport";
-import { reportPeriod } from "../report/types";
+import {
+  flagFor, reportPeriod, statValue, withUnit,
+} from "../report/types";
 import { metricBlindSpotNote, WIRE_KEY_TO_METRIC } from "../report/operatorThresholds";
-import type { ReportInput, WaterBodyType, ParameterStats } from "../report/types";
+import { probeAccuracy } from "../report/referenceRanges";
+import type {
+  Flag, ReportInput, WaterBodyType, ParameterStats, StatusAssessment,
+} from "../report/types";
+import { readingAge } from "./readingAge";
 
 const log = createLogger("GenerateReport");
 
@@ -97,6 +103,53 @@ const baselineProvenance = (report: ReportInput): Record<string, string> => {
   }));
 };
 
+/**
+ * Every measured parameter's flag, keyed like `baseline_provenance`. The status alone told the
+ * model that something was wrong without saying what, so it filled the gap from the event count
+ * and wrote "Action Required" beside "no abnormal conditions" (`CONVERSATION_QA_2026-09-24.md`
+ * finding 3).
+ */
+const parameterFlags = (report: ReportInput): Record<string, Flag> => Object.fromEntries(
+  report.parameters.map((p): [string, Flag] => [p.baseline.key, flagFor(p, probeAccuracy)]),
+);
+
+/**
+ * One sentence saying which rule set the status and, for a flag-driven status, the observed range
+ * of each parameter behind it against its configured threshold, in the PDF's own number format.
+ * Built from `assessStatus`, the same ladder that chose the status, so the two cannot disagree.
+ */
+const statusReason = (report: ReportInput, basis: StatusAssessment): string => {
+  const byKey = new Map(
+    report.parameters.map((p): [string, ParameterStats] => [p.baseline.key, p]),
+  );
+  const observed = basis.parameters.map((key) => {
+    const p = byKey.get(key) as ParameterStats;
+    const b = p.baseline;
+    // Keyed as in parameter_flags, and "from ... to" because a hyphen misreads beside a negative.
+    return `${key} ranged from ${withUnit(`${statValue(p.min)} to ${statValue(p.max)}`, b.unit)} `
+      + `against its configured ${withUnit(`${b.baselineMin} to ${b.baselineMax}`, b.unit)}`;
+  }).join("; ");
+  switch (basis.rule) {
+    case "exceedance":
+      return "Action Required because a parameter went beyond its configured threshold by more "
+        + `than the exceedance margin: ${observed}. This is independent of the event count.`;
+    case "high-confidence-high-event":
+      return "Action Required because a high-severity event was detected with enough confidence "
+        + "to name it; see event_types.";
+    case "excursion":
+      return `Watch because a parameter moved outside its configured threshold: ${observed}.`;
+    case "event":
+      return "Watch because the report flagged a candidate event; see event_types. No parameter "
+        + "left its configured threshold.";
+    case "no-baseline":
+      return "Not assessed because no parameter has a usable configured threshold, so nothing was "
+        + "compared.";
+    default:
+      return "Normal: every parameter with a configured threshold stayed within it, and no event "
+        + "was flagged.";
+  }
+};
+
 export interface GenerateReportOptions {
   sensor?: QuerySensorData;
   /** Injectable for tests; defaults to config.waterType mapped to the report's WaterBodyType. */
@@ -154,18 +207,32 @@ export class GenerateReport {
       return failure(prepared.error);
     }
     const {
-      report, status, narrative, skippedParameters,
+      report, status, statusBasis, narrative, skippedParameters,
     } = prepared;
     const { events } = report;
+    // The period ends on the device's newest reading, not today, so a silent pod's "last 30
+    // days" quietly ends on the day it stopped. The age says so.
+    const lastReading = report.site.lastReadingAt
+      ? readingAge(report.site.lastReadingAt, this.sensor.clockMs())
+      : null;
 
     log.info(`Report summarised (status=${status}, events=${events.length})`);
 
     return {
       status,
+      status_reason: statusReason(report, statusBasis),
+      parameter_flags: parameterFlags(report),
       site_name: report.site.siteName,
       time_range_resolved: { start: report.site.startDate, end: report.site.endDate },
       // The period as the PDF prints it, for the model to quote verbatim (see REPORT_TOOL_BLOCK).
       report_period: reportPeriod(report.site),
+      ...(report.site.lastReadingAt && lastReading
+        ? {
+          device_last_reported: report.site.lastReadingAt,
+          device_last_reported_age: lastReading.age,
+          device_last_reported_stale: lastReading.stale,
+        }
+        : {}),
       // Surfaced because event classification and narrative text still read it, and a reader who
       // disagrees with it should be told rather than have to open the PDF to find out. It no
       // longer selects any baseline -- see baseline_provenance below for where baselines come

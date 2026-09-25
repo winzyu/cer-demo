@@ -152,6 +152,71 @@ describe("GenerateReport.run", () => {
     expect(result).not.toHaveProperty("report_request");
   });
 
+  describe("the reason behind the status", () => {
+    // CONVERSATION_QA_2026-09-24 finding 3, as observed live on Old Woman Creek 2026: ORP dipped
+    // below its configured 0-800 mV, the status came back "Action Required" with no events, and
+    // with nothing saying why, the model wrote "Action Required" beside "no abnormal conditions".
+    const flat = (value: number) => ([
+      { start: "2026-08-01T00:00:00.000Z", end: "2026-08-01T12:00:00.000Z", mean: value, min: value, max: value, n: 20 },
+    ]);
+    const orpSeries = [
+      { start: "2026-08-01T00:00:00.000Z", end: "2026-08-01T12:00:00.000Z", mean: 300, min: 250, max: 350, n: 20 },
+      { start: "2026-08-01T12:00:00.000Z", end: "2026-08-02T00:00:00.000Z", mean: -156.25, min: -160, max: -150, n: 20 },
+    ];
+    const LAST_READING = "2026-08-02T00:00:00.000Z";
+    const stubSensor = (orp: unknown[], now = Date.parse("2026-08-12T00:00:00.000Z")) => ({
+      query: async () => ({
+        device: { name: "Old Woman Creek 2026", label: "dev:owc", operating_environment: "fresh-water" },
+        time_range_resolved: { start: "2026-07-26T00:00:00.000Z", end: LAST_READING },
+        device_last_reported: LAST_READING,
+        metrics: {
+          temperature: { value: 70, n_samples: 40, series: flat(70) },
+          ph: { value: 7.5, n_samples: 40, series: flat(7.5) },
+          orp: { value: 72, n_samples: 40, series: orp },
+        },
+      }),
+      deviceRecord: async () => ({
+        label: "dev:owc",
+        thresholds: {
+          minPH: "6", maxPH: "9", minORP: "0", maxORP: "800", minTemperature: "30", maxTemperature: "100",
+        },
+      }),
+      clockMs: () => now,
+    } as unknown as QuerySensorData);
+
+    it("names the parameter behind an Exceedance, with its range against the threshold", async () => {
+      const result = await new GenerateReport({ sensor: stubSensor(orpSeries) })
+        .run({ time_range: "last week", device: "Old Woman Creek" }, CALLER);
+
+      expect(result.error).toBeUndefined();
+      expect(result.status).toBe("Action Required");
+      expect(result.events_flagged).toBe(0);
+      expect(result.parameter_flags).toMatchObject({ orp: "Exceedance", ph: "Normal", temperature: "Normal" });
+      expect(result.status_reason).toContain("orp ranged from -160.00 to 350.00 mV against its configured 0 to 800 mV");
+      expect(result.status_reason).toContain("independent of the event count");
+    });
+
+    it("gives a Normal report a reason that names no parameter", async () => {
+      const result = await new GenerateReport({ sensor: stubSensor(flat(300)) })
+        .run({ time_range: "last week", device: "Old Woman Creek" }, CALLER);
+
+      expect(result.status).toBe("Normal");
+      expect(result.status_reason).toMatch(/^Normal: every parameter with a configured threshold stayed within it/);
+      expect(result.parameter_flags).toMatchObject({ orp: "Normal" });
+    });
+
+    it("says how long ago the period's last reading was, so a silent pod's window is not read as current", async () => {
+      const result = await new GenerateReport({ sensor: stubSensor(flat(300)) })
+        .run({ time_range: "last week", device: "Old Woman Creek" }, CALLER);
+
+      expect(result).toMatchObject({
+        device_last_reported: LAST_READING,
+        device_last_reported_age: "10 days",
+        device_last_reported_stale: true,
+      });
+    });
+  });
+
   it("reports Not assessed, not Normal, for a device with no usable registry threshold on any "
     + "numeric parameter", async () => {
     // A device whose registry row cannot be read (deviceRecord() -> null) or carries no

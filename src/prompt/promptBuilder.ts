@@ -39,6 +39,23 @@ export const formatSelectedDevice = (device: string): string => {
     + "one; do not ask which pod they mean.";
 };
 
+/**
+ * Tells the model what time it is, to the minute, in UTC.
+ *
+ * Without it the model had no way to tell a ten-day-old reading from a current one: it called two
+ * pods that had been silent for 10 and 12 days "likely online" and presented a 10-day-old
+ * reading as the current temperature (`docs/migration/CONVERSATION_QA_2026-09-24.md` findings 1
+ * and 2). The tools state each reading's age as well (`src/tools/readingAge.ts`); this line
+ * anchors "today", "yesterday" and "right now" in the user's own question.
+ *
+ * It is per request, so it cannot live in the system prompt, which must stay byte-identical to be
+ * cached. It goes after history for the same reason as the pod line.
+ */
+export const formatCurrentTime = (now: Date): string => (
+  `CURRENT TIME: ${now.toISOString().slice(0, 16)}Z (UTC). Measure how old a reading or a `
+  + "report period is against this time."
+);
+
 export interface BuildMessagesInput {
   query: string;
   chunks: Chunk[];
@@ -48,6 +65,8 @@ export interface BuildMessagesInput {
   selectedDevice?: string;
   /** Whether a device tool is offered; the pod line is noise to a model with no tools. */
   toolsEnabled?: boolean;
+  /** The request's clock, for the current-time line; injectable for tests. */
+  now?: Date;
 }
 
 /**
@@ -58,8 +77,9 @@ export interface BuildMessagesInput {
  *   1. system prompt   — identical on every request for a given deployment
  *   2. document context — identical per corpus slice (direct-feed) or per query (RAG)
  *   3. history          — grows over a conversation
- *   4. selected pod     - per request, only when one was sent and a device tool is on
- *   5. the user question — different every time
+ *   4. current time     - per request, only when a device tool is on
+ *   5. selected pod     - per request, only when one was sent and a device tool is on
+ *   6. the user question — different every time
  *
  * Fireworks prompt caching matches on a **prefix**, so a cache hit only extends as far as the
  * first byte that differs. Interleaving anything dynamic earlier — a timestamp in the system
@@ -77,6 +97,7 @@ export const buildMessages = ({
   history = [],
   selectedDevice,
   toolsEnabled = config.tools.sensorTool || config.tools.reportTool,
+  now = new Date(),
 }: BuildMessagesInput): ChatMessage[] => {
   const messages: ChatMessage[] = [
     { role: "system", content: buildSystemPrompt() },
@@ -89,8 +110,11 @@ export const buildMessages = ({
   }
 
   messages.push(...history);
-  // Per request, so it goes after everything cacheable and just before the question. Eval
+  // Per request, so these go after everything cacheable and just before the question. Eval
   // captures send no device and run with the tools off, so their prompt is unchanged.
+  if (toolsEnabled) {
+    messages.push({ role: "system", content: formatCurrentTime(now) });
+  }
   const pod = selectedDevice?.trim();
   if (pod && toolsEnabled) {
     messages.push({ role: "system", content: formatSelectedDevice(pod) });
