@@ -463,6 +463,13 @@ const main = async (): Promise<void> => {
     results,
   }, null, 2)}\n`, "utf8");
   log.info(`\nWrote ${path.relative(process.cwd(), resolved)}`);
+
+  // A pass with unrecorded calls is incomplete, and one where every call failed wrote an empty
+  // summary; exiting 0 would let a caller read either as a result. Re-running resumes from the ledger.
+  if (failures.length > 0) {
+    log.info(`Incomplete: ${failures.length} of ${tasks.length} call(s) failed; re-run to resume.`);
+    process.exitCode = 1;
+  }
 };
 
 main().catch((error: Error) => {

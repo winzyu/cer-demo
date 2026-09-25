@@ -7,7 +7,9 @@
  * defaults a missing score, or a gate that averages a non-servable class into an arm's mean,
  * would move a pre-registered threshold without anyone seeing it happen.
  */
+import { spawn } from "child_process";
 import fs from "fs";
+import net from "net";
 import os from "os";
 import path from "path";
 import type OpenAI from "openai";
@@ -1021,4 +1023,46 @@ describe("grading rounds", () => {
     expect(report.stale).toHaveLength(0);
     expect(report.dimensions[0].pairs).toBe(1);
   });
+});
+
+/**
+ * The judge once exited 0 after every call failed on a DNS error, leaving an empty summary that
+ * looked like a finished pass. A local server that drops every connection stands in for the
+ * outage, so the script's real exit path runs without reaching a provider.
+ */
+describe("judge exit status", () => {
+  it("exits nonzero when calls fail", async () => {
+    const server = net.createServer((socket) => socket.destroy());
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const { port } = server.address() as net.AddressInfo;
+    const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "judge-exit-")), "pass.json");
+    try {
+      const code = await new Promise<number | null>((resolve) => {
+        const child = spawn(
+          process.execPath,
+          [
+            require.resolve("ts-node/dist/bin"), "--transpile-only", "scripts/judge.ts",
+            "--run=p3-calib-2026-09-24", "--only=refusal-how-long-can-it-stay-in",
+            "--reasoning-effort=none", `--out=${out}`,
+          ],
+          {
+            cwd: path.resolve(__dirname, "../.."),
+            env: {
+              ...process.env,
+              FIREWORKS_API_KEY: "test-key",
+              FIREWORKS_BASE_URL: `http://127.0.0.1:${port}/v1`,
+              SENSOR_TOOL: "false",
+              REPORT_TOOL: "false",
+            },
+            stdio: "ignore",
+          },
+        );
+        child.on("exit", resolve);
+      });
+      expect(code).toBe(1);
+      expect(JSON.parse(fs.readFileSync(out, "utf8")).budget.calls).toBe(0);
+    } finally {
+      server.close();
+    }
+  }, 60_000);
 });
