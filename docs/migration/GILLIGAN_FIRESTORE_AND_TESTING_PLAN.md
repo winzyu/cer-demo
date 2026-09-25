@@ -12,8 +12,9 @@ Task IDs are the release plan's ([`GILLIGAN_RELEASE_PLAN.md`](GILLIGAN_RELEASE_P
 - Testing climbs five levels, from offline fixtures to a production smoke; levels 1 and 2 can start today.
 - Firestore needs one new collection (`gilligan_usage`) and extra fields on the existing `chats` messages.
   Two corrections to the framework table are needed before the supervisor approves it (§4.3).
-- The recommendation for test data is a hybrid: do the isolation matrix in the unused QA database (`qa-db`) behind a staged server revision, if the supervisor agrees, and keep the live test set to the minimum that only production can prove, deleted before launch.
-  A "hide test records" flag is not recommended for launch (§6).
+- The recommendation for test data: run the isolation matrix on a local backend backed by the Firestore emulator (no approval needed), ask the supervisor for a fresh test database for the staged stack, and keep live test records to the minimum only production can prove, deleted before launch.
+  The old `qa-db` is a fallback: its server runs an older codebase and its contents are unverified (§6).
+  A "hide test records" flag is not recommended for launch.
 
 ## 2. Getting it onto the site
 
@@ -138,23 +139,55 @@ Option C's conditions:
 - The QA revision needs its own `ACCESS_TOKEN_SECRET`.
   The server trusts the role and organization inside a token (`src/middleware/auth.ts`), so with the shared secret a superadmin created in `qa-db` would hold a token production accepts.
 - Email and payment keys in that revision must be placeholders or test keys, so it cannot mail customers or charge anyone.
-- `qa-db` was last used in November 2024; its contents are unknown until a read is approved.
 - It is never given traffic, and its tag is removed after launch.
 
-**Recommendation:** ask the supervisor for option C now, and run the level-2 isolation matrix there.
-Keep option A for the minimum that only production can show: one test member logs in to the staged stack and sees nothing from a real organization, and the empty organization B1 checks P3 on the real server.
+### What is known about `qa-db` (checked 2026-09-25)
+
+- This machine has no Google Cloud credentials: no `gcloud`, no Firebase CLI, and the service-account key is lost, so the database itself could not be read.
+- The old QA server is still deployed at `https://cer-api-qa-98242557946.us-central1.run.app`.
+  It answers with a NestJS-style error body and has none of today's routes (`/api/v1/*`, `/health`, `/test-db` are 404; `/devices` is 401), so it runs a different, older server codebase than the Express server on the feature branch.
+  `qa-db` may therefore hold an older document shape than today's `users`, `organizations`, `devices` and water-data collections.
+- An authenticated read of its device list was not made; it needs the user's approval, because it is a read against the production project with the superadmin token.
+- Still unknown: whether `qa-db` still exists, its mode (it must be Native mode for the server's library), its collections and counts, and its last activity.
+
+To answer those, the user runs, after installing `gcloud` and logging in:
+
+```bash
+gcloud firestore databases describe --database=qa-db --project=conductive-fold-343604   # exists, mode, location, created and updated times
+curl -s -X POST -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+  https://firestore.googleapis.com/v1/projects/conductive-fold-343604/databases/qa-db/documents:listCollectionIds -d '{}'
+gcloud run revisions list --service=cer-api-qa --region=us-central1 --project=conductive-fold-343604   # last deploy
+```
+
+Last read and write activity is on the console's Firestore page: select `qa-db`, then the Usage tab (Cloud Monitoring keeps about six weeks).
+Firestore records no per-database "last accessed" time beyond that; document `updateTime` values give the last write to each document.
+
+### Two more options: a backend of our own
+
+| | D. Local backend on the Firestore emulator | E. A new named database |
+|---|---|---|
+| How | Run the CER server fully locally (nothing proxied) with `FIRESTORE_EMULATOR_HOST` set and its own `ACCESS_TOKEN_SECRET`; seed users, organizations, devices and readings from `test/fixtures/pod-scope/`; point cer-demo's device API at it; the dashboard logs in against it | Create a database such as `gilligan-test` in the production project, or in a project the user owns, and point a staged server revision and `cer-gilligan` at it |
+| Approval | None; nothing leaves the machine (S6 installs Java and `firebase-tools`) | Supervisor, for a new resource in their project; none for the user's own project, but see the cost below |
+| Covers | Every row of §5, including fabricated readings, merge chains, the CWA Old rule and the ten-label slice, with real logins and the dashboard | The same, plus the deployed IAM, service key and Cloud Run behaviour (level 3) |
+| Does not cover | Cloud Run, IAM, Secret Manager, the real production data | Real production data |
+| Cost | Free | Pennies at test volume; only one database per project gets the free quota |
+| Catches | If `FIRESTORE_EMULATOR_HOST` is unset by mistake the server falls back to real credentials, if any exist; the server hard-codes the project id, so a run should use a start-up check that refuses without the emulator | The server hard-codes the project id (`src/config/database.ts`), so a database in another project needs a small server change to read the project from the environment; a new database also needs its own seed |
+
+**Recommendation, revised:** build option D now as the level-2 backend, since it needs no approval and covers the whole isolation matrix.
+For level 3, ask the supervisor for option E in the production project (a clean database we create, seed and delete) rather than option C, since `qa-db` belongs to an older codebase and its state is unknown; fall back to C only if its checks above come back clean and current.
+Keep option A for the minimum only production can show: one test member on the staged stack sees nothing from a real organization, and the empty organization B1 checks P3 on the real server.
 Leave option B until after launch, and only if CER wants a permanent test organization.
 
 ## 7. Decisions and next steps
 
 | # | decision or step | who |
 |---|---|---|
-| 1 | Ask the supervisor: may a staged server revision use `qa-db` for test data (option C)? | user |
+| 1 | Ask the supervisor: may we create a test database in the project for the staged stack (option E), or use `qa-db` (option C)? Run the §6 `qa-db` checks first if C is still in play | user |
 | 2 | Before F2: correct the retention field and the access scope in F1 (§4.3), and choose between a separate `gilligan` database and `(default)` | user, then the service session |
 | 3 | Tell the service session to add `expireAt` to the usage document | orchestrator |
-| 4 | S6: install the Firestore emulator for level 1b, or approve a test collection | user |
+| 4 | S6: install the Firestore emulator; it backs both level 1b and the option D local backend | user |
 | 5 | Run a level-1 baseline on today's branches (live reads, announced) | an end-to-end session |
-| 6 | Create the level-2 test users, on `qa-db` if option C is approved, otherwise on live per T1 | Claude, each batch approved |
+| 6 | Build the option D local backend with the §5 test set; keep live test users (T1) to the option A minimum, each batch approved | an end-to-end session |
 | 7 | L1 runbook: fold in §2.2 and the §2.3 checklist | L1 session |
 
 ## 8. Found while writing this
