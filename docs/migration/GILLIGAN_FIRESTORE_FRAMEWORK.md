@@ -39,8 +39,8 @@ Who besides the author may read a chat is still open (stakeholder item 21).
 
 ## Cost
 
-- Usage: one read and one write per question or report, inside a transaction.
-  At 300 users using every allowance every day that is about 7,500 reads and 7,500 writes a day, well inside Firestore's free daily quota of 50,000 reads and 20,000 writes.
+- Usage: a question costs three reads and two writes (the limit check, then a transaction each for the question count and its tokens); a report costs two reads and one write.
+  At 300 users using every allowance every day that is about 21,000 reads and 13,500 writes a day, inside Firestore's free daily quota of 50,000 reads and 20,000 writes, and a few cents a day above it.
 - Chats: one read and one write per message, unchanged from the Gemini-era design.
 - Storage is negligible next to reads and writes.
 
@@ -49,3 +49,20 @@ Who besides the author may read a chat is still open (stakeholder item 21).
 A conversation is one document, and Firestore caps a document at 1 MiB.
 The new answer details make each message larger, mostly through `tool_calls`, so a very long conversation could hit the cap and stop saving.
 Before launch the message size will be measured from real local answers; if a conversation could reach the cap within a plausible use, either a new conversation starts automatically at a message limit, or `tool_calls` is trimmed to what the audit needs.
+
+**Measured 2026-09-24: yes, a long conversation can reach the cap.**
+Five live questions ran through a local cer-rag with the release settings (tools, reports and catalogue on), and each answer was passed through the CER server's own relay mapping and sized with Firestore's storage formula:
+
+| question | saved message | largest part |
+|---|---|---|
+| a document question (no pod data) | 5.6 KB | citations 3.5 KB |
+| a 30-day report for one pod | 6.6 KB | citations 3.9 KB |
+| latest readings for every pod | 18.6 KB | `tool_calls` 11.1 KB |
+| pH and oxygen at one pod over 7 days | 27.6 KB | `tool_calls` 21.3 KB |
+| three parameters across all pods over 30 days | 179.7 KB | `tool_calls` 164.9 KB |
+
+About 5 messages like the last one, or about 21 at this mix, fill one conversation document, and at 20 questions a day one busy conversation can do that in a day.
+When it happens the save fails after the answer was generated and paid for.
+`tool_calls` carries the raw readings and is over 90% of every data-heavy message.
+Recommended: store `tool_calls` without the raw readings (tool name, arguments, row counts and the summary the answer rests on), which brings the largest message to a few kilobytes, and also start a new conversation when a save would pass about 900 KB, as a backstop.
+Both are changes to the CER server's relay and are not in the release branch yet.

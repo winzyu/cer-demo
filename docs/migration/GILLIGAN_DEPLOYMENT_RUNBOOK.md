@@ -98,6 +98,8 @@ Neither file travels with an ordinary clone.
 
 ### 3.2 Close the image packaging gap
 
+**Implemented 2026-09-24 on `feat/service-release`, superseding the recommendation below:** the image carries both `data/corpus/corpus.json` and `data/embeddings/cache.json` with `CORPUS_SOURCE=artifact`, so no Firestore corpus seeding is needed; the build checks both against `release/artifacts.sha256`, and `scripts/dockerContext.ts` lists the build context without Docker (see the Dockerfile's comments and `timeline.md` 2026-09-24).
+
 Current evidence: [Dockerfile](../../Dockerfile), [.dockerignore](../../.dockerignore), [retrieval registration](../../src/retrieval/index.ts), and [LocalVectorAdapter](../../src/retrieval/adapters/LocalVectorAdapter.ts).
 Production `hybrid-slice-vector` combines a Firestore document slice with dense retrieval over `data/embeddings/cache.json` relative to the process working directory.
 The cache includes chunk text; runtime dense retrieval does not need to read the corpus artifact again.

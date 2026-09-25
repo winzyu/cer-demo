@@ -35,10 +35,10 @@ Each has a default so work does not wait.
 |---|---|---|---|
 | O1 | Which CER support contact do referrals and fault messages use? | supervisor | **Answered 2026-09-24:** sales@cleanearthrovers.com, or the customer's existing CER contact |
 | O2 | How are the dashboard and server deployed today (platform, who merges, who deploys)? | user | **Answered 2026-09-24:** the user merges and deploys; platform details go in the runbook's §2 inputs |
-| O3 | Token cap per user per day. | user | 500,000 tokens, as an environment variable |
+| O3 | Token cap per user per day. | user | **Answered 2026-09-24:** 1,000,000 tokens (`QUERY_QUOTA_TOKENS`), to be tuned in testing |
 | O4 | Catalogue decisions marked "your decision". | user | **Answered 2026-09-24:** every entry approved, marked-up ones as edited (50% confidence, both referral renames); the "Industrial" label rename and the inland entry were review notes, not entry edits, and were not applied |
 | O5 | Who may read saved chats (support staff, organization admins)? | supervisor | Only the author; nobody else has an access path at launch |
-| O6 | R1 scope (the last item in STATUS "The user's" list). | user | Section 3 S1-S6 as written, `/gilligan/answer` and identity tokens after launch |
+| O6 | R1 scope (the last item in STATUS "The user's" list). | user | **Answered 2026-09-24:** S1-S4 and Q7 for September 30, `/gilligan/answer` and identity tokens after launch; cer-rag stays a separate Cloud Run service |
 | O7 | Did the malware ever run on a build machine (Cloud Build, App Engine)? | user | Must be answered before L6 builds anything from the upstream branches |
 | O8 | Relax the `CLAUDE.md` rule against checking out `main` or `develop` now that their tips are clean. | user | Keep the rule; P1 proposes wording |
 
@@ -71,7 +71,7 @@ All stay inside tools-on prompt blocks and tool results, so R4's tools-off captu
 | Q4 | Stuck-sensor detection: a sustained zero-variance run at 0 or 1005 is flagged as a likely failed sensor in tool results and reports, and is excluded before report pattern matching (the catalogue's engine check) | Claude | must | Q1 | Sep 26 |
 | Q5 | Limits wider than the sensor's range read "not assessed" in `get_pod_thresholds` and reports, not "within limits" | Claude | should | Q1 | Sep 27 |
 | Q6 | CWA Old with a null organization: fixture test that its readings still merge into OWC 2026 and are visible only to CWA | Claude | should | none | Sep 27 |
-| Q7 | Near-limit field in the usage status (for U3) | Claude | should | S3 | Sep 27 |
+| Q7 | **Done 2026-09-24** (`feat/service-release`). Near-limit field in the usage status (for U3) | Claude | should | S3 | Sep 27 |
 
 ### Catalogue (R2)
 
@@ -92,10 +92,10 @@ Worktree cut from `dev`; none of these files overlap Q1-Q7.
 |---|---|---|---|---|---|
 | F1 | **done 2026-09-24.** Firestore framework table for the supervisor: existing chat collections and the `audit` field, one new usage collection, and the corpus and chunk collections as optional (launch ships the corpus inside the image, so Firestore corpus is not needed) | Claude, then user sends | must | none | Sep 25 |
 | F2 | Supervisor approves the table | supervisor | must | F1 | Sep 26 |
-| S1 | Image packaging: ship `data/corpus/` and `data/embeddings/cache.json` in the image, `CORPUS_SOURCE=artifact`; build proof without local Docker (Cloud Build or a machine with Docker) | Claude, user builds | must | O7 | Sep 26 |
-| S2 | Service check between cer-api and cer-rag per runbook §5 (Cloud Run invoker IAM, or a shared secret header if §5's forwarding problem bites) | Claude | must | none | Sep 26 |
-| S3 | Firestore usage store with daily windows: 20 questions, 5 reports, O3 tokens per user per UTC day; keys from verified identity | Claude | must | F2 | Sep 27 |
-| S4 | Fireworks 429/503 retry once, then "busy"; concurrency limit 8 | Claude | should | none | Sep 27 |
+| S1 | **Code done 2026-09-24, image not built** (`feat/service-release`). Image packaging: ship `data/corpus/` and `data/embeddings/cache.json` in the image, `CORPUS_SOURCE=artifact`; build proof without local Docker (Cloud Build or a machine with Docker) | Claude, user builds | must | O7 | Sep 26 |
+| S2 | **Done 2026-09-24** (`feat/service-release`, server `feat/service-key`): shared service key. Service check between cer-api and cer-rag per runbook §5 (Cloud Run invoker IAM, or a shared secret header if §5's forwarding problem bites) | Claude | must | none | Sep 26 |
+| S3 | **Code done 2026-09-24, not run against Firestore** (`feat/service-release`). Firestore usage store with daily windows: 20 questions, 5 reports, O3 tokens per user per UTC day; keys from verified identity | Claude | must | F2 | Sep 27 |
+| S4 | **Done 2026-09-24** (`feat/service-release`). Fireworks 429/503 retry once, then "busy"; concurrency limit 8 | Claude | should | none | Sep 27 |
 | S5 | Fireworks payment method and spending cap; `max-instances=1` if S3 slips | user | must | none | Sep 26 |
 | S6 | Firestore emulator (Java, `firebase-tools`) for S3 tests, or approval to test S3 against a live test collection | user | must | F2 | Sep 26 |
 
@@ -160,6 +160,8 @@ Slack: Sep 29 absorbs one slipped day; anything "should" still open on Sep 28 mo
 ## 5. After launch
 
 - `/gilligan/answer` and identity tokens (R1 remainder), organization monthly token budget.
+- Merge cer-rag into the CER server as one service (the user's request, 2026-09-24): removes the service check and the second deployment; needs the cer-demo code moved into the server repository and the relay, evaluation and catalogue retested.
+- Trim `tool_calls` in saved chats to what the audit needs, and start a new conversation before a save would pass Firestore's 1 MiB document cap (measured risk in `GILLIGAN_FIRESTORE_FRAMEWORK.md`); move before launch if heavy data questions are expected at the demo.
 - Task C later slices: series chart, input controls, pod-status bar, error UX, time-range chips, feedback loop.
 - Quantitative turbidity once the superadmin sensor checkbox exists.
 - Phase 1e retrieval work, the slice-coverage overshoot, `ADVICE_TIER`.

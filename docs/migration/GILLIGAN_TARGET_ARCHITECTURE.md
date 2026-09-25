@@ -36,7 +36,7 @@ cer-rag (this service, new Cloud Run service in the upstream project)
   ├─ usage limits                       Firestore counters, per user / org / day / month
   ├─ ChatOrchestrator                   tool loop, whole answers at launch
   │     ├─ query_sensor_data, list_pods, get_pod_thresholds, get_turbidity_info, generate_report
-  │     ├─ retrieval                    corpus in upstream Firestore (CORPUS_SOURCE=firestore)
+  │     ├─ retrieval                    corpus and embedding cache in the image (CORPUS_SOURCE=artifact)
   │     └─ catalogue                    supervisor-approved entries, versioned
   ├─ report renderer                    PDF bytes returned in the response, nothing on disk
   └─ Fireworks gpt-oss-120b             upstream-owned key; no data retention for open models
@@ -75,6 +75,11 @@ Recommended: Cloud Run invoker IAM, with cer-api's service account as the only i
 cer-rag then trusts the `userId` and `organizationId` fields for quota keys only.
 Data access still rests on the forwarded user JWT, which the device API checks on every call, so a forged identity field cannot widen data access.
 
+**Launch uses a shared secret instead (2026-09-24).**
+Cloud Run strips the signature from the forwarded service token, so cer-rag cannot verify it itself (runbook §5), and identity tokens were moved after launch.
+cer-api sends `CER_RAG_SERVICE_KEY` (from Secret Manager, the same value on both services) with the user and organization ids as headers; cer-rag checks the key in constant time and only then trusts the ids (`SPECS.md` §4c).
+Invoker IAM can be added in front later without changing that contract.
+
 ### 2c. Usage limits
 
 Fireworks documents no free tier for `gpt-oss-120b`, so the account needs a payment method; a third-party page says accounts without one are held to 10 requests per minute, which 50 users would exceed.
@@ -86,13 +91,14 @@ The goal is that every user gets the same allowance, that no single user or orga
 |---|---|---|
 | Questions per user per UTC day | 20 | the visible, easy-to-explain allowance; confirmed by the supervisor 2026-09-24 |
 | Reports per user per UTC day | 5 | set by the supervisor 2026-09-24; a report runs several device calls and a long render |
-| Tokens per user per UTC day | 500,000 (placeholder; the supervisor's cap is still to be set) | catches runaway tool loops; roughly 10 heavy or 40 light questions |
+| Tokens per user per UTC day | 1,000,000 (the user's starting value, 2026-09-24; tune after testing) | catches runaway tool loops; measured 2026-09-24 at 18,000 tokens for a document question, 38,000 to 129,000 for one- to five-pod questions, and 491,000 for a 30-day comparison across all pods, so a heavy user reaches it before 20 questions |
 | Tokens per organization per month | 10,000,000 | stops one large organization consuming the shared budget |
 | Deployment spend per day | monthly budget ÷ 30 | a daily slice, so early heavy use cannot drain the month |
 | Concurrent model calls | 8 | stays under the adaptive rate limit; extra requests wait up to 20 s, then get "busy, try again" |
 
 Each value is an environment variable in the grammar `.env.example` already uses, so the numbers can change without code.
 On a Fireworks 429 or 503, cer-rag retries once with backoff and then reports "busy", not an error.
+The per-user daily limits, the near-limit flag, the concurrency limit and the retry are implemented (`SPECS.md` §4a, §4c); the organization monthly budget and the deployment spend slice are not.
 
 Cost at these values, using the handoff's illustrative $0.003-$0.0123 per question (12,000 in / 2,000 out to 50,000 in / 8,000 out tokens):
 
@@ -237,6 +243,7 @@ Settled 2026-09-21:
 - **D11. R2 before R1** (2026-09-17): the catalogue was built first because supervisor approval is on the critical path.
   Its commits were lost with the old machine and recovered on 2026-09-22 at tag `old-machine-recovery-2026-09-19`.
 - **D12. Identity check inside cer-rag** (2026-09-17): cer-rag verifies the Google-signed ID token itself (audience and cer-api's service-account email) with `google-auth-library`, in addition to Cloud Run invoker IAM, so a deployment accidentally left public still refuses forged identity.
+  Deferred past launch (2026-09-24): Cloud Run strips the forwarded token's signature, so launch uses the shared service key in §2b, which gives the same refusal of forged identity.
   The check sits behind a flag that is off for local development and the demo.
 
 Open:

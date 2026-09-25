@@ -307,6 +307,11 @@ endpoint reports standing and the gate refuses; `QuotaService.status` is the rea
 | `QUERY_QUOTA_REPORTS` | `unlimited` | report PDFs per key per window (`POST /api/v1/reports`); refuses with `quota_reports_exceeded` |
 | `QUERY_QUOTA_WINDOW` | `30d` | window length; **unit suffix required** (`s`/`m`/`h`/`d`/`w`) |
 | `QUERY_QUOTA_SCOPE` | `caller` | `caller` (per identity) or `global` (whole deployment) |
+| `QUERY_QUOTA_STORE` | `memory` | `memory` (in-process) or `firestore` (`gilligan_usage`, needs `QUERY_QUOTA_WINDOW=1d`) |
+| `QUERY_QUOTA_WARN_AT` | `0.2` | fraction of a finite allowance at or below which the status reports `nearLimit`; `0` = never |
+
+The release runs 20 questions, 5 reports and 1,000,000 tokens per user per UTC day (`QUERY_QUOTA_WINDOW=1d`, `QUERY_QUOTA_STORE=firestore`); the token cap is the user's 2026-09-24 starting value, to be tuned in testing.
+`GET /api/v1/usage` carries `nearLimit` on each dimension and at the top level, true when at least one is left and no more than `ceil(limit x QUERY_QUOTA_WARN_AT)` remain (4 of 20 questions, 1 of 5 reports), for the dashboard's warning.
 
 Reports are a third, separate dimension: a report runs several device reads and a render but no model call, so it is gated by `quotaGuard(…, "report")` on `POST /api/v1/reports` against `reports` only, and chat is gated against `requests` and `tokens` only.
 All three share `QUERY_QUOTA_WINDOW`; a per-day report limit beside a per-month token limit needs R1's multi-window store.
@@ -339,6 +344,9 @@ reported" and "free" are different facts.
 
 ### What the counters key on — and what they cannot
 
+With `CER_RAG_SERVICE_KEY` set (every deployment), `caller` scope keys on `user:<id>`, the user the CER server names after verifying the JWT (§4c), so a fresh login is not a fresh allowance.
+The rest of this section describes `caller` scope without the key, for local runs and the eval harness.
+
 `caller` scope resolves, in order: `sha256(bearer token)` truncated to 16 hex chars → `ip:<addr>`
 → a single shared `anonymous` bucket. Being unattributable must not buy an unlimited allowance.
 What is **not** available here, stated plainly:
@@ -356,22 +364,22 @@ What is **not** available here, stated plainly:
   the proxy. For anonymous traffic, `global` is the scope whose behavior matches its name.
   `config` warns about all of this at startup rather than leaving it to be discovered.
 
-### Storage caveat
+### Storage
 
-`InMemoryQuotaStore` is a `Map` in the process: it **resets on every redeploy and crash**, it is
+`InMemoryQuotaStore` (`QUERY_QUOTA_STORE=memory`, for tests and local runs) is a `Map` in the process: it **resets on every redeploy and crash**, it is
 **per instance** (N containers enforce N quotas, so the effective limit is `limit x N`), and
 read-then-record is not transactional, so concurrent requests from one key can overshoot by one
 or two. Windows are **fixed and epoch-aligned**, not rolling — a caller can spend a full
 allowance on each side of a boundary, and a `7d` window rolls over on Thursday 00:00 UTC rather
 than on Sunday or on the caller's first request.
 
-That is adequate for deciding which policy the team wants, and inadequate as the gate on a paid
-tier. The `QuotaStore` interface is where a Firestore or Redis implementation lands: policy
-(`QuotaService`) and counting (`QuotaStore`) are already separate, and swapping the store is a
-new file plus one line in `src/quota/index.ts`. Every method takes `nowMs` explicitly so window
-rollover is testable without faking the clock.
-
----
+`FirestoreQuotaStore` (`QUERY_QUOTA_STORE=firestore`, the release setting) keeps one `gilligan_usage` document per user per UTC day, id `<userId>_<YYYY-MM-DD>`, with the fields in `migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
+A new day is a new document, so there is no rollover logic; that is why the store requires `QUERY_QUOTA_WINDOW=1d`.
+Each record reads and rewrites the day's document in one transaction, so simultaneous answers all count.
+The check in `quotaGuard` is a separate read, so a user with several questions in flight at the ceiling can overshoot by those few.
+An unreadable store fails closed: the gate answers 503 and a question is not answered if its count cannot be written, because failing open would be unmetered model spend.
+Token and report counts recorded after the answer or PDF exists are logged on failure rather than withheld from the user.
+The store is async (`QuotaStore` returns promises) and every method takes `nowMs` explicitly so window rollover is testable without faking the clock.
 
 ## 4b. Guidance catalogue (`src/catalogue/`)
 
@@ -408,6 +416,24 @@ The eval runners build their grounding prompt with the block off.
 
 **Review page.**
 `npm run catalogue:review` regenerates `docs/catalogue/review.html` from the file; never edit the page by hand.
+
+---
+
+## 4c. Service check and model-call gate
+
+**Service check (`src/middleware/requireServiceKey.ts`).**
+With `CER_RAG_SERVICE_KEY` set, every `/api/v1` route requires that shared secret in `X-CER-RAG-Service-Key`, compared in constant time; a missing or wrong key is 401 `service_key_invalid`.
+Once the key matches, `X-CER-RAG-User-Id` is required (400 `service_identity_required` without it) and `X-CER-RAG-Organization-Id` is optional; together they become the verified identity the quota keys on.
+Identity headers are ignored whenever the key is unset or wrong.
+`/health` stays outside the check for probes, and `NODE_ENV=production` refuses to boot without a key of at least 32 characters.
+A shared secret was chosen over Cloud Run identity tokens because Cloud Run strips the signature from the forwarded service token, so this process cannot verify one (`migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` §5), and minting identity tokens in the CER server was deferred past launch.
+Data access is unchanged: device reads still use the caller's own forwarded JWT.
+
+**Model-call gate (`src/services/modelCallGate.ts`).**
+Every Fireworks chat call runs inside a process-wide limit of `LLM_MAX_CONCURRENT` (8) calls; others queue up to `LLM_QUEUE_TIMEOUT_MS` (20 s), and a streamed call holds its slot until the stream ends.
+A Fireworks 429 or 503 is retried once after `LLM_RETRY_DELAY_MS` (2 s) or a shorter `Retry-After` (capped at 10 s); a second refusal, or no slot in time, is 503 `model_busy` ("busy, try again").
+The OpenAI SDK's own silent retries are off (`maxRetries: 0`), so this is the only retry policy.
+Embedding calls (`EmbeddingService`) are not gated and keep the SDK's default retries.
 
 ---
 
@@ -470,6 +496,9 @@ morgan("dev") → helmet(...) → cors() → express.json()
   | `quota_requests_exceeded` | 429 | this key's `QUERY_QUOTA_REQUESTS` allowance is spent (§4a) |
   | `quota_tokens_exceeded` | 429 | this key's `QUERY_QUOTA_TOKENS` allowance is spent (§4a) |
   | `quota_reports_exceeded` | 429 | this key's `QUERY_QUOTA_REPORTS` allowance is spent (§4a) |
+  | `model_busy` | 503 | Fireworks refused twice with 429/503, or no model-call slot freed in time (§4c) |
+  | `service_key_invalid` | 401 | missing or wrong `X-CER-RAG-Service-Key` while `CER_RAG_SERVICE_KEY` is set (§4c) |
+  | `service_identity_required` | 400 | the service key matched but the user id header was missing or malformed (§4c) |
 
   Clients branch on `code`, never on prose: `frontend/js/podbar.js` maps the four device/LLM codes
   to its badge text, and falls back to `err.status` when a failure carries no code at all.
