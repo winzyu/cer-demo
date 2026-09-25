@@ -5,19 +5,19 @@
   "modelsUnderTest": [
     "accounts/fireworks/models/gpt-oss-120b"
   ],
-  "judgedAt": "2026-09-25T07:52:12.749Z",
+  "judgedAt": "2026-09-25T22:56:56.420Z",
   "budget": {
-    "calls": 91,
-    "promptTokens": 1154967,
-    "cachedPromptTokens": 35489,
-    "completionTokens": 173485,
-    "usd": 0.361033683
+    "calls": 115,
+    "promptTokens": 1442019,
+    "cachedPromptTokens": 57074,
+    "completionTokens": 215625,
+    "usd": 0.447399918
   },
   "results": [
     {
       "arm": "gold-context",
       "pass": "warm",
-      "turnsJudged": 16,
+      "turnsJudged": 22,
       "correctness": {
         "perClass": [
           {
@@ -36,7 +36,7 @@
           },
           {
             "class": "definitional",
-            "turns": 2,
+            "turns": 4,
             "mean": 1,
             "servable": true,
             "met": true
@@ -50,14 +50,14 @@
           },
           {
             "class": "precedence",
-            "turns": 2,
-            "mean": 1.5,
+            "turns": 4,
+            "mean": 1.25,
             "servable": true,
             "met": true
           },
           {
             "class": "probe-calibration",
-            "turns": 2,
+            "turns": 4,
             "mean": 1,
             "servable": true,
             "met": true
@@ -70,15 +70,15 @@
             "met": false
           }
         ],
-        "overall": 1.125,
+        "overall": 1.0909090909090908,
         "coverage": 1,
         "met": false
       },
       "ungrounded": {
-        "turnsWithClaims": 8,
-        "turns": 16,
-        "rate": 0.5,
-        "totalClaims": 15,
+        "turnsWithClaims": 10,
+        "turns": 22,
+        "rate": 0.45454545454545453,
+        "totalClaims": 18,
         "met": false
       },
       "citationSupport": {
@@ -148,6 +148,18 @@
           "detail": "2: In practice many users still perform periodic verification checks—especially before field trips or after long deployments—to confirm the probe is still measuring accurately. — I searched the supplied material for any statement about what many users do about verification after long deployments or about the purpose of confirming accuracy and found none.; it’s advisable to periodically verify its accuracy against a known standard — I searched for any statement that it is advisable to periodically verify accuracy for this sensor; the USGS guidance requires checking before every field trip for specific conductance meters but does not say it is advisable for this probe."
         },
         {
+          "fixtureId": "definitional-required-versus-recommended",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: Simply noting it in the log without the required quality‑assurance documentation would not satisfy the protocol. — I searched the supplied material for any statement that a log entry is insufficient or that 'independently quality assured and documented' requires something beyond a log note and found no such specification. The context only states the departure 'must be independently quality assured and documented' without defining what that entails."
+        },
+        {
+          "fixtureId": "probecal-buffer-handling",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: USGS procedure requires — The supplied material says buffers 'should be refreshed before every field trip' but does not say the procedure 'requires' it; 'should' is a recommendation not a mandate.; you must discard or refresh it at least once per trip — The supplied material says 'should be refreshed before every field trip' but does not say 'must' or mention discarding nor does it specify 'at least once per trip'."
+        },
+        {
           "fixtureId": "followup-mixing-the-clarity-bottle",
           "turn": 1,
           "dimension": "citations",
@@ -170,7 +182,7 @@
     {
       "arm": "hybrid-slice-vector",
       "pass": "warm",
-      "turnsJudged": 16,
+      "turnsJudged": 22,
       "correctness": {
         "perClass": [
           {
@@ -189,8 +201,8 @@
           },
           {
             "class": "definitional",
-            "turns": 2,
-            "mean": 0,
+            "turns": 4,
+            "mean": 0.25,
             "servable": true,
             "met": false
           },
@@ -203,15 +215,15 @@
           },
           {
             "class": "precedence",
-            "turns": 2,
+            "turns": 4,
             "mean": 0.5,
             "servable": true,
             "met": false
           },
           {
             "class": "probe-calibration",
-            "turns": 2,
-            "mean": 0.5,
+            "turns": 4,
+            "mean": 0.75,
             "servable": true,
             "met": false
           },
@@ -223,15 +235,15 @@
             "met": false
           }
         ],
-        "overall": 0.3125,
+        "overall": 0.4090909090909091,
         "coverage": 1,
         "met": false
       },
       "ungrounded": {
-        "turnsWithClaims": 11,
-        "turns": 16,
-        "rate": 0.6875,
-        "totalClaims": 25,
+        "turnsWithClaims": 14,
+        "turns": 22,
+        "rate": 0.6363636363636364,
+        "totalClaims": 30,
         "met": false
       },
       "citationSupport": {
@@ -247,22 +259,28 @@
           "detail": "scored 0 — The answer gives a single 10% tolerance covering all parameters violating a must-not and makes none of the required specific stabilization criteria or the 60-second thermal-equilibrium point. Unmet: temperature criterion ±0.2 C; specific conductance criterion ±5 μS/cm or ±3%; dissolved oxygen criterion ±0.2 mg/L; pH criterion ±0.1 unit; turbidity criterion ±0.5 TU/±5% or ±10%; criterion judged over five or more consecutive readings; minimum wait 60 seconds for thermal equilibrium; 60 seconds is a minimum some instruments need longer"
         },
         {
-          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
-          "turn": 2,
-          "dimension": "correctness",
-          "detail": "scored 0 — The answer is a refusal that withholds all requested facts and figures so it misses every must-contain point and scores 0. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check requiring agreement within 0.05 pH unit of the certified value at calibration temperature; notes separately that a post-calibration buffer check should read within about 0.05 pH unit of that buffer's certified value at the calibration temperature"
-        },
-        {
           "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
           "turn": 2,
           "dimension": "correctness",
           "detail": "scored 0 — The answer invents a discrepancy by saying the multiparameter chapter has separate criteria and should be followed instead of the general guidance violating the must-not items and makes none of the required points. Unmet: states plainly that the two tables give the same stabilisation criteria and do not conflict; states the general field-measurement chapter itself points multiparameter users to the multiparameter chapter for criteria of the same kind; states the criteria are standard sensor stabilisation criteria and that actual sensor accuracy varies by model and manufacturer which is a separate matter; For persistent variability extends equilibration and records additional measurements then either reports the median of the final five or more readings or selects a representative final reading using site knowledge and professional judgment documenting the decision"
         },
         {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a refusal that withholds all requested facts and figures so it misses every must-contain point and scores 0. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check requiring agreement within 0.05 pH unit of the certified value at calibration temperature; notes separately that a post-calibration buffer check should read within about 0.05 pH unit of that buffer's certified value at the calibration temperature"
+        },
+        {
           "fixtureId": "deepmanual-brackish-do-correction",
           "turn": 1,
           "dimension": "correctness",
           "detail": "scored 0 — The answer refuses to provide the required factor 0.8235 withholding the figure the rubric asks for so it scores 0 despite mentioning multiplication and the table. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a refusal and makes none of the required substantive points about the 2 000 µS/cm threshold the 1.0000 factor or asking for upstream specific conductance. Unmet: Explains manual's correction applies above 2 000 µS/cm and asks for upstream SC; Gives 1.0000 at zero SC without extending to all freshwater; States manual treats water as saline only above about 2 000 µS/cm"
         },
         {
           "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
@@ -283,16 +301,16 @@
           "detail": "scored 0 — The answer invents a normal range for natural surface waters (4.0 to 9.5) that the cited source only gives as a temperature-compensation range violating the must-not against inventing a pH criterion and it misses the required 6.5–8.5 river description. Unmet: States that the USGS pH chapter describes river waters not affected by contamination as generally reading pH 6.5 to 8.5 attributed to that chapter; Makes clear this is a description of what such waters generally read not a criterion or limit the chapter sets"
         },
         {
-          "fixtureId": "deepmanual-brackish-do-correction",
-          "turn": 2,
-          "dimension": "correctness",
-          "detail": "scored 0 — The answer is a refusal and makes none of the required substantive points about the 2 000 µS/cm threshold the 1.0000 factor or asking for upstream specific conductance. Unmet: Explains manual's correction applies above 2 000 µS/cm and asks for upstream SC; Gives 1.0000 at zero SC without extending to all freshwater; States manual treats water as saline only above about 2 000 µS/cm"
-        },
-        {
           "fixtureId": "probecal-ec-never-recalibrate",
           "turn": 1,
           "dimension": "correctness",
           "detail": "scored 0 — The answer violates the must-not by treating the datasheet's ~10 year figure as the governing recalibration interval for a reporting station and it fails to make the required points about pre-field-trip checks field-site verification against a standard the acceptance criterion and recalibration on failure. Unmet: States that the sensor must still be checked or calibrated before every field trip; States that accuracy must be verified at the field site against a standard before measurements are made; Gives the acceptance criterion as within ±5 μS/cm at ≤100 μS/cm or ±3% above; States that the meter is recalibrated when the check fails"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer violates a must-not by presenting the ORP probe's one-year recalibration interval as how long the pod may be left in the creek and it misses all but the first must-contain point. Unmet: Acknowledges that the corpus includes deployed-temperature verification continuous-sonde calibration checks and turbidity maintenance without treating them as a universal deployment lifetime; Attributes the deferral of full long-term deployment guidance to the turbidity section which points to manufacturer instructions and external continuous-monitor references; Gives the turbidity chapter's approximate two-to-four-week deployed optical-sensor cleaning cadence more often with apparent biofouling without calling it the only interval in the corpus; States that this is a maintenance cadence for one sensor and not a limit on how long the instrument may stay deployed; Says plainly that the deployment limit has to come from outside these sources such as the manufacturer or the project's own plan"
         },
         {
           "fixtureId": "refusal-how-long-can-it-stay-in",
@@ -301,10 +319,16 @@
           "detail": "scored 0 — The answer makes none of the required points and instead asserts the entire month's data can be kept based on maintenance intervals which is an unsupported threshold for record retention. Unmet: States that the corpus gives no rule for deciding which part of a long record may be kept and which must be thrown out; States that no source gives an allowable rate of drift - a per-day or per-week figure - for a sensor left in the water; States that it gives no procedure for correcting or adjusting a record after the instrument comes out; Notes that the turbidity chapter does offer a fouling check comparing the sensor's reading on a calibrant before and after cleaning it and taking the percent difference; States that this fouling check quantifies one sensor's condition and is not an acceptance rule for the record; Notes that the EPA field calibration SOP has the operator calibrate before deployment and check the calibration on recovery defers the drift criteria to the project's quality assurance plan and supplies its own default post-calibration criteria only for when that plan is silent; Declines to convert the EPA post-calibration criteria into a keep-or-discard threshold for a month of record and supplies no drift tolerance beyond them; Notes that the EPA SOP's default post-calibration criteria are a pass-or-fail check on the instrument at recovery not a rule for how much of the record may be kept and that data failing the check are qualified rather than discarded"
         },
         {
-          "fixtureId": "refusal-how-long-can-it-stay-in",
-          "turn": 1,
+          "fixtureId": "definitional-required-versus-recommended",
+          "turn": 2,
           "dimension": "correctness",
-          "detail": "scored 0 — The answer violates a must-not by presenting the ORP probe's one-year recalibration interval as how long the pod may be left in the creek and it misses all but the first must-contain point. Unmet: Acknowledges that the corpus includes deployed-temperature verification continuous-sonde calibration checks and turbidity maintenance without treating them as a universal deployment lifetime; Attributes the deferral of full long-term deployment guidance to the turbidity section which points to manufacturer instructions and external continuous-monitor references; Gives the turbidity chapter's approximate two-to-four-week deployed optical-sensor cleaning cadence more often with apparent biofouling without calling it the only interval in the corpus; States that this is a maintenance cadence for one sensor and not a limit on how long the instrument may stay deployed; Says plainly that the deployment limit has to come from outside these sources such as the manufacturer or the project's own plan"
+          "detail": "scored 0 — The answer makes the first two points but misses the third and violates a must-not by inventing a sign-off role ('often by a supervisor or water‑quality specialist') for the departure. Unmet: notes that the same documentation-plus-independent-quality-assurance expectation applies to departures from recommended procedures"
+        },
+        {
+          "fixtureId": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer violates the must-not by stating that the USGS document defines 'hypoxic to anoxic' as concentrations less than 1.0 mg/L which is stating that the USGS uses 1.0 mg/L as an ecological threshold. Unmet: States that anticipated DO below 1.0 mg/L triggers instrument-specific spectrophotometric verification for optical sensors before reporting not an alarm at or below 1.0 mg/L; Notes that the Rhodazine D spectrophotometric method the chapter points to covers roughly 0.025 to 1.0 mg/L underscoring that the figure is about verifying the instrument not judging the water"
         },
         {
           "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
@@ -371,6 +395,24 @@
           "turn": 1,
           "dimension": "ungrounded",
           "detail": "2: you can leave the pod in the creek for at least a year without mandatory recalibration for any of the measured parameters — I searched the supplied material for a time-before-recalibration figure for the turbidity sensor and found none; the claim extends the 'at least a year' statement to all measured parameters including turbidity which is not supported.; the hardware should remain functional for several years (up to the life‑expectancy values above) — I searched the supplied material for a life-expectancy figure for the turbidity sensor and found none; the claim extends the 'several years' statement to all measured parameters including turbidity which is not supported."
+        },
+        {
+          "fixtureId": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: the USGS document defines “hypoxic to anoxic” as concentrations less than 1.0 mg/L — I searched the supplied material for any definition of 'hypoxic to anoxic' or a DO threshold of 1.0 mg/L and found none. The cited document [11] is about turbidity not dissolved oxygen and contains no such definition."
+        },
+        {
+          "fixtureId": "probecal-buffer-handling",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: If a bottle has no printed expiration date you should follow the manufacturer’s recommended shelf life and replace the buffer once that time has elapsed. — I searched the supplied material for any instruction on what to do when a buffer container lacks a printed expiration date and found none. The material only says to label containers with the expiration date and not to use expired buffers but does not specify a procedure for missing expiration dates."
+        },
+        {
+          "fixtureId": "definitional-required-versus-recommended",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: you would need to record the reason the step couldn’t be done — The supplied material states that deviations must be independently quality assured and documented but does not specify that the reason for the deviation must be recorded.; obtain the appropriate QA/QC verification (often by a supervisor or water‑quality specialist) — The supplied material does not mention obtaining QA/QC verification from a supervisor or water-quality specialist for deviations.; document the deviation in the instrument logbook before proceeding — The supplied material does not state that deviations must be documented in the instrument logbook or that this must be done before proceeding."
         },
         {
           "fixtureId": "followup-mixing-the-clarity-bottle",
