@@ -1,0 +1,384 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4-flash-0731",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-25T05:02:23.722Z",
+  "budget": {
+    "calls": 91,
+    "promptTokens": 1150688,
+    "cachedPromptTokens": 34463,
+    "completionTokens": 169078,
+    "usd": 0.357402221
+  },
+  "results": [
+    {
+      "arm": "gold-context",
+      "pass": "warm",
+      "turnsJudged": 16,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 4,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 2,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 1.1875,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 8,
+        "turns": 16,
+        "rate": 0.5,
+        "totalClaims": 15,
+        "met": false
+      },
+      "citationSupport": {
+        "turnsChecked": 14,
+        "unsupported": 3
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal and makes none of the required substantive points about the absence of a keep/discard rule the lack of a drift rate the turbidity fouling check or the EPA SOP's calibration criteria."
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: the increased conductance should allow the reading to stabilize — I searched the supplied material for a statement that raising the specific conductance with KCl would stabilize the pH reading and found only that the method allows using normal pH field electrodes and standard pH buffers not that it stabilizes the reading."
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "4: Salinity‑correction factors are only needed when the water’s specific conductance is high enough to affect oxygen solubility. — The supplied material only states that correcting DO solubility for saline waters (specific conductance greater than 2 000 µS/cm) varies and provides a table with correction factors for 0 and 1 000 µS/cm; it does not state that correction is needed only above a threshold.; Fresh‑water streams typically have conductances well below that threshold — No information about typical fresh‑water conductance values appears in the supplied material.; the correction factor would be essentially 1.0 — The table shows factors of 1.0000 at 0 µS/cm and 0.9961 at 1 000 µS/cm so the factor is not essentially 1.0 for all fresh water; no statement supports this.; no adjustment is required — The supplied material does not state that no adjustment is needed for fresh water; it only describes correction for saline waters and provides factors for various conductances."
+        },
+        {
+          "fixtureId": "followup-mixing-the-clarity-bottle",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: uneven suspension — I searched the supplied material for any mention of uneven suspension as a source of bias and found none; the excerpts mention air bubbles causing bias but do not mention uneven suspension."
+        },
+        {
+          "fixtureId": "precedence-ph-river-range-not-pod-limit",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: surface‑water pH values that are not impacted by contamination are typically “in the range of 6.5 to 8.5” — I searched the supplied material for a statement that surface-water pH values not impacted by contamination are typically in the range 6.5 to 8.5 and found only a statement about 'River waters' not 'surface-water'."
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: A6.4 by contrast specifies a **final‑buffer check** that is much stricter and does not vary with conductivity — The supplied A6.4 excerpt gives a 0.05 pH unit tolerance but never states that the check is independent of conductivity; no such statement appears in the material.; A6.4 requires the buffer reading to be within ±0.05 pH units of the certified value regardless of conductivity — The supplied A6.4 excerpt gives a 0.05 pH unit tolerance but does not say it applies regardless of conductivity; no such qualifier is present.; the A6.4 rule is a final‑check step that demands a tighter uniform accuracy before accepting a sample measurement — The supplied A6.4 excerpt describes a buffer check but does not characterize it as uniform; no statement about uniformity is found in the material."
+        },
+        {
+          "fixtureId": "probecal-ec-never-recalibrate",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: check the probe against it before or after a deployment — The supplied material only instructs checking or calibrating before every field trip (e.g. 'Specific conductance meters must be checked or calibrated before every field trip') and checking at the field site but contains no mention of checking after a deployment."
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: Eh (or ORP) — I searched the supplied material for a statement that Eh and ORP are the same numeric value or interchangeable and found none.; because the USGS treats it as not a routine direct‑field measurement — I searched for a statement that the reason Eh is absent from the stabilization-criteria table is that it is not a routine direct field measurement; the material only states that Eh is not considered a routine or direct field measurement not that this is the reason for its exclusion from the table."
+        },
+        {
+          "fixtureId": "probecal-ec-never-recalibrate",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: In practice many users still perform periodic verification checks—especially before field trips or after long deployments—to confirm the probe is still measuring accurately. — I searched the supplied material for any statement about what many users do about verification after long deployments or about the purpose of confirming accuracy and found none.; it’s advisable to periodically verify its accuracy against a known standard — I searched for any statement that it is advisable to periodically verify accuracy for this sensor; the USGS guidance requires checking before every field trip for specific conductance meters but does not say it is advisable for this probe."
+        },
+        {
+          "fixtureId": "followup-mixing-the-clarity-bottle",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "1: [3†\"Gently invert—do not shake—the sample 25 times (ASTM\"}] — The claim states to gently invert about 25 times (roughly one inversion per second) but the cited document only says to gently invert 25 times and does not mention the rate."
+        },
+        {
+          "fixtureId": "probecal-ec-never-recalibrate",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: [5] — The claim that USGS recommends standards that 'bracket the expected specific conductance of the samples' is not supported by the cited document; it only recommends standards greater than 200 µS/cm. The bracketing recommendation appears in a different document (marker [4])."
+        },
+        {
+          "fixtureId": "probecal-ec-never-recalibrate",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "1: [6] — The claim that the vendor's sheet notes graphite plates do not go bad and recalibration is not necessary is supported by document [1] (the probe spec sheet) not by the cited document [6] which is a USGS calibration procedure section and does not contain that statement."
+        }
+      ]
+    },
+    {
+      "arm": "hybrid-slice-vector",
+      "pass": "warm",
+      "turnsJudged": 16,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 4,
+            "mean": 0.25,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "definitional",
+            "turns": 2,
+            "mean": 0,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "follow-up",
+            "turns": 2,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "refusal",
+            "turns": 2,
+            "mean": 0,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 0.375,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 11,
+        "turns": 16,
+        "rate": 0.6875,
+        "totalClaims": 25,
+        "met": false
+      },
+      "citationSupport": {
+        "turnsChecked": 13,
+        "unsupported": 4
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives a single 10% tolerance covering all parameters (a must-not violation) and omits every required specific criterion (temperature ±0.2 C conductivity ±5 μS/cm DO ±0.2 mg/L pH ±0.1 unit turbidity thresholds five-or-more readings and the 60-second minimum wait)."
+        },
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer invents a discrepancy between the two tables and resolves it by picking the multiparameter chapter instead of stating they agree and it fails to make any of the required points about the criteria being the same the general chapter pointing to the multiparameter chapter or the standard stabilisation criteria and separate accuracy matter."
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses entirely and provides none of the required points: it does not attribute ±0.1 or ±0.3 pH criteria to the A6.8 example form nor distinguish them from A6.4's 0.05 pH final-buffer check."
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal and makes none of the required points: it does not mention the 2 000 µS/cm threshold ask for upstream specific conductance give 1.0000 at zero specific conductance or state the manual's saline-water definition."
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer asserts that the probe's raw ORP output is the same as Eh directly violating the 'must not' item that they are not interchangeable and it fails to state that Eh is relative to the standard hydrogen electrode that the raw reading is against the probe's own reference or that the reference potential must be added."
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer fails to state that Eh is not a routine field measurement does not mention the stabilisation criteria and does not name the routine properties (water temperature dissolved oxygen specific conductance pH turbidity) instead giving an unsupported explanation about turbidity and ORP."
+        },
+        {
+          "fixtureId": "precedence-ph-river-range-not-pod-limit",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses without making any of the required points: it does not state that 6.5–8.5 is a general description does not mention groundwater does not distinguish the described range from a configured threshold and does not explicitly decline to adopt the band."
+        },
+        {
+          "fixtureId": "probecal-ec-never-recalibrate",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer treats the ~10-year datasheet figure as the governing interval and never states the required pre-field-trip check field-site verification against a standard the ±5 μS/cm / ±3% acceptance criterion or recalibration on a failed check."
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer presents recalibration intervals and life expectancies as deployment limits invents a 'at least a year' deployment claim and fails to state that no source gives a maximum deployment time or to mention the turbidity cleaning cadence and deferral to manufacturer guidance."
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer misses every must-contain point (no statement about corpus lacking a keep/discard rule no drift-rate absence no correction procedure no turbidity fouling check no EPA SOP discussion) and violates must-not by recommending keeping the entire month based on unsupported maintenance intervals."
+        },
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "1: When you are using a multiparameter sonde you should follow the criteria laid out in that chapter rather than the broader non‑instrument‑specific recommendations. — I searched the supplied material for any statement that the multiparameter chapter's stabilization criteria take precedence over the general field-measurement guidance and found none. The material only indicates that the chapter has its own criteria (table 6.8-5) and that you should allow time to stabilize within those criteria but it does not say that those criteria override the general ones."
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "3: which brings the water into a range where the pH probe can maintain a stable circuit and give a reliable reading — The excerpt only states that adding KCl increases specific conductance by approximately 150 μS/cm; it does not state that this brings the water into a range where the pH probe can maintain a stable circuit or give a reliable reading.; So the wandering pH value is a symptom of the low‑conductivity water not a fault with the new probe. — The excerpt describes low-specific-conductance waters as challenging for pH measurement but does not state that a wandering pH is a symptom of low conductivity nor does it rule out a fault with the probe.; Adding a measured amount of KCl (as described) and then re‑measuring the pH should stabilize the reading. — The excerpt recommends the KCl-addition method but does not state that re-measuring the pH after adding KCl will stabilize the reading."
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: Yes. In the USGS field manuals the term **Eh** (the symbol for oxidation‑reduction potential) is used for the same redox measurement that your probe reports as **ORP** in millivolts. — I searched the supplied material for any statement that Eh and ORP are the same measurement or that the term Eh is used for the same redox measurement as ORP. The excerpts mention ORP accuracy and refer to Eh measurements but none of them state that the two terms refer to the same quantity or that the numeric values are equivalent.; Thus the numeric value your probe outputs as ORP (mV) is the Eh value the USGS documents refer to. — I searched the supplied material for any statement that the numeric value of ORP in millivolts equals the Eh value referenced in USGS documents. The excerpts provide ORP accuracy specifications and mention Eh in the context of platinum electrode guidance but they do not assert that the ORP reading is numerically identical to Eh."
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "6: not to redox‑potential (ORP/Eh) readings — The supplied material contains a turbidity note about particle settling but no statement that this note does not apply to ORP/Eh measurements.; Turbidity is measured by how much light is scattered by suspended particles — The supplied turbidity excerpt does not describe the measurement principle as light scattering by suspended particles.; so if those particles settle the instrument can give a lower value — The supplied turbidity excerpt says particle settling can affect the measurement but does not state that settling gives a lower value.; does not mention particle settling as a factor — The ORP probe specification excerpt does not state that particle settling is not a factor; absence of mention is not evidence of absence.; Because the redox potential is not dependent on suspended solids — The supplied ORP material does not state that redox potential is independent of suspended solids.; the USGS documents do not include ORP/Eh in the “watch for settling” list. — The supplied material does not contain a list of parameters with settling notes nor a statement that ORP/Eh is excluded from such a list."
+        },
+        {
+          "fixtureId": "followup-mixing-the-clarity-bottle",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: Shaking can introduce bubbles that give a falsely high turbidity reading — The supplied material instructs to 'Gently invert—do not shake—the sample 25 times' and notes that 'Air bubbles can cause significant positive bias in turbidity measurements' but it does not state that shaking introduces air bubbles."
+        },
+        {
+          "fixtureId": "followup-mixing-the-clarity-bottle",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: keep the bottle sealed — The supplied excerpt says to store the sample in a refrigerator at 4°C (or cooler) and read it within 24 hours but does not mention sealing the bottle.; After 24 hours a new sample should be collected. — The supplied excerpt says to read it within 24 hours but does not state that a new sample should be collected after 24 hours."
+        },
+        {
+          "fixtureId": "precedence-ph-river-range-not-pod-limit",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "1: a pH of 8.7 falls within the normal range of most natural surface waters (typically 4.0 to 9.5) — I searched the supplied material for a statement that natural surface waters typically have pH 4.0 to 9.5 and found only that temperature compensation works well in that pH range not that it is the normal range of natural surface waters."
+        },
+        {
+          "fixtureId": "probecal-ec-never-recalibrate",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "3: unless the probe shows drift — Searched the vendor sheet for any mention of drift as a trigger for recalibration; none found. The vendor states recalibration is not necessary after first calibration.; or you reach the ~10‑year interval — Searched for any statement that recalibration is required at the 10-year interval; the spec lists '~10 years Time before recalibration' but the vendor also says 'recalibration is not necessary' and 'After the first calibration your conductivity probe is good to go.' No requirement to recalibrate at 10 years is stated.; regular visual checks — Searched for any recommendation of regular visual checks; the vendor mentions bubble removal and cleaning but not visual checks."
+        },
+        {
+          "fixtureId": "probecal-ec-never-recalibrate",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: a handheld meter that can read the standard — I searched the supplied material for any specification of a handheld meter for checking conductivity standards and found none; the USGS only says to measure the specific conductance of a check standard.; to catch any drift or fouling — I searched the supplied material for any mention of drift or fouling as a reason for periodic checks and found none; the USGS says to check standards and recalibrate if necessary but does not give that reason."
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "2: the data you collect during that time can be retained and used — I searched the supplied material for any statement that data collected within a manufacturer's recalibration interval is valid or may be retained and found only recalibration schedules and life expectancies with no statement about data validity or retention.; the readings you obtain during that month are considered valid and can be kept — I searched the supplied material for any statement that readings are considered valid if taken within a recalibration interval and found no such statement; the documents only specify when recalibration is recommended not that data within that period is automatically valid."
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "2: you can leave the pod in the creek for at least a year without mandatory recalibration for any of the measured parameters — I searched the supplied material for a time-before-recalibration figure for the turbidity sensor and found none; the claim extends the 'at least a year' statement to all measured parameters including turbidity which is not supported.; the hardware should remain functional for several years (up to the life‑expectancy values above) — I searched the supplied material for a life-expectancy figure for the turbidity sensor and found none; the claim extends the 'several years' statement to all measured parameters including turbidity which is not supported."
+        },
+        {
+          "fixtureId": "followup-mixing-the-clarity-bottle",
+          "turn": 2,
+          "dimension": "citations",
+          "detail": "1: [5] — The claim that guidance says to store the sample in a refrigerator and read within 24 hours is not supported by the cited document which only discusses applicability of the method and series changes not sample storage or reading time."
+        },
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "1: [44] — The claim that stability is reached when three to five (or more) sequential readings are within 10% is not supported by the document cited as [44]; it is actually found in the document cited as [19] (usgs-nfm-a6.7-turbidity.pdf__96a634629b66)."
+        },
+        {
+          "fixtureId": "precedence-ph-river-range-not-pod-limit",
+          "turn": 1,
+          "dimension": "citations",
+          "detail": "2: 【19†\"pH from 1.68 to 10\"}】 — The claim is that the sensor has a pH range from 1.68 to 10 but the document only states that standard procedures are expected to yield accurate measurements for that range not that the sensor has that range.; 【19†\"pH from 4.0 to 9.5\"}】 — The claim is that 8.7 falls within the normal range of most natural surface waters (typically 4.0 to 9.5) but the document only mentions that temperature compensation works well in that pH range not that it is the normal range of natural surface waters."
+        }
+      ]
+    }
+  ]
+}

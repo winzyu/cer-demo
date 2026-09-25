@@ -1008,6 +1008,33 @@ Both are accepted: the rows calibrate the judge against a human on the same answ
 Only `correctness_0_1_2` and `ungrounded_claims` are graded; `invalid_citations` stays blank and yields no pairs.
 Once graded, `npm run judge -- --run=p3-calib-2026-09-24 --calibration` judges the 32 rows at `--final` (91 calls with citations, estimated at $0.45 from `p3-k20-2026-09-23`'s measured cost), then `--calibrate` reports kappa against the 0.70 bar.
 
+#### Result - 2026-09-24: correctness kappa 0.56, below the 0.70 bar
+
+The user graded `scores.csv` themselves (`ea380f6`), then reconciled their ungrounded counts with the AI review (`d17ade6`, SHA256 `751e9c78...`); correctness is the user's first grading throughout.
+The AI review was amended in the same commit: its reviewer withdrew the strict rule that counted example and calculated numbers as ungrounded (SHA256 now `f58502d2...`, 27 claims across 14 answers).
+Because the two sheets now carry identical ungrounded counts, the judge's ungrounded agreement below is agreement with a reconciled human-and-AI reference, not an independent human one.
+
+`--calibration` judged 91/91 calls with 0 failures at `--final`: 1,150,688 prompt tokens (34,463 cached), 169,078 completion tokens, about $0.3574 at the `src/eval/prices.ts` rate.
+`--calibrate` matched 32 pairs on each graded dimension, with 0 rows unjudged and none stale.
+
+| Comparison | Correctness exact | Within one | Any/none | Kappa | Ungrounded exact | Any/none | Kappa (counts) |
+|---|---|---|---|---|---|---|---|
+| Judge vs user (`scores.csv`) | 23/32 | 32/32 | 27/32 | **0.561** | 15/32 | 25/32 | 0.231 |
+| Judge vs AI review (secondary) | 28/32 | 32/32 | 28/32 | 0.786 | 15/32 | 25/32 | 0.231 |
+| User vs AI review (secondary) | 25/32 | 32/32 | 29/32 | 0.659 | 32/32 | 32/32 | 1.000 |
+
+The judge never differs from the user by two points; its disagreements fall into three patterns.
+It misses rules its prompt already states in two rows: it gave 1 to a refusal where an answer was owed (`deepmanual-brackish-do-correction` t1, retrieval) and to an answer calling pH 8.7 "within the normal range of most natural surface waters" against a `must_not` on declaring 8.7 normal (`precedence-ph-river-range-not-pod-limit` t1, retrieval); both references agree with the user on the first, and the AI review scored the second 1 as well.
+It scores two appropriate bare refusals 0 where the user and the AI review give 1 for the refusal point (`precedence-ph-river-range-not-pod-limit` t2 and `refusal-how-long-can-it-stay-in` t2).
+It withholds full credit for omitted minor qualifiers (a 60-second minimum, "at calibration temperature", NIST traceability, the reason to stay above 200 uS/cm) in four gold-context rows the user scored 2; the AI review agrees with the judge on all four, so these are a strictness question in the rubric reading, not judge errors.
+The ninth, `probecal-ec-never-recalibrate` t2 retrieval, is contested: the user applied the "invents an unsupported standard" `must_not` to a suggested 700 uS/cm standard, which that item's own "allows other certified, instrument-compatible values" clause arguably excuses; the judge and the AI review scored 1.
+
+Ungrounded counts agree poorly in both directions.
+The judge counts inferential glue as ungrounded where both references count none (for example "the increased conductance should allow the reading to stabilize", or "regardless of conductivity" added to a quoted tolerance), and it counts none where a source rule is misapplied with its own number, as with the turbidity-only 10 percent rule generalized to every parameter.
+
+Correctness kappa misses the 0.70 bar, so the judge is not yet calibrated and E3 stays blocked.
+Setting those two rows and the two refusal rows to the user's scores would give 0.76, but that is fitted to this sample and not a measurement.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.

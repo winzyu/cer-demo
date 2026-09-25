@@ -81,3 +81,20 @@ The CLI labels the reference scores "human"; for this packet, explicitly identif
 The user chose to grade the packet themselves, so these AI scores moved to `eval/grading/p3-calib-2026-09-24/warm/scores-ai-review.csv` (same SHA256 as above) and `scores.csv` is blank again, byte-identical to the sheet `30eb285` generated.
 Commit `7cdd366` describes these scores as the user's grades; they are this AI review.
 `judge --calibrate` reads `scores.csv`, so kappa is reported against the human re-grade; the AI review stays available for comparison.
+
+## Human calibration result - 2026-09-24
+
+Network access returned (an unauthenticated request to `api.fireworks.ai` answered HTTP 401), and the judge ran against the user's own sheet.
+`scores.csv` is the user's grading (`ea380f6`), with ungrounded counts later reconciled to this review (`d17ade6`); correctness was not changed.
+This review was amended in `d17ade6`: its reviewer withdrew the strict count of example and calculated numbers above, so `deepmanual-brackish-do-correction` turn 1 A drops from 2 ungrounded claims to 0 and the new SHA256 is `f58502d277165cf6da8b585a7778a5bf61420e002ac8db177a424a2062f8e1e1` (27 claims across 14 answers).
+
+`--calibration` judged 91/91 calls with 0 failures for about $0.3574, and `--calibrate` matched 32 pairs per graded dimension.
+Correctness Cohen's kappa against the user is **0.561, below the 0.70 bar**: exact 23/32, within one 32/32.
+Ungrounded any/none agreement is 25/32 (count kappa 0.231); since the two sheets carry identical ungrounded counts, that figure is the same against this review.
+As a secondary result, the judge agrees with this review on correctness at kappa 0.786 (28/32 exact), and the user agrees with this review at 0.659 (25/32 exact).
+The disagreement patterns and the decision they leave are in `docs/EVAL_REBUILD.md`, "Calibration packet (2c)".
+
+R4 spend is now about $7.80 of the $20 ceiling ($7.44 before this run).
+The empty `warm.json` from the failed attempts was overwritten by this run.
+The judge's exit status 0 when every call failed was fixed in `e662fa0`: it now exits 1 whenever any call fails.
+
