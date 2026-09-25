@@ -1125,6 +1125,24 @@ The judge returned an empty reply ("no JSON object") on 12 call attempts in pass
 
 Spend: captures about $0.27 (gold context $0.07, retrieval $0.19, spot checks about $0.01), judge pass 1 $1.80 and pass 2 $1.31 (more of its input was cached), about $3.38 for E3 and about $11.30 of the $20 R4 ceiling; empty replies are not in the ledger, so their cost, if billed, is not counted.
 
+### Held-out calibration check - 2026-09-25, run `p3-calib-2026-09-24`, round `heldout-2026-09-25`
+
+The user graded 12 rows from three fixtures the correctness-prompt tuning never saw: `definitional-required-versus-recommended`, `precedence-do-hypoxia-qa-trigger-not-pod-limit` and `probecal-buffer-handling`, both arms, both turns.
+They were judged at `--final` with `--only` on correctness and ungrounded (24 calls, 0 failed, about $0.09); citations were left out because the sheet leaves `invalid_citations` blank.
+Agreement was computed over these rows alone by passing only their ledger records to `calibrate()`, so the 32 tuned rows are reported separately.
+
+| | held-out, n=12 | tuned, n=32 |
+|---|---|---|
+| correctness exact | 75% (9/12) | 91% (29/32) |
+| correctness within one | 100% | 100% |
+| correctness kappa | 0.25 | 0.849 |
+| ungrounded any/none | 75% | 78% |
+| ungrounded count kappa | 0.25 | 0.23 |
+
+The three correctness disagreements are each one point and run both ways: `precedence-do-hypoxia-qa-trigger-not-pod-limit` t1 gold (human 0, judge 1) and `probecal-buffer-handling` t2 retrieval (human 0, judge 1) are judged more leniently, and `precedence-do-hypoxia-qa-trigger-not-pod-limit` t2 retrieval (human 1, judge 0) more strictly, on a must-not.
+Nine of the twelve human grades are 1, so kappa over this sample is dominated by chance agreement and unstable; exact agreement is the steadier figure.
+Reading: the tuned kappa overstates agreement on unseen fixtures, and single-turn judge scores carry about one point of noise in a quarter of rows, but with no direction in the errors the E3 arm means stand, and the gaps to the 1.30 floor (0.29 on gold context, 0.72 on retrieval) are far wider than this noise.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
