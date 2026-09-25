@@ -1164,6 +1164,34 @@ Reranked k=10 already beats today's k=20, so a reranker could also halve the man
 Launch cost: about 33K reranker tokens per question, about $0.0066, and 0.8-1.4 s per call on three timed requests; the answer call costs about $0.003 at k=20, so reranking roughly triples model spend per question, still under a cent.
 Caveats: the labels are agent-authored and fixture-wide, and recall is not correctness; the next step is a `hybrid-slice-vector` capture with the reranker, correctness-judged against E3's 0.58.
 
+### Reranker capture - 2026-09-25, run `p3-rerank-2026-09-25`
+
+`hybrid-slice-rerank` (`RerankAdapter` over `local-vector`, pool 50, `qwen3-reranker-8b`, `32275aa`) captured with E3's settings on port 8011: 90/90 turns, 0 failed, after a spot check.
+`src/` is unchanged since E3's `309da6c` apart from the new mode, so the only difference from `hybrid-slice-vector` is the ordering of the manual chunks.
+Scoring the captured contexts against the retrieval labels gives recall 51.9% and nDCG 0.209, exactly the offline figures, against 39.5% and 0.154 for E3's contexts.
+Judged once at `--final` on correctness only (90 calls; 4 empty replies re-run to 0 failed).
+
+| correctness | E3 `hybrid-slice-vector`, pass 1 / 2 | `hybrid-slice-rerank` |
+|---|---|---|
+| overall (floor 1.30) | 0.58 / 0.59 | 0.62 |
+| cross-document | 0.50 / 0.46 | 0.50 |
+| deep-in-manual | 0.55 / 0.60 | 0.55 |
+| definitional | 0.63 / 0.63 | 0.63 |
+| follow-up | 0.63 / 0.63 | 0.63 |
+| precedence | 1.00 / 0.83 | 1.00 |
+| probe-calibration | 0.56 / 0.69 | 0.81 |
+| refusal | 0.50 / 0.50 | 0.50 |
+
+Against the mean of E3's two passes, 16 turns score higher, 12 lower and 62 the same, so the +0.04 is inside the judge's noise (held-out check above); only probe-calibration moves more than one pass-to-pass swing.
+Refusal wording on non-refusal turns falls from 19 to 13, and those scored 0 from 13 to 9, so the reranker does fix some evidence-starved refusals, but other turns lose as much.
+Tier 1: refusal integrity FAIL (1 answered, 1 off-contract), fabricated figures PASS (0 of 319), quotes supported 65.4% against 57.0%.
+Citation validity reads 16.0% only because one answer (`precedence-turbidity-groundwater-background-not-pod-limit` t1) looped on 807 malformed `【5†"…"}` markers, which the server's audit stripped from the visible answer; without that turn it is 164/220, 74.5%, against E3's 77.9%.
+Ungrounded was not judged; the judge's "0/0 turns" line for it is an empty dimension, not a pass.
+
+Reading: a 12-point recall gain does not reach correctness, which agrees with gold context scoring only 1.01; the answer model, not retrieval, is the binding constraint.
+At about 1 s and $0.0066 per question for no measurable gain, the reranker is not worth enabling for launch; `hybrid-slice-rerank` stays registered for later work and `DEFAULT_RETRIEVAL` is unchanged.
+Spend: captures about $0.20 plus about $0.65 of rerank calls (including two spot checks), judge $0.57; about $1.42 for this run and about $13.40 of the $20 R4 ceiling with the held-out check and the offline measurement.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.

@@ -1,0 +1,309 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4-flash-0731",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-25T23:55:01.808Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 2065011,
+    "cachedPromptTokens": 389825,
+    "completionTokens": 303038,
+    "usd": 0.571274775
+  },
+  "results": [
+    {
+      "arm": "hybrid-slice-rerank",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 0.55,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 0.625,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 0.625,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 0.8125,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 0.6222222222222222,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer asserts the normal buffer set including 1.68 is appropriate and does not state that 4/7/10 alone is insufficient nor the accuracy range temperature proximity or 0.05 pH tolerance check so none of the must-contain points are met. Unmet: states that usual 4/7/10 buffer set is not sufficient and pH 1.68 (or 2) buffer is needed for acidic water; states standard pH procedure accurate over roughly pH 1.68 to 10; states sample pH must fall inside calibrated range so 4/7/10 set does not bracket pH 3.2; states calibration buffers must be within about 10 C of sample temperature; states buffer nearest sample pH should be within about 0.05 pH unit or system recalibrated"
+        },
+        {
+          "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a refusal and makes none of the required substantive points. Unmet: states turbidity subsample needs qualifier and comment; states same restriction for temperature DO Eh; states discrete turbidity sample must not be from flow-cell discharge; gives storage limits (amber bottle dark ≤4C ≤24h); notes turbidity time-sensitive measure on site/in situ"
+        },
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives a single 10% stability tolerance for all parameters violating the must-not and makes none of the required per-parameter criteria or the 60-second thermal-equilibrium wait. Unmet: temperature criterion ±0.2 C; specific conductance criterion ±5 μS/cm at ≤100 ±3% above; dissolved oxygen criterion ±0.2 mg/L; pH criterion ±0.1 unit; turbidity criterion ±0.5 TU or ±5% at ≤100 TU ±10% above; criterion judged over five or more consecutive readings; minimum wait at least 60 seconds for thermal equilibrium; 60 seconds is a minimum some instruments need longer"
+        },
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer invents a conflict and claims the multiparameter chapter is stricter and takes precedence violating the must-not items and makes none of the required must-contain points. Unmet: states plainly that the two tables give the same stabilisation criteria and do not conflict; states the general field-measurement chapter itself points multiparameter users to the multiparameter chapter for criteria of the same kind; states the criteria are standard sensor stabilisation criteria and that actual sensor accuracy varies by model and manufacturer which is a separate matter; For persistent variability extends equilibration and records additional measurements then either reports the median of the final five or more readings or selects a representative final reading using site knowledge and professional judgment documenting the decision"
+        },
+        {
+          "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer violates the must-not by claiming the EPA and USGS guidance disagree without support and it misses several must-contain points (midday drift qualification continuous sonde deployment/recovery checks DO post-calibration details drift criteria applicability and deployment/recovery distinction). Unmet: Midday drift: recalibrate and qualify preceding data; Continuous sonde calibrated before deployment and checked on recovery; DO post-calibration check in measurement mode with DO temp pressure vs solubility chart; SOP drift criteria apply only when QA plan lacks its own; Per-location exception allowed while distinguishing deployment/recovery checks"
+        },
+        {
+          "fixtureId": "crossdoc-sonde-sensor-order",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer invents a probe position rule not stated in the manuals (allowing other sensors before or after the conductivity-pH pair) which is a must-not violation so the score is 0 despite correctly placing pH downstream of conductivity. Unmet: states the flow cell should be kept as close to the source water as possible and shielded from direct sunlight; notes the specific-conductance probe position relative to the pH electrode depends on the flow-cell design"
+        },
+        {
+          "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer invents a check interval not in the manuals ('more often if you notice drift or if the pod operates in harsh conditions') violating a must-not and misses several must-contain points (no NIST reference no distinction from pH adjustment no multiparameter condition no calibration solution/evaporation). Unmet: states temperature sensor is not adjusted like pH; verify accuracy across range; check against NIST-certified or NIST-traceable thermometer; accuracy within ±0.2 C where bundled on multiparameter instrument used to correct another parameter; calibration solution must cover probe and temperature sensor; identifies evaporation of moisture as DO air-calibration concern"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer providing none of the required values or comparisons. Unmet: gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; States the difference is 0.03 mg/L and assesses its significance against the applicable procedure not as universally insignificant; notes the USGS values are generated from the Benson and Krause equations; Compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; advises using the table belonging to whichever protocol the work is being done under consistently rather than mixing them"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer discusses turbidity dilution and gives a USGS pressure range but never addresses temperature limits EPA chart bounds combined coverage or salinity correction missing all rubric points. Unmet: states the EPA chart's temperature coverage runs to 45 C and gives no value above that; states the USGS solubility table stops at 40.0 C its highest tabulated temperature; states the USGS table extends down to 600 mmHg lower than the EPA chart; states the EPA chart bottoms out around 690 mmHg; Explains the different table bounds and that neither printed table covers simultaneous temperature above 40 °C and pressure below 690 mmHg; supported generated values require a separate source; notes only the USGS chapter supplies salinity correction factors which the EPA chart does not carry"
+        },
+        {
+          "fixtureId": "crossdoc-warm-week-oxygen-drop",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and makes none of the required points so it scores 0. Unmet: states the salinity correction table is indexed on specific conductance referenced to 25 C not on raw conductivity at the water's own temperature; states that a conductivity reading taken at any other temperature must be corrected to what it would read at 25 C before it is used; states that most modern meters and sondes apply that temperature compensation automatically and report the 25 C value; tells the operator to confirm whether the pod's conductivity output is already temperature-compensated; Notes that A6.2 defines saline waters as specific conductance greater than 2 000 microsiemens per centimetre where how the dissolved-oxygen solubility correction is applied varies with instrument type calibration method and the salts in solution"
+        },
+        {
+          "fixtureId": "crossdoc-warm-week-oxygen-drop",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer treats the brackish site as freshwater and skips the salinity correction entirely violating a must-not item so the score is 0. Unmet: States freshwater equilibrium solubility at 760 mmHg falls by 0.99 mg/L from 15 to 20 C as conditional benchmark not ceiling; States equilibrium saturation depends on barometric pressure; States brackish water requires salinity correction; States actual warming contribution cannot be quantified without pressure salinity initial saturation; does not assign 1 mg/L to warming"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to provide the correction withholding the required factor and procedure so none of the must-contain points are made. Unmet: States the measured DO must be multiplied by a salinity correction factor; Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm; Attributes the factor to the salinity-correction table in the USGS NFM dissolved-oxygen chapter (table 6.2-4)"
+        },
+        {
+          "fixtureId": "deepmanual-diluting-clarity-standards",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a refusal that provides none of the required points about not diluting commercial standards the 4 000-unit formazin exception non-linearity or buying prepared solutions. Unmet: states that commercial calibration solutions must not be diluted; gives 4 000-unit formazin as the one exception that may be diluted; explains that diluting changes the suspension matrix so the dilutions are no longer linear; recommends buying commercially prepared solutions at the values needed rather than preparing them by dilution"
+        },
+        {
+          "fixtureId": "deepmanual-do-air-calibration",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer describes the USGS air-calibration procedure (5-10 min ±0.2 mg/L) and omits all five required points from the EPA SOP: wet sponge/towel no contact 10-15 min on-site barometer with elevation correction and comparison to solubility chart with repeat on failure. Unmet: States the calibration uses a 100 percent water-saturated air environment made with a wet sponge or wet paper towel in the bottom of the container; States neither the probe nor the temperature sensor may touch the wet sponge or towel; States roughly 10 to 15 minutes are needed for the confined air to saturate while the instrument warms up; States the barometric pressure entered must come from an on-site barometer not a weather service unless corrected for the site's elevation; States the mg/L reading is then compared with the oxygen solubility chart and must agree within about ±0.2 mg/L or the calibration is repeated"
+        },
+        {
+          "fixtureId": "deepmanual-do-air-calibration",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer never mentions the 0.5 mg/L criterion the cleaning/membrane/electrolyte action or the accuracy/project adjustment so it misses all required points. Unmet: States the instrument should read less than 0.5 mg/L in a 0.0 mg/L DO solution; States a reading above 0.5 mg/L or any negative reading calls for cleaning the probe and changing the membrane and electrolyte; Notes the 0.5 mg/L value assumes an instrument accuracy of about ±0.2 mg/L and may be adjusted to the project's or instrument's accuracy requirements"
+        },
+        {
+          "fixtureId": "deepmanual-do-saturation-ceiling",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives 9.07 mg/L instead of the table's 9.09 mg/L does not cite table 6.2-2 and does not state the value is for fresh water before salinity correction. Unmet: Gives 9.09 mg/L for 20.0 °C at 760 mmHg; Attributes the value to the freshwater table in the USGS NFM chapter on dissolved oxygen (table 6.2-2); States the figure is for fresh water before any salinity correction"
+        },
+        {
+          "fixtureId": "deepmanual-do-saturation-ceiling",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to provide the requested value so it misses all must-contain points. Unmet: Gives 6.95 mg/L for 35.0 °C at 760 mmHg; States equilibrium saturation decreases by 2.14 mg/L about 2 mg/L; Takes both figures from the same USGS table"
+        },
+        {
+          "fixtureId": "deepmanual-sonde-settle-time",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits specific conductance and turbidity stabilization criteria and says three or more readings instead of about five or more violating the must-not rule against omitting applicable installed channels. Unmet: Specific conductance ±5 µS/cm ≤100 ±3% >100; Turbidity ±0.5 TU or ±5% ≤100 ±10% >100; About five or more consecutive readings"
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-rounding",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives only a 43.12-to-45 example and never states the required rounded values for 0.42 and 63.7 under EPA 180.1 nor the USGS-follows-ASTM-unless-drinking-water-compliance condition. Unmet: States EPA 180.1 reports 0.42 as 0.40; States EPA 180.1 reports 63.7 as 65; Notes USGS follows ASTM unless drinking-water compliance under EPA 180.1 GLI or ISO"
+        },
+        {
+          "fixtureId": "deepmanual-thermistor-annual-check",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer omits the pre-trip one-point check violating the must-not 'Drops the pre-trip one-point check ' and also fails to state the 12-month verification requirement. Unmet: States verification is required at least once every 12 months; States a one-point check against a certified sensor is also required immediately before a field trip"
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer invents a numeric offset (+197 mV) not supported by the context violating a must-not item and also fails to state that Eh is an equilibrium potential at a noble-metal electrode boundary. Unmet: Eh is equilibrium potential at noble-metal electrode boundary reflecting redox species"
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer never mentions Eh does not state that Eh is not a routine field measurement does not explain its absence from stabilization criteria and does not name the routine properties. Unmet: states that Eh is not treated as a routine or direct field measurement; states that because of this it has no entry in the stabilisation criteria that the other field measurements have; names the properties that are treated as routine on-site measurements - water temperature dissolved oxygen specific conductance pH and turbidity"
+        },
+        {
+          "fixtureId": "definitional-what-per-centimetre-means",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer saying it lacks information on micromhos per centimetre so it makes none of the required points. Unmet: states that no conversion is needed because a mho per centimetre and a siemens per centimetre are the same unit under two names; notes that mhos were the normal reporting unit for older data with the changeover around 1971; notes that specific conductance specific electrical conductance and electrical conductivity are all used in the literature for this same measurement; notes that because electrical conductivity is not always referenced to a standard temperature the measurement or reference temperature has to be reported and checked against the older values"
+        },
+        {
+          "fixtureId": "followup-cleaning-the-salt-sensor",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer never mentions acid escalation hydrochloric acid a manufacturer check before acid or the nitric acid/aqua regia warning and it omits the check-the-manufacturer-first step violating a must-not. Unmet: start with detergent escalate to acid only if fails; name dilute hydrochloric acid ~5% as acid to escalate to; check manufacturer's guidance before putting acid on probe; warn against nitric acid aqua regia etching agents for platinum/gold"
+        },
+        {
+          "fixtureId": "followup-cleaning-the-salt-sensor",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to provide the requested soak time and rinse details making none of the must-contain points and it omits the deionized-water rinse violating a must-not. Unmet: gives 2 hours as the maximum soak; states that the probe is rinsed thoroughly with deionized water afterwards; repeats or upholds that the manufacturer's recommendations govern so a shorter limit from the instrument maker wins"
+        },
+        {
+          "fixtureId": "followup-clarity-calibration-whole-head",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer mentions both immersion methods but omits the manufacturer-compatibility qualifier the separate-vessel requirement and the whole-sonde trade-off of larger volume and contamination/dilution risk. Unmet: States whole-sonde and turbidity-sensor-only immersion are both accepted where compatible with the manufacturer instructions; states that either way the calibration is done in a separate vessel with the sensor sitting in the calibration standard not in the water body being monitored; gives the trade-off for putting the whole head in: it takes a lot more standard and brings a risk of contaminating or diluting that standard"
+        },
+        {
+          "fixtureId": "followup-mixing-the-clarity-bottle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and provides none of the required storage details (24-hour hold ≤4°C amber bottle fallback framing). Unmet: states that the sample must be held no longer than 24 hours; states that it has to be chilled at or below 4 degrees Celsius; states that it goes in a clean amber bottle and is kept out of sunlight; frames holding the sample as a fallback for when immediate measurement is not possible not as normal practice"
+        },
+        {
+          "fixtureId": "probecal-buffer-handling",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer providing none of the five required substantive points about buffer bottle refreshment expiration temperature protection invalidation or logbook recording. Unmet: States that the decanted field bottles should be refreshed before every field trip; States that solution past its expiration date must not be used; States that the solutions must be protected from wide temperature swings and from extreme heat or freezing; States that solution which has been frozen or overheated can no longer be assumed valid and should be discarded; Notes that the lot number expiration date and the temperature at use are recorded in the instrument logbook"
+        },
+        {
+          "fixtureId": "probecal-do-saturation-target",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer invents a verification tolerance of ±0.2 mg/L or 2% that appears in no source violating a must-not so the score is 0. Unmet: For optical hardware checks optical module and temperature-sensor surfaces repeats if water droplets present; States a calibrated conductivity sensor is needed for saline/brackish water; Prefers applying manual salinity correction after calibration and measurement; automatic compensation separate; Notes manual salinity correction during calibration forces recalibration for every salinity change"
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer tells the operator the order is arbitrary violating a must-not and makes none of the required ordering points. Unmet: States order matters and gives recommended sequence; Places temperature first; Places specific conductance before pH; Places DO then ORP after pH; Explains lower-to-higher ionic strength rationale; Notes pH buffers/filling solutions contaminate conductivity calibration"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a pure refusal and makes none of the required substantive points so it scores 0. Unmet: States that the corpus gives no rule for deciding which part of a long record may be kept; States that no source gives an allowable rate of drift; States that it gives no procedure for correcting or adjusting a record; Notes that the turbidity chapter offers a fouling check; States that this fouling check is not an acceptance rule; Notes the EPA SOP calibration before deployment and check on recovery deferring to QA plan; Declines to convert EPA criteria into a keep-or-discard threshold; Notes EPA default criteria are a pass-or-fail check not a retention rule"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer presents the recalibration intervals (e.g. ~1 year for ORP/DO/pH) as the practical deployment limit violating multiple must-nots and makes none of the required must-contain points about the turbidity cleaning cadence or external deferral. Unmet: States that no source here gives a maximum length of time an instrument may be left in the water; Acknowledges deployed-temperature verification continuous-sonde calibration checks and turbidity maintenance without treating them as a universal deployment lifetime; Attributes deferral of full long-term deployment guidance to the turbidity section pointing to manufacturer instructions and external continuous-monitor references; Gives turbidity chapter's two-to-four-week deployed optical-sensor cleaning cadence more often with apparent biofouling without calling it the only interval; States that this is a maintenance cadence for one sensor and not a limit on deployment duration; Says plainly that the deployment limit has to come from outside these sources such as the manufacturer or the project's own plan"
+        },
+        {
+          "fixtureId": "refusal-turbidity-sensor-hardware",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses to answer and makes none of the required points about the corpus lacking a turbidity datasheet depth being unavailable USGS A6.7 or manufacturer documentation. Unmet: States corpus holds no turbidity datasheet; States depth/pressure rating unavailable; Identifies USGS A6.7 as dedicated turbidity chapter; States USGS chapter pushes instrument-specific facts to manufacturer; Points operator to manufacturer documentation"
+        },
+        {
+          "fixtureId": "refusal-turbidity-sensor-hardware",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer only states the sensor gives an uncalibrated relative index and does not make any of the required points about NTU/FNU optical design corpus limitations or the USGS spreadsheet. Unmet: Gives NTU and FNU as white-light and near-infrared nephelometric examples; Distinguishes calibration-standard equivalence from environmental-sample non-interchangeability; States unit follows from optical design and model; States corpus does not identify make/model of turbidity instrument; States application labels turbidity in NTU and treats as uncalibrated relative index without establishing hardware unit; Notes mapping from model to unit lives in USGS spreadsheet not in corpus; Declines to infer optical design or unit from prevalence of infrared instruments"
+        },
+        {
+          "fixtureId": "crossdoc-bailed-orp-jumping",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer violates the must-not by giving a settling time of 5–10 seconds without stating it is a minimum and it fails to make any of the required points about thermal equilibration airtight system and the manual's measurement procedure. Unmet: states measurement must be in situ or airtight flowthrough eliminating aeration; states tubing impermeable fittings airtight oxygen purged; states drift until thermal equilibrium can exceed 30 min; after equilibration readings every few min for 15-20 min then ~10 min until 30 min and constant; notes ORP slower than pH and asymmetric; states calculated Eh reported to nearest 10 mV; states temperature electrode system pH must be recorded with value"
+        },
+        {
+          "fixtureId": "deepmanual-thermistor-annual-check",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer requires a fixed number of two points violating the must-not rule and it also fails to state the ±2°C and ±4°C rules and the at-most-five-points note. Unmet: States the points must be within ±2 °C of the annual minimum and maximum; States the points must be within ±4 °C of the annual mean; Notes this range-verification procedure requires at most five points without generalizing to every certification procedure"
+        }
+      ]
+    }
+  ]
+}
