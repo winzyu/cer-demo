@@ -57,6 +57,8 @@ Useful for fingerprinting which wave a machine or branch carries.
 | 2026-04-28 | `15b5747` (user-dashboard) | 5657 B, different build. |
 | 2026-08-19 | `ec2b283` (user-dashboard) | Removed, back to 82 B. Titled "Remove obfuscated malicious code from postcss.config.js". |
 | 2026-08-26 | `9ce674b` (user-dashboard), `500ceac` (server) | Reintroduced in both repos. Both titled "Ignore local env files". |
+| 2026-09-23 | `c7ecede` (user-dashboard `main`), `a5b745e` (server `develop`) | Removed upstream, byte-identical to our local `5dff5fd` and `693fc96`. |
+| 2026-09-24 | `d3b4a3f` (user-dashboard `develop`), `3ed15ff` (server `main`) | Removed upstream on the remaining two tips. |
 
 Both reinfection commits also touch `.gitignore`, consistent with an unrelated commit picking up a one-line config change made by something running on the committing machine.
 This reads as a compromised workstation rather than intent.
@@ -89,7 +91,7 @@ Done:
 
 Outstanding:
 
-- The three files are still infected at HEAD upstream, and on every branch listed above. Local cleanup was executed 2026-09-21 in both checkouts and **not pushed**: branch `security/remove-payload` holds the one cleanup commit (user-dashboard `5dff5fd` off `main` `9ce674b`; clean-earth-rovers-server `693fc96` off `develop` `500ceac`), and branch `local` is cut from it in each repo as the base for local development. Both branches are created with `--no-track` and have no upstream, so nothing can be pushed by accident; pushing still needs explicit consent.
+- Upstream removed the payload from every remaining branch tip on 2026-09-23/24 (table above); the other infected branches listed above no longer exist on `origin`, and older history still carries the payload. Local cleanup was executed 2026-09-21 in both checkouts and **not pushed**: branch `security/remove-payload` holds the one cleanup commit (user-dashboard `5dff5fd` off `main` `9ce674b`; clean-earth-rovers-server `693fc96` off `develop` `500ceac`), and branch `local` is cut from it in each repo as the base for local development. Both branches are created with `--no-track` and have no upstream, so nothing can be pushed by accident; pushing still needs explicit consent.
 - Whether the payload ever ran on a build machine (Cloud Build, App Engine) is unchecked. A `next build` there would trigger it identically.
 - Google Cloud ADC (`adc-tapout-backup.json`) and GitHub recovery codes sit in plaintext on the 2026-09-19 backup drive, which was written by the compromised machine.
 
@@ -101,9 +103,29 @@ Catches all builds seen, including the two different obfuscators:
 grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .
 ```
 
-Re-run it after any clone, fetch, pull or branch switch in the two upstream repositories, because upstream still serves the payload on every branch.
+Re-run it after any clone, fetch, pull or branch switch in the two upstream repositories, because their history still carries the payload.
 A branch sweep on 2026-09-21 (`git grep -lE ' {200,}'` against every `origin/*` head) reproduced the infected list above; `CER-35-forgot-password`, `login_fixes_server` and `migration-to-nestjs` in the server repo were the only clean remote branches.
 A reusable Python scanner with a `--fix` mode was written on 2026-09-19 and lost before it was committed; it has not been rebuilt.
+
+## Publishing the local work, 2026-09-24
+
+The `local` commits go to new feature branches on `origin`, cut from the clean tips, for pull requests the user merges after the supervisor demo.
+Both repositories were fetched first (no new commits) and scanned with the long-line command above.
+
+| scope | user-dashboard | clean-earth-rovers-server |
+|---|---|---|
+| remote tips | `main` `c7ecede`, `develop` `d3b4a3f`: clean | `main` `3ed15ff`, `develop` `a5b745e`, `CER-35-forgot-password`, `login_fixes_server`, `migration-to-nestjs`: clean |
+| positive control | `c7ecede^` flags `postcss.config.js` | `a5b745e^` flags both jest configs |
+| working tree of `local` | clean | clean |
+| feature branch | `feature/gilligan-rag-assistant` off `main`, 4 commits, tip `da5412f`: clean | `feature/gilligan-rag-assistant` off `develop`, 5 commits, tip `b2074b8`: clean |
+| pushed | 2026-09-24, remote tip `da5412f` | 2026-09-24, remote tip `b2074b8` |
+| pull request | held back by the user; draft body in [`UPSTREAM_PR_BODIES.md`](UPSTREAM_PR_BODIES.md) | held back by the user; draft body in [`UPSTREAM_PR_BODIES.md`](UPSTREAM_PR_BODIES.md) |
+
+Each branch is `local` cherry-picked without our payload-removal commit, which upstream had made identically; each branch tree equals `git merge-tree` of `local` into its base.
+The audit found no secrets, `.env` files or credential files; the dashboard adds only `remark-gfm`, resolved from `registry.yarnpkg.com`.
+The server ships four development-only switches, each inert under `NODE_ENV=production`, which the Dockerfile sets: the passthrough (`DEV_UPSTREAM_BASE_URL` with `DEV_LOCAL_PATHS`), `DEV_UNVERIFIED_AUTH` and `DEV_CHAT_STORE`.
+The user approved shipping the passthrough on 2026-09-24.
+`CER_RAG_BASE_URL` falls back to `http://localhost:8010`; it is unused while `GILLIGAN_BACKEND` is `gemini` and must be set at cutover.
 
 ## Evidence
 
