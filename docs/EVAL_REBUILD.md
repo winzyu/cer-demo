@@ -1083,6 +1083,47 @@ Ungrounded is unchanged and weak: any/none 25/32, count kappa 0.231, with the ju
 The correctness judge is accepted as calibrated for R4 with two caveats: the prompt was tuned on these rows, and four reference rows are Claude's rulings.
 Reported ungrounded rates carry the weak ungrounded agreement as a caveat.
 
+### R4 final capture (E3) - 2026-09-25, runs `p3-final-2026-09-25` and `p3-final-rejudge-2026-09-25`
+
+Captured at `309da6c` on the frozen 45 / 90 set: `gold-context` and `hybrid-slice-vector` at k=20, `gpt-oss-120b` at temperature 0, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, with `SENSOR_TOOL`, `REPORT_TOOL` and `CATALOGUE_PROMPT` set `false` and `DEBUG_RETRIEVAL=true` on server and runner; both arms 90/90 turns with 0 failed, after a spot check of each.
+The prompt is iteration 1's plus Task A's turbidity wording, the first capture to include it.
+`dev` was not merged again: its commits since the last merge change only tools-on prompt blocks and tool code, and its tools-off message list is byte-identical to the merge base's, so the capture is what a merge would have produced.
+Both passes were judged at `--final` with the calibrated correctness prompt (`49e28ae`); the second pass is a symlink run over the same transcripts.
+Correctness here is therefore not strictly comparable with earlier runs, which were judged on the previous correctness prompt.
+The fixtures are not human-verified, so every number rests on agent-authored ground truth.
+
+| | gold-context pass 1 | pass 2 | hybrid-slice-vector pass 1 | pass 2 |
+|---|---|---|---|---|
+| correctness (floor 1.30) | 1.01 | 1.01 | 0.58 | 0.59 |
+| cross-document | 0.83 | 0.83 | 0.50 | 0.46 |
+| deep-in-manual | 1.20 | 1.25 | 0.55 | 0.60 |
+| definitional | 1.00 | 1.00 | 0.63 | 0.63 |
+| follow-up | 1.13 | 1.13 | 0.63 | 0.63 |
+| precedence | 1.17 | 1.00 | 1.00 | 0.83 |
+| probe-calibration | 1.00 | 1.00 | 0.56 | 0.69 |
+| refusal | 0.88 | 0.88 | 0.50 | 0.50 |
+| ungrounded turns (ceiling 2%) | 51.1% (98 claims) | 48.9% (88) | 58.9% (177) | 55.6% (181) |
+
+Between the passes, correctness is identical on 84/90 gold-context turns and 81/90 retrieval turns, and ungrounded any/none on 78/90 and 85/90; two-pass correctness means are 1.011 and 0.583.
+Both arms fail the Tier 2 gates in both passes.
+Gold context fails the per-class floor on cross-document and refusal; on `hybrid-slice-vector` every class is under 1.00 in at least one pass, precedence included (1.00 then 0.83).
+
+Tier 1 (`data/results/gate-check/p3-final-2026-09-25/warm.json`), with earlier runs re-scored by the current checker for comparison, because Task C's citation audit (`fb75add`) now counts markers closed with `"}` as malformed: iteration 1 gold context re-scores from the recorded 90.5% to 57.5% citation validity, `p3-k20-2026-09-23` scores 78.0%.
+
+| | gold-context | re-scored it1 gold | hybrid-slice-vector | re-scored k=20 |
+|---|---|---|---|---|
+| refusal integrity | FAIL, 1 of 8 answered | 2 answered | FAIL, 2 answered, 1 off-contract | 2 answered, 1 off-contract |
+| citation validity (floor 95%) | 60.4% | 57.5% | 77.9% | 78.0% |
+| fabricated figures | FAIL, 1 | 2 | PASS, 0 | 2 |
+| quotes supported | 84.6% | 82.5% | 57.0% | 68.7% |
+
+Refusal wording on turns that do not require a refusal: 3 on gold context (1 scored 0) and 19 on `hybrid-slice-vector` (13 scored 0 in pass 1), so over-refusal accounts for about 13 of the retrieval arm's 90 turns.
+
+The judge returned an empty reply ("no JSON object") on 12 call attempts in pass 1 and 22 in pass 2; each was re-run until both passes held 360/360 verdicts.
+`gold-context` `probecal-ph-slope-acceptance` turn 2 correctness failed four times before it answered.
+
+Spend: captures about $0.27 (gold context $0.07, retrieval $0.19, spot checks about $0.01), judge pass 1 $1.80 and pass 2 $1.31 (more of its input was cached), about $3.38 for E3 and about $11.30 of the $20 R4 ceiling; empty replies are not in the ledger, so their cost, if billed, is not counted.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
