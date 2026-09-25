@@ -4,6 +4,7 @@ Draft, 2026-09-17, for the September 30, 2026 dashboard release.
 Built on the decisions in [`GILLIGAN_PRODUCT_DIRECTION.md`](GILLIGAN_PRODUCT_DIRECTION.md); the integration background was `INTEGRATION_PLAN.md` (archived, tag `docs-archive-2026-09-23`).
 This is a plan for review, not an approved implementation specification.
 Built so far: R2's catalogue code (`docs/SPECS.md` §4b, flags off, supervisor approval pending), R3's relay and page (`GILLIGAN_R3_PORT.md`), the tool-access fix (`GILLIGAN_TOOL_ACCESS.md`) and R1's report half (`docs/SPECS.md` §10.7).
+The 2026-09-24 release decision ships S1-S6 as written, with `/gilligan/answer` and identity tokens after launch; CER supplies its own paid Fireworks key in Secret Manager.
 
 Code evidence was read at cer-demo `1a8c744`, `user-dashboard` `c55f65d` and `clean-earth-rovers-server` `origin/develop` `b221702`.
 The local server checkout is behind its remote, so upstream claims come from `origin/develop` and may still be stale against the real remote.

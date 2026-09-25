@@ -88,11 +88,12 @@ Done:
 - Machine fully rebuilt. Windows reinstalled 2026-09-20 (new SID, `Windows.old` empty), fresh WSL distro 2026-09-21. Verified clean on 2026-09-21: no payload signatures outside the three upstream files, no malicious processes, no C2 connections, no persistence in cron, systemd, autostart, Run keys, startup folders, scheduled tasks or services.
 - New SSH key generated. 1Password account password changed and Secret Key regenerated. Highest-value vault items rotated.
 - Clean Earth Rovers notified 2026-09-21.
+- The user confirmed on 2026-09-24 that the payload ran on a build machine and was told every credential has been rotated.
 
 Outstanding:
 
 - Upstream removed the payload from every remaining branch tip on 2026-09-23/24 (table above); the other infected branches listed above no longer exist on `origin`, and older history still carries the payload. Local cleanup was executed 2026-09-21 in both checkouts and **not pushed**: branch `security/remove-payload` holds the one cleanup commit (user-dashboard `5dff5fd` off `main` `9ce674b`; clean-earth-rovers-server `693fc96` off `develop` `500ceac`), and branch `local` is cut from it in each repo as the base for local development. Both branches are created with `--no-track` and have no upstream, so nothing can be pushed by accident; pushing still needs explicit consent.
-- Whether the payload ever ran on a build machine (Cloud Build, App Engine) is unchecked. A `next build` there would trigger it identically.
+- Build and deploy only from the clean feature branches, with no build cache or image from before the cleanup.
 - Google Cloud ADC (`adc-tapout-backup.json`) and GitHub recovery codes sit in plaintext on the 2026-09-19 backup drive, which was written by the compromised machine.
 
 ## Detection
