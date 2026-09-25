@@ -1,6 +1,6 @@
 # Gilligan release plan, September 24-30
 
-Written 2026-09-24, after the supervisor's answers to the stakeholder questions and the marked-up catalogue review (`review-marked-up.html`, untracked at the repo root).
+Current at `dev` `90de90f` plus this edit (2026-09-24, late). Written 2026-09-24, after the supervisor's answers to the stakeholder questions and the marked-up catalogue review (`review-marked-up.html`, untracked at the repo root).
 The goal is unchanged from [`RELEASE_GOAL_AND_PLAN.md`](RELEASE_GOAL_AND_PLAN.md); this file replaces the dates in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4 for the last six days.
 Task IDs (P1, Q2, ...) are for this plan only.
 
@@ -106,8 +106,8 @@ Worktree cut from `dev`; none of these files overlap Q1-Q7.
 |---|---|---|---|---|---|
 | P1 | **done 2026-09-24:** server `b2074b8` and dashboard `da5412f` pushed to `feature/gilligan-rag-assistant`; PRs held back (`UPSTREAM_PR_BODIES.md`). Publish: fetch and scan, cherry-pick `local` onto dashboard `origin/main` and server `origin/develop`, secrets and passthrough audit, push feature branches and draft PRs with named commands; propose the malware-rule update (O8) | Claude, user approves pushes | must | none | Sep 25 |
 | P2 | The user merges the PRs after the demo (O2) | user | must | P1, L7 | Sep 29 |
-| P3 | **Committed 2026-09-24, under review:** server `78e2dfb` on local branch `task/gilligan-release-p3-p4` (fetched from the temporary clone). Task E (1): membership check in `findPeriodWaterData` with organization-isolation tests from `test/fixtures/pod-scope/` | Codex, Claude reviews | must | P1 | Sep 26 |
-| P4 | **Committed 2026-09-24, under review:** in server `78e2dfb` and dashboard `40e59b8`, same branch name. Task E (2) lazy `EmailService` and `PaymentService`; (3) ESLint parser if small; `turbVoltToNTU.ts` null; dashboard dial to 345/795 | Codex, Claude reviews | should | P1 | Sep 26 |
+| P3 | **Reviewed 2026-09-24, awaiting the user's push:** server `ccc759e` on local branch `task/gilligan-release-p3-p4` (fetched from the temporary clone) adds the null-organization rule for an explicit `null`; an organization id that does not exist (CWA Old) is still withheld until the user decides. Task E (1): membership check in `findPeriodWaterData` with organization-isolation tests from `test/fixtures/pod-scope/` | Codex, Claude reviews | must | P1 | Sep 26 |
+| P4 | **Reviewed 2026-09-24, awaiting the user's push:** server `ccc759e` (`.eslintrc.js` reverted) and dashboard `9b1ed78` (charts and dial keep missing turbidity as a gap), same branch name. Task E (2) lazy `EmailService` and `PaymentService`; (3) ESLint parser if small; `turbVoltToNTU.ts` null; dashboard dial to 345/795 | Codex, Claude reviews | should | P1 | Sep 26 |
 | P5 | Check the dashboard `confirm-email` "Attempted import error" does not break a production build | Claude | must | P1 | Sep 26 |
 | U1 | Disclaimer line on the Gilligan page with the approved wording | Claude | must | P1 | Sep 26 |
 | U2 | Question stays visible while the answer loads; verify on the rebuilt page first, fix only if it still disappears | Claude | must | P1 | Sep 26 |
@@ -134,7 +134,7 @@ Live writes are approved for test data only; each creation is announced in chat 
 |---|---|---|---|---|---|
 | L1 | Rewrite the runbook for the user deploying, with the stage-then-route flow and the rollback for each service | Claude | must | O2 | Sep 26 |
 | L2 | Fill runbook §2 inputs; partly answered 2026-09-24 (below), the rest in an interview session with the user | user | must | L1 | Sep 27 |
-| L3 | Hygiene session #5 (the `deviceApi` test, `git-plan` copy, settings paths) | Codex, Claude reviews | should | none | Sep 25 |
+| L3 | Hygiene session #5 (the `deviceApi` test, `git-plan` copy, settings paths); four commits on `chore/hygiene-2026-09-24` reviewed 2026-09-24, land when the session reports done | Codex, Claude reviews | should | none | Sep 25 |
 | L4 | Freeze a release candidate on `dev` (all must tasks merged, typecheck, lint, named suites) | Claude | must | E4, Q1-Q4, S1-S3 | Sep 28 |
 | L5 | Deploy cer-rag as a no-traffic revision; health, retrieval and one tools-on question against it | user, Claude assists | must | L4, L2 | Sep 28 |
 | L6 | Deploy the server and dashboard branches as staged versions per O2; run the dashboard on localhost against them | user | must | P2 or staging access, L5 | Sep 29 |
