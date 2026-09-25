@@ -4,7 +4,7 @@ Current state and next steps only.
 Rewritten at the end of every session by `/handoff`; history is `git log -p docs/STATUS.md`.
 Never cite this file from code or other docs: the reasoning lives in the docs under "Where things live".
 
-Updated 2026-09-24 in an orchestration session that reconciled five overnight sessions (Task A, Task C follow-up, R4 depth captures, judge cost, a conversation quality check); `dev` and `eval/wave1-corrections` were verified that day.
+Updated 2026-09-24 (late) by the release orchestrator: Q1, the token-cap and publish records landed on `dev`; E1 and E2 are done; P3 and P4 are committed in temporary clones and under review. The release plan is the task list; this file only points into it.
 
 ## Start here
 
@@ -40,7 +40,7 @@ Updated 2026-09-24 in an orchestration session that reconciled five overnight se
   Record: `timeline.md` 2026-09-24, `STAKEHOLDER_QUESTIONS.md` items 3, 10, 14 and 18, [`migration/TURBIDITY_EXPLORATION.md`](migration/TURBIDITY_EXPLORATION.md).
   Upstream follow-ups remain: the dashboard dial to 345/795, and `turbVoltToNTU.ts` returning null for a missing voltage.
 - **Conversation quality check - 2026-09-24, 26 live turns through the full local stack.** Plumbing, tool choice and refusals are sound; answer content is not.
-  High: the model is never given today's date and `list_pods` gives no reading age, so stale pods read as online; `generate_report` gives a status without the parameter that caused it, so a summary contradicted its own report.
+  Q1 fixed findings 1-5 on `dev` (current time, reading ages, the report's status reason, spike and note guidance); the gaps its re-check left are release plan Q8.
   Record and suggested fixes: [`migration/CONVERSATION_QA_2026-09-24.md`](migration/CONVERSATION_QA_2026-09-24.md).
 - **Catalogue (R2) - approved 2026-09-24.** `src/catalogue/catalogue.json` `2026-09-24.1`: all 38 entries and 6 referrals approved, the marked-up ones as edited; CER contact is sales@cleanearthrovers.com or the customer's existing CER contact. The release runs `CATALOGUE_PROMPT=true`; the eval harness keeps it off. `SPECS.md` §4b.
 - **Environment - rebuilt.** Corpus byte-reproducible, secrets in, `DEFAULT_RETRIEVAL=hybrid-slice-vector` with `CORPUS_SOURCE=artifact`, and the git-ignored `data/embeddings/cache.json` built; see [`migration/LOCAL_STACK.md`](migration/LOCAL_STACK.md).
@@ -65,10 +65,10 @@ Independent tasks for separate sessions; the user was given a starting prompt fo
 
 ## Last session
 
-- Orchestration: reconciled five overnight sessions and cleaned up their worktrees.
-- `dev`: `c55f7cb` removes the two blank lines Task C left in every tools-off correctness judge prompt (regression test added); `c65ea28` commits the conversation quality check and the runbook draft.
-- `eval/wave1-corrections`: finished the abandoned `dev` merge (`7223c36`), completing `p3-k30-2026-09-24` at 180 of 180 verdicts; set `DEFAULT_TOP_K` to 20 and recorded both depth captures (`707e865`); merged `eval/judge-cost` (`3062d3d`). All pushed.
-- Checks: typecheck and lint on both branches; judge, prompt, gateCheck, bakeoffRunner, gradePacket, retrieval and eight more suites run singly, all passing. No spend, no live reads.
+- Orchestration: reviewed every workstream's actual diff; landed `docs/token-cap-1m`, `docs/upstream-publish` and `fix/answer-quality-q1` on `dev`; fixed the catalogue prompt test that the approval had broken (`1fe7a40`) and made reading ages round up (`53620b4`).
+- Checks on `dev` after landing: typecheck and lint clean; `prompt`, `readingAge`, `listPods`, `querySensorData`, `generateReport` and `reportModel` run singly, all passing.
+- Deleted stale local branches: cer-demo `eval/claims-reresolve` (same patch as `9b18094`), server `develop` and dashboard `main` (both behind their remotes).
+- R4: `dev` was merged into wave1 by the R4 session (`e7d3e44`); re-running `resolveRetrievalLabels.ts` there gave no diff. The user's graded sheet is in the wave1 worktree, uncommitted, for the R4 session.
 
 ## Working tree
 
@@ -120,8 +120,10 @@ Reported 2026-09-10 to 2026-09-24.
 | `../clean-earth-rovers-server` ESLint | The TypeScript parser is not configured, so `npm run lint` reports 119 parsing errors. `tsc --noEmit` is the only working gate. Task E. | medium |
 | `../clean-earth-rovers-server` `turbVoltToNTU.ts` | Returns 0 for a missing voltage and for the offline sentinel, same as clear water; cer-demo now flags all-zero periods, but the source should return null. Task A follow-up. | medium |
 | `../user-dashboard` turbidity dial | Uses 350/800 as band edges against the report's 345/795, so a 347 reading is Clear on the dial and Moderate in a report. Task A follow-up. | low |
-| `src/prompt/systemPrompt.ts`, `list_pods`, `query_sensor_data` | No current date in the prompt and no reading age in tool results, so stale pods read as online and old readings as current (`migration/CONVERSATION_QA_2026-09-24.md`). | high |
-| `generate_report` tool result | Carries the status but not the parameter that set it, so the model contradicts its own report. | high |
+| tools-on answers | After Q1: the withheld-history note is still dropped, the water-type note is paraphrased wrongly, and implausibly high dissolved oxygen is not flagged (release plan Q8). | medium |
+| server P3 (`78e2dfb`) | The membership check authorizes a label only through its own registry row, so a retired pod whose organization is set to null (the supervisor's plan for CWA Old) becomes unreadable to its own organization, and cer-demo's chain expansion also withholds it; Q6 needs a rule for null-organization predecessors before P3 lands. | high |
+| server `.eslintrc.js` (`78e2dfb`) | With the TypeScript parser configured, `npm run lint` (`eslint --fix src`) now auto-fixes .ts files and still reports 623 rule errors, so running it rewrites the source tree. | medium |
+| server `findPeriodWaterData` | Slices the organization's labels to 10 for the Firestore `in` query, so an organization with more than 10 pods silently loses the rest from an unfiltered period query (pre-existing). | low |
 | `test/unit/deviceApi.test.ts` | Its list of error codes lacks `quota_reports_exceeded`, so the suite fails. | low |
 | `../clean-earth-rovers-server` `src/routes/userRoutes.ts` | `UserController` is constructed at import, which constructs `EmailService`, whose constructor throws without nodemailer credentials, so the server fails to boot; `PaymentService` does the same with `STRIPE_SECRET_KEY`. Task E. | medium |
 | `../user-dashboard` `src/app/confirm-email` | Imports `confirmEmail`, which `src/app/services/auth` does not export; `next build` reports "Attempted import error". Runtime effect unchecked. | medium |

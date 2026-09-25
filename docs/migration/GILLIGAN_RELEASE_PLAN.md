@@ -38,8 +38,8 @@ Each has a default so work does not wait.
 | O3 | Token cap per user per day. | user | **Answered 2026-09-24:** 1,000,000 tokens per user per UTC day as a runaway guard, as an environment variable; the 20-message cap is the working limit (`timeline.md`) |
 | O4 | Catalogue decisions marked "your decision". | user | **Answered 2026-09-24:** every entry approved, marked-up ones as edited (50% confidence, both referral renames); the "Industrial" label rename and the inland entry were review notes, not entry edits, and were not applied |
 | O5 | Who may read saved chats (support staff, organization admins)? | supervisor | Only the author; nobody else has an access path at launch |
-| O6 | R1 scope (the last item in STATUS "The user's" list). | user | Section 3 S1-S6 as written, `/gilligan/answer` and identity tokens after launch |
-| O7 | Did the malware ever run on a build machine (Cloud Build, App Engine)? | user | Must be answered before L6 builds anything from the upstream branches |
+| O6 | R1 scope (the last item in STATUS "The user's" list). | user | **Answered 2026-09-24:** the default, S1-S6 as written, with `/gilligan/answer` and identity tokens after launch |
+| O7 | Did the malware ever run on a build machine (Cloud Build, App Engine)? | user | **Answered 2026-09-24:** yes; the user was told every credential has been rotated. Build and deploy only from the clean feature branches, with no build cache or image from before the cleanup |
 | O8 | Relax the `CLAUDE.md` rule against checking out `main` or `develop` now that their tips are clean. | user | Keep the rule; P1 proposes wording |
 
 ## 3. Tasks
@@ -51,9 +51,9 @@ Priority: **must** blocks launch, **should** ships if ready by Sep 28, **after**
 
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
-| E1 | `--run` support in `grade:packet` and the judge; build the 32-row calibration packet | Claude | must | none | Sep 25 |
-| E2 | Grade the packet on correctness and ungrounded | user | must | E1 | Sep 26 |
-| E3 | Merge `dev` into `eval/wave1-corrections`, then the final two-arm capture judged twice with `--final` (paid, approval) | Claude, user approves | must | E2, Q1 | Sep 27 |
+| E1 | **done 2026-09-24** (`1cc508e`, `30eb285`). `--run` support in `grade:packet` and the judge; build the 32-row calibration packet | Claude | must | none | Sep 25 |
+| E2 | **done 2026-09-24**, 32 of 32 rows. Grade the packet on correctness and ungrounded | user | must | E1 | Sep 26 |
+| E3 | Merge `dev` into `eval/wave1-corrections`, then the final two-arm capture judged twice with `--final` (paid; spend approved 2026-09-24). The `dev` merge is done (`e7d3e44`) | Claude, user approves | must | E2, Q1 | Sep 27 |
 | E4 | For each class under the bar, add a refusal (or a caveat where the answer is sound but partial) | Claude | must | E3 | Sep 28 |
 | E5 | Tools-on live smoke with the release configuration (live reads, approval) | Claude | must | Q1-Q5, C4 | Sep 28 |
 | E6 | R4 report, top-k 20 into `SPECS.md`, decisions into `timeline.md`, land `eval/wave1-corrections` on `dev` | Claude | should | E4 | Sep 29 |
@@ -65,13 +65,14 @@ All stay inside tools-on prompt blocks and tool results, so R4's tools-off captu
 
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
-| Q1 | QA findings 1-5 and 7: today's date in the prompt, reading age in `list_pods` and `query_sensor_data`, the parameter behind `generate_report`'s status, guidance to use min or series for claimed spikes and to relay tool notes | Claude | must | none | Sep 25 |
+| Q1 | **done, landed on `dev` 2026-09-24.** QA findings 1-5 and 7: today's date in the prompt, reading age in `list_pods` and `query_sensor_data`, the parameter behind `generate_report`'s status, guidance to use min or series for claimed spikes and to relay tool notes | Claude | must | none | Sep 25 |
 | Q2 | **done 2026-09-24.** Record the answers: `STAKEHOLDER_QUESTIONS.md` (items 1-4, 10, 11, 18, 21, 22), decisions in `timeline.md`, quota and deploy changes in `GILLIGAN_TARGET_ARCHITECTURE.md` | Claude | must | none | Sep 25 |
 | Q3 | Current-site filtering: split a device's readings into sites by coordinates, default every query and report to the latest site, add an explicit option for earlier sites, and say when earlier sites exist; verify first that `/water/period` rows carry coordinates for every pod | Claude | must | Q1 | Sep 26 |
 | Q4 | Stuck-sensor detection: a sustained zero-variance run at 0 or 1005 is flagged as a likely failed sensor in tool results and reports, and is excluded before report pattern matching (the catalogue's engine check) | Claude | must | Q1 | Sep 26 |
 | Q5 | Limits wider than the sensor's range read "not assessed" in `get_pod_thresholds` and reports, not "within limits" | Claude | should | Q1 | Sep 27 |
 | Q6 | CWA Old with a null organization: fixture test that its readings still merge into OWC 2026 and are visible only to CWA | Claude | should | none | Sep 27 |
 | Q7 | Near-limit field in the usage status (for U3) | Claude | should | S3 | Sep 27 |
+| Q8 | Gaps left by Q1's paid re-check (`CONVERSATION_QA_2026-09-24.md`): relay the withheld-history note, paraphrase the water-type note accurately, and flag implausibly high dissolved oxygen with a saturation-aware check in the tool | Claude | should | Q1 | Sep 28 |
 
 ### Catalogue (R2)
 
@@ -96,17 +97,17 @@ Worktree cut from `dev`; none of these files overlap Q1-Q7.
 | S2 | Service check between cer-api and cer-rag per runbook §5 (Cloud Run invoker IAM, or a shared secret header if §5's forwarding problem bites) | Claude | must | none | Sep 26 |
 | S3 | Firestore usage store with daily windows: 20 questions, 5 reports, O3 tokens per user per UTC day; keys from verified identity | Claude | must | F2 | Sep 27 |
 | S4 | Fireworks 429/503 retry once, then "busy"; concurrency limit 8 | Claude | should | none | Sep 27 |
-| S5 | Fireworks payment method and spending cap; `max-instances=1` if S3 slips | user | must | none | Sep 26 |
+| S5 | Fireworks payment method and spending cap; `max-instances=1` if S3 slips. **Decided 2026-09-24:** CER replaces the cer-demo key with a key from its own paid Fireworks account, stored in Secret Manager; the in-app token cap, concurrency limit and instance ceiling are the other guards | user | must | none | Sep 26 |
 | S6 | Firestore emulator (Java, `firebase-tools`) for S3 tests, or approval to test S3 against a live test collection | user | must | F2 | Sep 26 |
 
 ### Upstream server and dashboard, sessions #3 and #4 and a UX session
 
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
-| P1 | Publish: fetch and scan, cherry-pick `local` onto dashboard `origin/main` and server `origin/develop`, secrets and passthrough audit, push feature branches and draft PRs with named commands; propose the malware-rule update (O8) | Claude, user approves pushes | must | none | Sep 25 |
+| P1 | **done 2026-09-24:** server `b2074b8` and dashboard `da5412f` pushed to `feature/gilligan-rag-assistant`; PRs held back (`UPSTREAM_PR_BODIES.md`). Publish: fetch and scan, cherry-pick `local` onto dashboard `origin/main` and server `origin/develop`, secrets and passthrough audit, push feature branches and draft PRs with named commands; propose the malware-rule update (O8) | Claude, user approves pushes | must | none | Sep 25 |
 | P2 | The user merges the PRs after the demo (O2) | user | must | P1, L7 | Sep 29 |
-| P3 | Task E (1): membership check in `findPeriodWaterData` with organization-isolation tests from `test/fixtures/pod-scope/` | Codex, Claude reviews | must | P1 | Sep 26 |
-| P4 | Task E (2) lazy `EmailService` and `PaymentService`; (3) ESLint parser if small; `turbVoltToNTU.ts` null; dashboard dial to 345/795 | Codex, Claude reviews | should | P1 | Sep 26 |
+| P3 | **Committed 2026-09-24, under review:** server `78e2dfb` on `task/gilligan-release-p3-p4`, in a temporary clone at `/tmp/cer-p3p4-server`. Task E (1): membership check in `findPeriodWaterData` with organization-isolation tests from `test/fixtures/pod-scope/` | Codex, Claude reviews | must | P1 | Sep 26 |
+| P4 | **Committed 2026-09-24, under review:** in server `78e2dfb` and dashboard `40e59b8` (`/tmp/cer-p3p4-dashboard`). Task E (2) lazy `EmailService` and `PaymentService`; (3) ESLint parser if small; `turbVoltToNTU.ts` null; dashboard dial to 345/795 | Codex, Claude reviews | should | P1 | Sep 26 |
 | P5 | Check the dashboard `confirm-email` "Attempted import error" does not break a production build | Claude | must | P1 | Sep 26 |
 | U1 | Disclaimer line on the Gilligan page with the approved wording | Claude | must | P1 | Sep 26 |
 | U2 | Question stays visible while the answer loads; verify on the rebuilt page first, fix only if it still disappears | Claude | must | P1 | Sep 26 |
@@ -132,7 +133,7 @@ Live writes are approved for test data only; each creation is announced in chat 
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
 | L1 | Rewrite the runbook for the user deploying, with the stage-then-route flow and the rollback for each service | Claude | must | O2 | Sep 26 |
-| L2 | Fill runbook §2 inputs | user | must | L1 | Sep 27 |
+| L2 | Fill runbook §2 inputs; partly answered 2026-09-24 (below), the rest in an interview session with the user | user | must | L1 | Sep 27 |
 | L3 | Hygiene session #5 (the `deviceApi` test, `git-plan` copy, settings paths) | Codex, Claude reviews | should | none | Sep 25 |
 | L4 | Freeze a release candidate on `dev` (all must tasks merged, typecheck, lint, named suites) | Claude | must | E4, Q1-Q4, S1-S3 | Sep 28 |
 | L5 | Deploy cer-rag as a no-traffic revision; health, retrieval and one tools-on question against it | user, Claude assists | must | L4, L2 | Sep 28 |
@@ -140,6 +141,16 @@ Live writes are approved for test data only; each creation is announced in chat 
 | L7 | Supervisor demo on the staged stack | user, supervisor | must | L6 | Sep 29 |
 | L8 | Staged smoke: one pod per test organization, a report, the limits, the disclaimer; then T3 | user, Claude | must | L7 | Sep 30 morning |
 | L9 | Route traffic, set `GILLIGAN_BACKEND=rag`, production smoke with a real member account | user | must | L8, T3 | Sep 30 |
+
+L2 answers so far (2026-09-24):
+
+- Project and region: the production project is the one whose ID starts `conductive-fold-` (exact ID to confirm); the live CER server is the Cloud Run service `cer-api` in `us-central1`, project number `98242557946`, read from the device API URL.
+- Cutover: the server is on Cloud Run, so staging is a revision deployed with no traffic, then a traffic switch.
+- Device API: the same production base URL the local stack uses (`DEVICE_API_BASE_URL`, ending `/api/v1`).
+- Image: the user builds the image locally first, then through Cloud Build before anything is pushed to the production project.
+- Service name: `cer-gilligan` (proposed).
+- Capacity, proposed until L5 measures it: 1 vCPU, 1 GiB memory, 300 s request timeout, request concurrency 8 (matching the model-call limit), minimum instances 0 (1 on demo and launch days to avoid a cold start), maximum instances 1 until the Firestore usage store (S3) is verified live, then 2.
+- Still open: the exact project ID, the Firestore database and location, the Artifact Registry repository, the two service accounts, the Fireworks secret name, the test identities, and the release owner and incident contact.
 
 There is still no working rollback to the Gemini backend (architecture decision D9); rollback means routing traffic back to the previous dashboard revision, which hides the new page.
 
