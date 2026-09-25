@@ -1,0 +1,259 @@
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__a5e101e3271a)
+
+y (HIF), and are sold through
+the USGS One Stop ordering system (accessed February 5, 2020, at
+https://1stop.usgs.gov/) (internal USGS access only).
+• Use only buffers that have been certified traceable to a
+NIST standard reference material.
+• Label pH buffer containers with the date opened and
+the expiration date. Copy the expiration date and the
+buffer lot number onto any reagent containers intowhich the buffer is transferred. This information is also
+recorded in the pH-meter/electrode logbook.
+• Do not use expired buffers.
+• Cap buffer bottles firmly after use to prevent
+evaporation and contamination.
+• Never pour used buffer back into a bottle containing the
+stock buffer solution.
+Table 6.4–3. 	Values of pH from 0 to 90 degrees Celsius (°C) for
+the commonly used standard pH buffers.
+[Values from Buck and others, 2002; and Robinson and Stokes, 1965]
+Temperature
+in °C
+pH buffer at 25 °C
+1.681 	4.012 	7.003 	10.014
+0 	1.67 	4.00 	7.12 	10.32
+5 	1.67 	4.00 	7.09 	10.25
+10 	1.67 	4.00 	7.06 	10.18
+15 	1.67 	4.00 	7.04 	10.12
+20 	1.68 	4.00 	7.02 	10.06
+25 	1.68 	4.01 	7.00 	10.01
+30 	1.68 	4.01 	6.99 	9.97
+35 	1.69 	4.02 	6.98 	9.93
+40 	1.69 	4.03 	6.97 	9.89
+45 	1.70 	4.04 	6.97 	9.86
+50 	1.71 	4.05 	6.97 	9.83
+55 	1.71 	4.06 	6.97 	9.80
+60 	1.72 	4.08 	6.98 	9.78
+65 	1.73 	4.10 	6.99 	9.77
+70 	1.74 	4.12 	7.00 	9.75
+75 	1.75 	4.14 	7.02 	9.74
+80 	1.76 	4.16 	7.04 	9.73
+85 	1.78 	4.18 	7.06 	9.73
+90 	1.79 	4.21 	7.09 	9.72
+1pH 1.68 buffer: 0.05 mole per kilogram (mol/kg) potassium tetroxalate
+2pH 4.01 buffer: 0.05 mol/kg potassium biphthalate
+3pH 7.00 buffer: 0.063 mol/kg potassium dihydrogen phosphate and 0.037
+mol/kg sodium hydroxide
+4pH 10.01 buffer: 0.025 mol/kg sodium bicarbonate and 0.025 mol/kg
+sodium carbonate
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__35d0f93e82e8)
+
+-- 15 of 32 --8 	Chapter A6.4. Measurement of pH
+• Do not insert an electrode or other material into a bottle
+containing stock buffer solution—always pour the buf-
+fer into a separate container and discard the solution
+after use.
+• Do not contaminate the buffer or sample by placing a wet
+or contaminated electrode into the solution to be measured
+(this can happen, for example, if drops of deionized
+water (DIW) used to clean the electrode drip into the
+buffer or if buffer solution drips into the sample). To
+minimize contamination or dilution, rinse the electrode
+with the solution to be measured by slowly pouring
+the sample or buffer to be measured over the electrode.
+Then place the electrode into the vessel containing the
+sample or buffer, remove the electrode, and dispose of
+the sample or buffer. Repeat this procedure for a total
+of three times every time a measurement is made. To
+measure the sample pH, add fresh sample or buffer to
+the same vessel and then place the electrode directly
+into the measurement vessel. This procedure ensures
+that the pH electrode and measurement vessel are well
+rinsed prior to measurement.
+• Protect buffers against wide temperature variations,
+whether they are in transit, in use, or in storage. Never
+expose buffers to extreme heat or freezing tempera-
+tures. If buffers experience these conditions, their pH
+values can no longer be assumed to be valid and they
+should be discarded appropriately.
+3.0 	Maintenance and Preparation of
+pH Instruments
+Proper care of pH meters, and particularly of the elec-
+trode, is essential for maintaining the accuracy and precision
+required for pH measurements and increases the longevity of
+the equipment. Maintenance includes adhering to the manufac-
+turer's instructions for the use and care of the pH instrument
+system, routine electrode cleaning, reconditioning, and storage
+requirements. As always, follow the manufacturer’s instruc-
+tions for the specific type of electrode in use.
+pH-meter and electrode performance is required to be
+checked before each water-quality field trip and at each
+field site.
+3.1 	Electrode Care and Cleaning
+USGS field personnel should integrate the following
+guidance for the care and cleaning of pH electrodes into their
+routine field-measurement procedures.
+• Never handle the glass bulb with bare fingers. Oily film
+or scratches on the bulb will interfere with the design
+characteristics of the glass bulb membrane and affect
+pH measurements.
+• Inspect the electrode and electrode cable for:
+• cut or frayed cable(s)
+• broken connectors and mismatched or missing parts
+• a visibly scratched or broken glass bulb, cracked
+electrode body, and broken or damaged internal
+electrodes (reference and measurement electrodes)
+• a visibly contaminated reference junction
+• low filling solution
+• Periodically remove and replace the filling solution
+• Gel-filled electrodes do not require filling and typically
+require less maintenance than liquid-filled electrodes.
+• Do not store gel-filled electrodes in low-ionic-
+strength water, including DIW, even temporarily,
+as ions will leach from the gel into the dilute water,
+causing dilution of the filling gel and errors in pH
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__434fe1dc3109)
+
+-- 19 of 32 --12 	Chapter A6.4. Measurement of pH
+• Use at least two pH buffer solutions with documented,
+NIST-traceable pH values that bracket the sample pH
+for accurate calibration of the pH instrument system.
+• If a large primary source of pH buffer is purchased
+initially, use a secondary bottle to store pH buffers
+while in the field to minimize the chance of contami-
+nating the main pH buffer source. Pour the amount of
+each buffer needed from the source container into a
+clean polyethylene bottle dedicated for the respective
+buffer, and label the bottle with the buffer’s pH value,
+lot number, and expiration date. Keep a printed chart
+of the temperature-adjusted pH values provided by the
+manufacturer for that buffer.
+• A calibration check of the pH meter’s temperature
+sensor is required to be performed at least annually
+(NFM A6.1). Most single-analyte pH meters use a
+thermistor built into the electrode. Multiparameter
+instruments typically have the temperature sensor
+in a different part of the instrument system than the
+pH electrode.
+• The pH instrumentation should be calibrated daily
+and recalibrated if a check of either of the two pH
+buffers nearest to the pH of the sample at a temperature
+that is ± 10 °C of the sample deviates by more than
+± 0.05 pH units.
+• The isopotential point is the characteristic pH where
+the e.m.f. is equal to 0 mV. Most modern pH electrodes
+are designed to have an isopotential point at or near
+pH=7. Test the electrode when it is new by placing it
+in pH-7.00 buffer and record the voltage. Repeat this
+test regularly and verify that the value is ±15 mV of
+the original value. If the isopotential point is more than
+±15 mV of the original value, clean, recondition, or
+replace the electrode.
+Do not use pH buffers that have exceeded their date of
+expiration. Buffers that have been transferred to a second-
+ary bottle for use while in the field should be refreshed
+before every field trip.
+4.1 	Calibration Procedure
+The following calibration procedure is expected to yield
+accurate sample-pH measurements for waters with specific
+conductance less than 60,000 μS/cm, temperatures from 0 to
+90 °C, and pH in the range from 1.68 to 10. Standard buffer
+solutions and combination pH electrode can be appropri-
+ately used to achieve an accurate measurement of the pH
+of environmental waters that is within these environmental
+ranges. Studies of waters with conditions that fall outside
+the ranges described above may require pH calibration and
+measurement modifications.
+4.1.1 	Calibration of a Single-Parameter Meter
+and pH Electrode used for Sample Measurement
+or an Alkalinity Titration
+1. 	Under most situations, it is recommended to calibrate
+the pH meter and electrode in a controlled environment
+such as a laboratory rather than in the field. Most mod-
+ern meters automatically adjust pH measurements for
+changes in temperature, and these corrections are usually
+accurate within a temperature range of 5 to 35 °C and for
+pH measurements between 4.0 and 9.5. Electrodes may
+not behave ideally, however, and this feature should be
+tested regularly with measurements on buffers equili-
+brated to ambient field temperatures.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__a03e15a87724)
+
+-- 20 of 32 --4.0 	Calibration of the pH Instrument System 	13
+electrode will affect the physical conditions necessary
+for correct operation of the electrode. Do not wipe
+moisture from the glass bulb.
+6. 	Turn on the pH meter. Note any error messages
+displayed by the meter during startup and record them
+in the pH-meter/electrode logbook. Correct any error
+messages. Malfunctioning meters may require manufac-
+turer attention.
+7. 	Record in the pH-meter/electrode logbook any impor-
+tant or unusual startup information displayed by the pH
+meter. A calibration log may be paper or electronic, but
+is required for all calibrations and is helpful in tracking
+the performance of the electrode over time.
+8. 	Initiate the calibration process by following the manu-
+facturer’s calibration instructions for the particular pH
+meter and electrode. Standard USGS procedure for
+calibration requires a two- or three-point calibration.
+• Some pH instrument systems may use a different
+multipoint calibration procedure; in such
+cases, follow the instructions provided in the
+instrument manual.
+• A single-point calibration, recommended by some
+manufacturers, is not acceptable for USGS field
+measurement of pH.
+USGS procedure for calibration of pH requires a two- or
+three-point calibration.
+9. 	Record the temperature and value of pH buffers used at
+that temperature, with lot numbers and expiration dates,
+in the pH-meter/electrode logbook.
+10. 	Begin calibration procedures:
+a. 	Note that the electrode and thermistor must be rinsed
+three times with DIW initially and between uses of
+each buffer.
+b. 	If the meter does not specify a calibration order,
+begin with pH 7.
+c. 	To minimize contamination, each pH buffer should
+be stored in a dedicated, capped bottle that is
+refreshed with buffer before each field trip. The
+bottles should be labeled with the buffer value, lot
+number, and expiration date.
+d. 	The calibration of the electrode should be performed
+in a small plastic or glass beaker that is dedicated to
+the pH calibration.
+e. 	Rinse the electrode and thermistor with DIW by
+pouring the DIW directly over the electrode. Rinse the
+calibration beaker with DIW three times.
+f. 	Rinse the electrode and thermistor with the first buf-
+fer by pouring the buffer directly over the electrode
+and discarding the solution to waste.
+g. 	First and second rinse, pour swirl discard—Pour
+enough buffer into the dedicated beaker so that it
+covers the electrode reference junction and some of
+the electrode body but does not cover the fill hole.
+The fill hole should be uncovered and open to the air.
+Immerse the electrode in the buffer solution; swirl
+the buffer to rinse the electrode body from above the
+reference junction to the bottom of the bulb. Discard
+the buffer appropriately. Repeat this step for a total
+of two times.
+h. 	Third rinse, pour sit discard—Pour the next
+aliquot of buffer into the beaker and immerse the
+electrode in the buffer for 1 minute. Discard the buf-
+fer appropriately.
+i. 	Pour sit measure—Pour fresh buffer into the beaker.
+Immerse the electrode, gently swirl to remove all
+air bubbles surrounding it, and allow it to sit for 1
+minute.
+j. 	Begin the calibration process for the buffer. Once the

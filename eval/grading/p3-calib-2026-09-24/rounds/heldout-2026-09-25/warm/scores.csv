@@ -1,0 +1,13 @@
+fixture,class,turn,label,correctness_0_1_2,ungrounded_claims,invalid_citations,notes
+definitional-required-versus-recommended,definitional,1,A,,,,
+definitional-required-versus-recommended,definitional,1,B,,,,
+definitional-required-versus-recommended,definitional,2,A,,,,
+definitional-required-versus-recommended,definitional,2,B,,,,
+precedence-do-hypoxia-qa-trigger-not-pod-limit,precedence,1,A,,,,
+precedence-do-hypoxia-qa-trigger-not-pod-limit,precedence,1,B,,,,
+precedence-do-hypoxia-qa-trigger-not-pod-limit,precedence,2,A,,,,
+precedence-do-hypoxia-qa-trigger-not-pod-limit,precedence,2,B,,,,
+probecal-buffer-handling,probe-calibration,1,A,,,,
+probecal-buffer-handling,probe-calibration,1,B,,,,
+probecal-buffer-handling,probe-calibration,2,A,,,,
+probecal-buffer-handling,probe-calibration,2,B,,,,
