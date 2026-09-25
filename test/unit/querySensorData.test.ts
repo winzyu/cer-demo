@@ -372,7 +372,7 @@ describe("query_sensor_data — the stale pod", () => {
     expect(result.value).not.toBe(0);
     expect(result.n_samples).toBe(0);
     expect(result.device_last_reported).toBe("2026-08-07T14:38:49.000Z");
-    expect(result.device_last_reported_age).toBe("5 days");
+    expect(result.device_last_reported_age).toBe("6 days");
     expect(result.device_last_reported_stale).toBe(true);
     expect(result.note).toContain("last reported");
   });
@@ -387,7 +387,7 @@ describe("query_sensor_data — the stale pod", () => {
 
     expect(result.value).not.toBeNull();
     expect(result.device_last_reported).toBe("2026-08-07T14:38:49.000Z");
-    expect(result.device_last_reported_age).toBe("5 days");
+    expect(result.device_last_reported_age).toBe("6 days");
     expect(result.device_last_reported_stale).toBe(true);
   });
 

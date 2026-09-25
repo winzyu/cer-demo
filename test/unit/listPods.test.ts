@@ -177,7 +177,7 @@ describe("list_pods — freshness", () => {
     const pods = podsOf(await tool.run({}, { token: TOKEN })) as unknown as Array<Record<string, unknown>>;
     const owc = pods.find((pod) => pod.device === "dev:351077454567580");
 
-    expect(owc).toMatchObject({ last_reported_age: "10 days", last_reported_stale: true });
+    expect(owc).toMatchObject({ last_reported_age: "11 days", last_reported_stale: true });
     // No timestamp, no age: a null must not acquire a made-up one.
     expect(pods[0]).not.toHaveProperty("last_reported_age");
     expect(pods[0]).not.toHaveProperty("last_reported_stale");

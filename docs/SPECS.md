@@ -667,7 +667,7 @@ In the 2026-09-24 conversation check the model called two pods silent for 10 and
 `buildMessages` now adds `CURRENT TIME: <UTC, to the minute>` as block 4 above; it cannot go in the system prompt, which must stay byte-identical to be cached.
 The tools state ages themselves, since date arithmetic by the model is unreliable: `list_pods` adds `last_reported_age` and `last_reported_stale`, and `query_sensor_data` and `generate_report` add `device_last_reported_age` and `device_last_reported_stale` (`src/tools/readingAge.ts`).
 Stale means more than six hours without a reading: the pods report about hourly, so six missed reports is well past jitter.
-Ages round down, so a reading is never described as fresher than it is.
+Ages round up, so a reading is never described as fresher than it is (9 days 20 hours reads as "10 days").
 `TOOL_BLOCK` asks the model to state a reading's age and never call a stale pod online, to test a claimed spike or crash with `min`, `max` or `series` rather than `latest` (finding 4), and to relay every tool `note` (finding 5).
 None of this reaches a tools-off prompt, so R4's captures are unchanged.
 

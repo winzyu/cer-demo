@@ -25,19 +25,23 @@ const DAY_MS = 24 * HOUR_MS;
 const plural = (count: number, unit: string): string => `${count} ${unit}${count === 1 ? "" : "s"}`;
 
 /**
- * Minutes under an hour, hours under two days, whole days beyond. Rounded down, so a reading is
- * never described as fresher than it is. A timestamp slightly ahead of the clock (device or server
- * clock skew) reads as "0 minutes" rather than as a negative age.
+ * Minutes under an hour, hours under two days, whole days beyond. Rounded up, so a reading is
+ * never described as fresher than it is: 9 days 20 hours reads as "10 days", not "9 days". The
+ * unit is chosen after rounding, so 59.5 minutes reads as "1 hour", never "60 minutes". A
+ * timestamp slightly ahead of the clock (device or server clock skew) reads as "0 minutes" rather
+ * than as a negative age.
  */
 export const describeAge = (ageMs: number): string => {
   const age = Math.max(0, ageMs);
-  if (age < HOUR_MS) {
-    return plural(Math.floor(age / MINUTE_MS), "minute");
+  const minutes = Math.ceil(age / MINUTE_MS);
+  if (minutes < 60) {
+    return plural(minutes, "minute");
   }
-  if (age < 2 * DAY_MS) {
-    return plural(Math.floor(age / HOUR_MS), "hour");
+  const hours = Math.ceil(age / HOUR_MS);
+  if (hours < 48) {
+    return plural(hours, "hour");
   }
-  return plural(Math.floor(age / DAY_MS), "day");
+  return plural(Math.ceil(age / DAY_MS), "day");
 };
 
 export interface ReadingAge {
