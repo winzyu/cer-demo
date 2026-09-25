@@ -52,7 +52,7 @@ Priority: **must** blocks launch, **should** ships if ready by Sep 28, **after**
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
 | E1 | **done 2026-09-24** (`1cc508e`, `30eb285`). `--run` support in `grade:packet` and the judge; build the 32-row calibration packet | Claude | must | none | Sep 25 |
-| E2 | **done 2026-09-24**, 32 of 32 rows. Grade the packet on correctness and ungrounded | user | must | E1 | Sep 26 |
+| E2 | **Re-grade pending:** the first 32-row sheet was an AI review, kept as `scores-ai-review.csv` (`01eaf61`); the user grades the reset sheet. Grade the packet on correctness and ungrounded | user | must | E1 | Sep 26 |
 | E3 | Merge `dev` into `eval/wave1-corrections`, then the final two-arm capture judged twice with `--final` (paid; spend approved 2026-09-24). The `dev` merge is done (`e7d3e44`) | Claude, user approves | must | E2, Q1 | Sep 27 |
 | E4 | For each class under the bar, add a refusal (or a caveat where the answer is sound but partial) | Claude | must | E3 | Sep 28 |
 | E5 | Tools-on live smoke with the release configuration (live reads, approval) | Claude | must | Q1-Q5, C4 | Sep 28 |

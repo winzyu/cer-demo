@@ -4,7 +4,7 @@ Current state and next steps only.
 Rewritten at the end of every session by `/handoff`; history is `git log -p docs/STATUS.md`.
 Never cite this file from code or other docs: the reasoning lives in the docs under "Where things live".
 
-Updated 2026-09-24 (late) by the release orchestrator: Q1, the token-cap and publish records landed on `dev`; E1 and E2 are done; P3 and P4 are on upstream local branches `task/gilligan-release-p3-p4`, with fixes requested. The release plan is the task list; this file only points into it.
+Updated 2026-09-24 (late) by the release orchestrator: Q1, the token-cap and publish records landed on `dev`; E1 is done and E2 awaits the user's own grades (the first sheet was an AI review); P3 and P4 are on upstream local branches `task/gilligan-release-p3-p4`, with fixes requested. The release plan is the task list; this file only points into it.
 
 ## Start here
 
