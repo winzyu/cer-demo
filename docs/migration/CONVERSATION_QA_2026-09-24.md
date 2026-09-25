@@ -51,3 +51,18 @@ The problems are in answer content, and most trace to what the tools and prompt 
 1. Put the current UTC time in the system prompt when tools are on, and add an age or staleness field to `list_pods` and `query_sensor_data` results (findings 1, 2, 3).
 2. Include per-parameter flags and the reason for the status in `generate_report`'s tool result (finding 3).
 3. Prompt guidance: use `min`/`max` or `series` to test a claimed spike or crash; relay tool `note` caveats (findings 4, 5).
+
+## Re-check after Q1, 2026-09-24
+
+Findings 1-5 were re-asked once each against `dev` `0814828` (`:8010`) and `fix/answer-quality-q1` `d37a4b6` (`:8011`), with the same configuration and caller as above and no history; 10 paid turns, all 200, about 433,000 prompt tokens (337,000 cached) and 6,200 completion tokens.
+Raw responses stayed in the session scratchpad.
+
+| # | `dev` | `fix/answer-quality-q1` |
+|---|---|---|
+| 1 | All five pods "appear to be online". | Only the three pods that reported within minutes are online; the two stale ones are named as not reporting recently. Fixed. |
+| 2 | 76.0 °F from 2026-09-14, presented as current. | Same reading, plus "last report was 10 days ago and is marked as stale, so this value may not reflect the present water temperature". Fixed. |
+| 3 | Refused this time, saying it lacked a pod name (not the original failure). | `generate_report` called; "Action Required because ORP exceeded its configured threshold (range -156 to 468 mV vs. 0-800 mV)", 0 events, per-parameter flags, and the pod silent for 10 days. Fixed. |
+| 4 | `aggregation: "latest"`, one reading of 7.72. | `aggregation: "min"`; "the lowest pH recorded ... was 7.70". Fixed. It also said no pH thresholds are configured without calling `get_pod_thresholds`, and read the water-type note as something that "can affect sensor performance"; both overreach. |
+| 5 | Weekly mean 14.99 mg/L above the configured maximum; mentions the two implausible exclusions only. | Relays the implausible exclusions and the water-type mismatch, though it misstates the mismatch as the thresholds being set for freshwater; still drops the withheld-history note; still does not say the values are about twice saturation. Partly fixed. |
+
+Open from this re-check: the withheld-history caveat is still dropped, the water-type note is paraphrased inaccurately, and implausibly high dissolved oxygen is not called out (a saturation-aware plausibility check in the tool, not prompt guidance, would fix the last).
