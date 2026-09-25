@@ -86,7 +86,7 @@ The goal is that every user gets the same allowance, that no single user or orga
 |---|---|---|
 | Questions per user per UTC day | 20 | the visible, easy-to-explain allowance; confirmed by the supervisor 2026-09-24 |
 | Reports per user per UTC day | 5 | set by the supervisor 2026-09-24; a report runs several device calls and a long render |
-| Tokens per user per UTC day | 500,000 (placeholder; the supervisor's cap is still to be set) | catches runaway tool loops; roughly 10 heavy or 40 light questions |
+| Tokens per user per UTC day | 1,000,000 (user decision 2026-09-24) | a runaway guard, not the working limit: a release message counts an estimated 29,000-90,000 tokens, cached ones included, so 20 messages fit in most days |
 | Tokens per organization per month | 10,000,000 | stops one large organization consuming the shared budget |
 | Deployment spend per day | monthly budget ÷ 30 | a daily slice, so early heavy use cannot drain the month |
 | Concurrent model calls | 8 | stays under the adaptive rate limit; extra requests wait up to 20 s, then get "busy, try again" |
