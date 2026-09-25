@@ -7,6 +7,7 @@ import healthRoutes from "./routes/healthRoutes";
 import api from "./routes";
 import { notFound } from "./middleware/notFound";
 import { errorHandler } from "./middleware/errorHandler";
+import { requireServiceKey } from "./middleware/requireServiceKey";
 
 const app: Express = express();
 
@@ -27,7 +28,9 @@ app.get("/", (_req, res) => {
 });
 
 app.use(healthRoutes); // GET /health — unversioned, for infra probes and the frontend
-app.use("/api/v1", api);
+// The CER server's shared key guards every API route (off when CER_RAG_SERVICE_KEY is unset);
+// `/health` above stays open for probes. See `middleware/requireServiceKey.ts`.
+app.use("/api/v1", requireServiceKey(), api);
 
 app.use(notFound);
 app.use(errorHandler);

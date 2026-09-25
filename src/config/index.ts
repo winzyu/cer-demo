@@ -37,6 +37,34 @@ export interface FireworksConfig {
    * requests carry real user identity.
    */
   user: string;
+  /**
+   * Model calls allowed in flight at once across the process (`LLM_MAX_CONCURRENT`).
+   *
+   * Fireworks' serverless limits are adaptive tokens-per-minute ceilings, so a burst of
+   * simultaneous tool loops is what trips them; queueing here keeps a busy minute a wait rather
+   * than a wall of 429s. Architecture §2c sets 8.
+   */
+  maxConcurrent: number;
+  /** How long a call may wait for a slot before it is told "busy" (`LLM_QUEUE_TIMEOUT_MS`). */
+  queueTimeoutMs: number;
+  /**
+   * Wait before the one retry after a Fireworks 429 or 503 (`LLM_RETRY_DELAY_MS`), unless the
+   * provider's `Retry-After` asks for less.
+   */
+  retryDelayMs: number;
+}
+
+/**
+ * The check between the CER server and this service (release plan S2).
+ *
+ * A shared secret rather than Cloud Run identity tokens: Cloud Run strips the signature from the
+ * forwarded service token, so this process could not verify one itself (runbook §5), and minting
+ * identity tokens in the CER server was moved after launch. Undefined means the check is off,
+ * which is how local runs, the eval harness and the demo frontend work; production refuses to
+ * boot without it.
+ */
+export interface ServiceAuthConfig {
+  key?: string;
 }
 
 export interface DeviceApiConfig {
@@ -187,7 +215,21 @@ export interface QuotaConfig {
   /** The literal string the operator wrote (`"7d"`), reused verbatim in logs and error prose. */
   windowLabel: string;
   scope: QuotaScope;
+  /**
+   * Where the counters live (`QUERY_QUOTA_STORE`). `memory` is the default for tests and local
+   * runs; `firestore` keeps them in the `gilligan_usage` collection so they survive restarts and
+   * are shared across instances, and requires a one-day window because its documents are keyed
+   * by UTC day.
+   */
+  store: QuotaStoreName;
+  /**
+   * The fraction of a finite allowance at or below which the usage status reports `nearLimit`
+   * (`QUERY_QUOTA_WARN_AT`), so the dashboard can warn before the refusal rather than at it.
+   */
+  warnAt: number;
 }
+
+export type QuotaStoreName = "memory" | "firestore";
 
 /**
  * Durable per-response record for dispute reconstruction (`docs/RESPONSIBILITY.md` #6).
@@ -236,6 +278,7 @@ export interface Config {
   logLevel: string;
   firestore: FirestoreConfig;
   fireworks: FireworksConfig;
+  serviceAuth: ServiceAuthConfig;
   deviceApi: DeviceApiConfig;
   tools: ToolsConfig;
   chat: ChatConfig;
@@ -405,6 +448,12 @@ const load = (): Config => {
       maxTokens: readInt("LLM_MAX_TOKENS", 4096),
       temperature: readFloat("LLM_TEMPERATURE", 0),
       user: readString("FIREWORKS_USER", "clean-earth-rag") as string,
+      maxConcurrent: readInt("LLM_MAX_CONCURRENT", 8),
+      queueTimeoutMs: readInt("LLM_QUEUE_TIMEOUT_MS", 20_000),
+      retryDelayMs: readInt("LLM_RETRY_DELAY_MS", 2_000),
+    },
+    serviceAuth: {
+      key: readString("CER_RAG_SERVICE_KEY"),
     },
     deviceApi: {
       baseUrl: readString("DEVICE_API_BASE_URL"),
@@ -429,6 +478,8 @@ const load = (): Config => {
       windowMs: quotaWindow.ms,
       windowLabel: quotaWindow.label,
       scope: readEnum<QuotaScope>("QUERY_QUOTA_SCOPE", ["caller", "global"], "caller"),
+      store: readEnum<QuotaStoreName>("QUERY_QUOTA_STORE", ["memory", "firestore"], "memory"),
+      warnAt: readFloat("QUERY_QUOTA_WARN_AT", 0.2),
     },
     retrieval: {
       defaultMode: readString("DEFAULT_RETRIEVAL", "stub") as string,
@@ -456,6 +507,31 @@ const load = (): Config => {
   }
   if (config.tools.rawLimit < 1) {
     errors.push(`RAW_LIMIT must be at least 1 (got ${config.tools.rawLimit})`);
+  }
+  if (config.fireworks.maxConcurrent < 1) {
+    errors.push(`LLM_MAX_CONCURRENT must be at least 1 (got ${config.fireworks.maxConcurrent})`);
+  }
+  if (config.fireworks.queueTimeoutMs < 0 || config.fireworks.retryDelayMs < 0) {
+    errors.push("LLM_QUEUE_TIMEOUT_MS and LLM_RETRY_DELAY_MS must not be negative");
+  }
+  if (config.quota.warnAt < 0 || config.quota.warnAt > 1) {
+    errors.push(`QUERY_QUOTA_WARN_AT must be between 0 and 1 (got ${config.quota.warnAt})`);
+  }
+  // The Firestore documents are one per user per UTC day (`gilligan_usage`, framework doc), so a
+  // different window would count a week into a document named for one day.
+  if (config.quota.store === "firestore" && config.quota.windowMs !== DURATION_UNITS_MS.d) {
+    errors.push(
+      `QUERY_QUOTA_STORE=firestore needs QUERY_QUOTA_WINDOW=1d (got "${config.quota.windowLabel}")`,
+    );
+  }
+  // Short keys are guessable, and a guessed key lets anyone set the identity the quota trusts.
+  if (config.serviceAuth.key !== undefined && config.serviceAuth.key.length < 32) {
+    errors.push("CER_RAG_SERVICE_KEY must be at least 32 characters");
+  }
+  // Production without the check would accept forged user identities from anyone who can reach
+  // the service, so it is a boot failure rather than a warning.
+  if (config.isProduction && config.serviceAuth.key === undefined) {
+    errors.push("CER_RAG_SERVICE_KEY must be set in production");
   }
 
   if (errors.length > 0) {
@@ -521,8 +597,9 @@ const load = (): Config => {
       `QUERY_QUOTA is ON — requests=${describe(config.quota.requests)}, `
       + `tokens=${describe(config.quota.tokens)}, reports=${describe(config.quota.reports)} `
       + `per ${config.quota.windowLabel} `
-      + `per ${config.quota.scope}. Counters are in-process: they reset on redeploy and are not `
-      + "shared between instances.",
+      + `per ${config.quota.scope}. ${config.quota.store === "firestore"
+        ? "Counters are in Firestore (gilligan_usage)."
+        : "Counters are in-process: they reset on redeploy and are not shared between instances."}`,
     );
     if (config.quota.requests === UNLIMITED && config.quota.tokens === UNLIMITED
       && config.quota.reports === UNLIMITED) {
@@ -538,7 +615,9 @@ const load = (): Config => {
     if (config.quota.reports === 0) {
       log.warn("QUERY_QUOTA_REPORTS is 0 - every report download will be refused.");
     }
-    if (config.quota.scope === "caller") {
+    if (config.quota.scope === "caller" && config.serviceAuth.key !== undefined) {
+      log.info("QUERY_QUOTA_SCOPE=caller keys on the user identity the CER server sends.");
+    } else if (config.quota.scope === "caller") {
       // See src/quota/quotaKey.ts. Said out loud because the failure is silent: everyone
       // sharing one bucket looks exactly like a quota that is simply too small.
       log.warn(
@@ -548,6 +627,13 @@ const load = (): Config => {
         + "the whole deployment.",
       );
     }
+  }
+
+  if (config.serviceAuth.key === undefined) {
+    log.warn(
+      "CER_RAG_SERVICE_KEY is not set - any caller is accepted and user identity headers are "
+      + "ignored. Local runs only.",
+    );
   }
 
   if (config.audit.enabled) {

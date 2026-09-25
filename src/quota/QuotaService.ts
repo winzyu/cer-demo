@@ -1,8 +1,18 @@
 import { config, UNLIMITED } from "../config";
 import type { QuotaConfig, QuotaDimension, QuotaLimit } from "../config";
 import type { ErrorCode } from "../utils/errors";
+import { createLogger } from "../utils/logger";
 import { InMemoryQuotaStore } from "./InMemoryQuotaStore";
-import type { QuotaStore, QuotaUsage } from "./QuotaStore";
+import type {
+  QuotaDelta, QuotaStore, QuotaSubject, QuotaUsage,
+} from "./QuotaStore";
+
+const log = createLogger("Quota");
+
+/** A bare key is a subject with no labels, which is all the in-memory store and tests need. */
+const subjectOf = (subject: QuotaSubject | string): QuotaSubject => (
+  typeof subject === "string" ? { key: subject } : subject
+);
 
 /** The request may proceed. Carries the key so the caller records against the same bucket. */
 export interface QuotaAllowed {
@@ -32,6 +42,12 @@ export interface QuotaDimensionStatus {
   used: number;
   limit: number | null;
   remaining: number | null;
+  /**
+   * `remaining` is at or below `QUERY_QUOTA_WARN_AT` of `limit` (and at least one is left), so
+   * the page can warn before the refusal. Always `false` for an unlimited dimension; a spent
+   * dimension is `remaining: 0`, which the page shows as "limit reached" instead.
+   */
+  nearLimit: boolean;
 }
 
 /**
@@ -46,6 +62,8 @@ export interface QuotaStatus {
   requests: QuotaDimensionStatus;
   tokens: QuotaDimensionStatus;
   reports: QuotaDimensionStatus;
+  /** Any dimension is `nearLimit`: the one flag the dashboard's warning needs (release plan Q7). */
+  nearLimit: boolean;
   windowLabel: string;
   resetAtMs: number;
 }
@@ -129,7 +147,7 @@ export class QuotaService {
    * first, so when both ceilings are simultaneously exhausted the refusal names the request
    * count — the cheaper, more legible thing for an operator to raise.
    */
-  check(key: string, nowMs: number = Date.now()): QuotaDecision {
+  check(key: string, nowMs: number = Date.now()): Promise<QuotaDecision> {
     return this.decide(key, ["requests", "tokens"], nowMs);
   }
 
@@ -139,17 +157,26 @@ export class QuotaService {
    * Only the report ceiling applies. A report makes no model call, so a caller who has spent
    * their questions can still fetch the report an earlier answer offered, and the reverse.
    */
-  checkReport(key: string, nowMs: number = Date.now()): QuotaDecision {
+  checkReport(key: string, nowMs: number = Date.now()): Promise<QuotaDecision> {
     return this.decide(key, ["reports"], nowMs);
   }
 
-  /** The first exhausted dimension, in the order given, refuses. */
-  private decide(key: string, dimensions: QuotaDimension[], nowMs: number): QuotaDecision {
+  /**
+   * The first exhausted dimension, in the order given, refuses.
+   *
+   * A store that cannot be read rejects, and the gate turns that into a 503: failing open would
+   * hand out unmetered model spend for as long as Firestore is unreachable.
+   */
+  private async decide(
+    key: string,
+    dimensions: QuotaDimension[],
+    nowMs: number,
+  ): Promise<QuotaDecision> {
     if (!this.policy.enabled) {
       return { allowed: true, key };
     }
 
-    const usage = this.store.read(key, nowMs);
+    const usage = await this.store.read(key, nowMs);
     const refusal = dimensions.reduce<ReturnType<typeof exceeded>>(
       (found, dimension) => found ?? exceeded(dimension, this.policy[dimension], usage[dimension]),
       undefined,
@@ -174,37 +201,65 @@ export class QuotaService {
    * Counts one admitted request.
    *
    * Called after validation rather than at the gate, so a malformed body — a 400 that never
-   * reached retrieval or the model — does not burn somebody's weekly allowance.
+   * reached retrieval or the model — does not burn somebody's daily allowance.
+   *
+   * Rejects when the store cannot be written, before any model spend, for the same reason the
+   * check fails closed.
    */
-  recordRequest(key: string, nowMs: number = Date.now()): void {
+  async recordRequest(subject: QuotaSubject | string, nowMs: number = Date.now()): Promise<void> {
     if (!this.policy.enabled) {
       return;
     }
-    this.store.record(key, { requests: 1 }, nowMs);
+    await this.store.record(subjectOf(subject), { requests: 1 }, nowMs);
   }
 
-  /** Counts one rendered report. Called after the PDF exists, so a failed render is free. */
-  recordReport(key: string, nowMs: number = Date.now()): void {
+  /**
+   * Counts one rendered report. Called after the PDF exists, so a failed render is free.
+   * Never rejects: the report is already made, and a counting fault must not withhold it.
+   */
+  async recordReport(subject: QuotaSubject | string, nowMs: number = Date.now()): Promise<void> {
     if (!this.policy.enabled) {
       return;
     }
-    this.store.record(key, { reports: 1 }, nowMs);
+    await this.recordAfterTheFact(subjectOf(subject), { reports: 1 }, nowMs);
   }
 
   /**
    * Adds an answer's token cost. `undefined` and non-finite values are dropped rather than
    * coerced: `LlmUsage.totalTokens` is optional because some providers omit it, and counting a
-   * missing number as `0` is indistinguishable from a genuinely free answer.
+   * missing number as `0` is indistinguishable from a genuinely free answer. Never rejects, like
+   * `recordReport`: the answer has already been paid for and written.
    */
-  recordTokens(key: string, tokens: number | undefined, nowMs: number = Date.now()): void {
+  async recordTokens(
+    subject: QuotaSubject | string,
+    tokens: number | undefined,
+    nowMs: number = Date.now(),
+  ): Promise<void> {
     if (!this.policy.enabled || typeof tokens !== "number" || !Number.isFinite(tokens)) {
       return;
     }
-    this.store.record(key, { tokens: Math.max(0, Math.round(tokens)) }, nowMs);
+    await this.recordAfterTheFact(
+      subjectOf(subject),
+      { tokens: Math.max(0, Math.round(tokens)) },
+      nowMs,
+    );
+  }
+
+  /** Logs rather than throws; the lost count is named so an operator can see what went missing. */
+  private async recordAfterTheFact(
+    subject: QuotaSubject,
+    delta: QuotaDelta,
+    nowMs: number,
+  ): Promise<void> {
+    try {
+      await this.store.record(subject, delta, nowMs);
+    } catch (error) {
+      log.error(`Could not record ${JSON.stringify(delta)} for ${subject.key}`, error);
+    }
   }
 
   /** Current usage for a key. Exposed for diagnostics and tests, not used by the gate. */
-  usage(key: string, nowMs: number = Date.now()): QuotaUsage {
+  usage(key: string, nowMs: number = Date.now()): Promise<QuotaUsage> {
     return this.store.read(key, nowMs);
   }
 
@@ -219,26 +274,34 @@ export class QuotaService {
    * `limit` and `remaining` are `null` for an unlimited dimension and while the quota is off,
    * so a client tells "no ceiling" from "you have 0 left" by type rather than by sentinel.
    */
-  status(key: string, nowMs: number = Date.now()): QuotaStatus {
-    const usage = this.store.read(key, nowMs);
-    const describe = (limit: QuotaLimit, used: number): QuotaDimensionStatus => (
-      !this.policy.enabled || limit === UNLIMITED
-        ? { used, limit: null, remaining: null }
-        : { used, limit, remaining: Math.max(0, limit - used) }
-    );
+  async status(key: string, nowMs: number = Date.now()): Promise<QuotaStatus> {
+    const usage = await this.store.read(key, nowMs);
+    const describe = (limit: QuotaLimit, used: number): QuotaDimensionStatus => {
+      if (!this.policy.enabled || limit === UNLIMITED) {
+        return {
+          used, limit: null, remaining: null, nearLimit: false,
+        };
+      }
+      const remaining = Math.max(0, limit - used);
+      // Rounded up so a small allowance still warns: 5 reports at 0.2 warns with 1 left.
+      const warnBelow = Math.ceil(limit * this.policy.warnAt);
+      return {
+        used, limit, remaining, nearLimit: remaining > 0 && remaining <= warnBelow,
+      };
+    };
+
+    const requests = describe(this.policy.requests, usage.requests);
+    const tokens = describe(this.policy.tokens, usage.tokens);
+    const reports = describe(this.policy.reports, usage.reports);
 
     return {
       enabled: this.policy.enabled,
-      requests: describe(this.policy.requests, usage.requests),
-      tokens: describe(this.policy.tokens, usage.tokens),
-      reports: describe(this.policy.reports, usage.reports),
+      requests,
+      tokens,
+      reports,
+      nearLimit: requests.nearLimit || tokens.nearLimit || reports.nearLimit,
       windowLabel: this.policy.windowLabel,
       resetAtMs: usage.windowEndMs,
     };
-  }
-
-  /** Clears every counter. */
-  reset(): void {
-    this.store.reset();
   }
 }

@@ -167,7 +167,9 @@ describe("POST /api/v1/reports", () => {
     expect(failed.body.error).toBeTruthy();
 
     const usage = await request(app).get("/api/v1/usage").set("Authorization", CALLER).expect(200);
-    expect(usage.body.reports).toEqual({ used: 0, limit: 1, remaining: 1 });
+    expect(usage.body.reports).toEqual({
+      used: 0, limit: 1, remaining: 1, nearLimit: true,
+    });
   }, RELOAD_TIMEOUT_MS);
 
   it("counts a rendered report and refuses the next one with quota_reports_exceeded", async () => {
@@ -196,8 +198,12 @@ describe("POST /api/v1/reports", () => {
 
     // A report is not a question: the chat allowance is untouched.
     const usage = await request(app).get("/api/v1/usage").set("Authorization", CALLER).expect(200);
-    expect(usage.body.reports).toEqual({ used: 1, limit: 1, remaining: 0 });
-    expect(usage.body.questions).toEqual({ used: 0, limit: 5, remaining: 5 });
+    expect(usage.body.reports).toEqual({
+      used: 1, limit: 1, remaining: 0, nearLimit: false,
+    });
+    expect(usage.body.questions).toEqual({
+      used: 0, limit: 5, remaining: 5, nearLimit: false,
+    });
   }, RELOAD_TIMEOUT_MS);
 
   it("no longer serves GET /api/v1/reports/:filename", async () => {

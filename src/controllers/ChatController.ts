@@ -8,7 +8,10 @@ import type { LlmUsage } from "../services/LlmService";
 import { ChatOrchestrator } from "../services/ChatOrchestrator";
 import { buildToolRegistry } from "../tools";
 import { parseChatRequest } from "../validators/chatValidators";
-import { QuotaService, quotaKeyFor, quotaService } from "../quota";
+import {
+  QuotaService, quotaKeyFor, quotaService, quotaSubjectFor,
+} from "../quota";
+import type { QuotaSubject } from "../quota";
 import { buildAuditLogRecord, writeAuditLog } from "../services/auditLog";
 import { createStreamingCommentaryFilter } from "../utils/answerFormat";
 import { assessCitations } from "../utils/citations";
@@ -62,8 +65,9 @@ export class ChatController {
       // Counted here rather than in the gate: a request that failed validation never reached
       // retrieval or the model, so charging a weekly allowance for a typo'd body would be a
       // bill for nothing. `quotaKeyFor` is pure, so this is the same bucket `quotaGuard` read.
-      const quotaKey = quotaKeyFor(req);
-      this.quota.recordRequest(quotaKey);
+      // Awaited: if the store cannot count the question, nothing is spent on answering it.
+      const quotaKey = quotaSubjectFor(req);
+      await this.quota.recordRequest(quotaKey);
 
       // Caller identity for the audit record (`docs/RESPONSIBILITY.md` #6). Forced to "caller"
       // scope regardless of `QUERY_QUOTA_SCOPE` — the audit trail must identify who asked even
@@ -113,7 +117,7 @@ export class ChatController {
 
       // Retrospective by necessity — a prompt's cost is not knowable before the call. The
       // request that crosses a token ceiling completes; the next one is refused.
-      this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
+      await this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
 
       const checked = assessCitations(answer.content, chunks, answer.invocations);
 
@@ -161,7 +165,7 @@ export class ChatController {
     messages: ReturnType<typeof buildMessages>,
     mode: string,
     chunks: Chunk[],
-    quotaKey: string,
+    quotaKey: QuotaSubject,
     query: string,
     callerId: string,
     device?: string,
@@ -200,7 +204,7 @@ export class ChatController {
           token,
           signal: controller.signal,
         });
-        this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
+        await this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
         const checked = assessCitations(answer.content, chunks, answer.invocations);
         writeSseEvent(res, "token", { text: checked.answer });
         writeSseEvent(res, "done", {
@@ -253,7 +257,7 @@ export class ChatController {
 
       // Recorded whether or not the provider reported usage: `recordTokens` drops an absent
       // count rather than charging zero, since "free" and "not reported" are different facts.
-      this.quota.recordTokens(quotaKey, usage?.totalTokens);
+      await this.quota.recordTokens(quotaKey, usage?.totalTokens);
 
       const tail = commentary.flush();
       if (tail) {

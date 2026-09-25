@@ -1,19 +1,15 @@
-node_modules
-dist
-coverage
-.git
-.gitignore
-.env
-.env.*
-*.log
-test
-archive
-docs
-md
-documents
-data
-report
-frontend
-Dockerfile
-.dockerignore
-README.md
+# An allow-list: everything is excluded, then only what the Dockerfile copies is let back in.
+# A deny-list sent the whole checkout to the builder, including .claude/ worktrees, eval/,
+# untracked PDFs and an empty serviceAccountKey.json, and would pick up the next such file too.
+# Check with `npx ts-node scripts/dockerContext.ts <checkout>`.
+*
+!package.json
+!package-lock.json
+!tsconfig.json
+!src
+!release/artifacts.sha256
+
+# The two approved data files (release plan S1); their hashes are in release/artifacts.sha256
+# and the Dockerfile checks them. Nothing else under data/ enters the context.
+!data/corpus/corpus.json
+!data/embeddings/cache.json
