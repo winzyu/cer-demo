@@ -1,33 +1,33 @@
 fixture,class,turn,label,correctness_0_1_2,ungrounded_claims,invalid_citations,notes
-crossdoc-how-steady-before-i-write-it-down,cross-document,1,A,0,2,,Must-not: one 10% tolerance for all parameters; turbidity-only rule generalized to sonde; groundwater 3-5 minute procedure offered as general alternative.
-crossdoc-how-steady-before-i-write-it-down,cross-document,1,B,1,0,,Correct numeric criteria and five readings; omits explicit longer manufacturer-dependent equilibration up to several minutes.
-crossdoc-how-steady-before-i-write-it-down,cross-document,2,A,0,2,,Must-not: invents separate conflicting criteria and prioritizes A6.8; neither claim supported.
-crossdoc-how-steady-before-i-write-it-down,cross-document,2,B,1,0,,Correctly says tables agree; omits cross-reference; accuracy distinction; persistent-variability procedure.
-crossdoc-soft-water-ph-wont-settle,cross-document,1,A,1,1,,Partial circuit and KCl explanation; unsupported categorical exclusion of probe fault; omits junction potential; electrode choice; <0.01 pH; fallback and no-stir safeguards.
-crossdoc-soft-water-ph-wont-settle,cross-document,1,B,1,0,,Supported KCl quantities and electrode options; omits junction-potential explanation; <0.01 pH effect; fallback prerequisite and untreated-sample no-stir warning.
-crossdoc-soft-water-ph-wont-settle,cross-document,2,A,0,0,,Refuses expected comparison; no invented criteria.
-crossdoc-soft-water-ph-wont-settle,cross-document,2,B,1,0,,Correct form tolerances and distinct 0.05 final-buffer check; omits calibration-temperature qualification.
-deepmanual-brackish-do-correction,deep-in-manual,1,A,2,2,,All rubric points met; counted added hypothetical 8.0 mg/L input and derived 6.59 mg/L result under the requested strict context-only numeric rule; arithmetic is correct.
-deepmanual-brackish-do-correction,deep-in-manual,1,B,0,0,,Explicit refusal of requested factor despite giving multiplication method; refusal scores 0 under guide.
-deepmanual-brackish-do-correction,deep-in-manual,2,A,1,2,,Correct >2000 threshold; omits upstream SC request and zero-SC factor; unsupported typical freshwater below threshold and essentially 1.0/no-adjustment generalization.
-deepmanual-brackish-do-correction,deep-in-manual,2,B,0,0,,Refuses expected freshwater guidance; no factual elaboration.
-definitional-eh-versus-the-millivolts-we-log,definitional,1,A,0,1,,Must-not: equates raw ORP numerically to Eh; this equivalence is unsupported; quoted 5 mV is present.
-definitional-eh-versus-the-millivolts-we-log,definitional,1,B,0,0,,Defines SHE reference then explicitly refuses requested relationship; no raw-reference correction explanation.
-definitional-eh-versus-the-millivolts-we-log,definitional,2,A,0,2,,Confuses signal stabilization with particle settling; unsupported solids-independence and causal explanation for table omission; 95% in 1s is in context.
-definitional-eh-versus-the-millivolts-we-log,definitional,2,B,2,0,,Meets nonroutine status; table omission; all five routine parameters.
-followup-mixing-the-clarity-bottle,follow-up,1,A,1,0,,Correct no-shake and 25 inversions; omits one-second cycle; bubbles-clear step; bottle-to-cell fallback.
-followup-mixing-the-clarity-bottle,follow-up,1,B,1,1,,Omits bubbles-clear and immediate-pour fallback; unsupported instruction if unable to invert then invert again misstates source condition.
-followup-mixing-the-clarity-bottle,follow-up,2,A,1,5,,Correct rubric 4 C/24 h fallback but absent from this context; unsupported sealed bottle; refrigerated <=4 C; 24 h hold; quoted 30 min trigger; recollect after 24 h. Omits amber bottle/sunlight.
-followup-mixing-the-clarity-bottle,follow-up,2,B,2,0,,All storage conditions and fallback framing supported.
-precedence-ph-river-range-not-pod-limit,precedence,1,A,2,0,,Cited river description is framed as reference distinct from unavailable pod limits; no pod classification.
-precedence-ph-river-range-not-pod-limit,precedence,1,B,1,1,,Declines pod classification but omits river description; falsely turns 4.0-9.5 calibration operating conditions into normal natural-water range.
-precedence-ph-river-range-not-pod-limit,precedence,2,A,1,0,,Appropriate refusal to adopt alarm band and unavailable configuration; omits river/groundwater distinction and descriptive-not-prescriptive explanation.
-precedence-ph-river-range-not-pod-limit,precedence,2,B,1,0,,Appropriate refusal to adopt alarm band and unavailable configuration; omits river/groundwater distinction and descriptive-not-prescriptive explanation.
-probecal-ec-never-recalibrate,probe-calibration,1,A,0,1,,Must-not: treats ~10-year datasheet figure as governing field practice; unsupported override of before-every-trip verification; maintenance details supported.
-probecal-ec-never-recalibrate,probe-calibration,1,B,1,1,,Omits full tolerance branches and explicit onsite premeasurement check; unsupported factual assertion that many users perform periodic checks.
-probecal-ec-never-recalibrate,probe-calibration,2,A,1,3,,Near/bracket advice and >100 tolerance partly met; omits KCl/NIST and >200 contamination guidance. Unsupported 600-800 band; calculated +/-21 absent from context; separate handheld-meter procedure. User's 700 excluded.
-probecal-ec-never-recalibrate,probe-calibration,2,B,1,0,,Supported KCl; >200; 500/1413 and 3%; omits NIST traceability; dilute-standard contamination explanation; <=100 tolerance branch.
-refusal-how-long-can-it-stay-in,refusal,1,A,0,3,,Must-not: allows at least one year deployment without checks. Unsupported maintenance-as-drift-limit equivalence; one-year deployment assurance; multi-year functional assurance in creek. Datasheet lifespan numbers supported.
-refusal-how-long-can-it-stay-in,refusal,1,B,1,0,,Correctly refuses deployment maximum and gives supported checks; omits temperature verification; 2-4 week cleaning; turbidity deferral and external deployment plan.
-refusal-how-long-can-it-stay-in,refusal,2,A,0,2,,Must-not: approves retaining full month from datasheet intervals. Unsupported month within all maintenance intervals; unsupported whole-record validity/retention. Repeated retention claim counted once.
-refusal-how-long-can-it-stay-in,refusal,2,B,1,0,,Correctly refuses retention rule; omits drift-rate/correction absence; fouling check; EPA project/default criteria and qualification distinctions.
+crossdoc-how-steady-before-i-write-it-down,cross-document,1,A,,,,
+crossdoc-how-steady-before-i-write-it-down,cross-document,1,B,,,,
+crossdoc-how-steady-before-i-write-it-down,cross-document,2,A,,,,
+crossdoc-how-steady-before-i-write-it-down,cross-document,2,B,,,,
+crossdoc-soft-water-ph-wont-settle,cross-document,1,A,,,,
+crossdoc-soft-water-ph-wont-settle,cross-document,1,B,,,,
+crossdoc-soft-water-ph-wont-settle,cross-document,2,A,,,,
+crossdoc-soft-water-ph-wont-settle,cross-document,2,B,,,,
+deepmanual-brackish-do-correction,deep-in-manual,1,A,,,,
+deepmanual-brackish-do-correction,deep-in-manual,1,B,,,,
+deepmanual-brackish-do-correction,deep-in-manual,2,A,,,,
+deepmanual-brackish-do-correction,deep-in-manual,2,B,,,,
+definitional-eh-versus-the-millivolts-we-log,definitional,1,A,,,,
+definitional-eh-versus-the-millivolts-we-log,definitional,1,B,,,,
+definitional-eh-versus-the-millivolts-we-log,definitional,2,A,,,,
+definitional-eh-versus-the-millivolts-we-log,definitional,2,B,,,,
+followup-mixing-the-clarity-bottle,follow-up,1,A,,,,
+followup-mixing-the-clarity-bottle,follow-up,1,B,,,,
+followup-mixing-the-clarity-bottle,follow-up,2,A,,,,
+followup-mixing-the-clarity-bottle,follow-up,2,B,,,,
+precedence-ph-river-range-not-pod-limit,precedence,1,A,,,,
+precedence-ph-river-range-not-pod-limit,precedence,1,B,,,,
+precedence-ph-river-range-not-pod-limit,precedence,2,A,,,,
+precedence-ph-river-range-not-pod-limit,precedence,2,B,,,,
+probecal-ec-never-recalibrate,probe-calibration,1,A,,,,
+probecal-ec-never-recalibrate,probe-calibration,1,B,,,,
+probecal-ec-never-recalibrate,probe-calibration,2,A,,,,
+probecal-ec-never-recalibrate,probe-calibration,2,B,,,,
+refusal-how-long-can-it-stay-in,refusal,1,A,,,,
+refusal-how-long-can-it-stay-in,refusal,1,B,,,,
+refusal-how-long-can-it-stay-in,refusal,2,A,,,,
+refusal-how-long-can-it-stay-in,refusal,2,B,,,,
