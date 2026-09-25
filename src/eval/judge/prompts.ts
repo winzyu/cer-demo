@@ -203,6 +203,13 @@ export const needsGroundingForCorrectness = (rubric: EvalRubric): boolean => (
  * On those turns the service rules are supplied too (2026-09-24). The instruction below already
  * counted them as grounding, but the judge was never shown them. Both now lead the prompt as
  * `groundingMaterial`, which also makes the pair a cache hit behind the `ungrounded` call.
+ *
+ * The 2026-09-25 human calibration (`EVAL_REBUILD.md`, "Calibration packet (2c)") found the judge
+ * wrong both ways: it called points absent that the answer made, sometimes inside a quotation, and
+ * it let through a refusal where an answer was owed and a datasheet range recast as a normal
+ * water range. Hence the point-by-point list before the score, the refusal rule keyed on whether
+ * the rubric asks for a decline, and the must-not and invention rules applied to effect as well
+ * as wording.
  */
 export const correctnessPrompt = (evidence: JudgeEvidence): string => `${
   needsGroundingForCorrectness(evidence.rubric) ? groundingMaterial(evidence) : ""}You are grading one answer
@@ -213,14 +220,28 @@ SCALE:
 1 = partially there — some points made, or the right idea stated vaguely or incompletely.
 0 = misses the point, is wrong, or refuses when the rubric expected a real answer.
 
+POINTS:
+Before scoring, take the "must contain" list one point at a time and search the whole answer for
+it, including text inside quotations from a source. A point is met when the answer states its
+substance in any wording; quote the words that make it. Never mark a point unmet without having
+looked for it: a figure or condition inside a quoted passage counts as stated.
+
 RULES:
 - Score against the rubric, not against your own knowledge. A true answer that does not make the
   rubric's points is not a 2.
 - If any "must not" item appears in the answer, the score is 0 regardless of everything else.
 - Judge each "must not" item on its own terms. Do not invent additional ones.
+- A "must not" item is violated by any wording with the same effect, not only by its own words:
+  saying a value "falls within the normal range" declares it normal.
+- When no "must contain" point asks the answer to decline or to say information is unavailable,
+  the rubric expects a real answer. An answer that then withholds a fact or figure a point asks
+  for, saying it lacks the information, is a refusal even if it also gives a method, a source name
+  or other partial content, and it scores 0.
 - A refusal satisfies a rubric point asking to decline an unsupported answer.
   If the rubric also requires supported explanations, grade those independently;
   a bare refusal does not earn full credit for the whole answer.
+  When a point asks the answer to decline or to say information is unavailable, a correct refusal
+  that makes at least one "must contain" point scores at least 1.
 - Wording is not part of a refusal rubric. When a rubric asks for a refusal, an answer that
   declines and says what it lacks satisfies that point in full, whether or not it uses the
   service's standard refusal sentence.
@@ -230,7 +251,9 @@ RULES:
 ${needsGroundingForCorrectness(evidence.rubric) ? `THE SERVICE RULES AND RETRIEVED DOCUMENTS ABOVE
 These are here for ONE purpose: this turn's "must not" list asks whether the answer made
 something up, and that cannot be decided without them. A figure, range, procedure or statement
-that appears anywhere in them was NOT invented, even if the rubric does not mention it. Do not
+that appears anywhere in them was NOT invented, even if the rubric does not mention it, unless
+the answer presents it as something they do not say it is: an instrument's operating or
+compensation range presented as the normal range of natural water is an invented criterion. Do not
 otherwise grade the answer against these documents: an answer can be entirely true and still miss
 the rubric's points, and that is still not a 2.
 
@@ -247,7 +270,7 @@ ANSWER:
 ${evidence.answer}
 
 ${JSON_ONLY}
-{"score": 0 | 1 | 2, "reason": "<one sentence, naming the rubric points made or missed>"}`;
+{"points": [{"point": "<a must-contain point, abbreviated>", "met": true | false, "quote": "<the answer's words that make it, or empty>"}], "score": 0 | 1 | 2, "reason": "<one sentence, naming the rubric points made or missed>"}`;
 
 /**
  * Ungrounded claims — enumerate, do not count.
@@ -406,7 +429,14 @@ export const parseVerdict = (dimension: JudgeDimension, reply: string): JudgeVer
     if (!Number.isInteger(score) || score < 0 || score > 2) {
       throw new Error(`judge returned score ${JSON.stringify(parsed.score)}, expected 0, 1 or 2`);
     }
-    return { score, items: [], note: clean(parsed.reason) };
+    // The point list is how the judge shows its reading of the answer; the score stays its own
+    // verdict, and unmet points are kept in the note so a disagreement shows what was missed.
+    const unmet = (Array.isArray(parsed.points) ? parsed.points : [])
+      .map((entry) => (entry ?? {}) as Record<string, unknown>)
+      .filter((point) => point.met === false)
+      .map((point) => clean(point.point));
+    const reason = clean(parsed.reason);
+    return { score, items: [], note: unmet.length > 0 ? `${reason} Unmet: ${unmet.join("; ")}` : reason };
   }
 
   const listKey = dimension === "ungrounded" ? "claims" : "invalid";
@@ -453,11 +483,24 @@ export const parseVerdict = (dimension: JudgeDimension, reply: string): JudgeVer
 export const JUDGE_SCHEMAS: Record<JudgeDimension, Record<string, unknown>> = {
   correctness: {
     type: "object",
+    // `points` comes first so the judge reads the answer point by point before it scores.
     properties: {
+      points: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            point: { type: "string" },
+            met: { type: "boolean" },
+            quote: { type: "string" },
+          },
+          required: ["point", "met", "quote"],
+        },
+      },
       score: { type: "integer", enum: [0, 1, 2] },
       reason: { type: "string" },
     },
-    required: ["score", "reason"],
+    required: ["points", "score", "reason"],
   },
   ungrounded: {
     type: "object",

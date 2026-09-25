@@ -139,6 +139,8 @@ describe("judge prompts — blinding", () => {
     expect(prompt).toMatch(/entirely true and still miss\s+the\s+rubric's points/);
     // The rule counts the service rules as grounding, so the judge has to be shown them.
     expect(prompt).toContain("AUTHORITATIVE NORMAL RANGES");
+    // A real figure recast as something the source does not say it is still counts as invented.
+    expect(prompt).toMatch(/compensation range presented as the normal range of natural water is an invented criterion/);
   });
 
   it("opens both grounded prompts with the same material, so the second call is a cache hit", () => {
@@ -190,6 +192,20 @@ describe("refusals are graded on behaviour, not phrasing", () => {
     expect(prompt).toMatch(/Wording is not part of a refusal rubric/);
     expect(prompt).toContain("a bare refusal does not earn full credit for the whole answer");
     expect(prompt).toMatch(/service's standard refusal sentence/);
+  });
+
+  it("separates a refusal where an answer was owed from a refusal the rubric asks for", () => {
+    // The 2026-09-25 calibration: the judge gave 1 to a refusal that withheld a table value it
+    // had been given, and 0 to correct refusals that made some of their rubric's points.
+    const prompt = correctnessPrompt(evidence());
+
+    expect(prompt).toContain("When no \"must contain\" point asks the answer to decline");
+    expect(prompt).toContain("or other partial content, and it scores 0");
+    expect(prompt).toContain("that makes at least one \"must contain\" point scores at least 1");
+    // The other two misses: points called absent that the answer made inside a quotation, and a
+    // must-not paraphrased past its own words.
+    expect(prompt).toContain("a figure or condition inside a quoted passage counts as stated");
+    expect(prompt).toContain("violated by any wording with the same effect");
   });
 
   it("leaves no live fixture demanding the exact refusal sentence", () => {
@@ -296,6 +312,19 @@ describe("judge prompts — parsing", () => {
     const verdict = parseVerdict("correctness", '```json\n{"score": 2, "reason": "all points"}\n```');
     expect(verdict.score).toBe(2);
     expect(verdict.note).toBe("all points");
+  });
+
+  it("keeps the judge's unmet points in the note, without letting them set the score", () => {
+    const verdict = parseVerdict("correctness", JSON.stringify({
+      points: [
+        { point: "gives the 60-second minimum", met: true, quote: "at least 60 seconds" },
+        { point: "names the liquid-junction potential", met: false, quote: "" },
+      ],
+      score: 1,
+      reason: "one point missed",
+    }));
+    expect(verdict.score).toBe(1);
+    expect(verdict.note).toBe("one point missed Unmet: names the liquid-junction potential");
   });
 
   it("throws rather than defaulting when the score is missing or out of range", () => {
@@ -1036,6 +1065,9 @@ describe("judge exit status", () => {
     await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
     const { port } = server.address() as net.AddressInfo;
     const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "judge-exit-")), "pass.json");
+    // The run's real ledger is read for reuse; a failed call must leave it exactly as it was.
+    const ledger = path.resolve(__dirname, "../../data/results/judge/p3-calib-2026-09-24/warm.jsonl");
+    const ledgerBefore = fs.existsSync(ledger) ? fs.readFileSync(ledger, "utf8") : undefined;
     try {
       const code = await new Promise<number | null>((resolve) => {
         const child = spawn(
@@ -1060,7 +1092,8 @@ describe("judge exit status", () => {
         child.on("exit", resolve);
       });
       expect(code).toBe(1);
-      expect(JSON.parse(fs.readFileSync(out, "utf8")).budget.calls).toBe(0);
+      expect(fs.existsSync(out)).toBe(true);
+      expect(fs.existsSync(ledger) ? fs.readFileSync(ledger, "utf8") : undefined).toBe(ledgerBefore);
     } finally {
       server.close();
     }
