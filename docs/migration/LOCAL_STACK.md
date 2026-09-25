@@ -216,9 +216,44 @@ With `--testTimeout=120000` all 5 tests passed in 3 of 3 runs with the correct t
 | `(default)` database | Native mode, us-west1: cer-demo's `corpus_chunks` and `corpus_documents` vector store; leave it alone |
 | `gilligan-test` database | Native mode, us-central1, created 2026-09-25 for Gilligan test data |
 
-The project holds no API keys, no service accounts and no downloadable keys, so it has nothing to rotate.
+The project holds no API keys and no downloadable keys, so it has nothing to rotate; its one service account is the Gilligan runtime identity below.
 Only the `(default)` database gets Firestore's free daily quota; `gilligan-test` bills from the first read, which is pennies at test volume.
 The CER server hard-codes project id `conductive-fold-343604` in `src/config/database.ts`, so pointing it at `cer-demo-2026` needs a small server change and is out of scope here.
+
+#### Gilligan identity and secret rehearsal, 2026-09-25
+
+This rehearses in `cer-demo-2026` the production arrangement settled at L2 (`GILLIGAN_RELEASE_PLAN.md`, "L2 answers so far"), and drafts the inventory for production.
+Everything was created by the user's account (`roles/owner` on the project) through Claude, each write approved by the user in chat.
+The project has no organization or folder above it, so no policy is inherited.
+Nothing was deployed to Cloud Run: the relay still sends the user's JWT as `Authorization`, which a private Cloud Run service rejects, so a deployed rehearsal waits on that decision.
+
+| resource | exact name | grant: role and condition | created by | verified by |
+|---|---|---|---|---|
+| APIs | `iam.googleapis.com`, `secretmanager.googleapis.com`, `policytroubleshooter.googleapis.com` | none | user via Claude | `services list --enabled` |
+| service account | `cer-gilligan-runtime@cer-demo-2026.iam.gserviceaccount.com`, display name "Gilligan runtime" | none on itself: its own policy is empty, so no one can act as it | user via Claude | `iam service-accounts describe`; `keys list` shows one Google-managed key and no user-managed key; `get-iam-policy` is empty |
+| secret | `cer-gilligan-fireworks-api-key`, automatic replication | Secret Manager Secret Accessor (`roles/secretmanager.secretAccessor`) for the runtime account, on this secret only | user via Claude; the value is added by the user, never through Claude | `secrets get-iam-policy` holds that single binding; troubleshooter: access granted on this secret, denied on any other secret name |
+| Firestore corpus | database `(default)` | Cloud Datastore Viewer (`roles/datastore.viewer`) for the runtime account, on the project, condition `gilligan-corpus-read`: `resource.name == "projects/cer-demo-2026/databases/(default)"` | user via Claude | troubleshooter: get and list granted; create, update and delete denied |
+| Firestore usage store | database `gilligan-test` | Cloud Datastore User (`roles/datastore.user`) for the runtime account, on the project, condition `gilligan-usage-rw`: `resource.name == "projects/cer-demo-2026/databases/gilligan-test"` | user via Claude | troubleshooter: get, list, create, update and delete granted; any other database denied |
+
+The project's policy (version 3) holds exactly these two conditional bindings for the account, and nothing at project level grants it `secretmanager.versions.access` or `iam.serviceAccounts.actAs`.
+Datastore Viewer is read-only on documents, including vector queries, plus database and index metadata.
+Datastore User includes delete, which the usage store does not need; only a custom role could drop it.
+Firestore IAM stops at the database: a condition can name a database but not a collection.
+
+At the time of recording, the secret has no version; the user adds it from `.env` in their own terminal.
+When checking `.env`, strip any surrounding quotes from the value first, because they would otherwise be stored as part of the key.
+
+How the checks were run, since the obvious forms fail:
+
+- `gcloud policy-troubleshoot` and `gcloud beta policy-intelligence troubleshoot-policy iam` need `--billing-project=cer-demo-2026` when no default project is set; otherwise they bill gcloud's own client project and fail with `SERVICE_DISABLED`.
+- A Firestore database is not a valid troubleshooter resource: troubleshoot the project, `//cloudresourcemanager.googleapis.com/projects/cer-demo-2026`, with `--resource-name=projects/cer-demo-2026/databases/<db>`, `--resource-service=firestore.googleapis.com` and `--resource-type=firestore.googleapis.com/Database`, in the same form the condition uses; the `//firestore.googleapis.com/` form evaluates the condition as false.
+- A secret must be named by project number: `//secretmanager.googleapis.com/projects/2771572559/secrets/<name>`.
+- `testIamPermissions` reports the caller's permissions, not another principal's, so it cannot verify the runtime account without impersonating it, which would need an extra grant.
+
+Decision for the production inventory, needing Michael and the supervisor (recorded 2026-09-25, not yet applied to cer-demo's configuration):
+production should give Gilligan a dedicated Firestore database, for example `gilligan` in us-central1 next to Cloud Run, holding both the corpus and the usage store.
+`cer-gilligan-runtime` then gets Datastore User conditioned on that database alone and no grant on `(default)`.
+Otherwise, because Firestore IAM cannot narrow below a database, the usage store's write access on `(default)` would also let the runtime account write `users`, `devices` and `water-data`.
 
 ### CER's old QA database
 
