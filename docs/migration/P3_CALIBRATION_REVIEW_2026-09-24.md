@@ -98,3 +98,11 @@ R4 spend is now about $7.80 of the $20 ceiling ($7.44 before this run).
 The empty `warm.json` from the failed attempts was overwritten by this run.
 The judge's exit status 0 when every call failed was fixed in `e662fa0`: it now exits 1 whenever any call fails.
 
+## Prompt fix and re-judge - 2026-09-25
+
+The user approved targeted correctness-prompt fixes and a correctness-only re-judge after an adjudication of the nine disputed rows (`docs/EVAL_REBUILD.md`, "Calibration packet (2c)").
+The re-judge (`49e28ae`) sent 32 calls with 0 failures for about $0.1206.
+Correctness kappa against the user's grades as submitted is now 0.659, still below 0.70; against the adjudicated reference it is 0.802.
+Against this review the judge now agrees at 0.895 on correctness.
+R4 spend is now about $7.92 of the $20 ceiling.
+

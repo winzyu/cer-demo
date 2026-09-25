@@ -1035,6 +1035,40 @@ The judge counts inferential glue as ungrounded where both references count none
 Correctness kappa misses the 0.70 bar, so the judge is not yet calibrated and E3 stays blocked.
 Setting those two rows and the two refusal rows to the user's scores would give 0.76, but that is fitted to this sample and not a measurement.
 
+#### Adjudication and re-judge - 2026-09-25: correctness kappa 0.659 as graded, 0.802 adjudicated
+
+The questions and rubrics predate the answers: rubrics were written 2026-09-01 to 09-13 and last corrected at 13:28 on 09-23 (`ec58b05`, an AI source review with no human verification), and both arms were captured after that (committed 22:07 on 09-23 and 00:43 on 09-24).
+Each disputed row was checked against its rubric, the answer and the context the answer was given.
+
+| Row | User | Judge (first pass) | Finding |
+|---|---|---|---|
+| `crossdoc-how-steady-before-i-write-it-down` t1, gold | 2 | 1 | User right: the judge said 60 seconds was not called a minimum, but the answer quotes "at least 60 seconds (or follow the manufacturer's guidelines)" |
+| `precedence-ph-river-range-not-pod-limit` t2, retrieval | 1 | 0 | User right: the answer says the pod's alarm range is not provided and does not adopt 6.5 to 8.5 (2 of 5 points) |
+| `refusal-how-long-can-it-stay-in` t2, gold | 1 | 0 | User right: the answer states the documents give no limit on how much of the month is usable (point 1) |
+| `deepmanual-brackish-do-correction` t1, retrieval | 0 | 1 | User right: table 6.2-4 with its 50,000 uS/cm column was in the retrieved context, so the refusal was owed an answer |
+| `precedence-ph-river-range-not-pod-limit` t1, retrieval | 0 | 1 | User right: "4.0 to 9.5" is A6.4's temperature-compensation range, recast as the normal range of natural surface waters |
+| `crossdoc-soft-water-ph-wont-settle` t1, gold | 2 | 1 | Judge right: 4 of 8 required points are absent |
+| `probecal-ec-never-recalibrate` t2, retrieval | 0 | 1 | Judge right: the must-not on inventing a standard allows certified, compatible values, and a 700 uS/cm standard is one |
+| `crossdoc-soft-water-ph-wont-settle` t2, gold | 2 | 1 | Open: the only gap is "at calibration temperature" |
+| `probecal-ec-never-recalibrate` t2, gold | 2 | 1 | Open: the gaps are NIST traceability and the reason to stay above 200 uS/cm |
+
+The correctness prompt was then changed (`49e28ae`): the judge lists each must-contain point as met or unmet, with a quote, before it scores; a refusal where no point asks for a decline scores 0 even with partial content; a correct refusal the rubric asks for scores at least 1 when it makes a point; must-not items apply to wording with the same effect; and a source figure presented as something the source does not say it is counts as invented.
+Whether a missing secondary qualifier denies a point was left unchanged; the user has not decided it.
+
+The correctness-only re-judge sent 32 calls at `--final` with 0 failures: 422,798 prompt tokens (9,690 cached) and 44,859 completion tokens, about $0.1206.
+It fixed three of the five judge errors above (`deepmanual` t1, `precedence` t1 and t2); the `crossdoc-how-steady` t1 and `refusal` t2 misreadings persist despite the point list.
+It moved `definitional-eh-versus-the-millivolts-we-log` t1 gold from 1 to 0: that answer gives the standard-hydrogen-electrode definition and then refuses the question, which the new refusal rule scores 0, as the AI review did and as the user scored the same pattern in `deepmanual` t1; the user scored it 1.
+
+| Reference | Exact | Kappa |
+|---|---|---|
+| User's grades as submitted | 25/32 | 0.659 |
+| Adjudicated: judge's reading on `soft-water` t1, `probecal` t2 retrieval and `definitional` t1 | 28/32 | 0.802 |
+| Adjudicated, and the judge's reading of the two open qualifier rows | 30/32 | 0.897 |
+
+As secondary results, the judge agrees with the AI review at 0.895 (30/32) on correctness; ungrounded agreement is unchanged at any/none 25/32, count kappa 0.231, since that prompt did not change.
+The prompt was tuned on these 32 rows and re-measured on them, so the gain is an upper estimate; a held-out sample would measure it honestly.
+Correctness verdicts from before `49e28ae` are not comparable with later ones, and the ledger re-judges them on the next pass.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
