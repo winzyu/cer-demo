@@ -10,7 +10,7 @@ Task IDs (P1, Q2, ...) are for this plan only.
 |---|---|---|
 | Goal and answer types | Data answers, cited education or approved guidance, clarifying questions, honest refusals, one-pod PDF reports; never another organization's data. | Matches the existing goal; no scope change. |
 | Quality floor | Block or refuse a question Gilligan cannot answer well. | Architecture decision D3 settles on refusal over caveat for weak classes found by R4 (E3). |
-| Usage limits | 20 messages and 5 reports per user per day; token cap to be decided. | Daily windows, reports 5 not 3, token cap as a configurable placeholder (S3). |
+| Usage limits | 20 messages and 5 reports per user per day; token cap to be decided. | Daily windows, reports 5 not 3, token cap 1,000,000 per user per day as a configurable guard (O3, S3). |
 | Chat features | Pod picker, question visible while waiting, formatted tables, citations, near-limit message, saved history; extras reviewed at the demo. | Dashboard work U1-U5. |
 | Disclaimer | "Content is AI generated, be sure to double check answers, turbidity is qualitative." | U1. |
 | Live backend writes | Allowed for test users and organizations, deleted before launch. | Live isolation test data (T1-T3); every created ID goes in a cleanup ledger. |
@@ -35,7 +35,7 @@ Each has a default so work does not wait.
 |---|---|---|---|
 | O1 | Which CER support contact do referrals and fault messages use? | supervisor | **Answered 2026-09-24:** sales@cleanearthrovers.com, or the customer's existing CER contact |
 | O2 | How are the dashboard and server deployed today (platform, who merges, who deploys)? | user | **Answered 2026-09-24:** the user merges and deploys; platform details go in the runbook's §2 inputs |
-| O3 | Token cap per user per day. | user | 500,000 tokens, as an environment variable |
+| O3 | Token cap per user per day. | user | **Answered 2026-09-24:** 1,000,000 tokens per user per UTC day as a runaway guard, as an environment variable; the 20-message cap is the working limit (`timeline.md`) |
 | O4 | Catalogue decisions marked "your decision". | user | **Answered 2026-09-24:** every entry approved, marked-up ones as edited (50% confidence, both referral renames); the "Industrial" label rename and the inland entry were review notes, not entry edits, and were not applied |
 | O5 | Who may read saved chats (support staff, organization admins)? | supervisor | Only the author; nobody else has an access path at launch |
 | O6 | R1 scope (the last item in STATUS "The user's" list). | user | Section 3 S1-S6 as written, `/gilligan/answer` and identity tokens after launch |
