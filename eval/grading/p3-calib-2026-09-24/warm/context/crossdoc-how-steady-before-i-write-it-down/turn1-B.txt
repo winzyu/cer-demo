@@ -1,0 +1,401 @@
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__47bda63fa730)
+
+-- 10 of 32 --3.0 	Performing Field Measurements 	3
+• AQUARIUS: Contains automated, continuous water
+data, all groundwater level data, and information for
+discrete samples.
+3.0 	Performing Field Measurements
+Field measurements should represent, as closely as pos-
+sible, the ambient physical and chemical properties of the
+surface-water or groundwater system at the time of sampling.
+Properties of temperature, DO concentration, and Eh are
+required to be measured directly (in situ) in the water body
+where possible. Other properties such as pH, conductivity,
+and turbidity are recommended to be measured in situ or
+from a sample withdrawn from the source, depending on the
+type of equipment selected for field measurements. Alkalinity
+determination requires titration on a measured volume of
+subsample. These properties are required to be measured at the
+field site.
+Expertise: Collecting data for USGS studies requires
+training, practice, and a knowledge of required and
+recommended protocols.
+• Training: Field personnel must complete USGS water-
+quality courses. Fundamental training for performing
+water-quality field activities in accordance with USGS
+protocols and standard procedures includes a two-
+week Field Water-Quality Methods class (QW1028).
+Other foundational training includes Water-Quality
+Principles (QW1022), Water Quality Instrumenta-
+tion; Operation, Calibration, and Maintenance (USGS–
+W–16–322), Statistical Methods for Environmental Data
+Analysis (QW1075), Quality-Control Sample Design
+and Interpretation (QW2034), and Water-Quality
+Toolbox for NWIS Users (QW1297). These classes
+provide a practicum for the knowledgeable execution
+of field and office project activities and help to ensure
+proper management and valid interpretation of the data
+being collected.
+• National Field Quality Assurance Program
+(NFQA): All field personnel, including non-USGS
+employees, who collect field-measurement data that
+are entered into NWIS are required to participate
+annually in the NFQA Program (https://qsb.usgs.gov/
+nfqa/onlineResources.php?page=overView, accessed
+May 14, 2020), which evaluates the proficiency of per-
+sonnel in measuring pH, SC, and alkalinity (or ANC).
+Equipment: A variety of single-parameter and multipa-
+rameter instruments that use various technologies to measure
+the same water property and that require different calibra-
+tion, maintenance, and measurement methods is available for
+field measurements.
+• Single-parameter instruments: Single-parameter
+instruments include, for example, stand-alone tem-
+perature sensors; DO, SC, and pH meters; and
+turbidimeters. The protocols and procedures that
+Table 6.0–1. 	Stabilization criteria for recording direct field measurements.
+[±, plus or minus; °C, degrees Celsius; ≤, less than or equal to; μS/cm, microsiemens per centimeter at 25 °C; >, greater than; unit, standard pH unit; mg/L, mil-
+ligrams per liter; FNU, formazin nephelometric units; TU, turbidity units; %, percent]
+Standard direct field measurement1
+Stabilization criteria2
+(Variability should be within the range shown for five or more
+measurements)
+Temperature
+Thermistor 	±0.2 °C
+Specific electrical conductance
+≤100 μS/cm
+>100 μS/cm
+±5 μS/cm
+±3%
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__1b7e9852e841)
+
+s per centimeter at 25 °C; >, greater than; unit, standard pH unit; mg/L, mil-
+ligrams per liter; FNU, formazin nephelometric units; TU, turbidity units; %, percent]
+Standard direct field measurement1
+Stabilization criteria2
+(Variability should be within the range shown for five or more
+measurements)
+Temperature
+Thermistor 	±0.2 °C
+Specific electrical conductance
+≤100 μS/cm
+>100 μS/cm
+±5 μS/cm
+±3%Dissolved oxygen
+Optical/luminescent sensors 	±0.2 mg/L
+pH:
+Meter displays to 0.01 	±0.1 unit
+Turbidity3
+≤100 FNU (or other TU)
+>100 FNU (or other TU)
+±0.5 TU or ±5%, whichever is greater
+±10%
+1
+Eh is not considered to be a routine or direct field measurement (see National Field Manual (NFM) A6.5). Alkalinity and acid-neutralizing capacity determi-
+nations require a titration procedure and are not considered direct measurements.
+2Refer to NFM A6.8 for similar criteria when using multiparameter instruments. For continuous monitors, consult Wagner and others (2006).
+3Multiparameter instruments used for most in situ turbidity applications contain single-beam infrared wavelength turbidity sensors and are reported in FNU.
+Check the Excel spreadsheet at https://pubs.usgs.gov//twri/twri9a6/twri9a67/twri9a_turbidity_codes_5-2012.xlsx to determine the appropriate turbidity unit of
+measure; consult NFM A6.7 for detailed guidance on turbidity measurement and instrumentation.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__e157e31940ab)
+
+ld-measurement values. Execute field measure-
+ments in a manner that avoids or minimizes bias from
+data-collection activities.
+• Check instrument precision and accuracy (variability
+and bias) periodically while at a field site; precision
+and accuracy may vary depending on the instru-
+ment used, sampling conditions, and the expertise
+of personnel.
+• Long-standing USGS standard procedure is to allowsensors to equilibrate to the temperature of the water
+being monitored to the extent possible before making
+field measurements, as is appropriate for the instru-
+ment in use. Sensors have equilibrated adequately
+when instrument readings have stabilized—that is,
+when the variability among consecutive measurements
+does not exceed an established criterion. The USGS
+criteria for stabilized field readings are defined opera-
+tionally in table 6.0–1 for a set of about five (or more)
+consecutive measurements.
+The natural variability inherent in surface water or
+groundwater at the time of sampling generally falls within the
+stability criteria given in table 6.0–1 and reflects the accuracy
+that should be attainable with a properly calibrated instrument.
+• Surface water: Allow at least 60 seconds (or follow
+the manufacturer’s guidelines) for sensors to equilibrate
+with sample water. Take instrument readings until the
+stabilization criteria in table 6.0–1 are met. Record the
+median of the final three or more readings as the value
+to be reported for that measurement point (section 3.1).
+• Groundwater: Begin recording measurements after
+sensors have equilibrated with purge water. Take instru-
+ment readings until the stabilization criteria in table
+6.0–1 are met and the required number of well volumes
+of groundwater have been purged. Record the median
+of the final five or more readings as the value to be
+reported for that site (section 3.2).
+• For sites at which variability exceeds the criteria shown
+in table 6.0–1, allow the instrument a longer equili-
+bration time and record additional measurements. To
+determine the value to be reported for that measure-
+ment point, either use the median of the final five or
+more measurements recorded, or apply knowledge of
+the site and professional judgment to select the most
+representative of the final readings and document in
+field notes how the decision was made.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__fea0c27e3094)
+
+-- 14 of 24 --4.0 Measurement 	7
+4.0 Measurement
+The field-measurement procedures implemented depend
+on the type of water body being studied, onsite characteristics
+and conditions at the time of measurement, and the objectives
+and data-quality requirements of the study. The following
+guidelines apply generally to multiparameter instruments.
+Consult NFM chapters A6.0 through A6.7 for detailed instruc-
+tions on measuring individual parameters. The information in
+chapters A6.0 through A6.7 is the definitive information for
+making measurements and is not replaced by either the general
+guidance here or the guidance in previous versions of this
+chapter. Allow time for the readings on the display to stabilize
+within the criteria shown in table 6.8–5. Record all required
+field measurements on the appropriate paper or electronic field
+forms, laboratory analytical request forms, logbooks, chain-of-
+custody logs, and other documentation that might be required
+for the study (see appendix 6.8–1 for an example of a field
+form). Note on the appropriate form(s) any onsite conditions
+that could have affected the quality of the data.
+4.1 Surface Water
+Field parameters are commonly measured within a cross
+section of a surface-water body to (1) help determine how well
+mixed the stream or river is, and consequently the sampling
+method to be used; and (2) determine the field-parameter
+values of the water body at the selected site. In situ use of
+a multiparameter instrument is a highly efficient means of
+obtaining surface-water field-parameter data. Considerations
+when using multiparameter instruments in surface water are
+listed in the following bullet points. For additional information
+on field measurements and sampling methods, see NFM A6.0
+and NFM A4. For more information on measuring specific
+individual field parameters, see NFM A6.1 through NFM
+A6.7.
+• Many instruments include a pressure transducer that
+produces a value for the depth of the sonde or the water
+level. For instruments without pressure transducers, the
+approximate depth of the sonde as it is lowered through
+the water column can be noted by placing incremental
+marks along the instrument cable, or the sonde can
+be connected to a pressure transducer. Depending on
+site conditions, the sonde might need to be weighted.
+Consult the manufacturer’s instructions for proper
+weighting procedures.
+• Wait a minimum of 60 seconds for the sensors and
+sonde body to reach thermal equilibrium with the water
+at each new measurement location. Some instruments
+require a longer equilibration time; check the manufac-
+turer’s recommendations.
+• Plants or debris in the water can interfere with sensors
+or the guard around sensors, which can adversely
+affect sensor readings. If field conditions and quality-
+assurance protocols allow, adjust the locations of the
+measurements along the cross section or transect to
+avoid areas that will require stopping and cleaning
+plant growth, sediment, or debris from the sensors.
+4.2 Groundwater
+The stability of field-parameter values is monitored
+toward the end of well purging to help indicate when the water
+being withdrawn represents fresh formation water and when
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__4e9dfc809f8a)
+
+assurance protocols allow, adjust the locations of the
+measurements along the cross section or transect to
+avoid areas that will require stopping and cleaning
+plant growth, sediment, or debris from the sensors.
+4.2 Groundwater
+The stability of field-parameter values is monitored
+toward the end of well purging to help indicate when the water
+being withdrawn represents fresh formation water and whensample collection should begin (see NFM A6.0, NFM A4).
+The final field-parameter values typically are recorded after
+three or more well volumes have been purged and stability
+criteria have been met.
+If the purpose of sampling is to obtain field measure-
+ments only, these data can be obtained in situ by deploying a
+multiparameter sonde into the well, followed by a submersible
+pump to draw water upward. If water-quality samples will be
+collected, pumping the water from the well to and through
+a flow-through cell that contains the instrument’s sensors is
+another efficient method for collecting field-parameter data
+without having to remove and redeploy sampling equipment.
+Flow-through cells are typically supplied by the manufacturers
+Table 6.8–5. 	Stabilization criteria for common field parameters.
+[±, plus or minus; °C, degrees Celsius; SC, specific electrical conductance; ≤, less than or equal to; %, percent; μS/cm, microsiemens per centimeter at 25
+degrees Celsius; >, greater than; DO, dissolved oxygen; mg/L, milligram per liter; TU, turbidity unit]
+Sensor
+Standard sensor stabilization criteria
+(Note that the actual accuracy of the sensor varies, depending on sensor model
+and manufacturer.)
+Temperature 	± 0.2 °C
+Specific electrical conductance (SC) 	± 5 μS/cm for SC ≤100 μS/cm, or ± 3% for SC >100 μS/cm
+DO 	± 0.2 mg/L
+pH 	± 0.1 pH units
+Turbidity 	± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or
+10% of the measured value for turbidity >100 TU
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__66feebbcbcec)
+
+riteria
+(Note that the actual accuracy of the sensor varies, depending on sensor model
+and manufacturer.)
+Temperature 	± 0.2 °C
+Specific electrical conductance (SC) 	± 5 μS/cm for SC ≤100 μS/cm, or ± 3% for SC >100 μS/cm
+DO 	± 0.2 mg/L
+pH 	± 0.1 pH units
+Turbidity 	± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or
+10% of the measured value for turbidity >100 TU-- 15 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3)
+
+-- 15 of 24 --8 	Chapter A6.8. Use of Multiparameter Instruments for Routine Field Measurements
+of multiparameter instruments. Considerations when using
+multiparameter instruments in groundwater are listed in the
+following bullet points. For information on field measurements
+and sampling methods, see NFM A6.0 and NFM A4. For
+information on measuring specific individual field parameters,
+see NFM A6.1 through NFM A6.7.
+• Connect all sampling-pump discharge-tubing fittings
+securely so that air does not enter the flow-through
+cell, as air can affect the accuracy and stability of the
+measurements.
+• Shield the flow-through cell from direct sunlight
+to minimize changes in the temperature of the
+groundwater as it is withdrawn. Changes in tempera-
+ture can affect the accuracy of other field-parameter
+measurements that rely on temperature corrections
+conducted within the sonde.
+• Wait a minimum of 60 seconds for the sensors and
+sonde body to reach thermal equilibrium with the water
+before monitoring field-parameter values. Some instru-
+ments require a longer equilibration time; check the
+manufacturer’s recommendations.
+• Sediment accumulated in the flow-through cell can
+adversely affect the sensors of multiparameter instru-
+ments. Check to make sure that fittings and flows
+are oriented to minimize the build-up of sediment
+(if present) in the flow-through cell.
+Field-measurement sensors must first be allowed to
+reach thermal equilibrium with the water body being
+sampled or monitored. This process can take from 60
+seconds to several minutes or more, depending on the
+instrument and the initial and final temperature range.
+5.0 Troubleshooting
+Multiparameter instruments that perform poorly can be
+tested to determine the cause of the issue. The complexity of
+problems and tests may increase with the number of sensors
+installed on the sonde. Troubleshooting tests should be per-
+formed in a prescribed order depending on the types of sensors
+in use and the potential for sensor contamination. General
+troubleshooting tips are provided in table 6.8–6. Detailed guid-
+ance is available from the instrument’s manufacturer. Consult
+the manufacturer’s user manual for the specific instrument
+being used.
+• If the display shows a warning message, do not use the
+instrument system until the error has been identified,
+understood, and corrected.
+• Unless otherwise specified, sensor ports on the sonde
+body should be dry before sensors are replaced. Use
+compressed air or isopropyl alcohol to dry the ports.
+Before using solvents, such as isopropyl alcohol, be
+sure they are compatible with the sonde. When using
+isopropyl alcohol, gently shake the excess liquid from
+the port and allow sufficient time for the liquid to
+evaporate before installing the sensor.
+WARNING: Alcohol and other solvents can damage
+certain types of plastics and o-rings and can destroy
+the sensing surface of the optical DO sensor.
+6.0 Reporting
+USGS personnel are instructed to record all field-param-
+eter values on electronic or paper field forms, and to complete
+and submit information on Analytical Services Request forms
+of the USGS National Water Quality Laboratory (NWQL) or
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea)
+
+other laboratories to which samples will be submitted. Record
+the method (where applicable) that was used to make field
+measurements. Quality-control checks of the data should be
+made by a second party and compared for accuracy and con-
+sistency. Field-parameter values are required to be entered into
+NWIS. Recording and storage guidelines for field measure-
+ments are summarized in table 6.8–7.-- 16 of 24 --
+
+6.0 Reporting 	9
+Table 6.8–6. 	Troubleshooting tips for typical problems with multiparameter instruments.
+[NIST, National Institute of Standards and Technology; NFM, USGS National Field Manual for the Collection of Water-Quality Data; DO, dissolved oxygen;
+SC, specific electrical conductance; ORP, oxidation-reduction (redox) potential]
+Problem 	Possible cause(s), corrective actions, and tips
+Unstable readings 	• Check for loose connections, low battery, or unstable wireless connection.
+• Unstable wireless connection; move sonde and handheld device closer together to stabilize
+connection or reset connection.
+Display does not turn on 	• Check that the batteries are installed properly and are fully charged.
+• Battery performance decreases with decreasing temperature. Carry spare batteries.
+Display does not show readings; the
+readings seem to be wrong or are
+scrambled
+• Check that the correct units are selected.
+• Inspect all connectors for moisture, dirt, damage, and loose connections.
+• Unstable wireless connection; move sonde and handheld device closer together to stabilize
+connection or reset connection.
+Initial drifting of the readings 	• Sensors not equilibrated to the water temperature.
+• Check that the sensors are appropriately submerged and at the required angle (if necessary).
+• Dislodge air bubbles from sensor surfaces.
+Temperature reading is unstable or
+inaccurate
+• Check for water in the port connector if present.
+• Check the temperature reading with a NIST-certified or NIST-traceable digital thermometer and
+replace the sensor if it does not meet accuracy standards. In some cases, only the manufacturer
+can replace a faulty temperature sensor.
+Reading is unstable or inaccurate.
+For individual parameters see
+the appropriate NFM chapters:
+DO (see also NFM A6.2), SC
+(see also NFM A6.3), pH (see
+also NFM A6.4), ORP (see also
+NFM A6.5), turbidity (see also
+NFM A6.7)
+• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s
+instructions. Replace damaged sensors and recalibrate.
+• Check the sensor connector for water; dry the connector and reinstall the sensor.
+• Allow sufficient time for the temperature sensor to equilibrate to the water temperature.
+• Check that the calibration solutions used were appropriate and not expired or subject to
+contamination.
+• Calibrations may have been rushed with inadequate rinsing of sensors. Check sensors and
+recalibrate if necessary.
+• Check pH reference junction; follow manufacturer’s instructions for cleaning. If possible,
+replace the junction which may be part of a replaceable cap.
+• If the ZoBell solution check fails, was temperature dependence of the ZoBell solution accounted
+for?
+• The SC sensor must be fully immersed for proper calibration and sample measurement. There
+must be no bubbles in the cell compartment if present.
+• The turbidity sensor wiper must be clean, activated, and rotating properly.
+• Check the age and condition of the DO sensor cap and replace according to manufacturer’s
+instructions if necessary.
+
+-- 17 of 24 --

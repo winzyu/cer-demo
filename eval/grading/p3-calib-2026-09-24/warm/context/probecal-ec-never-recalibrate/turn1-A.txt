@@ -1,0 +1,2056 @@
+### EC_K_1.0_probe.pdf (chunk EC_K_1.0_probe.pdf)
+
+Range 	5 − 200,000 μS/cm
+90% in 1s	Response time
+3,447 kPa (500 PSI)	Max pressure
+1 meter	Cable length
+No	Internal temperature sensor
+~10 years	Time before recalibration
+Graphite
+Reads 	Conductivity
+1 − 110 °C	Temperature range °C
+352m (1,157 ft)	Max depth
++/ – 2%	Accuracy
+Male SMA / Male BNC	Connector
+~10 years	Life expectancy
+Conductivity
+Gen 3
+Probe K 1.0
+(Optional)
+Revised 10/25
+V 4.2
+
+-- 1 of 9 --
+
+Operating principle
+An E.C. (electrical conductivity) probe measures the electrical conductivity in a solution.
+It is commonly used in hydroponics, aquaculture and freshwater systems to monitor the
+amount of nutrients, salts or impurities in the water.
+Inside the conductivity probe, two electrodes are positioned opposite from each other,
+an AC voltage is applied to the electrodes causing cations to move to the negatively
+charged electrode, while the anions move to the positively electrode. The more free
+electrolyte the liquid contains, the higher the electrical conductivity.
+AC voltage
+Epoxy body
+Graphite
+Epoxy body
+Graphite
+Epoxy body
+Glass stem
+Platinum
+ody
+e
+Epoxy body
+Graphite
+The entire conducting area must be
+submerged in order to get accurate
+readings.
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 9 --
+
+112.7mm
+(4.4”)
+150.3mm
+(5.9”)
+37.6mm
+(1.4”)
+12mm (0.5”)
+Cable Length
+1m (3.2’)
+29mm
+(1.1”)
+Ø 8mm
+Ø 2.6mm
+Optional
+Sensing area
+15.5mm
+(0.6”)
+16mm
+(0.6”)
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 9 --
+
+PVC
+ABS 	Polyethylene
+Titanium Nitride
+ABS
+Graphite
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Graphite
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Conductivity Probe K 1.0
+Part # ENV-40-EC-K1.0
+Complies with NSF/ANSI Standard 51
+Food Safe
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 9 --
+
+Specifications
+• 	Standard Lab use
+• 	Field use
+• 	Aquarium
+• 	Hydroponics
+• 	Fish keeping
+• 	Mixed aqueous/organic
+• 	Samples containing Heavy metals
+• 	Soil Samples
+• 	Strong reducing agents
+Typical applications
+This Conductivity probe can be 	fully
+submerged 	in fresh or salt water, up
+to the SMA connector indefinitely.
+Materials
+PVC
+ABS
+Polyethylene
+ABS 	Graphite
+Titanium Nitride
+K 1.0
+Max depth
+Cable length
+Weight
+Speed of response
+Measuring Surface
+Dimensions
+SMA connector
+Sterilization
+Food safe
+5 μS/cm – 200,000 μS/cm
+352m (1,157 ft)
+1 meter
+43 grams
+90% in 1 second
+Graphite
+12mm x 145.5mm (0.47" x 5.7")
+Male
+Chemical only
+Yes
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 9 --
+
+A conductivity probe is a very simple device. It is just two conductors with a fixed surface
+area at a fixed distance from each other. This distance and surface area is known as the
+conductivity cell. The cells distance and surface area is quantified as the conductivity cells
+K constant.
+How often do you need to
+recalibrate a conductivity probe?
+Conductivity probes work by measuring the electrical current of the water between two
+graphite plates. The plates do not go bad, or change, so recalibration is not necessary. After
+the first calibration your conductivity probe is good to go.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 9 --
+
+Extending the probe cable length
+You can extend the cable to greater than 100 meters with no loss of signal. Atlas Scientific
+has tested up to 300 meters without a problem, however you run the risk of turning your
+E.C. probe into an antenna, picking up noise along the length of your cable.
+If you want to extend your cable, we recommend that you use proper isolation, such as
+the Basic EZO TM Inline Voltage Isolator, or an i2 InterLink. Be sure to calibrate your
+probe with the extended cable.
+Extending a probe cable can be easily done with our SMA Extension Cables. Simply
+connect the SMA end of the probe to the Extension cable, and you are all set.
+If you need to water proof a SMA connection, we highly recommend using a product like
+Coax-Seal to safely cover and prevent any water damage that may occur.
+Water proof
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 9 --
+
+Helpful operating tips
+Be sure to watch out for air bubbles, as they can get caught between the two
+graphite plates and throw off your results. Lightly tap your conductivity probe to
+knock out any bubbles caught in the probe.
+Bubbles
+Over time conductivity probes can become dirty and covered in deposits, which can
+change the basic electrical properties of the probe and cause inaccurate readings.
+Soft coatings can be removed by lightly brushing around the conducting area.
+Probe cleaning
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 9 --
+
+Hard coatings should be chemically removed. We highly recommend you use the
+Atlas Scientific conductivity probe cleaner.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 9 --
+
+
+
+---
+
+### IORP_probe.pdf (chunk IORP_probe.pdf)
+
+Range 	-2000mV – 2000mV
+95% in 1s	Response time
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+No	Internal temperature sensor
+~1 Year	Time before recalibration
+Reads 	ORP
+Platinum	Sensing element
+1 − 99 °C	Temperature range °C
+70m (230’)	Max depth
+SMA or Tinned leads	Connector
++/– 1mV	Accuracy
+~4 Years +	Life expectancy
+or
+ORP Probe
+Industrial
+Gen 3
+with Platinum sensing element
+Revised 8/25
+V 3.2
+
+-- 1 of 11 --
+
+Operating principle
+ORP stands for oxidation/reduction potential. Oxidation is the loss of electrons and
+reduction is the gain of electrons. The output of the probe is represented in millivolts and
+can be positive or negative.
+Just like a pH probe measures hydrogen ion activity in a liquid; an ORP probe measures
+electron activity in a liquid. The ORP readings represents how strongly electrons are
+transferred to or from substances in a liquid. Keeping in mind that the readings do not
+indicate the amount of electrons available for transfer.
+pH Probe 	ORP Probe
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 11 --
+
+Add just a drop of bleach
+(which is an oxidizing agent)
+606.9
+Reading A
+605.3
+Reading B
+-234.6
+Reading A
+24.2
+Reading B
+A	
+A
+B	
+B
+Tap water 	Tap water
+The water is unreactive and has only trace amounts of electron movement. These
+readings are equivalent to the readings you see with an unconnected multimeter.
+An ORP probe has a platinum tip that is connected to a silver wire, surrounded by
+silver chloride. That silver wire is then connected to a KCL reference solution. Because
+platinum is an unreactive metal it can “silently observe” the electron activity of the
+liquid without becoming apart of whatever reaction is occurring in the liquid.
+When reading the ORP of a liquid that has very few electrons available for
+transfer, ORP readings can appear to be inconsistent.
+(Theoretical value)
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 3 of 11 --
+
+46.6mm
+(1.8”)
+Soaker bottle
++ 	–
+10ml
+Ø 8mm
+197mm
+(7.7”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Ø 2.8mm
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+Measurements
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 11 --
+
+Platinum
+Teflon
+PVC
+EPDM
+Delrin ®
+(body)
+Polyethylene
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Platinum
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Grade ORP Probe
+Part # ENV-50-ORP
+Complies with NSF/ANSI Standard 51
+Food Safe
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 11 --
+
+Body material
+Max depth
+Cable length
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+70m (230 ft)
+3m (9.8 feet)
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This ORP probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Platinum
+Teflon
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 11 --
+
+An ORP probe is a passive device that detects a current generated from the oxidation or
+reduction chemical substances in water. This current (which can be positive or negative)
+is very weak and cannot be detected with a multimeter, or an analog to digital converter.
+How often do you need
+to recalibrate an ORP probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that has
+generally weak levels of chemical reactions you will only need to recalibrate your probe
+once per year for the first 2 years. After that every ~6 months.
+If you are using the ORP probe in batch chemical manufacturing, industrial process, or
+in a solution that is known to have strong chemical reactions, then calibration should be
+done monthly or in extreme cases after each batch.
+V
+V
+0000
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 11 --
+
+AtlasScientific
+PWR
+RX
+TX
+225 	B	A
+ORP
+How to connect the
+industrial ORP probe
+The Atlas Scientific ™ Industrial ORP probe can be connected in several different ways.
+The following show two examples:
+Using our EZO Complete-ORP ™ you can easily connect the
+Gen 3 Industrial ORP probe, via the probes SMA connector.
+Gen 3 Industrial ORP probe
+with the SMA connector option.
+Gen 3 Industrial ORP probe
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial ORP probe, can
+be easily connected to our Industrial ORP Transmitter via
+the probes tinned leads.
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 11 --
+
+Remove the Industrial ORP probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the ORP probe must stay wet and cannot be
+allowed to dry out, this is why every Industrial ORP probe is shipped with a plastic cap
+containing ORP probe storage solution. The cap should remain on the probe until it is used.
+fi
+Long term storage
+When you are finished using the Industrial ORP probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has ORP probe storage
+solution within it. If not, just add some from the ORP probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 11 --
+
+Probe cleaning
+Coating of the platinum tip can lead to erroneous readings including shortened span
+(slope). The type of coating will determine the cleaning technique. Soft coatings can
+be removed by vigorous stirring or by the use of a squirt bottle. Organic chemical, or
+hard coatings, should be chemically removed. A light bleach solution or even a 5 – 10%
+hydrochloric acid (HCl) soak for a few minutes, often removes many coatings. Do not use
+abrasive materials on the ORP probe.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 11 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 11 --
+
+
+
+---
+
+### Industrial-DO-probe.pdf (chunk Industrial-DO-probe.pdf)
+
+Range 	0 − 100 mg/L
+~0.1 mg/L/per sec	Response time
+300 PSI	Max pressure
+3 Meters	Cable length
+Yes (PT-1000)	Internal temperature sensor
+~1 Year	Time before recalibration
+~ 4 Years	Life expectancy
+~18 Months	Maintenance
+Reads 	Dissolved Oxygen
+1 − 99 °C	Temperature range °C
+212m (694 ft)	Max depth
++/– 0.05 mg/L	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+D.O. Probe
+or
+Revised 4/26
+V 2.4
+
+-- 1 of 13 --
+
+Wastewater
+Treatment
+Food
+Production
+Chemical
+Production
+Envriomental
+Monitoring
+(No Organic Solvents)
+This Probe can be used for:
+2	Copyright © Atlas Scientific LLC
+
+-- 2 of 13 --
+
+Operating principle
+This galvanic dissolved oxygen probe consists of a HDPE membrane, an anode bathed
+in an electrolyte and a cathode. Oxygen molecules defuse through the probes membrane
+at a constant rate (without the membrane the reaction happens too quickly). Once the
+oxygen molecules have crossed the membrane they are reduced at the cathode and
+a small voltage is produced. If no oxygen molecules are present, the probe will output
+0 mV. As the oxygen increases so does the mV output from the probe. Each probe will
+output a different voltage in the presence of oxygen. The only thing that is constant is that
+0mV = 0 Oxygen.
+Electrolyte
+Cathode (Pure silver rod)
+Membrane
+Anode (Zinc)
+Time (sec)
+90%
+60%
+5 	10 	15 	20 	25 	30	0
+Dissolved Oxygen
+Stagnant water
+Oxygen being
+consumed by probe
+20%
+One of the drawbacks from using a galvanic
+probe is that it consumes a VERY small amount
+of the oxygen it reads. Therefore, a small amount
+of water movement is necessary to take accurate
+readings. Approximately 60 ml/min.
+3	Copyright © Atlas Scientific LLC
+
+-- 3 of 13 --
+
+Ø 4.4mm
+Ø 5.3mm
+D.O.
+D.O.
+PT-1000(There is no polarity)
+PT-1000
+175.5mm
+(6.9”)
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+47.9mm
+(1.8”)
+19.7mm (.7”)
+Cable Length
+3m (10’)
+3/4 NPT
+28.4mm
+(1.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+Measurements
+4	Copyright © Atlas Scientific LLC
+
+-- 4 of 13 --
+
+PVC
+PVCDelrin ®
+(body)
+Polyethylene
+HDPE
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+HDPE
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+ABS
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Dissolved Oxygen Probe
+Part # ENV-50-DO
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+Food Safe
+5	Copyright © Atlas Scientific LLC
+
+-- 5 of 13 --
+
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Temp. probe type
+Temp. accuracy
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+212m (694 ft)
+3m (10 feet)
+Yes
+Class A platinum, RTD
++/- (0.15 + (0.002*t))
+SMA or Tinned Leads
+195 grams
+(3/4") NPT
+Chemical only
+Yes
+Materials
+Polyethylene
+Delrin® thermoplastic
+ABS
+HDPE
+PVC 	PVC
+PVC
+PVC
+Polyethylene
+Polyethylene Titanium Nitride
+Titanium Nitride
+This Dissolved Oxygen probe can be
+fully submerged in fresh or salt water,
+up to the SMA connector or Tinned
+leads indefinitely.
+6	Copyright © Atlas Scientific LLC
+
+-- 6 of 13 --
+
+This galvanic dissolved oxygen probe is a passive device that generates a small voltage
+from 0mv – 60+ mv depending on the oxygen saturation of the sensing membrane. This
+voltage can easily be read by a multimeter or an analog to digital converter.
+Because every use case is different, there is no set schedule for recalibration.
+The dissolved oxygen probe reacts with oxygen in the water, the more oxygen it reacts
+with the more the probe is depleted of its electrolyte solution. Typically an industrial
+dissolved oxygen probe will last 2 years before the electrolyte is depleted (results will
+vary). When the electrolyte is depleted, the probe will read very low numbers. Best practice is
+to replace the electrolyte solution and membrane every 1 – 2 years.
+How often do you need to
+recalibrate a dissolved oxygen probe?
+V
+V
+0000
+7	Copyright © Atlas Scientific LLC
+
+-- 7 of 13 --
+
+9 - 36VDC
+	L H
+DO
+A 	Low 	High
+AtlasScientific
+PWR
+RX
+TX
+AtlasScientific
+PWR
+RX
+TX
+How to connect the industrial
+Dissolved Oxygen probe
+The Atlas Scientific ™ Gen 3 Industrial Dissolved Oxygen probe can be connected in
+several different ways. The following show two examples:
+For industrial purposes, the Gen 3 Industrial DO probe,
+can be easily connected to our Industrial DO Transmitter
+via the probes tinned leads.
+Using 	our 	EZO 	Complete-DO™ and
+EZO 	Complete-TMP™ you can easily
+connect the Gen 3 Industrial DO probe,
+via the probes SMA connectors.
+8	Copyright © Atlas Scientific LLC
+
+-- 8 of 13 --
+
+How to add more electrolyte solution
+During usage, a small amount of electrolyte solution within the dissolved oxygen probe
+will deplete. In this case, you will need to add more solution into the probe.
+To add more electrolyte solution: Carefully unscrew the probes membrane cap, and
+drain any remaining electrolyte solution. Using the supplied syringe, inject solution into
+the membrane cap until it's filled half way. Screw the membrane cap back onto probe.
+Once the probe is reassembled, rinse of the probe.
+1 	Rinse
+probe
+Fill half way
+2 	3 	4 	5 	6 	7
+RIGHT SIDE UP 	UPSIDE DOWN
+9	Copyright © Atlas Scientific LLC
+
+-- 9 of 13 --
+
+How to recondition the industrial
+Dissolved Oxygen probe
+During usage, a small amount of corrosion (zinc oxide) may build up around the anode of
+the probe, this will cause irregular readings. In this case, you will need to recondition the
+probe.
+To recondition the probe: Carefully unscrew the probes membrane cap, and drain any
+remaining electrolyte solution. Using a small file, carefully file off the corrsion buildup
+around the anode of the probe. Do not file the cathode, as this will damage the probe.
+Once the corrosion has been removed, rinse the off the anode.
+Using the supplied syringe, inject solution into the membrane cap until it's filled half
+way. Screw the membrane cap back onto probe. Once the probe is reassembled, rinse
+of the probe.
+1 	2
+anode
+cathode
+3 	4
+RIGHT SIDE UP 	UPSIDE DOWN
+10	Copyright © Atlas Scientific LLC
+
+-- 10 of 13 --
+
+Over time, the membrane can wear out, this will lead to irregular readings from
+the probe. To correct this issue, the probes membrane cap must be replaced.
+To replace membrane cap: Carefully unscrew the probes membrane cap, drain
+any remaining electrolyte solution; Then discard the damaged membrane cap.
+With a new membrane cap ready, fill the new membrane cap half way with electrolyte
+solution and screw back on to probe body.
+How to replace the membrane cap
+1 	2 	3
+RIGHT SIDE UP 	UPSIDE DOWN
+Fill half way
+5	4 	6
+OLD &
+DAMAGED
+NEW
+11	Copyright © Atlas Scientific LLC
+
+-- 11 of 13 --
+
+Over time dissolved oxygen probes can become dirty and covered in chemical deposits.
+Soft coatings can be removed by lightly brushing around the sides of the probe and
+membrane cap. If the probes membrane is in need of cleaning, use a mild bleach mixture
+to gently wash away any deposits.
+DO NOT USE A BRUSH TO CLEAN THE MEMBRANE
+If the probes membrane is ripped it must be replaced, as it will cause irregular readings.
+Probe cleaning
+12	Copyright © Atlas Scientific LLC
+
+-- 12 of 13 --
+
+Dried KCl residue
+from Electrolyte
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+13	Copyright © Atlas Scientific LLC
+
+-- 13 of 13 --
+
+
+
+---
+
+### IpH_probe.pdf (chunk IpH_probe.pdf)
+
+pH Probe
+Range 	0 − 14
+95% in 1s	Response time
++/- 0.001	Resolution
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+Double junction silver / silver chloride
+No Temp
+Reads 	pH
+-5 − 99 °C	Temperature range °C
+70m (230’)	Max depth
++/– 0.002	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+~1 Year	Time before recalibration
+~4 Years +	Life expectancy
+or
+Revised 11/25
+V 5.3
+
+-- 1 of 12 --
+
+Operating principle
+A pH (potential of Hydrogen) probe measures the hydrogen ion activity in a liquid.
+At the tip of a pH probe is a glass membrane. This glass membrane permits hydrogen
+ions from the liquid being measured to defuse into the outer layer of the glass, while
+larger ions remain in the solution. The difference in the concentration of hydrogen ions
+(outside the probe vs. inside the probe) creates a VERY small current. This current
+is proportional to the concentration of hydrogen ions in the liquid being measured.
+Base: pH > 7	Neutral: pH = 7	Acid: pH < 7
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 2 of 12 --
+
+46.6mm
+(1.8”)
+Soaker cap
+~3 – 4 pH
+pH
+197mm
+(7.7”)
+99.2mm
+(3.9”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+10ml
+Ø 2.8mm
+Ø 8mm
+Minimum
+Immersion
+Unique
+12-digit
+serial #
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 12 --
+
+Glass
+Teflon
+PVC
+EPDM
+Delrin ®
+(body) Polyethylene
+Titanium
+Nitride
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+Glass
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Food Safe
+Atlas Scientific LLC, hereby certifies that,
+Gen 3 Industrial pH Probe – No Temp
+Part # ENV-50-pH-NT
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 12 --
+
+Reference electrode
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Silver / Silver Chloride
+Delrin® thermoplastic
+70m (230 feet)
+3m (9.8 feet)
+No
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This pH probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Glass
+Teflon
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 12 --
+
+A pH electrode is a passive device that detects a current generated from hydrogen ion
+activity. This current (which can be positive or negative) is very weak and cannot be
+detected with a multimeter, or an analog to digital converter. This weak electrical signal
+can easily be disrupted and care should be taken to only use proper connectors and cables.
+The current that is generated from the hydrogen ion activity is the reciprocal of that
+activity and can be predicted using this equation:
+Because a pH probe is a passive device it can pick up voltages that are transmitted
+through the solution being measured. This will result in incorrect readings and will
+slowly damage the pH probe over time. In this instance, proper isolation is required.
+Where R is the ideal gas constant.
+T is the temperature in Kelvin.
+F is the Faraday constant.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 12 --
+
+AtlasScientific
+PWR
+RX
+TX
+9 - 36VDC
+pH
+How to connect the
+industrial pH probe
+The Atlas Scientific ™ Gen 3 Industrial pH probe - No Temp, can be connected in several
+different ways. The following show two examples:
+Using our EZO Complete-pH ™ you can easily connect the
+Gen 3 Industrial pH probe - No Temp, via the probes SMA
+connector.
+Gen 3 Industrial pH probe - No Temp
+with the SMA connector option.
+Gen 3 Industrial pH probe - No Temp
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial pH probe -
+No Temp, can be easily connected 	to our Industrial pH
+Transmitter via the probes tinned leads.
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 12 --
+
+Remove the Industrial pH probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the pH probe can be left dry for up to 3 weeks
+without damaging the probe, this is why every Industrial pH probe is shipped with a
+plastic cap containing pH probe storage solution. The cap should remain on the probe
+until it is used.
+Long term storage
+When you are finished using the Industrial pH probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has pH probe storage
+solution within it. If not, just add some from the pH probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+Ready to use
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 12 --
+
+Unlike most pH probes, this probe can dry out. It can be left dry for up to 3 weeks without
+damaging the probe. However, repeated wetting and drying cycles will eventually damage
+the probe. For best results, keep the probe wet at all times. But if the probe is left out to
+dry, it should not be considered damaged. It just needs to be rehydrated.
+If a pH probe is kept in a hot environment during shipping, KCl creep may cause the soaker
+bottle to dry out. KCl will form a salt channel that wicks the water out of the probe's soaker
+bottle.
+Follow these instructions to rehydrate your industrial pH probe:
+1. Place the probe into a beaker of tap water.
+2. Let the probe sit in the water for 3 – 5 mins.
+3. Add a scoop of KCL (best) or NaCl (good) to the beaker.
+(a scoop = so much salt that no human could drink the water)
+4. Let the probe sit in the salt water for 15 – 20 mins.
+5. Done.
+The probe is now ready to use.
+Probe can dry out
+
+-- 9 of 12 --
+
+Probe cleaning
+Coating of the pH bulb can lead to erroneous readings including shortened span (slope).
+The type of coating will determine the cleaning technique. Soft coatings can be removed
+by vigorous stirring or by the use of a squirt bottle. Organic chemical, or hard coatings,
+should be chemically removed using a light bleach solution. If cleaning does not restore
+performance, reconditioning may be tried. Do not use a brush or abrasive materials
+on the pH probe.
+How often do you need
+to recalibrate a pH probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that
+has generally weak levels of acids and bases you will only need to recalibrate your probe
+once per year for the first two years. After that every ~six months.
+If you are using the pH probe in batch chemical manufacturing, industrial process,
+or in a solution that is known to have strong acids and bases, then calibration should be
+done monthly or in extreme cases after each batch.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 12 --
+
+Probe reconditioning
+When reconditioning your pH probe is required due to aging, we recommend you use
+the Atlas Scientific pH probe reconditioning kit.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 12 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+12 Copyright © Atlas Scientific LLC
+
+-- 12 of 12 --
+
+
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__2cade3723a66, score 0.7163463515657038)
+
+tergents for many
+hours without damage.
+Figure 6.3–1. 	Diagram
+showing general guidelines
+for selecting an electrical
+conductivity probe with
+the optimum cell constant.
+Modified from chart in the
+YSI Model 3200 Operations
+Manual (YSI Incorporated,
+1999, p. 43). Definitions: cm-1,
+per centimeter; CO2, carbon
+dioxide; μS/cm at 25 °C,
+microsiemens per centimeter
+at 25 degrees Celsius.
+
+-- 12 of 24 --3.0 Calibration 	5
+• When additional cleaning is required, soak the probe
+in 5-percent volume per volume (v/v) hydrochloric
+acid for as long as 2 hours and then rinse thoroughly
+with DIW. Check the manufacturer’s recommenda-
+tions before using acid.
+• Caution: Platinum and platinum-iridium electrodes
+should not be cleaned in nitric acid (HNO3), aqua
+regia, or any other solution that is known to etch
+platinum or gold.
+Consult your instruction manual for specific storage
+instructions. Most conductivity probes, including probes with
+graphite electrodes, can be stored clean and dry; however,
+probes on multiparameter sondes are required to be stored
+in water (typically tap water) to prevent drying out of other
+sensors. Storage in water is acceptable while the probe is
+in use.
+3.0 	Calibration
+Specific conductance measurements are only as good
+as the calibration itself. Several factors must be considered
+when calibrating the meter. Thermal expansion of the con-
+ductivity cell can affect the cell constant; however, the cell
+constants (𝐾cell) of modern field probes are generally stable
+from 0 to 100 °C. Most conductivity standards are potassium
+chloride (KCl) solutions, and the linear (0.019–0.020) and
+nonlinear (International Organization for Standardization,
+1985) temperature-compensation factors (α) will produce
+reliable calibrations from 5 to 35 °C. Caution should be
+used when calibrating at temperatures greater than 35 °C,
+however, because the commonly used nonlinear (International
+Organization for Standardization, 1985) temperature compen-
+sation deviates substantially when applied to KCl solutions.
+Therefore, if a modern conductivity probe that expands
+minimally with temperature is used and the temperature of the
+water to be measured is between 5 and 35 °C, the temperature
+of the calibration solutions (either laboratory or in situ) is not
+expected to significantly affect the measurement of specific
+conductance of samples in the field.
+Conductivity standards are susceptible to contamination
+or dilution from residual solutions, including rinse water, and
+each calibration should be done with care. Low-conductivity
+standards (<200 μS/cm) are especially susceptible to con-
+tamination. Calibration in the laboratory prior to field
+measurement, for both specific conductance meters and
+multiparameter sondes, is recommended because the tempera-
+ture is regulated and the standard solutions are less susceptible
+to contamination.
+Specific conductance meters must be checked or calibrated
+before every field trip to ensure that the meter and probe
+are working properly. The accuracy of specific conductance
+measurements should be checked in the laboratory and in the
+field by conducting measurements on standards whose specific
+conductance is near the expected specific conductance of the
+sample. Measurements of specific conductance standards that
+are within ±5 μS/cm of the certified values for measurements
+≤100 μS/cm or ±3 percent of the certified values for measure-
+ments >100 μS/cm are considered accurate and do not warrant
+recalibration. Because specific conductance meters typically
+maintain their calibration, frequent recalibration is generally
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__d36f674ffd4f, score 0.7155130989050525)
+
+r a multipoint calibration, repeat steps
+4 through 6 for each standard, beginning with the
+lowest conductivity standard and continuing the
+calibration in ascending order.
+8. 	Record the following in the instrument log
+book, field sheets, or personal computing field
+forms (PCFFs):
+a. 	The concentrations and lot numbers of the
+conductivity standards and their known and
+measured specific conductance,b. 	The temperature of the standard solution,
+c. 	The water-temperature compensation
+utilized (unless the user changes the settings
+or uses a low-pH conductivity method, the
+temperature compensation may only need to
+be recorded once in the log book),
+d. 	The cell constant (one-point calibration)
+or the slope and intercept (multipoint
+calibration), and
+e. 	The meter type, meter serial number, and
+probe serial number.
+9. 	Verify that the new calibration parameters are
+consistent with previous calibrations and are
+within the limits established by the manufacturer.
+10. 	Discard the standard solution into a waste
+container, thoroughly rinse the cell with DIW,
+and dry.
+11. 	Check the accuracy of the calibration by
+measuring at least one additional standard. For
+a one-point calibration, the additional standard
+should be one that brackets the expected specific
+conductance value of the sample. For a multi-
+point calibration, the additional standard should
+have a value near the expected range of environ-
+mental values to be measured. The specific
+conductance of USGS SRSs also can be mea-
+sured to check accuracy. The specific conduc-
+tance of check standards should be within ±5 μS/
+cm for measurements ≤100 μS/cm or ±3 percent
+for measurements >100 μS/cm. Recalibrate the
+specific conductance meter if the measured spe-
+cific conductance of the check standards does not
+meet the calibration criteria.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__619a464ebb28, score 0.6992447125504601)
+
+ check is the battery voltage. Always have fresh
+batteries in meters and carry spares when taking meters out
+into the field.
+Check the voltage of batteries. Always have fresh batteries
+in field meters and carry spares.
+6.0 	Reporting Specific Conductance in
+Natural Waters
+• Follow USGS standard protocols for reporting spe-
+cific conductance in the National Water Information
+System (NWIS) database—• Report the value on the field forms to three signifi-
+cant figures for specific conductance ≥100 μS/cm or
+two significant figures for specific conductance <100
+μS/cm.
+• Enter field-determined specific conductance mea-
+surements on the USGS National Water Quality
+Laboratory (NWQL) Analytical Services Request
+(ASR) form using the correct parameter code.
+• Report the temperature-compensation factor in the
+comment field if a nonstandard temperature com-
+pensation is utilized (for example, if the low-pH
+temperature-compensation method is used).
+6.1 Uncertainty in Measurements of Specific
+Conductance
+The primary sources of uncertainty for specific con-
+ductance measurements are quality of calibration standards,
+temperature compensation, quality of the specific conductance
+meter and probe, and contamination of the sample during
+measurement. The uncertainty for most routine specific
+conductance measurements is estimated to be <5 μS/cm for
+specific conductance ≤100 μS/cm or <3 percent of the most
+probable value for specific conductance >100 μS/cm. This
+uncertainty was estimated by using results from multiple inter-
+laboratory comparison studies performed by the USGS QSB.
+Comparison studies of specific conductance were conducted
+over 19 years, and included 74 SRSs whose specific conduc-
+tance ranged from 5 to 1,100 μS/cm; 16 to 93 laboratories
+participated in each SRS study. The QSB provides SRSs for
+specific conductance quality-assurance testing. Additionally,
+all USGS WMA personnel who measure specific conductance
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__e49322bacce3, score 0.6983696509279266)
+
+eaning and drying
+• Disposable laboratory gloves and glasses
+• Flasks or beakers
+• Waste-disposal container
+• Multiparameter sonde sensor guard and calibration cup
+• Spare electrical conductivity probe
+• Spare batteries
+sondes. Probes containing dip conductivity cells are straight-
+forward to use as they are immersed in the water during
+measurement, can be used in flowing or static waters, and arerelatively easy to clean and maintain. Other less commonly
+used conductivity cells include a cup with built-in electrodes
+that hold the sample during measurement and a flow-through
+conductivity cell that is connected to a fluid line that maintains
+a closed system during measurement. In addition to the cell
+type, the material used in the cell body (epoxy or plastic—for
+example, acrylonitrile butadiene styrene (ABS) or polyvinyli-
+dene fluoride [PVDF]), stainless steel, or Pyrex glass) and
+electrodes (graphite, platinum, or platinum-iridium) should
+be considered when selecting equipment. Probes constructed
+of epoxy, plastic, or stainless steel with graphite electrodes
+are well suited for field use, whereas Pyrex glass probes with
+platinum-iridium electrodes are more fragile and better suited
+for laboratory use. Modern conductivity cells generally con-
+tain thermistors used for automatic temperature compensation.
+Thermistors should be checked on a regular basis to assure
+optimum performance; malfunctioning thermistors will pro-
+duce erroneous specific conductance values. Because probes
+are used more commonly for field measurements, this chapter
+focuses on their use; however, similar procedures and criteria
+should be used when using conductivity cups or flow-through
+conductivity cells.
+Specific conductance meters have an optimal range for
+measurement of conductance; for modern meters, this range
+can be large because of built-in auto-ranging capabilities.
+Manufacturer’s recommendations for the appropriate range
+
+---
+
+### https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/EQASOP-FieldCalibrat.pdf (chunk epa-sop-field-instrument-calibration-2010.pdf__591e8ba6ee04, score 0.6936257835575466)
+
+bel before use) to water. This solution is prepared prior to the sampling
+event. ‘Note: this solution can be made without cobalt chloride, but the probe will take
+
+_ longer to respond to the low DO concentration.
+
+SPECIFIC CONDUCTANCE
+
+Conductivity is used to measure the ability of an aqueous solution to carry an electrical current.
+Specific conductance is the conductivity value corrected to 25°C.Most instruments are calibrated against a single standard which is near the specific conductance
+of the environmental samples. The standard can be either below or above the specific
+conductance of the environmental samples. A second standard is used to check the linearity of
+the instrument in the range of measurements.
+
+When performing specific conductance measurement on groundwater or surface water and the
+measurement is outside the initial calibration range defined by the two standards, the instrument
+will need to be re-calibrated using the appropriate standards. .
+
+Specific Conductance Calibration Procedure
+1. Allow the calibration standards to equilibrate to the ambient temperature.
+2. Fill calibration containers with the standards so each standard will cover the probe and
+
+temperature sensor. Remove probe from its storage container, rinse the probe with
+deionized water or a small amount of the standard (discard the rinsate), and place the
+EQASOP-FieldCalibrat
+Region 1 Calibration of
+Field Instruments
+Revision Number: 2
+Date: June 3, 1998
+Revised January 19, 2010
+Page 11 of 18
+
+probe into the standard.
+3. Select measurement mode. Wait until the probe temperature has stabilized.
+
+4. Select calibration mode, then specific conductance. Enter the specific conductance
+standard value. Make sure that the units on the standard are the same as the units used
+
+by the instrument. If not, convert the units on the standard to the units used by the
+instrument. -
+
+5. Select measurement mode. The reading should remain within manufacturer’s
+specifications. If it does not, re-calibrate, If readings continue to change after re-
+calibration, consult manufacturer or replace calibration solution. ,
+
+6. Remove probe from the standard, rinse the probe with deionized water or a small
+amount of the second standard (discard the rinsate), and place the probe into the
+second standard. The second standard will serve to verify the linearity of the
+instrument. Read the specific conductance value from the instrument and compare the
+value to the specific conductance on the standard. The two values should agree within
+the specifications of the instrument. If they do not agree, re-calibrate. If readings do
+not compare, then the second standard may be outside the linear range of the
+
+" instrument. Use a standard that is closer to the first standard and repeat the
+
+verification. If values still do not compare, try cleaning the probe or consult the
+manufacturer.
+
+7. After the calibration has been completed, rinse the probe with deionized water and
+store the probe according to manufacturer’s instructions. .
+
+8. Record the calibration information on Table 1.
+
+Note: for projects where specific conductance is not a critical measurement it may be possible to
+calibrate with one standard in the range of the expected measurement.
+
+5.5 | OXIDATION/REDUCTION POTENTIAL (ORP)
+The oxidation/reduction potential is the electrometric difference measured in a solution between
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__aed72e2efaab, score 0.6906246566387133)
+
+eparations
+The service performed on all equipment, whether a full
+calibration, calibration check, or replacement or repair of
+parts for the instrument, and whether performed in the office,
+laboratory, or field, must be accurately recorded and dated in
+the instrument or sensor log book.
+Field-measurement instruments are required to be main-
+tained on a regular schedule and performance tested beforefield use, as described below:
+1. 	Check all electrical connections and the charge on
+the batteries, as applicable for the instrument in
+use. Batteries should be in good condition with as
+high a state of charge as possible. Replace or charge
+questionable batteries.
+2. 	Thermistors/thermometers must be calibrated
+and field checked before use, as described in
+NFM 6.1, Temperature.
+3. 	Perform a 100-percent oxygen-saturation calibration
+check (see section 2.2). This performance check does not
+negate the need for an onsite sensor-calibration check
+at oxygen saturation. The result of the check should be
+within +/- 0.2 mg/L of the 100-percent saturated concen-
+tration determined from the DO solubility tables found at
+https://water.usgs.gov/software/DOTABLES.
+4. 	Perform a zero-DO sensor-performance check.
+• Prepare the zero-DO sodium sulfite
+solution (see table 6.2–1).
+• Before immersing the sensor in the zero-DO solu-
+tion, remove the wiper (or sponge) from the unit to
+avoid saturating it with the sodium sulfite solution.
+(Not all instruments have a wiper.)
+• Immerse the sensor into the zero-DO solution,
+wait for reading to stabilize (usually within
+5–10 minutes), record reading.
+• If the instrument reading exceeds 0.2 mg/L in the
+zero-DO solution, check DO again with a freshly
+prepared zero-DO solution; if a reading greater than
+0.2 mg/L persists, contact the instrument manufac-
+turer and inquire whether the luminophore module
+should be replaced.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf (chunk usgs-nfm-a6.1-temperature.pdf__39a5287b84ed, score 0.6889086299306267)
+
+s—replace with new batteries.
+• Calibration expired—verify or recertify.
+Erratic sensor readings 	• Bad or dirty connection at meter or sensor connections—tighten or clean the connections.
+• Break in the cables—replace cables, which may require recertification.
+• Weak batteries—replace with new batteries.
+Readings are slow to stabilize 	• Dirty sensor—clean the sensor to remove dirt and oily film.-- 20 of 23 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__f9d002693709, score 0.6888334027896127)
+
+cted specific conductance of the
+sample. Measurements of specific conductance standards that
+are within ±5 μS/cm of the certified values for measurements
+≤100 μS/cm or ±3 percent of the certified values for measure-
+ments >100 μS/cm are considered accurate and do not warrant
+recalibration. Because specific conductance meters typically
+maintain their calibration, frequent recalibration is generallyunnecessary and may not improve data accuracy. If calibration
+in the field is required, make certain the temperature of the
+standards is stable and between 5 and 35 °C.
+Specific conductance meters utilize either a one- or a
+multipoint calibration procedure. Both calibration proce-
+dures work well and the instruction manual accompanying
+the specific conductance meter as well as the NFM should be
+followed closely. Record and track the cell constant (one-point
+calibration) or slope (multipoint calibration), as deviations can
+be used to identify inaccurate calibrations or faulty equipment.
+To verify that the specific conductance meter is responding
+properly at low values of specific conductance, check the zero
+response of the dry conductivity cell in air or DIW. The mea-
+sured specific conductance of DIW should be <3 μS/cm.
+Specific conductance meters are typically calibrated
+with KCl solutions of known concentration that are traceable
+to National Institute of Standards and Technology (NIST).
+Specific conductance standards with certificates of analyses
+(NIST traceable) with values between 50 and 50,000 μS/cm
+are available from USGS One Stop.1 Electrical conductivi-
+ties of highly accurate KCl standards (0.01, 0.1, and 1.0 mole
+per kilogram [mol/kg]) were determined by Pratt and others
+(2001) and are shown in table 6.3–2. Extreme care should be
+used when calibrating with dilute (<200-μS/cm) solutions,
+as small amounts of contaminants or minor dilution can
+substantially affect the calibration. Triple rinsing with DIW
+and calibration standards is required. In addition to conduc-
+tivity standards, the USGS Quality Systems Branch (QSB)
+provides a variety of standard reference samples (SRSs),
+prepared from natural waters, for quality-assurance testing and
+measurements of specific conductance.
+3.1 One-Point Calibration—Determination of
+the Cell Constant
+Many specific conductance meters and multiparameter
+sondes utilize a one-point calibration for measurement of
+specific conductance. Calibration of specific conductance
+meters using a one-point calibration involves determination
+of the cell constant (𝐾cell) by measuring the conductance (G)
+of a standard solution with a known conductivity (κ) (see
+equation 1, where the value of κ is known). Meters utiliz-
+ing one-point calibrations typically require calibration with
+1Equipment and supplies that are tested and quality assured are available
+to USGS field studies from the National Field Supply Service (NFSS)
+and the Hydrologic Instrumentation Facility (HIF), and are sold through
+the USGS One Stop ordering system (accessed September 11, 2017, at
+https://1stop.usgs.gov/, internal USGS access only).
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__85db7e026099, score 0.6862593805201674)
+
+the expected measurement or deployment
+range of measurements.
+• Check sensor ports to ensure that sensors are prop-
+erly installed or that empty ports are sealed. Sensors
+from which data are not being collected routinely
+can be removed from the sonde for safe storage. The
+temperature sensor should not be removed. All electri-
+cal connections must be clean, dry, waterproof, and
+protected from dust.-- 14 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__d8ae5e803001, score 0.6859245820647852)
+
+to bias from dilution or contamina-
+tion and are difficult to measure accurately. Therefore, it is
+recommended to calibrate specific conductance with stan-
+dards with values that are greater than 200 μS/cm. After the
+meter is calibrated, check the accuracy of the calibration by
+measuring the specific conductance of at least one additional
+standard near the expected range of environmental values tobe measured. Measurements of specific conductance standards
+that are within ±5 μS/cm of the certified values for measure-
+ments ≤100 μS/cm or ±3 percent of the certified values for
+measurements >100 μS/cm are considered accurate and do not
+warrant recalibration.
+Deionized water and calibration standards with specific
+conductance less than 200 μS/cm are susceptible to
+bias from dilution or contamination and are difficult to
+measure accurately. It is recommended to calibrate specific
+conductance with standards with values that are greater
+than 200 μS/cm. After the meter is calibrated, check the
+accuracy of the calibration by measuring the specific
+conductance of standards near the expected range of
+environmental values to be measured.
+3.3 Meter Calibration Procedure
+The calibration procedure described in this section
+applies to most field specific conductance meters equipped
+with a probe containing a dip-style conductivity cell and built-
+in temperature compensation. Refer to the meter’s manual
+for specific instructions. Calibration in the laboratory prior to
+field measurement is recommended because the temperature
+is regulated and the standard solutions are less susceptible to
+contamination. If calibration in the field is required, the same
+procedure should be followed. Make certain the temperature
+of the standards is stable and between 5 and 35 °C.
+Calibration in the laboratory prior to field measurement
+is recommended because the temperature is regulated
+and the standard solutions are less susceptible to
+contamination.
+• Meter calibration steps—
+1. 	If possible, select a probe with a conductivity cell
+that will most accurately measure the expected
+specific conductance (fig. 6.3–1). However, many
+modern specific conductance meters and multipa-
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__b616630e7511, score 0.6859120438198874)
+
+d measurements, this chapter
+focuses on their use; however, similar procedures and criteria
+should be used when using conductivity cups or flow-through
+conductivity cells.
+Specific conductance meters have an optimal range for
+measurement of conductance; for modern meters, this range
+can be large because of built-in auto-ranging capabilities.
+Manufacturer’s recommendations for the appropriate range-- 11 of 24 --
+
+4 	Chapter A6.3. Specific Conductance
+of each meter should be followed, although most field meters
+in use today have auto-ranging capability. Also, a conductiv-
+ity probe with a suitable cell constant for the types of waters
+being measured should be used. The approximate ranges of
+specific conductance for a variety of water types with the cor-
+responding cell constants that would most likely produce accu-
+rate results are shown in figure 6.3–1. The user should check
+the meter specifications to verify that the meter and probe
+can be used to measure the entire range of expected specific
+conductance in the field.
+2.2 Equipment Maintenance
+Maintenance of specific conductance equipment includes
+periodic inspections of meters and probes and checks on
+instrument operation and performance.
+• To maintain the specific conductance meter in good
+operating condition—
+• Protect the meter and probe from excessive heat
+and cold. Keep the equipment free from dust and
+transport it in a designated case for protection during
+transport.
+• Keep all cable connectors dry and free from dirt and
+salts.
+• Ensure the batteries are adequately charged and cor-
+rosion free.
+• Keep the probes clean. Probes may build up dirt and
+corrosion that can affect measurements; therefore,
+regular cleaning is required.
+2.2.1 Conductivity Probe Cleaning, Storage, and
+Maintenance
+Accurate and precise measurement of specific conduc-
+tance requires a well-maintained and clean conductivity probe.
+A probe that is dirty or wet with solution other than the sample
+may contaminate the measured solution and bias the mea-
+surement of specific conductance. Conductivity probes must
+be clean and the electrodes free from scratches to produce
+accurate results. Refer to the manufacturer’s instructions for
+storage and additional maintenance information.
+• To clean conductivity probes—
+• Clean the probe thoroughly by rinsing with copious
+amounts of deionized water (DIW) before and after
+making a measurement. This is sufficient cleaning in
+most cases.
+• Epoxy and graphite conductivity probes can be
+gently wiped with a clean laboratory tissue to
+remove any residues.
+• Never wipe or scour platinum-coated electrodes.
+• Remove oily residues or other chemical residues
+with a detergent solution and then rinse thoroughly
+with DIW. Probes can soak in detergents for many
+hours without damage.
+Figure 6.3–1. 	Diagram
+showing general guidelines
+for selecting an electrical
+conductivity probe with
+the optimum cell constant.
+Modified from chart in the
+YSI Model 3200 Operations
+Manual (YSI Incorporated,
+1999, p. 43). Definitions: cm-1,
+per centimeter; CO2, carbon
+dioxide; μS/cm at 25 °C,
+microsiemens per centimeter
+at 25 degrees Celsius.
+
+-- 12 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__603c9e54d9bd, score 0.6855004274677209)
+
+-- 14 of 24 --3.0 Calibration 	7
+rameter sondes have one all-purpose conductivity
+cell designed to measure a wide range of specific
+conductance values in natural waters.
+2. 	Inspect the meter and conductivity cell for
+damage. Check the batteries and change or
+charge the batteries if needed. Make sure the
+cables are clean and properly connected.
+3. 	Select calibration standards. If possible, use
+specific conductance standards that bracket
+(multipoint calibration) or are near (one-point
+calibration) the expected specific conductance
+of the samples. Some meters utilize an auto-
+matic calibration procedure and can only be
+calibrated with standards having certain specific
+conductance (for example, 100, 500, 1,413, or
+12,900 μS/cm). For a multipoint calibration,
+begin the calibration with the standard that has
+the lowest specific conductance and continue
+the calibration by using standards in ascending
+order. Use fresh standards and verify that the
+date on the standards has not expired. Do not use
+expired standards.
+4. 	Fill the calibration cup or beaker to about one
+third full with DIW. Place the probe in the beaker
+or calibration cup and thoroughly rinse the probe
+(note that some probes on multiparameter sondes
+require an aggressive rinse procedure). Rinse the
+probe with the DIW from the cup or beaker and
+shake off the excess liquid. Dispose of the solu-
+tion. Repeat this procedure for a total of three
+times. Do not calibrate using DIW; however, the
+measured specific conductance of DIW should be
+<3 μS/cm.
+5. 	Fill the calibration cup or beaker to about one-
+third full with the specific conductance standard.
+For a one-point calibration, this will be a
+standard chosen that is near the expected specific
+conductance of the sample. For a multipoint
+calibration, this will be the specific conductance
+standard with the lowest value of the standards
+that have been chosen for the calibration. Place
+the probe in the calibration cup or beaker and
+swirl the probe to thoroughly rinse. Ensure that
+the conductivity cell (all electrodes on the probe)
+is completely submerged. Rinse the probe with
+a small amount of the standard and shake off
+excess liquid. Dispose of the solution. Repeat this
+procedure for a total of three times.
+6. 	Fill the calibration cup or beaker with the specific
+conductance standard, place the probe in the
+solution, gently swirl the solution to ensure all
+air bubbles are removed from the cell, and allow
+the solution and probe to equilibrate. Monitor the
+temperature and conductance, and when both are
+stable, begin the calibration following the meter’s
+calibration procedure.
+7. 	For one-point calibration, the cell constant can
+now be determined. For multipoint calibration,
+the calibration of the first point can now be deter-
+mined. For a multipoint calibration, repeat steps
+4 through 6 for each standard, beginning with the
+lowest conductivity standard and continuing the
+calibration in ascending order.
+8. 	Record the following in the instrument log
+book, field sheets, or personal computing field
+forms (PCFFs):
+a. 	The concentrations and lot numbers of the
+conductivity standards and their known and
+measured specific conductance,
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__75d13350deef, score 0.6816563362686996)
+
+
+4. 	Dissolved-oxygen concentration (DO)—See
+NFM A6.2 for specific procedures.
+5. 	Oxidation-reduction potential (ORP)—See
+NFM A6.5 for specific procedures.
+6. 	Turbidity—See NFM A6.7 for specific
+procedures.
+7. 	Ion-selective electrodes—Followed by
+chlorophyll-fluorescence and other sensors.
+• Calibration records must be maintained and entered
+into the appropriate instrument or sensor logbook andfield form at the time of calibration or verification.
+• Keep a hard or electronic copy of past field measure-
+ments in the field or site folder. These records contain
+vital information that can be referenced if performance
+questions arise. See NFM chapter A1 for more infor-
+mation on field forms and site folders.
+• Follow the manufacturer’s instructions on how to
+operate the instrument model and sensors being used.
+Make sure the units of measurement are set correctly
+in the instrument’s software setup.
+• Follow NFM guidance in chapters A6.1 through A6.7
+for selection of standards, temperature ranges, rinsing
+procedures, and specific calibration procedures for each
+parameter. Note that generally standards are chosen
+that bracket the expected measurement or deployment
+range of measurements.
+• Check sensor ports to ensure that sensors are prop-
+erly installed or that empty ports are sealed. Sensors
+from which data are not being collected routinely
+can be removed from the sonde for safe storage. The
+temperature sensor should not be removed. All electri-
+cal connections must be clean, dry, waterproof, and
+protected from dust.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea, score 0.6808312722560372)
+
+other laboratories to which samples will be submitted. Record
+the method (where applicable) that was used to make field
+measurements. Quality-control checks of the data should be
+made by a second party and compared for accuracy and con-
+sistency. Field-parameter values are required to be entered into
+NWIS. Recording and storage guidelines for field measure-
+ments are summarized in table 6.8–7.-- 16 of 24 --
+
+6.0 Reporting 	9
+Table 6.8–6. 	Troubleshooting tips for typical problems with multiparameter instruments.
+[NIST, National Institute of Standards and Technology; NFM, USGS National Field Manual for the Collection of Water-Quality Data; DO, dissolved oxygen;
+SC, specific electrical conductance; ORP, oxidation-reduction (redox) potential]
+Problem 	Possible cause(s), corrective actions, and tips
+Unstable readings 	• Check for loose connections, low battery, or unstable wireless connection.
+• Unstable wireless connection; move sonde and handheld device closer together to stabilize
+connection or reset connection.
+Display does not turn on 	• Check that the batteries are installed properly and are fully charged.
+• Battery performance decreases with decreasing temperature. Carry spare batteries.
+Display does not show readings; the
+readings seem to be wrong or are
+scrambled
+• Check that the correct units are selected.
+• Inspect all connectors for moisture, dirt, damage, and loose connections.
+• Unstable wireless connection; move sonde and handheld device closer together to stabilize
+connection or reset connection.
+Initial drifting of the readings 	• Sensors not equilibrated to the water temperature.
+• Check that the sensors are appropriately submerged and at the required angle (if necessary).
+• Dislodge air bubbles from sensor surfaces.
+Temperature reading is unstable or
+inaccurate
+• Check for water in the port connector if present.
+• Check the temperature reading with a NIST-certified or NIST-traceable digital thermometer and
+replace the sensor if it does not meet accuracy standards. In some cases, only the manufacturer
+can replace a faulty temperature sensor.
+Reading is unstable or inaccurate.
+For individual parameters see
+the appropriate NFM chapters:
+DO (see also NFM A6.2), SC
+(see also NFM A6.3), pH (see
+also NFM A6.4), ORP (see also
+NFM A6.5), turbidity (see also
+NFM A6.7)
+• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s
+instructions. Replace damaged sensors and recalibrate.
+• Check the sensor connector for water; dry the connector and reinstall the sensor.
+• Allow sufficient time for the temperature sensor to equilibrate to the water temperature.
+• Check that the calibration solutions used were appropriate and not expired or subject to
+contamination.
+• Calibrations may have been rushed with inadequate rinsing of sensors. Check sensors and
+recalibrate if necessary.
+• Check pH reference junction; follow manufacturer’s instructions for cleaning. If possible,
+replace the junction which may be part of a replaceable cap.
+• If the ZoBell solution check fails, was temperature dependence of the ZoBell solution accounted
+for?
+• The SC sensor must be fully immersed for proper calibration and sample measurement. There
+must be no bubbles in the cell compartment if present.
+• The turbidity sensor wiper must be clean, activated, and rotating properly.
+• Check the age and condition of the DO sensor cap and replace according to manufacturer’s
+instructions if necessary.
+
+-- 17 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__63e59ce27f1c, score 0.6773500856029087)
+
+libration in the laboratory prior to field measurement
+is recommended because the temperature is regulated
+and the standard solutions are less susceptible to
+contamination.
+• Meter calibration steps—
+1. 	If possible, select a probe with a conductivity cell
+that will most accurately measure the expected
+specific conductance (fig. 6.3–1). However, many
+modern specific conductance meters and multipa--- 14 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__05c228f6e257, score 0.6770665090066723)
+
+f check standards should be
+within ±5 μS/cm for measurements ≤100 μS/cm
+or ±3 percent for measurements >100 μS/cm.
+Recalibrate if necessary.
+2. 	Install the specific conductance probe.
+a. 	For measurement in a downhole system—
+i. 	Lower the probe to the sampling point.
+ii. 	Remove air trapped in the conductiv-
+ity cell by gently moving the probe up
+and down under the water; read the
+meter display.-- 18 of 24 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a65/twri9a_6.5_v_1.2.pdf (chunk usgs-nfm-a6.5-orp.pdf__d38f4e5fb14d, score 0.6767042685422343)
+
+ reference junction.
+b. 	Allow the electrode to reach thermal equilibrium (15 to 30
+minutes).
+c. 	Record the potential reading.
+d. 	Follow steps 5 through 7 of the equipment test procedure in
+section 6.5.2.
+6. Record all data and calculate Eh (see EXAMPLE, section 6.5.2).
+Fill out the Eh data record form for field measurements
+fig. 6.5–2).
+7. Quality control—Repeat the measurement.
+
+-- 15 of 22 --Reduction-Oxidation Potential, Version 1.2 (9/2005) 	U.S. Geological Survey TWRI Book 9
+16—REDOX
+TECHNICAL NOTE: The response of the Eh measurement
+system may be considerably slower than that of the pH system
+and that response also may be asymmetrical: the time required
+for stabilization may be longer when moving from an oxidizing
+to reducing environment or vice versa. If the readings do not
+stabilize within about 30 minutes, record the potential and its
+drift; assume a single quantitative value is not possible. If an
+estimate of an asymptotic final (hypothetical) potential in such
+a drifting measurement is desired, refer to the method used by
+Whitfield (1974) and Thorstenson and others (1979).
+6.5.3.A INTERFERENCES AND LIMITATIONS
+Measurements should not be carried out without an awareness of the
+interferences and limitations inherent in the method.
+X 	Organic matter and sulfide may cause contamination of the
+electrode surface, salt bridge, or internal electrolyte, which can
+cause drift or erratic performance when reference electrodes are
+used (American Public Health Association and others, 2001).
+X 	Hydrogen sulfide can produce a coating on the platinum
+electrode that interferes with the measurement if the electrode is
+left in sulfide-rich water for several hours (Whitfield, 1974; Sato,
+1960).
+X 	The platinum single and combination redox electrodes may yield
+unstable readings in solutions containing chromium, uranium,
+vanadium, or titanium ions and other ions that are stronger
+reducing agents than hydrogen or platinum (Orion Research
+Instruction Manual, written commun., 1991).
+X 	Do not insert redox electrodes into iron-rich waters directly after
+the electrode(s) contact ZoBell’s. An insoluble blue precipitate
+coats the electrode surface because of an immediate reaction
+between ferro- and ferricyanide ions in ZoBell’s with ferrous and
+ferric ions in the sample water, causing erratic readings.
+Many elements with more than one oxidation state do not exhibit
+reversible behavior at the platinum electrode surface and some systems
+will give mixed potentials, depending on the presence of several differ-
+ent couples (Barcelona and others, 1989; Bricker, 1982, p. 59–65;
+Stumm and Morgan, 1981, p. 490–495; Bricker, 1965, p. 65). Methane,
+bicarbonate, nitrogen gas, sulfate, and dissolved oxygen generally are
+not in equilibrium with platinum electrodes (Berner, 1981).
+
+-- 16 of 22 --
+
+---
+
+### https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/EQASOP-FieldCalibrat.pdf (chunk epa-sop-field-instrument-calibration-2010.pdf__dd989c168d7e, score 0.676365250768558)
+
+falls outside the calibration range, the instrument must be re-
+calibrated to bracket the new range before continuing measurements. Otherwise, the
+measurements that are outside the calibration range will need to be qualified.
+
+This SOP requires that the manufacturer’s instruction manual (including the instrument
+specifications) accompany the instrument into the field.
+
+4.0 FREQUENCY OF CALIBRATIONAt a minimum, the instrument is calibrated prior to use on the day the measurements are to be
+performed. A post calibration check at the end of the day is performed to determine if the
+instrument drifted out of calibration. Some projects may require more frequent calibration
+checks throughout the day in addition to the check at the end of the day. For these checks, the
+
+_ instrument can be recalibrated during the day if the instrument drifted out of calibration and only
+- the data measured prior to the check would need to be qualified. The calibration/post calibration
+data information is recorded in Table 1.
+
+ 
+
+Instruments (e.g., sonde) that monitor continuously over a period of time are calibrated before
+deployment. When these instruments are recovered, the calibration is checked to determine if
+any of them drifted out of calibration.
+
+Some instruments lose their calibration criteria when they are turned off. Those instruments can
+either be left on all day (battery dependent) or calibrated at each sampling location. If they are
+calibrated at each sampling location, a post calibration check is not needed.
+
+Ideally, the temperature of the standards should be close to the temperature of the ambient water
+that is being measured.
+
+5.0 CALIBRATION PROCEDURES
+
+Prior to calibration, all instrument probes and cable connections must be cleaned and the battery
+checked according to the manufacturer’s instructions. Failure to perform these steps (proper
+maintenance) can lead to erratic measurements.
+
+Ifa multi-probe instrument is to be used, program the instrument to display the parameters to be
+
+measured (€.g., temperature, pH, percent dissolved oxygen, mg/L dissolved doxygen, specific -
+conductance, and ORP).
+EQASOP-FieldCalibrat
+Region 1 Calibration of
+
+Field Instruments
+Revision Number: 2
+Date: June 3, 1998
+Revised January 19, 2010
+Page 6 of 18
+
+The volume of the calibration solutions must be sufficient to cover both the probe and
+temperature sensor (see manufacturer’s instructions for the volume to be used).
+
+Check the expiration date of the standards. Do not use expired standards.
+
+All standards are stored according to manufacturer instructions.
+
+5.1 TEMPERATURE
+
+Most instrument manuals state there is no calibration of the temperature sensor, but the
+temperature sensor must be checked to determine its accuracy. This accuracy check is performed
+at least once per year and the accuracy check date/information is kept with the instrument. If the
+accuracy check date/information is not included with the instrument or the last check was over a
+year, the temperature sensor accuracy needs to be checked at the beginning of the sampling event.
+If the instrument contains multiple temperature sensors, each sensor must be checked. This
+procedure is not normally perform in the field. If the instrument is obtained from a rental
+company, the rental company should performed the calibration check and include with the
+instrument documentation that it was performed.
+
+Verification Procedure
+
+1. Fill a container with water and adjust the water temperature to below the water body’s
+temperature to be measured. Use ice or warm water to adjust the temperature.

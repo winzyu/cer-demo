@@ -1,0 +1,360 @@
+### https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/EQASOP-FieldCalibrat.pdf (chunk epa-sop-field-instrument-calibration-2010.pdf__dd989c168d7e)
+
+falls outside the calibration range, the instrument must be re-
+calibrated to bracket the new range before continuing measurements. Otherwise, the
+measurements that are outside the calibration range will need to be qualified.
+
+This SOP requires that the manufacturer’s instruction manual (including the instrument
+specifications) accompany the instrument into the field.
+
+4.0 FREQUENCY OF CALIBRATIONAt a minimum, the instrument is calibrated prior to use on the day the measurements are to be
+performed. A post calibration check at the end of the day is performed to determine if the
+instrument drifted out of calibration. Some projects may require more frequent calibration
+checks throughout the day in addition to the check at the end of the day. For these checks, the
+
+_ instrument can be recalibrated during the day if the instrument drifted out of calibration and only
+- the data measured prior to the check would need to be qualified. The calibration/post calibration
+data information is recorded in Table 1.
+
+ 
+
+Instruments (e.g., sonde) that monitor continuously over a period of time are calibrated before
+deployment. When these instruments are recovered, the calibration is checked to determine if
+any of them drifted out of calibration.
+
+Some instruments lose their calibration criteria when they are turned off. Those instruments can
+either be left on all day (battery dependent) or calibrated at each sampling location. If they are
+calibrated at each sampling location, a post calibration check is not needed.
+
+Ideally, the temperature of the standards should be close to the temperature of the ambient water
+that is being measured.
+
+5.0 CALIBRATION PROCEDURES
+
+Prior to calibration, all instrument probes and cable connections must be cleaned and the battery
+checked according to the manufacturer’s instructions. Failure to perform these steps (proper
+maintenance) can lead to erratic measurements.
+
+Ifa multi-probe instrument is to be used, program the instrument to display the parameters to be
+
+measured (€.g., temperature, pH, percent dissolved oxygen, mg/L dissolved doxygen, specific -
+conductance, and ORP).
+EQASOP-FieldCalibrat
+Region 1 Calibration of
+
+Field Instruments
+Revision Number: 2
+Date: June 3, 1998
+Revised January 19, 2010
+Page 6 of 18
+
+The volume of the calibration solutions must be sufficient to cover both the probe and
+temperature sensor (see manufacturer’s instructions for the volume to be used).
+
+Check the expiration date of the standards. Do not use expired standards.
+
+All standards are stored according to manufacturer instructions.
+
+5.1 TEMPERATURE
+
+Most instrument manuals state there is no calibration of the temperature sensor, but the
+temperature sensor must be checked to determine its accuracy. This accuracy check is performed
+at least once per year and the accuracy check date/information is kept with the instrument. If the
+accuracy check date/information is not included with the instrument or the last check was over a
+year, the temperature sensor accuracy needs to be checked at the beginning of the sampling event.
+If the instrument contains multiple temperature sensors, each sensor must be checked. This
+procedure is not normally perform in the field. If the instrument is obtained from a rental
+company, the rental company should performed the calibration check and include with the
+instrument documentation that it was performed.
+
+Verification Procedure
+
+1. Fill a container with water and adjust the water temperature to below the water body’s
+temperature to be measured. Use ice or warm water to adjust the temperature.
+
+---
+
+### https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/EQASOP-FieldCalibrat.pdf (chunk epa-sop-field-instrument-calibration-2010.pdf__6bf0e3b82a75)
+
+ion standards to equilibrate at the ambient temperature. The use of
+commercially available polymer primary standards (AMCO-AEPA-1) is preferred;
+however, the standards can be prepared using Formazin (read the warning on the label
+before use) according to the EPA analytical Method 180,1. Other standards may be
+used if they can be shown that they are equivalent to the previously mentioned
+standards.2. If the standard cuvette is not sealed, rinse a cuvette with deionized water. Shake the
+cuvette to remove as much water as possible. Do not wipe dry the inside of the cuvette
+because lint from the wipe may remain in the cuvette. Add the standard to the cuvette.
+
+3. Before performing the calibration procedure, make sure the cuvettes are not scratched
+and the outside surfaces are dry and free from fingerprints and dust. If the cuvette is
+scratched or dirty, discard or clean the cuvette respectively. Note: some ;
+manufacturers require the cuvette to be orientated in the instrument in a particular
+direction for accurate reading.
+
+_ 4, Select a low value standard such as a zero or 0.02 NTU and calibrate according to
+manufacturer’s instructions. Note: a zero standard (approximately 0 NTU) can be
+prepared by passing distilled water through a 0.45 micron pore size membrane filter.
+
+5. Select a high standard and calibrate according to manufacturer’s instructions or verify
+the calibration if instrument will not accept a second standard. In verifying, the
+instrument should read the standard value to within the specifications of the
+instrument. If the instrument has range of scales, check each range that will be used
+during the sampling event with a standard that falls within that range.
+
+6. Record the calibration information on Table 1.
+EQASOP-FieldCalibrat
+Region 1 Calibration of
+
+Field Instruments -
+Revision Number: 2 .
+Date: June 3, 1998
+Revised January 19, 2010
+Page 14 of 18
+
+6.0 POST CALIBRATION CHECK
+
+After the initial calibration is performed, the instrument’s calibration may drift during the
+measurement period. As a result, you need to determine the amount of drift that occurred after
+collecting the measurements. This is performed by placing the instrument in measurement mode
+(not calibration mode) and placing the probe in one or more of the standards used during the
+initial calibration; for turbidity place the standard in a cuvette and then into the turbidimeter.
+Wait for the instrument to stabilize and record the measurement (Table 1). Compare the
+measurement value to the initial calibration value. This difference in value is then compared to
+the drift criteria or post calibration criteria described in the quality assurance project plan or the
+sampling and analysis plan for the project. Ifthe check value is outside the criteria, then the
+measurement data will need to be qualified.
+
+For the dissolved oxygen calibration check, follow the calibration instructions steps one through
+three while the instrument is in measurement mode. Record dissolved oxygen value (mg/L),
+temperature, and barometric pressure. Compare the measurement value to the Oxygen Solubility
+at Indicated Pressure chart attached to this SOP. The value should be within the criteria specified
+
+for the project. If measurement value drifted outside the criteria, the data will need to.be
+qualified.
+
+If the quality assurance project plan or the sampling and analysis plan do not list the drift criteria
+or the post-calibration criteria, use the criteria below.
+
+---
+
+### https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/EQASOP-FieldCalibrat.pdf (chunk epa-sop-field-instrument-calibration-2010.pdf__63eb942808c2)
+
+nt value to the Oxygen Solubility
+at Indicated Pressure chart attached to this SOP. The value should be within the criteria specified
+
+for the project. If measurement value drifted outside the criteria, the data will need to.be
+qualified.
+
+If the quality assurance project plan or the sampling and analysis plan do not list the drift criteria
+or the post-calibration criteria, use the criteria below.Measurement Post Calibration Criteria
+Dissolved Oxygen + (.5 mg/L of sat. value*
+<0.5 mg/L for the 0 mg/L solution, but not a negative value
+Specific Conductance +5% of standard or + 10 yS/em (whichever is greater)
+pH + 0.3 pH unit with pH 7 buffer* |
+Turbidity , + 5% of standard |
+ORP © . +10 mv*
+
+Note: * Table 8.1, USEPA Region 1 YST 6-Series Sondes and Data Logger SOP, January 30,
+2007, revision 9.
+EQASOP-FieldCalibrat
+
+Region 1 Calibration of
+Field Instruments
+
+Revision Number: 2
+
+Date: June 3, 1998
+
+Revised January 19,2010 |
+
+Page 15 of 18
+
+7.0 DATA MANAGEMENT AND RECORDS MANAGEMENT
+
+All calibration records must be documented in the project’s log book or on a calibration log
+sheet. At a minimum, include the instrument manufacturer, model number, instrument
+identification number (when more than one instrument of the same model is used), the standards
+‘used to calibrate the instruments (including source), the calibration date, the instrument readings,
+. the post calibration check, and the name of the person(s) who performed the calibration. An
+example of a calibration log sheet is shown in Table 1.
+
+8.0 References
+
+Standard Methods for the Examination of Water and Wastewater, 20" edition, 1998.
+
+Methods for Chemical Analysis of Water and Wastes, EPA-600/4-79-020, Revised March 1983.
+
+Turbidity - Methods for the Determination of Inorganic Substances in Environmental Samples,
+EPA/600/R-93/100, August 1993.
+
+- USEPA Region 1 YSI 6-Series Sondes and Data Logger SOP, January 30, 2007, revision 9.
+
+USGS Guidelines and Standard Procedures for Continuous Water-Quality Monitors: Station
+Operation, Record Computation, and Data Reporting, Techniques and Methods 1-D3.
+TABLE 1
+INSTRUMENT CALIBRATION LOG
+
+Project Name. Date
+Weather
+Calibrated by Instrument
+
+Serial Number
+
+ 
+
+Parameters Morning Morning Bnd of Day | End of Day
+Calibration | Temperature | Calibration | Temperature
+Check*
+
+ 
+
+Specific
+Conductance
+Standard #1
+
+ 
+
+Specific
+Conductance
+Standard #2
+
+ 
+
+pH (7)
+
+ 
+
+pH (4)
+
+ 
+
+pH (10)
+
+ 
+
+ORP
+Zobel
+solution
+
+ 
+
+Dissolved
+Oxygen
+
+100% water
+saturated air
+mg/L
+
+ 
+
+Dissolved
+Oxygen
+
+Zero
+Dissolved
+Oxygen
+Solution mg/L
+
+ 
+
+.Barometric NA NA
+Pressure
+mm Hg
+
+ 
+
+Turbidity
+Standard #1
+
+ 
+
+Turbidity
+Standard #2
+
+ 
+
+ 
+
+Turbidity
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Standard. #3
+
+* For each Parameter, chose one standard as your check standard.
+T£ possible, choose the one that is closest to the ambient
+measurement value.
+
+ 
+Oxygen Solubility at Indicated Pressure
+
+ 
+
+ 
+
+OO OnIN A PWwWH | ©
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__5b8340b4b614)
+
+site, have two or more
+people determine turbidity at the established measurement
+location. Use the same instrument for each set of
+measurements, although it can be calibrated by each person
+independently to incorporate all sources of variability.
+If sand or coarse silt are present in the sample, qualify your
+static-determination data being entered into NWIS with an
+"E" remark code.
+
+-- 48 of 55 --Chapter A6. Field Measurements 	Turbidity, Version 2.1 (9/2005)
+TBY—49
+BIAS 	6.7.4.B
+Sources of bias can include effects on measurements from various
+properties of water (table 6.7–1), interferences (table 6.7–2),
+sampling and subsampling techniques, instrument drift, biofouling,
+sensor damage, different operators, and different protocols being
+employed. Bias in turbidity is quantified through measurements of
+turbidity against known calibration solutions, at different times, using
+different instrumentation, or with different methods. This is
+particularly important before and after a measurement series, either in
+a laboratory or when servicing a continuous monitor in the field.
+Following are examples of quality-assurance tests that can be
+performed periodically for static or dynamic determinations of
+turbidity.
+X 	Instrument Drift: After a series of measurements and prior to
+calibration, measure turbidity using known calibrants, including
+turbidity-free water or zero-turbidity calibration solution and a
+calibration (or “check”) solution near the maximum calibrated
+range. Record the turbidity before making any adjustments to
+instrument calibration. Bias is computed as the percent
+difference between readings before calibration and readings at
+the same range after calibration. Instrument drift is most
+important to document in continuous monitoring applications.
+X 	Fouling: After a series of measurements and before calibration,
+measure source-water turbidity using known calibrants,
+including turbidity-free water or zero-turbidity calibration
+solution and a calibration (or “check”) solution near the
+maximum calibrated range. Record data. Clean the cuvette or
+submersible sensor and repeat measurements of source water
+and calibrants. Record data. Calculate bias as the percent
+difference between the calibrant reading of the uncleaned sensor
+and the cleaned sensor.
+X 	Operator Bias: Similar to Operator Variability (above), bias can
+result from inconsistencies in methods among different
+operators. Split one water sample into two or more subsamples
+using a churn splitter. Have different operators prepare cuvettes
+and measure turbidity on the subsamples. Consider submitting
+samples to a laboratory for analysis. Calculate bias as the
+percent difference between the turbidity readings obtained by
+the different operators.
+
+-- 49 of 55 --

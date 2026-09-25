@@ -1,0 +1,1652 @@
+### EC_K_1.0_probe.pdf (chunk EC_K_1.0_probe.pdf)
+
+Range 	5 − 200,000 μS/cm
+90% in 1s	Response time
+3,447 kPa (500 PSI)	Max pressure
+1 meter	Cable length
+No	Internal temperature sensor
+~10 years	Time before recalibration
+Graphite
+Reads 	Conductivity
+1 − 110 °C	Temperature range °C
+352m (1,157 ft)	Max depth
++/ – 2%	Accuracy
+Male SMA / Male BNC	Connector
+~10 years	Life expectancy
+Conductivity
+Gen 3
+Probe K 1.0
+(Optional)
+Revised 10/25
+V 4.2
+
+-- 1 of 9 --
+
+Operating principle
+An E.C. (electrical conductivity) probe measures the electrical conductivity in a solution.
+It is commonly used in hydroponics, aquaculture and freshwater systems to monitor the
+amount of nutrients, salts or impurities in the water.
+Inside the conductivity probe, two electrodes are positioned opposite from each other,
+an AC voltage is applied to the electrodes causing cations to move to the negatively
+charged electrode, while the anions move to the positively electrode. The more free
+electrolyte the liquid contains, the higher the electrical conductivity.
+AC voltage
+Epoxy body
+Graphite
+Epoxy body
+Graphite
+Epoxy body
+Glass stem
+Platinum
+ody
+e
+Epoxy body
+Graphite
+The entire conducting area must be
+submerged in order to get accurate
+readings.
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 9 --
+
+112.7mm
+(4.4”)
+150.3mm
+(5.9”)
+37.6mm
+(1.4”)
+12mm (0.5”)
+Cable Length
+1m (3.2’)
+29mm
+(1.1”)
+Ø 8mm
+Ø 2.6mm
+Optional
+Sensing area
+15.5mm
+(0.6”)
+16mm
+(0.6”)
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 9 --
+
+PVC
+ABS 	Polyethylene
+Titanium Nitride
+ABS
+Graphite
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Graphite
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Conductivity Probe K 1.0
+Part # ENV-40-EC-K1.0
+Complies with NSF/ANSI Standard 51
+Food Safe
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 9 --
+
+Specifications
+• 	Standard Lab use
+• 	Field use
+• 	Aquarium
+• 	Hydroponics
+• 	Fish keeping
+• 	Mixed aqueous/organic
+• 	Samples containing Heavy metals
+• 	Soil Samples
+• 	Strong reducing agents
+Typical applications
+This Conductivity probe can be 	fully
+submerged 	in fresh or salt water, up
+to the SMA connector indefinitely.
+Materials
+PVC
+ABS
+Polyethylene
+ABS 	Graphite
+Titanium Nitride
+K 1.0
+Max depth
+Cable length
+Weight
+Speed of response
+Measuring Surface
+Dimensions
+SMA connector
+Sterilization
+Food safe
+5 μS/cm – 200,000 μS/cm
+352m (1,157 ft)
+1 meter
+43 grams
+90% in 1 second
+Graphite
+12mm x 145.5mm (0.47" x 5.7")
+Male
+Chemical only
+Yes
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 9 --
+
+A conductivity probe is a very simple device. It is just two conductors with a fixed surface
+area at a fixed distance from each other. This distance and surface area is known as the
+conductivity cell. The cells distance and surface area is quantified as the conductivity cells
+K constant.
+How often do you need to
+recalibrate a conductivity probe?
+Conductivity probes work by measuring the electrical current of the water between two
+graphite plates. The plates do not go bad, or change, so recalibration is not necessary. After
+the first calibration your conductivity probe is good to go.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 9 --
+
+Extending the probe cable length
+You can extend the cable to greater than 100 meters with no loss of signal. Atlas Scientific
+has tested up to 300 meters without a problem, however you run the risk of turning your
+E.C. probe into an antenna, picking up noise along the length of your cable.
+If you want to extend your cable, we recommend that you use proper isolation, such as
+the Basic EZO TM Inline Voltage Isolator, or an i2 InterLink. Be sure to calibrate your
+probe with the extended cable.
+Extending a probe cable can be easily done with our SMA Extension Cables. Simply
+connect the SMA end of the probe to the Extension cable, and you are all set.
+If you need to water proof a SMA connection, we highly recommend using a product like
+Coax-Seal to safely cover and prevent any water damage that may occur.
+Water proof
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 9 --
+
+Helpful operating tips
+Be sure to watch out for air bubbles, as they can get caught between the two
+graphite plates and throw off your results. Lightly tap your conductivity probe to
+knock out any bubbles caught in the probe.
+Bubbles
+Over time conductivity probes can become dirty and covered in deposits, which can
+change the basic electrical properties of the probe and cause inaccurate readings.
+Soft coatings can be removed by lightly brushing around the conducting area.
+Probe cleaning
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 9 --
+
+Hard coatings should be chemically removed. We highly recommend you use the
+Atlas Scientific conductivity probe cleaner.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 9 --
+
+
+
+---
+
+### IORP_probe.pdf (chunk IORP_probe.pdf)
+
+Range 	-2000mV – 2000mV
+95% in 1s	Response time
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+No	Internal temperature sensor
+~1 Year	Time before recalibration
+Reads 	ORP
+Platinum	Sensing element
+1 − 99 °C	Temperature range °C
+70m (230’)	Max depth
+SMA or Tinned leads	Connector
++/– 1mV	Accuracy
+~4 Years +	Life expectancy
+or
+ORP Probe
+Industrial
+Gen 3
+with Platinum sensing element
+Revised 8/25
+V 3.2
+
+-- 1 of 11 --
+
+Operating principle
+ORP stands for oxidation/reduction potential. Oxidation is the loss of electrons and
+reduction is the gain of electrons. The output of the probe is represented in millivolts and
+can be positive or negative.
+Just like a pH probe measures hydrogen ion activity in a liquid; an ORP probe measures
+electron activity in a liquid. The ORP readings represents how strongly electrons are
+transferred to or from substances in a liquid. Keeping in mind that the readings do not
+indicate the amount of electrons available for transfer.
+pH Probe 	ORP Probe
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 11 --
+
+Add just a drop of bleach
+(which is an oxidizing agent)
+606.9
+Reading A
+605.3
+Reading B
+-234.6
+Reading A
+24.2
+Reading B
+A	
+A
+B	
+B
+Tap water 	Tap water
+The water is unreactive and has only trace amounts of electron movement. These
+readings are equivalent to the readings you see with an unconnected multimeter.
+An ORP probe has a platinum tip that is connected to a silver wire, surrounded by
+silver chloride. That silver wire is then connected to a KCL reference solution. Because
+platinum is an unreactive metal it can “silently observe” the electron activity of the
+liquid without becoming apart of whatever reaction is occurring in the liquid.
+When reading the ORP of a liquid that has very few electrons available for
+transfer, ORP readings can appear to be inconsistent.
+(Theoretical value)
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 3 of 11 --
+
+46.6mm
+(1.8”)
+Soaker bottle
++ 	–
+10ml
+Ø 8mm
+197mm
+(7.7”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Ø 2.8mm
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+Measurements
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 11 --
+
+Platinum
+Teflon
+PVC
+EPDM
+Delrin ®
+(body)
+Polyethylene
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Platinum
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Grade ORP Probe
+Part # ENV-50-ORP
+Complies with NSF/ANSI Standard 51
+Food Safe
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 11 --
+
+Body material
+Max depth
+Cable length
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+70m (230 ft)
+3m (9.8 feet)
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This ORP probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Platinum
+Teflon
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 11 --
+
+An ORP probe is a passive device that detects a current generated from the oxidation or
+reduction chemical substances in water. This current (which can be positive or negative)
+is very weak and cannot be detected with a multimeter, or an analog to digital converter.
+How often do you need
+to recalibrate an ORP probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that has
+generally weak levels of chemical reactions you will only need to recalibrate your probe
+once per year for the first 2 years. After that every ~6 months.
+If you are using the ORP probe in batch chemical manufacturing, industrial process, or
+in a solution that is known to have strong chemical reactions, then calibration should be
+done monthly or in extreme cases after each batch.
+V
+V
+0000
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 11 --
+
+AtlasScientific
+PWR
+RX
+TX
+225 	B	A
+ORP
+How to connect the
+industrial ORP probe
+The Atlas Scientific ™ Industrial ORP probe can be connected in several different ways.
+The following show two examples:
+Using our EZO Complete-ORP ™ you can easily connect the
+Gen 3 Industrial ORP probe, via the probes SMA connector.
+Gen 3 Industrial ORP probe
+with the SMA connector option.
+Gen 3 Industrial ORP probe
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial ORP probe, can
+be easily connected to our Industrial ORP Transmitter via
+the probes tinned leads.
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 11 --
+
+Remove the Industrial ORP probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the ORP probe must stay wet and cannot be
+allowed to dry out, this is why every Industrial ORP probe is shipped with a plastic cap
+containing ORP probe storage solution. The cap should remain on the probe until it is used.
+fi
+Long term storage
+When you are finished using the Industrial ORP probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has ORP probe storage
+solution within it. If not, just add some from the ORP probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 11 --
+
+Probe cleaning
+Coating of the platinum tip can lead to erroneous readings including shortened span
+(slope). The type of coating will determine the cleaning technique. Soft coatings can
+be removed by vigorous stirring or by the use of a squirt bottle. Organic chemical, or
+hard coatings, should be chemically removed. A light bleach solution or even a 5 – 10%
+hydrochloric acid (HCl) soak for a few minutes, often removes many coatings. Do not use
+abrasive materials on the ORP probe.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 11 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 11 --
+
+
+
+---
+
+### Industrial-DO-probe.pdf (chunk Industrial-DO-probe.pdf)
+
+Range 	0 − 100 mg/L
+~0.1 mg/L/per sec	Response time
+300 PSI	Max pressure
+3 Meters	Cable length
+Yes (PT-1000)	Internal temperature sensor
+~1 Year	Time before recalibration
+~ 4 Years	Life expectancy
+~18 Months	Maintenance
+Reads 	Dissolved Oxygen
+1 − 99 °C	Temperature range °C
+212m (694 ft)	Max depth
++/– 0.05 mg/L	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+D.O. Probe
+or
+Revised 4/26
+V 2.4
+
+-- 1 of 13 --
+
+Wastewater
+Treatment
+Food
+Production
+Chemical
+Production
+Envriomental
+Monitoring
+(No Organic Solvents)
+This Probe can be used for:
+2	Copyright © Atlas Scientific LLC
+
+-- 2 of 13 --
+
+Operating principle
+This galvanic dissolved oxygen probe consists of a HDPE membrane, an anode bathed
+in an electrolyte and a cathode. Oxygen molecules defuse through the probes membrane
+at a constant rate (without the membrane the reaction happens too quickly). Once the
+oxygen molecules have crossed the membrane they are reduced at the cathode and
+a small voltage is produced. If no oxygen molecules are present, the probe will output
+0 mV. As the oxygen increases so does the mV output from the probe. Each probe will
+output a different voltage in the presence of oxygen. The only thing that is constant is that
+0mV = 0 Oxygen.
+Electrolyte
+Cathode (Pure silver rod)
+Membrane
+Anode (Zinc)
+Time (sec)
+90%
+60%
+5 	10 	15 	20 	25 	30	0
+Dissolved Oxygen
+Stagnant water
+Oxygen being
+consumed by probe
+20%
+One of the drawbacks from using a galvanic
+probe is that it consumes a VERY small amount
+of the oxygen it reads. Therefore, a small amount
+of water movement is necessary to take accurate
+readings. Approximately 60 ml/min.
+3	Copyright © Atlas Scientific LLC
+
+-- 3 of 13 --
+
+Ø 4.4mm
+Ø 5.3mm
+D.O.
+D.O.
+PT-1000(There is no polarity)
+PT-1000
+175.5mm
+(6.9”)
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+47.9mm
+(1.8”)
+19.7mm (.7”)
+Cable Length
+3m (10’)
+3/4 NPT
+28.4mm
+(1.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+Measurements
+4	Copyright © Atlas Scientific LLC
+
+-- 4 of 13 --
+
+PVC
+PVCDelrin ®
+(body)
+Polyethylene
+HDPE
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+HDPE
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+ABS
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Dissolved Oxygen Probe
+Part # ENV-50-DO
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+Food Safe
+5	Copyright © Atlas Scientific LLC
+
+-- 5 of 13 --
+
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Temp. probe type
+Temp. accuracy
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+212m (694 ft)
+3m (10 feet)
+Yes
+Class A platinum, RTD
++/- (0.15 + (0.002*t))
+SMA or Tinned Leads
+195 grams
+(3/4") NPT
+Chemical only
+Yes
+Materials
+Polyethylene
+Delrin® thermoplastic
+ABS
+HDPE
+PVC 	PVC
+PVC
+PVC
+Polyethylene
+Polyethylene Titanium Nitride
+Titanium Nitride
+This Dissolved Oxygen probe can be
+fully submerged in fresh or salt water,
+up to the SMA connector or Tinned
+leads indefinitely.
+6	Copyright © Atlas Scientific LLC
+
+-- 6 of 13 --
+
+This galvanic dissolved oxygen probe is a passive device that generates a small voltage
+from 0mv – 60+ mv depending on the oxygen saturation of the sensing membrane. This
+voltage can easily be read by a multimeter or an analog to digital converter.
+Because every use case is different, there is no set schedule for recalibration.
+The dissolved oxygen probe reacts with oxygen in the water, the more oxygen it reacts
+with the more the probe is depleted of its electrolyte solution. Typically an industrial
+dissolved oxygen probe will last 2 years before the electrolyte is depleted (results will
+vary). When the electrolyte is depleted, the probe will read very low numbers. Best practice is
+to replace the electrolyte solution and membrane every 1 – 2 years.
+How often do you need to
+recalibrate a dissolved oxygen probe?
+V
+V
+0000
+7	Copyright © Atlas Scientific LLC
+
+-- 7 of 13 --
+
+9 - 36VDC
+	L H
+DO
+A 	Low 	High
+AtlasScientific
+PWR
+RX
+TX
+AtlasScientific
+PWR
+RX
+TX
+How to connect the industrial
+Dissolved Oxygen probe
+The Atlas Scientific ™ Gen 3 Industrial Dissolved Oxygen probe can be connected in
+several different ways. The following show two examples:
+For industrial purposes, the Gen 3 Industrial DO probe,
+can be easily connected to our Industrial DO Transmitter
+via the probes tinned leads.
+Using 	our 	EZO 	Complete-DO™ and
+EZO 	Complete-TMP™ you can easily
+connect the Gen 3 Industrial DO probe,
+via the probes SMA connectors.
+8	Copyright © Atlas Scientific LLC
+
+-- 8 of 13 --
+
+How to add more electrolyte solution
+During usage, a small amount of electrolyte solution within the dissolved oxygen probe
+will deplete. In this case, you will need to add more solution into the probe.
+To add more electrolyte solution: Carefully unscrew the probes membrane cap, and
+drain any remaining electrolyte solution. Using the supplied syringe, inject solution into
+the membrane cap until it's filled half way. Screw the membrane cap back onto probe.
+Once the probe is reassembled, rinse of the probe.
+1 	Rinse
+probe
+Fill half way
+2 	3 	4 	5 	6 	7
+RIGHT SIDE UP 	UPSIDE DOWN
+9	Copyright © Atlas Scientific LLC
+
+-- 9 of 13 --
+
+How to recondition the industrial
+Dissolved Oxygen probe
+During usage, a small amount of corrosion (zinc oxide) may build up around the anode of
+the probe, this will cause irregular readings. In this case, you will need to recondition the
+probe.
+To recondition the probe: Carefully unscrew the probes membrane cap, and drain any
+remaining electrolyte solution. Using a small file, carefully file off the corrsion buildup
+around the anode of the probe. Do not file the cathode, as this will damage the probe.
+Once the corrosion has been removed, rinse the off the anode.
+Using the supplied syringe, inject solution into the membrane cap until it's filled half
+way. Screw the membrane cap back onto probe. Once the probe is reassembled, rinse
+of the probe.
+1 	2
+anode
+cathode
+3 	4
+RIGHT SIDE UP 	UPSIDE DOWN
+10	Copyright © Atlas Scientific LLC
+
+-- 10 of 13 --
+
+Over time, the membrane can wear out, this will lead to irregular readings from
+the probe. To correct this issue, the probes membrane cap must be replaced.
+To replace membrane cap: Carefully unscrew the probes membrane cap, drain
+any remaining electrolyte solution; Then discard the damaged membrane cap.
+With a new membrane cap ready, fill the new membrane cap half way with electrolyte
+solution and screw back on to probe body.
+How to replace the membrane cap
+1 	2 	3
+RIGHT SIDE UP 	UPSIDE DOWN
+Fill half way
+5	4 	6
+OLD &
+DAMAGED
+NEW
+11	Copyright © Atlas Scientific LLC
+
+-- 11 of 13 --
+
+Over time dissolved oxygen probes can become dirty and covered in chemical deposits.
+Soft coatings can be removed by lightly brushing around the sides of the probe and
+membrane cap. If the probes membrane is in need of cleaning, use a mild bleach mixture
+to gently wash away any deposits.
+DO NOT USE A BRUSH TO CLEAN THE MEMBRANE
+If the probes membrane is ripped it must be replaced, as it will cause irregular readings.
+Probe cleaning
+12	Copyright © Atlas Scientific LLC
+
+-- 12 of 13 --
+
+Dried KCl residue
+from Electrolyte
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+13	Copyright © Atlas Scientific LLC
+
+-- 13 of 13 --
+
+
+
+---
+
+### IpH_probe.pdf (chunk IpH_probe.pdf)
+
+pH Probe
+Range 	0 − 14
+95% in 1s	Response time
++/- 0.001	Resolution
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+Double junction silver / silver chloride
+No Temp
+Reads 	pH
+-5 − 99 °C	Temperature range °C
+70m (230’)	Max depth
++/– 0.002	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+~1 Year	Time before recalibration
+~4 Years +	Life expectancy
+or
+Revised 11/25
+V 5.3
+
+-- 1 of 12 --
+
+Operating principle
+A pH (potential of Hydrogen) probe measures the hydrogen ion activity in a liquid.
+At the tip of a pH probe is a glass membrane. This glass membrane permits hydrogen
+ions from the liquid being measured to defuse into the outer layer of the glass, while
+larger ions remain in the solution. The difference in the concentration of hydrogen ions
+(outside the probe vs. inside the probe) creates a VERY small current. This current
+is proportional to the concentration of hydrogen ions in the liquid being measured.
+Base: pH > 7	Neutral: pH = 7	Acid: pH < 7
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 2 of 12 --
+
+46.6mm
+(1.8”)
+Soaker cap
+~3 – 4 pH
+pH
+197mm
+(7.7”)
+99.2mm
+(3.9”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+10ml
+Ø 2.8mm
+Ø 8mm
+Minimum
+Immersion
+Unique
+12-digit
+serial #
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 12 --
+
+Glass
+Teflon
+PVC
+EPDM
+Delrin ®
+(body) Polyethylene
+Titanium
+Nitride
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+Glass
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Food Safe
+Atlas Scientific LLC, hereby certifies that,
+Gen 3 Industrial pH Probe – No Temp
+Part # ENV-50-pH-NT
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 12 --
+
+Reference electrode
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Silver / Silver Chloride
+Delrin® thermoplastic
+70m (230 feet)
+3m (9.8 feet)
+No
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This pH probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Glass
+Teflon
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 12 --
+
+A pH electrode is a passive device that detects a current generated from hydrogen ion
+activity. This current (which can be positive or negative) is very weak and cannot be
+detected with a multimeter, or an analog to digital converter. This weak electrical signal
+can easily be disrupted and care should be taken to only use proper connectors and cables.
+The current that is generated from the hydrogen ion activity is the reciprocal of that
+activity and can be predicted using this equation:
+Because a pH probe is a passive device it can pick up voltages that are transmitted
+through the solution being measured. This will result in incorrect readings and will
+slowly damage the pH probe over time. In this instance, proper isolation is required.
+Where R is the ideal gas constant.
+T is the temperature in Kelvin.
+F is the Faraday constant.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 12 --
+
+AtlasScientific
+PWR
+RX
+TX
+9 - 36VDC
+pH
+How to connect the
+industrial pH probe
+The Atlas Scientific ™ Gen 3 Industrial pH probe - No Temp, can be connected in several
+different ways. The following show two examples:
+Using our EZO Complete-pH ™ you can easily connect the
+Gen 3 Industrial pH probe - No Temp, via the probes SMA
+connector.
+Gen 3 Industrial pH probe - No Temp
+with the SMA connector option.
+Gen 3 Industrial pH probe - No Temp
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial pH probe -
+No Temp, can be easily connected 	to our Industrial pH
+Transmitter via the probes tinned leads.
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 12 --
+
+Remove the Industrial pH probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the pH probe can be left dry for up to 3 weeks
+without damaging the probe, this is why every Industrial pH probe is shipped with a
+plastic cap containing pH probe storage solution. The cap should remain on the probe
+until it is used.
+Long term storage
+When you are finished using the Industrial pH probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has pH probe storage
+solution within it. If not, just add some from the pH probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+Ready to use
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 12 --
+
+Unlike most pH probes, this probe can dry out. It can be left dry for up to 3 weeks without
+damaging the probe. However, repeated wetting and drying cycles will eventually damage
+the probe. For best results, keep the probe wet at all times. But if the probe is left out to
+dry, it should not be considered damaged. It just needs to be rehydrated.
+If a pH probe is kept in a hot environment during shipping, KCl creep may cause the soaker
+bottle to dry out. KCl will form a salt channel that wicks the water out of the probe's soaker
+bottle.
+Follow these instructions to rehydrate your industrial pH probe:
+1. Place the probe into a beaker of tap water.
+2. Let the probe sit in the water for 3 – 5 mins.
+3. Add a scoop of KCL (best) or NaCl (good) to the beaker.
+(a scoop = so much salt that no human could drink the water)
+4. Let the probe sit in the salt water for 15 – 20 mins.
+5. Done.
+The probe is now ready to use.
+Probe can dry out
+
+-- 9 of 12 --
+
+Probe cleaning
+Coating of the pH bulb can lead to erroneous readings including shortened span (slope).
+The type of coating will determine the cleaning technique. Soft coatings can be removed
+by vigorous stirring or by the use of a squirt bottle. Organic chemical, or hard coatings,
+should be chemically removed using a light bleach solution. If cleaning does not restore
+performance, reconditioning may be tried. Do not use a brush or abrasive materials
+on the pH probe.
+How often do you need
+to recalibrate a pH probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that
+has generally weak levels of acids and bases you will only need to recalibrate your probe
+once per year for the first two years. After that every ~six months.
+If you are using the pH probe in batch chemical manufacturing, industrial process,
+or in a solution that is known to have strong acids and bases, then calibration should be
+done monthly or in extreme cases after each batch.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 12 --
+
+Probe reconditioning
+When reconditioning your pH probe is required due to aging, we recommend you use
+the Atlas Scientific pH probe reconditioning kit.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 12 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+12 Copyright © Atlas Scientific LLC
+
+-- 12 of 12 --
+
+
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__c64e9feccc13, score 0.6160297313449323)
+
+ing the “pour-swirl-discard twice, pour-
+sit-discard, pour-sit-measure” method described in
+section 4.1.1, step 10.
+5. 	Repeat step 4, using additional pH buffers, and lock in
+the calibration points. (Depending on site conditions and
+study objectives, it might be useful to check the calibra-
+tion range of the pH sensor by using an additional buffer;
+if appropriate, lock in the third buffer value.)-- 22 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__80961835fb6c, score 0.5881177981753066)
+
+6.0–1, allow the instrument a longer equili-
+bration time and record additional measurements. To
+determine the value to be reported for that measure-
+ment point, either use the median of the final five or
+more measurements recorded, or apply knowledge of
+the site and professional judgment to select the most
+representative of the final readings and document in
+field notes how the decision was made.-- 12 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__ab206848465b, score 0.5879277383601205)
+
+each field-measurement
+chapter of the NMF. Stabilization criteria for recording
+direct field measurements are given in table 6.0–1.
+• Final or reported field-measurement values for USGS
+studies are to be entered into the following parts of the
+National Water Information System (NWIS):
+• QWDATA: Contains discrete (noncontinuous) field-
+measurement data in addition to results of laboratory
+analyses.-- 10 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__c536dd79ec6f, score 0.5867735851585716)
+
+.)
+• Immerse the sensor into the zero-DO solution,
+wait for reading to stabilize (usually within
+5–10 minutes), record reading.
+• If the instrument reading exceeds 0.2 mg/L in the
+zero-DO solution, check DO again with a freshly
+prepared zero-DO solution; if a reading greater than
+0.2 mg/L persists, contact the instrument manufac-
+turer and inquire whether the luminophore module
+should be replaced.-- 13 of 44 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf (chunk usgs-nfm-a6.1-temperature.pdf__49cdd9b58400, score 0.585803026181212)
+
+hod described in this
+chapter is applicable to air and most natural waters.
+Before 2017, the USGS NFM chapters were released
+in the USGS Techniques of Water-Resources Investiga-
+tions series. Effective in 2018, new and revised NFM
+chapters are being released in the USGS Techniques and
+Methods series; this series change does not affect the con-
+tent and format of the NFM. More information is in the-- 9 of 23 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__63e59ce27f1c, score 0.5858013683217594)
+
+libration in the laboratory prior to field measurement
+is recommended because the temperature is regulated
+and the standard solutions are less susceptible to
+contamination.
+• Meter calibration steps—
+1. 	If possible, select a probe with a conductivity cell
+that will most accurately measure the expected
+specific conductance (fig. 6.3–1). However, many
+modern specific conductance meters and multipa--- 14 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__4c8cc53480b4, score 0.5857032382607489)
+
+ow-pH waters, temperature corrections may
+represent the largest source of error. A temperature-compen-
+sation method applicable to low-pH waters is described in
+section 4.3 below and by McCleskey (2013). No temperature-
+compensation method is available for waters with pH greater
+than 11; therefore, the specific conductance in high-pH waters
+should be checked by measuring at ambient temperature and-- 10 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf (chunk usgs-nfm-a6.1-temperature.pdf__39a5287b84ed, score 0.5837705884176557)
+
+s—replace with new batteries.
+• Calibration expired—verify or recertify.
+Erratic sensor readings 	• Bad or dirty connection at meter or sensor connections—tighten or clean the connections.
+• Break in the cables—replace cables, which may require recertification.
+• Weak batteries—replace with new batteries.
+Readings are slow to stabilize 	• Dirty sensor—clean the sensor to remove dirt and oily film.-- 20 of 23 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__4e2d2050f1d7, score 0.5829848993281865)
+
+situ are likely more representative than
+measurements made in samples removed from their source.
+Purchase costs for multiparameter instruments are higher than those
+for single-parameter instruments.
+Instruments can store data, either in a display device or to internal
+memory.
+Calibration may require use of a greater volume of standards for
+rinsing than that needed for single-parameter instruments.-- 10 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf (chunk usgs-nfm-a6.1-temperature.pdf__51e9de758232, score 0.5820520478799335)
+
+erated water bath
+• Soap solution, 0.1–0.2%, non-phosphate
+laboratory detergent
+• Deionized water (1 liter), ASTM type 2 or better
+• Flowthrough chamber (for groundwater applications
+as an alternative to multiparameter instruments with
+downhole capabilities)
+• Paper tissues, disposable, soft, and lint-free
+• Logbook, for recording all calibrations, maintenance,
+and repairs, may be digital or paper-- 11 of 23 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__dc51eae3cee7, score 0.5809642754092884)
+
+-- 14 of 44 --2.0 Optical (Luminescence) Sensor Method 	7
+barometric pressure reading not measured at the DO calibra-
+tion altitude for use during a DO calibration is no longer
+recommended. It is required that the barometric pressure be
+measured at the altitude of the DO calibration or check.
+For DO calibrations, the ambient atmospheric pressure
+must be determined to the nearest 1 millimeter (mm) of
+mercury. A calibrated pocket altimeter-barometer typically has
+been used to determine atmospheric pressure; however, many
+multiparameter water-quality instruments and DO meters in
+common use include an internal barometer.
+Check the accuracy of all field barometers (including
+barometers built into instrument systems) before each field trip
+or at least annually, and record readings and adjustments in the
+instrument log book. Check field barometers against a NIST-
+traceable barometer kept at the USGS Water Science Center,
+office, or laboratory, or check barometer accuracy while at an
+official weather station where ambient atmospheric pressure
+can be obtained.
+Most modern multiparameter instruments (see NFM 6.8)
+incorporate a pressure-temperature and salinity compensa-
+tion algorithm in their firmware for DO measurements; the
+instruments have a built-in conductivity sensor that is used
+to correct the DO-concentration data for salinity automatically.
+For instruments that are not equipped with a conductivity
+sensor, manual correction of the DO data for salinity
+is required.
+If a user-specified salinity correction is needed, the
+preferred USGS method is to apply salinity-correction factors
+after calibrating and measuring the DO concentration of the
+environmental water body (see section 5.0). Interactive tables
+for user-specified temperature, pressure, and salinity are avail-
+able at https://water.usgs.gov/software/DOTABLES/.
+When a manual salinity correction is made by the user
+during calibration, the instrument requires recalibration for
+each measured field variation in salinity (see section 5.0).
+If a multiparameter instrument that includes
+a calibrated conductivity sensor is used, salin-
+ity correction to the DO concentration reading is
+performed automatically.
+2.2.2 Selection of Calibration Method
+Manufacturers uniformly recommend a 100-percent satu-
+rated oxygen calibration of DO sensors regardless of whether
+calibration in air (Procedure 1) or calibration in air-saturated
+water (Procedure 2) is used. It is important to refer to the
+manufacturer-provided guidance, as each of the procedures
+has inherent advantages and disadvantages and may include
+instrument-specific sources of error.
+Calibration or checking of an instrument in air
+(Procedure 1) is the preferred method specified by some
+manufacturers. The process is easily accomplished in the
+laboratory or field setting so long as the temperature of the air
+calibration chamber is stable.
+The air calibration or check with a wet-towel method
+(variation of Procedure 1) is the recommended method to
+be performed at the field site. This method is well suited to
+checking an instrument after transportation to a field site fol-
+lowed by calibration if the instrument fails the check with a
+wet-towel procedure.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__7abc0fdf01b2, score 0.5805790706005887)
+
+ slope of less
+than 95 percent or greater than 101 percent indicates
+probable electrode deterioration. If the slope is outside
+the acceptable range (95–101 percent), the electrode
+should be cleaned, reconditioned, or replaced, and the
+new electrode calibrated. If a liquid-filled electrode is
+being used, try reconditioning it (section 3.2) in the
+laboratory before replacing it with a new electrode.-- 19 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__f7d859ebd110, score 0.5776615511131217)
+
+illing solutions
+differ in concentration and composition—always
+check that the correct filling solution required
+by the manufacturer for a particular electrode is
+being used.
+• Drain and flush the reference chamber of refill-
+able electrodes, and routinely refill them with the
+correct filling solution (check the manufacturer’s
+recommendations). Allow the probe to re-equilibrate
+before calibration.-- 16 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__7f727185cb8b, score 0.5773145897347323)
+
+citable procedures for monitoring the
+quality of surface water and groundwater. Formal train-
+ing and field apprenticeships supplement the information
+provided in the NFM.
+Chapter A6.4 provides guidance and protocols for the
+measurement of pH of a water sample, which include the
+scientific basis of the measurement, selection and maintenance
+of equipment, calibration, procedures for measurement andreporting, and troubleshooting. pH is an important variable in
+aquatic systems, and accurate measurements of this property
+are the basis for describing other attributes of those systems.
+Before 2017, the NFM chapters were released in the
+USGS Techniques of Water-Resources Investigations series.
+Effective in 2018, new and revised NFM chapters are being
+released in the USGS Techniques and Methods series; this
+series change does not affect the content and format of the
+NFM. More information is in the general introduction to the
+NFM (USGS Techniques and Methods, book 9, chapter A0)
+at https://doi.org/tm9A0. The authoritative current versions
+of NFM chapters are available in the USGS Publications
+Warehouse at https://pubs.er.usgs.gov/. Comments, questions,
+and suggestions related to the NFM can be addressed to
+nfm@usgs.gov.
+1.1 	Overview of pH
+The pH of natural waters is routinely measured in the
+field as part of USGS studies of water quality. Many aquatic
+chemical processes, such as chemical speciation, solubility
+of minerals and gases, ion exchange on mineral surfaces, and
+the kinetics or rate of reactions, vary as a function of pH. The
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__af6c9f365e31, score 0.5762470811484349)
+
+ent unless additional
+flowthrough equipment is used.
+— 	Values must be read from the meter before particle settling
+can affect the measured turbidity.
+— 	If particle settling of sand or silt occurs before the
+measurement can be completed, the sample results must be
+recorded in the database to reflect the possible bias in the
+Reagents and calibrants must not exceed their shelf life.
+
+-- 26 of 55 --Chapter A6. Field Measurements 	Turbidity, Version 2.1 (9/2005)
+TBY—27
+data. (For input to the USGS NWIS database, the results
+would be coded with an “E” remark, indicating the value is
+an “Estimate” only.)
+— 	The cuvettes used for calibrating static turbidimeters are
+identical to those used in the meter when taking a turbidity
+reading.
+X 	Submersible meters collect data by immersing a turbidity sensor
+in the sample media, but are calibrated using a separate chamber
+that allows the sensor to be immersed in the calibrant.
+Benchtop (static) turbidimeter calibration
+The calibration instructions and procedures that follow are general
+and should be modified to apply to the instrument being used—check
+manufacturer’s instructions. Refer to table 6.7–5 for a list of supplies
+commonly used for turbidity measurement.
+To calibrate a benchtop turbidimeter:
+1. 	Prepare formazin suspensions as described above.
+• 	Allow stock solutions to come to room temperature.
+• 	Calibrate each instrument range using at least two calibrant
+concentrations, and three or more if the instrument allows it.
+Use calibrant solutions that bracket the range of the turbidity
+anticipated in the sample solution.
+• 	Prepare dilute calibrant fresh from the stock at the time of
+use—after dilution, the stock suspension is stable only for a
+few hours.
+• 	Formazin-based calibrants should be resuspended by
+inverting the calibrant 25 times (1-second inversion cycle),
+followed by a 2- to 10-minute wait to allow for bubble
+removal. Calibrants of 40 turbidity units or less will remain
+suspended for up to 30 minutes; calibrants greater than 40
+turbidity units may require more frequent resuspension.
+• 	Do not use calibrants with flocculated suspensions.
+2. 	Turn on the turbidimeter and allow it to warm up. (Check
+manufacturer’s instructions for equipment startup.)
+
+-- 27 of 55 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf (chunk usgs-nfm-a6.1-temperature.pdf__aa7664732370, score 0.5743870290934459)
+
+ry and in a protective
+case during transit to prevent excessive vibration.
+• Check the batteries of digital thermometers for
+proper voltage and replace regularly. Be sure the bat-
+tery compartment is clean and dry.
+A separate logbook or electronic log for recording repair,
+maintenance, and calibration history information is required to
+be maintained for each piece of field equipment or replaceablesensor that stores calibration information within the sensor’s
+internal processor. The logbook should travel with the equip-
+ment or be accessible through electronic means. The pages of
+a paper logbook should be prenumbered consecutively. Do not
+skip or tear out pages. Water-resistant paper is recommended.
+Paper logbooks are available to USGS personnel only through
+One-Stop shopping (https://1stop.usgs.gov/; item Q609FLD).
+USGS personnel are encouraged to use electronic
+rather than paper field notes to increase efficiency and
+minimize transcription errors. Office of Water Quality
+Technical Memorandum 2016.09 (U.S. Geological Survey,
+2016) recommends that all water-quality records, including
+logbooks, be collected electronically wherever feasible and
+specifies requirements for electronic records.
+3.0. 	Calibration Verification of
+er Temperature Sensors
+Temperature sensor and digital thermometer calibration
+differ from the process by which a pH or conductivity sensor
+is adjusted until the accuracy of its performance conforms
+to that of an accepted calibration standard. For temperature
+sensors, calibration refers to a verification of calibrated accu-
+racy at a range of temperatures covering the expected or actual
+range of use or deployment. The verification comparison is
+done with a certified or traceable thermometer or sensor. A
+traceable classification for a temperature sensor can be accom-
+plished by following the procedures in section 2.2 Establishing
+and Maintaining a Traceable Sensor. A new sensor is required
+to be checked against a certified or traceable sensor at points
+covering the range of expected temperature measurements
+using a water bath, before the sensor is used to collect envi-
+ronmental data. Calibration verification of sensors collecting
+data for USGS publication is required to be performed every
+12 months through one of the following two methods. Both
+methods are acceptable and neither method is preferred.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__9468990c7428, score 0.5741854000145342)
+
+actice can save time and help determine the appropri-
+ate procedures and length of time over which the well
+should be purged.
+To purge a monitor well (assuming that the well will
+be pumped and that a flow-through cell/chamber system and
+water-level sensor will be used):
+1. 	Measure and record the depth to static water level
+(fig. 6.0–4). Instructions for water-level measurement are
+given in NFM 4.-- 23 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__85db7e026099, score 0.5741530380018839)
+
+the expected measurement or deployment
+range of measurements.
+• Check sensor ports to ensure that sensors are prop-
+erly installed or that empty ports are sealed. Sensors
+from which data are not being collected routinely
+can be removed from the sonde for safe storage. The
+temperature sensor should not be removed. All electri-
+cal connections must be clean, dry, waterproof, and
+protected from dust.-- 14 of 24 --
+
+---
+
+### https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/EQASOP-FieldCalibrat.pdf (chunk epa-sop-field-instrument-calibration-2010.pdf__dd989c168d7e, score 0.5728261307524187)
+
+falls outside the calibration range, the instrument must be re-
+calibrated to bracket the new range before continuing measurements. Otherwise, the
+measurements that are outside the calibration range will need to be qualified.
+
+This SOP requires that the manufacturer’s instruction manual (including the instrument
+specifications) accompany the instrument into the field.
+
+4.0 FREQUENCY OF CALIBRATIONAt a minimum, the instrument is calibrated prior to use on the day the measurements are to be
+performed. A post calibration check at the end of the day is performed to determine if the
+instrument drifted out of calibration. Some projects may require more frequent calibration
+checks throughout the day in addition to the check at the end of the day. For these checks, the
+
+_ instrument can be recalibrated during the day if the instrument drifted out of calibration and only
+- the data measured prior to the check would need to be qualified. The calibration/post calibration
+data information is recorded in Table 1.
+
+ 
+
+Instruments (e.g., sonde) that monitor continuously over a period of time are calibrated before
+deployment. When these instruments are recovered, the calibration is checked to determine if
+any of them drifted out of calibration.
+
+Some instruments lose their calibration criteria when they are turned off. Those instruments can
+either be left on all day (battery dependent) or calibrated at each sampling location. If they are
+calibrated at each sampling location, a post calibration check is not needed.
+
+Ideally, the temperature of the standards should be close to the temperature of the ambient water
+that is being measured.
+
+5.0 CALIBRATION PROCEDURES
+
+Prior to calibration, all instrument probes and cable connections must be cleaned and the battery
+checked according to the manufacturer’s instructions. Failure to perform these steps (proper
+maintenance) can lead to erratic measurements.
+
+Ifa multi-probe instrument is to be used, program the instrument to display the parameters to be
+
+measured (€.g., temperature, pH, percent dissolved oxygen, mg/L dissolved doxygen, specific -
+conductance, and ORP).
+EQASOP-FieldCalibrat
+Region 1 Calibration of
+
+Field Instruments
+Revision Number: 2
+Date: June 3, 1998
+Revised January 19, 2010
+Page 6 of 18
+
+The volume of the calibration solutions must be sufficient to cover both the probe and
+temperature sensor (see manufacturer’s instructions for the volume to be used).
+
+Check the expiration date of the standards. Do not use expired standards.
+
+All standards are stored according to manufacturer instructions.
+
+5.1 TEMPERATURE
+
+Most instrument manuals state there is no calibration of the temperature sensor, but the
+temperature sensor must be checked to determine its accuracy. This accuracy check is performed
+at least once per year and the accuracy check date/information is kept with the instrument. If the
+accuracy check date/information is not included with the instrument or the last check was over a
+year, the temperature sensor accuracy needs to be checked at the beginning of the sampling event.
+If the instrument contains multiple temperature sensors, each sensor must be checked. This
+procedure is not normally perform in the field. If the instrument is obtained from a rental
+company, the rental company should performed the calibration check and include with the
+instrument documentation that it was performed.
+
+Verification Procedure
+
+1. Fill a container with water and adjust the water temperature to below the water body’s
+temperature to be measured. Use ice or warm water to adjust the temperature.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__883476eb822b, score 0.572516947529933)
+
+will accompany the samples being
+shipped to the laboratory, as this value is used in
+many analyses.
+6. 	Between calibrations and measurements of different
+samples, rinse the electrode and thermistor with DIW
+and then again with the new sample or buffer. This step
+must always be completed between different solutions.
+Always record the temperature of the sample concurrently
+with each pH measurement.-- 25 of 32 --

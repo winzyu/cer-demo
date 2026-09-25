@@ -992,6 +992,22 @@ The ungrounded rate is flat at about 60% at every depth, so it comes from the mo
 `p3-k30-2026-09-24` has 180 of 180 verdicts: three calls failed on the first pass and were refilled, one of them after the `dev` merge had started; that row is an `ungrounded` verdict on a tools-off turn, whose prompt the merge leaves byte-identical.
 Spend: k=20 $1.37 (capture $0.20, judge $1.18), k=30 $1.73 (capture $0.27, judge $1.46); R4 total about $7.44 of the $20 ceiling the user set on 2026-09-24.
 
+### Calibration packet (2c) - 2026-09-24, run `p3-calib-2026-09-24`
+
+The user chose on 2026-09-24 to grade 32 rows on correctness and ungrounded claims: 8 conversations, both turns, gold-context and retrieval answers side by side.
+`p3-calib-2026-09-24` is a composite run of two symlinked arm directories, so the transcripts stay verbatim where they were captured: `gold-context` from `p3-it1-2026-09-23` and `hybrid-slice-vector` from `p3-k20-2026-09-23`, both on the iteration 1 prompt, with retrieval at the settled k=20.
+`npm run grade:packet -- --run=<id>` reads `eval/transcripts/<id>/` and writes `eval/grading/<id>/`; `npm run judge -- --run=<id> --calibration` and `--calibrate` read that sheet and the run's transcripts.
+
+The 8 fixtures are one per class, plus a second from `cross-document`, the weakest class.
+Within a class, the pick favoured fixtures where the two arms' existing verdicts differ, so both arms span correctness 0 to 2 and ungrounded counts from 0 to 5.
+Fixtures whose labels `dev`'s EPA re-resolve touched were excluded.
+Chosen: `crossdoc-how-steady-before-i-write-it-down`, `crossdoc-soft-water-ph-wont-settle`, `deepmanual-brackish-do-correction`, `definitional-eh-versus-the-millivolts-we-log`, `followup-mixing-the-clarity-bottle`, `precedence-ph-river-range-not-pod-limit`, `probecal-ec-never-recalibrate`, `refusal-how-long-can-it-stay-in`.
+
+Blinding is weak with two arms: each answer's footer gives its chunk count, which separates k=20 retrieval from gold context, and the seeded shuffle put retrieval at label `A` on 6 of 8 sheets.
+Both are accepted: the rows calibrate the judge against a human on the same answers, not one arm against the other.
+Only `correctness_0_1_2` and `ungrounded_claims` are graded; `invalid_citations` stays blank and yields no pairs.
+Once graded, `npm run judge -- --run=p3-calib-2026-09-24 --calibration` judges the 32 rows at `--final` (91 calls with citations, estimated at $0.45 from `p3-k20-2026-09-23`'s measured cost), then `--calibrate` reports kappa against the 0.70 bar.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.

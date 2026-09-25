@@ -1,0 +1,300 @@
+### IpH_probe.pdf (chunk IpH_probe.pdf__d3fc1e169fc7)
+
+pH Probe
+Range 	0 − 14
+95% in 1s	Response time
++/- 0.001	Resolution
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+Double junction silver / silver chloride
+No Temp
+Reads 	pH
+-5 − 99 °C	Temperature range °C
+70m (230’)	Max depth
++/– 0.002	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+~1 Year	Time before recalibration
+~4 Years +	Life expectancy
+or
+Revised 11/25
+V 5.3
+
+-- 1 of 12 --
+
+Operating principle
+A pH (potential of Hydrogen) probe measures the hydrogen ion activity in a liquid.
+At the tip of a pH probe is a glass membrane. This glass membrane permits hydrogen
+ions from the liquid being measured to defuse into the outer layer of the glass, while
+larger ions remain in the solution. The difference in the concentration of hydrogen ions
+(outside the probe vs. inside the probe) creates a VERY small current. This current
+is proportional to the concentration of hydrogen ions in the liquid being measured.
+Base: pH > 7	Neutral: pH = 7	Acid: pH < 7
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 2 of 12 --
+
+46.6mm
+(1.8”)
+Soaker cap
+~3 – 4 pH
+pH
+197mm
+(7.7”)
+99.2mm
+(3.9”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+10ml
+Ø 2.8mm
+Ø 8mm
+Minimum
+Immersion
+Unique
+12-digit
+serial #
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 12 --
+
+Glass
+Teflon
+PVC
+EPDM
+Delrin ®
+(body) Polyethylene
+Titanium
+Nitride
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+Glass
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Food Safe
+Atlas Scientific LLC, hereby certifies that,
+Gen 3 Industrial pH Probe – No Temp
+Part # ENV-50-pH-NT
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 12 --
+
+Reference electrode
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Silver / Silver Chloride
+Delrin® thermoplastic
+70m (230 feet)
+3m (9.8 feet)
+No
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This pH probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Glass
+Teflon
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 12 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__d69cb303fc10)
+
+-- 9 of 32 --2 	Chapter A6.4. Measurement of pH
+pH of surface waters is affected diurnally by photosynthe-
+sis and respiration of algae and rooted macrophytes (Hem,
+1989). Additionally, pH directly affects physiological func-
+tions of biota and is an important indicator of the health of an
+aquatic system.
+The pH of water is defined as the negative base-10 loga-
+rithm of the hydrogen ion activity {H+}.
+By definition,
+pH 	H	  	 	
+log10 	, and
+H pH	 	
+ 	  10 	, where
+H 	activityof hydrogen ion
+ 	  	.
+Information on pH—
+• In aqueous solutions, the hydrogen ion (H+) exists as
+hydronium (H3O+). For simplicity, “H+” is commonly
+used when defining pH.
+• Potentiometric measurements made by using ion-
+selective electrodes (ISE) indicate free ionic activities
+rather than the actual concentrations of ions. Therefore,
+similar to other ion-selective electrodes (ISE), pH elec-
+trodes measure hydrogen ion activity.
+• Activity can be thought of as an “effective” concentra-
+tion and differs from true molar concentration because
+of ion-ion interactions. The hydrogen ion activity is
+defined as the molar concentration of hydrogen ions
+multiplied by an activity coefficient that takes into
+account the interaction of hydrogen ions with other
+chemical species in the solution. For dilute waters,
+activity values of ions are similar to their molar
+concentrations. For waters with high ionic strength—
+for example, brackish water or seawater—activities
+can differ substantially from molar concentrations. The
+theoretical basis of activity and activity coefficients
+and their relation to ionic strength and ionic concen-
+trations are described in detail in Hem (1989) and
+Benjamin (2015).
+• Activity is dimensionless; therefore, pH values are
+unitless.
+• Because pH is based on a logarithmic scale, a change
+of 1 pH unit is a 10-fold change in the hydrogen ion
+activity.
+• Temperature and dissolved gases affect the chemi-
+cal equilibria of ionic activities in aqueous solutions,
+including that of H+ (Hem, 1989). For example, the
+neutral pH of pure water at 25 degrees Celsius (°C) is
+defined as 7.00, but the value is 6.92 at 30 °C and 7.48
+at 0 °C. In addition, pure water in equilibrium with the
+atmosphere at 25 °C has a pH of 5.7 because of the
+dissolution and dissociation of carbon dioxide (CO2)
+from the atmosphere.
+• For an in-depth discussion of pH theory, see
+Bates (1965).
+• Figure 6.4–1 shows the pH range of several types of
+natural waters (modified from Nordstrom (1997)—
+USGS Training Course: Geochemistry for Groundwa-
+ter Systems). Most groundwaters in the United States
+have pH values generally ranging from 6.0 to 8.5
+(Hem, 1989). Care must be taken when measuring the
+pH of groundwaters because the water may be super-
+saturated with CO2 before it reaches the land surface,
+and degassing can increase pH.
+• River waters not affected by contamination generally
+have a pH in the range of 6.5 to 8.5 and commonly
+exhibit diel fluctuations in pH as a result of photosyn-
+thesis, respiration, and temperature, causing variations
+in dissolved CO2 (Hem, 1989). Some extreme pH
+measurements of waters in the field include -3.6 for
+hyperacidic mine waters (Nordstrom and Alpers, 1999),
