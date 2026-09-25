@@ -41,7 +41,8 @@ Target architecture, gap analysis and roadmap built on these: [`GILLIGAN_TARGET_
 
 - **Merge path:** build the complete, quality-checked product first, demo it to the supervisor, and the supervisor approves merging it into the upstream repositories. Where that code is written is D1 below.
 - **Integration shape:** the dashboard keeps calling the upstream Gilligan routes; the upstream server calls this service over HTTP (`INTEGRATION_PLAN.md` Shape C, archived under tag `docs-archive-2026-09-23`). Moving this code into the upstream server is an option if time allows.
-- **Hosting:** the upstream owners create their own Fireworks API key for `gpt-oss-120b`. The document corpus is expected to live in their Firestore.
+- **Hosting:** CER replaces the cer-demo Fireworks key with a key from its own paid account, held in Secret Manager (S5, decided 2026-09-24).
+- **Release packaging:** ship the corpus and embedding cache in the image from a clean feature branch, without reusing a build cache or image from before the malware cleanup (O7).
 - **Data handling is a launch requirement.** Fireworks documents that it does not log or store prompts or generations for open models unless the account opts in, which covers the serverless models used here (checked below).
 - **Phase 3 capture spend is approved**, to be run in a separate session.
 - **Usage limits:** left to Claude's design, for about 50 users at launch and sized for several hundred. Proposal in the architecture document.
