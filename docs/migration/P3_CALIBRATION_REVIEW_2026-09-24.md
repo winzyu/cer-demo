@@ -106,3 +106,9 @@ Correctness kappa against the user's grades as submitted is now 0.659, still bel
 Against this review the judge now agrees at 0.895 on correctness.
 R4 spend is now about $7.92 of the $20 ceiling.
 
+## Final adjudication - 2026-09-25
+
+At the user's request Claude ruled on the remaining disputed rows; four of the user's correctness grades changed, each recorded in its `scores.csv` note with the original grade.
+Correctness kappa against the adjudicated sheet is 0.849 (29/32 exact), meeting the 0.70 bar with no further spend.
+The reference is no longer purely human, and the prompt was tuned on these rows; `docs/EVAL_REBUILD.md` records both caveats and the ruling rule.
+

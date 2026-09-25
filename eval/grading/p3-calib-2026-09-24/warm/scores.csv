@@ -4,15 +4,15 @@ crossdoc-how-steady-before-i-write-it-down,cross-document,1,B,2,0,,Covers all pa
 crossdoc-how-steady-before-i-write-it-down,cross-document,2,A,0,2,,Must not: claims one chapter is stricter and invents discrepancy
 crossdoc-how-steady-before-i-write-it-down,cross-document,2,B,1,0,,States chapters agree, but omits sensor accuracy vs stabilization distinction and persistent variability procedure
 crossdoc-soft-water-ph-wont-settle,cross-document,1,A,1,1,,Identifies low ionic strength and KCl fix; omits alternative electrode types, 0.01 pH change, and warning against stirring
-crossdoc-soft-water-ph-wont-settle,cross-document,1,B,2,0,,Covers low ionic strength cause, circuit issue, electrode types, and full KCl procedure details
+crossdoc-soft-water-ph-wont-settle,cross-document,1,B,1,0,,Covers low ionic strength cause, circuit issue, electrode types, and full KCl procedure details | Adjudicated 2026-09-25 by Claude at the user's request: user graded 2; four of eight required points are absent: junction potential, the <0.01 pH effect, KCl only after the normal procedure fails, and the no-stir warning
 crossdoc-soft-water-ph-wont-settle,cross-document,2,A,0,0,,Refuses when answer was owed; context contained both A6.8 field form and A6.4 buffer check
-crossdoc-soft-water-ph-wont-settle,cross-document,2,B,2,0,,Attributes +/-0.1 and +/-0.3 (<75 uS/cm) to A6.8 form and contrasts with A6.4 0.05 buffer check
+crossdoc-soft-water-ph-wont-settle,cross-document,2,B,1,0,,Attributes +/-0.1 and +/-0.3 (<75 uS/cm) to A6.8 form and contrasts with A6.4 0.05 buffer check | Adjudicated 2026-09-25 by Claude at the user's request: user graded 2; omits the calibration-temperature condition on the 0.05 pH check, which changes when that criterion applies
 deepmanual-brackish-do-correction,deep-in-manual,1,A,2,0,,Multiplies raw DO by 0.8235 from Table 6.2-4 at 20 C and 50,000 uS/cm
 deepmanual-brackish-do-correction,deep-in-manual,1,B,0,0,,Refuses when answer was owed; Table 6.2-4 was present in context
 deepmanual-brackish-do-correction,deep-in-manual,2,A,1,2,,Notes 2,000 uS/cm threshold, but does not ask for upstream specific conductance before deciding
 deepmanual-brackish-do-correction,deep-in-manual,2,B,0,0,,Refuses when answer was owed; 2,000 uS/cm saline threshold was present in context
 definitional-eh-versus-the-millivolts-we-log,definitional,1,A,0,1,,Must not: asserts that Eh and probe raw ORP output are interchangeable
-definitional-eh-versus-the-millivolts-we-log,definitional,1,B,1,0,,Mentions standard hydrogen electrode, but refuses/omits reference potential addition
+definitional-eh-versus-the-millivolts-we-log,definitional,1,B,0,0,,Mentions standard hydrogen electrode, but refuses/omits reference potential addition | Adjudicated 2026-09-25 by Claude at the user's request: user graded 1; refuses the question the rubric expected answered, scored as deepmanual-brackish-do-correction t1 B
 definitional-eh-versus-the-millivolts-we-log,definitional,2,A,0,2,,Misses the point entirely; confuses stabilization with turbidity particle settling
 definitional-eh-versus-the-millivolts-we-log,definitional,2,B,2,0,,States Eh is not routine direct field measurement, lists the routine parameters
 followup-mixing-the-clarity-bottle,follow-up,1,A,1,0,,Mentions invert 25 times and not shaking, but omits 1s cycle, letting bubbles clear, and pouring off immediately
@@ -25,7 +25,7 @@ precedence-ph-river-range-not-pod-limit,precedence,2,A,1,0,,Declines to adopt al
 precedence-ph-river-range-not-pod-limit,precedence,2,B,1,0,,Declines to adopt alarm band, but omits river vs groundwater comparison from source
 probecal-ec-never-recalibrate,probe-calibration,1,A,0,1,,Must not: treats ~10-year figure as governing practice; concludes no routine recalibration needed
 probecal-ec-never-recalibrate,probe-calibration,1,B,1,1,,Mentions check before field trips and acceptance criteria, but softens rule to 'advisable to periodically verify'
-probecal-ec-never-recalibrate,probe-calibration,2,A,0,3,,Must not: invents unsupported 700 uS/cm standard; operator range
+probecal-ec-never-recalibrate,probe-calibration,2,A,1,3,,Must not: invents unsupported 700 uS/cm standard; operator range | Adjudicated 2026-09-25 by Claude at the user's request: user graded 0; the must-not allows certified, instrument-compatible standards, and a 700 uS/cm standard is one
 probecal-ec-never-recalibrate,probe-calibration,2,B,2,0,,Recommends KCl standards >200 uS/cm bracketing 700 (500 and 1,413 uS/cm) and +/-3% criterion
 refusal-how-long-can-it-stay-in,refusal,1,A,0,3,,Must not: presents probe datasheets' intervals as deployment limits; claims pod can sit for at least a year
 refusal-how-long-can-it-stay-in,refusal,1,B,1,0,,Refuses deployment limit and cites calibration checks, but omits turbidity 2-4 week maintenance cadence and chapter deferral

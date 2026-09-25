@@ -1069,6 +1069,20 @@ As secondary results, the judge agrees with the AI review at 0.895 (30/32) on co
 The prompt was tuned on these 32 rows and re-measured on them, so the gain is an upper estimate; a held-out sample would measure it honestly.
 Correctness verdicts from before `49e28ae` are not comparable with later ones, and the ledger re-judges them on the next pass.
 
+#### Final adjudication - 2026-09-25: correctness kappa 0.849, the bar is met
+
+The user asked Claude to rule on the remaining disputed rows rather than re-grade, so the reference is the user's grades with four rows adjudicated by Claude; it is not a purely human sample.
+One rule decided every row: a point is met when its operative content is stated, a missing explanation or elaboration does not deny it, a missing condition that changes when a criterion applies does, and refusals follow the written scale as the user applied it to `deepmanual-brackish-do-correction` t1.
+Changed in `scores.csv`, each with the user's original grade and the reason in its note: `crossdoc-soft-water-ph-wont-settle` t1 B from 2 to 1 and t2 B from 2 to 1, `definitional-eh-versus-the-millivolts-we-log` t1 B from 1 to 0, and `probecal-ec-never-recalibrate` t2 A from 0 to 1.
+Upheld against the judge: `crossdoc-how-steady-before-i-write-it-down` t1 B at 2, `refusal-how-long-can-it-stay-in` t2 B at 1, and `probecal-ec-never-recalibrate` t2 B at 2, where the only gaps are "NIST" for a stated certified standard and the reason for the 200 uS/cm floor.
+
+Against that sheet, `--calibrate` gives correctness exact 29/32, within one 32/32, kappa 0.849, over 32 pairs with none unjudged; no further judge calls were made.
+Secondary: the judge agrees with the AI review at 0.895, and the adjudicated sheet agrees with the AI review at 0.848.
+Ungrounded is unchanged and weak: any/none 25/32, count kappa 0.231, with the judge counting inferential links the references accept and missing source rules misapplied with their own numbers.
+
+The correctness judge is accepted as calibrated for R4 with two caveats: the prompt was tuned on these rows, and four reference rows are Claude's rulings.
+Reported ungrounded rates carry the weak ungrounded agreement as a caveat.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
