@@ -118,8 +118,8 @@ Both repositories were fetched first (no new commits) and scanned with the long-
 | positive control | `c7ecede^` flags `postcss.config.js` | `a5b745e^` flags both jest configs |
 | working tree of `local` | clean | clean |
 | feature branch | `feature/gilligan-rag-assistant` off `main`, 4 commits, tip `da5412f`: clean | `feature/gilligan-rag-assistant` off `develop`, 5 commits, tip `b2074b8`: clean |
-| pushed | not yet; awaiting the user's yes | not yet; awaiting the user's yes |
-| pull request | not yet opened | not yet opened |
+| pushed | 2026-09-24, remote tip `da5412f` | 2026-09-24, remote tip `b2074b8` |
+| pull request | held back by the user; draft body in [`UPSTREAM_PR_BODIES.md`](UPSTREAM_PR_BODIES.md) | held back by the user; draft body in [`UPSTREAM_PR_BODIES.md`](UPSTREAM_PR_BODIES.md) |
 
 Each branch is `local` cherry-picked without our payload-removal commit, which upstream had made identically; each branch tree equals `git merge-tree` of `local` into its base.
 The audit found no secrets, `.env` files or credential files; the dashboard adds only `remark-gfm`, resolved from `registry.yarnpkg.com`.
