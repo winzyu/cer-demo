@@ -197,7 +197,11 @@ describe("the tool flags are additive", () => {
 
 describe("the catalogue block", () => {
   const drafts = buildCatalogueBlock(usableGuidance(catalogue, true));
-  const none = buildCatalogueBlock(usableGuidance(catalogue, false));
+  // The shipped catalogue is approved (2026-09-24.1), so the nothing-approved wording is tested
+  // against the same catalogue with no entries or referrals.
+  const none = buildCatalogueBlock(
+    usableGuidance({ ...catalogue, entries: [], referrals: [] }, false),
+  );
 
   it("appends last, after both tool blocks, leaving every earlier byte unchanged", () => {
     const tools = buildSystemPrompt(true, true, null);
@@ -213,7 +217,6 @@ describe("the catalogue block", () => {
   });
 
   it("forbids causes, actions and contacts outright while nothing is approved", () => {
-    // The shipped catalogue has no approved entries yet (supervisor items 17-20).
     expect(none).toContain("No guidance is approved yet.");
     expect(none).not.toContain("Clean Earth Rovers");
     expect(none).not.toContain("[");
