@@ -17,6 +17,8 @@ export interface FireworksConfig {
   baseUrl: string;
   chatModel?: string;
   embeddingModel: string;
+  /** Cross-encoder for the `*-rerank` retrieval modes; see `RerankService`. */
+  rerankModel: string;
   /**
    * Deliberately generous. gpt-oss models emit reasoning tokens before visible output and
    * truncate to an empty answer if starved — a low cap fails as silence, not as an error.
@@ -402,6 +404,7 @@ const load = (): Config => {
       baseUrl: readString("FIREWORKS_BASE_URL", "https://api.fireworks.ai/inference/v1") as string,
       chatModel: readString("LLM_MODEL"),
       embeddingModel: readString("EMBEDDING_MODEL", "nomic-ai/nomic-embed-text-v1.5") as string,
+      rerankModel: readString("RERANK_MODEL", "fireworks/qwen3-reranker-8b") as string,
       maxTokens: readInt("LLM_MAX_TOKENS", 4096),
       temperature: readFloat("LLM_TEMPERATURE", 0),
       user: readString("FIREWORKS_USER", "clean-earth-rag") as string,

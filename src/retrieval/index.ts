@@ -7,6 +7,8 @@ import { FirestoreVectorAdapter } from "./adapters/FirestoreVectorAdapter";
 import { HybridSliceVectorAdapter } from "./adapters/HybridSliceVectorAdapter";
 import { RrfHybridAdapter } from "./adapters/RrfHybridAdapter";
 import { LocalVectorAdapter } from "./adapters/LocalVectorAdapter";
+import { RerankAdapter } from "./adapters/RerankAdapter";
+import { RerankService } from "../services/RerankService";
 import { ArtifactCorpusSource } from "./sources/ArtifactCorpusSource";
 import { FirestoreCorpusSource } from "./sources/FirestoreCorpusSource";
 import type { CorpusSource } from "./sources/corpusSource";
@@ -85,6 +87,18 @@ retrievalRegistry.register(new HybridSliceVectorAdapter(
   new RrfHybridAdapter(new LocalVectorAdapter(), "local-hybrid-inner"),
   undefined,
   "hybrid-slice-lexvec",
+));
+
+/**
+ * Dense retrieval reordered by a cross-encoder, alone and under the operator tier. The reranker
+ * is called per request, so these modes cost a Fireworks rerank call that the others do not.
+ */
+retrievalRegistry.register(new RerankAdapter(new LocalVectorAdapter(), new RerankService()));
+retrievalRegistry.register(new HybridSliceVectorAdapter(
+  new DirectFeedAdapter(createCorpusSource()),
+  new RerankAdapter(new LocalVectorAdapter(), new RerankService(), "local-rerank-inner"),
+  undefined,
+  "hybrid-slice-rerank",
 ));
 
 /**
