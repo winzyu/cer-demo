@@ -11,7 +11,7 @@ Mark it done with the date and where the evidence is.
 ## 1. The mirror scenarios, repeated with live test users
 
 The mirror ticket (`GILLIGAN_E2E_TEST_TICKET.md`, on branch `docs/gcp-test-env`) defines nine scenario groups.
-Phase 1 ran on the mirror on 2026-09-25: 41 questions, 36 pass, 5 fail.
+Phase 1 ran on the mirror on 2026-09-25: 46 scenarios, 43 pass, 3 fail, after reruns that fixed bot defects (`GILLIGAN_E2E_RESULTS_2026-09-25.md` on `docs/gcp-test-env`).
 On live, run them as the T1 test users (release plan T2), with the release limits of 20 questions and 5 reports rather than the mirror's 5 and 3.
 
 | group | what it checks | mirror 2026-09-25 | live |
@@ -20,11 +20,11 @@ On live, run them as the T1 test users (release plan T2), with the release limit
 | B no pod | definitions, a follow-up, "which pod?", a safety refusal, prompt injection, Spanish | pass | open |
 | C pod data | salt vs fresh water, placeholder thresholds, dead sensors, 60-day history, all-pod comparisons | pass | open |
 | D isolation | other organizations' pods by name, label and crafted URL; the orphan; the no-pod customer | fail: the orphan sees every pod in answers (D4) | open |
-| E history | legacy chats, persistence across reloads and restarts, an answer landing in the right chat | fail: an answer that arrives after switching chats does not land in its chat (E4) | open |
+| E history | legacy chats, persistence across reloads and restarts, an answer landing in the right chat | pass | open |
 | F reports | offer, download, re-download, 60-day chain, report limit | pass | open |
 | G quota | the allowance in the page, across restarts, per user | pass | open |
-| H failures | services down, double-send, a 2,000-character question, a nearly-full chat document | fail: a double-click sends two questions (H3) | open |
-| I layout | the dashboard widget, phone width | not run | open |
+| H failures | services down, double-send, a 2,000-character question, a nearly-full chat document | pass; a chat whose history passes about 100 KB fails with "request entity too large" (H5, finding 5) | open |
+| I layout | the dashboard widget, phone width | pass | open |
 
 ## 2. Release decisions that depend on production data
 
