@@ -32,9 +32,27 @@ import type { DeviceSummary } from "../types/device.types";
  *   (`BACKEND_FIELDS.md` §5b). History is read only where same-organization ownership is known;
  *   whether those merges transferred the site is open with the operator (`SPECS.md` §10.3c).
  *
- * So a predecessor is read only when it appears in the caller's own org-scoped `/devices`
- * response **and** carries the same `organization` string as the survivor. Everything else is
- * withheld and named, so a short history is never mistaken for a complete one.
+ * So a predecessor the caller can see is read only when it carries the same `organization`
+ * string as the survivor. Everything else is withheld and named, so a short history is never
+ * mistaken for a complete one.
+ *
+ * ## Predecessors the caller cannot see
+ *
+ * `/devices` hides every device carrying `mergedInto`, even from a superadmin, so live every
+ * predecessor is absent from the caller's view and its organization cannot be read here. The
+ * server's period route decides those instead once patched: it walks `mergedInto` back from the
+ * caller's own devices and grants a predecessor whose organization is null or matches no
+ * organization document, and nothing past one registered to another organization
+ * (`timeline.md`, 2026-09-24 and 2026-09-25). A hidden label the registry chain names is
+ * therefore sent to that route and listed in `unconfirmed`; the tool moves any label the route
+ * refuses into `withheld`.
+ *
+ * That hand-off is made only when the caller's view is org-scoped: every visible device carries
+ * the survivor's organization. A superadmin's view spans organizations and the route grants a
+ * superadmin every label, so it cannot say whether a hidden predecessor belongs to the
+ * survivor's organization; those stay withheld. This relies on the patched route: one that does
+ * not authorize its `device` parameter (`SECURITY_FINDINGS.md` §1) would return another
+ * organization's history.
  */
 
 /**
@@ -56,6 +74,12 @@ export interface WithheldLabel {
 export interface DeviceChain {
   /** Labels to query, survivor first. Always carries at least the survivor's own label. */
   labels: string[];
+  /**
+   * The subset of `labels` read on the period route's authority alone, because the caller cannot
+   * see them. A refusal for one of these (`isChainRefusal`) withholds it rather than failing the
+   * query: `withholdRefused`.
+   */
+  unconfirmed: string[];
   /** Predecessors deliberately not read. */
   withheld: WithheldLabel[];
   /** Set when the *resolved* device is itself retired — it points at its successor. */
@@ -129,12 +153,13 @@ export const resolveChain = (
 ): DeviceChain => {
   const self = device.label;
   if (typeof self !== "string" || self === "") {
-    return { labels: [], withheld: [] };
+    return { labels: [], unconfirmed: [], withheld: [] };
   }
 
   const merged = mergedIntoOf(device);
   const chain: DeviceChain = {
     labels: [self],
+    unconfirmed: [],
     withheld: [],
     ...(merged ? { mergedInto: merged } : {}),
   };
@@ -145,11 +170,17 @@ export const resolveChain = (
   // (`SPECS.md` §10.3c). A survivor with no organization of its own therefore inherits
   // nothing — the empty set, never a wildcard.
   const org = device.organization;
+  const orgScoped = Boolean(org) && visible.every((candidate) => candidate.organization === org);
 
   predecessorsOf(device, visible).forEach((label) => {
     const row = visible.find((candidate) => candidate.label === label);
     if (!row) {
-      chain.withheld.push({ label, reason: "not visible to this account" });
+      if (orgScoped) {
+        chain.labels.push(label);
+        chain.unconfirmed.push(label);
+      } else {
+        chain.withheld.push({ label, reason: "not visible to this account" });
+      }
       return;
     }
     if (!org || row.organization !== org) {
@@ -163,6 +194,31 @@ export const resolveChain = (
   });
 
   return chain;
+};
+
+/** Reason recorded when the period route refuses an `unconfirmed` label. */
+export const REFUSED_REASON = "refused by the device API for this account";
+
+/**
+ * True when a period read failed because the route refused the label: a 400 carrying the
+ * route's "Device not found". Any other failure is a fault and must still fail the query.
+ */
+export const isChainRefusal = (error: unknown): boolean => {
+  const { status, message } = (error ?? {}) as { status?: unknown; message?: unknown };
+  return status === 400 && typeof message === "string" && message.includes("Device not found");
+};
+
+/** `chain` with an `unconfirmed` label the period route refused moved into `withheld`. */
+export const withholdRefused = (chain: DeviceChain, label: string): DeviceChain => {
+  if (!chain.unconfirmed.includes(label)) {
+    return chain;
+  }
+  return {
+    ...chain,
+    labels: chain.labels.filter((entry) => entry !== label),
+    unconfirmed: chain.unconfirmed.filter((entry) => entry !== label),
+    withheld: [...chain.withheld, { label, reason: REFUSED_REASON }],
+  };
 };
 
 /**
