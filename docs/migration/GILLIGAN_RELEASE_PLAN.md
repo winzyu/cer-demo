@@ -178,6 +178,10 @@ L2 answers so far (2026-09-24 and 2026-09-25):
 - Gilligan's data (decided 2026-09-25): all of it, the corpus and the usage store, lives in a dedicated Firestore database (for example `gilligan`, in `us-central1`), so `cer-gilligan-runtime` has no grant on the customer `(default)` database; it reads pod data only through the server with the caller's token.
   Firestore IAM stops at the database, so a grant on `(default)` would let the runtime write users and devices.
   The new database needs Michael and the supervisor (as F1 does for new collections), and cer-demo needs a database setting for the corpus and usage store.
+- Service-to-service check at launch (decided 2026-09-25): the shared service key (S2; server `feat/service-key` `9ef59b7`, cer-demo `requireServiceKey` on `feat/service-release`), which passed the mirror end-to-end run.
+  Cloud Run's own IAM check stays off for launch, so `cer-gilligan` allows unauthenticated invocation and refuses any request without the key; the Invoker grant to the default compute account, and the runbook §5 identity-token change, move to after launch.
+  This replaces the Invoker grant in Michael's list with two items: allow public invocation on `cer-gilligan` (an IAM change Editor cannot make; an organization policy may forbid it, to check), and store the key as a secret readable by both `cer-gilligan-runtime` and cer-api's default compute account.
+- Usage limits must be set explicitly in `cer-gilligan`'s configuration (20 messages, 5 reports, 1,000,000 tokens per user per day): the mirror run showed the quota store is unlimited when no limit is set.
 - Still open: a structured inventory of every resource and grant, who creates it (the user or Michael) and how each is demonstrated, before anything is created in production.
 
 There is still no working rollback to the Gemini backend (architecture decision D9); rollback means routing traffic back to the previous dashboard revision, which hides the new page.
