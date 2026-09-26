@@ -9,7 +9,9 @@ Production is read-only for this work; every production figure comes from a live
 
 "Only the pointer changes" is reachable for the code, not for the deployment.
 The code can be made identical: the server now takes its project and database from the environment (server branch `feat/firestore-config`, `0003170`, local and unpushed), and cer-demo already does.
-Some launch-day changes can never be exercised on the emulator, because they are cloud resources the emulator does not have: the `gilligan` database, its IAM grants, the secrets, the TTL policy, the indexes and the Cloud Run settings.
+Some launch-day changes can never be exercised on the emulator, because they are cloud resources the emulator does not have: the `gilligan` database, its IAM grants, the secrets, the TTL policy and the Cloud Run settings.
+The indexes production's customer database needs already exist (R8), and `cer-api`'s timeout already exceeds the relay's (R9).
+The data gaps that matter are the mirror being tidier than production: production pods report every 30 minutes, some fall silent for weeks, and failed readings put a billion in every metric (section 1).
 The aim is therefore that each of those is written down once (section 7), rehearsed in `cer-demo-2026` where it can be, and checked by a read on the day.
 
 Severity, for launch:
@@ -24,27 +26,28 @@ Severity, for launch:
 In plain terms: the mirror is a made-up copy of production with the same collections and field names, so the code sees familiar documents.
 Where the made-up data is tidier than the real data, bugs that depend on the mess stay hidden until launch.
 
-What already matches (the mirror copies it on purpose): the five collections, 9 organizations, 27 users by role, 15 devices with 4 merge survivors, 5 merged-away and 6 archived, 2 devices pointing at organizations that do not exist, a cross-organization merge chain, a fresh-water survivor absorbing salt-water pods, all-zero and placeholder thresholds stored as strings, a Firestore timestamp among ISO calibration dates, the `lastCalibrationData` typo, `archived` stored as the string `"true"`, the capitalised `Organization` field, integer and timestamp `registrationDate`s, 4 invited users with no password, pods with no turbidity or oxygen sensor, and the firmware's `1000000000` failure value.
-The mirror's own census (the same script as production's, `scripts/exploreFirestoreParity.sh --emulator`) confirms those shapes.
+What matches, confirmed by running the same census on both (R1-R6): the five collections and no others, so production has no separate events collection; 9 organizations holding only `name`; 27 users with the same password, `registrationDate`, `emailValidated`, `emailVerified` and capitalised `Organization` shapes; every user's `organization` a string, none a map; 15 devices with the same field types, 13 threshold sets of 10 string values, one device both merged and archived, `archived` once stored as the string `"true"`, one calibration date stored as a timestamp, the `lastCalibrationData` typo; readings with the same top-level fields and types, `lat` and `lon` stored as numbers in both.
 
 What the mirror leaves out or makes tidier:
 
-| id | gap | mirror | production | severity | fix |
+| id | gap | mirror | production (2026-09-26) | severity | fix |
 |---|---|---|---|---|---|
-| D1 | Reporting interval | Every pod reports exactly every 60 minutes | Some pods report about twice an hour (report audit #4); pending R4 | High | Mirror: give one active pod a 30-minute interval and one irregular gaps |
-| D2 | Silent pods | Every active pod's last reading is about 5 hours old | A pod can be silent for two weeks and still read "Normal" in a report (report audit #3); pending R4 | High | Mirror: make one active pod's readings stop 14 days ago |
-| D3 | Stuck sensors | No sensor repeats a value more than twice in a row | Stuck sensors are a known production case (plan Q4); pending R4 | High | Mirror: flat-line one metric on one pod for a day |
-| D4 | Value ranges and rails | Narrow, plausible ranges; conductivity only near 450 or 47,000 µS/cm | pH 14.00 rail, dissolved oxygen 19.3 mg/L against a maximum of 10, a label moving from fresh to salt water within a month, out-of-water dips (`BACKEND_FIELDS.md` §3c, §4d); pending R4 | Medium | Mirror: add a relocation block, a pH rail and an out-of-water dip |
-| D5 | `water_data.lat` and `lon` types | Numbers | Pending R4. The server's `/water-data` schema wants strings and returns 500 on the mirror (preflight P5) | Medium | If production stores strings, fix the mirror; if numbers, the server schema is wrong in production too (unrelated server defect) |
-| D6 | Volume and history | 8,640 readings over 30 days | About 118,000 readings; merged-away labels reach back to 2023 with up to 19,286 rows each (`BACKEND_FIELDS.md` §4a); pending R1 | Medium | Mirror: seed with `--days 365` and give merged-away labels multi-year histories, then time the one-year report and CSV export |
+| D1 | Reporting interval | Every pod reports every 60 minutes | Every reporting pod reports about every 30 minutes (median 29.95-30.1 minutes on all five); two pods have irregular gaps, up to 32 hours and 5.2 days | High: report audit #4 (`MIN_BUCKET_SAMPLES` against 1-hour buckets) only shows at this rate | Mirror: 30-minute readings, one pod with multi-hour and multi-day gaps |
+| D2 | Silent pods | Every current pod's last reading is 5 hours old | Of the five pods that reported in the last 18 days, three reported within the hour and two stopped 280 and 323 hours (12 and 13 days) ago; whether those two are current or retired is pending R11 | High if current: a report can read "Normal" on two-week-old data (report audit #3) | Mirror: one current pod whose readings stop 13 days ago |
+| D3 | Failure readings | Only turbidity ever reads `1000000000`, and only `turbError` is ever set | About 5 of 2,000 readings carry `1000000000` in every metric at once (oxygen, ORP, pH, conductivity, temperature, turbidity) with every error flag set | High: a reading of a billion degrees reaches any path that does not filter it; on the mirror the error-flag query in `findLastDataByDevice` never excluded anything | Mirror: whole-reading failures with all flags set, about 1 in 400 |
+| D4 | Stuck or absent sensors | No non-zero value repeats more than twice; conductivity reads 0 in 10 of 2,000 readings | No non-zero value repeats more than three times either, so "stuck" shows as zeros: oxygen reads 0 in 35% of readings and conductivity in 23% | Medium | Mirror: one pod whose conductivity reads 0 for days, as Q4 expects |
+| D5 | Value ranges | Oxygen 5.8-11.2 mg/L, pH 7.6-8.4, conductivity 351-49,994 µS/cm, ORP 180-300 mV, temperature 16-26 °C, turbidity code 72 always 0, `turbVolt` 0.2-1.0 | Oxygen up to 35.3 mg/L (median 12.7), pH 2.07 to the 14.00 rail, conductivity 76-177,200 µS/cm, ORP 120-818 mV, temperature 15.5-36.3 °C, code 72 reading 322-3,003 five times, `turbVolt` from -0.015 to the 5 V rail; conductivity is sometimes stored as a double | Medium: the implausible-value, rail and baseline checks never fire on the mirror | Mirror: widen ranges to production's, add pH and voltage rails, negative voltages, oxygen above 20, and non-integer conductivity |
+| D6 | Volume and history | 8,640 readings over 30 days | 117,863 readings; merged-away labels reach back to 2023 with up to 19,286 rows each (`BACKEND_FIELDS.md` §4a) | Medium | Mirror: seed with `--days 365` and multi-year histories on merged-away labels, then time the one-year report and CSV export |
 | D7 | Overlapping merge chains | Merged-away pods stop a month before the survivor starts | New Trinidad and Trinidad Island reported together for five months (`BACKEND_FIELDS.md` §4a) | Medium | Mirror: overlap one chain by a month and check reports do not double-count |
-| D8 | Active pod with a non-existent organization | Only merged-away or archived pods point at missing organizations | `Marina Park`, an actively reporting survivor, points at an organization that does not exist (`BACKEND_FIELDS.md` §5a); pending R2 and R3 for whether any user carries that organization | Medium | Mirror: move one dangling id onto an active survivor and give it a customer; this is the case Q6 changes |
-| D9 | Users' `organization` field | Always a string; one user has an empty string | No non-superadmin has a missing, empty or id-less organization (read of 2026-09-26, L2 block); whether any is a map is pending R2 | Low | None if R2 shows strings only; the mirror's orphan stays as a stricter-than-production test (finding 4) |
-| D10 | Where Gilligan's own data lives | `gilligan_usage` in the customer `(default)` database (the run set `FIRESTORE_DATABASE_ID=(default)`) | Decided 2026-09-25: a dedicated `gilligan` database, so the runtime account has no grant on `(default)` | High | Mirror run: set cer-demo's `FIRESTORE_DATABASE_ID=gilligan`; the emulator serves named databases |
-| D11 | Chat documents | Gemini-era chats, at most 7 messages | An average of 1.6 messages among the 20 most recent; sizes pending R5 | Low | None; new chats are written by the code under test |
-| D12 | Organization fields | `{ name }` only | Pending R6 | Low | Add any field R6 shows |
+| D8 | Devices pointing at organizations that do not exist | Two, both retired | One (it was two on 2026-08-21); whether it is current and reporting is pending R11 | Medium if current: Q6 treats it as having no organization | Mirror: match R11 |
+| D9 | Superadmin with a missing organization | All 8 superadmins belong to the CER organization | 7 do; 1 superadmin's organization does not exist | Low: superadmins see every pod regardless, but they are not among the users the server alerts (`DevicesService` looks up superadmins of the CER organization) | Mirror: move one superadmin to a missing organization |
+| D10 | Orphan user | One customer with an empty organization | None; every customer and admin names an existing organization | None: the mirror is deliberately stricter (finding 4) | Keep |
+| D11 | Where Gilligan's own data lives | `gilligan_usage` in the customer `(default)` database, because the run set `FIRESTORE_DATABASE_ID=(default)` | Decided 2026-09-25: a dedicated `gilligan` database, so the runtime account has no grant on `(default)`; it does not exist yet (R7) | High | Mirror run: set cer-demo's `FIRESTORE_DATABASE_ID=gilligan`; the emulator serves named databases |
+| D12 | Chat length | Longest chat 7 messages | Longest 31 messages (about 35 KB); 95% have 7 or fewer | Low: Gemini-era chats are neither listed nor continued (decision D2, end-to-end E group) | Mirror: one 31-message chat, to show it stays hidden |
+| D13 | Merge chain arrays | `labels` arrays of 2 or 3 entries | One survivor's `labels` holds a single entry; 4 devices are merged away, not 5 | Low | Mirror: one single-entry `labels` array |
+| D14 | Duplicate thresholds | One device with minimum equal to maximum | Two | Low | Mirror: a second all-zero set |
 
-How to demonstrate: run the census script on the reseeded mirror and on production, and compare section by section: every line in production's output should have a counterpart on the mirror, at the same type and within the same range.
+How to demonstrate: after reseeding, run `scripts/exploreFirestoreParity.sh --emulator` and compare it with the production output section by section; every production line should have a counterpart on the mirror at the same type and within the same range, except the counts in R1.
 
 ## 2. What the emulator lets through and production does not
 
@@ -53,7 +56,7 @@ Real Firestore refuses some requests the emulator accepts, and the refusals only
 
 | id | gap | what production does | our code | severity | fix |
 |---|---|---|---|---|---|
-| E1 | Composite indexes | A query that filters on one field and sorts on another fails with `FAILED_PRECONDITION` unless a matching composite index exists; the emulator never asks for one | The server's `water-data` queries need `device` + `timestamp desc`, and `device` + five `water_data.*Error` + `timestamp desc` (`WaterAnalyticsService.ts`). All come from upstream commits (`62993fe`, `f0dd8a2` and older), not from our branches; P3's new query is a single-field equality that needs none | Blocker if missing: every pod question and report fails | Deployment: R8 lists production's indexes; any missing one is created by Michael before L6 (building takes minutes on 118,000 documents) |
+| E1 | Composite indexes | A query that filters on one field and sorts on another fails with `FAILED_PRECONDITION` unless a matching composite index exists; the emulator never asks for one | The server's `water-data` queries need `device` + `timestamp desc`, and `device` + five `water_data.*Error` + `timestamp desc` (`WaterAnalyticsService.ts`). All come from upstream commits (`62993fe`, `f0dd8a2` and older), not from our branches; P3's new query is a single-field equality that needs none | Blocker if missing: every pod question and report fails | None: R8 shows all needed indexes `READY` (`device` + `timestamp desc`, and `device` + the five error flags + `timestamp desc`, which also serve the range and `in` forms); closed |
 | E2 | Indexes in the `gilligan` database | Same rule | The usage store reads and writes by document id, so it needs no composite index. The audit-log listing (`caller` + `timestamp`) and the Firestore corpus source (`inDirectFeedSlice` + `filename`, and the vector index) would, but the release image fixes `CORPUS_SOURCE=artifact` and `AUDIT_LOG` defaults off | Low | None for launch; if `AUDIT_LOG` or `CORPUS_SOURCE=firestore` is turned on later, create those indexes first |
 | E3 | Document size, 1 MiB | A chat document cannot grow past 1 MiB | Each answer rewrites the chat's whole `messages` array, now with citations and an audit block. A long chat breaks earlier on cer-demo's 100 KB request-body limit (finding 5) | Medium | Code: send only the last `MAX_HISTORY_MESSAGES` turns from the server, and give the page a "chat too long, start a new one" message; verify with H5 |
 | E4 | Transaction contention | Real Firestore locks a document during a transaction and retries on conflict | The usage store updates one document per user per day inside a transaction; only one user's own parallel questions contend. The emulator test passed 25 contended updates with the right total | Low | None; the L8 smoke asks two questions at once from one account |
@@ -62,9 +65,8 @@ Real Firestore refuses some requests the emulator accepts, and the refusals only
 | E7 | TTL | Real Firestore deletes documents when a TTL field passes; the emulator ignores TTL | `gilligan_usage` needs `expireAt`, not landed (`feat/service-release`); a TTL on `updatedAt` would delete the current day's counter | Low for launch, Medium after | Code first, then a TTL policy on `gilligan_usage.expireAt`; checked by the TTL read |
 | E8 | Quotas and rates | About one sustained write per second per document; 500 writes per batch; `in` takes at most 30 values | No launch path comes near these; the server slices an organization's labels to 10 for `in`, a separate pre-existing defect | Low | None |
 
-How to demonstrate E1 beyond reading the index list: a real Firestore database refuses a query whose index is missing, with the index it wants in the error.
-Seeding the mirror data into a scratch database in `cer-demo-2026` and running the server against it (now possible with `feat/firestore-config`) would show every missing index at once, for about $0.05; it needs the user's approval as a cloud write and a change to the seeder's emulator-only guard.
-Recommended only if R8 leaves any doubt.
+E1 is settled by the index list, so the scratch-database test in `cer-demo-2026` (seeding the mirror into a real database to make it refuse unindexed queries) is not needed for launch.
+It becomes worth its $0.05 if a later change adds a query that filters on one field and sorts on another.
 
 ## 3. Configuration
 
@@ -83,7 +85,7 @@ Server (`cer-api`):
 | `GILLIGAN_BACKEND` | `rag` | `rag`, set at L9 | Defaults to `gemini`, which calls the retired `gemini-pro` and fails every question | Blocker |
 | `CER_RAG_BASE_URL` | `http://localhost:8010` | cer-gilligan's `run.app` URL | Defaults to localhost: every question fails | Blocker |
 | `CER_RAG_SERVICE_KEY` | A random test key | A secret shared with cer-gilligan | cer-demo refuses the relay with 401 | Blocker |
-| `CER_RAG_TIMEOUT_MS` | Default 120 s | Default 120 s | Must stay below cer-api's own request timeout (pending R9) and cer-gilligan's 300 s | Medium |
+| `CER_RAG_TIMEOUT_MS` | Default 120 s | Default 120 s | Must stay below `cer-api`'s own request timeout, 300 s (R9), and cer-gilligan's 300 s; it does | - |
 | `FRONTEND_URL` | `http://localhost:3000` | `https://cleanearthrovers-datahub.app` | Email links point at localhost | Low |
 | CORS | `cors()` with every origin allowed | Same code | - (no parity gap; an open CORS policy is a separate hardening item) | - |
 | `ACCESS_TOKEN_SECRET` | A mirror-only secret | Production's existing secret | - | - |
@@ -117,7 +119,7 @@ In plain terms: on the laptop everything is one machine with no network in betwe
 |---|---|---|---|---|
 | R1 | Region hop | `cer-api` (us-central1) already reads `(default)` in us-west3, adding tens of milliseconds per query; the `gilligan` database sits next to cer-gilligan in us-central1 | Low | None; L8 records the time of a one-year report |
 | R2 | Cold start | With minimum instances 0 the first question after idle waits for the container to start and load 9.5 MB of corpus and embeddings | Medium | Minimum instances 1 on demo and launch days (L2); L6 measures the first answer after a deploy |
-| R3 | Timeout chain | Dashboard, then `cer-api` (its Cloud Run timeout, pending R9), then the 120 s relay, then cer-gilligan's 300 s, then the model queue's 20 s | Medium | Set `cer-api`'s timeout above 120 s if R9 shows less |
+| R3 | Timeout chain | Dashboard, then `cer-api` (300 s, R9), then the 120 s relay, then cer-gilligan's 300 s, then the model queue's 20 s | - | None: the chain is ordered correctly; closed |
 | R4 | Body size | Express's 100 KB JSON limit on both services; Cloud Run allows 32 MiB | Medium (same as E3) | Code, as E3 |
 | R5 | Secrets | `.env` on the laptop, Secret Manager in production; surrounding quotes in a copied value become part of the secret | Medium | The user adds each secret version from their own terminal with quotes stripped; the staged smoke proves the key works |
 | R6 | Instances | Maximum instances 1 until the Firestore usage store is verified live, then 2 (L2) | Low | None |
@@ -127,49 +129,62 @@ A Cloud Run rehearsal in `cer-demo-2026` would measure R2 and R3 and prove the r
 
 ## 5. Gap register
 
-Owner "Claude" means work in cer-demo, the mirror or a local server branch; "user" means a cloud action or decision by the user; "Michael" means a grant only the project admin can make.
+Owner "Claude" means work in cer-demo, the mirror or a local server branch; "user" means a cloud action or decision by the user; "Michael" means a grant or resource only the project admin can create.
 
 | id | severity | fix in | owner | how verified | status |
 |---|---|---|---|---|---|
-| E1 composite indexes | Blocker if missing | deployment | Michael (user reads) | R8 shows each needed index `READY` | pending R8 |
+| E1 composite indexes on `(default)` | Blocker if missing | deployment | - | R8: every index the server's queries need is `READY` | closed 2026-09-26 |
 | E5 runtime IAM | Blocker if missing | deployment | Michael | Troubleshooter in production as in `cer-demo-2026`; L6 staged smoke answers a question | open |
-| E6 `gilligan` database | Blocker if missing | deployment | Michael | R7 lists it in us-central1 | open |
-| C `GILLIGAN_BACKEND`, `CER_RAG_BASE_URL`, service key, `DEVICE_API_BASE_URL`, `FIREWORKS_API_KEY`, `FIRESTORE_DATABASE_ID` | Blocker | deployment | user | Startup logs of both staged revisions; L8 smoke | open |
-| D10 Gilligan data in `(default)` on the mirror | High | mirror run settings | Claude | Mirror rerun of G1-G3 with `FIRESTORE_DATABASE_ID=gilligan`; census shows no `gilligan_usage` in `(default)` | open |
-| D1-D3 cadence, silent pods, stuck sensors | High | mirror | Claude | Census of reseeded mirror shows production's interval, age and repeat patterns; report audit #3 and #4 reproduce on the mirror | pending R4 |
+| E6 `gilligan` database | Blocker if missing | deployment | Michael | R7 lists it in us-central1 | open (R7: not created yet) |
+| C server Gilligan settings: `GILLIGAN_BACKEND`, `CER_RAG_BASE_URL`, `CER_RAG_SERVICE_KEY` | Blocker | deployment | user | R9 lists them on the new revision; startup log; L8 smoke | open (R9: none of the three is set today) |
+| C cer-gilligan settings: `DEVICE_API_BASE_URL`, `FIREWORKS_API_KEY`, `FIRESTORE_DATABASE_ID`, service key | Blocker | deployment | user | Startup log of the staged revision; L8 smoke | open |
+| D1-D3 cadence, silent pods, whole-reading failures | High | mirror | Claude | Census of the reseeded mirror matches R4; report audit #3 and #4 reproduce on the mirror | open; D2 severity waits on R11 |
+| D11 Gilligan data in `(default)` on the mirror | High | mirror run settings | Claude | Mirror rerun of G1-G3 with `FIRESTORE_DATABASE_ID=gilligan`; the census shows no `gilligan_usage` in `(default)` | open |
 | C quota limits and store | High | deployment | user | Startup log; G1 on staging with a limit of 20 | open |
-| Mirror runs under the production project id | High (safety) | server code, mirror | Claude, user decides whether it ships | `feat/firestore-config` unit test 4/4 and emulator probe; mirror README updated | code done, mirror open |
-| D4-D8 ranges, lat type, volume, overlap, active dangling organization | Medium | mirror | Claude | Census comparison; one-year report and CSV export timed on the mirror | pending R2-R4 |
+| Mirror runs under the production project id | High for safety | server code, mirror | Claude; the user decides whether the server change ships | `feat/firestore-config` unit test 4/4 and the emulator probe; mirror README and scripts updated | code done, mirror open |
+| D4-D8 zeros, ranges, volume, overlap, missing organization | Medium | mirror | Claude | Census comparison; one-year report and CSV export timed on the mirror | open; D8 waits on R11 |
 | E3 and R4 chat size and body limit | Medium | code | Claude (cer-demo), user (server) | H5 rerun shows a readable message instead of "request entity too large" | open |
 | R7 production build never run on the mirror | Medium | test procedure | Claude | Preflight and G1-G3 pass against both images | open |
-| R2, R3 cold start and timeouts | Medium | deployment | user | R9; first-answer time at L6 | pending R9 |
-| E7 TTL on usage documents | Low at launch | code, then deployment | Claude, then Michael | TTL read shows the policy on `expireAt` | open |
-| E2, E4, E8, R1, R6, D9, D11, D12 | Low | none | - | As in their sections | - |
+| R2 cold start | Medium | deployment | user | First-answer time at L6 | open |
+| R3 timeout chain | Medium | deployment | - | R9: `cer-api` allows 300 s, above the 120 s relay | closed 2026-09-26 |
+| D5 `lat` type | - | - | - | R4: numbers in both; the `/water-data` 500 is a server defect in production too (below) | closed 2026-09-26 |
+| E7 TTL on usage documents | Low at launch | code, then deployment | Claude, then Michael | TTL read on `gilligan` shows the policy on `expireAt` | open |
+| D9, D12-D14, E2, E4, E8, R1, R6 | Low | mirror or none | Claude | As in their sections | open or none |
+
+Observed outside this task's scope, reported and not fixed here:
+
+- Server `/water-data` validates `water_data.lat` as a string, but production stores numbers, so the route likely returns 500 in production as it does on the mirror (preflight P5).
+- Production `(default)` has point-in-time recovery and delete protection off (R7), so an accidental delete of the customer database or a bad bulk write cannot be undone; worth raising with Michael.
+- `cer-api` sets no `OPENAI_API_KEY` (R9) although `WaterAnalyticsService` reads one, and none of the `STRIPE_GILLIGAN_STANDARD_*` or `_PRO_*` ids the payment code reads; whichever features use them presumably fail today.
+- The server's legacy `src/api/api_methods/db_config.js` still hard-codes the production project; nothing in the app imports it.
+- `GilliganService` rewrites a chat's whole `messages` array without a transaction, so two answers finishing together in one chat can lose one.
 
 ## 6. Live reads
 
 `scripts/exploreFirestoreParity.sh` runs every production read below with the user's own `gcloud` login and prints only aggregates: counts, field names, value types, numeric ranges, reporting intervals and document sizes.
 No document id, name, email, device label or free text is printed or written to disk.
-It was first run against the local emulator only, which produced the mirror column.
+It was run first against the local emulator, then by the user against production on 2026-09-26 at 08:18 UTC.
+R11 was added after that run; `--followup` runs it alone.
 
-| read | what it asks | mirror (2026-09-26) | production |
+| read | what it asks | mirror (2026-09-26) | production (2026-09-26) |
 |---|---|---|---|
-| R1 | Collections and document counts | `chats` 87 (52 seeded plus end-to-end runs), `devices` 15, `gilligan_usage` 9, `organizations` 9, `users` 27, `water-data` 8,640 | pending |
-| R2 | Users' `organization` type and whether it names an existing organization, by role | All strings: 8 superadmin, 4 admin and 14 customer name existing organizations, 1 customer is empty | pending |
-| R3 | Device field types and organization references | 13 existing, 2 missing organizations; 1 device merged and archived | pending |
-| R4 | The 2,000 newest readings: types, ranges, intervals, last-reading age, repeated values | 5 pods, every interval 60 minutes, last reading 5 hours old, no value repeated more than twice; `lat` and `lon` are doubles | pending |
-| R5 | Chat sizes and message fields | Largest about 1.0 MB (the padded H5 chat), median 3 KB | pending |
-| R6 | Organization field types | `name` only | pending |
-| R7 | Databases: location, mode, protection | - | pending |
-| R8 | Composite indexes, field overrides and TTL on `(default)` | - | pending |
-| R9 | `cer-api` timeout, concurrency, resources, scaling, environment variable names | - | pending |
-| R10 | Cloud Run service names in us-central1 | - | pending |
+| R1 | Collections and document counts | `chats` 87 (52 seeded, the rest from end-to-end runs), `devices` 15, `gilligan_usage` 9, `organizations` 9, `users` 27, `water-data` 8,640 | `chats` 52, `devices` 15, `organizations` 9, `users` 27, `water-data` 117,863; no other collection |
+| R2 | Users' `organization` type and whether it names an existing organization, by role | All strings; 8 superadmin, 4 admin and 14 customer name existing organizations, 1 customer is empty | All strings; 7 superadmin, 4 admin and 15 customer name existing organizations, 1 superadmin names a missing one |
+| R3 | Device field types and organization references | 13 existing, 2 missing organizations; 5 merged away; `labels` lengths 2, 2, 2, 3; 1 set with minimum equal to maximum | 14 existing, 1 missing; 4 merged away; `labels` lengths 1, 2, 2, 3; 2 such sets; otherwise identical types and counts |
+| R4 | The 2,000 newest readings | 5 pods, every interval 60 minutes, newest reading 5 hours old on all 5, failures only in turbidity | 5 pods, intervals about 30 minutes, newest readings 0, 0, 0, 280 and 323 hours old, whole-reading failures with all error flags, wider ranges (section 1) |
+| R5 | Chat sizes and message fields | Largest about 1.0 MB (the padded H5 chat), median 3 KB, up to 7 messages | Largest about 35 KB, median 4 KB, up to 31 messages; answers hold only `date` and `text`; no `assistant` field |
+| R6 | Organization field types | `name` only | `name` only |
+| R7 | Databases | - | `(default)` and `qa-db`, both Native mode in us-west3, pessimistic concurrency, point-in-time recovery off, delete protection off; no `gilligan` database yet |
+| R8 | Composite indexes, field overrides and TTL on `(default)` | - | Four `READY` indexes on `water-data`: `device` + `timestamp desc`; `device` + the five error flags + `timestamp desc`; `device` + `date` in each direction; no single-field overrides, no TTL policy |
+| R9 | `cer-api` configuration | - | Revision `cer-api-00061-xeq`, image `gcr.io/conductive-fold-343604/cer-api` with no commit label, timeout 300 s, concurrency 80, 1 CPU and 2 GiB, up to 100 instances, startup CPU boost, default compute account; 13 variables: `NODE_ENV`, `PROD_BASE_URL`, `FRONTEND_URL`, `DB_ENVIRONMENT`, `NODEMAILER_APP_EMAIL`, four Stripe ids, and as secrets `ACCESS_TOKEN_SECRET`, `STRIPE_SECRET_KEY`, `NODEMAILER_APP_PASSWORD`, `GEMINI_API_KEY` |
+| R10 | Cloud Run services in us-central1 | - | `cer-api`, `cer-api-qa`, `cer-ui`, `cer-ui-qa`, `triggerendpoint`; no `cer-gilligan` yet |
+| R11 | Per device: status, organization reference, hours since the last reading | 5 current pods at 5 hours; retired pods at 725 hours or never | pending |
 
 ## 7. Launch-day changes
 
 Everything that differs from the last mirror run, in order; nothing else should change.
 
-1. Michael, before L5: create the `gilligan` database in us-central1; create `cer-gilligan-runtime`; grant it Datastore User conditioned on `gilligan` and Secret Accessor on its two secrets; create any index R8 shows missing; allow unauthenticated invocation of `cer-gilligan`; disable the `cer-ui` build trigger.
+1. Michael, before L5: create the `gilligan` database in us-central1; create `cer-gilligan-runtime`; grant it Datastore User conditioned on `gilligan` and Secret Accessor on its two secrets; allow unauthenticated invocation of `cer-gilligan`; disable the `cer-ui` build trigger.
 2. User, L5: add the Fireworks key and the shared service key as secret versions; deploy `cer-gilligan` with the cer-demo settings in section 3 and minimum instances 1.
 3. User, L6: deploy the server revision with no traffic and the server settings in section 3; `cer-api`'s default compute account also needs Secret Accessor on the shared service key.
 4. L8 staged smoke, then L9: route traffic and set `GILLIGAN_BACKEND=rag`, as the release plan orders it.

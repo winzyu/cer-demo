@@ -16,7 +16,18 @@ PROJECT=conductive-fold-343604
 DATABASE='(default)'
 REGION=us-central1
 
-if [ "${1:-}" = "--emulator" ]; then
+#   add --followup to run only R11
+FOLLOWUP_ONLY=false
+EMULATOR=false
+for arg in "$@"; do
+  case "$arg" in
+    --emulator) EMULATOR=true ;;
+    --followup) FOLLOWUP_ONLY=true ;;
+    *) echo "unknown argument: $arg" >&2; exit 2 ;;
+  esac
+done
+
+if [ "$EMULATOR" = true ]; then
   MODE=emulator
   HOST="http://${FIRESTORE_EMULATOR_HOST:-127.0.0.1:8080}"
 else
@@ -62,7 +73,35 @@ def stats: sort as $s | ($s | length) as $n
       p95: $s[($n * 0.95) | floor], max: $s[-1]} end;
 '
 
+# R11: for each device, its registry status, whether its organization exists, and how long ago it
+# last reported. Labels are read into a variable to build each query and are never printed.
+followup() {
+  echo
+  echo "## R11 per device: status, organization reference and hours since the last reading (no labels)"
+  local orgs devices label rows="" hours
+  orgs="$(query organizations '["__name__"]' | jq -c "$JQ_LIB"' docs | map(.name | split("/") | last)')"
+  devices="$(query devices '["label","organization","archived","mergedInto"]' | jq -c --argjson orgs "$orgs" "$JQ_LIB"'
+    docs | map(.fields // {}) | map({label: .label.stringValue,
+      status: (if .mergedInto != null and .archived != null then "merged-away and archived"
+        elif .mergedInto != null then "merged-away" elif .archived != null then "archived" else "current" end),
+      organization: (if (.organization.stringValue // "") == "" then "none"
+        elif (.organization.stringValue | IN($orgs[])) then "exists" else "no such organization" end)})')"
+  for i in $(seq 0 $(($(jq length <<<"$devices") - 1))); do
+    label="$(jq -r ".[$i].label" <<<"$devices")"
+    hours="$(query water-data '["timestamp"]' "$(jq -nc --arg l "$label" '{where: {fieldFilter: {field: {fieldPath: "device"},
+        op: "EQUAL", value: {stringValue: $l}}}, orderBy: [{field: {fieldPath: "timestamp"}, direction: "DESCENDING"}], limit: 1}')" \
+      | jq -c "$JQ_LIB"' docs | if length == 0 then null else (.[0].fields.timestamp | num) as $t | ((now - $t) / 3600 | floor) end')"
+    rows="$rows$(jq -c --argjson h "$hours" ".[$i] | del(.label) + {hoursSinceLastReading: \$h}" <<<"$devices")"$'\n'
+  done
+  printf '%s' "$rows" | jq -sc 'sort_by(.status, .hoursSinceLastReading) | .[]'
+}
+
 echo "# Firestore parity census ($MODE, database $DATABASE), $(date -u +%Y-%m-%dT%H:%MZ)"
+
+if [ "$FOLLOWUP_ONLY" = true ]; then
+  followup
+  exit 0
+fi
 
 echo
 echo "## R1 collections and document counts"
@@ -154,6 +193,8 @@ echo
 echo "## R6 organizations: field types"
 query organizations | jq -c "$JQ_LIB"'docs | map(.fields // {}) | {organizations: length,
   fieldTypes: (map(to_entries | map("\(.key): \(.value | vtype)")) | add // [] | hist)}'
+
+followup
 
 if [ "$MODE" = emulator ]; then
   echo
