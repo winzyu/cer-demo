@@ -58,6 +58,23 @@ describe("LlmService.complete", () => {
     expect(params.stream).toBe(false);
   });
 
+  it("sends reasoning_effort only when LLM_REASONING_EFFORT names one", async () => {
+    const fireworks = config.fireworks as { reasoningEffort: string };
+    const original = fireworks.reasoningEffort;
+    try {
+      const create = jest.fn().mockResolvedValue(okResponse("ok"));
+      fireworks.reasoningEffort = "default";
+      await new LlmService(fakeClient(create)).complete(messages);
+      fireworks.reasoningEffort = "high";
+      await new LlmService(fakeClient(create)).complete(messages);
+
+      expect("reasoning_effort" in create.mock.calls[0][0]).toBe(false);
+      expect(create.mock.calls[1][0].reasoning_effort).toBe("high");
+    } finally {
+      fireworks.reasoningEffort = original;
+    }
+  });
+
   it("offers no tools — retrieval runs before the call", async () => {
     const create = jest.fn().mockResolvedValue(okResponse("ok"));
     await new LlmService(fakeClient(create)).complete(messages);

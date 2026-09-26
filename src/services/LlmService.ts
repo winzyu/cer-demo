@@ -89,6 +89,12 @@ export interface LlmStreamEvent {
   usage?: LlmUsage;
 }
 
+/** `reasoning_effort`, or nothing at all under `default` so the provider's own default applies. */
+const reasoningEffort = (): { reasoning_effort?: "low" | "medium" | "high" } => {
+  const effort = config.fireworks.reasoningEffort;
+  return effort === "default" ? {} : { reasoning_effort: effort };
+};
+
 let client: OpenAI | undefined;
 
 /**
@@ -139,6 +145,7 @@ export class LlmService {
       max_tokens: config.fireworks.maxTokens,
       // Pinned so answers are reproducible; the N2 bake-off requires it (RETRIEVAL_BAKEOFF §7a).
       temperature: config.fireworks.temperature,
+      ...reasoningEffort(),
       // Cache affinity on serverless — see FireworksConfig.user.
       user: config.fireworks.user,
       // Omitted entirely when absent. Sending `tools: []` is not the same as sending nothing —
@@ -218,6 +225,7 @@ export class LlmService {
         messages: messages as never,
         max_tokens: config.fireworks.maxTokens,
         temperature: config.fireworks.temperature,
+        ...reasoningEffort(),
         user: config.fireworks.user,
         stream: true,
         stream_options: { include_usage: true },

@@ -123,6 +123,7 @@ const main = async (): Promise<void> => {
     model: config.fireworks.chatModel ?? "unset",
     temperature: config.fireworks.temperature,
     maxTokens: config.fireworks.maxTokens,
+    reasoningEffort: config.fireworks.reasoningEffort,
     corpusSource: config.retrieval.corpusSource,
     baseUrl: args.baseUrl,
     transport: args.transport,
