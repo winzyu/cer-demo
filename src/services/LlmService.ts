@@ -95,6 +95,10 @@ const reasoningEffort = (): { reasoning_effort?: "low" | "medium" | "high" } => 
   return effort === "default" ? {} : { reasoning_effort: effort };
 };
 
+const thinking = (): { thinking?: { type: "disabled" } } => (
+  config.fireworks.thinking === "disabled" ? { thinking: { type: "disabled" } } : {}
+);
+
 let client: OpenAI | undefined;
 
 /**
@@ -146,6 +150,7 @@ export class LlmService {
       // Pinned so answers are reproducible; the N2 bake-off requires it (RETRIEVAL_BAKEOFF §7a).
       temperature: config.fireworks.temperature,
       ...reasoningEffort(),
+      ...thinking(),
       // Cache affinity on serverless — see FireworksConfig.user.
       user: config.fireworks.user,
       // Omitted entirely when absent. Sending `tools: []` is not the same as sending nothing —
@@ -226,6 +231,7 @@ export class LlmService {
         max_tokens: config.fireworks.maxTokens,
         temperature: config.fireworks.temperature,
         ...reasoningEffort(),
+        ...thinking(),
         user: config.fireworks.user,
         stream: true,
         stream_options: { include_usage: true },

@@ -75,6 +75,23 @@ describe("LlmService.complete", () => {
     }
   });
 
+  it("sends thinking only when LLM_THINKING is disabled", async () => {
+    const fireworks = config.fireworks as { thinking: string };
+    const original = fireworks.thinking;
+    try {
+      const create = jest.fn().mockResolvedValue(okResponse("ok"));
+      fireworks.thinking = "default";
+      await new LlmService(fakeClient(create)).complete(messages);
+      fireworks.thinking = "disabled";
+      await new LlmService(fakeClient(create)).complete(messages);
+
+      expect("thinking" in create.mock.calls[0][0]).toBe(false);
+      expect(create.mock.calls[1][0].thinking).toEqual({ type: "disabled" });
+    } finally {
+      fireworks.thinking = original;
+    }
+  });
+
   it("offers no tools — retrieval runs before the call", async () => {
     const create = jest.fn().mockResolvedValue(okResponse("ok"));
     await new LlmService(fakeClient(create)).complete(messages);

@@ -38,6 +38,11 @@ export interface FireworksConfig {
    */
   reasoningEffort: (typeof REASONING_EFFORTS)[number];
   /**
+   * `disabled` sends `thinking: {type: "disabled"}`, the switch models such as `minimax-m3` use to
+   * skip reasoning; `default` sends nothing. gpt-oss ignores it and uses `reasoningEffort`.
+   */
+  thinking: (typeof THINKING_MODES)[number];
+  /**
    * Sent as the OpenAI `user` field. On Fireworks serverless this drives cache affinity:
    * requests sharing a value tend to land on the same worker, which is what makes prompt
    * caching actually hit. A constant is correct for a single-tenant demo; revisit when
@@ -325,6 +330,7 @@ const readEnum = <T extends string>(name: string, allowed: readonly T[], fallbac
 };
 
 export const REASONING_EFFORTS = ["default", "low", "medium", "high"] as const;
+export const THINKING_MODES = ["default", "disabled"] as const;
 
 /** The one spelling of "no ceiling" this service accepts, in every quota variable. */
 export const UNLIMITED = "unlimited";
@@ -420,6 +426,7 @@ const load = (): Config => {
       maxTokens: readInt("LLM_MAX_TOKENS", 4096),
       temperature: readFloat("LLM_TEMPERATURE", 0),
       reasoningEffort: readEnum("LLM_REASONING_EFFORT", REASONING_EFFORTS, "default"),
+      thinking: readEnum("LLM_THINKING", THINKING_MODES, "default"),
       user: readString("FIREWORKS_USER", "clean-earth-rag") as string,
     },
     deviceApi: {

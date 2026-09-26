@@ -65,6 +65,9 @@ export const CHAT_PRICES: Record<string, TokenPrices> = {
   // prints a flat 90% off rather than the 90.7% the older figure implied. This model is the
   // production generator (and was the Tier-2 judge until 2026-09-02), so the rate bills real spend.
   "accounts/fireworks/models/gpt-oss-120b": { input: 0.15, cachedInput: 0.015, output: 0.60 },
+  // Answer-model candidate for R4's stronger-model test, read from its Fireworks model page
+  // 2026-09-26 (`EVAL_REBUILD.md`, "Candidate models"); `minimax-m3` is priced below.
+  "accounts/fireworks/models/glm-5p3-flash": { input: 0.15, cachedInput: 0.03, output: 0.50 },
   // Judge candidate, evaluated and REJECTED 2026-08-28. Listed on rate alone it looks 3x cheaper
   // than `gpt-oss-120b` and, unlike either gpt-oss model, satisfies §7b's *intent* rather than only
   // its letter. Calibrated against the human sample it failed on all three counts, and the ledger
