@@ -1,17 +1,21 @@
-# Phase 3 / R4 handoff - 2026-09-25 (updated after the held-out check, the improvement round and the rubric review)
+# Phase 3 / R4 handoff - 2026-09-26 (updated after the judge replacement and the unpinned-datasheet captures)
 
-R4 (evaluation-driven improvement) has calibrated the judge (E2), captured the final two-arm run (E3), checked the judge on held-out rows, and tried the two improvement levers: a reranker and answer-model reasoning `high`.
-Neither lever raised correctness, and three outside reviews of the rubric's strictness are in for the user to synthesize.
-What remains is the user's rubric decision, E4 (caveats and refusals for weak classes) and E6 (report and landing).
+R4 (evaluation-driven improvement) has calibrated the judge (E2), captured the final two-arm run (E3), checked the judge on held-out rows, tried a reranker and answer-model reasoning `high`, applied rubric v2, replaced the judge after Fireworks withdrew it, and measured retrieval without the pinned probe datasheets at k=10 and k=20.
+No lever has lifted correctness beyond the judge's noise; the gap splits into a retrieval gap (production retrieval 0.72 against 1.10 on gold context) and an answer gap (1.10 against the 1.30 floor).
+Next is the improvement plan below (follow-up query rewriting, keyword search, a stronger model on gold context), then the user's open decisions, E4 and E6.
 Work on branch `eval/wave1-corrections` in its worktree `.claude/worktrees/wave1-corrections`; landing into `dev` is a separate step with its own git plan.
 
 ## Exact state
 
-- Branch `eval/wave1-corrections` at `01a7609` or later, pushed to `origin`; the only untracked path is the v2 re-judge link `eval/transcripts/p3-final-rubric-v2-2026-09-25`; `dev` last merged at `e7d3e44`.
+- Branch `eval/wave1-corrections` at `b395570` or later, pushed to `origin`, clean; `dev` last merged at `e7d3e44`.
 - `dev` has since gained Q1's tools-on prompt and tool changes only; its tools-off message list is byte-identical to the merge base's, so R4's tools-off captures are unaffected, but merge `dev` before landing.
-- The correctness judge is calibrated (kappa 0.849 on the 32 tuned rows) and held up on 12 held-out rows at 9/12 exact, all within one point, errors in both directions.
-- Two retrieval modes and one setting were added and are off by default: `local-rerank` and `hybrid-slice-rerank` (`32275aa`, `RERANK_MODEL`), and `LLM_REASONING_EFFORT` (`d11d577`, default sends nothing); `DEFAULT_RETRIEVAL` and the answer model are unchanged.
-- Spend about $13.90 of the $20 ceiling the user set on 2026-09-24, approved for R4 through September 28.
+- **Judge:** `deepseek-v4-flash-0731` returns 404 on Fireworks since 2026-09-25 but is still `DEFAULT_JUDGE_MODEL` in `src/eval/judge/runner.ts`; every judge call must pass `--judge-model=accounts/fireworks/models/deepseek-v4p1-flash` until the default is changed (with the user's approval) and its rate added to `src/eval/prices.ts` (unknown; Fireworks' pricing page does not list it).
+  The replacement is calibrated (kappa 0.852 on the 32 tuned rows, 0.823 on the 38 rows v2 left unchanged) but about 0.05-0.09 more lenient than the old judge, so compare only runs judged by the same judge.
+- **Rubric:** v2 as corrected (`19b363d`, fixture fingerprint `9a715154...`); v1 stays the reported rubric for E3's 1.01.
+- **Baselines, new judge, rubric v2:** gold context 1.10; `hybrid-slice-vector` k=20 (E3, pinned datasheets) 0.68; `local-vector` k=10 0.72 / 0.72; `local-vector` k=20 0.72 / 0.74.
+- `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); the user decided to stop pinning the datasheets (they stay in the corpus) but has not yet chosen the production depth.
+- Modes and settings off by default: `local-rerank`, `hybrid-slice-rerank` (`RERANK_MODEL`), `LLM_REASONING_EFFORT`.
+- Spend about $15.50 of the $20 ceiling at the old judge's rate (about $4.50 left, approved for R4 through September 28); the new judge's own rate may differ, so check the Fireworks bill.
 
 ## What to review
 
@@ -24,6 +28,10 @@ Everything below is committed on `eval/wave1-corrections`; the full records with
 | Reranker mode and capture | `src/retrieval/adapters/RerankAdapter.ts`, `src/services/RerankService.ts`; `EVAL_REBUILD.md` "Reranker capture"; run `p3-rerank-2026-09-25` | `32275aa`, `7643e15` |
 | Reasoning `high` setting and capture | `src/services/LlmService.ts`; `EVAL_REBUILD.md` "Answer-model reasoning `high`"; run `p3-reason-high-2026-09-25` | `d11d577`, `abfe241` |
 | Rubric-strictness review packet | `eval/reviews/rubric-strictness-2026-09-25/PROMPT.md`, `SAMPLE.md`, `ALL_TURNS.md`; generator `scripts/buildRubricReviewPacket.ts` | `eb7e69a` |
+| Rubric v2 review corrections | `eval/reviews/rubric-strictness-2026-09-25/RUBRIC_FIXES.md` "Review corrections" | `19b363d` |
+| Judge replacement calibration | `EVAL_REBUILD.md` "Judge replacement calibration"; run `p3-calib-v4p1-2026-09-25` | `dfe3345` |
+| E3 re-judged, new judge, v1 and v2 | `EVAL_REBUILD.md` "E3 re-judged by the new judge"; runs `p3-final-v4p1-2026-09-25`, `p3-final-rubric-v2-2026-09-25` | `c250011` |
+| Unpinned datasheets, k=10 and k=20 | `EVAL_REBUILD.md` "Datasheets unpinned, k=10" and "k=20"; runs `p3-lv-k10-2026-09-26`, `p3-lv-k20-2026-09-26` and their `-rejudge` links | `00afbd7`, `b395570` |
 | Outside reviews | same folder: `claude-review-packet.md`, `codex-review-packet.md`, `rubric_review_report.md` (Gemini) | `1c5f1fd`, `bc3f124`, `abfe241` |
 
 ## Results
@@ -69,20 +77,46 @@ Rubric review, three reviewers given the same packet (verdicts only; read the fi
 - The reasoning `high` result arrived after the reviews: Claude's review proposed it as the test of answer habit against capability, and scores did not rise.
 - The blind labelling and fresh fixtures all three ask for cannot be done before the September 30 launch.
 
+## Results since the rubric decision (new judge, rubric v2, secondary to E3's 1.01)
+
+| | correctness | median prompt | "not enough information" on answerable turns |
+|---|---|---|---|
+| gold context | 1.10 | - | - |
+| E3 `hybrid-slice-vector` k=20, datasheets pinned | 0.68 | 19,524 | 19 |
+| `local-vector` k=10, unpinned | 0.72 / 0.72 | 7,236 | 22 |
+| `local-vector` k=20, unpinned | 0.72 / 0.74 | 12,913 | 16 |
+
+- Rubric v2 moved 13 of 180 E3 verdicts (+0.04 gold, +0.01 retrieval): flawed points were not what held scores down.
+- Unpinning costs nothing measurable: all six datasheet-labelled turns score at or above the baseline at k=20, and 32 of 90 turns still retrieve a datasheet chunk; the refusal class dipped on both unpinned depths (8 turns, one or two verdicts; refusal gate not re-run).
+- Retrieval sees only the latest message (`ChatController.postChat` calls `adapter.getContext(query)`; `history` goes to the prompt only), so follow-up turns that do not name their subject search blind.
+- Keyword search (`local-hybrid`, dense+BM25 by RRF, `RrfHybridAdapter`) exists but was last measured on the archived August label set (59.5% against 54.3% for dense at k=10), never on the frozen 90.
+
 ## Next steps
 
-1. Done 2026-09-25: the user chose to fix only flawed points; rubric v2 is applied and logged (`eval/reviews/rubric-strictness-2026-09-25/RUBRIC_FIXES.md`, `EVAL_REBUILD.md` "Rubric v2"). Next: with approval, re-judge E3 on v2 as run `p3-final-rubric-v2-2026-09-25` (a symlink to `p3-final-2026-09-25`), correctness only at `--final`, 180 calls, and report it as secondary to 1.01.
-1a. Measure the datasheet slice, offline first: `hybrid-slice-vector` pins the four probe datasheets on every request (about 6.5K tokens, 4 of 24 excerpts; the answer-model prompt is a median 19.5K tokens, max 26.6K, against a window of about 131K), yet they hold 6 of 485 labelled chunks and draw 12 of 165 citations in E3.
-   Their original reason, keeping the source-of-truth document in the prompt, lapsed when it left the corpus on 2026-09-13; that document (the root v2 PDF included) is in no prompt in any form.
-   Propose `local-vector` at an equal budget against `hybrid-slice-vector` with its cost before any capture; production questions about the operator's own probes may still need the datasheets.
-2. User: accept or reject the recommendation not to enable `hybrid-slice-rerank` or `LLM_REASONING_EFFORT=high` for launch.
-3. E4: the user chooses, per class, between a caveat and a refusal under D3 (`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`); implement each as a tools-off prompt rule with a prompt test, and re-measure with a capture only if spend allows (about $6.10 left).
-4. E6: the R4 report in `eval/reviews/` (1.01 as the failed pre-registered result with the rubric caveat, then the improvement round and the review outcome), the "Edits wanted" below, then merge `dev` and land `eval/wave1-corrections` with a git plan.
+Improvement plan agreed with the user on 2026-09-26; every paid step needs the user's approval with its cost first, and offline steps come first.
+
+1. **Follow-up query rewriting, offline (about $0.02).**
+   Add an optional step that rewrites the latest message into a standalone search query from the conversation history before retrieval, behind a new off-by-default setting, with unit tests; the answer prompt still gets the user's own words.
+   Measure it with the retrieval harness on the 45 second turns (history from the fixtures), `local-vector` k=20, against the same turns without rewriting; the rewrite model is `gpt-oss-120b` (45 short calls) plus query embeddings.
+   Bar: a clear recall gain on second turns (the whole-set noise band is a few points), with no loss on first turns, which are unchanged by construction.
+2. **Keyword search, offline (query embeddings only, under $0.01).**
+   `npm run retrieval:eval -- --arm=local-hybrid --k=20` on the frozen 90 against `local-vector` at k=20 (38.4% recall, from the saved pools); read per class, and remember the contamination caveat (`EVAL_REBUILD.md` item 1: questions inherit their sources' wording, which flatters BM25).
+   If 1 helped, also measure the two together.
+3. **One capture of the winner, if 1 or 2 lifts recall by more than about 5 points (about $0.50):** k=20, judged twice by the new judge on v2, against `local-vector` k=20 at 0.72 / 0.74.
+4. **A stronger model on gold context (about $1-1.50, depending on its rate):** the direct test of whether `gpt-oss-120b` is the ceiling (1.10 with perfect excerpts, 1.30 needed).
+   Pick a non-DeepSeek model, since the judge is DeepSeek (candidates Fireworks serves on 2026-09-26: `kimi-k3`, `glm-5p3`, `qwen3p8-max`, `minimax-m3`); add its rate to `prices.ts`, set `LLM_MODEL` on the capture server only, and judge twice.
+   Optional, cheaper, and a proposal the user has not yet approved: gold context with `gpt-oss-120b` and the tools-off prompt's "Keep answers short and direct" line relaxed (about $0.40), since the judge's notes on gold-context 1s are mostly omitted points, not wrong ones.
+5. **User decisions, then E4 and E6:** the production retrieval setting (recommended: `local-vector` at k=20, datasheets unpinned; k=10 needs a code change because `DEFAULT_TOP_K` is a constant); not enabling `hybrid-slice-rerank` or `LLM_REASONING_EFFORT=high` for launch (recommended); per class, a caveat or a refusal under D3; whether to capture k=20 once with `CATALOGUE_PROMPT=true` (about $0.60), the prompt customers get, which adds about 21,000 characters; then the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
 
 ## Traps found
 
+- `DEFAULT_TOP_K` is a constant in `src/retrieval/options.ts`, not an environment setting; an env var of that name is silently ignored (the spot check shows the real excerpt count). The k=10 capture edited the constant for the run and restored it.
+- The judge reads the fixtures in its own tree: judging on an older rubric means running from an archive of the older commit (`git archive <sha> | tar -x`, with `node_modules` and `.env` linked in), then copying the ledger back.
+- `npm run judge` exits 1 when the Tier 2 gates fail, even with every verdict recorded; check "judged, 0 failed", not the exit code.
+- A model can stay listed in Fireworks' `/v1/models` after chat calls to it return 404; probe with one small chat call.
+
 - `pkill -f "<pattern>"` matches its own shell when the pattern is in the command line; stop the server by the PID listening on the port.
-- Port 8010 is taken by a server running from `.claude/worktrees/feat+service-release`; R4's captures this session used 8011.
+- R4 captures use port 8011 so they never collide with the user's own server on 8000 (8010 was taken on 2026-09-25, free on 2026-09-26).
 - A re-judge needs its own `--run`; a symlink run directory to the original transcripts works and keeps them verbatim.
 - The judge rebuilds the system prompt from source at start: finish any judge pass before editing `systemPrompt.ts`, and never start a merge while a judge pass is running.
 - `scores.csv` notes contain unquoted commas; the reader takes everything after the seventh comma as the note, so edit rows line by line, never through a CSV library.
@@ -100,6 +134,11 @@ Rubric review, three reviewers given the same packet (verdicts only; read the fi
 
 ## Decisions
 
+- User, 2026-09-25: MN4 on followup-cleaning-the-salt-sensor#1 stays deleted; the two v2 edits that exceeded their classes were corrected before the re-judge.
+- User, 2026-09-25/26: replace the withdrawn judge with `deepseek-v4p1-flash` after calibration; re-judge E3 on v1 and v2 with it.
+- User, 2026-09-26: stop pinning the four probe datasheets and keep them as ordinary corpus documents; the turbidity sensor datasheets and the source-of-truth document stay out of the corpus.
+- User, 2026-09-26: capture unpinned `local-vector` at k=10, then k=20 (both run); pursue the improvement order rewriting, keyword search, stronger model.
+
 - User, 2026-09-24: raise `DEFAULT_TOP_K` until marginal utility flattens; measured, it peaks at 20.
 - User, 2026-09-24: R4 spend ceiling $20; calibration graded by the user on correctness and ungrounded.
 - User, 2026-09-25: the AI review of the calibration packet was amended (strict numeric rule withdrawn) and the user's ungrounded counts reconciled to it; correctness stayed the user's.
@@ -113,5 +152,5 @@ Rubric review, three reviewers given the same packet (verdicts only; read the fi
 ## Edits wanted in other files at landing
 
 - `docs/SPECS.md`: retrieval depth is `DEFAULT_TOP_K=20`; the `local-rerank` and `hybrid-slice-rerank` modes and `RERANK_MODEL`; `LLM_REASONING_EFFORT`.
-- `docs/timeline.md`: decisions for the Phase 1d closure without human verification (2026-09-23), the top-k choice, the iteration 2 revert, the $20 ceiling, the calibration adjudication, E3, the held-out check, the reranker and reasoning `high` outcomes, and the user's rubric decision.
+- `docs/timeline.md`: the judge replacement, the datasheet unpinning and the production depth decision; and decisions for the Phase 1d closure without human verification (2026-09-23), the top-k choice, the iteration 2 revert, the $20 ceiling, the calibration adjudication, E3, the held-out check, the reranker and reasoning `high` outcomes, and the user's rubric decision.
 - `docs/migration/GILLIGAN_RELEASE_PLAN.md` (on `dev`): E2 and E3 are marked done in the uncommitted `dev` edits; add the improvement round and the rubric review when E4 or E6 lands.
