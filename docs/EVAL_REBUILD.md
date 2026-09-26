@@ -1270,6 +1270,30 @@ Eight of the moves are on turns v2 edited, seven up and one down (`probecal-orp-
 Reading: fixing the flawed points adds 0.04 on gold context and 0.01 on retrieval, so rubric flaws were not what held scores under the 1.30 floor; both arms still fail it on either rubric and with either judge.
 The baseline for later captures judged by the new judge on v2 is `hybrid-slice-vector` 0.68 (one pass).
 
+### Datasheets unpinned, k=10 - 2026-09-26, runs `p3-lv-k10-2026-09-26` and `p3-lv-k10-rejudge-2026-09-26`
+
+User decision, 2026-09-26: stop pinning the four probe datasheets into every prompt and leave them in the corpus as ordinary retrievable documents, then measure `local-vector` from k=10 up to k=20.
+Captured with E3's settings (`gpt-oss-120b`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, `SENSOR_TOOL`, `REPORT_TOOL` and `CATALOGUE_PROMPT` false, `DEBUG_RETRIEVAL=true`) on port 8011 with `DEFAULT_RETRIEVAL=local-vector`: 90/90 turns, 0 failed, after a spot check.
+`DEFAULT_TOP_K` is a constant in `src/retrieval/options.ts`, not an environment setting, so it was set to 10 in the working tree for the capture only and restored to 20 afterwards; nothing else in `src/` differs from E3's.
+Every turn received exactly 10 excerpts; the answer-model prompt is a median 7,236 tokens (max 11,502) against E3's 19,524, and the capture cost about $0.11.
+Judged twice at `--final`, correctness only, by `deepseek-v4p1-flash` on rubric v2: 90/90 each, 0 failed; about $0.26 for both at the old judge's rate.
+
+| class | E3 `hybrid-slice-vector` k=20, same judge and rubric | `local-vector` k=10, pass 1 / 2 |
+|---|---|---|
+| all | 0.68 | 0.72 / 0.72 |
+| cross-document | 0.54 | 0.54 / 0.46 |
+| deep-in-manual | 0.75 | 0.80 / 0.95 |
+| definitional | 0.62 | 0.75 / 0.75 |
+| follow-up | 0.75 | 0.75 / 0.62 |
+| precedence | 0.83 | 0.83 / 0.83 |
+| probe-calibration | 0.62 | 0.75 / 0.81 |
+| refusal | 0.88 | 0.88 / 0.75 |
+
+The two passes agree on 80/90 turns; against the baseline, the two-pass mean is higher on 15 turns and lower on 10, so the +0.04 is inside the judge's noise.
+The six turns with a labelled datasheet chunk: the first turns retrieved their datasheet, the second turns of `precedence-do-hypoxia-qa-trigger-not-pod-limit` and `probecal-ec-never-recalibrate` did not, and none of the six scored lower than the baseline in both passes.
+Refusal wording ("don't have enough information") on non-refusal turns: 22, against 19 for E3's retrieval arm.
+Reading: at less than half the prompt, unpinned k=10 scores at least as well as the pinned k=20 baseline; the follow-up turns that lose their datasheet did not lose points here, but there are only two of them.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
