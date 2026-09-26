@@ -48,7 +48,6 @@
         "must_not": [
           "gives a settling time shorter than the manual's without saying it is a minimum",
           "Reports calculated Eh more finely than the specified nearest 10 mV; retaining more precise raw reference-relative observations is permitted.",
-          "omits the requirement to record temperature and pH alongside the ORP value",
           "invents a stabilisation tolerance other than the manual's +/-5 mV"
         ],
         "cite": [

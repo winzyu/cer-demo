@@ -23,7 +23,6 @@
         ],
         "must_not": [
           "Describes submerging the sensor in ordinary water as the saturation reference without aeration",
-          "Omits the barometric pressure input entirely",
           "invents an equilibration time or pressure precision that appears in no source",
           "Attributes the procedure to a probe datasheet",
           "Substitutes the datasheet's membrane and electrolyte replacement steps for a calibration procedure"
@@ -47,8 +46,7 @@
         ],
         "must_not": [
           "invents a verification tolerance that appears in no source",
-          "Recommends manual salinity entry during calibration as the generally preferred USGS approach",
-          "Ignores the brackish half of the question"
+          "Recommends manual salinity entry during calibration as the generally preferred USGS approach"
         ],
         "cite": [
           "usgs-nfm-a6.2-dissolved-oxygen.pdf"

@@ -71,7 +71,7 @@ Rubric review, three reviewers given the same packet (verdicts only; read the fi
 
 ## Next steps
 
-1. User: synthesize the three reviews and decide the rubric question (keep as is, fix only flawed points, or add a secondary core/supplementary metric under the blind procedure the reviews describe); record the decision in `docs/timeline.md`.
+1. Done 2026-09-25: the user chose to fix only flawed points; rubric v2 is applied and logged (`eval/reviews/rubric-strictness-2026-09-25/RUBRIC_FIXES.md`, `EVAL_REBUILD.md` "Rubric v2"). Next: with approval, re-judge E3 on v2 as run `p3-final-rubric-v2-2026-09-25` (a symlink to `p3-final-2026-09-25`), correctness only at `--final`, 180 calls, and report it as secondary to 1.01.
 2. User: accept or reject the recommendation not to enable `hybrid-slice-rerank` or `LLM_REASONING_EFFORT=high` for launch.
 3. E4: the user chooses, per class, between a caveat and a refusal under D3 (`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`); implement each as a tools-off prompt rule with a prompt test, and re-measure with a capture only if spend allows (about $6.10 left).
 4. E6: the R4 report in `eval/reviews/` (1.01 as the failed pre-registered result with the rubric caveat, then the improvement round and the review outcome), the "Edits wanted" below, then merge `dev` and land `eval/wave1-corrections` with a git plan.
@@ -103,6 +103,7 @@ Rubric review, three reviewers given the same packet (verdicts only; read the fi
 - User, 2026-09-25: E3 approved and run.
 - User, 2026-09-25: held-out check and reranker measurement approved and run; reranker capture approved and run; reasoning `high` capture approved and run.
 - User, 2026-09-25: commissioned the rubric-strictness review from Gemini, Claude and Codex, to synthesize personally.
+- User, 2026-09-25: rubric question decided as "fix only flawed points" (rubric v2); no core/supplementary split before launch.
 - Judge strictness audit (`EVAL_REBUILD.md`): about 6 of 117 flagged claims are over-strict and about 90% are real model elaboration.
 
 ## Edits wanted in other files at landing

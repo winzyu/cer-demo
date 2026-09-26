@@ -15,8 +15,7 @@
         "must_contain": [
           "States deionized water must not be used as a calibration standard",
           "States calibration standards greater than 200 µS/cm are recommended because lower ones are easily biased by dilution or contamination",
-          "States the standard should be the one nearest to or bracketing the expected sample value",
-          "Selects a certified, instrument-compatible standard near or bracketing the expected sample value; 500 µS/cm is one supported example",
+          "States the standard should be the one nearest to or bracketing the expected sample value, and selects a certified, instrument-compatible standard on that basis; 500 µS/cm is one supported example",
           "Distinguishes calibration from the permitted zero-response check in dry air or deionized water"
         ],
         "must_not": [

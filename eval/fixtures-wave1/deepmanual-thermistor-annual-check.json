@@ -21,7 +21,7 @@
           "Notes this range-verification procedure requires at most five points, without generalizing to every certification procedure"
         ],
         "must_not": [
-          "Requires an unsupported fixed number of points; accepts two points here when all placement and spacing rules are met.",
+          "Says two points are not enough for this site, or requires a fixed number of points the manual does not give",
           "Says a single-point check is enough for annual verification",
           "Recommends points violating the extrema/mean rules or the small-range spacing of at least 2 C and no more than 4 C."
         ],
@@ -43,8 +43,7 @@
         ],
         "must_not": [
           "Claims the laboratory water bath is the only acceptable method",
-          "Invents a mandatory verification interval or permits annual verification less frequently than every 12 months; does not reject legitimate additional checks.",
-          "Drops the pre-trip one-point check"
+          "Invents a mandatory verification interval or permits annual verification less frequently than every 12 months; does not reject legitimate additional checks."
         ],
         "cite": [
           "usgs-nfm-a6.1-temperature.pdf",

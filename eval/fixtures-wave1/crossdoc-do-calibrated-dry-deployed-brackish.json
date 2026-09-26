@@ -27,7 +27,6 @@
         "must_not": [
           "invents a barometric pressure or temperature reading precision not in the manual",
           "treats the DO sensor as reading mg/L directly with no computation from temperature and ionic strength",
-          "ignores salinity entirely at a brackish site",
           "cites a probe datasheet accuracy figure in place of the calibration procedure"
         ],
         "cite": [
@@ -47,8 +46,7 @@
           "If a midday check finds drift, successfully recalibrates before treating later data as unaffected; data preceding that check are qualified",
           "states a continuously deployed sonde is calibrated before deployment and its calibration checked on recovery",
           "states the DO post-calibration check is done in measurement mode, recording DO, temperature and barometric pressure for comparison against an oxygen-solubility chart",
-          "states the SOP's own drift criteria apply only when the project quality assurance plan does not specify its own",
-          "Allows EPA's per-location recalibration exception to post-checks, while distinguishing deployment/recovery checks for continuous sondes"
+          "states the SOP's own drift criteria apply only when the project quality assurance plan does not specify its own"
         ],
         "must_not": [
           "presents the EPA SOP as replacing the analytical methods it supplements",

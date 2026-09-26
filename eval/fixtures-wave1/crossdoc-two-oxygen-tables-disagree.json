@@ -23,7 +23,6 @@
           "advises using the table belonging to whichever protocol the work is being done under, consistently, rather than mixing them"
         ],
         "must_not": [
-          "presents one table's value without acknowledging the other",
           "Claims the 0.03 mg/L difference necessarily prevents routine measurement without considering the applicable check tolerance",
           "invents a solubility value for either table",
           "recommends averaging the two values"

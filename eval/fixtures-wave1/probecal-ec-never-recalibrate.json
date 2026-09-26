@@ -38,9 +38,8 @@
       "rubric": {
         "must_contain": [
           "States that potassium chloride solutions traceable to NIST are the standards used",
-          "States that the standard should be near, or bracket, the expected value in the water being measured",
+          "States that the standard should be near, or bracket, the expected value in the water being measured, and selects compatible certified standards on that basis for approximately 700 µS/cm, such as 500 for a one-point check or 500 and 1,413 for multipoint calibration; these examples are not exclusive",
           "Recommends staying above 200 microsiemens per centimetre because dilute standards are easily contaminated or diluted",
-          "Selects compatible certified standards near or bracketing approximately 700 µS/cm, such as 500 for a one-point check or 500 and 1,413 for multipoint calibration; these examples are not exclusive",
           "Applies ±5 µS/cm at or below a standard value of 100 µS/cm, or ±3 percent above 100 µS/cm, to the check standard rather than the sample value"
         ],
         "must_not": [

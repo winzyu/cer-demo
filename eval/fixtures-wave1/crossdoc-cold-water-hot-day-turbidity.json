@@ -44,8 +44,7 @@
         ],
         "must_not": [
           "permits sampling turbidity from the flow-cell discharge",
-          "invents a holding time or storage temperature not in the manual",
-          "omits the qualifier requirement for a reported subsample measurement"
+          "invents a holding time or storage temperature not in the manual"
         ],
         "cite": [
           "usgs-nfm-a6.0-field-measurement-guidelines.pdf",

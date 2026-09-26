@@ -47,7 +47,7 @@
           "Distinguishes equivalent results on calibration standards from environmental-sample results that need not be interchangeable across optical designs",
           "States that which unit an instrument reports follows from its optical design and model",
           "States that the corpus does not identify the make or model of turbidity instrument in this fleet",
-          "States that the application labels turbidity in NTU and treats it as an uncalibrated relative index; this does not establish the unidentified hardware's optical-standard unit or calibration",
+          "States that the service treats turbidity as a relative, uncalibrated index; this does not establish the unidentified hardware's optical-standard unit or calibration",
           "Notes that the mapping from instrument model to unit lives in a USGS spreadsheet that is not part of the corpus",
           "Declines to infer this fleet's optical design or physical reporting unit from the prevalence of infrared instruments in general guidance"
         ],

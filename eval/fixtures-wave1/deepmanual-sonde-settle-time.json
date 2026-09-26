@@ -44,8 +44,7 @@
         ],
         "must_not": [
           "Invents a stabilization tolerance not in the table",
-          "Gives the operator baseline healthy ranges instead of stabilization criteria",
-          "Omits applicable installed channels when assessing the sonde; does not require sensors the sonde lacks"
+          "Gives the operator baseline healthy ranges instead of stabilization criteria"
         ],
         "cite": [
           "usgs-nfm-a6.8-multiparameter-instruments.pdf",

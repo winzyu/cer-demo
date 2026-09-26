@@ -32,8 +32,7 @@
       "rubric": {
         "must_contain": [
           "Explains the manual's operational saline-water correction applies above 2,000 µS/cm and asks for the upstream specific conductance before deciding; freshwater does not imply zero conductivity or mathematically zero salinity effect",
-          "Gives 1.0000 at zero specific conductance without extending that exact factor to all freshwater",
-          "States the manual treats water as saline only above about 2,000 µS/cm specific conductance"
+          "Gives 1.0000 at zero specific conductance without extending that exact factor to all freshwater"
         ],
         "must_not": [
           "Invents a conductivity threshold such as 1,000 or 5,000 µS/cm",

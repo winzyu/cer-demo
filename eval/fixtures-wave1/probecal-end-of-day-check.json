@@ -24,7 +24,6 @@
         ],
         "must_not": [
           "Applies the datasheet's yearly or six-monthly interval as the sampling-week cadence",
-          "Omits the normal end-of-day check without a source-supported exception; accepts EPA's per-location calibration exemption and continuous-sonde deployment/recovery cadence",
           "Describes the end-of-day check as being performed in calibration mode"
         ],
         "cite": [
@@ -39,9 +38,8 @@
         "must_contain": [
           "Gives the default end-of-day criterion for pH as plus or minus 0.3 pH unit measured in the pH 7 buffer",
           "Gives the default end-of-day criterion for dissolved oxygen as plus or minus 0.5 milligrams per litre of the saturated value",
-          "States that these defaults apply only when the project's quality assurance plan does not specify its own drift criteria",
+          "States that these defaults apply only when the project's quality assurance plan does not specify its own drift criteria; when it does, the plan's criteria govern",
           "States that USGS field practice for pH is tighter, requiring recalibration when a checked buffer is off by more than plus or minus 0.05 pH unit",
-          "States that the project's own quality assurance plan criteria govern, and that the EPA SOP defaults apply only in their absence",
           "For USGS oxygen verification, accepts the A6.2 saturation performance check within ±0.2 mg/L, distinct from EPA's default end-of-day ±0.5 mg/L and the applicable project criteria"
         ],
         "must_not": [

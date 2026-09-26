@@ -43,8 +43,7 @@
         "must_contain": [
           "Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion",
           "Attributes ±0.3 pH unit below 75 µS/cm to that example form",
-          "Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check, requiring agreement within 0.05 pH unit of the certified value at calibration temperature",
-          "notes separately that a post-calibration buffer check should read within about 0.05 pH unit of that buffer's certified value at the calibration temperature"
+          "Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check, requiring agreement within 0.05 pH unit of the certified value at calibration temperature"
         ],
         "must_not": [
           "Uses the example form's relaxed criterion as a replacement for A6.4's final-buffer check",

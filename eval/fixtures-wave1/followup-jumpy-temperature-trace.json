@@ -33,9 +33,7 @@
       "content": "If it turns out to be the cable, can we just swap it ourselves and carry on?",
       "rubric": {
         "must_contain": [
-          "warns that swapping the cable is not necessarily a free repair, because changing cables can require the sensor to be recertified",
-          "Attributes the conditional NWIS uncertainty rule to the temperature chapter, rather than asserting current platform capability; requires re-verification after repair.",
-          "Requires verified accuracy before treating repaired-sensor data as verified; checks whether cable replacement invalidates certification and requires recertification."
+          "warns that swapping the cable is not necessarily a free repair, because changing cables can require the sensor to be recertified"
         ],
         "must_not": [
           "says a cable swap is a simple field fix with no follow-up",

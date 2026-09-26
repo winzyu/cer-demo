@@ -37,7 +37,7 @@
       "rubric": {
         "must_contain": [
           "States that being outside plus or minus 5 millivolts, along with drift and erratic readings, is a recognised failure symptom",
-          "For accessible, compatible reference-electrode hardware, describes comparing the questionable reference with a known-good reference of the same type; follows manufacturer guidance for sealed or incompatible hardware.",
+          "Describes comparing the questionable reference electrode with a known-good reference of the same type; deferring to manufacturer guidance for sealed or incompatible hardware is acceptable but not required",
           "States that two same-type reference electrodes read against each other should agree within about 0 plus or minus 5 millivolts",
           "Specifies that the 44 plus or minus 5 mV diagnostic applies to the Ag:AgCl and Hg:HgCl2 pair, not arbitrary dissimilar electrodes."
         ],

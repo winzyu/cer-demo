@@ -20,12 +20,12 @@
           "States freshwater equilibrium solubility at 760 mmHg falls by 0.99 mg/L from 15 C to 20 C as a conditional benchmark, not a ceiling on measured DO.",
           "States equilibrium saturation also depends on barometric pressure, so the site's actual pressure changes the benchmark",
           "states that in brackish water the freshwater value must be reduced by a salinity correction factor before it is compared with the reading",
-          "States the actual warming contribution and remaining site-specific drop cannot be quantified from these readings alone without pressure, salinity and initial saturation assumptions; does not assign 1 mg/L of the measured drop to warming."
+          "States the actual warming contribution and the remaining site-specific drop cannot be established from these readings alone, because pressure, salinity and the initial saturation are not given; a conditional estimate labelled with those assumptions is acceptable"
         ],
         "must_not": [
           "Invents unsupported solubility values; permits supported tabulated, interpolated or calculated values with stated assumptions.",
           "answers only with the qualitative rule that warm water holds less oxygen and gives no numbers",
-          "treats the brackish site as freshwater and skips the salinity correction entirely"
+          "treats the brackish site as freshwater, presenting freshwater solubility values as applying unchanged there"
         ],
         "cite": [
           "usgs-nfm-a6.2-dissolved-oxygen.pdf",

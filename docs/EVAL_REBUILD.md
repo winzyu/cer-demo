@@ -1212,6 +1212,21 @@ Reasoning `high` scores lower on the same turns, fails one turn in seven at the 
 A larger token cap would remove the failures but not the paired drop on answered turns.
 Spend: capture about $0.15 by the recorded usage (the failed turns' reasoning tokens are not in it and may add up to about $0.12), judge $0.24; about $0.40-0.50, and about $13.90 of the $20 R4 ceiling.
 
+### Rubric v2: validity fixes - 2026-09-25
+
+**User decision, 2026-09-25**: after the three rubric-strictness reviews (Gemini, Claude, Codex), fix only the rubric points they identified as flawed; no core/supplementary split, which all three say needs blind labelling and fresh fixtures.
+This is a recorded change to the frozen fixture set, rubric text only: 32 edits in 24 turns of 19 fixtures, must-contain points 423 to 412, must-not items 315 to 304.
+The rule (unsupported by the turn's excerpts, duplicate, omission-type must-not, or an instruction that reads as a requirement), every edit and what was left alone are in `eval/reviews/rubric-strictness-2026-09-25/RUBRIC_FIXES.md`.
+
+| directory | files | fingerprint |
+|---|---|---|
+| `eval/fixtures-wave1/` (rubric v2) | 45 | `144dd7f16a3e565d49a9dbac35f49335ab3fd4590db2e75e2738daf4bd6841f0` |
+
+No question text changed, so every capture stays valid; labels are unchanged.
+Verdicts judged on v1 are not comparable with v2 verdicts: a v2 number needs a re-judge under its own `--run`.
+E3's 1.01 on v1 stays the reported, pre-registered result; any v2 score is secondary and must be labelled as such.
+The edits can only remove requirements or vetoes, so v2 scores cannot fall on the same answers except by judge noise.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
