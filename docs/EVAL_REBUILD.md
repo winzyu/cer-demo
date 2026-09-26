@@ -1337,6 +1337,33 @@ Keyword search alone is level with dense retrieval (+0.5 points overall, -2.2 on
 Reading: rewriting clears the bar set for a capture; keyword search does not, so the capture candidate is `local-vector` k=20 with `QUERY_REWRITE=true`.
 Recall is a necessary condition only; whether answers improve needs the capture.
 
+### Brevity line relaxed on gold context - 2026-09-26, runs `p3-gold-promptA-2026-09-26` and `p3-gold-promptB-2026-09-26`
+
+The judge's notes on gold-context 1s are mostly omitted rubric points, so two variants of the tools-off prompt's last rule were captured on `gold-context` with E3's settings (`gpt-oss-120b`, temperature 0, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools, catalogue and `QUERY_REWRITE` off, port 8011), each judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed) with the variant still in the source, since the judge rebuilds the prompt; the committed line was restored afterwards.
+A deletes "Keep answers short and direct."; B replaces it with "Include every point in CONTEXT that bears on the question, then stop."
+Each capture cost about $0.08; the four judge passes about $0.60 at the old judge's rate.
+
+| | E3 gold, new judge v2 (one pass) | A, pass 1 / 2 | B, pass 1 / 2 |
+|---|---|---|---|
+| all | 1.10 | 1.10 / 1.06 | 1.02 / 1.07 |
+| cross-document | 0.96 | 1.00 / 0.96 | 0.96 / 0.92 |
+| deep-in-manual | 1.20 | 1.20 / 1.10 | 1.15 / 1.30 |
+| definitional | 1.12 | 1.00 / 1.00 | 1.00 / 1.00 |
+| follow-up | 1.25 | 1.50 / 1.50 | 1.25 / 1.25 |
+| precedence | 1.17 | 1.17 / 1.00 | 0.83 / 1.00 |
+| probe-calibration | 1.12 | 1.00 / 1.00 | 0.94 / 1.00 |
+| refusal | 1.00 | 1.00 / 1.00 | 1.00 / 1.00 |
+| scored 0 | 4 | 5 / 7 | 7 / 5 |
+| median answer characters | 688 | 955 | 861 |
+| refusal sentence on answerable turns | 3 | 6 | 5 |
+| refusal sentence on the 8 refusal turns | 7 | 7 | 5 |
+
+On the two-pass mean A is higher than E3 on 8 turns and lower on 11, B higher on 5 and lower on 11.
+Reading: longer answers do not recover the omitted points and add zeros, so the brevity line stays; the omissions are the model's, not the instruction's, which leaves a stronger model as the next test.
+
+Candidate models (Fireworks, 2026-09-26, rates from Fireworks' model pages, one probe call each): `minimax-m3` ($0.30 / $1.20 per million, reasoning can be disabled, tools, 512K), `glm-5p3-flash` ($0.15 / $0.50, tools, 1M, reasoning control unconfirmed), `nemotron-lightning-3p5-30b-a3b` ($0.05 / $0.20, tools, 262K); `kimi-k3`, `glm-5p3` and `qwen3p8-max` cost 7-25 times `gpt-oss-120b`; DeepSeek models are excluded while the judge is DeepSeek.
+No faithfulness benchmark was found for any of them.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
