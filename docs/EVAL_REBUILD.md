@@ -1337,6 +1337,33 @@ Keyword search alone is level with dense retrieval (+0.5 points overall, -2.2 on
 Reading: rewriting clears the bar set for a capture; keyword search does not, so the capture candidate is `local-vector` k=20 with `QUERY_REWRITE=true`.
 Recall is a necessary condition only; whether answers improve needs the capture.
 
+### Follow-up rewriting captured, k=20 - 2026-09-26, runs `p3-lv-k20-rewrite-2026-09-26` and `p3-lv-k20-rewrite-rejudge-2026-09-26`
+
+The unpinned k=20 capture's settings (`gpt-oss-120b`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools and catalogue off, `DEFAULT_RETRIEVAL=local-vector`, port 8011) with `QUERY_REWRITE=true`: 90/90 turns, 0 failed, after a spot check.
+All 45 second turns retrieved a different excerpt list from `p3-lv-k20-2026-09-26` and 44 of 45 first turns an identical one, so the rewrite fired where intended.
+Judged twice at `--final`, correctness only, by `deepseek-v4p1-flash` on rubric v2: 90/90 each, 0 failed.
+The capture cost about $0.20 for answers plus an estimated $0.02 for the 45 rewrite calls, whose usage transcripts do not record; both judge passes about $0.30 at the old judge's rate.
+
+| | unpinned k=20, pass 1 / 2 | + rewrite, pass 1 / 2 |
+|---|---|---|
+| all | 0.72 / 0.74 | 0.89 / 0.92 |
+| first turns | 0.82 / 0.84 | 0.84 / 0.87 |
+| second turns | 0.62 / 0.64 | 0.93 / 0.98 |
+| cross-document | 0.54 / 0.62 | 0.71 / 0.71 |
+| deep-in-manual | 0.85 / 0.80 | 1.05 / 1.05 |
+| definitional | 0.75 / 0.62 | 1.00 / 1.00 |
+| follow-up | 1.00 / 1.00 | 1.38 / 1.38 |
+| precedence | 1.00 / 1.00 | 0.83 / 0.83 |
+| probe-calibration | 0.62 / 0.69 | 0.75 / 0.88 |
+| refusal | 0.62 / 0.75 | 0.75 / 0.88 |
+| scored 0 | 29 / 26 | 18 / 16 |
+| refusal sentence on answerable turns | 16 | 8 |
+
+On the two-pass mean the rewrite arm is higher on 20 turns and lower on 3.
+Reading: the largest retrieval gain of R4 so far; second turns now score above first turns, and declined answerable questions halve.
+Precedence dropped one verdict in both passes (6 turns); the refusal gate was not re-run.
+Still under the 1.30 floor, and under gold context's 1.10.
+
 ### Brevity line relaxed on gold context - 2026-09-26, runs `p3-gold-promptA-2026-09-26` and `p3-gold-promptB-2026-09-26`
 
 The judge's notes on gold-context 1s are mostly omitted rubric points, so two variants of the tools-off prompt's last rule were captured on `gold-context` with E3's settings (`gpt-oss-120b`, temperature 0, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools, catalogue and `QUERY_REWRITE` off, port 8011), each judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed) with the variant still in the source, since the judge rebuilds the prompt; the committed line was restored afterwards.
