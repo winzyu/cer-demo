@@ -1246,6 +1246,30 @@ The two judges agree on 40 of 44 rows (kappa 0.843); all four differences are th
 On these rows the mean score is 0.795 human, 0.750 old judge and 0.841 new judge, so the new judge is at least as close to the human grades but slightly more lenient than the old one.
 Reading: the new judge meets the same agreement bar, but its scores are not interchangeable with the old judge's; any comparison with E3 needs E3 re-judged by the new judge.
 
+### E3 re-judged by the new judge on rubric v1 and v2 - 2026-09-26, runs `p3-final-v4p1-2026-09-25` and `p3-final-rubric-v2-2026-09-25`
+
+Both runs are symlinks to E3's transcripts, judged once each at `--final`, correctness only, by `deepseek-v4p1-flash`: 180/180 verdicts each, 0 failed.
+The v1 pass ran from an archive of `8a8f555` (the commit before rubric v2, fixture fingerprint `b0b647f4...`, judge code identical to the current one), because the judge reads the fixtures in its tree; its ledger was copied here.
+Tokens: v1 2,305,720 in (2,203,260 cached) / 206,950 out; v2 2,304,986 in (952,530 cached) / 197,086 out; about $0.61 for both at the old judge's rate.
+These are secondary to E3's reported 1.01; they measure the judge change and the rubric change separately.
+
+| class | gold, old judge v1 (pass 1 / 2) | gold, new judge v1 | gold, new judge v2 | hybrid, old judge v1 (pass 1 / 2) | hybrid, new judge v1 | hybrid, new judge v2 |
+|---|---|---|---|---|---|---|
+| all | 1.01 / 1.01 | 1.06 | 1.10 | 0.58 / 0.59 | 0.67 | 0.68 |
+| cross-document | 0.83 / 0.83 | 0.92 | 0.96 | 0.50 / 0.46 | 0.50 | 0.54 |
+| deep-in-manual | 1.20 / 1.25 | 1.20 | 1.20 | 0.55 / 0.60 | 0.70 | 0.75 |
+| definitional | 1.00 / 1.00 | 1.12 | 1.12 | 0.62 / 0.62 | 0.75 | 0.62 |
+| follow-up | 1.12 / 1.12 | 1.00 | 1.25 | 0.62 / 0.62 | 0.62 | 0.75 |
+| precedence | 1.17 / 1.00 | 1.17 | 1.17 | 1.00 / 0.83 | 1.00 | 0.83 |
+| probe-calibration | 1.00 / 1.00 | 1.06 | 1.12 | 0.56 / 0.69 | 0.69 | 0.62 |
+| refusal | 0.88 / 0.88 | 1.00 | 1.00 | 0.50 / 0.50 | 0.75 | 0.88 |
+
+Judge change, same rubric v1: the new judge is identical to the old judge's first pass on 82/90 gold and 78/90 retrieval turns, and scores higher on both arms (+0.05 gold, +0.09 retrieval), as its calibration predicted.
+Rubric change, same new judge: 13 of 180 turns moved; gold 5 up and 1 down, retrieval 4 up and 3 down.
+Eight of the moves are on turns v2 edited, seven up and one down (`probecal-orp-standard-check#2` retrieval, 1 to 0, where the edit only made a clause optional, so judge noise); the other five are on unedited turns and are judge noise.
+Reading: fixing the flawed points adds 0.04 on gold context and 0.01 on retrieval, so rubric flaws were not what held scores under the 1.30 floor; both arms still fail it on either rubric and with either judge.
+The baseline for later captures judged by the new judge on v2 is `hybrid-slice-vector` 0.68 (one pass).
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
