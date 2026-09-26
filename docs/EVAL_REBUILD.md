@@ -1294,6 +1294,30 @@ The six turns with a labelled datasheet chunk: the first turns retrieved their d
 Refusal wording ("don't have enough information") on non-refusal turns: 22, against 19 for E3's retrieval arm.
 Reading: at less than half the prompt, unpinned k=10 scores at least as well as the pinned k=20 baseline; the follow-up turns that lose their datasheet did not lose points here, but there are only two of them.
 
+### Datasheets unpinned, k=20 - 2026-09-26, runs `p3-lv-k20-2026-09-26` and `p3-lv-k20-rejudge-2026-09-26`
+
+Same settings as the k=10 capture with `DEFAULT_TOP_K` at its committed 20, so `src/` is identical to E3's: 90/90 turns, 0 failed, after a spot check; every turn received 20 excerpts.
+The answer-model prompt is a median 12,913 tokens (max 21,033); capture about $0.19, both judge passes (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90 each, 0 failed) about $0.28 at the old judge's rate.
+
+| class | E3 pinned k=20 | unpinned k=10, pass 1 / 2 | unpinned k=20, pass 1 / 2 |
+|---|---|---|---|
+| all | 0.68 | 0.72 / 0.72 | 0.72 / 0.74 |
+| cross-document | 0.54 | 0.54 / 0.46 | 0.54 / 0.62 |
+| deep-in-manual | 0.75 | 0.80 / 0.95 | 0.85 / 0.80 |
+| definitional | 0.62 | 0.75 / 0.75 | 0.75 / 0.62 |
+| follow-up | 0.75 | 0.75 / 0.62 | 1.00 / 1.00 |
+| precedence | 0.83 | 0.83 / 0.83 | 1.00 / 1.00 |
+| probe-calibration | 0.62 | 0.75 / 0.81 | 0.62 / 0.69 |
+| refusal | 0.88 | 0.88 / 0.75 | 0.62 / 0.75 |
+| median prompt tokens | 19,524 | 7,236 | 12,913 |
+| refusal wording on non-refusal turns | 19 | 22 | 16 |
+
+The k=20 passes agree on 84/90 turns; on the two-pass mean, k=20 is higher than the baseline on 15 turns and lower on 9, and higher than k=10 on 11 and lower on 9.
+All six turns with a labelled datasheet chunk score at or above the baseline in both passes; 32 of 90 turns retrieved at least one datasheet chunk without the pin, and the two follow-up turns that retrieved none still scored 1.
+The refusal class is lower on both unpinned depths (8 turns, so one or two verdicts); the refusal gate was not re-run here.
+Reading: both unpinned depths match or beat the pinned baseline at a smaller prompt; k=20 and k=10 are level overall within noise, with k=20 declining fewer answerable questions (16 against 22) and holding follow-up and precedence at 1.00.
+Every arm stays far under the 1.30 floor.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
