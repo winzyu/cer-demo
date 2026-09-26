@@ -1337,6 +1337,35 @@ Keyword search alone is level with dense retrieval (+0.5 points overall, -2.2 on
 Reading: rewriting clears the bar set for a capture; keyword search does not, so the capture candidate is `local-vector` k=20 with `QUERY_REWRITE=true`.
 Recall is a necessary condition only; whether answers improve needs the capture.
 
+### Stronger answer models on gold context - 2026-09-26, runs `p3-gold-glm-5p3-flash-2026-09-26` and `p3-gold-minimax-m3-2026-09-26`
+
+E3's gold-context settings (`LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools, catalogue and `QUERY_REWRITE` off, port 8011) with `LLM_MODEL` changed on the capture server only; each judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+`glm-5p3-flash` ran at `LLM_REASONING_EFFORT=low` (it cannot switch reasoning off); `minimax-m3` at `LLM_THINKING=disabled`.
+
+`minimax-m3` is invalid, not weak: it scored 0.13 / 0.13 because Fireworks' template for it keeps only the first system message, so the CONTEXT message never arrived (prompts of about 1,300 tokens, the system prompt alone; a two-system-message probe confirmed it) and it refused nearly every turn.
+Testing it needs the context merged into one system message for that model.
+
+| | `gpt-oss-120b` (E3, one pass) | `glm-5p3-flash`, pass 1 / 2 |
+|---|---|---|
+| correctness (floor 1.30) | 1.10 | 1.33 / 1.34 |
+| cross-document | 0.96 | 1.08 / 1.08 |
+| deep-in-manual | 1.20 | 1.60 / 1.60 |
+| definitional | 1.12 | 1.38 / 1.38 |
+| follow-up | 1.25 | 1.50 / 1.50 |
+| precedence | 1.17 | 1.33 / 1.50 |
+| probe-calibration | 1.12 | 1.38 / 1.38 |
+| refusal | 1.00 | 1.12 / 1.12 |
+| scored 0 | 4 | 1 / 2 |
+| median answer characters / completion tokens | 688 / 520 | 1,069 / 265 |
+| refusal gate (8 turns) | 1 exact, 6 folded, 1 answered | 6 exact, 1 off-contract, 1 answered |
+| citation validity (floor 95%) | 60.4% | 99.5% |
+| unexplained figures | 1 | 3, all "0.40": the question's 0.42 rounded by the quoted rule |
+
+On the two-pass mean GLM is higher on 25 turns and lower on 6.
+Capture cost about $0.07 (490,714 prompt tokens, 33% cached; 26,563 completion), below `gpt-oss-120b`'s $0.08 on the same turns, since low reasoning spends far fewer output tokens; wall time 332 s against 297 s.
+Reading: the first arm to clear the 1.30 floor, on gold context and on the secondary judge and rubric only; the answer model, not the prompt or the rubric, was the ceiling.
+Not yet measured: GLM on real retrieval, its ungrounded rate (longer answers), tool calling with the sensor and report tools, and whether the judge's calibration on `gpt-oss-120b` answers holds for another model's style.
+
 ### Follow-up rewriting captured, k=20 - 2026-09-26, runs `p3-lv-k20-rewrite-2026-09-26` and `p3-lv-k20-rewrite-rejudge-2026-09-26`
 
 The unpinned k=20 capture's settings (`gpt-oss-120b`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools and catalogue off, `DEFAULT_RETRIEVAL=local-vector`, port 8011) with `QUERY_REWRITE=true`: 90/90 turns, 0 failed, after a spot check.
