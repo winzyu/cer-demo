@@ -1192,6 +1192,26 @@ Reading: a 12-point recall gain does not reach correctness, which agrees with go
 At about 1 s and $0.0066 per question for no measurable gain, the reranker is not worth enabling for launch; `hybrid-slice-rerank` stays registered for later work and `DEFAULT_RETRIEVAL` is unchanged.
 Spend: captures about $0.20 plus about $0.65 of rerank calls (including two spot checks), judge $0.57; about $1.42 for this run and about $13.40 of the $20 R4 ceiling with the held-out check and the offline measurement.
 
+### Answer-model reasoning `high` - 2026-09-25, run `p3-reason-high-2026-09-25`
+
+Question: is gold context's 1.01 an answer habit (terse answers that omit points) that more reasoning fixes.
+`LLM_REASONING_EFFORT=high` (`d11d577`; every earlier capture sent no `reasoning_effort`, so the provider default applied) on `gold-context`, otherwise E3's settings, including `LLM_MAX_TOKENS=16384`.
+12 of the 79 attempted turns failed with an empty answer: reasoning used the whole 16,384-token budget. When a first turn fails the runner skips its second, so 11 more turns were never asked; 11 of the 12 failures are first turns, 9 of them cross-document or deep-in-manual.
+The judge scored the 67 answered turns and the 12 failures (as 0) at `--final`, correctness only (4 empty judge replies re-run to 0 failed).
+
+| | E3 gold context, mean of 2 passes | reasoning `high` |
+|---|---|---|
+| correctness, the 67 turns both answered | 1.00 | 0.88 |
+| turns higher / lower than E3 by more than a quarter point | - | 7 / 15 |
+| correctness over the servable set, failures as 0 | 1.01 | 0.75 |
+| failed turns | 0 of 90 | 12 of 79 (15%) |
+| completion tokens per answered turn, median / p90 | 525 / 997 | 2,203 / 5,866 |
+| wall time per answered turn, median / p90 | 2.5 s / 4.5 s | 10.3 s / 27.5 s |
+
+Reasoning `high` scores lower on the same turns, fails one turn in seven at the current token cap, and is four times slower at the median, so more reasoning is not the lever; it is not recommended for launch, and the setting stays `default`.
+A larger token cap would remove the failures but not the paired drop on answered turns.
+Spend: capture about $0.15 by the recorded usage (the failed turns' reasoning tokens are not in it and may add up to about $0.12), judge $0.24; about $0.40-0.50, and about $13.90 of the $20 R4 ceiling.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
