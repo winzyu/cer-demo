@@ -23,7 +23,10 @@ const FIXTURES = path.join(__dirname, "../fixtures/device-api");
 const load = (name: string): unknown => JSON.parse(fs.readFileSync(path.join(FIXTURES, name), "utf8"));
 
 const DEVICES = load("devices.json");
-const ALGALITA_PERIOD = load("algalita-period-1-day.json") as Array<Record<string, unknown>>;
+// Synthetic GPS fixes let these numeric regression cases establish a current site.
+// The captured artifact remains verbatim; its original 0,0 rows are tested separately.
+const ALGALITA_PERIOD: Array<Record<string, unknown>> = (load("algalita-period-1-day.json") as Array<Record<string, unknown>>)
+  .map((reading) => ({ ...reading, best_lat: 33.74, best_lon: -118.1 }));
 const OWC_PERIOD_DAY = load("owc-period-1-day.json");
 const OWC_LAST = load("owc-last.json") as { data: Record<string, unknown> };
 
@@ -43,6 +46,7 @@ const NOW = Date.parse("2026-08-13T12:00:00.000Z");
  */
 const OWC_PERIOD_WEEK = [{
   ...OWC_LAST.data,
+  best_lat: 41.38, best_lon: -82.51,
   water_data: {
     ...(OWC_LAST.data.water_data as Record<string, unknown>),
     // /water/period returns the stored document, so temperature is Celsius on this route
@@ -96,6 +100,10 @@ const makeClient = (
         }
         if (url.includes("/1/month")) {
           return overrides.periodMonth ?? (forOwc ? OWC_PERIOD_WEEK : ALGALITA_PERIOD);
+        }
+        if (url.includes("/1/year")) {
+          return overrides.periodMonth ?? overrides.periodWeek ?? overrides.periodDay
+            ?? (forOwc ? OWC_PERIOD_WEEK : ALGALITA_PERIOD);
         }
         return overrides.periodDay ?? (forOwc ? OWC_PERIOD_DAY : ALGALITA_PERIOD);
       }
@@ -346,7 +354,7 @@ describe("query_sensor_data — the stale pod", () => {
 
     const periodCalls = calls.filter((call) => call.url.includes("/water/period/"));
     expect(periodCalls).toHaveLength(1);
-    expect(periodCalls[0].url).toContain("/1/month");
+    expect(periodCalls[0].url).toContain("/1/year");
   });
 
   it("makes exactly one period call on the normal path", async () => {
@@ -403,8 +411,8 @@ describe("query_sensor_data — the stale pod", () => {
     });
 
     const periodCalls = calls.filter((call) => call.url.includes("/water/period/"));
-    expect(periodCalls).toHaveLength(3);
-    expect(periodCalls.some((call) => call.url.includes("/1/year"))).toBe(false);
+    expect(periodCalls).toHaveLength(1);
+    expect(periodCalls[0].url).toContain("/1/year");
     expect(result.value).toBeNull();
     expect(result.device_last_reported).toBeNull();
   });
@@ -437,8 +445,8 @@ describe("query_sensor_data — caveats that travel with the number", () => {
       metric: "turbidity", time_range: "last day", aggregation: "mean", device: "Algalita",
     });
 
-    expect(result.value).toBe(0);
-    expect(result.note).toContain("may be a missing sensor rather than confirmed clear water");
+    expect(result.value).toBeNull();
+    expect(result.note).toContain("likely failed sensor");
   });
 
   it("does not flag turbidity as all zero when any reading rose above 0", async () => {
@@ -882,17 +890,16 @@ describe("query_sensor_data — window honesty", () => {
     expect((result.window_actually_searched as { complete: boolean }).complete).toBe(true);
   });
 
-  it("surfaces a shared observed_at at the top level for multi-metric reads", async () => {
-    // Every metric comes off the same row, so they share one instant. Without it at the top
-    // level the model substituted the window boundary.
+  it("omits shared observed_at when stuck-sensor filtering changes the earliest metric instant", async () => {
+    // Turbidity starts with a failed run; its first usable instant differs from pH.
     const { tool } = makeTool();
     const result = await tool.run({
       metric: "all", time_range: "last day", aggregation: "earliest", device: "Algalita",
     });
 
     const metrics = result.metrics as Record<string, { observed_at: string }>;
-    expect(typeof result.observed_at).toBe("string");
-    expect(result.observed_at).toBe(metrics.ph.observed_at);
+    expect(result.observed_at).toBeUndefined();
+    expect(metrics.turbidity.observed_at).not.toBe(metrics.ph.observed_at);
   });
 
   it("omits a shared observed_at when the aggregation has no single instant", async () => {
@@ -903,4 +910,14 @@ describe("query_sensor_data — window honesty", () => {
 
     expect(result.observed_at).toBeUndefined();
   });
+});
+
+
+it("withholds the original capture whose best coordinates are all missing", async () => {
+  const { tool } = makeTool({ periodDay: load("algalita-period-1-day.json") });
+  const result = await tool.run({
+    metric: "ph", time_range: "last day", aggregation: "mean", device: "Algalita",
+  });
+  expect(result.value).toBeNull();
+  expect(result.note).toContain("Current site not assessed");
 });

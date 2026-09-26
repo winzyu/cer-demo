@@ -18,7 +18,10 @@ const FIXTURES = path.join(__dirname, "../fixtures/device-api");
 const load = (name: string): unknown => JSON.parse(fs.readFileSync(path.join(FIXTURES, name), "utf8"));
 
 const DEVICES = load("devices.json");
-const ALGALITA_PERIOD = load("algalita-period-1-day.json") as Array<Record<string, unknown>>;
+// Synthetic GPS fixes let these numeric regression cases establish a current site.
+// The captured artifact remains verbatim; its original 0,0 rows are tested separately.
+const ALGALITA_PERIOD: Array<Record<string, unknown>> = (load("algalita-period-1-day.json") as Array<Record<string, unknown>>)
+  .map((reading) => ({ ...reading, best_lat: 33.74, best_lon: -118.1 }));
 const OWC_PERIOD_DAY = load("owc-period-1-day.json");
 const OWC_LAST = load("owc-last.json") as { data: Record<string, unknown> };
 
@@ -468,12 +471,12 @@ describe("buildReportInput", () => {
     expect(ph.mean).toBeLessThanOrEqual(ph.max);
   });
 
-  it("reports Not available for coordinates and client, rather than fabricating placeholder values", async () => {
+  it("uses the current-site coordinates and leaves the unavailable client unset", async () => {
     const sensor = makeSensor();
     const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
 
-    expect(report!.site.latitude).toBeUndefined();
-    expect(report!.site.longitude).toBeUndefined();
+    expect(report!.site.latitude).toBe(33.74);
+    expect(report!.site.longitude).toBe(-118.1);
     expect(report!.site.clientName).toContain("Not available");
   });
 
@@ -499,7 +502,7 @@ describe("buildReportInput", () => {
     const { report, error } = await buildReportInput(sensor, { timeRange: "last day", device: "OWC" });
 
     expect(report).toBeUndefined();
-    expect(error).toContain("No readings found");
+    expect(error).toContain("No usable readings found");
   });
 
   it("threads the caller's bearer token from ToolContext into every device call", async () => {

@@ -31,7 +31,7 @@ import {
 import { metricBlindSpotNote, WIRE_KEY_TO_METRIC } from "../report/operatorThresholds";
 import { probeAccuracy } from "../report/referenceRanges";
 import type {
-  Flag, ReportInput, WaterBodyType, ParameterStats, StatusAssessment,
+  ReportInput, WaterBodyType, ParameterStats, StatusAssessment,
 } from "../report/types";
 import { readingAge } from "./readingAge";
 
@@ -109,8 +109,11 @@ const baselineProvenance = (report: ReportInput): Record<string, string> => {
  * and wrote "Action Required" beside "no abnormal conditions" (`CONVERSATION_QA_2026-09-24.md`
  * finding 3).
  */
-const parameterFlags = (report: ReportInput): Record<string, Flag> => Object.fromEntries(
-  report.parameters.map((p): [string, Flag] => [p.baseline.key, flagFor(p, probeAccuracy)]),
+const parameterFlags = (report: ReportInput): Record<string, string> => Object.fromEntries(
+  report.parameters.map((p): [string, string] => {
+    const flag = flagFor(p, probeAccuracy);
+    return [p.baseline.key, flag === "N/A" ? "Not assessed" : flag];
+  }),
 );
 
 /**
@@ -254,9 +257,12 @@ export class GenerateReport {
       // summary was computed from, echoed rather than resolved: the route re-validates them
       // against the caller's own token, so nothing here is trusted on the way back in.
       report_request: { time_range: timeRange, ...(device ? { device } : {}) },
-      ...(skippedParameters && skippedParameters.length > 0
-        ? { note: `No readings for: ${skippedParameters.join(", ")}. Report covers the remaining parameters only.` }
-        : {}),
+      note: [
+        report.dataQuality?.completenessNotes,
+        report.dataQuality?.calibrationStatus === "Review" ? report.dataQuality.calibrationNotes : null,
+        skippedParameters?.length
+          ? `No readings for: ${skippedParameters.join(", ")}. Report covers the remaining parameters only.` : null,
+      ].filter(Boolean).join(" "),
     };
   }
 }

@@ -31,6 +31,8 @@ import {
 } from "./timeRange";
 import type { FetchWindow, ResolvedRange } from "./timeRange";
 import { readingAge } from "./readingAge";
+import { currentSite } from "./currentSite";
+import { stuckTurbidityReadings, STUCK_SENSOR_NOTE } from "./stuckSensor";
 
 const log = createLogger("SensorTool");
 
@@ -193,11 +195,8 @@ const DEVICE_CACHE_MS = 5 * 60_000;
 /** Empty-window escalations before giving up. Two rungs: day → week → month. */
 const MAX_ESCALATIONS = 2;
 
-/**
- * Floor on the window a query may ask for. Guards the "now" case and any range whose start is
- * in the future, either of which would otherwise compute a zero or negative look-back.
- */
-const MIN_LOOKBACK_MS = 60 * 60_000;
+/** Site boundaries use all history the API can expose, including rows after a requested date. */
+const SITE_HISTORY_MS = 365 * 24 * 60 * 60_000;
 
 /**
  * Bucket widths a caller may name for `series`.
@@ -685,8 +684,9 @@ export class QuerySensorData {
 
     if (referenceIso === null) {
       // `/water/last` drops readings with no GPS fix, so a null here is not proof of silence.
-      // Fall back to widening period windows, which do not filter, to find any data at all.
-      const probe = await this.fetchWindow(chain.labels, lookbackMsFor(parsed, this.now()), token);
+      // Read the full site history even when the requested range is short.
+      const lookback = Math.max(SITE_HISTORY_MS, lookbackMsFor(parsed, this.now()));
+      const probe = await this.fetchWindow(chain.labels, lookback, token);
       readings = probe.readings;
       probeSpanMs = probe.window.spanMs;
       referenceIso = QuerySensorData.newestObservedAt(readings);
@@ -705,14 +705,14 @@ export class QuerySensorData {
       };
     }
 
-    const referenceMs = Date.parse(referenceIso);
+    let referenceMs = Date.parse(referenceIso);
     if (!Number.isFinite(referenceMs)) {
       return failure("The device API returned a reading with no usable timestamp.");
     }
-    const range = resolveRange(parsed, referenceMs);
+    let range = resolveRange(parsed, referenceMs);
 
     // Step 2: one window, sized to reach from now back to the start of the resolved range.
-    const neededLookback = Math.max(this.now() - range.startMs, MIN_LOOKBACK_MS);
+    const neededLookback = Math.max(this.now() - range.startMs, SITE_HISTORY_MS);
     const window = fetchWindowFor(neededLookback);
     if (readings.length === 0 || window.spanMs > probeSpanMs) {
       readings = await this.getPeriodChain(chain.labels, window.duration, window.unit, token);
@@ -732,9 +732,24 @@ export class QuerySensorData {
       };
     }
 
+    // Period rows can be newer than /water/last, whose GPS filtering omits some rows.
+    referenceIso = QuerySensorData.newestObservedAt(readings) ?? referenceIso;
+    referenceMs = Date.parse(referenceIso);
+    range = resolveRange(parsed, referenceMs);
+    const site = currentSite(readings);
+    readings = site.readings;
+    const stuck = stuckTurbidityReadings(readings);
+    const inRequestedRange = (row: DeviceReading): boolean => {
+      const time = Date.parse(row.observedAt!);
+      return time >= range.startMs
+        && (range.endInclusive ? time <= range.endMs : time < range.endMs);
+    };
+    const excludedStuck = [...stuck].filter(inRequestedRange).length;
+
     // One fetched window, read once per requested metric. The device API is not touched again.
     const computed = metricKeys.map((key) => {
-      const samples = QuerySensorData.samplesInRange(readings, key, range);
+      const usable = key === "turbidity" ? readings.filter((row) => !stuck.has(row)) : readings;
+      const samples = QuerySensorData.samplesInRange(usable, key, range);
       return {
         key,
         samples,
@@ -749,6 +764,8 @@ export class QuerySensorData {
 
     const shape = (key: MetricKey, result: AggregateResult): Record<string, unknown> => ({
       unit: unitFor(key),
+      ...(key === "turbidity" && excludedStuck > 0
+        ? { excluded_stuck: excludedStuck, sensor_quality: "likely failed sensor" } : {}),
       value: result.value,
       n_samples: result.nSamples,
       excluded_faulted: result.excludedFaulted,
@@ -774,6 +791,8 @@ export class QuerySensorData {
 
     const common = {
       ...identity,
+      current_site_last_reported: QuerySensorData.newestObservedAt(readings),
+      ...(site.note ? { site_note: site.note } : {}),
       time_range_requested: timeRangeInput,
       time_range_resolved: { start: range.start, end: range.end, label: range.label },
       // Omitted rather than nulled when no reading carried a fix, so a consumer cannot mistake
@@ -812,6 +831,11 @@ export class QuerySensorData {
       implausible,
       allZeroTurbidity,
     );
+
+    const extraNotes = [notes.note, site.note,
+      metricKeys.includes("turbidity") && excludedStuck > 0 ? STUCK_SENSOR_NOTE : undefined]
+      .filter(Boolean);
+    if (extraNotes.length) notes.note = extraNotes.join(" ");
 
     if (single) {
       // Flat shape for a single metric — unchanged from before multi-metric existed, so nothing
