@@ -1228,6 +1228,24 @@ A review before the re-judge found two edits beyond their classes (an F1 cut tha
 E3's 1.01 on v1 stays the reported, pre-registered result; any v2 score is secondary and must be labelled as such.
 The edits can only remove requirements or vetoes, so v2 scores cannot fall on the same answers except by judge noise.
 
+### Judge replacement calibration - 2026-09-25, run `p3-calib-v4p1-2026-09-25`
+
+The calibrated judge `deepseek-v4-flash-0731` stopped serving on Fireworks on 2026-09-25: every chat call returns 404 "Model not found, inaccessible, and/or not deployed", though `/v1/models` still lists it; its last verdict is 00:43Z that day, and the failed v2 re-judge attempts were not billed.
+`deepseek-v4p1-flash` serves, and was checked against the same human grades with the calibrated correctness prompt unchanged (`--judge-model`, `--final`, correctness only): 44 calls, 0 failed, 550,234 prompt tokens (73,812 cached) and 32,348 completion tokens, about $0.13 at the old judge's rate (its own rate is not in `prices.ts`).
+The run is a symlink to `p3-calib-2026-09-24` for both transcripts and grading, so the old ledger is untouched.
+The human grades were made on rubric v1 and the judge read the current v2 files, so the fair comparison is the 38 rows whose rubric is identical in both.
+
+| rows | old judge exact / kappa | new judge exact / kappa |
+|---|---|---|
+| tuned 32 (the 0.849 sheet) | 90.6% / 0.849 | 90.6% / 0.852 |
+| held-out 12 | 75.0% / 0.250 | 75.0% / 0.294 |
+| rubric unchanged by v2, 38 | 86.8% / 0.772 | 89.5% / 0.823 |
+| all 44 | 86.4% / 0.763 | 86.4% / 0.771 |
+
+The two judges agree on 40 of 44 rows (kappa 0.843); all four differences are the new judge one point higher, one of them on a turn v2 loosened.
+On these rows the mean score is 0.795 human, 0.750 old judge and 0.841 new judge, so the new judge is at least as close to the human grades but slightly more lenient than the old one.
+Reading: the new judge meets the same agreement bar, but its scores are not interchangeable with the old judge's; any comparison with E3 needs E3 re-judged by the new judge.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
