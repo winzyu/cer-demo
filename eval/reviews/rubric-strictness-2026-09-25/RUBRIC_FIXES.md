@@ -23,12 +23,13 @@ The audit did not open any answer or judge verdict, but its author (Claude) had 
 
 ## Edits
 
-32 edits in 24 turns of 19 fixtures; must-contain points 423 to 412, must-not items 315 to 304.
+32 edits in 24 turns of 19 fixtures; must-contain points 423 to 413, must-not items 315 to 304.
+Two rows were corrected after a review of this log on 2026-09-25 (see "Review corrections"); the table shows the corrected edits.
 No question text changed, so every capture stays valid; only judge verdicts need re-running.
 
 | turn | class | edit | reason |
 |---|---|---|---|
-| crossdoc-temp-sensor-drift-blast-radius#1 | F1 | MC1 drops "corrected Eh"; MC4 (pH electrode slope and buffer values) and MC5 (reference-electrode potential for Eh) deleted | The excerpts name dissolved oxygen, conductivity and pH as relying on temperature; nothing on slope, buffers, Eh or ORP. Flagged by Claude and Codex. |
+| crossdoc-temp-sensor-drift-blast-radius#1 | F1 | MC1 names ORP instead of "corrected Eh"; MC4 keeps only the temperature dependence of pH buffer values, dropping the electrode slope; MC5 (reference-electrode potential for Eh) deleted | The EPA SOP excerpt names pH, dissolved oxygen, specific conductance and ORP as relying on the temperature sensor and requires temperature-adjusted buffer values; nothing on electrode slope, Eh or the reference-electrode potential. Flagged by Claude and Codex. |
 | followup-jumpy-temperature-trace#2 | F1, F2 | MC2 (conditional NWIS uncertainty rule) and MC3 (verify before trusting repaired data) deleted | The excerpt says only "replace cables, which may require recertification", which MC1 already requires; no uncertainty rule exists in the excerpts. Flagged by both. |
 | refusal-turbidity-sensor-hardware#2 | F1 | MC5 no longer requires "the application labels turbidity in NTU" | Neither the excerpts nor the tools-off system prompt say so; the relative-index part is a system-prompt rule and stays. |
 | probecal-ph-what-solutions#1 | F2 | MC1 and MC2 merged | "At least two, not one" and "single-point is not acceptable" are one proposition. Flagged by both. |
@@ -51,7 +52,7 @@ No question text changed, so every capture stays valid; only judge verdicts need
 | probecal-end-of-day-check#1 | F3 | MN2 deleted | Omission of MC2 (end-of-day check). |
 | crossdoc-warm-week-oxygen-drop#1 | F3 | MN3 keeps "treats the brackish site as freshwater" and drops "skips the salinity correction entirely" | Keeps the commission, drops the omission already covered by MC5. |
 | crossdoc-warm-week-oxygen-drop#1 | F4 | MC6 allows a conditional estimate labelled with its assumptions | It forbade "assigning 1 mg/L to warming" while MC3 requires the 0.99 mg/L drop as a conditional benchmark; the two points contradicted each other. Claude and Codex. |
-| deepmanual-thermistor-annual-check#1 | F4 | MN1 rewritten as a plain prohibition | "Accepts two points here" read as an instruction, and pass 2 applied it backwards. Claude. |
+| deepmanual-thermistor-annual-check#1 | F4 | MN1 reduced to "Requires a fixed number of points the manual does not give"; the permission is dropped | "Accepts two points here" read as an instruction, and pass 2 applied it backwards. Claude. |
 | probecal-orp-standard-check#2 | F4 | MC2's manufacturer-guidance clause made optional | A scope condition the judge read as a required statement. Claude. |
 
 ## Left alone, and why
@@ -69,9 +70,19 @@ No question text changed, so every capture stays valid; only judge verdicts need
 
 Every edit either removes a requirement or a veto, or leaves the requirement set unchanged, so v2 scores can only rise or stay level on the same answers, apart from judge noise.
 The rule is symmetric, but no flawed point in this set made the rubric too lenient.
-Removing F3 items lowers severity for eleven safety-flavoured omissions from 0 to at most 1; the most defensible to keep as a veto is followup-cleaning-the-salt-sensor#1 MN4 (acid on electrodes without the manufacturer check), which the user may restore as a deliberate exception.
+Removing F3 items lowers severity for eleven safety-flavoured omissions from 0 to at most 1; the most defensible to keep as a veto was followup-cleaning-the-salt-sensor#1 MN4 (acid on electrodes without the manufacturer check).
+User decision, 2026-09-25: MN4 stays deleted, so F3 applies uniformly.
+
+## Review corrections, 2026-09-25
+
+A review of the committed edits (`c53dcbd`) against the four classes found two that went beyond them, and the user approved both corrections before the v2 re-judge.
+
+- crossdoc-temp-sensor-drift-blast-radius#1: the F1 edit removed supported content. The EPA SOP excerpt lists ORP among the readings that rely on the temperature sensor and requires temperature-adjusted buffer values, so MC1 now names ORP and MC4 is restored without the unsupported electrode slope. The original log row said the excerpts had nothing on buffers or ORP; that was wrong.
+- deepmanual-thermistor-annual-check#1: the F4 rewrite of MN1 turned the permission "accepts two points here" into a new veto ("Says two points are not enough for this site"), the only edit that could lower a score. The new clause is dropped; a wrong claim that two points are insufficient still scores 0 as a wrong statement.
+
+The other 30 edits stay within their classes. The re-judge `p3-final-rubric-v2-2026-09-25` uses the corrected set.
 
 ## Fingerprint
 
-`sha256sum *.json | sha256sum` in `eval/fixtures-wave1/`: v1 `b0b647f4ba6a54a3f812a508ef5f450f6d1e43e183858cf6d203ee2a8ea1f148`, v2 `144dd7f16a3e565d49a9dbac35f49335ab3fd4590db2e75e2738daf4bd6841f0`.
+`sha256sum *.json | sha256sum` in `eval/fixtures-wave1/`: v1 `b0b647f4ba6a54a3f812a508ef5f450f6d1e43e183858cf6d203ee2a8ea1f148`, v2 as first committed `144dd7f16a3e565d49a9dbac35f49335ab3fd4590db2e75e2738daf4bd6841f0`, v2 as corrected and judged `9a715154d34fec898c00911a5441399a3a2d7e4a294351b893f71d2799554518`.
 Labels (`eval/retrieval-labels/`) are unchanged: they do not read rubric text.

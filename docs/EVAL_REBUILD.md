@@ -1215,15 +1215,16 @@ Spend: capture about $0.15 by the recorded usage (the failed turns' reasoning to
 ### Rubric v2: validity fixes - 2026-09-25
 
 **User decision, 2026-09-25**: after the three rubric-strictness reviews (Gemini, Claude, Codex), fix only the rubric points they identified as flawed; no core/supplementary split, which all three say needs blind labelling and fresh fixtures.
-This is a recorded change to the frozen fixture set, rubric text only: 32 edits in 24 turns of 19 fixtures, must-contain points 423 to 412, must-not items 315 to 304.
+This is a recorded change to the frozen fixture set, rubric text only: 32 edits in 24 turns of 19 fixtures, must-contain points 423 to 413, must-not items 315 to 304.
 The rule (unsupported by the turn's excerpts, duplicate, omission-type must-not, or an instruction that reads as a requirement), every edit and what was left alone are in `eval/reviews/rubric-strictness-2026-09-25/RUBRIC_FIXES.md`.
 
 | directory | files | fingerprint |
 |---|---|---|
-| `eval/fixtures-wave1/` (rubric v2) | 45 | `144dd7f16a3e565d49a9dbac35f49335ab3fd4590db2e75e2738daf4bd6841f0` |
+| `eval/fixtures-wave1/` (rubric v2) | 45 | `9a715154d34fec898c00911a5441399a3a2d7e4a294351b893f71d2799554518` |
 
 No question text changed, so every capture stays valid; labels are unchanged.
 Verdicts judged on v1 are not comparable with v2 verdicts: a v2 number needs a re-judge under its own `--run`.
+A review before the re-judge found two edits beyond their classes (an F1 cut that removed supported content, an F4 rewrite that added a veto); both were corrected with the user's approval, so the table's fingerprint is the corrected set (`RUBRIC_FIXES.md` "Review corrections").
 E3's 1.01 on v1 stays the reported, pre-registered result; any v2 score is secondary and must be labelled as such.
 The edits can only remove requirements or vetoes, so v2 scores cannot fall on the same answers except by judge noise.
 

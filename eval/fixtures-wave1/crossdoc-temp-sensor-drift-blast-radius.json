@@ -19,9 +19,10 @@
       "content": "If the temperature sensor on one of our pods has gone off by half a degree and nobody noticed, which of the other readings are wrong because of it?",
       "rubric": {
         "must_contain": [
-          "Identifies pH, dissolved oxygen and specific conductance as potentially affected where their calculations or calibration rely on that temperature sensor; does not assume the pod wiring or compensation configuration.",
+          "Identifies pH, dissolved oxygen, specific conductance and ORP as potentially affected where their calculations or calibration rely on that temperature sensor; does not assume the pod wiring or compensation configuration.",
           "explains for specific conductance that the reported value is a temperature-corrected number computed from the measured temperature",
           "explains for dissolved oxygen that the reported concentration is computed from the sensor signal together with temperature",
+          "explains for pH that the buffer values used to calibrate it depend on temperature",
           "notes that on a multiparameter instrument the temperature sensor typically sits in a different part of the instrument from the pH electrode"
         ],
         "must_not": [

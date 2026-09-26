@@ -21,7 +21,7 @@
           "Notes this range-verification procedure requires at most five points, without generalizing to every certification procedure"
         ],
         "must_not": [
-          "Says two points are not enough for this site, or requires a fixed number of points the manual does not give",
+          "Requires a fixed number of points the manual does not give",
           "Says a single-point check is enough for annual verification",
           "Recommends points violating the extrema/mean rules or the small-range spacing of at least 2 C and no more than 4 C."
         ],
