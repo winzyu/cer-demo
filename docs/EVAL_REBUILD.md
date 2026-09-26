@@ -1318,6 +1318,25 @@ The refusal class is lower on both unpinned depths (8 turns, so one or two verdi
 Reading: both unpinned depths match or beat the pinned baseline at a smaller prompt; k=20 and k=10 are level overall within noise, with k=20 declining fewer answerable questions (16 against 22) and holding follow-up and precedence at 1.00.
 Every arm stays far under the 1.30 floor.
 
+### Follow-up rewriting and keyword search, offline - 2026-09-26, `data/results/retrieval/r4-2026-09-26/`
+
+Retrieval sees only the latest message, so a follow-up that does not name its subject searches blind.
+`QUERY_REWRITE` (off by default, `src/retrieval/queryRewrite.ts`) asks the answer model to rewrite a follow-up into a standalone search query from the last four history messages; the answer prompt still gets the user's words, a first turn makes no call, and any failure searches the original message.
+`retrieval:eval --rewrite` replays it on the frozen 90 with the assistant's first answers taken from `p3-lv-k20-2026-09-26`, as that capture sent them.
+All four runs are k=20, datasheets unpinned; cost was query embeddings plus 90 rewrite calls to `gpt-oss-120b`, a few cents.
+
+| arm | recall, all 90 | turn 1 (n=45) | turn 2 (n=45) | nDCG |
+|---|---|---|---|---|
+| `local-vector` | 38.4% | 50.0% | 26.8% | 0.264 |
+| `local-vector` + rewrite | 55.4% | 50.0% | 60.8% | 0.404 |
+| `local-hybrid` (dense + BM25) | 38.9% | 47.8% | 30.1% | 0.275 |
+| `local-hybrid` + rewrite | 58.1% | 47.8% | 68.5% | 0.444 |
+
+Rewriting raised recall on 27 of 45 second turns and lowered it on 2; rewrites average 120 characters, read as search queries rather than answers, and raise every class (cross-document 25.7% to 32.0%, probe-calibration 33.8% to 52.3%, definitional 45.1% to 76.1%).
+Keyword search alone is level with dense retrieval (+0.5 points overall, -2.2 on first turns), and its +2.7 over rewritten dense retrieval is inside the noise and flattered by the questions sharing their sources' wording (item 1); the two runs also drew separate rewrites.
+Reading: rewriting clears the bar set for a capture; keyword search does not, so the capture candidate is `local-vector` k=20 with `QUERY_REWRITE=true`.
+Recall is a necessary condition only; whether answers improve needs the capture.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.

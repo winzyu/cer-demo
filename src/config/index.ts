@@ -234,6 +234,11 @@ export interface RetrievalConfig {
    * could have a run measured against the wrong source and misreport the arm's cost.
    */
   corpusSource: CorpusSourceName;
+  /**
+   * Rewrite a follow-up into a standalone search query from the conversation before retrieval
+   * (`src/retrieval/queryRewrite.ts`). Off by default: it adds a model call to every follow-up.
+   */
+  queryRewrite: boolean;
 }
 
 export interface Config {
@@ -449,6 +454,7 @@ const load = (): Config => {
         ["artifact", "firestore"],
         "artifact",
       ),
+      queryRewrite: readBool("QUERY_REWRITE", false),
     },
     waterType: readEnum<WaterType>("WATER_TYPE", ["freshwater", "saltwater"], "freshwater"),
     audit: {
