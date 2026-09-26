@@ -49,3 +49,12 @@ Who besides the author may read a chat is still open (stakeholder item 21).
 A conversation is one document, and Firestore caps a document at 1 MiB.
 The new answer details make each message larger, mostly through `tool_calls`, so a very long conversation could hit the cap and stop saving.
 Before launch the message size will be measured from real local answers; if a conversation could reach the cap within a plausible use, either a new conversation starts automatically at a message limit, or `tool_calls` is trimmed to what the audit needs.
+
+## Corrections, 2026-09-25
+
+Two statements above are wrong and need correcting before the supervisor approves the table (F2).
+
+- **Retention.** A Firestore TTL policy deletes a document once its TTL field is in the past, so a policy on `updatedAt` would delete the current day's usage counter within about a day and reset that user's limits.
+  `gilligan_usage` needs an `expireAt` field set 90 days after `updatedAt`, with the policy on `expireAt`; `feat/service-release` (`cc8a300`) does not write it yet.
+- **Access.** Firestore IAM cannot grant access to one collection: the Datastore User role covers every collection in a database.
+  The promise that Gilligan touches only `gilligan_usage` holds only if Gilligan's data lives in its own Firestore database with the role granted on that database alone; the user chose that on 2026-09-25 (branch `docs/l2-inputs`, `9d448f8`, not yet on `dev`), and the new database needs the supervisor's approval as well.

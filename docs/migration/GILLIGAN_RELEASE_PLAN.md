@@ -1,6 +1,6 @@
 # Gilligan release plan, September 24-30
 
-Current at `dev` `90de90f` plus this edit (2026-09-24, late). Written 2026-09-24, after the supervisor's answers to the stakeholder questions and the marked-up catalogue review (`review-marked-up.html`, untracked at the repo root).
+Current at `dev` `621da45` plus this edit (2026-09-25, late, after the user's decisions on the open items). Written 2026-09-24, after the supervisor's answers to the stakeholder questions and the marked-up catalogue review (`review-marked-up.html`, untracked at the repo root).
 The goal is unchanged from [`RELEASE_GOAL_AND_PLAN.md`](RELEASE_GOAL_AND_PLAN.md); this file replaces the dates in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4 for the last six days.
 Task IDs (P1, Q2, ...) are for this plan only.
 
@@ -20,8 +20,8 @@ Task IDs (P1, Q2, ...) are for this plan only.
 | Period-query data hole | Fix it if legitimate; permission granted. | P3 is release-blocking. |
 | Gemini-era chats | Not answered. | Architecture decision D2 stands: ignore them. |
 | Wide alert limits | Unintentional; the supervisor fixes them in the superadmin view. | Q5: until fixed, a limit wider than the sensor's range reads "not assessed". |
-| CWA Old pod | Still Cleveland Water Alliance's; its old organization should be null because the pod merged into the new one. | Q6 verifies the merge chain with a null organization. |
-| Pod moved between sites | Default to the current site, unless the user asks otherwise; reports cover the current site. | Q3, release-blocking for OWC 2026. |
+| CWA Old pod | Still Cleveland Water Alliance's; its old organization should be null because the pod merged into the new one. | Q6 verifies the merge chain with a null organization. **2026-09-25:** an organization id that does not exist counts as null too (user decision), so CWA Old merges into OWC 2026. |
+| Pod moved between sites | Default to the current site, unless the user asks otherwise; reports cover the current site. **Tightened 2026-09-25 (supervisor, through the user):** chat and reports cover only the current site; readings recorded elsewhere are never reported. | Q3, release-blocking for OWC 2026: the merged chain is about 70% North Carolina and Utah rows, so the merge (Q6) and the site filter (Q3) ship together. |
 | Turbidity hardware | Every pod is Keyestudio; a superadmin checkbox will record the sensor later. | Items 3, 4, 11 and 18 close; no sensor-model work for launch. |
 | Missing turbidity | Failing sensors read a flat 0 or 1005 with no variance; Gilligan should call that abnormal. | Q4 generalizes the all-zero flag to stuck runs at 0 or 1005. |
 | Chat retention | Keep chats. | Indefinite retention; who may read them is still open (O5). |
@@ -52,9 +52,9 @@ Priority: **must** blocks launch, **should** ships if ready by Sep 28, **after**
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
 | E1 | **done 2026-09-24** (`1cc508e`, `30eb285`). `--run` support in `grade:packet` and the judge; build the 32-row calibration packet | Claude | must | none | Sep 25 |
-| E2 | **Re-grade pending:** the first 32-row sheet was an AI review, kept as `scores-ai-review.csv` (`01eaf61`); the user grades the reset sheet. Grade the packet on correctness and ungrounded | user | must | E1 | Sep 26 |
-| E3 | Merge `dev` into `eval/wave1-corrections`, then the final two-arm capture judged twice with `--final` (paid; spend approved 2026-09-24). The `dev` merge is done (`e7d3e44`) | Claude, user approves | must | E2, Q1 | Sep 27 |
-| E4 | For each class under the bar, add a refusal (or a caveat where the answer is sound but partial) | Claude | must | E3 | Sep 28 |
+| E2 | **done 2026-09-25** (`387cbce` on `eval/wave1-corrections`). The user graded the packet; after a judge-prompt fix (`49e28ae`) and Claude's adjudication of four rows at the user's request, correctness kappa is 0.849 against the 0.70 bar; on a 12-row held-out round (`309da6c`) it agrees on 9/12 exactly, all within one point | user | must | E1 | Sep 26 |
+| E3 | **done 2026-09-25** (`4e74603` on `eval/wave1-corrections`). Final two-arm capture judged twice with `--final`: correctness 1.01 on gold context and 0.58-0.59 on `hybrid-slice-vector`, both failing the Tier 2 gates; about $3.38, R4 about $11.30 of $20. `dev` was not re-merged: its tools-off prompt is byte-identical to the merge base's | Claude, user approves | must | E2, Q1 | Sep 27 |
+| E4 | For each class under the bar, add a refusal (or a caveat where the answer is sound but partial). The 2026-09-25 improvement round (reranker 0.62, reasoning `high` 0.88 against 1.00) raised no class; three outside reviews of rubric strictness await the user's synthesis (`eval/reviews/phase3-2026-09-23/HANDOFF.md` on `eval/wave1-corrections`) | Claude | must | E3 | Sep 28 |
 | E5 | Tools-on live smoke with the release configuration (live reads, approval) | Claude | must | Q1-Q5, C4 | Sep 28 |
 | E6 | R4 report, top-k 20 into `SPECS.md`, decisions into `timeline.md`, land `eval/wave1-corrections` on `dev` | Claude | should | E4 | Sep 29 |
 
@@ -67,12 +67,14 @@ All stay inside tools-on prompt blocks and tool results, so R4's tools-off captu
 |---|---|---|---|---|---|
 | Q1 | **done, landed on `dev` 2026-09-24.** QA findings 1-5 and 7: today's date in the prompt, reading age in `list_pods` and `query_sensor_data`, the parameter behind `generate_report`'s status, guidance to use min or series for claimed spikes and to relay tool notes | Claude | must | none | Sep 25 |
 | Q2 | **done 2026-09-24.** Record the answers: `STAKEHOLDER_QUESTIONS.md` (items 1-4, 10, 11, 18, 21, 22), decisions in `timeline.md`, quota and deploy changes in `GILLIGAN_TARGET_ARCHITECTURE.md` | Claude | must | none | Sep 25 |
-| Q3 | Current-site filtering: split a device's readings into sites by coordinates, default every query and report to the latest site, add an explicit option for earlier sites, and say when earlier sites exist; verify first that `/water/period` rows carry coordinates for every pod | Claude | must | Q1 | Sep 26 |
+| Q3 | Current-site filtering (**scope changed 2026-09-25**: current site only, no option for earlier sites): split a device's readings, including merged-chain history, into sites by coordinates; every query, comparison and report uses only the latest site; answers and reports may say that readings from an earlier location were excluded but never report them; verify first that `/water/period` rows carry coordinates for every pod, and define the behaviour for rows without them | Claude | must | Q1 | Sep 26 |
 | Q4 | Stuck-sensor detection: a sustained zero-variance run at 0 or 1005 is flagged as a likely failed sensor in tool results and reports, and is excluded before report pattern matching (the catalogue's engine check) | Claude | must | Q1 | Sep 26 |
 | Q5 | Limits wider than the sensor's range read "not assessed" in `get_pod_thresholds` and reports, not "within limits" | Claude | should | Q1 | Sep 27 |
-| Q6 | CWA Old with a null organization: fixture test that its readings still merge into OWC 2026 and are visible only to CWA | Claude | should | none | Sep 27 |
+| Q6 | CWA Old merges into OWC 2026 (**decided 2026-09-25**: an organization id that does not exist counts as null): server follow-up to P3 on a new branch from `task/gilligan-release-p3-p4`, plus cer-demo's chain expansion; fixture tests that its readings merge into OWC 2026, are visible only to CWA, and that a predecessor registered to another existing organization stays withheld | Claude | must | P3 | Sep 27 |
 | Q7 | Near-limit field in the usage status (for U3) | Claude | should | S3 | Sep 27 |
 | Q8 | Gaps left by Q1's paid re-check (`CONVERSATION_QA_2026-09-24.md`): relay the withheld-history note, paraphrase the water-type note accurately, and flag implausibly high dissolved oxygen with a saturation-aware check in the tool | Claude | should | Q1 | Sep 28 |
+
+The 2026-09-25 report audit ([`REPORT_AUDIT_2026-09-25.md`](REPORT_AUDIT_2026-09-25.md)) lists 20 findings from 15 live reports; those not covered by Q3-Q5 need owners, above all the missing reading age in the PDF and the empty 1-day series on thin data (both high).
 
 ### Catalogue (R2)
 
@@ -92,13 +94,13 @@ Worktree cut from `dev`; none of these files overlap Q1-Q7.
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
 | F1 | **done 2026-09-24.** Firestore framework table for the supervisor: existing chat collections and the `audit` field, one new usage collection, and the corpus and chunk collections as optional (launch ships the corpus inside the image, so Firestore corpus is not needed) | Claude, then user sends | must | none | Sep 25 |
-| F2 | Supervisor approves the table | supervisor | must | F1 | Sep 26 |
+| F2 | **Approved 2026-09-25**, including the dedicated Gilligan database; the user is waiting for the technical permissions on the live Firestore, so Firestore work targets the local emulator mirror until then | supervisor | must | F1 | Sep 26 |
 | S1 | Image packaging: ship `data/corpus/` and `data/embeddings/cache.json` in the image, `CORPUS_SOURCE=artifact`; build proof without local Docker (Cloud Build or a machine with Docker) | Claude, user builds | must | O7 | Sep 26 |
-| S2 | Service check between cer-api and cer-rag per runbook §5 (Cloud Run invoker IAM, or a shared secret header if §5's forwarding problem bites) | Claude | must | none | Sep 26 |
+| S2 | Service check between cer-api and cer-rag per runbook §5 (Cloud Run invoker IAM, or a shared secret header if §5's forwarding problem bites) The server half, `feat/service-key` (`9ef59b7`, sends the service key and verified user on every relay call), was pushed 2026-09-25 | Claude | must | none | Sep 26 |
 | S3 | Firestore usage store with daily windows: 20 questions, 5 reports, O3 tokens per user per UTC day; keys from verified identity | Claude | must | F2 | Sep 27 |
 | S4 | Fireworks 429/503 retry once, then "busy"; concurrency limit 8 | Claude | should | none | Sep 27 |
-| S5 | Fireworks payment method and spending cap; `max-instances=1` if S3 slips. **Decided 2026-09-24:** CER replaces the cer-demo key with a key from its own paid Fireworks account, stored in Secret Manager; the in-app token cap, concurrency limit and instance ceiling are the other guards | user | must | none | Sep 26 |
-| S6 | Firestore emulator (Java, `firebase-tools`) for S3 tests, or approval to test S3 against a live test collection | user | must | F2 | Sep 26 |
+| S5 | Fireworks payment method and spending cap; `max-instances=1` if S3 slips. **Decided 2026-09-24:** CER replaces the cer-demo key with a key from its own paid Fireworks account, stored in Secret Manager; the in-app token cap, concurrency limit and instance ceiling are the other guards **2026-09-25:** the key swap and the credential rotation happen after the user has tested on the local mirror and approved the demo; behaviour fixes are verified on the mirror until then | user | must | none | Sep 26 |
+| S6 | **Done 2026-09-25** (`LOCAL_STACK.md` on `docs/gcp-test-env`): Java 21, `firebase-tools` and `gcloud` installed; the usage-store emulator suite passes once its concurrency test gets a longer timeout. Firestore emulator (Java, `firebase-tools`) for S3 tests, or approval to test S3 against a live test collection | user | must | F2 | Sep 26 |
 
 ### Upstream server and dashboard, sessions #3 and #4 and a UX session
 
@@ -106,9 +108,10 @@ Worktree cut from `dev`; none of these files overlap Q1-Q7.
 |---|---|---|---|---|---|
 | P1 | **done 2026-09-24:** server `b2074b8` and dashboard `da5412f` pushed to `feature/gilligan-rag-assistant`; PRs held back (`UPSTREAM_PR_BODIES.md`). Publish: fetch and scan, cherry-pick `local` onto dashboard `origin/main` and server `origin/develop`, secrets and passthrough audit, push feature branches and draft PRs with named commands; propose the malware-rule update (O8) | Claude, user approves pushes | must | none | Sep 25 |
 | P2 | The user merges the PRs after the demo (O2) | user | must | P1, L7 | Sep 29 |
-| P3 | **Reviewed 2026-09-24, awaiting the user's push:** server `ccc759e` on local branch `task/gilligan-release-p3-p4` (fetched from the temporary clone) adds the null-organization rule for an explicit `null`; an organization id that does not exist (CWA Old) is still withheld until the user decides. Task E (1): membership check in `findPeriodWaterData` with organization-isolation tests from `test/fixtures/pod-scope/` | Codex, Claude reviews | must | P1 | Sep 26 |
-| P4 | **Reviewed 2026-09-24, awaiting the user's push:** server `ccc759e` (`.eslintrc.js` reverted) and dashboard `9b1ed78` (charts and dial keep missing turbidity as a gap), same branch name. Task E (2) lazy `EmailService` and `PaymentService`; (3) ESLint parser if small; `turbVoltToNTU.ts` null; dashboard dial to 345/795 | Codex, Claude reviews | should | P1 | Sep 26 |
+| P3 | **Pushed 2026-09-25** (reviewed 2026-09-24): server `ccc759e` on local branch `task/gilligan-release-p3-p4` (fetched from the temporary clone) adds the null-organization rule for an explicit `null`; an organization id that does not exist (CWA Old) is still withheld on this branch and becomes null under Q6. Task E (1): membership check in `findPeriodWaterData` with organization-isolation tests from `test/fixtures/pod-scope/` | Codex, Claude reviews | must | P1 | Sep 26 |
+| P4 | **Pushed 2026-09-25** (reviewed 2026-09-24): server `ccc759e` (`.eslintrc.js` reverted) and dashboard `9b1ed78` (charts and dial keep missing turbidity as a gap), same branch name. Task E (2) lazy `EmailService` and `PaymentService`; (3) ESLint parser if small; `turbVoltToNTU.ts` null; dashboard dial to 345/795 | Codex, Claude reviews | should | P1 | Sep 26 |
 | P5 | Check the dashboard `confirm-email` "Attempted import error" does not break a production build | Claude | must | P1 | Sep 26 |
+| P6 | **Pushed 2026-09-25** (reviewed that day): server `fix/user-route-auth` (`f9607bd`) closes the unauthenticated `/users/all`, `/users/:id` and `/test-db` routes (`SECURITY_FINDINGS.md` §8) | Claude | must | P1 | Sep 27 |
 | U1 | Disclaimer line on the Gilligan page with the approved wording | Claude | must | P1 | Sep 26 |
 | U2 | Question stays visible while the answer loads; verify on the rebuilt page first, fix only if it still disappears | Claude | must | P1 | Sep 26 |
 | U3 | Near-limit message from the usage status | Claude | should | Q7 | Sep 27 |
@@ -125,7 +128,7 @@ Live writes are approved for test data only; each creation is announced in chat 
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
 | T1 | **done 2026-09-24.** Plan the test set (two organizations with members, one with no pods) and a cleanup ledger in `docs/migration/` listing every created ID | Claude | must | none | Sep 25 |
-| T2 | Create the test data; run isolation checks through the local stack: own pods answer, the other organization's pods refuse, the empty organization sees nothing, direct `/water/period` calls are refused once P3 is deployed | Claude, user approves each write batch | must | T1, P3 | Sep 27 |
+| T2 | Offline first: a fabricated Firestore mirror in the local emulator (server `mirror/firestore-emulator` `7dc36e2`, run from `mirror/e2e-p3` with P3/P4) has passed its preflight (`GILLIGAN_E2E_RESULTS_2026-09-25.md` on `docs/gcp-test-env`); phase 1 ran 2026-09-25 (41 questions, 36 pass, 5 fail: the orphan sees every pod in A1 and D4, invited-user login 500 in A3, E4 answer lands in the wrong chat, H3 double-send); the user approved $10 for the mirror's model calls on 2026-09-25. What must be re-checked on live data is [`LIVE_TEST_LIST.md`](LIVE_TEST_LIST.md). Live: create the test data; run isolation checks through the local stack: own pods answer, the other organization's pods refuse, the empty organization sees nothing, direct `/water/period` calls are refused once P3 is deployed | Claude, user approves each write batch | must | T1, P3 | Sep 27 |
 | T3 | Delete every ledger entry and confirm none remain | Claude, user confirms | must | L8 smoke | Sep 30, before traffic |
 
 ### Deployment and launch (L)
@@ -133,7 +136,7 @@ Live writes are approved for test data only; each creation is announced in chat 
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
 | L1 | Rewrite the runbook for the user deploying, with the stage-then-route flow and the rollback for each service | Claude | must | O2 | Sep 26 |
-| L2 | Fill runbook §2 inputs; partly answered 2026-09-24 (below), the rest in an interview session with the user | user | must | L1 | Sep 27 |
+| L2 | Fill runbook §2 inputs; partly answered 2026-09-24 (below), more gathered 2026-09-25 with the dedicated Gilligan database decision on `docs/l2-inputs` (`9d448f8`, not on `dev`), the rest in an interview session with the user | user | must | L1 | Sep 27 |
 | L3 | Hygiene session #5 (the `deviceApi` test, `git-plan` copy, settings paths); four commits on `chore/hygiene-2026-09-24` reviewed 2026-09-24, land when the session reports done | Codex, Claude reviews | should | none | Sep 25 |
 | L4 | Freeze a release candidate on `dev` (all must tasks merged, typecheck, lint, named suites) | Claude | must | E4, Q1-Q4, S1-S3 | Sep 28 |
 | L5 | Deploy cer-rag as a no-traffic revision; health, retrieval and one tools-on question against it | user, Claude assists | must | L4, L2 | Sep 28 |
