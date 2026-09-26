@@ -7,7 +7,7 @@ Work on branch `eval/wave1-corrections` in its worktree `.claude/worktrees/wave1
 
 ## Exact state
 
-- Branch `eval/wave1-corrections` at `abfe241` or later, pushed to `origin`, clean; `dev` last merged at `e7d3e44`.
+- Branch `eval/wave1-corrections` at `01a7609` or later, pushed to `origin`; the only untracked path is the v2 re-judge link `eval/transcripts/p3-final-rubric-v2-2026-09-25`; `dev` last merged at `e7d3e44`.
 - `dev` has since gained Q1's tools-on prompt and tool changes only; its tools-off message list is byte-identical to the merge base's, so R4's tools-off captures are unaffected, but merge `dev` before landing.
 - The correctness judge is calibrated (kappa 0.849 on the 32 tuned rows) and held up on 12 held-out rows at 9/12 exact, all within one point, errors in both directions.
 - Two retrieval modes and one setting were added and are off by default: `local-rerank` and `hybrid-slice-rerank` (`32275aa`, `RERANK_MODEL`), and `LLM_REASONING_EFFORT` (`d11d577`, default sends nothing); `DEFAULT_RETRIEVAL` and the answer model are unchanged.
@@ -72,6 +72,9 @@ Rubric review, three reviewers given the same packet (verdicts only; read the fi
 ## Next steps
 
 1. Done 2026-09-25: the user chose to fix only flawed points; rubric v2 is applied and logged (`eval/reviews/rubric-strictness-2026-09-25/RUBRIC_FIXES.md`, `EVAL_REBUILD.md` "Rubric v2"). Next: with approval, re-judge E3 on v2 as run `p3-final-rubric-v2-2026-09-25` (a symlink to `p3-final-2026-09-25`), correctness only at `--final`, 180 calls, and report it as secondary to 1.01.
+1a. Measure the datasheet slice, offline first: `hybrid-slice-vector` pins the four probe datasheets on every request (about 6.5K tokens, 4 of 24 excerpts; the answer-model prompt is a median 19.5K tokens, max 26.6K, against a window of about 131K), yet they hold 6 of 485 labelled chunks and draw 12 of 165 citations in E3.
+   Their original reason, keeping the source-of-truth document in the prompt, lapsed when it left the corpus on 2026-09-13; that document (the root v2 PDF included) is in no prompt in any form.
+   Propose `local-vector` at an equal budget against `hybrid-slice-vector` with its cost before any capture; production questions about the operator's own probes may still need the datasheets.
 2. User: accept or reject the recommendation not to enable `hybrid-slice-rerank` or `LLM_REASONING_EFFORT=high` for launch.
 3. E4: the user chooses, per class, between a caveat and a refusal under D3 (`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`); implement each as a tools-off prompt rule with a prompt test, and re-measure with a capture only if spend allows (about $6.10 left).
 4. E6: the R4 report in `eval/reviews/` (1.01 as the failed pre-registered result with the rubric caveat, then the improvement round and the review outcome), the "Edits wanted" below, then merge `dev` and land `eval/wave1-corrections` with a git plan.
@@ -91,6 +94,7 @@ Rubric review, three reviewers given the same packet (verdicts only; read the fi
 - `bakeoff` writes transcripts only when the run ends, and skips a conversation's second turn when its first fails, so a failure costs two turns of coverage.
 - At `LLM_REASONING_EFFORT=high`, `LLM_MAX_TOKENS=16384` is too small for about one turn in seven.
 - One answer in `p3-rerank-2026-09-25` looped on 807 malformed citation markers and alone drags citation validity to 16.0%; check per-turn totals before trusting a citation rate.
+- Rubric v1 and v2 verdicts are not comparable: judge v2 only under its own `--run`, and report any v2 number as secondary to E3's 1.01.
 - `npm run lint` covers `src/` only; `scripts/` has pre-existing lint errors.
 - Outside review agents wrote into this worktree and into `/tmp/cer-codex-review-packet-20260925`; everything is committed, and that `/tmp` clone is no longer needed.
 
