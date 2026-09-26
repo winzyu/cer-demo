@@ -182,6 +182,8 @@ L2 answers so far (2026-09-24 and 2026-09-25):
   Cloud Run's own IAM check stays off for launch, so `cer-gilligan` allows unauthenticated invocation and refuses any request without the key; the Invoker grant to the default compute account, and the runbook §5 identity-token change, move to after launch.
   This replaces the Invoker grant in Michael's list with two items: allow public invocation on `cer-gilligan` (an IAM change Editor cannot make; an organization policy may forbid it, to check), and store the key as a secret readable by both `cer-gilligan-runtime` and cer-api's default compute account.
 - Usage limits must be set explicitly in `cer-gilligan`'s configuration (20 messages, 5 reports, 1,000,000 tokens per user per day): the mirror run showed the quota store is unlimited when no limit is set.
+- Empty-organization exposure (mirror finding 4, `GILLIGAN_E2E_RESULTS_2026-09-25.md`): a read-only query of production `users` on 2026-09-26, selecting only `organization` and `role`, found 27 users and no non-superadmin whose organization is missing, null, empty or an object without an id, so no current user sees every pod.
+  The server still treats an empty organization as unfiltered, so the fix stays on the server list for after launch, or before it if any account is created without an organization.
 - Still open: a structured inventory of every resource and grant, who creates it (the user or Michael) and how each is demonstrated, before anything is created in production.
 
 There is still no working rollback to the Gemini backend (architecture decision D9); rollback means routing traffic back to the previous dashboard revision, which hides the new page.
