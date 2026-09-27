@@ -1337,6 +1337,37 @@ Keyword search alone is level with dense retrieval (+0.5 points overall, -2.2 on
 Reading: rewriting clears the bar set for a capture; keyword search does not, so the capture candidate is `local-vector` k=20 with `QUERY_REWRITE=true`.
 Recall is a necessary condition only; whether answers improve needs the capture.
 
+### `glm-5p3-flash` with follow-up rewriting, k=20, and ungrounded checks - 2026-09-26, runs `p3-lv-k20-rewrite-glm-2026-09-26`, `p3-gold-gptoss-ungrounded-2026-09-26` and `p3-gold-glm-ungrounded-2026-09-26`
+
+Retrieval capture: the rewrite capture's settings with `LLM_MODEL=glm-5p3-flash` and `LLM_REASONING_EFFORT=low` on the server, so GLM also wrote the rewrites; 90/90 turns, 0 failed, after a spot check.
+All 45 second turns and 2 of 45 first turns retrieved a different excerpt list from `p3-lv-k20-2026-09-26`, so the rewrite fired.
+Capture about $0.20 (1,253,989 prompt tokens, 2% cached; 28,177 completion) plus rewrites; judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed), about $0.30.
+
+| | `gpt-oss-120b` + rewrite, pass 1 / 2 | `glm-5p3-flash` + rewrite, pass 1 / 2 |
+|---|---|---|
+| correctness (floor 1.30) | 0.89 / 0.92 | 1.07 / 1.06 |
+| first / second turns | 0.84, 0.87 / 0.93, 0.98 | 1.02, 0.98 / 1.11, 1.13 |
+| cross-document | 0.71 / 0.71 | 0.75 / 0.67 |
+| deep-in-manual | 1.05 / 1.05 | 1.25 / 1.15 |
+| definitional | 1.00 / 1.00 | 1.25 / 1.38 |
+| follow-up | 1.38 / 1.38 | 1.25 / 1.25 |
+| precedence | 0.83 / 0.83 | 1.17 / 1.33 |
+| probe-calibration | 0.75 / 0.88 | 1.19 / 1.25 |
+| refusal | 0.75 / 0.88 | 0.88 / 0.88 |
+| scored 0 | 18 / 16 | 11 / 13 |
+| refusal gate | PASS (0 exact, 7 folded, 1 off-contract) | PASS (7 exact, 1 off-contract) |
+| citation validity (floor 95%) | 66.5% | 99.5% |
+| unexplained figures | 1 | 0 |
+
+On the two-pass mean GLM is higher on 24 turns and lower on 7.
+Reading: GLM lifts real retrieval by about 0.16 and passes the refusal, citation and figure gates, but stays under the 1.30 floor; retrieval now costs it about 0.27 against its gold-context 1.33-1.34, and cross-document questions remain weakest.
+
+Ungrounded, gold context, one pass each (`--final`, `deepseek-v4p1-flash`, symlinked runs): `gpt-oss-120b` (E3's answers) 53 of 89 judged turns carry an ungrounded claim (59.6%, 110 claims); `glm-5p3-flash` 35 of 87 (40.2%, 53 claims).
+Four calls failed twice with an empty judge reply and are unjudged; about $0.30 for both.
+The ungrounded dimension agrees weakly with the user's grades, so this is indicative only: GLM's longer answers do not carry more unsupported claims, and probably fewer.
+
+A blind 10-turn packet (`eval/grading/p3-gold-glm-vs-gptoss-2026-09-26/`, 5 fixtures, both models' gold-context answers labelled A/B, run directory of symlinks to the two captures) is ready for the user to grade against the judge.
+
 ### Stronger answer models on gold context - 2026-09-26, runs `p3-gold-glm-5p3-flash-2026-09-26` and `p3-gold-minimax-m3-2026-09-26`
 
 E3's gold-context settings (`LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools, catalogue and `QUERY_REWRITE` off, port 8011) with `LLM_MODEL` changed on the capture server only; each judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).

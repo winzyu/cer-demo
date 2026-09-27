@@ -1,0 +1,395 @@
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__b9b676eac883)
+
+inse the electrode
+with DIW before using or storing.
+• For cleaning bacterial contaminants, soak the electrode
+in a dilute (1:10 volume per volume) solution of bleach
+(sodium hypochlorite) for 30 minutes. Thoroughly
+rinse the electrode with DIW before using or storing.
+3.2 	Reconditioning (Flushing and Refilling) of
+Liquid-Filled Electrodes
+If problems persist during calibration of a liquid-filledelectrode, or if there is reason to doubt that the electrode is in
+good working condition, check the manufacturer’s instructions
+for testing and reconditioning the electrode. Reconditioning
+procedures should be implemented if the electrode’s slope
+response has deteriorated to less than 95 percent or greater
+than 101 percent, if the meter no longer recognizes the pH
+buffers because of shifting of the isopotential point, or if the
+response time is longer than expected. Document the date,
+serial number, and action in the pH-meter/electrode logbook if
+the electrode has been reconditioned or replaced. Salt crystal
+deposits in the reference electrode or reference junction com-
+monly cause pH electrodes to malfunction. The following
+general procedure for renewing the filling solution can be used
+to attempt to bring a liquid-filled electrode back into proper
+working condition. If the electrode has a replaceable reference
+junction, follow the manufacturer’s instructions for changing
+the reference junction, which may require renewing the filling
+solution. If the electrode does not have a replaceable reference
+junction, follow the general instructions below to renew the
+filling solution.
+1. 	Remove the old filling solution from the electrode.
+• Use a small pipet or syringe to remove the filling
+solution through the filling hole. Another method of
+removing the filling solution is to wick it out with
+a laboratory wipe. The electrode manufacturer also
+may have specific recommendations for removing
+the filling solution.
+2. 	Flush the pH electrode with DIW.
+• Use a pipet, syringe, or squeeze bottle to partially fill
+the pH electrode chamber with DIW.
+• Remove the DIW from the electrode as
+described above.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__6f4fa660b169)
+
+-- 17 of 32 --10 	Chapter A6.4. Measurement of pH
+• As a result of changes in pressure, temperature, or
+evaporation of the filling solution, visible crystals
+may have formed in the pH electrode. If these are
+present, continue to flush with DIW until all the
+crystals have been dissolved and removed from the
+pH electrode.
+• Do not leave DIW in the reference electrode
+after cleaning.
+3. 	Flush and fill the electrode with fresh filling solution
+by using a syringe or equipment recommended by the
+manufacturer.
+• Partially fill the pH electrode chamber with the
+filling solution.
+• Tilt the pH electrode so the filling solution will
+contact all of the internal electrode surfaces.
+• Remove and discard the filling solution to a waste
+container and repeat the two steps above.
+• Refill the electrode chamber with fresh filling
+solution until the filling-solution level is just below
+the fill hole.
+• Be sure to use the appropriate type and
+concentration of filling solution.
+• Rinse any excess filling solution from the outside of
+the electrode with DIW.
+4. 	Test the electrode by performing a calibration and
+recording the slope and isopotential point. The slope
+should be in the range of 95 to 101 percent (56.2 to
+59.8 mV/pH unit at 25 °C) of the response expected
+according to the theoretical Nernst equation. If the slope
+falls outside this range, do not use the electrode.
+3.3 	Electrode Storage
+Electrodes must be clean before they are stored for any
+length of time. Refer to the manufacturer’s instructions for
+the proper short-term (used daily or weekly) and long-term
+(months) storage requirements of the electrode.
+General guidelines for short-term storage:
+• Storage solutions are specific to the type of electrode;
+check the manufacturer’s manual for each electrode.
+Do not store pH electrodes in DIW unless instructed
+to do so by the manufacturer.
+• Storage solutions have a limited shelf life. Label
+storage-solution containers with the expiration date and
+discard expired solutions in an appropriate manner.
+• Do not place cotton or paper towel in the electrode cap
+to help keep it moist, as this practice can scratch the
+glass bulb membrane.
+• Store pH electrodes upright so the filling solution or gel
+is always in contact with the reference junction.
+• Store pH electrodes wet between uses to maximize
+their accuracy and response time.
+• The glass bulb membrane should be fully immersed in
+the proper electrode-storage solution.
+• For liquid-filled electrodes, replace the plug on the fill
+hole and cover the electrode bulb with the cap between
+uses. Fill the cap with enough storage solution to keep
+the bulb wet.
+• Storing the electrode in either pH-4 or -7 buffer may be
+recommended for short-term storage (less than 1 day).
+Unless it is recommended by the manufacturer, do not
+store the electrode in buffer solution for a long period.
+• Gel-filled electrodes should be stored according to the
+manufacturer’s instructions.
+General guidelines for long-term storage:
+• Store electrodes in the appropriate storage solu-
+tion and cap as recommended by the manufacturer.
+For long-term storage, wrap the electrode cap and
+filling-hole plug with lab plastic wrap (Parafilm) to
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__9fd4fb61c959)
+
+, do not
+store the electrode in buffer solution for a long period.
+• Gel-filled electrodes should be stored according to the
+manufacturer’s instructions.
+General guidelines for long-term storage:
+• Store electrodes in the appropriate storage solu-
+tion and cap as recommended by the manufacturer.
+For long-term storage, wrap the electrode cap and
+filling-hole plug with lab plastic wrap (Parafilm) toprevent formation of excess salts or evaporation of
+the reference solution. Liquid-filled electrodes may
+need to be drained of filling solution; follow the
+manufacturer’s instructions.
+• Clean the electrode cable contacts and connector
+(with alcohol, if necessary). Allow the contacts to dry
+thoroughly, and seal and store them in a plastic bag.
+• Store every component of the pH-measuring system in
+an area that is clean, dry, and protected from extreme
+hot or cold temperatures.
+4.0 	Calibration of the pH
+Instrument System
+Proper calibration of the pH instrument system is crucial
+to accurate measurement of the pH of environmental samples.
+A calibration curve is created by measurement of two or
+more standard pH buffers that bracket the pH of the water
+being measured. The ideal slope of the calibration curve
+at 25 °C, based on the Nernst equation (see section 2.2), is
+59.16 mV/pH unit. Almost all pH electrodes are designed to
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__b1653e60dd01)
+
+-- 18 of 32 --4.0 	Calibration of the pH Instrument System 	11
+have an isopotential point at pH 7 (the pH at which e.m.f. is
+equal to 0 mV). Most modern pH meters are equipped with
+ATC, which compensates for the temperature dependence of
+the standard buffers. The Nernst equation gives the expected
+(theoretical) response potential of the pH buffer at the specific
+temperature of the calibration (Hem, 1989), and after calibra-
+tion most meters report the calibration slope as a percentage
+of the Nernstian theoretical slope. To successfully calibrate
+pH instrumentation, (1) the meter and pH electrode must be
+functioning properly, (2) the system must be calibrated with
+pH buffers so the pH of the solution being measured is within
+the calibrated range, and (3) the temperature of the pH buffers
+during calibration needs be stable and similar to (within 10 °C
+of) the temperature of the solution being measured.
+A properly working pH system has—
+• new or adequately charged batteries
+• a thermistor that functions properly and accurately
+measures the temperature
+• a pH electrode with an accurate Nernstian response
+(slope of 95–101 percent of the theoretical
+Nernstian slope)
+• an isopotential point near pH 7
+• a quick response time (1–2 minutes) in standard
+buffer solutions.
+Accurate measurement of the pH of environmental
+samples requires calibration with pH buffers that bracket the
+pH of the sample. Before the pH instrument system is cali-
+brated, it is useful to estimate (or anticipate from historical
+site data, if available) the pH and conductivity of the waters to
+be encountered at the field sites. If no data are available from
+which to estimate sample pH, then pH indicator paper can
+be used onsite as a gross indicator of the pH of the site, but
+under no circumstances should a pH value from indica-
+tor paper be recorded as the site pH. A two- or three-point
+calibration can be performed. Most manufacturers use a linear
+calibration curve for all calibrations (including multipoint
+calibrations). For most modern meters, a two-point calibration,
+typically with buffers selected from pH 10.01, 7.00, 4.01, or
+1.68, is recommended. pH meters that use either a point-to-
+point calibration or a nonlinear function are not recommended.
+Follow the manufacturer’s instructions with respect to recom-
+mended buffers and the sequence of buffer calibration.
+Examples: When measuring pH in a stream—
+• If pH values are expected to be between 7 and 8,
+then the standard pH-7 and pH-10.01 buffers (at a
+minimum) should be selected.
+• If pH values are expected to be less than 7, then the
+standard pH-7 and pH-4.01 buffers (at a minimum)
+should be selected.
+For the two examples above, a three-point calibration
+using pH-4.01, -7.00, and -10.01 buffers could also be used to
+allow measurement of a larger range of pH.
+The pH of a solution changes with temperature, and most
+modern pH meters automatically compensate for temperature
+differences between the buffers used for calibration and the
+measurements made in samples. However, electrodes may not
+behave ideally and this feature should be tested regularly. Cali-
+brating a pH meter and electrode with buffers that are within
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__823654fb151f)
+
+.
+h. 	Third rinse, pour sit discard—Pour the next
+aliquot of buffer into the beaker and immerse the
+electrode in the buffer for 1 minute. Discard the buf-
+fer appropriately.
+i. 	Pour sit measure—Pour fresh buffer into the beaker.
+Immerse the electrode, gently swirl to remove all
+air bubbles surrounding it, and allow it to sit for 1
+minute.
+j. 	Begin the calibration process for the buffer. Once thereading has stabilized, record the pH measurement
+(and [or] millivolts) in the pH meter/electrode log-
+book, along with the buffer temperature reading and
+the pH value from the buffer and temperature table.
+11. 	For calibration with the additional pH buffer or buf-
+fers necessary to bracket the expected measurement,
+repeat step 10 above. Record all the calibration data,
+including the millivolt and slope readings, in the pH
+meter/electrode logbook (see step 12 to test the adequacy
+of the calibration using the slope test or millivolt test).
+12. 	At this point, the electrode should be calibrated.
+Check the adequacy of the calibration and that the elec-
+trode is functioning properly by using the slope test and
+the millivolt test. Some instruments can display the slope
+value; this value should be recorded in the pH-meter/
+electrode logbook.
+• The slope test—Properly working electrodes should
+have slopes that are 56.2 to 59.8 mV/pH unit at
+25 °C, which is 95 to 101 percent of the expected
+slope from the theoretical Nernst relation (Busenberg
+and Plummer, 1987). If the slope or percent value
+is outside this range, first clean the electrode and
+check: the level of the filling solution, that the fill
+hole is open, and that the junction is free flowing;
+then, recalibrate.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__147ba11e0c62)
+
+-- 21 of 32 --14 	Chapter A6.4. Measurement of pH
+• To calculate the slope in units of millivolts per pH
+unit for a two-point calibration at 25 °C:
+slope  	( 	)
+(
+millivolts of buffer 	millivolts of buffer
+pH of buffer
+1 	2
+22 	1	 pH of buffer )
+and the slope as a percentage of the expected slope
+from the theoretical Nernst relation at 25 °C is
+slope 	in percent slope
+ 	  	
+59 16 100
+.
+This straightforward calculation of slope and relative
+slope is valid only at 25 °C because the expected
+slope from the theoretical Nernst relation varies
+with temperature. For example, the Nernstian slope
+is 55.18 mv/pH unit at 5 °C and 64.12 mV/pH unit
+at 50 °C (Bates, 1965). To calculate relative slope
+at a temperature other than 25 °C, the value for the
+theoretical Nernst response must be substituted for
+59.16 in the equation.
+• The millivolt test—For pH meters that display
+and store millivolt readings, troubleshoot a suspect
+electrode or calibration by using the following
+guidelines to determine adequate voltage potentials
+for each buffer:
+• pH 10.01 buffer: readings between −192 and
+−162 mV
+• pH 7.00 buffer: readings between −15 and 15 mV
+• pH 4.01 buffer: readings between 162 and 192 mV
+• pH 1.68 buffer: readings between 300 and 330 mV
+• The meter may not recognize the pH buffer or
+may incorrectly identify the pH buffer if the mil-
+livolt response is outside the acceptable range. The
+acceptable range may vary with the manufacturer.
+• If buffers other than the standard pH 1.68, 4.01, 7.00,
+and 10.01 buffers are used, refer to the information
+provided with the specific buffer lot to determine
+the correct, temperature-compensated pH value for
+that buffer. Buffers other than pH 1.68, 4.01, 7.00,
+and 10.01 should be used for calibration only in
+cases where expected measured pH is less than 1.68
+or greater than 10, or if the pH meter specifically
+requires their use.
+13. 	Clean, recondition, or replace the electrode if, after reca-
+libration, the slope remains outside the acceptable range
+of 95 to 101 percent or the acceptable range of the mil-
+livolt response is not met at any of the calibration points.
+TECHNICAL NOTE:
+After calibration, measure the pH of the final pH buffer and
+check that the measured pH at the calibration temperature is
+within 0.05 pH units of the certified value (table 6.4–3).
+• 	If the measured pH is equal to or within 0.05
+pH units of the certified value, proceed with the
+sample measurement.
+• 	If the measured pH is more than ±0.05 pH units
+from the certified value, recalibrate the pH electrode
+or determine whether the electrode is not functioning
+properly and should be reconditioned or replaced.
+4.1.2 	Calibration of the pH Sensor in
+Multiparameter Sondes
+Before beginning calibration of the pH electrode in a
+multiparameter sonde, carefully read and follow the manufac-
+turer’s instructions. Guidelines that incorporate USGS proto-
+cols for pH calibration and measurement using multiparameter
+sondes also are described in NFM A6.8.
+General procedures for calibration of the pH sensor on a
+multiparameter sonde—
+1. 	Calibrate the sonde in a controlled environment such as a
+laboratory. Most modern multiparameter sondes auto-
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__c4d565e70268)
+
+ response falls outside the acceptable range for the
+response slope and the deviation cannot be corrected through
+cleaning or reconditioning. Also, for any problem encountered,
+first check that the instrument batteries are fully charged, and
+keep spare fresh batteries on hand.
+Table 6.4–4 provides a general guide for troubleshooting
+pH meters, electrodes, and multiparameter sondes.
+
+-- 27 of 32 --20 	Chapter A6.4. Measurement of pH
+Table 6.4–4. 	Troubleshooting guide for pH measurement.
+[Modified from Ritz and Collins, 2008; DIW, deionized water; NIST, National Institute of Standards and Technology]
+Symptom 	Possible cause—corrective action
+Instrument system will not
+calibrate satisfactorily
+• Buffers may be contaminated or old—use fresh buffers.
+• Are buffers the correct NIST standards for this meter? Most meters recognize a certain set of pH
+buffers; refer to the pH meter manual for use of specific buffers.
+• Electrode may be faulty—clean, recondition, or replace electrode (see section 3.0).
+• Batteries may be weak—replace with new or fully charged batteries.
+Slow response 	For liquid-filled electrodes:
+• Weak or incorrect filling solution—change filling solution to correct molarity.
+• No or low filling solution—add fresh solution of correct molarity.
+• Contaminated electrode (for example, visible chemical deposits or organic or biological matter
+on the electrode)—rinse with DIW; if residue persists, use solution and cleaning method recom-
+mended by the manufacturer. Take care not to scratch the electrode bulb. Refer to section 3.1
+for electrode care and cleaning information.
+• Clogged or partially clogged junction—follow the manufacturer’s instructions to unclog the junc-
+tion.
+• Water is cold or of low ionic strength—see section 5.2. Allow more time for equilibration; con-
+sider using a different electrode—refer to table 6.4–2.
+• Slow response to pH changes; refer to table 6.4–2.
+For gel-filled electrodes:
+• Dirty glass bulb—rinse bulb carefully with DIW. If organic/inorganic/biological residue persists,
+consult the manufacturer’s recommendations.
+• Clogged junction—follow the manufacturer’s instructions to unclog the junction
+• Water is cold or of low ionic strength—see section 5.2. Allow more time for equilibration, con-
+sider using a different electrode—refer to table 6.4–2.
+Erratic readings 	Check the following:
+• Tighten, clean, or replace loose or defective connections.
+• Repair or replace broken or defective cables.
+• Loose battery connection—tighten connection.
+• Air bubbles in the electrode bulb—shake electrode gently.
+• Pressure in flow-through chamber—reduce pressure.
+• Weak batteries—replace with new, fully charged batteries.
+Electrode voltage potential and (or)
+slope of the relation between
+millivolts and pH are outside
+acceptable range
+Check the following:
+• Clean, recondition, or replace electrode (see section 3.0).
+• Replace calibration buffers that yield inaccurate results with fresh NIST-traceable buffers.
+
+-- 28 of 32 --
+
+ANSWER EVIDENCE:
+{
+  "audit": {
+    "original_answer": "At 92 percent, your electrode is outside the acceptable range — the guidance says \"If the slope or percent value is outside this range, first clean the electrode and check: the level of the filling solution, that the fill hole is open, and that the junction is free flowing; then, recalibrate\" 【6】.\n\nIf it still fails after that, the manual says to \"Clean, recondition, or replace the electrode if, after recalibration, the slope remains outside the acceptable range of 95 to 101 percent\" 【6】.\n\nReconditioning for a liquid-filled electrode means flushing and refilling the filling solution: remove the old solution, flush the electrode with deionized water, then \"Flush and fill the electrode with fresh filling solution by using a syringe or equipment recommended by the manufacturer\" 【2】, and retest by calibration. Reconditioning is specifically indicated when \"the electrode's slope response has deteriorated to less than 95 percent\" 【1】 — which is your situation.\n\nAs for when to order a new one: replace it if the slope \"remains outside the acceptable range for the response slope and the deviation cannot be corrected through cleaning or reconditioning\" 【7】. So the sequence is clean → recondition → recalibrate, and if it still won't reach 95–101 percent, that's when you replace it.",
+    "corrections": [],
+    "invalid_citations": []
+  }
+}
