@@ -2,7 +2,7 @@
 
 R4 (evaluation-driven improvement) has calibrated the judge (E2), captured the final two-arm run (E3), replaced the withdrawn judge, and run two improvement rounds on 2026-09-26 and 2026-09-27.
 The answer model is `glm-5p3-flash` at `LLM_REASONING_EFFORT=low` (user, 2026-09-26); follow-up rewriting (`QUERY_REWRITE`) is the clearest win of R4, first-turn rewriting (`QUERY_REWRITE_FIRST_TURN`) and a tools-off prompt rule were added on 2026-09-27, and GLM passed a tool-calling check against the fabricated mirror.
-The best real-retrieval arm so far, `local-rerank` k=20 with both rewrites, scores 1.11 / 1.17 against 1.07 / 1.06 but fails the refusal gate and costs about three times as much per question; the reranker is not recommended until the control capture (next step 1) separates its effect.
+The control capture (2026-09-27) settled the reranker: `local-vector` k=20 with both rewrites scores 1.14 / 1.17 against the reranker's 1.11 / 1.17 at a third of the cost and 1.2 s sooner to first token, so the reranker adds nothing; both arms fail the refusal gate (2 answered), which is GLM's to fix.
 Work on branch `eval/wave1-corrections` in its worktree `.claude/worktrees/wave1-corrections`; landing into `dev` is a separate step with its own git plan.
 
 ## Exact state
@@ -17,8 +17,8 @@ Work on branch `eval/wave1-corrections` in its worktree `.claude/worktrees/wave1
 - **Rubric:** v2 as corrected (`19b363d`, fixture fingerprint `9a715154...`); v1 stays the reported rubric for E3's 1.01.
 - **Latest arms, new judge, rubric v2, two passes:** gold context GLM with the tools-off rule 1.28 / 1.31 (`p3-gold-glm-notools-2026-09-27`); `local-rerank` k=20, both rewrites, GLM, rule 1.11 / 1.17 (`p3-rerank-k20-rewrite2-glm-2026-09-27`), refusal gate FAIL.
 - **Baselines, new judge, rubric v2, two passes unless noted:** gold context `gpt-oss-120b` 1.10 (one pass), `glm-5p3-flash` 1.33 / 1.34; `local-vector` k=20 unpinned `gpt-oss-120b` 0.72 / 0.74, with rewriting 0.89 / 0.92; **`glm-5p3-flash` with rewriting 1.07 / 1.06 (run `p3-lv-k20-rewrite-glm-2026-09-26`), the baseline for the next round.**
-- `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); production retrieval is still the user's choice (recommended `local-vector` k=20, datasheets unpinned, with `QUERY_REWRITE=true` and `QUERY_REWRITE_FIRST_TURN=true`; the reranker on hold until the control capture).
-- **Spend:** about $20.65 of the $30 ceiling after the 2026-09-27 round (about $2.25: offline runs $0.10, reranker offline $0.60, tool check $0.10, tools-off rule capture and judging $0.40, reranker capture and judging $1.15), so about $9.35 left; estimates, since `deepseek-v4p1-flash` has no rate in `prices.ts`, so check the Fireworks bill.
+- `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); production retrieval is still the user's choice (recommended `local-vector` k=20, datasheets unpinned, with `QUERY_REWRITE=true` and `QUERY_REWRITE_FIRST_TURN=true`, no reranker, per the control capture).
+- **Spend:** about $21.10 of the $30 ceiling after the control capture (about $0.45: answers $0.21, rewrites $0.03, two judge passes about $0.20, estimated); before it, about $20.65 after the 2026-09-27 round (about $2.25: offline runs $0.10, reranker offline $0.60, tool check $0.10, tools-off rule capture and judging $0.40, reranker capture and judging $1.15), so about $8.90 left; estimates, since `deepseek-v4p1-flash` has no rate in `prices.ts`, so check the Fireworks bill.
 
 ## What to review
 
@@ -142,9 +142,8 @@ Full records in `EVAL_REBUILD.md`: "Retrieval experiments on GLM rewrites, offli
 The user asks before every paid step: give its cost and wait for approval.
 Report every result with its full configuration (model, reasoning, retrieval arm, k, `QUERY_REWRITE`, `QUERY_REWRITE_FIRST_TURN`, prompt, judge and passes).
 
-1. **Control capture to decide the reranker (about $0.50, awaiting approval):** `local-vector` k=20, GLM, `QUERY_REWRITE=true`, `QUERY_REWRITE_FIRST_TURN=true`, the tools-off rule, tools and catalogue off, judged twice, plus `gate:check`; against `p3-rerank-k20-rewrite2-glm-2026-09-27` (1.11 / 1.17, refusal FAIL).
-   About 1.10 with the refusal gate passing means drop the reranker; about 1.06 with the gate failing means the reranker carries the gain and the refusal failure is GLM's to fix in the prompt.
-2. **GLM refusal gate:** GLM fails `gate:check` refusal integrity on gold context (6 exact, 1 answered before the rule; 5 and 2 after) and on the reranker capture (2 answered, both taking a figure from a retrieved passage); a prompt fix is gold context, judged twice, about $0.40.
+1. **Done 2026-09-27: control capture** (`p3-lv-k20-rewrite2-glm-2026-09-27`, `local-vector` k=20, both rewrites, GLM low, tools-off rule, tools and catalogue off): 1.14 / 1.17 against the reranker's 1.11 / 1.17, refusal gate FAIL (5 exact, 1 off-contract, 2 answered); drop the reranker (`EVAL_REBUILD.md`, "Control: `local-vector` with both rewrites").
+2. **GLM refusal gate:** GLM fails `gate:check` refusal integrity on gold context (6 exact, 1 answered before the rule; 5 and 2 after) and on both the reranker and control captures (2 answered each, taking a figure from a retrieved passage); a prompt fix is gold context, judged twice, about $0.40.
 3. **Step 2, production-prompt capture (about $0.55, not yet run):** the chosen retrieval with `CATALOGUE_PROMPT=true`, passing the same value to the judge.
 4. **Add `deepseek-v4p1-flash`'s rate to `src/eval/prices.ts`** with the date read, so judge spend is measured; changing `DEFAULT_JUDGE_MODEL` awaits the user.
 5. **Route the tool-check findings to the Gilligan answer-quality work on `dev`** (tools-on prompt and tools, not R4): the "last 24 hours" answer and the partial relay of the water-type and withheld-history notes (plan Q8).
@@ -193,6 +192,7 @@ Then: the user's open decisions (`QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` 
 
 ## Decisions
 
+- User, 2026-09-27 (later): the control capture approved and run.
 - User, 2026-09-27: steps 1 and 3-6 approved and run; keep the tools-off rule; add `QUERY_REWRITE_FIRST_TURN`; the mirror login allowed for the tool check. The control capture (next step 1) awaits approval.
 
 - User, 2026-09-26 (late): approved next-round steps 1-6 (about $2.50-3.00), including about 10 live read-only device API questions for the GLM tool check if the local mirror cannot serve them; to run in a new conversation.

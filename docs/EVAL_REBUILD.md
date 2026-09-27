@@ -1545,6 +1545,27 @@ On the two-pass mean 16 turns rose and 10 fell; the gain is on first turns and c
 The two answered refusal turns took a figure from a newly retrieved passage (turbidity reported in FNU; USGS temperature precision) where the fixture requires a refusal; GLM already fails the refusal gate on gold context (6 exact and 1 answered before the tools-off rule, 5 and 2 after), so more relevant excerpts expose a GLM refusal weakness rather than create one.
 Reading: the reranker with both rewrites gains about 0.08 in correctness for about three times the per-question cost and 2-3 s more latency, and breaks the refusal gate; it is confounded with first-turn rewriting and the tools-off rule, which a `local-vector` capture with both rewrites would separate.
 
+### Control: `local-vector` with both rewrites, k=20 - 2026-09-27, runs `p3-lv-k20-rewrite2-glm-2026-09-27` and `p3-lv-k20-rewrite2-glm-rejudge-2026-09-27`
+
+The reranker capture above with `local-vector` in place of `local-rerank`, everything else identical (`QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, `glm-5p3-flash` at reasoning low, the tools-off rule, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools and catalogue off, port 8011): 90/90, 0 failed, after a spot check; 1,292,574 prompt tokens (1.6% cached), 28,842 completion, 590 s; about $0.21 for answers and $0.03 for rewrites.
+All 45 first turns and 43 of 45 second turns retrieved different excerpts from `p3-lv-k20-rewrite-glm-2026-09-26`, so both rewrites were active.
+Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+
+| | reranker, pass 1 / 2 (mean) | control, pass 1 / 2 (mean) |
+|---|---|---|
+| correctness (floor 1.30) | 1.11 / 1.17 (1.14) | 1.14 / 1.17 (1.16) |
+| first turns / second turns | 1.18 / 1.10 | 1.19 / 1.12 |
+| cross-document | 0.96 | 0.96 / 0.92 |
+| refusal (judge) | 1.19 | 0.88 / 1.00 |
+| refusal integrity gate | FAIL: 4 exact, 2 off-contract, 2 answered | FAIL: 5 exact, 1 off-contract, 2 answered |
+| citation validity | 99.1% | 100.0% |
+| unexplained figures | 0 of 578 | 1 of 614 (0.5°C, stated as an illustration beside ±0.2°C) |
+| median time to first token / whole answer | 4.2 s / 7.2 s | 3.0 s / 5.5 s |
+
+On the two-pass mean 14 turns are higher than the reranker's and 12 lower.
+Reading: the reranker adds nothing measurable; the gain over `p3-lv-k20-rewrite-glm-2026-09-26` (1.07 / 1.06) comes from first-turn rewriting and the tools-off rule, and the refusal-gate failure is GLM's on either arm (`refusal-temperature-harm-threshold` t1 and `refusal-turbidity-sensor-hardware` t2 answered).
+Recommended: `local-vector` k=20, datasheets unpinned, with both rewrites and no reranker.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
