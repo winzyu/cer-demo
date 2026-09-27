@@ -76,6 +76,7 @@
 
 import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorData";
 import { SensorQueryError } from "../tools/querySensorData";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext } from "../types/tool.types";
 import type {
   DataQualityCheck, ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WaterBodyType,
@@ -84,6 +85,7 @@ import {
   metricThreshold, metricThresholdRejectionReason, metricBlindSpotNote,
   temperatureThreshold, thresholdRejectionNote, WIRE_KEY_TO_METRIC,
 } from "./operatorThresholds";
+import { STUCK_SENSOR_NOTE } from "../tools/stuckSensor";
 import type { ThresholdVerdict } from "./operatorThresholds";
 import { classifyPattern, type HourlySeries } from "./patterns";
 
@@ -140,6 +142,7 @@ interface MetricEntry {
   n_samples?: number;
   excluded_faulted?: number;
   excluded_implausible?: number;
+  excluded_stuck?: number;
   series?: Array<{ start: string; end: string; mean: number; min: number; max: number; n: number }>;
 }
 
@@ -193,6 +196,7 @@ const metricsOf = (result: Record<string, unknown>): Record<string, MetricEntry>
       excluded_implausible: typeof rec.excluded_implausible === "number"
         ? rec.excluded_implausible
         : undefined,
+      excluded_stuck: typeof rec.excluded_stuck === "number" ? rec.excluded_stuck : undefined,
       series: Array.isArray(rec.series) ? (rec.series as MetricEntry["series"]) : undefined,
     };
     return out;
@@ -226,6 +230,11 @@ export interface BuildReportInputResult {
   error?: string;
   /** Parameters with no readings in the window -- surfaced to the caller, not silently dropped. */
   skippedParameters?: string[];
+  /**
+   * The series read's reader notes (site, stuck sensor, merged or withheld history), for
+   * `generate_report`'s own `USER_NOTES_FIELD`: its `note` repeats them only in the model's words.
+   */
+  userNotes?: string[];
 }
 
 /**
@@ -250,7 +259,8 @@ const buildDataQuality = (
   const used = entries.reduce((sum, e) => sum + (e.entry.n_samples ?? 0), 0);
   const faulted = entries.reduce((sum, e) => sum + (e.entry.excluded_faulted ?? 0), 0);
   const implausible = entries.reduce((sum, e) => sum + (e.entry.excluded_implausible ?? 0), 0);
-  const offered = used + faulted + implausible;
+  const stuck = entries.reduce((sum, e) => sum + (e.entry.excluded_stuck ?? 0), 0);
+  const offered = used + faulted + implausible + stuck;
   // "Completeness" here is the share of readings the device returned that survived filtering --
   // not coverage against an expected cadence, which this pipeline cannot know. Said plainly in
   // the note so the number is not read as the stronger claim.
@@ -262,6 +272,7 @@ const buildDataQuality = (
 
   const completenessNotes = [
     `${used} of ${offered} readings returned for the period were usable`,
+    stuck > 0 ? `${stuck} excluded as likely failed sensor readings` : null,
     faulted > 0 ? `${faulted} excluded on the probe's own fault flag` : null,
     implausible > 0 ? `${implausible} excluded as physically impossible` : null,
     skipped.length > 0 ? `no readings at all for: ${skipped.join(", ")}` : null,
@@ -273,7 +284,7 @@ const buildDataQuality = (
     completenessNotes,
     // A probe that rails without raising its error flag is exactly the signal a calibration
     // review exists to catch, so this row is driven by the plausibility filter's count.
-    calibrationStatus: implausible > 0 ? "Review" : "Pass",
+    calibrationStatus: implausible > 0 || stuck > 0 ? "Review" : "Pass",
     calibrationNotes: implausible > 0
       ? `${implausible} reading(s) were sensor rails reported without a fault flag (${railed.join("; ")}). `
         + "Inspect and recalibrate the affected probes; the hardware did not self-report these."
@@ -305,21 +316,15 @@ export const buildReportInput = async (
   let medianResult: Record<string, unknown>;
   let hourlyResult: Record<string, unknown>;
   try {
-    // `sensor.query` is the typed programmatic path QuerySensorData exposes specifically for
-    // report generation (see querySensorData.ts's module docstring) -- it does not go through
-    // the model's tool-calling loop, this handler calls it directly.
-    [seriesResult, medianResult, hourlyResult] = await Promise.all([
-      sensor.query({ ...baseArgs, aggregation: "series", bucket: "auto" }, context?.token),
-      sensor.query({ ...baseArgs, aggregation: "median" }, context?.token),
-      // Pattern classification only (`patterns.ts`): diel and tidal rhythms need hourly
-      // resolution, which the auto-width series above does not have past a couple of days.
-      sensor.query(
-        {
-          ...baseArgs, aggregation: "series", bucket: "hour", maxBuckets: MAX_HOURLY_BUCKETS,
-        },
-        context?.token,
-      ),
-    ]);
+    // Pin one authorized snapshot for series, exact median and hourly pattern classification.
+    // These deterministic calculations never go through the model's tool-calling loop.
+    [seriesResult, medianResult, hourlyResult] = await sensor.queryBatch([
+      { ...baseArgs, aggregation: "series", bucket: "auto" },
+      { ...baseArgs, aggregation: "median" },
+      {
+        ...baseArgs, aggregation: "series", bucket: "hour", maxBuckets: MAX_HOURLY_BUCKETS,
+      },
+    ], context?.token);
   } catch (error) {
     if (error instanceof SensorQueryError) {
       return { error: error.message };
@@ -546,15 +551,33 @@ export const buildReportInput = async (
     .map((r) => r.skippedLabel);
 
   if (parameters.length === 0) {
-    return { error: `No readings found for any parameter in "${params.timeRange}".` };
+    return {
+      error: [`No usable readings found for any parameter in "${params.timeRange}".`,
+        seriesResult.site_note,
+        Object.values(seriesMetrics).some((m) => (m.excluded_stuck ?? 0) > 0)
+          ? STUCK_SENSOR_NOTE : null,
+      ].filter(Boolean).join(" "),
+    };
   }
 
+  const dataQuality = buildDataQuality(seriesMetrics, skipped);
+  if (Object.values(seriesMetrics).some((m) => (m.excluded_stuck ?? 0) > 0)) {
+    dataQuality.calibrationNotes = `${STUCK_SENSOR_NOTE} ${dataQuality.calibrationNotes}`;
+  }
+  if (typeof seriesResult.site_note === "string") {
+    dataQuality.completenessNotes += ` ${seriesResult.site_note}`;
+  }
   const report: ReportInput = {
     site,
     parameters,
     events: [],
-    dataQuality: buildDataQuality(seriesMetrics, skipped),
+    dataQuality,
   };
 
-  return { report, ...(skipped.length > 0 ? { skippedParameters: skipped } : {}) };
+  const userNotes = seriesResult[USER_NOTES_FIELD];
+  return {
+    report,
+    ...(skipped.length > 0 ? { skippedParameters: skipped } : {}),
+    ...(Array.isArray(userNotes) && userNotes.length > 0 ? { userNotes } : {}),
+  };
 };

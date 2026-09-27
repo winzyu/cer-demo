@@ -128,11 +128,15 @@ export class GetPodThresholds {
           unit: unitFor(metricKey),
         }
         : {
-          status: "rejected",
+          status: verdict.reason === "implausible" ? "not assessed" : "rejected",
           reason: metricThresholdRejectionReason(verdict.reason, metricKey),
         };
       return [wireName, entry];
     }));
+
+    const notAssessed = Object.values(thresholds)
+      .filter((entry) => entry.status === "not assessed")
+      .map((entry) => entry.reason as string);
 
     return {
       device: {
@@ -151,6 +155,8 @@ export class GetPodThresholds {
         + "water-quality standard.",
       [USER_NOTES_FIELD]: [
         "These limits are the alert thresholds set for this pod, not an ecological water-quality standard.",
+        // The "not assessed" reasons are already plain statements with no instruction in them.
+        ...notAssessed,
       ],
     };
   }

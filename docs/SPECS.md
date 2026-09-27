@@ -903,6 +903,8 @@ The dashboard keeps tool arguments, results, rounds and reuse status in a collap
 Incomplete searches, stale or empty windows, provisional turbidity, tool errors and exhausted rounds remain visible outside it.
 Outside it the page shows only reader-facing text: its own fixed notices and each result's `user_notes` (`USER_NOTES_FIELD`), never a result's `note`, which is written for the model.
 `ChatOrchestrator` removes `user_notes` from the copy of a result the model reads, so adding one never changes the model's input; every new tool note needs a reader version or the page shows nothing for it.
+Site exclusions, the no-GPS rule, an unassessed site, stuck sensors, not-assessed limits and withheld history each carry one; `generate_report` repeats its series read's reader notes.
+`list_pods` lifts each probed pod's reader notes to its own top level, prefixed with the pod's name, because the page reads only that level and it is the only copy removed from the model's input.
 A failed call is not shown once a later call to the same tool succeeded, and an empty window is judged on `n_samples`, since `series` and `raw` results have readings and `value: null`.
 Citations carry the document `title` where `corpus.json` has one, added at the response boundary (`src/retrieval/sourceTitles.ts`) because the prompt reads only `source` and `text`; the page labels a source by its title and falls back to the address.
 An empty window or null value is never converted to zero; actual zero measurements remain zero.
@@ -1573,3 +1575,59 @@ git-ignored too, with the four Tier 1 corpus files force-tracked as the exceptio
 Two holes of this service's own were found and fixed on 2026-08-21, and are written up in [`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md) §6.
 `GET /api/v1/devices` served unauthenticated callers out of the deployment's superadmin token; it now requires the caller's token (§10.5).
 `GET /api/v1/reports/:filename` served stored customer PDFs with no authentication; it was first gated by a token-hash ownership check and was removed on 2026-09-22, when reports moved to `POST /api/v1/reports` with nothing stored (§10.7).
+
+## 19. Current-site readings, sensor quality and predecessor authorization
+
+Chat queries, comparisons and reports use only the visit containing the latest coordinate-bearing reading, following the September 24 and September 25 decisions in `timeline.md` and Q3-Q6 in `migration/GILLIGAN_RELEASE_PLAN.md`.
+Coordinates come only from finite, in-range `best_lat` and `best_lon`, never `best_location`, fallback GPS fields or the registry.
+The pair 0,0 means no fix; other equator or prime-meridian coordinates remain valid.
+Chronologically, a positioned reading more than 1 km from the current visit's running spherical centroid starts a new visit.
+Returning A -> B -> A starts a new visit to A and excludes the first visit to A.
+Unpositioned readings count only between the current visit's first and last positioned timestamps, and missing or invalid timestamps cannot support a visit.
+A pod with no usable fix anywhere in its history is treated as never having moved: every timestamped reading counts, with a “Location not recorded” note (user decision, `timeline.md` 2026-09-27).
+A recent window without a provable site reset is re-read from the epoch first, so this never applies to a window that merely lacks fixes.
+When a pod has fixes but available history still cannot establish a site boundary, values are withheld with a “Current site not assessed” explanation.
+
+The in-process cache is scoped by a hash of caller authorization, API base URL, resolved device chain and `PREDECESSOR_PERIOD_HANDOFF`, so callers never share readings or predecessor permissions.
+Device lists and reading snapshots have named five-minute TTLs, concurrent identical requests are coalesced, and failed reads are not cached.
+Retained site context expires after thirty minutes even if refreshed, with at most 64 entries and 200,000 raw rows across reading-cache entries; oversized snapshots can answer the current request but are not retained.
+Cached rows, visit boundaries and centroid state retain the earlier context needed by the chronological rule.
+A cold request first reads three recent days from `/water/period`, independently of the requested answer range.
+Consecutive positioned fixes over 2 km apart prove a reset independently of earlier context, because the centroid after accepting a fix is within 1 km of that fix.
+The ordinary 1 km rule still determines every visit; the 2 km test is only a sufficient proof that a partial history can be used safely.
+Without that proof or retained complete context, the period duration expands to include all available nonnegative Unix-timestamp history back to the epoch, using the endpoint's duration-in-days parameter rather than treating a one-year window edge as a boundary.
+This cold or ambiguous read can be expensive, and depends on the period endpoint returning its complete requested history rather than silently truncating it.
+A fetch failure fails the query, and a partial window without a proven boundary withholds values.
+Within the TTL, repeated questions and historical ranges reuse the snapshot, which contains all rows of the established current visit even when the requested range is short.
+After the TTL, a recent read replaces an overlapping tail while retaining earlier centroid context; changes to authorized chain membership discard incompatible history.
+Registry changes become visible at the device-list TTL, and older backfills or corrections outside the recent tail become visible when retained context expires and is rebuilt.
+Report series, exact median and hourly pattern calculations pin one consistent fetched snapshot for the whole batch, including across TTL expiry or cache eviction.
+
+Turbidity is a likely failed sensor only when it remains exactly 0 or exactly 1005 for at least 24 hours between the first and last qualifying samples, with no consecutive gap longer than 3 hours.
+Named constants define both durations, and missing or faulted turbidity, a changed value, an unusable timestamp or a gap over 3 hours breaks a run.
+Detection runs on current-site context before trimming to the requested range, so a short query cannot conceal an established failed run.
+All samples in a qualifying run are excluded before aggregation and report pattern matching, and the “likely failed sensor” warning remains even when no usable turbidity sample survives.
+Operator limits that are unusable because they exceed the sensor's measurement range remain “Not assessed”, with no assertion that readings are within those limits.
+
+`PREDECESSOR_PERIOD_HANDOFF` defaults to `false`, keeping hidden predecessor labels withheld without period requests for them.
+When enabled, an organization-scoped caller can submit hidden predecessors named by the registry chain separately to the patched period route for authorization.
+The patched server alone determines whether a hidden predecessor with a null or non-existent organization belongs to the survivor's organization; a predecessor registered to another existing organization remains withheld.
+Only an unconfirmed predecessor's recognized 400 “Device not found” refusal becomes withheld history, while successful authorized readings remain available and returned history labels, withheld labels and explanatory notes are rebuilt consistently.
+A survivor refusal, a confirmed-label refusal, authentication failure, outage or unrelated error still fails the query.
+A view spanning organizations cannot use this hand-off, and visible predecessors still require the same organization as the survivor.
+Enable the flag only after the patched server handles all cer-api traffic and its authorization behavior has been verified.
+Mixed old/new server traffic is not safe.
+The flag must remain off during rollback to an unpatched server.
+
+The manual coordinate audit lists devices visible to the configured `DEVICE_API_TOKEN` and reads `/water/period/90/day` once per device without `/water/last`, writes, or model calls.
+Run it from this worktree with the existing TypeScript tooling after configuring `DEVICE_API_BASE_URL` and `DEVICE_API_TOKEN` locally:
+
+```bash
+npx --no-install ts-node scripts/coordinateAudit.ts
+```
+
+It prints device identification, total rows, usable GPS excluding 0,0, rows at 0,0, missing or invalid GPS excluding 0,0, newest timestamp, and chronological visit counts and date ranges.
+The three GPS categories are non-overlapping and sum to the total, while visit counts include unpositioned rows only within each visit's coordinate-supported span.
+Production and audit share coordinate validation and chronological segmentation.
+Site discovery is limited to the audited 90-day window, its first visit is provisional, and the audit cannot establish earlier centroid context or authorize hidden predecessor history.
+Tokens, authorization headers, raw rows, sensor values and upstream exception text are never printed by the script.
