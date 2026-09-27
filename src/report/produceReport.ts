@@ -41,6 +41,8 @@ export interface PreparedReport {
   statusBasis: StatusAssessment;
   narrative: NarrativeSections;
   skippedParameters?: string[];
+  /** See `BuildReportInputResult.userNotes`. */
+  userNotes?: string[];
 }
 
 export type PrepareResult =
@@ -53,7 +55,9 @@ export const prepareReport = async (
   request: ReportRequest,
   context?: ToolContext,
 ): Promise<PrepareResult> => {
-  const { report, error, skippedParameters } = await buildReportInput(sensor, request, context);
+  const {
+    report, error, skippedParameters, userNotes,
+  } = await buildReportInput(sensor, request, context);
   if (error || !report) {
     return { error: error ?? "Could not build a report from the available sensor data." };
   }
@@ -63,7 +67,12 @@ export const prepareReport = async (
   const { status } = statusBasis;
   const narrative = deterministicNarrative(report, probeAccuracy, status, guidance);
   return {
-    report, status, statusBasis, narrative, ...(skippedParameters ? { skippedParameters } : {}),
+    report,
+    status,
+    statusBasis,
+    narrative,
+    ...(skippedParameters ? { skippedParameters } : {}),
+    ...(userNotes ? { userNotes } : {}),
   };
 };
 

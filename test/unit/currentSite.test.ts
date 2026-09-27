@@ -32,6 +32,10 @@ describe("current site", () => {
     expect(result.readings.map((r) => r.metrics.ph.value)).toEqual([1, 2]);
     expect(result.note).toContain("Location not recorded");
     expect(result.note).toContain("1 reading(s) with missing timestamps were excluded");
+    expect(result.userNotes).toEqual([
+      expect.stringMatching(/^Location not recorded: .*never reported a GPS position/),
+      "1 reading(s) without a timestamp were left out.",
+    ]);
   });
   it("does not fall back to lat/lon or use the backend's 0,0 missing-fix sentinel", () => {
     const missing = decodeReading({ timestamp: 1, best_lat: 0, best_lon: 0, lat: 41, lon: -82 });
@@ -45,5 +49,16 @@ describe("current site", () => {
     const result = currentSite([row(1, 35), row(2, 35), row(3, 41)]);
     expect(result.note).toBe("2 reading(s) from an earlier location were excluded "
       + "(2026-09-20T01:00:00.000Z to 2026-09-20T02:00:00.000Z).");
+    expect(result.userNotes).toEqual(["2 reading(s) from an earlier location "
+      + "(2026-09-20T01:00:00.000Z to 2026-09-20T02:00:00.000Z) were left out; "
+      + "only the pod's current site is covered."]);
+  });
+  it("gives readings outside the current site's span a reader note too", () => {
+    const result = currentSite([row(1, 41), row(2, 41), row(3)]);
+    expect(result.note).toContain("1 reading(s) with missing timestamps or outside");
+    expect(result.userNotes).toEqual([expect.stringMatching(/^1 reading\(s\) without a timestamp, or from outside/)]);
+  });
+  it("adds no reader notes when nothing was excluded", () => {
+    expect(currentSite([row(1, 41), row(2, 41)]).userNotes).toBeUndefined();
   });
 });

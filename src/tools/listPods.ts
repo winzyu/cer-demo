@@ -34,9 +34,11 @@
 
 import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import { QuerySensorData, type SensorToolResult } from "./querySensorData";
 import { readingAge } from "./readingAge";
+import type { DeviceSummary } from "../types/device.types";
 
 const log = createLogger("ListPods");
 
@@ -67,6 +69,8 @@ export const listPodsDefinition: ToolDefinition = {
     },
   },
 };
+
+const podName = (device: DeviceSummary): string => device.name ?? device.label ?? "(unnamed)";
 
 export interface ListPodsOptions {
   sensor?: QuerySensorData;
@@ -130,7 +134,7 @@ export class ListPods {
     const pods = devices.map((device, index) => {
       const age = index < probed.length ? readingAge(freshness[index], nowMs) : null;
       return {
-        name: device.name ?? device.label ?? "(unnamed)",
+        name: podName(device),
         device: device.label ?? null,
         operating_environment: device.operatingEnvironment ?? null,
         ...(index < probed.length
@@ -142,6 +146,14 @@ export class ListPods {
       };
     });
 
+    // Each probe's reader notes, named because this answer covers several pods. Lifted to the
+    // top level: the page reads only that, and it is the only copy the model never sees.
+    const podNotes = probed.flatMap((device, index) => {
+      const texts = quality[index][USER_NOTES_FIELD];
+      return Array.isArray(texts) ? texts.map((text) => `${podName(device)}: ${text}`) : [];
+    });
+    const failedNames = probed.filter((_, index) => quality[index].error).map(podName);
+
     return {
       pods,
       count: pods.length,
@@ -150,6 +162,17 @@ export class ListPods {
         + "whose time span needs GPS fixes, so a null there means \"not confirmed recently\" "
         + "and NOT that the pod is silent. Confirm with query_sensor_data before telling the user "
         + `a pod has stopped reporting.${probeNote}`,
+      [USER_NOTES_FIELD]: [
+        "Last-report times come from each pod's readings at its current site; a missing time "
+          + "means not confirmed recently, not that the pod has stopped reporting.",
+        ...(devices.length > probed.length
+          ? [`Last-report times were checked for the first ${probed.length} of ${devices.length} pods only.`]
+          : []),
+        ...(failedNames.length > 0
+          ? [`The last report could not be checked for ${failedNames.join(", ")}.`]
+          : []),
+        ...podNotes,
+      ],
     };
   }
 }

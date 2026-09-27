@@ -18,6 +18,7 @@ import type {
 } from "../types/device.types";
 import { codedError, resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import {
   AGGREGATIONS, aggregate, isAggregation,
@@ -36,7 +37,7 @@ import {
   SITE_CACHE_TTL_MS, SITE_RECENT_DAYS, snapshotSite,
 } from "./siteSnapshot";
 import type { SiteSnapshot } from "./siteSnapshot";
-import { stuckTurbidityReadings, STUCK_SENSOR_NOTE } from "./stuckSensor";
+import { stuckTurbidityReadings, STUCK_SENSOR_NOTE, STUCK_SENSOR_USER_NOTE } from "./stuckSensor";
 
 const log = createLogger("SensorTool");
 
@@ -97,6 +98,10 @@ export interface SensorToolResult {
 
 /** Everything the tool returns on failure. Fed back to the model, never thrown (§3). */
 const failure = (message: string): SensorToolResult => ({ error: message });
+
+/** The reader's version of the withheld-predecessor note (see `USER_NOTES_FIELD`). */
+const WITHHELD_USER_NOTE = "Earlier readings from this site are not available to this account, "
+  + "so the history shown may start later than the site's first reading.";
 
 /**
  * Initials of a device name — "Old Woman Creek 2026" → "owc".
@@ -741,6 +746,10 @@ export class QuerySensorData {
           snapshot.lastReported ? `This device last reported at ${snapshot.lastReported}.` : null,
           chain.withheld.length ? "Earlier history was withheld for this account." : null]
           .filter(Boolean).join(" "),
+        // "No readings" and the last report are derived by the page from the fields above.
+        ...QuerySensorData.userNotes([
+          ...(site.userNotes ?? []), chain.withheld.length ? WITHHELD_USER_NOTE : undefined,
+        ]),
       };
     }
     const referenceMs = Date.parse(referenceIso);
@@ -836,10 +845,15 @@ export class QuerySensorData {
       allZeroTurbidity,
     );
 
-    const extraNotes = [notes.note, site.note,
-      metricKeys.includes("turbidity") && excludedStuck > 0 ? STUCK_SENSOR_NOTE : undefined]
+    const stuckExcluded = metricKeys.includes("turbidity") && excludedStuck > 0;
+    const extraNotes = [notes.note, site.note, stuckExcluded ? STUCK_SENSOR_NOTE : undefined]
       .filter(Boolean);
     if (extraNotes.length) notes.note = extraNotes.join(" ");
+    Object.assign(notes, QuerySensorData.userNotes([
+      ...(notes[USER_NOTES_FIELD] as string[] | undefined ?? []),
+      ...(site.userNotes ?? []),
+      stuckExcluded ? STUCK_SENSOR_USER_NOTE : undefined,
+    ]));
 
     if (single) {
       // Flat shape for a single metric — unchanged from before multi-metric existed, so nothing
@@ -967,6 +981,12 @@ export class QuerySensorData {
     }
   }
 
+  /** `USER_NOTES_FIELD` holding the given sentences once each, or nothing when there are none. */
+  private static userNotes(texts: Array<string | undefined>): Record<string, string[]> {
+    const unique = [...new Set(texts.filter((text): text is string => Boolean(text)))];
+    return unique.length > 0 ? { [USER_NOTES_FIELD]: unique } : {};
+  }
+
   /**
    * Caveats that belong with the number rather than in a doc nobody reads at answer time.
    *
@@ -988,6 +1008,10 @@ export class QuerySensorData {
     allZeroTurbidity = false,
   ): Record<string, unknown> {
     const notes: string[] = [];
+    // The reader's version of the caveats a person needs, without instructions to the model;
+    // the page shows these, never `note` (see `USER_NOTES_FIELD`). Caveats the page already
+    // derives from structured fields (no readings, provisional turbidity) are not repeated.
+    const userNotes: string[] = [];
 
     if (chain.labels.length > 1) {
       // Said out loud because the alternative is a number whose provenance is invisible: these
@@ -998,6 +1022,9 @@ export class QuerySensorData {
         + "replaced Notecard mints a new label and the older readings keep the old one. This "
         + `answer covers all of them (${chain.labels.join(", ")}), de-duplicated where their `
         + "spans overlap.",
+      );
+      userNotes.push(
+        `Includes readings recorded under this site's earlier device labels (${chain.labels.join(", ")}).`,
       );
     }
 
@@ -1010,13 +1037,14 @@ export class QuerySensorData {
         `Earlier readings from this site were NOT included: ${parts.join("; ")}. `
         + "Say that the history shown may start later than the site's first reading.",
       );
+      userNotes.push(WITHHELD_USER_NOTE);
     }
 
     if (chain.mergedInto) {
-      notes.push(
-        `This device was retired and merged into ${chain.mergedInto}, so its readings stop at `
-        + "the merge. Current data for the site is under that label.",
-      );
+      const merged = `This device was retired and merged into ${chain.mergedInto}, so its `
+        + "readings stop at the merge. Current data for the site is under that label.";
+      notes.push(merged);
+      userNotes.push(merged);
     }
 
     if (implausible.length > 0) {
@@ -1030,6 +1058,9 @@ export class QuerySensorData {
       notes.push(
         `Excluded as physically impossible despite no probe fault flag: ${parts.join("; ")}. `
         + "These are sensor rails, not measurements, and are not counted in any statistic above.",
+      );
+      userNotes.push(
+        `Left out as sensor faults, not measurements: ${parts.join("; ")}.`,
       );
     }
 
@@ -1049,6 +1080,7 @@ export class QuerySensorData {
 
     if (allZeroTurbidity) {
       notes.push(TURBIDITY_ALL_ZERO_CAVEAT);
+      userNotes.push(TURBIDITY_ALL_ZERO_CAVEAT);
     }
 
     const environment = device.operatingEnvironment;
@@ -1061,7 +1093,10 @@ export class QuerySensorData {
       );
     }
 
-    return notes.length > 0 ? { note: notes.join(" ") } : {};
+    return {
+      ...(notes.length > 0 ? { note: notes.join(" ") } : {}),
+      ...(userNotes.length > 0 ? { [USER_NOTES_FIELD]: userNotes } : {}),
+    };
   }
 }
 

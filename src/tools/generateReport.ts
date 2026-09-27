@@ -22,6 +22,7 @@
 import { config } from "../config";
 import { codedError } from "../utils/errors";
 import { createLogger } from "../utils/logger";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import { QuerySensorData, type SensorToolResult } from "./querySensorData";
 import { prepareReport } from "../report/produceReport";
@@ -210,8 +211,14 @@ export class GenerateReport {
       return failure(prepared.error);
     }
     const {
-      report, status, statusBasis, narrative, skippedParameters,
+      report, status, statusBasis, narrative, skippedParameters, userNotes,
     } = prepared;
+    const readerNotes = [
+      ...(userNotes ?? []),
+      ...(skippedParameters?.length
+        ? [`No readings for ${skippedParameters.join(", ")}, so the report covers the other parameters only.`]
+        : []),
+    ];
     const { events } = report;
     // The period ends on the device's newest reading, not today, so a silent pod's "last 30
     // days" quietly ends on the day it stopped. The age says so.
@@ -263,6 +270,9 @@ export class GenerateReport {
         skippedParameters?.length
           ? `No readings for: ${skippedParameters.join(", ")}. Report covers the remaining parameters only.` : null,
       ].filter(Boolean).join(" "),
+      // The review-worthy parts of the data-quality notes (stuck, railed readings) and the site
+      // notes arrive in the series read's reader notes; the usable-reading count is in the PDF.
+      ...(readerNotes.length > 0 ? { [USER_NOTES_FIELD]: readerNotes } : {}),
     };
   }
 }

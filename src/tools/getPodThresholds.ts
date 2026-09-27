@@ -27,6 +27,7 @@ import {
 } from "../report/operatorThresholds";
 import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import { QuerySensorData, type SensorToolResult } from "./querySensorData";
 
@@ -133,6 +134,10 @@ export class GetPodThresholds {
       return [wireName, entry];
     }));
 
+    const notAssessed = Object.values(thresholds)
+      .filter((entry) => entry.status === "not assessed")
+      .map((entry) => entry.reason as string);
+
     return {
       device: {
         name: device.name ?? device.label ?? "(unnamed)",
@@ -148,6 +153,11 @@ export class GetPodThresholds {
       source: "Device registry — operator-configured alert thresholds.",
       note: "These are configured alert limits an operator set for this pod, not an ecological "
         + "water-quality standard.",
+      [USER_NOTES_FIELD]: [
+        "These limits are the alert thresholds set for this pod, not an ecological water-quality standard.",
+        // The "not assessed" reasons are already plain statements with no instruction in them.
+        ...notAssessed,
+      ],
     };
   }
 }
