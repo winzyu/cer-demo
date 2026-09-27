@@ -1484,6 +1484,28 @@ k=30 alone gains more recall than first-turn rewriting but puts 50% more context
 The reranker over both rewrites is the best arm at k=20: 69.4% and nDCG 0.570, raising 35 queries and lowering 5 against first-turn rewriting at k=20, and ahead of k=30 in every class; it adds a Fireworks rerank call per request (about $0.60 for these 90).
 Each run draws its own rewrites, so differences of a point or two are within noise.
 
+### GLM tools-off rule on gold context - 2026-09-27, runs `p3-gold-glm-notools-2026-09-27` and `p3-gold-glm-notools-rejudge-2026-09-27`
+
+With both tools off, GLM turned the refusal contract's "closest thing you genuinely can do" into offers to fetch the pod's readings, which the tools-off prompt cannot do (user's blind grading, `refusal-temperature-harm-threshold`).
+`NO_TOOLS_RULE` in `src/prompt/systemPrompt.ts`, added only when both tools are off, says there is no access to the pod's readings, thresholds, reports or tools, and that any next step named must be doable from CONTEXT or be a person or authority to ask; the tools-on prompt is byte-identical.
+Captured with the gold-context GLM settings above (`glm-5p3-flash`, reasoning low, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools, catalogue and `QUERY_REWRITE` off, port 8011): 90/90, 0 failed; 498,064 prompt tokens (34.5% cached), 27,980 completion, about $0.07.
+Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+
+| | before, pass 1 / 2 | with the rule, pass 1 / 2 |
+|---|---|---|
+| correctness (floor 1.30) | 1.33 / 1.34 | 1.28 / 1.31 |
+| cross-document | 1.08 / 1.08 | 1.04 / 1.08 |
+| deep-in-manual | 1.60 / 1.60 | 1.50 / 1.60 |
+| definitional | 1.38 / 1.38 | 1.13 / 1.13 |
+| follow-up | 1.50 / 1.50 | 1.38 / 1.38 |
+| precedence | 1.33 / 1.50 | 1.50 / 1.50 |
+| probe-calibration | 1.38 / 1.38 | 1.44 / 1.44 |
+| refusal | 1.12 / 1.12 | 1.00 / 1.00 |
+
+Offers to fetch or report the pod's readings fell from 9 answers to 0; the three remaining mentions of "your pod's readings" are disclaimers that the readings are unavailable.
+On the two-pass mean 4 turns rose and 8 fell; seven of the eight falls are omitted rubric points on turns that made no offer before (Eh's definition, the 12-month thermistor check, the manufacturer's soak limit), and one, `refusal-temperature-harm-threshold` turn 2, no longer says the sources lack a thermal-harm criterion.
+Reading: the rule removes the behaviour; the 0.03-0.05 fall is of the size GLM's answers could vary between captures, but no repeat capture of the old prompt exists to separate the two.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
