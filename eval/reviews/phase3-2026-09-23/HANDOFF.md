@@ -19,7 +19,6 @@ Work on branch `eval/wave1-corrections` in its worktree `.claude/worktrees/wave1
 - **Baselines, new judge, rubric v2, two passes unless noted:** gold context `gpt-oss-120b` 1.10 (one pass), `glm-5p3-flash` 1.33 / 1.34; `local-vector` k=20 unpinned `gpt-oss-120b` 0.72 / 0.74, with rewriting 0.89 / 0.92; **`glm-5p3-flash` with rewriting 1.07 / 1.06 (run `p3-lv-k20-rewrite-glm-2026-09-26`), the baseline for the next round.**
 - `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); production retrieval is still the user's choice (recommended `local-vector` k=20, datasheets unpinned, with `QUERY_REWRITE=true` and `QUERY_REWRITE_FIRST_TURN=true`; the reranker on hold until the control capture).
 - **Spend:** about $20.65 of the $30 ceiling after the 2026-09-27 round (about $2.25: offline runs $0.10, reranker offline $0.60, tool check $0.10, tools-off rule capture and judging $0.40, reranker capture and judging $1.15), so about $9.35 left; estimates, since `deepseek-v4p1-flash` has no rate in `prices.ts`, so check the Fireworks bill.
-- `docs/STATUS.md` in the main checkout (`dev`) was mid-merge (unmerged, `UU`) on 2026-09-27, owned by another session; R4's STATUS lines were not updated this round.
 
 ## What to review
 
