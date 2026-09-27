@@ -5,20 +5,26 @@
 // processes so it can restart them; the emulator and the dashboard must already be running.
 //
 //   node scripts/e2e/gilliganE2E.mjs [--groups A,B] [--only A1,B2] [--reseed] [--max-questions 80]
-//                                    [--run-id ID] [--keep-services]
+//                                    [--max-usd 5] [--run-id ID] [--keep-services]
 //
-// E2E_SERVER_DIR: the server checkout on the mirror branch (default ../clean-earth-rovers-server/.worktrees/mirror)
-// E2E_CER_DIR:    the cer-demo checkout under test (default .claude/worktrees/feat+service-release)
-// E2E_DASHBOARD:  the dashboard URL (default http://localhost:3000)
+// Groups run in the order --groups names them, so quota exhaustion (G) can go last.
+// --reseed seeds the mirror with its release-test fixtures (server scripts/mirror/README.md).
 //
-// Output goes to data/e2e/<run-id>/ (git-ignored). Every question sent is a paid model call.
+// E2E_SERVER_DIR:    the server checkout on the mirror branch (default ../clean-earth-rovers-server/.worktrees/mirror)
+// E2E_CER_DIR:       the cer-demo checkout under test (default .claude/worktrees/e2e-rc)
+// E2E_DASHBOARD:     the dashboard URL (default http://localhost:3000)
+// E2E_DASHBOARD_DIR: the dashboard checkout serving it, recorded with the results
+//
+// Output goes to data/e2e/<run-id>/ (git-ignored). Every question sent is a paid model call;
+// --max-usd stops the run once the tokens counted in the quota store, all priced at the output
+// rate, reach that amount.
 import { execFileSync } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { Browser, delay } from "./cdp.mjs";
 import {
-  PASSWORD, PERSONAS, SERVER_API, createServices, emailOf, emulator, forbiddenTerms, legacyChats,
-  loadEntities, plain, reseed,
+  OUTPUT_USD_PER_MILLION, PASSWORD, PERSONAS, SERVER_API, applyFixtures, createServices, emailOf, emulator,
+  forbiddenTerms, legacyChats, loadEntities, plain, reseed, usageTokens,
 } from "./stack.mjs";
 
 const argv = process.argv.slice(2);
@@ -30,11 +36,13 @@ const flag = (name) => argv.includes(`--${name}`);
 
 const mainCheckout = path.dirname(execFileSync("git", ["rev-parse", "--path-format=absolute", "--git-common-dir"], { encoding: "utf8" }).trim());
 const SERVER_DIR = process.env.E2E_SERVER_DIR ?? path.resolve(mainCheckout, "../clean-earth-rovers-server/.worktrees/mirror");
-const CER_DIR = process.env.E2E_CER_DIR ?? path.join(mainCheckout, ".claude/worktrees/feat+service-release");
+const CER_DIR = process.env.E2E_CER_DIR ?? path.join(mainCheckout, ".claude/worktrees/e2e-rc");
 const DASHBOARD = process.env.E2E_DASHBOARD ?? "http://localhost:3000";
+const DASHBOARD_DIR = process.env.E2E_DASHBOARD_DIR ?? "";
 const RUN_ID = option("run-id", new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19));
 const RUN_DIR = path.resolve("data/e2e", RUN_ID);
 const MAX_QUESTIONS = Number(option("max-questions", "80"));
+const MAX_USD = Number(option("max-usd", "5"));
 
 // Page-side element lookups.
 const INPUT = `[...document.querySelectorAll("textarea")].find((t) => !t.getAttribute("aria-hidden") && t.offsetParent !== null)`;
@@ -67,10 +75,21 @@ class Run {
     this.state = {};
     this.questions = 0;
     this.shots = 0;
+    this.stackLines = [];
+    this.tokensAtStart = 0;
   }
 
-  spend() {
+  /** Upper bound on this run's model spend: tokens counted since it started, at the output rate. */
+  async usd() {
+    let tokens = 0;
+    for (const database of ["(default)", "gilligan"]) tokens += await usageTokens(database).catch(() => 0);
+    return Math.max(0, tokens - this.tokensAtStart) * OUTPUT_USD_PER_MILLION / 1e6;
+  }
+
+  async spend() {
     if (this.questions >= MAX_QUESTIONS) throw new BudgetSpent(`question budget of ${MAX_QUESTIONS} spent`);
+    const usd = await this.usd();
+    if (usd >= MAX_USD) throw new BudgetSpent(`question budget: $${usd.toFixed(2)} of $${MAX_USD} spent`);
     this.questions += 1;
   }
 
@@ -200,10 +219,23 @@ class Session {
   }
 
   async pickPod(name) {
-    await this.openMenu();
     const label = name || "No pod selected";
-    await this.page.click(`${OPTIONS}.find((o) => o.innerText.trim() === ${JSON.stringify(label)})`);
-    await this.page.waitFor(`!document.querySelector("[role=listbox]")`, 8000);
+    // The picker can re-render while the pod list loads and leave the menu open; retry once.
+    for (let attempt = 1; ; attempt++) {
+      await this.openMenu();
+      await this.page.click(`${OPTIONS}.find((o) => o.innerText.trim() === ${JSON.stringify(label)})`);
+      try {
+        await this.page.waitFor(`!document.querySelector("[role=listbox]")`, 8000);
+        break;
+      } catch (error) {
+        if (attempt > 1) throw error;
+        await this.page.key("Escape");
+        await delay(1000);
+      }
+    }
+    const shown = await this.page.eval(`(${POD_SELECT})?.innerText.trim() ?? ""`);
+    const none = shown === "" || shown === "No pod selected" || shown === "\u200b";
+    if (name ? shown !== name : !none) throw new Error(`pod picker shows "${shown}", not "${label}"`);
     this.pod = name;
     await this.step(`pod ${label}`);
   }
@@ -228,7 +260,7 @@ class Session {
 
   async ask(text, { via = "click", allow5xx = false, spend = true } = {}) {
     const { page, run } = this;
-    if (spend) run.spend();
+    if (spend) await run.spend();
     const before = await page.eval(`document.querySelectorAll(".gilligan-markdown").length`);
     await page.type(INPUT, text);
     await delay(200);
@@ -240,6 +272,7 @@ class Session {
     let busy = false;
     try { await page.waitFor(`!!${SPINNER}`, 3000, 50); busy = true; } catch { /* answered or refused at once */ }
     if (busy) run.check(await page.eval(`!${SEND} && !!(${INPUT})?.disabled`), "input and send disabled while answering");
+    const questionShown = busy ? await page.eval(`document.body.innerText.includes(${JSON.stringify(text.slice(0, 40))})`) : null;
     try { await page.waitFor(`!${SPINNER}`, 150000, 250); } catch { run.check(false, "no answer or error within 150 s"); }
     const ms = Date.now() - started;
     await delay(500);
@@ -249,7 +282,9 @@ class Session {
       return {
         answer: fresh ? fresh.innerText : null,
         citations: fresh ? fresh.querySelectorAll('button[aria-label^="Source"], button[aria-label^="Tool evidence"]').length : 0,
+        sources: fresh ? [...fresh.querySelectorAll('button[aria-label^="Source"]')].map((b) => b.innerText.trim()) : [],
         evidence: fresh ? !!fresh.querySelector("details") : false,
+        table: fresh ? !!fresh.querySelector("table") : false,
         reports: fresh ? [...fresh.querySelectorAll("button")].map((b) => b.innerText.trim()).filter((t) => t.startsWith("Download report")) : [],
         error: ${ERROR_TEXT},
         path: location.pathname,
@@ -261,9 +296,9 @@ class Session {
     run.transcript.push({
       scenario: run.current.id, persona: this.key, pod: this.pod || null, question: text,
       answer: result.answer, error: result.error || null, seconds: Math.round(ms / 100) / 10,
-      citations: result.citations, reports: result.reports, screenshot,
+      citations: result.citations, sources: result.sources, reports: result.reports, screenshot,
     });
-    return { ...result, ms };
+    return { ...result, ms, questionShown };
   }
 
   /** Clicks the newest "Download report" button and waits for the PDF. */
@@ -346,6 +381,11 @@ const checkPdf = (run, session, download, filenamePattern) => {
   run.note(`report ${download.file}: ${pages} pages`);
 };
 
+/** Keeps a downloaded report for the R checks later in the run. */
+const keepPdf = (run, key, download) => {
+  if (download.file) (run.state.pdfs ??= {})[key] = { file: download.file, path: download.path, scenario: run.current.id };
+};
+
 const sameSet = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
 
 // ---------------------------------------------------------------------------------------------
@@ -355,7 +395,7 @@ const S = [];
 const scenario = (id, title, run) => S.push({ id, group: id[0], title, run });
 
 scenario("A1", "Each persona logs in; pod picker, history and quota line", async (r) => {
-  for (const key of ["super", "harborAdmin", "harborCust", "lakeCust", "seaviewAdmin", "univCust", "bayCust", "orphan"]) {
+  for (const key of ["super", "harborAdmin", "harborCust", "lakeCust", "seaviewAdmin", "univCust", "bayCust", "orphan", "riverCust"]) {
     const s = await r.fresh(key);
     const pods = await s.podOptions();
     r.check(sameSet(pods, PERSONAS[key].pods), `${key}: pod picker lists ${JSON.stringify(pods)}; expected ${JSON.stringify(PERSONAS[key].pods)}`);
@@ -427,25 +467,61 @@ scenario("B6", "Question in Spanish", async (r) => {
   r.review("answer is in Spanish");
 });
 
+/**
+ * Asks once per run: a later check with the same persona, pod and question reuses the answer and
+ * its expectation joins the original's row on the review sheet, so no question is paid for twice.
+ */
+const askFor = async (r, key, pod, question, { newChat = true } = {}) => {
+  const id = `${key}|${pod}|${question}`;
+  r.state.answers ??= {};
+  const earlier = r.state.answers[id];
+  if (earlier) {
+    r.current.reuses = earlier.scenario;
+    r.note(`reuses the answer from ${earlier.scenario}`);
+    return earlier;
+  }
+  const s = await r.session(key);
+  if (newChat) {
+    await s.newChat();
+    await s.pickPod(pod);
+  }
+  const answer = { ...(await s.ask(question)), scenario: r.current.id, session: s };
+  r.state.answers[id] = answer;
+  return answer;
+};
+
 const podQuestion = (id, key, pod, question, expectation, { newChat = true } = {}) =>
   scenario(id, `${key} on ${pod || "no pod"}: ${question}`, async (r) => {
-    const s = await r.session(key);
-    if (newChat) {
-      await s.newChat();
-      await s.pickPod(pod);
-    }
-    const a = await s.ask(question);
+    const a = await askFor(r, key, pod, question, { newChat });
     r.check(!!a.answer, "answered");
     r.review(expectation);
   });
+
+/** A check this stack cannot run; it is reported as blocked with the reason. */
+const blocked = (id, title, reason) => scenario(id, title, async () => { throw new Blocked(reason); });
+
+/** Numbers written in a text, with thousands separators removed. */
+const numbersIn = (text) => [...String(text ?? "").matchAll(/\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?/g)].map((m) => Number(m[0].replace(/,/g, "")));
+/**
+ * The moved fixture read 1,300-1,700 uS/cm at its earlier site and 350-550 at its current one.
+ * Only values written with the unit count; the upper end of a range such as the fresh-water
+ * limit "100-1500 µS/cm" is a threshold, not a reading.
+ */
+const oldSiteConductivity = (text) => [...String(text ?? "").matchAll(/([-‑–]\s*)?(\d{1,3}(?:[ ,\u202f]\d{3})+|\d+)(?:\.\d+)?\s*[µu]S\/cm/g)]
+  .filter((m) => !m[1]).map((m) => Number(m[2].replace(/[ ,\u202f]/g, ""))).filter((n) => n >= 1250 && n <= 1750);
+/** Min and max of a report's Conductivity row. */
+const pdfConductivity = (text) => {
+  const row = /Conductivity \(µS\/cm\)\s+\S+\s+([\d.]+)\s+([\d.]+)/.exec(text);
+  return row ? [Number(row[1]), Number(row[2])] : null;
+};
 
 podQuestion("C1", "harborAdmin", "Harbor Pier Buoy", "How is the water this week?", "uses this week's readings; ~47,000 uS/cm reads as salt water; states the period");
 podQuestion("C2", "harborAdmin", "Harbor Pier Buoy", "Are any readings out of range?", "treats the all-zero thresholds as unset", { newChat: false });
 podQuestion("C3", "harborAdmin", "Harbor Pier Buoy", "What's the turbidity?", "recognises an all-zero series as a likely missing sensor", { newChat: false });
 podQuestion("C4", "super", "Demo Public Dock Buoy", "Is the pH within its limits?", "treats maxPH=100 as unset");
 podQuestion("C5", "univCust", "dev:100000000000012", "Why is dissolved oxygen zero?", "suggests a sensor fault, not anoxic water");
-podQuestion("C6", "lakeCust", "Lakeside Buoy 2026", "Summarize the last 60 days", "fresh water (~450 uS/cm); same-organization predecessor history may appear; nothing from Lakeside Legacy Pod (organization does not exist; P3 withholds it)");
-podQuestion("C7", "super", "", "Which pods are online?", "five pods reporting within the hour");
+podQuestion("C6", "lakeCust", "Lakeside Buoy 2026", "Summarize the last 60 days", "fresh water (~450 uS/cm); same-organization predecessor history may appear; with Q6, Lakeside Legacy Pod and the fixture's Spare Pods A and B (no organization) may appear as Lakeside history");
+podQuestion("C7", "super", "", "Which pods are online?", "every current pod reporting within the hour (five, plus the two fixture pods when seeded with --fixtures)");
 podQuestion("C8", "super", "", "Compare temperature across my pods", "one read per pod; consistent units", { newChat: false });
 podQuestion("C9", "harborAdmin", "Harbor Pier Buoy", "What happened at Harbor Pier 45 days ago?", "reads the predecessor's history, which stops 30 days before now, and says so");
 podQuestion("C10", "seaviewAdmin", "Seaview Marina", "Is there a tide station for my pod?", "uses the NOAA id if the tools expose it; no invented station");
@@ -591,7 +667,9 @@ scenario("F1", "Report offer for Harbor Pier Buoy, 7 days", async (r) => {
 
 scenario("F2", "Download the report", async (r) => {
   const s = await r.session("harborAdmin");
-  checkPdf(r, s, await s.download(), /^cer-report-harbor-pier-buoy-.+-to-.+\.pdf$/);
+  const download = await s.download();
+  checkPdf(r, s, download, /^cer-report-harbor-pier-buoy-.+-to-.+\.pdf$/);
+  keepPdf(r, "harbor-7d", download);
   r.review("the period in the PDF matches the answer");
 });
 
@@ -608,230 +686,360 @@ scenario("F4", "60-day report on Lakeside Buoy 2026", async (r) => {
   await s.pickPod("Lakeside Buoy 2026");
   const a = await s.ask("Give me a water quality report for the last 60 days");
   r.check(a.reports.length > 0, "report offered");
-  if (a.reports.length) checkPdf(r, s, await s.download(), /^cer-report-lakeside-buoy-2026-.+\.pdf$/);
-  r.review("covers the same-organization chain; nothing from Lakeside Legacy Pod");
-});
-
-scenario("F5", "Report allowance of 3 is enforced", async (r) => {
-  await r.closeAll();
-  await r.services.cer.restart({ QUERY_QUOTA_REPORTS: "3" });
-  try {
-    const s = await r.fresh("harborCust");
-    await s.newChat();
-    await s.pickPod("Harbor Pier Buoy");
-    const a = await s.ask("Give me a water quality report for the last 7 days");
-    if (!a.reports.length) throw new Blocked("no report offered to exhaust");
-    const outcomes = [];
-    for (let i = 0; i < 4; i++) {
-      outcomes.push(await s.download().catch((error) => ({ file: null, status: `no button: ${error.message.slice(0, 80)}` })));
-    }
-    r.check(outcomes.slice(0, 3).every((o) => o.file), "the first three downloads succeed");
-    const fourth = outcomes[3];
-    r.check(!fourth.file && fourth.status === 429, `the fourth is refused with 429 (got ${fourth.status})`);
-    r.check(!!fourth.retryAfter, "the refusal carries Retry-After");
-    r.check(await s.page.eval(`document.body.innerText.includes("Report limit reached")`), "page says Report limit reached");
-    const b = await s.ask("What does conductivity measure?");
-    r.check(!!b.answer, "chat still works after the report limit");
-    await r.close(s);
-  } finally {
-    await r.services.cer.restart();
+  if (a.reports.length) {
+    const download = await s.download();
+    checkPdf(r, s, download, /^cer-report-lakeside-buoy-2026-.+\.pdf$/);
+    keepPdf(r, "lakeside-60d", download);
   }
+  r.review("covers the chain as Q6 allows: same-organization predecessors and the no-organization Lakeside Legacy Pod and Spare Pods, within the current site");
 });
 
-const G_QUESTIONS = ["What is pH?", "What is salinity?", "What is turbidity?", "What is conductivity?", "What is dissolved oxygen?", "What is water temperature?"];
-
-scenario("G1", "Question allowance of 5 is enforced in the page", async (r) => {
+scenario("F5", "The release report allowance of 5 is enforced", async (r) => {
   await r.closeAll();
-  await r.services.cer.restart({ QUERY_QUOTA_REQUESTS: "5" });
-  const s = await r.fresh("seaviewCust1");
-  r.note(`quota line on arrival: "${await s.quotaLine()}"`);
+  const s = await r.fresh("harborCust");
+  await s.newChat();
+  await s.pickPod("Harbor Pier Buoy");
+  const a = await s.ask("Give me a water quality report for the last 7 days");
+  if (!a.reports.length) throw new Blocked("no report offered to exhaust");
+  const outcomes = [];
+  for (let i = 0; i < 6; i++) {
+    outcomes.push(await s.download().catch((error) => ({ file: null, status: `no button: ${error.message.slice(0, 80)}` })));
+  }
+  r.check(outcomes.slice(0, 5).every((o) => o.file), `the first five downloads succeed (${outcomes.map((o) => o.status).join(", ")})`);
+  const sixth = outcomes[5];
+  r.check(!sixth.file && sixth.status === 429, `the sixth is refused with 429 (got ${sixth.status})`);
+  r.check(!!sixth.retryAfter, "the refusal carries Retry-After");
+  r.check(await s.page.eval(`document.body.innerText.includes("Report limit reached")`), "page says Report limit reached");
+  const b = await s.ask("What does conductivity measure?");
+  r.check(!!b.answer, "chat still works after the report limit");
+  await r.close(s);
+});
+
+const G_QUESTIONS = ["What is pH?", "What is salinity?", "What is turbidity?", "What is conductivity?", "What is dissolved oxygen?", "What is water temperature?", "What is ORP?"];
+const remainingOf = (line) => Number(/(\d+) questions? left/.exec(line)?.[1] ?? NaN);
+
+/**
+ * G1 at the release allowance: Harbor admin sends short questions until the page refuses, watching
+ * for the near-limit warning (K14) on the way.
+ */
+const exhaust = async (r, label) => {
+  const s = await r.fresh("harborAdmin");
+  const arrival = await s.quotaLine();
+  r.note(`${label}: quota line on arrival "${arrival}"`);
   let asked = 0;
-  while (asked < 6 && (await s.inputLabel()) !== "Message limit reached") {
-    await s.ask(G_QUESTIONS[asked]);
+  let warned = null;
+  while (asked < 25 && (await s.inputLabel()) !== "Message limit reached") {
+    await s.ask(G_QUESTIONS[asked % G_QUESTIONS.length]);
     asked += 1;
     await delay(1500);
+    const line = await s.quotaLine();
+    if (warned === null && /Almost out/.test(line)) warned = line;
   }
-  r.note(`limit reached after ${asked} questions`);
-  r.check(asked <= 6 && (await s.inputLabel()) === "Message limit reached", "input shows Message limit reached");
-  r.check(await s.page.eval(`!!(${INPUT})?.disabled`), "input disabled at the limit");
-  r.check(await s.page.eval(`!!document.querySelector('a[href="/plans"]')`), "See plans link shown");
-  r.check(/Resets/.test(await s.quotaLine()), `reset time shown ("${await s.quotaLine()}")`);
+  r.note(`${label}: limit reached after ${asked} more questions; near-limit line ${JSON.stringify(warned)}`);
+  r.check((await s.inputLabel()) === "Message limit reached", `${label}: input shows Message limit reached`);
+  r.check(await s.page.eval(`!!(${INPUT})?.disabled`), `${label}: input disabled at the limit`);
+  r.check(await s.page.eval(`!!document.querySelector('a[href="/plans"]')`), `${label}: See plans link shown`);
+  r.check(/Resets/i.test(await s.quotaLine()), `${label}: reset time shown ("${await s.quotaLine()}")`);
+  await r.close(s);
+  return { arrival, asked, warned };
+};
+
+const survives = async (r, label, extraEnv) => {
+  await r.services.cer.restart(extraEnv);
+  const s = await r.fresh("harborAdmin");
+  r.check((await s.inputLabel()) === "Message limit reached", `${label}: still at the limit after a Gilligan restart and a fresh login`);
+  r.note(`${label}: quota line after restart "${await s.quotaLine()}"`);
+  await r.close(s);
+};
+
+const separate = async (r, label) => {
+  const s = await r.fresh("harborCust");
+  r.check((await s.inputLabel()) === "Ask Gilligan", `${label}: Harbor customer can still ask`);
+  r.note(`${label}: Harbor customer quota line "${await s.quotaLine()}"`);
+  const a = await s.ask("What is pH?");
+  r.check(!!a.answer, `${label}: Harbor customer's question answered`);
+  await r.close(s);
+};
+
+scenario("G1", "Harbor admin reaches the release allowance of 20 (and K14's warning)", async (r) => {
+  await r.closeAll();
+  r.state.g1 = await exhaust(r, "G1");
+  r.check(r.state.g1.warned !== null, "a near-limit warning appeared before the limit (K14)");
+  r.review("K14: the near-limit line appears at five questions left, then the limit message");
 });
 
-scenario("G2", "The count survives a cer-demo restart and a fresh login", async (r) => {
-  await r.services.cer.restart({ QUERY_QUOTA_REQUESTS: "5" });
-  const s = await r.session("seaviewCust1");
-  await s.openGilligan();
-  r.check((await s.inputLabel()) === "Message limit reached", "still at the limit after the restart");
-  const again = await r.fresh("seaviewCust1");
-  r.check((await again.inputLabel()) === "Message limit reached", "still at the limit with a fresh login (keyed by user, not token)");
-  await r.close(again);
-});
+scenario("G2", "The count survives a Gilligan restart and a fresh login", async (r) => survives(r, "G2"));
 
-scenario("G3", "Another user in the same organization has their own allowance", async (r) => {
+scenario("G3", "Harbor customer keeps a separate allowance", async (r) => separate(r, "G3"));
+
+/** Counter fingerprints per database, as the guide's named-database check computes them. */
+const usageFingerprint = async (database) => {
+  const rows = (await emulator.list("gilligan_usage", database)).map((d) => [d.name.split("/").pop(), plain({ mapValue: { fields: d.fields } })]);
+  rows.sort((a, b) => a[0].localeCompare(b[0]));
+  return { documents: rows.length, json: JSON.stringify(rows) };
+};
+
+scenario("G4", "G1-G3 again with Gilligan's database set to gilligan", async (r) => {
+  await r.closeAll();
+  const before = { main: await usageFingerprint("(default)"), named: await usageFingerprint("gilligan") };
+  const named = { FIRESTORE_DATABASE_ID: "gilligan" };
+  await r.services.cer.restart(named);
   try {
-    const s = await r.fresh("seaviewCust2");
-    r.check((await s.inputLabel()) === "Ask Gilligan", "seaviewCust2 can still ask");
-    r.note(`seaviewCust2 quota line: "${await s.quotaLine()}"`);
-    await r.close(s);
+    const log = await fs.readFile(r.services.cer.logFile, "utf8");
+    const boot = log.slice(log.lastIndexOf("==== start"));
+    r.note(`startup lines: ${boot.split("\n").filter((l) => /quota|QUOTA|Firestore|limit/i.test(l)).slice(0, 6).join(" / ").slice(0, 600)}`);
+    const g1 = await exhaust(r, "G4/G1");
+    r.check(remainingOf(g1.arrival) === 20, `fresh counters in the named database: arrival shows 20 left ("${g1.arrival}")`);
+    await survives(r, "G4/G2", named);
+    await separate(r, "G4/G3");
+    const after = { main: await usageFingerprint("(default)"), named: await usageFingerprint("gilligan") };
+    r.check(after.main.json === before.main.json, "(default) gilligan_usage unchanged by the named-database run");
+    r.check(after.named.json !== before.named.json && after.named.documents > 0, `gilligan gilligan_usage written (${after.named.documents} documents)`);
   } finally {
-    await r.closeAll();
     await r.services.cer.restart();
   }
 });
 
-scenario("H1", "cer-demo down: readable error, page stays usable", async (r) => {
-  const s = await r.session("harborCust");
-  await r.services.cer.stop();
-  try {
-    await s.newChat();
-    const a = await s.ask("What is salinity?", { allow5xx: true, spend: false });
-    r.check(!!a.error && !a.answer, `readable error shown ("${a.error}")`);
-    r.check(await s.page.eval(`!(${INPUT})?.disabled`), "input usable after the error");
-  } finally {
-    await r.services.cer.start();
+// ---------------------------------------------------------------------------------------------
+// K: decisions made visible (manual guide on dev). Expectations are for the review sheet.
+
+const DISCLAIMER = "Content is AI generated, be sure to double check answers, turbidity is qualitative.";
+
+scenario("K1", "Disclaimer visible without scrolling", async (r) => {
+  const s = await r.fresh("harborCust");
+  const place = await s.page.eval(`(() => {
+    const e = [...document.querySelectorAll("body *")].find((x) => x.children.length === 0 && x.innerText?.trim() === ${JSON.stringify(DISCLAIMER)});
+    if (!e) return null;
+    const b = e.getBoundingClientRect();
+    return { top: b.top, bottom: b.bottom, height: innerHeight };
+  })()`);
+  r.check(!!place, "the approved disclaimer is on the page");
+  if (place) r.check(place.bottom <= place.height && place.top >= 0, `disclaimer visible without scrolling (${JSON.stringify(place)})`);
+  await r.close(s);
+});
+podQuestion("K2", "seaviewAdmin", "Seaview Marina", "What is the turbidity in NTU?", "turbidity described as relative or qualitative; no NTU figure presented as calibrated");
+scenario("K3", "Harbor admin: is the turbidity sensor working?", async (r) => {
+  const a = await askFor(r, "harborAdmin", "Harbor Pier Buoy", "Is the turbidity sensor working?");
+  r.check(!!a.answer, "answered");
+  r.note("the 7-day PDF for this check is F2's (harbor-7d)");
+  r.review("calls the flat turbidity run a likely failed sensor, not clear water; F2's PDF ignores the stuck run in its patterns and events");
+});
+podQuestion("K4", "super", "Demo Public Dock Buoy", "Is the pH within its limits?", "pH limit called not assessed (maximum 100 exceeds the sensor's range); never within limits");
+scenario("K5", "Harbor admin: last reading and its age", async (r) => {
+  const a = await askFor(r, "harborAdmin", "Harbor Pier Buoy", "When was the last reading, and how old is it?");
+  r.check(/\d{4}|\d{1,2}:\d{2}|minute|hour/i.test(a.answer ?? ""), "answer gives a time or an age");
+  r.review("a timestamp and an age counted from today's date");
+});
+scenario("K6", "Moved pod: 60 days, then the old location", async (r) => {
+  const a = await askFor(r, "lakeCust", "Lakeside Mobile Buoy", "Summarize the last 60 days");
+  const b = await askFor(r, "lakeCust", "Lakeside Mobile Buoy", "Show me the readings from the old location", { newChat: false });
+  for (const [what, x] of [["summary", a], ["follow-up", b]]) {
+    const leaked = oldSiteConductivity(x.answer);
+    r.check(leaked.length === 0, `${what} shows no earlier-site conductivity (1,300-1,700 uS/cm)${leaked.length ? `: ${leaked.join(", ")}` : ""}`);
   }
+  r.review("summary uses only the last 12 days (the current site) and says earlier-location readings were excluded; the follow-up reveals no old-site values");
 });
-
-scenario("H2", "Server stopped mid-answer", async (r) => {
-  const s = await r.session("harborCust");
-  const { page } = s;
-  await s.newChat();
-  await s.pickPod("Harbor Pier Buoy");
-  r.spend();
-  await page.type(INPUT, "Describe this week's water quality trends in detail");
-  await page.click(SEND);
-  s.asked.push("Describe this week's water quality trends in detail");
-  await delay(2500);
-  await r.services.server.stop();
-  try {
-    await page.waitFor(`!${SPINNER}`, 150000, 250).catch(() => r.check(false, "request settled within 150 s"));
-    await delay(500);
-    const error = await page.eval(ERROR_TEXT);
-    r.check(!!error, `readable error shown ("${error}")`);
-    await s.step("server stopped mid-answer", { allow5xx: true });
-  } finally {
-    await r.services.server.start();
+scenario("K7", "No-GPS pod: how is the water this week?", async (r) => {
+  const a = await askFor(r, "riverCust", "River Watch Float", "How is the water this week?");
+  r.check(!!a.answer, "answered");
+  r.check(!/current site not assessed/i.test(a.answer ?? ""), "not answered with \"Current site not assessed\"");
+  r.check(/location[^.]*not (been )?recorded|no (usable )?(GPS|location)|never (having )?moved/i.test(a.answer ?? ""), "notes that the location is not recorded and the pod is treated as never having moved");
+  r.review("answered from all its readings, with a note that its location is not recorded and it is treated as never having moved");
+});
+const K8_QUESTION = "Summarize the last 60 days, including the history of Lakeside Legacy Pod";
+podQuestion("K8", "lakeCust", "Lakeside Buoy 2026", K8_QUESTION, "Legacy Pod's readings appear as part of Lakeside Buoy 2026's history, within the current site");
+podQuestion("K9", "super", "Lakeside Buoy 2026", K8_QUESTION, "Lakeside Buoy 2026's own readings answered; Legacy Pod's history withheld with a note, not an error");
+scenario("K10", "Predecessors with an absent or empty organization: period reads", async (r) => {
+  const lake = await r.fresh("lakeCust", { open: false });
+  const harbor = await r.fresh("harborAdmin", { open: false });
+  for (const label of ["dev:100000000000018", "dev:100000000000019"]) {
+    const variant = label.endsWith("18") ? "organization absent" : "organization empty";
+    for (const days of [60, 7]) {
+      const target = `/water/period/${days}/day?device=${encodeURIComponent(label)}`;
+      const own = await r.api(lake, "GET", target);
+      const rows = (own.text.match(/"device"/g) ?? []).length;
+      r.check(own.status === 200, `${variant}, ${days} days: Lakeside customer gets 200 (${own.status}, ${rows} readings)`);
+      if (days === 60) r.check(rows > 0, `${variant}: Lakeside customer's 60-day read has readings (${rows})`);
+      const other = await r.api(harbor, "GET", target);
+      r.check(other.status === 400 && !/water_data/.test(other.text), `${variant}, ${days} days: Harbor admin refused (${other.status} ${other.text.slice(0, 60)})`);
+    }
   }
-  const a = await s.ask("What is pH?");
-  r.check(!!a.answer, "the page continues once the server is back");
+  r.note("the fixtures' histories end 30 days before seed time, so the 7-day read is empty for the owner by design");
+  await r.close(lake);
+  await r.close(harbor);
+});
+scenario("K11", "Harbor customer: who to contact about a broken pod", async (r) => {
+  const a = await askFor(r, "harborCust", "Harbor Pier Buoy", "My pod seems broken, who should I contact?");
+  r.check(/sales@cleanearthrovers\.com/i.test(a.answer ?? ""), "names sales@cleanearthrovers.com");
+  r.check(!/\(?\d{3}\)?[ .-]\d{3}[ .-]\d{4}/.test(a.answer ?? ""), "no phone number");
+  r.review("sales@cleanearthrovers.com or the usual CER contact; no invented phone number or person");
+});
+blocked("K12", "Refuse rather than answer weakly (E4 classes)", "E4's list of refused question classes is not final (eval/wave1-corrections)");
+scenario("K13", "Question stays visible, a table renders, citations show titles", async (r) => {
+  const a = await askFor(r, "super", "", "Compare temperature across my pods as a table");
+  r.check(a.questionShown !== false, "the question stays on screen while waiting");
+  r.check(a.table, "the answer renders an HTML table");
+  const b = await askFor(r, "super", "", "What does dissolved oxygen measure?");
+  r.check(b.sources.length > 0, `citations present (${b.sources.length})`);
+  const addresses = b.sources.filter((t) => /https?:|www\.|\.pdf\b|\//i.test(t));
+  r.check(addresses.length === 0, `citations show titles, not addresses${addresses.length ? `: ${addresses.join(" | ")}` : ""}`);
+  r.note(`citation labels: ${b.sources.join(" | ").slice(0, 400)}`);
+});
+scenario("K15", "Gilligan answers only the CER server", async (r) => {
+  const usage = await fetch("http://localhost:8010/api/v1/usage");
+  const body = await usage.text();
+  r.check(usage.status === 401 && /service_key_invalid/.test(body), `direct /api/v1/usage refused with 401 service_key_invalid (${usage.status} ${body.slice(0, 80)})`);
+  r.check((await fetch("http://localhost:8010/health")).status === 200, "/health answers");
+});
+scenario("K16", "Unauthenticated user routes closed", async (r) => {
+  for (const route of ["/users/all", "/test-db"]) {
+    const response = await fetch(`${SERVER_API}${route}`);
+    r.check(response.status === 401, `${route} without a token gives 401 (got ${response.status})`);
+  }
+  r.note("the mirror server does not include fix/user-route-auth, so a failure here is expected on this stack");
 });
 
-scenario("H3", "Double-click send and repeated Enter send one question", async (r) => {
-  const s = await r.session("harborCust");
-  const { page } = s;
-  await s.newChat();
-  r.spend();
-  const since = page.requests.length;
-  await page.type(INPUT, "What is a water quality index?");
-  s.asked.push("What is a water quality index?");
-  await page.click(SEND).catch(() => {});
-  await page.click(SEND).catch(() => {});
-  for (let i = 0; i < 3; i++) await page.key("Enter");
-  await page.waitFor(`!${SPINNER}`, 150000, 250).catch(() => {});
-  await delay(800);
-  const sent = page.requests.slice(since).filter((q) => q.method === "GET" && q.url.includes("/gilligan/question")).length;
-  r.check(sent === 1, `one question sent (${sent})`);
-  await s.step("after double send");
-});
+// ---------------------------------------------------------------------------------------------
+// M: merge rules, current site and production-shaped data.
 
-scenario("H4", "A 2,000-character question", async (r) => {
-  const s = await r.session("harborCust");
-  await s.newChat();
-  const sentence = "Please explain how temperature, salinity and dissolved oxygen interact in a harbor over a week. ";
-  const a = await s.ask(sentence.repeat(Math.ceil(2000 / sentence.length)).slice(0, 2000));
-  r.check(!!a.answer || !!a.error, "accepted or refused cleanly");
+scenario("M1", "Lakeside 60-day history and report (Q6)", async (r) => {
+  const f4 = r.results.find((x) => x.id === "F4");
+  if (!f4 || !r.state.pdfs?.["lakeside-60d"]) throw new Blocked("needs F4's 60-day Lakeside answer and report in the same run");
+  r.current.reuses = "F4";
+  r.note("reuses F4's answer and PDF, and K8's answer");
+  r.review("M1: no-organization predecessors belong only to Lakeside's history, within the current site");
 });
+scenario("M2", "Harbor admin cannot reach Lakeside Legacy Pod", async (r) => {
+  await askFor(r, "harborAdmin", "", "Show me the history of Lakeside Legacy Pod");
+  await askFor(r, "harborAdmin", "", "Show the readings for dev:100000000000005", { newChat: false });
+  const s = await r.session("harborAdmin");
+  const response = await r.api(s, "GET", `/water/period/60/day?device=${encodeURIComponent("dev:100000000000005")}`);
+  r.check(response.status === 400 && !/water_data/.test(response.text), `period read refused (${response.status})`);
+  r.review("no Lakeside predecessor readings disclosed; no confirmation it exists");
+});
+scenario("M3", "Seaview 60-day report", async (r) => {
+  const a = await askFor(r, "seaviewAdmin", "Seaview Marina", "Give me a water quality report for the last 60 days");
+  r.check(a.reports.length > 0, "report offered");
+  if (a.reports.length) {
+    const download = await a.session.download();
+    checkPdf(r, a.session, download, /^cer-report-seaview-marina-.+\.pdf$/);
+    keepPdf(r, "seaview-60d", download);
+  }
+  r.review("same-organization, same-site merged and archived Seaview Marina DataPod history may be included; not a second current pod");
+});
+scenario("M4", "Moved pod: 60-day answer and report", async (r) => {
+  const a = await askFor(r, "lakeCust", "Lakeside Mobile Buoy", "Give me a water quality report for the last 60 days");
+  const leaked = oldSiteConductivity(a.answer);
+  r.check(leaked.length === 0, `answer shows no earlier-site conductivity${leaked.length ? `: ${leaked.join(", ")}` : ""}`);
+  r.check(a.reports.length > 0, "report offered");
+  if (a.reports.length) {
+    const download = await a.session.download();
+    checkPdf(r, a.session, download, /^cer-report-lakeside-mobile-buoy-.+\.pdf$/);
+    keepPdf(r, "moved-60d", download);
+    if (download.path) {
+      const { text } = pdfFacts(download.path);
+      const range = pdfConductivity(text);
+      r.check(!!range && range[1] < 600, `PDF conductivity row stays at the current site's values (${range?.join("-")})`);
+      r.check(/from an earlier location were excluded/.test(text), "PDF states that earlier-location readings were excluded");
+      r.check(!/Lakeside North/.test(text), "PDF never names the earlier site");
+    }
+  }
+  r.review("answer and PDF use only the last 12 days, and state the earlier-site exclusion and the shortened coverage");
+});
+scenario("M5", "Moved pod compared across the move date", async (r) => {
+  const a = await askFor(r, "super", "", "Compare conductivity at Lakeside Mobile Buoy and Lakeside Buoy 2026 over the last 30 days");
+  const b = await askFor(r, "super", "", "What was the conductivity at Lakeside Mobile Buoy's previous location?", { newChat: false });
+  for (const [what, x] of [["comparison", a], ["old-site request", b]]) {
+    const leaked = oldSiteConductivity(x.answer);
+    r.check(leaked.length === 0, `${what} shows no earlier-site conductivity${leaked.length ? `: ${leaked.join(", ")}` : ""}`);
+  }
+  r.review("comparison excludes old-site values; asking for the old site does not bypass current-site-only scope");
+});
+blocked("M6", "30-minute Harbor fixture", "no 30-minute fixture: the seed is hourly and only three fixtures were approved");
+blocked("M7", "Two-week-silent fixture", "no silent fixture in the seed");
+blocked("M8", "Whole-reading-failure fixture", "no whole-reading failure fixture: the seed fails only turbidity");
+scenario("M9", "University: flat-zero oxygen answer and report", async (r) => {
+  await askFor(r, "univCust", "dev:100000000000012", "Why is dissolved oxygen zero?");
+  const a = await askFor(r, "univCust", "dev:100000000000012", "Give me a water quality report for the last 7 days", { newChat: false });
+  r.check(a.reports.length > 0, "report offered");
+  if (a.reports.length) {
+    const download = await a.session.download();
+    checkPdf(r, a.session, download, /^cer-report-dev.+\.pdf$/);
+    keepPdf(r, "university-7d", download);
+  }
+  r.note("the extended conductivity-at-zero part is blocked: no such fixture");
+  r.review("sensor-quality warnings, not water-condition verdicts, for the flat-zero oxygen");
+});
+blocked("M10", "Extended range fixture", "no spike, off-scale or rail-value fixture in the seed");
+blocked("M11", "One-year history", "needs a separate disposable 365-day reseed, which wipes this run's evidence; run it on its own");
+blocked("M12", "Year-dead current pod", "no year-silent current pod in the seed");
 
-// Firestore's size rules, near enough to aim a document just under the 1 MiB limit.
-const fieldSize = (value) => {
-  if ("stringValue" in value) return Buffer.byteLength(value.stringValue) + 1;
-  if ("mapValue" in value) return Object.entries(value.mapValue.fields ?? {}).reduce((n, [k, v]) => n + Buffer.byteLength(k) + 1 + fieldSize(v), 0);
-  if ("arrayValue" in value) return (value.arrayValue.values ?? []).reduce((n, v) => n + fieldSize(v), 0);
-  if ("booleanValue" in value || "nullValue" in value) return 1;
-  return 8;
+// ---------------------------------------------------------------------------------------------
+// R: PDF checks. The person reviewing reads each PDF; these are the mechanical parts only.
+
+const pdfPages = (file) => execFileSync("pdftotext", ["-layout", file, "-"], { encoding: "utf8" }).split("\f");
+const withPdf = (key, run) => async (r) => {
+  const pdf = r.state.pdfs?.[key];
+  if (!pdf) throw new Blocked(`no ${key} report was downloaded in this run`);
+  r.note(`PDF: ${pdf.file}`);
+  await run(r, pdf, pdfFacts(pdf.path).text);
 };
 
-scenario("H5", "Asking in a chat just under the 1 MiB document limit", async (r) => {
-  const s = await r.session("harborCust");
-  const chat = (await emulator.list("chats")).find((d) => plain(d.fields.user) === s.persona.userId && plain(d.fields.assistant) === "cer-rag"
-    && plain(d.fields.messages)?.[0]?.question?.text === "What is turbidity?");
-  if (!chat) throw new Blocked("E3's chat is missing");
-  const id = chat.name.split("/").pop();
-  const fields = chat.fields;
-  const template = fields.messages.arrayValue.values[0];
-  const size = () => Object.entries(fields).reduce((n, [k, v]) => n + Buffer.byteLength(k) + 1 + fieldSize(v), 0) + 16 + Buffer.byteLength(`chats/${id}`);
-  const target = 1048576 - 1500;
-  const filler = structuredClone(template);
-  filler.mapValue.fields.answer.mapValue.fields.text = { stringValue: "" };
-  fields.messages.arrayValue.values.splice(1, 0, filler);
-  filler.mapValue.fields.answer.mapValue.fields.text.stringValue = "Padding for the document-size test. ".repeat(Math.ceil((target - size()) / 36)).slice(0, target - size());
-  await emulator.patch("chats", id, fields);
-  const before = plain(fields.messages).length;
-  r.note(`chat ${id} padded to about ${size()} bytes with ${before} messages`);
-  await s.openGilligan();
-  await s.openHistory("What is turbidity?");
-  const a = await s.ask("One more: what is conductivity?", { allow5xx: true });
-  const after = plain((await emulator.get("chats", id)).fields.messages).length;
-  r.note(`outcome: ${a.answer ? "answer shown" : `error "${a.error}"`}; stored messages ${before} -> ${after}`);
-  r.check(!(a.answer && after === before), "no lost answer: an answer shown is also stored");
-  r.check(!!a.answer || !!a.error, "a clean outcome or a clear error");
-});
-
-scenario("H6", "Logged out in another tab, then asks", async (r) => {
-  const s = await r.fresh("harborCust");
-  const other = await s.context.newPage();
-  s.extraPages.push(other);
-  await other.goto(`${DASHBOARD}/home`);
-  await other.eval(`localStorage.removeItem("token")`);
-  await s.page.type(INPUT, "What is pH?");
-  await s.page.click(SEND);
-  await s.page.waitFor(`location.pathname.startsWith("/login")`, 20000).catch(() => {});
-  r.check(await s.page.eval(`location.pathname.startsWith("/login")`), "sent back to the login page");
-  await s.step("after logout elsewhere");
-  await r.close(s);
-});
-
-scenario("I1", "Ask from the dashboard widget", async (r) => {
-  const s = await r.fresh("harborCust", { open: false });
-  const { page } = s;
-  await page.waitFor(`[...document.querySelectorAll("label")].some((l) => l.innerText.trim() === "Ask Gilligan")`, 30000);
-  const since = page.requests.length;
-  r.spend();
-  await page.type(`[...document.querySelectorAll("label")].find((l) => l.innerText.trim() === "Ask Gilligan").parentElement.querySelector("input, textarea")`, "What does turbidity measure?");
-  s.asked.push("What does turbidity measure?");
-  await page.key("Enter");
-  await page.waitFor(`location.pathname === "/gilligan"`, 30000);
-  await page.waitFor(`!!${SPINNER}`, 8000, 50).catch(() => {});
-  await page.waitFor(`!${SPINNER}`, 150000, 250).catch(() => {});
-  await delay(1000);
-  const sent = page.requests.slice(since).filter((q) => q.method === "GET" && q.url.includes("/gilligan/question")).length;
-  r.check(sent === 1, `question asked exactly once (${sent})`);
-  r.check(!(await page.eval(`location.search.includes("question=")`)), "question dropped from the address bar");
-  r.check(await page.eval(`document.querySelectorAll(".gilligan-markdown").length >= 1`), "answer shown");
-  await s.step("widget question answered");
-  await r.close(s);
-});
-
-scenario("I2", "B1, C1 and F2 at 390 px wide", async (r) => {
-  const s = await r.fresh("harborAdmin", { width: 390, height: 844 });
-  const noScroll = () => s.page.eval(`document.documentElement.scrollWidth <= window.innerWidth + 1`);
-  r.check(await noScroll(), "no horizontal scroll on arrival");
-  await s.newChat();
-  await s.ask("What does dissolved oxygen measure?");
-  await s.newChat();
-  await s.pickPod("Harbor Pier Buoy");
-  await s.ask("How is the water this week?");
-  const a = await s.ask("Give me a water quality report for the last 7 days");
-  r.check(await noScroll(), "no horizontal scroll after answers");
-  if (a.reports.length) {
-    const reachable = await s.page.eval(`(() => { const b = [...document.querySelectorAll("button")].filter((x) => x.innerText.trim().startsWith("Download report")).pop(); if (!b) return false; const w = b.getBoundingClientRect(); return w.width > 0 && w.right <= window.innerWidth + 1; })()`);
-    r.check(reachable, "report button fits the screen");
-    checkPdf(r, s, await s.download(), /^cer-report-harbor-pier-buoy-.+\.pdf$/);
-  } else {
-    r.check(false, "report offered at phone width");
+scenario("R0", "Units, limits and status agree in every downloaded PDF", async (r) => {
+  const pdfs = Object.entries(r.state.pdfs ?? {});
+  if (!pdfs.length) throw new Blocked("no report was downloaded in this run");
+  for (const [key, pdf] of pdfs) {
+    const { text } = pdfFacts(pdf.path);
+    for (const unit of ["°F", "µS/cm", "mV", "mg/L"]) r.check(text.includes(unit), `${key}: shows ${unit}`);
   }
-  await r.close(s);
+  r.review("status agrees with flags; registry water type and operator limits used; turbidity unitless and relative");
+});
+scenario("R1", "University PDF: flat-zero oxygen", withPdf("university-7d", async (r, pdf, text) => {
+  r.check(/sensor/i.test(text), "the PDF mentions the sensor");
+  r.review("DO identified as a failed or missing sensor; no normal-water verdict or oxygen emergency resting on it");
+}));
+for (const id of ["R2", "R3", "R4", "R5", "R9", "R10", "R12", "R15", "R16", "R17"]) blocked(id, `PDF audit check ${id}`, "needs a fixture the seed does not have (manual guide, PDF checks)");
+scenario("R6", "Harbor PDF: all-zero turbidity", withPdf("harbor-7d", async (r, pdf, text) => {
+  const line = text.split("\n").find((l) => /Turbidity/i.test(l) && /Clear/i.test(l));
+  r.check(!line, `turbidity not an unqualified "Clear"${line ? `: ${line.trim()}` : ""}`);
+  r.review("missing-sensor caveat on turbidity");
+}));
+scenario("R7", "Lakeside PDF: floor-spanning limits", withPdf("lakeside-60d", async (r) => {
+  r.review("blind spots and unhelpfully wide limits explained; values at the sensor floor do not prove health");
+}));
+scenario("R8", "Lakeside PDF: provenance and blind-spot notes on normal rows", withPdf("lakeside-60d", async (r) => {
+  r.review("needed warnings visible even where Section 3 omits a row");
+}));
+scenario("R11", "Moved pod PDF: latest site only", withPdf("moved-60d", async (r, pdf, text) => {
+  const range = pdfConductivity(text);
+  r.check(!!range && range[1] < 600, `conductivity row stays at the current site's values (${range?.join("-")})`);
+  r.check(/Lakeside MI/.test(text) || !/Lakeside North/.test(text), "printed location is the current site");
+  r.review("latest site only, including extrema and events; the excluded-history note is printed");
+}));
+scenario("R13", "Time zone labelled in every PDF", async (r) => {
+  const pdfs = Object.entries(r.state.pdfs ?? {});
+  if (!pdfs.length) throw new Blocked("no report was downloaded in this run");
+  for (const [key, pdf] of pdfs) r.check(/\bUTC\b|\bP[DS]T\b|time zone/i.test(pdfFacts(pdf.path).text), `${key}: dates carry a time zone`);
+  r.review("report date, range and event times unambiguous (known audit issue: unlabelled UTC)");
+});
+scenario("R14", "Event Detection heading never ends a page", async (r) => {
+  const pdfs = Object.entries(r.state.pdfs ?? {});
+  if (!pdfs.length) throw new Blocked("no report was downloaded in this run");
+  for (const [key, pdf] of pdfs) {
+    const orphaned = pdfPages(pdf.path).map((page) => page.trim().split("\n").at(-1) ?? "").some((last) => /Event Detection/i.test(last));
+    r.check(!orphaned, `${key}: no page ends on the Event Detection heading`);
+  }
+});
+scenario("R18", "Precision, units and punctuation", async (r) => {
+  const pdfs = Object.entries(r.state.pdfs ?? {});
+  if (!pdfs.length) throw new Blocked("no report was downloaded in this run");
+  for (const [key, pdf] of pdfs) {
+    const text = pdfFacts(pdf.path).text;
+    if (text.includes("‑")) r.note(`${key}: non-breaking hyphens (U+2011) present (known)`);
+    const long = text.match(/\d+\.\d{4,}/g) ?? [];
+    if (long.length) r.note(`${key}: ${long.length} values with four or more decimals, e.g. ${long.slice(0, 3).join(", ")}`);
+  }
+  r.review("precision not misleading; negative ranges readable");
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -842,14 +1050,18 @@ const writeOutputs = async (run) => {
   await fs.writeFile(path.join(RUN_DIR, "results.json"), JSON.stringify(run.results, null, 2));
   await fs.writeFile(path.join(RUN_DIR, "transcript.json"), JSON.stringify(run.transcript, null, 2));
   await fs.writeFile(path.join(RUN_DIR, "network.json"), JSON.stringify(run.network, null, 2));
-  const lines = [`# Gilligan E2E run ${RUN_ID}`, "", `Questions sent: ${run.questions} of a budget of ${MAX_QUESTIONS}.`, "",
+  const usd = await run.usd().catch(() => NaN);
+  const lines = [`# Gilligan E2E run ${RUN_ID}`, "", ...run.stackLines, "",
+    `Questions sent: ${run.questions} of a budget of ${MAX_QUESTIONS}; model spend at most $${usd.toFixed(2)} of $${MAX_USD} (quota-store tokens at the output rate).`, "",
     "| scenario | status | failed checks | notes |", "|---|---|---|---|"];
   for (const result of run.results) {
     const failed = result.checks.filter((c) => !c.ok).map((c) => c.what).join("; ");
     lines.push(`| ${result.id} ${result.title.replace(/\|/g, "/")} | ${result.status} | ${failed.replace(/\|/g, "/")} | ${[result.reason, ...result.notes].filter(Boolean).join("; ").replace(/\|/g, "/").slice(0, 600)} |`);
   }
   await fs.writeFile(path.join(RUN_DIR, "summary.md"), `${lines.join("\n")}\n`);
-  const expectations = Object.fromEntries(run.results.map((x) => [x.id, x.review.join("; ")]));
+  const expectations = Object.fromEntries(run.results.map((x) => [x.id, [
+    ...x.review, ...run.results.filter((y) => y.reuses === x.id).map((y) => `${y.id}: ${y.review.join("; ")}`),
+  ].join("; ")]));
   const rows = run.transcript.map((t, i) => `<section><h2>${i + 1}. ${escapeHtml(t.scenario)} - ${escapeHtml(t.persona)}${t.pod ? ` on ${escapeHtml(t.pod)}` : ""} (${t.seconds} s)</h2>
 <p class="exp">Expect: ${escapeHtml(expectations[t.scenario])}</p><p class="q">${escapeHtml(t.question)}</p>
 <pre>${escapeHtml(t.answer ?? `ERROR: ${t.error}`)}</pre>${t.screenshot ? `<a href="${t.screenshot}"><img src="${t.screenshot}" loading="lazy"></a>` : ""}
@@ -863,7 +1075,8 @@ const main = async () => {
   await fs.mkdir(path.join(RUN_DIR, "screenshots"), { recursive: true });
   const groups = option("groups", "ABCDEFGHI").replace(/,/g, "");
   const only = option("only", "").split(",").filter(Boolean);
-  const selected = S.filter((x) => (only.length ? only.includes(x.id) : groups.includes(x.group)));
+  const selected = S.filter((x) => (only.length ? only.includes(x.id) : groups.includes(x.group)))
+    .sort((a, b) => (only.length ? 0 : groups.indexOf(a.group) - groups.indexOf(b.group)));
   console.log(`[e2e] run ${RUN_ID}: ${selected.length} scenarios, budget ${MAX_QUESTIONS} questions, output ${RUN_DIR}`);
 
   if (flag("reseed")) {
@@ -872,7 +1085,19 @@ const main = async () => {
   }
   const services = createServices({ serverDir: SERVER_DIR, cerDir: CER_DIR, runDir: RUN_DIR });
   const browser = await Browser.launch({ profileDir: path.join(RUN_DIR, ".chrome-profile") });
-  const run = new Run(browser, services, await loadEntities());
+  const entities = await loadEntities();
+  const fixtures = applyFixtures(entities);
+  const run = new Run(browser, services, entities);
+  const head = (dir) => { try { return execFileSync("git", ["-C", dir, "log", "-1", "--format=%h %s"], { encoding: "utf8" }).trim(); } catch { return "unknown"; } };
+  const branch = (dir) => { try { return execFileSync("git", ["-C", dir, "rev-parse", "--abbrev-ref", "HEAD"], { encoding: "utf8" }).trim(); } catch { return "?"; } };
+  run.stackLines = [
+    `- server: ${branch(SERVER_DIR)} ${head(SERVER_DIR)}`,
+    `- cer-demo: ${branch(CER_DIR)} ${head(CER_DIR)}${(() => { try { return ` (parents ${execFileSync("git", ["-C", CER_DIR, "log", "-1", "--format=%p"], { encoding: "utf8" }).trim()})`; } catch { return ""; } })()}`,
+    `- dashboard: ${DASHBOARD_DIR ? `${branch(DASHBOARD_DIR)} ${head(DASHBOARD_DIR)}` : DASHBOARD}`,
+    `- seed: ${fixtures ? "with release-test fixtures" : "census only"}, ${entities.devices.length} devices`,
+  ];
+  run.tokensAtStart = 0;
+  for (const database of ["(default)", "gilligan"]) run.tokensAtStart += await usageTokens(database).catch(() => 0);
   let group = "";
   try {
     await services.server.start();

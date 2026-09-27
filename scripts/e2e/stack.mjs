@@ -5,20 +5,23 @@ import fs from "node:fs";
 import path from "node:path";
 import { delay } from "./cdp.mjs";
 
-export const MIRROR_PROJECT = "conductive-fold-343604";
+/** A `demo-` project never resolves to a real one; the server and seed refuse anything else. */
+export const MIRROR_PROJECT = process.env.MIRROR_PROJECT_ID ?? "demo-cer-mirror";
+if (!MIRROR_PROJECT.startsWith("demo-")) throw new Error(`MIRROR_PROJECT_ID must start with demo- (got "${MIRROR_PROJECT}")`);
 export const EMULATOR_HOST = "127.0.0.1:8080";
 export const SERVER_API = "http://localhost:5101/api/v1";
 
-const emulatorDocs = `http://${EMULATOR_HOST}/v1/projects/${MIRROR_PROJECT}/databases/(default)/documents`;
+const emulatorDocs = (database = "(default)") =>
+  `http://${EMULATOR_HOST}/v1/projects/${MIRROR_PROJECT}/databases/${encodeURIComponent(database)}/documents`;
 const emulatorHeaders = { Authorization: "Bearer owner", "Content-Type": "application/json" };
 
 /** Firestore REST reads and writes against the emulator only; the host is fixed above. */
 export const emulator = {
-  async list(collection) {
+  async list(collection, database) {
     const documents = [];
     let pageToken = "";
     do {
-      const url = `${emulatorDocs}/${collection}?pageSize=300${pageToken ? `&pageToken=${pageToken}` : ""}`;
+      const url = `${emulatorDocs(database)}/${collection}?pageSize=300${pageToken ? `&pageToken=${pageToken}` : ""}`;
       const body = await (await fetch(url, { headers: emulatorHeaders })).json();
       documents.push(...(body.documents ?? []));
       pageToken = body.nextPageToken ?? "";
@@ -26,11 +29,11 @@ export const emulator = {
     return documents;
   },
   async get(collection, id) {
-    const response = await fetch(`${emulatorDocs}/${collection}/${encodeURIComponent(id)}`, { headers: emulatorHeaders });
+    const response = await fetch(`${emulatorDocs()}/${collection}/${encodeURIComponent(id)}`, { headers: emulatorHeaders });
     return response.ok ? response.json() : null;
   },
   async patch(collection, id, fields) {
-    const response = await fetch(`${emulatorDocs}/${collection}/${encodeURIComponent(id)}`, {
+    const response = await fetch(`${emulatorDocs()}/${collection}/${encodeURIComponent(id)}`, {
       method: "PATCH", headers: emulatorHeaders, body: JSON.stringify({ fields }),
     });
     if (!response.ok) throw new Error(`emulator patch ${collection}/${id}: ${response.status} ${await response.text()}`);
@@ -56,10 +59,19 @@ const docId = (document) => document.name.split("/").pop();
 export const loadEntities = async () => {
   const devices = (await emulator.list("devices")).map((d) => ({
     id: docId(d), name: plain(d.fields.name), label: plain(d.fields.label), organization: plain(d.fields.organization) ?? "",
+    mergedInto: plain(d.fields.mergedInto) ?? "",
   }));
   const organizations = (await emulator.list("organizations")).map((d) => ({ id: docId(d), name: plain(d.fields.name) }));
   return { devices, organizations };
 };
+
+/**
+ * Model tokens cer-demo's Firestore quota store has counted in one database. Every token priced at
+ * the model's output rate gives an upper bound on spend.
+ */
+export const usageTokens = async (database = "(default)") =>
+  (await emulator.list("gilligan_usage", database)).reduce((sum, d) => sum + (plain(d.fields.tokens) ?? 0), 0);
+export const OUTPUT_USD_PER_MILLION = 0.60; // gpt-oss-120b on Fireworks, src/eval/prices.ts
 
 export const legacyChats = async (userId) =>
   (await emulator.list("chats"))
@@ -85,18 +97,36 @@ export const PERSONAS = {
   invited: { userId: "user-harbor-cust-03", org: "org-harbor-000000001", pods: [] },
   seaviewCust1: { userId: "user-seaview-cust-01", org: "org-seaview-00000001", pods: ["Seaview Marina"] },
   seaviewCust2: { userId: "user-seaview-cust-02", org: "org-seaview-00000001", pods: ["Seaview Marina"] },
+  riverCust: { userId: "user-river-cust-0001", org: "org-river-0000000001", pods: [] },
+};
+
+/** With `mirror:seed -- --fixtures`, pickers gain the moved and no-GPS pods (server scripts/mirror/README.md). */
+export const applyFixtures = (entities) => {
+  if (!entities.devices.some((d) => d.label === "dev:100000000000016")) return false;
+  PERSONAS.super.pods.push("Lakeside Mobile Buoy", "River Watch Float");
+  PERSONAS.lakeCust.pods.push("Lakeside Mobile Buoy");
+  PERSONAS.riverCust.pods.push("River Watch Float");
+  return true;
 };
 export const PASSWORD = "mirror-dev-password";
 export const emailOf = (persona) => `${persona.userId.replace(/-0*(\d+)$/, "-$1")}@mirror.example.invalid`;
 
 const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-/** Names, labels and organization names the persona must never be shown. */
+/**
+ * Names, labels and organization names the persona must never be shown. A predecessor with no
+ * organization (null, missing, empty or an id that does not exist) belongs to the organization of
+ * the pod it merged into (release plan Q6), so that organization may see it.
+ */
 export const forbiddenTerms = (persona, entities) => {
   if (persona.all) return [];
   const terms = new Set();
+  const known = new Set(entities.organizations.map((o) => o.id));
+  const orgOf = new Map(entities.devices.map((d) => [d.label, d.organization]));
   for (const device of entities.devices) {
     if (device.organization === persona.org && persona.org !== "") continue;
+    const unowned = !device.organization || !known.has(device.organization);
+    if (unowned && device.mergedInto && persona.org !== "" && orgOf.get(device.mergedInto) === persona.org) continue;
     terms.add(device.name);
     terms.add(device.label);
   }
@@ -165,6 +195,7 @@ export const createServices = ({ serverDir, cerDir, runDir }) => {
   const server = new Service("server", {
     cwd: serverDir,
     command: "exec npm run dev:mirror",
+    env: { MIRROR_PROJECT_ID: MIRROR_PROJECT },
     ready: async () => (await fetch(`${SERVER_API}/devices`)).status === 401,
     logFile: path.join(runDir, "server.log"),
   });
@@ -176,8 +207,13 @@ export const createServices = ({ serverDir, cerDir, runDir }) => {
     env: {
       PORT: "8010", DEVICE_API_BASE_URL: SERVER_API, DEVICE_API_TOKEN: "",
       SENSOR_TOOL: "true", REPORT_TOOL: "true",
-      QUERY_QUOTA: "true", QUERY_QUOTA_STORE: "firestore", QUERY_QUOTA_WINDOW: "1d",
+      CORPUS_SOURCE: "artifact", DEFAULT_RETRIEVAL: "hybrid-slice-vector", AUDIT_LOG: "false",
+      // The release allowances (manual guide, "Make one temporary settings file").
+      QUERY_QUOTA: "true", QUERY_QUOTA_STORE: "firestore", QUERY_QUOTA_WINDOW: "1d", QUERY_QUOTA_SCOPE: "caller",
+      QUERY_QUOTA_REQUESTS: "20", QUERY_QUOTA_REPORTS: "5", QUERY_QUOTA_TOKENS: "1000000",
       FIRESTORE_EMULATOR_HOST: EMULATOR_HOST, FIRESTORE_PROJECT_ID: MIRROR_PROJECT, FIRESTORE_DATABASE_ID: "(default)",
+      // Q6: a predecessor with no organization is read for its successor's organization.
+      PREDECESSOR_PERIOD_HANDOFF: "true",
       CER_RAG_SERVICE_KEY: serviceKey,
     },
     ready: async () => (await fetch("http://localhost:8010/health")).ok,
@@ -186,10 +222,11 @@ export const createServices = ({ serverDir, cerDir, runDir }) => {
   return { server, cer };
 };
 
-export const reseed = (serverDir, runDir) => new Promise((resolve, reject) => {
+export const reseed = (serverDir, runDir, { fixtures = true } = {}) => new Promise((resolve, reject) => {
   const log = fs.openSync(path.join(runDir, "seed.log"), "a");
-  const child = spawn("bash", ["-c", "exec npm run mirror:seed"], {
-    cwd: serverDir, stdio: ["ignore", log, log], env: { ...process.env, FIRESTORE_EMULATOR_HOST: EMULATOR_HOST },
+  const child = spawn("bash", ["-c", `exec npm run mirror:seed${fixtures ? " -- --fixtures" : ""}`], {
+    cwd: serverDir, stdio: ["ignore", log, log],
+    env: { ...process.env, FIRESTORE_EMULATOR_HOST: EMULATOR_HOST, MIRROR_PROJECT_ID: MIRROR_PROJECT },
   });
   child.on("exit", (code) => { fs.closeSync(log); code === 0 ? resolve() : reject(new Error(`seed exited ${code}`)); });
 });

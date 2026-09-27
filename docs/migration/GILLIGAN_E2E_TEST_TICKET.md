@@ -1,6 +1,7 @@
 # Ticket: end-to-end test of the Gilligan page on the Firestore mirror
 
-Written 2026-09-25 for a new session to pick up.
+Written 2026-09-25 for a new session to pick up; updated 2026-09-27.
+The manual test guide, [`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_TEST_GUIDE.md), is now the checklist of record, with the added groups G4, K, M and R; where the two differ, follow the guide.
 Start with `CLAUDE.md`, then this ticket, then [`LOCAL_STACK.md`](LOCAL_STACK.md) (the Google Cloud and emulator section) and `clean-earth-rovers-server/.worktrees/mirror/scripts/mirror/README.md`.
 
 ## Goal
@@ -26,7 +27,7 @@ Never tested yet:
 
 - Any caller other than superadmin, so customer isolation has not been seen in a browser.
 - Chat history and quota persisted in Firestore rather than in memory.
-- Legacy Gemini-era chats in the history list.
+- That Gemini-era chats stay out of the history list (decision D2).
 - The server running against the mirror at all: its env file was not created in the session that built the mirror.
 
 ## The stack for this run
@@ -40,8 +41,8 @@ bot (headless Chromium) -> dashboard :3000 -> server :5101 (mirror branch) -> Fi
 | piece | checkout and branch | settings |
 |---|---|---|
 | Firestore emulator | server worktree `.worktrees/mirror` | `npm run mirror:emulator`, then `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npm run mirror:seed` |
-| Server | `clean-earth-rovers-server/.worktrees/mirror`, branch `mirror/firestore-emulator` (from `local`) | `npm run dev:mirror` with `.env.mirror.local` as the mirror README lists; port 5101; nothing proxied upstream |
-| cer-demo | a worktree of `feat/service-release` (the release candidate with the Firestore quota store) | `PORT=8010`, `DEVICE_API_BASE_URL=http://localhost:5101/api/v1`, `DEVICE_API_TOKEN` empty, `SENSOR_TOOL=true`, `REPORT_TOOL=true`, `QUERY_QUOTA=true` with store `firestore`, `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080`, `FIRESTORE_PROJECT_ID=conductive-fold-343604` |
+| Server | `clean-earth-rovers-server/.worktrees/mirror`, branch `mirror/e2e-p3` (from `local`, with P3, P4, the service key and Q6's `510cf00`) | `npm run dev:mirror` with `.env.mirror.local` as the mirror README lists and `MIRROR_PROJECT_ID=demo-cer-mirror`; port 5101; nothing proxied upstream |
+| cer-demo | a local, unpushed merge of `dev` and `feat/service-release` (the Firestore quota store and service key are not on `dev` yet) | `PORT=8010`, `DEVICE_API_BASE_URL=http://localhost:5101/api/v1`, `DEVICE_API_TOKEN` empty, `SENSOR_TOOL=true`, `REPORT_TOOL=true`, `QUERY_QUOTA=true` with store `firestore` and the release allowances, `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080`, `FIRESTORE_PROJECT_ID=demo-cer-mirror`, `PREDECESSOR_PERIOD_HANDOFF=true` |
 | Dashboard | `user-dashboard`, branch `local` | `NEXT_PUBLIC_API_BASE_URL=http://localhost:5101` and `API_PROXY_TARGET=http://localhost:5101` for this run |
 
 Before starting:
@@ -70,7 +71,7 @@ Each must pass before the bot runs; a failure here is a finding in its own right
 ## Who the bot logs in as
 
 Every user with a password logs in with `mirror-dev-password`; emails are `<user id without leading zeros>@mirror.example.invalid`, for example `user-harbor-admin-1@mirror.example.invalid`.
-Every such user already has two or three legacy chats in their history.
+Every such user also has two or three Gemini-era chats in Firestore; decision D2 ignores them, so they must never appear in the history list.
 
 | persona | user | should see | why it matters |
 |---|---|---|---|
@@ -114,7 +115,7 @@ Expected answers describe content, not wording.
 
 | # | do | expect |
 |---|---|---|
-| A1 | Log in as each persona and open the Gilligan page | Page loads; pod picker lists exactly the persona's pods; history lists their legacy chats; the quota line shows the allowance |
+| A1 | Log in as each persona and open the Gilligan page | Page loads; pod picker lists exactly the persona's pods; history lists none of their Gemini-era chats (decision D2); the quota line shows the allowance |
 | A2 | Bay customer opens the page | Empty pod picker handled gracefully; document questions still work |
 | A3 | Invited user tries to log in | Refused with a readable message |
 
@@ -158,8 +159,8 @@ Expected answers describe content, not wording.
 
 | # | do | expect |
 |---|---|---|
-| E1 | Open a legacy chat | Question and answer render; no invented citations or evidence; the old pod snapshot does not break the layout |
-| E2 | Ask a new question inside a legacy chat | Appends to it, or starts a new chat; either is fine if consistent and the list updates |
+| E1 | Look for the persona's Gemini-era chats | Neither listed nor openable (decision D2; guide E1) |
+| E2 | Ask a question naming a Gemini-era chat | Starts a new chat and leaves the old one unchanged |
 | E3 | Start a new chat, ask, reload | The chat persists and titles from its first question |
 | E4 | Send a question, then open another chat before the answer arrives | The answer lands in its own chat, not the one on screen |
 | E5 | Restart the server and cer-demo | History is still there (it lives in the emulator now) |
