@@ -32,6 +32,18 @@ export const REWRITE_SYSTEM_PROMPT = `You rewrite the user's latest message into
 - If the latest message already stands on its own, return it unchanged.
 Reply with the query only, on one line, with no quotes or explanation.`;
 
+/**
+ * First turns have no conversation to resolve, but are often phrased conversationally ("my
+ * readings look off after the storm, should I worry?"), which embeds poorly. Measured offline
+ * only (`retrieval:eval --rewrite-first`); `rewriteQuery` still leaves first turns alone.
+ */
+export const FIRST_TURN_REWRITE_SYSTEM_PROMPT = `You rewrite a user's question into a search query for a library of water-quality monitoring documents.
+- Name the specific instrument, parameter, site condition or procedure the question is about, using the question's own terms.
+- Keep every detail the question asks about, and do not add topics it does not ask about.
+- Do not answer the question.
+- If the question is already a clear search query, return it unchanged.
+Reply with the query only, on one line, with no quotes or explanation.`;
+
 export interface RewriteCompleter {
   complete(messages: ChatMessage[]): Promise<{ content: string; usage?: LlmUsage }>;
 }
@@ -90,6 +102,28 @@ export const rewriteQuery = async (
     return { query: cleaned, rewritten: cleaned !== query, usage: answer.usage };
   } catch (error) {
     log.warn(`Query rewrite failed; searching with the original message: ${error instanceof Error ? error.message : String(error)}`);
+    return { query, rewritten: false };
+  }
+};
+
+/** A first turn as a search query; same fallbacks as `rewriteQuery`. */
+export const rewriteFirstTurn = async (
+  llm: RewriteCompleter,
+  query: string,
+): Promise<RewriteResult> => {
+  try {
+    const answer = await llm.complete([
+      { role: "system", content: FIRST_TURN_REWRITE_SYSTEM_PROMPT },
+      { role: "user", content: `Question:\n${query}\n\nSearch query:` },
+    ]);
+    const cleaned = cleanRewrite(answer.content);
+    if (cleaned === "") {
+      log.warn("First-turn rewrite returned nothing usable; searching with the original message.");
+      return { query, rewritten: false, usage: answer.usage };
+    }
+    return { query: cleaned, rewritten: cleaned !== query, usage: answer.usage };
+  } catch (error) {
+    log.warn(`First-turn rewrite failed; searching with the original message: ${error instanceof Error ? error.message : String(error)}`);
     return { query, rewritten: false };
   }
 };

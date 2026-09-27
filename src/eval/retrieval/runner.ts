@@ -1,4 +1,5 @@
 import { readCorpus } from "../../ingestion/ingest";
+import { mergeRankings } from "../../retrieval/queryDecompose";
 import type { Chunk } from "../../types/retrieval.types";
 import { loadLabels, type LoadedLabels } from "./labels";
 import { scoreQuery, summarise } from "./metrics";
@@ -40,8 +41,12 @@ export interface RunOptions {
   /**
    * Turns a labelled query into the text actually searched, e.g. a follow-up rewritten from its
    * conversation (`QUERY_REWRITE`). Absent, the label's query is searched verbatim.
+   *
+   * An array is a split query (`queryDecompose.ts`): the first entry is searched as usual and
+   * each further one alongside it, merged by `mergeRankings` to the first search's size, so the
+   * prompt holds as many chunks as an unsplit query's.
    */
-  searchQuery?: (fixtureId: string, label: LabelledQuery) => Promise<string>;
+  searchQuery?: (fixtureId: string, label: LabelledQuery) => Promise<string | string[]>;
 }
 
 export interface RunResult {
@@ -98,13 +103,22 @@ export const runRetrievalEval = async (
 
   for (let i = 0; i < labels.queries.length; i += 1) {
     const { fixtureId, fixtureClass, label } = labels.queries[i];
-    const query = options.searchQuery
+    const searchedFor = options.searchQuery
       // eslint-disable-next-line no-await-in-loop
       ? await options.searchQuery(fixtureId, label)
       : label.query;
-    if (query !== label.query) searched[`${fixtureId}#${label.turn}`] = query;
+    const [query, ...subQueries] = Array.isArray(searchedFor) ? searchedFor : [searchedFor];
+    const shown = [query, ...subQueries].join(" | ");
+    if (shown !== label.query) searched[`${fixtureId}#${label.turn}`] = shown;
     // eslint-disable-next-line no-await-in-loop
-    const context = await adapter.getContext(query, { topK: options.topK });
+    const first = await adapter.getContext(query, { topK: options.topK });
+    const context = subQueries.length === 0
+      ? first
+      : mergeRankings([
+        first,
+        // eslint-disable-next-line no-await-in-loop
+        ...await Promise.all(subQueries.map((q) => adapter.getContext(q, { topK: options.topK }))),
+      ], first.length);
     const ranked = toRanked(context, byFilename);
 
     totalChunks += ranked.length;
