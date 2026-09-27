@@ -164,3 +164,17 @@ describe("get_pod_thresholds — device resolution", () => {
     expect(calls.filter((c) => c.url.includes("/devices")).length).toBe(1);
   });
 });
+
+it.each([
+  { minPH: 0, maxPH: 100 },
+  { minPH: -1, maxPH: 8 },
+])("marks an over-wide physical range not assessed, without quoting it: %j", async (thresholds) => {
+  const { client } = makeClient([{ id: "pod", data: { name: "Pod", label: "dev:pod", thresholds } }]);
+  const tool = new GetPodThresholds({ sensor: new QuerySensorData({ client }) });
+  const result = await tool.run({});
+  const ph = (result.thresholds as Record<string, Record<string, unknown>>).ph;
+  expect(ph.status).toBe("not assessed");
+  expect(ph.reason).toMatch(/not assessed/i);
+  expect(ph).not.toHaveProperty("min");
+  expect(ph).not.toHaveProperty("max");
+});

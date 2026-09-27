@@ -239,12 +239,13 @@ Shape:
 config = {
   nodeEnv, isProduction, port, logLevel,
   firestore:  { projectId?, databaseId },
-  fireworks:  { apiKey?, baseUrl, chatModel?, embeddingModel, maxTokens, temperature, user },
+  fireworks:  { apiKey?, baseUrl, chatModel?, embeddingModel, rerankModel, maxTokens, temperature,
+                reasoningEffort, thinking, user },
   deviceApi:  { baseUrl?, devToken?, timeoutMs, defaultDeviceLabel? },
   tools:      { sensorTool, reportTool, maxToolRounds, rawLimit },
   chat:       { maxHistoryMessages },
   quota:      { enabled, requests, tokens, reports, windowMs, windowLabel, scope },
-  retrieval:  { defaultMode, debug, corpusSource },
+  retrieval:  { defaultMode, debug, corpusSource, queryRewrite, queryRewriteFirstTurn },
   waterType,
   audit:      { enabled },
   catalogue:  { prompt, includeDrafts },
@@ -262,6 +263,16 @@ every startup log than a silently voided sweep.
 `catalogue.prompt` (`CATALOGUE_PROMPT`, default `false`) appends the guidance block to the system
 prompt and warns at startup for the same capture-comparability reason. `catalogue.includeDrafts`
 (`CATALOGUE_DRAFTS`, default `false`) shows unapproved entries, for the supervisor's review only (§4b).
+
+`fireworks.reasoningEffort` (`LLM_REASONING_EFFORT`: `default` sends nothing, or `low`, `medium`,
+`high`) and `fireworks.thinking` (`LLM_THINKING`: `default` or `disabled`, which sends
+`thinking: {type: "disabled"}` for models such as `minimax-m3`) shape the answer call. The release
+answers with `glm-5p3-flash` at `low`: it is thinking-only, rejects `disabled` with a 400, and was
+evaluated at `low` (`EVAL_REBUILD.md`, R4).
+
+`retrieval.queryRewrite` (`QUERY_REWRITE`, default `false`) and `retrieval.queryRewriteFirstTurn`
+(`QUERY_REWRITE_FIRST_TURN`, default `false`, effective only with the first on) are described in
+§10.1a; the release turns both on.
 
 Environment variables and defaults are documented in `README.md` §5 and `.env.example`.
 
@@ -538,10 +549,18 @@ tests construct isolated instances instead of depending on import order.
 - **`firestore-vector`** (`FirestoreVectorAdapter`) — dense RAG on Firestore's own vector search
   (§14b), the surviving RAG arm.
 - **`local-vector`** (`LocalVectorAdapter`) — the same dense retrieval computed in process against
-  the cache `npm run embed:cache` writes. No credentials, no vector index, no network on the query
-  path. It exists so retrieval can be evaluated offline and free; `npm run compare:vector-arms`
+  the cache `npm run embed:cache` writes. No vector index and no Firestore reads; each query is
+  still embedded through Fireworks (`EmbeddingService.embedQuery`), and the cache holds only the
+  corpus vectors. It began as the way to evaluate retrieval offline; `npm run compare:vector-arms`
   reports **30/30 queries ranked identically** to `firestore-vector`, drift ~1e-4, because
   Firestore's index is configured `flat` (exhaustive) rather than approximate.
+  **It is the release's retrieval (user, 2026-09-27)** at `DEFAULT_TOP_K` 20 with the four probe
+  datasheets unpinned, as ordinary corpus documents: R4 measured it level with the reranker at a
+  third of the cost (`EVAL_REBUILD.md`, "Control: `local-vector` with both rewrites").
+- **`local-rerank`** / **`hybrid-slice-rerank`** — the same candidates re-scored by a Fireworks
+  reranker (`RERANK_MODEL`, default `fireworks/qwen3-reranker-8b`) before the top k are kept. R4
+  found no gain over `local-vector` with both rewrites at about three times the cost per question,
+  so neither is used in the release.
 - **`local-hybrid`** (`RrfHybridAdapter`) — dense fused with an in-process BM25 index using
   Reciprocal Rank Fusion, `RRF_K = 60`. This restores the lexical half the migration dropped
   because Firestore has no full-text search (`RETRIEVAL_BAKEOFF.md` §4b's "dead lexical branch").
@@ -567,8 +586,12 @@ behavior, so retrieval stays comparable across the migration.
 **`MAX_TOP_K` was raised from 10 to 50 on 2026-08-24.** The old ceiling was legacy parity
 (`MIGRATION_SPEC.md` §7: default 5, caller-capped 1–10), never a measurement. While it stood, a
 `k=20` run returned exactly `k=10`'s numbers because `resolveTopK` clamped — which reads as "depth
-does not help" when the request simply never happened. **`DEFAULT_TOP_K` is unchanged at 5**: the
-ceiling bounds what a caller may request, the default is what every request pays.
+does not help" when the request simply never happened. The ceiling bounds what a caller may
+request; the default is what every request pays.
+
+**`DEFAULT_TOP_K` is 20** (raised from 5 in R4, 2026-09-24): measured correctness rose with depth and
+peaked at 20 (`EVAL_REBUILD.md`). It is a code constant in `options.ts`, not an environment
+setting; an environment variable of that name is ignored.
 
 ---
 
@@ -600,12 +623,37 @@ house `{ error, message }` shape.
   unbounded client-controlled input; without a cap one conversation grows the prompt, and the bill,
   without limit. Oldest turns are dropped because recent ones carry the context that matters.
 
+### 10.1a Search query rewriting (`src/retrieval/queryRewrite.ts`)
+
+Retrieval sees one query string, not the conversation, so a follow-up such as "what about in
+winter?" searches without its subject. With `QUERY_REWRITE` on, `ChatController.postChat` first asks
+the answer model to rewrite a follow-up into a standalone search query from the history; with
+`QUERY_REWRITE_FIRST_TURN` also on, a first message is rewritten into a search query too. Only the
+search changes: the prompt still carries the user's own words. A failed or empty rewrite falls back
+to the message verbatim and is logged; a success logs nothing. Each rewrite is one extra model call
+per turn.
+
+R4 measured the effect (`EVAL_REBUILD.md`): follow-up rewriting raised offline recall at k=20 from
+38% to 55% and correctness from 0.72 to about 0.90; first-turn rewriting added about five recall
+points. The release turns both on.
+
 ### 10.2 Prompt assembly (`src/prompt/`)
 
 `buildSystemPrompt()` is ported from the legacy `backend/main.py::build_system_prompt`, recovered
 from git history at `7e2b09e^` — `MIGRATION_SPEC.md` §4.2 described its structure but never recorded
 its text. `REFUSAL_SENTENCE` is **verbatim** because behavior depends on its exact wording (pinned
 by a test; `MIGRATION_SPEC.md` §11 calls it out specifically).
+
+Three rules were added in R4 (2026-09-27, `EVAL_REBUILD.md`):
+
+- **`NO_TOOLS_RULE`**, added only when both tools are off, forbids offering to look up pod readings
+  or any other tool action; `glm-5p3-flash` otherwise offered to fetch readings it could not reach.
+  The tools-on prompt does not carry it.
+- **No pod facts from typical instruments** (both modes): a unit, model, sensor type, setting or
+  threshold is never inferred for this pod from what an excerpt says of other instruments.
+- **The refusal sentence word for word** (both modes) whenever any part is declined; a paraphrase
+  does not replace it. With the previous rule GLM answered or paraphrased two of eight must-refuse
+  turns; with both it refused all eight exactly on gold context and in the launch capture.
 
 **The prompt carries no ranges.** The legacy `AUTHORITATIVE NORMAL RANGES` block was deleted on
 2026-09-13, when the supervisor vetoed the operator source-of-truth document's ranges. A pod's
@@ -650,7 +698,9 @@ it cannot perform. See ◆G11.
 | 1 | system prompt | never, for a given deployment |
 | 2 | document context | per corpus slice (direct-feed) or per query (RAG) |
 | 3 | history | per conversation |
-| 4 | the user question | every request |
+| 4 | `CURRENT TIME` line, only with a device tool on | every request |
+| 5 | `SELECTED POD` line, only with a device tool on and a pod sent | every request |
+| 6 | the user question | every request |
 
 **This ordering is load-bearing, not stylistic.** Fireworks prompt caching matches on a *prefix*, so
 a cache hit extends only to the first differing byte. Anything dynamic placed earlier truncates the
@@ -659,6 +709,15 @@ on this (`RETRIEVAL_BAKEOFF.md` §1); a test asserts two different questions pro
 prefixes. The context block is omitted entirely when there are no chunks, because an empty
 `CONTEXT:` heading reads to the model as "the corpus had nothing" — a different claim from "no
 corpus was consulted".
+
+**With tools on, each request carries the current time and each reading its age** (2026-09-24, Q1).
+In the 2026-09-24 conversation check the model called two pods silent for 10 and 12 days "likely online" and gave a 10-day-old temperature as current, because nothing told it the date (`migration/CONVERSATION_QA_2026-09-24.md` findings 1 and 2).
+`buildMessages` now adds `CURRENT TIME: <UTC, to the minute>` as block 4 above; it cannot go in the system prompt, which must stay byte-identical to be cached.
+The tools state ages themselves, since date arithmetic by the model is unreliable: `list_pods` adds `last_reported_age` and `last_reported_stale`, and `query_sensor_data` and `generate_report` add `device_last_reported_age` and `device_last_reported_stale` (`src/tools/readingAge.ts`).
+Stale means more than six hours without a reading: the pods report about hourly, so six missed reports is well past jitter.
+Ages round up, so a reading is never described as fresher than it is (9 days 20 hours reads as "10 days").
+`TOOL_BLOCK` asks the model to state a reading's age and never call a stale pod online, to test a claimed spike or crash with `min`, `max` or `series` rather than `latest` (finding 4), and to relay every tool `note` (finding 5).
+None of this reaches a tools-off prompt, so R4's captures are unchanged.
 
 ### 10.3 LLM call (`src/services/LlmService.ts`)
 
@@ -730,7 +789,8 @@ accepts, and shares the per-token `/devices` TTL cache with every other tool in 
 which drops readings with no GPS fix, so a null there means "not confirmed recently" and the
 question "has this pod stopped" is a `query_sensor_data` call. Freshness probing is capped at 20
 pods (the listing itself is never truncated); beyond that, pods carry
-`"last_reported": "not_checked"`.
+`"last_reported": "not_checked"`. A timestamp comes with `last_reported_age` and
+`last_reported_stale` (§10.2).
 
 **Arguments:** `metric` (six names, or `all`), `time_range`, `aggregation`, optional `device`, and
 optional `bucket` for `series`.
@@ -772,6 +832,7 @@ Behavior worth knowing, each guarding a documented silent-failure mode in `DEVIC
 |---|---|
 | `/water/average` is never called; everything is computed from the raw period series | that endpoint returns zeros on an empty window and drops whole rows when any one probe faults |
 | empty window ⇒ `value: null`, `n_samples: 0`, plus `device_last_reported` | a fabricated `0` is anoxic water at pH 0, and the eval's automatic disqualification |
+| every result with a `device_last_reported` also carries its age and a stale flag (§10.2) | ranges anchor to the newest reading, so a pod silent for days answers "now" with a days-old value that reads as current |
 | `earliest` is its own aggregation, not the first row of `raw` | `raw` drops the **oldest** rows first, so its first row is not the earliest reading — this produced a confidently wrong date on live data |
 | `series` buckets server-side rather than handing over raw rows | a week is ~336 rows; trend-reading from those is arithmetic a 20B model is bad at, over a window `raw` may have truncated |
 | ranges anchor to the device's newest reading, not the wall clock | one cleared pod is stale; a wall-clock "last day" is empty on a pod with a good last day of data |
@@ -981,6 +1042,12 @@ No LLM call is made and nothing is written to disk.
 
 **The tool renders no PDF.** `generate_report` returns the summary the model narrates (status, event headings, baseline provenance, catalogue version) plus `report_request: { time_range, device? }`, the arguments it ran with.
 It never returns a URL, and the prompt tells the model to point at the interface's download button instead of writing a link.
+
+**The status comes with its reason** (2026-09-24, Q1).
+`assessStatus` (`src/report/types.ts`) walks the same ladder `overallStatus` always did and also returns the rule that fired and the parameters behind it; `overallStatus` is now its `.status`, so the PDF is unchanged.
+The tool adds `status_reason`, one sentence naming that rule and, for a flag-driven status, each flagged parameter's observed range against its configured threshold in the PDF's number format, and `parameter_flags`, every measured parameter's flag.
+Before this, an ORP Exceedance on Old Woman Creek reached the model as "Action Required" with 0 events and no cause, and the model wrote "no abnormal conditions" beside it (`migration/CONVERSATION_QA_2026-09-24.md` finding 3).
+The period ends on the device's newest reading, so the tool also returns `device_last_reported` with its age, and the prompt asks the model to say when a stale pod's period ended.
 
 **The route renders the PDF on request.** `POST /api/v1/reports` takes that `report_request` as its body and answers `200 application/pdf` with `Content-Disposition: attachment; filename="cer-report-<site>-<start>-to-<end>.pdf"` and `Cache-Control: no-store`.
 Guards, in order: `requireCallerToken` (401), the report quota (429, §4a), `REPORT_TOOL` (404 while off), body validation (400: `time_range` required, at most 100 characters; `device` optional, at most 200), then the pipeline's own refusal as 422 (a phrase the grammar does not read, a pod the caller cannot see, an empty window).
@@ -1550,3 +1617,59 @@ git-ignored too, with the four Tier 1 corpus files force-tracked as the exceptio
 Two holes of this service's own were found and fixed on 2026-08-21, and are written up in [`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md) §6.
 `GET /api/v1/devices` served unauthenticated callers out of the deployment's superadmin token; it now requires the caller's token (§10.5).
 `GET /api/v1/reports/:filename` served stored customer PDFs with no authentication; it was first gated by a token-hash ownership check and was removed on 2026-09-22, when reports moved to `POST /api/v1/reports` with nothing stored (§10.7).
+
+## 19. Current-site readings, sensor quality and predecessor authorization
+
+Chat queries, comparisons and reports use only the visit containing the latest coordinate-bearing reading, following the September 24 and September 25 decisions in `timeline.md` and Q3-Q6 in `migration/GILLIGAN_RELEASE_PLAN.md`.
+Coordinates come only from finite, in-range `best_lat` and `best_lon`, never `best_location`, fallback GPS fields or the registry.
+The pair 0,0 means no fix; other equator or prime-meridian coordinates remain valid.
+Chronologically, a positioned reading more than 1 km from the current visit's running spherical centroid starts a new visit.
+Returning A -> B -> A starts a new visit to A and excludes the first visit to A.
+Unpositioned readings count only between the current visit's first and last positioned timestamps, and missing or invalid timestamps cannot support a visit.
+A pod with no usable fix anywhere in its history is treated as never having moved: every timestamped reading counts, with a “Location not recorded” note (user decision, `timeline.md` 2026-09-27).
+A recent window without a provable site reset is re-read from the epoch first, so this never applies to a window that merely lacks fixes.
+When a pod has fixes but available history still cannot establish a site boundary, values are withheld with a “Current site not assessed” explanation.
+
+The in-process cache is scoped by a hash of caller authorization, API base URL, resolved device chain and `PREDECESSOR_PERIOD_HANDOFF`, so callers never share readings or predecessor permissions.
+Device lists and reading snapshots have named five-minute TTLs, concurrent identical requests are coalesced, and failed reads are not cached.
+Retained site context expires after thirty minutes even if refreshed, with at most 64 entries and 200,000 raw rows across reading-cache entries; oversized snapshots can answer the current request but are not retained.
+Cached rows, visit boundaries and centroid state retain the earlier context needed by the chronological rule.
+A cold request first reads three recent days from `/water/period`, independently of the requested answer range.
+Consecutive positioned fixes over 2 km apart prove a reset independently of earlier context, because the centroid after accepting a fix is within 1 km of that fix.
+The ordinary 1 km rule still determines every visit; the 2 km test is only a sufficient proof that a partial history can be used safely.
+Without that proof or retained complete context, the period duration expands to include all available nonnegative Unix-timestamp history back to the epoch, using the endpoint's duration-in-days parameter rather than treating a one-year window edge as a boundary.
+This cold or ambiguous read can be expensive, and depends on the period endpoint returning its complete requested history rather than silently truncating it.
+A fetch failure fails the query, and a partial window without a proven boundary withholds values.
+Within the TTL, repeated questions and historical ranges reuse the snapshot, which contains all rows of the established current visit even when the requested range is short.
+After the TTL, a recent read replaces an overlapping tail while retaining earlier centroid context; changes to authorized chain membership discard incompatible history.
+Registry changes become visible at the device-list TTL, and older backfills or corrections outside the recent tail become visible when retained context expires and is rebuilt.
+Report series, exact median and hourly pattern calculations pin one consistent fetched snapshot for the whole batch, including across TTL expiry or cache eviction.
+
+Turbidity is a likely failed sensor only when it remains exactly 0 or exactly 1005 for at least 24 hours between the first and last qualifying samples, with no consecutive gap longer than 3 hours.
+Named constants define both durations, and missing or faulted turbidity, a changed value, an unusable timestamp or a gap over 3 hours breaks a run.
+Detection runs on current-site context before trimming to the requested range, so a short query cannot conceal an established failed run.
+All samples in a qualifying run are excluded before aggregation and report pattern matching, and the “likely failed sensor” warning remains even when no usable turbidity sample survives.
+Operator limits that are unusable because they exceed the sensor's measurement range remain “Not assessed”, with no assertion that readings are within those limits.
+
+`PREDECESSOR_PERIOD_HANDOFF` defaults to `false`, keeping hidden predecessor labels withheld without period requests for them.
+When enabled, an organization-scoped caller can submit hidden predecessors named by the registry chain separately to the patched period route for authorization.
+The patched server alone determines whether a hidden predecessor with a null or non-existent organization belongs to the survivor's organization; a predecessor registered to another existing organization remains withheld.
+Only an unconfirmed predecessor's recognized 400 “Device not found” refusal becomes withheld history, while successful authorized readings remain available and returned history labels, withheld labels and explanatory notes are rebuilt consistently.
+A survivor refusal, a confirmed-label refusal, authentication failure, outage or unrelated error still fails the query.
+A view spanning organizations cannot use this hand-off, and visible predecessors still require the same organization as the survivor.
+Enable the flag only after the patched server handles all cer-api traffic and its authorization behavior has been verified.
+Mixed old/new server traffic is not safe.
+The flag must remain off during rollback to an unpatched server.
+
+The manual coordinate audit lists devices visible to the configured `DEVICE_API_TOKEN` and reads `/water/period/90/day` once per device without `/water/last`, writes, or model calls.
+Run it from this worktree with the existing TypeScript tooling after configuring `DEVICE_API_BASE_URL` and `DEVICE_API_TOKEN` locally:
+
+```bash
+npx --no-install ts-node scripts/coordinateAudit.ts
+```
+
+It prints device identification, total rows, usable GPS excluding 0,0, rows at 0,0, missing or invalid GPS excluding 0,0, newest timestamp, and chronological visit counts and date ranges.
+The three GPS categories are non-overlapping and sum to the total, while visit counts include unpositioned rows only within each visit's coordinate-supported span.
+Production and audit share coordinate validation and chronological segmentation.
+Site discovery is limited to the audited 90-day window, its first visit is provisional, and the audit cannot establish earlier centroid context or authorize hidden predecessor history.
+Tokens, authorization headers, raw rows, sensor values and upstream exception text are never printed by the script.

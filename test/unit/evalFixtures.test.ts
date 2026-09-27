@@ -17,13 +17,20 @@ import { DIRECT_FEED_SLICE, DOC_META } from "../../src/ingestion/corpus";
  * loader actually rejects the malformed cases it claims to.
  */
 
+const createdDirs: string[] = [];
+
 const writeFixtureDir = (files: Record<string, unknown>): string => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "eval-fixtures-"));
+  createdDirs.push(dir);
   Object.entries(files).forEach(([name, body]) => {
     fs.writeFileSync(path.join(dir, name), JSON.stringify(body), "utf8");
   });
   return dir;
 };
+
+afterEach(() => {
+  createdDirs.splice(0).forEach((dir) => fs.rmSync(dir, { recursive: true, force: true }));
+});
 
 const validFixture = {
   id: "sample",

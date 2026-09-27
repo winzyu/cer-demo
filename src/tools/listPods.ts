@@ -18,10 +18,13 @@
  * likeliest outcome was the refusal sentence for a question the system can answer completely.
  *
  * **`last_reported` is best-effort and its null is not proof of silence.** It comes from
- * `/water/last`, which drops readings whose latitude is absent or zero
- * (`DeviceApiClient.getLastReading`), so a pod reporting water chemistry without a GPS fix is
- * indistinguishable here from one that has stopped. The result says so in its own `note`, and
+ * `query_sensor_data`, using the current site's coordinate-supported time span.
+ * A pod whose returned history has no usable best_lat/best_lon fix cannot establish a site.
+ * The result says so in its own `note`, and
  * the answer to "is this pod dead" is a `query_sensor_data` call, not this field.
+ *
+ * **Each timestamp carries its age.** `last_reported_age` and `last_reported_stale` sit beside
+ * it, so "which pods are online" does not rest on date arithmetic by the model (`readingAge.ts`).
  *
  * **Device resolution and the `/devices` call are reused, not rebuilt.** This shares the
  * `QuerySensorData` instance `buildToolRegistry` hands every device-reading tool, so it hits the
@@ -33,11 +36,12 @@ import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import { QuerySensorData, type SensorToolResult } from "./querySensorData";
+import { readingAge } from "./readingAge";
 
 const log = createLogger("ListPods");
 
 /**
- * How many pods get a `last_reported` probe. Each one is its own `/water/last` call, so an
+ * How many pods get a `last_reported` probe. Each one is its own `query_sensor_data` call, so an
  * uncapped fan-out on a large or superadmin-scoped fleet would turn one question into dozens of
  * production reads. The listing itself is never truncated -- only the probe is -- because a
  * partial fleet is a wrong answer, while a missing freshness field is a stated omission.
@@ -108,9 +112,12 @@ export class ListPods {
     }
 
     const probed = devices.slice(0, LAST_REPORTED_PROBE_LIMIT);
-    const freshness = await Promise.all(
-      probed.map((device) => this.sensor.lastReportedForTool(device.label ?? "", token)),
-    );
+    const quality = await Promise.all(probed.map((device) => this.sensor.run({
+      device: device.label, metric: "all", time_range: "last year", aggregation: "latest",
+    }, { token })));
+    const freshness = quality.map((result) => (
+      typeof result.current_site_last_reported === "string" ? result.current_site_last_reported : null
+    ));
 
     // Said out loud only when it applies: on a fleet inside the cap this sentence would
     // describe a truncation that did not happen.
@@ -119,21 +126,28 @@ export class ListPods {
         + " rest are listed with \"last_reported\": \"not_checked\"."
       : "";
 
-    const pods = devices.map((device, index) => ({
-      name: device.name ?? device.label ?? "(unnamed)",
-      device: device.label ?? null,
-      operating_environment: device.operatingEnvironment ?? null,
-      ...(index < probed.length
-        ? { last_reported: freshness[index] }
-        : { last_reported: "not_checked" }),
-    }));
+    const nowMs = this.sensor.clockMs();
+    const pods = devices.map((device, index) => {
+      const age = index < probed.length ? readingAge(freshness[index], nowMs) : null;
+      return {
+        name: device.name ?? device.label ?? "(unnamed)",
+        device: device.label ?? null,
+        operating_environment: device.operatingEnvironment ?? null,
+        ...(index < probed.length
+          ? { last_reported: freshness[index] }
+          : { last_reported: "not_checked" }),
+        ...(index < probed.length && (quality[index].note || quality[index].error)
+          ? { note: quality[index].note ?? quality[index].error } : {}),
+        ...(age ? { last_reported_age: age.age, last_reported_stale: age.stale } : {}),
+      };
+    });
 
     return {
       pods,
       count: pods.length,
       source: "Device registry — the pods this account's organization can see.",
-      note: "\"last_reported\" is best effort: it comes from the latest positioned reading, "
-        + "which omits readings with no GPS fix, so a null there means \"not confirmed recently\" "
+      note: "\"last_reported\" is best effort: it comes from current-site readings, "
+        + "whose time span needs GPS fixes, so a null there means \"not confirmed recently\" "
         + "and NOT that the pod is silent. Confirm with query_sensor_data before telling the user "
         + `a pod has stopped reporting.${probeNote}`,
     };

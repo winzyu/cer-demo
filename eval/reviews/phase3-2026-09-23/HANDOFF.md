@@ -1,5 +1,7 @@
 # Phase 3 / R4 handoff - 2026-09-27 (updated after the GLM round: steps 1 and 3-6 run, step 2 not run)
 
+**Closed 2026-09-27: R4 landed on `dev`; the summary is `R4_REPORT.md` beside this file.** What follows is the working record.
+
 R4 (evaluation-driven improvement) has calibrated the judge (E2), captured the final two-arm run (E3), replaced the withdrawn judge, and run two improvement rounds on 2026-09-26 and 2026-09-27.
 The answer model is `glm-5p3-flash` at `LLM_REASONING_EFFORT=low` (user, 2026-09-26); follow-up rewriting (`QUERY_REWRITE`) is the clearest win of R4, first-turn rewriting (`QUERY_REWRITE_FIRST_TURN`) and a tools-off prompt rule were added on 2026-09-27, and GLM passed a tool-calling check against the fabricated mirror.
 The control capture (2026-09-27) settled the reranker: `local-vector` k=20 with both rewrites scores 1.14 / 1.17 against the reranker's 1.11 / 1.17 at a third of the cost and 1.2 s sooner to first token, so the reranker adds nothing; both arms fail the refusal gate (2 answered), which is GLM's to fix.

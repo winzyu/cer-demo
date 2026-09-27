@@ -127,7 +127,7 @@ export class GetPodThresholds {
           unit: unitFor(metricKey),
         }
         : {
-          status: "rejected",
+          status: verdict.reason === "implausible" ? "not assessed" : "rejected",
           reason: metricThresholdRejectionReason(verdict.reason, metricKey),
         };
       return [wireName, entry];

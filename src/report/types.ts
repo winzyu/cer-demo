@@ -84,6 +84,11 @@ export interface SiteMetadata {
   siteName: string;
   startDate: string; // ISO date, e.g. "2026-08-01"
   endDate: string;
+  /**
+   * The device's newest reading as a full timestamp; the period ends on it. Not printed: it lets
+   * `generate_report` say how long the pod has been silent since `endDate`.
+   */
+  lastReadingAt?: string;
   reportDate: string;
   /** Newest in-window GPS fix. Absent when no reading in the window carried one (see
    * buildReportInput.ts) -- never defaulted to 0,0. */
@@ -340,6 +345,34 @@ export const heldSteady = (
 ): boolean => flag === "Normal" && (p.pattern === "flat" || p.pattern === "unknown");
 
 /**
+ * Which rung of `assessStatus`'s ladder set the status. `"normal"` is the only rung with no
+ * cause to name.
+ */
+export type StatusRule =
+  | "exceedance"
+  | "high-confidence-high-event"
+  | "excursion"
+  | "event"
+  | "no-baseline"
+  | "normal";
+
+export interface StatusAssessment {
+  status: ReportStatus;
+  rule: StatusRule;
+  /**
+   * The parameters behind the rule, by `ParameterBaseline.key`: the ones flagged at that rung's
+   * level for `"exceedance"` and `"excursion"`, and empty for the event rules and the rest.
+   */
+  parameters: string[];
+}
+
+/**
+ * The report's status together with the reason for it. The status alone reached the model through
+ * `generate_report`, and an Exceedance-driven "Action Required" with no events read as a
+ * contradiction the model then papered over ("Action Required ... no abnormal conditions were
+ * reported", `docs/migration/CONVERSATION_QA_2026-09-24.md` finding 3). Computing the reason on
+ * the same ladder as the status, rather than beside it, keeps the two from ever disagreeing.
+ *
  * Note which flags are and are not consulted: "N/A" and "Qualitative" match none of the branches
  * below, on purpose. A parameter with no range (temperature) and a parameter on an uncalibrated
  * scale (turbidity) cannot raise or lower the report's status, because neither can be shown to
@@ -350,13 +383,18 @@ export const heldSteady = (
  * numeric parameter returns "Not assessed" rather than falling through to "Normal" -- see
  * ReportStatus's docstring for why a silent all-clear there is the wrong default.
  */
-export const overallStatus = (
+export const assessStatus = (
   report: ReportInput,
   probeAccuracy: (key: string, reading: number) => number,
-): ReportStatus => {
+): StatusAssessment => {
   const flagOf = (p: ParameterStats): Flag => flagFor(p, probeAccuracy);
-  if (report.parameters.some((p) => flagOf(p) === "Exceedance")) {
-    return "Action Required";
+  const flagged = (flags: Flag[]): string[] => report.parameters
+    .filter((p) => flags.includes(flagOf(p)))
+    .map((p) => p.baseline.key);
+
+  const exceeded = flagged(["Exceedance"]);
+  if (exceeded.length > 0) {
+    return { status: "Action Required", rule: "exceedance", parameters: exceeded };
   }
   // Severity alone used to escalate here, and severity is computed from duration alone. A
   // 30%-confidence window that events.ts had already downgraded to "Inconclusive" therefore put
@@ -364,13 +402,14 @@ export const overallStatus = (
   // report telling someone to escalate on evidence the same report calls too weak to name. An
   // event below the floor can still reach "Watch" below; it just cannot demand action.
   if (report.events.some((e) => e.severity === "High" && e.confidence >= CONFIDENCE_FLOOR)) {
-    return "Action Required";
+    return { status: "Action Required", rule: "high-confidence-high-event", parameters: [] };
   }
-  if (report.parameters.some((p) => ["Elevated", "Low"].includes(flagOf(p)))) {
-    return "Watch";
+  const excursions = flagged(["Elevated", "Low"]);
+  if (excursions.length > 0) {
+    return { status: "Watch", rule: "excursion", parameters: excursions };
   }
   if (report.events.length > 0) {
-    return "Watch";
+    return { status: "Watch", rule: "event", parameters: [] };
   }
   // Every escalation above wins first. Only what would otherwise be a silent "Normal" gets
   // downgraded here: if not one non-relative-index parameter has a real baseline, nothing was
@@ -382,7 +421,13 @@ export const overallStatus = (
     (p) => !isRelativeIndex(p.baseline) && p.baseline.hasFixedBaseline,
   );
   if (!anyNumericBaseline) {
-    return "Not assessed";
+    return { status: "Not assessed", rule: "no-baseline", parameters: [] };
   }
-  return "Normal";
+  return { status: "Normal", rule: "normal", parameters: [] };
 };
+
+/** The status alone, for the PDF and every caller that does not need the reason. */
+export const overallStatus = (
+  report: ReportInput,
+  probeAccuracy: (key: string, reading: number) => number,
+): ReportStatus => assessStatus(report, probeAccuracy).status;
