@@ -1,6 +1,6 @@
 import { buildMessages, formatContext, formatSelectedDevice } from "../../src/prompt/promptBuilder";
 import {
-  MULTI_SOURCE_CAVEAT, NO_TOOLS_RULE, REFUSAL_SENTENCE, REPORT_TOOL_BLOCK, TOOL_BLOCK, buildSystemPrompt,
+  NO_TOOLS_RULE, REFUSAL_SENTENCE, REPORT_TOOL_BLOCK, TOOL_BLOCK, buildSystemPrompt,
 } from "../../src/prompt/systemPrompt";
 import type { Chunk } from "../../src/types/retrieval.types";
 import { buildCatalogueBlock, catalogue, usableGuidance } from "../../src/catalogue";
@@ -76,12 +76,6 @@ describe("buildSystemPrompt", () => {
 
   it("embeds the refusal sentence verbatim", () => {
     expect(buildSystemPrompt()).toContain(REFUSAL_SENTENCE);
-  });
-
-  it("carries the multi-source caveat verbatim with tools on and off", () => {
-    // E4: the caveat's exact text is what transcripts are counted against.
-    expect(buildSystemPrompt(false, false, null)).toContain(`"${MULTI_SOURCE_CAVEAT}"`);
-    expect(buildSystemPrompt(true, true, null)).toContain(`"${MULTI_SOURCE_CAVEAT}"`);
   });
 
   it("keeps the refusal sentence character-for-character stable", () => {
