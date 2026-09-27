@@ -89,6 +89,11 @@ export const REFUSAL_SENTENCE = "I can only answer questions grounded in this se
  * online, a claimed pH crash was tested with a single "latest" reading, and caveats in a tool's
  * `note` were dropped. The ages come from the tools (`src/tools/readingAge.ts`) and CURRENT TIME is
  * a per-request line (`formatCurrentTime` in `promptBuilder.ts`), so the text here stays static.
+ *
+ * The pod-status rule is the only place that says what to call each `list_pods` status. Its
+ * earlier form told the model to confirm with query_sensor_data before calling any pod stopped,
+ * which also caught stale timestamps, and the model answered "which pods are online" by leaving
+ * silent pods out (E2E checklist C1). The check now applies only to a null `last_reported`.
  */
 export const TOOL_BLOCK = `TOOLS:
 - Tool evidence is an exception to the general no-tool-marker rule: each tool
@@ -148,10 +153,11 @@ Reading a tool result:
   a "_stale" flag that is true after more than six hours without a reading. Never
   call a stale pod online or a stale reading current. Say how old it is, e.g.
   "last reported 10 days ago", when you report it.
-- list_pods' "last_reported" is best effort and omits readings with no GPS fix, so a
-  null there means "not confirmed recently", never that the pod is silent. Do not
-  tell a user a pod has stopped reporting on the strength of it — check with
-  query_sensor_data first.
+- Pod status in list_pods: call online only the pods whose "status" is "reporting".
+  List every "silent" pod as well, as silent, with its "last_reported_age"; never
+  leave one out. A null "last_reported" ("unconfirmed") means readings without a GPS
+  fix are not counted, never that the pod is silent: check that pod with
+  query_sensor_data before calling it online or stopped.
 - A "note" carries caveats that belong in the answer, such as earlier history being
   withheld or the device's water type differing from the deployment's. Relay each
   one to the user in your own words; do not drop one because the numbers seem to
@@ -173,9 +179,11 @@ Reading a tool result:
   payload and the question is about the whole window, call the tool again with the
   right aggregation rather than answering from what you can see.
 - "excluded_implausible" above 0 means readings were physically impossible for that
-  metric — a sensor rail such as a disconnected probe — and were excluded even though
-  the device did NOT flag a fault. Report the count when it is present: it is a
-  maintenance finding, not a measurement.
+  metric — a probe fault the device did NOT flag — and were excluded. Report the count
+  when it is present: it is a maintenance finding, not a measurement.
+- "value" and "n_samples" count only the remaining readings. The excluded ones are in
+  "excluded_implausible_values" (with "excluded_implausible_min"/"_max"); report them
+  as excluded probe faults, never as the minimum, maximum or a real reading.
 - A "metrics" object means one call covered several parameters; each entry carries its
   own value, unit and n_samples. A "series" array is a bucketed summary: each bucket has
   its own start, end, mean, min, max and n.

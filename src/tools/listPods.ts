@@ -20,8 +20,8 @@
  * **`last_reported` is best-effort and its null is not proof of silence.** It comes from
  * `query_sensor_data`, using the current site's coordinate-supported time span.
  * A pod whose returned history has no usable best_lat/best_lon fix cannot establish a site.
- * The result says so in its own `note`, and
- * the answer to "is this pod dead" is a `query_sensor_data` call, not this field.
+ * The result says so in its own `note`, and such a pod is "unconfirmed": only that status
+ * needs a `query_sensor_data` check before the model calls the pod online or stopped.
  *
  * **Each timestamp carries its age.** `last_reported_age` and `last_reported_stale` sit beside
  * it, so "which pods are online" does not rest on date arithmetic by the model (`readingAge.ts`).
@@ -30,7 +30,10 @@
  * are online" by listing the fresh pods and leaving the rest out, so a pod that stopped reporting
  * vanished from the answer instead of being reported as down. Each pod now carries a `status`
  * ("reporting", "silent", "unconfirmed" or "not_checked"), and the result repeats the silent ones
- * in `silent_pods` with their age, with a note that an online answer must list them too.
+ * in `silent_pods` with their age. The note says what each status means; what to say about each
+ * is one rule in the system prompt (`systemPrompt.ts`, "Pod status in list_pods"), not repeated
+ * here. It used to be: the note's "confirm with query_sensor_data before saying a pod stopped"
+ * covered stale timestamps too, and the model resolved that conflict by leaving silent pods out.
  *
  * **Device resolution and the `/devices` call are reused, not rebuilt.** This shares the
  * `QuerySensorData` instance `buildToolRegistry` hands every device-reading tool, so it hits the
@@ -171,21 +174,17 @@ export class ListPods {
       .map((pod) => ({
         name: pod.name, last_reported: pod.last_reported, last_reported_age: pod.last_reported_age,
       }));
-    const silentNote = silentPods.length > 0
-      ? ` ${silentPods.length} pod(s) are silent (no reading for more than 6 hours), listed in`
-        + " \"silent_pods\" with the age of their last reading. When asked which pods are online,"
-        + " list the silent pods too, marked silent with that age; never leave them out."
-      : "";
 
     return {
       pods,
       count: pods.length,
       silent_pods: silentPods,
       source: "Device registry — the pods this account's organization can see.",
-      note: "\"last_reported\" is best effort: it comes from current-site readings, "
-        + "whose time span needs GPS fixes, so a null there means \"not confirmed recently\" "
-        + "and NOT that the pod is silent. Confirm with query_sensor_data before telling the user "
-        + `a pod has stopped reporting.${silentNote}${probeNote}`,
+      note: "\"status\" is \"reporting\" when the pod's last current-site reading is at most "
+        + "six hours old and \"silent\" when it is older; silent pods are repeated in "
+        + "\"silent_pods\" with \"last_reported_age\". \"unconfirmed\" means \"last_reported\" "
+        + "is null: only readings with a GPS fix count, so this pod may be reporting without one, "
+        + `and its state is not known from this list.${probeNote}`,
     };
   }
 }

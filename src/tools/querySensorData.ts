@@ -91,6 +91,37 @@ export const SUPPORTED_METRICS: readonly MetricKey[] = METRICS.map((metric) => m
 /** §8 step 5 reports pH as "unitless" rather than omitting the field. */
 const unitFor = (key: MetricKey): string => METRIC_BY_KEY.get(key)?.unit ?? "unitless";
 
+/**
+ * How many implausible readings are listed individually per metric. The count and the range
+ * cover all of them; the list only has to let the model quote the readings a claim is about
+ * ("the pH crashed to 2 yesterday") without flooding the result on a probe that railed for days.
+ */
+const EXCLUDED_VALUES_LIMIT = 10;
+
+/**
+ * The readings `excluded_implausible` counts, so the model can tell them apart from the counted
+ * minimum. Before this the result said only "3 excluded" beside a `value` of 7.9, and a claim of
+ * pH 2 had nothing to be checked against. Newest last, the newest `EXCLUDED_VALUES_LIMIT` kept.
+ */
+const excludedImplausibleDetail = (samples: Sample[]): Record<string, unknown> => {
+  const excluded = samples
+    .filter((sample) => sample.valid && sample.plausible === false)
+    .sort((a, b) => a.atMs - b.atMs);
+  if (excluded.length === 0) {
+    return {};
+  }
+  const values = excluded.map((sample) => sample.value);
+  const listed = excluded.slice(-EXCLUDED_VALUES_LIMIT);
+  return {
+    excluded_implausible_min: Math.min(...values),
+    excluded_implausible_max: Math.max(...values),
+    excluded_implausible_values: listed.map((sample) => ({ at: sample.at, value: sample.value })),
+    ...(excluded.length > listed.length
+      ? { excluded_implausible_not_listed: excluded.length - listed.length }
+      : {}),
+  };
+};
+
 export interface SensorToolResult {
   [field: string]: unknown;
 }
@@ -770,7 +801,11 @@ export class QuerySensorData {
       };
     });
 
-    const shape = (key: MetricKey, result: AggregateResult): Record<string, unknown> => ({
+    const shape = (
+      key: MetricKey,
+      result: AggregateResult,
+      samples: Sample[],
+    ): Record<string, unknown> => ({
       unit: unitFor(key),
       ...(key === "turbidity" && excludedStuck > 0
         ? { excluded_stuck: excludedStuck, sensor_quality: "likely failed sensor" } : {}),
@@ -778,7 +813,10 @@ export class QuerySensorData {
       n_samples: result.nSamples,
       excluded_faulted: result.excludedFaulted,
       ...(result.excludedImplausible > 0
-        ? { excluded_implausible: result.excludedImplausible }
+        ? {
+          excluded_implausible: result.excludedImplausible,
+          ...excludedImplausibleDetail(samples),
+        }
         : {}),
       ...(result.observedAt ? { observed_at: result.observedAt } : {}),
       ...(result.samples ? { samples: result.samples } : {}),
@@ -844,7 +882,7 @@ export class QuerySensorData {
     if (single) {
       // Flat shape for a single metric — unchanged from before multi-metric existed, so nothing
       // reading `result.value` had to learn a new shape.
-      return { ...common, ...shape(single, computed[0].result), ...notes };
+      return { ...common, ...shape(single, computed[0].result, computed[0].samples), ...notes };
     }
 
     // Every metric comes off the same rows, so for `latest`/`earliest` they all share one
@@ -862,7 +900,7 @@ export class QuerySensorData {
       ...(observedAts.size === 1 ? { observed_at: [...observedAts][0] } : {}),
       metrics: Object.fromEntries(computed.map((entry) => [
         NAME_BY_METRIC_KEY.get(entry.key) as string,
-        shape(entry.key, entry.result),
+        shape(entry.key, entry.result, entry.samples),
       ])),
       ...notes,
     };
@@ -1029,7 +1067,10 @@ export class QuerySensorData {
       });
       notes.push(
         `Excluded as physically impossible despite no probe fault flag: ${parts.join("; ")}. `
-        + "These are sensor rails, not measurements, and are not counted in any statistic above.",
+        + "These are probe faults, not measurements. Each metric's \"value\" and \"n_samples\" "
+        + "count only the remaining readings; the excluded ones are in "
+        + "\"excluded_implausible_values\", with their range in \"excluded_implausible_min\" and "
+        + "\"excluded_implausible_max\".",
       );
     }
 

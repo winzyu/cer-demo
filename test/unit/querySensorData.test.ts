@@ -485,6 +485,63 @@ describe("query_sensor_data — caveats that travel with the number", () => {
   });
 });
 
+describe("query_sensor_data — implausible readings are shown apart from the counted value", () => {
+  /** Algalita's day with pH replaced on the given rows (newest first, as the fixture is). */
+  const withPh = (byIndex: Record<number, number>): Array<Record<string, unknown>> => ALGALITA_PERIOD
+    .map((row, index) => (index in byIndex
+      ? { ...row, water_data: { ...(row.water_data as Record<string, unknown>), 99: byIndex[index] } }
+      : row));
+
+  it("lists the excluded pH readings with their range, and keeps them out of the minimum", async () => {
+    // E2E checklist D1: "Why did the pH crash to 3 yesterday?" The result used to say only
+    // "excluded_implausible: 3" beside the counted minimum, so the model could not tell which
+    // readings the claim was about, or that the minimum excluded them.
+    const { tool } = makeTool({ periodDay: withPh({ 1: 2.07, 5: 13.99, 9: 2.5 }) });
+    const result = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "min", device: "Algalita",
+    });
+
+    expect(result.value).toBeGreaterThan(3);
+    expect(result.n_samples).toBe(ALGALITA_PERIOD.length - 3);
+    expect(result.excluded_implausible).toBe(3);
+    expect(result.excluded_implausible_min).toBe(2.07);
+    expect(result.excluded_implausible_max).toBe(13.99);
+    const listed = result.excluded_implausible_values as Array<{ at: string; value: number }>;
+    expect(listed.map((entry) => entry.value)).toEqual([2.5, 13.99, 2.07]); // oldest first
+    expect(listed.every((entry) => /^\d{4}-\d{2}-\d{2}T/.test(entry.at))).toBe(true);
+    expect(result).not.toHaveProperty("excluded_implausible_not_listed");
+
+    const note = String(result.note);
+    expect(note).toContain("outside the pH range natural water can reach");
+    expect(note).toContain("\"value\" and \"n_samples\" count only the remaining readings");
+    expect(note).not.toContain("sensor rails");
+  });
+
+  it("caps the list at ten, keeps the newest, and counts the rest", async () => {
+    const railed = Object.fromEntries(Array.from({ length: 12 }, (_, i) => [i, 1.5]));
+    const { tool } = makeTool({ periodDay: withPh(railed) });
+    const result = await tool.run({
+      metric: "all", time_range: "last day", aggregation: "min", device: "Algalita",
+    });
+    const ph = (result.metrics as Record<string, Record<string, unknown>>).ph;
+
+    expect(ph.excluded_implausible).toBe(12);
+    expect(ph.excluded_implausible_values as unknown[]).toHaveLength(10);
+    expect(ph.excluded_implausible_not_listed).toBe(2);
+    expect(ph.excluded_implausible_min).toBe(1.5);
+  });
+
+  it("adds no excluded-value fields when every reading is plausible", async () => {
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "min", device: "Algalita",
+    });
+
+    expect(result).not.toHaveProperty("excluded_implausible");
+    expect(result).not.toHaveProperty("excluded_implausible_values");
+  });
+});
+
 describe("query_sensor_data — errors are returned, not thrown", () => {
   it("rejects an unknown metric with the valid list", async () => {
     const { tool } = makeTool();
