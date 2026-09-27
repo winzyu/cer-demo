@@ -582,6 +582,19 @@ scenario("D5", "Bay customer asks for a report", async (r) => {
   await r.close(s);
 });
 
+scenario("D6", "Harbor admin exports another organization's pod as CSV", async (r) => {
+  // The dashboard's Export dialog posts this request; the server looks the pod up without the caller.
+  const s = await r.session("harborAdmin");
+  const end = new Date();
+  const start = new Date(end.getTime() - 7 * 86_400_000);
+  for (const label of ["dev:100000000000003", "dev:100000000000006"]) {
+    const csv = await r.api(s, "POST", `/water/export/csv/${encodeURIComponent(label)}`,
+      { startDate: start.toISOString(), endDate: end.toISOString() });
+    const rows = csv.status === 200 ? csv.text.trim().split("\n").length - 1 : 0;
+    r.check(csv.status >= 400 && csv.status < 500 && rows === 0, `CSV export of ${label} refused (${csv.status}, ${rows} rows)`);
+  }
+});
+
 scenario("E1", "Gemini-era chats are neither listed nor opened", async (r) => {
   const s = await r.session("harborCust");
   const legacy = await legacyChats(s.persona.userId);
