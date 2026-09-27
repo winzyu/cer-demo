@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { retrievalRegistry } from "../retrieval";
+import { withSourceTitles } from "../retrieval/sourceTitles";
 import type { RetrievalRegistry } from "../retrieval/RetrievalRegistry";
 import type { Chunk } from "../types/retrieval.types";
 import { buildMessages } from "../prompt/promptBuilder";
@@ -136,7 +137,7 @@ export class ChatController {
         mode: adapter.mode,
         // Retrieved context is returned so the caller can show provenance. N5 turns these
         // into inline quote citations.
-        citations: chunks,
+        citations: withSourceTitles(chunks),
         usage: answer.usage,
         // Tool handles link to invocation evidence, separately from document citations.
         // Omitted entirely when no tool ran, so the pre-N3 response shape is unchanged.
@@ -185,7 +186,7 @@ export class ChatController {
     });
 
     openSseStream(res);
-    writeSseEvent(res, "meta", { mode, citations: chunks });
+    writeSseEvent(res, "meta", { mode, citations: withSourceTitles(chunks) });
 
     try {
       if (this.orchestrator.hasTools) {
