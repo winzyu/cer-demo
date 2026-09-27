@@ -150,7 +150,7 @@ Report every result with its full configuration (model, reasoning, retrieval arm
 6. **E4 (user chose a caveat for cross-document, 2026-09-27):** `MULTI_SOURCE_CAVEAT` rule added (`e0abe8b`, tools on and off); its verification capture of the launch configuration, judged twice, costs about $0.90 at the measured judge rate and awaits approval.
 5. **Route the tool-check findings to the Gilligan answer-quality work on `dev`** (tools-on prompt and tools, not R4): the "last 24 hours" answer and the partial relay of the water-type and withheld-history notes (plan Q8).
 
-Then: the user's open decisions ( E4's per-class caveat or refusal under D3, with cross-document the obvious candidate), E4 and E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
+Then: E4's verification (item 6) and E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
 
 ## Traps found
 
