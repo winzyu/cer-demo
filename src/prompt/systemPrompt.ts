@@ -237,6 +237,18 @@ Report vs. single-stat routing:
  * block (`src/catalogue/promptBlock.ts`) appends last, after both tool blocks, so turning it on
  * leaves every earlier byte unchanged.
  */
+/**
+ * With both tools off nothing can read the pod, but the rules above still describe pod readings
+ * as in scope, and `glm-5p3-flash` turned "name the closest thing you can do" into offers to
+ * fetch the pod's readings (refusal-temperature-harm-threshold, R4 blind grading). Added only
+ * when both tools are off, so the tools-on prompt is unchanged.
+ */
+export const NO_TOOLS_RULE = `- In this conversation you have no access to this pod's readings, thresholds or
+  reports, and no tools. Answer only from the CONTEXT excerpts. Never offer to
+  look up, fetch, report or check readings or anything else; any next step you
+  name must be one you can do from the CONTEXT, or a person or authority the
+  user can ask.`;
+
 export const buildSystemPrompt = (
   sensorTool: boolean = config.tools.sensorTool,
   reportTool: boolean = config.tools.reportTool,
@@ -313,4 +325,4 @@ Rules:
 - When you take a value from a table, use the exact row and column that match the
   question, quote that line, and show any arithmetic from the quoted values.
 - Do not fabricate readings or citations.
-- Keep answers short and direct. Give specific numbers from the data.${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}${reportTool ? `\n\n${REPORT_TOOL_BLOCK}` : ""}${catalogueBlock ? `\n\n${catalogueBlock}` : ""}`;
+- Keep answers short and direct. Give specific numbers from the data.${sensorTool || reportTool ? "" : `\n${NO_TOOLS_RULE}`}${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}${reportTool ? `\n\n${REPORT_TOOL_BLOCK}` : ""}${catalogueBlock ? `\n\n${catalogueBlock}` : ""}`;

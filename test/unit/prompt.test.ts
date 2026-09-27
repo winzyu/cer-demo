@@ -1,6 +1,6 @@
 import { buildMessages, formatContext, formatSelectedDevice } from "../../src/prompt/promptBuilder";
 import {
-  REFUSAL_SENTENCE, REPORT_TOOL_BLOCK, TOOL_BLOCK, buildSystemPrompt,
+  NO_TOOLS_RULE, REFUSAL_SENTENCE, REPORT_TOOL_BLOCK, TOOL_BLOCK, buildSystemPrompt,
 } from "../../src/prompt/systemPrompt";
 import type { Chunk } from "../../src/types/retrieval.types";
 import { buildCatalogueBlock, catalogue, usableGuidance } from "../../src/catalogue";
@@ -162,6 +162,16 @@ describe("buildSystemPrompt", () => {
  */
 describe("the tool flags are additive", () => {
   const base = buildSystemPrompt(false, false, null);
+  // The rules every combination shares: the tools-off prompt without its no-tools line.
+  const shared = base.replace(`\n${NO_TOOLS_RULE}`, "");
+
+  it("ends the tools-off rules with the no-tools line, and only there", () => {
+    expect(base.endsWith(`\n${NO_TOOLS_RULE}`)).toBe(true);
+    expect(shared).not.toBe(base);
+    [[true, false], [false, true], [true, true]].forEach(([sensor, report]) => {
+      expect(buildSystemPrompt(sensor, report, null)).not.toContain(NO_TOOLS_RULE);
+    });
+  });
 
   it("says nothing about tools when both flags are off", () => {
     expect(base).not.toContain("query_sensor_data");
@@ -184,8 +194,8 @@ describe("the tool flags are additive", () => {
   it("appends the sensor tool block, and only that, when SENSOR_TOOL is on", () => {
     const on = buildSystemPrompt(true, false, null);
 
-    expect(on.startsWith(base)).toBe(true);
-    expect(on.slice(base.length)).toBe(`\n\n${TOOL_BLOCK}`);
+    expect(on.startsWith(shared)).toBe(true);
+    expect(on.slice(shared.length)).toBe(`\n\n${TOOL_BLOCK}`);
   });
 
   it("appends the report tool block, and only that, when REPORT_TOOL is on alone", () => {
@@ -193,8 +203,8 @@ describe("the tool flags are additive", () => {
     // block is written to read correctly in that case. Untested until now.
     const on = buildSystemPrompt(false, true, null);
 
-    expect(on.startsWith(base)).toBe(true);
-    expect(on.slice(base.length)).toBe(`\n\n${REPORT_TOOL_BLOCK}`);
+    expect(on.startsWith(shared)).toBe(true);
+    expect(on.slice(shared.length)).toBe(`\n\n${REPORT_TOOL_BLOCK}`);
   });
 
   it("appends sensor then report, in that order, when both are on", () => {
