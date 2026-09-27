@@ -23,7 +23,10 @@ const FIXTURES = path.join(__dirname, "../fixtures/device-api");
 const load = (name: string): unknown => JSON.parse(fs.readFileSync(path.join(FIXTURES, name), "utf8"));
 
 const DEVICES = load("devices.json");
-const ALGALITA_PERIOD = load("algalita-period-1-day.json") as Array<Record<string, unknown>>;
+// Synthetic GPS fixes let these numeric regression cases establish a current site.
+// The captured artifact remains verbatim; its original 0,0 rows are tested separately.
+const ALGALITA_PERIOD: Array<Record<string, unknown>> = (load("algalita-period-1-day.json") as Array<Record<string, unknown>>)
+  .map((reading) => ({ ...reading, best_lat: 33.74, best_lon: -118.1 }));
 const OWC_PERIOD_DAY = load("owc-period-1-day.json");
 const OWC_LAST = load("owc-last.json") as { data: Record<string, unknown> };
 
@@ -43,6 +46,7 @@ const NOW = Date.parse("2026-08-13T12:00:00.000Z");
  */
 const OWC_PERIOD_WEEK = [{
   ...OWC_LAST.data,
+  best_lat: 41.38, best_lon: -82.51,
   water_data: {
     ...(OWC_LAST.data.water_data as Record<string, unknown>),
     // /water/period returns the stored document, so temperature is Celsius on this route
@@ -96,6 +100,10 @@ const makeClient = (
         }
         if (url.includes("/1/month")) {
           return overrides.periodMonth ?? (forOwc ? OWC_PERIOD_WEEK : ALGALITA_PERIOD);
+        }
+        if (url.includes("/1/year") || Number(/\/period\/(\d+)\/day/.exec(url)?.[1]) > 365) {
+          return overrides.periodMonth ?? overrides.periodWeek ?? overrides.periodDay
+            ?? (forOwc ? OWC_PERIOD_WEEK : ALGALITA_PERIOD);
         }
         return overrides.periodDay ?? (forOwc ? OWC_PERIOD_DAY : ALGALITA_PERIOD);
       }
@@ -327,36 +335,32 @@ describe("query_sensor_data — the stale pod", () => {
       metric: "ph", time_range: "last day", aggregation: "latest", device: "OWC",
     });
 
-    expect(calls.some((call) => call.url.includes("/water/last/"))).toBe(true);
+    expect(calls.some((call) => call.url.includes("/water/last/"))).toBe(false);
     expect(result.value).toBeCloseTo(9.119500160217285, 6);
     expect((result.time_range_resolved as { end: string }).end).toBe("2026-08-07T14:38:49.000Z");
   });
 
-  it("sizes the window from the reference instant, in one fetch, not from the phrase", async () => {
-    // The phrase says "last week", but the range it resolves to ends six days ago, so covering
-    // it from the server's now needs ~13 days — a month rung, not a week. Sizing from the phrase
-    // alone would fetch 7 days and return a real statistic over a fraction of the window it
-    // claims, with nothing in the result saying so. Asking /water/last first makes the right
-    // size knowable before the series is fetched, so this stays one period call rather than a
-    // short fetch followed by a corrective one.
+  it("expands a cold recent window to establish complete site context", async () => {
+    // A cold ambiguous site needs earlier centroid context, regardless of the answer range.
     const { tool, calls } = makeTool();
     await tool.run({
       metric: "ph", time_range: "last week", aggregation: "mean", device: "OWC",
     });
 
     const periodCalls = calls.filter((call) => call.url.includes("/water/period/"));
-    expect(periodCalls).toHaveLength(1);
-    expect(periodCalls[0].url).toContain("/1/month");
+    expect(periodCalls).toHaveLength(2);
+    expect(periodCalls[0].url).toContain("/3/day");
+    expect(periodCalls[1].url).toContain("/20680/day");
   });
 
-  it("makes exactly one period call on the normal path", async () => {
-    // The correction for staleness must not become a second call on every query.
+  it("uses two cold reads for an ambiguous site and caches subsequent queries", async () => {
+    // Full earlier context is fetched once for a cold ambiguous site.
     const { tool, calls } = makeTool();
     await tool.run({
       metric: "ph", time_range: "last day", aggregation: "mean", device: "Algalita",
     });
 
-    expect(calls.filter((call) => call.url.includes("/water/period/"))).toHaveLength(1);
+    expect(calls.filter((call) => call.url.includes("/water/period/"))).toHaveLength(2);
   });
 
   it("reports no data as null with the last-reported time, never as zero", async () => {
@@ -391,10 +395,8 @@ describe("query_sensor_data — the stale pod", () => {
     expect(result.device_last_reported_stale).toBe(true);
   });
 
-  it("falls back to widening windows when /water/last gives nothing, and stops", async () => {
-    // `/water/last` drops readings with no GPS fix, so an empty response there is not proof of
-    // silence — the period route does not filter, and is the honest second opinion. That probe
-    // widens at most twice rather than climbing to a year-wide fetch.
+  it("stops after a recent and complete-history read when the pod has no data", async () => {
+    // Empty period history is not a numeric zero.
     const { tool, calls } = makeTool({
       last: [], periodDay: [], periodWeek: [], periodMonth: [],
     });
@@ -403,8 +405,9 @@ describe("query_sensor_data — the stale pod", () => {
     });
 
     const periodCalls = calls.filter((call) => call.url.includes("/water/period/"));
-    expect(periodCalls).toHaveLength(3);
-    expect(periodCalls.some((call) => call.url.includes("/1/year"))).toBe(false);
+    expect(periodCalls).toHaveLength(2);
+    expect(periodCalls[0].url).toContain("/3/day");
+    expect(periodCalls[1].url).toContain("/20680/day");
     expect(result.value).toBeNull();
     expect(result.device_last_reported).toBeNull();
   });
@@ -425,7 +428,7 @@ describe("query_sensor_data — caveats that travel with the number", () => {
     expect(result.note).toContain("not NTU");
   });
 
-  it("flags a window in which every turbidity reading is 0 as a possible missing sensor", async () => {
+  it("keeps the all-zero caveat for a window too short to prove sensor failure", async () => {
     // The backend returns 0 for a missing voltage and for the offline sentinel, the same as for
     // clear water; a live read on 2026-09-22 returned 14 days of zeros from a reporting pod.
     const allZero = ALGALITA_PERIOD.map((row) => ({
@@ -438,7 +441,7 @@ describe("query_sensor_data — caveats that travel with the number", () => {
     });
 
     expect(result.value).toBe(0);
-    expect(result.note).toContain("may be a missing sensor rather than confirmed clear water");
+    expect(result.note).toContain("may be a missing sensor");
   });
 
   it("does not flag turbidity as all zero when any reading rose above 0", async () => {
@@ -667,8 +670,8 @@ describe("query_sensor_data — all metrics in one call", () => {
     expect(metrics.temperature.unit).toBe("°F");
     expect(metrics.ph.unit).toBe("unitless");
 
-    // One period call, not six — the whole point of the option.
-    expect(calls.filter((call) => call.url.includes("/water/period/"))).toHaveLength(1);
+    // The two cold context reads serve every metric and are shared by subsequent calls.
+    expect(calls.filter((call) => call.url.includes("/water/period/"))).toHaveLength(2);
   });
 
   it("agrees with the equivalent single-metric calls", async () => {
@@ -858,12 +861,10 @@ describe("query_sensor_data — the programmatic surface", () => {
 
 describe("query_sensor_data — window honesty", () => {
   it("reports the window it actually searched alongside the one requested", async () => {
-    // Live, a model asked for "last 10 years" was told the resolved range began in 2016 and
-    // reported that as the pod's first reading. The API's ladder tops out at one year, so the
-    // search never went near 2016.
+    // Even a complete available-history read cannot support dates before the Unix epoch.
     const { tool } = makeTool();
     const result = await tool.run({
-      metric: "ph", time_range: "last 10 years", aggregation: "earliest", device: "Algalita",
+      metric: "ph", time_range: "last 100 years", aggregation: "earliest", device: "Algalita",
     });
 
     const searched = result.window_actually_searched as { start: string; complete: boolean };
@@ -882,17 +883,21 @@ describe("query_sensor_data — window honesty", () => {
     expect((result.window_actually_searched as { complete: boolean }).complete).toBe(true);
   });
 
-  it("surfaces a shared observed_at at the top level for multi-metric reads", async () => {
-    // Every metric comes off the same row, so they share one instant. Without it at the top
-    // level the model substituted the window boundary.
-    const { tool } = makeTool();
+  it("omits shared observed_at when stuck-sensor filtering changes the earliest metric instant", async () => {
+    // Synthetic 24-hour run followed by a healthy sample preserves the differing instants.
+    const periodDay = Array.from({ length: 26 }, (_, i) => ({
+      timestamp: NOW / 1000 - (25 - i) * 3600,
+      best_lat: 33.74, best_lon: -118.1,
+      water_data: { 99: 8, 72: i < 25 ? 0 : 25, phError: 0, turbError: 0 },
+    }));
+    const { tool } = makeTool({ periodDay });
     const result = await tool.run({
-      metric: "all", time_range: "last day", aggregation: "earliest", device: "Algalita",
+      metric: "all", time_range: "last 2 days", aggregation: "earliest", device: "Algalita",
     });
 
     const metrics = result.metrics as Record<string, { observed_at: string }>;
-    expect(typeof result.observed_at).toBe("string");
-    expect(result.observed_at).toBe(metrics.ph.observed_at);
+    expect(result.observed_at).toBeUndefined();
+    expect(metrics.turbidity.observed_at).not.toBe(metrics.ph.observed_at);
   });
 
   it("omits a shared observed_at when the aggregation has no single instant", async () => {
@@ -903,4 +908,14 @@ describe("query_sensor_data — window honesty", () => {
 
     expect(result.observed_at).toBeUndefined();
   });
+});
+
+
+it("answers the original capture whose best coordinates are all missing as a pod that never moved", async () => {
+  const { tool } = makeTool({ periodDay: load("algalita-period-1-day.json") });
+  const result = await tool.run({
+    metric: "ph", time_range: "last day", aggregation: "mean", device: "Algalita",
+  });
+  expect(result.value).toEqual(expect.any(Number));
+  expect(result.note).toContain("Location not recorded");
 });

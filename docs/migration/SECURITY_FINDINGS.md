@@ -328,3 +328,18 @@ past the `ec2b283` this section was written against: `1f81f87` ("Neumorphic ligh
 conversion; expandable device pills; mobile layout fixes", 2026-08-26) and a `.gitignore` commit.
 No security surface changed — it is a repaint plus one new component — but the palette our
 `frontend/theme.css` was lifted from is now light, not dark. See `INTEGRATION_PLAN.md` §3 (archived, tag `docs-archive-2026-09-23`).
+
+---
+
+## 8. Unauthenticated user lookups in the CER server, 2026-09-25
+
+Found by reading `feature/gilligan-rag-assistant` (`b2074b8`); production was not called to confirm.
+
+- `GET /api/v1/users/all` (`src/routes/userRoutes.ts` line 17) has no authentication and returns every user's id, name, email, role, organization and device list (`UserDTO.format`).
+- `GET /api/v1/users/:id` (line 72) has no authentication and returns the same record for any id.
+- `GET /api/v1/test-db` (`src/routes/testDbRoutes.ts`) has no authentication and reports the project id, database id and whether `users` is reachable.
+
+Fix, reviewed 2026-09-25: server branch `fix/user-route-auth` (`f9607bd`, cut from `local`) makes `/users/all` superadmin only, lets `/users/:id` serve the user themself, an admin of the same organization (anyone else gets the missing-id 404) or a superadmin, and removes `/test-db`.
+`tsc` is clean and `test/unit/controllers/userRouteAccess.test.ts` passes 9/9; it applies cleanly onto `feature/gilligan-rag-assistant` and `task/gilligan-release-p3-p4`.
+The dashboard calls only `DELETE` and `POST` on `/users/:id`, so it is unaffected.
+Pushing it and telling the supervisor about the exposure are the user's calls.

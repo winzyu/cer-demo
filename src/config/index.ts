@@ -78,6 +78,8 @@ export interface DeviceApiConfig {
  * the base prompt stays a byte-exact prefix no matter which flags are on.
  */
 export interface ToolsConfig {
+  /** Enable only after every period-route server enforces Q6 authorization. */
+  predecessorPeriodHandoff: boolean;
   /** Master switch for `query_sensor_data` — the prompt block, the tools array, and the loop. */
   sensorTool: boolean;
   /**
@@ -413,6 +415,7 @@ const load = (): Config => {
       defaultDeviceLabel: readString("SENSOR_DEVICE_LABEL"),
     },
     tools: {
+      predecessorPeriodHandoff: readBool("PREDECESSOR_PERIOD_HANDOFF", false),
       sensorTool: readBool("SENSOR_TOOL", false),
       reportTool: readBool("REPORT_TOOL", false),
       maxToolRounds: readInt("MAX_TOOL_ROUNDS", 16),

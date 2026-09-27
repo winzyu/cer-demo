@@ -17,7 +17,10 @@ const FIXTURES = path.join(__dirname, "../fixtures/device-api");
 const load = (name: string): unknown => JSON.parse(fs.readFileSync(path.join(FIXTURES, name), "utf8"));
 
 const DEVICES = load("devices.json");
-const ALGALITA_PERIOD = load("algalita-period-1-day.json") as Array<Record<string, unknown>>;
+// Synthetic GPS fixes let these numeric regression cases establish a current site.
+// The captured artifact remains verbatim; its original 0,0 rows are tested separately.
+const ALGALITA_PERIOD: Array<Record<string, unknown>> = (load("algalita-period-1-day.json") as Array<Record<string, unknown>>)
+  .map((reading) => ({ ...reading, best_lat: 33.74, best_lon: -118.1 }));
 const NOW = Date.parse("2026-08-13T12:00:00.000Z");
 
 const ALGALITA_LAST = (() => {
@@ -110,6 +113,7 @@ describe("GenerateReport.run", () => {
         },
       }),
       deviceRecord: async () => null,
+      queryBatch: QuerySensorData.prototype.queryBatch,
     } as unknown as QuerySensorData;
     const result = await new GenerateReport({ sensor: stubSensor }).run({ time_range: "last week" }, CALLER);
 
@@ -182,6 +186,7 @@ describe("GenerateReport.run", () => {
         },
       }),
       clockMs: () => now,
+      queryBatch: QuerySensorData.prototype.queryBatch,
     } as unknown as QuerySensorData);
 
     it("names the parameter behind an Exceedance, with its range against the threshold", async () => {
@@ -237,6 +242,7 @@ describe("GenerateReport.run", () => {
         },
       }),
       deviceRecord: async () => null,
+      queryBatch: QuerySensorData.prototype.queryBatch,
     } as unknown as QuerySensorData;
     const tool = new GenerateReport({ sensor: stubSensor });
     const result = await tool.run({ time_range: "last week" }, CALLER);
