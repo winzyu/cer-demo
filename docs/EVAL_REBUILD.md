@@ -1514,7 +1514,7 @@ Caller: the fabricated Harbor Admin, whose account sees one salt-water pod (Harb
 
 All 10 returned 200 with well-formed calls to `query_sensor_data`, `get_pod_thresholds`, `get_turbidity_info`, `generate_report` and `list_pods`, at most two tool rounds per turn, and the results used in the answers; no turn neared `MAX_TOOL_ROUNDS`, and the mirror's log shows all 34 device requests.
 The all-zero thresholds were reported as unconfigured rather than as a range, and a turbidity index of 0 as ambiguous rather than clear water.
-The water-type note (deployment freshwater, pod salt water) was relayed in 4 of the 8 turns whose results carried it, and the withheld-history note in 4 of 8, both accurately when relayed; plan Q8 covers relaying them.
+The water-type note (deployment freshwater, pod salt water) was relayed in 3 of the 8 turns whose results carried it, and the withheld-history note in 4 of 8 (counted by keyword, not read for accuracy); plan Q8 covers relaying them.
 Defect: "Did the pod record anything in the last 24 hours?" was answered "Yes" with 25 samples, but the tool anchors a relative window to `device_last_reported` (2026-09-26 03:11 UTC, 30 hours before the question) and the answer did not say the pod has been silent since.
 The cross-organization withheld-history case needs a non-superadmin in the survivor's organization, which the mirror does not have.
 
