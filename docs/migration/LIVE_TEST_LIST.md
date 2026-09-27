@@ -12,7 +12,8 @@ Mark it done with the date and where the evidence is.
 
 The mirror ticket (`GILLIGAN_E2E_TEST_TICKET.md`, on branch `docs/gcp-test-env`) defines nine scenario groups.
 Phase 1 ran on the mirror on 2026-09-25: 46 scenarios, 43 pass, 3 fail, after reruns that fixed bot defects (`GILLIGAN_E2E_RESULTS_2026-09-25.md` on `docs/gcp-test-env`).
-On live, run them as the T1 test users (release plan T2), with the release limits of 20 questions and 5 reports rather than the mirror's 5 and 3.
+On live, run them as the T1 test users (release plan T2), with the release limits of 20 questions and 5 reports.
+The mirror rerun on 2026-09-27 used those limits and added the manual guide's G4, K, M and R checks, with fixtures for a moved pod, a pod with no GPS and predecessors with an absent or empty organization (`GILLIGAN_E2E_RESULTS_2026-09-27.md` on `docs/gcp-test-env`).
 
 | group | what it checks | mirror 2026-09-25 | live |
 |---|---|---|---|
@@ -32,6 +33,8 @@ On live, run them as the T1 test users (release plan T2), with the release limit
 |---|---|---|---|---|
 | L1 | **CWA Old merges into Old Woman Creek 2026** (decided 2026-09-25, release plan Q6). A Cleveland Water Alliance member sees CWA Old's readings as part of OWC 2026's history, within the current site; a member of any other organization gets nothing for CWA Old by name, label or a crafted `/water/period` call. | CWA Old's organization id `T0Cl83CJ…` is a real dangling reference that the API cannot show; the mirror only fakes one. Needs a test user in CWA (a live write) or a CWA member's account. | Claude, user approves | open |
 | L2 | **Current site only** (decided 2026-09-25, release plan Q3). For Old Woman Creek 2026 and Marina Park, chat answers, comparisons and a report cover only the latest site (Huron OH for OWC 2026), and never quote readings recorded in North Carolina, Utah or elsewhere. | Relocation lives in production coordinates (`best_lat`, `best_lon`, `best_location`); Q3 must first confirm every pod's rows carry them: the user runs `scripts/coordinateAudit.ts` (on `task/q3-q5`, read-only), because captured Algalita rows carry only 0,0 and a pod without GPS reports nothing under this rule. | user, then Claude | open |
+| L9 | **Superadmins do not get merged-predecessor history** (decided 2026-09-27, manual guide K9). A superadmin asking about OWC 2026 gets its own readings, with CWA Old's history withheld and a note. | On the mirror a superadmin got a full report on the predecessor (results 2026-09-27, finding 9); re-check live after the fix, against the real chain. | Claude | open |
+| L10 | **Missing organizations and GPS on real devices.** Which production devices have an absent or empty `organization`, or report only 0,0, and whether Gilligan treats them by the rules the mirror checked (K7, K10). | The mirror's cases are fabricated; only production shows which pods are affected. Read-only; announce before reading. | Claude | open |
 | L3 | **Production-shaped readings.** The server reads real rows without schema errors. | The mirror ticket's known defect: `WaterDataRepository` wants string `lat`, `lon` and `bat`, while production stores numbers and has no `bat`. | Claude | open |
 
 ## 3. Fixes to re-check live once deployed
@@ -47,4 +50,4 @@ On live, run them as the T1 test users (release plan T2), with the release limit
 | # | check | source | status |
 |---|---|---|---|
 | L7 | Gilligan answers with CER's own Fireworks key from Secret Manager, and the old cer-demo key is rejected once rotated. | Release plan S5 | open |
-| L8 | The usage store runs in the dedicated Gilligan database: counts survive a revision restart, `expireAt` retention removes only past days, and the service account reaches only that database. | Release plan F2, S3; `GILLIGAN_FIRESTORE_FRAMEWORK.md` "Corrections" | open, waiting on Firestore access |
+| L8 | The usage store runs in the dedicated Gilligan database: counts survive a revision restart, `expireAt` retention removes only past days, and the service account reaches only that database. | Release plan F2, S3; `GILLIGAN_FIRESTORE_FRAMEWORK.md` "Corrections"; mirror G4 passed on the emulator's `gilligan` database on 2026-09-27, which cannot prove the real database, grants or retention | open, waiting on Firestore access |
