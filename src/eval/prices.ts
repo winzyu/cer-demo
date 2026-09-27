@@ -96,6 +96,12 @@ export const CHAT_PRICES: Record<string, TokenPrices> = {
   "accounts/fireworks/models/deepseek-v4-flash-0731": {
     input: 0.22, cachedInput: 0.007, output: 0.66,
   },
+  // The Tier-2 judge since 2026-09-25, replacing `deepseek-v4-flash-0731` (withdrawn: chat calls
+  // return 404). Read 2026-09-27 from the serverless pricing page, "DeepSeek V4.1 Flash
+  // (Standard)"; the "(US)" row is dearer and not the endpoint the judge calls.
+  "accounts/fireworks/models/deepseek-v4p1-flash": {
+    input: 0.30, cachedInput: 0.006, output: 1.20,
+  },
 };
 
 /**

@@ -82,9 +82,14 @@ export const PRODUCTION_GENERATOR = "accounts/fireworks/models/gpt-oss-120b";
  * conclude anything. §2's exit criterion 2 re-measures κ against a new 30-row stratified sample
  * and that is the number that decides whether this judge survives.
  *
+ * **Replaced 2026-09-27 by `deepseek-v4p1-flash`.** Fireworks withdrew `deepseek-v4-flash-0731`
+ * (chat calls return 404); its successor was calibrated against the same human grades on
+ * 2026-09-25 (`EVAL_REBUILD.md`) and has judged every R4 run since. Its verdicts compare only with
+ * each other, not with the old judge's.
+ *
  * Override with `JUDGE_MODEL` or `--judge-model=`. Whatever is used ends up in the run manifest.
  */
-export const DEFAULT_JUDGE_MODEL = "accounts/fireworks/models/deepseek-v4-flash-0731";
+export const DEFAULT_JUDGE_MODEL = "accounts/fireworks/models/deepseek-v4p1-flash";
 
 /**
  * Default reply budget for a judge call, in completion tokens.
