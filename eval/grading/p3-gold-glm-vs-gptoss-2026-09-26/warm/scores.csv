@@ -1,21 +1,21 @@
 fixture,class,turn,label,correctness_0_1_2,ungrounded_claims,invalid_citations,notes
-crossdoc-conductivity-rise-with-warming,cross-document,1,A,,,,
-crossdoc-conductivity-rise-with-warming,cross-document,1,B,,,,
-crossdoc-conductivity-rise-with-warming,cross-document,2,A,,,,
-crossdoc-conductivity-rise-with-warming,cross-document,2,B,,,,
-deepmanual-brackish-do-correction,deep-in-manual,1,A,,,,
-deepmanual-brackish-do-correction,deep-in-manual,1,B,,,,
-deepmanual-brackish-do-correction,deep-in-manual,2,A,,,,
-deepmanual-brackish-do-correction,deep-in-manual,2,B,,,,
-definitional-required-versus-recommended,definitional,1,A,,,,
-definitional-required-versus-recommended,definitional,1,B,,,,
-definitional-required-versus-recommended,definitional,2,A,,,,
-definitional-required-versus-recommended,definitional,2,B,,,,
-probecal-ph-slope-acceptance,probe-calibration,1,A,,,,
-probecal-ph-slope-acceptance,probe-calibration,1,B,,,,
-probecal-ph-slope-acceptance,probe-calibration,2,A,,,,
-probecal-ph-slope-acceptance,probe-calibration,2,B,,,,
-refusal-temperature-harm-threshold,refusal,1,A,,,,
-refusal-temperature-harm-threshold,refusal,1,B,,,,
-refusal-temperature-harm-threshold,refusal,2,A,,,,
-refusal-temperature-harm-threshold,refusal,2,B,,,,
+crossdoc-conductivity-rise-with-warming,cross-document,1,A,1,0,0,Omits checking existing compensation; ionic dependence; explicit correction method; and accuracy envelope. Prefer B for caveats.
+crossdoc-conductivity-rise-with-warming,cross-document,1,B,1,0,0,Gives range and accuracy envelope; does not explain the temperature-minus-25 calculation or identify the ISO nonlinear method. Prefer B.
+crossdoc-conductivity-rise-with-warming,cross-document,2,A,1,1,0,Omits verification-versus-adjustment distinction and faulty-thermistor consequence; NIST not explicit. Generalizes five-point traceable-sensor procedure to all verification. Prefer B.
+crossdoc-conductivity-rise-with-warming,cross-document,2,B,1,0,0,Correct bundled-sensor accuracy and verification distinction; omits faulty-thermistor consequence and explicit NIST reference. Prefer B.
+deepmanual-brackish-do-correction,deep-in-manual,1,A,2,0,0,Correct table factor and multiplication; hypothetical 6.18 mg/L is supported arithmetic. Prefer A for readable evidence.
+deepmanual-brackish-do-correction,deep-in-manual,1,B,2,0,0,Correct factor and multiplication; malformed table quotation is a presentation defect rather than an unsupported factor. Prefer A.
+deepmanual-brackish-do-correction,deep-in-manual,2,A,1,1,0,Correct operational threshold; invents that upstream pods fall well below it; does not request conductance or give zero-conductance factor. Prefer B for conditional wording.
+deepmanual-brackish-do-correction,deep-in-manual,2,B,1,0,0,Conditions advice on low conductance but does not request readings or give 1.0000 at zero conductance. Prefer B.
+definitional-required-versus-recommended,definitional,1,A,1,0,0,Omits research or technical-consensus basis for required policy and recording reasons for choosing a recommended alternative. Prefer B on selection documentation.
+definitional-required-versus-recommended,definitional,1,B,1,0,0,Omits research or technical-consensus basis for required policy; optional alternatives is qualified by mandatory documentation so no must-not violation. Prefer B.
+definitional-required-versus-recommended,definitional,2,A,2,0,0,Covers independent QA and documentation for departures from both categories. Prefer A.
+definitional-required-versus-recommended,definitional,2,B,1,0,0,Omits that departures from recommended procedures also require independent QA and documentation. Prefer A.
+probecal-ph-slope-acceptance,probe-calibration,1,A,1,0,0,Correct slope ranges and 25 C equivalence; omits one-to-two-minute buffer response. Prefer B for troubleshooting sequence.
+probecal-ph-slope-acceptance,probe-calibration,1,B,1,0,0,Correct slope range and 25 C equivalence; omits one-to-two-minute buffer response. Prefer B.
+probecal-ph-slope-acceptance,probe-calibration,2,A,1,1,0,Omits electrode-condition and junction-flow checks and manufacturer-directed restoration; unqualified refill instruction assumes a liquid-filled design. Temperature qualifier for mV range appears only in prior turn. Prefer B.
+probecal-ph-slope-acceptance,probe-calibration,2,B,1,0,0,Good restoration and replacement sequence; initial filling-solution and fill-hole checks lack design qualification; no explicit electrode-condition inspection. Citation 6 first quote is in chunk 5 of the same document; document-level citation remains valid. Prefer B.
+refusal-temperature-harm-threshold,refusal,1,A,2,1,0,Correct refusal and missing criterion per guide refusal rule; unsupported offer implies access to weekly pod readings. Prefer B for avoiding access implication.
+refusal-temperature-harm-threshold,refusal,1,B,2,0,0,Declines and identifies missing fish threshold; guide gives refusal a 2. Does not explicitly discuss alert criteria or chapter scope. Prefer B.
+refusal-temperature-harm-threshold,refusal,2,A,2,1,0,Declines unsupported thermal judgment and directs to state; guide refusal rule gives 2. Omits EPA SOP distinction and supplied duration/oxygen offer; implies access to actual pod readings. Prefer A for answering authority question despite access defect.
+refusal-temperature-harm-threshold,refusal,2,B,2,0,0,Declines and identifies missing limit; guide refusal rule gives 2. Omits state referral; EPA calibration distinction; and offer to summarize supplied observations. Prefer A for answering follow-up.

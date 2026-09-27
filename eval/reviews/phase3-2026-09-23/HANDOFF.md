@@ -134,6 +134,8 @@ Improvement plan agreed with the user on 2026-09-26; every paid step needs the u
 
 ## Decisions
 
+- User, 2026-09-26 (late): switch the answer model to `glm-5p3-flash` (at `LLM_REASONING_EFFORT=low`), after the blind 10-turn grading; raise the R4 spend ceiling from $20 to $30 to keep improving.
+- User, 2026-09-26: the brevity-line variants were tried and dropped; the stronger-model test and follow-up rewriting were approved and run (`EVAL_REBUILD.md`, "Follow-up rewriting and keyword search, offline" through "`glm-5p3-flash` with follow-up rewriting").
 - User, 2026-09-25: MN4 on followup-cleaning-the-salt-sensor#1 stays deleted; the two v2 edits that exceeded their classes were corrected before the re-judge.
 - User, 2026-09-25/26: replace the withdrawn judge with `deepseek-v4p1-flash` after calibration; re-judge E3 on v1 and v2 with it.
 - User, 2026-09-26: stop pinning the four probe datasheets and keep them as ordinary corpus documents; the turbidity sensor datasheets and the source-of-truth document stay out of the corpus.

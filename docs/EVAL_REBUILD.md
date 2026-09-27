@@ -1366,7 +1366,17 @@ Ungrounded, gold context, one pass each (`--final`, `deepseek-v4p1-flash`, symli
 Four calls failed twice with an empty judge reply and are unjudged; about $0.30 for both.
 The ungrounded dimension agrees weakly with the user's grades, so this is indicative only: GLM's longer answers do not carry more unsupported claims, and probably fewer.
 
-A blind 10-turn packet (`eval/grading/p3-gold-glm-vs-gptoss-2026-09-26/`, 5 fixtures, both models' gold-context answers labelled A/B, run directory of symlinks to the two captures) is ready for the user to grade against the judge.
+A blind 10-turn packet (`eval/grading/p3-gold-glm-vs-gptoss-2026-09-26/`, 5 fixtures, one per class from cross-document, deep-in-manual, definitional, probe-calibration and refusal, both models' gold-context answers labelled A/B, run directory of symlinks to the two captures) was graded by the user before the key was opened.
+
+| | user correctness | judge correctness | exact agreement | user: turns with an ungrounded claim | user preferred |
+|---|---|---|---|---|---|
+| `glm-5p3-flash` | 1.4 | 1.5 / 1.4 | 7 of 10 | 3 | 7 of 10 turns |
+| `gpt-oss-120b` | 1.3 | 1.2 | 7 of 10 | 2 | 3 of 10 turns |
+
+The judge does not favour GLM: it is within 0.1 of the user on both models, and its disagreements run both ways (two GLM turns and one `gpt-oss-120b` turn over-scored, two refusal turns under-scored where the grading guide gives a correct refusal 2).
+GLM's three ungrounded turns are an invented claim about upstream pods and, twice on the refusal fixture, an offer implying access to the pod's readings with the tools off; the user preferred GLM for its caveats and conditional wording.
+Ten turns is a small sample: it supports the judge's direction, not its size.
+Decision (user, 2026-09-26): switch the answer model to `glm-5p3-flash` at `LLM_REASONING_EFFORT=low`.
 
 ### Stronger answer models on gold context - 2026-09-26, runs `p3-gold-glm-5p3-flash-2026-09-26` and `p3-gold-minimax-m3-2026-09-26`
 
