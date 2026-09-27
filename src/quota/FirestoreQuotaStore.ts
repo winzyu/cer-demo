@@ -8,6 +8,9 @@ export const USAGE_COLLECTION = "gilligan_usage";
 
 const DAY_MS = 86_400_000;
 
+/** How long a usage document is kept after its last write (the framework doc's 90 days). */
+export const USAGE_RETENTION_MS = 90 * DAY_MS;
+
 /**
  * The stored shape, one document per user per UTC day. Field names are the framework table's:
  * `questions` is what `QuotaUsage` calls `requests`, because it is the word the dashboard shows.
@@ -20,8 +23,13 @@ export interface UsageDocument {
   questions: number;
   reports: number;
   tokens: number;
-  /** Also the field a Firestore TTL policy can expire on (90 days in the framework doc). */
   updatedAt: Date;
+  /**
+   * The field the Firestore TTL policy expires on: `updatedAt` plus `USAGE_RETENTION_MS`.
+   * A TTL policy deletes a document once its field is in the past, so a policy on `updatedAt`
+   * would delete the current day's counter and reset the user's limits.
+   */
+  expireAt: Date;
 }
 
 /** `YYYY-MM-DD` of the UTC day containing `nowMs`. */
@@ -110,6 +118,7 @@ export class FirestoreQuotaStore implements QuotaStore {
         reports: count(current?.reports) + (delta.reports ?? 0),
         tokens: count(current?.tokens) + (delta.tokens ?? 0),
         updatedAt: new Date(nowMs),
+        expireAt: new Date(nowMs + USAGE_RETENTION_MS),
       };
       transaction.set(ref, next);
     });

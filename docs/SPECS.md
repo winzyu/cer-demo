@@ -374,6 +374,7 @@ allowance on each side of a boundary, and a `7d` window rolls over on Thursday 0
 than on Sunday or on the caller's first request.
 
 `FirestoreQuotaStore` (`QUERY_QUOTA_STORE=firestore`, the release setting) keeps one `gilligan_usage` document per user per UTC day, id `<userId>_<YYYY-MM-DD>`, with the fields in `migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
+Each write sets `expireAt` 90 days after `updatedAt`, and the Firestore TTL policy runs on `expireAt`: a document is deleted once its TTL field is in the past, so a policy on `updatedAt` would delete the current day's counter and reset the user's limits.
 A new day is a new document, so there is no rollover logic; that is why the store requires `QUERY_QUOTA_WINDOW=1d`.
 Each record reads and rewrites the day's document in one transaction, so simultaneous answers all count.
 The check in `quotaGuard` is a separate read, so a user with several questions in flight at the ceiling can overshoot by those few.

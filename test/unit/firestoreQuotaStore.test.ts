@@ -83,6 +83,7 @@ describe("FirestoreQuotaStore logic", () => {
       reports: 1,
       tokens: 1234,
       updatedAt: new Date(NOON_SEP_25 + 1000),
+      expireAt: new Date(NOON_SEP_25 + 1000 + 90 * DAY_MS),
     });
     expect(await store.read("user:u-1", NOON_SEP_25)).toMatchObject({
       requests: 1, tokens: 1234, reports: 1,

@@ -57,6 +57,8 @@ describeEmulator(`FirestoreQuotaStore on the emulator (${emulator})`, () => {
       userId: "alice", organizationId: "org-a", day: "2026-09-25", questions: 1, reports: 0, tokens: 1500,
     });
     expect(data?.updatedAt.toDate()).toEqual(new Date(NOON_SEP_25));
+    // The TTL policy runs on `expireAt`; one on `updatedAt` would delete today's counter.
+    expect(data?.expireAt.toDate()).toEqual(new Date(NOON_SEP_25 + 90 * DAY_MS));
   });
 
   it("counts every one of many simultaneous records (the transaction)", async () => {
@@ -64,7 +66,8 @@ describeEmulator(`FirestoreQuotaStore on the emulator (${emulator})`, () => {
     await Promise.all(Array.from({ length: 25 }, () => store.record(bob, { tokens: 100 }, NOON_SEP_25)));
 
     expect((await store.read("user:bob", NOON_SEP_25)).tokens).toBe(2500);
-  });
+    // The emulator serialises contended transactions with retry backoff: about 7.5 s locally.
+  }, 30_000);
 
   it("admits 20 questions a day, refuses the 21st, and resets at midnight UTC", async () => {
     const carol = { key: "user:carol", userId: "carol", organizationId: "org-a" };
