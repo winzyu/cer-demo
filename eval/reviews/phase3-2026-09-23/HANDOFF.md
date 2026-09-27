@@ -17,7 +17,7 @@ Work on branch `eval/wave1-corrections` in its worktree `.claude/worktrees/wave1
 - **Rubric:** v2 as corrected (`19b363d`, fixture fingerprint `9a715154...`); v1 stays the reported rubric for E3's 1.01.
 - **Latest arms, new judge, rubric v2, two passes:** gold context GLM with the tools-off rule 1.28 / 1.31 (`p3-gold-glm-notools-2026-09-27`); `local-rerank` k=20, both rewrites, GLM, rule 1.11 / 1.17 (`p3-rerank-k20-rewrite2-glm-2026-09-27`), refusal gate FAIL.
 - **Baselines, new judge, rubric v2, two passes unless noted:** gold context `gpt-oss-120b` 1.10 (one pass), `glm-5p3-flash` 1.33 / 1.34; `local-vector` k=20 unpinned `gpt-oss-120b` 0.72 / 0.74, with rewriting 0.89 / 0.92; **`glm-5p3-flash` with rewriting 1.07 / 1.06 (run `p3-lv-k20-rewrite-glm-2026-09-26`), the baseline for the next round.**
-- `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); production retrieval is still the user's choice (recommended `local-vector` k=20, datasheets unpinned, with `QUERY_REWRITE=true` and `QUERY_REWRITE_FIRST_TURN=true`, no reranker, per the control capture).
+- `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); launch retrieval decided by the user on 2026-09-27: `DEFAULT_RETRIEVAL=local-vector`, k=20, datasheets unpinned, `QUERY_REWRITE=true`, `QUERY_REWRITE_FIRST_TURN=true`, no reranker (the runbook still says `hybrid-slice-vector`; change it at landing).
 - **Spend:** about $21.10 of the $30 ceiling after the control capture (about $0.45: answers $0.21, rewrites $0.03, two judge passes about $0.20, estimated); before it, about $20.65 after the 2026-09-27 round (about $2.25: offline runs $0.10, reranker offline $0.60, tool check $0.10, tools-off rule capture and judging $0.40, reranker capture and judging $1.15), so about $8.90 left; estimates, since `deepseek-v4p1-flash` has no rate in `prices.ts`, so check the Fireworks bill.
 
 ## What to review
@@ -148,7 +148,7 @@ Report every result with its full configuration (model, reasoning, retrieval arm
 4. **Add `deepseek-v4p1-flash`'s rate to `src/eval/prices.ts`** with the date read, so judge spend is measured; changing `DEFAULT_JUDGE_MODEL` awaits the user.
 5. **Route the tool-check findings to the Gilligan answer-quality work on `dev`** (tools-on prompt and tools, not R4): the "last 24 hours" answer and the partial relay of the water-type and withheld-history notes (plan Q8).
 
-Then: the user's open decisions (`QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` for launch, both recommended on; the production retrieval setting and the reranker; the judge default in code; E4's per-class caveat or refusal under D3, with cross-document the obvious candidate), E4 and E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
+Then: the user's open decisions (the judge default in code; E4's per-class caveat or refusal under D3, with cross-document the obvious candidate), E4 and E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
 
 ## Traps found
 
@@ -192,7 +192,7 @@ Then: the user's open decisions (`QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` 
 
 ## Decisions
 
-- User, 2026-09-27 (later): the control capture approved and run.
+- User, 2026-09-27 (later): the control capture approved and run; launch retrieval is `local-vector` k=20, datasheets unpinned, with `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on and no reranker.
 - User, 2026-09-27: steps 1 and 3-6 approved and run; keep the tools-off rule; add `QUERY_REWRITE_FIRST_TURN`; the mirror login allowed for the tool check. The control capture (next step 1) awaits approval.
 
 - User, 2026-09-26 (late): approved next-round steps 1-6 (about $2.50-3.00), including about 10 live read-only device API questions for the GLM tool check if the local mirror cannot serve them; to run in a new conversation.
@@ -218,7 +218,7 @@ Then: the user's open decisions (`QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` 
 - `docs/SPECS.md`: retrieval depth is `DEFAULT_TOP_K=20`; the `local-rerank` and `hybrid-slice-rerank` modes and `RERANK_MODEL`; `LLM_REASONING_EFFORT`.
 - `docs/timeline.md`: the judge replacement, the datasheet unpinning and the production depth decision; and decisions for the Phase 1d closure without human verification (2026-09-23), the top-k choice, the iteration 2 revert, the $20 ceiling, the calibration adjudication, E3, the held-out check, the reranker and reasoning `high` outcomes, and the user's rubric decision.
 - `docs/migration/GILLIGAN_RELEASE_PLAN.md` (on `dev`): E2 and E3 are marked done in the uncommitted `dev` edits; add the improvement round and the rubric review when E4 or E6 lands.
-- `docs/migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` (on `dev`, line 187 and the L4 check at 212): `LLM_MODEL: "accounts/fireworks/models/glm-5p3-flash"` and `LLM_REASONING_EFFORT: "low"`, plus `QUERY_REWRITE: "true"` if the user approves it for launch; `.env.example` likewise. Only after GLM passes a tool-calling check with the sensor and report tools, which the gold and retrieval captures did not exercise.
+- `docs/migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` (on `dev`, line 187 and the L4 check at 212): `LLM_MODEL: "accounts/fireworks/models/glm-5p3-flash"` and `LLM_REASONING_EFFORT: "low"`, plus `QUERY_REWRITE: "true"` (approved 2026-09-27); `.env.example` likewise. Only after GLM passes a tool-calling check with the sensor and report tools, which the gold and retrieval captures did not exercise.
 - `docs/SPECS.md`: `QUERY_REWRITE`, `QUERY_REWRITE_FIRST_TURN`, `LLM_THINKING` and the tools-off rule (`NO_TOOLS_RULE`).
-- `docs/migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` and `.env.example`: add `QUERY_REWRITE_FIRST_TURN: "true"` beside `QUERY_REWRITE` if the user approves both; `DEFAULT_RETRIEVAL` per the user's retrieval decision.
+- `docs/migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` and `.env.example`: add `QUERY_REWRITE_FIRST_TURN: "true"` beside `QUERY_REWRITE`, and `DEFAULT_RETRIEVAL: "local-vector"` (approved 2026-09-27).
 - `docs/timeline.md`: the 2026-09-27 decisions (tools-off rule kept, first-turn rewriting added, the tool check passed, the reranker held pending the control).
