@@ -216,13 +216,16 @@ describe("query_sensor_data over a merge chain", () => {
     const { tool } = makeTool();
     const result = await tool.run({
       metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "OWC",
-    }) as { device: Record<string, unknown>; note: string };
+    }) as { device: Record<string, unknown>; note: string; user_notes: string[] };
 
     expect(result.device.history_labels).toEqual([SURVIVOR, PRED]);
     expect(result.device.history_withheld).toEqual([
       { label: FOREIGN, reason: "different organization — history not transferred" },
     ]);
     expect(result.note).toContain("NOT included");
+    // The reader's version states the limit without the model instruction.
+    expect(result.user_notes).toContainEqual(expect.stringContaining("not available to this account"));
+    expect(result.user_notes.join(" ")).not.toMatch(/\bSay\b|query_sensor_data/);
   });
 
   it("tells the model when the pod it was asked about is itself retired", async () => {

@@ -27,6 +27,7 @@ import {
 } from "../report/operatorThresholds";
 import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import { QuerySensorData, type SensorToolResult } from "./querySensorData";
 
@@ -148,6 +149,9 @@ export class GetPodThresholds {
       source: "Device registry — operator-configured alert thresholds.",
       note: "These are configured alert limits an operator set for this pod, not an ecological "
         + "water-quality standard.",
+      [USER_NOTES_FIELD]: [
+        "These limits are the alert thresholds set for this pod, not an ecological water-quality standard.",
+      ],
     };
   }
 }

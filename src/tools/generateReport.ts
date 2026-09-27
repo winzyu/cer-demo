@@ -22,6 +22,7 @@
 import { config } from "../config";
 import { codedError } from "../utils/errors";
 import { createLogger } from "../utils/logger";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import { QuerySensorData, type SensorToolResult } from "./querySensorData";
 import { prepareReport } from "../report/produceReport";
@@ -255,7 +256,12 @@ export class GenerateReport {
       // against the caller's own token, so nothing here is trusted on the way back in.
       report_request: { time_range: timeRange, ...(device ? { device } : {}) },
       ...(skippedParameters && skippedParameters.length > 0
-        ? { note: `No readings for: ${skippedParameters.join(", ")}. Report covers the remaining parameters only.` }
+        ? {
+          note: `No readings for: ${skippedParameters.join(", ")}. Report covers the remaining parameters only.`,
+          [USER_NOTES_FIELD]: [
+            `No readings for ${skippedParameters.join(", ")}, so the report covers the other parameters only.`,
+          ],
+        }
         : {}),
     };
   }

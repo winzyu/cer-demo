@@ -16,6 +16,7 @@ import type {
 } from "../types/device.types";
 import { codedError, resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import {
   AGGREGATIONS, aggregate, isAggregation,
@@ -959,6 +960,10 @@ export class QuerySensorData {
     allZeroTurbidity = false,
   ): Record<string, unknown> {
     const notes: string[] = [];
+    // The reader's version of the caveats a person needs, without instructions to the model;
+    // the page shows these, never `note` (see `USER_NOTES_FIELD`). Caveats the page already
+    // derives from structured fields (no readings, provisional turbidity) are not repeated.
+    const userNotes: string[] = [];
 
     if (chain.labels.length > 1) {
       // Said out loud because the alternative is a number whose provenance is invisible: these
@@ -969,6 +974,9 @@ export class QuerySensorData {
         + "replaced Notecard mints a new label and the older readings keep the old one. This "
         + `answer covers all of them (${chain.labels.join(", ")}), de-duplicated where their `
         + "spans overlap.",
+      );
+      userNotes.push(
+        `Includes readings recorded under this site's earlier device labels (${chain.labels.join(", ")}).`,
       );
     }
 
@@ -981,13 +989,17 @@ export class QuerySensorData {
         `Earlier readings from this site were NOT included: ${parts.join("; ")}. `
         + "Say that the history shown may start later than the site's first reading.",
       );
+      userNotes.push(
+        "Earlier readings from this site are not available to this account, so the history "
+        + "shown may start later than the site's first reading.",
+      );
     }
 
     if (chain.mergedInto) {
-      notes.push(
-        `This device was retired and merged into ${chain.mergedInto}, so its readings stop at `
-        + "the merge. Current data for the site is under that label.",
-      );
+      const merged = `This device was retired and merged into ${chain.mergedInto}, so its `
+        + "readings stop at the merge. Current data for the site is under that label.";
+      notes.push(merged);
+      userNotes.push(merged);
     }
 
     if (implausible.length > 0) {
@@ -1001,6 +1013,9 @@ export class QuerySensorData {
       notes.push(
         `Excluded as physically impossible despite no probe fault flag: ${parts.join("; ")}. `
         + "These are sensor rails, not measurements, and are not counted in any statistic above.",
+      );
+      userNotes.push(
+        `Left out as sensor faults, not measurements: ${parts.join("; ")}.`,
       );
     }
 
@@ -1020,6 +1035,7 @@ export class QuerySensorData {
 
     if (allZeroTurbidity) {
       notes.push(TURBIDITY_ALL_ZERO_CAVEAT);
+      userNotes.push(TURBIDITY_ALL_ZERO_CAVEAT);
     }
 
     const environment = device.operatingEnvironment;
@@ -1032,7 +1048,10 @@ export class QuerySensorData {
       );
     }
 
-    return notes.length > 0 ? { note: notes.join(" ") } : {};
+    return {
+      ...(notes.length > 0 ? { note: notes.join(" ") } : {}),
+      ...(userNotes.length > 0 ? { [USER_NOTES_FIELD]: userNotes } : {}),
+    };
   }
 }
 

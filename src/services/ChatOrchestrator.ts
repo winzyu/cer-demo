@@ -3,6 +3,7 @@ import type { ChatMessage } from "../types/chat.types";
 import type {
   ToolCall, ToolContext, ToolDefinition, ToolHandler, ToolInvocation,
 } from "../types/tool.types";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import { stripCommentaryMarkers } from "../utils/answerFormat";
 import { createLogger } from "../utils/logger";
 import type { LlmService, LlmUsage } from "./LlmService";
@@ -316,11 +317,22 @@ export class ChatOrchestrator {
         role: "tool",
         tool_call_id: call.id,
         name,
-        content: JSON.stringify({ handle, result }),
+        content: JSON.stringify({ handle, result: ChatOrchestrator.forModel(result) }),
       });
     }
 
     return { messages, invocations };
+  }
+
+  /**
+   * The result as the model reads it: without the reader-facing `USER_NOTES_FIELD`, which
+   * repeats `note` for the page, so adding reader notes never changes the model's input.
+   */
+  private static forModel(result: unknown): unknown {
+    if (result === null || typeof result !== "object" || !(USER_NOTES_FIELD in result)) {
+      return result;
+    }
+    return Object.fromEntries(Object.entries(result).filter(([key]) => key !== USER_NOTES_FIELD));
   }
 
   /**
