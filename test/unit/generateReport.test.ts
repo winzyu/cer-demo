@@ -113,6 +113,7 @@ describe("GenerateReport.run", () => {
         },
       }),
       deviceRecord: async () => null,
+      queryBatch: QuerySensorData.prototype.queryBatch,
     } as unknown as QuerySensorData;
     const result = await new GenerateReport({ sensor: stubSensor }).run({ time_range: "last week" }, CALLER);
 
@@ -185,6 +186,7 @@ describe("GenerateReport.run", () => {
         },
       }),
       clockMs: () => now,
+      queryBatch: QuerySensorData.prototype.queryBatch,
     } as unknown as QuerySensorData);
 
     it("names the parameter behind an Exceedance, with its range against the threshold", async () => {
@@ -240,6 +242,7 @@ describe("GenerateReport.run", () => {
         },
       }),
       deviceRecord: async () => null,
+      queryBatch: QuerySensorData.prototype.queryBatch,
     } as unknown as QuerySensorData;
     const tool = new GenerateReport({ sensor: stubSensor });
     const result = await tool.run({ time_range: "last week" }, CALLER);
