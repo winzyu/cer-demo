@@ -45,7 +45,7 @@ describe("get_pod_thresholds — tool definition", () => {
       + "minimum and maximum for temperature (°F), pH, dissolved oxygen (mg/L), ORP (mV) and "
       + "conductivity (µS/cm), plus the pod's water type. These are configured alert limits, "
       + "not an ecological standard. Values that fail validation are returned as rejected with a "
-      + "reason — never quote a rejected value. There is no turbidity threshold; use "
+      + "reason - never quote a rejected value. This tool exposes no numeric turbidity threshold; use "
       + "get_turbidity_info for turbidity.",
     );
   });
@@ -78,7 +78,7 @@ describe("get_pod_thresholds — a fully valid pod", () => {
       orp: { status: "configured", min: 50, max: 400, unit: "mV" },
       conductivity: { status: "configured", min: 40_000, max: 75_000, unit: "µS/cm" },
     });
-    expect(result.turbidity).toMatchObject({ status: "no_threshold" });
+    expect(result.turbidity).toMatchObject({ status: "unavailable" });
     expect(String((result.turbidity as { note: string }).note)).toContain("get_turbidity_info");
     expect(String(result.source)).toMatch(/device registry/i);
     expect(String(result.note)).toMatch(/not an ecological/i);

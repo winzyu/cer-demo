@@ -1,0 +1,424 @@
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__ca460547d41b)
+
+.....................................................................20
+Tables
+6.0–1. 	Stabilization criteria for recording direct field measurements ............................................3
+6.0–2. 	Example of field notes for a discharge-weighted conductivity measurement ..................7
+6.0–3. 	Example of field notes for an area-weighted conductivity measurement .........................8-- 5 of 32 --
+
+iv
+Conversion Factors
+U.S. customary units to International System of Units
+Multiply 	By 	To obtain
+gallon (gal) 	3.785 	liter (L)
+pound, avoirdupois (lb) 	0.4536 	kilogram (kg)
+International System of Units to U.S. customary units
+Multiply 	By 	To obtain
+kilogram (kg) 	2.205 	pound, avoirdupois (lb)
+liter (L) 	0.2642 	gallon (gal)
+liter (L) 	61.02 	cubic inch (in3)
+milligram (mg) 	3.527 x 10-5 	ounce, avoirdupois (oz)
+milliliter (mL) 	0.0338 	ounce, fluid (oz)
+milliliter (mL) 	2.642 x 10-4 	gallon (gal)
+Temperature is reported in degrees Celsius (°C), which can be converted to degrees Fahrenheit
+(°F) by use of the following equation:
+°F = 1.8(°C) + 32
+Specific conductance is reported in microsiemens per centimeter at 25 degrees Celsius
+(μS/cm at 25 °C).
+Abbreviations and Symbols
+ANC 	acid-neutralizing capacity
+Eh 	measure of the oxidation-reduction potential of a solution
+L 	liter
+μS/cm 	microsiemens per centimeter (reported at 25 ºC)
+mg/L 	milligram per liter (equivalent to parts per million [ppm])
+NFM 	National Field Manual for the Collection of Water-Quality Data (USGS)
+NFQA 	National Field Quality Assurance program (USGS)
+NFSS 	National Field Supplies Service—also referred to as “One-Stop Shopping” (USGS)
+NWIS 	National Water Information System (USGS)
+NWIS-TS 	NWIS time-series data—NWIS database for continuous water data (USGS)
+pH 	negative base-10 logarithm of the hydrogen ion activity (unitless)
+QA 	quality assurance
+QC 	quality control
+QW 	quality of water
+QWDATA 	Quality of Water Database (USGS NWIS database for discrete water data)
+
+-- 6 of 32 --
+
+v
+USGS 	U.S. Geological Survey
+> 	greater than
+≥ 	greater than or equal to
+< 	less than
+≤ 	less than or equal to
+
+-- 7 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__91f856db8d42)
+
+-- 9 of 32 --2 	Chapter A6.0. Guidelines for Field-Measured Water-Quality Properties
+concentration, specific electrical conductance (SC), pH,
+reduction-oxidation potential (redox/ORP), alkalinity and
+acid-neutralizing capacity (ANC)2, and turbidity.3 The field
+methods for measuring field parameters described in this
+chapter are applicable to most natural waters.
+USGS guidelines for continuous monitoring of selected
+field measurements are described in Wagner and others (2006).
+Specific guidance for the use of multiparameter instruments—
+instruments for which the individual field-measurement
+sensors are combined into a sonde and deployed to the water
+body for in situ measurements—is provided in NFM A6.8.
+Before 2017, the NFM chapters were released in the
+USGS Techniques of Water-Resources Investigations series.
+Effective in 2018, new and revised NFM chapters are being
+released in the USGS Techniques and Methods series; this
+series change does not affect the content and format of the
+NFM. More information is in the general introduction to the
+NFM (USGS Techniques and Methods, book 9, chapter A0)
+at https://doi.org/10.3133/tm9A0. The authoritative current
+versions of NFM chapters are available in the USGS Publica-
+tions Warehouse at https://pubs.er.usgs.gov/. Comments, ques-
+tions, and suggestions related to the NFM can be addressed
+to nfm@usgs.gov.
+2.0 	Quality Assurance
+Adherence to standard U.S. Geological Survey (USGS)
+quality-assurance protocols is required, and quality-controlled
+procedures are to be incorporated into every USGS data-
+collection effort to monitor water quality. Quality assurance
+of the data collected includes the timely and accurate docu-
+mentation of field information in electronic and (or) paper
+records, as well as second- or third-party auditing of such
+records. Included in these records of quality-control data for
+field measurements are the records of replicate measurements.
+Training in measurement techniques and the collection of
+quality-control data is essential to the consistency of the field-
+measurement procedures.
+2.1 	Records
+Recordkeeping is the responsibility of all field personnel.
+Electronic and (or) paper records must be established and
+maintained for each uniquely identified sampling location to
+2Alkalinity/acid-neutralizing capacity (ANC) is a field analysis, not a
+direct field measurement; however, the analysis is performed routinely during
+the same field trip in which the other field-measurements are made. In this
+section, the term “alkalinity” is used when referring to either alkalinity or
+ANC.
+3Each of these field measurements is discussed in detail in the following
+chapters of the National Field Manual: temperature (NFM A6.1), dissolved
+oxygen (NFM A6.2), specific electrical conductance (NFM A6.3), pH
+(NFM A6.4), reduction-oxidation potential (NFM A6.5), alkalinity and acid-
+neutralizing capacity (NFM A6.6), and turbidity (NFM A6.7).
+permanently document field activities, measurement readings,
+instrument calibration, and any other information needed to
+meet programmatic or regulatory requirements (see NFM A1
+and A4 for detailed information about records).
+• For every field visit, instrument-performance informa-
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__1b7e9852e841)
+
+s per centimeter at 25 °C; >, greater than; unit, standard pH unit; mg/L, mil-
+ligrams per liter; FNU, formazin nephelometric units; TU, turbidity units; %, percent]
+Standard direct field measurement1
+Stabilization criteria2
+(Variability should be within the range shown for five or more
+measurements)
+Temperature
+Thermistor 	±0.2 °C
+Specific electrical conductance
+≤100 μS/cm
+>100 μS/cm
+±5 μS/cm
+±3%Dissolved oxygen
+Optical/luminescent sensors 	±0.2 mg/L
+pH:
+Meter displays to 0.01 	±0.1 unit
+Turbidity3
+≤100 FNU (or other TU)
+>100 FNU (or other TU)
+±0.5 TU or ±5%, whichever is greater
+±10%
+1
+Eh is not considered to be a routine or direct field measurement (see National Field Manual (NFM) A6.5). Alkalinity and acid-neutralizing capacity determi-
+nations require a titration procedure and are not considered direct measurements.
+2Refer to NFM A6.8 for similar criteria when using multiparameter instruments. For continuous monitors, consult Wagner and others (2006).
+3Multiparameter instruments used for most in situ turbidity applications contain single-beam infrared wavelength turbidity sensors and are reported in FNU.
+Check the Excel spreadsheet at https://pubs.usgs.gov//twri/twri9a6/twri9a67/twri9a_turbidity_codes_5-2012.xlsx to determine the appropriate turbidity unit of
+measure; consult NFM A6.7 for detailed guidance on turbidity measurement and instrumentation.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__a038c4c76937)
+
+hamber for use with multiple sensors, shown without sensors
+installed; and (B) a flow-through cell for a multiparameter sonde. (Photographs from (A) Geotech Environmental
+Equipment, Inc., accessed February 13, 2020, at http://www.geotechenv.com/flowblock_monitoring_system.html, and (B)
+YSI Inc., accessed February 13, 2020, at https://www.ysi.com/accessory/id-005083/5083-flow-cell.)
+
+-- 22 of 32 --3.0 	Performing Field Measurements 	15
+• The field-measurement system should be con-
+nected to the supply plumbing inline before or as it
+bypasses holding tanks, back-flow pressure tanks,
+flow meters, or chemical treatment systems.
+• Monitor wells—At wells that allow downhole access,
+it is necessary to determine the depth interval at which
+measurements will be made or from which water will
+be withdrawn for field measurements. Selection of
+the sampling-depth interval depends on how the well
+was constructed and the sampling design of the study.
+Record the depth at which the pump intake is set within
+a given screened or open interval.
+• The standard three-volume purging protocol typi-
+cally is appropriate. (Consult NFM A4 before field
+work begins; the summary in section 3.2.1 does not
+include all the information needed to ensure ade-
+quate performance.)
+• Either direct-measurement or subsample proce-
+dures can be used at monitor wells, depending on
+study needs and sampling objectives. If samples for
+laboratory analysis will be collected, use of the flow-
+through cell/chamber system (inline-flow procedure)
+is recommended in order to avoid possible sample
+contamination from use of a downhole sensor system
+or bailer.
+3.2.1 	Summary of Well-Purging Protocols
+The standard USGS well-purging protocol is to remove
+three or more well casing volumes of water while monitoring
+the water level and the stabilization of field parameters as a
+function of time, pumping rate, and the volume of water being
+removed (see NFM A4). Routine field measurements include
+pH, temperature, conductivity, DO concentration, and turbid-
+ity. Inherent in the purging procedure is an assumption that
+stabilization of field parameters indicates that the water being
+discharged from the well represents ambient formation water.
+Field personnel should examine this assumption for each well,
+using their knowledge of the well and aquifer hydraulics. Field
+experience, an understanding of the effects of hydrologic and
+geochemical conditions, and knowledge of data-collection and
+data-quality requirements are necessary to determine the most
+representative field-measurement values.
+Before purging begins:
+1. 	Select and set up the field-measurement system most
+appropriate to the requirements for the data-collection
+effort. Options include—
+a. 	A transparent, air-tight flow-through chamber, hold-
+ing the sensors of single-parameter instruments or
+a multiparameter sonde. The flow-through chamber
+is connected to tubing through which the sample is
+pumped directly from the well to the measurement
+chamber (examples are given in figure 6.0–5).
+b. 	A multiparameter instrument without the flow-
+through chamber, deployed downhole in the well.
+c. 	Single-parameter meters with sensors that allow for
+downhole submergence.
+d. 	Single-parameter meters or a multiparameter instru-
+ment with sensors immersed in subsamples collected
+from a discrete-volume sampler.
+2. 	Option (a) is generally preferred and constitutes what
+is termed in this report the “inline-flow procedure.”
+Options (b) and (c) constitute what is termed in this
+report the “downhole (in situ) procedure.” Option (d) is
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a65/twri9a_6.5_v_1.2.pdf (chunk usgs-nfm-a6.5-orp.pdf__dcd192573a81)
+
+als of selected reference
+electrodes as a function of temperature and
+potassium chloride reference-solution
+concentration, in volts ................................................... 	9
+6.5–3. Eh of ZoBell’s solution as a function of
+temperature ................................................................... 	9
+6.5–4. Troubleshooting guide for Eh measurement ............... 	19
+
+-- 2 of 22 --Chapter A6. Field Measurements 	Reduction-Oxidation Potential, Version 1.2 (9/2005)
+REDOX — 3
+REDUCTION-OXIDATION 	6.5
+POTENTIAL (ELECTRODE
+METHOD)
+In contrast to other field measurements, the determination of the
+reduction-oxidation potential of water (referred to as redox) should not
+be considered a routine determination. Measurement of redox
+potential, described here as Eh measurement, is not recommended in
+general because of the difficulties inherent in its theoretical concept
+and its practical measurement (see “Interferences and Limitations,”
+section 6.5.3.A).
+REDUCTION-OXIDATION POTENTIAL (as Eh)—A
+measure of the equilibrium potential, relative to
+the standard hydrogen electrode, developed at
+the interface between a noble metal
+electrode and an aqueous solution containing
+electroactive redox species.
+X 	Eh measurement may show qualitative trends but generally
+cannot be interpreted as equilibrium values.
+X 	Determinations of redox using the platinum (or other noble
+metal) electrode method (Eh) are valid only when redox species
+are (a) electroactive, and (b) present in the solution at
+concentrations of about 10-5 molal and higher. Redox species in
+natural waters generally do not reach equilibrium with metal
+electrodes.
+Procedures for equipment calibration (test procedures) and Eh
+measurement are described in this section for the platinum electrode
+only. Although the general guidance given here applies to other types
+of redox electrodes (such as gold and glassy carbon electrodes), it is
+necessary to consult the manufacturer’s instructions for correct use of
+the specific electrode selected. Concentrations of redox species can be
+determined by direct chemical analysis instead of using the electrode
+method (Baedecker and Cozzarelli, 1992).
+
+-- 3 of 22 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a65/twri9a_6.5_v_1.2.pdf (chunk usgs-nfm-a6.5-orp.pdf__9dfb772d652d)
+
+of the electrode connector
+must be kept clean. Clean them with alcohol, if necessary. Store the con-
+nector ends in a plastic bag when not in use.
+Some of the procedures recommended herein for equip-
+ment operation may be out of date if the equipment being
+used is different from that described or
+incorporates more recent technological
+advances—follow the manufacturer’s instructions.
+
+-- 7 of 22 --Reduction-Oxidation Potential, Version 1.2 (9/2005) 	U.S. Geological Survey TWRI Book 9
+8—REDOX
+6.5.2 	EQUIPMENT TEST PROCEDURE
+Eh measuring systems can be tested for accuracy but they cannot be
+adjusted. Eh equipment must be tested, either in the laboratory or in
+the field, against a ZoBell’s standard solution before making field
+measurements. In general, field testing with ZoBell’s is not required,
+but the protocol used will depend on study needs.
+X 	Before using, check that the ZoBell’s solution has not exceeded
+its shelf life.
+X 	Test the Eh equipment using the ZoBell’s solution before and
+after field use.
+X 	Be aware that:
+— ZoBell’s is toxic and needs to be handled with care.
+— ZoBell’s reacts readily with minute particles of iron, dust, and
+other substances, making field use potentially difficult and
+messy.
+The Eh measurements are made by inserting a platinum electrode cou-
+pled with a reference electrode into the solution to be measured. The
+resulting potential, read directly in millivolts from a potentiometer
+(such as a pH meter), is corrected for the difference between the stan-
+dard potential of the reference electrode being used at the solution
+temperature and the potential of the standard hydrogen electrode (table
+6.5–2).
+TECHNICAL NOTE: Eref is the whole-cell potential of the
+reference electrode in ZoBell’s solution.
+Eref = 238 mV (saturated KCl, immersed with the platinum
+electrode in ZoBell’s at 25°C) is the measured potential of the
+silver:silver-chloride (Ag:AgCl) electrode;
+Eref = 185.5 mV (saturated KCl, immersed with the platinum
+electrode in ZoBell’s at 25°C) is the measured potential of the
+calomel (Hg:HgCl2) electrode;
+E° = 430 mV is the standard electrode potential of ZoBell’s
+solution measured against the hydrogen electrode at 25°C.
+Half-cell potentials for the calomel, silver:silver chloride, and combi-
+nation electrodes are shown in table 6.5–2. Table 6.5–3 provides the
+theoretical Eh of ZoBell’s solution as a function of temperature. For
+those temperatures not shown on tables 6.5–2 and 6.5–3, interpolate
+the values. Add the value corresponding to the solution temperature to
+the measured potential electromotive force (emf measurement).
+
+-- 8 of 22 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a65/twri9a_6.5_v_1.2.pdf (chunk usgs-nfm-a6.5-orp.pdf__0fc2879a5e90)
+
+ KCl
+saturated 2
+Silver:silver chloride
+Table 6.5–3. Eh of ZoBell’s solution as a function
+of temperature
+Temperature o
+C 	Eh(mV) 	Temperature o
+C,
+(continued)
+Eh(mV),
+(continued)
+10 	467 	26 	428
+12 	462 	28 	423
+14 	457 	30 	418
+16 	453 	32 	416
+18 	448 	34 	407
+20 	443 	36 	402
+22 	438 	38 	397
+24 	433 	40 	393
+25 	430
+[From Nordstrom (1977); O C, degrees Celsius; mV, millivolts]
+
+-- 9 of 22 --Reduction-Oxidation Potential, Version 1.2 (9/2005) 	U.S. Geological Survey TWRI Book 9
+10—REDOX
+To test Eh equipment, complete the following 7 steps and record
+results on the Eh data record form for the equipment test procedure
+(fig. 6.5–1):
+1. Follow the manufacturers’ recommendations for instrument warm
+up and operation.
+● 	Set the scale to the desired millivolt range.
+● 	Record the type of reference electode being used.
+2. Unplug the fill hole. Shake the electrode gently to remove air bub-
+bles from the sensing tip of the electrode. Check the level of the
+filling solution and replenish to the bottom of the fill hole.
+● 	The filling solution level must be at least 1 in. above the level
+of solution being measured.
+● 	Use only the filling solution specified by the manufacturer.
+3. Rinse the electrode, thermometer, and measurement beaker with
+deionized water. Blot (do not wipe) excess moisture from the
+electrode.
+4. Pour ZoBell’s solution into a measurement beaker containing the
+electrode and temperature sensor.
+● 	The Eh electrode must not touch the bottom or side of the con-
+tainer.
+● 	Add enough solution to cover the reference junction.
+● 	Allow 15 to 30 minutes for the solution and sensors to equili-
+brate to ambient temperature.
+5. Stir slowly with a magnetic stirrer (or swirl manually) to establish
+equilibrium between the electrode(s) and solution. Switch the
+meter to the millivolt function, allow the reading to stabilize (±5
+mV), and record the temperature and millivolt value.
+6. Look up the half-cell reference potential for the electrode being
+used (table 6.5–2). Add this value to the measured potential to
+obtain the Eh of ZoBell’s at ambient temperature.
+● 	If the value is within 5 mV of the ZoBell Eh given on table
+6.5–3, the equipment is ready for field use. (See the example
+below.)
+● 	Refer to section 6.5.4 if the value is not within 5 mV of the
+ZoBell Eh.
+7. Rinse off the electrodes and the thermometer thoroughly with
+deionized water. Store the test solution temporarily for possible
+verification.
+
+-- 10 of 22 --
+
+Chapter A6. Field Measurements 	Reduction-Oxidation Potential, Version 1.2 (9/2005)
+REDOX — 11
+EXAMPLE:
+Example of the equipment test procedure using a silver:silver chloride-
+saturated KCl (Ag:AgCl) electrode.
+Eh = emf + Eref
+where:
+Eh is the potential (in millivolts) of the sample solution relative to
+the standard hydrogen electrode,
+emf or Emeasured is the electromotive force or potential (in milli-
+volts) of the water measured at the sample temperature,
+Eref is the reference electrode potential of the ZoBell’s solution
+corrected for the sample temperature (table 6.5–2).
+a. 	Follow steps 1–5 (above). For this example,
+• 	Measured temperature = 22°C
+• 	emf = 238 mV.
+b. 	Check table 6.5–2. The interpolated reference
+potential = 202 mV for Ag:AgCl−saturated KCl at 22°C.
+c. 	From Eh = emf + Eref
+Eh (ZoBell’s) = 238 mV
++ 202 mV = 440 mV.
+d. 	Check table 6.5–3. The test value of 440 mV is within ± 5 mV
+of 438 mV from table 6.5–3. Thus, the equipment is function-
+ing well and ready for field use.
+Check the date on Zobell’s solution—do not use
+solution past its expiration date.
+
+-- 11 of 22 --

@@ -1,0 +1,251 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-26T06:54:24.264Z",
+  "budget": {
+    "calls": 44,
+    "promptTokens": 550234,
+    "cachedPromptTokens": 73812,
+    "completionTokens": 32348
+  },
+  "results": [
+    {
+      "arm": "gold-context",
+      "pass": "warm",
+      "turnsJudged": 22,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 4,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 4,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 2,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 4,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 4,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 1.1818181818181819,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives only the standard-hydrogen-electrode definition and then refuses the actual question withholding the reference-electrode and addition facts the rubric requires even though the loaded documents supply them. Unmet: Eh is an equilibrium potential developed at the boundary between a noble-metal electrode and the water reflecting redox-active species; The probe's millivolt reading is not Eh on its own because it is measured against the probe's own reference electrode; Getting Eh means adding the reference electrode's own potential to the measured reading"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that withholds the supported explanations the rubric asks for making none of the must-contain points (no mention of the turbidity fouling check the EPA pre/post-calibration procedure or the qualification-not-discard point). Unmet: Corpus gives no rule for deciding which part of a long record may be kept; No source gives an allowable per-day/per-week drift rate; No procedure for correcting or adjusting a record after recovery; Turbidity chapter offers a fouling check comparing calibrant reading before and after cleaning percent difference; Fouling check quantifies one sensor's condition not an acceptance rule for the record; EPA SOP: calibrate before deployment check on recovery defers drift criteria to QA plan default criteria only if plan silent; Declines to convert EPA post-calibration criteria into a keep-or-discard threshold for a month; EPA default criteria are a pass-or-fail check at recovery not a record-retention rule; failing data are qualified not discarded"
+        }
+      ]
+    },
+    {
+      "arm": "hybrid-slice-vector",
+      "pass": "warm",
+      "turnsJudged": 22,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 4,
+            "mean": 0.25,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 2,
+            "mean": 0,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "definitional",
+            "turns": 4,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "follow-up",
+            "turns": 2,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 4,
+            "mean": 0.75,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 4,
+            "mean": 0.75,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "refusal",
+            "turns": 2,
+            "mean": 0,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 0.5,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer invents a discrepancy between the two chapters treats A6.8 as separate/stricter and resolves the imagined conflict by picking one document violating the must-not items. Unmet: States the two tables give the same stabilisation criteria and do not conflict; States the general field-measurement chapter points multiparameter users to the multiparameter chapter for criteria of the same kind; States the criteria are standard sensor stabilisation criteria and actual sensor accuracy varies by model and manufacturer; For persistent variability extends equilibration and records additional measurements then reports the median of the final five or more readings or selects a representative final reading documenting the decision"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal stating the A6.8 example field form and its criteria are not in the excerpts so none of the three must-contain points (the ±0.1 pH unit criterion the ±0.3 pH unit below 75 µS/cm criterion or the contrast with A6.4's 0.05 pH unit final-buffer check) is made and the rubric expected a real answer. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check (0.05 pH unit of certified value at calibration temperature)"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer withholds the required factor 0.8235 saying it lacks the information which is a refusal of the figure the rubric asks for even though it correctly states the multiplication method and names table 6.2-4. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm; Attributes the factor to the salinity-correction table in the USGS NFM dissolved-oxygen chapter (table 6.2-4)"
+        },
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives only one generic 10% tolerance for the sonde's readings which is a single tolerance covering all parameters (a must-not) and it omits every parameter-specific criterion and the 60-second minimum wait. Unmet: temperature criterion about ±0.2 °C; specific conductance criterion ±5 µS/cm at ≤100 ±3% above; dissolved oxygen criterion about ±0.2 mg/L; pH criterion about ±0.1 unit; turbidity stabilization ±0.5 TU or ±5% ±10% above 100 TU; minimum wait in surface water at least 60 seconds; 60 seconds is a minimum some instruments need longer"
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes none of the must-contain points and explicitly asserts that the probe's raw ORP millivolt output is the Eh value violating the 'must not' item that Eh and the raw ORP output are interchangeable. Unmet: states that Eh is defined relative to the standard hydrogen electrode; states that Eh is an equilibrium potential developed at the boundary between a noble-metal electrode and the water and reflects the redox-active species in solution; states that the millivolts the probe reads are not Eh on their own because that raw reading is against the probe's own reference electrode; states that getting Eh means adding the reference electrode's own potential to the measured reading"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that withholds the requested guidance entirely making none of the must-contain points (no 2 000 µS/cm threshold no request for upstream specific conductance no 1.0000 factor) though it avoids the must-not violations. Unmet: Explains the manual's operational saline-water correction applies above 2 000 µS/cm and asks for the upstream specific conductance before deciding; freshwater does not imply zero conductivity or zero salinity effect; Gives 1.0000 at zero specific conductance without extending that exact factor to all freshwater"
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer explains turbidity settling and ORP response time but never says Eh is not a routine/direct field measurement never mentions the stabilisation criteria list and never names the five routine properties. Unmet: states that Eh is not treated as a routine or direct field measurement; states that because of this it has no entry in the stabilisation criteria that the other field measurements have; names the properties that are treated as routine on-site measurements - water temperature dissolved oxygen specific conductance pH and turbidity"
+        },
+        {
+          "fixtureId": "precedence-ph-river-range-not-pod-limit",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer declines for the pod but violates a must-not by declaring 8.7 'falls within the normal range' and presenting the 4.0–9.5 compensation range as the normal range of natural surface waters an invented criterion; it also never gives the 6.5–8.5 river description. Unmet: States the USGS pH chapter describes river waters not affected by contamination as generally reading pH 6.5 to 8.5 attributed to that chapter; Makes clear this is a description of what such waters generally read not a criterion or limit the chapter sets"
+        },
+        {
+          "fixtureId": "probecal-ec-never-recalibrate",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes the manufacturer's 'no recalibration needed' point but omits every field-verification requirement and it violates two must-nots by concluding no scheduled recalibration is needed after the first calibration and by treating the datasheet's ~10-year figure as the governing recalibration interval for a reporting station. Unmet: States that the sensor must still be checked or calibrated before every field trip; States that accuracy must be verified at the field site against a standard before measurements are made; Gives the acceptance criterion as within plus or minus 5 microsiemens per centimetre at or below 100 microsiemens per centimetre or plus or minus 3 percent above that; States that the meter is recalibrated when the check fails"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes none of the required points and instead invents a retention rule telling the user a month of readings 'can be kept' based on manufacturer recalibration intervals which is exactly the prohibited made-up keep-or-discard threshold. Unmet: States the corpus gives no rule for deciding which part of a long record may be kept; States no source gives an allowable rate of drift (per-day/per-week); States no procedure for correcting or adjusting a record after recovery; Notes the turbidity chapter's fouling check comparing pre/post-cleaning calibrant readings and percent difference; States the fouling check quantifies one sensor's condition not an acceptance rule for the record; Notes the EPA field calibration SOP: calibrate before deployment check on recovery defers drift criteria to the QA plan default post-calibration criteria only if plan silent; Declines to convert EPA post-calibration criteria into a keep-or-discard threshold for a month of record; Notes EPA default post-calibration criteria are a pass-or-fail check on the instrument at recovery not a rule for how much record may be kept and failing data are qualified rather than discarded"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer violates a 'must not' item by presenting the probes' recalibration intervals (e.g. 'you can leave the pod in the creek for at least a year without mandatory recalibration') as how long a pod may be left in a creek and it misses most must-contain points about the turbidity cleaning cadence and deferral to outside sources. Unmet: Acknowledges the corpus includes deployed-temperature verification continuous-sonde calibration checks and turbidity maintenance without treating them as a universal deployment lifetime; Attributes the deferral of full long-term deployment guidance to the turbidity section which points to manufacturer instructions and external continuous-monitor references; Gives the turbidity chapter's approximate two-to-four-week deployed optical-sensor cleaning cadence more often with apparent biofouling; States that this is a maintenance cadence for one sensor and not a limit on how long the instrument may stay deployed; Says plainly that the deployment limit has to come from outside these sources such as the manufacturer or the project's own plan"
+        },
+        {
+          "fixtureId": "definitional-required-versus-recommended",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes the documentation and independent-QA points but invents a sign-off role (\"often by a supervisor or water-quality specialist\") for the departure violating a must-not item and omits the recommended-procedure point. Unmet: notes that the same documentation-plus-independent-quality-assurance expectation applies to departures from recommended procedures"
+        }
+      ]
+    }
+  ]
+}

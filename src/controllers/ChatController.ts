@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
+import { config } from "../config";
 import { retrievalRegistry } from "../retrieval";
+import { rewriteQuery } from "../retrieval/queryRewrite";
 import { withSourceTitles } from "../retrieval/sourceTitles";
 import type { RetrievalRegistry } from "../retrieval/RetrievalRegistry";
 import type { Chunk } from "../types/retrieval.types";
@@ -74,7 +76,17 @@ export class ChatController {
       // Selection rules (including the DEBUG_RETRIEVAL override rule) live in the
       // registry, so this controller stays a thin HTTP wrapper.
       const adapter = this.registry.resolve(retrieval);
-      const chunks = await adapter.getContext(query);
+      // A follow-up is searched as a standalone query when QUERY_REWRITE is on; the prompt below
+      // still carries the user's own words. Off, this is the latest message verbatim.
+      const search = config.retrieval.queryRewrite
+        ? await rewriteQuery(this.llm, query, history, {
+          firstTurn: config.retrieval.queryRewriteFirstTurn,
+        })
+        : { query, usage: undefined };
+      if (search.usage?.totalTokens !== undefined) {
+        this.quota.recordTokens(quotaKey, search.usage.totalTokens);
+      }
+      const chunks = await adapter.getContext(search.query);
 
       // Ordering is load-bearing for prompt caching — see promptBuilder.
       const messages = buildMessages({

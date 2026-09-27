@@ -65,6 +65,9 @@ export const CHAT_PRICES: Record<string, TokenPrices> = {
   // prints a flat 90% off rather than the 90.7% the older figure implied. This model is the
   // production generator (and was the Tier-2 judge until 2026-09-02), so the rate bills real spend.
   "accounts/fireworks/models/gpt-oss-120b": { input: 0.15, cachedInput: 0.015, output: 0.60 },
+  // Answer-model candidate for R4's stronger-model test, read from its Fireworks model page
+  // 2026-09-26 (`EVAL_REBUILD.md`, "Candidate models"); `minimax-m3` is priced below.
+  "accounts/fireworks/models/glm-5p3-flash": { input: 0.15, cachedInput: 0.03, output: 0.50 },
   // Judge candidate, evaluated and REJECTED 2026-08-28. Listed on rate alone it looks 3x cheaper
   // than `gpt-oss-120b` and, unlike either gpt-oss model, satisfies §7b's *intent* rather than only
   // its letter. Calibrated against the human sample it failed on all three counts, and the ledger
@@ -92,6 +95,12 @@ export const CHAT_PRICES: Record<string, TokenPrices> = {
   "accounts/fireworks/models/minimax-m3": { input: 0.30, cachedInput: 0.06, output: 1.20 },
   "accounts/fireworks/models/deepseek-v4-flash-0731": {
     input: 0.22, cachedInput: 0.007, output: 0.66,
+  },
+  // The Tier-2 judge since 2026-09-25, replacing `deepseek-v4-flash-0731` (withdrawn: chat calls
+  // return 404). Read 2026-09-27 from the serverless pricing page, "DeepSeek V4.1 Flash
+  // (Standard)"; the "(US)" row is dearer and not the endpoint the judge calls.
+  "accounts/fireworks/models/deepseek-v4p1-flash": {
+    input: 0.30, cachedInput: 0.006, output: 1.20,
   },
 };
 

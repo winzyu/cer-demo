@@ -1,0 +1,328 @@
+### https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf (chunk usgs-nfm-a6.1-temperature.pdf__6c3145b44cb4)
+
+-- 11 of 23 --4 	Chapter A6.1. Temperature
+2.1. 	Definitions
+Within this chapter the following terms will be used and
+are defined as follows:
+Certified Temperature Sensor.— A sensor with a valid
+calibration certificate of NIST traceability from a
+laboratory certified by NIST's National Voluntary
+Laboratory Accreditation Program (NVLAP) (NIST,
+2024). For use in the procedures outlined in this
+chapter, these sensors or digital thermometers are
+required to have a range of at least -5°C to 45°C, and a
+certified accuracy of less than or equal to ±0.05°C with
+a readout resolution of at least 0.001°C. The calibration
+certificate is valid for up to 2 years.
+Traceability.— Property of a result of a measurement or
+value of a standard whereby it can be related with a
+stated uncertainty, to stated references, usually national
+or international standards, through an unbroken chain
+of comparisons (NIST, 2023).
+Traceable Temperature Sensor.— A sensor that is
+compared to a certified sensor every 6 months in
+an unbroken chain of comparison measurements
+that lead back to NIST standards through a certified
+sensor. It has a range of at least -5°C to 45°C and a
+manufacturer’s stated accuracy of less than or equal
+to ±0.2°C. Section 2.2 Establishing and Maintaining
+a Traceable Sensor outlines the procedure required to
+establish the chain of comparisons, which are made
+with a certified sensor. Traceable sensors are used for
+discrete data collection and as a reference sensor to
+verify the accuracy of deployed sensors.
+Verified Temperature Sensor.— A sensor with
+documented data quality determined via an annual
+comparison to a traceable or certified temperature
+sensor, creating NIST traceability. Uncertainty in a
+sensor's measurements increases with each additional
+degree of separation from a certified standard.
+Therefore, the sensor is required to go through
+procedures described in section 3.0 Calibration
+Verification to define and verify the uncertainty of
+data collected with a sensor and establish traceability,
+regardless of the sensor's accuracy requirement.
+Verified sensors may be used for continuous
+temperature measurements and data collection for
+publication. An accuracy specification for a verified
+sensor is only required if the sensor is bundled onto
+a multiparameter instrument and is used to correct
+another water-quality parameter (such as dissolved
+oxygen or specific conductance). The accuracy of such
+a sensor is required to be less than or equal to ±0.2°C.
+Water Temperature Sensor.—Any integrated sensor or
+technology used to measure water temperature utilizing
+a thermistor or thermocouple. This can be a sensor
+combined with a readout device to form a digital
+thermometer or a multiparameter instrument with an
+integrated temperature sensor.
+The relation of the sensor classifications defined above
+can be seen in figure 6.1–1. The procedures in this chapter
+should provide traceability of all temperature measurements to
+certified sensors.
+2.2. 	Establishing and Maintaining a Traceable
+Sensor
+To maintain rigorous traceability, a sensor classified as
+traceable is required to be compared with a certified sensor or
+digital thermometer at no less than five points between 0°C
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf (chunk usgs-nfm-a6.1-temperature.pdf__aa7664732370)
+
+ry and in a protective
+case during transit to prevent excessive vibration.
+• Check the batteries of digital thermometers for
+proper voltage and replace regularly. Be sure the bat-
+tery compartment is clean and dry.
+A separate logbook or electronic log for recording repair,
+maintenance, and calibration history information is required to
+be maintained for each piece of field equipment or replaceablesensor that stores calibration information within the sensor’s
+internal processor. The logbook should travel with the equip-
+ment or be accessible through electronic means. The pages of
+a paper logbook should be prenumbered consecutively. Do not
+skip or tear out pages. Water-resistant paper is recommended.
+Paper logbooks are available to USGS personnel only through
+One-Stop shopping (https://1stop.usgs.gov/; item Q609FLD).
+USGS personnel are encouraged to use electronic
+rather than paper field notes to increase efficiency and
+minimize transcription errors. Office of Water Quality
+Technical Memorandum 2016.09 (U.S. Geological Survey,
+2016) recommends that all water-quality records, including
+logbooks, be collected electronically wherever feasible and
+specifies requirements for electronic records.
+3.0. 	Calibration Verification of
+er Temperature Sensors
+Temperature sensor and digital thermometer calibration
+differ from the process by which a pH or conductivity sensor
+is adjusted until the accuracy of its performance conforms
+to that of an accepted calibration standard. For temperature
+sensors, calibration refers to a verification of calibrated accu-
+racy at a range of temperatures covering the expected or actual
+range of use or deployment. The verification comparison is
+done with a certified or traceable thermometer or sensor. A
+traceable classification for a temperature sensor can be accom-
+plished by following the procedures in section 2.2 Establishing
+and Maintaining a Traceable Sensor. A new sensor is required
+to be checked against a certified or traceable sensor at points
+covering the range of expected temperature measurements
+using a water bath, before the sensor is used to collect envi-
+ronmental data. Calibration verification of sensors collecting
+data for USGS publication is required to be performed every
+12 months through one of the following two methods. Both
+methods are acceptable and neither method is preferred.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__361ef9509206)
+
+he following equation:
+ = K 	G	cell 	(1)
+where 𝐾cell is the cell constant (in units of cm-1). The cell con-
+stant is the ratio of the distance between two electrode plates
+(d) and their area (A). The units of electrical conductivity are
+siemens per centimeter (S/cm), which is the equivalent of
+mhos per centimeter (mhos/cm). Most values reported prior to
+1971 were in units of mhos per centimeter.Electrical conductivity increases by 0.5 to 3 percent per
+degree Celsius and varies depending on the ionic species
+present (Robinson and Stokes, 1970; McCleskey, 2013). For
+natural waters, conductometric measurements are typically
+used to estimate the concentrations of total dissolved solids
+(TDS); therefore, the electrical conductivity is reported at
+25 °C (κ25 °C, which is equivalent to specific conductance), to
+facilitate this estimation of TDS by removing the effects of
+temperature. The value of κ25 °C is typically calculated by using
+the following equation:
+κ
+κ
+α
+25 1 	25
+° 	= + 	− 	°
+C t 	C	( 	) (2)
+where α is the temperature-compensation factor and t is the
+measured temperature in degrees Celsius. Modern specific
+conductance field meters typically have preprogrammed
+temperature-compensation factors (α) and report specific
+conductance (or electrical conductivity) at 25 °C (κ25 °C).
+Most specific conductance meters utilize either linear
+(0.019–0.020 per °C) or nonlinear (International Organiza-
+tion for Standardization, 1985) temperature-compensation
+algorithms that are applicable for most natural waters. The
+temperature compensation used is likely described in the
+meter’s manual or can be determined by using standard
+solutions and the method described by McCleskey (2013).
+Conductance and temperature can be measured accurately
+with modern instrumentation, and temperature compensation
+is typically accurate to ±5 percent for water in the range from
+5 to 35 ºC and whose pH is between 4 and 11. For low-pH
+(pH <4) waters, using the standard temperature-compensation
+factors can result in κ25 °C errors as large as 50 percent, because
+the transport properties of the hydrogen ion are different from
+those of most other ions, and the hydrogen ion contributes sub-
+stantially to the electrical conductance at low pH (McCleskey,
+2013). For low-pH waters, temperature corrections may
+represent the largest source of error. A temperature-compen-
+sation method applicable to low-pH waters is described in
+section 4.3 below and by McCleskey (2013). No temperature-
+compensation method is available for waters with pH greater
+than 11; therefore, the specific conductance in high-pH waters
+should be checked by measuring at ambient temperature and
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__e49322bacce3)
+
+eaning and drying
+• Disposable laboratory gloves and glasses
+• Flasks or beakers
+• Waste-disposal container
+• Multiparameter sonde sensor guard and calibration cup
+• Spare electrical conductivity probe
+• Spare batteries
+sondes. Probes containing dip conductivity cells are straight-
+forward to use as they are immersed in the water during
+measurement, can be used in flowing or static waters, and arerelatively easy to clean and maintain. Other less commonly
+used conductivity cells include a cup with built-in electrodes
+that hold the sample during measurement and a flow-through
+conductivity cell that is connected to a fluid line that maintains
+a closed system during measurement. In addition to the cell
+type, the material used in the cell body (epoxy or plastic—for
+example, acrylonitrile butadiene styrene (ABS) or polyvinyli-
+dene fluoride [PVDF]), stainless steel, or Pyrex glass) and
+electrodes (graphite, platinum, or platinum-iridium) should
+be considered when selecting equipment. Probes constructed
+of epoxy, plastic, or stainless steel with graphite electrodes
+are well suited for field use, whereas Pyrex glass probes with
+platinum-iridium electrodes are more fragile and better suited
+for laboratory use. Modern conductivity cells generally con-
+tain thermistors used for automatic temperature compensation.
+Thermistors should be checked on a regular basis to assure
+optimum performance; malfunctioning thermistors will pro-
+duce erroneous specific conductance values. Because probes
+are used more commonly for field measurements, this chapter
+focuses on their use; however, similar procedures and criteria
+should be used when using conductivity cups or flow-through
+conductivity cells.
+Specific conductance meters have an optimal range for
+measurement of conductance; for modern meters, this range
+can be large because of built-in auto-ranging capabilities.
+Manufacturer’s recommendations for the appropriate range
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__e7c93d2b2493)
+
+-- 19 of 24 --12 	Chapter A6.3. Specific Conductance
+TECHNICAL NOTES:
+• 	If the measurement is made on a sample in an open
+container and readings do not stabilize within several
+minutes, the cause may be CO2 degassing. Use a closed
+system to make the measurement.
+• 	Filter a sample to measure specific conductance if clay
+or other suspended particles interfere with the stability
+of the readings.
+4.3 Measurement of Specific Conductance of a
+Water Sample with Low or High pH
+Specific conductance (and electrical conductivity) data
+are reported at 25 °C. Most modern specific conductance
+meters have the capability to compensate for temperature auto-
+matically. Equation 2 is used most commonly to determine the
+specific conductance at 25 °C and commercially available field
+specific conductance meters typically use either a constant α
+(typically 0.019–0.020 per °C) or a nonlinear α (International
+Organization for Standardization, 1985). Whereas these com-
+monly used temperature-compensation factors work well for
+waters having a pH between 4 and 11, they can be the source
+of errors as large as 50 percent for low-pH samples.
+4.3.1 Measurement of Specific Conductance of
+a Water Sample with Low pH (<4)
+The specific conductance measurement error for low-pH
+(<4) waters can be large if the commonly used temperature-
+compensation factors are used. To determine whether an alter-
+native temperature-compensation method should be used for
+samples with pH <4, the in situ specific conductance should
+be compared to the specific conductance of a sample equili-
+brated to 25 °C. If the measurements are comparable (within
+±5 μS/cm for specific conductance ≤100 μS/cm or ±3 percent
+for specific conductance >100 μS/cm), then the temperature
+algorithm used is likely sufficient. If a temperature-compen-
+sation factor is required for a water sample with pH <4, the
+method described by McCleskey (2013) is recommended.
+4.3.2 Measurement of Specific Conductance of
+a Water Sample with High pH (>11)
+No temperature-compensation method is available for
+waters with high pH (>11); therefore, the specific conduc-
+tance should be checked by making a measurement at ambient
+temperature and at 25 °C for waters with pH >11. At high pH,
+hydroxide becomes a major ion in the solution and its mobility
+is different than that of most other ions. However, the hydrox-
+ide-equivalent conductivity is much lower than the hydrogen-
+equivalent conductivity and, unlike in low-pH waters, the stan-
+dard temperature-compensation approaches may be adequate.
+Furthermore, relatively few natural waters have a pH >11, so
+this situation is fairly rare.
+5.0 Troubleshooting
+Contact the instrument manufacturer if the actions sug-
+gested in table 6.3–3 fail to resolve the problem. One of the
+first things to check is the battery voltage. Always have fresh
+batteries in meters and carry spares when taking meters out
+into the field.
+Check the voltage of batteries. Always have fresh batteries
+in field meters and carry spares.
+6.0 	Reporting Specific Conductance in
+Natural Waters
+• Follow USGS standard protocols for reporting spe-
+cific conductance in the National Water Information
+System (NWIS) database—
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__81332f744656)
+
+-- 11 of 24 --4 	Chapter A6.8. Use of Multiparameter Instruments for Routine Field Measurements
+Table 6.8–4. 	Ancillary supplies related to multiparameter instruments.
+[NFM, USGS National Field Manual for the Collection of Water-Quality Data; NIST, National Institute of Standards and Technology; μS/cm, microsiemens per
+centimeter at 25 degrees Celsius; ASTM, ASTM International Company; DO, dissolved oxygen; USGS, U.S. Geological Survey]
+Equipment 	Information and specifications
+Flow-through cell/chamber 	Standard flow-through cell/chamber, obtained from the manufacturer of the instrument.
+(Commonly used for groundwater or other water pumped from the water source to the
+airtight cell for measurement).
+Extra sensors and meters 	Single-parameter meters and sensors or a multiparameter instrument are recommended
+as backup. Refer to equipment lists and descriptions and instructions provided in NFM
+A6.1 through A6.7.
+Calibration thermometer and barometer 	NIST-certified or NIST-traceable. (see NFM A6.1 and A6.2 for USGS standard
+specifications).
+Carrying case 	Protective, insulated, case, vented, white or other reflective color, for transport and storage.
+Logbook(s) 	One per instrument or interchangeable sensor, for recording calibrations, maintenance, and
+repairs. Logbook travels with the instrument or sensor or is digitally accessible.
+Deionized water 	Maximum conductivity of 1 μS/cm (ASTM Type 2) for rinsing sensors, dispensed from a
+plastic bottle.
+Paper tissues 	Laboratory grades (for example, lint-free Kimwipes).
+Towels, cloth or paper 	For DO sensor calibration and checks, and general cleanup.
+Brushes for equipment cleaning 	Brushes of various sizes, but generally small and soft to prevent scratching the sensor(s) or
+other surfaces. Consult instrument manual.
+Batteries and (or) battery pack(s) 	Check that batteries are fully charged; bring spares.
+Disposable gloves 	Nitrile gloves, disposable, nonpowdered are available from USGS One-Stop Shopping.
+Waste-disposal containers 	Appropriate for safe containment of regulated substances and dedicated to use for the
+respective waste material (examples: ZoBell’s solution, acid, and turbidity calibration
+solutions).
+Table 6.8–3. 	Specifications for calibration solutions for multiparameter instruments.
+[SDS, Safety Data Sheet; NFM, USGS National Field Manual for the Collection of Water-Quality Data; SC, specific electrical conductance; DO, dissolved oxy-
+gen; g, gram; L, liter; DIW, deionized water; ORP, oxidation-reduction (redox) potential; SDVB, styrene-divinylbenzene; ≤, less than or equal to; μm, microm-
+eter]
+Solution 	Specifications
+All sensor-calibration solutions 	Keep the respective SDS guidance on hand in the laboratory and in the field. Dispose of waste
+according to local regulations, using a licensed disposal company, if necessary.
+pH buffers 	Standard buffers are pH 4, 7, and 10. Temperature-correction chart(s) supplied by the buffer
+manufacturer or distributor are required. See NFM A6.4.
+SC standards 	Choose the SC standard(s) nearest to and/or that bracket(s) the expected measurement or range. To
+field check the calibration, select additional standard(s) that bracket the expected sample SC. See
+
+ANSWER EVIDENCE:
+{
+  "audit": {
+    "original_answer": "The USGS guidance distinguishes sensor classes by accuracy. A \"Certified Temperature Sensor\" is required to have \"a certified accuracy of less than or equal to ±0.05°C with a readout resolution of at least 0.001°C\" 【1†\"a certified accuracy of less than or equal to ±0.05°C with a readout resolution of at least 0.001°C\"】. A \"Traceable Temperature Sensor\" needs \"a manufacturer's stated accuracy of less than or equal to ±0.2°C\" 【1†\"a manufacturer's stated accuracy of less than or equal to ±0.2°C\"】.\n\nImportantly for your case, when a temperature sensor is used to correct another parameter, the tighter requirement applies: \"An accuracy specification for a verified sensor is only required if the sensor is bundled onto a multiparameter instrument and is used to correct another water-quality parameter (such as dissolved oxygen or specific conductance). The accuracy of such a sensor is required to be less than or equal to ±0.2°C\" 【1†\"The accuracy of such a sensor is required to be less than or equal to ±0.2°C\"】.\n\nAs for checking it: temperature calibration is a verification rather than an adjustment — \"calibration refers to a verification of calibrated accuracy at a range of temperatures covering the expected or actual range of use or deployment. The verification comparison is done with a certified or traceable thermometer or sensor\" 【2†\"calibration refers to a verification of calibrated accuracy at a range of temperatures covering the expected or actual range of use or deployment\"】. A new sensor must be checked \"against a certified or traceable sensor at points covering the range of expected temperature measurements using a water bath, before the sensor is used to collect environmental data\" 【2†\"against a certified or traceable sensor at points covering the range of expected temperature measurements using a water bath\"】, and for publication-quality data this verification \"is required to be performed every 12 months\" 【2†\"Calibration verification of sensors collecting data for USGS publication is required to be performed every 12 months\"】.\n\nNote these are the USGS standard specifications from the reference documents, not your pod's configured thresholds — I don't have your pod's own sensor accuracy spec or verification history available here.",
+    "corrections": [],
+    "invalid_citations": []
+  }
+}

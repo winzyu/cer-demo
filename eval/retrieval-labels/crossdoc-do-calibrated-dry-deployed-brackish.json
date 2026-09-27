@@ -150,10 +150,9 @@
           "contentHash": "0647560e9eed",
           "filename": "epa-sop-field-instrument-calibration-2010.pdf",
           "grade": 2,
-          "evidence": "760 755 750 74S 740 735 730 mm",
+          "evidence": "20 9.06 9.00 8.94 8.88 8.82 8.75 8.69",
           "locator": "Attachment, \"Oxygen Solubility at Indicated Pressure\" chart, 760-730 mm Hg block plus the head of the 725-690 mm Hg block (tail of the Table 1 calibration log precedes it)",
           "claimIds": [
-            "epa-oxygen-solubility-chart-01",
             "epa-do-solubility-20c-01"
           ]
         },
@@ -317,10 +316,9 @@
           "contentHash": "0647560e9eed",
           "filename": "epa-sop-field-instrument-calibration-2010.pdf",
           "grade": 2,
-          "evidence": "760 755 750 74S 740 735 730 mm",
+          "evidence": "20 9.06 9.00 8.94 8.88 8.82 8.75 8.69",
           "locator": "Attachment, \"Oxygen Solubility at Indicated Pressure\" chart, 760-730 mm Hg block plus the head of the 725-690 mm Hg block (tail of the Table 1 calibration log precedes it)",
           "claimIds": [
-            "epa-oxygen-solubility-chart-01",
             "epa-do-solubility-20c-01"
           ]
         },

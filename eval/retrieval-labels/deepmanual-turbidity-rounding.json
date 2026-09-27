@@ -5,7 +5,7 @@
   "turns": [
     {
       "turn": 1,
-      "query": "The turbidity meter showed 0.42 at one site and 63.7 at another. How many decimal places do we actually keep when we log those?",
+      "query": "The turbidity meter showed 0.42 at one site and 63.7 at another. What rounded values belong in a USGS report?",
       "relevant": [
         {
           "chunkId": "usgs-nfm-a6.7-turbidity.pdf__ac8bab5fcc79",

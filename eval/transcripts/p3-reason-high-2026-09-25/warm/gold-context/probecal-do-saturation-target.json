@@ -1,0 +1,36 @@
+{
+  "fixtureId": "probecal-do-saturation-target",
+  "fixtureClass": "probe-calibration",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-26T00:07:27.290Z",
+    "gitSha": "d11d57738f7f3d844fba64bd10d33e3d73ddd60f",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "reasoningEffort": "high",
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8011/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "Our oxygen sensor is coming up on its yearly recalibration per the vendor sheet, which gives no steps at all. What am I calibrating it against out here, and how do I set that up? Use USGS A6.2's water-saturated-air calibration-chamber Procedure 1.",
+      "answer": "",
+      "context": [],
+      "mode": "gold-context",
+      "timing": {
+        "wallMs": 0
+      },
+      "error": "Model \"accounts/fireworks/models/gpt-oss-120b\" streamed an empty answer. This usually means max_tokens (16384) was exhausted by reasoning tokens; raise LLM_MAX_TOKENS."
+    }
+  ],
+  "totals": {
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "wallMs": 0
+  }
+}

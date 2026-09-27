@@ -7,8 +7,7 @@
     "usgs-nfm-a6.8-multiparameter-instruments.pdf"
   ],
   "requires": [],
-  "notes": "The one legitimate two-chapter question about stabilisation. A6.0 supplies the criteria and the reporting rule: a60-tbl601-caption-01 and a60-xcut-tbl601-all-01 (table 6.0-1 across all five metrics), a60-xcut-equilibrate-01 (equilibrated when five or more consecutive readings stay inside the criterion), a60-xcut-sw-60s-median3-01 (surface water: 60 s minimum, median of the final three or more), a60-xcut-gw-median5-01 (groundwater: median of the final five or more, after the required well volumes), a60-xcut-exceeds-criteria-01, a60-tbl601-multiparam-01 (which explicitly routes multiparameter users to A6.8). A6.8 supplies the sonde-specific half: mp-stabilize-to-table-01 (table 6.8-5), mp-60s-surface-water-06 and mp-60s-groundwater-03 and mp-60s-longer-manufacturer-07 (60 s is a minimum, some instruments need longer), mp-equilibrium-range-04 (60 s to several minutes depending on the temperature step), mp-t5-accuracy-caveat-08 (these are stabilisation criteria, not sensor accuracy, which varies by model), mp-t6-equilibrate-temp-09. VERIFIED AND DELIBERATE: table 6.0-1 and table 6.8-5 state the SAME criteria numerically and the rubric asserts they AGREE — this fixture tests whether an arm can bring two chapters together without inventing a conflict, and must_not names fabricating a discrepancy as the failure mode. Predicted rag: the slice has no stabilisation criteria for any parameter."
-  ,
+  "notes": "Tests crossdoc how steady before i write it down. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: a60-tbl601-caption-01, a60-xcut-tbl601-all-01, a60-xcut-equilibrate-01, a60-xcut-sw-60s-median3-01, a60-xcut-gw-median5-01, a60-xcut-exceeds-criteria-01, a60-tbl601-multiparam-01, mp-stabilize-to-table-01, mp-60s-surface-water-06, mp-60s-groundwater-03, mp-60s-longer-manufacturer-07, mp-equilibrium-range-04, mp-t5-accuracy-caveat-08, mp-t6-equilibrate-temp-09. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -19,7 +18,7 @@
           "gives the specific conductance criterion as about plus or minus 5 microsiemens per centimetre at or below 100, and about plus or minus 3 percent above that",
           "gives the dissolved oxygen criterion as about plus or minus 0.2 mg/L",
           "gives the pH criterion as about plus or minus 0.1 unit",
-          "gives the turbidity criterion as about plus or minus 0.5 turbidity units or 5 percent, whichever is greater",
+          "Gives turbidity stabilization as ±0.5 TU or ±5 percent, whichever is greater, at or below 100 TU; above 100 TU uses ±10 percent",
           "states the criterion is judged over five or more consecutive readings, not a single pair",
           "gives the minimum wait in surface water as at least 60 seconds for the sensors and sonde body to reach thermal equilibrium",
           "states 60 seconds is a minimum and some instruments need longer per the manufacturer, up to several minutes depending on the temperature step"
@@ -34,7 +33,37 @@
           "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
           "usgs-nfm-a6.8-multiparameter-instruments.pdf"
         ]
-      }
+      },
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "(Variability should be within the range shown for five or more\nmeasurements)"
+        },
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "Sensors have equilibrated adequately\nwhen instrument readings have stabilized—that is,\nwhen the variability among consecutive measurements\ndoes not exceed an established criterion."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Allow time for the readings on the display to stabilize\nwithin the criteria shown in table 6.8–5."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Wait a minimum of 60 seconds for the sensors and\nsonde body to reach thermal equilibrium with the water\nbefore monitoring field-parameter values."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)"
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "• Allow sufficient time for the temperature sensor to equilibrate to the water temperature."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Turbidity \t± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or"
+        }
+      ]
     },
     {
       "role": "user",
@@ -44,19 +73,53 @@
           "states plainly that the two tables give the same stabilisation criteria and do not conflict",
           "states the general field-measurement chapter itself points multiparameter users to the multiparameter chapter for criteria of the same kind",
           "states the criteria are standard sensor stabilisation criteria and that actual sensor accuracy varies by model and manufacturer, which is a separate matter",
-          "tells the operator what to do when the readings will not come inside the criteria: extend equilibration, take more readings, and report the median of the final five or more, documenting how the value was chosen"
+          "For persistent variability, extends equilibration and records additional measurements, then either reports the median of the final five or more readings or selects a representative final reading using site knowledge and professional judgment, documenting the decision"
         ],
         "must_not": [
           "invents a discrepancy between the two tables",
           "claims one chapter is stricter than the other",
-          "changes any of the numeric criteria given in the first answer",
+          "Changes a correctly stated criterion without source support; correcting an earlier incomplete or incorrect criterion is allowed",
           "resolves an imagined conflict by picking a document instead of stating that they agree"
         ],
         "cite": [
           "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
         ]
-      }
+      },
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "(Variability should be within the range shown for five or more\nmeasurements)"
+        },
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "Sensors have equilibrated adequately\nwhen instrument readings have stabilized—that is,\nwhen the variability among consecutive measurements\ndoes not exceed an established criterion."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Allow time for the readings on the display to stabilize\nwithin the criteria shown in table 6.8–5."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Wait a minimum of 60 seconds for the sensors and\nsonde body to reach thermal equilibrium with the water\nbefore monitoring field-parameter values."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)"
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "• Allow sufficient time for the temperature sensor to equilibrate to the water temperature."
+        },
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "• For sites at which variability exceeds the criteria shown"
+        },
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "ment point, either use the median of the final five or"
+        }
+      ]
     }
   ]
 }

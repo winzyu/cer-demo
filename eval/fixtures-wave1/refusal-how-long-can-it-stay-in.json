@@ -2,9 +2,13 @@
   "id": "refusal-how-long-can-it-stay-in",
   "class": "refusal",
   "expected_to_favor": "rag",
-  "answerable_from": [],
+  "answerable_from": [
+    "usgs-nfm-a6.7-turbidity.pdf",
+    "usgs-nfm-a6.1-temperature.pdf",
+    "epa-sop-field-instrument-calibration-2010.pdf"
+  ],
   "requires": [],
-  "notes": "Every measurement procedure in this corpus is written for an attended, discrete visit, and no source anywhere states how long an instrument may be left in the water or how much of the resulting record may be kept. Gap entries used: a6.4 'there is no maximum deployment duration, no fouling-check interval, and no procedure for drift-correcting a continuous record. It defers to NFM A6.8'; a6.0 'No guidance on unattended or continuous sonde deployment. Zero occurrences of unattended, fouling or biofouling. Continuous monitors are deferred to Wagner and others, which is not in this corpus'; a6.8 'No unattended long-term deployment protocol: the chapter is written around discrete field visits and purging, not continuous monitoring'; a6.1 'Gives no procedure for continuous unattended monitoring ... deferred to Wagner and others (2006) without restating any requirement'; a6.3 'no allowable drift per day of deployment ... and no data-qualification rule for a drifting record'; a6.2 'Gives no drift, fouling-correction, or data-acceptance criteria for continuous or unattended DO monitoring'; a6.7 'Section 6.7.3.B states explicitly that long-term deployment guidelines are beyond the scope of this section'; epa-sop 'Gives no allowable drift, deployment duration, or mid-deployment check interval for continuously deployed sondes ... with the drift criteria left to the project QAPP'. Checked against a6.7 before writing: that chapter does give a roughly 2-to-4-week cleaning frequency for a deployed optical turbidity sensor and a fouling-bias percent-difference calculation (claims tby-clean-frequency-2-4-weeks-01, tby-fouling-bias-percent-diff-01). Those are a maintenance cadence and a QC check for one sensor, not a deployment limit or a record-acceptance rule, so the question stays unanswerable — and they become the sharpest named failure mode rather than a hole in the fixture. The other traps are the slice datasheets' intervals: the DO probe's roughly 18-month maintenance interval, the ORP probe's approximately 1 year before recalibration, and the conductivity probe's approximately 10 years. Predicted to favour rag because only the retrieval arm reaches the explicit out-of-scope and deferral statements that justify an honest refusal, while the direct-feed arm sees the datasheet intervals with nothing to contradict them.",
+  "notes": "The supplied corpus does not establish a universal maximum deployment lifetime or a rule allocating how much of a month-long record to retain. It does contain continuous-monitor procedures: temperature verification, turbidity maintenance and drift/fouling checks, and EPA deployment/recovery calibration and data qualification. Per-turn positive evidence supports these distinctions without inventing project criteria or importing external guidance. Expected to favor RAG for the supported explanations.",
   "turns": [
     {
       "role": "user",
@@ -12,9 +16,9 @@
       "rubric": {
         "must_contain": [
           "States that no source here gives a maximum length of time an instrument may be left in the water",
-          "States that the USGS procedures are written for measurements taken while an operator is present, not for an instrument left on its own",
-          "States that where those chapters raise long-term deployment they place it outside their own scope and point at a separate reference that is not among these sources",
-          "Notes that the one interval the corpus does supply is a cleaning frequency of roughly two to four weeks for a deployed optical turbidity sensor, more often where fouling is obvious",
+          "Acknowledges that the corpus includes deployed-temperature verification, continuous-sonde calibration checks and turbidity maintenance, without treating them as a universal deployment lifetime",
+          "Attributes the deferral of full long-term deployment guidance to the turbidity section, which points to manufacturer instructions and external continuous-monitor references",
+          "Gives the turbidity chapter's approximate two-to-four-week deployed optical-sensor cleaning cadence, more often with apparent biofouling, without calling it the only interval in the corpus",
           "States that this is a maintenance cadence for one sensor and not a limit on how long the instrument may stay deployed",
           "Says plainly that the deployment limit has to come from outside these sources, such as the manufacturer or the project's own plan"
         ],
@@ -24,10 +28,38 @@
           "presents the ORP probe's roughly one year or the conductivity probe's roughly ten years before recalibration as how long a pod may be left in a creek",
           "presents the USGS requirement to calibrate on the day of use or check before each field trip as a deployment limit",
           "invents a number of days or weeks the instrument may remain deployed",
-          "implies the corpus contains a continuous-monitoring protocol",
+          "Claims the corpus supplies a complete deployment-validity or month-retention protocol; source-supported continuous-monitor checks are allowed",
           "cites the deferred continuous-monitoring reference as though its contents were available here"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf",
+          "usgs-nfm-a6.1-temperature.pdf",
+          "epa-sop-field-instrument-calibration-2010.pdf"
         ]
-      }
+      },
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "quote": "— \tFor deployed, dynamic monitoring, the cleaning frequency"
+        },
+        {
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "quote": "refer to the manufacturer’s instructions and recommendations, and to"
+        },
+        {
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "quote": "Determination of Points for Sensor Calibration Verification"
+        },
+        {
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "quote": "bration verifications. In situ verifications must be within the"
+        },
+        {
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "quote": "either be left on all day (battery dependent) or calibrated at each sampling location. If they are"
+        }
+      ],
+      "requires_refusal": true
     },
     {
       "role": "user",
@@ -44,15 +76,38 @@
           "Notes that the EPA SOP's default post-calibration criteria are a pass-or-fail check on the instrument at recovery, not a rule for how much of the record may be kept, and that data failing the check are qualified rather than discarded"
         ],
         "must_not": [
-          "presents the EPA default post-calibration criteria as a limit on how far a sensor may drift during a deployment, rather than as a check performed on recovery",
+          "Converts EPA drift/post-calibration criteria into an unsupported per-day drift rate or rule allocating portions of a month to retain; using EPA's drift terminology is allowed",
           "turns the turbidity fouling-bias percent difference into a pass or fail cutoff by attaching a number to it",
-          "reuses a calibration acceptance criterion as an allowable field drift across a deployment",
+          "Invents an allowable drift rate across a deployment; accepts EPA's actual pre/post-calibration comparison and project/default drift criteria",
           "presents the plus or minus 0.2 degrees C temperature comparison tolerance as an allowable drift for a month in the water",
           "invents a data-qualification or flagging scheme and attributes it to these sources",
           "claims the project quality assurance plan's criteria are available here",
           "recommends keeping or discarding a specific portion of the record on a threshold it made up"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf",
+          "epa-sop-field-instrument-calibration-2010.pdf"
         ]
-      }
+      },
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "quote": "X \tFouling: After a series of measurements and before calibration,"
+        },
+        {
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "quote": "Instruments (e.g., sonde) that monitor continuously over a period of time are calibrated before"
+        },
+        {
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "quote": "the drift criteria or post calibration criteria described in the quality assurance project plan or the"
+        },
+        {
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "quote": "If the quality assurance project plan or the sampling and analysis plan do not list the drift criteria"
+        }
+      ],
+      "requires_refusal": true
     }
   ]
 }

@@ -1,0 +1,2205 @@
+### EC_K_1.0_probe.pdf (chunk EC_K_1.0_probe.pdf)
+
+Range 	5 − 200,000 μS/cm
+90% in 1s	Response time
+3,447 kPa (500 PSI)	Max pressure
+1 meter	Cable length
+No	Internal temperature sensor
+~10 years	Time before recalibration
+Graphite
+Reads 	Conductivity
+1 − 110 °C	Temperature range °C
+352m (1,157 ft)	Max depth
++/ – 2%	Accuracy
+Male SMA / Male BNC	Connector
+~10 years	Life expectancy
+Conductivity
+Gen 3
+Probe K 1.0
+(Optional)
+Revised 10/25
+V 4.2
+
+-- 1 of 9 --
+
+Operating principle
+An E.C. (electrical conductivity) probe measures the electrical conductivity in a solution.
+It is commonly used in hydroponics, aquaculture and freshwater systems to monitor the
+amount of nutrients, salts or impurities in the water.
+Inside the conductivity probe, two electrodes are positioned opposite from each other,
+an AC voltage is applied to the electrodes causing cations to move to the negatively
+charged electrode, while the anions move to the positively electrode. The more free
+electrolyte the liquid contains, the higher the electrical conductivity.
+AC voltage
+Epoxy body
+Graphite
+Epoxy body
+Graphite
+Epoxy body
+Glass stem
+Platinum
+ody
+e
+Epoxy body
+Graphite
+The entire conducting area must be
+submerged in order to get accurate
+readings.
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 9 --
+
+112.7mm
+(4.4”)
+150.3mm
+(5.9”)
+37.6mm
+(1.4”)
+12mm (0.5”)
+Cable Length
+1m (3.2’)
+29mm
+(1.1”)
+Ø 8mm
+Ø 2.6mm
+Optional
+Sensing area
+15.5mm
+(0.6”)
+16mm
+(0.6”)
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 9 --
+
+PVC
+ABS 	Polyethylene
+Titanium Nitride
+ABS
+Graphite
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Graphite
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Conductivity Probe K 1.0
+Part # ENV-40-EC-K1.0
+Complies with NSF/ANSI Standard 51
+Food Safe
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 9 --
+
+Specifications
+• 	Standard Lab use
+• 	Field use
+• 	Aquarium
+• 	Hydroponics
+• 	Fish keeping
+• 	Mixed aqueous/organic
+• 	Samples containing Heavy metals
+• 	Soil Samples
+• 	Strong reducing agents
+Typical applications
+This Conductivity probe can be 	fully
+submerged 	in fresh or salt water, up
+to the SMA connector indefinitely.
+Materials
+PVC
+ABS
+Polyethylene
+ABS 	Graphite
+Titanium Nitride
+K 1.0
+Max depth
+Cable length
+Weight
+Speed of response
+Measuring Surface
+Dimensions
+SMA connector
+Sterilization
+Food safe
+5 μS/cm – 200,000 μS/cm
+352m (1,157 ft)
+1 meter
+43 grams
+90% in 1 second
+Graphite
+12mm x 145.5mm (0.47" x 5.7")
+Male
+Chemical only
+Yes
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 9 --
+
+A conductivity probe is a very simple device. It is just two conductors with a fixed surface
+area at a fixed distance from each other. This distance and surface area is known as the
+conductivity cell. The cells distance and surface area is quantified as the conductivity cells
+K constant.
+How often do you need to
+recalibrate a conductivity probe?
+Conductivity probes work by measuring the electrical current of the water between two
+graphite plates. The plates do not go bad, or change, so recalibration is not necessary. After
+the first calibration your conductivity probe is good to go.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 9 --
+
+Extending the probe cable length
+You can extend the cable to greater than 100 meters with no loss of signal. Atlas Scientific
+has tested up to 300 meters without a problem, however you run the risk of turning your
+E.C. probe into an antenna, picking up noise along the length of your cable.
+If you want to extend your cable, we recommend that you use proper isolation, such as
+the Basic EZO TM Inline Voltage Isolator, or an i2 InterLink. Be sure to calibrate your
+probe with the extended cable.
+Extending a probe cable can be easily done with our SMA Extension Cables. Simply
+connect the SMA end of the probe to the Extension cable, and you are all set.
+If you need to water proof a SMA connection, we highly recommend using a product like
+Coax-Seal to safely cover and prevent any water damage that may occur.
+Water proof
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 9 --
+
+Helpful operating tips
+Be sure to watch out for air bubbles, as they can get caught between the two
+graphite plates and throw off your results. Lightly tap your conductivity probe to
+knock out any bubbles caught in the probe.
+Bubbles
+Over time conductivity probes can become dirty and covered in deposits, which can
+change the basic electrical properties of the probe and cause inaccurate readings.
+Soft coatings can be removed by lightly brushing around the conducting area.
+Probe cleaning
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 9 --
+
+Hard coatings should be chemically removed. We highly recommend you use the
+Atlas Scientific conductivity probe cleaner.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 9 --
+
+
+
+---
+
+### IORP_probe.pdf (chunk IORP_probe.pdf)
+
+Range 	-2000mV – 2000mV
+95% in 1s	Response time
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+No	Internal temperature sensor
+~1 Year	Time before recalibration
+Reads 	ORP
+Platinum	Sensing element
+1 − 99 °C	Temperature range °C
+70m (230’)	Max depth
+SMA or Tinned leads	Connector
++/– 1mV	Accuracy
+~4 Years +	Life expectancy
+or
+ORP Probe
+Industrial
+Gen 3
+with Platinum sensing element
+Revised 8/25
+V 3.2
+
+-- 1 of 11 --
+
+Operating principle
+ORP stands for oxidation/reduction potential. Oxidation is the loss of electrons and
+reduction is the gain of electrons. The output of the probe is represented in millivolts and
+can be positive or negative.
+Just like a pH probe measures hydrogen ion activity in a liquid; an ORP probe measures
+electron activity in a liquid. The ORP readings represents how strongly electrons are
+transferred to or from substances in a liquid. Keeping in mind that the readings do not
+indicate the amount of electrons available for transfer.
+pH Probe 	ORP Probe
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 11 --
+
+Add just a drop of bleach
+(which is an oxidizing agent)
+606.9
+Reading A
+605.3
+Reading B
+-234.6
+Reading A
+24.2
+Reading B
+A	
+A
+B	
+B
+Tap water 	Tap water
+The water is unreactive and has only trace amounts of electron movement. These
+readings are equivalent to the readings you see with an unconnected multimeter.
+An ORP probe has a platinum tip that is connected to a silver wire, surrounded by
+silver chloride. That silver wire is then connected to a KCL reference solution. Because
+platinum is an unreactive metal it can “silently observe” the electron activity of the
+liquid without becoming apart of whatever reaction is occurring in the liquid.
+When reading the ORP of a liquid that has very few electrons available for
+transfer, ORP readings can appear to be inconsistent.
+(Theoretical value)
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 3 of 11 --
+
+46.6mm
+(1.8”)
+Soaker bottle
++ 	–
+10ml
+Ø 8mm
+197mm
+(7.7”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Ø 2.8mm
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+Measurements
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 11 --
+
+Platinum
+Teflon
+PVC
+EPDM
+Delrin ®
+(body)
+Polyethylene
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Platinum
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Grade ORP Probe
+Part # ENV-50-ORP
+Complies with NSF/ANSI Standard 51
+Food Safe
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 11 --
+
+Body material
+Max depth
+Cable length
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+70m (230 ft)
+3m (9.8 feet)
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This ORP probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Platinum
+Teflon
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 11 --
+
+An ORP probe is a passive device that detects a current generated from the oxidation or
+reduction chemical substances in water. This current (which can be positive or negative)
+is very weak and cannot be detected with a multimeter, or an analog to digital converter.
+How often do you need
+to recalibrate an ORP probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that has
+generally weak levels of chemical reactions you will only need to recalibrate your probe
+once per year for the first 2 years. After that every ~6 months.
+If you are using the ORP probe in batch chemical manufacturing, industrial process, or
+in a solution that is known to have strong chemical reactions, then calibration should be
+done monthly or in extreme cases after each batch.
+V
+V
+0000
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 11 --
+
+AtlasScientific
+PWR
+RX
+TX
+225 	B	A
+ORP
+How to connect the
+industrial ORP probe
+The Atlas Scientific ™ Industrial ORP probe can be connected in several different ways.
+The following show two examples:
+Using our EZO Complete-ORP ™ you can easily connect the
+Gen 3 Industrial ORP probe, via the probes SMA connector.
+Gen 3 Industrial ORP probe
+with the SMA connector option.
+Gen 3 Industrial ORP probe
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial ORP probe, can
+be easily connected to our Industrial ORP Transmitter via
+the probes tinned leads.
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 11 --
+
+Remove the Industrial ORP probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the ORP probe must stay wet and cannot be
+allowed to dry out, this is why every Industrial ORP probe is shipped with a plastic cap
+containing ORP probe storage solution. The cap should remain on the probe until it is used.
+fi
+Long term storage
+When you are finished using the Industrial ORP probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has ORP probe storage
+solution within it. If not, just add some from the ORP probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 11 --
+
+Probe cleaning
+Coating of the platinum tip can lead to erroneous readings including shortened span
+(slope). The type of coating will determine the cleaning technique. Soft coatings can
+be removed by vigorous stirring or by the use of a squirt bottle. Organic chemical, or
+hard coatings, should be chemically removed. A light bleach solution or even a 5 – 10%
+hydrochloric acid (HCl) soak for a few minutes, often removes many coatings. Do not use
+abrasive materials on the ORP probe.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 11 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 11 --
+
+
+
+---
+
+### Industrial-DO-probe.pdf (chunk Industrial-DO-probe.pdf)
+
+Range 	0 − 100 mg/L
+~0.1 mg/L/per sec	Response time
+300 PSI	Max pressure
+3 Meters	Cable length
+Yes (PT-1000)	Internal temperature sensor
+~1 Year	Time before recalibration
+~ 4 Years	Life expectancy
+~18 Months	Maintenance
+Reads 	Dissolved Oxygen
+1 − 99 °C	Temperature range °C
+212m (694 ft)	Max depth
++/– 0.05 mg/L	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+D.O. Probe
+or
+Revised 4/26
+V 2.4
+
+-- 1 of 13 --
+
+Wastewater
+Treatment
+Food
+Production
+Chemical
+Production
+Envriomental
+Monitoring
+(No Organic Solvents)
+This Probe can be used for:
+2	Copyright © Atlas Scientific LLC
+
+-- 2 of 13 --
+
+Operating principle
+This galvanic dissolved oxygen probe consists of a HDPE membrane, an anode bathed
+in an electrolyte and a cathode. Oxygen molecules defuse through the probes membrane
+at a constant rate (without the membrane the reaction happens too quickly). Once the
+oxygen molecules have crossed the membrane they are reduced at the cathode and
+a small voltage is produced. If no oxygen molecules are present, the probe will output
+0 mV. As the oxygen increases so does the mV output from the probe. Each probe will
+output a different voltage in the presence of oxygen. The only thing that is constant is that
+0mV = 0 Oxygen.
+Electrolyte
+Cathode (Pure silver rod)
+Membrane
+Anode (Zinc)
+Time (sec)
+90%
+60%
+5 	10 	15 	20 	25 	30	0
+Dissolved Oxygen
+Stagnant water
+Oxygen being
+consumed by probe
+20%
+One of the drawbacks from using a galvanic
+probe is that it consumes a VERY small amount
+of the oxygen it reads. Therefore, a small amount
+of water movement is necessary to take accurate
+readings. Approximately 60 ml/min.
+3	Copyright © Atlas Scientific LLC
+
+-- 3 of 13 --
+
+Ø 4.4mm
+Ø 5.3mm
+D.O.
+D.O.
+PT-1000(There is no polarity)
+PT-1000
+175.5mm
+(6.9”)
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+47.9mm
+(1.8”)
+19.7mm (.7”)
+Cable Length
+3m (10’)
+3/4 NPT
+28.4mm
+(1.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+Measurements
+4	Copyright © Atlas Scientific LLC
+
+-- 4 of 13 --
+
+PVC
+PVCDelrin ®
+(body)
+Polyethylene
+HDPE
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+HDPE
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+ABS
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Dissolved Oxygen Probe
+Part # ENV-50-DO
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+Food Safe
+5	Copyright © Atlas Scientific LLC
+
+-- 5 of 13 --
+
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Temp. probe type
+Temp. accuracy
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+212m (694 ft)
+3m (10 feet)
+Yes
+Class A platinum, RTD
++/- (0.15 + (0.002*t))
+SMA or Tinned Leads
+195 grams
+(3/4") NPT
+Chemical only
+Yes
+Materials
+Polyethylene
+Delrin® thermoplastic
+ABS
+HDPE
+PVC 	PVC
+PVC
+PVC
+Polyethylene
+Polyethylene Titanium Nitride
+Titanium Nitride
+This Dissolved Oxygen probe can be
+fully submerged in fresh or salt water,
+up to the SMA connector or Tinned
+leads indefinitely.
+6	Copyright © Atlas Scientific LLC
+
+-- 6 of 13 --
+
+This galvanic dissolved oxygen probe is a passive device that generates a small voltage
+from 0mv – 60+ mv depending on the oxygen saturation of the sensing membrane. This
+voltage can easily be read by a multimeter or an analog to digital converter.
+Because every use case is different, there is no set schedule for recalibration.
+The dissolved oxygen probe reacts with oxygen in the water, the more oxygen it reacts
+with the more the probe is depleted of its electrolyte solution. Typically an industrial
+dissolved oxygen probe will last 2 years before the electrolyte is depleted (results will
+vary). When the electrolyte is depleted, the probe will read very low numbers. Best practice is
+to replace the electrolyte solution and membrane every 1 – 2 years.
+How often do you need to
+recalibrate a dissolved oxygen probe?
+V
+V
+0000
+7	Copyright © Atlas Scientific LLC
+
+-- 7 of 13 --
+
+9 - 36VDC
+	L H
+DO
+A 	Low 	High
+AtlasScientific
+PWR
+RX
+TX
+AtlasScientific
+PWR
+RX
+TX
+How to connect the industrial
+Dissolved Oxygen probe
+The Atlas Scientific ™ Gen 3 Industrial Dissolved Oxygen probe can be connected in
+several different ways. The following show two examples:
+For industrial purposes, the Gen 3 Industrial DO probe,
+can be easily connected to our Industrial DO Transmitter
+via the probes tinned leads.
+Using 	our 	EZO 	Complete-DO™ and
+EZO 	Complete-TMP™ you can easily
+connect the Gen 3 Industrial DO probe,
+via the probes SMA connectors.
+8	Copyright © Atlas Scientific LLC
+
+-- 8 of 13 --
+
+How to add more electrolyte solution
+During usage, a small amount of electrolyte solution within the dissolved oxygen probe
+will deplete. In this case, you will need to add more solution into the probe.
+To add more electrolyte solution: Carefully unscrew the probes membrane cap, and
+drain any remaining electrolyte solution. Using the supplied syringe, inject solution into
+the membrane cap until it's filled half way. Screw the membrane cap back onto probe.
+Once the probe is reassembled, rinse of the probe.
+1 	Rinse
+probe
+Fill half way
+2 	3 	4 	5 	6 	7
+RIGHT SIDE UP 	UPSIDE DOWN
+9	Copyright © Atlas Scientific LLC
+
+-- 9 of 13 --
+
+How to recondition the industrial
+Dissolved Oxygen probe
+During usage, a small amount of corrosion (zinc oxide) may build up around the anode of
+the probe, this will cause irregular readings. In this case, you will need to recondition the
+probe.
+To recondition the probe: Carefully unscrew the probes membrane cap, and drain any
+remaining electrolyte solution. Using a small file, carefully file off the corrsion buildup
+around the anode of the probe. Do not file the cathode, as this will damage the probe.
+Once the corrosion has been removed, rinse the off the anode.
+Using the supplied syringe, inject solution into the membrane cap until it's filled half
+way. Screw the membrane cap back onto probe. Once the probe is reassembled, rinse
+of the probe.
+1 	2
+anode
+cathode
+3 	4
+RIGHT SIDE UP 	UPSIDE DOWN
+10	Copyright © Atlas Scientific LLC
+
+-- 10 of 13 --
+
+Over time, the membrane can wear out, this will lead to irregular readings from
+the probe. To correct this issue, the probes membrane cap must be replaced.
+To replace membrane cap: Carefully unscrew the probes membrane cap, drain
+any remaining electrolyte solution; Then discard the damaged membrane cap.
+With a new membrane cap ready, fill the new membrane cap half way with electrolyte
+solution and screw back on to probe body.
+How to replace the membrane cap
+1 	2 	3
+RIGHT SIDE UP 	UPSIDE DOWN
+Fill half way
+5	4 	6
+OLD &
+DAMAGED
+NEW
+11	Copyright © Atlas Scientific LLC
+
+-- 11 of 13 --
+
+Over time dissolved oxygen probes can become dirty and covered in chemical deposits.
+Soft coatings can be removed by lightly brushing around the sides of the probe and
+membrane cap. If the probes membrane is in need of cleaning, use a mild bleach mixture
+to gently wash away any deposits.
+DO NOT USE A BRUSH TO CLEAN THE MEMBRANE
+If the probes membrane is ripped it must be replaced, as it will cause irregular readings.
+Probe cleaning
+12	Copyright © Atlas Scientific LLC
+
+-- 12 of 13 --
+
+Dried KCl residue
+from Electrolyte
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+13	Copyright © Atlas Scientific LLC
+
+-- 13 of 13 --
+
+
+
+---
+
+### IpH_probe.pdf (chunk IpH_probe.pdf)
+
+pH Probe
+Range 	0 − 14
+95% in 1s	Response time
++/- 0.001	Resolution
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+Double junction silver / silver chloride
+No Temp
+Reads 	pH
+-5 − 99 °C	Temperature range °C
+70m (230’)	Max depth
++/– 0.002	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+~1 Year	Time before recalibration
+~4 Years +	Life expectancy
+or
+Revised 11/25
+V 5.3
+
+-- 1 of 12 --
+
+Operating principle
+A pH (potential of Hydrogen) probe measures the hydrogen ion activity in a liquid.
+At the tip of a pH probe is a glass membrane. This glass membrane permits hydrogen
+ions from the liquid being measured to defuse into the outer layer of the glass, while
+larger ions remain in the solution. The difference in the concentration of hydrogen ions
+(outside the probe vs. inside the probe) creates a VERY small current. This current
+is proportional to the concentration of hydrogen ions in the liquid being measured.
+Base: pH > 7	Neutral: pH = 7	Acid: pH < 7
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 2 of 12 --
+
+46.6mm
+(1.8”)
+Soaker cap
+~3 – 4 pH
+pH
+197mm
+(7.7”)
+99.2mm
+(3.9”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+10ml
+Ø 2.8mm
+Ø 8mm
+Minimum
+Immersion
+Unique
+12-digit
+serial #
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 12 --
+
+Glass
+Teflon
+PVC
+EPDM
+Delrin ®
+(body) Polyethylene
+Titanium
+Nitride
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+Glass
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Food Safe
+Atlas Scientific LLC, hereby certifies that,
+Gen 3 Industrial pH Probe – No Temp
+Part # ENV-50-pH-NT
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 12 --
+
+Reference electrode
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Silver / Silver Chloride
+Delrin® thermoplastic
+70m (230 feet)
+3m (9.8 feet)
+No
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This pH probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Glass
+Teflon
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 12 --
+
+A pH electrode is a passive device that detects a current generated from hydrogen ion
+activity. This current (which can be positive or negative) is very weak and cannot be
+detected with a multimeter, or an analog to digital converter. This weak electrical signal
+can easily be disrupted and care should be taken to only use proper connectors and cables.
+The current that is generated from the hydrogen ion activity is the reciprocal of that
+activity and can be predicted using this equation:
+Because a pH probe is a passive device it can pick up voltages that are transmitted
+through the solution being measured. This will result in incorrect readings and will
+slowly damage the pH probe over time. In this instance, proper isolation is required.
+Where R is the ideal gas constant.
+T is the temperature in Kelvin.
+F is the Faraday constant.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 12 --
+
+AtlasScientific
+PWR
+RX
+TX
+9 - 36VDC
+pH
+How to connect the
+industrial pH probe
+The Atlas Scientific ™ Gen 3 Industrial pH probe - No Temp, can be connected in several
+different ways. The following show two examples:
+Using our EZO Complete-pH ™ you can easily connect the
+Gen 3 Industrial pH probe - No Temp, via the probes SMA
+connector.
+Gen 3 Industrial pH probe - No Temp
+with the SMA connector option.
+Gen 3 Industrial pH probe - No Temp
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial pH probe -
+No Temp, can be easily connected 	to our Industrial pH
+Transmitter via the probes tinned leads.
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 12 --
+
+Remove the Industrial pH probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the pH probe can be left dry for up to 3 weeks
+without damaging the probe, this is why every Industrial pH probe is shipped with a
+plastic cap containing pH probe storage solution. The cap should remain on the probe
+until it is used.
+Long term storage
+When you are finished using the Industrial pH probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has pH probe storage
+solution within it. If not, just add some from the pH probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+Ready to use
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 12 --
+
+Unlike most pH probes, this probe can dry out. It can be left dry for up to 3 weeks without
+damaging the probe. However, repeated wetting and drying cycles will eventually damage
+the probe. For best results, keep the probe wet at all times. But if the probe is left out to
+dry, it should not be considered damaged. It just needs to be rehydrated.
+If a pH probe is kept in a hot environment during shipping, KCl creep may cause the soaker
+bottle to dry out. KCl will form a salt channel that wicks the water out of the probe's soaker
+bottle.
+Follow these instructions to rehydrate your industrial pH probe:
+1. Place the probe into a beaker of tap water.
+2. Let the probe sit in the water for 3 – 5 mins.
+3. Add a scoop of KCL (best) or NaCl (good) to the beaker.
+(a scoop = so much salt that no human could drink the water)
+4. Let the probe sit in the salt water for 15 – 20 mins.
+5. Done.
+The probe is now ready to use.
+Probe can dry out
+
+-- 9 of 12 --
+
+Probe cleaning
+Coating of the pH bulb can lead to erroneous readings including shortened span (slope).
+The type of coating will determine the cleaning technique. Soft coatings can be removed
+by vigorous stirring or by the use of a squirt bottle. Organic chemical, or hard coatings,
+should be chemically removed using a light bleach solution. If cleaning does not restore
+performance, reconditioning may be tried. Do not use a brush or abrasive materials
+on the pH probe.
+How often do you need
+to recalibrate a pH probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that
+has generally weak levels of acids and bases you will only need to recalibrate your probe
+once per year for the first two years. After that every ~six months.
+If you are using the pH probe in batch chemical manufacturing, industrial process,
+or in a solution that is known to have strong acids and bases, then calibration should be
+done monthly or in extreme cases after each batch.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 12 --
+
+Probe reconditioning
+When reconditioning your pH probe is required due to aging, we recommend you use
+the Atlas Scientific pH probe reconditioning kit.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 12 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+12 Copyright © Atlas Scientific LLC
+
+-- 12 of 12 --
+
+
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__8ce445a76059, score 0.7498406636770724)
+
+ppears to be a lot of suspended sediment in
+the water sample, measure the specific conductance
+of both unfiltered and filtered subsamples and record
+both values on the field form. High concentrations of
+suspended sediments may interfere with the mea-
+surement of specific conductance, and the inference
+may vary from site to site depending on the type,
+size, and concentration of suspended sediments.• If the values of specific conductance for the filtered
+and unfiltered samples differ by more than ±5 μS/
+cm for measurements ≤100 μS/cm or ±3 percent
+for measurements >100 μS/cm, report the filtered
+value and identify it as having been measured on a
+“filtered sample.”
+• Steps to measure specific conductance on a
+subsample of surface water—
+1. 	Check the accuracy of the specific conductance
+measurement at the field site by measuring
+the specific conductance of a check standard.
+Select a check standard with a specific conduc-
+tance similar to that of the sample. The specific
+conductance of check standards should be
+within ±5 μS/cm for measurements ≤100 μS/cm
+or ±3 percent for measurements >100 μS/cm.
+Recalibrate if necessary.
+2. 	Select the sampling method (see NFM A6.0) and
+collect a representative sample.
+3. 	Withdraw a homogenized subsample from a
+sample splitter or compositing device. Rinse a
+clean sample bottle three times with the sample.
+For filtered samples, rinse with sample filtrate.
+4. 	Prepare the specific conductance probe for
+sample measurement:
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__fda03ba0cf91, score 0.7425886392489726)
+
+-- 16 of 24 --4.0 Measurement of Specific Conductance 	9
+b. 	If the stream is too deep or swift to wade,
+lower a conductivity probe from a bridge,
+cableway, or boat.
+c. 	For still-water conditions in streams, mea-
+sure specific conductance at multiple depths
+at several points in the cross section.
+d. 	For large still-water bodies such as lakes,
+reservoirs, and estuaries, measure specific
+conductance at multiple depths and locations
+depending on the study objectives.
+3. 	Immerse the specific conductance probe in the
+water to the appropriate depth and hold (not less
+than 60 seconds) until the probe equilibrates
+to water conditions. Determine equilibration
+by observing stability of the reading. Always
+keep probes above the streambed so as not to
+immerse the sensor into bed sediments, which
+can bias readings.
+4. 	Record the measurements of specific conduc-
+tance and temperature without removing the
+probes from the water.
+a. 	Consecutive measurements should meet
+the stability criterion (±5 μS/cm for mea-
+surements ≤100 μS/cm or ±3 percent for
+measurements >100 μS/cm).
+b. 	Record the stabilized value on field forms.
+c. 	If the readings do not meet the stability
+criterion after extending the measurement
+period, record this difficulty in the field
+notes along with the fluctuation range and
+the median value of the last five or more
+readings. Consider troubleshooting the
+measurement (see section 5.0) or using a dif-
+ferent specific conductance meter.
+5. 	For measurements made using EWI or EDI
+methods, proceed to the next station in the cross
+section and repeat steps 3 and 4. Record on
+field forms the stable value for each subsection
+measured.
+6. 	When the measurements are completed, remove
+the probe from the water, rinse it with DIW, and
+store the meter and probe in a protective case.
+7. 	Record specific conductance and temperature on
+the field sheet following the procedures described
+in NFM A6.0 for still-water, EDI, or EWI mea-
+surement methods. Refer to section 6.0 below for
+reporting of specific conductance values.
+4.1.2 Measurement of Specific Conductance on
+a Subsample from Surface Water
+Representative samples for analysis of water quality are
+collected and split or composited according to approved USGS
+methods (NFM A4). Measure the specific conductance of
+these composited subsamples as soon as possible after collec-
+tion. If the sample cannot be analyzed immediately, fill a clean
+and triple-rinsed bottle completely to the top, cap it tightly,
+and attempt to maintain the sample at stream temperature until
+measurement. Reported values of specific conductance typi-
+cally are determined on an unfiltered sample.
+• High concentrations of suspended sediment can be a
+source of measurement error—record such condi-
+tions in the field notes.
+• If there appears to be a lot of suspended sediment in
+the water sample, measure the specific conductance
+of both unfiltered and filtered subsamples and record
+both values on the field form. High concentrations of
+suspended sediments may interfere with the mea-
+surement of specific conductance, and the inference
+may vary from site to site depending on the type,
+size, and concentration of suspended sediments.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__b5488a5db6ff, score 0.740932264659679)
+
+-- 20 of 24 --7.0 Applications of Specific Conductance in Surface Water and Groundwater 	13
+Table 6.3–3. 	Troubleshooting guide for measurements of specific conductance.
+[>, Greater than; ≤, less than or equal to; HCl, hydrochloric acid; μS/cm, microsiemens per centimeter; °C, degrees Celsius]
+Symptom 	Possible cause and corrective action
+Meter will not calibrate to standards
+or will not accurately read
+standards
+• Standards may be old or contaminated—use fresh standards.
+• Electrodes dirty—first clean with a detergent solution, then if necessary with 5-percent HCl.
+Before using any acid solution to remove resistant residues, check manufacturer’s guidelines.
+• Air trapped in conductivity sensor—gently move sensor up and down to expel trapped air.
+• Weak or corroded batteries—replace.
+• Temperature compensation incorrect—ensure that thermistor is operating properly.
+• Multiparameter sonde inadequately rinsed—repeat rinsing.
+Erratic readings 	• Loose or defective connections—tighten or replace.
+• Broken cables—repair or replace.
+• Air trapped in conductivity probes—gently move sensor up and down to expel trapped air.
+• Rapid changes in water temperature of subsample—measure in situ.
+• Degassing of groundwater sample—measure the specific conductance downhole, or use a
+sealed flow-cell chamber.
+• Broken conductivity probe—replace.
+Specific conductance meter requires
+frequent recalibration
+• Temperature compensation may not be working—measure specific conductance of a solution.
+Place solution in a water bath and raise solution temperature to about 25 ºC. Measure specific
+conductance again, allowing sufficient time for the probe to equilibrate to temperature of solu-
+tion. If the two values differ by ±5 μS/cm for specific conductance ≤100 μS/cm or ±3 percent
+for specific conductance >100 μS/cm, check the temperature-compensation settings on the
+meter, check the thermistor, and consider replacing the conductivity probe.
+Specific conductance reading is
+drifting or variable
+• Insufficient equilibration—allow conductivity cell to thermally equilibrate with water samples
+and repeat measurements.
+• Probe dirty or malfunctioning—clean or replace conductivity probe.
+are required to participate in the National Field Quality
+Assurance project (NFQA), whereby samples of known values
+of specific conductance are distributed annually to test the
+proficiency of the analysts and accuracy of the equipment.
+The primary sources of uncertainty for specific
+conductance measurements are quality of calibration
+standards, temperature compensation, quality of the
+specific conductance meter and probe, and contamination
+of the sample during measurement.
+7.0 Applications of Specific
+Conductance in Surface Water and
+Groundwater
+Measurements of specific conductance have been used to
+estimate the salinity of (Lewis, 1980), ionic strength of (Lind,
+1970), and concentrations of major solutes (McCleskey and
+others, 2012a) and TDS (Hem, 1985) in natural waters. In
+addition, the specific conductance and the relative contribu-
+tion of a given ion to the overall specific conductance (known
+as the transport number) can be calculated from chemical
+analyses (McCleskey and others, 2012b). The USGS geo-
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__e319c1b44de6, score 0.7407321074865653)
+
+ the first value, the range of values, and the time
+period observed.
+Step 9
+Repeat from step 6 on two or more subsamples from the same sample volume
+to document precision. Rinse sensors thoroughly with deionized water.
+Figure 6.0–7. 	Subsample field-measurement procedures for conductivity, pH, and alkalinity of groundwater. (μS/cm, microsiemens
+per centimeter at 25 degrees Celsius)
+
+-- 28 of 32 --Selected References 	21
+Selected References
+ASTM International, 2018, Standard guide for purging
+methods for wells used for ground water quality investiga-
+tions: ASTM International, ASTM D6452–18, accessed
+April 16, 2020, at https://www.astm.org/Standards/
+D6452.htm.
+ASTM International, 1992, Standards on ground water and
+vadose zone investigations: American Society for Test-
+ing and Materials publication, accessed April 16, 2020, at
+https://doi.org/10.1029/97EO00017.
+Dupré, D.H., Scott, J.C., Clark, M.L., Canova, M.G, and
+Stoker, Y.E., 2013, User’s manual for the National Water
+Information System of the U.S. Geological Survey: Water-
+Quality System, version 5.0: U.S. Geological Survey Open-
+File Report 2013–1054, 730 p., accessed April 16, 2020, at
+https://doi.org/10.3133/ofr20131054.
+Edwards, T.K., and Glysson, D.G., 1999, Field methods
+for measurement of fluvial sediment: U.S. Geological
+Survey Techniques of Water-Resources Investigations,
+book 3, chap. C2, 80 p., accessed April 16, 2020, at
+https://doi.org/10.3133/twri03C2.
+Fishman, M.J., and Friedman, L.C., 1989, Methods for
+determination of inorganic substances in water and
+fluvial sediments: U.S. Geological Survey Techniques
+of Water-Resources Investigations, book 5, chap. A1,
+545 p., accessed April 16, 2020, at https://doi.org/10.3133/
+twri05A1.
+Hem, J.D., 1986, Study and interpretation of the chemical
+characteristics of natural water: U.S. Geological Survey
+Water-Supply Paper 2254, 263 p., accessed April 16, 2020,
+at https://doi.org/10.3133/wsp2254.
+Horowitz, A.J., Demas, C.R., Fitzgerald, K.K., Miller, T.L.,
+and Rickert, D.A., 1994, U.S. Geological Survey pro-
+tocol for the collection and processing of surface-water
+samples for the subsequent determination of inorganic
+constituents in filtered water: U.S. Geological Survey
+Open-File Report 94–539, 57 p. accessed April 16, 2020,
+at https://doi.org/10.3133/ofr94539.
+Kearl, P.M., Korte, N.E., and Cronk, T.A., 1992, Suggested
+modifications to ground water sampling procedures based
+on observations from the colloidal borescope: Ground Water
+Monitoring Review, v. 12, no. 2, p. 155–160, accessed
+April 16, 2020, at. https://ngwa.onlinelibrary.wiley.com/doi/
+abs/10.1111/j.1745-6592.1992.tb00046.x.
+Lapham, W.W., Wilde, F.D., and Koterba, M.T., 1997,
+Guidelines and standard procedures for studies of ground-
+water quality—Selection and installation of wells, and
+supporting documentation: U.S. Geological Survey Water-
+Resources Investigations Report 96–4233, 110 p., accessed
+April 16, 2020, at https://doi.org/10.3133/wri964233.
+Puls, R.W., and Powell, R.M., 1992, Acquisition of
+representative ground water quality samples for
+metals: Ground Water Monitoring Review, v. 12,
+no. 3, p. 167–176, accessed April 16, 2020, at
+https://doi.org/10.1111/j.1745-6592.1992.tb00057.x.
+Puls, R.W., Powell, R.M., Clark, D.A., and Paul, C.J., 1991,
+Facilitated transport of inorganic contaminants in ground
+water—Part II, Colloidal transport: Ada, Oklahoma, Robert
+S. Kerr Laboratory, U.S. Environmental Protection Agency
+Report EPA/600/m-91/040, 12 p., accessed April 16, 2020,
+at https://nepis.epa.gov/Exe/ZyNET.exe/20009K5W.TXT?
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__3082a6f1985a, score 0.7345937305124423)
+
+-- 15 of 24 --8 	Chapter A6.3. Specific Conductance
+4.0 	Measurement of Specific
+Conductance
+In situ measurements generally are preferred for deter-
+mining the specific conductance of surface water, and down-
+hole or flow-through cell measurements are preferred for
+groundwater. Specific conductance is typically determined on
+an unfiltered sample.
+• The following precautions should be taken when
+measuring specific conductance—
+• It is best to measure the specific conductance of the
+sample in situ because the specific conductance of
+water can change over time as a result of chemi-
+cal and physical processes such as precipitation,
+adsorption, degassing, and oxidation.
+• If a measurement cannot be made in situ and the
+water is highly susceptible to substantial gain or
+loss of dissolved gases, make the measurement
+from a composited or discrete subsample within a
+triple-rinsed, gas-impermeable container fitted with
+a stopper. Measure the specific conductance as soon
+as possible and try to maintain the sample at the
+temperature at which it was collected. Gas-bubble
+formation on the probe surface or gases flowing over
+the surface will result in an inaccurate reading.
+• When using multiparameter sondes, avoid
+contamination from the pH electrode-filling solu-
+tion and calibration buffers. The pH buffers and
+filling solutions have high ionic strengths and are a
+potential source of contamination. When calibrating
+multiparameter sondes, calibrate specific conduc-
+tance before pH.
+• When measuring the specific conductance of flowing
+water, make sure that the conductivity cell has no
+cavitation or air bubbles. If the water velocity is too
+high to measure the specific conductance accurately,
+relocate the probe to an area with lower velocity or
+measure the specific conductance of a representative
+subsample as soon as possible.
+• The stability criterion for recording a specific
+conductance measurement in the field is ±5 μS/cm
+for measurements ≤100 μS/cm or ±3 percent for
+measurements >100 μS/cm. A measurement outside
+the criterion is likely the result of air or cavitation
+within the conductivity cell, a faulty meter, or poor
+mixing of the measured water, causing its composi-
+tion to change rapidly.
+• Standard temperature-compensation factors
+(either linear [0.019–0.020 per °C] or nonlinear
+[International Organization for Standardization,
+1985]) should be utilized for samples with pH
+between 4 and 11 and temperature between
+5 and 35 °C.
+4.1 Measurement of Specific Conductance in
+Surface Water
+Specific conductance of surface water should be
+measured in situ if practical; otherwise, measure specific con-
+ductance in discrete samples collected from a sample splitter
+or compositing device.
+4.1.1 In Situ Measurement of Specific
+Conductance in Surface Water
+Measurements of specific conductance in flowing surface
+water should represent the cross-sectional mean or median
+specific conductance at the time of observation. Any deviation
+from this convention must be documented in the database and
+with the published data. This requirement is especially impor-
+tant for poorly mixed streams at points downstream from a
+convergence or source of drainage.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__164de423e5e7, score 0.734502477866853)
+
+-- 22 of 32 --5.0 	Measurement of pH 	15
+6. 	Always record temperature, buffer lot numbers, and
+expiration dates with calibration information in the pH
+meter/electrode logbook.
+5.0 	Measurement of pH
+Standard procedures for pH measurement are expected
+to yield accurate sample pH measurements for waters with
+specific conductance between 100 and 60,000 μS/cm, tem-
+perature from 0 to 90 °C, and pH from 1.68 to 10. Some of
+the procedures will need to be amended to accurately measure
+pH at the extremes of these ranges, but standard pH calibra-
+tions and combination pH electrodes can be appropriately
+used to achieve an accurate pH measurement of environmental
+waters whose characteristics fall within these ranges. Studies
+of waters whose properties fall outside the ranges described
+above (low-ionic-strength waters and [or] waters with pH less
+than 1.68 or greater than 10) require further modifications of
+pH calibration or measurement procedures.
+The pH of sample water should be measured in situ or as
+soon as possible after removal of the sample from its environ-
+mental source. The pH of a water sample can change substan-
+tially within hours or even minutes after sample collection
+as a result of temperature change; changes in concentra-
+tions of gases (carbon dioxide, hydrogen sulfide, ammonia);
+changes in redox conditions; mineral precipitation; metabolic
+respiration by microorganisms; and other chemical reac-
+tions, physical changes, and biological activity (Hem, 1989).
+Field conditions, including rain, wind, cold, heat, dust, direct
+sunlight, and direct exposure to vehicle exhaust, can cause
+measurement problems. Always protect the instrument system
+and the measurement process from the effects of harsh weather
+and transportation damage.
+In addition to potential changes in the composition of the
+sample water, the reliability of pH measurements depends on
+the accuracy of the calibration, and temperature measurement.
+The physical limitations and characteristics of the electrode,
+including response time, liquid junction potentials, and drift,
+can affect the accuracy of the pH measurement.
+5.1 	Making the pH Measurement
+To measure pH, follow the steps in the procedure outlined
+in figure 6.4–3. Details for each step in the procedure are
+provided below.
+Step 1. Calibrate the pH meter and probe (section 4.0).
+Single-parameter pH meters and electrodes or multipa-
+rameter instruments used for discrete sampling are required
+to be calibrated on the day of use and to be checked at each
+field site to ensure that the calibration is stable. The frequency
+of calibration is determined by the stability of the meter.
+Typically, the calibration should be done in a controlled
+laboratory environment. Most modern meters have built-in
+temperature compensation that works well in the temperature
+range from 5 to 35 °C and pH from 4.0 to 9.5, but this assump-
+tion should be checked regularly with buffers that are equili-
+brated to ambient field-sample temperatures. See section 4.0
+for information about and procedures for meter and electrode
+calibration for pH measurements.
+Step 2. Determine the location and method for the pH
+measurement.
+1. 	The pH of surface water can be determined—
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__c589d620b9d4, score 0.734440159718641)
+
+-- 17 of 24 --10 	Chapter A6.3. Specific Conductance
+a. 	First, rinse the specific conductance probe
+and the container three times with DIW.
+b. 	Next, rinse the specific conductance probe
+and the container three times with sample
+water.
+5. 	Allow the probe to equilibrate to sample temper-
+ature, then discard the sample water. Pour fresh
+sample water into a container holding the probe,
+as described by the manufacturer to avoid fringe
+field interferences.
+6. 	Allow the probe to thermally equilibrate to the
+water temperature by monitoring the temperature.
+7. 	Measure specific conductance.
+a. 	Remove any air trapped in the sensor by
+gently swirling the probe up and down under
+the water surface.
+b. 	Read the meter display.
+c. 	Gently swirl the sensor up and down under
+the water surface, and read the display again.
+d. 	Repeat the procedure until consecutive
+readings are the same. Consecutive measure-
+ments should meet the stability criterion
+(±5 μS/cm for measurements ≤100 μS/cm or
+±3 percent for measurements >100 μS/cm).
+8. 	Record specific conductance and temperature
+on the field sheet. Refer to section 6.0 below for
+reporting of specific conductance values.
+9. 	Collect replicates for quality control.
+a. 	Repeat steps 4b through 8 with at least two
+fresh subsamples, rinsing the probes only
+once with sample water.
+b. 	Subsample values should be within
+±5 μS/cm for specific conductance
+≤100 μS/cm or ±3 percent for specific con-
+ductance >100 μS/cm.
+c. 	If criteria cannot be met, filter the samples,
+report the value of specific conductance
+of three or more samples, and record this
+difficulty in the field notes.
+10. 	Rinse the probe and the container with DIW and
+store the meter and probe as directed by the manu-
+facturer in a protective case.
+4.2 Measurement of Specific Conductance in
+Groundwater
+Measurements of specific conductance in groundwater
+must be representative of aquifer conditions. Temperature and
+redox changes resulting from transporting a sample from the
+aquifer to land surface can affect measurements of specific
+conductance.
+• To minimize environmental effects on measurements
+of specific conductance in wells—
+• Measure specific conductance as close to the source
+as possible, using either a downhole or flow-through
+chamber sampling system (refer to NFM A6.0 for
+details).
+• Bailing or other methods for collecting discrete sam-
+ples isolated from the source are not recommended
+as standard practice for the measurement of specific
+conductance, although such methods are sometimes
+called for owing to site characteristics or other study
+requirements.
+• The well should be purged or in the process of purg-
+ing before sample specific conductance is measured
+and recorded. During purging, confirm that readings
+of temperature and specific conductance have stabi-
+lized before proceeding with specific conductance
+measurements.
+4.2.1 Measurement of Specific Conductance in
+a Well
+• For measurements of specific conductance downhole
+or in a flow-through chamber with water pumped
+from a well—
+1. 	Check the accuracy of the specific conductance
+measurement at the field site by measuring
+the specific conductance of a check standard.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__82b12bdb95cd, score 0.7333683536151572)
+
+-- 25 of 32 --18 	Chapter A6.4. Measurement of pH
+Step 4. Recheck instrument calibration.
+Check the stability of the pH meter and electrode in the
+field by measuring the pH of the buffer whose pH is nearest
+to that of the samples. If the pH of the buffer differs by more
+than 0.05 pH units from the certified value at the measured
+temperature (table 6.4–3), recalibrate the pH system and then
+remeasure the pH of the sample.
+5.2 	Measurement of pH in Waters with Low
+Specific Conductance
+Accurate and precise measurement of pH in low-specific-
+conductance waters (less than 100 μS/cm) is challenging
+because (1) the water is not sufficiently conductive to complete
+the electrical circuit and allow for a stable pH reading using
+a combination pH electrode, (2) differences in ionic strength
+between the sample and buffers are large, and (3) the potential
+of the liquid junction is larger than normal. Modern reference
+junctions are designed to decrease the effects of low specific
+conductance, but may not always produce the desired accuracy
+for measurements of pH. Low-resistance glass pH electrodes
+or reference junctions with a fast, continuous leak rate can
+be used to make accurate measurements of pH in low-ionic-
+strength waters; however, because these electrodes are expen-
+sive, generally are not designed for fieldwork, and only work
+well in dilute waters, they do not replace traditional electrodes.
+Some methods recommend calibrating with low-ionic-strength
+buffers to minimize liquid junction potential errors, but these
+buffers are easily contaminated and should be avoided in
+field settings.
+The recommended method allows for using normal
+pH field electrodes and standard pH buffers (table 6.4–3)
+by adding a small amount of potassium chloride (KCl) to a
+subsample of water to increase the specific conductance by
+approximately 150 μS/cm. Increasing the specific conduc-
+tance by this amount has little effect on the hydrogen ion
+activity coefficient; the pH is expected to be affected by less
+than 0.01 pH units (Busenberg and Plummer, 1987). It is first
+recommended to determine the pH by using the procedures
+described in section 5.1. If the sample pH does not stabilize,
+and the specific conductance is less than 100 μS/cm, then the
+following procedure is recommended:
+1. 	Before going to the field, prepare small glass vials
+containing 20 milligrams (mg) of dry potassium chlo-
+ride (KCl—crystalline, American Chemical Society-
+certified). Prepare more vials than the expected number
+of pH measurements. (Note: Addition of other salts [for
+example, sodium chloride] also will increase the specific
+conductance, but KCl is recommended to minimize
+effects on the liquid junction potential.)
+2. 	At the sample site, fill a 250-mL polyethylene bottle with
+raw sample water. Immediately transfer 20 mg KCl to
+the sample solution, cap the solution to minimize trans-
+fer of gases, and gently swirl the bottle to dissolve the
+KCl. Maintain the sample at ambient temperature. This
+procedure will increase the specific conductance of the
+sample by approximately 150 μS/cm.
+3. 	Measure the pH on an aliquot of the KCl-amended
+sample from the 250-mL bottle following the procedure
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__630a36494d64, score 0.7324911635941489)
+
+-- 18 of 24 --4.0 Measurement of Specific Conductance 	11
+iii. 	Repeat this procedure until the
+specific conductance measurement
+is stable. Consecutive measure-
+ments should meet the stability
+criterion (±5 μS/cm for measurements
+≤100 μS/cm or ±3 percent for measure-
+ments >100 μS/cm).
+b. 	For measurement with a pumped flow-cell
+system—
+i. 	Install the flow-cell system as close
+to the well as possible and shield the
+system from direct sunlight.
+ii. 	Depending on the flow-cell design,
+position the specific conductance probe
+upstream from the pH electrode.
+iii. 	Direct water flow to the flow cell after
+an initial discharge of waste to clear
+sediment and other contaminants from
+the sample line.
+iv. 	Release air trapped in the chamber and
+ensure air is not trapped in the conduc-
+tivity cell.
+v. 	Consecutive measurements
+should meet the stability criterion
+(±5 μS/cm for measurements
+≤100 μS/cm or ±3 percent for measure-
+ments >100 μS/cm). If the readings are
+not consistent, air may be trapped in
+the cell.
+3. 	While purging the well, maintain a constant flow
+rate.
+4. 	Allow the probe to thermally equilibrate with
+groundwater temperature for 5 minutes or more
+at the flow rate to be used for collecting all other
+samples.
+5. 	Measure specific conductance and temperature at
+regular intervals throughout purging; record the
+values of specific conductance and the associated
+temperatures on field forms.
+6. 	Check the variability of the measured specific
+conductance toward the end of purging.
+a. 	The specific conductance stability criterion
+is met when five measurements made at
+regularly spaced intervals of 3 to 5 minutes
+or more are within ±5 μS/cm for specific
+conductance ≤100 μS/cm or ±3 percent for
+specific conductance >100 μS/cm.
+b. 	When readings fluctuate rapidly, record the
+median of three or more readings within
+approximately 60 seconds as the value for a
+specific time interval.
+c. 	If the stability criterion is not met, extend
+the purge period in accordance with study
+objectives and continue to record measure-
+ments at regularly spaced time intervals.
+Record this difficulty on the field forms.
+7. 	Report the specific conductance and temperature.
+a. 	Record the final five values on the field
+sheet.
+b. 	Report the median value of the final five
+specific conductance values. Refer to section
+6.0 below for reporting of specific conduc-
+tance values.
+c. 	If the stability criterion is not met, report
+the range of values observed for the time
+interval on the field sheet, along with the
+median of the final five or more values.
+Consider troubleshooting the measurement
+(see section 5.0) or using a different specific
+conductance meter.
+4.2.2 Measurement of Specific Conductance on
+a Subsample from a Well
+Specific conductance measurements reported from bailed
+or other discrete samples need to be identified in the database,
+indicating the sampling method used. Refer to NFM A6.0 for
+use of bailers and the subsample method.
+• To measure specific conductance on a bailed or
+discrete groundwater sample—
+1. 	Check the accuracy of the specific conductance
+measurement at the field site by measuring
+the specific conductance of a check standard.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__4c8cc53480b4, score 0.7299011681933892)
+
+ow-pH waters, temperature corrections may
+represent the largest source of error. A temperature-compen-
+sation method applicable to low-pH waters is described in
+section 4.3 below and by McCleskey (2013). No temperature-
+compensation method is available for waters with pH greater
+than 11; therefore, the specific conductance in high-pH waters
+should be checked by measuring at ambient temperature and-- 10 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__e7c93d2b2493, score 0.7293428473464455)
+
+-- 19 of 24 --12 	Chapter A6.3. Specific Conductance
+TECHNICAL NOTES:
+• 	If the measurement is made on a sample in an open
+container and readings do not stabilize within several
+minutes, the cause may be CO2 degassing. Use a closed
+system to make the measurement.
+• 	Filter a sample to measure specific conductance if clay
+or other suspended particles interfere with the stability
+of the readings.
+4.3 Measurement of Specific Conductance of a
+Water Sample with Low or High pH
+Specific conductance (and electrical conductivity) data
+are reported at 25 °C. Most modern specific conductance
+meters have the capability to compensate for temperature auto-
+matically. Equation 2 is used most commonly to determine the
+specific conductance at 25 °C and commercially available field
+specific conductance meters typically use either a constant α
+(typically 0.019–0.020 per °C) or a nonlinear α (International
+Organization for Standardization, 1985). Whereas these com-
+monly used temperature-compensation factors work well for
+waters having a pH between 4 and 11, they can be the source
+of errors as large as 50 percent for low-pH samples.
+4.3.1 Measurement of Specific Conductance of
+a Water Sample with Low pH (<4)
+The specific conductance measurement error for low-pH
+(<4) waters can be large if the commonly used temperature-
+compensation factors are used. To determine whether an alter-
+native temperature-compensation method should be used for
+samples with pH <4, the in situ specific conductance should
+be compared to the specific conductance of a sample equili-
+brated to 25 °C. If the measurements are comparable (within
+±5 μS/cm for specific conductance ≤100 μS/cm or ±3 percent
+for specific conductance >100 μS/cm), then the temperature
+algorithm used is likely sufficient. If a temperature-compen-
+sation factor is required for a water sample with pH <4, the
+method described by McCleskey (2013) is recommended.
+4.3.2 Measurement of Specific Conductance of
+a Water Sample with High pH (>11)
+No temperature-compensation method is available for
+waters with high pH (>11); therefore, the specific conduc-
+tance should be checked by making a measurement at ambient
+temperature and at 25 °C for waters with pH >11. At high pH,
+hydroxide becomes a major ion in the solution and its mobility
+is different than that of most other ions. However, the hydrox-
+ide-equivalent conductivity is much lower than the hydrogen-
+equivalent conductivity and, unlike in low-pH waters, the stan-
+dard temperature-compensation approaches may be adequate.
+Furthermore, relatively few natural waters have a pH >11, so
+this situation is fairly rare.
+5.0 Troubleshooting
+Contact the instrument manufacturer if the actions sug-
+gested in table 6.3–3 fail to resolve the problem. One of the
+first things to check is the battery voltage. Always have fresh
+batteries in meters and carry spares when taking meters out
+into the field.
+Check the voltage of batteries. Always have fresh batteries
+in field meters and carry spares.
+6.0 	Reporting Specific Conductance in
+Natural Waters
+• Follow USGS standard protocols for reporting spe-
+cific conductance in the National Water Information
+System (NWIS) database—
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__d06365e8c6fd, score 0.7287123497112228)
+
+-- 10 of 24 --2.0 Equipment and Supplies 	3
+then again at 25 °C. Additional sources of uncertainty when
+measuring specific conductance include calibration, prepara-
+tion of standard solutions, fouling or contamination of the
+conductivity cell, and improper maintenance of the specific
+conductance meter and probe. The method described here is
+intended to produce accurate and precise specific conductance
+measurements over a wide range of solution composition,
+pH, and temperature. The USGS typically reports the electri-
+cal conductivity of water as specific conductance in units of
+microsiemens per centimeter (μS/cm) at 25 °C.
+The USGS typically reports the electrical conductivity of
+water as specific conductance in units of microsiemens per
+centimeter (μS/cm) at 25 °C.
+2.0 	Equipment and Supplies
+High-quality specific conductance meters, including
+multiparameter sondes, are available commercially. Most
+modern specific conductance meters have built-in temperature
+compensation and are accurate (typically within ±5 percent)
+for waters with a pH between 4 and 11 and in the temperature
+range from 5 to 35 °C.
+This section provides detailed information on the mea-
+surement of specific conductance that is applicable to most
+meters. Users must be familiar with the instructions provided
+by the manufacturer to develop a standard operating proce-
+dure (SOP) for calibration and measurement for each meter.
+The SOP should combine the requirements of this chapter of
+the NFM with the recommendations of the manufacturer to
+standardize instrument operations for users. Every specific
+conductance meter should be accompanied by a log for record-
+ing calibrations, cell constants, and repairs. Typical supplies
+used for field measurement of specific conductance are listed
+in table 6.3–1.
+Most modern specific conductance meters have built-in
+temperature compensation and are accurate (typically
+within ±5 percent) for waters with a pH between 4 and 11
+and in the temperature range from 5 to 35 °C.
+2.1 Electrical Conductivity Cells and Specific
+Conductance Meters
+There are several types of conductivity cells. A dip-
+style conductivity cell is integrated into a probe, is adaptable
+to many measurement situations, and is commonly used in
+modern field specific conductance meters and multiparameter
+Table 6.3–1. 	Equipment and supplies used to measure specific
+conductance in the field.
+[Modify this list to meet the specific needs of the field effort]
+Equipment and supplies
+• Specific conductance meter with probe, thermistor, and built-
+in temperature compensation
+• Instruction manual
+• Log book (physical or electronic) for recording cell constant,
+calibrations, maintenance, and repairs
+• Specific conductance standards
+• Deionized water for rinsing
+• Flow-through cell
+• Paper tissue for cleaning and drying
+• Disposable laboratory gloves and glasses
+• Flasks or beakers
+• Waste-disposal container
+• Multiparameter sonde sensor guard and calibration cup
+• Spare electrical conductivity probe
+• Spare batteries
+sondes. Probes containing dip conductivity cells are straight-
+forward to use as they are immersed in the water during
+measurement, can be used in flowing or static waters, and are
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__54b040d83f83, score 0.7268706448831109)
+
+rature
+range from 5 to 35 °C and pH from 4.0 to 9.5, but this assump-
+tion should be checked regularly with buffers that are equili-
+brated to ambient field-sample temperatures. See section 4.0
+for information about and procedures for meter and electrode
+calibration for pH measurements.
+Step 2. Determine the location and method for the pH
+measurement.
+1. 	The pH of surface water can be determined—• in situ from a single point or a cross sectional
+measurement; document the method in field notes
+and see point 3 below.
+• from a sample that is withdrawn from a churn
+or cone splitter or other approved sample-
+compositing device.
+• by using a pumping system with a flow-through cell
+or chamber.
+2. 	It is not advisable to immerse the pH electrode into fast-
+flowing surface water for the following reasons—
+• Placing the pH electrode into fast-flowing water
+risks damage to the delicate glass bulb (scratching,
+pitting, coating), which will inhibit the correct
+functioning of the electrode.
+• Proper functioning of the glass bulb membrane is
+affected when equilibrium is not achieved with the
+surrounding sample solution especially if cavitation
+occurs around the electrode.
+• Reference-junction equilibrium can be affected by
+rapidly moving water.
+Figure 6.4–3. 	Procedure: Steps for making measurements of pH.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__2cade3723a66, score 0.7268612707384228)
+
+tergents for many
+hours without damage.
+Figure 6.3–1. 	Diagram
+showing general guidelines
+for selecting an electrical
+conductivity probe with
+the optimum cell constant.
+Modified from chart in the
+YSI Model 3200 Operations
+Manual (YSI Incorporated,
+1999, p. 43). Definitions: cm-1,
+per centimeter; CO2, carbon
+dioxide; μS/cm at 25 °C,
+microsiemens per centimeter
+at 25 degrees Celsius.
+
+-- 12 of 24 --3.0 Calibration 	5
+• When additional cleaning is required, soak the probe
+in 5-percent volume per volume (v/v) hydrochloric
+acid for as long as 2 hours and then rinse thoroughly
+with DIW. Check the manufacturer’s recommenda-
+tions before using acid.
+• Caution: Platinum and platinum-iridium electrodes
+should not be cleaned in nitric acid (HNO3), aqua
+regia, or any other solution that is known to etch
+platinum or gold.
+Consult your instruction manual for specific storage
+instructions. Most conductivity probes, including probes with
+graphite electrodes, can be stored clean and dry; however,
+probes on multiparameter sondes are required to be stored
+in water (typically tap water) to prevent drying out of other
+sensors. Storage in water is acceptable while the probe is
+in use.
+3.0 	Calibration
+Specific conductance measurements are only as good
+as the calibration itself. Several factors must be considered
+when calibrating the meter. Thermal expansion of the con-
+ductivity cell can affect the cell constant; however, the cell
+constants (𝐾cell) of modern field probes are generally stable
+from 0 to 100 °C. Most conductivity standards are potassium
+chloride (KCl) solutions, and the linear (0.019–0.020) and
+nonlinear (International Organization for Standardization,
+1985) temperature-compensation factors (α) will produce
+reliable calibrations from 5 to 35 °C. Caution should be
+used when calibrating at temperatures greater than 35 °C,
+however, because the commonly used nonlinear (International
+Organization for Standardization, 1985) temperature compen-
+sation deviates substantially when applied to KCl solutions.
+Therefore, if a modern conductivity probe that expands
+minimally with temperature is used and the temperature of the
+water to be measured is between 5 and 35 °C, the temperature
+of the calibration solutions (either laboratory or in situ) is not
+expected to significantly affect the measurement of specific
+conductance of samples in the field.
+Conductivity standards are susceptible to contamination
+or dilution from residual solutions, including rinse water, and
+each calibration should be done with care. Low-conductivity
+standards (<200 μS/cm) are especially susceptible to con-
+tamination. Calibration in the laboratory prior to field
+measurement, for both specific conductance meters and
+multiparameter sondes, is recommended because the tempera-
+ture is regulated and the standard solutions are less susceptible
+to contamination.
+Specific conductance meters must be checked or calibrated
+before every field trip to ensure that the meter and probe
+are working properly. The accuracy of specific conductance
+measurements should be checked in the laboratory and in the
+field by conducting measurements on standards whose specific
+conductance is near the expected specific conductance of the
+sample. Measurements of specific conductance standards that
+are within ±5 μS/cm of the certified values for measurements
+≤100 μS/cm or ±3 percent of the certified values for measure-
+ments >100 μS/cm are considered accurate and do not warrant
+recalibration. Because specific conductance meters typically
+maintain their calibration, frequent recalibration is generally
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__05c228f6e257, score 0.7254738264223963)
+
+f check standards should be
+within ±5 μS/cm for measurements ≤100 μS/cm
+or ±3 percent for measurements >100 μS/cm.
+Recalibrate if necessary.
+2. 	Install the specific conductance probe.
+a. 	For measurement in a downhole system—
+i. 	Lower the probe to the sampling point.
+ii. 	Remove air trapped in the conductiv-
+ity cell by gently moving the probe up
+and down under the water; read the
+meter display.-- 18 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__31a944e77d5e, score 0.725064166153041)
+
+e Water
+Measurements of specific conductance in flowing surface
+water should represent the cross-sectional mean or median
+specific conductance at the time of observation. Any deviation
+from this convention must be documented in the database and
+with the published data. This requirement is especially impor-
+tant for poorly mixed streams at points downstream from a
+convergence or source of drainage.• Before making a measurement of specific conduc-
+tance—
+• If you are unfamiliar with the sample site, measure
+a depth and cross-sectional specific conductance
+profile to determine the degree of system variability.
+A dip-style conductivity probe works best for this
+purpose.
+• Refer to NFM A6.0 for information on which sam-
+pling method to use.
+• To measure specific conductance in surface water—
+1. 	Check the accuracy of the specific conductance
+measurement at the field site by measuring the
+specific conductance of a check standard. Select
+a check standard with a specific conductance
+similar to that of the sample. The specific con-
+ductance of check standards should be within
+±5 μS/cm for measurements ≤100 μS/cm or ±3
+percent for measurements >100 μS/cm. Recali-
+brate if necessary.
+2. 	Determine the variation of specific conductance
+along a cross-sectional profile using an appropri-
+ate measurement method (see NFM A6.0; use
+equal-width increment [EWI] or equal-discharge
+increment [EDI] method if required):
+a. 	If the stream is flowing and wadable, wade
+to the location(s) where specific conductance
+is to be measured.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__361ef9509206, score 0.724105471420849)
+
+he following equation:
+ = K 	G	cell 	(1)
+where 𝐾cell is the cell constant (in units of cm-1). The cell con-
+stant is the ratio of the distance between two electrode plates
+(d) and their area (A). The units of electrical conductivity are
+siemens per centimeter (S/cm), which is the equivalent of
+mhos per centimeter (mhos/cm). Most values reported prior to
+1971 were in units of mhos per centimeter.Electrical conductivity increases by 0.5 to 3 percent per
+degree Celsius and varies depending on the ionic species
+present (Robinson and Stokes, 1970; McCleskey, 2013). For
+natural waters, conductometric measurements are typically
+used to estimate the concentrations of total dissolved solids
+(TDS); therefore, the electrical conductivity is reported at
+25 °C (κ25 °C, which is equivalent to specific conductance), to
+facilitate this estimation of TDS by removing the effects of
+temperature. The value of κ25 °C is typically calculated by using
+the following equation:
+κ
+κ
+α
+25 1 	25
+° 	= + 	− 	°
+C t 	C	( 	) (2)
+where α is the temperature-compensation factor and t is the
+measured temperature in degrees Celsius. Modern specific
+conductance field meters typically have preprogrammed
+temperature-compensation factors (α) and report specific
+conductance (or electrical conductivity) at 25 °C (κ25 °C).
+Most specific conductance meters utilize either linear
+(0.019–0.020 per °C) or nonlinear (International Organiza-
+tion for Standardization, 1985) temperature-compensation
+algorithms that are applicable for most natural waters. The
+temperature compensation used is likely described in the
+meter’s manual or can be determined by using standard
+solutions and the method described by McCleskey (2013).
+Conductance and temperature can be measured accurately
+with modern instrumentation, and temperature compensation
+is typically accurate to ±5 percent for water in the range from
+5 to 35 ºC and whose pH is between 4 and 11. For low-pH
+(pH <4) waters, using the standard temperature-compensation
+factors can result in κ25 °C errors as large as 50 percent, because
+the transport properties of the hydrogen ion are different from
+those of most other ions, and the hydrogen ion contributes sub-
+stantially to the electrical conductance at low pH (McCleskey,
+2013). For low-pH waters, temperature corrections may
+represent the largest source of error. A temperature-compen-
+sation method applicable to low-pH waters is described in
+section 4.3 below and by McCleskey (2013). No temperature-
+compensation method is available for waters with pH greater
+than 11; therefore, the specific conductance in high-pH waters
+should be checked by measuring at ambient temperature and
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__4e9dfc809f8a, score 0.7194156094219778)
+
+assurance protocols allow, adjust the locations of the
+measurements along the cross section or transect to
+avoid areas that will require stopping and cleaning
+plant growth, sediment, or debris from the sensors.
+4.2 Groundwater
+The stability of field-parameter values is monitored
+toward the end of well purging to help indicate when the water
+being withdrawn represents fresh formation water and whensample collection should begin (see NFM A6.0, NFM A4).
+The final field-parameter values typically are recorded after
+three or more well volumes have been purged and stability
+criteria have been met.
+If the purpose of sampling is to obtain field measure-
+ments only, these data can be obtained in situ by deploying a
+multiparameter sonde into the well, followed by a submersible
+pump to draw water upward. If water-quality samples will be
+collected, pumping the water from the well to and through
+a flow-through cell that contains the instrument’s sensors is
+another efficient method for collecting field-parameter data
+without having to remove and redeploy sampling equipment.
+Flow-through cells are typically supplied by the manufacturers
+Table 6.8–5. 	Stabilization criteria for common field parameters.
+[±, plus or minus; °C, degrees Celsius; SC, specific electrical conductance; ≤, less than or equal to; %, percent; μS/cm, microsiemens per centimeter at 25
+degrees Celsius; >, greater than; DO, dissolved oxygen; mg/L, milligram per liter; TU, turbidity unit]
+Sensor
+Standard sensor stabilization criteria
+(Note that the actual accuracy of the sensor varies, depending on sensor model
+and manufacturer.)
+Temperature 	± 0.2 °C
+Specific electrical conductance (SC) 	± 5 μS/cm for SC ≤100 μS/cm, or ± 3% for SC >100 μS/cm
+DO 	± 0.2 mg/L
+pH 	± 0.1 pH units
+Turbidity 	± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or
+10% of the measured value for turbidity >100 TU

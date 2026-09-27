@@ -47,6 +47,8 @@ export interface TranscriptRunMeta {
   model: string;
   temperature: number;
   maxTokens: number;
+  /** `LLM_REASONING_EFFORT` as the runner saw it; absent on captures made before it existed. */
+  reasoningEffort?: string;
   corpusSource: string;
   baseUrl: string;
   transport: "sse" | "json";

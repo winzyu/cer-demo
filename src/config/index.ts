@@ -17,6 +17,8 @@ export interface FireworksConfig {
   baseUrl: string;
   chatModel?: string;
   embeddingModel: string;
+  /** Cross-encoder for the `*-rerank` retrieval modes; see `RerankService`. */
+  rerankModel: string;
   /**
    * Deliberately generous. gpt-oss models emit reasoning tokens before visible output and
    * truncate to an empty answer if starved — a low cap fails as silence, not as an error.
@@ -30,6 +32,16 @@ export interface FireworksConfig {
    * answers were not reproducible.
    */
   temperature: number;
+  /**
+   * gpt-oss `reasoning_effort`. `default` sends nothing, so the provider's own default applies;
+   * every capture before this setting existed ran that way.
+   */
+  reasoningEffort: (typeof REASONING_EFFORTS)[number];
+  /**
+   * `disabled` sends `thinking: {type: "disabled"}`, the switch models such as `minimax-m3` use to
+   * skip reasoning; `default` sends nothing. gpt-oss ignores it and uses `reasoningEffort`.
+   */
+  thinking: (typeof THINKING_MODES)[number];
   /**
    * Sent as the OpenAI `user` field. On Fireworks serverless this drives cache affinity:
    * requests sharing a value tend to land on the same worker, which is what makes prompt
@@ -229,6 +241,16 @@ export interface RetrievalConfig {
    * could have a run measured against the wrong source and misreport the arm's cost.
    */
   corpusSource: CorpusSourceName;
+  /**
+   * Rewrite a follow-up into a standalone search query from the conversation before retrieval
+   * (`src/retrieval/queryRewrite.ts`). Off by default: it adds a model call to every follow-up.
+   */
+  queryRewrite: boolean;
+  /**
+   * With `queryRewrite` on, also rewrite a first turn into a search query (`rewriteFirstTurn`).
+   * Off by default: it adds a model call to every first turn. Ignored while `queryRewrite` is off.
+   */
+  queryRewriteFirstTurn: boolean;
 }
 
 export interface Config {
@@ -313,6 +335,9 @@ const readEnum = <T extends string>(name: string, allowed: readonly T[], fallbac
   }
   return raw as T;
 };
+
+export const REASONING_EFFORTS = ["default", "low", "medium", "high"] as const;
+export const THINKING_MODES = ["default", "disabled"] as const;
 
 /** The one spelling of "no ceiling" this service accepts, in every quota variable. */
 export const UNLIMITED = "unlimited";
@@ -404,8 +429,11 @@ const load = (): Config => {
       baseUrl: readString("FIREWORKS_BASE_URL", "https://api.fireworks.ai/inference/v1") as string,
       chatModel: readString("LLM_MODEL"),
       embeddingModel: readString("EMBEDDING_MODEL", "nomic-ai/nomic-embed-text-v1.5") as string,
+      rerankModel: readString("RERANK_MODEL", "fireworks/qwen3-reranker-8b") as string,
       maxTokens: readInt("LLM_MAX_TOKENS", 4096),
       temperature: readFloat("LLM_TEMPERATURE", 0),
+      reasoningEffort: readEnum("LLM_REASONING_EFFORT", REASONING_EFFORTS, "default"),
+      thinking: readEnum("LLM_THINKING", THINKING_MODES, "default"),
       user: readString("FIREWORKS_USER", "clean-earth-rag") as string,
     },
     deviceApi: {
@@ -441,6 +469,8 @@ const load = (): Config => {
         ["artifact", "firestore"],
         "artifact",
       ),
+      queryRewrite: readBool("QUERY_REWRITE", false),
+      queryRewriteFirstTurn: readBool("QUERY_REWRITE_FIRST_TURN", false),
     },
     waterType: readEnum<WaterType>("WATER_TYPE", ["freshwater", "saltwater"], "freshwater"),
     audit: {

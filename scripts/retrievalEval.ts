@@ -13,10 +13,15 @@
  */
 import fs from "fs";
 import path from "path";
-import { loadLabels } from "../src/eval/retrieval/labels";
+import { loadLabels, type LoadedLabels } from "../src/eval/retrieval/labels";
 import { runRetrievalEval } from "../src/eval/retrieval/runner";
-import type { RunResult } from "../src/eval/retrieval/runner";
+import type { RunOptions, RunResult } from "../src/eval/retrieval/runner";
+import type { LabelledQuery } from "../src/eval/retrieval/types";
 import { retrievalRegistry } from "../src/retrieval";
+import { decomposeQuery } from "../src/retrieval/queryDecompose";
+import { rewriteFirstTurn, rewriteQuery } from "../src/retrieval/queryRewrite";
+import { LlmService } from "../src/services/LlmService";
+import type { ChatMessage } from "../src/types/chat.types";
 import { createLogger } from "../src/utils/logger";
 
 const log = createLogger("RetrievalEval");
@@ -25,6 +30,65 @@ const arg = (name: string): string | undefined => process.argv
   .find((a) => a.startsWith(`--${name}=`))?.split("=").slice(1).join("=");
 
 const pct = (value: number): string => `${(value * 100).toFixed(1)}%`;
+
+const TRANSCRIPT_DIR = path.resolve(__dirname, "../eval/transcripts");
+
+/**
+ * `--rewrite`: search each follow-up as `QUERY_REWRITE` would, from a real conversation. The
+ * labels hold only user turns, so the assistant's earlier answers come from a captured run
+ * (`--history-run`, arm `--history-arm`), exactly as the capture sent them as history.
+ * `--rewrite-first` also rewrites first turns (`rewriteFirstTurn`), and works without `--rewrite`.
+ */
+const rewriteSearch = (
+  labels: LoadedLabels,
+  llm: LlmService,
+  { followUps, firstTurns }: { followUps: boolean; firstTurns: boolean },
+  historyRun: string,
+  historyArm: string,
+): ((fixtureId: string, label: LabelledQuery) => Promise<string>) => (
+  async (fixtureId, label) => {
+    if (label.turn === 1) {
+      if (!firstTurns) return label.query;
+      const result = await rewriteFirstTurn(llm, label.query);
+      log.info(`  ${fixtureId}#1 -> ${result.rewritten ? result.query : "(unchanged)"}`);
+      return result.query;
+    }
+    const fixture = labels.fixtures.find((f) => f.fixtureId === fixtureId);
+    const file = path.join(TRANSCRIPT_DIR, historyRun, "warm", historyArm, `${fixtureId}.json`);
+    if (!fixture || !followUps) return label.query;
+    if (!fs.existsSync(file)) {
+      throw new Error(`No captured history for ${fixtureId} at ${file}.`);
+    }
+    const transcript = JSON.parse(fs.readFileSync(file, "utf8")) as {
+      turns: Array<{ index: number; question: string; answer?: string }>;
+    };
+    const history: ChatMessage[] = fixture.turns
+      .filter((t) => t.turn < label.turn)
+      .flatMap((t) => {
+        const answer = transcript.turns.find((c) => c.index === t.turn - 1)?.answer;
+        if (!answer) throw new Error(`${fixtureId} turn ${t.turn} has no captured answer in ${historyRun}.`);
+        return [{ role: "user", content: t.query }, { role: "assistant", content: answer }] as ChatMessage[];
+      });
+    const result = await rewriteQuery(llm, label.query, history);
+    log.info(`  ${fixtureId}#${label.turn} -> ${result.rewritten ? result.query : "(unchanged)"}`);
+    return result.query;
+  }
+);
+
+/**
+ * `--decompose`: split each query searched (after any rewrite) into single-subject sub-queries
+ * (`queryDecompose.ts`); the runner merges their rankings with the query's own.
+ */
+const decomposeSearch = (
+  llm: LlmService,
+  base: (fixtureId: string, label: LabelledQuery) => Promise<string>,
+): RunOptions["searchQuery"] => async (fixtureId, label) => {
+  const query = await base(fixtureId, label);
+  const result = await decomposeQuery(llm, query);
+  if (!result.decomposed) return query;
+  log.info(`  ${fixtureId}#${label.turn} split -> ${result.queries.join(" | ")}`);
+  return [query, ...result.queries];
+};
 
 const printSummary = (result: RunResult): void => {
   const { summary } = result;
@@ -35,6 +99,13 @@ const printSummary = (result: RunResult): void => {
   log.info(`  MRR        ${summary.mrr.toFixed(3)}`);
   log.info(`  nDCG       ${summary.ndcg.toFixed(3)}`);
   log.info(`  chunks in context, mean  ${result.meanChunksInContext.toFixed(1)}`);
+  log.info("");
+  log.info("  per turn:");
+  [...new Set(result.scores.map((q) => q.turn))].sort().forEach((turn) => {
+    const inTurn = result.scores.filter((q) => q.turn === turn);
+    const avg = (xs: number[]): number => xs.reduce((a, x) => a + x, 0) / xs.length;
+    log.info(`    turn ${turn}  n=${String(inTurn.length).padStart(3)}  recall ${pct(avg(inTurn.map((q) => q.recall))).padStart(6)}  nDCG ${avg(inTurn.map((q) => q.ndcg)).toFixed(3)}`);
+  });
   log.info("");
   log.info("  per class:");
   Object.entries(summary.perClass)
@@ -61,6 +132,16 @@ const main = async (): Promise<void> => {
 
   const labels = loadLabels();
   log.info(`Loaded ${labels.fixtures.length} labelled fixtures, ${labels.queries.length} queries.`);
+  const followUps = process.argv.includes("--rewrite");
+  const firstTurns = process.argv.includes("--rewrite-first");
+  const decompose = process.argv.includes("--decompose");
+  const llm = followUps || firstTurns || decompose ? new LlmService() : undefined;
+  const rewritten = llm && (followUps || firstTurns)
+    ? rewriteSearch(labels, llm, { followUps, firstTurns }, arg("history-run") ?? "p3-lv-k20-2026-09-26", arg("history-arm") ?? "local-vector")
+    : undefined;
+  const searchQuery = llm && decompose
+    ? decomposeSearch(llm, rewritten ?? (async (_fixtureId, label) => label.query))
+    : rewritten;
 
   const results: RunResult[] = [];
   // Sequential: the vector adapters embed each query over the network, and a burst is neither
@@ -71,7 +152,7 @@ const main = async (): Promise<void> => {
     if (!adapter) continue;
     log.info(`Running ${mode}…`);
     // eslint-disable-next-line no-await-in-loop
-    const result = await runRetrievalEval(adapter, { topK, labels });
+    const result = await runRetrievalEval(adapter, { topK, labels, searchQuery });
     results.push(result);
     printSummary(result);
   }
@@ -90,7 +171,9 @@ const main = async (): Promise<void> => {
     // what a tuning change moved, including the things that quietly got worse.
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
     fs.writeFileSync(outPath, JSON.stringify(
-      results.map((r) => ({ summary: r.summary, retrieved: r.retrieved })),
+      results.map((r) => ({
+        summary: r.summary, scores: r.scores, retrieved: r.retrieved, searched: r.searched,
+      })),
       null,
       2,
     ), "utf8");

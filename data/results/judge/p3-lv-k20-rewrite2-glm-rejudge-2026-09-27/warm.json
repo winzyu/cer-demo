@@ -1,0 +1,140 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-27T19:14:15.802Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1317521,
+    "cachedPromptTokens": 1174462,
+    "completionTokens": 97610
+  },
+  "results": [
+    {
+      "arm": "local-vector",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.9166666666666666,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.3,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.3333333333333333,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.1875,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.1666666666666667,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer declares the standard 4.01/7.00 buffers adequate for pH 3.2 with no further comment violating a must-not item and misses the 1.68-buffer bracketing 10 C and 0.05 pH-unit check points. Unmet: States the usual 4/7/10 buffer set is not sufficient for acidic water and a pH 1.68 (or 2) buffer is needed when acidic waters are measured; States the sample pH must fall inside the calibrated range so a 4/7/10 set does not bracket pH 3.2; States the calibration buffers must be within about 10 C of the sample temperature; States that a check of the buffer nearest the sample pH should be within about 0.05 pH unit of its value at that temperature or the system is recalibrated"
+        },
+        {
+          "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes the subsample-qualifier points for turbidity/temperature/DO/Eh but withholds the flow-cell turbidity-sampling prohibition and the storage/time-sensitivity facts the rubric asks for declining them as unavailable so it scores 0. Unmet: states plainly that a discrete turbidity sample must not be collected from the discharge passing through the flow-through chamber holding the other sensors; gives the storage limits if the sample cannot be read on site: clean amber bottle kept out of sunlight chilled at or below 4 C held no longer than 24 hours; notes turbidity is time sensitive and should be measured on site preferably in situ"
+        },
+        {
+          "fixtureId": "deepmanual-diluting-clarity-standards",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer approves diluting calibration standards generally (\"Yes — the USGS guidance describes exactly that practice\") violating the must-not item against approving dilution of commercial standards other than 4 000-unit formazin and it makes none of the must-contain points. Unmet: states that commercial calibration solutions must not be diluted; gives 4 000-unit formazin as the one exception that may be diluted; explains that diluting changes the suspension matrix so the dilutions are no longer linear; recommends buying commercially prepared solutions at the values needed rather than preparing them by dilution"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer declines the A6.8 example form's conductivity-dependent criteria (±0.1 pH unit; ±0.3 pH unit below 75 µS/cm) and so makes no distinction from A6.4's final-buffer check leaving all three must-contain points unmet. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check requiring agreement within 0.05 pH unit of the certified value at calibration temperature"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the multiply method and attributes it to table 6.2-4 but withholds the required factor 0.8235 for 20.0 °C at 50 000 µS/cm saying it lacks the information — a refusal of a figure the rubric expects which scores 0. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm"
+        },
+        {
+          "fixtureId": "followup-mixing-the-clarity-bottle",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer recommends shaking the sample ('shake gently don't shake hard') which violates the must-not against recommending shaking and it also omits the one-turn-per-second rate and the pour-off-immediately fallback. Unmet: says not to shake the sample because shaking beats air into it; says to mix by turning the bottle end over end about 25 times roughly one turn per second; notes that reading straight from the bottle into the cell is best avoided and that if it cannot be avoided the sample is poured off immediately after mixing so the particles do not settle out"
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer discusses deionized-water rinsing between standards but never states the three-rinse requirement never mentions rinsing with the next standard/buffer never mentions the calibration cup and never notes rushed calibration with inadequate rinsing as a cause of unstable readings so none of the must-contain points are made. Unmet: States that rinsing three times with deionized water between different solutions is required practice; States that after the deionized-water rinses the sensors are also rinsed with the next standard or buffer itself before it is used; Describes rinsing the calibration cup as well as the sensors; Notes that a rushed calibration with inadequate rinsing is a recognised cause of unstable or inaccurate readings"
+        },
+        {
+          "fixtureId": "refusal-turbidity-sensor-hardware",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer asserts FNU for this unidentified instrument by leaning on the general prevalence of infrared multiparameter sensors which violates the must-not items against claiming a verified optical design/unit and resolving the ambiguity by picking the unit the surrounding text uses most. Unmet: Gives NTU and FNU as white-light and near-infrared nephelometric examples; Distinguishes equivalent results on calibration standards from environmental-sample results that need not be interchangeable; States that the corpus does not identify the make or model of turbidity instrument in this fleet; States that the service treats turbidity as a relative uncalibrated index; this does not establish the unidentified hardware's optical-standard unit or calibration; Notes that the mapping from instrument model to unit lives in a USGS spreadsheet that is not part of the corpus; Declines to infer this fleet's optical design or physical reporting unit from the prevalence of infrared instruments in general guidance"
+        }
+      ]
+    }
+  ]
+}

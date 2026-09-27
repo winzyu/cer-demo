@@ -236,19 +236,13 @@ chunks these are.
   inventory, which was wrong at the 2026-09-01 qualification pass
   (`eval/fixtures-wave1/_QUALIFICATION.md` §2.1) and has since been fixed.
 
-  **Done 2026-09-21, landed on `dev` 2026-09-24.** All 12 entries were re-resolved onto the corpus chunk of the same index.
-  The mapping was not assumed from the index: every entry's quotes match its mapped chunk and no other, apart from the expected spill into index+1 from the 400-char chunk overlap.
+  **Done 2026-09-21.** All 12 entries were re-resolved onto the corpus chunk of the same index.
+  The mapping was confirmed by exact-quote evidence rather than assumed from the index: every entry's quotes match its mapped chunk and no other, with the expected spill into index+1 from the 400-char chunk overlap.
   The re-OCR also broke 12 `quote` values; 11 were the same passage with only OCR characters moved (`14.38` to `1438`, `uS/om` to `yS/em`, straight to curly apostrophes) and were refreshed against the mapped chunk.
-  Claim ids, claim text, `type`, `metrics`, `specificity`, `locator` and the summary blocks are byte-identical to the previous version, so the corrected drift/QAPP gap statement survives.
-  **446/446 chunk ids now resolve, 2177 claims, no duplicate ids, no quote over 200 chars.** Per-claim detail is the 2026-09-21 note in `eval/claims/_STATUS.md`.
-
-  `epa-oxygen-solubility-chart-01` quoted the solubility chart's pressure header row, which the +86-char shift moved from chunk index 9 into chunk index 10.
-  By the user's decision of 2026-09-23 it moved to chunk index 10, whose `locator` already describes that chart, with its quote refreshed to that chunk's OCR, so all 2177 quotes are verbatim again.
-  Chunk index 9 holds only the chart title, not the pressure range the claim states, so keeping it would credit retrieval for a chunk without the answer.
-  The two fixtures that name the claim (`crossdoc-do-calibrated-dry-deployed-brackish`, `crossdoc-two-oxygen-tables-disagree`) lose chunk index 9 from their labels and keep chunk index 10 at grade 2; retrieval scores already computed against the old labels for these two fixtures need re-scoring.
-
-  `eval/retrieval-labels/` was regenerated with `scripts/resolveRetrievalLabels.ts` on 2026-09-24: the 30 old-id references across 5 files became the new ids, and the chunk move above was regenerated the same way; no stale label files are left.
-  The old ids in `eval/transcripts/warm/gold-context/` (30) and `data/results/judge/warm.*` (6) are historical captures and correctly stay.
+  Claim ids, claim text, `type`, `metrics`, `specificity`, `locator` and the summary blocks are unchanged, so the corrected drift/QAPP gap statement survives.
+  446/446 chunk ids resolve, with 2177 claims, no duplicate ids and no quote over 200 chars; per-claim detail is the 2026-09-21 note in `eval/claims/_STATUS.md`.
+  The twelfth quote, `epa-oxygen-solubility-chart-01`, was re-parented to chunk index 10 on 2026-09-23 (`c85848a`), and `eval/retrieval-labels/` carries none of the 12 old ids.
+  `dev` made the same re-resolve independently (`9b18094`, `959fe94`) against its uncorrected fixtures, two of which name the chart claim; merging `dev` here on 2026-09-24 kept the corrected fixtures, whose labels do not name it, and the claim files were byte-identical on both sides.
 
 Phase 1e's **human locator** (document + section + short quote) is the mitigation for all three. It
 lets a label be re-resolved against a new chunk instead of re-authored. Phase 1a is already
@@ -673,6 +667,7 @@ npm run retrieval:eval                  # offline retrieval diagnostics, ~10s, f
 npm run cost                            # sweep completion length across arms
 npm run cost -- --model=<id> --completion=measured
 npm run judge -- --dry-run              # what a pass would cost, without spending
+npm run judge -- --run=<id> --final     # reported numbers: default reasoning (see "Judge cost")
 npm run judge -- --calibrate            # judge-vs-human agreement, no API calls
 npm run judge -- --report               # summarize the ledger, no API calls
 npm run ingest                          # documents/ -> data/corpus/corpus.json
@@ -692,7 +687,7 @@ means nothing for the new set.
 
 `npm run cost`, `npm run ingest` and `npm run embed:cache` are unaffected.
 
-**Capturing an arm** (~$0.02–0.05). The user often runs a server on port 8000 with different env —
+**Capturing an arm** (measured 2026-09-23: about $0.07-0.08 per 90-turn arm, plus about $0.65-0.72 to judge it). Name every new capture with `--run=<id>` on `bakeoff`, `gate:check` and `judge`: it writes to `eval/transcripts/<id>/` and `data/results/judge/<id>/`, keeping the old transcripts verbatim and the judge from reusing verdicts keyed only by arm, fixture, turn and dimension; `bakeoff` refuses to overwrite an existing transcript. The user often runs a server on port 8000 with different env —
 **use another port, do not kill it.**
 
 ```
@@ -749,12 +744,12 @@ The 2026-09-21 re-OCR changed the EPA SOP's text and all 12 of its chunk ids aft
 | 1a — claim inventory | ✅ 2,250 claims, 1,685 high-specificity, 168 gaps, 451/451 chunks |
 | 1b — question generation | ✅ 46 fixtures / 92 turns (superseded 2026-09-13: now 45 / 90) |
 | 1c — decontaminate | ✅ 22.8% document-level, 11.6% chunk-level, against the < 40% bar — **exit criterion 1 passes**. `eval/fixtures-wave1/_CONTAMINATION.md` |
-| 1d — human verification | ⬜ **the user's, ~4–6 h.** Do not start before the fixture text is frozen |
+| 1d — human verification | ✅ **closed by user decision 2026-09-23, without human verification** - the agent-corrected set was accepted in its place and frozen at 45 / 90; see "Phase 1d decision and fixture freeze" below |
 | 1e — labels + hard negatives | 🟡 partial — `eval/retrieval-labels/` regenerated (**45 files**, `scripts/resolveRetrievalLabels.ts`), but provisional: flat grade 2, no hard negatives, per-fixture not per-turn. Adequate for the gold-context arm, which resolves every label at 100% offline; the remainder blocks Phase 4, not Phase 3 |
 | 2a — quote-based citations | 🟡 **demonstrated, not measured, 2026-09-13** — the prompt asks for `【n†"quote"】`, `formatContext` labels excerpts `【n】`, and `QUOTE_CITATION_PATTERN` accepts a non-dagger separator. A same-day smoke capture ($0.0075, `gpt-oss-120b`, gold-context arm, three runs) showed the closing-bracket and quote rules produce a non-zero quoted-citation rate (10/10 markers closed correctly across two runs; 4/4 citations quoted in one answer, 1 supported and 3 too short) — a smoke check, not the Phase 2 STOP block's measured rate |
 | 2b — repoint the judge | ✅ done 2026-09-02 |
 | 2c — re-calibrate | ⬜ needs captured answers to grade — see the sequencing note below |
-| 3 — generation baseline | 🟡 captured and judged 2026-09-14 (`gpt-oss-120b`, 90 turns, judge ~$0.55): Tier 1 passes; correctness 0.91 against 1.30 and 43.2% ungrounded against 2%, both provisional until 2c. The refusal class is not measurable on this capture: the prompt's all-or-nothing refusal contradicts the rewritten rubrics, and gold context sends no chunks to the unlabelled refusal turns. Recapture after that contract changes |
+| 3 — generation baseline | 🟡 **re-captured 2026-09-23 on the frozen set** (run `p3-2026-09-23`, below): gold context 1.01 correctness and 47.8% ungrounded, `hybrid-slice-vector` 0.52 and 59.6%, Tier 1 failing on both; iteration 1 (four prompt rules, `DEFAULT_TOP_K` 10) is committed at `22d6dd0` and not yet measured. The 2026-09-14 capture predates the corrections and two prompt edits, and no longer counts |
 | 4 — retrieval | ⬜ |
 
 **Sequencing — SETTLED 2026-09-09: Phase 3 runs before 2c.** 2c grades 30 stratified rows, and
@@ -802,6 +797,838 @@ At handoff, `dev` is `eaba51c` and includes later Gilligan and recovered catalog
 The proposed push preserves the correction branch separately; merged behavior has not been tested, and integration must retain greetings, `list_pods` routing and catalogue behavior before rerunning focused checks.
 Human verification/freeze, judge calibration, broader label refinement and the chart-header decision remain open.
 
+### Phase 1d decision and fixture freeze - 2026-09-23
+
+**User decision, 2026-09-23: Phase 1d is closed without human verification.**
+No human has verified any fixture, label or rubric in the wave 1 set.
+The user accepted the Codex correction work (the 2026-09-21 agent review, the 35 corrected fixtures, the 45 regenerated labels and the refusal/context contract fixes) in place of the manual pass, because there is neither the time nor the domain expertise for one before the release.
+Every score measured on this set therefore rests on agent-authored and agent-reviewed ground truth; report it that way, and do not describe any result as human-validated.
+Do not ask the user to verify fixtures.
+
+The correction work landed on `eval/wave1-corrections` as `ec58b05` and was merged with `dev` (`9c783cd`) as `9cf91fe`.
+The merge reconciled `src/prompt/systemPrompt.ts`: the refusal keeps the closest-supported-alternative sentence, followed by the corrections' partial-answer rule, and the greeting carve-out, `list_pods` routing and catalogue block are unchanged.
+Checks after the merge: 8 Jest suites run individually (prompt, evalFixtures, gateCheck, getPodThresholds, goldContext, judge, listPods, catalogue; 230 tests), typecheck, lint, the label generator (no output change), `scripts/verifyWave1LabelFailures.py` and `scripts/verifyWave1Corrections.ts`.
+
+**The fixture set is frozen at 45 fixtures / 90 turns, 8 of them flagged `requires_refusal`.**
+Fingerprint, as `sha256sum *.json | sha256sum` run inside each directory:
+
+| directory | files | fingerprint |
+|---|---|---|
+| `eval/fixtures-wave1/` | 45 | `b0b647f4ba6a54a3f812a508ef5f450f6d1e43e183858cf6d203ee2a8ea1f148` |
+| `eval/retrieval-labels/` | 45 | `fa76d62647aad389b1bcdcd1c03710e5f4a0c8ce1297a3d798ae25485f5f09de` |
+
+Fixture text does not change after this point.
+A change to a fixture after a capture voids every capture made on the old text, and needs its own recorded decision here.
+Labels may still be regenerated by `scripts/resolveRetrievalLabels.ts` for Phase 1e; a changed label fingerprint must be recorded with the capture it applies to.
+Still open and not closed by this decision: judge calibration (2c, exit criterion 2), per-turn label splits and hard negatives (1e), and the `epa-oxygen-solubility-chart-01` chart-header quote exception.
+The quote exception was closed on 2026-09-23: the claim moved to chunk index 10 with its quote refreshed to that chunk's OCR; no fixture names it, so the label fingerprint above is unchanged (`eval/claims/_STATUS.md`).
+On 2026-09-24 `dev` (its EPA SOP re-resolve, label regeneration and the approved catalogue) was merged into `eval/wave1-corrections`, keeping the corrected fixtures, and `eval/retrieval-labels/` was regenerated with `scripts/resolveRetrievalLabels.ts`.
+Both fingerprints above are unchanged: the 45 regenerated label files are byte-identical, none is stale, all 479 label chunk references resolve, and all 2177 claim quotes are verbatim in their chunks.
+R4's final capture applies to these fingerprints; the harness keeps `CATALOGUE_PROMPT` off, so the catalogue approval does not change it.
+
+### Phase 3 baseline - 2026-09-23, run `p3-2026-09-23`
+
+Captured at `e74a4b3` on the frozen 45 / 90 set: `gpt-oss-120b`, temperature 0, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, with `SENSOR_TOOL`, `REPORT_TOOL` and `CATALOGUE_PROMPT` set `false` on server and runner.
+Transcripts are in `eval/transcripts/p3-2026-09-23/`, gate results in `data/results/gate-check/p3-2026-09-23/`, and verdicts in `data/results/judge/p3-2026-09-23/`, apart from the 2026-09-14 capture and its ledger.
+The judge (`deepseek-v4-flash-0731`) is still uncalibrated (2c), and the fixtures are not human-verified, so every number below is provisional.
+
+| arm | refusal | citations | fabricated | quotes supported | correctness | ungrounded turns |
+|---|---|---|---|---|---|---|
+| `gold-context` | FAIL, 3 of 8 answered | 95.1% | FAIL, 3 | 77.3% | **1.01** | **47.8%** (43/90) |
+| `hybrid-slice-vector`, k=5 | FAIL, 2 of 8 answered, 1 off-contract | 97.5% | FAIL, 1 | 68.3% | **0.52** | **59.6%** (53/89) |
+
+Per class on gold context: cross-document 0.92 and refusal 0.75 fail the 1.00 floor; deep-in-manual 1.10, definitional 1.00, follow-up 1.13, precedence 1.00 and probe-calibration 1.13 pass.
+On `hybrid-slice-vector` every class fails, from 0.38 (cross-document, definitional) to 0.75 (refusal).
+
+**Gold context clears neither bar**, so part of the gap is generation and no retrieval arm can close it alone.
+The gold-context failures group into four causes, each with a prompt rule landed after this capture:
+
+- Citation numbers taken from numbered steps inside an excerpt (`【10†…】` with 5 excerpts supplied); about half of the unsupported quotes are verbatim in a different excerpt than the one cited.
+- Partial refusals that answer the supported part and never state the refusal (3 of 8 refusal turns).
+- Unsupported elaboration: reasons, mechanisms, consequences and troubleshooting steps from general knowledge, which is most of the 112 ungrounded claims; some of the rest is judge strictness (adjectives, `±` against OCR's `+`), unmeasured until 2c.
+- Misread tables: a wrong pressure row (9.03 against 8.97 mg/L), a table's range misstated, the wrong EPA rounding increment, and an invented 95-102% slope window.
+
+**Retrieval halves correctness.** The default arm returned 16% of labelled chunks and no labelled chunk at all on 54% of turns; offline `retrieval:eval` agrees (18.4% at k=5).
+Every production request used `DEFAULT_TOP_K=5` while labels average 5.4 chunks per turn, and every arm scores alike at equal depth (17-19% at k=5), so depth is the first lever: recall is 29.0% at k=10, 35.2% at k=15 and 39.5% at k=20 on `hybrid-slice-vector`.
+The labels are still fixture-wide rather than per turn (1e), which overstates misses somewhat, but not enough to explain a 0.49 correctness gap.
+
+Measured completion mean: 589 tokens on gold context, 619 on `hybrid-slice-vector`; both are under the ~697-token 20b/120b crossover in §4.
+Spend: captures about $0.07 and $0.08, judge passes $0.645 and $0.719, three spot checks about $0.01, about $1.53 in total.
+
+### R4 iteration 1 - 2026-09-23, run `p3-it1-2026-09-23`
+
+Captured at `22d6dd0` (four prompt rules, `DEFAULT_TOP_K` 10) with the baseline's settings; transcripts in `eval/transcripts/p3-it1-2026-09-23/`, gate and judge results under `data/results/*/p3-it1-2026-09-23/`.
+Nine judge calls first failed with "no JSON object" and were filled by a second `judge` pass.
+
+| arm | refusal | citations | fabricated | quotes supported | correctness | ungrounded turns |
+|---|---|---|---|---|---|---|
+| `gold-context` | FAIL, 2 of 8 answered | 90.5% | FAIL, 2 | 71.7% | **1.01** (was 1.01) | **54.4%** (49/90, was 47.8%) |
+| `hybrid-slice-vector`, k=10 | FAIL, 1 answered, 2 off-contract | 100% | FAIL, 2 | 67.3% | **0.51** (was 0.52) | **57.8%** (52/90, was 59.6%) |
+
+Per class on gold context: cross-document 0.92, deep-in-manual 1.20, definitional 1.00, follow-up 1.00, precedence 1.17, probe-calibration 1.00, refusal 0.75.
+On `hybrid-slice-vector`: cross-document 0.46, deep-in-manual 0.60, definitional 0.50, follow-up 0.50, precedence 0.50, probe-calibration 0.56, refusal 0.38.
+
+**The prompt rules did not move correctness, and the citation-number rule made citations worse.**
+Gold-context out-of-range markers rose from 10 to 16 (e.g. 【10】, 【14】, 【16】 with 5 excerpts supplied).
+The numbers are not step or table numbers from the excerpt text: the quotes behind them are verbatim in excerpts 3-5, so the model is inventing marker numbers, not misreading labels, and a prompt rule does not reach that.
+Refusals improved in form (6 of 8 exact after hyphen folding, none off-contract) but two turns still state a figure.
+
+**Depth doubled recall without moving correctness.**
+Measured from the captured context against fixture-wide labels, `hybrid-slice-vector` recall rose from 11.6% to 20.3% and zero-hit turns fell from 49 to 32 of 90, at 13.5 chunks per turn against 8.7.
+Correctness stayed at 0.51 because scores fell within each retrieval bucket while turns moved up between them:
+
+| turns by share of labelled chunks retrieved | baseline, k=5 | iteration 1, k=10 |
+|---|---|---|
+| none | 49 turns, 0.35 | 32 turns, 0.19 |
+| under half | 29 turns, 0.66 | 39 turns, 0.56 |
+| half or more | 12 turns, 0.92 | 19 turns, 0.95 |
+
+Retrieval still decides the score: a turn with half its labels scores like gold context, and one with none scores near zero.
+The within-bucket drop is the prompt: answers got shorter (well-retrieved turns 1,923 to 774 characters), ungrounded claims fell from 180 to 140, and refusal wording appeared on more turns.
+On gold context, refusal wording on non-refusal fixtures rose from 3 turns to 6; two of them score 0 on questions the supplied excerpts answer (`deepmanual-turbidity-rounding` turn 2, `definitional-eh-versus-the-millivolts-we-log` turn 1), which was read as the partial-refusal rule over-refusing. **That reading was wrong:** both turns also score 0 in the baseline, before the rule existed (see iteration 2).
+
+**Judge variance, run `p3-it1-rejudge-2026-09-23`:** the same gold-context answers judged a second time (the run directory is a symlink to `p3-it1-2026-09-23`, so the transcripts are the same files).
+Correctness 1.01 then 0.98, with 7 of 90 turns scored differently; ungrounded turns 49 then 57 of 90 (54% then 63%), with 16 turns flagged differently.
+So a correctness change under about 0.05 is noise, the baseline-to-iteration-1 rise in ungrounded turns is noise, and the ungrounded rate cannot be read to better than about ±9 points per run with this judge; the 2% ceiling is not measurable with it.
+Cost $0.561, about $3.71 in total.
+
+### R4 iteration 2 - prompt
+
+Two changes, both reversing iteration 1 effects:
+
+- The excerpt-number sentence is dropped: out-of-range markers rose with it. Correcting marker numbers from the quote's location is left to the citation-validation work (Task C), because a prompt rule does not reach invented numbers.
+- The partial-refusal rule now tells the model to check every excerpt before refusing, and counts a value derived by applying an excerpt's rule, table or formula to the user's numbers as supported; the refusal is still required for a specific value no excerpt gives or yields.
+
+Spend: captures and spot check about $0.16, judge $1.463, about $1.62 for the run and about $3.15 in total.
+
+### R4 iteration 2 - 2026-09-24, run `p3-it2-2026-09-24`, gold context only
+
+Captured at `e2a0761` with the baseline's settings; one judge call failed and was left unfilled (89 of 90 ungrounded rows).
+
+| run | refusal | citations | fabricated | quotes supported | correctness | ungrounded turns |
+|---|---|---|---|---|---|---|
+| baseline `p3-2026-09-23` | 3 of 8 answered | 95.1% | 3 | 77.3% | 1.01 | 47.8% |
+| iteration 1, judged twice | 2 of 8 answered | 90.5% | 2 | 71.7% | 1.01 / 0.98 | 54.4% / 63.3% |
+| iteration 2 | 3 of 8 answered | 91.2% | 3 | 72.9% | **0.92** | 60.7% (54/89) |
+
+Per class: cross-document 0.79, deep-in-manual 1.05, definitional 1.00, follow-up 1.00, precedence 0.83, probe-calibration 1.06, refusal 0.62.
+
+**Iteration 2 is worse and is to be reverted to the iteration 1 prompt.**
+Seven turns scored below both iteration 1 judgements and one above.
+The two target turns did not move: they score 0 in all four judgements, baseline included.
+The new "applying a rule, table or formula to the user's numbers" wording is the likely cause of two of the losses: `precedence-turbidity-groundwater-background-not-pod-limit` turn 1 judged the user's 12 NTU against an excerpt's background range, which the precedence rule forbids, and `refusal-how-long-can-it-stay-in` answered both turns with derived durations instead of refusing.
+Dropping the excerpt-number sentence did not restore citation validity (91.2% against 90.5%), so that sentence was not what lowered it; the out-of-range marker numbers are left to Task C's citation validation.
+
+**Prompt iteration has reached the noise floor on gold context.**
+Across three prompt versions correctness stays within 0.92-1.01 while one judge alone moves 0.03 between passes, and generation variance (a recapture of the same prompt) is still unmeasured.
+The measured lever left is retrieval: on `hybrid-slice-vector` a turn with half its labels retrieved scores 0.95, like gold context, and one with none scores 0.19.
+
+Spend: capture and spot check about $0.08, judge $0.552, about $4.34 in total.
+
+### Judge strictness audit - 2026-09-24, agent audit of run `p3-it1-2026-09-23`
+
+All 117 ungrounded claims the judge flagged on gold context were read against the supplied excerpts by the agent; no human reviewed them.
+About 6 verdicts are wrong or over-strict, about 5 are borderline general knowledge, and the rest (about 90%) are real: added reasons, consequences, troubleshooting steps and record-keeping items no excerpt gives, strengthened modals ("should" to "must"), and misread tables.
+So judge strictness does not explain the ungrounded rate; the model's elaboration does.
+
+Over-strict verdicts, each checked against the excerpt text:
+
+| fixture, turn | flagged claim | excerpt | why the verdict is too strict |
+|---|---|---|---|
+| `probecal-orp-standard-check` 2 | "Check the reference-solution level and refill if low" | "Check the level of the filling solution and replenish to the bottom of the fill hole." | stated nearly verbatim |
+| `deepmanual-cross-section-points` 1 | "you must 'divide the stream into a minimum of four increments'" | "Divide the stream into a minimum of four increments." | an imperative instruction read as not supporting "must" |
+| `crossdoc-temp-sensor-drift-blast-radius` 2 | "before any measurements are taken" | "needs to be checked at the beginning of the sampling event" | paraphrase with the same meaning |
+| `crossdoc-sonde-sensor-order` 2 | "so that the water passes the conductivity cell first and then the pH cell" | the pH sensor is installed downstream from the conductivity sensor | restates what downstream means |
+| `crossdoc-conductivity-rise-with-warming` 2 | "Confirm the deviation is within the ±0.2 °C limit" | accuracy "required to be less than or equal to ±0.2°C" | applies a stated requirement as a check step |
+| `crossdoc-bailed-orp-jumping` 2 | "the ORP (Eh) reading will not be 'real' until the sensor has come to thermal equilibrium" | allow the sensors to reach thermal equilibrium and the reading to stabilize before recording | paraphrase of the instruction's purpose |
+
+Borderline, general knowledge the rule nonetheless forbids: NTU expanded as "nephelometric turbidity units", "the 500 µS/cm KCl standard", "brackish water has measurable conductivity", "typical atmospheric pressure (≈760 mm Hg)".
+Correctly flagged although it looks harsh: "five points between 0 °C and the maximum expected temperature" - the excerpt is cut at "between 0°C", so the upper bound is the model's.
+The baseline's recorded strictness examples (adjectives, `±` against OCR `+`) are of the same kind and similarly rare.
+
+### Retrieval depth sweep - 2026-09-24, offline
+
+`npm run retrieval:eval -- --arm=hybrid-slice-vector --k=N` on the frozen 90 queries (fixture-wide labels, 5.4 per turn on average); query embeddings only, well under $0.01.
+
+| k | recall | nDCG | gain per +5 |
+|---|---|---|---|
+| 10 | 29.0% | 0.117 | - |
+| 15 | 35.2% | 0.140 | +6.2 |
+| 20 | 39.5% | 0.154 | +4.3 |
+| 25 | 42.5% | 0.165 | +3.0 |
+| 30 | 46.5% | 0.179 | +4.0 |
+| 40 | 51.0% | 0.193 | +2.3 |
+
+Recall has no knee up to 40; ranking is weak (MRR 0.077 at k=20), so depth is compensating for ordering.
+A chunk is about 800 prompt tokens, about $0.00012 uncached on `gpt-oss-120b`, so k=30 costs about $0.0024 more per request than k=10.
+Choose k on answer correctness, not recall: capture k=20 and k=30 on `hybrid-slice-vector` and stop where correctness gains less than the 0.05 noise band.
+
+### Retrieval depth captures - 2026-09-24, runs `p3-k20-2026-09-23` and `p3-k30-2026-09-24`
+
+`hybrid-slice-vector` captured at k=20 (`9abc8a8`) and k=30 (`fb7314d`) on the frozen 45 / 90 set, with iteration 1's prompt and the same settings as the baseline; k=10 is iteration 1's run `p3-it1-2026-09-23`.
+Both captures predate the `dev` merge that brought Task A's turbidity prompt wording, so they do not reflect it.
+The judge is still uncalibrated and the fixtures are not human-verified, so every number is provisional.
+Recall here is the share of each turn's labelled chunks that were retrieved.
+
+| | k=10 | k=20 | k=30 |
+|---|---|---|---|
+| correctness | 0.51 | **0.60** | 0.52 |
+| recall | 25.9% | 36.6% | 43.3% |
+| turns with no labelled chunk retrieved | 32 | 21 | 16 |
+| correctness on turns with half or more of their labels retrieved | 0.95 (19 turns) | 0.80 (30) | 0.73 (37) |
+| refusal wording on non-refusal turns (of which scored 0) | 21 (17) | 17 (9) | 29 (21) |
+| ungrounded turns / claims | 57.8% / 140 | 62.2% / 188 | 62.2% / 173 |
+| refusal gate | FAIL | FAIL | PASS (0 answered) |
+| fabricated figures | 2 | 2 | 0 |
+| quotes supported | 67.3% | 64.0% | 52.1% |
+| prompt tokens per turn | 13.9K | 19.2K | 24.5K |
+
+**k=20 is the default.** From k=20 to k=30 correctness fell 0.08, more than the 0.05 noise band, with 16 turns falling and 10 rising; follow-up (0.63 to 0.25) and precedence (0.83 to 0.50) fell most, and refusal was the only class to gain.
+More depth makes the model refuse more: recall keeps rising, but the model declines questions the excerpts answer, and scores fall even on well-retrieved turns.
+The gates k=30 passes (refusal, fabricated figures) come from refusing more often, not from better answers.
+The next retrieval lever is order, not depth: the labelled chunks are retrieved but ranked low, so a reranker or dropping the always-on operator slice can be measured offline for almost nothing.
+The ungrounded rate is flat at about 60% at every depth, so it comes from the model elaborating rather than from retrieval; calibrate the judge before trusting that number.
+
+`p3-k30-2026-09-24` has 180 of 180 verdicts: three calls failed on the first pass and were refilled, one of them after the `dev` merge had started; that row is an `ungrounded` verdict on a tools-off turn, whose prompt the merge leaves byte-identical.
+Spend: k=20 $1.37 (capture $0.20, judge $1.18), k=30 $1.73 (capture $0.27, judge $1.46); R4 total about $7.44 of the $20 ceiling the user set on 2026-09-24.
+
+### Calibration packet (2c) - 2026-09-24, run `p3-calib-2026-09-24`
+
+The user chose on 2026-09-24 to grade 32 rows on correctness and ungrounded claims: 8 conversations, both turns, gold-context and retrieval answers side by side.
+`p3-calib-2026-09-24` is a composite run of two symlinked arm directories, so the transcripts stay verbatim where they were captured: `gold-context` from `p3-it1-2026-09-23` and `hybrid-slice-vector` from `p3-k20-2026-09-23`, both on the iteration 1 prompt, with retrieval at the settled k=20.
+`npm run grade:packet -- --run=<id>` reads `eval/transcripts/<id>/` and writes `eval/grading/<id>/`; `npm run judge -- --run=<id> --calibration` and `--calibrate` read that sheet and the run's transcripts.
+
+The 8 fixtures are one per class, plus a second from `cross-document`, the weakest class.
+Within a class, the pick favoured fixtures where the two arms' existing verdicts differ, so both arms span correctness 0 to 2 and ungrounded counts from 0 to 5.
+Fixtures whose labels `dev`'s EPA re-resolve touched were excluded.
+Chosen: `crossdoc-how-steady-before-i-write-it-down`, `crossdoc-soft-water-ph-wont-settle`, `deepmanual-brackish-do-correction`, `definitional-eh-versus-the-millivolts-we-log`, `followup-mixing-the-clarity-bottle`, `precedence-ph-river-range-not-pod-limit`, `probecal-ec-never-recalibrate`, `refusal-how-long-can-it-stay-in`.
+
+Blinding is weak with two arms: each answer's footer gives its chunk count, which separates k=20 retrieval from gold context, and the seeded shuffle put retrieval at label `A` on 6 of 8 sheets.
+Both are accepted: the rows calibrate the judge against a human on the same answers, not one arm against the other.
+Only `correctness_0_1_2` and `ungrounded_claims` are graded; `invalid_citations` stays blank and yields no pairs.
+Once graded, `npm run judge -- --run=p3-calib-2026-09-24 --calibration` judges the 32 rows at `--final` (91 calls with citations, estimated at $0.45 from `p3-k20-2026-09-23`'s measured cost), then `--calibrate` reports kappa against the 0.70 bar.
+
+#### Result - 2026-09-24: correctness kappa 0.56, below the 0.70 bar
+
+The user graded `scores.csv` themselves (`ea380f6`), then reconciled their ungrounded counts with the AI review (`d17ade6`, SHA256 `751e9c78...`); correctness is the user's first grading throughout.
+The AI review was amended in the same commit: its reviewer withdrew the strict rule that counted example and calculated numbers as ungrounded (SHA256 now `f58502d2...`, 27 claims across 14 answers).
+Because the two sheets now carry identical ungrounded counts, the judge's ungrounded agreement below is agreement with a reconciled human-and-AI reference, not an independent human one.
+
+`--calibration` judged 91/91 calls with 0 failures at `--final`: 1,150,688 prompt tokens (34,463 cached), 169,078 completion tokens, about $0.3574 at the `src/eval/prices.ts` rate.
+`--calibrate` matched 32 pairs on each graded dimension, with 0 rows unjudged and none stale.
+
+| Comparison | Correctness exact | Within one | Any/none | Kappa | Ungrounded exact | Any/none | Kappa (counts) |
+|---|---|---|---|---|---|---|---|
+| Judge vs user (`scores.csv`) | 23/32 | 32/32 | 27/32 | **0.561** | 15/32 | 25/32 | 0.231 |
+| Judge vs AI review (secondary) | 28/32 | 32/32 | 28/32 | 0.786 | 15/32 | 25/32 | 0.231 |
+| User vs AI review (secondary) | 25/32 | 32/32 | 29/32 | 0.659 | 32/32 | 32/32 | 1.000 |
+
+The judge never differs from the user by two points; its disagreements fall into three patterns.
+It misses rules its prompt already states in two rows: it gave 1 to a refusal where an answer was owed (`deepmanual-brackish-do-correction` t1, retrieval) and to an answer calling pH 8.7 "within the normal range of most natural surface waters" against a `must_not` on declaring 8.7 normal (`precedence-ph-river-range-not-pod-limit` t1, retrieval); both references agree with the user on the first, and the AI review scored the second 1 as well.
+It scores two appropriate bare refusals 0 where the user and the AI review give 1 for the refusal point (`precedence-ph-river-range-not-pod-limit` t2 and `refusal-how-long-can-it-stay-in` t2).
+It withholds full credit for omitted minor qualifiers (a 60-second minimum, "at calibration temperature", NIST traceability, the reason to stay above 200 uS/cm) in four gold-context rows the user scored 2; the AI review agrees with the judge on all four, so these are a strictness question in the rubric reading, not judge errors.
+The ninth, `probecal-ec-never-recalibrate` t2 retrieval, is contested: the user applied the "invents an unsupported standard" `must_not` to a suggested 700 uS/cm standard, which that item's own "allows other certified, instrument-compatible values" clause arguably excuses; the judge and the AI review scored 1.
+
+Ungrounded counts agree poorly in both directions.
+The judge counts inferential glue as ungrounded where both references count none (for example "the increased conductance should allow the reading to stabilize", or "regardless of conductivity" added to a quoted tolerance), and it counts none where a source rule is misapplied with its own number, as with the turbidity-only 10 percent rule generalized to every parameter.
+
+Correctness kappa misses the 0.70 bar, so the judge is not yet calibrated and E3 stays blocked.
+Setting those two rows and the two refusal rows to the user's scores would give 0.76, but that is fitted to this sample and not a measurement.
+
+#### Adjudication and re-judge - 2026-09-25: correctness kappa 0.659 as graded, 0.802 adjudicated
+
+The questions and rubrics predate the answers: rubrics were written 2026-09-01 to 09-13 and last corrected at 13:28 on 09-23 (`ec58b05`, an AI source review with no human verification), and both arms were captured after that (committed 22:07 on 09-23 and 00:43 on 09-24).
+Each disputed row was checked against its rubric, the answer and the context the answer was given.
+
+| Row | User | Judge (first pass) | Finding |
+|---|---|---|---|
+| `crossdoc-how-steady-before-i-write-it-down` t1, gold | 2 | 1 | User right: the judge said 60 seconds was not called a minimum, but the answer quotes "at least 60 seconds (or follow the manufacturer's guidelines)" |
+| `precedence-ph-river-range-not-pod-limit` t2, retrieval | 1 | 0 | User right: the answer says the pod's alarm range is not provided and does not adopt 6.5 to 8.5 (2 of 5 points) |
+| `refusal-how-long-can-it-stay-in` t2, gold | 1 | 0 | User right: the answer states the documents give no limit on how much of the month is usable (point 1) |
+| `deepmanual-brackish-do-correction` t1, retrieval | 0 | 1 | User right: table 6.2-4 with its 50,000 uS/cm column was in the retrieved context, so the refusal was owed an answer |
+| `precedence-ph-river-range-not-pod-limit` t1, retrieval | 0 | 1 | User right: "4.0 to 9.5" is A6.4's temperature-compensation range, recast as the normal range of natural surface waters |
+| `crossdoc-soft-water-ph-wont-settle` t1, gold | 2 | 1 | Judge right: 4 of 8 required points are absent |
+| `probecal-ec-never-recalibrate` t2, retrieval | 0 | 1 | Judge right: the must-not on inventing a standard allows certified, compatible values, and a 700 uS/cm standard is one |
+| `crossdoc-soft-water-ph-wont-settle` t2, gold | 2 | 1 | Open: the only gap is "at calibration temperature" |
+| `probecal-ec-never-recalibrate` t2, gold | 2 | 1 | Open: the gaps are NIST traceability and the reason to stay above 200 uS/cm |
+
+The correctness prompt was then changed (`49e28ae`): the judge lists each must-contain point as met or unmet, with a quote, before it scores; a refusal where no point asks for a decline scores 0 even with partial content; a correct refusal the rubric asks for scores at least 1 when it makes a point; must-not items apply to wording with the same effect; and a source figure presented as something the source does not say it is counts as invented.
+Whether a missing secondary qualifier denies a point was left unchanged; the user has not decided it.
+
+The correctness-only re-judge sent 32 calls at `--final` with 0 failures: 422,798 prompt tokens (9,690 cached) and 44,859 completion tokens, about $0.1206.
+It fixed three of the five judge errors above (`deepmanual` t1, `precedence` t1 and t2); the `crossdoc-how-steady` t1 and `refusal` t2 misreadings persist despite the point list.
+It moved `definitional-eh-versus-the-millivolts-we-log` t1 gold from 1 to 0: that answer gives the standard-hydrogen-electrode definition and then refuses the question, which the new refusal rule scores 0, as the AI review did and as the user scored the same pattern in `deepmanual` t1; the user scored it 1.
+
+| Reference | Exact | Kappa |
+|---|---|---|
+| User's grades as submitted | 25/32 | 0.659 |
+| Adjudicated: judge's reading on `soft-water` t1, `probecal` t2 retrieval and `definitional` t1 | 28/32 | 0.802 |
+| Adjudicated, and the judge's reading of the two open qualifier rows | 30/32 | 0.897 |
+
+As secondary results, the judge agrees with the AI review at 0.895 (30/32) on correctness; ungrounded agreement is unchanged at any/none 25/32, count kappa 0.231, since that prompt did not change.
+The prompt was tuned on these 32 rows and re-measured on them, so the gain is an upper estimate; a held-out sample would measure it honestly.
+Correctness verdicts from before `49e28ae` are not comparable with later ones, and the ledger re-judges them on the next pass.
+
+#### Final adjudication - 2026-09-25: correctness kappa 0.849, the bar is met
+
+The user asked Claude to rule on the remaining disputed rows rather than re-grade, so the reference is the user's grades with four rows adjudicated by Claude; it is not a purely human sample.
+One rule decided every row: a point is met when its operative content is stated, a missing explanation or elaboration does not deny it, a missing condition that changes when a criterion applies does, and refusals follow the written scale as the user applied it to `deepmanual-brackish-do-correction` t1.
+Changed in `scores.csv`, each with the user's original grade and the reason in its note: `crossdoc-soft-water-ph-wont-settle` t1 B from 2 to 1 and t2 B from 2 to 1, `definitional-eh-versus-the-millivolts-we-log` t1 B from 1 to 0, and `probecal-ec-never-recalibrate` t2 A from 0 to 1.
+Upheld against the judge: `crossdoc-how-steady-before-i-write-it-down` t1 B at 2, `refusal-how-long-can-it-stay-in` t2 B at 1, and `probecal-ec-never-recalibrate` t2 B at 2, where the only gaps are "NIST" for a stated certified standard and the reason for the 200 uS/cm floor.
+
+Against that sheet, `--calibrate` gives correctness exact 29/32, within one 32/32, kappa 0.849, over 32 pairs with none unjudged; no further judge calls were made.
+Secondary: the judge agrees with the AI review at 0.895, and the adjudicated sheet agrees with the AI review at 0.848.
+Ungrounded is unchanged and weak: any/none 25/32, count kappa 0.231, with the judge counting inferential links the references accept and missing source rules misapplied with their own numbers.
+
+The correctness judge is accepted as calibrated for R4 with two caveats: the prompt was tuned on these rows, and four reference rows are Claude's rulings.
+Reported ungrounded rates carry the weak ungrounded agreement as a caveat.
+
+### R4 final capture (E3) - 2026-09-25, runs `p3-final-2026-09-25` and `p3-final-rejudge-2026-09-25`
+
+Captured at `309da6c` on the frozen 45 / 90 set: `gold-context` and `hybrid-slice-vector` at k=20, `gpt-oss-120b` at temperature 0, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, with `SENSOR_TOOL`, `REPORT_TOOL` and `CATALOGUE_PROMPT` set `false` and `DEBUG_RETRIEVAL=true` on server and runner; both arms 90/90 turns with 0 failed, after a spot check of each.
+The prompt is iteration 1's plus Task A's turbidity wording, the first capture to include it.
+`dev` was not merged again: its commits since the last merge change only tools-on prompt blocks and tool code, and its tools-off message list is byte-identical to the merge base's, so the capture is what a merge would have produced.
+Both passes were judged at `--final` with the calibrated correctness prompt (`49e28ae`); the second pass is a symlink run over the same transcripts.
+Correctness here is therefore not strictly comparable with earlier runs, which were judged on the previous correctness prompt.
+The fixtures are not human-verified, so every number rests on agent-authored ground truth.
+
+| | gold-context pass 1 | pass 2 | hybrid-slice-vector pass 1 | pass 2 |
+|---|---|---|---|---|
+| correctness (floor 1.30) | 1.01 | 1.01 | 0.58 | 0.59 |
+| cross-document | 0.83 | 0.83 | 0.50 | 0.46 |
+| deep-in-manual | 1.20 | 1.25 | 0.55 | 0.60 |
+| definitional | 1.00 | 1.00 | 0.63 | 0.63 |
+| follow-up | 1.13 | 1.13 | 0.63 | 0.63 |
+| precedence | 1.17 | 1.00 | 1.00 | 0.83 |
+| probe-calibration | 1.00 | 1.00 | 0.56 | 0.69 |
+| refusal | 0.88 | 0.88 | 0.50 | 0.50 |
+| ungrounded turns (ceiling 2%) | 51.1% (98 claims) | 48.9% (88) | 58.9% (177) | 55.6% (181) |
+
+Between the passes, correctness is identical on 84/90 gold-context turns and 81/90 retrieval turns, and ungrounded any/none on 78/90 and 85/90; two-pass correctness means are 1.011 and 0.583.
+Both arms fail the Tier 2 gates in both passes.
+Gold context fails the per-class floor on cross-document and refusal; on `hybrid-slice-vector` every class is under 1.00 in at least one pass, precedence included (1.00 then 0.83).
+
+Tier 1 (`data/results/gate-check/p3-final-2026-09-25/warm.json`), with earlier runs re-scored by the current checker for comparison, because Task C's citation audit (`fb75add`) now counts markers closed with `"}` as malformed: iteration 1 gold context re-scores from the recorded 90.5% to 57.5% citation validity, `p3-k20-2026-09-23` scores 78.0%.
+
+| | gold-context | re-scored it1 gold | hybrid-slice-vector | re-scored k=20 |
+|---|---|---|---|---|
+| refusal integrity | FAIL, 1 of 8 answered | 2 answered | FAIL, 2 answered, 1 off-contract | 2 answered, 1 off-contract |
+| citation validity (floor 95%) | 60.4% | 57.5% | 77.9% | 78.0% |
+| fabricated figures | FAIL, 1 | 2 | PASS, 0 | 2 |
+| quotes supported | 84.6% | 82.5% | 57.0% | 68.7% |
+
+Refusal wording on turns that do not require a refusal: 3 on gold context (1 scored 0) and 19 on `hybrid-slice-vector` (13 scored 0 in pass 1), so over-refusal accounts for about 13 of the retrieval arm's 90 turns.
+Of those 19 retrieval turns, 13 had no labelled chunk in their context, 5 had under half and 1 had half or more, so most of them decline for want of evidence: they are a retrieval failure, not a generation one.
+
+The judge returned an empty reply ("no JSON object") on 12 call attempts in pass 1 and 22 in pass 2; each was re-run until both passes held 360/360 verdicts.
+`gold-context` `probecal-ph-slope-acceptance` turn 2 correctness failed four times before it answered.
+
+Spend: captures about $0.27 (gold context $0.07, retrieval $0.19, spot checks about $0.01), judge pass 1 $1.80 and pass 2 $1.31 (more of its input was cached), about $3.38 for E3 and about $11.30 of the $20 R4 ceiling; empty replies are not in the ledger, so their cost, if billed, is not counted.
+
+### Held-out calibration check - 2026-09-25, run `p3-calib-2026-09-24`, round `heldout-2026-09-25`
+
+The user graded 12 rows from three fixtures the correctness-prompt tuning never saw: `definitional-required-versus-recommended`, `precedence-do-hypoxia-qa-trigger-not-pod-limit` and `probecal-buffer-handling`, both arms, both turns.
+They were judged at `--final` with `--only` on correctness and ungrounded (24 calls, 0 failed, about $0.09); citations were left out because the sheet leaves `invalid_citations` blank.
+Agreement was computed over these rows alone by passing only their ledger records to `calibrate()`, so the 32 tuned rows are reported separately.
+
+| | held-out, n=12 | tuned, n=32 |
+|---|---|---|
+| correctness exact | 75% (9/12) | 91% (29/32) |
+| correctness within one | 100% | 100% |
+| correctness kappa | 0.25 | 0.849 |
+| ungrounded any/none | 75% | 78% |
+| ungrounded count kappa | 0.25 | 0.23 |
+
+The three correctness disagreements are each one point and run both ways: `precedence-do-hypoxia-qa-trigger-not-pod-limit` t1 gold (human 0, judge 1) and `probecal-buffer-handling` t2 retrieval (human 0, judge 1) are judged more leniently, and `precedence-do-hypoxia-qa-trigger-not-pod-limit` t2 retrieval (human 1, judge 0) more strictly, on a must-not.
+Nine of the twelve human grades are 1, so kappa over this sample is dominated by chance agreement and unstable; exact agreement is the steadier figure.
+Reading: the tuned kappa overstates agreement on unseen fixtures, and single-turn judge scores carry about one point of noise in a quarter of rows, but with no direction in the errors the E3 arm means stand, and the gaps to the 1.30 floor (0.29 on gold context, 0.72 on retrieval) are far wider than this noise.
+
+### Reranker, offline - 2026-09-25
+
+Question: can a cross-encoder reorder a deeper dense candidate pool so the labelled chunks reach the top k, rather than paying for depth.
+Candidate recall of `local-vector` is 38.4% at 20 and 56.8% at 50 (`MAX_TOP_K`), so a perfect reorder of the top 50 has about 18 points to recover.
+Method: `retrieval:eval --arm=local-vector --k=50 --out` saved each of the 90 frozen queries' top 50; Fireworks `/v1/rerank` with `fireworks/qwen3-reranker-8b` scored every candidate once (90 calls, 0 failed, 2.99M prompt tokens, about $0.60 at $0.20 per million); each ordering below was then scored with the harness's own `scoreQuery` and `summarise`, and the slice composition emulates `HybridSliceVectorAdapter` (top k from the dense arm, slice-covered chunks dropped, the slice's chunks in front).
+The emulated `vector k=20` with the slice reproduces the recorded `hybrid-slice-vector` 39.5% recall and nDCG 0.154, so the rows compare like for like.
+
+| with the operator slice | recall | nDCG | manuals-only MRR |
+|---|---|---|---|
+| vector, k=10 | 29.0% | 0.117 | 0.305 |
+| vector, k=20 (today) | 39.5% | 0.154 | 0.314 |
+| rerank top 30, k=20 | 45.5% | 0.186 | 0.495 |
+| rerank top 50, k=10 | 43.3% | 0.178 | 0.523 |
+| rerank top 50, k=15 | 49.8% | 0.200 | 0.527 |
+| rerank top 50, k=20 | 51.9% | 0.209 | 0.527 |
+
+Reranking the top 50 into k=20 adds 12.4 points of recall and recovers about 70% of the pool's headroom; every class gains except refusal, where recall is not the target, and precedence rises from 50% to 86% with the slice kept.
+Reranked k=10 already beats today's k=20, so a reranker could also halve the manual context.
+Launch cost: about 33K reranker tokens per question, about $0.0066, and 0.8-1.4 s per call on three timed requests; the answer call costs about $0.003 at k=20, so reranking roughly triples model spend per question, still under a cent.
+Caveats: the labels are agent-authored and fixture-wide, and recall is not correctness; the next step is a `hybrid-slice-vector` capture with the reranker, correctness-judged against E3's 0.58.
+
+### Reranker capture - 2026-09-25, run `p3-rerank-2026-09-25`
+
+`hybrid-slice-rerank` (`RerankAdapter` over `local-vector`, pool 50, `qwen3-reranker-8b`, `32275aa`) captured with E3's settings on port 8011: 90/90 turns, 0 failed, after a spot check.
+`src/` is unchanged since E3's `309da6c` apart from the new mode, so the only difference from `hybrid-slice-vector` is the ordering of the manual chunks.
+Scoring the captured contexts against the retrieval labels gives recall 51.9% and nDCG 0.209, exactly the offline figures, against 39.5% and 0.154 for E3's contexts.
+Judged once at `--final` on correctness only (90 calls; 4 empty replies re-run to 0 failed).
+
+| correctness | E3 `hybrid-slice-vector`, pass 1 / 2 | `hybrid-slice-rerank` |
+|---|---|---|
+| overall (floor 1.30) | 0.58 / 0.59 | 0.62 |
+| cross-document | 0.50 / 0.46 | 0.50 |
+| deep-in-manual | 0.55 / 0.60 | 0.55 |
+| definitional | 0.63 / 0.63 | 0.63 |
+| follow-up | 0.63 / 0.63 | 0.63 |
+| precedence | 1.00 / 0.83 | 1.00 |
+| probe-calibration | 0.56 / 0.69 | 0.81 |
+| refusal | 0.50 / 0.50 | 0.50 |
+
+Against the mean of E3's two passes, 16 turns score higher, 12 lower and 62 the same, so the +0.04 is inside the judge's noise (held-out check above); only probe-calibration moves more than one pass-to-pass swing.
+Refusal wording on non-refusal turns falls from 19 to 13, and those scored 0 from 13 to 9, so the reranker does fix some evidence-starved refusals, but other turns lose as much.
+Tier 1: refusal integrity FAIL (1 answered, 1 off-contract), fabricated figures PASS (0 of 319), quotes supported 65.4% against 57.0%.
+Citation validity reads 16.0% only because one answer (`precedence-turbidity-groundwater-background-not-pod-limit` t1) looped on 807 malformed `【5†"…"}` markers, which the server's audit stripped from the visible answer; without that turn it is 164/220, 74.5%, against E3's 77.9%.
+Ungrounded was not judged; the judge's "0/0 turns" line for it is an empty dimension, not a pass.
+
+Reading: a 12-point recall gain does not reach correctness, which agrees with gold context scoring only 1.01; the answer model, not retrieval, is the binding constraint.
+At about 1 s and $0.0066 per question for no measurable gain, the reranker is not worth enabling for launch; `hybrid-slice-rerank` stays registered for later work and `DEFAULT_RETRIEVAL` is unchanged.
+Spend: captures about $0.20 plus about $0.65 of rerank calls (including two spot checks), judge $0.57; about $1.42 for this run and about $13.40 of the $20 R4 ceiling with the held-out check and the offline measurement.
+
+### Answer-model reasoning `high` - 2026-09-25, run `p3-reason-high-2026-09-25`
+
+Question: is gold context's 1.01 an answer habit (terse answers that omit points) that more reasoning fixes.
+`LLM_REASONING_EFFORT=high` (`d11d577`; every earlier capture sent no `reasoning_effort`, so the provider default applied) on `gold-context`, otherwise E3's settings, including `LLM_MAX_TOKENS=16384`.
+12 of the 79 attempted turns failed with an empty answer: reasoning used the whole 16,384-token budget. When a first turn fails the runner skips its second, so 11 more turns were never asked; 11 of the 12 failures are first turns, 9 of them cross-document or deep-in-manual.
+The judge scored the 67 answered turns and the 12 failures (as 0) at `--final`, correctness only (4 empty judge replies re-run to 0 failed).
+
+| | E3 gold context, mean of 2 passes | reasoning `high` |
+|---|---|---|
+| correctness, the 67 turns both answered | 1.00 | 0.88 |
+| turns higher / lower than E3 by more than a quarter point | - | 7 / 15 |
+| correctness over the servable set, failures as 0 | 1.01 | 0.75 |
+| failed turns | 0 of 90 | 12 of 79 (15%) |
+| completion tokens per answered turn, median / p90 | 525 / 997 | 2,203 / 5,866 |
+| wall time per answered turn, median / p90 | 2.5 s / 4.5 s | 10.3 s / 27.5 s |
+
+Reasoning `high` scores lower on the same turns, fails one turn in seven at the current token cap, and is four times slower at the median, so more reasoning is not the lever; it is not recommended for launch, and the setting stays `default`.
+A larger token cap would remove the failures but not the paired drop on answered turns.
+Spend: capture about $0.15 by the recorded usage (the failed turns' reasoning tokens are not in it and may add up to about $0.12), judge $0.24; about $0.40-0.50, and about $13.90 of the $20 R4 ceiling.
+
+### Rubric v2: validity fixes - 2026-09-25
+
+**User decision, 2026-09-25**: after the three rubric-strictness reviews (Gemini, Claude, Codex), fix only the rubric points they identified as flawed; no core/supplementary split, which all three say needs blind labelling and fresh fixtures.
+This is a recorded change to the frozen fixture set, rubric text only: 32 edits in 24 turns of 19 fixtures, must-contain points 423 to 413, must-not items 315 to 304.
+The rule (unsupported by the turn's excerpts, duplicate, omission-type must-not, or an instruction that reads as a requirement), every edit and what was left alone are in `eval/reviews/rubric-strictness-2026-09-25/RUBRIC_FIXES.md`.
+
+| directory | files | fingerprint |
+|---|---|---|
+| `eval/fixtures-wave1/` (rubric v2) | 45 | `9a715154d34fec898c00911a5441399a3a2d7e4a294351b893f71d2799554518` |
+
+No question text changed, so every capture stays valid; labels are unchanged.
+Verdicts judged on v1 are not comparable with v2 verdicts: a v2 number needs a re-judge under its own `--run`.
+A review before the re-judge found two edits beyond their classes (an F1 cut that removed supported content, an F4 rewrite that added a veto); both were corrected with the user's approval, so the table's fingerprint is the corrected set (`RUBRIC_FIXES.md` "Review corrections").
+E3's 1.01 on v1 stays the reported, pre-registered result; any v2 score is secondary and must be labelled as such.
+The edits can only remove requirements or vetoes, so v2 scores cannot fall on the same answers except by judge noise.
+
+### Judge replacement calibration - 2026-09-25, run `p3-calib-v4p1-2026-09-25`
+
+The calibrated judge `deepseek-v4-flash-0731` stopped serving on Fireworks on 2026-09-25: every chat call returns 404 "Model not found, inaccessible, and/or not deployed", though `/v1/models` still lists it; its last verdict is 00:43Z that day, and the failed v2 re-judge attempts were not billed.
+`deepseek-v4p1-flash` serves, and was checked against the same human grades with the calibrated correctness prompt unchanged (`--judge-model`, `--final`, correctness only): 44 calls, 0 failed, 550,234 prompt tokens (73,812 cached) and 32,348 completion tokens, about $0.13 at the old judge's rate (its own rate is not in `prices.ts`).
+The run is a symlink to `p3-calib-2026-09-24` for both transcripts and grading, so the old ledger is untouched.
+The human grades were made on rubric v1 and the judge read the current v2 files, so the fair comparison is the 38 rows whose rubric is identical in both.
+
+| rows | old judge exact / kappa | new judge exact / kappa |
+|---|---|---|
+| tuned 32 (the 0.849 sheet) | 90.6% / 0.849 | 90.6% / 0.852 |
+| held-out 12 | 75.0% / 0.250 | 75.0% / 0.294 |
+| rubric unchanged by v2, 38 | 86.8% / 0.772 | 89.5% / 0.823 |
+| all 44 | 86.4% / 0.763 | 86.4% / 0.771 |
+
+The two judges agree on 40 of 44 rows (kappa 0.843); all four differences are the new judge one point higher, one of them on a turn v2 loosened.
+On these rows the mean score is 0.795 human, 0.750 old judge and 0.841 new judge, so the new judge is at least as close to the human grades but slightly more lenient than the old one.
+Reading: the new judge meets the same agreement bar, but its scores are not interchangeable with the old judge's; any comparison with E3 needs E3 re-judged by the new judge.
+
+### E3 re-judged by the new judge on rubric v1 and v2 - 2026-09-26, runs `p3-final-v4p1-2026-09-25` and `p3-final-rubric-v2-2026-09-25`
+
+Both runs are symlinks to E3's transcripts, judged once each at `--final`, correctness only, by `deepseek-v4p1-flash`: 180/180 verdicts each, 0 failed.
+The v1 pass ran from an archive of `8a8f555` (the commit before rubric v2, fixture fingerprint `b0b647f4...`, judge code identical to the current one), because the judge reads the fixtures in its tree; its ledger was copied here.
+Tokens: v1 2,305,720 in (2,203,260 cached) / 206,950 out; v2 2,304,986 in (952,530 cached) / 197,086 out; about $0.61 for both at the old judge's rate.
+These are secondary to E3's reported 1.01; they measure the judge change and the rubric change separately.
+
+| class | gold, old judge v1 (pass 1 / 2) | gold, new judge v1 | gold, new judge v2 | hybrid, old judge v1 (pass 1 / 2) | hybrid, new judge v1 | hybrid, new judge v2 |
+|---|---|---|---|---|---|---|
+| all | 1.01 / 1.01 | 1.06 | 1.10 | 0.58 / 0.59 | 0.67 | 0.68 |
+| cross-document | 0.83 / 0.83 | 0.92 | 0.96 | 0.50 / 0.46 | 0.50 | 0.54 |
+| deep-in-manual | 1.20 / 1.25 | 1.20 | 1.20 | 0.55 / 0.60 | 0.70 | 0.75 |
+| definitional | 1.00 / 1.00 | 1.12 | 1.12 | 0.62 / 0.62 | 0.75 | 0.62 |
+| follow-up | 1.12 / 1.12 | 1.00 | 1.25 | 0.62 / 0.62 | 0.62 | 0.75 |
+| precedence | 1.17 / 1.00 | 1.17 | 1.17 | 1.00 / 0.83 | 1.00 | 0.83 |
+| probe-calibration | 1.00 / 1.00 | 1.06 | 1.12 | 0.56 / 0.69 | 0.69 | 0.62 |
+| refusal | 0.88 / 0.88 | 1.00 | 1.00 | 0.50 / 0.50 | 0.75 | 0.88 |
+
+Judge change, same rubric v1: the new judge is identical to the old judge's first pass on 82/90 gold and 78/90 retrieval turns, and scores higher on both arms (+0.05 gold, +0.09 retrieval), as its calibration predicted.
+Rubric change, same new judge: 13 of 180 turns moved; gold 5 up and 1 down, retrieval 4 up and 3 down.
+Eight of the moves are on turns v2 edited, seven up and one down (`probecal-orp-standard-check#2` retrieval, 1 to 0, where the edit only made a clause optional, so judge noise); the other five are on unedited turns and are judge noise.
+Reading: fixing the flawed points adds 0.04 on gold context and 0.01 on retrieval, so rubric flaws were not what held scores under the 1.30 floor; both arms still fail it on either rubric and with either judge.
+The baseline for later captures judged by the new judge on v2 is `hybrid-slice-vector` 0.68 (one pass).
+
+### Datasheets unpinned, k=10 - 2026-09-26, runs `p3-lv-k10-2026-09-26` and `p3-lv-k10-rejudge-2026-09-26`
+
+User decision, 2026-09-26: stop pinning the four probe datasheets into every prompt and leave them in the corpus as ordinary retrievable documents, then measure `local-vector` from k=10 up to k=20.
+Captured with E3's settings (`gpt-oss-120b`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, `SENSOR_TOOL`, `REPORT_TOOL` and `CATALOGUE_PROMPT` false, `DEBUG_RETRIEVAL=true`) on port 8011 with `DEFAULT_RETRIEVAL=local-vector`: 90/90 turns, 0 failed, after a spot check.
+`DEFAULT_TOP_K` is a constant in `src/retrieval/options.ts`, not an environment setting, so it was set to 10 in the working tree for the capture only and restored to 20 afterwards; nothing else in `src/` differs from E3's.
+Every turn received exactly 10 excerpts; the answer-model prompt is a median 7,236 tokens (max 11,502) against E3's 19,524, and the capture cost about $0.11.
+Judged twice at `--final`, correctness only, by `deepseek-v4p1-flash` on rubric v2: 90/90 each, 0 failed; about $0.26 for both at the old judge's rate.
+
+| class | E3 `hybrid-slice-vector` k=20, same judge and rubric | `local-vector` k=10, pass 1 / 2 |
+|---|---|---|
+| all | 0.68 | 0.72 / 0.72 |
+| cross-document | 0.54 | 0.54 / 0.46 |
+| deep-in-manual | 0.75 | 0.80 / 0.95 |
+| definitional | 0.62 | 0.75 / 0.75 |
+| follow-up | 0.75 | 0.75 / 0.62 |
+| precedence | 0.83 | 0.83 / 0.83 |
+| probe-calibration | 0.62 | 0.75 / 0.81 |
+| refusal | 0.88 | 0.88 / 0.75 |
+
+The two passes agree on 80/90 turns; against the baseline, the two-pass mean is higher on 15 turns and lower on 10, so the +0.04 is inside the judge's noise.
+The six turns with a labelled datasheet chunk: the first turns retrieved their datasheet, the second turns of `precedence-do-hypoxia-qa-trigger-not-pod-limit` and `probecal-ec-never-recalibrate` did not, and none of the six scored lower than the baseline in both passes.
+Refusal wording ("don't have enough information") on non-refusal turns: 22, against 19 for E3's retrieval arm.
+Reading: at less than half the prompt, unpinned k=10 scores at least as well as the pinned k=20 baseline; the follow-up turns that lose their datasheet did not lose points here, but there are only two of them.
+
+### Datasheets unpinned, k=20 - 2026-09-26, runs `p3-lv-k20-2026-09-26` and `p3-lv-k20-rejudge-2026-09-26`
+
+Same settings as the k=10 capture with `DEFAULT_TOP_K` at its committed 20, so `src/` is identical to E3's: 90/90 turns, 0 failed, after a spot check; every turn received 20 excerpts.
+The answer-model prompt is a median 12,913 tokens (max 21,033); capture about $0.19, both judge passes (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90 each, 0 failed) about $0.28 at the old judge's rate.
+
+| class | E3 pinned k=20 | unpinned k=10, pass 1 / 2 | unpinned k=20, pass 1 / 2 |
+|---|---|---|---|
+| all | 0.68 | 0.72 / 0.72 | 0.72 / 0.74 |
+| cross-document | 0.54 | 0.54 / 0.46 | 0.54 / 0.62 |
+| deep-in-manual | 0.75 | 0.80 / 0.95 | 0.85 / 0.80 |
+| definitional | 0.62 | 0.75 / 0.75 | 0.75 / 0.62 |
+| follow-up | 0.75 | 0.75 / 0.62 | 1.00 / 1.00 |
+| precedence | 0.83 | 0.83 / 0.83 | 1.00 / 1.00 |
+| probe-calibration | 0.62 | 0.75 / 0.81 | 0.62 / 0.69 |
+| refusal | 0.88 | 0.88 / 0.75 | 0.62 / 0.75 |
+| median prompt tokens | 19,524 | 7,236 | 12,913 |
+| refusal wording on non-refusal turns | 19 | 22 | 16 |
+
+The k=20 passes agree on 84/90 turns; on the two-pass mean, k=20 is higher than the baseline on 15 turns and lower on 9, and higher than k=10 on 11 and lower on 9.
+All six turns with a labelled datasheet chunk score at or above the baseline in both passes; 32 of 90 turns retrieved at least one datasheet chunk without the pin, and the two follow-up turns that retrieved none still scored 1.
+The refusal class is lower on both unpinned depths (8 turns, so one or two verdicts); the refusal gate was not re-run here.
+Reading: both unpinned depths match or beat the pinned baseline at a smaller prompt; k=20 and k=10 are level overall within noise, with k=20 declining fewer answerable questions (16 against 22) and holding follow-up and precedence at 1.00.
+Every arm stays far under the 1.30 floor.
+
+### Follow-up rewriting and keyword search, offline - 2026-09-26, `data/results/retrieval/r4-2026-09-26/`
+
+Retrieval sees only the latest message, so a follow-up that does not name its subject searches blind.
+`QUERY_REWRITE` (off by default, `src/retrieval/queryRewrite.ts`) asks the answer model to rewrite a follow-up into a standalone search query from the last four history messages; the answer prompt still gets the user's words, a first turn makes no call, and any failure searches the original message.
+`retrieval:eval --rewrite` replays it on the frozen 90 with the assistant's first answers taken from `p3-lv-k20-2026-09-26`, as that capture sent them.
+All four runs are k=20, datasheets unpinned; cost was query embeddings plus 90 rewrite calls to `gpt-oss-120b`, a few cents.
+
+| arm | recall, all 90 | turn 1 (n=45) | turn 2 (n=45) | nDCG |
+|---|---|---|---|---|
+| `local-vector` | 38.4% | 50.0% | 26.8% | 0.264 |
+| `local-vector` + rewrite | 55.4% | 50.0% | 60.8% | 0.404 |
+| `local-hybrid` (dense + BM25) | 38.9% | 47.8% | 30.1% | 0.275 |
+| `local-hybrid` + rewrite | 58.1% | 47.8% | 68.5% | 0.444 |
+
+Rewriting raised recall on 27 of 45 second turns and lowered it on 2; rewrites average 120 characters, read as search queries rather than answers, and raise every class (cross-document 25.7% to 32.0%, probe-calibration 33.8% to 52.3%, definitional 45.1% to 76.1%).
+Keyword search alone is level with dense retrieval (+0.5 points overall, -2.2 on first turns), and its +2.7 over rewritten dense retrieval is inside the noise and flattered by the questions sharing their sources' wording (item 1); the two runs also drew separate rewrites.
+Reading: rewriting clears the bar set for a capture; keyword search does not, so the capture candidate is `local-vector` k=20 with `QUERY_REWRITE=true`.
+Recall is a necessary condition only; whether answers improve needs the capture.
+
+### `glm-5p3-flash` with follow-up rewriting, k=20, and ungrounded checks - 2026-09-26, runs `p3-lv-k20-rewrite-glm-2026-09-26`, `p3-gold-gptoss-ungrounded-2026-09-26` and `p3-gold-glm-ungrounded-2026-09-26`
+
+Retrieval capture: the rewrite capture's settings with `LLM_MODEL=glm-5p3-flash` and `LLM_REASONING_EFFORT=low` on the server, so GLM also wrote the rewrites; 90/90 turns, 0 failed, after a spot check.
+All 45 second turns and 2 of 45 first turns retrieved a different excerpt list from `p3-lv-k20-2026-09-26`, so the rewrite fired.
+Capture about $0.20 (1,253,989 prompt tokens, 2% cached; 28,177 completion) plus rewrites; judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed), about $0.30.
+
+| | `gpt-oss-120b` + rewrite, pass 1 / 2 | `glm-5p3-flash` + rewrite, pass 1 / 2 |
+|---|---|---|
+| correctness (floor 1.30) | 0.89 / 0.92 | 1.07 / 1.06 |
+| first / second turns | 0.84, 0.87 / 0.93, 0.98 | 1.02, 0.98 / 1.11, 1.13 |
+| cross-document | 0.71 / 0.71 | 0.75 / 0.67 |
+| deep-in-manual | 1.05 / 1.05 | 1.25 / 1.15 |
+| definitional | 1.00 / 1.00 | 1.25 / 1.38 |
+| follow-up | 1.38 / 1.38 | 1.25 / 1.25 |
+| precedence | 0.83 / 0.83 | 1.17 / 1.33 |
+| probe-calibration | 0.75 / 0.88 | 1.19 / 1.25 |
+| refusal | 0.75 / 0.88 | 0.88 / 0.88 |
+| scored 0 | 18 / 16 | 11 / 13 |
+| refusal gate | PASS (0 exact, 7 folded, 1 off-contract) | PASS (7 exact, 1 off-contract) |
+| citation validity (floor 95%) | 66.5% | 99.5% |
+| unexplained figures | 1 | 0 |
+
+On the two-pass mean GLM is higher on 24 turns and lower on 7.
+Reading: GLM lifts real retrieval by about 0.16 and passes the refusal, citation and figure gates, but stays under the 1.30 floor; retrieval now costs it about 0.27 against its gold-context 1.33-1.34, and cross-document questions remain weakest.
+
+Ungrounded, gold context, one pass each (`--final`, `deepseek-v4p1-flash`, symlinked runs): `gpt-oss-120b` (E3's answers) 53 of 89 judged turns carry an ungrounded claim (59.6%, 110 claims); `glm-5p3-flash` 35 of 87 (40.2%, 53 claims).
+Four calls failed twice with an empty judge reply and are unjudged; about $0.30 for both.
+The ungrounded dimension agrees weakly with the user's grades, so this is indicative only: GLM's longer answers do not carry more unsupported claims, and probably fewer.
+
+A blind 10-turn packet (`eval/grading/p3-gold-glm-vs-gptoss-2026-09-26/`, 5 fixtures, one per class from cross-document, deep-in-manual, definitional, probe-calibration and refusal, both models' gold-context answers labelled A/B, run directory of symlinks to the two captures) was graded by the user before the key was opened.
+
+| | user correctness | judge correctness | exact agreement | user: turns with an ungrounded claim | user preferred |
+|---|---|---|---|---|---|
+| `glm-5p3-flash` | 1.4 | 1.5 / 1.4 | 7 of 10 | 3 | 7 of 10 turns |
+| `gpt-oss-120b` | 1.3 | 1.2 | 7 of 10 | 2 | 3 of 10 turns |
+
+The judge does not favour GLM: it is within 0.1 of the user on both models, and its disagreements run both ways (two GLM turns and one `gpt-oss-120b` turn over-scored, two refusal turns under-scored where the grading guide gives a correct refusal 2).
+GLM's three ungrounded turns are an invented claim about upstream pods and, twice on the refusal fixture, an offer implying access to the pod's readings with the tools off; the user preferred GLM for its caveats and conditional wording.
+Ten turns is a small sample: it supports the judge's direction, not its size.
+Decision (user, 2026-09-26): switch the answer model to `glm-5p3-flash` at `LLM_REASONING_EFFORT=low`.
+
+### Stronger answer models on gold context - 2026-09-26, runs `p3-gold-glm-5p3-flash-2026-09-26` and `p3-gold-minimax-m3-2026-09-26`
+
+E3's gold-context settings (`LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools, catalogue and `QUERY_REWRITE` off, port 8011) with `LLM_MODEL` changed on the capture server only; each judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+`glm-5p3-flash` ran at `LLM_REASONING_EFFORT=low` (it cannot switch reasoning off); `minimax-m3` at `LLM_THINKING=disabled`.
+
+`minimax-m3` is invalid, not weak: it scored 0.13 / 0.13 because Fireworks' template for it keeps only the first system message, so the CONTEXT message never arrived (prompts of about 1,300 tokens, the system prompt alone; a two-system-message probe confirmed it) and it refused nearly every turn.
+Testing it needs the context merged into one system message for that model.
+
+| | `gpt-oss-120b` (E3, one pass) | `glm-5p3-flash`, pass 1 / 2 |
+|---|---|---|
+| correctness (floor 1.30) | 1.10 | 1.33 / 1.34 |
+| cross-document | 0.96 | 1.08 / 1.08 |
+| deep-in-manual | 1.20 | 1.60 / 1.60 |
+| definitional | 1.12 | 1.38 / 1.38 |
+| follow-up | 1.25 | 1.50 / 1.50 |
+| precedence | 1.17 | 1.33 / 1.50 |
+| probe-calibration | 1.12 | 1.38 / 1.38 |
+| refusal | 1.00 | 1.12 / 1.12 |
+| scored 0 | 4 | 1 / 2 |
+| median answer characters / completion tokens | 688 / 520 | 1,069 / 265 |
+| refusal gate (8 turns) | 1 exact, 6 folded, 1 answered | 6 exact, 1 off-contract, 1 answered |
+| citation validity (floor 95%) | 60.4% | 99.5% |
+| unexplained figures | 1 | 3, all "0.40": the question's 0.42 rounded by the quoted rule |
+
+On the two-pass mean GLM is higher on 25 turns and lower on 6.
+Capture cost about $0.07 (490,714 prompt tokens, 33% cached; 26,563 completion), below `gpt-oss-120b`'s $0.08 on the same turns, since low reasoning spends far fewer output tokens; wall time 332 s against 297 s.
+Reading: the first arm to clear the 1.30 floor, on gold context and on the secondary judge and rubric only; the answer model, not the prompt or the rubric, was the ceiling.
+Not yet measured: GLM on real retrieval, its ungrounded rate (longer answers), tool calling with the sensor and report tools, and whether the judge's calibration on `gpt-oss-120b` answers holds for another model's style.
+
+### Follow-up rewriting captured, k=20 - 2026-09-26, runs `p3-lv-k20-rewrite-2026-09-26` and `p3-lv-k20-rewrite-rejudge-2026-09-26`
+
+The unpinned k=20 capture's settings (`gpt-oss-120b`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools and catalogue off, `DEFAULT_RETRIEVAL=local-vector`, port 8011) with `QUERY_REWRITE=true`: 90/90 turns, 0 failed, after a spot check.
+All 45 second turns retrieved a different excerpt list from `p3-lv-k20-2026-09-26` and 44 of 45 first turns an identical one, so the rewrite fired where intended.
+Judged twice at `--final`, correctness only, by `deepseek-v4p1-flash` on rubric v2: 90/90 each, 0 failed.
+The capture cost about $0.20 for answers plus an estimated $0.02 for the 45 rewrite calls, whose usage transcripts do not record; both judge passes about $0.30 at the old judge's rate.
+
+| | unpinned k=20, pass 1 / 2 | + rewrite, pass 1 / 2 |
+|---|---|---|
+| all | 0.72 / 0.74 | 0.89 / 0.92 |
+| first turns | 0.82 / 0.84 | 0.84 / 0.87 |
+| second turns | 0.62 / 0.64 | 0.93 / 0.98 |
+| cross-document | 0.54 / 0.62 | 0.71 / 0.71 |
+| deep-in-manual | 0.85 / 0.80 | 1.05 / 1.05 |
+| definitional | 0.75 / 0.62 | 1.00 / 1.00 |
+| follow-up | 1.00 / 1.00 | 1.38 / 1.38 |
+| precedence | 1.00 / 1.00 | 0.83 / 0.83 |
+| probe-calibration | 0.62 / 0.69 | 0.75 / 0.88 |
+| refusal | 0.62 / 0.75 | 0.75 / 0.88 |
+| scored 0 | 29 / 26 | 18 / 16 |
+| refusal sentence on answerable turns | 16 | 8 |
+
+On the two-pass mean the rewrite arm is higher on 20 turns and lower on 3.
+Reading: the largest retrieval gain of R4 so far; second turns now score above first turns, and declined answerable questions halve.
+Precedence dropped one verdict in both passes (6 turns); the refusal gate was not re-run.
+Still under the 1.30 floor, and under gold context's 1.10.
+
+### Brevity line relaxed on gold context - 2026-09-26, runs `p3-gold-promptA-2026-09-26` and `p3-gold-promptB-2026-09-26`
+
+The judge's notes on gold-context 1s are mostly omitted rubric points, so two variants of the tools-off prompt's last rule were captured on `gold-context` with E3's settings (`gpt-oss-120b`, temperature 0, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools, catalogue and `QUERY_REWRITE` off, port 8011), each judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed) with the variant still in the source, since the judge rebuilds the prompt; the committed line was restored afterwards.
+A deletes "Keep answers short and direct."; B replaces it with "Include every point in CONTEXT that bears on the question, then stop."
+Each capture cost about $0.08; the four judge passes about $0.60 at the old judge's rate.
+
+| | E3 gold, new judge v2 (one pass) | A, pass 1 / 2 | B, pass 1 / 2 |
+|---|---|---|---|
+| all | 1.10 | 1.10 / 1.06 | 1.02 / 1.07 |
+| cross-document | 0.96 | 1.00 / 0.96 | 0.96 / 0.92 |
+| deep-in-manual | 1.20 | 1.20 / 1.10 | 1.15 / 1.30 |
+| definitional | 1.12 | 1.00 / 1.00 | 1.00 / 1.00 |
+| follow-up | 1.25 | 1.50 / 1.50 | 1.25 / 1.25 |
+| precedence | 1.17 | 1.17 / 1.00 | 0.83 / 1.00 |
+| probe-calibration | 1.12 | 1.00 / 1.00 | 0.94 / 1.00 |
+| refusal | 1.00 | 1.00 / 1.00 | 1.00 / 1.00 |
+| scored 0 | 4 | 5 / 7 | 7 / 5 |
+| median answer characters | 688 | 955 | 861 |
+| refusal sentence on answerable turns | 3 | 6 | 5 |
+| refusal sentence on the 8 refusal turns | 7 | 7 | 5 |
+
+On the two-pass mean A is higher than E3 on 8 turns and lower on 11, B higher on 5 and lower on 11.
+Reading: longer answers do not recover the omitted points and add zeros, so the brevity line stays; the omissions are the model's, not the instruction's, which leaves a stronger model as the next test.
+
+Candidate models (Fireworks, 2026-09-26, rates from Fireworks' model pages, one probe call each): `minimax-m3` ($0.30 / $1.20 per million, reasoning can be disabled, tools, 512K), `glm-5p3-flash` ($0.15 / $0.50, tools, 1M, reasoning control unconfirmed), `nemotron-lightning-3p5-30b-a3b` ($0.05 / $0.20, tools, 262K); `kimi-k3`, `glm-5p3` and `qwen3p8-max` cost 7-25 times `gpt-oss-120b`; DeepSeek models are excluded while the judge is DeepSeek.
+No faithfulness benchmark was found for any of them.
+
+### Retrieval experiments on GLM rewrites, offline - 2026-09-27, `data/results/retrieval/r4-2026-09-27/`
+
+All runs are `local-vector`, datasheets unpinned, on the frozen 90, with `glm-5p3-flash` (reasoning low) writing every rewrite and split, and GLM's own first answers from `p3-lv-k20-rewrite-glm-2026-09-26` as history; no run logged a fallback.
+The first baseline attempt failed on a provider 503 and was re-run; a plain k=20 check reproduced 38.4% with one tie swapped at rank 8.
+`--decompose` (`src/retrieval/queryDecompose.ts`) splits each searched query into up to three single-subject queries and interleaves their rankings with the query's own, cut to the same chunk count; `--rewrite-first` (`rewriteFirstTurn`) rewrites first turns as search queries.
+Both are reachable from `retrieval:eval` only; neither is wired into the server.
+
+| arm | recall, all 90 | turn 1 | turn 2 | nDCG | chunks | cross-document (n=24) |
+|---|---|---|---|---|---|---|
+| k=20 + rewrite (GLM rewrites) | 56.4% | 50.0% | 62.8% | 0.398 | 20 | 29.4% |
+| + split (3a) | 59.4% | 57.6% | 61.2% | 0.405 | 20 | 30.7% |
+| + first-turn rewrite (3b) | 61.0% | 59.1% | 62.8% | 0.443 | 20 | 35.6% |
+| k=30 + rewrite (3c) | 63.8% | 58.3% | 69.2% | 0.424 | 30 | 36.8% |
+| k=30 + rewrite + first-turn rewrite | 67.1% | 65.4% | 68.9% | 0.455 | 30 | 42.4% |
+| `local-rerank` k=20 (top 50 reranked) + rewrite + first-turn rewrite (step 4) | 69.4% | 70.2% | 68.6% | 0.570 | 20 | 43.3% |
+
+GLM's rewrites score 56.4% against `gpt-oss-120b`'s 55.4%, so the earlier baseline carries over.
+Splitting did not do what it was for: GLM split all 90 queries, cross-document moved only 1.3 points, and it raised 21 queries while lowering 13; most of its gain is on first turns and the refusal class, which first-turn rewriting also gets at one call instead of one call plus two or three searches.
+First-turn rewriting raised 15 of 45 first turns and lowered 3, at the same prompt size.
+k=30 alone gains more recall than first-turn rewriting but puts 50% more context in every prompt; combined they reach 67.1%.
+The reranker over both rewrites is the best arm at k=20: 69.4% and nDCG 0.570, raising 35 queries and lowering 5 against first-turn rewriting at k=20, and ahead of k=30 in every class; it adds a Fireworks rerank call per request (about $0.60 for these 90).
+Each run draws its own rewrites, so differences of a point or two are within noise.
+
+### GLM tools-off rule on gold context - 2026-09-27, runs `p3-gold-glm-notools-2026-09-27` and `p3-gold-glm-notools-rejudge-2026-09-27`
+
+With both tools off, GLM turned the refusal contract's "closest thing you genuinely can do" into offers to fetch the pod's readings, which the tools-off prompt cannot do (user's blind grading, `refusal-temperature-harm-threshold`).
+`NO_TOOLS_RULE` in `src/prompt/systemPrompt.ts`, added only when both tools are off, says there is no access to the pod's readings, thresholds, reports or tools, and that any next step named must be doable from CONTEXT or be a person or authority to ask; the tools-on prompt is byte-identical.
+Captured with the gold-context GLM settings above (`glm-5p3-flash`, reasoning low, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools, catalogue and `QUERY_REWRITE` off, port 8011): 90/90, 0 failed; 498,064 prompt tokens (34.5% cached), 27,980 completion, about $0.07.
+Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+
+| | before, pass 1 / 2 | with the rule, pass 1 / 2 |
+|---|---|---|
+| correctness (floor 1.30) | 1.33 / 1.34 | 1.28 / 1.31 |
+| cross-document | 1.08 / 1.08 | 1.04 / 1.08 |
+| deep-in-manual | 1.60 / 1.60 | 1.50 / 1.60 |
+| definitional | 1.38 / 1.38 | 1.13 / 1.13 |
+| follow-up | 1.50 / 1.50 | 1.38 / 1.38 |
+| precedence | 1.33 / 1.50 | 1.50 / 1.50 |
+| probe-calibration | 1.38 / 1.38 | 1.44 / 1.44 |
+| refusal | 1.12 / 1.12 | 1.00 / 1.00 |
+
+Offers to fetch or report the pod's readings fell from 9 answers to 0; the three remaining mentions of "your pod's readings" are disclaimers that the readings are unavailable.
+On the two-pass mean 4 turns rose and 8 fell; seven of the eight falls are omitted rubric points on turns that made no offer before (Eh's definition, the 12-month thermistor check, the manufacturer's soak limit), and one, `refusal-temperature-harm-threshold` turn 2, no longer says the sources lack a thermal-harm criterion.
+Reading: the rule removes the behaviour; the 0.03-0.05 fall is of the size GLM's answers could vary between captures, but no repeat capture of the old prompt exists to separate the two.
+
+### GLM tool-calling check on the fabricated mirror - 2026-09-27, `data/results/tool-check-2026-09-27/`
+
+No earlier GLM run exercised the sensor and report tools, which production answers pod questions with.
+Server: `glm-5p3-flash` (reasoning low), `SENSOR_TOOL` and `REPORT_TOOL` on, `DEVICE_API_BASE_URL` at the mirror server on :5101 (`mirror/e2e-p3` `37fec03`, Firestore emulator seeded 2026-09-26, no proxy to the live API), `DEVICE_API_TOKEN` empty, `local-rerank` k=20 with `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, catalogue off, port 8011.
+Caller: the fabricated Harbor Admin, whose account sees one salt-water pod (Harbor Pier Buoy, all-zero thresholds, a predecessor withheld as not visible); 10 turns in 9 conversations (`toolcheck.js`), about $0.10.
+
+All 10 returned 200 with well-formed calls to `query_sensor_data`, `get_pod_thresholds`, `get_turbidity_info`, `generate_report` and `list_pods`, at most two tool rounds per turn, and the results used in the answers; no turn neared `MAX_TOOL_ROUNDS`, and the mirror's log shows all 34 device requests.
+The all-zero thresholds were reported as unconfigured rather than as a range, and a turbidity index of 0 as ambiguous rather than clear water.
+The water-type note (deployment freshwater, pod salt water) was relayed in 3 of the 8 turns whose results carried it, and the withheld-history note in 4 of 8 (counted by keyword, not read for accuracy); plan Q8 covers relaying them.
+Defect: "Did the pod record anything in the last 24 hours?" was answered "Yes" with 25 samples, but the tool anchors a relative window to `device_last_reported` (2026-09-26 03:11 UTC, 30 hours before the question) and the answer did not say the pod has been silent since.
+The cross-organization withheld-history case needs a non-superadmin in the survivor's organization, which the mirror does not have.
+
+### Reranker with both rewrites captured, k=20 - 2026-09-27, runs `p3-rerank-k20-rewrite2-glm-2026-09-27` and `p3-rerank-k20-rewrite2-glm-rejudge-2026-09-27`
+
+Step 6, the winner of the offline experiments: `local-rerank` k=20 (top 50 reranked), `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, `glm-5p3-flash` (reasoning low), the tools-off rule, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools and catalogue off, port 8011: 90/90, 0 failed, after a spot check; 1,344,757 prompt tokens (0.8% cached), 30,345 completion, 685 s; about $0.22 for answers, $0.60 for reranking and $0.03 for rewrites.
+Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed); the baseline is `p3-lv-k20-rewrite-glm-2026-09-26` (`local-vector` k=20, follow-up rewriting only, before the tools-off rule).
+
+| | baseline, two-pass mean | this run, pass 1 / 2 (mean) |
+|---|---|---|
+| correctness (floor 1.30) | 1.07 / 1.06 | 1.11 / 1.17 (1.14) |
+| first turns | 1.00 | 1.18 |
+| second turns | 1.12 | 1.10 |
+| cross-document | 0.71 | 0.96 |
+| deep-in-manual | 1.20 | 1.15 |
+| definitional | 1.31 | 1.25 |
+| follow-up | 1.25 | 1.38 |
+| precedence | 1.25 | 1.33 |
+| probe-calibration | 1.22 | 1.13 |
+| refusal (judge) | 0.88 | 1.19 |
+| scored 0 | 11 / 13 | 8 / 6 |
+| refusal integrity gate | PASS: 7 exact, 1 off-contract | FAIL: 4 exact, 2 off-contract, 2 answered |
+| citation validity | 99.5% | 99.1% |
+| unexplained figures | 0 | 0 of 578 |
+| median time to first token / whole answer | 2.3 s / 4.5 s | 4.2 s / 7.2 s |
+
+On the two-pass mean 16 turns rose and 10 fell; the gain is on first turns and cross-document, where recall rose most offline, and second turns are level.
+The two answered refusal turns took a figure from a newly retrieved passage (turbidity reported in FNU; USGS temperature precision) where the fixture requires a refusal; GLM already fails the refusal gate on gold context (6 exact and 1 answered before the tools-off rule, 5 and 2 after), so more relevant excerpts expose a GLM refusal weakness rather than create one.
+Reading: the reranker with both rewrites gains about 0.08 in correctness for about three times the per-question cost and 2-3 s more latency, and breaks the refusal gate; it is confounded with first-turn rewriting and the tools-off rule, which a `local-vector` capture with both rewrites would separate.
+
+### Control: `local-vector` with both rewrites, k=20 - 2026-09-27, runs `p3-lv-k20-rewrite2-glm-2026-09-27` and `p3-lv-k20-rewrite2-glm-rejudge-2026-09-27`
+
+The reranker capture above with `local-vector` in place of `local-rerank`, everything else identical (`QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, `glm-5p3-flash` at reasoning low, the tools-off rule, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools and catalogue off, port 8011): 90/90, 0 failed, after a spot check; 1,292,574 prompt tokens (1.6% cached), 28,842 completion, 590 s; about $0.21 for answers and $0.03 for rewrites.
+All 45 first turns and 43 of 45 second turns retrieved different excerpts from `p3-lv-k20-rewrite-glm-2026-09-26`, so both rewrites were active.
+Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+
+| | reranker, pass 1 / 2 (mean) | control, pass 1 / 2 (mean) |
+|---|---|---|
+| correctness (floor 1.30) | 1.11 / 1.17 (1.14) | 1.14 / 1.17 (1.16) |
+| first turns / second turns | 1.18 / 1.10 | 1.19 / 1.12 |
+| cross-document | 0.96 | 0.96 / 0.92 |
+| refusal (judge) | 1.19 | 0.88 / 1.00 |
+| refusal integrity gate | FAIL: 4 exact, 2 off-contract, 2 answered | FAIL: 5 exact, 1 off-contract, 2 answered |
+| citation validity | 99.1% | 100.0% |
+| unexplained figures | 0 of 578 | 1 of 614 (0.5°C, stated as an illustration beside ±0.2°C) |
+| median time to first token / whole answer | 4.2 s / 7.2 s | 3.0 s / 5.5 s |
+
+On the two-pass mean 14 turns are higher than the reranker's and 12 lower.
+Reading: the reranker adds nothing measurable; the gain over `p3-lv-k20-rewrite-glm-2026-09-26` (1.07 / 1.06) comes from first-turn rewriting and the tools-off rule, and the refusal-gate failure is GLM's on either arm (`refusal-temperature-harm-threshold` t1 and `refusal-turbidity-sensor-hardware` t2 answered).
+Recommended: `local-vector` k=20, datasheets unpinned, with both rewrites and no reranker.
+The user adopted this for launch on 2026-09-27.
+
+### GLM refusal fix on gold context - 2026-09-27, runs `p3-gold-glm-refusal-2026-09-27` and `p3-gold-glm-refusal-rejudge-2026-09-27`
+
+Two general rules added to the system prompt (`dcb3ce3`, both tools-on and tools-off): never infer a fact about this pod or its instruments (a unit, model, sensor type, setting or threshold) from what an excerpt says is typical of other instruments; and whenever any part is declined, write the refusal sentence word for word, since a paraphrase does not replace it.
+They answer the two failures seen on every GLM arm: `refusal-turbidity-sensor-hardware` t2 inferred the pod's turbidity unit (FNU) from what most USGS instruments use, and `refusal-temperature-harm-threshold` declined in its own words without the sentence.
+Gold context, `glm-5p3-flash` at reasoning low, the tools-off rule, `QUERY_REWRITE` off, tools and catalogue off, port 8011: 90/90, 0 failed, about $0.07 for answers; judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+
+| | before (`p3-gold-glm-notools-2026-09-27`) | with the fix |
+|---|---|---|
+| correctness, pass 1 / 2 | 1.28 / 1.31 | 1.36 / 1.30 |
+| refusal integrity gate | FAIL: 5 exact, 1 off-contract, 2 answered | PASS: 8 exact |
+| refusal (judge) | - | 1.13 / 1.00 |
+| citation validity | 98.8% | 97.6% (10 quotes cut at a hyphenated line break) |
+| unexplained figures | 3 of 633 | 2 of 656 (both 0.40, a rounding result) |
+
+Kept: the refusal gate passes and correctness does not fall.
+
+### Launch configuration captured - 2026-09-27, runs `p3-launch-lv-k20-glm-2026-09-27` and `p3-launch-lv-k20-glm-rejudge-2026-09-27`
+
+The launch settings as far as an evaluation can reach them: `local-vector` k=20, datasheets unpinned, `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, `glm-5p3-flash` at reasoning low, `CATALOGUE_PROMPT=true` (on server and judge), the refusal fix at `dcb3ce3`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, port 8011.
+The tools stay off, as every capture requires (on means live production reads), so the prompt carries the tools-off rule where production carries the tool blocks.
+90/90, 0 failed, after a spot check; 1,722,969 prompt tokens (24.1% cached), 30,562 completion, 475 s; about $0.23 for answers and $0.03 for rewrites.
+Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+
+| | control (`p3-lv-k20-rewrite2-glm-2026-09-27`) | launch configuration, pass 1 / 2 |
+|---|---|---|
+| correctness (floor 1.30) | 1.14 / 1.17 | 1.18 / 1.13 |
+| first turns / second turns | 1.19 / 1.12 | 1.12 / 1.19 |
+| cross-document | 0.96 / 0.92 | 0.83 / 0.83 (FAIL) |
+| deep-in-manual | 1.25 / 1.30 | 1.50 / 1.45 |
+| refusal (judge) | 0.88 / 1.00 | 1.00 / 0.75 |
+| scored 0 | - | 6 / 8 |
+| refusal integrity gate | FAIL: 5 exact, 1 off-contract, 2 answered | PASS: 8 exact |
+| citation validity | 100.0% | 99.8% |
+| unexplained figures | 1 of 614 | 0 of 535 |
+| median time to first token / whole answer | 3.0 s / 5.5 s | 2.5 s / 4.7 s |
+
+On the two-pass mean 13 turns rose and 16 fell against the control; overall correctness is level, and every Tier 1 gate passes for the first time on a real-retrieval GLM arm.
+Correctness stays under the 1.30 floor, and cross-document (0.83) is the class under the bar for E4; the judge's refusal score is low although all eight refusals are exact, because several refuse without the supported related points the rubrics also require (for example `refusal-how-long-can-it-stay-in`, a bare refusal scored 0 in pass 2).
+This is the run E4 and the R4 report cite.
+
+### E4 multi-source caveat - 2026-09-27, runs `p3-launch-caveat-glm-2026-09-27` and `p3-launch-caveat-glm-rejudge-2026-09-27`
+
+The user chose a caveat over a refusal for cross-document questions (D3).
+`MULTI_SOURCE_CAVEAT` (`e0abe8b`) asks the model to end an answer with a fixed sentence when the question works through a field situation where several factors interact; the model cannot see a question's class, and a trigger on citing two or more documents would miss half the weak turns (in the launch capture 14 of 24 cross-document answers and 16 of 66 others cited several documents, and single-document cross-document answers scored lower, 0.80 against 0.86).
+The launch configuration above plus the caveat, same settings and port: 90/90, 0 failed; 1,735,851 prompt tokens (30.4% cached), 33,178 completion, 548 s; about $0.21 for answers and $0.03 for rewrites.
+Judged twice by the new default judge (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed): $0.45 and $0.17 measured.
+
+| | launch configuration | with the caveat |
+|---|---|---|
+| correctness, pass 1 / 2 | 1.18 / 1.13 | 1.17 / 1.19 |
+| cross-document | 0.83 / 0.83 | 0.88 / 0.88 |
+| refusal (judge) | 1.00 / 0.75 | 1.13 / 1.25 |
+| refusal integrity gate | PASS: 8 exact | FAIL: 6 exact, 1 off-contract, 1 answered |
+| citation validity | 99.8% | 99.0% |
+| unexplained figures | 0 of 535 | 0 of 546 |
+| caveat present | - | cross-document 11 of 24; other classes 12 of 66 |
+
+The caveat does not reach the weak answers: cross-document turns carrying it average 1.00 and those without it 0.77, and none of the nine turns scoring under 1 in any class carries it.
+The model adds it where it is already confident, so as a warning it misses the answers that need one.
+The gate's answered turn (`refusal-turbidity-sensor-hardware` t2) now gives the catalogue's approved reply, that the pod shows a clarity band with no unit, then cites the FNU light wavelength as background; the off-contract turn declines in its own words.
+The launch capture passed 8 of 8 on the same prompt apart from the caveat, so GLM's refusal wording still varies between runs.
+Decision (user, 2026-09-27): drop the prompt caveat (reverted in `f694766`) and meet D3 with a standing caveat under every answer that cites documents, shown by the dashboard; the launch capture stays the cited run.
 
 ## Task C provenance inputs - 2026-09-24
 
@@ -814,3 +1641,27 @@ Legacy captures remain readable without synthesizing missing evidence, and exist
 The wire and display contract is documented in `SPECS.md` section 10.4a.
 Task C's prompt changes are confined to the tools-only blocks; the R4 general prompt and separate evaluation worktree are untouched.
 No paid capture or grading run is part of this verification.
+
+## Judge cost - 2026-09-24
+
+Measured on `eval/judge-cost` by re-judging the `p3-it1` gold-context answers (180 calls each); ledgers are under `data/results/judge/p3-it1-*-2026-09-24/`.
+At the default reasoning setting, hidden reasoning was 45-60% of each pass's bill: a one-sentence correctness verdict cost 1,000-1,700 completion tokens and an ungrounded verdict 3,000-5,000.
+`response_format: json_schema` does not suppress that reasoning on `deepseek-v4-flash-0731`, contrary to the older comment in `prompts.ts`.
+
+| Pass | Cost | Correctness | Ungrounded turns | Failed calls |
+|---|---|---|---|---|
+| it1, default reasoning | $0.57 | 1.011 | 54.4% | 0 |
+| it1 re-judge, default reasoning | $0.56 | 0.978 | 63.3% | 0 |
+| cache-first layout, default reasoning | $0.52 | 0.956 | 55.7% | 2 |
+| cache-first layout, `reasoning_effort: none` | $0.23 | 1.011 | 57.8% | 0 |
+
+Means with reasoning off stay inside the spread of the default passes, but turn-level agreement falls: identical correctness scores on 70-72% of turns against 87-92% between two default passes, and the same ungrounded yes/no on 72-76% against 82-84%.
+Decision: exploratory judge passes run with reasoning off, and any pass whose numbers are reported or decide something runs with `--final`, which sends no `reasoning_effort`.
+That covers the R4 final two-arm capture and its second judging; `--calibration` implies `--final`.
+Compare only passes judged at the same setting: the ledger records `reasoningEffort` per verdict, the output file records it per pass, and a verdict is reused only for the same prompt hash and setting.
+Making reasoning-off the final judge as well would need a human calibration sample first.
+
+Prompt caching did not pay off.
+Judge prompts now open with the service rules and retrieved documents shared by both dimensions of a turn, which raised the cacheable share of input from 14-21% to 50-52% offline, and each call sends a per-turn `user` key, which Fireworks documents as its cache-routing hint.
+Both passes still read under 1% of input from cache on first-time prompts; hits appeared only when the same prompt was resent within minutes.
+The layout stays because grounded correctness prompts now include the service rules their instruction already counted as grounding.

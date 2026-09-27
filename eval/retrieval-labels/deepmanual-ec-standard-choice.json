@@ -5,7 +5,7 @@
   "turns": [
     {
       "turn": 1,
-      "query": "We're setting up conductivity calibration for a creek that sits around 300 µS/cm. Which standard should we use, and can we zero the meter in distilled water first?",
+      "query": "We're setting up conductivity calibration for a creek that sits around 300 µS/cm. Which standard should we use, and can we zero the meter in deionized water first?",
       "relevant": [
         {
           "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__603c9e54d9bd",

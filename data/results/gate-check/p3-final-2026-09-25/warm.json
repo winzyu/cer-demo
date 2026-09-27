@@ -1,0 +1,1782 @@
+[
+  {
+    "arm": "gold-context",
+    "pass": "warm",
+    "turns": 90,
+    "refusal": {
+      "required": 8,
+      "exact": 1,
+      "normalized": 6,
+      "tolerance": 0,
+      "offContract": 0,
+      "answered": 1,
+      "met": false
+    },
+    "citations": {
+      "total": 225,
+      "valid": 136,
+      "rate": 0.6044444444444445,
+      "met": false
+    },
+    "figures": {
+      "total": 375,
+      "unexplained": 1,
+      "conversions": 7,
+      "met": false
+    },
+    "quotes": {
+      "total": 136,
+      "supported": 115,
+      "elided": 12,
+      "short": 0,
+      "rate": 0.8455882352941176
+    },
+    "gatesMet": false,
+    "findings": [
+      {
+        "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"can result in κ25 °C errors as large as 50 percent\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"can be the source of errors as large as 50 percent\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【5†\"standard pH buffers … pH 1.68 or 2 are also needed if acidic waters are measured\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-bailed-orp-jumping",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"Subsamples must not be used for reported measure‑ments of temperature, DO concentration, Eh, or turbidity without value qualifiers\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-bailed-orp-jumping",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"The bailed sample … may not be used for measurements of DO concentration, Eh, and water temperature\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-bailed-orp-jumping",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【7†\"Measure Eh in situ with a submersible instrument or use an airtight flowthrough system\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-bailed-orp-jumping",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【14†\"Allow the reading to stabilize (±5 mV)\"】 points at context #14, but 9 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "crossdoc-bailed-orp-jumping",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【16†\"If the readings do not stabilize within about 30 minutes, record the potential and its drift\"】 points at context #16, but 9 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"Measurements of field parameters made in discrete or non‑pumped samples are more vulnerable to bias from changes in temperature… than measurements made by using inline‑flow or in situ measurement procedures.\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__f1715861e455\""
+      },
+      {
+        "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【8†\"ambient atmospheric pressure must be determined to the nearest 1 millimeter (mm) of mercury\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"temperature stability during calibration and measurement is extremely important\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【7†\"Ionic strength is estimated from the conductivity measurement for routine field applications\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"Temperature  ± 0.2 °C\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"DO  ± 0.2 mg/L\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"pH  ± 0.1 pH units\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"Specific electrical conductance (SC)  ± 5 μS/cm for SC ≤100 μS/cm, or ± 3% for SC >100 μS/cm\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"Turbidity  ± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or 10% of the measured value for turbidity >100 TU\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【2†\"Temperature Thermistor ±0.2 °C…DO ±0.2 mg/L…pH ±0.1 unit…Turbidity ±0.5 TU or ±5 %\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__1b7e9852e841\""
+      },
+      {
+        "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【6†\"Temperature ± 0.2 °C…DO ± 0.2 mg/L…pH ± 0.1 pH units…Turbidity ± 0.5 TU or 5 %…10 % for turbidity > 100 TU\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.8-multiparameter-instruments.pdf__4e9dfc809f8a\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【7†\"Allow 15 to 30 minutes for the solution and sensors to equilibrate to ambient temperature.\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__79b5d6c04cc9\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【5†\"Eref = 202 mV for Ag:AgCl‑saturated KCl at 22°C.\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__5d571cf4d09e\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"Eh (ZoBell’s) = 238 mV + 202 mV = 440 mV.\"】 points at context #10, but 9 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"The test value of 440 mV is within ± 5 mV of 438 mV from table 6.5–3.\"】 points at context #10, but 9 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【2†\"Variability should be within the range shown for five or more measurements.\"】 not found verbatim in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__e157e31940ab\""
+      },
+      {
+        "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【3†\"Specific conductance <100 μS/cm … causing an unstable pH reading.\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.4-ph.pdf__17e96af99482\""
+      },
+      {
+        "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【6†\"Calibration Criteria: ± 0.1 pH units, ± 0.3 if SC <75us/cm\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【5†\"If the pH of the buffer differs by more than 0.05 pH units from the certified value\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【1†\"the probe readings for pH, dissolved oxygen, specific conductance, and ORP are automatically corrected for temperature.\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__443c31100934\""
+      },
+      {
+        "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【5†\"temperature sensor must be checked to determine its accuracy. This accuracy check is performed at least once per year\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【1†\"the calibration/post calibration data information is recorded in Table 1\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【2†\"At a minimum, the instrument is calibrated prior to use on the day the measurements are to be performed. A post calibration check at the end of the day is performed\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【5†\"This accuracy check is performed at least once per year\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【7†\"Calibration verification of sensors ... is required to be performed every 12 months\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【2†\"instrument is calibrated prior to use on the day ... A post calibration check at the end of the day is performed\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"Oxygen Solubilty at Indicated Pressure\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【6†\"Solubility of oxygen in freshwater at various temperatures and pressures\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【1†\"Oxygen Solubilty at Indicated Pressure\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【6†\"Atmospheric pressure, in millimeters of mercury\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-warm-week-oxygen-drop",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"15.0 9.27 9.34 9.41 9.48\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-warm-week-oxygen-drop",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"20.0 8.36 8.42 8.48 8.54 8.60 8.66 8.73 8.79 8.85 8.91 8.97 9.03\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-warm-week-oxygen-drop",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【7†\"Specific conductance is reported in microsiemens per centimeter at 25 degrees Celsius (μS/cm at 25 °C)\"】 not found verbatim in \"usgs-nfm-a6.3-specific-conductance.pdf__fc9b0488e3d3\""
+      },
+      {
+        "fixtureId": "crossdoc-warm-week-oxygen-drop",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【8†\"Equation 2 is used most commonly to determine the specific conductance at 25 °C\"】 not found verbatim in \"usgs-nfm-a6.3-specific-conductance.pdf__361ef9509206\""
+      },
+      {
+        "fixtureId": "deepmanual-brackish-do-correction",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"20.0 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-brackish-do-correction",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【1†\"correcting DO solubility for saline waters (specific conductance greater than 2,000 μS/cm)\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-cross-section-points",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【3†\"If profile values of pH, conductivity, temperature, and DO concentration differ by less than 5 percent … a single measurement point at the centroid of flow can be used\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-cross-section-points",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"In a small stream, typically less than 5 feet (ft) in width … a single point at the centroid of flow may be used\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-cross-section-points",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"Divide the stream into a minimum of four increments\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-cross-section-points",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"In streams 5 ft wide or greater, a minimum of 10 equal‑width increments is recommended\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-cross-section-points",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【1†\"Allow at least 60 seconds (or follow the manufacturer’s guidelines) for sensors to equilibrate with sample water. Take instrument readings until the stabilization criteria in table 6.0–1 are met. Record the median of the final three or more readings as the value to be reported for that measurement point\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-cross-section-points",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【4†\"The value recorded at each vertical should be the median of values observed within approximately 60 seconds after sensor(s) have equilibrated with streamwater\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-diluting-clarity-standards",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"To prepare 500 mL of a 400 turbidity-unit calibrant solution, dilute the 4,000 turbidity-unit stock solution by a 1:10 ratio\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-diluting-clarity-standards",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"To prepare a 40 turbidity-unit calibrant solution, dilute the 400 turbidity-unit solution by a 1:10 ratio\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-diluting-clarity-standards",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"With the exception of 4,000 NTU formazin, commercial calibration solutions … must not be diluted because changes will occur in the suspension matrix that will render the dilutions nonlinear\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-diluting-clarity-standards",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"The 400 turbidity-unit stock solution is stable only for about one day\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-diluting-clarity-standards",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【1†\"The 4,000 turbidity-unit stock suspension is stable for about a year\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-diluting-clarity-standards",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【3†\"Formazin‑based calibrants should be resuspended by inverting the calibrant 25 times\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-do-air-calibration",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【1†\"Create a 100 percent water‑saturated air environment by placing a wet sponge or a wet paper towel on the bottom of the DO calibration container.\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__738f644915c9\""
+      },
+      {
+        "fixtureId": "deepmanual-do-air-calibration",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【1†\"Allow the confined air to become saturated with water vapor (saturation occurs in approximately 10 to 15 minutes).\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__738f644915c9\""
+      },
+      {
+        "fixtureId": "deepmanual-do-air-calibration",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"Select calibration mode; then select “DO %”. Enter the local barometric pressure (usually in mm of mercury) for the sampling location into the instrument.\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__8498757732be\""
+      },
+      {
+        "fixtureId": "deepmanual-do-air-calibration",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【1†\"Compare the DO mg/L reading to the Oxygen Solubility at Indicated Pressure chart attached to the SOP. The numbers should agree. If they do not agree within the accuracy of the instrument (usually + 0.2 mg/L), repeat calibration.\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__738f644915c9\""
+      },
+      {
+        "fixtureId": "deepmanual-ec-standard-choice",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【1†\"Check the zero response of the dry conductivity cell in air or DIW. The measured specific conductance of DIW should be <3 μS/cm\"】 not found verbatim in \"usgs-nfm-a6.3-specific-conductance.pdf__2cade3723a66\""
+      },
+      {
+        "fixtureId": "deepmanual-ec-standard-choice",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"Do not calibrate using DIW; however, the measured specific conductance of DIW should be <3 μS/cm\"]} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-ec-standard-choice",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【1†\"The measured specific conductance of DIW should be <3 μS/cm\"】 not found verbatim in \"usgs-nfm-a6.3-specific-conductance.pdf__2cade3723a66\""
+      },
+      {
+        "fixtureId": "deepmanual-sonde-settle-time",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【3†\"Temperature ± 0.2 °C … DO ± 0.2 mg/L … pH ± 0.1 pH units … Turbidity ± 0.5 TU or 5% …\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-sonde-settle-time",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【1†\"when the variability among consecutive measurements does not exceed an established criterion\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-turbidity-rounding",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"0–<1  0.05\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-turbidity-rounding",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"40–<100  1\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-turbidity-rounding",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "figures",
+        "detail": "\"0.40\" not in context — it. Rounded to the nearest 0.05 gives **0.40**. * 63.7 NTU falls in the 40–<100 NTU"
+      },
+      {
+        "fixtureId": "deepmanual-turbidity-rounding",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【1†\"using either EPA Method 180.1, GLI Method 2, or ISO 7027\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-turbidity-rounding",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【2†\"40–<100  1  1  5  5  N/A\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"Allow the electrode to reach thermal equilibrium (15 to 30 minutes)\"] malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"Switch the meter to the millivolt function, allow the reading to stabilize (±5 mV), and record the temperature and millivolt value\"] malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"Add this value to the measured potential to obtain the Eh of ZoBell’s at ambient temperature\"] malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"If the value is within 5 mV of the ZoBell Eh given on table 6.5‑3, the equipment is ready for field use\"] malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【10†\"Allow 15 to 30 minutes for the solution and sensors to equilibrate to ambient temperature.\"】 points at context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【16†\"If the readings do not stabilize within about 30 minutes, record the potential and its drift; assume a single quantitative value is not possible.\"】 points at context #16, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "definitional-required-versus-recommended",
+        "fixtureClass": "definitional",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"Departures from or modifications to the recommended procedures must be independently quality assured and documented】 malformed citation marker"
+      },
+      {
+        "fixtureId": "definitional-what-a-bare-tu-label-tells-us",
+        "fixtureClass": "definitional",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【3†\"White or broadband (with a peak spectral output of 400‑680 nm)… At 90° to incident beam … (NTU)\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.7-turbidity.pdf__0663ce0e133d\""
+      },
+      {
+        "fixtureId": "definitional-what-a-bare-tu-label-tells-us",
+        "fixtureClass": "definitional",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【3†\"Monochrome (spectral output typically near infrared, 780‑900 nm)… At 90° to incident beam … (FNU)\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.7-turbidity.pdf__0663ce0e133d\""
+      },
+      {
+        "fixtureId": "definitional-what-per-centimetre-means",
+        "fixtureClass": "definitional",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"specific conductance is an indirect measure of the collective concentration of dissolved ions in solution, and is defined as the electrical conductance of 1 cubic centimeter (cm³) of a solution at 25 degrees Celsius\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "definitional-what-per-centimetre-means",
+        "fixtureClass": "definitional",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【3†\"specific conductance in units of microsiemens per centimeter (μS/cm) at 25 °C\"}] malformed citation marker"
+      },
+      {
+        "fixtureId": "followup-mixing-the-clarity-bottle",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【3†\"Gently invert—do not shake—the sample 25 times (ASTM\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "followup-mixing-the-clarity-bottle",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"invert the bottle 25 times using a 1-second inversion cycle\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+        "fixtureClass": "precedence",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"hypoxic to anoxic (concentration less than 1.0 mg/L)\"}] malformed citation marker"
+      },
+      {
+        "fixtureId": "precedence-ph-river-range-not-pod-limit",
+        "fixtureClass": "precedence",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"River waters not affected by contamination generally have a pH in the range of 6.5 to 8.5\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "precedence-ph-river-range-not-pod-limit",
+        "fixtureClass": "precedence",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"Most groundwaters in the United States have pH values generally ranging from 6.0 to 8.5\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"The main goal of the one‑point DO calibration procedure is to create a 100‑percent saturated oxygen environment\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"Wet the inside of the calibration chamber with water and then pour out the water, leaving a few drops or a layer of water in the bottom of the calibration cup\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"Allow 5 to 10 minutes for the air to saturate with water vapor and for the DO sensor and the air inside the calibration chamber to equilibrate\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"Using a calibration‑checked barometer, read the ambient atmospheric pressure to the nearest 1 mm of mercury\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"Monitor the temperature and DO readings in the calibration chamber, observing readings until they stabilize. Read the temperature to the nearest 0.1 degree Celsius (°C)\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"If calibrating to a given DO concentration rather than to a condition of 100‑percent saturation, use table 6.2‑2 ... to determine DO saturation at the calibration temperature and atmospheric pressure\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"When the instrument readings are stable, adjust the instrument to the DO‑saturation value determined from the oxygen‑solubility table\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"Verify that the instrument reading is within ±0.2 mg/L or 2 percent of the computed saturation value\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"Remove the sensor from the calibration chamber to check whether water droplets were on the optical module during calibration; water droplets on the sensor module or on the temperature sensor can cause improper calibration\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"Record calibration information in instrument log books and transfer calibration data into electronic records or onto paper field forms at the time of calibration\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"For many multiparameter instruments, a 100‑percent humidity environment can be created by wrapping a wet towel around the sensor guard and inserting it into a plastic bag\"}] malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【2†\"The result of a DO instrument performance check should be within +/- 0.2 mg/L of the 100-percent saturated concentration\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【3†\"If a multiparameter instrument that includes a calibrated conductivity sensor is used, salinity correction to the DO concentration reading is performed automatically\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【3†\"For instruments that are not equipped with a conductivity sensor, manual correction of the DO data for salinity is required\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【6†\"correction factors for salinity based on specific conductance (table 6.2‑4) ... Most multiparameter instruments that include DO and specific‑conductance sensors automatically correct the DO reading for salinity\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-end-of-day-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【3†\"pH + 0.3 pH unit with pH 7 buffer*\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-end-of-day-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【3†\"Dissolved Oxygen + (.5 mg/L of sat. value*\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-orp-standard-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【11†\"The test value of 440 mV is within ± 5 mV of 438 mV from table 6.5–3. Thus, the equipment is functioning well and ready for field use.\"】 points at context #11, but 6 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "probecal-orp-standard-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【5†\"Organic matter and sulfide may cause contamination of the electrode surface… causing drift or erratic performance.\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.5-orp.pdf__d38f4e5fb14d\""
+      },
+      {
+        "fixtureId": "probecal-orp-standard-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【6†\"Eh of ZoBell's solution exceeds theoretical by ±5 mV\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-orp-standard-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【6†\"Check electrode operation\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-ph-slope-acceptance",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【12†\"slopes that are 56.2 to 59.8 mV/pH unit at 25 °C\"】 points at context #12, but 10 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "probecal-ph-slope-acceptance",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【7†\"Clean, recondition, or replace electrode ... if the slope remains outside the acceptable range\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.4-ph.pdf__c4d565e70268\""
+      },
+      {
+        "fixtureId": "probecal-ph-what-solutions",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"The commonly used standard pH buffer solutions and their corresponding pH values from 0 to 90 °C are shown in table 6.4–3.\"】 not found verbatim in \"usgs-nfm-a6.4-ph.pdf__a5e101e3271a\""
+      },
+      {
+        "fixtureId": "probecal-sonde-calibration-order",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【6†\"the following order is recommended for performing parameter calibrations or checks of multiparameter instruments\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-buffering-capacity-not-measured",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 0: answer U+004E \"N\" vs pinned U+0049 \"I\""
+      },
+      {
+        "fixtureId": "refusal-buffering-capacity-not-measured",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-temperature-harm-threshold",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-turbidity-sensor-hardware",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-turbidity-sensor-hardware",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "answered: stated 2 figure(s) (780, 900) on a turn that had to refuse; term overlap 12%"
+      }
+    ]
+  },
+  {
+    "arm": "hybrid-slice-vector",
+    "pass": "warm",
+    "turns": 90,
+    "refusal": {
+      "required": 8,
+      "exact": 0,
+      "normalized": 5,
+      "tolerance": 0,
+      "offContract": 1,
+      "answered": 2,
+      "met": false
+    },
+    "citations": {
+      "total": 213,
+      "valid": 166,
+      "rate": 0.7793427230046949,
+      "met": false
+    },
+    "figures": {
+      "total": 292,
+      "unexplained": 0,
+      "conversions": 3,
+      "met": true
+    },
+    "quotes": {
+      "total": 165,
+      "supported": 94,
+      "elided": 8,
+      "short": 0,
+      "rate": 0.5696969696969697
+    },
+    "gatesMet": false,
+    "findings": [
+      {
+        "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"temperature‑compensation factors work well for waters having a pH between 4 and 11\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"error can be as large as 50 percent for low-pH samples\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【5†\"pH 1.68, 4.01, 7.00, 10.01 buffers\"】 not found verbatim in \"usgs-nfm-a6.4-ph.pdf__463363d709a0\""
+      },
+      {
+        "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【5†\"low‑pH measurement may be more difficult\"】 not found verbatim in \"usgs-nfm-a6.4-ph.pdf__463363d709a0\""
+      },
+      {
+        "fixtureId": "crossdoc-bailed-orp-jumping",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【5†\"Bailers are not recommended for purging … Therefore, water sub‑sampled from a bailed sample may not be used for measurements of DO concentration, Eh, and water temperature.\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__f1715861e455\""
+      },
+      {
+        "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【21†\"Groundwater temperature must always be measured in situ or in a well‑designed groundwater flow‑through cell\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【21†\"Do not measure groundwater temperature in a sample extracted from a bailer or other sampling device that results in sample exposure to the atmosphere\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【21†\"Bailers are not recommended for purging … water subsampled from a bailed sample may not be used for measurements of … water temperature.\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__f61d4c287271\""
+      },
+      {
+        "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【7†\"A flow‑through cell/chamber is an air‑tight, transparent vessel …\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__d7462e09e17b\""
+      },
+      {
+        "fixtureId": "crossdoc-conductivity-rise-with-warming",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【6†\"temperature‑compensation factor and t is the measured temperature in degrees Celsius\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-conductivity-rise-with-warming",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【6†\"most modern specific conductance meters have built‑in temperature‑compensation factors (α) (0.019–0.020 per °C)\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-conductivity-rise-with-warming",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【6†\"Electrical conductivity increases by 0.5 to 3 percent per degree Celsius\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-conductivity-rise-with-warming",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【6†\"most modern specific conductance meters have built‑in temperature‑compensation (α) (0.019–0.020 per °C)\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【18†\"DO calibration procedures include corrections for atmospheric pressure and ionic strength. (Ionic strength is estimated from the conductivity measurement for routine field applications.)】 malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【5†\"If a measurement falls outside the calibration range, the instrument must be recalibrated to bracket the new range before continuing measurements.\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__dd989c168d7e\""
+      },
+      {
+        "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【24†\"ORP © . +10 mv*\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【5†\"Select measurement mode. Wait for the probe temperature to stabilize, and then read the temperature.\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__f0cdaf07e71e\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【9†\"ORP  Accuracy, ±5 mV.\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__63eb942808c2\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【8†\"optical DO sensors generally have accuracy ±0.1 mg/L or 1 percent after calibration\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__aa1374c14e21\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【12†\"membrane can wear out, this will lead to irregular readings\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【12†\"Low-resistance glass pH electrodes ... are expensive, generally not designed for fieldwork\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.4-ph.pdf__82b12bdb95cd\""
+      },
+      {
+        "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【22†\"Calibration verification of temperature sensors…must be performed every 12 months\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.1-temperature.pdf__aa7664732370\""
+      },
+      {
+        "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【14†\"The sensor does not read accurately … Calibration expired – verify or recertify.\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.1-temperature.pdf__c4c215ab7bd4\""
+      },
+      {
+        "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【13†\"The instrument’s temperature sensor must agree with the reference thermometer measurement within the accuracy of the sensor (e.g., +0.2 °C).\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__738f644915c9\""
+      },
+      {
+        "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"consult Oxygen Solubility at Indicated Pressure chart attached to the SOP\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-warm-week-oxygen-drop",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"15.0 °C … 8.6 mg/L\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-warm-week-oxygen-drop",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"20.0 °C … 7.6 mg/L\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "crossdoc-warm-week-oxygen-drop",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【6†\"the specific conductance of 8,000 μS/cm. The freshwater oxygen solubility … the salinity‑correction factor … is 0.9733 … the solubility … is 8.97 mg/L × 0.9733 = 8.73 mg/L\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__af19876f2172\""
+      },
+      {
+        "fixtureId": "deepmanual-cross-section-points",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【19†\"if the stream is well mixed, a single measurement point at the centroid of flow can be used to represent field‑measurement values for the cross section.\"】 not found verbatim in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__19b41bfb8c9f\""
+      },
+      {
+        "fixtureId": "deepmanual-cross-section-points",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【21†\"For streams 5 ft wide or greater, a minimum of 10 equal‑width increments is recommended. For streams less than 5 ft wide, use as many increments as is practical, but they must be equally spaced and a minimum of 3 inches apart.\"】 not found verbatim in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__d2c6ff539118\""
+      },
+      {
+        "fixtureId": "deepmanual-do-air-calibration",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【6†\"Allow 5 to 10 minutes for the air to saturate with water vapor and for the DO sensor and the air inside the calibration container to equilibrate.\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__aa1374c14e21\""
+      },
+      {
+        "fixtureId": "deepmanual-do-air-calibration",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【6†\"Using a calibration‑checked barometer, read the ambient atmospheric pressure to the nearest 1 mm of mercury.\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__aa1374c14e21\""
+      },
+      {
+        "fixtureId": "deepmanual-do-air-calibration",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【8†\"Select measurement mode; then select “DO %”.\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__7609693093b6\""
+      },
+      {
+        "fixtureId": "deepmanual-do-air-calibration",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【6†\"Check that no water droplets are on the probe or temperature sensor\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__aa1374c14e21\""
+      },
+      {
+        "fixtureId": "deepmanual-do-saturation-ceiling",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【14†\"20.0   9.09   9.04   8.97\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__0647560e9eed\""
+      },
+      {
+        "fixtureId": "deepmanual-ec-standard-choice",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"it is recommended to calibrate specific conductance with standards with values that are greater than 200 μS/cm\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-ec-standard-choice",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"Measurements of specific conductance standards that are within … ±3 percent of the certified values for measurements >100 μS/cm are considered accurate\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-ec-standard-choice",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【13†\"Do not calibrate using DIW; however, the measured specific conductance of DIW should be <3 μS/cm\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-ec-standard-choice",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【17†\"Deionized water and calibration standards with specific conductance less than 200 µS/cm are susceptible to bias\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-ec-standard-choice",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【17†\"recommended to calibrate specific conductance with standards with values that are greater than 200 µS/cm\"}] malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-sonde-settle-time",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【22†\"Sensors have equilibrated adequately when instrument readings have stabilized—that is, when the variability among consecutive measurements does not exceed an established criterion.\"】 not found verbatim in \"usgs-nfm-a6.8-multiparameter-instruments.pdf__4e9dfc809f8a\""
+      },
+      {
+        "fixtureId": "deepmanual-sonde-settle-time",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【22†\"Stability is reached if values for three (for in situ procedure) to five (for flowthrough‑chamber procedure)…are within 10 percent.\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.8-multiparameter-instruments.pdf__4e9dfc809f8a\""
+      },
+      {
+        "fixtureId": "deepmanual-thermistor-annual-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【5†\"The verification points must be ±2°C of the minimum and maximum and ±4°C of the mean\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-thermistor-annual-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【17†\"Method 2.— The annual verification requirement for deployed temperature sensors is met by performing a verification during each site visit throughout the year or field deployment period by comparison with a certified or traceable temperature sensor, in situ\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-turbidity-rounding",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【11†\"0 to <1, nearest 0.05\\n1 to <10, nearest 0.1\\n10 to <100, nearest 1\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【5†\"Allow the calibration standard (a Zobell solution: read the warning on the label before use) to equilibrate to ambient temperature.\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__a49a822f593f\""
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【5†\"Select measurement mode. … Wait for the probe temperature to stabilize, and then read the temperature.\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.5-orp.pdf__a49a822f593f\""
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【5†\"The readings should remain unchanged within manufacturer’s specifications.\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__a49a822f593f\""
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【5†\"Allow the calibration standard (a Zobell solution: read the warning on the label before use) to equilibrate to ambient temperature.\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__b575099996ac\""
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【3†\"Allow the electrode to reach thermal equilibrium (15 to 30 minutes).\"】 not found verbatim in \"Industrial-DO-probe.pdf\""
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【21†\"If the readings do not stabilize within about 30 minutes, record the potential and its drift; assume a single quantitative value is not possible.\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__79b5d6c04cc9\""
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【3†\"Allow the electrode to reach thermal equilibrium (15 to 30 minutes).\"】 not found verbatim in \"Industrial-DO-probe.pdf\""
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【21†\"If the readings do not stabilize within about 30 minutes, record the potential and its drift; assume a single quantitative value is not possible.\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__79b5d6c04cc9\""
+      },
+      {
+        "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+        "fixtureClass": "definitional",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"ORP stands for oxidation/reduction potential. Oxidation is the loss of electrons and reduction is the gain of electrons. The output of the probe is represented in millivolts\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+        "fixtureClass": "definitional",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"ORP  Accuracy, ±5 mV\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+        "fixtureClass": "definitional",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【13†\"Eh measurements are made by inserting a platinum electrode coupled with a reference electrode\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "definitional-required-versus-recommended",
+        "fixtureClass": "definitional",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【7†\"The terms “recommend,” “recommended,” and “recommendation” indicate that, on the basis of research or consensus, there are several acceptable alternatives to a given procedure…\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.1-temperature.pdf__49cdd9b58400\""
+      },
+      {
+        "fixtureId": "definitional-required-versus-recommended",
+        "fixtureClass": "definitional",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【6†\"Departure from or modifications to stipulated requirements, if necessary for accomplishing specific data‑quality requirements or study objectives, must be independently quality assured and documented.\"】 not found verbatim in \"usgs-nfm-a6.8-multiparameter-instruments.pdf__dbea57f43cf5\""
+      },
+      {
+        "fixtureId": "definitional-what-a-bare-tu-label-tells-us",
+        "fixtureClass": "definitional",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【5†\"Turbidity, ≤100 FNU (or other TU)\"】 not found verbatim in \"usgs-nfm-a6.7-turbidity.pdf__5bf774f777a4\""
+      },
+      {
+        "fixtureId": "followup-clarity-calibration-whole-head",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【6†\"Immersion of the entire sonde (bundle of field‑measurement sensors, including the turbidity sensor) requires larger volumes of calibrant\"】 not found verbatim in \"usgs-nfm-a6.7-turbidity.pdf__cd4dfb5fb149\""
+      },
+      {
+        "fixtureId": "followup-clarity-calibration-whole-head",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【6†\"Immersion of turbidity sensor only… This technique minimizes the volume of calibrant required for calibration\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.7-turbidity.pdf__cd4dfb5fb149\""
+      },
+      {
+        "fixtureId": "followup-cleaning-the-salt-sensor",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【8†\"Hard coatings should be chemically removed. We highly recommend you use the Atlas Scientific conductivity probe cleaner.\"】 not found verbatim in \"usgs-nfm-a6.4-ph.pdf__c4d565e70268\""
+      },
+      {
+        "fixtureId": "followup-cleaning-the-salt-sensor",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【7†\"Over time conductivity probes can become dirty and covered in deposits, which can change the basic electrical properties of the probe and cause inaccurate readings.\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__aed72e2efaab\""
+      },
+      {
+        "fixtureId": "followup-cleaning-the-salt-sensor",
+        "fixtureClass": "follow-up",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【21†\"When additional cleaning is required, soak the probe in 5-percent volume per volume (v/v) hydrochloric acid for as long as 2 hours and then rinse thoroughly with DIW.\"】 not found verbatim in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__9468990c7428\""
+      },
+      {
+        "fixtureId": "followup-cleaning-the-salt-sensor",
+        "fixtureClass": "follow-up",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【7†\"Over time conductivity probes can become dirty and covered in deposits, which can change the basic electrical properties of the probe and cause inaccurate readings.\"】 not found verbatim in \"usgs-nfm-a6.8-multiparameter-instruments.pdf__4e2d2050f1d7\""
+      },
+      {
+        "fixtureId": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+        "fixtureClass": "precedence",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【13†\"hypoxic to anoxic (concentration less than 1.0 mg/L)\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__a014e07168d9\""
+      },
+      {
+        "fixtureId": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+        "fixtureClass": "precedence",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【13†\"hypoxic to anoxic (concentration less than 1.0 mg/L)\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__83a54c2ad6f3\""
+      },
+      {
+        "fixtureId": "probecal-buffer-handling",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【6†\"Rinse the electrode and thermistor three times with DIW initially and between uses of each buffer.\"】 not found verbatim in \"usgs-nfm-a6.4-ph.pdf__35d0f93e82e8\""
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【5†\"If calibrating to a given DO concentration rather than a condition of 100‑percent saturation, use table 6.2–2 …\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__7609693093b6\""
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【8†\"The air‑calibration or check with a wet‑towel method (variation of Procedure 1) is the recommended method to be performed at the field site.\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__aa1374c14e21\""
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【5†\"Monitor the temperature and DO readings in the calibration chamber, observing readings until they stabilize. Read the temperature to the nearest 0.1 degree Celsius (°C).\"】 not found verbatim in \"usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc\""
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【5†\"Verify that the instrument reading is within ±0.2 mg/L or 2 percent of the computed saturation value.\"】 not found verbatim in \"usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc\""
+      },
+      {
+        "fixtureId": "probecal-ec-never-recalibrate",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【6†\"The plates do not go bad, or change, so recalibration is not necessary\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-ec-never-recalibrate",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"~10 years\tTime before recalibration\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-ec-never-recalibrate",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【7†\"Be sure to watch out for air bubbles\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-ec-never-recalibrate",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【8†\"Soft coatings can be removed by lightly brushing\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-ec-never-recalibrate",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【6†\"The plates do not go bad, or change, so recalibration is not necessary. After the first calibration your conductivity probe is good to go.\"】 not found verbatim in \"usgs-nfm-a6.3-specific-conductance.pdf__0c26ff6f08d1\""
+      },
+      {
+        "fixtureId": "probecal-ec-never-recalibrate",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【8†\"Lightly tap your conductivity probe to knock out any bubbles caught in the probe.\"】 not found verbatim in \"usgs-nfm-a6.3-specific-conductance.pdf__619a464ebb28\""
+      },
+      {
+        "fixtureId": "probecal-end-of-day-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【6†\"How often do you need to recalibrate a conductivity probe?\"】 not found verbatim in \"usgs-nfm-a6.1-temperature.pdf__befd357b2b1f\""
+      },
+      {
+        "fixtureId": "probecal-end-of-day-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【6†\"How often do you need to recalibrate an ORP probe?\"】 not found verbatim in \"usgs-nfm-a6.1-temperature.pdf__befd357b2b1f\""
+      },
+      {
+        "fixtureId": "probecal-end-of-day-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【6†\"How often do you need to recalibrate a dissolved oxygen probe?\"】 not found verbatim in \"usgs-nfm-a6.1-temperature.pdf__befd357b2b1f\""
+      },
+      {
+        "fixtureId": "probecal-end-of-day-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【9†\"How often do you need to recalibrate a pH probe?\"】 not found verbatim in \"usgs-nfm-a6.1-temperature.pdf__09a7f331e5eb\""
+      },
+      {
+        "fixtureId": "probecal-end-of-day-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【19†\"pH + 0.3 pH unit with pH 7 buffer*\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-end-of-day-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【19†\"Dissolved Oxygen + (.5 mg/L of sat. value* <0.5 mg/L for the 0 mg/L solution\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-end-of-day-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【12†\"Verify that the instrument reading is within ±0.2 mg/L or 2 percent of the computed saturation value\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-end-of-day-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【23†\"Properties of temperature, DO concentration, and Eh are required to be measured directly (in situ) … Other properties such as pH, conductivity, and turbidity are recommended to be measured in situ\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-orp-standard-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【14†\"Zoell's solution is the standard solution for testing redox instruments\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__9dfb772d652d\""
+      },
+      {
+        "fixtureId": "probecal-orp-standard-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【9†\"Eh of ZoBell's solution exceeds theoretical by ±5 mV\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__d2968873c795\""
+      },
+      {
+        "fixtureId": "probecal-orp-standard-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【11†\"If the readings change, re‑calibrate. If they continue to change after re‑calibration, try a new Zobell solution or consult manufacturer.\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__f0cdaf07e71e\""
+      },
+      {
+        "fixtureId": "probecal-ph-slope-acceptance",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【14†\"Properly working electrodes should have slopes that are 56.2 to 59.8 mV/pH unit at 25 °C, which is 95 to 101 percent of the expected slope\"} malformed citation marker"
+      },
+      {
+        "fixtureId": "probecal-ph-slope-acceptance",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【9†\"Soft coatings can be removed by vigorous stirring or by the use of a squirt bottle.\"】 not found verbatim in \"usgs-nfm-a6.8-multiparameter-instruments.pdf__420b66dc4067\""
+      },
+      {
+        "fixtureId": "probecal-ph-slope-acceptance",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【9†\"A light bleach solution or even a 5 – 10 % hydrochloric acid (HCl) soak for a few minutes, often removes many coatings.\"】 not found verbatim in \"usgs-nfm-a6.8-multiparameter-instruments.pdf__420b66dc4067\""
+      },
+      {
+        "fixtureId": "probecal-ph-what-solutions",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【15†\"Rinse the electrode and thermistor thoroughly with DIW, then with the sample by pouring directly over the electrode and thermistor and appropriately discarding the rinse.\"】 not found verbatim in \"usgs-nfm-a6.4-ph.pdf__147ba11e0c62\""
+      },
+      {
+        "fixtureId": "probecal-ph-what-solutions",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【15†\"Select the pH‑7 buffer and one or two (depending on the meter) additional buffer solutions that will bracket the anticipated pH of the sample.\"】 not found verbatim in \"usgs-nfm-a6.4-ph.pdf__147ba11e0c62\""
+      },
+      {
+        "fixtureId": "probecal-ph-what-solutions",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【15†\"Third rinse—Pour the next aliquot of buffer into the beaker and immerse the electrode in the buffer for 1 minute.\"】 not found verbatim in \"usgs-nfm-a6.4-ph.pdf__147ba11e0c62\""
+      },
+      {
+        "fixtureId": "probecal-ph-what-solutions",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【14†\"Use at least two pH buffer solutions with documented, NIST‑traceable pH values that bracket the sample pH for accurate calibration of the pH instrument system.\"】 not found verbatim in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__d2c6ff539118\""
+      },
+      {
+        "fixtureId": "probecal-ph-what-solutions",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【15†\"Select the pH‑7 buffer and one or two (depending on the meter) additional buffer solutions that will bracket the anticipated pH of the sample.\"】 not found verbatim in \"usgs-nfm-a6.4-ph.pdf__a5e101e3271a\""
+      },
+      {
+        "fixtureId": "probecal-ph-what-solutions",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【15†\"Most modern meters have built‑in temperature compensation that works well in the temperature range from 5 to 35 °C and pH from 4.0 to 9.5, but this assumption should be checked regularly with buffers that are equilibrated to ambient field‑sample temperatures.\"】 not found verbatim in \"usgs-nfm-a6.4-ph.pdf__a5e101e3271a\""
+      },
+      {
+        "fixtureId": "probecal-sonde-calibration-order",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【8†\"Be sure to watch out for air bubbles, as they can get caught between the two graphite plates and throw off your results.\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__6ac12d7a1ec8\""
+      },
+      {
+        "fixtureId": "probecal-sonde-calibration-order",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【9†\"Soft coatings can be removed by vigorous stirring or by the use of a squirt bottle.\"】 not found verbatim in \"usgs-nfm-a6.8-multiparameter-instruments.pdf__5854e428dee9\""
+      },
+      {
+        "fixtureId": "probecal-sonde-calibration-order",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【9†\"A light bleach solution or even a 5 – 10% hydrochloric acid (HCl) soak for a few minutes, often removes many coatings. Do not use abrasive materials on the ORP probe.\"】 not found verbatim in \"usgs-nfm-a6.8-multiparameter-instruments.pdf__5854e428dee9\""
+      },
+      {
+        "fixtureId": "probecal-sonde-calibration-order",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【11†\"Soft coatings can be removed by lightly brushing around the sides of the probe and membrane cap.\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__c536dd79ec6f\""
+      },
+      {
+        "fixtureId": "probecal-sonde-calibration-order",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【11†\"If the probes membrane is in need of cleaning, use a mild bleach mixture to gently wash away any deposits. DO NOT USE A BRUSH TO CLEAN THE MEMBRANE.\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__c536dd79ec6f\""
+      },
+      {
+        "fixtureId": "probecal-sonde-calibration-order",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【9†\"Soft coatings can be removed by vigorous stirring or by the use of a squirt bottle.\"】 not found verbatim in \"usgs-nfm-a6.8-multiparameter-instruments.pdf__5854e428dee9\""
+      },
+      {
+        "fixtureId": "probecal-sonde-calibration-order",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【9†\"Organic chemical, or hard coatings, should be chemically removed using a light bleach solution. Do not use a brush or abrasive materials on the pH probe.\"】 not found verbatim in \"usgs-nfm-a6.8-multiparameter-instruments.pdf__5854e428dee9\""
+      },
+      {
+        "fixtureId": "refusal-buffering-capacity-not-measured",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-buffering-capacity-not-measured",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "answered: stated 8 figure(s) (10, 10, 1) on a turn that had to refuse; term overlap 10%"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"~10 years\tTime before recalibration】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【1†\"~10 years\tLife expectancy】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"~1 Year\tTime before recalibration】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"~4 Years +\tLife expectancy】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【3†\"~1 Year\tTime before recalibration】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【3†\"~ 4 Years\tLife expectancy】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"~1 Year\tTime before recalibration】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【4†\"~4 Years +\tLife expectancy】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "answered: stated 8 figure(s) (10, 10, 1) on a turn that had to refuse; term overlap 10%"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【1†\"~10 years Time before recalibration\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【2†\"~1 Year Time before recalibration\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【3†\"~1 Year Time before recalibration\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【4†\"~1 Year Time before recalibration\"}】 malformed citation marker"
+      },
+      {
+        "fixtureId": "refusal-temperature-harm-threshold",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-temperature-harm-threshold",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-turbidity-sensor-hardware",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-turbidity-sensor-hardware",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "off-contract: refused without the pinned sentence and stated no figure — passes the gate, fails the rubric; hand to the judge"
+      },
+      {
+        "fixtureId": "refusal-turbidity-sensor-hardware",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【5†\"Units; FNU, Formazin Nephelometric Units; N/A, not applicable;<, less than; >, equal to or greater than] Turbidity】 malformed citation marker"
+      }
+    ]
+  }
+]

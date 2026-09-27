@@ -239,12 +239,13 @@ Shape:
 config = {
   nodeEnv, isProduction, port, logLevel,
   firestore:  { projectId?, databaseId },
-  fireworks:  { apiKey?, baseUrl, chatModel?, embeddingModel, maxTokens, temperature, user },
+  fireworks:  { apiKey?, baseUrl, chatModel?, embeddingModel, rerankModel, maxTokens, temperature,
+                reasoningEffort, thinking, user },
   deviceApi:  { baseUrl?, devToken?, timeoutMs, defaultDeviceLabel? },
   tools:      { sensorTool, reportTool, maxToolRounds, rawLimit },
   chat:       { maxHistoryMessages },
   quota:      { enabled, requests, tokens, reports, windowMs, windowLabel, scope },
-  retrieval:  { defaultMode, debug, corpusSource },
+  retrieval:  { defaultMode, debug, corpusSource, queryRewrite, queryRewriteFirstTurn },
   waterType,
   audit:      { enabled },
   catalogue:  { prompt, includeDrafts },
@@ -262,6 +263,16 @@ every startup log than a silently voided sweep.
 `catalogue.prompt` (`CATALOGUE_PROMPT`, default `false`) appends the guidance block to the system
 prompt and warns at startup for the same capture-comparability reason. `catalogue.includeDrafts`
 (`CATALOGUE_DRAFTS`, default `false`) shows unapproved entries, for the supervisor's review only (§4b).
+
+`fireworks.reasoningEffort` (`LLM_REASONING_EFFORT`: `default` sends nothing, or `low`, `medium`,
+`high`) and `fireworks.thinking` (`LLM_THINKING`: `default` or `disabled`, which sends
+`thinking: {type: "disabled"}` for models such as `minimax-m3`) shape the answer call. The release
+answers with `glm-5p3-flash` at `low`: it is thinking-only, rejects `disabled` with a 400, and was
+evaluated at `low` (`EVAL_REBUILD.md`, R4).
+
+`retrieval.queryRewrite` (`QUERY_REWRITE`, default `false`) and `retrieval.queryRewriteFirstTurn`
+(`QUERY_REWRITE_FIRST_TURN`, default `false`, effective only with the first on) are described in
+§10.1a; the release turns both on.
 
 Environment variables and defaults are documented in `README.md` §5 and `.env.example`.
 
@@ -538,10 +549,18 @@ tests construct isolated instances instead of depending on import order.
 - **`firestore-vector`** (`FirestoreVectorAdapter`) — dense RAG on Firestore's own vector search
   (§14b), the surviving RAG arm.
 - **`local-vector`** (`LocalVectorAdapter`) — the same dense retrieval computed in process against
-  the cache `npm run embed:cache` writes. No credentials, no vector index, no network on the query
-  path. It exists so retrieval can be evaluated offline and free; `npm run compare:vector-arms`
+  the cache `npm run embed:cache` writes. No vector index and no Firestore reads; each query is
+  still embedded through Fireworks (`EmbeddingService.embedQuery`), and the cache holds only the
+  corpus vectors. It began as the way to evaluate retrieval offline; `npm run compare:vector-arms`
   reports **30/30 queries ranked identically** to `firestore-vector`, drift ~1e-4, because
   Firestore's index is configured `flat` (exhaustive) rather than approximate.
+  **It is the release's retrieval (user, 2026-09-27)** at `DEFAULT_TOP_K` 20 with the four probe
+  datasheets unpinned, as ordinary corpus documents: R4 measured it level with the reranker at a
+  third of the cost (`EVAL_REBUILD.md`, "Control: `local-vector` with both rewrites").
+- **`local-rerank`** / **`hybrid-slice-rerank`** — the same candidates re-scored by a Fireworks
+  reranker (`RERANK_MODEL`, default `fireworks/qwen3-reranker-8b`) before the top k are kept. R4
+  found no gain over `local-vector` with both rewrites at about three times the cost per question,
+  so neither is used in the release.
 - **`local-hybrid`** (`RrfHybridAdapter`) — dense fused with an in-process BM25 index using
   Reciprocal Rank Fusion, `RRF_K = 60`. This restores the lexical half the migration dropped
   because Firestore has no full-text search (`RETRIEVAL_BAKEOFF.md` §4b's "dead lexical branch").
@@ -567,8 +586,12 @@ behavior, so retrieval stays comparable across the migration.
 **`MAX_TOP_K` was raised from 10 to 50 on 2026-08-24.** The old ceiling was legacy parity
 (`MIGRATION_SPEC.md` §7: default 5, caller-capped 1–10), never a measurement. While it stood, a
 `k=20` run returned exactly `k=10`'s numbers because `resolveTopK` clamped — which reads as "depth
-does not help" when the request simply never happened. **`DEFAULT_TOP_K` is unchanged at 5**: the
-ceiling bounds what a caller may request, the default is what every request pays.
+does not help" when the request simply never happened. The ceiling bounds what a caller may
+request; the default is what every request pays.
+
+**`DEFAULT_TOP_K` is 20** (raised from 5 in R4, 2026-09-24): measured correctness rose with depth and
+peaked at 20 (`EVAL_REBUILD.md`). It is a code constant in `options.ts`, not an environment
+setting; an environment variable of that name is ignored.
 
 ---
 
@@ -600,12 +623,37 @@ house `{ error, message }` shape.
   unbounded client-controlled input; without a cap one conversation grows the prompt, and the bill,
   without limit. Oldest turns are dropped because recent ones carry the context that matters.
 
+### 10.1a Search query rewriting (`src/retrieval/queryRewrite.ts`)
+
+Retrieval sees one query string, not the conversation, so a follow-up such as "what about in
+winter?" searches without its subject. With `QUERY_REWRITE` on, `ChatController.postChat` first asks
+the answer model to rewrite a follow-up into a standalone search query from the history; with
+`QUERY_REWRITE_FIRST_TURN` also on, a first message is rewritten into a search query too. Only the
+search changes: the prompt still carries the user's own words. A failed or empty rewrite falls back
+to the message verbatim and is logged; a success logs nothing. Each rewrite is one extra model call
+per turn.
+
+R4 measured the effect (`EVAL_REBUILD.md`): follow-up rewriting raised offline recall at k=20 from
+38% to 55% and correctness from 0.72 to about 0.90; first-turn rewriting added about five recall
+points. The release turns both on.
+
 ### 10.2 Prompt assembly (`src/prompt/`)
 
 `buildSystemPrompt()` is ported from the legacy `backend/main.py::build_system_prompt`, recovered
 from git history at `7e2b09e^` — `MIGRATION_SPEC.md` §4.2 described its structure but never recorded
 its text. `REFUSAL_SENTENCE` is **verbatim** because behavior depends on its exact wording (pinned
 by a test; `MIGRATION_SPEC.md` §11 calls it out specifically).
+
+Three rules were added in R4 (2026-09-27, `EVAL_REBUILD.md`):
+
+- **`NO_TOOLS_RULE`**, added only when both tools are off, forbids offering to look up pod readings
+  or any other tool action; `glm-5p3-flash` otherwise offered to fetch readings it could not reach.
+  The tools-on prompt does not carry it.
+- **No pod facts from typical instruments** (both modes): a unit, model, sensor type, setting or
+  threshold is never inferred for this pod from what an excerpt says of other instruments.
+- **The refusal sentence word for word** (both modes) whenever any part is declined; a paraphrase
+  does not replace it. With the previous rule GLM answered or paraphrased two of eight must-refuse
+  turns; with both it refused all eight exactly on gold context and in the launch capture.
 
 **The prompt carries no ranges.** The legacy `AUTHORITATIVE NORMAL RANGES` block was deleted on
 2026-09-13, when the supervisor vetoed the operator source-of-truth document's ranges. A pod's

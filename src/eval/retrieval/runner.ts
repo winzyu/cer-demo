@@ -1,8 +1,11 @@
 import { readCorpus } from "../../ingestion/ingest";
+import { mergeRankings } from "../../retrieval/queryDecompose";
 import type { Chunk } from "../../types/retrieval.types";
 import { loadLabels, type LoadedLabels } from "./labels";
 import { scoreQuery, summarise } from "./metrics";
-import type { QueryScore, RankedResult, RunSummary } from "./types";
+import type {
+  LabelledQuery, QueryScore, RankedResult, RunSummary,
+} from "./types";
 
 /**
  * Replays every labelled query through one retrieval adapter and scores what came back.
@@ -35,6 +38,15 @@ export interface RunOptions {
   corpusPath?: string;
   /** Called after each query, for progress on a slow adapter. */
   onQuery?: (index: number, total: number) => void;
+  /**
+   * Turns a labelled query into the text actually searched, e.g. a follow-up rewritten from its
+   * conversation (`QUERY_REWRITE`). Absent, the label's query is searched verbatim.
+   *
+   * An array is a split query (`queryDecompose.ts`): the first entry is searched as usual and
+   * each further one alongside it, merged by `mergeRankings` to the first search's size, so the
+   * prompt holds as many chunks as an unsplit query's.
+   */
+  searchQuery?: (fixtureId: string, label: LabelledQuery) => Promise<string | string[]>;
 }
 
 export interface RunResult {
@@ -44,6 +56,8 @@ export interface RunResult {
   meanChunksInContext: number;
   /** Ranked chunk ids per query, keyed `fixtureId#turn`. The golden-snapshot payload. */
   retrieved: Record<string, string[]>;
+  /** The text searched per query, keyed like `retrieved`, when it differs from the label's. */
+  searched: Record<string, string>;
 }
 
 /** filename -> chunk ids, in reading order. Used to expand document-level results. */
@@ -84,12 +98,27 @@ export const runRetrievalEval = async (
 
   const scores: QueryScore[] = [];
   const retrieved: Record<string, string[]> = {};
+  const searched: Record<string, string> = {};
   let totalChunks = 0;
 
   for (let i = 0; i < labels.queries.length; i += 1) {
     const { fixtureId, fixtureClass, label } = labels.queries[i];
+    const searchedFor = options.searchQuery
+      // eslint-disable-next-line no-await-in-loop
+      ? await options.searchQuery(fixtureId, label)
+      : label.query;
+    const [query, ...subQueries] = Array.isArray(searchedFor) ? searchedFor : [searchedFor];
+    const shown = [query, ...subQueries].join(" | ");
+    if (shown !== label.query) searched[`${fixtureId}#${label.turn}`] = shown;
     // eslint-disable-next-line no-await-in-loop
-    const context = await adapter.getContext(label.query, { topK: options.topK });
+    const first = await adapter.getContext(query, { topK: options.topK });
+    const context = subQueries.length === 0
+      ? first
+      : mergeRankings([
+        first,
+        // eslint-disable-next-line no-await-in-loop
+        ...await Promise.all(subQueries.map((q) => adapter.getContext(q, { topK: options.topK }))),
+      ], first.length);
     const ranked = toRanked(context, byFilename);
 
     totalChunks += ranked.length;
@@ -104,5 +133,6 @@ export const runRetrievalEval = async (
     scores,
     meanChunksInContext: labels.queries.length === 0 ? 0 : totalChunks / labels.queries.length,
     retrieved,
+    searched,
   };
 };

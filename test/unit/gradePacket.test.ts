@@ -6,7 +6,7 @@ import { __testing } from "../../scripts/gradePacket";
 import { loadFixtures } from "../../src/eval/fixtures";
 
 const {
-  shuffleFor, labelsFor, hasFilledScores, armsOnDisk,
+  shuffleFor, labelsFor, hasFilledScores, armsOnDisk, parseArgs,
 } = __testing;
 
 /**
@@ -56,6 +56,25 @@ describe("blind grading packet — arm discovery", () => {
 
     await expect(armsOnDisk(root, "warm", ["firestore-direct", "nope"]))
       .rejects.toThrow(/No transcripts for arm\(s\) nope/);
+  });
+
+  it("follows a symlinked arm, so a composite run can draw arms from two captures", async () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "grade-arms-"));
+    write(path.join(root, "gold-run"), "warm", ["gold-context"]);
+    write(path.join(root, "k20-run"), "warm", ["hybrid-slice-vector"]);
+    const composite = path.join(root, "composite", "warm");
+    fs.mkdirSync(composite, { recursive: true });
+    const link = (run: string, arm: string): void => fs.symlinkSync(
+      path.join(root, run, "warm", arm),
+      path.join(composite, arm),
+    );
+    link("gold-run", "gold-context");
+    link("k20-run", "hybrid-slice-vector");
+    // A dangling link is not an arm.
+    fs.symlinkSync(path.join(root, "missing"), path.join(composite, "gone"));
+
+    expect(await armsOnDisk(path.join(root, "composite"), "warm"))
+      .toEqual(["gold-context", "hybrid-slice-vector"]);
   });
 
   it("says what to do when the pass has not been captured at all", async () => {
@@ -194,4 +213,27 @@ it("retains future tool and audit evidence in grading inputs without inventing l
   const rendered = gradingContext({ ...legacy, ...fields });
   expect(JSON.parse(rendered.split("ANSWER EVIDENCE:\n")[1])).toEqual(fields);
   expect(gradingContext(legacy)).toBe("### doc (chunk one)\n\nexcerpt");
+});
+
+describe("blind grading packet — named runs", () => {
+  const grading = path.join(process.cwd(), "eval", "grading");
+
+  it("writes a named run's packet beside it, where judge --run reads it", () => {
+    const args = parseArgs(["--run=p3-calib-2026-09-24"]);
+    expect(args.run).toBe("p3-calib-2026-09-24");
+    expect(args.outRoot).toBe(path.join(grading, "p3-calib-2026-09-24"));
+  });
+
+  it("keeps the default layout without --run", () => {
+    expect(parseArgs([]).outRoot).toBe(grading);
+  });
+
+  it("lets --out place a top-up round of a named run", () => {
+    const args = parseArgs(["--run=r1", "--out=eval/grading/r1/rounds/top-up"]);
+    expect(args.outRoot).toBe(path.resolve("eval/grading/r1/rounds/top-up"));
+  });
+
+  it("rejects a run id that would escape the transcript root", () => {
+    expect(() => parseArgs(["--run=../warm"])).toThrow(/--run must be/);
+  });
 });

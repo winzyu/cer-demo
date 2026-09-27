@@ -1,0 +1,134 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-26T21:35:15.072Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 581076,
+    "cachedPromptTokens": 109106,
+    "completionTokens": 89224
+  },
+  "results": [
+    {
+      "arm": "gold-context",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.9583333333333334,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.15,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 0.8333333333333334,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 0.9375,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.0222222222222221,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that withholds every figure and comparison the rubric requires and no must-contain point asked it to decline. Unmet: gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; States the difference is 0.03 mg/L and assesses its significance against the applicable procedure; notes the USGS values are generated from the Benson and Krause equations; Compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; advises using the table belonging to whichever protocol the work is being done under consistently"
+        },
+        {
+          "fixtureId": "crossdoc-warm-week-oxygen-drop",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the two tabulated freshwater values but computes a wrong 1.05 mg/L drop omits any pressure dependence salinity correction or statement that the residual cannot be established and violates a must-not by applying freshwater solubility unchanged to the brackish site. Unmet: States the 760 mmHg solubility falls by 0.99 mg/L from 15 C to 20 C as a conditional benchmark not a ceiling on measured DO; States equilibrium saturation also depends on barometric pressure so the site's actual pressure changes the benchmark; States that in brackish water the freshwater value must be reduced by a salinity correction factor before comparison; States the actual warming contribution and remaining site-specific drop cannot be established from these readings alone (pressure salinity initial saturation not given)"
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-rounding",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer claims EPA and USGS resolutions are identical across every range (stating 1 NTU for 40–<100 under EPA 180.1) which is the prohibited claim so the score is 0 despite noting the ASTM/drinking-water-compliance exception. Unmet: EPA Method 180.1 reports 63.7 as 65 to the nearest 5 units in the 40 to under 100 range"
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the standard-hydrogen-electrode definition but asserts the probe's raw ORP millivolts are the same as Eh violating the 'must not' item on interchangeability and missing the reference-electrode correction points. Unmet: states that Eh is an equilibrium potential developed at the boundary between a noble-metal electrode and the water and reflects the redox-active species in solution; states that the millivolts the probe reads are not Eh on their own because that raw reading is against the probe's own reference electrode; states that getting Eh means adding the reference electrode's own potential to the measured reading"
+        },
+        {
+          "fixtureId": "deepmanual-thermistor-annual-check",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives 6 and 10 °C but fails to state the ±2 °C extrema and ±4 °C mean rules omits the at-most-five-points note and requires a fixed two points violating the must-not. Unmet: States a minimum of two verification points; States the points must be within ±2 °C of the annual minimum and maximum; States the points must be within ±4 °C of the annual mean; Notes this range-verification procedure requires at most five points without generalizing to every certification procedure"
+        },
+        {
+          "fixtureId": "precedence-turbidity-groundwater-background-not-pod-limit",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that withholds the chapter's groundwater turbidity figures and all substantive points the rubric requires even though the question was answerable from the loaded document. Unmet: States chapter reports natural groundwater turbidity up to 19 units and contaminated groundwater can be considerably higher attributed to the chapter; States the chapter's groundwater figures describe observations not a recommended flagging value; Reiterates turbidity is a relative qualitative indicator not a numeric pass/fail band; States this pod's configured threshold is unavailable; no supplied result establishes whether one is configured; Declines to adopt 19 NTU or any figure as the pod's flagging threshold"
+        },
+        {
+          "fixtureId": "probecal-end-of-day-check",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the EPA pH ±0.3 and DO ±0.5 defaults and their project-plan caveat but omits both USGS figures (±0.05 pH ±0.2 mg/L) and presents the single EPA pH tolerance as 'the federal guidance' implying the sources agree — a must-not violation. Unmet: States that USGS field practice for pH is tighter requiring recalibration when a checked buffer is off by more than plus or minus 0.05 pH unit; For USGS oxygen verification accepts the A6.2 saturation performance check within ±0.2 mg/L distinct from EPA's default end-of-day ±0.5 mg/L and the applicable project criteria"
+        }
+      ]
+    }
+  ]
+}

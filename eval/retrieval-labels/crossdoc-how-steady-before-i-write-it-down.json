@@ -13,22 +13,17 @@
           "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
           "grade": 2,
           "evidence": "(Variability should be within the range shown for five or more\nmeasurements)",
-          "locator": "Section 3.0 Performing Field Measurements and start of table 6.0–1 — \"Properties of temperature, DO concentration, and Eh are\\nrequired to be measured directly (in situ)\"",
-          "claimIds": [
-            "a60-tbl601-caption-01"
-          ]
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__1b7e9852e841",
           "contentHash": "1b7e9852e841",
           "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
           "grade": 2,
-          "evidence": "±3%Dissolved oxygen\nOptical/luminescent sensors \t±0.2 mg/L\npH:\nMeter displays to 0.01 \t±0.1 unit",
-          "locator": "Table 6.0–1 remainder and its footnotes — \"Dissolved oxygen\\nOptical/luminescent sensors\"",
-          "claimIds": [
-            "a60-xcut-tbl601-all-01",
-            "a60-tbl601-multiparam-01"
-          ]
+          "evidence": "(Variability should be within the range shown for five or more\nmeasurements)",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__e157e31940ab",
@@ -36,13 +31,8 @@
           "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
           "grade": 2,
           "evidence": "Sensors have equilibrated adequately\nwhen instrument readings have stabilized—that is,\nwhen the variability among consecutive measurements\ndoes not exceed an established criterion.",
-          "locator": "Section 3.0 Performance bullets — \"Surface water: Allow at least 60 seconds\" and \"Groundwater: Begin recording measurements\"",
-          "claimIds": [
-            "a60-xcut-equilibrate-01",
-            "a60-xcut-sw-60s-median3-01",
-            "a60-xcut-gw-median5-01",
-            "a60-xcut-exceeds-criteria-01"
-          ]
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__fea0c27e3094",
@@ -50,12 +40,8 @@
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
           "evidence": "Allow time for the readings on the display to stabilize\nwithin the criteria shown in table 6.8–5.",
-          "locator": "Sections 4.0 Measurement and 4.1 Surface Water — \"Wait a minimum of 60 seconds for the sensors\"",
-          "claimIds": [
-            "mp-stabilize-to-table-01",
-            "mp-60s-surface-water-06",
-            "mp-60s-longer-manufacturer-07"
-          ]
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
@@ -63,22 +49,26 @@
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
           "evidence": "Wait a minimum of 60 seconds for the sensors and\nsonde body to reach thermal equilibrium with the water\nbefore monitoring field-parameter values.",
-          "locator": "Section 4.2 Groundwater bullets and section 5.0 Troubleshooting — \"Field-measurement sensors must first be allowed to reach thermal equilibrium\"",
-          "claimIds": [
-            "mp-60s-groundwater-03",
-            "mp-equilibrium-range-04"
-          ]
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__4e9dfc809f8a",
           "contentHash": "4e9dfc809f8a",
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
-          "evidence": "(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)",
-          "locator": "Section 4.2 Groundwater and table 6.8–5. Stabilization criteria for common field parameters",
-          "claimIds": [
-            "mp-t5-accuracy-caveat-08"
-          ]
+          "evidence": "Turbidity \t± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__66feebbcbcec",
+          "contentHash": "66feebbcbcec",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Turbidity \t± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
@@ -86,10 +76,8 @@
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
           "evidence": "• Allow sufficient time for the temperature sensor to equilibrate to the water temperature.",
-          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
-          "claimIds": [
-            "mp-t6-equilibrate-temp-09"
-          ]
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         }
       ]
     },
@@ -103,36 +91,26 @@
           "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
           "grade": 2,
           "evidence": "(Variability should be within the range shown for five or more\nmeasurements)",
-          "locator": "Section 3.0 Performing Field Measurements and start of table 6.0–1 — \"Properties of temperature, DO concentration, and Eh are\\nrequired to be measured directly (in situ)\"",
-          "claimIds": [
-            "a60-tbl601-caption-01"
-          ]
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__1b7e9852e841",
           "contentHash": "1b7e9852e841",
           "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
           "grade": 2,
-          "evidence": "±3%Dissolved oxygen\nOptical/luminescent sensors \t±0.2 mg/L\npH:\nMeter displays to 0.01 \t±0.1 unit",
-          "locator": "Table 6.0–1 remainder and its footnotes — \"Dissolved oxygen\\nOptical/luminescent sensors\"",
-          "claimIds": [
-            "a60-xcut-tbl601-all-01",
-            "a60-tbl601-multiparam-01"
-          ]
+          "evidence": "(Variability should be within the range shown for five or more\nmeasurements)",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__e157e31940ab",
           "contentHash": "e157e31940ab",
           "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
           "grade": 2,
-          "evidence": "Sensors have equilibrated adequately\nwhen instrument readings have stabilized—that is,\nwhen the variability among consecutive measurements\ndoes not exceed an established criterion.",
-          "locator": "Section 3.0 Performance bullets — \"Surface water: Allow at least 60 seconds\" and \"Groundwater: Begin recording measurements\"",
-          "claimIds": [
-            "a60-xcut-equilibrate-01",
-            "a60-xcut-sw-60s-median3-01",
-            "a60-xcut-gw-median5-01",
-            "a60-xcut-exceeds-criteria-01"
-          ]
+          "evidence": "ment point, either use the median of the final five or",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__fea0c27e3094",
@@ -140,12 +118,8 @@
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
           "evidence": "Allow time for the readings on the display to stabilize\nwithin the criteria shown in table 6.8–5.",
-          "locator": "Sections 4.0 Measurement and 4.1 Surface Water — \"Wait a minimum of 60 seconds for the sensors\"",
-          "claimIds": [
-            "mp-stabilize-to-table-01",
-            "mp-60s-surface-water-06",
-            "mp-60s-longer-manufacturer-07"
-          ]
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
@@ -153,11 +127,8 @@
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
           "evidence": "Wait a minimum of 60 seconds for the sensors and\nsonde body to reach thermal equilibrium with the water\nbefore monitoring field-parameter values.",
-          "locator": "Section 4.2 Groundwater bullets and section 5.0 Troubleshooting — \"Field-measurement sensors must first be allowed to reach thermal equilibrium\"",
-          "claimIds": [
-            "mp-60s-groundwater-03",
-            "mp-equilibrium-range-04"
-          ]
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__4e9dfc809f8a",
@@ -165,10 +136,17 @@
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
           "evidence": "(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)",
-          "locator": "Section 4.2 Groundwater and table 6.8–5. Stabilization criteria for common field parameters",
-          "claimIds": [
-            "mp-t5-accuracy-caveat-08"
-          ]
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__66feebbcbcec",
+          "contentHash": "66feebbcbcec",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
@@ -176,10 +154,17 @@
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
           "evidence": "• Allow sufficient time for the temperature sensor to equilibrate to the water temperature.",
-          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
-          "claimIds": [
-            "mp-t6-equilibrate-temp-09"
-          ]
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__80961835fb6c",
+          "contentHash": "80961835fb6c",
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "grade": 2,
+          "evidence": "ment point, either use the median of the final five or",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         }
       ]
     }

@@ -44,7 +44,7 @@
     },
     {
       "turn": 2,
-      "query": "We've been doing the second one to save standard. What are we trading away?",
+      "query": "We've been immersing only the turbidity sensor to save standard. What are we trading away?",
       "relevant": [
         {
           "chunkId": "usgs-nfm-a6.7-turbidity.pdf__bde5db3720f7",

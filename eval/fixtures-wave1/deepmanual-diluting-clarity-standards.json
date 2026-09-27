@@ -6,7 +6,7 @@
     "usgs-nfm-a6.7-turbidity.pdf"
   ],
   "requires": [],
-  "notes": "Replaces deepmanual-ph-slope-check, which duplicated probecal-ph-slope-acceptance (0.26 term overlap, the only collision in the set). Built on claims tby-no-dilute-commercial-01, tby-commercial-recommended-01, tby-cal-range-high-value-01 (turn 1) and tby-no-flocculated-calibrants-01, tby-calibrant-labeling-01, tby-formazin-storage-disposal-01 (turn 2), all from usgs-nfm-a6.7-turbidity.pdf sections 6.7.2.A and 6.7.2.B. Chosen because turbidity was under-used in this class (only deepmanual-turbidity-rounding) and because the corpus contains no turbidity probe datasheet at all, so a6.7 is the sole source anywhere for this material. The question is adversarial in a realistic way: diluting an expensive high standard to make a cheap low one is the obvious thing a budget-conscious operator would try, and the manual specifically forbids it for everything except 4,000-unit formazin. Predicted rag because the answer sits deep in section 6.7.2.A of a chapter the direct-feed slice does not contain, and no probe datasheet carries any calibration-solution guidance.",
+  "notes": "Tests deepmanual diluting clarity standards. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: tby-no-dilute-commercial-01, tby-commercial-recommended-01, tby-cal-range-high-value-01, tby-no-flocculated-calibrants-01, tby-calibrant-labeling-01, tby-formazin-storage-disposal-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -22,7 +22,7 @@
           "approves diluting StablCal, AMCO-AEPA-1 or any commercial standard other than 4,000-unit formazin",
           "invents a dilution ratio or formula not stated in the manual",
           "presents the 4,000-unit formazin exception as though it applied to all commercial standards",
-          "cites a probe datasheet, since no turbidity datasheet exists in the corpus"
+          "Attributes turbidity-calibrant guidance to a turbidity probe datasheet absent from the corpus."
         ],
         "cite": [
           "usgs-nfm-a6.7-turbidity.pdf"
@@ -35,12 +35,12 @@
       "rubric": {
         "must_contain": [
           "states that calibrants with flocculated suspensions must not be used",
-          "states the bottle should be discarded rather than remixed and returned to service"
+          "Requires checking whether the settled layer is reversible settling or flocculation, along with labeled expiry and storage compliance; rejects flocculated, expired or compromised calibrant rather than assuming all settled calibrant must be discarded."
         ],
         "must_not": [
           "advises remixing and using it without checking whether the suspension has flocculated",
           "invents a shelf life in months or a number of inversions that would make it usable again",
-          "confuses this with the routine inversion step used to mix a sound calibrant before measurement"
+          "Treats routine inversion as restoring a flocculated, expired or storage-compromised calibrant"
         ],
         "cite": [
           "usgs-nfm-a6.7-turbidity.pdf"

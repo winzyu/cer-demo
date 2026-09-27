@@ -1,0 +1,92 @@
+{
+  "fixtureId": "precedence-ph-river-range-not-pod-limit",
+  "fixtureClass": "precedence",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-26T00:07:27.290Z",
+    "gitSha": "d11d57738f7f3d844fba64bd10d33e3d73ddd60f",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "reasoningEffort": "high",
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8011/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "Our surface site came back at pH 8.7 this morning. Is that out of range for our pod, or are we okay?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The question asks about water safety, which the sensor cannot assess. I can tell you whether the pH reading is within the sensor's measurement range. The pod can measure pH from 0 to 14, so 8.7 is within its measurement range【1†\"Range 0 − 14\"】.",
+      "context": [
+        {
+          "id": "IpH_probe.pdf__d3fc1e169fc7",
+          "text": "pH Probe\nRange \t0 − 14\n95% in 1s\tResponse time\n+/- 0.001\tResolution\n100 PSI\tMax pressure\n3 meters (9.8’)\tCable length\nDouble junction silver / silver chloride\nNo Temp\nReads \tpH\n-5 − 99 °C\tTemperature range °C\n70m (230’)\tMax depth\n+/– 0.002\tAccuracy\nSMA or Tinned leads\tConnector\nIndustrial\nGen 3\n~1 Year\tTime before recalibration\n~4 Years +\tLife expectancy\nor\nRevised 11/25\nV 5.3\n\n-- 1 of 12 --\n\nOperating principle\nA pH (potential of Hydrogen) probe measures the hydrogen ion activity in a liquid.\nAt the tip of a pH probe is a glass membrane. This glass membrane permits hydrogen\nions from the liquid being measured to defuse into the outer layer of the glass, while\nlarger ions remain in the solution. The difference in the concentration of hydrogen ions\n(outside the probe vs. inside the probe) creates a VERY small current. This current\nis proportional to the concentration of hydrogen ions in the liquid being measured.\nBase: pH > 7\tNeutral: pH = 7\tAcid: pH < 7\nfi\u001e\u001d\u001c\u001b\u001a\u0019\u0018\u001e\u001a\u001b\n\u0017\n\u001e\n\u0016\n\u0015\n\u0019\n\u0014\n\u0013\n\u0018\n\u001b\n\u001a\n\u0019\n\u001e\n\u0012\n\u0013\n\u001d\n\u0011\n\u0010\n\u001b\n\u000f\n\u0019\n\u001a\n\u001b\n\u000e\n\u001b\n\u001a\n\u001b\n\u001b\n\u0019\n\u001b\n\u001d\n\u001b\n\u0010\n\u001a\n\u0013\n\u000f\n\u001b\n\u0017\n\u000f\n\u001a\n\u0013\n\u0016\n\u001b\n\u0019\n\u0011\n\u0014\n\u001d\n\u001e\n\u001b\n\u001a\n\b\n\u001b\n\u0007\n\u0013\n\u0019\n\u0006\n\u0005\n\u0010\n\u001e\n\u0013\n\u0004\n\u0003\n\u0002\n\u0019\n\u001a\n\u001b\n\u000e\n\u001b\n\u001a\n\u001b\n\u001b\n\u0019\n\u0012\n\u0013\n\u001d\n\u0005\n\u0010\n\u001e\n\u0013\n\u0001\n\u0005\n•\n•\n\u001b\n\u001a\n\u0019\n\u0006\n\u0005\n\u0010\n\u001e\n\u0013\n\n-- 2 of 12 --\n\n46.6mm\n(1.8”)\nSoaker cap\n~3 – 4 pH\npH\n197mm\n(7.7”)\n99.2mm\n(3.9”)\n25mm\n(1”)\n17.6mm (.7”)\n3/4 NPT\n53.30mm\n(2.1”)\nStorage Life \t~5 Years\nWorking Life \t~4+ Years\n10ml\nØ 2.8mm\nØ 8mm\nMinimum\nImmersion\nUnique\n12-digit\nserial #\nMeasurements\n3 \tCopyright © Atlas Scientific LLC\n\n-- 3 of 12 --\n\nGlass\nTeflon\nPVC\nEPDM\nDelrin ®\n(body) Polyethylene\nTitanium\nNitride\nTitanium Nitride\nNSF-51 Compliant\nPolyethylene\nNSF-51 Compliant\nTeflon\nNSF-51 Compliant\nDelrin ®\nNSF-51 Compliant\nEPDM\nNSF-51 Compliant\nGlass\nNSF-51 Compliant\nPVC\nNSF-51 Compliant\nNSF/ANSI 51 Compliant\nFood Safe\nAtlas Scientific LLC, hereby certifies that,\nGen 3 Industrial pH Probe – No Temp\nPart # ENV-50-pH-NT\nmeets the NSF/ANSI Std. 51,\nWhether or not they bear the NSF Mark.\n4 \tCopyright © Atlas Scientific LLC\n\n-- 4 of 12 --\n\nReference electrode\nBody material\nMax depth\nCable length\nInternal temp. probe\nConnector\nWeight\nThreading\nSterilization\nFood safe\nSpecifications\nSilver / Silver Chloride\nDelrin® thermoplastic\n70m (230 feet)\n3m (9.8 feet)\nNo\nSMA or Tinned Leads\n155 grams\n(3/4\") NPT\nChemical only\nYes\nThis pH probe can be fully submerged\nin fresh or salt water, up to the SMA\nconnector or tinned leads indefinitely.\nMaterials\nEPDM \tDelrin ®\nthermoplastic\nPVC \tTitanium Nitride\tPolyethylene\nPVC \tPVC\nGlass\nTeflon\n5 \tCopyright © Atlas Scientific LLC\n\n-- 5 of 12 --",
+          "source": "IpH_probe.pdf"
+        },
+        {
+          "id": "usgs-nfm-a6.4-ph.pdf__d69cb303fc10",
+          "text": "-- 9 of 32 --2 \tChapter A6.4. Measurement of pH\npH of surface waters is affected diurnally by photosynthe-\nsis and respiration of algae and rooted macrophytes (Hem,\n1989). Additionally, pH directly affects physiological func-\ntions of biota and is an important indicator of the health of an\naquatic system.\nThe pH of water is defined as the negative base-10 loga-\nrithm of the hydrogen ion activity {H+}.\nBy definition,\npH \tH\t\u001f \u001e \t\u001d \t\u001c\u001b\nlog10 \t, and\nH pH\t\u001f \t\u001e\n\u001d \t\u001c \u001b 10 \t, where\nH \tactivityof hydrogen ion\u001f\n\u001e \t\u001d \u001c \t.\nInformation on pH—\n• In aqueous solutions, the hydrogen ion (H+) exists as\nhydronium (H3O+). For simplicity, “H+” is commonly\nused when defining pH.\n• Potentiometric measurements made by using ion-\nselective electrodes (ISE) indicate free ionic activities\nrather than the actual concentrations of ions. Therefore,\nsimilar to other ion-selective electrodes (ISE), pH elec-\ntrodes measure hydrogen ion activity.\n• Activity can be thought of as an “effective” concentra-\ntion and differs from true molar concentration because\nof ion-ion interactions. The hydrogen ion activity is\ndefined as the molar concentration of hydrogen ions\nmultiplied by an activity coefficient that takes into\naccount the interaction of hydrogen ions with other\nchemical species in the solution. For dilute waters,\nactivity values of ions are similar to their molar\nconcentrations. For waters with high ionic strength—\nfor example, brackish water or seawater—activities\ncan differ substantially from molar concentrations. The\ntheoretical basis of activity and activity coefficients\nand their relation to ionic strength and ionic concen-\ntrations are described in detail in Hem (1989) and\nBenjamin (2015).\n• Activity is dimensionless; therefore, pH values are\nunitless.\n• Because pH is based on a logarithmic scale, a change\nof 1 pH unit is a 10-fold change in the hydrogen ion\nactivity.\n• Temperature and dissolved gases affect the chemi-\ncal equilibria of ionic activities in aqueous solutions,\nincluding that of H+ (Hem, 1989). For example, the\nneutral pH of pure water at 25 degrees Celsius (°C) is\ndefined as 7.00, but the value is 6.92 at 30 °C and 7.48\nat 0 °C. In addition, pure water in equilibrium with the\natmosphere at 25 °C has a pH of 5.7 because of the\ndissolution and dissociation of carbon dioxide (CO2)\nfrom the atmosphere.\n• For an in-depth discussion of pH theory, see\nBates (1965).\n• Figure 6.4–1 shows the pH range of several types of\nnatural waters (modified from Nordstrom (1997)—\nUSGS Training Course: Geochemistry for Groundwa-\nter Systems). Most groundwaters in the United States\nhave pH values generally ranging from 6.0 to 8.5\n(Hem, 1989). Care must be taken when measuring the\npH of groundwaters because the water may be super-\nsaturated with CO2 before it reaches the land surface,\nand degassing can increase pH.\n• River waters not affected by contamination generally\nhave a pH in the range of 6.5 to 8.5 and commonly\nexhibit diel fluctuations in pH as a result of photosyn-\nthesis, respiration, and temperature, causing variations\nin dissolved CO2 (Hem, 1989). Some extreme pH\nmeasurements of waters in the field include -3.6 for\nhyperacidic mine waters (Nordstrom and Alpers, 1999),",
+          "source": "https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf"
+        }
+      ],
+      "audit": {
+        "original_answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The question asks about water safety, which the sensor cannot assess. I can tell you whether the pH reading is within the sensor's measurement range. The pod can measure pH from 0 to 14, so 8.7 is within its measurement range【1†\"Range 0 − 14\"】.",
+        "corrections": [],
+        "invalid_citations": []
+      },
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 3101,
+        "completionTokens": 8071,
+        "totalTokens": 11172,
+        "cachedPromptTokens": 1230
+      },
+      "timing": {
+        "ttftMs": 27157,
+        "wallMs": 27502
+      }
+    },
+    {
+      "index": 1,
+      "question": "So should we just set our pod's pH alarm at 6.5 to 8.5, since that's what the manual backs up?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The pod's alarm threshold settings are not provided. I can share the typical pH range for natural surface waters. River waters not affected by contamination generally have a pH in the range of 6.5 to 8.5【2†\"River waters not affected by contamination generally have a pH in the range of 6.5 to 8.5\"】.",
+      "context": [
+        {
+          "id": "IpH_probe.pdf__d3fc1e169fc7",
+          "text": "pH Probe\nRange \t0 − 14\n95% in 1s\tResponse time\n+/- 0.001\tResolution\n100 PSI\tMax pressure\n3 meters (9.8’)\tCable length\nDouble junction silver / silver chloride\nNo Temp\nReads \tpH\n-5 − 99 °C\tTemperature range °C\n70m (230’)\tMax depth\n+/– 0.002\tAccuracy\nSMA or Tinned leads\tConnector\nIndustrial\nGen 3\n~1 Year\tTime before recalibration\n~4 Years +\tLife expectancy\nor\nRevised 11/25\nV 5.3\n\n-- 1 of 12 --\n\nOperating principle\nA pH (potential of Hydrogen) probe measures the hydrogen ion activity in a liquid.\nAt the tip of a pH probe is a glass membrane. This glass membrane permits hydrogen\nions from the liquid being measured to defuse into the outer layer of the glass, while\nlarger ions remain in the solution. The difference in the concentration of hydrogen ions\n(outside the probe vs. inside the probe) creates a VERY small current. This current\nis proportional to the concentration of hydrogen ions in the liquid being measured.\nBase: pH > 7\tNeutral: pH = 7\tAcid: pH < 7\nfi\u001e\u001d\u001c\u001b\u001a\u0019\u0018\u001e\u001a\u001b\n\u0017\n\u001e\n\u0016\n\u0015\n\u0019\n\u0014\n\u0013\n\u0018\n\u001b\n\u001a\n\u0019\n\u001e\n\u0012\n\u0013\n\u001d\n\u0011\n\u0010\n\u001b\n\u000f\n\u0019\n\u001a\n\u001b\n\u000e\n\u001b\n\u001a\n\u001b\n\u001b\n\u0019\n\u001b\n\u001d\n\u001b\n\u0010\n\u001a\n\u0013\n\u000f\n\u001b\n\u0017\n\u000f\n\u001a\n\u0013\n\u0016\n\u001b\n\u0019\n\u0011\n\u0014\n\u001d\n\u001e\n\u001b\n\u001a\n\b\n\u001b\n\u0007\n\u0013\n\u0019\n\u0006\n\u0005\n\u0010\n\u001e\n\u0013\n\u0004\n\u0003\n\u0002\n\u0019\n\u001a\n\u001b\n\u000e\n\u001b\n\u001a\n\u001b\n\u001b\n\u0019\n\u0012\n\u0013\n\u001d\n\u0005\n\u0010\n\u001e\n\u0013\n\u0001\n\u0005\n•\n•\n\u001b\n\u001a\n\u0019\n\u0006\n\u0005\n\u0010\n\u001e\n\u0013\n\n-- 2 of 12 --\n\n46.6mm\n(1.8”)\nSoaker cap\n~3 – 4 pH\npH\n197mm\n(7.7”)\n99.2mm\n(3.9”)\n25mm\n(1”)\n17.6mm (.7”)\n3/4 NPT\n53.30mm\n(2.1”)\nStorage Life \t~5 Years\nWorking Life \t~4+ Years\n10ml\nØ 2.8mm\nØ 8mm\nMinimum\nImmersion\nUnique\n12-digit\nserial #\nMeasurements\n3 \tCopyright © Atlas Scientific LLC\n\n-- 3 of 12 --\n\nGlass\nTeflon\nPVC\nEPDM\nDelrin ®\n(body) Polyethylene\nTitanium\nNitride\nTitanium Nitride\nNSF-51 Compliant\nPolyethylene\nNSF-51 Compliant\nTeflon\nNSF-51 Compliant\nDelrin ®\nNSF-51 Compliant\nEPDM\nNSF-51 Compliant\nGlass\nNSF-51 Compliant\nPVC\nNSF-51 Compliant\nNSF/ANSI 51 Compliant\nFood Safe\nAtlas Scientific LLC, hereby certifies that,\nGen 3 Industrial pH Probe – No Temp\nPart # ENV-50-pH-NT\nmeets the NSF/ANSI Std. 51,\nWhether or not they bear the NSF Mark.\n4 \tCopyright © Atlas Scientific LLC\n\n-- 4 of 12 --\n\nReference electrode\nBody material\nMax depth\nCable length\nInternal temp. probe\nConnector\nWeight\nThreading\nSterilization\nFood safe\nSpecifications\nSilver / Silver Chloride\nDelrin® thermoplastic\n70m (230 feet)\n3m (9.8 feet)\nNo\nSMA or Tinned Leads\n155 grams\n(3/4\") NPT\nChemical only\nYes\nThis pH probe can be fully submerged\nin fresh or salt water, up to the SMA\nconnector or tinned leads indefinitely.\nMaterials\nEPDM \tDelrin ®\nthermoplastic\nPVC \tTitanium Nitride\tPolyethylene\nPVC \tPVC\nGlass\nTeflon\n5 \tCopyright © Atlas Scientific LLC\n\n-- 5 of 12 --",
+          "source": "IpH_probe.pdf"
+        },
+        {
+          "id": "usgs-nfm-a6.4-ph.pdf__d69cb303fc10",
+          "text": "-- 9 of 32 --2 \tChapter A6.4. Measurement of pH\npH of surface waters is affected diurnally by photosynthe-\nsis and respiration of algae and rooted macrophytes (Hem,\n1989). Additionally, pH directly affects physiological func-\ntions of biota and is an important indicator of the health of an\naquatic system.\nThe pH of water is defined as the negative base-10 loga-\nrithm of the hydrogen ion activity {H+}.\nBy definition,\npH \tH\t\u001f \u001e \t\u001d \t\u001c\u001b\nlog10 \t, and\nH pH\t\u001f \t\u001e\n\u001d \t\u001c \u001b 10 \t, where\nH \tactivityof hydrogen ion\u001f\n\u001e \t\u001d \u001c \t.\nInformation on pH—\n• In aqueous solutions, the hydrogen ion (H+) exists as\nhydronium (H3O+). For simplicity, “H+” is commonly\nused when defining pH.\n• Potentiometric measurements made by using ion-\nselective electrodes (ISE) indicate free ionic activities\nrather than the actual concentrations of ions. Therefore,\nsimilar to other ion-selective electrodes (ISE), pH elec-\ntrodes measure hydrogen ion activity.\n• Activity can be thought of as an “effective” concentra-\ntion and differs from true molar concentration because\nof ion-ion interactions. The hydrogen ion activity is\ndefined as the molar concentration of hydrogen ions\nmultiplied by an activity coefficient that takes into\naccount the interaction of hydrogen ions with other\nchemical species in the solution. For dilute waters,\nactivity values of ions are similar to their molar\nconcentrations. For waters with high ionic strength—\nfor example, brackish water or seawater—activities\ncan differ substantially from molar concentrations. The\ntheoretical basis of activity and activity coefficients\nand their relation to ionic strength and ionic concen-\ntrations are described in detail in Hem (1989) and\nBenjamin (2015).\n• Activity is dimensionless; therefore, pH values are\nunitless.\n• Because pH is based on a logarithmic scale, a change\nof 1 pH unit is a 10-fold change in the hydrogen ion\nactivity.\n• Temperature and dissolved gases affect the chemi-\ncal equilibria of ionic activities in aqueous solutions,\nincluding that of H+ (Hem, 1989). For example, the\nneutral pH of pure water at 25 degrees Celsius (°C) is\ndefined as 7.00, but the value is 6.92 at 30 °C and 7.48\nat 0 °C. In addition, pure water in equilibrium with the\natmosphere at 25 °C has a pH of 5.7 because of the\ndissolution and dissociation of carbon dioxide (CO2)\nfrom the atmosphere.\n• For an in-depth discussion of pH theory, see\nBates (1965).\n• Figure 6.4–1 shows the pH range of several types of\nnatural waters (modified from Nordstrom (1997)—\nUSGS Training Course: Geochemistry for Groundwa-\nter Systems). Most groundwaters in the United States\nhave pH values generally ranging from 6.0 to 8.5\n(Hem, 1989). Care must be taken when measuring the\npH of groundwaters because the water may be super-\nsaturated with CO2 before it reaches the land surface,\nand degassing can increase pH.\n• River waters not affected by contamination generally\nhave a pH in the range of 6.5 to 8.5 and commonly\nexhibit diel fluctuations in pH as a result of photosyn-\nthesis, respiration, and temperature, causing variations\nin dissolved CO2 (Hem, 1989). Some extreme pH\nmeasurements of waters in the field include -3.6 for\nhyperacidic mine waters (Nordstrom and Alpers, 1999),",
+          "source": "https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf"
+        }
+      ],
+      "audit": {
+        "original_answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The pod's alarm threshold settings are not provided. I can share the typical pH range for natural surface waters. River waters not affected by contamination generally have a pH in the range of 6.5 to 8.5【2†\"River waters not affected by contamination generally have a pH in the range of 6.5 to 8.5\"】.",
+        "corrections": [],
+        "invalid_citations": []
+      },
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 3235,
+        "completionTokens": 1857,
+        "totalTokens": 5092,
+        "cachedPromptTokens": 3100
+      },
+      "timing": {
+        "ttftMs": 6975,
+        "wallMs": 7273
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 6336,
+    "cachedPromptTokens": 4330,
+    "completionTokens": 9928,
+    "wallMs": 34775
+  }
+}

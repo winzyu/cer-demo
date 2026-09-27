@@ -6,14 +6,77 @@
     {
       "turn": 1,
       "query": "Before we call a pH drop at the mill creek a real event, I want to know how much acid that creek can soak up before the pH actually moves. Can our pods tell me that?",
-      "relevant": [],
-      "noRelevantChunks": "refusal fixture (answerable_from empty) — no corpus chunk answers this query. Mechanically labelled by scripts/resolveRetrievalLabels.ts; not human-verified."
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__e2d6bf031f75",
+          "contentHash": "e2d6bf031f75",
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "grade": 1,
+          "evidence": "the acidimetric titration of a sample; the only difference is that the alkalinity sample is filtered,",
+          "locator": "usgs-nfm-a6.6-alkalinity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__d6c853e90b3e",
+          "contentHash": "d6c853e90b3e",
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "grade": 1,
+          "evidence": "Vs \tis \tthe volume of sample, in milliliters.",
+          "locator": "usgs-nfm-a6.6-alkalinity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__5260ade8b428",
+          "contentHash": "5260ade8b428",
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "grade": 1,
+          "evidence": "Vs \tis \tthe volume of sample, in milliliters.",
+          "locator": "usgs-nfm-a6.6-alkalinity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        }
+      ]
     },
     {
       "turn": 2,
       "query": "Those pods are already logging pH and conductivity every fifteen minutes. Is there really no way to work it out from those two?",
-      "relevant": [],
-      "noRelevantChunks": "refusal fixture (answerable_from empty) — no corpus chunk answers this query. Mechanically labelled by scripts/resolveRetrievalLabels.ts; not human-verified."
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__6d69289a742e",
+          "contentHash": "6d69289a742e",
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "grade": 1,
+          "evidence": "alkalinity or ANC is expected to be less than about 0.4 milliequivalents per liter (meq/L)",
+          "locator": "usgs-nfm-a6.6-alkalinity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__3bb23c4082d6",
+          "contentHash": "3bb23c4082d6",
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "grade": 1,
+          "evidence": "available, record the sample conductivity.",
+          "locator": "usgs-nfm-a6.6-alkalinity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__d6c853e90b3e",
+          "contentHash": "d6c853e90b3e",
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "grade": 1,
+          "evidence": "Vs \tis \tthe volume of sample, in milliliters.",
+          "locator": "usgs-nfm-a6.6-alkalinity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.6-alkalinity.pdf__5260ade8b428",
+          "contentHash": "5260ade8b428",
+          "filename": "usgs-nfm-a6.6-alkalinity.pdf",
+          "grade": 1,
+          "evidence": "Vs \tis \tthe volume of sample, in milliliters.",
+          "locator": "usgs-nfm-a6.6-alkalinity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        }
+      ]
     }
   ]
 }

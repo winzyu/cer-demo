@@ -1,0 +1,20 @@
+{
+  "note": "Label -> arm mapping. DO NOT open before grading is complete and scores.csv is filled in.",
+  "pass": "warm",
+  "run": "p3-calib-2026-09-24",
+  "generatedAt": "2026-09-25T10:03:57.600Z",
+  "key": {
+    "definitional-required-versus-recommended": {
+      "A": "gold-context",
+      "B": "hybrid-slice-vector"
+    },
+    "precedence-do-hypoxia-qa-trigger-not-pod-limit": {
+      "A": "gold-context",
+      "B": "hybrid-slice-vector"
+    },
+    "probecal-buffer-handling": {
+      "A": "hybrid-slice-vector",
+      "B": "gold-context"
+    }
+  }
+}

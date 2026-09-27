@@ -6,7 +6,7 @@
     "usgs-nfm-a6.3-specific-conductance.pdf"
   ],
   "requires": [],
-  "notes": "Built from sc-definition-1cm3-25c-01, sc-conductance-inverse-resistance-01, sc-conductivity-normalized-01, sc-usgs-reporting-units-01 (turn 1) and sc-siemens-mhos-equivalence-01, sc-units-mhos-pre1971-01, sc-terms-interchangeable-01 (turn 2). This is the control class: a plain unit-and-terminology question that every retrieval arm should get right, so expected_to_favor is 'tie'. The material sits in one chapter, needs no cross-document reasoning and no deep procedural lookup, so RAG has no advantage and the direct-feed slice, if it could answer at all, would answer identically. Slice check: the operator source-of-truth says only that EC is reported in uS/cm and must be temperature-corrected to 25 C (SLICE-EXCLUSION lines 185, 211, 235). It never says what the quantity is - that conductance is the inverse of resistance in siemens, that conductivity is that conductance normalised to unit length and area, or that specific conductance is the conductance of one cubic centimetre - and it has nothing at all on mhos. Turn 2 in particular is unanswerable inside the slice.",
+  "notes": "Tests definitional what per centimetre means. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: sc-definition-1cm3-25c-01, sc-conductance-inverse-resistance-01, sc-conductivity-normalized-01, sc-usgs-reporting-units-01, sc-siemens-mhos-equivalence-01, sc-units-mhos-pre1971-01, sc-terms-interchangeable-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -14,9 +14,9 @@
       "rubric": {
         "must_contain": [
           "explains that the raw electrical reading, conductance, is the inverse of the water's electrical resistance and is measured in siemens",
-          "explains that dividing through by the electrode geometry - the length and cross-sectional area between the plates - is what turns that raw conductance into a property of the water rather than of the instrument",
-          "states that the resulting quantity is defined as the conductance of one cubic centimetre of the solution",
-          "states that the value is referenced to 25 degrees Celsius, so the same water gives the same number regardless of the temperature it was measured at"
+          "Explains that conductivity equals conductance multiplied by the cell constant, electrode spacing divided by electrode area, giving a geometry-normalized property of the water",
+          "Defines specific conductance as the conductance of one cubic centimetre of solution referenced to 25 °C",
+          "Distinguishes conductivity from specific conductance referenced to 25 °C; µS/cm alone does not establish temperature compensation, so the measurement or reference temperature must be checked"
         ],
         "must_not": [
           "claims the unit is a raw meter output with no normalisation, i.e. treats uS/cm as just 'microsiemens, per centimetre of probe'",
@@ -40,7 +40,7 @@
           "notes that because electrical conductivity is not always referenced to a standard temperature, the measurement or reference temperature has to be reported and checked against the older values"
         ],
         "must_not": [
-          "invents a numeric conversion factor between mhos and siemens",
+          "Invents a nonunit conversion factor between mhos and siemens; a conversion factor of one is correct",
           "claims micromhos and microsiemens measure different properties",
           "treats the old values as unusable without saying why they are or are not comparable"
         ],

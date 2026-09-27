@@ -103,6 +103,14 @@ describe("closestWindow", () => {
 });
 
 describe("checkRefusal", () => {
+  it("permits the pinned refusal followed by a supported numerical explanation", () => {
+    const answer = `${REFUSAL_SENTENCE} No maximum deployment lifetime is supplied. `
+      + "The turbidity chapter describes cleaning every 2 to 4 weeks; that is not a lifetime.";
+    expect(checkRefusal(answer).vetoes).toBe(false);
+    // Whether the explanation is actually grounded, and whether a forbidden lifetime was
+    // invented, remain separate figures/quote checks and judge rubric decisions.
+  });
+
   it("reports an untouched refusal as an exact match", () => {
     const result = checkRefusal(`${REFUSAL_SENTENCE} The threshold is not in the documents.`);
     expect(result.match).toBe("exact");

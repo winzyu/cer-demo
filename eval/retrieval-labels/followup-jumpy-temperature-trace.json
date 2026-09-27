@@ -23,7 +23,7 @@
     },
     {
       "turn": 2,
-      "query": "If it turns out to be that one, can we just swap it ourselves and carry on?",
+      "query": "If it turns out to be the cable, can we just swap it ourselves and carry on?",
       "relevant": [
         {
           "chunkId": "usgs-nfm-a6.1-temperature.pdf__c4c215ab7bd4",

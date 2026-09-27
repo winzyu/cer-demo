@@ -5,10 +5,12 @@
   "answerable_from": [
     "usgs-nfm-a6.8-multiparameter-instruments.pdf",
     "usgs-nfm-a6.3-specific-conductance.pdf",
-    "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
+    "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+    "usgs-nfm-a6.7-turbidity.pdf"
   ],
   "requires": [],
-  "notes": "Two different orderings that both couple conductivity to pH, stated in different files. The calibration sequence is A6.8: mp-calibration-order-08 (temperature, then specific conductance, pH, dissolved oxygen, ORP, turbidity, then ion-selective and fluorescence sensors), mp-ionic-strength-rationale-09 (the order runs from low to high ionic strength so residual standard cannot bias the next calibration), mp-triple-rinse-10 (three deionized-water rinses between standards), mp-calibrate-before-each-use-04, mp-bracket-standards-04, mp-a61-a67-definitive-06 (the per-parameter chapters remain definitive over A6.8's general guidance). The reason the conductivity-before-pH leg of that order is not optional is stated only in A6.3: sc-calibrate-sc-before-ph-01 — pH buffers and electrode filling solutions are high-ionic-strength contamination sources. Turn 2 asks about the physical order of probes in a flow-through cell, which is a different ordering entirely and is stated in A6.0 (fm-ph-downstream-of-conductivity-01) and A6.3 (sc-probe-upstream-of-ph-01, sc-flowcell-shield-sunlight-01), with A6.7 adjacent (a discrete turbidity sample must not be drawn from the flow-cell discharge). An A6.8-only answer gives the sequence with no rationale and misses the plumbing question; an A6.3-only answer has the pH constraint and not the full order. Predicted rag: nothing in the slice covers calibration order or flow-cell layout.",
+  "notes": "Tests crossdoc sonde sensor order. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: mp-calibration-order-08, mp-ionic-strength-rationale-09, mp-triple-rinse-10, mp-calibrate-before-each-use-04, mp-bracket-standards-04, mp-a61-a67-definitive-06, sc-calibrate-sc-before-ph-01, fm-ph-downstream-of-conductivity-01, sc-probe-upstream-of-ph-01, sc-flowcell-shield-sunlight-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -17,7 +19,7 @@
         "must_contain": [
           "states the order does matter and gives temperature first",
           "gives specific conductance next, before pH",
-          "gives the remaining order as pH, then dissolved oxygen, then ORP, then turbidity, with ion-selective and fluorescence sensors last",
+          "Gives the general remaining order as pH, DO, ORP, turbidity, then ion-selective and fluorescence sensors, while allowing A6.2's two-point DO calibration exception requiring DO last to avoid sodium-sulfite interference",
           "explains the rationale as working from low to high ionic strength so residual standard cannot bias the next calibration",
           "states specifically that conductivity must be calibrated before pH because pH buffers and electrode filling solutions are high in ionic strength and are a contamination source",
           "states the sensors are rinsed three times with deionized water between different standards",
@@ -31,16 +33,43 @@
         ],
         "cite": [
           "usgs-nfm-a6.8-multiparameter-instruments.pdf",
-          "usgs-nfm-a6.3-specific-conductance.pdf"
+          "usgs-nfm-a6.3-specific-conductance.pdf",
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
         ]
-      }
+      },
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "The following order is recommended for performing\nparameter calibrations or checks of multiparameter\ninstruments."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Note that generally standards are chosen\nthat bracket the expected measurement or deployment\nrange of measurements."
+        },
+        {
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "quote": "calibrate specific conduc-\ntance before pH."
+        },
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "install the pH sensor down-\nstream from the conductivity sensor"
+        },
+        {
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "quote": "upstream from the pH electrode."
+        },
+        {
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "quote": "• Before starting or planning for a two-point calibration,"
+        }
+      ]
     },
     {
       "role": "user",
       "content": "Same question for the flow cell we run at the well — does it matter which probe the water hits first once they're all plumbed in there?",
       "rubric": {
         "must_contain": [
-          "states the pH sensor is installed downstream of the conductivity sensor in the flow-through chamber",
+          "For separately installed flow-cell sensors, places pH downstream of conductivity, subject to cell design",
           "states the flow cell should be kept as close to the source water as possible and shielded from direct sunlight",
           "notes the specific-conductance probe position relative to the pH electrode depends on the flow-cell design"
         ],
@@ -51,9 +80,40 @@
         ],
         "cite": [
           "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
-          "usgs-nfm-a6.3-specific-conductance.pdf"
+          "usgs-nfm-a6.3-specific-conductance.pdf",
+          "usgs-nfm-a6.7-turbidity.pdf"
         ]
-      }
+      },
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "The following order is recommended for performing\nparameter calibrations or checks of multiparameter\ninstruments."
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "Note that generally standards are chosen\nthat bracket the expected measurement or deployment\nrange of measurements."
+        },
+        {
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "quote": "calibrate specific conduc-\ntance before pH."
+        },
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "install the pH sensor down-\nstream from the conductivity sensor"
+        },
+        {
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "quote": "upstream from the pH electrode."
+        },
+        {
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "quote": "X \tFor discrete-sample measurement using a turbidimeter or"
+        },
+        {
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "quote": "— \tBailers are not recommended for collecting turbidity"
+        }
+      ]
     }
   ]
 }

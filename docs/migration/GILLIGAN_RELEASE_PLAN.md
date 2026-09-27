@@ -54,9 +54,9 @@ Priority: **must** blocks launch, **should** ships if ready by Sep 28, **after**
 | E1 | **done 2026-09-24** (`1cc508e`, `30eb285`). `--run` support in `grade:packet` and the judge; build the 32-row calibration packet | Claude | must | none | Sep 25 |
 | E2 | **done 2026-09-25** (`387cbce` on `eval/wave1-corrections`). The user graded the packet; after a judge-prompt fix (`49e28ae`) and Claude's adjudication of four rows at the user's request, correctness kappa is 0.849 against the 0.70 bar; on a 12-row held-out round (`309da6c`) it agrees on 9/12 exactly, all within one point | user | must | E1 | Sep 26 |
 | E3 | **done 2026-09-25** (`4e74603` on `eval/wave1-corrections`). Final two-arm capture judged twice with `--final`: correctness 1.01 on gold context and 0.58-0.59 on `hybrid-slice-vector`, both failing the Tier 2 gates; about $3.38, R4 about $11.30 of $20. `dev` was not re-merged: its tools-off prompt is byte-identical to the merge base's | Claude, user approves | must | E2, Q1 | Sep 27 |
-| E4 | For each class under the bar, add a refusal (or a caveat where the answer is sound but partial). The 2026-09-25 improvement round (reranker 0.62, reasoning `high` 0.88 against 1.00) raised no class; three outside reviews of rubric strictness await the user's synthesis (`eval/reviews/phase3-2026-09-23/HANDOFF.md` on `eval/wave1-corrections`) | Claude | must | E3 | Sep 28 |
+| E4 | **done 2026-09-27** (`bc0512c` on `eval/wave1-corrections`). The launch configuration (`glm-5p3-flash` at reasoning low, `local-vector` k=20, both query rewrites, catalogue on, tools off) scores 1.18 / 1.13 with every Tier 1 gate passing, cross-document 0.83 the weakest class; the user chose a standing caveat under every answer that cites documents, shown by the dashboard (U7), after a prompt caveat reached only confident answers; R4 spend about $25.85 of $30 (`EVAL_REBUILD.md`) | Claude | must | E3 | Sep 28 |
 | E5 | Tools-on live smoke with the release configuration (live reads, approval) | Claude | must | Q1-Q5, C4 | Sep 28 |
-| E6 | R4 report, top-k 20 into `SPECS.md`, decisions into `timeline.md`, land `eval/wave1-corrections` on `dev` | Claude | should | E4 | Sep 29 |
+| E6 | **done 2026-09-27** (landing commit on `dev`). R4 report `eval/reviews/phase3-2026-09-23/R4_REPORT.md`, launch settings in the runbook §4.1 and `SPECS.md`, decisions in `timeline.md`, `eval/wave1-corrections` landed on `dev` | Claude | should | E4 | Sep 29 |
 
 ### Answer quality, session #2 and a follow-on
 
@@ -119,6 +119,7 @@ Worktree cut from `dev`; none of these files overlap Q1-Q7.
 | U4 | Tables render in answers (`remark-gfm` is installed; check styling and width) | Claude | should | P1 | Sep 26 |
 | U5 | Citation titles end to end instead of addresses | Claude | should | P1 | Sep 27 |
 | U6 | Pod picker and saved history: confirm both on the rebuilt page in the full local stack | Claude | must | P1 | Sep 26 |
+| U7 | Standing caveat under every Gilligan answer that cites documents (E4, D3): "Answers draw on document excerpts and may not cover every step; check the cited sections before acting." (draft wording; the user approves the final text) | Claude | must | P1 | Sep 28 |
 
 The 2026-09-26 end-to-end checklist adds two dashboard fixes for the same session: tool notes written for the model appear under every answer (X1), and a retried tool call still shows "Tool failed" (X2), both in `src/app/shared/gilligan-provenance.js`. Saved history sorting oldest first with no dates (G1) is probably the in-memory chat store only; the mirror checks it. The refused "How does temperature affect DO?" (B3) is a retrieval regression for R4.
 

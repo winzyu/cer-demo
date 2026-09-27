@@ -192,12 +192,15 @@ It holds no secrets; the two secrets are attached with `--set-secrets` (§6.1).
 ```yaml
 NODE_ENV: "production"
 LOG_LEVEL: "info"
-DEFAULT_RETRIEVAL: "hybrid-slice-vector"
+DEFAULT_RETRIEVAL: "local-vector"
+QUERY_REWRITE: "true"
+QUERY_REWRITE_FIRST_TURN: "true"
 CORPUS_SOURCE: "artifact"
 DEBUG_RETRIEVAL: "false"
 FIRESTORE_PROJECT_ID: "conductive-fold-343604"
 FIRESTORE_DATABASE_ID: "gilligan"
-LLM_MODEL: "accounts/fireworks/models/gpt-oss-120b"
+LLM_MODEL: "accounts/fireworks/models/glm-5p3-flash"
+LLM_REASONING_EFFORT: "low"
 EMBEDDING_MODEL: "nomic-ai/nomic-embed-text-v1.5"
 LLM_MAX_TOKENS: "16384"
 LLM_MAX_CONCURRENT: "8"
@@ -222,7 +225,7 @@ QUERY_QUOTA_STORE: "firestore"
 QUERY_QUOTA_WARN_AT: "0.2"
 ```
 
-Confirm at L4 that `LLM_MODEL`, `LLM_MAX_TOKENS` and `MAX_TOOL_ROUNDS` are the values the release candidate was evaluated with, and that `EMBEDDING_MODEL` is the model the packaged cache was built with.
+Confirm at L4 that `LLM_MODEL`, `LLM_REASONING_EFFORT`, `LLM_MAX_TOKENS`, `MAX_TOOL_ROUNDS`, `DEFAULT_RETRIEVAL` and both `QUERY_REWRITE` settings are the values the release candidate was evaluated with, and that `EMBEDDING_MODEL` is the model the packaged cache was built with.
 Never set `DEVICE_API_TOKEN` or `SENSOR_DEVICE_LABEL`: device reads must use the caller's own token.
 
 What happens when a variable is missing:
@@ -235,6 +238,8 @@ What happens when a variable is missing:
 | `QUERY_QUOTA_WINDOW` | uses a 30-day window (with the Firestore store it refuses to boot instead) |
 | `FIRESTORE_DATABASE_ID` | writes usage documents into the customer `(default)` database |
 | `DEFAULT_RETRIEVAL` | answers from the `stub` retriever, with no documents |
+| `QUERY_REWRITE`, `QUERY_REWRITE_FIRST_TURN` | searches with the user's words verbatim, so follow-ups that do not name their subject retrieve poorly |
+| `LLM_REASONING_EFFORT` | sends no reasoning setting, which `glm-5p3-flash` was not evaluated with |
 | `SENSOR_TOOL`, `REPORT_TOOL` | answers without pod data or reports |
 | `CATALOGUE_PROMPT` | answers without the approved catalogue guidance |
 | `NODE_ENV` | skips the production checks; the image sets `production`, but set it anyway |

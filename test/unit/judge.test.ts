@@ -7,7 +7,9 @@
  * defaults a missing score, or a gate that averages a non-servable class into an arm's mean,
  * would move a pre-registered threshold without anyone seeing it happen.
  */
+import { spawn } from "child_process";
 import fs from "fs";
+import net from "net";
 import os from "os";
 import path from "path";
 import type OpenAI from "openai";
@@ -27,14 +29,17 @@ import {
   DEFAULT_JUDGE_MAX_TOKENS,
   DEFAULT_JUDGE_MODEL,
   PRODUCTION_GENERATOR,
+  answersTask,
   budgetOf,
   buildTasks,
   filterToCurrentFixtures,
   isServable,
   judgeOnce,
+  promptHash,
   judgesOwnFamily,
   summarize,
   type JudgeRecord,
+  type JudgeTask,
 } from "../../src/eval/judge/runner";
 import {
   agreementFor,
@@ -54,6 +59,15 @@ const evidence = (overrides: Partial<JudgeEvidence> = {}): JudgeEvidence => ({
   systemPrompt: "AUTHORITATIVE NORMAL RANGES:\n- pH: 6.5 to 8.5",
   history: [],
   ...overrides,
+});
+
+const judgeTask = (over: Partial<JudgeEvidence> = {}): JudgeTask => ({
+  arm: "gold-context",
+  fixtureId: "demo",
+  fixtureClass: "definitional",
+  turn: 1,
+  dimension: "correctness",
+  evidence: evidence(over),
 });
 
 const record = (over: Partial<JudgeRecord>): JudgeRecord => ({
@@ -122,7 +136,29 @@ describe("judge prompts — blinding", () => {
     expect(prompt).toContain("Hypoxia begins below 2 mg/L");
     expect(prompt).toMatch(/was NOT invented/);
     // ...and is still told not to re-grade truth against them, which is a different measurement.
-    expect(prompt).toMatch(/entirely true and still miss the\s+rubric's points/);
+    expect(prompt).toMatch(/entirely true and still miss\s+the\s+rubric's points/);
+    // The rule counts the service rules as grounding, so the judge has to be shown them.
+    expect(prompt).toContain("AUTHORITATIVE NORMAL RANGES");
+    // A real figure recast as something the source does not say it is still counts as invented.
+    expect(prompt).toMatch(/compensation range presented as the normal range of natural water is an invented criterion/);
+  });
+
+  it("opens both grounded prompts with the same material, so the second call is a cache hit", () => {
+    const invention = evidence({
+      rubric: { must_contain: ["reproduces the table"], must_not: ["invents numeric criteria"] },
+    });
+    const correctness = correctnessPrompt(invention);
+    const ungrounded = ungroundedPrompt(invention);
+    let shared = 0;
+    while (correctness[shared] === ungrounded[shared]) {
+      shared += 1;
+    }
+    const prefix = correctness.slice(0, shared);
+    expect(prefix).toContain("AUTHORITATIVE NORMAL RANGES");
+    expect(prefix).toContain("Hypoxia begins below 2 mg/L");
+    // The answer stays out of the shared part: it is what differs least across dimensions but
+    // most across turns, and it must come after the instructions that say how to read it.
+    expect(prefix).not.toContain(invention.answer);
   });
 
   it("gives groundedness the system prompt, not just the retrieved chunks", () => {
@@ -154,7 +190,22 @@ describe("refusals are graded on behaviour, not phrasing", () => {
     }));
 
     expect(prompt).toMatch(/Wording is not part of a refusal rubric/);
+    expect(prompt).toContain("a bare refusal does not earn full credit for the whole answer");
     expect(prompt).toMatch(/service's standard refusal sentence/);
+  });
+
+  it("separates a refusal where an answer was owed from a refusal the rubric asks for", () => {
+    // The 2026-09-25 calibration: the judge gave 1 to a refusal that withheld a table value it
+    // had been given, and 0 to correct refusals that made some of their rubric's points.
+    const prompt = correctnessPrompt(evidence());
+
+    expect(prompt).toContain("When no \"must contain\" point asks the answer to decline");
+    expect(prompt).toContain("or other partial content, and it scores 0");
+    expect(prompt).toContain("that makes at least one \"must contain\" point scores at least 1");
+    // The other two misses: points called absent that the answer made inside a quotation, and a
+    // must-not paraphrased past its own words.
+    expect(prompt).toContain("a figure or condition inside a quoted passage counts as stated");
+    expect(prompt).toContain("violated by any wording with the same effect");
   });
 
   it("leaves no live fixture demanding the exact refusal sentence", () => {
@@ -261,6 +312,19 @@ describe("judge prompts — parsing", () => {
     const verdict = parseVerdict("correctness", '```json\n{"score": 2, "reason": "all points"}\n```');
     expect(verdict.score).toBe(2);
     expect(verdict.note).toBe("all points");
+  });
+
+  it("keeps the judge's unmet points in the note, without letting them set the score", () => {
+    const verdict = parseVerdict("correctness", JSON.stringify({
+      points: [
+        { point: "gives the 60-second minimum", met: true, quote: "at least 60 seconds" },
+        { point: "names the liquid-junction potential", met: false, quote: "" },
+      ],
+      score: 1,
+      reason: "one point missed",
+    }));
+    expect(verdict.score).toBe(1);
+    expect(verdict.note).toBe("one point missed Unmet: names the liquid-junction potential");
   });
 
   it("throws rather than defaulting when the score is missing or out of range", () => {
@@ -565,6 +629,87 @@ describe("judge call - max-tokens budget", () => {
     expect(result.maxTokens).toBe(DEFAULT_JUDGE_MAX_TOKENS);
     expect(create.mock.calls[0][0].max_tokens).toBe(DEFAULT_JUDGE_MAX_TOKENS);
   });
+
+  it("records cached input tokens when reported, and leaves them unknown otherwise", async () => {
+    const task = judgeTask();
+    const reply = (usage: Record<string, unknown>) => fakeClient(jest.fn().mockResolvedValue({
+      choices: [{ message: { content: '{"score": 2, "reason": "fine"}' } }],
+      model: "judge-model",
+      usage,
+    }));
+    const options = { model: "judge-model", maxTokens: 100 };
+
+    const usage = { prompt_tokens: 50, completion_tokens: 5 };
+    const cached = await judgeOnce(
+      reply({ ...usage, prompt_tokens_details: { cached_tokens: 40 } }),
+      options,
+      task,
+    );
+    expect(cached.cachedPromptTokens).toBe(40);
+
+    const unreported = await judgeOnce(reply(usage), options, task);
+    expect(unreported.cachedPromptTokens).toBeUndefined();
+  });
+
+  it("routes every dimension of one turn with the same cache-affinity key", async () => {
+    const create = jest.fn().mockResolvedValue({
+      choices: [{ message: { content: '{"score": 2, "reason": "fine", "claims": []}' } }],
+      model: "judge-model",
+      usage: { prompt_tokens: 50, completion_tokens: 5 },
+    });
+    const options = { model: "judge-model", maxTokens: 100 };
+    await judgeOnce(fakeClient(create), options, judgeTask());
+    await judgeOnce(fakeClient(create), options, { ...judgeTask(), dimension: "ungrounded" });
+    await judgeOnce(fakeClient(create), options, { ...judgeTask(), turn: 2 });
+
+    const [first, second, otherTurn] = create.mock.calls.map((call) => call[0].user);
+    expect(first).toBe(second);
+    expect(otherTurn).not.toBe(first);
+    expect(first).not.toContain("gold-context");
+  });
+
+  it("sends reasoning_effort only when one is chosen, and records it", async () => {
+    const create = jest.fn().mockResolvedValue({
+      choices: [{ message: { content: '{"score": 2, "reason": "fine"}' } }],
+      model: "judge-model",
+      usage: { prompt_tokens: 50, completion_tokens: 5 },
+    });
+    const off = await judgeOnce(fakeClient(create), { model: "m", maxTokens: 100 }, judgeTask());
+    const none = await judgeOnce(
+      fakeClient(create),
+      { model: "m", maxTokens: 100, reasoningEffort: "none" },
+      judgeTask(),
+    );
+
+    expect(create.mock.calls[0][0]).not.toHaveProperty("reasoning_effort");
+    expect(create.mock.calls[1][0].reasoning_effort).toBe("none");
+    expect(off.reasoningEffort).toBe("default");
+    expect(none.reasoningEffort).toBe("none");
+  });
+});
+
+describe("judge ledger reuse", () => {
+  it("reuses a verdict only for the exact prompt it graded", () => {
+    const judged = record({ promptHash: promptHash(judgeTask()) });
+    expect(answersTask(judged, judgeTask())).toBe(true);
+    // A re-capture into the same pass: same key, different answer. Reusing it is the silent
+    // wrong verdict the hash exists to prevent.
+    expect(answersTask(judged, judgeTask({ answer: "Below 5 mg/L is hypoxic." }))).toBe(false);
+  });
+
+  it("never lets an exploratory verdict stand in for a final one, or the reverse", () => {
+    const final = record({ promptHash: promptHash(judgeTask()), reasoningEffort: "default" });
+    const cheap = record({ promptHash: promptHash(judgeTask()), reasoningEffort: "none" });
+    expect(answersTask(final, judgeTask())).toBe(true);
+    expect(answersTask(final, judgeTask(), "none")).toBe(false);
+    expect(answersTask(cheap, judgeTask(), "none")).toBe(true);
+    expect(answersTask(cheap, judgeTask())).toBe(false);
+  });
+
+  it("re-judges rows from before hashes were recorded, and turns never judged", () => {
+    expect(answersTask(record({}), judgeTask())).toBe(false);
+    expect(answersTask(undefined, judgeTask())).toBe(false);
+  });
 });
 
 describe("judge budget", () => {
@@ -574,6 +719,12 @@ describe("judge budget", () => {
     expect(budgetOf([record({})], "accounts/fireworks/models/not-priced").usd).toBeUndefined();
     expect(budgetOf([record({})], "accounts/fireworks/models/gpt-oss-120b").usd)
       .toBeCloseTo((100 / 1e6) * 0.15 + (10 / 1e6) * 0.6);
+  });
+
+  it("bills cached input at the cached rate", () => {
+    const budget = budgetOf([record({ cachedPromptTokens: 80 })], "accounts/fireworks/models/gpt-oss-120b");
+    expect(budget.cachedPromptTokens).toBe(80);
+    expect(budget.usd).toBeCloseTo((20 / 1e6) * 0.15 + (80 / 1e6) * 0.015 + (10 / 1e6) * 0.6);
   });
 });
 
@@ -901,4 +1052,50 @@ describe("grading rounds", () => {
     expect(report.stale).toHaveLength(0);
     expect(report.dimensions[0].pairs).toBe(1);
   });
+});
+
+/**
+ * The judge once exited 0 after every call failed on a DNS error, leaving an empty summary that
+ * looked like a finished pass. A local server that drops every connection stands in for the
+ * outage, so the script's real exit path runs without reaching a provider.
+ */
+describe("judge exit status", () => {
+  it("exits nonzero when calls fail", async () => {
+    const server = net.createServer((socket) => socket.destroy());
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const { port } = server.address() as net.AddressInfo;
+    const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "judge-exit-")), "pass.json");
+    // The run's real ledger is read for reuse; a failed call must leave it exactly as it was.
+    const ledger = path.resolve(__dirname, "../../data/results/judge/p3-calib-2026-09-24/warm.jsonl");
+    const ledgerBefore = fs.existsSync(ledger) ? fs.readFileSync(ledger, "utf8") : undefined;
+    try {
+      const code = await new Promise<number | null>((resolve) => {
+        const child = spawn(
+          process.execPath,
+          [
+            require.resolve("ts-node/dist/bin"), "--transpile-only", "scripts/judge.ts",
+            "--run=p3-calib-2026-09-24", "--only=refusal-how-long-can-it-stay-in",
+            "--reasoning-effort=none", `--out=${out}`,
+          ],
+          {
+            cwd: path.resolve(__dirname, "../.."),
+            env: {
+              ...process.env,
+              FIREWORKS_API_KEY: "test-key",
+              FIREWORKS_BASE_URL: `http://127.0.0.1:${port}/v1`,
+              SENSOR_TOOL: "false",
+              REPORT_TOOL: "false",
+            },
+            stdio: "ignore",
+          },
+        );
+        child.on("exit", resolve);
+      });
+      expect(code).toBe(1);
+      expect(fs.existsSync(out)).toBe(true);
+      expect(fs.existsSync(ledger) ? fs.readFileSync(ledger, "utf8") : undefined).toBe(ledgerBefore);
+    } finally {
+      server.close();
+    }
+  }, 60_000);
 });

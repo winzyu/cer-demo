@@ -2,7 +2,7 @@ import {
   buildMessages, formatContext, formatCurrentTime, formatSelectedDevice,
 } from "../../src/prompt/promptBuilder";
 import {
-  REFUSAL_SENTENCE, REPORT_TOOL_BLOCK, TOOL_BLOCK, buildSystemPrompt,
+  NO_TOOLS_RULE, REFUSAL_SENTENCE, REPORT_TOOL_BLOCK, TOOL_BLOCK, buildSystemPrompt,
 } from "../../src/prompt/systemPrompt";
 import type { Chunk } from "../../src/types/retrieval.types";
 import { buildCatalogueBlock, catalogue, usableGuidance } from "../../src/catalogue";
@@ -30,7 +30,7 @@ describe("buildSystemPrompt", () => {
     const prompt = buildSystemPrompt(false, false, null);
 
     expect(prompt).toContain("not this pod's threshold");
-    expect(prompt).toContain("say that no threshold is configured for this pod");
+    expect(prompt).toContain("say the configured threshold is unavailable here");
   });
 
   it("keeps turbidity qualitative without naming any sensor hardware", () => {
@@ -49,9 +49,31 @@ describe("buildSystemPrompt", () => {
     const prompt = buildSystemPrompt(false, false, null);
 
     expect(prompt).toContain("【n†\"quote\"】");
-    expect(prompt).toContain("character-for-\n  character");
+    expect(prompt).toContain("copied character-for-character from that excerpt");
     expect(prompt).toContain("ellipsis");
-    expect(prompt).toContain("A refusal carries no marker.");
+    expect(prompt).toContain("The refusal sentence itself carries no marker; cite any supported explanation separately.");
+  });
+
+  it("permits cited partial answers while refusing the unsupported request", () => {
+    const prompt = buildSystemPrompt(false, false);
+    expect(prompt).toContain("When only part of a request is supported");
+    expect(prompt).toContain("Then answer the supported part");
+    expect(prompt).toContain("when nothing relevant is available");
+    expect(TOOL_BLOCK).toContain("A failed or unavailable lookup leaves configuration unknown");
+    expect(TOOL_BLOCK).toContain("If a threshold is rejected, report it as unusable");
+  });
+
+  it("carries the Phase 3 grounding rules measured on the 2026-09-23 baseline", () => {
+    // Each rule answers a failure seen on that capture: step numbers cited as excerpt numbers,
+    // partial refusals that answered around the gap, general-knowledge rationale, and misread
+    // table rows (docs/EVAL_REBUILD.md).
+    const prompt = buildSystemPrompt(false, false, null);
+
+    expect(prompt).toContain("never a step, table,\n  figure or page number printed inside the excerpt's text");
+    expect(prompt).toContain("Answering only the related parts is not a refusal.");
+    expect(prompt).toContain("Say only what an excerpt states.");
+    expect(prompt).toContain("\"can\" stays \"can\"");
+    expect(prompt).toContain("use the exact row and column that match the\n  question");
   });
 
   it("embeds the refusal sentence verbatim", () => {
@@ -95,7 +117,7 @@ describe("buildSystemPrompt", () => {
     const prompt = buildSystemPrompt(false, false);
 
     expect(prompt).toContain("DO NOT answer from prior knowledge");
-    expect(prompt).toContain("Never use general world knowledge to fill gaps.");
+    expect(prompt).toContain("Never use general world knowledge to fill gaps or invent the missing value.");
     expect(prompt).toContain("Do not fabricate readings or citations.");
   });
 
@@ -142,6 +164,16 @@ describe("buildSystemPrompt", () => {
  */
 describe("the tool flags are additive", () => {
   const base = buildSystemPrompt(false, false, null);
+  // The rules every combination shares: the tools-off prompt without its no-tools line.
+  const shared = base.replace(`\n${NO_TOOLS_RULE}`, "");
+
+  it("ends the tools-off rules with the no-tools line, and only there", () => {
+    expect(base.endsWith(`\n${NO_TOOLS_RULE}`)).toBe(true);
+    expect(shared).not.toBe(base);
+    [[true, false], [false, true], [true, true]].forEach(([sensor, report]) => {
+      expect(buildSystemPrompt(sensor, report, null)).not.toContain(NO_TOOLS_RULE);
+    });
+  });
 
   it("says nothing about tools when both flags are off", () => {
     expect(base).not.toContain("query_sensor_data");
@@ -164,8 +196,8 @@ describe("the tool flags are additive", () => {
   it("appends the sensor tool block, and only that, when SENSOR_TOOL is on", () => {
     const on = buildSystemPrompt(true, false, null);
 
-    expect(on.startsWith(base)).toBe(true);
-    expect(on.slice(base.length)).toBe(`\n\n${TOOL_BLOCK}`);
+    expect(on.startsWith(shared)).toBe(true);
+    expect(on.slice(shared.length)).toBe(`\n\n${TOOL_BLOCK}`);
   });
 
   it("appends the report tool block, and only that, when REPORT_TOOL is on alone", () => {
@@ -173,8 +205,8 @@ describe("the tool flags are additive", () => {
     // block is written to read correctly in that case. Untested until now.
     const on = buildSystemPrompt(false, true, null);
 
-    expect(on.startsWith(base)).toBe(true);
-    expect(on.slice(base.length)).toBe(`\n\n${REPORT_TOOL_BLOCK}`);
+    expect(on.startsWith(shared)).toBe(true);
+    expect(on.slice(shared.length)).toBe(`\n\n${REPORT_TOOL_BLOCK}`);
   });
 
   it("appends sensor then report, in that order, when both are on", () => {
@@ -277,7 +309,7 @@ describe("TOOL_BLOCK", () => {
 
   it("routes a limits question to get_pod_thresholds, never to a document", () => {
     expect(TOOL_BLOCK).toContain("get_pod_thresholds for the limits");
-    expect(TOOL_BLOCK).toContain("never substitute a\n  number from a document");
+    expect(TOOL_BLOCK).toContain("Never substitute a\n  number from a document");
     expect(TOOL_BLOCK).toContain("never a \"normal range\"");
   });
 

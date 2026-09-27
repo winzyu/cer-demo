@@ -1,0 +1,285 @@
+### Industrial-DO-probe.pdf (chunk Industrial-DO-probe.pdf__610532812499)
+
+Range 	0 − 100 mg/L
+~0.1 mg/L/per sec	Response time
+300 PSI	Max pressure
+3 Meters	Cable length
+Yes (PT-1000)	Internal temperature sensor
+~1 Year	Time before recalibration
+~ 4 Years	Life expectancy
+~18 Months	Maintenance
+Reads 	Dissolved Oxygen
+1 − 99 °C	Temperature range °C
+212m (694 ft)	Max depth
++/– 0.05 mg/L	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+D.O. Probe
+or
+Revised 4/26
+V 2.4
+
+-- 1 of 13 --
+
+Wastewater
+Treatment
+Food
+Production
+Chemical
+Production
+Envriomental
+Monitoring
+(No Organic Solvents)
+This Probe can be used for:
+2	Copyright © Atlas Scientific LLC
+
+-- 2 of 13 --
+
+Operating principle
+This galvanic dissolved oxygen probe consists of a HDPE membrane, an anode bathed
+in an electrolyte and a cathode. Oxygen molecules defuse through the probes membrane
+at a constant rate (without the membrane the reaction happens too quickly). Once the
+oxygen molecules have crossed the membrane they are reduced at the cathode and
+a small voltage is produced. If no oxygen molecules are present, the probe will output
+0 mV. As the oxygen increases so does the mV output from the probe. Each probe will
+output a different voltage in the presence of oxygen. The only thing that is constant is that
+0mV = 0 Oxygen.
+Electrolyte
+Cathode (Pure silver rod)
+Membrane
+Anode (Zinc)
+Time (sec)
+90%
+60%
+5 	10 	15 	20 	25 	30	0
+Dissolved Oxygen
+Stagnant water
+Oxygen being
+consumed by probe
+20%
+One of the drawbacks from using a galvanic
+probe is that it consumes a VERY small amount
+of the oxygen it reads. Therefore, a small amount
+of water movement is necessary to take accurate
+readings. Approximately 60 ml/min.
+3	Copyright © Atlas Scientific LLC
+
+-- 3 of 13 --
+
+Ø 4.4mm
+Ø 5.3mm
+D.O.
+D.O.
+PT-1000(There is no polarity)
+PT-1000
+175.5mm
+(6.9”)
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+47.9mm
+(1.8”)
+19.7mm (.7”)
+Cable Length
+3m (10’)
+3/4 NPT
+28.4mm
+(1.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+Measurements
+4	Copyright © Atlas Scientific LLC
+
+-- 4 of 13 --
+
+PVC
+PVCDelrin ®
+(body)
+Polyethylene
+HDPE
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+HDPE
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+ABS
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Dissolved Oxygen Probe
+Part # ENV-50-DO
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+Food Safe
+5	Copyright © Atlas Scientific LLC
+
+-- 5 of 13 --
+
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Temp. probe type
+Temp. accuracy
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+212m (694 ft)
+3m (10 feet)
+Yes
+Class A platinum, RTD
++/- (0.15 + (0.002*t))
+SMA or Tinned Leads
+195 grams
+(3/4") NPT
+Chemical only
+Yes
+Materials
+Polyethylene
+Delrin® thermoplastic
+ABS
+HDPE
+PVC 	PVC
+PVC
+PVC
+Polyethylene
+Polyethylene Titanium Nitride
+Titanium Nitride
+This Dissolved Oxygen probe can be
+fully submerged in fresh or salt water,
+up to the SMA connector or Tinned
+leads indefinitely.
+6	Copyright © Atlas Scientific LLC
+
+-- 6 of 13 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__f3c3c9519851)
+
+m that generates tables of DO solubility values and
+(or) salinity correction factors over a range of user-specified
+temperature, atmospheric pressure, and salinity or specific
+conductance (https://water.usgs.gov/software/DOTABLES/).
+2.3.1 Surface Water
+Standard determinations of DO in riverine surface water
+represent the cross-sectional median or mean DO concentra-
+tion at the time of observation.Multiparameter instruments (sondes) are in common use
+by the USGS for measurement of DO and other field param-
+eters, both for in situ discrete measurements in surface water
+and for short- or long-term deployment in streams, lakes and
+reservoirs, and other surface-water bodies. Refer to NFM
+6.8, Wagner and others (2006), and manufacturer guidance
+for additional information regarding the siting and use of
+multiparameter instruments.
+Measuring the DO concentration at one distinct point in
+a cross section is valid only for flowing water with a cross-
+sectional DO variation less than 0.5 mg/L. Discerning such
+variation requires a reconnaissance cross-section measure-
+ment. Measurements made at multiple locations in the cross
+section are recommended when possible. Determining DO
+concentration for a single channel at the centroid of flow at the
+midpoint of the vertical represents the cross section only under
+ideal mixing conditions.
+Do not measure DO in or directly below sections with
+turbulent flow, in still water, or from the bank unless these
+conditions represent most of the stream reach or are required
+to fulfill project objectives.
+Verify whether or not the instrument in use applies salin-
+ity corrections automatically. If not, apply a salinity correction
+to the saturation values after making the DO measurement,
+referring to section 5.0 and table 6.2–4 (at end of chapter).
+If the anticipated DO concentration is less than 1.0 mg/L,
+use of spectrophotometric methods (section 3.0) is required
+to develop an instrument-specific rating before measure-
+ments made with a field instrument can be reported. Optical
+DO instrument readings are required to be verified through
+the development of an instrument-specific comparison with
+spectrophotometric methods. The instrument-specific rating
+should consist of at least five measurements made as nearly
+simultaneously as possible with the optical instrument and
+the spectrophotometric method. When compared, the median
+of these measurements should agree within 0.03 mg/L. If the
+measurements do not agree within 0.03 mg/L, the optical
+instrument should be checked and, if necessary, calibrated to
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__a2b58928d95a)
+
+-- 21 of 44 --14 	Chapter A6.2. Dissolved Oxygen
+Table 6.2–3. 	Equipment and supplies for the spectrophotometric
+method of determining dissolved-oxygen concentration using
+Rhodazine D and Indigo Carmine reagents.
+[DO, dissolved-oxygen concentration; μS/cm, microsiemens per centimeter at
+25 degrees Celsius]
+Portable spectrophotometer (or photometer)
+Appropriate reagent kits for the expected DO range of the environ-
+mental condition
+Blank ampule (zero DO), included in each Rhodazine D kit
+Submersible sampling tool, used in situ, to meet criteria described
+in White and others (1990)
+Sampler device (overflow cell), length of C-flex tubing, and sample
+pump
+Safety gloves, glasses, and apron
+Waste-disposal container
+Deionized water (maximum conductivity 1 μS/cm)
+Bottle, squeeze dispenser, for deionized water
+Lint-free wipes to remove moisture from the surface of the ampule
+sensors and spectrophotometric methods were made by using
+an In-Situ, Inc., multiparameter sonde (various models) with
+a rugged dissolved oxygen (RDO) optical sensor. Before
+measuring and reporting hypoxic to anoxic (concentration
+less than 1.0 mg/L) DO-concentration data from optical sen-
+sors, the capability and accuracy of the optical sensor in this
+low-DO concentration range is required to be documented by
+making side-by-side measurements onsite to compare results
+with values obtained by using a spectrophotometric method.
+(See section 2.3, Measurement, above.)
+The Rhodazine D spectrophotometric method is appli-
+cable to a range of DO concentrations from 0.025 to 1.0
+mg/L in aqueous environments. The low-level Indigo Car-
+mine spectrophotometric methods are applicable to a range
+of DO concentrations from either 0.006 to 0.8 mg/L or 0.2 to
+2.0 mg/L, depending on the specific method being used for the
+concentration range of interest.
+3.1 Equipment and Supplies
+The Rhodazine D and Indigo Carmine spectrophotomet-
+ric methods were designed to minimize atmospheric interac-
+tion with the water sampled. Two sampling systems commonly
+are used—(1) an in situ (submersible or downhole) sampler,
+such as the assemblies discussed in White and others (1990);
+and (2) a plastic overflow cell through which sample water is
+pumped (see table 6.2–3).
+The sampling system is configured to use a self-filling
+ampule with the Rhodazine D or Indigo Carmine reagent vac-
+uum sealed inside. DO concentration is determined instrumen-
+tally on the resultant solution by using a spectrophotometer or
+photometer. The spectrophotometer (or photometer) selected
+must be adjustable to the appropriate wavelength of incident
+light needed for the determination of DO concentration in the
+resultant colored sample, based on the reagent used. Appli-
+cable spectrophotometers, photometers, and ampule kits are
+available commercially from various companies for a variety
+of concentration ranges.
+Information about the accuracy of commercially avail-
+able reagent kits may not be included with the equipment
+or supplies purchased. Always check with the manufacturer
+regarding the accuracy of the specific test kit(s) of interest.
+The accuracy of the test kits will typically be a function of the
+range of DO concentration in the sample.

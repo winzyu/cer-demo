@@ -8,18 +8,11 @@
  * (`docs/EVAL_REBUILD.md` §1e). A label here is real ground truth only for the claim ids that
  * happen to be named and resolve; everything else is a reported gap, not a guess.
  *
- * A claim id that does not resolve is dropped from the label and reported, never guessed at. A
- * fixture that resolves nothing at all and is not a refusal fixture gets **no label file** —
- * writing `noRelevantChunks` for it would silently tell the harness "nothing is relevant here",
- * which is not a fact this script has any basis to assert.
- *
- * Labels are flat per fixture: every resolved chunk is attached to every turn. The fixture's
- * own contamination methodology (`eval/fixtures-wave1/_EXIT_CRITERIA.md` "Reproducing") already
- * treats the notes' claim-id list as one gold set per fixture rather than per turn, so this
- * matches existing precedent rather than inventing a new one. It is coarser than a hand-split
- * would be — a fixture whose two turns draw from disjoint sources will over-credit recall on
- * each turn — and that coarseness is exactly the kind of thing a human labelling pass exists to
- * tighten.
+ * Per-turn retrieval_evidence overrides notes using verbatim filename/quote anchors.
+ * Refusal fixtures must provide it: missing requested values do not imply missing explanatory
+ * context. Explicit anchors fail closed if they no longer resolve in the current corpus.
+ * Other fixtures retain provisional fixture-wide claim labels until the Phase 1e split.
+ * This script does not delete stale output files; verify output membership after generation.
  *
  *   npx ts-node scripts/resolveRetrievalLabels.ts
  *   npx ts-node scripts/resolveRetrievalLabels.ts --out=eval/retrieval-labels
@@ -117,13 +110,18 @@ const main = (): void => {
   const knownChunks = new Set<string>();
   corpus.documents.forEach((d) => d.chunks.forEach((c) => knownChunks.add(c.id)));
 
-  const fixtureFiles = fs.readdirSync(FIXTURES_DIR).filter((f) => f.endsWith(".json")).sort();
+  const fixtureDir = path.resolve(arg("fixtures") ?? FIXTURES_DIR);
+  const fixtureFiles = fs.readdirSync(fixtureDir).filter((f) => f.endsWith(".json")).sort();
   const coverage: FixtureCoverage[] = [];
+  const outputs: Array<{ file: string; body: string }> = [];
+  const stale = fs.readdirSync(outDir).filter((file) => file.endsWith(".json")
+    && !fixtureFiles.includes(file));
+  if (stale.length > 0) throw new Error(`Stale label files require review: ${stale.join(", ")}`);
 
   fixtureFiles.forEach((file) => {
     const fixtureId = file.replace(/\.json$/, "");
-    const fixture = JSON.parse(fs.readFileSync(path.join(FIXTURES_DIR, file), "utf8"));
-    const isRefusal = (fixture.answerable_from ?? []).length === 0;
+    const fixture = JSON.parse(fs.readFileSync(path.join(fixtureDir, file), "utf8"));
+    const isRefusal = fixture.class === "refusal";
     const named = namedClaimIds(fixture.notes ?? "");
 
     const resolved: string[] = [];
@@ -142,6 +140,11 @@ const main = (): void => {
         unresolved.push(`${id} (chunk ${resolution.chunkId} not in corpus)`);
         return;
       }
+      const source = corpus.documents.find((d) => d.filename === resolution.filename);
+      const chunk = source?.chunks.find((c) => c.id === resolution.chunkId);
+      if (!chunk?.text.includes(resolution.quote)) {
+        throw new Error(`${fixtureId}: claim ${id} quote does not match its current chunk`);
+      }
       resolved.push(id);
       const entry = byChunk.get(resolution.chunkId);
       if (entry) {
@@ -151,9 +154,7 @@ const main = (): void => {
       }
     });
 
-    // Refusal fixtures never get a chunk marked relevant, even if a stray claim id resolves —
-    // notes name those as decoys/near-misses ("the sharpest named failure mode"), not sources.
-    const relevant: RelevantChunkDraft[] = isRefusal ? [] : [...byChunk.entries()].map(
+    const fallback: RelevantChunkDraft[] = [...byChunk.entries()].map(
       ([chunkId, { resolution, claimIds }]) => ({
         chunkId,
         contentHash: chunkId.split("__").pop() as string,
@@ -165,32 +166,46 @@ const main = (): void => {
       }),
     );
 
-    // Nothing resolved and this isn't a refusal fixture: we have no basis for either a relevant
-    // chunk or a noRelevantChunks claim. Skip the file rather than guess either way.
-    if (!isRefusal && relevant.length === 0) {
-      coverage.push({
-        fixtureId,
-        fixtureClass: fixture.class,
-        isRefusal,
-        named,
-        resolved,
-        unresolved,
-        distinctChunks: [],
-        written: false,
-      });
-      return;
-    }
-
-    const turns = (fixture.turns ?? []).map((turn: { content: string }, i: number) => ({
-      turn: i + 1,
-      query: turn.content,
-      relevant,
-      ...(isRefusal ? {
-        noRelevantChunks: "refusal fixture (answerable_from empty) — no corpus chunk answers "
-          + "this query. Mechanically labelled by scripts/resolveRetrievalLabels.ts; not "
-          + "human-verified.",
-      } : {}),
-    }));
+    const turns = (fixture.turns ?? []).map((turn: {
+      content: string;
+      retrieval_evidence?: Array<{ filename: string; quote: string }>;
+    }, i: number) => {
+      let relevant = fallback;
+      if (turn.retrieval_evidence !== undefined) {
+        const selected = new Map<string, RelevantChunkDraft>();
+        if (turn.retrieval_evidence.length === 0) {
+          throw new Error(`${fixtureId} turn ${i + 1}: empty explicit evidence`);
+        }
+        turn.retrieval_evidence.forEach(({ filename, quote }) => {
+          if (!quote || !fixture.answerable_from.includes(filename)) {
+            throw new Error(`${fixtureId} turn ${i + 1}: invalid evidence source or quote`);
+          }
+          const document = corpus.documents.find((d) => d.filename === filename);
+          const matches = document?.chunks.filter((c) => c.text.includes(quote)) ?? [];
+          if (matches.length === 0) {
+            throw new Error(`${fixtureId} turn ${i + 1}: unresolved evidence in ${filename}: ${quote}`);
+          }
+          matches.forEach((chunk) => selected.set(chunk.id, {
+            chunkId: chunk.id,
+            contentHash: chunk.id.split("__").pop() as string,
+            filename,
+            grade: isRefusal ? 1 : 2,
+            evidence: quote,
+            locator: `${filename}: verbatim per-turn fixture evidence`,
+            claimIds: [],
+          }));
+        });
+        relevant = [...selected.values()];
+      } else if (isRefusal) {
+        // Refusal notes can name tempting but irrelevant claims. Do not infer that these
+        // are gold explanations, or that an unsupported requested value needs no context.
+        throw new Error(`${fixtureId} turn ${i + 1}: refusal needs explicit explanatory evidence`);
+      }
+      if (relevant.length === 0) {
+        throw new Error(`${fixtureId} turn ${i + 1}: no evidence resolved; labels not written`);
+      }
+      return { turn: i + 1, query: turn.content, relevant };
+    });
 
     const label = {
       fixtureId,
@@ -203,7 +218,7 @@ const main = (): void => {
       turns,
     };
 
-    fs.writeFileSync(path.join(outDir, `${fixtureId}.json`), `${JSON.stringify(label, null, 2)}\n`, "utf8");
+    outputs.push({ file: `${fixtureId}.json`, body: `${JSON.stringify(label, null, 2)}\n` });
 
     coverage.push({
       fixtureId,
@@ -212,10 +227,12 @@ const main = (): void => {
       named,
       resolved,
       unresolved,
-      distinctChunks: [...byChunk.keys()],
+      distinctChunks: [...new Set<string>(turns.flatMap((turn: { relevant: RelevantChunkDraft[] }) => turn.relevant.map((chunk) => chunk.chunkId)))],
       written: true,
     });
   });
+
+  outputs.forEach(({ file, body }) => fs.writeFileSync(path.join(outDir, file), body, "utf8"));
 
   // ---- coverage report ----
 
@@ -234,7 +251,7 @@ const main = (): void => {
 
   const noneNamed = coverage.filter((c) => c.named.length === 0);
   log.info(`\nFixtures naming zero claim ids (${noneNamed.length}):`);
-  noneNamed.forEach((c) => log.info(`  ${c.fixtureId}${c.isRefusal ? " [refusal — expected]" : "  <-- NOT a refusal fixture, needs manual labelling"}`));
+  noneNamed.forEach((c) => log.info(`  ${c.fixtureId}${c.isRefusal ? " [explicit per-turn evidence]" : "  <-- NOT a refusal fixture, needs manual labelling"}`));
 
   const notWritten = coverage.filter((c) => !c.written);
   log.info(`\nFixtures with no label file written (${notWritten.length}):`);
@@ -251,7 +268,7 @@ const main = (): void => {
   log.info(`  1 chunk: ${dist[1]}   2 chunks: ${dist[2]}   3+ chunks: ${dist["3+"]}`);
 
   const refusalCount = coverage.filter((c) => c.isRefusal).length;
-  log.info(`\nRefusal-class fixtures (answerable_from empty): ${refusalCount} — all written with relevant=[] + noRelevantChunks on every turn.`);
+  log.info(`\nRefusal-class fixtures: ${refusalCount}, with explicit per-turn explanatory evidence.`);
 
   const totalUnresolved = coverage.reduce((sum, c) => sum + c.unresolved.length, 0);
   const totalResolved = coverage.reduce((sum, c) => sum + c.resolved.length, 0);
