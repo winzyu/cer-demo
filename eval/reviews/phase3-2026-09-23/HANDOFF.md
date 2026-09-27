@@ -1,21 +1,22 @@
-# Phase 3 / R4 handoff - 2026-09-26 (updated after the judge replacement and the unpinned-datasheet captures)
+# Phase 3 / R4 handoff - 2026-09-27 (updated after follow-up rewriting, the model test and the switch to `glm-5p3-flash`)
 
-R4 (evaluation-driven improvement) has calibrated the judge (E2), captured the final two-arm run (E3), checked the judge on held-out rows, tried a reranker and answer-model reasoning `high`, applied rubric v2, replaced the judge after Fireworks withdrew it, and measured retrieval without the pinned probe datasheets at k=10 and k=20.
-No lever has lifted correctness beyond the judge's noise; the gap splits into a retrieval gap (production retrieval 0.72 against 1.10 on gold context) and an answer gap (1.10 against the 1.30 floor).
-Next is the improvement plan below (follow-up query rewriting, keyword search, a stronger model on gold context), then the user's open decisions, E4 and E6.
+R4 (evaluation-driven improvement) has calibrated the judge (E2), captured the final two-arm run (E3), replaced the withdrawn judge, and on 2026-09-26 ran the improvement round: follow-up query rewriting, keyword search, two prompt variants and a stronger answer model.
+Two levers worked: rewriting follow-ups before retrieval (0.72 / 0.74 to 0.89 / 0.92 on `gpt-oss-120b`) and `glm-5p3-flash` as the answer model (gold context 1.33 / 1.34, the first arm over the 1.30 floor; real retrieval with rewriting 1.07 / 1.06).
+The user switched the answer model to `glm-5p3-flash` and approved the next round (steps 1-6 under "Next steps"), to run in a new conversation.
 Work on branch `eval/wave1-corrections` in its worktree `.claude/worktrees/wave1-corrections`; landing into `dev` is a separate step with its own git plan.
 
 ## Exact state
 
-- Branch `eval/wave1-corrections` at `b395570` or later, pushed to `origin`, clean; `dev` last merged at `e7d3e44`.
-- `dev` has since gained Q1's tools-on prompt and tool changes only; its tools-off message list is byte-identical to the merge base's, so R4's tools-off captures are unaffected, but merge `dev` before landing.
-- **Judge:** `deepseek-v4-flash-0731` returns 404 on Fireworks since 2026-09-25 but is still `DEFAULT_JUDGE_MODEL` in `src/eval/judge/runner.ts`; every judge call must pass `--judge-model=accounts/fireworks/models/deepseek-v4p1-flash` until the default is changed (with the user's approval) and its rate added to `src/eval/prices.ts` (unknown; Fireworks' pricing page does not list it).
-  The replacement is calibrated (kappa 0.852 on the 32 tuned rows, 0.823 on the 38 rows v2 left unchanged) but about 0.05-0.09 more lenient than the old judge, so compare only runs judged by the same judge.
+- Branch `eval/wave1-corrections` at `691e4f0` or later, pushed to `origin`, clean; `dev` last merged at `e7d3e44`.
+- `dev` has since gained Q1's tools-on prompt and tool changes only; its tools-off message list is byte-identical to the merge base's, so R4's tools-off captures are unaffected, but merge `dev` before landing, and re-check the tools-on path with GLM (step 1).
+- **Answer model:** decided `glm-5p3-flash` at `LLM_REASONING_EFFORT=low` (user, 2026-09-26); production still runs `gpt-oss-120b` until the runbook changes at landing ("Edits wanted"). GLM always reasons and rejects `thinking` disabled; `low` is accepted. Its rate is in `src/eval/prices.ts` ($0.15 / $0.03 cached / $0.50).
+- **New settings on this branch, both off by default:** `QUERY_REWRITE` (`src/retrieval/queryRewrite.ts`, wired in `ChatController.postChat`; the user has not yet decided whether launch turns it on, recommended yes) and `LLM_THINKING=disabled` (for models such as `minimax-m3`). `retrieval:eval --rewrite [--history-run=<run>] [--history-arm=<arm>]` replays follow-ups with captured history and prints per-turn recall.
+- **Judge:** every call must pass `--judge-model=accounts/fireworks/models/deepseek-v4p1-flash`; `DEFAULT_JUDGE_MODEL` in `src/eval/judge/runner.ts` still names the withdrawn `deepseek-v4-flash-0731` (changing it awaits the user) and the replacement's rate is not in `prices.ts`. Compare only runs judged by the same judge.
+  The user's blind grades of 10 GLM and 10 `gpt-oss-120b` turns agree with the judge within 0.1 on both models (7 of 10 exact each), so the judge does not favour GLM.
 - **Rubric:** v2 as corrected (`19b363d`, fixture fingerprint `9a715154...`); v1 stays the reported rubric for E3's 1.01.
-- **Baselines, new judge, rubric v2:** gold context 1.10; `hybrid-slice-vector` k=20 (E3, pinned datasheets) 0.68; `local-vector` k=10 0.72 / 0.72; `local-vector` k=20 0.72 / 0.74.
-- `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); the user decided to stop pinning the datasheets (they stay in the corpus) but has not yet chosen the production depth.
-- Modes and settings off by default: `local-rerank`, `hybrid-slice-rerank` (`RERANK_MODEL`), `LLM_REASONING_EFFORT`.
-- Spend about $15.50 of the $20 ceiling at the old judge's rate (about $4.50 left, approved for R4 through September 28); the new judge's own rate may differ, so check the Fireworks bill.
+- **Baselines, new judge, rubric v2, two passes unless noted:** gold context `gpt-oss-120b` 1.10 (one pass), `glm-5p3-flash` 1.33 / 1.34; `local-vector` k=20 unpinned `gpt-oss-120b` 0.72 / 0.74, with rewriting 0.89 / 0.92; **`glm-5p3-flash` with rewriting 1.07 / 1.06 (run `p3-lv-k20-rewrite-glm-2026-09-26`), the baseline for the next round.**
+- `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); production retrieval is still the user's choice (recommended `local-vector` k=20, datasheets unpinned, with `QUERY_REWRITE=true`).
+- **Spend:** about $18.40 of the ceiling, which the user raised from $20 to $30 on 2026-09-26, so about $11.60 left; at the old judge's rate, so check the Fireworks bill. Steps 1-6 are approved at about $2.50-3.00.
 
 ## What to review
 
@@ -32,6 +33,12 @@ Everything below is committed on `eval/wave1-corrections`; the full records with
 | Judge replacement calibration | `EVAL_REBUILD.md` "Judge replacement calibration"; run `p3-calib-v4p1-2026-09-25` | `dfe3345` |
 | E3 re-judged, new judge, v1 and v2 | `EVAL_REBUILD.md` "E3 re-judged by the new judge"; runs `p3-final-v4p1-2026-09-25`, `p3-final-rubric-v2-2026-09-25` | `c250011` |
 | Unpinned datasheets, k=10 and k=20 | `EVAL_REBUILD.md` "Datasheets unpinned, k=10" and "k=20"; runs `p3-lv-k10-2026-09-26`, `p3-lv-k20-2026-09-26` and their `-rejudge` links | `00afbd7`, `b395570` |
+| Follow-up rewriting and keyword search, offline | `src/retrieval/queryRewrite.ts`, `test/unit/queryRewrite.test.ts`, `scripts/retrievalEval.ts`; `EVAL_REBUILD.md` "Follow-up rewriting and keyword search, offline"; `data/results/retrieval/r4-2026-09-26/` | `4fee6d6` |
+| Brevity-line variants A and B | `EVAL_REBUILD.md` "Brevity line relaxed on gold context"; runs `p3-gold-promptA-2026-09-26`, `p3-gold-promptB-2026-09-26` | `c78d91b` |
+| Rewriting captured, `gpt-oss-120b` | `EVAL_REBUILD.md` "Follow-up rewriting captured, k=20"; run `p3-lv-k20-rewrite-2026-09-26` | `765a080` |
+| `LLM_THINKING`, GLM price | `src/services/LlmService.ts`, `src/config/index.ts`, `test/unit/llmService.test.ts` | `cf5f0af` |
+| Stronger models on gold context | `EVAL_REBUILD.md` "Stronger answer models on gold context"; runs `p3-gold-glm-5p3-flash-2026-09-26`, `p3-gold-minimax-m3-2026-09-26` (invalid) | `607119a` |
+| GLM with rewriting, ungrounded checks, blind grades | `EVAL_REBUILD.md` "`glm-5p3-flash` with follow-up rewriting"; runs `p3-lv-k20-rewrite-glm-2026-09-26`, `p3-gold-*-ungrounded-2026-09-26`; grades in `eval/grading/p3-gold-glm-vs-gptoss-2026-09-26/warm/scores.csv` | `2cb522f`, `e9569ca` |
 | Outside reviews | same folder: `claude-review-packet.md`, `codex-review-packet.md`, `rubric_review_report.md` (Gemini) | `1c5f1fd`, `bc3f124`, `abfe241` |
 
 ## Results
@@ -91,24 +98,53 @@ Rubric review, three reviewers given the same packet (verdicts only; read the fi
 - Retrieval sees only the latest message (`ChatController.postChat` calls `adapter.getContext(query)`; `history` goes to the prompt only), so follow-up turns that do not name their subject search blind.
 - Keyword search (`local-hybrid`, dense+BM25 by RRF, `RrfHybridAdapter`) exists but was last measured on the archived August label set (59.5% against 54.3% for dense at k=10), never on the frozen 90.
 
+## Results of the 2026-09-26 improvement round (new judge, rubric v2, secondary to E3's 1.01)
+
+| configuration | correctness, pass 1 / 2 | notes |
+|---|---|---|
+| gold, `gpt-oss-120b` (E3) | 1.10 (one pass) | citations 60.4% |
+| gold, `gpt-oss-120b`, brevity line deleted (A) | 1.10 / 1.06 | longer answers, more zeros; dropped |
+| gold, `gpt-oss-120b`, "include every point" (B) | 1.02 / 1.07 | dropped |
+| gold, `glm-5p3-flash`, reasoning low | 1.33 / 1.34 | citations 99.5%; ungrounded 40% of turns against 60% |
+| gold, `minimax-m3`, thinking disabled | 0.13 / 0.13 | invalid: the second system message (CONTEXT) is dropped |
+| `local-vector` k=20, `gpt-oss-120b` | 0.72 / 0.74 | |
+| + `QUERY_REWRITE` | 0.89 / 0.92 | second turns 0.62 to 0.93-0.98 |
+| + `QUERY_REWRITE`, `glm-5p3-flash` | 1.07 / 1.06 | refusal gate PASS, citations 99.5%, 0 unexplained figures |
+
+Offline recall at k=20: `local-vector` 38.4% (turn 2 26.8%), with rewriting 55.4% (turn 2 60.8%); `local-hybrid` 38.9%, with rewriting 58.1% (within noise of dense, so keyword search was dropped).
+GLM with rewriting still loses about 0.27 to its gold-context score, so the remaining gap is mostly retrieval; cross-document (0.67-0.75) is the weakest class.
+The user's blind grading flagged a GLM habit: with the tools off it twice offered to look at "your pod's readings", and once invented a claim about upstream pods.
+
 ## Next steps
 
-Improvement plan agreed with the user on 2026-09-26; every paid step needs the user's approval with its cost first, and offline steps come first.
+Approved by the user on 2026-09-26 (steps 1-6, about $2.50-3.00 of the $11.60 left), to run in a new conversation; every paid step beyond these needs approval with its cost first.
+Run steps 3 and 1 first, in parallel; they are cheap and independent.
+Report every result with its full configuration (model, reasoning, retrieval arm, k, `QUERY_REWRITE`, prompt, judge and passes): the user asked for this explicitly.
 
-1. **Follow-up query rewriting, offline (about $0.02).**
-   Add an optional step that rewrites the latest message into a standalone search query from the conversation history before retrieval, behind a new off-by-default setting, with unit tests; the answer prompt still gets the user's own words.
-   Measure it with the retrieval harness on the 45 second turns (history from the fixtures), `local-vector` k=20, against the same turns without rewriting; the rewrite model is `gpt-oss-120b` (45 short calls) plus query embeddings.
-   Bar: a clear recall gain on second turns (the whole-set noise band is a few points), with no loss on first turns, which are unchanged by construction.
-2. **Keyword search, offline (query embeddings only, under $0.01).**
-   `npm run retrieval:eval -- --arm=local-hybrid --k=20` on the frozen 90 against `local-vector` at k=20 (38.4% recall, from the saved pools); read per class, and remember the contamination caveat (`EVAL_REBUILD.md` item 1: questions inherit their sources' wording, which flatters BM25).
-   If 1 helped, also measure the two together.
-3. **One capture of the winner, if 1 or 2 lifts recall by more than about 5 points (about $0.50):** k=20, judged twice by the new judge on v2, against `local-vector` k=20 at 0.72 / 0.74.
-4. **A stronger model on gold context (about $1-1.50, depending on its rate):** the direct test of whether `gpt-oss-120b` is the ceiling (1.10 with perfect excerpts, 1.30 needed).
-   Pick a non-DeepSeek model, since the judge is DeepSeek (candidates Fireworks serves on 2026-09-26: `kimi-k3`, `glm-5p3`, `qwen3p8-max`, `minimax-m3`); add its rate to `prices.ts`, set `LLM_MODEL` on the capture server only, and judge twice.
-   Optional, cheaper, and a proposal the user has not yet approved: gold context with `gpt-oss-120b` and the tools-off prompt's "Keep answers short and direct" line relaxed (about $0.40), since the judge's notes on gold-context 1s are mostly omitted points, not wrong ones.
-5. **User decisions, then E4 and E6:** the production retrieval setting (recommended: `local-vector` at k=20, datasheets unpinned; k=10 needs a code change because `DEFAULT_TOP_K` is a constant); not enabling `hybrid-slice-rerank` or `LLM_REASONING_EFFORT=high` for launch (recommended); per class, a caveat or a refusal under D3; whether to capture k=20 once with `CATALOGUE_PROMPT=true` (about $0.60), the prompt customers get, which adds about 21,000 characters; then the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
+1. **GLM tool-calling check (under $0.10).** Production answers sensor and report questions through tools; no GLM run has exercised them.
+   First check whether the tools can point at the local mirror (`DEVICE_API_BASE_URL` at the mirror server on :5101, fabricated data, `mirror/e2e-p3`); if not, the user approved about 10 live read-only questions against the production device API, announced before running.
+   Ask about 10 sensor and report questions through the chat endpoint with `LLM_MODEL=accounts/fireworks/models/glm-5p3-flash`, `LLM_REASONING_EFFORT=low`, `SENSOR_TOOL=true`, `REPORT_TOOL=true`, on port 8011; check that tool calls are well-formed, results are used, the withheld-history note and water-type note survive (plan Q8), and no call loops to `MAX_TOOL_ROUNDS`.
+2. **Production-prompt capture (about $0.55):** `local-vector` k=20, GLM, `QUERY_REWRITE=true`, `CATALOGUE_PROMPT=true` (adds about 21,000 characters), tools off; judged twice; against 1.07 / 1.06.
+   `CATALOGUE_PROMPT` changes the system prompt, so pass the same value to the judge as to the server.
+3. **Offline retrieval experiments (a few cents), recall on the frozen 90 with `retrieval:eval`:** (a) split cross-document questions into two or three sub-queries and merge the results (a new off-by-default option beside `QUERY_REWRITE`); (b) rewrite first turns too; (c) k=30 with rewriting, since GLM handles long prompts.
+   Baseline `local-vector` k=20 with rewriting, 55.4%; use `--history-run=p3-lv-k20-rewrite-glm-2026-09-26` for GLM's own first answers and `LLM_MODEL` set to GLM so it writes the rewrites.
+4. **Reranker on top of rewriting (about $0.60 per 90-query offline run):** `local-rerank` or `hybrid-slice-rerank` with `--rewrite`; earlier the reranker alone lifted recall from 39.5% to 51.9%.
+5. **GLM prompt fix (about $0.40):** with the tools off, forbid offering pod readings or any capability the tools-off prompt does not have; gold context with GLM, judged twice, against 1.33 / 1.34; check the two refusal turns the user flagged in `refusal-temperature-harm-threshold`.
+6. **One real capture of the winner of 3-4, plus 5 if it helped (about $0.55):** k as chosen, GLM, rewriting on, judged twice, against 1.07 / 1.06.
+
+Then: the user's open decisions (`QUERY_REWRITE` for launch, production retrieval setting, reranker and reasoning, the judge default in code, E4's per-class caveat or refusal under D3, with cross-document the obvious candidate), E4 and E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
 
 ## Traps found
+
+- `minimax-m3` on Fireworks keeps only the first system message; `buildMessages` sends CONTEXT as a second one, so that model answers with no excerpts. Any model change needs a two-system-message probe first.
+- `glm-5p3-flash` is thinking-only: `thinking: {type: "disabled"}` returns 400; use `LLM_REASONING_EFFORT=low`.
+- Retrieval transcripts keep excerpts under `turns[].context` (with `id`), not `citations`; a check reading the wrong key compares empty lists and reports "identical".
+- `rewriteQuery` logs nothing on success, only on fallback; confirm a rewrite capture by comparing second-turn excerpt lists with `p3-lv-k20-2026-09-26` (all 45 should differ). Rewrite usage is not in transcripts, so its cost is an estimate.
+- The spot check is single-turn, so it never exercises `QUERY_REWRITE`.
+- `gold-context` looks up excerpts by verbatim question text: never run it with `QUERY_REWRITE=true`.
+- The ungrounded judge returns an empty reply on a few long answers, repeatably (4 of 180 on 2026-09-26); resume once, then report them unjudged.
+- `grade:packet` needs at least two arms; for a blind two-model packet, make a run directory whose arm folders are symlinks to the two captures' arm folders.
+- Model-run helper used on 2026-09-26 (scratchpad, not committed): start the server with the env, spot-check, capture with `--run`, stop the server by the PID on :8011, symlink a `-rejudge` run, judge twice with `--final --dimension=correctness --arm=<arm> --judge-model=...deepseek-v4p1-flash`.
 
 - `DEFAULT_TOP_K` is a constant in `src/retrieval/options.ts`, not an environment setting; an env var of that name is silently ignored (the spot check shows the real excerpt count). The k=10 capture edited the constant for the run and restored it.
 - The judge reads the fixtures in its own tree: judging on an older rubric means running from an archive of the older commit (`git archive <sha> | tar -x`, with `node_modules` and `.env` linked in), then copying the ledger back.
@@ -134,6 +170,7 @@ Improvement plan agreed with the user on 2026-09-26; every paid step needs the u
 
 ## Decisions
 
+- User, 2026-09-26 (late): approved next-round steps 1-6 (about $2.50-3.00), including about 10 live read-only device API questions for the GLM tool check if the local mirror cannot serve them; to run in a new conversation.
 - User, 2026-09-26 (late): switch the answer model to `glm-5p3-flash` (at `LLM_REASONING_EFFORT=low`), after the blind 10-turn grading; raise the R4 spend ceiling from $20 to $30 to keep improving.
 - User, 2026-09-26: the brevity-line variants were tried and dropped; the stronger-model test and follow-up rewriting were approved and run (`EVAL_REBUILD.md`, "Follow-up rewriting and keyword search, offline" through "`glm-5p3-flash` with follow-up rewriting").
 - User, 2026-09-25: MN4 on followup-cleaning-the-salt-sensor#1 stays deleted; the two v2 edits that exceeded their classes were corrected before the re-judge.
