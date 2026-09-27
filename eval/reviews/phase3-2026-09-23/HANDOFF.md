@@ -147,10 +147,10 @@ Report every result with its full configuration (model, reasoning, retrieval arm
 2. **Done 2026-09-27: GLM refusal fix** (`dcb3ce3`, two general prompt rules): gold context 1.36 / 1.30 against 1.28 / 1.31, refusal gate 8 exact (`p3-gold-glm-refusal-2026-09-27`); kept.
 3. **Done 2026-09-27: launch-configuration capture** (`p3-launch-lv-k20-glm-2026-09-27`, `local-vector` k=20, both rewrites, `CATALOGUE_PROMPT=true`, the fix, tools off): 1.18 / 1.13, every Tier 1 gate PASS, cross-document 0.83; the run E4 and the R4 report cite.
 4. **Done 2026-09-27:** `deepseek-v4p1-flash` priced in `src/eval/prices.ts` and made `DEFAULT_JUDGE_MODEL` (user, `59e4b5d`).
-6. **E4 (user chose a caveat for cross-document, 2026-09-27):** `MULTI_SOURCE_CAVEAT` (`e0abe8b`) captured and judged (`p3-launch-caveat-glm-2026-09-27`, 1.17 / 1.19): correctness level, but the model adds it only where it is already confident (11 of 24 cross-document turns, none of the nine turns under 1); the user decides between a standing display caveat and another prompt round.
+6. **Done 2026-09-27: E4.** The prompt caveat (`e0abe8b`, run `p3-launch-caveat-glm-2026-09-27`) reached only confident answers and was reverted (`f694766`); the user chose a standing caveat carried by the dashboard, not the server, since a new response field would need the server relay and the dashboard to pass it on. The launch capture `p3-launch-lv-k20-glm-2026-09-27` stays the cited run.
 5. **Route the tool-check findings to the Gilligan answer-quality work on `dev`** (tools-on prompt and tools, not R4): the "last 24 hours" answer and the partial relay of the water-type and withheld-history notes (plan Q8).
 
-Then: E4's verification (item 6) and E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
+Then: E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
 
 ## Traps found
 
@@ -194,6 +194,7 @@ Then: E4's verification (item 6) and E6, the R4 report in `eval/reviews/`, the "
 
 ## Decisions
 
+- User, 2026-09-27 (later): E4 is a standing caveat shown by the dashboard; the prompt caveat is dropped.
 - User, 2026-09-27 (later): judge default switched to `deepseek-v4p1-flash`; E4 is a caveat for cross-document; the caveat's verification capture (about $0.90) approved and run.
 - User, 2026-09-27 (later): the refusal fix on gold context and the launch-configuration capture approved and run.
 - User, 2026-09-27 (later): the control capture approved and run; launch retrieval is `local-vector` k=20, datasheets unpinned, with `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on and no reranker.
@@ -226,3 +227,4 @@ Then: E4's verification (item 6) and E6, the R4 report in `eval/reviews/`, the "
 - `docs/SPECS.md`: `QUERY_REWRITE`, `QUERY_REWRITE_FIRST_TURN`, `LLM_THINKING` and the tools-off rule (`NO_TOOLS_RULE`).
 - `docs/migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` and `.env.example`: add `QUERY_REWRITE_FIRST_TURN: "true"` beside `QUERY_REWRITE`, and `DEFAULT_RETRIEVAL: "local-vector"` (approved 2026-09-27).
 - `docs/timeline.md`: the 2026-09-27 decisions (tools-off rule kept, first-turn rewriting added, the tool check passed, the reranker held pending the control).
+- `docs/migration/GILLIGAN_RELEASE_PLAN.md` (on `dev`): E4 done as a standing caveat; add a dashboard task beside U1 ("Disclaimer line on the Gilligan page"): a fixed line under every answer that cites documents, such as "Answers draw on document excerpts and may not cover every step; check the cited sections before acting.", wording approved by the user; the dashboard session (`task/gilligan-ux`) builds it.

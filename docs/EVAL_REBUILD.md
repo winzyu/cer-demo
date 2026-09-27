@@ -1628,6 +1628,7 @@ The caveat does not reach the weak answers: cross-document turns carrying it ave
 The model adds it where it is already confident, so as a warning it misses the answers that need one.
 The gate's answered turn (`refusal-turbidity-sensor-hardware` t2) now gives the catalogue's approved reply, that the pod shows a clarity band with no unit, then cites the FNU light wavelength as background; the off-contract turn declines in its own words.
 The launch capture passed 8 of 8 on the same prompt apart from the caveat, so GLM's refusal wording still varies between runs.
+Decision (user, 2026-09-27): drop the prompt caveat (reverted in `f694766`) and meet D3 with a standing caveat under every answer that cites documents, shown by the dashboard; the launch capture stays the cited run.
 
 ## Task C provenance inputs - 2026-09-24
 
