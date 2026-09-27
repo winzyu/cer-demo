@@ -4,150 +4,114 @@ Current state and next steps only.
 Rewritten at the end of every session by `/handoff`; history is `git log -p docs/STATUS.md`.
 Never cite this file from code or other docs: the reasoning lives in the docs under "Where things live".
 
-Updated 2026-09-24 in an orchestration session that reconciled five overnight sessions (Task A, Task C follow-up, R4 depth captures, judge cost, a conversation quality check); `dev` and `eval/wave1-corrections` were verified that day.
+Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygiene landed, Q6 decisions, WaterDataRepository finding); otherwise as of 2026-09-26 at `61172a7`; R4 entries were updated 2026-09-27 by the R4 session at `eval/wave1-corrections` `7428a48` (uncommitted in the main checkout), and L2 entries come from `docs/l2-inputs` (`f308ea3`).
 
 ## Start here
 
-- **The task list for September 24-30 is [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md)** (task IDs such as Q1, S3, L5), written 2026-09-24 after the supervisor's answers; where this file and the plan disagree, the plan is newer.
-- **Gilligan release (September 30), 6 days left, holds with reduced scope; the user deploys (decided 2026-09-24, `timeline.md`).**
-  Read [`migration/GILLIGAN_PRODUCT_DIRECTION.md`](migration/GILLIGAN_PRODUCT_DIRECTION.md) then [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md).
-  The user holds owner/editor access to the production Google Cloud project, so upstream IAM is no longer someone else's step.
-  The upstream organization's owners already know about the malware incident.
-  Done: R3, the tool-access fix, Task B (R1's report half) and Task C's provenance slice.
-  Open on the release path: the R1 remainder and image packaging, the runbook, R4's final capture, and the supervisor's catalogue approval.
-- **R1 remainder - not started; its release scope is the next user decision.**
-  Three of R1's parts are done (report bytes, history mapping in R3's relay, the usage endpoint).
-  Open: the `/gilligan/answer` contract (optional under D8), the service identity check (D12), a persistent usage store, and a model-call limiter with 429/503 retry.
-  **Image packaging blocks any deployment** and belongs to no roadmap row: `.dockerignore` excludes `data/`, so the image carries neither the corpus nor the embedding cache.
-  Packaging and the cer-demo side of the identity check touch no Task C file and can start now; the rest is cut from the post-Task C heads.
-  The recommended minimum is packaging, a shared-secret service check, `max-instances=1` and a Fireworks spending cap, with identity tokens, Firestore quotas, `/gilligan/answer` and the limiter after launch; the user has not chosen yet.
-  This machine has no Docker, `gcloud`, Java or Firestore emulator, so neither the image nor a Firestore usage store can be tested end to end locally yet.
-- **Deployment runbook - drafted, committed unrevised, stale.** [`migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md`](migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md) was drafted 2026-09-23 against `50adac0`.
-  It assumes the upstream owners deploy; rewrite its owner roles and §2 permissions for the user deploying, and let the user fill its §2 inputs table.
-  Its §5 finding stands: Cloud Run strips the signature from the forwarded service token, so D12's in-app verification needs a separate header arrangement.
-- **Task C, first slice - done, merged and pushed 2026-09-24.**
-  cer-demo `fb75add` (merged into `dev` as `913ec33`), server `d12ad6d` and dashboard `fd103a0` on `local`, not pushed.
-  Tool results and the round cap now reach the relay, the page, saved history, transcripts, the gate and the judge; tool results are citable as `【Tn】`, and citation markers are audited, corrected where unambiguous, and stripped only on display.
-  Contract: `SPECS.md` §10.4a; checks: [`migration/TASK_C_VERIFICATION.md`](migration/TASK_C_VERIFICATION.md); after the `dev` merge the citation, audit, health and retrieval suites passed 81/81, with typecheck and lint clean.
-  Tools-off transcripts carry no tool fields, so the judge prompt for R4's captures is unchanged.
-- **Eval (R4) - depth settled at k=20; calibration and the final capture remain.** All on `eval/wave1-corrections` (`3062d3d`, pushed), not in `dev`.
-  `dev` (Task A and Task C) and `eval/judge-cost` are merged in; exploratory judge passes now run with reasoning off and reported passes with `--final`.
-  `hybrid-slice-vector` correctness: 0.51 at k=10, 0.60 at k=20, 0.52 at k=30, where the model refuses answerable questions; gold context 1.01.
-  Spend about $7.44 of the $20 ceiling the user set 2026-09-24, approved through September 28.
-  Next: calibration tooling and a 32-row packet the user grades on correctness and ungrounded, then the final two-arm capture about September 27.
-  Detail: `EVAL_REBUILD.md` "Retrieval depth captures" and `eval/reviews/phase3-2026-09-23/HANDOFF.md`, both on that branch.
-- **Task A, turbidity - done, provisional, pushed 2026-09-24 (`dev` `e7a986b`).** Bands stay at 345/795 (the operator's 2.2 V and 0.7 V thresholds), an all-zero period is flagged as a possible missing sensor, turbidity is a unitless index (never NTU), every pod is treated as qualitative, and item 18 is treated as granted.
-  Record: `timeline.md` 2026-09-24, `STAKEHOLDER_QUESTIONS.md` items 3, 10, 14 and 18, [`migration/TURBIDITY_EXPLORATION.md`](migration/TURBIDITY_EXPLORATION.md).
-  Upstream follow-ups remain: the dashboard dial to 345/795, and `turbVoltToNTU.ts` returning null for a missing voltage.
-- **Conversation quality check - 2026-09-24, 26 live turns through the full local stack.** Plumbing, tool choice and refusals are sound; answer content is not.
-  High: the model is never given today's date and `list_pods` gives no reading age, so stale pods read as online; `generate_report` gives a status without the parameter that caused it, so a summary contradicted its own report.
-  Record and suggested fixes: [`migration/CONVERSATION_QA_2026-09-24.md`](migration/CONVERSATION_QA_2026-09-24.md).
-- **Catalogue (R2) - approved 2026-09-24.** `src/catalogue/catalogue.json` `2026-09-24.1`: all 38 entries and 6 referrals approved, the marked-up ones as edited; CER contact is sales@cleanearthrovers.com or the customer's existing CER contact. The release runs `CATALOGUE_PROMPT=true`; the eval harness keeps it off. `SPECS.md` §4b.
-- **Environment - rebuilt.** Corpus byte-reproducible, secrets in, `DEFAULT_RETRIEVAL=hybrid-slice-vector` with `CORPUS_SOURCE=artifact`, and the git-ignored `data/embeddings/cache.json` built; see [`migration/LOCAL_STACK.md`](migration/LOCAL_STACK.md).
-  `cer-demo/.env` sets `SENSOR_TOOL=true` and `REPORT_TOOL=true`, so every local boot answers reading questions with live production reads.
-- **Upstream repos - clean `local` branches, not yet pushed; the user has authorization to push (2026-09-24).** Push only to new feature branches by a command named in chat, never to `main` or `develop`.
-  **Upstream removed the payload on `main` and `develop` in both repos on 2026-09-23/24**, byte-identical to our `security/remove-payload` commits; every remote branch tip scanned clean on 2026-09-24 (long-line scan, positive-controlled on the old infected commits). Older history still carries it.
-  `local` merges cleanly onto dashboard `origin/main` and server `origin/develop`; server `origin/main` conflicts. `origin` in both points at the live `Clean-Earth-Rovers-Technology` repositories ([`migration/SECURITY_INCIDENT_2026-09-19.md`](migration/SECURITY_INCIDENT_2026-09-19.md)).
-  Bundles of `local`, `task/c-provenance` and `security/remove-payload` are at `~/code/clean-earth-rovers/backups/*-local-2026-09-24.bundle`, verified; they are on this machine only, and `local`'s history still contains the pre-cleanup payload commits.
+- **Gilligan release, September 30.** The task list, owners and dates are [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md) (task IDs such as Q1, S3, L5); where this file and the plan disagree, the plan wins. The user deploys.
+  Background: [`migration/GILLIGAN_PRODUCT_DIRECTION.md`](migration/GILLIGAN_PRODUCT_DIRECTION.md), then [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md).
+- **Orchestration.** One session reviews each workstream's actual diff when it reports done, lands cer-demo branches on `dev` one at a time in dependency order, runs typecheck, lint and the touched suites singly after each merge, pushes `dev`, keeps the plan current, and pushes upstream only as new branches with the user's consent.
+  Next: review the R4, dashboard, service, mirror and release-candidate sessions (all started) as they report, one at a time.
+- **Eval (R4)** on `eval/wave1-corrections` (`7428a48`, pushed, clean, not in `dev`). E3's reported result stays 1.01 on gold context, failing the Tier 2 gates; later numbers use the replacement judge `deepseek-v4p1-flash` and rubric v2 and compare only with each other.
+  2026-09-26 round: rewriting follow-ups into standalone search queries (`QUERY_REWRITE`, off by default) lifted `local-vector` k=20 from 0.72 / 0.74 to 0.89 / 0.92; `glm-5p3-flash` (reasoning low) scored 1.33 / 1.34 on gold context, the first arm over 1.30, and 1.07 / 1.06 with rewriting on real retrieval. Keyword search and relaxing the brevity line did not help. The user switched the answer model to GLM and raised the R4 ceiling to $30.
+  Next: approved steps 1-6 (GLM tool check, catalogue-prompt capture, offline retrieval experiments, reranker, a GLM prompt fix, one capture of the winner) in `eval/reviews/phase3-2026-09-23/HANDOFF.md` "Next steps"; results in [`EVAL_REBUILD.md`](EVAL_REBUILD.md) from "Follow-up rewriting and keyword search, offline" on, both on that branch.
+- **Answer quality.** Q3-Q6 are implemented and reviewed on `task/q3-q5` (`e8bbaa9`, pushed, not on `dev`); the rules are in its `SPECS.md` and the 2026-09-26 timeline row. Server Q6 is `task/gilligan-cwa-old` (`510cf00`, pushed).
+  2026-09-27: a pod with no GPS in its history now counts as never having moved (`ac8a166`, pushed; `sensorChat` 17/17). Landed on `dev` 2026-09-27 (`abe4169`); 17 touched suites pass singly. The user may still run `scripts/coordinateAudit.ts` (read-only) to find pods whose GPS dropped out part-way; a fix for any it finds goes on `dev`. Q9 and the 413 are another chat's (`task/q9-413`).
+- **Deployment inputs (L2).** Landed on `dev` 2026-09-27 (`6f4d060`): the plan's L2 answers, runbook §2 and a new §2.2 "What differs from the mirror run", and three timeline rows. The runbook itself (L1) is on `dev` (`fa4103f`).
+  Next: the user sends Michael the runbook §2.1 list; the user cannot deploy any service until he restores "act as".
+- **Upstream.** Pushed as new branches: server `feature/gilligan-rag-assistant`, `task/gilligan-release-p3-p4`, `fix/user-route-auth`, `feat/service-key`, `task/gilligan-cwa-old`; dashboard `feature/gilligan-rag-assistant`, `task/gilligan-release-p3-p4`. PRs are held back ([`migration/UPSTREAM_PR_BODIES.md`](migration/UPSTREAM_PR_BODIES.md)); the server needs one combined release commit before L6. The user merges and deploys after the demo.
+  The malware did run on a build machine; the user was told every credential was rotated. Build only from the clean feature branches ([`migration/SECURITY_INCIDENT_2026-09-19.md`](migration/SECURITY_INCIDENT_2026-09-19.md)).
 
-## Next conversations
+## In flight
 
-Independent tasks for separate sessions; the user was given a starting prompt for each on 2026-09-24.
-
-- **R4 calibration and final capture**, continuing on `eval/wave1-corrections` in its existing worktree.
-- **Gilligan answer quality**: the high and medium findings in `migration/CONVERSATION_QA_2026-09-24.md`, confined to tools-on prompt blocks and tool results so R4's tools-off captures are unaffected; must reach `eval/wave1-corrections` before the final capture if it touches the general prompt.
-- **Upstream publish**: audit the `local` commits in both upstream repositories, then push them to new branches on `origin` and open pull requests, never to `main` or `develop`.
-- **Task E, upstream hardening, plus Task A's upstream follow-ups**, on `../clean-earth-rovers-server` and `../user-dashboard` in worktrees cut from `local`; it must not touch `CerRagService.ts`, `GilliganController.ts` or `GilliganService.ts`.
-  Task E: (1) the device-membership hole in `WaterAnalyticsService.findPeriodWaterData` (`migration/SECURITY_FINDINGS.md` §1) with organization-isolation tests from `test/fixtures/pod-scope/`; (2) construct `EmailService` and `PaymentService` on first use; (3) configure the TypeScript ESLint parser if small, else report.
-- **R1 packaging and service check**, in a worktree cut from `dev`; blocked on the user's R1 scope choice.
-- **Task C, later slices**, after the release unless descoped in: series chart (`chart.js`), input controls (`input.js`), the pod-status bar (`podbar.js`, `SPECS.md` §15a), error codes and error UX (`SPECS.md` §7), time-range chips (Live / Week / Month / Year / 5 Years), and a feedback loop blocked on where feedback is stored.
-  Citations still carry only `source`, so a document shows as its address until a title field runs end to end.
+- **Ready to land on `dev`**: `docs/gcp-test-env` (`5ab30e8`, pushed: mirror setup, ticket, bot, phase 1 results); `docs/firestore-testing-plan` (`60befd4`, partly superseded).
+- **Service (S1-S4, Q7)**: `feat/service-release` (`cc8a300`), no active session. Before landing: `expireAt` on usage documents, a longer emulator concurrency timeout, and a `.gcloudignore` that uploads `data/` for Cloud Build (runbook §3.3).
+- **Dashboard (U1-U6, P5, checklist X1 and X2)**: `task/gilligan-ux` in `~/code/clean-earth-rovers/worktrees/dashboard-ux`, not started.
+- **Mirror end-to-end (T2 offline)**: phase 1 on 2026-09-25, 46 scenarios, 43 pass (A1/D4 empty-organization user sees every pod, A3 invited-user 500, and a 413 past about 100 KB of history); phase 2 waits for Q3-Q6. Next session: the user's merged prompt A (seed CWA Old and a moved pod, cherry-pick `510cf00` and `feat/firestore-config` with `-x`, $10 budget). Unprovable items go in [`migration/LIVE_TEST_LIST.md`](migration/LIVE_TEST_LIST.md).
+- **Release candidate**: the user's prompt B (one server and one dashboard release branch, the mirror rebuilt from it, a production-mode local run), not started.
+- **End-to-end checklist** ([`migration/E2E_CHECKLIST.md`](migration/E2E_CHECKLIST.md)): level-1 baseline 2026-09-26, 25 pass, 5 fail, 1 N/A, about $0.22; findings routed in the plan (dashboard, R4, Q9).
 
 ## Last session
 
-- Orchestration: reconciled five overnight sessions and cleaned up their worktrees.
-- `dev`: `c55f7cb` removes the two blank lines Task C left in every tools-off correctness judge prompt (regression test added); `c65ea28` commits the conversation quality check and the runbook draft.
-- `eval/wave1-corrections`: finished the abandoned `dev` merge (`7223c36`), completing `p3-k30-2026-09-24` at 180 of 180 verdicts; set `DEFAULT_TOP_K` to 20 and recorded both depth captures (`707e865`); merged `eval/judge-cost` (`3062d3d`). All pushed.
-- Checks: typecheck and lint on both branches; judge, prompt, gateCheck, bakeoffRunner, gradePacket, retrieval and eight more suites run singly, all passing. No spend, no live reads.
+- Orchestrator: recorded the user's decisions (CWA Old null, current site only, mirror-first testing, $10 mirror budget, the Q3-Q6 review rules) and started `LIVE_TEST_LIST.md`; pushed the server and dashboard branches above.
+- Landed on `dev`: runbook, checklist, mirror parity, the Codex manual testing guide (rescued from `/tmp`); reviewed Q6 and Codex's Q3-Q5 and fix round, fixed the `generateReport` stubs; typecheck, lint and 20 touched suites pass except `sensorChat` 16/17 (Algalita GPS).
+- The auto-mode classifier refused the live coordinate read despite chat approval; the user runs it. Orchestrator spend: none.
+- L2 session: found the user's Editor role replaced on 2026-09-23 (no "act as") and the `cer-ui` trigger building the infected `main`; a production read found 0 of 27 users with an empty organization.
+- R4 (2026-09-26/27): added `QUERY_REWRITE` and `LLM_THINKING` with tests; ran four offline retrieval arms and eight captures (all 0 failed); the user's blind grades of GLM against `gpt-oss-120b` agree with the judge; about $2.90 spent, R4 about $18.40 of $30.
 
 ## Working tree
 
-- `dev` is level with `origin/dev` after this handoff; `_EXIT_CRITERIA.md`, `eval/grading/` and the root v2 PDF stay untracked on purpose (`migration/LOCAL_STACK.md`).
-- Worktrees: `wave1-corrections` (R4, active); `eval/judge-cost` is merged and deleted locally, its remote branch kept.
-- `.agents/skills/git-plan/SKILL.md` is an older copy that still requires chat approval before git mutations, and differs from `.claude/skills/git-plan/SKILL.md`; reconcile or remove it.
-- Upstream: server `local` is `d12ad6d`, dashboard `local` is `fd103a0`, both with git-ignored `.env` files carrying the R3 variables.
-- Restored and untracked or git-ignored, so invisible to `git status`: `node_modules/`, `.env`, the 8 downloaded corpus PDFs, `documents/_excluded/water-quality-metrics-source-of-truth.pdf`, `.ocr_cache/`, `data/corpus/`, `data/embeddings/cache.json` (7.1 MB). Still missing: `data/retrieval-eval/`, `data/device-fields/`, `data/backend-surface/`, `serviceAccountKey.json` ([`migration/LOCAL_STACK.md`](migration/LOCAL_STACK.md)).
+- `dev` `f9efb96` plus this STATUS, plan, timeline and manual-guide update, pushed; `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
+- cer-demo worktrees: `wave1-corrections` (R4), `q3-q5`, `feat+service-release`, `l2-inputs`, `mirror-parity`, `gcp-test-env`, `firestore-plan`, `firestore-mirror` (no commits), `hygiene`. Merged and removable: `gilligan-runbook`, `cwa-old`, `answer-quality-q1`, `token-cap`, `upstream-publish`; Codex's `/tmp/cer-q3-q5` and `/tmp/cer-manual-testing-guide` are preserved in branches.
+- Upstream: server `local` `d12ad6d` and dashboard `local` `fd103a0` with git-ignored `.env` files; worktrees under `~/code/clean-earth-rovers/worktrees/`: `server-publish`, `server-service-key`, `server-user-auth`, `server-cwa-old`, `server-firestore-config` (`0003170`, unpushed), `dashboard-publish`, `dashboard-ux`; the server's `.worktrees/mirror` (`mirror/e2e-p3` `37fec03`).
+- Local processes: Firestore emulator :8080 (hub :4400) and something on :3000; the mirror's server :5101 and cer-demo :8010 are down.
+- Tools: `gcloud`, `firebase-tools` and Java 21 are installed (`LOCAL_STACK.md` on `docs/gcp-test-env`); test project `cer-demo-2026` with database `gilligan-test`.
+- Git-ignored or untracked restored inputs: `node_modules/`, `.env`, the corpus PDFs, `.ocr_cache/`, `data/corpus/`, `data/embeddings/cache.json`. Still missing: `data/retrieval-eval/`, `data/device-fields/`, `data/backend-surface/`, `serviceAccountKey.json`.
 
 ## Open work
 
-### Stakeholders
-
-Tracked in [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md). Release-critical: supervisor items 17-20 (v2 fallback ranges, turbidity exemption, worked examples and customer-facing recommendations, CER referral contacts).
-Also blocking: item 1, the operator's review of pod alert limits (they drive event detection); item 6, the "configured thresholds" wording.
-
-### The user's
-
-1. Choose R1's release scope: which of packaging, the service check (shared secret or identity tokens), persistent quotas, and `/gilligan/answer` with the limiter must ship on September 30.
-2. Install Docker Desktop with WSL integration if the image is to be tested locally; the Firestore emulator (Java and `firebase-tools`) likewise for a persistent usage store.
-3. Fill the runbook's §2 inputs: project and region, Firestore database, registry, service names and accounts, the Fireworks secret and budget, capacity, and test identities in two organizations.
-4. Chase the supervisor on items 17-20 (sent 2026-09-19, no reply).
-5. Eval: grade the 32-row calibration packet once built; approve the final two-arm capture judged twice with `--final`; approve a landing plan for `eval/wave1-corrections`.
-6. Confirm the Fireworks account has a payment method and set a spending cap; a third-party source says accounts without one are held to 10 requests per minute.
-7. Approve re-seeding Firestore (`npm run seed:firestore -- --prune` and the paid `seed:firestore-chunks -- --prune`): the collections predate the 2026-09-21 re-OCR. Blocks any `CORPUS_SOURCE=firestore` capture and a Firestore-backed deployment.
-8. Decide the slice-coverage overshoot before wave 2 spends budget (defects below).
-9. Choose the `ADVICE_TIER` test design, if the catalogue keeps tiers: append-only tier blocks (recommended) or a pinned prompt per tier.
-10. Check whether the malware ever ran on a build machine (Cloud Build, App Engine); a `next build` there would trigger it.
-
-### Claude's
-
-1. R1 packaging and the service check once scoped; then the rest of the chosen R1 on the post-Task C heads.
-2. Rewrite the runbook for the user deploying, then commit it.
-3. Eval R4 in its session: calibration tooling and packet, the final two-arm capture judged twice, a tools-on live smoke check (approval needed), D3 caveats for classes under 1.00, and the R4 report; carry top-k 20 into `SPECS.md` and the decisions into `timeline.md`.
-4. Gilligan answer quality, upstream publish, and Task E with Task A's upstream follow-ups, each in its own session.
-5. Phase 1e remainder: per-turn label splits, candidate sweep, hard negatives, grade differentiation. Blocks Phase 4, not Phase 3.
+- User: run the coordinate audit (`cd .claude/worktrees/q3-q5 && ln -sf ../../../.env .env && npx --no-install ts-node scripts/coordinateAudit.ts`); send Michael runbook §2.1 and tell him not to use the repositories' deploy scripts; get Firestore access or choose the Sep 28 fallback (one instance, in-memory counts); start the dashboard, service, mirror (A) and release-candidate (B) sessions; grade `data/e2e/phase1-2026-09-25-review.html`; approve the demo, then S5; R4: decide `QUERY_REWRITE` for launch (recommended on), the production retrieval setting (recommended unpinned `local-vector` k=20), the judge default in code, and E4's per-class caveats or refusals.
+- User (decisions pending 2026-09-27): the coordinate audit (optional, read-only); the census commit and run (blocked for the agent by the auto-mode classifier); `scripts/censusFirestore.ts` (untracked, 24 lint errors, in `.claude/worktrees/firestore-mirror`); who adds the emulator test timeout on `feat/service-release`; Firestore access or the fallback, decided Sep 28 with the supervisor.
+- Agent: land the ready branches; land `task/q3-q5` after the audit decision, then run Q9; keep the plan current; on Sep 28 move open "should" tasks after launch and freeze the release candidate (L4).
+- Agent (R4): approved steps 1-6, then E4, E6 and the R4 report, on `eval/wave1-corrections`; at landing, switch the runbook to `glm-5p3-flash` only after its tool check passes (handoff "Edits wanted").
+- Standing: re-seed Firestore needs approval; the slice-coverage overshoot and `ADVICE_TIER` design wait for after launch.
 
 ## Unfixed defects
 
-Reported 2026-09-10 to 2026-09-24.
-
 | where | defect | severity |
 |---|---|---|
-| `Dockerfile` + `.dockerignore` | The image excludes `data/`, so it ships without the corpus and the embedding cache and cannot answer anything on `hybrid-slice-vector`. Blocks deployment. | high |
-| `src/quota/InMemoryQuotaStore.ts` | Quotas live in process memory, keyed by a token hash: reset on every restart, multiplied per instance, and a fresh login gets a fresh allowance. Replaced by a Firestore store in R1. | medium |
-| `eval/fixtures-wave1/` | Slice-coverage overshoot: the corrected set has 84/90 turns with explanatory sources entirely outside the ◆G9 slice, including partial refusals, so Phase 4 conclusions remain manual-heavy. | medium |
-| `../clean-earth-rovers-server` `WaterAnalyticsService.findPeriodWaterData` | Explicit device filters are not checked against membership (`migration/SECURITY_FINDINGS.md` §1). Task E. | high |
-| `../clean-earth-rovers-server` `GilliganService.askQuestionGemini` | Calls the retired `gemini-pro` model; live-confirmed 2026-09-21, so production Gilligan fails every question today and `GILLIGAN_BACKEND=gemini` is not a rollback (D9). | high |
-| `../clean-earth-rovers-server` ESLint | The TypeScript parser is not configured, so `npm run lint` reports 119 parsing errors. `tsc --noEmit` is the only working gate. Task E. | medium |
-| `../clean-earth-rovers-server` `turbVoltToNTU.ts` | Returns 0 for a missing voltage and for the offline sentinel, same as clear water; cer-demo now flags all-zero periods, but the source should return null. Task A follow-up. | medium |
-| `../user-dashboard` turbidity dial | Uses 350/800 as band edges against the report's 345/795, so a 347 reading is Clear on the dial and Moderate in a report. Task A follow-up. | low |
-| `src/prompt/systemPrompt.ts`, `list_pods`, `query_sensor_data` | No current date in the prompt and no reading age in tool results, so stale pods read as online and old readings as current (`migration/CONVERSATION_QA_2026-09-24.md`). | high |
-| `generate_report` tool result | Carries the status but not the parameter that set it, so the model contradicts its own report. | high |
-| `test/unit/deviceApi.test.ts` | Its list of error codes lacks `quota_reports_exceeded`, so the suite fails. | low |
-| `../clean-earth-rovers-server` `src/routes/userRoutes.ts` | `UserController` is constructed at import, which constructs `EmailService`, whose constructor throws without nodemailer credentials, so the server fails to boot; `PaymentService` does the same with `STRIPE_SECRET_KEY`. Task E. | medium |
-| `../user-dashboard` `src/app/confirm-email` | Imports `confirmEmail`, which `src/app/services/auth` does not export; `next build` reports "Attempted import error". Runtime effect unchecked. | medium |
-| `../user-dashboard` `src/app/gilligan/page.js` | `useSearchParams` outside a Suspense boundary deopts the whole page to client-side rendering. | low |
-| citation contract (cer-demo to relay to page) | Citations carry only `source`, so a document shows as its address; a title needs a field end to end. | low |
-| device registry | No sensor-model field, so quantitative and qualitative-only turbidity sensors cannot be told apart. Task A. | low |
+| `Dockerfile` + `.dockerignore` on `dev` | The image excludes `data/`, so it ships without corpus or embedding cache; fixed on `feat/service-release`, not landed; Cloud Build also needs a `.gcloudignore`. | high |
+| `src/quota/InMemoryQuotaStore.ts` on `dev` | Quotas reset on restart and multiply per instance; the Firestore store is on `feat/service-release`, not landed. | medium |
+| server `findPeriodWaterData` | Device filters not checked against membership (`migration/SECURITY_FINDINGS.md` §1): fixed on `task/gilligan-release-p3-p4`; CWA Old as null on `task/gilligan-cwa-old`; both pushed, not deployed. | high |
+| server `src/routes/userRoutes.ts:17,72`, `testDbRoutes.ts` | Unauthenticated user list, user lookup and database probe (`SECURITY_FINDINGS.md` §8); fixed on `fix/user-route-auth`, pushed, not deployed. | high |
+| server `UserService.login` | An invited user with no password gets 500 (zod `password: Required`) instead of a 4xx; seen on the mirror, likely in production. | medium |
+| server `assignOrganization` | A non-superadmin with an empty organization is unfiltered and sees every pod, also through Gilligan (mirror A1, D4); no production user has one. | medium |
+| Cloud Build trigger `8ad67b17…` (`cer-ui`) | Builds and deploys `cer-ui` on every push to the dashboard's infected `main`; Michael disables it (runbook §2.1). | high |
+| cer-demo `src/app.ts` `express.json()` and the server relay | The whole chat history is sent each turn, so the 100 KB body limit returns 413 on long chats (mirror finding 5; Q9). | medium |
+| `src/report/renderPdf.ts`, `src/report/buildReportInput.ts` | The PDF never states the last reading's age, and 1-day series empty on pods reporting twice an hour (report audit #3 and #4; Q9). | high |
+| dashboard `src/app/shared/gilligan-provenance.js` | Tool notes written for the model show under every data answer, and a retried tool call still shows "Tool failed" (checklist X1, X2). | medium |
+| tools-on answers, `src/devices/plausibility.ts` | Silent pods left out of "which pods are online" (C1); a pH of 2.07 passes plausibility (D1); "How does temperature affect DO?" refused after retrieval pulls a salinity table (B3, R4). | medium |
+| `gilligan_usage` retention (`feat/service-release`) | A TTL policy on `updatedAt` would delete the current day's counter; needs `expireAt`. | medium |
+| server `findPeriodWaterData` | Slices an organization's labels to 10 for the `in` query, dropping pods past the tenth (pre-existing). | low |
+| server `GilliganService.askQuestionGemini` | Calls the retired `gemini-pro`; production Gilligan fails every question and `gemini` is not a rollback (D9). | high |
+| `scripts/judge.ts` on `dev` | Exits 0 and writes an empty summary when every call fails; fixed on `eval/wave1-corrections` (`e662fa0`), not landed. | medium |
+| R4 judge, ungrounded dimension | Agreement with the reference grades is weak (any/none 78%, count kappa 0.23), so ungrounded rates are indicative only. | medium |
+| `src/eval/judge/runner.ts` `DEFAULT_JUDGE_MODEL` | Still `deepseek-v4-flash-0731`, which Fireworks now answers with 404; its replacement's rate is not in `prices.ts`. | medium |
+| `src/prompt/promptBuilder.ts` `buildMessages` | CONTEXT is a second system message, which `minimax-m3` on Fireworks drops; any new model needs a two-system-message probe. | low |
+| tools-off answers (`gpt-oss-120b`) | Can loop on malformed citation markers: one answer in R4's reranker capture emitted 807; the audit strips them from display, but the citation rate counts them. | low |
+| tools-on answers | Withheld-history note dropped, water-type note misparaphrased, implausibly high dissolved oxygen not flagged (plan Q8). | medium |
+| `/tmp/eval-fixtures-*` | 131 directories leaked before the hygiene fix (landed `f9efb96`) remain. | low |
+| server `src/schemas/waterData.schema.ts` via `WaterDataRepository` | Wants string `lat`, `lon`, `bat` and `time_meas`; production rows carry numeric `lat`/`lon` and no `bat`, so the legacy unauthenticated `/water-data`, `/device` and `/duration/*` routes fail on real rows (mirror P5). Pre-existing (unchanged since `0c91404`); Gilligan and the dashboard use `/water/*`, which does not parse. Loosening the schema alone would re-open `SECURITY_FINDINGS.md` §5 item 2, so fix it by removing or authenticating those routes. | low |
+| `../user-dashboard` `src/app/confirm-email` | Imports `confirmEmail`, which `services/auth` does not export; build reports "Attempted import error" (plan P5). | medium |
+| `../user-dashboard` `src/app/gilligan/page.js` | `useSearchParams` outside Suspense deopts the page to client rendering. | low |
+| citation contract | Citations carry only `source`, so a document shows as its address (plan U5). | low |
+| `eval/fixtures-wave1/` | Slice-coverage overshoot: 84/90 turns have explanatory sources outside the ◆G9 slice. | medium |
 
 ## Active traps
 
-- **The two upstream CER repositories carried malware at HEAD on `main` and `develop` until 2026-09-23/24**, and every earlier commit still does. It runs on `next dev`, `next build` and `npm test`. Branch tips are clean now, but checking out an older commit reinfects the working tree, and `CLAUDE.md` still forbids checking out `main` or `develop` until the user changes that rule. Check with `grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .` after any clone, fetch, pull or branch switch, and read upstream code with `git show origin/develop:<path>`. cer-demo is clean.
-- **`SENSOR_TOOL` matters in both directions.** Off, the assistant has no tools and refuses every reading question. On, every such question is a live production device read. Captures need it and `REPORT_TOOL` explicitly `false` on **both** server and runner; never rely on the default, and never on `.env`, which sets both `true`.
-- **Both servers read their `.env` at boot only**, and `ts-node-dev` watches source, not `.env`. Restart after any env change. An **empty** env var silently takes `readString`'s fallback; `DEFAULT_RETRIEVAL` is now validated at boot. `hybrid-slice-vector` needs the git-ignored `data/embeddings/cache.json`, so a fresh clone, worktree or image fails every request until the paid `npm run embed:cache` runs or the cache is copied in.
-- A fresh worktree has no `node_modules`, `.env` or `data/` caches; link them per the `run-local` skill's worktree reference. `EnterWorktree` cuts from `origin/main`, which is far behind `dev`, so reset the new branch onto `dev` first.
-- `.ocr_cache/` is tesseract 4.1.1 output, not the original 5.3.4. **Any re-ingest from a different tesseract build moves 12 chunk ids again**, and re-chunking voids every label. `scripts/resolveRetrievalLabels.ts` does not delete stale label files, and any `-NN`-shaped token in fixture `notes` is read as a claim id.
-- Anything dropped into `documents/` is ingested whether or not it is in `DOC_META`. Keep `water-quality-source-of-truth-v2.pdf` at the repo root.
-- `.claude/settings.json` deny rules point at the old OneDrive paths and match nothing, so the upstream read-only guard is inert.
-- Fireworks documents no free tier for `gpt-oss-120b`; budget and rate limits assume a paid account.
-- Run jest suites one at a time with `--runInBand`; parallel runs get killed for memory. Use port 8010; never kill 8000. `:5001` and `:3000` are the upstream server and dashboard.
-- The configured device token is **superadmin** and sees 5 pods; its JWT carries **no `exp` claim**.
-- Eval captures must use `--run=<id>` on `bakeoff`, `gate:check` and `judge`: the judge ledger has no answer hash, so judging a re-capture into an existing ledger silently reuses old verdicts.
+- **Upstream history carries malware**; branch tips are clean. It runs on `next dev`, `next build` and `npm test`. Never check out `main`, `develop` or an old commit; scan with `grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .` after any clone, fetch, pull or branch switch.
+- **`SENSOR_TOOL` and `REPORT_TOOL`**: on means live production reads; `.env` sets both `true`, so captures and judge runs must set both `false` explicitly on server and runner.
+- `PREDECESSOR_PERIOD_HANDOFF` (on `task/q3-q5`) stays off until the patched server takes all cer-api traffic; with an unpatched period route it returns another organization's history.
+- The user's production roles lack `iam.serviceAccounts.actAs` (since 2026-09-23), so no service can be deployed until Michael restores it; production reads go through the user, and the auto-mode classifier refuses them from this agent even with chat approval.
+- Both servers read `.env` at boot only. `hybrid-slice-vector` needs the git-ignored embedding cache; a fresh worktree has no `node_modules`, `.env` or `data/` (link per the `run-local` skill). `EnterWorktree` cuts from `origin/main`; reset onto `dev`.
+- Re-ingesting with a different tesseract build moves 12 chunk ids and voids labels; `resolveRetrievalLabels.ts` does not delete stale label files.
+- Anything in `documents/` is ingested; keep the v2 PDF at the repo root.
+- The mirror runs under the production project id because the server hard-codes it, and application default credentials exist on this machine; `feat/firestore-config` (`0003170`, unpushed) takes the project from the environment once the mirror picks it.
+- The server's integration suites (`test/setup/testDb.ts`) force `DB_ENVIRONMENT=qa` and connect to the real `qa-db`: never run them.
+- Every `cer-gilligan` guard defaults to off or unlimited (quota, store, window, retrieval); a release environment file missing a variable fails open.
+- Run Jest suites singly with `--runInBand`; use port 8010, never kill 8000.
+- The device token is superadmin (6 pods in 3 organizations on 2026-09-26; Marina Park DataPod™ silent since July 2025) with no `exp` claim.
+- R4 judge runs must pass `--judge-model=accounts/fireworks/models/deepseek-v4p1-flash`; `DEFAULT_TOP_K` is a code constant, so an env var of that name is ignored; `gold-context` must run with `QUERY_REWRITE` off; GLM rejects reasoning off, so use `LLM_REASONING_EFFORT=low`.
+- Eval captures and judge runs need `--run=<id>`; the judge ledger has no answer hash. On `dev` a judge exit status of 0 does not prove calls succeeded (fixed on `eval/wave1-corrections`).
+- `scores.csv` notes hold unquoted commas: edit rows line by line, never through a CSV library.
+- Sandboxed sessions (Codex) may lack network and write access to upstream `.git`; they work in `/tmp` clones, which a restart can erase.
 - Nothing is deployed; all testing is local.
 
 ## Where things live
 
-- **Gilligan**: [`migration/GILLIGAN_PRODUCT_DIRECTION.md`](migration/GILLIGAN_PRODUCT_DIRECTION.md) (decisions and research), [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md) (architecture, roadmap, decisions D1-D12), [`migration/GILLIGAN_R3_PORT.md`](migration/GILLIGAN_R3_PORT.md) (the relay and the rebuilt page), [`migration/GILLIGAN_TOOL_ACCESS.md`](migration/GILLIGAN_TOOL_ACCESS.md) (tool access and refusal quality), [`migration/TASK_C_HANDOFF.md`](migration/TASK_C_HANDOFF.md) (provenance and citations).
-- **Environment**: [`migration/LOCAL_STACK.md`](migration/LOCAL_STACK.md), [`migration/SECURITY_INCIDENT_2026-09-19.md`](migration/SECURITY_INCIDENT_2026-09-19.md).
+- **Release**: [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md), [`migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md`](migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md), [`migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`](migration/GILLIGAN_FIRESTORE_FRAMEWORK.md), [`migration/LIVE_TEST_LIST.md`](migration/LIVE_TEST_LIST.md), [`migration/E2E_CHECKLIST.md`](migration/E2E_CHECKLIST.md), [`migration/GILLIGAN_MANUAL_TEST_GUIDE.md`](migration/GILLIGAN_MANUAL_TEST_GUIDE.md), [`migration/MIRROR_PRODUCTION_PARITY.md`](migration/MIRROR_PRODUCTION_PARITY.md).
+- **Gilligan**: [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md) (decisions D1-D12), [`migration/GILLIGAN_R3_PORT.md`](migration/GILLIGAN_R3_PORT.md), [`migration/TASK_C_HANDOFF.md`](migration/TASK_C_HANDOFF.md), [`migration/CONVERSATION_QA_2026-09-24.md`](migration/CONVERSATION_QA_2026-09-24.md).
+- **Environment and security**: [`migration/LOCAL_STACK.md`](migration/LOCAL_STACK.md), [`migration/SECURITY_INCIDENT_2026-09-19.md`](migration/SECURITY_INCIDENT_2026-09-19.md), [`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md), [`migration/BACKEND_FIELDS.md`](migration/BACKEND_FIELDS.md).
 - **Behaviour and decisions**: [`SPECS.md`](SPECS.md), [`timeline.md`](timeline.md), [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md).
-- **Evaluation and corpus**: [`EVAL_REBUILD.md`](EVAL_REBUILD.md), [`CORPUS_SOURCING_BRIEF.md`](CORPUS_SOURCING_BRIEF.md), [`RESPONSIBILITY.md`](RESPONSIBILITY.md).
-- **People and history**: [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md), [`ARCHIVED.md`](ARCHIVED.md), house rules in [`../CLAUDE.md`](../CLAUDE.md), [`../AGENTS.md`](../AGENTS.md) and `.claude/skills/`.
+- **Evaluation**: [`EVAL_REBUILD.md`](EVAL_REBUILD.md) (full R4 state on `eval/wave1-corrections`), [`GRADING_GUIDE.md`](GRADING_GUIDE.md).
+- **People**: [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md), [`ARCHIVED.md`](ARCHIVED.md), house rules in [`../CLAUDE.md`](../CLAUDE.md) and `.claude/skills/`.

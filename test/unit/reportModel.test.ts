@@ -1,5 +1,5 @@
 import {
-  flagFor, heldSteady, overallStatus, coordinatesStr, outOfRangeShare, withUnit, statValue,
+  assessStatus, flagFor, heldSteady, overallStatus, coordinatesStr, outOfRangeShare, withUnit, statValue,
 } from "../../src/report/types";
 import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent,
@@ -240,6 +240,50 @@ describe("overallStatus", () => {
     it("still escalates to Action Required when the one baselined parameter is an Exceedance", () => {
       const r = report({ parameters: [param({ max: 9.0 }), noBaseline()] });
       expect(overallStatus(r, noAccuracy)).toBe("Action Required");
+    });
+  });
+
+  describe("assessStatus -- the rule and parameters behind the status", () => {
+    // generate_report states this reason, so it must come off the same ladder as the status.
+    const orp = (overrides: Partial<ParameterStats> = {}): ParameterStats => param({
+      baseline: baseline({ key: "orp", baselineMin: 0, baselineMax: 800 }),
+      min: 100,
+      max: 400,
+      ...overrides,
+    });
+
+    it("names only the Exceedance parameters, even when others are merely Elevated", () => {
+      const r = report({ parameters: [param({ max: 8.6 }), orp({ min: -160 })] });
+      expect(assessStatus(r, noAccuracy)).toEqual({
+        status: "Action Required", rule: "exceedance", parameters: ["orp"],
+      });
+    });
+
+    it("names the excursion parameters behind a Watch", () => {
+      expect(assessStatus(report({ parameters: [param({ max: 8.6 }), orp()] }), noAccuracy)).toEqual({
+        status: "Watch", rule: "excursion", parameters: ["ph"],
+      });
+    });
+
+    it("attributes an event-driven status to the events, not to a parameter", () => {
+      const confident = event({ severity: "High", confidence: 0.7 });
+      expect(assessStatus(report({ events: [confident] }), noAccuracy))
+        .toEqual({ status: "Action Required", rule: "high-confidence-high-event", parameters: [] });
+      expect(assessStatus(report({ events: [event()] }), noAccuracy))
+        .toEqual({ status: "Watch", rule: "event", parameters: [] });
+    });
+
+    it("agrees with overallStatus on every case above", () => {
+      const cases = [
+        report(),
+        report({ parameters: [param({ max: 9.0 })] }),
+        report({ parameters: [param({ max: 8.6 })] }),
+        report({ events: [event()] }),
+        report({ parameters: [param({ baseline: baseline({ hasFixedBaseline: false }) })] }),
+      ];
+      cases.forEach((r) => expect(assessStatus(r, noAccuracy).status).toBe(overallStatus(r, noAccuracy)));
+      expect(assessStatus(report(), noAccuracy).rule).toBe("normal");
+      expect(assessStatus(cases[4], noAccuracy).rule).toBe("no-baseline");
     });
   });
 });

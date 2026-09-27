@@ -4,6 +4,7 @@ Draft, 2026-09-17, for the September 30, 2026 dashboard release.
 Built on the decisions in [`GILLIGAN_PRODUCT_DIRECTION.md`](GILLIGAN_PRODUCT_DIRECTION.md); the integration background was `INTEGRATION_PLAN.md` (archived, tag `docs-archive-2026-09-23`).
 This is a plan for review, not an approved implementation specification.
 Built so far: R2's catalogue code (`docs/SPECS.md` §4b, flags off, supervisor approval pending), R3's relay and page (`GILLIGAN_R3_PORT.md`), the tool-access fix (`GILLIGAN_TOOL_ACCESS.md`) and R1's report half (`docs/SPECS.md` §10.7).
+The 2026-09-24 release decision ships S1-S6 as written, with `/gilligan/answer` and identity tokens after launch; CER supplies its own paid Fireworks key in Secret Manager.
 
 Code evidence was read at cer-demo `1a8c744`, `user-dashboard` `c55f65d` and `clean-earth-rovers-server` `origin/develop` `b221702`.
 The local server checkout is behind its remote, so upstream claims come from `origin/develop` and may still be stale against the real remote.
@@ -91,7 +92,7 @@ The goal is that every user gets the same allowance, that no single user or orga
 |---|---|---|
 | Questions per user per UTC day | 20 | the visible, easy-to-explain allowance; confirmed by the supervisor 2026-09-24 |
 | Reports per user per UTC day | 5 | set by the supervisor 2026-09-24; a report runs several device calls and a long render |
-| Tokens per user per UTC day | 1,000,000 (the user's starting value, 2026-09-24; tune after testing) | catches runaway tool loops; measured 2026-09-24 at 18,000 tokens for a document question, 38,000 to 129,000 for one- to five-pod questions, and 491,000 for a 30-day comparison across all pods, so a heavy user reaches it before 20 questions |
+| Tokens per user per UTC day | 1,000,000 (user decision 2026-09-24; tune after testing) | a runaway guard, not the working limit: measured 2026-09-24 at 18,000 tokens for a document question, 38,000 to 129,000 for one- to five-pod questions, and 491,000 for a 30-day comparison across all pods, cached tokens included, so 20 messages fit on most days but a heavy data user reaches it first |
 | Tokens per organization per month | 10,000,000 | stops one large organization consuming the shared budget |
 | Deployment spend per day | monthly budget ÷ 30 | a daily slice, so early heavy use cannot drain the month |
 | Concurrent model calls | 8 | stays under the adaptive rate limit; extra requests wait up to 20 s, then get "busy, try again" |

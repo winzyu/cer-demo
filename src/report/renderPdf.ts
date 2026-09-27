@@ -61,7 +61,8 @@ export const flagCellText = (
   probeAccuracy: (key: string, reading: number) => number,
 ): string => {
   if (!isRelativeIndex(p.baseline)) {
-    return flagFor(p, probeAccuracy);
+    const flag = flagFor(p, probeAccuracy);
+    return flag === "N/A" ? "Not assessed" : flag;
   }
   const band = clarityBandFor(p.mean);
   // The band alone reads as a clarity claim; "(off-scale)" tells the reader this particular

@@ -83,6 +83,12 @@ export const REFUSAL_SENTENCE = "I can only answer questions grounded in this se
  * refused a question the system can answer in full. The routing rule is written as a prohibition
  * ("never answer 'I have no data for your pods' without having called it") because the observed
  * failure was a confident negative, not a missing call.
+ *
+ * The age, spike and note rules were added 2026-09-24 after a live conversation check
+ * (`docs/migration/CONVERSATION_QA_2026-09-24.md` findings 1, 2, 4 and 5): stale pods read as
+ * online, a claimed pH crash was tested with a single "latest" reading, and caveats in a tool's
+ * `note` were dropped. The ages come from the tools (`src/tools/readingAge.ts`) and CURRENT TIME is
+ * a per-request line (`formatCurrentTime` in `promptBuilder.ts`), so the text here stays static.
  */
 export const TOOL_BLOCK = `TOOLS:
 - Tool evidence is an exception to the general no-tool-marker rule: each tool
@@ -130,12 +136,26 @@ Tool routing:
 - For trends, changes over time, or "has it been rising", use aggregation "series".
   It returns bucketed means over the window and is exact. Reading a trend off "raw"
   rows is guesswork over a possibly truncated window.
+- To check a claimed spike, crash, drop or extreme value ("the pH crashed to 3
+  yesterday"), use aggregation "min" or "max" over that window, or "series" to see
+  when it moved. Never test such a claim with "latest": one reading cannot show
+  whether a value occurred. If the minimum or maximum does not reach the claimed
+  value, say so and give the actual minimum or maximum.
 
 Reading a tool result:
+- Each device timestamp comes with its age, measured against CURRENT TIME:
+  "last_reported_age" in list_pods, "device_last_reported_age" elsewhere, each with
+  a "_stale" flag that is true after more than six hours without a reading. Never
+  call a stale pod online or a stale reading current. Say how old it is, e.g.
+  "last reported 10 days ago", when you report it.
 - list_pods' "last_reported" is best effort and omits readings with no GPS fix, so a
   null there means "not confirmed recently", never that the pod is silent. Do not
   tell a user a pod has stopped reporting on the strength of it — check with
   query_sensor_data first.
+- A "note" carries caveats that belong in the answer, such as earlier history being
+  withheld or the device's water type differing from the deployment's. Relay each
+  one to the user in your own words; do not drop one because the numbers seem to
+  answer the question without it.
 - "value": null with "n_samples": 0 means NO READING EXISTS in that window. Say so,
   and use "device_last_reported" to say when the device was last heard from. Never
   report a missing reading as 0 — 0 is a real measurement for ORP and turbidity, so a
@@ -161,7 +181,9 @@ Reading a tool result:
   its own start, end, mean, min, max and n.
 - "time_range_resolved" is anchored to the device's most recent reading, not to the
   current wall-clock time. A pod that stopped reporting days ago still answers "the
-  last day" — about its last day of data. Report the timestamps you were given.
+  last day" — about its last day of data. Report the timestamps you were given, and
+  when "device_last_reported_stale" is true, say the window ends when the pod went
+  quiet and how long ago that was.
 - "time_range_resolved" is the window you ASKED for; "window_actually_searched" is what
   was searched. If its "complete" is false, the search did not reach the start of your
   range. Never quote either boundary as the time of a reading — a reading's own time is
@@ -210,8 +232,15 @@ Report vs. single-stat routing:
   query_sensor_data directly, not generate_report. generate_report is slower and
   produces a PDF, not a number; do not reach for it to answer "what is the pH right
   now."
-- generate_report's result gives you a status and an event count — not the
-  underlying numbers. State the status and event count in your reply. When you
+- generate_report's result gives you a status, its "status_reason", each
+  parameter's flag in "parameter_flags", and an event count. Beyond the ranges in
+  "status_reason" it gives you none of the underlying numbers. State the status
+  together with its reason, and the event count, in your reply. A parameter flag
+  can set the status with no events at all, so never say a report found no
+  abnormal conditions unless its status is Normal.
+- The period ends on the pod's last reading, not today. When
+  "device_last_reported_stale" is true, say the period ends on the pod's last
+  reading and give "device_last_reported_age". When you
   state the reporting period, copy "report_period" character for character, exactly
   as the PDF prints it; never reformat, reorder or retype its dates. Do not
   describe report contents you were not given; the PDF is the source of truth for

@@ -66,3 +66,12 @@ When it happens the save fails after the answer was generated and paid for.
 `tool_calls` carries the raw readings and is over 90% of every data-heavy message.
 Recommended: store `tool_calls` without the raw readings (tool name, arguments, row counts and the summary the answer rests on), which brings the largest message to a few kilobytes, and also start a new conversation when a save would pass about 900 KB, as a backstop.
 Both are changes to the CER server's relay and are not in the release branch yet.
+
+## Corrections, 2026-09-25
+
+Two statements above are wrong and need correcting before the supervisor approves the table (F2).
+
+- **Retention.** A Firestore TTL policy deletes a document once its TTL field is in the past, so a policy on `updatedAt` would delete the current day's usage counter within about a day and reset that user's limits.
+  `gilligan_usage` needs an `expireAt` field set 90 days after `updatedAt`, with the policy on `expireAt`; `feat/service-release` (`cc8a300`) does not write it yet.
+- **Access.** Firestore IAM cannot grant access to one collection: the Datastore User role covers every collection in a database.
+  The promise that Gilligan touches only `gilligan_usage` holds only if Gilligan's data lives in its own Firestore database with the role granted on that database alone; the user chose that on 2026-09-25 (branch `docs/l2-inputs`, `9d448f8`, not yet on `dev`), and the new database needs the supervisor's approval as well.

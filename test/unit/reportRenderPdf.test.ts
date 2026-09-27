@@ -440,3 +440,9 @@ describe("drawSparkline", () => {
     expect(drawSparkline(doc, withSeries([[0, 7.2], [3_600_000, 7.2]]), box)).toBe(true);
   });
 });
+
+
+it("prints Not assessed for a numeric row with an unusable operator limit", () => {
+  expect(flagCellText({ ...param, baseline: { ...baseline, hasFixedBaseline: false } }, () => 0))
+    .toBe("Not assessed");
+});
