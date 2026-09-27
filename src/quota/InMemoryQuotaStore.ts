@@ -1,5 +1,5 @@
 import {
-  QuotaDelta, QuotaStore, QuotaUsage, windowStartFor,
+  QuotaDelta, QuotaStore, QuotaSubject, QuotaUsage, windowStartFor,
 } from "./QuotaStore";
 
 interface Bucket {
@@ -44,7 +44,7 @@ export class InMemoryQuotaStore implements QuotaStore {
     this.windowMs = windowMs;
   }
 
-  read(key: string, nowMs: number): QuotaUsage {
+  async read(key: string, nowMs: number): Promise<QuotaUsage> {
     const windowStartMs = windowStartFor(nowMs, this.windowMs);
     const bucket = this.buckets.get(key);
     // A bucket from a previous window is not this window's usage. It is left in place rather
@@ -59,7 +59,7 @@ export class InMemoryQuotaStore implements QuotaStore {
     };
   }
 
-  record(key: string, delta: QuotaDelta, nowMs: number): void {
+  async record({ key }: QuotaSubject, delta: QuotaDelta, nowMs: number): Promise<void> {
     const windowStartMs = windowStartFor(nowMs, this.windowMs);
     const existing = this.buckets.get(key);
     const bucket = existing && existing.windowStartMs === windowStartMs
@@ -78,6 +78,7 @@ export class InMemoryQuotaStore implements QuotaStore {
     }
   }
 
+  /** Drops every counter. For tests; the shared Firestore store deliberately has no equivalent. */
   reset(): void {
     this.buckets.clear();
   }

@@ -52,6 +52,18 @@ export const ERROR_CODES = [
   "quota_tokens_exceeded",
   /** The caller's report allowance for the current quota window is spent (429). */
   "quota_reports_exceeded",
+  /**
+   * The model provider is saturated (503): Fireworks answered 429 or 503 twice, or no model-call
+   * slot freed up in time. Transient, so the page says "busy, try again" rather than "error".
+   */
+  "model_busy",
+  /** The request did not carry the CER server's service key, or carried the wrong one (401). */
+  "service_key_invalid",
+  /**
+   * The service key checked out but the user identity the quota keys on was missing (400): a
+   * relay fault, not the user's.
+   */
+  "service_identity_required",
 ] as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[number];

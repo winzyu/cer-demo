@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
 import { config } from "../config";
-import { quotaKeyFor, quotaService } from "../quota";
+import { quotaService, quotaSubjectFor } from "../quota";
 import type { QuotaService } from "../quota";
 import { prepareReport, renderReportPdf, reportFilename } from "../report/produceReport";
 import type { WaterBodyType } from "../report/types";
@@ -93,7 +93,7 @@ export class ReportController {
       }
 
       const pdf = await renderReportPdf(prepared);
-      this.quota.recordReport(quotaKeyFor(req));
+      await this.quota.recordReport(quotaSubjectFor(req));
       log.info(`Report rendered (status=${prepared.status}, bytes=${pdf.length})`);
 
       res.status(200)

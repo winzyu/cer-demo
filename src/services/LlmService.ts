@@ -4,6 +4,7 @@ import { config } from "../config";
 import type { ChatMessage } from "../types/chat.types";
 import type { ToolCall, ToolDefinition } from "../types/tool.types";
 import { createLogger } from "../utils/logger";
+import { ModelCallGate, modelCallGate } from "./modelCallGate";
 
 const log = createLogger("LLM");
 
@@ -101,11 +102,49 @@ const getClient = (): OpenAI => {
     if (!apiKey) {
       throw createError(503, "FIREWORKS_API_KEY is not configured.");
     }
-    client = new OpenAI({ apiKey, baseURL: baseUrl });
+    // The SDK retries 429s and 5xx twice by default, silently; `ModelCallGate` owns the one retry
+    // the release allows, so the SDK's are off.
+    client = new OpenAI({ apiKey, baseURL: baseUrl, maxRetries: 0 });
     log.info(`Client initialized (baseUrl=${baseUrl}).`);
   }
   return client;
 };
+
+/** Reads a completion stream into events; the empty-answer check mirrors `complete`. */
+async function* readStream(
+  stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+  model: string,
+): AsyncGenerator<LlmStreamEvent> {
+  let emitted = false;
+
+  for await (const part of stream) {
+    const text = part.choices?.[0]?.delta?.content;
+    if (text) {
+      emitted = true;
+      yield { text, model: part.model ?? model };
+    }
+    if (part.usage) {
+      yield {
+        model: part.model ?? model,
+        usage: {
+          promptTokens: part.usage.prompt_tokens,
+          completionTokens: part.usage.completion_tokens,
+          totalTokens: part.usage.total_tokens,
+          cachedPromptTokens: readCachedTokens(part.usage),
+        },
+      };
+    }
+  }
+
+  if (!emitted) {
+    // Same silent failure as the non-streaming path: the stream completes, nothing visible
+    // was produced. Thrown rather than ending quietly so the caller can report it.
+    throw createError(
+      502,
+      `Model "${model}" streamed an empty answer. This usually means max_tokens (${config.fireworks.maxTokens}) was exhausted by reasoning tokens; raise LLM_MAX_TOKENS.`,
+    );
+  }
+}
 
 /**
  * Wraps the Fireworks chat-completions call. Fireworks speaks the OpenAI API, so the
@@ -119,8 +158,12 @@ const getClient = (): OpenAI => {
 export class LlmService {
   private readonly openai?: OpenAI;
 
-  constructor(openai?: OpenAI) {
+  private readonly gate: ModelCallGate;
+
+  /** `gate` defaults to the process-wide one, so every instance shares the concurrency limit. */
+  constructor(openai?: OpenAI, gate: ModelCallGate = modelCallGate) {
     this.openai = openai;
+    this.gate = gate;
   }
 
   async complete(messages: ChatMessage[], tools?: ToolDefinition[]): Promise<LlmAnswer> {
@@ -131,7 +174,7 @@ export class LlmService {
 
     const openai = this.openai ?? getClient();
 
-    const response = await openai.chat.completions.create({
+    const response = await this.gate.run(() => openai.chat.completions.create({
       model,
       // The SDK's message union does not model a `tool` role carrying our optional fields;
       // the wire shape is correct and is what the provider validates.
@@ -146,7 +189,7 @@ export class LlmService {
       // exists to avoid while the bake-off arms are unresolved.
       ...(tools && tools.length > 0 ? { tools } : {}),
       stream: false,
-    });
+    }));
 
     const content = response.choices[0]?.message?.content ?? "";
     const toolCalls = readToolCalls(response.choices[0]?.message);
@@ -212,47 +255,26 @@ export class LlmService {
 
     const openai = this.openai ?? getClient();
 
-    const stream = await openai.chat.completions.create(
-      {
-        model,
-        messages: messages as never,
-        max_tokens: config.fireworks.maxTokens,
-        temperature: config.fireworks.temperature,
-        user: config.fireworks.user,
-        stream: true,
-        stream_options: { include_usage: true },
-      },
-      signal ? { signal } : undefined,
-    );
+    // The slot is held until the stream ends, not just until it opens: the provider is working on
+    // it the whole time. Only opening is retried; a failure mid-stream has already sent text.
+    const release = await this.gate.acquire();
+    try {
+      const stream = await this.gate.withRetry(() => openai.chat.completions.create(
+        {
+          model,
+          messages: messages as never,
+          max_tokens: config.fireworks.maxTokens,
+          temperature: config.fireworks.temperature,
+          user: config.fireworks.user,
+          stream: true,
+          stream_options: { include_usage: true },
+        },
+        signal ? { signal } : undefined,
+      ), signal);
 
-    let emitted = false;
-
-    for await (const part of stream) {
-      const text = part.choices?.[0]?.delta?.content;
-      if (text) {
-        emitted = true;
-        yield { text, model: part.model ?? model };
-      }
-      if (part.usage) {
-        yield {
-          model: part.model ?? model,
-          usage: {
-            promptTokens: part.usage.prompt_tokens,
-            completionTokens: part.usage.completion_tokens,
-            totalTokens: part.usage.total_tokens,
-            cachedPromptTokens: readCachedTokens(part.usage),
-          },
-        };
-      }
-    }
-
-    if (!emitted) {
-      // Same silent failure as the non-streaming path: the stream completes, nothing visible
-      // was produced. Thrown rather than ending quietly so the caller can report it.
-      throw createError(
-        502,
-        `Model "${model}" streamed an empty answer. This usually means max_tokens (${config.fireworks.maxTokens}) was exhausted by reasoning tokens; raise LLM_MAX_TOKENS.`,
-      );
+      yield* readStream(stream, model);
+    } finally {
+      release();
     }
   }
 }

@@ -1,11 +1,11 @@
 /**
  * The storage seam for quota counters.
  *
- * Deliberately tiny, and deliberately **not** an implementation detail of `QuotaService`. The
- * only implementation today is in-process (`InMemoryQuotaStore`), which is honest for a single
- * instance and wrong the moment there are two — see that file's header. Keeping the policy
- * (`QuotaService`) and the counting (`QuotaStore`) apart means swapping in Firestore or Redis
- * later is a new file plus one line at the composition root, not a rewrite of the gate.
+ * Deliberately tiny, and deliberately **not** an implementation detail of `QuotaService`. Two
+ * implementations: in-process (`InMemoryQuotaStore`), for tests and local runs, and Firestore
+ * (`FirestoreQuotaStore`), for a deployment; `QUERY_QUOTA_STORE` picks one at the composition
+ * root. Keeping the policy (`QuotaService`) and the counting (`QuotaStore`) apart is what made the
+ * second a new file rather than a rewrite of the gate.
  *
  * Every method takes `nowMs` explicitly rather than reading the clock itself. Window rollover is
  * the part most likely to be wrong, and a clock passed in is a clock a test can advance.
@@ -32,16 +32,30 @@ export interface QuotaDelta {
   reports?: number;
 }
 
+/**
+ * Who a record is for. `key` is the bucket (`quotaKeyFor`); the other two are labels a durable
+ * store keeps beside the counters so a document names its user and organization. They are absent
+ * when the service check is off and the key is a token hash, an IP or `global`.
+ */
+export interface QuotaSubject {
+  key: string;
+  userId?: string;
+  organizationId?: string | null;
+}
+
+/**
+ * Asynchronous because the durable implementation is a network call; the in-memory one resolves
+ * at once. There is deliberately no `reset`: on a shared store it would clear every user's
+ * counters, which is not an operation a request path should be able to reach.
+ */
 export interface QuotaStore {
   /**
-   * Usage for `key` in the window containing `nowMs`. Never throws and never returns
-   * `undefined`: an unknown key has spent nothing, which is a usage of zero, not an error.
+   * Usage for `key` in the window containing `nowMs`. An unknown key has spent nothing, which is
+   * a usage of zero, not an error. Rejects only when the store itself cannot be reached.
    */
-  read(key: string, nowMs: number): QuotaUsage;
-  /** Adds `delta` to `key`'s counters in the window containing `nowMs`. */
-  record(key: string, delta: QuotaDelta, nowMs: number): void;
-  /** Drops every counter. For tests and for an operator-triggered reset; not on any hot path. */
-  reset(): void;
+  read(key: string, nowMs: number): Promise<QuotaUsage>;
+  /** Adds `delta` to the subject's counters in the window containing `nowMs`. */
+  record(subject: QuotaSubject, delta: QuotaDelta, nowMs: number): Promise<void>;
 }
 
 /**

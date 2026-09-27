@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import createError from "http-errors";
 import {
   quotaErrorCode, quotaErrorMessage, quotaKeyFor, quotaService,
 } from "../quota";
@@ -33,9 +34,17 @@ export const quotaGuard = (
   service: QuotaService = quotaService,
   kind: "chat" | "report" = "chat",
 ) => (
-  (req: Request, res: Response, next: NextFunction): void => {
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const key = quotaKeyFor(req);
-    const decision = kind === "report" ? service.checkReport(key) : service.check(key);
+    let decision;
+    try {
+      decision = await (kind === "report" ? service.checkReport(key) : service.check(key));
+    } catch (error) {
+      // Fails closed: an unreadable store must not become unmetered model spend.
+      log.error(`Could not read usage for ${key}`, error);
+      next(createError(503, "Usage limits cannot be checked right now. Please try again shortly."));
+      return;
+    }
     if (decision.allowed) {
       next();
       return;
