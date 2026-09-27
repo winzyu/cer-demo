@@ -4,7 +4,7 @@ Current state and next steps only.
 Rewritten at the end of every session by `/handoff`; history is `git log -p docs/STATUS.md`.
 Never cite this file from code or other docs: the reasoning lives in the docs under "Where things live".
 
-Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygiene landed, Q6 decisions, WaterDataRepository finding); otherwise as of 2026-09-26 at `61172a7`; R4 entries were updated 2026-09-27 by the R4 session at `eval/wave1-corrections` `7428a48` (uncommitted in the main checkout), and L2 entries come from `docs/l2-inputs` (`f308ea3`).
+Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygiene landed, Q6 decisions, WaterDataRepository finding); otherwise as of 2026-09-26 at `61172a7`; R4 entries were updated 2026-09-27 by the R4 session at `eval/wave1-corrections` `a358bf2`, and L2 entries come from `docs/l2-inputs` (`f308ea3`).
 
 ## Start here
 
@@ -12,9 +12,9 @@ Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygien
   Background: [`migration/GILLIGAN_PRODUCT_DIRECTION.md`](migration/GILLIGAN_PRODUCT_DIRECTION.md), then [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md).
 - **Orchestration.** One session reviews each workstream's actual diff when it reports done, lands cer-demo branches on `dev` one at a time in dependency order, runs typecheck, lint and the touched suites singly after each merge, pushes `dev`, keeps the plan current, and pushes upstream only as new branches with the user's consent.
   Next: review the R4, dashboard, service, mirror and release-candidate sessions (all started) as they report, one at a time.
-- **Eval (R4)** on `eval/wave1-corrections` (`7428a48`, pushed, clean, not in `dev`). E3's reported result stays 1.01 on gold context, failing the Tier 2 gates; later numbers use the replacement judge `deepseek-v4p1-flash` and rubric v2 and compare only with each other.
-  2026-09-26 round: rewriting follow-ups into standalone search queries (`QUERY_REWRITE`, off by default) lifted `local-vector` k=20 from 0.72 / 0.74 to 0.89 / 0.92; `glm-5p3-flash` (reasoning low) scored 1.33 / 1.34 on gold context, the first arm over 1.30, and 1.07 / 1.06 with rewriting on real retrieval. Keyword search and relaxing the brevity line did not help. The user switched the answer model to GLM and raised the R4 ceiling to $30.
-  Next: approved steps 1-6 (GLM tool check, catalogue-prompt capture, offline retrieval experiments, reranker, a GLM prompt fix, one capture of the winner) in `eval/reviews/phase3-2026-09-23/HANDOFF.md` "Next steps"; results in [`EVAL_REBUILD.md`](EVAL_REBUILD.md) from "Follow-up rewriting and keyword search, offline" on, both on that branch.
+- **Eval (R4)** on `eval/wave1-corrections` (`a358bf2`, pushed, clean, not in `dev`). E3's reported result stays 1.01 on gold context, failing the Tier 2 gates; later numbers use the replacement judge `deepseek-v4p1-flash` and rubric v2 and compare only with each other.
+  2026-09-27 round: GLM passed a tool-calling check on the fabricated mirror; `QUERY_REWRITE_FIRST_TURN` (off by default) and a tools-off prompt rule were added; `local-rerank` k=20 with both rewrites scored 1.11 / 1.17 against 1.07 / 1.06 but fails the refusal gate at about three times the cost per question, so the reranker is on hold.
+  Next: the `local-vector` control capture that decides the reranker (about $0.50, awaiting approval), in `eval/reviews/phase3-2026-09-23/HANDOFF.md` "Next steps"; results in [`EVAL_REBUILD.md`](EVAL_REBUILD.md) from "Follow-up rewriting and keyword search, offline" on, both on that branch.
 - **Answer quality.** Q3-Q6 are implemented and reviewed on `task/q3-q5` (`e8bbaa9`, pushed, not on `dev`); the rules are in its `SPECS.md` and the 2026-09-26 timeline row. Server Q6 is `task/gilligan-cwa-old` (`510cf00`, pushed).
   2026-09-27: a pod with no GPS in its history now counts as never having moved (`ac8a166`, pushed; `sensorChat` 17/17). Landed on `dev` 2026-09-27 (`abe4169`); 17 touched suites pass singly. The user may still run `scripts/coordinateAudit.ts` (read-only) to find pods whose GPS dropped out part-way; a fix for any it finds goes on `dev`. Q9 and the 413 are another chat's (`task/q9-413`).
 - **Deployment inputs (L2).** Landed on `dev` 2026-09-27 (`6f4d060`): the plan's L2 answers, runbook §2 and a new §2.2 "What differs from the mirror run", and three timeline rows. The runbook itself (L1) is on `dev` (`fa4103f`).
@@ -37,7 +37,7 @@ Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygien
 - Landed on `dev`: runbook, checklist, mirror parity, the Codex manual testing guide (rescued from `/tmp`); reviewed Q6 and Codex's Q3-Q5 and fix round, fixed the `generateReport` stubs; typecheck, lint and 20 touched suites pass except `sensorChat` 16/17 (Algalita GPS).
 - The auto-mode classifier refused the live coordinate read despite chat approval; the user runs it. Orchestrator spend: none.
 - L2 session: found the user's Editor role replaced on 2026-09-23 (no "act as") and the `cer-ui` trigger building the infected `main`; a production read found 0 of 27 users with an empty organization.
-- R4 (2026-09-26/27): added `QUERY_REWRITE` and `LLM_THINKING` with tests; ran four offline retrieval arms and eight captures (all 0 failed); the user's blind grades of GLM against `gpt-oss-120b` agree with the judge; about $2.90 spent, R4 about $18.40 of $30.
+- R4 (2026-09-27): ran approved steps 1 and 3-6 (step 2 not run); the user kept the tools-off rule and allowed the mirror login; about $2.25 spent, R4 about $20.65 of $30 (estimated, the judge's rate is not in `prices.ts`).
 
 ## Working tree
 
@@ -50,10 +50,10 @@ Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygien
 
 ## Open work
 
-- User: run the coordinate audit (`cd .claude/worktrees/q3-q5 && ln -sf ../../../.env .env && npx --no-install ts-node scripts/coordinateAudit.ts`); send Michael runbook §2.1 and tell him not to use the repositories' deploy scripts; get Firestore access or choose the Sep 28 fallback (one instance, in-memory counts); start the dashboard, service, mirror (A) and release-candidate (B) sessions; grade `data/e2e/phase1-2026-09-25-review.html`; approve the demo, then S5; R4: decide `QUERY_REWRITE` for launch (recommended on), the production retrieval setting (recommended unpinned `local-vector` k=20), the judge default in code, and E4's per-class caveats or refusals.
+- User: run the coordinate audit (`cd .claude/worktrees/q3-q5 && ln -sf ../../../.env .env && npx --no-install ts-node scripts/coordinateAudit.ts`); send Michael runbook §2.1 and tell him not to use the repositories' deploy scripts; get Firestore access or choose the Sep 28 fallback (one instance, in-memory counts); start the dashboard, service, mirror (A) and release-candidate (B) sessions; grade `data/e2e/phase1-2026-09-25-review.html`; approve the demo, then S5; R4: approve the control capture (about $0.50); decide `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` for launch (both recommended on), the production retrieval setting and the reranker (recommended unpinned `local-vector` k=20 until the control), the judge default in code, and E4's per-class caveats or refusals.
 - User (decisions pending 2026-09-27): the coordinate audit (optional, read-only); the census commit and run (blocked for the agent by the auto-mode classifier); `scripts/censusFirestore.ts` (untracked, 24 lint errors, in `.claude/worktrees/firestore-mirror`); who adds the emulator test timeout on `feat/service-release`; Firestore access or the fallback, decided Sep 28 with the supervisor.
 - Agent: land the ready branches; land `task/q3-q5` after the audit decision, then run Q9; keep the plan current; on Sep 28 move open "should" tasks after launch and freeze the release candidate (L4).
-- Agent (R4): approved steps 1-6, then E4, E6 and the R4 report, on `eval/wave1-corrections`; at landing, switch the runbook to `glm-5p3-flash` only after its tool check passes (handoff "Edits wanted").
+- Agent (R4): the handoff's next steps (control capture, GLM refusal fix, catalogue-prompt capture, the judge's rate), then E4, E6 and the R4 report, on `eval/wave1-corrections`; at landing, switch the runbook to `glm-5p3-flash`, whose tool check passed (handoff "Edits wanted").
 - Standing: re-seed Firestore needs approval; the slice-coverage overshoot and `ADVICE_TIER` design wait for after launch.
 
 ## Unfixed defects
@@ -79,7 +79,8 @@ Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygien
 | `src/eval/judge/runner.ts` `DEFAULT_JUDGE_MODEL` | Still `deepseek-v4-flash-0731`, which Fireworks now answers with 404; its replacement's rate is not in `prices.ts`. | medium |
 | `src/prompt/promptBuilder.ts` `buildMessages` | CONTEXT is a second system message, which `minimax-m3` on Fireworks drops; any new model needs a two-system-message probe. | low |
 | tools-off answers (`gpt-oss-120b`) | Can loop on malformed citation markers: one answer in R4's reranker capture emitted 807; the audit strips them from display, but the citation rate counts them. | low |
-| tools-on answers | Withheld-history note dropped, water-type note misparaphrased, implausibly high dissolved oxygen not flagged (plan Q8). | medium |
+| tools-on answers | Withheld-history note dropped, water-type note misparaphrased, implausibly high dissolved oxygen not flagged (plan Q8); "anything in the last 24 hours?" answered yes for a pod silent 30 hours, since the tool anchors relative windows to its last report (R4 GLM tool check). | medium |
+| tools-off answers (`glm-5p3-flash`) | Fail the refusal-integrity gate: 1-2 of 8 must-refuse turns answered on gold context, 2 with the reranker, taking a figure from a retrieved passage (R4, `eval/wave1-corrections`). | medium |
 | `/tmp/eval-fixtures-*` | 131 directories leaked before the hygiene fix (landed `f9efb96`) remain. | low |
 | server `src/schemas/waterData.schema.ts` via `WaterDataRepository` | Wants string `lat`, `lon`, `bat` and `time_meas`; production rows carry numeric `lat`/`lon` and no `bat`, so the legacy unauthenticated `/water-data`, `/device` and `/duration/*` routes fail on real rows (mirror P5). Pre-existing (unchanged since `0c91404`); Gilligan and the dashboard use `/water/*`, which does not parse. Loosening the schema alone would re-open `SECURITY_FINDINGS.md` §5 item 2, so fix it by removing or authenticating those routes. | low |
 | `../user-dashboard` `src/app/confirm-email` | Imports `confirmEmail`, which `services/auth` does not export; build reports "Attempted import error" (plan P5). | medium |
