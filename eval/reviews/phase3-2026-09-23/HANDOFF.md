@@ -19,7 +19,7 @@ Work on branch `eval/wave1-corrections` in its worktree `.claude/worktrees/wave1
 - **Earlier arms, new judge, rubric v2, two passes:** gold context GLM with the tools-off rule 1.28 / 1.31 (`p3-gold-glm-notools-2026-09-27`); `local-rerank` k=20, both rewrites, GLM, rule 1.11 / 1.17 (`p3-rerank-k20-rewrite2-glm-2026-09-27`), refusal gate FAIL.
 - **Baselines, new judge, rubric v2, two passes unless noted:** gold context `gpt-oss-120b` 1.10 (one pass), `glm-5p3-flash` 1.33 / 1.34; `local-vector` k=20 unpinned `gpt-oss-120b` 0.72 / 0.74, with rewriting 0.89 / 0.92; **`glm-5p3-flash` with rewriting 1.07 / 1.06 (run `p3-lv-k20-rewrite-glm-2026-09-26`), the baseline for the next round.**
 - `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); launch retrieval decided by the user on 2026-09-27: `DEFAULT_RETRIEVAL=local-vector`, k=20, datasheets unpinned, `QUERY_REWRITE=true`, `QUERY_REWRITE_FIRST_TURN=true`, no reranker (the runbook still says `hybrid-slice-vector`; change it at landing).
-- **Spend:** about $21.80 of the $30 ceiling after the refusal fix (about $0.25) and the launch capture (about $0.45); about $21.10 after the control capture (about $0.45: answers $0.21, rewrites $0.03, two judge passes about $0.20, estimated); before it, about $20.65 after the 2026-09-27 round (about $2.25: offline runs $0.10, reranker offline $0.60, tool check $0.10, tools-off rule capture and judging $0.40, reranker capture and judging $1.15), so about $8.20 left; estimates, since `deepseek-v4p1-flash` has no rate in `prices.ts`, so check the Fireworks bill.
+- **Spend:** about $25 of the $30 ceiling, so about $5 left (corrected 2026-09-27). `deepseek-v4p1-flash` is now priced ($0.30 / $0.006 cached / $1.20, read 2026-09-27) and its ledgers since 2026-09-25 total $7.60 measured, about $3.15 more than the estimates recorded at the old judge's rate and in this round; earlier records said about $21.80. A two-pass judge of a retrieval arm costs about $0.60 (pass 1 about $0.45 uncached). Check the Fireworks bill.
 
 ## What to review
 
@@ -146,10 +146,11 @@ Report every result with its full configuration (model, reasoning, retrieval arm
 1. **Done 2026-09-27: control capture** (`p3-lv-k20-rewrite2-glm-2026-09-27`, `local-vector` k=20, both rewrites, GLM low, tools-off rule, tools and catalogue off): 1.14 / 1.17 against the reranker's 1.11 / 1.17, refusal gate FAIL (5 exact, 1 off-contract, 2 answered); drop the reranker (`EVAL_REBUILD.md`, "Control: `local-vector` with both rewrites").
 2. **Done 2026-09-27: GLM refusal fix** (`dcb3ce3`, two general prompt rules): gold context 1.36 / 1.30 against 1.28 / 1.31, refusal gate 8 exact (`p3-gold-glm-refusal-2026-09-27`); kept.
 3. **Done 2026-09-27: launch-configuration capture** (`p3-launch-lv-k20-glm-2026-09-27`, `local-vector` k=20, both rewrites, `CATALOGUE_PROMPT=true`, the fix, tools off): 1.18 / 1.13, every Tier 1 gate PASS, cross-document 0.83; the run E4 and the R4 report cite.
-4. **Add `deepseek-v4p1-flash`'s rate to `src/eval/prices.ts`** with the date read, so judge spend is measured; changing `DEFAULT_JUDGE_MODEL` awaits the user.
+4. **Done 2026-09-27:** `deepseek-v4p1-flash` priced in `src/eval/prices.ts` and made `DEFAULT_JUDGE_MODEL` (user, `59e4b5d`).
+6. **E4 (user chose a caveat for cross-document, 2026-09-27):** `MULTI_SOURCE_CAVEAT` rule added (`e0abe8b`, tools on and off); its verification capture of the launch configuration, judged twice, costs about $0.90 at the measured judge rate and awaits approval.
 5. **Route the tool-check findings to the Gilligan answer-quality work on `dev`** (tools-on prompt and tools, not R4): the "last 24 hours" answer and the partial relay of the water-type and withheld-history notes (plan Q8).
 
-Then: the user's open decisions (the judge default in code; E4's per-class caveat or refusal under D3, with cross-document the obvious candidate), E4 and E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
+Then: the user's open decisions ( E4's per-class caveat or refusal under D3, with cross-document the obvious candidate), E4 and E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
 
 ## Traps found
 
