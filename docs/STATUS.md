@@ -4,7 +4,7 @@ Current state and next steps only.
 Rewritten at the end of every session by `/handoff`; history is `git log -p docs/STATUS.md`.
 Never cite this file from code or other docs: the reasoning lives in the docs under "Where things live".
 
-Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygiene landed, Q6 decisions, WaterDataRepository finding); otherwise as of 2026-09-26 at `61172a7`; R4 entries were updated 2026-09-27 by the R4 session at `eval/wave1-corrections` `a358bf2`, and L2 entries come from `docs/l2-inputs` (`f308ea3`).
+Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygiene landed, Q6 decisions, WaterDataRepository finding); otherwise as of 2026-09-26 at `61172a7`; R4 entries were updated 2026-09-27 by the R4 session at `eval/wave1-corrections` `a358bf2`, L2 entries come from `docs/l2-inputs` (`f308ea3`), and mirror end-to-end entries from the T2 session on `docs/gcp-test-env`.
 
 ## Start here
 
@@ -24,33 +24,33 @@ Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygien
 
 ## In flight
 
-- **Ready to land on `dev`**: `docs/gcp-test-env` (`5ab30e8`, pushed: mirror setup, ticket, bot, phase 1 results); `docs/firestore-testing-plan` (`60befd4`, partly superseded).
+- **Ready to land on `dev`**: `docs/gcp-test-env` (pushed, `dev` merged in: mirror setup, ticket, bot, both results documents, `LIVE_TEST_LIST.md` L9-L10); `docs/firestore-testing-plan` (`60befd4`, partly superseded).
 - **Service (S1-S4, Q7)**: `feat/service-release` (`cc8a300`), no active session. Before landing: `expireAt` on usage documents, a longer emulator concurrency timeout, and a `.gcloudignore` that uploads `data/` for Cloud Build (runbook §3.3).
 - **Dashboard (U1-U6, P5, checklist X1 and X2)**: `task/gilligan-ux` in `~/code/clean-earth-rovers/worktrees/dashboard-ux`, not started.
-- **Mirror end-to-end (T2 offline)**: phase 1 on 2026-09-25, 46 scenarios, 43 pass (A1/D4 empty-organization user sees every pod, A3 invited-user 500, and a 413 past about 100 KB of history); phase 2 waits for Q3-Q6. Next session: the user's merged prompt A (seed CWA Old and a moved pod, cherry-pick `510cf00` and `feat/firestore-config` with `-x`, $10 budget). Unprovable items go in [`migration/LIVE_TEST_LIST.md`](migration/LIVE_TEST_LIST.md).
+- **Mirror end-to-end (T2 offline)**: rerun 2026-09-27 on server `mirror/e2e-p3` `1ef21a7` (local: `510cf00` as `3e7c3fb`, the fixtures, project `demo-cer-mirror`), cer-demo `test/e2e-rc` `77cd4c9` (local merge of `dev` and `feat/service-release`) and dashboard `task/gilligan-ux` `9e18555`: 73 questions, at most $1.27; release limits, G4, K10 and K15 pass; findings 6-10 and blocked checks in [`migration/GILLIGAN_E2E_RESULTS_2026-09-27.md`](migration/GILLIGAN_E2E_RESULTS_2026-09-27.md) on that branch. Next: groups B, D, E, H and I and phase 2 on this stack, M11, and replacing `1ef21a7`'s project setting with `feat/firestore-config`.
 - **Release candidate**: the user's prompt B (one server and one dashboard release branch, the mirror rebuilt from it, a production-mode local run), not started.
 - **End-to-end checklist** ([`migration/E2E_CHECKLIST.md`](migration/E2E_CHECKLIST.md)): level-1 baseline 2026-09-26, 25 pass, 5 fail, 1 N/A, about $0.22; findings routed in the plan (dashboard, R4, Q9).
 
 ## Last session
 
-- Orchestrator: recorded the user's decisions (CWA Old null, current site only, mirror-first testing, $10 mirror budget, the Q3-Q6 review rules) and started `LIVE_TEST_LIST.md`; pushed the server and dashboard branches above.
-- Landed on `dev`: runbook, checklist, mirror parity, the Codex manual testing guide (rescued from `/tmp`); reviewed Q6 and Codex's Q3-Q5 and fix round, fixed the `generateReport` stubs; typecheck, lint and 20 touched suites pass except `sensorChat` 16/17 (Algalita GPS).
-- The auto-mode classifier refused the live coordinate read despite chat approval; the user runs it. Orchestrator spend: none.
+- Orchestrator: recorded the user's decisions (CWA Old null, current site only, mirror-first testing, $10 mirror budget, Q3-Q6 review rules), started `LIVE_TEST_LIST.md`, pushed the upstream branches, and landed the runbook, checklist, mirror parity and manual guide; typecheck, lint and 20 touched suites pass except `sensorChat` 16/17 (Algalita GPS). Orchestrator spend: none.
+- The auto-mode classifier refused the live coordinate read despite chat approval; the user runs it.
 - L2 session: found the user's Editor role replaced on 2026-09-23 (no "act as") and the `cer-ui` trigger building the infected `main`; a production read found 0 of 27 users with an empty organization.
 - R4 (2026-09-27): ran approved steps 1 and 3-6 (step 2 not run); the user kept the tools-off rule and allowed the mirror login; about $2.25 spent, R4 about $20.65 of $30 (estimated, the judge's rate is not in `prices.ts`).
+- T2 mirror (2026-09-27): cherry-picked `510cf00`, added fixtures and the `demo-` project guard, ran the rerun and the guide's G4, K, M and R checks; bot defects fixed and rerun; about $1.27 of the $10 mirror budget.
 
 ## Working tree
 
 - `dev` `f9efb96` plus this STATUS, plan, timeline and manual-guide update, pushed; `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
-- cer-demo worktrees: `wave1-corrections` (R4), `q3-q5`, `feat+service-release`, `l2-inputs`, `mirror-parity`, `gcp-test-env`, `firestore-plan`, `firestore-mirror` (no commits), `hygiene`. Merged and removable: `gilligan-runbook`, `cwa-old`, `answer-quality-q1`, `token-cap`, `upstream-publish`; Codex's `/tmp/cer-q3-q5` and `/tmp/cer-manual-testing-guide` are preserved in branches.
-- Upstream: server `local` `d12ad6d` and dashboard `local` `fd103a0` with git-ignored `.env` files; worktrees under `~/code/clean-earth-rovers/worktrees/`: `server-publish`, `server-service-key`, `server-user-auth`, `server-cwa-old`, `server-firestore-config` (`0003170`, unpushed), `dashboard-publish`, `dashboard-ux`; the server's `.worktrees/mirror` (`mirror/e2e-p3` `37fec03`).
-- Local processes: Firestore emulator :8080 (hub :4400) and something on :3000; the mirror's server :5101 and cer-demo :8010 are down.
+- cer-demo worktrees: `wave1-corrections` (R4), `q3-q5`, `feat+service-release`, `l2-inputs`, `mirror-parity`, `gcp-test-env`, `e2e-rc` (local test merge, removable once `feat/service-release` lands), `firestore-plan`, `firestore-mirror` (no commits), `hygiene`. Merged and removable: `gilligan-runbook`, `cwa-old`, `answer-quality-q1`, `token-cap`, `upstream-publish`; Codex's `/tmp/cer-q3-q5` and `/tmp/cer-manual-testing-guide` are preserved in branches.
+- Upstream: server `local` `d12ad6d` and dashboard `local` `fd103a0` with git-ignored `.env` files; worktrees under `~/code/clean-earth-rovers/worktrees/`: `server-publish`, `server-service-key`, `server-user-auth`, `server-cwa-old`, `server-firestore-config` (`0003170`, unpushed), `dashboard-publish`, `dashboard-ux`, `dashboard-e2e` (detached `9e18555`, test only); the server's `.worktrees/mirror` (`mirror/e2e-p3` `1ef21a7`, local).
+- Local processes: Firestore emulator :8080 (`demo-cer-mirror`, seeded 2026-09-27 with fixtures, holding the rerun's chats and counts) and the dashboard :3000 from `dashboard-e2e`; the mirror's server :5101 and cer-demo :8010 are down.
 - Tools: `gcloud`, `firebase-tools` and Java 21 are installed (`LOCAL_STACK.md` on `docs/gcp-test-env`); test project `cer-demo-2026` with database `gilligan-test`.
 - Git-ignored or untracked restored inputs: `node_modules/`, `.env`, the corpus PDFs, `.ocr_cache/`, `data/corpus/`, `data/embeddings/cache.json`. Still missing: `data/retrieval-eval/`, `data/device-fields/`, `data/backend-surface/`, `serviceAccountKey.json`.
 
 ## Open work
 
-- User: run the coordinate audit (`cd .claude/worktrees/q3-q5 && ln -sf ../../../.env .env && npx --no-install ts-node scripts/coordinateAudit.ts`); send Michael runbook §2.1 and tell him not to use the repositories' deploy scripts; get Firestore access or choose the Sep 28 fallback (one instance, in-memory counts); start the dashboard, service, mirror (A) and release-candidate (B) sessions; grade `data/e2e/phase1-2026-09-25-review.html`; approve the demo, then S5; R4: approve the control capture (about $0.50); decide `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` for launch (both recommended on), the production retrieval setting and the reranker (recommended unpinned `local-vector` k=20 until the control), the judge default in code, and E4's per-class caveats or refusals.
+- User: run the coordinate audit (`cd .claude/worktrees/q3-q5 && ln -sf ../../../.env .env && npx --no-install ts-node scripts/coordinateAudit.ts`); send Michael runbook §2.1 and tell him not to use the repositories' deploy scripts; get Firestore access or choose the Sep 28 fallback (one instance, in-memory counts); start the dashboard, service and release-candidate (B) sessions; grade `data/e2e/phase1-2026-09-25-review.html` and the 2026-09-27 sheets (`data/e2e/p2-*`), both in the `gcp-test-env` worktree; approve the demo, then S5; R4: approve the control capture (about $0.50); decide `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` for launch (both recommended on), the production retrieval setting and the reranker (recommended unpinned `local-vector` k=20 until the control), the judge default in code, and E4's per-class caveats or refusals.
 - User (decisions pending 2026-09-27): the coordinate audit (optional, read-only); the census commit and run (blocked for the agent by the auto-mode classifier); `scripts/censusFirestore.ts` (untracked, 24 lint errors, in `.claude/worktrees/firestore-mirror`); who adds the emulator test timeout on `feat/service-release`; Firestore access or the fallback, decided Sep 28 with the supervisor.
 - Agent: land the ready branches; land `task/q3-q5` after the audit decision, then run Q9; keep the plan current; on Sep 28 move open "should" tasks after launch and freeze the release candidate (L4).
 - Agent (R4): the handoff's next steps (control capture, GLM refusal fix, catalogue-prompt capture, the judge's rate), then E4, E6 and the R4 report, on `eval/wave1-corrections`; at landing, switch the runbook to `glm-5p3-flash`, whose tool check passed (handoff "Edits wanted").
@@ -83,6 +83,7 @@ Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygien
 | tools-off answers (`glm-5p3-flash`) | Fail the refusal-integrity gate: 1-2 of 8 must-refuse turns answered on gold context, 2 with the reranker, taking a figure from a retrieved passage (R4, `eval/wave1-corrections`). | medium |
 | `/tmp/eval-fixtures-*` | 131 directories leaked before the hygiene fix (landed `f9efb96`) remain. | low |
 | server `src/schemas/waterData.schema.ts` via `WaterDataRepository` | Wants string `lat`, `lon`, `bat` and `time_meas`; production rows carry numeric `lat`/`lon` and no `bat`, so the legacy unauthenticated `/water-data`, `/device` and `/duration/*` routes fail on real rows (mirror P5). Pre-existing (unchanged since `0c91404`); Gilligan and the dashboard use `/water/*`, which does not parse. Loosening the schema alone would re-open `SECURITY_FINDINGS.md` §5 item 2, so fix it by removing or authenticating those routes. | low |
+| tools-on answers and reports (mirror 2026-09-27, findings 6-10) | A moved pod's answers and report summary claim the whole period after earlier-site readings are excluded; a no-GPS pod gets no location note; the broken-pod referral (O1) is declined; a superadmin gets a merged predecessor's full report; a fresh-water survivor's history includes a salt-water predecessor's conductivity and turns Action Required. | medium |
 | `../user-dashboard` `src/app/confirm-email` | Imports `confirmEmail`, which `services/auth` does not export; build reports "Attempted import error" (plan P5). | medium |
 | `../user-dashboard` `src/app/gilligan/page.js` | `useSearchParams` outside Suspense deopts the page to client rendering. | low |
 | citation contract | Citations carry only `source`, so a document shows as its address (plan U5). | low |
@@ -97,7 +98,7 @@ Updated 2026-09-27 at `dev` `f9efb96` by the release orchestrator (L2 and hygien
 - Both servers read `.env` at boot only. `hybrid-slice-vector` needs the git-ignored embedding cache; a fresh worktree has no `node_modules`, `.env` or `data/` (link per the `run-local` skill). `EnterWorktree` cuts from `origin/main`; reset onto `dev`.
 - Re-ingesting with a different tesseract build moves 12 chunk ids and voids labels; `resolveRetrievalLabels.ts` does not delete stale label files.
 - Anything in `documents/` is ingested; keep the v2 PDF at the repo root.
-- The mirror runs under the production project id because the server hard-codes it, and application default credentials exist on this machine; `feat/firestore-config` (`0003170`, unpushed) takes the project from the environment once the mirror picks it.
+- The mirror runs under `demo-cer-mirror` from server `1ef21a7` on; older mirror commits and the manual guide still use the production project id, and application default credentials exist on this machine. `feat/firestore-config` (`0003170`, unpushed) overlaps `1ef21a7`.
 - The server's integration suites (`test/setup/testDb.ts`) force `DB_ENVIRONMENT=qa` and connect to the real `qa-db`: never run them.
 - Every `cer-gilligan` guard defaults to off or unlimited (quota, store, window, retrieval); a release environment file missing a variable fails open.
 - Run Jest suites singly with `--runInBand`; use port 8010, never kill 8000.

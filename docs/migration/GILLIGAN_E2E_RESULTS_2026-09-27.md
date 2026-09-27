@@ -22,6 +22,7 @@ The server's `waterPeriodScope` suite passed 10 of 10 after the cherry-pick.
 The mirror now runs under a `demo-` project id, which Google never resolves to a real project.
 The server and seed refuse a project id that does not start with `demo-`, checked with an empty id and with the production id.
 The guide's instruction to keep `conductive-fold-343604` for the mirror no longer applies from server `1ef21a7` on.
+Server `feat/firestore-config` (`0003170`, unpushed) already reads the project from `FIRESTORE_PROJECT_ID`; `1ef21a7` duplicates it through `MIRROR_PROJECT_ID`, so one should replace the other.
 
 `task/gilligan-ux` does not have `local` as an ancestor, because the malware cleanup rewrote `local`; the guide's ancestry check does not apply to it.
 

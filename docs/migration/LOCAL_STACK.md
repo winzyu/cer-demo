@@ -202,6 +202,8 @@ FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npx jest --runInBand test/integration/fir
 
 Port 8080 does not collide with 8000 or 8010; the emulator hub also reserves 4400, 4500 and 9150.
 A `demo-` project id keeps the emulator from ever reaching a real project.
+The CER mirror runs under `demo-cer-mirror` from server `mirror/e2e-p3` `1ef21a7` on (`MIRROR_PROJECT_ID`, required by `dev:mirror` and the seed); cer-demo sharing that emulator sets `FIRESTORE_PROJECT_ID=demo-cer-mirror`.
+Server `feat/firestore-config` (`0003170`, unpushed) makes the same change through `FIRESTORE_PROJECT_ID`, so one of the two should replace the other.
 
 Result on `feat/service-release` at `cc8a300`: at Jest's defaults the suite failed 6 of 8 runs, always in "counts every one of many simultaneous records".
 That test runs 25 contended transactions on one document, which takes about 7.5 s on the emulator against Jest's 5 s default.
@@ -218,7 +220,7 @@ With `--testTimeout=120000` all 5 tests passed in 3 of 3 runs with the correct t
 
 The project holds no API keys and no downloadable keys, so it has nothing to rotate; its one service account is the Gilligan runtime identity below.
 Only the `(default)` database gets Firestore's free daily quota; `gilligan-test` bills from the first read, which is pennies at test volume.
-The CER server hard-codes project id `conductive-fold-343604` in `src/config/database.ts`, so pointing it at `cer-demo-2026` needs a small server change and is out of scope here.
+The CER server hard-codes project id `conductive-fold-343604` in `src/config/database.ts`, so pointing it at `cer-demo-2026` needs a small server change, which `feat/firestore-config` (`0003170`, unpushed) makes.
 
 #### Gilligan identity and secret rehearsal, 2026-09-25
 
