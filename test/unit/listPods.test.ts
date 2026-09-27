@@ -48,7 +48,11 @@ const makeClient = (
         ok: true, status: 200, json: async () => payload, text: async () => JSON.stringify(payload),
       } as unknown as Response;
     }
-    const body = url.includes("/devices") ? devices : {};
+    const label = new URL(url).searchParams.get("device") ?? "";
+    const latest = lastByLabel[label] as { data?: Record<string, unknown> } | undefined;
+    // Fabricated period counterpart with a usable fix; captured artifacts stay unchanged.
+    const period = latest?.data ? [{ ...latest.data, best_lat: 41.38, best_lon: -82.51 }] : [];
+    const body = url.includes("/devices") ? devices : period;
     return {
       ok: true, status: 200, json: async () => body, text: async () => JSON.stringify(body),
     } as unknown as Response;

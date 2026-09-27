@@ -267,7 +267,7 @@ export const metricThresholdRejectionReason = (
         + "be read as a range.";
     case "implausible": {
       const [lo, hi] = RAILS[metric];
-      return `This device's ${label} thresholds fall outside a plausible range (${lo} to ${hi}), `
+      return `Not assessed: this device's ${label} thresholds fall outside a plausible range (${lo} to ${hi}), `
         + "so they read as a placeholder rather than a configured limit.";
     }
     default:
@@ -299,7 +299,7 @@ export const thresholdRejectionNote = (reason: ThresholdRejection): string => {
       return "This device's temperature thresholds have a minimum above the maximum, so they "
         + `cannot be read as a range. ${tail}`;
     case "implausible":
-      return "This device's temperature thresholds fall outside the range natural surface water "
+      return "Not assessed: this device's temperature thresholds fall outside the range natural surface water "
         + `occupies (${TEMPERATURE_BASELINE_RAIL_F[0]}-${TEMPERATURE_BASELINE_RAIL_F[1]} °F), so `
         + `they read as placeholders rather than a site baseline. ${tail}`;
     default:
