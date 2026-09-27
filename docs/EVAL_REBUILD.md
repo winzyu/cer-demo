@@ -1565,6 +1565,47 @@ Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0
 On the two-pass mean 14 turns are higher than the reranker's and 12 lower.
 Reading: the reranker adds nothing measurable; the gain over `p3-lv-k20-rewrite-glm-2026-09-26` (1.07 / 1.06) comes from first-turn rewriting and the tools-off rule, and the refusal-gate failure is GLM's on either arm (`refusal-temperature-harm-threshold` t1 and `refusal-turbidity-sensor-hardware` t2 answered).
 Recommended: `local-vector` k=20, datasheets unpinned, with both rewrites and no reranker.
+The user adopted this for launch on 2026-09-27.
+
+### GLM refusal fix on gold context - 2026-09-27, runs `p3-gold-glm-refusal-2026-09-27` and `p3-gold-glm-refusal-rejudge-2026-09-27`
+
+Two general rules added to the system prompt (`dcb3ce3`, both tools-on and tools-off): never infer a fact about this pod or its instruments (a unit, model, sensor type, setting or threshold) from what an excerpt says is typical of other instruments; and whenever any part is declined, write the refusal sentence word for word, since a paraphrase does not replace it.
+They answer the two failures seen on every GLM arm: `refusal-turbidity-sensor-hardware` t2 inferred the pod's turbidity unit (FNU) from what most USGS instruments use, and `refusal-temperature-harm-threshold` declined in its own words without the sentence.
+Gold context, `glm-5p3-flash` at reasoning low, the tools-off rule, `QUERY_REWRITE` off, tools and catalogue off, port 8011: 90/90, 0 failed, about $0.07 for answers; judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+
+| | before (`p3-gold-glm-notools-2026-09-27`) | with the fix |
+|---|---|---|
+| correctness, pass 1 / 2 | 1.28 / 1.31 | 1.36 / 1.30 |
+| refusal integrity gate | FAIL: 5 exact, 1 off-contract, 2 answered | PASS: 8 exact |
+| refusal (judge) | - | 1.13 / 1.00 |
+| citation validity | 98.8% | 97.6% (10 quotes cut at a hyphenated line break) |
+| unexplained figures | 3 of 633 | 2 of 656 (both 0.40, a rounding result) |
+
+Kept: the refusal gate passes and correctness does not fall.
+
+### Launch configuration captured - 2026-09-27, runs `p3-launch-lv-k20-glm-2026-09-27` and `p3-launch-lv-k20-glm-rejudge-2026-09-27`
+
+The launch settings as far as an evaluation can reach them: `local-vector` k=20, datasheets unpinned, `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, `glm-5p3-flash` at reasoning low, `CATALOGUE_PROMPT=true` (on server and judge), the refusal fix at `dcb3ce3`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, port 8011.
+The tools stay off, as every capture requires (on means live production reads), so the prompt carries the tools-off rule where production carries the tool blocks.
+90/90, 0 failed, after a spot check; 1,722,969 prompt tokens (24.1% cached), 30,562 completion, 475 s; about $0.23 for answers and $0.03 for rewrites.
+Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+
+| | control (`p3-lv-k20-rewrite2-glm-2026-09-27`) | launch configuration, pass 1 / 2 |
+|---|---|---|
+| correctness (floor 1.30) | 1.14 / 1.17 | 1.18 / 1.13 |
+| first turns / second turns | 1.19 / 1.12 | 1.12 / 1.19 |
+| cross-document | 0.96 / 0.92 | 0.83 / 0.83 (FAIL) |
+| deep-in-manual | 1.25 / 1.30 | 1.50 / 1.45 |
+| refusal (judge) | 0.88 / 1.00 | 1.00 / 0.75 |
+| scored 0 | - | 6 / 8 |
+| refusal integrity gate | FAIL: 5 exact, 1 off-contract, 2 answered | PASS: 8 exact |
+| citation validity | 100.0% | 99.8% |
+| unexplained figures | 1 of 614 | 0 of 535 |
+| median time to first token / whole answer | 3.0 s / 5.5 s | 2.5 s / 4.7 s |
+
+On the two-pass mean 13 turns rose and 16 fell against the control; overall correctness is level, and every Tier 1 gate passes for the first time on a real-retrieval GLM arm.
+Correctness stays under the 1.30 floor, and cross-document (0.83) is the class under the bar for E4; the judge's refusal score is low although all eight refusals are exact, because several refuse without the supported related points the rubrics also require (for example `refusal-how-long-can-it-stay-in`, a bare refusal scored 0 in pass 2).
+This is the run E4 and the R4 report cite.
 
 ## Task C provenance inputs - 2026-09-24
 
