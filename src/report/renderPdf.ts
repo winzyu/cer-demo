@@ -20,6 +20,7 @@ import {
   clarityBandFor, isAllZeroTurbidity, isOffScaleTurbidity, TURBIDITY_NO_BASELINE_TEXT,
 } from "./referenceRanges";
 import type { NarrativeSections } from "./narrative";
+import { readingAge } from "../tools/readingAge";
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
   Normal: "#1a7f37",
@@ -404,15 +405,45 @@ const drawFooters = (doc: PDFKit.PDFDocument, report: ReportInput): void => {
   doc.x = MARGIN;
 };
 
+/**
+ * The "Last Reading" row: the device's newest reading and how old it was when the PDF was built.
+ *
+ * Without it, a pod silent for two weeks printed a two-week-old period beside today's Report
+ * Date and a "Normal — no action required" status, and nothing on the page said the pod had
+ * stopped reporting (REPORT_AUDIT_2026-09-25.md finding 3). The age uses `readingAge`, the same
+ * rule and six-hour stale line `generate_report` and `list_pods` state in their tool results.
+ * `warning` is set only when stale, and the PDF prints it under the metadata table.
+ */
+export const lastReadingText = (
+  lastReadingAt: string | undefined,
+  nowMs: number,
+): { value: string; warning?: string } => {
+  const age = readingAge(lastReadingAt, nowMs);
+  if (!lastReadingAt || !age) {
+    return { value: "Not available" };
+  }
+  const value = `${formatTs(Date.parse(lastReadingAt))} UTC (${age.age} before this report)`;
+  if (!age.stale) {
+    return { value };
+  }
+  return {
+    value,
+    warning: `This pod has not reported for ${age.age}. The period ends at its last reading, so `
+      + "this report describes the water then, not current conditions.",
+  };
+};
+
 export interface RenderPdfOptions {
   probeAccuracy: (key: string, reading: number) => number;
   status: ReportStatus;
+  /** The clock the last reading's age is measured against; defaults to now. */
+  nowMs?: number;
 }
 
 export const buildReportPdf = (
   report: ReportInput,
   narrative: NarrativeSections,
-  { probeAccuracy, status }: RenderPdfOptions,
+  { probeAccuracy, status, nowMs = Date.now() }: RenderPdfOptions,
 ): PDFKit.PDFDocument => {
   const doc = new PDFDocument({
     size: "LETTER",
@@ -442,6 +473,7 @@ export const buildReportPdf = (
   doc.x = MARGIN;
   doc.y = HEADER_HEIGHT + 16;
 
+  const lastReading = lastReadingText(report.site.lastReadingAt, nowMs);
   drawKeyValueTable(doc, [
     { label: "Coordinates", value: coordinatesStr(report.site) },
     // The provenance travels with the value: this one field selects the whole baseline table
@@ -455,8 +487,16 @@ export const buildReportPdf = (
     },
     { label: "Client / Contract", value: report.site.clientName },
     { label: "Report Date", value: report.site.reportDate },
+    { label: "Last Reading", value: lastReading.value },
     { label: "Prepared By", value: "Clean Earth Rovers" },
   ]);
+
+  if (lastReading.warning) {
+    doc.moveDown(0.3);
+    doc.font("Helvetica-Bold").fontSize(10).fillColor(STATUS_COLORS.Watch)
+      .text(lastReading.warning, MARGIN, doc.y, { width: CONTENT_WIDTH });
+    doc.fillColor("#000000");
+  }
 
   doc.moveDown(0.4);
 

@@ -198,6 +198,42 @@ describe("list_pods — freshness", () => {
       .toMatchObject({ last_reported_age: "40 minutes", last_reported_stale: false });
   });
 
+  it("lists a silent pod, marked silent with its age, instead of leaving it out", async () => {
+    // E2E checklist C1: asked which pods are online, the model dropped the stale pods from the
+    // answer. The result now names them in `silent_pods` and says they must be listed.
+    const stub = makeClient({ "dev:351077454567580": OWC_LAST, "dev:351077454569099": [] });
+    const tenDaysOn = Date.parse("2026-08-17T15:00:00.000Z");
+    const tool = new ListPods({ sensor: new QuerySensorData({ client: stub.client, now: () => tenDaysOn }) });
+
+    const result = await tool.run({}, { token: TOKEN });
+    const pods = podsOf(result) as unknown as Array<Record<string, unknown>>;
+
+    expect(result.count).toBe(4);
+    expect(pods.find((pod) => pod.device === "dev:351077454567580"))
+      .toMatchObject({ status: "silent", last_reported_age: "11 days" });
+    expect(result.silent_pods).toEqual([{
+      name: pods[1].name,
+      last_reported: "2026-08-07T14:38:49.000Z",
+      last_reported_age: "11 days",
+    }]);
+    expect(String(result.note)).toContain("list the silent pods too, marked silent");
+    // A null timestamp is unconfirmed, not silent: no GPS fix is not proof the pod is down.
+    expect(pods[0]).toMatchObject({ status: "unconfirmed" });
+  });
+
+  it("marks a pod that reported within the hour as reporting, with no silent note", async () => {
+    const stub = makeClient({ "dev:351077454567580": OWC_LAST });
+    const fortyMinutesOn = Date.parse("2026-08-07T15:18:49.000Z");
+    const tool = new ListPods({ sensor: new QuerySensorData({ client: stub.client, now: () => fortyMinutesOn }) });
+
+    const result = await tool.run({}, { token: TOKEN });
+    const pods = podsOf(result) as unknown as Array<Record<string, unknown>>;
+
+    expect(pods.find((pod) => pod.device === "dev:351077454567580")).toMatchObject({ status: "reporting" });
+    expect(result.silent_pods).toEqual([]);
+    expect(String(result.note)).not.toContain("silent_pods");
+  });
+
   it("says in the result that a null last_reported is not proof of silence", async () => {
     // The trap this tool could otherwise walk the model into: null here means "not confirmed",
     // because the route drops readings with no GPS fix, so a pod reporting chemistry without a

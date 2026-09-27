@@ -1,7 +1,7 @@
 import PDFDocument from "pdfkit";
 import {
   buildReportPdf, resolveSectionNumbers, drawGridTable, drawKeyValueTable, drawSparkline,
-  flagCellText, MARGIN,
+  flagCellText, lastReadingText, MARGIN,
 } from "../../src/report/renderPdf";
 import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent, DataQualityCheck, ReportStatus,
@@ -133,6 +133,31 @@ describe("flagCellText — the Flag column", () => {
   });
 });
 
+describe("lastReadingText — the Last Reading row (report audit #3)", () => {
+  const REPORT_MS = Date.parse("2026-09-26T12:00:00.000Z");
+
+  it("states a silent pod's last reading age and warns that the report is not current", () => {
+    // Audit #3: Old Woman Creek, silent for about two weeks, printed "Normal" with no age anywhere.
+    const { value, warning } = lastReadingText("2026-09-12T14:38:49.000Z", REPORT_MS);
+
+    expect(value).toBe("2026-09-12 14:38 UTC (14 days before this report)");
+    expect(warning).toContain("has not reported for 14 days");
+    expect(warning).toContain("not current conditions");
+  });
+
+  it("states the age without a warning for a pod that reported within six hours", () => {
+    const { value, warning } = lastReadingText("2026-09-26T11:20:00.000Z", REPORT_MS);
+
+    expect(value).toBe("2026-09-26 11:20 UTC (40 minutes before this report)");
+    expect(warning).toBeUndefined();
+  });
+
+  it("says Not available rather than inventing an age when no timestamp was carried", () => {
+    expect(lastReadingText(undefined, REPORT_MS)).toEqual({ value: "Not available" });
+    expect(lastReadingText("not a date", REPORT_MS)).toEqual({ value: "Not available" });
+  });
+});
+
 describe("resolveSectionNumbers — dynamic section numbering", () => {
   it("numbers Recommendations as 4 when both Event Detection and Data Quality are absent", () => {
     expect(resolveSectionNumbers({ events: [], dataQuality: undefined })).toEqual({
@@ -221,6 +246,30 @@ describe("buildReportPdf — smoke test", () => {
     };
     const buffer = await render(report);
     expect(buffer.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+  });
+
+  it("renders the stale last-reading warning, and a fresh pod's page differs from it", async () => {
+    const nowMs = Date.parse("2026-09-26T12:00:00.000Z");
+    const renderAt = (lastReadingAt: string): Promise<Buffer> => {
+      const doc = buildReportPdf(
+        { site: { ...site, lastReadingAt }, parameters: [param], events: [] },
+        narrative,
+        { probeAccuracy: noAccuracy, status: "Normal", nowMs },
+      );
+      const chunks: Buffer[] = [];
+      return new Promise<Buffer>((resolve, reject) => {
+        doc.on("data", (chunk: Buffer) => chunks.push(chunk));
+        doc.on("end", () => resolve(Buffer.concat(chunks)));
+        doc.on("error", reject);
+        doc.end();
+      });
+    };
+
+    const [stale, fresh] = await Promise.all([
+      renderAt("2026-09-12T14:38:49.000Z"), renderAt("2026-09-26T11:20:00.000Z"),
+    ]);
+    expect(stale.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+    expect(stale.equals(fresh)).toBe(false);
   });
 
   it("prints the water body type's provenance alongside it", async () => {
