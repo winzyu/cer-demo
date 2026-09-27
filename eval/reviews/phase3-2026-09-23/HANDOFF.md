@@ -1,22 +1,25 @@
-# Phase 3 / R4 handoff - 2026-09-27 (updated after follow-up rewriting, the model test and the switch to `glm-5p3-flash`)
+# Phase 3 / R4 handoff - 2026-09-27 (updated after the GLM round: steps 1 and 3-6 run, step 2 not run)
 
-R4 (evaluation-driven improvement) has calibrated the judge (E2), captured the final two-arm run (E3), replaced the withdrawn judge, and on 2026-09-26 ran the improvement round: follow-up query rewriting, keyword search, two prompt variants and a stronger answer model.
-Two levers worked: rewriting follow-ups before retrieval (0.72 / 0.74 to 0.89 / 0.92 on `gpt-oss-120b`) and `glm-5p3-flash` as the answer model (gold context 1.33 / 1.34, the first arm over the 1.30 floor; real retrieval with rewriting 1.07 / 1.06).
-The user switched the answer model to `glm-5p3-flash` and approved the next round (steps 1-6 under "Next steps"), to run in a new conversation.
+R4 (evaluation-driven improvement) has calibrated the judge (E2), captured the final two-arm run (E3), replaced the withdrawn judge, and run two improvement rounds on 2026-09-26 and 2026-09-27.
+The answer model is `glm-5p3-flash` at `LLM_REASONING_EFFORT=low` (user, 2026-09-26); follow-up rewriting (`QUERY_REWRITE`) is the clearest win of R4, first-turn rewriting (`QUERY_REWRITE_FIRST_TURN`) and a tools-off prompt rule were added on 2026-09-27, and GLM passed a tool-calling check against the fabricated mirror.
+The best real-retrieval arm so far, `local-rerank` k=20 with both rewrites, scores 1.11 / 1.17 against 1.07 / 1.06 but fails the refusal gate and costs about three times as much per question; the reranker is not recommended until the control capture (next step 1) separates its effect.
 Work on branch `eval/wave1-corrections` in its worktree `.claude/worktrees/wave1-corrections`; landing into `dev` is a separate step with its own git plan.
 
 ## Exact state
 
-- Branch `eval/wave1-corrections` at `691e4f0` or later, pushed to `origin`, clean; `dev` last merged at `e7d3e44`.
-- `dev` has since gained Q1's tools-on prompt and tool changes only; its tools-off message list is byte-identical to the merge base's, so R4's tools-off captures are unaffected, but merge `dev` before landing, and re-check the tools-on path with GLM (step 1).
-- **Answer model:** decided `glm-5p3-flash` at `LLM_REASONING_EFFORT=low` (user, 2026-09-26); production still runs `gpt-oss-120b` until the runbook changes at landing ("Edits wanted"). GLM always reasons and rejects `thinking` disabled; `low` is accepted. Its rate is in `src/eval/prices.ts` ($0.15 / $0.03 cached / $0.50).
-- **New settings on this branch, both off by default:** `QUERY_REWRITE` (`src/retrieval/queryRewrite.ts`, wired in `ChatController.postChat`; the user has not yet decided whether launch turns it on, recommended yes) and `LLM_THINKING=disabled` (for models such as `minimax-m3`). `retrieval:eval --rewrite [--history-run=<run>] [--history-arm=<arm>]` replays follow-ups with captured history and prints per-turn recall.
+- Branch `eval/wave1-corrections` at `edcffd6` or later, pushed to `origin`, clean; `dev` last merged at `e7d3e44`.
+- `dev` has since gained Q1's tools-on prompt and tool changes only; its tools-off message list is byte-identical to the merge base's, so R4's tools-off captures are unaffected, but merge `dev` before landing; the tools-on path was checked with GLM on 2026-09-27.
+- **Answer model:** decided `glm-5p3-flash` at `LLM_REASONING_EFFORT=low` (user, 2026-09-26); production still runs `gpt-oss-120b` until the runbook changes at landing ("Edits wanted"); GLM passed the tool-calling check on 2026-09-27, so the switch is no longer blocked on tools. GLM always reasons and rejects `thinking` disabled; `low` is accepted. Its rate is in `src/eval/prices.ts` ($0.15 / $0.03 cached / $0.50).
+- **New settings on this branch, all off by default:** `QUERY_REWRITE_FIRST_TURN` (2026-09-27; rewrites a first message with `rewriteFirstTurn`, only while `QUERY_REWRITE` is on; recommended on), `QUERY_REWRITE` (`src/retrieval/queryRewrite.ts`, wired in `ChatController.postChat`; the user has not yet decided whether launch turns it on, recommended yes) and `LLM_THINKING=disabled` (for models such as `minimax-m3`). `retrieval:eval --rewrite [--history-run=<run>] [--history-arm=<arm>]` replays follow-ups with captured history and prints per-turn recall; `--rewrite-first` rewrites first turns and `--decompose` splits queries (`src/retrieval/queryDecompose.ts`, eval only, not wired into the server, did not help).
+- **Tools-off prompt rule:** `NO_TOOLS_RULE` in `src/prompt/systemPrompt.ts` (2026-09-27, kept by the user) is added only when both tools are off and forbids offering pod readings or other tool actions; the tools-on prompt is byte-identical.
 - **Judge:** every call must pass `--judge-model=accounts/fireworks/models/deepseek-v4p1-flash`; `DEFAULT_JUDGE_MODEL` in `src/eval/judge/runner.ts` still names the withdrawn `deepseek-v4-flash-0731` (changing it awaits the user) and the replacement's rate is not in `prices.ts`. Compare only runs judged by the same judge.
   The user's blind grades of 10 GLM and 10 `gpt-oss-120b` turns agree with the judge within 0.1 on both models (7 of 10 exact each), so the judge does not favour GLM.
 - **Rubric:** v2 as corrected (`19b363d`, fixture fingerprint `9a715154...`); v1 stays the reported rubric for E3's 1.01.
+- **Latest arms, new judge, rubric v2, two passes:** gold context GLM with the tools-off rule 1.28 / 1.31 (`p3-gold-glm-notools-2026-09-27`); `local-rerank` k=20, both rewrites, GLM, rule 1.11 / 1.17 (`p3-rerank-k20-rewrite2-glm-2026-09-27`), refusal gate FAIL.
 - **Baselines, new judge, rubric v2, two passes unless noted:** gold context `gpt-oss-120b` 1.10 (one pass), `glm-5p3-flash` 1.33 / 1.34; `local-vector` k=20 unpinned `gpt-oss-120b` 0.72 / 0.74, with rewriting 0.89 / 0.92; **`glm-5p3-flash` with rewriting 1.07 / 1.06 (run `p3-lv-k20-rewrite-glm-2026-09-26`), the baseline for the next round.**
-- `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); production retrieval is still the user's choice (recommended `local-vector` k=20, datasheets unpinned, with `QUERY_REWRITE=true`).
-- **Spend:** about $18.40 of the ceiling, which the user raised from $20 to $30 on 2026-09-26, so about $11.60 left; at the old judge's rate, so check the Fireworks bill. Steps 1-6 are approved at about $2.50-3.00.
+- `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); production retrieval is still the user's choice (recommended `local-vector` k=20, datasheets unpinned, with `QUERY_REWRITE=true` and `QUERY_REWRITE_FIRST_TURN=true`; the reranker on hold until the control capture).
+- **Spend:** about $20.65 of the $30 ceiling after the 2026-09-27 round (about $2.25: offline runs $0.10, reranker offline $0.60, tool check $0.10, tools-off rule capture and judging $0.40, reranker capture and judging $1.15), so about $9.35 left; estimates, since `deepseek-v4p1-flash` has no rate in `prices.ts`, so check the Fireworks bill.
+- `docs/STATUS.md` in the main checkout (`dev`) was mid-merge (unmerged, `UU`) on 2026-09-27, owned by another session; R4's STATUS lines were not updated this round.
 
 ## What to review
 
@@ -39,6 +42,11 @@ Everything below is committed on `eval/wave1-corrections`; the full records with
 | `LLM_THINKING`, GLM price | `src/services/LlmService.ts`, `src/config/index.ts`, `test/unit/llmService.test.ts` | `cf5f0af` |
 | Stronger models on gold context | `EVAL_REBUILD.md` "Stronger answer models on gold context"; runs `p3-gold-glm-5p3-flash-2026-09-26`, `p3-gold-minimax-m3-2026-09-26` (invalid) | `607119a` |
 | GLM with rewriting, ungrounded checks, blind grades | `EVAL_REBUILD.md` "`glm-5p3-flash` with follow-up rewriting"; runs `p3-lv-k20-rewrite-glm-2026-09-26`, `p3-gold-*-ungrounded-2026-09-26`; grades in `eval/grading/p3-gold-glm-vs-gptoss-2026-09-26/warm/scores.csv` | `2cb522f`, `e9569ca` |
+| Retrieval experiments on GLM rewrites, reranker offline | `src/retrieval/queryDecompose.ts`, `test/unit/queryDecompose.test.ts`, `scripts/retrievalEval.ts`, `src/eval/retrieval/runner.ts`; `EVAL_REBUILD.md` "Retrieval experiments on GLM rewrites, offline"; `data/results/retrieval/r4-2026-09-27/` | `89cef3e`, `888705e` |
+| Tools-off rule | `src/prompt/systemPrompt.ts` (`NO_TOOLS_RULE`), `test/unit/prompt.test.ts`; `EVAL_REBUILD.md` "GLM tools-off rule on gold context"; run `p3-gold-glm-notools-2026-09-27` | `873f349`, `50d4b07` |
+| `QUERY_REWRITE_FIRST_TURN` | `src/config/index.ts`, `src/retrieval/queryRewrite.ts`, `src/controllers/ChatController.ts`, `.env.example`, `test/unit/queryRewrite.test.ts` | `26e0a6d` |
+| GLM tool-calling check | `EVAL_REBUILD.md` "GLM tool-calling check on the fabricated mirror"; `data/results/tool-check-2026-09-27/` | `7bd2d6a`, `f939346` |
+| Reranker with both rewrites captured | `EVAL_REBUILD.md` "Reranker with both rewrites captured, k=20"; run `p3-rerank-k20-rewrite2-glm-2026-09-27` | `edcffd6` |
 | Outside reviews | same folder: `claude-review-packet.md`, `codex-review-packet.md`, `rubric_review_report.md` (Gemini) | `1c5f1fd`, `bc3f124`, `abfe241` |
 
 ## Results
@@ -115,26 +123,42 @@ Offline recall at k=20: `local-vector` 38.4% (turn 2 26.8%), with rewriting 55.4
 GLM with rewriting still loses about 0.27 to its gold-context score, so the remaining gap is mostly retrieval; cross-document (0.67-0.75) is the weakest class.
 The user's blind grading flagged a GLM habit: with the tools off it twice offered to look at "your pod's readings", and once invented a claim about upstream pods.
 
+## Results of the 2026-09-27 round (new judge, rubric v2, secondary to E3's 1.01)
+
+Full records in `EVAL_REBUILD.md`: "Retrieval experiments on GLM rewrites, offline", "GLM tools-off rule on gold context", "GLM tool-calling check on the fabricated mirror" and "Reranker with both rewrites captured, k=20".
+
+| configuration | result | notes |
+|---|---|---|
+| offline recall, `local-vector` k=20 + follow-up rewrite (GLM rewrites) | 56.4% | new offline baseline |
+| + split into sub-queries (3a) | 59.4% | split all 90; cross-document +1.3; dropped |
+| + first-turn rewrite (3b) | 61.0% | 15 first turns up, 3 down |
+| k=30 + follow-up rewrite (3c) / + first-turn rewrite | 63.8% / 67.1% | 50% more context |
+| `local-rerank` k=20 + both rewrites (step 4) | 69.4%, nDCG 0.570 | 35 up, 5 down; about $0.007 per question |
+| gold context, GLM + tools-off rule (step 5) | 1.28 / 1.31 against 1.33 / 1.34 | offers of pod readings 9 to 0 |
+| tool check, GLM on the mirror (step 1) | 10/10 well-formed, at most 2 rounds | "last 24 hours" defect, see Traps |
+| `local-rerank` k=20 + both rewrites + rule, GLM (step 6) | 1.11 / 1.17 against 1.07 / 1.06 | first turns 1.00 to 1.18, cross-document 0.71 to 0.96; refusal gate FAIL (2 answered); 4.2 s to first token against 2.3 s |
+
 ## Next steps
 
-Approved by the user on 2026-09-26 (steps 1-6, about $2.50-3.00 of the $11.60 left), to run in a new conversation; every paid step beyond these needs approval with its cost first.
-Run steps 3 and 1 first, in parallel; they are cheap and independent.
-Report every result with its full configuration (model, reasoning, retrieval arm, k, `QUERY_REWRITE`, prompt, judge and passes): the user asked for this explicitly.
+The user asks before every paid step: give its cost and wait for approval.
+Report every result with its full configuration (model, reasoning, retrieval arm, k, `QUERY_REWRITE`, `QUERY_REWRITE_FIRST_TURN`, prompt, judge and passes).
 
-1. **GLM tool-calling check (under $0.10).** Production answers sensor and report questions through tools; no GLM run has exercised them.
-   First check whether the tools can point at the local mirror (`DEVICE_API_BASE_URL` at the mirror server on :5101, fabricated data, `mirror/e2e-p3`); if not, the user approved about 10 live read-only questions against the production device API, announced before running.
-   Ask about 10 sensor and report questions through the chat endpoint with `LLM_MODEL=accounts/fireworks/models/glm-5p3-flash`, `LLM_REASONING_EFFORT=low`, `SENSOR_TOOL=true`, `REPORT_TOOL=true`, on port 8011; check that tool calls are well-formed, results are used, the withheld-history note and water-type note survive (plan Q8), and no call loops to `MAX_TOOL_ROUNDS`.
-2. **Production-prompt capture (about $0.55):** `local-vector` k=20, GLM, `QUERY_REWRITE=true`, `CATALOGUE_PROMPT=true` (adds about 21,000 characters), tools off; judged twice; against 1.07 / 1.06.
-   `CATALOGUE_PROMPT` changes the system prompt, so pass the same value to the judge as to the server.
-3. **Offline retrieval experiments (a few cents), recall on the frozen 90 with `retrieval:eval`:** (a) split cross-document questions into two or three sub-queries and merge the results (a new off-by-default option beside `QUERY_REWRITE`); (b) rewrite first turns too; (c) k=30 with rewriting, since GLM handles long prompts.
-   Baseline `local-vector` k=20 with rewriting, 55.4%; use `--history-run=p3-lv-k20-rewrite-glm-2026-09-26` for GLM's own first answers and `LLM_MODEL` set to GLM so it writes the rewrites.
-4. **Reranker on top of rewriting (about $0.60 per 90-query offline run):** `local-rerank` or `hybrid-slice-rerank` with `--rewrite`; earlier the reranker alone lifted recall from 39.5% to 51.9%.
-5. **GLM prompt fix (about $0.40):** with the tools off, forbid offering pod readings or any capability the tools-off prompt does not have; gold context with GLM, judged twice, against 1.33 / 1.34; check the two refusal turns the user flagged in `refusal-temperature-harm-threshold`.
-6. **One real capture of the winner of 3-4, plus 5 if it helped (about $0.55):** k as chosen, GLM, rewriting on, judged twice, against 1.07 / 1.06.
+1. **Control capture to decide the reranker (about $0.50, awaiting approval):** `local-vector` k=20, GLM, `QUERY_REWRITE=true`, `QUERY_REWRITE_FIRST_TURN=true`, the tools-off rule, tools and catalogue off, judged twice, plus `gate:check`; against `p3-rerank-k20-rewrite2-glm-2026-09-27` (1.11 / 1.17, refusal FAIL).
+   About 1.10 with the refusal gate passing means drop the reranker; about 1.06 with the gate failing means the reranker carries the gain and the refusal failure is GLM's to fix in the prompt.
+2. **GLM refusal gate:** GLM fails `gate:check` refusal integrity on gold context (6 exact, 1 answered before the rule; 5 and 2 after) and on the reranker capture (2 answered, both taking a figure from a retrieved passage); a prompt fix is gold context, judged twice, about $0.40.
+3. **Step 2, production-prompt capture (about $0.55, not yet run):** the chosen retrieval with `CATALOGUE_PROMPT=true`, passing the same value to the judge.
+4. **Add `deepseek-v4p1-flash`'s rate to `src/eval/prices.ts`** with the date read, so judge spend is measured; changing `DEFAULT_JUDGE_MODEL` awaits the user.
+5. **Route the tool-check findings to the Gilligan answer-quality work on `dev`** (tools-on prompt and tools, not R4): the "last 24 hours" answer and the partial relay of the water-type and withheld-history notes (plan Q8).
 
-Then: the user's open decisions (`QUERY_REWRITE` for launch, production retrieval setting, reranker and reasoning, the judge default in code, E4's per-class caveat or refusal under D3, with cross-document the obvious candidate), E4 and E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
+Then: the user's open decisions (`QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` for launch, both recommended on; the production retrieval setting and the reranker; the judge default in code; E4's per-class caveat or refusal under D3, with cross-document the obvious candidate), E4 and E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
 
 ## Traps found
+
+- The tool reads a relative window ("last 24 hours") back from `device_last_reported`, not from now; GLM answered "Yes, 25 samples in the last 24 hours" for a pod silent for 30 hours (`data/results/tool-check-2026-09-27/`).
+- Mirror tool check: log in at `POST http://localhost:5101/api/v1/users/login` as `user-harbor-admin-1@mirror.example.invalid` with the password in the mirror README, pass the token as the caller's `Authorization: Bearer`, and leave `DEVICE_API_TOKEN` empty; auto mode blocked the login until the user allowed it in chat. The mirror has no non-superadmin in the CER organization, so the cross-organization withheld-history case cannot be exercised there.
+- Start the mirror server from `clean-earth-rovers-server/.worktrees/mirror` with a scratchpad settings file (empty `DEV_UPSTREAM_BASE_URL`, `DEV_LOCAL_PATHS`, `DEV_CHAT_STORE`, `DEV_UNVERIFIED_AUTH`, fresh `ACCESS_TOKEN_SECRET`) after the malware scan; never reseed the emulator on :8080, which another session owns.
+- Each `retrieval:eval` run with a rewrite flag draws its own rewrites, so recall differences of a point or two are noise; a provider 503 kills the run (re-run it).
+- Pre-existing failures, not R4's: `test/unit/prompt.test.ts` "forbids causes, actions and contacts outright while nothing is approved" (fails at HEAD), lint errors in `test/unit/prompt.test.ts`, `test/unit/queryRewrite.test.ts:97` and `scripts/retrievalEval.ts:152`.
 
 - `minimax-m3` on Fireworks keeps only the first system message; `buildMessages` sends CONTEXT as a second one, so that model answers with no excerpts. Any model change needs a two-system-message probe first.
 - `glm-5p3-flash` is thinking-only: `thinking: {type: "disabled"}` returns 400; use `LLM_REASONING_EFFORT=low`.
@@ -170,6 +194,8 @@ Then: the user's open decisions (`QUERY_REWRITE` for launch, production retrieva
 
 ## Decisions
 
+- User, 2026-09-27: steps 1 and 3-6 approved and run; keep the tools-off rule; add `QUERY_REWRITE_FIRST_TURN`; the mirror login allowed for the tool check. The control capture (next step 1) awaits approval.
+
 - User, 2026-09-26 (late): approved next-round steps 1-6 (about $2.50-3.00), including about 10 live read-only device API questions for the GLM tool check if the local mirror cannot serve them; to run in a new conversation.
 - User, 2026-09-26 (late): switch the answer model to `glm-5p3-flash` (at `LLM_REASONING_EFFORT=low`), after the blind 10-turn grading; raise the R4 spend ceiling from $20 to $30 to keep improving.
 - User, 2026-09-26: the brevity-line variants were tried and dropped; the stronger-model test and follow-up rewriting were approved and run (`EVAL_REBUILD.md`, "Follow-up rewriting and keyword search, offline" through "`glm-5p3-flash` with follow-up rewriting").
@@ -194,4 +220,6 @@ Then: the user's open decisions (`QUERY_REWRITE` for launch, production retrieva
 - `docs/timeline.md`: the judge replacement, the datasheet unpinning and the production depth decision; and decisions for the Phase 1d closure without human verification (2026-09-23), the top-k choice, the iteration 2 revert, the $20 ceiling, the calibration adjudication, E3, the held-out check, the reranker and reasoning `high` outcomes, and the user's rubric decision.
 - `docs/migration/GILLIGAN_RELEASE_PLAN.md` (on `dev`): E2 and E3 are marked done in the uncommitted `dev` edits; add the improvement round and the rubric review when E4 or E6 lands.
 - `docs/migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` (on `dev`, line 187 and the L4 check at 212): `LLM_MODEL: "accounts/fireworks/models/glm-5p3-flash"` and `LLM_REASONING_EFFORT: "low"`, plus `QUERY_REWRITE: "true"` if the user approves it for launch; `.env.example` likewise. Only after GLM passes a tool-calling check with the sensor and report tools, which the gold and retrieval captures did not exercise.
-- `docs/SPECS.md`: `QUERY_REWRITE` and `LLM_THINKING`.
+- `docs/SPECS.md`: `QUERY_REWRITE`, `QUERY_REWRITE_FIRST_TURN`, `LLM_THINKING` and the tools-off rule (`NO_TOOLS_RULE`).
+- `docs/migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` and `.env.example`: add `QUERY_REWRITE_FIRST_TURN: "true"` beside `QUERY_REWRITE` if the user approves both; `DEFAULT_RETRIEVAL` per the user's retrieval decision.
+- `docs/timeline.md`: the 2026-09-27 decisions (tools-off rule kept, first-turn rewriting added, the tool check passed, the reranker held pending the control).
