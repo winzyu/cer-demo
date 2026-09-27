@@ -4,11 +4,13 @@
 // emulator, the CER server's mirror branch and cer-demo. The bot owns the server and cer-demo
 // processes so it can restart them; the emulator and the dashboard must already be running.
 //
-//   node scripts/e2e/gilliganE2E.mjs [--groups A,B] [--only A1,B2] [--reseed] [--max-questions 80]
+//   node scripts/e2e/gilliganE2E.mjs [--groups A,B] [--only A1,B2] [--reseed [--seed-days N]] [--max-questions 80]
 //                                    [--max-usd 5] [--run-id ID] [--keep-services]
 //
 // Groups run in the order --groups names them, so quota exhaustion (G) can go last.
-// --reseed seeds the mirror with its release-test fixtures (server scripts/mirror/README.md).
+// --reseed seeds the mirror with its release-test fixtures (server scripts/mirror/README.md);
+// --seed-days N seeds N days of readings instead of 30. M11 runs alone on its own demo- project:
+//   MIRROR_PROJECT_ID=demo-cer-m11 node scripts/e2e/gilliganE2E.mjs --reseed --seed-days 365 --only M11
 //
 // E2E_SERVER_DIR:    the server checkout on the mirror branch (default ../clean-earth-rovers-server/.worktrees/mirror)
 // E2E_CER_DIR:       the cer-demo checkout under test (default .claude/worktrees/e2e-rc)
@@ -23,7 +25,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Browser, delay } from "./cdp.mjs";
 import {
-  OUTPUT_USD_PER_MILLION, PASSWORD, PERSONAS, SERVER_API, applyFixtures, createServices, emailOf, emulator,
+  MIRROR_PROJECT, OUTPUT_USD_PER_MILLION, PASSWORD, PERSONAS, SERVER_API, applyFixtures, createServices, emailOf, emulator,
   forbiddenTerms, legacyChats, loadEntities, plain, reseed, usageTokens,
 } from "./stack.mjs";
 
@@ -146,8 +148,9 @@ class Run {
     for (const session of [...this.sessions.values()]) await this.close(session);
   }
 
-  async api(session, method, pathAndQuery) {
-    const response = await fetch(`${SERVER_API}${pathAndQuery}`, { method, headers: { Authorization: `Bearer ${session.token}` } });
+  async api(session, method, pathAndQuery, body) {
+    const headers = { Authorization: `Bearer ${session.token}`, ...(body ? { "Content-Type": "application/json" } : {}) };
+    const response = await fetch(`${SERVER_API}${pathAndQuery}`, { method, headers, body: body ? JSON.stringify(body) : undefined });
     const text = await response.text();
     return { status: response.status, text };
   }
@@ -971,7 +974,32 @@ scenario("M9", "University: flat-zero oxygen answer and report", async (r) => {
   r.review("sensor-quality warnings, not water-condition verdicts, for the flat-zero oxygen");
 });
 blocked("M10", "Extended range fixture", "no spike, off-scale or rail-value fixture in the seed");
-blocked("M11", "One-year history", "needs a separate disposable 365-day reseed, which wipes this run's evidence; run it on its own");
+scenario("M11", "One-year history: timed report and CSV export", async (r) => {
+  // Seeding wipes the project it seeds, so M11 runs on its own demo- project, never the main mirror.
+  if (MIRROR_PROJECT === "demo-cer-mirror") {
+    throw new Blocked("run alone on a separate project: MIRROR_PROJECT_ID=demo-cer-m11 ... --reseed --seed-days 365 --only M11");
+  }
+  const a = await askFor(r, "super", "Harbor Pier Buoy", "Give me a water quality report for the last 365 days");
+  r.note(`answer took ${Math.round(a.ms / 100) / 10} s`);
+  r.check(a.reports.length > 0, "report offered");
+  if (a.reports.length) {
+    const started = Date.now();
+    const download = await a.session.download();
+    r.note(`report download took ${Math.round((Date.now() - started) / 100) / 10} s`);
+    checkPdf(r, a.session, download, /^cer-report-harbor-pier-buoy-.+\.pdf$/);
+    keepPdf(r, "harbor-365d", download);
+  }
+  // The dashboard's Export dialog posts the same request (user-dashboard services/device-data.js exportCSV).
+  const end = new Date();
+  const start = new Date(end.getTime() - 365 * 86_400_000);
+  const started = Date.now();
+  const csv = await r.api(a.session, "POST", `/water/export/csv/${encodeURIComponent("dev:100000000000001")}`,
+    { startDate: start.toISOString(), endDate: end.toISOString() });
+  const rows = csv.text.trim().split("\n").length - 1;
+  r.note(`one-year CSV export: ${csv.status}, ${rows} rows, ${csv.text.length} bytes in ${Math.round((Date.now() - started) / 100) / 10} s`);
+  r.check(csv.status === 200 && rows > 0, `one-year CSV export returns rows (${csv.status})`);
+  r.review("answer and PDF state the real one-year coverage (the seed is hourly for 365 days); completion times are acceptable");
+});
 blocked("M12", "Year-dead current pod", "no year-silent current pod in the seed");
 
 // ---------------------------------------------------------------------------------------------
@@ -1081,7 +1109,7 @@ const main = async () => {
 
   if (flag("reseed")) {
     console.log("[e2e] reseeding the mirror");
-    await reseed(SERVER_DIR, RUN_DIR);
+    await reseed(SERVER_DIR, RUN_DIR, { days: option("seed-days", undefined) });
   }
   const services = createServices({ serverDir: SERVER_DIR, cerDir: CER_DIR, runDir: RUN_DIR });
   const browser = await Browser.launch({ profileDir: path.join(RUN_DIR, ".chrome-profile") });

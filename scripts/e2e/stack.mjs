@@ -222,9 +222,11 @@ export const createServices = ({ serverDir, cerDir, runDir }) => {
   return { server, cer };
 };
 
-export const reseed = (serverDir, runDir, { fixtures = true } = {}) => new Promise((resolve, reject) => {
+export const reseed = (serverDir, runDir, { fixtures = true, days } = {}) => new Promise((resolve, reject) => {
+  if (days !== undefined && !/^[1-9]\d*$/.test(String(days))) throw new Error(`--seed-days must be a positive whole number (got "${days}")`);
   const log = fs.openSync(path.join(runDir, "seed.log"), "a");
-  const child = spawn("bash", ["-c", `exec npm run mirror:seed${fixtures ? " -- --fixtures" : ""}`], {
+  const args = [...(fixtures ? ["--fixtures"] : []), ...(days ? ["--days", String(days)] : [])];
+  const child = spawn("bash", ["-c", `exec npm run mirror:seed${args.length ? ` -- ${args.join(" ")}` : ""}`], {
     cwd: serverDir, stdio: ["ignore", log, log],
     env: { ...process.env, FIRESTORE_EMULATOR_HOST: EMULATOR_HOST, MIRROR_PROJECT_ID: MIRROR_PROJECT },
   });
