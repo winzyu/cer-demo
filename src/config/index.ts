@@ -244,6 +244,11 @@ export interface RetrievalConfig {
    * (`src/retrieval/queryRewrite.ts`). Off by default: it adds a model call to every follow-up.
    */
   queryRewrite: boolean;
+  /**
+   * With `queryRewrite` on, also rewrite a first turn into a search query (`rewriteFirstTurn`).
+   * Off by default: it adds a model call to every first turn. Ignored while `queryRewrite` is off.
+   */
+  queryRewriteFirstTurn: boolean;
 }
 
 export interface Config {
@@ -462,6 +467,7 @@ const load = (): Config => {
         "artifact",
       ),
       queryRewrite: readBool("QUERY_REWRITE", false),
+      queryRewriteFirstTurn: readBool("QUERY_REWRITE_FIRST_TURN", false),
     },
     waterType: readEnum<WaterType>("WATER_TYPE", ["freshwater", "saltwater"], "freshwater"),
     audit: {

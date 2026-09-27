@@ -14,7 +14,8 @@ const log = createLogger("QueryRewrite");
  * conversation so far. The rewrite is used for retrieval only: the answer prompt still carries
  * the user's own words, so a bad rewrite can cost recall but never puts words in the user's mouth.
  *
- * A first turn (no history) is returned unchanged without a model call, and any failure falls
+ * A first turn (no history) is returned unchanged without a model call unless `firstTurn` is set
+ * (`QUERY_REWRITE_FIRST_TURN`), and any failure falls
  * back to the original message: rewriting is an optimisation, and must never fail a question.
  */
 
@@ -35,7 +36,8 @@ Reply with the query only, on one line, with no quotes or explanation.`;
 /**
  * First turns have no conversation to resolve, but are often phrased conversationally ("my
  * readings look off after the storm, should I worry?"), which embeds poorly. Measured offline
- * only (`retrieval:eval --rewrite-first`); `rewriteQuery` still leaves first turns alone.
+ * `QUERY_REWRITE_FIRST_TURN` (`rewriteQuery` with `firstTurn`), off by default; measured offline
+ * with `retrieval:eval --rewrite-first`.
  */
 export const FIRST_TURN_REWRITE_SYSTEM_PROMPT = `You rewrite a user's question into a search query for a library of water-quality monitoring documents.
 - Name the specific instrument, parameter, site condition or procedure the question is about, using the question's own terms.
@@ -83,29 +85,6 @@ export const cleanRewrite = (raw: string): string => {
   return unquoted.length > REWRITE_MAX_CHARS ? "" : unquoted;
 };
 
-export const rewriteQuery = async (
-  llm: RewriteCompleter,
-  query: string,
-  history: ChatMessage[] = [],
-): Promise<RewriteResult> => {
-  const usable = history.some((m) => (m.role === "user" || m.role === "assistant") && m.content.trim() !== "");
-  if (!usable) {
-    return { query, rewritten: false };
-  }
-  try {
-    const answer = await llm.complete(buildRewriteMessages(query, history));
-    const cleaned = cleanRewrite(answer.content);
-    if (cleaned === "") {
-      log.warn("Query rewrite returned nothing usable; searching with the original message.");
-      return { query, rewritten: false, usage: answer.usage };
-    }
-    return { query: cleaned, rewritten: cleaned !== query, usage: answer.usage };
-  } catch (error) {
-    log.warn(`Query rewrite failed; searching with the original message: ${error instanceof Error ? error.message : String(error)}`);
-    return { query, rewritten: false };
-  }
-};
-
 /** A first turn as a search query; same fallbacks as `rewriteQuery`. */
 export const rewriteFirstTurn = async (
   llm: RewriteCompleter,
@@ -124,6 +103,30 @@ export const rewriteFirstTurn = async (
     return { query: cleaned, rewritten: cleaned !== query, usage: answer.usage };
   } catch (error) {
     log.warn(`First-turn rewrite failed; searching with the original message: ${error instanceof Error ? error.message : String(error)}`);
+    return { query, rewritten: false };
+  }
+};
+
+export const rewriteQuery = async (
+  llm: RewriteCompleter,
+  query: string,
+  history: ChatMessage[] = [],
+  { firstTurn = false }: { firstTurn?: boolean } = {},
+): Promise<RewriteResult> => {
+  const usable = history.some((m) => (m.role === "user" || m.role === "assistant") && m.content.trim() !== "");
+  if (!usable) {
+    return firstTurn ? rewriteFirstTurn(llm, query) : { query, rewritten: false };
+  }
+  try {
+    const answer = await llm.complete(buildRewriteMessages(query, history));
+    const cleaned = cleanRewrite(answer.content);
+    if (cleaned === "") {
+      log.warn("Query rewrite returned nothing usable; searching with the original message.");
+      return { query, rewritten: false, usage: answer.usage };
+    }
+    return { query: cleaned, rewritten: cleaned !== query, usage: answer.usage };
+  } catch (error) {
+    log.warn(`Query rewrite failed; searching with the original message: ${error instanceof Error ? error.message : String(error)}`);
     return { query, rewritten: false };
   }
 };

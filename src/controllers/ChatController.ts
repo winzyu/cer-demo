@@ -78,7 +78,9 @@ export class ChatController {
       // A follow-up is searched as a standalone query when QUERY_REWRITE is on; the prompt below
       // still carries the user's own words. Off, this is the latest message verbatim.
       const search = config.retrieval.queryRewrite
-        ? await rewriteQuery(this.llm, query, history)
+        ? await rewriteQuery(this.llm, query, history, {
+          firstTurn: config.retrieval.queryRewriteFirstTurn,
+        })
         : { query, usage: undefined };
       if (search.usage?.totalTokens !== undefined) {
         this.quota.recordTokens(quotaKey, search.usage.totalTokens);

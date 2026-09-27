@@ -1,4 +1,5 @@
 import {
+  FIRST_TURN_REWRITE_SYSTEM_PROMPT,
   REWRITE_HISTORY_MESSAGES,
   REWRITE_MAX_CHARS,
   REWRITE_MESSAGE_CHARS,
@@ -36,6 +37,14 @@ describe("rewriteQuery", () => {
     const result = await rewriteQuery(llm, "What is ORP?", []);
     expect(result).toEqual({ query: "What is ORP?", rewritten: false });
     expect(llm.calls).toHaveLength(0);
+  });
+
+  it("rewrites a first turn with the first-turn prompt when firstTurn is set", async () => {
+    const llm = completer("ORP definition oxidation-reduction potential");
+    const result = await rewriteQuery(llm, "What is ORP?", [], { firstTurn: true });
+    expect(result).toMatchObject({ query: "ORP definition oxidation-reduction potential", rewritten: true });
+    expect(llm.calls).toHaveLength(1);
+    expect(llm.calls[0][0].content).toBe(FIRST_TURN_REWRITE_SYSTEM_PROMPT);
   });
 
   it("searches with the rewrite on a follow-up and reports its usage", async () => {
