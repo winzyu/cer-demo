@@ -19,7 +19,7 @@ Work on branch `eval/wave1-corrections` in its worktree `.claude/worktrees/wave1
 - **Earlier arms, new judge, rubric v2, two passes:** gold context GLM with the tools-off rule 1.28 / 1.31 (`p3-gold-glm-notools-2026-09-27`); `local-rerank` k=20, both rewrites, GLM, rule 1.11 / 1.17 (`p3-rerank-k20-rewrite2-glm-2026-09-27`), refusal gate FAIL.
 - **Baselines, new judge, rubric v2, two passes unless noted:** gold context `gpt-oss-120b` 1.10 (one pass), `glm-5p3-flash` 1.33 / 1.34; `local-vector` k=20 unpinned `gpt-oss-120b` 0.72 / 0.74, with rewriting 0.89 / 0.92; **`glm-5p3-flash` with rewriting 1.07 / 1.06 (run `p3-lv-k20-rewrite-glm-2026-09-26`), the baseline for the next round.**
 - `DEFAULT_RETRIEVAL` is unchanged (`hybrid-slice-vector`); launch retrieval decided by the user on 2026-09-27: `DEFAULT_RETRIEVAL=local-vector`, k=20, datasheets unpinned, `QUERY_REWRITE=true`, `QUERY_REWRITE_FIRST_TURN=true`, no reranker (the runbook still says `hybrid-slice-vector`; change it at landing).
-- **Spend:** about $25 of the $30 ceiling, so about $5 left (corrected 2026-09-27). `deepseek-v4p1-flash` is now priced ($0.30 / $0.006 cached / $1.20, read 2026-09-27) and its ledgers since 2026-09-25 total $7.60 measured, about $3.15 more than the estimates recorded at the old judge's rate and in this round; earlier records said about $21.80. A two-pass judge of a retrieval arm costs about $0.60 (pass 1 about $0.45 uncached). Check the Fireworks bill.
+- **Spend:** about $25.85 of the $30 ceiling, so about $4.15 left (corrected 2026-09-27; the E4 caveat capture was about $0.86 measured). `deepseek-v4p1-flash` is now priced ($0.30 / $0.006 cached / $1.20, read 2026-09-27); its ledgers from 2026-09-25 to the launch capture total $7.60 measured, about $3.15 more than the estimates recorded at the old judge's rate. A two-pass judge of a retrieval arm costs about $0.62 (pass 1 about $0.45 uncached). Check the Fireworks bill.
 
 ## What to review
 
@@ -147,7 +147,7 @@ Report every result with its full configuration (model, reasoning, retrieval arm
 2. **Done 2026-09-27: GLM refusal fix** (`dcb3ce3`, two general prompt rules): gold context 1.36 / 1.30 against 1.28 / 1.31, refusal gate 8 exact (`p3-gold-glm-refusal-2026-09-27`); kept.
 3. **Done 2026-09-27: launch-configuration capture** (`p3-launch-lv-k20-glm-2026-09-27`, `local-vector` k=20, both rewrites, `CATALOGUE_PROMPT=true`, the fix, tools off): 1.18 / 1.13, every Tier 1 gate PASS, cross-document 0.83; the run E4 and the R4 report cite.
 4. **Done 2026-09-27:** `deepseek-v4p1-flash` priced in `src/eval/prices.ts` and made `DEFAULT_JUDGE_MODEL` (user, `59e4b5d`).
-6. **E4 (user chose a caveat for cross-document, 2026-09-27):** `MULTI_SOURCE_CAVEAT` rule added (`e0abe8b`, tools on and off); its verification capture of the launch configuration, judged twice, costs about $0.90 at the measured judge rate and awaits approval.
+6. **E4 (user chose a caveat for cross-document, 2026-09-27):** `MULTI_SOURCE_CAVEAT` (`e0abe8b`) captured and judged (`p3-launch-caveat-glm-2026-09-27`, 1.17 / 1.19): correctness level, but the model adds it only where it is already confident (11 of 24 cross-document turns, none of the nine turns under 1); the user decides between a standing display caveat and another prompt round.
 5. **Route the tool-check findings to the Gilligan answer-quality work on `dev`** (tools-on prompt and tools, not R4): the "last 24 hours" answer and the partial relay of the water-type and withheld-history notes (plan Q8).
 
 Then: E4's verification (item 6) and E6, the R4 report in `eval/reviews/`, the "Edits wanted" below, merging `dev` and landing with a git plan.
@@ -194,6 +194,7 @@ Then: E4's verification (item 6) and E6, the R4 report in `eval/reviews/`, the "
 
 ## Decisions
 
+- User, 2026-09-27 (later): judge default switched to `deepseek-v4p1-flash`; E4 is a caveat for cross-document; the caveat's verification capture (about $0.90) approved and run.
 - User, 2026-09-27 (later): the refusal fix on gold context and the launch-configuration capture approved and run.
 - User, 2026-09-27 (later): the control capture approved and run; launch retrieval is `local-vector` k=20, datasheets unpinned, with `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on and no reranker.
 - User, 2026-09-27: steps 1 and 3-6 approved and run; keep the tools-off rule; add `QUERY_REWRITE_FIRST_TURN`; the mirror login allowed for the tool check. The control capture (next step 1) awaits approval.

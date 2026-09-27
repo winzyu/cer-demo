@@ -1607,6 +1607,28 @@ On the two-pass mean 13 turns rose and 16 fell against the control; overall corr
 Correctness stays under the 1.30 floor, and cross-document (0.83) is the class under the bar for E4; the judge's refusal score is low although all eight refusals are exact, because several refuse without the supported related points the rubrics also require (for example `refusal-how-long-can-it-stay-in`, a bare refusal scored 0 in pass 2).
 This is the run E4 and the R4 report cite.
 
+### E4 multi-source caveat - 2026-09-27, runs `p3-launch-caveat-glm-2026-09-27` and `p3-launch-caveat-glm-rejudge-2026-09-27`
+
+The user chose a caveat over a refusal for cross-document questions (D3).
+`MULTI_SOURCE_CAVEAT` (`e0abe8b`) asks the model to end an answer with a fixed sentence when the question works through a field situation where several factors interact; the model cannot see a question's class, and a trigger on citing two or more documents would miss half the weak turns (in the launch capture 14 of 24 cross-document answers and 16 of 66 others cited several documents, and single-document cross-document answers scored lower, 0.80 against 0.86).
+The launch configuration above plus the caveat, same settings and port: 90/90, 0 failed; 1,735,851 prompt tokens (30.4% cached), 33,178 completion, 548 s; about $0.21 for answers and $0.03 for rewrites.
+Judged twice by the new default judge (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed): $0.45 and $0.17 measured.
+
+| | launch configuration | with the caveat |
+|---|---|---|
+| correctness, pass 1 / 2 | 1.18 / 1.13 | 1.17 / 1.19 |
+| cross-document | 0.83 / 0.83 | 0.88 / 0.88 |
+| refusal (judge) | 1.00 / 0.75 | 1.13 / 1.25 |
+| refusal integrity gate | PASS: 8 exact | FAIL: 6 exact, 1 off-contract, 1 answered |
+| citation validity | 99.8% | 99.0% |
+| unexplained figures | 0 of 535 | 0 of 546 |
+| caveat present | - | cross-document 11 of 24; other classes 12 of 66 |
+
+The caveat does not reach the weak answers: cross-document turns carrying it average 1.00 and those without it 0.77, and none of the nine turns scoring under 1 in any class carries it.
+The model adds it where it is already confident, so as a warning it misses the answers that need one.
+The gate's answered turn (`refusal-turbidity-sensor-hardware` t2) now gives the catalogue's approved reply, that the pod shows a clarity band with no unit, then cites the FNU light wavelength as background; the off-contract turn declines in its own words.
+The launch capture passed 8 of 8 on the same prompt apart from the caveat, so GLM's refusal wording still varies between runs.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
