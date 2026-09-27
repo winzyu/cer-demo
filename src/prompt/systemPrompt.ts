@@ -64,6 +64,15 @@ import { buildCatalogueBlock, guidance } from "../catalogue";
 export const REFUSAL_SENTENCE = "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that.";
 
 /**
+ * The launch caveat for the weak question class (decision D3, E4 of the release plan). R4's launch
+ * configuration scored cross-document questions 0.83 of 2 against a 1.30 floor: a field situation
+ * where several factors interact needs guidance spread across documents, and the answer often
+ * rests on one of them. The model cannot see a question's class, so the rule names the shape of
+ * the question; the sentence is fixed so how often it fires can be counted in transcripts.
+ */
+export const MULTI_SOURCE_CAVEAT = "This draws on several documents and may not cover every step; check the cited sections before acting on it.";
+
+/**
  * The tool inventory and routing rules, appended only when `SENSOR_TOOL` is on.
  *
  * Every rule here exists because the device API has a failure mode that returns a
@@ -317,6 +326,13 @@ Rules:
   answer related parts. Answering only the related parts is not a refusal.
 - Never use general world knowledge to fill gaps or invent the missing value.
   A supported explanation does not make the unsupported part answerable.
+- When a question asks you to work through a field situation where several
+  factors interact — diagnosing a suspect reading, deciding what a combination of
+  conditions means for a measurement, or reconciling two sources — end the answer
+  with this sentence on its own line, word for word:
+    "${MULTI_SOURCE_CAVEAT}"
+  Do not add it to a definition, a single value or table lookup, a greeting, or
+  a refusal.
 - Never infer a fact about this pod or its instruments — a unit, model, sensor
   type, setting or threshold — from what an excerpt says is typical of other
   instruments. If no excerpt or tool result states it for this pod, that part
