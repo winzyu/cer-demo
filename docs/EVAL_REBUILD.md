@@ -1518,6 +1518,33 @@ The water-type note (deployment freshwater, pod salt water) was relayed in 3 of 
 Defect: "Did the pod record anything in the last 24 hours?" was answered "Yes" with 25 samples, but the tool anchors a relative window to `device_last_reported` (2026-09-26 03:11 UTC, 30 hours before the question) and the answer did not say the pod has been silent since.
 The cross-organization withheld-history case needs a non-superadmin in the survivor's organization, which the mirror does not have.
 
+### Reranker with both rewrites captured, k=20 - 2026-09-27, runs `p3-rerank-k20-rewrite2-glm-2026-09-27` and `p3-rerank-k20-rewrite2-glm-rejudge-2026-09-27`
+
+Step 6, the winner of the offline experiments: `local-rerank` k=20 (top 50 reranked), `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, `glm-5p3-flash` (reasoning low), the tools-off rule, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools and catalogue off, port 8011: 90/90, 0 failed, after a spot check; 1,344,757 prompt tokens (0.8% cached), 30,345 completion, 685 s; about $0.22 for answers, $0.60 for reranking and $0.03 for rewrites.
+Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed); the baseline is `p3-lv-k20-rewrite-glm-2026-09-26` (`local-vector` k=20, follow-up rewriting only, before the tools-off rule).
+
+| | baseline, two-pass mean | this run, pass 1 / 2 (mean) |
+|---|---|---|
+| correctness (floor 1.30) | 1.07 / 1.06 | 1.11 / 1.17 (1.14) |
+| first turns | 1.00 | 1.18 |
+| second turns | 1.12 | 1.10 |
+| cross-document | 0.71 | 0.96 |
+| deep-in-manual | 1.20 | 1.15 |
+| definitional | 1.31 | 1.25 |
+| follow-up | 1.25 | 1.38 |
+| precedence | 1.25 | 1.33 |
+| probe-calibration | 1.22 | 1.13 |
+| refusal (judge) | 0.88 | 1.19 |
+| scored 0 | 11 / 13 | 8 / 6 |
+| refusal integrity gate | PASS: 7 exact, 1 off-contract | FAIL: 4 exact, 2 off-contract, 2 answered |
+| citation validity | 99.5% | 99.1% |
+| unexplained figures | 0 | 0 of 578 |
+| median time to first token / whole answer | 2.3 s / 4.5 s | 4.2 s / 7.2 s |
+
+On the two-pass mean 16 turns rose and 10 fell; the gain is on first turns and cross-document, where recall rose most offline, and second turns are level.
+The two answered refusal turns took a figure from a newly retrieved passage (turbidity reported in FNU; USGS temperature precision) where the fixture requires a refusal; GLM already fails the refusal gate on gold context (6 exact and 1 answered before the tools-off rule, 5 and 2 after), so more relevant excerpts expose a GLM refusal weakness rather than create one.
+Reading: the reranker with both rewrites gains about 0.08 in correctness for about three times the per-question cost and 2-3 s more latency, and breaks the refusal gate; it is confounded with first-turn rewriting and the tools-off rule, which a `local-vector` capture with both rewrites would separate.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
