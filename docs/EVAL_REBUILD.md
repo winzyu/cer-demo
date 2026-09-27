@@ -1474,11 +1474,15 @@ Both are reachable from `retrieval:eval` only; neither is wired into the server.
 | + split (3a) | 59.4% | 57.6% | 61.2% | 0.405 | 20 | 30.7% |
 | + first-turn rewrite (3b) | 61.0% | 59.1% | 62.8% | 0.443 | 20 | 35.6% |
 | k=30 + rewrite (3c) | 63.8% | 58.3% | 69.2% | 0.424 | 30 | 36.8% |
+| k=30 + rewrite + first-turn rewrite | 67.1% | 65.4% | 68.9% | 0.455 | 30 | 42.4% |
+| `local-rerank` k=20 (top 50 reranked) + rewrite + first-turn rewrite (step 4) | 69.4% | 70.2% | 68.6% | 0.570 | 20 | 43.3% |
 
 GLM's rewrites score 56.4% against `gpt-oss-120b`'s 55.4%, so the earlier baseline carries over.
 Splitting did not do what it was for: GLM split all 90 queries, cross-document moved only 1.3 points, and it raised 21 queries while lowering 13; most of its gain is on first turns and the refusal class, which first-turn rewriting also gets at one call instead of one call plus two or three searches.
 First-turn rewriting raised 15 of 45 first turns and lowered 3, at the same prompt size.
-k=30 gains the most recall but puts 50% more context in every prompt; first-turn rewriting and k=30 were not combined.
+k=30 alone gains more recall than first-turn rewriting but puts 50% more context in every prompt; combined they reach 67.1%.
+The reranker over both rewrites is the best arm at k=20: 69.4% and nDCG 0.570, raising 35 queries and lowering 5 against first-turn rewriting at k=20, and ahead of k=30 in every class; it adds a Fireworks rerank call per request (about $0.60 for these 90).
+Each run draws its own rewrites, so differences of a point or two are within noise.
 
 ## Task C provenance inputs - 2026-09-24
 
