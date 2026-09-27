@@ -442,6 +442,7 @@ describe("query_sensor_data — caveats that travel with the number", () => {
 
     expect(result.value).toBe(0);
     expect(result.note).toContain("may be a missing sensor");
+    expect(result.user_notes).toEqual([expect.stringContaining("may be a missing sensor")]);
   });
 
   it("does not flag turbidity as all zero when any reading rose above 0", async () => {
@@ -464,6 +465,8 @@ describe("query_sensor_data — caveats that travel with the number", () => {
 
     expect(result.note).toContain("salt-water");
     expect(result.note).toContain("freshwater");
+    // Written for the model ("use get_pod_thresholds"), so the page gets nothing from it.
+    expect(result.user_notes).toBeUndefined();
   });
 
   it("says nothing about water type when the device agrees with the deployment", async () => {

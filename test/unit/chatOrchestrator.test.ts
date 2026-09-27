@@ -114,6 +114,24 @@ describe("ChatOrchestrator tool rounds", () => {
     });
   });
 
+  it("keeps reader-only notes out of the model's copy of a result, and in the evidence", async () => {
+    const run = jest.fn().mockResolvedValue({ value: 7.1, note: "for the model", user_notes: ["for the reader"] });
+    const { llm, seen } = scriptedLlm([
+      answer({ toolCalls: [toolCall("call_1", "query_sensor_data", { metric: "ph" })] }),
+      answer({ content: "pH is 7.1." }),
+    ]);
+
+    const result = await new ChatOrchestrator(llm, [sensorTool(run)]).run(messages);
+
+    const second = seen[1].messages;
+    expect(second[second.length - 1].content).toBe(
+      JSON.stringify({ handle: "T1", result: { value: 7.1, note: "for the model" } }),
+    );
+    expect(result.invocations[0].result).toEqual({
+      value: 7.1, note: "for the model", user_notes: ["for the reader"],
+    });
+  });
+
   it("handles several tool calls in one round", async () => {
     const run = jest.fn().mockImplementation(async (args: Record<string, unknown>) => ({
       metric: args.metric,

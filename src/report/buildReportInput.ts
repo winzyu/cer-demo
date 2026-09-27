@@ -76,6 +76,7 @@
 
 import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorData";
 import { SensorQueryError } from "../tools/querySensorData";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext } from "../types/tool.types";
 import type {
   DataQualityCheck, ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WaterBodyType,
@@ -229,6 +230,11 @@ export interface BuildReportInputResult {
   error?: string;
   /** Parameters with no readings in the window -- surfaced to the caller, not silently dropped. */
   skippedParameters?: string[];
+  /**
+   * The series read's reader notes (site, stuck sensor, merged or withheld history), for
+   * `generate_report`'s own `USER_NOTES_FIELD`: its `note` repeats them only in the model's words.
+   */
+  userNotes?: string[];
 }
 
 /**
@@ -568,5 +574,10 @@ export const buildReportInput = async (
     dataQuality,
   };
 
-  return { report, ...(skipped.length > 0 ? { skippedParameters: skipped } : {}) };
+  const userNotes = seriesResult[USER_NOTES_FIELD];
+  return {
+    report,
+    ...(skipped.length > 0 ? { skippedParameters: skipped } : {}),
+    ...(Array.isArray(userNotes) && userNotes.length > 0 ? { userNotes } : {}),
+  };
 };

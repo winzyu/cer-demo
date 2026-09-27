@@ -4,6 +4,9 @@ export const STUCK_SENSOR_MIN_DURATION_MS = 24 * 60 * 60_000;
 export const STUCK_SENSOR_MAX_GAP_MS = 3 * 60 * 60_000;
 export const STUCK_SENSOR_NOTE = "Turbidity has a sustained zero-variance run at exactly 0 or "
   + "1005, indicating a likely failed sensor. Affected readings were excluded; inspect the sensor.";
+/** The reader's version of `STUCK_SENSOR_NOTE` (see `USER_NOTES_FIELD`). */
+export const STUCK_SENSOR_USER_NOTE = "Turbidity readings stuck at exactly 0 or 1005 for a day or "
+  + "more were left out as a likely failed sensor; the turbidity sensor should be inspected.";
 
 /** Missing/faulted samples and changes of value break a run. */
 export const stuckTurbidityReadings = (rows: DeviceReading[]): Set<DeviceReading> => {

@@ -34,6 +34,10 @@ export const snapshotSite = (
         readings: [],
         note: "Current site not assessed: available history "
       + "cannot establish a site boundary. Values were withheld rather than inferred from a window edge.",
+        userNotes: [
+          "Current site not assessed: the available history cannot show where this pod's current "
+            + "site begins, so no values are given rather than guessed.",
+        ],
       },
     };
   }
@@ -45,6 +49,10 @@ export const snapshotSite = (
   const earlier = rows.length - context.length;
   if (earlier) {
     site.note = `${earlier} reading(s) from an earlier location were excluded. ${site.note ?? ""}`.trim();
+    site.userNotes = [
+      `${earlier} reading(s) from an earlier location were left out; only the pod's current site is covered.`,
+      ...(site.userNotes ?? []),
+    ];
   }
   return { site, visits: siteVisits(context) };
 };

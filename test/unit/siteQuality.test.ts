@@ -7,6 +7,15 @@ import { flagCellText } from "../../src/report/renderPdf";
 import { probeAccuracy } from "../../src/report/referenceRanges";
 import { prepareReport, renderReportPdf } from "../../src/report/produceReport";
 import { GetPodThresholds } from "../../src/tools/getPodThresholds";
+import { STUCK_SENSOR_USER_NOTE } from "../../src/tools/stuckSensor";
+
+/** Model-facing wording that must never reach the page. */
+const MODEL_ONLY = /best_lat|query_sensor_data|get_pod_thresholds|\bSay\b|\bConfirm\b/;
+const readerNotes = (result: Record<string, unknown>): string[] => {
+  const notes = result.user_notes as string[];
+  expect(notes.join(" ")).not.toMatch(MODEL_ONLY);
+  return notes;
+};
 
 const NOW = Date.parse("2026-09-26T12:00:00Z");
 const row = (hour: number, lat: number | null, ph = 8, turbidity = 20) => ({
@@ -65,6 +74,48 @@ describe("current-site tool and report pipeline", () => {
   });
 });
 
+describe("reader notes for every site and sensor note", () => {
+  it("gives query_sensor_data's earlier-location and stuck-sensor notes reader versions", async () => {
+    const sensor = sensorFor([row(-25, 35, 2), ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8, 1005)),
+      row(1, 41, 8, 25)]);
+    const result = await sensor.run({ metric: "turbidity", time_range: "last 7 days", aggregation: "max" });
+    expect(readerNotes(result)).toEqual([
+      expect.stringMatching(/^1 reading\(s\) from an earlier location .*were left out/),
+      STUCK_SENSOR_USER_NOTE,
+    ]);
+  });
+
+  it("gives the no-GPS rule a reader version", async () => {
+    const sensor = sensorFor([row(1, null, 2), row(2, null, 3)]);
+    const result = await sensor.run({ metric: "ph", time_range: "last year", aggregation: "mean" });
+    expect(readerNotes(result)).toEqual([expect.stringMatching(/^Location not recorded: /)]);
+  });
+
+  it("tells the reader which limits were not assessed", async () => {
+    const sensor = sensorFor([row(1, 41)], { minPH: 0, maxPH: 100 });
+    const notes = readerNotes(await new GetPodThresholds({ sensor }).run({}));
+    expect(notes).toHaveLength(2);
+    expect(notes[1]).toMatch(/^Not assessed: this device's pH thresholds/);
+  });
+
+  it("names each pod on list_pods' reader notes and states the freshness limit", async () => {
+    const sensor = sensorFor([row(-25, 35, 2), ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8, 0))]);
+    const notes = readerNotes(await new ListPods({ sensor }).run({}));
+    expect(notes[0]).toMatch(/^Last-report times come from/);
+    expect(notes).toContainEqual(expect.stringMatching(/^Pod: 1 reading\(s\) from an earlier location/));
+    expect(notes).toContainEqual(`Pod: ${STUCK_SENSOR_USER_NOTE}`);
+  });
+
+  it("carries the series read's reader notes into generate_report", async () => {
+    const sensor = sensorFor([row(-25, 35, 2),
+      ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8, 1005))]);
+    const result = await new GenerateReport({ sensor }).run({ time_range: "last 7 days" }, { token: "fixture" });
+    const notes = readerNotes(result);
+    expect(notes).toContainEqual(expect.stringMatching(/earlier location .*were left out/));
+    expect(notes).toContain(STUCK_SENSOR_USER_NOTE);
+    expect(notes).toContainEqual(expect.stringMatching(/^No readings for .*Turbidity \(Relative\), so the report covers the other/));
+  });
+});
 
 describe("release surfaces", () => {
   it("filters merged-chain history before every aggregation, including comparisons", async () => {

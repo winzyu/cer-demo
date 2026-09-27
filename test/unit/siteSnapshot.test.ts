@@ -112,6 +112,8 @@ it("does not guess that a partial window's first row starts a visit", () => {
   const rows = [row(1), row(0)].map((r) => decodeReading(r));
   expect(snapshotSite(rows, NOW - DAY_MS).site.readings).toEqual([]);
   expect(snapshotSite(rows, NOW - DAY_MS).site.note).toMatch(/cannot establish/);
+  expect(snapshotSite(rows, NOW - DAY_MS).site.userNotes)
+    .toEqual([expect.stringMatching(/^Current site not assessed: .*no values are given/)]);
 });
 
 it("uses one pinned snapshot for all three report calculations", async () => {
@@ -200,6 +202,26 @@ it("drops cached predecessor readings when its authorization is refused on refre
   expect(result.value).toBe(8);
   expect((result.device as Record<string, unknown>).history_labels).toBeUndefined();
   expect(result.note).toMatch(/NOT included.*dev:old/);
+  expect(result.user_notes).toContainEqual(expect.stringContaining("not available to this account"));
+});
+
+it("gives the reader the withheld history when the pod itself has no readings", async () => {
+  const client = new DeviceApiClient({ baseUrl: "https://offline.invalid", token: "fixture",
+    fetchImpl: async (url) => {
+      const old = new URL(url).searchParams.get("device") === "dev:old";
+      const body = url.includes("/devices") ? registry(["dev:pod", "dev:old"]) : [];
+      return { ok: !old, status: old ? 400 : 200,
+        text: async () => "Device not found", json: async () => body } as Response;
+    } });
+  config.tools.predecessorPeriodHandoff = true;
+  const result = await new QuerySensorData({ client, now: () => NOW }).run(args);
+  expect(result.n_samples).toBe(0);
+  expect(result.note).toContain("Earlier history was withheld for this account.");
+  // An empty pod has no fix either, so the no-GPS note comes first.
+  expect(result.user_notes).toEqual([
+    expect.stringMatching(/^Location not recorded/),
+    expect.stringContaining("not available to this account"),
+  ]);
 });
 
 it("preserves the failed-sensor warning when the report has no other usable parameter", async () => {

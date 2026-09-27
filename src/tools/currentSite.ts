@@ -27,6 +27,8 @@ export const distanceKm = ([a, b]: [number, number], [c, d]: [number, number]): 
 export interface CurrentSite {
   readings: DeviceReading[];
   note?: string;
+  /** The reader's version of `note`, one sentence per caveat (see `USER_NOTES_FIELD`). */
+  userNotes?: string[];
 }
 
 export interface SiteVisit {
@@ -103,6 +105,11 @@ export const currentSite = (rows: DeviceReading[]): CurrentSite => {
       readings: ordered,
       note: "Location not recorded: no reading has usable best_lat and best_lon coordinates, "
         + `so the pod is treated as never having moved.${excluded}`,
+      userNotes: [
+        "Location not recorded: this pod has never reported a GPS position, so all of its "
+          + "readings are treated as coming from one site.",
+        ...(untimed ? [`${untimed} reading(s) without a timestamp were left out.`] : []),
+      ],
     };
   }
   const { startMs: start, endMs: end } = latest;
@@ -110,13 +117,18 @@ export const currentSite = (rows: DeviceReading[]): CurrentSite => {
   const unlocated = rows.length - ordered.length
     + ordered.filter((r) => Date.parse(r.observedAt!) > end).length;
   const notes: string[] = [];
+  const userNotes: string[] = [];
   if (earlier.length) {
-    notes.push(`${earlier.length} reading(s) from an earlier location were excluded `
-      + `(${earlier[0].observedAt} to ${earlier[earlier.length - 1].observedAt}).`);
+    const span = `(${earlier[0].observedAt} to ${earlier[earlier.length - 1].observedAt})`;
+    notes.push(`${earlier.length} reading(s) from an earlier location were excluded ${span}.`);
+    userNotes.push(`${earlier.length} reading(s) from an earlier location ${span} were left out; `
+      + "only the pod's current site is covered.");
   }
   if (unlocated) {
     notes.push(`${unlocated} reading(s) with missing timestamps or outside the current site's `
       + "coordinate-supported time span were excluded.");
+    userNotes.push(`${unlocated} reading(s) without a timestamp, or from outside the time the `
+      + "pod's GPS places it at its current site, were left out.");
   }
   return {
     readings: ordered.filter((r) => {
@@ -126,6 +138,6 @@ export const currentSite = (rows: DeviceReading[]): CurrentSite => {
       const fix = coordinates(r);
       return { ...r, latitude: fix?.[0], longitude: fix?.[1] };
     }),
-    ...(notes.length ? { note: notes.join(" ") } : {}),
+    ...(notes.length ? { note: notes.join(" "), userNotes } : {}),
   };
 };
