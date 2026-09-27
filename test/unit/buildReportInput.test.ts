@@ -115,6 +115,7 @@ describe("buildReportInput", () => {
 
     /** Minimal sensor with one temperature series and a registry row of the caller's choosing. */
     const sensorWithThresholds = (thresholds?: Record<string, string | number>): QuerySensorData => ({
+      queryBatch: QuerySensorData.prototype.queryBatch,
       query: async () => ({
         device: { name: "Stub Pod", label: "dev:stub", operating_environment: "salt-water" },
         time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
@@ -252,6 +253,7 @@ describe("buildReportInput", () => {
       ]);
 
       const owcSensor = (): QuerySensorData => ({
+        queryBatch: QuerySensorData.prototype.queryBatch,
         query: async () => ({
           device: { name: "Old Woman Creek 2026", label: "dev:owc", operating_environment: "fresh-water" },
           time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
@@ -338,6 +340,7 @@ describe("buildReportInput", () => {
 
       it("when the registry lookup itself comes back empty", async () => {
         const sensor = {
+          queryBatch: QuerySensorData.prototype.queryBatch,
           query: (sensorWithThresholds() as unknown as { query: unknown }).query,
           deviceRecord: async () => null,
         } as unknown as QuerySensorData;
@@ -362,6 +365,7 @@ describe("buildReportInput", () => {
           { start: "2026-08-01T00:00:00.000Z", end: "2026-08-01T12:00:00.000Z", mean, min, max, n: 20 },
         ]);
         const stubSensor = {
+          queryBatch: QuerySensorData.prototype.queryBatch,
           query: async () => ({
             device: { name: "Stub Pod", label: "dev:stub", operating_environment: "salt-water" },
             time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
@@ -412,6 +416,7 @@ describe("buildReportInput", () => {
       // these readings -- the exact dev: label the query resolved is what gets looked up.
       const requested: Array<string | undefined> = [];
       const sensor = {
+        queryBatch: QuerySensorData.prototype.queryBatch,
         query: async () => ({
           device: { name: "Algalita Pod", label: "dev:351077454569099", operating_environment: "salt-water" },
           time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
@@ -517,6 +522,7 @@ describe("buildReportInput", () => {
     const calls: Array<{ token: string | undefined }> = [];
     const registryCalls: Array<{ token: string | undefined }> = [];
     const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
       query: async (_params: unknown, token?: string) => {
         calls.push({ token });
         return { device: { name: "Stub" }, time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" }, metrics: {} };
@@ -579,6 +585,7 @@ describe("buildReportInput", () => {
 
     it("falls back to the deployment value only when the registry says nothing usable", async () => {
       const stubSensor = {
+        queryBatch: QuerySensorData.prototype.queryBatch,
         query: async () => ({
           device: { name: "Unregistered Pod", operating_environment: null },
           time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
@@ -618,6 +625,7 @@ describe("buildReportInput", () => {
 
     it("raises calibration to Review, naming the metric, when a probe railed without a fault flag", async () => {
       const stubSensor = {
+        queryBatch: QuerySensorData.prototype.queryBatch,
         query: async () => ({
           device: { name: "Algalita Pod", operating_environment: "salt-water" },
           time_range_resolved: { start: "2026-07-21T00:00:00.000Z", end: "2026-08-20T00:00:00.000Z" },
@@ -659,6 +667,7 @@ describe("buildReportInput", () => {
     // feeding it to the event detector invites a step-change event out of a gap. Section 2's
     // extremes stay exact over every usable reading.
     const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
       query: async () => ({
         device: { name: "Algalita Pod", operating_environment: "salt-water" },
         time_range_resolved: { start: "2026-07-21T00:00:00.000Z", end: "2026-08-20T00:00:00.000Z" },
@@ -710,6 +719,7 @@ describe("buildReportInput - pattern tags", () => {
   );
 
   const stubSensor = (hourly: ReturnType<typeof hourlyBuckets>) => ({
+    queryBatch: QuerySensorData.prototype.queryBatch,
     query: async (params: { aggregation: string; bucket?: string }) => {
       const series = params.bucket === "hour"
         ? hourly

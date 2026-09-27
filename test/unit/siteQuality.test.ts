@@ -46,8 +46,7 @@ describe("current-site tool and report pipeline", () => {
   });
 
   it("excludes sustained endpoint runs before report patterns", async () => {
-    const sensor = sensorFor([row(1, 41, 8, 1005), row(2, 41, 8, 1005),
-      row(3, 41, 8, 1005), row(4, 41, 8, 25)]);
+    const sensor = sensorFor([...Array.from({ length: 25 }, (_, i) => row(i - 2, 41, 8, 1005)), row(23, 41, 8, 25)]);
     const result = await sensor.run({ metric: "turbidity", time_range: "last 7 days", aggregation: "max" });
     expect(result.value).toBe(25);
     expect(result.note).toMatch(/likely failed sensor/i);
@@ -82,17 +81,17 @@ describe("release surfaces", () => {
   });
 
   it("gives list_pods the same site exclusion and sensor-failure notes", async () => {
-    const sensor = sensorFor([row(1, 35, 2), row(2, 41, 8, 0), row(3, 41, 8, 0), row(4, 41, 8, 0)]);
+    const sensor = sensorFor([row(-25, 35, 2), ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8, 0))]);
     const result = await new ListPods({ sensor }).run({});
     const pod = (result.pods as Array<{ note: string; last_reported: string }>)[0];
     expect(pod.note).toMatch(/earlier location.*excluded/i);
     expect(pod.note).toMatch(/likely failed sensor/i);
-    expect(pod.last_reported).toBe(new Date(row(4, 41).timestamp * 1000).toISOString());
+    expect(pod.last_reported).toBe(new Date(row(0, 41).timestamp * 1000).toISOString());
   });
 
   it("renders a report and preserves exclusions in generate_report without model calls", async () => {
-    const sensor = sensorFor([row(1, 35, 2), row(2, 41, 8, 1005),
-      row(3, 41, 8, 1005), row(4, 41, 8, 1005)], { minPH: 0, maxPH: 100 });
+    const sensor = sensorFor([row(-25, 35, 2),
+      ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8, 1005))], { minPH: 0, maxPH: 100 });
     const prepared = await prepareReport(sensor, { timeRange: "last 7 days" });
     if (prepared.error || !("report" in prepared)) throw new Error(prepared.error);
     expect(prepared.report.parameters.map((p) => p.baseline.key)).toEqual(["ph"]);

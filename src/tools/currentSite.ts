@@ -4,7 +4,7 @@ export const SITE_MOVE_DISTANCE_KM = 1;
 const EARTH_RADIUS_KM = 6371;
 
 /** Use only best_lat/best_lon, never the free-text location or fallback GPS fields. */
-const coordinates = (row: DeviceReading): [number, number] | undefined => {
+export const coordinates = (row: DeviceReading): [number, number] | undefined => {
   const parse = (value: unknown): number => (
     (typeof value === "number" || (typeof value === "string" && value.trim() !== ""))
       ? Number(value) : NaN
@@ -18,7 +18,7 @@ const coordinates = (row: DeviceReading): [number, number] | undefined => {
 };
 
 const radians = (degrees: number): number => degrees * (Math.PI / 180);
-const distanceKm = ([a, b]: [number, number], [c, d]: [number, number]): number => {
+export const distanceKm = ([a, b]: [number, number], [c, d]: [number, number]): number => {
   const h = Math.sin(radians(c - a) / 2) ** 2
     + Math.cos(radians(a)) * Math.cos(radians(c)) * Math.sin(radians(d - b) / 2) ** 2;
   return 2 * EARTH_RADIUS_KM * Math.asin(Math.sqrt(Math.min(1, h)));
@@ -29,44 +29,79 @@ export interface CurrentSite {
   note?: string;
 }
 
-/** Chronological visits, including a new visit when a pod returns to a former location. */
-export const currentSite = (rows: DeviceReading[]): CurrentSite => {
-  const ordered = rows.filter((r) => Number.isFinite(Date.parse(r.observedAt ?? "")))
-    .sort((a, b) => Date.parse(a.observedAt!) - Date.parse(b.observedAt!));
-  let start = Infinity;
-  let end = -Infinity;
-  let centroid: [number, number] | undefined;
-  let count = 0;
-  // Unit-vector averaging avoids an artificial move at the international date line.
-  let x = 0;
-  let y = 0;
-  let z = 0;
-  ordered.forEach((row) => {
+export interface SiteVisit {
+  startMs: number;
+  endMs: number;
+  centroid: [number, number];
+  count: number;
+  x: number;
+  y: number;
+  z: number;
+}
+
+export const orderedReadings = (rows: DeviceReading[]): DeviceReading[] => rows
+  .filter((r) => Number.isFinite(Date.parse(r.observedAt ?? "")))
+  .sort((a, b) => Date.parse(a.observedAt!) - Date.parse(b.observedAt!));
+
+/** Shared chronological running-centroid rule for production and the manual audit. */
+export const siteVisits = (rows: DeviceReading[]): SiteVisit[] => {
+  const visits: SiteVisit[] = [];
+  orderedReadings(rows).forEach((row) => {
     const fix = coordinates(row);
     if (!fix) return;
-    if (!centroid || distanceKm(centroid, fix) > SITE_MOVE_DISTANCE_KM) {
-      start = Date.parse(row.observedAt!);
-      count = 0;
-      x = 0;
-      y = 0;
-      z = 0;
+    const time = Date.parse(row.observedAt!);
+    let visit = visits[visits.length - 1];
+    if (!visit || distanceKm(visit.centroid, fix) > SITE_MOVE_DISTANCE_KM) {
+      visit = {
+        startMs: time, endMs: time, centroid: fix, count: 0, x: 0, y: 0, z: 0,
+      };
+      visits.push(visit);
     }
     const [lat, lon] = fix.map(radians);
-    x += Math.cos(lat) * Math.cos(lon);
-    y += Math.cos(lat) * Math.sin(lon);
-    z += Math.sin(lat);
-    count += 1;
-    centroid = [Math.atan2(z / count, Math.hypot(x / count, y / count)) * (180 / Math.PI),
-      Math.atan2(y, x) * (180 / Math.PI)];
-    end = Date.parse(row.observedAt!);
+    visit.x += Math.cos(lat) * Math.cos(lon);
+    visit.y += Math.cos(lat) * Math.sin(lon);
+    visit.z += Math.sin(lat);
+    visit.count += 1;
+    const horizontal = Math.hypot(visit.x / visit.count, visit.y / visit.count);
+    visit.centroid = [Math.atan2(visit.z / visit.count, horizontal) * (180 / Math.PI),
+      Math.atan2(visit.y, visit.x) * (180 / Math.PI)];
+    visit.endMs = time;
   });
-  if (!centroid) {
+  return visits;
+};
+
+/**
+ * After accepting a fix, the centroid is within 1 km of that fix.
+ * Two consecutive positioned fixes over 2 km apart therefore force a reset regardless of
+ * unseen earlier history; a mere 1 km separation or a fetched left edge proves nothing.
+ */
+export const provenSiteStart = (rows: DeviceReading[]): number | undefined => {
+  let previous: [number, number] | undefined;
+  let start: number | undefined;
+  orderedReadings(rows).forEach((row) => {
+    const fix = coordinates(row);
+    if (!fix) return;
+    if (previous && distanceKm(previous, fix) > 2 * SITE_MOVE_DISTANCE_KM) {
+      start = Date.parse(row.observedAt!);
+    }
+    previous = fix;
+  });
+  return start;
+};
+
+/** Chronological visits, including a new visit when a pod returns to a former location. */
+export const currentSite = (rows: DeviceReading[]): CurrentSite => {
+  const ordered = orderedReadings(rows);
+  const visits = siteVisits(ordered);
+  const latest = visits[visits.length - 1];
+  if (!latest) {
     return {
       readings: [],
       note: "Current site not assessed: no readings have usable best_lat and "
-      + "best_lon coordinates. Readings without an established site were excluded.",
+      + "best_lon coordinates and a usable timestamp. Readings without an established site were excluded.",
     };
   }
+  const { startMs: start, endMs: end } = latest;
   const earlier = ordered.filter((r) => Date.parse(r.observedAt!) < start);
   const unlocated = rows.length - ordered.length
     + ordered.filter((r) => Date.parse(r.observedAt!) > end).length;

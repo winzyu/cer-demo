@@ -1,3 +1,4 @@
+import { config } from "../../src/config";
 import fs from "fs";
 import path from "path";
 import createError from "http-errors";
@@ -63,7 +64,7 @@ describe("resolveChain", () => {
     // /devices hides every merged device, so CWA Old never appears in CWA's own view. The
     // patched route grants it (null or dangling organization) or refuses it (another existing
     // organization); the chain marks it so a refusal is withheld rather than fatal.
-    const chain = resolveChain(survivor, [survivor, predecessor]);
+    const chain = resolveChain(survivor, [survivor, predecessor], true);
     expect(chain.labels).toEqual([SURVIVOR, PRED, FOREIGN]);
     expect(chain.unconfirmed).toEqual([FOREIGN]);
     expect(chain.withheld).toEqual([]);
@@ -121,6 +122,7 @@ describe("period-route refusals", () => {
   const chain = resolveChain(
     row(SURVIVOR, CWA, { labels: [SURVIVOR, PRED, FOREIGN] }),
     [row(SURVIVOR, CWA, { labels: [SURVIVOR, PRED, FOREIGN] })],
+    true,
   );
 
   it("moves a refused label into withheld and keeps the rest", () => {
@@ -175,6 +177,7 @@ describe("query_sensor_data over a merge chain", () => {
   const reading = (device: string, atMs: number, ph: number): Record<string, unknown> => ({
     device,
     timestamp: seconds(atMs),
+    best_lat: 41.38, best_lon: -82.51,
     date: new Date(NOW + atMs).toISOString(),
     water_data: { 99: ph, phError: 0 },
   });
@@ -288,12 +291,16 @@ describe("query_sensor_data over a merge chain", () => {
  * is org-scoped, and the period stub grants only what the patched route grants that caller.
  */
 describe("query_sensor_data and a hidden dangling-organization predecessor", () => {
+  beforeEach(() => { config.tools.predecessorPeriodHandoff = true; });
+  afterEach(() => { config.tools.predecessorPeriodHandoff = false; });
   const NOW = Date.parse("2026-08-20T00:00:00.000Z");
   const CWA_OLD = "dev:cwa-old";
   const NEWPORT_POD = "dev:newport";
   const reading = (device: string, daysAgo: number, ph: number): Record<string, unknown> => ({
     device,
     timestamp: Math.floor((NOW - daysAgo * 24 * 60 * 60_000) / 1000),
+    best_lat: device === NEWPORT_POD ? 33.61 : 41.38,
+    best_lon: device === NEWPORT_POD ? -117.93 : -82.51,
     water_data: { 99: ph, phError: 0 },
   });
   const PERIOD: Record<string, Array<Record<string, unknown>>> = {
@@ -421,7 +428,7 @@ describe("pod-scope fixture fleet", () => {
     // The Lakeside organization's /devices as the server returns it: no merged devices.
     const lakeView = fleet.filter((device) => device.organization === "org-lake-00000000001"
       && !device.raw.mergedInto);
-    const chain = resolveChain(by("dev:100000000000003"), lakeView);
+    const chain = resolveChain(by("dev:100000000000003"), lakeView, true);
     expect(chain.labels).toEqual([
       "dev:100000000000003", "dev:100000000000004", "dev:100000000000005",
     ]);

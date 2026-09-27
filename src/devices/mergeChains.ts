@@ -1,3 +1,4 @@
+import { config } from "../config";
 import type { DeviceSummary } from "../types/device.types";
 
 /**
@@ -44,9 +45,11 @@ import type { DeviceSummary } from "../types/device.types";
  * caller's own devices and grants a predecessor whose organization is null or matches no
  * organization document, and nothing past one registered to another organization
  * (`timeline.md`, 2026-09-24 and 2026-09-25). A hidden label the registry chain names is
- * therefore sent to that route and listed in `unconfirmed`; the tool moves any label the route
- * refuses into `withheld`.
+ * sent to that route only when PREDECESSOR_PERIOD_HANDOFF is enabled and listed in `unconfirmed`;
+ * the tool moves any label the route refuses into `withheld`.
  *
+ * The flag defaults off and must remain off until patched servers handle all cer-api traffic
+ * and authorization has been verified; mixed old/new traffic and unpatched rollback are unsafe.
  * That hand-off is made only when the caller's view is org-scoped: every visible device carries
  * the survivor's organization. A superadmin's view spans organizations and the route grants a
  * superadmin every label, so it cannot say whether a hidden predecessor belongs to the
@@ -150,6 +153,7 @@ const predecessorsOf = (survivor: DeviceSummary, visible: DeviceSummary[]): stri
 export const resolveChain = (
   device: DeviceSummary,
   visible: DeviceSummary[],
+  periodHandoff = config.tools.predecessorPeriodHandoff,
 ): DeviceChain => {
   const self = device.label;
   if (typeof self !== "string" || self === "") {
@@ -175,7 +179,7 @@ export const resolveChain = (
   predecessorsOf(device, visible).forEach((label) => {
     const row = visible.find((candidate) => candidate.label === label);
     if (!row) {
-      if (orgScoped) {
+      if (periodHandoff && orgScoped) {
         chain.labels.push(label);
         chain.unconfirmed.push(label);
       } else {

@@ -310,21 +310,15 @@ export const buildReportInput = async (
   let medianResult: Record<string, unknown>;
   let hourlyResult: Record<string, unknown>;
   try {
-    // `sensor.query` is the typed programmatic path QuerySensorData exposes specifically for
-    // report generation (see querySensorData.ts's module docstring) -- it does not go through
-    // the model's tool-calling loop, this handler calls it directly.
-    [seriesResult, medianResult, hourlyResult] = await Promise.all([
-      sensor.query({ ...baseArgs, aggregation: "series", bucket: "auto" }, context?.token),
-      sensor.query({ ...baseArgs, aggregation: "median" }, context?.token),
-      // Pattern classification only (`patterns.ts`): diel and tidal rhythms need hourly
-      // resolution, which the auto-width series above does not have past a couple of days.
-      sensor.query(
-        {
-          ...baseArgs, aggregation: "series", bucket: "hour", maxBuckets: MAX_HOURLY_BUCKETS,
-        },
-        context?.token,
-      ),
-    ]);
+    // Pin one authorized snapshot for series, exact median and hourly pattern classification.
+    // These deterministic calculations never go through the model's tool-calling loop.
+    [seriesResult, medianResult, hourlyResult] = await sensor.queryBatch([
+      { ...baseArgs, aggregation: "series", bucket: "auto" },
+      { ...baseArgs, aggregation: "median" },
+      {
+        ...baseArgs, aggregation: "series", bucket: "hour", maxBuckets: MAX_HOURLY_BUCKETS,
+      },
+    ], context?.token);
   } catch (error) {
     if (error instanceof SensorQueryError) {
       return { error: error.message };
