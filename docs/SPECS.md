@@ -901,6 +901,10 @@ Legacy transcripts without an audit are assessed from their stored answer.
 Both frontends render tool handles as controls opening evidence within that answer, without colliding with document numbers or another answer's handles.
 The dashboard keeps tool arguments, results, rounds and reuse status in a collapsed disclosure.
 Incomplete searches, stale or empty windows, provisional turbidity, tool errors and exhausted rounds remain visible outside it.
+Outside it the page shows only reader-facing text: its own fixed notices and each result's `user_notes` (`USER_NOTES_FIELD`), never a result's `note`, which is written for the model.
+`ChatOrchestrator` removes `user_notes` from the copy of a result the model reads, so adding one never changes the model's input; every new tool note needs a reader version or the page shows nothing for it.
+A failed call is not shown once a later call to the same tool succeeded, and an empty window is judged on `n_samples`, since `series` and `raw` results have readings and `value: null`.
+Citations carry the document `title` where `corpus.json` has one, added at the response boundary (`src/retrieval/sourceTitles.ts`) because the prompt reads only `source` and `text`; the page labels a source by its title and falls back to the address.
 An empty window or null value is never converted to zero; actual zero measurements remain zero.
 Explicit scope refusals have intentional-outcome styling.
 Turbidity interpretation itself is unchanged.
