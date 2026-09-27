@@ -1506,6 +1506,18 @@ Offers to fetch or report the pod's readings fell from 9 answers to 0; the three
 On the two-pass mean 4 turns rose and 8 fell; seven of the eight falls are omitted rubric points on turns that made no offer before (Eh's definition, the 12-month thermistor check, the manufacturer's soak limit), and one, `refusal-temperature-harm-threshold` turn 2, no longer says the sources lack a thermal-harm criterion.
 Reading: the rule removes the behaviour; the 0.03-0.05 fall is of the size GLM's answers could vary between captures, but no repeat capture of the old prompt exists to separate the two.
 
+### GLM tool-calling check on the fabricated mirror - 2026-09-27, `data/results/tool-check-2026-09-27/`
+
+No earlier GLM run exercised the sensor and report tools, which production answers pod questions with.
+Server: `glm-5p3-flash` (reasoning low), `SENSOR_TOOL` and `REPORT_TOOL` on, `DEVICE_API_BASE_URL` at the mirror server on :5101 (`mirror/e2e-p3` `37fec03`, Firestore emulator seeded 2026-09-26, no proxy to the live API), `DEVICE_API_TOKEN` empty, `local-rerank` k=20 with `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, catalogue off, port 8011.
+Caller: the fabricated Harbor Admin, whose account sees one salt-water pod (Harbor Pier Buoy, all-zero thresholds, a predecessor withheld as not visible); 10 turns in 9 conversations (`toolcheck.js`), about $0.10.
+
+All 10 returned 200 with well-formed calls to `query_sensor_data`, `get_pod_thresholds`, `get_turbidity_info`, `generate_report` and `list_pods`, at most two tool rounds per turn, and the results used in the answers; no turn neared `MAX_TOOL_ROUNDS`, and the mirror's log shows all 34 device requests.
+The all-zero thresholds were reported as unconfigured rather than as a range, and a turbidity index of 0 as ambiguous rather than clear water.
+The water-type note (deployment freshwater, pod salt water) was relayed in 4 of the 8 turns whose results carried it, and the withheld-history note in 4 of 8, both accurately when relayed; plan Q8 covers relaying them.
+Defect: "Did the pod record anything in the last 24 hours?" was answered "Yes" with 25 samples, but the tool anchors a relative window to `device_last_reported` (2026-09-26 03:11 UTC, 30 hours before the question) and the answer did not say the pod has been silent since.
+The cross-organization withheld-history case needs a non-superadmin in the survivor's organization, which the mirror does not have.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
