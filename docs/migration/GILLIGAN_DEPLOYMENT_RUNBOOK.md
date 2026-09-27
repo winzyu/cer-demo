@@ -51,20 +51,21 @@ Known values, from the release plan's L2 answers:
 | cer-gilligan capacity | 1 vCPU, 1 GiB, 300 s timeout, concurrency 8, min instances 0 (1 on demo and launch days), max instances 1 until the usage store is verified live, then 2 |
 | Usage limits | 20 messages, 5 reports, 1,000,000 tokens per user per UTC day |
 | Release owner | the user, first contact; Michael is escalation for IAM and the upstream services |
+| Dedicated Gilligan Firestore database | `gilligan` (proposed name), in `us-central1` next to cer-gilligan; Native mode; holds only the usage store, because the corpus ships in the image |
+| Production device API base URL | `https://cer-api-98242557946.us-central1.run.app/api/v1`, the same URL the local stack uses |
+| cer-api Cloud Run request timeout | 300 s (read 2026-09-26, `MIRROR_PRODUCTION_PARITY.md` R9), above `CER_RAG_TIMEOUT_MS` |
+| Service key secret | `cer-gilligan-service-key` (proposed name) |
 
 Still open:
 
 | input | value |
 |---|---|
-| Dedicated Gilligan Firestore database id and location | `[FILL: database id, e.g. the proposed "gilligan"]`, `[FILL: location]` |
-| Service key secret name and version | `[FILL: secret name]`, `[FILL: version]`; readable by `cer-gilligan-runtime` and the default compute account |
+| Service key secret version | `[FILL: version]`; readable by `cer-gilligan-runtime` and the default compute account |
 | Fireworks secret version for the demo (cer-demo key) | `[FILL: version]` |
 | Fireworks secret version after S5 (CER's key) | `[FILL: version]` |
 | Whether an organization policy allows unauthenticated invocation of `cer-gilligan` | `[FILL: checked by Michael]` |
-| Production device API base URL (ends `/api/v1`) | `[FILL: same URL the local stack uses]` |
 | Dashboard build keys (`_STRIPE_KEY`, `_HERE_MAP_API`, `_GOOGLE_MAP_API`) | `[FILL: read from the live cer-ui service, §3.4]` |
 | Release commits | `[FILL]` for each repository (§3.1) |
-| cer-api Cloud Run request timeout | `[FILL: read from the live service]`; must exceed `CER_RAG_TIMEOUT_MS` |
 | Credentials in the S5 rotation | `[FILL: the user's list]` |
 | Fallback if Firestore access is still pending on Sep 28 | `[FILL: the user's decision]`; the plan's fallback is `max-instances=1` with the in-memory store, whose counts reset on every restart |
 | Inventory of every resource and grant, who creates it and how it is shown | `[FILL: still open in the plan]`; the rehearsal in `cer-demo-2026` (`LOCAL_STACK.md`) is its draft |
@@ -82,6 +83,18 @@ Michael does these, and each is checked off in §8 before L5:
 6. After cer-gilligan exists (§6.1), allow unauthenticated invocation on it (`allUsers` as Cloud Run Invoker), if the organization policy permits.
 7. Disable the `cer-ui` Cloud Build trigger `8ad67b17-5439-4507-9718-5b2b5eb4abe9`, which builds on every push to the infected `main`.
 8. Once the release commit writes `expireAt` on usage documents, add a Firestore TTL policy on `gilligan_usage.expireAt` in the dedicated database, never on `updatedAt` ([`GILLIGAN_FIRESTORE_FRAMEWORK.md`](GILLIGAN_FIRESTORE_FRAMEWORK.md)).
+
+### 2.2 What differs from the mirror run
+
+The local Firestore mirror is where release behaviour is verified; production must differ from the last mirror run only in the four ways below, and anything else that differs is a release risk.
+The full comparison, with evidence from production reads, is [`MIRROR_PRODUCTION_PARITY.md`](MIRROR_PRODUCTION_PARITY.md) §3 and §7.
+
+1. Cloud resources the emulator cannot have: the `gilligan` database, `cer-gilligan-runtime`, the two secrets, the IAM grants and the unauthenticated invocation (§2.1).
+2. Settings: the §4 values replace the mirror's local ones; the mirror run used the same names with a test service key, the emulator host and localhost URLs.
+3. Code: each service is built from a release commit (§3.1) that contains exactly the changes the mirror ran; the server's `mirror/*` branches are test-only and never ship, so compare the release commit with the mirror branch before building and expect only mirror scripts and seed data to differ.
+4. Runtime: the compiled images with `NODE_ENV=production` instead of the development runners; run each image locally against the mirror before L5 (§3.3, §3.4).
+
+Worth raising with Michael, outside the release: the customer `(default)` database has point-in-time recovery and delete protection off.
 
 ## 3. Release sources and clean builds
 
@@ -183,14 +196,14 @@ DEFAULT_RETRIEVAL: "hybrid-slice-vector"
 CORPUS_SOURCE: "artifact"
 DEBUG_RETRIEVAL: "false"
 FIRESTORE_PROJECT_ID: "conductive-fold-343604"
-FIRESTORE_DATABASE_ID: "[FILL: dedicated Gilligan database id]"
+FIRESTORE_DATABASE_ID: "gilligan"
 LLM_MODEL: "accounts/fireworks/models/gpt-oss-120b"
 EMBEDDING_MODEL: "nomic-ai/nomic-embed-text-v1.5"
 LLM_MAX_TOKENS: "16384"
 LLM_MAX_CONCURRENT: "8"
 LLM_QUEUE_TIMEOUT_MS: "20000"
 LLM_RETRY_DELAY_MS: "2000"
-DEVICE_API_BASE_URL: "[FILL: production device API base URL ending /api/v1]"
+DEVICE_API_BASE_URL: "https://cer-api-98242557946.us-central1.run.app/api/v1"
 DEVICE_API_TIMEOUT_MS: "10000"
 SENSOR_TOOL: "true"
 REPORT_TOOL: "true"
