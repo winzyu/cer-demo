@@ -311,8 +311,13 @@ every problem, missing secrets are warnings only.
 | `NODE_ENV` | `development` | `development` \| `test` \| `production`. Controls error-stack exposure. |
 | `PORT` | `8000` | HTTP port. |
 | `LOG_LEVEL` | `info` | Log verbosity label. |
-| `MAX_HISTORY_MESSAGES` | `20` | Cap on prior turns per request. Oldest dropped, not rejected. |
+| `MAX_HISTORY_MESSAGES` | `20` | Cap on prior messages per request, normally 10 question-answer pairs. Oldest exchanges are dropped. |
 | `WATER_TYPE` | `freshwater` | `freshwater` \| `saltwater`. A deployment-wide label that frames chat answers; the prompt carries no ranges since 2026-09-13 (pod limits come from `get_pod_thresholds`), and reports read each pod's registry `operatingEnvironment` instead. **Global — see the caveat in [§7e](#7e-known-limits).** |
+
+`POST /api/v1/chat` accepts JSON bodies up to 1 MiB; other endpoints retain the 100 KiB limit.
+After validation, the model receives the newest contiguous history fitting both `MAX_HISTORY_MESSAGES` and a fixed 64 KiB serialized UTF-8 budget.
+Trimming preserves complete question-answer pairs and never cuts message text; if the newest exchange cannot fit, no history is replayed.
+Requests above the transport limit receive JSON HTTP 413 before validation, so callers should also bound history before sending it.
 
 ### LLM (Fireworks)
 
