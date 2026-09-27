@@ -1578,7 +1578,9 @@ The pair 0,0 means no fix; other equator or prime-meridian coordinates remain va
 Chronologically, a positioned reading more than 1 km from the current visit's running spherical centroid starts a new visit.
 Returning A -> B -> A starts a new visit to A and excludes the first visit to A.
 Unpositioned readings count only between the current visit's first and last positioned timestamps, and missing or invalid timestamps cannot support a visit.
-When available history cannot establish a site, values are withheld with a “Current site not assessed” explanation.
+A pod with no usable fix anywhere in its history is treated as never having moved: every timestamped reading counts, with a “Location not recorded” note (user decision, `timeline.md` 2026-09-27).
+A recent window without a provable site reset is re-read from the epoch first, so this never applies to a window that merely lacks fixes.
+When a pod has fixes but available history still cannot establish a site boundary, values are withheld with a “Current site not assessed” explanation.
 
 The in-process cache is scoped by a hash of caller authorization, API base URL, resolved device chain and `PREDECESSOR_PERIOD_HANDOFF`, so callers never share readings or predecessor permissions.
 Device lists and reading snapshots have named five-minute TTLs, concurrent identical requests are coalesced, and failed reads are not cached.

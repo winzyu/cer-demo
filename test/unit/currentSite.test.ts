@@ -26,14 +26,16 @@ describe("current site", () => {
     expect(hours([row(0), row(1, 35), row(2), row(3, 41), row(4), row(5, 41), row(6)]))
       .toEqual([3, 4, 5]);
   });
-  it("withholds all values when no site can be established", () => {
-    const result = currentSite([row(1), row(2)]);
-    expect(result.readings).toEqual([]);
-    expect(result.note).toContain("Current site not assessed");
+  it("treats a pod with no usable fix in its history as never having moved", () => {
+    const untimed = decodeReading({ best_lat: 41, best_lon: -82, water_data: { 99: 9 } });
+    const result = currentSite([row(2), row(1), untimed]);
+    expect(result.readings.map((r) => r.metrics.ph.value)).toEqual([1, 2]);
+    expect(result.note).toContain("Location not recorded");
+    expect(result.note).toContain("1 reading(s) with missing timestamps were excluded");
   });
   it("does not fall back to lat/lon or use the backend's 0,0 missing-fix sentinel", () => {
     const missing = decodeReading({ timestamp: 1, best_lat: 0, best_lon: 0, lat: 41, lon: -82 });
-    expect(currentSite([missing]).readings).toEqual([]);
+    expect(currentSite([missing]).note).toContain("Location not recorded");
   });
   it("handles jitter across the date line", () => {
     expect(hours([row(1, 41, 179.999), row(2, 41, -179.999), row(3, 41, 179.999)]))

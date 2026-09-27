@@ -95,10 +95,14 @@ export const currentSite = (rows: DeviceReading[]): CurrentSite => {
   const visits = siteVisits(ordered);
   const latest = visits[visits.length - 1];
   if (!latest) {
+    // A pod that never recorded a usable fix is treated as never having moved (user decision
+    // 2026-09-27). Callers pass complete history here, so this is not a window without fixes.
+    const untimed = rows.length - ordered.length;
+    const excluded = untimed ? ` ${untimed} reading(s) with missing timestamps were excluded.` : "";
     return {
-      readings: [],
-      note: "Current site not assessed: no readings have usable best_lat and "
-      + "best_lon coordinates and a usable timestamp. Readings without an established site were excluded.",
+      readings: ordered,
+      note: "Location not recorded: no reading has usable best_lat and best_lon coordinates, "
+        + `so the pod is treated as never having moved.${excluded}`,
     };
   }
   const { startMs: start, endMs: end } = latest;

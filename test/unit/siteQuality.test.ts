@@ -105,10 +105,11 @@ describe("release surfaces", () => {
     expect(result.parameter_flags).toMatchObject({ ph: "Not assessed" });
   });
 
-  it("refuses an all-unpositioned window and does not invent a site's values", async () => {
+  it("treats a pod that never recorded GPS as never having moved", async () => {
     const sensor = sensorFor([row(1, null, 2), row(2, null, 3)]);
     const result = await sensor.run({ metric: "all", time_range: "last year", aggregation: "mean" });
-    expect(result.note).toContain("Current site not assessed");
-    expect((await buildReportInput(sensor, { timeRange: "last year" })).report).toBeUndefined();
+    expect(result.note).toContain("Location not recorded");
+    expect(result.note).not.toContain("Current site not assessed");
+    expect((await buildReportInput(sensor, { timeRange: "last year" })).report).toBeDefined();
   });
 });

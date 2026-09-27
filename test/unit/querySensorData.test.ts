@@ -911,11 +911,11 @@ describe("query_sensor_data — window honesty", () => {
 });
 
 
-it("withholds the original capture whose best coordinates are all missing", async () => {
+it("answers the original capture whose best coordinates are all missing as a pod that never moved", async () => {
   const { tool } = makeTool({ periodDay: load("algalita-period-1-day.json") });
   const result = await tool.run({
     metric: "ph", time_range: "last day", aggregation: "mean", device: "Algalita",
   });
-  expect(result.value).toBeNull();
-  expect(result.note).toContain("Current site not assessed");
+  expect(result.value).toEqual(expect.any(Number));
+  expect(result.note).toContain("Location not recorded");
 });
