@@ -82,7 +82,7 @@ Michael does these, and each is checked off in §8 before L5:
 5. Store the service key (at least 32 characters) as its own secret, readable by `cer-gilligan-runtime` and the default compute account.
 6. After cer-gilligan exists (§6.1), allow unauthenticated invocation on it (`allUsers` as Cloud Run Invoker), if the organization policy permits.
 7. Disable the `cer-ui` Cloud Build trigger `8ad67b17-5439-4507-9718-5b2b5eb4abe9`, which builds on every push to the infected `main`.
-8. Once the release commit writes `expireAt` on usage documents, add a Firestore TTL policy on `gilligan_usage.expireAt` in the dedicated database, never on `updatedAt` ([`GILLIGAN_FIRESTORE_FRAMEWORK.md`](GILLIGAN_FIRESTORE_FRAMEWORK.md)).
+8. The release commit writes `expireAt` on usage documents (90 days after the last update); add a Firestore TTL policy on `gilligan_usage.expireAt` in the dedicated database, never on `updatedAt` ([`GILLIGAN_FIRESTORE_FRAMEWORK.md`](GILLIGAN_FIRESTORE_FRAMEWORK.md)).
 
 ### 2.2 What differs from the mirror run
 
@@ -150,13 +150,13 @@ curl -s localhost:8011/health
 ```
 
 Then check what Cloud Build would upload.
-cer-demo has no `.gcloudignore`, and without one `gcloud` skips everything `.gitignore` lists, which includes `data/`:
+cer-demo's `.gcloudignore` is an allow-list: it uploads the Dockerfile, the package files, `tsconfig.json`, `src/`, `release/artifacts.sha256` and the two data files, and nothing else, so `.env` and credentials never leave the machine:
 
 ```bash
-gcloud meta list-files-for-upload . | grep -E '^data/'
+gcloud meta list-files-for-upload . | grep -v '^src/'
 ```
 
-Both data files must be listed; if they are not, the release commit needs a `.gcloudignore` before this step can run.
+The list must show exactly `.dockerignore`, `.gcloudignore`, `Dockerfile`, `data/corpus/corpus.json`, `data/embeddings/cache.json`, `package-lock.json`, `package.json`, `release/artifacts.sha256` and `tsconfig.json`; stop if either data file is missing or anything else appears.
 
 ```bash
 gcloud builds submit --project=conductive-fold-343604 --tag=gcr.io/conductive-fold-343604/cer-gilligan:<commit> .

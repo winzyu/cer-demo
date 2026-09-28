@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { QuotaService, quotaKeyFor, quotaService } from "../quota";
 
 /**
@@ -24,11 +24,20 @@ export class UsageController {
     this.quota = quota;
   }
 
-  getUsage = (req: Request, res: Response): void => {
-    const status = this.quota.status(quotaKeyFor(req));
+  getUsage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    let status;
+    try {
+      status = await this.quota.status(quotaKeyFor(req));
+    } catch (error) {
+      next(error);
+      return;
+    }
 
     res.status(200).json({
       enabled: status.enabled,
+      // Any dimension within `QUERY_QUOTA_WARN_AT` of its ceiling (release plan Q7); each
+      // dimension also carries its own `nearLimit` so the page can say which.
+      nearLimit: status.nearLimit,
       // Named for what a user counts, not for what the store counts: "questions" is the word the
       // dashboard shows. The wire name is decoupled from `QuotaDimension` deliberately, so
       // renaming either side does not silently reshape the other.

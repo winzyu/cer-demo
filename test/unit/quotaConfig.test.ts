@@ -7,6 +7,11 @@ const QUOTA_VARS = [
   "QUERY_QUOTA_REPORTS",
   "QUERY_QUOTA_WINDOW",
   "QUERY_QUOTA_SCOPE",
+  "QUERY_QUOTA_STORE",
+  "QUERY_QUOTA_WARN_AT",
+  "CER_RAG_SERVICE_KEY",
+  "LLM_MAX_CONCURRENT",
+  "NODE_ENV",
 ];
 
 /**
@@ -27,8 +32,18 @@ const expectLoadFailure = (env: Record<string, string>, pattern: RegExp): void =
   expect(() => loadConfigWith(env)).toThrow(pattern);
 };
 
+// Restored rather than deleted: `NODE_ENV` is Jest's own `test`, and other suites read it.
+const ORIGINAL_ENV = Object.fromEntries(QUOTA_VARS.map((name) => [name, process.env[name]]));
+
 afterAll(() => {
-  QUOTA_VARS.forEach((name) => { delete process.env[name]; });
+  QUOTA_VARS.forEach((name) => {
+    const original = ORIGINAL_ENV[name];
+    if (original === undefined) {
+      delete process.env[name];
+    } else {
+      process.env[name] = original;
+    }
+  });
   jest.resetModules();
 });
 
@@ -167,5 +182,49 @@ describe("the upstream policy is expressible", () => {
     expect(message).toContain("QUERY_QUOTA_REQUESTS");
     expect(message).toContain("QUERY_QUOTA_WINDOW");
     expect(message).toContain("QUERY_QUOTA_SCOPE");
+  });
+});
+
+describe("release settings (release plan S2-S4)", () => {
+  const KEY = "k".repeat(32);
+
+  it("defaults to the in-memory store, a 20% warning, 8 model calls and no service key", () => {
+    const config = loadConfigWith({});
+    expect(config.quota.store).toBe("memory");
+    expect(config.quota.warnAt).toBe(0.2);
+    expect(config.fireworks.maxConcurrent).toBe(8);
+    expect(config.fireworks.queueTimeoutMs).toBe(20_000);
+    expect(config.serviceAuth.key).toBeUndefined();
+  });
+
+  it("accepts the release quota: 20 questions, 5 reports, 1,000,000 tokens a UTC day in Firestore", () => {
+    const config = loadConfigWith({
+      QUERY_QUOTA: "true",
+      QUERY_QUOTA_REQUESTS: "20",
+      QUERY_QUOTA_REPORTS: "5",
+      QUERY_QUOTA_TOKENS: "1000000",
+      QUERY_QUOTA_WINDOW: "1d",
+      QUERY_QUOTA_STORE: "firestore",
+      CER_RAG_SERVICE_KEY: KEY,
+    });
+    expect(config.quota).toMatchObject({
+      enabled: true, requests: 20, reports: 5, tokens: 1_000_000, windowMs: 86_400_000, store: "firestore",
+    });
+    expect(config.serviceAuth.key).toBe(KEY);
+  });
+
+  it("refuses the Firestore store with a window other than one day", () => {
+    expectLoadFailure({ QUERY_QUOTA_STORE: "firestore", QUERY_QUOTA_WINDOW: "7d" }, /QUERY_QUOTA_WINDOW=1d/);
+  });
+
+  it("refuses a short service key, a warning fraction outside 0-1, and no model-call slots", () => {
+    expectLoadFailure({ CER_RAG_SERVICE_KEY: "short" }, /at least 32 characters/);
+    expectLoadFailure({ QUERY_QUOTA_WARN_AT: "1.5" }, /QUERY_QUOTA_WARN_AT/);
+    expectLoadFailure({ LLM_MAX_CONCURRENT: "0" }, /LLM_MAX_CONCURRENT/);
+  });
+
+  it("refuses to boot in production without the service key", () => {
+    expectLoadFailure({ NODE_ENV: "production" }, /CER_RAG_SERVICE_KEY must be set in production/);
+    expect(loadConfigWith({ NODE_ENV: "production", CER_RAG_SERVICE_KEY: KEY }).isProduction).toBe(true);
   });
 });

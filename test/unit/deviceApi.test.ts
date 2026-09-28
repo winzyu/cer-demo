@@ -480,6 +480,9 @@ describe("error taxonomy", () => {
       "quota_requests_exceeded",
       "quota_tokens_exceeded",
       "quota_reports_exceeded",
+      "model_busy",
+      "service_key_invalid",
+      "service_identity_required",
     ]);
   });
 
