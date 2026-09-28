@@ -1630,6 +1630,20 @@ The gate's answered turn (`refusal-turbidity-sensor-hardware` t2) now gives the 
 The launch capture passed 8 of 8 on the same prompt apart from the caveat, so GLM's refusal wording still varies between runs.
 Decision (user, 2026-09-27): drop the prompt caveat (reverted in `f694766`) and meet D3 with a standing caveat under every answer that cites documents, shown by the dashboard; the launch capture stays the cited run.
 
+### E7 launch corpus update: decision rule fixed before capture - 2026-09-27
+
+Release task E7 adds `keyestudio-ks0414-turbidity-sensor.md` (2 chunks) and `cer-water-quality-guidance-v2-excerpt.md` (v2 §5-7 and §11 without §7.2 rule 1; 9 chunks) to the corpus: 16 documents, 457 chunks, the 446 existing chunk ids unchanged and the direct-feed slice unchanged at 26,096 characters.
+Both documents launch by user decision, so the rerun decides whether the v2 sections need narrowing, not whether the documents ship.
+Recorded before any capture on the new corpus (user-approved plan, 2026-09-27):
+
+- Setup: the E4 launch settings (`local-vector` k=20, `glm-5p3-flash` at reasoning low, `LLM_MAX_TOKENS=16384`, both rewrites, `CATALOGUE_PROMPT=true`, `CORPUS_SOURCE=artifact`, tools off), the same 45 wave 1 fixtures, rubric v2, and the `deepseek-v4p1-flash` judge at `--final`, correctness only.
+- Measure: overall correctness as the mean of two captures, each judged twice, against E4's mean of 1.155 (1.18 / 1.13); judge pass-to-pass spread is about 0.05 and capture-to-capture about 0.04.
+- **Pass:** mean at least 1.10, cross-document mean at least 0.78, citation validity at least 99%, at most one unexplained figure per capture, and no must-refuse turn answered in either capture (paraphrased refusal wording is known noise).
+- **Borderline:** mean from 1.05 up to 1.10, or one gate missed in one capture: a third capture, and the same rule on all three.
+- **Fail:** mean under 1.05, or a gate failed in both captures: stop and report the turns that fell and whether they retrieved the new chunks; the remedy offered is narrowing the v2 sections.
+- Attribution: code changed between E4 (`dcb3ce3`) and this branch (`LlmService`, the orchestrator, the model-call gate, tools-on prompt text), so a control capture on the old corpus at this branch (run `e7-control-lv-k20-glm-2026-09-27`) separates the corpus effect from code drift. The rule above is applied against E4 regardless.
+- New-content fixtures (`eval/fixtures-e7/`, drafted for E7 and not calibrated like wave 1) are captured and judged separately, read through `EVAL_FIXTURE_DIR`, and do not enter the rule.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
