@@ -42,6 +42,21 @@ export const DOC_META: Record<string, DocMeta> = {
   "Industrial-DO-probe.pdf": {
     title: "Atlas Scientific Industrial Dissolved Oxygen Probe — Datasheet",
   },
+  // The turbidity sensor every pod carries (supervisor, 2026-09-24), ingested for launch by user
+  // decision on 2026-09-27 (plan E7). Not in DIRECT_FEED_SLICE: the slice stays the fixed baseline.
+  "keyestudio-ks0414-turbidity-sensor.md": {
+    title: "Keyestudio KS0414 Turbidity Sensor V1.0 - Vendor Documentation",
+    sourceUrl: "https://wiki.keyestudio.com/KS0414_Keyestudio_Turbidity_Sensor_V1.0",
+  },
+
+  // === CER guidance. Sections 5-7 and 11 of the operator's source-of-truth v2, launched by user
+  // decision on 2026-09-27 (plan E7); `migration/V2_CORPUS_DECISION.md` records the earlier case
+  // against. The title names it as CER's own synthesis so a citation to it reads differently from
+  // a vendor, USGS or EPA source. The v2 ranges (§2-3) stay out under the supervisor's range veto
+  // and the open stakeholder item 17. ===
+  "cer-water-quality-guidance-v2-excerpt.md": {
+    title: "Clean Earth Rovers Water Quality Guidance v2.0 (CER internal synthesis, 2026-09-16) - Excerpt",
+  },
 
   // === Tier 2 — USGS National Field Manual, Chapter A6 (field measurements). The authoritative
   // method reference: one chapter per parameter, each covering calibration, interferences,

@@ -68,11 +68,11 @@ Vendor material for the probes this deployment actually carries, so it outranks 
 reference. The probe datasheets are **ORP's only vendor-level coverage**, and — since the
 source-of-truth document's removal — the corpus's only Tier 1 material of any kind.
 
-### Tier 1 — turbidity vendor documentation (added 2026-09-17, not yet ingested)
+### Turbidity vendor documentation (added 2026-09-17; Keyestudio ingested 2026-09-27)
 
 | file | source | in slice |
 |---|---|---|
-| `_excluded/keyestudio-ks0414-turbidity-sensor.md` | [Keyestudio wiki, KS0414 V1.0](https://wiki.keyestudio.com/KS0414_Keyestudio_Turbidity_Sensor_V1.0) | no |
+| `keyestudio-ks0414-turbidity-sensor.md` | [Keyestudio wiki, KS0414 V1.0](https://wiki.keyestudio.com/KS0414_Keyestudio_Turbidity_Sensor_V1.0) | no |
 | `_excluded/turner-turbidity-plus-sensor.md` | [Turner Designs product page](https://www.turnerdesigns.com/turbidity-plus-submersible-sensor), [datasheet](https://www.turnerdesigns.com/_files/ugd/9a5dca_6d195f5834d74ab3b52623350504c0ac.pdf), [User's Manual 998-2187 Rev. J](https://docs.turnerdesigns.com/t2/doc/manuals/998-2187.pdf) | no |
 
 Transcriptions of public vendor documentation for the two turbidity sensors the operator named
@@ -80,14 +80,11 @@ Transcriptions of public vendor documentation for the two turbidity sensors the 
 PDF covering the corpus's actual gap: the optical basis of the reading. Each file carries the
 vendor's own text plus an explicit list of what that vendor never states.
 
-**They sit in `_excluded/`, outside the ingest path, and are not in `DOC_META`,** so neither file is
-retrievable. Ingesting them adds chunks the retrieval labels do not cover and changes what every
-arm retrieves (`../docs/EVAL_REBUILD.md` §2b, chunk-id stability), which is a decision for after
-the Phase 1d fixture freeze;
-the `DOC_META` entries to add then are at tag `old-machine-recovery-2026-09-19`
-(`src/ingestion/corpus.ts`). The registry has no sensor-model field either, so which pod carries
-which sensor is unknown; injecting an unattributed datasheet into every answer would assert hardware
-this deployment cannot confirm.
+**Keyestudio is ingested for launch; Turner stays in `_excluded/`.** The supervisor confirmed on
+2026-09-24 that every pod carries the Keyestudio sensor, and the user decided on 2026-09-27 that its
+document launches with the pods (plan E7); it has a `DOC_META` entry and sits outside the direct-feed
+slice. No pod carries the Turner sensor, so its specifications would only compete with the real
+sensor's on turbidity questions.
 
 What they do and do not settle: **neither vendor states a numeric wavelength or a detection angle.**
 Turner states "Light Source: Light Emitting Diode", "Excitation Wavelength: IR", "Detector:
@@ -181,6 +178,16 @@ a refusal the service must make, and [`../docs/SPECS.md`](../docs/SPECS.md) §14
 `firestore-vector` doing exactly that with the volunteer manual's fecal-bacteria chapter.
 **Re-check the refusal fixtures after any sweep on this corpus.**
 
+### CER guidance (added 2026-09-27)
+
+| file | source | in slice |
+|---|---|---|
+| `cer-water-quality-guidance-v2-excerpt.md` | `water-quality-source-of-truth-v2.pdf` (version 2.0, 2026-09-16), kept untracked at the repository root and never in this directory | no |
+
+Sections 5-7 and 11 of the operator's source-of-truth v2, in its own words with tables written one row
+per line and §7.2 rule 1 left out (`../docs/migration/V2_CORPUS_DECISION.md`). Launched by user decision
+on 2026-09-27 (plan E7). The ranges in §2-3 stay out under the supervisor's range veto.
+
 ## OCR
 
 `epa-sop-field-instrument-calibration-2010.pdf` is **scanned images — 18 chars/page extracted**,
@@ -261,8 +268,8 @@ Nothing in `_excluded/` is parsed by `npm run ingest`.
 **These files are large and mostly untracked.** `.gitignore` has a `documents/*` rule. Tracked
 anyway, by exception: this README, and the four Tier 1 PDFs that make up the ◆G9 direct-feed slice
 (above). The two USGS chapters that predate the rule are also tracked, renamed in place on
-2026-08-21, as are three files under `_excluded/`: the volunteer methods manual and the two
-turbidity vendor transcriptions. Everything else — the other seven USGS chapters, both EPA documents, both situational
+2026-08-21, as are the Keyestudio transcription and the v2 excerpt (2026-09-27), and two files
+under `_excluded/`: the volunteer methods manual and the Turner transcription. Everything else — the other seven USGS chapters, both EPA documents, both situational
 documents, and the removed source-of-truth PDF (now under `_excluded/`) — is untracked and absent
 from a fresh clone. `git ls-files documents/` is the answer; check it before assuming a file is or
 is not in the repo.
@@ -278,8 +285,9 @@ npm run seed:firestore         # re-upload corpus_documents
 npm run seed:firestore-chunks  # re-embed for firestore-vector (costs embedding tokens)
 ```
 
-`hybrid-slice-vector` is the production arm (D7 in `../docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`),
-so `embed:cache` is the step a corpus change cannot skip.
+`local-vector` is the launch arm (`../docs/migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` §4.1), so
+`embed:cache` is the step a corpus change cannot skip; the release image then needs new checksums in
+`../release/artifacts.sha256`, and the two Firestore seeds are not on the launch path.
 
 **Check the `direct-feed slice:` line ingest prints.** `0 chars` means the Tier 1 files are missing;
 ingest will not tell you twice and will not fail.
