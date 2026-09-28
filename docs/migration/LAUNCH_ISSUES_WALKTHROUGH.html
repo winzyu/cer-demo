@@ -1,0 +1,728 @@
+<title>Gilligan Launch Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --ground: #f4f6f5; --surface: #ffffff; --ink: #1b2422; --muted: #56635f; --rule: #d3dbd8;
+  --accent: #0f6e6a; --accent-soft: #e0efed;
+  --fail: #b42318; --fail-soft: #fbe9e7; --pass: #1f7a3a; --pass-soft: #e5f3e8;
+  --hold: #9a5a06; --hold-soft: #fbf0dc; --code-bg: #eef2f0;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #111615; --surface: #182020; --ink: #e3eae7; --muted: #9aa8a3; --rule: #2d3a37;
+    --accent: #56b8b0; --accent-soft: #173331; --fail: #f08b7f; --fail-soft: #3a1c19;
+    --pass: #7fcf94; --pass-soft: #17301f; --hold: #e6b35f; --hold-soft: #35280f; --code-bg: #1f2927;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #111615; --surface: #182020; --ink: #e3eae7; --muted: #9aa8a3; --rule: #2d3a37;
+  --accent: #56b8b0; --accent-soft: #173331; --fail: #f08b7f; --fail-soft: #3a1c19;
+  --pass: #7fcf94; --pass-soft: #17301f; --hold: #e6b35f; --hold-soft: #35280f; --code-bg: #1f2927;
+}
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font: 15px/1.6 var(--body); margin: 0; padding-inline: 16px; padding-block: 24px 64px; }
+.wrap { max-width: 1140px; margin: 0 auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; }
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); align-self: start; max-height: calc(100vh - 32px); overflow-y: auto; font-size: 13px; }
+nav.toc h2 { font: 700 11px/1.2 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 18px 0 6px; }
+nav.toc a { display: block; color: var(--ink); text-decoration: none; padding: 2px 0; }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--accent); }
+nav.toc .id { font-family: var(--mono); color: var(--muted); display: inline-block; min-width: 3.4em; }
+main { min-width: 0; display: grid; gap: 28px; }
+h1 { font: 700 34px/1.15 var(--display); margin: 0; text-wrap: balance; }
+h2.part { font: 700 24px/1.2 var(--display); margin: 20px 0 0; padding-top: 18px; border-top: 3px solid var(--ink); text-wrap: balance; }
+h3.cat { font: 600 13px/1.3 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 8px 0 -8px; }
+p { margin: 0; max-width: 70ch; }
+.lede { color: var(--muted); max-width: 70ch; }
+code, .mono { font-family: var(--mono); font-size: .88em; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+pre { background: var(--code-bg); padding: 10px 12px; border-radius: 6px; overflow-x: auto; margin: 0; font: 13px/1.5 var(--mono); }
+.tablebox { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--rule); }
+th { font: 600 12px/1.3 var(--display); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 16px 18px; display: grid; gap: 10px; }
+.rules li { margin-bottom: 4px; }
+ul, ol { margin: 0; padding-left: 1.3em; }
+article.item { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 18px 20px; display: grid; gap: 14px; scroll-margin-top: 16px; }
+.item header { display: grid; gap: 6px; }
+.item h4 { font: 700 19px/1.3 var(--display); margin: 0; text-wrap: balance; }
+.item h4 .id { font-family: var(--mono); font-weight: 500; color: var(--accent); margin-right: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 12px/1 var(--body); padding: 4px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--muted); white-space: nowrap; }
+.chip.demo { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.chip.high { background: var(--fail-soft); color: var(--fail); border-color: transparent; }
+.chip.med { background: var(--hold-soft); color: var(--hold); border-color: transparent; }
+.chip.ok { background: var(--pass-soft); color: var(--pass); border-color: transparent; }
+dl.facts { display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: 14px; }
+dl.facts dt { color: var(--muted); font-weight: 500; }
+dl.facts dd { margin: 0; }
+.label { font: 600 12px/1.3 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.state { border-radius: 6px; padding: 10px 12px; border: 1px solid var(--rule); font-size: 14px; }
+.state.bad { background: var(--fail-soft); border-color: transparent; }
+.state.good { background: var(--pass-soft); border-color: transparent; }
+.state.wait { background: var(--hold-soft); border-color: transparent; }
+.state .label { color: inherit; opacity: .8; }
+.note { font-size: 14px; color: var(--muted); }
+a { color: var(--accent); }
+@media (max-width: 820px) {
+  .wrap { grid-template-columns: 1fr; gap: 20px; }
+  nav.toc { position: static; max-height: none; }
+  dl.facts { grid-template-columns: 1fr; gap: 2px; }
+  dl.facts dd { margin-bottom: 6px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <h2>Before you start</h2>
+  <a href="#stacks">Stacks and addresses</a>
+  <a href="#personas">Logins</a>
+  <a href="#rules">Ground rules</a>
+  <a href="#helpers">Browser API helper</a>
+  <h2>Part 1: Active issues</h2>
+  <a href="#A1"><span class="id">A1</span>CSV export</a>
+  <a href="#A2"><span class="id">A2</span>User lookups</a>
+  <a href="#A3"><span class="id">A3</span>Period query</a>
+  <a href="#A5"><span class="id">A5</span>Invited login</a>
+  <a href="#A6"><span class="id">A6</span>No-organization user</a>
+  <a href="#A4"><span class="id">A4</span>CWA Old merge</a>
+  <a href="#B2"><span class="id">B2</span>Salt-water history</a>
+  <a href="#B5"><span class="id">B5</span>Retired pod report</a>
+  <a href="#B1"><span class="id">B1</span>Moved pod period</a>
+  <a href="#B4"><span class="id">B4</span>No-GPS pod</a>
+  <a href="#B3"><span class="id">B3</span>Broken-pod referral</a>
+  <a href="#B7"><span class="id">B7</span>Document caveat</a>
+  <a href="#B6C1"><span class="id">B6</span>Silent pods</a>
+  <a href="#B6D1"><span class="id">B6</span>pH 3-12 band</a>
+  <a href="#B6R"><span class="id">B6</span>Report age, thin data</a>
+  <a href="#A7"><span class="id">A7</span>Build trigger</a>
+  <a href="#A8"><span class="id">A8</span>Low-severity server</a>
+  <h2>Part 2: Basic user testing</h2>
+  <a href="#U1"><span class="id">U1</span>Log in and out</a>
+  <a href="#U2"><span class="id">U2</span>Own pods only</a>
+  <a href="#U3"><span class="id">U3</span>Pod pages load</a>
+  <a href="#U4"><span class="id">U4</span>Export own pod</a>
+  <a href="#U5"><span class="id">U5</span>Document question</a>
+  <a href="#U6"><span class="id">U6</span>Pod data question</a>
+  <a href="#U7"><span class="id">U7</span>Report download</a>
+  <a href="#U8"><span class="id">U8</span>Chat history</a>
+  <a href="#U9"><span class="id">U9</span>Allowance line</a>
+  <a href="#U10"><span class="id">U10</span>Phone layout</a>
+</nav>
+
+<main>
+<header style="display:grid;gap:10px">
+  <h1>Gilligan Launch Walkthrough</h1>
+  <p class="lede">Step-by-step instructions for every launch issue and the everyday user flows, on fake data only. Each card says where to go, what to do, what you should see on CER's current code and on our release, and why the current behaviour is wrong. Results are recorded in <code>LAUNCH_ISSUES_CHECKLIST.md</code>, not here. Written 2026-09-27; nothing on this page has been run yet unless the checklist says so.</p>
+</header>
+
+<section id="stacks" class="panel">
+  <div class="label">Stacks and addresses</div>
+  <div class="tablebox"><table>
+    <thead><tr><th>Stack</th><th>Open in the browser</th><th>Server</th><th>Code</th><th>Data</th><th>Used for</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Current</strong> (CER's code)</td><td><code>http://localhost:3100</code></td><td><code>:5201</code></td><td>server <code>693fc96</code>, dashboard <code>5dff5fd</code></td><td>emulator <code>:8180</code>, fake seed</td><td>the "broken" half of each A item</td></tr>
+      <tr><td><strong>Release</strong> (our fixes)</td><td><code>http://localhost:3300</code></td><td><code>:5301</code></td><td>server <code>122136d</code>, dashboard <code>9e18555</code></td><td>the same emulator <code>:8180</code></td><td>the "fixed" half of each A item</td></tr>
+      <tr><td><strong>Mirror</strong> (Gilligan)</td><td><code>http://localhost:3000</code></td><td><code>:5101</code>, Gilligan <code>:8010</code></td><td>owned by the mirror end-to-end chat</td><td>emulator <code>:8080</code>, with fixtures</td><td>every B item; costs model spend</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Current and Release have no Gilligan: their servers are not connected to it, so every B item runs on the Mirror stack. The Mirror's Gilligan (:8010) is not running today and belongs to another chat; B items wait for its go-ahead. The 8180 emulator has no fixtures (moved pod, no-GPS pod, missing-organization predecessors), so fixture items also need the Mirror.</p>
+</section>
+
+<section id="personas" class="panel">
+  <div class="label">Logins</div>
+  <p>Every login uses the password <code>mirror-dev-password</code>. All accounts are fake and exist only in the emulators.</p>
+  <div class="tablebox"><table>
+    <thead><tr><th>Who</th><th>Email</th><th>Organization</th><th>Should see</th></tr></thead>
+    <tbody>
+      <tr><td>Superadmin</td><td><code>user-super-1@mirror.example.invalid</code></td><td>CER</td><td>every current pod</td></tr>
+      <tr><td>Harbor admin</td><td><code>user-harbor-admin-1@mirror.example.invalid</code></td><td>Harbor City Water</td><td>Harbor Pier Buoy only</td></tr>
+      <tr><td>Harbor customer</td><td><code>user-harbor-cust-1@mirror.example.invalid</code></td><td>Harbor City Water</td><td>Harbor Pier Buoy only</td></tr>
+      <tr><td>Invited Harbor customer</td><td><code>user-harbor-cust-3@mirror.example.invalid</code></td><td>Harbor City Water</td><td>cannot log in (no password set)</td></tr>
+      <tr><td>Lakeside customer</td><td><code>user-lake-cust-1@mirror.example.invalid</code></td><td>Lakeside Alliance</td><td>Lakeside Buoy 2026 (plus Lakeside Mobile Buoy on the Mirror)</td></tr>
+      <tr><td>River Watch customer</td><td><code>user-river-cust-1@mirror.example.invalid</code></td><td>River Watch Coalition</td><td>River Watch Float (Mirror only)</td></tr>
+      <tr><td>Orphan</td><td><code>user-orphan-1@mirror.example.invalid</code></td><td>none (empty)</td><td>nothing; today sees every pod</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Pod labels: Harbor Pier Buoy <code>dev:100000000000001</code>, Lakeside Buoy 2026 <code>dev:100000000000003</code>, Demo Public Dock Buoy <code>dev:100000000000006</code>. Current and Release both use <code>localhost</code>, so open one of them in a private window, or they share one saved login.</p>
+</section>
+
+<section id="rules" class="panel">
+  <div class="label">Ground rules</div>
+  <ul class="rules">
+    <li>Never paste a login token, an Authorization header or a login response into notes or chat.</li>
+    <li>Before every Gilligan question, click <strong>New chat</strong>: earlier turns change the answer.</li>
+    <li>Gilligan questions cost about $0.02 each and reports about $0.05, from the $10 mirror budget. Each persona gets 20 questions and 5 reports per UTC day.</li>
+    <li>Stop and report if any page or request tries to reach a <code>run.app</code> or other outside address.</li>
+    <li>Capture evidence as you go: the status code, the row or pod count, the exact answer text, and the PDF file name.</li>
+  </ul>
+</section>
+
+<section id="helpers" class="panel">
+  <div class="label">Browser API helper</div>
+  <p>Some checks call the server directly as the logged-in user. Log in on the dashboard, open Developer Tools, go to Console, and paste this once. It prints the status and a short summary, never the token. Set <code>BASE</code> to the server behind the dashboard you are on: <code>5201</code> for Current, <code>5301</code> for Release.</p>
+<pre>const BASE = 'http://localhost:5201';   // 5301 on the Release dashboard
+async function api(method, path, body) {
+  if (!path.startsWith('/api/v1/')) throw new Error('Local API paths only');
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Log in first');
+  const r = await fetch(BASE + path, { method, headers: { Authorization: 'Bearer ' + token,
+    'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+  const text = await r.text();
+  console.log(r.status, text.includes('\n') ? (text.trim().split('\n').length - 1) + ' data rows' : text.slice(0, 200));
+}
+const week = { startDate: new Date(Date.now() - 7 * 864e5).toISOString(), endDate: new Date().toISOString() };</pre>
+  <p class="note">If <code>localStorage.getItem('token')</code> comes back empty, look under Application, Local Storage for the key the dashboard uses and tell me its name; do not paste its value.</p>
+</section>
+
+<h2 class="part" id="part1">Part 1: Active issues</h2>
+<p class="lede">Known defects. For A items, show the Current stack first (the defect in what CER runs), then the Release stack (our fix). Items with no fix yet show the defect only, and Michael decides.</p>
+
+<h3 class="cat">Security and access control</h3>
+
+<article class="item" id="A1">
+  <header>
+    <h4><span class="id">A1</span>Any user can export any pod's readings as CSV</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip high">High</span><span class="chip">Finding 11</span><span class="chip">Guide D6</span><span class="chip ok">$0</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stacks</dt><dd>Current (3100), then Release (3300)</dd>
+    <dt>Log in as</dt><dd>Harbor admin; then Superadmin for the control</dd>
+    <dt>Page</dt><dd><code>/home</code>, then the browser Console with the helper loaded</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol>
+      <li>On <code>http://localhost:3100/login</code>, log in as Harbor admin.</li>
+      <li>Open <strong>Export CSV</strong> from the menu and note that the pod list offers only Harbor Pier Buoy. The page cannot request another pod, which is why this needs the Console.</li>
+      <li>In the Console, load the helper with <code>BASE = 'http://localhost:5201'</code>, then run <code>api('POST', '/api/v1/water/export/csv/dev:100000000000001', week)</code> for Harbor's own pod.</li>
+      <li>Run the same for Lakeside's pod, <code>dev:100000000000003</code>, and Demo Public Dock's, <code>dev:100000000000006</code>.</li>
+      <li>Repeat steps 1-4 on <code>http://localhost:3300</code> with <code>BASE = 'http://localhost:5301'</code>.</li>
+      <li>Control: log in as Superadmin and export <code>dev:100000000000003</code> on either stack.</li>
+    </ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Current: expected defect</div>200 with about 168 data rows for Harbor's own pod, and also 200 with rows for Lakeside's and Demo's pods.</div>
+    <div class="state wait"><div class="label">Release: no fix yet</div>The same as Current. Plan Q11 is not written, so the release still leaks.</div>
+    <div class="state good"><div class="label">Correct behaviour</div>Harbor's own pod and the superadmin get 200. Another organization's pod gets a refusal like the period query's 400 <code>Device not found</code>, with no rows.</div>
+  </div>
+  <dl class="facts">
+    <dt>Why it's wrong</dt><dd>Any customer can download another organization's water data. Pod labels are not secret; they appear in URLs and reports.</dd>
+    <dt>Cause</dt><dd><code>WaterAnalyticsController.exportCsv</code> never passes the caller, and <code>findByLabel(device, null)</code> applies no organization filter.</dd>
+    <dt>Who, production</dt><dd>Every logged-in customer. Likely live in production; I will compare the same function on CER's <code>main</code> before the demo.</dd>
+    <dt>Fix</dt><dd>Plan Q11, server branch not written. Michael decides whether it goes into the launch.</dd>
+    <dt>Evidence</dt><dd>The Console status and row count for each of the three pods, on both stacks.</dd>
+  </dl>
+</article>
+
+<article class="item" id="A2">
+  <header>
+    <h4><span class="id">A2</span>User lookups answer without a login</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip high">High</span><span class="chip">Security findings §8</span><span class="chip">Guide K16</span><span class="chip ok">$0</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stacks</dt><dd>Current (server 5201), then Release (server 5301)</dd>
+    <dt>Log in as</dt><dd>Nobody for steps 1-3; Harbor admin and Superadmin for step 4</dd>
+    <dt>Where</dt><dd>A terminal (no dashboard page calls these routes)</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol>
+      <li>Status only: <code>curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5201/api/v1/users/all</code></li>
+      <li>Show what leaks, first 300 characters: <code>curl -s http://localhost:5201/api/v1/users/all | head -c 300</code></li>
+      <li>Another organization's user by id: <code>curl -s http://localhost:5201/api/v1/users/user-lake-cust-0001 | head -c 300</code>, then <code>curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5201/api/v1/test-db</code></li>
+      <li>Repeat 1-3 against <code>http://localhost:5301</code>. Then, logged in on 3300 as Harbor admin, run <code>api('GET', '/api/v1/users/user-lake-cust-0001')</code> and <code>api('GET', '/api/v1/users/all')</code>; as Superadmin, run <code>api('GET', '/api/v1/users/all')</code>.</li>
+    </ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Current: expected defect</div>200 on all three, with no token. <code>/users/all</code> returns every user's name, email, role, organization and pods; <code>/test-db</code> reports the project and database.</div>
+    <div class="state good"><div class="label">Release: expected fix</div><code>/users/all</code> 401 without a token and refused for a non-superadmin; <code>/users/:id</code> 404 for another organization's user; <code>/test-db</code> 404 (removed). Superadmin still gets the list.</div>
+  </div>
+  <dl class="facts">
+    <dt>Why it's wrong</dt><dd>Anyone on the internet can pull the customer contact list.</dd>
+    <dt>Who, production</dt><dd>Every customer's details. Found by reading the code; never tried against production, and we keep it that way.</dd>
+    <dt>Fix</dt><dd>Server <code>fix/user-route-auth</code> <code>f9607bd</code>, pushed; in release <code>122136d</code>. Not in the mirror server <code>1ef21a7</code>.</dd>
+    <dt>Evidence</dt><dd>The status codes, and the first 300 characters of each leak (fake data, safe to keep).</dd>
+  </dl>
+</article>
+
+<article class="item" id="A3">
+  <header>
+    <h4><span class="id">A3</span>The period query trusts the caller's pod label</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip high">High</span><span class="chip">Plan P3</span><span class="chip">Guide P4b, D2b</span><span class="chip ok">$0</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stacks</dt><dd>Current (3100), then Release (3300)</dd>
+    <dt>Log in as</dt><dd>Harbor admin; Superadmin for the control</dd>
+    <dt>Page</dt><dd>Any logged-in page, Console with the helper loaded</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol>
+      <li>On 3100 as Harbor admin: <code>api('GET', '/api/v1/water/period/7/day?device=dev:100000000000003')</code></li>
+      <li>Also <code>api('GET', '/api/v1/water/last/dev:100000000000003')</code>.</li>
+      <li>Repeat both on 3300 (<code>BASE</code> 5301).</li>
+      <li>Control: Superadmin runs step 1 on either stack.</li>
+    </ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Current: expected defect</div>200 with Lakeside's readings, served to Harbor.</div>
+    <div class="state good"><div class="label">Release: expected fix</div>400 <code>Device not found</code> for Harbor; Superadmin still gets 200.</div>
+  </div>
+  <dl class="facts">
+    <dt>Why it's wrong</dt><dd>The same leak as A1, through the path the dashboard's charts use.</dd>
+    <dt>Fix</dt><dd>Server <code>task/gilligan-release-p3-p4</code> (<code>78e2dfb</code>, <code>ccc759e</code>); in release <code>122136d</code>; in the mirror server as cherry-picks.</dd>
+    <dt>Also on the Mirror</dt><dd>Gilligan refuses by itself: a relay call naming <code>dev:100000000000006</code> answers that it cannot find the pod (costs one question).</dd>
+  </dl>
+</article>
+
+<article class="item" id="A5">
+  <header>
+    <h4><span class="id">A5</span>An invited user with no password gets a server error at login</h4>
+    <div class="chips"><span class="chip demo">Michael demo if time allows</span><span class="chip med">Medium</span><span class="chip">Finding 1</span><span class="chip">Guide P2c, A3</span><span class="chip ok">$0</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stacks</dt><dd>Current (3100), then Release (3300)</dd>
+    <dt>Log in as</dt><dd>Invited Harbor customer, with any password</dd>
+    <dt>Page</dt><dd><code>/login</code>, with Developer Tools open on Network</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol>
+      <li>On <code>http://localhost:3100/login</code>, enter <code>user-harbor-cust-3@mirror.example.invalid</code> and any password, and submit.</li>
+      <li>Note the message on the page, and the status of the <code>users/login</code> request in Network.</li>
+      <li>Repeat on <code>http://localhost:3300/login</code>.</li>
+    </ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Current: expected defect</div>500 from the server, and the form shows no useful message.</div>
+    <div class="state good"><div class="label">Release: expected fix</div>401, and the page shows "Login failed: Finish setting up your account before logging in".</div>
+  </div>
+  <dl class="facts">
+    <dt>Why it's wrong</dt><dd>A real invited customer can't get in and sees nothing explaining why.</dd>
+    <dt>Fix</dt><dd>Server <code>fix/invited-login</code> <code>f7dec3c</code>, committed, not pushed; in release <code>122136d</code>.</dd>
+  </dl>
+</article>
+
+<article class="item" id="A6">
+  <header>
+    <h4><span class="id">A6</span>A user with no organization sees every pod</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip med">Medium</span><span class="chip">Finding 4</span><span class="chip">Guide A1h, D4</span><span class="chip ok">$0 on the dashboard</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stacks</dt><dd>Current (3100), then Release (3300); the Gilligan half on the Mirror</dd>
+    <dt>Log in as</dt><dd>Orphan</dd>
+    <dt>Page</dt><dd><code>/home</code> (the pod list), then Export CSV's pod menu</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol>
+      <li>On 3100, log in as Orphan and count the pods on <code>/home</code>.</li>
+      <li>Open Export CSV and count the pods in its menu.</li>
+      <li>Repeat on 3300.</li>
+      <li>Mirror only, $0.02: open Gilligan, click New chat, ask "List my pods".</li>
+    </ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Current: expected defect</div>Every current pod is listed.</div>
+    <div class="state wait"><div class="label">Release: no fix yet</div>The same as Current.</div>
+    <div class="state good"><div class="label">Correct behaviour</div>No pods, and a message that the account has no organization.</div>
+  </div>
+  <dl class="facts">
+    <dt>Why it's wrong</dt><dd>It fails open: an empty organization means "no filter".</dd>
+    <dt>Who, production</dt><dd>No production user is in this state today (checked 2026-09-26); the first account created without an organization would see the whole fleet.</dd>
+    <dt>Fix</dt><dd>Not written. Michael decides.</dd>
+  </dl>
+</article>
+
+<h3 class="cat">Merged pod history</h3>
+
+<article class="item" id="A4">
+  <header>
+    <h4><span class="id">A4</span>CWA Old merge: a predecessor with a missing or empty organization</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip">Plan Q6</span><span class="chip">Guide K8, K10, M1, M2</span><span class="chip med">~$0.10</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stack</dt><dd>Mirror (fixtures <code>dev:100000000000018</code>, no organization field, and <code>dev:100000000000019</code>, empty organization)</dd>
+    <dt>Log in as</dt><dd>Lakeside customer; Harbor admin and Superadmin for the controls</dd>
+    <dt>Page</dt><dd><code>/gilligan</code>, Lakeside Buoy 2026 picked</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol>
+      <li>With Gilligan started with <code>PREDECESSOR_PERIOD_HANDOFF=true</code>: New chat, ask "Show me the last 30 days of history".</li>
+      <li>Free check in the Console: <code>api('GET', '/api/v1/water/period/60/day?device=dev:100000000000018')</code> as Lakeside customer, then as Harbor admin.</li>
+      <li>Restart Gilligan with <code>PREDECESSOR_PERIOD_HANDOFF=false</code> (the launch setting) and repeat step 1 in a new chat.</li>
+      <li>As Superadmin, repeat step 1 on Lakeside Buoy 2026.</li>
+    </ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Handoff true</div>The Spare Pods' history is merged into Lakeside Buoy 2026's. Lakeside gets 200 on the period call; Harbor gets 400 <code>Device not found</code>.</div>
+    <div class="state good"><div class="label">Handoff false (launch)</div>The Spare Pods' history is withheld, with a note saying so.</div>
+    <div class="state good"><div class="label">Always</div>A predecessor registered to another existing organization stays withheld. A superadmin gets merged history withheld (decision of 2026-09-27).</div>
+  </div>
+  <dl class="facts">
+    <dt>Why it matters</dt><dd>The supervisor decided CWA Old's history belongs to OWC 2026, but the launch setting withholds it; this confirms the note tells the customer so.</dd>
+    <dt>Fix</dt><dd>Server <code>task/gilligan-cwa-old</code> <code>510cf00</code> (mirror <code>3e7c3fb</code>; release <code>9751f8f</code>), cer-demo on <code>dev</code>.</dd>
+  </dl>
+</article>
+
+<article class="item" id="B2">
+  <header>
+    <h4><span class="id">B2</span>A fresh-water pod is judged against a salt-water predecessor</h4>
+    <div class="chips"><span class="chip demo">Michael demo for the rule</span><span class="chip high">Must</span><span class="chip">Finding 10</span><span class="chip">Guide M13</span><span class="chip med">~$0.07</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stack</dt><dd>Mirror</dd>
+    <dt>Log in as</dt><dd>Lakeside customer</dd>
+    <dt>Page</dt><dd><code>/gilligan</code>, Lakeside Buoy 2026 picked</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol>
+      <li>New chat, ask "Show me the last 60 days of history".</li>
+      <li>New chat, ask "Give me a water quality report for the last 60 days", then download the PDF.</li>
+      <li>In the answer and the PDF, find the conductivity range and the pod's status.</li>
+    </ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Before: expected defect</div>Conductivity 350 to 49,992 uS/cm flagged as an Exceedance, and the pod reads Action Required. The high values come from Lakeside Testbed, a salt-water predecessor.</div>
+    <div class="state good"><div class="label">After the fix</div>No fresh-water exceedance from the predecessor's salt-water conductivity. Recommended rule: withhold a predecessor whose registered water type differs, with a note. Check the fix branch's <code>SPECS.md</code> for the rule chosen.</div>
+  </div>
+  <dl class="facts">
+    <dt>Why it's wrong</dt><dd>A false alarm about a customer's water. One production merge chain has this shape.</dd>
+    <dt>Fix</dt><dd>Plan Q10, fix-round branch not created yet.</dd>
+  </dl>
+</article>
+
+<article class="item" id="B5">
+  <header>
+    <h4><span class="id">B5</span>A superadmin gets a report on a retired pod</h4>
+    <div class="chips"><span class="chip">Internal, record only</span><span class="chip">Finding 9</span><span class="chip">Guide K9</span><span class="chip med">~$0.07</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stack</dt><dd>Mirror</dd>
+    <dt>Log in as</dt><dd>Superadmin</dd>
+    <dt>Page</dt><dd><code>/gilligan</code>, Lakeside Buoy 2026 picked</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>New chat, ask "Summarize the last 60 days, including the history of Lakeside Legacy Pod".</li><li>If a report is offered, download it and note which pod it names.</li></ol>
+  </div>
+  <div class="compare">
+    <div class="state wait"><div class="label">Seen on 2026-09-27</div>A 60-day report for Lakeside Legacy Pod itself.</div>
+    <div class="state wait"><div class="label">Expected: undecided</div>The coordinator recommends accepting it, since a superadmin may view the retired pod on its own. You decide.</div>
+  </div>
+</article>
+
+<h3 class="cat">Location and current site</h3>
+
+<article class="item" id="B1">
+  <header>
+    <h4><span class="id">B1</span>A pod that moved claims the whole period</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip high">Must</span><span class="chip">Finding 6</span><span class="chip">Guide K6, M4</span><span class="chip med">~$0.07</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stack</dt><dd>Mirror</dd>
+    <dt>Log in as</dt><dd>Lakeside customer</dd>
+    <dt>Page</dt><dd><code>/gilligan</code>, Lakeside Mobile Buoy (<code>dev:100000000000016</code>) picked; it moved about 21 km 12 days before seed time</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol>
+      <li>New chat, ask "Summarize the last 60 days".</li>
+      <li>New chat, ask for a 60-day report and download the PDF.</li>
+      <li>Read the dates in the answer, the PDF title and its Summary, and the Data Quality row.</li>
+    </ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Before: expected defect</div>Values are current-site only, but the answer, PDF title and Summary state the full 60 days. Only the Data Quality row mentions 432 excluded readings, beside a count of 1,728 "readings" (288 rows times 6 parameters).</div>
+    <div class="state good"><div class="label">After the fix</div>The answer, title and summary state the dates actually covered (about the last 12 days) and that readings from an earlier location were excluded. Counts use one unit.</div>
+  </div>
+  <dl class="facts">
+    <dt>Also check</dt><dd>No earlier-site value appears anywhere: conductivity 1,300-1,700 uS/cm or pH 6.7-7.3.</dd>
+    <dt>Why it's wrong</dt><dd>The customer believes they are seeing the full period at their site. The rule (Sep 25) is current site only, stated plainly.</dd>
+    <dt>Fix</dt><dd>Plan Q10, fix round.</dd>
+  </dl>
+</article>
+
+<article class="item" id="B4">
+  <header>
+    <h4><span class="id">B4</span>No "location not recorded" note, and one glitch reading sets Action Required</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip med">Should</span><span class="chip">Finding 7</span><span class="chip">Guide K7, C5</span><span class="chip med">~$0.04</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stack</dt><dd>Mirror, with cer-demo <code>dev</code> <code>5922109</code> or later and dashboard <code>9e18555</code> or <code>817a7c2</code> (the failing run's cer-demo sent no reader notes)</dd>
+    <dt>Log in as</dt><dd>River Watch customer</dd>
+    <dt>Page</dt><dd><code>/gilligan</code>, River Watch Float (<code>dev:100000000000017</code>, every reading at 0,0)</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>New chat, ask "How is the water this week?"</li><li>New chat, ask it again.</li></ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Before: expected defect</div>No mention that the location isn't recorded. Both answers call the week Action Required from one dissolved-oxygen reading of 0.00 mg/L.</div>
+    <div class="state good"><div class="label">Expected</div>A note that the location is not recorded; never "Current site not assessed". A single implausible 0.00 does not set the week's status on its own (report audit item 5).</div>
+  </div>
+</article>
+
+<h3 class="cat">Answer behaviour</h3>
+
+<article class="item" id="B3">
+  <header>
+    <h4><span class="id">B3</span>"My pod is broken" gets declined</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip med">Should</span><span class="chip">Finding 8</span><span class="chip">Guide K11</span><span class="chip med">~$0.02</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stack</dt><dd>Mirror</dd>
+    <dt>Log in as</dt><dd>Harbor customer</dd>
+    <dt>Page</dt><dd><code>/gilligan</code>, Harbor Pier Buoy picked</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>New chat, ask "My pod seems broken, who should I contact?"</li></ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Before: expected defect</div>"Outside supported scope ... I'm missing any contact or support details."</div>
+    <div class="state good"><div class="label">After the fix</div>Refers the customer to sales@cleanearthrovers.com or their usual CER contact (decision O1). No invented phone number or person.</div>
+  </div>
+  <dl class="facts">
+    <dt>Show Michael</dt><dd>The fixed answer, so he can confirm the wording.</dd>
+    <dt>Fix</dt><dd>Plan Q10, fix round.</dd>
+  </dl>
+</article>
+
+<article class="item" id="B7">
+  <header>
+    <h4><span class="id">B7</span>Standing caveat under answers that cite documents (U7)</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip high">Must</span><span class="chip">Guide K20</span><span class="chip med">~$0.04</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stack</dt><dd>Mirror, with the dashboard branch that adds U7 (not created yet)</dd>
+    <dt>Log in as</dt><dd>Any member</dd>
+    <dt>Page</dt><dd><code>/gilligan</code></dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>New chat, no pod: ask "What does conductivity measure?"</li><li>New chat, with a pod: ask "How is the water this week?"</li><li>Reopen the first chat from history.</li></ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Expected</div>The document answer shows one fixed caveat under it, also when reopened. Draft wording, pending your approval: "Answers draw on document excerpts and may not cover every step; check the cited sections before acting." The data-only answer shows no caveat.</div>
+  </div>
+</article>
+
+<article class="item" id="B6C1">
+  <header>
+    <h4><span class="id">B6</span>Silent pods left out of "which pods are online" (Q9 C1)</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip med">Should</span><span class="chip">Guide C11</span><span class="chip med">~$0.02</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stack</dt><dd>Mirror, before on the current cer-demo; after on <code>task/q9-land</code> (from <code>cloud/q9-logic</code> <code>bc097e1</code> and <code>cloud/q9-c1-d1</code> <code>ad7eec9</code>)</dd>
+    <dt>Log in as</dt><dd>Superadmin</dd>
+    <dt>Page</dt><dd><code>/gilligan</code>, no pod picked</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>New chat, ask "Which of my pods are online right now?"</li></ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Before</div>Pods that stopped reporting are left out, so a dead pod looks fine.</div>
+    <div class="state good"><div class="label">After</div>Only reporting pods are called online; each silent pod is named with the age of its last reading.</div>
+  </div>
+  <p class="note">The original E2E checklist step (C1) named real production pods; this card uses the fake-data version so no live reads are needed.</p>
+</article>
+
+<h3 class="cat">Data quality and reports</h3>
+
+<article class="item" id="B6D1">
+  <header>
+    <h4><span class="id">B6</span>A pH of 2.07 passes plausibility (Q9 D1)</h4>
+    <div class="chips"><span class="chip demo">Michael demo: the 3-12 band</span><span class="chip med">Should</span><span class="chip">Guide C12</span><span class="chip med">~$0.02</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stack</dt><dd>Mirror, after on <code>task/q9-land</code></dd>
+    <dt>Log in as</dt><dd>A member whose pod has pH readings below 3</dd>
+    <dt>Blocker</dt><dd>The mirror has no low-pH fixture yet, so this is blocked until one exists; the original check ran on a real production pod.</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>New chat on that pod, ask "Why did the pH crash to 3 yesterday?"</li></ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Before</div>The 2.07 reading counts as a real minimum.</div>
+    <div class="state good"><div class="label">After</div>It is flagged as implausible, outside the pH 3-12 band, and excluded; the answer reports the counted minimum separately and invents no cause.</div>
+  </div>
+  <dl class="facts"><dt>Show Michael</dt><dd>Whether the 3-12 band is acceptable.</dd></dl>
+</article>
+
+<article class="item" id="B6R">
+  <header>
+    <h4><span class="id">B6</span>Report reading age and thin 1-day series (report audit #3, #4)</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip med">Should</span><span class="chip">Guide K5, M6</span><span class="chip med">~$0.10</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Stack</dt><dd>Mirror, after on <code>task/q9-land</code></dd>
+    <dt>Log in as</dt><dd>Harbor admin</dd>
+    <dt>Page</dt><dd><code>/gilligan</code>, Harbor Pier Buoy picked</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol>
+      <li>#3: New chat, ask for a 7-day report, download it, and look for the age of the latest reading.</li>
+      <li>#4: New chat, ask for a 1-day report on a pod with thin data. The mirror seed is hourly and has no 30-minute fixture, so this half is blocked.</li>
+      <li>In any report that lists excluded implausible values (<code>excluded_implausible_min/max</code>), check they match the values actually excluded.</li>
+    </ol>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Before</div>#3: the PDF never states how old its readings are. #4: a 1-day report on thin data shows an empty series.</div>
+    <div class="state good"><div class="label">After</div>#3: the reading age appears in the PDF. #4: a series of the readings that exist.</div>
+  </div>
+</article>
+
+<h3 class="cat">Infrastructure</h3>
+
+<article class="item" id="A7">
+  <header>
+    <h4><span class="id">A7</span>The cer-ui build trigger deploys from the dashboard's malware-carrying main</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip high">High</span><span class="chip">Not testable locally</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Action</dt><dd>Michael disables Cloud Build trigger <code>8ad67b17-5439-4507-9718-5b2b5eb4abe9</code>.</dd>
+    <dt>Check</dt><dd>You confirm in the Cloud console that it shows as disabled. Nobody queries it from here.</dd>
+    <dt>Why it's wrong</dt><dd>Every push to the dashboard's infected <code>main</code> builds and deploys cer-ui.</dd>
+  </dl>
+</article>
+
+<article class="item" id="A8">
+  <header>
+    <h4><span class="id">A8</span>Low-severity server items</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip">Deferred</span><span class="chip">Guide P5, M14</span><span class="chip ok">$0</span></div>
+  </header>
+  <dl class="facts">
+    <dt>/water-data</dt><dd>Logged in on 3100, run <code>api('GET', '/api/v1/water-data')</code>. Expected: 500, because the schema wants a string latitude and gets a number. Legacy route; nothing depends on it.</dd>
+    <dt>10-pod cap</dt><dd>The period query slices an organization's pods to 10. No seeded organization has more than 10 pods, so this is recorded from code reading only.</dd>
+    <dt>Record</dt><dd>Before only; both are deferred.</dd>
+  </dl>
+</article>
+
+<h2 class="part" id="part2">Part 2: Basic user testing</h2>
+<p class="lede">Everyday flows a customer relies on. These should work on every stack; a failure here is a regression, not a known issue. Run U1-U4 on Current and Release to confirm our release breaks nothing CER already had; U5-U10 need Gilligan, so they run on the Mirror.</p>
+
+<h3 class="cat">Dashboard, on Current and Release</h3>
+
+<article class="item" id="U1">
+  <header>
+    <h4><span class="id">U1</span>Log in, a wrong password, and log out</h4>
+    <div class="chips"><span class="chip">Guide P2a, P2b</span><span class="chip ok">$0</span></div>
+  </header>
+  <dl class="facts"><dt>Log in as</dt><dd>Harbor admin</dd><dt>Page</dt><dd><code>/login</code></dd></dl>
+  <div><div class="label">Steps</div><ol>
+    <li>Log in with the right password.</li>
+    <li>Log out, then try a wrong password.</li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">Expected on both</div>The right password lands on <code>/home</code>. A wrong password gives 401 and a readable "Login failed" message, with no server error.</div></div>
+</article>
+
+<article class="item" id="U2">
+  <header>
+    <h4><span class="id">U2</span>Each person sees only their own pods</h4>
+    <div class="chips"><span class="chip">Guide P3, A1a-A1c</span><span class="chip ok">$0</span></div>
+  </header>
+  <dl class="facts"><dt>Log in as</dt><dd>Superadmin, Harbor admin, Harbor customer, Lakeside customer</dd><dt>Page</dt><dd><code>/home</code></dd></dl>
+  <div><div class="label">Steps</div><ol><li>Log in as each persona in turn and list the pods on <code>/home</code>.</li></ol></div>
+  <div class="compare"><div class="state good"><div class="label">Expected on both</div>Superadmin sees every current pod; Harbor people see only Harbor Pier Buoy; Lakeside customer sees only Lakeside's current pods. Merged-away and archived pods are not listed as extra pods.</div></div>
+</article>
+
+<article class="item" id="U3">
+  <header>
+    <h4><span class="id">U3</span>Own pod's pages load with readings</h4>
+    <div class="chips"><span class="chip">Guide P4a</span><span class="chip ok">$0</span></div>
+  </header>
+  <dl class="facts"><dt>Log in as</dt><dd>Harbor admin</dd><dt>Pages</dt><dd><code>/home</code>, then the chart, dial and map pages from the menu</dd></dl>
+  <div><div class="label">Steps</div><ol><li>Open Harbor Pier Buoy on each page.</li><li>In the Console, run <code>api('GET', '/api/v1/water/period/7/day?device=dev:100000000000001')</code>.</li></ol></div>
+  <div class="compare"><div class="state good"><div class="label">Expected on both</div>Pages render readings without errors, <code>undefined</code> or <code>NaN</code>. The period call returns 200 with hourly readings up to seed time. Maps may be blank: there is no map key locally, which is expected.</div></div>
+</article>
+
+<article class="item" id="U4">
+  <header>
+    <h4><span class="id">U4</span>Export your own pod's data</h4>
+    <div class="chips"><span class="chip">Pair with A1</span><span class="chip ok">$0</span></div>
+  </header>
+  <dl class="facts"><dt>Log in as</dt><dd>Harbor admin</dd><dt>Page</dt><dd>Export CSV</dd></dl>
+  <div><div class="label">Steps</div><ol><li>Pick Harbor Pier Buoy, keep the default 7 days, and export.</li></ol></div>
+  <div class="compare"><div class="state good"><div class="label">Expected on both</div>A CSV downloads with about a week of hourly rows. This must keep working after the A1 fix.</div></div>
+</article>
+
+<h3 class="cat">Gilligan, on the Mirror</h3>
+
+<article class="item" id="U5">
+  <header>
+    <h4><span class="id">U5</span>A document question gets a grounded answer with sources</h4>
+    <div class="chips"><span class="chip">Guide B1, K13</span><span class="chip med">~$0.02</span></div>
+  </header>
+  <dl class="facts"><dt>Log in as</dt><dd>Harbor customer</dd><dt>Page</dt><dd><code>/gilligan</code>, no pod</dd></dl>
+  <div><div class="label">Steps</div><ol><li>New chat, ask "What does dissolved oxygen measure, and why does it matter for aquatic life?"</li><li>Open the "Sources" list under the answer.</li></ol></div>
+  <div class="compare"><div class="state good"><div class="label">Expected</div>A plain answer, numbered citation chips, and document titles under Sources. The question stays visible; no raw citation markers.</div></div>
+</article>
+
+<article class="item" id="U6">
+  <header>
+    <h4><span class="id">U6</span>A pod data question uses today's readings</h4>
+    <div class="chips"><span class="chip">Guide C1, K5</span><span class="chip med">~$0.02</span></div>
+  </header>
+  <dl class="facts"><dt>Log in as</dt><dd>Harbor admin</dd><dt>Page</dt><dd><code>/gilligan</code>, Harbor Pier Buoy picked</dd></dl>
+  <div><div class="label">Steps</div><ol><li>New chat, ask "When was the last reading, and how old is it?"</li></ol></div>
+  <div class="compare"><div class="state good"><div class="label">Expected</div>The timestamp of the latest reading and its age counted from today; an old reading is not described as current.</div></div>
+</article>
+
+<article class="item" id="U7">
+  <header>
+    <h4><span class="id">U7</span>Ask for a report and download the PDF</h4>
+    <div class="chips"><span class="chip">Guide F1, F2</span><span class="chip med">~$0.07</span></div>
+  </header>
+  <dl class="facts"><dt>Log in as</dt><dd>Harbor admin</dd><dt>Page</dt><dd><code>/gilligan</code>, Harbor Pier Buoy picked</dd></dl>
+  <div><div class="label">Steps</div><ol><li>New chat, ask "Give me a water quality report for the last 7 days".</li><li>Click the report button.</li></ol></div>
+  <div class="compare"><div class="state good"><div class="label">Expected</div>The offer names the pod and period. A PDF named like <code>cer-report-harbor-pier-buoy-&lt;start&gt;-to-&lt;end&gt;.pdf</code>, two or more pages, units on every value, only Harbor's data.</div></div>
+</article>
+
+<article class="item" id="U8">
+  <header>
+    <h4><span class="id">U8</span>Chats are saved and reopen</h4>
+    <div class="chips"><span class="chip">Guide E3, E6</span><span class="chip ok">$0 after U5-U7</span></div>
+  </header>
+  <dl class="facts"><dt>Log in as</dt><dd>The personas used in U5-U7</dd><dt>Page</dt><dd><code>/gilligan</code> history list</dd></dl>
+  <div><div class="label">Steps</div><ol><li>Reload the page.</li><li>Open each earlier chat from the history list.</li></ol></div>
+  <div class="compare"><div class="state good"><div class="label">Expected</div>Each chat reopens with its title, answer and citations. Only the persona's own chats are listed.</div></div>
+</article>
+
+<article class="item" id="U9">
+  <header>
+    <h4><span class="id">U9</span>The allowance line is shown and counts down</h4>
+    <div class="chips"><span class="chip">Guide A1b, K14</span><span class="chip ok">$0 after U5</span></div>
+  </header>
+  <dl class="facts"><dt>Page</dt><dd><code>/gilligan</code>, the line under the input</dd></dl>
+  <div><div class="label">Steps</div><ol><li>Read the line before and after a question.</li></ol></div>
+  <div class="compare"><div class="state good"><div class="label">Expected</div>"N questions left, resets ..." that drops by one per question, with a warning when few remain. Do not exhaust the allowance here: the mirror chat relies on its counts.</div></div>
+</article>
+
+<article class="item" id="U10">
+  <header>
+    <h4><span class="id">U10</span>Phone layout</h4>
+    <div class="chips"><span class="chip">Guide I2</span><span class="chip ok">$0 after U5</span></div>
+  </header>
+  <dl class="facts"><dt>Page</dt><dd><code>/gilligan</code> at 390 px wide (Developer Tools device toolbar)</dd></dl>
+  <div><div class="label">Steps</div><ol><li>Switch to a 390 x 844 phone view and scroll a chat.</li></ol></div>
+  <div class="compare"><div class="state good"><div class="label">Expected</div>No sideways scrolling; the input, the pod picker and the report button fit.</div></div>
+</article>
+
+<p class="note">Sources: the release brief for this testing session, <code>GILLIGAN_MANUAL_TEST_GUIDE.md</code> (guide IDs), the 2026-09-25 and 2026-09-27 end-to-end results (finding numbers), and the fix commits named on each card.</p>
+</main>
+</div>
