@@ -112,6 +112,7 @@ dl.gloss dd { margin: 0; max-width: 70ch; }
   <a href="#stacks"><span class="id">3</span>Three copies, before and after</a>
   <a href="#judging"><span class="id">4</span>How a test is judged</a>
   <a href="#glossary"><span class="id">5</span>Glossary</a>
+  <a href="#data"><span class="id">6</span>The fake data</a>
   <h2>Security and access</h2>
   <a href="#a1"><span class="id">A1</span>CSV export of any pod</a>
   <a href="#a2"><span class="id">A2</span>User lookups, no login</a>
@@ -298,6 +299,95 @@ dl.gloss dd { margin: 0; max-width: 70ch; }
   <dt>Michael demo</dt><dd>Items to show Michael at CER, who decides what goes into the Sep 30 launch (freeze Sep 28).</dd>
   <dt>Plan Q-numbers</dt><dd>Entries in the release plan, such as Q10 (Gilligan answer fixes) or Q11 (CSV fix).</dd>
 </dl>
+
+<!-- ================= DATA ================= -->
+<h2 class="part" id="data">6. The fake data</h2>
+<p>The seed is a made-up copy of production built from a census taken on 2026-09-25, which recorded field names, types and counts but no values. So it has the same number of organizations, users and pods as production, arranged in the same odd shapes, with invented names. Messy shapes are kept on purpose: code that only works on tidy data hasn't really been tested.</p>
+<div class="compare">
+  <div class="state"><div class="label">:8180, Current and Release</div>The base seed: 9 organizations, 27 users, 15 pods, 52 chats, 8,640 readings. Also copied to CER-DEV's <code>cer-demo-fixtures</code>.</div>
+  <div class="state"><div class="label">:8080, Mirror</div>The same base plus 4 extra "fixture" pods (19 in all), built for specific Gilligan tests. Production has no pods shaped like these yet.</div>
+  <div class="state"><div class="label">Readings</div>Hourly, 30 days each (720 per pod). Current pods run up to seed time; merged and retired pods stop a month earlier, when they were replaced. Dates move with each reseed.</div>
+</div>
+
+<h3 class="sub">Organizations and who is in them</h3>
+<div class="tablebox">
+<table>
+  <thead><tr><th>Organization</th><th>People</th><th>Current pods</th><th>Why it's there</th></tr></thead>
+  <tbody>
+    <tr><td>CER Super Admin (mirror)</td><td>8 superadmins (<code>user-super-1</code> to <code>-8</code>)</td><td>Demo Public Dock Buoy</td><td>CER's own organization. Its id is the real one the server has built in for staff alerts.</td></tr>
+    <tr><td>Harbor City Water</td><td>1 admin, 3 customers; customer 3 is invited with no password</td><td>Harbor Pier Buoy</td><td>The main "attacker" persona in A1-A3 and the everyday persona in U tests; A5's invited user.</td></tr>
+    <tr><td>Lakeside Alliance</td><td>1 admin, 3 customers; customer 3 invited; customer 1 also has an old capitalised <code>Organization</code> field</td><td>Lakeside Buoy 2026; on the Mirror also Lakeside Mobile Buoy</td><td>The "victim" in A1-A3, and the owner of the merged-history cases (A4, B1, B2, B5).</td></tr>
+    <tr><td>City of Seaview</td><td>1 admin, 2 customers</td><td>Seaview Marina</td><td>A normal customer with a normal pod.</td></tr>
+    <tr><td>Coastal University Lab</td><td>1 admin, 2 customers; 1 invited</td><td>A pod named only by its label</td><td>A pod with no friendly name and no oxygen sensor.</td></tr>
+    <tr><td>Bay Conservancy</td><td>2 customers; 1 invited</td><td>none</td><td>A company with no pods: should see an empty list. The contrast to A6's orphan, who wrongly sees everything.</td></tr>
+    <tr><td>Northshore Aquarium</td><td>1 customer</td><td>none</td><td>Another empty company.</td></tr>
+    <tr><td>Braidwell Labs</td><td>nobody</td><td>none (2 retired)</td><td>Only retired pods.</td></tr>
+    <tr><td>River Watch Coalition</td><td>1 customer</td><td>none on :8180; River Watch Float on the Mirror</td><td>Exists for B4's no-GPS pod.</td></tr>
+    <tr><td><i>no organization</i></td><td><code>user-orphan-1</code></td><td>should be none</td><td>A6.</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="note">Every user with a password logs in with <code>mirror-dev-password</code>. The four invited users (Harbor 3, Lakeside 3, University 2, Bay 2) have no password; only Harbor 3 is used in tests. Superadmins 2-8 exist only so the count matches production.</p>
+
+<h3 class="sub">Every pod, and what shape it has</h3>
+<p>Pod labels run <code>dev:100000000000001</code> to <code>...019</code>; the table uses the last two digits. "Current" pods show up in lists. "Merged" pods are hidden, and their history belongs to the survivor they point at. "Retired" (archived) pods are hidden with no successor.</p>
+<div class="tablebox">
+<table>
+  <thead><tr><th>#</th><th>Pod</th><th>Owner</th><th>State</th><th>Its special shape</th><th>Used by</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">01</td><td>Harbor Pier Buoy</td><td>Harbor</td><td>current, salt water</td><td><b>Mostly normal.</b> Survivor of 02. Its alert limits are all zero (junk production also has), and it has no turbidity sensor.</td><td>A1, A3 control (own pod); U1-U4, U6, U7; B3</td></tr>
+    <tr><td class="mono">02</td><td>Harbor Pier DataPod&trade;</td><td>Harbor</td><td>merged into 01</td><td>A same-company predecessor: the simple, correct merge. Its calibration date is stored as a different data type from every other pod's.</td><td>U2 (must not appear as an extra pod)</td></tr>
+    <tr><td class="mono">03</td><td>Lakeside Buoy 2026</td><td>Lakeside</td><td>current, fresh water</td><td>Survivor of two predecessors, 04 and 05; four on the Mirror, adding 18 and 19.</td><td>A1, A3 (the pod Harbor tries to steal); A4, B2, B5</td></tr>
+    <tr><td class="mono">04</td><td>Lakeside Testbed</td><td>Lakeside</td><td>merged into 03</td><td><b>Salt-water</b> predecessor of a fresh-water pod.</td><td>B2</td></tr>
+    <tr><td class="mono">05</td><td>Lakeside Legacy Pod</td><td>an organization that doesn't exist</td><td>merged into 03</td><td>Predecessor pointing at a deleted company, as two production pods do.</td><td>B5; A4's "other organization" rule</td></tr>
+    <tr><td class="mono">06</td><td>Demo Public Dock Buoy</td><td>CER</td><td>current, salt water</td><td>Survivor of 07, which belongs to <i>Harbor</i>: a cross-company merge. Its limits are placeholders (pH up to 100).</td><td>A1 (Demo pod); A3 on the Mirror</td></tr>
+    <tr><td class="mono">07</td><td>Old Anchorage DataPod&trade;</td><td>Harbor</td><td>merged into 06</td><td>The cross-company predecessor: Harbor's history under CER's pod.</td><td>A4's "another company's predecessor is withheld"</td></tr>
+    <tr><td class="mono">08</td><td>Retired Conference Pod</td><td>CER</td><td>retired</td><td>Retired, with old readings.</td><td>U2 (must stay hidden)</td></tr>
+    <tr><td class="mono">09</td><td>(label only)</td><td>CER</td><td>retired</td><td>Bare record, no name, no readings.</td><td>shape only</td></tr>
+    <tr><td class="mono">10</td><td>Seaview Marina</td><td>Seaview</td><td>current, salt water</td><td><b>Normal pod</b> with proper limits; survivor of 11.</td><td>U2 (other personas' pods)</td></tr>
+    <tr><td class="mono">11</td><td>Seaview Marina DataPod&trade;</td><td>Seaview</td><td>merged <i>and</i> retired</td><td>Both flags at once, as production's counts imply.</td><td>shape only</td></tr>
+    <tr><td class="mono">12</td><td>(label only)</td><td>University</td><td>current, salt water</td><td><b>Normal readings</b>, but no friendly name and no oxygen sensor.</td><td>U2; display checks</td></tr>
+    <tr><td class="mono">13</td><td>Braidwell DataPod</td><td>Braidwell</td><td>retired</td><td>Retired, with old readings.</td><td>shape only</td></tr>
+    <tr><td class="mono">14</td><td>Braidwell DataPod 2</td><td>Braidwell</td><td>retired</td><td>"Retired" stored as the text <code>"true"</code> rather than a yes/no value, as in production.</td><td>shape only</td></tr>
+    <tr><td class="mono">15</td><td>Field Trial Pod</td><td>an organization that doesn't exist</td><td>retired</td><td>Retired and pointing at a deleted company.</td><td>shape only</td></tr>
+    <tr><td class="mono">16</td><td>Lakeside Mobile Buoy</td><td>Lakeside</td><td>current, Mirror only</td><td><b>Moved about 21 km</b> 12 days before seed time; different water values at each site.</td><td>B1</td></tr>
+    <tr><td class="mono">17</td><td>River Watch Float</td><td>River Watch</td><td>current, Mirror only</td><td><b>No GPS</b>: every reading at position 0,0.</td><td>B4</td></tr>
+    <tr><td class="mono">18</td><td>Lakeside Spare Pod A</td><td>field missing entirely</td><td>merged into 03, Mirror only</td><td>Predecessor with <b>no</b> organization field.</td><td>A4</td></tr>
+    <tr><td class="mono">19</td><td>Lakeside Spare Pod B</td><td>blank (<code>""</code>)</td><td>merged into 03, Mirror only</td><td>Predecessor with an <b>empty</b> organization.</td><td>A4</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="panel">
+  <h3 class="sub">So, are some just normal pods?</h3>
+  <p>Yes. Five pods are current on :8180 (01, 03, 06, 10, 12) and they all report normal hourly readings. Seaview Marina (10) is the plainest. Harbor Pier Buoy (01) is the everyday test pod despite its junk limits. The <i>special shapes</i> live mostly in the hidden pods behind them (merged and retired) and in the four Mirror fixtures.</p>
+  <p>The readings also contain rare random faults, as real pods do: about 1 in 200 readings has dissolved oxygen of exactly 0 (a glitch), and about 1 in 250 carries the firmware's failure value of 1,000,000,000. B4's "one 0.00 oxygen reading sets Action Required" comes from exactly this kind of glitch.</p>
+</div>
+
+<h3 class="sub">Coverage: does the data let us see each issue?</h3>
+<div class="tablebox">
+<table>
+  <thead><tr><th>Item</th><th>What in the data makes it testable</th><th>Covered?</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">A1, A3</td><td>Harbor admin; Harbor's own 01; Lakeside's 03 and CER's 06 as other companies' pods</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">A2</td><td>27 users across companies; <code>user-lake-cust-0001</code> as "another company's user"</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">A4</td><td>03 with no-field (18) and blank (19) predecessors; 07 as another company's predecessor</td><td class="yes">Mirror only</td></tr>
+    <tr><td class="mono">A5</td><td><code>user-harbor-cust-3</code>, invited, no password</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">A6</td><td>The orphan user; Bay Conservancy as the correct "no pods" contrast</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">A8</td><td><code>/water-data</code> crash: yes. 10-pod cap: no company has more than 1 current pod</td><td class="no">cap from code only</td></tr>
+    <tr><td class="mono">B1</td><td>16, the moved buoy</td><td class="yes">Mirror only</td></tr>
+    <tr><td class="mono">B2</td><td>04, salt-water predecessor of fresh-water 03</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">B3</td><td>Any customer with a pod; Harbor and 01</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">B4</td><td>17, the no-GPS pod, plus the random oxygen glitches</td><td class="yes">Mirror only</td></tr>
+    <tr><td class="mono">B5</td><td>05 behind 03, asked about by a superadmin</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">B6 C1</td><td>Needs a current pod that has stopped reporting. The seed has none built for this; every current pod reports up to seed time, so it only works if the seed is old</td><td class="no">gap: check with the mirror chat</td></tr>
+    <tr><td class="mono">B6 D1</td><td>Needs a pod with pH below 3</td><td class="no">gap: no fixture</td></tr>
+    <tr><td class="mono">B6 #3</td><td>Any report on 01</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">B6 #4</td><td>Needs sparse, 30-minute data; the seed is hourly and full</td><td class="no">gap: no fixture</td></tr>
+    <tr><td class="mono">B7</td><td>Any user; uses documents, not pod data</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">U1-U10</td><td>Harbor personas and 01; other companies' pods for U2</td><td class="yes">yes</td></tr>
+  </tbody>
+</table>
+</div>
 
 <!-- ================= SECURITY ================= -->
 <h2 class="part">Part 1: The active issues</h2>
