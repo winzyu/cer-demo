@@ -2,7 +2,7 @@
 
 Source: "DataPod Water Quality Source of Truth", version 2.0, last updated 2026-09-16, owner Clean
 Earth Rovers, Inc. (CER). This is CER's own synthesis for interpreting DataPod data, not an external
-standard. This excerpt reproduces Sections 5, 6, 7 and 11 in the document's own words; tables are
+standard. This excerpt reproduces Sections 5, 6, 7.1-7.2 and 11 in the document's own words; tables are
 written one row per line. Omitted: rule 1 of Section 7.2 (identical timestamps across channels),
 pending CER review. Sections referenced below but not included here: 2.4.1, 8, 9 and 10.
 
@@ -292,18 +292,6 @@ Rule 1 is omitted from this excerpt; the numbering below is the document's own.
    second.
 8. Neighbor comparison: If a nearby DataPod does not show the change and the plume could not
    plausibly be local, suspect a fault.
-
-### 7.3 Required Metadata for Every DataPod
-
-- DO sensor type (galvanic, optical, or polarographic)
-- ORP reference electrode type and filling solution
-- Turbidity unit (FNU or NTU)
-- pH calibration buffer type (NBS/NIST)
-- Calibration dates, slopes, and offsets
-- Cleaning and maintenance log
-- Battery voltage time series
-- Sensor depth
-- Firmware version
 
 ## 11. Parameter Coupling Reference
 

@@ -8,7 +8,7 @@ No corpus, code, or ingested-data file was touched to write this memo.
 > Source-of-truth v2 launches with the pods.
 > The first trigger below is met in part: the supervisor approved the whole catalogue on 2026-09-24 as version `2026-09-24.1`, including `upwelling-caution` and `fault-first`, but stakeholder item 17 is still open.
 > Product-direction items 6 and 8 are handled in the launch excerpt, not resolved: §7.2 rule 1 is left out, and the document is titled as CER's own synthesis so its citations read differently from USGS or EPA ones.
-> The ingested excerpt is `documents/cer-water-quality-guidance-v2-excerpt.md` (§5-7 and §11); its evaluation is in `../EVAL_REBUILD.md`.
+> The ingested excerpt is `documents/cer-water-quality-guidance-v2-excerpt.md` (§5, §6, §7.1-7.2 and §11; §7.3 dropped after the first E7 rerun); its evaluation is in `../EVAL_REBUILD.md`.
 > The memo below is the record of the case against and is not updated.
 
 ## Recommendation
