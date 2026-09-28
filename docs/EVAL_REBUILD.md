@@ -1643,6 +1643,7 @@ Recorded before any capture on the new corpus (user-approved plan, 2026-09-27):
 - **Fail:** mean under 1.05, or a gate failed in both captures: stop and report the turns that fell and whether they retrieved the new chunks; the remedy offered is narrowing the v2 sections.
 - Attribution: code changed between E4 (`dcb3ce3`) and this branch (`LlmService`, the orchestrator, the model-call gate, tools-on prompt text), so a control capture on the old corpus at this branch (run `e7-control-lv-k20-glm-2026-09-27`) separates the corpus effect from code drift. The rule above is applied against E4 regardless.
 - New-content fixtures (`eval/fixtures-e7/`, drafted for E7 and not calibrated like wave 1) are captured and judged separately, read through `EVAL_FIXTURE_DIR`, and do not enter the rule.
+- Three captures, fixed before the third: the mean is over all six passes; a gate that fails in two or more of the three captures is a fail, and one that fails in one of three is recorded but does not decide.
 
 ## Task C provenance inputs - 2026-09-24
 
