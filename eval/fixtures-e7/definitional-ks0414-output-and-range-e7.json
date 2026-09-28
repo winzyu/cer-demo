@@ -1,0 +1,51 @@
+{
+  "id": "definitional-ks0414-output-and-range-e7",
+  "class": "definitional",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "keyestudio-ks0414-turbidity-sensor.md"
+  ],
+  "requires": [],
+  "notes": "Drafted for plan E7 and has not been reviewed by a human. Tests the vendor output modes and stated detection range without treating the range as a calibrated pod measurement. Sources: vendor Description, Specification, and Output behaviour and unit conversion; system prompt turbidity rule. Reviewed 2026-09-27: dropped a must_not against saying the pod uses the KS0414, since the supervisor confirmed every pod carries it.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "According to the Keyestudio KS0414 document, what does the sensor output in analog and digital modes, what does the blue potentiometer do, and what detection range does the vendor state?",
+      "rubric": {
+        "must_contain": [
+          "States that switching to A selects analog output, read through an analog port to obtain the output voltage.",
+          "States that switching to D selects digital HIGH or LOW output, rather than a continuous turbidity measurement.",
+          "States that the blue potentiometer adjusts sensor sensitivity.",
+          "Attributes the detection range of 0%-3.5% (0-4550 NTU) to the vendor specification, rather than presenting it as a normal water-quality range."
+        ],
+        "must_not": [
+          "Presents a pod turbidity reading as a calibrated NTU measurement.",
+          "Claims the potentiometer calibrates the sensor against NTU standards.",
+          "Treats the vendor detection range as a bay water-quality limit or a pod configured threshold."
+        ],
+        "cite": [
+          "keyestudio-ks0414-turbidity-sensor.md"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "How does that analog voltage change as turbidity rises, and what does the document actually establish about calibration or converting voltage to NTU?",
+      "rubric": {
+        "must_contain": [
+          "States that output voltage falls as turbidity rises.",
+          "Identifies the vendor conversion as an empirical suspended-solids concentration-to-NTU relationship, not a calibration against turbidity standards.",
+          "States that the vendor publishes no equation converting output voltage to NTU.",
+          "States that pod turbidity is treated as a relative, uncalibrated index and can be interpreted qualitatively rather than as calibrated NTU."
+        ],
+        "must_not": [
+          "Invents a voltage-to-NTU equation or claims that the empirical concentration conversion is such an equation.",
+          "Claims that the stated vendor range proves calibration of pod readings."
+        ],
+        "cite": [
+          "keyestudio-ks0414-turbidity-sensor.md"
+        ]
+      }
+    }
+  ]
+}

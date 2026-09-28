@@ -1,0 +1,54 @@
+{
+  "id": "followup-storm-drain-freshening-e7",
+  "class": "follow-up",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "cer-water-quality-guidance-v2-excerpt.md"
+  ],
+  "requires": [],
+  "notes": "Drafted for plan E7 and has not been reviewed by a human. Tests continuity across a two-turn differential: freshening and a turbidity spike, then absence of rainfall. Sources: sections 6.2 and 6.4 raw sewage and stormwater; system prompt limits on unmeasured contaminants.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "As a document-based scenario, a coastal marine pod near a storm drain shows a salinity drop and a turbidity-index spike. Rainfall timing is not yet known. What possible inputs fit, and what would help separate them?",
+      "rubric": {
+        "must_contain": [
+          "Identifies both raw sewage and stormwater runoff as possible explanations for freshening with a turbidity increase in marine receiving water.",
+          "Identifies rainfall timing as a discriminator because stormwater occurs within hours of rainfall onset.",
+          "Explains that sewage can show salinity and turbidity changes first, followed by DO and ORP decline over the following hours as oxygen demand develops.",
+          "Keeps the source tentative because freshening and a turbidity spike alone do not distinguish sewage from stormwater."
+        ],
+        "must_not": [
+          "Identifies the drain discharge as confirmed sewage or confirmed stormwater from these two changes alone.",
+          "Assigns a calibrated NTU value or numeric normal turbidity limit to the spike.",
+          "Claims the pod directly measured bacteria, metals or hydrocarbons."
+        ],
+        "cite": [
+          "cer-water-quality-guidance-v2-excerpt.md"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "For that same drain and the possibilities you just described, it has not rained. How can we tell sewage from stormwater now, and what else could explain it?",
+      "rubric": {
+        "must_contain": [
+          "Uses the absence of rainfall to weaken the stormwater explanation without treating dry weather as proof of sewage.",
+          "Identifies dry-weather urban runoff as an alternative near drains, potentially following irrigation timing, with little DO or ORP change in the matrix.",
+          "Identifies a delayed DO and ORP decline after the initial freshening and turbidity increase as supporting the sewage hypothesis.",
+          "Recommends grab samples for fecal indicator bacteria such as Enterococcus and notifying the relevant agency per site protocol, as the sewage guidance states.",
+          "States that the pod cannot measure bacteria, so its parameter pattern alone cannot confirm sewage contamination."
+        ],
+        "must_not": [
+          "Ignores the no-rain follow-up and presents rainfall-driven stormwater as established.",
+          "Declares that no rain conclusively proves a sewage spill.",
+          "Claims bacteria testing results or offers to fetch pod data in this tools-off conversation.",
+          "Concludes that stormwater or dry-weather runoff is safe to swim in."
+        ],
+        "cite": [
+          "cer-water-quality-guidance-v2-excerpt.md"
+        ]
+      }
+    }
+  ]
+}
