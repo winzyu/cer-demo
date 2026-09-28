@@ -1719,6 +1719,23 @@ Test: rather than rerun retrieval (new GLM rewrites each time), `scripts/capture
 - **Where the reranker loses.** Against its `local-vector` control, on the 24 turns where it found more of the turn's own passages it scored 0.19 higher; on the 51 turns where it found the same share it scored 0.18 lower. Two captures of near-identical configuration differ by 0.02-0.04 on such turns, so the loss is real and lies outside the labelled passages: what the reranker puts beside or instead of them, or their order, which recall does not see.
 - **Caveats.** One reranker capture; labels cover only claims the fixture notes name, so a passage a turn needs but no note names counts as irrelevant (the 23 uncovered rubric points).
 
+### E7 full corpus A re-judged with the catalogue - 2026-09-28, run `e7-corpus-a-lv-k20-glm-catalogue-rejudge-2026-09-28`
+
+Question: capture A (`e7-corpus-a-lv-k20-glm-2026-09-27`, the launch configuration on the launch corpus) answered with the catalogue block in its system prompt but was judged without it; does grading with the prompt it ran under change its score?
+The run links A's transcripts unchanged and is judged once with `CATALOGUE_PROMPT=true` in the grading process (A predates the recorded `cataloguePrompt`), `deepseek-v4p1-flash`, `--final`, correctness, rubric v2: 90/90, 0 failed; the judge prompt carries about 5,000 more tokens per call.
+
+| correctness | catalogue off, pass 1 / 2 | catalogue on |
+|---|---|---|
+| overall | 1.14 / 1.16 | 1.16 |
+| cross-document | 0.83 / 0.92 | 0.83 |
+| deep-in-manual | 1.35 / 1.35 | 1.30 |
+| probe-calibration | 1.19 / 1.12 | 1.31 |
+| definitional, follow-up, precedence, refusal | unchanged | unchanged |
+
+- **Result: no effect.** The catalogue-on pass agrees turn by turn with the two earlier passes (85 and 83 of 90) as often as they agree with each other (84). Three turns differ from two agreeing earlier passes, one up and two down, and no verdict note mentions the catalogue.
+- **So** the launch numbers graded without the catalogue stand, and the catalogue neither helps nor hurts correctness as the judge sees it; its citation-marker interaction (【fault-first】 counted as an invalid citation) is a gate matter this pass does not touch.
+- **Spend** $0.53.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
