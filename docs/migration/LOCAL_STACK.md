@@ -53,7 +53,7 @@ Long tool results there are truncated, so check a recovered file for a truncatio
 - Project memory is keyed by path: `~/.claude/projects/-home-winsy-code-clean-earth-rovers-repo-cer-demo/`.
 - `AGENTS.md`, `CLAUDE.md` and `.claude/skills/` are tracked on `dev`, not on `main`.
 - `.claude/settings.json` denies edits to the upstream repositories, but its deny paths still point at the old OneDrive locations and match nothing, so that guard is inert until they are updated to the layout above.
-- `gcloud` credentials did not survive the rebuild; re-authenticate as needed.
+- `gcloud` is reinstalled and logged in as of 2026-09-25; see [Google Cloud and the Firestore emulator](#google-cloud-and-the-firestore-emulator).
 
 ## Verify the checkout
 
@@ -168,3 +168,103 @@ DEV_CHAT_STORE=memory
 
 `cer-demo/.env` needs `DEFAULT_RETRIEVAL=hybrid-slice-vector` with `CORPUS_SOURCE=artifact`.
 An empty `DEFAULT_RETRIEVAL` resolves to `stub`, and `data/embeddings/` must exist (`npm run embed:cache`) or every request fails.
+
+## Google Cloud and the Firestore emulator
+
+Set up on 2026-09-25 for Gilligan release testing (release task S6 and the test-data options in `GILLIGAN_FIRESTORE_AND_TESTING_PLAN.md` §6).
+
+### Tools
+
+All three are user-space installs, so none needs `sudo`.
+
+| tool | version | where |
+|---|---|---|
+| Google Cloud CLI | 586.0.0 | `~/.local/opt/google-cloud-sdk`, from the Linux x86_64 tarball; update with `gcloud components update` |
+| Firebase CLI | 15.31.0 | `npm install -g firebase-tools` under nvm's Node 24.21 |
+| Temurin JDK | 21.0.12.1 | `~/.local/opt/jdk-21.0.12.1+1`, from the Adoptium API with its SHA-256 checked |
+
+The Firestore emulator refuses Java older than 21 (`MIN_SUPPORTED_JAVA_MAJOR_VERSION` in firebase-tools 15), and Ubuntu 20.04's apt has no JDK 21, hence the tarball.
+`~/.bashrc` sets `JAVA_HOME` and puts both `bin` directories on `PATH`; a shell that skips `.bashrc` needs the full paths.
+Credentials come from `gcloud auth login` and `gcloud auth application-default login`; no service-account key exists or is needed.
+
+### Firestore emulator
+
+Run it from a directory outside the repository holding this `firebase.json`, so nothing is added to the tree:
+
+```json
+{ "emulators": { "firestore": { "host": "127.0.0.1", "port": 8080 }, "ui": { "enabled": false }, "singleProjectMode": true } }
+```
+
+```bash
+firebase emulators:start --only firestore --project demo-cer
+FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npx jest --runInBand test/integration/firestoreQuotaStore.emulator.test.ts
+```
+
+Port 8080 does not collide with 8000 or 8010; the emulator hub also reserves 4400, 4500 and 9150.
+A `demo-` project id keeps the emulator from ever reaching a real project.
+The CER mirror runs under `demo-cer-mirror` from server `mirror/e2e-p3` `1ef21a7` on (`MIRROR_PROJECT_ID`, required by `dev:mirror` and the seed); cer-demo sharing that emulator sets `FIRESTORE_PROJECT_ID=demo-cer-mirror`.
+Server `feat/firestore-config` (`0003170`, unpushed) makes the same change through `FIRESTORE_PROJECT_ID`, so one of the two should replace the other.
+
+Result on `feat/service-release` at `cc8a300`: at Jest's defaults the suite failed 6 of 8 runs, always in "counts every one of many simultaneous records".
+That test runs 25 contended transactions on one document, which takes about 7.5 s on the emulator against Jest's 5 s default.
+With `--testTimeout=120000` all 5 tests passed in 3 of 3 runs with the correct total of 2500, so the store is right and the test needs its own timeout.
+
+### Test project
+
+| item | value |
+|---|---|
+| project id | `cer-demo-2026` (display name CER-DEV; a project id cannot be renamed) |
+| billing | linked; a budget of 10 USD a month on the whole billing account alerts at 50, 90 and 100 percent |
+| `(default)` database | Native mode, us-west1: cer-demo's `corpus_chunks` and `corpus_documents` vector store; leave it alone |
+| `gilligan-test` database | Native mode, us-central1, created 2026-09-25 for Gilligan test data |
+
+The project holds no API keys and no downloadable keys, so it has nothing to rotate; its one service account is the Gilligan runtime identity below.
+Only the `(default)` database gets Firestore's free daily quota; `gilligan-test` bills from the first read, which is pennies at test volume.
+The CER server hard-codes project id `conductive-fold-343604` in `src/config/database.ts`, so pointing it at `cer-demo-2026` needs a small server change, which `feat/firestore-config` (`0003170`, unpushed) makes.
+
+#### Gilligan identity and secret rehearsal, 2026-09-25
+
+This rehearses in `cer-demo-2026` the production arrangement settled at L2 (`GILLIGAN_RELEASE_PLAN.md`, "L2 answers so far"), and drafts the inventory for production.
+Everything was created by the user's account (`roles/owner` on the project) through Claude, each write approved by the user in chat.
+The project has no organization or folder above it, so no policy is inherited.
+Nothing was deployed to Cloud Run: the relay still sends the user's JWT as `Authorization`, which a private Cloud Run service rejects, so a deployed rehearsal waits on that decision.
+
+| resource | exact name | grant: role and condition | created by | verified by |
+|---|---|---|---|---|
+| APIs | `iam.googleapis.com`, `secretmanager.googleapis.com`, `policytroubleshooter.googleapis.com` | none | user via Claude | `services list --enabled` |
+| service account | `cer-gilligan-runtime@cer-demo-2026.iam.gserviceaccount.com`, display name "Gilligan runtime" | none on itself: its own policy is empty, so no one can act as it | user via Claude | `iam service-accounts describe`; `keys list` shows one Google-managed key and no user-managed key; `get-iam-policy` is empty |
+| secret | `cer-gilligan-fireworks-api-key`, automatic replication | Secret Manager Secret Accessor (`roles/secretmanager.secretAccessor`) for the runtime account, on this secret only | user via Claude; the value is added by the user, never through Claude | `secrets get-iam-policy` holds that single binding; troubleshooter: access granted on this secret, denied on any other secret name |
+| Firestore corpus | database `(default)` | Cloud Datastore Viewer (`roles/datastore.viewer`) for the runtime account, on the project, condition `gilligan-corpus-read`: `resource.name == "projects/cer-demo-2026/databases/(default)"` | user via Claude | troubleshooter: get and list granted; create, update and delete denied |
+| Firestore usage store | database `gilligan-test` | Cloud Datastore User (`roles/datastore.user`) for the runtime account, on the project, condition `gilligan-usage-rw`: `resource.name == "projects/cer-demo-2026/databases/gilligan-test"` | user via Claude | troubleshooter: get, list, create, update and delete granted; any other database denied |
+
+The project's policy (version 3) holds exactly these two conditional bindings for the account, and nothing at project level grants it `secretmanager.versions.access` or `iam.serviceAccounts.actAs`.
+Datastore Viewer is read-only on documents, including vector queries, plus database and index metadata.
+Datastore User includes delete, which the usage store does not need; only a custom role could drop it.
+Firestore IAM stops at the database: a condition can name a database but not a collection.
+
+At the time of recording, the secret has no version; the user adds it from `.env` in their own terminal.
+When checking `.env`, strip any surrounding quotes from the value first, because they would otherwise be stored as part of the key.
+
+How the checks were run, since the obvious forms fail:
+
+- `gcloud policy-troubleshoot` and `gcloud beta policy-intelligence troubleshoot-policy iam` need `--billing-project=cer-demo-2026` when no default project is set; otherwise they bill gcloud's own client project and fail with `SERVICE_DISABLED`.
+- A Firestore database is not a valid troubleshooter resource: troubleshoot the project, `//cloudresourcemanager.googleapis.com/projects/cer-demo-2026`, with `--resource-name=projects/cer-demo-2026/databases/<db>`, `--resource-service=firestore.googleapis.com` and `--resource-type=firestore.googleapis.com/Database`, in the same form the condition uses; the `//firestore.googleapis.com/` form evaluates the condition as false.
+- A secret must be named by project number: `//secretmanager.googleapis.com/projects/2771572559/secrets/<name>`.
+- `testIamPermissions` reports the caller's permissions, not another principal's, so it cannot verify the runtime account without impersonating it, which would need an extra grant.
+
+Decision for the production inventory, needing Michael and the supervisor (recorded 2026-09-25, not yet applied to cer-demo's configuration):
+production should give Gilligan a dedicated Firestore database, for example `gilligan` in us-central1 next to Cloud Run, holding both the corpus and the usage store.
+`cer-gilligan-runtime` then gets Datastore User conditioned on that database alone and no grant on `(default)`.
+Otherwise, because Firestore IAM cannot narrow below a database, the usage store's write access on `(default)` would also let the runtime account write `users`, `devices` and `water-data`.
+
+### CER's old QA database
+
+Read on 2026-09-25 with the user's approval, metadata only; no document was read.
+
+- `qa-db` exists in `conductive-fold-343604`: Native mode, us-west3, pessimistic concurrency, created 2024-02-22 and not reconfigured since, with no delete protection and no point-in-time recovery.
+- The production `(default)` database is also in us-west3, not us-central1 where Cloud Run runs.
+- Collections and document counts: `chats` 27, `devices` 3, `organizations` 22, `users` 30, `water-data` 31,905.
+- `cer-api-qa` has one revision, `cer-api-qa-00001-pt8`, deployed 2024-11-19 by a contractor account, and serves all its traffic.
+- Recent read and write activity is unknown: Cloud Monitoring refuses this account on the CER project, so it needs the console's Firestore Usage tab or a monitoring viewer role.
+
+Its configuration and its server have not changed since 2024, and that server is an older codebase, which weighs against plan §6 option C.
