@@ -1,0 +1,99 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-28T18:43:35.212Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1497374,
+    "cachedPromptTokens": 76542,
+    "completionTokens": 82906,
+    "usd": 0.526196052
+  },
+  "results": [
+    {
+      "arm": "gold-plus-local-vector",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 1.125,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.7,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.1666666666666667,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.375,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.3333333333333333,
+        "coverage": 1,
+        "met": true
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": true,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer declares the standard 4/7/10 buffers adequate for pH 3.2 and wrongly claims pH 4.01 and 7.00 bracket 3.2 missing the 1.68-buffer requirement the 10 C buffer-temperature rule and the 0.05 pH-unit check and thereby violates the must-not against calling 4/7/10 adequate at pH 3. Unmet: Usual 4/7/10 buffer set insufficient for acidic water; pH 1.68 (or 2) buffer needed for acidic waters; Sample pH must fall inside calibrated range so 4/7/10 does not bracket pH 3.2; Calibration buffers must be within about 10 C of sample temperature; Buffer nearest sample pH checked within about 0.05 pH unit of its value at that temperature else recalibrate"
+        }
+      ]
+    }
+  ]
+}

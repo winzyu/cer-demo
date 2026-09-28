@@ -1669,6 +1669,29 @@ The control is the old 14-document corpus at this branch; "full" is the 16-docum
 - **Grading without the catalogue (found 2026-09-28).** E4 and every E7 capture answered with the catalogue block in the prompt (answers cite 【fault-first】, which only the catalogue carries), but the judge and the gates rebuilt the system prompt with it off, whatever `CATALOGUE_PROMPT` said, so neither saw catalogue text as grounding. Captures now record `cataloguePrompt` and grading rebuilds the prompt from it (`src/eval/captureSystemPrompt.ts`); older captures take `CATALOGUE_PROMPT` from the grading process. Re-run with the catalogue on, the gates on all six E7 captures are unchanged; the judge passes were not re-run, so the correctness scores above were graded without the catalogue block.
 - **Spend** about $4.75 (six captures about $1.70, twelve judge passes $3.05); about $9.40 left of the R4 ceiling plus the user's added $10.
 
+### Gold context plus retrieval - 2026-09-28, run `gold-plus-lv-k20-glm-2026-09-28`
+
+Question: is the gap between gold context (1.33) and the launch configuration (about 1.16) passages retrieval misses, or retrieved passages that distract the answer model?
+`gold-plus-local-vector` (`GoldPlusRetrievedAdapter`, `6bf47cd`) puts each turn's gold chunks first, then the launch `local-vector` k=20 results without duplicates; gold is looked up by the user's words while search uses the rewrite.
+Launch settings otherwise (both rewrites, `glm-5p3-flash` at reasoning low, the full E7 corpus, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools off), with `CATALOGUE_PROMPT=false` to match the gold run: 90/90, 0 failed, after a spot check; every turn starts with its gold chunks, 22.5 chunks per turn on average (5.4 gold, so about 3 gold chunks per turn were already in the top 20); 1,485,232 prompt tokens.
+Judged once (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+
+| correctness | gold (two passes) | gold plus retrieval | launch, E7 full A / B (two passes each) |
+|---|---|---|---|
+| overall | 1.33 | 1.33 | 1.15 / 1.16 |
+| cross-document | 1.13 | 1.13 | 0.88 / 1.00 |
+| deep-in-manual | 1.63 | 1.70 | 1.35 / 1.35 |
+| probe-calibration | 1.34 | 1.38 | 1.16 / 1.06 |
+| follow-up | 1.38 | 1.50 | 1.25 / 1.50 |
+| definitional | 1.25 | 1.25 | 1.50 / 1.31 |
+| precedence | 1.50 | 1.17 | 1.33 / 1.17 |
+| refusal | 1.06 | 1.00 | 0.88 / 0.88 |
+
+- **Reading.** Adding the 17 or so non-gold retrieved chunks costs nothing: the score stays at the gold ceiling. The gap to launch is passages retrieval misses, concentrated in deep-in-manual, cross-document and probe-calibration; distraction is not the cause.
+- **So retrieval recall is worth improving,** and extra depth is cheap to try: this answer model held the ceiling with 20 to 35 chunks, unlike the `gpt-oss-120b` k=30 capture of 2026-09-24. The reranker's offline recall gain that did not reach correctness points at the fixture-wide labels, which count chunks a turn does not need; per-turn labels would make offline recall a usable screen.
+- **Caveats.** One judge pass (pass-to-pass spread about 0.05); precedence and refusal have 6 and 8 turns. The launch captures ran with the catalogue on and were graded without it; the catalogue-off control of 2026-09-27 (`p3-lv-k20-rewrite2-glm-2026-09-27`, 1.16) sits at the same level.
+- **Spend** about $0.75: capture about $0.22 with rewrites, judge $0.53.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
