@@ -35,6 +35,17 @@ import type {
 export const FIXTURE_DIR = path.resolve(__dirname, "../../eval/fixtures-wave1");
 
 /**
+ * The directory captures and judge runs read. `EVAL_FIXTURE_DIR`, relative to the repo root,
+ * points them at a side set scored apart from wave 1, such as `eval/fixtures-e7` (the launch
+ * corpus update's new-content fixtures); unset, it is `FIXTURE_DIR`.
+ */
+export const activeFixtureDir = (): string => (
+  process.env.EVAL_FIXTURE_DIR
+    ? path.resolve(__dirname, "../..", process.env.EVAL_FIXTURE_DIR)
+    : FIXTURE_DIR
+);
+
+/**
  * Capabilities the service has today. Fixtures requiring anything absent from this list are
  * committed but not runnable — see `EVAL_REQUIREMENTS`.
  *
@@ -218,7 +229,7 @@ const validateFixture = (
  * cannot drift from `DIRECT_FEED_SLICE` or from what the service can actually do.
  */
 export const loadFixtures = (
-  dir: string = FIXTURE_DIR,
+  dir: string = activeFixtureDir(),
   capabilities: readonly EvalRequirement[] = AVAILABLE_CAPABILITIES,
 ): LoadedFixture[] => {
   const filenames = fs.readdirSync(dir).filter((name) => name.endsWith(".json")).sort();
