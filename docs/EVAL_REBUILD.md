@@ -1692,6 +1692,33 @@ Judged once (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 
 - **Caveats.** One judge pass (pass-to-pass spread about 0.05); precedence and refusal have 6 and 8 turns. The launch captures ran with the catalogue on and were graded without it; the catalogue-off control of 2026-09-27 (`p3-lv-k20-rewrite2-glm-2026-09-27`, 1.16) sits at the same level.
 - **Spend** about $0.75: capture about $0.22 with rewrites, judge $0.53.
 
+### Per-turn retrieval labels - 2026-09-28, `eval/turn-claims/`, `eval/retrieval-labels-per-turn/`
+
+Question: the fixture-wide labels give both turns of a fixture every claim its notes name, so a turn is scored against passages only its sibling needs; does labelling each turn with its own passages make offline recall rank arms the way the captures did?
+Codex assigned each of the 340 named claims of the 41 non-refusal fixtures to turn 1, turn 2, both or neither, keeping a claim for a turn only when it supports one of that turn's `must_contain` points (`eval/turn-claims/_BRIEF.md`); the result was reviewed and spot-checked against the rubrics.
+Split: 138 claims turn 1 only, 120 turn 2 only, 41 both, 41 neither; 23 rubric points have no supporting named claim (`eval/turn-claims/_SUMMARY.md`).
+`scripts/resolveRetrievalLabels.ts --turn-claims=eval/turn-claims` writes `eval/retrieval-labels-per-turn/` (331 chunk references against 485); turns with explicit `retrieval_evidence` keep it, and `eval/retrieval-labels/` and the gold arm are unchanged.
+`retrieval:eval --labels=<dir>` scores against either set.
+
+| directory | files | fingerprint |
+|---|---|---|
+| `eval/turn-claims/` | 41 | `fb70f1dc61547435636bf4bfc828ebda7d6bda8f5cdf395f5e8f8b15b1d8bcbb` |
+| `eval/retrieval-labels-per-turn/` | 45 | `df5cbb1ccd3335e361ad470d2388ac471dcf51bf1c6514114e7b1d31697fd49a` |
+
+Test: rather than rerun retrieval (new GLM rewrites each time), `scripts/captureLabelRecall.py` scores the excerpts each GLM capture actually sent against both label sets, beside that capture's correctness (mean of its judge passes), on the 82 non-refusal turns; no model calls.
+
+| capture | correctness | recall, fixture-wide | recall, per turn |
+|---|---|---|---|
+| `local-vector`, follow-up rewrite (`p3-lv-k20-rewrite-glm-2026-09-26`) | 1.08 | 59.0% | 59.9% |
+| `local-vector`, both rewrites (`p3-lv-k20-rewrite2-glm-2026-09-27`) | 1.18 | 62.9% | 63.9% |
+| `local-rerank`, both rewrites (`p3-rerank-k20-rewrite2-glm-2026-09-27`) | 1.13 | 70.5% | 73.3% |
+| launch, E4 caveat, E7 control and corpora A-E (7 captures) | 1.15-1.20 | 60.4-65.1% | 60.0-66.4% |
+
+- **Result: fail.** Per-turn recall still puts the reranker first and a correctness loser; across the 11 captures its rank correlation with correctness is unchanged (Spearman 0.29 on both label sets). Offline recall is not a usable screen for choosing an arm, and paid captures stay the test.
+- **What the per-turn labels did change.** Turn by turn they track correctness slightly better (Spearman 0.45 against 0.43; within a turn across captures 0.21 against 0.18), and turns with all their own passages score 1.45 against 0.84 for turns with none.
+- **Where the reranker loses.** Against its `local-vector` control, on the 24 turns where it found more of the turn's own passages it scored 0.19 higher; on the 51 turns where it found the same share it scored 0.18 lower. Two captures of near-identical configuration differ by 0.02-0.04 on such turns, so the loss is real and lies outside the labelled passages: what the reranker puts beside or instead of them, or their order, which recall does not see.
+- **Caveats.** One reranker capture; labels cover only claims the fixture notes name, so a passage a turn needs but no note names counts as irrelevant (the 23 uncovered rubric points).
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
