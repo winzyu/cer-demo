@@ -217,6 +217,7 @@ With `--testTimeout=120000` all 5 tests passed in 3 of 3 runs with the correct t
 | billing | linked; a budget of 10 USD a month on the whole billing account alerts at 50, 90 and 100 percent |
 | `(default)` database | Native mode, us-west1: cer-demo's `corpus_chunks` and `corpus_documents` vector store; leave it alone |
 | `gilligan-test` database | Native mode, us-central1, created 2026-09-25 for Gilligan test data |
+| `cer-demo-fixtures` database | Native mode, us-central1, created 2026-09-28: a browsable snapshot of the fabricated :8180 emulator data (9 organizations, 27 users, 15 devices, 52 chats, 8,640 readings) for showing roles and organizations in the console; no server reads it. Refresh with `node scripts/copyEmulatorToCloud.mjs --write`, then `--verify` |
 
 The project holds no API keys and no downloadable keys, so it has nothing to rotate; its one service account is the Gilligan runtime identity below.
 Only the `(default)` database gets Firestore's free daily quota; `gilligan-test` bills from the first read, which is pennies at test volume.
