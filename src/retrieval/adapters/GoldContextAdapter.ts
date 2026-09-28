@@ -27,9 +27,10 @@ export class GoldContextAdapter implements RetrievalAdapter {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async getContext(query: string, _opts?: GetContextOptions): Promise<Chunk[]> {
+  async getContext(query: string, opts?: GetContextOptions): Promise<Chunk[]> {
     const index = this.index ?? (this.index = this.buildIndex());
-    const chunks = index.get(query);
+    // Labels are keyed by what the user asked, not by a search rewrite of it.
+    const chunks = index.get(opts?.originalQuery ?? query);
     if (chunks === undefined) {
       throw new Error(`GoldContextAdapter: no gold-context label for query "${query}".`);
     }

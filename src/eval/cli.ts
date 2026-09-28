@@ -127,6 +127,11 @@ export const SPOT_CHECK_QUERIES = [
 /** The arm that looks context up by verbatim labelled query, so it answers labelled turns only. */
 export const GOLD_CONTEXT_ARM = "gold-context";
 
+/** Arms that include gold context, and so can only be asked labelled questions. */
+export const isGoldContextArm = (arm: string): boolean => (
+  arm === GOLD_CONTEXT_ARM || arm === "gold-plus-local-vector"
+);
+
 /**
  * The classes the gold-context spot check draws from: an answer deep in one manual, one that spans
  * documents, and a calibration question. Refusal turns are left out on purpose -- they are labelled
@@ -146,7 +151,7 @@ export const spotCheckQueriesFor = (
   arm: string,
   labelled: ReadonlyArray<{ fixtureId: string; fixtureClass: string; label: LabelledQuery }>,
 ): string[] => {
-  if (arm !== GOLD_CONTEXT_ARM) {
+  if (!isGoldContextArm(arm)) {
     return [...SPOT_CHECK_QUERIES];
   }
   return GOLD_CONTEXT_SPOT_CHECK_CLASSES.map((fixtureClass) => {
@@ -154,7 +159,7 @@ export const spotCheckQueriesFor = (
       .filter((entry) => entry.fixtureClass === fixtureClass && entry.label.relevant.length > 0)
       .sort((a, b) => a.fixtureId.localeCompare(b.fixtureId) || a.label.turn - b.label.turn);
     if (first === undefined) {
-      throw new Error(`No labelled ${fixtureClass} turn to spot-check the ${GOLD_CONTEXT_ARM} arm with.`);
+      throw new Error(`No labelled ${fixtureClass} turn to spot-check the ${arm} arm with.`);
     }
     return first.label.query;
   });

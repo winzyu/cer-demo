@@ -1,6 +1,8 @@
 import { loadFixtures } from "../../src/eval/fixtures";
 import { loadLabels } from "../../src/eval/retrieval/labels";
 import { GoldContextAdapter } from "../../src/retrieval/adapters/GoldContextAdapter";
+import { GoldPlusRetrievedAdapter } from "../../src/retrieval/adapters/GoldPlusRetrievedAdapter";
+import type { Chunk, RetrievalAdapter } from "../../src/types/retrieval.types";
 
 /**
  * Exercised against the real label files and the real ingestion artifact — same pattern as
@@ -100,5 +102,36 @@ describe("GoldContextAdapter", () => {
     const second = await adapter.getContext(other);
 
     expect(second.map((c) => c.id)).toEqual(first.map((c) => c.id));
+  });
+});
+
+describe("gold context with a search rewrite", () => {
+  const asked = "We put a pod below an old mine adit. Water is running about pH 3.2 and the "
+    + "conductivity trace looks wrong to me — higher than the grab samples the lab ran. Is the "
+    + "low pH capable of throwing the conductivity off, and if so by how much?";
+
+  it("looks the label up by the user's own words when the search query was rewritten", async () => {
+    const adapter = new GoldContextAdapter();
+    const direct = await adapter.getContext(asked);
+    const viaRewrite = await adapter.getContext("low pH effect on conductivity", { originalQuery: asked });
+    expect(viaRewrite).toEqual(direct);
+  });
+
+  it("puts gold first, then the retrieved chunks it lacks, searching with the rewrite", async () => {
+    const gold = await new GoldContextAdapter().getContext(asked);
+    const extra: Chunk = { id: "other.pdf__1", text: "unrelated", source: "other.pdf" };
+    const seen: string[] = [];
+    const retrieved: RetrievalAdapter = {
+      mode: "fake",
+      getContext: (query) => {
+        seen.push(query);
+        return Promise.resolve([gold[3], extra, gold[0]]);
+      },
+    };
+    const chunks = await new GoldPlusRetrievedAdapter(new GoldContextAdapter(), retrieved, "gold-plus-fake")
+      .getContext("low pH effect on conductivity", { originalQuery: asked });
+
+    expect(seen).toEqual(["low pH effect on conductivity"]);
+    expect(chunks.map((c) => c.id)).toEqual([...gold.map((c) => c.id), extra.id]);
   });
 });
