@@ -14,19 +14,14 @@ Updated 2026-09-27 by the release coordinator as the baseline for a full reset o
   Critical path: Michael's setup, then cer-gilligan no-traffic deploy (L5, Sep 28), then staged server and dashboard plus the supervisor demo (L6, L7, Sep 29), then smoke and traffic (L8, L9, Sep 30).
 - **Coordination rules.** One coordinator is the only writer of `dev`, this file, the plan and the manual guide; every other chat works on its own branch and worktree and reports commit IDs to the coordinator, who reviews the actual diff and lands it. Upstream pushes are new branches only, each with the user's consent in chat.
 
-## Landed on `dev` on 2026-09-27
+## Last session
 
-- `docs/l2-inputs` (L2 deployment inputs), `chore/hygiene-2026-09-24` (L3).
-- `task/q3-q5` (Q3-Q6: current site only, stuck turbidity, not-assessed limits, CWA Old merge; a pod with no GPS in its history counts as never having moved).
-- `task/gilligan-ux-contract` (reader-facing `user_notes` for every tool note, document titles on citations).
-- `eval/wave1-corrections` (R4 closed: E4, E6, launch settings in runbook §4.1).
-- `feat/service-release` (S1-S4, Q7: image packaging, service key, Firestore usage store with `expireAt`, model-call gate, `.gcloudignore`); merged with R4's reasoning options in `LlmService`.
-- `task/q9-413` (1 MiB body on `/api/v1/chat`, history trimmed to 20 messages and 64 KB).
-- `docs/gcp-test-env` (mirror setup, bot, ticket, 2026-09-25 and 2026-09-27 results).
-- Manual guide: section K (decisions made visible), a "What it checks" column, every session's suggested checks, and demo, rehearsal and staged-smoke paths.
-- Checks after each merge: typecheck and lint clean; touched suites pass singly (for example `sensorChat` 17/17, `chat` 24/24, `llmService` 14/14, `chatBodyLimit` 7/7).
+- Coordinator (2026-09-27): landed `docs/l2-inputs`, the hygiene branch, `task/q3-q5` (Q3-Q6, no-GPS rule), `task/gilligan-ux-contract` (reader notes, citation titles), `feat/service-release` (merged with R4's reasoning options in `LlmService`), `task/q9-413` and `docs/gcp-test-env`; R4 landed `eval/wave1-corrections` itself. Typecheck, lint and touched suites pass singly after each merge.
+- User decisions recorded in `timeline.md`: superadmins keep merged-predecessor history withheld; a missing or empty organization counts as null (server test `9751f8f`, pushed); a pod with no GPS counts as never moved; launch counts usage in Firestore; E4 becomes a standing dashboard caveat.
+- Manual guide: section K, a "What it checks" column, every session's checks, demo and staged-smoke paths. Plan: Q10 and Q11 for mirror findings 6-11.
+- Roundup of every active chat for a full reset; coordinator spend: none.
 
-## Workstreams and who picks them up
+## Open work
 
 Each item names the chat that owns it after the reset.
 
@@ -45,14 +40,12 @@ Each item names the chat that owns it after the reset.
 - **Deploy assist (new chat, once Michael's setup is done; L5-L8).** Runbook [`migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md`](migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md) §2.1, §3 and §4.1.
 - **Stop:** the Sep 24-25 orchestrator (`gilligan release reconciliation`), the Q9 orchestrator (`cer-demo-51`; its work passes to the coordinator and the fix round), R4 (`cer-demo-84`), the service chat (`cer-demo-49`), the duplicate mirror chat (`mirror project setup`), and `cer-demo-c1` (unreachable).
 
-## Decisions and actions the user owes
-
-- **Michael (blocks every deploy).** "Act as" on the compute account is restored (checked 2026-09-27). Still open: create `cer-gilligan-runtime`; create the Fireworks secret and grant the runtime account access; create the dedicated `gilligan` Firestore database and its grants; a TTL policy on `gilligan_usage.expireAt`, never `updatedAt`; disable the `cer-ui` trigger `8ad67b17`, which is still enabled. The user lacks `iam.serviceAccounts.create`, `setIamPolicy`, `secretmanager.secrets.create` and `datastore.databases.create`.
-- **Launch blockers to confirm:** fix findings 11 (cross-organization CSV export), 6 and 10 before launch (recommended); 8 should; 9 is likely acceptable (a superadmin may see a retired pod by itself).
-- **Pushes (consent):** dashboard `task/gilligan-ux`; server `task/gilligan-citation-title`, `fix/invited-login`, the Q11 branch, the mirror fixtures (`1ef21a7`), and the combined server release commit before L6.
-- **Approvals:** U7 wording ("Answers draw on document excerpts and may not cover every step; check the cited sections before acting."); E5, the tools-on live smoke; the mirror's C1 and D1 rerun and its remaining groups; the release candidate's delta test (about $0.10); grade the mirror review sheets (`data/e2e/`).
-- **Supervisor, Sep 28:** the standing caveat in place of refusals for weak answer classes (E4, D3); the pH 3-12 plausibility band; the demo date (L7, Sep 29) and which Fireworks key it uses; the user-route exposure (`SECURITY_FINDINGS.md` §8); Firestore access for cer-gilligan (launch uses the Firestore store, decided 2026-09-27).
-- **Optional:** the coordinate audit (`scripts/coordinateAudit.ts`, read-only, finds pods whose GPS dropped out part-way); `scripts/censusFirestore.ts` (untracked in `.claude/worktrees/firestore-mirror`, lint errors; commit to `docs/mirror-parity` or drop; the classifier blocked the agent); removing merged worktrees (`wave1-corrections` needs `--force` for its ignored `.env`).
+- User: **Michael (blocks every deploy).** "Act as" on the compute account is restored (checked 2026-09-27). Still open: create `cer-gilligan-runtime`; create the Fireworks secret and grant the runtime account access; create the dedicated `gilligan` Firestore database and its grants; a TTL policy on `gilligan_usage.expireAt`, never `updatedAt`; disable the `cer-ui` trigger `8ad67b17`, which is still enabled. The user lacks `iam.serviceAccounts.create`, `setIamPolicy`, `secretmanager.secrets.create` and `datastore.databases.create`.
+- User: **Launch blockers to confirm:** fix findings 11 (cross-organization CSV export), 6 and 10 before launch (recommended); 8 should; 9 is likely acceptable (a superadmin may see a retired pod by itself).
+- User: **Pushes (consent):** dashboard `task/gilligan-ux`; server `task/gilligan-citation-title`, `fix/invited-login`, the Q11 branch, the mirror fixtures (`1ef21a7`), and the combined server release commit before L6.
+- User: **Approvals:** U7 wording ("Answers draw on document excerpts and may not cover every step; check the cited sections before acting."); E5, the tools-on live smoke; the mirror's C1 and D1 rerun and its remaining groups; the release candidate's delta test (about $0.10); grade the mirror review sheets (`data/e2e/`).
+- User: **Supervisor, Sep 28:** the standing caveat in place of refusals for weak answer classes (E4, D3); the pH 3-12 plausibility band; the demo date (L7, Sep 29) and which Fireworks key it uses; the user-route exposure (`SECURITY_FINDINGS.md` §8); Firestore access for cer-gilligan (launch uses the Firestore store, decided 2026-09-27).
+- User: **Optional:** the coordinate audit (`scripts/coordinateAudit.ts`, read-only, finds pods whose GPS dropped out part-way); `scripts/censusFirestore.ts` (untracked in `.claude/worktrees/firestore-mirror`, lint errors; commit to `docs/mirror-parity` or drop; the classifier blocked the agent); removing merged worktrees (`wave1-corrections` needs `--force` for its ignored `.env`).
 
 ## Working tree
 
