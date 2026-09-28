@@ -1,0 +1,147 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-28T03:07:22.207Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1332834,
+    "cachedPromptTokens": 607938,
+    "completionTokens": 120394,
+    "usd": 0.36558922799999993
+  },
+  "results": [
+    {
+      "arm": "local-vector",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.35,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.1666666666666667,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.0625,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 0.875,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 1.1555555555555554,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer withholds the comparison saying it cannot compare the two tables so it never states they agree never notes A6.0 points multiparameter users to A6.8 never mentions standard stabilisation criteria or model-dependent accuracy and gives no persistent-variability procedure. Unmet: States plainly that the two tables give the same stabilisation criteria and do not conflict; States the general field-measurement chapter points multiparameter users to the multiparameter chapter for criteria of the same kind; States the criteria are standard sensor stabilisation criteria and that actual sensor accuracy varies by model and manufacturer; For persistent variability extends equilibration and records additional measurements then reports the median of the final five or more readings or selects a representative final reading using site knowledge and professional judgment documenting the decision"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses the A6.8 conductivity-dependent criteria (±0.1 ±0.3 below 75 µS/cm) as unavailable so the required points are withheld even though it correctly states A6.4's 0.05 pH-unit final-buffer check. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check (0.05 pH unit of certified value at calibration temperature)"
+        },
+        {
+          "fixtureId": "crossdoc-orp-sliding-do-steady",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes the ZoBell-check and temperature-table points but gives ZoBell millivolt values (440 mV / 438 mV) with no temperature attached violating a must-not item and omits the 430 mV at 25 C interpolation 15–30 minute equilibration the Eh = emf + Eref ±5 mV window and the 90-day stability statement. Unmet: Gives the theoretical ZoBell Eh at 25 C as about 430 mV; States values for temperatures between table rows are interpolated; States the solution and sensors must be left to reach thermal equilibrium on the order of 15 to 30 minutes before the check is read; Gives the check pass window as calculated Eh after adding the appropriate reference-electrode potential to measured potential within 5 mV of the temperature-specific table value; States ZoBell's solution is reported stable for at least 90 days chilled at 4 C; does not invent a 90-day expiry"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses the core question and withholds the USGS value and the 0.03 mg/L comparison the rubric asks for though it does give the EPA 9.06 mg/L value and the Benson and Krause source. Unmet: gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; States the difference is 0.03 mg/L and assesses its significance against the applicable procedure; Compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; advises using the table belonging to whichever protocol the work is being done under consistently"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the multiply-by-factor method and names table 6.2–4 but withholds the required 0.8235 factor saying it lacks the information which is a refusal of a figure the rubric asks for. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm"
+        },
+        {
+          "fixtureId": "deepmanual-diluting-clarity-standards",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer endorses diluting calibrants generally (\"Yes — the USGS guidance ... describes exactly that approach for formazin calibrants by diluting a stronger stock solution\") and never states that commercial standards must not be diluted never names 4 000-unit formazin as the sole exception never explains the loss of linearity and never recommends buying prepared solutions — thereby approving dilution of commercial standards beyond the 4 000-unit formazin exception. Unmet: states that commercial calibration solutions must not be diluted; gives 4 000-unit formazin as the one exception that may be diluted; explains that diluting changes the suspension matrix so the dilutions are no longer linear; recommends buying commercially prepared solutions at the values needed rather than preparing them by dilution"
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer places pH before specific conductance and tells the operator the other three can be done in any order violating two 'must not' items and it misses the temperature-first conductance-before-pH DO-then-ORP ionic-strength rationale and pH-buffer contamination points. Unmet: Places temperature first in the sequence; Places specific conductance before pH; Places dissolved oxygen and then oxidation-reduction potential after pH; Explains that the sequence runs from lower to higher ionic strength so carryover from one standard does not bias the next; Notes specifically that pH buffers and electrode filling solutions are high in ionic strength and would contaminate a conductivity calibration"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that makes none of the rubric's must-contain points withholding the supported explanations about the turbidity fouling check and the EPA SOP's post-calibration criteria that the rubric expected. Unmet: States that the corpus gives no rule for deciding which part of a long record may be kept and which must be thrown out; States that no source gives an allowable rate of drift - a per-day or per-week figure - for a sensor left in the water; States that it gives no procedure for correcting or adjusting a record after the instrument comes out; Notes that the turbidity chapter does offer a fouling check comparing the sensor's reading on a calibrant before and after cleaning it and taking the percent difference; States that this fouling check quantifies one sensor's condition and is not an acceptance rule for the record; Notes that the EPA field calibration SOP has the operator calibrate before deployment and check the calibration on recovery defers the drift criteria to the project's quality assurance plan and supplies its own default post-calibration criteria only for when that plan is silent; Declines to convert the EPA post-calibration criteria into a keep-or-discard threshold for a month of record and supplies no drift tolerance beyond them; Notes that the EPA SOP's default post-calibration criteria are a pass-or-fail check on the instrument at recovery not a rule for how much of the record may be kept and that data failing the check are qualified rather than discarded"
+        },
+        {
+          "fixtureId": "probecal-ph-slope-acceptance",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer correctly names the slope and the 95-101 percent / 56.2-59.8 mV at 25 °C range but it omits the 1-2 minute response-time point and uses a stated working life (12-18 months) to conclude the electrode is likely deteriorated which has the same effect as the prohibited datasheet-lifespan criterion. Unmet: Notes that a healthy electrode also responds quickly in buffer on the order of one to two minutes"
+        }
+      ]
+    }
+  ]
+}
