@@ -23,7 +23,7 @@ These older commits do not contain every later release fix, so record a known fa
 
 **Setup below is the 2026-09-26 stack and is being updated.**
 The 2026-09-27 stack differs: the mirror server (`mirror/e2e-p3` `1ef21a7` or the release candidate's `mirror/release-rc1`) runs under a `demo-` project (`demo-cer-mirror`) and refuses production project ids, `mirror:seed -- --fixtures` adds the moved pod, the no-GPS pod and the missing- and empty-organization predecessors, and the dashboard's `local` ancestry check no longer holds after the malware cleanup rewrote `local`.
-Until this section is rewritten, follow [`LOCAL_STACK.md`](LOCAL_STACK.md) and `GILLIGAN_E2E_RESULTS_2026-09-27.md` for those differences.
+For the current stack, follow [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md) instead of the setup below.
 
 In the setup terminal, check branches, ancestry and malware before starting either upstream checkout:
 
