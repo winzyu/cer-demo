@@ -5,7 +5,7 @@
   "chunkCount": 9,
   "chunks": [
     {
-      "chunkId": "cer-water-quality-guidance-v2-excerpt.md__32ed8a9cd015",
+      "chunkId": "cer-water-quality-guidance-v2-excerpt.md__68786b86ebe2",
       "index": 0,
       "locator": "Sections 5.1-5.3, natural cycles - \"DO and pH move in phase\"",
       "claims": [
@@ -1051,7 +1051,7 @@
       ]
     },
     {
-      "chunkId": "cer-water-quality-guidance-v2-excerpt.md__84a6c0991f1b",
+      "chunkId": "cer-water-quality-guidance-v2-excerpt.md__154575e7bcf0",
       "index": 8,
       "locator": "Sections 7.2-7.3 and 11, fault rules and coupling - \"Required Metadata for Every DataPod\"",
       "claims": [
@@ -1149,34 +1149,6 @@
           ],
           "type": "procedural",
           "quote": "Neighbor comparison: If a nearby DataPod does not show the change and the plume could not\n   plausibly be local, suspect a fault.",
-          "specificity": "high"
-        },
-        {
-          "id": "v2x-required-sensor-metadata",
-          "claim": "Every DataPod requires DO sensor type, ORP reference-electrode type and filling solution, turbidity unit, and pH calibration-buffer type as metadata.",
-          "metrics": [
-            "dissolvedOxygen",
-            "orp",
-            "turbidity",
-            "ph"
-          ],
-          "type": "procedural",
-          "quote": "- DO sensor type (galvanic, optical, or polarographic)\n- ORP reference electrode type and filling solution\n- Turbidity unit (FNU or NTU)\n- pH calibration buffer type (NBS/NIST)",
-          "specificity": "high"
-        },
-        {
-          "id": "v2x-required-operational-metadata",
-          "claim": "Every DataPod requires calibration dates, slopes and offsets, cleaning and maintenance history, battery-voltage time series, sensor depth, and firmware version as metadata.",
-          "metrics": [
-            "dissolvedOxygen",
-            "orp",
-            "ph",
-            "conductivity",
-            "temperature",
-            "turbidity"
-          ],
-          "type": "procedural",
-          "quote": "- Calibration dates, slopes, and offsets\n- Cleaning and maintenance log\n- Battery voltage time series\n- Sensor depth\n- Firmware version",
           "specificity": "high"
         },
         {
@@ -1281,7 +1253,7 @@
     }
   ],
   "summary": {
-    "totalClaims": 102,
+    "totalClaims": 100,
     "byMetric": {
       "dissolvedOxygen": 65,
       "ph": 53,
@@ -1308,6 +1280,6 @@
       "Does not supply site-specific agency contacts, reporting deadlines, or a full sewage or fish-kill response protocol beyond grab sampling and high-priority verification.",
       "Does not reproduce Section 7.2 rule 1, which is explicitly omitted pending CER review, although Section 6.4 still mentions identical timestamps as a fault discriminator."
     ],
-    "notes": "All nine chunks are represented; front matter is not turned into claims. Shared opening text is not re-extracted. Chunk 1 joins the Section 5.4 heading to its first bullet; chunks 2 and 6 join matrix introductions to their first rows. The dredging row is split between chunks 2 and 3: its parameter pattern is assigned to chunk 2 and its newly completed working-hours discriminator to chunk 3. The clock-drift row is split between chunks 6 and 7: its pattern is assigned to chunk 6 and its newly completed time-of-day check to chunk 7. Chunk 3 has a doubled space before the dredging discriminator, and chunk 7 has a doubled space before the clock-drift discriminator. Chunks 4 and 8 join the preceding row to the following heading, and chunk 5 joins the Thermal Discharge heading to its bullet. Several overlap openings start mid-word. Continuation rows name their parameters, so there are no unlabeled numeric grids. Section 7.2 rule 1 is intentionally absent, but the identical-timestamp assertion remains in Section 6.4, chunk 5. The marine sewage matrix says not tied to rain, while the detailed signature allows heavy rain overwhelming a system; this tension is preserved. Sections 2.4.1, 8, 9, and 10 are referenced but absent. Salinity and specific conductance claims use the conductivity metric; general channel-wide diagnostic rules carry all six metrics."
+    "notes": "All nine chunks are represented; front matter is not turned into claims. Shared opening text is not re-extracted. Chunk 1 joins the Section 5.4 heading to its first bullet; chunks 2 and 6 join matrix introductions to their first rows. The dredging row is split between chunks 2 and 3: its parameter pattern is assigned to chunk 2 and its newly completed working-hours discriminator to chunk 3. The clock-drift row is split between chunks 6 and 7: its pattern is assigned to chunk 6 and its newly completed time-of-day check to chunk 7. Chunk 3 has a doubled space before the dredging discriminator, and chunk 7 has a doubled space before the clock-drift discriminator. Chunks 4 and 8 join the preceding row to the following heading, and chunk 5 joins the Thermal Discharge heading to its bullet. Several overlap openings start mid-word. Continuation rows name their parameters, so there are no unlabeled numeric grids. Section 7.2 rule 1 is intentionally absent, but the identical-timestamp assertion remains in Section 6.4, chunk 5. The marine sewage matrix says not tied to rain, while the detailed signature allows heavy rain overwhelming a system; this tension is preserved. Sections 2.4.1, 8, 9, and 10 are referenced but absent. Salinity and specific conductance claims use the conductivity metric; general channel-wide diagnostic rules carry all six metrics. 2026-09-27: §7.3 left the excerpt after the first E7 rerun; chunks 6-7 were re-keyed and their §7.3 claims dropped."
   }
 }
