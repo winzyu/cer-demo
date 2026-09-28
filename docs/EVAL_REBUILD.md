@@ -1585,7 +1585,7 @@ Kept: the refusal gate passes and correctness does not fall.
 
 ### Launch configuration captured - 2026-09-27, runs `p3-launch-lv-k20-glm-2026-09-27` and `p3-launch-lv-k20-glm-rejudge-2026-09-27`
 
-The launch settings as far as an evaluation can reach them: `local-vector` k=20, datasheets unpinned, `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, `glm-5p3-flash` at reasoning low, `CATALOGUE_PROMPT=true` (on server and judge), the refusal fix at `dcb3ce3`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, port 8011.
+The launch settings as far as an evaluation can reach them: `local-vector` k=20, datasheets unpinned, `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, `glm-5p3-flash` at reasoning low, `CATALOGUE_PROMPT=true` (on the server; the judge and gates graded without the catalogue block until 2026-09-28, see the E7 results), the refusal fix at `dcb3ce3`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, port 8011.
 The tools stay off, as every capture requires (on means live production reads), so the prompt carries the tools-off rule where production carries the tool blocks.
 90/90, 0 failed, after a spot check; 1,722,969 prompt tokens (24.1% cached), 30,562 completion, 475 s; about $0.23 for answers and $0.03 for rewrites.
 Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
@@ -1666,6 +1666,7 @@ The control is the old 14-document corpus at this branch; "full" is the 16-docum
 - **§7.3 was dropped** because one answer cited its required-metadata list as records a pod keeps; the drop did not change the refusal gate.
 - **Decision (user, 2026-09-27):** since the refusal misses do not come from the corpus, launch the full corpus of `4821679`; the refusal gate stays a known weakness of the launch configuration (R4 report); retrieval improvement is the next step. §7.3 is restored by reverting `581e200` and `8e59d75`; the rebuilt corpus matches `4821679` (16 documents, 457 chunks, the 446 earlier chunk ids and the slice unchanged) and the claims and retrieval labels resolve against it unchanged.
 - **Labels.** `eval/claims/` holds 120 claims for the 11 new chunks (Codex draft, every quote checked verbatim); `eval/retrieval-labels/` regenerates unchanged, since no wave 1 fixture names a new claim. `eval/fixtures-e7/` (six Codex-drafted fixtures, reviewed once) has not been captured.
+- **Grading without the catalogue (found 2026-09-28).** E4 and every E7 capture answered with the catalogue block in the prompt (answers cite 【fault-first】, which only the catalogue carries), but the judge and the gates rebuilt the system prompt with it off, whatever `CATALOGUE_PROMPT` said, so neither saw catalogue text as grounding. Captures now record `cataloguePrompt` and grading rebuilds the prompt from it (`src/eval/captureSystemPrompt.ts`); older captures take `CATALOGUE_PROMPT` from the grading process. Re-run with the catalogue on, the gates on all six E7 captures are unchanged; the judge passes were not re-run, so the correctness scores above were graded without the catalogue block.
 - **Spend** about $4.75 (six captures about $1.70, twelve judge passes $3.05); about $9.40 left of the R4 ceiling plus the user's added $10.
 
 ## Task C provenance inputs - 2026-09-24

@@ -124,6 +124,7 @@ const main = async (): Promise<void> => {
     temperature: config.fireworks.temperature,
     maxTokens: config.fireworks.maxTokens,
     reasoningEffort: config.fireworks.reasoningEffort,
+    cataloguePrompt: config.catalogue.prompt,
     corpusSource: config.retrieval.corpusSource,
     baseUrl: args.baseUrl,
     transport: args.transport,

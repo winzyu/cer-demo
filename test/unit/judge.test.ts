@@ -426,6 +426,25 @@ describe("judge task building", () => {
     expect(turn2!.evidence.systemPrompt).toContain("This prompt carries no normal or acceptable ranges.");
   });
 
+  it("grades against the catalogue block only when the capture ran with it", () => {
+    const build = (arm: string, cataloguePrompt: boolean) => {
+      const dir = path.join(root, "warm", arm);
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, `${FIXTURE_ID}.json`), JSON.stringify({
+        fixtureId: FIXTURE_ID,
+        fixtureClass: "refusal",
+        run: { cataloguePrompt },
+        turns: [{
+          index: 0, question: "q", answer: "a", context: [],
+        }],
+      }), "utf8");
+      return buildTasks({ pass: "warm", arms: [arm], root })[0]!.evidence.systemPrompt;
+    };
+
+    expect(build("catalogue-on", true)).toContain("APPROVED GUIDANCE (catalogue");
+    expect(build("catalogue-off", false)).not.toContain("APPROVED GUIDANCE");
+  });
+
   it("drops a transcript whose fixture is not in the live set", () => {
     // The guard that stops an archived fixture's capture being judged against a rubric that no
     // longer exists — which is exactly the state the tree is in during this migration.
