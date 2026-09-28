@@ -121,7 +121,9 @@ def pair_report(a, b, label_sets):
             groups[group].append(sa[key] - sb[key])
         print(f"[{n}] {a} minus {b}")
         for group, diffs in groups.items():
-            print(f"  A's recall {group:7} n={len(diffs):3}  mean correctness difference {st.mean(diffs) if diffs else float('nan'):+.2f}")
+            wins, losses = sum(d > 0 for d in diffs), sum(d < 0 for d in diffs)
+            print(f"  A's recall {group:7} n={len(diffs):3}  mean correctness difference "
+                  f"{st.mean(diffs) if diffs else float('nan'):+.2f}  (A higher on {wins}, lower on {losses})")
 
 
 def main():
