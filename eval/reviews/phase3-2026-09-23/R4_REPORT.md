@@ -51,3 +51,11 @@ Tried and dropped: the reranker (level with the control at three times the cost)
 
 About $25.85 of the $30 ceiling, measured from token counts at the rates in `src/eval/prices.ts`; the judge was priced only on 2026-09-27, when earlier estimates turned out about $3.15 low.
 The Fireworks bill is the authority.
+
+## Addendum: launch corpus update (E7), 2026-09-27
+
+The Keyestudio document and the source-of-truth v2 excerpt (§5-7 and §11, without §7.2 rule 1) join the launch corpus by user decision.
+Two captures on the E4 settings score 1.14 / 1.16 and 1.16 / 1.17 against a same-day control of 1.19 / 1.20 on the old corpus, with cross-document 0.83-1.00.
+The pre-set rule failed on its gates, but the control failed the refusal gate as well, so GLM's refusal behaviour, not the corpus, is the launch weakness; the new documents cost two refusal turns a point each by displacing the USGS passages their rubrics expect.
+Spend about $4.75 more, from the remaining budget plus $10 the user added. Details: `docs/EVAL_REBUILD.md`, "E7 launch corpus update: results".
+

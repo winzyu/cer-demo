@@ -34,12 +34,14 @@ tag `corpus-archive-2026-09-13` (`../docs/ARCHIVED.md`); its claim inventory
 `eval/claims/water-quality-metrics-source-of-truth.json` was deleted. See
 [`../docs/timeline.md`](../docs/timeline.md) "Eval rebuild" for the full record.
 
-## Current corpus — 14 documents, 840,413 chars (~210K tokens), 446 chunks
+## Current corpus — 16 documents, 864,321 chars (~216K tokens), 457 chunks
 
 Expanded 2026-08-21 from 8 documents (~716K chars) to 18 as the retrieval posture moved toward
 RAG-first, then **trimmed to 15 on 2026-08-24** by cutting three documents that carried no number
 or procedure for any measured parameter (32% of the corpus; see [`_excluded/`](#_excluded)), then
-**to 14 on 2026-09-13** by removing the operator source-of-truth document above. The corpus is
+**to 14 on 2026-09-13** by removing the operator source-of-truth document above, then **to 16 on
+2026-09-27** with the Keyestudio document and the v2 excerpt (plan E7; 11 chunks, every earlier chunk
+id unchanged). The corpus is
 **scoped to the six parameters the DataPod measures** — temperature, dissolved oxygen, ORP,
 conductivity, pH, turbidity — and the reference tier carries one authoritative chapter per
 parameter.
@@ -49,7 +51,7 @@ removed bulk that was competing for top-k slots without contributing. Net agains
 the corpus has lost roughly a third of its characters (32% at the 2026-08-24 trim, a further
 11,564 chars at the 2026-09-13 removal) and kept every document whose numbers are not vetoed.
 
-Every row below matches `data/corpus/corpus.json` as rebuilt on **2026-09-21** after the machine
+Every row below, apart from the two 2026-09-27 additions, matches `data/corpus/corpus.json` as rebuilt on **2026-09-21** after the machine
 rebuild: the 13 text PDFs reproduce their 2026-09-13 char counts exactly, and the OCR'd EPA SOP
 grew by 86 chars on re-OCR (see [OCR](#ocr)), which is why the total moved from 840,327. The direct-feed slice is now **26,096 chars (~6,524 tokens), 3.1% of the corpus** (was
 37,660 chars / 4.4% with the source-of-truth document included), and no longer covers turbidity or

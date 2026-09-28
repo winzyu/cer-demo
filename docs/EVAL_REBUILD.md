@@ -1645,6 +1645,29 @@ Recorded before any capture on the new corpus (user-approved plan, 2026-09-27):
 - New-content fixtures (`eval/fixtures-e7/`, drafted for E7 and not calibrated like wave 1) are captured and judged separately, read through `EVAL_FIXTURE_DIR`, and do not enter the rule.
 - Three captures, fixed before the third: the mean is over all six passes; a gate that fails in two or more of the three captures is a fail, and one that fails in one of three is recorded but does not decide.
 
+### E7 launch corpus update: results - 2026-09-27
+
+Six captures with the settings above, each 90/90 with 0 failed and each judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90); runs `e7-control-…`, `e7-corpus-{a,b}-…` and `e7-narrow-{c,d,e}-…`, all `-lv-k20-glm-2026-09-27` with `-rejudge-` twins.
+The control is the old 14-document corpus at this branch; "full" is the 16-document corpus of `4821679`; "narrowed" drops v2 §7.3 (`581e200`, `8e59d75`).
+
+| | control | full A | full B | narrowed C | narrowed D | narrowed E |
+|---|---|---|---|---|---|---|
+| correctness | 1.19 / 1.20 | 1.14 / 1.16 | 1.16 / 1.17 | 1.13 / 1.13 | 1.13 / 1.13 | 1.18 / 1.16 |
+| cross-document | 0.92 / 0.88 | 0.83 / 0.92 | 1.00 / 1.00 | 0.88 / 0.92 | 0.88 / 0.83 | 0.88 / 0.88 |
+| refusal (judge) | 1.13 / 1.13 | 0.88 / 0.88 | 0.88 / 0.88 | 1.00 / 1.00 | 0.88 / 0.88 | 1.00 / 1.00 |
+| refusal gate: exact / off-contract / answered | 6 / 1 / 1 | 5 / 2 / 1 | 5 / 2 / 1 | 5 / 3 / 0 | 3 / 2 / 3 | 6 / 1 / 1 |
+| citation validity | 99.5% | 98.3% | 98.5% | 99.0% | 99.3% | 99.3% |
+| unexplained figures | 0 of 547 | 0 of 548 | 2 of 565 | 0 of 559 | 0 of 596 | 0 of 537 |
+
+- **Rule outcome.** Both corpora pass on score (full 1.16, narrowed 1.14, against 1.10) and cross-document (0.94 and 0.88, against 0.78). Both fail on gates: the full corpus on citation validity and the refusal gate in both captures, the narrowed corpus on the refusal gate in two of three.
+- **Code drift since E4 is nil.** The control matches E4 (1.18 / 1.13).
+- **The gates do not separate the corpora.** The refusal gate failed in five of six captures, the control included. Of its eight "answered" flags, four restate the user's own "24", two are USGS text (alkalinity figures; the 780-900 nm FNU band) and two quote v2 §5.6's CER heatwave default ("2 °C … for at least 5 days") on `refusal-temperature-harm-threshold` t2, labelled there as not a fish limit. No invalid citation points at a new chunk: they are unterminated markers and catalogue ids used as markers (for example 【thermal】, 【fault-first】), which the control shows too. B's two unexplained figures restate the user's "half a degree" and compute a ratio of two USGS tolerances.
+- **The one corpus effect** is on refusals: v2 chunks displace the USGS and EPA passages that refusal rubrics expect, so `refusal-how-long-can-it-stay-in` t2 and `refusal-temperature-harm-threshold` t1 each lose a point in both full-corpus captures. Elsewhere turns that retrieve new chunks moved like those that did not. The new documents are cited in 4 of 90 answers in capture A.
+- **§7.3 was dropped** because one answer cited its required-metadata list as records a pod keeps; the drop did not change the refusal gate.
+- **Decision (user, 2026-09-27):** since the refusal misses do not come from the corpus, launch the full corpus of `4821679`; the refusal gate stays a known weakness of the launch configuration (R4 report); retrieval improvement is the next step.
+- **Labels.** `eval/claims/` holds 120 claims for the 11 new chunks (Codex draft, every quote checked verbatim); `eval/retrieval-labels/` regenerates unchanged, since no wave 1 fixture names a new claim. `eval/fixtures-e7/` (six Codex-drafted fixtures, reviewed once) has not been captured.
+- **Spend** about $4.75 (six captures about $1.70, twelve judge passes $3.05); about $9.40 left of the R4 ceiling plus the user's added $10.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
