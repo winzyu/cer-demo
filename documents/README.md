@@ -186,7 +186,7 @@ a refusal the service must make, and [`../docs/SPECS.md`](../docs/SPECS.md) §14
 |---|---|---|
 | `cer-water-quality-guidance-v2-excerpt.md` | `water-quality-source-of-truth-v2.pdf` (version 2.0, 2026-09-16), kept untracked at the repository root and never in this directory | no |
 
-Sections 5, 6, 7.1-7.2 and 11 of the operator's source-of-truth v2, in its own words with tables written one row
+Sections 5-7 and 11 of the operator's source-of-truth v2, in its own words with tables written one row
 per line and §7.2 rule 1 left out (`../docs/migration/V2_CORPUS_DECISION.md`). Launched by user decision
 on 2026-09-27 (plan E7). The ranges in §2-3 stay out under the supervisor's range veto.
 
