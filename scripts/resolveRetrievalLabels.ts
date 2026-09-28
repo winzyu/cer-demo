@@ -11,15 +11,19 @@
  * Per-turn retrieval_evidence overrides notes using verbatim filename/quote anchors.
  * Refusal fixtures must provide it: missing requested values do not imply missing explanatory
  * context. Explicit anchors fail closed if they no longer resolve in the current corpus.
- * Other fixtures retain provisional fixture-wide claim labels until the Phase 1e split.
+ * Other turns get every claim the fixture's notes name, unless `--turn-claims=<dir>` supplies a
+ * per-turn assignment (`src/eval/retrieval/turnClaims.ts`); then each turn gets only its own.
  * This script does not delete stale output files; verify output membership after generation.
  *
  *   npx ts-node scripts/resolveRetrievalLabels.ts
  *   npx ts-node scripts/resolveRetrievalLabels.ts --out=eval/retrieval-labels
+ *   npx ts-node scripts/resolveRetrievalLabels.ts --turn-claims=eval/turn-claims
+ *     (writes eval/retrieval-labels-per-turn unless --out names another directory)
  */
 import fs from "fs";
 import path from "path";
 import { readCorpus } from "../src/ingestion/ingest";
+import { turnClaimIds, type TurnClaimAssignment } from "../src/eval/retrieval/turnClaims";
 import { createLogger } from "../src/utils/logger";
 
 const log = createLogger("ResolveRetrievalLabels");
@@ -27,6 +31,7 @@ const log = createLogger("ResolveRetrievalLabels");
 const FIXTURES_DIR = path.resolve(__dirname, "../eval/fixtures-wave1");
 const CLAIMS_DIR = path.resolve(__dirname, "../eval/claims");
 const DEFAULT_OUT = path.resolve(__dirname, "../eval/retrieval-labels");
+const PER_TURN_OUT = path.resolve(__dirname, "../eval/retrieval-labels-per-turn");
 
 const arg = (name: string): string | undefined => process.argv
   .find((a) => a.startsWith(`--${name}=`))?.split("=").slice(1).join("=");
@@ -102,7 +107,12 @@ interface FixtureCoverage {
 }
 
 const main = (): void => {
-  const outDir = path.resolve(arg("out") ?? DEFAULT_OUT);
+  const turnClaimsDir = arg("turn-claims") ? path.resolve(arg("turn-claims") as string) : undefined;
+  const outDir = path.resolve(arg("out") ?? (turnClaimsDir ? PER_TURN_OUT : DEFAULT_OUT));
+  if (turnClaimsDir && outDir === DEFAULT_OUT) {
+    // The fixture-wide labels back the gold-context arm and every recorded capture fingerprint.
+    throw new Error("Per-turn labels must not overwrite eval/retrieval-labels; choose another --out.");
+  }
   fs.mkdirSync(outDir, { recursive: true });
 
   const claimIndex = loadClaimIndex();
@@ -126,7 +136,6 @@ const main = (): void => {
 
     const resolved: string[] = [];
     const unresolved: string[] = [];
-    const byChunk = new Map<string, { resolution: ClaimResolution; claimIds: string[] }>();
 
     named.forEach((id) => {
       const resolution = claimIndex.get(id);
@@ -146,16 +155,21 @@ const main = (): void => {
         throw new Error(`${fixtureId}: claim ${id} quote does not match its current chunk`);
       }
       resolved.push(id);
-      const entry = byChunk.get(resolution.chunkId);
-      if (entry) {
-        entry.claimIds.push(id);
-      } else {
-        byChunk.set(resolution.chunkId, { resolution, claimIds: [id] });
-      }
     });
 
-    const fallback: RelevantChunkDraft[] = [...byChunk.entries()].map(
-      ([chunkId, { resolution, claimIds }]) => ({
+    /** One grade-2 label per chunk the claims resolve to, its evidence the first claim's quote. */
+    const claimChunks = (ids: string[]): RelevantChunkDraft[] => {
+      const byChunk = new Map<string, { resolution: ClaimResolution; claimIds: string[] }>();
+      ids.forEach((id) => {
+        const resolution = claimIndex.get(id) as ClaimResolution;
+        const entry = byChunk.get(resolution.chunkId);
+        if (entry) {
+          entry.claimIds.push(id);
+        } else {
+          byChunk.set(resolution.chunkId, { resolution, claimIds: [id] });
+        }
+      });
+      return [...byChunk.entries()].map(([chunkId, { resolution, claimIds }]) => ({
         chunkId,
         contentHash: chunkId.split("__").pop() as string,
         filename: resolution.filename,
@@ -163,14 +177,25 @@ const main = (): void => {
         evidence: resolution.quote,
         locator: resolution.locator,
         claimIds,
-      }),
-    );
+      }));
+    };
 
-    const turns = (fixture.turns ?? []).map((turn: {
+    const fixtureTurns = fixture.turns ?? [];
+    let perTurnIds: string[][] | undefined;
+    if (turnClaimsDir && !isRefusal) {
+      const assignmentPath = path.join(turnClaimsDir, file);
+      if (!fs.existsSync(assignmentPath)) {
+        throw new Error(`${fixtureId}: no turn-claim assignment at ${assignmentPath}`);
+      }
+      const assignment = JSON.parse(fs.readFileSync(assignmentPath, "utf8")) as TurnClaimAssignment;
+      perTurnIds = turnClaimIds(assignment, fixtureId, resolved, fixtureTurns.length);
+    }
+
+    const turns = fixtureTurns.map((turn: {
       content: string;
       retrieval_evidence?: Array<{ filename: string; quote: string }>;
     }, i: number) => {
-      let relevant = fallback;
+      let relevant = claimChunks(perTurnIds ? perTurnIds[i] : resolved);
       if (turn.retrieval_evidence !== undefined) {
         const selected = new Map<string, RelevantChunkDraft>();
         if (turn.retrieval_evidence.length === 0) {

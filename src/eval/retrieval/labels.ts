@@ -51,7 +51,7 @@ export const loadLabels = (
   const fixtures: FixtureLabels[] = [];
 
   filenames.forEach((filename) => {
-    const where = `eval/retrieval-labels/${filename}`;
+    const where = path.relative(process.cwd(), path.join(dir, filename));
     const raw = JSON.parse(fs.readFileSync(path.join(dir, filename), "utf8")) as FixtureLabels;
 
     if (raw.fixtureId !== filename.replace(/\.json$/, "")) {
