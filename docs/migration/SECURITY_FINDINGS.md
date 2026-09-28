@@ -314,6 +314,12 @@ them. So that endpoint is now the outlier *twice over* — no org check **and** 
 while every sibling has both. This is strong evidence the §1 gap is an oversight, and it gives the
 fix an exact shape: **call `deviceLabelsFor` and AND the org filter, as the seven siblings do.**
 
+**Correction (2026-09-27, mirror finding 11):** not every sibling is organization-checked.
+`WaterAnalyticsController.exportCsv` never passes the caller, and `findDeviceWaterDataExportCSV`
+calls `findByLabel(device, null)`, so any logged-in user can export any pod's readings as CSV
+(`POST /water/export/csv/<label>` returned 200 with rows for another organization's pods on the
+mirror). Release plan Q11 scopes it like `findPeriodWaterData`.
+
 **The cross-org question in §3 has been answered implicitly, and the answer is "yes".**
 `expandLabel` resolves purely by label, with **no organization filter at all**. Fetching PCH Public
 Dock Buoy's last reading now returns East Anchorage's rows — a City of Newport Beach pod. That is
