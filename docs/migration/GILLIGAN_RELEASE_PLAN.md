@@ -57,6 +57,7 @@ Priority: **must** blocks launch, **should** ships if ready by Sep 28, **after**
 | E4 | **done 2026-09-27** (`bc0512c` on `eval/wave1-corrections`). The launch configuration (`glm-5p3-flash` at reasoning low, `local-vector` k=20, both query rewrites, catalogue on, tools off) scores 1.18 / 1.13 with every Tier 1 gate passing, cross-document 0.83 the weakest class; the user chose a standing caveat under every answer that cites documents, shown by the dashboard (U7), after a prompt caveat reached only confident answers; R4 spend about $25.85 of $30 (`EVAL_REBUILD.md`) | Claude | must | E3 | Sep 28 |
 | E5 | Tools-on live smoke with the release configuration (live reads, approval) | Claude | must | Q1-Q5, C4 | Sep 28 |
 | E6 | **done 2026-09-27** (landing commit on `dev`). R4 report `eval/reviews/phase3-2026-09-23/R4_REPORT.md`, launch settings in the runbook §4.1 and `SPECS.md`, decisions in `timeline.md`, `eval/wave1-corrections` landed on `dev` | Claude | should | E4 | Sep 29 |
+| E7 | Launch corpus update (user decision 2026-09-27): add `documents/_excluded/keyestudio-ks0414-turbidity-sensor.md` and the source-of-truth v2 sections chosen with the user, re-ingest from the existing OCR cache, label the new chunks (Codex drafts, Claude reviews), rerun the E4 launch capture on the same fixtures two or three times with the same judge and rubric against a decision rule fixed before the runs, and hand the new `data/corpus/corpus.json` to L4 for rc2 and the Firestore reseed | Codex, Claude reviews | must | E4 | Sep 28 |
 
 ### Answer quality, session #2 and a follow-on
 
@@ -202,7 +203,7 @@ There is still no working rollback to the Gemini backend (architecture decision 
 | Fri Sep 25 | E1, Q1 land; Q2; C1; F1; T1; P1 pushes; start S1, S2; start #4 (P3, P4) | Approve P1 pushes; send C2 and F1; answer O1, O5 |
 | Sat Sep 26 | Q3, Q4; S1, S2; P3 review; U1, U2, U4, U6; P5; L1 | E2 grading; F2; S6; build the image (S1) |
 | Sun Sep 27 | E3 capture; S3, S4; Q5-Q7; U3, U5; T2 | Approve E3 spend and T2 writes; L2; C3 |
-| Mon Sep 28 | E4, E5, C4; L4 release candidate; L5 | L5 deploy |
+| Mon Sep 28 | E4, E5, E7, C4; L4 release candidate; L5 | L5 deploy |
 | Tue Sep 29 | E6; fixes from the demo | L6, L7; P2 merges |
 | Wed Sep 30 | L8 support, T3 | L8, L9 launch |
 
