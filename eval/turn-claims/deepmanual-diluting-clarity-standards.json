@@ -1,0 +1,62 @@
+{
+  "fixtureId": "deepmanual-diluting-clarity-standards",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "tby-no-dilute-commercial-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Forbids commercial-standard dilution except 4,000-unit formazin and explains nonlinearity."
+        },
+        {
+          "claimId": "tby-commercial-recommended-01",
+          "rubric": [
+            4
+          ],
+          "why": "Recommends commercially prepared calibration solutions."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "tby-no-flocculated-calibrants-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Rejects flocculated calibrants, making the nature of the settled material decisive."
+        },
+        {
+          "claimId": "tby-calibrant-labeling-01",
+          "rubric": [
+            2
+          ],
+          "why": "Requires expiration labels needed to check whether the bottle remains usable."
+        },
+        {
+          "claimId": "tby-formazin-storage-disposal-01",
+          "rubric": [
+            2
+          ],
+          "why": "Gives storage conditions to check if the bottle contains formazin."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "tby-cal-range-high-value-01",
+      "why": "Specifies calibration-range selection; neither rubric asks how to set the range."
+    }
+  ]
+}

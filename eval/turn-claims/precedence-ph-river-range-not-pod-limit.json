@@ -1,0 +1,53 @@
+{
+  "fixtureId": "precedence-ph-river-range-not-pod-limit",
+  "fixtureClass": "precedence",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "ph-river-range-6p5-8p5-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Gives the river pH range as a general observation, not a criterion."
+        }
+      ],
+      "uncovered": [
+        3,
+        4
+      ]
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "ph-river-range-6p5-8p5-01",
+          "rubric": [
+            1,
+            4,
+            5
+          ],
+          "why": "Its descriptive scope supports distinguishing the range from an alarm and declining to adopt it."
+        },
+        {
+          "claimId": "ph-groundwater-range-01",
+          "rubric": [
+            2
+          ],
+          "why": "Gives the different groundwater range."
+        }
+      ],
+      "uncovered": [
+        3
+      ]
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "ph-range-01",
+      "why": "Only helps avoid treating the probe's measurement range as an acceptable-water band in turn 1."
+    }
+  ]
+}

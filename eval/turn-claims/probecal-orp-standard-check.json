@@ -1,0 +1,86 @@
+{
+  "fixtureId": "probecal-orp-standard-check",
+  "fixtureClass": "probe-calibration",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "orp-zobells-standard-01",
+          "rubric": [
+            1
+          ],
+          "why": "Names ZoBell's as the redox equipment test standard."
+        },
+        {
+          "claimId": "orp-equilibrate-15-30-01",
+          "rubric": [
+            2
+          ],
+          "why": "Gives 15-30 minutes for solution and sensor equilibration."
+        },
+        {
+          "claimId": "orp-eh-equation-01",
+          "rubric": [
+            3
+          ],
+          "why": "Requires adding reference-electrode potential to measured emf."
+        },
+        {
+          "claimId": "orp-table653-values-01",
+          "rubric": [
+            4
+          ],
+          "why": "Provides temperature-dependent theoretical values including 430 mV at 25 C."
+        },
+        {
+          "claimId": "orp-pass-criterion-5mv-01",
+          "rubric": [
+            5
+          ],
+          "why": "Gives the 5 mV equipment-test pass criterion."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "orp-pass-criterion-5mv-01",
+          "rubric": [
+            1
+          ],
+          "why": "Establishes that a 20 mV discrepancy fails the test and requires troubleshooting."
+        },
+        {
+          "claimId": "orp-table654-symptoms-01",
+          "rubric": [
+            1
+          ],
+          "why": "Lists excessive deviation, drift and erratic performance as failure symptoms."
+        },
+        {
+          "claimId": "orp-two-ref-electrodes-0mv-01",
+          "rubric": [
+            2,
+            3,
+            4
+          ],
+          "why": "Gives the reference-electrode comparison and both explicitly scoped diagnostic windows."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "orp-eref-agagcl-238-01",
+      "why": "Gives a hardware-specific potential that neither rubric requests."
+    },
+    {
+      "claimId": "orp-iron-blue-precipitate-01",
+      "why": "Concerns iron-rich sample carryover after ZoBell exposure, not the reported unstable standard check."
+    }
+  ]
+}

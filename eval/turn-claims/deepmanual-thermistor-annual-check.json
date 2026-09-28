@@ -1,0 +1,87 @@
+{
+  "fixtureId": "deepmanual-thermistor-annual-check",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "t-min-two-points-01",
+          "rubric": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "why": "Gives the minimum point count and extrema/mean constraints for choosing valid temperatures."
+        },
+        {
+          "claimId": "t-points-2c-apart-01",
+          "rubric": [
+            4
+          ],
+          "why": "Supplies the small-range minimum spacing used to validate the selected points."
+        },
+        {
+          "claimId": "t-points-10c-large-range-01",
+          "rubric": [
+            5
+          ],
+          "why": "States the five-point maximum for this range-verification procedure."
+        },
+        {
+          "claimId": "t-example-4-12-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives the exact 6 C and 10 C example for the stated annual range."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "t-cal-verif-12mo-01",
+          "rubric": [
+            1,
+            3
+          ],
+          "why": "Accepts either verification method without preference and requires annual verification."
+        },
+        {
+          "claimId": "t-321-verify-12mo-01",
+          "rubric": [
+            3
+          ],
+          "why": "Requires verification at least every 12 months."
+        },
+        {
+          "claimId": "t-method1-lab-01",
+          "rubric": [
+            1
+          ],
+          "why": "Describes the accepted laboratory water-bath comparison."
+        },
+        {
+          "claimId": "t-method2-insitu-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Describes annual verification through in-situ reference comparisons at each visit."
+        },
+        {
+          "claimId": "t-onepoint-pre-trip-01",
+          "rubric": [
+            4
+          ],
+          "why": "Requires an additional one-point check immediately before the field trip."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

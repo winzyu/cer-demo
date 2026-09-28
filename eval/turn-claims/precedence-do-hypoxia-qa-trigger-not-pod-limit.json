@@ -1,0 +1,67 @@
+{
+  "fixtureId": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+  "fixtureClass": "precedence",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "do-hypoxic-anoxic-1mgl-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Scopes the below-1 mg/L wording to optical-sensor verification before reporting."
+        },
+        {
+          "claimId": "do-below-1mgL-spectro-required-01",
+          "rubric": [
+            2
+          ],
+          "why": "Requires instrument-specific verification below 1 mg/L before reporting."
+        }
+      ],
+      "uncovered": [
+        3,
+        4
+      ]
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "do-hypoxic-anoxic-1mgl-01",
+          "rubric": [
+            1,
+            4
+          ],
+          "why": "Identifies a verification trigger, supporting refusal to derive a pod alarm from it."
+        },
+        {
+          "claimId": "do-below-1mgL-spectro-required-01",
+          "rubric": [
+            1,
+            4
+          ],
+          "why": "Defines a reporting verification requirement rather than a basis for setting an alarm."
+        },
+        {
+          "claimId": "do-rhodazine-range-0025-10-01",
+          "rubric": [
+            2
+          ],
+          "why": "Gives the Rhodazine D verification range."
+        }
+      ],
+      "uncovered": [
+        3
+      ]
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "do-range-01",
+      "why": "Only helps avoid treating the probe's measurement range as a water-quality limit in turn 1."
+    }
+  ]
+}

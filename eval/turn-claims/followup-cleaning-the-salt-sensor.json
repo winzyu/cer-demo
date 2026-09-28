@@ -1,0 +1,59 @@
+{
+  "fixtureId": "followup-cleaning-the-salt-sensor",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "sc-t633-electrode-cleaning-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Gives detergent-first cleaning, 5 percent HCl and manufacturer guidance."
+        },
+        {
+          "claimId": "sc-no-nitric-acid-01",
+          "rubric": [
+            4
+          ],
+          "why": "Forbids acids and solutions that etch platinum or gold electrodes."
+        },
+        {
+          "claimId": "sc-hcl-soak-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Supports 5 percent HCl only after checking manufacturer recommendations."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "sc-t633-electrode-cleaning-01",
+          "rubric": [
+            3
+          ],
+          "why": "Requires checking manufacturer guidance before acid cleaning."
+        },
+        {
+          "claimId": "sc-hcl-soak-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Gives the two-hour ceiling, thorough DIW rinse and manufacturer constraint."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

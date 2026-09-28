@@ -10,6 +10,9 @@
  * score means the material was available, not that the model used it well. Retrieval misses are
  * unrecoverable downstream, so ruling them out first is simply the cheapest ordering; the LLM
  * sweep remains the final word on answer quality.
+ *
+ * `--labels=<dir>` scores against another label directory, such as the per-turn labels in
+ * `eval/retrieval-labels-per-turn/`; the default is `eval/retrieval-labels/`.
  */
 import fs from "fs";
 import path from "path";
@@ -130,7 +133,7 @@ const main = async (): Promise<void> => {
     throw new Error(`Unknown adapter(s): ${unknown.join(", ")}. Available: ${available.join(", ")}.`);
   }
 
-  const labels = loadLabels();
+  const labels = loadLabels(arg("labels") ? path.resolve(arg("labels") as string) : undefined);
   log.info(`Loaded ${labels.fixtures.length} labelled fixtures, ${labels.queries.length} queries.`);
   const followUps = process.argv.includes("--rewrite");
   const firstTurns = process.argv.includes("--rewrite-first");

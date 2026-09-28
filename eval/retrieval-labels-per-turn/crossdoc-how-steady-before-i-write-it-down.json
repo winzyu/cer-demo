@@ -1,0 +1,172 @@
+{
+  "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+  "set": "committed",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "When I drop the sonde in, the numbers wobble for a bit. How steady do they need to get before the reading is worth writing down, and how long am I meant to stand there?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__47bda63fa730",
+          "contentHash": "47bda63fa730",
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "grade": 2,
+          "evidence": "(Variability should be within the range shown for five or more\nmeasurements)",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__1b7e9852e841",
+          "contentHash": "1b7e9852e841",
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "grade": 2,
+          "evidence": "(Variability should be within the range shown for five or more\nmeasurements)",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__e157e31940ab",
+          "contentHash": "e157e31940ab",
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "grade": 2,
+          "evidence": "Sensors have equilibrated adequately\nwhen instrument readings have stabilized—that is,\nwhen the variability among consecutive measurements\ndoes not exceed an established criterion.",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__fea0c27e3094",
+          "contentHash": "fea0c27e3094",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Allow time for the readings on the display to stabilize\nwithin the criteria shown in table 6.8–5.",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+          "contentHash": "6ae74c4bc1f3",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Wait a minimum of 60 seconds for the sensors and\nsonde body to reach thermal equilibrium with the water\nbefore monitoring field-parameter values.",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__4e9dfc809f8a",
+          "contentHash": "4e9dfc809f8a",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Turbidity \t± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__66feebbcbcec",
+          "contentHash": "66feebbcbcec",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Turbidity \t± 0.5 TU or 5% of the measured value, whichever is greater, for turbidity ≤ 100 TU; or",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Allow sufficient time for the temperature sensor to equilibrate to the water temperature.",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Someone on the team says the multiparameter chapter has its own numbers and they're stricter than the general ones. Is that right, and which do I follow?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__47bda63fa730",
+          "contentHash": "47bda63fa730",
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "grade": 2,
+          "evidence": "(Variability should be within the range shown for five or more\nmeasurements)",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__1b7e9852e841",
+          "contentHash": "1b7e9852e841",
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "grade": 2,
+          "evidence": "(Variability should be within the range shown for five or more\nmeasurements)",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__e157e31940ab",
+          "contentHash": "e157e31940ab",
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "grade": 2,
+          "evidence": "ment point, either use the median of the final five or",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__fea0c27e3094",
+          "contentHash": "fea0c27e3094",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Allow time for the readings on the display to stabilize\nwithin the criteria shown in table 6.8–5.",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+          "contentHash": "6ae74c4bc1f3",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Wait a minimum of 60 seconds for the sensors and\nsonde body to reach thermal equilibrium with the water\nbefore monitoring field-parameter values.",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__4e9dfc809f8a",
+          "contentHash": "4e9dfc809f8a",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__66feebbcbcec",
+          "contentHash": "66feebbcbcec",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "(Note that the actual accuracy of the sensor varies, depending on sensor model\nand manufacturer.)",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Allow sufficient time for the temperature sensor to equilibrate to the water temperature.",
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__80961835fb6c",
+          "contentHash": "80961835fb6c",
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "grade": 2,
+          "evidence": "ment point, either use the median of the final five or",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        }
+      ]
+    }
+  ]
+}

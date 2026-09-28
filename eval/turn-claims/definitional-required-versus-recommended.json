@@ -1,0 +1,69 @@
+{
+  "fixtureId": "definitional-required-versus-recommended",
+  "fixtureClass": "definitional",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "a60-required-meaning-01",
+          "rubric": [
+            1
+          ],
+          "why": "Defines required policy and the obligation to follow its procedures."
+        },
+        {
+          "claimId": "a60-recommended-meaning-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Defines recommended alternatives and requires documenting the chosen option."
+        },
+        {
+          "claimId": "sc-required-definition-01",
+          "rubric": [
+            1
+          ],
+          "why": "Defines required policy as research- or consensus-based."
+        },
+        {
+          "claimId": "sc-recommended-definition-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Defines recommended alternatives and documentation of selection."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "sc-required-definition-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Requires both documentation and independent quality assurance for departures from requirements."
+        },
+        {
+          "claimId": "sc-recommended-definition-01",
+          "rubric": [
+            3
+          ],
+          "why": "Requires documentation and independent quality assurance for departures from recommendations."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "sc-nfm-mandate-01",
+      "why": "Defines who must follow the NFM, not the distinction between required and recommended or departure handling."
+    }
+  ]
+}
