@@ -49,6 +49,11 @@ export interface TranscriptRunMeta {
   maxTokens: number;
   /** `LLM_REASONING_EFFORT` as the runner saw it; absent on captures made before it existed. */
   reasoningEffort?: string;
+  /**
+   * `CATALOGUE_PROMPT` as the runner saw it, which must match the server's; absent on captures made
+   * before 2026-09-28. Grading rebuilds the system prompt from it (`captureSystemPrompt`).
+   */
+  cataloguePrompt?: boolean;
   corpusSource: string;
   baseUrl: string;
   transport: "sse" | "json";

@@ -37,7 +37,7 @@ This is input for the Task A interview, not a decision record.
 - 7 of 43 catalogue items mention turbidity: `sewage-marine`, `sewage-freshwater`, `hypoxia`, `stormwater`, `thermal`, `saltwater-intrusion` and `turbidity-relative`.
 - Only `turbidity-relative` names the bands (Clear, Moderate, Turbid).
 - None contains a numeric edge.
-- All entries are drafts pending the supervisor.
+- All entries are drafts pending the supervisor. Superseded: the supervisor approved the catalogue on 2026-09-24 as version `2026-09-24.1` (`GILLIGAN_RELEASE_PLAN.md` C3).
 
 ## 5. If the edges move to 350 and 800
 

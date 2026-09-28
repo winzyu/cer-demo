@@ -1,0 +1,223 @@
+{
+  "filename": "keyestudio-ks0414-turbidity-sensor.md",
+  "title": "Keyestudio KS0414 Turbidity Sensor V1.0 - Vendor Documentation",
+  "inSlice": false,
+  "chunkCount": 2,
+  "chunks": [
+    {
+      "chunkId": "keyestudio-ks0414-turbidity-sensor.md__d7bb3c87060a",
+      "index": 0,
+      "locator": "Description, Specification, Output behaviour and Vendor notices - \"the lower the output voltage is\"",
+      "claims": [
+        {
+          "id": "ks-detection-range",
+          "claim": "The KS0414 vendor specification gives a detection range of 0% to 3.5%, labelled as 0 to 4550 NTU.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Detection Range: 0%--3.5% (0-4550NTU)",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-description-error",
+          "claim": "The KS0414 description prints its error range as \"±05%F*S\".",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "with an error range of ±05%F*S.",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-specification-error",
+          "claim": "The KS0414 specification lists its error range as \"±0.5%F*S\".",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "Error Range: ±0.5%F*S",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-analog-mode",
+          "claim": "For analog operation, set the KS0414 slide switch to A and connect its signal terminal to an analog port to read a value for calculating output voltage and turbidity.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "When slide the switch to A end, connect the signal end to analog port, can read the analog\nvalue to calculate the output voltage so as to get the turbidity degree of water.",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-digital-mode",
+          "claim": "For digital operation, set the KS0414 switch to D and connect its signal terminal to a digital port to detect turbidity through a HIGH or LOW output.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "If slide to D\nend, connect signal end to digital port, can detect the water whether is turbidity by outputting\nHIGH or LOW level.",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-sensitivity-adjustment",
+          "claim": "The KS0414 sensitivity can be adjusted by turning its blue potentiometer.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "You can turn the blue potentiometer on the sensor to adjust the sensitivity of sensor.",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-applications",
+          "claim": "The vendor lists rivers and streams, wastewater and effluent, sediment transport research, and laboratory measurements as turbidity-sensor applications.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Turbidity sensors can be used in measurement of water quality in rivers and streams, wastewater\nand effluent measurements, sediment transport research and laboratory measurements.",
+          "specificity": "low"
+        },
+        {
+          "id": "ks-electrical-supply",
+          "claim": "The KS0414 specification lists DC 5 V operating voltage and about 11 mA operating current.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "- Operating Voltage: DC 5V\n- Operating Current: about 11mA",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-temperature-limits",
+          "claim": "The KS0414 specification lists operating temperatures of -30 to 80 °C and storage temperatures of -10 to 80 °C.",
+          "metrics": [
+            "turbidity",
+            "temperature"
+          ],
+          "type": "numeric",
+          "quote": "- Operating Temperature: -30°C~80°C\n- Storage Temperature: -10°C~80°C",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-weight",
+          "claim": "The KS0414 specification lists a weight of 18 g.",
+          "metrics": [],
+          "type": "numeric",
+          "quote": "Weight: 18g",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-inverse-voltage",
+          "claim": "The KS0414 output voltage decreases as turbidity increases.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "The corresponding table of output voltage and concentration shows that the higher the turbidity\nvalue is, the lower the output voltage is.",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-empirical-conversion",
+          "claim": "The vendor labels its conversion empirical and equates 1 mg/L with 0.13 NTU and 3.5% with 35000 mg/L or 4550 NTU.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "numeric",
+          "quote": "10-6 (PPM)=1ppm=1mg/L=0.13NTU\n(empirical formula) that is: 3.5%=35000ppm=35000mg/L=4550NTU",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-conversion-not-calibration",
+          "claim": "The document states that the vendor percentage-to-NTU conversion is not a calibration against turbidity standards and that no output-voltage-to-NTU equation is published.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "It is not a calibration\nagainst turbidity standards, and the vendor publishes no equation relating output voltage to NTU;",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-immersion-limit",
+          "claim": "Only the transparent bottom part of the KS0414 probe may be placed in water because the probe top is not waterproof.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Note: the top of probe is not water-proof; can only place the transparent bottom part into water.",
+          "specificity": "high"
+        }
+      ]
+    },
+    {
+      "chunkId": "keyestudio-ks0414-turbidity-sensor.md__4f34190c3bf9",
+      "index": 1,
+      "locator": "Vendor notices and Properties this vendor documentation does not state - \"The top of probe is not water-proof\"",
+      "claims": [
+        {
+          "id": "ks-power-polarity",
+          "claim": "The vendor warns that reversed power polarity or overvoltage can burn out the KS0414 and specifies DC 5 V only.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "procedural",
+          "quote": "Avoid burning out the sensor due to\nreversed connection. The voltage can only be DC5V; pay close attention to the voltage to prevent\novervoltage from burning the sensor.",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-light-source-unspecified",
+          "claim": "The KS0414 documentation does not identify the light source type or wavelength and does not establish whether it uses visible or infrared light.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "The light source type or its wavelength. Nothing on the page identifies the sensor as a white-light\n  (visible) or an infrared instrument.",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-geometry-unspecified",
+          "claim": "The KS0414 documentation does not give a detection angle or establish whether the measurement is nephelometric at 90 degrees or uses transmission.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "The angle at which scattered light is detected, so the page does not establish whether the\n  measurement is nephelometric (90-degree) or a transmission measurement.",
+          "specificity": "high"
+        },
+        {
+          "id": "ks-standards-unspecified",
+          "claim": "The KS0414 documentation mentions neither ISO 7027 nor EPA Method 180.1, FNU, or formazin.",
+          "metrics": [
+            "turbidity"
+          ],
+          "type": "conceptual",
+          "quote": "Neither ISO 7027 nor EPA\n  Method 180.1 is mentioned, and neither the unit FNU nor the term \"formazin\" appears.",
+          "specificity": "high"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalClaims": 18,
+    "byMetric": {
+      "turbidity": 17,
+      "temperature": 1
+    },
+    "byType": {
+      "numeric": 7,
+      "procedural": 5,
+      "conceptual": 6
+    },
+    "gaps": [
+      "Gives no light-source type, wavelength, or detector angle, so it cannot establish visible versus infrared or nephelometric versus transmission measurement.",
+      "Gives no ISO 7027 or EPA Method 180.1 compliance claim, FNU designation, or formazin reference.",
+      "Gives no calibration procedure, calibration standards, factory calibration claim, or output-voltage-to-NTU equation.",
+      "Gives no response or settling time, linearity, minimum detection limit, resolution, or temperature-compensation specification.",
+      "Gives no dimensions, connector pinout, or depth rating beyond the warning to immerse only the transparent probe bottom.",
+      "Gives no numeric digital switching threshold or procedure for setting the potentiometer to a known NTU value.",
+      "Does not define F*S or resolve the different error-range notation in the description and specification."
+    ],
+    "notes": "Chunk 0 preserves conflicting error strings: the description says ±05%F*S and the specification says ±0.5%F*S; neither is corrected here. The empirical formula is rendered as 10-6 (PPM), with ambiguous exponent formatting, and is preserved literally. The characteristic curve and corresponding table are discussed but are not present as plotted or tabulated data in these chunks. Chunk 1 begins mid-word in its 400-character overlap and joins the repeated waterproofing notice directly to the Special Notice without whitespace. Overlap-only claims are assigned to chunk 0. The weight claim has no metric tag."
+  }
+}

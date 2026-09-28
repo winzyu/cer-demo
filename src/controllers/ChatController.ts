@@ -90,7 +90,7 @@ export class ChatController {
       if (search.usage?.totalTokens !== undefined) {
         this.quota.recordTokens(quotaKey, search.usage.totalTokens);
       }
-      const chunks = await adapter.getContext(search.query);
+      const chunks = await adapter.getContext(search.query, { originalQuery: query });
 
       // Ordering is load-bearing for prompt caching — see promptBuilder.
       const messages = buildMessages({

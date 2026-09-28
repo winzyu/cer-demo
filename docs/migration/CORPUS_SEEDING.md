@@ -18,6 +18,12 @@ The corpus was rebuilt on 2026-09-21, so check the document list below against `
 > the service, and the query path needs `FIREWORKS_API_KEY` to embed each question. The paragraphs
 > below describe the direct-feed-only design this runbook was written for.
 
+> **Not on the launch path (2026-09-27).** The Gilligan release runs `DEFAULT_RETRIEVAL=local-vector`
+> with `CORPUS_SOURCE=artifact` (`GILLIGAN_DEPLOYMENT_RUNBOOK.md` §4.1): the service reads
+> `data/corpus/corpus.json` and `data/embeddings/cache.json` from its image, checked against
+> `release/artifacts.sha256`, and reads nothing from `corpus_documents`. A corpus change for launch
+> therefore means `npm run ingest`, `npm run embed:cache` and new checksums, not this seed.
+
 Production reads the corpus through `DEFAULT_RETRIEVAL=firestore-direct` (`src/retrieval/adapters/DirectFeedAdapter.ts`), which loads its documents from whichever `CorpusSource` `CORPUS_SOURCE` names.
 With `CORPUS_SOURCE=firestore` that source is `FirestoreCorpusSource` (`src/retrieval/sources/FirestoreCorpusSource.ts`), which reads the **`corpus_documents`** collection.
 That collection is written by exactly one script: `npm run seed:firestore` (`scripts/seedFirestore.ts`).
@@ -38,7 +44,7 @@ A fresh `git clone` of this repository does not carry everything `npm run seed:f
 | `documents/usgs-nfm-a6.2-dissolved-oxygen.pdf`, `usgs-nfm-a6.8-multiparameter-instruments.pdf` | yes (`git add -f`) | regenerating the artifact; reference tier, not in the slice |
 | the other untracked PDFs under `documents/` (nine files: `usgs-nfm-a6.0` through `a6.7` except `a6.2`, plus `epa-sop-field-instrument-calibration-2010.pdf`) | no, gitignored | regenerating the artifact; reference tier, not in the slice |
 | `.ocr_cache/epa-sop-field-instrument-calibration-2010.pdf.txt` | no, gitignored | regenerating the artifact; `epa-sop...pdf` is scanned and ingest hard-errors without this cache |
-| `documents/_excluded/keyestudio-ks0414-turbidity-sensor.md`, `turner-turbidity-plus-sensor.md` | yes (`git add -f`), but outside the ingest path | only if the turbidity ingest chain (packet C8) has landed by then; confirm before assuming they are in the artifact |
+| `documents/keyestudio-ks0414-turbidity-sensor.md`, `documents/cer-water-quality-guidance-v2-excerpt.md` | yes (`git add -f`) | regenerating the artifact; required for launch (user decision 2026-09-27, plan E7); reference tier, not in the slice |
 
 **Two ways to get `data/corpus/corpus.json` onto the seeding machine, in order of preference:**
 
@@ -142,7 +148,7 @@ import { FirestoreCorpusSource } from './src/retrieval/sources/FirestoreCorpusSo
 ```
 
 **Expected observable result**, against the corpus as ingested in this checkout on 2026-09-13: `slice size: 4`, filenames `EC_K_1.0_probe.pdf`, `IORP_probe.pdf`, `IpH_probe.pdf`, `Industrial-DO-probe.pdf` in alphabetical order (`FirestoreCorpusSource.loadSlice` orders by `filename` deliberately, so the prompt prefix stays byte-identical between runs), `IpH_probe.pdf found: true`, `expected snippet present: true`.
-If the artifact seeded is not this one — for example after the turbidity ingest chain (C8) lands and changes the slice — expect a different slice size and filename list, and pick a different known document and snippet from whatever `npm run ingest` reported at seed time.
+If the artifact seeded is not this one, expect a different slice size and filename list, and pick a different known document and snippet from whatever `npm run ingest` reported at seed time. The Keyestudio document and the v2 excerpt added for launch (plan E7) sit outside the slice, so they leave this check unchanged.
 
 An empty `filenames` array with no error is the specific failure the missing composite index produces; `README.md` §2b: "without the composite index the direct-feed query fails outright" is closer to what a permissions or network error looks like, and a genuinely empty result (index present, zero documents) means the seed either did not run or wrote to a different project or database.
 

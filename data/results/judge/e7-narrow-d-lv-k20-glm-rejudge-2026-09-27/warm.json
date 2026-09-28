@@ -1,0 +1,147 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-28T03:58:41.599Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1316847,
+    "cachedPromptTokens": 1235954,
+    "completionTokens": 102291,
+    "usd": 0.154432824
+  },
+  "results": [
+    {
+      "arm": "local-vector",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.8333333333333334,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.35,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.1666666666666667,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.0625,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 0.875,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 1.1333333333333333,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer correctly gives the subsample qualifier rule for turbidity temperature DO and Eh but it refuses the flow-cell-discharge question and omits the storage limits and time-sensitivity points withholding facts the rubric expects a real answer for. Unmet: states plainly that a discrete turbidity sample must not be collected from the discharge passing through the flow-through chamber holding the other sensors; gives the storage limits if the sample cannot be read on site: clean amber bottle kept out of sunlight chilled at or below 4 C held no longer than 24 hours; notes turbidity is time sensitive and should be measured on site preferably in situ"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer withholds the A6.8 example-form criteria (±0.1 pH unit; ±0.3 pH unit below 75 µS/cm) that the rubric asks for saying it lacks the information so it is a refusal of the graded content even though it correctly reports A6.4's 0.05 pH-unit final-buffer check. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check requiring agreement within 0.05 pH unit of the certified value at calibration temperature"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that supplies none of the required values difference tolerance comparison or table-selection advice so it misses every must-contain point. Unmet: Gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; Gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; States the difference is 0.03 mg/L and assesses its significance against the applicable procedure; Notes the USGS values are generated from the Benson and Krause equations; Compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; Advises using the table belonging to whichever protocol the work is being done under consistently"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the multiplication method and names table 6.2-4 but withholds the required factor 0.8235 saying it lacks the information which is a refusal of a figure the rubric asks for. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm"
+        },
+        {
+          "fixtureId": "deepmanual-diluting-clarity-standards",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer approves the user's plan to dilute a stronger commercial standard generalizing dilution to 'formazin-based calibrants' (which includes commercial stabilized formazin) violating the must-not against approving dilution of any commercial standard other than 4 000-unit formazin and it makes none of the required must-contain points. Unmet: states that commercial calibration solutions must not be diluted; gives 4 000-unit formazin as the one exception that may be diluted; explains that diluting changes the suspension matrix so the dilutions are no longer linear; recommends buying commercially prepared solutions at the values needed rather than preparing them by dilution"
+        },
+        {
+          "fixtureId": "crossdoc-warm-week-oxygen-drop",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer misattributes tabulated solubility values to the wrong temperatures (12.09 mg/L at 15 °C and 8.75 mg/L at 20 °C) presenting figures as something the documents do not say they are which violates the must-not against inventing unsupported solubility values; it also misses the 0.99 mg/L benchmark and the correct 15/20 °C solubility figures. Unmet: Gives freshwater oxygen solubility at about 15 C (roughly 10.0-10.1 mg/L near 760 mmHg); Gives freshwater oxygen solubility at about 20 C (roughly 9.0-9.1 mg/L near 760 mmHg); States freshwater equilibrium solubility at 760 mmHg falls by 0.99 mg/L from 15 C to 20 C as a conditional benchmark; States the actual warming contribution and remaining site-specific drop cannot be established from these readings alone (pressure salinity initial saturation not given)"
+        },
+        {
+          "fixtureId": "probecal-ph-slope-acceptance",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes the slope 95-101 percent 56.2-59.8 mV/pH at 25 °C and response-time points but it violates a must-not by using the stated 12-18 month working life as a criterion for the electrode's usability (\"so two seasons is beyond that window\")."
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer places pH before specific conductance and omits temperature-first the ionic-strength rationale and the pH-buffer contamination note violating a must-not item. Unmet: States that the order does matter and gives a recommended sequence; Places temperature first in the sequence; Places specific conductance before pH; Places dissolved oxygen and then oxidation-reduction potential after pH; Explains that the sequence runs from lower to higher ionic strength so carryover from one standard does not bias the next; Notes specifically that pH buffers and electrode filling solutions are high in ionic strength and would contaminate a conductivity calibration"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that makes none of the rubric's required points about the turbidity fouling check or the EPA SOP's calibration/drift criteria and it cites no relevant source. Unmet: Corpus gives no rule for deciding which part of a long record may be kept; No source gives an allowable rate of drift (per-day/per-week); No procedure for correcting/adjusting a record after recovery; Turbidity chapter offers a fouling check comparing calibrant reading before/after cleaning with percent difference; Fouling check quantifies one sensor's condition not an acceptance rule for the record; EPA SOP: calibrate before deployment check on recovery defers drift criteria to QA plan default post-calibration criteria only if plan silent; Declines to convert EPA post-calibration criteria into keep-or-discard threshold; EPA default criteria are pass/fail check at recovery not a record-retention rule; failing data qualified not discarded"
+        }
+      ]
+    }
+  ]
+}

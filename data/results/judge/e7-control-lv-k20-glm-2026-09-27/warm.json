@@ -1,0 +1,135 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-28T02:42:31.753Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1333258,
+    "cachedPromptTokens": 80824,
+    "completionTokens": 104955,
+    "usd": 0.502161144
+  },
+  "results": [
+    {
+      "arm": "local-vector",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.9166666666666666,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.35,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.375,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.125,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.3333333333333333,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.3125,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1.125,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.1888888888888889,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-orp-sliding-do-steady",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer declines to give the consecutive-reading stability criterion never states 0.3 mg/L exceeds it and omits the equilibration/median rules and the ORP note so no must-contain point is made (though no must-not item is violated). Unmet: Gives the USGS stabilisation criterion for optical DO as about ±0.2 mg/L across five or more consecutive readings; States consecutive-reading variation of 0.3 mg/L exceeds the optical-DO routine stability criterion without diagnosing sensor noise or declaring all qualified reporting impossible; Allows longer equilibration and additional readings then either the median of the final five or more readings or a representative final reading selected using site knowledge and professional judgment with the decision documented; Gives the median rule as the final three or more readings in surface water or the final five or more in groundwater; Notes that ORP is not covered by that stabilisation table and is instead judged by the potential holding constant over the reading sequence"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer withholds the A6.8 example-form criteria (±0.1 pH unit; ±0.3 below 75 µS/cm) that the rubric asks for declining them as unavailable and so cannot make the required distinction even though it correctly states A6.4's 0.05 pH-unit final-buffer check. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check (0.05 pH unit of certified value)"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a refusal that supplies none of the required values comparison or guidance withholding the figures the rubric asks for. Unmet: Gives USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; Gives EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; States the difference is 0.03 mg/L and assesses significance against the applicable procedure; Notes USGS values are generated from Benson and Krause equations; Compares 0.03 mg/L difference with USGS saturation-check tolerance of ±0.2 mg/L; Advises using the table belonging to whichever protocol the work is under consistently"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer states the multiply-by-factor method and attributes it to table 6.2–4 but withholds the required 0.8235 factor saying it lacks the information — a refusal of a figure the rubric expects which scores 0. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm"
+        },
+        {
+          "fixtureId": "deepmanual-diluting-clarity-standards",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer never mentions flocculated suspensions and instead advises resuspending and using the settled standard based on expiry date alone which is exactly the prohibited advice to remix and use without checking for flocculation. Unmet: States that calibrants with flocculated suspensions must not be used; Requires checking whether the settled layer is reversible settling or flocculation plus labeled expiry and storage compliance and rejects flocculated/expired/compromised calibrant"
+        },
+        {
+          "fixtureId": "followup-jumpy-temperature-trace",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes the recertification warning but it invents a recertification/calibration provider by asserting that \"calibration is handled by Clean Earth Rovers as part of your subscription \" which is a must-not violation."
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer places pH before specific conductance violating a 'must not' item and misses the temperature-first conductivity-before-pH DO-then-ORP ordering and the ionic-strength carryover rationale. Unmet: Places temperature first in the sequence; Places specific conductance before pH; Places dissolved oxygen and then ORP after pH; Explains the sequence runs from lower to higher ionic strength to avoid carryover bias; Notes pH buffers and electrode filling solutions are high ionic strength and would contaminate a conductivity calibration"
+        }
+      ]
+    }
+  ]
+}

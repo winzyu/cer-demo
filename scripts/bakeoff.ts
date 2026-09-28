@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { config } from "../src/config";
 import {
-  GOLD_CONTEXT_ARM, USAGE, parseArgs, spotCheckQueriesFor,
+  USAGE, isGoldContextArm, parseArgs, spotCheckQueriesFor,
 } from "../src/eval/cli";
 import { loadFixtures, runnableFixtures } from "../src/eval/fixtures";
 import { loadLabels } from "../src/eval/retrieval/labels";
@@ -37,7 +37,7 @@ const gitSha = (): string => {
 const fmt = (n: number): string => n.toLocaleString("en-US");
 
 const spotCheck = async (ask: AskFn, arm: string): Promise<void> => {
-  const queries = spotCheckQueriesFor(arm, arm === GOLD_CONTEXT_ARM ? loadLabels().queries : []);
+  const queries = spotCheckQueriesFor(arm, isGoldContextArm(arm) ? loadLabels().queries : []);
   log.info(`Spot-checking "${arm}" on ${queries.length} queries.`);
 
   for (let i = 0; i < queries.length; i += 1) {
@@ -124,6 +124,7 @@ const main = async (): Promise<void> => {
     temperature: config.fireworks.temperature,
     maxTokens: config.fireworks.maxTokens,
     reasoningEffort: config.fireworks.reasoningEffort,
+    cataloguePrompt: config.catalogue.prompt,
     corpusSource: config.retrieval.corpusSource,
     baseUrl: args.baseUrl,
     transport: args.transport,

@@ -1585,7 +1585,7 @@ Kept: the refusal gate passes and correctness does not fall.
 
 ### Launch configuration captured - 2026-09-27, runs `p3-launch-lv-k20-glm-2026-09-27` and `p3-launch-lv-k20-glm-rejudge-2026-09-27`
 
-The launch settings as far as an evaluation can reach them: `local-vector` k=20, datasheets unpinned, `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, `glm-5p3-flash` at reasoning low, `CATALOGUE_PROMPT=true` (on server and judge), the refusal fix at `dcb3ce3`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, port 8011.
+The launch settings as far as an evaluation can reach them: `local-vector` k=20, datasheets unpinned, `QUERY_REWRITE` and `QUERY_REWRITE_FIRST_TURN` on, `glm-5p3-flash` at reasoning low, `CATALOGUE_PROMPT=true` (on the server; the judge and gates graded without the catalogue block until 2026-09-28, see the E7 results), the refusal fix at `dcb3ce3`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, port 8011.
 The tools stay off, as every capture requires (on means live production reads), so the prompt carries the tools-off rule where production carries the tool blocks.
 90/90, 0 failed, after a spot check; 1,722,969 prompt tokens (24.1% cached), 30,562 completion, 475 s; about $0.23 for answers and $0.03 for rewrites.
 Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
@@ -1629,6 +1629,68 @@ The model adds it where it is already confident, so as a warning it misses the a
 The gate's answered turn (`refusal-turbidity-sensor-hardware` t2) now gives the catalogue's approved reply, that the pod shows a clarity band with no unit, then cites the FNU light wavelength as background; the off-contract turn declines in its own words.
 The launch capture passed 8 of 8 on the same prompt apart from the caveat, so GLM's refusal wording still varies between runs.
 Decision (user, 2026-09-27): drop the prompt caveat (reverted in `f694766`) and meet D3 with a standing caveat under every answer that cites documents, shown by the dashboard; the launch capture stays the cited run.
+
+### E7 launch corpus update: decision rule fixed before capture - 2026-09-27
+
+Release task E7 adds `keyestudio-ks0414-turbidity-sensor.md` (2 chunks) and `cer-water-quality-guidance-v2-excerpt.md` (v2 §5-7 and §11 without §7.2 rule 1; 9 chunks) to the corpus: 16 documents, 457 chunks, the 446 existing chunk ids unchanged and the direct-feed slice unchanged at 26,096 characters.
+Both documents launch by user decision, so the rerun decides whether the v2 sections need narrowing, not whether the documents ship.
+Recorded before any capture on the new corpus (user-approved plan, 2026-09-27):
+
+- Setup: the E4 launch settings (`local-vector` k=20, `glm-5p3-flash` at reasoning low, `LLM_MAX_TOKENS=16384`, both rewrites, `CATALOGUE_PROMPT=true`, `CORPUS_SOURCE=artifact`, tools off), the same 45 wave 1 fixtures, rubric v2, and the `deepseek-v4p1-flash` judge at `--final`, correctness only.
+- Measure: overall correctness as the mean of two captures, each judged twice, against E4's mean of 1.155 (1.18 / 1.13); judge pass-to-pass spread is about 0.05 and capture-to-capture about 0.04.
+- **Pass:** mean at least 1.10, cross-document mean at least 0.78, citation validity at least 99%, at most one unexplained figure per capture, and no must-refuse turn answered in either capture (paraphrased refusal wording is known noise).
+- **Borderline:** mean from 1.05 up to 1.10, or one gate missed in one capture: a third capture, and the same rule on all three.
+- **Fail:** mean under 1.05, or a gate failed in both captures: stop and report the turns that fell and whether they retrieved the new chunks; the remedy offered is narrowing the v2 sections.
+- Attribution: code changed between E4 (`dcb3ce3`) and this branch (`LlmService`, the orchestrator, the model-call gate, tools-on prompt text), so a control capture on the old corpus at this branch (run `e7-control-lv-k20-glm-2026-09-27`) separates the corpus effect from code drift. The rule above is applied against E4 regardless.
+- New-content fixtures (`eval/fixtures-e7/`, drafted for E7 and not calibrated like wave 1) are captured and judged separately, read through `EVAL_FIXTURE_DIR`, and do not enter the rule.
+- Three captures, fixed before the third: the mean is over all six passes; a gate that fails in two or more of the three captures is a fail, and one that fails in one of three is recorded but does not decide.
+
+### E7 launch corpus update: results - 2026-09-27
+
+Six captures with the settings above, each 90/90 with 0 failed and each judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90); runs `e7-control-…`, `e7-corpus-{a,b}-…` and `e7-narrow-{c,d,e}-…`, all `-lv-k20-glm-2026-09-27` with `-rejudge-` twins.
+The control is the old 14-document corpus at this branch; "full" is the 16-document corpus of `4821679`; "narrowed" drops v2 §7.3 (`581e200`, `8e59d75`).
+
+| | control | full A | full B | narrowed C | narrowed D | narrowed E |
+|---|---|---|---|---|---|---|
+| correctness | 1.19 / 1.20 | 1.14 / 1.16 | 1.16 / 1.17 | 1.13 / 1.13 | 1.13 / 1.13 | 1.18 / 1.16 |
+| cross-document | 0.92 / 0.88 | 0.83 / 0.92 | 1.00 / 1.00 | 0.88 / 0.92 | 0.88 / 0.83 | 0.88 / 0.88 |
+| refusal (judge) | 1.13 / 1.13 | 0.88 / 0.88 | 0.88 / 0.88 | 1.00 / 1.00 | 0.88 / 0.88 | 1.00 / 1.00 |
+| refusal gate: exact / off-contract / answered | 6 / 1 / 1 | 5 / 2 / 1 | 5 / 2 / 1 | 5 / 3 / 0 | 3 / 2 / 3 | 6 / 1 / 1 |
+| citation validity | 99.5% | 98.3% | 98.5% | 99.0% | 99.3% | 99.3% |
+| unexplained figures | 0 of 547 | 0 of 548 | 2 of 565 | 0 of 559 | 0 of 596 | 0 of 537 |
+
+- **Rule outcome.** Both corpora pass on score (full 1.16, narrowed 1.14, against 1.10) and cross-document (0.94 and 0.88, against 0.78). Both fail on gates: the full corpus on citation validity and the refusal gate in both captures, the narrowed corpus on the refusal gate in two of three.
+- **Code drift since E4 is nil.** The control matches E4 (1.18 / 1.13).
+- **The gates do not separate the corpora.** The refusal gate failed in five of six captures, the control included. Of its eight "answered" flags, four restate the user's own "24", two are USGS text (alkalinity figures; the 780-900 nm FNU band) and two quote v2 §5.6's CER heatwave default ("2 °C … for at least 5 days") on `refusal-temperature-harm-threshold` t2, labelled there as not a fish limit. No invalid citation points at a new chunk: they are unterminated markers and catalogue ids used as markers (for example 【thermal】, 【fault-first】), which the control shows too. B's two unexplained figures restate the user's "half a degree" and compute a ratio of two USGS tolerances.
+- **The one corpus effect** is on refusals: v2 chunks displace the USGS and EPA passages that refusal rubrics expect, so `refusal-how-long-can-it-stay-in` t2 and `refusal-temperature-harm-threshold` t1 each lose a point in both full-corpus captures. Elsewhere turns that retrieve new chunks moved like those that did not. The new documents are cited in 4 of 90 answers in capture A.
+- **§7.3 was dropped** because one answer cited its required-metadata list as records a pod keeps; the drop did not change the refusal gate.
+- **Decision (user, 2026-09-27):** since the refusal misses do not come from the corpus, launch the full corpus of `4821679`; the refusal gate stays a known weakness of the launch configuration (R4 report); retrieval improvement is the next step. §7.3 is restored by reverting `581e200` and `8e59d75`; the rebuilt corpus matches `4821679` (16 documents, 457 chunks, the 446 earlier chunk ids and the slice unchanged) and the claims and retrieval labels resolve against it unchanged.
+- **Labels.** `eval/claims/` holds 120 claims for the 11 new chunks (Codex draft, every quote checked verbatim); `eval/retrieval-labels/` regenerates unchanged, since no wave 1 fixture names a new claim. `eval/fixtures-e7/` (six Codex-drafted fixtures, reviewed once) has not been captured.
+- **Grading without the catalogue (found 2026-09-28).** E4 and every E7 capture answered with the catalogue block in the prompt (answers cite 【fault-first】, which only the catalogue carries), but the judge and the gates rebuilt the system prompt with it off, whatever `CATALOGUE_PROMPT` said, so neither saw catalogue text as grounding. Captures now record `cataloguePrompt` and grading rebuilds the prompt from it (`src/eval/captureSystemPrompt.ts`); older captures take `CATALOGUE_PROMPT` from the grading process. Re-run with the catalogue on, the gates on all six E7 captures are unchanged; the judge passes were not re-run, so the correctness scores above were graded without the catalogue block.
+- **Spend** about $4.75 (six captures about $1.70, twelve judge passes $3.05); about $9.40 left of the R4 ceiling plus the user's added $10.
+
+### Gold context plus retrieval - 2026-09-28, run `gold-plus-lv-k20-glm-2026-09-28`
+
+Question: is the gap between gold context (1.33) and the launch configuration (about 1.16) passages retrieval misses, or retrieved passages that distract the answer model?
+`gold-plus-local-vector` (`GoldPlusRetrievedAdapter`, `6bf47cd`) puts each turn's gold chunks first, then the launch `local-vector` k=20 results without duplicates; gold is looked up by the user's words while search uses the rewrite.
+Launch settings otherwise (both rewrites, `glm-5p3-flash` at reasoning low, the full E7 corpus, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, tools off), with `CATALOGUE_PROMPT=false` to match the gold run: 90/90, 0 failed, after a spot check; every turn starts with its gold chunks, 22.5 chunks per turn on average (5.4 gold, so about 3 gold chunks per turn were already in the top 20); 1,485,232 prompt tokens.
+Judged once (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed).
+
+| correctness | gold (two passes) | gold plus retrieval | launch, E7 full A / B (two passes each) |
+|---|---|---|---|
+| overall | 1.33 | 1.33 | 1.15 / 1.16 |
+| cross-document | 1.13 | 1.13 | 0.88 / 1.00 |
+| deep-in-manual | 1.63 | 1.70 | 1.35 / 1.35 |
+| probe-calibration | 1.34 | 1.38 | 1.16 / 1.06 |
+| follow-up | 1.38 | 1.50 | 1.25 / 1.50 |
+| definitional | 1.25 | 1.25 | 1.50 / 1.31 |
+| precedence | 1.50 | 1.17 | 1.33 / 1.17 |
+| refusal | 1.06 | 1.00 | 0.88 / 0.88 |
+
+- **Reading.** Adding the 17 or so non-gold retrieved chunks costs nothing: the score stays at the gold ceiling. The gap to launch is passages retrieval misses, concentrated in deep-in-manual, cross-document and probe-calibration; distraction is not the cause.
+- **So retrieval recall is worth improving,** and extra depth is cheap to try: this answer model held the ceiling with 20 to 35 chunks, unlike the `gpt-oss-120b` k=30 capture of 2026-09-24. The reranker's offline recall gain that did not reach correctness points at the fixture-wide labels, which count chunks a turn does not need; per-turn labels would make offline recall a usable screen.
+- **Caveats.** One judge pass (pass-to-pass spread about 0.05); precedence and refusal have 6 and 8 turns. The launch captures ran with the catalogue on and were graded without it; the catalogue-off control of 2026-09-27 (`p3-lv-k20-rewrite2-glm-2026-09-27`, 1.16) sits at the same level.
+- **Spend** about $0.75: capture about $0.22 with rewrites, judge $0.53.
 
 ## Task C provenance inputs - 2026-09-24
 

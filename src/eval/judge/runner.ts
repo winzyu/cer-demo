@@ -22,7 +22,7 @@ import OpenAI from "openai";
 import type { ReasoningEffort } from "openai/resources/shared";
 import type { CitationEvidence } from "../../utils/citations";
 import { loadFixtures } from "../fixtures";
-import { buildSystemPrompt } from "../../prompt/systemPrompt";
+import { captureSystemPrompt } from "../captureSystemPrompt";
 import { checkCitations } from "../gates/checks";
 import { CHAT_PRICES } from "../prices";
 import {
@@ -246,7 +246,7 @@ interface CapturedTurn {
 interface CapturedTranscript {
   fixtureId: string;
   fixtureClass?: string;
-  run?: { model?: string };
+  run?: { model?: string; cataloguePrompt?: boolean };
   turns?: CapturedTurn[];
 }
 
@@ -292,14 +292,6 @@ export const buildTasks = (options: BuildOptions = {}): JudgeTask[] => {
   const arms = options.arms ?? armsOnDisk(root, pass);
   const dimensions = options.dimensions ?? JUDGE_DIMENSIONS;
 
-  // Built once with the eval harness's flags — SENSOR_TOOL, REPORT_TOOL and CATALOGUE_PROMPT off —
-  // because the harness requires SENSOR_TOOL=false on both the server and the runner
-  // (`docs/timeline.md`, Phase N6), so this is the prompt every capture actually runs under. It
-  // is no longer a pinned control for a specific bake-off — that pin was released 2026-08-26 when
-  // ◆G7 split, and the transcripts it protected were archived 2026-09-01 under
-  // `eval-archive-2026-09-01`.
-  const systemPrompt = buildSystemPrompt(false, false, null);
-
   const rubrics = new Map(loadFixtures().map((fixture) => [fixture.id, fixture]));
   const tasks: JudgeTask[] = [];
 
@@ -310,6 +302,9 @@ export const buildTasks = (options: BuildOptions = {}): JudgeTask[] => {
         return;
       }
 
+      // The prompt this capture ran under, catalogue included when it was on
+      // (`captureSystemPrompt`); the tool blocks are off because every capture runs tools-off.
+      const systemPrompt = captureSystemPrompt(transcript.run);
       const turns = transcript.turns ?? [];
       turns.forEach((turn, position) => {
         const spec = fixture.turns[position];

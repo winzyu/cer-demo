@@ -3,6 +3,7 @@ import { RetrievalRegistry } from "./RetrievalRegistry";
 import { StubAdapter } from "./adapters/StubAdapter";
 import { DirectFeedAdapter } from "./adapters/DirectFeedAdapter";
 import { GoldContextAdapter } from "./adapters/GoldContextAdapter";
+import { GoldPlusRetrievedAdapter } from "./adapters/GoldPlusRetrievedAdapter";
 import { FirestoreVectorAdapter } from "./adapters/FirestoreVectorAdapter";
 import { HybridSliceVectorAdapter } from "./adapters/HybridSliceVectorAdapter";
 import { RrfHybridAdapter } from "./adapters/RrfHybridAdapter";
@@ -34,6 +35,16 @@ retrievalRegistry.register(new DirectFeedAdapter(createCorpusSource()));
  * Reads only the label files and the ingestion artifact — no network, no embeddings.
  */
 retrievalRegistry.register(new GoldContextAdapter());
+
+/**
+ * Diagnostic: gold context plus what `local-vector` retrieved, which splits the gap between the
+ * two into missing passages and distracting ones (`GoldPlusRetrievedAdapter`). Evaluation only.
+ */
+retrievalRegistry.register(new GoldPlusRetrievedAdapter(
+  new GoldContextAdapter(),
+  new LocalVectorAdapter(),
+  "gold-plus-local-vector",
+));
 
 /**
  * Bake-off arm ◆G10. Unlike the pgvector arm — now archived under `archive/pgvector-rag/` — this
@@ -113,6 +124,7 @@ export { HybridSliceVectorAdapter } from "./adapters/HybridSliceVectorAdapter";
 export { RrfHybridAdapter, RRF_K, FUSION_DEPTH } from "./adapters/RrfHybridAdapter";
 export { DirectFeedAdapter } from "./adapters/DirectFeedAdapter";
 export { GoldContextAdapter } from "./adapters/GoldContextAdapter";
+export { GoldPlusRetrievedAdapter } from "./adapters/GoldPlusRetrievedAdapter";
 export {
   CHUNK_COLLECTION,
   DISTANCE_FIELD,
