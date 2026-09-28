@@ -1740,6 +1740,7 @@ The run links A's transcripts unchanged and is judged once with `CATALOGUE_PROMP
 - **Result: no effect.** The catalogue-on pass agrees turn by turn with the two earlier passes (85 and 83 of 90) as often as they agree with each other (84). Three turns differ from two agreeing earlier passes, one up and two down, and no verdict note mentions the catalogue.
 - **So** the launch numbers graded without the catalogue stand, and the catalogue neither helps nor hurts correctness as the judge sees it; its citation-marker interaction (【fault-first】 counted as an invalid citation) is a gate matter this pass does not touch.
 - **Spend** $0.53.
+- **Decisions (user, 2026-09-28).** No catalogue-on gold capture; the reranker stays out of launch. Next, in a new eval chat: a long-conversation test (10-12 turn scripted conversations; none of the wave 1 fixtures exceeds two turns) and a `local-vector` k=30 capture, each approved with its cost before it runs.
 
 ## Task C provenance inputs - 2026-09-24
 
