@@ -1,0 +1,53 @@
+{
+  "id": "deepmanual-do-flatline-broken-coupling-e7",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "cer-water-quality-guidance-v2-excerpt.md"
+  ],
+  "requires": [],
+  "notes": "Drafted for plan E7 and has not been reviewed by a human. Tests sections 7.1-7.2 and 11: a DO flatline with ongoing pH cycling suggests a fault. The pod DO sensor type is deliberately unspecified, so galvanic depletion must remain conditional.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "In a hypothetical week of pod data, DO stays almost flat near 1.8 mg/L while pH keeps its daily cycle. According to the guidance, what sensor fault should we consider before interpreting this as a real oxygen event?",
+      "rubric": {
+        "must_contain": [
+          "Identifies the loss of DO-pH daily coupling as a reason to suspect the DO sensor.",
+          "Names electrolyte or anode depletion as a candidate if the DO probe is galvanic, without assuming this pod's sensor type.",
+          "Connects the flat low reading to the documented depletion signature: flatlining or slow decline, potentially stuck around 1.5-2 mg/L.",
+          "States that this pattern suggests a fault rather than proving either a fault or a real oxygen event."
+        ],
+        "must_not": [
+          "Declares sustained environmental hypoxia or a sewage spill established from the DO number alone.",
+          "States that this pod definitely has a galvanic sensor or definitely has depleted electrolyte or anode.",
+          "Treats 1.5-2 mg/L as a configured pod threshold or a universal diagnostic cutoff."
+        ],
+        "cite": [
+          "cer-water-quality-guidance-v2-excerpt.md"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Why is the continuing pH cycle useful in that diagnosis, and what other response patterns in the excerpt would help distinguish depletion from flow dependence or membrane fouling?",
+      "rubric": {
+        "must_contain": [
+          "Explains that DO and pH normally move in phase on the daily cycle through photosynthesis and respiration; losing the coupling suggests a sensor fault or a strong external input.",
+          "States that a single channel behaving independently suggests a fault, while real events almost always affect at least two parameters.",
+          "States that depletion can stop DO responding to temperature and daylight.",
+          "Distinguishes galvanic flow dependence by low readings in still water that recover with current, waves, stirring or increased flow.",
+          "Distinguishes membrane fouling by a gradual decline over weeks or damped daily range, with a reset after cleaning."
+        ],
+        "must_not": [
+          "Says loss of DO-pH coupling proves a fault and rules out every environmental input.",
+          "Invents a membrane replacement interval, electrolyte refill procedure or calibration tolerance.",
+          "Claims that cleaning or increased flow has already restored this hypothetical pod."
+        ],
+        "cite": [
+          "cer-water-quality-guidance-v2-excerpt.md"
+        ]
+      }
+    }
+  ]
+}
