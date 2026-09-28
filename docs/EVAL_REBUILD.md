@@ -1742,6 +1742,33 @@ The run links A's transcripts unchanged and is judged once with `CATALOGUE_PROMP
 - **Spend** $0.53.
 - **Decisions (user, 2026-09-28).** No catalogue-on gold capture; the reranker stays out of launch. Next, in a new eval chat: a long-conversation test (10-12 turn scripted conversations; none of the wave 1 fixtures exceeds two turns) and a `local-vector` k=30 capture, each approved with its cost before it runs.
 
+### Long conversations: decision rule fixed before capture - 2026-09-28
+
+Question: does answer quality hold late in a 10-12 turn conversation, and on turns that refer back to early ones?
+No wave 1 fixture exceeds two turns, so these limits were never exercised:
+
+- History is capped at 20 messages and 64 KB, dropping the oldest exchanges (`src/validators/chatValidators.ts` `parseHistory`, `MAX_HISTORY_MESSAGES`); at turn 12 turn 1's exchange is gone, while 64 KB is out of reach at about 1.5 KB per answer.
+- The search rewrite sees only the last 4 history messages (`REWRITE_HISTORY_MESSAGES` in `src/retrieval/queryRewrite.ts`), so a turn 9 reference to turn 2 is searched without it.
+- Earlier answers reach the model verbatim, citation markers included (`src/prompt/promptBuilder.ts` `buildMessages`); each turn's CONTEXT is renumbered from 【1】, so an old 【3】 names a different passage, and the tool blocks say "Numeric markers remain CONTEXT citations" (`src/prompt/systemPrompt.ts`). The eval runner replays the same way (`src/eval/runner.ts`).
+- The launch quota of 20 messages per user per day allows one such conversation plus a few questions; no capture measures it.
+
+Fixtures: five Codex-drafted conversations of 12 turns in `eval/fixtures-long/` (brief `eval/fixtures-long/_BRIEF.md`), same schema and rubric style as wave 1, read through `EVAL_FIXTURE_DIR`; `eval/fixtures-wave1/` is untouched. Each fixture's notes carry a `Turn roles:` line (hidden from the judge), and `eval/turn-claims-long/` assigns claims per turn for `captureLabelRecall.py`.
+Setup: the launch configuration of the E7 captures (`local-vector` k=20, both rewrites, `glm-5p3-flash` at reasoning low, `CATALOGUE_PROMPT=true`, `LLM_MAX_TOKENS=16384`, `CORPUS_SOURCE=artifact`, the full E7 corpus, tools off), one capture after a spot check, judged once by `deepseek-v4p1-flash` at `--final`, correctness, rubric v2.
+Bands (`scripts/longConversationBands.py`): early = turns 1-3; late = turns 9-12; back-reference = turns referring to turns 1-3 by paraphrase; the turn 12 reference to turn 1 (dropped by the cap) is scored apart; the one refusal turn is in no band.
+
+- **Pass:** early minus late and early minus back-reference each at most 0.10; citation validity at least 99%; the refusal turn not answered.
+- **Borderline:** either gap from 0.10 up to 0.20: a second judge pass, and the same rule on the mean of both.
+- **Fail:** either gap above 0.20, or a gate missed: report which limit the falling turns hit (cap, rewrite window, stale markers or none).
+- About 15 turns per band, so a gap under 0.10 is within judge noise; the capped turn 12 is reported, not ruled on.
+
+### `local-vector` k=30: decision rule fixed before capture - 2026-09-28
+
+Question: gold plus retrieval showed the gap to gold is passages retrieval misses and that GLM held the gold score with 20-35 chunks, so does a deeper k=30 lift correctness?
+Setup: the launch configuration above with only `DEFAULT_TOP_K` changed from 20 to 30 (a code constant in `src/retrieval/options.ts`, raised in a commit for the capture and reverted after it, as the 2026-09-24 depth capture did), the 45 wave 1 fixtures, one capture after a spot check of one fixture, judged twice.
+
+- **Adopt:** correctness at least 0.05 above the launch pair (E7 full A and B, 1.16) on both judge passes; refusal integrity gate and citation validity no worse than A and B (refusal gate 5 exact, 2 off-contract, 1 answered; citation validity 98.3-98.5%); and the user accepts about 50% more prompt tokens per question.
+- **Otherwise** k stays 20. `gpt-oss-120b` lost 0.08 at k=30 by refusing more, so refusal wording on non-refusal turns is checked either way.
+
 ## Task C provenance inputs - 2026-09-24
 
 Future transcript turns retain optional `tool_calls`, `tool_round_cap_reached` and citation `audit` from either transport.
