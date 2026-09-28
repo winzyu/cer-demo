@@ -1,0 +1,105 @@
+{
+  "fixtureId": "probecal-end-of-day-check",
+  "fixtureClass": "probe-calibration",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "epa-cal-frequency-daily-01",
+          "rubric": [
+            1
+          ],
+          "why": "Requires calibration before use on each measurement day."
+        },
+        {
+          "claimId": "epa-post-cal-end-of-day-01",
+          "rubric": [
+            2
+          ],
+          "why": "Requires an end-of-day drift check."
+        },
+        {
+          "claimId": "epa-midday-check-qualify-01",
+          "rubric": [
+            4,
+            5
+          ],
+          "why": "Requires qualifying earlier data when midday drift is found and corrected."
+        },
+        {
+          "claimId": "epa-postcal-procedure-01",
+          "rubric": [
+            3
+          ],
+          "why": "Requires measurement mode and standards from the initial calibration."
+        },
+        {
+          "claimId": "ph-daily-cal-and-recal-01",
+          "rubric": [
+            1
+          ],
+          "why": "Supports daily pH calibration, with the broader instrument cadence supplied by EPA."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "epa-postcal-defaults-apply-when-01",
+          "rubric": [
+            3,
+            5
+          ],
+          "why": "Makes project drift criteria govern over EPA defaults when comparing procedures."
+        },
+        {
+          "claimId": "epa-postcal-ph-criteria-01",
+          "rubric": [
+            1
+          ],
+          "why": "Gives the EPA pH 7 buffer tolerance; matches explicit evidence."
+        },
+        {
+          "claimId": "epa-postcal-do-criteria-01",
+          "rubric": [
+            2,
+            5
+          ],
+          "why": "Gives EPA's 0.5 mg/L default for comparison; it does not supply the USGS tolerance."
+        },
+        {
+          "claimId": "ph-daily-cal-and-recal-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives the USGS 0.05 pH recalibration trigger; matches explicit evidence."
+        },
+        {
+          "claimId": "ph-recheck-005-recal-01",
+          "rubric": [
+            4
+          ],
+          "why": "Requires recalibration after a buffer check differs by over 0.05 pH; matches explicit evidence."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "epa-sonde-deploy-cal-01",
+      "why": "Concerns continuous deployment and recovery, not the requested daily sampling cadence."
+    },
+    {
+      "claimId": "epa-postcal-spc-criteria-01",
+      "why": "Gives a conductivity tolerance; turn 2 asks for pH and oxygen only."
+    },
+    {
+      "claimId": "epa-postcal-orp-criteria-01",
+      "why": "Gives an ORP tolerance; turn 2 asks for pH and oxygen only."
+    }
+  ]
+}

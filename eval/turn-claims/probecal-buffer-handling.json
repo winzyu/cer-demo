@@ -1,0 +1,72 @@
+{
+  "fixtureId": "probecal-buffer-handling",
+  "fixtureClass": "probe-calibration",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "ph-buffer-no-electrode-in-stock-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Forbids stock-bottle measurement and requires a separate vessel and disposal after use."
+        },
+        {
+          "claimId": "ph-buffer-no-return-01",
+          "rubric": [
+            3
+          ],
+          "why": "Forbids returning used buffer to stock."
+        },
+        {
+          "claimId": "ph-secondary-bottle-01",
+          "rubric": [
+            4
+          ],
+          "why": "Specifies a dedicated clean field bottle and its identifying labels."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "ph-secondary-refresh-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Requires refreshing field bottles before each trip and rejecting expired buffer."
+        },
+        {
+          "claimId": "ph-buffer-temp-protection-01",
+          "rubric": [
+            3,
+            4
+          ],
+          "why": "Requires temperature protection and disposal after freezing or overheating."
+        },
+        {
+          "claimId": "ph-buffer-no-expired-01",
+          "rubric": [
+            2
+          ],
+          "why": "Forbids expired buffers."
+        },
+        {
+          "claimId": "ph-record-buffer-lot-temp-01",
+          "rubric": [
+            5
+          ],
+          "why": "Requires recording buffer temperature, lot and expiration in the logbook."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

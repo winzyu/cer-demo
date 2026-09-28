@@ -1,0 +1,45 @@
+{
+  "fixtureId": "deepmanual-do-saturation-ceiling",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "do-t622-20c-750-897-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Gives the freshwater 20 C value and its USGS table source."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "do-t622-20c-750-897-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Supplies the earlier same-table value needed to calculate the 2.14 mg/L decrease."
+        },
+        {
+          "claimId": "do-t622-35c-760-695-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Gives the 35 C value from the same table for the saturation decrease."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

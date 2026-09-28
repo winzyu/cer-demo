@@ -1,0 +1,134 @@
+{
+  "fixtureId": "probecal-ec-never-recalibrate",
+  "fixtureClass": "probe-calibration",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "ec-recal-interval-01",
+          "rubric": [
+            1
+          ],
+          "why": "Supports the manufacturer's claim of infrequent recalibration without making it the field-check cadence."
+        },
+        {
+          "claimId": "ec-no-recal-needed-01",
+          "rubric": [
+            1
+          ],
+          "why": "States the manufacturer's graphite-plate and no-recalibration position."
+        },
+        {
+          "claimId": "sc-check-before-field-trip-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Requires checks before every trip and field verification with nearby standards."
+        },
+        {
+          "claimId": "sc-recalibration-unnecessary-01",
+          "rubric": [
+            1
+          ],
+          "why": "Supports the general observation that frequent recalibration is unnecessary when calibration holds."
+        },
+        {
+          "claimId": "sc-field-site-check-standard-01",
+          "rubric": [
+            3,
+            4,
+            5
+          ],
+          "why": "Gives the field check, acceptance thresholds and recalibration response."
+        },
+        {
+          "claimId": "sc-accuracy-criteria-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives certified-standard accuracy tolerances."
+        },
+        {
+          "claimId": "sc-check-standard-criterion-01",
+          "rubric": [
+            4,
+            5
+          ],
+          "why": "Gives check-standard tolerances and requires recalibration on failure."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "sc-check-before-field-trip-01",
+          "rubric": [
+            2
+          ],
+          "why": "Recommends standards near expected sample conductance."
+        },
+        {
+          "claimId": "sc-field-site-check-standard-01",
+          "rubric": [
+            2,
+            4
+          ],
+          "why": "Requires a nearby check standard and applies tolerances to its measured value."
+        },
+        {
+          "claimId": "sc-accuracy-criteria-01",
+          "rubric": [
+            4
+          ],
+          "why": "Applies both tolerance branches to standards rather than the sample."
+        },
+        {
+          "claimId": "sc-nist-traceable-standards-01",
+          "rubric": [
+            1
+          ],
+          "why": "Identifies NIST-traceable potassium chloride standards."
+        },
+        {
+          "claimId": "sc-one-point-standard-values-01",
+          "rubric": [
+            2
+          ],
+          "why": "Supplies supported one-point standard values and nearest-value selection."
+        },
+        {
+          "claimId": "sc-bracket-or-near-standards-01",
+          "rubric": [
+            2
+          ],
+          "why": "Requires near-value or bracketing standards according to calibration type."
+        },
+        {
+          "claimId": "sc-calibrate-above-200-01",
+          "rubric": [
+            3
+          ],
+          "why": "Recommends standards above 200 microsiemens/cm to reduce dilution and contamination bias."
+        },
+        {
+          "claimId": "sc-check-standard-criterion-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives the standard-based 100 microsiemens/cm split and tolerances."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "sc-cell-constant-2-percent-01",
+      "why": "Gives cell-constant stability and contamination diagnostics; neither rubric asks for them."
+    }
+  ]
+}

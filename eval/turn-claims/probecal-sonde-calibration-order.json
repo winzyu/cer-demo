@@ -1,0 +1,105 @@
+{
+  "fixtureId": "probecal-sonde-calibration-order",
+  "fixtureClass": "probe-calibration",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "mp-calibration-order-08",
+          "rubric": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "why": "Gives the recommended temperature, conductivity, pH, DO and ORP sequence."
+        },
+        {
+          "claimId": "mp-ionic-strength-rationale-09",
+          "rubric": [
+            5
+          ],
+          "why": "Explains low-to-high ionic strength as protection against standard carryover."
+        },
+        {
+          "claimId": "sc-calibrate-sc-before-ph-01",
+          "rubric": [
+            3,
+            6
+          ],
+          "why": "Requires conductivity before pH because buffers and filling solutions can contaminate it."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "mp-ionic-strength-rationale-09",
+          "rubric": [
+            4
+          ],
+          "why": "Explains how inadequate rinsing biases subsequent calibrations."
+        },
+        {
+          "claimId": "mp-triple-rinse-10",
+          "rubric": [
+            1
+          ],
+          "why": "Requires three deionized-water rinses between standards."
+        },
+        {
+          "claimId": "mp-t6-rushed-calibration-08",
+          "rubric": [
+            4
+          ],
+          "why": "Identifies rushed calibration and inadequate rinsing as causes of unstable or inaccurate readings."
+        },
+        {
+          "claimId": "sc-diw-rinse-three-times-01",
+          "rubric": [
+            1,
+            3
+          ],
+          "why": "Gives three DIW rinses using the calibration cup or beaker."
+        },
+        {
+          "claimId": "sc-standard-rinse-three-times-01",
+          "rubric": [
+            2
+          ],
+          "why": "Requires rinsing with the calibration standard before use."
+        },
+        {
+          "claimId": "ph-sonde-rinse-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Requires triple rinsing of sonde, cup and electrode with DIW and buffer."
+        },
+        {
+          "claimId": "ph-pour-swirl-discard-01",
+          "rubric": [
+            2
+          ],
+          "why": "Describes buffer rinses before calibration."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "do-two-point-order-01",
+      "why": "Gives a two-point DO exception not requested by either turn's must_contain points."
+    },
+    {
+      "claimId": "ph-pour-sit-measure-01",
+      "why": "Describes fresh-buffer measurement and bubble removal, not rinsing between solutions."
+    }
+  ]
+}

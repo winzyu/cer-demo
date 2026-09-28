@@ -1,0 +1,101 @@
+{
+  "fixtureId": "probecal-do-saturation-target",
+  "fixtureClass": "probe-calibration",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "do-one-point-goal-01",
+          "rubric": [
+            1
+          ],
+          "why": "Defines the saturated-oxygen goal and the two supported calibration environments."
+        },
+        {
+          "claimId": "do-proc1-chamber-humidity-01",
+          "rubric": [
+            2
+          ],
+          "why": "Specifies wetting the chamber and retaining water for full humidity."
+        },
+        {
+          "claimId": "do-proc1-no-airtight-seal-01",
+          "rubric": [
+            3
+          ],
+          "why": "Requires a loose chamber to preserve ambient pressure."
+        },
+        {
+          "claimId": "do-proc1-equilibration-time-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives Procedure 1's 5-10 minute equilibration period."
+        },
+        {
+          "claimId": "do-pressure-nearest-mm-01",
+          "rubric": [
+            5
+          ],
+          "why": "Requires ambient pressure to the nearest millimetre of mercury."
+        },
+        {
+          "claimId": "do-barometer-at-altitude-01",
+          "rubric": [
+            6
+          ],
+          "why": "Requires pressure measured at calibration altitude."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "do-proc1-verify-tolerance-01",
+          "rubric": [
+            1
+          ],
+          "why": "Gives the saturation verification tolerance and project-specific tightening."
+        },
+        {
+          "claimId": "do-water-droplets-01",
+          "rubric": [
+            2
+          ],
+          "why": "Requires an optical-surface droplet check and recalibration if droplets were present."
+        },
+        {
+          "claimId": "do-salinity-correction-after-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives the preferred timing for user-specified manual salinity correction."
+        },
+        {
+          "claimId": "do-spc-sensor-for-saline-01",
+          "rubric": [
+            3
+          ],
+          "why": "Requires a calibrated conductance sensor in saline or brackish systems."
+        },
+        {
+          "claimId": "do-manual-salinity-recalibration-01",
+          "rubric": [
+            5
+          ],
+          "why": "Requires recalibration for changed salinity after manual correction during calibration."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "do-saline-above-2000-01",
+      "why": "Describes saline-water correction scope but not the required equipment, timing or verification steps."
+    }
+  ]
+}

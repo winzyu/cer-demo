@@ -1,0 +1,56 @@
+{
+  "fixtureId": "deepmanual-turbidity-rounding",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "tby-t6-low-rows-01",
+          "rubric": [
+            1,
+            3
+          ],
+          "why": "Gives the USGS low-range resolution and reporting-table attribution."
+        },
+        {
+          "claimId": "tby-t6-40-100-row-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Gives the USGS one-unit resolution and table attribution, producing 64."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "tby-t6-low-rows-01",
+          "rubric": [
+            1
+          ],
+          "why": "Gives EPA's 0.05-unit resolution, producing 0.40 from 0.42."
+        },
+        {
+          "claimId": "tby-t6-40-100-row-01",
+          "rubric": [
+            2
+          ],
+          "why": "Gives EPA's five-unit resolution, producing 65 from 63.7."
+        },
+        {
+          "claimId": "tby-usgs-conforms-astm-01",
+          "rubric": [
+            3
+          ],
+          "why": "States the ASTM default and drinking-water compliance exceptions."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}
