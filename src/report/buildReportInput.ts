@@ -8,9 +8,10 @@
  *
  * 1. **Patterns come from an hourly series.** Each parameter's `pattern` (diel, tidal, trend or
  *    unknown) is classified by `patterns.ts` from a third query at hourly resolution, capped at
- *    `MAX_HOURLY_BUCKETS`. That tag is what switches on `events.ts`'s diel/tidal exclusion and
- *    the algal-bloom detector (which needs a DO series tagged "diel"); the classifier's own
- *    limits (a diurnal tide reads as diel; `unknown` is not "steady") are documented there.
+ *    `MAX_HOURLY_BUCKETS`. That tag raises `events.ts`'s event-window minimum to half a day and
+ *    switches on the algal-bloom detector (which needs a DO series tagged "diel"); the
+ *    classifier's own limits (a diurnal tide reads as diel; `unknown` is not "steady") are
+ *    documented there.
  * 2. **Series is bucketed, not raw.** Event detection here runs against
  *    `aggregation: "series"` buckets (bucket means at each bucket's midpoint), not the sensor's
  *    native ~15min cadence. This is coarser than what the Python prototype's demo data
@@ -87,7 +88,7 @@ import {
   metricThreshold, metricThresholdRejectionReason, metricBlindSpotNote,
   temperatureThreshold, thresholdRejectionNote, WIRE_KEY_TO_METRIC,
 } from "./operatorThresholds";
-import { STUCK_SENSOR_NOTE } from "../tools/stuckSensor";
+import { STUCK_SENSOR_NOTE, STUCK_SENSOR_USER_NOTE } from "../tools/stuckSensor";
 import type { ThresholdVerdict } from "./operatorThresholds";
 import { classifyPattern, type HourlySeries } from "./patterns";
 
@@ -592,12 +593,17 @@ export const buildReportInput = async (
     .map((r) => r.skippedLabel);
 
   if (parameters.length === 0) {
+    // This text reaches the reader (the 422 body, the dashboard's tool row), so it is built only
+    // from reader notes: `site_note` and `STUCK_SENSOR_NOTE` are the model's wording.
+    const readerNotes = seriesResult[USER_NOTES_FIELD];
     return {
       error: [`No usable readings found for any parameter in "${params.timeRange}".`,
-        seriesResult.site_note,
+        ...(Array.isArray(readerNotes) ? readerNotes : []),
         Object.values(seriesMetrics).some((m) => (m.excluded_stuck ?? 0) > 0)
-          ? STUCK_SENSOR_NOTE : null,
-      ].filter(Boolean).join(" "),
+          ? STUCK_SENSOR_USER_NOTE : null,
+      ].filter((text): text is string => typeof text === "string" && text !== "")
+        .filter((text, index, all) => all.indexOf(text) === index)
+        .join(" "),
     };
   }
 

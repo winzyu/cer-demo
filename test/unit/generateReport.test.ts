@@ -49,7 +49,7 @@ const makeSensor = (period = ALGALITA_PERIOD): QuerySensorData => {
   };
   const client = new DeviceApiClient({ baseUrl: "https://example.invalid/api/v1", token: "test-token", fetchImpl });
   return new QuerySensorData({
-    client, now: () => NOW, rawLimit: 200, waterType: "saltwater",
+    client, now: () => NOW, rawLimit: 200,
   });
 };
 

@@ -233,8 +233,6 @@ export interface QuerySensorDataOptions {
   now?: () => number;
   rawLimit?: number;
   defaultDeviceLabel?: string;
-  /** Deployment water type, for the mismatch note. Defaults to `config.waterType`. */
-  waterType?: string;
 }
 
 /** How long a device list is reused. The registry changes on the order of weeks. */
@@ -262,8 +260,6 @@ export class QuerySensorData {
 
   private readonly defaultDeviceLabel?: string;
 
-  private readonly waterType: string;
-
   /**
    * Keyed by token, because the device API scopes `/devices` to the token holder's organization.
    * A single-slot cache on this shared singleton would serve one caller's fleet to the next.
@@ -283,7 +279,6 @@ export class QuerySensorData {
     this.now = options.now ?? (() => Date.now());
     this.rawLimit = options.rawLimit ?? config.tools.rawLimit;
     this.defaultDeviceLabel = options.defaultDeviceLabel ?? config.deviceApi.defaultDeviceLabel;
-    this.waterType = options.waterType ?? config.waterType;
   }
 
   /**
@@ -918,9 +913,8 @@ export class QuerySensorData {
       .map((sample) => sample.value) ?? [];
     const allZeroTurbidity = turbidityValues.length > 0
       && isAllZeroTurbidity(turbidityValues.reduce((max, v) => Math.max(max, v), 0));
-    const notes = this.notes(
+    const notes = QuerySensorData.notes(
       metricKeys,
-      device,
       chain,
       totalSamples,
       referenceMs,
@@ -1074,16 +1068,12 @@ export class QuerySensorData {
   /**
    * Caveats that belong with the number rather than in a doc nobody reads at answer time.
    *
-   * The water-type note is a **flag, not a fix**. `WATER_TYPE` is one global env var, while pods
-   * differ in water type — one deployment cannot describe both. The system prompt no longer carries
-   * ranges (deleted 2026-09-13; pod limits come from `get_pod_thresholds`), so the global value now
-   * only frames the answer. Reading water type per device in chat is unbuilt Phase N4 work, no
-   * longer gated by ◆G3, which resolved 2026-09-13 (`DEVICE_API.md` §12c). Surfacing the
-   * disagreement here at least stops the model describing a saltwater pod as freshwater in silence.
+   * No note compares the pod's water type with the deployment's `WATER_TYPE`: that one global
+   * value cannot describe a mixed fleet, and the comparison flagged nearly every salt-water pod.
+   * The pod's own `operating_environment` is in the result, and limits come from its registry.
    */
-  private notes(
+  private static notes(
     metricKeys: MetricKey[],
-    device: DeviceSummary,
     chain: DeviceChain,
     nSamples: number,
     referenceMs: number,
@@ -1168,16 +1158,6 @@ export class QuerySensorData {
     if (allZeroTurbidity) {
       notes.push(TURBIDITY_ALL_ZERO_CAVEAT);
       userNotes.push(TURBIDITY_ALL_ZERO_CAVEAT);
-    }
-
-    const environment = device.operatingEnvironment;
-    const deviceWaterType = environment?.includes("salt") ? "saltwater" : "freshwater";
-    if (environment && deviceWaterType !== this.waterType) {
-      notes.push(
-        `This device operates in ${environment}, but the deployment's configured water type is `
-        + `${this.waterType}. Your instructions carry no ranges; to judge this reading against `
-        + "limits, use this pod's configured thresholds from get_pod_thresholds.",
-      );
     }
 
     return {

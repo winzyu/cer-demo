@@ -873,7 +873,7 @@ Behavior worth knowing, each guarding a documented silent-failure mode in `DEVIC
 | a device must be named when several are visible | the two cleared pods are different water bodies on opposite coasts |
 | turbidity results carry a provisional/uncalibrated note and no unit | it is a derived voltage index, not a measurement and not NTU |
 | a window in which every turbidity reading is 0 carries a possible-missing-sensor note | the backend reports a missing or offline voltage as 0, the same as clear water |
-| a device whose `operatingEnvironment` disagrees with `WATER_TYPE` is flagged in the result | one global env var cannot describe both pods; per-device water type in chat is unbuilt N4 work |
+| the result never compares a device's `operatingEnvironment` with `WATER_TYPE` | `WATER_TYPE` is one deployment-wide setting and most pods are salt-water, so the comparison put a "configured as freshwater" note on nearly every answer; limits and reports follow each pod's registered type, and `WATER_TYPE` is only the report's fallback for a pod with no registered type (removed 2026-09-29) |
 
 ### 10.3c Device continuity — merge chains (`src/devices/mergeChains.ts`)
 
@@ -1107,7 +1107,10 @@ Each parameter is tagged `diel`, `tidal`, `trend` or `unknown` from a third, hou
 Periodicity is read from the autocorrelation of the series minus a centered 25-hour moving mean: a diel cycle repeats at 24 h and inverts at 12 h, a semidiurnal tide repeats at 12 h and inverts at 6 h.
 A trend is daily means on a straight line (R² ≥ 0.7) over at least 14 days.
 At least 72 hours and 60% hourly coverage are required, and `unknown` means unclassified, not steady.
-A diel or tidal tag stops threshold windows opening on that parameter and enables the algal-bloom detector; a diurnal tide is indistinguishable from a diel rhythm on these lags and is tagged diel.
+A diel or tidal tag raises that parameter's minimum threshold window from one hour to twelve and enables the algal-bloom detector; a diurnal tide is indistinguishable from a diel rhythm on these lags and is tagged diel.
+Twelve hours is half a cycle: a daily or tidal swing crosses a limit for only part of each cycle, so a nightly dip below a dissolved-oxygen minimum raises nothing, while a run that stays beyond the limit for half a day or more breaks the rhythm and is an event (K21b, 2026-09-29: 18 hourly readings below a 5 mg/L minimum on a diel series had raised none).
+Windows are measured on the report's bucketed series, so at the 3-hour buckets of a one-week report any run of 18 hours or more qualifies; a report long enough to use 12-hour buckets resolves only runs of about a day or more.
+This does not change the status ladder: a window becomes an event, and "Action Required" still needs the event rung or two readings beyond the exceedance bound (finding 7).
 Hourly buckets are not thinned by `MIN_BUCKET_SAMPLES`: the Newport pods report about once an hour, so one reading per bucket is their cadence.
 
 **Downgraded events keep their signature.** An event below the 0.5 confidence floor is `Inconclusive`, and `WQEvent.signature` records what it matched.
