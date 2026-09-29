@@ -1815,6 +1815,10 @@ Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0
 - **Spend** about $1.18: capture about $0.34 with rewrites, spot check about $0.01, judge passes $0.20 and $0.63 (the first read most of its input from cache because both passes ran at once).
 - **Second capture, rule fixed before it runs (user decision, 2026-09-28).** A judge pass re-grades the same answers, so it cannot say whether the answers are reliably better; a second capture (`k30-b-lv-glm-2026-09-28`, same settings, judged once) can.
   Adopt k=30 only if all three hold: the second capture's pass is at least 1.206; the mean of all three k=30 passes is at least 1.206; and the second capture's refusal gate and citation validity are no worse than launch A and B (at most 1 answered, validity at least 98.3%). Otherwise k stays 20.
+- **Second capture: k stays 20.** Captured at `2587add` (k=30 reapplied, reverted in the next commit): 90/90, 0 failed, 30 excerpts every turn; 2,295,848 prompt tokens (17.8% cached), 32,854 completion, 563 s. One judge pass, same settings: 90/90, 0 failed.
+  Correctness 1.167 (cross-document 0.92, deep-in-manual 1.30, probe-calibration 1.25, refusal 0.88), under 1.206; the mean of the three k=30 passes is 1.200, also under. The gates hold: refusal 6 exact, 1 off-contract, 1 answered (the answered turn restates the user's own "24", the known noise of the E7 captures); citation validity 431/431; 0 unexplained figures of 611.
+  Reading: capture 1's 1.233 was the high end of capture-to-capture spread; across two captures k=30 sits about 0.04 above launch, inside noise, for a third more prompt tokens. Its gate gains hold in both captures (refusal 7 and 6 exact against 5; citation validity 99.3% and 100%).
+  Spend: capture about $0.34, judge $0.51; about $2.31 for the long-conversation and k=30 work, leaving about $5.76 of the $8.07.
 
 ## Task C provenance inputs - 2026-09-24
 
