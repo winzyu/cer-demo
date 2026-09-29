@@ -19,14 +19,15 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - Launch issues A1, A2, A3, A5 and A6 reproduce on CER's own code (`LAUNCH_ISSUES_CHECKLIST.md`); a Codex mirror run (about $0.34) reproduced findings 11 and D4 and left 23 REVIEW rows unjudged.
 - Guide K21 added (catalogue entries only with evidence); the unused production-export script `firestore-copy.sh` deleted.
 - Roundup of every reachable chat, recorded in the reset brief; coordinator spend: none.
+- Release demo (`docs/release-demo` `8a2e521`, pushed, not landed): the Michael demo run order is Part 0 of `LAUNCH_ISSUES_WALKTHROUGH.html`, dry-run on the Mirror (24 questions, 2 PDFs, about $0.40); A2, A3 and A5 cards corrected; results and new findings in `LAUNCH_ISSUES_CHECKLIST.md`; demo decisions in `timeline.md` (2026-09-29).
 
 ## Working tree
 
 - Branch `dev`, pushed and level with `origin/dev` except this handoff; `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
-- cer-demo worktrees in use: `gcp-test-env` (bot and Codex outputs, git-ignored), `e2e-rc` (the mirror's Gilligan), `release-candidate` (`release/rc1`, stale), `supervisor-brief` (uncommitted brief), `firestore-mirror` (untracked census script), `e7-corpus` (E7 `corpus.json` and cache), `launch-issues` (`7a2f2fc`, landed, branch unpushed).
+- cer-demo worktrees in use: `gcp-test-env` (bot and Codex outputs, git-ignored), `e2e-rc` (the mirror's Gilligan), `release-candidate` (`release/rc1`, stale), `supervisor-brief` (uncommitted brief), `firestore-mirror` (untracked census script), `e7-corpus` (E7 `corpus.json` and cache), `launch-issues` (`7a2f2fc`, landed, branch unpushed), `release-demo` (`docs/release-demo`, runs Gilligan :8010).
   Removable: `e2e-dev`, `long-conversations`, `answer-quality-q1`, `cwa-old`, `e7-claims`, `e7-fixtures`, `feat+service-release`, `gilligan-runbook`, `gilligan-ux-contract`, `hygiene`, `l2-inputs`, `mirror-parity`, `per-turn-labels`, `q3-q5`, `q9-413`, `stale-claims`, `token-cap`, `upstream-publish`, `wave1-corrections`, `firestore-plan` (keep its branch).
 - Upstream worktrees are under `~/code/clean-earth-rovers/worktrees/` (release, mirror, citation-title, invited-login, cwa-old, dashboard-ux, dashboard-e2e, dashboard-release, and the launch-issues `*-original`, `*-release-demo`, `server-original-seed`); the server's `.worktrees/mirror` is `mirror/e2e-p3` `1ef21a7`.
-- Running: mirror emulator :8080 (2026-09-27 evidence), dashboard :3000 and Gilligan :8010; the mirror server :5101 has stopped (`MIRROR_RUNBOOK.md` §3); launch-issues emulator :8180 (viewer :4180), Current :3100 and :5201, Release :3300 and :5301.
+- Running: mirror emulator :8080 (reseeded with fixtures 2026-09-29T04:48:55Z), dashboard :3000, mirror server :5101 from `server-release-mirror` `8594338` (the Mirror chat's) and Gilligan :8010 from `release-demo` (runbook §4.1 settings, handoff false); launch-issues emulator :8180 (viewer :4180), Current :3100 and :5201, Release :3300 and :5301.
 - Git-ignored restored inputs: `node_modules/`, `.env`, corpus PDFs, `.ocr_cache/`, `data/corpus/` (Sep 21 corpus here), `data/embeddings/cache.json`; still missing `data/retrieval-eval/`, `data/device-fields/`, `data/backend-surface/`, `serviceAccountKey.json`.
 
 ## Open work
@@ -36,12 +37,13 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - User, go-aheads: build `task/q9-land`; the mirror's pH 2.07 and 18-hour event fixtures; the Gilligan behaviour decisions listed in the reset brief; U7 wording and placement; the history citation-marker fix.
 - User, spend: mirror C1/D1 about $0.04, K21 and catalogue checks about $0.20, groups about $0.51; Gilligan behaviour checks about $0.21; dashboard recheck about $0.05; rc2 delta test up to $0.15; the rc2 embedding rebuild; E5 tools-on live smoke; five read-only live `gcloud` checks of Michael's setup (run with `!`).
 - User, pushes: dashboard `task/gilligan-ux`; server `task/gilligan-citation-title`, `fix/invited-login`, the Q11 branch, the combined release commit before L6; optionally `test/launch-issues`.
+- User, before the demo: ask the Mirror chat to reseed about an hour before (readings stop at seed time); name the release chat so the demo stack and key can be settled.
 - User, supervisor or Michael at the demo: the standing caveat in place of refusals; the pH 3-12 band; the demo date and key; the A items; Firestore access for cer-gilligan.
-- User, housekeeping: review the supervisor brief; mark the mirror review sheets (`data/e2e/`); stop the launch-issues stacks when idle; remove merged worktrees; the coordinate audit and `scripts/censusFirestore.ts` are optional.
+- User, housekeeping: review the supervisor brief; mark the mirror review sheets (`data/e2e/`); keep the launch-issues stacks up for the demo (they listen on the LAN); remove merged worktrees; the coordinate audit and `scripts/censusFirestore.ts` are optional.
 - Agent, release plan: build `task/q9-land`, then land after the mirror rerun; refresh the plan; rewrite guide K12; runbook §3.1, §4.1 and §2.1 fixes; `SECURITY_FINDINGS.md` §5 and §8 corrections; declare `dev` final for rc2 (reset brief, "Release plan").
 - Agent, Gilligan behaviour: Q10 findings 6, 8, 10 and 7, K21, U7, citation markers, follow-ups (reset brief, "Gilligan behaviour").
 - Agent, release: rc2, re-ingest and checksums, production-mode run, `RELEASE_CANDIDATE.md`, then L5-L8 (reset brief, "Release").
-- Agent, release demo: walkthrough corrections, browser checks, CER `main` comparison, demo script (reset brief, "Release demo").
+- Agent, release demo: settle the demo stack and key with the release chat; raise `WATER_TYPE` with the coordinator; send dry-run findings to Gilligan behaviour; rerun D12-D15 when fixes land (`LAUNCH_ISSUES_WALKTHROUGH.html` Part 0).
 - Agent, suggested: Q11 and A6 server branches; mirror testing (reset brief sections of those names).
 
 ## Unfixed defects
@@ -57,13 +59,16 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 | Cloud Build trigger `8ad67b17` (`cer-ui`) | Builds and deploys on every push to the dashboard's infected `main`; still enabled. | high |
 | server `GilliganService.askQuestionGemini` | Calls the retired `gemini-pro`; production Gilligan fails every question and is no rollback (D9). | high |
 | `src/prompt/promptBuilder.ts:112` | Earlier answers' citation markers reach the model unchanged; in turns 9-12, 13 of 33 citations point at the wrong excerpt; the gate misses it. | medium |
-| cer-demo referrals | "My pod is broken" is declined instead of referred to sales@cleanearthrovers.com (finding 8); may be a catalogue-off artifact. | medium |
+| cer-demo referrals | "My pod is broken" is declined instead of referred to sales@cleanearthrovers.com (finding 8); did not reproduce in the 2026-09-29 Mirror dry run with the catalogue on. | medium |
 | server `UserService.login` | An invited user with no password gets 500; fixed on `fix/invited-login` `f7dec3c`, not pushed. | medium |
 | server `assignOrganization` | A non-superadmin with an empty organization sees every pod; no production user has one. | medium |
 | tools-on answers | Withheld-history note dropped, water-type note misparaphrased, high dissolved oxygen not flagged (Q8); a pod silent 30 hours reported active "in the last 24 hours". | medium |
 | answers (`glm-5p3-flash`) | Refusal wording varies between runs; cross-document answers score 0.83. | medium |
 | R4 judge, ungrounded dimension | Weak agreement with reference grades (kappa 0.23); ungrounded rates are indicative only. | medium |
 | `eval/fixtures-wave1/` | 84/90 turns have explanatory sources outside the ◆G9 slice. | medium |
+| `GILLIGAN_DEPLOYMENT_RUNBOOK.md` §4.1, `src/tools/querySensorData.ts:1088` | `WATER_TYPE: "freshwater"` makes every salt-water pod's answer report "the deployment's configured water type is freshwater". | medium |
+| report PDF turbidity summary | Chat says a stuck turbidity run was excluded; the PDF Summary calls it "Clear (relative index mean 0.0)" (Lakeside Buoy 2026, 2026-09-29). | low |
+| server `DevicesService` on CER `main` | Water alert emails go to `michae@cleanearthrovers.com`. | low |
 | `src/report/buildReportInput.ts:548` | A report with no usable readings shows the model-facing site note as "Tool failed". | low |
 | `src/tools/getPodThresholds.ts` | Rejected (unset or inverted) limits have no reader note. | low |
 | eval gates | Catalogue-id markers such as `【fault-first】` count as invalid citations. | low |
