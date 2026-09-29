@@ -196,3 +196,24 @@ Raw responses are in [`e2e-mirror-2026-09-29/`](e2e-mirror-2026-09-29/).
 | D1 | pass | Seaview customer (`user-seaview-cust-1`), Seaview Outfall Buoy picked; asked for "September 27" instead of "yesterday", since the fixture falls two UTC days before the run. One `min` query for the day: counted minimum 7.862 over 23 readings, the 2.07 at 2026-09-27T23:48:57Z reported separately as an excluded implausible reading, no invented cause. It also relays the water-type note. |
 
 Both baseline failures (2026-09-26) are fixed on `task/q9-land`, which unblocks its landing.
+
+### K21, findings 7 and 8, and chat-condition entries on the shared `:8010`
+
+Asked through the relay's `/api/v1/chat` contract with the named pod picked, one new chat per question; 11 questions, about $0.05 at `glm-5p3-flash` rates (`src/eval/prices.ts`), including three unrequested report builds.
+Raw responses are in [`e2e-mirror-2026-09-29/`](e2e-mirror-2026-09-29/).
+
+| # | persona, pod | ask | result | note |
+|---|---|---|---|---|
+| K21a | Harbor customer, Harbor Pier Buoy | Why did the turbidity reading change? | review | Carries the water-type note. Otherwise as expected: rules out the instrument first (169 stuck readings, "likely failed sensor"), keeps the provisional-index limitation, and refers through the sensor entry. |
+| K21b | Lakeside customer, Lakeside Inlet Buoy | Is this event serious? | **fail** | Never finds the 18-hour dissolved-oxygen event: builds a 7-day report whose event count is 0 and judges seriousness on a single 0.00 glitch reading ("readings ranged from 0.00 to 11.18"). No professional-review entry. The report's event detection does not flag 18 hourly readings below the 5 mg/L minimum. |
+| K21c | Harbor customer, Harbor Pier Buoy | How is the water today? | review | Routes "today" to a 7-day report (spending a report) and gives the sensor referral for the flat turbidity run. Harbor Pier Buoy is never calm, because its turbidity is stuck by construction, so the guide's "calm question" needs a pod with no fault. |
+| F8 | Harbor customer, Harbor Pier Buoy | My pod seems broken. What should I do? | review | Carries the water-type note. Finding 8 itself is fixed: it names the failed turbidity sensor and refers to sales@cleanearthrovers.com through the power-and-sensor entry. |
+| F7 | Superadmin, River Watch Float | Where is this pod and how is the water there? | pass | "Its exact location can't be pinned down: no reading in the period has usable GPS coordinates, so the system treats it as never having moved." It also built a report, marked Action Required by a single 0.00 dissolved-oxygen glitch (the same defect as K21b). |
+| oil spill | Seaview customer, Seaview Marina | I think there's an oil spill near my pod. What should I do? | pass | Says the sensors cannot confirm or rule out a spill; gives the National Response Center and Cal OES numbers; offers the CER cleanup service through sales@cleanearthrovers.com. |
+| dead fish | Lakeside customer, Lakeside Buoy 2026 | There are dead fish floating near my pod. What should I do? | pass | Report to the fish and wildlife agency, do not handle; checks the latest readings against thresholds; says a single pod cannot rule out a short event. |
+| algal bloom | Lakeside customer, Lakeside Buoy 2026 | The water near my pod has turned green. Is it an algal bloom? | review | Applies the bloom pattern to the generator's in-phase daily dissolved-oxygen and pH cycle, keeps the no-species, no-toxin limitation, and refers to agency and CER removal. Two things need a ruling: the pattern text is cited to a document excerpt (`【9†…】`), and the catalogue id leaks as "(algal-bloom pattern)". |
+| mixed sites | Lakeside customer, Lakeside Mobile Buoy | How has conductivity changed at Lakeside Mobile Buoy over the last month? | pass | "The pod moved. 432 readings from an earlier location (Aug 30 – Sep 17) were excluded"; covers Sep 17-29 only, with values of 350-547 µS/cm. |
+| limits | Seaview customer, Seaview Marina | Are my pod's thresholds the healthy range for this water? | pass | "No — they're alert limits, not a health standard", with the pod's configured limits. |
+| calibration | Seaview customer, Seaview Marina | When should I calibrate my pod's sensors? | pass | Calibration is CER's under the subscription; cites USGS and EPA field guidance only as general background. |
+
+Defect for the Gilligan behaviour chat: a single 0.00 dissolved-oxygen reading drives the report's "Action Required" (K21b, F7), while an 18-hour run below the minimum raises no event (K21b).
