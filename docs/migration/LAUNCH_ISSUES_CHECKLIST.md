@@ -21,10 +21,13 @@ All testing uses fabricated data; nothing here reads production except the one s
 - **Why the cleanup commits:** `693fc96` and `5dff5fd` are CER's code plus the malware removal.
   - `local` (`d12ad6d`, `fd103a0`) adds our relay and Gilligan UI commits.
   - Those commits touch no water, user, device or organization code, so either would do for the A items; the user chose "none of our changes" on 2026-09-27.
-- **Emulator :8180:** runs from `~/code/clean-earth-rovers/emulator-original/` as project `demo-cer-original`, with single-project mode off.
+- **Emulator :8180:** runs from `~/code/clean-earth-rovers/emulator-original/` as project `conductive-fold-343604`, with single-project mode off, so its web viewer at http://127.0.0.1:4180/firestore shows the seeded data.
+  - The user restarted it that way and reseeded on 2026-09-28 at about 20:55 UTC, with `guard.env` loaded; the earlier `demo-cer-original` start showed an empty viewer.
+  - A read-only check afterwards found the guard variables in the emulator process, no connection off the machine, and no outbound request in `firebase-debug.log`.
   - Seeded with the pre-guard mirror seed `7dc36e2` under the label `conductive-fold-343604`, because CER's server hard-codes that id.
   - It holds 9 organizations, 27 users, 15 devices, 52 chats and 8,640 readings, and no fixtures.
   - The emulator keeps nothing on disk: restarting it needs a reseed.
+  - Edits made in the web viewer change what both stacks serve; reseed before running the A items if anything was edited.
 - **Guard (`emulator-original/guard.env`):** sourced by the seed, both servers and both dashboards.
   - It sets the emulator host `127.0.0.1:8180` and a dead proxy for anything not local.
   - It also hides every credential: `GOOGLE_APPLICATION_CREDENTIALS` points at a missing file and `CLOUDSDK_CONFIG` at an empty folder.
@@ -244,6 +247,7 @@ Everyday flows from the walkthrough's part 2; a failure is a regression.
 
 ## Next
 
-1. Run A1, A2, A3, A5 and A6 on Current, then on Release ($0), and U1-U4 on both.
+1. Run A1, A2, A3, A5 and A6 on Current, then on Release ($0), and U1-U4 on both; the user has not yet approved this run.
 2. Before the Michael demo, compare the A1 and A3 functions on CER's `main` with `git show`, without checking it out.
-3. Ask the mirror chat before using :3000, :5101 or :8010; the B items and U5-U10 need its Gilligan.
+3. Ask the mirror chat before using :3000, :5101 or :8010; the B items and U5-U10 need its Gilligan ([`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md)).
+4. Optional: a Current and Release start-up section in `MIRROR_RUNBOOK.md`, which covers only the Mirror.

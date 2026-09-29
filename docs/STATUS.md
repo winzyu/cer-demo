@@ -4,63 +4,144 @@ Current state and next steps only.
 Rewritten at the end of every session by `/handoff`; history is `git log -p docs/STATUS.md`.
 Never cite this file from code or other docs: the reasoning lives in the docs under "Where things live".
 
-Updated 2026-09-27 by the release coordinator as the baseline for a full reset of every chat, after a roundup of all active sessions; `dev` at the commit that carries this file.
+Updated 2026-09-28 by the release coordinator as the baseline for a second full reset of every chat, after a roundup of all reachable sessions; `dev` at the commit that carries this file.
 
 ## Start here
 
-- **Gilligan release, September 30.** Tasks, owners and dates are [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md) (IDs such as Q10, S3, L5); where this file and the plan disagree, the plan wins. The user deploys.
-  Background: [`migration/GILLIGAN_PRODUCT_DIRECTION.md`](migration/GILLIGAN_PRODUCT_DIRECTION.md), then [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md).
-- **Where we are.** Features are built and almost all landed on `dev`; the mirror has run most checks and found defects that need a fix round (plan Q10, Q11); the release candidate must be rebuilt from `dev` (rc2) before the Sep 28 freeze; nothing is deployed, and deployment waits on Michael's one-time setup.
-  Critical path: Michael's setup, then cer-gilligan no-traffic deploy (L5, Sep 28), then staged server and dashboard plus the supervisor demo (L6, L7, Sep 29), then smoke and traffic (L8, L9, Sep 30).
-- **Coordination rules.** One coordinator is the only writer of `dev`, this file, the plan and the manual guide; every other chat works on its own branch and worktree and reports commit IDs to the coordinator, who reviews the actual diff and lands it. Upstream pushes are new branches only, each with the user's consent in chat.
+- **Gilligan release, September 30.**
+  Tasks, owners and dates are in [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md) (IDs such as Q10, E7, L5); where this file and the plan disagree, the plan wins.
+  The plan's rows are partly stale (U1-U6 and P5 are done; Q9, Q10 and Q11 are not landed); refreshing it is the release-plan chat's first job.
+  The user deploys.
+- **Where we are (freeze day, Sep 28).**
+  `dev` is not final: Q9 (`task/q9-land`), Q10 and Q11 are not written or landed, U7 is not written, and rc2 has not been cut.
+  Nothing is deployed, and every deploy still waits on Michael's one-time setup.
+  Critical path: Michael's setup, then cer-gilligan no-traffic deploy (L5), then staged server and dashboard plus the supervisor demo (L6, L7, Sep 29), then smoke and traffic (L8, L9, Sep 30).
+  With L5 not done on Sep 28, Sep 29 has no slack left.
+- **Production fixes outside Gilligan (user rule, 2026-09-28).**
+  Server and dashboard defects that are not Gilligan code (CSV export, user routes, period query, invited login, empty organization) are shown to Michael on fabricated data first.
+  They ship at launch only with his go-ahead; otherwise they wait until after launch.
+  The staged server (L6) is built before the demo, so his answer is needed before L6; without it the release candidate builds a Gilligan-only server commit.
+- **Coordination rules.**
+  One coordinator is the only writer of `dev`, this file, the plan and the manual guide.
+  Every other chat works on its own branch and worktree and reports commit IDs to the coordinator, who reviews the actual diff and lands it.
+  Upstream pushes are new branches only, each with the user's consent in chat.
+  On 2026-09-28 the launch-issues chat landed its own docs on `dev` at the user's request (`d2ad8b8`, `c8b3ff1`); that was a one-off.
+
+## Chats after this reset
+
+The user asked for four; the coordinator suggests three more.
+Each prompt should name the open-work entry below that it inherits.
+
+1. **Release (release candidate and deploy assist; L4-L9).** Cut rc2 once `dev` is final; production-mode run; `RELEASE_CANDIDATE.md`; then guide L5-L8 from the runbook.
+2. **Gilligan behaviour (cer-demo code).** How answers use catalogue entries and refer people to CER: finding 8 (referral), K21 (entries only with evidence), the U7 caveat, findings 6, 7 and 10, the history citation-marker defect; takes over the fix round's Q10 plan and its decisions.
+3. **Release plan (coordinator).** Refresh the plan, land branches, keep this file and the guide current, declare `dev` final for rc2, move open "should" tasks after launch.
+4. **Release demo.** The Michael and supervisor demo: launch-issues evidence (A items on CER's own code), the supervisor brief, a demo script, the demo stack and key.
+5. *Suggested:* **Server security fixes (Q11 and A6), gated on Michael.** Written on new server branches so they are ready if he says yes.
+6. *Suggested:* **Mirror testing.** Build-and-rerun for `task/q9-land` (C1, D1), K21 and the pH 2.07 and 18-hour event fixtures, the 23 unjudged REVIEW rows, groups B, D, E, H and I.
+7. *Suggested:* **Eval wrap-up.** Finish the k=30 capture 2 on `task/long-conversations`, revert `2587add`, land the branch.
 
 ## Last session
 
-- Coordinator (2026-09-27): landed `docs/l2-inputs`, the hygiene branch, `task/q3-q5` (Q3-Q6, no-GPS rule), `task/gilligan-ux-contract` (reader notes, citation titles), `feat/service-release` (merged with R4's reasoning options in `LlmService`), `task/q9-413` and `docs/gcp-test-env`; R4 landed `eval/wave1-corrections` itself. Typecheck, lint and touched suites pass singly after each merge.
-- User decisions recorded in `timeline.md`: superadmins keep merged-predecessor history withheld; a missing or empty organization counts as null (server test `9751f8f`, pushed); a pod with no GPS counts as never moved; launch counts usage in Firestore; E4 becomes a standing dashboard caveat.
-- Manual guide: section K, a "What it checks" column, every session's checks, demo and staged-smoke paths. Plan: Q10 and Q11 for mirror findings 6-11.
-- Roundup of every active chat for a full reset; coordinator spend: none.
+- Coordinator (2026-09-28):
+  - Landed `task/e7-corpus` `df7d845` (`7271828`), `task/per-turn-labels` `30d3beb` (`4c318ea`; both label sets regenerate byte-identical), `hygiene/stale-claims-2026-09-28` `d02d567` (`b72ad54`) and `docs/gcp-test-env` `36416ae` (`b021eb3`, finding 11 and M11).
+  - Typecheck, lint and the touched suites pass singly after each merge.
+  - Added guide K21 (catalogue entries only with evidence, tools on) and marked E7 landed in the plan.
+  - Deleted the launch-issues chat's unused production-export script `firestore-copy.sh` at the user's request.
+- Launch-issues chat (2026-09-28): rehearsal stacks on fabricated data (Current = CER's own code `693fc96`/`5dff5fd`; Release = `122136d`/`9e18555`); A1, A2, A3, A5, A6 and U1-U4 run on both, $0 (results below).
+- A Codex run of mirror groups B, D, E, H and I (`codex-bdehi-2026-09-28`, about $0.34): 9 pass, D6 (finding 11) and D4 (empty organization) fail, 23 REVIEW rows unjudged.
+- Eval (2026-09-28): long-conversation test fails its pre-set rule only through the cross-document slot; a citation-marker defect found; k=30 capture 1 not adopted.
+- User decisions (2026-09-28, `timeline.md`): production fixes outside Gilligan wait for Michael; launch-issue rehearsal on fabricated data; the mirror stack branches pushed so `MIRROR_RUNBOOK.md` works elsewhere; the fabricated data copied into CER-DEV database `cer-demo-fixtures` (about $0.02).
 
 ## Open work
 
 Each item names the chat that owns it after the reset.
 
-- **Coordinator (restart).** Land `cloud/q9-logic` (`bc097e1`) then `cloud/q9-c1-d1` (`ad7eec9`) after the mirror reruns C1 and D1; land the fix round's branch; review server `fix/invited-login` (`f7dec3c`) and the Q11 branch; keep this file, the plan and the guide current; tell the release candidate when `dev` is final for rc2; on Sep 28 move open "should" tasks after launch.
-  Do not land `docs/firestore-testing-plan` (`60befd4`): the mirror and L2 docs supersede it; keep it as history.
-- **Fix round (new chat).** Plan Q10 on a branch from `dev`: mirror findings 6 (a moved pod's answer and PDF summary claim the full period), 8 (broken-pod referral declined instead of sales@cleanearthrovers.com) and 10 (a fresh-water survivor judged on a salt-water predecessor's conductivity, Action Required); recheck 7 on `dev` first (that run paired the dashboard with a cer-demo that sent no reader notes).
-  Plan Q11 on a new server branch: scope the CSV export by organization like `findPeriodWaterData` (finding 11).
-  Also: `src/report/buildReportInput.ts:548` returns the model-facing site note as its error; `get_pod_thresholds` has no reader note for rejected (unset or inverted) limits; Q9 follow-ups (calibration notes still say "sensor rails"; a pH limit outside 3-12 can never be crossed and nothing warns; a stale `lastReadingAt` comment in `src/report/types.ts`; the PDF measures reading age from its own clock; `Math.min(...spread)` on very large arrays in `excluded_implausible_min/max`); `.env.example` near line 209 says to keep `DEFAULT_RETRIEVAL` as stub but sets `firestore-direct`.
-- **Release candidate (restart; L4, prompt B).** Local, nothing pushed: server `release/gilligan-2026-09-30` `122136d` (local `d12ad6d` plus `cwa-old` `9751f8f`, `user-route-auth` `f9607bd`, `service-key` `9ef59b7`, `firestore-config` `0003170`, `citation-title` `b443e41`, `invited-login` `f7dec3c`), server `mirror/release-rc1` `d1821bd`, dashboard `release/gilligan-2026-09-30` `9e18555`, cer-demo `release/rc1` `5367164` (stale).
-  Next: rc2 from the final `dev`, dashboard `817a7c2` plus U7, and the server release plus Q11; the production-mode run (guide P8, P1-P7, G1-G3); `RELEASE_CANDIDATE.md`; share ports with the mirror (the mirror stack holds 8080, 5101, 8010 and 3000).
-  The supervisor brief `docs/migration/SUPERVISOR_BRIEF.html` (worktree `supervisor-brief`, branch `docs/supervisor-brief`) is uncommitted because the auto-mode classifier denied its commit; the user reviews it, then it is committed and landed.
-- **Dashboard (restart; U1-U7).** `task/gilligan-ux` `817a7c2` in `~/code/clean-earth-rovers/worktrees/dashboard-ux`, reviewed (build completes, provenance 6/6), not pushed. Next: U7, the standing caveat under every answer that cites documents, once the user approves its wording; push `task/gilligan-ux` and server `task/gilligan-citation-title` with consent; recheck X1, X2 and pod-named notes on the release candidate.
-- **Mirror end-to-end (restart one chat; T2 offline).** Stack: server `mirror/e2e-p3` `1ef21a7` (local, unpushed: `510cf00` as `3e7c3fb`, fixtures, project `demo-cer-mirror`), cer-demo `test/e2e-rc` `77cd4c9` (local), dashboard worktree `dashboard-e2e` at `9e18555`. Results: [`migration/GILLIGAN_E2E_RESULTS_2026-09-27.md`](migration/GILLIGAN_E2E_RESULTS_2026-09-27.md); about $2.56 of $10 spent.
-  Uncommitted in `.claude/worktrees/gcp-test-env`: that results file's M11 row and finding 11; commit it on `docs/gcp-test-env` for the coordinator to land.
-  Next: C1 and D1 on a `dev` + Q9 stack (about $0.04, the user approves); groups B, D, E, H and I (about $0.50); recheck finding 7; phase 2 only if the user asks; move to `dev` `5922109` or later so reader notes show; settle with the release candidate whether `1ef21a7`'s `MIRROR_PROJECT_ID` gives way to `0003170` (`mirror/release-rc1` already combines them); rewrite the manual guide's setup section for the 2026-09-27 stack (delegated by the coordinator). Harbor admin's allowance resets at 00:00 UTC.
-- **Corpus update (new eval chat; plan E7).** Add the Keyestudio sensor document and the chosen source-of-truth v2 sections, label new chunks with Codex, rerun the E4 capture on the same fixtures against a rule fixed in advance, and hand `data/corpus/corpus.json` to the release candidate for rc2 and the reseed. Fix the docs that still call the catalogue unapproved (`V2_CORPUS_DECISION.md`, `TURBIDITY_EXPLORATION.md`, `CORPUS_SEEDING.md`). R4 budget left: about $4.15 of $30.
-- **Deploy assist (new chat, once Michael's setup is done; L5-L8).** Runbook [`migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md`](migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md) §2.1, §3 and §4.1.
-- **Stop:** the Sep 24-25 orchestrator (`gilligan release reconciliation`), the Q9 orchestrator (`cer-demo-51`; its work passes to the coordinator and the fix round), R4 (`cer-demo-84`), the service chat (`cer-demo-49`), the duplicate mirror chat (`mirror project setup`), and `cer-demo-c1` (unreachable).
+- **Release plan (coordinator).**
+  - Build `task/q9-land` in a worktree from `dev`: merge `origin/cloud/q9-c1-d1` `ad7eec9` (contains `cloud/q9-logic` `bc097e1`), resolve the conflicts in `src/tools/listPods.ts` (keep Q9's single pod-status rule and `dev`'s reader notes) and `docs/migration/E2E_CHECKLIST.md`, run checks, push; land only after the mirror's C1 and D1 rerun passes.
+  - Land when reported: the Q10 branch, U7, `task/long-conversations` (only once `2587add` is reverted), `test/launch-issues` results.
+  - Refresh the plan (U1-U6, P5 done; Q9-Q11 state; E7 done; the user's production-fix rule).
+  - Rewrite guide K12, which still expects refusals; the standing caveat (K20) replaced them.
+  - Fix runbook §3.1 (release rows predate the candidate), add `PREDECESSOR_PERIOD_HANDOFF=false` and `DEFAULT_TOP_K=20` to §4.1, add §2.1 item 5 (service-key secret) to the Michael list, and give §2.1 item 6 (organization policy on unauthenticated invocation) a fallback.
+  - `SECURITY_FINDINGS.md` §5 item 1 says the sibling routes check organization, which §7 contradicts; A2's leaked fields are id, name, userName, email and devices (not role or organization).
+  - Tell the release candidate when `dev` is final; on Sep 28 move open "should" tasks after launch.
+  - Do not land `docs/firestore-testing-plan` (`60befd4`); keep it as history.
+- **Gilligan behaviour (new chat; takes over the fix round).**
+  The fix round planned but wrote nothing; its plan, by finding:
+  - 6: `src/tools/querySensorData.ts` reports the full window as `time_range_resolved`; `src/report/buildReportInput.ts:340` takes the PDF title and Summary dates from it; the Data Quality row mixes values (1,728) and rows (432).
+  - 10: `src/devices/mergeChains.ts` `resolveChain` admits same-organization predecessors with no water-type check. With the handoff off at launch, only a visible predecessor can hit it. Proposed: a cer-demo guard now, a server check in `findInheritedLabels` before the handoff is ever enabled, a `SPECS.md` §19 note.
+  - 8: no approved catalogue entry covers "my pod seems broken"; `check-power-connection` (which carries the sales@cleanearthrovers.com referral) is limited to missing, delayed or stuck readings. Proposed: widen only its conditions as version `2026-09-27.1`, with user and supervisor approval. First recheck with `CATALOGUE_PROMPT=true`: the 2026-09-27 mirror run had no such line in `.claude/worktrees/e2e-rc/.env`, so it ran without the catalogue.
+  - 7: `dev` emits a "Location not recorded" note; recheck on a stack at `5922109` or later.
+  - Also: K21 (tools-on catalogue entries), U7's final wording, the history citation-marker defect (below).
+  - Follow-ups: `buildReportInput.ts:548` (site note as error); `getPodThresholds.ts` (no reader note for rejected limits); Q9 leftovers after `task/q9-land` lands (`buildReportInput.ts:289` "sensor rails", `src/report/types.ts` `lastReadingAt` comment, PDF age clock, `excluded_implausible_min/max` spread).
+  - Planned branch `fix/q10-gilligan` from `dev` after `task/q9-land` lands (they touch `querySensorData`, `buildReportInput` and `renderPdf`); ports 8011 and 5102 proposed; about $0.21 of paid checks.
+- **Server security fixes (suggested chat; gated on Michael).**
+  - Q11 (finding 11): factor `findPeriodWaterData`'s membership logic into one helper for the CSV export too; `findDeviceWaterDataExportCSV` also crashes on an unknown label. `local` lacks `findInheritedLabels`, so cut from `task/gilligan-cwa-old` `9751f8f` (user decision).
+  - A6 (empty organization sees every pod, `assignOrganization`): not written.
+- **Release (restart; L4-L9).**
+  - Local, unpushed unless noted: server `release/gilligan-2026-09-30` `122136d` (worktree `server-release`; local `d12ad6d` plus `9751f8f`, `f9607bd`, `9ef59b7`, `0003170`, `b443e41`, `f7dec3c`; no Q11); server `mirror/release-rc1` `d1821bd`; dashboard `release/gilligan-2026-09-30` `9e18555` (pushed 2026-09-28; `817a7c2` is one commit ahead); cer-demo `release/rc1` `5367164` (stale).
+  - rc2: final `dev`, dashboard `817a7c2` plus U7, the server release plus Q11 if Michael agrees, or a Gilligan-only server commit if not.
+  - The main checkout's `data/corpus/corpus.json` is still the Sep 21 corpus and `release/artifacts.sha256` matches it; rc2 must run `npm run ingest` from the existing OCR cache, rebuild the embedding cache for 457 chunks (a small paid call; confirm the cost), and regenerate the checksums.
+  - Proposed ports 8081, 5102, 8011 and 3001 (8011 is in use by the eval chat); the "delta test" means the paid rc2 rows (G1, G3, and B1, C1, F2 rechecks), capped at $0.15.
+  - Supervisor brief `docs/migration/SUPERVISOR_BRIEF.html` is still uncommitted in worktree `supervisor-brief` (`docs/supervisor-brief` `73770d2`), awaiting the user's review.
+  - Deploy assist found `§4.1` matches `src/config/index.ts`; it proposed staging L5-L7 on the memory store with `max-instances=1` if Firestore is still pending, and requiring the Firestore store before L9.
+- **Dashboard (fold into Release or Gilligan behaviour).**
+  `task/gilligan-ux` `817a7c2` in `~/code/clean-earth-rovers/worktrees/dashboard-ux`; `origin/task/gilligan-ux` is at `5356415`, and `b014e94` through `817a7c2` (U3, U1, P5, X1/X2, U5, U6, pod-named notes) are unpushed.
+  U7 not started; proposed placement: small muted text directly above the "Sources (n)" toggle in `src/app/components/gilligan-answer.js` (about line 286), shown only when `usedCitations(text, citations)` is non-empty, with a case in `test/provenance.test.mjs`.
+  Server `task/gilligan-citation-title` `b443e41` has no remote branch.
+- **Release demo (new chat).**
+  - Launch-issues evidence, `.claude/worktrees/launch-issues` (`test/launch-issues` `a56c8ef`, merged): the checklist's new results are uncommitted there because the auto-mode classifier blocked that chat's commit; the user commits them, then the coordinator lands them.
+  - Results on CER's own code (Current) vs Release: A1 CSV export 200 with 165 rows of other organizations' pods on both (Q11 not written); A2 no-token `/users/all`, `/users/:id`, `/test-db` 200 on Current, 401/401/404 on Release; A3 period query 200 on Current, 400 on Release; A5 invited login 500 with a raw validation dump on Current, 401 "Finish setting up your account..." on Release; A6 the orphan sees all 5 pods on both, period data 200 on Current, 400 on Release, CSV 200 on both; U1-U4 pass on both at API level.
+  - Walkthrough corrections: A3 drop `/water/last` (CER already scopes it); A5 the page likely shows "Login failed: " plus the dump; A2 leaked fields as above. Browser checks still needed: A5's page message, the orphan's pod count on `/home`, U3 rendering.
+  - Before the demo, compare the A1 and A3 functions on CER's `main` with `git show` (read only); production's exact commit is unknown.
+  - Supervisor brief review; demo script; demo stack and key (release candidate proposes the staged stack with `cer-gilligan-fireworks-api-key`, falling back to local rc2 with the development key).
+- **Mirror testing (suggested chat).**
+  - Stack: server `mirror/e2e-p3` `1ef21a7` and cer-demo `test/e2e-rc` `77cd4c9` (both pushed 2026-09-28), dashboard `dashboard-e2e` at `9e18555`; setup in [`migration/MIRROR_RUNBOOK.md`](migration/MIRROR_RUNBOOK.md).
+  - Next: C1 and D1 on `task/q9-land` (about $0.04) once fixtures exist for a silent pod and a pH 2.07 reading; K21 a/b/c plus finding 8 recheck and chat-condition entries (about $0.20; K21b needs an 18-hour freshwater dissolved-oxygen fixture); groups B, D, E, H, I and finding 7 (about $0.51), all with `CATALOGUE_PROMPT=true` and `CATALOGUE_DRAFTS=false`; judge the Codex run's 23 REVIEW rows (`.claude/worktrees/gcp-test-env/data/e2e/codex-bdehi-2026-09-28/`); the bot has no H or I scenarios.
+  - Recommendation: `0003170`'s `FIRESTORE_PROJECT_ID` supersedes `1ef21a7`'s `MIRROR_PROJECT_ID`; move the mirror to `mirror/release-rc1` or its rc2 successor. Phase 2 not before launch.
+  - About $2.56 plus $0.34 (Codex) of the $10 mirror budget spent.
+- **Eval wrap-up (suggested chat, or the release-plan chat).**
+  `task/long-conversations` (`.claude/worktrees/long-conversations`): pushed to `e6e3674`; local `2587add` re-applies `DEFAULT_TOP_K=30` for a running capture and must be reverted before landing.
+  When capture `k30-b-lv-glm-2026-09-28` finishes: revert `2587add`, stop the 8011 server, run `gate:check` and one `--final` judge pass, apply the `e6e3674` rule (`EVAL_REBUILD.md`, "local-vector k=30: results"), record, push, report.
+  R4 spend about $1.46 this round; about $5.60 of $8.07 left after capture 2.
+- **Stop:** every chat that answered the 2026-09-28 roundup (`gilligan fix round planning`, `cer-demo-9a`, `cer-demo-7d`, `cer-demo-8f`, `cer-demo-af`, `cer-demo-c2`, `gilligan release reconciliation`, `cer-demo-23`, `cer-demo-92`, `e2e session documentation review`), after `cer-demo-d6` finishes its capture steps; `cer-demo-25` (busy) and `cer-demo-c1` did not accept messages.
+  Cloud sessions `Docs link and reference audit` (told to branch `cloud/docs-link-audit`) and `Gilligan release consistency audit` have not reported.
 
-- User: **Michael (blocks every deploy).** "Act as" on the compute account is restored (checked 2026-09-27). Still open: create `cer-gilligan-runtime`; create the Fireworks secret and grant the runtime account access; create the dedicated `gilligan` Firestore database and its grants; a TTL policy on `gilligan_usage.expireAt`, never `updatedAt`; disable the `cer-ui` trigger `8ad67b17`, which is still enabled. The user lacks `iam.serviceAccounts.create`, `setIamPolicy`, `secretmanager.secrets.create` and `datastore.databases.create`.
-- User: **Launch blockers to confirm:** fix findings 11 (cross-organization CSV export), 6 and 10 before launch (recommended); 8 should; 9 is likely acceptable (a superadmin may see a retired pod by itself).
-- User: **Pushes (consent):** dashboard `task/gilligan-ux`; server `task/gilligan-citation-title`, `fix/invited-login`, the Q11 branch, the mirror fixtures (`1ef21a7`), and the combined server release commit before L6.
-- User: **Approvals:** U7 wording ("Answers draw on document excerpts and may not cover every step; check the cited sections before acting."); E5, the tools-on live smoke; the mirror's C1 and D1 rerun and its remaining groups; the release candidate's delta test (about $0.10); grade the mirror review sheets (`data/e2e/`).
-- User: **Supervisor, Sep 28:** the standing caveat in place of refusals for weak answer classes (E4, D3); the pH 3-12 plausibility band; the demo date (L7, Sep 29) and which Fireworks key it uses; the user-route exposure (`SECURITY_FINDINGS.md` §8); Firestore access for cer-gilligan (launch uses the Firestore store, decided 2026-09-27).
-- User: **Optional:** the coordinate audit (`scripts/coordinateAudit.ts`, read-only, finds pods whose GPS dropped out part-way); `scripts/censusFirestore.ts` (untracked in `.claude/worktrees/firestore-mirror`, lint errors; commit to `docs/mirror-parity` or drop; the classifier blocked the agent); removing merged worktrees (`wave1-corrections` needs `--force` for its ignored `.env`).
+## User decisions and actions
+
+- **Michael (blocks every deploy).**
+  "Act as" is restored.
+  Still open: create `cer-gilligan-runtime`; the Fireworks secret and its grant; the service-key secret readable by the runtime and compute accounts (runbook §2.1 item 5); the dedicated `gilligan` Firestore database and grants; a TTL policy on `gilligan_usage.expireAt`, never `updatedAt`; whether an organization policy forbids unauthenticated invocation of `cer-gilligan` (§2.1 item 6); disable the `cer-ui` trigger `8ad67b17`.
+  Also: rotate `DEVICE_API_TOKEN`, which a chat printed into its local transcript on 2026-09-28.
+  Deploy assist asked the user to approve five read-only live `gcloud` checks of this setup (run by the user with `!`).
+- **Launch blockers:** findings 6 and 10 (Gilligan, recommended must); 11 and the other A items depend on Michael's go-ahead; 8 should; 9 accept (recommended).
+- **Gilligan behaviour decisions (from the fix round):** 10 as a blocker or not; the water-class rule (withhold a predecessor whose registered water type differs, recommended); the moved-pod wording; Data Quality units; widening `check-power-connection`'s conditions; the pH 3-12 band; the thresholds-note wording; Q11's base branch (`9751f8f`, recommended).
+- **Go for `task/q9-land`** and for the mirror's pH 2.07 and 18-hour event fixtures ($0 each).
+- **Spend approvals:** mirror C1/D1 about $0.04, K21 and catalogue checks about $0.20, groups about $0.51; Gilligan behaviour checks about $0.21; dashboard recheck about $0.05; rc2 delta test up to $0.15; E5 tools-on live smoke; the rc2 embedding cache rebuild.
+- **U7:** the wording ("Answers draw on document excerpts and may not cover every step; check the cited sections before acting.", recommended as is) and placement (above the Sources toggle, only when documents are cited).
+- **History citation markers:** strip or renumber markers from earlier answers, or change the prompt line (see defects).
+- **Pushes (consent):** dashboard `task/gilligan-ux`; server `task/gilligan-citation-title`, `fix/invited-login`, the Q11 branch, and the combined server release commit before L6.
+- **Supervisor or Michael, at the demo:** the standing caveat in place of refusals (E4, D3); the pH 3-12 band; the demo date and Fireworks key; the A items (CSV export, user routes, period query, invited login, empty organization) and whether they ship; Firestore access for cer-gilligan.
+- **Housekeeping:** commit the launch-issues checklist results; review the supervisor brief; mark the mirror review sheets (`data/e2e/`); stop the launch-issues stacks when not in use (they listen on all interfaces, so A2's open routes are reachable from the LAN); remove merged worktrees.
+- **Optional:** the coordinate audit (`scripts/coordinateAudit.ts`); `scripts/censusFirestore.ts` (untracked in `.claude/worktrees/firestore-mirror`, lint errors; commit or drop).
 
 ## Working tree
 
 - `dev` is pushed and level with `origin/dev`; `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
-- cer-demo worktrees still in use: `gcp-test-env` (mirror, uncommitted results edit), `e2e-rc` (`test/e2e-rc`), `release-candidate` (`release/rc1`), `supervisor-brief` (uncommitted brief), `firestore-mirror` (untracked census script). Merged and removable: `q3-q5`, `feat+service-release`, `gilligan-ux-contract`, `wave1-corrections`, `q9-413`, `l2-inputs`, `hygiene`, `gilligan-runbook`, `cwa-old`, `answer-quality-q1`, `token-cap`, `upstream-publish`, `mirror-parity`, `firestore-plan`.
-- Upstream: server `local` `d12ad6d`, dashboard `local` `fd103a0`; worktrees under `~/code/clean-earth-rovers/worktrees/` include `server-release`, `server-release-mirror`, `server-citation-title`, `server-invited-login`, `server-cwa-old`, `dashboard-ux`, `dashboard-e2e`, `dashboard-release`; the server's `.worktrees/mirror` is `mirror/e2e-p3` `1ef21a7`.
-- Local processes: the mirror's Firestore emulator :8080 (holds the 2026-09-27 rerun's chats and counts) and dashboard :3000 are running.
-- Git-ignored restored inputs: `node_modules/`, `.env`, corpus PDFs, `.ocr_cache/`, `data/corpus/`, `data/embeddings/cache.json`. Still missing: `data/retrieval-eval/`, `data/device-fields/`, `data/backend-surface/`, `serviceAccountKey.json`.
+- cer-demo worktrees in use: `launch-issues` (uncommitted checklist results), `long-conversations` (`2587add` local), `gcp-test-env` (bot and Codex run outputs, git-ignored), `e2e-rc` (`test/e2e-rc`, the mirror's Gilligan), `release-candidate` (`release/rc1`, stale), `supervisor-brief` (uncommitted brief), `firestore-mirror` (untracked census script), `e7-corpus` (holds the E7 `corpus.json` and cache), `e2e-dev` (detached `b07f950`, setup only, removable).
+  Merged and removable: `answer-quality-q1`, `cwa-old`, `e7-claims`, `e7-fixtures`, `feat+service-release`, `gilligan-runbook`, `gilligan-ux-contract`, `hygiene`, `l2-inputs`, `mirror-parity`, `per-turn-labels`, `q3-q5`, `q9-413`, `stale-claims`, `token-cap`, `upstream-publish`, `wave1-corrections`, and `firestore-plan` (unmerged history, keep the branch).
+- Upstream worktrees under `~/code/clean-earth-rovers/worktrees/`: `server-release`, `server-release-mirror`, `server-citation-title`, `server-invited-login`, `server-cwa-old`, `dashboard-ux`, `dashboard-e2e`, `dashboard-release`, and the launch-issues `server-original`, `dashboard-original`, `server-release-demo`, `dashboard-release-demo`, `server-original-seed`; the server's `.worktrees/mirror` is `mirror/e2e-p3` `1ef21a7`.
+- Running processes:
+  - Mirror: Firestore emulator :8080 (java 2171997, holds the 2026-09-27 evidence), dashboard :3000 (2176422), server :5101 (1403953) and Gilligan :8010 (1403658), the last two started by the deploy-assist chat at the user's request.
+  - Launch issues: emulator :8180 (viewer :4180, production project id, `emulator-original/guard.env`), Current :3100 and :5201, Release :3300 and :5301, all on every interface.
+  - Eval: cer-demo :8011 with `DEFAULT_TOP_K=30` and a background capture, from `long-conversations`.
+- Git-ignored restored inputs: `node_modules/`, `.env`, corpus PDFs, `.ocr_cache/`, `data/corpus/` (Sep 21 corpus in the main checkout), `data/embeddings/cache.json`. Still missing: `data/retrieval-eval/`, `data/device-fields/`, `data/backend-surface/`, `serviceAccountKey.json`.
+- Browsable HTML of the release docs is outside the repo at `~/code/clean-earth-rovers/docs-html` (`build.py` regenerates it).
 
 ## Unfixed defects
 
 | where | defect | severity |
 |---|---|---|
-| server `WaterAnalyticsController.exportCsv` | Any logged-in user can export any pod's readings as CSV (mirror finding 11; plan Q11); likely in production. | high |
+| server `WaterAnalyticsController.exportCsv` | Any logged-in user can export any pod's readings as CSV (mirror finding 11; plan Q11); reproduced on CER's own code `693fc96` on 2026-09-28, so likely in production. | high |
 | cer-demo answers and PDF | A moved pod's answer, PDF title and summary claim the full period though values are current-site only (finding 6; Q10). | high |
 | cer-demo merged history | A fresh-water survivor is judged on a salt-water predecessor's conductivity and reads Action Required (finding 10; Q10). | high |
 | `release/rc1`, `test/e2e-rc` | Pair dashboard `9e18555`, which shows only reader notes, with a cer-demo that sends none; fixed on `dev` since `5922109`, so rc2 and the mirror must move to it. | high |
@@ -75,7 +156,6 @@ Each item names the chat that owns it after the reset.
 | answers (`glm-5p3-flash`) | Refusal wording varies between runs (8 of 8 exact, then 6 of 8); cross-document answers score 0.83. | medium |
 | R4 judge, ungrounded dimension | Weak agreement with reference grades (any/none 78%, kappa 0.23), so ungrounded rates are indicative only. | medium |
 | `eval/fixtures-wave1/` | Slice-coverage overshoot: 84/90 turns have explanatory sources outside the ◆G9 slice. | medium |
-| manual guide setup section | Describes the 2026-09-26 stack (production project id, `local` ancestry check); the mirror chat rewrites it. | medium |
 | `src/report/buildReportInput.ts:548` | A report with no usable readings returns the model-facing site note, shown as "Tool failed: … best_lat and best_lon …". | low |
 | `src/tools/getPodThresholds.ts` | Rejected (unset or inverted) limits have no reader note. | low |
 | server `src/schemas/waterData.schema.ts` | Rejects production-shaped rows, so the legacy unauthenticated `/water-data`, `/device` and `/duration/*` routes fail on real data; after launch, remove or authenticate those routes rather than loosen the schema (`SECURITY_FINDINGS.md` §5 item 2). | low |
@@ -84,6 +164,9 @@ Each item names the chat that owns it after the reset.
 | tools-off answers (`gpt-oss-120b`) | Can loop on malformed citation markers. | low |
 | `../user-dashboard` `src/app/gilligan/page.js` | `useSearchParams` outside Suspense deopts the page to client rendering. | low |
 | `/tmp/eval-fixtures-*` | 131 directories leaked before the hygiene fix remain. | low |
+| cer-demo history (`src/prompt/promptBuilder.ts:112`, `src/prompt/systemPrompt.ts:97` and `:220`) | Citation markers from earlier answers reach the model unchanged while each turn renumbers excerpts from 1, so in turns 9-12 of long chats 13 of 33 quoted citations point at the wrong excerpt; the citation gate misses it. | medium |
+| eval gates | Catalogue-id markers such as `【fault-first】` count as invalid citations. | low |
+| server charts (CER's own code) | Chart point timestamps run 7 hours past their labels on Current and Release; unverified in a browser. | low |
 
 ## Active traps
 
@@ -91,7 +174,7 @@ Each item names the chat that owns it after the reset.
 - **`SENSOR_TOOL` and `REPORT_TOOL`**: on means live production reads; `.env` sets both `true`, so captures and judge runs must set both `false` explicitly.
 - `PREDECESSOR_PERIOD_HANDOFF` stays off in production until the patched server takes all cer-api traffic; the mirror sets it `true` because its server is patched.
 - Production reads go through the user: the auto-mode classifier refuses them from agents even with chat approval, and it also refused one worktree inspection and one commit today.
-- The mirror now runs under a `demo-` project (`demo-cer-mirror`) on `1ef21a7` and `d1821bd`; older stacks used the production project id with the emulator host set. Application default credentials exist on this machine, so a missing emulator host would reach production.
+- The mirror now runs under a `demo-` project (`demo-cer-mirror`) on `1ef21a7` and `d1821bd`; older stacks used the production project id with the emulator host set. Application default credentials exist on this machine, so a missing emulator host would reach production. The launch-issues emulator :8180 also uses the production id (CER's original server has it built in); start it and every process that talks to it only with `emulator-original/guard.env` loaded.
 - The server's integration suites (`test/setup/testDb.ts`) connect to the real `qa-db`: never run them. Its Jest `roots` spans sibling worktrees: run server unit suites with `FIRESTORE_EMULATOR_HOST=127.0.0.1:1`. The server `.env` cannot be copied (deny rule).
 - Every `cer-gilligan` guard defaults to off or unlimited (quota, store, window, retrieval); a release environment file missing a variable fails open. Set 20 messages, 5 reports and 1,000,000 tokens explicitly.
 - Both servers read `.env` at boot only; a fresh worktree has no `node_modules`, `.env` or `data/` (link per the `run-local` skill). `EnterWorktree` cuts from `origin/main`; reset onto `dev`.
@@ -100,11 +183,15 @@ Each item names the chat that owns it after the reset.
 - Re-ingesting with a different tesseract build moves 12 chunk ids and voids labels. Anything in `documents/` is ingested; keep the v2 PDF at the repo root.
 - `scores.csv` notes hold unquoted commas: edit rows line by line.
 - The device token is superadmin with no `exp` claim.
+- The launch-issues stacks (:3100, :3300, :5201, :5301) listen on every interface; the Current server's open user routes are reachable from the LAN while it runs.
+- The mirror's `.claude/worktrees/e2e-rc/.env` has no `CATALOGUE_PROMPT` line, so it defaults to false; set it `true` for any behaviour check, as the release does.
+- `task/long-conversations` holds a local `DEFAULT_TOP_K=30` commit (`2587add`); never land it while that is at the tip.
+- The main checkout's `data/corpus/` is the Sep 21 corpus; the E7 corpus is only in `.claude/worktrees/e7-corpus` until rc2 re-ingests.
 - Nothing is deployed; all testing is local.
 
 ## Where things live
 
-- **Release**: [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md), [`migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md`](migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md), [`migration/GILLIGAN_MANUAL_TEST_GUIDE.md`](migration/GILLIGAN_MANUAL_TEST_GUIDE.md) (checks, demo and smoke paths), [`migration/LIVE_TEST_LIST.md`](migration/LIVE_TEST_LIST.md), [`migration/E2E_CHECKLIST.md`](migration/E2E_CHECKLIST.md), [`migration/GILLIGAN_E2E_RESULTS_2026-09-27.md`](migration/GILLIGAN_E2E_RESULTS_2026-09-27.md), [`migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`](migration/GILLIGAN_FIRESTORE_FRAMEWORK.md), [`migration/MIRROR_PRODUCTION_PARITY.md`](migration/MIRROR_PRODUCTION_PARITY.md).
+- **Release**: [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md), [`migration/MIRROR_RUNBOOK.md`](migration/MIRROR_RUNBOOK.md), [`migration/LAUNCH_ISSUES_CHECKLIST.md`](migration/LAUNCH_ISSUES_CHECKLIST.md) (with `LAUNCH_ISSUES_WALKTHROUGH.html` and `LAUNCH_ISSUES_EXPLAINED.html`), [`migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md`](migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md), [`migration/GILLIGAN_MANUAL_TEST_GUIDE.md`](migration/GILLIGAN_MANUAL_TEST_GUIDE.md) (checks, demo and smoke paths), [`migration/LIVE_TEST_LIST.md`](migration/LIVE_TEST_LIST.md), [`migration/E2E_CHECKLIST.md`](migration/E2E_CHECKLIST.md), [`migration/GILLIGAN_E2E_RESULTS_2026-09-27.md`](migration/GILLIGAN_E2E_RESULTS_2026-09-27.md), [`migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`](migration/GILLIGAN_FIRESTORE_FRAMEWORK.md), [`migration/MIRROR_PRODUCTION_PARITY.md`](migration/MIRROR_PRODUCTION_PARITY.md), [`migration/MIRROR_RUNBOOK.md`](migration/MIRROR_RUNBOOK.md), [`migration/LAUNCH_ISSUES_CHECKLIST.md`](migration/LAUNCH_ISSUES_CHECKLIST.md).
 - **Gilligan**: [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md) (decisions D1-D12), [`migration/GILLIGAN_R3_PORT.md`](migration/GILLIGAN_R3_PORT.md).
 - **Environment and security**: [`migration/LOCAL_STACK.md`](migration/LOCAL_STACK.md), [`migration/SECURITY_INCIDENT_2026-09-19.md`](migration/SECURITY_INCIDENT_2026-09-19.md), [`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md), [`migration/BACKEND_FIELDS.md`](migration/BACKEND_FIELDS.md).
 - **Behaviour and decisions**: [`SPECS.md`](SPECS.md), [`timeline.md`](timeline.md), [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md).
