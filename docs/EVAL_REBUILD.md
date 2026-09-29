@@ -1761,6 +1761,31 @@ Bands (`scripts/longConversationBands.py`): early = turns 1-3; late = turns 9-12
 - **Fail:** either gap above 0.20, or a gate missed: report which limit the falling turns hit (cap, rewrite window, stale markers or none).
 - About 15 turns per band, so a gap under 0.10 is within judge noise; the capped turn 12 is reported, not ruled on.
 
+### Long conversations: results - 2026-09-28, run `long-lv-k20-glm-2026-09-28`
+
+Captured at `e79943b` with the settings above: 60/60 turns, 0 failed, after a one-conversation spot check (`long-spot-lv-k20-glm-2026-09-28`); 1,142,623 prompt tokens (27.4% cached), 12,811 completion, 285 s.
+Judged once (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2): 60/60, 0 failed, overall 1.75.
+The fixtures are narrower than wave 1 (three to four rubric points a turn, drawn straight from claims), so 1.75 does not compare with wave 1's 1.16; only the bands within this run do.
+
+| correctness | turns | mean |
+|---|---|---|
+| early (turns 1-3) | 15 | 1.87 |
+| late (turns 9-11; turn 12 is scored apart) | 15 | 1.60 |
+| back-reference to turns 2-3 (turns 8-9) | 10 | 1.90 |
+| turn 12, reference to the dropped turn 1 | 5 | 1.60 |
+| switch / return | 5 / 5 | 2.00 / 2.00 |
+| cross-document | 9 | 1.33 |
+| turn 10 (the cross-document turn in every conversation) | 5 | 1.00 |
+
+By turn: 9 scores 2.00, 10 scores 1.00, 11 scores 1.80.
+
+- **Rule outcome: fail.** Early minus late is +0.27, above the 0.20 fail line; early minus back-reference is -0.03; the refusal turn is exact; citation validity 212/212, 0 unexplained figures of 58.
+- **The late gap is turn 10, which is the design's cross-document slot.** Every conversation put its cross-document turn at 10 (Codex followed the brief's example order), and cross-document turns elsewhere score 1.75; without turn 10 the late turns score 1.90, level with the early ones. Of turn 10's misses, one gives the sonde sensor's ±0.2 °C where the rubric wants the reference thermometer's ±0.05 °C (an ambiguous question), and three omit a required second point with two-thirds or more of their passages retrieved. None traces to a history limit.
+- **One loss is the 20-message cap.** In `long-turbidity-bubbles` turn 12 ("that window problem I opened with") turn 1's bubbles exchange had been dropped, and the answer took turn 10's dirty window instead (scored 0). The other four turn-12 questions named enough detail, and topic A was still in the recent history after the return, to answer in full: the cap probe is weak by construction.
+- **The rewrite window did not bite.** Back-reference turns come one or two exchanges after the return turn, so topic A was inside the last four messages; per-turn recall is 77-100% at every turn index (83.6% overall) with no decline.
+- **Stale citation markers do show.** The quoted-citation check (informational, not a gate) supports 61 of 85 quotes (71.8%) against 81-85% on E7 full A and B. By turn, 3 of 21 quotes in turns 1-3 carry a number that points at a different excerpt, against 13 of 33 in turns 9-12; the quoted text is in that turn's context under another number. 17 of the 20 such markers reuse the number the same quote had in an earlier answer, so the model is copying markers from history. `assessCitations` renumbers some by quote match (four in the spot check's turn 12) but not these, and citation validity still passes because the stale number is in range. In the interface such a marker opens the wrong excerpt.
+- **Spend** about $0.28: capture about $0.17 with rewrites, spot check about $0.03, judge $0.08.
+
 ### `local-vector` k=30: decision rule fixed before capture - 2026-09-28
 
 Question: gold plus retrieval showed the gap to gold is passages retrieval misses and that GLM held the gold score with 20-35 chunks, so does a deeper k=30 lift correctness?
@@ -1768,6 +1793,26 @@ Setup: the launch configuration above with only `DEFAULT_TOP_K` changed from 20 
 
 - **Adopt:** correctness at least 0.05 above the launch pair (E7 full A and B, 1.16) on both judge passes; refusal integrity gate and citation validity no worse than A and B (refusal gate 5 exact, 2 off-contract, 1 answered; citation validity 98.3-98.5%); and the user accepts about 50% more prompt tokens per question.
 - **Otherwise** k stays 20. `gpt-oss-120b` lost 0.08 at k=30 by refusing more, so refusal wording on non-refusal turns is checked either way.
+
+### `local-vector` k=30: results - 2026-09-28, runs `k30-lv-glm-2026-09-28` and `k30-lv-glm-rejudge-2026-09-28`
+
+Captured at `2b4f33d` (k raised to 30, reverted in `65a3ecb`) with the launch settings: 90/90, 0 failed, 30 excerpts every turn, after a one-fixture spot check (`k30-spot-lv-glm-2026-09-28`); 2,292,207 prompt tokens (17.9% cached), 31,397 completion, 628 s.
+Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0 failed); the second pass links the first's transcripts.
+
+| | launch, E7 full A / B (two passes each) | k=30, pass 1 / 2 |
+|---|---|---|
+| correctness | 1.14, 1.16 / 1.16, 1.17 (mean 1.156) | 1.233 / 1.200 |
+| cross-document | 0.83, 0.92 / 1.00, 1.00 | 1.04 / 0.96 |
+| refusal (judge) | 0.88 / 0.88 | 1.13 / 1.00 |
+| refusal gate: exact / off-contract / answered | 5 / 2 / 1 and 5 / 2 / 1 | 7 / 1 / 0 |
+| citation validity | 98.3% / 98.5% | 99.3% |
+| unexplained figures | 0 of 548 / 2 of 565 | 0 of 570 |
+| prompt tokens | 1.72M / 1.73M | 2.29M (+33%) |
+
+- **Rule outcome: not adopted, narrowly.** The bar is 1.206 (the launch mean plus 0.05) on both passes; pass 1 clears it at 1.233 and pass 2 misses at 1.200. Both gates improve, and the token increase is about a third, under the 50% the user accepted.
+- **Direction.** On the two-pass mean against the four launch passes, 21 turns rose and 13 fell; the mean gain is 0.06, just above the 0.05 noise band, and gold plus retrieval (1.33) says missing passages are the gap, so depth helps a little but does not close it.
+- **No refusal drift.** Unlike `gpt-oss-120b`, GLM does not refuse more at k=30: the pinned refusal sentence appears on 6 of 82 non-refusal turns against 8 in each launch capture, and refusal-style openings are level (12 of 82 in all three).
+- **Spend** about $1.18: capture about $0.34 with rewrites, spot check about $0.01, judge passes $0.20 and $0.63 (the first read most of its input from cache because both passes ran at once).
 
 ## Task C provenance inputs - 2026-09-24
 
