@@ -1,0 +1,1909 @@
+{
+  "port": "8010",
+  "persona": "lake-cust-1",
+  "device": "dev:100000000000003",
+  "query": "The water near my pod has turned green. Is it an algal bloom?",
+  "started": "2026-09-29T05:38:39.673Z",
+  "status": 200,
+  "response": {
+    "answer": "The readings are consistent with heavy algal growth, though I can't confirm a bloom from the sensors alone.\n\nWhat the data shows (last 3 days, Lakeside Buoy 2026, last reading ~50 minutes ago):\n\n- **Dissolved oxygen** swings strongly each day — from about 6.5–7 mg/L in the early morning up to 10.3–10.7 mg/L in the evening.\n- **pH** moves in step with it, from about 7.6–7.7 up to 8.0–8.1 at the same times of day.\n\nThat in-phase daily oscillation of DO and pH is the signature the guidance describes: \"DO large daily swings... pH large daily swings in phase with DO\" 【9†\"pH large daily swings in phase with DO\"】. The CER guidance says this pattern \"is consistent with heavy algal growth\" and that \"the low point before dawn is when fish are most at risk\" (algal-bloom pattern).\n\nTwo important caveats:\n\n1. **The turbidity sensor appears to have failed.** Every turbidity reading in this period is 0, and the system flags a \"likely failed sensor\" — a sustained run of zeros is the sensor's default for a bad reading, not confirmed clear water. So the sensor cannot show whether the water is cloudier, which would otherwise support the bloom picture. I'd recommend contacting Clean Earth Rovers support (sales@cleanearthrovers.com) to have it checked or replaced.\n2. **The sensors cannot identify algae species or detect toxins** — \"The sensors cannot identify algae species or detect toxins, and toxin-producing blooms may show no oxygen pattern.\"\n\nGiven your own observation of green water, the sensible steps are:\n\n- Keep people and pets out of discolored or scummy water, and report a suspected bloom to your local environmental or health agency, which can test for toxins.\n- If you'd like help removing it, Clean Earth Rovers can collect and remove floating algae — contact sales@cleanearthrovers.com (or your usual CER contact). This is a service offer, not a diagnosis.\n- Watch the pre-dawn dissolved-oxygen minimum over the next few nights; falling pre-dawn minimums indicate rising hypoxia risk.",
+    "audit": {
+      "original_answer": "The readings are consistent with heavy algal growth, though I can't confirm a bloom from the sensors alone.\n\nWhat the data shows (last 3 days, Lakeside Buoy 2026, last reading ~50 minutes ago):\n\n- **Dissolved oxygen** swings strongly each day — from about 6.5–7 mg/L in the early morning up to 10.3–10.7 mg/L in the evening.\n- **pH** moves in step with it, from about 7.6–7.7 up to 8.0–8.1 at the same times of day.\n\nThat in-phase daily oscillation of DO and pH is the signature the guidance describes: \"DO large daily swings... pH large daily swings in phase with DO\" 【9†\"pH large daily swings in phase with DO\"】. The CER guidance says this pattern \"is consistent with heavy algal growth\" and that \"the low point before dawn is when fish are most at risk\" (algal-bloom pattern).\n\nTwo important caveats:\n\n1. **The turbidity sensor appears to have failed.** Every turbidity reading in this period is 0, and the system flags a \"likely failed sensor\" — a sustained run of zeros is the sensor's default for a bad reading, not confirmed clear water. So the sensor cannot show whether the water is cloudier, which would otherwise support the bloom picture. I'd recommend contacting Clean Earth Rovers support (sales@cleanearthrovers.com) to have it checked or replaced.\n2. **The sensors cannot identify algae species or detect toxins** — \"The sensors cannot identify algae species or detect toxins, and toxin-producing blooms may show no oxygen pattern.\"\n\nGiven your own observation of green water, the sensible steps are:\n\n- Keep people and pets out of discolored or scummy water, and report a suspected bloom to your local environmental or health agency, which can test for toxins.\n- If you'd like help removing it, Clean Earth Rovers can collect and remove floating algae — contact sales@cleanearthrovers.com (or your usual CER contact). This is a service offer, not a diagnosis.\n- Watch the pre-dawn dissolved-oxygen minimum over the next few nights; falling pre-dawn minimums indicate rising hypoxia risk.",
+      "corrections": [],
+      "invalid_citations": []
+    },
+    "model": "accounts/fireworks/models/glm-5p3-flash",
+    "mode": "local-vector",
+    "citations": [
+      {
+        "id": "cer-water-quality-guidance-v2-excerpt.md__32ed8a9cd015",
+        "text": "# Clean Earth Rovers Water Quality Guidance v2.0 - Excerpt: Natural Cycles, Event Signatures, Sensor Faults, Parameter Coupling\n\nSource: \"DataPod Water Quality Source of Truth\", version 2.0, last updated 2026-09-16, owner Clean\nEarth Rovers, Inc. (CER). This is CER's own synthesis for interpreting DataPod data, not an external\nstandard. This excerpt reproduces Sections 5, 6, 7 and 11 in the document's own words; tables are\nwritten one row per line. Omitted: rule 1 of Section 7.2 (identical timestamps across channels),\npending CER review. Sections referenced below but not included here: 2.4.1, 8, 9 and 10.\n\n## 5. Natural Cycles and Look-Alike Events\n\nRule these out before declaring a pollution event.\n\n### 5.1 Diel (24-Hour) Cycle\n\n- Pattern: DO and pH rise through daylight, peak in mid to late afternoon, and fall overnight to a\n  minimum just before dawn. Temperature follows solar heating. ORP shows a weaker version of the\n  same pattern, partly because of temperature.\n- Diagnostic: DO and pH move in phase, repeat each day, and change smoothly.\n- Danger window: The pre-dawn DO minimum. Low-oxygen events and fish kills most often occur\n  between about 03:00 and 07:00 local time.\n- Caution: Solar-powered DataPods are also most likely to experience low battery voltage in the\n  pre-dawn hours. Check battery voltage before interpreting a pre-dawn anomaly (Section 7).\n\n### 5.2 Tidal Cycle\n\n- Pattern: Southern California has mixed semidiurnal tides, with two unequal high tides and two\n  unequal low tides per day (the main lunar period is about 12.42 hours). Salinity, temperature, and\n  turbidity oscillate with tidal exchange. Turbidity often peaks near maximum current.\n- Diagnostic: The change repeats on the tidal clock, not the solar clock, and shifts by about 50\n  minutes per day.\n- Method: Compare readings to the same tidal phase in the baseline, or remove tidal signal with\n  harmonic analysis.\n- Sensor exposure: Shallow DataPods may be exposed or nearly exposed at extreme low tides,\n  creating fault signatures (Section 7).\n\n### 5.3 Coastal Upwelling (Major False Positive)\n\n- Cause: Winds push surface water offshore, bringing cold, low-oxygen, high-CO₂ deep water to the\n  surface. In Southern California, upwelling is strongest in spring (roughly March through June) but\n  can occur at other times.\n- Signature: Temperature strongly down (2 to 6 °C over one to three days), DO down, pH down,\n  salinity slightly up (about 0.1 to 0.3 PSU), ORP slightly down, turbidity little change.\n- Why it matters: DO and pH fall together, which resembles organic pollution.\n- Diagnostic: Temperature falls with DO and pH. Pollution does not cool the water. Salinity rises\n  slightly instead of falling. The pattern often affects several nearby sites at once.\n\n### 5.4 Internal Tides and Bores (Major False Positive)",
+        "source": "cer-water-quality-guidance-v2-excerpt.md",
+        "score": 0.6067433093784453,
+        "title": "Clean Earth Rovers Water Quality Guidance v2.0 (CER internal synthesis, 2026-09-16) - Excerpt"
+      },
+      {
+        "id": "cer-water-quality-guidance-v2-excerpt.md__26568f5d8f4d",
+        "text": "trong decrease,\n  negative; Salinity / SC little change; pH decrease; Turbidity variable. Key discriminator: DO and\n  ORP bottoming out together.\n- Oil or fuel spill: Temperature little change; DO little change; ORP little change; Salinity / SC\n  little change; pH little change; Turbidity little change or slight increase. Key discriminator:\n  largely undetectable with DataPod sensors (Section 10).### 6.3 Freshwater Receiving Water Differences\n\nIn freshwater, several directions reverse or change:\n\n- Raw sewage: Conductivity increases instead of decreasing.\n- Stormwater runoff: Conductivity may decrease (dilution by rain) or increase (road salt, first\n  flush of dissolved pollutants).\n- Industrial discharge: Conductivity usually increases strongly.\n- Saltwater intrusion: Conductivity strong increase, tied to tide, drought, or low river flow; pH\n  little change or slight increase; other parameters little change.\n- Acidic input (acid mine drainage, acid spill): pH strong decrease, conductivity increase, ORP\n  increase, turbidity increase; unlikely to be detectable in seawater unless near source.\n- Algal bloom: pH swings much larger (afternoon above 9 is common) because freshwater is weakly\n  buffered.\n\n### 6.4 Detailed Signatures\n\n#### Raw Sewage Spill (Marine)\n\n- Timing: Unrelated to daylight or tide. Often follows pump station failures, line breaks, or heavy\n  rain overwhelming a system.\n- Leading indicators: Salinity decrease and turbidity increase appear first. DO and ORP decline\n  over the following hours as oxygen demand is exerted, most clearly where flushing is poor.\n- Magnitude check: Estimate the freshwater fraction with Section 2.4.1. Raw sewage carries roughly\n  200 to 300 mg/L of BOD. A 1 percent sewage mix carries roughly 2 to 3 mg/L of oxygen demand,\n  exerted over days.\n- Confounders: Stormwater (same freshening and turbidity, but coincides with rain), dry-weather\n  runoff, treated effluent (ORP rises instead).\n- Confirmation: Grab samples for fecal indicator bacteria (Enterococcus), notify the relevant\n  agency per site protocol.\n\n#### Stormwater Runoff (Marine)\n\n- Timing: Within hours of rainfall onset. The first significant storm after the dry season (first\n  flush) carries the highest pollutant load.\n- Signature: Strong turbidity increase and salinity decrease near outfalls, pH decrease, DO\n  variable.\n- Contamination note: Southern California stormwater routinely carries bacteria, metals, and\n  hydrocarbons. Treat a stormwater signature as a likely contamination event even though DataPods\n  cannot measure those contaminants.\n\n#### Active Algal Bloom\n\n- Signature: DO above 120 percent saturation in afternoon, low pre-dawn DO, pH moving in phase with\n  DO, turbidity elevated, usually during warm, calm, stratified conditions.\n- Southern California context: Dinoflagellate blooms (red tides) can become dense enough to drive\n  low oxygen and fish kills when respiration and decomposition exceed photosynthesis.\n- Risk indicator: Watch the pre-dawn minimum trend. Falling pre-dawn minimums over several nights\n  indicate rising hypoxia risk.\n- Limitation: Toxin-producing blooms may not produce a DO signature (Section 10).\n\n#### Bloom Collapse\n\n- Signature: DO drops and stays low through daylight, ORP falls, pH falls, and salinity does not\n  change.\n- Why it matters: This resembles sewage. The discriminator is stable salinity plus a preceding\n  bloom period.\n\n#### Thermal Discharge",
+        "source": "cer-water-quality-guidance-v2-excerpt.md",
+        "score": 0.5898878892025395,
+        "title": "Clean Earth Rovers Water Quality Guidance v2.0 (CER internal synthesis, 2026-09-16) - Excerpt"
+      },
+      {
+        "id": "cer-water-quality-guidance-v2-excerpt.md__aafc5bd42d5a",
+        "text": "ms over several nights\n  indicate rising hypoxia risk.\n- Limitation: Toxin-producing blooms may not produce a DO signature (Section 10).\n\n#### Bloom Collapse\n\n- Signature: DO drops and stays low through daylight, ORP falls, pH falls, and salinity does not\n  change.\n- Why it matters: This resembles sewage. The discriminator is stable salinity plus a preceding\n  bloom period.\n\n#### Thermal Discharge- Signature: Temperature rises with proportional DO decline in mg/L, while percent saturation stays\n  roughly constant. Specific conductance and salinity stay flat. Raw uncorrected conductivity will\n  rise, which is why corrected values must be used.\n\n#### Industrial or Chemical Discharge\n\n- Signature: Abrupt step changes in conductivity, pH, or ORP with no diel, tidal, or rainfall\n  explanation. Directions depend on the effluent.\n- Discriminator from sensor faults: A real discharge usually affects more than one parameter in a\n  chemically consistent way and changes gradually as a plume arrives. A fault often affects one\n  channel, or all channels at the identical timestamp.\n\n#### Dredging or Construction\n\n- Signature: Strong turbidity increase with slight decreases in DO, ORP, and pH from resuspended\n  reduced sediment.\n- Timing cue: Occurs during working hours and on working days and stops at night and weekends.\n\n#### Hypoxia or Fish-Kill Conditions\n\n- Signature: DO near zero, ORP negative versus Ag/AgCl, pH decreasing. Often warm, calm, stratified\n  conditions following a bloom or large organic load.\n- Urgent response: Treat as high priority regardless of cause. First verify the DO sensor is not\n  faulted (galvanic flow dependence and electrolyte depletion can mimic hypoxia).\n\n## 7. Sensor Fault Signatures (Check First)\n\n### 7.1 Fault Matrix\n\nEach row gives the fault, then the channels affected; signature; key discriminator.",
+        "source": "cer-water-quality-guidance-v2-excerpt.md",
+        "score": 0.5851073489704227,
+        "title": "Clean Earth Rovers Water Quality Guidance v2.0 (CER internal synthesis, 2026-09-16) - Excerpt"
+      },
+      {
+        "id": "cer-water-quality-guidance-v2-excerpt.md__1cb22682df6a",
+        "text": "alm, stratified\n  conditions following a bloom or large organic load.\n- Urgent response: Treat as high priority regardless of cause. First verify the DO sensor is not\n  faulted (galvanic flow dependence and electrolyte depletion can mimic hypoxia).\n\n## 7. Sensor Fault Signatures (Check First)\n\n### 7.1 Fault Matrix\n\nEach row gives the fault, then the channels affected; signature; key discriminator.- Sensor exposed (out of water): Channels affected: all. Signature: specific conductance drops to\n  near zero or becomes erratic; temperature tracks air with a larger daily range; DO jumps to about\n  100 % sat air reading or becomes erratic; pH and ORP drift or become noisy. Key discriminator:\n  coincides with extreme low tide or wave troughs.\n- Galvanic DO electrolyte or anode depletion: Channels affected: DO. Signature: DO flatlines or\n  declines slowly; stops responding to temperature and daylight; may stick at a low value (for\n  example 1.5 to 2 mg/L). Key discriminator: DO no longer moves with pH on the daily cycle; DO moves\n  opposite to what temperature predicts.\n- Galvanic DO flow dependence: Channels affected: DO. Signature: DO reads low in still water and\n  recovers with current or waves. Key discriminator: low DO coincides with slack tide or calm night\n  conditions; readings rise when a probe is stirred or flow increases.\n- DO membrane fouling: Channels affected: DO. Signature: gradual DO decline over weeks, or damped\n  daily range. Key discriminator: resets after cleaning; follows maintenance interval.\n- Biofilm photosynthesis on DO sensor: Channels affected: DO. Signature: unrealistically high midday\n  DO. Key discriminator: extreme afternoon peak not matched by pH.\n- pH electrode aging (reduced slope): Channels affected: pH. Signature: compressed daily pH range;\n  slow drift. Key discriminator: daily DO range unchanged while pH range shrinks; calibration slope\n  below about 90 percent of theoretical.\n- pH reference junction clogging: Channels affected: pH. Signature: slow response, offset, noisy\n  readings. Key discriminator: offset changes after cleaning; response time increases.\n- ORP platinum fouling or sulfide poisoning: Channels affected: ORP. Signature: sluggish or stuck\n  ORP. Key discriminator: fails to recover when DO recovers; resets after cleaning.\n- Conductivity cell fouling: Channels affected: conductivity. Signature: gradual false decrease in\n  conductivity and salinity. Key discriminator: slow freshening trend over weeks without rain;\n  resets after cleaning.\n- Turbidity window fouling or wiper failure: Channels affected: turbidity. Signature: steadily\n  rising baseline. Key discriminator: rise does not match other parameters; resets after cleaning.\n- Bubbles, fish, debris: Channels affected: turbidity (also conductivity). Signature: single-sample\n  spikes. Key discriminator: spike lasts one to a few samples; fails spike test.\n- Temperature sensor fault: Channels affected: temperature plus all corrected values. Signature:\n  temperature error propagates into salinity, DO saturation, pH compensation, and ORP residual. Key\n  discriminator: several derived values shift together at the same moment.\n- Low battery or power brownout: Channels affected: multiple. Signature: simultaneous step change,\n  noise, or dropouts across several channels. Key discriminator: coincides with falling battery\n  voltage, often pre-dawn on solar systems or after cloudy days.\n- Clock or timestamp drift: Channels affected: all. Signature: daily cycles appear shifted in time.",
+        "source": "cer-water-quality-guidance-v2-excerpt.md",
+        "score": 0.5821185093819989,
+        "title": "Clean Earth Rovers Water Quality Guidance v2.0 (CER internal synthesis, 2026-09-16) - Excerpt"
+      },
+      {
+        "id": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__0221863ef433",
+        "text": ", at\nhttps://doi.org/10.1111/j.1745-6592.1992.tb00057.x.\nPuls, R.W., Powell, R.M., Clark, D.A., and Paul, C.J., 1991,\nFacilitated transport of inorganic contaminants in ground\nwater—Part II, Colloidal transport: Ada, Oklahoma, Robert\nS. Kerr Laboratory, U.S. Environmental Protection Agency\nReport EPA/600/m-91/040, 12 p., accessed April 16, 2020,\nat https://nepis.epa.gov/Exe/ZyNET.exe/20009K5W.TXT?ZyActionD=ZyDocument&Client=EPA&Index=1991+Thr\nu+1994&Docs=&Query=&Time=&EndTime=&SearchMet\nhod=1&TocRestrict=n&Toc=&TocEntry=&QField=&QFiel\ndYear=&QFieldMonth=&QFieldDay=&IntQFieldOp=0&E\nxtQFieldOp=0&XmlQuery=&File=D%3A%5Czyfiles%5CI\nndex%20Data%5C91thru94%5CTxt%5C00000001%5C200\n09K5W.txt&User=ANONYMOUS&Password=anonymous\n&SortMethod=h%7C-&MaximumDocuments=1&FuzzyDe\ngree=0&ImageQuality=r75g8/r75g8/x150y150g16/i425&Di\nsplay=hpfr&DefSeekPage=x&SearchBack=ZyActionL&Ba\nck=ZyActionS&BackDesc=Results%20page&MaximumPa\nges=1&ZyEntry=1&SeekPage=x&ZyPURL.\nReilly, T.E., and Gibs, Jacob, 1993, Effects of\nphysical and chemical heterogeneity of water-qual-\nity samples obtained from wells: Ground Water,\nv. 31, no. 5, p. 805–813, accessed April 16, 2020, at\nhttps://doi.org/10.1111/j.1745-6584.1993.tb00854.x.\nU.S. Geological Survey, variously dated, National\nfield manual for the collection of water-quality data:\nU.S. Geological Survey Techniques of Water-Resources\nInvestigations, book 9, chaps. A1–A10, accessed April\n16, 2020, at https://www.usgs.gov/mission-areas/water-\nresources/science/national-field-manual-collection-water-\nquality-data-nfm.\nU.S. Geological Survey, 2002, Water-quality field methods/\nNational Field Manual for the Collection of Water Qual-\nity Data: U.S. Geological Survey Office of Water Quality\nTechnical Memorandum 2002.13, accessed April 29, 2020,\nat https://water.usgs.gov/admin/memo/QW/qw02.13.html.",
+        "source": "https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf",
+        "score": 0.5808957859393811,
+        "title": "USGS TM 9-A6.0 — Guidelines for Field-Measured Water-Quality Properties (2023)"
+      },
+      {
+        "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__44dccd598c09",
+        "text": "nd field\nanalysis of ground-water samples for selected unstable\nconstituents: U.S. Geological Survey Techniques of Water-\nResources Investigations, book 1, chap. D2, p. 22–24,\nhttp://pubs.usgs.gov/twri/twri1-d2/pdf/twri_1-D2_a.pdf.\nYSI, Inc., 2019, Dissolved oxygen measurement in water\nwith oxygen meters: accessed January 6, 2020, at\nhttps://www.ysi.com/parameters/dissolved-oxygen.\n\n-- 27 of 44 --20 \tChapter A6.2. Dissolved Oxygen\nTable 6.2–2.\n \nSolubility of oxygen in freshwater at various temperatures and pressures.\n[Solubility shown in milligrams per liter; values are based on equations published by Benson and Krause (1980, 1984); Temp. (°C), temperature in degrees Celsius; solubility values for atmospheric pressures\t\nfrom 600 to 695 millimeters of mercury are after the values for 0-40 °C]\nTemp.\t\n(deg C)\nAtmospheric pressure, in millimeters of mercury\n700\n \n705\n \n710\n \n715\n \n720\n \n725\n \n730\n \n735\n \n740\n \n745\n \n750\n \n755\n \n760\n \n765\n \n770\n \n775\n \n780\n \n785\n \n790\n \n795\n0.0\n \n13.46\n \n13.56\n \n13.65\n \n13.75\n \n13.85\n \n13.94\n \n14.04\n \n14.14\n \n14.23\n \n14.33\n \n14.43\n \n14.52\n \n14.62\n \n14.72\n \n14.81\n \n14.91\n \n15.01\n \n15.10\n \n15.20\n \n15.30\n0.5\n \n13.27\n \n13.37\n \n13.46\n \n13.56\n \n13.65\n \n13.75\n \n13.84\n \n13.94\n \n14.03\n \n14.13\n \n14.23\n \n14.32\n \n14.42\n \n14.51\n \n14.61\n \n14.70\n \n14.80\n \n14.89\n \n14.99\n \n15.08\n1.0\n \n13.09\n \n13.18\n \n13.28\n \n13.37\n \n13.46\n \n13.56\n \n13.65\n \n13.75\n \n13.84\n \n13.93\n \n14.03\n \n14.12\n \n14.22\n \n14.31\n \n14.40\n \n14.50\n \n14.59\n \n14.69\n \n14.78\n \n14.87\n1.5\n \n12.91\n \n13.00\n \n13.09\n \n13.19\n \n13.28\n \n13.37\n \n13.46\n \n13.56\n \n13.65\n \n13.74\n \n13.84\n \n13.93\n \n14.02\n \n14.11\n \n14.21\n \n14.30\n \n14.39\n \n14.48\n \n14.58\n \n14.67\n2.0\n \n12.73\n \n12.82\n \n12.91\n \n13.01\n \n13.10\n \n13.19\n \n13.28\n \n13.37\n \n13.46\n \n13.56\n \n13.65\n \n13.74\n \n13.83\n \n13.92\n \n14.01\n \n14.10\n \n14.20\n \n14.29\n \n14.38\n \n14.47\n2.5\n \n12.56\n \n12.65\n \n12.74\n \n12.83\n \n12.92\n \n13.01\n \n13.10\n \n13.19\n \n13.28\n \n13.37\n \n13.46\n \n13.55\n \n13.64\n \n13.73\n \n13.82\n \n13.91\n \n14.00\n \n14.10\n \n14.19\n \n14.28\n3.0\n \n12.39\n \n12.48\n \n12.57\n \n12.66\n \n12.75\n \n12.84\n \n12.93\n \n13.02\n \n13.10\n \n13.19\n \n13.28\n \n13.37\n \n13.46\n \n13.55\n \n13.64\n \n13.73\n \n13.82\n \n13.91\n \n14.00\n \n14.09\n3.5\n \n12.23\n \n12.31\n \n12.40\n \n12.49\n \n12.58\n \n12.67\n \n12.75\n \n12.84\n \n12.93\n \n13.02\n \n13.11\n \n13.19\n \n13.28\n \n13.37\n \n13.46\n \n13.55\n \n13.63\n \n13.72\n \n13.81\n \n13.90\n4.0\n \n12.07\n \n12.15\n \n12.24\n \n12.33\n \n12.41\n \n12.50\n \n12.59\n \n12.67\n \n12.76\n \n12.85\n \n12.93\n \n13.02\n \n13.11\n \n13.20\n \n13.28\n \n13.37\n \n13.46\n \n13.54\n \n13.63\n \n13.72\n4.5\n \n11.91\n \n11.99\n \n12.08\n \n12.17\n \n12.25\n \n12.34\n \n12.42\n \n12.51\n \n12.59\n \n12.68\n \n12.77\n \n12.85\n \n12.94\n \n13.02\n \n13.11\n \n13.20\n \n13.28\n \n13.37\n \n13.45\n \n13.54\n5.0\n \n11.75\n \n11.84\n \n11.92\n \n12.01\n \n12.09\n \n12.18\n \n12.26\n \n12.35\n \n12.43\n \n12.52\n \n12.60\n \n12.69\n \n12.77\n \n12.86\n \n12.94\n \n13.03\n \n13.11\n \n13.19\n \n13.28\n \n13.36\n5.5\n \n11.60\n \n11.69\n \n11.77\n \n11.86\n \n11.94\n \n12.02\n \n12.11\n \n12.19\n \n12.27\n \n12.36\n \n12.44\n \n12.52\n \n12.61\n \n12.69\n \n12.78\n \n12.86\n \n12.94\n \n13.03\n \n13.11\n \n13.19\n6.0\n \n11.46\n \n11.54\n \n11.62\n \n11.70\n \n11.79\n \n11.87\n \n11.95\n \n12.04\n \n12.12\n \n12.20\n \n12.28\n \n12.37\n \n12.45\n \n12.53\n \n12.61\n \n12.70\n \n12.78\n \n12.86\n \n12.94\n \n13.03\n6.5\n \n11.31\n \n11.39\n \n11.48\n \n11.56\n \n11.64\n \n11.72\n \n11.80\n \n11.88\n \n11.97\n \n12.05\n \n12.13\n \n12.21\n \n12.29\n \n12.37\n \n12.46\n \n12.54\n \n12.62\n \n12.70\n \n12.78\n \n12.86\n7.0\n \n11.17\n \n11.25\n \n11.33\n \n11.41\n \n11.49\n \n11.58\n \n11.66\n \n11.74\n \n11.82\n \n11.90\n \n11.98\n \n12.06\n \n12.14\n \n12.22\n \n12.30\n \n12.38\n \n12.46\n \n12.54\n \n12.62\n \n12.70\n7.5\n \n11.03\n \n11.11\n \n11.19\n \n11.27\n \n11.35\n \n11.43\n \n11.51\n \n11.59\n \n11.67\n \n11.75\n \n11.83\n \n11.91\n \n11.99\n \n12.07\n \n12.15\n \n12.23\n \n12.31\n \n12.39\n \n12.47",
+        "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
+        "score": 0.5718484819897593,
+        "title": "USGS TM 9-A6.2 — Dissolved Oxygen (2020)"
+      },
+      {
+        "id": "cer-water-quality-guidance-v2-excerpt.md__fe71a2213564",
+        "text": " slightly up (about 0.1 to 0.3 PSU), ORP slightly down, turbidity little change.\n- Why it matters: DO and pH fall together, which resembles organic pollution.\n- Diagnostic: Temperature falls with DO and pH. Pollution does not cool the water. Salinity rises\n  slightly instead of falling. The pattern often affects several nearby sites at once.\n\n### 5.4 Internal Tides and Bores (Major False Positive)- Cause: Internal waves carry cold, deeper water shoreward along the density interface.\n- Signature: Temperature drops 1 to 5 °C within minutes to an hour, with DO and pH dropping at the\n  same time, then recovery. Often recurs roughly twice daily during stratified conditions, most\n  common in summer.\n- Diagnostic: Sharp cold pulses, synchronized DO and pH drops, rapid recovery, and recurrence.\n\n### 5.5 Seasonal Cycle\n\n- Pattern: Temperature, stratification, rainfall, runoff, upwelling, and bloom risk shift through\n  the year. The Southern California rainy season is roughly November through April.\n- Method: Compare readings against the same month or season in the site baseline.\n\n### 5.6 Marine Heatwaves\n\n- Definition (literature, Hobday et al. 2016): Water temperature above the 90th percentile of the\n  local seasonal climatology for at least 5 consecutive days.\n- CER default without a long climatology: Temperature more than 2 °C above the same-week site\n  baseline for at least 5 days.\n- Consequences: Lower DO in mg/L, higher bloom risk, and higher chance of low pre-dawn DO. A\n  heatwave is an environmental condition, not a discharge, but it raises the risk of hypoxia.\n\n### 5.7 Rain Without Pollution\n\nRain falling directly on a water body lowers surface salinity and may slightly lower pH and\ntemperature without a turbidity spike. Stormwater runoff differs by bringing a turbidity spike and a\nlarger salinity drop near drains and outfalls.\n\n### 5.8 The Test for a Real Event\n\nA candidate pollution event should meet all of these conditions:\n\n1. Passes the data quality checks in Sections 7 and 8.\n2. Is a step change or sustained excursion that breaks the expected diel, tidal, and seasonal\n   pattern.\n3. Is not explained by upwelling, internal tides, heatwave, or direct rainfall.\n4. Shows a correlated shift in two or more parameters consistent with a signature in Section 6.\n\n## 6. Event Signature Library\n\n### 6.1 Direction Vocabulary\n\n- Strong increase / strong decrease: Large change relative to site variability (CER default:\n  robust z-score magnitude above 5).\n- Increase / decrease: Moderate change (CER default: robust z-score magnitude 3 to 5).\n- Slight increase / slight decrease: Small but consistent change.\n- Variable: Direction depends on the source or conditions.\n- Little change: Within normal variability.\n\n### 6.2 Summary Matrix (Marine Receiving Water)\n\nEach row gives the event, then Temperature; DO; ORP; Salinity / SC; pH; Turbidity; Key\ndiscriminator.",
+        "source": "cer-water-quality-guidance-v2-excerpt.md",
+        "score": 0.5700532821270107,
+        "title": "Clean Earth Rovers Water Quality Guidance v2.0 (CER internal synthesis, 2026-09-16) - Excerpt"
+      },
+      {
+        "id": "usgs-nfm-a6.7-turbidity.pdf__a079d759fdae",
+        "text": "EPA Method 180.1 or GLI Method 2 may perform poorly\n(including nonlinear responses) at turbidities that commonly occur in\nsurface-water bodies (greater than 40 turbidity units). Also, white-\nlight instruments typically consume more power than monochrome\ninstruments, so access to the regional power grid is commonly\nrequired. For these methods, waters with turbidities greater than 40\n\n-- 11 of 55 --Turbidity, Version 2.1 (9/2005) \tU.S. Geological Survey TWRI Book 9\n12—TBY\nmust be diluted before measuring. For studies involving the\nmeasurement of turbidity in finished drinking water, either EPA\nMethod 180.1, GLI Method 2, or Hach Method 10133 must be\nused. (This requirement commonly is applied when determining\nground-water turbidity in water from wells used for human\nconsumption.)\nTECHNICAL NOTE (3): One other method, ISO 7027\n(International Organization for Standardization, 1999), has\nbeen defined for waters with low turbidity and is in use in\nEurope and elsewhere; however, as of 2003, ISO 7027 had not\nbeen accepted by USEPA for compliance with drinking-water\nregulations in the United States.\nUSEPA-approved methods generally are not required when providing\ndata for regulatory purposes in accordance with the Clean Water Act\n(U.S. Environmental Protection Agency, 2002a). For example,\nnonregulatory methods can be used to determine changes in turbidity\nof surface water resulting from resource management actions, or to\ncorrelate turbidity with regulated constituents such as suspended\nsediment (Uhrich and Bragg, 2003), nutrients, or bacteria\n(Christensen and others, 2000). For such data-collection efforts, it\nmay be possible to use alternative instrument designs that are targeted\ntowards specific study objectives and that will accommodate the range\nof natural conditions that occur in the water body. Before selecting a\nmethodology and the corresponding instrumentation, determine if\nUSEPA-compliant methodologies are necessary. Given the breadth\nof applications for measuring turbidity, no particular sampling\nconsideration can be defined as the most important in all cases;\nhowever, consistency of instrument types and calibration\nprocedures within monitoring programs or among individual\nprojects is one of the most important aspects to consider when\ndesigning a data-collection program that will include turbidity.\nNephelometry: the measurement of light scattering\nusing a light detector 90 degrees from the incident light\n(USEPA, 1999).\n\n-- 12 of 55 --",
+        "source": "https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf",
+        "score": 0.569212298420709,
+        "title": "USGS NFM 6.7 — Turbidity (version 2.1, 9/2005)"
+      },
+      {
+        "id": "cer-water-quality-guidance-v2-excerpt.md__8d042e92296a",
+        "text": "ase / decrease: Moderate change (CER default: robust z-score magnitude 3 to 5).\n- Slight increase / slight decrease: Small but consistent change.\n- Variable: Direction depends on the source or conditions.\n- Little change: Within normal variability.\n\n### 6.2 Summary Matrix (Marine Receiving Water)\n\nEach row gives the event, then Temperature; DO; ORP; Salinity / SC; pH; Turbidity; Key\ndiscriminator.- Raw sewage spill: Temperature variable, often slight increase; DO decrease, delayed; ORP\n  decrease; Salinity / SC decrease; pH slight decrease; Turbidity increase. Key discriminator:\n  freshening plus turbidity plus oxygen demand, not tied to rain or daylight.\n- Treated effluent (chlorinated): Temperature slight increase; DO little change or slight decrease;\n  ORP increase; Salinity / SC decrease; pH little change or slight decrease; Turbidity little\n  change. Key discriminator: freshening with rising ORP.\n- Stormwater runoff: Temperature variable; DO variable, often decrease; ORP slight decrease;\n  Salinity / SC strong decrease near outfalls; pH decrease; Turbidity strong increase. Key\n  discriminator: coincides with rainfall; turbidity spike.\n- Dry-weather urban runoff: Temperature variable; DO little change; ORP little change; Salinity /\n  SC slight decrease; pH slight decrease; Turbidity slight increase. Key discriminator: no rain;\n  near drains; may follow irrigation timing.\n- Algal bloom (active): Temperature often increase; DO large daily swings, above 120 % sat\n  afternoon, low pre-dawn; ORP variable; Salinity / SC little change; pH large daily swings in phase\n  with DO; Turbidity increase. Key discriminator: in-phase DO and pH oscillation.\n- Bloom collapse or die-off: Temperature variable; DO strong decrease, day and night; ORP strong\n  decrease; Salinity / SC little change; pH decrease; Turbidity variable. Key discriminator: oxygen\n  crash without freshening; follows a bloom.\n- Upwelling (natural): Temperature strong decrease; DO decrease; ORP slight decrease; Salinity / SC\n  slight increase; pH decrease; Turbidity little change. Key discriminator: water cools.\n- Internal tide or bore (natural): Temperature sharp decrease, pulsed; DO decrease, pulsed; ORP\n  slight decrease; Salinity / SC slight increase or little change; pH decrease, pulsed; Turbidity\n  little change. Key discriminator: rapid cold pulses with recovery.\n- Thermal discharge: Temperature strong increase; DO decrease in mg/L, % sat roughly unchanged; ORP\n  little change; Salinity / SC little change; pH little change; Turbidity little change. Key\n  discriminator: warming only, other chemistry flat.\n- Marine heatwave (natural): Temperature sustained increase; DO decrease in mg/L; ORP little\n  change; Salinity / SC little change or slight increase; pH little change; Turbidity variable. Key\n  discriminator: regional, lasts days to weeks.\n- Industrial or chemical discharge: Temperature variable; DO variable; ORP variable, can be strong;\n  Salinity / SC variable, often decrease; pH variable, can be strong; Turbidity variable. Key\n  discriminator: abrupt step change with no natural explanation.\n- Alkaline input (concrete washwater): Temperature little change; DO little change; ORP decrease;\n  Salinity / SC slight increase near source; pH strong increase; Turbidity increase. Key\n  discriminator: pH rise with turbidity near construction.\n- Dredging or construction resuspension: Temperature little change; DO slight decrease; ORP slight\n  decrease; Salinity / SC little change; pH slight decrease; Turbidity strong increase. Key",
+        "source": "cer-water-quality-guidance-v2-excerpt.md",
+        "score": 0.5608505350062584,
+        "title": "Clean Earth Rovers Water Quality Guidance v2.0 (CER internal synthesis, 2026-09-16) - Excerpt"
+      },
+      {
+        "id": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__8ef4fa2753fa",
+        "text": "hich can cause volatilization of\ndissolved gases and volatile organic compounds.\n• When a large volume of water must be purged, a\ndual-pump system can be used. If the depth to water\nis less than 28 ft (depending on the altitude of the site),\neither position a submersible pump downhole and a\ncentrifugal pump at the surface or use two submersible\npumps. An inflatable packer system set above the pump-- 17 of 32 --\n\n10 \tChapter A6.0. Guidelines for Field-Measured Water-Quality Properties\nStill water\n1. \tselect one or more vertical section(s).\n2. \tlower sensors to the depth appropriate to\nmeet study needs.\n3. \tmonitor field-measurement readings.\nFlowing water\nEWI:\nDivide cross section\ninto minimum of 10\nequal-width increments.\nAt each increment,\n1. locate the midpoint.\n2. lower sensors to\nmid-depth of the\nvertical.\n3. monitor field-\nmeasurement\nreadings\nEDI:\nDivide cross section\ninto minimum of four\nequal-discharge increments\n(unless conditions are\nappropriate for one equal-\ndischarge vertical at\ncentroid of flow).\nAt each increment,\n1. locate the centroid.\n2. lower sensors to\nmid-depth of the vertical.\n3. monitor field-\nmeasurement\nreadings.\nReport stabilized value of the median of the last five or more values and the time of measurement.\nStill water: Report median of values measured after readings stabilize.\nEDI:\n1. record median measurement at each vertical.\n2. report mean value of the medians of verticals to get a discharge-weighted value.\nEWI:\n1. record median measurement at each vertical.\n2. report mean (or median) value, if appropriate, of the medians of verticals (can be used in area-weighted calculations).\nTest, calibrate, and check field instruments.\nAllow sensors to equilibrate with ambient waters.\nSelect sampling method.\nEDI—equal-discharge increment\nEWI—equal-width increment\nFigure 6.0–1. \tIn situ field-measurement procedures for surface water.\n\n-- 18 of 32 --",
+        "source": "https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf",
+        "score": 0.5578541111562789,
+        "title": "USGS TM 9-A6.0 — Guidelines for Field-Measured Water-Quality Properties (2023)"
+      },
+      {
+        "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__41fcd80a2341",
+        "text": "gical Survey Techniques of\nWater-Resources Investigations, book 9, chap. A6.2, 55 p.,\nhttps://doi.org/10.3133/twri09A6.2.\nU.S. Geological Survey, 2002, Water-quality field methods/\nNational Field Manual for the Collection of Water-Quality\nData: U.S. Geological Survey Office of Water Quality\nTechnical Memorandum 2002.13, accessed March 26, 2019,\nat https://water.usgs.gov/admin/memo/QW/qw02.13.html.-- 26 of 44 --\n\nReferences Cited \t19\nU.S. Geological Survey, 2011, U.S. Geological Survey\nOffice of Water Quality Technical Memorandum 2011.03,\n2 p. plus attachment, accessed January 6, 2020, at\nhttp://water.usgs.gov/admin/memo/QW/qw11.03.pdf.\nU.S. Geological Survey, variously dated, National field man-\nual for the collection of water-quality data: U.S. Geological\nSurvey Techniques and Methods, book 9, chap. A0–A10,\naccessed September 16, 2020, at https://www.usgs.gov/\nmission-areas/water-resources/science/national-field-man-\nual-collection-water-quality-data-nfm?qt-science_center_\nobjects=0#qt-science_center_objects.\nWagner, R.J., Boulger, R.W., Jr., Oblinger, C.J., and Smith,\nB.A., 2006, Guidelines and standard procedures for con-\ntinuous water-quality monitors—Station operation, record\ncomputation, and data reporting: U.S. Geological Survey\nTechniques and Methods 1–D3, http://pubs.water.usgs.gov/\ntm1D3.\nWhite, A.F., Peterson, M.L., and Solbau, R.D., 1990, Measure-\nment and interpretation of low levels of dissolved oxygen in\ngroundwater: Groundwater, v. 28, no. 4, p. 584–590 (abstract),\naccessed January 6, 2020, at http://onlinelibrary.wiley.com/\ndoi/10.1111/j.1745-6584.1990.tb01715.x/abstract.\nWilde, F.D., and Skrobialowski, S.C., 2011, U.S. Geological\nSurvey protocol for sample collection in response to the\nDeepwater Horizon oil spill, Gulf of Mexico, 2010: U.S.\nGeological Survey Open-File Report 2011–1098, 178 p.,\nhttp://pubs.usgs.gov/of/2011/1098/.\nWood, W.W., 1981, Guidelines for collection and field\nanalysis of ground-water samples for selected unstable\nconstituents: U.S. Geological Survey Techniques of Water-\nResources Investigations, book 1, chap. D2, p. 22–24,\nhttp://pubs.usgs.gov/twri/twri1-d2/pdf/twri_1-D2_a.pdf.\nYSI, Inc., 2019, Dissolved oxygen measurement in water\nwith oxygen meters: accessed January 6, 2020, at\nhttps://www.ysi.com/parameters/dissolved-oxygen.\n\n-- 27 of 44 --",
+        "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
+        "score": 0.5576416757483226,
+        "title": "USGS TM 9-A6.2 — Dissolved Oxygen (2020)"
+      },
+      {
+        "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c92c42a01570",
+        "text": "-- 20 of 44 --3.0 Spectrophotometric (Rhodazine D and Indigo Carmine) Methods \t13\n• Shield the sample tubing and flow-through cell/\nchamber from direct sunlight to minimize changes\nto sample temperature.\n• Dislodge and flush entrained gas bubbles from\nthe tubing walls and flow-through chamber by\ntapping the tubing with a blunt tool (see Technical\nNote 4). Note that air bubbles are an indication of\nair leakage into the sampling system and should\nbe distinguished from gas bubbles that could be\nnative to formation water.\n• Check for and eliminate back pressure in the\nflow-through chamber. The outlet of the chamber\nshould be free flowing.\n3. \tMeasure and record the DO concentration at regular\nintervals throughout purging. Allow the sensors to equili-\nbrate with groundwater for a minimum of 5 minutes\nbefore making the first measurement.\n4. \tCheck the stability (measurement variability) of the DO\nconcentration toward the end of purging. The stability\ncriterion is met when five consecutive measurements\nmade at regularly spaced intervals of 3 to 5 minutes or\nmore are within ±0.2 mg/L. (For each reading, monitor\nfluctuations for 30 to 60 seconds and record the median\nvalue, if necessary.) If the ±0.2-mg/L criterion is not met,\nincrease the purging period in accordance with project\nobjectives and continue to record measurements at regu-\nlarly spaced time intervals.\n5. \tReport DO concentration as the median of the final\nfive DO readings recorded. Record on field forms any\ndifficulty that may have been encountered with reading\nstabilization.\n6. \tRemove the sensor from the water and rinse it with\ndeionized or tap water. Store the sensor according to the\nmanufacturer’s instructions.\nAir bubbles in the tubing lines and flow-through\nchamber can add substantial error to measurements of\nDO in low-DO or oxygen-depleted groundwater.\nTECHNICAL NOTE 4.\nAnomalously high DO measurements commonly are caused\nby aeration of groundwater during pumping. This situation can\nresult from air leakage through loose fittings on production-\nwell pumping systems, or if drawdown in the aquifer intro-\nduces air into the well-screen perforations. To understand\nthese problems, review information about the pump and its\ndepth within the well, data on well construction and water\nlevels during pumping, and previous data records. Corrective\nactions may or may not be possible.\n3.0 \tSpectrophotometric (Rhodazine D\nand Indigo Carmine) Methods\nVarious spectrophotometric methods (see Technical Note\n5) are available for determining DO over a broad range of\nconcentrations. The information in this section, however, is\nlimited to the application of spectrophotometric analysis of\nRhodazine D and Indigo Carmine reagents for determining\nDO concentrations in relatively oxygen-deficient waters—that\nis, DO concentration from about 2 to 0 mg/L. Indigo carmine\nis an organic salt formulated by sulfonating indigo dye. The\nreduced form of indigo carmine reacts with DO to form a\nblue product. The Rhodazine D (phenzone dye) compound, in\nreduced form, reacts with DO to form a bright pink reaction\nproduct. (CHEMetrics, Inc., 2012). The option to measure\nDO in the higher concentration ranges by spectrophotometry",
+        "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
+        "score": 0.5540761171256302,
+        "title": "USGS TM 9-A6.2 — Dissolved Oxygen (2020)"
+      },
+      {
+        "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__01e0280e31f9",
+        "text": "-- 29 of 44 --22 \tChapter A6.2. Dissolved Oxygen\nTable 6.2–2.\n \nSolubility of oxygen in freshwater at various temperatures and pressures.—Continued\n[Solubility shown in milligrams per liter; values are based on equations published by Benson and Krause (1980, 1984); Temp. (°C), temperature in degrees Celsius; solubility values for atmospheric pressures\t\nfrom 600 to 695 millimeters of mercury are after the values for 0-40 °C]\nTemp.\t\n(deg C)\nAtmospheric pressure, in millimeters of mercury\n700\n \n705\n \n710\n \n715\n \n720\n \n725\n \n730\n \n735\n \n740\n \n745\n \n750\n \n755\n \n760\n \n765\n \n770\n \n775\n \n780\n \n785\n \n790\n \n795\n30.0\n \n6.94\n \n6.99\n \n7.04\n \n7.09\n \n7.14\n \n7.20\n \n7.25\n \n7.30\n \n7.35\n \n7.40\n \n7.46\n \n7.51\n \n7.56\n \n7.61\n \n7.66\n \n7.71\n \n7.77\n \n7.82\n \n7.87\n \n7.92\n30.5\n \n6.88\n \n6.93\n \n6.98\n \n7.03\n \n7.08\n \n7.13\n \n7.19\n \n7.24\n \n7.29\n \n7.34\n \n7.39\n \n7.44\n \n7.49\n \n7.55\n \n7.60\n \n7.65\n \n7.70\n \n7.75\n \n7.80\n \n7.85\n31.0\n \n6.82\n \n6.87\n \n6.92\n \n6.97\n \n7.02\n \n7.07\n \n7.12\n \n7.17\n \n7.23\n \n7.28\n \n7.33\n \n7.38\n \n7.43\n \n7.48\n \n7.53\n \n7.58\n \n7.63\n \n7.69\n \n7.74\n \n7.79\n31.5\n \n6.76\n \n6.81\n \n6.86\n \n6.91\n \n6.96\n \n7.01\n \n7.06\n \n7.11\n \n7.16\n \n7.21\n \n7.27\n \n7.32\n \n7.37\n \n7.42\n \n7.47\n \n7.52\n \n7.57\n \n7.62\n \n7.67\n \n7.72\n32.0\n \n6.70\n \n6.75\n \n6.80\n \n6.85\n \n6.90\n \n6.95\n \n7.00\n \n7.05\n \n7.10\n \n7.15\n \n7.20\n \n7.25\n \n7.30\n \n7.36\n \n7.41\n \n7.46\n \n7.51\n \n7.56\n \n7.61\n \n7.66\n32.5\n \n6.64\n \n6.69\n \n6.74\n \n6.79\n \n6.84\n \n6.89\n \n6.94\n \n6.99\n \n7.04\n \n7.09\n \n7.14\n \n7.19\n \n7.24\n \n7.29\n \n7.34\n \n7.39\n \n7.44\n \n7.49\n \n7.54\n \n7.59\n33.0\n \n6.59\n \n6.64\n \n6.69\n \n6.74\n \n6.79\n \n6.84\n \n6.89\n \n6.93\n \n6.98\n \n7.03\n \n7.08\n \n7.13\n \n7.18\n \n7.23\n \n7.28\n \n7.33\n \n7.38\n \n7.43\n \n7.48\n \n7.53\n33.5\n \n6.53\n \n6.58\n \n6.63\n \n6.68\n \n6.73\n \n6.78\n \n6.83\n \n6.88\n \n6.93\n \n6.98\n \n7.02\n \n7.07\n \n7.12\n \n7.17\n \n7.22\n \n7.27\n \n7.32\n \n7.37\n \n7.42\n \n7.47\n34.0\n \n6.48\n \n6.53\n \n6.57\n \n6.62\n \n6.67\n \n6.72\n \n6.77\n \n6.82\n \n6.87\n \n6.92\n \n6.97\n \n7.02\n \n7.06\n \n7.11\n \n7.16\n \n7.21\n \n7.26\n \n7.31\n \n7.36\n \n7.41\n34.5\n \n6.42\n \n6.47\n \n6.52\n \n6.57\n \n6.62\n \n6.67\n \n6.71\n \n6.76\n \n6.81\n \n6.86\n \n6.91\n \n6.96\n \n7.01\n \n7.06\n \n7.10\n \n7.15\n \n7.20\n \n7.25\n \n7.30\n \n7.35\n35.0\n \n6.37\n \n6.42\n \n6.47\n \n6.51\n \n6.56\n \n6.61\n \n6.66\n \n6.71\n \n6.76\n \n6.80\n \n6.85\n \n6.90\n \n6.95\n \n7.00\n \n7.05\n \n7.09\n \n7.14\n \n7.19\n \n7.24\n \n7.29\n35.5\n \n6.32\n \n6.36\n \n6.41\n \n6.46\n \n6.51\n \n6.56\n \n6.60\n \n6.65\n \n6.70\n \n6.75\n \n6.80\n \n6.84\n \n6.89\n \n6.94\n \n6.99\n \n7.04\n \n7.08\n \n7.13\n \n7.18\n \n7.23\n36.0\n \n6.26\n \n6.31\n \n6.36\n \n6.41\n \n6.45\n \n6.50\n \n6.55\n \n6.60\n \n6.65\n \n6.69\n \n6.74\n \n6.79\n \n6.84\n \n6.88\n \n6.93\n \n6.98\n \n7.03\n \n7.08\n \n7.12\n \n7.17\n36.5\n \n6.21\n \n6.26\n \n6.31\n \n6.35\n \n6.40\n \n6.45\n \n6.50\n \n6.54\n \n6.59\n \n6.64\n \n6.69\n \n6.73\n \n6.78\n \n6.83\n \n6.88\n \n6.92\n \n6.97\n \n7.02\n \n7.07\n \n7.11\n37.0\n \n6.16\n \n6.21\n \n6.26\n \n6.30\n \n6.35\n \n6.40\n \n6.44\n \n6.49\n \n6.54\n \n6.59\n \n6.63\n \n6.68\n \n6.73\n \n6.77\n \n6.82\n \n6.87\n \n6.92\n \n6.96\n \n7.01\n \n7.06\n37.5\n \n6.11\n \n6.16\n \n6.20\n \n6.25\n \n6.30\n \n6.35\n \n6.39\n \n6.44\n \n6.49\n \n6.53\n \n6.58\n \n6.63\n \n6.67\n \n6.72\n \n6.77\n \n6.81\n \n6.86\n \n6.91\n \n6.95\n \n7.00\n38.0\n \n6.06\n \n6.11\n \n6.15\n \n6.20\n \n6.25\n \n6.29\n \n6.34\n \n6.39\n \n6.43\n \n6.48\n \n6.53\n \n6.57\n \n6.62\n \n6.67\n \n6.71\n \n6.76\n \n6.81\n \n6.85\n \n6.90\n \n6.95\n38.5\n \n6.01\n \n6.06\n \n6.10\n \n6.15\n \n6.20\n \n6.24\n \n6.29\n \n6.34\n \n6.38\n \n6.43\n \n6.47\n \n6.52\n \n6.57\n \n6.61\n \n6.66\n \n6.71\n \n6.75\n \n6.80\n \n6.84\n ",
+        "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
+        "score": 0.55111220387215,
+        "title": "USGS TM 9-A6.2 — Dissolved Oxygen (2020)"
+      },
+      {
+        "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__4c5e9d344235",
+        "text": "\nsions of NFM chapters are available in the USGS Publications\nWarehouse at https://pubs.er.usgs.gov. Comments, questions,\nand suggestions related to the NFM can be addressed to\nnfm@usgs.gov.\n1.1 Overview of Dissolved Oxygen\nThe concentration of DO in water is affected by many\nfactors, including ambient temperature, atmospheric pressure,\nand ion activity (ionic strength of the water body). Accuratedissolved-oxygen data are essential for understanding and\ndocumenting effects on environmental water resources that\nresult from natural phenomena and human activities. Sources\nof DO in water include atmospheric aeration and photo-\nsynthetic activities of aquatic plants. Sinks of DO in water\ninclude respiration, aerobic decomposition processes, ammo-\nnia nitrification, and other chemical and biological reactions.\nMany chemical and biological reactions in groundwater and\nsurface water depend on the amount of available oxygen.\nThe presence of DO in aquatic systems is necessary for the\nsurvival and growth of many aquatic organisms and is used as\nan indicator of the health and geochemical quality of surface\nwater and groundwater systems.\nDISSOLVED OXYGEN: Molecular oxygen (oxygen gas)\ndissolved in water.\nStandard procedures used by the USGS to determine\nconcentrations of DO in surface water and groundwater involve\nthe use of luminescence-based optical sensors, or spectro-\nphoometric methods of analysis. Before the advent in the 2000s\nof optical sensors for DO measurement, the amperometric\n(Clark cell) sensor was used. Optical sensors have replaced\nthe amperometric type of sensor. The amperometric sensor\nis an acceptable method for use in the measurement of DO;\nhowever, barring any project-specific requirements, optical\nsensors should be considered the standard field method. The\niodometric (Winkler) method is no longer used by the USGS\nfor routine measurement of DO at field sites, but remains an\nacceptable method for verifying the results of DO measure-\nments made with other methods.\nThe selection of field equipment and measurement\nmethods takes into consideration (1) whether equipment\nwill be used at multiple and discrete locations and times or\nbe deployed at a single location over a period during which\nit will be unattended, (2) anticipated environmental condi-\ntions, (3) the specific data-quality objectives of the data-\ncollection program, and (4) specific program objectives. The",
+        "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
+        "score": 0.5482970908797065,
+        "title": "USGS TM 9-A6.2 — Dissolved Oxygen (2020)"
+      },
+      {
+        "id": "cer-water-quality-guidance-v2-excerpt.md__7ec34a96478c",
+        "text": "): Temperature little change; DO little change; ORP decrease;\n  Salinity / SC slight increase near source; pH strong increase; Turbidity increase. Key\n  discriminator: pH rise with turbidity near construction.\n- Dredging or construction resuspension: Temperature little change; DO slight decrease; ORP slight\n  decrease; Salinity / SC little change; pH slight decrease; Turbidity strong increase. Key  discriminator: turbidity during working hours, often weekdays.\n- Hypoxia or fish-kill conditions: Temperature often increase; DO near zero; ORP strong decrease,\n  negative; Salinity / SC little change; pH decrease; Turbidity variable. Key discriminator: DO and\n  ORP bottoming out together.\n- Oil or fuel spill: Temperature little change; DO little change; ORP little change; Salinity / SC\n  little change; pH little change; Turbidity little change or slight increase. Key discriminator:\n  largely undetectable with DataPod sensors (Section 10).",
+        "source": "cer-water-quality-guidance-v2-excerpt.md",
+        "score": 0.5481259694420201,
+        "title": "Clean Earth Rovers Water Quality Guidance v2.0 (CER internal synthesis, 2026-09-16) - Excerpt"
+      },
+      {
+        "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__3dacebd1adf3",
+        "text": "-concentration data for groundwa-\nter at a time when sensor methods were not capable of in\nsitu measurement.\nAs mentioned previously, USGS technical staff have doc-\numented optical sensor measurements at DO concentrations\nof 0.03 mg/L and spectrophotometric readings by using either\nRhodazine D or Indigo Carmine to be of comparable accuracy.\nData are shown in appendix 1. Comparisons between optical-- 21 of 44 --",
+        "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
+        "score": 0.5444769486029064,
+        "title": "USGS TM 9-A6.2 — Dissolved Oxygen (2020)"
+      },
+      {
+        "id": "usgs-nfm-a6.4-ph.pdf__bf409c014f85",
+        "text": "ic chloride is used as a\nflocculating agent in waste-\nwater-treatment plants, for\nexample.\nFerric chloride affects the glass\nbulb membrane of the pH\nelectrode, deactivating many\nof the sensing sites on the\nglass surface.\nConsult the manufacturer for\ninformation on (1) selecting\npH electrodes that can\nwithstand this environment;\nand (or) (2) specific cleaning\nprocedures for the glass bulb\nmembrane.-- 14 of 32 --",
+        "source": "https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf",
+        "score": 0.5438750169486972,
+        "title": "USGS TM 9-A6.4 — Measurement of pH (2021)"
+      },
+      {
+        "id": "usgs-nfm-a6.2-dissolved-oxygen.pdf__2d5d863cf1da",
+        "text": "-- 24 of 44 --5.0 Correction Factors for Oxygen Solubility and Salinity \t17\naccuracy of the DO concentration to be reported. Repeat\nsteps 9 and 10 twice in rapid succession to document\nmeasurement precision. Make a total of three measure-\nments to document the precision of the method.\n12. \tTo document the variability of DO concentrations within\nthe water system being measured, repeat the measure-\nment on three sequentially collected samples.\nDo not exceed time interval specified by manufacturer\nfor completion of DO measurement when using Rhoda-\nzine D or Indigo Carmine reagents.\n4.0 \tReporting\nUSGS personnel are instructed to enter the DO value on\nfield forms or into electronic records indicating the method\ncode (optical, spectrophotometric, other) appropriate for the\nmethod used for DO measurement.\nDO concentrations for the optical-sensor method are\nreported to the nearest 0.1 mg/L and stored to the nearest\n0.01 mg/L.\nDO concentrations for the spectrophotometric/Rhodazine\nD and Indigo Carmine methods are reported and stored to the\nnearest 0.01 mg/L.\nNote that the percentage of DO saturation in water can\nbe greater than 100 as a result of nonequilibrium conditions\ninduced by photosynthesis and oxygen exchange with the\natmosphere. When the concentration exceeds 20 mg/L, check\nthe sensor manufacturer’s specifications and:\n• Report “> the listed numerical limit” if the concentra-\ntion exceeds the manufacturer’s specified sensor range.\n5.0 \tCorrection Factors for Oxygen\nSolubility and Salinity\nSolubility concentrations of oxygen in freshwater at\nvarious temperatures and pressures (table 6.2–2, at end of\nchapter) and correction factors for salinity based on specific\nconductance (table 6.2–4, at end of chapter) were generated\nfrom the equations of Benson and Krause (1980, 1984) and\ncan be customized to cover the range and number of decimal\nplaces needed; see U.S. Geological Survey Office of Water\nQuality Technical Memorandum 2011.03 (U.S. Geological\nSurvey, 2011). By accessing “DOTABLES” at https://water.\nusgs.gov/software/DOTABLES/, the interactive software that\ngenerated tables 6.2–2 and 6.2–4 (at end of chapter) the user\ncan self-generate individual values or tables of a specific range\nof oxygen-solubility and salinity correction factors.\nTo adjust freshwater oxygen-solubility values for the\neffects of salinity, use correction factors based on specific\nconductance. Report the corrected values. Refer to the manu-\nfacturer’s instructions for the DO instrument before applying\na salinity correction. Most multiparameter instruments that\ninclude DO and specific-conductance sensors automatically\ncorrect the DO reading for salinity if needed, unless the fea-\nture is turned off by the user.\nCorrecting DO solubility for saline waters (specific\nconductance greater than 2,000 μS/cm) varies with instru-\nment type, calibration method, and the salts in solution. The\ncorrection based on specific conductance (table 6.2–4, at end\nof chapter) is useful because accurate conductivity can be\ndetermined easily from a field measurement.\nExample salinity correction:\nConsider a DO measurement made in water with a\ntemp-erature of 20.0 °C, an atmospheric pressure of 750 mm",
+        "source": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
+        "score": 0.5425969378636296,
+        "title": "USGS TM 9-A6.2 — Dissolved Oxygen (2020)"
+      },
+      {
+        "id": "usgs-nfm-a6.8-multiparameter-instruments.pdf__715b5374f700",
+        "text": "-- 10 of 24 --2.0 Equipment and Supplies \t3\nfor the determination of water temperature, specific electrical\nconductance (SC), pH, dissolved-oxygen (DO) concentration\nand turbidity are commonly bundled in sondes used for USGS\nwater-quality studies. Permanent sensors for measuring baro-\nmetric pressure (for use with a DO sensor), water depth (either\nvented or unvented), and location (global positioning systems)\neither are standard equipment with many multiparameter\ninstruments or can be added at extra cost. Nonpermanent\nsensors for measuring oxidation-reduction potential (Eh), fluo-\nrescence1, velocity, and concentrations of nitrate, ammonia,\nammonium, chloride, and chlorophyll can be added to many\nsondes through use of sensor ports. The types and number of\nsensors that can be bundled in a given sonde depend on the\nnumber of ports available in an instrument model, typically\nfour to seven. When selecting a sensor, consult the manufac-\nturer’s recommendations and specifications for the instrument,\ntaking into consideration the environmental conditions to be\nencountered, the data-quality objectives of the study, and the\nspecific benefit of a particular sensor technology that could be\napplicable to the anticipated field conditions.\nTable 6.8–2 lists the equipment specifications required\nwhen making field measurements with a multiparameter\ninstrument. Table 6.8–3 lists the specifications for calibration\n1Fluorescence sensors indicate different algal pigment concentrations; see\nNFM chapter A7.4 and Booth and others (2023) for additional information.\nsolutions required when using multiparameter instruments.\nThe requirements in tables 6.8–2 and 6.8–3 may be modified\nto fit specific project needs. Ancillary supplies and equipment\nneeded to measure field properties with multiparameter instru-\nments (table 6.8–4) are the same as or similar to those required\nfor the calibration and maintenance of single-parameter\ninstruments, and are discussed in detail in the individual field-\nmeasurement chapters (NFM chapters A6.1 through A6.7).\n2.1 Equipment Transport\nMultiparameter instruments have become more robust\nwith time, but the sensors can easily be damaged if handled\nimproperly. Some sensors require storage and transporta-\ntion in a wet/moist environment, whereas others do not,\ncheck the manufacturer’s recommendations. Sondes should\nnot be exposed to extreme heat or cold. Transport in a case\nthat is designed to protect the equipment following the\nmanufacturer’s recommendations is best. For transportation\nand storage, use a padded case that protects the sonde from\nshock. The padding should be of a type that will not absorb\nwater. Hard-sided cases should be equipped with a vent so\nthat internal pressure can equalize with that of the atmosphere.\nDo not expose the case to direct sunlight in order to avoid\nsolar heating of the equipment inside.\nTable 6.8–2. \tSpecifications for multiparameter instruments.\n[±, plus or minus; mV, millivolt; −, minus; +, plus; °C, degrees Celsius; SC, specific electrical conductance; μS/cm, microsiemens per centimeter at 25 °C; DO,",
+        "source": "https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf",
+        "score": 0.541843421353541,
+        "title": "USGS TM 9-A6.8 — Use of Multiparameter Instruments for Routine Field Measurements (version 1.1, 6/2025)"
+      },
+      {
+        "id": "usgs-nfm-a6.1-temperature.pdf__51e9de758232",
+        "text": "erated water bath\n• Soap solution, 0.1–0.2%, non-phosphate\nlaboratory detergent\n• Deionized water (1 liter), ASTM type 2 or better\n• Flowthrough chamber (for groundwater applications\nas an alternative to multiparameter instruments with\ndownhole capabilities)\n• Paper tissues, disposable, soft, and lint-free\n• Logbook, for recording all calibrations, maintenance,\nand repairs, may be digital or paper-- 11 of 23 --",
+        "source": "https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf",
+        "score": 0.5405129589839766,
+        "title": "USGS TM 9-A6.1 — Temperature (2024)"
+      }
+    ],
+    "usage": {
+      "promptTokens": 59576,
+      "completionTokens": 613,
+      "totalTokens": 60189,
+      "cachedPromptTokens": 20480
+    },
+    "tool_calls": [
+      {
+        "handle": "T1",
+        "raw_arguments": "{\"aggregation\": \"series\", \"metric\": \"all\", \"time_range\": \"last 3 days\"}",
+        "round": 1,
+        "name": "query_sensor_data",
+        "arguments": {
+          "aggregation": "series",
+          "metric": "all",
+          "time_range": "last 3 days",
+          "device": "dev:100000000000003"
+        },
+        "result": {
+          "device": {
+            "name": "Lakeside Buoy 2026",
+            "label": "dev:100000000000003",
+            "operating_environment": "fresh-water",
+            "history_withheld": [
+              {
+                "label": "dev:100000000000004",
+                "reason": "not visible to this account"
+              },
+              {
+                "label": "dev:100000000000005",
+                "reason": "not visible to this account"
+              },
+              {
+                "label": "dev:100000000000018",
+                "reason": "not visible to this account"
+              },
+              {
+                "label": "dev:100000000000019",
+                "reason": "not visible to this account"
+              }
+            ]
+          },
+          "metric": "all",
+          "aggregation": "series",
+          "current_site_last_reported": "2026-09-29T04:48:57.000Z",
+          "time_range_requested": "last 3 days",
+          "time_range_resolved": {
+            "start": "2026-09-26T04:48:57.000Z",
+            "end": "2026-09-29T04:48:57.000Z",
+            "label": "last 3 days"
+          },
+          "position": {
+            "latitude": 44.04498339974526,
+            "longitude": -83.39765917318277,
+            "location": "Lakeside MI"
+          },
+          "window_actually_searched": {
+            "start": "1970-01-01T00:00:00.000Z",
+            "end": "2026-09-29T05:38:45.539Z",
+            "complete": true
+          },
+          "device_last_reported": "2026-09-29T04:48:57.000Z",
+          "device_last_reported_age": "50 minutes",
+          "device_last_reported_stale": false,
+          "metrics": {
+            "dissolved_oxygen": {
+              "unit": "mg/L",
+              "value": null,
+              "n_samples": 73,
+              "excluded_faulted": 0,
+              "series": [
+                {
+                  "start": "2026-09-26T04:00:00.000Z",
+                  "end": "2026-09-26T06:00:00.000Z",
+                  "mean": 6.9525,
+                  "min": 6.754,
+                  "max": 7.151,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T06:00:00.000Z",
+                  "end": "2026-09-26T08:00:00.000Z",
+                  "mean": 6.804,
+                  "min": 6.779,
+                  "max": 6.829,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T08:00:00.000Z",
+                  "end": "2026-09-26T10:00:00.000Z",
+                  "mean": 6.539,
+                  "min": 6.47,
+                  "max": 6.608,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T10:00:00.000Z",
+                  "end": "2026-09-26T12:00:00.000Z",
+                  "mean": 7.0335,
+                  "min": 6.765,
+                  "max": 7.302,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T12:00:00.000Z",
+                  "end": "2026-09-26T14:00:00.000Z",
+                  "mean": 7.9030000000000005,
+                  "min": 7.192,
+                  "max": 8.614,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T14:00:00.000Z",
+                  "end": "2026-09-26T16:00:00.000Z",
+                  "mean": 8.9725,
+                  "min": 8.959,
+                  "max": 8.986,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T16:00:00.000Z",
+                  "end": "2026-09-26T18:00:00.000Z",
+                  "mean": 9.849,
+                  "min": 9.467,
+                  "max": 10.231,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T18:00:00.000Z",
+                  "end": "2026-09-26T20:00:00.000Z",
+                  "mean": 10.3285,
+                  "min": 10.089,
+                  "max": 10.568,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T20:00:00.000Z",
+                  "end": "2026-09-26T22:00:00.000Z",
+                  "mean": 10.4315,
+                  "min": 9.862,
+                  "max": 11.001,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T22:00:00.000Z",
+                  "end": "2026-09-27T00:00:00.000Z",
+                  "mean": 10.454,
+                  "min": 9.93,
+                  "max": 10.978,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T00:00:00.000Z",
+                  "end": "2026-09-27T02:00:00.000Z",
+                  "mean": 9.1065,
+                  "min": 8.942,
+                  "max": 9.271,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T02:00:00.000Z",
+                  "end": "2026-09-27T04:00:00.000Z",
+                  "mean": 8.488,
+                  "min": 7.803,
+                  "max": 9.173,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T04:00:00.000Z",
+                  "end": "2026-09-27T06:00:00.000Z",
+                  "mean": 7.4585,
+                  "min": 7.354,
+                  "max": 7.563,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T06:00:00.000Z",
+                  "end": "2026-09-27T08:00:00.000Z",
+                  "mean": 7.225,
+                  "min": 6.958,
+                  "max": 7.492,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T08:00:00.000Z",
+                  "end": "2026-09-27T10:00:00.000Z",
+                  "mean": 3.2135,
+                  "min": 0,
+                  "max": 6.427,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T10:00:00.000Z",
+                  "end": "2026-09-27T12:00:00.000Z",
+                  "mean": 7.019500000000001,
+                  "min": 6.719,
+                  "max": 7.32,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T12:00:00.000Z",
+                  "end": "2026-09-27T14:00:00.000Z",
+                  "mean": 7.4544999999999995,
+                  "min": 6.835,
+                  "max": 8.074,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T14:00:00.000Z",
+                  "end": "2026-09-27T16:00:00.000Z",
+                  "mean": 9.259,
+                  "min": 9.076,
+                  "max": 9.442,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T16:00:00.000Z",
+                  "end": "2026-09-27T18:00:00.000Z",
+                  "mean": 9.6185,
+                  "min": 9.588,
+                  "max": 9.649,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T18:00:00.000Z",
+                  "end": "2026-09-27T20:00:00.000Z",
+                  "mean": 10.48,
+                  "min": 10.209,
+                  "max": 10.751,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T20:00:00.000Z",
+                  "end": "2026-09-27T22:00:00.000Z",
+                  "mean": 10.368500000000001,
+                  "min": 10.091,
+                  "max": 10.646,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T22:00:00.000Z",
+                  "end": "2026-09-28T00:00:00.000Z",
+                  "mean": 9.8855,
+                  "min": 9.171,
+                  "max": 10.6,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T00:00:00.000Z",
+                  "end": "2026-09-28T02:00:00.000Z",
+                  "mean": 9.698,
+                  "min": 9.321,
+                  "max": 10.075,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T02:00:00.000Z",
+                  "end": "2026-09-28T04:00:00.000Z",
+                  "mean": 8.038,
+                  "min": 7.918,
+                  "max": 8.158,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T04:00:00.000Z",
+                  "end": "2026-09-28T06:00:00.000Z",
+                  "mean": 7.4645,
+                  "min": 7.122,
+                  "max": 7.807,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T06:00:00.000Z",
+                  "end": "2026-09-28T08:00:00.000Z",
+                  "mean": 6.1455,
+                  "min": 6.033,
+                  "max": 6.258,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T08:00:00.000Z",
+                  "end": "2026-09-28T10:00:00.000Z",
+                  "mean": 6.1905,
+                  "min": 6.158,
+                  "max": 6.223,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T10:00:00.000Z",
+                  "end": "2026-09-28T12:00:00.000Z",
+                  "mean": 6.8225,
+                  "min": 6.74,
+                  "max": 6.905,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T12:00:00.000Z",
+                  "end": "2026-09-28T14:00:00.000Z",
+                  "mean": 7.2445,
+                  "min": 6.936,
+                  "max": 7.553,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T14:00:00.000Z",
+                  "end": "2026-09-28T16:00:00.000Z",
+                  "mean": 8.475000000000001,
+                  "min": 8.316,
+                  "max": 8.634,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T16:00:00.000Z",
+                  "end": "2026-09-28T18:00:00.000Z",
+                  "mean": 9.901,
+                  "min": 9.665,
+                  "max": 10.137,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T18:00:00.000Z",
+                  "end": "2026-09-28T20:00:00.000Z",
+                  "mean": 10.665,
+                  "min": 10.536,
+                  "max": 10.794,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T20:00:00.000Z",
+                  "end": "2026-09-28T22:00:00.000Z",
+                  "mean": 10.622499999999999,
+                  "min": 10.6,
+                  "max": 10.645,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T22:00:00.000Z",
+                  "end": "2026-09-29T00:00:00.000Z",
+                  "mean": 10.401,
+                  "min": 9.985,
+                  "max": 10.817,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T00:00:00.000Z",
+                  "end": "2026-09-29T02:00:00.000Z",
+                  "mean": 9.438500000000001,
+                  "min": 9.025,
+                  "max": 9.852,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T02:00:00.000Z",
+                  "end": "2026-09-29T04:00:00.000Z",
+                  "mean": 7.6845,
+                  "min": 7.339,
+                  "max": 8.03,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T04:00:00.000Z",
+                  "end": "2026-09-29T06:00:00.000Z",
+                  "mean": 7.742,
+                  "min": 7.742,
+                  "max": 7.742,
+                  "n": 1
+                }
+              ],
+              "bucket_ms": 7200000
+            },
+            "orp": {
+              "unit": "mV",
+              "value": null,
+              "n_samples": 73,
+              "excluded_faulted": 0,
+              "series": [
+                {
+                  "start": "2026-09-26T04:00:00.000Z",
+                  "end": "2026-09-26T06:00:00.000Z",
+                  "mean": 268.35,
+                  "min": 255.6,
+                  "max": 281.1,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T06:00:00.000Z",
+                  "end": "2026-09-26T08:00:00.000Z",
+                  "mean": 246.1,
+                  "min": 228.8,
+                  "max": 263.4,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T08:00:00.000Z",
+                  "end": "2026-09-26T10:00:00.000Z",
+                  "mean": 242.85000000000002,
+                  "min": 193.1,
+                  "max": 292.6,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T10:00:00.000Z",
+                  "end": "2026-09-26T12:00:00.000Z",
+                  "mean": 228.5,
+                  "min": 213.3,
+                  "max": 243.7,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T12:00:00.000Z",
+                  "end": "2026-09-26T14:00:00.000Z",
+                  "mean": 266.95,
+                  "min": 259.7,
+                  "max": 274.2,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T14:00:00.000Z",
+                  "end": "2026-09-26T16:00:00.000Z",
+                  "mean": 240.55,
+                  "min": 238.4,
+                  "max": 242.7,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T16:00:00.000Z",
+                  "end": "2026-09-26T18:00:00.000Z",
+                  "mean": 274.54999999999995,
+                  "min": 260.4,
+                  "max": 288.7,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T18:00:00.000Z",
+                  "end": "2026-09-26T20:00:00.000Z",
+                  "mean": 211.55,
+                  "min": 186.6,
+                  "max": 236.5,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T20:00:00.000Z",
+                  "end": "2026-09-26T22:00:00.000Z",
+                  "mean": 232.5,
+                  "min": 217.4,
+                  "max": 247.6,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T22:00:00.000Z",
+                  "end": "2026-09-27T00:00:00.000Z",
+                  "mean": 286.45,
+                  "min": 284.7,
+                  "max": 288.2,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T00:00:00.000Z",
+                  "end": "2026-09-27T02:00:00.000Z",
+                  "mean": 273.3,
+                  "min": 273,
+                  "max": 273.6,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T02:00:00.000Z",
+                  "end": "2026-09-27T04:00:00.000Z",
+                  "mean": 211.05,
+                  "min": 199.2,
+                  "max": 222.9,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T04:00:00.000Z",
+                  "end": "2026-09-27T06:00:00.000Z",
+                  "mean": 253.5,
+                  "min": 241,
+                  "max": 266,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T06:00:00.000Z",
+                  "end": "2026-09-27T08:00:00.000Z",
+                  "mean": 254.4,
+                  "min": 218.2,
+                  "max": 290.6,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T08:00:00.000Z",
+                  "end": "2026-09-27T10:00:00.000Z",
+                  "mean": 229.2,
+                  "min": 211.1,
+                  "max": 247.3,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T10:00:00.000Z",
+                  "end": "2026-09-27T12:00:00.000Z",
+                  "mean": 258.45000000000005,
+                  "min": 256.6,
+                  "max": 260.3,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T12:00:00.000Z",
+                  "end": "2026-09-27T14:00:00.000Z",
+                  "mean": 188.8,
+                  "min": 187.3,
+                  "max": 190.3,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T14:00:00.000Z",
+                  "end": "2026-09-27T16:00:00.000Z",
+                  "mean": 216.45,
+                  "min": 209.1,
+                  "max": 223.8,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T16:00:00.000Z",
+                  "end": "2026-09-27T18:00:00.000Z",
+                  "mean": 243.60000000000002,
+                  "min": 234.3,
+                  "max": 252.9,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T18:00:00.000Z",
+                  "end": "2026-09-27T20:00:00.000Z",
+                  "mean": 234,
+                  "min": 203,
+                  "max": 265,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T20:00:00.000Z",
+                  "end": "2026-09-27T22:00:00.000Z",
+                  "mean": 222.35,
+                  "min": 212.1,
+                  "max": 232.6,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T22:00:00.000Z",
+                  "end": "2026-09-28T00:00:00.000Z",
+                  "mean": 232.35,
+                  "min": 204.5,
+                  "max": 260.2,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T00:00:00.000Z",
+                  "end": "2026-09-28T02:00:00.000Z",
+                  "mean": 239.25,
+                  "min": 223.5,
+                  "max": 255,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T02:00:00.000Z",
+                  "end": "2026-09-28T04:00:00.000Z",
+                  "mean": 257.85,
+                  "min": 233.6,
+                  "max": 282.1,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T04:00:00.000Z",
+                  "end": "2026-09-28T06:00:00.000Z",
+                  "mean": 218.3,
+                  "min": 204.9,
+                  "max": 231.7,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T06:00:00.000Z",
+                  "end": "2026-09-28T08:00:00.000Z",
+                  "mean": 222.6,
+                  "min": 188.5,
+                  "max": 256.7,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T08:00:00.000Z",
+                  "end": "2026-09-28T10:00:00.000Z",
+                  "mean": 224.65,
+                  "min": 191,
+                  "max": 258.3,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T10:00:00.000Z",
+                  "end": "2026-09-28T12:00:00.000Z",
+                  "mean": 252.95,
+                  "min": 221.2,
+                  "max": 284.7,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T12:00:00.000Z",
+                  "end": "2026-09-28T14:00:00.000Z",
+                  "mean": 276.05,
+                  "min": 261,
+                  "max": 291.1,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T14:00:00.000Z",
+                  "end": "2026-09-28T16:00:00.000Z",
+                  "mean": 203.64999999999998,
+                  "min": 194.2,
+                  "max": 213.1,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T16:00:00.000Z",
+                  "end": "2026-09-28T18:00:00.000Z",
+                  "mean": 204.85,
+                  "min": 189,
+                  "max": 220.7,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T18:00:00.000Z",
+                  "end": "2026-09-28T20:00:00.000Z",
+                  "mean": 211.05,
+                  "min": 210.6,
+                  "max": 211.5,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T20:00:00.000Z",
+                  "end": "2026-09-28T22:00:00.000Z",
+                  "mean": 219.35,
+                  "min": 219.2,
+                  "max": 219.5,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T22:00:00.000Z",
+                  "end": "2026-09-29T00:00:00.000Z",
+                  "mean": 224.9,
+                  "min": 203.3,
+                  "max": 246.5,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T00:00:00.000Z",
+                  "end": "2026-09-29T02:00:00.000Z",
+                  "mean": 260.25,
+                  "min": 249.7,
+                  "max": 270.8,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T02:00:00.000Z",
+                  "end": "2026-09-29T04:00:00.000Z",
+                  "mean": 277.4,
+                  "min": 268.9,
+                  "max": 285.9,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T04:00:00.000Z",
+                  "end": "2026-09-29T06:00:00.000Z",
+                  "mean": 181.1,
+                  "min": 181.1,
+                  "max": 181.1,
+                  "n": 1
+                }
+              ],
+              "bucket_ms": 7200000
+            },
+            "ph": {
+              "unit": "unitless",
+              "value": null,
+              "n_samples": 73,
+              "excluded_faulted": 0,
+              "series": [
+                {
+                  "start": "2026-09-26T04:00:00.000Z",
+                  "end": "2026-09-26T06:00:00.000Z",
+                  "mean": 7.7425,
+                  "min": 7.721,
+                  "max": 7.764,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T06:00:00.000Z",
+                  "end": "2026-09-26T08:00:00.000Z",
+                  "mean": 7.7684999999999995,
+                  "min": 7.693,
+                  "max": 7.844,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T08:00:00.000Z",
+                  "end": "2026-09-26T10:00:00.000Z",
+                  "mean": 7.7935,
+                  "min": 7.775,
+                  "max": 7.812,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T10:00:00.000Z",
+                  "end": "2026-09-26T12:00:00.000Z",
+                  "mean": 7.660500000000001,
+                  "min": 7.65,
+                  "max": 7.671,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T12:00:00.000Z",
+                  "end": "2026-09-26T14:00:00.000Z",
+                  "mean": 7.965,
+                  "min": 7.947,
+                  "max": 7.983,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T14:00:00.000Z",
+                  "end": "2026-09-26T16:00:00.000Z",
+                  "mean": 7.839,
+                  "min": 7.805,
+                  "max": 7.873,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T16:00:00.000Z",
+                  "end": "2026-09-26T18:00:00.000Z",
+                  "mean": 7.974,
+                  "min": 7.952,
+                  "max": 7.996,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T18:00:00.000Z",
+                  "end": "2026-09-26T20:00:00.000Z",
+                  "mean": 7.9315,
+                  "min": 7.926,
+                  "max": 7.937,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T20:00:00.000Z",
+                  "end": "2026-09-26T22:00:00.000Z",
+                  "mean": 8.052499999999998,
+                  "min": 8.033,
+                  "max": 8.072,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T22:00:00.000Z",
+                  "end": "2026-09-27T00:00:00.000Z",
+                  "mean": 7.969,
+                  "min": 7.948,
+                  "max": 7.99,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T00:00:00.000Z",
+                  "end": "2026-09-27T02:00:00.000Z",
+                  "mean": 7.9165,
+                  "min": 7.912,
+                  "max": 7.921,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T02:00:00.000Z",
+                  "end": "2026-09-27T04:00:00.000Z",
+                  "mean": 7.853,
+                  "min": 7.795,
+                  "max": 7.911,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T04:00:00.000Z",
+                  "end": "2026-09-27T06:00:00.000Z",
+                  "mean": 7.791,
+                  "min": 7.769,
+                  "max": 7.813,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T06:00:00.000Z",
+                  "end": "2026-09-27T08:00:00.000Z",
+                  "mean": 7.648,
+                  "min": 7.634,
+                  "max": 7.662,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T08:00:00.000Z",
+                  "end": "2026-09-27T10:00:00.000Z",
+                  "mean": 7.7135,
+                  "min": 7.66,
+                  "max": 7.767,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T10:00:00.000Z",
+                  "end": "2026-09-27T12:00:00.000Z",
+                  "mean": 7.7765,
+                  "min": 7.729,
+                  "max": 7.824,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T12:00:00.000Z",
+                  "end": "2026-09-27T14:00:00.000Z",
+                  "mean": 7.964,
+                  "min": 7.944,
+                  "max": 7.984,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T14:00:00.000Z",
+                  "end": "2026-09-27T16:00:00.000Z",
+                  "mean": 7.994999999999999,
+                  "min": 7.976,
+                  "max": 8.014,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T16:00:00.000Z",
+                  "end": "2026-09-27T18:00:00.000Z",
+                  "mean": 7.891,
+                  "min": 7.861,
+                  "max": 7.921,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T18:00:00.000Z",
+                  "end": "2026-09-27T20:00:00.000Z",
+                  "mean": 7.9375,
+                  "min": 7.901,
+                  "max": 7.974,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T20:00:00.000Z",
+                  "end": "2026-09-27T22:00:00.000Z",
+                  "mean": 8.077,
+                  "min": 8.007,
+                  "max": 8.147,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T22:00:00.000Z",
+                  "end": "2026-09-28T00:00:00.000Z",
+                  "mean": 7.986000000000001,
+                  "min": 7.951,
+                  "max": 8.021,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T00:00:00.000Z",
+                  "end": "2026-09-28T02:00:00.000Z",
+                  "mean": 8.0545,
+                  "min": 8.038,
+                  "max": 8.071,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T02:00:00.000Z",
+                  "end": "2026-09-28T04:00:00.000Z",
+                  "mean": 7.881,
+                  "min": 7.73,
+                  "max": 8.032,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T04:00:00.000Z",
+                  "end": "2026-09-28T06:00:00.000Z",
+                  "mean": 7.811,
+                  "min": 7.714,
+                  "max": 7.908,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T06:00:00.000Z",
+                  "end": "2026-09-28T08:00:00.000Z",
+                  "mean": 7.702,
+                  "min": 7.629,
+                  "max": 7.775,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T08:00:00.000Z",
+                  "end": "2026-09-28T10:00:00.000Z",
+                  "mean": 7.6585,
+                  "min": 7.629,
+                  "max": 7.688,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T10:00:00.000Z",
+                  "end": "2026-09-28T12:00:00.000Z",
+                  "mean": 7.874499999999999,
+                  "min": 7.842,
+                  "max": 7.907,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T12:00:00.000Z",
+                  "end": "2026-09-28T14:00:00.000Z",
+                  "mean": 7.8345,
+                  "min": 7.794,
+                  "max": 7.875,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T14:00:00.000Z",
+                  "end": "2026-09-28T16:00:00.000Z",
+                  "mean": 7.8705,
+                  "min": 7.821,
+                  "max": 7.92,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T16:00:00.000Z",
+                  "end": "2026-09-28T18:00:00.000Z",
+                  "mean": 8.0145,
+                  "min": 7.957,
+                  "max": 8.072,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T18:00:00.000Z",
+                  "end": "2026-09-28T20:00:00.000Z",
+                  "mean": 7.9265,
+                  "min": 7.895,
+                  "max": 7.958,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T20:00:00.000Z",
+                  "end": "2026-09-28T22:00:00.000Z",
+                  "mean": 7.9855,
+                  "min": 7.903,
+                  "max": 8.068,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T22:00:00.000Z",
+                  "end": "2026-09-29T00:00:00.000Z",
+                  "mean": 8.01,
+                  "min": 7.921,
+                  "max": 8.099,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T00:00:00.000Z",
+                  "end": "2026-09-29T02:00:00.000Z",
+                  "mean": 7.9825,
+                  "min": 7.86,
+                  "max": 8.105,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T02:00:00.000Z",
+                  "end": "2026-09-29T04:00:00.000Z",
+                  "mean": 7.9785,
+                  "min": 7.976,
+                  "max": 7.981,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T04:00:00.000Z",
+                  "end": "2026-09-29T06:00:00.000Z",
+                  "mean": 7.9,
+                  "min": 7.9,
+                  "max": 7.9,
+                  "n": 1
+                }
+              ],
+              "bucket_ms": 7200000
+            },
+            "conductivity": {
+              "unit": "µS/cm",
+              "value": null,
+              "n_samples": 73,
+              "excluded_faulted": 0,
+              "series": [
+                {
+                  "start": "2026-09-26T04:00:00.000Z",
+                  "end": "2026-09-26T06:00:00.000Z",
+                  "mean": 467,
+                  "min": 417,
+                  "max": 517,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T06:00:00.000Z",
+                  "end": "2026-09-26T08:00:00.000Z",
+                  "mean": 446.5,
+                  "min": 406,
+                  "max": 487,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T08:00:00.000Z",
+                  "end": "2026-09-26T10:00:00.000Z",
+                  "mean": 440.5,
+                  "min": 397,
+                  "max": 484,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T10:00:00.000Z",
+                  "end": "2026-09-26T12:00:00.000Z",
+                  "mean": 358,
+                  "min": 355,
+                  "max": 361,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T12:00:00.000Z",
+                  "end": "2026-09-26T14:00:00.000Z",
+                  "mean": 487,
+                  "min": 464,
+                  "max": 510,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T14:00:00.000Z",
+                  "end": "2026-09-26T16:00:00.000Z",
+                  "mean": 490,
+                  "min": 449,
+                  "max": 531,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T16:00:00.000Z",
+                  "end": "2026-09-26T18:00:00.000Z",
+                  "mean": 454.5,
+                  "min": 414,
+                  "max": 495,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T18:00:00.000Z",
+                  "end": "2026-09-26T20:00:00.000Z",
+                  "mean": 365.5,
+                  "min": 363,
+                  "max": 368,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T20:00:00.000Z",
+                  "end": "2026-09-26T22:00:00.000Z",
+                  "mean": 500,
+                  "min": 477,
+                  "max": 523,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T22:00:00.000Z",
+                  "end": "2026-09-27T00:00:00.000Z",
+                  "mean": 450.5,
+                  "min": 434,
+                  "max": 467,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T00:00:00.000Z",
+                  "end": "2026-09-27T02:00:00.000Z",
+                  "mean": 478,
+                  "min": 438,
+                  "max": 518,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T02:00:00.000Z",
+                  "end": "2026-09-27T04:00:00.000Z",
+                  "mean": 468.5,
+                  "min": 449,
+                  "max": 488,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T04:00:00.000Z",
+                  "end": "2026-09-27T06:00:00.000Z",
+                  "mean": 496,
+                  "min": 480,
+                  "max": 512,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T06:00:00.000Z",
+                  "end": "2026-09-27T08:00:00.000Z",
+                  "mean": 486,
+                  "min": 457,
+                  "max": 515,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T08:00:00.000Z",
+                  "end": "2026-09-27T10:00:00.000Z",
+                  "mean": 409.5,
+                  "min": 361,
+                  "max": 458,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T10:00:00.000Z",
+                  "end": "2026-09-27T12:00:00.000Z",
+                  "mean": 390.5,
+                  "min": 387,
+                  "max": 394,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T12:00:00.000Z",
+                  "end": "2026-09-27T14:00:00.000Z",
+                  "mean": 396,
+                  "min": 353,
+                  "max": 439,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T14:00:00.000Z",
+                  "end": "2026-09-27T16:00:00.000Z",
+                  "mean": 455.5,
+                  "min": 364,
+                  "max": 547,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T16:00:00.000Z",
+                  "end": "2026-09-27T18:00:00.000Z",
+                  "mean": 530.5,
+                  "min": 518,
+                  "max": 543,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T18:00:00.000Z",
+                  "end": "2026-09-27T20:00:00.000Z",
+                  "mean": 527,
+                  "min": 513,
+                  "max": 541,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T20:00:00.000Z",
+                  "end": "2026-09-27T22:00:00.000Z",
+                  "mean": 423.5,
+                  "min": 360,
+                  "max": 487,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T22:00:00.000Z",
+                  "end": "2026-09-28T00:00:00.000Z",
+                  "mean": 454,
+                  "min": 380,
+                  "max": 528,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T00:00:00.000Z",
+                  "end": "2026-09-28T02:00:00.000Z",
+                  "mean": 461.5,
+                  "min": 453,
+                  "max": 470,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T02:00:00.000Z",
+                  "end": "2026-09-28T04:00:00.000Z",
+                  "mean": 403.5,
+                  "min": 388,
+                  "max": 419,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T04:00:00.000Z",
+                  "end": "2026-09-28T06:00:00.000Z",
+                  "mean": 380.5,
+                  "min": 356,
+                  "max": 405,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T06:00:00.000Z",
+                  "end": "2026-09-28T08:00:00.000Z",
+                  "mean": 484.5,
+                  "min": 438,
+                  "max": 531,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T08:00:00.000Z",
+                  "end": "2026-09-28T10:00:00.000Z",
+                  "mean": 440,
+                  "min": 397,
+                  "max": 483,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T10:00:00.000Z",
+                  "end": "2026-09-28T12:00:00.000Z",
+                  "mean": 425.5,
+                  "min": 393,
+                  "max": 458,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T12:00:00.000Z",
+                  "end": "2026-09-28T14:00:00.000Z",
+                  "mean": 398.5,
+                  "min": 379,
+                  "max": 418,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T14:00:00.000Z",
+                  "end": "2026-09-28T16:00:00.000Z",
+                  "mean": 413,
+                  "min": 411,
+                  "max": 415,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T16:00:00.000Z",
+                  "end": "2026-09-28T18:00:00.000Z",
+                  "mean": 453,
+                  "min": 391,
+                  "max": 515,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T18:00:00.000Z",
+                  "end": "2026-09-28T20:00:00.000Z",
+                  "mean": 476,
+                  "min": 450,
+                  "max": 502,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T20:00:00.000Z",
+                  "end": "2026-09-28T22:00:00.000Z",
+                  "mean": 488,
+                  "min": 461,
+                  "max": 515,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T22:00:00.000Z",
+                  "end": "2026-09-29T00:00:00.000Z",
+                  "mean": 490,
+                  "min": 472,
+                  "max": 508,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T00:00:00.000Z",
+                  "end": "2026-09-29T02:00:00.000Z",
+                  "mean": 491,
+                  "min": 481,
+                  "max": 501,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T02:00:00.000Z",
+                  "end": "2026-09-29T04:00:00.000Z",
+                  "mean": 379,
+                  "min": 374,
+                  "max": 384,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T04:00:00.000Z",
+                  "end": "2026-09-29T06:00:00.000Z",
+                  "mean": 520,
+                  "min": 520,
+                  "max": 520,
+                  "n": 1
+                }
+              ],
+              "bucket_ms": 7200000
+            },
+            "temperature": {
+              "unit": "°F",
+              "value": null,
+              "n_samples": 73,
+              "excluded_faulted": 0,
+              "series": [
+                {
+                  "start": "2026-09-26T04:00:00.000Z",
+                  "end": "2026-09-26T06:00:00.000Z",
+                  "mean": 64.11542,
+                  "min": 63.95522,
+                  "max": 64.27562,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T06:00:00.000Z",
+                  "end": "2026-09-26T08:00:00.000Z",
+                  "mean": 63.107780000000005,
+                  "min": 61.84652,
+                  "max": 64.36904000000001,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T08:00:00.000Z",
+                  "end": "2026-09-26T10:00:00.000Z",
+                  "mean": 62.396420000000006,
+                  "min": 61.973780000000005,
+                  "max": 62.81906,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T10:00:00.000Z",
+                  "end": "2026-09-26T12:00:00.000Z",
+                  "mean": 65.10182,
+                  "min": 64.33915999999999,
+                  "max": 65.86448,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T12:00:00.000Z",
+                  "end": "2026-09-26T14:00:00.000Z",
+                  "mean": 65.83487000000001,
+                  "min": 65.75756000000001,
+                  "max": 65.91218,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T14:00:00.000Z",
+                  "end": "2026-09-26T16:00:00.000Z",
+                  "mean": 69.31886,
+                  "min": 68.59742,
+                  "max": 70.0403,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T16:00:00.000Z",
+                  "end": "2026-09-26T18:00:00.000Z",
+                  "mean": 70.59479,
+                  "min": 70.20032,
+                  "max": 70.98926,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T18:00:00.000Z",
+                  "end": "2026-09-26T20:00:00.000Z",
+                  "mean": 72.40064,
+                  "min": 71.65147999999999,
+                  "max": 73.1498,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T20:00:00.000Z",
+                  "end": "2026-09-26T22:00:00.000Z",
+                  "mean": 72.9887,
+                  "min": 72.14305999999999,
+                  "max": 73.83434,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-26T22:00:00.000Z",
+                  "end": "2026-09-27T00:00:00.000Z",
+                  "mean": 72.35222,
+                  "min": 71.99078,
+                  "max": 72.71366,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T00:00:00.000Z",
+                  "end": "2026-09-27T02:00:00.000Z",
+                  "mean": 68.90162000000001,
+                  "min": 68.49824000000001,
+                  "max": 69.305,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T02:00:00.000Z",
+                  "end": "2026-09-27T04:00:00.000Z",
+                  "mean": 68.19512,
+                  "min": 67.1063,
+                  "max": 69.28394,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T04:00:00.000Z",
+                  "end": "2026-09-27T06:00:00.000Z",
+                  "mean": 65.7122,
+                  "min": 65.64092,
+                  "max": 65.78348,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T06:00:00.000Z",
+                  "end": "2026-09-27T08:00:00.000Z",
+                  "mean": 62.969359999999995,
+                  "min": 61.053079999999994,
+                  "max": 64.88564,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T08:00:00.000Z",
+                  "end": "2026-09-27T10:00:00.000Z",
+                  "mean": 63.44042,
+                  "min": 62.86352,
+                  "max": 64.01732000000001,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T10:00:00.000Z",
+                  "end": "2026-09-27T12:00:00.000Z",
+                  "mean": 62.98115000000001,
+                  "min": 61.824920000000006,
+                  "max": 64.13738000000001,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T12:00:00.000Z",
+                  "end": "2026-09-27T14:00:00.000Z",
+                  "mean": 65.60069,
+                  "min": 64.52600000000001,
+                  "max": 66.67537999999999,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T14:00:00.000Z",
+                  "end": "2026-09-27T16:00:00.000Z",
+                  "mean": 68.36063,
+                  "min": 67.35128,
+                  "max": 69.36998,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T16:00:00.000Z",
+                  "end": "2026-09-27T18:00:00.000Z",
+                  "mean": 70.49435,
+                  "min": 69.62360000000001,
+                  "max": 71.3651,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T18:00:00.000Z",
+                  "end": "2026-09-27T20:00:00.000Z",
+                  "mean": 72.33953,
+                  "min": 71.37302,
+                  "max": 73.30604,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T20:00:00.000Z",
+                  "end": "2026-09-27T22:00:00.000Z",
+                  "mean": 72.24233,
+                  "min": 71.93624,
+                  "max": 72.54842,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-27T22:00:00.000Z",
+                  "end": "2026-09-28T00:00:00.000Z",
+                  "mean": 72.86675,
+                  "min": 72.58478,
+                  "max": 73.14872,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T00:00:00.000Z",
+                  "end": "2026-09-28T02:00:00.000Z",
+                  "mean": 71.55113,
+                  "min": 71.19427999999999,
+                  "max": 71.90798000000001,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T02:00:00.000Z",
+                  "end": "2026-09-28T04:00:00.000Z",
+                  "mean": 67.43245999999999,
+                  "min": 66.76321999999999,
+                  "max": 68.1017,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T04:00:00.000Z",
+                  "end": "2026-09-28T06:00:00.000Z",
+                  "mean": 64.76369,
+                  "min": 64.32548,
+                  "max": 65.2019,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T06:00:00.000Z",
+                  "end": "2026-09-28T08:00:00.000Z",
+                  "mean": 63.66416,
+                  "min": 62.782700000000006,
+                  "max": 64.54562,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T08:00:00.000Z",
+                  "end": "2026-09-28T10:00:00.000Z",
+                  "mean": 61.634029999999996,
+                  "min": 61.11338,
+                  "max": 62.15468,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T10:00:00.000Z",
+                  "end": "2026-09-28T12:00:00.000Z",
+                  "mean": 64.43321,
+                  "min": 64.39982,
+                  "max": 64.4666,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T12:00:00.000Z",
+                  "end": "2026-09-28T14:00:00.000Z",
+                  "mean": 65.57369,
+                  "min": 63.51386,
+                  "max": 67.63352,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T14:00:00.000Z",
+                  "end": "2026-09-28T16:00:00.000Z",
+                  "mean": 68.62783999999999,
+                  "min": 67.34138,
+                  "max": 69.9143,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T16:00:00.000Z",
+                  "end": "2026-09-28T18:00:00.000Z",
+                  "mean": 71.75318,
+                  "min": 69.96038,
+                  "max": 73.54598,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T18:00:00.000Z",
+                  "end": "2026-09-28T20:00:00.000Z",
+                  "mean": 72.88997,
+                  "min": 72.87062,
+                  "max": 72.90932000000001,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T20:00:00.000Z",
+                  "end": "2026-09-28T22:00:00.000Z",
+                  "mean": 73.94279,
+                  "min": 73.33052,
+                  "max": 74.55506,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-28T22:00:00.000Z",
+                  "end": "2026-09-29T00:00:00.000Z",
+                  "mean": 71.74247,
+                  "min": 70.14056,
+                  "max": 73.34438,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T00:00:00.000Z",
+                  "end": "2026-09-29T02:00:00.000Z",
+                  "mean": 70.64285000000001,
+                  "min": 70.19996,
+                  "max": 71.08574,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T02:00:00.000Z",
+                  "end": "2026-09-29T04:00:00.000Z",
+                  "mean": 67.32068000000001,
+                  "min": 66.63956,
+                  "max": 68.0018,
+                  "n": 2
+                },
+                {
+                  "start": "2026-09-29T04:00:00.000Z",
+                  "end": "2026-09-29T06:00:00.000Z",
+                  "mean": 64.0382,
+                  "min": 64.0382,
+                  "max": 64.0382,
+                  "n": 1
+                }
+              ],
+              "bucket_ms": 7200000
+            },
+            "turbidity": {
+              "unit": "unitless",
+              "excluded_stuck": 54,
+              "sensor_quality": "likely failed sensor",
+              "value": null,
+              "n_samples": 17,
+              "excluded_faulted": 1,
+              "excluded_implausible": 1,
+              "series": [
+                {
+                  "start": "2026-09-28T12:00:00.000Z",
+                  "end": "2026-09-28T13:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-28T13:00:00.000Z",
+                  "end": "2026-09-28T14:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-28T14:00:00.000Z",
+                  "end": "2026-09-28T15:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-28T15:00:00.000Z",
+                  "end": "2026-09-28T16:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-28T16:00:00.000Z",
+                  "end": "2026-09-28T17:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-28T17:00:00.000Z",
+                  "end": "2026-09-28T18:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-28T18:00:00.000Z",
+                  "end": "2026-09-28T19:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-28T19:00:00.000Z",
+                  "end": "2026-09-28T20:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-28T20:00:00.000Z",
+                  "end": "2026-09-28T21:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-28T21:00:00.000Z",
+                  "end": "2026-09-28T22:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-28T22:00:00.000Z",
+                  "end": "2026-09-28T23:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-28T23:00:00.000Z",
+                  "end": "2026-09-29T00:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-29T00:00:00.000Z",
+                  "end": "2026-09-29T01:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-29T01:00:00.000Z",
+                  "end": "2026-09-29T02:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-29T02:00:00.000Z",
+                  "end": "2026-09-29T03:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-29T03:00:00.000Z",
+                  "end": "2026-09-29T04:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                },
+                {
+                  "start": "2026-09-29T04:00:00.000Z",
+                  "end": "2026-09-29T05:00:00.000Z",
+                  "mean": 0,
+                  "min": 0,
+                  "max": 0,
+                  "n": 1
+                }
+              ],
+              "bucket_ms": 3600000
+            }
+          },
+          "note": "Earlier readings from this site were NOT included: dev:100000000000004 (not visible to this account); dev:100000000000005 (not visible to this account); dev:100000000000018 (not visible to this account); dev:100000000000019 (not visible to this account). Say that the history shown may start later than the site's first reading. Excluded as physically impossible despite no probe fault flag: 1 Turbidity reading(s) beyond the range of the turbidity voltage conversion. These are sensor rails, not measurements, and are not counted in any statistic above. Turbidity is derived from a raw voltage by a provisional, uncalibrated conversion. It is a relative index with no unit, not a calibrated measurement and not NTU. Every turbidity reading in this period is 0. The backend reports a missing or offline sensor voltage as 0, the same as clear water, so this may be a missing sensor rather than confirmed clear water. Turbidity has a sustained zero-variance run at exactly 0 or 1005, indicating a likely failed sensor. Affected readings were excluded; inspect the sensor.",
+          "user_notes": [
+            "Earlier readings from this site are not available to this account, so the history shown may start later than the site's first reading.",
+            "Left out as sensor faults, not measurements: 1 Turbidity reading(s) beyond the range of the turbidity voltage conversion.",
+            "Every turbidity reading in this period is 0. The backend reports a missing or offline sensor voltage as 0, the same as clear water, so this may be a missing sensor rather than confirmed clear water.",
+            "Turbidity readings stuck at exactly 0 or 1005 for a day or more were left out as a likely failed sensor; the turbidity sensor should be inspected."
+          ]
+        }
+      }
+    ]
+  }
+}
