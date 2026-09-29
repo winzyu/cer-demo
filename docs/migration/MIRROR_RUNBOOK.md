@@ -46,10 +46,10 @@ browser -> dashboard :3000 -> CER server :5101 -> Firestore emulator :8080 (proj
 
 | piece | checkout on this machine | commit | pushed? |
 |---|---|---|---|
-| Emulator and seed | `~/code/clean-earth-rovers/repo/clean-earth-rovers-server/.worktrees/mirror` | `1ef21a7` (`mirror/e2e-p3`) | no, local only |
-| CER server :5101 | same checkout | `1ef21a7` | no, local only |
+| Emulator and seed | `~/code/clean-earth-rovers/repo/clean-earth-rovers-server/.worktrees/mirror` | `1ef21a7` (`mirror/e2e-p3`) | yes, CER server `origin/mirror/e2e-p3` |
+| CER server :5101 | same checkout | `1ef21a7` | yes, same branch |
 | Gilligan :8010 | `~/code/clean-earth-rovers/repo/cer-demo/.claude/worktrees/e2e-rc` | `77cd4c9` (`test/e2e-rc`, a merge of `dev` and `feat/service-release`) | yes, `origin/test/e2e-rc` |
-| Dashboard :3000 | `~/code/clean-earth-rovers/worktrees/dashboard-e2e` | `9e18555` (detached) | four commits ahead of `origin/task/gilligan-ux` |
+| Dashboard :3000 | `~/code/clean-earth-rovers/worktrees/dashboard-e2e` | `9e18555` (detached) | yes, CER dashboard `origin/release/gilligan-2026-09-30` |
 
 The Mirror server has the A3 and A4 fixes but not the A2 or A5 fixes; test those two on the Release stack (:3300/:5301) instead.
 If the release coordinator names a newer candidate (for example server `mirror/release-rc1` and cer-demo `release/rc1`), use its checkouts and commits and record them.
@@ -267,11 +267,10 @@ Items A1, A2, A5 and U1-U4 belong to the Current and Release stacks, not the Mir
 
 ## 11. On another machine
 
-This runbook uses this machine's paths and checkouts, and the server and dashboard commits exist only here.
+This runbook uses this machine's paths and checkouts; all four commits are on GitHub as of 2026-09-28.
 Before someone else can follow it elsewhere:
 
-- The server commit `1ef21a7` and the dashboard commit `9e18555` need to be shared, and pushing in the CER repositories needs explicit consent.
-  Gilligan's `77cd4c9` is on cer-demo's `origin/test/e2e-rc`.
+- Fetch the commits from `mirror/e2e-p3` (server), `release/gilligan-2026-09-30` (dashboard) and `test/e2e-rc` (cer-demo), each into its own worktree.
 - The CER repositories must be cloned without a checkout and cleaned first, as [`SECURITY_INCIDENT_2026-09-19.md`](SECURITY_INCIDENT_2026-09-19.md) describes; a normal clone checks out malware.
 - They need their own model provider key in the Gilligan `.env`, the document library (`data/corpus/`, `data/embeddings/cache.json`), Java 21 and the Firebase CLI; see [`LOCAL_STACK.md`](LOCAL_STACK.md).
 - The ports and paths in steps 3-5 change to theirs.
