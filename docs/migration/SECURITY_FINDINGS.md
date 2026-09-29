@@ -206,9 +206,9 @@ could widen the history, never narrow it.
 
 Theirs to fix, ours to raise. Bundled with the two already-known items so it goes over once:
 
-1. **`/water/period` does not authorize its `device` parameter** (§1). The one-line shape of the
-   fix is to apply the same `findOrganizationDevices` membership check its three sibling routes
-   already use, and to make the org filter an `AND` rather than an `else`.
+1. **`/water/period` does not authorize its `device` parameter** (§1).
+   The one-line shape of the fix is to apply the `findOrganizationDevices` membership check that `/water/last/:device`, `/water/average/:duration/:unit` and `/water/average/many-devices` use, and to make the org filter an `AND` rather than an `else`.
+   Not every sibling route checks organization: the CSV export does not (§7 correction), so it is item 7 below and not a model for this fix.
 2. **Unauthenticated water-data routes** (`/water-data`, `/device`, `/duration/*`,
    `POST /water/check-alerts`) expose sensor data with no auth and no scoping, and enumerate device
    labels for §1 (`DEVICE_API.md` §4).
@@ -343,7 +343,7 @@ No security surface changed — it is a repaint plus one new component — but t
 
 Found by reading `feature/gilligan-rag-assistant` (`b2074b8`); production was not called to confirm.
 
-- `GET /api/v1/users/all` (`src/routes/userRoutes.ts` line 17) has no authentication and returns every user's id, name, email, role, organization and device list (`UserDTO.format`).
+- `GET /api/v1/users/all` (`src/routes/userRoutes.ts` line 17) has no authentication and returns every user's id, name, userName, email and device list (`UserDTO.format`), but not their role or organization.
 - `GET /api/v1/users/:id` (line 72) has no authentication and returns the same record for any id.
 - `GET /api/v1/test-db` (`src/routes/testDbRoutes.ts`) has no authentication and reports the project id, database id and whether `users` is reachable.
 
