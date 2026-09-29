@@ -85,6 +85,8 @@ export interface DeviceChain {
   unconfirmed: string[];
   /** Predecessors deliberately not read. */
   withheld: WithheldLabel[];
+  /** Caveats for retained history, surfaced through tool and reader notes. */
+  notes?: string[];
   /** Set when the *resolved* device is itself retired — it points at its successor. */
   mergedInto?: string;
 }
@@ -150,6 +152,11 @@ const predecessorsOf = (survivor: DeviceSummary, visible: DeviceSummary[]): stri
  * therefore the only trustworthy statement of what this caller may see. Intersecting against it
  * is what keeps expansion narrowing-only (`SECURITY_FINDINGS.md` §4.2).
  */
+/** Registered water type, normalised for comparison; undefined when unset. */
+const waterTypeOf = (device: DeviceSummary): string | undefined => (
+  device.operatingEnvironment?.trim().toLowerCase() || undefined
+);
+
 export const resolveChain = (
   device: DeviceSummary,
   visible: DeviceSummary[],
@@ -193,6 +200,21 @@ export const resolveChain = (
         reason: "different organization — history not transferred",
       });
       return;
+    }
+    // Merged history is judged against the survivor's limits, so a predecessor registered for
+    // another water type would be judged on the wrong table (salt-water conductivity against
+    // fresh-water limits). Unset types are kept: dropping history for a blank field loses more.
+    const ownType = waterTypeOf(device);
+    const rowType = waterTypeOf(row);
+    if (ownType && rowType && ownType !== rowType) {
+      chain.withheld.push({ label, reason: "different water type \u2014 history not transferred" });
+      return;
+    }
+    if (!ownType || !rowType) {
+      (chain.notes ??= []).push(
+        `Earlier history from ${label} is included, but the two pods' water types could not be `
+        + "compared because one is not recorded.",
+      );
     }
     chain.labels.push(label);
   });

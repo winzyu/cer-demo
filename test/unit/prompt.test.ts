@@ -542,6 +542,22 @@ describe("buildMessages", () => {
     expect(a.slice(0, -1)).toEqual(b.slice(0, -1));
   });
 
+  it("strips all assistant history markers without changing other messages or the input", () => {
+    const content = 'Earlier【1†"quote"】【T1】 answer【fault-first】.\nMore【2】 text [ordinary].';
+    const history: ChatMessage[] = [
+      { role: "user", content: "Explain 【T1】" },
+      { role: "assistant", content },
+      { role: "assistant", content: "Again【T22】【3†L1-L2】." },
+    ];
+    const messages = buildMessages({ query: "Now 【1】?", chunks, history, toolsEnabled: false });
+    expect(messages[1].content).toBe(formatContext(chunks));
+    expect(messages[2]).toEqual(history[0]);
+    expect(messages[3].content).toBe("Earlier answer.\nMore text [ordinary].");
+    expect(messages[4].content).toBe("Again.");
+    expect(messages[5].content).toBe("Now 【1】?");
+    expect(history[1].content).toBe(content);
+  });
+
   it("passes history through unchanged", () => {
     const history: ChatMessage[] = [{ role: "assistant", content: "verbatim" }];
     const messages = buildMessages({ query: "q", chunks: [], history });

@@ -783,13 +783,14 @@ export class QuerySensorData {
         excluded_faulted: 0,
         device_last_reported: snapshot.lastReported ?? null,
         ...(snapshot.lastReported ? this.lastReportedAge(snapshot.lastReported) : {}),
-        note: ["No readings found in available history.", site.note,
+        note: ["No readings found in available history.", site.note, ...(chain.notes ?? []),
           snapshot.lastReported ? `This device last reported at ${snapshot.lastReported}.` : null,
           chain.withheld.length ? "Earlier history was withheld for this account." : null]
           .filter(Boolean).join(" "),
         // "No readings" and the last report are derived by the page from the fields above.
         ...QuerySensorData.userNotes([
-          ...(site.userNotes ?? []), chain.withheld.length ? WITHHELD_USER_NOTE : undefined,
+          ...(site.userNotes ?? []), ...(chain.notes ?? []),
+          chain.withheld.length ? WITHHELD_USER_NOTE : undefined,
         ]),
       };
     }
@@ -1090,11 +1091,11 @@ export class QuerySensorData {
     implausible: Array<[MetricKey, number]> = [],
     allZeroTurbidity = false,
   ): Record<string, unknown> {
-    const notes: string[] = [];
+    const notes: string[] = [...(chain.notes ?? [])];
     // The reader's version of the caveats a person needs, without instructions to the model;
     // the page shows these, never `note` (see `USER_NOTES_FIELD`). Caveats the page already
     // derives from structured fields (no readings, provisional turbidity) are not repeated.
-    const userNotes: string[] = [];
+    const userNotes: string[] = [...(chain.notes ?? [])];
 
     if (chain.labels.length > 1) {
       // Said out loud because the alternative is a number whose provenance is invisible: these

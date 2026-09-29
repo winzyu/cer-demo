@@ -1715,6 +1715,8 @@ The patched server alone determines whether a hidden predecessor with a null or 
 Only an unconfirmed predecessor's recognized 400 “Device not found” refusal becomes withheld history, while successful authorized readings remain available and returned history labels, withheld labels and explanatory notes are rebuilt consistently.
 A survivor refusal, a confirmed-label refusal, authentication failure, outage or unrelated error still fails the query.
 A view spanning organizations cannot use this hand-off, and visible predecessors still require the same organization as the survivor.
+Visible same-organization predecessors are withheld when both registered `operatingEnvironment` values are set and differ (compared ignoring case and surrounding spaces), with the reason "different water type - history not transferred".
+When either water type is unset, the predecessor is retained with a tool and reader note that its water type could not be confirmed; hidden predecessors keep the existing authorization hand-off behavior.
 Enable the flag only after the patched server handles all cer-api traffic and its authorization behavior has been verified.
 Mixed old/new server traffic is not safe.
 The flag must remain off during rollback to an unpatched server.
