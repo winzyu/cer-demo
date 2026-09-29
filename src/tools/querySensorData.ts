@@ -92,6 +92,42 @@ export const SUPPORTED_METRICS: readonly MetricKey[] = METRICS.map((metric) => m
 /** §8 step 5 reports pH as "unitless" rather than omitting the field. */
 const unitFor = (key: MetricKey): string => METRIC_BY_KEY.get(key)?.unit ?? "unitless";
 
+/**
+ * How many implausible readings are listed individually per metric. The count and the range
+ * cover all of them; the list only has to let the model quote the readings a claim is about
+ * ("the pH crashed to 2 yesterday") without flooding the result on a probe that railed for days.
+ */
+const EXCLUDED_VALUES_LIMIT = 10;
+
+/**
+ * The readings `excluded_implausible` counts, so the model can tell them apart from the counted
+ * minimum. Before this the result said only "3 excluded" beside a `value` of 7.9, and a claim of
+ * pH 2 had nothing to be checked against. Newest last, the newest `EXCLUDED_VALUES_LIMIT` kept.
+ */
+const excludedImplausibleDetail = (samples: Sample[]): Record<string, unknown> => {
+  const excluded = samples
+    .filter((sample) => sample.valid && sample.plausible === false)
+    .sort((a, b) => a.atMs - b.atMs);
+  if (excluded.length === 0) {
+    return {};
+  }
+  let min = Infinity;
+  let max = -Infinity;
+  excluded.forEach((sample) => {
+    min = Math.min(min, sample.value);
+    max = Math.max(max, sample.value);
+  });
+  const listed = excluded.slice(-EXCLUDED_VALUES_LIMIT);
+  return {
+    excluded_implausible_min: min,
+    excluded_implausible_max: max,
+    excluded_implausible_values: listed.map((sample) => ({ at: sample.at, value: sample.value })),
+    ...(excluded.length > listed.length
+      ? { excluded_implausible_not_listed: excluded.length - listed.length }
+      : {}),
+  };
+};
+
 export interface SensorToolResult {
   [field: string]: unknown;
 }
@@ -186,6 +222,9 @@ export interface SensorQueryParams {
    * hourly pattern classification. Defaults to `DEFAULT_MAX_BUCKETS`.
    */
   maxBuckets?: number;
+  /** Programmatic only: inspect in-window samples before aggregation or raw truncation.
+   * Includes fault/plausibility flags so the caller can use the same filtering as aggregate. */
+  onSamples?: (metric: string, samples: readonly Sample[]) => void;
 }
 
 export interface QuerySensorDataOptions {
@@ -525,7 +564,7 @@ export class QuerySensorData {
       aggregation: params.aggregation,
       ...(params.device !== undefined ? { device: params.device } : {}),
       ...(params.bucket !== undefined ? { bucket: params.bucket } : {}),
-    }, token, params.maxBuckets, scope);
+    }, token, params.maxBuckets, scope, params.onSamples);
 
     if (typeof result.error === "string") {
       throw new SensorQueryError(result.error);
@@ -647,6 +686,7 @@ export class QuerySensorData {
     token?: string,
     maxBuckets?: number,
     scope?: Map<string, Promise<SiteSnapshot>>,
+    onSamples?: SensorQueryParams["onSamples"],
   ): Promise<SensorToolResult> {
     const metricName = typeof args.metric === "string" ? normalize(args.metric) : "";
     // "all" fetches one window and reads every metric out of it — one API call, not six, and
@@ -739,6 +779,7 @@ export class QuerySensorData {
         time_range_resolved: null,
         value: null,
         n_samples: 0,
+        reading_counts: { used: 0, excluded: 0 },
         excluded_faulted: 0,
         device_last_reported: snapshot.lastReported ?? null,
         ...(snapshot.lastReported ? this.lastReportedAge(snapshot.lastReported) : {}),
@@ -762,11 +803,20 @@ export class QuerySensorData {
         && (range.endInclusive ? time <= range.endMs : time < range.endMs);
     };
     const excludedStuck = [...stuck].filter(inRequestedRange).length;
+    const periodReadings = readings.filter(inRequestedRange);
+    // A partly usable row still contributes to the report. Count it once, without making a
+    // fault in one probe discard the other probes or counting six values as six readings.
+    const usedReadings = periodReadings.filter((row) => metricKeys.some((key) => {
+      const metric = row.metrics[key];
+      return metric?.valid && metric.value !== undefined && isPlausible(key, metric.value)
+        && !(key === "turbidity" && stuck.has(row));
+    })).length;
 
     // One fetched window, read once per requested metric. The device API is not touched again.
     const computed = metricKeys.map((key) => {
       const usable = key === "turbidity" ? readings.filter((row) => !stuck.has(row)) : readings;
       const samples = QuerySensorData.samplesInRange(usable, key, range);
+      onSamples?.(NAME_BY_METRIC_KEY.get(key)!, samples);
       return {
         key,
         samples,
@@ -779,7 +829,11 @@ export class QuerySensorData {
       };
     });
 
-    const shape = (key: MetricKey, result: AggregateResult): Record<string, unknown> => ({
+    const shape = (
+      key: MetricKey,
+      result: AggregateResult,
+      samples: Sample[],
+    ): Record<string, unknown> => ({
       unit: unitFor(key),
       ...(key === "turbidity" && excludedStuck > 0
         ? { excluded_stuck: excludedStuck, sensor_quality: "likely failed sensor" } : {}),
@@ -787,7 +841,10 @@ export class QuerySensorData {
       n_samples: result.nSamples,
       excluded_faulted: result.excludedFaulted,
       ...(result.excludedImplausible > 0
-        ? { excluded_implausible: result.excludedImplausible }
+        ? {
+          excluded_implausible: result.excludedImplausible,
+          ...excludedImplausibleDetail(samples),
+        }
         : {}),
       ...(result.observedAt ? { observed_at: result.observedAt } : {}),
       ...(result.samples ? { samples: result.samples } : {}),
@@ -797,8 +854,28 @@ export class QuerySensorData {
         : {}),
     });
 
-    const coveredFromMs = Math.max(range.startMs, snapshot.fromMs);
-    const partial = coveredFromMs > range.startMs;
+    // Site readings are chronological. When location filtering removes history, the dates
+    // describe the retained readings inside the request, never the older requested boundary.
+    const siteStartMs = Date.parse(readings[0]?.observedAt ?? "");
+    const siteEndMs = Date.parse(readings[readings.length - 1]?.observedAt ?? "");
+    const siteLimited = readings.length === 0 || snapshot.rows.some((row) => {
+      const time = Date.parse(row.observedAt ?? "");
+      return time < siteStartMs || time > siteEndMs;
+    });
+    const firstAt = periodReadings[0]?.observedAt;
+    const lastAt = periodReadings[periodReadings.length - 1]?.observedAt;
+    let resolvedRange: { start: string; end: string; label: string } | null = {
+      start: range.start, end: range.end, label: range.label,
+    };
+    if (siteLimited) {
+      resolvedRange = firstAt && lastAt ? {
+        start: firstAt, end: lastAt, label: `${firstAt} to ${lastAt} (current-site readings)`,
+      } : null;
+    }
+    const sitePartial = siteLimited && (!resolvedRange
+      || Date.parse(resolvedRange.start) > range.startMs
+      || Date.parse(resolvedRange.end) < range.endMs);
+    const partial = snapshot.fromMs > range.startMs || sitePartial;
 
     const position = QuerySensorData.newestPosition(readings, range);
 
@@ -807,7 +884,8 @@ export class QuerySensorData {
       current_site_last_reported: QuerySensorData.newestObservedAt(readings),
       ...(site.note ? { site_note: site.note } : {}),
       time_range_requested: timeRangeInput,
-      time_range_resolved: { start: range.start, end: range.end, label: range.label },
+      time_range_resolved: resolvedRange,
+      reading_counts: { used: usedReadings, excluded: periodReadings.length - usedReadings },
       // Omitted rather than nulled when no reading carried a fix, so a consumer cannot mistake
       // an absent GPS lock for coordinates of 0,0 — the same rule metrics.ts applies to `lat`.
       ...(position ? { position } : {}),
@@ -815,7 +893,12 @@ export class QuerySensorData {
         start: new Date(snapshot.fromMs).toISOString(),
         end: new Date(snapshot.at).toISOString(),
         ...(partial
-          ? { complete: false, reason: "Earlier history predates the established site context and is excluded." }
+          ? {
+            complete: false,
+            reason: sitePartial
+              ? "Only current-site readings inside the requested range are covered; see the site note."
+              : "Earlier history predates the established site context and is excluded.",
+          }
           : { complete: true }),
       },
       device_last_reported: new Date(referenceMs).toISOString(),
@@ -858,7 +941,7 @@ export class QuerySensorData {
     if (single) {
       // Flat shape for a single metric — unchanged from before multi-metric existed, so nothing
       // reading `result.value` had to learn a new shape.
-      return { ...common, ...shape(single, computed[0].result), ...notes };
+      return { ...common, ...shape(single, computed[0].result, computed[0].samples), ...notes };
     }
 
     // Every metric comes off the same rows, so for `latest`/`earliest` they all share one
@@ -876,7 +959,7 @@ export class QuerySensorData {
       ...(observedAts.size === 1 ? { observed_at: [...observedAts][0] } : {}),
       metrics: Object.fromEntries(computed.map((entry) => [
         NAME_BY_METRIC_KEY.get(entry.key) as string,
-        shape(entry.key, entry.result),
+        shape(entry.key, entry.result, entry.samples),
       ])),
       ...notes,
     };
@@ -1056,11 +1139,14 @@ export class QuerySensorData {
         return `${count} ${label} reading(s) ${implausibilityReason(key)}`;
       });
       notes.push(
-        `Excluded as physically impossible despite no probe fault flag: ${parts.join("; ")}. `
-        + "These are sensor rails, not measurements, and are not counted in any statistic above.",
+        `Readings outside plausibility bounds: ${parts.join("; ")}. `
+        + "These may be sensor faults and were left out. Each metric's \"value\" and \"n_samples\" "
+        + "count only the remaining readings; the excluded ones are in "
+        + "\"excluded_implausible_values\", with their range in \"excluded_implausible_min\" and "
+        + "\"excluded_implausible_max\".",
       );
       userNotes.push(
-        `Left out as sensor faults, not measurements: ${parts.join("; ")}.`,
+        `${parts.join("; ")} may be sensor faults and were left out.`,
       );
     }
 

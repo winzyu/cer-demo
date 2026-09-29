@@ -1,12 +1,14 @@
 import PDFDocument from "pdfkit";
 import {
   buildReportPdf, resolveSectionNumbers, drawGridTable, drawKeyValueTable, drawSparkline,
-  flagCellText, MARGIN,
+  flagCellText, lastReadingText, MARGIN,
 } from "../../src/report/renderPdf";
 import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent, DataQualityCheck, ReportStatus,
 } from "../../src/report/types";
 import type { NarrativeSections } from "../../src/report/narrative";
+import { deterministicNarrative } from "../../src/report/narrative";
+import { guidance } from "../../src/catalogue";
 
 /**
  * renderPdf.ts is the pdfkit port of render_pdf.py. The behavior most worth pinning here is the
@@ -133,6 +135,32 @@ describe("flagCellText — the Flag column", () => {
   });
 });
 
+describe("lastReadingText — the Last Reading row (report audit #3)", () => {
+  const REPORT_MS = Date.parse("2026-09-26T12:00:00.000Z");
+
+  it("states a silent pod's last reading age and warns that the report is not current", () => {
+    // Audit #3: Old Woman Creek, silent for about two weeks, printed "Normal" with no age anywhere.
+    const { value, warning } = lastReadingText("2026-09-12T14:38:49.000Z", REPORT_MS);
+
+    expect(value).toBe("2026-09-12 14:38 UTC (14 days before this report)");
+    expect(warning).toContain("has not reported for 14 days");
+    expect(warning).toContain("not current conditions");
+    expect(warning).not.toContain("The period ends at its last reading");
+  });
+
+  it("states the age without a warning for a pod that reported within six hours", () => {
+    const { value, warning } = lastReadingText("2026-09-26T11:20:00.000Z", REPORT_MS);
+
+    expect(value).toBe("2026-09-26 11:20 UTC (40 minutes before this report)");
+    expect(warning).toBeUndefined();
+  });
+
+  it("says Not available rather than inventing an age when no timestamp was carried", () => {
+    expect(lastReadingText(undefined, REPORT_MS)).toEqual({ value: "Not available" });
+    expect(lastReadingText("not a date", REPORT_MS)).toEqual({ value: "Not available" });
+  });
+});
+
 describe("resolveSectionNumbers — dynamic section numbering", () => {
   it("numbers Recommendations as 4 when both Event Detection and Data Quality are absent", () => {
     expect(resolveSectionNumbers({ events: [], dataQuality: undefined })).toEqual({
@@ -160,6 +188,50 @@ describe("resolveSectionNumbers — dynamic section numbering", () => {
 });
 
 describe("buildReportPdf — smoke test", () => {
+  it("uses the report's generation time for reading age even when rendered days later", async () => {
+    const text = jest.spyOn(PDFDocument.prototype, "text");
+    jest.useFakeTimers().setSystemTime(new Date("2026-10-01T12:00:00Z"));
+    try {
+      await render({
+        generatedAt: "2026-09-26T12:00:00.000Z",
+        site: { ...site, reportDate: "2026-09-26", lastReadingAt: "2026-09-26T11:20:00.000Z" },
+        parameters: [param], events: [],
+      });
+      const printed = text.mock.calls.map(([value]) => String(value)).join(" ");
+      expect(printed).toContain("40 minutes before this report");
+      expect(printed).not.toContain("This pod has not reported");
+    } finally {
+      text.mockRestore();
+      jest.useRealTimers();
+    }
+  });
+
+  it("prints the current-site period in the title and Summary", async () => {
+    const text = jest.spyOn(PDFDocument.prototype, "text");
+    const list = jest.spyOn(PDFDocument.prototype, "list");
+    const periodNote = "432 reading(s) from an earlier location were left out; only the pod's current site is covered.";
+    const report: ReportInput = {
+      site: { ...site, startDate: "2026-09-17", endDate: "2026-09-28", periodNote },
+      parameters: [param], events: [],
+    };
+    try {
+      const doc = buildReportPdf(
+        report,
+        deterministicNarrative(report, noAccuracy, "Normal", guidance),
+        { probeAccuracy: noAccuracy, status: "Normal" },
+      );
+      doc.resume();
+      doc.end();
+      expect(text.mock.calls.map(([value]) => String(value)).join(" ")).toContain("2026-09-17");
+      expect(text.mock.calls.map(([value]) => String(value)).join(" ")).toContain("2026-09-28");
+      expect((list.mock.calls[0][0] as string[]).join(" ")).toContain("2026-09-17 to 2026-09-28");
+      expect(text.mock.calls.map(([value]) => String(value))).toContain(periodNote);
+    } finally {
+      text.mockRestore();
+      list.mockRestore();
+    }
+  });
+
   const render = async (report: ReportInput): Promise<Buffer> => {
     const doc = buildReportPdf(report, narrative, { probeAccuracy: noAccuracy, status: "Normal" });
     const chunks: Buffer[] = [];
@@ -221,6 +293,30 @@ describe("buildReportPdf — smoke test", () => {
     };
     const buffer = await render(report);
     expect(buffer.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+  });
+
+  it("renders the stale last-reading warning, and a fresh pod's page differs from it", async () => {
+    const nowMs = Date.parse("2026-09-26T12:00:00.000Z");
+    const renderAt = (lastReadingAt: string): Promise<Buffer> => {
+      const doc = buildReportPdf(
+        { site: { ...site, lastReadingAt }, parameters: [param], events: [] },
+        narrative,
+        { probeAccuracy: noAccuracy, status: "Normal", nowMs },
+      );
+      const chunks: Buffer[] = [];
+      return new Promise<Buffer>((resolve, reject) => {
+        doc.on("data", (chunk: Buffer) => chunks.push(chunk));
+        doc.on("end", () => resolve(Buffer.concat(chunks)));
+        doc.on("error", reject);
+        doc.end();
+      });
+    };
+
+    const [stale, fresh] = await Promise.all([
+      renderAt("2026-09-12T14:38:49.000Z"), renderAt("2026-09-26T11:20:00.000Z"),
+    ]);
+    expect(stale.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+    expect(stale.equals(fresh)).toBe(false);
   });
 
   it("prints the water body type's provenance alongside it", async () => {

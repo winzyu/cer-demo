@@ -1080,10 +1080,17 @@ No LLM call is made and nothing is written to disk.
 It never returns a URL, and the prompt tells the model to point at the interface's download button instead of writing a link.
 
 **The status comes with its reason** (2026-09-24, Q1).
-`assessStatus` (`src/report/types.ts`) walks the same ladder `overallStatus` always did and also returns the rule that fired and the parameters behind it; `overallStatus` is now its `.status`, so the PDF is unchanged.
+`assessStatus` (`src/report/types.ts`) returns the status, the rule that fired and the parameters behind it; `overallStatus` is its `.status`, and the PDF receives the same assessment through `produceReport`.
 The tool adds `status_reason`, one sentence naming that rule and, for a flag-driven status, each flagged parameter's observed range against its configured threshold in the PDF's number format, and `parameter_flags`, every measured parameter's flag.
 Before this, an ORP Exceedance on Old Woman Creek reached the model as "Action Required" with 0 events and no cause, and the model wrote "no abnormal conditions" beside it (`migration/CONVERSATION_QA_2026-09-24.md` finding 3).
 The period ends on the device's newest reading, so the tool also returns `device_last_reported` with its age, and the prompt asks the model to say when a stale pod's period ended.
+
+The exceedance rung requires at least two usable readings beyond the exceedance bounds for the same parameter, counting both sides together and retaining the configured margin and probe-accuracy floor (finding 7).
+`buildReportInput` records this as `ParameterStats.exceedanceCount` from the existing query snapshot's individual readings before bucketing, trend thinning or raw-result truncation; faulted and implausible readings are excluded as they are from other statistics.
+A lone exceedance falls to the excursion rung at Watch, and `status_reason` names the single reading and says that one reading alone may be a sensor glitch.
+The high-confidence, high-severity event rung still takes precedence over Watch, and parameter flags still describe the observed extrema.
+The plausibility filter is unchanged: dissolved oxygen of 0.00 mg/L remains physically possible and stays in the report.
+Open question: should escalation require two readings, a duration, or a share of readings?
 
 **The route renders the PDF on request.** `POST /api/v1/reports` takes that `report_request` as its body and answers `200 application/pdf` with `Content-Disposition: attachment; filename="cer-report-<site>-<start>-to-<end>.pdf"` and `Cache-Control: no-store`.
 Guards, in order: `requireCallerToken` (401), the report quota (429, §4a), `REPORT_TOOL` (404 while off), body validation (400: `time_range` required, at most 100 characters; `device` optional, at most 200), then the pipeline's own refusal as 422 (a phrase the grammar does not read, a pod the caller cannot see, an empty window).
@@ -1680,12 +1687,27 @@ Within the TTL, repeated questions and historical ranges reuse the snapshot, whi
 After the TTL, a recent read replaces an overlapping tail while retaining earlier centroid context; changes to authorized chain membership discard incompatible history.
 Registry changes become visible at the device-list TTL, and older backfills or corrections outside the recent tail become visible when retained context expires and is rebuilt.
 Report series, exact median and hourly pattern calculations pin one consistent fetched snapshot for the whole batch, including across TTL expiry or cache eviction.
+When location filtering limits a pod's history, `time_range_resolved` uses the first and last current-site readings inside the requested range, or is null when none fall inside it.
+The answer's report period, PDF title and Summary inherit those dates, and the existing earlier-location note stays with the tool result and is printed in the PDF Summary as well as Data Quality.
+`window_actually_searched.complete` is false when the fetched context or current-site coverage cannot cover the requested range, even if the fetch reached the epoch.
+Report Data Quality counts rows once: a reading is used if at least one requested parameter survives fault, plausibility and stuck-sensor filtering, and is left out if none survives.
+The completeness percentage compares those used rows with all current-site rows inside the requested range; earlier-location exclusions remain a separate row count in the site note.
 
 Turbidity is a likely failed sensor only when it remains exactly 0 or exactly 1005 for at least 24 hours between the first and last qualifying samples, with no consecutive gap longer than 3 hours.
 Named constants define both durations, and missing or faulted turbidity, a changed value, an unusable timestamp or a gap over 3 hours breaks a run.
 Detection runs on current-site context before trimming to the requested range, so a short query cannot conceal an established failed run.
 All samples in a qualifying run are excluded before aggregation and report pattern matching, and the “likely failed sensor” warning remains even when no usable turbidity sample survives.
 Operator limits that are unusable because they exceed the sensor's measurement range remain “Not assessed”, with no assertion that readings are within those limits.
+
+A pH reading outside 3-12 is implausible and excluded like a probe rail, because natural surface water spans roughly 3.5 (peat bogs) to 11 (soda lakes) and the fleet sits in neither; configured pH limits are still validated against the 0-14 scale.
+The pH 3-12 band stays inclusive, and the tool and report notes say readings outside plausibility bounds "may be sensor faults and were left out" without claiming a confirmed fault.
+`list_pods` gives each pod a status of reporting, silent (no current-site reading for more than 6 hours), unconfirmed (no timestamp) or not checked, and repeats silent pods with their reading age in `silent_pods`, so an answer about which pods are online lists them as silent instead of leaving them out.
+The system prompt's single pod-status rule calls only reporting pods online, lists every silent pod with its age, and requires a `query_sensor_data` check only for an unconfirmed pod; the `list_pods` note defines the statuses without restating the rule.
+`query_sensor_data` lists each metric's implausible readings beside `excluded_implausible` as `excluded_implausible_values` (newest 10, oldest first, with `excluded_implausible_not_listed` for the rest) plus `excluded_implausible_min` and `excluded_implausible_max`, and its note says `value` and `n_samples` count only the remaining readings.
+Excluded-reading extrema are computed iteratively so long faulty runs cannot exceed the JavaScript function-argument limit.
+The report PDF prints the device's last reading with its age at the report's recorded generation time, and adds a warning under the metadata table when that age is over 6 hours.
+Older report inputs without a generation timestamp use their report date for reading age.
+A report trend bucket is thin, and dropped from the trend series only, when it holds under half the series' median bucket count, capped at 3 readings; a series the floor would empty keeps every bucket.
 
 `PREDECESSOR_PERIOD_HANDOFF` defaults to `false`, keeping hidden predecessor labels withheld without period requests for them.
 When enabled, an organization-scoped caller can submit hidden predecessors named by the registry chain separately to the patched period route for authorization.

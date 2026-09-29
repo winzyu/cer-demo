@@ -76,6 +76,8 @@
 
 import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorData";
 import { SensorQueryError } from "../tools/querySensorData";
+import { flagFor } from "./types";
+import { probeAccuracy } from "./referenceRanges";
 import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext } from "../types/tool.types";
 import type {
@@ -158,8 +160,26 @@ interface MetricEntry {
  * Section 2's min/max/mean deliberately do NOT apply this floor -- those are exact statistics
  * over every usable reading, and dropping readings from them to tidy a trend line would be the
  * same fabrication in the other direction.
+ *
+ * **The floor scales down to the pod's own cadence** (`trendFloor`). A fixed 3 against 1-hour
+ * auto buckets emptied 1-day series on pods reporting about twice an hour: Balboa Yacht Basin
+ * Buoy's 25 buckets held n=2 each but one (n=4), so the trend collapsed to that one bucket, with
+ * no sparkline, no trend and no event window (REPORT_AUDIT_2026-09-25.md finding 4).
  */
 const MIN_BUCKET_SAMPLES = 3;
+
+/**
+ * The thin-bucket floor for one series: a bucket is thin when it holds under half the series'
+ * median bucket count, capped at `MIN_BUCKET_SAMPLES` and never below 1. Twice-hourly pods in
+ * 1-hour buckets (median 2) keep every bucket; a 12-hour bucket holding one reading among
+ * buckets of ~20 is still dropped, which is the gap this floor was written for.
+ */
+const trendFloor = (counts: number[]): number => {
+  const sorted = [...counts].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  const median = sorted.length % 2 === 1 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+  return Math.min(MIN_BUCKET_SAMPLES, Math.max(1, Math.ceil(median / 2)));
+};
 
 /**
  * Hourly buckets the pattern classifier may receive: 62 days, enough for any "last N days"
@@ -251,31 +271,34 @@ export interface BuildReportInputResult {
 const buildDataQuality = (
   seriesMetrics: Record<string, MetricEntry>,
   skipped: string[],
+  readingCounts: Record<string, unknown>,
 ): DataQualityCheck => {
   const entries = PARAMETER_META
     .map((meta) => ({ meta, entry: seriesMetrics[meta.key] }))
     .filter((e): e is { meta: typeof PARAMETER_META[number]; entry: MetricEntry } => !!e.entry);
 
-  const used = entries.reduce((sum, e) => sum + (e.entry.n_samples ?? 0), 0);
+  const used = typeof readingCounts.used === "number" ? readingCounts.used : 0;
+  const excluded = typeof readingCounts.excluded === "number" ? readingCounts.excluded : 0;
   const faulted = entries.reduce((sum, e) => sum + (e.entry.excluded_faulted ?? 0), 0);
   const implausible = entries.reduce((sum, e) => sum + (e.entry.excluded_implausible ?? 0), 0);
   const stuck = entries.reduce((sum, e) => sum + (e.entry.excluded_stuck ?? 0), 0);
-  const offered = used + faulted + implausible + stuck;
+  const offered = used + excluded;
   // "Completeness" here is the share of readings the device returned that survived filtering --
   // not coverage against an expected cadence, which this pipeline cannot know. Said plainly in
   // the note so the number is not read as the stronger claim.
   const completenessPct = offered === 0 ? 0 : (used / offered) * 100;
 
-  const railed = entries
+  const implausibleParameters = entries
     .filter((e) => (e.entry.excluded_implausible ?? 0) > 0)
     .map((e) => `${e.meta.label}: ${e.entry.excluded_implausible}`);
 
   const completenessNotes = [
-    `${used} of ${offered} readings returned for the period were usable`,
-    stuck > 0 ? `${stuck} excluded as likely failed sensor readings` : null,
-    faulted > 0 ? `${faulted} excluded on the probe's own fault flag` : null,
-    implausible > 0 ? `${implausible} excluded as physically impossible` : null,
-    skipped.length > 0 ? `no readings at all for: ${skipped.join(", ")}` : null,
+    `${used} of ${offered} readings returned for the period were usable for at least one parameter`,
+    `${excluded} readings were left out because no requested parameter was usable`,
+    stuck > 0 ? "Values from likely failed sensors were left out" : null,
+    faulted > 0 ? "Values with the probe's own fault flag were left out" : null,
+    implausible > 0 ? "Values outside plausibility bounds may be sensor faults and were left out" : null,
+    skipped.length > 0 ? `no usable readings for: ${skipped.join(", ")}` : null,
     "Share of returned readings, not coverage against an expected sampling cadence.",
   ].filter(Boolean).join(". ");
 
@@ -286,10 +309,10 @@ const buildDataQuality = (
     // review exists to catch, so this row is driven by the plausibility filter's count.
     calibrationStatus: implausible > 0 || stuck > 0 ? "Review" : "Pass",
     calibrationNotes: implausible > 0
-      ? `${implausible} reading(s) were sensor rails reported without a fault flag (${railed.join("; ")}). `
-        + "Inspect and recalibrate the affected probes; the hardware did not self-report these."
-      : "No physically impossible readings in the period. Probe error flags were clear for all "
-        + "readings counted above.",
+      ? `Readings outside plausibility bounds without a fault flag (${implausibleParameters.join("; ")}) `
+        + "may be sensor faults and were left out. Inspect and recalibrate the affected probes."
+      : "No readings outside plausibility bounds in the period. Probe error flags were clear for all "
+        + "values used above.",
     driftNotes: "Not assessed — this pipeline has no drift detector. Requires comparison against "
       + "a calibration record, which is not available from the device API.",
     biofoulingNotes: "Not assessed — this pipeline has no biofouling detector. Requires service "
@@ -306,6 +329,7 @@ export const buildReportInput = async (
   params: BuildReportInputParams,
   context?: ToolContext,
 ): Promise<BuildReportInputResult> => {
+  const generatedAt = new Date().toISOString();
   const baseArgs: Omit<SensorQueryParams, "aggregation"> = {
     metric: "all",
     timeRange: params.timeRange,
@@ -315,11 +339,19 @@ export const buildReportInput = async (
   let seriesResult: Record<string, unknown>;
   let medianResult: Record<string, unknown>;
   let hourlyResult: Record<string, unknown>;
+  const readingsByMetric = new Map<string, number[]>();
   try {
     // Pin one authorized snapshot for series, exact median and hourly pattern classification.
     // These deterministic calculations never go through the model's tool-calling loop.
     [seriesResult, medianResult, hourlyResult] = await sensor.queryBatch([
-      { ...baseArgs, aggregation: "series", bucket: "auto" },
+      {
+        ...baseArgs,
+        aggregation: "series",
+        bucket: "auto",
+        onSamples: (key, samples) => readingsByMetric.set(key, samples
+          .filter((sample) => sample.valid && sample.plausible !== false)
+          .map((sample) => sample.value)),
+      },
       { ...baseArgs, aggregation: "median" },
       {
         ...baseArgs, aggregation: "series", bucket: "hour", maxBuckets: MAX_HOURLY_BUCKETS,
@@ -383,10 +415,11 @@ export const buildReportInput = async (
     siteName,
     startDate,
     endDate,
+    ...(typeof seriesResult.site_note === "string" ? { periodNote: seriesResult.site_note } : {}),
     ...(typeof seriesResult.device_last_reported === "string"
       ? { lastReadingAt: seriesResult.device_last_reported }
       : {}),
-    reportDate: new Date().toISOString().slice(0, 10),
+    reportDate: generatedAt.slice(0, 10),
     waterBodyType,
     waterBodyTypeSource,
     ...(latitude !== undefined && longitude !== undefined ? { latitude, longitude } : {}),
@@ -513,11 +546,18 @@ export const buildReportInput = async (
     const baseline = RELATIVE_INDEX_KEYS.has(meta.key)
       ? relativeIndexBaseline(meta)
       : registryBaseline(meta);
+    // Count readings, not buckets: two excursions can share a bucket whose mean stays normal.
+    // Reuse flagFor so the exceedance margin and the probe's accuracy floor agree exactly.
+    const exceedanceCount = (readingsByMetric.get(meta.key) ?? []).filter((value) => (
+      flagFor({ baseline, min: value, max: value }, probeAccuracy) === "Exceedance"
+    )).length;
 
-    // Thin buckets are dropped from the trend series only -- see MIN_BUCKET_SAMPLES. The floor
-    // is skipped entirely when it would empty the series (a genuinely sparse pod), since a
-    // coarse trend beats no trend and the bucket count is what event detection reasons over.
-    const trendBuckets = buckets.filter((b) => b.n >= MIN_BUCKET_SAMPLES);
+    // Thin buckets are dropped from the trend series only -- see MIN_BUCKET_SAMPLES and
+    // `trendFloor`. The floor is skipped entirely when it would empty the series (a genuinely
+    // sparse pod), since a coarse trend beats no trend and the bucket count is what event
+    // detection reasons over.
+    const floor = trendFloor(buckets.map((b) => b.n));
+    const trendBuckets = buckets.filter((b) => b.n >= floor);
     const series: Array<[number, number]> = (trendBuckets.length > 0 ? trendBuckets : buckets)
       .map((b) => {
         const startMs = Date.parse(b.start);
@@ -535,6 +575,7 @@ export const buildReportInput = async (
         max,
         mean,
         median,
+        exceedanceCount,
         // See file docstring §1.
         pattern: classifyPattern(hourlySeries(hourlyMetrics[meta.key])),
         series,
@@ -560,7 +601,11 @@ export const buildReportInput = async (
     };
   }
 
-  const dataQuality = buildDataQuality(seriesMetrics, skipped);
+  const dataQuality = buildDataQuality(
+    seriesMetrics,
+    skipped,
+    asRecord(seriesResult.reading_counts),
+  );
   if (Object.values(seriesMetrics).some((m) => (m.excluded_stuck ?? 0) > 0)) {
     dataQuality.calibrationNotes = `${STUCK_SENSOR_NOTE} ${dataQuality.calibrationNotes}`;
   }
@@ -568,6 +613,7 @@ export const buildReportInput = async (
     dataQuality.completenessNotes += ` ${seriesResult.site_note}`;
   }
   const report: ReportInput = {
+    generatedAt,
     site,
     parameters,
     events: [],

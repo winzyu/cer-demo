@@ -3,6 +3,7 @@ import path from "path";
 import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import { QuerySensorData } from "../../src/tools/querySensorData";
 import { buildReportInput } from "../../src/report/buildReportInput";
+import { prepareReport } from "../../src/report/produceReport";
 import { flagFor } from "../../src/report/types";
 import { probeAccuracy } from "../../src/report/referenceRanges";
 import type { DeviceSummary } from "../../src/types/device.types";
@@ -70,6 +71,56 @@ const makeSensor = (
 };
 
 describe("buildReportInput", () => {
+  it("uses current-site dates in the report and Summary and preserves the earlier-location note", async () => {
+    const periodDay = [
+      { at: "2026-06-20T12:00:00Z", lat: 34 },
+      { at: "2026-08-01T12:00:00Z", lat: 33 },
+      { at: "2026-08-12T12:00:00Z", lat: 33 },
+      { at: "2026-08-13T12:00:00Z", lat: 0 },
+    ].map(({ at, lat }) => ({
+      timestamp: Date.parse(at) / 1000, best_lat: lat, best_lon: lat ? -118 : 0,
+      water_data: { 99: 8, phError: 0 },
+    }));
+    const prepared = await prepareReport(makeSensor({ periodDay }), { timeRange: "last 60 days", device: "Algalita" });
+    expect(prepared.error).toBeUndefined();
+    if (prepared.error !== undefined) throw new Error(prepared.error);
+    expect(prepared.report.site).toMatchObject({ startDate: "2026-08-01", endDate: "2026-08-12" });
+    expect(prepared.narrative.summaryBullets.join(" ")).toContain("2026-08-01 to 2026-08-12");
+    expect(prepared.userNotes).toEqual(expect.arrayContaining([expect.stringContaining("earlier location")]));
+    expect(prepared.report.dataQuality!.completenessNotes).toContain("earlier location");
+    expect(prepared.report.site.periodNote).toBeDefined();
+    expect(prepared.report.site.periodNote).toContain("earlier location");
+  });
+
+  it("counts usable and left-out rows once even when several metrics share a row", async () => {
+    const water = [
+      { 99: 8, 72: 25, phError: 0, turbError: 0 },
+      { 99: 2, 72: 25, phError: 0, turbError: 0 },
+      { 99: 2, 72: 25, phError: 0, turbError: 1 },
+      {},
+    ];
+    const periodDay = water.map((water_data, i) => ({
+      timestamp: NOW / 1000 - i * 3600, best_lat: 33, best_lon: -118, water_data,
+    }));
+    const { report } = await buildReportInput(makeSensor({ periodDay }), { timeRange: "last day", device: "Algalita" });
+    expect(report!.dataQuality!.completenessPct).toBe(50);
+    expect(report!.dataQuality!.completenessNotes).toContain("2 of 4 readings");
+    expect(report!.dataQuality!.completenessNotes).toContain("2 readings were left out");
+    expect(report!.dataQuality!.calibrationNotes).toContain("may be sensor faults and were left out");
+    expect(report!.dataQuality!.calibrationNotes).not.toContain("sensor rails");
+  });
+
+  it("records one generation timestamp for the report date and reading age", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-09-29T12:34:00Z"));
+    try {
+      const { report } = await buildReportInput(makeSensor(), { timeRange: "last day", device: "Algalita" });
+      expect(report).toHaveProperty("generatedAt", "2026-09-29T12:34:00.000Z");
+      expect(report!.site.reportDate).toBe("2026-09-29");
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it("builds a ReportInput covering every parameter with real readings", async () => {
     const sensor = makeSensor();
     const { report, error, skippedParameters } = await buildReportInput(
@@ -81,6 +132,9 @@ describe("buildReportInput", () => {
     expect(report).toBeDefined();
     expect(report!.site.siteName).toContain("Algalita");
     expect(report!.parameters).toHaveLength(6);
+    expect(report!.dataQuality!.completenessNotes).toContain(
+      `${ALGALITA_PERIOD.length} of ${ALGALITA_PERIOD.length} readings`,
+    );
   });
 
   it("labels temperature in the unit the device API actually returns (°F, not °C)", async () => {
@@ -696,6 +750,70 @@ describe("buildReportInput", () => {
     // ...but it still counted toward the exact extremes.
     expect(ph.max).toBe(8.9);
     expect(ph.min).toBe(7.0);
+  });
+
+  it("keeps a 1-day series for a pod reporting twice an hour (report audit #4)", async () => {
+    // Balboa Yacht Basin Buoy, live 2026-09-25: 1-hour auto buckets holding n=2 each but one
+    // (n=4). A fixed floor of 3 kept only the n=4 bucket, so the report had no trend at all.
+    const start = Date.parse("2026-09-25T00:00:00.000Z");
+    const buckets = Array.from({ length: 25 }, (_, h) => ({
+      start: new Date(start + h * 3_600_000).toISOString(),
+      end: new Date(start + (h + 1) * 3_600_000).toISOString(),
+      mean: h === 12 ? 0.2 : 0.1,
+      min: 0,
+      max: 0.3,
+      n: h === 12 ? 4 : 2,
+    }));
+    const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
+      query: async () => ({
+        device: { name: "Balboa Yacht Basin Buoy", operating_environment: "salt-water" },
+        time_range_resolved: { start: buckets[0].start, end: buckets[24].end },
+        metrics: { dissolved_oxygen: { value: 0.1, n_samples: 52, series: buckets } },
+      }),
+      deviceRecord: async () => null,
+    } as unknown as QuerySensorData;
+
+    const { report } = await buildReportInput(stubSensor, { timeRange: "last day" });
+    const dissolvedOxygen = report!.parameters.find((p) => p.baseline.key === "dissolved_oxygen")!;
+
+    expect(dissolvedOxygen.series).toHaveLength(25);
+  });
+
+  it("still drops a single-reading bucket when the pod's own buckets hold three readings", async () => {
+    // The floor follows the cadence (half the median bucket count), so n=1 among n=3 is thin.
+    const start = Date.parse("2026-09-25T00:00:00.000Z");
+    const buckets = [3, 3, 1, 3, 3].map((n, h) => ({
+      start: new Date(start + h * 3_600_000).toISOString(),
+      end: new Date(start + (h + 1) * 3_600_000).toISOString(),
+      mean: n === 1 ? 9 : 7.2,
+      min: 7,
+      max: 9,
+      n,
+    }));
+    const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
+      query: async () => ({
+        device: { name: "Stub", operating_environment: "salt-water" },
+        time_range_resolved: { start: buckets[0].start, end: buckets[4].end },
+        metrics: { ph: { value: 7.2, n_samples: 13, series: buckets } },
+      }),
+      deviceRecord: async () => null,
+    } as unknown as QuerySensorData;
+
+    const { report } = await buildReportInput(stubSensor, { timeRange: "last day" });
+    const ph = report!.parameters.find((p) => p.baseline.key === "ph")!;
+
+    expect(ph.series).toHaveLength(4);
+    expect(ph.series!.some(([, v]) => v === 9)).toBe(false);
+  });
+
+  it("carries the device's newest reading time for the PDF to state its age (report audit #3)", async () => {
+    const sensor = makeSensor();
+    const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
+
+    expect(report!.site.lastReadingAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(Date.parse(report!.site.lastReadingAt!)).toBeLessThanOrEqual(NOW);
   });
 });
 

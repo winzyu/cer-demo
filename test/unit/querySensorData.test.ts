@@ -488,6 +488,79 @@ describe("query_sensor_data — caveats that travel with the number", () => {
   });
 });
 
+describe("query_sensor_data — implausible readings are shown apart from the counted value", () => {
+  /** Algalita's day with pH replaced on the given rows (newest first, as the fixture is). */
+  const withPh = (byIndex: Record<number, number>): Array<Record<string, unknown>> => ALGALITA_PERIOD
+    .map((row, index) => (index in byIndex
+      ? { ...row, water_data: { ...(row.water_data as Record<string, unknown>), 99: byIndex[index] } }
+      : row));
+
+  it("lists the excluded pH readings with their range, and keeps them out of the minimum", async () => {
+    // E2E checklist D1: "Why did the pH crash to 3 yesterday?" The result used to say only
+    // "excluded_implausible: 3" beside the counted minimum, so the model could not tell which
+    // readings the claim was about, or that the minimum excluded them.
+    const { tool } = makeTool({ periodDay: withPh({ 1: 2.07, 5: 13.99, 9: 2.5 }) });
+    const result = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "min", device: "Algalita",
+    });
+
+    expect(result.value).toBeGreaterThan(3);
+    expect(result.n_samples).toBe(ALGALITA_PERIOD.length - 3);
+    expect(result.excluded_implausible).toBe(3);
+    expect(result.excluded_implausible_min).toBe(2.07);
+    expect(result.excluded_implausible_max).toBe(13.99);
+    const listed = result.excluded_implausible_values as Array<{ at: string; value: number }>;
+    expect(listed.map((entry) => entry.value)).toEqual([2.5, 13.99, 2.07]); // oldest first
+    expect(listed.every((entry) => /^\d{4}-\d{2}-\d{2}T/.test(entry.at))).toBe(true);
+    expect(result).not.toHaveProperty("excluded_implausible_not_listed");
+
+    const note = String(result.note);
+    expect(note).toContain("outside the pH plausibility band (3-12)");
+    expect(note).toContain("may be sensor faults and were left out");
+    expect(result.user_notes).toEqual(expect.arrayContaining([
+      expect.stringContaining("may be sensor faults and were left out"),
+    ]));
+    expect(note).not.toContain("These are probe faults");
+    expect(note).toContain("\"value\" and \"n_samples\" count only the remaining readings");
+    expect(note).not.toContain("sensor rails");
+  });
+
+  it("caps the list at ten, keeps the newest, and counts the rest", async () => {
+    const railed = Object.fromEntries(Array.from({ length: 12 }, (_, i) => [i, 1.5]));
+    const { tool } = makeTool({ periodDay: withPh(railed) });
+    const result = await tool.run({
+      metric: "all", time_range: "last day", aggregation: "min", device: "Algalita",
+    });
+    const ph = (result.metrics as Record<string, Record<string, unknown>>).ph;
+
+    expect(ph.excluded_implausible).toBe(12);
+    expect(ph.excluded_implausible_values as unknown[]).toHaveLength(10);
+    expect(ph.excluded_implausible_not_listed).toBe(2);
+    expect(ph.excluded_implausible_min).toBe(1.5);
+  });
+
+  it("adds no excluded-value fields when every reading is plausible", async () => {
+    const { tool } = makeTool();
+    const result = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "min", device: "Algalita",
+    });
+
+    expect(result).not.toHaveProperty("excluded_implausible");
+    expect(result).not.toHaveProperty("excluded_implausible_values");
+  });
+
+  it("keeps the inclusive pH 3-12 band while excluding values just outside it", async () => {
+    const { tool } = makeTool({ periodDay: withPh({ 0: 3, 1: 12, 2: 2.99, 3: 12.01 }) });
+    const result = await tool.run({
+      metric: "ph", time_range: "last day", aggregation: "raw", device: "Algalita",
+    });
+    const values = (result.samples as Array<{ value: number }>).map((sample) => sample.value);
+    expect(values).toEqual(expect.arrayContaining([3, 12]));
+    expect(values).not.toEqual(expect.arrayContaining([2.99, 12.01]));
+    expect(result.excluded_implausible).toBe(2);
+  });
+});
+
 describe("query_sensor_data — errors are returned, not thrown", () => {
   it("rejects an unknown metric with the valid list", async () => {
     const { tool } = makeTool();
@@ -863,6 +936,63 @@ describe("query_sensor_data — the programmatic surface", () => {
 });
 
 describe("query_sensor_data — window honesty", () => {
+  const movedRows = [
+    { timestamp: Date.parse("2026-08-01T12:00:00Z") / 1000, best_lat: 34, best_lon: -118 },
+    { timestamp: Date.parse("2026-09-17T12:00:00Z") / 1000, best_lat: 33, best_lon: -118 },
+    { timestamp: Date.parse("2026-09-28T12:00:00Z") / 1000, best_lat: 33, best_lon: -118 },
+    { timestamp: Date.parse("2026-09-29T12:00:00Z") / 1000, best_lat: 0, best_lon: 0 },
+  ].map((row) => ({ ...row, water_data: { 99: 8, phError: 0 } }));
+
+  it("bounds a moved pod's 60-day answer by current-site readings, including the last GPS fix", async () => {
+    const { tool } = makeTool({ periodDay: movedRows });
+    const result = await tool.run({
+      metric: "ph", time_range: "last 60 days", aggregation: "mean", device: "Algalita",
+    });
+    expect(result.time_range_resolved).toMatchObject({
+      start: "2026-09-17T12:00:00.000Z", end: "2026-09-28T12:00:00.000Z",
+    });
+    expect(result.window_actually_searched).toMatchObject({ complete: false });
+    expect(result.note).toContain("earlier location");
+    expect(result.reading_counts).toEqual({ used: 2, excluded: 0 });
+    expect(result.user_notes).toEqual(expect.arrayContaining([expect.stringContaining("earlier location")]));
+  });
+
+  it("does not extend a shorter request back to the move", async () => {
+    const { tool } = makeTool({ periodDay: movedRows });
+    const result = await tool.run({
+      metric: "ph", time_range: "last 2 days", aggregation: "mean", device: "Algalita",
+    });
+    expect(result.time_range_resolved).toMatchObject({
+      start: "2026-09-28T12:00:00.000Z", end: "2026-09-28T12:00:00.000Z",
+    });
+    expect(result.n_samples).toBe(1);
+  });
+
+  it("gives no resolved coverage for a request wholly before the current visit", async () => {
+    const { tool } = makeTool({ periodDay: movedRows });
+    const result = await tool.run({
+      metric: "ph", time_range: "2026-08-01 to 2026-08-02", aggregation: "mean", device: "Algalita",
+    });
+    expect(result.error).toBeUndefined();
+    expect(result.time_range_resolved).toBeNull();
+    expect(result.window_actually_searched).toMatchObject({ complete: false });
+    expect(result.n_samples).toBe(0);
+  });
+
+  it("marks site-limited coverage incomplete even when the fetch reaches the epoch", async () => {
+    const { client } = makeClient({ periodDay: [], periodMonth: movedRows });
+    const tool = new QuerySensorData({ client, now: () => Date.parse("2026-09-29T12:00:00Z") });
+    const result = await tool.run({
+      metric: "ph", time_range: "last 60 days", aggregation: "mean", device: "Algalita",
+    });
+    expect(result.window_actually_searched).toMatchObject({
+      start: "1970-01-01T00:00:00.000Z", complete: false,
+    });
+    expect(result.time_range_resolved).toMatchObject({
+      start: "2026-09-17T12:00:00.000Z", end: "2026-09-28T12:00:00.000Z",
+    });
+  });
+
   it("reports the window it actually searched alongside the one requested", async () => {
     // Even a complete available-history read cannot support dates before the Unix epoch.
     const { tool } = makeTool();
@@ -901,6 +1031,11 @@ describe("query_sensor_data — window honesty", () => {
     const metrics = result.metrics as Record<string, { observed_at: string }>;
     expect(result.observed_at).toBeUndefined();
     expect(metrics.turbidity.observed_at).not.toBe(metrics.ph.observed_at);
+    expect(result.reading_counts).toEqual({ used: 26, excluded: 0 });
+    const turbidity = await tool.run({
+      metric: "turbidity", time_range: "last 2 days", aggregation: "mean", device: "Algalita",
+    });
+    expect(turbidity.reading_counts).toEqual({ used: 1, excluded: 25 });
   });
 
   it("omits a shared observed_at when the aggregation has no single instant", async () => {
@@ -910,6 +1045,39 @@ describe("query_sensor_data — window honesty", () => {
     });
 
     expect(result.observed_at).toBeUndefined();
+  });
+});
+
+describe("query_sensor_data row counts and large exclusions", () => {
+  it("counts each row once and retains a row when any requested metric is usable", async () => {
+    const water = [
+      { 99: 8, 72: 25, phError: 0, turbError: 0 },
+      { 99: 2, 72: 25, phError: 0, turbError: 0 },
+      { 99: 2, 72: 25, phError: 0, turbError: 1 },
+      {},
+    ];
+    const periodDay = water.map((water_data, i) => ({
+      timestamp: NOW / 1000 - i * 3600, best_lat: 33, best_lon: -118, water_data,
+    }));
+    const { tool } = makeTool({ periodDay });
+    const all = await tool.run({ metric: "all", time_range: "last day", aggregation: "mean", device: "Algalita" });
+    expect(all.reading_counts).toEqual({ used: 2, excluded: 2 });
+    const ph = await tool.run({ metric: "ph", time_range: "last day", aggregation: "mean", device: "Algalita" });
+    expect(ph.reading_counts).toEqual({ used: 1, excluded: 3 });
+  });
+
+  it("computes excluded extremes without exceeding the argument limit", async () => {
+    const periodDay = Array.from({ length: 150_000 }, (_, i) => ({
+      timestamp: NOW / 1000 - i, best_lat: 33, best_lon: -118,
+      water_data: { 99: i === 0 ? 13 : 2, phError: 0 },
+    }));
+    const { tool } = makeTool({ periodDay });
+    const result = await tool.run({ metric: "ph", time_range: "last 2 days", aggregation: "min", device: "Algalita" });
+    expect(result.error).toBeUndefined();
+    expect(result.excluded_implausible_min).toBe(2);
+    expect(result.excluded_implausible_max).toBe(13);
+    expect(result.excluded_implausible).toBe(150_000);
+    expect(result.excluded_implausible_values).toHaveLength(10);
   });
 });
 

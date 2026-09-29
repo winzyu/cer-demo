@@ -36,6 +36,13 @@ export interface PlausibleRange {
   /** True when a reading exactly equal to the bound is itself the rail (pH 0.000 / 14.000). */
   exclusiveMin?: boolean;
   exclusiveMax?: boolean;
+  /**
+   * Tighter, inclusive bounds a *reading* must also meet, where the metric's scale is wider
+   * than any natural water (pH). Kept apart from `min`/`max` because those also validate
+   * operator-configured limits (`operatorThresholds.ts`), which may legitimately sit anywhere on
+   * the scale.
+   */
+  naturalWater?: { min: number; max: number };
   reason: string;
 }
 
@@ -54,11 +61,23 @@ export const PLAUSIBLE_RANGES: Record<MetricKey, PlausibleRange> = {
   ph: {
     // 0 and 14 are the ends of the scale itself. A probe reporting exactly 0.000 or 14.000 is
     // reporting its rail, not water -- natural water never sits precisely on either end.
+    // `operatorThresholds.ts` validates configured pH limits against these two numbers, so they
+    // stay the scale; readings are held to the tighter `naturalWater` window below.
     min: 0,
     max: 14,
     exclusiveMin: true,
     exclusiveMax: true,
-    reason: "pinned to the end of the pH scale (probe rail, not a measurement)",
+    // Natural surface water spans roughly pH 3.5 (peat bogs and humic brown-water streams, the
+    // most acidic natural water outside mine drainage and volcanic crater lakes) to about 11
+    // (soda lakes, and eutrophic water at the peak of afternoon photosynthesis). The fleet sits
+    // in lakes, creeks, harbors and the open coast, where neither extreme source exists, so a
+    // reading outside 3-12 is excluded as a possible sensor fault. Live cause: the Algalita Pod, in
+    // seawater (~pH 8.1), reported a 1-day minimum of 2.07 and a 7-day maximum of 12.62, and
+    // each alone set a report to Action Required (REPORT_AUDIT_2026-09-25.md finding 5). Both
+    // edges stay outside every non-placeholder operator pH limit in the recorded registry
+    // fixtures (5 to 10), so no excursion those limits exist to catch is removed here.
+    naturalWater: { min: 3, max: 12 },
+    reason: "outside the pH plausibility band (3-12)",
   },
   dissolvedOxygen: {
     // Max solubility is ~14.6 mg/L at 0 °C; ~30 allows for roughly 200% supersaturation during
@@ -111,7 +130,9 @@ export const isPlausible = (key: MetricKey, value: number): boolean => {
   }
   const aboveMin = range.exclusiveMin ? value > range.min : value >= range.min;
   const belowMax = range.exclusiveMax ? value < range.max : value <= range.max;
-  return aboveMin && belowMax;
+  const natural = range.naturalWater;
+  const inNaturalWater = !natural || (value >= natural.min && value <= natural.max);
+  return aboveMin && belowMax && inNaturalWater;
 };
 
 /** Human-readable reason a metric's bounds exist, for a data-quality note. */

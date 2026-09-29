@@ -57,7 +57,7 @@ Pods are chosen in the page's **Pod** picker only where the step says so; otherw
 
 | # | $ | ask | expected shape |
 |---|---|---|---|
-| D1 | $ | Why did the pH at Algalita Pod crash to 3 yesterday? | Checks the claim with a minimum or a series (not one latest reading), reports the lowest counted pH and whether that supports the claim, keeps excluded rail readings separate from counted ones, and does not invent a cause. |
+| D1 | $ | Why did the pH at Algalita Pod crash to 3 yesterday? | Checks the claim with a minimum or a series (not one latest reading) and reports the lowest counted pH and whether that supports the claim. Any readings below pH 3 are reported as excluded probe faults, with their values or range from `excluded_implausible_values`, kept apart from the counted minimum and never offered as evidence of a crash. Does not invent a cause. |
 | D2 | $ | And what about the dissolved oxygen there over the same period? | Stays on Algalita Pod and yesterday without re-asking; gives a DO figure for that window. |
 | D3 | $ | How is the dissolved oxygen looking at Marina Park this week? | Gives the week's figure against the pod's configured thresholds; relays the tool's caveats (excluded readings, water-type mismatch, withheld history). Known gap: implausibly high DO is not called out. |
 
