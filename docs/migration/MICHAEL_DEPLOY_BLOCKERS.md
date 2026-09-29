@@ -70,7 +70,14 @@ Pass: a row for collection `gilligan_usage`, field `expireAt`, state `ACTIVE` (o
 ```
 
 Pass: no `allowedValues` restriction (an empty policy or a "not found" error both mean no restriction).
-If it lists domains, `allUsers` cannot be granted Invoker; use the runbook §2.1 item 6 fallback.
+If it lists domains, `allUsers` cannot be granted Invoker; use the runbook §2.1 item 6 fallback, which turns off Cloud Run's invoker check instead.
+That fallback works only if the second policy below is not enforced:
+
+```
+! gcloud org-policies describe run.managed.requireInvokerIam --project=conductive-fold-343604 --effective
+```
+
+Pass for the fallback: not enforced (it is off by default).
 After cer-gilligan exists, confirm the grant with `! gcloud run services get-iam-policy cer-gilligan --project=conductive-fold-343604 --region=us-central1`, which should show `allUsers` under `roles/run.invoker`.
 
 ## 7. `cer-ui` build trigger

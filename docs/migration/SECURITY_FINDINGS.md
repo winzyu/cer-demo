@@ -61,6 +61,8 @@ Every sibling device-scoped route performs the membership check that this one om
 
 Four routes, one pattern, one gap.
 
+Correction (2026-09-27, mirror finding 11): the CSV export route is a sibling that does not check organization either (§7 correction; §5 item 7).
+
 ### Labels are not a secret, so "you'd have to guess it" is not a mitigation
 
 - `GET /devices` hands a caller every label in their own org, and merge chains (`labels[]`,
