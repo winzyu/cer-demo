@@ -14,5 +14,5 @@ import type { TranscriptRunMeta } from "./transcript";
  */
 export const captureSystemPrompt = (run?: Pick<TranscriptRunMeta, "cataloguePrompt">): string => {
   const catalogueOn = run?.cataloguePrompt ?? config.catalogue.prompt;
-  return buildSystemPrompt(false, false, catalogueOn ? buildCatalogueBlock(guidance) : null);
+  return buildSystemPrompt(false, false, catalogueOn ? buildCatalogueBlock(guidance) : null, null);
 };

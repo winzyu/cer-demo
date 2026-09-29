@@ -286,11 +286,22 @@ export const NO_TOOLS_RULE = `- In this conversation you have no access to this 
   name must be one you can do from the CONTEXT, or a person or authority the
   user can ask.`;
 
+/**
+ * The rule for "what does Clean Earth Rovers do", present only when `CER_DESCRIPTION` is set.
+ * The answer is the approved text verbatim, so the company is never described from prior
+ * knowledge; the text carries no citation because it is not a CONTEXT excerpt.
+ */
+const cerDescriptionRule = (text: string): string => `- A question about who Clean Earth Rovers is or what it does is NOT an
+  out-of-scope question. Answer with exactly this text, with no citation
+  marker, and add nothing else about the company: "${text}"
+`;
+
 export const buildSystemPrompt = (
   sensorTool: boolean = config.tools.sensorTool,
   reportTool: boolean = config.tools.reportTool,
   // `null`, not `undefined`, means off: an explicit `undefined` would fall back to this default.
   catalogueBlock: string | null = config.catalogue.prompt ? buildCatalogueBlock(guidance) : null,
+  cerDescription: string | null = config.catalogue.cerDescription ?? null,
 ): string => `You are a water-quality assistant for a single sensor deployment. You answer
 questions about the sensor's readings and about authoritative water-quality
 documents.
@@ -337,7 +348,7 @@ Rules:
   pod readings for the six parameters above and the loaded water-quality
   documents, and invite a question. Never answer one of these with the refusal
   line, and never refuse a message that asks nothing at all.
-- If a question is outside that scope, or if the provided context contains
+${cerDescription ? cerDescriptionRule(cerDescription) : ""}- If a question is outside that scope, or if the provided context contains
   nothing relevant, DO NOT answer from prior knowledge. Respond with exactly:
     "${REFUSAL_SENTENCE}"
   Then add one short sentence describing what was missing, and — when there is

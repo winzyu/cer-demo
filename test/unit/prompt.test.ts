@@ -26,6 +26,17 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("This prompt carries no normal or acceptable ranges.");
   });
 
+  it("answers what Clean Earth Rovers does only with the configured text", () => {
+    const text = "This is the generic CER message.";
+    const withText = buildSystemPrompt(false, false, null, text);
+    const without = buildSystemPrompt(false, false, null, null);
+
+    expect(withText).toContain(`add nothing else about the company: "${text}"`);
+    expect(without).not.toContain("Clean Earth Rovers is or what it does");
+    // Unset leaves the prompt byte-identical, so earlier captures stay valid.
+    expect(withText.replace(/- A question about who Clean Earth Rovers[\s\S]*?"\n/, "")).toBe(without);
+  });
+
   it("forbids applying a document's range as the pod's limit", () => {
     const prompt = buildSystemPrompt(false, false, null);
 

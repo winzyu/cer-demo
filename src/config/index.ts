@@ -263,10 +263,15 @@ export interface AuditConfig {
  *
  * `includeDrafts` also defaults to off. On, customers see wording no supervisor has approved,
  * so it exists only for the supervisor's own review of a running demo.
+ *
+ * `cerDescription` is the approved answer to "what does Clean Earth Rovers do". Unset, the prompt
+ * carries no such rule and the question stays out of scope; the text is never model-written, and
+ * it lives in configuration so a placeholder cannot ship in code.
  */
 export interface CatalogueConfig {
   prompt: boolean;
   includeDrafts: boolean;
+  cerDescription?: string;
 }
 
 export type CorpusSourceName = "artifact" | "firestore";
@@ -530,6 +535,7 @@ const load = (): Config => {
     catalogue: {
       prompt: readBool("CATALOGUE_PROMPT", false),
       includeDrafts: readBool("CATALOGUE_DRAFTS", false),
+      cerDescription: readString("CER_DESCRIPTION"),
     },
   };
 
