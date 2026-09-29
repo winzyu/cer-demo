@@ -131,17 +131,24 @@ export interface AggregateOptions {
  * Auto by default because choosing it is exactly the work worth taking off the model: asked for
  * "the last week", a 20B model picking `bucket: "hour"` gets 168 buckets and is no better off
  * than with raw rows. Snapping to a ladder keeps the answer human-sized whatever the window.
+ *
+ * The fit counts **epoch-aligned** buckets, not span / width: a 60-day window starting mid-day
+ * touches 61 calendar days, and sizing by span alone let `bucketize`'s cap drop the oldest one.
  */
 export const autoBucketMs = (
   chronological: Sample[],
   maxBuckets: number = DEFAULT_MAX_BUCKETS,
 ): number => {
-  const span = chronological[chronological.length - 1].atMs - chronological[0].atMs;
-  if (span <= 0) {
+  const first = chronological[0].atMs;
+  const last = chronological[chronological.length - 1].atMs;
+  if (last - first <= 0) {
     return HOUR_MS;
   }
-  const needed = span / maxBuckets;
-  return BUCKET_LADDER.find((width) => width >= needed) ?? BUCKET_LADDER[BUCKET_LADDER.length - 1];
+  const alignedBuckets = (width: number): number => (
+    Math.floor(last / width) - Math.floor(first / width) + 1
+  );
+  return BUCKET_LADDER.find((width) => alignedBuckets(width) <= maxBuckets)
+    ?? BUCKET_LADDER[BUCKET_LADDER.length - 1];
 };
 
 /**
