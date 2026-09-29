@@ -71,13 +71,13 @@ export const PLAUSIBLE_RANGES: Record<MetricKey, PlausibleRange> = {
     // most acidic natural water outside mine drainage and volcanic crater lakes) to about 11
     // (soda lakes, and eutrophic water at the peak of afternoon photosynthesis). The fleet sits
     // in lakes, creeks, harbors and the open coast, where neither extreme source exists, so a
-    // reading outside 3-12 is a failing probe, not water. Live cause: the Algalita Pod, in
+    // reading outside 3-12 is excluded as a possible sensor fault. Live cause: the Algalita Pod, in
     // seawater (~pH 8.1), reported a 1-day minimum of 2.07 and a 7-day maximum of 12.62, and
     // each alone set a report to Action Required (REPORT_AUDIT_2026-09-25.md finding 5). Both
     // edges stay outside every non-placeholder operator pH limit in the recorded registry
     // fixtures (5 to 10), so no excursion those limits exist to catch is removed here.
     naturalWater: { min: 3, max: 12 },
-    reason: "outside the pH range natural water can reach (pH 3-12; probe failure, not a measurement)",
+    reason: "outside the pH plausibility band (3-12)",
   },
   dissolvedOxygen: {
     // Max solubility is ~14.6 mg/L at 0 °C; ~30 allows for roughly 200% supersaturation during

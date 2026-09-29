@@ -269,31 +269,34 @@ export interface BuildReportInputResult {
 const buildDataQuality = (
   seriesMetrics: Record<string, MetricEntry>,
   skipped: string[],
+  readingCounts: Record<string, unknown>,
 ): DataQualityCheck => {
   const entries = PARAMETER_META
     .map((meta) => ({ meta, entry: seriesMetrics[meta.key] }))
     .filter((e): e is { meta: typeof PARAMETER_META[number]; entry: MetricEntry } => !!e.entry);
 
-  const used = entries.reduce((sum, e) => sum + (e.entry.n_samples ?? 0), 0);
+  const used = typeof readingCounts.used === "number" ? readingCounts.used : 0;
+  const excluded = typeof readingCounts.excluded === "number" ? readingCounts.excluded : 0;
   const faulted = entries.reduce((sum, e) => sum + (e.entry.excluded_faulted ?? 0), 0);
   const implausible = entries.reduce((sum, e) => sum + (e.entry.excluded_implausible ?? 0), 0);
   const stuck = entries.reduce((sum, e) => sum + (e.entry.excluded_stuck ?? 0), 0);
-  const offered = used + faulted + implausible + stuck;
+  const offered = used + excluded;
   // "Completeness" here is the share of readings the device returned that survived filtering --
   // not coverage against an expected cadence, which this pipeline cannot know. Said plainly in
   // the note so the number is not read as the stronger claim.
   const completenessPct = offered === 0 ? 0 : (used / offered) * 100;
 
-  const railed = entries
+  const implausibleParameters = entries
     .filter((e) => (e.entry.excluded_implausible ?? 0) > 0)
     .map((e) => `${e.meta.label}: ${e.entry.excluded_implausible}`);
 
   const completenessNotes = [
-    `${used} of ${offered} readings returned for the period were usable`,
-    stuck > 0 ? `${stuck} excluded as likely failed sensor readings` : null,
-    faulted > 0 ? `${faulted} excluded on the probe's own fault flag` : null,
-    implausible > 0 ? `${implausible} excluded as physically impossible` : null,
-    skipped.length > 0 ? `no readings at all for: ${skipped.join(", ")}` : null,
+    `${used} of ${offered} readings returned for the period were usable for at least one parameter`,
+    `${excluded} readings were left out because no requested parameter was usable`,
+    stuck > 0 ? "Values from likely failed sensors were left out" : null,
+    faulted > 0 ? "Values with the probe's own fault flag were left out" : null,
+    implausible > 0 ? "Values outside plausibility bounds may be sensor faults and were left out" : null,
+    skipped.length > 0 ? `no usable readings for: ${skipped.join(", ")}` : null,
     "Share of returned readings, not coverage against an expected sampling cadence.",
   ].filter(Boolean).join(". ");
 
@@ -304,10 +307,10 @@ const buildDataQuality = (
     // review exists to catch, so this row is driven by the plausibility filter's count.
     calibrationStatus: implausible > 0 || stuck > 0 ? "Review" : "Pass",
     calibrationNotes: implausible > 0
-      ? `${implausible} reading(s) were sensor rails reported without a fault flag (${railed.join("; ")}). `
-        + "Inspect and recalibrate the affected probes; the hardware did not self-report these."
-      : "No physically impossible readings in the period. Probe error flags were clear for all "
-        + "readings counted above.",
+      ? `Readings outside plausibility bounds without a fault flag (${implausibleParameters.join("; ")}) `
+        + "may be sensor faults and were left out. Inspect and recalibrate the affected probes."
+      : "No readings outside plausibility bounds in the period. Probe error flags were clear for all "
+        + "values used above.",
     driftNotes: "Not assessed — this pipeline has no drift detector. Requires comparison against "
       + "a calibration record, which is not available from the device API.",
     biofoulingNotes: "Not assessed — this pipeline has no biofouling detector. Requires service "
@@ -324,6 +327,7 @@ export const buildReportInput = async (
   params: BuildReportInputParams,
   context?: ToolContext,
 ): Promise<BuildReportInputResult> => {
+  const generatedAt = new Date().toISOString();
   const baseArgs: Omit<SensorQueryParams, "aggregation"> = {
     metric: "all",
     timeRange: params.timeRange,
@@ -401,10 +405,11 @@ export const buildReportInput = async (
     siteName,
     startDate,
     endDate,
+    ...(typeof seriesResult.site_note === "string" ? { periodNote: seriesResult.site_note } : {}),
     ...(typeof seriesResult.device_last_reported === "string"
       ? { lastReadingAt: seriesResult.device_last_reported }
       : {}),
-    reportDate: new Date().toISOString().slice(0, 10),
+    reportDate: generatedAt.slice(0, 10),
     waterBodyType,
     waterBodyTypeSource,
     ...(latitude !== undefined && longitude !== undefined ? { latitude, longitude } : {}),
@@ -580,7 +585,11 @@ export const buildReportInput = async (
     };
   }
 
-  const dataQuality = buildDataQuality(seriesMetrics, skipped);
+  const dataQuality = buildDataQuality(
+    seriesMetrics,
+    skipped,
+    asRecord(seriesResult.reading_counts),
+  );
   if (Object.values(seriesMetrics).some((m) => (m.excluded_stuck ?? 0) > 0)) {
     dataQuality.calibrationNotes = `${STUCK_SENSOR_NOTE} ${dataQuality.calibrationNotes}`;
   }
@@ -588,6 +597,7 @@ export const buildReportInput = async (
     dataQuality.completenessNotes += ` ${seriesResult.site_note}`;
   }
   const report: ReportInput = {
+    generatedAt,
     site,
     parameters,
     events: [],
