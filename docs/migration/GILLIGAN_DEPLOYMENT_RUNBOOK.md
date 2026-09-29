@@ -81,6 +81,13 @@ Michael does these, and each is checked off in §8 before L5:
 4. Store the Fireworks key as `cer-gilligan-fireworks-api-key` and grant `cer-gilligan-runtime` Secret Accessor on that secret only.
 5. Store the service key (at least 32 characters) as its own secret, readable by `cer-gilligan-runtime` and the default compute account.
 6. After cer-gilligan exists (§6.1), allow unauthenticated invocation on it (`allUsers` as Cloud Run Invoker), if the organization policy permits.
+   Check first whether the domain-restricted sharing constraint (`iam.allowedPolicyMemberDomains`) applies to the project, since it rejects any `allUsers` grant.
+   If it does, the fallback is to turn off Cloud Run's invoker check on the service instead (`gcloud run services update cer-gilligan --project=conductive-fold-343604 --region=us-central1 --no-invoker-iam-check`), which grants nothing to `allUsers`.
+   That flag is refused in turn if the constraint `run.managed.requireInvokerIam` is enforced.
+   If both are blocked, Michael asks the organization administrator for a project exception to either constraint, and L5 waits for it.
+   If no exception is granted, the §5 identity-token change moves before launch: cer-api mints an identity token for each relay call, and the default compute account gets Cloud Run Invoker on cer-gilligan.
+   That is a server code change that has not been built, so it delays the release rather than unblocking it.
+   The service-key check (§5) stays in place under every option.
 7. Disable the `cer-ui` Cloud Build trigger `8ad67b17-5439-4507-9718-5b2b5eb4abe9`, which builds on every push to the infected `main`.
 8. The release commit writes `expireAt` on usage documents (90 days after the last update); add a Firestore TTL policy on `gilligan_usage.expireAt` in the dedicated database, never on `updatedAt` ([`GILLIGAN_FIRESTORE_FRAMEWORK.md`](GILLIGAN_FIRESTORE_FRAMEWORK.md)).
 
@@ -99,6 +106,11 @@ Worth raising with Michael, outside the release: the customer `(default)` databa
 ## 3. Release sources and clean builds
 
 ### 3.1 What to deploy
+
+The table and the note under it predate the release candidate.
+They record what each release commit had to contain when the plan was written, not the commits that ship.
+The release commits, their contents and their checksums go in [`RELEASE_CANDIDATE.md`](RELEASE_CANDIDATE.md), which is still to be written.
+Where the two differ, `RELEASE_CANDIDATE.md` wins, and its commits fill the `[FILL]` cells below and in §8.
 
 | service | repository | release commit must contain | release commit |
 |---|---|---|---|
@@ -195,6 +207,7 @@ LOG_LEVEL: "info"
 DEFAULT_RETRIEVAL: "local-vector"
 QUERY_REWRITE: "true"
 QUERY_REWRITE_FIRST_TURN: "true"
+PREDECESSOR_PERIOD_HANDOFF: "false"
 CORPUS_SOURCE: "artifact"
 DEBUG_RETRIEVAL: "false"
 FIRESTORE_PROJECT_ID: "conductive-fold-343604"
@@ -227,6 +240,9 @@ QUERY_QUOTA_WARN_AT: "0.2"
 
 Confirm at L4 that `LLM_MODEL`, `LLM_REASONING_EFFORT`, `LLM_MAX_TOKENS`, `MAX_TOOL_ROUNDS`, `DEFAULT_RETRIEVAL` and both `QUERY_REWRITE` settings are the values the release candidate was evaluated with, and that `EMBEDDING_MODEL` is the model the packaged cache was built with.
 Never set `DEVICE_API_TOKEN` or `SENSOR_DEVICE_LABEL`: device reads must use the caller's own token.
+`PREDECESSOR_PERIOD_HANDOFF` is read in `src/config/index.ts` and defaults to `false`; it is set explicitly because it stays `false` until the patched server takes all cer-api traffic, since an unpatched period route would return another organization's history.
+The retrieval depth `DEFAULT_TOP_K` is 20, but it is a code constant in `src/retrieval/options.ts`, not an environment setting: `src/config/index.ts` does not read it, so it is deliberately absent from the file above.
+Confirm at L4 that the release candidate's `src/retrieval/options.ts` still sets `DEFAULT_TOP_K = 20`, the depth the release was evaluated at.
 
 What happens when a variable is missing:
 
