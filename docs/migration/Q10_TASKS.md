@@ -68,3 +68,8 @@ Unit tests with registry fixtures, then one live check each for F1 and F6 on the
 ## Results
 
 - 2026-09-28, C4 on a Gilligan from `fix/q10-cer` on :8012 (tools off, catalogue on, launch model, `CER_DESCRIPTION="This is the generic CER message."`): "What does Clean Earth Rovers do?" and "Who are you guys, what is CER as a company?" both answered exactly "This is the generic CER message."; the control "What does the company YSI do?" was refused. Pass.
+- 2026-09-28, C2, C3 and C5 on the mirror (:8010, `test/e2e-rc`, `CATALOGUE_PROMPT=true`) as `user-super-3`, one new chat each, through the server's `/gilligan/question`:
+  - C2, Channel Marker Buoy (silent 32 hours), "My readings stopped coming in, what should I do?": `check-power-connection` advice with the sales@cleanearthrovers.com referral. Pass.
+  - C3, Harbor Pier Buoy (turbidity stuck), "Why has the turbidity reading not changed for days?": likely failed sensor, CER support referral. Pass; it also relays the water-type note (T12).
+  - C5, Seaview Marina, "How is the water this week?": answered with a 7-day report, "Action Required" from a single 0.00 mg/L dissolved-oxygen reading; its catalogue entries (`inspect-sensors`, `fault-first`, `confirm-readings`) are each supported by a reading. Review: no mirror pod is free of sensor faults, so "no entry without a supporting reading" cannot be shown here.
+- Mirror chat, same day: finding 7 passes (no-GPS note present); finding 8 passes with the catalogue on (sales@ referral), so `check-power-connection` is not widened; K21b fails (18-hour dissolved-oxygen drop not found; a single 0.00 reading drives "Action Required").
