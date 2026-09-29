@@ -48,6 +48,31 @@ describe("resolveChain", () => {
   const predecessor = row(PRED, CWA, { mergedInto: SURVIVOR });
   const foreign = row(FOREIGN, NEWPORT, { mergedInto: SURVIVOR });
 
+  it.each([
+    ["fresh-water", "salt-water", false],
+    ["salt-water", "fresh-water", false],
+    ["fresh-water", "fresh-water", true],
+    ["salt-water", "salt-water", true],
+    [undefined, "fresh-water", true],
+    ["fresh-water", undefined, true],
+    [undefined, undefined, true],
+    ["", "fresh-water", true],
+    [" Fresh-Water ", "fresh-water", true],
+  ])("checks survivor %s and predecessor %s water types", (water, olderWater, kept) => {
+    const head = { ...row(SURVIVOR, CWA, { labels: [SURVIVOR, PRED] }), operatingEnvironment: water };
+    const older = { ...predecessor, operatingEnvironment: olderWater };
+    const chain = resolveChain(head, [head, older]);
+    expect(chain.labels).toEqual(kept ? [SURVIVOR, PRED] : [SURVIVOR]);
+    expect(chain.withheld).toEqual(kept ? [] : [
+      { label: PRED, reason: "different water type \u2014 history not transferred" },
+    ]);
+    if (!water || !olderWater) {
+      expect(chain).toHaveProperty("notes", [expect.stringContaining("could not be compared")]);
+    } else {
+      expect(chain.notes).toBeUndefined();
+    }
+  });
+
   it("reads a same-organization predecessor, survivor first", () => {
     const chain = resolveChain(survivor, [survivor, predecessor, foreign]);
     expect(chain.labels).toEqual([SURVIVOR, PRED]);
@@ -213,13 +238,15 @@ describe("query_sensor_data over a merge chain", () => {
     [FOREIGN]: [reading(FOREIGN, -3 * DAY, 1)],
   };
 
-  const makeTool = (): { tool: QuerySensorData; urls: string[] } => {
+  const makeTool = (water?: string, olderWater?: string): { tool: QuerySensorData; urls: string[] } => {
     const urls: string[] = [];
     const fetchImpl = async (url: string): Promise<Response> => {
       urls.push(url);
       const body = ((): unknown => {
         if (url.includes("/devices")) {
-          return DEVICES;
+          return DEVICES.map((entry) => ({ ...entry, data: { ...entry.data,
+            operatingEnvironment: entry.data.label === SURVIVOR ? water : olderWater,
+          } }));
         }
         const label = Object.keys(PERIOD)
           .find((candidate) => url.includes(encodeURIComponent(candidate)));
@@ -245,6 +272,27 @@ describe("query_sensor_data over a merge chain", () => {
       urls,
     };
   };
+
+  it("excludes different-water history from requests and statistics and explains why", async () => {
+    const { tool, urls } = makeTool("fresh-water", "salt-water");
+    const result = await tool.run({
+      metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "OWC",
+    });
+    expect(result.n_samples).toBe(2);
+    expect(result.value).toBeCloseTo(7.2);
+    expect(urls.some((url) => url.includes(encodeURIComponent(PRED)))).toBe(false);
+    expect(result.note).toContain("different water type");
+  });
+
+  it("retains unknown-water history and surfaces the uncertainty in both note paths", async () => {
+    const { tool } = makeTool("fresh-water");
+    const result = await tool.run({
+      metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "OWC",
+    }) as { n_samples: number; note: string; user_notes: string[] };
+    expect(result.n_samples).toBe(3);
+    expect(result.note).toContain("water types could not be compared");
+    expect(result.user_notes).toContainEqual(expect.stringContaining("water types could not be compared"));
+  });
 
   it("fans out over the chain, de-duplicates the overlap, and never reads the foreign label", async () => {
     const { tool, urls } = makeTool();
@@ -421,10 +469,10 @@ describe("pod-scope fixture fleet", () => {
     expect(chain.withheld).toEqual([]);
   });
 
-  it("withholds the dangling-organization leg of a three-label chain", () => {
+  it("withholds different-water and dangling-organization legs of a three-label chain", () => {
     const chain = resolveChain(by("dev:100000000000003"), fleet);
-    expect(chain.labels).toEqual(["dev:100000000000003", "dev:100000000000004"]);
-    expect(chain.withheld.map((entry) => entry.label)).toEqual(["dev:100000000000005"]);
+    expect(chain.labels).toEqual(["dev:100000000000003"]);
+    expect(chain.withheld.map((entry) => entry.label)).toEqual(["dev:100000000000004", "dev:100000000000005"]);
   });
 
   it("hands the dangling-organization leg to the period route for its own organization", () => {

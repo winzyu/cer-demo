@@ -20,8 +20,8 @@ Owner: the Gilligan behaviour chat. Started 2026-09-28 from `GILLIGAN_RESET_2026
 
 | # | Task | Owner | Waits on | Status |
 |---|---|---|---|---|
-| T1 | Finding 10 guard in `src/devices/mergeChains.ts` with tests; `SPECS.md` §19 note | Codex in `fix/q10-history`, Claude reviews | - | ready |
-| T2 | Strip earlier answers' citation markers in `src/prompt/promptBuilder.ts`, with a test | Codex in `fix/q10-history`, Claude reviews | - | ready |
+| T1 | Finding 10 guard in `src/devices/mergeChains.ts` with tests; `SPECS.md` §19 note | Codex in `fix/q10-history`, Claude reviews | - | done |
+| T2 | Strip earlier answers' citation markers in `src/prompt/promptBuilder.ts`, with a test | Codex in `fix/q10-history`, Claude reviews | - | done |
 | T3 | Rejected-limit note (decision 8) and the no-readings message at `buildReportInput.ts:548` | cloud `cloud/q10-followups` | - | ready |
 | T4 | Server `findInheritedLabels` water-type check, written as a proposal | Claude, to the server security chat | T1 | todo |
 | T5 | Finding 6 dates and Data Quality units; softened sensor-fault note; "sensor rails", `lastReadingAt` comment, PDF reading age, `Math.min` spread | Codex in `fix/q10-gilligan`, Claude reviews | `task/q9-land` | blocked |

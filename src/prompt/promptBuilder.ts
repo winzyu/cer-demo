@@ -1,3 +1,4 @@
+import { stripCitationMarkers } from "../utils/citations";
 import { config } from "../config";
 import type { ChatMessage } from "../types/chat.types";
 import type { Chunk } from "../types/retrieval.types";
@@ -59,7 +60,7 @@ export const formatCurrentTime = (now: Date): string => (
 export interface BuildMessagesInput {
   query: string;
   chunks: Chunk[];
-  /** Prior turns, oldest first. Passed through unchanged. */
+  /** Prior turns, oldest first. Assistant citation markers are removed for this request. */
   history?: ChatMessage[];
   /** The pod chosen in the interface, if any (`device` on the chat request). */
   selectedDevice?: string;
@@ -109,7 +110,9 @@ export const buildMessages = ({
     messages.push({ role: "system", content: formatContext(chunks) });
   }
 
-  messages.push(...history);
+  messages.push(...history.map((message) => (message.role === "assistant"
+    ? { ...message, content: stripCitationMarkers(message.content) }
+    : message)));
   // Per request, so these go after everything cacheable and just before the question. Eval
   // captures send no device and run with the tools off, so their prompt is unchanged.
   if (toolsEnabled) {
