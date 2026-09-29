@@ -1,0 +1,256 @@
+{
+  "fixtureId": "long-turbidity-bubbles",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "tby-dynamic-agitate-bubbles-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Agitates the sensor to remove bubbles from its optical surface. Uses up-and-down or circular movement to dislodge the bubbles. Activates the wiper mechanism if available."
+        },
+        {
+          "claimId": "tby-bubbles-positive-01",
+          "rubric": [
+            4
+          ],
+          "why": "Explains that bubbles can bias apparent turbidity upward."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "tby-dynamic-stability-3-or-5-01",
+          "rubric": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "why": "Requires at least three sequential readings for the in situ procedure. Requires at least five sequential readings for the flow-through chamber procedure. Takes readings at regular time increments. Requires the sequence to be within 10 percent."
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "claims": [
+        {
+          "claimId": "tby-dynamic-2min-warmup-10-20-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Allows at least 2 minutes before recording the required sequence. Notes that some instruments need 10 to 20 minutes of warmup."
+        },
+        {
+          "claimId": "tby-dynamic-median-10pct-01",
+          "rubric": [
+            3
+          ],
+          "why": "Reports the median of the sequential readings meeting the stability criterion."
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "claims": [
+        {
+          "claimId": "tby-dynamic-avoids-settling-01",
+          "rubric": [
+            1
+          ],
+          "why": "Explains that dynamic measurement avoids particle-settling problems in discrete samples."
+        },
+        {
+          "claimId": "tby-static-biased-low-coarse-01",
+          "rubric": [
+            2
+          ],
+          "why": "Warns that static readings can be biased low when sand or coarse silt is present."
+        },
+        {
+          "claimId": "tby-static-settling-3-5s-01",
+          "rubric": [
+            3
+          ],
+          "why": "States that a sample settling within 3 to 5 seconds cannot be measured accurately with the static method."
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "claims": [
+        {
+          "claimId": "orp-zobells-storage-01",
+          "rubric": [
+            1
+          ],
+          "why": "Stores the solution in a dark bottle."
+        },
+        {
+          "claimId": "orp-zobells-shelf-life-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Keeps the solution chilled at 4 degrees Celsius. States that stability is reported for at least 90 days under that chilled condition."
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "claims": [
+        {
+          "claimId": "orp-zobells-toxic-01",
+          "rubric": [
+            1
+          ],
+          "why": "Warns that ZoBell's solution is toxic and must be handled with care."
+        },
+        {
+          "claimId": "orp-zobells-iron-reactive-01",
+          "rubric": [
+            2
+          ],
+          "why": "Warns that ZoBell's reacts readily with minute iron particles and dust."
+        },
+        {
+          "claimId": "orp-fresh-zobells-troubleshoot-01",
+          "rubric": [
+            3
+          ],
+          "why": "Uses a fresh aliquot of ZoBell's solution for troubleshooting the electrode reading."
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "claims": [
+        {
+          "claimId": "tby-dynamic-agitate-bubbles-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Moves the sensor up and down or in a circular pattern to remove bubbles. Activates the wiper if available."
+        },
+        {
+          "claimId": "tby-bubbles-positive-01",
+          "rubric": [
+            3
+          ],
+          "why": "Identifies bubbles as a source of positive turbidity bias."
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "claims": [
+        {
+          "claimId": "tby-dynamic-stability-3-or-5-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Uses five or more sequential readings for the flow-through chamber. Spaces the readings at regular time increments. Requires the readings to be within 10 percent."
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "claims": [
+        {
+          "claimId": "tby-dynamic-2min-warmup-10-20-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Treats 2 minutes as the minimum wait before the sequence. Notes that some instruments require 10 to 20 minutes of warmup."
+        },
+        {
+          "claimId": "tby-dynamic-median-10pct-01",
+          "rubric": [
+            3
+          ],
+          "why": "Reports the median of the accepted sequential readings rather than their maximum."
+        }
+      ]
+    },
+    {
+      "turn": 10,
+      "claims": [
+        {
+          "claimId": "tby-bubbles-positive-01",
+          "rubric": [
+            1
+          ],
+          "why": "Identifies bubbles as a possible source of positive turbidity bias."
+        },
+        {
+          "claimId": "mp-t6-clean-replace-07",
+          "rubric": [
+            2,
+            3,
+            4
+          ],
+          "why": "Cleans sensors according to the manufacturer's instructions. Replaces a damaged sensor. Recalibrates after replacing a damaged sensor."
+        }
+      ]
+    },
+    {
+      "turn": 11,
+      "claims": [
+        {
+          "claimId": "tby-designs-not-equivalent-01",
+          "rubric": [
+            1
+          ],
+          "why": "Warns that different turbidity instrument designs commonly do not yield equivalent results."
+        },
+        {
+          "claimId": "tby-instrument-relations-site-specific-01",
+          "rubric": [
+            2
+          ],
+          "why": "States that relations between instrument types are site specific."
+        },
+        {
+          "claimId": "tby-store-by-design-units-01",
+          "rubric": [
+            3
+          ],
+          "why": "Preserves instrument design and reporting units when storing turbidity data."
+        }
+      ]
+    },
+    {
+      "turn": 12,
+      "claims": [
+        {
+          "claimId": "tby-dynamic-agitate-bubbles-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Moves the turbidity sensor up and down or in a circle to dislodge optical-surface bubbles. Activates the wiper mechanism if available."
+        },
+        {
+          "claimId": "tby-bubbles-positive-01",
+          "rubric": [
+            3
+          ],
+          "why": "States that bubbles can produce positive turbidity bias."
+        }
+      ]
+    }
+  ],
+  "neither": []
+}

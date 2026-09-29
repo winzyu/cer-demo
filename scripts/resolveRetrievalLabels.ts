@@ -69,18 +69,24 @@ const loadClaimIndex = (): Map<string, ClaimResolution> => {
 };
 
 /**
- * Claim ids are alnum, 3+ hyphen-separated segments, last segment exactly 2 digits — verified
- * against all 2,250 ids in `eval/claims/`. That final-segment check is what keeps this from
+ * Wave 1 claim ids are alnum, 3+ hyphen-separated segments, last segment exactly 2 digits. The E7
+ * claims (`v2x-…`, `ks-…`) have no digit suffix, so a token that is itself a known claim id also
+ * counts as named. That final-segment check is what keeps this from
  * matching every other hyphenated phrase in the notes prose (document filenames, cross-fixture
  * mentions, "plus-or-minus", "out-of-scope"...); it still occasionally matches a real phrase
  * that happens to end in two digits (e.g. "in-situ-vs-25"), which the exact-match against
  * `loadClaimIndex()` below is what actually decides — this regex only picks the candidates the
  * coverage report calls "named".
  */
-const CLAIM_ID_SHAPE = /\b[A-Za-z0-9]+(?:-[A-Za-z0-9]+){2,}\b/g;
+const CLAIM_ID_SHAPE = /\b[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+\b/g;
 
-const namedClaimIds = (notes: string): string[] => [...new Set(
-  (notes.match(CLAIM_ID_SHAPE) ?? []).filter((token) => /-\d{2}$/.test(token)),
+const namedClaimIds = (
+  notes: string,
+  knownIds: ReadonlyMap<string, unknown>,
+): string[] => [...new Set(
+  (notes.match(CLAIM_ID_SHAPE) ?? []).filter((token) => (
+    (/-\d{2}$/.test(token) && token.split("-").length >= 3) || knownIds.has(token)
+  )),
 )];
 
 interface RelevantChunkDraft {
@@ -132,7 +138,7 @@ const main = (): void => {
     const fixtureId = file.replace(/\.json$/, "");
     const fixture = JSON.parse(fs.readFileSync(path.join(fixtureDir, file), "utf8"));
     const isRefusal = fixture.class === "refusal";
-    const named = namedClaimIds(fixture.notes ?? "");
+    const named = namedClaimIds(fixture.notes ?? "", claimIndex);
 
     const resolved: string[] = [];
     const unresolved: string[] = [];

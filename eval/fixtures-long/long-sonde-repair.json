@@ -1,0 +1,229 @@
+{
+  "id": "long-sonde-repair",
+  "class": "follow-up",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+    "cer-water-quality-guidance-v2-excerpt.md"
+  ],
+  "requires": [],
+  "notes": "Tests whether sonde troubleshooting survives a switch to stormwater interpretation, a refusal to invent a metals measurement, and indirect returns to the repair sequence.\nClaims: mp-t6-scrambled-03, mp-dry-ports-08, mp-solvent-do-warning-09, mp-warning-message-07, mp-t6-clean-replace-07, mp-t6-display-off-02, v2x-predawn-battery-check, v2x-battery-brownout, v2x-marine-stormwater-discriminator, v2x-stormwater-contamination, v2x-turbidity-loading-proxy, v2x-maintenance-step, mp-cal-records-01, mp-inspect-cables-11, mp-cable-coil-07.\nTurn roles: 1=early; 2=early; 3=early; 4=on-topic+cross-document; 5=switch; 6=on-topic+refusal; 7=return; 8=back-reference(2); 9=back-reference(3); 10=cross-document; 11=on-topic; 12=capped-back-reference(1).",
+  "turns": [
+    {
+      "role": "user",
+      "content": "After a wet trip, our handheld sonde display is showing numbers that look scrambled or in the wrong scale. What should I check before deciding the sensors are bad?",
+      "rubric": {
+        "must_contain": [
+          "Checks that the correct measurement units are selected.",
+          "Inspects connectors for moisture.",
+          "Inspects connectors for dirt or damage.",
+          "Checks for loose connections."
+        ],
+        "must_not": [
+          "Diagnoses a real change in water quality from the scrambled display alone."
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "One sensor port is damp and we may need to fit a spare sensor. Can I dry the whole head with alcohol, including the optical oxygen face?",
+      "rubric": {
+        "must_contain": [
+          "Dries the sensor port before installing the replacement sensor.",
+          "Identifies compressed air as a port-drying option.",
+          "Warns that alcohol or other solvents can destroy the optical DO sensing surface.",
+          "Warns that alcohol or other solvents can damage some plastics and o-rings."
+        ],
+        "must_not": [
+          "Recommends wiping the optical DO sensing surface with alcohol."
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "There's also a warning on the display and one sensor looks physically damaged. Can the crew carry on after wiping it, or what has to happen?",
+      "rubric": {
+        "must_contain": [
+          "Does not use the instrument until the warning's underlying error is identified, understood, and corrected.",
+          "Replaces damaged sensors.",
+          "Recalibrates after replacing a damaged sensor."
+        ],
+        "must_not": [
+          "Treats clearing the warning from the display as sufficient without correcting its cause."
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Tomorrow's start will be cold, and last week several channels dropped out together before dawn. What power-related checks should go on the list?",
+      "rubric": {
+        "must_contain": [
+          "Notes that battery performance decreases as temperature decreases.",
+          "Carries spare batteries.",
+          "Checks battery voltage for a pre-dawn anomaly.",
+          "Identifies simultaneous steps, noise, or dropouts across channels with falling battery voltage as a possible power brownout."
+        ],
+        "must_not": [
+          "Declares a pre-dawn dropout to be a pollution event without checking power."
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "cer-water-quality-guidance-v2-excerpt.md"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Different site now: after rain at our marine outfall, the turbidity jumped while salinity and pH fell. What stormwater pattern does that fit, and what can be riding in with it?",
+      "rubric": {
+        "must_contain": [
+          "Recognizes a salinity or specific-conductance decrease near an outfall as part of the marine stormwater pattern.",
+          "Recognizes the turbidity spike coinciding with rain as a stormwater discriminator.",
+          "Identifies lower pH as part of the marine stormwater pattern.",
+          "Notes that stormwater can carry bacteria, metals, and hydrocarbons."
+        ],
+        "must_not": [
+          "Treats the pattern as a direct measurement of a particular contaminant."
+        ],
+        "cite": [
+          "cer-water-quality-guidance-v2-excerpt.md"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "So how many milligrams per litre of metals are in that water? We've only got the pod readings; can you work out the concentration from that spike?",
+      "rubric": {
+        "must_contain": [
+          "States that DataPods cannot measure the metals in stormwater.",
+          "Declines to supply a metals concentration from those pod measurements.",
+          "Describes a turbidity spike as a loading proxy rather than a measured metals concentration."
+        ],
+        "must_not": [
+          "Invents a metals concentration or converts turbidity into milligrams per litre of metals.",
+          "Offers a typical numeric metals concentration as a substitute for the unavailable measurement."
+        ],
+        "cite": [
+          "cer-water-quality-guidance-v2-excerpt.md"
+        ]
+      },
+      "requires_refusal": true
+    },
+    {
+      "role": "user",
+      "content": "OK, back to the sonde we were repairing. We still see the warning after cleaning; should we put it back to work, and what about the damaged sensor?",
+      "rubric": {
+        "must_contain": [
+          "Keeps the instrument out of use until the error is identified, understood, and corrected.",
+          "Replaces the damaged sensor.",
+          "Recalibrates after replacement."
+        ],
+        "must_not": [
+          "Continues interpreting the stormwater event instead of addressing the instrument warning."
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "That damp socket and the face beside it from earlier - which part needs drying before the swap, and what should I keep the solvent off?",
+      "rubric": {
+        "must_contain": [
+          "Dries the sensor port before replacing the sensor.",
+          "Offers compressed air for drying the port.",
+          "Keeps alcohol and other solvents away from the optical DO sensing surface because they can destroy it.",
+          "Warns that solvents can also damage some plastics and o-rings."
+        ],
+        "must_not": [
+          "Answers about contaminants in the stormwater sample instead of the damp sensor port."
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The warning and damaged part I mentioned near the start - is wiping the part and acknowledging the message enough to release the kit?",
+      "rubric": {
+        "must_contain": [
+          "Requires the underlying error to be identified, understood, and corrected before use.",
+          "Requires replacement of a damaged sensor.",
+          "Requires recalibration after sensor replacement."
+        ],
+        "must_not": [
+          "Substitutes stormwater risk interpretation for the repair release requirements.",
+          "Treats acknowledging a warning as equivalent to correcting its cause."
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Once it's fixed, a serviced channel shows a sudden offset right when we worked on it. What record should I compare that with, and what checks need recording after replacement?",
+      "rubric": {
+        "must_contain": [
+          "Compares an abrupt offset in a serviced channel with the maintenance timestamp and log.",
+          "Recalibrates after replacing the damaged sensor.",
+          "Maintains calibration records in the appropriate instrument or sensor logbook."
+        ],
+        "must_not": [
+          "Attributes an offset at the maintenance timestamp to a discharge without checking the maintenance log."
+        ],
+        "cite": [
+          "cer-water-quality-guidance-v2-excerpt.md",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "We're ready to carry it back out. What should I inspect on the leads, and how tightly can I coil them in the case?",
+      "rubric": {
+        "must_contain": [
+          "Inspects cables for damage.",
+          "Inspects connectors and sensor ports for corrosion.",
+          "Uses cable coils no tighter than 6 inches in diameter.",
+          "Stores cables clean and dry."
+        ],
+        "must_not": [
+          "Recommends tightly winding the cables into coils smaller than 6 inches in diameter."
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The strange display I opened with - remind me what to check in the settings and at the connections before blaming the water.",
+      "rubric": {
+        "must_contain": [
+          "Checks that the correct measurement units are selected.",
+          "Inspects connectors for moisture, dirt, or damage.",
+          "Checks for loose connections."
+        ],
+        "must_not": [
+          "Answers about stormwater metals instead of troubleshooting the sonde display.",
+          "presents a guess about which earlier instrument or procedure is meant as though it were certain"
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    }
+  ]
+}
