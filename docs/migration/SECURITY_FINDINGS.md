@@ -222,6 +222,8 @@ Theirs to fix, ours to raise. Bundled with the two already-known items so it goe
    unbounded blast radius once a token leaks.
 6. **The zero-device fail-open** in `findPeriodWaterData` (§1): an organization with no devices
    must match nothing, not everything.
+7. **CSV export bypasses organization scoping** (mirror finding 11; §7 correction):
+   `WaterAnalyticsController.exportCsv` lets any logged-in user export any pod's readings as CSV.
 
 ---
 
