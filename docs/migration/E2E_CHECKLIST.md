@@ -217,3 +217,28 @@ Raw responses are in [`e2e-mirror-2026-09-29/`](e2e-mirror-2026-09-29/).
 | calibration | Seaview customer, Seaview Marina | When should I calibrate my pod's sensors? | pass | Calibration is CER's under the subscription; cites USGS and EPA field guidance only as general background. |
 
 Defect for the Gilligan behaviour chat: a single 0.00 dissolved-oxygen reading drives the report's "Action Required" (K21b, F7), while an 18-hour run below the minimum raises no event (K21b).
+
+### Groups B, D, E, H and I in the browser
+
+Headless Chromium through the dashboard on `:3000`, driven by `scripts/e2e/mirrorChecklist.mjs` in the `gcp-test-env` worktree (untracked there). It reuses the bot's `cdp.mjs` and starts, stops and restarts nothing.
+12 questions and 1 report, about $0.03; transcript in [`e2e-mirror-2026-09-29/browser-transcript.json`](e2e-mirror-2026-09-29/browser-transcript.json), all screenshots in the worktree's `data/e2e/mirror-bdehi-2026-09-29/`.
+Group B ran twice as the Harbor customer, once with no pod and once with Harbor Pier Buoy picked; D ran as the Seaview customer, E as the Lakeside customer, H as the Harbor customer at 390 x 844, and I as `user-super-5`.
+For I, the emulator's usage document for `user-super-5` was set to 19 questions first (free, local), instead of asking 19 questions.
+
+| # | result | note |
+|---|---|---|
+| B1 | pass | Both runs: grounded in USGS TM 9-A6.2 with citation chips; no raw markers. |
+| B2 | pass | Both runs: ±0.002 and "~1 Year" from the Atlas pH datasheet, USGS daily calibration as the stricter rule, and CER's subscription calibration for the pod. |
+| B3 | pass | Both runs: colder water holds more oxygen, cited, with the 14.62 to 7.56 mg/L solubility figures (finding 7 of the 2026-09-24 QA stays fixed). With the pod picked, it opens with the salinity quote before the temperature one. |
+| D1 | review | Carries the water-type note. On `dev` (no Q9 yet) the 2.07 still counts as the day's minimum; the answer calls it a single isolated glitch that recovered the next bucket, checks other parameters with a series, and invents no cause. |
+| D2 | review | Carries the water-type note. Stays on Seaview Outfall Buoy and Sep 26-28 without re-asking; dissolved oxygen 6.0-10.9 mg/L on Sep 27. |
+| D3 | review | Carries the water-type note. Also: no comparison with the configured thresholds (only offered), and "the visible history starts on Sep 28" misparaphrases the withheld-history note, since the week's readings are all shown. |
+| E1 | **fail** | Shape as expected (no pod question, status with reason, "Events flagged: 0", period `2026-09-22 to 2026-09-29`, a **Download report - Lakeside Buoy 2026 (PDF)** button), but the status is "Action Required" because dissolved oxygen "ranged from 0.00 to 11.15 mg/L": a single 0.00 glitch, the K21b defect. |
+| E2 | pass | `Preparing report...`, then `cer-report-lakeside-buoy-2026-2026-09-22-to-2026-09-29.pdf`; 3 pages; header period matches E1. |
+| H1 | pass | No horizontal scroll (390 of 390 px); the chat panel comes before history and the picker; input and send fully visible. [screenshot](e2e-mirror-2026-09-29/H1.png) |
+| H2 | review | The answer fits and a tapped chip opens the sources list without horizontal scroll, but the source title is clipped at the panel edge ("USGS TM 9-A6.3 — Specific C"). [screenshot](e2e-mirror-2026-09-29/H2.png) |
+| I1 | pass | "Almost out: 1 question left, resets 09/29 17:00." The "Almost out" prefix is new since the baseline (`QUERY_QUOTA_WARN_AT=0.2`), so the expectation above is out of date. |
+| I2 | pass | Answered; then "Message limit reached", "You have used this period’s questions. Resets 09/29 17:00.", a See plans link, and send and input disabled. [screenshot](e2e-mirror-2026-09-29/I2.png) |
+| I3 | pass | The limit state survives the reload. |
+
+The brief asked for B1-B6 with and without a pod; this checklist's group B has three turns, and the manual guide's B4-B6 were not run.
