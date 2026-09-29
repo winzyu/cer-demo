@@ -242,3 +242,22 @@ For I, the emulator's usage document for `user-super-5` was set to 19 questions 
 | I3 | pass | The limit state survives the reload. |
 
 The brief asked for B1-B6 with and without a pod; this checklist's group B has three turns, and the manual guide's B4-B6 were not run.
+
+### The 23 REVIEW rows of `codex-bdehi-2026-09-28`
+
+Judged from that run's `RESULTS.md` and screenshots (`gcp-test-env` worktree, `data/e2e/codex-bdehi-2026-09-28/`, git-ignored); IDs are the manual guide's.
+That run was on server `mirror/e2e-p3` `1ef21a7` and cer-demo `b07f950`, without `CATALOGUE_PROMPT`.
+
+| guide # | verdict | reason |
+|---|---|---|
+| B3 | pass, pod picked only | With Harbor Pier Buoy picked, gives that pod's pH (8.17) with its age and a stale flag, from a tool call; nothing invented. The guide's no-pod case was not run. |
+| B4 | **fail** | No swimming verdict, but no alternative source either: the canned "Outside supported scope" reply offers sensor readings instead of referring to local public-health authorities. Pre-catalogue run; recheck with `CATALOGUE_PROMPT=true`. |
+| B5 | pass | Declines; no prompt text. |
+| B6 | pass | Answers in Spanish, grounded and cited; the last bullet is uncited. |
+| D1a | pass | "I don't have any data for a pod named “Lakeside Buoy 2026”"; no readings, no confirmation that it exists. |
+| D1b | pass | "Not found among your visible deployments"; offers the Harbor pod instead. |
+| D2a | pass | Chat and crafted relay call both refuse, with no reading fields; the crafted page URL was not tested. |
+| D3 | pass | Old Anchorage DataPod™ (Harbor-owned, merged into CER's Demo Public Dock Buoy) is withheld as unknown, and the CER pod is not named. |
+| E6 | pass | The matching titles are the same questions asked by both users; the emulator holds distinct chat ids for each, so the admin sees only their own. The guide's direction (customer after admin) was not run. |
+| B7, B8, D7, D8, E7 | not run | No bot scenario. |
+| H1-H7, I1, I2 | not run | No bot scenario. H1, H2, H5 and H7 stop services or stub the model, so they need a window when no other chat uses the mirror; the 390 px layout (I2) is partly covered by checklist H1 and H2 above. |
