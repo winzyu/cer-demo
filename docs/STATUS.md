@@ -1,13 +1,13 @@
 # Status
 
-Updated 2026-09-28 at commit `adaad8c`, as the baseline for the second full reset of every chat.
+Updated 2026-09-29 when `dev` was declared final for rc2.
 Current state and next steps only; history is `git log -p docs/STATUS.md`; never cite this file from code or other docs.
 
 ## Start here
 
 - **Gilligan release, September 30**: tasks, owners and dates are in [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md), which wins over this file; the user deploys.
   Next: each chat reads its section of [`migration/GILLIGAN_RESET_2026-09-28.md`](migration/GILLIGAN_RESET_2026-09-28.md).
-- **Where we are (freeze day)**: `dev` is not final (Q9 `task/q9-land`, Q10, Q11 and U7 are not written or landed; rc2 is not cut); nothing is deployed, and every deploy waits on Michael's setup.
+- **Where we are**: `dev` is final for rc2 at `303280d` (the full `npm test` passes, 1584 tests); the server candidate is `release/gilligan-2026-09-30-rc2` `8463545` and the dashboard candidate is `release/gilligan-2026-09-30-rc2` `fc13d16`, both pushed; Michael picks the server commit after the demo (manual guide section L). Next: the release chat cuts rc2 (L4), then manual testing runs against exactly these three commits; nothing is deployed.
   Critical path: Michael's setup, L5 no-traffic deploy, L6-L7 staged stack and demo (Sep 29), L8-L9 smoke and traffic (Sep 30); Sep 29 has no slack left.
 - **Production fixes outside Gilligan** (CSV export, user routes, period query, invited login, empty organization) ship only with Michael's go-ahead, needed before L6 (`timeline.md`, 2026-09-28).
 - **Chats after the reset**: release (L4-L9), Gilligan behaviour, release plan (coordinator), release demo; suggested: server security fixes, mirror testing.
@@ -38,7 +38,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - User, pushes: dashboard `task/gilligan-ux`; server `task/gilligan-citation-title`, `fix/invited-login`, the Q11 branch, the combined release commit before L6; optionally `test/launch-issues`.
 - User, supervisor or Michael at the demo: the standing caveat in place of refusals; the pH 3-12 band; the demo date and key; the A items; Firestore access for cer-gilligan.
 - User, housekeeping: review the supervisor brief; mark the mirror review sheets (`data/e2e/`); stop the launch-issues stacks when idle; remove merged worktrees; the coordinate audit and `scripts/censusFirestore.ts` are optional.
-- Agent, release plan: build `task/q9-land`, then land after the mirror rerun; refresh the plan; rewrite guide K12; runbook §3.1, §4.1 and §2.1 fixes; `SECURITY_FINDINGS.md` §5 and §8 corrections; declare `dev` final for rc2 (reset brief, "Release plan").
+- Agent, release plan: done through declaring `dev` final; next, record Michael's answer and the pinned commits after the demo.
 - Agent, Gilligan behaviour: Q10 findings 6, 8, 10 and 7, K21, U7, citation markers, follow-ups (reset brief, "Gilligan behaviour").
 - Agent, release: rc2, re-ingest and checksums, production-mode run, `RELEASE_CANDIDATE.md`, then L5-L8 (reset brief, "Release").
 - Agent, release demo: walkthrough corrections, browser checks, CER `main` comparison, demo script (reset brief, "Release demo").

@@ -1,6 +1,6 @@
 # Gilligan release plan, September 24-30
 
-Current at `dev` `3396821` plus this edit (2026-09-29: U1-U6, P5, E7 and Q9 done; Q10 findings 6, 7 and 10, citation-marker stripping and `CER_DESCRIPTION` landed; Q10 T12 and K21b, `cloud/q10-followups`, Q11 and U7 open; rc2 not cut).
+Current at `dev` `303280d` plus this edit (2026-09-29: `dev` declared final for rc2; Q9, Q10 including T12 and K21b, U7 and the aggregate-window fix landed; server candidate `8463545` and dashboard candidate `fc13d16` pushed; the server commit is pinned after Michael's answer at the demo, manual guide section L).
 Production fixes outside Gilligan (the CSV export, the user routes, the period query, invited-user login, the empty-organization filter) ship at launch only with Michael's go-ahead, needed before L6; otherwise they follow launch (`timeline.md`, 2026-09-28).
 Written 2026-09-24, after the supervisor's answers to the stakeholder questions and the marked-up catalogue review (`review-marked-up.html`, untracked at the repo root).
 The goal is unchanged from [`RELEASE_GOAL_AND_PLAN.md`](RELEASE_GOAL_AND_PLAN.md); this file replaces the dates in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4 for the last six days.
