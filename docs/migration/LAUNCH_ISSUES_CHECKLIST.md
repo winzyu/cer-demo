@@ -53,8 +53,9 @@ All testing uses fabricated data; nothing here reads production except the one s
 | date | questions | reports | spend | running total of the $10 mirror budget |
 |---|---:|---:|---:|---:|
 | 2026-09-27 | 0 | 0 | $0.00 | about $2.56 spent before this chat; $2.56 |
+| 2026-09-29 | 24 | 2 | about $0.40 (estimate, not metered) | about $2.96 |
 
-Allowance used per persona (20 questions and 5 reports per UTC day, Mirror only): none so far.
+Allowance used per persona (20 questions and 5 reports per UTC day, Mirror only), 2026-09-29 dry run: harbor-cust-2 7, harbor-admin-1 3, lake-cust-2 5, super-2 7, river-cust-1 1, orphan-1 1.
 
 ## Commits under test
 
@@ -133,7 +134,7 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **Steps:** ask for 30 days of history with `PREDECESSOR_PERIOD_HANDOFF=true`, then `false`; period calls for `...018` as Lakeside and Harbor; repeat as Superadmin.
 - **Expected:** `true` merges the Spare Pods' history; `false` withholds it with a note; another organization's predecessor always withheld; superadmin gets merged history withheld.
 - **Fix:** server `510cf00` (mirror `3e7c3fb`, release `9751f8f`) and cer-demo `dev`.
-- **Result:** not run (needs the Mirror's Gilligan).
+- **Result (Mirror dry run 2026-09-29 04:50-05:05 UTC: server `8594338` (`mirror/release-rc1` plus fixtures), Gilligan `docs/release-demo` (`dev` `0de9059` code) with runbook §4.1 settings, dashboard `9e18555`):** pass. With `true`, Lakeside customer 2's 60-day history used 8,640 readings and noted labels 003, 004, 005, 018 and 019; with `false`, 4,320 readings and the "Earlier readings from this site are not available" note; Superadmin 2 got 4,320 either way. Period call for `...018`/`...004`: Lakeside 200 (720), Harbor admin 400 `Device not found`.
 
 ### A5. Invited user with no password gets a 500 at login
 
@@ -160,6 +161,7 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **Who, production:** no production user is in this state (checked 2026-09-26).
 - **Fix:** not written.
 - **Result (2026-09-29, API only):** original confirmed; release (unfixed) confirmed, partly.
+- **Gilligan half (Mirror dry run, 2026-09-29):** "List my pods" as Orphan returns a table of all 10 pods' names and water types; every reading lookup fails "Device not found", so names leak but data does not.
 - **Evidence:** `GET /devices`, which feeds `/home` and Export CSV's menu, returns the same 5 pods to the orphan as to Superadmin on both stacks.
   - Data access differs: on Current the orphan gets `...003`'s period (200, 165) but 400 on `/water/last`, so `/home` lists pods without latest readings; on Release period and last are both 400, but CSV export still returns 200 (A1).
   - The chart endpoint returns no datasets for the orphan on either stack.
@@ -186,7 +188,7 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **Actual (reported):** current-site values, but the answer, PDF title and Summary state the full period; only Data Quality mentions 432 excluded readings, beside 1,728 "readings" in another unit.
 - **Expected:** the covered dates and the exclusion stated everywhere; one unit for counts; no earlier-site value (1,300-1,700 uS/cm, pH 6.7-7.3).
 - **Fix:** plan Q10, fix round (no branch yet).
-- **Result:** before not run; after not run.
+- **Result (Mirror dry run, 2026-09-29):** partly fixed on `dev`: the answer and a note state "432 reading(s) from an earlier location ... were left out", but the heading still says "report period 2026-07-31 to 2026-09-29"; PDF not downloaded.
 
 ### B2. A fresh-water pod is judged against a salt-water predecessor
 
@@ -196,7 +198,7 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **Actual (reported):** conductivity 350 to 49,992 uS/cm flagged Exceedance; Action Required, from salt-water Lakeside Testbed.
 - **Expected:** no fresh-water exceedance from the predecessor; check the fix branch's `SPECS.md` for the rule.
 - **Fix:** plan Q10, fix round.
-- **Result:** before not run.
+- **Result (Mirror dry run, 2026-09-29):** at the launch setting the salt-water predecessor is withheld, so no conductivity exceedance; with `PREDECESSOR_PERIOD_HANDOFF=true` it reproduces: "Conductivity ranged 350.00–49,992 µS/cm against its configured 100–1500 µS/cm — an exceedance", Action Required.
 
 ### B3. "My pod is broken" gets declined
 
@@ -206,7 +208,7 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **Actual (reported):** "Outside supported scope ... I'm missing any contact or support details."
 - **Expected:** sales@cleanearthrovers.com or the usual CER contact (O1); nothing invented.
 - **Fix:** plan Q10, fix round.
-- **Result:** before not run.
+- **Result (Mirror dry run, 2026-09-29):** does not reproduce on `dev` with the catalogue on: "contact Clean Earth Rovers support ... sales@cleanearthrovers.com, or your usual contact at Clean Earth Rovers".
 
 ### B4. No location note, and one glitch reading sets Action Required
 
@@ -215,7 +217,7 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **Steps:** "How is the water this week?" twice, in two new chats.
 - **Actual (reported, on a cer-demo that sent no notes):** no location note; Action Required from one 0.00 mg/L oxygen reading.
 - **Expected:** a "location not recorded" note, never "Current site not assessed"; one implausible 0.00 does not set the status alone.
-- **Result:** recheck not run (the mirror still runs `77cd4c9`, which predates `5922109`).
+- **Result (Mirror dry run, 2026-09-29):** location note passes ("Location not recorded: this pod has never reported a GPS position"); the glitch half still fails: "Action Required — dissolved oxygen ranged from 0.00 to 11.21 mg/L"; the same on Lakeside Buoy 2026.
 
 ### B5. A superadmin gets a report on a retired pod
 
@@ -223,7 +225,7 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **Steps:** as `user-super-1` on Lakeside Buoy 2026, "Summarize the last 60 days, including the history of Lakeside Legacy Pod".
 - **Actual (reported):** a 60-day report for Lakeside Legacy Pod itself.
 - **Expected:** undecided; the coordinator recommends accepting it. The user decides.
-- **Result:** not run.
+- **Result (Mirror dry run, 2026-09-29):** does not reproduce: the answer covers Lakeside Buoy 2026 only, with the withheld-history note.
 
 ### B6. Q9 fixes
 
@@ -234,14 +236,14 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **#3:** the PDF never states its reading age; it should.
 - **#4:** a 1-day report on thin data shows an empty series; it should show the readings that exist. Blocked: no 30-minute fixture.
 - **Also:** listed `excluded_implausible_min/max` must match the values actually excluded.
-- **Result:** not run.
+- **Result (Mirror dry run, 2026-09-29, before):** C1 passes on `dev` without the fix: "One is stale: Channel Marker Buoy last reported 31 hours ago". D1 fails as expected: "The lowest pH at Seaview Outfall Buoy over the last 3 days was 2.07". Asking about "yesterday" missed the fixture, whose time is fixed at the reseed.
 
 ### B7. Standing caveat under answers that cite documents (U7)
 
 - **Tag:** internal. Must. Guide K20.
 - **Steps:** one education question ("What does conductivity measure?") and one data question, each in a new chat.
 - **Expected:** the approved caveat under the document answer only. Draft: "Answers draw on document excerpts and may not cover every step; check the cited sections before acting."
-- **Result:** not run (no U7 dashboard branch yet).
+- **Result (2026-09-29):** not built; no caveat under document answers on dashboard `9e18555`.
 
 ## Basic user testing
 
@@ -253,12 +255,12 @@ Everyday flows from the walkthrough's part 2; a failure is a regression.
 | U2 | each persona sees only their own pods | Current, Release | pass (API): Superadmin 5, Harbor admin and customer Harbor Pier Buoy only, Lakeside customer Lakeside Buoy 2026 only, on both |
 | U3 | own pod's pages and period data load | Current, Release | pass (API): the six pages answer 200; Harbor's last, chart (pH, 1 and 7 days, all points valued), dial and map averages, and 7-day period (165) all 200 on both; browser (2026-09-28): Home, Chart (pH), Dial and Map render with no NaN, undefined or error text on both; the only failed call is `water/tides/.../20260928/20260928` 400, with no visible effect |
 | U4 | export own pod's CSV | Current, Release | pass (API): Harbor admin and customer get 200 with 165 rows for `...001` on both |
-| U5 | document question with sources | Mirror | not run |
-| U6 | pod data question with reading age | Mirror | not run |
-| U7 | report offer and PDF | Mirror | not run |
-| U8 | chats saved and reopened | Mirror | not run |
-| U9 | allowance line counts down | Mirror | not run |
-| U10 | phone layout | Mirror | not run |
+| U5 | document question with sources | Mirror | pass (dry run): cited answer, source titles such as "USGS TM 9-A6.2 — Dissolved Oxygen (2020)" |
+| U6 | pod data question with reading age | Mirror | pass (dry run): "last reading 4 minutes ago" with the period dates |
+| U7 | report offer and PDF | Mirror | pass (dry run): `cer-report-harbor-pier-buoy-2026-09-22-to-2026-09-29.pdf`, 3 pages; Lakeside 60-day PDF also 3 pages |
+| U8 | chats saved and reopened | Mirror | pass (dry run): five chats listed newest first with dates; reopened with sources |
+| U9 | allowance line counts down | Mirror | pass (dry run): 20 to 13 over seven questions, "resets 09/29 17:00" |
+| U10 | phone layout | Mirror | pass (dry run): page width 390 at 390 |
 
 ## Next
 
@@ -266,3 +268,10 @@ Everyday flows from the walkthrough's part 2; a failure is a regression.
 2. Done 2026-09-28: A1 and A3 on CER's `main` have the same defects (see A1 and A3).
 3. Ask the mirror chat before using :3000, :5101 or :8010; the B items and U5-U10 need its Gilligan ([`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md)).
 4. Optional: a Current and Release start-up section in `MIRROR_RUNBOOK.md`, which covers only the Mirror.
+
+## Found in the 2026-09-29 dry run
+
+- `WATER_TYPE: "freshwater"` in `GILLIGAN_DEPLOYMENT_RUNBOOK.md` §4.1 makes every salt-water pod's data answer say "the deployment's configured water type is freshwater" (`src/tools/querySensorData.ts:1088`); production salt-water pods would get it too.
+- On Lakeside Buoy 2026 the chat says the stuck turbidity run was excluded as a likely failed sensor, while the 60-day PDF's Summary calls turbidity "Clear (relative index mean 0.0, held steady across the period)" with a "possibly a missing sensor" note.
+- "What level is too low for fish?" after a dissolved-oxygen answer is refused as "Outside supported scope"; the demo uses "How is it measured in the field?" instead.
+- CER's `main` sends water alert emails to `michae@cleanearthrovers.com` (`DevicesService`, `origin/main` `3ed15ff`).

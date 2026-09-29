@@ -82,6 +82,18 @@ a { color: var(--accent); }
 
 <div class="wrap">
 <nav class="toc" aria-label="Contents">
+  <h2>Part 0: Michael demo</h2>
+  <a href="#demo-plan">Running order</a>
+  <a href="#demo-setup">Set up before the demo</a>
+  <a href="#D1"><span class="id">D1</span>Arrival</a>
+  <a href="#D3"><span class="id">D3</span>Documents</a>
+  <a href="#D8"><span class="id">D8</span>Pod data</a>
+  <a href="#D13"><span class="id">D13</span>Moved, merged</a>
+  <a href="#D17"><span class="id">D17</span>Isolation</a>
+  <a href="#D19"><span class="id">D19</span>Saved chats</a>
+  <a href="#demo-asks">Questions for Michael</a>
+  <a href="#demo-a">A items if time</a>
+  <a href="#demo-known">Known problems</a>
   <h2>Before you start</h2>
   <a href="#stacks">Stacks and addresses</a>
   <a href="#personas">Logins</a>
@@ -123,8 +135,413 @@ a { color: var(--accent); }
 <main>
 <header style="display:grid;gap:10px">
   <h1>Gilligan Launch Walkthrough</h1>
-  <p class="lede">Step-by-step instructions for every launch issue and the everyday user flows, on fake data only. Each card says where to go, what to do, what you should see on CER's current code and on our release, and why the current behaviour is wrong. Results are recorded in <code>LAUNCH_ISSUES_CHECKLIST.md</code>, not here. Written 2026-09-27; nothing on this page has been run yet unless the checklist says so.</p>
+  <p class="lede">Step-by-step instructions for every launch issue and the everyday user flows, on fake data only. Each card says where to go, what to do, what you should see on CER's current code and on our release, and why the current behaviour is wrong. Results are recorded in <code>LAUNCH_ISSUES_CHECKLIST.md</code>, not here. Written 2026-09-27; Part 0, the demo run order, added 2026-09-29 from a dry run. Outside Part 0, nothing on this page has been run unless the checklist says so.</p>
 </header>
+
+<h2 class="part" id="part0">Part 0: The Michael demo, step by step</h2>
+<p class="lede">A 40-minute run through Gilligan's features and the decisions Michael made, then the A items if time allows (about 10 minutes more). Every step below was run on 2026-09-29 between 04:50 and 05:05 UTC (21:50-22:05 local on Sep 28) on the stacks described in "Set up before the demo"; the "You should see" boxes quote what came back. Wording varies a little between runs; the facts and the notes under each answer should not.</p>
+
+<section class="panel" id="demo-plan">
+  <div class="label">Running order</div>
+  <div class="tablebox"><table>
+    <thead><tr><th>Minutes</th><th>Segment</th><th>Steps</th><th>Window and account</th></tr></thead>
+    <tbody>
+      <tr><td>0-5</td><td>Arrival and basics</td><td><a href="#D1">D1-D2</a></td><td>Mirror, Harbor customer 2</td></tr>
+      <tr><td>5-11</td><td>Documents and answer rules</td><td><a href="#D3">D3-D7</a></td><td>Mirror, Harbor customer 2</td></tr>
+      <tr><td>11-19</td><td>Pod data, reports and data quality</td><td><a href="#D8">D8-D12</a></td><td>Mirror, Harbor admin, then Superadmin 2</td></tr>
+      <tr><td>19-27</td><td>Moved pods, merged pods (CWA Old)</td><td><a href="#D13">D13-D16</a></td><td>Mirror, Lakeside customer 2, River Watch customer, Superadmin 2</td></tr>
+      <tr><td>27-31</td><td>Isolation between organizations</td><td><a href="#D17">D17-D18</a></td><td>Mirror, Harbor admin, then Orphan</td></tr>
+      <tr><td>31-34</td><td>Saved chats and phone layout</td><td><a href="#D19">D19-D20</a></td><td>Mirror, Harbor customer 2</td></tr>
+      <tr><td>34-40</td><td>Decisions to ask Michael</td><td><a href="#demo-asks">Questions</a></td><td>none</td></tr>
+      <tr><td>40-50</td><td>If time allows: the A items</td><td><a href="#demo-a">A2, A3, A1, A5, A6, A7</a></td><td>Current and Release windows</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Questions used: about 17 on the Mirror, spread over six accounts, so no account comes near its 20 a day.</p>
+</section>
+
+<section class="panel" id="demo-setup">
+  <div class="label">Set up before the demo (30-60 minutes before)</div>
+  <ol>
+    <li><strong>Refresh the Mirror's data about an hour before.</strong> The fake readings stop at the moment the Mirror was seeded, so a day later every pod looks silent. Ask the Mirror chat (it owns ports 3000, 5101 and 8080) to reseed with fixtures, or, if it agrees you run it: in a terminal, <code>source</code> the Mirror settings file that its server was started with, then <code>cd ~/code/clean-earth-rovers/worktrees/server-release-mirror &amp;&amp; npm run mirror:seed -- --fixtures</code>. Expect 22 devices. A reseed wipes all chats and resets every question counter. Gilligan does not need a restart.</li>
+    <li><strong>Check each service in a browser tab.</strong>
+      <ul>
+        <li><code>http://localhost:8010/health</code> shows <code>"status":"ok"</code> (Gilligan).</li>
+        <li><code>http://localhost:5101/api/v1/devices</code> shows a "not logged in" error, not a list (the Mirror server refuses anonymous callers).</li>
+        <li><code>http://localhost:3000</code>, <code>http://localhost:3100</code> and <code>http://localhost:3300</code> each show the Clean Earth Rovers login page.</li>
+      </ul>
+      If any check fails, do not restart anything yourself; the Mirror belongs to the Mirror chat and Gilligan to this chat.</li>
+    <li><strong>Open three browser windows</strong> and arrange them so you can switch quickly:
+      <ul>
+        <li>Window 1, normal: <code>http://localhost:3000/login</code>, the Mirror (Gilligan, our release code, fake data).</li>
+        <li>Window 2, private: <code>http://localhost:3100/login</code>, "Current", CER's own code today. Only for the A items.</li>
+        <li>Window 3, private: <code>http://localhost:3300/login</code>, "Release", CER's code plus our server fixes. Only for the A items.</li>
+      </ul></li>
+    <li><strong>Accounts.</strong> Every password is <code>mirror-dev-password</code>. To switch account in a window, click <strong>LOGOUT</strong> (top right), then log in with the next email.
+      <div class="tablebox"><table>
+        <thead><tr><th>Account</th><th>Email</th><th>Sees</th></tr></thead>
+        <tbody>
+          <tr><td>Harbor customer 2</td><td><code>user-harbor-cust-2@mirror.example.invalid</code></td><td>Harbor Pier Buoy</td></tr>
+          <tr><td>Harbor admin</td><td><code>user-harbor-admin-1@mirror.example.invalid</code></td><td>Harbor Pier Buoy</td></tr>
+          <tr><td>Lakeside customer 2</td><td><code>user-lake-cust-2@mirror.example.invalid</code></td><td>Lakeside Buoy 2026, Lakeside Mobile Buoy, Lakeside Inlet Buoy</td></tr>
+          <tr><td>River Watch customer</td><td><code>user-river-cust-1@mirror.example.invalid</code></td><td>River Watch Float</td></tr>
+          <tr><td>Superadmin 2</td><td><code>user-super-2@mirror.example.invalid</code></td><td>all 10 current pods</td></tr>
+          <tr><td>Orphan</td><td><code>user-orphan-1@mirror.example.invalid</code></td><td>should see nothing (A6)</td></tr>
+        </tbody>
+      </table></div>
+      The Mirror chat uses the <code>-1</code> customer and superadmin accounts; stay on the ones above so neither of you runs out of questions.</li>
+    <li><strong>Every Gilligan question starts in a new chat</strong> unless the step says "same chat": click <strong>New chat</strong> (small link at the top right of "Chat history"), then set the <strong>Pod</strong> picker below the history list, then type the question in <strong>Ask Gilligan</strong> and click the arrow. Before sending, look at the picker and confirm it shows the pod the step names.</li>
+    <li>Answers take 5-20 seconds. The grey notes printed under an answer come from our code, not the model; point at them when a step says so.</li>
+  </ol>
+  <p class="note">What runs where (2026-09-29): Mirror server <code>server-release-mirror</code> <code>8594338</code> (<code>mirror/release-rc1</code> plus the fixtures), emulator :8080 project <code>demo-cer-mirror</code>; Gilligan :8010 from cer-demo <code>docs/release-demo</code> (<code>dev</code> <code>0de9059</code> code) with the deployment runbook §4.1 settings and <code>PREDECESSOR_PERIOD_HANDOFF=false</code>; dashboard :3000 <code>9e18555</code>. Nothing reads production.</p>
+</section>
+
+<h3 class="cat">Arrival and basics (Mirror, Harbor customer 2)</h3>
+
+<article class="item" id="D1">
+  <header>
+    <h4><span class="id">D1</span>Log in and open Gilligan</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">1 min</span><span class="chip ok">$0</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Say</dt><dd>"This is the release on fake data: the same code we will deploy, pointed at a copy of the database with made-up customers and pods."</dd>
+  </dl>
+  <div><div class="label">Do</div><ol>
+    <li>Window 1: log in as Harbor customer 2.</li>
+    <li>Click <strong>GILLIGAN</strong> in the top menu.</li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>"Chat history" on the left with "No conversations yet." (after a reseed), the greeting bubble "Hi I'm Gilligan™, your AI water quality assistant...", and the input "Ask Gilligan".</div></div>
+</article>
+
+<article class="item" id="D2">
+  <header>
+    <h4><span class="id">D2</span>One pod pre-selected, the question counter and the disclaimer</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">1 min</span><span class="chip ok">$0</span><span class="chip">Guide K1, K14, K17</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>Point at the <strong>Pod</strong> picker, then at the two grey lines under the input.</li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>The picker already shows <strong>Harbor Pier Buoy</strong>. Under the input: "20 questions left, resets 09/29 17:00" and "Content is AI generated, be sure to double check answers, turbidity is qualitative."</div></div>
+  <dl class="facts">
+    <dt>Decisions</dt><dd>The disclaimer wording and the 20 questions and 5 reports per person per day are Michael's (2026-09-24); the one-pod pre-selection is ours (2026-09-27); a warning appears when 5 or fewer questions remain. The counter resets at midnight UTC, which is 17:00 in California.</dd>
+  </dl>
+</article>
+
+<h3 class="cat">Documents and answer rules (Mirror, Harbor customer 2)</h3>
+
+<article class="item" id="D3">
+  <header>
+    <h4><span class="id">D3</span>A document answer with sources</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">2 min</span><span class="chip">1 question</span><span class="chip">Guide B1, K13</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>Click <strong>New chat</strong>; set the picker to <strong>No pod selected</strong>.</li>
+    <li>Ask: <code>What does dissolved oxygen measure, and why does it matter for aquatic life?</code></li>
+    <li>Click <strong>Sources (2)</strong> under the answer.</li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>"Dissolved oxygen (DO) is molecular oxygen (oxygen gas) dissolved in water", with small numbered chips after each claim; the sources list shows document titles such as "USGS TM 9-A6.2 — Dissolved Oxygen (2020)". The question stays visible above the answer. The counter drops to 19.</div></div>
+  <dl class="facts">
+    <dt>Decisions</dt><dd>Source citations and the question kept visible (Michael, 2026-09-24); titles on citations (2026-09-27).</dd>
+    <dt>Not yet</dt><dd>The standing caveat under document answers (U7, "Answers draw on document excerpts and may not cover every step; check the cited sections before acting.") is not built; ask Michael about its wording at the end.</dd>
+  </dl>
+</article>
+
+<article class="item" id="D4">
+  <header>
+    <h4><span class="id">D4</span>A follow-up keeps the topic</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">1 min</span><span class="chip">1 question</span><span class="chip">Guide B2, B7</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>Same chat as D3 (no New chat). Ask: <code>How is it measured in the field?</code></li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>"According to the USGS National Field Manual, the standard field method is an optical (luminescence-based) sensor", with steps and 4 sources, ending "it doesn't tell us which sensor type your pod uses." "It" was understood as dissolved oxygen.</div></div>
+  <dl class="facts">
+    <dt>Avoid</dt><dd>"What level is too low for fish?" got "Outside supported scope ... The loaded documents don't state a specific dissolved-oxygen level below which fish are harmed." That is the refuse-rather-than-guess rule working, but it looks like a failure on screen.</dd>
+  </dl>
+</article>
+
+<article class="item" id="D5">
+  <header>
+    <h4><span class="id">D5</span>No swimming verdict</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">1 min</span><span class="chip">1 question</span><span class="chip">Guide B4, F3</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>New chat; picker <strong>Harbor Pier Buoy</strong>. Ask: <code>Is it safe to swim at Harbor Pier Buoy today?</code></li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>"I can't answer that from the sensor data. These sensors measure dissolved oxygen, ORP, pH, conductivity, temperature, and turbidity — they cannot detect bacteria, viruses, nutrients, metals, or algal toxins ... Only appropriate testing, together with your local health agency's advice, can."</div></div>
+  <dl class="facts"><dt>Decision</dt><dd>A question Gilligan cannot answer well is refused rather than answered weakly (Michael, 2026-09-24).</dd></dl>
+</article>
+
+<article class="item" id="D6">
+  <header>
+    <h4><span class="id">D6</span>Turbidity is qualitative, and a stuck sensor is called out</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">1 min</span><span class="chip">1 question</span><span class="chip">Guide B8, K2, K3</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>New chat; picker <strong>Harbor Pier Buoy</strong>. Ask: <code>What is the turbidity at my pod in NTU?</code></li>
+    <li>Point at the grey notes under the answer.</li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>"I can't give you a turbidity reading in NTU", because the readings were a stuck run ("likely failed sensor") and "It's a relative, uncalibrated index derived from a raw voltage, with no unit — it's not NTU". It suggests contacting "sales@cleanearthrovers.com, or your usual contact there". Notes: "Turbidity is provisional - a relative index, not a calibrated measurement." and "Turbidity readings stuck at exactly 0 or 1005 for a day or more were left out as a likely failed sensor".</div></div>
+  <dl class="facts"><dt>Decisions</dt><dd>Turbidity stays qualitative, never NTU (2026-09-24); a flat 0 or 1005 is a failing sensor (Michael, 2026-09-24), counted only after 24 hours (2026-09-26).</dd></dl>
+</article>
+
+<article class="item" id="D7">
+  <header>
+    <h4><span class="id">D7</span>"My pod is broken" gets CER's contact</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">1 min</span><span class="chip">1 question</span><span class="chip">Finding 8</span><span class="chip">Guide K11</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>New chat; picker <strong>Harbor Pier Buoy</strong>. Ask: <code>My pod seems broken, who should I contact?</code></li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>"For power, connection, and sensor faults, contact Clean Earth Rovers support — these are handled by CER under your subscription. Contact: sales@cleanearthrovers.com, or your usual contact at Clean Earth Rovers if you already work with one."</div></div>
+  <dl class="facts">
+    <dt>Decision</dt><dd>Michael's approved catalogue and contact (2026-09-24). Ask him to confirm the wording.</dd>
+    <dt>Note</dt><dd>Finding 8 (declined instead of referred, 2026-09-27) did not reproduce on this run with the catalogue on.</dd>
+  </dl>
+</article>
+
+<h3 class="cat">Pod data, reports and data quality</h3>
+
+<article class="item" id="D8">
+  <header>
+    <h4><span class="id">D8</span>"How is the water this week?" with unset limits</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">2 min</span><span class="chip">1 question</span><span class="chip">Guide C1, C2, K5</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>LOGOUT; log in as Harbor admin; open GILLIGAN. The picker shows Harbor Pier Buoy.</li>
+    <li>New chat. Ask: <code>How is the water this week?</code></li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>"Here's the week for Harbor Pier Buoy (marine), covering 2026-09-22 to 2026-09-29" (the dates move with the demo day). "Status: Not assessed — no parameter has a usable configured threshold". "Only 843 of 1,014 readings were usable". "last reading 4 minutes ago". A <strong>Download report - Harbor Pier Buoy (PDF)</strong> button.</div></div>
+  <dl class="facts">
+    <dt>Decisions</dt><dd>Today's date and the reading's age in every data answer (Q1); limits that cannot be real read "not assessed" instead of passing (Michael, 2026-09-24).</dd>
+    <dt>Say</dt><dd>"Harbor's limits are all zero in the registry, so Gilligan refuses to call the water normal."</dd>
+  </dl>
+</article>
+
+<article class="item" id="D9">
+  <header>
+    <h4><span class="id">D9</span>A PDF report</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">2 min</span><span class="chip">1 question, 1 report</span><span class="chip">Guide F1, F2</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>New chat. Ask: <code>Give me a water quality report for the last 7 days</code></li>
+    <li>Click <strong>Download report - Harbor Pier Buoy (PDF)</strong> and open the file.</li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>The answer names the pod and the period. The file is <code>cer-report-harbor-pier-buoy-2026-09-22-to-2026-09-29.pdf</code> (dates move), 3 pages, titled "Water Quality Report", status "Not assessed", with "Marine (from device registry)" and a Summary that says "This is not a clean result; it means nothing was checked".</div></div>
+  <dl class="facts"><dt>Decision</dt><dd>Reports are part of the release, limited to 5 per person per day (Michael, 2026-09-24).</dd></dl>
+</article>
+
+<article class="item" id="D10">
+  <header>
+    <h4><span class="id">D10</span>Which pods are online, including a silent one</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">1 min</span><span class="chip">1 question</span><span class="chip">Guide C11</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>LOGOUT; log in as Superadmin 2; open GILLIGAN. New chat; picker <strong>No pod selected</strong>.</li>
+    <li>Ask: <code>Which of my pods are online right now?</code></li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>"You have 10 pods. Nine are reporting right now", listed, then "One is stale: Channel Marker Buoy last reported 31 hours ago ... so it's currently offline or not communicating."</div></div>
+  <dl class="facts"><dt>Note</dt><dd>This works on the release code without the Q9 C1 fix, which is not landed.</dd></dl>
+</article>
+
+<article class="item" id="D11">
+  <header>
+    <h4><span class="id">D11</span>A placeholder limit reads "not assessed"</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">1 min</span><span class="chip">1 question</span><span class="chip">Guide C4, K4</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>New chat; picker <strong>Demo Public Dock Buoy</strong>. Ask: <code>Is the pH within its limits this week?</code></li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>"I can't confirm whether pH is within limits this week, because this pod's pH thresholds are not usable ... the configured values fall outside the plausible pH range (0–14)". It still gives the real range (about 7.8 to 8.4). Note: "Not assessed: this device's pH thresholds fall outside a plausible range (0 to 14), so they read as a placeholder rather than a configured limit."</div></div>
+  <dl class="facts"><dt>Decision</dt><dd>The wide limits were unintentional; until Michael corrects them, a limit wider than the sensor's range reads "not assessed" (2026-09-24).</dd></dl>
+</article>
+
+<article class="item" id="D12">
+  <header>
+    <h4><span class="id">D12</span>A pH of 2.07: the 3-12 band</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip high">Decision needed</span><span class="chip">1 min</span><span class="chip">1 question</span><span class="chip">Guide C12</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>New chat; picker <strong>Seaview Outfall Buoy</strong>. Ask: <code>What was the lowest pH at Seaview Outfall Buoy in the last 3 days?</code></li>
+  </ol></div>
+  <div class="compare">
+    <div class="state bad"><div class="label">You should see today</div>"The lowest pH at Seaview Outfall Buoy over the last 3 days was 2.07 (unitless), from 73 samples". The one-off 2.07 is treated as a real reading.</div>
+    <div class="state wait"><div class="label">With the fix (task/q9-land, not built)</div>Readings outside pH 3-12 are called probe faults with their value and left out; the answer reports the lowest counted pH instead.</div>
+  </div>
+  <dl class="facts">
+    <dt>Ask Michael</dt><dd>"Is pH 3-12 the right band for a plausible reading?"</dd>
+    <dt>Avoid</dt><dd>Do not say "yesterday": the fixture's date is fixed at the reseed, so "Why did the pH crash to 2 yesterday?" missed it on 2026-09-29 and answered that nothing happened.</dd>
+  </dl>
+</article>
+
+<h3 class="cat">Moved pods and merged pods</h3>
+
+<article class="item" id="D13">
+  <header>
+    <h4><span class="id">D13</span>A pod that moved reports only its current site</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">2 min</span><span class="chip">1 question</span><span class="chip">Finding 6</span><span class="chip">Guide K6, M4</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>LOGOUT; log in as Lakeside customer 2; open GILLIGAN. New chat; picker <strong>Lakeside Mobile Buoy</strong>.</li>
+    <li>Ask: <code>Summarize the last 60 days</code></li>
+    <li>Point at "Site move" in the answer and at the grey note.</li>
+  </ol></div>
+  <div class="compare">
+    <div class="state good"><div class="label">You should see</div>"Site move: 432 readings from an earlier location (2026-08-30 to 2026-09-17) were excluded, since readings taken before a move describe a different body of water". Note: "432 reading(s) from an earlier location ... were left out; only the pod's current site is covered."</div>
+    <div class="state bad"><div class="label">Still wrong (finding 6)</div>The heading still says "report period 2026-07-31 to 2026-09-29", the full 60 days, though only about the last 12 days are the current site. Fix: plan Q10.</div>
+  </div>
+  <dl class="facts"><dt>Decision</dt><dd>Pods report only on their current site; earlier-site readings are left out and the answer says so (Michael, 2026-09-25).</dd></dl>
+</article>
+
+<article class="item" id="D14">
+  <header>
+    <h4><span class="id">D14</span>The CWA Old rule on a merged pod</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">3 min</span><span class="chip">1 question</span><span class="chip">A4</span><span class="chip">Guide K8, K10, M1</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Say</dt><dd>"Lakeside Buoy 2026 plays Old Woman Creek 2026. Its predecessors include a pod whose organization is missing, one with an empty organization and one registered to an organization that no longer exists: the CWA Old shapes."</dd>
+  </dl>
+  <div><div class="label">Do</div><ol>
+    <li>Still Lakeside customer 2. New chat; picker <strong>Lakeside Buoy 2026</strong>.</li>
+    <li>Ask: <code>Show me the last 60 days of history</code></li>
+  </ol></div>
+  <div class="compare">
+    <div class="state good"><div class="label">You should see (launch setting)</div>A 60-day answer from 4,320 readings of the current pod only, and the note "Earlier readings from this site are not available to this account, so the history shown may start later than the site's first reading."</div>
+    <div class="state wait"><div class="label">Once the handoff is switched on (tested 2026-09-29)</div>With <code>PREDECESSOR_PERIOD_HANDOFF=true</code> the same question used 8,640 readings and noted "Includes readings recorded under this site's earlier device labels (dev:...003, ...004, ...005, ...018, ...019)". The same period call from the Harbor admin for <code>...018</code> returned <code>400 Device not found</code>.</div>
+  </div>
+  <dl class="facts">
+    <dt>Decisions</dt><dd>CWA Old's readings stay with Old Woman Creek 2026, readable only by its organization (Michael, 2026-09-24/25); missing or empty organizations count as none (2026-09-27); the merge is off at launch until the patched server takes all traffic, because the old server would hand another organization's history to anyone (2026-09-26).</dd>
+    <dt>Say it plainly</dt><dd>"The rule is built and tested; at launch it is switched off, so customers see a note instead of the old history, until the server fix is live everywhere."</dd>
+    <dt>Known problem</dt><dd>With the handoff on, the salt-water predecessor's conductivity (350-49,992 µS/cm) is judged against this fresh-water pod's 100-1,500 limit and sets Action Required (finding 10, must, plan Q10). Do not switch it on until Q10 is fixed.</dd>
+  </dl>
+</article>
+
+<article class="item" id="D15">
+  <header>
+    <h4><span class="id">D15</span>A pod with no GPS is treated as never having moved</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">1 min</span><span class="chip">1 question</span><span class="chip">Finding 7</span><span class="chip">Guide K7</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>LOGOUT; log in as River Watch customer; open GILLIGAN (River Watch Float is pre-selected). New chat.</li>
+    <li>Ask: <code>How is the water this week?</code></li>
+  </ol></div>
+  <div class="compare">
+    <div class="state good"><div class="label">You should see</div>"No location coordinates were recorded, so the pod is treated as never having moved." Note: "Location not recorded: this pod has never reported a GPS position, so all of its readings are treated as coming from one site."</div>
+    <div class="state bad"><div class="label">Still wrong (finding 7)</div>"Status: Action Required — dissolved oxygen ranged from 0.00 to 11.21 mg/L". The 0.00 is a sensor glitch, and a lone glitch should not set the status. The same happens on Lakeside Buoy 2026.</div>
+  </div>
+  <dl class="facts"><dt>Decision</dt><dd>No GPS in a pod's whole history means one site, with a note (2026-09-27).</dd></dl>
+</article>
+
+<article class="item" id="D16">
+  <header>
+    <h4><span class="id">D16</span>A superadmin does not get merged history</h4>
+    <div class="chips"><span class="chip">Optional</span><span class="chip">1 min</span><span class="chip">1 question</span><span class="chip">Finding 9</span><span class="chip">Guide K9</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>LOGOUT; log in as Superadmin 2; open GILLIGAN. New chat; picker <strong>Lakeside Buoy 2026</strong>.</li>
+    <li>Ask: <code>Summarize the last 60 days, including the history of Lakeside Legacy Pod</code></li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>"note the report is for this pod; I can't confirm from the data whether it's the same unit previously named 'Lakeside Legacy Pod.'" and the "Earlier readings from this site are not available" note. Finding 9 (a report on the retired pod itself) did not reproduce.</div></div>
+  <dl class="facts"><dt>Decision</dt><dd>Superadmins get merged history only once the server can decide who owns it (2026-09-27).</dd></dl>
+</article>
+
+<h3 class="cat">Isolation between organizations</h3>
+
+<article class="item" id="D17">
+  <header>
+    <h4><span class="id">D17</span>Another organization's pod is not confirmed</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">2 min</span><span class="chip">1 question</span><span class="chip">Guide D1</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>LOGOUT; log in as Harbor admin; open GILLIGAN. New chat; picker <strong>No pod selected</strong>.</li>
+    <li>Ask: <code>What's the latest reading at Lakeside Buoy 2026?</code></li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>"There's no pod named 'Lakeside Buoy 2026' on your account — the only visible device is Harbor Pier Buoy", then Harbor's own latest readings. No Lakeside value appears.</div></div>
+  <dl class="facts"><dt>Decision</dt><dd>No answer crosses organizations (Michael, 2026-09-24).</dd></dl>
+</article>
+
+<article class="item" id="D18">
+  <header>
+    <h4><span class="id">D18</span>A user with no organization (A6, in Gilligan)</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip high">Decision needed</span><span class="chip">1 min</span><span class="chip">1 question</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>LOGOUT; log in as Orphan; open GILLIGAN. New chat. Ask: <code>List my pods</code></li>
+  </ol></div>
+  <div class="compare"><div class="state bad"><div class="label">You should see</div>A table of all 10 pods with names and water types, then "the registry couldn't confirm recent reporting for any of these (the lookup returned 'Device not found' errors for each)". The names leak; the readings do not, because our server fix refuses the data.</div></div>
+  <dl class="facts"><dt>Ask Michael</dt><dd>Whether to fix A6 (no organization should mean no pods) before launch. No production user is in this state today.</dd></dl>
+</article>
+
+<h3 class="cat">Saved chats and phone layout</h3>
+
+<article class="item" id="D19">
+  <header>
+    <h4><span class="id">D19</span>Chats are saved and reopen</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip">2 min</span><span class="chip ok">$0</span><span class="chip">Guide E3, E6</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>LOGOUT; log in as Harbor customer 2; open GILLIGAN.</li>
+    <li>Click the chat "What does dissolved oxygen measure..." in Chat history, then <strong>Sources</strong>.</li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>The chats from D3-D7, each titled by its first question with a date, newest first. The reopened chat shows both questions, both answers and the source titles. The counter is where D7 left it.</div></div>
+  <dl class="facts"><dt>Decision</dt><dd>Chats are kept indefinitely (Michael, 2026-09-24); each person sees only their own.</dd></dl>
+</article>
+
+<article class="item" id="D20">
+  <header>
+    <h4><span class="id">D20</span>Phone layout</h4>
+    <div class="chips"><span class="chip">Optional</span><span class="chip">1 min</span><span class="chip ok">$0</span><span class="chip">Guide I2</span></div>
+  </header>
+  <div><div class="label">Do</div><ol>
+    <li>Press F12, click the phone icon (Toggle device toolbar), choose a 390 x 844 size.</li>
+  </ol></div>
+  <div class="compare"><div class="state good"><div class="label">You should see</div>No sideways scrolling; the chat, input and picker fit (checked 2026-09-29: page width 390 at 390).</div></div>
+</article>
+
+<section class="panel" id="demo-asks">
+  <div class="label">Decisions to ask Michael (6 minutes)</div>
+  <p>Read each question, give the recommendation, and write his answer down.</p>
+  <div class="tablebox"><table>
+    <thead><tr><th>#</th><th>Question</th><th>Recommendation</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Is pH 3-12 the right band for a believable reading (D12)?</td><td>Yes; build <code>task/q9-land</code>.</td></tr>
+      <tr><td>2</td><td>The wording of the standing caveat under document answers: "Answers draw on document excerpts and may not cover every step; check the cited sections before acting."</td><td>Approve as written.</td></tr>
+      <tr><td>3</td><td>Firestore access for cer-gilligan: a separate <code>gilligan</code> database, with the runtime account allowed into that database only and nothing on the customer database. Can he create it and the grants before the deploy?</td><td>Yes; the fallback is one instance with counts in memory, which reset on every restart.</td></tr>
+      <tr><td>4</td><td>Findings 6 (D13) and 10 (D14): fix before launch?</td><td>Yes, both are must; Q10 fix round.</td></tr>
+      <tr><td>5</td><td>A lone glitch reading setting Action Required (D15, finding 7)?</td><td>Should; fix with Q10 if it fits.</td></tr>
+      <tr><td>6</td><td>The A items (Part 1): ship the server fixes A2, A3 and A5 at launch; A1 (CSV export) and A6 (no organization) have no fix written yet.</td><td>Ship A2, A3, A5; write A1 (Q11) now; A6 after launch unless he wants it.</td></tr>
+      <tr><td>7</td><td>A7: disable Cloud Build trigger <code>8ad67b17</code> (<code>cer-ui</code>), which deploys from the dashboard's infected <code>main</code>.</td><td>Disable before launch.</td></tr>
+      <tr><td>8</td><td>The demo and launch key: after he approves, CER's own Fireworks key replaces ours in <code>cer-gilligan-fireworks-api-key</code>.</td><td>As planned (S5).</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Also worth mentioning: on CER's <code>main</code>, water alert emails go to <code>michae@cleanearthrovers.com</code> (missing "l") in <code>DevicesService</code>.</p>
+</section>
+
+<section class="panel" id="demo-a">
+  <div class="label">If time allows: the A items (about 10 minutes)</div>
+  <p>Use windows 2 (Current, CER's code today) and 3 (Release, our fixes). Each card in Part 1 has the exact steps; this is the order and what to say.</p>
+  <ol>
+    <li><a href="#A2">A2</a>, 2 min: in window 2 (private, not logged in), open <code>http://localhost:5201/api/v1/users/all</code>: every user's id, name, user name, email and pods. Then <code>http://localhost:5301/api/v1/users/all</code>: refused. Say: "Anyone on the internet can pull the customer list today."</li>
+    <li><a href="#A3">A3</a>, 2 min: as Harbor admin in each window, the Console helper's period call for Lakeside's pod: 200 with Lakeside's readings on Current, <code>400 Device not found</code> on Release.</li>
+    <li><a href="#A1">A1</a>, 3 min: the CSV export of Lakeside's pod as Harbor admin returns rows on both stacks; no fix written. Say: "This is the one data leak we have not fixed yet."</li>
+    <li><a href="#A5">A5</a>, 1 min: the invited customer's login; watch the top-right pop-up (3 seconds): a raw validation dump on Current, "Finish setting up your account before logging in" on Release.</li>
+    <li><a href="#A6">A6</a>, 1 min: the Orphan's Home lists 5 pods on both stacks (and all 10 in Gilligan, D18).</li>
+    <li><a href="#A7">A7</a>, 1 min: talk only; the trigger.</li>
+  </ol>
+  <p class="note">CER's <code>main</code> (<code>3ed15ff</code>, 2026-09-24, read without checking it out) has the same A1 and A3 defects as Current; which commit production runs is not known.</p>
+</section>
+
+<section class="panel" id="demo-known">
+  <div class="label">Seen in the dry run and not yet fixed (be upfront if they come up)</div>
+  <ul>
+    <li>Finding 6 (D13): the period heading still claims the full 60 days on a moved pod.</li>
+    <li>Finding 7 (D15): a single 0.00 dissolved-oxygen glitch sets Action Required.</li>
+    <li>Finding 10 (D14, handoff on only): a salt-water predecessor's conductivity sets Action Required on a fresh-water pod.</li>
+    <li>The pH 3-12 band (D12) is not built.</li>
+    <li>Every salt-water pod's answer says "the deployment's configured water type is freshwater": the runbook sets <code>WATER_TYPE: "freshwater"</code>, and each pod's own water type disagrees. If Michael asks: it is a configuration note, raised with the release coordinator.</li>
+    <li>On Lakeside Buoy 2026 the chat says the stuck turbidity readings were left out, while the PDF calls turbidity "Clear (relative index mean 0.0)" with a "possibly a missing sensor" note.</li>
+  </ul>
+</section>
+
 
 <section id="stacks" class="panel">
   <div class="label">Stacks and addresses</div>
