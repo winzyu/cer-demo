@@ -1687,6 +1687,13 @@ Detection runs on current-site context before trimming to the requested range, s
 All samples in a qualifying run are excluded before aggregation and report pattern matching, and the “likely failed sensor” warning remains even when no usable turbidity sample survives.
 Operator limits that are unusable because they exceed the sensor's measurement range remain “Not assessed”, with no assertion that readings are within those limits.
 
+A pH reading outside 3-12 is implausible and excluded like a probe rail, because natural surface water spans roughly 3.5 (peat bogs) to 11 (soda lakes) and the fleet sits in neither; configured pH limits are still validated against the 0-14 scale.
+`list_pods` gives each pod a status of reporting, silent (no current-site reading for more than 6 hours), unconfirmed (no timestamp) or not checked, and repeats silent pods with their reading age in `silent_pods`, so an answer about which pods are online lists them as silent instead of leaving them out.
+The system prompt's single pod-status rule calls only reporting pods online, lists every silent pod with its age, and requires a `query_sensor_data` check only for an unconfirmed pod; the `list_pods` note defines the statuses without restating the rule.
+`query_sensor_data` lists each metric's implausible readings beside `excluded_implausible` as `excluded_implausible_values` (newest 10, oldest first, with `excluded_implausible_not_listed` for the rest) plus `excluded_implausible_min` and `excluded_implausible_max`, and its note says `value` and `n_samples` count only the remaining readings.
+The report PDF prints the device's last reading with its age at render time, and adds a warning under the metadata table when that age is over 6 hours.
+A report trend bucket is thin, and dropped from the trend series only, when it holds under half the series' median bucket count, capped at 3 readings; a series the floor would empty keeps every bucket.
+
 `PREDECESSOR_PERIOD_HANDOFF` defaults to `false`, keeping hidden predecessor labels withheld without period requests for them.
 When enabled, an organization-scoped caller can submit hidden predecessors named by the registry chain separately to the patched period route for authorization.
 The patched server alone determines whether a hidden predecessor with a null or non-existent organization belongs to the survivor's organization; a predecessor registered to another existing organization remains withheld.

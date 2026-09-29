@@ -697,6 +697,70 @@ describe("buildReportInput", () => {
     expect(ph.max).toBe(8.9);
     expect(ph.min).toBe(7.0);
   });
+
+  it("keeps a 1-day series for a pod reporting twice an hour (report audit #4)", async () => {
+    // Balboa Yacht Basin Buoy, live 2026-09-25: 1-hour auto buckets holding n=2 each but one
+    // (n=4). A fixed floor of 3 kept only the n=4 bucket, so the report had no trend at all.
+    const start = Date.parse("2026-09-25T00:00:00.000Z");
+    const buckets = Array.from({ length: 25 }, (_, h) => ({
+      start: new Date(start + h * 3_600_000).toISOString(),
+      end: new Date(start + (h + 1) * 3_600_000).toISOString(),
+      mean: h === 12 ? 0.2 : 0.1,
+      min: 0,
+      max: 0.3,
+      n: h === 12 ? 4 : 2,
+    }));
+    const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
+      query: async () => ({
+        device: { name: "Balboa Yacht Basin Buoy", operating_environment: "salt-water" },
+        time_range_resolved: { start: buckets[0].start, end: buckets[24].end },
+        metrics: { dissolved_oxygen: { value: 0.1, n_samples: 52, series: buckets } },
+      }),
+      deviceRecord: async () => null,
+    } as unknown as QuerySensorData;
+
+    const { report } = await buildReportInput(stubSensor, { timeRange: "last day" });
+    const dissolvedOxygen = report!.parameters.find((p) => p.baseline.key === "dissolved_oxygen")!;
+
+    expect(dissolvedOxygen.series).toHaveLength(25);
+  });
+
+  it("still drops a single-reading bucket when the pod's own buckets hold three readings", async () => {
+    // The floor follows the cadence (half the median bucket count), so n=1 among n=3 is thin.
+    const start = Date.parse("2026-09-25T00:00:00.000Z");
+    const buckets = [3, 3, 1, 3, 3].map((n, h) => ({
+      start: new Date(start + h * 3_600_000).toISOString(),
+      end: new Date(start + (h + 1) * 3_600_000).toISOString(),
+      mean: n === 1 ? 9 : 7.2,
+      min: 7,
+      max: 9,
+      n,
+    }));
+    const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
+      query: async () => ({
+        device: { name: "Stub", operating_environment: "salt-water" },
+        time_range_resolved: { start: buckets[0].start, end: buckets[4].end },
+        metrics: { ph: { value: 7.2, n_samples: 13, series: buckets } },
+      }),
+      deviceRecord: async () => null,
+    } as unknown as QuerySensorData;
+
+    const { report } = await buildReportInput(stubSensor, { timeRange: "last day" });
+    const ph = report!.parameters.find((p) => p.baseline.key === "ph")!;
+
+    expect(ph.series).toHaveLength(4);
+    expect(ph.series!.some(([, v]) => v === 9)).toBe(false);
+  });
+
+  it("carries the device's newest reading time for the PDF to state its age (report audit #3)", async () => {
+    const sensor = makeSensor();
+    const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
+
+    expect(report!.site.lastReadingAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(Date.parse(report!.site.lastReadingAt!)).toBeLessThanOrEqual(NOW);
+  });
 });
 
 describe("buildReportInput - pattern tags", () => {

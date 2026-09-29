@@ -345,6 +345,24 @@ describe("TOOL_BLOCK", () => {
     // no GPS fix, so "not confirmed recently" and "stopped reporting" look identical here.
     expect(TOOL_BLOCK).toContain("never that the pod is silent");
   });
+
+  it("lists silent pods and confines the query_sensor_data check to unconfirmed ones (C1)", () => {
+    // The old wording asked for a query_sensor_data check before calling ANY pod stopped, which
+    // covered stale timestamps too; the model resolved the conflict by leaving silent pods out.
+    expect(TOOL_BLOCK).toContain("call online only the pods whose \"status\" is \"reporting\"");
+    expect(TOOL_BLOCK).toContain("List every \"silent\" pod as well, as silent, with its \"last_reported_age\"");
+    expect(TOOL_BLOCK).toContain("check that pod with\n  query_sensor_data before calling it online or stopped");
+    // One rule: the check is stated once, not again in other words.
+    expect(TOOL_BLOCK.match(/query_sensor_data (first|before)/g)).toHaveLength(1);
+    expect(TOOL_BLOCK).not.toContain("Do not\n  tell a user a pod has stopped reporting");
+  });
+
+  it("tells the model to keep excluded implausible readings apart from the counted value (D1)", () => {
+    expect(TOOL_BLOCK).toContain("\"value\" and \"n_samples\" count only the remaining readings");
+    expect(TOOL_BLOCK).toContain("\"excluded_implausible_values\"");
+    expect(TOOL_BLOCK).toContain("never as the minimum, maximum or a real reading");
+    expect(TOOL_BLOCK).not.toContain("sensor rail");
+  });
 });
 
 describe("REPORT_TOOL_BLOCK", () => {

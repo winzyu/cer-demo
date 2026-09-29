@@ -158,8 +158,26 @@ interface MetricEntry {
  * Section 2's min/max/mean deliberately do NOT apply this floor -- those are exact statistics
  * over every usable reading, and dropping readings from them to tidy a trend line would be the
  * same fabrication in the other direction.
+ *
+ * **The floor scales down to the pod's own cadence** (`trendFloor`). A fixed 3 against 1-hour
+ * auto buckets emptied 1-day series on pods reporting about twice an hour: Balboa Yacht Basin
+ * Buoy's 25 buckets held n=2 each but one (n=4), so the trend collapsed to that one bucket, with
+ * no sparkline, no trend and no event window (REPORT_AUDIT_2026-09-25.md finding 4).
  */
 const MIN_BUCKET_SAMPLES = 3;
+
+/**
+ * The thin-bucket floor for one series: a bucket is thin when it holds under half the series'
+ * median bucket count, capped at `MIN_BUCKET_SAMPLES` and never below 1. Twice-hourly pods in
+ * 1-hour buckets (median 2) keep every bucket; a 12-hour bucket holding one reading among
+ * buckets of ~20 is still dropped, which is the gap this floor was written for.
+ */
+const trendFloor = (counts: number[]): number => {
+  const sorted = [...counts].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  const median = sorted.length % 2 === 1 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+  return Math.min(MIN_BUCKET_SAMPLES, Math.max(1, Math.ceil(median / 2)));
+};
 
 /**
  * Hourly buckets the pattern classifier may receive: 62 days, enough for any "last N days"
@@ -514,10 +532,12 @@ export const buildReportInput = async (
       ? relativeIndexBaseline(meta)
       : registryBaseline(meta);
 
-    // Thin buckets are dropped from the trend series only -- see MIN_BUCKET_SAMPLES. The floor
-    // is skipped entirely when it would empty the series (a genuinely sparse pod), since a
-    // coarse trend beats no trend and the bucket count is what event detection reasons over.
-    const trendBuckets = buckets.filter((b) => b.n >= MIN_BUCKET_SAMPLES);
+    // Thin buckets are dropped from the trend series only -- see MIN_BUCKET_SAMPLES and
+    // `trendFloor`. The floor is skipped entirely when it would empty the series (a genuinely
+    // sparse pod), since a coarse trend beats no trend and the bucket count is what event
+    // detection reasons over.
+    const floor = trendFloor(buckets.map((b) => b.n));
+    const trendBuckets = buckets.filter((b) => b.n >= floor);
     const series: Array<[number, number]> = (trendBuckets.length > 0 ? trendBuckets : buckets)
       .map((b) => {
         const startMs = Date.parse(b.start);
