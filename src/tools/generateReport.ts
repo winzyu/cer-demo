@@ -136,12 +136,27 @@ const statusReason = (report: ReportInput, basis: StatusAssessment): string => {
   switch (basis.rule) {
     case "exceedance":
       return "Action Required because a parameter went beyond its configured threshold by more "
-        + `than the exceedance margin: ${observed}. This is independent of the event count.`;
+        + `than the exceedance margin in at least two readings: ${observed}. `
+        + "This is independent of the event count.";
     case "high-confidence-high-event":
       return "Action Required because a high-severity event was detected with enough confidence "
         + "to name it; see event_types.";
-    case "excursion":
+    case "excursion": {
+      const singleReadings = basis.parameters.flatMap((key) => {
+        const p = byKey.get(key) as ParameterStats;
+        if (p.exceedanceCount !== 1 || flagFor(p, probeAccuracy) !== "Exceedance") return [];
+        const value = flagFor({ ...p, max: p.min }, probeAccuracy) === "Exceedance" ? p.min : p.max;
+        return [`a single ${key.replace(/_/g, " ")} reading of ${withUnit(statValue(value), p.baseline.unit)} `
+          + "went beyond its configured threshold"];
+      });
+      if (singleReadings.length > 0) {
+        const otherExcursions = singleReadings.length < basis.parameters.length
+          ? ` Other parameter excursions also contributed: ${observed}.` : "";
+        return `Watch because ${singleReadings.join("; ")}; `
+          + `one reading alone may be a sensor glitch.${otherExcursions}`;
+      }
       return `Watch because a parameter moved outside its configured threshold: ${observed}.`;
+    }
     case "event":
       return "Watch because the report flagged a candidate event; see event_types. No parameter "
         + "left its configured threshold.";
