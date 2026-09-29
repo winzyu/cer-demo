@@ -171,3 +171,28 @@ Nothing was changed; these are pointers for the owning sessions.
 - Restart cer-demo before a full re-run so the in-memory allowance is back at 22; restarting the relay empties history.
 - The live pod list changes: re-read it (A1) and keep section C at one turn per pod, adjusting the allowance to match.
 - Level 3 and the demo reuse the questions unchanged; F1 becomes a real refusal check once a member login is used (level 2).
+
+## Mirror rerun, 2026-09-29
+
+The same script on the mirror (fabricated data in the Firestore emulator, project `demo-cer-mirror`), with member logins instead of the superadmin device token.
+
+| service | port | code | settings that matter |
+|---|---|---|---|
+| emulator | 8080 | server `mirror/release-rc1` `8594338` seed, reseeded 2026-09-29T04:48:55Z with `--fixtures` | 22 devices, 13,680 readings; the silent, low-pH and dissolved-oxygen fixtures are in the server's `scripts/mirror/README.md` |
+| relay server | 5101 | server `mirror/release-rc1` `8594338` (release `122136d` plus the mirror seed; local, not pushed) | `MIRROR_RUNBOOK.md` §4 settings file |
+| cer-demo (shared) | 8010 | `docs/release-demo` (`dev` `0de9059` plus doc-only commits), started by the release-demo chat | `GILLIGAN_DEPLOYMENT_RUNBOOK.md` §4.1 values, with the mirror's Firestore project and device API |
+| cer-demo (Q9) | 8011 | `task/q9-land` `93764b2`, stopped after C1 and D1 | the same values |
+
+`WATER_TYPE=freshwater` from §4.1 adds a water-type mismatch note to every salt-water pod; answers that carry it are recorded as review until that note is removed.
+
+### C1 and D1 on `task/q9-land`
+
+Asked through the relay's `/api/v1/chat` contract (the server's service key and verified-user headers), not the browser; about $0.04.
+Raw responses are in [`e2e-mirror-2026-09-29/`](e2e-mirror-2026-09-29/).
+
+| # | result | note |
+|---|---|---|
+| C1 | pass | Superadmin (`user-super-1`): "10 pods; 9 are online (reporting) and 1 is silent", naming Channel Marker Buoy "last reported 31 hours ago (2026-09-27 22:48 UTC)"; only the reporting pods are called online. It also relays the water-type note. |
+| D1 | pass | Seaview customer (`user-seaview-cust-1`), Seaview Outfall Buoy picked; asked for "September 27" instead of "yesterday", since the fixture falls two UTC days before the run. One `min` query for the day: counted minimum 7.862 over 23 readings, the 2.07 at 2026-09-27T23:48:57Z reported separately as an excluded implausible reading, no invented cause. It also relays the water-type note. |
+
+Both baseline failures (2026-09-26) are fixed on `task/q9-land`, which unblocks its landing.
