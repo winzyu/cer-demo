@@ -80,7 +80,7 @@ export const WIRE_KEY_TO_METRIC: Record<string, MetricThresholdKey> = {
 };
 
 /** Registry field names, exact spellings from the live documents (`BACKEND_FIELDS.md` §1, §3). */
-const FIELD_KEYS: Record<MetricThresholdKey, { min: string; max: string }> = {
+export const FIELD_KEYS: Record<MetricThresholdKey, { min: string; max: string }> = {
   temperature: { min: "minTemperature", max: "maxTemperature" },
   ph: { min: "minPH", max: "maxPH" },
   dissolvedOxygen: { min: "minDissolvedOxygen", max: "maxDissolvedOxygen" },

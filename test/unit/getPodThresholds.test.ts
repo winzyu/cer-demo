@@ -226,6 +226,13 @@ describe("get_pod_thresholds — reader notes for limits that were not used", ()
     expect(notes.join(" ")).not.toMatch(/97|51|100/);
   });
 
+  it("gives a pod with no limits at all one note, not one per metric", async () => {
+    const notes = await notesFor({});
+    expect(notes.slice(1)).toEqual([
+      "No limits are set for this pod, so no reading was checked against a limit.",
+    ]);
+  });
+
   it("names every metric on the all-zero row", async () => {
     const { client } = makeClient();
     const tool = new GetPodThresholds({ sensor: new QuerySensorData({ client }) });

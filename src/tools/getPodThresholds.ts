@@ -23,6 +23,7 @@ import { METRIC_BY_KEY } from "../devices/metrics";
 import {
   type MetricThresholdKey,
   type ThresholdRejection,
+  FIELD_KEYS,
   metricThreshold,
   metricThresholdRejectionReason,
 } from "../report/operatorThresholds";
@@ -51,19 +52,9 @@ const METRIC_ORDER: ReadonlyArray<[string, MetricThresholdKey]> = [
 /** `MetricThresholdKey` values match `MetricKey` exactly, so this lookup is a direct hit. */
 const unitFor = (key: MetricThresholdKey): string => METRIC_BY_KEY.get(key)?.unit ?? "unitless";
 
-/**
- * Registry field suffix per metric, so a `missing` verdict can name the absent side. Mirrors
- * `operatorThresholds.ts`'s private `FIELD_KEYS` (`min<Suffix>`/`max<Suffix>`).
- */
-const REGISTRY_SUFFIX: Record<MetricThresholdKey, string> = {
-  temperature: "Temperature",
-  ph: "PH",
-  dissolvedOxygen: "DissolvedOxygen",
-  orp: "ORP",
-  conductivity: "Conductivity",
-};
-
 const isAbsent = (value: unknown): boolean => value === undefined || value === null;
+
+const NO_THRESHOLDS_USER_NOTE = "No limits are set for this pod, so no reading was checked against a limit.";
 
 /**
  * The reader's sentence for a limit that was not used (see `USER_NOTES_FIELD`), named by the
@@ -82,15 +73,15 @@ const rejectionUserNote = (
     case "implausible":
       return `${label} was not checked against its limits: they are not usable.`;
     case "missing": {
-      const minAbsent = isAbsent(thresholds?.[`min${REGISTRY_SUFFIX[metric]}`]);
-      const maxAbsent = isAbsent(thresholds?.[`max${REGISTRY_SUFFIX[metric]}`]);
+      const minAbsent = isAbsent(thresholds?.[FIELD_KEYS[metric].min]);
+      const maxAbsent = isAbsent(thresholds?.[FIELD_KEYS[metric].max]);
       if (minAbsent !== maxAbsent) {
         return `${label} was not checked against a limit: its ${minAbsent ? "minimum" : "maximum"} `
           + "is not set.";
       }
       return `${label} was not checked against a limit: its limits are not set.`;
     }
-    // "unset" (min === max) and "no-thresholds": neither side is set.
+    // "unset" (min === max): neither side is set. "no-thresholds" gets one note for the pod.
     default:
       return `${label} was not checked against a limit: its limits are not set.`;
   }
@@ -164,11 +155,14 @@ export class GetPodThresholds {
     }
     const { device } = resolved;
 
-    const readerNotes: string[] = [];
+    const readerNotes = new Set<string>();
     const thresholds = Object.fromEntries(METRIC_ORDER.map(([wireName, metricKey]) => {
       const verdict = metricThreshold(device.thresholds, metricKey);
       if (!verdict.usable) {
-        readerNotes.push(rejectionUserNote(verdict.reason, metricKey, device.thresholds));
+        // A pod with no limits at all gets one note for the pod, not one per metric.
+        readerNotes.add(verdict.reason === "no-thresholds"
+          ? NO_THRESHOLDS_USER_NOTE
+          : rejectionUserNote(verdict.reason, metricKey, device.thresholds));
       }
       const entry = verdict.usable
         ? {
