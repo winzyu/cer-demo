@@ -23,7 +23,7 @@ import type { GetContextOptions } from "../types/retrieval.types";
  * prompt tokens on this corpus, so the cap is what keeps a request from being unbounded rather
  * than what keeps it small.
  */
-export const DEFAULT_TOP_K = 20;
+export const DEFAULT_TOP_K = 30;
 export const MAX_TOP_K = 50;
 
 /**
