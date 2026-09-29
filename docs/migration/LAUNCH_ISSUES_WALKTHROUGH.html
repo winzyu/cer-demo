@@ -116,6 +116,8 @@ a { color: var(--accent); }
   <a href="#U8"><span class="id">U8</span>Chat history</a>
   <a href="#U9"><span class="id">U9</span>Allowance line</a>
   <a href="#U10"><span class="id">U10</span>Phone layout</a>
+  <h2>Part 3: API run in the browser</h2>
+  <a href="#replay"><span class="id">R</span>Replay the 2026-09-29 run</a>
 </nav>
 
 <main>
@@ -722,6 +724,26 @@ const week = { startDate: new Date(Date.now() - 7 * 864e5).toISOString(), endDat
   <div><div class="label">Steps</div><ol><li>Switch to a 390 x 844 phone view and scroll a chat.</li></ol></div>
   <div class="compare"><div class="state good"><div class="label">Expected</div>No sideways scrolling; the input, the pod picker and the report button fit.</div></div>
 </article>
+
+<h2 class="part" id="part3">Part 3: API run in the browser</h2>
+<section class="panel" id="replay">
+  <p>On 2026-09-29 the A and U checks were run by sending the dashboard's own requests straight to the servers (:5201 Current, :5301 Release), not by clicking. This table maps each request to the clicks that make it, so the run can be repeated by hand. Use Current on <code>http://localhost:3100</code> and Release on <code>http://localhost:3300</code> in separate windows, keep Developer Tools on Network, and load the Browser API helper above where a page cannot make the request. Results are in <code>LAUNCH_ISSUES_CHECKLIST.md</code>.</p>
+  <div class="tablebox"><table>
+    <thead><tr><th>Check</th><th>What was sent</th><th>In the dashboard</th><th>What you should see</th></tr></thead>
+    <tbody>
+      <tr><td>Check the data</td><td>Counted documents in each emulator collection</td><td>Open <code>http://127.0.0.1:4180/firestore</code> and read the count of each collection</td><td>9 organizations, 27 users, 15 devices, 52 chats, 8,640 <code>water-data</code></td></tr>
+      <tr><td>A1</td><td><code>POST /water/export/csv/&lt;label&gt;</code> for <code>...001</code>, <code>...003</code>, <code>...006</code> as Harbor admin, Superadmin and Orphan</td><td>Log in, open <strong>Export CSV</strong>, pick the pod, keep 7 days, click <strong>Export</strong>. The menu offers only your own pods, so for <code>...003</code> and <code>...006</code> run the Console helper's <code>api('POST', '/api/v1/water/export/csv/dev:100000000000003', week)</code></td><td>Both stacks: 200 and 165 rows each; open the file and the DEVICE column names Lakeside or Demo</td></tr>
+      <tr><td>A2</td><td><code>GET /users/all</code>, <code>/users/user-lake-cust-0001</code>, <code>/test-db</code> with no login; then logged in</td><td>No page calls these. Log out and paste <code>http://localhost:5201/api/v1/users/all</code> into the address bar (5301 for Release); logged in, use the helper, and use <code>user-harbor-cust-01</code> for a same-organization user</td><td>Current: user list, user record, project details. Release: 401, 401, 404; logged in, Harbor admin 403 on the list, 404 on a Lakeside user, 200 on a Harbor user</td></tr>
+      <tr><td>A3</td><td><code>GET /water/period/7/day?device=dev:100000000000003</code> and <code>/water/last/...003</code> as Harbor admin</td><td>Log in as Harbor admin; open <strong>Chart</strong> to watch Network show <code>water/chart</code> calls. The page never asks for another pod, so use the helper for both calls</td><td>Current: period 200 with 165 Lakeside rows, <code>last</code> already 400. Release: both 400 <code>Device not found</code></td></tr>
+      <tr><td>A5</td><td><code>POST /users/login</code> as the invited customer with any password</td><td>On <code>/login</code>, enter <code>user-harbor-cust-3@mirror.example.invalid</code> and any password, with Network open, and read the red message</td><td>Current: 500 and most likely <code>Login failed:</code> followed by raw schema text. Release: 401 and "Finish setting up your account"</td></tr>
+      <tr><td>A6</td><td><code>GET /devices</code>, then period and <code>last</code> calls, as Orphan</td><td>Log in as Orphan; count pods on <strong>Home</strong> and in <strong>Export CSV</strong>'s menu; open <strong>Chart</strong></td><td>Both: 5 pods listed, the same as Superadmin. Current: Home shows no latest readings. Chart empty on both. Export of any listed pod works on both</td></tr>
+      <tr><td>U1</td><td>Login with the right and a wrong password</td><td>Log in as Harbor admin, click <strong>LOGOUT</strong>, log in with a wrong password</td><td>Right: lands on Home. Wrong: "Login failed: Error: Password incorrect"</td></tr>
+      <tr><td>U2</td><td><code>GET /devices</code> per persona</td><td>Log in as each persona in turn and count pods on Home</td><td>Superadmin 5; Harbor admin and customer Harbor Pier Buoy; Lakeside customer Lakeside Buoy 2026</td></tr>
+      <tr><td>U3</td><td><code>last</code>, <code>chart/.../99/...</code> (99 is pH), dial and map averages, 7-day period, for <code>...001</code></td><td>As Harbor admin open Home, Chart (pH, Live then 7 days), Dial and Map with Harbor Pier Buoy picked</td><td>Every page shows numbers, with no errors, <code>undefined</code> or <code>NaN</code>; the map may be blank without a map key</td></tr>
+      <tr><td>U4</td><td>Export <code>...001</code> as Harbor admin and customer</td><td>Export CSV, Harbor Pier Buoy, 7 days, Export</td><td>A CSV with 165 hourly rows</td></tr>
+    </tbody>
+  </table></div>
+</section>
 
 <p class="note">Sources: the release brief for this testing session, <code>GILLIGAN_MANUAL_TEST_GUIDE.md</code> (guide IDs), the 2026-09-25 and 2026-09-27 end-to-end results (finding numbers), and the fix commits named on each card.</p>
 </main>
