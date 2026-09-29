@@ -1080,10 +1080,17 @@ No LLM call is made and nothing is written to disk.
 It never returns a URL, and the prompt tells the model to point at the interface's download button instead of writing a link.
 
 **The status comes with its reason** (2026-09-24, Q1).
-`assessStatus` (`src/report/types.ts`) walks the same ladder `overallStatus` always did and also returns the rule that fired and the parameters behind it; `overallStatus` is now its `.status`, so the PDF is unchanged.
+`assessStatus` (`src/report/types.ts`) returns the status, the rule that fired and the parameters behind it; `overallStatus` is its `.status`, and the PDF receives the same assessment through `produceReport`.
 The tool adds `status_reason`, one sentence naming that rule and, for a flag-driven status, each flagged parameter's observed range against its configured threshold in the PDF's number format, and `parameter_flags`, every measured parameter's flag.
 Before this, an ORP Exceedance on Old Woman Creek reached the model as "Action Required" with 0 events and no cause, and the model wrote "no abnormal conditions" beside it (`migration/CONVERSATION_QA_2026-09-24.md` finding 3).
 The period ends on the device's newest reading, so the tool also returns `device_last_reported` with its age, and the prompt asks the model to say when a stale pod's period ended.
+
+The exceedance rung requires at least two usable readings beyond the exceedance bounds for the same parameter, counting both sides together and retaining the configured margin and probe-accuracy floor (finding 7).
+`buildReportInput` records this as `ParameterStats.exceedanceCount` from the existing query snapshot's individual readings before bucketing, trend thinning or raw-result truncation; faulted and implausible readings are excluded as they are from other statistics.
+A lone exceedance falls to the excursion rung at Watch, and `status_reason` names the single reading and says that one reading alone may be a sensor glitch.
+The high-confidence, high-severity event rung still takes precedence over Watch, and parameter flags still describe the observed extrema.
+The plausibility filter is unchanged: dissolved oxygen of 0.00 mg/L remains physically possible and stays in the report.
+Open question: should escalation require two readings, a duration, or a share of readings?
 
 **The route renders the PDF on request.** `POST /api/v1/reports` takes that `report_request` as its body and answers `200 application/pdf` with `Content-Disposition: attachment; filename="cer-report-<site>-<start>-to-<end>.pdf"` and `Cache-Control: no-store`.
 Guards, in order: `requireCallerToken` (401), the report quota (429, §4a), `REPORT_TOOL` (404 while off), body validation (400: `time_range` required, at most 100 characters; `device` optional, at most 200), then the pipeline's own refusal as 422 (a phrase the grammar does not read, a pod the caller cannot see, an empty window).

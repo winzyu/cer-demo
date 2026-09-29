@@ -2,8 +2,11 @@ import fs from "fs";
 import path from "path";
 import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import { QuerySensorData } from "../../src/tools/querySensorData";
+import type { SensorQueryParams } from "../../src/tools/querySensorData";
 import { GenerateReport, generateReportDefinition } from "../../src/tools/generateReport";
 import { catalogue } from "../../src/catalogue";
+import { prepareReport, renderReportPdf } from "../../src/report/produceReport";
+import * as pdfRenderer from "../../src/report/renderPdf";
 
 /**
  * generate_report end to end: runs the real report pipeline over recorded device-api fixtures
@@ -32,12 +35,12 @@ const ALGALITA_LAST = (() => {
   };
 })();
 
-const makeSensor = (): QuerySensorData => {
+const makeSensor = (period = ALGALITA_PERIOD): QuerySensorData => {
   const fetchImpl = async (url: string): Promise<Response> => {
     const body = ((): unknown => {
       if (url.includes("/devices")) return DEVICES;
       if (url.includes("/water/last/")) return ALGALITA_LAST;
-      if (url.includes("/water/period/")) return ALGALITA_PERIOD;
+      if (url.includes("/water/period/")) return period;
       return {};
     })();
     return {
@@ -157,6 +160,71 @@ describe("GenerateReport.run", () => {
   });
 
   describe("the reason behind the status", () => {
+    const oxygenPeriod = (values: number[]): Array<Record<string, unknown>> => (
+      Array.from({ length: 60 * 24 }, (_, i) => {
+        const time = NOW - (60 * 24 + 12 - i) * 3_600_000;
+        return {
+          ...ALGALITA_PERIOD[0],
+          event: `oxygen-${i}`,
+          timestamp: time / 1000,
+          date: new Date(time).toISOString(),
+          water_data: {
+            ...(ALGALITA_PERIOD[0].water_data as Record<string, number>),
+            97: values[i] ?? 8, 98: 200, 99: 7.2, 100: 55000, 102: 20, 72: 100,
+          },
+        };
+      })
+    );
+
+    it.each([
+      [[0], "Watch", 1],
+      [[0, 0], "Action Required", 2],
+      [[0, 2.35], "Watch", 1],
+      [[0, 17], "Action Required", 2],
+      [[17], "Watch", 1],
+    ] as const)("counts individual exceedances %j across a 60-day report", async (values, status, count) => {
+      // Both low readings fit in one bucket, and are older than the capped raw tool's window.
+      const sensor = makeSensor(oxygenPeriod([...values]));
+      const result = await new GenerateReport({ sensor })
+        .run({ time_range: "last 60 days", device: "Algalita" }, CALLER);
+      expect(result.error).toBeUndefined();
+      expect(result.events_flagged).toBe(0);
+      expect(result.status).toBe(status);
+      expect(result.parameter_flags).toMatchObject({ dissolved_oxygen: "Exceedance" });
+      if (status === "Watch") {
+        expect(result.status_reason).toBe(`Watch because a single dissolved oxygen reading of ${values[0].toFixed(2)} mg/L `
+          + "went beyond its configured threshold; one reading alone may be a sensor glitch.");
+      }
+      const prepared = await prepareReport(sensor, { timeRange: "last 60 days", device: "Algalita" }, CALLER);
+      if (prepared.error !== undefined) throw new Error(prepared.error);
+      // The PDF receives this same prepared status from renderReportPdf.
+      expect(prepared.status).toBe(result.status);
+      expect(prepared.report.parameters.find((p) => p.baseline.key === "dissolved_oxygen"))
+        .toMatchObject({ min: Math.min(8, ...values), exceedanceCount: count });
+      const pdfSpy = jest.spyOn(pdfRenderer, "buildReportPdf");
+      try {
+        const pdf = await renderReportPdf(prepared);
+        expect(pdf.subarray(0, 5).toString()).toBe("%PDF-");
+        expect(pdfSpy).toHaveBeenCalledWith(prepared.report, prepared.narrative, {
+          probeAccuracy: expect.any(Function), status,
+        });
+      } finally {
+        pdfSpy.mockRestore();
+      }
+    });
+
+    it("excludes faulted and implausible readings from the exceedance count", async () => {
+      const period = oxygenPeriod([0, 0, -1]);
+      (period[1].water_data as Record<string, number>).doError = 1;
+      const prepared = await prepareReport(makeSensor(period), {
+        timeRange: "last 60 days", device: "Algalita",
+      }, CALLER);
+      if (prepared.error !== undefined) throw new Error(prepared.error);
+      expect(prepared.status).toBe("Watch");
+      expect(prepared.report.parameters.find((p) => p.baseline.key === "dissolved_oxygen"))
+        .toMatchObject({ min: 0, exceedanceCount: 1 });
+    });
+
     // CONVERSATION_QA_2026-09-24 finding 3, as observed live on Old Woman Creek 2026: ORP dipped
     // below its configured 0-800 mV, the status came back "Action Required" with no events, and
     // with nothing saying why, the model wrote "Action Required" beside "no abnormal conditions".
@@ -168,17 +236,25 @@ describe("GenerateReport.run", () => {
       { start: "2026-08-01T12:00:00.000Z", end: "2026-08-02T00:00:00.000Z", mean: -156.25, min: -160, max: -150, n: 20 },
     ];
     const LAST_READING = "2026-08-02T00:00:00.000Z";
-    const stubSensor = (orp: unknown[], now = Date.parse("2026-08-12T00:00:00.000Z")) => ({
-      query: async () => ({
-        device: { name: "Old Woman Creek 2026", label: "dev:owc", operating_environment: "fresh-water" },
-        time_range_resolved: { start: "2026-07-26T00:00:00.000Z", end: LAST_READING },
-        device_last_reported: LAST_READING,
-        metrics: {
-          temperature: { value: 70, n_samples: 40, series: flat(70) },
-          ph: { value: 7.5, n_samples: 40, series: flat(7.5) },
-          orp: { value: 72, n_samples: 40, series: orp },
-        },
-      }),
+    const stubSensor = (orp: typeof orpSeries, now = Date.parse("2026-08-12T00:00:00.000Z")) => ({
+      query: async (params: SensorQueryParams) => {
+        params.onSamples?.("orp", orp.flatMap((bucket) => Array.from({ length: bucket.n }, (_, i) => ({
+          at: bucket.start,
+          atMs: Date.parse(bucket.start),
+          value: i === 0 ? bucket.min : i === 1 ? bucket.max : bucket.mean,
+          valid: true,
+        }))));
+        return {
+          device: { name: "Old Woman Creek 2026", label: "dev:owc", operating_environment: "fresh-water" },
+          time_range_resolved: { start: "2026-07-26T00:00:00.000Z", end: LAST_READING },
+          device_last_reported: LAST_READING,
+          metrics: {
+            temperature: { value: 70, n_samples: 40, series: flat(70) },
+            ph: { value: 7.5, n_samples: 40, series: flat(7.5) },
+            orp: { value: 72, n_samples: 40, series: orp },
+          },
+        };
+      },
       deviceRecord: async () => ({
         label: "dev:owc",
         thresholds: {

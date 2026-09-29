@@ -76,6 +76,8 @@
 
 import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorData";
 import { SensorQueryError } from "../tools/querySensorData";
+import { flagFor } from "./types";
+import { probeAccuracy } from "./referenceRanges";
 import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext } from "../types/tool.types";
 import type {
@@ -333,11 +335,19 @@ export const buildReportInput = async (
   let seriesResult: Record<string, unknown>;
   let medianResult: Record<string, unknown>;
   let hourlyResult: Record<string, unknown>;
+  const readingsByMetric = new Map<string, number[]>();
   try {
     // Pin one authorized snapshot for series, exact median and hourly pattern classification.
     // These deterministic calculations never go through the model's tool-calling loop.
     [seriesResult, medianResult, hourlyResult] = await sensor.queryBatch([
-      { ...baseArgs, aggregation: "series", bucket: "auto" },
+      {
+        ...baseArgs,
+        aggregation: "series",
+        bucket: "auto",
+        onSamples: (key, samples) => readingsByMetric.set(key, samples
+          .filter((sample) => sample.valid && sample.plausible !== false)
+          .map((sample) => sample.value)),
+      },
       { ...baseArgs, aggregation: "median" },
       {
         ...baseArgs, aggregation: "series", bucket: "hour", maxBuckets: MAX_HOURLY_BUCKETS,
@@ -531,6 +541,11 @@ export const buildReportInput = async (
     const baseline = RELATIVE_INDEX_KEYS.has(meta.key)
       ? relativeIndexBaseline(meta)
       : registryBaseline(meta);
+    // Count readings, not buckets: two excursions can share a bucket whose mean stays normal.
+    // Reuse flagFor so the exceedance margin and the probe's accuracy floor agree exactly.
+    const exceedanceCount = (readingsByMetric.get(meta.key) ?? []).filter((value) => (
+      flagFor({ baseline, min: value, max: value }, probeAccuracy) === "Exceedance"
+    )).length;
 
     // Thin buckets are dropped from the trend series only -- see MIN_BUCKET_SAMPLES and
     // `trendFloor`. The floor is skipped entirely when it would empty the series (a genuinely
@@ -555,6 +570,7 @@ export const buildReportInput = async (
         max,
         mean,
         median,
+        exceedanceCount,
         // See file docstring §1.
         pattern: classifyPattern(hourlySeries(hourlyMetrics[meta.key])),
         series,

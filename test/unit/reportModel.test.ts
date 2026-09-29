@@ -158,8 +158,35 @@ describe("overallStatus", () => {
     expect(overallStatus(report(), noAccuracy)).toBe("Normal");
   });
 
-  it("is Action Required when any parameter is an Exceedance", () => {
-    expect(overallStatus(report({ parameters: [param({ max: 9.0 })] }), noAccuracy)).toBe("Action Required");
+  it("is Action Required when a parameter has two readings beyond the exceedance bounds", () => {
+    expect(overallStatus(report({ parameters: [param({ max: 9.0, exceedanceCount: 2 })] }), noAccuracy))
+      .toBe("Action Required");
+  });
+
+  it("keeps a lone exceedance at Watch, even when separate parameters each have one", () => {
+    const parameters = [
+      param({ max: 9.0, exceedanceCount: 1 }),
+      param({ baseline: baseline({ key: "other" }), min: 5, exceedanceCount: 1 }),
+    ];
+    expect(assessStatus(report({ parameters }), noAccuracy)).toEqual({
+      status: "Watch", rule: "excursion", parameters: ["ph", "other"],
+    });
+  });
+
+  it("does not infer repeated readings from extrema when no count is available", () => {
+    expect(assessStatus(report({ parameters: [param({ max: 9.0 })] }), noAccuracy)).toEqual({
+      status: "Watch", rule: "excursion", parameters: ["ph"],
+    });
+  });
+
+  it.each([0.3, 0.7])("keeps the event rung unchanged with a lone exceedance and confidence %s", (confidence) => {
+    const r = report({
+      parameters: [param({ max: 9.0, exceedanceCount: 1 })],
+      events: [event({ severity: "High", confidence })],
+    });
+    expect(assessStatus(r, noAccuracy)).toEqual(confidence >= 0.7
+      ? { status: "Action Required", rule: "high-confidence-high-event", parameters: [] }
+      : { status: "Watch", rule: "excursion", parameters: ["ph"] });
   });
 
   it("is Action Required when a confident High-severity event lands, even with clean parameters", () => {
@@ -198,7 +225,7 @@ describe("overallStatus", () => {
 
   it("lets an Exceedance parameter override a merely Watch-level event", () => {
     const r = report({
-      parameters: [param({ max: 9.0 })],
+      parameters: [param({ max: 9.0, exceedanceCount: 2 })],
       events: [event({ severity: "Low" })],
     });
     expect(overallStatus(r, noAccuracy)).toBe("Action Required");
@@ -238,7 +265,7 @@ describe("overallStatus", () => {
     });
 
     it("still escalates to Action Required when the one baselined parameter is an Exceedance", () => {
-      const r = report({ parameters: [param({ max: 9.0 }), noBaseline()] });
+      const r = report({ parameters: [param({ max: 9.0, exceedanceCount: 2 }), noBaseline()] });
       expect(overallStatus(r, noAccuracy)).toBe("Action Required");
     });
   });
@@ -253,7 +280,7 @@ describe("overallStatus", () => {
     });
 
     it("names only the Exceedance parameters, even when others are merely Elevated", () => {
-      const r = report({ parameters: [param({ max: 8.6 }), orp({ min: -160 })] });
+      const r = report({ parameters: [param({ max: 8.6 }), orp({ min: -160, exceedanceCount: 2 })] });
       expect(assessStatus(r, noAccuracy)).toEqual({
         status: "Action Required", rule: "exceedance", parameters: ["orp"],
       });

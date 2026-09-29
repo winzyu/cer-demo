@@ -193,6 +193,9 @@ export interface ParameterStats {
   max: number;
   mean: number;
   median: number;
+  /** Usable individual readings beyond the exceedance bounds, including the accuracy floor.
+   * Absent in older hand-built inputs; those cannot establish a repeated exceedance. */
+  exceedanceCount?: number;
   pattern: Pattern;
   /** Optional raw (epoch ms, value) series, used for pattern detection and excursion timestamps. */
   series?: Array<[number, number]>;
@@ -392,7 +395,9 @@ export const assessStatus = (
     .filter((p) => flags.includes(flagOf(p)))
     .map((p) => p.baseline.key);
 
-  const exceeded = flagged(["Exceedance"]);
+  const exceeded = report.parameters
+    .filter((p) => flagOf(p) === "Exceedance" && (p.exceedanceCount ?? 0) >= 2)
+    .map((p) => p.baseline.key);
   if (exceeded.length > 0) {
     return { status: "Action Required", rule: "exceedance", parameters: exceeded };
   }
@@ -404,7 +409,7 @@ export const assessStatus = (
   if (report.events.some((e) => e.severity === "High" && e.confidence >= CONFIDENCE_FLOOR)) {
     return { status: "Action Required", rule: "high-confidence-high-event", parameters: [] };
   }
-  const excursions = flagged(["Elevated", "Low"]);
+  const excursions = flagged(["Exceedance", "Elevated", "Low"]);
   if (excursions.length > 0) {
     return { status: "Watch", rule: "excursion", parameters: excursions };
   }

@@ -217,6 +217,9 @@ export interface SensorQueryParams {
    * hourly pattern classification. Defaults to `DEFAULT_MAX_BUCKETS`.
    */
   maxBuckets?: number;
+  /** Programmatic only: inspect in-window samples before aggregation or raw truncation.
+   * Includes fault/plausibility flags so the caller can use the same filtering as aggregate. */
+  onSamples?: (metric: string, samples: readonly Sample[]) => void;
 }
 
 export interface QuerySensorDataOptions {
@@ -556,7 +559,7 @@ export class QuerySensorData {
       aggregation: params.aggregation,
       ...(params.device !== undefined ? { device: params.device } : {}),
       ...(params.bucket !== undefined ? { bucket: params.bucket } : {}),
-    }, token, params.maxBuckets, scope);
+    }, token, params.maxBuckets, scope, params.onSamples);
 
     if (typeof result.error === "string") {
       throw new SensorQueryError(result.error);
@@ -678,6 +681,7 @@ export class QuerySensorData {
     token?: string,
     maxBuckets?: number,
     scope?: Map<string, Promise<SiteSnapshot>>,
+    onSamples?: SensorQueryParams["onSamples"],
   ): Promise<SensorToolResult> {
     const metricName = typeof args.metric === "string" ? normalize(args.metric) : "";
     // "all" fetches one window and reads every metric out of it — one API call, not six, and
@@ -798,6 +802,7 @@ export class QuerySensorData {
     const computed = metricKeys.map((key) => {
       const usable = key === "turbidity" ? readings.filter((row) => !stuck.has(row)) : readings;
       const samples = QuerySensorData.samplesInRange(usable, key, range);
+      onSamples?.(NAME_BY_METRIC_KEY.get(key)!, samples);
       return {
         key,
         samples,
