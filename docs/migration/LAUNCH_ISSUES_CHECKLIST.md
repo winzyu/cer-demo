@@ -77,6 +77,7 @@ Finding numbers come from the end-to-end results: 1-5 from 2026-09-25, 6-11 from
 "Guide" is the matching check ID in `GILLIGAN_MANUAL_TEST_GUIDE.md`.
 States: **original** is CER's code (the Current stack), **before** is our stack without the fix, and **after** is the branch with the fix.
 Every result below is **not run** unless stated.
+The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests straight to :5201 and :5301 as each persona, $0, after checking :8180 still held the seed's counts (9, 27, 15, 52 and 8,640).
 
 ### A1. CSV export returns any pod's readings
 
@@ -89,8 +90,9 @@ Every result below is **not run** unless stated.
 - **Who, production:** every logged-in customer; likely live. `WaterAnalyticsService` on CER's `main` differs from `693fc96` in label handling, so still compare `findDeviceWaterDataExportCSV` there with `git show` before the demo.
 - **Cause:** `WaterAnalyticsController.exportCsv` never passes the caller; `findByLabel(device, null)` applies no organization filter.
 - **Fix:** plan Q11, not written.
-- **Result:** original not run; release (still unfixed) not run.
-- **Evidence:** none yet.
+- **Result (2026-09-29):** original confirmed; release (still unfixed) confirmed.
+- **Evidence:** a 7-day export as Harbor admin returns 200 with 165 rows for `...001`, `...003` and `...006` on both stacks, and the DEVICE column names Lakeside Buoy 2026 and Demo Public Dock Buoy; Superadmin gets the same.
+  - The orphan also exports `...003` (200, 165 rows) on both stacks.
 
 ### A2. User lookups need no login
 
@@ -102,8 +104,11 @@ Every result below is **not run** unless stated.
 - **Why wrong:** anyone on the internet can pull the customer contact list.
 - **Who, production:** never confirmed against production; keep it that way.
 - **Fix:** `fix/user-route-auth` `f9607bd`, pushed; in release `122136d`, not in mirror `1ef21a7`.
-- **Result:** original not run; after not run.
-- **Evidence:** none yet.
+- **Result (2026-09-29):** original confirmed; after passes, with the notes below.
+- **Evidence:** Current, no token: `/users/all` 200 with all 27 users, `/users/user-lake-cust-0001` 200, `/test-db` 200 naming project `conductive-fold-343604`.
+  - Release, no token: 401, 401 and 404; `/users/all` 403 for Harbor admin and 200 (27) for Superadmin; `/users/user-harbor-cust-01` 200 for Harbor admin, the user and Superadmin.
+  - The leaked records hold id, name, user name, email and pods, not role or organization as the card said.
+  - Another organization's user gets 404 when a Harbor admin asks but 403 when the Lakeside customer asks, so a customer can tell that an id exists (low).
 
 ### A3. The period query trusts the caller's pod label
 
@@ -115,8 +120,9 @@ Every result below is **not run** unless stated.
 - **Why wrong:** the same leak as A1, through the dashboard's data path.
 - **Fix:** `task/gilligan-release-p3-p4` `78e2dfb`, `ccc759e`; in release; in mirror as cherry-picks.
 - **Also record:** on the Mirror, a relay call with `device=dev:100000000000006` answers that it cannot find the pod (one question).
-- **Result:** original not run; after not run.
-- **Evidence:** none yet.
+- **Result (2026-09-29):** original confirmed for `/water/period` only; after passes.
+- **Evidence:** Current, Harbor admin: `/water/period/7/day?device=dev:100000000000003` 200 with 165 rows, every one `dev:100000000000003`; Release 400 `Device not found`; Superadmin 200 (165) on both.
+  - `/water/last/dev:100000000000003` is already 400 for Harbor on Current: CER's `getLastDataByDevice` checks the caller's organization's pods, so the card's "also `/water/last`" leak does not exist.
 
 ### A4. CWA Old merge with a missing or empty organization
 
@@ -136,7 +142,9 @@ Every result below is **not run** unless stated.
 - **Expected (from `f7dec3c`):** 401 with "Finish setting up your account before logging in", shown as "Login failed: ..." on the page.
 - **Why wrong:** a real invited customer can't get in and sees nothing explaining why.
 - **Fix:** `fix/invited-login` `f7dec3c`, committed, not pushed; in release.
-- **Result:** original not run; after not run.
+- **Result (2026-09-29, API only):** original confirmed; after passes.
+- **Evidence:** the stored user has no `password` field; Current returns 500 with a raw schema error (`invalid_type`, `password`, `Required`) as its message, Release 401 "Error: Finish setting up your account before logging in, please try again."
+  - Both login pages show `Login failed: ` plus the server's message, so Current most likely shows that raw schema text rather than no message; confirm in a browser.
 
 ### A6. A user with no organization sees every pod
 
@@ -148,7 +156,10 @@ Every result below is **not run** unless stated.
 - **Why wrong:** it fails open.
 - **Who, production:** no production user is in this state (checked 2026-09-26).
 - **Fix:** not written.
-- **Result:** original not run; release (unfixed) not run.
+- **Result (2026-09-29, API only):** original confirmed; release (unfixed) confirmed, partly.
+- **Evidence:** `GET /devices`, which feeds `/home` and Export CSV's menu, returns the same 5 pods to the orphan as to Superadmin on both stacks.
+  - Data access differs: on Current the orphan gets `...003`'s period (200, 165) but 400 on `/water/last`, so `/home` lists pods without latest readings; on Release period and last are both 400, but CSV export still returns 200 (A1).
+  - The chart endpoint returns no datasets for the orphan on either stack.
 
 ### A7. The cer-ui build trigger deploys from the dashboard's infected main
 
@@ -234,10 +245,10 @@ Everyday flows from the walkthrough's part 2; a failure is a regression.
 
 | ID | flow | stacks | result |
 |---|---|---|---|
-| U1 | log in, wrong password, log out | Current, Release | not run |
-| U2 | each persona sees only their own pods | Current, Release | not run |
-| U3 | own pod's pages and period data load | Current, Release | not run |
-| U4 | export own pod's CSV | Current, Release | not run |
+| U1 | log in, wrong password, log out | Current, Release | pass (API, 2026-09-29): 200 and 401 "Password incorrect" on both; log out only clears the browser's token, which has no expiry (`SECURITY_FINDINGS.md` item 5) |
+| U2 | each persona sees only their own pods | Current, Release | pass (API): Superadmin 5, Harbor admin and customer Harbor Pier Buoy only, Lakeside customer Lakeside Buoy 2026 only, on both |
+| U3 | own pod's pages and period data load | Current, Release | pass (API): the six pages answer 200; Harbor's last, chart (pH, 1 and 7 days, all points valued), dial and map averages, and 7-day period (165) all 200 on both; rendering not checked in a browser |
+| U4 | export own pod's CSV | Current, Release | pass (API): Harbor admin and customer get 200 with 165 rows for `...001` on both |
 | U5 | document question with sources | Mirror | not run |
 | U6 | pod data question with reading age | Mirror | not run |
 | U7 | report offer and PDF | Mirror | not run |
