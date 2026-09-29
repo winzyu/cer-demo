@@ -29,7 +29,8 @@ Owner: the Gilligan behaviour chat. Started 2026-09-28 from `GILLIGAN_RESET_2026
 | T7 | v2 §3 fallback ranges (decision 9) and unit tests F1-F6 | Codex, Claude reviews | T3, T5; conductivity waits on Michael | blocked |
 | T8 | U7 caveat in the dashboard from `task/gilligan-ux` `817a7c2` | Claude | - | todo |
 | T9 | Catalogue tests C1-C6, findings 7 and 8 rechecks, K21 on the mirror | Claude with the mirror chat | mirror chat, spend approval (~$0.21) | todo |
-| T10 | Approved description of Clean Earth Rovers for "what does CER do" | Michael supplies the text; Claude wires it | Michael | waiting |
+| T10 | Approved description of Clean Earth Rovers for "what does CER do" | Wired as `CER_DESCRIPTION` on `fix/q10-cer` `2d045af`; Michael supplies the production text | Michael | wired |
+| T12 | Remove the deployment water-type mismatch note (`querySensorData.ts` about line 1086), which every salt-water pod carries under `WATER_TYPE=freshwater`; keep `WATER_TYPE` as the fallback for pods with no registered type | the session working in `fix/q10-gilligan` (same file) | T5 | todo |
 | T11 | Confirm whether `CWA 2025 testbed` and `CWA Old` were ever in salt water | Michael | - | waiting |
 
 ## Catalogue tests (T9)
@@ -63,3 +64,7 @@ Unit tests with registry fixtures, then one live check each for F1 and F6 on the
 - Decided 2026-09-28: a `salt-water` pod uses the "Southern California Coastal and Harbor" column.
 - Decided 2026-09-28: a reading outside a fallback range is described only as "outside the typical range", never "Exceedance" or "Action Required".
 - Open: v2 lists specific conductance (corrected to 25 °C); the registry records no compensation setting and the EC probe has no internal temperature sensor, so Michael confirms whether the pods report compensated conductivity; until then conductivity gets no fallback.
+
+## Results
+
+- 2026-09-28, C4 on a Gilligan from `fix/q10-cer` on :8012 (tools off, catalogue on, launch model, `CER_DESCRIPTION="This is the generic CER message."`): "What does Clean Earth Rovers do?" and "Who are you guys, what is CER as a company?" both answered exactly "This is the generic CER message."; the control "What does the company YSI do?" was refused. Pass.
