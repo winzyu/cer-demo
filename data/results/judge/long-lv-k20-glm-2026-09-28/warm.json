@@ -1,0 +1,63 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-29T00:18:50.683Z",
+  "budget": {
+    "calls": 60,
+    "promptTokens": 195895,
+    "cachedPromptTokens": 34066,
+    "completionTokens": 27012,
+    "usd": 0.081167496
+  },
+  "results": [
+    {
+      "arm": "local-vector",
+      "pass": "warm",
+      "turnsJudged": 60,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "follow-up",
+            "turns": 60,
+            "mean": 1.75,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.75,
+        "coverage": 1,
+        "met": true
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": true,
+      "findings": [
+        {
+          "fixtureId": "long-ice-bath",
+          "turn": 10,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives a wrong accuracy figure (±0.2 °C not the reference's ±0.05 °C) and withholds the required 0.001 °C resolution figure by saying it lacks the information a refusal that scores 0 even though the logbook point is made. Unmet: Specifies certified reference accuracy of ±0.05 °C or better; Specifies reference readout resolution of at least 0.001 °C"
+        },
+        {
+          "fixtureId": "long-turbidity-bubbles",
+          "turn": 12,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer addresses cleaning and sensor fouling instead of the bubble fix so it misses all three must-contain points (agitation wiper and bubble-induced positive bias). Unmet: Moves the turbidity sensor up and down or in a circle to dislodge optical-surface bubbles; Activates the wiper mechanism if available; States that bubbles can produce positive turbidity bias"
+        }
+      ]
+    }
+  ]
+}
