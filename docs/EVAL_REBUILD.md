@@ -1813,6 +1813,8 @@ Judged twice (`deepseek-v4p1-flash`, `--final`, correctness, rubric v2, 90/90, 0
 - **Direction.** On the two-pass mean against the four launch passes, 21 turns rose and 13 fell; the mean gain is 0.06, just above the 0.05 noise band, and gold plus retrieval (1.33) says missing passages are the gap, so depth helps a little but does not close it.
 - **No refusal drift.** Unlike `gpt-oss-120b`, GLM does not refuse more at k=30: the pinned refusal sentence appears on 6 of 82 non-refusal turns against 8 in each launch capture, and refusal-style openings are level (12 of 82 in all three).
 - **Spend** about $1.18: capture about $0.34 with rewrites, spot check about $0.01, judge passes $0.20 and $0.63 (the first read most of its input from cache because both passes ran at once).
+- **Second capture, rule fixed before it runs (user decision, 2026-09-28).** A judge pass re-grades the same answers, so it cannot say whether the answers are reliably better; a second capture (`k30-b-lv-glm-2026-09-28`, same settings, judged once) can.
+  Adopt k=30 only if all three hold: the second capture's pass is at least 1.206; the mean of all three k=30 passes is at least 1.206; and the second capture's refusal gate and citation validity are no worse than launch A and B (at most 1 answered, validity at least 98.3%). Otherwise k stays 20.
 
 ## Task C provenance inputs - 2026-09-24
 
