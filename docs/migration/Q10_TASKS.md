@@ -26,7 +26,7 @@ Owner: the Gilligan behaviour chat. Started 2026-09-28 from `GILLIGAN_RESET_2026
 | T4 | Server `findInheritedLabels` water-type check, written as a proposal | Claude, to the server security chat | T1 | todo |
 | T5 | Finding 6 dates and Data Quality units; softened sensor-fault note; "sensor rails", `lastReadingAt` comment, PDF reading age, `Math.min` spread | Codex in `fix/q10-gilligan`, Claude reviews | `task/q9-land` | blocked |
 | T6 | Prompt lines at `systemPrompt.ts:97` and `:220` about earlier markers | with T5 | `task/q9-land` (touches `systemPrompt.ts`) | blocked |
-| T7 | v2 §3 fallback ranges (decision 9) and unit tests F1-F6 | Codex, Claude reviews | T3, T5, fallback questions | blocked |
+| T7 | v2 §3 fallback ranges (decision 9) and unit tests F1-F6 | Codex, Claude reviews | T3, T5; conductivity waits on Michael | blocked |
 | T8 | U7 caveat in the dashboard from `task/gilligan-ux` `817a7c2` | Claude | - | todo |
 | T9 | Catalogue tests C1-C6, findings 7 and 8 rechecks, K21 on the mirror | Claude with the mirror chat | mirror chat, spend approval (~$0.21) | todo |
 | T10 | Approved description of Clean Earth Rovers for "what does CER do" | Michael supplies the text; Claude wires it | Michael | waiting |
@@ -60,6 +60,6 @@ Unit tests with registry fixtures, then one live check each for F1 and F6 on the
 
 ## Open questions for the fallback (T7)
 
-- Which v2 column a `salt-water` pod uses: "Southern California Coastal and Harbor" or "Brackish / Estuarine".
-- Whether a reading outside a general range may be called "Exceedance" or "Action Required", or only "outside the typical range".
-- v2 lists specific conductance (temperature-corrected); whether the pod's conductivity is comparable.
+- Decided 2026-09-28: a `salt-water` pod uses the "Southern California Coastal and Harbor" column.
+- Decided 2026-09-28: a reading outside a fallback range is described only as "outside the typical range", never "Exceedance" or "Action Required".
+- Open: v2 lists specific conductance (corrected to 25 °C); the registry records no compensation setting and the EC probe has no internal temperature sensor, so Michael confirms whether the pods report compensated conductivity; until then conductivity gets no fallback.
