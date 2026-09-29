@@ -3,6 +3,7 @@ import path from "path";
 import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import { QuerySensorData } from "../../src/tools/querySensorData";
 import { buildReportInput } from "../../src/report/buildReportInput";
+import { STUCK_SENSOR_NOTE, STUCK_SENSOR_USER_NOTE } from "../../src/tools/stuckSensor";
 import { flagFor } from "../../src/report/types";
 import { probeAccuracy } from "../../src/report/referenceRanges";
 import type { DeviceSummary } from "../../src/types/device.types";
@@ -508,6 +509,30 @@ describe("buildReportInput", () => {
 
     expect(report).toBeUndefined();
     expect(error).toContain("No usable readings found");
+  });
+
+  it("builds the no-readings error from reader notes only, never the model-facing site note", async () => {
+    const SITE_NOTE = "Model-only: this device reports under dev:stub; quote no numbers from before 2026-08-01.";
+    const READER_NOTE = "History from this pod's earlier deployment is not shown.";
+    const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
+      query: async () => ({
+        device: { name: "Stub Pod", label: "dev:stub", operating_environment: "salt-water" },
+        time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
+        site_note: SITE_NOTE,
+        user_notes: [READER_NOTE, STUCK_SENSOR_USER_NOTE],
+        metrics: { turbidity: { value: null, n_samples: 0, excluded_stuck: 96, series: [] } },
+      }),
+      deviceRecord: async () => null,
+    } as unknown as QuerySensorData;
+
+    const { report, error } = await buildReportInput(stubSensor, { timeRange: "last week" });
+
+    expect(report).toBeUndefined();
+    expect(error).toBe(`No usable readings found for any parameter in "last week". ${READER_NOTE} `
+      + STUCK_SENSOR_USER_NOTE);
+    expect(error).not.toContain(SITE_NOTE);
+    expect(error).not.toContain(STUCK_SENSOR_NOTE);
   });
 
   it("threads the caller's bearer token from ToolContext into every device call", async () => {
