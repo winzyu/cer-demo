@@ -357,7 +357,7 @@ These subsets reuse rows below in a fixed order; the full tables stay the refere
 Rehearse the demo path once on the mirror before the supervisor demo (release plan L7), then run it on the staged stack.
 Align it with the demo script in `SUPERVISOR_BRIEF.html` (release-candidate session, `docs/supervisor-brief`) once that is committed.
 
-Demo path (L7), about ten steps: K1 disclaimer, A1b picker scoped to one organization, K17 single pod pre-selected, B1 grounded answer with document titles (K13), K20 standing caveat, C1 weekly summary, K5 reading age, K3 stuck turbidity, D1 another organization refused, K6 current site only, F1-F2 report offer and PDF, I2 phone layout.
+Demo path (L7), about ten steps, then section L for Michael: K1 disclaimer, A1b picker scoped to one organization, K17 single pod pre-selected, B1 grounded answer with document titles (K13), K20 standing caveat, C1 weekly summary, K5 reading age, K3 stuck turbidity, D1 another organization refused, K6 current site only, F1-F2 report offer and PDF, I2 phone layout.
 
 Staged smoke (L8), with the superadmin and one real member account instead of mirror personas: P1, P3, P8, B1, K13, C1, D1, D6, F2, K1, K15, K16, and the quota line shown in A1b.
 
@@ -526,6 +526,31 @@ Isolation (never another organization's data) is already D1, D2 and M2; Gemini-e
 | K21 | Catalogue entries apply only when a reading supports them, tools on (E7 hand-off, 2026-09-28; evals cannot cover this because every capture runs tools off; overlaps E5) | Harbor admin, Harbor; a Lakeside pod with an event over 12 hours | Ask "Why did the turbidity reading change?" on Harbor's flat run (K3). Then, on a pod with a threshold event lasting more than 12 hours, ask "Is this event serious?". Then ask a Harbor question with no event, such as "How is the water today?". | The flat run gets "Rule out the instrument first" (`fault-first`) with its limitation kept. The long event gets "Professional review for long events" (`professional-review`), and its referral appears only through that entry. The calm question gets neither entry. No catalogue text carries a document citation. | cer-demo `dev` with `CATALOGUE_PROMPT=true`; a fixture event over 12 hours (B without one) | Paid | [ ] P [ ] F [ ] B |
 | X1 | Readers see plain notes, never the model's instructions (checklist X1) | Harbor admin, Harbor | Ask “What is the turbidity?”, then “Which pods are online?”, and read the notes under each answer. | Plain sentences only, such as “…may be a missing sensor…” and “Last-report times come from each pod's readings at its current site…”; no tool names (`query_sensor_data`, `get_pod_thresholds`) and no instructions such as “Confirm with…” or “Say that…”. | cer-demo `dev` `5922109` or later; dashboard `task/gilligan-ux` | Paid, two questions | [ ] P [ ] F [ ] B |
 | X2 | A retried tool call is not shown as a failure (checklist X2) | Harbor admin, Harbor | Repeat D2a's first question and open the evidence. | If a failed call is followed by a successful call to the same tool, no “Tool failed” line appears; “No readings in this window” appears only when the answering call has no readings. | Dashboard `task/gilligan-ux` | Paid | [ ] P [ ] F [ ] B |
+
+### L. Production fixes for Michael's decision (demo)
+
+These are CER server defects outside Gilligan, reproduced on CER's own code with fabricated data ([`LAUNCH_ISSUES_CHECKLIST.md`](LAUNCH_ISSUES_CHECKLIST.md) A1 and A6).
+They ship at launch only if Michael agrees at the demo; until then the server release commit is not pinned.
+Show him each row on the launch-issues stacks, which read the fabricated emulator on :8180 and never production: "before" is the release commit `122136d` on :5301, "after" is `release/gilligan-2026-09-30-rc2` `8463545` on :5302, both started with `emulator-original/guard.env`.
+Each CSV request covers the last 7 days; row counts move with the window.
+
+| # | issue | persona | request | before (`122136d`) | after (`8463545`) | [ ] shown |
+|---|---|---|---|---|---|---|
+| L1 | CSV export ignores organization (launch issue A1, finding 11) | Harbor admin | CSV of its own pod | 200 with rows | 200 with the same rows | [ ] |
+| L2 | As L1 | Harbor admin | CSV of another organization's pod | 200 with that pod's rows | 400 Device not found | [ ] |
+| L3 | As L1 | Harbor admin, Superadmin | CSV of an unknown label | 200 with 0 rows | 400 Device not found | [ ] |
+| L4 | A user with no organization sees every pod (launch issue A6, finding 4) | No-organization user | `GET /devices` | 200 with every pod | 400 No organization assigned to this account | [ ] |
+| L5 | As L4 | No-organization user | CSV of any pod | 200 with rows | 400, same message | [ ] |
+| L6 | Superadmin unaffected | Superadmin | devices, all CSVs, period queries | 200 | 200, unchanged | [ ] |
+
+Michael's answer picks the server release commit:
+
+- Both fixes: `8463545` (CSV scope plus the water-type check on inherited history in `27d07ac`, the no-organization rule in `d766c65`, and the follow-up that keeps the release-only user, report and quota routes from failing).
+- CSV fix only: `008dad6` on the same branch; it builds and its unit suites pass.
+- Neither: `122136d`, which also drops the inherited-history water-type check because it shares a commit with the CSV fix.
+
+The Gilligan side of A6 (its pod list for a user with no organization) is covered by unit tests only; the launch-issues stacks run no Gilligan.
+Record his answer in `timeline.md` and pin the chosen commit in `RELEASE_CANDIDATE.md` before L6.
 
 ### M. Merge rules, current site and production-shaped data
 
