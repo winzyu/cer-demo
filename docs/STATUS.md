@@ -29,7 +29,7 @@ Updated 2026-09-28 by the release coordinator as the baseline for a second full 
 
 ## Chats after this reset
 
-The user asked for four; the coordinator suggests three more.
+The user asked for four; the coordinator suggests two more.
 Each prompt should name the open-work entry below that it inherits.
 
 1. **Release (release candidate and deploy assist; L4-L9).** Cut rc2 once `dev` is final; production-mode run; `RELEASE_CANDIDATE.md`; then guide L5-L8 from the runbook.
@@ -38,7 +38,6 @@ Each prompt should name the open-work entry below that it inherits.
 4. **Release demo.** The Michael and supervisor demo: launch-issues evidence (A items on CER's own code), the supervisor brief, a demo script, the demo stack and key.
 5. *Suggested:* **Server security fixes (Q11 and A6), gated on Michael.** Written on new server branches so they are ready if he says yes.
 6. *Suggested:* **Mirror testing.** Build-and-rerun for `task/q9-land` (C1, D1), K21 and the pH 2.07 and 18-hour event fixtures, the 23 unjudged REVIEW rows, groups B, D, E, H and I.
-7. *Suggested:* **Eval wrap-up.** Finish the k=30 capture 2 on `task/long-conversations`, revert `2587add`, land the branch.
 
 ## Last session
 
@@ -49,7 +48,7 @@ Each prompt should name the open-work entry below that it inherits.
   - Deleted the launch-issues chat's unused production-export script `firestore-copy.sh` at the user's request.
 - Launch-issues chat (2026-09-28): rehearsal stacks on fabricated data (Current = CER's own code `693fc96`/`5dff5fd`; Release = `122136d`/`9e18555`); A1, A2, A3, A5, A6 and U1-U4 run on both, $0 (results below).
 - A Codex run of mirror groups B, D, E, H and I (`codex-bdehi-2026-09-28`, about $0.34): 9 pass, D6 (finding 11) and D4 (empty organization) fail, 23 REVIEW rows unjudged.
-- Eval (2026-09-28): long-conversation test fails its pre-set rule only through the cross-document slot; a citation-marker defect found; k=30 capture 1 not adopted.
+- Eval (2026-09-28): `task/long-conversations` `f8fa202` landed (`09a9d68`; wave 1 and per-turn labels regenerate byte-identical). The long-conversation test fails its pre-set rule only through the cross-document slot; the citation-marker defect was found; k=30 is not adopted over two captures (mean 1.200 against a 1.206 bar), so k stays 20. R4 spend about $2.31, about $5.76 of $8.07 left.
 - User decisions (2026-09-28, `timeline.md`): production fixes outside Gilligan wait for Michael; launch-issue rehearsal on fabricated data; the mirror stack branches pushed so `MIRROR_RUNBOOK.md` works elsewhere; the fabricated data copied into CER-DEV database `cer-demo-fixtures` (about $0.02).
 
 ## Open work
@@ -58,7 +57,7 @@ Each item names the chat that owns it after the reset.
 
 - **Release plan (coordinator).**
   - Build `task/q9-land` in a worktree from `dev`: merge `origin/cloud/q9-c1-d1` `ad7eec9` (contains `cloud/q9-logic` `bc097e1`), resolve the conflicts in `src/tools/listPods.ts` (keep Q9's single pod-status rule and `dev`'s reader notes) and `docs/migration/E2E_CHECKLIST.md`, run checks, push; land only after the mirror's C1 and D1 rerun passes.
-  - Land when reported: the Q10 branch, U7, `task/long-conversations` (only once `2587add` is reverted).
+  - Land when reported: the Q10 branch and U7.
   - Refresh the plan (U1-U6, P5 done; Q9-Q11 state; E7 done; the user's production-fix rule).
   - Rewrite guide K12, which still expects refusals; the standing caveat (K20) replaced them.
   - Fix runbook §3.1 (release rows predate the candidate), add `PREDECESSOR_PERIOD_HANDOFF=false` and `DEFAULT_TOP_K=20` to §4.1, add §2.1 item 5 (service-key secret) to the Michael list, and give §2.1 item 6 (organization policy on unauthenticated invocation) a fallback.
@@ -81,7 +80,7 @@ Each item names the chat that owns it after the reset.
   - Local, unpushed unless noted: server `release/gilligan-2026-09-30` `122136d` (worktree `server-release`; local `d12ad6d` plus `9751f8f`, `f9607bd`, `9ef59b7`, `0003170`, `b443e41`, `f7dec3c`; no Q11); server `mirror/release-rc1` `d1821bd`; dashboard `release/gilligan-2026-09-30` `9e18555` (pushed 2026-09-28; `817a7c2` is one commit ahead); cer-demo `release/rc1` `5367164` (stale).
   - rc2: final `dev`, dashboard `817a7c2` plus U7, the server release plus Q11 if Michael agrees, or a Gilligan-only server commit if not.
   - The main checkout's `data/corpus/corpus.json` is still the Sep 21 corpus and `release/artifacts.sha256` matches it; rc2 must run `npm run ingest` from the existing OCR cache, rebuild the embedding cache for 457 chunks (a small paid call; confirm the cost), and regenerate the checksums.
-  - Proposed ports 8081, 5102, 8011 and 3001 (8011 is in use by the eval chat); the "delta test" means the paid rc2 rows (G1, G3, and B1, C1, F2 rechecks), capped at $0.15.
+  - Proposed ports 8081, 5102, 8011 and 3001 (8011 is free again); the "delta test" means the paid rc2 rows (G1, G3, and B1, C1, F2 rechecks), capped at $0.15.
   - Supervisor brief `docs/migration/SUPERVISOR_BRIEF.html` is still uncommitted in worktree `supervisor-brief` (`docs/supervisor-brief` `73770d2`), awaiting the user's review.
   - Deploy assist found `§4.1` matches `src/config/index.ts`; it proposed staging L5-L7 on the memory store with `max-instances=1` if Firestore is still pending, and requiring the Firestore store before L9.
 - **Dashboard (fold into Release or Gilligan behaviour).**
@@ -99,11 +98,7 @@ Each item names the chat that owns it after the reset.
   - Next: C1 and D1 on `task/q9-land` (about $0.04) once fixtures exist for a silent pod and a pH 2.07 reading; K21 a/b/c plus finding 8 recheck and chat-condition entries (about $0.20; K21b needs an 18-hour freshwater dissolved-oxygen fixture); groups B, D, E, H, I and finding 7 (about $0.51), all with `CATALOGUE_PROMPT=true` and `CATALOGUE_DRAFTS=false`; judge the Codex run's 23 REVIEW rows (`.claude/worktrees/gcp-test-env/data/e2e/codex-bdehi-2026-09-28/`); the bot has no H or I scenarios.
   - Recommendation: `0003170`'s `FIRESTORE_PROJECT_ID` supersedes `1ef21a7`'s `MIRROR_PROJECT_ID`; move the mirror to `mirror/release-rc1` or its rc2 successor. Phase 2 not before launch.
   - About $2.56 plus $0.34 (Codex) of the $10 mirror budget spent.
-- **Eval wrap-up (suggested chat, or the release-plan chat).**
-  `task/long-conversations` (`.claude/worktrees/long-conversations`): pushed to `e6e3674`; local `2587add` re-applies `DEFAULT_TOP_K=30` for a running capture and must be reverted before landing.
-  When capture `k30-b-lv-glm-2026-09-28` finishes: revert `2587add`, stop the 8011 server, run `gate:check` and one `--final` judge pass, apply the `e6e3674` rule (`EVAL_REBUILD.md`, "local-vector k=30: results"), record, push, report.
-  R4 spend about $1.46 this round; about $5.60 of $8.07 left after capture 2.
-- **Stop:** every chat that answered the 2026-09-28 roundup (`gilligan fix round planning`, `cer-demo-9a`, `cer-demo-7d`, `cer-demo-8f`, `cer-demo-af`, `cer-demo-c2`, `gilligan release reconciliation`, `cer-demo-23`, `cer-demo-92`, `e2e session documentation review`), after `cer-demo-d6` finishes its capture steps; `cer-demo-25` (busy) and `cer-demo-c1` did not accept messages.
+- **Stop:** every chat that answered the 2026-09-28 roundup (`gilligan fix round planning`, `cer-demo-9a`, `cer-demo-7d`, `cer-demo-8f`, `cer-demo-af`, `cer-demo-c2`, `gilligan release reconciliation`, `cer-demo-23`, `cer-demo-92`, `e2e session documentation review`), and `cer-demo-d6` (eval, finished); `cer-demo-25` (busy) and `cer-demo-c1` did not accept messages.
   Cloud sessions `Docs link and reference audit` (told to branch `cloud/docs-link-audit`) and `Gilligan release consistency audit` have not reported.
 
 ## User decisions and actions
@@ -127,13 +122,12 @@ Each item names the chat that owns it after the reset.
 ## Working tree
 
 - `dev` is pushed and level with `origin/dev`; `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
-- cer-demo worktrees in use: `launch-issues` (`7a2f2fc`, landed, branch unpushed), `long-conversations` (`2587add` local), `gcp-test-env` (bot and Codex run outputs, git-ignored), `e2e-rc` (`test/e2e-rc`, the mirror's Gilligan), `release-candidate` (`release/rc1`, stale), `supervisor-brief` (uncommitted brief), `firestore-mirror` (untracked census script), `e7-corpus` (holds the E7 `corpus.json` and cache), `e2e-dev` (detached `b07f950`, setup only, removable).
-  Merged and removable: `answer-quality-q1`, `cwa-old`, `e7-claims`, `e7-fixtures`, `feat+service-release`, `gilligan-runbook`, `gilligan-ux-contract`, `hygiene`, `l2-inputs`, `mirror-parity`, `per-turn-labels`, `q3-q5`, `q9-413`, `stale-claims`, `token-cap`, `upstream-publish`, `wave1-corrections`, and `firestore-plan` (unmerged history, keep the branch).
+- cer-demo worktrees in use: `launch-issues` (`7a2f2fc`, landed, branch unpushed), `gcp-test-env` (bot and Codex run outputs, git-ignored), `e2e-rc` (`test/e2e-rc`, the mirror's Gilligan), `release-candidate` (`release/rc1`, stale), `supervisor-brief` (uncommitted brief), `firestore-mirror` (untracked census script), `e7-corpus` (holds the E7 `corpus.json` and cache), `e2e-dev` (detached `b07f950`, setup only, removable).
+  Merged and removable: `long-conversations`, `answer-quality-q1`, `cwa-old`, `e7-claims`, `e7-fixtures`, `feat+service-release`, `gilligan-runbook`, `gilligan-ux-contract`, `hygiene`, `l2-inputs`, `mirror-parity`, `per-turn-labels`, `q3-q5`, `q9-413`, `stale-claims`, `token-cap`, `upstream-publish`, `wave1-corrections`, and `firestore-plan` (unmerged history, keep the branch).
 - Upstream worktrees under `~/code/clean-earth-rovers/worktrees/`: `server-release`, `server-release-mirror`, `server-citation-title`, `server-invited-login`, `server-cwa-old`, `dashboard-ux`, `dashboard-e2e`, `dashboard-release`, and the launch-issues `server-original`, `dashboard-original`, `server-release-demo`, `dashboard-release-demo`, `server-original-seed`; the server's `.worktrees/mirror` is `mirror/e2e-p3` `1ef21a7`.
 - Running processes:
   - Mirror: Firestore emulator :8080 (java 2171997, holds the 2026-09-27 evidence), dashboard :3000 (2176422) and Gilligan :8010 (1403658, started by the deploy-assist chat at the user's request); the mirror server :5101 stopped on 2026-09-28 after a working dashboard session and is not restarted (`MIRROR_RUNBOOK.md` §3).
   - Launch issues: emulator :8180 (viewer :4180, production project id, `emulator-original/guard.env`), Current :3100 and :5201, Release :3300 and :5301, all on every interface.
-  - Eval: cer-demo :8011 with `DEFAULT_TOP_K=30` and a background capture, from `long-conversations`.
 - Git-ignored restored inputs: `node_modules/`, `.env`, corpus PDFs, `.ocr_cache/`, `data/corpus/` (Sep 21 corpus in the main checkout), `data/embeddings/cache.json`. Still missing: `data/retrieval-eval/`, `data/device-fields/`, `data/backend-surface/`, `serviceAccountKey.json`.
 - Browsable HTML of the release docs is outside the repo at `~/code/clean-earth-rovers/docs-html` (`build.py` regenerates it).
 
@@ -185,7 +179,6 @@ Each item names the chat that owns it after the reset.
 - The device token is superadmin with no `exp` claim.
 - The launch-issues stacks (:3100, :3300, :5201, :5301) listen on every interface; the Current server's open user routes are reachable from the LAN while it runs.
 - The mirror's `.claude/worktrees/e2e-rc/.env` has no `CATALOGUE_PROMPT` line, so it defaults to false; set it `true` for any behaviour check, as the release does.
-- `task/long-conversations` holds a local `DEFAULT_TOP_K=30` commit (`2587add`); never land it while that is at the tip.
 - The main checkout's `data/corpus/` is the Sep 21 corpus; the E7 corpus is only in `.claude/worktrees/e7-corpus` until rc2 re-ingests.
 - Nothing is deployed; all testing is local.
 
