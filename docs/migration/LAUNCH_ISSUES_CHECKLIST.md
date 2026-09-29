@@ -87,7 +87,8 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **Actual (reported):** 200 with 167 rows for pods Harbor doesn't own.
 - **Expected:** refused like `/water/period` (400 `Device not found`); Harbor's own pod and a superadmin still get 200.
 - **Why wrong:** any customer can download another organization's data, and pod labels aren't secret.
-- **Who, production:** every logged-in customer; likely live. `WaterAnalyticsService` on CER's `main` differs from `693fc96` in label handling, so still compare `findDeviceWaterDataExportCSV` there with `git show` before the demo.
+- **Who, production:** every logged-in customer; likely live.
+- **CER `main`** (`origin/main` `3ed15ff`, 2026-09-24, read with `git show`): `exportCsv` passes no caller and `findDeviceWaterDataExportCSV` calls `findByLabel(device, null)`, the same defect. `main` and `693fc96` share base `7e4f40e` and differ in merge-label handling; production's exact commit is unknown.
 - **Cause:** `WaterAnalyticsController.exportCsv` never passes the caller; `findByLabel(device, null)` applies no organization filter.
 - **Fix:** plan Q11, not written.
 - **Result (2026-09-29):** original confirmed; release (still unfixed) confirmed.
@@ -121,6 +122,7 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **Fix:** `task/gilligan-release-p3-p4` `78e2dfb`, `ccc759e`; in release; in mirror as cherry-picks.
 - **Also record:** on the Mirror, a relay call with `device=dev:100000000000006` answers that it cannot find the pod (one question).
 - **Result (2026-09-29):** original confirmed for `/water/period` only; after passes.
+- **CER `main`** (`3ed15ff`, `git show`): `findPeriodWaterData` puts the caller's `device` straight into the query with no organization check, the same defect; `getLastDataByDevice` checks the caller's pods, as on Current.
 - **Evidence:** Current, Harbor admin: `/water/period/7/day?device=dev:100000000000003` 200 with 165 rows, every one `dev:100000000000003`; Release 400 `Device not found`; Superadmin 200 (165) on both.
   - `/water/last/dev:100000000000003` is already 400 for Harbor on Current: CER's `getLastDataByDevice` checks the caller's organization's pods, so the card's "also `/water/last`" leak does not exist.
 
@@ -144,7 +146,8 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **Fix:** `fix/invited-login` `f7dec3c`, committed, not pushed; in release.
 - **Result (2026-09-29, API only):** original confirmed; after passes.
 - **Evidence:** the stored user has no `password` field; Current returns 500 with a raw schema error (`invalid_type`, `password`, `Required`) as its message, Release 401 "Error: Finish setting up your account before logging in, please try again."
-  - Both login pages show `Login failed: ` plus the server's message, so Current most likely shows that raw schema text rather than no message; confirm in a browser.
+  - Browser (2026-09-28, headless Chromium, both dashboards): the message is a top-right pop-up that hides after 3 seconds.
+  - Current shows `Login failed: [ { "code": "invalid_type", "expected": "string", "received": "undefined", "path": [ "password" ], "message": "Required" } ]`; Release shows `Login failed: Error: Finish setting up your account before logging in, please try again.`
 
 ### A6. A user with no organization sees every pod
 
@@ -160,6 +163,7 @@ The 2026-09-29 run (about 00:25-00:45 UTC) sent the dashboard's own requests str
 - **Evidence:** `GET /devices`, which feeds `/home` and Export CSV's menu, returns the same 5 pods to the orphan as to Superadmin on both stacks.
   - Data access differs: on Current the orphan gets `...003`'s period (200, 165) but 400 on `/water/last`, so `/home` lists pods without latest readings; on Release period and last are both 400, but CSV export still returns 200 (A1).
   - The chart endpoint returns no datasets for the orphan on either stack.
+  - Browser (2026-09-28): `/home` lists 5 pods on both stacks (one shown only as `dev:100000000000012`), with the map reading "You don't have any registered device or they don't have GPS data yet"; Export CSV's menu offers the same 5.
 
 ### A7. The cer-ui build trigger deploys from the dashboard's infected main
 
@@ -247,7 +251,7 @@ Everyday flows from the walkthrough's part 2; a failure is a regression.
 |---|---|---|---|
 | U1 | log in, wrong password, log out | Current, Release | pass (API, 2026-09-29): 200 and 401 "Password incorrect" on both; log out only clears the browser's token, which has no expiry (`SECURITY_FINDINGS.md` item 5) |
 | U2 | each persona sees only their own pods | Current, Release | pass (API): Superadmin 5, Harbor admin and customer Harbor Pier Buoy only, Lakeside customer Lakeside Buoy 2026 only, on both |
-| U3 | own pod's pages and period data load | Current, Release | pass (API): the six pages answer 200; Harbor's last, chart (pH, 1 and 7 days, all points valued), dial and map averages, and 7-day period (165) all 200 on both; rendering not checked in a browser |
+| U3 | own pod's pages and period data load | Current, Release | pass (API): the six pages answer 200; Harbor's last, chart (pH, 1 and 7 days, all points valued), dial and map averages, and 7-day period (165) all 200 on both; browser (2026-09-28): Home, Chart (pH), Dial and Map render with no NaN, undefined or error text on both; the only failed call is `water/tides/.../20260928/20260928` 400, with no visible effect |
 | U4 | export own pod's CSV | Current, Release | pass (API): Harbor admin and customer get 200 with 165 rows for `...001` on both |
 | U5 | document question with sources | Mirror | not run |
 | U6 | pod data question with reading age | Mirror | not run |
@@ -259,6 +263,6 @@ Everyday flows from the walkthrough's part 2; a failure is a regression.
 ## Next
 
 1. Run A1, A2, A3, A5 and A6 on Current, then on Release ($0), and U1-U4 on both; the user has not yet approved this run.
-2. Before the Michael demo, compare the A1 and A3 functions on CER's `main` with `git show`, without checking it out.
+2. Done 2026-09-28: A1 and A3 on CER's `main` have the same defects (see A1 and A3).
 3. Ask the mirror chat before using :3000, :5101 or :8010; the B items and U5-U10 need its Gilligan ([`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md)).
 4. Optional: a Current and Release start-up section in `MIRROR_RUNBOOK.md`, which covers only the Mirror.

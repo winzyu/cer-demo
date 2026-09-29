@@ -233,19 +233,19 @@ const week = { startDate: new Date(Date.now() - 7 * 864e5).toISOString(), endDat
   <dl class="facts">
     <dt>Stacks</dt><dd>Current (server 5201), then Release (server 5301)</dd>
     <dt>Log in as</dt><dd>Nobody for steps 1-3; Harbor admin and Superadmin for step 4</dd>
-    <dt>Where</dt><dd>A terminal (no dashboard page calls these routes)</dd>
+    <dt>Where</dt><dd>A private browser window with no login (no dashboard page calls these routes), then the Console helper on 3300</dd>
   </dl>
   <div>
     <div class="label">Steps</div>
     <ol>
-      <li>Status only: <code>curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5201/api/v1/users/all</code></li>
-      <li>Show what leaks, first 300 characters: <code>curl -s http://localhost:5201/api/v1/users/all | head -c 300</code></li>
-      <li>Another organization's user by id: <code>curl -s http://localhost:5201/api/v1/users/user-lake-cust-0001 | head -c 300</code>, then <code>curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5201/api/v1/test-db</code></li>
+      <li>Open a private (incognito) window, which has no login. Paste <code>http://localhost:5201/api/v1/users/all</code> into the address bar and press Enter. The browser shows the raw user list as text.</li>
+      <li>In the same window, open <code>http://localhost:5201/api/v1/users/user-lake-cust-0001</code> (another organization's user), then <code>http://localhost:5201/api/v1/test-db</code>.</li>
+      <li>Terminal alternative for a status code only: <code>curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5201/api/v1/users/all</code>.</li>
       <li>Repeat 1-3 against <code>http://localhost:5301</code>. Then, logged in on 3300 as Harbor admin, run <code>api('GET', '/api/v1/users/user-lake-cust-0001')</code> and <code>api('GET', '/api/v1/users/all')</code>; as Superadmin, run <code>api('GET', '/api/v1/users/all')</code>.</li>
     </ol>
   </div>
   <div class="compare">
-    <div class="state bad"><div class="label">Current: expected defect</div>200 on all three, with no token. <code>/users/all</code> returns every user's name, email, role, organization and pods; <code>/test-db</code> reports the project and database.</div>
+    <div class="state bad"><div class="label">Current: expected defect</div>200 on all three, with no token. <code>/users/all</code> returns every user's id, name, user name, email and pods (not role or organization); <code>/test-db</code> reports the project and database.</div>
     <div class="state good"><div class="label">Release: expected fix</div><code>/users/all</code> 401 without a token and refused for a non-superadmin; <code>/users/:id</code> 404 for another organization's user; <code>/test-db</code> 404 (removed). Superadmin still gets the list.</div>
   </div>
   <dl class="facts">
@@ -270,8 +270,7 @@ const week = { startDate: new Date(Date.now() - 7 * 864e5).toISOString(), endDat
     <div class="label">Steps</div>
     <ol>
       <li>On 3100 as Harbor admin: <code>api('GET', '/api/v1/water/period/7/day?device=dev:100000000000003')</code></li>
-      <li>Also <code>api('GET', '/api/v1/water/last/dev:100000000000003')</code>.</li>
-      <li>Repeat both on 3300 (<code>BASE</code> 5301).</li>
+      <li>Repeat on 3300 (<code>BASE</code> 5301).</li>
       <li>Control: Superadmin runs step 1 on either stack.</li>
     </ol>
   </div>
@@ -281,6 +280,7 @@ const week = { startDate: new Date(Date.now() - 7 * 864e5).toISOString(), endDat
   </div>
   <dl class="facts">
     <dt>Why it's wrong</dt><dd>The same leak as A1, through the path the dashboard's charts use.</dd>
+    <dt>Not affected</dt><dd><code>/water/last/&lt;label&gt;</code> already returns 400 for another organization's pod on CER's own code, because <code>getLastDataByDevice</code> checks the caller's pods; only the period query leaks.</dd>
     <dt>Fix</dt><dd>Server <code>task/gilligan-release-p3-p4</code> (<code>78e2dfb</code>, <code>ccc759e</code>); in release <code>122136d</code>; in the mirror server as cherry-picks.</dd>
     <dt>Also on the Mirror</dt><dd>Gilligan refuses by itself: a relay call naming <code>dev:100000000000006</code> answers that it cannot find the pod (costs one question).</dd>
   </dl>
@@ -300,13 +300,13 @@ const week = { startDate: new Date(Date.now() - 7 * 864e5).toISOString(), endDat
     <div class="label">Steps</div>
     <ol>
       <li>On <code>http://localhost:3100/login</code>, enter <code>user-harbor-cust-3@mirror.example.invalid</code> and any password, and submit.</li>
-      <li>Note the message on the page, and the status of the <code>users/login</code> request in Network.</li>
+      <li>Watch the top-right corner immediately: the message is a pop-up that disappears after 3 seconds. Also note the status of the <code>users/login</code> request in Network.</li>
       <li>Repeat on <code>http://localhost:3300/login</code>.</li>
     </ol>
   </div>
   <div class="compare">
-    <div class="state bad"><div class="label">Current: expected defect</div>500 from the server, and the form shows no useful message.</div>
-    <div class="state good"><div class="label">Release: expected fix</div>401, and the page shows "Login failed: Finish setting up your account before logging in".</div>
+    <div class="state bad"><div class="label">Current: expected defect</div>500 from the server, and the pop-up shows the raw validation dump: <code>Login failed: [ { "code": "invalid_type", "expected": "string", "received": "undefined", "path": [ "password" ], "message": "Required" } ]</code> (seen in a browser 2026-09-28).</div>
+    <div class="state good"><div class="label">Release: expected fix</div>401, and the pop-up shows "Login failed: Error: Finish setting up your account before logging in, please try again." (seen in a browser 2026-09-28).</div>
   </div>
   <dl class="facts">
     <dt>Why it's wrong</dt><dd>A real invited customer can't get in and sees nothing explaining why.</dd>
@@ -734,8 +734,8 @@ const week = { startDate: new Date(Date.now() - 7 * 864e5).toISOString(), endDat
       <tr><td>Check the data</td><td>Counted documents in each emulator collection</td><td>Open <code>http://127.0.0.1:4180/firestore</code> and read the count of each collection</td><td>9 organizations, 27 users, 15 devices, 52 chats, 8,640 <code>water-data</code></td></tr>
       <tr><td>A1</td><td><code>POST /water/export/csv/&lt;label&gt;</code> for <code>...001</code>, <code>...003</code>, <code>...006</code> as Harbor admin, Superadmin and Orphan</td><td>Log in, open <strong>Export CSV</strong>, pick the pod, keep 7 days, click <strong>Export</strong>. The menu offers only your own pods, so for <code>...003</code> and <code>...006</code> run the Console helper's <code>api('POST', '/api/v1/water/export/csv/dev:100000000000003', week)</code></td><td>Both stacks: 200 and 165 rows each; open the file and the DEVICE column names Lakeside or Demo</td></tr>
       <tr><td>A2</td><td><code>GET /users/all</code>, <code>/users/user-lake-cust-0001</code>, <code>/test-db</code> with no login; then logged in</td><td>No page calls these. Log out and paste <code>http://localhost:5201/api/v1/users/all</code> into the address bar (5301 for Release); logged in, use the helper, and use <code>user-harbor-cust-01</code> for a same-organization user</td><td>Current: user list, user record, project details. Release: 401, 401, 404; logged in, Harbor admin 403 on the list, 404 on a Lakeside user, 200 on a Harbor user</td></tr>
-      <tr><td>A3</td><td><code>GET /water/period/7/day?device=dev:100000000000003</code> and <code>/water/last/...003</code> as Harbor admin</td><td>Log in as Harbor admin; open <strong>Chart</strong> to watch Network show <code>water/chart</code> calls. The page never asks for another pod, so use the helper for both calls</td><td>Current: period 200 with 165 Lakeside rows, <code>last</code> already 400. Release: both 400 <code>Device not found</code></td></tr>
-      <tr><td>A5</td><td><code>POST /users/login</code> as the invited customer with any password</td><td>On <code>/login</code>, enter <code>user-harbor-cust-3@mirror.example.invalid</code> and any password, with Network open, and read the red message</td><td>Current: 500 and most likely <code>Login failed:</code> followed by raw schema text. Release: 401 and "Finish setting up your account"</td></tr>
+      <tr><td>A3</td><td><code>GET /water/period/7/day?device=dev:100000000000003</code> as Harbor admin (<code>/water/last/...003</code> was checked too and is already scoped)</td><td>Log in as Harbor admin; open <strong>Chart</strong> to watch Network show <code>water/chart</code> calls. The page never asks for another pod, so use the helper for both calls</td><td>Current: period 200 with 165 Lakeside rows, <code>last</code> already 400. Release: both 400 <code>Device not found</code></td></tr>
+      <tr><td>A5</td><td><code>POST /users/login</code> as the invited customer with any password</td><td>On <code>/login</code>, enter <code>user-harbor-cust-3@mirror.example.invalid</code> and any password, with Network open, and read the red message</td><td>Current: 500 and a pop-up (top right, 3 seconds) reading <code>Login failed:</code> followed by the raw schema dump. Release: 401 and "Finish setting up your account"</td></tr>
       <tr><td>A6</td><td><code>GET /devices</code>, then period and <code>last</code> calls, as Orphan</td><td>Log in as Orphan; count pods on <strong>Home</strong> and in <strong>Export CSV</strong>'s menu; open <strong>Chart</strong></td><td>Both: 5 pods listed, the same as Superadmin. Current: Home shows no latest readings. Chart empty on both. Export of any listed pod works on both</td></tr>
       <tr><td>U1</td><td>Login with the right and a wrong password</td><td>Log in as Harbor admin, click <strong>LOGOUT</strong>, log in with a wrong password</td><td>Right: lands on Home. Wrong: "Login failed: Error: Password incorrect"</td></tr>
       <tr><td>U2</td><td><code>GET /devices</code> per persona</td><td>Log in as each persona in turn and count pods on Home</td><td>Superadmin 5; Harbor admin and customer Harbor Pier Buoy; Lakeside customer Lakeside Buoy 2026</td></tr>

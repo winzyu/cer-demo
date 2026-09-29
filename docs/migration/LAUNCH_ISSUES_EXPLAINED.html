@@ -420,7 +420,7 @@ dl.gloss dd { margin: 0; max-width: 70ch; }
     <h4><span class="id">A2</span>User lookups answer without a login</h4>
     <div class="chips"><span class="chip demo">Michael demo</span><span class="chip high">High</span><span class="chip">Current + Release</span><span class="chip">$0</span></div>
   </header>
-  <p class="oneline">"Anyone on the internet, without logging in, can download CER's whole customer list: names, emails, roles and companies."</p>
+  <p class="oneline">"Anyone on the internet, without logging in, can download CER's whole customer list: ids, names, user names, emails and pods."</p>
   <div class="ways">
     <div><div class="label">Analogy</div><p>The front desk hands the staff directory to anyone who walks in off the street and asks. There is also a "test" door left open that shows which building and filing system the company uses.</p></div>
     <div><div class="label">Step by step</div><ol>
@@ -429,7 +429,7 @@ dl.gloss dd { margin: 0; max-width: 70ch; }
       <li>The fix adds the check: list-all is superadmin only; one user is visible to themselves, an admin of the same company, or a superadmin; the test page is removed.</li>
       <li>An admin asking about another company's user gets 404, as if the ID doesn't exist, so the server doesn't even confirm who is a customer.</li>
     </ol></div>
-    <div><div class="label">The test</div><p>From a terminal, with no login, call the three routes on both servers. Then on Release, try the lookups as Harbor admin (should be refused) and as Superadmin (should work). No dashboard page uses these routes, so a terminal is the natural tool.</p></div>
+    <div><div class="label">The test</div><p>From a terminal, with no login, call the three routes on both servers. Then on Release, try the lookups as Harbor admin (should be refused) and as Superadmin (should work). No dashboard page uses these routes; paste each address into a private browser window (no login) to see the same result.</p></div>
   </div>
   <div class="compare">
     <div class="state bad"><div class="label">Current</div>200 on all three with no token. Every fake user's details come back.</div>
@@ -452,7 +452,7 @@ dl.gloss dd { margin: 0; max-width: 70ch; }
       <li>So Harbor, typing Lakeside's label into the Console, gets Lakeside's chart data.</li>
       <li>The fix checks X against the caller's organization and answers <code>400 Device not found</code> otherwise.</li>
     </ol></div>
-    <div><div class="label">The test</div><p>As Harbor admin, ask for Lakeside's period and latest reading on both stacks. Superadmin asks the same as a control. On the Mirror, Gilligan should also say it cannot find a pod from another company (costs one question).</p></div>
+    <div><div class="label">The test</div><p>As Harbor admin, ask for Lakeside's period on both stacks. (Lakeside's latest reading is already refused on CER's own code, so it is not part of this issue.) Superadmin asks the same as a control. On the Mirror, Gilligan should also say it cannot find a pod from another company (costs one question).</p></div>
   </div>
   <div class="compare">
     <div class="state bad"><div class="label">Current</div>200 with Lakeside's readings, served to Harbor.</div>
@@ -478,8 +478,8 @@ dl.gloss dd { margin: 0; max-width: 70ch; }
     <div><div class="label">The test</div><p>On each stack's login page, enter <code>user-harbor-cust-3</code> with any password, with the browser's Network tab open. Note the status of the login request and the message on the page.</p></div>
   </div>
   <div class="compare">
-    <div class="state bad"><div class="label">Current</div>500; no useful message.</div>
-    <div class="state good"><div class="label">Release (f7dec3c)</div>401 and "Login failed: Finish setting up your account before logging in".</div>
+    <div class="state bad"><div class="label">Current</div>500, and the pop-up shows the raw validation dump ("Login failed: [ { "code": "invalid_type" ... "path": [ "password" ] ... } ]"), seen in a browser 2026-09-28.</div>
+    <div class="state good"><div class="label">Release (f7dec3c)</div>401 and "Login failed: Error: Finish setting up your account before logging in, please try again.", seen in a browser 2026-09-28.</div>
   </div>
 </article>
 
