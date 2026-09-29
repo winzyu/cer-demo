@@ -58,7 +58,7 @@ Each item names the chat that owns it after the reset.
 
 - **Release plan (coordinator).**
   - Build `task/q9-land` in a worktree from `dev`: merge `origin/cloud/q9-c1-d1` `ad7eec9` (contains `cloud/q9-logic` `bc097e1`), resolve the conflicts in `src/tools/listPods.ts` (keep Q9's single pod-status rule and `dev`'s reader notes) and `docs/migration/E2E_CHECKLIST.md`, run checks, push; land only after the mirror's C1 and D1 rerun passes.
-  - Land when reported: the Q10 branch, U7, `task/long-conversations` (only once `2587add` is reverted), `test/launch-issues` results.
+  - Land when reported: the Q10 branch, U7, `task/long-conversations` (only once `2587add` is reverted).
   - Refresh the plan (U1-U6, P5 done; Q9-Q11 state; E7 done; the user's production-fix rule).
   - Rewrite guide K12, which still expects refusals; the standing caveat (K20) replaced them.
   - Fix runbook §3.1 (release rows predate the candidate), add `PREDECESSOR_PERIOD_HANDOFF=false` and `DEFAULT_TOP_K=20` to §4.1, add §2.1 item 5 (service-key secret) to the Michael list, and give §2.1 item 6 (organization policy on unauthenticated invocation) a fallback.
@@ -89,7 +89,7 @@ Each item names the chat that owns it after the reset.
   U7 not started; proposed placement: small muted text directly above the "Sources (n)" toggle in `src/app/components/gilligan-answer.js` (about line 286), shown only when `usedCitations(text, citations)` is non-empty, with a case in `test/provenance.test.mjs`.
   Server `task/gilligan-citation-title` `b443e41` has no remote branch.
 - **Release demo (new chat).**
-  - Launch-issues evidence, `.claude/worktrees/launch-issues` (`test/launch-issues` `a56c8ef`, merged): the checklist's new results are uncommitted there because the auto-mode classifier blocked that chat's commit; the user commits them, then the coordinator lands them.
+  - Launch-issues evidence: `test/launch-issues` `7a2f2fc` (landed on `dev`; the branch itself is not pushed) holds the results and a walkthrough table mapping each API request to dashboard clicks; the walkthrough cards still need the three corrections below.
   - Results on CER's own code (Current) vs Release: A1 CSV export 200 with 165 rows of other organizations' pods on both (Q11 not written); A2 no-token `/users/all`, `/users/:id`, `/test-db` 200 on Current, 401/401/404 on Release; A3 period query 200 on Current, 400 on Release; A5 invited login 500 with a raw validation dump on Current, 401 "Finish setting up your account..." on Release; A6 the orphan sees all 5 pods on both, period data 200 on Current, 400 on Release, CSV 200 on both; U1-U4 pass on both at API level.
   - Walkthrough corrections: A3 drop `/water/last` (CER already scopes it); A5 the page likely shows "Login failed: " plus the dump; A2 leaked fields as above. Browser checks still needed: A5's page message, the orphan's pod count on `/home`, U3 rendering.
   - Before the demo, compare the A1 and A3 functions on CER's `main` with `git show` (read only); production's exact commit is unknown.
@@ -121,13 +121,13 @@ Each item names the chat that owns it after the reset.
 - **History citation markers:** strip or renumber markers from earlier answers, or change the prompt line (see defects).
 - **Pushes (consent):** dashboard `task/gilligan-ux`; server `task/gilligan-citation-title`, `fix/invited-login`, the Q11 branch, and the combined server release commit before L6.
 - **Supervisor or Michael, at the demo:** the standing caveat in place of refusals (E4, D3); the pH 3-12 band; the demo date and Fireworks key; the A items (CSV export, user routes, period query, invited login, empty organization) and whether they ship; Firestore access for cer-gilligan.
-- **Housekeeping:** commit the launch-issues checklist results; review the supervisor brief; mark the mirror review sheets (`data/e2e/`); stop the launch-issues stacks when not in use (they listen on all interfaces, so A2's open routes are reachable from the LAN); remove merged worktrees.
+- **Housekeeping:** push `test/launch-issues` if wanted (its content is on `dev`); review the supervisor brief; mark the mirror review sheets (`data/e2e/`); stop the launch-issues stacks when not in use (they listen on all interfaces, so A2's open routes are reachable from the LAN); remove merged worktrees.
 - **Optional:** the coordinate audit (`scripts/coordinateAudit.ts`); `scripts/censusFirestore.ts` (untracked in `.claude/worktrees/firestore-mirror`, lint errors; commit or drop).
 
 ## Working tree
 
 - `dev` is pushed and level with `origin/dev`; `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
-- cer-demo worktrees in use: `launch-issues` (uncommitted checklist results), `long-conversations` (`2587add` local), `gcp-test-env` (bot and Codex run outputs, git-ignored), `e2e-rc` (`test/e2e-rc`, the mirror's Gilligan), `release-candidate` (`release/rc1`, stale), `supervisor-brief` (uncommitted brief), `firestore-mirror` (untracked census script), `e7-corpus` (holds the E7 `corpus.json` and cache), `e2e-dev` (detached `b07f950`, setup only, removable).
+- cer-demo worktrees in use: `launch-issues` (`7a2f2fc`, landed, branch unpushed), `long-conversations` (`2587add` local), `gcp-test-env` (bot and Codex run outputs, git-ignored), `e2e-rc` (`test/e2e-rc`, the mirror's Gilligan), `release-candidate` (`release/rc1`, stale), `supervisor-brief` (uncommitted brief), `firestore-mirror` (untracked census script), `e7-corpus` (holds the E7 `corpus.json` and cache), `e2e-dev` (detached `b07f950`, setup only, removable).
   Merged and removable: `answer-quality-q1`, `cwa-old`, `e7-claims`, `e7-fixtures`, `feat+service-release`, `gilligan-runbook`, `gilligan-ux-contract`, `hygiene`, `l2-inputs`, `mirror-parity`, `per-turn-labels`, `q3-q5`, `q9-413`, `stale-claims`, `token-cap`, `upstream-publish`, `wave1-corrections`, and `firestore-plan` (unmerged history, keep the branch).
 - Upstream worktrees under `~/code/clean-earth-rovers/worktrees/`: `server-release`, `server-release-mirror`, `server-citation-title`, `server-invited-login`, `server-cwa-old`, `dashboard-ux`, `dashboard-e2e`, `dashboard-release`, and the launch-issues `server-original`, `dashboard-original`, `server-release-demo`, `dashboard-release-demo`, `server-original-seed`; the server's `.worktrees/mirror` is `mirror/e2e-p3` `1ef21a7`.
 - Running processes:
