@@ -873,7 +873,7 @@ Behavior worth knowing, each guarding a documented silent-failure mode in `DEVIC
 | a device must be named when several are visible | the two cleared pods are different water bodies on opposite coasts |
 | turbidity results carry a provisional/uncalibrated note and no unit | it is a derived voltage index, not a measurement and not NTU |
 | a window in which every turbidity reading is 0 carries a possible-missing-sensor note | the backend reports a missing or offline voltage as 0, the same as clear water |
-| a device whose `operatingEnvironment` disagrees with `WATER_TYPE` is flagged in the result | one global env var cannot describe both pods; per-device water type in chat is unbuilt N4 work |
+| the result never compares a device's `operatingEnvironment` with `WATER_TYPE` | `WATER_TYPE` is one deployment-wide setting and most pods are salt-water, so the comparison put a "configured as freshwater" note on nearly every answer; limits and reports follow each pod's registered type, and `WATER_TYPE` is only the report's fallback for a pod with no registered type (removed 2026-09-29) |
 
 ### 10.3c Device continuity — merge chains (`src/devices/mergeChains.ts`)
 

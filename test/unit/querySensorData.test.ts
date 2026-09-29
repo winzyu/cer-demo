@@ -126,7 +126,7 @@ const makeClient = (
 
 const makeTool = (
   overrides?: Parameters<typeof makeClient>[0],
-  options: { waterType?: string; defaultDeviceLabel?: string } = {},
+  options: { defaultDeviceLabel?: string } = {},
 ): { tool: QuerySensorData; calls: Call[] } => {
   const { client, calls } = makeClient(overrides);
   return {
@@ -134,7 +134,6 @@ const makeTool = (
       client,
       now: () => NOW,
       rawLimit: 200,
-      waterType: options.waterType ?? "saltwater",
       defaultDeviceLabel: options.defaultDeviceLabel,
     }),
     calls,
@@ -454,28 +453,17 @@ describe("query_sensor_data — caveats that travel with the number", () => {
     expect(result.note).not.toContain("missing sensor");
   });
 
-  it("flags a device whose water type disagrees with the deployment's", async () => {
-    // WATER_TYPE is one global env var, and pods differ in water type — one deployment cannot
-    // describe both. This is a flag, not a fix: reading water type per device in chat is unbuilt
-    // N4 work (◆G3 resolved 2026-09-13; DEVICE_API.md §12c).
-    const { tool } = makeTool(undefined, { waterType: "freshwater" });
+  it("never compares a device's water type with the deployment's WATER_TYPE", async () => {
+    // WATER_TYPE is one deployment-wide setting and most of the fleet is salt-water, so a
+    // comparison put a "configured as freshwater" note on nearly every answer, which the model
+    // then paraphrased. Limits and reports already follow each pod's registered type.
+    const { tool } = makeTool();
     const result = await tool.run({
       metric: "conductivity", time_range: "last day", aggregation: "mean", device: "Algalita",
     });
 
-    expect(result.note).toContain("salt-water");
-    expect(result.note).toContain("freshwater");
-    // Written for the model ("use get_pod_thresholds"), so the page gets nothing from it.
-    expect(result.user_notes).toBeUndefined();
-  });
-
-  it("says nothing about water type when the device agrees with the deployment", async () => {
-    const { tool } = makeTool(undefined, { waterType: "saltwater" });
-    const result = await tool.run({
-      metric: "conductivity", time_range: "last day", aggregation: "mean", device: "Algalita",
-    });
-
-    expect(result.note).toBeUndefined();
+    expect(result.note ?? "").not.toMatch(/configured water type|freshwater/);
+    expect(JSON.stringify(result.user_notes ?? [])).not.toMatch(/configured water type|freshwater/);
   });
 
   it("reports the device's own operating environment alongside the reading", async () => {
