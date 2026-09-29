@@ -8,9 +8,10 @@
  *
  * 1. **Patterns come from an hourly series.** Each parameter's `pattern` (diel, tidal, trend or
  *    unknown) is classified by `patterns.ts` from a third query at hourly resolution, capped at
- *    `MAX_HOURLY_BUCKETS`. That tag is what switches on `events.ts`'s diel/tidal exclusion and
- *    the algal-bloom detector (which needs a DO series tagged "diel"); the classifier's own
- *    limits (a diurnal tide reads as diel; `unknown` is not "steady") are documented there.
+ *    `MAX_HOURLY_BUCKETS`. That tag raises `events.ts`'s event-window minimum to half a day and
+ *    switches on the algal-bloom detector (which needs a DO series tagged "diel"); the
+ *    classifier's own limits (a diurnal tide reads as diel; `unknown` is not "steady") are
+ *    documented there.
  * 2. **Series is bucketed, not raw.** Event detection here runs against
  *    `aggregation: "series"` buckets (bucket means at each bucket's midpoint), not the sensor's
  *    native ~15min cadence. This is coarser than what the Python prototype's demo data

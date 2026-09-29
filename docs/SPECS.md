@@ -1107,7 +1107,10 @@ Each parameter is tagged `diel`, `tidal`, `trend` or `unknown` from a third, hou
 Periodicity is read from the autocorrelation of the series minus a centered 25-hour moving mean: a diel cycle repeats at 24 h and inverts at 12 h, a semidiurnal tide repeats at 12 h and inverts at 6 h.
 A trend is daily means on a straight line (R² ≥ 0.7) over at least 14 days.
 At least 72 hours and 60% hourly coverage are required, and `unknown` means unclassified, not steady.
-A diel or tidal tag stops threshold windows opening on that parameter and enables the algal-bloom detector; a diurnal tide is indistinguishable from a diel rhythm on these lags and is tagged diel.
+A diel or tidal tag raises that parameter's minimum threshold window from one hour to twelve and enables the algal-bloom detector; a diurnal tide is indistinguishable from a diel rhythm on these lags and is tagged diel.
+Twelve hours is half a cycle: a daily or tidal swing crosses a limit for only part of each cycle, so a nightly dip below a dissolved-oxygen minimum raises nothing, while a run that stays beyond the limit for half a day or more breaks the rhythm and is an event (K21b, 2026-09-29: 18 hourly readings below a 5 mg/L minimum on a diel series had raised none).
+Windows are measured on the report's bucketed series, so at the 3-hour buckets of a one-week report any run of 18 hours or more qualifies; a report long enough to use 12-hour buckets resolves only runs of about a day or more.
+This does not change the status ladder: a window becomes an event, and "Action Required" still needs the event rung or two readings beyond the exceedance bound (finding 7).
 Hourly buckets are not thinned by `MIN_BUCKET_SAMPLES`: the Newport pods report about once an hour, so one reading per bucket is their cadence.
 
 **Downgraded events keep their signature.** An event below the 0.5 confidence floor is `Inconclusive`, and `WQEvent.signature` records what it matched.

@@ -1,4 +1,5 @@
 import { detectEvents, CONFIDENCE_FLOOR_FOR_CLASSIFICATION } from "../../src/report/events";
+import { classifyPattern } from "../../src/report/patterns";
 import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WaterBodyType,
 } from "../../src/report/types";
@@ -432,5 +433,68 @@ describe("detectEvents — movement clauses", () => {
     const [event] = detectEvents(report([stats]));
     expect(event.parameterMovements).toContain("fell to 6.18 on bucket averages");
     expect(event.parameterMovements).not.toMatch(/ {2}/);
+  });
+});
+
+describe("detectEvents — a sustained run below the minimum inside a daily cycle (K21b)", () => {
+  // The mirror's Lakeside Inlet Buoy (server `scripts/mirror/mirrorData.ts`): a week of hourly
+  // fresh-water dissolved oxygen at 8.5 +/- 2 mg/L on a daily cycle with jitter and 0.5% zero
+  // glitches, and 18 hourly readings at 2.6-3.8 mg/L ending 6 hours before the end, against a
+  // 5-14 mg/L configured limit. The hourly series classifies as "diel", which used to switch
+  // threshold-crossing off for the whole parameter.
+  const HOURS = 168;
+  const DROP = { from: HOURS - 24, to: HOURS - 7 };
+  const seeded = (seed: number) => {
+    let state = seed;
+    return (): number => {
+      state = (state * 16807) % 2147483647;
+      return state / 2147483647;
+    };
+  };
+  const dailyOxygen = (h: number, random: () => number, mean = 8.5, swing = 2): number => (
+    random() < 0.005 ? 0 : mean + swing * Math.sin(((h - 14) / 24) * 2 * Math.PI) + (random() - 0.5) * 1.5
+  );
+  const bucketed = (hourly: Array<[number, number]>, width: number): Array<[number, number]> => {
+    const buckets = new Map<number, number[]>();
+    hourly.forEach(([t, v]) => {
+      const key = Math.floor(t / (width * HOUR));
+      buckets.set(key, [...(buckets.get(key) ?? []), v]);
+    });
+    return [...buckets.entries()].map(([key, values]) => [
+      key * width * HOUR + (width * HOUR) / 2, values.reduce((sum, v) => sum + v, 0) / values.length,
+    ]);
+  };
+  const oxygenStats = (hourly: Array<[number, number]>): ParameterStats => ({
+    ...statsFor(fixedBaseline("dissolved_oxygen", "Dissolved Oxygen", "mg/L", 5, 14), bucketed(hourly, 3)),
+    pattern: classifyPattern(hourly),
+  });
+
+  it("raises an event for 18 hours below the minimum although the series is diel", () => {
+    const random = seeded(17);
+    const hourly: Array<[number, number]> = Array.from({ length: HOURS }, (_, h) => [
+      at(h),
+      h >= DROP.from && h <= DROP.to ? 3.2 + 0.6 * Math.sin((h - DROP.from) / 3) : dailyOxygen(h, random),
+    ]);
+    const oxygen = oxygenStats(hourly);
+    expect(oxygen.pattern).toBe("diel");
+
+    const events = detectEvents(report([oxygen]));
+
+    expect(events).toHaveLength(1);
+    expect(events[0].windowStartMs).toBeGreaterThanOrEqual(at(DROP.from));
+    expect(events[0].windowEndMs).toBeLessThanOrEqual(at(DROP.to + 1));
+    expect(events[0].parameterMovements).toContain("Dissolved Oxygen fell");
+  });
+
+  it("raises nothing for a daily cycle whose trough dips below the minimum each night", () => {
+    // Below 5 mg/L for about 9 hours of every day: the pod's normal rhythm, not an event.
+    const random = seeded(29);
+    const hourly: Array<[number, number]> = Array.from({ length: HOURS }, (_, h) => [
+      at(h), dailyOxygen(h, random, 5.5, 1.5),
+    ]);
+    const oxygen = oxygenStats(hourly);
+    expect(oxygen.pattern).toBe("diel");
+
+    expect(detectEvents(report([oxygen]))).toEqual([]);
   });
 });

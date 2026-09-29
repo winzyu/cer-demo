@@ -37,6 +37,15 @@ import { waterClassFor } from "../catalogue/select";
 import type { WaterClass } from "../catalogue/types";
 
 const MIN_EVENT_DURATION_MS = 60 * 60_000; // 1 hour
+/**
+ * The shortest window that counts as an event on a parameter tagged "diel" or "tidal". Half a
+ * day: a daily or tidal swing spends at most part of each cycle beyond a limit, so a window at
+ * least this long is a sustained excursion that breaks the rhythm (K21b: 18 hourly readings of
+ * dissolved oxygen below the minimum on an otherwise diel series raised no event). On the
+ * report's bucketed series an 18-hour run always spans at least this much at 3-hour buckets; a
+ * report long enough to use 12-hour buckets resolves only runs of about a day or more.
+ */
+const SUSTAINED_RHYTHM_EXCURSION_MS = 12 * 60 * 60_000;
 /** Re-exported under its original name: the constant moved to types.ts, which `overallStatus`
  * needs it in too (importing events.ts from there would be a cycle). */
 export const CONFIDENCE_FLOOR_FOR_CLASSIFICATION = CONFIDENCE_FLOOR;
@@ -57,24 +66,23 @@ const PERSISTENT_WINDOW_SHARE = 0.8;
 type Window = [number, number]; // [startMs, endMs]
 
 /**
- * Threshold-crossing windows for the generic classifier below. Skips parameters tagged "diel"
- * or "tidal": the source-of-truth doc is explicit that ruling out the water body's normal rhythm
+ * Threshold-crossing windows for the generic classifier below. On parameters tagged "diel"
+ * or "tidal" only a window of at least `SUSTAINED_RHYTHM_EXCURSION_MS` counts: the
+ * source-of-truth doc is explicit that ruling out the water body's normal rhythm
  * comes BEFORE calling something an event ("a smooth, repeating daily oscillation is biology,
  * not pollution ... the test for a real event is a step-change or sustained excursion that BREAKS
  * the expected diel/tidal rhythm"). A parameter already tagged diel/tidal is, by definition,
- * doing its expected periodic thing -- without this skip, a strong-but-normal diel swing crosses
- * baseline twice a day, every day, and this detector spams one near-duplicate "Inconclusive"
- * event per crossing instead of recognizing a single ongoing pattern.
+ * doing its expected periodic thing -- without the longer minimum, a strong-but-normal diel
+ * swing crosses baseline twice a day, every day, and this detector spams one near-duplicate
+ * "Inconclusive" event per crossing instead of recognizing a single ongoing pattern.
  *
- * Real known gap, carried over unchanged: a genuine step-change that happens to interrupt a diel
- * rhythm (e.g. a discharge arriving on top of the normal cycle) won't be caught by this generic
- * detector either -- only `detectAlgalBloom` below looks inside a diel-tagged series at all, and
- * only for the DO/pH amplification pattern.
+ * Remaining gap: a step-change on top of a diel rhythm that stays inside the limits, or leaves
+ * them for less than half a day, is still not caught here; `detectAlgalBloom` below covers only
+ * the DO/pH amplification pattern.
  */
 const outsideBaselineWindows = (p: ParameterStats): Window[] => {
   if (
     !p.series || p.series.length === 0
-    || p.pattern === "diel" || p.pattern === "tidal"
     // Temperature has no fixed baseline (see referenceRanges.ts) -- there is nothing to
     // threshold-cross against. The Python prototype never had a code path where this ran
     // without a baseline; this guard makes that assumption explicit rather than computing
@@ -91,6 +99,8 @@ const outsideBaselineWindows = (p: ParameterStats): Window[] => {
     return [];
   }
   const b = p.baseline;
+  const minDurationMs = p.pattern === "diel" || p.pattern === "tidal"
+    ? SUSTAINED_RHYTHM_EXCURSION_MS : MIN_EVENT_DURATION_MS;
   const sorted = [...p.series].sort((a, b2) => a[0] - b2[0]);
 
   // A stateful sequential scan (running "start"/"prevT" across the sorted series) -- reduce
@@ -104,7 +114,7 @@ const outsideBaselineWindows = (p: ParameterStats): Window[] => {
       accStart = t;
     }
     if (!outside && accStart !== null) {
-      if (acc.prevT !== null && acc.prevT - accStart >= MIN_EVENT_DURATION_MS) {
+      if (acc.prevT !== null && acc.prevT - accStart >= minDurationMs) {
         acc.windows.push([accStart, acc.prevT]);
       }
       accStart = null;
@@ -112,7 +122,7 @@ const outsideBaselineWindows = (p: ParameterStats): Window[] => {
     return { windows: acc.windows, start: accStart, prevT: t };
   }, { windows: [], start: null, prevT: null });
 
-  if (start !== null && prevT !== null && prevT - start >= MIN_EVENT_DURATION_MS) {
+  if (start !== null && prevT !== null && prevT - start >= minDurationMs) {
     windows.push([start, prevT]);
   }
   return windows;
