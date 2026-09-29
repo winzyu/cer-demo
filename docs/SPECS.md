@@ -1680,6 +1680,11 @@ Within the TTL, repeated questions and historical ranges reuse the snapshot, whi
 After the TTL, a recent read replaces an overlapping tail while retaining earlier centroid context; changes to authorized chain membership discard incompatible history.
 Registry changes become visible at the device-list TTL, and older backfills or corrections outside the recent tail become visible when retained context expires and is rebuilt.
 Report series, exact median and hourly pattern calculations pin one consistent fetched snapshot for the whole batch, including across TTL expiry or cache eviction.
+When location filtering limits a pod's history, `time_range_resolved` uses the first and last current-site readings inside the requested range, or is null when none fall inside it.
+The answer's report period, PDF title and Summary inherit those dates, and the existing earlier-location note stays with the tool result and is printed in the PDF Summary as well as Data Quality.
+`window_actually_searched.complete` is false when the fetched context or current-site coverage cannot cover the requested range, even if the fetch reached the epoch.
+Report Data Quality counts rows once: a reading is used if at least one requested parameter survives fault, plausibility and stuck-sensor filtering, and is left out if none survives.
+The completeness percentage compares those used rows with all current-site rows inside the requested range; earlier-location exclusions remain a separate row count in the site note.
 
 Turbidity is a likely failed sensor only when it remains exactly 0 or exactly 1005 for at least 24 hours between the first and last qualifying samples, with no consecutive gap longer than 3 hours.
 Named constants define both durations, and missing or faulted turbidity, a changed value, an unusable timestamp or a gap over 3 hours breaks a run.
@@ -1688,10 +1693,13 @@ All samples in a qualifying run are excluded before aggregation and report patte
 Operator limits that are unusable because they exceed the sensor's measurement range remain “Not assessed”, with no assertion that readings are within those limits.
 
 A pH reading outside 3-12 is implausible and excluded like a probe rail, because natural surface water spans roughly 3.5 (peat bogs) to 11 (soda lakes) and the fleet sits in neither; configured pH limits are still validated against the 0-14 scale.
+The pH 3-12 band stays inclusive, and the tool and report notes say readings outside plausibility bounds "may be sensor faults and were left out" without claiming a confirmed fault.
 `list_pods` gives each pod a status of reporting, silent (no current-site reading for more than 6 hours), unconfirmed (no timestamp) or not checked, and repeats silent pods with their reading age in `silent_pods`, so an answer about which pods are online lists them as silent instead of leaving them out.
 The system prompt's single pod-status rule calls only reporting pods online, lists every silent pod with its age, and requires a `query_sensor_data` check only for an unconfirmed pod; the `list_pods` note defines the statuses without restating the rule.
 `query_sensor_data` lists each metric's implausible readings beside `excluded_implausible` as `excluded_implausible_values` (newest 10, oldest first, with `excluded_implausible_not_listed` for the rest) plus `excluded_implausible_min` and `excluded_implausible_max`, and its note says `value` and `n_samples` count only the remaining readings.
-The report PDF prints the device's last reading with its age at render time, and adds a warning under the metadata table when that age is over 6 hours.
+Excluded-reading extrema are computed iteratively so long faulty runs cannot exceed the JavaScript function-argument limit.
+The report PDF prints the device's last reading with its age at the report's recorded generation time, and adds a warning under the metadata table when that age is over 6 hours.
+Older report inputs without a generation timestamp use their report date for reading age.
 A report trend bucket is thin, and dropped from the trend series only, when it holds under half the series' median bucket count, capped at 3 readings; a series the floor would empty keeps every bucket.
 
 `PREDECESSOR_PERIOD_HANDOFF` defaults to `false`, keeping hidden predecessor labels withheld without period requests for them.

@@ -7,6 +7,8 @@ import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent, DataQualityCheck, ReportStatus,
 } from "../../src/report/types";
 import type { NarrativeSections } from "../../src/report/narrative";
+import { deterministicNarrative } from "../../src/report/narrative";
+import { guidance } from "../../src/catalogue";
 
 /**
  * renderPdf.ts is the pdfkit port of render_pdf.py. The behavior most worth pinning here is the
@@ -143,6 +145,7 @@ describe("lastReadingText — the Last Reading row (report audit #3)", () => {
     expect(value).toBe("2026-09-12 14:38 UTC (14 days before this report)");
     expect(warning).toContain("has not reported for 14 days");
     expect(warning).toContain("not current conditions");
+    expect(warning).not.toContain("The period ends at its last reading");
   });
 
   it("states the age without a warning for a pod that reported within six hours", () => {
@@ -185,6 +188,50 @@ describe("resolveSectionNumbers — dynamic section numbering", () => {
 });
 
 describe("buildReportPdf — smoke test", () => {
+  it("uses the report's generation time for reading age even when rendered days later", async () => {
+    const text = jest.spyOn(PDFDocument.prototype, "text");
+    jest.useFakeTimers().setSystemTime(new Date("2026-10-01T12:00:00Z"));
+    try {
+      await render({
+        generatedAt: "2026-09-26T12:00:00.000Z",
+        site: { ...site, reportDate: "2026-09-26", lastReadingAt: "2026-09-26T11:20:00.000Z" },
+        parameters: [param], events: [],
+      });
+      const printed = text.mock.calls.map(([value]) => String(value)).join(" ");
+      expect(printed).toContain("40 minutes before this report");
+      expect(printed).not.toContain("This pod has not reported");
+    } finally {
+      text.mockRestore();
+      jest.useRealTimers();
+    }
+  });
+
+  it("prints the current-site period in the title and Summary", async () => {
+    const text = jest.spyOn(PDFDocument.prototype, "text");
+    const list = jest.spyOn(PDFDocument.prototype, "list");
+    const periodNote = "432 reading(s) from an earlier location were left out; only the pod's current site is covered.";
+    const report: ReportInput = {
+      site: { ...site, startDate: "2026-09-17", endDate: "2026-09-28", periodNote },
+      parameters: [param], events: [],
+    };
+    try {
+      const doc = buildReportPdf(
+        report,
+        deterministicNarrative(report, noAccuracy, "Normal", guidance),
+        { probeAccuracy: noAccuracy, status: "Normal" },
+      );
+      doc.resume();
+      doc.end();
+      expect(text.mock.calls.map(([value]) => String(value)).join(" ")).toContain("2026-09-17");
+      expect(text.mock.calls.map(([value]) => String(value)).join(" ")).toContain("2026-09-28");
+      expect((list.mock.calls[0][0] as string[]).join(" ")).toContain("2026-09-17 to 2026-09-28");
+      expect(text.mock.calls.map(([value]) => String(value))).toContain(periodNote);
+    } finally {
+      text.mockRestore();
+      list.mockRestore();
+    }
+  });
+
   const render = async (report: ReportInput): Promise<Buffer> => {
     const doc = buildReportPdf(report, narrative, { probeAccuracy: noAccuracy, status: "Normal" });
     const chunks: Buffer[] = [];

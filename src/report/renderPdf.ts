@@ -428,22 +428,24 @@ export const lastReadingText = (
   }
   return {
     value,
-    warning: `This pod has not reported for ${age.age}. The period ends at its last reading, so `
-      + "this report describes the water then, not current conditions.",
+    warning: `This pod has not reported for ${age.age}. This report describes the water during `
+      + "the reporting period, not current conditions.",
   };
 };
 
 export interface RenderPdfOptions {
   probeAccuracy: (key: string, reading: number) => number;
   status: ReportStatus;
-  /** The clock the last reading's age is measured against; defaults to now. */
+  /** Override the report's generation time when measuring the last reading's age. */
   nowMs?: number;
 }
 
 export const buildReportPdf = (
   report: ReportInput,
   narrative: NarrativeSections,
-  { probeAccuracy, status, nowMs = Date.now() }: RenderPdfOptions,
+  {
+    probeAccuracy, status, nowMs = Date.parse(report.generatedAt ?? report.site.reportDate),
+  }: RenderPdfOptions,
 ): PDFKit.PDFDocument => {
   const doc = new PDFDocument({
     size: "LETTER",
@@ -508,6 +510,10 @@ export const buildReportPdf = (
     bulletRadius: 2,
     textIndent: 10,
   });
+  if (report.site.periodNote) {
+    doc.moveDown(0.3);
+    doc.text(report.site.periodNote, MARGIN, doc.y, { width: CONTENT_WIDTH });
+  }
   doc.moveDown(0.4);
 
   // 2. Parameter Data

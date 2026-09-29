@@ -84,9 +84,11 @@ export interface SiteMetadata {
   siteName: string;
   startDate: string; // ISO date, e.g. "2026-08-01"
   endDate: string;
+  /** Current-site exclusions, printed beside the Summary's reporting dates. */
+  periodNote?: string;
   /**
-   * The device's newest reading as a full timestamp; the period ends on it. Not printed: it lets
-   * `generate_report` say how long the pod has been silent since `endDate`.
+   * The device's newest reading as a full timestamp, which may be outside the reporting period.
+   * Printed with its age in the PDF and used by `generate_report` to describe pod silence.
    */
   lastReadingAt?: string;
   reportDate: string;
@@ -244,6 +246,8 @@ export interface DataQualityCheck {
 }
 
 export interface ReportInput {
+  /** Full generation timestamp for reading age; older inputs fall back to the report date. */
+  generatedAt?: string;
   site: SiteMetadata;
   parameters: ParameterStats[];
   events: WQEvent[];
