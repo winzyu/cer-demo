@@ -22,6 +22,7 @@
 import { METRIC_BY_KEY } from "../devices/metrics";
 import {
   type MetricThresholdKey,
+  type ThresholdRejection,
   metricThreshold,
   metricThresholdRejectionReason,
 } from "../report/operatorThresholds";
@@ -49,6 +50,51 @@ const METRIC_ORDER: ReadonlyArray<[string, MetricThresholdKey]> = [
 
 /** `MetricThresholdKey` values match `MetricKey` exactly, so this lookup is a direct hit. */
 const unitFor = (key: MetricThresholdKey): string => METRIC_BY_KEY.get(key)?.unit ?? "unitless";
+
+/**
+ * Registry field suffix per metric, so a `missing` verdict can name the absent side. Mirrors
+ * `operatorThresholds.ts`'s private `FIELD_KEYS` (`min<Suffix>`/`max<Suffix>`).
+ */
+const REGISTRY_SUFFIX: Record<MetricThresholdKey, string> = {
+  temperature: "Temperature",
+  ph: "PH",
+  dissolvedOxygen: "DissolvedOxygen",
+  orp: "ORP",
+  conductivity: "Conductivity",
+};
+
+const isAbsent = (value: unknown): boolean => value === undefined || value === null;
+
+/**
+ * The reader's sentence for a limit that was not used (see `USER_NOTES_FIELD`), named by the
+ * metric's user-facing label. Never echoes a registry value.
+ */
+const rejectionUserNote = (
+  reason: ThresholdRejection,
+  metric: MetricThresholdKey,
+  thresholds: Record<string, unknown> | null | undefined,
+): string => {
+  const label = METRIC_BY_KEY.get(metric)?.label ?? metric;
+  switch (reason) {
+    case "inverted":
+      return `${label} was not checked against its limits: the minimum is above the maximum.`;
+    case "non-numeric":
+    case "implausible":
+      return `${label} was not checked against its limits: they are not usable.`;
+    case "missing": {
+      const minAbsent = isAbsent(thresholds?.[`min${REGISTRY_SUFFIX[metric]}`]);
+      const maxAbsent = isAbsent(thresholds?.[`max${REGISTRY_SUFFIX[metric]}`]);
+      if (minAbsent !== maxAbsent) {
+        return `${label} was not checked against a limit: its ${minAbsent ? "minimum" : "maximum"} `
+          + "is not set.";
+      }
+      return `${label} was not checked against a limit: its limits are not set.`;
+    }
+    // "unset" (min === max) and "no-thresholds": neither side is set.
+    default:
+      return `${label} was not checked against a limit: its limits are not set.`;
+  }
+};
 
 export const getPodThresholdsDefinition: ToolDefinition = {
   type: "function",
@@ -118,8 +164,12 @@ export class GetPodThresholds {
     }
     const { device } = resolved;
 
+    const readerNotes: string[] = [];
     const thresholds = Object.fromEntries(METRIC_ORDER.map(([wireName, metricKey]) => {
       const verdict = metricThreshold(device.thresholds, metricKey);
+      if (!verdict.usable) {
+        readerNotes.push(rejectionUserNote(verdict.reason, metricKey, device.thresholds));
+      }
       const entry = verdict.usable
         ? {
           status: "configured",
@@ -133,10 +183,6 @@ export class GetPodThresholds {
         };
       return [wireName, entry];
     }));
-
-    const notAssessed = Object.values(thresholds)
-      .filter((entry) => entry.status === "not assessed")
-      .map((entry) => entry.reason as string);
 
     return {
       device: {
@@ -155,8 +201,8 @@ export class GetPodThresholds {
         + "water-quality standard.",
       [USER_NOTES_FIELD]: [
         "These limits are the alert thresholds set for this pod, not an ecological water-quality standard.",
-        // The "not assessed" reasons are already plain statements with no instruction in them.
-        ...notAssessed,
+        // One per metric whose limit was not used; `reason` stays the model's version.
+        ...readerNotes,
       ],
     };
   }

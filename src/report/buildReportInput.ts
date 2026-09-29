@@ -88,7 +88,7 @@ import {
   metricThreshold, metricThresholdRejectionReason, metricBlindSpotNote,
   temperatureThreshold, thresholdRejectionNote, WIRE_KEY_TO_METRIC,
 } from "./operatorThresholds";
-import { STUCK_SENSOR_NOTE } from "../tools/stuckSensor";
+import { STUCK_SENSOR_NOTE, STUCK_SENSOR_USER_NOTE } from "../tools/stuckSensor";
 import type { ThresholdVerdict } from "./operatorThresholds";
 import { classifyPattern, type HourlySeries } from "./patterns";
 
@@ -593,12 +593,17 @@ export const buildReportInput = async (
     .map((r) => r.skippedLabel);
 
   if (parameters.length === 0) {
+    // This text reaches the reader (the 422 body, the dashboard's tool row), so it is built only
+    // from reader notes: `site_note` and `STUCK_SENSOR_NOTE` are the model's wording.
+    const readerNotes = seriesResult[USER_NOTES_FIELD];
     return {
       error: [`No usable readings found for any parameter in "${params.timeRange}".`,
-        seriesResult.site_note,
+        ...(Array.isArray(readerNotes) ? readerNotes : []),
         Object.values(seriesMetrics).some((m) => (m.excluded_stuck ?? 0) > 0)
-          ? STUCK_SENSOR_NOTE : null,
-      ].filter(Boolean).join(" "),
+          ? STUCK_SENSOR_USER_NOTE : null,
+      ].filter((text): text is string => typeof text === "string" && text !== "")
+        .filter((text, index, all) => all.indexOf(text) === index)
+        .join(" "),
     };
   }
 
