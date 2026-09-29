@@ -95,7 +95,7 @@ P is a mechanical pass; content still goes to the review sheet where the guide a
 | M5 | P | The comparison and the old-site request show no earlier-site values; the old-site request is declined |
 | M6-M8, M10, M12 | B | No such fixture |
 | M9 | P, review | The extended conductivity-at-zero part is blocked: no fixture |
-| M11 | B | Needs a separate disposable 365-day reseed |
+| M11 | P, review | Run alone on project `demo-cer-m11` (365 hourly days, 140,160 readings) so the main mirror kept its evidence: superadmin's one-year Harbor Pier Buoy answer took 7.7 s, the 3-page PDF `cer-report-harbor-pier-buoy-2025-09-27-to-2026-09-27.pdf` downloaded in 3.6 s and states the full period, and the one-year CSV export returned 16,800 rows (1.9 MB) in 2.6 s; the guide's multi-year ages and overlapping chains stay B |
 | R0, R1, R6, R7, R8 | P, review | Units present in every PDF; the Harbor PDF never calls turbidity an unqualified "Clear" |
 | R11 | P | The moved pod's conductivity row is 350-547 uS/cm; the PDF records "432 reading(s) from an earlier location were excluded" |
 | R13 | F, known | No PDF labels its time zone (report audit 14) |
@@ -128,6 +128,12 @@ Numbered after the 2026-09-25 findings.
    Observed: conductivity 350 to 49,992 uS/cm flagged Exceedance and Action Required; the high values come from Lakeside Testbed, a same-organization, same-site predecessor registered salt-water, as one production chain is.
    Likely cause: merged history is judged against the survivor's fresh-water limits with no check of the predecessor's registered water type.
 
+11. **Any logged-in user can export any pod's readings as CSV.**
+   Steps: log in as `user-harbor-admin-1` and `POST /api/v1/water/export/csv/dev:100000000000003` (a Lakeside pod) with a 7-day `startDate` and `endDate`, as the dashboard's Export dialog does; D6 in the bot.
+   Observed: 200 with 167 rows for Lakeside's pod and for `dev:100000000000006`; Harbor admin owns neither.
+   Likely cause: `WaterAnalyticsController.exportCsv` never passes the caller, and `WaterAnalyticsService.findDeviceWaterDataExportCSV` looks the pod up with `findByLabel(device, null)`, so no organization filter applies; `SECURITY_FINDINGS.md` lists this query among those with both merge expansion and an organization check, which is wrong for it.
+   Unfixed on every pushed server branch and on `local`; likely in production, not checked live.
+
 Still seen, already known: findings 1 and 4, P5, K16 (`LIVE_TEST_LIST.md` L5) and R13 (report audit 14).
 
 ## Bot defects fixed during the run
@@ -144,5 +150,5 @@ The downloaded PDFs are under each run's `downloads/`.
 ## Not run
 
 - Groups B, D, E, H and I, and phase 2.
-- M11, and every check blocked for a missing fixture.
+- Every check blocked for a missing fixture.
 - The live follow-ups, listed in [`LIVE_TEST_LIST.md`](LIVE_TEST_LIST.md).
