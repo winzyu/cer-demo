@@ -1,0 +1,248 @@
+{
+  "fixtureId": "long-ph-storage",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "ph-storage-cap-01",
+          "rubric": [
+            1
+          ],
+          "why": "Uses pH probe storage solution to top up the cap."
+        },
+        {
+          "claimId": "ph-store-upright-wet-01",
+          "rubric": [
+            2
+          ],
+          "why": "Stores the electrode upright."
+        },
+        {
+          "claimId": "ph-no-diw-storage-01",
+          "rubric": [
+            3
+          ],
+          "why": "Does not use deionized water for storage unless the manufacturer instructs it."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "ph-longterm-cable-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Cleans the electrode cable contacts and connector. Allows the contacts to dry thoroughly. Seals and stores the dry contacts in a plastic bag."
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "claims": [
+        {
+          "claimId": "ph-storage-solution-expiry-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Labels storage-solution containers with an expiration date. Discards expired storage solution appropriately."
+        },
+        {
+          "claimId": "ph-storage-environment-01",
+          "rubric": [
+            3,
+            4
+          ],
+          "why": "Keeps the system in a clean, dry area. Protects the system from extreme heat or cold."
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "claims": [
+        {
+          "claimId": "ph-storage-cap-01",
+          "rubric": [
+            3
+          ],
+          "why": "Tightens the Atlas Industrial pH probe cap counterclockwise."
+        },
+        {
+          "claimId": "ph-repeated-dry-cycles-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Repeated wetting and drying can eventually damage the probe. Keeps the probe wet for best results."
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "claims": [
+        {
+          "claimId": "t-air-5ft-01",
+          "rubric": [
+            1
+          ],
+          "why": "Places or hangs the air-temperature sensor about 5 feet above the ground."
+        },
+        {
+          "claimId": "t-air-equil-3-5min-01",
+          "rubric": [
+            2
+          ],
+          "why": "Allows 3 to 5 minutes for air-temperature equilibration."
+        },
+        {
+          "claimId": "t-air-radiant-01",
+          "rubric": [
+            3
+          ],
+          "why": "Avoids radiant-heat influences such as vehicle sides, metal walls, or rock exposures."
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "claims": [
+        {
+          "claimId": "t-air-equil-longer-01",
+          "rubric": [
+            1
+          ],
+          "why": "Explains that a sensor equilibrates more slowly in air than in water."
+        },
+        {
+          "claimId": "t-air-median-01",
+          "rubric": [
+            2
+          ],
+          "why": "Uses the median of the air-temperature measurements for reporting."
+        },
+        {
+          "claimId": "t-air-report-01deg-01",
+          "rubric": [
+            3
+          ],
+          "why": "Reports routine air temperature to the nearest 0.1 degree Celsius."
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "claims": [
+        {
+          "claimId": "ph-store-upright-wet-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Stores the electrode upright. Explains that upright storage keeps filling solution or gel in contact with the reference junction."
+        },
+        {
+          "claimId": "ph-no-diw-storage-01",
+          "rubric": [
+            1
+          ],
+          "why": "Rejects deionized-water storage unless the manufacturer instructs otherwise."
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "claims": [
+        {
+          "claimId": "ph-longterm-cable-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Cleans the cable contacts and connector first. Dries the contacts thoroughly before sealing. Stores the prepared contacts sealed in a plastic bag."
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "claims": [
+        {
+          "claimId": "ph-storage-solution-expiry-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "States that storage solutions have a limited shelf life. Requires expiration-date labels on the containers. Discards expired solutions appropriately."
+        }
+      ]
+    },
+    {
+      "turn": 10,
+      "claims": [
+        {
+          "claimId": "ph-storage-cap-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Tops up the cap with pH probe storage solution as needed. Tightens the probe cap counterclockwise."
+        },
+        {
+          "claimId": "mp-storage-case-foam-02",
+          "rubric": [
+            3
+          ],
+          "why": "Uses closed-cell nonabsorbent foam cushioning for the multiparameter instrument."
+        }
+      ]
+    },
+    {
+      "turn": 11,
+      "claims": [
+        {
+          "claimId": "ph-storage-environment-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Uses a clean storage area. Uses a dry storage area. Protects the system from extreme hot or cold temperatures."
+        }
+      ]
+    },
+    {
+      "turn": 12,
+      "claims": [
+        {
+          "claimId": "ph-storage-cap-01",
+          "rubric": [
+            2
+          ],
+          "why": "Tops up the cap with pH probe storage solution."
+        },
+        {
+          "claimId": "ph-store-upright-wet-01",
+          "rubric": [
+            1
+          ],
+          "why": "Stores the pH electrode upright."
+        },
+        {
+          "claimId": "ph-no-diw-storage-01",
+          "rubric": [
+            3
+          ],
+          "why": "Rejects deionized-water storage unless the manufacturer instructs it."
+        }
+      ]
+    }
+  ],
+  "neither": []
+}

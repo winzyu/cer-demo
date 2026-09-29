@@ -1,0 +1,334 @@
+{
+  "fixtureId": "long-groundwater-oxygen",
+  "set": "committed",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "We can't get the oxygen sensor down our narrow monitoring well, so we'll pump water through a chamber at the surface. What pump and tubing should I set up, and where should the chamber sit?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__116a7989b64e",
+          "contentHash": "116a7989b64e",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Flow-through chamber for determining groundwater DO concentration, if downhole sensor deployment is impractical",
+          "locator": "Table 6.2–1, Equipment and supplies for the optical sensor method — \"DO instrument should have a digital temperature and DO readout display\"",
+          "claimIds": [
+            "do-flowthrough-chamber-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__0059a6d641b9",
+          "contentHash": "0059a6d641b9",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "The sample is transferred by using a positive-displacement\nsubmersible pump fitted with high-density plastic or fluorocar-\nbon-polymer tubing that is relatively gas impermeable.",
+          "locator": "Section 2.3 Measurement / 2.3.2 Groundwater — \"applying optical sensor methods for groundwater DO measurements in the concentration range less than 2 mg/L is reliable\"",
+          "claimIds": [
+            "do-positive-displacement-pump-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__b6db5500055f",
+          "contentHash": "b6db5500055f",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Protect exposed sample tubing and the flow-through\ncell or chamber from direct sunlight.",
+          "locator": "Section 2.3.2 Groundwater, measurement steps 1-2 — \"Air bubbles introduced through leaking fittings can add substantial error\"",
+          "claimIds": [
+            "do-shield-tubing-sunlight-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "There are bubbles along the line, and someone has partly pinched the chamber outlet. What needs fixing before we trust it?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c92c42a01570",
+          "contentHash": "c92c42a01570",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Dislodge and flush entrained gas bubbles from\nthe tubing walls and flow-through chamber by\ntapping the tubing with a blunt tool",
+          "locator": "Section 2.3.2 steps 3-6, Technical Note 4, and Section 3.0 opening — \"The stability criterion is met when five consecutive measurements\"",
+          "claimIds": [
+            "do-tap-tubing-blunt-tool-01",
+            "do-no-back-pressure-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "query": "At the wider well tomorrow we can lower everything directly. Where do the sensors go in relation to the pump, and what should we watch while pumping?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__b6db5500055f",
+          "contentHash": "b6db5500055f",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Downhole system—Lower the DO and temperature\nsensors to the measuring point, followed by the\npump, to monitor DO variation during purging.",
+          "locator": "Section 2.3.2 Groundwater, measurement steps 1-2 — \"Air bubbles introduced through leaking fittings can add substantial error\"",
+          "claimIds": [
+            "do-downhole-sensor-before-pump-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "query": "At today's surface setup, could air getting in at a loose joint matter even if we don't see much foam?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c92c42a01570",
+          "contentHash": "c92c42a01570",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Check for and eliminate back pressure in the\nflow-through chamber. The outlet of the chamber\nshould be free flowing.",
+          "locator": "Section 2.3.2 steps 3-6, Technical Note 4, and Section 3.0 opening — \"The stability criterion is met when five consecutive measurements\"",
+          "claimIds": [
+            "do-no-back-pressure-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+          "contentHash": "6ae74c4bc1f3",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "securely so that air does not enter the flow-through\ncell, as air can affect the accuracy and stability of the\nmeasurements.",
+          "locator": "Section 4.2 Groundwater bullets and section 5.0 Troubleshooting — \"Field-measurement sensors must first be allowed to reach thermal equilibrium\"",
+          "claimIds": [
+            "mp-gw-no-air-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "query": "Separate job: we're measuring conductivity on mixed stream samples in bottles. How should I prepare the bottle and the measurement container before putting the sample in?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__8ce445a76059",
+          "contentHash": "8ce445a76059",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 2,
+          "evidence": "clean sample bottle three times with the sample.",
+          "locator": "Section 4.1.2 Subsample from Surface Water, steps 1-4 — \"report the filtered value and identify it\"",
+          "claimIds": [
+            "sc-subsample-bottle-rinse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__c589d620b9d4",
+          "contentHash": "c589d620b9d4",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 2,
+          "evidence": "and the container three times with DIW.",
+          "locator": "Section 4.1.2 steps 4a-10 and Section 4.2 Groundwater — \"rinse the specific conductance probe and the container three times\"",
+          "claimIds": [
+            "sc-diw-then-sample-rinse-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "query": "If those bottles have to wait while we finish another measurement, how should we close them, and what should the field record say about how we measured?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__fda03ba0cf91",
+          "contentHash": "fda03ba0cf91",
+          "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
+          "grade": 2,
+          "evidence": "and triple-rinsed bottle completely to the top, cap it tightly,",
+          "locator": "Section 4.1.1 steps 2b-7 and Section 4.1.2 — \"Immerse the specific conductance probe in the water\"",
+          "claimIds": [
+            "sc-subsample-measure-asap-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__3cf6be833c6a",
+          "contentHash": "3cf6be833c6a",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Record\nthe method (where applicable) that was used to make field\nmeasurements.",
+          "locator": "Section 6.0 Reporting — \"Field-parameter values are required to be entered into NWIS\"",
+          "claimIds": [
+            "mp-record-method-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "query": "OK, back to the oxygen chamber at the well. The sun has moved onto the line and there are bubbles again; what should I sort out?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__b6db5500055f",
+          "contentHash": "b6db5500055f",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Protect exposed sample tubing and the flow-through\ncell or chamber from direct sunlight.",
+          "locator": "Section 2.3.2 Groundwater, measurement steps 1-2 — \"Air bubbles introduced through leaking fittings can add substantial error\"",
+          "claimIds": [
+            "do-shield-tubing-sunlight-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c92c42a01570",
+          "contentHash": "c92c42a01570",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Dislodge and flush entrained gas bubbles from\nthe tubing walls and flow-through chamber by\ntapping the tubing with a blunt tool",
+          "locator": "Section 2.3.2 steps 3-6, Technical Note 4, and Section 3.0 opening — \"The stability criterion is met when five consecutive measurements\"",
+          "claimIds": [
+            "do-tap-tubing-blunt-tool-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "query": "That partly closed outlet and trapped-air problem from earlier - what's the correction again before I take another set?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c92c42a01570",
+          "contentHash": "c92c42a01570",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Dislodge and flush entrained gas bubbles from\nthe tubing walls and flow-through chamber by\ntapping the tubing with a blunt tool",
+          "locator": "Section 2.3.2 steps 3-6, Technical Note 4, and Section 3.0 opening — \"The stability criterion is met when five consecutive measurements\"",
+          "claimIds": [
+            "do-tap-tubing-blunt-tool-01",
+            "do-no-back-pressure-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "query": "For the wider well I mentioned near the start, remind me what goes down first and what we're watching during the purge.",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__b6db5500055f",
+          "contentHash": "b6db5500055f",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Downhole system—Lower the DO and temperature\nsensors to the measuring point, followed by the\npump, to monitor DO variation during purging.",
+          "locator": "Section 2.3.2 Groundwater, measurement steps 1-2 — \"Air bubbles introduced through leaking fittings can add substantial error\"",
+          "claimIds": [
+            "do-downhole-sensor-before-pump-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 10,
+      "query": "The chamber has grit in it too. Why does that matter, and what else about the line and the day's conditions belongs in our checks?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c92c42a01570",
+          "contentHash": "c92c42a01570",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Check for and eliminate back pressure in the\nflow-through chamber. The outlet of the chamber\nshould be free flowing.",
+          "locator": "Section 2.3.2 steps 3-6, Technical Note 4, and Section 3.0 opening — \"The stability criterion is met when five consecutive measurements\"",
+          "claimIds": [
+            "do-no-back-pressure-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+          "contentHash": "6ae74c4bc1f3",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Sediment accumulated in the flow-through cell can\nadversely affect the sensors of multiparameter instru-\nments.",
+          "locator": "Section 4.2 Groundwater bullets and section 5.0 Troubleshooting — \"Field-measurement sensors must first be allowed to reach thermal equilibrium\"",
+          "claimIds": [
+            "mp-gw-sediment-05"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__fea0c27e3094",
+          "contentHash": "fea0c27e3094",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Note on the appropriate form(s) any onsite conditions\nthat could have affected the quality of the data.",
+          "locator": "Sections 4.0 Measurement and 4.1 Surface Water — \"Wait a minimum of 60 seconds for the sensors\"",
+          "claimIds": [
+            "mp-record-conditions-03"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 11,
+      "query": "Before we leave this setup for the next crew, give me the tubing checklist for preventing air problems.",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__0059a6d641b9",
+          "contentHash": "0059a6d641b9",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "The sample is transferred by using a positive-displacement\nsubmersible pump fitted with high-density plastic or fluorocar-\nbon-polymer tubing that is relatively gas impermeable.",
+          "locator": "Section 2.3 Measurement / 2.3.2 Groundwater — \"applying optical sensor methods for groundwater DO measurements in the concentration range less than 2 mg/L is reliable\"",
+          "claimIds": [
+            "do-positive-displacement-pump-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__c92c42a01570",
+          "contentHash": "c92c42a01570",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Dislodge and flush entrained gas bubbles from\nthe tubing walls and flow-through chamber by\ntapping the tubing with a blunt tool",
+          "locator": "Section 2.3.2 steps 3-6, Technical Note 4, and Section 3.0 opening — \"The stability criterion is met when five consecutive measurements\"",
+          "claimIds": [
+            "do-tap-tubing-blunt-tool-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+          "contentHash": "6ae74c4bc1f3",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "securely so that air does not enter the flow-through\ncell, as air can affect the accuracy and stability of the\nmeasurements.",
+          "locator": "Section 4.2 Groundwater bullets and section 5.0 Troubleshooting — \"Field-measurement sensors must first be allowed to reach thermal equilibrium\"",
+          "claimIds": [
+            "mp-gw-no-air-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 12,
+      "query": "The narrow-well workaround we started with - remind me of the pump type, line material, and where to put it in relation to the sun.",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__0059a6d641b9",
+          "contentHash": "0059a6d641b9",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "The sample is transferred by using a positive-displacement\nsubmersible pump fitted with high-density plastic or fluorocar-\nbon-polymer tubing that is relatively gas impermeable.",
+          "locator": "Section 2.3 Measurement / 2.3.2 Groundwater — \"applying optical sensor methods for groundwater DO measurements in the concentration range less than 2 mg/L is reliable\"",
+          "claimIds": [
+            "do-positive-displacement-pump-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__b6db5500055f",
+          "contentHash": "b6db5500055f",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "Protect exposed sample tubing and the flow-through\ncell or chamber from direct sunlight.",
+          "locator": "Section 2.3.2 Groundwater, measurement steps 1-2 — \"Air bubbles introduced through leaking fittings can add substantial error\"",
+          "claimIds": [
+            "do-shield-tubing-sunlight-01"
+          ]
+        }
+      ]
+    }
+  ]
+}
