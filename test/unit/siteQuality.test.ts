@@ -86,7 +86,7 @@ describe("reader notes for every site and sensor note", () => {
   });
 
   it("gives the no-GPS rule a reader version", async () => {
-    const sensor = sensorFor([row(1, null, 2), row(2, null, 3)]);
+    const sensor = sensorFor([row(1, null, 7), row(2, null, 8)]);
     const result = await sensor.run({ metric: "ph", time_range: "last year", aggregation: "mean" });
     expect(readerNotes(result)).toEqual([expect.stringMatching(/^Location not recorded: /)]);
   });
@@ -94,8 +94,8 @@ describe("reader notes for every site and sensor note", () => {
   it("tells the reader which limits were not assessed", async () => {
     const sensor = sensorFor([row(1, 41)], { minPH: 0, maxPH: 100 });
     const notes = readerNotes(await new GetPodThresholds({ sensor }).run({}));
-    expect(notes).toHaveLength(2);
-    expect(notes[1]).toMatch(/^Not assessed: this device's pH thresholds/);
+    expect(notes).toHaveLength(6);
+    expect(notes).toContain("pH was not checked against its limits: they are not usable.");
   });
 
   it("names each pod on list_pods' reader notes and states the freshness limit", async () => {
@@ -157,7 +157,7 @@ describe("release surfaces", () => {
   });
 
   it("treats a pod that never recorded GPS as never having moved", async () => {
-    const sensor = sensorFor([row(1, null, 2), row(2, null, 3)]);
+    const sensor = sensorFor([row(1, null, 7), row(2, null, 8)]);
     const result = await sensor.run({ metric: "all", time_range: "last year", aggregation: "mean" });
     expect(result.note).toContain("Location not recorded");
     expect(result.note).not.toContain("Current site not assessed");

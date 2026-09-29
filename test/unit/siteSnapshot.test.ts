@@ -189,13 +189,13 @@ it("drops cached predecessor readings when its authorization is refused on refre
       const old = new URL(url).searchParams.get("device") === "dev:old";
       const fail = old && refused;
       const body = url.includes("/devices") ? registry(["dev:pod", "dev:old"])
-        : [old ? row(240, 41, 2) : row(0, 41, 8)];
+        : [old ? row(240, 41, 4) : row(0, 41, 8)];
       return { ok: !fail, status: fail ? 400 : 200,
         text: async () => "Device not found", json: async () => body } as Response;
     } });
   config.tools.predecessorPeriodHandoff = true;
   const sensor = new QuerySensorData({ client, now: () => now });
-  expect((await sensor.run({ ...args, aggregation: "min" })).value).toBe(2);
+  expect((await sensor.run({ ...args, aggregation: "min" })).value).toBe(4);
   now += SITE_CACHE_TTL_MS;
   refused = true;
   const result = await sensor.run({ ...args, aggregation: "min" });
