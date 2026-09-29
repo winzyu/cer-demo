@@ -243,6 +243,8 @@ Never set `DEVICE_API_TOKEN` or `SENSOR_DEVICE_LABEL`: device reads must use the
 `PREDECESSOR_PERIOD_HANDOFF` is read in `src/config/index.ts` and defaults to `false`; it is set explicitly because it stays `false` until the patched server takes all cer-api traffic, since an unpatched period route would return another organization's history.
 The retrieval depth `DEFAULT_TOP_K` is 20, but it is a code constant in `src/retrieval/options.ts`, not an environment setting: `src/config/index.ts` does not read it, so it is deliberately absent from the file above.
 Confirm at L4 that the release candidate's `src/retrieval/options.ts` still sets `DEFAULT_TOP_K = 20`, the depth the release was evaluated at.
+`WATER_TYPE: "freshwater"` currently adds a water-type mismatch note to every salt-water pod's answers (mirror rerun, 2026-09-29).
+Removing the line does not help, because `src/config/index.ts` defaults it to `freshwater`; Q10 T12 removes the note and keeps `WATER_TYPE` only as the fallback for pods with no registered type, and must land before rc2.
 
 What happens when a variable is missing:
 

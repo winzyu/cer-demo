@@ -46,8 +46,8 @@ browser -> dashboard :3000 -> CER server :5101 -> Firestore emulator :8080 (proj
 
 | piece | checkout on this machine | commit | pushed? |
 |---|---|---|---|
-| Emulator and seed | `~/code/clean-earth-rovers/repo/clean-earth-rovers-server/.worktrees/mirror` | `1ef21a7` (`mirror/e2e-p3`) | yes, CER server `origin/mirror/e2e-p3` |
-| CER server :5101 | same checkout | `1ef21a7` | yes, same branch |
+| Emulator and seed | `~/code/clean-earth-rovers/worktrees/server-release-mirror` | `8594338` (`mirror/release-rc1`: release `122136d` plus the silent, low-pH and dissolved-oxygen fixtures) | no, local until the user approves the push |
+| CER server :5101 | same checkout | `8594338` | no, same branch |
 | Gilligan :8010 | `~/code/clean-earth-rovers/repo/cer-demo/.claude/worktrees/e2e-rc` | `77cd4c9` (`test/e2e-rc`, a merge of `dev` and `feat/service-release`) | yes, `origin/test/e2e-rc` |
 | Dashboard :3000 | `~/code/clean-earth-rovers/worktrees/dashboard-e2e` | `9e18555` (detached) | yes, CER dashboard `origin/release/gilligan-2026-09-30` |
 
@@ -70,11 +70,11 @@ In the setup terminal:
 
 ```bash
 export CER_REPOS=/home/winsy/code/clean-earth-rovers/repo
-export MIRROR_SERVER="$CER_REPOS/clean-earth-rovers-server/.worktrees/mirror"
+export MIRROR_SERVER=/home/winsy/code/clean-earth-rovers/worktrees/server-release-mirror
 export GILLIGAN_DIR="$CER_REPOS/cer-demo/.claude/worktrees/e2e-rc"
 export DASHBOARD_DIR=/home/winsy/code/clean-earth-rovers/worktrees/dashboard-e2e
 
-git -C "$MIRROR_SERVER" rev-parse --short HEAD      # 1ef21a7
+git -C "$MIRROR_SERVER" rev-parse --short HEAD      # 8594338
 git -C "$GILLIGAN_DIR" rev-parse --short HEAD       # 77cd4c9
 git -C "$DASHBOARD_DIR" rev-parse --short HEAD      # 9e18555
 (cd "$MIRROR_SERVER" && grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .)
@@ -164,7 +164,7 @@ The emulator keeps nothing on disk: every start needs a seed.
 cd "$MIRROR_SERVER" && npm run mirror:seed -- --fixtures
 ```
 
-Expect 9 organizations, 27 users, 19 devices, 52 chats and 11,520 readings.
+Expect 22 devices and 13,680 readings with `--fixtures` at `8594338` (19 devices and 11,520 readings at the earlier `1ef21a7`).
 The seed wipes the emulator first, including chats and allowance counts.
 Readings run up to the moment of seeding and do not grow afterwards, so write down the seed time.
 
