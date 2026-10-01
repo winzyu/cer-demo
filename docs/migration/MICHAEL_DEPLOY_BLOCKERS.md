@@ -3,17 +3,18 @@
 Every deploy (L5 onwards) waits on these; the setup steps are in [`GILLIGAN_DEPLOYMENT_RUNBOOK.md`](GILLIGAN_DEPLOYMENT_RUNBOOK.md) §2.1.
 Each command is read-only and prints no secret values; run it in Claude Code with the `!` prefix.
 A permission error means your roles cannot see that resource: ask Michael to confirm instead.
+The L5 deploy proves items 1-3 in practice: it fails if the user cannot act as the runtime account or the runtime account cannot read either secret.
 
-| # | Blocker | Done when |
+| # | Blocker | Result, 2026-09-30 |
 |---|---|---|
-| 1 | `cer-gilligan-runtime` exists and you can act as it | [ ] |
-| 2 | Fireworks secret stored, readable by the runtime account only | [ ] |
-| 3 | Service-key secret stored, readable by the runtime and default compute accounts | [ ] |
-| 4 | `gilligan` database exists; runtime granted on it alone | [ ] |
-| 5 | TTL policy on `gilligan_usage.expireAt` | [ ] |
-| 6 | Organization policy allows unauthenticated invocation | [ ] |
-| 7 | `cer-ui` trigger `8ad67b17` disabled | [ ] |
-| 8 | `DEVICE_API_TOKEN` rotated | [ ] |
+| 1 | `cer-gilligan-runtime` exists and you can act as it | Exists, enabled; its policy is unreadable to the user, so "act as" rests on Michael (A2) |
+| 2 | Fireworks secret stored, readable by the runtime account only | Unreadable to the user (version adder only); created with no versions (A6), the user adds the key |
+| 3 | Service-key secret stored, readable by the runtime and default compute accounts | `cer-gilligan-service-key` version 1 per Michael (A7); unreadable to the user |
+| 4 | `gilligan` database exists; runtime granted on it alone | Database passes (`FIRESTORE_NATIVE`, `us-central1`); the conditioned grant is unreadable to the user (A4) |
+| 5 | TTL policy on `gilligan_usage.expireAt` | Pass: `ACTIVE`, none on `updatedAt` |
+| 6 | Organization policy allows unauthenticated invocation | Unreadable to the user; Michael: domain restriction off, invoker check not required (A1), so B1 grants `allUsers` |
+| 7 | `cer-ui` trigger `8ad67b17` disabled | Pass: global trigger, disabled; the only trigger in the project |
+| 8 | `DEVICE_API_TOKEN` rotated | Open |
 
 ## 1. Runtime account
 
@@ -35,7 +36,7 @@ Pass: the secret exists, and `roles/secretmanager.secretAccessor` lists `cer-gil
 
 ## 3. Service-key secret
 
-Its name is not recorded yet (runbook §4.2 `[FILL]`); list the secrets to find it, then check its readers.
+Its name is `cer-gilligan-service-key` (version 1, recorded in the runbook); check its readers.
 
 ```
 ! gcloud secrets list --project=conductive-fold-343604 --format='value(name,createTime)'
@@ -43,7 +44,6 @@ Its name is not recorded yet (runbook §4.2 `[FILL]`); list the secrets to find 
 ```
 
 Pass: `roles/secretmanager.secretAccessor` lists both `cer-gilligan-runtime` and `98242557946-compute@developer.gserviceaccount.com`.
-Record the name in the runbook's `[FILL]` markers.
 
 ## 4. Gilligan database and grants
 

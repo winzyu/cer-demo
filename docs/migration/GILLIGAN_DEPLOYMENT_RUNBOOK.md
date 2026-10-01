@@ -329,7 +329,7 @@ gcloud run deploy cer-gilligan \
   --image=gcr.io/conductive-fold-343604/cer-gilligan@sha256:[FILL] \
   --service-account=cer-gilligan-runtime@conductive-fold-343604.iam.gserviceaccount.com \
   --env-vars-file=$HOME/release/cer-gilligan.env.yaml \
-  --set-secrets=FIREWORKS_API_KEY=cer-gilligan-fireworks-api-key:[FILL],CER_RAG_SERVICE_KEY=[FILL]:[FILL] \
+  --set-secrets=FIREWORKS_API_KEY=cer-gilligan-fireworks-api-key:[FILL],CER_RAG_SERVICE_KEY=cer-gilligan-service-key:1 \
   --cpu=1 --memory=1Gi --timeout=300 --concurrency=8 \
   --min-instances=0 --max-instances=1 \
   --no-allow-unauthenticated \
@@ -363,7 +363,7 @@ gcloud run deploy cer-api \
   --image=gcr.io/conductive-fold-343604/cer-api@sha256:[FILL] \
   --no-traffic --tag=rc1 \
   --update-env-vars=GILLIGAN_BACKEND=rag,CER_RAG_BASE_URL=[FILL],CER_RAG_TIMEOUT_MS=120000 \
-  --update-secrets=CER_RAG_SERVICE_KEY=[FILL]:[FILL] \
+  --update-secrets=CER_RAG_SERVICE_KEY=cer-gilligan-service-key:1 \
   --remove-env-vars=DEV_UNVERIFIED_AUTH,DEV_CHAT_STORE,DEV_UPSTREAM_BASE_URL,DEV_LOCAL_PATHS
 
 gcloud run deploy cer-ui \

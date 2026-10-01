@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-09-30 by the upstream-landing chat, on branch `docs/release-pin` (from `dev` `5f00487`).
+Updated 2026-09-30 by the upstream-landing chat after the `develop` pushes, on branch `docs/release-pin` (from `dev` `5f00487`).
 Current state and next steps only; history is `git log -p docs/STATUS.md`; never cite this file from code or other docs.
 
 ## Start here
@@ -8,7 +8,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - **Gilligan release, September 30**: tasks, owners and dates are in [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md), which wins over this file; the user deploys.
   Next: each chat reads its section of [`migration/GILLIGAN_RESET_2026-09-28.md`](migration/GILLIGAN_RESET_2026-09-28.md).
 - **Upstream landing**: land the release in CER's `develop`, then `main`, of the server and dashboard ([`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md)).
-  Next: the user's consent to push the two `develop` merges (landing doc section 6), and whether to run the paid delta test first.
+  `develop` is pushed in both repositories (server `5f04064`, dashboard `5ae4993`, 2026-09-30). Next: the `main` merges, after the L8 staged smoke; and whether to fund the rest of G1 and G3 (landing doc section 4).
 - **Where we are**: `dev` is final for rc2 at `303280d` (the full `npm test` passes, 1584 tests); rc2 is cut (`release/rc2` `ddd6292`) and approved for release; Michael picked server `122136d` (`timeline.md`, 2026-09-29) with dashboard `fc13d16`; nothing is deployed.
   Critical path: Michael's setup, L5 no-traffic deploy, L6-L7 staged stack and demo (Sep 29), L8-L9 smoke and traffic (Sep 30); Sep 29 has no slack left.
 - **Production fixes outside Gilligan**: with `122136d` the user routes, period query and invited login ship; the CSV export scope and empty-organization refusal follow launch (`timeline.md`, 2026-09-29).
@@ -17,9 +17,11 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 ## Last session
 
-- Upstream landing: server `122136d` and dashboard `fc13d16` merged into CER's `develop` as local commits `5f04064` and `5ae4993`, trees identical to the release commits; not pushed.
+- Upstream landing: server `122136d` and dashboard `fc13d16` merged into CER's `develop` as `5f04064` and `5ae4993`, trees identical to the release commits; both pushed 2026-09-30 with the user's consent.
 - Checks: server typecheck and 10 unit suites (76 tests), dashboard tests 7/7 and production build, free end-to-end on ports 8082/5103/8012/3002 all pass; A6 ships as expected.
-- A test script's unquoted `curl --noproxy *` sent fabricated mirror logins to three `.md` domains (landing doc finding 1); spend: none.
+- A test script's unquoted `curl --noproxy *` sent fabricated mirror logins to three `.md` domains (landing doc finding 1).
+- Delta test `rc2-delta-2026-09-30`: B1, C1, F1, F2 pass; G1 stopped at the $0.15 cap after 7 questions (at most $0.17), G3 not reached.
+- Michael's blockers: 5 and 7 pass, 4's database passes; 1-3 and 6 are unreadable to the user and rest on Michael's note; 8 open (`MICHAEL_DEPLOY_BLOCKERS.md`).
 
 ## Working tree
 
@@ -39,10 +41,10 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - User, spend: mirror C1/D1 about $0.04, K21 and catalogue checks about $0.20, groups about $0.51; Gilligan behaviour checks about $0.21; dashboard recheck about $0.05; rc2 delta test up to $0.15; the rc2 embedding rebuild; E5 tools-on live smoke; five read-only live `gcloud` checks of Michael's setup (run with `!`).
 - User, pushes: dashboard `task/gilligan-ux`; server `task/gilligan-citation-title`, `fix/invited-login`, the Q11 branch, the combined release commit before L6; optionally `test/launch-issues`.
 - User, supervisor or Michael at the demo: the standing caveat in place of refusals; the pH 3-12 band; the demo date and key; the A items; Firestore access for cer-gilligan.
-- User, landing: consent to push `develop` in the server and dashboard; approve or skip the delta test (up to $0.15); before `main`, disable trigger `8ad67b17`, list the other triggers, and tell Michael `62993fe` ships with server `main`.
+- User, landing: add the Fireworks key version and send Michael its number; fund or skip the rest of G1 and G3; rotate `DEVICE_API_TOKEN` with Michael; before `main`, tell Michael `62993fe` ships with server `main` (trigger `8ad67b17` is disabled and is the only trigger).
 - User, housekeeping: review the supervisor brief; mark the mirror review sheets (`data/e2e/`); stop the launch-issues stacks when idle; remove merged worktrees; the coordinate audit and `scripts/censusFirestore.ts` are optional.
 - Agent, release plan: land `docs/release-pin` (Michael's answer is recorded there) and pin `RELEASE_CANDIDATE.md`'s server row to `122136d`.
-- Agent, upstream landing: push `develop` on consent, then build the `main` merges (the server's conflicts in `WaterAnalyticsService.ts`; take the release side) per the landing doc.
+- Agent, upstream landing: build the `main` merges (the server's conflicts in `WaterAnalyticsService.ts`; take the release side) per the landing doc; push on consent.
 - Agent, Gilligan behaviour: Q10 findings 6, 8, 10 and 7, K21, U7, citation markers, follow-ups (reset brief, "Gilligan behaviour").
 - Agent, release: rc2, re-ingest and checksums, production-mode run, `RELEASE_CANDIDATE.md`, then L5-L8 (reset brief, "Release").
 - Agent, release demo: walkthrough corrections, browser checks, CER `main` comparison, demo script (reset brief, "Release demo").

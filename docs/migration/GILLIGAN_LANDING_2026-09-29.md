@@ -45,7 +45,7 @@ Fetched 2026-09-29; the tips have not moved since 2026-09-24.
 | Dashboard `fc13d16`: `node --test test/provenance.test.mjs` | 7/7 pass |
 | Dashboard `fc13d16`: `yarn build` | passes; lint warnings only, all in CER's existing code; no `confirm-email` import error (P5) |
 | End-to-end, free checks (section 4.1) | pass, except A6 as expected at `122136d` |
-| End-to-end, paid delta test (G1, G3, B1, C1, F2 rechecks, cap $0.15) | not run; needs the user's approval |
+| End-to-end, paid delta test (G1, G3, B1, C1, F2 rechecks, cap $0.15), run `rc2-delta-2026-09-30` on 2026-09-30 | B1, C1, F1 and F2 pass (PDF `cer-report-harbor-pier-buoy-2026-09-24-to-2026-10-01.pdf`, 3 pages, no other organization); G1 blocked by the cap after 7 questions (at most $0.17, all tokens priced at the output rate) and G3 not reached; the full G1 needs about 20 questions, so the $0.15 estimate was too low |
 
 The server's Jest config sets `roots: ['<rootDir>/../']`, so from a worktree it also runs every sibling worktree's copy of a suite; pass the suite path first and `--roots "$PWD"` after it.
 The integration suites were not run: they reach the real `qa-db`.
@@ -87,8 +87,8 @@ Gates before either `main` push:
 
 | step | repository | commit | when |
 |---|---|---|---|
-| develop | clean-earth-rovers-server | `5f04064` built on local branch `land/gilligan-develop`; not pushed | |
-| develop | user-dashboard | `5ae4993` built on local branch `land/gilligan-develop`; not pushed | |
+| develop | clean-earth-rovers-server | `5f04064`, pushed as a fast-forward from `a5b745e` | 2026-09-30 |
+| develop | user-dashboard | `5ae4993`, pushed as a fast-forward from `d3b4a3f` | 2026-09-30 |
 | main | clean-earth-rovers-server | | |
 | main | user-dashboard | | |
 
