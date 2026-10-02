@@ -1137,9 +1137,12 @@ retrieval-strategy differences.
 | Filter | length ≥ 100 and no PDF boilerplate. The alphabetic-ratio ≥ 0.5 test is **off for every document** and off by default — see below |
 | Output | per document: full `text` (direct-feed) and filtered `chunks` (vector arms), plus the ◆G9 slice flag |
 
-Current run, **since the source-of-truth document left the corpus on 2026-09-13**: **14
-documents, 840,413 chars, 446 chunks** (840,327 until the 2026-09-21 re-OCR added 86 chars to the
-EPA SOP, `EVAL_REBUILD.md` §2b); direct-feed slice **26,096 chars (~6.5K tokens), the four
+Current run, **since the E7 launch corpus update of 2026-09-27**: **16 documents, 864,321 chars,
+457 chunks** (`documents/README.md`), adding the Keyestudio turbidity sensor page and the CER v2
+guidance excerpt (11 chunks) without renumbering any earlier chunk. From 2026-09-13, when the
+source-of-truth document left the corpus, until then it was 14 documents, 840,413 chars, 446 chunks
+(840,327 until the 2026-09-21 re-OCR added 86 chars to the EPA SOP, `EVAL_REBUILD.md` §2b);
+direct-feed slice **26,096 chars (~6.5K tokens), the four
 probe datasheets**. Before that it was 15 documents / 851,891 chars / 451 chunks, re-ingested
 2026-08-31 without the alpha-ratio filter (393 chunks with it on), with a 37,660-char slice. It was
 18 documents /

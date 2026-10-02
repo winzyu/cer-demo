@@ -3,17 +3,27 @@
 The evaluation set. **Data, not code** — one JSON file per conversation, loaded by
 `src/eval/fixtures.ts` and validated by `test/unit/evalFixtures.test.ts`.
 
-**The apparatus is being rebuilt.** The plan, and the only context a fresh session needs, is
-[`docs/EVAL_REBUILD.md`](../docs/EVAL_REBUILD.md). Read that before anything else in `docs/` that
-describes an eval — `RETRIEVAL_BAKEOFF.md` describes the set that was archived on 2026-09-01, and
-its report and fixture spec are archived too (`docs/ARCHIVED.md`).
+**The apparatus was rebuilt between 2026-09-01 and 2026-09-28.** The plan, its rules and the dated
+record of every capture are in [`docs/EVAL_REBUILD.md`](../docs/EVAL_REBUILD.md); the release
+readout is [`reviews/phase3-2026-09-23/R4_REPORT.md`](reviews/phase3-2026-09-23/R4_REPORT.md).
+Read those before anything else in `docs/` that describes an eval — `RETRIEVAL_BAKEOFF.md`
+describes the set that was archived on 2026-09-01, and its report and fixture spec are archived too
+(`docs/ARCHIVED.md`).
 
 ## What is here
 
 | path | what it is |
 |---|---|
-| `fixtures-wave1/` | the wave 1 rebuild — **45 conversations, 90 turns**, all runnable (no fixture declares a `requires`). Seven classes; slice coverage 41 none / 5 partial / 0 full. `FIXTURE_DIR` points here. |
-| `claims/` | the Phase 1a claim inventory — what each chunk supports, which drives the class quotas and the refusal fixtures |
+| `fixtures-wave1/` | the wave 1 rebuild — **45 conversations, 90 turns**, frozen 2026-09-23, all runnable (no fixture declares a `requires`). Seven classes; slice coverage 41 none / 5 partial / 0 full. `FIXTURE_DIR` points here. `_BRIEF.md`, `_CONTAMINATION.md` and `_QUALIFICATION.md` record how it was written and checked. |
+| `fixtures-long/` | five 12-turn conversations for the long-conversation check of 2026-09-28 (`_BRIEF.md`) |
+| `fixtures-e7/` | six fixtures drafted for the E7 corpus additions, reviewed once, not yet captured |
+| `claims/` | the Phase 1a claim inventory — what each chunk supports, which drives the class quotas and the refusal fixtures; extended for the E7 corpus |
+| `turn-claims/`, `turn-claims-long/` | each named claim assigned to the turn it supports (2026-09-28) |
+| `retrieval-labels/` | Phase 1e chunk labels, one file per wave 1 fixture, fixture-wide; regenerate with `scripts/resolveRetrievalLabels.ts` |
+| `retrieval-labels-per-turn/`, `retrieval-labels-long/`, `retrieval-labels-long-per-turn/` | the same labels per turn and for the long set (`--turn-claims=`); `retrieval:eval --labels=<dir>` picks a set |
+| `transcripts/<run>/` | every captured run since the rebuild, verbatim; never edited or regenerated |
+| `grading/<run>/` | blind grading packets for the human grading rounds; regenerate with `npm run grade:packet` |
+| `reviews/` | written reviews: the wave 1 agent review and corrections, the rubric strictness audit, and the Phase 3 / R4 report |
 
 ## What is not here
 
@@ -22,18 +32,16 @@ its report and fixture spec are archived too (`docs/ARCHIVED.md`).
 `git show eval-archive-2026-09-01:eval/grading/warm/scores.csv`. The reasons, and what breaks
 until the rebuild refills them, are in [`docs/ARCHIVED.md`](../docs/ARCHIVED.md).
 
-Their names are deliberately free. New captures, packets and labels land back at
-`transcripts/`, `grading/` and `retrieval-labels/`. `fixtures/` stays empty until the last step
-of the migration renames `fixtures-wave1/` into it.
+The rebuild's captures, packets and labels have since refilled `transcripts/`, `grading/` and
+`retrieval-labels/`; the archived files are the pre-rebuild set only. `fixtures/` stays empty until
+the last step of the migration renames `fixtures-wave1/` into it.
 
-**`grading/` now holds one file again**, recovered 2026-09-21 after the incident:
-`phase-1d-wave1-fixture-review.html`, the Phase 1d human-verification sheet. It is the review
-*tool plus its fixture data*, *not* the review's results — the page saves decisions to
-`localStorage` in whichever browser they were made, so the decisions themselves are not in this
-file and are not in the repository. The page is still live and owned by the user at
-`https://claude.ai/code/artifact/9ee30967-633b-42ca-86b4-418cff7858e6`, which is the copy that
-holds any decisions already recorded.
-**It describes the superseded 46-fixture / 92-turn set**, not the current 45 / 90 above.
+`grading/phase-1d-wave1-fixture-review.html`, the Phase 1d human-verification sheet recovered
+2026-09-21 after the incident, is deliberately left untracked. It is the review *tool plus its
+fixture data*, *not* the review's results — the page saves decisions to `localStorage` in whichever
+browser they were made. The page is still live and owned by the user at
+`https://claude.ai/code/artifact/9ee30967-633b-42ca-86b4-418cff7858e6`. It describes the superseded
+46-fixture / 92-turn set, and Phase 1d was closed without human verification (2026-09-23).
 
 ## Rules that did not change
 

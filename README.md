@@ -105,7 +105,7 @@ Firestore (`@google-cloud/firestore`) · Fireworks via the `openai` SDK · Jest 
 
 1. Create an account at **https://fireworks.ai**.
 2. **API Keys** → generate a key → put it in `.env` as `FIREWORKS_API_KEY`.
-3. Model ids are already in `.env.example` (`accounts/fireworks/models/gpt-oss-120b`,
+3. Model ids are already in `.env.example` (`accounts/fireworks/models/glm-5p3-flash`,
    `nomic-ai/nomic-embed-text-v1.5`). **Confirm the exact id in the console first** — the serverless
    catalogue rotates.
 
@@ -301,8 +301,9 @@ pkill -f "[t]s-node-dev"
 
 ## 5. Configuration reference
 
-`cp .env.example .env`. Nothing here blocks boot; invalid *values* fail fast with a message listing
-every problem, missing secrets are warnings only.
+`cp .env.example .env`. Invalid *values* fail fast at boot with a message listing every problem;
+missing secrets are warnings only, except that production (`NODE_ENV=production`) refuses to boot
+without `CER_RAG_SERVICE_KEY`.
 
 ### Core
 
@@ -312,6 +313,7 @@ every problem, missing secrets are warnings only.
 | `PORT` | `8000` | HTTP port. |
 | `LOG_LEVEL` | `info` | Log verbosity label. |
 | `MAX_HISTORY_MESSAGES` | `20` | Cap on prior messages per request, normally 10 question-answer pairs. Oldest exchanges are dropped. |
+| `CER_RAG_SERVICE_KEY` | *(unset)* | Shared secret the CER server sends on every `/api/v1` call (`requireServiceKey`), compared in constant time; at least 32 characters. Set, it also makes the server's user and organization headers the caller identity. Unset, the check is off and those headers are ignored, which keeps local runs and the eval harness working. Required in production. |
 | `WATER_TYPE` | `freshwater` | `freshwater` \| `saltwater`. A deployment-wide label that frames chat answers; the prompt carries no ranges since 2026-09-13 (pod limits come from `get_pod_thresholds`), and reports read each pod's registry `operatingEnvironment` instead. **Global — see the caveat in [§7e](#7e-known-limits).** |
 
 `POST /api/v1/chat` accepts JSON bodies up to 1 MiB; other endpoints retain the 100 KiB limit.
@@ -325,11 +327,17 @@ Requests above the transport limit receive JSON HTTP 413 before validation, so c
 |---|---|---|
 | `FIREWORKS_API_KEY` | *(unset)* | Required before any chat works. |
 | `FIREWORKS_BASE_URL` | `https://api.fireworks.ai/inference/v1` | OpenAI-compatible endpoint. |
-| `LLM_MODEL` | *(unset)* | e.g. `accounts/fireworks/models/gpt-oss-120b`. |
-| `LLM_MAX_TOKENS` | `4096` | **Raise to 16384 for tool use or capture runs.** gpt-oss emits reasoning tokens and returns an *empty answer* if starved — the API call still succeeds. |
+| `LLM_MODEL` | *(unset)* | The release uses `accounts/fireworks/models/glm-5p3-flash` (`.env.example`), chosen 2026-09-26 over `gpt-oss-120b` (`docs/EVAL_REBUILD.md`). |
+| `LLM_MAX_TOKENS` | `4096` | **Raise to 16384 for tool use or capture runs.** Reasoning models (gpt-oss, GLM) spend tokens before visible output and return an *empty answer* if starved - the API call still succeeds. |
+| `LLM_REASONING_EFFORT` | `default` | `default` \| `low` \| `medium` \| `high`, sent as `reasoning_effort`; `default` sends nothing. The release runs GLM at `low`, which cannot switch reasoning off. |
+| `LLM_THINKING` | `default` | `disabled` sends `thinking: {type: "disabled"}` for models such as `minimax-m3`; `default` sends nothing. |
+| `LLM_MAX_CONCURRENT` | `8` | Model calls in flight at once across the process; extra calls queue, so a burst waits instead of hitting Fireworks' rate limits. |
+| `LLM_QUEUE_TIMEOUT_MS` | `20000` | How long a call may wait for a slot before it is told the service is busy. |
+| `LLM_RETRY_DELAY_MS` | `2000` | Wait before the single retry after a Fireworks 429 or 503, unless `Retry-After` asks for less. |
 | `LLM_TEMPERATURE` | `0` | **Leave at 0 for eval captures** — sampling variance would measure the sampler, not the change under test. |
 | `FIREWORKS_USER` | `clean-earth-rag` | Sent as the OpenAI `user` field; drives serverless prompt-cache affinity. |
 | `EMBEDDING_MODEL` | `nomic-ai/nomic-embed-text-v1.5` | 768-dim. |
+| `RERANK_MODEL` | `fireworks/qwen3-reranker-8b` | Cross-encoder for the `*-rerank` retrieval modes (`RerankService`). Measured and not adopted for launch (`docs/EVAL_REBUILD.md`). |
 
 ### Retrieval ([§6](#6-retrieval-arms))
 
@@ -339,6 +347,8 @@ Requests above the transport limit receive JSON HTTP 413 before validation, so c
 | `DEBUG_RETRIEVAL` | `false` | When `true`, a request's `"retrieval"` field is honoured. Required by the bake-off runner. |
 | `AUDIT_LOG` | `false` | When `true`, every chat response is persisted to Firestore for dispute reconstruction (`docs/RESPONSIBILITY.md` §6). Keep off until the retention and access policy is settled. |
 | `CORPUS_SOURCE` | `artifact` | Where `firestore-direct` reads text: `artifact` (local file, no credentials) or `firestore`. Explicit rather than auto-detected — a silent fallback would measure the wrong source. |
+| `QUERY_REWRITE` | `false` | Rewrite a follow-up into a standalone search query before retrieval (`src/retrieval/queryRewrite.ts`); one extra model call per follow-up. On in the release. |
+| `QUERY_REWRITE_FIRST_TURN` | `false` | With `QUERY_REWRITE` on, also rewrite first turns. On in the release; ignored while `QUERY_REWRITE` is off. |
 
 ### Query quota (`POST /api/v1/chat`)
 
@@ -355,11 +365,9 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | `QUERY_QUOTA_REPORTS` | `unlimited` | report PDFs per key per window (`POST /api/v1/reports`); refuses with 429 `quota_reports_exceeded`. |
 | `QUERY_QUOTA_TOKENS` | `unlimited` | `usage.totalTokens` per key per window, summed across tool rounds. **Enforced on tokens already spent**: the request that crosses the line finishes, the next one is refused. |
 | `QUERY_QUOTA_WINDOW` | `30d` | Window length. **Unit suffix required** — `s`/`m`/`h`/`d`/`w`. Windows are fixed and epoch-aligned, so `7d` rolls over on **Thursday** 00:00 UTC and a burst of `2 x limit` is reachable across a boundary. |
-| `QUERY_QUOTA_SCOPE` | `caller` | `caller` (sha256 of the bearer token → client IP → one shared `anonymous` bucket) or `global` (whole deployment). **`trust proxy` is not set**, so behind a proxy every anonymous caller shares one IP bucket; the bundled frontend sends a token only when an account is signed in. |
-
-> **Counters are in process memory.** They reset on every redeploy and crash, and each instance
-> enforces its own quota (`limit x instances`). Fine for deciding a policy; not a spend gate for a
-> paid tier — that needs a shared store behind the `QuotaStore` interface (`docs/SPECS.md` §4a).
+| `QUERY_QUOTA_SCOPE` | `caller` | `caller` or `global` (whole deployment). With `CER_RAG_SERVICE_KEY` set, `caller` keys on the user id the CER server sends; without it, on the sha256 of the bearer token → client IP → one shared `anonymous` bucket. **`trust proxy` is not set**, so behind a proxy every anonymous caller shares one IP bucket. |
+| `QUERY_QUOTA_STORE` | `memory` | Where counters live. `memory` resets on every redeploy and crash, and each instance enforces its own quota (`limit x instances`). `firestore` keeps one `gilligan_usage` document per user per UTC day, shared across instances, and requires `QUERY_QUOTA_WINDOW=1d`; the release uses it (`docs/SPECS.md` §4a). |
+| `QUERY_QUOTA_WARN_AT` | `0.2` | Fraction of a finite allowance at or below which `GET /api/v1/usage` reports `nearLimit`, so the dashboard warns before refusing. |
 
 ### Sensor tool ([§7](#7-sensor-querying))
 
@@ -368,6 +376,7 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | `SENSOR_TOOL` | `false` | **The gate.** Enables `query_sensor_data`, `list_pods`, `get_pod_thresholds` and `get_turbidity_info`, the tool-round loop, and the prompt's tool block. Off ⇒ the bot cannot read sensors at all. |
 | `MAX_TOOL_ROUNDS` | `16` | Tool-enabled rounds before a forced text-only round. Legacy was 5, which cannot fit a six-parameter question. |
 | `RAW_LIMIT` | `200` | Rows an `aggregation: "raw"` call returns. A cap, not a page size — raw output goes into the next prompt. |
+| `PREDECESSOR_PERIOD_HANDOFF` | `false` | Lets period reads include a merged pod's hidden predecessor history. Keep off until every period-route server in front of this service enforces the Q6 authorization check (`docs/SPECS.md`). |
 | `SENSOR_DEVICE_LABEL` | *(unset)* | Default pod when the model names none. **Leave unset unless the deployment truly has one pod** — the token sees a whole fleet (21 → 17 → **15** across three live counts; nothing may hard-code it — `docs/migration/BACKEND_FIELDS.md` §1) and the two cleared test pods are on opposite coasts. Unset means the tool asks. |
 
 ### Report tool ([§10](#10-endpoints))
@@ -377,6 +386,7 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | `REPORT_TOOL` | `false` | **The gate.** Enables `generate_report`, its entry in the tool registry, and the prompt's report-vs-stat routing rule. Separate from `SENSOR_TOOL` because `generate_report` calls `QuerySensorData.query()` directly rather than through the model's tool loop — but it needs `DEVICE_API_BASE_URL` all the same. Same pinned-prompt caveat as `SENSOR_TOOL`. |
 | `CATALOGUE_PROMPT` | `false` | Appends the approved-guidance block (`src/catalogue/`) to the system prompt. Same pinned-prompt caveat as `SENSOR_TOOL`. Reports use the catalogue regardless. |
 | `CATALOGUE_DRAFTS` | `false` | Also shows catalogue entries no supervisor has approved. For supervisor review only; never set it for customers. |
+| `CER_DESCRIPTION` | *(unset)* | The approved answer to "what does Clean Earth Rovers do". Unset, the question stays out of scope; the text lives in configuration so a placeholder cannot ship in code. |
 
 ### Device API ([§2c](#2c-clean-earth-device-api))
 
@@ -462,7 +472,7 @@ corpus change so documents that left the corpus are deleted too.
 <details>
 <summary><b><code>firestore-vector</code></b></summary>
 
-Requires `FIREWORKS_API_KEY` (it embeds the corpus's 446 chunks) and the **vector index** from
+Requires `FIREWORKS_API_KEY` (it embeds the corpus's 457 chunks) and the **vector index** from
 [§2b](#2b-google-cloud--firestore).
 
 ```bash
@@ -744,7 +754,7 @@ docs/                   # STATUS.md (start here), SPECS.md, timeline.md, EVAL_RE
 |---|---|---|
 | `GET` | `/` | service banner |
 | `GET` | `/health` | liveness + config-presence checks (no external I/O) |
-| `GET` | `/api/v1` | API v1 banner |
+| `GET` | `/api/v1` | API v1 banner. **Every `/api/v1` route requires the `x-cer-rag-service-key` header when `CER_RAG_SERVICE_KEY` is set** ([§5](#core)); `/` and `/health` stay open for probes. |
 | `GET` | `/api/v1/devices` | pod list for the UI selector (read-only, forwards the caller's token). **Requires `Authorization: Bearer`** |
 | `GET` | `/api/v1/usage` | the caller's quota standing (questions, tokens, reports, window reset). Read-only and outside the quota gate (SPECS.md §4a). |
 | `POST` | `/api/v1/reports` | body `{ time_range, device? }` (a `generate_report` result's `report_request`); returns the report PDF as a download and stores nothing. **Requires `Authorization: Bearer`**; 404 while `REPORT_TOOL` is off; counted against `QUERY_QUOTA_REPORTS` (SPECS.md §10.7). |

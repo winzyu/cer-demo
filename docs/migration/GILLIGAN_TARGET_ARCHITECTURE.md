@@ -40,7 +40,7 @@ cer-rag (this service, new Cloud Run service in the upstream project)
   │     ├─ retrieval                    corpus and embedding cache in the image (CORPUS_SOURCE=artifact)
   │     └─ catalogue                    supervisor-approved entries, versioned
   ├─ report renderer                    PDF bytes returned in the response, nothing on disk
-  └─ Fireworks gpt-oss-120b             upstream-owned key; no data retention for open models
+  └─ Fireworks glm-5p3-flash            upstream-owned key; no data retention for open models
 ```
 
 ### 2a. Request flows
@@ -83,7 +83,7 @@ Invoker IAM can be added in front later without changing that contract.
 
 ### 2c. Usage limits
 
-Fireworks documents no free tier for `gpt-oss-120b`, so the account needs a payment method; a third-party page says accounts without one are held to 10 requests per minute, which 50 users would exceed.
+Fireworks documents no free tier for its serverless models (checked for `gpt-oss-120b`, the answer model until 2026-09-26; the release runs `glm-5p3-flash`), so the account needs a payment method; a third-party page says accounts without one are held to 10 requests per minute, which 50 users would exceed.
 Fireworks' own limits are adaptive tokens-per-minute ceilings, reported in `X-Ratelimit-Limit-Tokens-*` headers.
 
 The goal is that every user gets the same allowance, that no single user or organization can exhaust the month, and that a runaway tool loop is cut off.

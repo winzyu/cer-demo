@@ -277,9 +277,11 @@ reimplementation-from-memory proves nothing. Constraints:
 - ~~Delete the sidecar once ◆G7 is resolved.~~ **Archived 2026-08-19, ahead of ◆G7 and by
   decision — the gate did not close.** The runtime code (adapter, `rrf.ts`, seeder, schema, compose
   file, config, the `pg` dependency) is in `archive/pgvector-rag/` and the mode is unregistered;
-  the **evidence is retained and live** — the 56 transcripts, `eval/grading/warm/KEY.json`, the
-  arm's cost scenario, and its row in `scripts/gradePacket.ts`. So the arm is still graded and still
-  priced here; what it can no longer do is **run**. Re-running or re-capturing it means restoring the
+  the **evidence was retained** at the time — the 56 transcripts, `eval/grading/warm/KEY.json`, the
+  arm's cost scenario, and its row in `scripts/gradePacket.ts`. So the arm was still graded and still
+  priced; what it could no longer do was **run**. (Since 2026-09-01 the transcripts and the KEY are
+  archived under `eval-archive-2026-09-01` with the rest of the old eval set; only the cost
+  scenario remains in `src/eval/costScenarios.ts`.) Re-running or re-capturing it means restoring the
   archive first — and because the system prompt is a pinned control (§4), a re-capture voids the
   other two arms unless they are re-captured too. See `SPECS.md` §14.
 

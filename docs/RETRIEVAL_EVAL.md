@@ -3,17 +3,23 @@
 `npm run retrieval:eval` scores a retrieval adapter against a labelled query set. **No LLM, no
 network for the corpus, deterministic, seconds per run.**
 
-> ## ⚠ The harness is live; its label set is partial, as of 2026-09-13
+> ## ⚠ The harness is live; its labels are provisional, as of 2026-09-28
 >
 > **Labels exist again.** Phase 1e of [`EVAL_REBUILD.md`](EVAL_REBUILD.md) regenerated
 > `eval/retrieval-labels/` — **45 files**, one per wave-1 fixture — replacing the label set that
-> was archived under `eval-archive-2026-09-01`. They are provisional (flat grade 2, no hard
-> negatives, per-fixture not per-turn) but adequate for the gold-context arm, which resolves every
-> label at 100% offline; see [`RETRIEVAL_LABELS.md`](RETRIEVAL_LABELS.md) for what 1e still owes.
+> was archived under `eval-archive-2026-09-01`; per-turn labels followed on 2026-09-28
+> (`eval/retrieval-labels-per-turn/`), and `--labels=<dir>` picks a set. They are provisional (flat
+> grade 2, no hard negatives); see [`RETRIEVAL_LABELS.md`](RETRIEVAL_LABELS.md) for what 1e still
+> owes.
+>
+> **Offline recall did not predict answer quality.** Scored against the excerpts eleven paid
+> captures actually sent, recall ranked the arms with Spearman 0.29 against judged correctness on
+> either label set: the reranker led on recall and lost on correctness. Use this harness to debug
+> retrieval, not to choose an arm (`EVAL_REBUILD.md`, "Per-turn retrieval labels").
 >
 > Every measured number below (99 queries, 48 fixtures, the 20.2% stub floor, the per-arm recall)
 > describes the now-archived label set against a **393-chunk** corpus that no longer exists — the
-> corpus is now **446 chunks** across 14 documents. The harness, the metrics and the traps are
+> corpus is now **457 chunks** across 16 documents (`documents/README.md`). The harness, the metrics and the traps are
 > unchanged and still correct; re-run against the current labels and corpus for current numbers.
 
 Companion docs: [`RETRIEVAL_LABELS.md`](RETRIEVAL_LABELS.md) (how the ground truth was built),

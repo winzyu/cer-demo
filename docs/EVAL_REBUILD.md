@@ -1,9 +1,16 @@
 # Eval Rebuild — plan and context
 
-The evaluation apparatus is being rebuilt from scratch. This file is the working plan and the
-only context a fresh session needs. It replaces reading the bake-off documents.
+The evaluation apparatus was rebuilt from scratch between 2026-09-01 and 2026-09-28. This file is
+the plan it followed, the rules that still bind, and the dated log of every capture (§9 onward). It
+replaces reading the bake-off documents.
 
-**Read this, then `CLAUDE.md` (house rules), then start at Phase 0.** Do not read
+**Where it ended (2026-09-28):** the launch configuration is `local-vector` k=20 with both query
+rewrites and `glm-5p3-flash` at reasoning low, judged by `deepseek-v4p1-flash` on rubric v2; its
+correctness is about 1.16 against the 1.30 floor; every Tier 1 gate passed on the launch capture
+(E4), but the refusal gate failed in five of the six E7 captures and stays a known weakness
+("Launch configuration captured" and the E7 and k=30 entries below). The phase table in §9 has the per-phase end state.
+
+**Read this, then `CLAUDE.md` (house rules).** Do not read
 `RETRIEVAL_BAKEOFF.md` unless a task here sends you there — it documents a completed experiment
 whose conclusions are superseded by §1 below. Its results report and fixture spec are archived
 (`docs/ARCHIVED.md`).
@@ -255,8 +262,8 @@ capturing locators, so the protection is in place before any label exists.
 | role | model | why |
 |---|---|---|
 | **Fixture author** | Claude (this tooling, human-supervised) | One-time, non-reproducible work where a human checks every output. A CLI agent is the right surface. |
-| **Judge** | **`deepseek-v4-flash-0731`** on Fireworks — decided, §3a | Must not be Claude (it authored the fixtures) and must not be gpt-oss (it generates). |
-| **Generator** | `gpt-oss-120b` | The product. |
+| **Judge** | **`deepseek-v4p1-flash`** on Fireworks since 2026-09-25 (§3a chose `deepseek-v4-flash-0731`, which Fireworks then withdrew; "Judge replacement calibration" in §9) | Must not be Claude (it authored the fixtures) and must not be the generator. |
+| **Generator** | `glm-5p3-flash` at reasoning low since 2026-09-26 (`gpt-oss-120b` before; "Stronger answer models on gold context" in §9) | The product. |
 
 **The judge must be called through an API, never through a CLI.** A judge is an instrument: it
 needs a pinned model id, `temperature: 0`, an enforced JSON schema, and per-call usage accounting.
@@ -721,7 +728,11 @@ The 2026-09-21 re-OCR changed the EPA SOP's text and all 12 of its chunk ids aft
 
 ---
 
-## 9. Repo state (2026-09-02)
+## 9. Repo state (2026-09-02) and phase status (2026-09-28)
+
+The bullets below are the 2026-09-02 snapshot; the phase table is current to 2026-09-28, and the
+dated entries after it are the record. The launch corpus is now 16 documents and 457 chunks
+(`documents/README.md`).
 
 - Branch `dev`, level with `origin/dev`. Working tree clean.
 - Corpus: **15 documents, 851,891 chars, 451 chunks** (re-ingested 2026-08-31 without the
@@ -745,12 +756,13 @@ The 2026-09-21 re-OCR changed the EPA SOP's text and all 12 of its chunk ids aft
 | 1b — question generation | ✅ 46 fixtures / 92 turns (superseded 2026-09-13: now 45 / 90) |
 | 1c — decontaminate | ✅ 22.8% document-level, 11.6% chunk-level, against the < 40% bar — **exit criterion 1 passes**. `eval/fixtures-wave1/_CONTAMINATION.md` |
 | 1d — human verification | ✅ **closed by user decision 2026-09-23, without human verification** - the agent-corrected set was accepted in its place and frozen at 45 / 90; see "Phase 1d decision and fixture freeze" below |
-| 1e — labels + hard negatives | 🟡 partial — `eval/retrieval-labels/` regenerated (**45 files**, `scripts/resolveRetrievalLabels.ts`), but provisional: flat grade 2, no hard negatives, per-fixture not per-turn. Adequate for the gold-context arm, which resolves every label at 100% offline; the remainder blocks Phase 4, not Phase 3 |
+| 1e — labels + hard negatives | 🟡 partial — `eval/retrieval-labels/` regenerated (**45 files**, `scripts/resolveRetrievalLabels.ts`), flat grade 2, no hard negatives. Per-turn labels followed on 2026-09-28 (`eval/retrieval-labels-per-turn/`, "Per-turn retrieval labels" below), but offline recall still does not rank arms the way captures do (Spearman 0.29), so paid captures remain the test; hard negatives were never added |
 | 2a — quote-based citations | 🟡 **demonstrated, not measured, 2026-09-13** — the prompt asks for `【n†"quote"】`, `formatContext` labels excerpts `【n】`, and `QUOTE_CITATION_PATTERN` accepts a non-dagger separator. A same-day smoke capture ($0.0075, `gpt-oss-120b`, gold-context arm, three runs) showed the closing-bracket and quote rules produce a non-zero quoted-citation rate (10/10 markers closed correctly across two runs; 4/4 citations quoted in one answer, 1 supported and 3 too short) — a smoke check, not the Phase 2 STOP block's measured rate |
 | 2b — repoint the judge | ✅ done 2026-09-02 |
-| 2c — re-calibrate | ⬜ needs captured answers to grade — see the sequencing note below |
+| 2c — re-calibrate | ✅ 2026-09-24/25: correctness kappa 0.849 on the 32 tuned rows and 0.25 on 12 held-out rows (exact agreement 75%); the ungrounded count stays weak (kappa 0.23), so ungrounded rates are indicative only. The replacement judge `deepseek-v4p1-flash` met the same bar ("Calibration packet (2c)", "Held-out calibration check", "Judge replacement calibration") |
 | 3 — generation baseline | 🟡 **re-captured 2026-09-23 on the frozen set** (run `p3-2026-09-23`, below): gold context 1.01 correctness and 47.8% ungrounded, `hybrid-slice-vector` 0.52 and 59.6%, Tier 1 failing on both; iteration 1 (four prompt rules, `DEFAULT_TOP_K` 10) is committed at `22d6dd0` and not yet measured. The 2026-09-14 capture predates the corrections and two prompt edits, and no longer counts |
-| 4 — retrieval | ⬜ |
+| 3, end state | ✅ the gold-context ceiling clears the 1.30 floor only with `glm-5p3-flash` (1.33 / 1.34, 2026-09-26; `gpt-oss-120b` scored 1.10) |
+| 4 — retrieval | ✅ decided 2026-09-27: `local-vector` k=20 with both query rewrites, no reranker ("Launch configuration captured"). Correctness about 1.16, under the floor; gold plus retrieval (1.33) shows the gap is passages retrieval misses, and k=30 was not adopted ("`local-vector` k=30: results") |
 
 **Sequencing — SETTLED 2026-09-09: Phase 3 runs before 2c.** 2c grades 30 stratified rows, and
 grading needs captured answers that only Phase 3 produces. One capture (~$0.02–0.05) therefore

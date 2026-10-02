@@ -3,23 +3,25 @@
 Chunk-level relevance judgements for every user turn, so retrieval quality can be measured offline,
 deterministically, in seconds, with no LLM in the loop.
 
-> **Status 2026-09-13 — Phase 1e has refilled the label set, provisionally.** The 48 files
+> **Status 2026-09-28: Phase 1e refilled the label set; it stays provisional.** The 48 files
 > described below were archived under the tag `eval-archive-2026-09-01`
-> ([`ARCHIVED.md`](ARCHIVED.md)). `eval/retrieval-labels/` now holds **45 files**, one per wave-1
-> fixture, built by `scripts/resolveRetrievalLabels.ts` — but they remain provisional: flat grade
-> 2, no hard negatives, per-fixture rather than per-turn. Adequate for the gold-context arm, which
-> resolves every label at 100% offline; the gaps below still block Phase 4, not Phase 3.
+> ([`ARCHIVED.md`](ARCHIVED.md)). `eval/retrieval-labels/` holds **45 files**, one per wave-1
+> fixture, built by `scripts/resolveRetrievalLabels.ts`: flat grade 2, no hard negatives,
+> fixture-wide. Per-turn labels followed on 2026-09-28 (`eval/retrieval-labels-per-turn/`, from
+> `eval/turn-claims/`), plus labels for the long-conversation set. Neither set makes offline recall
+> rank arms the way paid captures do (Spearman 0.29 on both), so captures remain the test
+> (`EVAL_REBUILD.md`, "Per-turn retrieval labels").
 >
 > **What Phase 1e still owes**, and why the old set could not simply be re-pointed:
 >
-> - The corpus is now **446 chunks** across 14 documents (the operator source-of-truth document
->   was removed 2026-09-13 when its ranges were vetoed; before that it was 451 chunks across 15
->   documents, re-ingested 2026-08-31 without the alpha-ratio filter). Chunk ids are
->   content-derived, so removing a document only drops its own chunks' labels, never renumbers the
->   rest.
+> - The corpus is now **457 chunks** across 16 documents (`documents/README.md`); the 11 chunks
+>   added 2026-09-27 (plan E7) carry claims in `eval/claims/` but no wave 1 fixture names them.
+>   Before that it was 446 chunks across 14 documents, after the operator source-of-truth document
+>   was removed 2026-09-13. Chunk ids are content-derived, so adding or removing a document only
+>   adds or drops its own chunks' labels, never renumbers the rest.
 > - Each label must carry a **human locator** (document + section + short quote) alongside the
 >   chunk hash, so a future re-chunk can re-resolve it instead of voiding it.
-> - **Do not assume "source chunk = the only relevant chunk."** With 400-char overlap across 14
+> - **Do not assume "source chunk = the only relevant chunk."** With 400-char overlap across 16
 >   documents covering six overlapping metrics, labelling only the source produces false negatives
 >   in ground truth. Run a separate pass over candidates.
 > - Salt in **hard negatives** — the wrong probe's datasheet, the right metric in the wrong water

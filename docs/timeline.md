@@ -62,9 +62,10 @@ Two things to keep straight about this track:
   under the same prompt, model and fixtures. Phase 4 of `EVAL_REBUILD.md` captures every arm fresh
   against the gold-context ceiling for exactly that reason.
 - **It was built and swept, then superseded.** The arms were captured on `gpt-oss-20b`, a
-  placeholder model, against a fixture set archived on 2026-09-01. The eval is being rebuilt
-  ([`EVAL_REBUILD.md`](EVAL_REBUILD.md)), every arm is unranked until its Phase 4 re-measures them,
-  and the current state is in "Eval rebuild — 2026-09-01" below.
+  placeholder model, against a fixture set archived on 2026-09-01. The rebuilt eval
+  ([`EVAL_REBUILD.md`](EVAL_REBUILD.md)) re-measured retrieval on the new set, and launch retrieval
+  was settled on 2026-09-27: `local-vector` k=20 with both query rewrites, no reranker (decision
+  table in "Eval rebuild — 2026-09-01" below).
 
 ### Corpus scoped to what the DataPod measures (2026-07-29)
 
@@ -790,9 +791,11 @@ conversations that survive a page reload.*
    read through the backend device API with the caller's token. **Resolved 2026-09-13 (◆G3):** no
    document or system-prompt range is authoritative — the registry threshold is. See ◆G3.
 3. **Site/device metadata** — coordinates, water-body type, client/contract, calibration dates.
-4. **Reference corpus** — **14 active docs since 2026-09-13** (4 Atlas Scientific probe datasheets,
-   the 9-chapter USGS National Field Manual A6 set, and 1 EPA field-calibration SOP); **840,413
-   chars / 446 chunks** since the 2026-09-21 re-OCR (840,327 before it). Was 15 docs / 851,891 chars / 451 chunks before the operator
+4. **Reference corpus** — **16 active docs since 2026-09-27** (4 Atlas Scientific probe datasheets,
+   the 9-chapter USGS National Field Manual A6 set, 1 EPA field-calibration SOP, the Keyestudio
+   KS0414 turbidity sensor page and the CER v2 guidance excerpt); **864,321 chars / 457 chunks**
+   (`../documents/README.md`). From 2026-09-13 it was 14 docs, **840,413 chars / 446 chunks** since
+   the 2026-09-21 re-OCR (840,327 before it). Was 15 docs / 851,891 chars / 451 chunks before the operator
    source-of-truth document was removed when its ranges were vetoed (see "Eval rebuild" below) — the
    451 figure itself followed the 2026-08-31 alpha-ratio-filter reversal from an original 393 at the
    2026-08-24 trim. No public links. Breakdown, the USGS edition-currency check, and the two ingest
