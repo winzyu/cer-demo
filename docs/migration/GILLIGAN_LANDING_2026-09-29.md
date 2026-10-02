@@ -116,3 +116,9 @@ Before pushing, fetch and confirm `origin/develop` is still `a5b745e` and `d3b4a
    The first attempt (`00001`) failed only because a pasted multi-line command split after `--image`; the container refused to start without `CER_RAG_SERVICE_KEY`, as designed.
    Checks: runs as `cer-gilligan-runtime`, image `sha256:1d2c0bc1c5f4`, Fireworks `:2` and service key `:1` from Secret Manager, 1 CPU, 1 GiB, concurrency 8, 0-1 instances; anonymous 403 before B1; `/health` 200 with the user's identity token; `/api/v1/chat` 401 `service_key_invalid` without the key; startup log clean on database `gilligan`.
    The deploy's "Setting IAM policy failed" warning is expected: `--no-allow-unauthenticated` tries to remove an `allUsers` binding the user cannot edit, and none existed.
+7. B1 check, 2026-10-01 (read-only): `cer-gilligan`'s IAM policy has no bindings, and anonymous `/health` and `/api/v1/chat` both get Cloud Run's 403, so B1 is not done yet.
+8. L6 images, 2026-10-01, built locally with `docker build --no-cache --pull` from clean detached worktrees (`worktrees/build-cer-api-122136d`, `worktrees/build-cer-ui-fc13d16`; scan and `git status` empty):
+   - cer-api `122136d`: image `gcr.io/conductive-fold-343604/cer-api:122136d`, local id `sha256:393ff60d0e73`, not pushed.
+     It boots with dummy settings on the emulator project `demo-cer-mirror` and no credentials; `/` returns 200 and an unauthenticated `/api/v1/users/all` returns 401.
+   - cer-ui `fc13d16`: a rehearsal image `cer-ui-rehearsal:fc13d16` with empty browser keys builds (CER's existing lint warnings only) and serves `/login` and `/gilligan` with 200; it must not be pushed.
+     The release image is rebuilt with Michael's live Stripe publishable key and two map keys as `gcr.io/conductive-fold-343604/cer-ui:fc13d16`.
