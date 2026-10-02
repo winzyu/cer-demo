@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Timeline</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1f2328;--muted:#5d6670;--card:#ffffff;--line:#e3e0d8;--accent:#1d6f5f;--accent-soft:#e3f1ec;--warn:#9a5b00;--warn-soft:#fbefd9;--bad:#a63d32;--bad-soft:#f8e4e1;--git:#4b55a8;--git-soft:#e8eaf7;--bar:#9fcabc}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15181b;--fg:#e6e8ea;--muted:#9aa3ab;--card:#1d2125;--line:#30363c;--accent:#5cc3a8;--accent-soft:#183029;--warn:#e0a54a;--warn-soft:#33281a;--bad:#ec8a7e;--bad-soft:#3a201d;--git:#9aa4f2;--git-soft:#22253d;--bar:#2f6f5f}}
+:root[data-theme="dark"]{--bg:#15181b;--fg:#e6e8ea;--muted:#9aa3ab;--card:#1d2125;--line:#30363c;--accent:#5cc3a8;--accent-soft:#183029;--warn:#e0a54a;--warn-soft:#33281a;--bad:#ec8a7e;--bad-soft:#3a201d;--git:#9aa4f2;--git-soft:#22253d;--bar:#2f6f5f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:880px;margin:0 auto;padding:32px 16px 72px}
+h1{font-size:1.9rem;margin:0 0 4px}
+h2{font-size:1.35rem;margin:48px 0 4px;padding-top:12px;border-top:1px solid var(--line)}
+h3{font-size:1.05rem;margin:22px 0 6px}
+.sub,.dates{color:var(--muted)}
+.sub{margin:0 0 24px}
+.dates{margin:0 0 12px;font-size:.92rem}
+a{color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--accent-soft);padding:1px 4px;border-radius:4px}
+pre{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;font-size:.85rem;line-height:1.5}
+pre code{background:none;padding:0}
+.box{border-radius:8px;padding:12px 16px;margin:14px 0;border:1px solid var(--line);background:var(--card)}
+.box.knew{border-left:4px solid var(--muted)}
+.box.cost{border-left:4px solid var(--warn);background:var(--warn-soft);border-color:transparent}
+.box.lesson{border-left:4px solid var(--accent);background:var(--accent-soft);border-color:transparent}
+.box.waste{border-left:4px solid var(--bad);background:var(--bad-soft);border-color:transparent}
+.box.git{border-left:4px solid var(--git);background:var(--git-soft);border-color:transparent}
+.box h4{margin:0 0 6px;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.box p{margin:6px 0}
+.box ul{margin:6px 0;padding-left:20px}
+nav.toc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 18px;margin:20px 0}
+nav.toc ol{margin:6px 0;padding-left:22px}
+table{width:100%;border-collapse:collapse;font-size:.92rem;margin:10px 0}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:.82rem}
+.weeks{display:grid;grid-template-columns:repeat(15,1fr);gap:4px;align-items:end;height:140px;margin:14px 0 4px}
+.weeks div{background:var(--bar);border-radius:3px 3px 0 0;position:relative;min-height:2px}
+.weeks div span{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:.7rem;color:var(--muted)}
+.wlabels{display:grid;grid-template-columns:repeat(15,1fr);gap:4px;font-size:.62rem;color:var(--muted);text-align:center}
+details{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;margin:10px 0}
+summary{cursor:pointer;font-weight:600}
+dl{margin:0}
+dt{font-weight:600;margin-top:10px}
+dd{margin:2px 0 0 0;color:var(--fg)}
+.q li{margin:6px 0}
+@media (max-width:600px){.wlabels{font-size:.5rem}.weeks div span{font-size:.55rem}}
+</style>
+</head>
+<body>
+<main>
+<p><a href="index.html">Course home</a></p>
+<h1>The project timeline</h1>
+<p class="sub">From a Python prototype (2026-05-15) to a deployed AI assistant (2026-10-01). It is told in seven eras, and each era says what happened, what the team knew at the time, what it cost, how git was used, and the lesson for next time.</p>
+
+<div class="box knew">
+<h4>The project in one paragraph</h4>
+<p>Clean Earth Rovers (CER) sells water-quality sensor pods ("DataPods") that measure six things: temperature, dissolved oxygen (DO), ORP, conductivity, pH and turbidity. Its customer dashboard had an assistant called <strong>Gilligan</strong>. This repository, <code>cer-demo</code>, is a new Gilligan "brain". It answers questions using two sources: a library of water-science documents (via <em>retrieval</em>), and live sensor readings (via <em>tools</em>). It also writes PDF reports. Most of the hard engineering went into <strong>evaluation</strong>, which means proving with numbers that the answers are correct and grounded in sources.</p>
+</div>
+
+<nav class="toc">
+<strong>On this page</strong>
+<ol>
+<li><a href="#shape">The shape of the work</a></li>
+<li><a href="#e1">Era 1: The prototype (May 15 - Jul 16)</a></li>
+<li><a href="#e2">Era 2: The bake-off (Jul 28 - Aug 29)</a></li>
+<li><a href="#e3">Era 3: The reset (Aug 30 - Sep 2)</a></li>
+<li><a href="#e4">Era 4: Rebuilding the instruments (Sep 3 - Sep 16)</a></li>
+<li><a href="#e5">Era 5: The pivot and the incident (Sep 17 - Sep 22)</a></li>
+<li><a href="#e6">Era 6: The sprint (Sep 23 - Sep 28)</a></li>
+<li><a href="#e7">Era 7: Landing (Sep 29 - Oct 1)</a></li>
+<li><a href="#glossary">Glossary for this page</a></li>
+<li><a href="#check">Check-in questions</a></li>
+</ol>
+</nav>
+
+<h2 id="shape">The shape of the work</h2>
+<p>Commits per week, across every branch. The project barely moved for two months. It then built steadily through August and exploded in late September as the release approached.</p>
+<div class="weeks" aria-label="Commits per ISO week, weeks 20 to 40 of 2026">
+<div style="height:1%"><span>1</span></div><div style="height:1%"><span>2</span></div><div style="height:1%"><span>1</span></div><div style="height:1%"><span>3</span></div><div style="height:1%"><span>3</span></div><div style="height:12.6%"><span>34</span></div><div style="height:2.6%"><span>7</span></div><div style="height:8.5%"><span>23</span></div><div style="height:21.9%"><span>59</span></div><div style="height:19.6%"><span>53</span></div><div style="height:14.8%"><span>40</span></div><div style="height:8.9%"><span>24</span></div><div style="height:7.8%"><span>21</span></div><div style="height:100%"><span>270</span></div><div style="height:34.1%"><span>92</span></div>
+</div>
+<div class="wlabels"><span>May 11</span><span>May 18</span><span>Jun 22</span><span>Jul 6</span><span>Jul 13</span><span>Jul 27</span><span>Aug 3</span><span>Aug 10</span><span>Aug 17</span><span>Aug 24</span><span>Aug 31</span><span>Sep 7</span><span>Sep 14</span><span>Sep 21</span><span>Sep 28</span></div>
+<p class="dates">Weeks with no commits are left out. Labels are each week's Monday. Source: <code>git log --all --format='%ad' --date=format:'%G-W%V' | sort | uniq -c</code>.</p>
+
+<table>
+<tr><th>Fact</th><th>Value</th><th>Why it matters</th></tr>
+<tr><td>Commits on <code>dev</code> (excluding merges)</td><td>525, plus 96 merges</td><td>About 93% landed after Aug 1</td></tr>
+<tr><td>Commits that touched only docs</td><td>202 of 525 (38%)</td><td>The documentation habit is both a strength and a cost (see Era 4)</td></tr>
+<tr><td>Size today</td><td>21.4k lines of <code>src</code>, 19.7k of tests, 16.3k of docs</td><td>Tests nearly match the code, and the docs are three-quarters its size</td></tr>
+<tr><td>Tags</td><td>11 (9 archive or recovery, 2 work-in-progress)</td><td>Old material was removed from the tree but kept retrievable through git</td></tr>
+<tr><td>Branches, worktrees</td><td>45 local branches, 40 worktrees</td><td>Many parallel AI-agent sessions, each on its own branch</td></tr>
+</table>
+
+<!-- ============ ERA 1 ============ -->
+<h2 id="e1">Era 1: The prototype</h2>
+<p class="dates">2026-05-15 to 2026-07-16 · about 10 commits</p>
+<p>It started as one commit of 2,729 lines: a <strong>Python FastAPI</strong> backend, <strong>Postgres with pgvector</strong> for "hybrid RAG" (keyword plus vector search), Docker, tests and a static HTML page. Over the following weeks came setup instructions, a rule to refuse out-of-scope questions, and a timeline. Then little happened until July.</p>
+<p>In July the decisive question was gate <strong>◆G1, the target stack</strong>. Three options were weighed: (A) keep the Python demo, (B) a hybrid, or (C) port everything to <strong>Node/Express + Firestore</strong> so it matched CER's existing server and dashboard. <strong>C was chosen.</strong> On Jul 12 the team reverse-engineered coding conventions from CER's two repositories. On Jul 16 it deleted the Python backend and scaffolded the new TypeScript service.</p>
+
+<div class="box knew"><h4>What we knew then</h4>
+<p>The product had to live inside CER's stack, which is JavaScript and Firestore on Google Cloud. A Python service with Postgres would have been a second stack for CER's team to run. Nobody yet knew whether RAG was even the right approach for this corpus.</p></div>
+
+<div class="box lesson"><h4>Lesson</h4>
+<ul>
+<li><strong>Good:</strong> the team chose the stack by asking who has to operate it. That is the right question for a small company.</li>
+<li><strong>Good:</strong> before deleting the Python code, its behaviour was written down in <code>docs/migration/MIGRATION_SPEC.md</code>, so no logic was lost in the port.</li>
+<li><strong>Next time:</strong> settle the deployment target in week one. The prototype showed the idea worked, but nearly all of its code was thrown away.</li>
+</ul></div>
+
+<div class="box git"><h4>Git lens: commits that tell a story</h4>
+<p>The first commit, <code>init baseline: docker + fastAPI + hybrid RAG + tests</code>, holds 23 files at once. Big-bang commits like that are normal for an import, but you can't review them, and later <code>git blame</code> points every line at one useless commit.</p>
+<p>The Jul 16 migration was done well. It used three separate commits: remove the legacy code, scaffold the new service, write the docs. Splitting work like this lets you revert one part without undoing the rest.</p>
+<pre><code># See any commit's files without checking it out
+git show --stat $(git rev-list --max-parents=0 dev)   # the very first commit
+git log --reverse --format='%ad %s' --date=short | head  # history, oldest first</code></pre>
+<p><strong>Best practice:</strong> one logical change per commit, and a subject that says what changed. The early messages (<code>added: set up instructions</code>) later gave way to a better style (<code>feat(retrieval): add firestore-direct adapter…</code>, and later plain sentences such as <code>Default the alpha-ratio filter off so the corpus cannot silently re-filter</code>). The last style is the most useful, because the subject explains <em>why</em>.</p></div>
+
+<!-- ============ ERA 2 ============ -->
+<h2 id="e2">Era 2: The bake-off</h2>
+<p class="dates">2026-07-28 to 2026-08-29 · about 170 commits</p>
+<p>The big open question was <strong>◆G7: how should the model get the documents?</strong> There were two families:</p>
+<ul>
+<li><strong>Direct-feed:</strong> paste source text straight into the prompt. Simple, but every question pays for a lot of input tokens.</li>
+<li><strong>RAG (retrieval-augmented generation):</strong> cut the documents into chunks, turn each chunk into an <em>embedding</em> (a list of numbers that captures meaning), search for the chunks closest to the question, and send only those. Each question is cheaper, but there are fixed costs for indexing.</li>
+</ul>
+<p>Rather than argue, the team <strong>measured</strong> it, which was the right instinct. The work built:</p>
+<ul>
+<li>a retrieval interface with swappable "arms": <code>firestore-direct</code>, <code>pgvector-rag</code>, <code>firestore-vector</code>, and later <code>local-vector</code> and hybrids</li>
+<li>a capture runner that records every answer with its exact context, token counts and timing</li>
+<li>a cost model with a break-even curve</li>
+<li>blind human grading packets</li>
+<li>an offline retrieval harness</li>
+<li>on Aug 26, a <strong>Tier 2 LLM judge</strong>: a second model that grades answers</li>
+</ul>
+<p>The product grew at the same time: a sensor tool reading live pods through CER's device API (Aug 11-16), the demo frontend (Aug 18-19), report generation (Aug 20, merged from a collaborator's pull request), a usage quota (Aug 21), and a corpus expanded to 18 documents and trimmed to 15.</p>
+<p>On Aug 26, ◆G7 was <strong>split</strong>. The retrieval half was "closed" on <code>firestore-direct</code>, and the quality floor was re-filed as a deploy blocker.</p>
+
+<div class="box knew"><h4>What we knew then</h4>
+<p>The numbers looked meaningful: three arms, two passes each, priced and graded. The comparison seemed to show that extra chunks <em>dilute</em> answers. What the team didn't fully take in was that every capture used <strong><code>gpt-oss-20b</code>, a placeholder model</strong>, and that 53-59% of its answers contained an ungrounded claim.</p></div>
+
+<div class="box waste"><h4>Where time was wasted (blunt)</h4>
+<ul>
+<li><strong>About 4-5 weeks of eval results were later discarded.</strong> All 224 transcripts and the grading packets were archived on Sep 1. The <em>instruments</em> survived: the runner, cost model, harness and judge. The <em>numbers</em> did not. In the bake-off doc's own words: "The instruments were kept; the numbers were not."</li>
+<li><strong>The order of measurement was wrong.</strong> Retrieval arms were compared while the generator was broken. If the model ignores its sources half the time, a better retriever can't show up in the scores. A <em>gold-context</em> arm (give the model exactly the right passages, to measure its ceiling) would have exposed this in a day. It wasn't built until Sep 9.</li>
+<li><strong>The question set couldn't test retrieval.</strong> 27 of its 30 fixtures were answerable from 4.4% of the corpus, and the whole "deep in the manual" class had 3 questions. A mean over 3 samples on a 0-2 scale has a standard error of about 0.43, which is too noisy to conclude anything.</li>
+<li><strong>Over-control caused a deadlock.</strong> The system prompt was pinned so that arms stayed comparable, which meant generation quality couldn't be improved without voiding the captures. Splitting the gate was a way out, but it recorded a provisional result as "CLOSED".</li>
+</ul></div>
+
+<div class="box lesson"><h4>Lesson for an ML engineer</h4>
+<ul>
+<li><strong>Measure the ceiling before comparing components.</strong> Fix or bound generation first, then compare retrieval.</li>
+<li><strong>Evaluate on the model you will ship.</strong> Results on a stand-in model rarely transfer.</li>
+<li><strong>Size the eval set for the decision.</strong> Work out the noise (standard error) per class before trusting class means.</li>
+<li><strong>Good:</strong> setting pass/fail thresholds <em>before</em> running anything (Jul 30: "fix the quality floor and latency ceiling before any arm runs") is real scientific discipline, and it carried into the rebuild.</li>
+</ul></div>
+
+<div class="box git"><h4>Git lens: evidence in git, pull requests, and the pickaxe</h4>
+<p>Transcripts were committed as data (<code>test(eval): add bake-off sweep transcripts, 3 arms x 2 passes</code>). That's unusual and deliberate. A captured model answer can't be reproduced exactly, so git is the lab notebook.</p>
+<p>The only pull requests in the history (#1-#4, Aug 20) brought in the report generator from a collaborator. After that, work went to <code>dev</code> directly or through local merges. For a team, PRs are the review point; for a solo project driven by agents, the review happened in chat instead.</p>
+<p><strong>Useful trick, the pickaxe <code>-S</code>:</strong> it finds the commits that added or removed a string. I used it in today's doc audit to find when env vars appeared:</p>
+<pre><code>git log --reverse -S"QUERY_REWRITE" --format='%h %ad %s' --date=short -- src | head -1
+# -> the commit that introduced QUERY_REWRITE (2026-09-26)</code></pre></div>
+
+<!-- ============ ERA 3 ============ -->
+<h2 id="e3">Era 3: The reset</h2>
+<p class="dates">2026-08-30 to 2026-09-02 · four days</p>
+<p>The team stopped and wrote <code>docs/EVAL_REBUILD.md</code>, which opens with three reasons the previous evaluation "produced a decision that does not hold up": the confounded comparison, the gate closed in the wrong order, and the placeholder model. A fourth problem was that the fixture set couldn't do its job. Then they rebuilt from scratch, in four steps:</p>
+<ol>
+<li><strong>Freeze chunking</strong> (Aug 31), because changing chunks invalidates every label.</li>
+<li><strong>Claim inventory</strong> (Sep 1): an agent read all 451 chunks and listed 2,250 factual claims they support, so questions could be written from what the corpus actually says.</li>
+<li><strong>Wave 1 fixtures</strong> (Sep 1): 46 conversations of 2 turns each, in seven classes (cross-document, deep-in-manual, definitional, follow-up, precedence, probe-calibration, refusal).</li>
+<li><strong>Decontamination</strong>: check that questions don't copy the source wording (22.8% document-level against a bar of under 40%). A question that copies its source chunk is trivially easy for search to find, so it inflates retrieval scores.</li>
+</ol>
+<p>It also chose the <strong>three model roles</strong>: Claude writes the fixtures, a different model family is the judge (<code>deepseek-v4-flash-0731</code>), and a third family generates answers. That way no model grades its own work.</p>
+
+<div class="box knew"><h4>What we knew then</h4>
+<p>By now the team knew the old numbers were unreliable. They didn't yet know which model would ship, or whether the corpus was right. Both changed later.</p></div>
+
+<div class="box lesson"><h4>Lesson</h4>
+<ul>
+<li><strong>Good:</strong> this is the most transferable moment in the project. The team admitted the eval was broken, wrote down exactly why, and rebuilt it with guards against each failure. Interviewers love this story, because most teams never admit it.</li>
+<li><strong>Good:</strong> the judge was chosen with evidence (agreement with human grades), and it's called through an API with a pinned model, temperature 0 and a JSON schema. It is never called through a chat CLI.</li>
+<li><strong>Next time:</strong> do this design work <em>first</em>. Almost none of it depended on the bake-off's results.</li>
+</ul></div>
+
+<div class="box git"><h4>Git lens: archive with tags, not with deletion</h4>
+<p>556 old eval files (about 20 MB) were removed from the working tree, but nothing was lost. The pattern (shown in general form below) is to tag the commit that still has them, delete them, and record the tag in <code>docs/ARCHIVED.md</code>. Later you can read any archived file without restoring it:</p>
+<pre><code>git tag eval-archive-2026-09-01            # bookmark the commit that still has the files
+git rm -r eval/transcripts eval/grading    # remove them from the tree
+git show eval-archive-2026-09-01:eval/grading/warm/scores.csv   # read one later</code></pre>
+<p>This repo has 9 archive or recovery tags. <strong>Trade-off:</strong> the files stay in git history forever, so the clone doesn't shrink. That's fine at 20 MB, but large binary data belongs in object storage or Git LFS.</p></div>
+
+<!-- ============ ERA 4 ============ -->
+<h2 id="e4">Era 4: Rebuilding the instruments</h2>
+<p class="dates">2026-09-03 to 2026-09-16 · about 80 commits</p>
+<ul>
+<li><strong>Sep 9:</strong> the <em>refusal gate</em> now reads a fixture flag instead of guessing from rubric text. Labels are resolved from the claim inventory. The <strong>gold-context arm</strong> is added; this is the ceiling measurement that was missing in Era 2.</li>
+<li><strong>Sep 10:</strong> a meeting with the operator (CER) brought turbidity clarity bands and an audit log of every answer.</li>
+<li><strong>Sep 13, a big day:</strong>
+  <ul>
+  <li>The operator's "source of truth" document was <strong>removed from the corpus</strong> and the prompt's range table deleted, because the ranges were vetoed. Pod limits now come from each pod's own registry settings through a tool.</li>
+  <li><strong>Quote-carrying citations</strong> arrived: the model must cite as <code>【n†"quote"】</code>, so a gate can check the quote really appears in excerpt n.</li>
+  <li>The fixture set became 45 conversations and 90 turns.</li>
+  <li>Dated hand-off documents were replaced by one living <code>docs/STATUS.md</code>.</li>
+  </ul></li>
+<li><strong>Sep 13-16:</strong> git and delegation rules were turned into project <em>skills</em>. The demo frontend was made to match the real dashboard, and starter prompts were removed.</li>
+</ul>
+
+<div class="box knew"><h4>What we knew then</h4>
+<p>The eval had its instruments back but no fresh baseline. The first post-rebuild capture (Sep 14) was later voided because the fixtures and prompt kept changing under it.</p></div>
+
+<div class="box waste"><h4>Where time was wasted (blunt)</h4>
+<ul>
+<li><strong>Documentation overhead.</strong> 38% of all commits touch only docs. STATUS alone was rewritten 44 times. Dated hand-offs were written and then archived in batches (Aug 30, Sep 13, Sep 23). For an AI-agent workflow, docs are working memory between sessions, so some of this is necessary. Much of it, though, re-described state that git already records.</li>
+<li><strong>Corpus churn.</strong> The corpus went from 8 documents to 18, then 15, then 14 (Sep 13), then 16 (Sep 27). Every change risks invalidating labels and captures. Settling with the domain expert which sources are authoritative before building labels would have saved several re-ingest cycles.</li>
+</ul></div>
+
+<div class="box lesson"><h4>Lesson</h4>
+<ul>
+<li><strong>Good:</strong> making citations checkable by machine (quote plus excerpt id) turns "is this grounded?" from opinion into a test.</li>
+<li><strong>Good:</strong> moving numeric thresholds out of the prompt and into per-pod data is the right design. The prompt shouldn't hard-code facts that differ per customer.</li>
+<li><strong>Next time:</strong> one living status file from day one, and keep it short.</li>
+</ul></div>
+
+<div class="box git"><h4>Git lens: guardrails for agents</h4>
+<p>On Sep 13 the git rules moved into a <code>git-plan</code> skill. Agents may run reversible git commands freely, but must ask before anything irreversible: <code>reset --hard</code>, <code>push --force</code>, <code>branch -D</code>, <code>clean -f</code>. That split is a good rule for humans too.</p>
+<pre><code>git merge --ff-only feature   # refuses unless it's a pure fast-forward: no surprise merge commits
+git branch -d feature         # lowercase -d refuses to delete unmerged work; -D forces it
+git add path/one path/two     # stage explicit paths, never "git add -A" in a shared tree</code></pre></div>
+
+<!-- ============ ERA 5 ============ -->
+<h2 id="e5">Era 5: The pivot and the incident</h2>
+<p class="dates">2026-09-17 to 2026-09-22</p>
+<p><strong>Sep 17: the goal changed.</strong> The driving track became the <strong>Gilligan release</strong>: replace the dashboard's assistant with this service by Sep 30. The architecture, roadmap (R1-R3) and decisions D1-D12 were written up, and questions went to the supervisor.</p>
+<p><strong>Sep 19: the security incident.</strong> CER's own upstream repositories had malware committed into tooling config files. It was obfuscated JavaScript placed after several hundred spaces on the same line, so it was invisible in editors and GitHub diffs. It runs automatically on <code>next dev</code>, <code>next build</code> and <code>npm test</code>. It ran on the developer machine and stole credentials. The machine was wiped and rebuilt. cer-demo itself was never infected (verified twice).</p>
+<p><strong>Sep 21-22: recovery.</strong> About 12 commits from Sep 17-19 had been committed but never pushed, and were lost with the wipe. They were rebuilt from saved agent session transcripts (tag <code>old-machine-recovery-2026-09-19</code>). The corpus PDFs were re-sourced, and the OCR cache for one scanned document was regenerated, which moved 12 chunk ids.</p>
+
+<div class="box cost"><h4>What it cost</h4>
+<p>Roughly 3-4 days of recovery work in the most time-critical fortnight, plus key rotation. The permanent residue is in every <code>CLAUDE.md</code> and STATUS file: never check out <code>main</code>/<code>develop</code> upstream, and scan after every fetch.</p></div>
+
+<div class="box lesson"><h4>Lesson</h4>
+<ul>
+<li><strong>Push often, even to a private branch.</strong> A commit that exists on one machine isn't backed up.</li>
+<li><strong>Treat third-party repos as untrusted code,</strong> even your employer's. Config files that tools load automatically (<code>jest.config.js</code>, <code>postcss.config.js</code>) run code without any install step.</li>
+<li><strong>Good:</strong> saved agent transcripts turned out to be a backup of the work itself. The incident write-up was reconstructed from them too.</li>
+</ul></div>
+
+<div class="box git"><h4>Git lens: hiding in plain sight</h4>
+<pre><code># the scan this project runs after any clone, fetch, pull or branch switch:
+grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .
+# lists any file with a run of 200+ spaces, which is where the payload hid
+
+git diff --ws-error-highlight=all   # shows whitespace in diffs
+git log --format='%h %an %ae %s' -- jest.config.js   # who last touched a config file?</code></pre>
+<p><strong>Best practice:</strong> review dependency and config changes as carefully as code. Protect <code>main</code> with required reviews, and use commit signing so you know who authored what.</p></div>
+
+<!-- ============ ERA 6 ============ -->
+<h2 id="e6">Era 6: The sprint</h2>
+<p class="dates">2026-09-23 to 2026-09-28 · 270 commits in one week</p>
+<p>The eval work (called <strong>R4</strong> in the release plan) ran in parallel with release engineering. The eval track went like this:</p>
+<table>
+<tr><th>Date</th><th>Step</th><th>Result</th></tr>
+<tr><td>Sep 23</td><td>Fixtures frozen at 45 / 90</td><td>Phase 1d (human verification) was skipped by decision; an agent-corrected set was accepted instead</td></tr>
+<tr><td>Sep 23</td><td>Phase 3 baseline</td><td>Gold context 1.01 correctness (floor 1.30), retrieval 0.52. Even perfect passages weren't enough with <code>gpt-oss-120b</code></td></tr>
+<tr><td>Sep 24-25</td><td>Judge calibration</td><td>Agreement with human grades: kappa 0.849 on the 32 rows used to tune it, but only 0.25 on 12 unseen rows (exact agreement 75%)</td></tr>
+<tr><td>Sep 25</td><td>Judge withdrawn</td><td>Fireworks stopped serving <code>deepseek-v4-flash-0731</code>. <code>deepseek-v4p1-flash</code> was re-checked against the same human grades for about $0.13 and passed</td></tr>
+<tr><td>Sep 26</td><td>Answer model switched</td><td><code>glm-5p3-flash</code> scored 1.33 / 1.34 on gold context against <code>gpt-oss-120b</code>'s 1.10. It was the first model to clear the floor</td></tr>
+<tr><td>Sep 27</td><td>Launch retrieval chosen</td><td><code>local-vector</code>, k=20, with query rewriting for follow-ups and first turns. Correctness about 1.16; every Tier 1 gate passed on that capture</td></tr>
+<tr><td>Sep 27</td><td>E7 corpus</td><td>Two new documents added (16 docs, 457 chunks). The refusal gate failed in 5 of 6 captures, including the control, so it's a model weakness, not a corpus effect</td></tr>
+<tr><td>Sep 28</td><td>Diagnosis</td><td>Gold plus retrieval scored 1.33, so the gap is <em>passages retrieval misses</em>, not distraction. Per-turn labels showed offline recall doesn't predict correctness (Spearman 0.29). k=30 wasn't adopted: a second capture fell inside the noise</td></tr>
+</table>
+<p>Release engineering ran alongside:</p>
+<ul>
+<li>supervisor answers on scope, limits and data policy</li>
+<li>a shared service key between CER's server and this service</li>
+<li>a Firestore usage store (20 messages, 5 reports and 1,000,000 tokens per user per day)</li>
+<li>pod-access rules for moved and merged pods</li>
+<li>a local Firestore "mirror" for testing without touching production</li>
+<li>a launch-issues checklist</li>
+</ul>
+
+<div class="box knew"><h4>What we knew then</h4>
+<p>The eval became a real decision tool here. Each experiment wrote down its decision rule <em>before</em> the capture. An example: "adopt k=30 only if the second capture scores at least 1.206 and the gates don't get worse". The numbers were then allowed to say no.</p></div>
+
+<div class="box cost"><h4>What it cost</h4>
+<p>Money was never the constraint. A full 90-turn capture cost about $0.20-0.35, and a judge pass $0.20-0.65. The R4 budget was a $30 ceiling (later raised by $10), and single experiments like k=30 cost about $1.18. The constraint was <strong>time and attention</strong>: 270 commits in a week, across many parallel agent chats.</p></div>
+
+<div class="box waste"><h4>Where time was wasted (blunt)</h4>
+<ul>
+<li><strong>The answer model was tested very late.</strong> The best single improvement in the project, switching to GLM (+0.23 on gold context), came on Sep 26, four days before the release date. A one-day model sweep on gold context in early September would have found it.</li>
+<li><strong>Grading drift.</strong> E4 and every E7 capture answered with the catalogue in the prompt, but the judge rebuilt the prompt without it. This was found on Sep 28, and those verdicts needed re-judging. The harness must grade exactly what the model saw.</li>
+<li><strong>Skipping human verification</strong> of the fixtures saved time, but left question quality resting on agent review alone. That's an honest trade-off under a deadline, and worth saying so in an interview.</li>
+</ul></div>
+
+<div class="box lesson"><h4>Lesson for an ML engineer</h4>
+<ul>
+<li><strong>Calibrate the judge on held-out rows.</strong> 0.849 on the tuning rows against 0.25 on unseen ones is classic overfitting of a prompt.</li>
+<li><strong>Pre-register decision rules.</strong> It stops you from cherry-picking the good run.</li>
+<li><strong>Check that your proxy metric predicts the real one</strong> before optimising it. Offline recall looked like a cheap stand-in for answer quality, and it wasn't.</li>
+<li><strong>Know your noise floor.</strong> Two captures of the same configuration differ by about 0.04-0.05. A "gain" smaller than that isn't a gain.</li>
+</ul></div>
+
+<div class="box git"><h4>Git lens: worktrees for parallel work</h4>
+<p>Many chats worked at once, each in its own <strong>worktree</strong>: a second checkout of the same repository on a different branch, in another folder, sharing one <code>.git</code>. There's no stashing or switching back and forth.</p>
+<pre><code>git worktree add ../wt-k30 -b eval/k30 dev   # new folder, new branch, cut from dev
+git worktree list                           # see them all (this repo has 40)
+git worktree remove ../wt-k30               # clean up after merging</code></pre>
+<p>Branch names carried intent (<code>feat/</code>, <code>fix/</code>, <code>docs/</code>, <code>eval/</code>, <code>task/</code>, <code>release/</code>), and a single coordinator chat merged into <code>dev</code>. <strong>The cost:</strong> 40 worktrees and 45 branches pile up, and STATUS spends lines listing which ones can be removed. <strong>Best practice:</strong> remove a worktree and delete its branch as soon as the branch merges.</p></div>
+
+<!-- ============ ERA 7 ============ -->
+<h2 id="e7">Era 7: Landing</h2>
+<p class="dates">2026-09-29 to 2026-10-01</p>
+<ul>
+<li><strong>Sep 29:</strong> Michael (CER) picked server commit <code>122136d</code> to ship. Some security fixes were deferred until after launch.</li>
+<li><strong>Sep 30:</strong> the release was merged into CER's <code>develop</code> branches in both upstream repositories and pushed with the user's consent. Release candidate <code>release/rc2</code> was cut and approved, and the full test suite passed (1,584 tests).</li>
+<li><strong>Oct 1:</strong> Cloud Build was refused for the user's account, so the image was built and tested locally in Docker, then deployed as <code>cer-gilligan</code> (step L5). It now waits on Michael for public access (B1), then a staged rollout (L6-L9).</li>
+</ul>
+
+<div class="box knew"><h4>Where it stands</h4>
+<p>The Sep 30 date slipped by a few days, but the service is deployed. Known weaknesses are recorded rather than hidden: correctness about 1.16 against a 1.30 floor, refusal wording varying between runs, and several medium-severity answer defects (see <code>docs/STATUS.md</code>, "Unfixed defects").</p></div>
+
+<div class="box lesson"><h4>Lesson</h4>
+<ul>
+<li><strong>Good:</strong> cutting scope to keep the date ("September 30 holds with reduced scope", Sep 24) and shipping with honest, documented limits.</li>
+<li><strong>Next time:</strong> confirm deploy permissions (Cloud Build, IAM grants) in the first week, not the last. Several launch blockers were access problems, not code problems.</li>
+</ul></div>
+
+<div class="box git"><h4>Git lens: commit IDs as release names</h4>
+<p>A short hash such as <code>122136d</code> names an exact snapshot that can't change, which branch names can't promise. Release candidates got branches (<code>release/rc1</code>, <code>release/rc2</code>), and the deploy image is tagged with the commit it was built from (<code>cer-gilligan:ddd6292</code>).</p>
+<pre><code>git branch --contains 4821679        # which branches include this commit?
+git merge-base --is-ancestor A B && echo "A is in B"
+git log --oneline release/rc2 ^dev   # commits on rc2 that dev lacks</code></pre>
+<p><strong>Best practice:</strong> push upstream only to new branches, and get consent before pushing to someone else's repository. This project followed both.</p></div>
+
+<!-- ============ GLOSSARY ============ -->
+<h2 id="glossary">Glossary for this page</h2>
+<details open><summary>ML and eval terms</summary>
+<dl>
+<dt>Token</dt><dd>The unit models read and bill by, roughly ¾ of a word. Cost is input tokens plus output tokens.</dd>
+<dt>Embedding</dt><dd>A list of numbers (here 768) representing a text's meaning. Similar meanings land close together.</dd>
+<dt>Chunk</dt><dd>A slice of a document (with overlap) small enough to embed and retrieve. This corpus has 457.</dd>
+<dt>RAG</dt><dd>Retrieval-augmented generation: search for relevant chunks, put them in the prompt, then answer. Like an open-book exam where you choose which pages to bring.</dd>
+<dt>k (top-k)</dt><dd>How many chunks retrieval returns. The launch uses 20.</dd>
+<dt>Gold context</dt><dd>An eval-only arm that gives the model exactly the right passages. It measures the best the generator can do.</dd>
+<dt>Fixture</dt><dd>One test conversation with its questions, rubric and labels.</dd>
+<dt>LLM judge</dt><dd>A different model that grades answers against a rubric. It has to be calibrated against human grades before you trust it.</dd>
+<dt>Cohen's kappa</dt><dd>Agreement between two graders after removing chance agreement. 1 is perfect, 0 is chance, and around 0.8 or above is strong.</dd>
+<dt>Recall</dt><dd>The share of the needed passages that retrieval actually found.</dd>
+<dt>Spearman correlation</dt><dd>Whether two rankings agree (1 means identical order). 0.29 is weak.</dd>
+<dt>Contamination</dt><dd>Test questions that leak the answer's wording, which makes scores look better than they are.</dd>
+</dl>
+</details>
+
+<!-- ============ CHECK-IN ============ -->
+<h2 id="check">Check-in questions</h2>
+<p>Answer these in chat in your own words. There are no trick questions.</p>
+<ol class="q">
+<li>The bake-off compared retrieval arms carefully, with fixed thresholds and blind grading. Why were its conclusions still thrown away? Name the single measurement that would have exposed the problem early.</li>
+<li>The judge agreed with humans at kappa 0.849 on some rows and 0.25 on others. What's the difference between those rows, and which number should you report?</li>
+<li>Offline recall said the reranker was best, but captured answers said it was worse. What does that teach you about proxy metrics?</li>
+<li>Why archive old files with a tag instead of just deleting them? What's the trade-off?</li>
+<li>About 12 commits were lost in the machine wipe. Which single git habit would have prevented it?</li>
+</ol>
+
+<div class="box lesson"><h4>Lessons collected so far (feeds module 10)</h4>
+<ul>
+<li>Measure the generator's ceiling before comparing retrievers.</li>
+<li>Evaluate on the model you'll ship; run a model sweep early.</li>
+<li>Size the eval set so each class can support a conclusion.</li>
+<li>Pre-register decision rules; know the run-to-run noise.</li>
+<li>Calibrate judges on held-out data; check proxies against the real metric.</li>
+<li>Settle the corpus with the domain expert before building labels.</li>
+<li>Confirm deploy access early.</li>
+<li>Push often; treat upstream code as untrusted.</li>
+<li>Keep one short living status doc; let git hold history.</li>
+</ul>
+</div>
+</main>
+</body>
+</html>

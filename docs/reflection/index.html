@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CER Reflection Course</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1f2328;--muted:#5d6670;--card:#ffffff;--line:#e3e0d8;--accent:#1d6f5f;--accent-soft:#e3f1ec;--warn:#9a5b00;--warn-soft:#fbefd9}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15181b;--fg:#e6e8ea;--muted:#9aa3ab;--card:#1d2125;--line:#30363c;--accent:#5cc3a8;--accent-soft:#183029;--warn:#e0a54a;--warn-soft:#33281a}}
+:root[data-theme="dark"]{--bg:#15181b;--fg:#e6e8ea;--muted:#9aa3ab;--card:#1d2125;--line:#30363c;--accent:#5cc3a8;--accent-soft:#183029;--warn:#e0a54a;--warn-soft:#33281a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:860px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:1.9rem;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 28px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.85rem;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+.tag{display:inline-block;font-size:.75rem;padding:1px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.todo{background:var(--warn-soft);color:var(--warn)}
+a{color:var(--accent)}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin:20px 0}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
+@media (max-width:600px){th:nth-child(3),td:nth-child(3){display:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>CER Reflection Course</h1>
+<p class="sub">Learning the cer-demo codebase from the ground up, with the eval work at the centre. Built on branch <code>reflection</code>, starting 2026-10-02.</p>
+
+<div class="box">
+<strong>How each module works.</strong> Read the page, then we walk through it in chat. Every module ends with check-in questions and a "lessons" box. The lessons feed the final retrospective (module 10). Each module also has a <em>git lens</em> covering how git was used at that stage, which commands help, and what best practice looks like.
+</div>
+
+<table>
+<thead><tr><th>#</th><th>Module</th><th>Covers</th><th>State</th></tr></thead>
+<tbody>
+<tr><td>T</td><td><a href="00-timeline.html">The timeline</a></td><td>May 15 to Oct 1 in seven eras: what happened, what was known then, what it cost, and the git lens for each era</td><td><span class="tag">ready</span></td></tr>
+<tr><td>0</td><td>The map</td><td>What Gilligan does, who uses it, and one question traced end to end</td><td><span class="tag todo">next</span></td></tr>
+<tr><td>1</td><td>LLM basics through this code</td><td>Prompts, system messages, context windows, tokens and cost, choosing a model</td><td><span class="tag todo">planned</span></td></tr>
+<tr><td>2</td><td>Retrieval</td><td>Chunking, embeddings, hybrid search, the direct-feed vs RAG bake-off</td><td><span class="tag todo">planned</span></td></tr>
+<tr><td>3</td><td>Live data and tools</td><td>Sensor tools, plausibility checks, report generation</td><td><span class="tag todo">planned</span></td></tr>
+<tr><td>4</td><td>Eval I: why</td><td>Why the first eval was thrown out, sizing, waves, contamination</td><td><span class="tag todo">planned</span></td></tr>
+<tr><td>5</td><td>Eval II: retrieval eval</td><td>Labels, recall@k, per-turn labels, why offline recall failed as a screen</td><td><span class="tag todo">planned</span></td></tr>
+<tr><td>6</td><td>Eval III: grading answers</td><td>Claims, citations, gates, LLM-as-judge, calibration, kappa</td><td><span class="tag todo">planned</span></td></tr>
+<tr><td>7</td><td>Eval IV: running it</td><td>Transcripts, grading packets, decision rules, cost; one small paid rerun</td><td><span class="tag todo">planned</span></td></tr>
+<tr><td>8</td><td>Production</td><td>Node and Firestore migration, the security incident, the mirror, deployment</td><td><span class="tag todo">planned</span></td></tr>
+<tr><td>9</td><td>The process</td><td>Agent-driven development, the docs system, parallel chats, git workflow in depth</td><td><span class="tag todo">planned</span></td></tr>
+<tr><td>10</td><td>Retrospective and playbook</td><td>Each detour with its cost and the early signal that would have caught it; a "day one next time" checklist</td><td><span class="tag todo">planned</span></td></tr>
+<tr><td>11</td><td>Interview kit</td><td>2-minute and 10-minute versions of the pitch, likely panel questions, explaining the eval design</td><td><span class="tag todo">planned</span></td></tr>
+</tbody>
+</table>
+</main>
+</body>
+</html>
