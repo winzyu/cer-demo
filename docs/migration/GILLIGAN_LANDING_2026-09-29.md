@@ -122,3 +122,4 @@ Before pushing, fetch and confirm `origin/develop` is still `a5b745e` and `d3b4a
      It boots with dummy settings on the emulator project `demo-cer-mirror` and no credentials; `/` returns 200 and an unauthenticated `/api/v1/users/all` returns 401.
    - cer-ui `fc13d16`: a rehearsal image `cer-ui-rehearsal:fc13d16` with empty browser keys builds (CER's existing lint warnings only) and serves `/login` and `/gilligan` with 200; it must not be pushed.
      The release image is rebuilt with Michael's live Stripe publishable key and two map keys as `gcr.io/conductive-fold-343604/cer-ui:fc13d16`.
+9. B1 confirmed, 2026-10-02 (read-only), after Michael's grant: `cer-gilligan`'s policy binds `allUsers` to `roles/run.invoker`; anonymous `/health` returns 200 (`status: ok`, Fireworks and Firestore configured) and `/api/v1/chat` without the key returns 401 `service_key_invalid`.
