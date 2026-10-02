@@ -61,7 +61,7 @@ Still open:
 | input | value |
 |---|---|
 | Service key secret version | `[FILL: version]`; readable by `cer-gilligan-runtime` and the default compute account |
-| Fireworks secret version for the demo (cer-demo key) | `[FILL: version]` |
+| Fireworks secret version for the demo (cer-demo key) | `2` (added 2026-10-01) |
 | Fireworks secret version after S5 (CER's key) | `[FILL: version]` |
 | Whether an organization policy allows unauthenticated invocation of `cer-gilligan` | `[FILL: checked by Michael]` |
 | Dashboard build keys (`_STRIPE_KEY`, `_HERE_MAP_API`, `_GOOGLE_MAP_API`) | `[FILL: read from the live cer-ui service, §3.4]` |
@@ -329,7 +329,7 @@ gcloud run deploy cer-gilligan \
   --image=gcr.io/conductive-fold-343604/cer-gilligan@sha256:[FILL] \
   --service-account=cer-gilligan-runtime@conductive-fold-343604.iam.gserviceaccount.com \
   --env-vars-file=$HOME/release/cer-gilligan.env.yaml \
-  --set-secrets=FIREWORKS_API_KEY=cer-gilligan-fireworks-api-key:[FILL],CER_RAG_SERVICE_KEY=cer-gilligan-service-key:1 \
+  --set-secrets=FIREWORKS_API_KEY=cer-gilligan-fireworks-api-key:2,CER_RAG_SERVICE_KEY=cer-gilligan-service-key:1 \
   --cpu=1 --memory=1Gi --timeout=300 --concurrency=8 \
   --min-instances=0 --max-instances=1 \
   --no-allow-unauthenticated \

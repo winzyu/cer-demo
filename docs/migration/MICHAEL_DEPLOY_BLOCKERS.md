@@ -7,14 +7,14 @@ The L5 deploy proves items 1-3 in practice: it fails if the user cannot act as t
 
 | # | Blocker | Result, 2026-09-30 |
 |---|---|---|
-| 1 | `cer-gilligan-runtime` exists and you can act as it | Exists, enabled; its policy is unreadable to the user, so "act as" rests on Michael (A2) |
-| 2 | Fireworks secret stored, readable by the runtime account only | Unreadable to the user (version adder only); created with no versions (A6), the user adds the key |
-| 3 | Service-key secret stored, readable by the runtime and default compute accounts | `cer-gilligan-service-key` version 1 per Michael (A7); unreadable to the user |
-| 4 | `gilligan` database exists; runtime granted on it alone | Database passes (`FIRESTORE_NATIVE`, `us-central1`); the conditioned grant is unreadable to the user (A4) |
+| 1 | `cer-gilligan-runtime` exists and you can act as it | Pass: exists, enabled; `testIamPermissions` grants the user `actAs` (2026-10-01) |
+| 2 | Fireworks secret stored, readable by the runtime account only | Pass: version 2 holds the cer-demo key; the L5 revision started with it (2026-10-01) |
+| 3 | Service-key secret stored, readable by the runtime and default compute accounts | Pass: the L5 revision started with `cer-gilligan-service-key:1` (2026-10-01) |
+| 4 | `gilligan` database exists; runtime granted on it alone | Database passes (`FIRESTORE_NATIVE`, `us-central1`); the runtime grant is proven by the first question through cer-api (L6) |
 | 5 | TTL policy on `gilligan_usage.expireAt` | Pass: `ACTIVE`, none on `updatedAt` |
 | 6 | Organization policy allows unauthenticated invocation | Unreadable to the user; Michael: domain restriction off, invoker check not required (A1), so B1 grants `allUsers` |
 | 7 | `cer-ui` trigger `8ad67b17` disabled | Pass: global trigger, disabled; the only trigger in the project |
-| 8 | `DEVICE_API_TOKEN` rotated | Open |
+| 8 | `DEVICE_API_TOKEN` rotated | Open: the 2026-09-28 token still returns 200 on 2026-10-01 |
 
 ## 1. Runtime account
 
