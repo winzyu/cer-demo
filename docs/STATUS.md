@@ -32,7 +32,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - cer-demo worktrees in use: `gcp-test-env` (bot and Codex outputs, git-ignored), `e2e-rc` (the mirror's Gilligan), `release-candidate` (`release/rc1`, stale), `supervisor-brief` (uncommitted brief), `firestore-mirror` (untracked census script), `e7-corpus` (E7 `corpus.json` and cache), `launch-issues` (`7a2f2fc`, landed, branch unpushed).
   Removable: `e2e-dev`, `long-conversations`, `answer-quality-q1`, `cwa-old`, `e7-claims`, `e7-fixtures`, `feat+service-release`, `gilligan-runbook`, `gilligan-ux-contract`, `hygiene`, `l2-inputs`, `mirror-parity`, `per-turn-labels`, `q3-q5`, `q9-413`, `stale-claims`, `token-cap`, `upstream-publish`, `wave1-corrections`, `firestore-plan` (keep its branch).
 - Upstream: `land/gilligan-develop` in both repositories equals the pushed `develop`; worktree `dashboard-land` is a clean `fc13d16`; `server-release-mirror` has a git-ignored `.env.mirror.local` holding only the service key.
-- Release files: `~/release/cer-gilligan.env.yaml` (deploy settings), `~/release/deploy-cer-gilligan-rc1.sh` (the L5 command); the image `gcr.io/conductive-fold-343604/cer-gilligan:ddd6292` is also in local Docker.
+- Release files: `release/cer-gilligan.env.yaml` (deploy settings), `release/deploy-cer-gilligan-rc1.sh` (the L5 command); the image `gcr.io/conductive-fold-343604/cer-gilligan:ddd6292` is also in local Docker.
 - Upstream worktrees are under `~/code/clean-earth-rovers/worktrees/` (release, mirror, citation-title, invited-login, cwa-old, dashboard-ux, dashboard-e2e, dashboard-release, and the launch-issues `*-original`, `*-release-demo`, `server-original-seed`); the server's `.worktrees/mirror` is `mirror/e2e-p3` `1ef21a7`.
 - Running: `dockerd` (started by hand; WSL has no service manager); another chat's rc2 mirror on 8081, 5102 (server `8463545`), 8011 and 3001; this session's stacks have all stopped; mirror emulator :8080 (2026-09-27 evidence), dashboard :3000 and Gilligan :8010; the mirror server :5101 has stopped (`MIRROR_RUNBOOK.md` §3); launch-issues emulator :8180 (viewer :4180), Current :3100 and :5201, Release :3300 and :5301.
 - Git-ignored restored inputs: `node_modules/`, `.env`, corpus PDFs, `.ocr_cache/`, `data/corpus/` (Sep 21 corpus here), `data/embeddings/cache.json`; still missing `data/retrieval-eval/`, `data/device-fields/`, `data/backend-surface/`, `serviceAccountKey.json`.
@@ -90,7 +90,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 - Upstream history carries malware (tips are clean; it runs on `next dev`, `next build`, `npm test`): never check out `main`, `develop` or an old commit; scan with `grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .` after any clone, fetch, pull or switch.
 - Quote curl's proxy bypass as `--noproxy '*'`; bare `*` expands to file names, and `README.md`, `CLAUDE.md` and `AGENTS.md` resolve as internet hosts.
-- `~/release/rc2-mirror.env.sh` sets the production `FIRESTORE_PROJECT_ID`; override it with `demo-cer-mirror` when reusing it. Background processes here stop after 30 minutes unless given a longer limit.
+- `release/rc2-mirror.env.sh` (gitignored, holds secrets) sets the production `FIRESTORE_PROJECT_ID`; override it with `demo-cer-mirror` when reusing it. Background processes here stop after 30 minutes unless given a longer limit.
 - `.env` sets `SENSOR_TOOL` and `REPORT_TOOL` true, which means live production reads: captures and judge runs set both false.
 - Application default credentials exist here: the mirror uses project `demo-cer-mirror`, but the launch-issues emulator :8180 uses the production id, so start it and everything that talks to it only with `emulator-original/guard.env`.
 - The launch-issues stacks listen on every interface, so the Current server's open user routes are reachable from the LAN while it runs.
@@ -105,7 +105,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - Re-ingesting with a different tesseract build moves 12 chunk ids; the main checkout's `data/corpus/` is the Sep 21 corpus until rc2 re-ingests.
 - The device token is superadmin with no `exp` claim and still works on production cer-api (2026-10-01).
 - On an existing Cloud Run service use `--update-secrets` and `--update-env-vars`; `--set-secrets` replaces every secret reference.
-- Long `gcloud` commands pasted into a terminal can split at a line break; put them in a script under `~/release/`.
+- Long `gcloud` commands pasted into a terminal can split at a line break; put them in a script under `release/`.
 - Docker: start the daemon with `sudo sh -c 'nohup dockerd > /var/log/dockerd.log 2>&1 &'` after each WSL restart; until a new login, run Docker through `sg docker -c`.
 
 ## Where things live

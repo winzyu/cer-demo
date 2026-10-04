@@ -54,3 +54,9 @@ documents/*
 
 # Migration planning artifacts are tracked deliverables (see CLAUDE.md)
 !docs/migration/
+
+# Release files that stay local: the rc2 mirror env holds secrets, the rc2 corpus and embedding
+# snapshot is a large derived cache (the rc1 image carries it), and the emulator snapshot is runtime state.
+release/rc2-mirror.env.sh
+release/rc2-artifacts/
+release/rc2-emulator-data/

@@ -198,7 +198,7 @@ Record each digest with `gcloud container images describe` as above.
 
 ### 4.1 cer-gilligan
 
-Write this file outside every repository, for example `~/release/cer-gilligan.env.yaml`.
+The file is cer-demo's `release/cer-gilligan.env.yaml`; `.dockerignore` and `.gcloudignore` keep it out of the image and the build upload.
 It holds no secrets; the two secrets are attached with `--set-secrets` (§6.1).
 
 ```yaml
@@ -328,7 +328,7 @@ gcloud run deploy cer-gilligan \
   --project=conductive-fold-343604 --region=us-central1 \
   --image=gcr.io/conductive-fold-343604/cer-gilligan@sha256:[FILL] \
   --service-account=cer-gilligan-runtime@conductive-fold-343604.iam.gserviceaccount.com \
-  --env-vars-file=$HOME/release/cer-gilligan.env.yaml \
+  --env-vars-file=release/cer-gilligan.env.yaml \
   --set-secrets=FIREWORKS_API_KEY=cer-gilligan-fireworks-api-key:2,CER_RAG_SERVICE_KEY=cer-gilligan-service-key:1 \
   --cpu=1 --memory=1Gi --timeout=300 --concurrency=8 \
   --min-instances=0 --max-instances=1 \
