@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-10-01 by the upstream-landing chat after L5, landed on `dev` at the user's request.
+Updated 2026-10-01 by the upstream-landing chat after L5, landed on `dev` at the user's request; 2026-10-04 the reflection course added its lines only.
 Current state and next steps only; history is `git log -p docs/STATUS.md`; never cite this file from code or other docs.
 
 ## Start here
@@ -15,6 +15,8 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
   Critical path: B1, L6 staged cer-api and cer-ui, L7 demo, L8 smoke, L9 traffic; the plan's Sep 29-30 dates have passed, so the user agrees new ones with the supervisor.
 - **Production fixes outside Gilligan**: with `122136d` the user routes, period query and invited login ship; the CSV export scope and empty-organization refusal follow launch (`timeline.md`, 2026-09-29).
 - **Chats after the reset**: release (L4-L9), Gilligan behaviour, release plan (coordinator), release demo; suggested: server security fixes, mirror testing.
+- **Reflection course** (branch `reflection`): teaching the user this codebase for AI/ML engineering, eval-heavy; stale docs fixed on `dev` (`cde5a1a`) and the timeline lesson written.
+  Next: read [`reflection/HANDOFF.md`](reflection/HANDOFF.md) on `reflection`, walk through the timeline's check-in questions, then build module 0.
 - **Coordination**: the coordinator alone writes `dev`, this file, the plan and the manual guide; other chats work on their own branch and worktree and report commit IDs; upstream pushes are new branches only, with the user's consent in chat.
 
 ## Last session
@@ -26,7 +28,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 ## Working tree
 
-- Branch `dev`, pushed and level with `origin/dev`, includes `docs/release-pin` (fast-forward, 2026-10-01); `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
+- Branch `dev`, pushed and level with `origin/dev` at `cde5a1a` (stale-doc fixes, 2026-10-04), includes `docs/release-pin` (fast-forward, 2026-10-01); branch `reflection` (pushed) adds `docs/reflection/` on top; `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
 - cer-demo worktrees in use: `gcp-test-env` (bot and Codex outputs, git-ignored), `e2e-rc` (the mirror's Gilligan), `release-candidate` (`release/rc1`, stale), `supervisor-brief` (uncommitted brief), `firestore-mirror` (untracked census script), `e7-corpus` (E7 `corpus.json` and cache), `launch-issues` (`7a2f2fc`, landed, branch unpushed).
   Removable: `e2e-dev`, `long-conversations`, `answer-quality-q1`, `cwa-old`, `e7-claims`, `e7-fixtures`, `feat+service-release`, `gilligan-runbook`, `gilligan-ux-contract`, `hygiene`, `l2-inputs`, `mirror-parity`, `per-turn-labels`, `q3-q5`, `q9-413`, `stale-claims`, `token-cap`, `upstream-publish`, `wave1-corrections`, `firestore-plan` (keep its branch).
 - Upstream: `land/gilligan-develop` in both repositories equals the pushed `develop`; worktree `dashboard-land` is a clean `fc13d16`; `server-release-mirror` has a git-ignored `.env.mirror.local` holding only the service key.
@@ -50,6 +52,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - Agent, Gilligan behaviour: Q10 findings 6, 8, 10 and 7, K21, U7, citation markers, follow-ups (reset brief, "Gilligan behaviour").
 - Agent, release: confirm B1, then build cer-api `122136d` and cer-ui `fc13d16` images locally and assist L6-L8 (runbook §6.2-6.5).
 - Agent, release demo: walkthrough corrections, browser checks, CER `main` comparison, demo script (reset brief, "Release demo").
+- Agent, reflection course: module 0 onward per `docs/reflection/HANDOFF.md`; small paid runs only with the user's approval each time.
 - Agent, suggested: Q11 and A6 server branches; mirror testing (reset brief sections of those names).
 
 ## Unfixed defects
