@@ -123,3 +123,11 @@ Before pushing, fetch and confirm `origin/develop` is still `a5b745e` and `d3b4a
    - cer-ui `fc13d16`: a rehearsal image `cer-ui-rehearsal:fc13d16` with empty browser keys builds (CER's existing lint warnings only) and serves `/login` and `/gilligan` with 200; it must not be pushed.
      The release image is rebuilt with Michael's live Stripe publishable key and two map keys as `gcr.io/conductive-fold-343604/cer-ui:fc13d16`.
 9. B1 confirmed, 2026-10-02 (read-only), after Michael's grant: `cer-gilligan`'s policy binds `allUsers` to `roles/run.invoker`; anonymous `/health` returns 200 (`status: ok`, Fireworks and Firestore configured) and `/api/v1/chat` without the key returns 401 `service_key_invalid`.
+10. Michael, 2026-10-05: B2 added CER's Fireworks key as `cer-gilligan-fireworks-api-key:3`, and he deployed `cer-gilligan-00003-slr` (same image and settings as `00002-zoc`, key `:3`) with all traffic, ahead of the demo; `rc1` still tags `00002-zoc` on the cer-demo key.
+    His `cer-api-secrets-1005-1653` (same 2026-08-19 image) reads `ACCESS_TOKEN_SECRET`, `GEMINI_API_KEY` and `NODEMAILER_APP_PASSWORD` from Secret Manager again (`jwt-secret:2`, `gemini-key:2`, `nodemailer-password:2`) and keeps `stripe-secret-live:1`, so item 5 is resolved; the old Gemini key and mail app password still need revoking at Google.
+    `/health` on v3 is ok; no question has yet confirmed the new key, because the user's account cannot read the service key (A7 grants it to the two services only).
+11. L6 images rebuilt 2026-10-05, after the WSL move emptied the local Docker store and left a corrupt build cache (cleared with `docker builder prune`):
+    - cer-api `122136d`: local id `sha256:ef043bbebdaa`; same smoke as item 8 (`/` 200, unauthenticated `/api/v1/users/all` 401).
+    - cer-ui `fc13d16`: `gcr.io/conductive-fold-343604/cer-ui:fc13d16`, local id `sha256:bb5aa228ddfa`, built with `API_PROXY_TARGET` the canonical cer-api URL and the live cer-ui service's Stripe publishable (`pk_live_`) and Google Maps keys; HERE is empty as on the live service and unused by the code.
+      Both keys appear in `.next/static` and no `localhost:50` address does; `/login` and `/gilligan` return 200.
+    Neither image is pushed yet.
