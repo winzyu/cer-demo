@@ -16,7 +16,8 @@ All course work lives on branch `reflection` (cut from `dev` at `cde5a1a`, pushe
 - Format: one local HTML page per module under `docs/reflection/`, then a walkthrough in chat with check-in questions before moving on.
 - Hands-on: free exercises plus small paid runs (cents each), each approved by the user before it runs; no live production reads.
 - Candour: fully blunt, with time or money estimates for each detour and the early signal that would have caught it.
-- Git is a strand of its own: every module has a "git lens" (how git was used, useful commands and tricks, best practice); module 9 covers git in depth.
+- Git is a strand of its own: every module has a "git lens" (how git was used, useful commands and tricks, best practice); module 9b covers git in depth.
+- Working with Claude is a strand too (added 2026-10-04 at the user's request): every module has a "Claude lens" (how Claude was used, what helped, what wasted time, rough cost); module 9a audits `CLAUDE.md`, `docs/STATUS.md`, memory and skills with evidence and ends in proposed changes the user approves one by one; module 10 adds a "setting up Claude for a new project" checklist.
 - Explanations: analogy, then numbered steps, then a pass/fail story; plain language, one concept at a time (see the user's memory notes on explanation style and planning).
 - Multi-step work: give a short numbered plan with costs and get approval before running.
 - Archived docs: approved for this course, read-only via `git show <tag>:<path>` (index in `docs/ARCHIVED.md`); never restore them into the tree.
@@ -36,8 +37,9 @@ All course work lives on branch `reflection` (cut from `dev` at `cde5a1a`, pushe
 | 6 | Eval III: grading answers, gates, LLM judge, calibration, kappa | planned |
 | 7 | Eval IV: running it, decision rules, cost; one small paid rerun | planned |
 | 8 | Production: migration, security incident, mirror, deployment | planned |
-| 9 | The process: agents, docs system, parallel chats, git in depth | planned |
-| 10 | Retrospective and playbook | planned |
+| 9a | Working with Claude: agents, docs system, parallel chats; audit of `CLAUDE.md`, STATUS, memory, skills | planned |
+| 9b | Git in depth | planned |
+| 10 | Retrospective and playbook, including a Claude setup checklist | planned |
 | 11 | Interview kit | planned |
 
 Modules 4-7 get the most depth.
@@ -51,7 +53,7 @@ Update the State column in `index.html` as modules land.
 ## Page conventions (match `00-timeline.html`)
 
 - Self-contained HTML; colour tokens on `:root` with dark mode under `prefers-color-scheme` and `data-theme`; 16px side gutter; no external scripts.
-- Box types: `knew` (what we knew then), `cost`, `waste` (blunt), `lesson`, `git` (git lens).
+- Box types: `knew` (what we knew then), `cost`, `waste` (blunt), `lesson`, `git` (git lens), `claude` (Claude lens; add its style alongside `git`).
 - Each page ends with check-in questions and a "lessons collected" box that feeds module 10.
 - Link to `index.html` at the top; plain hyphens in new text, no em dashes.
 - Fact-check every number against code, git or the live docs before committing, and run any git command shown on the page.
@@ -78,4 +80,5 @@ Update the State column in `index.html` as modules land.
 
 - Stale code comments found during the doc audit, out of scope so far: `scripts/gradePacket.ts:56` (says the transcript tree is empty) and `src/eval/costScenarios.ts:36-40` (calls `gpt-oss-120b` the production generator; `npm run cost` still prices at its rates).
 - The main checkout also holds another workstream's uncommitted edits (`.gitignore`, `docs/STATUS.md`, two migration docs, seen 2026-10-04); do not stage or revert them.
+- Candidates for 9a seen 2026-10-04, unverified: STATUS (118 lines, mostly release detail) is read every course session though the HANDOFF suffices; `CLAUDE.md`'s "Cloud sessions" block loads in local sessions; some memory notes read like project rules (git handling, judge setting), and the memory folder is keyed to the checkout path, which moved from `~/code/` to `~/code/work/` on 2026-10-04.
 - The course is local only; publish a page externally only if the user asks.
