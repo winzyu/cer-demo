@@ -289,6 +289,7 @@ git log --format='%h %an %ae %s' -- jest.config.js   # who last touched a config
 <tr><td>Sep 23</td><td>Phase 3 baseline</td><td>Gold context 1.01 correctness (floor 1.30), retrieval 0.52. Even perfect passages weren't enough with <code>gpt-oss-120b</code></td></tr>
 <tr><td>Sep 24-25</td><td>Judge calibration</td><td>Agreement with human grades: kappa 0.849 on the 32 rows used to tune it, but only 0.25 on 12 unseen rows (exact agreement 75%)</td></tr>
 <tr><td>Sep 25</td><td>Judge withdrawn</td><td>Fireworks stopped serving <code>deepseek-v4-flash-0731</code>. <code>deepseek-v4p1-flash</code> was re-checked against the same human grades for about $0.13 and passed</td></tr>
+<tr><td>Sep 25-27</td><td>Reranker tried</td><td>Offline, the reranker had the best recall of any arm at k=20 (69.4% against 61.0% without it). In captures with the same settings it scored 1.14 against the control's 1.16, answered more slowly and cost about three times as much per question, so it stayed out of launch</td></tr>
 <tr><td>Sep 26</td><td>Answer model switched</td><td><code>glm-5p3-flash</code> scored 1.33 / 1.34 on gold context against <code>gpt-oss-120b</code>'s 1.10. It was the first model to clear the floor</td></tr>
 <tr><td>Sep 27</td><td>Launch retrieval chosen</td><td><code>local-vector</code>, k=20, with query rewriting for follow-ups and first turns. Correctness about 1.16; every Tier 1 gate passed on that capture</td></tr>
 <tr><td>Sep 27</td><td>E7 corpus</td><td>Two new documents added (16 docs, 457 chunks). The refusal gate failed in 5 of 6 captures, including the control, so it's a model weakness, not a corpus effect</td></tr>
@@ -412,7 +413,10 @@ git log --oneline release/rc2 ^dev   # commits on rc2 that dev lacks</code></pre
 <dt>LLM judge</dt><dd>A different model that grades answers against a rubric. It has to be calibrated against human grades before you trust it.</dd>
 <dt>Cohen's kappa</dt><dd>Agreement between two graders after removing chance agreement. 1 is perfect, 0 is chance, and around 0.8 or above is strong.</dd>
 <dt>Recall</dt><dd>The share of the needed passages that retrieval actually found.</dd>
-<dt>Spearman correlation</dt><dd>Whether two rankings agree (1 means identical order). 0.29 is weak.</dd>
+<dt>Offline vs captured (online) evaluation</dt><dd><em>Offline</em> means scoring retrieval alone: run the 90 test questions through search and compare the chunks returned with the labels. No answer is generated, so it costs nothing and takes minutes. A <em>capture</em> runs the whole system: the answer model writes real answers from what was retrieved, the runner saves each answer with its exact context to <code>eval/transcripts/&lt;run&gt;/</code>, and the judge grades them. It costs cents to dollars and measures what users actually get.</dd>
+<dt>Reranker</dt><dd>A second, slower model that re-orders search results. Search fetches 50 candidate chunks cheaply; the reranker reads each one beside the question, scores how relevant it is, and keeps the best 20. Here it was <code>qwen3-reranker-8b</code> on Fireworks.</dd>
+<dt>Proxy metric</dt><dd>A cheap measurement used in place of the one you care about, because the real one is slow or costly. Offline recall is a proxy for answer correctness. A proxy is only useful if it moves with the real metric; you check that with a correlation such as Spearman.</dd>
+<dt>Spearman correlation</dt><dd>Whether two measurements put things in the same order: rank both, then correlate the ranks. 1 is identical order, 0 unrelated, -1 reversed. 0.29 is weak. Worked example in Era 6.</dd>
 <dt>Contamination</dt><dd>Test questions that leak the answer's wording, which makes scores look better than they are.</dd>
 </dl>
 </details>
@@ -484,7 +488,7 @@ git worktree remove ../practice-wt &amp;&amp; git branch -D practice/wt</code></
 <ol class="q">
 <li>The bake-off compared retrieval arms carefully, with fixed thresholds and blind grading. Why were its conclusions still thrown away? Name the single measurement that would have exposed the problem early.</li>
 <li>The judge agreed with humans at kappa 0.849 on some rows and 0.25 on others. What's the difference between those rows, and which number should you report?</li>
-<li>Offline recall said the reranker was best, but captured answers said it was worse. What does that teach you about proxy metrics?</li>
+<li>Offline recall said the reranker was the best arm, but in captures its answers scored no better than without it (Era 6, Sep 25-27). What does that teach you about proxy metrics?</li>
 <li>Why archive old files with a tag instead of just deleting them? What's the trade-off?</li>
 <li>About 12 commits were lost in the machine wipe. Which single git habit would have prevented it?</li>
 </ol>
