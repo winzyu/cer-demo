@@ -34,11 +34,16 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
 <strong>How each module works.</strong> Read the page, then we walk through it in chat. Every module ends with check-in questions and a "lessons" box. The lessons feed the final retrospective (module 10). Each module also has a <em>git lens</em> covering how git was used at that stage, which commands help, and what best practice looks like. A <em>Claude lens</em> does the same for working with Claude: how it was used at that stage, what helped, what wasted time, and roughly what each cost.
 </div>
 
+<div class="box">
+<strong>Learning by doing.</strong> Every metric comes with a "How it's computed" box: the formula, each input and where it comes from, and a worked example with this project's real numbers. Every module has a "Try it" section of hands-on exercises, including git and Claude Code, run in a throwaway practice clone so nothing real can break. Module D teaches how to read a running system's state, and later modules reuse it.
+</div>
+
 <table>
 <thead><tr><th>#</th><th>Module</th><th>Covers</th><th>State</th></tr></thead>
 <tbody>
 <tr><td>T</td><td><a href="00-timeline.html">The timeline</a></td><td>May 15 to Oct 1 in seven eras: what happened, what was known then, what it cost, and the git lens for each era</td><td><span class="tag">ready</span></td></tr>
 <tr><td>0</td><td>The map</td><td>What Gilligan does, who uses it, and one question traced end to end</td><td><span class="tag todo">next</span></td></tr>
+<tr><td>D</td><td>Diagnosing a running system</td><td>Processes, ports, curl and health checks, logs, Docker, environment, git state; practised on the local stack, including breaking it on purpose</td><td><span class="tag todo">planned</span></td></tr>
 <tr><td>1</td><td>LLM basics through this code</td><td>Prompts, system messages, context windows, tokens and cost, choosing a model</td><td><span class="tag todo">planned</span></td></tr>
 <tr><td>2</td><td>Retrieval</td><td>Chunking, embeddings, hybrid search, the direct-feed vs RAG bake-off</td><td><span class="tag todo">planned</span></td></tr>
 <tr><td>3</td><td>Live data and tools</td><td>Sensor tools, plausibility checks, report generation</td><td><span class="tag todo">planned</span></td></tr>

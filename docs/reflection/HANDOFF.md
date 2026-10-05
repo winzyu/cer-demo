@@ -15,6 +15,9 @@ All course work lives on branch `reflection` (cut from `dev` at `cde5a1a`, pushe
 - Goals, all four: job interviews, owning the codebase, a playbook for next projects, general ML skills.
 - Format: one local HTML page per module under `docs/reflection/`, then a walkthrough in chat with check-in questions before moving on.
 - Hands-on: free exercises plus small paid runs (cents each), each approved by the user before it runs; no live production reads.
+- Metrics (asked 2026-10-04): whenever a metric or measurement appears (kappa, recall@k, nDCG, MRR, Spearman, standard error, correctness mean, ungrounded rate, cost), give a "How it's computed" box: the formula in plain words, each input and where it comes from (file, code path, run id), and a worked example with this project's real numbers; where possible, an exercise that recomputes it (for kappa, by hand and then with `cohensKappa` in `src/eval/judge/calibrate.ts`).
+- Practice over reading (asked 2026-10-04): every module has a "Try it" section of hands-on exercises, not just questions, always including git and Claude Code exercises; each exercise gives the goal, the commands, what the user should see, and a check.
+- Diagnostics (asked 2026-10-04): the user wants to learn how to read a system's state; module D teaches it and every later module's "Try it" reuses it.
 - Candour: fully blunt, with time or money estimates for each detour and the early signal that would have caught it.
 - Git is a strand of its own: every module has a "git lens" (how git was used, useful commands and tricks, best practice); module 9b covers git in depth.
 - Working with Claude is a strand too (added 2026-10-04 at the user's request): every module has a "Claude lens" (how Claude was used, what helped, what wasted time, rough cost); module 9a audits `CLAUDE.md`, `docs/STATUS.md`, memory and skills with evidence and ends in proposed changes the user approves one by one; module 10 adds a "setting up Claude for a new project" checklist.
@@ -29,6 +32,7 @@ All course work lives on branch `reflection` (cut from `dev` at `cde5a1a`, pushe
 | A | Stale-doc fixes on `dev` | done, `cde5a1a`, pushed |
 | T | Timeline (`00-timeline.html`) | done, `5d5cf01`, pushed; walkthrough not yet started |
 | 0 | The map: what Gilligan does, one question traced end to end | next |
+| D | Diagnosing a running system: processes, ports, curl, logs, Docker, env, git state; practised on the local stack | planned |
 | 1 | LLM basics through this code | planned |
 | 2 | Retrieval and the direct-feed vs RAG bake-off | planned |
 | 3 | Live data and tools: sensor tools, plausibility, reports | planned |
@@ -54,7 +58,8 @@ Update the State column in `index.html` as modules land.
 
 - Self-contained HTML; colour tokens on `:root` with dark mode under `prefers-color-scheme` and `data-theme`; 16px side gutter; no external scripts.
 - Box types: `knew` (what we knew then), `cost`, `waste` (blunt), `lesson`, `git` (git lens), `claude` (Claude lens; add its style alongside `git`).
-- Each page ends with check-in questions and a "lessons collected" box that feeds module 10.
+- Each page has a "Try it" section (exercises with commands, expected output and a check), then check-in questions and a "lessons collected" box that feeds module 10.
+- Box types for the new strands: `metric` ("How it's computed") and `try` (exercise); add their styles alongside the others.
 - Link to `index.html` at the top; plain hyphens in new text, no em dashes.
 - Fact-check every number against code, git or the live docs before committing, and run any git command shown on the page.
 - Check tag nesting with a small Python `HTMLParser` pass before committing.
@@ -81,4 +86,6 @@ Update the State column in `index.html` as modules land.
 - Stale code comments found during the doc audit, out of scope so far: `scripts/gradePacket.ts:56` (says the transcript tree is empty) and `src/eval/costScenarios.ts:36-40` (calls `gpt-oss-120b` the production generator; `npm run cost` still prices at its rates).
 - The main checkout also holds another workstream's uncommitted edits (`.gitignore`, `docs/STATUS.md`, two migration docs, seen 2026-10-04); do not stage or revert them.
 - Candidates for 9a seen 2026-10-04, unverified: STATUS (118 lines, mostly release detail) is read every course session though the HANDOFF suffices; `CLAUDE.md`'s "Cloud sessions" block loads in local sessions; some memory notes read like project rules (git handling, judge setting), and the memory folder is keyed to the checkout path, which moved from `~/code/` to `~/code/work/` on 2026-10-04.
+- Exercise safety: git and Claude Code exercises run in a throwaway practice clone (for example `git clone ~/code/work/clean-earth-rovers/repo/cer-demo ~/code/work/practice/cer-demo`), never on real branches; diagnostics run against a local stack started with `run-local` on free ports, never production, never port 8000 or another chat's stack; never print `.env` values (show variable names only).
+- To do on `00-timeline.html`: add "How it's computed" boxes for the metrics it uses (kappa, recall, Spearman, standard error) and a "Try it" section with git exercises; change "would have exposed this in a day" to a few days, since gold context needs labels first.
 - The course is local only; publish a page externally only if the user asks.
