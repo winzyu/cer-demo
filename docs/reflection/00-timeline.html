@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Project Timeline</title>
 <style>
-:root{--bg:#fbfaf7;--fg:#1f2328;--muted:#5d6670;--card:#ffffff;--line:#e3e0d8;--accent:#1d6f5f;--accent-soft:#e3f1ec;--warn:#9a5b00;--warn-soft:#fbefd9;--bad:#a63d32;--bad-soft:#f8e4e1;--git:#4b55a8;--git-soft:#e8eaf7;--bar:#9fcabc}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15181b;--fg:#e6e8ea;--muted:#9aa3ab;--card:#1d2125;--line:#30363c;--accent:#5cc3a8;--accent-soft:#183029;--warn:#e0a54a;--warn-soft:#33281a;--bad:#ec8a7e;--bad-soft:#3a201d;--git:#9aa4f2;--git-soft:#22253d;--bar:#2f6f5f}}
-:root[data-theme="dark"]{--bg:#15181b;--fg:#e6e8ea;--muted:#9aa3ab;--card:#1d2125;--line:#30363c;--accent:#5cc3a8;--accent-soft:#183029;--warn:#e0a54a;--warn-soft:#33281a;--bad:#ec8a7e;--bad-soft:#3a201d;--git:#9aa4f2;--git-soft:#22253d;--bar:#2f6f5f}
+:root{--bg:#fbfaf7;--fg:#1f2328;--muted:#5d6670;--card:#ffffff;--line:#e3e0d8;--accent:#1d6f5f;--accent-soft:#e3f1ec;--warn:#9a5b00;--warn-soft:#fbefd9;--bad:#a63d32;--bad-soft:#f8e4e1;--git:#4b55a8;--git-soft:#e8eaf7;--metric:#7a4f9a;--metric-soft:#f1e9f7;--bar:#9fcabc}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15181b;--fg:#e6e8ea;--muted:#9aa3ab;--card:#1d2125;--line:#30363c;--accent:#5cc3a8;--accent-soft:#183029;--warn:#e0a54a;--warn-soft:#33281a;--bad:#ec8a7e;--bad-soft:#3a201d;--git:#9aa4f2;--git-soft:#22253d;--metric:#c9a3e8;--metric-soft:#2c2236;--bar:#2f6f5f}}
+:root[data-theme="dark"]{--bg:#15181b;--fg:#e6e8ea;--muted:#9aa3ab;--card:#1d2125;--line:#30363c;--accent:#5cc3a8;--accent-soft:#183029;--warn:#e0a54a;--warn-soft:#33281a;--bad:#ec8a7e;--bad-soft:#3a201d;--git:#9aa4f2;--git-soft:#22253d;--metric:#c9a3e8;--metric-soft:#2c2236;--bar:#2f6f5f}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
 main{max-width:880px;margin:0 auto;padding:32px 16px 72px}
@@ -27,6 +27,10 @@ pre code{background:none;padding:0}
 .box.lesson{border-left:4px solid var(--accent);background:var(--accent-soft);border-color:transparent}
 .box.waste{border-left:4px solid var(--bad);background:var(--bad-soft);border-color:transparent}
 .box.git{border-left:4px solid var(--git);background:var(--git-soft);border-color:transparent}
+.box.metric{border-left:4px solid var(--metric);background:var(--metric-soft);border-color:transparent}
+.box.try{border:1px dashed var(--accent);border-left:4px solid var(--accent)}
+.box ol{margin:6px 0;padding-left:22px}
+.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9rem;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:6px 10px;display:inline-block;margin:4px 0}
 .box h4{margin:0 0 6px;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .box p{margin:6px 0}
 .box ul{margin:6px 0;padding-left:20px}
@@ -71,6 +75,7 @@ dd{margin:2px 0 0 0;color:var(--fg)}
 <li><a href="#e6">Era 6: The sprint (Sep 23 - Sep 28)</a></li>
 <li><a href="#e7">Era 7: Landing (Sep 29 - Oct 1)</a></li>
 <li><a href="#glossary">Glossary for this page</a></li>
+<li><a href="#try">Try it</a></li>
 <li><a href="#check">Check-in questions</a></li>
 </ol>
 </nav>
@@ -142,9 +147,28 @@ git log --reverse --format='%ad %s' --date=short | head  # history, oldest first
 <div class="box waste"><h4>Where time was wasted (blunt)</h4>
 <ul>
 <li><strong>About 4-5 weeks of eval results were later discarded.</strong> All 224 transcripts and the grading packets were archived on Sep 1. The <em>instruments</em> survived: the runner, cost model, harness and judge. The <em>numbers</em> did not. In the bake-off doc's own words: "The instruments were kept; the numbers were not."</li>
-<li><strong>The order of measurement was wrong.</strong> Retrieval arms were compared while the generator was broken. If the model ignores its sources half the time, a better retriever can't show up in the scores. A <em>gold-context</em> arm (give the model exactly the right passages, to measure its ceiling) would have exposed this in a day. It wasn't built until Sep 9.</li>
+<li><strong>The order of measurement was wrong.</strong> Retrieval arms were compared while the generator was broken. If the model ignores its sources half the time, a better retriever can't show up in the scores. A <em>gold-context</em> arm (give the model exactly the right passages, to measure its ceiling) would have exposed this in a few days, most of them spent labelling which passages answer each question. It wasn't built until Sep 9.</li>
 <li><strong>The question set couldn't test retrieval.</strong> 27 of its 30 fixtures were answerable from 4.4% of the corpus, and the whole "deep in the manual" class had 3 questions. A mean over 3 samples on a 0-2 scale has a standard error of about 0.43, which is too noisy to conclude anything.</li>
 <li><strong>Over-control caused a deadlock.</strong> The system prompt was pinned so that arms stayed comparable, which meant generation quality couldn't be improved without voiding the captures. Splitting the gate was a way out, but it recorded a provisional result as "CLOSED".</li>
+</ul></div>
+
+<div class="box metric"><h4>How it's computed: correctness mean</h4>
+<p>Each answer (one <em>turn</em>) gets a score from 0 to 2 against that turn's "must contain" list (<code>docs/GRADING_GUIDE.md</code>): <strong>2</strong> every point made correctly, <strong>1</strong> partly there, <strong>0</strong> misses, is wrong, or refuses when an answer was owed.</p>
+<p class="formula">correctness = sum of turn scores / number of turns</p>
+<ul>
+<li><strong>Inputs:</strong> one score per turn, from a human sheet (<code>scores.csv</code>, column <code>correctness_0_1_2</code>) or the judge's ledger (<code>data/results/judge/&lt;run&gt;/warm.jsonl</code>, rows with <code>"dimension":"correctness"</code>, field <code>score</code>).</li>
+<li><strong>Worked example:</strong> the 1.30 floor over 90 turns needs a total of at least 117. One way to get there: 40 turns score 2, 37 score 1, 13 score 0, so (80 + 37 + 0) / 90 = 1.30. The launch's 1.16 is a total of about 104.</li>
+<li><strong>Reading it:</strong> 1.30 means "better than partly right on average". A mean hides the mix, so the docs also report it per class (deep-in-manual, cross-document and so on), each with its own 1.00 floor.</li>
+</ul></div>
+
+<div class="box metric"><h4>How it's computed: standard error</h4>
+<p>How much a mean would wobble if you re-ran the same kind of test with different questions.</p>
+<p class="formula">standard error = SD / &radic;n</p>
+<ul>
+<li><strong>SD</strong> (standard deviation): the typical distance of one score from the mean. <strong>n</strong>: how many scores went into the mean.</li>
+<li><strong>Worked example:</strong> the deep-in-manual class had n = 3. &radic;3 &asymp; 1.73, so the documented standard error of 0.43 implies an SD of about 0.75 per answer (0.43 &times; 1.73). That SD is my back-calculation; the doc gives only the 0.43.</li>
+<li><strong>Why it killed the class result:</strong> a rough 95% range is the mean plus or minus 2 standard errors, so &plusmn;0.86 on a 0-2 scale. A class mean of 1.0 could really be anywhere from about 0.1 to 1.9.</li>
+<li><strong>The fix is more questions:</strong> the rebuilt set has 20 deep-in-manual turns, and 0.75 / &radic;20 &asymp; 0.17.</li>
 </ul></div>
 
 <div class="box lesson"><h4>Lesson for an ML engineer</h4>
@@ -280,6 +304,47 @@ git log --format='%h %an %ae %s' -- jest.config.js   # who last touched a config
 <li>a launch-issues checklist</li>
 </ul>
 
+<div class="box metric"><h4>How it's computed: Cohen's kappa (judge vs human)</h4>
+<p class="formula">kappa = (observed - expected) / (1 - expected)</p>
+<ul>
+<li><strong>observed:</strong> share of rows where the two graders gave the same score.</li>
+<li><strong>expected:</strong> the agreement luck alone would give if each grader kept their own habits (how often each gives 0, 1, 2). For each score, multiply the two graders' shares; add the products.</li>
+<li><strong>Inputs:</strong> human grades in <code>eval/grading/p3-calib-2026-09-24/rounds/heldout-2026-09-25/warm/scores.csv</code> (graded blind as arms A and B); <code>KEY.json</code> beside it maps A and B to arms; judge verdicts in <code>data/results/judge/p3-calib-2026-09-24/warm.jsonl</code>; code: <code>cohensKappa</code> in <code>src/eval/judge/calibrate.ts</code>.</li>
+</ul>
+<p><strong>Worked example, the 12 held-out rows:</strong></p>
+<table>
+<tr><th></th><th>judge 0</th><th>judge 1</th><th>total</th></tr>
+<tr><td>human 0</td><td>1</td><td>2</td><td>3</td></tr>
+<tr><td>human 1</td><td>1</td><td>8</td><td>9</td></tr>
+<tr><td>total</td><td>2</td><td>10</td><td>12</td></tr>
+</table>
+<ol>
+<li>observed = (1 + 8) / 12 = 0.75</li>
+<li>expected = (3/12 &times; 2/12) + (9/12 &times; 10/12) = 6/144 + 90/144 = 96/144 &asymp; 0.667</li>
+<li>kappa = (0.75 - 0.667) / (1 - 0.667) = 0.083 / 0.333 = <strong>0.25</strong></li>
+</ol>
+<p><strong>Reading it:</strong> luck alone gives 67% here because both graders say 1 most of the time. A lazy judge that always says 1 would score 75% raw agreement and kappa <strong>0</strong>. That is why raw agreement alone can't be trusted, and why 12 rows dominated by one grade make kappa unstable. Report held-out exact agreement (75%) and within-one (100%) beside it.</p></div>
+
+<div class="box metric"><h4>How it's computed: recall</h4>
+<p class="formula">recall for a turn = labelled chunks found in the context / labelled chunks for that turn</p>
+<ul>
+<li><strong>Inputs:</strong> the label, <code>eval/retrieval-labels/&lt;fixture&gt;.json</code> (<code>turns[].relevant[].chunkId</code>); what retrieval actually sent, <code>eval/transcripts/&lt;run&gt;/warm/&lt;arm&gt;/&lt;fixture&gt;.json</code> (<code>turns[].context[].id</code>, 20 chunks at k=20). A capture's recall is the mean over its 82 non-refusal turns (<code>scripts/captureLabelRecall.py</code>).</li>
+<li><strong>Worked example</strong>, run <code>p3-lv-k20-rewrite2-glm-2026-09-27</code>, fixture <code>deepmanual-zobell-check</code>: turn 1 has 5 labelled chunks and 1 was retrieved (at position 8), so recall = 1/5 = 20%, and the judge's first pass scored it 1. Turn 2 found 4 of 5 (80%) and scored 2.</li>
+<li><strong>Where it misleads:</strong> in <code>crossdoc-acid-drainage-conductivity-suspect</code> from the same run, turn 1 found 4 of 9 and scored 1, turn 2 found 6 of 9 and scored 0. Recall counts whether passages arrived, not their order, what sits beside them, or whether the model used them.</li>
+</ul></div>
+
+<div class="box metric"><h4>How it's computed: Spearman correlation</h4>
+<p>Do two measurements put things in the same <em>order</em>? Replace each value by its rank, then correlate the ranks. 1 is the same order, 0 is unrelated, -1 is reversed.</p>
+<p class="formula">with no ties: rho = 1 - 6 &times; sum(d&sup2;) / (n &times; (n&sup2; - 1)), where d = difference between a capture's two ranks</p>
+<p><strong>Worked example, three captures</strong> (<code>scripts/captureLabelRecall.py</code>, fixture-wide labels):</p>
+<table>
+<tr><th>capture</th><th>recall (rank)</th><th>correctness (rank)</th><th>d</th></tr>
+<tr><td><code>local-vector</code>, follow-up rewrite</td><td>59.0% (1)</td><td>1.08 (1)</td><td>0</td></tr>
+<tr><td><code>local-vector</code>, both rewrites</td><td>62.9% (2)</td><td>1.18 (3)</td><td>-1</td></tr>
+<tr><td><code>local-rerank</code>, both rewrites</td><td>70.5% (3)</td><td>1.13 (2)</td><td>1</td></tr>
+</table>
+<p>sum(d&sup2;) = 0 + 1 + 1 = 2, so rho = 1 - 6 &times; 2 / (3 &times; 8) = 1 - 12/24 = <strong>0.50</strong>. The reranker has the best recall but not the best answers. Across all 11 captures in <code>docs/EVAL_REBUILD.md</code> ("Per-turn retrieval labels") it is <strong>0.29</strong>: recall barely predicts which configuration answers best.</p></div>
+
 <div class="box knew"><h4>What we knew then</h4>
 <p>The eval became a real decision tool here. Each experiment wrote down its decision rule <em>before</em> the capture. An example: "adopt k=30 only if the second capture scores at least 1.206 and the gates don't get worse". The numbers were then allowed to say no.</p></div>
 
@@ -351,6 +416,67 @@ git log --oneline release/rc2 ^dev   # commits on rc2 that dev lacks</code></pre
 <dt>Contamination</dt><dd>Test questions that leak the answer's wording, which makes scores look better than they are.</dd>
 </dl>
 </details>
+
+<!-- ============ TRY IT ============ -->
+<h2 id="try">Try it</h2>
+<p>Hands-on, free, no model calls. Paste each command into your terminal (or prefix it with <code>!</code> in Claude Code so the output lands in the chat). Exercises 1-4 only read files in your real checkout; the git exercises run in a throwaway practice clone.</p>
+
+<div class="box try"><h4>1. Kappa by hand, then by code</h4>
+<p>Recompute the 0.25 from the table in Era 6 on paper. Then check it with the project's own function, from the repository root (each pair is <code>[human, judge]</code>):</p>
+<pre><code>npx --no-install ts-node -T -e 'import {cohensKappa} from "./src/eval/judge/calibrate"; console.log(cohensKappa([[1,1],[1,1],[1,1],[0,0],[0,1],[1,1],[1,1],[1,0],[1,1],[1,1],[0,1],[1,1]]))'</code></pre>
+<p><strong>You should see</strong> <code>0.25000000000000006</code> (the tail is floating-point rounding). <strong>Check:</strong> change every judge score to 1. What does it print, and why?</p></div>
+
+<div class="box try"><h4>2. Standard error</h4>
+<p>By hand: three answers scored 2, 0 and 1. Mean? Sample SD (divide the squared distances by n - 1)? Standard error? Then:</p>
+<pre><code>python3 -c "import statistics as s; x=[2,0,1]; print(s.stdev(x)/len(x)**0.5)"</code></pre>
+<p><strong>You should see</strong> <code>0.577...</code>. <strong>Check:</strong> how many answers with that spread would you need to get the standard error under 0.10?</p></div>
+
+<div class="box try"><h4>3. Recall for one turn, with <code>jq</code></h4>
+<pre><code>L=eval/retrieval-labels/deepmanual-zobell-check.json
+T=eval/transcripts/p3-lv-k20-rewrite2-glm-2026-09-27/warm/local-vector/deepmanual-zobell-check.json
+jq -c '.turns[] | {turn, labelled: (.relevant|length)}' $L
+jq -r '.turns[0].context[].id' $T | grep -n -F -f &lt;(jq -r '.turns[] | select(.turn==1) | .relevant[].chunkId' $L)</code></pre>
+<p><strong>You should see</strong> 5 labelled chunks per turn, then one line, <code>8:usgs-nfm-a6.5-orp.pdf__d38f4e5fb14d</code>: one of five found, at position 8. <strong>Check:</strong> change <code>turns[0]</code> to <code>turns[1]</code> and <code>turn==1</code> to <code>turn==2</code>. What is turn 2's recall?</p></div>
+
+<div class="box try"><h4>4. Spearman by hand, then by script</h4>
+<p>Rank the three captures in Era 6 yourself and compute rho. Then:</p>
+<pre><code>python3 scripts/captureLabelRecall.py p3-lv-k20-rewrite-glm-2026-09-26 p3-lv-k20-rewrite2-glm-2026-09-27 p3-rerank-k20-rewrite2-glm-2026-09-27</code></pre>
+<p><strong>You should see</strong> the three recall and correctness rows, then <code>run-level Spearman 0.50</code>. <strong>Check:</strong> the output also buckets turns by recall ("none" to "all"). Does higher recall mean better answers on average, even though it doesn't rank captures well?</p></div>
+
+<div class="box try"><h4>5. Git: set up a practice clone</h4>
+<pre><code>git clone ~/code/work/clean-earth-rovers/repo/cer-demo ~/code/work/practice/cer-demo
+cd ~/code/work/practice/cer-demo
+git remote set-url --push origin DISABLED   # its origin is your real repo; this blocks pushes
+git checkout dev</code></pre>
+<p><strong>You should see</strong> <code>git remote -v</code> list <code>DISABLED</code> on the push line. Everything below happens here.</p></div>
+
+<div class="box try"><h4>6. Git: archaeology</h4>
+<pre><code>git log --reverse -S"GoldContextAdapter" --format='%h %ad %s' --date=short -- src | head -1
+git tag -l '*archive*'
+git show eval-docs-archive-2026-09-15:docs/RETRIEVAL_COMPARISON.md | head -3</code></pre>
+<p><strong>You should see</strong> <code>d5f19ce 2026-09-09 Add a gold-context retrieval arm...</code> (the Sep 9 date from Era 2), a list of archive tags, and the old bake-off report's "SUPERSEDED" banner, read from a tag without restoring it. <strong>Check:</strong> use <code>-S</code> to find the day <code>cohensKappa</code> first appeared.</p></div>
+
+<div class="box try"><h4>7. Git: lose a commit, then get it back</h4>
+<pre><code>git commit --allow-empty -m "practice: important work"
+git status -sb                  # "ahead 1": this commit exists only here
+git log --oneline @{u}..        # list what the remote doesn't have
+git reset --hard HEAD~1         # "lose" it
+git reflog -3                   # it is still listed
+git reset --hard HEAD@{1}       # bring it back</code></pre>
+<p><strong>You should see</strong> the commit vanish from <code>git log</code> and return. <strong>Check:</strong> the reflog lives inside this folder's <code>.git</code>. What happens to it if the disk is wiped, and what would have saved the commit? (Compare with check-in question 5.)</p></div>
+
+<div class="box try"><h4>8. Git: a worktree round trip</h4>
+<pre><code>git worktree add ../practice-wt -b practice/wt dev
+git worktree list
+git worktree remove ../practice-wt &amp;&amp; git branch -D practice/wt</code></pre>
+<p><strong>You should see</strong> two folders listed, then one. <strong>Check:</strong> run <code>git worktree list | wc -l</code> in the real checkout. How many are there? Then run <code>git branch --merged dev</code>: which worktree branches are already merged, so their worktrees could go?</p></div>
+
+<div class="box try"><h4>9. Claude Code: what loads before you type</h4>
+<p>In a fresh Claude Code session in the real checkout, run <code>/context</code>, then <code>/memory</code>.</p>
+<p><strong>You should see</strong> how much of the context window <code>CLAUDE.md</code>, memory and tools take before any work, and the memory files, including <code>learn-by-doing.md</code>. <strong>Check:</strong> note the numbers; module 9a uses them to judge what earns its place.</p></div>
+
+<div class="box try"><h4>Clean up</h4>
+<pre><code>rm -rf ~/code/work/practice</code></pre></div>
 
 <!-- ============ CHECK-IN ============ -->
 <h2 id="check">Check-in questions</h2>
