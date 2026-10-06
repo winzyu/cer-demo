@@ -142,3 +142,8 @@ Before pushing, fetch and confirm `origin/develop` is still `a5b745e` and `d3b4a
     `POST /api/v1/users/:id` and `DELETE /api/v1/users/:id` (admin or superadmin) check no organization, so an organization admin can edit, promote or delete users of other organizations, and `POST /api/v1/users` lets an admin create users in any organization.
     Present on CER's production code (`693fc96`) and on the release `122136d`; not in `SECURITY_FINDINGS.md`.
     The user's own account has only `datastore.entities.get` on the project, so a test user must be created and moved through the app as a superadmin.
+15. Parked until after launch (user, 2026-10-06: the launch comes first; nothing else is worked on until L9 is done):
+    - The unguarded user routes of item 14 (live in production now; tell Michael).
+    - Launch blockers 6 and 10 (Q10), and the other open Gilligan behaviour items.
+    - Revoking the old Gemini key and mail app password (Michael), the `rc1` tag on `cer-gilligan-00002-zoc`, the cer-demo Fireworks key, and runbook §3.4's build-time `API_PROXY_TARGET` claim.
+    - Recovering `~/release/`, lost in the 2026-10-04 WSL move.
