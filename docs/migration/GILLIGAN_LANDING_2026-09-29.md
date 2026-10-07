@@ -147,3 +147,8 @@ Before pushing, fetch and confirm `origin/develop` is still `a5b745e` and `d3b4a
     - Launch blockers 6 and 10 (Q10), and the other open Gilligan behaviour items.
     - Revoking the old Gemini key and mail app password (Michael), the `rc1` tag on `cer-gilligan-00002-zoc`, the cer-demo Fireworks key, and runbook §3.4's build-time `API_PROXY_TARGET` claim.
     - Recovering `~/release/`, lost in the 2026-10-04 WSL move.
+16. Email, 2026-10-06/07: inviting a test user failed with Gmail `535 BadCredentials`; cer-api logs show the same rejection on every serving revision back to at least 2026-09-27 (`00061-xeq`), so production email was already down before Michael's 10-05 revision, as he says (`nodemailer-password:2` is a revoked value).
+    Michael deployed `cer-api-00081-qon` (same image as `rc1`, tag `rc2`, 0% traffic) with `nodemailer-password:3`, the app password from the September cleanup, and reports a working Gmail login; its other references match `rc1`.
+    The live `cer-api-secrets-1005-1653` still reads `:2`, so production email stays down until L9 routes to `rc2`.
+    Free checks on `rc2`: `/` 200; `/api/v1/devices`, `/api/v1/users/all` and `/api/v1/users/test-db` 401 without a login; the local test dashboard (`cer-ui-l8-local`) now proxies to `rc2`.
+    The test user created on `rc1` was saved before its invitation failed (`TeamUserService.create` writes the user first), so it exists without an invitation.
