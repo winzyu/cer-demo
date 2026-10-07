@@ -148,6 +148,7 @@ Before pushing, fetch and confirm `origin/develop` is still `a5b745e` and `d3b4a
     - Revoking the old Gemini key and mail app password (Michael), the `rc1` tag on `cer-gilligan-00002-zoc`, the cer-demo Fireworks key, and runbook §3.4's build-time `API_PROXY_TARGET` claim.
     - Recovering `~/release/`, lost in the 2026-10-04 WSL move.
     - The L8 behaviour items in item 17, and deleting the customer test user after launch.
+    - The stale pod list after switching accounts (item 19).
 16. Email, 2026-10-06/07: inviting a test user failed with Gmail `535 BadCredentials`; cer-api logs show the same rejection on every serving revision back to at least 2026-09-27 (`00061-xeq`), so production email was already down before Michael's 10-05 revision, as he says (`nodemailer-password:2` is a revoked value).
     Michael deployed `cer-api-00081-qon` (same image as `rc1`, tag `rc2`, 0% traffic) with `nodemailer-password:3`, the app password from the September cleanup, and reports a working Gmail login; its other references match `rc1`.
     The live `cer-api-secrets-1005-1653` still reads `:2`, so production email stays down until L9 routes to `rc2`.
@@ -158,3 +159,10 @@ Before pushing, fetch and confirm `origin/develop` is still `a5b745e` and `d3b4a
     - C1 "How is the water this week?" on a pod answered with the readings, an action-required section and next steps, and offered a report, instead of a plain weekly summary; an explicit request for last week's summary or readings gave the means.
     - After a reload, asking for a summary of the sensor data returned almost the same answer as the earlier turn; check whether reloading changes the context sent with the next question, or whether the answer is simply deterministic.
     - D1: as Algalita, asking "what has the water been" at Old Woman Creek 2026 (another organization's pod) returned an Algalita report without saying the named pod is unavailable; no other organization's data appeared, but the answer should say it cannot discuss that pod.
+18. L9, 2026-10-07: the user routed `cer-gilligan-00004-r5q` (minimum and maximum one instance, Fireworks `:3`, service key `:1`), cer-api `rc2` (`cer-api-00081-qon`) and cer-ui `rc1` (`cer-ui-00070-dax`) to 100%; rollback targets are `cer-api-secrets-1005-1653` (revoked mail password) and `cer-ui-00067-jid`.
+    Agent checks after the switch: `https://cleanearthrovers-datahub.app` serves `/login` and `/gilligan`; `/api/v1/users/all`, `/api/v1/users/test-db` and `/api/v1/devices` return 401 there and on the canonical cer-api, so the open user routes are closed in production; Gilligan `/health` ok; no 5xx or ERROR on the three services since 07:20 UTC, and no Gmail rejection on 2026-10-07.
+19. Finding, 2026-10-07: after using the customer test user (Algalita), the superadmin's home page listed only Algalita's pod.
+    `getDevicesGlobal` (`src/app/services/device-data.js:341`) returns the in-memory `MainContext` pod list whenever it is non-empty, and logout (`src/app/components/header.js`) clears only `localStorage` and navigates with `router.push`, so the previous account's pod list (and organization list) survives a logout and login in the same tab until a full reload.
+    The reverse order shows a superadmin's full pod list to the next account in that tab, a cross-account exposure on shared computers.
+    Present in CER's own dashboard (`5dff5fd`); workaround: reload the page after logging in.
+    Fix after launch: clear `devices` and `organizations` on logout and login (or reload on logout), and key the cache to the user.
