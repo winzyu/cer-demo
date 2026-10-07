@@ -147,8 +147,14 @@ Before pushing, fetch and confirm `origin/develop` is still `a5b745e` and `d3b4a
     - Launch blockers 6 and 10 (Q10), and the other open Gilligan behaviour items.
     - Revoking the old Gemini key and mail app password (Michael), the `rc1` tag on `cer-gilligan-00002-zoc`, the cer-demo Fireworks key, and runbook §3.4's build-time `API_PROXY_TARGET` claim.
     - Recovering `~/release/`, lost in the 2026-10-04 WSL move.
+    - The L8 behaviour items in item 17, and deleting the customer test user after launch.
 16. Email, 2026-10-06/07: inviting a test user failed with Gmail `535 BadCredentials`; cer-api logs show the same rejection on every serving revision back to at least 2026-09-27 (`00061-xeq`), so production email was already down before Michael's 10-05 revision, as he says (`nodemailer-password:2` is a revoked value).
     Michael deployed `cer-api-00081-qon` (same image as `rc1`, tag `rc2`, 0% traffic) with `nodemailer-password:3`, the app password from the September cleanup, and reports a working Gmail login; its other references match `rc1`.
     The live `cer-api-secrets-1005-1653` still reads `:2`, so production email stays down until L9 routes to `rc2`.
     Free checks on `rc2`: `/` 200; `/api/v1/devices`, `/api/v1/users/all` and `/api/v1/users/test-db` 401 without a login; the local test dashboard (`cer-ui-l8-local`) now proxies to `rc2`.
     The test user created on `rc1` was saved before its invitation failed (`TeamUserService.create` writes the user first), so it exists without an invitation.
+17. L8 staged smoke passed, 2026-10-07, on the local dashboard against `rc2` (`cer-api-00081-qon`) and `cer-gilligan-00003-slr`: the user's superadmin account and a customer test user (`winsyu475+certest@gmail.com`, organization Algalita) passed K1, the usage line, B1 with a citation that opens the PDF, K13, F2, chat kept after a reload, the invitation email (proving `nodemailer-password:3`), P3 (one pod for the test user) and D1; logs show 21 Gilligan calls, all 200, and no 5xx.
+    Behaviour to address after launch, not launch blockers (the user's decision):
+    - C1 "How is the water this week?" on a pod answered with the readings, an action-required section and next steps, and offered a report, instead of a plain weekly summary; an explicit request for last week's summary or readings gave the means.
+    - After a reload, asking for a summary of the sensor data returned almost the same answer as the earlier turn; check whether reloading changes the context sent with the next question, or whether the answer is simply deterministic.
+    - D1: as Algalita, asking "what has the water been" at Old Woman Creek 2026 (another organization's pod) returned an Algalita report without saying the named pod is unavailable; no other organization's data appeared, but the answer should say it cannot discuss that pod.
