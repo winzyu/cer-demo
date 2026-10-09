@@ -7,6 +7,7 @@ import { GenerateReport, generateReportDefinition } from "../../src/tools/genera
 import { catalogue } from "../../src/catalogue";
 import { prepareReport, renderReportPdf } from "../../src/report/produceReport";
 import * as pdfRenderer from "../../src/report/renderPdf";
+import { REPORT_OMIT_GROUPS } from "../../src/report/omit";
 
 /**
  * generate_report end to end: runs the real report pipeline over recorded device-api fixtures
@@ -61,6 +62,12 @@ describe("generate_report — tool definition", () => {
     expect(generateReportDefinition.function.name).toBe("generate_report");
     expect(generateReportDefinition.function.parameters.required).toEqual(["time_range"]);
   });
+
+  it("offers omit as a closed list of the report's note groups", () => {
+    const { omit } = generateReportDefinition.function.parameters.properties as Record<
+      string, { items: { enum: string[] } }>;
+    expect(omit.items.enum).toEqual([...REPORT_OMIT_GROUPS]);
+  });
 });
 
 describe("GenerateReport.run", () => {
@@ -99,6 +106,34 @@ describe("GenerateReport.run", () => {
 
     expect(result.report_period).toBe(`${resolved.start} to ${resolved.end}`);
     expect(result.report_period).toMatch(/^\d{4}-\d{2}-\d{2} to \d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("carries a requested omit list into report_request, in canonical order", async () => {
+    const result = await new GenerateReport({ sensor: makeSensor() }).run({
+      time_range: "last day",
+      device: "Algalita",
+      omit: ["data_quality", "turbidity_notes", "turbidity_notes"],
+    }, CALLER);
+
+    expect(result.error).toBeUndefined();
+    expect(result.report_request).toEqual({
+      time_range: "last day", device: "Algalita", omit: ["turbidity_notes", "data_quality"],
+    });
+    expect(result.omitted_from_pdf).toEqual(["turbidity_notes", "data_quality"]);
+  });
+
+  it("leaves omit out of report_request when nothing was omitted", async () => {
+    const result = await new GenerateReport({ sensor: makeSensor() })
+      .run({ time_range: "last day", device: "Algalita", omit: [] }, CALLER);
+    expect(result.report_request).toEqual({ time_range: "last day", device: "Algalita" });
+    expect(result).not.toHaveProperty("omitted_from_pdf");
+  });
+
+  it("rejects an omit value outside the list, naming the allowed ones", async () => {
+    const result = await new GenerateReport({ sensor: makeSensor() })
+      .run({ time_range: "last day", device: "Algalita", omit: ["recommendations"] }, CALLER);
+    expect(result.error).toContain("turbidity_notes");
+    expect(result).not.toHaveProperty("report_request");
   });
 
   it("omits device from report_request when the call named none", async () => {
@@ -206,7 +241,7 @@ describe("GenerateReport.run", () => {
         const pdf = await renderReportPdf(prepared);
         expect(pdf.subarray(0, 5).toString()).toBe("%PDF-");
         expect(pdfSpy).toHaveBeenCalledWith(prepared.report, prepared.narrative, {
-          probeAccuracy: expect.any(Function), status,
+          probeAccuracy: expect.any(Function), status, omit: [],
         });
       } finally {
         pdfSpy.mockRestore();

@@ -1,8 +1,9 @@
 import PDFDocument from "pdfkit";
 import {
   buildReportPdf, resolveSectionNumbers, drawGridTable, drawKeyValueTable, drawSparkline,
-  flagCellText, lastReadingText, MARGIN,
+  clarityFootnoteText, flagCellText, lastReadingText, MARGIN,
 } from "../../src/report/renderPdf";
+import { REPORT_OMIT_GROUPS, type ReportOmitGroup } from "../../src/report/omit";
 import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent, DataQualityCheck, ReportStatus,
 } from "../../src/report/types";
@@ -541,4 +542,82 @@ describe("drawSparkline", () => {
 it("prints Not assessed for a numeric row with an unusable operator limit", () => {
   expect(flagCellText({ ...param, baseline: { ...baseline, hasFixedBaseline: false } }, () => 0))
     .toBe("Not assessed");
+});
+
+describe("buildReportPdf — notes left out on request", () => {
+  const thresholdBaseline: ParameterBaseline = { ...baseline, baselineSource: "operator-threshold" };
+  const full: ReportInput = {
+    site,
+    parameters: [{ ...param, baseline: thresholdBaseline }, turbidityParam(0)],
+    events: [],
+    dataQuality: { ...dataQuality, calibrationNotes: "Calibration note for the test." },
+  };
+
+  /** Every string the PDF drew, from pdfkit's text calls; PDF text cannot be read under Jest. */
+  const drawnText = (omit: ReportOmitGroup[]): string => {
+    const text = jest.spyOn(PDFDocument.prototype, "text");
+    try {
+      const doc = buildReportPdf(
+        full,
+        deterministicNarrative(full, noAccuracy, "Normal", guidance, omit),
+        { probeAccuracy: noAccuracy, status: "Normal", omit },
+      );
+      doc.resume();
+      doc.end();
+      return text.mock.calls.map(([value]) => String(value)).join(" \n ");
+    } finally {
+      text.mockRestore();
+    }
+  };
+
+  it("prints every note and no Omitted row by default", () => {
+    const text = drawnText([]);
+    expect(text).toContain("No range (relative index)");
+    expect(text).toContain("uncalibrated relative index");
+    expect(text).toContain("Clear (all zero)");
+    expect(text).toContain("operator-configured threshold from the device registry");
+    expect(text).toContain("Calibration note for the test.");
+    expect(text).not.toContain("Omitted");
+  });
+
+  it("leaves out each group's notes, keeps the numbers, and says what was omitted", () => {
+    const text = drawnText([...REPORT_OMIT_GROUPS]);
+    expect(text).not.toContain("No range (relative index)");
+    expect(text).not.toContain("uncalibrated");
+    expect(text).not.toContain("(all zero)");
+    expect(text).not.toContain("operator-configured threshold from the device registry");
+    expect(text).not.toMatch(/\d\. Data Quality/);
+    expect(text).not.toContain("Calibration note for the test.");
+    expect(text).toContain("Omitted");
+    expect(text).toContain("turbidity notes, sensor fault notes, threshold notes, Data Quality "
+      + "section (at the requester's request)");
+    expect(text).toContain("6.5-8.5");
+    expect(text).toContain("4. Recommendations");
+  });
+});
+
+describe("clarityFootnoteText / flagCellText / resolveSectionNumbers — omit", () => {
+  it("keeps the footnote unchanged by default and drops each half with its group", () => {
+    const fullText = clarityFootnoteText();
+    expect(fullText.startsWith("  Turbidity is reported")).toBe(true);
+    expect(fullText).toContain("comparison only. A Flag reading '(all zero)'");
+    expect(clarityFootnoteText(["turbidity_notes"]).startsWith("  A Flag reading")).toBe(true);
+    expect(clarityFootnoteText(["sensor_fault_notes"])).not.toContain("(all zero)");
+    expect(clarityFootnoteText(["turbidity_notes", "sensor_fault_notes"])).toBe("");
+  });
+
+  it("explains the Flag suffixes only when a Flag cell carries one", () => {
+    expect(clarityFootnoteText([], false)).not.toContain("(all zero)");
+    expect(clarityFootnoteText(["turbidity_notes"], false)).toBe("");
+  });
+
+  it("prints the bare band under sensor_fault_notes", () => {
+    expect(flagCellText(turbidityParam(0), noAccuracy, ["sensor_fault_notes"])).toBe("Clear");
+    expect(flagCellText(turbidityParam(2_042), noAccuracy, ["sensor_fault_notes"])).toBe("Turbid");
+  });
+
+  it("renumbers Recommendations when the Data Quality section is left out", () => {
+    expect(resolveSectionNumbers({ events: [event], dataQuality }, ["data_quality"]))
+      .toEqual({ eventDetection: 4, recommendations: 5 });
+  });
 });

@@ -7,6 +7,7 @@ import type {
 import { catalogue, parseCatalogue, usableGuidance } from "../../src/catalogue";
 import type { UsableGuidance } from "../../src/catalogue";
 import { TURBIDITY_ALL_ZERO_CAVEAT } from "../../src/report/referenceRanges";
+import type { ReportOmitGroup } from "../../src/report/omit";
 
 /**
  * narrative.ts is the rule-based (zero-AI-call) prose writer. Covers the two user-requested
@@ -671,5 +672,52 @@ describe("deterministicNarrative — shipped catalogue", () => {
     ].join(" \n ");
     // Treating the water is a separate, legally gated piece of work.
     expect(allText).not.toMatch(/\binstall\b|\bdose\b|\baerat|\bincrease flow\b|\bflush\b|\breduce\b|\badd\s+(chlorine|treatment|lime)/i);
+  });
+});
+
+describe("deterministicNarrative — notes left out on request", () => {
+  const omitting = (input: ReportInput, omit: ReportOmitGroup[]) => (
+    narrate(input, noAccuracy, "Normal", NO_GUIDANCE, omit)
+  );
+
+  it("keeps every turbidity note when nothing is omitted", () => {
+    const { parameterAnalysis, summaryBullets } = omitting(report([turbidityParam([0, 0, 0])]), []);
+    expect(parameterAnalysis.get("Turbidity (Relative)")).toContain("provisional, uncalibrated conversion");
+    expect(parameterAnalysis.get("Turbidity (Relative)")).toContain(TURBIDITY_ALL_ZERO_CAVEAT);
+    expect(summaryBullets.join(" ")).toContain("uncalibrated scale with no operator range");
+  });
+
+  it("drops the scale caveat under turbidity_notes but keeps the band, numbers and trend", () => {
+    const rising = report([turbidityParam([500, 550, 600, 700, 750, 800])]);
+    const { parameterAnalysis, summaryBullets } = omitting(rising, ["turbidity_notes"]);
+    const text = parameterAnalysis.get("Turbidity (Relative)")!;
+    expect(text).toBe("Water clarity read as Moderate for the period (relative index mean 650.0, "
+      + "range 500.0-800.0), rising across the period. The period spanned moderate to turbid "
+      + "conditions.");
+    const bullet = summaryBullets.find((b) => b.startsWith("Turbidity"))!;
+    expect(bullet).toBe("Turbidity (Relative): Moderate (relative index mean 650.0, rising across "
+      + "the period).");
+  });
+
+  it("drops the all-zero and off-scale sentences only under sensor_fault_notes", () => {
+    const zero = omitting(report([turbidityParam([0, 0, 0])]), ["sensor_fault_notes"]);
+    expect(zero.parameterAnalysis.get("Turbidity (Relative)")).not.toContain(TURBIDITY_ALL_ZERO_CAVEAT);
+    expect(zero.summaryBullets.join(" ")).not.toContain("possibly a missing sensor");
+    expect(zero.parameterAnalysis.get("Turbidity (Relative)")).toContain("provisional, uncalibrated conversion");
+
+    const offScale = omitting(report([turbidityParam([1_006, 1_006, 1_006])]), ["sensor_fault_notes"]);
+    expect(offScale.parameterAnalysis.get("Turbidity (Relative)")).not.toContain("turbVolt");
+    expect(offScale.summaryBullets.join(" ")).not.toContain("Off-scale");
+  });
+
+  it("drops a parameter's baseline note under threshold_notes, keeping its comparison", () => {
+    const baseline = {
+      ...noFixedBaseline("temperature", "Temperature (°F)", "°F"),
+      baselineNote: "No operator thresholds are configured for this device.",
+    };
+    const temp = param(baseline, { min: 60, max: 90, pattern: "unknown" });
+    const text = omitting(report([temp]), ["threshold_notes"]).parameterAnalysis.get("Temperature (°F)")!;
+    expect(text).not.toContain("No operator thresholds are configured");
+    expect(text).toContain("No baseline is established for this parameter");
   });
 });

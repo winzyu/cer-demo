@@ -26,6 +26,7 @@ import {
 import { entriesFor, entryText, waterClassFor } from "../catalogue/select";
 import type { Finding, UsableGuidance } from "../catalogue/select";
 import type { CatalogueEntry, RecommendationSlot, WaterClass } from "../catalogue/types";
+import type { ReportOmitGroup } from "./omit";
 
 /**
  * Section 4's wording for one event. The event itself (`events.ts`) says what was detected; this
@@ -231,28 +232,37 @@ const trendWord = (p: ParameterStats): string => {
  * the reading is at or beyond the top of the conversion's own scale, which points at the sensor
  * or its wiring at least as readily as it points at turbid water. An all-zero period gets
  * `TURBIDITY_ALL_ZERO_CAVEAT` instead, for the same reason in the other direction.
+ *
+ * `omit` drops the scale caveat (`turbidity_notes`) or the off-scale and all-zero sentences
+ * (`sensor_fault_notes`); the band, numbers and trend always stay.
  */
-const relativeIndexAnalysisLine = (p: ParameterStats): string => {
+const relativeIndexAnalysisLine = (
+  p: ParameterStats,
+  omit: readonly ReportOmitGroup[],
+): string => {
   const band = clarityBandFor(p.mean);
   const minBand = clarityBandFor(p.min);
   const maxBand = clarityBandFor(p.max);
   const spread = minBand === maxBand
     ? ""
     : ` The period spanned ${minBand.toLowerCase()} to ${maxBand.toLowerCase()} conditions.`;
-  const offScale = isOffScaleTurbidity(p.mean)
+  const faultNotes = !omit.includes("sensor_fault_notes");
+  const offScale = faultNotes && isOffScaleTurbidity(p.mean)
     ? " This reading is at or beyond the top of the conversion's scale, which indicates a "
       + "sensor or wiring problem as readily as it indicates turbid water -- worth checking "
       + "against turbVolt directly."
     : "";
-  const allZero = isAllZeroTurbidity(p.max) ? ` ${TURBIDITY_ALL_ZERO_CAVEAT}` : "";
+  const allZero = faultNotes && isAllZeroTurbidity(p.max) ? ` ${TURBIDITY_ALL_ZERO_CAVEAT}` : "";
+  const scale = omit.includes("turbidity_notes") ? "" : ` ${TURBIDITY_SCALE_CAVEAT}`;
   return `Water clarity read as ${band} for the period (relative index mean `
     + `${p.mean.toFixed(1)}, range ${p.min.toFixed(1)}-${p.max.toFixed(1)}), `
-    + `${trendWord(p)}.${spread} ${TURBIDITY_SCALE_CAVEAT}${offScale}${allZero}`;
+    + `${trendWord(p)}.${spread}${scale}${offScale}${allZero}`;
 };
 
 const paramAnalysisLine = (
   p: ParameterStats,
   probeAccuracy: (key: string, reading: number) => number,
+  omit: readonly ReportOmitGroup[],
 ): string => {
   const b = p.baseline;
   const flag = flagFor(p, probeAccuracy);
@@ -267,7 +277,7 @@ const paramAnalysisLine = (
 
   let text: string;
   if (flag === "Qualitative") {
-    text = relativeIndexAnalysisLine(p);
+    text = relativeIndexAnalysisLine(p, omit);
   } else if (flag === "N/A") {
     text = `${sentenceCase(phrase)}. No baseline is established for this parameter -- reported `
       + "for reference only, not flagged against a range.";
@@ -306,8 +316,8 @@ const paramAnalysisLine = (
     }
   }
   // Provenance travels with the numbers, and the "why not" travels with their absence -- see
-  // ParameterBaseline.baselineNote.
-  if (b.baselineNote) {
+  // ParameterBaseline.baselineNote. `threshold_notes` leaves both out.
+  if (b.baselineNote && !omit.includes("threshold_notes")) {
     text += ` ${b.baselineNote}`;
   }
   if (p.excursionNote) {
@@ -320,12 +330,16 @@ const paramAnalysisLine = (
  * `guidance` is the catalogue content this deployment may show (`src/catalogue/index.ts`).
  * Possible causes and every recommendation for a flagged period come only from it; the routine
  * and "not assessed" lines below are about monitoring and configuration, not about the water.
+ *
+ * `omit` is the requester's list of notes to leave out (`omit.ts`); empty, the default, keeps
+ * every note.
  */
 export const deterministicNarrative = (
   report: ReportInput,
   probeAccuracy: (key: string, reading: number) => number,
   status: ReportStatus,
   guidance: UsableGuidance,
+  omit: readonly ReportOmitGroup[] = [],
 ): NarrativeSections => {
   // "N/A" is excluded alongside "Normal": it means the parameter has no baseline to be outside
   // of (temperature on a device with no usable registry threshold -- see operatorThresholds.ts),
@@ -343,16 +357,19 @@ export const deterministicNarrative = (
   const clarityBullets = report.parameters
     .filter((p) => isRelativeIndex(p.baseline))
     .map((p) => {
-      const offScale = isOffScaleTurbidity(p.mean)
+      const faultNotes = !omit.includes("sensor_fault_notes");
+      const offScale = faultNotes && isOffScaleTurbidity(p.mean)
         ? " Off-scale: check against turbVolt directly."
         : "";
-      const allZero = isAllZeroTurbidity(p.max)
+      const allZero = faultNotes && isAllZeroTurbidity(p.max)
         ? " All readings were 0: possibly a missing sensor, not confirmed clear water."
         : "";
+      const scale = omit.includes("turbidity_notes")
+        ? "."
+        : " — operator-authoritative bands over an uncalibrated scale with no operator range; "
+          + "reported as a band, not judged against one.";
       return `${p.baseline.label}: ${clarityBandFor(p.mean)} (relative index mean `
-        + `${p.mean.toFixed(1)}, ${trendWord(p)}) — operator-authoritative bands over an `
-        + "uncalibrated scale with no operator range; reported as a band, not judged "
-        + `against one.${offScale}${allZero}`;
+        + `${p.mean.toFixed(1)}, ${trendWord(p)})${scale}${offScale}${allZero}`;
     });
 
   let summaryBullets: string[];
@@ -400,7 +417,10 @@ export const deterministicNarrative = (
   const parameterAnalysis = new Map<string, string>();
   report.parameters
     .filter((p) => !heldSteady(p, flagFor(p, probeAccuracy)))
-    .forEach((p) => parameterAnalysis.set(p.baseline.label, paramAnalysisLine(p, probeAccuracy)));
+    .forEach((p) => parameterAnalysis.set(
+      p.baseline.label,
+      paramAnalysisLine(p, probeAccuracy, omit),
+    ));
 
   const water = waterClassFor(report.site.waterBodyType);
   const selections = report.events.map((event) => {
