@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-10-07 by the release chat after L9, on `docs/launch-handoff` (from `dev` `cde5a1a` plus `task/release-l6-images` `7bc4572`).
+Updated 2026-10-07 by the release chat after L9, on `docs/launch-handoff` (from `dev` `cde5a1a` plus `task/release-l6-images` `7bc4572`); report-editing workstream updated 2026-10-10 on `task/report-omit`, which merges `docs/launch-handoff`.
 Current state and next steps only; history is `git log -p docs/STATUS.md`; never cite this file from code or other docs.
 
 ## Start here
@@ -8,6 +8,8 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - **Gilligan is live (2026-10-07).** cer-gilligan `00004-r5q`, cer-api `00081-qon` (tag `rc2`) and cer-ui `00070-dax` (tag `rc1`) take all traffic; record in [`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md) §7 items 10-19.
 - **Post-launch backlog (next chat).** Lay out every item set aside for after launch from [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md), reconcile it with the user's untracked `docs/migration/POST_RELEASE_ITEMS_EXPLAINED.html` (2026-10-02), and agree an order with the user before working on any item.
   The over-flagging change Michael asked for (§1) and the unguarded user-update routes (§2) are the obvious candidates for first.
+- **Report editing (backlog §6).** Report options (`omit`) are built and unit-tested on cer-demo `task/report-omit` and server `task/gilligan-report-omit`; next, run [`migration/REPORT_OMIT_MIRROR_TEST.md`](migration/REPORT_OMIT_MIRROR_TEST.md) on the Mirror (free steps first, paid steps after budget approval), then send Michael the sample PDFs.
+  This chat leaves over-flagging (§1) out by the user's decision.
 - **Upstream landing.** `develop` is pushed in both repositories (server `5f04064`, dashboard `5ae4993`); next are the `main` merges, which Michael tests first ([`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md) §5).
 - **Coordination**: the coordinator alone writes `dev`, this file, the plan and the manual guide; other chats work on their own branch and worktree and report commit IDs; upstream pushes are new branches only, with the user's consent in chat.
 
@@ -26,12 +28,15 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - This handoff: branch `docs/launch-handoff` (worktree `launch-handoff`) merges `task/release-l6-images` into `dev` and adds the backlog, three timeline rows and a runbook §3.4 correction; it awaits the coordinator's landing on `dev`.
 - cer-demo worktrees: 40 besides the main checkout; `release-l6` (pushed, merged here) and `launch-handoff` are this chat's; `post-launch-security` and `mirror-testing` are stale (2026-09-28) with nothing uncommitted.
 - Upstream build worktrees `worktrees/build-cer-api-122136d` and `build-cer-ui-fc13d16` are clean detached checkouts of the live commits; the server and dashboard checkouts stay on `local`.
+- Report editing: worktree `report-omit` on `task/report-omit` (pushed; feature `97e396e`, plan `ac212d1`, then a merge of `docs/launch-handoff`), so the coordinator lands `docs/launch-handoff` first; server worktree `worktrees/server-report-omit` on `task/gilligan-report-omit` `ddcddc5` (local only, never push without consent); the options comparison `docs/migration/REPORT_EDITING_OPTIONS.html` is untracked in the main checkout.
 - Running: Docker container `cer-ui-l8-local` on 127.0.0.1:3000 (the release dashboard proxying to cer-api `rc2`, which is now live); the pre-move stacks (mirror, launch-issues, rc2 mirror) are gone.
 
 ## Open work
 
 - User: choose the post-launch order; send Michael the launch note; delete the test user `winsyu475+certest@gmail.com`; say when to stop `cer-ui-l8-local`; recover `~/release/` if a backup has it.
 - Michael: revoke the old Gemini key and Gmail app password; optionally grant the user Cloud Build bucket write and `roles/datastore.user` on the `gilligan` database (usage resets); test before the `main` merges.
+- User, report editing: approve the Mirror budget (about $0.30-0.50); after the test, send Michael the before-and-after PDFs and correct the earlier message that the model edits parts of the report (it never did; the variation came from data-driven templates).
+- Agent, report editing: run the Mirror test plan and record results in `docs/migration/REPORT_OMIT_MIRROR_RESULTS_<date>.md`.
 - Agent, post-launch: everything in [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md), once ordered.
 - Agent, upstream landing: build the `main` merges (server conflicts in `WaterAnalyticsService.ts`; take the release side); push on consent; tell Michael `62993fe` ships with server `main`.
 - Agent, release follow-through: logs and spend in the first days; cer-gilligan to 2 instances after the restart check; remove stale tags (backlog §4).
@@ -62,6 +67,8 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 | `/tmp/eval-fixtures-*` | 131 directories leaked before the hygiene fix remain. | low |
 
 ## Active traps
+
+- `MIRROR_RUNBOOK.md` predates the 2026-10-04 move: its paths are under `~/code/clean-earth-rovers/`, `server-release-mirror`'s `node_modules` link is broken, and port 3000 now belongs to `cer-ui-l8-local` (live cer-api); `REPORT_OMIT_MIRROR_TEST.md` lists the substitutions.
 
 - Upstream history carries malware (tips are clean; it runs on `next dev`, `next build`, `npm test`): never check out `main`, `develop` or an old commit; scan with `grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .` after any clone, fetch, pull or switch.
 - Rollback targets are `cer-ui-00067-jid` and `cer-api-secrets-1005-1653`; the latter carries the revoked mail password and the Gemini-backed Gilligan, so roll back cer-ui first.

@@ -96,7 +96,8 @@ Michael, 2026-10-07, after using the live Gilligan:
 
 The user offered two directions: the model writes the whole report as HTML, converted to PDF (estimated 3-15 cents a report, not measured), or the model edits a fixed HTML template with named sections, such as a warning section it can remove on request.
 Michael: "I would say the HTML is the better idea".
-No design is chosen; this section keeps the ideas and the research still open.
+**Status 2026-10-09:** idea 1 (report options on the tool) is built on cer-demo `task/report-omit` and server `task/gilligan-report-omit`, awaiting a Mirror test ([`REPORT_OMIT_MIRROR_TEST.md`](REPORT_OMIT_MIRROR_TEST.md)) and Michael's approval of sample PDFs; the decision is in [`timeline.md`](../timeline.md).
+Research items 2, 3, 6 and 7 were settled by the user: removal is allowed on explicit request, notes are kept by default, a copy says what it omits, the zero-AI-calls decision stands, and omitted copies count against the quota as before.
 
 How the report works today:
 
