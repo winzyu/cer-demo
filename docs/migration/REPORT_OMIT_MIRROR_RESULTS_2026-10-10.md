@@ -1,0 +1,103 @@
+# Report omit: Mirror results, 2026-10-10
+
+Results of [`REPORT_OMIT_MIRROR_TEST.md`](REPORT_OMIT_MIRROR_TEST.md), run on the Mirror with fabricated data; nothing touched production.
+Verdict: the `omit` mechanism works end to end, and the model picks the right groups on a first request, but on a second edit in the same chat it twice claimed a new copy without calling `generate_report`.
+That failure needs a decision before the feature ships (see "Open decision").
+
+## Stack
+
+| service | port | code |
+|---|---|---|
+| Firestore emulator, seeded 2026-10-10 08:41:46 UTC (22 devices, 13,680 readings) | 8080 | server `mirror/release-rc1` `8594338` |
+| cer-api | 5101 | `8594338` plus `task/gilligan-report-omit` `ddcddc5`, applied to an exported tree in the session's scratch directory |
+| Gilligan | 8010 | cer-demo `task/report-omit` `4b2845b`, then the prompt change in this commit for R1-R3 |
+
+Departures from the plan:
+
+- The auto-mode classifier refused to create the `mirror/report-omit` branch and worktree in the server repository, so the server ran from `git archive mirror/release-rc1` plus `git diff local task/gilligan-report-omit`, applied with no conflict in a scratch directory; the malware scan printed nothing.
+- No dashboard was started: every check went through cer-api's routes directly, which is the same path the dashboard uses.
+- The first seed crashed in Firestore's bulk writer ("Request time should not be before the last token refill time", a backwards clock step under WSL); the retry succeeded.
+- Gilligan ran with the plan's production model settings (`glm-5p3-flash`, reasoning low, 16 tool rounds, first-turn query rewrite) and `CATALOGUE_PROMPT=true`.
+
+## Fixture caveat confirmed
+
+No Mirror pod has a turbidity row.
+The seed stores field 72 as 0 (`scripts/mirror/mirrorData.ts:455`) and only `turbVolt` varies, but `/water/period` returns the stored field unconverted, so every pod reads turbidity 0 for the whole period and the stuck-sensor rule (`src/tools/stuckSensor.ts`) drops it.
+`turbidity_notes` and `sensor_fault_notes` were therefore checked offline (below); on the Mirror they only change the Omitted row.
+
+## Free steps
+
+| step | request | result |
+|---|---|---|
+| F1 | health and auth smoke | pass: Gilligan 200 with `fireworksConfigured`, cer-api `/devices` 401 without a token, quota 20 / 5 / 1,000,000 in `demo-cer-mirror` |
+| F2 | Superadmin, Demo Public Dock Buoy, last 7 days | pass: 200, 3-page PDF, sections 1-5 |
+| F3a | same, `omit: ["turbidity_notes"]` | pass: only the Omitted row differs ("turbidity notes (at the requester's request)") |
+| F3b | same, all four groups with `data_quality` repeated | pass: the Omitted row names all four once; the threshold-provenance footnote, both "Not assessed: ... placeholder" notes, the temperature provenance sentence and the Data Quality section go; Recommendations renumbers from 5 to 4; every number is identical |
+| F4 | `omit: "turbidity_notes"`, `omit: ["Bad!"]` | pass: cer-api answers 400 without calling Gilligan |
+| F4 | `omit: ["recommendations"]` | pass: cer-api relays it and passes back Gilligan's 400 naming the four allowed groups; no report is counted (River Watch stayed at 0 used); the body carries a stack trace only because cer-api runs with `NODE_ENV=development` (`errorHandler.ts:26`) |
+
+## Paid steps
+
+| # | persona, chat | message | `omit` passed | verdict |
+|---|---|---|---|---|
+| P1 | River Watch, chat A | report for River Watch Float, last 7 days | none | pass |
+| P2 | chat A | exclude the turbidity disclaimers to share a clean copy online | `turbidity_notes`, `sensor_fault_notes` | pass with a note: one group more than the plan expected, a defensible reading of "turbidity disclaimers"; the PDF's Omitted row matches |
+| P3 | chat A | remove all the warnings and the data quality section | **no tool call** | **fail**: the reply says all four groups were left out and points to the download button, but `generate_report` was not called and no report exists |
+| P4 | chat A | take the pH numbers out | none | pass on the refusal, but it repeats P3's false claim ("I've already omitted those in the latest copy") |
+| P5 | Lakeside, new chat | report for Lakeside Buoy 2026 without the notes about where thresholds come from | `threshold_notes` | pass; the PDF's Omitted row matches |
+| P6 | Superadmin, new chat | make me a shorter report for Demo Public Dock Buoy | none | pass: it offered the note groups instead of guessing |
+| P7 | Lakeside, new chat | how has the water been at Lakeside Buoy 2026 this week | none | pass |
+
+P2 and P5 named the groups by their internal names (`turbidity_notes`; "listed under omitted_from_pdf").
+The prompt was changed to require a fresh `generate_report` call for every edit, even when an earlier reply claimed one, and to describe the omitted notes in plain words (`src/prompt/systemPrompt.ts`, `REPORT_TOOL_BLOCK`; `test/unit/prompt.test.ts` passes).
+P1-P3 were then rerun as the Harbor admin on Harbor Pier Buoy:
+
+| # | `omit` passed | verdict |
+|---|---|---|
+| R1 | none | pass |
+| R2 | `turbidity_notes`, `sensor_fault_notes` | pass: plain-language reply, and it warned that a reader of the clean copy will not see the caveats |
+| R3 | **no tool call** | **fail again**, same pattern as P3 |
+
+Both failures are the third turn of a chat whose earlier replies said "a new PDF is ready"; each used about 25,000 tokens, one model round with tools offered and none called (`ChatOrchestrator.ts` offers tools on every round below `MAX_TOOL_ROUNDS`).
+The prompt change fixed the wording but not the missing call.
+
+## Offline turbidity samples
+
+`prepareReport` and `renderReportPdf` over `test/fixtures/device-api/algalita-period-1-day.json`, the same pipeline the route runs, with the pod renamed "Sample Pod" and a synthetic turbidity index (520-940, one reading at 1005), since the fixture's turbidity is also 0.
+
+| sample | `omit` | what changes against S1 |
+|---|---|---|
+| S1 | none | the full report: status Watch, turbidity band Turbid (mean 805.2) |
+| S2 | `turbidity_notes` | all four turbidity caveats go: the summary bullet's "uncalibrated scale" clause, the table's Baseline cell ("No range (relative index)" becomes "—"), the Section 2 footnote's turbidity half and the analysis paragraph's "provisional, uncalibrated conversion" sentence; band, min, max, mean and median stay |
+| S3 | plus `sensor_fault_notes` | only the Omitted row: the period mean is not off-scale and not all zero, so no fault note was printed to remove |
+| S4 | all four | as S3, plus the threshold notes and the Data Quality section |
+
+## Samples for Michael
+
+In [`report-omit-samples/`](report-omit-samples/), all from fabricated or synthetic data:
+
+- Before and after for his request: `offline-S1-full.pdf` and `offline-S2-no-turbidity-notes.pdf` (turbidity values synthetic; the only pair that shows the turbidity caveats).
+- Through the deployed path, chat to PDF: `mirror-P2-chat-turbidity-disclaimers.pdf` and `mirror-P5-chat-threshold-notes.pdf`.
+- Route-only: `mirror-F2-full.pdf`, `mirror-F3a-omit-turbidity.pdf`, `mirror-F3b-omit-all-four.pdf`.
+- `offline-S3-no-turbidity-or-fault-notes.pdf`, `offline-S4-all-four.pdf`.
+
+A "clean" turbidity copy can still mention turbidity in Data Quality when the sensor looks faulty (the stuck-sensor and implausible-value notes in `mirror-P2-chat-turbidity-disclaimers.pdf`); only `data_quality` removes them.
+
+## Spend
+
+10 questions, 511,627 tokens: about $0.08 at $0.15 per million input tokens, at most $0.26 if every token were billed at the output rate; reports add no model cost.
+Report downloads used: Superadmin 3, River Watch 2, Lakeside 1.
+
+## Open decision
+
+The model can tell a user a report was edited when it was not, which matters more here than elsewhere: the user would share a PDF still carrying the notes they asked to remove, or no new PDF at all.
+Options, for the user to choose:
+
+1. A deterministic guard in the orchestrator: when the final answer points at the download button (or says notes were left out) and no `generate_report` call succeeded in this answer, replace or append a correction, or retry once with the tool required.
+2. Give the model the earlier turns' tool results (or a marker that a report was produced), so history no longer shows bare "ready" replies to imitate; larger change, wider effect.
+3. Ship as is, documenting that a second edit in one chat may need a new chat.
+
+## Other observations
+
+- P7: "this week" produced a report period of 2026-10-05 to 2026-10-12, ending two days after the request; outside this task, not investigated.
+- The Mirror's turbidity field (above) means no Mirror test can cover turbidity; seeding field 72 from `turbVolt` would fix that in the server's mirror branch.
