@@ -973,12 +973,38 @@ describe("query_sensor_data — window honesty", () => {
     const result = await tool.run({
       metric: "ph", time_range: "last 60 days", aggregation: "mean", device: "Algalita",
     });
+    // The epoch read only establishes the site; the searched window is the request's own start.
     expect(result.window_actually_searched).toMatchObject({
-      start: "1970-01-01T00:00:00.000Z", complete: false,
+      start: "2026-07-31T12:00:00.000Z", complete: false,
     });
     expect(result.time_range_resolved).toMatchObject({
       start: "2026-09-17T12:00:00.000Z", end: "2026-09-28T12:00:00.000Z",
     });
+  });
+
+  it("calls a week complete when the earlier site ended before it and the first reading is just after it opens", async () => {
+    // Shaped on a production answer that showed "Searched from 1970" and "incomplete" for a
+    // week of half-hourly readings, all from the current site.
+    const at = (iso: string, lat: number) => ({
+      timestamp: Date.parse(iso) / 1000, best_lat: lat, best_lon: -118,
+      water_data: { 99: 8, phError: 0 },
+    });
+    const rows = [
+      at("2026-06-13T16:17:56Z", 34), at("2026-08-06T21:54:03Z", 34),
+      at("2026-08-20T12:00:00Z", 33), at("2026-10-01T12:00:00Z", 33),
+      at("2026-10-02T21:29:30Z", 33), at("2026-10-06T12:00:00Z", 33), at("2026-10-09T21:07:35Z", 33),
+    ];
+    const { client } = makeClient({ periodDay: [], periodMonth: rows });
+    const tool = new QuerySensorData({ client, now: () => Date.parse("2026-10-09T21:37:56Z") });
+    const result = await tool.run({
+      metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "Algalita",
+    });
+
+    expect(result.note).toContain("earlier location");
+    expect(result.window_actually_searched).toEqual({
+      start: "2026-10-02T21:07:35.000Z", end: "2026-10-09T21:07:35.000Z", complete: true,
+    });
+    expect(result.n_samples).toBe(3);
   });
 
   it("reports the window it actually searched alongside the one requested", async () => {

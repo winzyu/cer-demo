@@ -868,10 +868,19 @@ export class QuerySensorData {
         start: firstAt, end: lastAt, label: `${firstAt} to ${lastAt} (current-site readings)`,
       } : null;
     }
-    const sitePartial = siteLimited && (!resolvedRange
-      || Date.parse(resolvedRange.start) > range.startMs
-      || Date.parse(resolvedRange.end) < range.endMs);
+    // Incomplete only when the location filter dropped readings inside the request. A first
+    // reading that lands a reporting interval after the window opens is ordinary spacing, and
+    // earlier-site history that ends before the window costs this answer nothing.
+    const sitePartial = siteLimited && snapshot.rows.some((row) => {
+      if (!inRequestedRange(row)) return false;
+      const time = Date.parse(row.observedAt ?? "");
+      return readings.length === 0 || time < siteStartMs || time > siteEndMs;
+    });
     const partial = snapshot.fromMs > range.startMs || sitePartial;
+    // The snapshot may reach back to the epoch to establish the site; that read is plumbing.
+    // Report the part of the request it covered, so no reader takes the epoch for the window.
+    const searchedStartMs = Math.max(snapshot.fromMs, range.startMs);
+    const searchedEndMs = Math.min(snapshot.at, range.endMs);
 
     const position = QuerySensorData.newestPosition(readings, range);
 
@@ -886,8 +895,8 @@ export class QuerySensorData {
       // an absent GPS lock for coordinates of 0,0 — the same rule metrics.ts applies to `lat`.
       ...(position ? { position } : {}),
       window_actually_searched: {
-        start: new Date(snapshot.fromMs).toISOString(),
-        end: new Date(snapshot.at).toISOString(),
+        start: new Date(searchedStartMs).toISOString(),
+        end: new Date(searchedEndMs).toISOString(),
         ...(partial
           ? {
             complete: false,
