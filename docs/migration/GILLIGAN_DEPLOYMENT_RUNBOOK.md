@@ -182,8 +182,9 @@ gcloud container images describe gcr.io/conductive-fold-343604/cer-gilligan:<com
 gcloud builds submit --project=conductive-fold-343604 --tag=gcr.io/conductive-fold-343604/cer-api:<commit> .
 ```
 
-The dashboard bakes its build-time values into the image, so pass all of them.
-`_API_URL` is the canonical cer-api URL, not a tagged one, because the released dashboard must follow whichever cer-api revision serves traffic.
+The dashboard bakes the three `NEXT_PUBLIC_*` keys into the image, so pass them.
+`_API_URL` becomes `API_PROXY_TARGET` only in the build stage; the proxy route (`src/lib/apiProxy.ts`) reads it at run time, where the live service's setting (the canonical cer-api URL) applies, so the released dashboard follows whichever cer-api revision serves traffic.
+A local test dashboard pointed at a tagged cer-api therefore needs `docker run -e API_PROXY_TARGET=<tagged URL>`; the build argument alone leaves it on the live cer-api.
 The three keys are public browser keys; read them from the live `cer-ui` service the way `deploy-cloud-run.sh` does, without running that script.
 
 ```bash
