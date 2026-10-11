@@ -98,7 +98,8 @@ Items A1-D3 are built on `task/sot-v2-flagging` (pushed, `268eb1b`..`cc6db99`, n
 Each touched Jest suite passed singly with `--runInBand` (27 unit suites plus the `q3Corrections`, `sensorChat` and `reports` integration suites), and `npm run typecheck` and `npm run lint` are clean; the full `npm test` was not run.
 Behaviour is in [`SPECS.md`](../SPECS.md) §19 (reading QC, limits, the flag rule, verdicts) and §10.7; the details decided on 2026-10-11 are in [`timeline.md`](../timeline.md); open questions 24-27 are in [`STAKEHOLDER_QUESTIONS.md`](../STAKEHOLDER_QUESTIONS.md).
 
-Next: a paid smoke check, approved by the user in principle, still needs their yes to read-only production pod reads, because the sensor tool must be on (`SENSOR_TOOL=true`, `REPORT_TOOL=false`, local server per the `run-local` skill; estimated $0.05-0.20).
+The smoke check ran on 2026-10-11 with the user's approval of read-only production reads (about $0.07): every question passes, question 1 only with a 30-day window because Balboa had no dissolved-oxygen zeros this week; results and answers are in [`V2_FLAGGING_SMOKE_2026-10-11.md`](V2_FLAGGING_SMOKE_2026-10-11.md).
+Next: the coordinator lands `task/sot-v2-flagging` on `dev`.
 Questions, with what a pass looks like:
 
 1. "How is the water at Balboa this week?": stuck dissolved-oxygen zeros are called a likely sensor or data issue, not low oxygen.

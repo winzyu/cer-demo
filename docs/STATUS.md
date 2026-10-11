@@ -1,18 +1,19 @@
 # Status
 
-Updated 2026-10-11 by the v2 flagging chat on `task/sot-v2-flagging` at `a5f5a1b` (cut from `docs/launch-handoff`); other workstreams as of the release chat's 2026-10-07 update after L9.
+Updated 2026-10-11 by the v2 flagging chat on `task/sot-v2-flagging` after its smoke check (cut from `docs/launch-handoff`); other workstreams as of the release chat's 2026-10-07 update after L9.
 Current state and next steps only; history is `git log -p docs/STATUS.md`; never cite this file from code or other docs.
 
 ## Start here
 
 - **Gilligan is live (2026-10-07).** cer-gilligan `00004-r5q`, cer-api `00081-qon` (tag `rc2`) and cer-ui `00070-dax` (tag `rc1`) take all traffic; record in [`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md) §7 items 10-19.
-- **v2 flagging (backlog §1, items A1-D3)**: built and pushed on `task/sot-v2-flagging` (worktree `sot-v2-flagging`). Next: the user's yes to read-only production pod reads, then the paid smoke check in [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md) §1d; then the coordinator lands the branch on `dev`.
+- **v2 flagging (backlog §1, items A1-D3)**: built and pushed on `task/sot-v2-flagging` (worktree `sot-v2-flagging`). The smoke check passed (2026-10-11, about $0.07, [`migration/V2_FLAGGING_SMOKE_2026-10-11.md`](migration/V2_FLAGGING_SMOKE_2026-10-11.md)). Next: the coordinator lands the branch on `dev`.
 - **Post-launch backlog.** Order the remaining items in [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md) with the user, reconciled with the untracked `docs/migration/POST_RELEASE_ITEMS_EXPLAINED.html` (2026-10-02); the unguarded user-update routes (§2) are the obvious next candidate.
 - **Upstream landing.** `develop` is pushed in both repositories (server `5f04064`, dashboard `5ae4993`); next are the `main` merges, which Michael tests first ([`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md) §5).
 - **Coordination**: the coordinator alone writes `dev`, this file, the plan and the manual guide; other chats work on their own branch and worktree and report commit IDs; upstream pushes are new branches only, with the user's consent in chat.
 
 ## Last session
 
+- v2 flagging smoke check: 8 live questions on a local server at 8020 (stopped), all pass; read-only production reads, about $0.07.
 - v2 flagging: per-reading QC (flat lines, spikes, read and board failures), operator thresholds with v2 §3 fallbacks, the 3-in-a-row rule with v2's minimum detectable change, per-metric verdicts in `query_sensor_data`, and the matching report flags, tiers and prompt rules; behaviour in [`SPECS.md`](SPECS.md) §19 and §10.7.
 - Decisions of 2026-10-11 (no conductivity or coastal ORP fallback, run and data-issue details, inspection only for a likely data issue) are in [`timeline.md`](timeline.md); [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md) now holds only open questions, with new items 24-27.
 - Checks: 27 unit suites and 3 integration suites run singly, typecheck and lint clean; full `npm test` not run; no production reads and no spend.
@@ -23,16 +24,16 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - Code moved to `~/code/work/clean-earth-rovers/` on 2026-10-04 (WSL rebuild); `~/release/` did not survive the move, and Docker's image store was emptied.
 - Main checkout on `reflection` with the user's uncommitted path fixes (`.claude/settings.json`, `release/start-rc2-emulator.sh`) and the untracked `docs/migration/POST_RELEASE_ITEMS_EXPLAINED.html`; `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
 - This handoff: branch `docs/launch-handoff` (worktree `launch-handoff`) merges `task/release-l6-images` into `dev` and adds the backlog, three timeline rows and a runbook §3.4 correction; it awaits the coordinator's landing on `dev`.
-- v2 flagging: worktree `sot-v2-flagging`, branch `task/sot-v2-flagging` level with origin (`268eb1b`..`a5f5a1b`), clean; `node_modules`, `.env` and the `data/` caches are linked or copied in, ignored.
+- v2 flagging: worktree `sot-v2-flagging`, branch `task/sot-v2-flagging` pushed, clean; `node_modules`, `.env` and the `data/` caches are linked or copied in, ignored.
 - cer-demo worktrees: 45 besides the main checkout; `release-l6` (pushed, merged here) and `launch-handoff` are this chat's; `post-launch-security` and `mirror-testing` are stale (2026-09-28) with nothing uncommitted.
 - Upstream build worktrees `worktrees/build-cer-api-122136d` and `build-cer-ui-fc13d16` are clean detached checkouts of the live commits; the server and dashboard checkouts stay on `local`.
 - Running: Docker container `cer-ui-l8-local` on 127.0.0.1:3000 (the release dashboard proxying to cer-api `rc2`, which is now live); the pre-move stacks (mirror, launch-issues, rc2 mirror) are gone.
 
 ## Open work
 
-- User: approve or decline read-only production reads for the v2 smoke check (backlog §1d, about $0.05-0.20); choose the rest of the post-launch order; send Michael the launch note; delete the test user `winsyu475+certest@gmail.com`; say when to stop `cer-ui-l8-local`; recover `~/release/` if a backup has it.
+- User: choose the rest of the post-launch order; send Michael the launch note; delete the test user `winsyu475+certest@gmail.com`; say when to stop `cer-ui-l8-local`; recover `~/release/` if a backup has it.
 - Michael: revoke the old Gemini key and Gmail app password; optionally grant the user Cloud Build bucket write and `roles/datastore.user` on the `gilligan` database (usage resets); test before the `main` merges.
-- Agent, v2 flagging: run the backlog §1d smoke check once approved; the coordinator lands `task/sot-v2-flagging` on `dev`.
+- Agent, v2 flagging: the coordinator lands `task/sot-v2-flagging` on `dev`.
 - Agent, post-launch: the rest of [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md), once ordered.
 - Agent, upstream landing: build the `main` merges (server conflicts in `WaterAnalyticsService.ts`; take the release side); push on consent; tell Michael `62993fe` ships with server `main`.
 - Agent, release follow-through: logs and spend in the first days; cer-gilligan to 2 instances after the restart check; remove stale tags (backlog §4).
