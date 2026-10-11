@@ -4,6 +4,7 @@ import {
 import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent,
 } from "../../src/report/types";
+import type { TimedValue } from "../../src/report/flagRules";
 
 /**
  * types.ts is the ported core data model (template_report/models.py). These tests cover the
@@ -37,6 +38,16 @@ const turbidityBaseline = (overrides: Partial<ParameterBaseline> = {}): Paramete
   ...overrides,
 });
 
+const STEP = 30 * 60_000;
+const series = (values: number[]): TimedValue[] => values.map((v, i) => [i * STEP, v]);
+/**
+ * The period's minimum and maximum, each held for three readings in a row: the shape that sets a
+ * flag under the 3-in-a-row rule (flagRules.ts), so a test's min/max mean what they always did.
+ */
+const held = (min: number, max: number): TimedValue[] => series([min, min, min, max, max, max]);
+/** One stray reading among normal ones: never a flag. */
+const lone = (value: number): TimedValue[] => series([7.0, 7.2, value, 7.1, 7.3]);
+
 const param = (overrides: Partial<ParameterStats> = {}): ParameterStats => ({
   baseline: baseline(),
   min: 7.0,
@@ -44,6 +55,7 @@ const param = (overrides: Partial<ParameterStats> = {}): ParameterStats => ({
   mean: 7.2,
   median: 7.2,
   pattern: "unknown",
+  readings: held(overrides.min ?? 7.0, overrides.max ?? 7.5),
   ...overrides,
 });
 
@@ -158,35 +170,36 @@ describe("overallStatus", () => {
     expect(overallStatus(report(), noAccuracy)).toBe("Normal");
   });
 
-  it("is Action Required when a parameter has two readings beyond the exceedance bounds", () => {
-    expect(overallStatus(report({ parameters: [param({ max: 9.0, exceedanceCount: 2 })] }), noAccuracy))
+  it("is Action Required when three readings in a row go beyond the exceedance bounds", () => {
+    expect(overallStatus(report({ parameters: [param({ max: 9.0 })] }), noAccuracy))
       .toBe("Action Required");
   });
 
-  it("keeps a lone exceedance at Watch, even when separate parameters each have one", () => {
+  it("keeps a single reading beyond the exceedance bounds Normal, even on several parameters", () => {
+    // Michael's over-flagging (POST_LAUNCH_BACKLOG.md §1): one stray reading is not a finding.
     const parameters = [
-      param({ max: 9.0, exceedanceCount: 1 }),
-      param({ baseline: baseline({ key: "other" }), min: 5, exceedanceCount: 1 }),
+      param({ max: 9.0, readings: lone(9.0) }),
+      param({ baseline: baseline({ key: "other" }), min: 5, readings: lone(5) }),
     ];
     expect(assessStatus(report({ parameters }), noAccuracy)).toEqual({
-      status: "Watch", rule: "excursion", parameters: ["ph", "other"],
+      status: "Normal", rule: "normal", parameters: [],
     });
   });
 
-  it("does not infer repeated readings from extrema when no count is available", () => {
-    expect(assessStatus(report({ parameters: [param({ max: 9.0 })] }), noAccuracy)).toEqual({
-      status: "Watch", rule: "excursion", parameters: ["ph"],
-    });
+  it("judges runs from the readings, not from the extrema", () => {
+    expect(flagFor(param({ max: 9.0, readings: lone(9.0) }), noAccuracy)).toBe("Normal");
+    const twoHigh = series([7.0, 9.0, 9.0, 7.0, 9.0]);
+    expect(flagFor(param({ max: 9.0, readings: twoHigh }), noAccuracy)).toBe("Normal");
   });
 
-  it.each([0.3, 0.7])("keeps the event rung unchanged with a lone exceedance and confidence %s", (confidence) => {
+  it.each([0.3, 0.7])("lets a High event at confidence %s decide when a lone reading cannot", (confidence) => {
     const r = report({
-      parameters: [param({ max: 9.0, exceedanceCount: 1 })],
+      parameters: [param({ max: 9.0, readings: lone(9.0) })],
       events: [event({ severity: "High", confidence })],
     });
     expect(assessStatus(r, noAccuracy)).toEqual(confidence >= 0.7
       ? { status: "Action Required", rule: "high-confidence-high-event", parameters: [] }
-      : { status: "Watch", rule: "excursion", parameters: ["ph"] });
+      : { status: "Watch", rule: "event", parameters: [] });
   });
 
   it("is Action Required when a confident High-severity event lands, even with clean parameters", () => {
@@ -225,7 +238,7 @@ describe("overallStatus", () => {
 
   it("lets an Exceedance parameter override a merely Watch-level event", () => {
     const r = report({
-      parameters: [param({ max: 9.0, exceedanceCount: 2 })],
+      parameters: [param({ max: 9.0 })],
       events: [event({ severity: "Low" })],
     });
     expect(overallStatus(r, noAccuracy)).toBe("Action Required");
@@ -265,7 +278,7 @@ describe("overallStatus", () => {
     });
 
     it("still escalates to Action Required when the one baselined parameter is an Exceedance", () => {
-      const r = report({ parameters: [param({ max: 9.0, exceedanceCount: 2 }), noBaseline()] });
+      const r = report({ parameters: [param({ max: 9.0 }), noBaseline()] });
       expect(overallStatus(r, noAccuracy)).toBe("Action Required");
     });
   });
@@ -280,7 +293,7 @@ describe("overallStatus", () => {
     });
 
     it("names only the Exceedance parameters, even when others are merely Elevated", () => {
-      const r = report({ parameters: [param({ max: 8.6 }), orp({ min: -160, exceedanceCount: 2 })] });
+      const r = report({ parameters: [param({ max: 8.6 }), orp({ min: -160 })] });
       expect(assessStatus(r, noAccuracy)).toEqual({
         status: "Action Required", rule: "exceedance", parameters: ["orp"],
       });

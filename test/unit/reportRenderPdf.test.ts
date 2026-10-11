@@ -41,8 +41,13 @@ const baseline: ParameterBaseline = {
   key: "ph", label: "pH", unit: "", baselineMin: 6.5, baselineMax: 8.5, exceedanceMargin: 0.15, hasFixedBaseline: true,
 };
 
+/** The period's minimum and maximum, each held for three readings: a flag's shape (flagRules.ts). */
+const held = (min: number, max: number): Array<[number, number]> => (
+  [min, min, min, max, max, max].map((v, i): [number, number] => [i * 1_800_000, v])
+);
+
 const param: ParameterStats = {
-  baseline, min: 7.0, max: 7.5, mean: 7.2, median: 7.2, pattern: "flat",
+  baseline, min: 7.0, max: 7.5, mean: 7.2, median: 7.2, pattern: "flat", readings: held(7.0, 7.5),
 };
 
 /** Turbidity as buildReportInput builds it -- no numeric baseline, uncalibrated relative scale. */
@@ -59,6 +64,7 @@ const turbidityBaseline: ParameterBaseline = {
 
 const turbidityParam = (mean: number): ParameterStats => ({
   baseline: turbidityBaseline, min: 0, max: mean * 2, mean, median: mean, pattern: "unknown",
+  readings: held(0, mean * 2),
 });
 
 const narrative: NarrativeSections = {
@@ -69,7 +75,7 @@ const narrative: NarrativeSections = {
   recommendationsStakeholder: "Routine report distribution to client only.",
   // Wording for the one `event` below; reports without events never read it.
   events: [{
-    heading: "Threshold crossing",
+    heading: "Anomaly, cause unclear",
     causeNamed: false,
     interpretation: "Test interpretation.",
     followUp: "No approved recommendation covers these findings yet.",
@@ -218,7 +224,7 @@ describe("buildReportPdf — smoke test", () => {
       const doc = buildReportPdf(
         report,
         deterministicNarrative(report, noAccuracy, "Normal", guidance),
-        { probeAccuracy: noAccuracy, status: "Normal" },
+        { noiseFloor: noAccuracy, status: "Normal" },
       );
       doc.resume();
       doc.end();
@@ -233,7 +239,7 @@ describe("buildReportPdf — smoke test", () => {
   });
 
   const render = async (report: ReportInput): Promise<Buffer> => {
-    const doc = buildReportPdf(report, narrative, { probeAccuracy: noAccuracy, status: "Normal" });
+    const doc = buildReportPdf(report, narrative, { noiseFloor: noAccuracy, status: "Normal" });
     const chunks: Buffer[] = [];
     return new Promise<Buffer>((resolve, reject) => {
       doc.on("data", (chunk: Buffer) => chunks.push(chunk));
@@ -301,7 +307,7 @@ describe("buildReportPdf — smoke test", () => {
       const doc = buildReportPdf(
         { site: { ...site, lastReadingAt }, parameters: [param], events: [] },
         narrative,
-        { probeAccuracy: noAccuracy, status: "Normal", nowMs },
+        { noiseFloor: noAccuracy, status: "Normal", nowMs },
       );
       const chunks: Buffer[] = [];
       return new Promise<Buffer>((resolve, reject) => {
@@ -354,7 +360,7 @@ describe("buildReportPdf — smoke test", () => {
         hasFixedBaseline: true,
         baselineSource: "operator-threshold",
       },
-      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown",
+      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown", readings: held(64, 72),
     };
     const withFootnote: ReportInput = { site, parameters: [param, operatorTemp], events: [] };
     const referenceOnly: ReportInput = {
@@ -391,7 +397,7 @@ describe("buildReportPdf — smoke test", () => {
         hasFixedBaseline: false,
         baselineNote: "No operator thresholds are configured for this device.",
       },
-      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown",
+      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown", readings: held(64, 72),
     };
     const report: ReportInput = { site, parameters: [param, noBaseline], events: [] };
 
@@ -410,7 +416,7 @@ describe("buildReportPdf — smoke test", () => {
     const renderWithStatus = async (
       reportInput: ReportInput, status: ReportStatus,
     ): Promise<Buffer> => {
-      const doc = buildReportPdf(reportInput, narrative, { probeAccuracy: noAccuracy, status });
+      const doc = buildReportPdf(reportInput, narrative, { noiseFloor: noAccuracy, status });
       const chunks: Buffer[] = [];
       return new Promise<Buffer>((resolve, reject) => {
         doc.on("data", (chunk: Buffer) => chunks.push(chunk));
@@ -430,7 +436,7 @@ describe("buildReportPdf — smoke test", () => {
         hasFixedBaseline: false,
         baselineNote: "No operator thresholds are configured for this device.",
       },
-      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown",
+      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown", readings: held(64, 72),
     };
     const report: ReportInput = { site, parameters: [noBaselineParam], events: [] };
 

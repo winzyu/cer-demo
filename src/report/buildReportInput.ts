@@ -33,28 +33,19 @@
  *    and no numeric baseline, so downstream it renders as a clarity band plus a direction of
  *    change instead of a pass/fail against a range. See referenceRanges.ts's
  *    TURBIDITY_BAND_EDGES for the cut points and why there is no range to compare against.
- * 5. **Every numeric parameter's baseline comes from the device registry, never from a reference
- *    table.** Temperature always worked this way, because the source-of-truth doc gave it no
- *    fixed range on purpose ("Climate/season-dependent"; "Establish a site-specific baseline
- *    before treating deviations as events"). The other four numeric metrics (pH, dissolved
- *    oxygen, ORP, conductivity) used to read a fixed range out of `referenceRanges.ts`'s
- *    `BASELINE_RANGES` -- that table is gone. The project supervisor vetoed the entire
- *    "Water Quality Metrics -- Source of Truth" document as a range source on 2026-09-13 (see
- *    docs/timeline.md): every range in it is discarded, not just temperature's. There is no
- *    fallback table for any metric now -- a pod with no usable registry threshold for a metric
- *    has no baseline for it, exactly what already happened for temperature.
- *
- *    The site-specific baseline the source doc asked for, for temperature, and the only baseline
- *    any metric can have now, is the operator's own `thresholds.min<Metric>`/`max<Metric>` on the
- *    device document, which this function reads via `sensor.deviceRecord()` -- a second registry
- *    lookup that costs nothing, because it hits the device cache `sensor.query()` just primed.
+ * 5. **Every numeric parameter's baseline is the device's operator threshold first, and
+ *    source-of-truth v2's general range second.** The operator's own
+ *    `thresholds.min<Metric>`/`max<Metric>` on the device document is read via
+ *    `sensor.deviceRecord()` -- a second registry lookup that costs nothing, because it hits the
+ *    device cache `sensor.query()` just primed.
  *
  *    Those numbers are hand-entered and partly junk, so they go through `operatorThresholds.ts`
- *    first (`metricThreshold`); anything that fails validation leaves that metric with no
- *    baseline -- Flag "N/A", "Not established", plus a rejection note built from
- *    `metricThresholdRejectionReason` saying why. Every usable row carries
- *    `baselineSource: "operator-threshold"` -- there is nothing else it could be now -- the same
- *    way `waterBodyTypeSource` marks where the water type came from.
+ *    first. When a pH, dissolved oxygen or ORP threshold fails validation, `resolveLimit` falls
+ *    back to v2 §3's range for the pod's registry water class (docs/timeline.md, 2026-10-10 and
+ *    2026-10-11), with `baselineSource: "v2-fallback"` and a note that labels it generic. Where v2
+ *    has no usable range -- temperature, conductivity, coastal ORP, or a pod whose water type the
+ *    registry does not give -- the metric has no baseline: Flag "N/A", "Not established", plus a
+ *    rejection note built from `metricThresholdRejectionReason` saying why.
  *
  *    ⚠️ Knock-on worth knowing, now true of all five metrics rather than temperature alone:
  *    `events.ts` skips any parameter with `hasFixedBaseline: false`, so a device with a usable
@@ -77,18 +68,18 @@
 
 import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorData";
 import { SensorQueryError } from "../tools/querySensorData";
-import { flagFor } from "./types";
-import { probeAccuracy } from "./referenceRanges";
+import { mapWaterType } from "./referenceRanges";
 import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext } from "../types/tool.types";
 import type {
   DataQualityCheck, ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WaterBodyType,
 } from "./types";
 import {
-  metricThreshold, metricThresholdRejectionReason, metricBlindSpotNote,
+  fallbackLimitNote, metricThresholdRejectionReason, metricBlindSpotNote, resolveLimit,
   temperatureThreshold, thresholdRejectionNote, WIRE_KEY_TO_METRIC,
 } from "./operatorThresholds";
-import { STUCK_SENSOR_NOTE, STUCK_SENSOR_USER_NOTE } from "../tools/stuckSensor";
+import type { TimedValue } from "./flagRules";
+import { stuckSensorNote, stuckSensorUserNote } from "../devices/readingQc";
 import type { ThresholdVerdict } from "./operatorThresholds";
 import { classifyPattern, type HourlySeries } from "./patterns";
 
@@ -113,39 +104,14 @@ const PARAMETER_META: Array<{ key: string; label: string; unit: string }> = [
 /** Metrics reported on an uncalibrated relative scale -- see types.ts `ParameterScale`. */
 const RELATIVE_INDEX_KEYS = new Set(["turbidity"]);
 
-/**
- * The device registry's `operating_environment` as a report water body type, or `undefined` when
- * the registry does not say anything usable.
- *
- * Returns `undefined` rather than taking a fallback argument so the caller can tell "the registry
- * classified this pod" from "nothing was on file and a default was applied" -- a distinction the
- * report prints, because it decides which baseline table every flag is computed against.
- */
-export const mapWaterType = (
-  operatingEnvironment: string | null | undefined,
-): WaterBodyType | undefined => {
-  if (!operatingEnvironment) {
-    return undefined;
-  }
-  const normalized = operatingEnvironment.toLowerCase();
-  if (normalized.includes("salt") || normalized.includes("marine")) {
-    return "Marine";
-  }
-  if (normalized.includes("brackish") || normalized.includes("estuar")) {
-    return "Brackish";
-  }
-  if (normalized.includes("fresh")) {
-    return "Freshwater";
-  }
-  return undefined;
-};
-
 interface MetricEntry {
   value: number | null;
   n_samples?: number;
   excluded_faulted?: number;
   excluded_implausible?: number;
   excluded_stuck?: number;
+  /** The sensor tool's verdict called this metric a likely data issue (`metricVerdict.ts`). */
+  data_issue?: boolean;
   series?: Array<{ start: string; end: string; mean: number; min: number; max: number; n: number }>;
 }
 
@@ -218,6 +184,7 @@ const metricsOf = (result: Record<string, unknown>): Record<string, MetricEntry>
         ? rec.excluded_implausible
         : undefined,
       excluded_stuck: typeof rec.excluded_stuck === "number" ? rec.excluded_stuck : undefined,
+      data_issue: asRecord(rec.verdict).status === "likely data issue",
       series: Array.isArray(rec.series) ? (rec.series as MetricEntry["series"]) : undefined,
     };
     return out;
@@ -340,7 +307,7 @@ export const buildReportInput = async (
   let seriesResult: Record<string, unknown>;
   let medianResult: Record<string, unknown>;
   let hourlyResult: Record<string, unknown>;
-  const readingsByMetric = new Map<string, number[]>();
+  const readingsByMetric = new Map<string, TimedValue[]>();
   try {
     // Pin one authorized snapshot for series, exact median and hourly pattern classification.
     // These deterministic calculations never go through the model's tool-calling loop.
@@ -351,7 +318,8 @@ export const buildReportInput = async (
         bucket: "auto",
         onSamples: (key, samples) => readingsByMetric.set(key, samples
           .filter((sample) => sample.valid && sample.plausible !== false)
-          .map((sample) => sample.value)),
+          .map((sample): TimedValue => [sample.atMs, sample.value])
+          .sort((a, b) => a[0] - b[0])),
       },
       { ...baseArgs, aggregation: "median" },
       {
@@ -455,9 +423,9 @@ export const buildReportInput = async (
   );
 
   /**
-   * This device's validated operator threshold for one of the five numeric metrics, or no
-   * baseline at all -- see file docstring §5 for why every numeric metric now takes this path
-   * (the reference-table alternative was vetoed in full, 2026-09-13).
+   * This device's validated operator threshold for one of the five numeric metrics, v2's general
+   * range for the pod's water class where that is unusable, or no baseline at all -- see file
+   * docstring §5.
    *
    * Checked first, before any metric-specific logic: `deviceRecord === null` means
    * `sensor.deviceRecord()` failed to read the registry row at all (unresolvable device, network
@@ -501,21 +469,24 @@ export const buildReportInput = async (
     }
 
     const thresholdKey = WIRE_KEY_TO_METRIC[meta.key];
-    const verdict: ThresholdVerdict = metricThreshold(deviceRecord?.thresholds, thresholdKey);
-    if (!verdict.usable) {
-      return absentBaseline(meta, metricThresholdRejectionReason(verdict.reason, thresholdKey));
+    // Only the registry's water type selects a v2 column; a defaulted one never does.
+    const limit = resolveLimit(deviceRecord?.thresholds, thresholdKey, registryWaterBodyType);
+    if (!limit.assessed) {
+      return absentBaseline(meta, metricThresholdRejectionReason(limit.reason, thresholdKey));
     }
-    const blindSpot = metricBlindSpotNote(thresholdKey, verdict.min, verdict.max);
+    const note = limit.source === "v2-fallback" && registryWaterBodyType
+      ? fallbackLimitNote(thresholdKey, registryWaterBodyType, limit.min, limit.max, limit.note)
+      : metricBlindSpotNote(thresholdKey, limit.min, limit.max);
     return {
       key: meta.key,
       label: meta.label,
       unit: meta.unit,
-      baselineMin: verdict.min,
-      baselineMax: verdict.max,
+      baselineMin: limit.min,
+      baselineMax: limit.max,
       exceedanceMargin: 0.15,
       hasFixedBaseline: true,
-      baselineSource: "operator-threshold",
-      ...(blindSpot ? { baselineNote: blindSpot } : {}),
+      baselineSource: limit.source,
+      ...(note ? { baselineNote: note } : {}),
     };
   };
 
@@ -540,18 +511,10 @@ export const buildReportInput = async (
     const mean = buckets.reduce((s, b) => s + b.mean * b.n, 0) / totalN;
     const median = medianEntry?.value ?? mean; // falls back to mean if the median call had no data
 
-    // Every numeric metric takes its baseline from this device's own registry threshold now --
-    // the reference-table alternative was vetoed in full (project supervisor, 2026-09-13; see
-    // docs/timeline.md). There is no fallback: a metric with no usable registry threshold has no
-    // baseline, exactly what already happened for temperature. See file docstring §5.
+    // Operator threshold first, v2 fallback second -- see file docstring §5.
     const baseline = RELATIVE_INDEX_KEYS.has(meta.key)
       ? relativeIndexBaseline(meta)
       : registryBaseline(meta);
-    // Count readings, not buckets: two excursions can share a bucket whose mean stays normal.
-    // Reuse flagFor so the exceedance margin and the probe's accuracy floor agree exactly.
-    const exceedanceCount = (readingsByMetric.get(meta.key) ?? []).filter((value) => (
-      flagFor({ baseline, min: value, max: value }, probeAccuracy) === "Exceedance"
-    )).length;
 
     // Thin buckets are dropped from the trend series only -- see MIN_BUCKET_SAMPLES and
     // `trendFloor`. The floor is skipped entirely when it would empty the series (a genuinely
@@ -576,7 +539,7 @@ export const buildReportInput = async (
         max,
         mean,
         median,
-        exceedanceCount,
+        readings: readingsByMetric.get(meta.key) ?? [],
         // See file docstring §1.
         pattern: classifyPattern(hourlySeries(hourlyMetrics[meta.key])),
         series,
@@ -592,15 +555,19 @@ export const buildReportInput = async (
     .filter((r): r is { skippedLabel: string } => "skippedLabel" in r)
     .map((r) => r.skippedLabel);
 
+  // Metrics with readings left out as a stuck sensor, named as the sensor tool names them.
+  const stuckLabels = PARAMETER_META
+    .filter((meta) => (seriesMetrics[meta.key]?.excluded_stuck ?? 0) > 0)
+    .map((meta) => meta.label.replace(/ \(.*\)$/, ""));
+
   if (parameters.length === 0) {
     // This text reaches the reader (the 422 body, the dashboard's tool row), so it is built only
-    // from reader notes: `site_note` and `STUCK_SENSOR_NOTE` are the model's wording.
+    // from reader notes: `site_note` and `stuckSensorNote` are the model's wording.
     const readerNotes = seriesResult[USER_NOTES_FIELD];
     return {
       error: [`No usable readings found for any parameter in "${params.timeRange}".`,
         ...(Array.isArray(readerNotes) ? readerNotes : []),
-        Object.values(seriesMetrics).some((m) => (m.excluded_stuck ?? 0) > 0)
-          ? STUCK_SENSOR_USER_NOTE : null,
+        stuckLabels.length > 0 ? stuckSensorUserNote(stuckLabels) : null,
       ].filter((text): text is string => typeof text === "string" && text !== "")
         .filter((text, index, all) => all.indexOf(text) === index)
         .join(" "),
@@ -612,8 +579,18 @@ export const buildReportInput = async (
     skipped,
     asRecord(seriesResult.reading_counts),
   );
-  if (Object.values(seriesMetrics).some((m) => (m.excluded_stuck ?? 0) > 0)) {
-    dataQuality.calibrationNotes = `${STUCK_SENSOR_NOTE} ${dataQuality.calibrationNotes}`;
+  if (stuckLabels.length > 0) {
+    dataQuality.calibrationNotes = `${stuckSensorNote(stuckLabels)} ${dataQuality.calibrationNotes}`;
+  }
+  const likelyDataIssue = [
+    ...PARAMETER_META
+      .filter((meta) => seriesMetrics[meta.key]?.data_issue
+        || (seriesMetrics[meta.key]?.excluded_stuck ?? 0) > 0)
+      .map((meta) => meta.label),
+    ...(Array.isArray(seriesResult.board_fault) ? ["All sensors at once"] : []),
+  ];
+  if (likelyDataIssue.length > 0) {
+    dataQuality.likelyDataIssue = likelyDataIssue;
   }
   if (typeof seriesResult.site_note === "string") {
     dataQuality.completenessNotes += ` ${seriesResult.site_note}`;

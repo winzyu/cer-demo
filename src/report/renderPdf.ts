@@ -59,10 +59,10 @@ const FLAG_COLORS: Record<Flag, string> = {
  */
 export const flagCellText = (
   p: ParameterStats,
-  probeAccuracy: (key: string, reading: number) => number,
+  noiseFloor: (key: string, reading: number) => number,
 ): string => {
   if (!isRelativeIndex(p.baseline)) {
-    const flag = flagFor(p, probeAccuracy);
+    const flag = flagFor(p, noiseFloor);
     return flag === "N/A" ? "Not assessed" : flag;
   }
   const band = clarityBandFor(p.mean);
@@ -434,7 +434,7 @@ export const lastReadingText = (
 };
 
 export interface RenderPdfOptions {
-  probeAccuracy: (key: string, reading: number) => number;
+  noiseFloor: (key: string, reading: number) => number;
   status: ReportStatus;
   /** Override the report's generation time when measuring the last reading's age. */
   nowMs?: number;
@@ -444,7 +444,7 @@ export const buildReportPdf = (
   report: ReportInput,
   narrative: NarrativeSections,
   {
-    probeAccuracy, status, nowMs = Date.parse(report.generatedAt ?? report.site.reportDate),
+    noiseFloor, status, nowMs = Date.parse(report.generatedAt ?? report.site.reportDate),
   }: RenderPdfOptions,
 ): PDFKit.PDFDocument => {
   const doc = new PDFDocument({
@@ -532,8 +532,8 @@ export const buildReportPdf = (
     // thing the eye caught in a table whose whole job is to be scanned.
     { header: "Flag", width: 72, align: "center" },
   ];
-  const paramFlags = report.parameters.map((p) => flagFor(p, probeAccuracy));
-  const paramCells = report.parameters.map((p) => flagCellText(p, probeAccuracy));
+  const paramFlags = report.parameters.map((p) => flagFor(p, noiseFloor));
+  const paramCells = report.parameters.map((p) => flagCellText(p, noiseFloor));
   const paramRows = report.parameters.map((p, i) => {
     const b = p.baseline;
     const baselineText = (() => {
@@ -578,7 +578,9 @@ export const buildReportPdf = (
       + "conversion's scale."
     : "";
   doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
-    "Flag values: Normal, Elevated, Low, or Exceedance relative to the site baseline. Out of "
+    "Flag values: Normal, Elevated, Low, or Exceedance relative to the site baseline. A flag "
+    + "needs at least three readings in a row beyond the baseline by more than the sensor's "
+    + "minimum detectable change; a single reading never sets one. Out of "
     + "range is the share of the period's series buckets whose average sat outside that "
     + "baseline — approximate, at bucket resolution, and shown because a flag alone cannot "
     + `separate a single stray reading from a sustained offset.${clarityFootnote}`,
@@ -595,8 +597,26 @@ export const buildReportPdf = (
     doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
       `Site Baseline for ${operatorSourced.join(", ")} is this device's operator-configured `
       + "threshold from the device registry — an alert limit the operator set, not a "
-      + "scientifically reviewed range. A parameter with no usable registry threshold shows no "
-      + "baseline at all (\"Not established\") rather than falling back to a fixed table.",
+      + "scientifically reviewed range.",
+      { width: CONTENT_WIDTH },
+    );
+  }
+  // A fallback is a generic range, and the reader must be able to tell it from a limit set for
+  // this site (docs/timeline.md, 2026-10-10).
+  const fallbackSourced = report.parameters
+    .filter((p) => p.baseline.baselineSource === "v2-fallback")
+    .map((p) => p.baseline.label);
+  if (fallbackSourced.length > 0) {
+    doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
+      `Site Baseline for ${fallbackSourced.join(", ")} is a generic fallback: the source-of-truth `
+      + "document's general range for this water type, used because this device has no usable "
+      + "threshold of its own for that parameter. It is not a limit set for this site.",
+      { width: CONTENT_WIDTH },
+    );
+  }
+  if (operatorSourced.length > 0 || fallbackSourced.length > 0) {
+    doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
+      "A parameter with neither shows no baseline at all (\"Not established\").",
       { width: CONTENT_WIDTH },
     );
   } else if (status === "Not assessed") {
@@ -644,10 +664,10 @@ export const buildReportPdf = (
       doc.font("Helvetica-Bold").fontSize(10).fillColor(INK)
         .text(label, MARGIN, top, { width: CONTENT_WIDTH - 130 });
       if (p) {
-        drawPill(doc, flagCellText(p, probeAccuracy), {
+        drawPill(doc, flagCellText(p, noiseFloor), {
           right: MARGIN + CONTENT_WIDTH,
           top: top - 2,
-          color: FLAG_COLORS[flagFor(p, probeAccuracy)],
+          color: FLAG_COLORS[flagFor(p, noiseFloor)],
           size: 7,
         });
       }

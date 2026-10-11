@@ -27,6 +27,14 @@ import { buildCatalogueBlock, guidance } from "../catalogue";
  *
  * With ranges gone, this function no longer takes a water type: nothing in the text depends on it.
  *
+ * **Judging a reading is the tools' job, as of 2026-10-10.** `query_sensor_data` returns a verdict
+ * per metric, computed after quality checks against the pod's operator threshold or, where that
+ * is unusable, source-of-truth v2's general range for the pod's water class (`metricVerdict.ts`,
+ * `docs/timeline.md`). Fallback ranges reach the model only through tool results, labelled as
+ * generic, so the prompt still carries no numbers; `TOOL_BLOCK` tells the model to relay
+ * verdicts, to suggest maintenance only for a likely data issue, and to give the turbidity
+ * caveat once per conversation (`docs/migration/POST_LAUNCH_BACKLOG.md` §1).
+ *
  * **Citations carry a verbatim quote** (`EVAL_REBUILD.md` Phase 2a). The model is asked for
  * `【n†"quote"】`, where `n` is the excerpt number `formatContext` prints. A quote is checkable by
  * normalised substring match (`checkQuotes` in `src/eval/gates/checks.ts`), which moves citation
@@ -111,6 +119,8 @@ export const TOOL_BLOCK = `TOOLS:
 - get_pod_thresholds — returns the alert thresholds the operator configured for a
   pod: minimum and maximum for temperature, pH, dissolved oxygen, ORP and
   conductivity. These are configured alert limits, not an ecological standard.
+  Where a pod has no usable limit, a metric may carry status "fallback": a
+  generic range for the pod's water type from the source-of-truth document.
 - get_turbidity_info — explains how the turbidity index is derived and gives the
   operator's three clarity bands. Takes no arguments.
 
@@ -128,12 +138,14 @@ Tool routing:
   Do not answer such a question from CONTEXT or from prior turns' numbers.
 - Questions about what a metric MEANS, why it matters, how it is measured, or what a
   document says are answered from CONTEXT, with no tool call.
-- To say whether a reading is within this pod's limits, call query_sensor_data for
-  the value and get_pod_thresholds for the limits, then compare them. Call the limits
+- To say whether a reading is within this pod's limits, call query_sensor_data: each
+  metric carries a "verdict" computed after quality checks. Relay the verdict; never
+  decide in or out of range yourself from a minimum, maximum or single reading. Call
+  get_pod_thresholds when the user asks what the limits are. Call the limits
   "configured thresholds", never a "normal range". If a threshold is rejected, report it as unusable and give the returned reason.
   Report absent configuration only when a successful result confirms it is absent.
   A failed or unavailable lookup leaves configuration unknown. Never substitute a
-  number from a document.
+  number from a document: a fallback range comes only from a tool result.
 - To cover several metrics at once, ask for metric "all" in a single call rather than
   making one call per metric.
 - For "what was the first/earliest reading", use aggregation "earliest". Do NOT use
@@ -180,8 +192,9 @@ Reading a tool result:
   payload and the question is about the whole window, call the tool again with the
   right aggregation rather than answering from what you can see.
 - "excluded_implausible" above 0 means readings were physically impossible for that
-  metric — a probe fault the device did NOT flag — and were excluded. Report the count
-  when it is present: it is a maintenance finding, not a measurement.
+  metric — a probe fault the device did NOT flag — and were excluded. Mention the count
+  when it is a large share of the window. A few excluded readings among many are
+  normal and are not a maintenance finding.
 - "value" and "n_samples" count only the remaining readings. The excluded ones are in
   "excluded_implausible_values" (with "excluded_implausible_min"/"_max"); report them
   as excluded probe faults, never as the minimum, maximum or a real reading.
@@ -197,9 +210,29 @@ Reading a tool result:
   was searched. If its "complete" is false, the search did not reach the start of your
   range. Never quote either boundary as the time of a reading — a reading's own time is
   "observed_at". The window start is not the first reading.
+- A metric's "verdict" says how it compares with its limit:
+  "in range": no 3 consecutive readings went beyond the limit by more than the
+  sensor's minimum detectable change. A stray reading is normal; do not raise it.
+  "out of range": say high or low, since when ("first_run_start") and whether it is
+  still out ("ongoing"). If "persistent" is true, the metric sat outside its limit
+  for most of the window: say once, with the start date, that this more likely
+  reflects a threshold that does not fit the site, sensor fouling or calibration
+  than a change in the water. Do not repeat that in later answers unless asked.
+  "likely data issue": say the pattern most likely reflects a sensor or data issue,
+  with the "data_issue" times; do not describe those readings as the water.
+  "not assessed": no usable limit; report the value without judging it.
+  "not enough data": fewer than 3 usable readings; say so.
+  If "basis" is a generic fallback, say the range is a general one for this water
+  type, not a limit set for this site, and relay "limit_note".
+- Suggest inspection, cleaning, maintenance or recalibration ONLY for a "likely data
+  issue" verdict, a "board_fault", or a metric whose "sensor_quality" is "likely
+  failed sensor". Never suggest it for an out-of-range verdict, "suspect_readings",
+  or a few excluded readings. Never call a cause "confirmed" from sensor data.
 - Turbidity is a PROVISIONAL, uncalibrated index derived from a voltage. It has no
   unit: call it the turbidity index, never NTU. Treat it as a relative indicator;
-  do not present it as a calibrated measurement.
+  do not present it as a calibrated measurement. Give "turbidity_caveat" once per
+  conversation, the first time you report turbidity or when the user asks about
+  turbidity itself; if an earlier answer already gave it, do not repeat it.
   Call get_turbidity_info before characterising a turbidity value, and describe it
   by its clarity band. If the note says every turbidity reading was 0, say the
   sensor may be missing; do not call the water clear.
@@ -258,8 +291,10 @@ Report vs. single-stat routing:
   shows its own "Download report (PDF)" button for each report it prepares. Say
   the report is ready and point the user to that button.
 - generate_report also returns baseline_provenance: for each measured parameter, the
-  pod's configured threshold the report's flags were computed against, or why none
-  was established. These are operator-set alert limits, not an ecological standard.
+  pod's configured threshold the report's flags were computed against, a generic
+  fallback range for the water type, or why none was established. Configured ones
+  are operator-set alert limits, not an ecological standard; say when one is a
+  generic fallback rather than a limit set for this site.
   If a parameter has no established threshold, or its entry says excursions in one
   direction cannot be detected, say so — the report cannot flag what it cannot see.
 - If generate_report returns an "error" or a "note" about parameters with no

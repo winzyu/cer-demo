@@ -318,10 +318,39 @@ describe("TOOL_BLOCK", () => {
     expect(TOOL_BLOCK).toContain("say the\n  sensor may be missing; do not call the water clear");
   });
 
-  it("routes a limits question to get_pod_thresholds, never to a document", () => {
-    expect(TOOL_BLOCK).toContain("get_pod_thresholds for the limits");
+  it("routes a limits question to the tools' verdicts and limits, never to a document", () => {
+    expect(TOOL_BLOCK).toContain("Relay the verdict; never\n  decide in or out of range yourself");
+    expect(TOOL_BLOCK).toContain("Call\n  get_pod_thresholds when the user asks what the limits are");
     expect(TOOL_BLOCK).toContain("Never substitute a\n  number from a document");
     expect(TOOL_BLOCK).toContain("never a \"normal range\"");
+  });
+
+  it("explains each verdict, with a stray reading not worth raising (backlog §1)", () => {
+    ["\"in range\"", "\"out of range\"", "\"likely data issue\"", "\"not assessed\"",
+      "\"not enough data\""].forEach((status) => expect(TOOL_BLOCK).toContain(status));
+    expect(TOOL_BLOCK).toContain("A stray reading is normal; do not raise it.");
+  });
+
+  it("states a persistent offset once, with its start, as a likely threshold or sensor issue", () => {
+    expect(TOOL_BLOCK).toContain("say once, with the start date");
+    expect(TOOL_BLOCK).toContain("Do not repeat that in later answers unless asked.");
+  });
+
+  it("suggests maintenance only for a likely data issue (v2 §9.2)", () => {
+    expect(TOOL_BLOCK).toContain("Suggest inspection, cleaning, maintenance or recalibration ONLY");
+    expect(TOOL_BLOCK).toContain("Never suggest it for an out-of-range verdict");
+    expect(TOOL_BLOCK).not.toContain("it is a maintenance finding");
+    expect(TOOL_BLOCK).toContain("Never call a cause \"confirmed\" from sensor data.");
+  });
+
+  it("gives the turbidity caveat once per conversation (backlog §1, D3)", () => {
+    expect(TOOL_BLOCK).toContain("Give \"turbidity_caveat\" once per\n  conversation");
+    expect(TOOL_BLOCK).toContain("if an earlier answer already gave it, do not repeat it");
+  });
+
+  it("labels a fallback range as generic, not a limit set for this site", () => {
+    expect(TOOL_BLOCK).toContain("status \"fallback\"");
+    expect(TOOL_BLOCK).toContain("not a limit set for this site");
   });
 
   it("sends turbidity interpretation through get_turbidity_info", () => {

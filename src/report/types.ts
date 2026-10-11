@@ -11,11 +11,16 @@
  * to it, so it stays testable without a live device.
  */
 
+import { assessRuns, type RunAssessment, type TimedValue } from "./flagRules";
+
 /**
  * "N/A" is for a parameter with no baseline at all -- distinct from "Normal", which means
- * "compared to a real baseline and found within it". This is any of the five numeric parameters
- * on a device whose registry thresholds are absent or fail validation
- * (`operatorThresholds.ts`) -- there is no reference-table fallback for any of them.
+ * "compared to a real baseline and found within it". This is a numeric parameter whose registry
+ * threshold is absent or fails validation (`operatorThresholds.ts`) and for which source-of-truth
+ * v2 gives no general range for the pod's water class either (`resolveLimit`).
+ *
+ * "Elevated", "Low" and "Exceedance" each need 3 consecutive readings beyond the baseline
+ * (`flagRules.ts`); a single reading never sets one.
  *
  * "Qualitative" is for a parameter that is not judged against a numeric range at all
  * (turbidity -- see ParameterScale below). It is deliberately NOT the same as "N/A":
@@ -157,12 +162,11 @@ export interface ParameterBaseline {
    *
    * - `"operator-threshold"` — this specific device's threshold pair from the backend's device
    *   registry (`minTemperature`/`maxTemperature`, `minPH`/`maxPH`, etc.), typed in by whoever
-   *   deployed the pod and validated by `operatorThresholds.ts` before it is trusted. This is now
-   *   the only source any numeric parameter's baseline can have — the "Water Quality Metrics —
-   *   Source of Truth" document's reference-table ranges were vetoed in full by the project
-   *   supervisor (2026-09-13, see docs/timeline.md) and no longer feed a baseline at all. There
-   *   is no fallback: a parameter with no usable registry threshold has no baseline, exactly as
-   *   temperature already behaved before the veto.
+   *   deployed the pod and validated by `operatorThresholds.ts` before it is trusted. Always
+   *   preferred when usable.
+   * - `"v2-fallback"` — source-of-truth v2 §3's general range for the pod's water class, used
+   *   only when the operator threshold is unusable and v2 gives a range for that metric
+   *   (`resolveLimit`, docs/timeline.md 2026-10-10). Labelled as generic wherever it is shown.
    *
    * Absent when `hasFixedBaseline` is false; there is no source for a baseline that does not
    * exist.
@@ -182,7 +186,7 @@ export interface ParameterBaseline {
   scale?: ParameterScale;
 }
 
-export type BaselineSource = "operator-threshold";
+export type BaselineSource = "operator-threshold" | "v2-fallback";
 
 /** True for a parameter whose value is monotonic but uncalibrated -- turbidity today. */
 export const isRelativeIndex = (b: Pick<ParameterBaseline, "scale">): boolean => (
@@ -195,9 +199,12 @@ export interface ParameterStats {
   max: number;
   mean: number;
   median: number;
-  /** Usable individual readings beyond the exceedance bounds, including the accuracy floor.
-   * Absent in older hand-built inputs; those cannot establish a repeated exceedance. */
-  exceedanceCount?: number;
+  /**
+   * Every usable reading in the period, in time order, after QC (`devices/readingQc.ts`): the
+   * raw readings the flag rule counts runs over (`flagRules.ts`). Bucket means cannot stand in:
+   * two excursions can share a bucket whose mean stays normal.
+   */
+  readings: TimedValue[];
   pattern: Pattern;
   /** Optional raw (epoch ms, value) series, used for pattern detection and excursion timestamps. */
   series?: Array<[number, number]>;
@@ -246,6 +253,12 @@ export interface DataQualityCheck {
   biofoulingNotes: string;
   sensorAgreementStatus?: CalibrationResult;
   sensorAgreementNotes: string;
+  /**
+   * Parameters whose readings most likely reflect a sensor or data issue (source-of-truth v2
+   * §9.2): a stuck sensor, a run of failed or suspect readings, or every sensor failing at once.
+   * The only case in which the report recommends inspection (POST_LAUNCH_BACKLOG.md §1b, D2).
+   */
+  likelyDataIssue?: string[];
 }
 
 export interface ReportInput {
@@ -305,44 +318,48 @@ export const outOfRangeShare = (p: ParameterStats): number | null => {
   return outside / p.series.length;
 };
 
-/** probeAccuracy is injected rather than imported to keep this module free of the
- * reference-data import cycle. */
-export const flagFor = (
-  p: Pick<ParameterStats, "min" | "max" | "baseline">,
-  probeAccuracy: (key: string, reading: number) => number,
-): Flag => {
+/**
+ * The parameter's out-of-range runs against its baseline, or undefined where no numeric range
+ * applies. `noiseFloor` is v2's minimum detectable change (`referenceRanges.ts`), injected rather
+ * than imported to keep this module free of the reference-data import cycle.
+ */
+export const runsFor = (
+  p: Pick<ParameterStats, "baseline" | "readings">,
+  noiseFloor: (key: string, reading: number) => number,
+): RunAssessment | undefined => {
   const b = p.baseline;
+  if (isRelativeIndex(b) || !b.hasFixedBaseline) return undefined;
+  return assessRuns(
+    p.readings,
+    { min: b.baselineMin, max: b.baselineMax },
+    (reading) => noiseFloor(b.key, reading),
+    b.exceedanceMargin,
+  );
+};
+
+/**
+ * The parameter's flag: "Exceedance" for a run of 3 readings beyond the baseline by the larger of
+ * the exceedance margin and the minimum detectable change, "Elevated" or "Low" for a run beyond
+ * the minimum detectable change alone, else "Normal" (`flagRules.ts`; docs/timeline.md,
+ * 2026-10-10). One reading, however far out, never flags.
+ */
+export const flagFor = (
+  p: Pick<ParameterStats, "baseline" | "readings">,
+  noiseFloor: (key: string, reading: number) => number,
+): Flag => {
   // Checked before anything else, and before `hasFixedBaseline`: a relative index has no
-  // calibrated scale, so every comparison below (baseline edges, exceedance margin, probe noise
-  // floor) would be arithmetic on a number that does not mean what the units say it means.
-  // The caller renders a ClarityBand for this row instead -- see referenceRanges.clarityBandFor.
-  if (isRelativeIndex(b)) {
+  // calibrated scale, so a range comparison would be arithmetic on a number that does not mean
+  // what the units say it means. The caller renders a ClarityBand for this row instead.
+  if (isRelativeIndex(p.baseline)) {
     return "Qualitative";
   }
-  if (!b.hasFixedBaseline) {
+  const runs = runsFor(p, noiseFloor);
+  if (!runs) {
     return "N/A";
   }
-  const width = b.baselineMax - b.baselineMin;
-  const exceedanceMargin = width * b.exceedanceMargin;
-
-  // Noise floor: don't flag an excursion the probe's own accuracy can't actually
-  // distinguish from baseline (e.g. the DO probe is +/-0.05 mg/L -- a reading 0.02 mg/L
-  // past the edge is noise, not a real reading change). Falls back to 0 where no probe
-  // spec is on file (turbidity).
-  const hiAccuracy = probeAccuracy(b.key, p.max);
-  const loAccuracy = probeAccuracy(b.key, p.min);
-
-  const exceedanceHi = b.baselineMax + Math.max(exceedanceMargin, hiAccuracy);
-  const exceedanceLo = b.baselineMin - Math.max(exceedanceMargin, loAccuracy);
-  if (p.max > exceedanceHi || p.min < exceedanceLo) {
-    return "Exceedance";
-  }
-  if (p.max > b.baselineMax + hiAccuracy) {
-    return "Elevated";
-  }
-  if (p.min < b.baselineMin - loAccuracy) {
-    return "Low";
-  }
+  if (runs.exceedance.length > 0) return "Exceedance";
+  if (runs.outOfRange.some((r) => r.direction === "high")) return "Elevated";
+  if (runs.outOfRange.some((r) => r.direction === "low")) return "Low";
   return "Normal";
 };
 
@@ -392,16 +409,14 @@ export interface StatusAssessment {
  */
 export const assessStatus = (
   report: ReportInput,
-  probeAccuracy: (key: string, reading: number) => number,
+  noiseFloor: (key: string, reading: number) => number,
 ): StatusAssessment => {
-  const flagOf = (p: ParameterStats): Flag => flagFor(p, probeAccuracy);
+  const flagOf = (p: ParameterStats): Flag => flagFor(p, noiseFloor);
   const flagged = (flags: Flag[]): string[] => report.parameters
     .filter((p) => flags.includes(flagOf(p)))
     .map((p) => p.baseline.key);
 
-  const exceeded = report.parameters
-    .filter((p) => flagOf(p) === "Exceedance" && (p.exceedanceCount ?? 0) >= 2)
-    .map((p) => p.baseline.key);
+  const exceeded = flagged(["Exceedance"]);
   if (exceeded.length > 0) {
     return { status: "Action Required", rule: "exceedance", parameters: exceeded };
   }
@@ -438,5 +453,5 @@ export const assessStatus = (
 /** The status alone, for the PDF and every caller that does not need the reason. */
 export const overallStatus = (
   report: ReportInput,
-  probeAccuracy: (key: string, reading: number) => number,
-): ReportStatus => assessStatus(report, probeAccuracy).status;
+  noiseFloor: (key: string, reading: number) => number,
+): ReportStatus => assessStatus(report, noiseFloor).status;
