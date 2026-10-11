@@ -43,7 +43,9 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   v2 §3 says coastal dissolved oxygen can dip to 4-5 mg/L and pH to about 7.6 during upwelling, both below its fallback ranges.
   For now the code attaches that note itself when a coastal pod is judged against the v2 fallback (`docs/timeline.md`, 2026-10-11).
   The catalogue is where every approved explanation customers see lives, so the note may belong there instead, alongside v2 §5's other natural cycles.
-  *Unblocks:* moving the note into the catalogue, or confirming it stays in code.
+  A second catalogue question from the same work: the approved "Inspect the pod" step (`inspect-sensors`) is triggered by any threshold crossing, but v2 §9.2 recommends inspection only when a data issue is likely.
+  The report now shows it only then, enforced in code (`DATA_ISSUE_ONLY_ENTRIES` in `src/report/narrative.ts`); the catalogue entry's own conditions could say so instead.
+  *Unblocks:* moving the note and the inspection condition into the catalogue, or confirming they stay in code.
   *Answer:*
 
 - [ ] **27. Who corrects the thresholds that do not fit the water, and should the alert emails follow the new flag rule?**
