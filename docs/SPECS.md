@@ -1107,6 +1107,8 @@ Every note is kept by default, and the prompt allows `omit` only when the user e
 Numbers, flags, status, events and recommendations are never removed, and a copy with notes left out lists them in an "Omitted" metadata row, so a shared PDF is not taken for the full assessment.
 `omit` travels in `report_request` (deduplicated, in canonical order) and the tool returns `omitted_from_pdf` for the reply to confirm.
 An omitted copy counts against the report quota like any other download.
+Every edit needs its own `generate_report` call: the prompt says so and asks the reply to describe the omitted notes in plain words, not by group name.
+Known gap (Mirror, 2026-10-10 and 2026-10-11): on a second edit in one chat the model sometimes says a new copy is ready without calling the tool (about 3 of 8 runs at temperature 0); a deterministic fix is approved but not built (`timeline.md`, 2026-10-11).
 The Section 2 footnote's explanation of the "(all zero)" and "(off-scale)" suffixes now prints only when a Flag cell shows one.
 
 **Recomputed at download.** The PDF is built from the same `time_range` phrase when the user clicks, and relative phrases anchor to the pod's newest reading (§10.3b).
