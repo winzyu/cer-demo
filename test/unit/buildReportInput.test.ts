@@ -4,7 +4,10 @@ import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import { QuerySensorData } from "../../src/tools/querySensorData";
 import { buildReportInput } from "../../src/report/buildReportInput";
 import { prepareReport } from "../../src/report/produceReport";
-import { STUCK_SENSOR_NOTE, STUCK_SENSOR_USER_NOTE } from "../../src/tools/stuckSensor";
+import { stuckSensorNote, stuckSensorUserNote } from "../../src/devices/readingQc";
+
+const STUCK_SENSOR_NOTE = stuckSensorNote(["Turbidity"]);
+const STUCK_SENSOR_USER_NOTE = stuckSensorUserNote(["Turbidity"]);
 import { flagFor } from "../../src/report/types";
 import { probeAccuracy } from "../../src/report/referenceRanges";
 import type { DeviceSummary } from "../../src/types/device.types";

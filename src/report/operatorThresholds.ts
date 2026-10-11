@@ -406,7 +406,9 @@ export const resolveLimit = (
 ): ResolvedLimit => {
   const verdict = metricThreshold(thresholds, metric);
   if (verdict.usable) {
-    return { assessed: true, min: verdict.min, max: verdict.max, source: "operator-threshold" };
+    return {
+      assessed: true, min: verdict.min, max: verdict.max, source: "operator-threshold",
+    };
   }
   const fallback = water ? V2_FALLBACK_RANGES[fallbackWaterClass(water)][metric] : undefined;
   if (!fallback) {

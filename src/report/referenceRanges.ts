@@ -263,6 +263,33 @@ export const probeAccuracy = (key: string, reading: number): number => {
  * Source-of-truth v2: fallback ranges (§3) and minimum detectable change (§8.3)
  * -----------------------------------------------------------------------------------------*/
 
+/**
+ * The device registry's `operating_environment` as a report water body type, or `undefined` when
+ * the registry does not say anything usable.
+ *
+ * Returns `undefined` rather than taking a fallback argument so the caller can tell "the registry
+ * classified this pod" from "nothing was on file and a default was applied" -- a distinction the
+ * report prints, and because a defaulted type must never select a v2 fallback column.
+ */
+export const mapWaterType = (
+  operatingEnvironment: string | null | undefined,
+): WaterBodyType | undefined => {
+  if (!operatingEnvironment) {
+    return undefined;
+  }
+  const normalized = operatingEnvironment.toLowerCase();
+  if (normalized.includes("salt") || normalized.includes("marine")) {
+    return "Marine";
+  }
+  if (normalized.includes("brackish") || normalized.includes("estuar")) {
+    return "Brackish";
+  }
+  if (normalized.includes("fresh")) {
+    return "Freshwater";
+  }
+  return undefined;
+};
+
 /** The v2 §3 column a water body type reads. Estuarine water uses the brackish column. */
 export type FallbackWaterClass = "freshwater" | "brackish" | "coastal";
 

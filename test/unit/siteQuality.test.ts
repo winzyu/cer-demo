@@ -7,7 +7,9 @@ import { flagCellText } from "../../src/report/renderPdf";
 import { probeAccuracy } from "../../src/report/referenceRanges";
 import { prepareReport, renderReportPdf } from "../../src/report/produceReport";
 import { GetPodThresholds } from "../../src/tools/getPodThresholds";
-import { STUCK_SENSOR_USER_NOTE } from "../../src/tools/stuckSensor";
+import { stuckSensorUserNote } from "../../src/devices/readingQc";
+
+const STUCK_SENSOR_USER_NOTE = stuckSensorUserNote(["Turbidity"]);
 
 /** Model-facing wording that must never reach the page. */
 const MODEL_ONLY = /best_lat|query_sensor_data|get_pod_thresholds|\bSay\b|\bConfirm\b/;
@@ -18,6 +20,7 @@ const readerNotes = (result: Record<string, unknown>): string[] => {
 };
 
 const NOW = Date.parse("2026-09-26T12:00:00Z");
+// Long runs vary pH: 24 identical readings would be a flat line and fail QC (readingQc.ts).
 const row = (hour: number, lat: number | null, ph = 8, turbidity = 20) => ({
   timestamp: NOW / 1000 - (24 - hour) * 3600,
   best_lat: lat, best_lon: lat === null ? null : -82,
@@ -55,13 +58,13 @@ describe("current-site tool and report pipeline", () => {
   });
 
   it("excludes sustained endpoint runs before report patterns", async () => {
-    const sensor = sensorFor([...Array.from({ length: 25 }, (_, i) => row(i - 2, 41, 8, 1005)), row(23, 41, 8, 25)]);
+    const sensor = sensorFor([...Array.from({ length: 25 }, (_, i) => row(i - 2, 41, 8 + i * 0.01, 1005)), row(23, 41, 8, 25)]);
     const result = await sensor.run({ metric: "turbidity", time_range: "last 7 days", aggregation: "max" });
     expect(result.value).toBe(25);
-    expect(result.note).toMatch(/likely failed sensor/i);
+    expect(result.note).toMatch(/sensor or data issue/i);
     const built = await buildReportInput(sensor, { timeRange: "last 7 days" });
     expect(built.report?.parameters.find((p) => p.baseline.key === "turbidity")?.max).toBe(25);
-    expect(built.report?.dataQuality?.calibrationNotes).toMatch(/likely failed sensor/i);
+    expect(built.report?.dataQuality?.calibrationNotes).toMatch(/sensor or data issue/i);
   });
 
   it("labels over-wide limits not assessed", async () => {
@@ -76,7 +79,7 @@ describe("current-site tool and report pipeline", () => {
 
 describe("reader notes for every site and sensor note", () => {
   it("gives query_sensor_data's earlier-location and stuck-sensor notes reader versions", async () => {
-    const sensor = sensorFor([row(-25, 35, 2), ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8, 1005)),
+    const sensor = sensorFor([row(-25, 35, 2), ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8 + i * 0.01, 1005)),
       row(1, 41, 8, 25)]);
     const result = await sensor.run({ metric: "turbidity", time_range: "last 7 days", aggregation: "max" });
     expect(readerNotes(result)).toEqual([
@@ -99,7 +102,7 @@ describe("reader notes for every site and sensor note", () => {
   });
 
   it("names each pod on list_pods' reader notes and states the freshness limit", async () => {
-    const sensor = sensorFor([row(-25, 35, 2), ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8, 0))]);
+    const sensor = sensorFor([row(-25, 35, 2), ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8 + i * 0.01, 0))]);
     const notes = readerNotes(await new ListPods({ sensor }).run({}));
     expect(notes[0]).toMatch(/^Last-report times come from/);
     expect(notes).toContainEqual(expect.stringMatching(/^Pod: 1 reading\(s\) from an earlier location/));
@@ -108,7 +111,7 @@ describe("reader notes for every site and sensor note", () => {
 
   it("carries the series read's reader notes into generate_report", async () => {
     const sensor = sensorFor([row(-25, 35, 2),
-      ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8, 1005))]);
+      ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8 + i * 0.01, 1005))]);
     const result = await new GenerateReport({ sensor }).run({ time_range: "last 7 days" }, { token: "fixture" });
     const notes = readerNotes(result);
     expect(notes).toContainEqual(expect.stringMatching(/earlier location .*were left out/));
@@ -132,17 +135,17 @@ describe("release surfaces", () => {
   });
 
   it("gives list_pods the same site exclusion and sensor-failure notes", async () => {
-    const sensor = sensorFor([row(-25, 35, 2), ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8, 0))]);
+    const sensor = sensorFor([row(-25, 35, 2), ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8 + i * 0.01, 0))]);
     const result = await new ListPods({ sensor }).run({});
     const pod = (result.pods as Array<{ note: string; last_reported: string }>)[0];
     expect(pod.note).toMatch(/earlier location.*excluded/i);
-    expect(pod.note).toMatch(/likely failed sensor/i);
+    expect(pod.note).toMatch(/sensor or data issue/i);
     expect(pod.last_reported).toBe(new Date(row(0, 41).timestamp * 1000).toISOString());
   });
 
   it("renders a report and preserves exclusions in generate_report without model calls", async () => {
     const sensor = sensorFor([row(-25, 35, 2),
-      ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8, 1005))], { minPH: 0, maxPH: 100 });
+      ...Array.from({ length: 25 }, (_, i) => row(i - 24, 41, 8 + i * 0.01, 1005))], { minPH: 0, maxPH: 100 });
     const prepared = await prepareReport(sensor, { timeRange: "last 7 days" });
     if (prepared.error || !("report" in prepared)) throw new Error(prepared.error);
     expect(prepared.report.parameters.map((p) => p.baseline.key)).toEqual(["ph"]);

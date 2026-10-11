@@ -78,7 +78,7 @@
 import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorData";
 import { SensorQueryError } from "../tools/querySensorData";
 import { flagFor } from "./types";
-import { probeAccuracy } from "./referenceRanges";
+import { mapWaterType, probeAccuracy } from "./referenceRanges";
 import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext } from "../types/tool.types";
 import type {
@@ -88,7 +88,7 @@ import {
   metricThreshold, metricThresholdRejectionReason, metricBlindSpotNote,
   temperatureThreshold, thresholdRejectionNote, WIRE_KEY_TO_METRIC,
 } from "./operatorThresholds";
-import { STUCK_SENSOR_NOTE, STUCK_SENSOR_USER_NOTE } from "../tools/stuckSensor";
+import { stuckSensorNote, stuckSensorUserNote } from "../devices/readingQc";
 import type { ThresholdVerdict } from "./operatorThresholds";
 import { classifyPattern, type HourlySeries } from "./patterns";
 
@@ -112,33 +112,6 @@ const PARAMETER_META: Array<{ key: string; label: string; unit: string }> = [
 
 /** Metrics reported on an uncalibrated relative scale -- see types.ts `ParameterScale`. */
 const RELATIVE_INDEX_KEYS = new Set(["turbidity"]);
-
-/**
- * The device registry's `operating_environment` as a report water body type, or `undefined` when
- * the registry does not say anything usable.
- *
- * Returns `undefined` rather than taking a fallback argument so the caller can tell "the registry
- * classified this pod" from "nothing was on file and a default was applied" -- a distinction the
- * report prints, because it decides which baseline table every flag is computed against.
- */
-export const mapWaterType = (
-  operatingEnvironment: string | null | undefined,
-): WaterBodyType | undefined => {
-  if (!operatingEnvironment) {
-    return undefined;
-  }
-  const normalized = operatingEnvironment.toLowerCase();
-  if (normalized.includes("salt") || normalized.includes("marine")) {
-    return "Marine";
-  }
-  if (normalized.includes("brackish") || normalized.includes("estuar")) {
-    return "Brackish";
-  }
-  if (normalized.includes("fresh")) {
-    return "Freshwater";
-  }
-  return undefined;
-};
 
 interface MetricEntry {
   value: number | null;
@@ -592,15 +565,19 @@ export const buildReportInput = async (
     .filter((r): r is { skippedLabel: string } => "skippedLabel" in r)
     .map((r) => r.skippedLabel);
 
+  // Metrics with readings left out as a stuck sensor, named as the sensor tool names them.
+  const stuckLabels = PARAMETER_META
+    .filter((meta) => (seriesMetrics[meta.key]?.excluded_stuck ?? 0) > 0)
+    .map((meta) => meta.label.replace(/ \(.*\)$/, ""));
+
   if (parameters.length === 0) {
     // This text reaches the reader (the 422 body, the dashboard's tool row), so it is built only
-    // from reader notes: `site_note` and `STUCK_SENSOR_NOTE` are the model's wording.
+    // from reader notes: `site_note` and `stuckSensorNote` are the model's wording.
     const readerNotes = seriesResult[USER_NOTES_FIELD];
     return {
       error: [`No usable readings found for any parameter in "${params.timeRange}".`,
         ...(Array.isArray(readerNotes) ? readerNotes : []),
-        Object.values(seriesMetrics).some((m) => (m.excluded_stuck ?? 0) > 0)
-          ? STUCK_SENSOR_USER_NOTE : null,
+        stuckLabels.length > 0 ? stuckSensorUserNote(stuckLabels) : null,
       ].filter((text): text is string => typeof text === "string" && text !== "")
         .filter((text, index, all) => all.indexOf(text) === index)
         .join(" "),
@@ -612,8 +589,8 @@ export const buildReportInput = async (
     skipped,
     asRecord(seriesResult.reading_counts),
   );
-  if (Object.values(seriesMetrics).some((m) => (m.excluded_stuck ?? 0) > 0)) {
-    dataQuality.calibrationNotes = `${STUCK_SENSOR_NOTE} ${dataQuality.calibrationNotes}`;
+  if (stuckLabels.length > 0) {
+    dataQuality.calibrationNotes = `${stuckSensorNote(stuckLabels)} ${dataQuality.calibrationNotes}`;
   }
   if (typeof seriesResult.site_note === "string") {
     dataQuality.completenessNotes += ` ${seriesResult.site_note}`;

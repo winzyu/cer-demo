@@ -230,3 +230,21 @@ export const readingGaps = (rows: readonly DeviceReading[]): ReadingRun[] => row
       ? [{ startMs: timeOf(rows[i]), endMs: timeOf(row), readings: 0 }]
       : [];
   });
+
+const listOf = (labels: string[]): string => (labels.length < 2
+  ? labels.join("")
+  : `${labels.slice(0, -1).join(", ")} and ${labels[labels.length - 1]}`);
+
+/**
+ * Said when readings were excluded as a flat line or stuck turbidity: v2 §9.2's "data issue
+ * likely" tier, the one case where inspection is the advice.
+ */
+export const stuckSensorNote = (labels: string[]): string => `${listOf(labels)} readings were `
+  + "stuck at one value for a long stretch (24 or more identical readings in a row, or turbidity "
+  + "at 0 for a day or more). This pattern most likely reflects a sensor or data issue; those "
+  + "readings were left out, and the sensor should be inspected.";
+
+/** The reader's version of `stuckSensorNote` (see `USER_NOTES_FIELD`). */
+export const stuckSensorUserNote = (labels: string[]): string => `${listOf(labels)} readings `
+  + "stuck at one value for a long stretch were left out as a likely failed sensor; the sensor "
+  + "should be inspected.";
