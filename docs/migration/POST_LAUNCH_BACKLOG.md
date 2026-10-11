@@ -76,7 +76,21 @@ Audit of the code against v2, and the planned changes:
 
 Recorded, not planned now: v2 event types the code lacks (treated effluent, dry-weather runoff, bloom collapse, upwelling, internal tide, marine heatwave, alkaline input, dredging) and the §5 natural-cycle checks; dissolved oxygen as percent saturation (§2.2); specific conductance at 25 °C or salinity (§2.4), pending whether pods report temperature-compensated conductivity; temperature-residual ORP (§2.3.1); site baselines with robust z-scores (§4, §9.1), for which operator thresholds stand in by decision; rate-of-change limits written per 10 minutes against a 30-minute cadence; climatology, attenuated-signal, multivariate and neighbour tests; §7.3 metadata (sensor types, battery voltage, maintenance log).
 Kept on purpose: the pH plausibility band of 3-12 is stricter than v2's 0-14 gross range (`src/devices/plausibility.ts` explains why); turbidity stays a relative index (stakeholder question 18).
-Still with the group: the share of the day (5% or 10%) alongside the 3-in-a-row rule, the window, how statuses map to v2's tiers, who fixes the thresholds above, and whether the server's alert emails follow the same rule.
+Decided 2026-10-10 (user): the flag rule is 3 consecutive readings beyond the limit plus the minimum detectable change (v2 §9.1); at 48 readings a day, 3 readings is 6.25% of a day, inside the 5-10% Michael and the colleague accepted, so there is no separate share rule.
+Still with the group: who fixes the thresholds above, and whether the server's alert emails follow the same rule.
+
+### 1c. Implementation brief (items A1-D3)
+
+Branch `task/sot-v2-flagging`, worktree `.claude/worktrees/sot-v2-flagging`; the coordinator lands it on `dev`.
+
+- v2 §3 fallback values, for pH, dissolved oxygen (mg/L), ORP (mV) and specific conductance (µS/cm): freshwater 6.5-8.5, 6-11, 100-400, 50-1,500; brackish 7.0-8.3, 5-9, 100-350, 1,000-46,000; Southern California coastal and harbor 7.8-8.3, 6-8.5, 100-400, 50,000-52,000. The registry's `operatingEnvironment` is "salt-water" (coastal column) or "fresh-water"; use the brackish column only for an explicit brackish or estuarine value. A fallback applies per metric whenever `metricThreshold` rejects the operator value (`src/report/operatorThresholds.ts`).
+- Minimum detectable change (v2 §8.3): pH 0.2, dissolved oxygen 1 mg/L, ORP 50 mV, conductivity 2% of reading, temperature 2 × `temperatureAccuracyC` (convert °F first); it replaces the datasheet values as `flagFor`'s noise floor (`src/report/types.ts`, `src/report/referenceRanges.ts`); keep the datasheet table for its other uses.
+- The run rule counts raw readings in time order, not the report's bucket means (`buildReportInput.ts` already keeps `readingsByMetric` for `exceedanceCount`); keep the status ladder in `assessStatus` and replace its single-reading triggers with 3-in-a-row runs, keeping the 15% margin as the Action Required step.
+- QC per reading: fail for an error flag, the `1000000000` value, an implausible value (`src/devices/plausibility.ts`) or 24 identical readings; suspect for 6 identical readings or a spike (beyond 3 × the window's MAD from the mean of two neighbours that agree; skip when MAD is 0); missing for gaps. Generalise `src/tools/stuckSensor.ts`; turbidity at 0 keeps its existing rule. All-channel failures count as a likely data issue; three in a row flags the sensor, provisional until the colleague confirms (§1 rule 2).
+- Chat: `query_sensor_data` returns each metric's verdict (in range, out of range since a time, likely data issue, not assessed, not enough data) with its basis (operator threshold or v2 fallback); the prompt relays verdicts, gives maintenance advice only for a likely data issue, states a persistent offset once with its start, and gives the turbidity caveat once per conversation. `TOOL_BLOCK` is pinned byte-for-byte by `test/unit/prompt.test.ts`, so update the pin with the change.
+- Report: provenance and Flag text for fallback ranges (`renderPdf.ts`, `narrative.ts`); event headings and narrative use v2 §9.2's tiers, never "confirmed".
+- Docs: `SPECS.md` (behaviour), `timeline.md` (any further decision); remove every "no fallback table" statement (`referenceRanges.ts` header, `systemPrompt.ts` docstring, `SPECS.md`).
+- Verification: unit tests per rule and per suite with `--runInBand`, `npm run typecheck`, `npm run lint`; never the full `npm test`. Production reads, paid answer checks and deploys need the user's approval each time; the user deploys.
 
 ## 2. Security
 
