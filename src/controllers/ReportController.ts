@@ -3,6 +3,7 @@ import createHttpError from "http-errors";
 import { config } from "../config";
 import { quotaService, quotaSubjectFor } from "../quota";
 import type { QuotaService } from "../quota";
+import { parseReportOmit } from "../report/omit";
 import { prepareReport, renderReportPdf, reportFilename } from "../report/produceReport";
 import type { WaterBodyType } from "../report/types";
 import { QuerySensorData } from "../tools/querySensorData";
@@ -37,8 +38,9 @@ const optionalString = (value: unknown, name: string, max: number): string | und
 /**
  * `POST /api/v1/reports` - renders a report PDF and returns its bytes as a download.
  *
- * Body: `{ time_range, device? }`, the `report_request` a `generate_report` tool result carries,
- * so a report offered in chat downloads through here with the arguments it was summarised from.
+ * Body: `{ time_range, device?, omit? }`, the `report_request` a `generate_report` tool result
+ * carries, so a report offered in chat downloads through here with the arguments it was
+ * summarised from. `omit` names notes to leave out of a copy for sharing (`report/omit.ts`).
  *
  * **Nothing is stored.** The PDF is rendered in memory and streamed back, which is what lets this
  * route drop the per-file ownership check the disk-backed design needed: there is no file for a
@@ -78,12 +80,19 @@ export class ReportController {
         throw createHttpError(400, "\"time_range\" is required, e.g. \"last 7 days\".");
       }
       const device = optionalString(body.device, "device", MAX_DEVICE_CHARS);
+      const parsedOmit = parseReportOmit(body.omit);
+      if (parsedOmit.error !== undefined) {
+        throw createHttpError(400, parsedOmit.error);
+      }
+      const { omit } = parsedOmit;
 
       // Non-null by construction: `requireCallerToken` refuses the request before it gets here.
       const token = callerToken(req) as string;
       const prepared = await prepareReport(
         this.sensor,
-        { timeRange, device, waterBodyTypeFallback: this.defaultWaterBodyType },
+        {
+          timeRange, device, omit, waterBodyTypeFallback: this.defaultWaterBodyType,
+        },
         { token },
       );
       if (prepared.error !== undefined) {

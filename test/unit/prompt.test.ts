@@ -412,6 +412,28 @@ describe("REPORT_TOOL_BLOCK", () => {
     expect(REPORT_TOOL_BLOCK).toContain("cannot be detected");
     expect(REPORT_TOOL_BLOCK).not.toContain("water body type selects");
   });
+
+  it("leaves announcing the PDF to the server's line, and asks for a call per edit", () => {
+    // SPECS.md §10.7: the model's own "a new PDF is ready" was false on a second edit.
+    expect(REPORT_TOOL_BLOCK).toContain("Do not announce that a\n  report or copy is ready");
+    expect(REPORT_TOOL_BLOCK).not.toContain("point the user to that button");
+    expect(REPORT_TOOL_BLOCK).toContain("Every change to a report needs its own\n  generate_report call");
+  });
+
+  it("keeps the server's delivery lines out of the history the model reads", () => {
+    const messages = buildMessages({
+      query: "now remove the data quality section",
+      chunks: [],
+      history: [
+        { role: "user", content: "report please" },
+        {
+          role: "assistant",
+          content: "Status: Normal.\n\nNew PDF in this reply: Harbor Pier Buoy, Oct 4, 2026, full report.",
+        },
+      ],
+    });
+    expect(messages.find((m) => m.role === "assistant")?.content).toBe("Status: Normal.");
+  });
 });
 
 describe("formatContext", () => {

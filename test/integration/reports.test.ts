@@ -156,6 +156,31 @@ describe("POST /api/v1/reports", () => {
     expect(fetchCalls).toHaveLength(0);
   }, RELOAD_TIMEOUT_MS);
 
+  it("rejects an omit value outside the list without reading any device", async () => {
+    const app = loadAppWith({});
+
+    const response = await request(app)
+      .post(REPORTS)
+      .set("Authorization", CALLER)
+      .send({ time_range: "last day", device: "Algalita", omit: ["recommendations"] })
+      .expect(400);
+    expect(JSON.stringify(response.body)).toContain("turbidity_notes");
+    expect(fetchCalls).toHaveLength(0);
+  }, RELOAD_TIMEOUT_MS);
+
+  it("renders a copy with the requested notes left out", async () => {
+    const app = loadAppWith({});
+
+    const response = await request(app)
+      .post(REPORTS)
+      .set("Authorization", CALLER)
+      .send({ time_range: "last day", device: "Algalita", omit: ["turbidity_notes", "data_quality"] })
+      .buffer(true)
+      .parse(binary)
+      .expect(200);
+    expect((response.body as Buffer).subarray(0, 5).toString("latin1")).toBe("%PDF-");
+  }, RELOAD_TIMEOUT_MS);
+
   it("answers 422 with the pipeline's own reason for a range it cannot read, and counts nothing", async () => {
     const app = loadAppWith({ QUERY_QUOTA: "true", QUERY_QUOTA_REPORTS: "1", QUERY_QUOTA_WINDOW: "1d" });
 

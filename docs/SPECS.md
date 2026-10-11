@@ -1084,7 +1084,7 @@ reading could be served as the answer for another.
 Both run one pipeline, `report/produceReport.ts`: sensor data, report model, events, status, narrative, and for the route only the PDF.
 No LLM call is made and nothing is written to disk.
 
-**The tool renders no PDF.** `generate_report` returns the summary the model narrates (status, event headings, baseline provenance, catalogue version) plus `report_request: { time_range, device? }`, the arguments it ran with.
+**The tool renders no PDF.** `generate_report` returns the summary the model narrates (status, event headings, baseline provenance, catalogue version) plus `report_request: { time_range, device?, omit? }`, the arguments it ran with.
 It never returns a URL, and the prompt tells the model to point at the interface's download button instead of writing a link.
 
 **The status comes with its reason** (2026-09-24, Q1).
@@ -1101,11 +1101,32 @@ The high-confidence, high-severity event rung still takes precedence over Watch.
 The plausibility filter is unchanged: dissolved oxygen of 0.00 mg/L remains physically possible and stays in the report, though 24 identical zeros in a row fail QC as a flat line.
 
 **The route renders the PDF on request.** `POST /api/v1/reports` takes that `report_request` as its body and answers `200 application/pdf` with `Content-Disposition: attachment; filename="cer-report-<site>-<start>-to-<end>.pdf"` and `Cache-Control: no-store`.
-Guards, in order: `requireCallerToken` (401), the report quota (429, §4a), `REPORT_TOOL` (404 while off), body validation (400: `time_range` required, at most 100 characters; `device` optional, at most 200), then the pipeline's own refusal as 422 (a phrase the grammar does not read, a pod the caller cannot see, an empty window).
+Guards, in order: `requireCallerToken` (401), the report quota (429, §4a), `REPORT_TOOL` (404 while off), body validation (400: `time_range` required, at most 100 characters; `device` optional, at most 200; `omit` optional, a list of the groups below), then the pipeline's own refusal as 422 (a phrase the grammar does not read, a pod the caller cannot see, an empty window).
 Every reading is fetched with the caller's token, which the device API scopes to their organization, so a report can only describe the caller's own pods.
 
 This replaced a design that wrote PDFs to `generated_reports/` and served them from `GET /api/v1/reports/:filename` behind a sha256-of-token ownership sidecar.
 That design lost every report on redeploy, bound access to one exact token string so a re-login lost it, and needed the ownership check only because a stored file could be asked for by someone else; with no stored file there is nothing to guard.
+
+**Notes left out on request** (2026-10-09, `POST_LAUNCH_BACKLOG.md` §6).
+A stakeholder asked for a copy without the turbidity disclaimers to share publicly; the report had no way to leave anything out, and the model could not edit it.
+`generate_report` and the route take an optional `omit`, a closed list from `report/omit.ts`: `turbidity_notes` (the uncalibrated-index caveats in the summary, table, footnote and turbidity card), `sensor_fault_notes` (off-scale and all-zero notes and Flag suffixes), `threshold_notes` (where each threshold comes from, rejection and blind-spot notes) and `data_quality` (the whole section; later sections renumber).
+Every note is kept by default, and the prompt allows `omit` only when the user explicitly asks; the model can choose groups but never write report text, so the same request always renders the same PDF and no model call is added.
+Numbers, flags, status, events and recommendations are never removed, and a copy with notes left out lists them in an "Omitted" metadata row, so a shared PDF is not taken for the full assessment.
+`omit` travels in `report_request` (deduplicated, in canonical order) and the tool returns `omitted_from_pdf`.
+An omitted copy counts against the report quota like any other download.
+Every edit needs its own `generate_report` call, which the prompt says.
+
+**The server, not the model, says which PDF a reply made** (2026-10-11, `report/delivery.ts`).
+On a second edit in one chat the model said a new copy was ready without calling `generate_report` in about 3 of 8 Mirror runs, so the user would have shared the earlier copy, still carrying the notes they asked to remove; a prompt rule did not stop it.
+The reply now ends with a line the server writes from the tool results, by the same rule cer-api uses for download buttons (a `report_request`, no error, not a deduped repeat): "New PDF in this reply: <site>, <period>, leaving out the …" (or "full report"), one per report.
+An answer that made no report gets "No new PDF was made in this reply." when its report call failed or an earlier reply in the chat carried one of these lines, which covers a "done" the check below cannot recognise; a chat that never involved a report gets nothing.
+The prompt tells the model not to announce a PDF, mention the download button or list the omitted notes.
+These lines are removed from history before the model reads it, because marking earlier replies as having produced a report made it skip the tool more often (5 of 6 runs against 1 of 6).
+A tool-free answer that points at the download button, or says in a sentence that is not a refusal that a PDF, copy or report has notes left out, when no report was made in that answer, is discarded and its round rerun once with `tool_choice` forcing `generate_report` (Fireworks honours it for `glm-5p3-flash`); if the answer after that still makes the claim, or no tool round is left, it is replaced with "That copy was not regenerated; please ask again."
+The forced call costs one more model round and a device read; a reply that only refers back to an earlier button triggers it too, and makes a fresh copy of what the model chooses.
+The response carries `report_retried: true` when the retry ran.
+Taking edits away from the model entirely (omit checkboxes beside the dashboard's download button) remains the fully deterministic alternative.
+The Section 2 footnote's explanation of the "(all zero)" and "(off-scale)" suffixes now prints only when a Flag cell shows one.
 
 **Recomputed at download.** The PDF is built from the same `time_range` phrase when the user clicks, and relative phrases anchor to the pod's newest reading (§10.3b).
 A pod that reported again in between yields a window shifted by those minutes; the PDF prints its own resolved period, which is the authority.

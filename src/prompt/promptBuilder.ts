@@ -1,4 +1,5 @@
 import { stripCitationMarkers } from "../utils/citations";
+import { stripDeliveryLines } from "../report/delivery";
 import { config } from "../config";
 import type { ChatMessage } from "../types/chat.types";
 import type { Chunk } from "../types/retrieval.types";
@@ -110,8 +111,10 @@ export const buildMessages = ({
     messages.push({ role: "system", content: formatContext(chunks) });
   }
 
+  // The server's "New PDF in this reply" lines are for the reader: shown to the model, an earlier
+  // report reads as a reason not to make the next one (`report/delivery.ts`).
   messages.push(...history.map((message) => (message.role === "assistant"
-    ? { ...message, content: stripCitationMarkers(message.content) }
+    ? { ...message, content: stripDeliveryLines(stripCitationMarkers(message.content)) }
     : message)));
   // Per request, so these go after everything cacheable and just before the question. Eval
   // captures send no device and run with the tools off, so their prompt is unchanged.
