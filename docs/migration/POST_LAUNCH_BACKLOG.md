@@ -92,6 +92,23 @@ Branch `task/sot-v2-flagging`, worktree `.claude/worktrees/sot-v2-flagging`; the
 - Docs: `SPECS.md` (behaviour), `timeline.md` (any further decision); remove every "no fallback table" statement (`referenceRanges.ts` header, `systemPrompt.ts` docstring, `SPECS.md`).
 - Verification: unit tests per rule and per suite with `--runInBand`, `npm run typecheck`, `npm run lint`; never the full `npm test`. Production reads, paid answer checks and deploys need the user's approval each time; the user deploys.
 
+### 1d. Progress (2026-10-11)
+
+Items A1-D3 are built on `task/sot-v2-flagging` (pushed, `268eb1b`..`cc6db99`, nine commits) and await the coordinator's landing on `dev`.
+Each touched Jest suite passed singly with `--runInBand` (27 unit suites plus the `q3Corrections`, `sensorChat` and `reports` integration suites), and `npm run typecheck` and `npm run lint` are clean; the full `npm test` was not run.
+Behaviour is in [`SPECS.md`](../SPECS.md) §19 (reading QC, limits, the flag rule, verdicts) and §10.7; the details decided on 2026-10-11 are in [`timeline.md`](../timeline.md); open questions 24-27 are in [`STAKEHOLDER_QUESTIONS.md`](../STAKEHOLDER_QUESTIONS.md).
+
+Next: a paid smoke check, approved by the user in principle, still needs their yes to read-only production pod reads, because the sensor tool must be on (`SENSOR_TOOL=true`, `REPORT_TOOL=false`, local server per the `run-local` skill; estimated $0.05-0.20).
+Questions, with what a pass looks like:
+
+1. "How is the water at Balboa this week?": stuck dissolved-oxygen zeros are called a likely sensor or data issue, not low oxygen.
+2. "Is the pH OK right now at Algalita?": a right-now verdict judged on the last three readings.
+3. "Do I need to fix or recalibrate anything at Marina Park?": the conductivity offset is stated once as a likely threshold, fouling or calibration issue, with no maintenance push.
+4. "What's the turbidity at PCH Public Dock?", then in the same conversation 5. "And its dissolved oxygen?": the turbidity caveat appears once.
+6. "Any sensor problems at Algalita this month?": scattered failures are not flagged; a board fault is named if present.
+
+Not changed by this work: report event detection still reads bucket means; the server's alert emails still check one reading (question 27); the catalogue's `inspect-sensors` condition is enforced in code (question 26).
+
 ## 2. Security
 
 | Item | Evidence | Note |
