@@ -57,6 +57,7 @@ Open questions: 5% or 10% (or per metric); whether the share counts only plausib
 | Item | Evidence |
 |---|---|
 | Over-flagging and repeated turbidity caveat | §1 |
+| Gilligan called a week of real readings sensor faults on a tide link it never measured, then reversed under pushback without new data; the "Searched from 1970" note is fixed on `dev` `469e972`, not deployed | [`GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](GILLIGAN_DATA_SKEPTICISM_2026-10-09.md) |
 | Michael cannot ask for a report without its turbidity disclaimers, or with sections left out, to share a clean PDF | §6 |
 | "How is the water this week?" answers with readings, actions and next steps and offers a report, instead of a plain weekly summary | Landing doc §7 item 17 (L8 C1) |
 | After a reload, a repeated summary request returns nearly the same answer | Landing doc §7 item 17 |
