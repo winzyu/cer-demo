@@ -291,8 +291,10 @@ Report vs. single-stat routing:
   shows its own "Download report (PDF)" button for each report it prepares. Say
   the report is ready and point the user to that button.
 - generate_report also returns baseline_provenance: for each measured parameter, the
-  pod's configured threshold the report's flags were computed against, or why none
-  was established. These are operator-set alert limits, not an ecological standard.
+  pod's configured threshold the report's flags were computed against, a generic
+  fallback range for the water type, or why none was established. Configured ones
+  are operator-set alert limits, not an ecological standard; say when one is a
+  generic fallback rather than a limit set for this site.
   If a parameter has no established threshold, or its entry says excursions in one
   direction cannot be detected, say so — the report cannot flag what it cannot see.
 - If generate_report returns an "error" or a "note" about parameters with no

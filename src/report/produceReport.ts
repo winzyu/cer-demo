@@ -20,7 +20,7 @@ import { guidance } from "../catalogue";
 import { buildReportInput } from "./buildReportInput";
 import { detectEvents } from "./events";
 import { deterministicNarrative, type NarrativeSections } from "./narrative";
-import { probeAccuracy } from "./referenceRanges";
+import { minimumDetectableChange } from "./referenceRanges";
 import { buildReportPdf } from "./renderPdf";
 import { assessStatus } from "./types";
 import type {
@@ -63,9 +63,9 @@ export const prepareReport = async (
   }
 
   report.events = detectEvents(report);
-  const statusBasis = assessStatus(report, probeAccuracy);
+  const statusBasis = assessStatus(report, minimumDetectableChange);
   const { status } = statusBasis;
-  const narrative = deterministicNarrative(report, probeAccuracy, status, guidance);
+  const narrative = deterministicNarrative(report, minimumDetectableChange, status, guidance);
   return {
     report,
     status,
@@ -81,7 +81,7 @@ export const renderReportPdf = (prepared: PreparedReport): Promise<Buffer> => (
   new Promise<Buffer>((resolve, reject) => {
     try {
       const doc = buildReportPdf(prepared.report, prepared.narrative, {
-        probeAccuracy, status: prepared.status,
+        noiseFloor: minimumDetectableChange, status: prepared.status,
       });
       const chunks: Buffer[] = [];
       doc.on("data", (chunk: Buffer) => chunks.push(chunk));

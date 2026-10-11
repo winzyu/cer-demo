@@ -105,9 +105,10 @@ export const assessRuns = (
   values: readonly TimedValue[],
   limit: Limit,
   minimumDetectableChange: Margin,
+  exceedanceMargin = EXCEEDANCE_MARGIN,
 ): RunAssessment => {
   const outOfRange = excursionRuns(values, limit, minimumDetectableChange);
-  const width = (limit.max - limit.min) * EXCEEDANCE_MARGIN;
+  const width = (limit.max - limit.min) * exceedanceMargin;
   const exceedance = excursionRuns(
     values,
     limit,

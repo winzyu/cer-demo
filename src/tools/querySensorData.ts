@@ -1187,7 +1187,7 @@ export class QuerySensorData {
 
     if (implausible.length > 0) {
       // Said out loud rather than silently dropped: a probe that rails without setting its
-      // error flag is a maintenance finding in its own right, and a reader comparing this
+      // error flag is worth knowing about, and a reader comparing this
       // answer against a raw export needs to know why the counts differ.
       const parts = implausible.map(([key, count]) => {
         const label = METRIC_BY_KEY.get(key)?.label ?? key;

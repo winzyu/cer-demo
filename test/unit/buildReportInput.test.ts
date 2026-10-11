@@ -258,8 +258,8 @@ describe("buildReportInput", () => {
 
     it("rejects a bad threshold for one metric while the other four still resolve normally", async () => {
       // A registry row can have one placeholder field (maxPH=100, the CER Conference Pod's real
-      // value) without the rest of the row being junk. pH alone should fall back to no baseline,
-      // with a rejection note -- everything else on this device keeps its own threshold.
+      // value) without the rest of the row being junk. pH alone falls back to v2's general range
+      // for this salt-water pod, labelled generic -- everything else keeps its own threshold.
       const sensor = makeSensor({
         devices: [{
           id: "bad-ph-pod",
@@ -280,9 +280,10 @@ describe("buildReportInput", () => {
       const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
 
       const ph = report!.parameters.find((p) => p.baseline.key === "ph")!;
-      expect(ph.baseline.hasFixedBaseline).toBe(false);
-      expect(ph.baseline.baselineSource).toBeUndefined();
-      expect(ph.baseline.baselineNote).toContain("pH");
+      expect(ph.baseline).toMatchObject({
+        hasFixedBaseline: true, baselineSource: "v2-fallback", baselineMin: 7.8, baselineMax: 8.3,
+      });
+      expect(ph.baseline.baselineNote).toMatch(/no usable pH threshold.*generic fallback.*upwelling/);
 
       const orp = report!.parameters.find((p) => p.baseline.key === "orp")!;
       expect(orp.baseline.hasFixedBaseline).toBe(true);

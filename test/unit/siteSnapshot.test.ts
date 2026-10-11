@@ -125,7 +125,8 @@ it("uses one pinned snapshot for all three report calculations", async () => {
 });
 
 it.each([0, 1005])("detects an established %s run across a short requested range", async (value) => {
-  const test = setup(Array.from({ length: 31 }, (_, i) => row(30 - i, 41, 8, value)));
+  // pH varies: 31 identical pH readings would be a flat line and fail QC too (readingQc.ts).
+  const test = setup(Array.from({ length: 31 }, (_, i) => row(30 - i, 41, 8 + i * 0.01, value)));
   const result = await test.sensor.run({ ...args, metric: "turbidity", time_range: "last hour" });
   expect(result.value).toBeNull();
   expect(result.excluded_stuck).toBe(2);
