@@ -1,38 +1,39 @@
 # Status
 
-Updated 2026-10-07 by the release chat after L9, on `docs/launch-handoff` (from `dev` `cde5a1a` plus `task/release-l6-images` `7bc4572`).
+Updated 2026-10-11 by the v2 flagging chat on `task/sot-v2-flagging` at `a5f5a1b` (cut from `docs/launch-handoff`); other workstreams as of the release chat's 2026-10-07 update after L9.
 Current state and next steps only; history is `git log -p docs/STATUS.md`; never cite this file from code or other docs.
 
 ## Start here
 
 - **Gilligan is live (2026-10-07).** cer-gilligan `00004-r5q`, cer-api `00081-qon` (tag `rc2`) and cer-ui `00070-dax` (tag `rc1`) take all traffic; record in [`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md) §7 items 10-19.
-- **Post-launch backlog (next chat).** Lay out every item set aside for after launch from [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md), reconcile it with the user's untracked `docs/migration/POST_RELEASE_ITEMS_EXPLAINED.html` (2026-10-02), and agree an order with the user before working on any item.
-  The over-flagging change Michael asked for (§1) and the unguarded user-update routes (§2) are the obvious candidates for first.
+- **v2 flagging (backlog §1, items A1-D3)**: built and pushed on `task/sot-v2-flagging` (worktree `sot-v2-flagging`). Next: the user's yes to read-only production pod reads, then the paid smoke check in [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md) §1d; then the coordinator lands the branch on `dev`.
+- **Post-launch backlog.** Order the remaining items in [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md) with the user, reconciled with the untracked `docs/migration/POST_RELEASE_ITEMS_EXPLAINED.html` (2026-10-02); the unguarded user-update routes (§2) are the obvious next candidate.
 - **Upstream landing.** `develop` is pushed in both repositories (server `5f04064`, dashboard `5ae4993`); next are the `main` merges, which Michael tests first ([`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md) §5).
 - **Coordination**: the coordinator alone writes `dev`, this file, the plan and the manual guide; other chats work on their own branch and worktree and report commit IDs; upstream pushes are new branches only, with the user's consent in chat.
 
 ## Last session
 
-- L6: cer-api `122136d` and cer-ui `fc13d16` built locally and staged; the full chain passed on CER's Fireworks key, which Michael added (B2) and routed early.
-- Michael fixed cer-api's plain-text credentials and the revoked mail password (`rc2`); production email had been down since at least 2026-09-27.
-- L7 approved by Michael; L8 passed on `rc2` with a customer test user; L9 switched all three services, closing the unauthenticated user routes in production; no 5xx after the switch.
-- Findings parked for after launch: unguarded user-update routes, stale pod list across accounts, three answer-behaviour items; Michael's over-flagging feedback and the agreed 5-10% rule are recorded verbatim in the backlog.
-- Spend: an estimated $0.10-0.30 on CER's Fireworks key for the L6 and L8 checks (about 25 Gilligan calls; Fireworks reports with a lag).
+- v2 flagging: per-reading QC (flat lines, spikes, read and board failures), operator thresholds with v2 §3 fallbacks, the 3-in-a-row rule with v2's minimum detectable change, per-metric verdicts in `query_sensor_data`, and the matching report flags, tiers and prompt rules; behaviour in [`SPECS.md`](SPECS.md) §19 and §10.7.
+- Decisions of 2026-10-11 (no conductivity or coastal ORP fallback, run and data-issue details, inspection only for a likely data issue) are in [`timeline.md`](timeline.md); [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md) now holds only open questions, with new items 24-27.
+- Checks: 27 unit suites and 3 integration suites run singly, typecheck and lint clean; full `npm test` not run; no production reads and no spend.
+- Release chat (2026-10-07): L6-L9 done ([`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md) §7); an estimated $0.10-0.30 on CER's Fireworks key for the L6 and L8 checks.
 
 ## Working tree
 
 - Code moved to `~/code/work/clean-earth-rovers/` on 2026-10-04 (WSL rebuild); `~/release/` did not survive the move, and Docker's image store was emptied.
 - Main checkout on `reflection` with the user's uncommitted path fixes (`.claude/settings.json`, `release/start-rc2-emulator.sh`) and the untracked `docs/migration/POST_RELEASE_ITEMS_EXPLAINED.html`; `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
 - This handoff: branch `docs/launch-handoff` (worktree `launch-handoff`) merges `task/release-l6-images` into `dev` and adds the backlog, three timeline rows and a runbook §3.4 correction; it awaits the coordinator's landing on `dev`.
-- cer-demo worktrees: 40 besides the main checkout; `release-l6` (pushed, merged here) and `launch-handoff` are this chat's; `post-launch-security` and `mirror-testing` are stale (2026-09-28) with nothing uncommitted.
+- v2 flagging: worktree `sot-v2-flagging`, branch `task/sot-v2-flagging` level with origin (`268eb1b`..`a5f5a1b`), clean; `node_modules`, `.env` and the `data/` caches are linked or copied in, ignored.
+- cer-demo worktrees: 45 besides the main checkout; `release-l6` (pushed, merged here) and `launch-handoff` are this chat's; `post-launch-security` and `mirror-testing` are stale (2026-09-28) with nothing uncommitted.
 - Upstream build worktrees `worktrees/build-cer-api-122136d` and `build-cer-ui-fc13d16` are clean detached checkouts of the live commits; the server and dashboard checkouts stay on `local`.
 - Running: Docker container `cer-ui-l8-local` on 127.0.0.1:3000 (the release dashboard proxying to cer-api `rc2`, which is now live); the pre-move stacks (mirror, launch-issues, rc2 mirror) are gone.
 
 ## Open work
 
-- User: choose the post-launch order; send Michael the launch note; delete the test user `winsyu475+certest@gmail.com`; say when to stop `cer-ui-l8-local`; recover `~/release/` if a backup has it.
+- User: approve or decline read-only production reads for the v2 smoke check (backlog §1d, about $0.05-0.20); choose the rest of the post-launch order; send Michael the launch note; delete the test user `winsyu475+certest@gmail.com`; say when to stop `cer-ui-l8-local`; recover `~/release/` if a backup has it.
 - Michael: revoke the old Gemini key and Gmail app password; optionally grant the user Cloud Build bucket write and `roles/datastore.user` on the `gilligan` database (usage resets); test before the `main` merges.
-- Agent, post-launch: everything in [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md), once ordered.
+- Agent, v2 flagging: run the backlog §1d smoke check once approved; the coordinator lands `task/sot-v2-flagging` on `dev`.
+- Agent, post-launch: the rest of [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md), once ordered.
 - Agent, upstream landing: build the `main` merges (server conflicts in `WaterAnalyticsService.ts`; take the release side); push on consent; tell Michael `62993fe` ships with server `main`.
 - Agent, release follow-through: logs and spend in the first days; cer-gilligan to 2 instances after the restart check; remove stale tags (backlog §4).
 
@@ -43,7 +44,8 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 | server `POST /api/v1/users/account/:id`, `POST`/`DELETE /api/v1/users/:id`, `POST /api/v1/users` | Any logged-in user can set any user's role, organization and email; admins can edit, promote, delete or create users in other organizations; live in production (landing doc §7 item 14). | high |
 | server `WaterAnalyticsController.exportCsv` | Any logged-in user exports any pod's readings as CSV (finding 11); fixed on `8463545`, not shipped. | high |
 | `../user-dashboard` `src/app/services/device-data.js:341`, `src/app/components/header.js` | A previous account's pod and organization lists survive logout and login in the same tab; a superadmin's pods show to the next account until a reload. | medium |
-| Gilligan answers | One out-of-range reading flags a metric and prompts maintenance; the turbidity caveat repeats in almost every answer (backlog §1). | medium |
+| Gilligan answers (live) | One out-of-range reading flags a metric and prompts maintenance; the turbidity caveat repeats in almost every answer (backlog §1); fixed on `task/sot-v2-flagging`, not landed or deployed. | medium |
+| server `checkWaterDataAndSendAlerts` | Alert emails fire on the latest reading alone, so an email can alert while chat calls the metric in range (stakeholder question 27). | low |
 | server `assignOrganization` | A non-superadmin with an empty organization sees every pod; no production user has one; fixed on `8463545`, not shipped. | medium |
 | Gilligan answers (L8) | "How is the water this week?" answers with actions and a report offer; another organization's pod named by a customer gets an answer about the caller's own pod without saying the named one is unavailable; near-identical repeat answers after a reload. | low |
 | cer-demo referrals | "My pod is broken" is declined instead of referred to sales@cleanearthrovers.com (finding 8); recheck on production. | medium |
@@ -63,6 +65,8 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 ## Active traps
 
+- QC (`src/devices/readingQc.ts`) fails 24 identical consecutive readings on any metric: a test fixture with a constant value now reads as a stuck sensor, so vary fixture values.
+- `npm run lint` covers `src` only; `eslint --fix` on a test file reformats unrelated lines.
 - Upstream history carries malware (tips are clean; it runs on `next dev`, `next build`, `npm test`): never check out `main`, `develop` or an old commit; scan with `grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .` after any clone, fetch, pull or switch.
 - Rollback targets are `cer-ui-00067-jid` and `cer-api-secrets-1005-1653`; the latter carries the revoked mail password and the Gemini-backed Gilligan, so roll back cer-ui first.
 - cer-gilligan traffic is pinned to a revision: any `services update` (minimum instances, settings) creates a revision with no traffic; route it with `update-traffic`.
