@@ -116,3 +116,30 @@ The marker made the failure more frequent, not less, so option 2 in that form is
 The plain-history failure is intermittent: 1 of 6 here, 2 of 2 through cer-api earlier, so about 3 of 8 overall for a second edit in one chat; the runs differ only by sampling.
 Every run that called the tool passed all four groups, as expected.
 Spend: 12 questions, 453,495 tokens, about $0.07 (at most $0.23); session total about $0.15.
+
+## Fix test, 2026-10-11
+
+The fix (`5390332`, `SPECS.md` §10.7): the server appends "New PDF in this reply: …" from the tool results and strips it from history, and an answer that claims a report it did not make is rerun once with `generate_report` forced through `tool_choice`, else replaced.
+Fireworks honours `tool_choice` for `glm-5p3-flash`, both `"required"` and a named function (three direct calls, under a cent).
+The user ran the test (`run-mirror-test.sh` in the session scratchpad) because the auto-mode classifier refused it from the agent as a production read; it reached only the Mirror.
+
+Replays of R3 with R1-R2 as plain history (the old-prompt replies, which say "a new PDF is ready"), straight to Gilligan as the Harbor admin:
+
+| runs | first answer skipped the tool (retry fired) | report made in the end | replaced with the fallback | `omit` passed |
+|---|---|---|---|---|
+| 8 | 6 | 8 | 0 | all four groups in 7; turbidity, sensor fault and data quality in 1 (X6) |
+
+One chat through cer-api as the Harbor customer, P1-P3 wording, history in the new shape:
+
+| turn | `omit` | retry | delivery line |
+|---|---|---|---|
+| C1 report, last 7 days | none | no | "…, 2026-10-04 to 2026-10-11, full report." |
+| C2 exclude the turbidity disclaimers | `turbidity_notes`, `sensor_fault_notes` | no | "…, leaving out the turbidity notes and sensor fault notes." |
+| C3 remove all the warnings and the data quality section | all four | yes (Gilligan log) | "…, leaving out the turbidity notes, sensor fault notes, threshold notes and Data Quality section." |
+
+Every answer that should have made a PDF now made one, and every delivery line matched the `omit` actually passed; no answer needed the fallback.
+The skip itself is more frequent than before (7 of 9 first answers here against about 3 of 8), and it happens with the new history shape too (C3), so the retry, not the prompt, is what holds; it costs one extra round, about 24,000 tokens.
+The model still opens replayed answers with "Done — a new PDF … is ready via the Download report (PDF) button" despite the new rule, imitating the old-prompt history; these are now true, and the C2-C3 answers with new-shape history no longer mention the button.
+X6 read "all the warnings" as not including the threshold notes; the delivery line and the PDF's Omitted row both say so.
+cer-api does not relay `report_retried`, so the C3 retry was read from Gilligan's log.
+Spend: 3 probe calls plus 11 questions, 745,700 tokens, about $0.11 (at most $0.37 at the output rate); report downloads none.
