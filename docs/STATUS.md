@@ -35,8 +35,8 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 - User: choose the post-launch order; send Michael the launch note; delete the test user `winsyu475+certest@gmail.com`; say when to stop `cer-ui-l8-local`; recover `~/release/` if a backup has it.
 - Michael: revoke the old Gemini key and Gmail app password; optionally grant the user Cloud Build bucket write and `roles/datastore.user` on the `gilligan` database (usage resets); test before the `main` merges.
-- User, report editing: choose the false-edit-claim fix (results doc, "Open decision"); then send Michael the before-and-after PDFs and correct the earlier message that the model edits parts of the report (it never did; the variation came from data-driven templates).
-- Agent, report editing: build the chosen fix and rerun only R3 on the Mirror after budget approval.
+- User, report editing: after the fix, send Michael the before-and-after PDFs and correct the earlier message that the model edits parts of the report (it never did; the variation came from data-driven templates).
+- Agent, report editing: approved 2026-10-11 (about $0.15): confirm Fireworks honours `tool_choice` for `glm-5p3-flash`, then build a server-written "New PDF in this reply" line and a check that reruns a round with `generate_report` forced when an answer claims a report it did not make; rerun the second-edit case 8 times on the Mirror (results doc, "History-marker test").
 - Agent, post-launch: everything in [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md), once ordered.
 - Agent, upstream landing: build the `main` merges (server conflicts in `WaterAnalyticsService.ts`; take the release side); push on consent; tell Michael `62993fe` ships with server `main`.
 - Agent, release follow-through: logs and spend in the first days; cer-gilligan to 2 instances after the restart check; remove stale tags (backlog §4).
