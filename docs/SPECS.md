@@ -1724,7 +1724,9 @@ Registry changes become visible at the device-list TTL, and older backfills or c
 Report series, exact median and hourly pattern calculations pin one consistent fetched snapshot for the whole batch, including across TTL expiry or cache eviction.
 When location filtering limits a pod's history, `time_range_resolved` uses the first and last current-site readings inside the requested range, or is null when none fall inside it.
 The answer's report period, PDF title and Summary inherit those dates, and the existing earlier-location note stays with the tool result and is printed in the PDF Summary as well as Data Quality.
-`window_actually_searched.complete` is false when the fetched context or current-site coverage cannot cover the requested range, even if the fetch reached the epoch.
+`window_actually_searched.complete` is false when the fetched context does not reach the start of the requested range, or when the location filter dropped readings inside it.
+A first reading that lands one reporting interval after the window opens, and earlier-site history that ends before it, leave the window complete.
+`window_actually_searched` reports the part of the requested range the fetch covered, never the fetch's own start: the snapshot can reach back to the epoch only to establish the current site, and the dashboard printed that as "Searched from 1970" under a complete week (`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md` §4).
 Report Data Quality counts rows once: a reading is used if at least one requested parameter survives fault, plausibility and flat-line filtering, and is left out if none survives.
 The completeness percentage compares those used rows with all current-site rows inside the requested range; earlier-location exclusions remain a separate row count in the site note.
 
