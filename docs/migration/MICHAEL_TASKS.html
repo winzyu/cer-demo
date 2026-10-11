@@ -1,0 +1,387 @@
+<title>Michael's Release Tasks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --ground: #f4f6f5; --surface: #ffffff; --ink: #1b2422; --muted: #56635f; --rule: #d3dbd8;
+  --accent: #0f6e6a; --accent-soft: #e0efed;
+  --fail: #b42318; --fail-soft: #fbe9e7; --pass: #1f7a3a; --pass-soft: #e5f3e8;
+  --hold: #9a5a06; --hold-soft: #fbf0dc; --code-bg: #eef2f0;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #111615; --surface: #182020; --ink: #e3eae7; --muted: #9aa8a3; --rule: #2d3a37;
+    --accent: #56b8b0; --accent-soft: #173331; --fail: #f08b7f; --fail-soft: #3a1c19;
+    --pass: #7fcf94; --pass-soft: #17301f; --hold: #e6b35f; --hold-soft: #35280f; --code-bg: #1f2927;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #111615; --surface: #182020; --ink: #e3eae7; --muted: #9aa8a3; --rule: #2d3a37;
+  --accent: #56b8b0; --accent-soft: #173331; --fail: #f08b7f; --fail-soft: #3a1c19;
+  --pass: #7fcf94; --pass-soft: #17301f; --hold: #e6b35f; --hold-soft: #35280f; --code-bg: #1f2927;
+}
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font: 15px/1.6 var(--body); margin: 0; padding-inline: 16px; padding-block: 24px 64px; }
+.wrap { max-width: 1140px; margin: 0 auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; }
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); align-self: start; max-height: calc(100vh - 32px); overflow-y: auto; font-size: 13px; }
+nav.toc h2 { font: 700 11px/1.2 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 18px 0 6px; }
+nav.toc a { display: block; color: var(--ink); text-decoration: none; padding: 2px 0; }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--accent); }
+nav.toc .id { font-family: var(--mono); color: var(--muted); display: inline-block; min-width: 3.4em; }
+main { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+h1 { font: 700 34px/1.15 var(--display); margin: 0; text-wrap: balance; }
+h2.part { font: 700 24px/1.2 var(--display); margin: 20px 0 0; padding-top: 18px; border-top: 3px solid var(--ink); text-wrap: balance; }
+h3.cat { font: 600 13px/1.3 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 8px 0 -8px; }
+p { margin: 0; max-width: 70ch; }
+.lede { color: var(--muted); max-width: 70ch; }
+code, .mono { font-family: var(--mono); font-size: .88em; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+pre { background: var(--code-bg); padding: 10px 12px; border-radius: 6px; overflow-x: auto; margin: 0; font: 13px/1.5 var(--mono); }
+.tablebox { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--rule); }
+th { font: 600 12px/1.3 var(--display); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 16px 18px; display: grid; gap: 10px; }
+.rules li { margin-bottom: 4px; }
+ul, ol { margin: 0; padding-left: 1.3em; }
+article.item { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 18px 20px; display: grid; gap: 14px; scroll-margin-top: 16px; }
+.item header { display: grid; gap: 6px; }
+.item h4 { font: 700 19px/1.3 var(--display); margin: 0; text-wrap: balance; }
+.item h4 .id { font-family: var(--mono); font-weight: 500; color: var(--accent); margin-right: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 12px/1 var(--body); padding: 4px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--muted); white-space: nowrap; }
+.chip.demo { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.chip.high { background: var(--fail-soft); color: var(--fail); border-color: transparent; }
+.chip.med { background: var(--hold-soft); color: var(--hold); border-color: transparent; }
+.chip.ok { background: var(--pass-soft); color: var(--pass); border-color: transparent; }
+dl.facts { display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: 14px; }
+dl.facts dt { color: var(--muted); font-weight: 500; }
+dl.facts dd { margin: 0; }
+.label { font: 600 12px/1.3 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.state { border-radius: 6px; padding: 10px 12px; border: 1px solid var(--rule); font-size: 14px; }
+.state.bad { background: var(--fail-soft); border-color: transparent; }
+.state.good { background: var(--pass-soft); border-color: transparent; }
+.state.wait { background: var(--hold-soft); border-color: transparent; }
+.state .label { color: inherit; opacity: .8; }
+.note { font-size: 14px; color: var(--muted); }
+a { color: var(--accent); }
+@media (max-width: 820px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  nav.toc { position: static; max-height: none; }
+  dl.facts { grid-template-columns: 1fr; gap: 2px; }
+  dl.facts dd { margin-bottom: 6px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+<style>
+main { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 820px) { .wrap { grid-template-columns: minmax(0, 1fr); } }
+.item > *, .panel > * { min-width: 0; }
+.item pre { margin: 8px 0 4px; }
+.item ol li { margin-bottom: 8px; }
+.fill { background: var(--hold-soft); color: var(--hold); padding: 0 4px; border-radius: 3px; font-weight: 600; }
+</style>
+
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <h2>Start</h2>
+  <a href="#setup">Before you start</a>
+  <a href="#summary">At a glance</a>
+  <h2>Part A</h2>
+  <a href="#A1"><span class="id">A1</span>Check whether an organization...</a>
+  <a href="#A2"><span class="id">A2</span>Create Gilligan's runtime account</a>
+  <a href="#A3"><span class="id">A3</span>Let the release owner deploy...</a>
+  <a href="#A4"><span class="id">A4</span>Create the gilligan database and...</a>
+  <a href="#A5"><span class="id">A5</span>Turn on automatic clean-up of old...</a>
+  <a href="#A6"><span class="id">A6</span>Create the Fireworks key secret</a>
+  <a href="#A7"><span class="id">A7</span>Create the service-key secret</a>
+  <a href="#A8"><span class="id">A8</span>Disable the infected cer-ui build...</a>
+  <a href="#A9"><span class="id">A9</span>Tell the release owner the setup...</a>
+  <h2>Part B</h2>
+  <a href="#B1"><span class="id">B1</span>Let cer-api reach Gilligan's service</a>
+  <a href="#B2"><span class="id">B2</span>Add CER's own Fireworks key</a>
+</nav>
+
+<main>
+<header style="display:grid;gap:10px">
+  <h1>Michael's Release Tasks</h1>
+  <p class="lede">What the Gilligan chatbot needs from you to run in production, in order, with every click and command. The release owner's account cannot do these steps. Part A comes before the first deploy; Part B comes after it. Each task ends with a "Done when" check; when all are finished, tell the release owner, who checks them with read-only commands (<code>MICHAEL_DEPLOY_BLOCKERS.md</code>). Nothing here is a secret: keys go straight into Secret Manager and are never pasted into chat or email.</p>
+</header>
+<section id="setup" class="panel">
+  <div class="label">Before you start (5 minutes)</div>
+  <ol>
+    <li>Open <code>https://console.cloud.google.com</code> and sign in with the account that owns project <code>conductive-fold-343604</code>.</li>
+    <li>In the project picker at the top of the page, choose <strong>conductive-fold-343604</strong> (project number <code>98242557946</code>).</li>
+    <li>Click the <strong>Activate Cloud Shell</strong> icon (a <code>&gt;_</code> box, top right). A terminal opens at the bottom of the page; wait for the prompt.</li>
+    <li>Paste this block into Cloud Shell and press Enter. It only sets names used by every command below. Replace <span class="fill">winsyu475@gmail.com</span> with the release owner's Google account first. If Cloud Shell disconnects later, paste the block again.</li>
+  </ol>
+<pre>PROJECT=conductive-fold-343604
+REGION=us-central1
+RUNTIME=cer-gilligan-runtime@conductive-fold-343604.iam.gserviceaccount.com
+COMPUTE=98242557946-compute@developer.gserviceaccount.com
+OWNER=user:winsyu475@gmail.com
+gcloud config set project $PROJECT</pre>
+  <p class="note">Roles you need: Owner on the project covers everything. Without Owner you need Service Account Admin, Project IAM Admin, Secret Manager Admin, Cloud Datastore Owner, Cloud Run Admin, Cloud Build Editor and Organization Policy Viewer. If a command says <code>PERMISSION_DENIED</code>, stop and tell the release owner which task and command; do not work around it.</p>
+</section>
+<section id="summary" class="panel">
+  <div class="label">At a glance</div>
+  <div class="tablebox"><table>
+    <thead><tr><th>#</th><th>Task</th><th>When</th><th>Time</th></tr></thead>
+    <tbody>
+      <tr><td>A1</td><td>Check two organization policies</td><td>Now, before any deploy</td><td>2 min</td></tr>
+      <tr><td>A2</td><td>Create Gilligan's runtime account</td><td>Now</td><td>3 min</td></tr>
+      <tr><td>A3</td><td>Let the release owner deploy cer-api and cer-ui</td><td>Now</td><td>1 min</td></tr>
+      <tr><td>A4</td><td>Create the <code>gilligan</code> database and its grant</td><td>Now</td><td>5 min</td></tr>
+      <tr><td>A5</td><td>Turn on clean-up of old usage records</td><td>After A4</td><td>2 min</td></tr>
+      <tr><td>A6</td><td>Create the Fireworks key secret</td><td>Now</td><td>3 min</td></tr>
+      <tr><td>A7</td><td>Create the service-key secret</td><td>Now</td><td>3 min</td></tr>
+      <tr><td>A8</td><td>Disable the infected <code>cer-ui</code> build trigger</td><td>Now: urgent</td><td>2 min</td></tr>
+      <tr><td>A9</td><td>Tell the release owner the setup is done</td><td>After A1-A8</td><td>1 min</td></tr>
+      <tr><td>B1</td><td>Let cer-api reach Gilligan's service</td><td>When the release owner says cer-gilligan is deployed</td><td>2 min</td></tr>
+      <tr><td>B2</td><td>Add CER's own Fireworks key</td><td>When the release owner asks, after the demo</td><td>3 min</td></tr>
+    </tbody>
+  </table></div>
+</section>
+<h2 class="part" id="partA">Part A: Before the first deploy</h2>
+<p class="lede">The release owner's account cannot create service accounts, grant IAM, use Secret Manager or create databases, so these steps are yours. Every deploy from L5 onwards waits on them. Do them in order.</p>
+
+<article class="item" id="A1">
+  <header>
+    <h4><span class="id">A1</span>Check whether an organization policy blocks public invocation</h4>
+    <div class="chips"><span class="chip high">Needed right after the first deploy</span><span class="chip ok">Read-only</span><span class="chip">Runbook §2.1 item 6</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Why</dt><dd>cer-api calls Gilligan's Cloud Run service, which the release protects with a shared service key rather than Cloud Run sign-in. That needs Cloud Run's invoker check opened, and two organization policies can forbid it.</dd>
+    <dt>Where</dt><dd>Cloud Shell</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>Run:<pre>gcloud org-policies describe iam.allowedPolicyMemberDomains --project=$PROJECT --effective</pre></li><li>Read the output. If it shows <code>allowedValues</code> listing domains, the domain restriction is on; write down "domain restriction: on". If it prints no <code>allowedValues</code>, or says <code>NOT_FOUND</code>, write down "domain restriction: off".</li><li>Run:<pre>gcloud org-policies describe run.managed.requireInvokerIam --project=$PROJECT --effective</pre></li><li>If the output contains <code>enforce: true</code>, write down "invoker check required: on"; otherwise "off".</li></ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Done when</div>You have both answers written down and sent them with A9. If both are "on", ask the organization administrator now for a project exception to either policy, because the release cannot go live without it.</div>
+  </div>
+</article>
+
+<article class="item" id="A2">
+  <header>
+    <h4><span class="id">A2</span>Create Gilligan's runtime account</h4>
+    <div class="chips"><span class="chip high">Blocks every deploy</span><span class="chip">Runbook §2.1 item 1</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Why</dt><dd>Gilligan runs as its own account, with access to its two secrets and its own database only (decision of 2026-09-25).</dd>
+    <dt>Where</dt><dd>Cloud Shell</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>Create the account:<pre>gcloud iam service-accounts create cer-gilligan-runtime \
+  --project=$PROJECT --display-name="cer-gilligan runtime"</pre></li><li>Let the release owner deploy services that run as it:<pre>gcloud iam service-accounts add-iam-policy-binding $RUNTIME \
+  --project=$PROJECT --member=$OWNER --role=roles/iam.serviceAccountUser</pre></li><li>Check:<pre>gcloud iam service-accounts get-iam-policy $RUNTIME --project=$PROJECT</pre></li></ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Done when</div>The last command lists the release owner's account under <code>roles/iam.serviceAccountUser</code>.</div>
+  </div>
+  <dl class="facts">
+    <dt>Do not</dt><dd>Grant this account any project-wide role. Its only permissions come from A4, A6 and A7.</dd>
+  </dl>
+</article>
+
+<article class="item" id="A3">
+  <header>
+    <h4><span class="id">A3</span>Let the release owner deploy cer-api and cer-ui</h4>
+    <div class="chips"><span class="chip high">Blocks the server and dashboard deploys</span><span class="chip">Runbook §2.1 item 2</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Why</dt><dd>cer-api and cer-ui run as the default compute account; deploying a revision of either needs permission to act as that account. Without this, you would have to run those two deploys yourself.</dd>
+    <dt>Where</dt><dd>Cloud Shell</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li><pre>gcloud iam service-accounts add-iam-policy-binding $COMPUTE \
+  --project=$PROJECT --member=$OWNER --role=roles/iam.serviceAccountUser</pre></li></ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Done when</div>The command prints the updated policy with the release owner's account under <code>roles/iam.serviceAccountUser</code>.</div>
+  </div>
+</article>
+
+<article class="item" id="A4">
+  <header>
+    <h4><span class="id">A4</span>Create the gilligan database and grant the runtime account access to it alone</h4>
+    <div class="chips"><span class="chip high">Blocks every deploy</span><span class="chip">Runbook §2.1 item 3</span><span class="chip">Approved by you 2026-09-25</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Why</dt><dd>Gilligan keeps only its usage counts (questions and reports per user per day) in its own Firestore database, next to the service, and never touches the customer <code>(default)</code> database (Firestore framework, approved 2026-09-25).</dd>
+    <dt>Where</dt><dd>Cloud Shell</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>Create the database (takes a minute):<pre>gcloud firestore databases create --database=gilligan \
+  --location=$REGION --type=firestore-native --delete-protection --project=$PROJECT</pre></li><li>Grant the runtime account read and write on that database only. The condition limits the role to <code>gilligan</code>:<pre>gcloud projects add-iam-policy-binding $PROJECT \
+  --member=serviceAccount:$RUNTIME --role=roles/datastore.user \
+  --condition='expression=resource.name == "projects/conductive-fold-343604/databases/gilligan",title=gilligan-database-only'</pre></li><li>If it asks whether to proceed with a conditional binding, answer <code>Y</code>.</li><li>Check:<pre>gcloud projects get-iam-policy $PROJECT --flatten=bindings \
+  --filter='bindings.members:cer-gilligan-runtime' \
+  --format='table(bindings.role,bindings.condition.expression)'</pre></li></ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Done when</div>The check shows exactly one row: <code>roles/datastore.user</code> with the condition naming <code>databases/gilligan</code>. No row without a condition.</div>
+  </div>
+  <dl class="facts">
+    <dt>If it goes wrong</dt><dd>If you chose another database name, tell the release owner; it goes into Gilligan's settings.</dd>
+  </dl>
+</article>
+
+<article class="item" id="A5">
+  <header>
+    <h4><span class="id">A5</span>Turn on automatic clean-up of old usage records</h4>
+    <div class="chips"><span class="chip">Runbook §2.1 item 8</span><span class="chip ok">No cost</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Why</dt><dd>Each usage record carries an <code>expireAt</code> date 90 days after its last update; this policy deletes records after that date.</dd>
+    <dt>Where</dt><dd>Cloud Shell, after A4</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li><pre>gcloud firestore fields ttls update expireAt \
+  --collection-group=gilligan_usage --enable-ttl --database=gilligan --project=$PROJECT</pre></li><li>Check:<pre>gcloud firestore fields ttls list --database=gilligan --project=$PROJECT</pre></li></ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Done when</div>A row for <code>gilligan_usage</code>, field <code>expireAt</code>, state <code>CREATING</code> or <code>ACTIVE</code>.</div>
+  </div>
+  <dl class="facts">
+    <dt>Do not</dt><dd>Put the policy on <code>updatedAt</code>; that would delete live counts.</dd>
+  </dl>
+</article>
+
+<article class="item" id="A6">
+  <header>
+    <h4><span class="id">A6</span>Create the Fireworks key secret</h4>
+    <div class="chips"><span class="chip high">Blocks every deploy</span><span class="chip">Runbook §2.1 item 4</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Why</dt><dd>Gilligan's model calls use a Fireworks key. For the demo it is the cer-demo development key; CER's own key replaces it later as a new version of the same secret.</dd>
+    <dt>Where</dt><dd>Cloud Shell</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>Create the empty secret:<pre>gcloud secrets create cer-gilligan-fireworks-api-key \
+  --replication-policy=automatic --project=$PROJECT</pre></li><li>Let the runtime account read it, and nobody else:<pre>gcloud secrets add-iam-policy-binding cer-gilligan-fireworks-api-key \
+  --project=$PROJECT --member=serviceAccount:$RUNTIME --role=roles/secretmanager.secretAccessor</pre></li><li>Let the release owner add the demo key without sending it to you (they can add versions but not read them):<pre>gcloud secrets add-iam-policy-binding cer-gilligan-fireworks-api-key \
+  --project=$PROJECT --member=$OWNER --role=roles/secretmanager.secretVersionAdder</pre></li><li>Check:<pre>gcloud secrets get-iam-policy cer-gilligan-fireworks-api-key --project=$PROJECT</pre></li></ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Done when</div><code>secretAccessor</code> lists only <code>cer-gilligan-runtime</code>, and <code>secretVersionAdder</code> lists the release owner. The release owner adds the key and records its version number.</div>
+  </div>
+</article>
+
+<article class="item" id="A7">
+  <header>
+    <h4><span class="id">A7</span>Create the service-key secret</h4>
+    <div class="chips"><span class="chip high">Blocks every deploy</span><span class="chip">Runbook §2.1 item 5</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Why</dt><dd>cer-api sends this key on every call to Gilligan, and Gilligan refuses any call without it. Both services read it from here, so nobody ever sees it.</dd>
+    <dt>Where</dt><dd>Cloud Shell</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>Generate a random 64-character key and store it in one step; it is never printed:<pre>openssl rand -base64 48 | tr -d '\n' | gcloud secrets create cer-gilligan-service-key \
+  --replication-policy=automatic --data-file=- --project=$PROJECT</pre></li><li>Let both services read it:<pre>gcloud secrets add-iam-policy-binding cer-gilligan-service-key \
+  --project=$PROJECT --member=serviceAccount:$RUNTIME --role=roles/secretmanager.secretAccessor
+gcloud secrets add-iam-policy-binding cer-gilligan-service-key \
+  --project=$PROJECT --member=serviceAccount:$COMPUTE --role=roles/secretmanager.secretAccessor</pre></li><li>Check:<pre>gcloud secrets versions list cer-gilligan-service-key --project=$PROJECT
+gcloud secrets get-iam-policy cer-gilligan-service-key --project=$PROJECT</pre></li></ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Done when</div>Version <code>1</code> is <code>enabled</code>, and <code>secretAccessor</code> lists both <code>cer-gilligan-runtime</code> and <code>98242557946-compute@developer.gserviceaccount.com</code>. Tell the release owner the secret name and version <code>1</code>.</div>
+  </div>
+</article>
+
+<article class="item" id="A8">
+  <header>
+    <h4><span class="id">A8</span>Disable the infected cer-ui build trigger</h4>
+    <div class="chips"><span class="chip high">Urgent, security</span><span class="chip">Runbook §2.1 item 7</span><span class="chip">Walkthrough A7</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Why</dt><dd>Trigger <code>8ad67b17-5439-4507-9718-5b2b5eb4abe9</code> builds and deploys the live dashboard on every push to the dashboard repository's <code>main</code>, which carries malware. Left on, the next push would replace the dashboard that carries Gilligan's chat page with an infected build. Disabling it stops those builds; it deletes nothing and can be re-enabled.</dd>
+    <dt>Where</dt><dd>Cloud console (easiest)</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>Open <code>https://console.cloud.google.com/cloud-build/triggers?project=conductive-fold-343604</code>.</li><li>At the top, set <strong>Region</strong> to <code>us-central1</code>. If the trigger is not listed there, set it to <code>global</code>.</li><li>Find the trigger whose ID is <code>8ad67b17-5439-4507-9718-5b2b5eb4abe9</code> (it builds <code>cer-ui</code>).</li><li>Click the three-dot menu at the end of its row and choose <strong>Disable</strong>. Confirm.</li><li>Check in Cloud Shell:<pre>gcloud builds triggers describe 8ad67b17-5439-4507-9718-5b2b5eb4abe9 \
+  --project=$PROJECT --region=$REGION --format='value(name,disabled)'</pre></li><li>If that says <code>NOT_FOUND</code>, run it again without <code>--region=$REGION</code>.</li></ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Done when</div>The row shows <strong>Disabled</strong>, and the check prints the trigger's name followed by <code>True</code>.</div>
+  </div>
+  <dl class="facts">
+    <dt>Do not</dt><dd>Delete the trigger or run it. The release deploys cer-ui from a clean branch by a different path.</dd>
+  </dl>
+</article>
+
+<article class="item" id="A9">
+  <header>
+    <h4><span class="id">A9</span>Tell the release owner the setup is done</h4>
+    <div class="chips"><span class="chip ok">1 minute</span></div>
+  </header>
+  <dl class="facts">
+    <dt>Send</dt><dd>Which of A1-A8 are done, the two A1 answers, the database name (<code>gilligan</code>), and the service-key secret name and version. Never send a key's value.</dd>
+  </dl>
+  <div class="compare">
+    <div class="state good"><div class="label">Done when</div>The release owner confirms the read-only checks in <code>MICHAEL_DEPLOY_BLOCKERS.md</code> pass.</div>
+  </div>
+</article>
+
+<h2 class="part" id="partB">Part B: After Gilligan is deployed</h2>
+<p class="lede">The release owner tells you when each step is due. Both are needed before customers can use Gilligan.</p>
+
+<article class="item" id="B1">
+  <header>
+    <h4><span class="id">B1</span>Let cer-api reach Gilligan's service</h4>
+    <div class="chips"><span class="chip high">Blocks launch</span><span class="chip">Runbook §2.1 item 6</span></div>
+  </header>
+  <dl class="facts">
+    <dt>When</dt><dd>Only after the release owner tells you <code>cer-gilligan</code> exists (they deploy it with no traffic).</dd>
+    <dt>Why</dt><dd>Cloud Run refuses unauthenticated callers by default. Gilligan's own service-key check (A7) guards it instead, so Cloud Run's check is opened; anyone without the key is still refused.</dd>
+    <dt>Where</dt><dd>Cloud Shell; paste the setup block again first if Cloud Shell has restarted. The option comes from your A1 answers.</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li><strong>Option 1</strong> (domain restriction off):<pre>gcloud run services add-iam-policy-binding cer-gilligan \
+  --project=$PROJECT --region=$REGION --member=allUsers --role=roles/run.invoker</pre></li><li><strong>Option 2</strong> (domain restriction on, invoker check not required):<pre>gcloud run services update cer-gilligan \
+  --project=$PROJECT --region=$REGION --no-invoker-iam-check</pre></li><li><strong>Both on</strong>: this needs the organization administrator's project exception from A1; tell the release owner, because launch waits for it.</li><li>Check:<pre>gcloud run services get-iam-policy cer-gilligan --project=$PROJECT --region=$REGION</pre></li></ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Done when</div>Option 1: <code>allUsers</code> appears under <code>roles/run.invoker</code>. Option 2: the command completes without an error. Tell the release owner which option you used; they test that a call without the key gets 401.</div>
+  </div>
+</article>
+
+<article class="item" id="B2">
+  <header>
+    <h4><span class="id">B2</span>Add CER's own Fireworks key</h4>
+    <div class="chips"><span class="chip high">Needed for launch</span><span class="chip">Runbook §6.4 step 1</span></div>
+  </header>
+  <dl class="facts">
+    <dt>When</dt><dd>When the release owner asks, after the demo.</dd>
+    <dt>Why</dt><dd>The demo runs on the cer-demo development key. CER's own key replaces it as a new version of the same secret, and the development key is then disabled.</dd>
+    <dt>Where</dt><dd>Cloud Shell</dd>
+  </dl>
+  <div>
+    <div class="label">Steps</div>
+    <ol><li>Get CER's Fireworks API key from CER's Fireworks account (<code>https://fireworks.ai</code>, API keys page). Do not paste it anywhere except the next step.</li><li>Paste this and press Enter, then paste the key (nothing shows while you paste) and press Enter:<pre>read -rs KEY &amp;&amp; printf %s "$KEY" | gcloud secrets versions add cer-gilligan-fireworks-api-key \
+  --data-file=- --project=$PROJECT; unset KEY</pre></li><li>Check:<pre>gcloud secrets versions list cer-gilligan-fireworks-api-key --project=$PROJECT</pre></li></ol>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Done when</div>A new version number is listed as <code>enabled</code>. Tell the release owner the number; they redeploy Gilligan pinned to it and disable the development key.</div>
+  </div>
+</article>
+
+</main>
+</div>
