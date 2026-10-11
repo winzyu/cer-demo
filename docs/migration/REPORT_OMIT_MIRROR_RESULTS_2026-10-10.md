@@ -101,3 +101,18 @@ Options, for the user to choose:
 
 - P7: "this week" produced a report period of 2026-10-05 to 2026-10-12, ending two days after the request; outside this task, not investigated.
 - The Mirror's turbidity field (above) means no Mirror test can cover turbidity; seeding field 72 from `turbVolt` would fix that in the server's mirror branch.
+
+## History-marker test, 2026-10-11
+
+Hypothesis: the model skips `generate_report` because history holds only the earlier replies' text ("a new PDF is ready") and never shows the tool call behind them.
+Test: R3's message sent straight to Gilligan's `/api/v1/chat` (service key and caller headers as cer-api sends them) with R1-R2 as history, either as plain text, which is what cer-api sends (`toHistory`), or with each reply marked `[generate_report was called for this reply with {...}]`.
+
+| history | runs | no tool call |
+|---|---|---|
+| plain | 6 | 1 |
+| marked | 6 | 5 |
+
+The marker made the failure more frequent, not less, so option 2 in that form is rejected: a reply that says a report was produced reads to the model as one more reason not to produce another.
+The plain-history failure is intermittent: 1 of 6 here, 2 of 2 through cer-api earlier, so about 3 of 8 overall for a second edit in one chat; the runs differ only by sampling.
+Every run that called the tool passed all four groups, as expected.
+Spend: 12 questions, 453,495 tokens, about $0.07 (at most $0.23); session total about $0.15.
