@@ -67,14 +67,14 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-0
 ## Supervisor
 
 Items 17-20 are on the release critical path: the September 30 roadmap needs their answers by about September 25 (`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md` §4).
-They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR_QUESTIONS_SEND.md`, asking for a reply by September 21; the supervisor answered on 2026-09-24, leaving only item 17 open.
+They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR_QUESTIONS_SEND.md`, asking for a reply by September 21; the supervisor answered on 2026-09-24, leaving only item 17 open; the user answered it on 2026-10-10.
 
-- [ ] **17. Are the generic fallback ranges in source-of-truth v2 for education only?**
+- [x] **17. Are the generic fallback ranges in source-of-truth v2 for education only?**
   v2 §3, "Fallback Baseline Ranges (Use Only Without a Site Baseline)", gives generic ranges per parameter, and §0 rule 3 says to use them only when a site has no baseline.
   The current rule is that a document's range never stands in for a pod's configured threshold (see item 6 and `docs/timeline.md`, 2026-09-13).
   If v2's ranges are meant to change what a report says when a pod has no configured threshold, that rule changes; if they are for explaining and teaching only, it stays.
   *Unblocks:* which v2 content enters the catalogue, and whether reports ever compare against v2 ranges.
-  *Answer:*
+  *Answer:* 2026-10-10 (user): no, they are fallbacks. A pod's operator threshold stays the source of truth; where a metric has no usable threshold, v2 §3's range for the pod's water class is used and labelled as a generic fallback; where v2 has no usable range either, the metric is "not assessed". Flagging also adopts the behaviour v2 already describes (§7-§9), and the code is reconciled with v2 (`docs/timeline.md`, 2026-10-10).
 
 - [x] **18. Can the current turbidity hardware be exempted from v2's quantitative turbidity content?**
   v2 gives turbidity ranges in FNU (§3), a typical sensor accuracy of ±2 FNU or ±5% (§8.3), and says field readings are FNU unless stated.

@@ -40,6 +40,44 @@ Agreed direction, not yet designed or built:
 Where it lives today: `src/devices/plausibility.ts` (per-reading plausibility), the tool notes and site notes that tell the model about exceedances, and the prompt's caveat rules; the exact threshold, its period and the share are behaviour changes for [`SPECS.md`](../SPECS.md) once decided.
 Open questions: 5% or 10% (or per metric); whether the share counts only plausible readings; how the report PDF states it.
 
+### 1a. Production scan, 2026-10-09
+
+Read-only: one `/devices` call and `/water/period/60/day` for each of the 5 pods the device token sees (8,177 readings, 2026-08-10 to 2026-10-09); days counted in UTC; raw readings were not kept in the repository.
+
+- Pods report every 30 minutes (median 29.9-30.1 minutes), so a day is 48 readings per metric; Algalita has 27 gaps over 3 hours and Balboa 17 (longest 124 hours); Old Woman Creek is silent since 2026-10-05 and PCH Public Dock since 2026-10-07.
+- Flagged pod-days per rule, all metrics: one reading (today) 243; 5% of the day 217; 10% 201; 3 in a row 215; 5% beyond a 15% margin 154.
+- Only 26 of the 243 flagged days were brief (under 5% of readings); 173 were out of range for at least half the day.
+- Most persistent flags are thresholds that do not fit the water: PCH's 68 °F maximum against 78-85 °F water; Marina Park's conductivity minimum of 40,000 against 31,000-39,000 and dissolved-oxygen maximum of 10 against 8.8-21 mg/L; Old Woman Creek's thresholds can never flag.
+- Stuck zeros count as real lows: dissolved oxygen reads 0 in 41% of Balboa and Old Woman Creek readings, conductivity in 59% at Balboa; treating dissolved-oxygen zeros as faults cuts its flagged days from 92 to 66.
+- Error flags only take the value 1; every reading with all six flags set reads `1000000000` on every metric (44 readings), which the server documents as a sensor read failure (`DevicesService.ts`); on Algalita these came 28 times singly, 4 times in pairs and once three in a row in 60 days.
+- The server's alert emails check only each pod's latest reading against its thresholds (`checkWaterDataAndSendAlerts`), skipping `1000000000` but not the error flags.
+
+### 1b. Decision: source-of-truth v2 governs flagging (2026-10-10)
+
+Stakeholder question 17 is closed: operator thresholds stay the source of truth, v2 §3's ranges are the fallback for a metric without a usable threshold, and a metric with neither is "not assessed"; flagging adopts the behaviour v2 already specifies, and code is reconciled with v2 ([`timeline.md`](../timeline.md), 2026-10-10).
+
+Audit of the code against v2, and the planned changes:
+
+| # | v2 says | Code today | Change |
+|---|---|---|---|
+| A1 | §3 fallback ranges per water class | No fallback; a metric without a usable threshold is "not assessed" | Add v2 §3's pH, dissolved oxygen, ORP and specific-conductance ranges by water class (from the registry's `operatingEnvironment`); the report, `get_pod_thresholds` and the prompt label them as a generic fallback |
+| A2 | §3 temperature is "site and season dependent" (coastal values are seasonal approximations); turbidity is in FNU | n/a | Temperature and turbidity have no usable fallback: "not assessed" and qualitative, as today |
+| B1 | §8.1 QARTOD flags: pass, not evaluated, suspect, fail, missing | Readings are valid or excluded (error flag, implausible value, stuck turbidity) | Classify every reading per metric; fail is excluded, suspect is kept and noted |
+| B2 | §8.2 flat line: suspect after 6 identical readings, fail after 24 | Only turbidity, stuck for 24 hours at 0 or 1005 | Apply to every metric; turbidity at 0 keeps its own rule because the index clamps clear water to 0 |
+| B3 | §8.2 spike: a point beyond 3 × MAD from both agreeing neighbours is suspect | None | Add, using the window's MAD until site baselines exist |
+| B4 | §7.2 rule 1: every channel failing at one timestamp suggests a fault | Flagged readings are dropped silently from the statistics | Report all-channel failures as a likely data issue; two or three in a row flag the sensor (count awaits the colleague) |
+| C1 | §8.3 a change smaller than the minimum detectable change is not real (pH about 0.2-0.3, dissolved oxygen about 1 mg/L, ORP about 50 mV, conductivity 2-3% of reading, temperature 2 × accuracy) | Noise floor from datasheet accuracy (pH 0.002, dissolved oxygen 0.05 mg/L, ORP 1 mV, conductivity 2%) | Use v2's minimum detectable change |
+| C2 | §9.1 anomalous only for at least 3 consecutive readings | Chat judges from minimum and maximum, so one reading flags; the report sets Watch on one reading and Action Required on two beyond a 15% margin | A metric is out of range only after 3 consecutive readings beyond its limit plus the minimum detectable change |
+| C3 | §0 rule 1 and §9.1: run QC first, then judge | The model compares minimum and maximum with thresholds itself | `query_sensor_data` returns a computed verdict per metric and the prompt relays it |
+| C4 | §7.2 rule 7: multi-week drift is fouling or calibration first | Report words a whole-period offset as persistent; chat repeats it | Chat and report state a persistent offset once, with its start date, as a likely threshold, fouling or calibration issue |
+| D1 | §9.2 confidence tiers with required wording ("consistent with", "data issue likely", never "confirmed" from sensor data) | Event headings are bare types such as "Sewage" | Headings and narrative use v2's tiers |
+| D2 | §9.2: recommend inspection only for a likely data issue | Maintenance advice can follow any exceedance | Maintenance or recalibration advice only for a likely data issue |
+| D3 | n/a (Michael) | Turbidity caveat in almost every answer | Once per conversation, or when turbidity is the subject |
+
+Recorded, not planned now: v2 event types the code lacks (treated effluent, dry-weather runoff, bloom collapse, upwelling, internal tide, marine heatwave, alkaline input, dredging) and the §5 natural-cycle checks; dissolved oxygen as percent saturation (§2.2); specific conductance at 25 °C or salinity (§2.4), pending whether pods report temperature-compensated conductivity; temperature-residual ORP (§2.3.1); site baselines with robust z-scores (§4, §9.1), for which operator thresholds stand in by decision; rate-of-change limits written per 10 minutes against a 30-minute cadence; climatology, attenuated-signal, multivariate and neighbour tests; §7.3 metadata (sensor types, battery voltage, maintenance log).
+Kept on purpose: the pH plausibility band of 3-12 is stricter than v2's 0-14 gross range (`src/devices/plausibility.ts` explains why); turbidity stays a relative index (stakeholder question 18).
+Still with the group: the share of the day (5% or 10%) alongside the 3-in-a-row rule, the window, how statuses map to v2's tiers, who fixes the thresholds above, and whether the server's alert emails follow the same rule.
+
 ## 2. Security
 
 | Item | Evidence | Note |
