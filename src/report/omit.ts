@@ -29,8 +29,8 @@ export const REPORT_OMIT_DESCRIPTIONS: Record<ReportOmitGroup, string> = {
   data_quality: "the whole Data Quality section",
 };
 
-/** How the metadata table names a left-out group. */
-const OMIT_LABELS: Record<ReportOmitGroup, string> = {
+/** How the metadata table and the reply's delivery line name a left-out group. */
+export const OMIT_LABELS: Record<ReportOmitGroup, string> = {
   turbidity_notes: "turbidity notes",
   sensor_fault_notes: "sensor fault notes",
   threshold_notes: "threshold notes",
