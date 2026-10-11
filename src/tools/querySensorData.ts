@@ -1244,7 +1244,9 @@ export const querySensorDataDefinition: ToolDefinition = {
       + "source of actual readings — the provided documents never contain them. Use it for any "
       + "question about current or past values, averages, minimums, maximums, or trends. "
       + "Returns value: null with n_samples: 0 when no reading exists in the window; that means "
-      + "no data, never a reading of zero.",
+      + "no data, never a reading of zero. Each metric also carries a verdict (in range, out of "
+      + "range, likely data issue, not assessed, not enough data) computed after quality checks; "
+      + "relay it rather than judging the readings yourself.",
     parameters: {
       type: "object",
       properties: {
