@@ -1159,7 +1159,7 @@ Michael reported (2026-10-11) that a summary or overview did not say what window
 - An answer that read no pod data, in a chat where an earlier reply did, gets "No new readings were read for this reply; any figures come from data covered earlier in this chat.", unless it made a report, whose period the "New PDF" line (§10.7) already gives.
 - A chat that never read pod data gets no line, and nothing changes with the tools off.
 - The line comes before the "New PDF" line, on the JSON and streaming paths alike, and is stripped from history before it reaches the model, so the model never writes one itself.
-- The prompt complements it: the first sentence of a sensor answer names its period with the dates of `time_range_resolved`; a summary, overview or "how is the water" with no period named uses "last 7 days", says so and offers a longer one; a follow-up that reuses earlier readings names their period or reads again; a report answer states `report_period` in its first sentence.
+- The prompt complements it: the first sentence of a sensor answer names its period with the dates of `time_range_resolved`; a summary, overview or "how is the water" with no period named uses "last 7 days", says so and offers a longer one; a follow-up that reuses earlier readings names their period or reads again, and a one-parameter follow-up ("what about the pH?") reads the earlier answer's period rather than the latest value; a report answer states `report_period` in its first sentence, and when no period was named it says the user named none, so it covers the last 7 days, and ends by offering a longer period.
 
 ---
 

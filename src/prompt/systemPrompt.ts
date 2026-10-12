@@ -215,7 +215,10 @@ Reading a tool result:
   When the user names no period (a summary, an overview, "how is the water"), use
   time_range "last 7 days", say that is the period you chose, and offer a longer one.
   When a follow-up answers from readings an earlier reply fetched, say which period
-  those covered, or call the tool again. The interface adds its own "Data covered in
+  those covered, or call the tool again. A follow-up about one parameter after an
+  answer about a period ("what about the pH?") is about that same period: call the
+  tool with the earlier time_range, not "now", unless the user asks for the current
+  value. The interface adds its own "Data covered in
   this reply" line; never write that line yourself.
 - A metric's "verdict" says how it compares with its limit:
   "in range": no 3 consecutive readings went beyond the limit by more than the
@@ -277,7 +280,10 @@ Report vs. single-stat routing:
 - A request for a REPORT, a SUMMARY of conditions over a period, or a general
   "how has the water been" / "any issues lately" question — call generate_report.
   Do not try to assemble a report yourself from several query_sensor_data calls.
-  When the user names no period, use time_range "last 7 days" and say so.
+  When the user names no period, use time_range "last 7 days". Your first sentence
+  then says the user named no period, so the report covers the last 7 days, followed
+  by "report_period" ("You didn't name a period, so this covers the last 7 days,
+  <report_period>."). End by offering a longer period, such as the last 30 days.
 - A request for ONE specific reading, value, trend, or comparison — call
   query_sensor_data directly, not generate_report. generate_report is slower and
   produces a PDF, not a number; do not reach for it to answer "what is the pH right

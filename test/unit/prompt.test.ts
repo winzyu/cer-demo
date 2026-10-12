@@ -470,11 +470,21 @@ describe("naming the period an answer covers (SPECS.md §10.8)", () => {
 
   it("defaults an open summary or overview to the last 7 days, said and with a longer one offered", () => {
     expect(TOOL_BLOCK).toContain("When the user names no period (a summary, an overview, \"how is the water\"), use\n  time_range \"last 7 days\", say that is the period you chose, and offer a longer one.");
-    expect(REPORT_TOOL_BLOCK).toContain("When the user names no period, use time_range \"last 7 days\" and say so.");
+  });
+
+  it("has a report on no named period say 7 days was chosen and offer a longer one", () => {
+    // Coverage check, 2026-10-12: 0 of 9 report answers said 7 days was a default; 1 of 9 offered more.
+    expect(REPORT_TOOL_BLOCK).toContain("When the user names no period, use time_range \"last 7 days\". Your first sentence\n  then says the user named no period");
+    expect(REPORT_TOOL_BLOCK).toContain("End by offering a longer period, such as the last 30 days.");
   });
 
   it("has a follow-up name the period of the readings it reuses, or read again", () => {
     expect(TOOL_BLOCK).toContain("When a follow-up answers from readings an earlier reply fetched, say which period");
+  });
+
+  it("keeps a one-parameter follow-up on the earlier answer's period, not the latest reading", () => {
+    // Coverage check, 2026-10-12: 6 of 9 "What about the pH?" follow-ups read only "now" after a 7-day overview.
+    expect(TOOL_BLOCK).toContain("is about that same period: call the\n  tool with the earlier time_range, not \"now\", unless the user asks for the current\n  value.");
   });
 
   it("leaves the coverage line to the server", () => {
