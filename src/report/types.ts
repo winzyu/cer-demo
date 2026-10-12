@@ -89,7 +89,7 @@ export interface SiteMetadata {
   siteName: string;
   startDate: string; // ISO date, e.g. "2026-08-01"
   endDate: string;
-  /** Current-site exclusions, printed beside the Summary's reporting dates. */
+  /** Current-site exclusions in the period, else that the pod moved before it (Summary). */
   periodNote?: string;
   /**
    * The device's newest reading as a full timestamp, which may be outside the reporting period.

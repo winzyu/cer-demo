@@ -96,6 +96,27 @@ describe("buildReportInput", () => {
     expect(prepared.report.site.periodNote).toContain("earlier location");
   });
 
+  it("tells a report after a move that nothing was left out of its period, not that readings were", async () => {
+    // Coverage check, 2026-10-12: a week's PDF said 775 earlier-location readings "were excluded"
+    // in its Summary and its completeness row, though that site ended 43 days before the week.
+    const periodDay = [
+      { at: "2026-06-20T12:00:00Z", lat: 34 },
+      { at: "2026-08-01T12:00:00Z", lat: 33 },
+      { at: "2026-08-10T12:00:00Z", lat: 33 },
+      { at: "2026-08-12T12:00:00Z", lat: 33 },
+    ].map(({ at, lat }) => ({
+      timestamp: Date.parse(at) / 1000, best_lat: lat, best_lon: -118,
+      water_data: { 99: 8, phError: 0 },
+    }));
+    const prepared = await prepareReport(makeSensor({ periodDay }), { timeRange: "last 7 days", device: "Algalita" });
+    if (prepared.error !== undefined) throw new Error(prepared.error);
+    expect(prepared.report.site.periodNote).toBe("The pod has been at its current site since "
+      + "2026-08-01T12:00:00.000Z; its 1 earlier-location reading(s) (2026-06-20T12:00:00.000Z to "
+      + "2026-06-20T12:00:00.000Z) fall outside the requested period, so none were left out of it.");
+    expect(prepared.report.dataQuality!.completenessNotes).not.toContain("earlier location");
+    expect(JSON.stringify(prepared.userNotes ?? [])).not.toContain("earlier location");
+  });
+
   it("counts usable and left-out rows once even when several metrics share a row", async () => {
     const water = [
       { 99: 8, 72: 25, phError: 0, turbError: 0 },

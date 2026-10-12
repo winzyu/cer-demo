@@ -1737,7 +1737,11 @@ After the TTL, a recent read replaces an overlapping tail while retaining earlie
 Registry changes become visible at the device-list TTL, and older backfills or corrections outside the recent tail become visible when retained context expires and is rebuilt.
 Report series, exact median and hourly pattern calculations pin one consistent fetched snapshot for the whole batch, including across TTL expiry or cache eviction.
 When location filtering limits a pod's history, `time_range_resolved` uses the first and last current-site readings inside the requested range, or is null when none fall inside it.
-The answer's report period, PDF title and Summary inherit those dates, and the existing earlier-location note stays with the tool result and is printed in the PDF Summary as well as Data Quality.
+The answer's report period, PDF title and Summary inherit those dates.
+The site notes (`site_note`, `user_notes`) count only readings inside the requested range that the location filter left out, plus readings with no timestamp, which no range can place (`siteNotesForPeriod` in `tools/currentSite.ts`).
+Counting the pod's whole history told a week 43 days after a move that 775 earlier-location readings "were excluded" from it (coverage check, 2026-10-12, `migration/data-skepticism-runs/coverage-check-prompt2/`).
+When the pod moved but none of its earlier-site readings fall inside the range, the model-only `site_history_note` says so, keeping the move known without telling the reader anything was left out.
+The PDF Summary prints `site_note`, or else `site_history_note`; Data Quality prints `site_note` only.
 `window_actually_searched.complete` is false when the fetched context does not reach the start of the requested range, or when the location filter dropped readings inside it.
 A first reading that lands one reporting interval after the window opens, and earlier-site history that ends before it, leave the window complete.
 `window_actually_searched` reports the part of the requested range the fetch covered, never the fetch's own start: the snapshot can reach back to the epoch only to establish the current site, and the dashboard printed that as "Searched from 1970" under a complete week (`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md` §4).

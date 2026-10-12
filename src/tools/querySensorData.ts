@@ -35,7 +35,7 @@ import {
 } from "./timeRange";
 import type { ResolvedRange } from "./timeRange";
 import { readingAge } from "./readingAge";
-import { provenSiteStart } from "./currentSite";
+import { provenSiteStart, siteNotesForPeriod } from "./currentSite";
 import {
   DAY_MS, SITE_CACHE_MAX_ENTRIES, SITE_CACHE_MAX_ROWS, SITE_CACHE_RETENTION_MS,
   SITE_CACHE_TTL_MS, SITE_RECENT_DAYS, snapshotSite,
@@ -823,6 +823,7 @@ export class QuerySensorData {
         && (range.endInclusive ? time <= range.endMs : time < range.endMs);
     };
     const periodReadings = readings.filter(inRequestedRange);
+    const siteNotes = siteNotesForPeriod(snapshot.rows, site, inRequestedRange);
     const excludedStuck = new Map(metricKeys.map((key): [MetricKey, number] => [
       key, periodReadings.filter((row) => isStuck(key, row)).length,
     ]));
@@ -921,7 +922,8 @@ export class QuerySensorData {
     const common = {
       ...identity,
       current_site_last_reported: QuerySensorData.newestObservedAt(readings),
-      ...(site.note ? { site_note: site.note } : {}),
+      ...(siteNotes.note ? { site_note: siteNotes.note } : {}),
+      ...(siteNotes.historyNote ? { site_history_note: siteNotes.historyNote } : {}),
       time_range_requested: timeRangeInput,
       time_range_resolved: resolvedRange,
       reading_counts: { used: usedReadings, excluded: periodReadings.length - usedReadings },
@@ -975,13 +977,13 @@ export class QuerySensorData {
       ? allChannelFailureRuns(ordered, metricKeys).filter(overlaps) : [];
     const gaps = readingGaps(ordered).filter(overlaps);
     const boardNote = boardFaults.length > 0 ? BOARD_FAULT_NOTE : undefined;
-    const extraNotes = [notes.note, site.note,
+    const extraNotes = [notes.note, siteNotes.note,
       stuckLabels.length > 0 ? stuckSensorNote(stuckLabels) : undefined, boardNote]
       .filter(Boolean);
     if (extraNotes.length) notes.note = extraNotes.join(" ");
     Object.assign(notes, QuerySensorData.userNotes([
       ...(notes[USER_NOTES_FIELD] as string[] | undefined ?? []),
-      ...(site.userNotes ?? []),
+      ...(siteNotes.userNotes ?? []),
       stuckLabels.length > 0 ? stuckSensorUserNote(stuckLabels) : undefined,
       boardNote,
     ]));

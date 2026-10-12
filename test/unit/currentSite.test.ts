@@ -1,5 +1,5 @@
 import { decodeReading } from "../../src/devices/metrics";
-import { currentSite, SITE_MOVE_DISTANCE_KM } from "../../src/tools/currentSite";
+import { currentSite, SITE_MOVE_DISTANCE_KM, siteNotesForPeriod } from "../../src/tools/currentSite";
 
 const row = (hour: number, latitude?: number, longitude = -82, location = "unchanged") => decodeReading({
   timestamp: Date.parse("2026-09-20T00:00:00Z") / 1000 + hour * 3600,
@@ -60,5 +60,45 @@ describe("current site", () => {
   });
   it("adds no reader notes when nothing was excluded", () => {
     expect(currentSite([row(1, 41), row(2, 41)]).userNotes).toBeUndefined();
+  });
+});
+
+describe("site notes for a requested period", () => {
+  // Earlier site at hours 0-1, current site 3-5 with a fix at 5, then an unpositioned reading at 7.
+  const rows = [row(0, 35), row(1, 35), row(3, 41), row(4), row(5, 41), row(7)];
+  const site = currentSite(rows);
+  const between = (from: number, to: number) => (r: ReturnType<typeof row>) => {
+    const hour = (Date.parse(r.observedAt!) - Date.parse("2026-09-20T00:00:00Z")) / 3_600_000;
+    return hour >= from && hour <= to;
+  };
+
+  it("leaves out nothing, and says so only to the model, for a period inside the current site", () => {
+    const notes = siteNotesForPeriod(rows, site, between(3, 5));
+    expect(notes.note).toBeUndefined();
+    expect(notes.userNotes).toBeUndefined();
+    expect(notes.historyNote).toMatch(/^The pod has been at its current site since 2026-09-20T03:00:00\.000Z; its 2 earlier-location/);
+  });
+
+  it("counts only the earlier-site and after-the-last-fix readings inside the period", () => {
+    const notes = siteNotesForPeriod(rows, site, between(1, 7));
+    expect(notes.note).toBe("1 reading(s) from an earlier location inside the requested period were excluded "
+      + "(2026-09-20T01:00:00.000Z to 2026-09-20T01:00:00.000Z). 1 reading(s) with missing timestamps or "
+      + "outside the current site's coordinate-supported time span were excluded.");
+    expect(notes.userNotes).toHaveLength(2);
+    expect(notes.historyNote).toBeUndefined();
+  });
+
+  it("always counts readings without a timestamp, which no period can place", () => {
+    const untimed = decodeReading({ best_lat: 41, best_lon: -82, water_data: { 99: 9 } });
+    const withUntimed = [...rows, untimed];
+    const notes = siteNotesForPeriod(withUntimed, currentSite(withUntimed), between(3, 5));
+    expect(notes.note).toBe("1 reading(s) with missing timestamps or outside the current site's "
+      + "coordinate-supported time span were excluded.");
+  });
+
+  it("passes a site with no established boundary through unchanged", () => {
+    const unlocated = [row(1), row(2)];
+    const plain = currentSite(unlocated);
+    expect(siteNotesForPeriod(unlocated, plain, between(0, 9))).toEqual({ note: plain.note, userNotes: plain.userNotes });
   });
 });

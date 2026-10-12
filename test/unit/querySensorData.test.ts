@@ -1002,11 +1002,54 @@ describe("query_sensor_data — window honesty", () => {
       metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "Algalita",
     });
 
-    expect(result.note).toContain("earlier location");
     expect(result.window_actually_searched).toEqual({
       start: "2026-10-02T21:07:35.000Z", end: "2026-10-09T21:07:35.000Z", complete: true,
     });
     expect(result.n_samples).toBe(3);
+  });
+
+  describe("earlier-site notes cover only the requested period", () => {
+    // Coverage check, 2026-10-12: every "What about the pH?" answer about Bay Mouth Pod's last
+    // week said 775 earlier-location readings were excluded, though that site ended 43 days
+    // before the week. The note counted the pod's whole history, not the period asked about.
+    const at = (iso: string, lat: number) => ({
+      timestamp: Date.parse(iso) / 1000, best_lat: lat, best_lon: -118,
+      water_data: { 99: 8, phError: 0 },
+    });
+    const rows = [
+      at("2026-06-13T16:17:56Z", 34), at("2026-08-06T21:54:03Z", 34), at("2026-08-19T12:00:00Z", 34),
+      at("2026-08-20T12:00:00Z", 33), at("2026-10-01T12:00:00Z", 33),
+      at("2026-10-02T21:29:30Z", 33), at("2026-10-06T12:00:00Z", 33), at("2026-10-09T21:07:35Z", 33),
+    ];
+    const ask = async (timeRange: string) => {
+      const { client } = makeClient({ periodDay: [], periodMonth: rows });
+      const tool = new QuerySensorData({ client, now: () => Date.parse("2026-10-09T21:37:56Z") });
+      return tool.run({ metric: "ph", time_range: timeRange, aggregation: "mean", device: "Algalita" });
+    };
+
+    it("says nothing was left out of a week after the move, and tells only the model the pod moved", async () => {
+      const result = await ask("last 7 days");
+
+      expect(result.site_note).toBeUndefined();
+      expect(result.note ?? "").not.toContain("earlier location");
+      expect(JSON.stringify(result.user_notes ?? [])).not.toContain("earlier location");
+      expect(result.site_history_note).toBe("The pod has been at its current site since "
+        + "2026-08-20T12:00:00.000Z; its 3 earlier-location reading(s) (2026-06-13T16:17:56.000Z to "
+        + "2026-08-19T12:00:00.000Z) fall outside the requested period, so none were left out of it.");
+    });
+
+    it("counts only the earlier-site readings inside a period that spans the move", async () => {
+      const result = await ask("2026-08-01 to 2026-09-01");
+
+      expect(result.site_note).toBe("2 reading(s) from an earlier location inside the requested "
+        + "period were excluded (2026-08-06T21:54:03.000Z to 2026-08-19T12:00:00.000Z).");
+      expect(result.user_notes).toEqual(expect.arrayContaining([
+        "2 reading(s) from an earlier location (2026-08-06T21:54:03.000Z to 2026-08-19T12:00:00.000Z) "
+          + "fall inside the requested period and were left out; only the pod's current site is covered.",
+      ]));
+      expect(result.site_history_note).toBeUndefined();
+      expect(result.window_actually_searched).toMatchObject({ complete: false });
+    });
   });
 
   it("reports the window it actually searched alongside the one requested", async () => {

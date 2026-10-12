@@ -380,11 +380,14 @@ export const buildReportInput = async (
   const latitude = typeof position.latitude === "number" ? position.latitude : undefined;
   const longitude = typeof position.longitude === "number" ? position.longitude : undefined;
 
+  // Readings the move left out of this period; failing that, that the pod moved before it.
+  const periodNote = [seriesResult.site_note, seriesResult.site_history_note]
+    .find((text): text is string => typeof text === "string");
   const site: SiteMetadata = {
     siteName,
     startDate,
     endDate,
-    ...(typeof seriesResult.site_note === "string" ? { periodNote: seriesResult.site_note } : {}),
+    ...(periodNote ? { periodNote } : {}),
     ...(typeof seriesResult.device_last_reported === "string"
       ? { lastReadingAt: seriesResult.device_last_reported }
       : {}),
