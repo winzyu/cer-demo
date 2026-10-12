@@ -6,6 +6,8 @@ Written 2026-10-11.
 ## 1. The conversation
 
 Michael sent the user a two-minute screen recording and one line: "when you ask it a question, it seems to analyze the entire dataset from the buoy, not necessarily a single window unless specified which doesnt rear" (cut off as received).
+Asked on 2026-10-11 whether he meant the "Searched from 1970" note (§4), he answered: "No if you ask it for a summary or overview, it doesn't specify what window the summary or overview is in."
+That is a separate gap, fixed by a server-written coverage line and a prompt rule ([`SPECS.md`](../SPECS.md) §10.8); §4's note was wrong regardless and its fix stands.
 The chat was read once from production Firestore, read-only: `chats/jg0HyEPyFZbw4FVB3s29`, 7 turns, 2026-10-09 21:35-21:52 UTC.
 
 | Turn | Michael | Gilligan |
@@ -44,6 +46,8 @@ Adding tide data alone would not generalise: daily cycles, water movement, weath
 The general fix is how Gilligan reasons; data and tools come second.
 
 ## 4. Fixed: the searched-window note
+
+Not what Michael's message referred to (§1), but a real defect found while tracing it.
 
 Under the answer the dashboard printed "Search is incomplete. Searched from 1970-01-01T00:00:00.000Z. Only current-site readings inside the requested range are covered; see the site note."
 `window_actually_searched` reported the snapshot's fetch span, which reaches the epoch to establish the current site, and marked a full week incomplete because the first reading landed 22 minutes after the window opened.

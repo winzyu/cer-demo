@@ -153,6 +153,7 @@ clean-earth-rag/
 │   ├── tools/
 │   │   ├── index.ts          tool registry, gated on SENSOR_TOOL and REPORT_TOOL
 │   │   ├── querySensorData.ts  the sensor tool: device match, fetch, caveats (§10.3a)
+│   │   ├── dataCoverage.ts     the server-written "Data covered in this reply" line (§10.8)
 │   │   ├── metricVerdict.ts  each metric's verdict for the sensor tool (§19)
 │   │   ├── generateReport.ts   the report tool, gated on REPORT_TOOL
 │   │   ├── getPodThresholds.ts  the pod's registry alert limits, validated, v2 fallback ranges
@@ -1147,6 +1148,19 @@ The heading still names no cause and next steps are still chosen as `Inconclusiv
 Today that is `saltwater-intrusion` (from 0.45) and `industrial-unclear` (from 0.3), the two classifications that previously could never reach a reader.
 Saltwater intrusion is named outright (0.55) only for an isolated conductivity rise in marine water whose series is tagged `trend`, the drought or sea-level shape; a discharge is a step, not a weeks-long creep.
 
+### 10.8 Data coverage line (`src/tools/dataCoverage.ts`)
+
+Every answer that read pod data ends with a line the server writes, naming which readings it covered, because the model chooses `time_range` itself and named it unevenly.
+Michael reported (2026-10-11) that a summary or overview did not say what window it was in; the dashboard shows a window only when a search was incomplete.
+
+- `Data covered in this reply: <pod>, <start> to <end> UTC (<n> readings)` lists each distinct window `query_sensor_data` resolved in this answer, in call order, from `time_range_resolved` and `reading_counts.used`, to the minute in UTC.
+  A single latest reading reads "the reading at <time> UTC"; a window limited to current-site readings adds "current site only"; a read with no readings in range says so with the phrase asked for.
+  Tool errors are skipped, and repeats of the same pod and window collapse to one.
+- An answer that read no pod data, in a chat where an earlier reply did, gets "No new readings were read for this reply; any figures come from data covered earlier in this chat.", unless it made a report, whose period the "New PDF" line (§10.7) already gives.
+- A chat that never read pod data gets no line, and nothing changes with the tools off.
+- The line comes before the "New PDF" line, on the JSON and streaming paths alike, and is stripped from history before it reaches the model, so the model never writes one itself.
+- The prompt complements it: the first sentence of a sensor answer names its period with the dates of `time_range_resolved`; a summary, overview or "how is the water" with no period named uses "last 7 days", says so and offers a longer one; a follow-up that reuses earlier readings names their period or reads again; a report answer states `report_period` in its first sentence.
+
 ---
 
 ## 11. Ingestion (`src/ingestion/`, `scripts/ingest.ts`)
@@ -1636,7 +1650,7 @@ No test touches the network, needs an API key or costs money, and new tests keep
 | `unit/usageStatus.test.ts` | `GET /api/v1/usage` (§4a): remaining against a finite ceiling, `null` limits for an unlimited dimension and while the quota is off, remaining floored at 0 when retrospective token accounting overshoots, window rollover, per-token bucketing, and — the defect the endpoint could easily have — that repeated status reads do not themselves spend the allowance |
 | `unit/quotaConfig.test.ts` | the `QUERY_QUOTA*` parsing rules: the off-and-unlimited default, `unlimited` accepted case-insensitively, `none`/`off`/`-1` **rejected** rather than guessed, the required duration unit suffix, `org` rejected as a scope this service cannot key on, and Gilligan's free tier expressed without a code change |
 | `integration/quotaChat.test.ts` | the gate over HTTP: the disabled default answering past tiny limits, the 429 body and `Retry-After`, a validation 400 not consuming an allowance, per-token vs global bucketing, tokens counted on the streamed path, and a refused `stream: true` request arriving as JSON with no SSE frames |
-| **N3** `integration/sensorChat.test.ts` | `query_sensor_data` end to end through `POST /chat` — scripted model, recorded device bodies, real loop/client/decoder in between — and the flag-off path making one tool-free call that never touches the device API |
+| **N3** `integration/sensorChat.test.ts` | `query_sensor_data` end to end through `POST /chat` — scripted model, recorded device bodies, real loop/client/decoder in between — and the flag-off path making one tool-free call that never touches the device API; the data-coverage line on the JSON and streaming paths (§10.8) |
 | `integration/devices.test.ts` | `GET /api/v1/devices` (§10.5): label dedupe, the `name`→`label` fallback and its stable tie-break, `water_type` echo, and a coded upstream failure propagating rather than flattening to `null` |
 | `unit/plausibility.test.ts` | the per-metric physical rails, including the verified −1023 °C temperature rail and the pH 0.000/14.000 exclusive bounds, and that `0` stays plausible for ORP and turbidity |
 | `unit/operatorThresholds.test.ts` | every rejection reason for an operator-entered temperature baseline — the all-zero "never configured" registry state, an inverted range, a typed-in placeholder magnitude — each falling back to "no baseline established" rather than to a wrong range, and never printing the rejected numbers |

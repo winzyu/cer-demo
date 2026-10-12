@@ -434,6 +434,56 @@ describe("REPORT_TOOL_BLOCK", () => {
     });
     expect(messages.find((m) => m.role === "assistant")?.content).toBe("Status: Normal.");
   });
+
+  it("keeps the server's data-coverage lines out of the history the model reads", () => {
+    const messages = buildMessages({
+      query: "what about the pH?",
+      chunks: [],
+      history: [
+        { role: "user", content: "give me an overview" },
+        {
+          role: "assistant",
+          content: "Over the last 7 days, Oct 5 to Oct 12, the water was steady.\n\n"
+            + "Data covered in this reply: Bay Mouth Pod, 2026-10-05 08:24 to 2026-10-12 08:24 UTC (316 readings).",
+        },
+        { role: "user", content: "and the oxygen?" },
+        {
+          role: "assistant",
+          content: "Oxygen rose each afternoon.\n\n"
+            + "No new readings were read for this reply; any figures come from data covered earlier in this chat.",
+        },
+      ],
+    });
+    expect(messages.filter((m) => m.role === "assistant").map((m) => m.content)).toEqual([
+      "Over the last 7 days, Oct 5 to Oct 12, the water was steady.",
+      "Oxygen rose each afternoon.",
+    ]);
+  });
+});
+
+describe("naming the period an answer covers (SPECS.md §10.8)", () => {
+  // Michael, 2026-10-11: a summary or overview did not say what window it was in.
+  it("has every sensor answer name its period first, with the resolved dates", () => {
+    expect(TOOL_BLOCK).toContain("Name the period your answer covers in its first sentence");
+    expect(TOOL_BLOCK).toContain("dates of \"time_range_resolved\"");
+  });
+
+  it("defaults an open summary or overview to the last 7 days, said and with a longer one offered", () => {
+    expect(TOOL_BLOCK).toContain("When the user names no period (a summary, an overview, \"how is the water\"), use\n  time_range \"last 7 days\", say that is the period you chose, and offer a longer one.");
+    expect(REPORT_TOOL_BLOCK).toContain("When the user names no period, use time_range \"last 7 days\" and say so.");
+  });
+
+  it("has a follow-up name the period of the readings it reuses, or read again", () => {
+    expect(TOOL_BLOCK).toContain("When a follow-up answers from readings an earlier reply fetched, say which period");
+  });
+
+  it("leaves the coverage line to the server", () => {
+    expect(TOOL_BLOCK).toContain("never write that line yourself");
+  });
+
+  it("states a report's period in the first sentence, copied exactly", () => {
+    expect(REPORT_TOOL_BLOCK).toContain("State the reporting period in your\n  first sentence: copy \"report_period\" character for character");
+  });
 });
 
 describe("formatContext", () => {

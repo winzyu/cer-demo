@@ -492,3 +492,103 @@ describe("POST /api/v1/chat forwards the caller's identity to the device API", (
     expect(response.body).not.toHaveProperty("status");
   }, RELOAD_TIMEOUT_MS);
 });
+
+/**
+ * The server-written "Data covered in this reply" line (`SPECS.md` §10.8). Michael, 2026-10-11:
+ * "if you ask it for a summary or overview, it doesn't specify what window the summary or
+ * overview is in." The model picks `time_range` itself and named it unevenly, so the server
+ * appends the windows the sensor tool actually resolved.
+ */
+describe("POST /api/v1/chat names the readings an answer covered", () => {
+  const overviewCall = {
+    content: "",
+    toolCalls: [{
+      id: "call_1",
+      type: "function",
+      function: {
+        name: "query_sensor_data",
+        arguments: JSON.stringify({ metric: "all", time_range: "last day", aggregation: "mean" }),
+      },
+    }],
+  };
+  /** "2026-08-11T19:37:25.000Z" as the line prints it. */
+  const minute = (iso: string): string => iso.slice(0, 16).replace("T", " ");
+  const doneEvent = (text: string): Record<string, unknown> => JSON.parse(
+    text.split("\n\n").find((block) => block.startsWith("event: done"))!.split("data: ")[1],
+  );
+
+  it("ends a sensor answer with the pod, the resolved window and the readings used", async () => {
+    // The model's own text names no window: the case Michael reported.
+    script = [overviewCall, { content: "The water looks steady overall.", toolCalls: [] }];
+
+    const app = loadAppWith(SENSOR_ENV);
+    const response = await chat(app).send({ query: "Give me an overview of this buoy" }).expect(200);
+
+    const { result } = response.body.tool_calls[0];
+    const { start, end } = result.time_range_resolved;
+    expect(response.body.answer).toBe(
+      "The water looks steady overall.\n\n"
+      + `Data covered in this reply: ${result.device.name}, ${minute(start)} to ${minute(end)} UTC `
+      + `(${result.reading_counts.used} readings).`,
+    );
+  }, RELOAD_TIMEOUT_MS);
+
+  it("writes the same line on the streaming path", async () => {
+    script = [overviewCall, { content: "The water looks steady overall.", toolCalls: [] }];
+
+    const app = loadAppWith(SENSOR_ENV);
+    const response = await chat(app).send({ query: "Give me an overview of this buoy", stream: true }).expect(200);
+
+    const done = doneEvent(response.text);
+    expect(done.answer).toMatch(/\n\nData covered in this reply: .+ UTC \(\d+ readings\)\.$/);
+  }, RELOAD_TIMEOUT_MS);
+
+  it("says a follow-up read nothing new when an earlier reply read pod data", async () => {
+    script = [{ content: "pH stayed near 8 over that period.", toolCalls: [] }];
+
+    const app = loadAppWith(SENSOR_ENV);
+    const response = await chat(app).send({
+      query: "What about the pH?",
+      history: [
+        { role: "user", content: "Give me an overview of this buoy" },
+        {
+          role: "assistant",
+          content: "The water looks steady overall.\n\n"
+            + "Data covered in this reply: Algalita Pod, 2026-08-10 19:37 to 2026-08-11 19:37 UTC (47 readings).",
+        },
+      ],
+    }).expect(200);
+
+    expect(response.body.answer).toBe(
+      "pH stayed near 8 over that period.\n\n"
+      + "No new readings were read for this reply; any figures come from data covered earlier in this chat.",
+    );
+    // The model never sees the server's line, so it cannot copy it.
+    const history = sent[0].messages as Array<{ role: string; content: string }>;
+    expect(history.some((message) => message.content.includes("Data covered in this reply"))).toBe(false);
+  }, RELOAD_TIMEOUT_MS);
+
+  it("adds nothing to a chat that has never read pod data", async () => {
+    script = [{ content: "ORP measures oxidation-reduction potential.", toolCalls: [] }];
+
+    const app = loadAppWith(SENSOR_ENV);
+    const response = await chat(app).send({ query: "what is ORP?" }).expect(200);
+
+    expect(response.body.answer).toBe("ORP measures oxidation-reduction potential.");
+  }, RELOAD_TIMEOUT_MS);
+
+  it("adds nothing with the sensor tool off, even after an earlier coverage line", async () => {
+    script = [{ content: "ORP measures oxidation-reduction potential.", toolCalls: [] }];
+
+    const app = loadAppWith({ ...SENSOR_ENV, SENSOR_TOOL: "false" });
+    const response = await chat(app).send({
+      query: "what is ORP?",
+      history: [
+        { role: "user", content: "overview?" },
+        { role: "assistant", content: "Steady.\n\nData covered in this reply: Algalita Pod, 2026-08-10 19:37 to 2026-08-11 19:37 UTC (47 readings)." },
+      ],
+    }).expect(200);
+
+    expect(response.body.answer).toBe("ORP measures oxidation-reduction potential.");
+  }, RELOAD_TIMEOUT_MS);
+});
