@@ -893,16 +893,6 @@ export class QuerySensorData {
       const time = Date.parse(row.observedAt ?? "");
       return time < siteStartMs || time > siteEndMs;
     });
-    const firstAt = periodReadings[0]?.observedAt;
-    const lastAt = periodReadings[periodReadings.length - 1]?.observedAt;
-    let resolvedRange: { start: string; end: string; label: string } | null = {
-      start: range.start, end: range.end, label: range.label,
-    };
-    if (siteLimited) {
-      resolvedRange = firstAt && lastAt ? {
-        start: firstAt, end: lastAt, label: `${firstAt} to ${lastAt} (current-site readings)`,
-      } : null;
-    }
     // Incomplete only when the location filter dropped readings inside the request. A first
     // reading that lands a reporting interval after the window opens is ordinary spacing, and
     // earlier-site history that ends before the window costs this answer nothing.
@@ -911,6 +901,18 @@ export class QuerySensorData {
       const time = Date.parse(row.observedAt ?? "");
       return readings.length === 0 || time < siteStartMs || time > siteEndMs;
     });
+    const firstAt = periodReadings[0]?.observedAt;
+    const lastAt = periodReadings[periodReadings.length - 1]?.observedAt;
+    let resolvedRange: { start: string; end: string; label: string } | null = {
+      start: range.start, end: range.end, label: range.label,
+    };
+    // Narrowed to the current-site readings only when the filter dropped some inside the request,
+    // so a week long after a move keeps the dates asked for.
+    if (sitePartial) {
+      resolvedRange = firstAt && lastAt ? {
+        start: firstAt, end: lastAt, label: `${firstAt} to ${lastAt} (current-site readings)`,
+      } : null;
+    }
     const partial = snapshot.fromMs > range.startMs || sitePartial;
     // The snapshot may reach back to the epoch to establish the site; that read is plumbing.
     // Report the part of the request it covered, so no reader takes the epoch for the window.

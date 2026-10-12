@@ -1008,6 +1008,29 @@ describe("query_sensor_data — window honesty", () => {
     expect(result.n_samples).toBe(3);
   });
 
+  it("keeps the requested dates for a week the move cost nothing", async () => {
+    // Coverage check, 2026-10-12: Bay Mouth Pod's week resolved to its first and last readings,
+    // labelled "(current-site readings)", though its earlier site ended 43 days before the week.
+    const at = (iso: string, lat: number) => ({
+      timestamp: Date.parse(iso) / 1000, best_lat: lat, best_lon: -118,
+      water_data: { 99: 8, phError: 0 },
+    });
+    const rows = [
+      at("2026-06-13T16:17:56Z", 34), at("2026-08-20T12:00:00Z", 33),
+      at("2026-10-03T12:00:00Z", 33), at("2026-10-09T21:07:35Z", 33),
+    ];
+    const { client } = makeClient({ periodDay: [], periodMonth: rows });
+    const tool = new QuerySensorData({ client, now: () => Date.parse("2026-10-09T21:37:56Z") });
+    const result = await tool.run({
+      metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "Algalita",
+    });
+
+    expect(result.time_range_resolved).toMatchObject({
+      start: "2026-10-02T21:07:35.000Z", end: "2026-10-09T21:07:35.000Z",
+    });
+    expect((result.time_range_resolved as { label: string }).label).not.toContain("current-site readings");
+  });
+
   describe("earlier-site notes cover only the requested period", () => {
     // Coverage check, 2026-10-12: every "What about the pH?" answer about Bay Mouth Pod's last
     // week said 775 earlier-location readings were excluded, though that site ended 43 days

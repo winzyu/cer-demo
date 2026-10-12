@@ -1736,7 +1736,8 @@ Within the TTL, repeated questions and historical ranges reuse the snapshot, whi
 After the TTL, a recent read replaces an overlapping tail while retaining earlier centroid context; changes to authorized chain membership discard incompatible history.
 Registry changes become visible at the device-list TTL, and older backfills or corrections outside the recent tail become visible when retained context expires and is rebuilt.
 Report series, exact median and hourly pattern calculations pin one consistent fetched snapshot for the whole batch, including across TTL expiry or cache eviction.
-When location filtering limits a pod's history, `time_range_resolved` uses the first and last current-site readings inside the requested range, or is null when none fall inside it.
+When location filtering drops readings inside the requested range, `time_range_resolved` uses the first and last current-site readings inside it, or is null when none fall inside it.
+A range the filter dropped nothing from keeps its requested dates, so a week long after a move is not relabelled "(current-site readings)" and narrowed to its first and last reading.
 The answer's report period, PDF title and Summary inherit those dates.
 The site notes (`site_note`, `user_notes`) count only readings inside the requested range that the location filter left out, plus readings with no timestamp, which no range can place (`siteNotesForPeriod` in `tools/currentSite.ts`).
 Counting the pod's whole history told a week 43 days after a move that 775 earlier-location readings "were excluded" from it (coverage check, 2026-10-12, `migration/data-skepticism-runs/coverage-check-prompt2/`).
