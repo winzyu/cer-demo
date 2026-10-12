@@ -23,7 +23,9 @@ import {
   TURBIDITY_ALL_ZERO_CAVEAT,
   TURBIDITY_SCALE_CAVEAT,
 } from "./referenceRanges";
-import { entriesFor, entryText, waterClassFor } from "../catalogue/select";
+import {
+  DATA_ISSUE_ONLY_ENTRIES, entriesFor, entryText, waterClassFor,
+} from "../catalogue/select";
 import type { Finding, UsableGuidance } from "../catalogue/select";
 import type { CatalogueEntry, RecommendationSlot, WaterClass } from "../catalogue/types";
 import type { ReportOmitGroup } from "./omit";
@@ -68,16 +70,7 @@ export const UNEXPLAINED_HEADING = "Anomaly, cause unclear";
 /** v2 §9.2's heading for an event whose cause the catalogue approves naming. */
 export const consistentWithHeading = (type: string): string => `Consistent with ${type}`;
 
-/**
- * Catalogue entries that recommend inspecting or maintaining the pod, or ruling it out first.
- * v2 §9.2 recommends inspection only when a data issue is likely, so these are shown only then,
- * whatever the catalogue's triggers say (POST_LAUNCH_BACKLOG.md §1b, D2; whether the catalogue
- * itself should carry this condition is STAKEHOLDER_QUESTIONS.md item 26). `fault-first` joined
- * after it turned a real daily pH dip into "an instrument problem"
- * (`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md` §3 cause 2): its own limitation says the
- * report runs no fault checks, but per-reading QC now runs them, and an exceedance passed them.
- */
-export const DATA_ISSUE_ONLY_ENTRIES: ReadonlySet<string> = new Set(["inspect-sensors", "fault-first"]);
+export { DATA_ISSUE_ONLY_ENTRIES };
 
 /** v2 §9.2's required wording for the "data issue likely" tier. */
 export const DATA_ISSUE_SENTENCE = "This pattern most likely reflects a sensor or data issue.";

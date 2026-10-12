@@ -478,6 +478,7 @@ describe("data skepticism (GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §5)", () => {
   it("takes the user's site facts as evidence and their causes as hypotheses", () => {
     expect(TOOL_BLOCK).toContain("What the user tells you about the site");
     expect(TOOL_BLOCK).toContain("A cause the user suggests\n  (\"high tides\", \"the sewage spill\") is a hypothesis");
+    expect(TOOL_BLOCK).toContain("never say the readings changed or did not change \"when it started\".");
   });
 
   it("re-reads the data when challenged and moves only for new data or a new site fact", () => {
@@ -495,7 +496,13 @@ describe("data skepticism (GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §5)", () => {
     const block = buildCatalogueBlock(usableGuidance(catalogue, false));
     expect(block).toContain("A cause the user suggests is not\n  evidence for an entry.");
     expect(block).toContain("That no entry explains it is not a sign of a fault.");
-    expect(block).toContain("never for an out-of-range verdict or an unusual pattern alone.");
+    ["fault-first", "inspect-sensors"].forEach((id) => {
+      const record = block.slice(block.indexOf(`[${id}]`)).split("\n\n")[0];
+      expect(record).toContain("Offer only when: a tool reports a \"likely data issue\"");
+      expect(record).toContain("never for an out-of-range verdict or an unusual pattern alone.");
+    });
+    const confirm = block.slice(block.indexOf("[confirm-readings]")).split("\n\n")[0];
+    expect(confirm).not.toContain("Offer only when");
   });
 
   it("keeps the natural-variation drafts out of production's prompt", () => {
