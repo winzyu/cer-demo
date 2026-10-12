@@ -1154,7 +1154,7 @@ Every answer that read pod data ends with a line the server writes, naming which
 Michael reported (2026-10-11) that a summary or overview did not say what window it was in; the dashboard shows a window only when a search was incomplete.
 
 - `Data covered in this reply: <pod>, <start> to <end> UTC (<n> readings)` lists each distinct window `query_sensor_data` resolved in this answer, in call order, from `time_range_resolved` and `reading_counts.used`, to the minute in UTC.
-  A single latest reading reads "the reading at <time> UTC"; a window limited to current-site readings adds "current site only"; a read with no readings in range says so with the phrase asked for.
+  A single latest reading reads "the reading at <time> UTC"; a window from which the location filter dropped readings inside the request (`window_actually_searched.complete` false with a current-site label) adds "current site only"; a read with no readings in range says so with the phrase asked for.
   Tool errors are skipped, and repeats of the same pod and window collapse to one.
 - An answer that read no pod data, in a chat where an earlier reply did, gets "No new readings were read for this reply; any figures come from data covered earlier in this chat.", unless it made a report, whose period the "New PDF" line (§10.7) already gives.
 - A chat that never read pod data gets no line, and nothing changes with the tools off.

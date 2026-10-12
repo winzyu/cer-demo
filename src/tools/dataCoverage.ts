@@ -48,6 +48,7 @@ const coverageOf = (call: ToolInvocation): Coverage | undefined => {
   const resolved = result.time_range_resolved as
     { start?: unknown; end?: unknown; label?: unknown } | null | undefined;
   const counts = result.reading_counts as { used?: unknown } | undefined;
+  const searched = result.window_actually_searched as { complete?: unknown } | undefined;
   const readings = typeof counts?.used === "number" ? counts.used : undefined;
   if (!resolved || typeof resolved.start !== "string" || typeof resolved.end !== "string") {
     const requested = typeof result.time_range_requested === "string" ? ` (${result.time_range_requested})` : "";
@@ -59,7 +60,11 @@ const coverageOf = (call: ToolInvocation): Coverage | undefined => {
     pod,
     window: start === end ? `the reading at ${end} UTC` : `${start} to ${end} UTC`,
     ...(readings !== undefined ? { readings } : {}),
-    currentSiteOnly: typeof resolved.label === "string" && resolved.label.includes("current-site readings"),
+    // Only when the location filter dropped readings inside the request: a pod that merely has
+    // earlier-site history long before the window lost nothing from it.
+    currentSiteOnly: typeof resolved.label === "string"
+      && resolved.label.includes("current-site readings")
+      && searched?.complete === false,
   };
 };
 

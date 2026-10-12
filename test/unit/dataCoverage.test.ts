@@ -40,8 +40,9 @@ describe("coveredWindows", () => {
     ]);
   });
 
-  it("says when only current-site readings were used", () => {
+  it("says when the location filter dropped readings inside the request", () => {
     const moved = week({
+      window_actually_searched: { start: "2025-10-12T08:24:26.000Z", end: "2026-10-12T08:24:26.000Z", complete: false },
       time_range_requested: "last 12 months",
       time_range_resolved: {
         start: "2026-08-23T08:24:26.000Z",
@@ -53,6 +54,22 @@ describe("coveredWindows", () => {
     expect(coverageLines([moved], false, false)[0]).toBe(
       "Data covered in this reply: Bay Mouth Pod, 2026-08-23 08:24 to 2026-10-12 08:24 UTC "
       + "(2251 readings, current site only).",
+    );
+  });
+
+  it("does not say current site only when the earlier site ended before the window", () => {
+    // Fake-device-API check, 2026-10-12: every Bay Mouth Pod line said "current site only", including a
+    // week that began 50 days after the earlier site's last reading and a single latest reading.
+    const week7 = week({
+      time_range_resolved: {
+        start: "2026-10-05T08:24:26.000Z",
+        end: "2026-10-12T08:24:26.000Z",
+        label: "2026-10-05T08:24:26.000Z to 2026-10-12T08:24:26.000Z (current-site readings)",
+      },
+      window_actually_searched: { start: "2026-10-05T08:24:26.000Z", end: "2026-10-12T08:24:26.000Z", complete: true },
+    });
+    expect(coverageLines([week7], false, false)[0]).toBe(
+      "Data covered in this reply: Bay Mouth Pod, 2026-10-05 08:24 to 2026-10-12 08:24 UTC (316 readings).",
     );
   });
 
