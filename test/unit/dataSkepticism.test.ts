@@ -86,11 +86,13 @@ describe("data skepticism: the incident week (Bay Mouth Pod, last 7 days)", () =
     week = await tools.query({ device: BAY_MOUTH, metric: "all", time_range: "last 7 days", aggregation: "series" });
   });
 
-  it("covers the requested week, complete, with the earlier location excluded and said", () => {
+  it("covers the requested week, complete, telling only the model about the earlier location it never reached", () => {
     expect(week.window_actually_searched).toEqual({
       start: "2026-10-02T21:30:00.000Z", end: "2026-10-09T21:30:00.000Z", complete: true,
     });
-    expect(week.site_note).toMatch(/^775 reading\(s\) from an earlier location were excluded/);
+    // The earlier location ended 50 days before the week, so nothing was left out of it (SPECS §19).
+    expect(week.site_note).toBeUndefined();
+    expect(week.site_history_note).toMatch(/its 775 earlier-location reading\(s\) .* fall outside the requested period/);
     expect((week.reading_counts as { used: number }).used).toBe(316);
   });
 
@@ -125,11 +127,11 @@ describe("data skepticism: the incident week (Bay Mouth Pod, last 7 days)", () =
     expect(turbidity.n_samples).toBe(0);
   });
 
-  it("keeps the user notes to the device-flagged faults and the earlier location", () => {
+  it("keeps the user notes to the device-flagged faults", () => {
     const notes = week.user_notes as string[];
-    expect(notes).toHaveLength(3);
+    expect(notes).toHaveLength(2);
     expect(notes.join(" ")).toMatch(/Conductivity/);
-    expect(notes.join(" ")).toMatch(/earlier location/);
+    expect(notes.join(" ")).not.toMatch(/earlier location/);
     expect(notes.join(" ")).toMatch(/Turbidity/);
     expect(notes.join(" ")).not.toMatch(/temperature|pH|oxygen/i);
   });
@@ -253,7 +255,7 @@ describe("data skepticism: a steady channel with independent noise", () => {
    * larger MAD and is unaffected, but Bay Mouth's ORP (independent noise, no cycle) shows three
    * such runs over its three-month window.
    *
-   * Recorded as `it.failing`: it starts failing once the spike rule stops flagging plain noise.
+   * Fixed on dev by `612adaa`: a spike must also exceed the probe's minimum detectable change.
    */
   const steadyFleet = (): Fleet => {
     const fleet = fleetWith();
@@ -273,7 +275,7 @@ describe("data skepticism: a steady channel with independent noise", () => {
     expect(conductivity.value as number).toBeCloseTo(52_000, -2);
   });
 
-  it.failing("is not a likely data issue", async () => {
+  it("is not a likely data issue", async () => {
     const conductivity = await toolsFor(steadyFleet()).query({
       device: HARBOR_ACID, metric: "conductivity", time_range: "last 7 days", aggregation: "mean",
     });
