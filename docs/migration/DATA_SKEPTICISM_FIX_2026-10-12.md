@@ -11,7 +11,7 @@ The user approved the work and paid testing on 2026-10-12, relayed by the landin
 - It tells a solar cycle from a tidal one from the new `daily_cycle` field: the tidal pod was called tidal in 3 of 3 runs after, 0 of 3 before; one mirror conversation misread the field (below).
 - Pushback without new facts no longer moves it, a site fact does, and a user's causal guess stays a hypothesis; every guard (implausible pH, a real low-oxygen event, a silent pod, stuck turbidity, a steady noisy channel, a device-flagged probe) still passes.
 - Not fixed: answers still say the user's reported swells or tides left no trace (3 of 9 before, 4 of 9 after), mostly as a fair inference from a 50-day record with no change.
-- Spend: about $1.82 of LLM calls against a $2.00 estimate; no production reads.
+- Spend: about $1.82 of LLM calls against a $2.00 estimate, plus $0.78 for the wave-1 document check (correctness 1.11, every gate passed; below); no production reads.
 
 ## What changed
 
@@ -93,8 +93,25 @@ On the Mirror the guards passed 12 of 12 after (11 of 12 before: one oxygen answ
 5. **Unchanged from 6e's findings**: one deep-dip answer queried every metric and did not mention the 16 conductivity zeros; the release's `WATER_TYPE=freshwater` once had a coastal pod's pH compared with a river range.
 6. The natural-variation drafts need supervisor review before `CATALOGUE_DRAFTS` matters; until then the timing comes from the tool and the prompt only.
 
+## Wave-1 document evaluation
+
+Run `skeptic-fix-lv-k20-glm-2026-10-12`, approved by the user on 2026-10-12: one capture of the 45 wave-1 fixtures at `e92a0c0` with the E7 launch settings (tools off, so of this fix only the catalogue block reaches the prompt), judged once with `deepseek-v4p1-flash` at `--final`, correctness, rubric v2.
+Spend: about $0.22 to capture and $0.56 to judge.
+
+| | E7 full corpus A / B (two judge passes each) | E7 control | This run |
+|---|---|---|---|
+| correctness | 1.14 / 1.16, 1.16 / 1.17 | 1.19 / 1.20 | 1.11 |
+| cross-document | 0.83 / 0.92, 1.00 / 1.00 | 0.92 / 0.88 | 0.83 |
+| refusal gate: exact / off-contract / answered | 5 / 2 / 1 (both) | 6 / 1 / 1 | 4 / 4 / 0 |
+| citation validity | 98.3%, 98.5% | 99.5% | 100% (212 of 212) |
+| unexplained figures | 0, 2 | 0 | 0 of 602 |
+
+- The run passes E7's rule (mean at least 1.10, cross-document at least 0.78, citations at least 99%, no must-refuse turn answered), the refusal gate for the first time at these settings.
+- Correctness is 0.05 below E7 A and B, inside one capture and one judge pass of noise (about 0.04 and 0.05).
+- Against all six E7 passes, three turns scored below every one of them and one above. The three are document slips with no catalogue or fault wording: 0.42 left unrounded (`deepmanual-turbidity-rounding`), the single-point rule for small streams left out (`deepmanual-cross-section-points`), and the 0.99 mg/L solubility fall not stated (`crossdoc-warm-week-oxygen-drop`).
+- No before-arm capture was taken, so code drift since E7 (`561eac1`) and this fix are not separated; a control at `c514e0b` would cost about $0.80.
+
 ## Not covered
 
-- Wave-1 document evaluations (plan step 8, about $1) were not run; the prompt changes sit in the sensor-tool block and the catalogue block, so document-only answers should not move, but this is unmeasured.
 - Three runs per arm show whether a behaviour is present, not its rate.
 - The Mirror's guard pods differ from the fake fleet's (one implausible reading, a 30-hour silence), so the two guard rows are not the same test.
