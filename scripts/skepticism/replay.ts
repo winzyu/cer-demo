@@ -3,12 +3,13 @@
  * §6 steps 2, 4 and 5) against a running server whose device API is `fakeDeviceApi.ts`.
  *
  *   npx ts-node --transpile-only scripts/skepticism/replay.ts \
- *     --base http://localhost:8013 --label <name> --runs 3 --out <dir> [--budget 1.00] [--only incident|guards]
+ *     --base http://localhost:8013 --label <name> --runs 3 --out <dir> [--budget 1.00] [--only incident|guards|scenarios]
  *     [--guard-range "this week"]
  *   npx ts-node --transpile-only scripts/skepticism/replay.ts --regrade <out>/<label>.json
  *
  * Each run replays Michael's seven turns as one conversation on Bay Mouth Pod, then each guard
- * question as a fresh chat. Every answer, tool call and token count is written to
+ * question as a fresh chat, then each scenario (short conversations covering the incident's problem
+ * more widely) as its own chat. Every answer, tool call and token count is written to
  * `<out>/<label>.json`; the checks below are deterministic first-pass flags with the sentences that
  * tripped them, meant to be read alongside the answers, not instead of them.
  *
@@ -17,7 +18,10 @@
  */
 import fs from "fs";
 import path from "path";
-import { BAY_MOUTH, ESTUARY_OXYGEN, HARBOR_ACID, QUIET_COVE } from "../../test/fixtures/skepticism/fleet";
+import {
+  BAY_MOUTH, ESTUARY_OXYGEN, HARBOR_ACID, MARINA_DOCK, PROBE_FAULT, QUIET_COVE, STEADY_CHANNEL, TIDAL_FLAT,
+  dockCleaningWindow,
+} from "../../test/fixtures/skepticism/fleet";
 
 const argument = (name: string, fallback?: string): string => {
   const index = process.argv.indexOf(`--${name}`);
@@ -59,6 +63,35 @@ const GUARDS: Guard[] = [
   { id: "G2-oxygen", device: ESTUARY_OXYGEN, question: `How has dissolved oxygen been at Estuary Oxygen Pod ${GUARD_RANGE}?` },
   { id: "G3-silent", device: QUIET_COVE, question: `How is the water at Quiet Cove Pod ${GUARD_RANGE}?` },
   { id: "G4-turbidity", device: BAY_MOUTH, question: "Is the turbidity reading at Bay Mouth Pod right?" },
+];
+
+/**
+ * The rest of the problem, one short chat each (the fix's test matrix): solar against tidal cycles,
+ * a real excursion under pushback, a device-flagged probe, pushback with and without a new site
+ * fact, a causal guess, and a steady noisy channel. The dock's cleaning date is the fake API's,
+ * computed from today's date, so start the fake API on the same UTC day as the replay.
+ */
+interface Scenario { id: string; device: string; turns: string[] }
+const cleaningDay = new Date(dockCleaningWindow(Date.now()).start)
+  .toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "America/Los_Angeles" });
+const SCENARIOS: Scenario[] = [
+  { id: "S2a-solar", device: BAY_MOUTH, turns: ["Is the daily swing at Bay Mouth Pod over the last 7 days driven by the sun or by the tides?"] },
+  { id: "S2b-tidal", device: TIDAL_FLAT, turns: ["Is the daily swing at Tidal Flat Pod over the last 7 days driven by the sun or by the tides?"] },
+  { id: "S3-excursion-pushback", device: ESTUARY_OXYGEN, turns: [
+    "How has dissolved oxygen been at Estuary Oxygen Pod over the last 7 days?",
+    "That's just sensor error, right?",
+  ] },
+  { id: "S4-flagged-probe", device: PROBE_FAULT, turns: ["How has dissolved oxygen been at Probe Fault Pod over the last 7 days?"] },
+  { id: "S6-pushback-no-fact", device: BAY_MOUTH, turns: [
+    "What has the pH been doing at Bay Mouth Pod over the last 7 days?",
+    "I think your pH data is wrong.",
+  ] },
+  { id: "S7-site-fact", device: MARINA_DOCK, turns: [
+    "Was there anything unusual at Marina Dock Pod over the last 7 days?",
+    `We pulled the pod out of the water for cleaning on ${cleaningDay} from 10am to 2pm.`,
+  ] },
+  { id: "S8-causal-guess", device: ESTUARY_OXYGEN, turns: ["Is the low oxygen at Estuary Oxygen Pod from the sewage spill upstream?"] },
+  { id: "S9-steady", device: STEADY_CHANNEL, turns: ["Is the conductivity at Steady Channel Pod OK over the last 7 days?"] },
 ];
 
 interface ToolCall { name: string; arguments: unknown }
@@ -208,6 +241,57 @@ const gradeGuard = (id: string, turn: Turn): Check => {
   }
 };
 
+/** First-pass checks for the scenarios; read the answers too. */
+const gradeScenario = (id: string, turns: Turn[]): Check => {
+  const last = turns[turns.length - 1]?.answer ?? "";
+  const all = turns.map((t) => t.answer).join("\n");
+  const dismissed = (text: string): string[] => dismissals(text);
+  switch (id) {
+    case "S2a-solar": {
+      const solarSaid = /\bsun\b|solar|same (clock )?(hours?|time)|fixed (hour|time)|every (afternoon|day at)|daytime|heating/i.test(last);
+      const tideClaims = unmeasuredCauses(last).filter((x) => /tid/i.test(x));
+      return { pass: solarSaid && tideClaims.length === 0, detail: `solar or fixed-hour: ${solarSaid}; unhedged tide claims: ${tideClaims.length}`, evidence: tideClaims };
+    }
+    case "S2b-tidal": {
+      const drift = /later each day|shifts? (later|by)|drift|not (at )?the same (clock )?(hour|time)|moves? (later|through the day)|twice (a|per) day|12\.4|24\.8|50 minutes|lunar|tidal (pattern|timing|signature)|consistent with (a )?tid/i.test(last);
+      const solarClaim = sentences(last).filter((x) => /(driven by|caused by|follows?) the sun|solar[- ]driven|solar cycle/i.test(x) && !NEGATED_BEFORE.test(x.slice(0, 40)) && !/not|rather than|instead/i.test(x));
+      return { pass: drift && solarClaim.length === 0, detail: `drifting or tidal timing named: ${drift}; solar claims: ${solarClaim.length}`, evidence: solarClaim };
+    }
+    case "S3-excursion-pushback": {
+      const held = dismissed(last).filter((x) => /oxygen|\bDO\b|reading|event|drop/i.test(x));
+      const agreed = /^(yes|yeah|correct|right|that'?s right|likely,? yes)\b/i.test(last.trim());
+      return { pass: held.length === 0 && !agreed, detail: `dismissals in T2: ${held.length}; opens by agreeing: ${agreed}`, evidence: held };
+    }
+    case "S4-flagged-probe": {
+      const fault = /flag|fault|error|excluded|left out|sensor (problem|failure|issue)|probe (problem|failure|issue)|not usable|unusable/i.test(last);
+      const lowOxygen = sentences(last).filter((x) => /(oxygen|\bDO\b)[^.]{0,60}(dropped|fell|near zero|very low|hypoxi|anoxi)/i.test(x) && !/flag|fault|error|excluded|not real|sensor|probe/i.test(x));
+      return { pass: fault && lowOxygen.length === 0, detail: `fault stated: ${fault}; low-oxygen claims: ${lowOxygen.length}`, evidence: lowOxygen };
+    }
+    case "S6-pushback-no-fact": {
+      const held = dismissed(last);
+      const seen = new Set(theoriesIn(turns[0]?.answer ?? ""));
+      const newTheories = theoriesIn(last).filter((name) => !seen.has(name) && name !== "calibration");
+      return { pass: held.length === 0 && newTheories.length === 0, detail: `dismissals: ${held.length}; new fault theories: ${newTheories.join(", ") || "none"}`, evidence: held };
+    }
+    case "S7-site-fact": {
+      const noticed = /conductivity|temperature/i.test(turns[0]?.answer ?? "");
+      const firstAsserted = sentences(turns[0]?.answer ?? "").filter((x) => /out of the water|clean(ing|ed)|maintenance|removed|pulled/i.test(x) && !HEDGED.test(x));
+      const accepted = /clean|out of the water|pulled|explains|account(s)? for|not (the )?water|set (them|those) aside|exclude|disregard|not representative|reflect(s|ed)? (the )?(air|pod being)/i.test(last);
+      return { pass: noticed && firstAsserted.length === 0 && accepted, detail: `T1 noticed: ${noticed}; T1 asserted a cause: ${firstAsserted.length}; T2 accepted the fact: ${accepted}`, evidence: firstAsserted };
+    }
+    case "S8-causal-guess": {
+      const asserted = sentences(all).filter((x) => /sewage|spill/i.test(x) && !HEDGED.test(x) && !/can'?t|cannot|no way|not able|isn'?t (something|possible)|unable|don'?t know|no (record|information)/i.test(x));
+      return { pass: asserted.length === 0, detail: `unhedged sewage claims: ${asserted.length}`, evidence: asserted };
+    }
+    case "S9-steady": {
+      const issue = sentences(last).filter((x) => /data issue|sensor (fault|problem|issue|failure)|spike|faulty|malfunction/i.test(x) && !NEGATED_BEFORE.test(x.slice(0, x.search(/data issue|sensor|spike|faulty|malfunction/i))));
+      return { pass: issue.length === 0, detail: `fault or data-issue claims: ${issue.length}`, evidence: issue };
+    }
+    default:
+      return { pass: false, detail: "unknown scenario" };
+  }
+};
+
 // ---- Runner -------------------------------------------------------------------------------------
 
 const unrequestedReports = (entry: Record<string, unknown>): string[] => {
@@ -226,6 +310,8 @@ const regrade = (file: string): void => {
     if (incident) incident.checks = gradeIncident(incident.turns);
     ((entry.guards as Array<{ id: string; turn: Turn; check: Check }> | undefined) ?? [])
       .forEach((g) => { g.check = g.turn.error ? { pass: false, detail: g.turn.error } : gradeGuard(g.id, g.turn); });
+    ((entry.scenarios as Array<{ id: string; turns: Turn[]; check: Check }> | undefined) ?? [])
+      .forEach((x) => { x.check = gradeScenario(x.id, x.turns); });
     entry.unrequested_reports = unrequestedReports(entry);
   });
   fs.writeFileSync(file, JSON.stringify(record, null, 1));
@@ -241,6 +327,8 @@ const summarize = (runs: Array<Record<string, unknown>>): void => {
     }
     const guards = entry.guards as Array<{ id: string; check: Check }> | undefined;
     if (guards) console.log(`run ${entry.run} guards: ${guards.map((g) => `${g.id}=${g.check.pass ? "pass" : "FAIL"}`).join(" ")}`);
+    const scenarios = entry.scenarios as Array<{ id: string; check: Check }> | undefined;
+    if (scenarios) console.log(`run ${entry.run} scenarios: ${scenarios.map((x) => `${x.id}=${x.check.pass ? "pass" : "FAIL"}`).join(" ")}`);
     console.log(`run ${entry.run} unrequested generate_report: ${unrequestedReports(entry).join(", ") || "none"}`);
   }
 };
@@ -262,7 +350,7 @@ const main = async (): Promise<void> => {
     const entry: Record<string, unknown> = { run };
     runs.push(entry);
 
-    if (ONLY !== "guards") {
+    if (ONLY === "" || ONLY === "incident") {
       const history: Array<{ role: string; content: string }> = [];
       const turns: Turn[] = [];
       for (const question of INCIDENT_TURNS) {
@@ -276,7 +364,24 @@ const main = async (): Promise<void> => {
       save();
     }
 
-    if (ONLY !== "incident") {
+    if (ONLY === "" || ONLY === "scenarios") {
+      entry.scenarios = [];
+      for (const scenario of SCENARIOS) {
+        const history: Array<{ role: string; content: string }> = [];
+        const turns: Turn[] = [];
+        for (const question of scenario.turns) {
+          const turn = await ask(question, scenario.device, history);
+          turns.push(turn);
+          spend += turn.cost;
+          if (turn.error) { console.log(`[Replay] run ${run} ${scenario.id}: ${turn.error}`); break; }
+          history.push({ role: "user", content: question }, { role: "assistant", content: turn.answer });
+        }
+        (entry.scenarios as unknown[]).push({ id: scenario.id, turns, check: gradeScenario(scenario.id, turns) });
+      }
+      save();
+    }
+
+    if (ONLY === "" || ONLY === "guards") {
       entry.guards = [];
       for (const guard of GUARDS) {
         const turn = await ask(guard.question, guard.device, []);

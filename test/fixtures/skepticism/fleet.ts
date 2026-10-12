@@ -15,6 +15,11 @@
  * - Three guard pods for over-correction: **Harbor Acid Pod** (four pH readings of 2.07 in an
  *   otherwise ordinary week), **Estuary Oxygen Pod** (dissolved oxygen near 2 mg/L for 18 hours,
  *   three days ago) and **Quiet Cove Pod** (silent for the last 12 days).
+ * - Four scenario pods: **Tidal Flat Pod** (a mixed tide whose daily high comes about 50 minutes
+ *   later each day, against Bay Mouth's fixed-hour solar cycle), **Steady Channel Pod** (flat
+ *   conductivity with independent noise inside the detectable change), **Probe Fault Pod** (the
+ *   device flagged its oxygen probe for the last 5 days) and **Marina Dock Pod** (out of the water
+ *   for cleaning for 4 hours two days ago, which only the user knows).
  *
  * Deterministic for a given `now`.
  */
@@ -25,6 +30,10 @@ export const BAY_MOUTH = "dev:100000000000023";
 export const HARBOR_ACID = "dev:100000000000024";
 export const ESTUARY_OXYGEN = "dev:100000000000025";
 export const QUIET_COVE = "dev:100000000000026";
+export const TIDAL_FLAT = "dev:100000000000027";
+export const STEADY_CHANNEL = "dev:100000000000028";
+export const PROBE_FAULT = "dev:100000000000029";
+export const MARINA_DOCK = "dev:100000000000030";
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
@@ -46,6 +55,19 @@ export const ACID_READINGS = 4;
 export const OXYGEN_EVENT_HOURS = 18;
 export const OXYGEN_EVENT_START_DAYS_AGO = 3;
 export const QUIET_SILENT_DAYS = 12;
+/** Lunar semidiurnal (M2) and diurnal periods: the daily high comes about 50 minutes later each day. */
+const M2_HOURS = 12.42;
+const LUNAR_DAY_HOURS = 24.84;
+export const PROBE_FAULT_DAYS = 5;
+export const STEADY_CONDUCTIVITY = 52_000;
+export const STEADY_NOISE_SD = 300;
+
+/** Marina Dock Pod's cleaning: 17:00-21:00 UTC (10:00-14:00 PDT) two days before `now`. */
+export const dockCleaningWindow = (now: number): { start: number; end: number } => {
+  const day = new Date(now - 2 * 24 * 60 * 60_000);
+  const start = Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(), 17);
+  return { start, end: start + 4 * 60 * 60_000 };
+};
 
 export interface Site { lat: number; lon: number; place: string }
 
@@ -282,6 +304,79 @@ const quietCove = (now: number): RawReading[] => {
     .map((at) => row(at, site, values(at)));
 };
 
+/**
+ * A mixed tide at the mouth of an estuary: ocean water at high tide is saltier, cooler and a little
+ * more alkaline, river water at low tide the reverse. The diurnal term makes one high dominate each
+ * lunar day, so the daily peak drifts about 50 minutes later per day; the sun adds only a little.
+ */
+const tidalFlat = (now: number): RawReading[] => {
+  const { jitter, row } = podWriter(TIDAL_FLAT, createRandom(20261027));
+  const site: Site = { lat: 33.62, lon: -117.93, place: "Tidal Flat CA" };
+  const base = ordinary(jitter);
+  return steps(now - GUARD_DAYS * DAY, now, GUARD_STEP_MINUTES).map((at) => {
+    const hours = at.getTime() / HOUR;
+    const tide = 0.45 * Math.cos((2 * Math.PI * hours) / M2_HOURS)
+      + 0.55 * Math.cos((2 * Math.PI * hours) / LUNAR_DAY_HOURS);
+    const values = base(at);
+    values.conductivity = Math.round(values.conductivity - 1_000 + tide * 6_000);
+    values.temperature = +(values.temperature - tide * 1.6).toFixed(4);
+    values.ph = +(values.ph - 0.05 + tide * 0.15).toFixed(3);
+    return row(at, site, values);
+  });
+};
+
+/** Flat conductivity with independent Gaussian noise inside the probe's 2% detectable change. */
+const steadyChannel = (now: number): RawReading[] => {
+  const random = createRandom(20261028);
+  const { jitter, row } = podWriter(STEADY_CHANNEL, random);
+  const site: Site = { lat: 33.70, lon: -118.05, place: "Steady Channel CA" };
+  const base = ordinary(jitter);
+  const gaussian = (): number => Math.sqrt(-2 * Math.log(1 - random())) * Math.cos(2 * Math.PI * random());
+  return steps(now - GUARD_DAYS * DAY, now, GUARD_STEP_MINUTES).map((at) => {
+    const values = base(at);
+    values.conductivity = Math.round(STEADY_CONDUCTIVITY + STEADY_NOISE_SD * gaussian());
+    return row(at, site, values);
+  });
+};
+
+/** The device set `doError` on every reading of the last 5 days; the oxygen values are junk. */
+const probeFault = (now: number): RawReading[] => {
+  const { jitter, row } = podWriter(PROBE_FAULT, createRandom(20261029));
+  const site: Site = { lat: 33.75, lon: -118.20, place: "Breakwater CA" };
+  const base = ordinary(jitter);
+  return steps(now - GUARD_DAYS * DAY, now, GUARD_STEP_MINUTES).map((at) => {
+    const values = base(at);
+    const faulted = at.getTime() >= now - PROBE_FAULT_DAYS * DAY;
+    if (faulted) values.oxygen = +(0.05 + Math.abs(jitter(0.1))).toFixed(3);
+    const reading = row(at, site, values);
+    if (faulted) reading.water_data.doError = 1;
+    return reading;
+  });
+};
+
+/**
+ * Out of the water for 4 hours: conductivity near nothing, the probe warming in the sun toward
+ * air temperature, oxygen at air saturation and ORP up. Nothing in the data says why.
+ */
+const marinaDock = (now: number): RawReading[] => {
+  const { jitter, row } = podWriter(MARINA_DOCK, createRandom(20261030));
+  const site: Site = { lat: 33.60, lon: -117.88, place: "Marina Dock CA" };
+  const base = ordinary(jitter);
+  const { start, end } = dockCleaningWindow(now);
+  return steps(now - GUARD_DAYS * DAY, now, GUARD_STEP_MINUTES).map((at) => {
+    const values = base(at);
+    const t = at.getTime();
+    if (t >= start && t <= end) {
+      const warmed = Math.min(1, (t - start) / HOUR);
+      values.conductivity = Math.round(180 + Math.abs(jitter(120)));
+      values.temperature = +(values.temperature + warmed * (fahrenheitToCelsius(96) - values.temperature)).toFixed(4);
+      values.oxygen = +(9.1 + jitter(0.3)).toFixed(3);
+      values.orp = +(values.orp + 110 + jitter(20)).toFixed(1);
+    }
+    return row(at, site, values);
+  });
+};
+
 export interface FleetOptions {
   /**
    * How far Bay Mouth's pH falls from dawn to the afternoon peak. The default 1.35 matches the
@@ -300,12 +395,20 @@ export const buildFleet = (now: number, options: FleetOptions = {}): Fleet => ({
     device("doc-fixture-acid", HARBOR_ACID, "Harbor Acid Pod"),
     device("doc-fixture-oxygen", ESTUARY_OXYGEN, "Estuary Oxygen Pod"),
     device("doc-fixture-quiet", QUIET_COVE, "Quiet Cove Pod"),
+    device("doc-fixture-tidal", TIDAL_FLAT, "Tidal Flat Pod"),
+    device("doc-fixture-steady", STEADY_CHANNEL, "Steady Channel Pod"),
+    device("doc-fixture-probe", PROBE_FAULT, "Probe Fault Pod"),
+    device("doc-fixture-dock", MARINA_DOCK, "Marina Dock Pod"),
   ],
   readings: {
     [BAY_MOUTH]: bayMouth(now, options.bayMouthPhSwing ?? DEFAULT_PH_SWING),
     [HARBOR_ACID]: harborAcid(now),
     [ESTUARY_OXYGEN]: estuaryOxygen(now),
     [QUIET_COVE]: quietCove(now),
+    [TIDAL_FLAT]: tidalFlat(now),
+    [STEADY_CHANNEL]: steadyChannel(now),
+    [PROBE_FAULT]: probeFault(now),
+    [MARINA_DOCK]: marinaDock(now),
   },
 });
 

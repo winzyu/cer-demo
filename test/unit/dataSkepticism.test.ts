@@ -10,10 +10,15 @@ import {
   ESTUARY_OXYGEN,
   HARBOR_ACID,
   IMPLAUSIBLE_LAST_WEEK,
+  MARINA_DOCK,
   OXYGEN_EVENT_HOURS,
+  PROBE_FAULT,
   QUIET_COVE,
   QUIET_SILENT_DAYS,
+  STEADY_CHANNEL,
+  TIDAL_FLAT,
   buildFleet,
+  dockCleaningWindow,
   routeDeviceApi,
   type Fleet,
   type FleetOptions,
@@ -282,3 +287,56 @@ describe("data skepticism: a steady channel with independent noise", () => {
     expect((conductivity.verdict as Verdict).status).toBe("in range");
   });
 });
+
+describe("data skepticism: scenario pods", () => {
+  const tools = toolsFor(fleetWith());
+  const week = (device: string, metric = "all") => tools.query({
+    device, metric, time_range: "last 7 days", aggregation: "series",
+  });
+
+  it("a tide is never a data issue: every Tidal Flat channel stays judged on its limits", async () => {
+    const m = metrics(await week(TIDAL_FLAT));
+    ["temperature", "ph", "conductivity", "dissolved_oxygen", "orp"].forEach((key) => {
+      expect(m[key].verdict.status).toBe("in range");
+    });
+  });
+
+  it("the tidal pod's daily high drifts later each day while Bay Mouth's stays on the clock", () => {
+    const fleet = fleetWith();
+    const peakHours = (device: string, code: number): number[] => {
+      const byDay = new Map<string, RawReading>();
+      fleet.readings[device].filter((r) => r.timestamp * 1000 >= NOW - 6 * 24 * HOUR).forEach((r) => {
+        const day = new Date(r.timestamp * 1000).toISOString().slice(0, 10);
+        const best = byDay.get(day);
+        if (!best || r.water_data[code] > best.water_data[code]) byDay.set(day, r);
+      });
+      return [...byDay.values()].slice(1, -1).map((r) => (r.timestamp % 86_400) / 3_600);
+    };
+    const drift = (hours: number[]): number => (hours[hours.length - 1] - hours[0]) / (hours.length - 1);
+    expect(drift(peakHours(TIDAL_FLAT, 100))).toBeGreaterThan(0.5);
+    expect(Math.abs(drift(peakHours(BAY_MOUTH, 102)))).toBeLessThan(0.5);
+  });
+
+  it("a steady channel with independent noise is in range, not a data issue (spike floor, 612adaa)", async () => {
+    const conductivity = await week(STEADY_CHANNEL, "conductivity");
+    expect((conductivity.verdict as Verdict).status).toBe("in range");
+  });
+
+  it("a probe the device flagged is excluded as faulted, never read as low oxygen", async () => {
+    const oxygen = await week(PROBE_FAULT, "dissolved_oxygen");
+    expect(oxygen.excluded_faulted as number).toBeGreaterThan(200);
+    expect(oxygen.value).toBeNull();
+    expect((oxygen.verdict as Verdict).status).not.toBe("out of range");
+  });
+
+  it("the dock pod's 4 hours out of the water are in the data as real out-of-range readings with no cause", async () => {
+    const { start, end } = dockCleaningWindow(NOW);
+    const result = await week(MARINA_DOCK);
+    const m = metrics(result);
+    expect(m.conductivity.verdict.status).toBe("out of range");
+    expect(Date.parse(m.conductivity.verdict.out_of_range!.first_run_start)).toBeGreaterThanOrEqual(start);
+    expect(Date.parse(m.conductivity.verdict.out_of_range!.latest_run_end)).toBeLessThanOrEqual(end);
+    expect(JSON.stringify(result)).not.toMatch(/clean|out of the water|maintenance/i);
+  });
+});
+
