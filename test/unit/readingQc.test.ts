@@ -116,6 +116,38 @@ describe("turbidity at 0 keeps its own 24-hour rule", () => {
 });
 
 describe("spike (v2 §8.2)", () => {
+  /** Deterministic Gaussian noise (Box-Muller over a fixed LCG), so the case never flakes. */
+  const noise = (n: number, sd: number): number[] => {
+    let seed = 42;
+    const uniform = (): number => {
+      seed = (seed * 1_664_525 + 1_013_904_223) % 2 ** 32;
+      return (seed + 0.5) / 2 ** 32;
+    };
+    return Array.from({ length: n }, () => (
+      sd * Math.sqrt(-2 * Math.log(uniform())) * Math.cos(2 * Math.PI * uniform())
+    ));
+  };
+  const conductivity = (values: number[]) => values.map(
+    (value, i) => decodeReading({ timestamp: at(i), water_data: { 100: value, ecError: 0 } }),
+  );
+
+  it("never makes a likely data issue from noise inside the minimum detectable change", () => {
+    // A healthy seawater probe: 52,000 µS/cm with noise of 300 (0.6%), under v2's 2% detectable
+    // change. Against the series' MAD alone, ordinary noise read as spikes and three in a row
+    // made a likely data issue in most such weeks.
+    const rows = conductivity(noise(336, 300).map((n) => 52_000 + n));
+    const flags = qcMetric(rows, "conductivity");
+    expect(rows.filter((row) => flags.get(row)?.reason === "spike")).toHaveLength(0);
+    expect(dataIssueRuns(rows, flags)).toEqual([]);
+  });
+
+  it("still suspects a conductivity spike beyond the detectable change", () => {
+    const values = noise(48, 300).map((n) => 52_000 + n);
+    values[20] = 58_000;
+    const rows = conductivity(values);
+    expect(qcMetric(rows, "conductivity").get(rows[20])).toEqual({ flag: "suspect", reason: "spike" });
+  });
+
   it("suspects a reading far from two agreeing neighbours", () => {
     const values = wobble(20);
     values[10] = 9.5;

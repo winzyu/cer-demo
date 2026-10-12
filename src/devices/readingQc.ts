@@ -29,6 +29,7 @@
 
 import type { DeviceReading, MetricKey } from "../types/device.types";
 import { isPlausible } from "./plausibility";
+import { minimumDetectableChange } from "../report/referenceRanges";
 
 export type QcFlag = "pass" | "suspect" | "fail";
 
@@ -54,8 +55,22 @@ export const FLAT_LINE_FAIL_READINGS = 24;
 export const STUCK_TURBIDITY_MIN_DURATION_MS = 24 * 60 * 60_000;
 /** A longer silence is missing data and breaks every run. */
 export const MAX_GAP_MS = 3 * 60 * 60_000;
-/** v2 §8.2 spike: beyond 3 x MAD from the neighbours' mean. */
+/**
+ * v2 §8.2 spike: beyond 3 x MAD from the neighbours' mean, and beyond v2 §8.3's minimum
+ * detectable change. The MAD is the series' own until site baselines exist, so on a steady channel
+ * it is just the noise, and 3 x MAD alone suspected ordinary noise.
+ */
 export const SPIKE_MAD_MULTIPLE = 3;
+
+/** `minimumDetectableChange`'s names for the device metric keys. */
+const DETECTABLE_CHANGE_KEY: Record<MetricKey, string> = {
+  dissolvedOxygen: "dissolved_oxygen",
+  orp: "orp",
+  ph: "ph",
+  conductivity: "conductivity",
+  temperature: "temperature",
+  turbidity: "turbidity",
+};
 /** Consecutive suspect or failed readings that make a likely data issue. */
 export const DATA_ISSUE_RUN = 3;
 
@@ -130,7 +145,7 @@ export const qcMetric = (
   });
   flush();
 
-  // Spikes, among the readings still kept, against the whole series' MAD.
+  // Spikes, among the readings still kept, against the whole series' MAD and the detectable change.
   const kept = rows.filter((row) => {
     const flag = flags.get(row)?.flag;
     return flag === "pass" || flag === "suspect";
@@ -145,7 +160,10 @@ export const qcMetric = (
       const gap = Math.max(timeOf(row) - timeOf(before), timeOf(after) - timeOf(row));
       if (gap > MAX_GAP_MS) return;
       const [prev, value, next] = [values[i - 1], values[i], values[i + 1]];
-      if (Math.abs(prev - next) <= tolerance && Math.abs(value - (prev + next) / 2) > tolerance) {
+      const expected = (prev + next) / 2;
+      const detectable = minimumDetectableChange(DETECTABLE_CHANGE_KEY[key], expected);
+      const floor = Math.max(tolerance, detectable);
+      if (Math.abs(prev - next) <= tolerance && Math.abs(value - expected) > floor) {
         flags.set(row, { flag: "suspect", reason: "spike" });
       }
     });
