@@ -36,6 +36,7 @@ import {
 import type { ResolvedRange } from "./timeRange";
 import { readingAge } from "./readingAge";
 import { provenSiteStart, siteNotesForPeriod } from "./currentSite";
+import { dailyCycle, solarOffsetHours, withLocalSolar } from "./dailyCycle";
 import {
   DAY_MS, SITE_CACHE_MAX_ENTRIES, SITE_CACHE_MAX_ROWS, SITE_CACHE_RETENTION_MS,
   SITE_CACHE_TTL_MS, SITE_RECENT_DAYS, snapshotSite,
@@ -823,6 +824,7 @@ export class QuerySensorData {
         && (range.endInclusive ? time <= range.endMs : time < range.endMs);
     };
     const periodReadings = readings.filter(inRequestedRange);
+    const position = QuerySensorData.newestPosition(readings, range);
     const siteNotes = siteNotesForPeriod(snapshot.rows, site, inRequestedRange);
     const excludedStuck = new Map(metricKeys.map((key): [MetricKey, number] => [
       key, periodReadings.filter((row) => isStuck(key, row)).length,
@@ -871,7 +873,7 @@ export class QuerySensorData {
         : {}),
       ...(result.observedAt ? { observed_at: result.observedAt } : {}),
       ...(result.samples ? { samples: result.samples } : {}),
-      ...(result.series ? { series: result.series, bucket_ms: result.bucketMs } : {}),
+      ...(result.series ? QuerySensorData.seriesFields(result, samples, position?.longitude) : {}),
       ...(result.truncated
         ? { truncated: true, truncated_to: this.rawLimit, truncated_kept: result.truncatedKept }
         : {}),
@@ -918,8 +920,6 @@ export class QuerySensorData {
     // Report the part of the request it covered, so no reader takes the epoch for the window.
     const searchedStartMs = Math.max(snapshot.fromMs, range.startMs);
     const searchedEndMs = Math.min(snapshot.at, range.endMs);
-
-    const position = QuerySensorData.newestPosition(readings, range);
 
     const common = {
       ...identity,
@@ -1034,6 +1034,25 @@ export class QuerySensorData {
         shape(entry.key, entry.result, entry.samples),
       ])),
       ...notes,
+    };
+  }
+
+  /**
+   * A series with each bucket's start in local solar time beside UTC, and when in the day the
+   * metric peaks (`dailyCycle.ts`). Without a GPS fix there is no longitude, so UTC only.
+   */
+  private static seriesFields(
+    result: AggregateResult,
+    samples: Sample[],
+    longitude: number | undefined,
+  ): Record<string, unknown> {
+    if (longitude === undefined) return { series: result.series, bucket_ms: result.bucketMs };
+    const cycle = dailyCycle(samples, longitude);
+    return {
+      series: withLocalSolar(result.series ?? [], longitude),
+      bucket_ms: result.bucketMs,
+      local_solar_offset_hours: Math.round(solarOffsetHours(longitude) * 10) / 10,
+      ...(cycle ? { daily_cycle: cycle } : {}),
     };
   }
 

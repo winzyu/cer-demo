@@ -317,6 +317,28 @@ describe("data skepticism: scenario pods", () => {
     expect(Math.abs(drift(peakHours(BAY_MOUTH, 102)))).toBeLessThan(0.5);
   });
 
+  it("tells the sun from the tide by when each day's peak comes (record §5 item 5)", async () => {
+    type Cycle = { timing: string; daily_peaks_local_solar: string[]; peak_drift_minutes_per_day: number };
+    const cycle = (result: Result, key: string): Cycle => (metrics(result)[key] as unknown as { daily_cycle: Cycle }).daily_cycle;
+    const bay = await week(BAY_MOUTH);
+    const tidal = await week(TIDAL_FLAT);
+    expect(cycle(bay, "temperature").timing).toBe("same hour each day");
+    // Warmest about 15:30 PDT, which is about 14:40 local solar time at longitude -118.1.
+    cycle(bay, "temperature").daily_peaks_local_solar.forEach((at) => {
+      expect(Number(at.slice(11, 13))).toBeGreaterThanOrEqual(12);
+      expect(Number(at.slice(11, 13))).toBeLessThanOrEqual(17);
+    });
+    expect(cycle(tidal, "conductivity").timing).toBe("about 50 minutes later each day");
+    expect(cycle(tidal, "conductivity").peak_drift_minutes_per_day).toBeGreaterThan(30);
+  });
+
+  it("labels each series bucket with local solar time beside UTC", async () => {
+    const bay = await week(BAY_MOUTH, "temperature");
+    const first = (bay.series as Array<{ start: string; start_local_solar: string }>)[0];
+    expect(bay.local_solar_offset_hours).toBe(-7.9);
+    expect(Date.parse(`${first.start_local_solar}Z`) - Date.parse(first.start)).toBeCloseTo(-7.874 * HOUR, -5);
+  });
+
   it("a steady channel with independent noise is in range, not a data issue (spike floor, 612adaa)", async () => {
     const conductivity = await week(STEADY_CHANNEL, "conductivity");
     expect((conductivity.verdict as Verdict).status).toBe("in range");

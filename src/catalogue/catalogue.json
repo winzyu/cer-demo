@@ -265,6 +265,71 @@
       }
     },
     {
+      "id": "daily-solar-cycle",
+      "title": "Daily cycle that follows the sun",
+      "kind": "explanation",
+      "text": "Water warms through the day and cools overnight, and plants and algae add oxygen in daylight and use it at night, so temperature, dissolved oxygen, pH and conductivity can rise and fall every day. A cycle that peaks at the same hour every day is consistent with this natural daily pattern, and is real water behaviour rather than a fault.",
+      "appliesTo": {
+        "conditions": "A tool reports a daily cycle that peaks at the same hour each day, or the user asks why readings rise and fall every day."
+      },
+      "requiredEvidence": "A \"daily_cycle\" of \"same hour each day\" for at least one parameter.",
+      "limitations": "The sensors cannot separate heating from biological activity. If pH swings much more than usual for the site, a calibration check is reasonable, but the swing is not evidence of a fault on its own.",
+      "sources": ["sot-v2 §11 (temperature and DO coupling)", "general"],
+      "review": {
+        "status": "draft",
+        "notes": "Drafted 2026-10-12 after a real daily cycle was written off as sensor faults (docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §3 cause 1, §5 item 4). Hidden until a supervisor approves it."
+      }
+    },
+    {
+      "id": "tidal-exchange",
+      "title": "Readings that follow the tide",
+      "kind": "explanation",
+      "text": "At coastal and estuary sites the tide brings saltier, cooler ocean water in and carries fresher water out, so conductivity, temperature and pH can rise and fall with it. A cycle whose peak comes about 50 minutes later each day is consistent with tidal exchange.",
+      "appliesTo": {
+        "water": ["marine"],
+        "conditions": "A tool reports a daily cycle whose peak comes about 50 minutes later each day at a coastal pod, or the user asks whether the tide moves the readings."
+      },
+      "requiredEvidence": "A \"daily_cycle\" of \"about 50 minutes later each day\" at a marine, brackish or estuarine pod.",
+      "limitations": "No tool measures the tide. Comparing with a tide table for the nearest station would confirm it, and that station may differ from the pod's site.",
+      "sources": ["general"],
+      "review": {
+        "status": "draft",
+        "notes": "Drafted 2026-10-12 after a real daily cycle was written off as sensor faults (docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §3 cause 1, §5 item 4). Hidden until a supervisor approves it."
+      }
+    },
+    {
+      "id": "heat-wave",
+      "title": "Hot weather warms the water",
+      "kind": "explanation",
+      "text": "A spell of hot weather warms the water, especially shallow water. Warm water holds less dissolved oxygen, and daily swings in temperature, oxygen and pH grow larger. Readings during a heat wave can be unusual and still be real.",
+      "appliesTo": {
+        "conditions": "Water temperature ran higher than earlier in the window for several days, or the user reports hot weather at the site."
+      },
+      "requiredEvidence": "Several days of higher water temperature in a tool result, or the user's report of hot weather at the site.",
+      "limitations": "No tool measures air temperature or weather; the user's report is the only evidence of a heat wave.",
+      "sources": ["sot-v2 §11 (temperature and DO coupling)", "general"],
+      "review": {
+        "status": "draft",
+        "notes": "Drafted 2026-10-12 after a real daily cycle was written off as sensor faults (docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §3 cause 1, §5 item 4). Hidden until a supervisor approves it."
+      }
+    },
+    {
+      "id": "shallow-deployment",
+      "title": "A pod near the surface sees bigger swings",
+      "kind": "explanation",
+      "text": "A pod sitting just under the surface, or in shallow water, warms and cools faster than deeper water and sees more of the sun's effect on oxygen and pH, so its daily swings can be large and still be real.",
+      "appliesTo": {
+        "conditions": "The user says the pod sits near the surface or in shallow water, and its readings swing widely each day."
+      },
+      "requiredEvidence": "The user's description of the pod's depth or position, and a daily swing in a tool result.",
+      "limitations": "The pod's depth is not recorded; this rests on what the user says about the site.",
+      "sources": ["general"],
+      "review": {
+        "status": "draft",
+        "notes": "Drafted 2026-10-12 after a real daily cycle was written off as sensor faults (docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §3 cause 1, §5 item 4). Hidden until a supervisor approves it."
+      }
+    },
+    {
       "id": "algal-bloom",
       "title": "Daily oxygen swings consistent with algae",
       "kind": "explanation",

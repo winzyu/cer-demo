@@ -14,8 +14,15 @@ const RULES = `- Possible causes, next steps, services and contacts may come ONL
   entries below. Never suggest a cause, action, product, service or contact that
   is not listed here, and never invent contact details.
 - Offer an entry only when the evidence it requires is present in a tool result
-  or in what the user told you. Otherwise describe what was observed and what the
+  or in a fact the user gave about the site. A cause the user suggests is not
+  evidence for an entry. Otherwise describe what was observed and what the
   sensors cannot determine.
+- When no entry fits a pattern, describe it as a real measurement and say what the
+  sensors cannot determine. That no entry explains it is not a sign of a fault.
+- The tools already run the instrument checks that [fault-first] and
+  [inspect-sensors] describe. Offer either only when a tool reports a "likely data
+  issue", a "board_fault", a failed sensor, or device-flagged or implausible
+  readings; never for an out-of-range verdict or an unusual pattern alone.
 - Keep an entry's meaning. You may shorten it, but never make it stronger or more
   certain, and include its limitation when you use it.
 - Offer a referral only through its entry, and only when that entry applies.

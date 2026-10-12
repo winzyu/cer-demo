@@ -461,6 +461,53 @@ describe("REPORT_TOOL_BLOCK", () => {
   });
 });
 
+describe("data skepticism (GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §5)", () => {
+  // Michael, 2026-10-09: a real daily pH cycle was called "all error data", blamed on tides no
+  // tool measured, and swapped for new fault theories each time he pushed back.
+  it("treats readings as real unless a tool flagged them", () => {
+    expect(TOOL_BLOCK).toContain("Readings are real measurements of the water unless a tool says otherwise");
+    expect(TOOL_BLOCK).toContain("The tools have already run the fault checks; an \"out of range\" or unusual reading\n  passed them.");
+    expect(TOOL_BLOCK).toContain("never offer a fault theory (fouling, drift,\n  calibration, power, exposure) as their likely cause.");
+  });
+
+  it("names as a cause only what a tool measured", () => {
+    expect(TOOL_BLOCK).toContain("Name as a cause only what a tool measured. Tides, swell, waves, weather, rain, air\n  exposure, depth and nearby activity are not measured");
+    expect(TOOL_BLOCK).toContain("never say they caused a\n  pattern or that they had no effect.");
+  });
+
+  it("takes the user's site facts as evidence and their causes as hypotheses", () => {
+    expect(TOOL_BLOCK).toContain("What the user tells you about the site");
+    expect(TOOL_BLOCK).toContain("A cause the user suggests\n  (\"high tides\", \"the sewage spill\") is a hypothesis");
+  });
+
+  it("re-reads the data when challenged and moves only for new data or a new site fact", () => {
+    expect(TOOL_BLOCK).toContain("When the user disputes what the data shows, call query_sensor_data again");
+    expect(TOOL_BLOCK).toContain("Never bring in a new fault theory to meet an objection.");
+  });
+
+  it("reads times of day in local solar time and tells sun from tide by daily_cycle", () => {
+    expect(TOOL_BLOCK).toContain("\"start_local_solar\" is the same instant in the pod's\n  local solar time");
+    expect(TOOL_BLOCK).toContain("\"same hour each day\" follows the\n  sun");
+    expect(TOOL_BLOCK).toContain("\"about 50 minutes later each day\" is the timing of a\n  tide");
+  });
+
+  it("keeps the instrument entries for a tool-reported fault, and a user's cause out of entry evidence", () => {
+    const block = buildCatalogueBlock(usableGuidance(catalogue, false));
+    expect(block).toContain("A cause the user suggests is not\n  evidence for an entry.");
+    expect(block).toContain("That no entry explains it is not a sign of a fault.");
+    expect(block).toContain("never for an out-of-range verdict or an unusual pattern alone.");
+  });
+
+  it("keeps the natural-variation drafts out of production's prompt", () => {
+    const live = buildCatalogueBlock(usableGuidance(catalogue, false));
+    const review = buildCatalogueBlock(usableGuidance(catalogue, true));
+    ["daily-solar-cycle", "tidal-exchange", "heat-wave", "shallow-deployment"].forEach((id) => {
+      expect(live).not.toContain(`[${id}]`);
+      expect(review).toContain(`[${id}]`);
+    });
+  });
+});
+
 describe("naming the period an answer covers (SPECS.md §10.8)", () => {
   // Michael, 2026-10-11: a summary or overview did not say what window it was in.
   it("has every sensor answer name its period first, with the resolved dates", () => {

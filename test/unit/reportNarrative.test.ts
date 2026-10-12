@@ -688,8 +688,16 @@ describe("deterministicNarrative — shipped catalogue", () => {
       biofoulingNotes: "", sensorAgreementNotes: "", likelyDataIssue: ["Turbidity (Relative)"],
     };
     const sections = deterministicNarrative(clean, noAccuracy, "Normal", drafts);
-    expect(sections.guidanceIds).toEqual(["inspect-sensors"]);
+    expect(sections.guidanceIds).toEqual(["fault-first", "inspect-sensors"]);
     expect(sections.summaryBullets.join(" ")).toContain("inspect the sensors named above");
+  });
+
+  it("does not tell a reader to rule out the instrument for an exceedance the QC passed", () => {
+    // A real daily pH dip below the limit became "an instrument problem" in chat
+    // (GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §3 cause 2): fault-first rode on every crossing.
+    const sections = deterministicNarrative(report([flaggedPh()]), noAccuracy, "Watch", drafts);
+    expect(sections.guidanceIds).not.toContain("fault-first");
+    expect(sections.guidanceIds).not.toContain("inspect-sensors");
   });
 
   it("does not name an acidic input in marine water, where v2 says it is rarely detectable", () => {
