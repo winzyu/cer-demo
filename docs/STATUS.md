@@ -1,15 +1,15 @@
 # Status
 
-Updated 2026-10-11 by the coordinator on `land/post-launch`, which merges `docs/launch-handoff`, `task/sot-v2-flagging` (v2 flagging chat, after its smoke check), `task/report-omit` (report-editing chat) and `docs/behavior-handoff` onto `dev`; other workstreams as of the release chat's 2026-10-07 update after L9.
+Updated 2026-10-12 by the coordinator after landing `land/post-launch` on `dev`: `docs/launch-handoff`, `task/sot-v2-flagging`, `task/report-omit`, `docs/behavior-handoff` and `task/data-skepticism`'s coverage-line work, plus three landing fixes; other workstreams as of the release chat's 2026-10-07 update after L9.
 Current state and next steps only; history is `git log -p docs/STATUS.md`; never cite this file from code or other docs.
 
 ## Start here
 
 - **Gilligan is live (2026-10-07).** cer-gilligan `00004-r5q`, cer-api `00081-qon` (tag `rc2`) and cer-ui `00070-dax` (tag `rc1`) take all traffic; record in [`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md) §7 items 10-19.
-- **v2 flagging (backlog §1, items A1-D3)**: built and pushed on `task/sot-v2-flagging` (worktree `sot-v2-flagging`). The smoke check passed (2026-10-11, about $0.07, [`migration/V2_FLAGGING_SMOKE_2026-10-11.md`](migration/V2_FLAGGING_SMOKE_2026-10-11.md)). Next: the coordinator lands the branch on `dev`.
+- **v2 flagging (backlog §1, items A1-D3)**: landed on `dev` (2026-10-12). The smoke check passed (2026-10-11, about $0.07, [`migration/V2_FLAGGING_SMOKE_2026-10-11.md`](migration/V2_FLAGGING_SMOKE_2026-10-11.md)). At landing, a spike must also exceed the minimum detectable change, so noise on a steady channel no longer makes a likely data issue; not deployed.
 - **Post-launch backlog.** Order the remaining items in [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md) with the user, reconciled with the untracked `docs/migration/POST_RELEASE_ITEMS_EXPLAINED.html` (2026-10-02); the unguarded user-update routes (§2) are the obvious next candidate.
 - **Report editing (backlog §6).** Report options (`omit`) are built and unit-tested on cer-demo `task/report-omit` and server `task/gilligan-report-omit`; the Mirror tests (2026-10-10 and 11, [`migration/REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](migration/REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md)) pass the mechanism; the false-claim fix (`5390332`: server-written "New PDF in this reply" line, forced retry) made a report in 8 of 8 replays and all three turns of a cer-api chat, with the retry firing in 7 of 11 (results doc, "Fix test").
-  Next: the user sends Michael the samples in `migration/report-omit-samples/`; then the server push and landing on consent.
+  Landed on `dev` (2026-10-12), with the report-claim check no longer reading reading-QC sentences as claims and `threshold_notes` covering every threshold footnote; not deployed. Next: the user sends Michael the samples in `migration/report-omit-samples/`; the server branch `task/gilligan-report-omit` waits for push consent.
   This chat leaves over-flagging (§1) out by the user's decision.
 - **Gilligan behaviour (data skepticism).** Gilligan wrote off a week of real readings as sensor faults on a tide link it never measured, then reversed under pushback ([`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md)).
   Next: get the user's mirror details, budget and decisions (§5-6 there), then reproduce on the mirror before changing the prompt; build on `task/sot-v2-flagging` once it lands, never edit its files in parallel.
@@ -32,7 +32,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 - Code moved to `~/code/work/clean-earth-rovers/` on 2026-10-04 (WSL rebuild); `~/release/` did not survive the move, and Docker's image store was emptied.
 - Main checkout on `reflection` with the user's uncommitted path fixes (`.claude/settings.json`, `release/start-rc2-emulator.sh`) and the untracked `docs/migration/POST_RELEASE_ITEMS_EXPLAINED.html`; `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
-- Landing: branch `land/post-launch` (worktree `post-launch-land`) is `dev` `469e972` plus `docs/launch-handoff`, `task/sot-v2-flagging`, `task/report-omit` and `docs/behavior-handoff`; `dev` fast-forwards to it once the merged-branch test plan passes.
+- Landing: `dev` is `land/post-launch` (2026-10-12), tested per [`migration/POST_LAUNCH_MERGE_TESTS.md`](migration/POST_LAUNCH_MERGE_TESTS.md) and [`migration/POST_LAUNCH_MERGE_RESULTS_2026-10-11.md`](migration/POST_LAUNCH_MERGE_RESULTS_2026-10-11.md); new work branches from `dev`.
 - `dev` moved to `469e972` (the window-note fix, pushed at the user's request outside the coordinator); worktree `dev` holds it.
 - v2 flagging: worktree `sot-v2-flagging`, branch `task/sot-v2-flagging` pushed, clean; `node_modules`, `.env` and the `data/` caches are linked or copied in, ignored.
 - cer-demo worktrees: 47 besides the main checkout; `post-launch-land` is the coordinator's; `data-skepticism` and `skeptic-repro` are the behaviour chat's; `post-launch-security` and `mirror-testing` are stale (2026-09-28) with nothing uncommitted.
@@ -46,7 +46,6 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - User, behaviour: mirror details, the test budget (about $1, or $2 with the wave-1 check), whether to stop `cer-ui-l8-local` for port 3000, and whether natural-variation catalogue drafts go to the supervisor; deploy `469e972`'s fix when convenient.
 - User: choose the rest of the post-launch order; send Michael the launch note; delete the test user `winsyu475+certest@gmail.com`; say when to stop `cer-ui-l8-local`; recover `~/release/` if a backup has it.
 - Michael: revoke the old Gemini key and Gmail app password; optionally grant the user Cloud Build bucket write and `roles/datastore.user` on the `gilligan` database (usage resets); test before the `main` merges.
-- Agent, landing: run the merged-branch test plan in [`migration/POST_LAUNCH_MERGE_TESTS.md`](migration/POST_LAUNCH_MERGE_TESTS.md) on `land/post-launch`, then fast-forward `dev` to it.
 - User, report editing: send Michael the before-and-after PDFs and correct the earlier message that the model edits parts of the report (it never did; the variation came from data-driven templates).
 - Agent, report editing: optionally relay `report_retried` through cer-api (`CerRagService.ask`) so retries show without Gilligan's log; stop the Mirror stack when the user says (delete `mirror-env.sh` and `server-mirror/`).
 - Agent, behaviour: the mirror fixture, reproduction and prompt and catalogue changes in [`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md) §5-6.

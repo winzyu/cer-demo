@@ -17,12 +17,14 @@ One conflict git did not flag: `test/unit/reportRenderPdf.test.ts` still passed 
 1. **QC explanations read as report claims (defect).**
    `claimsReport` treats "excluded", "removed" or "omitted" next to "report" as a delivery claim, and v2 answers explain QC exclusions in exactly those words.
    With the report tool registered, such an answer forces a `generate_report` round in a chat that never asked for a report; if no PDF is made, the answer is replaced with "That copy was not regenerated; please ask again."
-   Pinned by `it.failing` cases in `test/unit/postLaunchMerge.test.ts`; they start failing once the check is fixed.
-   Not fixed on this branch: the fix (and whether to gate the check on a report request or an earlier delivery line) is the user's call.
+   Fixed at landing (2026-10-12): a sentence that names readings is not a delivery claim, since `omit` never removes readings; reproduced first through `POST /api/v1/chat` (`test/integration/reportClaim.test.ts`).
 2. **`threshold_notes` does not cover v2's fallback footnote (decision).**
    The operator-threshold footnote is left out, but the "generic fallback" footnote and the "Not assessed" footnote still print.
    The parameter prose still says "generic fallback" under every omit subset, so a reader can always tell a fallback from a site limit.
-   Recorded as `it.todo` until the user decides.
+   Resolved at landing (2026-10-12): `threshold_notes` now drops all three footnotes, as its description promised (`timeline.md`).
+3. **Spike rule over-flags steady channels (defect, found by the test chats).**
+   Against the series' MAD alone, ordinary noise on a healthy steady channel read as spikes, and three in a row made a likely data issue.
+   Fixed at landing (2026-10-12): a spike must also exceed v2's minimum detectable change (`readingQc.ts`, `test/unit/readingQc.test.ts`).
 
 ## Tier 1: static checks (free)
 
@@ -47,7 +49,7 @@ npx jest --silent \
   test/integration/devices.test.ts test/integration/provenance.test.ts
 ```
 
-Expected on 2026-10-11: 19 unit suites (all pass, 1 todo) and 5 integration suites (66 tests) pass.
+On 2026-10-12, after the landing fixes and `task/data-skepticism`, the 24 touched suites (706 tests) and 9 further dependent suites (229 tests) pass.
 `postLaunchMerge.test.ts` covers:
 
 - all 16 omit subsets leave every numeric flag cell unchanged;

@@ -1110,7 +1110,7 @@ That design lost every report on redeploy, bound access to one exact token strin
 
 **Notes left out on request** (2026-10-09, `POST_LAUNCH_BACKLOG.md` §6).
 A stakeholder asked for a copy without the turbidity disclaimers to share publicly; the report had no way to leave anything out, and the model could not edit it.
-`generate_report` and the route take an optional `omit`, a closed list from `report/omit.ts`: `turbidity_notes` (the uncalibrated-index caveats in the summary, table, footnote and turbidity card), `sensor_fault_notes` (off-scale and all-zero notes and Flag suffixes), `threshold_notes` (where each threshold comes from, rejection and blind-spot notes) and `data_quality` (the whole section; later sections renumber).
+`generate_report` and the route take an optional `omit`, a closed list from `report/omit.ts`: `turbidity_notes` (the uncalibrated-index caveats in the summary, table, footnote and turbidity card), `sensor_fault_notes` (off-scale and all-zero notes and Flag suffixes), `threshold_notes` (where each threshold comes from, including the operator, v2 fallback and "Not assessed" footnotes, rejection and blind-spot notes; each parameter's prose still calls a fallback generic) and `data_quality` (the whole section; later sections renumber).
 Every note is kept by default, and the prompt allows `omit` only when the user explicitly asks; the model can choose groups but never write report text, so the same request always renders the same PDF and no model call is added.
 Numbers, flags, status, events and recommendations are never removed, and a copy with notes left out lists them in an "Omitted" metadata row, so a shared PDF is not taken for the full assessment.
 `omit` travels in `report_request` (deduplicated, in canonical order) and the tool returns `omitted_from_pdf`.
@@ -1123,7 +1123,8 @@ The reply now ends with a line the server writes from the tool results, by the s
 An answer that made no report gets "No new PDF was made in this reply." when its report call failed or an earlier reply in the chat carried one of these lines, which covers a "done" the check below cannot recognise; a chat that never involved a report gets nothing.
 The prompt tells the model not to announce a PDF, mention the download button or list the omitted notes.
 These lines are removed from history before the model reads it, because marking earlier replies as having produced a report made it skip the tool more often (5 of 6 runs against 1 of 6).
-A tool-free answer that points at the download button, or says in a sentence that is not a refusal that a PDF, copy or report has notes left out, when no report was made in that answer, is discarded and its round rerun once with `tool_choice` forcing `generate_report` (Fireworks honours it for `glm-5p3-flash`); if the answer after that still makes the claim, or no tool round is left, it is replaced with "That copy was not regenerated; please ask again."
+A tool-free answer that points at the download button, or says in a sentence that is not a refusal and names no readings that a PDF, copy or report has notes left out, when no report was made in that answer, is discarded and its round rerun once with `tool_choice` forcing `generate_report` (Fireworks honours it for `glm-5p3-flash`); if the answer after that still makes the claim, or no tool round is left, it is replaced with "That copy was not regenerated; please ask again."
+A sentence that names readings ("two flat-line readings were excluded from the report period") explains reading QC, since `omit` leaves out notes and never readings.
 The forced call costs one more model round and a device read; a reply that only refers back to an earlier button triggers it too, and makes a fresh copy of what the model chooses.
 The response carries `report_retried: true` when the retry ran.
 Taking edits away from the model entirely (omit checkboxes beside the dashboard's download button) remains the fully deterministic alternative.
@@ -1752,7 +1753,8 @@ The completeness percentage compares those used rows with all current-site rows 
 **Reading QC** (`src/devices/readingQc.ts`, source-of-truth v2 §8; `timeline.md` 2026-10-10 and 2026-10-11).
 Every reading of every metric is pass, suspect or fail before anything is judged against a limit.
 Fail: the probe's error flag, the server's `1000000000` read-failure value, an implausible value, or a flat line of 24 or more identical consecutive readings.
-Suspect: a flat line of 6 or more, or a spike more than 3 × the series' MAD from the mean of two neighbours that agree within that tolerance; the spike test is skipped when the MAD is 0.
+Suspect: a flat line of 6 or more, or a spike more than 3 × the series' MAD, and more than the minimum detectable change, from the mean of two neighbours that agree within 3 × the MAD; the spike test is skipped when the MAD is 0.
+The detectable-change floor keeps ordinary noise on a steady channel, where the series' MAD is only the noise, from reading as spikes and then as a likely data issue.
 Turbidity at exactly 0 keeps its own rule, because the index clamps clear water to 0: it fails only after at least 24 hours of zeros, and never becomes suspect by count.
 A missing or failed reading, a changed value or a gap over 3 hours breaks a flat line; gaps over 3 hours are reported as missing data (`missing_data`).
 QC runs on current-site context before trimming to the requested range, so a short query cannot conceal an established flat line.
