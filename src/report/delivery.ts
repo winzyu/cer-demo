@@ -121,10 +121,16 @@ const LEFT_OUT = /\b(?:left out|leaves out|leaving out|omitted|omits|removed|exc
 const REPORT_NOUN = /\b(?:pdf|copy|report|version)\b/i;
 /** "Numbers cannot be removed from the report" is a refusal, not a delivery. */
 const NEGATION = /\b(?:cannot|can't|can not|not|never|won't|unable)\b/i;
+/**
+ * "Two flat-line readings were excluded from the report period" explains reading QC
+ * (`readingQc.ts`), not a delivery: `omit` leaves out notes and sections, never readings.
+ */
+const READINGS = /\b(?:readings?|data points?|samples?|measurements?)\b/i;
 
 /**
  * True when an answer reads as delivering a report: it points at the download button, or says a
- * PDF, copy or report has notes left out, in one sentence that is not a refusal. Only consulted
+ * PDF, copy or report has notes left out, in one sentence that is not a refusal or about
+ * readings. Only consulted
  * for an answer that made no report, where either reading is false. A wording this misses (the
  * model saying "done" without either) still gets the "No new PDF" line when the chat has had a
  * report.
@@ -133,5 +139,6 @@ export const claimsReport = (answer: string): boolean => (
   BUTTON.test(answer)
   || answer.split(/(?<=[.!?])\s+|\n+/).some((sentence) => (
     LEFT_OUT.test(sentence) && REPORT_NOUN.test(sentence) && !NEGATION.test(sentence)
+    && !READINGS.test(sentence)
   ))
 );

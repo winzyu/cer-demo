@@ -1,5 +1,5 @@
 import PDFDocument from "pdfkit";
-import { claimsReport, NOT_REGENERATED_ANSWER } from "../../src/report/delivery";
+import { claimsReport } from "../../src/report/delivery";
 import { REPORT_OMIT_GROUPS, type ReportOmitGroup } from "../../src/report/omit";
 import { buildReportPdf, flagCellText } from "../../src/report/renderPdf";
 import { deterministicNarrative } from "../../src/report/narrative";
@@ -16,8 +16,8 @@ import type { ToolDefinition, ToolHandler } from "../../src/types/tool.types";
  * editing (`task/report-omit`: the `omit` groups and the server-checked report claim).
  * Each branch's own suites pass; these cases cover what neither could test alone.
  *
- * `it.failing` marks a known cross-branch defect: the case passes while the defect is present
- * and fails once it is fixed, which is the signal to turn it into a plain `it`.
+ * The report-claim cases pin a defect the merge exposed: reading-QC explanations ("readings were
+ * excluded from the report period") read as delivery claims and forced a `generate_report` round.
  */
 
 const noFloor = (): number => 0;
@@ -154,6 +154,9 @@ describe("omit on a v2-flagged PDF", () => {
       expect(text.includes("operator-configured threshold from the device registry"))
         .toBe(!omit.includes("threshold_notes"));
       expect(text.includes("(all zero)")).toBe(!omit.includes("sensor_fault_notes"));
+      expect(text.includes("is a generic fallback: the source-of-truth"))
+        .toBe(!omit.includes("threshold_notes"));
+      expect(text.includes("A parameter with neither")).toBe(!omit.includes("threshold_notes"));
     },
   );
 
@@ -164,7 +167,14 @@ describe("omit on a v2-flagged PDF", () => {
     expect(narrative.parameterAnalysis.get("Dissolved Oxygen")).toContain("generic fallback");
   });
 
-  it.todo("decide whether threshold_notes also drops the v2 'generic fallback' footnote and the Not assessed footnote");
+  it("leaves out the Not assessed footnote with threshold notes, keeping the status", () => {
+    const unassessed: ReportInput = { ...mixed, parameters: [stats(orp, 200, 260)] };
+    const footnote = "No numeric parameter on this device has a usable registry threshold";
+    expect(drawnText(unassessed, "Not assessed", [])).toContain(footnote);
+    const omitted = drawnText(unassessed, "Not assessed", ["threshold_notes"]);
+    expect(omitted).not.toContain(footnote);
+    expect(omitted).toContain("Not assessed");
+  });
 });
 
 describe("report-claim check against v2 QC wording", () => {
@@ -176,7 +186,7 @@ describe("report-claim check against v2 QC wording", () => {
   });
 
   // A chat answer explaining reading QC (readingQc.ts) uses the same verbs as an omit delivery.
-  it.failing.each([
+  it.each([
     "Two flat-line readings were excluded from the report period's average.",
     "Spike readings are removed before the report's verdicts are worked out.",
     "Readings flagged by the probe were omitted from this report.",
@@ -223,7 +233,7 @@ describe("orchestrator: a QC explanation in a chat with no report", () => {
     { role: "user", content: "Is the dissolved oxygen OK this week?" },
   ];
 
-  it.failing("answers without forcing generate_report", async () => {
+  it("answers without forcing generate_report", async () => {
     const report = jest.fn(async () => ({ error: "not requested" }));
     const { llm, forced } = scripted([qcAnswer, qcAnswer]);
 
@@ -232,15 +242,5 @@ describe("orchestrator: a QC explanation in a chat with no report", () => {
     expect(forced.every((tool) => tool === undefined)).toBe(true);
     expect(report).not.toHaveBeenCalled();
     expect(result.content).toBe(qcAnswer.content);
-  });
-
-  it("today: the answer is replaced when the forced report is not made (documents the defect)", async () => {
-    const report = jest.fn(async () => ({ error: "not requested" }));
-    const { llm } = scripted([qcAnswer, qcAnswer]);
-
-    const result = await new ChatOrchestrator(llm, tools(report)).run(messages);
-
-    expect(result.reportRetried).toBe(true);
-    expect(result.content).toBe(NOT_REGENERATED_ANSWER);
   });
 });

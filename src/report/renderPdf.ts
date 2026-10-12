@@ -630,9 +630,10 @@ export const buildReportPdf = (
   const operatorSourced = report.parameters
     .filter((p) => p.baseline.baselineSource === "operator-threshold")
     .map((p) => p.baseline.label);
-  if (omit.includes("threshold_notes")) {
-    // Left out at the requester's request; the metadata table says so.
-  } else if (operatorSourced.length > 0) {
+  // `threshold_notes` leaves out every provenance footnote below; the metadata table says so, and
+  // each parameter's prose still names a fallback as generic (narrative.ts).
+  const thresholdNotes = !omit.includes("threshold_notes");
+  if (thresholdNotes && operatorSourced.length > 0) {
     doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
       `Site Baseline for ${operatorSourced.join(", ")} is this device's operator-configured `
       + "threshold from the device registry — an alert limit the operator set, not a "
@@ -645,7 +646,7 @@ export const buildReportPdf = (
   const fallbackSourced = report.parameters
     .filter((p) => p.baseline.baselineSource === "v2-fallback")
     .map((p) => p.baseline.label);
-  if (fallbackSourced.length > 0) {
+  if (thresholdNotes && fallbackSourced.length > 0) {
     doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
       `Site Baseline for ${fallbackSourced.join(", ")} is a generic fallback: the source-of-truth `
       + "document's general range for this water type, used because this device has no usable "
@@ -653,7 +654,9 @@ export const buildReportPdf = (
       { width: CONTENT_WIDTH },
     );
   }
-  if (operatorSourced.length > 0 || fallbackSourced.length > 0) {
+  if (!thresholdNotes) {
+    // Left out at the requester's request.
+  } else if (operatorSourced.length > 0 || fallbackSourced.length > 0) {
     doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
       "A parameter with neither shows no baseline at all (\"Not established\").",
       { width: CONTENT_WIDTH },
