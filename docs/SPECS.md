@@ -154,6 +154,7 @@ clean-earth-rag/
 │   │   ├── index.ts          tool registry, gated on SENSOR_TOOL and REPORT_TOOL
 │   │   ├── querySensorData.ts  the sensor tool: device match, fetch, caveats (§10.3a)
 │   │   ├── dataCoverage.ts     the server-written "Data covered in this reply" line (§10.8)
+│   │   ├── dailyCycle.ts       local solar time and when each day's peak comes (§10.9)
 │   │   ├── metricVerdict.ts  each metric's verdict for the sensor tool (§19)
 │   │   ├── generateReport.ts   the report tool, gated on REPORT_TOOL
 │   │   ├── getPodThresholds.ts  the pod's registry alert limits, validated, v2 fallback ranges
@@ -207,6 +208,7 @@ clean-earth-rag/
 │   │                 devices.test.ts, reports.test.ts
 │   ├── fixtures/device-api/  recorded production bodies + provenance README (§16)
 │   ├── fixtures/pod-scope/   synthetic fleet for pod-authorization work
+│   ├── fixtures/skepticism/  fabricated fleet for the data-skepticism tests and replay (§10.9)
 │   └── unit/         51 suites — see the table in §16
 ├── eval/fixtures-wave1/      45 committed eval conversations, 90 turns (§12)
 ├── eval/claims/              Phase 1a claim inventory, one file per document
@@ -1162,6 +1164,26 @@ Michael reported (2026-10-11) that a summary or overview did not say what window
 - The line comes before the "New PDF" line, on the JSON and streaming paths alike, and is stripped from history before it reaches the model, so the model never writes one itself.
 - The prompt complements it: the first sentence of a sensor answer names its period with the dates of `time_range_resolved`; a summary, overview or "how is the water" with no period named uses "last 7 days", says so and offers a longer one; a follow-up that reuses earlier readings names their period or reads again, and a one-parameter follow-up ("what about the pH?") reads the earlier answer's period rather than the latest value; a report answer states `report_period` in its first sentence, and when no period was named it says the user named none, so it covers the last 7 days, and ends by offering a longer period.
 
+
+### 10.9 Reading the data (`src/prompt/systemPrompt.ts`, `src/tools/dailyCycle.ts`, `src/catalogue/`)
+
+Gilligan wrote off a real daily pH cycle as sensor faults, blamed tides no tool measures, and swapped in a new fault theory each time the user pushed back (`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`).
+The tools already judge readings (§19); these rules keep the model from overruling them.
+
+- Readings are real measurements unless a tool says otherwise: device-flagged (`excluded_faulted`), implausible, a "likely data issue" verdict, a `board_fault` or a failed sensor.
+  An out-of-range or unusual reading passed those checks; the model reports it as what the water did and may call it unusual and worth checking, never bad, an error or an instrument problem, and never offers a fault theory as its cause.
+- Only measured quantities may be named as causes; tides, swell, weather, rain, air exposure, depth and nearby activity may be offered only as "consistent with", with what would confirm them.
+- A user's statement about the site (depth, position, always submerged, out of the water at a stated time) is evidence; a cause the user suggests is a hypothesis, and an event the user mentions has no time in the data, so the model never says the readings did or did not change "when it started".
+- When the user disputes the data, the model calls `query_sensor_data` again and changes position only for new data or a new site fact, saying which.
+- Series buckets carry `start_local_solar` beside the UTC `start` (UTC plus longitude / 15 hours; the API carries no time zone, and solar time is what decides whether a cycle follows the sun).
+  Reading UTC bucket times as local inverted the incident pod's cycle in every pre-fix conversation ("nightly lows, midday peaks" for a pH that bottoms out mid-afternoon).
+- With three or more full local days, each metric in a series carries `daily_cycle`: each day's peak in local solar time, the fitted drift in minutes per day, and a timing of "same hour each day" (drift within 15 minutes, a solar cycle), "about 50 minutes later each day" (30-72 minutes, the lunar day's 24.84 hours, a tide) or "unclear" (day-to-day scatter over 1.5 hours, or anything else).
+  No tool measures tides, so this timing is the only evidence for telling the two apart.
+- The catalogue's `fault-first` and `inspect-sensors` are offered only for a tool-reported data issue, board fault, failed sensor, or flagged or implausible readings (`DATA_ISSUE_ONLY_ENTRIES` in `catalogue/select.ts`): the report leaves them out otherwise, and each record in the chat prompt carries an "Offer only when" line.
+  `fault-first`'s own limitation says the report runs no fault checks; per-reading QC now runs them, and an exceedance passed them.
+  A pattern no entry explains is described as a real measurement, and a cause the user suggests is not evidence for an entry.
+- Natural-variation entries (`daily-solar-cycle`, `tidal-exchange`, `heat-wave`, `shallow-deployment`) are drafts, hidden in production (`CATALOGUE_DRAFTS=false`) until a supervisor approves them.
+
 ---
 
 ## 11. Ingestion (`src/ingestion/`, `scripts/ingest.ts`)
@@ -1657,6 +1679,8 @@ No test touches the network, needs an API key or costs money, and new tests keep
 | `unit/operatorThresholds.test.ts` | every rejection reason for an operator-entered temperature baseline — the all-zero "never configured" registry state, an inverted range, a typed-in placeholder magnitude — each falling back to "no baseline established" rather than to a wrong range, and never printing the rejected numbers |
 | `unit/answerFormat.test.ts` | `【commentary…】` stripping anchored to the channel name, **citation markers in the same brackets left untouched** (~160 of them across the captured transcripts), the marker-only answer coming out empty so the existing 502 guard fires, and the streaming filter agreeing with the batch stripper however the text is chopped up |
 | `unit/generateReport.test.ts`, `unit/buildReportInput.test.ts`, `unit/reportModel.test.ts`, `unit/reportEvents.test.ts`, `unit/reportPatterns.test.ts`, `unit/reportReferenceRanges.test.ts`, `unit/reportNarrative.test.ts`, `unit/reportRenderPdf.test.ts` | the report pipeline: the tool's arguments and flag gating, the computed model assembled from sensor + registry data, event detection, diel/tidal/trend tagging, the transcribed baselines and turbidity bands, narration confined to pre-computed facts, and the PDF layout |
+| `unit/dataSkepticism.test.ts` | what the tools hand the model for the data-skepticism fleet (`test/fixtures/skepticism/fleet.ts`, served in the device API's wire shapes): the incident week's solar cycle and afternoon pH dip never a data issue, device-flagged faults still reported, the guard pods (implausible pH, a real low-oxygen event, a silent pod, stuck turbidity), a tidal pod's drifting peak against the solar pod's fixed one, a steady noisy channel in range, a flagged probe excluded, and a pod out of the water with no cause in the result (§10.9) |
+| `unit/dailyCycle.test.ts` | `daily_cycle` timing: same hour, about 50 minutes later across midnight, unclear for noise, nothing under three full days, flagged readings ignored; local solar time from longitude (§10.9) |
 | `integration/reports.test.ts` | `POST /api/v1/reports` (§10.7): each guard (token, flag, body, report quota), the PDF returned with nothing written to disk, a 422 refusal that counts nothing, and the removed `GET /reports/:filename` |
 
 **`unit/pgvectorRag.test.ts` is gone from the live suite** (2026-08-19). Its `fuseRrf` and

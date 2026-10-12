@@ -63,6 +63,8 @@ Not deployed: production stays on `ddd6292` until the user builds and routes a n
 
 ## 5. Remaining work
 
+Items 1-5 and labelled UTC buckets were built and tested on 2026-10-12: [`DATA_SKEPTICISM_FIX_2026-10-12.md`](DATA_SKEPTICISM_FIX_2026-10-12.md), [`SPECS.md`](../SPECS.md) §10.9.
+
 `task/sot-v2-flagging` (worktree `sot-v2-flagging`, active on 2026-10-11 with uncommitted edits) already moves judging into the tools: a QC-checked verdict per metric, maintenance only for a "likely data issue", "board_fault" or failed sensor, and the turbidity caveat once per conversation.
 Build on that branch once it lands; do not edit its files in parallel.
 It merges cleanly with `469e972`.
