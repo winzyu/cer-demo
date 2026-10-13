@@ -39,6 +39,18 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
 
 ## Supervisor
 
+- [ ] **28. Was Algalita's pH probe serviced around Sep 29-30 or Oct 7, and could pH there really reach 12.9 or 2.7?**
+  Between Sep 25 and 29, Algalita pH jumped by 4-5 units within half an hour four times (to 11.8, then 6.4, 2.7 and back), and again on Oct 7 (7.2 to 10.9), while ORP, conductivity, oxygen and temperature followed the same daily curve as on normal nights and the probe's own error flag stayed 0.
+  Readings returned to normal around Sep 29-30, when the registry's next calibration date fell; the data alone cannot show whether the probe or the water changed (`docs/timeline.md`, 2026-10-12).
+  *Unblocks:* whether Gilligan may describe these readings as "very unusual, a calibration check would confirm", and the manual test expectations for the customer's Sep 26 question.
+  *Answer:*
+
+- [ ] **29. May Gilligan tell customers a reading is "very unusual; a calibration check would confirm" instead of calling it a sensor fault?**
+  The proposal keeps readings the device did not flag, including pH outside 3-12 and half-hour jumps faster than v2 §8.2's rate-of-change guide, and describes them as unusual rather than faulty; "sensor fault" and "inspect" stay for faults the device reports (error flags, read failures, flat lines, stuck turbidity).
+  Options and walkthroughs: `docs/migration/FLAGGING_OVERVIEW_2026-10-12.html` §5-7.
+  *Unblocks:* the wording rule and the pH plausibility change in the flagging rework.
+  *Answer:*
+
 - [ ] **26. Should natural-variation notes, such as coastal upwelling, live in the guidance catalogue?**
   v2 §3 says coastal dissolved oxygen can dip to 4-5 mg/L and pH to about 7.6 during upwelling, both below its fallback ranges.
   For now the code attaches that note itself when a coastal pod is judged against the v2 fallback (`docs/timeline.md`, 2026-10-11).
@@ -51,6 +63,7 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
 - [ ] **27. Who corrects the thresholds that do not fit the water, and should the alert emails follow the new flag rule?**
   The 2026-10-09 scan found most persistent flags come from thresholds that do not fit the water, for example PCH's 68 °F maximum against 78-85 °F water (`POST_LAUNCH_BACKLOG.md` §1a).
   Gilligan now flags a metric only after 3 consecutive readings beyond its limit, but the server's alert emails still check only the latest reading, so an email can alert while chat says the metric is in range.
+  On 2026-10-12 Michael kept the emails out of scope for the new share rule (5% of a rolling 24 hours) without saying whether they should eventually match it; they list any exceedance in their daily, weekly or monthly digests.
   *Unblocks:* fewer persistent flags, and chat and emails agreeing.
   *Answer:*
 
