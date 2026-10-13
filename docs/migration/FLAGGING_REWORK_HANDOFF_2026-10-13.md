@@ -5,6 +5,67 @@ Design and the real cases: [`FLAGGING_OVERVIEW_2026-10-12.html`](FLAGGING_OVERVI
 Decisions: [`../timeline.md`](../timeline.md), the 2026-10-13 row "Flagging rework decisions".
 Rules as built: [`../SPECS.md`](../SPECS.md), "The flag rule", "Reading labels" and "Verdicts".
 
+## Start here (next chat)
+
+The work is built, tested, replayed and pushed; what remains is Michael's review and anything he reverses.
+Read this file, then the timeline's two 2026-10-13 flagging rows; open the overview only for a case's detail.
+Rules carried over: STATUS.md is the coordinator's, do not edit it; announce any device API read before running it; production reads are blocked for the agent, so hand the user a `! ...` command; no paid runs without approval; do not quote the customer's chat or name her in committed docs beyond the chat id; run only relevant Jest suites singly plus `npm run typecheck` and `npm run lint`; commit and push the task branch when a verified unit is done; never merge into `dev` without asking.
+
+Next steps, in order:
+1. The user sends "Summary for Michael" below to Michael; record his answers in `STAKEHOLDER_QUESTIONS.md` items 27-29 and a timeline row.
+2. Revert or adjust any rule he rejects, using "Where each rule lives" below; rerun the suites listed under "Tests run".
+3. Once the user has run the real-data pull (see "Still open"), check the edge rule and the Sep 27-29 and Oct 2-12 cases on the real readings, and replace the fixture's synthetic days if they differ materially.
+4. Ask the user before merging into `dev`; deployment (F16) is a separate decision.
+
+## Summary for Michael
+
+Written to be sent as is; it names no customer.
+
+**What changed.** Gilligan now gives every reading one of four labels.
+Normal.
+Out of range: past the limit by more than the probe's noise margin (pH 0.2); the only label that can trigger a flag.
+Unusual: a sudden jump, a spike, or pH outside 3-12; it stays visible, never counts toward a flag, and is described as "very unusual for this water; a calibration check would confirm".
+Device fault: something the device itself reports, or a value no working probe can produce; left out, and only here does Gilligan say "sensor fault" or "inspect".
+
+| Rule | Effect on the Algalita Pod |
+|---|---|
+| 1. pH outside 3-12 is "unusual", not a fault | Sep 25-26's readings above 12 and the drop to 2.73 stay in the data and are described, not thrown out as "physically impossible". |
+| 2. v2's rate-of-change test | Your Oct 7 example (10.94, 10.92, 10.32) stays quiet: the jump to 10.94 is unusual, leaving only 2 out-of-range readings. |
+| 3. Unusual readings never trigger a flag | A long stretch of them gets a calm mention with a calibration check, never "fault"; the report goes no higher than Watch. |
+| 4. Your 5% of a rolling 24 hours, at least 3 readings | Sep 26 is flagged high (12 readings at 11.2-11.9) and Sep 27-29 low (readings of 3-5.8). |
+| 5. Noise margin is v2's figure (pH 0.2) | Fits your "about 2 x the probe's accuracy". |
+| 6. Action Required only for a flag that is still active | The 30-day report is now Watch, with Sep 26-29 told in the past tense; before, it was Action Required. |
+| 7. Your "at or around the threshold for an extended period" | Afternoons at about 6.0 against a minimum of 6 are mentioned as "at the low edge of its healthy range", Watch at most. |
+| 8. "Data issue" only from device-reported faults | No pH data issue anywhere; turbidity stuck at 0 is still flagged for inspection. |
+| 9. Report events come from the flagged days | The two events are "Anomaly, cause unclear"; no made-up cause such as "Acidic input". |
+
+**Replay of the customer's two questions (3 runs each).**
+Before: 3 of 3 answers on Sep 26 said "likely data issue" and recommended recalibrating the probe; the 30-day reports said Action Required.
+After: the Sep 26 answers give the drops with times and values, say the data cannot show the cause, offer a calibration check, and call nothing a fault; the 30-day reports are Watch, each flag named by day and marked cleared.
+
+**Questions for you.**
+Was the Algalita pH probe serviced around Sep 29-30, or touched on Oct 7 around 02:30?
+Is "very unusual; a calibration check would confirm" acceptable wording for customers?
+Is the 15% margin for Action Required right? It is our number, not a source's.
+Should the customer alert emails follow the same 5% rule?
+
+## Where each rule lives
+
+For reverting one rule without the others; each has tests named in "Tests run".
+
+| Rule | Code |
+|---|---|
+| 1. pH 3-12 unusual | `isNaturalWater` in `src/devices/plausibility.ts`; the `outside-natural-water` point check in `src/devices/readingQc.ts`. |
+| 2. Rate of change | `RATE_OF_CHANGE` and its loop in `qcMetric`, `src/devices/readingQc.ts`; water class passed from `querySensorData.ts`. |
+| 3. Unusual never counts; stretches | `isUnusual`, `unusualStretches`, `UnusualKind` in `src/report/flagRules.ts`; `unusualKind` in `readingQc.ts`; mentions in `narrative.ts` and the `unusual` status rule in `types.ts`. |
+| 4. Share rule | `inQualifyingWindows`, `flagEpisodes`, `FLAG_SHARE`, `MIN_FLAG_READINGS`, `STRETCH_GAP_MS` in `flagRules.ts`. |
+| 5. Cushion | `minimumDetectableChange` in `src/report/referenceRanges.ts` (unchanged). |
+| 6. Current-only Action Required | `latestDayFlagged`, `currentExceedance` in `flagRules.ts`; `flagFor`, `pastPeriod` and the event rung of `assessStatus` in `types.ts`; `pastPeriod` set in `buildReportInput.ts`; `current` in `metricVerdict.ts`. |
+| 7. Edge rule | `edgeOn` and the `EDGE_*` constants in `flagRules.ts`; the `edge` status rule in `types.ts`; wording in `narrative.ts`. |
+| 8. Device-only data issues | `dataIssueRuns` in `readingQc.ts`; `faultedOnly` in `judgeMetric`; `data_issue` in `buildReportInput.ts`. |
+| 9. Events from flags | `outsideBaselineWindows` in `src/report/events.ts`. |
+| Wording | The verdict rules in `src/prompt/systemPrompt.ts`; `statusReason` and `flagDetail` in `src/tools/generateReport.ts`; the flag footnote in `renderPdf.ts`. |
+
 ## Commits
 
 | Commit | What |
@@ -93,6 +154,7 @@ Run on the branch with the fake API (`npx ts-node --transpile-only scripts/flagg
 - **Real data.** Production reads were blocked for the agent, so the edge rule has not been checked on the real Algalita afternoons and the fixture's synthetic days stand in for Sep 27-29 and Oct 2-12.
   To pull the month read-only (two GET requests to the device API): `! node scripts/flagging/pullAlgalitaReadings.mjs /tmp/algalita-month.json`, run from this worktree.
 - **Michael**: stakeholder questions 28 (was the probe serviced around Sep 29-30 or Oct 7; could pH reach 12.9 or 2.7) and 29 (the "very unusual; a calibration check would confirm" wording), the provisional 15% Action Required margin, and whether alert emails should follow the share rule (27).
+- **Local setup left in place** (git-ignored, nothing staged): `.env` copied into `.claude/worktrees/dev`, and the main checkout's `data/corpus`, `data/e2e` and `data/embeddings` linked into both worktrees, so a local server and the replay run there. All servers are stopped.
 - **Not merged into `dev`, not deployed.**
   Customers keep the live behaviour until a new image is built and routed (F16).
 
