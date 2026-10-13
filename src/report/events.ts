@@ -30,20 +30,19 @@
 import type {
   ParameterStats, Pattern, ReportInput, WQEvent, EventType, Severity,
 } from "./types";
+import type { TimedValue } from "./flagRules";
 import {
-  CONFIDENCE_FLOOR, isRelativeIndex, statValue, withUnit,
+  CONFIDENCE_FLOOR, flagsFor, isRelativeIndex, statValue, withUnit,
 } from "./types";
+import { minimumDetectableChange } from "./referenceRanges";
 import { waterClassFor } from "../catalogue/select";
 import type { WaterClass } from "../catalogue/types";
 
-const MIN_EVENT_DURATION_MS = 60 * 60_000; // 1 hour
 /**
- * The shortest window that counts as an event on a parameter tagged "diel" or "tidal". Half a
- * day: a daily or tidal swing spends at most part of each cycle beyond a limit, so a window at
- * least this long is a sustained excursion that breaks the rhythm (K21b: 18 hourly readings of
- * dissolved oxygen below the minimum on an otherwise diel series raised no event). On the
- * report's bucketed series an 18-hour run always spans at least this much at 3-hour buckets; a
- * report long enough to use 12-hour buckets resolves only runs of about a day or more.
+ * The shortest unbroken out-of-range stretch that makes a flagged episode on a parameter tagged
+ * "diel" or "tidal" an event. Half a day: a daily or tidal swing spends at most part of each cycle
+ * beyond a limit, so a stretch at least this long breaks the rhythm (K21b: 18 hourly readings of
+ * dissolved oxygen below the minimum on an otherwise diel series).
  */
 const SUSTAINED_RHYTHM_EXCURSION_MS = 12 * 60 * 60_000;
 /** Re-exported under its original name: the constant moved to types.ts, which `overallStatus`
@@ -66,66 +65,46 @@ const PERSISTENT_WINDOW_SHARE = 0.8;
 type Window = [number, number]; // [startMs, endMs]
 
 /**
- * Threshold-crossing windows for the generic classifier below. On parameters tagged "diel"
- * or "tidal" only a window of at least `SUSTAINED_RHYTHM_EXCURSION_MS` counts: the
- * source-of-truth doc is explicit that ruling out the water body's normal rhythm
- * comes BEFORE calling something an event ("a smooth, repeating daily oscillation is biology,
- * not pollution ... the test for a real event is a step-change or sustained excursion that BREAKS
- * the expected diel/tidal rhythm"). A parameter already tagged diel/tidal is, by definition,
- * doing its expected periodic thing -- without the longer minimum, a strong-but-normal diel
- * swing crosses baseline twice a day, every day, and this detector spams one near-duplicate
- * "Inconclusive" event per crossing instead of recognizing a single ongoing pattern.
+ * Event windows for the generic classifier below: the parameter's flagged episodes
+ * (`report/flagRules.ts`), from the first to the last out-of-range reading, so an event and a flag
+ * can never disagree (docs/timeline.md, 2026-10-13). Before that, windows came from the 2-3 hour
+ * bucket means: an unusual reading averaged with its neighbour (Sep 26's 7.19 and 2.73 make about
+ * 5) read as a real crossing, and a metric hovering just past its limit averaged back inside it.
+ * Unusual readings never count toward a flag. On a parameter tagged "diel" or "tidal" a flagged
+ * episode is an event only when it holds an unbroken out-of-range stretch of
+ * `SUSTAINED_RHYTHM_EXCURSION_MS`: without that, a strong but normal daily swing would read as a
+ * pollution event.
  *
- * Remaining gap: a step-change on top of a diel rhythm that stays inside the limits, or leaves
- * them for less than half a day, is still not caught here; `detectAlgalBloom` below covers only
- * the DO/pH amplification pattern.
+ * Temperature with no fixed baseline, and turbidity, never originate a window: there is nothing
+ * to cross, and a relative index cannot support "crossed a threshold". Turbidity still takes part
+ * in classifying a window some other parameter opened -- see `movementsIn` below.
  */
 const outsideBaselineWindows = (p: ParameterStats): Window[] => {
-  if (
-    !p.series || p.series.length === 0
-    // Temperature has no fixed baseline (see referenceRanges.ts) -- there is nothing to
-    // threshold-cross against. The Python prototype never had a code path where this ran
-    // without a baseline; this guard makes that assumption explicit rather than computing
-    // against an undefined range.
-    //
-    // Turbidity is excluded by the same guard, and that is deliberate: a relative-index
-    // parameter must never *originate* an event window, because "crossed a threshold" is the
-    // one claim its uncalibrated scale cannot support. It still participates fully in
-    // classifying a window some other parameter opened -- see `movementsIn` below, which reads
-    // its relative movement rather than a range crossing. The sewage and stormwater signatures
-    // therefore keep working.
-    || !p.baseline.hasFixedBaseline
-  ) {
-    return [];
-  }
   const b = p.baseline;
-  const minDurationMs = p.pattern === "diel" || p.pattern === "tidal"
-    ? SUSTAINED_RHYTHM_EXCURSION_MS : MIN_EVENT_DURATION_MS;
-  const sorted = [...p.series].sort((a, b2) => a[0] - b2[0]);
-
-  // A stateful sequential scan (running "start"/"prevT" across the sorted series) -- reduce
-  // over forEach/for-of so the running state has one obvious home, rather than three outer lets.
-  const { windows, start, prevT } = sorted.reduce<{
-    windows: Window[]; start: number | null; prevT: number | null;
-  }>((acc, [t, v]) => {
-    const outside = v < b.baselineMin || v > b.baselineMax;
-    let { start: accStart } = acc;
-    if (outside && accStart === null) {
-      accStart = t;
-    }
-    if (!outside && accStart !== null) {
-      if (acc.prevT !== null && acc.prevT - accStart >= minDurationMs) {
-        acc.windows.push([accStart, acc.prevT]);
+  const beyond = ([, v, unusual]: TimedValue): boolean => !unusual && (
+    v > b.baselineMax + minimumDetectableChange(b.key, v)
+    || v < b.baselineMin - minimumDetectableChange(b.key, v));
+  // The longest unbroken stretch of out-of-range readings inside a window.
+  const longestOutside = (startMs: number, endMs: number): number => {
+    let longest = 0;
+    let since: number | undefined;
+    p.readings.filter(([t]) => t >= startMs && t <= endMs).forEach((point) => {
+      if (!beyond(point)) {
+        since = undefined;
+        return;
       }
-      accStart = null;
-    }
-    return { windows: acc.windows, start: accStart, prevT: t };
-  }, { windows: [], start: null, prevT: null });
-
-  if (start !== null && prevT !== null && prevT - start >= minDurationMs) {
-    windows.push([start, prevT]);
-  }
-  return windows;
+      since ??= point[0];
+      longest = Math.max(longest, point[0] - since);
+    });
+    return longest;
+  };
+  const rhythm = p.pattern === "diel" || p.pattern === "tidal";
+  return (flagsFor(p, minimumDetectableChange)?.episodes ?? [])
+    // A flagged daily or tidal swing is still the water body's rhythm, not an event, unless it
+    // breaks the rhythm by staying out for half a day (the source-of-truth doc: "a smooth,
+    // repeating daily oscillation is biology, not pollution"; K21b).
+    .filter((e) => !rhythm || longestOutside(e.startMs, e.endMs) >= SUSTAINED_RHYTHM_EXCURSION_MS)
+    .map((e): Window => [e.startMs, e.endMs]);
 };
 
 type Movement = "up" | "down";

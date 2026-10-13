@@ -5,6 +5,7 @@ import {
   SENSOR_READ_FAILURE_VALUE, STUCK_TURBIDITY_MIN_DURATION_MS,
 } from "../../src/devices/readingQc";
 import type { MetricKey } from "../../src/types/device.types";
+import { OCT_7, SEP_25_26 } from "../fixtures/algalita/recorded";
 
 /**
  * Per-reading QC, v2 §8. Readings are 30 minutes apart unless a case says otherwise, the pods'
@@ -47,9 +48,18 @@ describe("point checks (v2 §8.2 gross range)", () => {
     expect(qcMetric(rows, "ph").get(rows[0])).toEqual({ flag: "fail", reason: "read-failure" });
   });
 
-  it("fails an implausible value the probe did not flag", () => {
-    const rows = ph([2.07]); // Algalita's pH minimum in seawater, REPORT_AUDIT finding 5
-    expect(qcMetric(rows, "ph").get(rows[0])).toEqual({ flag: "fail", reason: "implausible" });
+  it("fails a rail the probe did not flag: pH exactly 0 or 14", () => {
+    const rows = ph([0, 14]);
+    const flags = qcMetric(rows, "ph");
+    expect(flags.get(rows[0])).toEqual({ flag: "fail", reason: "implausible" });
+    expect(flags.get(rows[1])).toEqual({ flag: "fail", reason: "implausible" });
+  });
+
+  it("keeps pH outside 3-12 as unusual, not a fault (docs/timeline.md, 2026-10-13)", () => {
+    const rows = ph([2.07, 12.62]); // Algalita in seawater, REPORT_AUDIT finding 5
+    const flags = qcMetric(rows, "ph");
+    expect(flags.get(rows[0])).toEqual({ flag: "suspect", reason: "outside-natural-water" });
+    expect(flags.get(rows[1])).toEqual({ flag: "suspect", reason: "outside-natural-water" });
   });
 
   it("leaves readings without a value for the metric out of the map", () => {
@@ -169,7 +179,69 @@ describe("spike (v2 §8.2)", () => {
   });
 });
 
-describe("likely data issue: 3 consecutive suspect or failed readings", () => {
+describe("rate of change (v2 §8.2)", () => {
+  it("labels Michael's Oct 7 jump unusual on a marine pod, leaving the readings after it", () => {
+    // Recorded Oct 7 01:27-03:57 PDT: 7.16, 7.16, 10.94, 10.92, 10.32, 8.41.
+    const rows = ph(OCT_7.map(([, value]) => value));
+    const flags = qcMetric(rows, "ph", { water: "coastal" });
+    expect(rows.map((row) => flags.get(row)?.reason ?? flags.get(row)?.flag))
+      .toEqual(["pass", "pass", "rate-of-change", "pass", "pass", "rate-of-change"]);
+  });
+
+  it("scales the limit with the gap: 0.3 per 10 minutes", () => {
+    const passes = ph([8.0, 8.85]); // 0.85 in 30 minutes, under 0.9
+    expect(qcMetric(passes, "ph", { water: "brackish" }).get(passes[1])?.flag).toBe("pass");
+    const jumps = ph([8.0, 8.95]);
+    expect(qcMetric(jumps, "ph", { water: "brackish" }).get(jumps[1])?.reason).toBe("rate-of-change");
+    const slow = ph([8.0, 9.5], 2 * HOUR); // 1.5 in 2 hours, under 3.6
+    expect(qcMetric(slow, "ph", { water: "coastal" }).get(slow[1])?.flag).toBe("pass");
+  });
+
+  it("does not test across a gap longer than 3 hours", () => {
+    const rows = ph([8.0, 10.5], 4 * HOUR);
+    expect(qcMetric(rows, "ph", { water: "coastal" }).get(rows[1])?.flag).toBe("pass");
+  });
+
+  it("gives freshwater pH no rate test, as v2 gives none", () => {
+    const rows = ph([7.0, 9.0]);
+    expect(qcMetric(rows, "ph", { water: "freshwater" }).get(rows[1])?.flag).toBe("pass");
+    expect(qcMetric(rows, "ph").get(rows[1])?.flag).toBe("pass");
+  });
+
+  it("tests temperature at 2 °C per 10 minutes in any water", () => {
+    const temperature = (celsius: number[]) => celsius.map((value, i) => decodeReading({
+      timestamp: at(i), water_data: { 102: value, rtdError: 0 },
+    }, "celsius"));
+    const steady = temperature([20, 25]); // 5 °C in 30 minutes, under 6
+    expect(qcMetric(steady, "temperature", { water: "freshwater" }).get(steady[1])?.flag).toBe("pass");
+    const jump = temperature([20, 27]);
+    expect(qcMetric(jump, "temperature").get(jump[1])?.reason).toBe("rate-of-change");
+  });
+
+  it("labels the recorded Sep 25-26 night: jumps and readings above 12 unusual, the rest kept", () => {
+    const rows = ph(SEP_25_26.map(([, value]) => value));
+    const flags = qcMetric(rows, "ph", { water: "coastal" });
+    const label = (value: number): string | undefined => {
+      const row = rows[SEP_25_26.findIndex(([, v]) => v === value)];
+      return flags.get(row)?.reason ?? flags.get(row)?.flag;
+    };
+    expect(label(11.83)).toBe("rate-of-change"); // 8.12 to 11.83 in 30 minutes
+    expect(label(12.91)).toBe("outside-natural-water");
+    expect(label(11.87)).toBe("pass"); // out of range, but a real reading to count
+    expect(label(6.36)).toBe("rate-of-change"); // 11.21 to 6.36: back in range, still a jump
+    expect(label(2.73)).toBe("outside-natural-water");
+    expect(label(4.26)).toBe("rate-of-change"); // 2.73 to 4.26
+    expect(label(5.07)).toBe("pass");
+    expect(dataIssueRuns(rows, flags)).toEqual([]);
+  });
+});
+
+describe("likely data issue: 3 consecutive device faults", () => {
+  it("is never raised by unusual readings, however many in a row", () => {
+    const rows = ph([2.5, 2.4, 2.6, 2.5, 12.5, 12.6, 12.4]);
+    expect(dataIssueRuns(rows, qcMetric(rows, "ph", { water: "coastal" }))).toEqual([]);
+  });
+
   it("is not raised by scattered failures", () => {
     const rows = inTimeOrder([0, 1, 2, 3, 4, 5].map((i) => decodeReading({
       timestamp: at(i), water_data: { 99: 8.1 + i * 0.01, phError: i % 2 },

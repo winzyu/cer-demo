@@ -11,7 +11,10 @@
  * to it, so it stays testable without a live device.
  */
 
-import { assessRuns, type RunAssessment, type TimedValue } from "./flagRules";
+import {
+  assessFlags, FLAG_WINDOW_MS, unusualStretches,
+  type FlagAssessment, type TimedValue, type UnusualStretch,
+} from "./flagRules";
 
 /**
  * "N/A" is for a parameter with no baseline at all -- distinct from "Normal", which means
@@ -19,8 +22,10 @@ import { assessRuns, type RunAssessment, type TimedValue } from "./flagRules";
  * threshold is absent or fails validation (`operatorThresholds.ts`) and for which source-of-truth
  * v2 gives no general range for the pod's water class either (`resolveLimit`).
  *
- * "Elevated", "Low" and "Exceedance" each need 3 consecutive readings beyond the baseline
- * (`flagRules.ts`); a single reading never sets one.
+ * "Elevated" and "Low" mean the parameter was flagged at some point in the period: out-of-range
+ * readings reached 5% of a rolling 24 hours and at least 3 (`flagRules.ts`); a single reading
+ * never sets one. "Exceedance" means a flag that is current (the period's latest 24 hours) and
+ * beyond the exceedance margin.
  *
  * "Qualitative" is for a parameter that is not judged against a numeric range at all
  * (turbidity -- see ParameterScale below). It is deliberately NOT the same as "N/A":
@@ -200,11 +205,17 @@ export interface ParameterStats {
   mean: number;
   median: number;
   /**
-   * Every usable reading in the period, in time order, after QC (`devices/readingQc.ts`): the
-   * raw readings the flag rule counts runs over (`flagRules.ts`). Bucket means cannot stand in:
-   * two excursions can share a bucket whose mean stays normal.
+   * Every kept reading in the period, in time order, after QC (`devices/readingQc.ts`), with
+   * unusual ones marked: the raw readings the flag rule counts (`flagRules.ts`). Bucket means
+   * cannot stand in: two excursions can share a bucket whose mean stays normal.
    */
   readings: TimedValue[];
+  /**
+   * True when the pod has readings after the period, so the period's last 24 hours are not the
+   * pod's latest and no flag in it is current (Michael #4): a past period is told in the past
+   * tense and never reaches Action Required on a flag.
+   */
+  pastPeriod?: boolean;
   pattern: Pattern;
   /** Optional raw (epoch ms, value) series, used for pattern detection and excursion timestamps. */
   series?: Array<[number, number]>;
@@ -255,7 +266,8 @@ export interface DataQualityCheck {
   sensorAgreementNotes: string;
   /**
    * Parameters whose readings most likely reflect a sensor or data issue (source-of-truth v2
-   * §9.2): a stuck sensor, a run of failed or suspect readings, or every sensor failing at once.
+   * §9.2): a stuck sensor, a run of device faults, or every sensor failing at once. Unusual
+   * readings never put a parameter here (docs/timeline.md, 2026-10-13).
    * The only case in which the report recommends inspection (POST_LAUNCH_BACKLOG.md §1b, D2).
    */
   likelyDataIssue?: string[];
@@ -319,32 +331,38 @@ export const outOfRangeShare = (p: ParameterStats): number | null => {
 };
 
 /**
- * The parameter's out-of-range runs against its baseline, or undefined where no numeric range
- * applies. `noiseFloor` is v2's minimum detectable change (`referenceRanges.ts`), injected rather
- * than imported to keep this module free of the reference-data import cycle.
+ * The parameter's flags against its baseline, or undefined where no numeric range applies.
+ * `noiseFloor` is v2's minimum detectable change (`referenceRanges.ts`), injected rather than
+ * imported to keep this module free of the reference-data import cycle.
  */
-export const runsFor = (
-  p: Pick<ParameterStats, "baseline" | "readings">,
+export const flagsFor = (
+  p: Pick<ParameterStats, "baseline" | "readings" | "pastPeriod">,
   noiseFloor: (key: string, reading: number) => number,
-): RunAssessment | undefined => {
+): FlagAssessment | undefined => {
   const b = p.baseline;
   if (isRelativeIndex(b) || !b.hasFixedBaseline) return undefined;
-  return assessRuns(
+  const flags = assessFlags(
     p.readings,
     { min: b.baselineMin, max: b.baselineMax },
     (reading) => noiseFloor(b.key, reading),
     b.exceedanceMargin,
   );
+  return p.pastPeriod ? { ...flags, current: false, currentExceedance: false } : flags;
 };
 
+/** The parameter's unusual readings that met the share rule themselves, baseline or not. */
+export const unusualFor = (p: Pick<ParameterStats, "readings">): UnusualStretch[] => (
+  unusualStretches(p.readings)
+);
+
 /**
- * The parameter's flag: "Exceedance" for a run of 3 readings beyond the baseline by the larger of
- * the exceedance margin and the minimum detectable change, "Elevated" or "Low" for a run beyond
- * the minimum detectable change alone, else "Normal" (`flagRules.ts`; docs/timeline.md,
- * 2026-10-10). One reading, however far out, never flags.
+ * The parameter's flag: "Exceedance" for a current flag (the period's latest 24 hours) beyond the
+ * baseline by the larger of the exceedance margin and the minimum detectable change, "Elevated" or
+ * "Low" for any flag in the period, else "Normal" (`flagRules.ts`; docs/timeline.md, 2026-10-13).
+ * One reading, however far out, never flags, and unusual readings never count.
  */
 export const flagFor = (
-  p: Pick<ParameterStats, "baseline" | "readings">,
+  p: Pick<ParameterStats, "baseline" | "readings" | "pastPeriod">,
   noiseFloor: (key: string, reading: number) => number,
 ): Flag => {
   // Checked before anything else, and before `hasFixedBaseline`: a relative index has no
@@ -353,13 +371,13 @@ export const flagFor = (
   if (isRelativeIndex(p.baseline)) {
     return "Qualitative";
   }
-  const runs = runsFor(p, noiseFloor);
-  if (!runs) {
+  const flags = flagsFor(p, noiseFloor);
+  if (!flags) {
     return "N/A";
   }
-  if (runs.exceedance.length > 0) return "Exceedance";
-  if (runs.outOfRange.some((r) => r.direction === "high")) return "Elevated";
-  if (runs.outOfRange.some((r) => r.direction === "low")) return "Low";
+  if (flags.currentExceedance) return "Exceedance";
+  if (flags.episodes.some((e) => e.direction === "high")) return "Elevated";
+  if (flags.episodes.some((e) => e.direction === "low")) return "Low";
   return "Normal";
 };
 
@@ -376,6 +394,8 @@ export type StatusRule =
   | "exceedance"
   | "high-confidence-high-event"
   | "excursion"
+  | "edge"
+  | "unusual"
   | "event"
   | "no-baseline"
   | "normal";
@@ -385,7 +405,8 @@ export interface StatusAssessment {
   rule: StatusRule;
   /**
    * The parameters behind the rule, by `ParameterBaseline.key`: the ones flagged at that rung's
-   * level for `"exceedance"` and `"excursion"`, and empty for the event rules and the rest.
+   * level for `"exceedance"` and `"excursion"`, at the edge for `"edge"`, with an unusual stretch
+   * for `"unusual"`, and empty for the event rules and the rest.
    */
   parameters: string[];
 }
@@ -424,13 +445,35 @@ export const assessStatus = (
   // 30%-confidence window that events.ts had already downgraded to "Inconclusive" therefore put
   // "Action Required" on the cover and made narrative.ts recommend notifying an authority -- the
   // report telling someone to escalate on evidence the same report calls too weak to name. An
-  // event below the floor can still reach "Watch" below; it just cannot demand action.
-  if (report.events.some((e) => e.severity === "High" && e.confidence >= CONFIDENCE_FLOOR)) {
+  // event below the floor can still reach "Watch" below; it just cannot demand action. Only a
+  // current event can: one that ended before the period's latest 24 hours is told in the past
+  // tense, never as action required (Michael #4, docs/timeline.md 2026-10-13).
+  const periodEnd = report.parameters.reduce(
+    (end, p) => Math.max(end, p.readings[p.readings.length - 1]?.[0] ?? -Infinity),
+    -Infinity,
+  );
+  const pastPeriod = report.parameters.some((p) => p.pastPeriod);
+  if (!pastPeriod && report.events.some((e) => e.severity === "High"
+    && e.confidence >= CONFIDENCE_FLOOR && e.windowEndMs > periodEnd - FLAG_WINDOW_MS)) {
     return { status: "Action Required", rule: "high-confidence-high-event", parameters: [] };
   }
   const excursions = flagged(["Exceedance", "Elevated", "Low"]);
   if (excursions.length > 0) {
     return { status: "Watch", rule: "excursion", parameters: excursions };
+  }
+  // Below a flag, two mentions lift the report to Watch at most (docs/timeline.md, 2026-10-13):
+  // Michael's edge rule, and unusual readings that met the share rule themselves.
+  const atEdge = report.parameters
+    .filter((p) => flagsFor(p, noiseFloor)?.edge)
+    .map((p) => p.baseline.key);
+  if (atEdge.length > 0) {
+    return { status: "Watch", rule: "edge", parameters: atEdge };
+  }
+  const unusual = report.parameters
+    .filter((p) => !isRelativeIndex(p.baseline) && unusualFor(p).length > 0)
+    .map((p) => p.baseline.key);
+  if (unusual.length > 0) {
+    return { status: "Watch", rule: "unusual", parameters: unusual };
   }
   if (report.events.length > 0) {
     return { status: "Watch", rule: "event", parameters: [] };

@@ -1,4 +1,4 @@
-import { PLAUSIBLE_RANGES, isPlausible } from "../../src/devices/plausibility";
+import { PLAUSIBLE_RANGES, isNaturalWater, isPlausible } from "../../src/devices/plausibility";
 import { aggregate } from "../../src/tools/aggregate";
 import type { Sample } from "../../src/tools/aggregate";
 
@@ -39,21 +39,26 @@ describe("isPlausible", () => {
     expect(isPlausible("ph", 7.2)).toBe(true);
   });
 
-  it("flags pH outside what natural water reaches, including the Algalita Pod's live 2.07 and 12.62", () => {
-    // Report audit 2026-09-25 finding 5: a seawater pod (~pH 8.1) printed a 1-day minimum of 2.07
-    // and a 7-day maximum of 12.62, and each alone set the report to Action Required.
-    expect(isPlausible("ph", 2.07)).toBe(false);
-    expect(isPlausible("ph", 12.62)).toBe(false);
-    expect(isPlausible("ph", 2.99)).toBe(false);
-    expect(isPlausible("ph", 12.01)).toBe(false);
+  it("keeps pH outside natural water plausible, including the Algalita Pod's live 2.07 and 12.62", () => {
+    // Report audit 2026-09-25 finding 5 (a lone 2.07 or 12.62 set Action Required) led `bc097e1`
+    // to fail them; since 2026-10-13 the device not flagging them means they are kept, and QC
+    // labels them unusual instead (docs/timeline.md, 2026-10-13).
+    [2.07, 2.73, 12.62, 12.91].forEach((ph) => {
+      expect(isPlausible("ph", ph)).toBe(true);
+      expect(isNaturalWater("ph", ph)).toBe(false);
+    });
+    expect(isNaturalWater("ph", 2.99)).toBe(false);
+    expect(isNaturalWater("ph", 12.01)).toBe(false);
   });
 
   it("keeps the most extreme natural waters the fleet could plausibly sit in", () => {
     // Peat bog / humic brown-water streams bottom out near pH 3.5; soda lakes and eutrophic water
-    // at the photosynthetic peak reach about 11. The bound is inclusive at 3 and 12.
+    // at the photosynthetic peak reach about 11. The band is inclusive at 3 and 12.
     [3, 3.5, 4.2, 6.5, 8.1, 9.8, 11, 12].forEach((ph) => {
       expect(isPlausible("ph", ph)).toBe(true);
+      expect(isNaturalWater("ph", ph)).toBe(true);
     });
+    expect(isNaturalWater("temperature", -20)).toBe(true);
   });
 
   it("keeps the pH scale itself as the rail operator limits are validated against", () => {

@@ -10,11 +10,12 @@
  * point rather than resurrecting it speculatively now.
  */
 
+import type { FlagEpisode } from "./flagRules";
 import type {
   ParameterStats, ReportInput, ReportStatus, WQEvent,
 } from "./types";
 import {
-  flagFor, heldSteady, isRelativeIndex, outOfRangeShare, runsFor, statValue, withUnit,
+  flagFor, flagsFor, heldSteady, isRelativeIndex, outOfRangeShare, statValue, unusualFor, withUnit,
 } from "./types";
 import {
   clarityBandFor,
@@ -180,6 +181,9 @@ const patternPhrase: Record<ParameterStats["pattern"], string> = {
 
 /** Uppercases only the first character, leaving the rest untouched -- unlike a naive
  * capitalize(), which would also lowercase interior text such as "ORP" or "mg/L". */
+/** Flagged stretches named one by one in a parameter's analysis; more are summarised. */
+const LISTED_STRETCHES = 4;
+
 const sentenceCase = (s: string): string => (s ? s[0].toUpperCase() + s.slice(1) : s);
 
 const timestamp = (ms: number): string => new Date(ms).toISOString().slice(0, 16).replace("T", " ");
@@ -297,46 +301,70 @@ const paramAnalysisLine = (
       + `${withUnit(`${b.baselineMin}-${b.baselineMax}`, b.unit)} ${baselineTerm}.`;
   } else {
     const width = b.baselineMax - b.baselineMin;
-    // Each direction's extreme comes from its qualifying runs, never from a lone reading: one
-    // stray point must not be described as the parameter's excursion (flagRules.ts). Both
-    // directions are named when both had runs.
-    const runs = runsFor(p, noiseFloor)?.outOfRange ?? [];
-    const high = runs.filter((r) => r.direction === "high");
-    const low = runs.filter((r) => r.direction === "low");
-    const excursions = [
-      high.length > 0
-        ? (() => {
-          const peak = Math.max(...high.map((r) => r.extreme));
-          return `${magnitudeWord(peak, b.baselineMax, width)} above it to `
-            + `${withUnit(statValue(peak), b.unit)}`;
-        })()
-        : null,
-      low.length > 0
-        ? (() => {
-          const trough = Math.min(...low.map((r) => r.extreme));
-          return `${magnitudeWord(trough, b.baselineMin, width)} below it to `
-            + `${withUnit(statValue(trough), b.unit)}`;
-        })()
-        : null,
-    ].filter((clause): clause is string => clause !== null);
-    const article = "aeiou".includes(flag.toLowerCase()[0]) ? "an" : "a";
+    // Each episode's extreme comes from its counted readings, never from a lone or unusual
+    // reading: one stray point must not be described as the parameter's excursion (flagRules.ts).
+    // Every flagged stretch is named with its times, so a report names the days, not the period
+    // (Michael #5), and a flag that has cleared is told in the past tense (Michael #4).
+    const flags = flagsFor(p, noiseFloor);
+    const episodes = flags?.episodes ?? [];
+    const stretchText = (e: FlagEpisode): string => {
+      const edge = e.direction === "high" ? b.baselineMax : b.baselineMin;
+      return `${magnitudeWord(e.extreme, edge, width)} ${e.direction === "high" ? "above" : "below"} `
+        + `it, to ${withUnit(statValue(e.extreme), b.unit)}, from ${timestamp(e.startMs)} to `
+        + `${timestamp(e.endMs)}`;
+    };
+    // A daily dip flags every afternoon; past a handful, the stretches are summarised by side.
+    const stretchesText = episodes.length <= LISTED_STRETCHES ? episodes.map(stretchText)
+      : (["high", "low"] as const).flatMap((side) => {
+        const own = episodes.filter((e) => e.direction === side);
+        if (own.length === 0) return [];
+        const edge = side === "high" ? b.baselineMax : b.baselineMin;
+        const extreme = own.reduce((x, e) => (side === "high" ? Math.max(x, e.extreme) : Math.min(x, e.extreme)), own[0].extreme);
+        const latest = own[own.length - 1];
+        return [`${side === "high" ? "above" : "below"} it on ${own.length} separate stretches from `
+          + `${timestamp(own[0].startMs)} to ${timestamp(latest.endMs)}, `
+          + `${magnitudeWord(extreme, edge, width)} at most, to ${withUnit(statValue(extreme), b.unit)}`];
+      });
     text = `${sentenceCase(phrase)}; against the `
-      + `${withUnit(`${b.baselineMin}-${b.baselineMax}`, b.unit)} ${baselineTerm} it stayed `
-      + `${excursions.join(" and ")} for at least three readings in a row, recorded as `
-      + `${article} ${flag.toLowerCase()}.`;
+      + `${withUnit(`${b.baselineMin}-${b.baselineMax}`, b.unit)} ${baselineTerm} it was flagged `
+      + `${stretchesText.join(", and ")}: out-of-range readings reached 5% of a 24-hour window and `
+      + "at least three readings.";
+    text += flags?.current
+      ? " The flag was still current in the period's last 24 hours."
+      : " That has since cleared: the period's last 24 hours were not flagged.";
     // How much of the period, not just whether it ever happened.
     const share = outOfRangeShare(p);
     if (share !== null) {
       text += ` Outside baseline in ${(share * 100).toFixed(0)}% of the period's series buckets.`;
     }
-    if (runsFor(p, noiseFloor)?.persistent && runs.length > 0) {
+    if (flags?.persistent && episodes.length > 0) {
       // v2 §7.2 rule 7, said once, here, with its start (POST_LAUNCH_BACKLOG.md §1b, C4).
-      text += ` It sat outside this range for most of the period, from ${timestamp(runs[0].startMs)}, `
+      text += ` It sat outside this range for most of the period, from ${timestamp(episodes[0].startMs)}, `
         + "which more likely reflects a threshold that does not fit the site, sensor fouling or "
         + "calibration than a change in the water.";
-    } else if (runs.length > 0) {
-      text += ` First stayed outside it from ${timestamp(runs[0].startMs)}.`;
     }
+  }
+  const edge = flag === "Normal" ? flagsFor(p, noiseFloor)?.edge : undefined;
+  if (edge && !isRelativeIndex(b)) {
+    // Michael #6: a metric at or around its threshold for an extended period is raised, because
+    // the threshold marks the edge of the healthy range.
+    const limit = edge.side === "low" ? b.baselineMin : b.baselineMax;
+    const span = edge.shape === "plateau"
+      ? `for ${(edge.longestMs / 3_600_000).toFixed(0)} hours in a row`
+      : `for two hours or more on ${edge.days} of the period's ${edge.periodDays} days`;
+    text += ` It sat at the ${edge.side} edge of its healthy range ${span} (`
+      + `${withUnit(`${statValue(edge.lowest)} to ${statValue(edge.highest)}`, b.unit)} against a `
+      + `${edge.side === "low" ? "minimum" : "maximum"} of ${withUnit(String(limit), b.unit)}), worth watching.`;
+  }
+  const unusual = isRelativeIndex(b) ? [] : unusualFor(p);
+  if (unusual.length > 0) {
+    // Decision 3 (docs/timeline.md, 2026-10-13): unusual readings never count toward a flag, are
+    // never called a fault, and are mentioned only when they meet the share rule themselves.
+    const spans = unusual.map((u) => `${timestamp(u.startMs)} to ${timestamp(u.endMs)} (`
+      + `${u.readings} readings, ${withUnit(`${statValue(u.lowest)} to ${statValue(u.highest)}`, b.unit)})`);
+    text += " Some readings were very unusual for this water, such as sudden jumps or values beyond "
+      + `what natural water reaches, from ${spans.join(" and ")}. They are shown but not counted `
+      + "toward a flag; a calibration check would confirm them.";
   }
   // Provenance travels with the numbers, and the "why not" travels with their absence -- see
   // ParameterBaseline.baselineNote. `threshold_notes` leaves both out.
@@ -374,6 +402,12 @@ export const deterministicNarrative = (
   // site baseline". It gets its own bullet below instead of being folded into an excursion list.
   const nonNormal = report.parameters
     .filter((p) => !["Normal", "N/A", "Qualitative"].includes(flagFor(p, noiseFloor)));
+  // The two mentions below a flag (docs/timeline.md, 2026-10-13): Michael's edge rule, and
+  // unusual readings that met the share rule themselves.
+  const atEdge = report.parameters
+    .filter((p) => flagFor(p, noiseFloor) === "Normal" && flagsFor(p, noiseFloor)?.edge);
+  const unusualParameters = report.parameters
+    .filter((p) => !isRelativeIndex(p.baseline) && unusualFor(p).length > 0);
 
   // Turbidity always gets a summary line, whatever the band -- it is a deliberately reported
   // metric, and silence would read as "not measured" rather than "measured and clear".
@@ -433,15 +467,37 @@ export const deterministicNarrative = (
         : "Recommendation: continue routine monitoring.",
     ];
   } else {
-    const flagged = nonNormal.length > 0 ? nonNormal.map((p) => p.baseline.label).join(", ") : "no parameters";
-    const eventClause = report.events.length > 0
-      ? `${report.events.length} candidate event(s) were identified`
-      : "no discrete pollution events were identified, though readings moved outside baseline";
+    const flagged = nonNormal.map((p) => p.baseline.label).join(", ");
+    // A flag that has cleared is told in the past tense, never as urgent (Michael #4).
+    const cleared = nonNormal.length > 0
+      && nonNormal.every((p) => !flagsFor(p, noiseFloor)?.current);
+    const flaggedBullets = nonNormal.length > 0 ? [
+      `${sentenceCase(flagged)}: flagged outside the site baseline during the `
+        + `${report.site.startDate} to ${report.site.endDate} reporting period, on the days the `
+        + "parameter analysis names"
+        + `${cleared ? "; each flag had cleared by the end of the period" : "; still flagged at its end"}.`,
+    ] : [];
+    let eventBullets: string[] = [];
+    if (report.events.length > 0) {
+      eventBullets = [`${report.events.length} candidate event(s) were identified.`];
+    } else if (nonNormal.length > 0) {
+      eventBullets = ["No discrete pollution events were identified."];
+    }
+    const edgeBullets = atEdge.length > 0
+      ? [`${atEdge.map((p) => p.baseline.label).join(", ")} sat at the edge of the healthy range `
+        + "for an extended period, worth watching; see the parameter analysis."]
+      : [];
+    const unusualBullets = unusualParameters.length > 0
+      ? [`${unusualParameters.map((p) => p.baseline.label).join(", ")} had stretches of very `
+        + "unusual readings, shown but not counted toward a flag; a calibration check would "
+        + "confirm them. See the parameter analysis."]
+      : [];
     summaryBullets = [
       `Overall status: ${status}.`,
-      `${sentenceCase(flagged)} moved outside the site baseline for the ${report.site.startDate} `
-        + `to ${report.site.endDate} reporting period.`,
-      `${sentenceCase(eventClause)}.`,
+      ...flaggedBullets,
+      ...eventBullets,
+      ...edgeBullets,
+      ...unusualBullets,
       ...clarityBullets,
       ...dataIssueBullets,
       "Recommendation: see Recommendations below for the operational, investigative, and "
@@ -451,7 +507,8 @@ export const deterministicNarrative = (
 
   const parameterAnalysis = new Map<string, string>();
   report.parameters
-    .filter((p) => !heldSteady(p, flagFor(p, noiseFloor)))
+    .filter((p) => !heldSteady(p, flagFor(p, noiseFloor))
+      || atEdge.includes(p) || unusualParameters.includes(p))
     .forEach((p) => parameterAnalysis.set(
       p.baseline.label,
       paramAnalysisLine(p, noiseFloor, omit),
@@ -492,6 +549,11 @@ export const deterministicNarrative = (
   } else if (dataIssues.length > 0) {
     used = inspection;
     operational = slotText("operational", used, guidance);
+    investigative = "None required this period.";
+    stakeholder = "Routine report distribution to client only.";
+  } else if (unusualParameters.length > 0) {
+    operational = `Check the calibration of the ${unusualParameters.map((p) => p.baseline.label)
+      .join(", ")} probe(s) to confirm the unusual readings; otherwise continue routine monitoring.`;
     investigative = "None required this period.";
     stakeholder = "Routine report distribution to client only.";
   } else {

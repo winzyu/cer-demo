@@ -485,38 +485,35 @@ describe("query_sensor_data — implausible readings are shown apart from the co
       ? { ...row, water_data: { ...(row.water_data as Record<string, unknown>), 99: byIndex[index] } }
       : row));
 
-  it("lists the excluded pH readings with their range, and keeps them out of the minimum", async () => {
+  it("lists the excluded pH rails with their range, and keeps them out of the minimum", async () => {
     // E2E checklist D1: "Why did the pH crash to 3 yesterday?" The result used to say only
     // "excluded_implausible: 3" beside the counted minimum, so the model could not tell which
-    // readings the claim was about, or that the minimum excluded them.
-    const { tool } = makeTool({ periodDay: withPh({ 1: 2.07, 5: 13.99, 9: 2.5 }) });
+    // readings the claim was about, or that the minimum excluded them. Only the scale's ends
+    // (exactly 0 or 14) are excluded since 2026-10-13; 2.07 is kept as unusual.
+    const { tool } = makeTool({ periodDay: withPh({ 1: 0, 5: 14, 9: 2.07 }) });
     const result = await tool.run({
       metric: "ph", time_range: "last day", aggregation: "min", device: "Algalita",
     });
 
-    expect(result.value).toBeGreaterThan(3);
-    expect(result.n_samples).toBe(ALGALITA_PERIOD.length - 3);
-    expect(result.excluded_implausible).toBe(3);
-    expect(result.excluded_implausible_min).toBe(2.07);
-    expect(result.excluded_implausible_max).toBe(13.99);
+    expect(result.value).toBe(2.07);
+    expect(result.n_samples).toBe(ALGALITA_PERIOD.length - 2);
+    expect(result.excluded_implausible).toBe(2);
+    expect(result.excluded_implausible_min).toBe(0);
+    expect(result.excluded_implausible_max).toBe(14);
     const listed = result.excluded_implausible_values as Array<{ at: string; value: number }>;
-    expect(listed.map((entry) => entry.value)).toEqual([2.5, 13.99, 2.07]); // oldest first
+    expect(listed.map((entry) => entry.value)).toEqual([14, 0]); // oldest first
     expect(listed.every((entry) => /^\d{4}-\d{2}-\d{2}T/.test(entry.at))).toBe(true);
     expect(result).not.toHaveProperty("excluded_implausible_not_listed");
 
     const note = String(result.note);
-    expect(note).toContain("outside the pH plausibility band (3-12)");
+    expect(note).toContain("at the very end of the pH scale (exactly 0 or 14)");
     expect(note).toContain("may be sensor faults and were left out");
-    expect(result.user_notes).toEqual(expect.arrayContaining([
-      expect.stringContaining("may be sensor faults and were left out"),
-    ]));
-    expect(note).not.toContain("These are probe faults");
     expect(note).toContain("\"value\" and \"n_samples\" count only the remaining readings");
     expect(note).not.toContain("sensor rails");
   });
 
   it("caps the list at ten, keeps the newest, and counts the rest", async () => {
-    const railed = Object.fromEntries(Array.from({ length: 12 }, (_, i) => [i, 1.5]));
+    const railed = Object.fromEntries(Array.from({ length: 12 }, (_, i) => [i, 0]));
     const { tool } = makeTool({ periodDay: withPh(railed) });
     const result = await tool.run({
       metric: "all", time_range: "last day", aggregation: "min", device: "Algalita",
@@ -526,7 +523,7 @@ describe("query_sensor_data — implausible readings are shown apart from the co
     expect(ph.excluded_implausible).toBe(12);
     expect(ph.excluded_implausible_values as unknown[]).toHaveLength(10);
     expect(ph.excluded_implausible_not_listed).toBe(2);
-    expect(ph.excluded_implausible_min).toBe(1.5);
+    expect(ph.excluded_implausible_min).toBe(0);
   });
 
   it("adds no excluded-value fields when every reading is plausible", async () => {
@@ -539,15 +536,19 @@ describe("query_sensor_data — implausible readings are shown apart from the co
     expect(result).not.toHaveProperty("excluded_implausible_values");
   });
 
-  it("keeps the inclusive pH 3-12 band while excluding values just outside it", async () => {
+  it("keeps pH just outside 3-12 and lists it as unusual, never as a fault", async () => {
     const { tool } = makeTool({ periodDay: withPh({ 0: 3, 1: 12, 2: 2.99, 3: 12.01 }) });
     const result = await tool.run({
       metric: "ph", time_range: "last day", aggregation: "raw", device: "Algalita",
     });
     const values = (result.samples as Array<{ value: number }>).map((sample) => sample.value);
-    expect(values).toEqual(expect.arrayContaining([3, 12]));
-    expect(values).not.toEqual(expect.arrayContaining([2.99, 12.01]));
-    expect(result.excluded_implausible).toBe(2);
+    expect(values).toEqual(expect.arrayContaining([3, 12, 2.99, 12.01]));
+    expect(result).not.toHaveProperty("excluded_implausible");
+    const verdict = result.verdict as Record<string, unknown>;
+    const listed = verdict.unusual_listed as Array<{ value: number; why?: string }>;
+    expect(listed.filter((u) => u.why === "outside the range natural water spans").map((u) => u.value).sort())
+      .toEqual([12.01, 2.99]);
+    expect(verdict).not.toHaveProperty("data_issue");
   });
 });
 
@@ -1137,8 +1138,8 @@ describe("query_sensor_data row counts and large exclusions", () => {
   it("counts each row once and retains a row when any requested metric is usable", async () => {
     const water = [
       { 99: 8, 72: 25, phError: 0, turbError: 0 },
-      { 99: 2, 72: 25, phError: 0, turbError: 0 },
-      { 99: 2, 72: 25, phError: 0, turbError: 1 },
+      { 99: 0, 72: 25, phError: 0, turbError: 0 },
+      { 99: 0, 72: 25, phError: 0, turbError: 1 },
       {},
     ];
     const periodDay = water.map((water_data, i) => ({
@@ -1154,13 +1155,13 @@ describe("query_sensor_data row counts and large exclusions", () => {
   it("computes excluded extremes without exceeding the argument limit", async () => {
     const periodDay = Array.from({ length: 150_000 }, (_, i) => ({
       timestamp: NOW / 1000 - i, best_lat: 33, best_lon: -118,
-      water_data: { 99: i === 0 ? 13 : 2, phError: 0 },
+      water_data: { 99: i === 0 ? 14 : 0, phError: 0 },
     }));
     const { tool } = makeTool({ periodDay });
     const result = await tool.run({ metric: "ph", time_range: "last 2 days", aggregation: "min", device: "Algalita" });
     expect(result.error).toBeUndefined();
-    expect(result.excluded_implausible_min).toBe(2);
-    expect(result.excluded_implausible_max).toBe(13);
+    expect(result.excluded_implausible_min).toBe(0);
+    expect(result.excluded_implausible_max).toBe(14);
     expect(result.excluded_implausible).toBe(150_000);
     expect(result.excluded_implausible_values).toHaveLength(10);
   });
@@ -1226,25 +1227,31 @@ describe("query_sensor_data — per-metric verdicts", () => {
     values.splice(8, 3, 8.8, 8.9, 8.8);
     const verdict = verdictOf(await run(phs(values)));
     expect(verdict.status).toBe("out of range");
-    expect(verdict.out_of_range).toMatchObject({
+    expect(verdict.out_of_range).toEqual({
       direction: "high",
-      runs: 1,
-      ongoing: false,
+      flagged: [{
+        direction: "high",
+        from: new Date(NOW - 11 * 1_800_000).toISOString(),
+        to: new Date(NOW - 9 * 1_800_000).toISOString(),
+        readings_out_of_range: 3,
+        highest: 8.9,
+      }],
+      // The window is under a day, so its latest 24 hours hold the flag.
+      current: true,
       persistent: false,
-      first_run_start: new Date(NOW - 11 * 1_800_000).toISOString(),
     });
   });
 
   it("calls an offset over most of the window persistent", async () => {
     const values = [8.1, ...normal(19).map((v) => v + 0.8)];
     expect(verdictOf(await run(phs(values))).out_of_range)
-      .toMatchObject({ ongoing: true, persistent: true });
+      .toMatchObject({ current: true, persistent: true });
   });
 
   it("judges a right-now question on the run ending at the newest reading", async () => {
     const values = [...normal(10), 8.8, 8.9, 8.8];
     const result = await run(phs(values), undefined, { time_range: "now", aggregation: "latest" });
-    expect(verdictOf(result)).toMatchObject({ status: "out of range", out_of_range: { ongoing: true } });
+    expect(verdictOf(result)).toMatchObject({ status: "out of range", out_of_range: { current: true } });
     const lone = await run(phs([...normal(10), 8.9]), undefined, { time_range: "now", aggregation: "latest" });
     expect(verdictOf(lone).status).toBe("in range");
   });
@@ -1269,14 +1276,33 @@ describe("query_sensor_data — per-metric verdicts", () => {
     expect(verdictOf(result).limit_note).toMatch(/No operator thresholds/);
   });
 
-  it("reports three failed readings in a row as a likely data issue, not one", async () => {
+  it("reports three device faults in a row as a data issue beside the verdict, not instead of it", async () => {
     const values = normal(12).map((v): Water => ({ 99: v }));
     values[3] = { 99: 8.1, phError: 1 };
-    expect(verdictOf(await run(values)).status).toBe("in range");
+    expect(verdictOf(await run(values))).not.toHaveProperty("data_issue");
     [6, 7, 8].forEach((i) => { values[i] = { 99: 8.1, phError: 1 }; });
     const verdict = verdictOf(await run(values));
-    expect(verdict.status).toBe("likely data issue");
+    expect(verdict.status).toBe("in range");
     expect(verdict.data_issue).toHaveLength(1);
+    const allFaulted = verdictOf(await run(normal(5).map((v): Water => ({ 99: v, phError: 1 }))));
+    expect(allFaulted.status).toBe("likely data issue");
+  });
+
+  it("never makes a data issue from unusual readings, and lists them with the jump", async () => {
+    const values = [...normal(10), 2.73, 2.8, 2.9, ...normal(5)];
+    const verdict = verdictOf(await run(phs(values)));
+    expect(verdict).not.toHaveProperty("data_issue");
+    // The three below 3, and the jump back up to 8, labelled as a jump with where it came from.
+    expect(verdict.unusual_readings).toBe(4);
+    expect(verdict.unusual_listed[0]).toMatchObject({
+      value: 2.73, why: "outside the range natural water spans",
+    });
+    expect(verdict.unusual_listed[3]).toMatchObject({
+      why: "a sudden jump from the previous reading", previous: 2.9,
+    });
+    expect(verdict.unusual_stretches).toHaveLength(1);
+    // Unusual readings never count toward a flag.
+    expect(verdict.status).toBe("in range");
   });
 
   it("reports every channel failing three times in a row as a board fault", async () => {

@@ -12,9 +12,13 @@ import { METRIC_BY_KEY, METRICS } from "../devices/metrics";
 import { implausibilityReason, isPlausible } from "../devices/plausibility";
 import {
   allChannelFailureRuns, inTimeOrder, qcReadings, readingGaps, stuckSensorNote, stuckSensorUserNote,
+  unusualKind,
 } from "../devices/readingQc";
 import type { ReadingRun } from "../devices/readingQc";
-import { isAllZeroTurbidity, TURBIDITY_ALL_ZERO_CAVEAT } from "../report/referenceRanges";
+import type { UnusualKind } from "../report/flagRules";
+import {
+  fallbackWaterClass, isAllZeroTurbidity, mapWaterType, TURBIDITY_ALL_ZERO_CAVEAT,
+} from "../report/referenceRanges";
 import type {
   DeviceReading,
   DeviceSummary,
@@ -812,7 +816,8 @@ export class QuerySensorData {
     // QC over the whole site history, so a flat line that began before the window is still
     // recognised inside it (`devices/readingQc.ts`).
     const ordered = inTimeOrder(readings);
-    const qc = qcReadings(ordered, metricKeys);
+    const water = mapWaterType(device.operatingEnvironment);
+    const qc = qcReadings(ordered, metricKeys, water ? { water: fallbackWaterClass(water) } : {});
     const isStuck = (key: MetricKey, row: DeviceReading): boolean => {
       const result = qc.get(key)?.get(row);
       return result?.flag === "fail"
@@ -840,7 +845,14 @@ export class QuerySensorData {
     // One fetched window, read once per requested metric. The device API is not touched again.
     const computed = metricKeys.map((key) => {
       const usable = readings.filter((row) => !isStuck(key, row));
-      const samples = QuerySensorData.samplesInRange(usable, key, range);
+      const unusualAt = new Map(usable.flatMap((row): Array<[string, UnusualKind]> => {
+        const kind = unusualKind(qc.get(key)?.get(row));
+        return kind && row.observedAt ? [[row.observedAt, kind]] : [];
+      }));
+      const samples = QuerySensorData.samplesInRange(usable, key, range).map((sample) => {
+        const unusual = unusualAt.get(sample.at);
+        return unusual ? { ...sample, unusual } : sample;
+      });
       onSamples?.(NAME_BY_METRIC_KEY.get(key)!, samples);
       return {
         key,

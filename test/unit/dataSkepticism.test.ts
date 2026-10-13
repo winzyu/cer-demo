@@ -46,7 +46,18 @@ const CONTEXT: ToolContext = { token: "test-token" };
 type Result = Record<string, unknown>;
 type Verdict = {
   status: string;
-  out_of_range?: { direction: string; first_run_start: string; latest_run_end: string; runs: number; persistent: boolean };
+  out_of_range?: {
+    direction: string;
+    flagged: Array<{ from: string; to: string }>;
+    flagged_not_listed?: number;
+    current: boolean;
+    persistent: boolean;
+  };
+  at_edge?: { side: string; shape: string };
+  unusual_readings?: number;
+  unusual_listed?: Array<{ value: number; why?: string }>;
+  unusual_stretches?: unknown[];
+  data_issue?: unknown[];
 };
 type MetricResult = {
   verdict: Verdict;
@@ -152,13 +163,21 @@ describe("data skepticism: the incident week (Bay Mouth Pod, last 7 days)", () =
     results.forEach((result) => expect(JSON.stringify(result)).not.toMatch(UNMEASURED_CAUSE));
   });
 
-  it("reports the week as Normal: no event, no flag on any configured parameter", async () => {
+  it("reports the week as Watch for pH at the low edge most afternoons: no flag, no event (Michael #6)", async () => {
     const report = await tools.report({ device: BAY_MOUTH, time_range: "last 7 days" });
-    expect(report.status).toBe("Normal");
+    expect(report.status).toBe("Watch");
+    expect(report.status_reason).toMatch(/^Watch because a parameter sat at the edge of its healthy range/);
     expect(report.parameter_flags).toEqual({
       dissolved_oxygen: "Normal", orp: "Normal", ph: "Normal", conductivity: "Normal", temperature: "Normal",
     });
+    expect(report.flag_detail).toEqual({
+      ph: { at_edge: expect.objectContaining({ side: "low", shape: "daily", days: 7, period_days: 7 }) },
+    });
     expect(report.events_flagged).toBe(0);
+    const ph = await tools.query({ device: BAY_MOUTH, metric: "ph", time_range: "last 7 days", aggregation: "mean" });
+    expect((ph.verdict as Verdict)).toMatchObject({
+      status: "in range", at_edge: { side: "low edge", shape: "on 7 of 7 days" },
+    });
   });
 
   it("reads only the routes the fake serves: devices, then period windows", () => {
@@ -176,7 +195,9 @@ describe("data skepticism: a deep daily pH dip is a real exceedance, never a per
     const verdict = ph.verdict as Verdict;
     expect(verdict.status).toBe("out of range");
     expect(verdict.out_of_range).toMatchObject({ direction: "low", persistent: false });
-    expect(verdict.out_of_range?.runs).toBeGreaterThanOrEqual(range === "last 7 days" ? 7 : 28);
+    // Each afternoon is its own flagged stretch, so the days are named, not the period.
+    const stretches = (verdict.out_of_range?.flagged.length ?? 0) + (verdict.out_of_range?.flagged_not_listed ?? 0);
+    expect(stretches).toBeGreaterThanOrEqual(range === "last 7 days" ? 7 : 28);
   });
 
   it("the report flags pH as an exceedance and leaves every other parameter Normal", async () => {
@@ -190,21 +211,29 @@ describe("data skepticism: a deep daily pH dip is a real exceedance, never a per
 describe("data skepticism: over-correction guards (record §6 step 5)", () => {
   const tools = toolsFor(fleetWith());
 
-  it("pH 2.07 is still implausible: excluded, listed and said, not averaged in", async () => {
+  it("pH 2.07 is kept and listed as unusual, never a fault and never a flag (2026-10-13)", async () => {
     const ph = await tools.query({ device: HARBOR_ACID, metric: "ph", time_range: "last 7 days", aggregation: "mean" });
-    expect(ph.excluded_implausible).toBe(ACID_READINGS);
-    expect((ph.excluded_implausible_values as Array<{ value: number }>).map((v) => v.value))
+    expect(ph).not.toHaveProperty("excluded_implausible");
+    const verdict = ph.verdict as Verdict;
+    expect(verdict.status).toBe("in range");
+    expect(verdict.unusual_listed!.filter((u) => u.why === "outside the range natural water spans").map((u) => u.value))
       .toEqual(Array(ACID_READINGS).fill(ACID_READING));
-    expect(ph.value as number).toBeGreaterThan(7.5);
-    expect(ph.user_notes).toEqual([expect.stringContaining("pH plausibility band")]);
+    // Isolated, a day and a half apart: no stretch to mention, no data issue.
+    expect(verdict).not.toHaveProperty("unusual_stretches");
+    expect(verdict).not.toHaveProperty("data_issue");
+    const report = await tools.report({ device: HARBOR_ACID, time_range: "last 7 days" });
+    expect(report.status).not.toBe("Action Required");
+    expect((report.parameter_flags as Record<string, string>).ph).toBe("Normal");
   });
 
   it(`an ${OXYGEN_EVENT_HOURS}-hour oxygen drop is still a real event: out of range low, one run, not a data issue`, async () => {
     const oxygen = await tools.query({ device: ESTUARY_OXYGEN, metric: "dissolved_oxygen", time_range: "last 7 days", aggregation: "mean" });
     const verdict = oxygen.verdict as Verdict;
     expect(verdict.status).toBe("out of range");
-    expect(verdict.out_of_range).toMatchObject({ direction: "low", runs: 1, persistent: false });
-    const span = Date.parse(verdict.out_of_range?.latest_run_end ?? "") - Date.parse(verdict.out_of_range?.first_run_start ?? "");
+    expect(verdict.out_of_range).toMatchObject({ direction: "low", persistent: false });
+    expect(verdict.out_of_range?.flagged).toHaveLength(1);
+    const [stretch] = verdict.out_of_range!.flagged;
+    const span = Date.parse(stretch.to) - Date.parse(stretch.from);
     expect(span).toBeGreaterThan((OXYGEN_EVENT_HOURS - 5) * HOUR);
     expect(span).toBeLessThanOrEqual(OXYGEN_EVENT_HOURS * HOUR);
     expect(oxygen.excluded_faulted).toBe(0);
@@ -356,8 +385,9 @@ describe("data skepticism: scenario pods", () => {
     const result = await week(MARINA_DOCK);
     const m = metrics(result);
     expect(m.conductivity.verdict.status).toBe("out of range");
-    expect(Date.parse(m.conductivity.verdict.out_of_range!.first_run_start)).toBeGreaterThanOrEqual(start);
-    expect(Date.parse(m.conductivity.verdict.out_of_range!.latest_run_end)).toBeLessThanOrEqual(end);
+    const { flagged } = m.conductivity.verdict.out_of_range!;
+    expect(Date.parse(flagged[0].from)).toBeGreaterThanOrEqual(start);
+    expect(Date.parse(flagged[flagged.length - 1].to)).toBeLessThanOrEqual(end);
     expect(JSON.stringify(result)).not.toMatch(/clean|out of the water|maintenance/i);
   });
 });

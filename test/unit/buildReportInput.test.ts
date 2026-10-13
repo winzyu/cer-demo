@@ -120,8 +120,8 @@ describe("buildReportInput", () => {
   it("counts usable and left-out rows once even when several metrics share a row", async () => {
     const water = [
       { 99: 8, 72: 25, phError: 0, turbError: 0 },
-      { 99: 2, 72: 25, phError: 0, turbError: 0 },
-      { 99: 2, 72: 25, phError: 0, turbError: 1 },
+      { 99: 0, 72: 25, phError: 0, turbError: 0 },
+      { 99: 0, 72: 25, phError: 0, turbError: 1 },
       {},
     ];
     const periodDay = water.map((water_data, i) => ({

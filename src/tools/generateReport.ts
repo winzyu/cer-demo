@@ -30,7 +30,7 @@ import {
   parseReportOmit, REPORT_OMIT_DESCRIPTIONS, REPORT_OMIT_GROUPS,
 } from "../report/omit";
 import {
-  flagFor, reportPeriod, runsFor, statValue, withUnit,
+  flagFor, flagsFor, reportPeriod, statValue, unusualFor, withUnit,
 } from "../report/types";
 import { metricBlindSpotNote, WIRE_KEY_TO_METRIC } from "../report/operatorThresholds";
 import { minimumDetectableChange } from "../report/referenceRanges";
@@ -138,6 +138,48 @@ const parameterFlags = (report: ReportInput): Record<string, string> => Object.f
 );
 
 /**
+ * What lies behind each parameter's flag, keyed like `parameter_flags`, for parameters with
+ * something to say: each flagged stretch with its times and whether the flag is still current
+ * (a cleared one is told in the past tense, Michael #4), Michael's edge rule, and unusual
+ * stretches (docs/timeline.md, 2026-10-13). Times are UTC.
+ */
+const flagDetail = (report: ReportInput): Record<string, unknown> => Object.fromEntries(
+  report.parameters.flatMap((p): Array<[string, unknown]> => {
+    const flags = flagsFor(p, minimumDetectableChange);
+    const unusual = unusualFor(p);
+    const iso = (ms: number): string => new Date(ms).toISOString();
+    const detail = {
+      ...(flags && flags.episodes.length > 0 ? {
+        flagged: flags.episodes.map((e) => ({
+          direction: e.direction, from: iso(e.startMs), to: iso(e.endMs), extreme: e.extreme,
+        })),
+        current: flags.current,
+      } : {}),
+      ...(flags?.edge ? {
+        at_edge: {
+          side: flags.edge.side,
+          shape: flags.edge.shape,
+          days: flags.edge.days,
+          period_days: flags.edge.periodDays,
+          lowest: flags.edge.lowest,
+          highest: flags.edge.highest,
+        },
+      } : {}),
+      ...(unusual.length > 0 ? {
+        unusual_stretches: unusual.map((u) => ({
+          from: iso(u.startMs),
+          to: iso(u.endMs),
+          readings: u.readings,
+          lowest: u.lowest,
+          highest: u.highest,
+        })),
+      } : {}),
+    };
+    return Object.keys(detail).length > 0 ? [[p.baseline.key, detail]] : [];
+  }),
+);
+
+/**
  * One sentence saying which rule set the status and, for a flag-driven status, the observed range
  * of each parameter behind it against its configured threshold, in the PDF's own number format.
  * Built from `assessStatus`, the same ladder that chose the status, so the two cannot disagree.
@@ -149,8 +191,9 @@ const statusReason = (report: ReportInput, basis: StatusAssessment): string => {
   const observed = basis.parameters.map((key) => {
     const p = byKey.get(key) as ParameterStats;
     const b = p.baseline;
-    const runs = runsFor(p, minimumDetectableChange)?.outOfRange ?? [];
-    const since = runs.length > 0 ? `, first from ${new Date(runs[0].startMs).toISOString()}` : "";
+    const episodes = flagsFor(p, minimumDetectableChange)?.episodes ?? [];
+    const since = episodes.length > 0
+      ? `, first flagged from ${new Date(episodes[0].startMs).toISOString()}` : "";
     // Keyed as in parameter_flags, and "from ... to" because a hyphen misreads beside a negative.
     return `${key} ranged from ${withUnit(`${statValue(p.min)} to ${statValue(p.max)}`, b.unit)} `
       + `against its ${b.baselineSource === "v2-fallback" ? "generic fallback" : "configured"} `
@@ -158,15 +201,25 @@ const statusReason = (report: ReportInput, basis: StatusAssessment): string => {
   }).join("; ");
   switch (basis.rule) {
     case "exceedance":
-      return "Action Required because a parameter stayed beyond its threshold by more than the "
-        + `exceedance margin for at least three readings in a row: ${observed}. `
+      return "Action Required because a parameter is flagged now, in the period's last 24 hours, "
+        + `beyond its threshold by more than the exceedance margin: ${observed}. `
         + "This is independent of the event count.";
     case "high-confidence-high-event":
-      return "Action Required because a high-severity event was detected with enough confidence "
-        + "to name it; see event_types.";
+      return "Action Required because a high-severity event in the period's last 24 hours was "
+        + "detected with enough confidence to name it; see event_types.";
     case "excursion":
-      return "Watch because a parameter stayed outside its threshold for at least three readings "
-        + `in a row: ${observed}. A single reading outside it never sets a flag.`;
+      return "Watch because a parameter was flagged outside its threshold during the period, "
+        + "with out-of-range readings reaching 5% of a 24-hour window and at least three: "
+        + `${observed}. A single reading never sets a flag. See flag_detail for the flagged times `
+        + "and whether each flag is current; tell a cleared flag in the past tense.";
+    case "edge":
+      return "Watch because a parameter sat at the edge of its healthy range for an extended "
+        + "period without being flagged; see flag_detail.";
+    case "unusual":
+      return "Watch because a parameter had a stretch of very unusual readings (sudden jumps or "
+        + "values beyond what natural water reaches) that the device did not flag as faults; they "
+        + "are shown, not counted toward a flag, and a calibration check would confirm them. See "
+        + "flag_detail.";
     case "event":
       return "Watch because the report flagged a candidate event; see event_types. No parameter "
         + "left its configured threshold.";
@@ -264,6 +317,7 @@ export class GenerateReport {
       status,
       status_reason: statusReason(report, statusBasis),
       parameter_flags: parameterFlags(report),
+      flag_detail: flagDetail(report),
       site_name: report.site.siteName,
       time_range_resolved: { start: report.site.startDate, end: report.site.endDate },
       // The period as the PDF prints it, for the model to quote verbatim (see REPORT_TOOL_BLOCK).
