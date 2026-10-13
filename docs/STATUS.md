@@ -1,12 +1,13 @@
 # Status
 
-Updated 2026-10-12 by the coordinator after landing `land/post-launch` on `dev`: `docs/launch-handoff`, `task/sot-v2-flagging`, `task/report-omit`, `docs/behavior-handoff` and `task/data-skepticism`'s coverage-line work, plus three landing fixes; other workstreams as of the release chat's 2026-10-07 update after L9.
+Updated 2026-10-13 at `f945ccb` on `task/flagging-share-window` for the flagging rework only; otherwise as the coordinator's 2026-10-12 update after landing `land/post-launch` on `dev`: `docs/launch-handoff`, `task/sot-v2-flagging`, `task/report-omit`, `docs/behavior-handoff` and `task/data-skepticism`'s coverage-line work, plus three landing fixes; other workstreams as of the release chat's 2026-10-07 update after L9.
 Current state and next steps only; history is `git log -p docs/STATUS.md`; never cite this file from code or other docs.
 
 ## Start here
 
 - **Gilligan is live (2026-10-07).** cer-gilligan `00004-r5q`, cer-api `00081-qon` (tag `rc2`) and cer-ui `00070-dax` (tag `rc1`) take all traffic; record in [`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md) §7 items 10-19.
-- **v2 flagging (backlog §1, items A1-D3)**: landed on `dev` (2026-10-12). The smoke check passed (2026-10-11, about $0.07, [`migration/V2_FLAGGING_SMOKE_2026-10-11.md`](migration/V2_FLAGGING_SMOKE_2026-10-11.md)). At landing, a spike must also exceed the minimum detectable change, so noise on a steady channel no longer makes a likely data issue; not deployed.
+- **Flagging rework** (Michael's 2026-10-12 decisions, on top of v2 flagging, landed on `dev` 2026-10-12): built, tested and replayed on `task/flagging-share-window`, pushed, not merged or deployed; decisions in [`timeline.md`](timeline.md) 2026-10-13.
+  Next: start at [`migration/FLAGGING_REWORK_HANDOFF_2026-10-13.md`](migration/FLAGGING_REWORK_HANDOFF_2026-10-13.md) "Start here": the user sends Michael its summary, then revert what he rejects and check the edge rule on real readings.
 - **Post-launch backlog.** Order the remaining items in [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md) with the user, reconciled with the untracked `docs/migration/POST_RELEASE_ITEMS_EXPLAINED.html` (2026-10-02); the unguarded user-update routes (§2) are the obvious next candidate.
 - **Report editing (backlog §6).** Report options (`omit`) are built and unit-tested on cer-demo `task/report-omit` and server `task/gilligan-report-omit`; the Mirror tests (2026-10-10 and 11, [`migration/REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](migration/REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md)) pass the mechanism; the false-claim fix (`5390332`: server-written "New PDF in this reply" line, forced retry) made a report in 8 of 8 replays and all three turns of a cer-api chat, with the retry firing in 7 of 11 (results doc, "Fix test").
   Landed on `dev` (2026-10-12), with the report-claim check no longer reading reading-QC sentences as claims and `threshold_notes` covering every threshold footnote; not deployed. Next: the user sends Michael the samples in `migration/report-omit-samples/`; the server branch `task/gilligan-report-omit` waits for push consent.
@@ -19,14 +20,11 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 ## Last session
 
-- Michael's 2026-10-09 chat (read once from production Firestore, read-only) traced to five root causes: no normal-variation guidance, `fault-first` stated as a finding, grounding that checks quotes not inferences, user statements taken as evidence, and no sensor-tool evals.
-- The "Searched from 1970 ... incomplete" note under a complete week is fixed: `fix/window-note` `4fb59bf` (from the deployed `ddd6292`) and `dev` `469e972`, both pushed; verified by a reproducing unit test, 280 tests in 11 suites, a live tool read on Algalita Pod (no model) and the live dashboard's notice code. Not deployed.
-- Mirror test plan and remaining prompt and catalogue changes written; nothing paid was run; spend $0.
-- v2 flagging smoke check: 8 live questions on a local server at 8020 (stopped), all pass; read-only production reads, about $0.07.
-- v2 flagging: per-reading QC (flat lines, spikes, read and board failures), operator thresholds with v2 §3 fallbacks, the 3-in-a-row rule with v2's minimum detectable change, per-metric verdicts in `query_sensor_data`, and the matching report flags, tiers and prompt rules; behaviour in [`SPECS.md`](SPECS.md) §19 and §10.7.
-- Decisions of 2026-10-11 (no conductivity or coastal ORP fallback, run and data-issue details, inspection only for a likely data issue) are in [`timeline.md`](timeline.md); [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md) now holds only open questions, with new items 24-27.
-- Checks: 27 unit suites and 3 integration suites run singly, typecheck and lint clean; full `npm test` not run; no production reads and no spend.
-- Release chat (2026-10-07): L6-L9 done ([`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md) §7); an estimated $0.10-0.30 on CER's Fireworks key for the L6 and L8 checks.
+- Flagging rework: decisions 1-10 taken with the user and recorded; implemented in `63fab5f` (reading labels, share rule, current-only Action Required, edge rule, device-only data issues, events from flags); behaviour in [`SPECS.md`](SPECS.md) "The flag rule", "Reading labels", "Verdicts".
+- Checks: 23 suites run singly, all passing, including a new Algalita end-to-end suite on recorded plus synthetic readings; typecheck and lint clean; full `npm test` not run.
+- Paid replay of the customer's two questions on a fake device API: $0.053 of the approved $0.30; `dev` calls Sep 26 a data issue and the report Action Required, the branch describes the drop and reports Watch with past flags.
+- The agent's read-only production pull of Algalita was blocked; the edge rule is unverified on real afternoons.
+- Earlier sessions' outcomes are in their durable docs; history is `git log -p docs/STATUS.md`.
 
 ## Working tree
 
@@ -34,7 +32,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - Main checkout on `reflection` with the user's uncommitted path fixes (`.claude/settings.json`, `release/start-rc2-emulator.sh`) and the untracked `docs/migration/POST_RELEASE_ITEMS_EXPLAINED.html`; `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html` and the root v2 PDF stay untracked on purpose.
 - Landing: `dev` is `land/post-launch` (2026-10-12), tested per [`migration/POST_LAUNCH_MERGE_TESTS.md`](migration/POST_LAUNCH_MERGE_TESTS.md) and [`migration/POST_LAUNCH_MERGE_RESULTS_2026-10-11.md`](migration/POST_LAUNCH_MERGE_RESULTS_2026-10-11.md); new work branches from `dev`.
 - `dev` moved to `469e972` (the window-note fix, pushed at the user's request outside the coordinator); worktree `dev` holds it.
-- v2 flagging: worktree `sot-v2-flagging`, branch `task/sot-v2-flagging` pushed, clean; `node_modules`, `.env` and the `data/` caches are linked or copied in, ignored.
+- Flagging: worktree `flagging-share-window`, branch `task/flagging-share-window` pushed at `f945ccb`, clean; `.env` copied into worktree `dev` and the `data/` caches linked into both, ignored; `sot-v2-flagging` (landed) is clean.
 - cer-demo worktrees: 47 besides the main checkout; `post-launch-land` is the coordinator's; `data-skepticism` and `skeptic-repro` are the behaviour chat's; `post-launch-security` and `mirror-testing` are stale (2026-09-28) with nothing uncommitted.
 - Upstream build worktrees `worktrees/build-cer-api-122136d` and `build-cer-ui-fc13d16` are clean detached checkouts of the live commits; the server and dashboard checkouts stay on `local`.
 - Report editing: worktree `report-omit` on `task/report-omit` (pushed; feature `97e396e`, plan `ac212d1`, then a merge of `docs/launch-handoff`), so the coordinator lands `docs/launch-handoff` first; server worktree `worktrees/server-report-omit` on `task/gilligan-report-omit` `ddcddc5` (local only, never push without consent); the options comparison `docs/migration/REPORT_EDITING_OPTIONS.html` is untracked in the main checkout.
@@ -49,6 +47,8 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - User, report editing: send Michael the before-and-after PDFs and correct the earlier message that the model edits parts of the report (it never did; the variation came from data-driven templates).
 - Agent, report editing: optionally relay `report_retried` through cer-api (`CerRagService.ask`) so retries show without Gilligan's log; stop the Mirror stack when the user says (delete `mirror-env.sh` and `server-mirror/`).
 - Agent, behaviour: the mirror fixture, reproduction and prompt and catalogue changes in [`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md) §5-6.
+- User, flagging: send Michael the handoff's summary; run `! node scripts/flagging/pullAlgalitaReadings.mjs /tmp/algalita-month.json` from worktree `flagging-share-window`; say when to merge into `dev`.
+- Agent, flagging: Michael's answers into [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md) 27-29, revert rejected rules (the handoff's "Where each rule lives"), check the real readings.
 - Agent, post-launch: the rest of [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md), once ordered.
 - Agent, upstream landing: build the `main` merges (server conflicts in `WaterAnalyticsService.ts`; take the release side); push on consent; tell Michael `62993fe` ships with server `main`.
 - Agent, release follow-through: logs and spend in the first days; cer-gilligan to 2 instances after the restart check; remove stale tags (backlog §4).
@@ -60,7 +60,8 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 | server `POST /api/v1/users/account/:id`, `POST`/`DELETE /api/v1/users/:id`, `POST /api/v1/users` | Any logged-in user can set any user's role, organization and email; admins can edit, promote, delete or create users in other organizations; live in production (landing doc §7 item 14). | high |
 | server `WaterAnalyticsController.exportCsv` | Any logged-in user exports any pod's readings as CSV (finding 11); fixed on `8463545`, not shipped. | high |
 | `../user-dashboard` `src/app/services/device-data.js:341`, `src/app/components/header.js` | A previous account's pod and organization lists survive logout and login in the same tab; a superadmin's pods show to the next account until a reload. | medium |
-| Gilligan answers (live) | One out-of-range reading flags a metric and prompts maintenance; the turbidity caveat repeats in almost every answer (backlog §1); fixed on `task/sot-v2-flagging`, not landed or deployed. | medium |
+| Gilligan answers (live) | One out-of-range reading flags a metric and prompts maintenance; the turbidity caveat repeats in almost every answer (backlog §1); fixed on `dev`, reworked on `task/flagging-share-window`, not deployed. | medium |
+| `src/tools/timeRange.ts` | A calendar date resolves as a UTC day, so a Pacific evening (Algalita's Sep 26 17:56 drop) falls on the next day. | medium |
 | server `checkWaterDataAndSendAlerts` | Alert emails fire on the latest reading alone, so an email can alert while chat calls the metric in range (stakeholder question 27). | low |
 | Gilligan answers, `src/prompt/systemPrompt.ts`, `src/catalogue/` | Real readings called sensor faults on an unmeasured cause (tides); positions flip under pushback without a fresh tool call (Michael, 2026-10-09). | high |
 | server `assignOrganization` | A non-superadmin with an empty organization sees every pod; no production user has one; fixed on `8463545`, not shipped. | medium |

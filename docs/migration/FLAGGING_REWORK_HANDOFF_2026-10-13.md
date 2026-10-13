@@ -9,7 +9,7 @@ Rules as built: [`../SPECS.md`](../SPECS.md), "The flag rule", "Reading labels" 
 
 The work is built, tested, replayed and pushed; what remains is Michael's review and anything he reverses.
 Read this file, then the timeline's two 2026-10-13 flagging rows; open the overview only for a case's detail.
-Rules carried over: STATUS.md is the coordinator's, do not edit it; announce any device API read before running it; production reads are blocked for the agent, so hand the user a `! ...` command; no paid runs without approval; do not quote the customer's chat or name her in committed docs beyond the chat id; run only relevant Jest suites singly plus `npm run typecheck` and `npm run lint`; commit and push the task branch when a verified unit is done; never merge into `dev` without asking.
+Rules carried over: STATUS.md is the coordinator's, so edit only this workstream's lines, and only at a handoff; announce any device API read before running it; production reads are blocked for the agent, so hand the user a `! ...` command; no paid runs without approval; do not quote the customer's chat or name her in committed docs beyond the chat id; run only relevant Jest suites singly plus `npm run typecheck` and `npm run lint`; commit and push the task branch when a verified unit is done; never merge into `dev` without asking.
 
 Next steps, in order:
 1. The user sends "Summary for Michael" below to Michael; record his answers in `STAKEHOLDER_QUESTIONS.md` items 27-29 and a timeline row.
