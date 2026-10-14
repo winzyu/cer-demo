@@ -86,7 +86,7 @@ Branch `task/sot-v2-flagging`, worktree `.claude/worktrees/sot-v2-flagging`; the
 - v2 §3 fallback values, for pH, dissolved oxygen (mg/L), ORP (mV) and specific conductance (µS/cm): freshwater 6.5-8.5, 6-11, 100-400, 50-1,500; brackish 7.0-8.3, 5-9, 100-350, 1,000-46,000; Southern California coastal and harbor 7.8-8.3, 6-8.5, 100-400, 50,000-52,000. The registry's `operatingEnvironment` is "salt-water" (coastal column) or "fresh-water"; use the brackish column only for an explicit brackish or estuarine value. A fallback applies per metric whenever `metricThreshold` rejects the operator value (`src/report/operatorThresholds.ts`).
 - Minimum detectable change (v2 §8.3): pH 0.2, dissolved oxygen 1 mg/L, ORP 50 mV, conductivity 2% of reading, temperature 2 × `temperatureAccuracyC` (convert °F first); it replaces the datasheet values as `flagFor`'s noise floor (`src/report/types.ts`, `src/report/referenceRanges.ts`); keep the datasheet table for its other uses.
 - The run rule counts raw readings in time order, not the report's bucket means (`buildReportInput.ts` already keeps `readingsByMetric` for `exceedanceCount`); keep the status ladder in `assessStatus` and replace its single-reading triggers with 3-in-a-row runs, keeping the 15% margin as the Action Required step.
-- QC per reading: fail for an error flag, the `1000000000` value, an implausible value (`src/devices/plausibility.ts`) or 24 identical readings; suspect for 6 identical readings or a spike (beyond 3 × the window's MAD from the mean of two neighbours that agree; skip when MAD is 0); missing for gaps. Generalise `src/tools/stuckSensor.ts`; turbidity at 0 keeps its existing rule. All-channel failures count as a likely data issue; three in a row flags the sensor, provisional until the colleague confirms (§1 rule 2).
+- QC per reading: fail for an error flag, the `1000000000` value, an implausible value (`src/devices/plausibility.ts`) or 24 identical readings; suspect for 6 identical readings or a spike (beyond 3 × the window's MAD from the mean of two neighbours that agree; skip when MAD is 0); missing for gaps. Generalise `src/tools/stuckSensor.ts` (done: `38205d4` moved it into `src/devices/readingQc.ts`, `stuckSensorNote` and `stuckSensorUserNote`); turbidity at 0 keeps its existing rule. All-channel failures count as a likely data issue; three in a row flags the sensor, provisional until the colleague confirms (§1 rule 2).
 - Chat: `query_sensor_data` returns each metric's verdict (in range, out of range since a time, likely data issue, not assessed, not enough data) with its basis (operator threshold or v2 fallback); the prompt relays verdicts, gives maintenance advice only for a likely data issue, states a persistent offset once with its start, and gives the turbidity caveat once per conversation. `TOOL_BLOCK` is pinned byte-for-byte by `test/unit/prompt.test.ts`, so update the pin with the change.
 - Report: provenance and Flag text for fallback ranges (`renderPdf.ts`, `narrative.ts`); event headings and narrative use v2 §9.2's tiers, never "confirmed".
 - Docs: `SPECS.md` (behaviour), `timeline.md` (any further decision); remove every "no fallback table" statement (`referenceRanges.ts` header, `systemPrompt.ts` docstring, `SPECS.md`).
@@ -94,7 +94,7 @@ Branch `task/sot-v2-flagging`, worktree `.claude/worktrees/sot-v2-flagging`; the
 
 ### 1d. Progress (2026-10-11)
 
-Items A1-D3 are built on `task/sot-v2-flagging` (pushed, `268eb1b`..`cc6db99`, nine commits) and await the coordinator's landing on `dev`.
+Items A1-D3 are built on `task/sot-v2-flagging` (pushed, `268eb1b`..`cc6db99`, nine commits) and landed on `dev` on 2026-10-12 with `land/post-launch`; not deployed.
 Each touched Jest suite passed singly with `--runInBand` (27 unit suites plus the `q3Corrections`, `sensorChat` and `reports` integration suites), and `npm run typecheck` and `npm run lint` are clean; the full `npm test` was not run.
 Behaviour is in [`SPECS.md`](../SPECS.md) §19 (reading QC, limits, the flag rule, verdicts) and §10.7; the details decided on 2026-10-11 are in [`timeline.md`](../timeline.md); open questions 24-27 are in [`STAKEHOLDER_QUESTIONS.md`](../STAKEHOLDER_QUESTIONS.md).
 
@@ -127,7 +127,7 @@ Not changed by this work: report event detection still reads bucket means; the s
 | Item | Evidence |
 |---|---|
 | Over-flagging and repeated turbidity caveat | §1 |
-| Gilligan called a week of real readings sensor faults on a tide link it never measured, then reversed under pushback without new data; the "Searched from 1970" note is fixed on `dev` `469e972`, not deployed | [`GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](GILLIGAN_DATA_SKEPTICISM_2026-10-09.md) |
+| Gilligan called a week of real readings sensor faults on a tide link it never measured, then reversed under pushback without new data; the "Searched from 1970" note is fixed on `dev` `469e972`, not deployed; the skepticism fix is on `dev` (`16cec6e`, `c303c2f`), not deployed | [`GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](GILLIGAN_DATA_SKEPTICISM_2026-10-09.md) |
 | Michael cannot ask for a report without its turbidity disclaimers, or with sections left out, to share a clean PDF | §6 |
 | "How is the water this week?" answers with readings, actions and next steps and offers a report, instead of a plain weekly summary | Landing doc §7 item 17 (L8 C1) |
 | After a reload, a repeated summary request returns nearly the same answer | Landing doc §7 item 17 |
@@ -168,6 +168,7 @@ Michael, 2026-10-07, after using the live Gilligan:
 The user offered two directions: the model writes the whole report as HTML, converted to PDF (estimated 3-15 cents a report, not measured), or the model edits a fixed HTML template with named sections, such as a warning section it can remove on request.
 Michael: "I would say the HTML is the better idea".
 **Status 2026-10-09:** idea 1 (report options on the tool) is built on cer-demo `task/report-omit` and server `task/gilligan-report-omit`, tested on the Mirror 2026-10-10 and 11 ([`REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md); the false edit claim is fixed by a server-written PDF line and a forced retry) and awaiting Michael's approval of sample PDFs; the decision is in [`timeline.md`](../timeline.md).
+On 2026-10-12 the cer-demo half landed on `dev` with `land/post-launch`, not deployed; server `task/gilligan-report-omit` (`ddcddc5`) is pushed upstream with no pull request.
 Research items 2, 3, 6 and 7 were settled by the user: removal is allowed on explicit request, notes are kept by default, a copy says what it omits, the zero-AI-calls decision stands, and omitted copies count against the quota as before.
 
 How the report works today:
