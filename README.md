@@ -662,7 +662,7 @@ reporting still answers "the last day" about its last day of data.
 |---|---|
 | `npm run dev` | live-reload dev server (`ts-node-dev`) |
 | `npm run build` / `npm start` | compile to `dist/` / run compiled |
-| `npm test` | full Jest suite (57 suites: 51 unit, 6 integration; none touching the network) |
+| `npm test` | full Jest suite (87 suites: 76 unit, 11 integration, counted 2026-10-14; none touching the network, and the Firestore emulator suite skips unless `FIRESTORE_EMULATOR_HOST` is set) |
 | `npm run test:coverage` / `test:watch` | coverage / watch mode |
 | `npm run lint` / `npm run typecheck` | ESLint (check-only) over `src` / `tsc --noEmit` |
 | `npm run lint:fix` | ESLint `--fix` over `src` `.ts` files, writes files |
@@ -703,17 +703,20 @@ src/
     lexical/            #   Bm25Index
     sources/            #   ArtifactCorpusSource | FirestoreCorpusSource
   devices/              # DeviceApiClient (read-only), metrics.ts (codes, flags, decoding),
-                        #   plausibility.ts (per-metric rails), mergeChains.ts
+                        #   plausibility.ts (per-metric rails), readingQc.ts (per-reading QC),
+                        #   mergeChains.ts
   tools/                # the model-facing tools — SPECS.md §10.3a
     querySensorData.ts  #   the sensor tool + typed query(); timeRange.ts; aggregate.ts
     listPods.ts         #   the caller's own fleet
     getPodThresholds.ts #   the pod's registry alert limits; getTurbidityInfo.ts
     generateReport.ts   #   the report tool, gated on REPORT_TOOL
+                        #   helpers: currentSite, siteSnapshot, dataCoverage, dailyCycle,
+                        #   metricVerdict, readingAge
   catalogue/            # catalogue.json (approved guidance) + validator, selection,
                         #   prompt block, review page - SPECS.md §4b
   report/               # the deterministic report pipeline: buildReportInput, events,
-                        #   patterns, referenceRanges, operatorThresholds, narrative,
-                        #   renderPdf, produceReport - SPECS.md §10.7
+                        #   patterns, referenceRanges, operatorThresholds, flagRules,
+                        #   narrative, omit, renderPdf, produceReport, delivery - SPECS.md §10.7
   quota/                # QuotaService + QuotaStore seam — SPECS.md §4a
   services/             # LlmService, ChatOrchestrator (tool loop), EmbeddingService, auditLog
   prompt/               # systemPrompt.ts (base prompt + TOOL_BLOCK / REPORT_TOOL_BLOCK),
@@ -725,11 +728,15 @@ scripts/                # ingest, seed*, embed cache, bakeoff, gateCheck, judge,
                         #   gradePacket, retrievalEval, resolveRetrievalLabels,
                         #   compareVectorArms, renderReport, exploreDeviceApi,
                         #   verifySensorTool, exploreDeviceFields.sh, exploreBackendSurface.sh
+                        #   folders: e2e/ (browser checks), mirror/, skepticism/ (replays),
+                        #   security/ (hidden-payload scan)
 test/
-  integration/          # health, chat, sensorChat, devices, quotaChat, reports
+  integration/          # health, chat, chatBodyLimit, sensorChat, devices, quotaChat, reports,
+                        #   reportClaim, provenance, q3Corrections, firestoreQuotaStore.emulator
   unit/                 # per-module suites
   fixtures/device-api/  # recorded production bodies + provenance README
   fixtures/pod-scope/   # synthetic fleet for pod-authorization work
+  fixtures/skepticism/  # fabricated fleet for the data-skepticism suite and replay
 frontend/               # chat UI (manual test surface, not the product). Served, not file://
   index.html            #   markup + mount points; app.css; js/ modules; vendor/ for third-party
 data/                   # corpus artifact + device recordings (git-ignored)
@@ -757,7 +764,7 @@ docs/                   # STATUS.md (start here), SPECS.md, timeline.md, EVAL_RE
 | `GET` | `/api/v1` | API v1 banner. **Every `/api/v1` route requires the `x-cer-rag-service-key` header when `CER_RAG_SERVICE_KEY` is set** ([§5](#core)); `/` and `/health` stay open for probes. |
 | `GET` | `/api/v1/devices` | pod list for the UI selector (read-only, forwards the caller's token). **Requires `Authorization: Bearer`** |
 | `GET` | `/api/v1/usage` | the caller's quota standing (questions, tokens, reports, window reset). Read-only and outside the quota gate (SPECS.md §4a). |
-| `POST` | `/api/v1/reports` | body `{ time_range, device? }` (a `generate_report` result's `report_request`); returns the report PDF as a download and stores nothing. **Requires `Authorization: Bearer`**; 404 while `REPORT_TOOL` is off; counted against `QUERY_QUOTA_REPORTS` (SPECS.md §10.7). |
+| `POST` | `/api/v1/reports` | body `{ time_range, device?, omit? }` (a `generate_report` result's `report_request`; `omit` names notes to leave out of a copy for sharing, `src/report/omit.ts`); returns the report PDF as a download and stores nothing. **Requires `Authorization: Bearer`**; 404 while `REPORT_TOOL` is off; counted against `QUERY_QUOTA_REPORTS` (SPECS.md §10.7). |
 | `POST` | `/api/v1/chat` | JSON, or SSE when `"stream": true`. Not itself gated, but the sensor and report tools require the caller's token |
 
 **Request:** `{ query, retrieval?, stream?, history?, device? }`. `query` required; `retrieval`
