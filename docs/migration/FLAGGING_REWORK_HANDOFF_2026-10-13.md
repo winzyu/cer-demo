@@ -161,6 +161,19 @@ Weak points in the rework's answers:
 - Q2 answers lead with the status and flagged days, not with the bay's daily patterns: data reliability is no longer the lead, but patterns are not either.
 - Temperature is flagged on Sep 25-27 because the recorded afternoons reach 84-86 °F against the 80 °F maximum in the recorded registry variant used; the real pod's thresholds were not read.
 
+### Replay on the reshaped month (2026-10-14)
+
+Approved by the user; the same two questions, 3 runs each, on `de7737f` against the fake API serving the reshaped month (all 6 device requests reached it); $0.044, no errors.
+Run: [`flagging-runs/reshaped-de7737f.json`](flagging-runs/reshaped-de7737f.json).
+- Q2, the 30-day report: 3 of 3 Watch; pH flagged low Sep 13, high Sep 26 and low Sep 27-30, conductivity low Sep 24, each named by day and cleared; unusual stretches described as kept but not counted; no fault wording about pH.
+- Q1, the Sep 26 drop: 3 of 3 give the jumps with times and values, say the data cannot show the cause and offer a calibration check; fault wording only for the Sep 24 pH 0 rail and the stuck turbidity, both device faults the rules allow.
+- The script's first-pass `fault_wording` flags (5 of 6) all matched those two device faults or a "Data quality" heading, not the Sep 26 readings.
+
+Weak points:
+- Q1 still takes 11.21 to 6.36 as the drop, the UTC-day defect below; one answer mixed clock and solar times (7.19 at 16:56, then 2.73 at 17:02).
+- Q2 named temperature "flat at 71.6 °F" on six sparse days: a fixture artifact (a 4-hour wobble sampled every 2 hours), fixed after the run in `month.ts`; the replay was not rerun.
+- The 12 whole-board read failures appear only as "12 left out because no parameter was usable", never as a board fault.
+
 ## Manual test list
 
 Run on the branch with the fake API (`npx ts-node --transpile-only scripts/flagging/fakeAlgalitaApi.ts`, then a server with `DEVICE_API_BASE_URL=http://localhost:5198/api/v1 SENSOR_TOOL=true REPORT_TOOL=true`), or on real data once pulled.
@@ -182,7 +195,6 @@ Run on the branch with the fake API (`npx ts-node --transpile-only scripts/flagg
 ## Still open
 
 - **Michael**: stakeholder questions 28 (was the probe serviced around Sep 29-30 or Oct 7; could pH reach 12.9 or 2.7) and 29 (the "very unusual; a calibration check would confirm" wording), the provisional 15% Action Required margin, and whether alert emails should follow the share rule (27); the addendum's afternoon board failures and Sep 24 conductivity drop.
-- **Replay on the reshaped month**: optional, about $0.05, only with the user's approval; the fake API serves the fixture.
 - **Local setup left in place** (git-ignored, nothing staged): `.env` copied into `.claude/worktrees/dev`, and the main checkout's `data/corpus`, `data/e2e` and `data/embeddings` linked into both worktrees, so a local server and the replay run there. All servers are stopped.
 - **Not merged into `dev`, not deployed.**
   Customers keep the live behaviour until a new image is built and routed (F16).

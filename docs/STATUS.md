@@ -48,7 +48,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - User, report editing: send Michael the before-and-after PDFs and correct the earlier message that the model edits parts of the report (it never did; the variation came from data-driven templates).
 - Agent, report editing: optionally relay `report_retried` through cer-api (`CerRagService.ask`) so retries show without Gilligan's log; stop the Mirror stack when the user says (delete `mirror-env.sh` and `server-mirror/`).
 - Agent, behaviour: the mirror fixture, reproduction and prompt and catalogue changes in [`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md) §5-6.
-- User, flagging: send Michael the handoff's summary and addendum; say when to merge into `dev`; optionally approve a replay on the reshaped month (about $0.05).
+- User, flagging: send Michael the handoff's summary and addendum; say when to merge into `dev`; the replay on the reshaped month ran 2026-10-14 ($0.044, handoff).
 - Agent, flagging: Michael's answers into [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md) 27-29, revert rejected rules (the handoff's "Where each rule lives").
 - Agent, post-launch: the rest of [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md), once ordered.
 - Agent, upstream landing: build the `main` merges (server conflicts in `WaterAnalyticsService.ts`; take the release side); push on consent; tell Michael `62993fe` ships with server `main`.

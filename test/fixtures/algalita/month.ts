@@ -89,7 +89,8 @@ const ordinary = (ms: number): Water => {
     orp: +(228 + 6 * wobble(ms, 9 * HOUR)).toFixed(1),
     conductivity: Math.round(61_000 - 2_500 * sun + 400 * wobble(ms, 7 * HOUR)),
     oxygen: +(8.6 + 1.2 * sun + 0.1 * wobble(ms, 3 * HOUR)).toFixed(3),
-    celsius: +(22 + 4 * sun + 0.1 * wobble(ms, 4 * HOUR)).toFixed(3),
+    // Not a 4-hour period: the sparse days' 2-hour readings would all sit on its zeros, a flat line.
+    celsius: +(22 + 4 * sun + 0.1 * wobble(ms, 4.5 * HOUR)).toFixed(3),
   };
 };
 
