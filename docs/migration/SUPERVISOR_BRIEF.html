@@ -1,0 +1,797 @@
+<title>Gilligan Release Brief</title>
+<meta name="description" content="What Gilligan looks like in production today, what the September 30 release adds, how to see it working, what it costs, and what we need approved.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f2f5f5;
+  --surface: #ffffff;
+  --surface-2: #e7eeee;
+  --ink: #12242b;
+  --ink-2: #44585f;
+  --ink-3: #6b7d83;
+  --rule: #cfdadb;
+  --accent: #0b6f78;
+  --accent-soft: #d6ecec;
+  --new: #9a5b00;
+  --new-soft: #f6e8d2;
+  --bad: #b3261e;
+  --bad-soft: #f8dedb;
+  --good: #1f7a3a;
+  --good-soft: #dcefe1;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --grid: #dfe6e7;
+  --display: "Newsreader", Georgia, "Times New Roman", serif;
+  --body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f1a1e;
+    --surface: #16242a;
+    --surface-2: #1d2f36;
+    --ink: #e6eef0;
+    --ink-2: #b2c3c8;
+    --ink-3: #8a9ea4;
+    --rule: #2c4148;
+    --accent: #5cc2c9;
+    --accent-soft: #173c41;
+    --new: #e8a94a;
+    --new-soft: #3a2c15;
+    --bad: #f08a80;
+    --bad-soft: #3d1f1c;
+    --good: #6fcf8b;
+    --good-soft: #173323;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --grid: #253a41;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1a1e;
+  --surface: #16242a;
+  --surface-2: #1d2f36;
+  --ink: #e6eef0;
+  --ink-2: #b2c3c8;
+  --ink-3: #8a9ea4;
+  --rule: #2c4148;
+  --accent: #5cc2c9;
+  --accent-soft: #173c41;
+  --new: #e8a94a;
+  --new-soft: #3a2c15;
+  --bad: #f08a80;
+  --bad-soft: #3d1f1c;
+  --good: #6fcf8b;
+  --good-soft: #173323;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --grid: #253a41;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.6 var(--body);
+  padding-inline: 16px;
+}
+.page { max-width: 980px; margin: 0 auto; padding-block: 40px 80px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.8rem); }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.2rem; }
+p { margin: 0; max-width: 68ch; }
+.stack { display: grid; gap: 16px; }
+.eyebrow { font: 600 0.75rem/1 var(--body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.muted { color: var(--ink-2); }
+.small { font-size: 0.875rem; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header.top { display: grid; gap: 14px; border-bottom: 1px solid var(--rule); padding-bottom: 28px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 0.875rem; color: var(--ink-2); }
+.meta span strong { color: var(--ink); font-weight: 600; }
+.draft { display: inline-block; font: 600 0.75rem/1 var(--body); letter-spacing: 0.06em; text-transform: uppercase; background: var(--new-soft); color: var(--new); padding: 6px 10px; border-radius: 4px; justify-self: start; }
+
+nav.toc { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.9rem; }
+nav.toc a { text-decoration: none; }
+nav.toc a:hover { text-decoration: underline; }
+
+.ask { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 24px; display: grid; gap: 18px; }
+.ask ol { margin: 0; padding-left: 1.3em; display: grid; gap: 10px; max-width: 72ch; }
+
+/* architecture diagrams */
+.arch { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 760px) { .arch { grid-template-columns: 1fr; } }
+.arch-col { display: grid; gap: 0; align-content: start; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 20px; }
+.arch-col > h3 { margin-bottom: 16px; }
+.node { border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; background: var(--surface-2); display: grid; gap: 4px; }
+.node .name { font-weight: 600; }
+.node .what { font-size: 0.875rem; color: var(--ink-2); }
+.node.is-new { background: var(--new-soft); border-color: var(--new); }
+.node.is-broken { background: var(--bad-soft); border-color: var(--bad); }
+.node .tag { font: 600 0.7rem/1 var(--body); letter-spacing: 0.06em; text-transform: uppercase; }
+.node.is-new .tag { color: var(--new); }
+.node.is-broken .tag { color: var(--bad); }
+.link { font-size: 0.8rem; color: var(--ink-3); padding: 6px 0 6px 18px; border-left: 2px solid var(--rule); margin-left: 18px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 420px) { .pair { grid-template-columns: 1fr; } }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.85rem; color: var(--ink-2); }
+.swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; border: 1px solid var(--rule); }
+
+/* tables */
+.table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--rule); }
+th { font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; background: var(--surface-2); }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pill { display: inline-block; font: 600 0.72rem/1 var(--body); padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.done { background: var(--good-soft); color: var(--good); }
+.pill.open { background: var(--new-soft); color: var(--new); }
+.pill.risk { background: var(--bad-soft); color: var(--bad); }
+
+/* demo steps */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); }
+.steps li { display: grid; grid-template-columns: 44px 1fr 1fr; gap: 16px; padding: 14px 16px; border-bottom: 1px solid var(--rule); }
+.steps li:last-child { border-bottom: 0; }
+.steps .n { font: 500 1.1rem/1.4 var(--mono); color: var(--accent); }
+.steps .do { font-weight: 500; }
+.steps .see { color: var(--ink-2); font-size: 0.92rem; }
+@media (max-width: 640px) { .steps li { grid-template-columns: 32px 1fr; } .steps .see { grid-column: 2; } }
+
+/* cost */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 700px) { .tiles { grid-template-columns: 1fr; } }
+.tile { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; display: grid; gap: 6px; align-content: start; }
+.tile .big { font: 600 2rem/1.1 var(--display); font-variant-numeric: tabular-nums; }
+.tile .lbl { font-size: 0.875rem; color: var(--ink-2); }
+.chart { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 20px; display: grid; gap: 12px; position: relative; }
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart svg text { fill: var(--ink-2); font: 12px var(--body); }
+.chart svg .t-strong { fill: var(--ink); font-weight: 600; }
+.chart svg .grid { stroke: var(--grid); stroke-width: 1; }
+.chart svg .axis { stroke: var(--ink-3); stroke-width: 1; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 0.8rem; line-height: 1.4; padding: 8px 10px; border-radius: 6px; max-width: 240px; }
+details.tableview summary { cursor: pointer; font-size: 0.875rem; color: var(--accent); }
+details.tableview[open] summary { margin-bottom: 10px; }
+.note { font-size: 0.875rem; color: var(--ink-2); border-left: 3px solid var(--rule); padding-left: 12px; max-width: 72ch; }
+footer { font-size: 0.85rem; color: var(--ink-3); border-top: 1px solid var(--rule); padding-top: 20px; display: grid; gap: 6px; }
+
+/* technical detail */
+details.deep { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 16px 20px; }
+details.deep > summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+details.deep[open] > summary { margin-bottom: 16px; }
+details.deep .stack { gap: 14px; }
+pre.shape { margin: 0; background: var(--surface-2); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; overflow-x: auto; font: 0.8rem/1.55 var(--mono); color: var(--ink); }
+pre.shape .c { color: var(--ink-3); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+ol.flow { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; max-width: 76ch; }
+.math { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 20px; display: grid; gap: 14px; }
+.math td.num strong { font-size: 1.05rem; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="page">
+
+<header class="top">
+  <span class="draft">Draft for review</span>
+  <div class="eyebrow">Clean Earth Rovers · Gilligan assistant</div>
+  <h1>Gilligan release brief</h1>
+  <p class="muted">What Gilligan looks like in production today, what the September 30 release adds, how to see it working, what it costs to run, and what we need approved to ship it.</p>
+  <div class="meta">
+    <span><strong>Updated</strong> 2026-09-29, for release candidate rc2</span>
+    <span><strong>Release date</strong> 2026-09-30</span>
+    <span><strong>Demo</strong> 2026-09-29 on a local copy of rc2 with made-up data; the staged, no-traffic version follows Michael's setup</span>
+  </div>
+  <nav class="toc" aria-label="Sections">
+    <a href="#ask">What we are asking</a>
+    <a href="#architecture">Today and after</a>
+    <a href="#setup">What Michael sets up</a>
+    <a href="#decisions">Decisions</a>
+    <a href="#changes">What changes</a>
+    <a href="#security">Server security</a>
+    <a href="#quality">Answer quality</a>
+    <a href="#demo">Demo</a>
+    <a href="#cost">Cost</a>
+    <a href="#open">Open items</a>
+  </nav>
+</header>
+
+<section id="ask" class="ask" aria-labelledby="ask-h">
+  <div class="eyebrow">Summary</div>
+  <h2 id="ask-h">What we are asking for</h2>
+  <p>Gilligan in production currently fails every question, because it calls a Google model that has been retired. The release replaces it with a new answering service that reads the manuals, the customer's own pods and their readings, and can produce a PDF report. While testing it, we also found security holes in CER's existing server, all reproduced on CER's own code; every fix is now written, and the two that change what customers see today ship only if Michael agrees.</p>
+  <p class="muted small">The release candidate (rc2) was cut on September 29 and is frozen: the Gilligan service, dashboard and server commits below are the ones that get tested and deployed. Nothing is deployed yet.</p>
+  <ol>
+    <li><strong>Approval to ship</strong> the release to production after the demo, as a new version that receives no traffic until it passes a smoke test.</li>
+    <li><strong>Setup help from Michael</strong> on the one-time items listed under <a href="#setup">What Michael sets up</a>: an account for the new service, the new <code>gilligan</code> database, two secrets and a few permissions. Without them the new service cannot be deployed.</li>
+    <li><strong>Michael's choice of server version</strong> at the demo: with both remaining security fixes, with the spreadsheet-export fix only, or with neither. The other three fixes are in every version. See <a href="#security">Server security</a>.</li>
+    <li><strong>A caveat in place of refusals for weak answers.</strong> Gilligan is still below our quality target when it finds the manual pages itself, and it cannot tell which of its own answers are weak. We propose a fixed caveat under every answer that cites the manuals, in place of the refusal rule approved on September 24. It is built into the release, so the demo shows it. See <a href="#quality">Answer quality</a>.</li>
+    <li><strong>Smaller confirmations:</strong> treating pH readings outside 3 to 12 as implausible sensor readings rather than real water; and, after launch, using the general ranges from CER's source-of-truth v2 when a pod's own limit is missing or reversed, which reverses your September 13 decision. See <a href="#decisions">Decisions</a>.</li>
+  </ol>
+</section>
+
+<section id="architecture" class="stack" aria-labelledby="arch-h">
+  <div class="eyebrow">Architecture</div>
+  <h2 id="arch-h">Today and after the release</h2>
+  <div class="legend">
+    <span><span class="swatch" style="background:var(--surface-2)"></span>Unchanged</span>
+    <span><span class="swatch" style="background:var(--new-soft);border-color:var(--new)"></span>New or changed</span>
+    <span><span class="swatch" style="background:var(--bad-soft);border-color:var(--bad)"></span>Broken or unsafe today</span>
+  </div>
+  <div class="arch">
+    <div class="arch-col">
+      <h3>Today</h3>
+      <div class="node">
+        <span class="name">Dashboard (<code>cer-ui</code>)</span>
+        <span class="what">The website customers use. Its Gilligan page is a simple chat box.</span>
+      </div>
+      <div class="link">questions and data requests, with the user's login</div>
+      <div class="node">
+        <span class="name">Server (<code>cer-api</code>)</span>
+        <span class="what">Logs users in, serves pods and readings, stores chats, and sends Gilligan questions to Google.</span>
+      </div>
+      <div class="link">every Gilligan question</div>
+      <div class="node is-broken">
+        <span class="tag">Broken</span>
+        <span class="name">Google <code>gemini-pro</code></span>
+        <span class="what">Retired by Google. Production Gilligan fails every question (confirmed 2026-09-21).</span>
+      </div>
+      <div class="link">the server also reads and writes</div>
+      <div class="node">
+        <span class="name">Firestore, <code>(default)</code> database</span>
+        <span class="what">Users, organizations, pods, readings and chats.</span>
+      </div>
+      <div class="link">unsafe paths found during the work</div>
+      <div class="node is-broken">
+        <span class="tag">Unsafe</span>
+        <span class="name">Security holes</span>
+        <span class="what">Anyone can list users and probe the database without logging in. A logged-in user can read or export another organization's pod readings. A user with no organization sees every pod. A build trigger still deploys the dashboard from a branch that contains malware. Details under <a href="#security">Server security</a>.</span>
+      </div>
+    </div>
+
+    <div class="arch-col">
+      <h3>After the release</h3>
+      <div class="node is-new">
+        <span class="tag">Changed</span>
+        <span class="name">Dashboard (<code>cer-ui</code>)</span>
+        <span class="what">Rebuilt Gilligan page: pod picker, saved chats, formatted tables, source links, a report button, the remaining-questions count, the approved disclaimer and a caveat under answers that cite the manuals. Built from a clean release branch. No new settings.</span>
+      </div>
+      <div class="link">questions, with the user's login</div>
+      <div class="node is-new">
+        <span class="tag">Changed</span>
+        <span class="name">Server (<code>cer-api</code>)</span>
+        <span class="what">Still logs users in and stores chats. Now passes Gilligan questions on to the new service with a shared service key and the verified user: three new settings and one new secret on the existing service. Three security fixes are in every version; two more if Michael agrees.</span>
+      </div>
+      <div class="link">question, chat history, verified user, service key</div>
+      <div class="node is-new">
+        <span class="tag">New</span>
+        <span class="name">Gilligan service (<code>cer-gilligan</code>)</span>
+        <span class="what">A new Cloud Run service with its own account. Searches the 16 water-quality documents packed into its image, reads the user's pods through the server using the user's own login, writes PDF reports, and enforces usage limits. Keeps no customer data of its own.</span>
+      </div>
+      <div class="pair">
+        <div>
+          <div class="link">answer requests</div>
+          <div class="node is-new">
+            <span class="tag">New</span>
+            <span class="name">Fireworks AI</span>
+            <span class="what">Hosts the answer model, <code>glm-5p3-flash</code>. Paid per token.</span>
+          </div>
+        </div>
+        <div>
+          <div class="link">usage counters only</div>
+          <div class="node is-new">
+            <span class="tag">New</span>
+            <span class="name">Firestore, <code>gilligan</code> database</span>
+            <span class="what">Holds the daily usage counters and nothing else, each deleted 90 days after its last use. No access to customer data.</span>
+          </div>
+        </div>
+      </div>
+      <div class="link">keys, read at start-up</div>
+      <div class="node is-new">
+        <span class="tag">New</span>
+        <span class="name">Secret Manager</span>
+        <span class="what">The model key and the shared service key. Only the Gilligan account can read them (the server also reads the service key).</span>
+      </div>
+    </div>
+  </div>
+  <p class="note">Customer data stays where it is. The new service never touches the customer database directly: every reading it uses comes through the existing server, which checks the user's login on every request. Gilligan's readings come from the pod-history route, whose organization check is one of the fixes below and is in every server version; that check is the same one the dashboard's charts rely on.</p>
+
+  <details class="deep">
+    <summary>Under the hood: what changes in Google Cloud, part by part</summary>
+    <div class="stack">
+      <p class="small muted">For reference, if you or Michael want the technical shape. Project <code>conductive-fold-343604</code>, region <code>us-central1</code> for everything.</p>
+
+      <h3>Each part, before and after</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Part</th><th>Today</th><th>After the release</th><th>Who does it</th></tr></thead>
+          <tbody>
+            <tr><td>Cloud Run <code>cer-gilligan</code></td><td>Does not exist</td><td>New service. 1 CPU, 1 GiB, 5-minute timeout, 8 requests at once per instance; scales to zero when idle (one warm instance on demo and launch days); at most 1 instance until the usage store is proven live, then 2. Runs as its own account, <code>cer-gilligan-runtime</code>.</td><td>We deploy; Michael creates the account</td></tr>
+            <tr><td>Cloud Run <code>cer-api</code></td><td>Runs as the default compute account</td><td>A new version from the release branch. Keeps every existing setting and adds only <code>GILLIGAN_BACKEND=rag</code>, <code>CER_RAG_BASE_URL</code> (the Gilligan address), <code>CER_RAG_TIMEOUT_MS=120000</code> and the secret <code>CER_RAG_SERVICE_KEY</code>. Without <code>GILLIGAN_BACKEND</code> it keeps calling the retired Google model.</td><td>We deploy, if the release owner may act as the compute account; otherwise Michael</td></tr>
+            <tr><td>Cloud Run <code>cer-ui</code></td><td>Built from a branch that carries malware</td><td>A new version built from the clean release branch; its settings are unchanged.</td><td>We deploy</td></tr>
+            <tr><td>Firestore <code>(default)</code></td><td>Users, organizations, pods, readings, chats</td><td>No new collections, no index, no migration. New Gilligan chats carry a marker and a few extra fields per answer (shape below), written by <code>cer-api</code> as before. Gilligan has no access to it.</td><td>Nothing to do</td></tr>
+            <tr><td>Firestore <code>gilligan</code></td><td>Does not exist</td><td>New database in Native mode, next to the service. Holds one collection, <code>gilligan_usage</code>. A time-to-live rule deletes each counter 90 days after its last use.</td><td>Michael</td></tr>
+            <tr><td>Secret Manager</td><td>No Gilligan secrets</td><td>Two secrets: the Fireworks model key (read by Gilligan only) and the shared service key, at least 32 characters (read by Gilligan and by <code>cer-api</code>).</td><td>Michael</td></tr>
+            <tr><td>Cloud Build trigger <code>8ad67b17</code></td><td>On: deploys <code>cer-ui</code> from the infected branch</td><td>Off.</td><td>Michael</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The path of one question</h3>
+      <ol class="flow small">
+        <li>The dashboard sends the question and the chosen pod to <code>cer-api</code> with the user's login, exactly as before.</li>
+        <li><code>cer-api</code> checks the login, loads the chat's earlier messages from <code>(default)</code>, and calls <code>cer-gilligan</code> with the service key, the verified user and organization, and the user's own login token.</li>
+        <li><code>cer-gilligan</code> refuses the call without the right key, then checks the user's daily counter in the <code>gilligan</code> database.</li>
+        <li>It rewrites the question into a search query, finds the 20 closest passages in the documents inside its image, and asks the model at Fireworks.</li>
+        <li>If the answer needs readings, it asks <code>cer-api</code> for them with the user's own token, so the server's organization check applies; it never holds a key of its own for customer data.</li>
+        <li>It adds the tokens used to the counter and returns the answer, its sources, the data lookups behind it and any report offer.</li>
+        <li><code>cer-api</code> saves the message on the chat in <code>(default)</code> and returns it to the page. A report download follows the same path; the PDF is drawn without the model and counts against the 5-a-day limit.</li>
+      </ol>
+
+      <h3>What the data looks like</h3>
+      <div class="two">
+        <div class="stack">
+          <p class="small"><strong>New:</strong> one usage counter per user per UTC day, in <code>gilligan</code> / <code>gilligan_usage</code>. About 200 bytes each.</p>
+<pre class="shape"><span class="c">// document id: &lt;userId&gt;_2026-09-30</span>
+{
+  userId:         "user-123",
+  organizationId: "org-45",
+  day:            "2026-09-30",   <span class="c">// UTC day</span>
+  questions:      7,              <span class="c">// limit 20</span>
+  reports:        1,              <span class="c">// limit 5</span>
+  tokens:         214380,         <span class="c">// limit 1,000,000</span>
+  updatedAt:      2026-09-30T18:04:11Z,
+  expireAt:       2026-12-29T18:04:11Z  <span class="c">// TTL field</span>
+}</pre>
+          <p class="small muted">Each question costs three reads and two writes here. At 300 users all using every allowance, that is about 21,000 reads and 13,500 writes a day, inside Firestore's free daily quota.</p>
+        </div>
+        <div class="stack">
+          <p class="small"><strong>Changed:</strong> Gilligan chats in <code>(default)</code> / <code>chats</code>. Existing fields are unchanged; the new ones are marked.</p>
+<pre class="shape">{
+  user: "user-123",
+  assistant: "cer-rag",    <span class="c">// new: marks chat</span>
+  creationDate, lastInteraction,
+  messages: [{
+    question: { text, date, waterData },
+    answer: {
+      text, date,
+      citations: [...],    <span class="c">// new: sources</span>
+      audit: {...},        <span class="c">// new: model etc.</span>
+      reports: [...],      <span class="c">// new: offers</span>
+      tool_calls: [...],   <span class="c">// new: lookups</span>
+      tool_round_cap_reached  <span class="c">// new</span>
+    }
+  }]
+}</pre>
+          <p class="small muted">Old Gemini-era chats have no <code>assistant</code> field, so the new page simply does not list them; nothing is migrated or deleted. The chat list is found with two plain equality filters, so no new index is needed.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+</section>
+
+<section id="setup" class="stack" aria-labelledby="setup-h">
+  <div class="eyebrow">Setup</div>
+  <h2 id="setup-h">What Michael sets up, once</h2>
+  <p>Our Google roles cannot create accounts, grant access, store secrets or create databases, so these steps are Michael's. Everything else we deploy ourselves. As of our read-only check on September 28, the account and the database did not exist yet and the build trigger was still on; we cannot see the secrets or permissions, so Michael confirms those.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="num">#</th><th>Step</th><th>What it grants, and why</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>Create the account <code>cer-gilligan-runtime</code> and let the release owner deploy as it</td><td>Gilligan runs as its own identity, so its access can be limited to its own database and key.</td></tr>
+        <tr><td class="num">2</td><td>Let the release owner deploy as the default compute account</td><td><code>cer-api</code> and <code>cer-ui</code> run as that account. Without this, Michael deploys those two versions himself.</td></tr>
+        <tr><td class="num">3</td><td>Create the Firestore database <code>gilligan</code> (Native mode, <code>us-central1</code>) and give the Gilligan account read and write on that database only</td><td>Google's Firestore roles cover a whole database, so a separate database is the only way to keep Gilligan out of the customer data. No grant on <code>(default)</code>.</td></tr>
+        <tr><td class="num">4</td><td>Add a time-to-live rule on <code>gilligan_usage.expireAt</code> in that database</td><td>Deletes each counter 90 days after its last use. It must be on <code>expireAt</code>, never <code>updatedAt</code>, or today's counters would be deleted and limits reset.</td></tr>
+        <tr><td class="num">5</td><td>Store the Fireworks key as the secret <code>cer-gilligan-fireworks-api-key</code>, readable by the Gilligan account only</td><td>The model key never sits in settings or code. We start on our development key and switch to CER's key after the demo.</td></tr>
+        <tr><td class="num">6</td><td>Store a random service key (32+ characters) as a second secret, readable by the Gilligan account and the default compute account</td><td>The server sends it and Gilligan checks it on every call; this is how Gilligan knows a call came from CER's server.</td></tr>
+        <tr><td class="num">7</td><td>After the first deploy, allow calls to <code>cer-gilligan</code> without a Google login, after checking no organization policy forbids it</td><td>Needed because the server does not yet sign its calls with a Google identity; the service key still guards every call. If a policy forbids it, there is a documented fallback; if that is blocked too, the release waits.</td></tr>
+        <tr><td class="num">8</td><td>Turn off the <code>cer-ui</code> build trigger <code>8ad67b17</code></td><td>It deploys the dashboard from the branch that carries malware.</td></tr>
+        <tr><td class="num">9</td><td>Rotate the secret that signs CER's login tokens</td><td>A long-lived admin token was exposed in a local log on September 28. Rotating it signs every user out once.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">If the database is not ready in time, the staged version can run with counters kept in memory on a single instance. Those counts reset on every restart, so this is for testing only; customer traffic waits for the database.</p>
+  <details class="deep">
+    <summary>The same steps as commands, for reference</summary>
+    <div class="stack">
+      <p class="small muted">Michael may prefer the Cloud console; these show the shape of each change. <code>&lt;release owner&gt;</code> is the deploying user's email.</p>
+<pre class="shape"><span class="c"># 1-2  Accounts</span>
+gcloud iam service-accounts create cer-gilligan-runtime --project=conductive-fold-343604
+gcloud iam service-accounts add-iam-policy-binding \
+  cer-gilligan-runtime@conductive-fold-343604.iam.gserviceaccount.com \
+  --member=user:&lt;release owner&gt; --role=roles/iam.serviceAccountUser
+gcloud iam service-accounts add-iam-policy-binding \
+  98242557946-compute@developer.gserviceaccount.com \
+  --member=user:&lt;release owner&gt; --role=roles/iam.serviceAccountUser
+
+<span class="c"># 3  Database, and access to it alone</span>
+gcloud firestore databases create --database=gilligan \
+  --location=us-central1 --type=firestore-native --project=conductive-fold-343604
+gcloud projects add-iam-policy-binding conductive-fold-343604 \
+  --member=serviceAccount:cer-gilligan-runtime@conductive-fold-343604.iam.gserviceaccount.com \
+  --role=roles/datastore.user \
+  --condition='expression=resource.name=="projects/conductive-fold-343604/databases/gilligan",title=gilligan-database-only'
+
+<span class="c"># 4  Delete counters 90 days after last use</span>
+gcloud firestore fields ttls update expireAt --collection-group=gilligan_usage \
+  --enable-ttl --database=gilligan --project=conductive-fold-343604
+
+<span class="c"># 5-6  Secrets (values typed in, never saved to a file)</span>
+gcloud secrets create cer-gilligan-fireworks-api-key --data-file=- --project=conductive-fold-343604
+gcloud secrets add-iam-policy-binding cer-gilligan-fireworks-api-key \
+  --member=serviceAccount:cer-gilligan-runtime@conductive-fold-343604.iam.gserviceaccount.com \
+  --role=roles/secretmanager.secretAccessor
+gcloud secrets create cer-gilligan-service-key --data-file=- --project=conductive-fold-343604
+<span class="c">#   then the same Secret Accessor grant for cer-gilligan-runtime and for</span>
+<span class="c">#   98242557946-compute@developer.gserviceaccount.com</span>
+
+<span class="c"># 7  After cer-gilligan exists</span>
+gcloud run services add-iam-policy-binding cer-gilligan --region=us-central1 \
+  --member=allUsers --role=roles/run.invoker --project=conductive-fold-343604
+
+<span class="c"># 8  Cloud console: Cloud Build, Triggers, 8ad67b17, Disable</span></pre>
+    </div>
+  </details>
+</section>
+
+<section id="decisions" class="stack" aria-labelledby="dec-h">
+  <div class="eyebrow">Decisions</div>
+  <h2 id="dec-h">The main decisions, and why</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Decision</th><th>Why</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Answer questions in a new, separate service</td><td>The search, tools, reports and limits change often and need their own testing. Keeping them out of the main server means a Gilligan fault cannot take down logins or charts.</td><td><span class="pill done">Decided</span></td></tr>
+        <tr><td>The existing server stays in front</td><td>It already checks logins and stores chats. The dashboard talks to the same server as before, so there is no new login system.</td><td><span class="pill done">Decided</span></td></tr>
+        <tr><td>Gilligan reads pods with the asking user's own login</td><td>A user can only get answers about pods their organization owns. The server enforces this, not the model.</td><td><span class="pill done">Decided</span></td></tr>
+        <tr><td>A dedicated <code>gilligan</code> database, no access to <code>(default)</code></td><td>Google cannot restrict access to part of a database. Any write access to the customer database would also cover users, pods and readings.</td><td><span class="pill done">Approved (you, Sep 25)</span></td></tr>
+        <tr><td>Usage counts kept in that database, not in the service's memory</td><td>Counts held in memory reset whenever the service restarts, so a user could exceed the limits. Each counter is deleted 90 days after its last use.</td><td><span class="pill done">Decided (Sep 27)</span></td></tr>
+        <tr><td>A shared service key between the server and Gilligan</td><td>Every service in the project runs under the same Google account, so Google's own access check cannot tell them apart. A key checked on every call can.</td><td><span class="pill done">Decided</span></td></tr>
+        <tr><td>Usage limits: 20 questions and 5 reports per user per day, plus a token cap of 1,000,000 per day</td><td>An equal allowance for every user, and a hard ceiling on what one user can cost (see <a href="#cost">Cost</a>). The day is a UTC day, so limits reset at 5 pm Pacific (4 pm in winter), weekends included. Changeable without new code; set explicitly, because an unset limit means no limit.</td><td><span class="pill done">Approved (you, Sep 24)</span></td></tr>
+        <tr><td>A fixed caveat under every answer that cites the manuals, in place of refusing weak answers</td><td>Replaces the September 24 rule for weak answers. Gilligan cannot tell which of its answers are weak: when we asked the model to add a caveat itself, it added it only to answers it was already confident in, and none of the nine weakest answers carried it. A fixed line reaches every weak answer at no extra cost. Questions outside water quality, or that the manuals cannot support, are still refused with a fixed sentence. Wording, as built: "Answers draw on document excerpts and may not cover every step; check the cited sections before acting." It appears under answers that cite documents, not under answers about readings, and stays when a chat is reopened.</td><td><span class="pill open">Built; needs your approval</span></td></tr>
+        <tr><td>Pods report only on their current site</td><td>A pod that moved would otherwise mix two bodies of water. The answer and the PDF's title and summary give the current site's own dates, with a note about the earlier location. A pod with no GPS in its whole history is treated as never having moved, with a "location not recorded" note.</td><td><span class="pill done">Approved (you, Sep 25; GPS rule Sep 27)</span></td></tr>
+        <tr><td>A retired pod with no organization belongs to the organization of the pod it merged into</td><td>CWA Old's readings belong to Old Woman Creek 2026, and only that organization can read them. The server enforces this in every version. Gilligan shows that merged history only once the new server takes all traffic, so at launch it withholds it with a note.</td><td><span class="pill done">Decided (Sep 24-27)</span></td></tr>
+        <tr><td>A fresh-water pod is not judged on a salt-water predecessor's history</td><td>A healthy lake pod read "Action Required" from an earlier salt-water pod's conductivity. When both pods have a registered water type and they differ, the older history is withheld with a note; if the older pod has none, it is kept with a note that its water type could not be confirmed.</td><td><span class="pill done">Decided (Sep 28)</span></td></tr>
+        <tr><td>Old Woman Creek 2026's two salt-water predecessors are withheld</td><td>They are registered as salt-water but sit on a fresh-water lake. We withhold their history until Michael confirms the registry is out of date, then restore it.</td><td><span class="pill open">Waiting on Michael</span></td></tr>
+        <tr><td>Superadmins do not see a merged predecessor's history at launch</td><td>The server cannot yet tell whether a predecessor belongs to the same organization when a superadmin asks, so that history is withheld until it can. A superadmin can still ask about the retired pod on its own; we propose accepting that.</td><td><span class="pill done">Decided (Sep 27)</span></td></tr>
+        <tr><td>"Action Required" needs two readings beyond a limit</td><td>One glitch, such as a single 0.00 oxygen reading, set a whole week to "Action Required". A sustained excursion of a parameter that normally swings daily or with the tide now raises an event.</td><td><span class="pill done">Decided (Sep 28)</span></td></tr>
+        <tr><td>Pods that stopped reporting are never called online</td><td>They are listed with the age of their last reading. Every data answer and every report states today's date and how old the latest reading is.</td><td><span class="pill done">Decided</span></td></tr>
+        <tr><td>A missing or reversed pod limit is named, not used</td><td>For example: "pH was not checked against a limit: its minimum is not set." A limit wider than the sensor can measure reads "not assessed".</td><td><span class="pill done">Decided (Sep 28)</span></td></tr>
+        <tr><td>After launch: use the general ranges from CER's source-of-truth v2 when a pod's own limit is missing or reversed</td><td>Reverses your September 13 decision not to use general ranges. Answers would label them as general ranges, not the pod's own limit. Not built; conductivity also waits on Michael.</td><td><span class="pill open">Needs your approval</span></td></tr>
+        <tr><td>Approved advice catalogue for causes and referrals</td><td>Every suggested cause or referral to CER comes from the catalogue you signed off, not from the model.</td><td><span class="pill done">Approved (you, Sep 24)</span></td></tr>
+        <tr><td>pH outside 3 to 12 treated as an implausible sensor reading</td><td>Natural water runs from about pH 3.5 to 11, and our pods sit in lakes, creeks, harbors and the coast. A seawater pod (about pH 8.1) has reported 2.07 and 12.62, and each alone set a report to "Action Required". Such readings are flagged as likely sensor faults instead of being reported as real water.</td><td><span class="pill open">Needs your confirmation</span></td></tr>
+        <tr><td>Answer model <code>glm-5p3-flash</code></td><td>The first model to clear our quality target when given the right pages (1.33 against 1.10 for the previous candidate), at about the same price. Our own blind grading agreed with the automatic grader.</td><td><span class="pill done">Decided (Sep 26)</span></td></tr>
+        <tr><td>Rewrite every question into a search query before searching</td><td>"What about in winter?" searches badly on its own. Rewriting raised the rate at which search finds the right pages for follow-ups from about 73% to about 90%; with the new model, the average score rose from about 0.73 to about 1.15. A re-ranking step scored the same at three times the cost and was dropped.</td><td><span class="pill done">Decided (Sep 27)</span></td></tr>
+        <tr><td>Search returns 20 passages per question</td><td>30 passages scored about 0.04 higher for about a third more cost per question, which is within the grader's run-to-run spread.</td><td><span class="pill done">Decided (Sep 28)</span></td></tr>
+        <tr><td>The Keyestudio turbidity sensor document and CER's source-of-truth v2 are added to the manuals</td><td>They describe the pods customers actually own. Adding them left the score within the grader's spread (about 1.16 against 1.20 before).</td><td><span class="pill done">Decided (Sep 27)</span></td></tr>
+        <tr><td>Old Gemini-era chats are not shown</td><td>They were answered by a different system. New chats are marked, so no data migration is needed.</td><td><span class="pill done">Decided</span></td></tr>
+        <tr><td>Deploy as a no-traffic version first</td><td>Each service is tested at its own address before any customer is routed to it. Rolling back is one command, but it returns the old Gilligan page, which also does not work, because its model is retired.</td><td><span class="pill done">Approved (you, Sep 24)</span></td></tr>
+        <tr><td>Fixes to CER's existing server code ship only with Michael's go-ahead</td><td>They change code outside Gilligan that customers use today. Three are in every server version because Gilligan or basic safety depends on them; Michael picks at the demo whether to add the spreadsheet-export fix and the no-organization fix. We demonstrate each on made-up data first.</td><td><span class="pill open">Michael chooses at the demo</span></td></tr>
+        <tr><td>Switch to CER's own model key after the demo</td><td>Testing ran on a development key. CER's paid key replaces it, and the test credentials are rotated.</td><td><span class="pill open">After demo approval</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="changes" class="stack" aria-labelledby="chg-h">
+  <div class="eyebrow">Code</div>
+  <h2 id="chg-h">What changes in each codebase</h2>
+  <p class="muted">Each repository ships one frozen release candidate (rc2, cut September 29), built from the clean branches only, never from <code>main</code> or <code>develop</code>, whose history carries the malware.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Codebase</th><th>Release commit</th><th>What it adds</th></tr></thead>
+      <tbody>
+        <tr><td>Dashboard</td><td><code>fc13d16</code></td><td>Rebuilt Gilligan page; the question stays visible while the answer loads; report download; source links labelled by document title; plain-language notes under answers instead of the model's internal notes, each naming its pod when an answer covers several; a warning when five or fewer questions remain; the approved disclaimer; the caveat under answers that cite the manuals (wording to approve); wide tables kept inside the chat; the pod pre-selected when a user has only one; turbidity dial bands matching the report; missing turbidity shown as a gap rather than zero; the broken confirm-email page removed.</td></tr>
+        <tr><td>Server, every version</td><td><code>122136d</code> and later</td><td>Passes Gilligan questions and report downloads to the new service, behind a switch that stays on the old behaviour until turned on; the service key and verified user on every call; document titles on sources; CWA Old treated as an organization-less pod merged into Old Woman Creek 2026. Also three security fixes: login required on user lookups and the database probe route removed; an organization check on pod-history requests; a clear message instead of a server error for invited users without a password.</td></tr>
+        <tr><td>Server, Michael's choice</td><td><code>008dad6</code> or <code>8463545</code></td><td><code>008dad6</code> adds an organization check on spreadsheet (CSV) export, and stops a pod inheriting a predecessor's history across water types. <code>8463545</code> adds that and refuses accounts with no organization instead of showing them every pod. Both written and tested on made-up data.</td></tr>
+        <tr><td>Gilligan service (new)</td><td><code>ddd6292</code></td><td>Search across 16 documents with every question rewritten for search; sensor tools; PDF reports; usage limits stored in the <code>gilligan</code> database; the approved catalogue, used only when a reading supports an entry; current-site rules with honest dates for moved pods; the water-type rule for merged history; the pH 3-12 band; silent pods named with their last reading's age; stuck-sensor, over-wide-limit and missing-limit checks; two readings needed for "Action Required"; long chats trimmed to the last 20 messages instead of failing; earlier answers' citation markers removed before the model sees them; an audit record returned with every answer and saved on the chat.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="security" class="stack" aria-labelledby="sec-h">
+  <div class="eyebrow">Server security</div>
+  <h2 id="sec-h">Holes in CER's existing server</h2>
+  <p>We ran CER's current server code and the release versions side by side on made-up organizations and pods, with no production data. All five holes below are in CER's own code today, so they are likely in production too; production's exact version is unknown, and we have not checked it live.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>What a user can do</th><th>CER's code today</th><th>Every release version</th><th>With Michael's go-ahead</th></tr></thead>
+      <tbody>
+        <tr><td>Export another organization's pod readings as a spreadsheet (CSV)</td><td><span class="pill risk">Yes</span> 165 rows of another organization's readings</td><td><span class="pill risk">Yes</span></td><td><span class="pill done">Blocked</span> "Device not found"; own pod unchanged (<code>008dad6</code>, <code>8463545</code>)</td></tr>
+        <tr><td>List users and look up a user without logging in; probe the database</td><td><span class="pill risk">Yes</span> all users with names and emails</td><td><span class="pill done">Blocked</span></td><td><span class="pill done">Blocked</span></td></tr>
+        <tr><td>Read another organization's pod history by naming the pod</td><td><span class="pill risk">Yes</span></td><td><span class="pill done">Blocked</span></td><td><span class="pill done">Blocked</span></td></tr>
+        <tr><td>Log in as an invited user who has not set a password</td><td><span class="pill risk">Server error</span> with a raw error dump</td><td><span class="pill done">Clear message</span> "Finish setting up your account..."</td><td><span class="pill done">Clear message</span></td></tr>
+        <tr><td>See every pod as a user with no organization</td><td><span class="pill risk">Yes</span> all 5 pods</td><td><span class="pill risk">Still sees the list</span> and can export it; its history is blocked</td><td><span class="pill done">Refused</span> "No organization assigned to this account" (<code>8463545</code> only). No production user is in this state (checked Sep 26).</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Michael's three options: <code>8463545</code> (both fixes, the current candidate), <code>008dad6</code> (the export fix only) or <code>122136d</code> (neither, which also drops the server's own water-type check on merged history, since it shares a commit with the export fix).</p>
+  <p class="note">Separately, a build trigger still deploys the dashboard from the branch that carries malware. Its builds have failed since August 26, so nothing has reached customers through it, but it should be switched off before launch.</p>
+</section>
+
+<section id="quality" class="stack" aria-labelledby="q-h">
+  <div class="eyebrow">Answer quality</div>
+  <h2 id="q-h">How good the answers are</h2>
+  <p>We grade answers on a fixed set of 90 questions, from 0 (wrong) to 2 (fully correct). The target we set before testing is an average of 1.30. All scores below come from the same grader and scoring rules.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Setup</th><th class="num">Average score</th><th>Meets 1.30</th></tr></thead>
+      <tbody>
+        <tr><td>Previous model, given the right manual pages</td><td class="num">1.10</td><td><span class="pill risk">No</span></td></tr>
+        <tr><td><code>glm-5p3-flash</code>, given the right manual pages</td><td class="num">1.33</td><td><span class="pill done">Yes</span></td></tr>
+        <tr><td><code>glm-5p3-flash</code>, given the right pages plus the 20 it finds itself</td><td class="num">1.33</td><td><span class="pill done">Yes</span></td></tr>
+        <tr><td><code>glm-5p3-flash</code>, finding the pages itself (the launch setup)</td><td class="num">1.16</td><td><span class="pill risk">No</span></td></tr>
+        <tr><td>Launch setup, questions that need several documents</td><td class="num">0.83 to 1.00</td><td><span class="pill risk">No</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">The model is good enough, and extra passages do not confuse it: the gap is pages the search misses, mostly on questions that combine several documents. Search improvement continues after launch. Because Gilligan cannot tell which answers are weak, we propose the fixed caveat above rather than refusals. Questions it should decline are refused with a fixed sentence; all eight such test questions were refused correctly at the launch settings, though the wording varied in some other test runs.</p>
+  <p class="note">Long chats hold up: in five 12-question chats, later answers scored as well as early ones except where the question needed several documents. One fault showed: in long chats, some source links pointed at the wrong passage (13 of 33 late in the chat), because earlier answers' citation markers reached the model. The release removes those markers first; the long-chat run has not been repeated since.</p>
+  <p class="note">Questions about a customer's own readings use live data rather than manual search. They were tested on a made-up copy of the database: every tool call worked, and the fixes for the problems found are in rc2. The rc2 behaviour itself is first exercised end to end in the demo rehearsal; anything still open is under <a href="#open">Open items</a>.</p>
+</section>
+
+<section id="demo" class="stack" aria-labelledby="demo-h">
+  <div class="eyebrow">Demo</div>
+  <h2 id="demo-h">Demo script</h2>
+  <p class="muted">The demo runs on a local copy of rc2 with made-up organizations and pods, so nothing touches customer data. It takes about 40 minutes for Gilligan, then the security fixes side by side (CER's code today against the release), then a quick check that the rest of the dashboard still works. The main steps and what you should see:</p>
+  <ol class="steps">
+    <li><span class="n">1</span><span class="do">Log in as a member of one organization and open Gilligan.</span><span class="see">The disclaimer, the remaining-questions count and only that organization's pods. With one pod, it is already selected.</span></li>
+    <li><span class="n">2</span><span class="do">Ask "What does dissolved oxygen measure, and why does it matter for aquatic life?"</span><span class="see">A plain answer with numbered sources labelled by document title, and the caveat line under it.</span></li>
+    <li><span class="n">3</span><span class="do">Ask "What is ORP?", then in the same chat "and how do I calibrate it?"</span><span class="see">ORP calibration steps from the right manual chapter, not generic calibration advice.</span></li>
+    <li><span class="n">4</span><span class="do">Ask "What will the weather be tomorrow?"</span><span class="see">The fixed refusal sentence, with no caveat.</span></li>
+    <li><span class="n">5</span><span class="do">With the pod selected, ask "How is the water this week?"</span><span class="see">Real readings with the dates covered and the age of the latest reading. No caveat, because the answer rests on readings, not documents.</span></li>
+    <li><span class="n">6</span><span class="do">On a pod whose turbidity sensor is stuck, ask "Is the turbidity sensor working?"</span><span class="see">A likely failed sensor, not clear water, and a referral to CER.</span></li>
+    <li><span class="n">7</span><span class="do">On a sea-water pod that reported pH 2.07, ask why the pH crashed that day.</span><span class="see">The reading is set aside as a likely sensor fault ("may be sensor faults and were left out"); no cause is invented.</span></li>
+    <li><span class="n">8</span><span class="do">On a pod that moved, ask for a 60-day report and open the PDF.</span><span class="see">Only the current site's readings, and the title and summary give the current site's dates, with a note about the earlier location.</span></li>
+    <li><span class="n">9</span><span class="do">On a lake pod that absorbed a salt-water pod, ask for its 60-day history.</span><span class="see">The salt-water history is withheld with a note; no "Action Required" from it.</span></li>
+    <li><span class="n">10</span><span class="do">Ask about another organization's pod, by name.</span><span class="see">A refusal, with no readings and no confirmation that the pod exists.</span></li>
+    <li><span class="n">11</span><span class="do">On a pod with a sensor fault, ask "My pod seems broken, who should I contact?"</span><span class="see">A referral to sales@cleanearthrovers.com or the customer's usual CER contact, with no invented contact.</span></li>
+    <li><span class="n">12</span><span class="do">Reload the page and reopen an earlier chat.</span><span class="see">The saved chats are listed and the earlier answer, sources, caveat and report button come back.</span></li>
+    <li><span class="n">13</span><span class="do">Point to the questions-left line.</span><span class="see">"Almost out" at five left; a screenshot shows the limit screen, with sending disabled until the reset time.</span></li>
+    <li><span class="n">14</span><span class="do">Log in as a user in a second organization.</span><span class="see">Only that organization's pods, its own chats and its own separate allowance.</span></li>
+  </ol>
+  <p class="note">The demo spends real model money: about $1 for a full run of the Gilligan part (about 34 questions and 4 reports, budgeted at $0.02 a question and $0.05 to $0.07 a report, because demo questions lean toward data and reports).</p>
+</section>
+
+<section id="cost" class="stack" aria-labelledby="cost-h">
+  <div class="eyebrow">Cost</div>
+  <h2 id="cost-h">What it costs to run</h2>
+  <p>Model usage is the main running cost. It is billed per token (roughly, per word read and written). The answer model <code>glm-5p3-flash</code> costs $0.15 per million tokens read, $0.03 per million when Fireworks has recently seen the same text, and $0.50 per million tokens written.</p>
+
+  <div class="tiles">
+    <div class="tile"><span class="lbl">Manuals-only question, measured</span><span class="big">$0.0028</span><span class="lbl">average over 90 test questions at the launch settings, including the search rewrite</span></div>
+    <div class="tile"><span class="lbl">Blended, per 1,000 questions</span><span class="big">$6.20</span><span class="lbl">estimate: half manual questions, half about readings</span></div>
+    <div class="tile"><span class="lbl">Most one user can cost</span><span class="big">$0.16 / day</span><span class="lbl">set by the 1,000,000-token daily cap; about $4.80 a month if hit on all 30 days</span></div>
+  </div>
+
+  <div class="chart" id="chart-q">
+    <h3>Cost per question, by kind of question</h3>
+    <p class="small muted">The bar is the price if nothing is cached; the dot is the price if half of each request is text Fireworks has recently seen. Only the first row is measured; the others are estimates.</p>
+    <svg id="svg-q" viewBox="0 0 720 250" role="img" aria-label="Cost per question with no caching: manuals-only $0.0034, measured; about readings with one data lookup $0.0095; with two lookups $0.0144; report request $0.0095."></svg>
+    <details class="tableview"><summary>Show as a table</summary>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Kind of question</th><th class="num">Tokens read</th><th class="num">No caching</th><th class="num">Half cached</th><th>Source</th></tr></thead>
+        <tbody id="tbl-q"></tbody>
+      </table></div>
+    </details>
+  </div>
+
+  <div class="chart" id="chart-m">
+    <h3>Monthly model cost by number of active users</h3>
+    <p class="small muted">Expected cost, using the blended $0.0062 per question over 20 working days. The table also shows the ceiling, the most the limits allow: $4.80 per user per month. The ceiling is a guardrail, not a forecast; the next panel explains the gap.</p>
+    <svg id="svg-m" viewBox="0 0 720 300" role="img" aria-label="Monthly cost rises in a straight line with users: at 300 users, about $112 at 3 questions a day and about $372 at 10 a day."></svg>
+    <details class="tableview"><summary>Show as a table</summary>
+      <div class="table-wrap"><table>
+        <thead><tr><th class="num">Active users</th><th class="num">3 questions a day</th><th class="num">10 questions a day</th><th class="num">Ceiling: everyone at the cap</th></tr></thead>
+        <tbody id="tbl-m"></tbody>
+      </table></div>
+    </details>
+  </div>
+
+  <div class="math" id="ceiling">
+    <h3>Why 30 users cost about $37 a month, but the ceiling is $144</h3>
+    <p>The two numbers answer different questions. <strong>$37</strong> is what we expect if 30 people each ask 10 ordinary questions on each working day. <strong>$144</strong> is the most the usage limits can ever let those 30 people spend, even if every one of them pushes Gilligan as hard as it allows, every day. The ceiling is about four times the estimate because it stacks three worst cases on top of the estimate:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Step</th><th>What changes</th><th class="num">Factor</th><th class="num">30 users, per month</th></tr></thead>
+        <tbody>
+          <tr><td>Estimate</td><td>10 questions a day, the blended mix at $0.0062 each, 20 working days: 30 × 10 × $0.0062 × 20</td><td class="num"></td><td class="num"><strong>$37</strong></td></tr>
+          <tr><td>1. Full allowance</td><td>Everyone asks all 20 questions allowed per day, not 10</td><td class="num">× 2</td><td class="num">$74</td></tr>
+          <tr><td>2. Heavy questions</td><td>The questions are data-heavy enough to reach the 1,000,000-token cap, about $0.16 a day, instead of 20 blended questions at about $0.12</td><td class="num">× 1.3</td><td class="num">$96</td></tr>
+          <tr><td>3. Every day</td><td>The limits reset every day, weekends included, so the ceiling counts 30 days, not 20 working days</td><td class="num">× 1.5</td><td class="num"><strong>$144</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small">Which limit stops a user first depends on what they ask. A user asking about the manuals uses about 19,000 tokens a question, so they hit the 20-question limit at about 380,000 tokens, or about $0.06 a day. A user asking about readings uses far more: a week of one pod measured about 76,000 tokens, so about 13 such questions reach the token cap; one 30-day comparison across every pod measured about 491,000, so two of those reach it. The token cap exists for that second kind of user.</p>
+    <p class="small muted">Two small refinements. The question that crosses the cap is allowed to finish, so a very heavy last question can add up to about $0.07 to that day. And text Fireworks has recently seen costs a fifth as much, which pulls real costs below these figures. Neither changes the picture: at 30 users the worst case is roughly $150 a month (a little more if many days end on a very heavy question), and expected use is about a quarter of that.</p>
+  </div>
+
+  <div class="stack">
+    <h3>What moves the cost</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Factor</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>Questions about readings</td><td>Each data lookup sends the whole conversation to the model again, so one lookup roughly triples the cost of a manuals-only question and two lookups roughly four-fold it. A 10-question check on made-up pods cost about $0.01 a question, in line with the estimate. Broad questions cost more: measured on September 24, every pod's latest readings took about 129,000 tokens (about $0.02) and a 30-day comparison across every pod about 491,000 (about $0.07).</td></tr>
+          <tr><td>Long chats</td><td>Measured on five 12-question chats: about the same cost per question as short chats, because only the last 20 messages are sent.</td></tr>
+          <tr><td>Caching</td><td>Text Fireworks has seen recently costs a fifth as much. At the launch settings about a quarter of the text read was cached (24 to 30%); the measured figure above includes it.</td></tr>
+          <tr><td>Rewriting questions for search</td><td>One small extra model call per question, about $0.0003.</td></tr>
+          <tr><td>Reports</td><td>The PDF itself is drawn without the model; the cost is the chat request that prepares it.</td></tr>
+          <tr><td>Usage limits</td><td>Cap the worst case at about $0.16 per user per day (see <a href="#ceiling">above</a>). Every token counts toward the cap, including the search rewrite and cached text.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Not included: Google Cloud charges for the new service and its small database. The service scales to zero when idle and runs one instance at most at launch; the usage counters stay inside Firestore's free daily quota even at 300 users. We will confirm the cost from billing after the first week.</p>
+  </div>
+</section>
+
+<section id="open" class="stack" aria-labelledby="open-h">
+  <div class="eyebrow">Open items</div>
+  <h2 id="open-h">What is still open</h2>
+  <h3>Setup and answers we need from Michael</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Item</th><th>Status on Sep 29</th></tr></thead>
+      <tbody>
+        <tr><td>The one-time setup steps 1-7 under <a href="#setup">What Michael sets up</a>: Gilligan's account, the <code>gilligan</code> database and its cleanup rule, the two secrets, and permission to call the service</td><td><span class="pill open">Not done</span> (account and database absent on Sep 28; the rest not visible to us)</td></tr>
+        <tr><td>Turn off the build trigger that deploys the dashboard from the infected <code>main</code> branch</td><td><span class="pill risk">Still on</span></td></tr>
+        <tr><td>Rotate the secret that signs login tokens</td><td><span class="pill open">Not done</span></td></tr>
+        <tr><td>Choose the server version: <code>8463545</code>, <code>008dad6</code> or <code>122136d</code></td><td><span class="pill open">At the demo</span></td></tr>
+        <tr><td>Confirm whether Old Woman Creek's two salt-water predecessors (and CWA's earlier pods) were ever in salt water</td><td><span class="pill open">Waiting</span></td></tr>
+        <tr><td>Supply the approved text for "What does Clean Earth Rovers do?"</td><td><span class="pill open">Waiting</span> (wired; empty until supplied)</td></tr>
+        <tr><td>Deploy permission for the release owner</td><td><span class="pill done">Restored</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>Known issues</h3>
+  <p class="small muted">Fixed in rc2 since the last version of this brief: moved pods' dates, fresh-water pods judged on salt-water history, the PDF's reading age, silent pods called online, implausible pH counted as real, a single glitch setting "Action Required", and wrong source links in long chats. These fixes pass their automated tests; the demo rehearsal is their first end-to-end run on rc2.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Issue</th><th>Impact</th><th>Plan</th></tr></thead>
+      <tbody>
+        <tr><td>"My pod seems broken" on a pod with no visible fault may be declined instead of referred to CER</td><td>With a missing, late or stuck reading, the approved entry refers the customer to CER. With healthy readings, the customer may get no contact. Widening the entry would come to you for approval.</td><td><span class="pill open">Open</span></td></tr>
+        <tr><td>A very long, data-heavy chat can outgrow Firestore's 1 MB limit per chat</td><td>After about 5 very heavy or 21 mixed answers in one chat, saving the next answer fails after it was paid for. Trimming the saved data lookups fixes it.</td><td><span class="pill open">After launch</span></td></tr>
+        <tr><td>An answer said a pod had readings "in the last 24 hours" when it had been silent for 30 hours; some tool notes are relayed inconsistently</td><td>Occasional misleading wording on data questions.</td><td><span class="pill open">After launch</span></td></tr>
+        <tr><td>Refusal wording varies between runs; answers needing several documents score lowest (0.83)</td><td>The reason for the caveat.</td><td><span class="pill open">After launch</span> (search work)</td></tr>
+        <tr><td>A report on a period with no usable readings labels its site note "Tool failed"; a rejected pod limit has no note for the reader</td><td>Confusing wording in rare cases.</td><td><span class="pill open">After launch</span></td></tr>
+        <tr><td>On a phone, a long source title is clipped at the panel edge</td><td>Cosmetic.</td><td><span class="pill open">After launch</span></td></tr>
+        <tr><td>Chart times in CER's existing charts appear to run 7 hours ahead of their labels</td><td>Pre-existing in CER's code; not yet confirmed in a browser.</td><td><span class="pill open">To confirm</span></td></tr>
+        <tr><td>Rolling back returns the old Gilligan page, which also fails, because its Google model is retired</td><td>A rollback means Gilligan is off until fixed forward.</td><td><span class="pill open">Accepted</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <span>Figures: quality from the 90-question evaluation (2026-09-26 to 09-28, one grader and rubric throughout); the manuals-only cost from the launch-settings run's recorded token counts (2026-09-27); long-chat cost from five 12-question chats (2026-09-28); token counts for questions about readings from the release sizing of 2026-09-24. Security results from side-by-side runs on made-up data (2026-09-28 and 09-29). Prices from Fireworks' model page, read 2026-09-26.</span>
+  <span>Release candidate rc2, cut 2026-09-29: Gilligan service <code>ddd6292</code>, dashboard <code>fc13d16</code>, server <code>8463545</code> pending Michael's choice. Cloud settings from the deployment runbook at that commit.</span>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, parent, text) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function money(v, d) { return "$" + v.toFixed(d == null ? 4 : d); }
+  function tipFor(chart) {
+    var t = document.createElement("div");
+    t.className = "tip"; t.hidden = true; chart.appendChild(t);
+    return function (show, html, evt) {
+      if (!show) { t.hidden = true; return; }
+      t.innerHTML = html; t.hidden = false;
+      var r = chart.getBoundingClientRect();
+      var x = evt.clientX - r.left + 12, y = evt.clientY - r.top + 12;
+      if (x + 250 > r.width) x = r.width - 250;
+      t.style.left = Math.max(8, x) + "px"; t.style.top = y + "px";
+    };
+  }
+
+  // Cost per question. Prices per million tokens.
+  var IN = 0.15, CIN = 0.03, OUT = 0.50, REWRITE = 0.00033;
+  function price(tokensIn, tokensOut, cachedShare) {
+    var c = tokensIn * cachedShare;
+    return ((tokensIn - c) * IN + c * CIN + tokensOut * OUT) / 1e6 + REWRITE;
+  }
+  var rows = [
+    { name: "Manuals only", tin: 19144, tout: 340, src: "Measured, 90 questions (about $0.0028 with the 24% actually cached)", measured: true },
+    { name: "About readings, one lookup", tin: 59000, tout: 700, src: "Estimate" },
+    { name: "About readings, two lookups", tin: 90000, tout: 1050, src: "Estimate" },
+    { name: "Report request", tin: 59000, tout: 700, src: "Estimate (one lookup)" }
+  ];
+  rows.forEach(function (r) {
+    if (r.hi == null) r.hi = price(r.tin, r.tout, 0);
+    r.lo = price(r.tin, r.tout, 0.5);
+  });
+
+  var svg = document.getElementById("svg-q"), chartQ = document.getElementById("chart-q");
+  var tip = tipFor(chartQ);
+  var L = 200, R = 700, top = 16, rowH = 44, max = 0.016;
+  function xq(v) { return L + (v / max) * (R - L); }
+  for (var g = 0; g <= max + 1e-9; g += 0.004) {
+    el("line", { x1: xq(g), x2: xq(g), y1: top - 4, y2: top + rows.length * rowH, class: "grid" }, svg);
+    el("text", { x: xq(g), y: top + rows.length * rowH + 18, "text-anchor": "middle" }, svg, "$" + g.toFixed(3));
+  }
+  rows.forEach(function (r, i) {
+    var y = top + i * rowH + rowH / 2;
+    el("text", { x: L - 12, y: y + 4, "text-anchor": "end", class: "t-strong" }, svg, r.name);
+    var bar = el("rect", { x: L, y: y - 9, width: Math.max(4, xq(r.hi) - L), height: 18, rx: 4, fill: "var(--series-1)", opacity: r.measured ? 1 : 0.55 }, svg);
+    var dot = el("circle", { cx: xq(r.lo), cy: y, r: 6, fill: "var(--series-2)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
+    el("text", { x: xq(r.hi) + 8, y: y + 4 }, svg, money(r.hi));
+    var hit = el("rect", { x: 0, y: y - rowH / 2, width: 720, height: rowH, fill: "transparent" }, svg);
+    var html = "<strong>" + r.name + "</strong><br>No caching: " + money(r.hi) + "<br>Half cached: " + money(r.lo) + "<br>" + r.src;
+    hit.addEventListener("mousemove", function (e) { tip(true, html, e); });
+    hit.addEventListener("mouseleave", function () { tip(false); });
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + r.name + "</td><td class='num'>" + r.tin.toLocaleString() + "</td><td class='num'>" + money(r.hi) + "</td><td class='num'>" + money(r.lo) + "</td><td>" + r.src + "</td>";
+    document.getElementById("tbl-q").appendChild(tr);
+  });
+  var ly = top + rows.length * rowH + 40;
+  el("rect", { x: L, y: ly - 9, width: 14, height: 12, rx: 3, fill: "var(--series-1)" }, svg);
+  el("text", { x: L + 20, y: ly + 1 }, svg, "No caching");
+  el("circle", { cx: L + 128, cy: ly - 3, r: 6, fill: "var(--series-2)" }, svg);
+  el("text", { x: L + 140, y: ly + 1 }, svg, "Half cached");
+  el("text", { x: L + 250, y: ly + 1 }, svg, "Faded bars are estimates");
+
+  // Monthly cost by users.
+  var PERQ = 0.0062, DAYS = 20, CAP_MONTH = 4.80;
+  var series = [
+    { name: "3 questions a day", q: 3, color: "var(--series-1)" },
+    { name: "10 questions a day", q: 10, color: "var(--series-2)" }
+  ];
+  var users = [0, 25, 50, 100, 150, 200, 250, 300];
+  var svgM = document.getElementById("svg-m"), chartM = document.getElementById("chart-m");
+  var tipM = tipFor(chartM);
+  var mL = 56, mR = 600, mT = 16, mB = 250, yMax = 450;
+  function mx(u) { return mL + (u / 300) * (mR - mL); }
+  function my(v) { return mB - (v / yMax) * (mB - mT); }
+  for (var v = 0; v <= yMax; v += 150) {
+    el("line", { x1: mL, x2: mR, y1: my(v), y2: my(v), class: "grid" }, svgM);
+    el("text", { x: mL - 8, y: my(v) + 4, "text-anchor": "end" }, svgM, "$" + v);
+  }
+  [0, 50, 100, 150, 200, 250, 300].forEach(function (u) {
+    el("text", { x: mx(u), y: mB + 20, "text-anchor": "middle" }, svgM, u);
+  });
+  el("text", { x: (mL + mR) / 2, y: mB + 42, "text-anchor": "middle" }, svgM, "Active users");
+  series.forEach(function (s) {
+    var pts = users.map(function (u) { return mx(u) + "," + my(u * s.q * DAYS * PERQ); }).join(" ");
+    el("polyline", { points: pts, fill: "none", stroke: s.color, "stroke-width": 2 }, svgM);
+    var end = 300 * s.q * DAYS * PERQ;
+    el("circle", { cx: mx(300), cy: my(end), r: 4, fill: s.color }, svgM);
+    el("text", { x: mx(300) + 10, y: my(end) + 4, class: "t-strong" }, svgM, "$" + Math.round(end));
+    el("text", { x: mx(300) + 10, y: my(end) + 20 }, svgM, s.name);
+  });
+  var cross = el("line", { x1: 0, x2: 0, y1: mT, y2: mB, stroke: "var(--ink-3)", "stroke-width": 1, "stroke-dasharray": "3 3", visibility: "hidden" }, svgM);
+  var overlay = el("rect", { x: mL, y: mT, width: mR - mL, height: mB - mT, fill: "transparent" }, svgM);
+  overlay.addEventListener("mousemove", function (e) {
+    var pt = svgM.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    var p = pt.matrixTransform(svgM.getScreenCTM().inverse());
+    var u = Math.round(((p.x - mL) / (mR - mL)) * 300 / 10) * 10;
+    u = Math.max(0, Math.min(300, u));
+    cross.setAttribute("x1", mx(u)); cross.setAttribute("x2", mx(u)); cross.setAttribute("visibility", "visible");
+    tipM(true, "<strong>" + u + " active users</strong><br>3 a day: $" + Math.round(u * 3 * DAYS * PERQ) + "/month<br>10 a day: $" + Math.round(u * 10 * DAYS * PERQ) + "/month<br>Ceiling: $" + Math.round(u * CAP_MONTH) + "/month", e);
+  });
+  overlay.addEventListener("mouseleave", function () { cross.setAttribute("visibility", "hidden"); tipM(false); });
+  [10, 30, 50, 100, 200, 300].forEach(function (u) {
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td class='num'>" + u + "</td><td class='num'>$" + Math.round(u * 3 * DAYS * PERQ) + "</td><td class='num'>$" + Math.round(u * 10 * DAYS * PERQ) + "</td><td class='num'>$" + Math.round(u * CAP_MONTH).toLocaleString() + "</td>";
+    document.getElementById("tbl-m").appendChild(tr);
+  });
+})();
+</script>
