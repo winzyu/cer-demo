@@ -1,8 +1,9 @@
 import PDFDocument from "pdfkit";
 import {
   buildReportPdf, resolveSectionNumbers, drawGridTable, drawKeyValueTable, drawSparkline,
-  flagCellText, lastReadingText, MARGIN,
+  clarityFootnoteText, flagCellText, lastReadingText, MARGIN,
 } from "../../src/report/renderPdf";
+import { REPORT_OMIT_GROUPS, type ReportOmitGroup } from "../../src/report/omit";
 import type {
   ParameterBaseline, ParameterStats, ReportInput, SiteMetadata, WQEvent, DataQualityCheck, ReportStatus,
 } from "../../src/report/types";
@@ -41,8 +42,13 @@ const baseline: ParameterBaseline = {
   key: "ph", label: "pH", unit: "", baselineMin: 6.5, baselineMax: 8.5, exceedanceMargin: 0.15, hasFixedBaseline: true,
 };
 
+/** The period's minimum and maximum, each held for three readings: a flag's shape (flagRules.ts). */
+const held = (min: number, max: number): Array<[number, number]> => (
+  [min, min, min, max, max, max].map((v, i): [number, number] => [i * 1_800_000, v])
+);
+
 const param: ParameterStats = {
-  baseline, min: 7.0, max: 7.5, mean: 7.2, median: 7.2, pattern: "flat",
+  baseline, min: 7.0, max: 7.5, mean: 7.2, median: 7.2, pattern: "flat", readings: held(7.0, 7.5),
 };
 
 /** Turbidity as buildReportInput builds it -- no numeric baseline, uncalibrated relative scale. */
@@ -59,6 +65,7 @@ const turbidityBaseline: ParameterBaseline = {
 
 const turbidityParam = (mean: number): ParameterStats => ({
   baseline: turbidityBaseline, min: 0, max: mean * 2, mean, median: mean, pattern: "unknown",
+  readings: held(0, mean * 2),
 });
 
 const narrative: NarrativeSections = {
@@ -69,7 +76,7 @@ const narrative: NarrativeSections = {
   recommendationsStakeholder: "Routine report distribution to client only.",
   // Wording for the one `event` below; reports without events never read it.
   events: [{
-    heading: "Threshold crossing",
+    heading: "Anomaly, cause unclear",
     causeNamed: false,
     interpretation: "Test interpretation.",
     followUp: "No approved recommendation covers these findings yet.",
@@ -218,7 +225,7 @@ describe("buildReportPdf — smoke test", () => {
       const doc = buildReportPdf(
         report,
         deterministicNarrative(report, noAccuracy, "Normal", guidance),
-        { probeAccuracy: noAccuracy, status: "Normal" },
+        { noiseFloor: noAccuracy, status: "Normal" },
       );
       doc.resume();
       doc.end();
@@ -233,7 +240,7 @@ describe("buildReportPdf — smoke test", () => {
   });
 
   const render = async (report: ReportInput): Promise<Buffer> => {
-    const doc = buildReportPdf(report, narrative, { probeAccuracy: noAccuracy, status: "Normal" });
+    const doc = buildReportPdf(report, narrative, { noiseFloor: noAccuracy, status: "Normal" });
     const chunks: Buffer[] = [];
     return new Promise<Buffer>((resolve, reject) => {
       doc.on("data", (chunk: Buffer) => chunks.push(chunk));
@@ -301,7 +308,7 @@ describe("buildReportPdf — smoke test", () => {
       const doc = buildReportPdf(
         { site: { ...site, lastReadingAt }, parameters: [param], events: [] },
         narrative,
-        { probeAccuracy: noAccuracy, status: "Normal", nowMs },
+        { noiseFloor: noAccuracy, status: "Normal", nowMs },
       );
       const chunks: Buffer[] = [];
       return new Promise<Buffer>((resolve, reject) => {
@@ -354,7 +361,7 @@ describe("buildReportPdf — smoke test", () => {
         hasFixedBaseline: true,
         baselineSource: "operator-threshold",
       },
-      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown",
+      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown", readings: held(64, 72),
     };
     const withFootnote: ReportInput = { site, parameters: [param, operatorTemp], events: [] };
     const referenceOnly: ReportInput = {
@@ -391,7 +398,7 @@ describe("buildReportPdf — smoke test", () => {
         hasFixedBaseline: false,
         baselineNote: "No operator thresholds are configured for this device.",
       },
-      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown",
+      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown", readings: held(64, 72),
     };
     const report: ReportInput = { site, parameters: [param, noBaseline], events: [] };
 
@@ -410,7 +417,7 @@ describe("buildReportPdf — smoke test", () => {
     const renderWithStatus = async (
       reportInput: ReportInput, status: ReportStatus,
     ): Promise<Buffer> => {
-      const doc = buildReportPdf(reportInput, narrative, { probeAccuracy: noAccuracy, status });
+      const doc = buildReportPdf(reportInput, narrative, { noiseFloor: noAccuracy, status });
       const chunks: Buffer[] = [];
       return new Promise<Buffer>((resolve, reject) => {
         doc.on("data", (chunk: Buffer) => chunks.push(chunk));
@@ -430,7 +437,7 @@ describe("buildReportPdf — smoke test", () => {
         hasFixedBaseline: false,
         baselineNote: "No operator thresholds are configured for this device.",
       },
-      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown",
+      min: 64, max: 72, mean: 68, median: 68, pattern: "unknown", readings: held(64, 72),
     };
     const report: ReportInput = { site, parameters: [noBaselineParam], events: [] };
 
@@ -541,4 +548,82 @@ describe("drawSparkline", () => {
 it("prints Not assessed for a numeric row with an unusable operator limit", () => {
   expect(flagCellText({ ...param, baseline: { ...baseline, hasFixedBaseline: false } }, () => 0))
     .toBe("Not assessed");
+});
+
+describe("buildReportPdf — notes left out on request", () => {
+  const thresholdBaseline: ParameterBaseline = { ...baseline, baselineSource: "operator-threshold" };
+  const full: ReportInput = {
+    site,
+    parameters: [{ ...param, baseline: thresholdBaseline }, turbidityParam(0)],
+    events: [],
+    dataQuality: { ...dataQuality, calibrationNotes: "Calibration note for the test." },
+  };
+
+  /** Every string the PDF drew, from pdfkit's text calls; PDF text cannot be read under Jest. */
+  const drawnText = (omit: ReportOmitGroup[]): string => {
+    const text = jest.spyOn(PDFDocument.prototype, "text");
+    try {
+      const doc = buildReportPdf(
+        full,
+        deterministicNarrative(full, noAccuracy, "Normal", guidance, omit),
+        { noiseFloor: noAccuracy, status: "Normal", omit },
+      );
+      doc.resume();
+      doc.end();
+      return text.mock.calls.map(([value]) => String(value)).join(" \n ");
+    } finally {
+      text.mockRestore();
+    }
+  };
+
+  it("prints every note and no Omitted row by default", () => {
+    const text = drawnText([]);
+    expect(text).toContain("No range (relative index)");
+    expect(text).toContain("uncalibrated relative index");
+    expect(text).toContain("Clear (all zero)");
+    expect(text).toContain("operator-configured threshold from the device registry");
+    expect(text).toContain("Calibration note for the test.");
+    expect(text).not.toContain("Omitted");
+  });
+
+  it("leaves out each group's notes, keeps the numbers, and says what was omitted", () => {
+    const text = drawnText([...REPORT_OMIT_GROUPS]);
+    expect(text).not.toContain("No range (relative index)");
+    expect(text).not.toContain("uncalibrated");
+    expect(text).not.toContain("(all zero)");
+    expect(text).not.toContain("operator-configured threshold from the device registry");
+    expect(text).not.toMatch(/\d\. Data Quality/);
+    expect(text).not.toContain("Calibration note for the test.");
+    expect(text).toContain("Omitted");
+    expect(text).toContain("turbidity notes, sensor fault notes, threshold notes, Data Quality "
+      + "section (at the requester's request)");
+    expect(text).toContain("6.5-8.5");
+    expect(text).toContain("4. Recommendations");
+  });
+});
+
+describe("clarityFootnoteText / flagCellText / resolveSectionNumbers — omit", () => {
+  it("keeps the footnote unchanged by default and drops each half with its group", () => {
+    const fullText = clarityFootnoteText();
+    expect(fullText.startsWith("  Turbidity is reported")).toBe(true);
+    expect(fullText).toContain("comparison only. A Flag reading '(all zero)'");
+    expect(clarityFootnoteText(["turbidity_notes"]).startsWith("  A Flag reading")).toBe(true);
+    expect(clarityFootnoteText(["sensor_fault_notes"])).not.toContain("(all zero)");
+    expect(clarityFootnoteText(["turbidity_notes", "sensor_fault_notes"])).toBe("");
+  });
+
+  it("explains the Flag suffixes only when a Flag cell carries one", () => {
+    expect(clarityFootnoteText([], false)).not.toContain("(all zero)");
+    expect(clarityFootnoteText(["turbidity_notes"], false)).toBe("");
+  });
+
+  it("prints the bare band under sensor_fault_notes", () => {
+    expect(flagCellText(turbidityParam(0), noAccuracy, ["sensor_fault_notes"])).toBe("Clear");
+    expect(flagCellText(turbidityParam(2_042), noAccuracy, ["sensor_fault_notes"])).toBe("Turbid");
+  });
+
+  it("renumbers Recommendations when the Data Quality section is left out", () => {
+    expect(resolveSectionNumbers({ events: [event], dataQuality }, ["data_quality"]))
+      .toEqual({ eventDetection: 4, recommendations: 5 });
+  });
 });

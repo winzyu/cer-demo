@@ -4,7 +4,10 @@ import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import { QuerySensorData } from "../../src/tools/querySensorData";
 import { buildReportInput } from "../../src/report/buildReportInput";
 import { prepareReport } from "../../src/report/produceReport";
-import { STUCK_SENSOR_NOTE, STUCK_SENSOR_USER_NOTE } from "../../src/tools/stuckSensor";
+import { stuckSensorNote, stuckSensorUserNote } from "../../src/devices/readingQc";
+
+const STUCK_SENSOR_NOTE = stuckSensorNote(["Turbidity"]);
+const STUCK_SENSOR_USER_NOTE = stuckSensorUserNote(["Turbidity"]);
 import { flagFor } from "../../src/report/types";
 import { probeAccuracy } from "../../src/report/referenceRanges";
 import type { DeviceSummary } from "../../src/types/device.types";
@@ -91,6 +94,27 @@ describe("buildReportInput", () => {
     expect(prepared.report.dataQuality!.completenessNotes).toContain("earlier location");
     expect(prepared.report.site.periodNote).toBeDefined();
     expect(prepared.report.site.periodNote).toContain("earlier location");
+  });
+
+  it("tells a report after a move that nothing was left out of its period, not that readings were", async () => {
+    // Coverage check, 2026-10-12: a week's PDF said 775 earlier-location readings "were excluded"
+    // in its Summary and its completeness row, though that site ended 43 days before the week.
+    const periodDay = [
+      { at: "2026-06-20T12:00:00Z", lat: 34 },
+      { at: "2026-08-01T12:00:00Z", lat: 33 },
+      { at: "2026-08-10T12:00:00Z", lat: 33 },
+      { at: "2026-08-12T12:00:00Z", lat: 33 },
+    ].map(({ at, lat }) => ({
+      timestamp: Date.parse(at) / 1000, best_lat: lat, best_lon: -118,
+      water_data: { 99: 8, phError: 0 },
+    }));
+    const prepared = await prepareReport(makeSensor({ periodDay }), { timeRange: "last 7 days", device: "Algalita" });
+    if (prepared.error !== undefined) throw new Error(prepared.error);
+    expect(prepared.report.site.periodNote).toBe("The pod has been at its current site since "
+      + "2026-08-01T12:00:00.000Z; its 1 earlier-location reading(s) (2026-06-20T12:00:00.000Z to "
+      + "2026-06-20T12:00:00.000Z) fall outside the requested period, so none were left out of it.");
+    expect(prepared.report.dataQuality!.completenessNotes).not.toContain("earlier location");
+    expect(JSON.stringify(prepared.userNotes ?? [])).not.toContain("earlier location");
   });
 
   it("counts usable and left-out rows once even when several metrics share a row", async () => {
@@ -255,8 +279,8 @@ describe("buildReportInput", () => {
 
     it("rejects a bad threshold for one metric while the other four still resolve normally", async () => {
       // A registry row can have one placeholder field (maxPH=100, the CER Conference Pod's real
-      // value) without the rest of the row being junk. pH alone should fall back to no baseline,
-      // with a rejection note -- everything else on this device keeps its own threshold.
+      // value) without the rest of the row being junk. pH alone falls back to v2's general range
+      // for this salt-water pod, labelled generic -- everything else keeps its own threshold.
       const sensor = makeSensor({
         devices: [{
           id: "bad-ph-pod",
@@ -277,9 +301,10 @@ describe("buildReportInput", () => {
       const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
 
       const ph = report!.parameters.find((p) => p.baseline.key === "ph")!;
-      expect(ph.baseline.hasFixedBaseline).toBe(false);
-      expect(ph.baseline.baselineSource).toBeUndefined();
-      expect(ph.baseline.baselineNote).toContain("pH");
+      expect(ph.baseline).toMatchObject({
+        hasFixedBaseline: true, baselineSource: "v2-fallback", baselineMin: 7.8, baselineMax: 8.3,
+      });
+      expect(ph.baseline.baselineNote).toMatch(/no usable pH threshold.*generic fallback.*upwelling/);
 
       const orp = report!.parameters.find((p) => p.baseline.key === "orp")!;
       expect(orp.baseline.hasFixedBaseline).toBe(true);

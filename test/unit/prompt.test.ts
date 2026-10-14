@@ -318,10 +318,39 @@ describe("TOOL_BLOCK", () => {
     expect(TOOL_BLOCK).toContain("say the\n  sensor may be missing; do not call the water clear");
   });
 
-  it("routes a limits question to get_pod_thresholds, never to a document", () => {
-    expect(TOOL_BLOCK).toContain("get_pod_thresholds for the limits");
+  it("routes a limits question to the tools' verdicts and limits, never to a document", () => {
+    expect(TOOL_BLOCK).toContain("Relay the verdict; never\n  decide in or out of range yourself");
+    expect(TOOL_BLOCK).toContain("Call\n  get_pod_thresholds when the user asks what the limits are");
     expect(TOOL_BLOCK).toContain("Never substitute a\n  number from a document");
     expect(TOOL_BLOCK).toContain("never a \"normal range\"");
+  });
+
+  it("explains each verdict, with a stray reading not worth raising (backlog §1)", () => {
+    ["\"in range\"", "\"out of range\"", "\"likely data issue\"", "\"not assessed\"",
+      "\"not enough data\""].forEach((status) => expect(TOOL_BLOCK).toContain(status));
+    expect(TOOL_BLOCK).toContain("A stray reading is normal; do not raise it.");
+  });
+
+  it("states a persistent offset once, with its start, as a likely threshold or sensor issue", () => {
+    expect(TOOL_BLOCK).toContain("say once, with the start date");
+    expect(TOOL_BLOCK).toContain("Do not repeat that in later answers unless asked.");
+  });
+
+  it("suggests maintenance only for a likely data issue (v2 §9.2)", () => {
+    expect(TOOL_BLOCK).toContain("Suggest inspection, cleaning, maintenance or recalibration ONLY");
+    expect(TOOL_BLOCK).toContain("Never suggest it for an out-of-range verdict");
+    expect(TOOL_BLOCK).not.toContain("it is a maintenance finding");
+    expect(TOOL_BLOCK).toContain("Never call a cause \"confirmed\" from sensor data.");
+  });
+
+  it("gives the turbidity caveat once per conversation (backlog §1, D3)", () => {
+    expect(TOOL_BLOCK).toContain("Give \"turbidity_caveat\" once per\n  conversation");
+    expect(TOOL_BLOCK).toContain("if an earlier answer already gave it, do not repeat it");
+  });
+
+  it("labels a fallback range as generic, not a limit set for this site", () => {
+    expect(TOOL_BLOCK).toContain("status \"fallback\"");
+    expect(TOOL_BLOCK).toContain("not a limit set for this site");
   });
 
   it("sends turbidity interpretation through get_turbidity_info", () => {
@@ -382,6 +411,142 @@ describe("REPORT_TOOL_BLOCK", () => {
     expect(REPORT_TOOL_BLOCK).toContain("baseline_provenance");
     expect(REPORT_TOOL_BLOCK).toContain("cannot be detected");
     expect(REPORT_TOOL_BLOCK).not.toContain("water body type selects");
+  });
+
+  it("leaves announcing the PDF to the server's line, and asks for a call per edit", () => {
+    // SPECS.md §10.7: the model's own "a new PDF is ready" was false on a second edit.
+    expect(REPORT_TOOL_BLOCK).toContain("Do not announce that a\n  report or copy is ready");
+    expect(REPORT_TOOL_BLOCK).not.toContain("point the user to that button");
+    expect(REPORT_TOOL_BLOCK).toContain("Every change to a report needs its own\n  generate_report call");
+  });
+
+  it("keeps the server's delivery lines out of the history the model reads", () => {
+    const messages = buildMessages({
+      query: "now remove the data quality section",
+      chunks: [],
+      history: [
+        { role: "user", content: "report please" },
+        {
+          role: "assistant",
+          content: "Status: Normal.\n\nNew PDF in this reply: Harbor Pier Buoy, Oct 4, 2026, full report.",
+        },
+      ],
+    });
+    expect(messages.find((m) => m.role === "assistant")?.content).toBe("Status: Normal.");
+  });
+
+  it("keeps the server's data-coverage lines out of the history the model reads", () => {
+    const messages = buildMessages({
+      query: "what about the pH?",
+      chunks: [],
+      history: [
+        { role: "user", content: "give me an overview" },
+        {
+          role: "assistant",
+          content: "Over the last 7 days, Oct 5 to Oct 12, the water was steady.\n\n"
+            + "Data covered in this reply: Bay Mouth Pod, 2026-10-05 08:24 to 2026-10-12 08:24 UTC (316 readings).",
+        },
+        { role: "user", content: "and the oxygen?" },
+        {
+          role: "assistant",
+          content: "Oxygen rose each afternoon.\n\n"
+            + "No new readings were read for this reply; any figures come from data covered earlier in this chat.",
+        },
+      ],
+    });
+    expect(messages.filter((m) => m.role === "assistant").map((m) => m.content)).toEqual([
+      "Over the last 7 days, Oct 5 to Oct 12, the water was steady.",
+      "Oxygen rose each afternoon.",
+    ]);
+  });
+});
+
+describe("data skepticism (GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §5)", () => {
+  // Michael, 2026-10-09: a real daily pH cycle was called "all error data", blamed on tides no
+  // tool measured, and swapped for new fault theories each time he pushed back.
+  it("treats readings as real unless a tool flagged them", () => {
+    expect(TOOL_BLOCK).toContain("Readings are real measurements of the water unless a tool says otherwise");
+    expect(TOOL_BLOCK).toContain("The tools have already run the fault checks; an \"out of range\" or unusual reading\n  passed them.");
+    expect(TOOL_BLOCK).toContain("never offer a fault theory (fouling, drift,\n  calibration, power, exposure) as their likely cause.");
+  });
+
+  it("names as a cause only what a tool measured", () => {
+    expect(TOOL_BLOCK).toContain("Name as a cause only what a tool measured. Tides, swell, waves, weather, rain, air\n  exposure, depth and nearby activity are not measured");
+    expect(TOOL_BLOCK).toContain("never say they caused a\n  pattern or that they had no effect.");
+  });
+
+  it("takes the user's site facts as evidence and their causes as hypotheses", () => {
+    expect(TOOL_BLOCK).toContain("What the user tells you about the site");
+    expect(TOOL_BLOCK).toContain("A cause the user suggests\n  (\"high tides\", \"the sewage spill\") is a hypothesis");
+    expect(TOOL_BLOCK).toContain("never say the readings changed or did not change \"when it started\".");
+  });
+
+  it("re-reads the data when challenged and moves only for new data or a new site fact", () => {
+    expect(TOOL_BLOCK).toContain("When the user disputes what the data shows, call query_sensor_data again");
+    expect(TOOL_BLOCK).toContain("Never bring in a new fault theory to meet an objection.");
+  });
+
+  it("reads times of day in local solar time and tells sun from tide by daily_cycle", () => {
+    expect(TOOL_BLOCK).toContain("\"start_local_solar\" is the same instant in the pod's\n  local solar time");
+    expect(TOOL_BLOCK).toContain("\"same hour each day\" follows the\n  sun");
+    expect(TOOL_BLOCK).toContain("\"about 50 minutes later each day\" is the timing of a\n  tide");
+  });
+
+  it("keeps the instrument entries for a tool-reported fault, and a user's cause out of entry evidence", () => {
+    const block = buildCatalogueBlock(usableGuidance(catalogue, false));
+    expect(block).toContain("A cause the user suggests is not\n  evidence for an entry.");
+    expect(block).toContain("That no entry explains it is not a sign of a fault.");
+    ["fault-first", "inspect-sensors"].forEach((id) => {
+      const record = block.slice(block.indexOf(`[${id}]`)).split("\n\n")[0];
+      expect(record).toContain("Offer only when: a tool reports a \"likely data issue\"");
+      expect(record).toContain("never for an out-of-range verdict or an unusual pattern alone.");
+    });
+    const confirm = block.slice(block.indexOf("[confirm-readings]")).split("\n\n")[0];
+    expect(confirm).not.toContain("Offer only when");
+  });
+
+  it("keeps the natural-variation drafts out of production's prompt", () => {
+    const live = buildCatalogueBlock(usableGuidance(catalogue, false));
+    const review = buildCatalogueBlock(usableGuidance(catalogue, true));
+    ["daily-solar-cycle", "tidal-exchange", "heat-wave", "shallow-deployment"].forEach((id) => {
+      expect(live).not.toContain(`[${id}]`);
+      expect(review).toContain(`[${id}]`);
+    });
+  });
+});
+
+describe("naming the period an answer covers (SPECS.md §10.8)", () => {
+  // Michael, 2026-10-11: a summary or overview did not say what window it was in.
+  it("has every sensor answer name its period first, with the resolved dates", () => {
+    expect(TOOL_BLOCK).toContain("Name the period your answer covers in its first sentence");
+    expect(TOOL_BLOCK).toContain("dates of \"time_range_resolved\"");
+  });
+
+  it("defaults an open summary or overview to the last 7 days, said and with a longer one offered", () => {
+    expect(TOOL_BLOCK).toContain("When the user names no period (a summary, an overview, \"how is the water\"), use\n  time_range \"last 7 days\", say that is the period you chose, and offer a longer one.");
+  });
+
+  it("has a report on no named period say 7 days was chosen and offer a longer one", () => {
+    // Coverage check, 2026-10-12: 0 of 9 report answers said 7 days was a default; 1 of 9 offered more.
+    expect(REPORT_TOOL_BLOCK).toContain("When the user names no period, use time_range \"last 7 days\". Your first sentence\n  then says the user named no period");
+    expect(REPORT_TOOL_BLOCK).toContain("End by offering a longer period, such as the last 30 days.");
+  });
+
+  it("has a follow-up name the period of the readings it reuses, or read again", () => {
+    expect(TOOL_BLOCK).toContain("When a follow-up answers from readings an earlier reply fetched, say which period");
+  });
+
+  it("keeps a one-parameter follow-up on the earlier answer's period, not the latest reading", () => {
+    // Coverage check, 2026-10-12: 6 of 9 "What about the pH?" follow-ups read only "now" after a 7-day overview.
+    expect(TOOL_BLOCK).toContain("is about that same period: call the\n  tool with the earlier time_range, not \"now\", unless the user asks for the current\n  value.");
+  });
+
+  it("leaves the coverage line to the server", () => {
+    expect(TOOL_BLOCK).toContain("never write that line yourself");
+  });
+
+  it("states a report's period in the first sentence, copied exactly", () => {
+    expect(REPORT_TOOL_BLOCK).toContain("State the reporting period in your\n  first sentence: copy \"report_period\" character for character");
   });
 });
 

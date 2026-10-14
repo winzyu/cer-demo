@@ -20,7 +20,8 @@ import { guidance } from "../catalogue";
 import { buildReportInput } from "./buildReportInput";
 import { detectEvents } from "./events";
 import { deterministicNarrative, type NarrativeSections } from "./narrative";
-import { probeAccuracy } from "./referenceRanges";
+import type { ReportOmitGroup } from "./omit";
+import { minimumDetectableChange } from "./referenceRanges";
 import { buildReportPdf } from "./renderPdf";
 import { assessStatus } from "./types";
 import type {
@@ -32,6 +33,8 @@ export interface ReportRequest {
   device?: string;
   /** Used only when the device registry does not say; see BuildReportInputParams. */
   waterBodyTypeFallback?: WaterBodyType;
+  /** Notes and sections to leave out of the PDF, already validated by `parseReportOmit`. */
+  omit?: ReportOmitGroup[];
 }
 
 export interface PreparedReport {
@@ -40,6 +43,8 @@ export interface PreparedReport {
   /** The rule and parameters behind `status`, for `generate_report`'s tool result. */
   statusBasis: StatusAssessment;
   narrative: NarrativeSections;
+  /** What the narrative left out; the renderer leaves out the same. */
+  omit: ReportOmitGroup[];
   skippedParameters?: string[];
   /** See `BuildReportInputResult.userNotes`. */
   userNotes?: string[];
@@ -63,14 +68,16 @@ export const prepareReport = async (
   }
 
   report.events = detectEvents(report);
-  const statusBasis = assessStatus(report, probeAccuracy);
+  const statusBasis = assessStatus(report, minimumDetectableChange);
   const { status } = statusBasis;
-  const narrative = deterministicNarrative(report, probeAccuracy, status, guidance);
+  const omit = request.omit ?? [];
+  const narrative = deterministicNarrative(report, minimumDetectableChange, status, guidance, omit);
   return {
     report,
     status,
     statusBasis,
     narrative,
+    omit,
     ...(skippedParameters ? { skippedParameters } : {}),
     ...(userNotes ? { userNotes } : {}),
   };
@@ -81,7 +88,7 @@ export const renderReportPdf = (prepared: PreparedReport): Promise<Buffer> => (
   new Promise<Buffer>((resolve, reject) => {
     try {
       const doc = buildReportPdf(prepared.report, prepared.narrative, {
-        probeAccuracy, status: prepared.status,
+        noiseFloor: minimumDetectableChange, status: prepared.status, omit: prepared.omit,
       });
       const chunks: Buffer[] = [];
       doc.on("data", (chunk: Buffer) => chunks.push(chunk));

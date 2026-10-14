@@ -1,119 +1,58 @@
 # Open questions for the operator, supervisor, backend owner and dashboard owner
 
-A checklist of answers the project needs from people outside the codebase. Tick the box when an
-item is resolved, write the answer and the date on its **Answer** line, and record any decision it
-settles in `docs/timeline.md`. Delete an item only when its answer is recorded somewhere else.
+A checklist of answers the project needs from people outside the codebase.
+When an item is answered, record the answer and any decision it settles in `docs/timeline.md` (or the document that owns it), then delete the item here.
+Only open questions stay in this file; answered items 1-4, 7-13 and 17-20 were removed on 2026-10-11 and remain in `git log -p docs/STAKEHOLDER_QUESTIONS.md`.
+Partly answered items keep only their open part.
 
-Items are ordered by what they unblock, most blocking first. Last updated 2026-09-24, after the supervisor's answers.
+Items are ordered by what they unblock, most blocking first. Last updated 2026-10-11.
 
 ---
 
 ## Operator
 
-- [x] **1. Are these the alert limits the report should trigger on?**
-  Since 2026-09-13, every report baseline is the pod's registry min/max, with no fallback table. A
-  report only opens an event when a reading crosses a limit, so a limit set at the edge of what the
-  sensor can read disables detection in that direction:
-  - **Old Woman Creek 2026:** pH 0–10, DO 0–12, conductivity 0–100,000. The zero minimums mean
-    Hypoxia, Sewage, Acidic input and Algal bloom can never be detected there.
-  - **Balboa Yacht Basin Buoy:** DO 3–27 mg/L. A bloom's high DO swing practically never crosses 27.
-  - **Marina Park, PCH Public Dock Buoy, Algalita Pod, Balboa:** a conductivity ceiling of
-    75,000 µS/cm makes saltwater intrusion hard to trip. PCH's floor of 10,000 is well below its
-    siblings' 40,000.
+- [ ] **24. Do the pods report conductivity corrected to 25 °C?**
+  Conductivity rises with water temperature even when salinity does not change, so a reading must be corrected to 25 °C (specific conductance) before it can be compared with v2 §3's ranges.
+  Example: Marina Park reads 31,000-39,000 µS/cm; against v2's coastal range of 50,000-52,000 an uncorrected reading would be "low" every day.
+  Until this is answered, conductivity has no v2 fallback: a pod without a usable conductivity threshold reads "not assessed" for it (`docs/timeline.md`, 2026-10-11).
+  *Unblocks:* the conductivity fallback in chat and reports, and v2 §2.4's salinity content.
+  *Answer:*
 
-  *Unblocks:* meaningful event detection, and every advice entry keyed to an event.
-  *Answer:* 2026-09-24 (supervisor): the wide limits, including Old Woman Creek 2026's, were not intentional; the supervisor will correct them in the superadmin view, where limits can change at any time. Until then a limit wider than the sensor's range reads "not assessed" (release plan Q5).
+- [ ] **25. Which field marks a board that is not responding, and how many in a row should flag it?**
+  The CER colleague who added the per-metric error flags asked that two or three consecutive "board not responding" errors flag the sensor at once (`docs/migration/POST_LAUNCH_BACKLOG.md` §1).
+  The 2026-10-09 production scan found the error flags only ever take the value 1, and that a reading with all six flags set reads `1000000000` on every metric.
+  This project treats three consecutive all-channel failures as a likely data issue, provisionally.
+  *Unblocks:* confirming or changing that provisional count.
+  *Answer:*
 
-- [x] **2. Should the pods with unusable thresholds be configured?**
-  `docs/migration/BACKEND_FIELDS.md` §3c records `Trinidad Island DataPod™` and `dev:860322068098448`
-  with all ten values at 0, `CER Conference Pod` with placeholders (`maxPH=100`,
-  `maxDissolvedOxygen=100`), and two devices with no thresholds at all. Reports for those pods now
-  read **"Not assessed"** instead of comparing anything.
-  *Unblocks:* reports for those pods.
-  *Answer:* 2026-09-24 (supervisor): yes; thresholds are corrected in the superadmin view (see item 1). Reports keep reading "Not assessed" until they are.
+- [ ] **5. Which real pods are in scope for testing?**
+  The configured device token sees 5 pods.
+  Live writes are allowed only for test users and test organizations this project creates and deletes (supervisor, 2026-09-24); which real pods are in scope is still open.
+  *Answer:*
 
-- [x] **3. Which pods carry the Turner turbidity sensor, and which the Keyestudio?**
-  The software cannot tell them apart: the registry has no sensor-model field. Until it can, chat
-  treats turbidity as qualitative for every pod. The backend's conversion
-  (`turbVoltToNTU.ts`) is written for the Keyestudio KS0414.
-  *Unblocks:* quantitative turbidity for Turner pods, and the frozen fixture
-  `refusal-turbidity-sensor-hardware`.
-  Not needed for the September 30 release: turbidity stays qualitative for every pod (decided 2026-09-16).
-  Interim, 2026-09-24 (user, provisional): every pod is treated as qualitative only until further notice (`timeline.md`, Task A).
-  *Answer:* 2026-09-24 (supervisor): every pod is Keyestudio today, and the difference does not matter for the relaunch. A superadmin checkbox in device setup will record the sensor in Firestore later (item 11).
-
-- [x] **4. Is 0–25 NTU the Turner sensor's range?**
-  The deleted prompt range (0–25 NTU freshwater, 0–10 saltwater) contradicted live readings up to
-  1,689. If it was the Turner's range, that explains the discrepancy. Lower priority now that the
-  range is gone, but it matters once Turner pods are treated quantitatively.
-  *Answer:* 2026-09-24: moot for now; no pod carries the Turner sensor (item 3).
-
-- [ ] **5. Which pods and organisations are in scope for testing?**
-  The configured device token sees 5 pods. The August census saw 15; a live read on 2026-09-23
-  showed the token is superadmin and `/devices` no longer returns retired or merged pods, which
-  accounts for the difference.
-  *Answer:* 2026-09-24 (supervisor): live writes are allowed for test users and test organizations that this project creates and deletes before launch; nothing else is written or deleted without asking first. Which real pods are in scope is still open.
-
-- [ ] **22. Did the three cross-organization merges transfer the site, or only the hardware?**
-  Not blocking. `Marina Park`, `PCH Public Dock Buoy` and `Old Woman Creek 2026` each absorbed a
-  pod that belonged to another organization in the August census. Pod data is shown only where
-  the organization is known to own it, so those predecessors' readings are withheld from answers
-  and reports today (`SPECS.md` §10.3c). A "yes, the site transferred" for a named chain would let
-  its history be shown; no answer keeps it withheld.
-  *Answer:* 2026-09-24 (supervisor), Old Woman Creek 2026 only: the retired "CWA Old" pod still belongs to Cleveland Water Alliance, its old organization should be null because the pod was merged into the new one, and its readings stay on the merged pod. The pod also served other sites and organizations, so answers and reports default to its current site unless the user asks otherwise (release plan Q3). Marina Park and PCH Public Dock Buoy are unanswered.
+- [ ] **22. Did the Marina Park and PCH Public Dock Buoy merges transfer the site, or only the hardware?**
+  Not blocking. Each absorbed a pod that belonged to another organization in the August census, so those predecessors' readings are withheld from answers and reports (`SPECS.md` §10.3c).
+  A "yes, the site transferred" for either chain would let its history be shown. Old Woman Creek 2026 was answered on 2026-09-24 (release plan Q3).
+  *Answer:*
 
 ---
 
 ## Supervisor
 
-Items 17-20 are on the release critical path: the September 30 roadmap needs their answers by about September 25 (`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md` §4).
-They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR_QUESTIONS_SEND.md`, asking for a reply by September 21; the supervisor answered on 2026-09-24, leaving only item 17 open.
-
-- [ ] **17. Are the generic fallback ranges in source-of-truth v2 for education only?**
-  v2 §3, "Fallback Baseline Ranges (Use Only Without a Site Baseline)", gives generic ranges per parameter, and §0 rule 3 says to use them only when a site has no baseline.
-  The current rule is that a document's range never stands in for a pod's configured threshold (see item 6 and `docs/timeline.md`, 2026-09-13).
-  If v2's ranges are meant to change what a report says when a pod has no configured threshold, that rule changes; if they are for explaining and teaching only, it stays.
-  *Unblocks:* which v2 content enters the catalogue, and whether reports ever compare against v2 ranges.
+- [ ] **26. Should natural-variation notes, such as coastal upwelling, live in the guidance catalogue?**
+  v2 §3 says coastal dissolved oxygen can dip to 4-5 mg/L and pH to about 7.6 during upwelling, both below its fallback ranges.
+  For now the code attaches that note itself when a coastal pod is judged against the v2 fallback (`docs/timeline.md`, 2026-10-11).
+  The catalogue is where every approved explanation customers see lives, so the note may belong there instead, alongside v2 §5's other natural cycles.
+  A second catalogue question from the same work: the approved "Inspect the pod" step (`inspect-sensors`) is triggered by any threshold crossing, but v2 §9.2 recommends inspection only when a data issue is likely.
+  The report now shows it only then, enforced in code (`DATA_ISSUE_ONLY_ENTRIES` in `src/report/narrative.ts`); the catalogue entry's own conditions could say so instead.
+  *Unblocks:* moving the note and the inspection condition into the catalogue, or confirming they stay in code.
   *Answer:*
 
-- [x] **18. Can the current turbidity hardware be exempted from v2's quantitative turbidity content?**
-  v2 gives turbidity ranges in FNU (§3), a typical sensor accuracy of ±2 FNU or ±5% (§8.3), and says field readings are FNU unless stated.
-  The release treats turbidity as qualitative only, because the current sensors cannot support measured values (item 3), and the fleet reports NTU, not FNU.
-  Confirm that v2's turbidity numbers do not apply to the current hardware, so chat and reports keep using the three clarity bands.
-  Interim, 2026-09-24 (user, provisional): treated as granted, so the bands and the caveat are unchanged (`timeline.md`, Task A).
-  Vendor documentation for both sensors the operator named was transcribed on 2026-09-17 (`documents/_excluded/keyestudio-ks0414-turbidity-sensor.md`, `documents/_excluded/turner-turbidity-plus-sensor.md`) and supports the exemption: Turner states only "Excitation Wavelength: IR" with no angle and no ISO 7027 or EPA 180.1 claim, is "not factory calibrated", and has no temperature compensation; Keyestudio states no optical property at all and publishes no voltage-to-NTU equation.
-  Two follow-ups for the operator: which sensor is fitted to each pod (the device registry has no sensor-model field), and where this project's `NTU = (3.35 - V) × 300` conversion came from, since neither vendor publishes it.
-  *Unblocks:* the turbidity entries in the catalogue.
-  *Answer:* 2026-09-24 (supervisor): granted; every pod is Keyestudio and the turbidity hardware difference need not be handled for the relaunch, so the qualitative bands and caveat stand.
-
-- [x] **19. Review the v2 worked examples, and approve the recommendations customers may see.**
-  Concerns found in the 2026-09-16 review (details in `docs/migration/GILLIGAN_PRODUCT_DIRECTION.md`, "Resolve before adopting v2"):
-  - Page 19, Example 1 says percent saturation falls less because colder water holds more oxygen; by its own formula, a lower measured DO against a higher saturation value makes the percent drop larger, not smaller.
-  - Example 2 treats "no rain" as ruling out stormwater, but rain earlier or elsewhere in the catchment is not ruled out by the data given.
-  - Example 3 goes from a suspected sensor failure to marking the readings as failed without saying what confirms the failure.
-  - Readings that change at the same moment do not by themselves show a sensor fault; how and how often the sensors sample matters.
-  - Building site baselines needs a minimum number of samples, a rule for when the spread is zero, behaviour when context is missing, and one consistent set of confidence terms.
-  - The scientific claims have no full reference list, and the CER-specific findings need the analyses behind them.
-
-  Then approve, edit or reject each follow-up recommendation for customers.
-  The approved set becomes the catalogue that chat and reports share; nothing unapproved is shown.
-  The entries to review, with their conditions, evidence and sources, are in `docs/catalogue/review.html` (catalogue `2026-09-19.1`, 38 drafts, generated by `npm run catalogue:review`).
-  This replaces item 7.
-  *Unblocks:* possible causes and recommended actions in reports and chat.
-  *Answer:* 2026-09-24 (supervisor): every entry approved; the 26 marked up in the 2026-09-24 review are approved as edited, the rest as written. The supervisor's four catalogue answers are in that review: routine cleaning is the customer's job; calibration, power, battery and sensor repair are CER's under the subscription; CER sets the default limits; a sustained run of 0 or 1005 is a failed sensor that CER replaces. Catalogue `2026-09-24.1` (`SPECS.md` §4b).
-
-- [x] **20. Confirm the CER referral contacts and wording.**
-  Gilligan will suggest CER for four problems: algal bloom cleanup, fish kill cleanup, debris capture and oil spill response.
-  Everything else is referred to a separate solution, with no named third party.
-  The public website gives:
-  - email: info@cleanearthrovers.com;
-  - "Schedule a Call" booking link: https://calendar.app.google/b4asoD6b6vuae7Qj6;
-  - no phone number or address.
-
-  A third-party listing says CER serves Southern California and Ohio.
-  Confirm which contact to show, whether the service area should be mentioned, and the wording of both referral lines.
-  *Unblocks:* referrals in chat and reports.
-  *Answer:* 2026-09-24 (supervisor): use sales@cleanearthrovers.com, or the customer's existing contact at CER (the user or Carlos) where they already work with one. No booking link and no service area. Referral wording as edited in the review: Floating algae removal, Oil spill cleanup (small to medium), fish kill cleanup after agency sampling, NRC and Cal OES numbers verified.
+- [ ] **27. Who corrects the thresholds that do not fit the water, and should the alert emails follow the new flag rule?**
+  The 2026-10-09 scan found most persistent flags come from thresholds that do not fit the water, for example PCH's 68 °F maximum against 78-85 °F water (`POST_LAUNCH_BACKLOG.md` §1a).
+  Gilligan now flags a metric only after 3 consecutive readings beyond its limit, but the server's alert emails still check only the latest reading, so an email can alert while chat says the metric is in range.
+  *Unblocks:* fewer persistent flags, and chat and emails agreeing.
+  *Answer:*
 
 - [ ] **23. Approve the Firestore data framework for Gilligan.**
   On 2026-09-24 the supervisor allowed new Firestore collections for Gilligan, once they have seen a table of what they hold.
@@ -128,56 +67,15 @@ They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR
   "healthy".
   *Answer:*
 
-- [x] **7. Approve, edit or reject the 38 advice-catalogue candidates.**
-  Review page: https://claude.ai/code/artifact/826ae48b-8403-49bc-b52b-60198efaf6d9 (private; share
-  from the page's menu). Two caveats before approving:
-  - 16 entries cite the removed source-of-truth document as evidence (2 of them its range claims),
-    so their evidence must be re-sourced first.
-  - Every entry fires on a detected event, so item 1 decides which ones can ever trigger.
-
-  *Unblocks:* advice in reports, then advice in chat and fixtures.
-  *Answer:* Superseded 2026-09-17. The catalogue is rebuilt from source-of-truth v2 and the usable drafts; its approval is item 19.
-
-- [x] **8. Does the veto also cover the removed document's event signatures?**
-  The veto removed its ranges and the document itself. `src/report/events.ts` still classifies
-  events using that document's signature-matrix *patterns* (which parameters move in which direction
-  — for example DO and ORP falling together with turbidity rising reads as Sewage). These are not
-  ranges, but their only source is now a document outside the corpus.
-  *Unblocks:* nothing today; it decides whether event classification needs a new source.
-  *Answer:* Settled by source-of-truth v2 (2026-09-16), which supplies its own event signatures in §6. Event rules are reconciled to v2 rather than to the removed document; the known difference is v2's marine sewage signature, where conductivity falls.
-
-- [x] **9. Audit-log retention and access, before `AUDIT_LOG` is ever switched on.**
-  Records hold the question, the full answer (which can contain customer sensor readings) and a
-  caller identity. No retention period or access rule is set (`src/services/auditLog.ts`).
-  *Answer:* 2026-09-17: `AUDIT_LOG` stays off. Audit details are saved inside each chat message instead (decision D4 in `docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`), so the retention question moves to item 21.
-
 ---
 
 ## Backend owner (`clean-earth-rovers-server`)
 
-- [x] **10. Can a missing or offline turbidity reading stop arriving as 0?**
-  `src/utils/turbVoltToNTU.ts` returns 0 for a missing voltage and for the firmware's offline code
-  (`turbVolt > 100`), the same value as clear water. A run of zeros is indistinguishable from clear
-  water. A `null` or a flag would let this service tell them apart.
-  Interim, 2026-09-24 (user, provisional): this service flags a period in which every turbidity reading is 0 as a possible missing sensor, and leaves a lone 0 as Clear (`timeline.md`, Task A).
-  *Answer:* 2026-09-24 (supervisor): failing devices read a flat 0 or 1005 with no variance, and Gilligan should recognise that as an abnormal pattern (release plan Q4). Returning null from `turbVoltToNTU.ts` stays a Task A upstream follow-up.
-
-- [x] **11. Can the device registry carry a sensor-model field?**
-  Same need as item 3, from the data side.
-  *Answer:* 2026-09-24 (supervisor): yes, later: a superadmin checkbox in device setup, stored in Firestore. Not needed for the release (item 3).
-
-- [x] **12. Who creates the Firestore composite index for audit-log lookups?**
-  `findAuditLogRecords` filters on `caller`, ranges on `timestamp` and orders by it. With no index the
-  first real query fails with `FAILED_PRECONDITION` (`src/services/auditLog.ts`; there is no
-  `firestore.indexes.json` in the repo).
-  *Answer:* Not needed: `AUDIT_LOG` stays off (item 9).
-
-- [ ] **21. How long are Gilligan chats kept, and who may read them?**
-  The upstream `chats` collection keeps every conversation with no deletion, and from the release each saved message also carries audit details: the cited sources, the model, the approved-content version and the data lookups behind the answer.
-  Chats already hold customer questions and sensor readings.
-  Decide a retention period (or confirm "keep indefinitely") and who besides the user may read a chat, for example superadmins handling a disputed answer.
+- [ ] **21. Who besides the author may read a saved Gilligan chat?**
+  Chats are kept indefinitely (supervisor, 2026-09-24) and hold customer questions, sensor readings and each answer's audit details.
+  Decide who besides the user may read one, for example superadmins handling a disputed answer (release plan O5).
   *Unblocks:* nothing for the release itself; it is the data policy the release inherits.
-  *Answer:* 2026-09-24 (supervisor): keep chats; the supervisor finds old conversations useful, so retention is indefinite. Who besides the author may read a chat is still open (release plan O5).
+  *Answer:*
 
 ---
 
@@ -185,13 +83,6 @@ They were sent on 2026-09-19 in the email recorded as `docs/migration/SUPERVISOR
 
 Found in a read-only pass on 2026-09-14.
 The Gilligan page itself (`src/app/gilligan/page.js`, `components/gilligan-answer.js`) is left out on purpose: it is known to be broken, and this project is building its replacement.
-
-- [x] **13. Can the "Ask Gilligan" box on the home, charts, dials and map pages send the whole question?**
-  The box opens the Gilligan page with the question in the address, but it does not encode it (`src/app/components/gilligan-widget.js:35`).
-  Anything after an `&` or `#` is lost, so "Is pH above 8 & rising?" arrives as "Is pH above 8 ".
-  The fix is to wrap the question in `encodeURIComponent`.
-  *Unblocks:* the replacement page receiving full questions from the box, which it will keep reading from `?question=`.
-  *Answer:* 2026-09-17: this project fixes it as part of the Gilligan replacement, developed in a local clone and transferred upstream after the supervisor approves it. Done in R3 on the dashboard's `local` branch (`encodeURIComponent` in `gilligan-widget.js`), not yet transferred.
 
 - [ ] **14. Which turbidity band edges are right: 345/795 NTU or 350/800?**
   The dials page calls a reading Clear below 350 NTU and Turbid from 800 (`src/app/datahub-dial/page.js:117-118`).

@@ -5,7 +5,12 @@ import { rewriteQuery } from "../retrieval/queryRewrite";
 import { withSourceTitles } from "../retrieval/sourceTitles";
 import type { RetrievalRegistry } from "../retrieval/RetrievalRegistry";
 import type { Chunk } from "../types/retrieval.types";
+import type { ToolInvocation } from "../types/tool.types";
 import { buildMessages } from "../prompt/promptBuilder";
+import {
+  deliveryLines, hasDeliveryLine, madeReports, withDeliveryLines,
+} from "../report/delivery";
+import { coverageLines, hasCoverageLine } from "../tools/dataCoverage";
 import { LlmService } from "../services/LlmService";
 import type { LlmUsage } from "../services/LlmService";
 import { ChatOrchestrator } from "../services/ChatOrchestrator";
@@ -24,6 +29,14 @@ import { createLogger } from "../utils/logger";
 import { openSseStream, writeSseEvent } from "../utils/sse";
 
 const log = createLogger("Chat");
+
+/** What earlier replies in this chat carried, as told by the server's own lines. */
+interface EarlierReplies {
+  /** A "New PDF" or "No new PDF" line (`report/delivery.ts`). */
+  report: boolean;
+  /** A "Data covered" or "No new readings" line (`tools/dataCoverage.ts`). */
+  data: boolean;
+}
 
 /**
  * Chat endpoint: retrieve context, assemble the prompt, answer.
@@ -57,6 +70,24 @@ export class ChatController {
     this.llm = llm;
     this.orchestrator = orchestrator;
     this.quota = quota;
+  }
+
+  /**
+   * The answer with its server-written lines: which readings it covered (`SPECS.md` §10.8), then
+   * which PDF it made (§10.7), the latter only while reports are on. Unchanged with the tools off.
+   */
+  private withServerLines(
+    answer: string,
+    invocations: ToolInvocation[],
+    earlier: EarlierReplies,
+  ): string {
+    const reports = this.orchestrator.offersReports;
+    return withDeliveryLines(answer, [
+      ...(this.orchestrator.hasTools
+        ? coverageLines(invocations, earlier.data, reports && madeReports(invocations).length > 0)
+        : []),
+      ...(reports ? deliveryLines(invocations, earlier.report) : []),
+    ]);
   }
 
   postChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -107,6 +138,20 @@ export class ChatController {
       // refuses on its own (`querySensorData.ts`, `generateReport.ts`) when this is undefined.
       const token = callerToken(req);
 
+      // The server, not the model, says which PDF an answer made (`SPECS.md` §10.7). A chat whose
+      // earlier reply carried that line gets "No new PDF" on an answer that made none, which
+      // covers a "done" the claim check cannot recognise.
+      // Likewise an earlier reply that read pod data gets a "no new readings" line on an answer
+      // that read none, so a follow-up never passes off an earlier window as a fresh one.
+      const earlier: EarlierReplies = {
+        report: (history ?? []).some((message) => (
+          message.role === "assistant" && hasDeliveryLine(message.content)
+        )),
+        data: (history ?? []).some((message) => (
+          message.role === "assistant" && hasCoverageLine(message.content)
+        )),
+      };
+
       if (stream) {
         await this.streamAnswer(
           res,
@@ -118,6 +163,7 @@ export class ChatController {
           callerId,
           device,
           token,
+          earlier,
         );
         return;
       }
@@ -133,6 +179,7 @@ export class ChatController {
       await this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
 
       const checked = assessCitations(answer.content, chunks, answer.invocations);
+      const reply = this.withServerLines(checked.answer, answer.invocations, earlier);
 
       // Fire-and-forget: `writeAuditLog` never throws and must not delay a response already
       // decided (§ "A logging failure must never fail a user's answer").
@@ -147,7 +194,7 @@ export class ChatController {
       }));
 
       res.status(200).json({
-        answer: checked.answer,
+        answer: reply,
         audit: checked.audit,
         model: answer.model,
         mode: adapter.mode,
@@ -159,6 +206,7 @@ export class ChatController {
         // Omitted entirely when no tool ran, so the pre-N3 response shape is unchanged.
         ...(answer.invocations.length > 0 ? { tool_calls: answer.invocations } : {}),
         ...(answer.capped ? { tool_round_cap_reached: true } : {}),
+        ...(answer.reportRetried ? { report_retried: true } : {}),
       });
     } catch (error) {
       // Express 4 does not forward async rejections — without this, a failing
@@ -183,6 +231,7 @@ export class ChatController {
     callerId: string,
     device?: string,
     token?: string,
+    earlier: EarlierReplies = { report: false, data: false },
   ): Promise<void> => {
     const controller = new AbortController();
     /**
@@ -219,14 +268,16 @@ export class ChatController {
         });
         await this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
         const checked = assessCitations(answer.content, chunks, answer.invocations);
-        writeSseEvent(res, "token", { text: checked.answer });
+        const reply = this.withServerLines(checked.answer, answer.invocations, earlier);
+        writeSseEvent(res, "token", { text: reply });
         writeSseEvent(res, "done", {
-          answer: checked.answer,
+          answer: reply,
           audit: checked.audit,
           model: answer.model,
           usage: answer.usage,
           ...(answer.invocations.length > 0 ? { tool_calls: answer.invocations } : {}),
           ...(answer.capped ? { tool_round_cap_reached: true } : {}),
+          ...(answer.reportRetried ? { report_retried: true } : {}),
         });
         writeSseEvent(res, "end", {});
 

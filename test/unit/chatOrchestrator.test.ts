@@ -1,3 +1,4 @@
+import { NOT_REGENERATED_ANSWER } from "../../src/report/delivery";
 import { ChatOrchestrator, ROUND_CAP_PLACEHOLDER } from "../../src/services/ChatOrchestrator";
 import type { LlmAnswer, LlmService } from "../../src/services/LlmService";
 import type { ChatMessage } from "../../src/types/chat.types";
@@ -37,16 +38,20 @@ const toolCall = (id: string, name: string, args: unknown) => ({
 /** An LLM that replays a scripted list of answers and records what it was sent. */
 const scriptedLlm = (script: LlmAnswer[]): {
   llm: LlmService;
-  seen: Array<{ messages: ChatMessage[]; tools?: ToolDefinition[] }>;
+  seen: Array<{ messages: ChatMessage[]; tools?: ToolDefinition[]; forceTool?: string }>;
 } => {
-  const seen: Array<{ messages: ChatMessage[]; tools?: ToolDefinition[] }> = [];
+  const seen: Array<{ messages: ChatMessage[]; tools?: ToolDefinition[]; forceTool?: string }> = [];
   let index = 0;
 
   const llm = {
-    complete: async (messages: ChatMessage[], tools?: ToolDefinition[]): Promise<LlmAnswer> => {
+    complete: async (
+      messages: ChatMessage[],
+      tools?: ToolDefinition[],
+      forceTool?: string,
+    ): Promise<LlmAnswer> => {
       // Deep-copied: the loop appends to its own conversation, and a stored reference would
       // show the final state on every recorded round.
-      seen.push({ messages: JSON.parse(JSON.stringify(messages)), tools });
+      seen.push({ messages: JSON.parse(JSON.stringify(messages)), tools, forceTool });
       const next = script[Math.min(index, script.length - 1)];
       index += 1;
       return next;
@@ -501,5 +506,86 @@ describe("ChatOrchestrator tool context", () => {
 
     expect(result.rounds).toBe(0);
     expect(seen).toHaveLength(0);
+  });
+});
+
+describe("ChatOrchestrator report claims", () => {
+  // The Mirror failure (2026-10-10): a second edit in one chat answered with a delivery and no
+  // generate_report call.
+  const falseClaim = answer({
+    content: "Done: all four groups are left out. Use the Download report (PDF) button.",
+  });
+  const reportCall = answer({
+    toolCalls: [toolCall("r1", "generate_report", { time_range: "last 7 days", omit: ["data_quality"] })],
+  });
+  const reportTool = (run: ToolHandler["run"]): ToolHandler => ({
+    definition: definition("generate_report", { time_range: { type: "string" } }),
+    run,
+  });
+  const madeReport = async () => ({
+    site_name: "Harbor Pier Buoy",
+    report_request: { time_range: "last 7 days", omit: ["data_quality"] },
+  });
+
+  it("reruns the round with generate_report forced and drops the false claim", async () => {
+    const run = jest.fn(madeReport);
+    const { llm, seen } = scriptedLlm([
+      falseClaim, reportCall, answer({ content: "Status: Normal." }),
+    ]);
+
+    const result = await new ChatOrchestrator(llm, [reportTool(run)]).run(messages);
+
+    expect(result.content).toBe("Status: Normal.");
+    expect(result.reportRetried).toBe(true);
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(seen.map((call) => call.forceTool)).toEqual([undefined, "generate_report", undefined]);
+    // The forced round sees the same conversation as the claiming one, without the claim.
+    expect(seen[1].messages).toEqual(seen[0].messages);
+  });
+
+  it("retries once, then replaces a claim that persists", async () => {
+    const run = jest.fn(async () => ({ error: "unknown pod" }));
+    const { llm, seen } = scriptedLlm([falseClaim, reportCall, falseClaim]);
+
+    const result = await new ChatOrchestrator(llm, [reportTool(run)]).run(messages);
+
+    expect(result.content).toBe(NOT_REGENERATED_ANSWER);
+    expect(seen.filter((call) => call.forceTool !== undefined)).toHaveLength(1);
+  });
+
+  it("corrects without a retry when no tool round is left", async () => {
+    const { llm, seen } = scriptedLlm([falseClaim]);
+
+    const result = await new ChatOrchestrator(llm, [reportTool(madeReport)], 1).run(messages);
+
+    expect(result.content).toBe(NOT_REGENERATED_ANSWER);
+    expect(result.reportRetried).toBe(false);
+    expect(seen).toHaveLength(1);
+  });
+
+  it("leaves a claim alone when this answer did make the report", async () => {
+    const { llm } = scriptedLlm([reportCall, falseClaim]);
+
+    const result = await new ChatOrchestrator(llm, [reportTool(madeReport)]).run(messages);
+
+    expect(result.content).toBe(falseClaim.content);
+    expect(result.reportRetried).toBe(false);
+  });
+
+  it("never checks answers when the report tool is off", async () => {
+    const { llm, seen } = scriptedLlm([falseClaim]);
+
+    const result = await new ChatOrchestrator(llm, [sensorTool(async () => ({}))]).run(messages);
+
+    expect(result.content).toBe(falseClaim.content);
+    expect(seen).toHaveLength(1);
+  });
+
+  it("leaves an ordinary answer alone", async () => {
+    const { llm, seen } = scriptedLlm([answer({ content: "pH stayed near 7.4." })]);
+
+    await new ChatOrchestrator(llm, [reportTool(madeReport)]).run(messages);
+
+    expect(seen).toHaveLength(1);
   });
 });

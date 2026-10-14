@@ -7,6 +7,7 @@ import { GenerateReport, generateReportDefinition } from "../../src/tools/genera
 import { catalogue } from "../../src/catalogue";
 import { prepareReport, renderReportPdf } from "../../src/report/produceReport";
 import * as pdfRenderer from "../../src/report/renderPdf";
+import { REPORT_OMIT_GROUPS } from "../../src/report/omit";
 
 /**
  * generate_report end to end: runs the real report pipeline over recorded device-api fixtures
@@ -61,6 +62,12 @@ describe("generate_report — tool definition", () => {
     expect(generateReportDefinition.function.name).toBe("generate_report");
     expect(generateReportDefinition.function.parameters.required).toEqual(["time_range"]);
   });
+
+  it("offers omit as a closed list of the report's note groups", () => {
+    const { omit } = generateReportDefinition.function.parameters.properties as Record<
+      string, { items: { enum: string[] } }>;
+    expect(omit.items.enum).toEqual([...REPORT_OMIT_GROUPS]);
+  });
 });
 
 describe("GenerateReport.run", () => {
@@ -99,6 +106,34 @@ describe("GenerateReport.run", () => {
 
     expect(result.report_period).toBe(`${resolved.start} to ${resolved.end}`);
     expect(result.report_period).toMatch(/^\d{4}-\d{2}-\d{2} to \d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("carries a requested omit list into report_request, in canonical order", async () => {
+    const result = await new GenerateReport({ sensor: makeSensor() }).run({
+      time_range: "last day",
+      device: "Algalita",
+      omit: ["data_quality", "turbidity_notes", "turbidity_notes"],
+    }, CALLER);
+
+    expect(result.error).toBeUndefined();
+    expect(result.report_request).toEqual({
+      time_range: "last day", device: "Algalita", omit: ["turbidity_notes", "data_quality"],
+    });
+    expect(result.omitted_from_pdf).toEqual(["turbidity_notes", "data_quality"]);
+  });
+
+  it("leaves omit out of report_request when nothing was omitted", async () => {
+    const result = await new GenerateReport({ sensor: makeSensor() })
+      .run({ time_range: "last day", device: "Algalita", omit: [] }, CALLER);
+    expect(result.report_request).toEqual({ time_range: "last day", device: "Algalita" });
+    expect(result).not.toHaveProperty("omitted_from_pdf");
+  });
+
+  it("rejects an omit value outside the list, naming the allowed ones", async () => {
+    const result = await new GenerateReport({ sensor: makeSensor() })
+      .run({ time_range: "last day", device: "Algalita", omit: ["recommendations"] }, CALLER);
+    expect(result.error).toContain("turbidity_notes");
+    expect(result).not.toHaveProperty("report_request");
   });
 
   it("omits device from report_request when the call named none", async () => {
@@ -170,59 +205,71 @@ describe("GenerateReport.run", () => {
           date: new Date(time).toISOString(),
           water_data: {
             ...(ALGALITA_PERIOD[0].water_data as Record<string, number>),
-            97: values[i] ?? 8, 98: 200, 99: 7.2, 100: 55000, 102: 20, 72: 100,
+            // Every metric varies: identical consecutive readings are a flat line (readingQc.ts).
+            97: values[i] ?? 8 + (i % 7) * 0.01,
+            98: 200 + (i % 7),
+            99: 7.2 + (i % 7) * 0.01,
+            100: 55000 + (i % 7) * 10,
+            102: 20 + (i % 7) * 0.01,
+            72: 100 + (i % 7),
           },
         };
       })
     );
 
+    // Algalita's dissolved oxygen limit is 4-15 mg/L. Watch needs 3 readings in a row beyond it
+    // by more than v2's 1 mg/L; Action Required beyond it by 15% of the width (1.65 mg/L).
     it.each([
-      [[0], "Watch", 1],
-      [[0, 0], "Action Required", 2],
-      [[0, 2.35], "Watch", 1],
-      [[0, 17], "Action Required", 2],
-      [[17], "Watch", 1],
-    ] as const)("counts individual exceedances %j across a 60-day report", async (values, status, count) => {
-      // Both low readings fit in one bucket, and are older than the capped raw tool's window.
+      [[0], "Normal", "Normal"],
+      [[0, 0], "Normal", "Normal"],
+      [[0, 0, 0], "Action Required", "Exceedance"],
+      [[2.8, 2.8, 2.8], "Watch", "Low"],
+      [[17, 17, 17], "Action Required", "Exceedance"],
+    ] as const)("flags dissolved oxygen %j only after three readings in a row", async (values, status, flag) => {
       const sensor = makeSensor(oxygenPeriod([...values]));
       const result = await new GenerateReport({ sensor })
         .run({ time_range: "last 60 days", device: "Algalita" }, CALLER);
       expect(result.error).toBeUndefined();
-      expect(result.events_flagged).toBe(0);
       expect(result.status).toBe(status);
-      expect(result.parameter_flags).toMatchObject({ dissolved_oxygen: "Exceedance" });
+      expect(result.parameter_flags).toMatchObject({ dissolved_oxygen: flag });
       if (status === "Watch") {
-        expect(result.status_reason).toBe(`Watch because a single dissolved oxygen reading of ${values[0].toFixed(2)} mg/L `
-          + "went beyond its configured threshold; one reading alone may be a sensor glitch.");
+        expect(result.status_reason).toMatch(/^Watch because a parameter stayed outside its threshold for at least three readings in a row: dissolved_oxygen ranged from 2\.80 to .* against its configured 4 to 15 mg\/L, first from /);
       }
       const prepared = await prepareReport(sensor, { timeRange: "last 60 days", device: "Algalita" }, CALLER);
       if (prepared.error !== undefined) throw new Error(prepared.error);
       // The PDF receives this same prepared status from renderReportPdf.
       expect(prepared.status).toBe(result.status);
       expect(prepared.report.parameters.find((p) => p.baseline.key === "dissolved_oxygen"))
-        .toMatchObject({ min: Math.min(8, ...values), exceedanceCount: count });
+        .toMatchObject({ min: Math.min(8, ...values) });
       const pdfSpy = jest.spyOn(pdfRenderer, "buildReportPdf");
       try {
         const pdf = await renderReportPdf(prepared);
         expect(pdf.subarray(0, 5).toString()).toBe("%PDF-");
         expect(pdfSpy).toHaveBeenCalledWith(prepared.report, prepared.narrative, {
-          probeAccuracy: expect.any(Function), status,
+          noiseFloor: expect.any(Function), status, omit: [],
         });
       } finally {
         pdfSpy.mockRestore();
       }
     });
 
-    it("excludes faulted and implausible readings from the exceedance count", async () => {
-      const period = oxygenPeriod([0, 0, -1]);
-      (period[1].water_data as Record<string, number>).doError = 1;
-      const prepared = await prepareReport(makeSensor(period), {
-        timeRange: "last 60 days", device: "Algalita",
-      }, CALLER);
-      if (prepared.error !== undefined) throw new Error(prepared.error);
-      expect(prepared.status).toBe("Watch");
-      expect(prepared.report.parameters.find((p) => p.baseline.key === "dissolved_oxygen"))
-        .toMatchObject({ min: 0, exceedanceCount: 1 });
+    it("drops faulted and implausible readings: they neither count toward nor break a run", async () => {
+      const run = async (values: number[]) => {
+        const period = oxygenPeriod(values);
+        (period[1].water_data as Record<string, number>).doError = 1;
+        const prepared = await prepareReport(makeSensor(period), {
+          timeRange: "last 60 days", device: "Algalita",
+        }, CALLER);
+        if (prepared.error !== undefined) throw new Error(prepared.error);
+        return prepared;
+      };
+      // Kept: 0 and 0. The faulted reading and the implausible -1 are dropped.
+      expect((await run([0, 0, -1, 0])).status).toBe("Normal");
+      // Kept: 0, 0, 0 in a row once the dropped readings are set aside.
+      const three = await run([0, 0, -1, 0, 0]);
+      expect(three.status).toBe("Action Required");
+      expect(three.report.parameters.find((p) => p.baseline.key === "dissolved_oxygen"))
+        .toMatchObject({ min: 0 });
     });
 
     // CONVERSATION_QA_2026-09-24 finding 3, as observed live on Old Woman Creek 2026: ORP dipped

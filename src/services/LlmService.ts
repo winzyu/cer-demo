@@ -176,7 +176,16 @@ export class LlmService {
     this.gate = gate;
   }
 
-  async complete(messages: ChatMessage[], tools?: ToolDefinition[]): Promise<LlmAnswer> {
+  /**
+   * `forceTool` names one of `tools` the model must call this round (`tool_choice`), which
+   * Fireworks honours for `glm-5p3-flash` (checked 2026-10-11). Used only for the report retry in
+   * `ChatOrchestrator`; every other round leaves the choice to the model.
+   */
+  async complete(
+    messages: ChatMessage[],
+    tools?: ToolDefinition[],
+    forceTool?: string,
+  ): Promise<LlmAnswer> {
     const model = config.fireworks.chatModel;
     if (!model) {
       throw createError(503, "LLM_MODEL is not configured.");
@@ -200,6 +209,9 @@ export class LlmService {
       // it still perturbs the cacheable prefix, which is exactly what the SENSOR_TOOL flag
       // exists to avoid while the bake-off arms are unresolved.
       ...(tools && tools.length > 0 ? { tools } : {}),
+      ...(tools && tools.length > 0 && forceTool
+        ? { tool_choice: { type: "function" as const, function: { name: forceTool } } }
+        : {}),
       stream: false,
     }));
 

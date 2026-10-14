@@ -421,10 +421,12 @@ describe("query_sensor_data — caveats that travel with the number", () => {
       metric: "turbidity", time_range: "last day", aggregation: "mean", device: "Algalita",
     });
 
-    expect(result.note).toContain("provisional, uncalibrated");
+    // Its own field, so the prompt can ask for it once per conversation (backlog §1, D3).
+    expect(result.turbidity_caveat).toContain("provisional, uncalibrated");
     // Not NTU: every pod's sensor is treated as qualitative only (Task A, timeline.md).
     expect(result.unit).toBe("unitless");
-    expect(result.note).toContain("not NTU");
+    expect(result.turbidity_caveat).toContain("not NTU");
+    expect(result.note ?? "").not.toContain("provisional, uncalibrated");
   });
 
   it("keeps the all-zero caveat for a window too short to prove sensor failure", async () => {
@@ -450,7 +452,7 @@ describe("query_sensor_data — caveats that travel with the number", () => {
       metric: "turbidity", time_range: "last day", aggregation: "mean", device: "Algalita",
     });
 
-    expect(result.note).not.toContain("missing sensor");
+    expect(result.note ?? "").not.toContain("missing sensor");
   });
 
   it("never compares a device's water type with the deployment's WATER_TYPE", async () => {
@@ -769,7 +771,7 @@ describe("query_sensor_data — all metrics in one call", () => {
       metric: "all", time_range: "last day", aggregation: "mean", device: "Algalita",
     });
 
-    expect(result.note).toContain("provisional, uncalibrated");
+    expect(result.turbidity_caveat).toContain("provisional, uncalibrated");
   });
 });
 
@@ -973,11 +975,103 @@ describe("query_sensor_data — window honesty", () => {
     const result = await tool.run({
       metric: "ph", time_range: "last 60 days", aggregation: "mean", device: "Algalita",
     });
+    // The epoch read only establishes the site; the searched window is the request's own start.
     expect(result.window_actually_searched).toMatchObject({
-      start: "1970-01-01T00:00:00.000Z", complete: false,
+      start: "2026-07-31T12:00:00.000Z", complete: false,
     });
     expect(result.time_range_resolved).toMatchObject({
       start: "2026-09-17T12:00:00.000Z", end: "2026-09-28T12:00:00.000Z",
+    });
+  });
+
+  it("calls a week complete when the earlier site ended before it and the first reading is just after it opens", async () => {
+    // Shaped on a production answer that showed "Searched from 1970" and "incomplete" for a
+    // week of half-hourly readings, all from the current site.
+    const at = (iso: string, lat: number) => ({
+      timestamp: Date.parse(iso) / 1000, best_lat: lat, best_lon: -118,
+      water_data: { 99: 8, phError: 0 },
+    });
+    const rows = [
+      at("2026-06-13T16:17:56Z", 34), at("2026-08-06T21:54:03Z", 34),
+      at("2026-08-20T12:00:00Z", 33), at("2026-10-01T12:00:00Z", 33),
+      at("2026-10-02T21:29:30Z", 33), at("2026-10-06T12:00:00Z", 33), at("2026-10-09T21:07:35Z", 33),
+    ];
+    const { client } = makeClient({ periodDay: [], periodMonth: rows });
+    const tool = new QuerySensorData({ client, now: () => Date.parse("2026-10-09T21:37:56Z") });
+    const result = await tool.run({
+      metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "Algalita",
+    });
+
+    expect(result.window_actually_searched).toEqual({
+      start: "2026-10-02T21:07:35.000Z", end: "2026-10-09T21:07:35.000Z", complete: true,
+    });
+    expect(result.n_samples).toBe(3);
+  });
+
+  it("keeps the requested dates for a week the move cost nothing", async () => {
+    // Coverage check, 2026-10-12: Bay Mouth Pod's week resolved to its first and last readings,
+    // labelled "(current-site readings)", though its earlier site ended 43 days before the week.
+    const at = (iso: string, lat: number) => ({
+      timestamp: Date.parse(iso) / 1000, best_lat: lat, best_lon: -118,
+      water_data: { 99: 8, phError: 0 },
+    });
+    const rows = [
+      at("2026-06-13T16:17:56Z", 34), at("2026-08-20T12:00:00Z", 33),
+      at("2026-10-03T12:00:00Z", 33), at("2026-10-09T21:07:35Z", 33),
+    ];
+    const { client } = makeClient({ periodDay: [], periodMonth: rows });
+    const tool = new QuerySensorData({ client, now: () => Date.parse("2026-10-09T21:37:56Z") });
+    const result = await tool.run({
+      metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "Algalita",
+    });
+
+    expect(result.time_range_resolved).toMatchObject({
+      start: "2026-10-02T21:07:35.000Z", end: "2026-10-09T21:07:35.000Z",
+    });
+    expect((result.time_range_resolved as { label: string }).label).not.toContain("current-site readings");
+  });
+
+  describe("earlier-site notes cover only the requested period", () => {
+    // Coverage check, 2026-10-12: every "What about the pH?" answer about Bay Mouth Pod's last
+    // week said 775 earlier-location readings were excluded, though that site ended 43 days
+    // before the week. The note counted the pod's whole history, not the period asked about.
+    const at = (iso: string, lat: number) => ({
+      timestamp: Date.parse(iso) / 1000, best_lat: lat, best_lon: -118,
+      water_data: { 99: 8, phError: 0 },
+    });
+    const rows = [
+      at("2026-06-13T16:17:56Z", 34), at("2026-08-06T21:54:03Z", 34), at("2026-08-19T12:00:00Z", 34),
+      at("2026-08-20T12:00:00Z", 33), at("2026-10-01T12:00:00Z", 33),
+      at("2026-10-02T21:29:30Z", 33), at("2026-10-06T12:00:00Z", 33), at("2026-10-09T21:07:35Z", 33),
+    ];
+    const ask = async (timeRange: string) => {
+      const { client } = makeClient({ periodDay: [], periodMonth: rows });
+      const tool = new QuerySensorData({ client, now: () => Date.parse("2026-10-09T21:37:56Z") });
+      return tool.run({ metric: "ph", time_range: timeRange, aggregation: "mean", device: "Algalita" });
+    };
+
+    it("says nothing was left out of a week after the move, and tells only the model the pod moved", async () => {
+      const result = await ask("last 7 days");
+
+      expect(result.site_note).toBeUndefined();
+      expect(result.note ?? "").not.toContain("earlier location");
+      expect(JSON.stringify(result.user_notes ?? [])).not.toContain("earlier location");
+      expect(result.site_history_note).toBe("The pod has been at its current site since "
+        + "2026-08-20T12:00:00.000Z; its 3 earlier-location reading(s) (2026-06-13T16:17:56.000Z to "
+        + "2026-08-19T12:00:00.000Z) fall outside the requested period, so none were left out of it.");
+    });
+
+    it("counts only the earlier-site readings inside a period that spans the move", async () => {
+      const result = await ask("2026-08-01 to 2026-09-01");
+
+      expect(result.site_note).toBe("2 reading(s) from an earlier location inside the requested "
+        + "period were excluded (2026-08-06T21:54:03.000Z to 2026-08-19T12:00:00.000Z).");
+      expect(result.user_notes).toEqual(expect.arrayContaining([
+        "2 reading(s) from an earlier location (2026-08-06T21:54:03.000Z to 2026-08-19T12:00:00.000Z) "
+          + "fall inside the requested period and were left out; only the pod's current site is covered.",
+      ]));
+      expect(result.site_history_note).toBeUndefined();
+      expect(result.window_actually_searched).toMatchObject({ complete: false });
     });
   });
 
@@ -1005,11 +1099,14 @@ describe("query_sensor_data — window honesty", () => {
   });
 
   it("omits shared observed_at when stuck-sensor filtering changes the earliest metric instant", async () => {
-    // Synthetic 24-hour run followed by a healthy sample preserves the differing instants.
+    // Synthetic 24-hour run followed by a healthy sample preserves the differing instants. pH
+    // varies: 26 identical pH readings would be a flat line and fail QC too.
     const periodDay = Array.from({ length: 26 }, (_, i) => ({
       timestamp: NOW / 1000 - (25 - i) * 3600,
       best_lat: 33.74, best_lon: -118.1,
-      water_data: { 99: 8, 72: i < 25 ? 0 : 25, phError: 0, turbError: 0 },
+      water_data: {
+        99: 8 + i * 0.01, 72: i < 25 ? 0 : 25, phError: 0, turbError: 0,
+      },
     }));
     const { tool } = makeTool({ periodDay });
     const result = await tool.run({
@@ -1077,4 +1174,125 @@ it("answers the original capture whose best coordinates are all missing as a pod
   });
   expect(result.value).toEqual(expect.any(Number));
   expect(result.note).toContain("Location not recorded");
+});
+
+/**
+ * Each metric's computed verdict (source-of-truth v2 §9.1; docs/timeline.md, 2026-10-10 and
+ * 2026-10-11). Readings are 30 minutes apart and end at NOW, the pods' real cadence.
+ */
+describe("query_sensor_data — per-metric verdicts", () => {
+  type Water = Record<string, number>;
+  const pod = (thresholds: Record<string, string>, operatingEnvironment = "salt-water") => [{
+    id: "pod",
+    data: {
+      name: "Pod", label: "dev:pod", organization: "org", operatingEnvironment, thresholds,
+    },
+  }];
+  const readings = (waters: Water[]) => waters.map((water_data, i) => ({
+    timestamp: NOW / 1000 - (waters.length - 1 - i) * 1800,
+    best_lat: 33.74,
+    best_lon: -118.1,
+    water_data: { phError: 0, ...water_data },
+  }));
+  /** pH that wobbles inside 7.5-8.5, never twice the same value. */
+  const phs = (values: number[]): Water[] => values.map((v) => ({ 99: v }));
+  const normal = (n: number): number[] => Array.from({ length: n }, (_, i) => 8 + 0.01 * (i % 5) + 0.001 * i);
+  const run = async (
+    waters: Water[],
+    thresholds: Record<string, string> = { minPH: "7.5", maxPH: "8.5" },
+    args: Record<string, string> = {},
+  ) => {
+    const rows = readings(waters);
+    const { tool } = makeTool({ devices: pod(thresholds), periodDay: rows, last: { data: rows[rows.length - 1] } });
+    return tool.run({
+      metric: "ph", time_range: "last day", aggregation: "max", device: "Pod", ...args,
+    });
+  };
+  const verdictOf = (result: Record<string, unknown>) => result.verdict as Record<string, any>;
+
+  it("keeps a metric in range when a single reading is out (Michael's over-flagging)", async () => {
+    const values = normal(20);
+    values[10] = 9.4;
+    const result = await run(phs(values));
+    expect(result.value).toBe(9.4);
+    expect(verdictOf(result)).toMatchObject({
+      status: "in range", basis: "operator threshold", limit: { min: 7.5, max: 8.5 },
+    });
+    expect(verdictOf(result).out_of_range).toBeUndefined();
+  });
+
+  it("flags three readings in a row beyond the limit plus pH's 0.2, with when", async () => {
+    const values = normal(20);
+    values.splice(8, 3, 8.8, 8.9, 8.8);
+    const verdict = verdictOf(await run(phs(values)));
+    expect(verdict.status).toBe("out of range");
+    expect(verdict.out_of_range).toMatchObject({
+      direction: "high",
+      runs: 1,
+      ongoing: false,
+      persistent: false,
+      first_run_start: new Date(NOW - 11 * 1_800_000).toISOString(),
+    });
+  });
+
+  it("calls an offset over most of the window persistent", async () => {
+    const values = [8.1, ...normal(19).map((v) => v + 0.8)];
+    expect(verdictOf(await run(phs(values))).out_of_range)
+      .toMatchObject({ ongoing: true, persistent: true });
+  });
+
+  it("judges a right-now question on the run ending at the newest reading", async () => {
+    const values = [...normal(10), 8.8, 8.9, 8.8];
+    const result = await run(phs(values), undefined, { time_range: "now", aggregation: "latest" });
+    expect(verdictOf(result)).toMatchObject({ status: "out of range", out_of_range: { ongoing: true } });
+    const lone = await run(phs([...normal(10), 8.9]), undefined, { time_range: "now", aggregation: "latest" });
+    expect(verdictOf(lone).status).toBe("in range");
+  });
+
+  it("falls back to v2's coastal range for a placeholder threshold, saying so", async () => {
+    const verdict = verdictOf(await run(phs(normal(10)), { minPH: "0", maxPH: "100" }));
+    expect(verdict).toMatchObject({
+      status: "in range",
+      basis: "source-of-truth v2 general range (generic fallback)",
+      limit: { min: 7.8, max: 8.3 },
+    });
+    expect(verdict.limit_note).toMatch(/generic fallback.*upwelling/);
+  });
+
+  it("is not assessed where v2 has no usable range, with the reason", async () => {
+    const rows = readings(normal(10).map((v, i) => ({ 99: v, 100: 50_000 + i * 37 })));
+    const { tool } = makeTool({ devices: pod({}), periodDay: rows, last: { data: rows[rows.length - 1] } });
+    const result = await tool.run({
+      metric: "conductivity", time_range: "last day", aggregation: "mean", device: "Pod",
+    });
+    expect(verdictOf(result)).toMatchObject({ status: "not assessed" });
+    expect(verdictOf(result).limit_note).toMatch(/No operator thresholds/);
+  });
+
+  it("reports three failed readings in a row as a likely data issue, not one", async () => {
+    const values = normal(12).map((v): Water => ({ 99: v }));
+    values[3] = { 99: 8.1, phError: 1 };
+    expect(verdictOf(await run(values)).status).toBe("in range");
+    [6, 7, 8].forEach((i) => { values[i] = { 99: 8.1, phError: 1 }; });
+    const verdict = verdictOf(await run(values));
+    expect(verdict.status).toBe("likely data issue");
+    expect(verdict.data_issue).toHaveLength(1);
+  });
+
+  it("reports every channel failing three times in a row as a board fault", async () => {
+    const failed = Object.fromEntries([97, 98, 99, 100, 102, 72].map((c) => [c, 1_000_000_000]));
+    const healthy = (i: number): Water => ({
+      97: 7 + i * 0.01, 98: 200 + i, 99: 8 + i * 0.001, 100: 50_000 + i, 102: 20 + i * 0.01, 72: 300 + i,
+    });
+    const waters = [...[0, 1, 2, 3].map(healthy), failed, failed, failed, ...[7, 8, 9].map(healthy)];
+    const rows = readings(waters);
+    const { tool } = makeTool({ devices: pod({}), periodDay: rows, last: { data: rows[rows.length - 1] } });
+    const result = await tool.run({
+      metric: "all", time_range: "last day", aggregation: "mean", device: "Pod",
+    });
+    expect(result.board_fault).toEqual([expect.objectContaining({ readings: 3 })]);
+    expect(result.note).toMatch(/most likely reflects a sensor or data issue/);
+    const { turbidity } = (result.metrics as Record<string, { verdict: Record<string, unknown> }>);
+    expect(turbidity.verdict.basis).toMatch(/relative index/);
+  });
 });

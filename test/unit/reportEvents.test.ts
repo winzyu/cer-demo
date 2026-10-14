@@ -52,6 +52,7 @@ const statsFor = (baseline: ParameterBaseline, series: Array<[number, number]>, 
     median: values.slice().sort((a, b) => a - b)[Math.floor(values.length / 2)],
     pattern,
     series,
+    readings: series,
   };
 };
 

@@ -148,12 +148,16 @@ clean-earth-rag/
 │   │   ├── DeviceApiClient.ts  read-only client for the Clean Earth backend
 │   │   ├── mergeChains.ts    device continuity across re-registered pods (§10.3c)
 │   │   ├── metrics.ts        metric codes, error flags, reading/average decoding
-│   │   └── plausibility.ts   per-metric physical rails the hardware error flags miss
+│   │   ├── plausibility.ts   per-metric physical rails the hardware error flags miss
+│   │   └── readingQc.ts      per-reading QC: QARTOD flags, flat lines, spikes, board faults (§19)
 │   ├── tools/
 │   │   ├── index.ts          tool registry, gated on SENSOR_TOOL and REPORT_TOOL
 │   │   ├── querySensorData.ts  the sensor tool: device match, fetch, caveats (§10.3a)
+│   │   ├── dataCoverage.ts     the server-written "Data covered in this reply" line (§10.8)
+│   │   ├── dailyCycle.ts       local solar time and when each day's peak comes (§10.9)
+│   │   ├── metricVerdict.ts  each metric's verdict for the sensor tool (§19)
 │   │   ├── generateReport.ts   the report tool, gated on REPORT_TOOL
-│   │   ├── getPodThresholds.ts  the pod's registry alert limits, validated, no fallback
+│   │   ├── getPodThresholds.ts  the pod's registry alert limits, validated, v2 fallback ranges
 │   │   ├── getTurbidityInfo.ts  turbidity clarity bands and sensor caveats
 │   │   ├── listPods.ts       the caller's own fleet, with best-effort freshness (§10.3a)
 │   │   ├── timeRange.ts      NL range parsing + reference-time anchoring
@@ -167,7 +171,8 @@ clean-earth-rag/
 │   ├── report/              the deterministic report pipeline (compute, then narrate)
 │   │   ├── buildReportInput.ts  assembles the report model from sensor + registry data
 │   │   ├── events.ts         period-relative event detection
-│   │   ├── referenceRanges.ts   registry-threshold baselines + TURBIDITY_BAND_EDGES
+│   │   ├── referenceRanges.ts   v2 fallback ranges, minimum detectable change, TURBIDITY_BAND_EDGES
+│   │   ├── flagRules.ts      the 3-in-a-row flag rule and verdicts, shared by chat and reports
 │   │   ├── operatorThresholds.ts  validated per-device registry thresholds
 │   │   ├── patterns.ts       diel / tidal / trend classification from an hourly series
 │   │   ├── produceReport.ts  the whole pipeline, shared by generate_report and POST /reports
@@ -203,6 +208,7 @@ clean-earth-rag/
 │   │                 devices.test.ts, reports.test.ts
 │   ├── fixtures/device-api/  recorded production bodies + provenance README (§16)
 │   ├── fixtures/pod-scope/   synthetic fleet for pod-authorization work
+│   ├── fixtures/skepticism/  fabricated fleet for the data-skepticism tests and replay (§10.9)
 │   └── unit/         51 suites — see the table in §16
 ├── eval/fixtures-wave1/      45 committed eval conversations, 90 turns (§12)
 ├── eval/claims/              Phase 1a claim inventory, one file per document
@@ -414,7 +420,9 @@ Entries that send the customer to CER support name the `cer-support` referral, s
 **Reports** (`report/narrative.ts`).
 An event's cause is named only when a usable `explanation` matches its type, water class, confidence and severity.
 An entry that sets both `minSeverity` and `minDurationHours` takes either as enough, so "High severity, or over 12 hours" also selects a long event the engine rates below High, such as a one-day bloom or a capped persistent offset.
-Otherwise the PDF heads it "Threshold crossing", prints no classification confidence, and selects every other entry as if the event were `Inconclusive`, so a next step cannot imply the unnamed cause.
+A named cause is headed "Consistent with <cause>", source-of-truth v2 §9.2's tier for matching signatures; "Strongly consistent with" needs neighbour or contextual evidence the pipeline lacks, and "Confirmed" is never assigned from sensor data (`timeline.md`, 2026-10-11).
+Otherwise the PDF heads it "Anomaly, cause unclear", says the cause cannot be determined from sensor data, prints no classification confidence, and selects every other entry as if the event were `Inconclusive`, so a next step cannot imply the unnamed cause.
+The `inspect-sensors` next step is shown only when the report has a likely data issue (`DataQualityCheck.likelyDataIssue`), because v2 §9.2 recommends inspection only then; whether the catalogue itself should carry that condition is `STAKEHOLDER_QUESTIONS.md` item 26.
 The detection rule's own rationale (`WQEvent.interpretation`) is never printed.
 Recommendations for a flagged period are the matching `next-step` texts per slot, deduplicated in catalogue order; an empty slot says no approved recommendation covers the findings.
 The routine and "not assessed" lines are about monitoring and configuration and do not come from the catalogue.
@@ -688,8 +696,10 @@ Three rules were added in R4 (2026-09-27, `EVAL_REBUILD.md`):
 **The prompt carries no ranges.** The legacy `AUTHORITATIVE NORMAL RANGES` block was deleted on
 2026-09-13, when the supervisor vetoed the operator source-of-truth document's ranges. A pod's
 limits may be stated only from a tool result: `get_pod_thresholds` returns the pod's validated,
-operator-configured registry alert limits, or a reason when none is usable, with no fallback
-table. Turbidity is described through `get_turbidity_info` (the operator's three clarity bands)
+operator-configured registry alert limits, or, where those are unusable, source-of-truth v2's
+general range for the pod's water class with status "fallback" (§19), or a reason when neither
+applies. `query_sensor_data` returns each metric's verdict, and the prompt has the model relay it
+rather than compare readings with limits itself. Turbidity is described through `get_turbidity_info` (the operator's three clarity bands)
 and stays qualitative for every pod. Both tools are gated on `SENSOR_TOOL`. The scope lines still
 name turbidity as one of the six measured parameters, and **0 is a valid turbidity reading** that
 must never be flagged as erroneous (same rule as ORP). The reasoning is in the
@@ -1077,7 +1087,7 @@ reading could be served as the answer for another.
 Both run one pipeline, `report/produceReport.ts`: sensor data, report model, events, status, narrative, and for the route only the PDF.
 No LLM call is made and nothing is written to disk.
 
-**The tool renders no PDF.** `generate_report` returns the summary the model narrates (status, event headings, baseline provenance, catalogue version) plus `report_request: { time_range, device? }`, the arguments it ran with.
+**The tool renders no PDF.** `generate_report` returns the summary the model narrates (status, event headings, baseline provenance, catalogue version) plus `report_request: { time_range, device?, omit? }`, the arguments it ran with.
 It never returns a URL, and the prompt tells the model to point at the interface's download button instead of writing a link.
 
 **The status comes with its reason** (2026-09-24, Q1).
@@ -1086,19 +1096,41 @@ The tool adds `status_reason`, one sentence naming that rule and, for a flag-dri
 Before this, an ORP Exceedance on Old Woman Creek reached the model as "Action Required" with 0 events and no cause, and the model wrote "no abnormal conditions" beside it (`migration/CONVERSATION_QA_2026-09-24.md` finding 3).
 The period ends on the device's newest reading, so the tool also returns `device_last_reported` with its age, and the prompt asks the model to say when a stale pod's period ended.
 
-The exceedance rung requires at least two usable readings beyond the exceedance bounds for the same parameter, counting both sides together and retaining the configured margin and probe-accuracy floor (finding 7).
-`buildReportInput` records this as `ParameterStats.exceedanceCount` from the existing query snapshot's individual readings before bucketing, trend thinning or raw-result truncation; faulted and implausible readings are excluded as they are from other statistics.
-A lone exceedance falls to the excursion rung at Watch, and `status_reason` names the single reading and says that one reading alone may be a sensor glitch.
-The high-confidence, high-severity event rung still takes precedence over Watch, and parameter flags still describe the observed extrema.
-The plausibility filter is unchanged: dissolved oxygen of 0.00 mg/L remains physically possible and stays in the report.
-Open question: should escalation require two readings, a duration, or a share of readings?
+A parameter's flag follows the 3-in-a-row rule (§19, `timeline.md` 2026-10-10): Elevated or Low needs 3 consecutive readings beyond the baseline by more than v2's minimum detectable change (Watch), and Exceedance needs 3 beyond it by the larger of 15% of the baseline's width and that change (Action Required).
+`buildReportInput` hands each parameter its usable raw readings in time order (`ParameterStats.readings`), taken from the query snapshot before bucketing, trend thinning or raw-result truncation; faulted, implausible and stuck readings are excluded, and neither count toward nor break a run.
+One or two readings beyond a limit, however far, set no flag, and the parameter analysis describes each direction by its runs' extremes, never by a lone reading.
+`status_reason` names the rule, each flagged parameter's range against its configured or generic fallback limit, and when its first run began.
+The high-confidence, high-severity event rung still takes precedence over Watch.
+The plausibility filter is unchanged: dissolved oxygen of 0.00 mg/L remains physically possible and stays in the report, though 24 identical zeros in a row fail QC as a flat line.
 
 **The route renders the PDF on request.** `POST /api/v1/reports` takes that `report_request` as its body and answers `200 application/pdf` with `Content-Disposition: attachment; filename="cer-report-<site>-<start>-to-<end>.pdf"` and `Cache-Control: no-store`.
-Guards, in order: `requireCallerToken` (401), the report quota (429, §4a), `REPORT_TOOL` (404 while off), body validation (400: `time_range` required, at most 100 characters; `device` optional, at most 200), then the pipeline's own refusal as 422 (a phrase the grammar does not read, a pod the caller cannot see, an empty window).
+Guards, in order: `requireCallerToken` (401), the report quota (429, §4a), `REPORT_TOOL` (404 while off), body validation (400: `time_range` required, at most 100 characters; `device` optional, at most 200; `omit` optional, a list of the groups below), then the pipeline's own refusal as 422 (a phrase the grammar does not read, a pod the caller cannot see, an empty window).
 Every reading is fetched with the caller's token, which the device API scopes to their organization, so a report can only describe the caller's own pods.
 
 This replaced a design that wrote PDFs to `generated_reports/` and served them from `GET /api/v1/reports/:filename` behind a sha256-of-token ownership sidecar.
 That design lost every report on redeploy, bound access to one exact token string so a re-login lost it, and needed the ownership check only because a stored file could be asked for by someone else; with no stored file there is nothing to guard.
+
+**Notes left out on request** (2026-10-09, `POST_LAUNCH_BACKLOG.md` §6).
+A stakeholder asked for a copy without the turbidity disclaimers to share publicly; the report had no way to leave anything out, and the model could not edit it.
+`generate_report` and the route take an optional `omit`, a closed list from `report/omit.ts`: `turbidity_notes` (the uncalibrated-index caveats in the summary, table, footnote and turbidity card), `sensor_fault_notes` (off-scale and all-zero notes and Flag suffixes), `threshold_notes` (where each threshold comes from, including the operator, v2 fallback and "Not assessed" footnotes, rejection and blind-spot notes; each parameter's prose still calls a fallback generic) and `data_quality` (the whole section; later sections renumber).
+Every note is kept by default, and the prompt allows `omit` only when the user explicitly asks; the model can choose groups but never write report text, so the same request always renders the same PDF and no model call is added.
+Numbers, flags, status, events and recommendations are never removed, and a copy with notes left out lists them in an "Omitted" metadata row, so a shared PDF is not taken for the full assessment.
+`omit` travels in `report_request` (deduplicated, in canonical order) and the tool returns `omitted_from_pdf`.
+An omitted copy counts against the report quota like any other download.
+Every edit needs its own `generate_report` call, which the prompt says.
+
+**The server, not the model, says which PDF a reply made** (2026-10-11, `report/delivery.ts`).
+On a second edit in one chat the model said a new copy was ready without calling `generate_report` in about 3 of 8 Mirror runs, so the user would have shared the earlier copy, still carrying the notes they asked to remove; a prompt rule did not stop it.
+The reply now ends with a line the server writes from the tool results, by the same rule cer-api uses for download buttons (a `report_request`, no error, not a deduped repeat): "New PDF in this reply: <site>, <period>, leaving out the …" (or "full report"), one per report.
+An answer that made no report gets "No new PDF was made in this reply." when its report call failed or an earlier reply in the chat carried one of these lines, which covers a "done" the check below cannot recognise; a chat that never involved a report gets nothing.
+The prompt tells the model not to announce a PDF, mention the download button or list the omitted notes.
+These lines are removed from history before the model reads it, because marking earlier replies as having produced a report made it skip the tool more often (5 of 6 runs against 1 of 6).
+A tool-free answer that points at the download button, or says in a sentence that is not a refusal and names no readings that a PDF, copy or report has notes left out, when no report was made in that answer, is discarded and its round rerun once with `tool_choice` forcing `generate_report` (Fireworks honours it for `glm-5p3-flash`); if the answer after that still makes the claim, or no tool round is left, it is replaced with "That copy was not regenerated; please ask again."
+A sentence that names readings ("two flat-line readings were excluded from the report period") explains reading QC, since `omit` leaves out notes and never readings.
+The forced call costs one more model round and a device read; a reply that only refers back to an earlier button triggers it too, and makes a fresh copy of what the model chooses.
+The response carries `report_retried: true` when the retry ran.
+Taking edits away from the model entirely (omit checkboxes beside the dashboard's download button) remains the fully deterministic alternative.
+The Section 2 footnote's explanation of the "(all zero)" and "(off-scale)" suffixes now prints only when a Flag cell shows one.
 
 **Recomputed at download.** The PDF is built from the same `time_range` phrase when the user clicks, and relative phrases anchor to the pod's newest reading (§10.3b).
 A pod that reported again in between yields a window shifted by those minutes; the PDF prints its own resolved period, which is the authority.
@@ -1111,13 +1143,46 @@ At least 72 hours and 60% hourly coverage are required, and `unknown` means uncl
 A diel or tidal tag raises that parameter's minimum threshold window from one hour to twelve and enables the algal-bloom detector; a diurnal tide is indistinguishable from a diel rhythm on these lags and is tagged diel.
 Twelve hours is half a cycle: a daily or tidal swing crosses a limit for only part of each cycle, so a nightly dip below a dissolved-oxygen minimum raises nothing, while a run that stays beyond the limit for half a day or more breaks the rhythm and is an event (K21b, 2026-09-29: 18 hourly readings below a 5 mg/L minimum on a diel series had raised none).
 Windows are measured on the report's bucketed series, so at the 3-hour buckets of a one-week report any run of 18 hours or more qualifies; a report long enough to use 12-hour buckets resolves only runs of about a day or more.
-This does not change the status ladder: a window becomes an event, and "Action Required" still needs the event rung or two readings beyond the exceedance bound (finding 7).
+This does not change the status ladder: a window becomes an event, and "Action Required" still needs the event rung or three readings in a row beyond the exceedance bound.
 Hourly buckets are not thinned by `MIN_BUCKET_SAMPLES`: the Newport pods report about once an hour, so one reading per bucket is their cadence.
 
 **Downgraded events keep their signature.** An event below the 0.5 confidence floor is `Inconclusive`, and `WQEvent.signature` records what it matched.
 The heading still names no cause and next steps are still chosen as `Inconclusive`, but an explanation the catalogue approves at that lower confidence is shown, hedged (`narrative.ts`).
 Today that is `saltwater-intrusion` (from 0.45) and `industrial-unclear` (from 0.3), the two classifications that previously could never reach a reader.
 Saltwater intrusion is named outright (0.55) only for an isolated conductivity rise in marine water whose series is tagged `trend`, the drought or sea-level shape; a discharge is a step, not a weeks-long creep.
+
+### 10.8 Data coverage line (`src/tools/dataCoverage.ts`)
+
+Every answer that read pod data ends with a line the server writes, naming which readings it covered, because the model chooses `time_range` itself and named it unevenly.
+Michael reported (2026-10-11) that a summary or overview did not say what window it was in; the dashboard shows a window only when a search was incomplete.
+
+- `Data covered in this reply: <pod>, <start> to <end> UTC (<n> readings)` lists each distinct window `query_sensor_data` resolved in this answer, in call order, from `time_range_resolved` and `reading_counts.used`, to the minute in UTC.
+  A single latest reading reads "the reading at <time> UTC"; a window from which the location filter dropped readings inside the request (`window_actually_searched.complete` false with a current-site label) adds "current site only"; a read with no readings in range says so with the phrase asked for.
+  Tool errors are skipped, and repeats of the same pod and window collapse to one.
+- An answer that read no pod data, in a chat where an earlier reply did, gets "No new readings were read for this reply; any figures come from data covered earlier in this chat.", unless it made a report, whose period the "New PDF" line (§10.7) already gives.
+- A chat that never read pod data gets no line, and nothing changes with the tools off.
+- The line comes before the "New PDF" line, on the JSON and streaming paths alike, and is stripped from history before it reaches the model, so the model never writes one itself.
+- The prompt complements it: the first sentence of a sensor answer names its period with the dates of `time_range_resolved`; a summary, overview or "how is the water" with no period named uses "last 7 days", says so and offers a longer one; a follow-up that reuses earlier readings names their period or reads again, and a one-parameter follow-up ("what about the pH?") reads the earlier answer's period rather than the latest value; a report answer states `report_period` in its first sentence, and when no period was named it says the user named none, so it covers the last 7 days, and ends by offering a longer period.
+
+
+### 10.9 Reading the data (`src/prompt/systemPrompt.ts`, `src/tools/dailyCycle.ts`, `src/catalogue/`)
+
+Gilligan wrote off a real daily pH cycle as sensor faults, blamed tides no tool measures, and swapped in a new fault theory each time the user pushed back (`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`).
+The tools already judge readings (§19); these rules keep the model from overruling them.
+
+- Readings are real measurements unless a tool says otherwise: device-flagged (`excluded_faulted`), implausible, a "likely data issue" verdict, a `board_fault` or a failed sensor.
+  An out-of-range or unusual reading passed those checks; the model reports it as what the water did and may call it unusual and worth checking, never bad, an error or an instrument problem, and never offers a fault theory as its cause.
+- Only measured quantities may be named as causes; tides, swell, weather, rain, air exposure, depth and nearby activity may be offered only as "consistent with", with what would confirm them.
+- A user's statement about the site (depth, position, always submerged, out of the water at a stated time) is evidence; a cause the user suggests is a hypothesis, and an event the user mentions has no time in the data, so the model never says the readings did or did not change "when it started".
+- When the user disputes the data, the model calls `query_sensor_data` again and changes position only for new data or a new site fact, saying which.
+- Series buckets carry `start_local_solar` beside the UTC `start` (UTC plus longitude / 15 hours; the API carries no time zone, and solar time is what decides whether a cycle follows the sun).
+  Reading UTC bucket times as local inverted the incident pod's cycle in every pre-fix conversation ("nightly lows, midday peaks" for a pH that bottoms out mid-afternoon).
+- With three or more full local days, each metric in a series carries `daily_cycle`: each day's peak in local solar time, the fitted drift in minutes per day, and a timing of "same hour each day" (drift within 15 minutes, a solar cycle), "about 50 minutes later each day" (30-72 minutes, the lunar day's 24.84 hours, a tide) or "unclear" (day-to-day scatter over 1.5 hours, or anything else).
+  No tool measures tides, so this timing is the only evidence for telling the two apart.
+- The catalogue's `fault-first` and `inspect-sensors` are offered only for a tool-reported data issue, board fault, failed sensor, or flagged or implausible readings (`DATA_ISSUE_ONLY_ENTRIES` in `catalogue/select.ts`): the report leaves them out otherwise, and each record in the chat prompt carries an "Offer only when" line.
+  `fault-first`'s own limitation says the report runs no fault checks; per-reading QC now runs them, and an exceedance passed them.
+  A pattern no entry explains is described as a real measurement, and a cause the user suggests is not evidence for an entry.
+- Natural-variation entries (`daily-solar-cycle`, `tidal-exchange`, `heat-wave`, `shallow-deployment`) are drafts, hidden in production (`CATALOGUE_DRAFTS=false`) until a supervisor approves them.
 
 ---
 
@@ -1608,12 +1673,14 @@ No test touches the network, needs an API key or costs money, and new tests keep
 | `unit/usageStatus.test.ts` | `GET /api/v1/usage` (§4a): remaining against a finite ceiling, `null` limits for an unlimited dimension and while the quota is off, remaining floored at 0 when retrospective token accounting overshoots, window rollover, per-token bucketing, and — the defect the endpoint could easily have — that repeated status reads do not themselves spend the allowance |
 | `unit/quotaConfig.test.ts` | the `QUERY_QUOTA*` parsing rules: the off-and-unlimited default, `unlimited` accepted case-insensitively, `none`/`off`/`-1` **rejected** rather than guessed, the required duration unit suffix, `org` rejected as a scope this service cannot key on, and Gilligan's free tier expressed without a code change |
 | `integration/quotaChat.test.ts` | the gate over HTTP: the disabled default answering past tiny limits, the 429 body and `Retry-After`, a validation 400 not consuming an allowance, per-token vs global bucketing, tokens counted on the streamed path, and a refused `stream: true` request arriving as JSON with no SSE frames |
-| **N3** `integration/sensorChat.test.ts` | `query_sensor_data` end to end through `POST /chat` — scripted model, recorded device bodies, real loop/client/decoder in between — and the flag-off path making one tool-free call that never touches the device API |
+| **N3** `integration/sensorChat.test.ts` | `query_sensor_data` end to end through `POST /chat` — scripted model, recorded device bodies, real loop/client/decoder in between — and the flag-off path making one tool-free call that never touches the device API; the data-coverage line on the JSON and streaming paths (§10.8) |
 | `integration/devices.test.ts` | `GET /api/v1/devices` (§10.5): label dedupe, the `name`→`label` fallback and its stable tie-break, `water_type` echo, and a coded upstream failure propagating rather than flattening to `null` |
 | `unit/plausibility.test.ts` | the per-metric physical rails, including the verified −1023 °C temperature rail and the pH 0.000/14.000 exclusive bounds, and that `0` stays plausible for ORP and turbidity |
 | `unit/operatorThresholds.test.ts` | every rejection reason for an operator-entered temperature baseline — the all-zero "never configured" registry state, an inverted range, a typed-in placeholder magnitude — each falling back to "no baseline established" rather than to a wrong range, and never printing the rejected numbers |
 | `unit/answerFormat.test.ts` | `【commentary…】` stripping anchored to the channel name, **citation markers in the same brackets left untouched** (~160 of them across the captured transcripts), the marker-only answer coming out empty so the existing 502 guard fires, and the streaming filter agreeing with the batch stripper however the text is chopped up |
 | `unit/generateReport.test.ts`, `unit/buildReportInput.test.ts`, `unit/reportModel.test.ts`, `unit/reportEvents.test.ts`, `unit/reportPatterns.test.ts`, `unit/reportReferenceRanges.test.ts`, `unit/reportNarrative.test.ts`, `unit/reportRenderPdf.test.ts` | the report pipeline: the tool's arguments and flag gating, the computed model assembled from sensor + registry data, event detection, diel/tidal/trend tagging, the transcribed baselines and turbidity bands, narration confined to pre-computed facts, and the PDF layout |
+| `unit/dataSkepticism.test.ts` | what the tools hand the model for the data-skepticism fleet (`test/fixtures/skepticism/fleet.ts`, served in the device API's wire shapes): the incident week's solar cycle and afternoon pH dip never a data issue, device-flagged faults still reported, the guard pods (implausible pH, a real low-oxygen event, a silent pod, stuck turbidity), a tidal pod's drifting peak against the solar pod's fixed one, a steady noisy channel in range, a flagged probe excluded, and a pod out of the water with no cause in the result (§10.9) |
+| `unit/dailyCycle.test.ts` | `daily_cycle` timing: same hour, about 50 minutes later across midnight, unclear for noise, nothing under three full days, flagged readings ignored; local solar time from longitude (§10.9) |
 | `integration/reports.test.ts` | `POST /api/v1/reports` (§10.7): each guard (token, flag, body, report quota), the PDF returned with nothing written to disk, a 422 refusal that counts nothing, and the removed `GET /reports/:filename` |
 
 **`unit/pgvectorRag.test.ts` is gone from the live suite** (2026-08-19). Its `fuseRrf` and
@@ -1694,16 +1761,50 @@ Within the TTL, repeated questions and historical ranges reuse the snapshot, whi
 After the TTL, a recent read replaces an overlapping tail while retaining earlier centroid context; changes to authorized chain membership discard incompatible history.
 Registry changes become visible at the device-list TTL, and older backfills or corrections outside the recent tail become visible when retained context expires and is rebuilt.
 Report series, exact median and hourly pattern calculations pin one consistent fetched snapshot for the whole batch, including across TTL expiry or cache eviction.
-When location filtering limits a pod's history, `time_range_resolved` uses the first and last current-site readings inside the requested range, or is null when none fall inside it.
-The answer's report period, PDF title and Summary inherit those dates, and the existing earlier-location note stays with the tool result and is printed in the PDF Summary as well as Data Quality.
-`window_actually_searched.complete` is false when the fetched context or current-site coverage cannot cover the requested range, even if the fetch reached the epoch.
-Report Data Quality counts rows once: a reading is used if at least one requested parameter survives fault, plausibility and stuck-sensor filtering, and is left out if none survives.
+When location filtering drops readings inside the requested range, `time_range_resolved` uses the first and last current-site readings inside it, or is null when none fall inside it.
+A range the filter dropped nothing from keeps its requested dates, so a week long after a move is not relabelled "(current-site readings)" and narrowed to its first and last reading.
+The answer's report period, PDF title and Summary inherit those dates.
+The site notes (`site_note`, `user_notes`) count only readings inside the requested range that the location filter left out, plus readings with no timestamp, which no range can place (`siteNotesForPeriod` in `tools/currentSite.ts`).
+Counting the pod's whole history told a week 43 days after a move that 775 earlier-location readings "were excluded" from it (coverage check, 2026-10-12, `migration/data-skepticism-runs/coverage-check-prompt2/`).
+When the pod moved but none of its earlier-site readings fall inside the range, the model-only `site_history_note` says so, keeping the move known without telling the reader anything was left out.
+The PDF Summary prints `site_note`, or else `site_history_note`; Data Quality prints `site_note` only.
+`window_actually_searched.complete` is false when the fetched context does not reach the start of the requested range, or when the location filter dropped readings inside it.
+A first reading that lands one reporting interval after the window opens, and earlier-site history that ends before it, leave the window complete.
+`window_actually_searched` reports the part of the requested range the fetch covered, never the fetch's own start: the snapshot can reach back to the epoch only to establish the current site, and the dashboard printed that as "Searched from 1970" under a complete week (`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md` §4).
+Report Data Quality counts rows once: a reading is used if at least one requested parameter survives fault, plausibility and flat-line filtering, and is left out if none survives.
 The completeness percentage compares those used rows with all current-site rows inside the requested range; earlier-location exclusions remain a separate row count in the site note.
 
-Turbidity is a likely failed sensor only when it remains exactly 0 or exactly 1005 for at least 24 hours between the first and last qualifying samples, with no consecutive gap longer than 3 hours.
-Named constants define both durations, and missing or faulted turbidity, a changed value, an unusable timestamp or a gap over 3 hours breaks a run.
-Detection runs on current-site context before trimming to the requested range, so a short query cannot conceal an established failed run.
-All samples in a qualifying run are excluded before aggregation and report pattern matching, and the “likely failed sensor” warning remains even when no usable turbidity sample survives.
+**Reading QC** (`src/devices/readingQc.ts`, source-of-truth v2 §8; `timeline.md` 2026-10-10 and 2026-10-11).
+Every reading of every metric is pass, suspect or fail before anything is judged against a limit.
+Fail: the probe's error flag, the server's `1000000000` read-failure value, an implausible value, or a flat line of 24 or more identical consecutive readings.
+Suspect: a flat line of 6 or more, or a spike more than 3 × the series' MAD, and more than the minimum detectable change, from the mean of two neighbours that agree within 3 × the MAD; the spike test is skipped when the MAD is 0.
+The detectable-change floor keeps ordinary noise on a steady channel, where the series' MAD is only the noise, from reading as spikes and then as a likely data issue.
+Turbidity at exactly 0 keeps its own rule, because the index clamps clear water to 0: it fails only after at least 24 hours of zeros, and never becomes suspect by count.
+A missing or failed reading, a changed value or a gap over 3 hours breaks a flat line; gaps over 3 hours are reported as missing data (`missing_data`).
+QC runs on current-site context before trimming to the requested range, so a short query cannot conceal an established flat line.
+Flat-line and stuck-turbidity failures are excluded before aggregation and report pattern matching and counted per metric as `excluded_stuck` with `sensor_quality: "likely failed sensor"`; error-flag and implausible failures keep their existing counts; suspect readings are kept and counted as `suspect_readings`.
+A **likely data issue** is 3 or more consecutive suspect or failed readings of one metric; scattered failures are excluded and counted but never flagged.
+Three or more consecutive readings on which every channel fails at once are reported as `board_fault`, with v2 §9.2's "most likely reflects a sensor or data issue" wording; the count is provisional until CER confirms it (`STAKEHOLDER_QUESTIONS.md` item 25).
+
+**Limits** (`resolveLimit`, `src/report/operatorThresholds.ts`).
+A metric is judged against the pod's operator threshold when it passes validation, otherwise against source-of-truth v2 §3's general range for the pod's registry water class, otherwise not at all.
+v2 ranges (`V2_FALLBACK_RANGES`): pH, dissolved oxygen and ORP for freshwater (6.5-8.5, 6-11 mg/L, 100-400 mV) and brackish or estuarine water (7.0-8.3, 5-9, 100-350); pH and dissolved oxygen for coastal water (7.8-8.3, 6-8.5), each with a note that upwelling can lower them naturally.
+Temperature, conductivity, coastal ORP and turbidity have no fallback: v2 calls temperature site and season dependent, its conductivity ranges are for conductance corrected to 25 °C, which the pods may not report (`STAKEHOLDER_QUESTIONS.md` item 24), and it judges coastal ORP by trend.
+A pod whose registry gives no water type gets no fallback; a defaulted water type never selects a column.
+Every fallback is labelled generic wherever it appears: `basis` and `limit_note` in the sensor tool, status "fallback" in `get_pod_thresholds`, `baselineSource: "v2-fallback"` and a footnote in the report.
+
+**The flag rule** (`src/report/flagRules.ts`, v2 §8.3 and §9.1).
+A metric is out of range only after 3 consecutive kept readings beyond its limit plus v2's minimum detectable change: pH 0.2, dissolved oxygen 1 mg/L, ORP 50 mV, conductivity 2% of the reading, temperature twice the PT-1000 accuracy at the reading.
+At 48 readings a day that is 6.25% of a day, inside the 5-10% Michael accepted, so there is no separate share rule.
+High and low runs are counted separately, a gap over 3 hours breaks a run, and only readings inside the requested window count.
+Runs holding at least 80% of the window's kept readings are a persistent offset, stated once with its start as more likely a threshold, fouling or calibration issue than a change in the water (v2 §7.2 rule 7).
+The datasheet accuracies (`PROBE_SPECS`) stay for their other uses but no longer set a noise floor.
+
+**Verdicts** (`src/tools/metricVerdict.ts`).
+`query_sensor_data` returns each metric's `verdict`: `status` (in range, out of range, likely data issue, not assessed, not enough data, by that precedence with the data issue first), `basis`, `limit`, `limit_note`, `out_of_range` (direction, first run start, latest run end, run count, whether ongoing, whether persistent), `data_issue` runs and `suspect_readings`.
+A window with fewer than 3 kept readings, such as "now", is judged on the run ending at its newest reading, using the two kept readings before it.
+The prompt has the model relay verdicts, suggest inspection or maintenance only for a likely data issue, a board fault or a likely failed sensor, state a persistent offset once, and give `turbidity_caveat`, now its own field rather than part of `note`, once per conversation.
+The server's alert emails still check only each pod's latest reading (`STAKEHOLDER_QUESTIONS.md` item 27), so an email can alert while chat calls the metric in range.
 Operator limits that are unusable because they exceed the sensor's measurement range remain “Not assessed”, with no assertion that readings are within those limits.
 
 A pH reading outside 3-12 is implausible and excluded like a probe rail, because natural surface water spans roughly 3.5 (peat bogs) to 11 (soda lakes) and the fleet sits in neither; configured pH limits are still validated against the 0-14 scale.

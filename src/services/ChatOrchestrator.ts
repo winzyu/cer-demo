@@ -1,4 +1,7 @@
 import { config } from "../config";
+import {
+  claimsReport, madeReports, NOT_REGENERATED_ANSWER, REPORT_TOOL_NAME,
+} from "../report/delivery";
 import type { ChatMessage } from "../types/chat.types";
 import type {
   ToolCall, ToolContext, ToolDefinition, ToolHandler, ToolInvocation,
@@ -27,6 +30,13 @@ const log = createLogger("Orchestrator");
  * pattern — the model re-asking the question it just asked. And every round's usage is summed
  * into the reported total, so an expensive conversation is visible in the response rather than
  * only on the invoice.
+ *
+ * **A report the answer claims but did not make is retried, not trusted** (`SPECS.md` §10.7). On
+ * a second edit in one chat the model sometimes said a new PDF was ready without calling
+ * `generate_report`, and no prompt wording stopped it. A tool-free answer that points at the
+ * download button or says notes were left out, when no report was made in this answer, is
+ * discarded and its round rerun once with `generate_report` forced; if the answer that follows
+ * still claims a report it did not make, it is replaced with `NOT_REGENERATED_ANSWER`.
  */
 
 /**
@@ -80,6 +90,8 @@ export interface OrchestratorResult {
   rounds: number;
   /** True when the loop hit the cap without the model producing a tool-free answer. */
   capped: boolean;
+  /** True when an answer claimed a report it had not made and its round was rerun forced. */
+  reportRetried: boolean;
 }
 
 /** Returned when the cap is hit and the model never produced any prose at all (§3 rule 5). */
@@ -136,6 +148,11 @@ export class ChatOrchestrator {
     return this.definitions.length > 0;
   }
 
+  /** True when `generate_report` is registered, so an answer may make a PDF. */
+  get offersReports(): boolean {
+    return this.handlers.has(REPORT_TOOL_NAME);
+  }
+
   async run(messages: ChatMessage[], options: RunOptions = {}): Promise<OrchestratorResult> {
     // Copied, not mutated in place: the caller's message list is built per request and reused
     // by the streaming path, and a loop that appends to it would leak tool turns across calls.
@@ -147,6 +164,8 @@ export class ChatOrchestrator {
     let model = "";
     let lastContent = "";
     let rounds = 0;
+    let reportRetried = false;
+    let forceReport = false;
 
     // Rounds 1..N offer tools; round N+1 omits them so the model must answer in text.
     const totalRounds = this.maxToolRounds + 1;
@@ -165,7 +184,9 @@ export class ChatOrchestrator {
       const answer = await this.llm.complete(
         conversation,
         offerTools ? this.definitions : undefined,
+        offerTools && forceReport ? REPORT_TOOL_NAME : undefined,
       );
+      forceReport = false;
 
       // The one place gpt-oss's leaked `【commentary…】` markers are stripped (WS-5).
       // Every way out of this loop reads `content`, so both the JSON and SSE paths and the
@@ -177,6 +198,7 @@ export class ChatOrchestrator {
       rounds = round;
       usage = sumUsage(usage, answer.usage);
       model = answer.model;
+      const previousContent = lastContent;
       // A round that was nothing but markers is not prose, so it must not become the fallback
       // answer below — the placeholder is honest where a stripped-empty string is not.
       if (content.trim() !== "") {
@@ -189,15 +211,28 @@ export class ChatOrchestrator {
       const toolCalls = answer.toolCalls ?? [];
 
       if (toolCalls.length === 0) {
+        // The forced round must still offer tools, so a claim on the last tool round or later
+        // goes straight to the correction below. The claiming answer is dropped, not replayed:
+        // keeping it in the conversation would show the model the claim it is meant to replace.
+        const canRetry = !reportRetried && round < this.maxToolRounds;
+        if (canRetry && this.claimsUnmadeReport(content, invocations)) {
+          log.warn("Answer claims a report it did not make; rerunning the round with generate_report forced.");
+          reportRetried = true;
+          forceReport = true;
+          lastContent = previousContent;
+          // eslint-disable-next-line no-continue
+          continue;
+        }
         // An answer that was entirely markers leaves here as `""` rather than as the marker's
         // contents dressed up as prose. Empty is reportable; invented is not.
         return {
-          content,
+          content: this.withoutUnmadeReportClaim(content, invocations),
           model,
           usage,
           invocations,
           rounds,
           capped: this.hasTools && round > this.maxToolRounds,
+          reportRetried,
         };
       }
 
@@ -237,13 +272,31 @@ export class ChatOrchestrator {
     // plainly that it was cut short when there is no prose at all.
     log.warn(`Hit the ${this.maxToolRounds}-round tool cap after ${invocations.length} tool calls.`);
     return {
-      content: lastContent === "" ? ROUND_CAP_PLACEHOLDER : lastContent,
+      content: lastContent === ""
+        ? ROUND_CAP_PLACEHOLDER
+        : this.withoutUnmadeReportClaim(lastContent, invocations),
       model,
       usage,
       invocations,
       rounds,
       capped: true,
+      reportRetried,
     };
+  }
+
+  /** Only with the report tool registered: without it no answer can be about a new PDF. */
+  private claimsUnmadeReport(content: string, invocations: ToolInvocation[]): boolean {
+    return this.offersReports
+      && madeReports(invocations).length === 0
+      && claimsReport(content);
+  }
+
+  private withoutUnmadeReportClaim(content: string, invocations: ToolInvocation[]): string {
+    if (!this.claimsUnmadeReport(content, invocations)) {
+      return content;
+    }
+    log.warn("Answer still claims a report it did not make; replacing it.");
+    return NOT_REGENERATED_ANSWER;
   }
 
   /**

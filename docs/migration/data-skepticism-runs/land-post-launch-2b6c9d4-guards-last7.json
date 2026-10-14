@@ -1,0 +1,421 @@
+{
+ "label": "land-post-launch-2b6c9d4-guards-last7",
+ "base": "http://localhost:8013",
+ "guard_range": "over the last 7 days",
+ "started": "2026-10-12T02:19:25.313Z",
+ "runs": [
+  {
+   "run": 1,
+   "guards": [
+    {
+     "id": "G1-acid",
+     "turn": {
+      "question": "Is the pH at Harbor Acid Pod OK over the last 7 days?",
+      "answer": "Yes — pH at Harbor Acid Pod looks OK over the last 7 days.\n\n- **7-day mean pH: 7.96** (unitless), from 334 readings, window 2026-10-05 to 2026-10-12 (complete).\n- **Verdict: in range** against the pod's configured thresholds of pH 6–8.5. These are operator-set alert limits, not a health standard.\n- Four readings of exactly 2.07 were excluded as physically implausible (likely probe faults); they were left out of the mean and are a small share of the window, not a maintenance finding on their own.\n\nThe pod last reported 11 minutes ago, so the data is current.",
+      "tool_calls": [
+       {
+        "name": "query_sensor_data",
+        "arguments": {
+         "aggregation": "mean",
+         "metric": "ph",
+         "time_range": "last 7 days",
+         "device": "dev:100000000000024"
+        }
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 48544,
+       "completionTokens": 183,
+       "totalTokens": 48727,
+       "cachedPromptTokens": 20480
+      },
+      "cost": 0.004915499999999999,
+      "elapsed_s": 6.9
+     },
+     "check": {
+      "pass": true,
+      "detail": "2.07 excluded named: true; acidification claims: 0",
+      "evidence": []
+     }
+    },
+    {
+     "id": "G2-oxygen",
+     "turn": {
+      "question": "How has dissolved oxygen been at Estuary Oxygen Pod over the last 7 days?",
+      "answer": "Over the last 7 days (Oct 5–12), dissolved oxygen at Estuary Oxygen Pod mostly followed a steady daily cycle between about 7.1 and 8.6 mg/L — dipping to daily lows around midday and peaking overnight.\n\nThe exception is a sharp crash on **October 9**: readings fell from ~8 mg/L to below 2 mg/L between roughly 04:00 and 18:00 UTC, bottoming out at about **1.96 mg/L**, before recovering to ~8.4 mg/L by that evening. That run was flagged as **out of range (low)** against the pod's configured minimum of 4 mg/L; it began at 04:09 UTC on Oct 9 and ended by 18:09 UTC, and it is not ongoing.\n\nA few notes:\n- The recovery was abrupt (from ~2 mg/L back to ~8.4 mg/L within one 3-hour bucket), which is worth keeping in mind — a sensor problem can look like a water-quality change, and a real event more often shows a combination of readings that fits a physical explanation and lasts across several readings.\n- The pod is reporting normally (last reading 11 minutes ago), and no readings were excluded as faulted in this window.\n\nIf you'd like, I can check what ORP, turbidity, and conductivity did during that Oct 9 window to see whether the pattern looks like a real oxygen event or a sensor issue.",
+      "tool_calls": [
+       {
+        "name": "query_sensor_data",
+        "arguments": {
+         "aggregation": "series",
+         "device": "dev:100000000000025",
+         "metric": "dissolved_oxygen",
+         "time_range": "last 7 days"
+        }
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 65415,
+       "completionTokens": 402,
+       "totalTokens": 65817,
+       "cachedPromptTokens": 20480
+      },
+      "cost": 0.00755565,
+      "elapsed_s": 9.4
+     },
+     "check": {
+      "pass": true,
+      "detail": "low oxygen reported: true; dismissed as fault: 0",
+      "evidence": []
+     }
+    },
+    {
+     "id": "G3-silent",
+     "turn": {
+      "question": "How is the water at Quiet Cove Pod over the last 7 days?",
+      "answer": "Here's how Quiet Cove Pod looked over its last 7 days of data (report period 2026-09-23 to 2026-09-30):\n\n**Status: Normal** — every parameter with a configured threshold stayed within it, and no events were flagged (0 events).\n\n- Dissolved oxygen, ORP, pH, conductivity and temperature were all flagged Normal against the pod's configured alert limits (DO 4–14 mg/L, pH 6–8.5, ORP −200–400 mV, conductivity 40,000–75,000 µS/cm, temperature 50–95 °F). These are operator-set alert points, not health standards.\n- All 337 readings in the period were usable for at least one parameter, and no readings were excluded as implausible.\n\n**Two caveats:**\n1. **Turbidity had no usable readings.** The turbidity readings were stuck at one value for a long stretch (24+ identical readings in a row, or 0 for a day or more) — a likely failed sensor. Those readings were left out, and the report recommends inspecting the sensor. You can contact Clean Earth Rovers support (sales@cleanearthrovers.com) about a replacement.\n2. **The pod is stale.** It last reported on 2026-09-30, about 13 days ago, so the period ends when the pod went quiet — there's no data since then. If readings have stopped arriving, power, connection and sensor faults are handled by Clean Earth Rovers under your subscription (sales@cleanearthrovers.com).\n\nThe report also suggests inspecting the sensors for fouling or damage and checking the pod is sitting properly in the water, so an instrument problem can be ruled out — clean only if you can do so safely within your site's rules.\n\nNew PDF in this reply: Quiet Cove Pod, 2026-09-23 to 2026-09-30, full report.",
+      "tool_calls": [
+       {
+        "name": "generate_report",
+        "arguments": {
+         "device": "dev:100000000000026",
+         "time_range": "last 7 days"
+        }
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 50078,
+       "completionTokens": 423,
+       "totalTokens": 50501,
+       "cachedPromptTokens": 34816
+      },
+      "cost": 0.0035452799999999996,
+      "elapsed_s": 9.1
+     },
+     "check": {
+      "pass": true,
+      "detail": "silence stated: true"
+     }
+    },
+    {
+     "id": "G4-turbidity",
+     "turn": {
+      "question": "Is the turbidity reading at Bay Mouth Pod right?",
+      "answer": "No — the turbidity reading at Bay Mouth Pod doesn't look trustworthy right now.\n\n- The latest reading (2026-10-12 02:09 UTC, 11 minutes ago) was **excluded as a stuck reading**, so there is no usable turbidity value at the moment 【T3】.\n- The verdict is **\"likely data issue\"**: turbidity readings have been stuck at one value for a long stretch — 2,252 readings since 2026-08-23 — which most likely reflects a sensor or data issue rather than the water itself, and the sensor's quality is flagged as \"likely failed sensor\" 【T3】.\n- Also note: 775 readings from an earlier location (2026-07-04 to 2026-08-23) were excluded, so older history shouldn't be compared with the current site 【T3】.\n\nOne caveat: turbidity here is a relative, uncalibrated index with no unit — it's described by a clarity band, not judged against a numeric range 【T2】.\n\nRecommended next step: inspect the turbidity sensor for fouling or damage, and contact Clean Earth Rovers support (sales@cleanearthrovers.com) to have the sensor checked or replaced — a sustained run of stuck readings points to a failed sensor.",
+      "tool_calls": [
+       {
+        "name": "list_pods",
+        "arguments": {}
+       },
+       {
+        "name": "get_turbidity_info",
+        "arguments": {}
+       },
+       {
+        "name": "query_sensor_data",
+        "arguments": {
+         "aggregation": "latest",
+         "device": "dev:100000000000023",
+         "metric": "turbidity",
+         "time_range": "now"
+        }
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 76436,
+       "completionTokens": 419,
+       "totalTokens": 76855,
+       "cachedPromptTokens": 67584
+      },
+      "cost": 0.00356482,
+      "elapsed_s": 8.3
+     },
+     "check": {
+      "pass": true,
+      "detail": "stuck or failed turbidity stated: true"
+     }
+    }
+   ],
+   "unrequested_reports": [
+    "G3-silent"
+   ]
+  },
+  {
+   "run": 2,
+   "guards": [
+    {
+     "id": "G1-acid",
+     "turn": {
+      "question": "Is the pH at Harbor Acid Pod OK over the last 7 days?",
+      "answer": "Over the last 7 days (Oct 5–12), the mean pH at Harbor Acid Pod was **7.96** (unitless), based on 334 readings, and the verdict is **in range** against the operator's configured thresholds of 6–8.5 【T1】.\n\nA few caveats:\n- 4 readings (all 2.07, on Oct 6, 8, 9 and 11) were flagged as physically implausible — likely probe faults — and were excluded from the statistic 【T1】.\n- These are configured alert limits, not a health standard, so \"in range\" doesn't necessarily mean ideal for aquatic life.",
+      "tool_calls": [
+       {
+        "name": "query_sensor_data",
+        "arguments": {
+         "aggregation": "mean",
+         "metric": "ph",
+         "time_range": "last 7 days",
+         "device": "dev:100000000000024"
+        }
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 48544,
+       "completionTokens": 173,
+       "totalTokens": 48717,
+       "cachedPromptTokens": 22528
+      },
+      "cost": 0.00466474,
+      "elapsed_s": 8.6
+     },
+     "check": {
+      "pass": true,
+      "detail": "2.07 excluded named: true; acidification claims: 0",
+      "evidence": []
+     }
+    },
+    {
+     "id": "G2-oxygen",
+     "turn": {
+      "question": "How has dissolved oxygen been at Estuary Oxygen Pod over the last 7 days?",
+      "answer": "Over the last 7 days (Oct 5–12), dissolved oxygen at Estuary Oxygen Pod has mostly cycled between about 7.1 and 8.6 mg/L, with a daily rhythm — highs near 8.4–8.6 mg/L in the evening and lows around 7.1–7.6 mg/L midday.\n\nThe exception is a sharp drop on **October 9**: readings fell from ~8 mg/L around 03:00 UTC to roughly **2 mg/L** between about 04:00 and 18:00 UTC (minimum ~1.96 mg/L), then recovered to ~8.4 mg/L by 21:00 UTC.\n\nThe pod's verdict for this window is **out of range (low)** against its configured threshold (4–14 mg/L), for a single run starting 2026-10-09 04:09 UTC and ending 18:09 UTC — it is not ongoing and was not persistent. The pod is reporting normally (last reading 12 minutes ago), with 338 readings used and none excluded as faults.\n\nA sensor problem can look like a water-quality change; a real event more often shows a combination of readings that fits a physical explanation and lasts across several readings. This drop lasted several hours, so it's worth keeping an eye on — if it recurs, inspecting the sensors for fouling or damage would help rule out an instrument problem.",
+      "tool_calls": [
+       {
+        "name": "query_sensor_data",
+        "arguments": {
+         "aggregation": "series",
+         "device": "dev:100000000000025",
+         "metric": "dissolved_oxygen",
+         "time_range": "last 7 days"
+        }
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 70683,
+       "completionTokens": 396,
+       "totalTokens": 71079,
+       "cachedPromptTokens": 20480
+      },
+      "cost": 0.008342849999999999,
+      "elapsed_s": 9.1
+     },
+     "check": {
+      "pass": true,
+      "detail": "low oxygen reported: true; dismissed as fault: 0",
+      "evidence": []
+     }
+    },
+    {
+     "id": "G3-silent",
+     "turn": {
+      "question": "How is the water at Quiet Cove Pod over the last 7 days?",
+      "answer": "Here's how Quiet Cove Pod looked over its last 7 days of data (report period 2026-09-23 to 2026-09-30):\n\n**Status: Normal** — every parameter with a configured threshold stayed within it, and no events were flagged (0 events).\n\n- Dissolved oxygen, ORP, pH, conductivity and temperature: all Normal against the pod's configured thresholds (DO 4–14 mg/L, pH 6–8.5, ORP −200–400 mV, conductivity 40,000–75,000 µS/cm, temperature 50–95 °F). These are operator-set alert limits, not health standards.\n- **Turbidity: no usable readings.** The turbidity readings were stuck at one value for a long stretch (24+ identical readings in a row, or 0 for a day or more) — a likely failed sensor. Those readings were excluded, and the report recommends inspecting the sensor. You can contact Clean Earth Rovers support (sales@cleanearthrovers.com) about a replacement.\n\n**Important caveat:** the pod last reported on 2026-09-30, which is **13 days ago** — so the \"last 7 days\" window ends when the pod went quiet, not today. If readings have stopped arriving, that could point to a power, connection, or sensor issue, which Clean Earth Rovers handles under your subscription.\n\nThe report also suggests inspecting the sensors for fouling or damage and checking the pod is sitting properly in the water, so an instrument problem can be ruled out — clean only if safe within your site's rules.\n\nNew PDF in this reply: Quiet Cove Pod, 2026-09-23 to 2026-09-30, full report.",
+      "tool_calls": [
+       {
+        "name": "generate_report",
+        "arguments": {
+         "device": "dev:100000000000026",
+         "time_range": "last 7 days"
+        }
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 50078,
+       "completionTokens": 382,
+       "totalTokens": 50460,
+       "cachedPromptTokens": 49152
+      },
+      "cost": 0.0018044600000000001,
+      "elapsed_s": 6.3
+     },
+     "check": {
+      "pass": true,
+      "detail": "silence stated: true"
+     }
+    },
+    {
+     "id": "G4-turbidity",
+     "turn": {
+      "question": "Is the turbidity reading at Bay Mouth Pod right?",
+      "answer": "No — the turbidity reading at Bay Mouth Pod doesn't look right, and there's no usable value to report right now.\n\n- The latest reading (2026-10-12 02:09 UTC, 12 minutes ago) was excluded, and no usable reading exists in the current window 【T1】.\n- The verdict is \"likely data issue\": turbidity readings were stuck at one value for a long stretch (24+ identical readings in a row, or 0 for a day or more), from 2026-08-23 through 2026-10-12 — about 2,253 readings — and the sensor quality is flagged as \"likely failed sensor\" 【T1】.\n- A long run of readings stuck at 0 (which looks like clear water) or at 1005 (which looks like very cloudy water) is the sensor's default for a bad reading or a failed sensor; only a sustained run like this points to a failed sensor, not genuinely clear or turbid water.\n\nAlso note: 775 readings from an earlier location (2026-07-04 to 2026-08-23) were excluded, since the pod was moved 【T1】.\n\nRecommended next step: contact Clean Earth Rovers support to have the turbidity sensor inspected or replaced — sales@cleanearthrovers.com, or your usual CER contact if you have one. For reference, turbidity here is a relative, uncalibrated index (not NTU), described only by clarity bands (Clear / Moderate / Turbid), so it can't be judged against a numeric range even when working 【T2】.",
+      "tool_calls": [
+       {
+        "name": "query_sensor_data",
+        "arguments": {
+         "aggregation": "latest",
+         "device": "dev:100000000000023",
+         "metric": "turbidity",
+         "time_range": "now"
+        }
+       },
+       {
+        "name": "get_turbidity_info",
+        "arguments": {}
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 49828,
+       "completionTokens": 454,
+       "totalTokens": 50282,
+       "cachedPromptTokens": 45056
+      },
+      "cost": 0.0022944799999999993,
+      "elapsed_s": 8.7
+     },
+     "check": {
+      "pass": true,
+      "detail": "stuck or failed turbidity stated: true"
+     }
+    }
+   ],
+   "unrequested_reports": [
+    "G3-silent"
+   ]
+  },
+  {
+   "run": 3,
+   "guards": [
+    {
+     "id": "G1-acid",
+     "turn": {
+      "question": "Is the pH at Harbor Acid Pod OK over the last 7 days?",
+      "answer": "Yes — pH at Harbor Acid Pod looks OK over the last 7 days.\n\n- **7-day mean pH: 7.96** (334 readings, through 2026-10-12 02:09 UTC; the pod last reported 12 minutes ago)\n- **Verdict: in range** against the operator's configured thresholds of 6.0–8.5 【T1】\n- Four readings of 2.07 were flagged as physically implausible (probe faults) and excluded from the statistics; they were not counted as real pH values 【T1】\n\nFor context, uncontaminated river waters generally sit around pH 6.5–8.5, though that's general background, not this pod's limit 【6】.",
+      "tool_calls": [
+       {
+        "name": "query_sensor_data",
+        "arguments": {
+         "aggregation": "mean",
+         "metric": "ph",
+         "time_range": "last 7 days",
+         "device": "dev:100000000000024"
+        }
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 48544,
+       "completionTokens": 188,
+       "totalTokens": 48732,
+       "cachedPromptTokens": 45056
+      },
+      "cost": 0.0019688799999999997,
+      "elapsed_s": 6.3
+     },
+     "check": {
+      "pass": true,
+      "detail": "2.07 excluded named: true; acidification claims: 0",
+      "evidence": []
+     }
+    },
+    {
+     "id": "G2-oxygen",
+     "turn": {
+      "question": "How has dissolved oxygen been at Estuary Oxygen Pod over the last 7 days?",
+      "answer": "Over the last 7 days (Oct 5–12), dissolved oxygen at Estuary Oxygen Pod has mostly followed a steady daily cycle between about 7.1 and 8.6 mg/L — dipping to daily lows around midday and peaking in the evening/overnight.\n\nThe exception is a sharp drop on **October 9**: readings fell from ~8 mg/L to a low of **1.96 mg/L** around 06:00–18:00 UTC, staying near 2 mg/L for roughly 12 hours before recovering to ~8.4 mg/L by late evening. The pod's verdict flags this as **out of range (low)** against its configured minimum of 4 mg/L, starting 2026-10-09 04:09 UTC and ending 18:09 UTC — a single run, not ongoing, and not persistent.\n\nA few notes:\n- The pod is reporting normally (last reading 12 minutes ago), and no readings were excluded as faults.\n- A sensor problem can look like a water-quality change; a real event more often shows a combination of readings that fits a physical explanation and lasts across several readings. This drop did last across many readings, but it's worth inspecting the sensors for fouling or damage to rule out an instrument problem — clean them only if you can do so safely and within your site's safety rules.\n- If low oxygen is confirmed, treat sustained low dissolved oxygen as a priority and follow your site protocol for notifying others; also check that the DO sensor's reading changes when the water around it moves, and contact Clean Earth Rovers support (sales@cleanearthrovers.com) if it still looks wrong.\n- It would also be worth checking for activity near the pod around that time (pumping, discharges, heavy boat traffic) and noting any visible observations from a safe distance.\n\nWould you like me to look at what ORP, turbidity, or the other parameters were doing during that October 9 window to help interpret it?",
+      "tool_calls": [
+       {
+        "name": "query_sensor_data",
+        "arguments": {
+         "aggregation": "series",
+         "device": "dev:100000000000025",
+         "metric": "dissolved_oxygen",
+         "time_range": "last 7 days"
+        }
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 65415,
+       "completionTokens": 512,
+       "totalTokens": 65927,
+       "cachedPromptTokens": 57344
+      },
+      "cost": 0.00318697,
+      "elapsed_s": 11.2
+     },
+     "check": {
+      "pass": true,
+      "detail": "low oxygen reported: true; dismissed as fault: 0",
+      "evidence": []
+     }
+    },
+    {
+     "id": "G3-silent",
+     "turn": {
+      "question": "How is the water at Quiet Cove Pod over the last 7 days?",
+      "answer": "Here's how Quiet Cove Pod looked over the last 7 days of its data (report period **2026-09-23 to 2026-09-30**):\n\n**Status: Normal** — every parameter with a configured threshold stayed within it, and no events were flagged (0 events).\n\n- Dissolved oxygen, ORP, pH, conductivity and temperature: all Normal against the pod's configured thresholds (DO 4–14 mg/L, pH 6–8.5, ORP −200–400 mV, conductivity 40,000–75,000 µS/cm, temperature 50–95 °F — these are operator-set alert limits, not ecological standards).\n\n**Two important caveats:**\n\n1. **The pod has gone quiet.** Its last reading was 13 days ago (2026-09-30), so the report period ends there, not today. If you expected recent data, the battery, connection or sensor may need attention — Clean Earth Rovers support handles power, connection and sensor faults under your subscription (sales@cleanearthrovers.com).\n\n2. **Turbidity is not covered.** There were no usable turbidity readings: the values were stuck at one value for a long stretch, which most likely reflects a failed sensor rather than clear water. Those readings were excluded, and the sensor should be inspected. Note turbidity is a relative clarity index, not a calibrated measurement.\n\nAll 337 readings returned for the period were usable for at least one parameter, and no readings fell outside plausibility bounds.\n\nNew PDF in this reply: Quiet Cove Pod, 2026-09-23 to 2026-09-30, full report.",
+      "tool_calls": [
+       {
+        "name": "generate_report",
+        "arguments": {
+         "device": "dev:100000000000026",
+         "time_range": "last 7 days"
+        }
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 50078,
+       "completionTokens": 364,
+       "totalTokens": 50442,
+       "cachedPromptTokens": 34816
+      },
+      "cost": 0.0035157799999999996,
+      "elapsed_s": 13.6
+     },
+     "check": {
+      "pass": true,
+      "detail": "silence stated: true"
+     }
+    },
+    {
+     "id": "G4-turbidity",
+     "turn": {
+      "question": "Is the turbidity reading at Bay Mouth Pod right?",
+      "answer": "No — the turbidity reading at Bay Mouth Pod doesn't look trustworthy right now.\n\n- The latest reading (2026-10-12 02:09 UTC, 13 minutes ago) was excluded, and no usable reading exists in the current window 【T2】.\n- The verdict is \"likely data issue\": turbidity readings have been stuck at one value for a long stretch (2,253 readings since 2026-08-23), which the system flags as a likely failed sensor 【T2】.\n- Also note: 775 readings from an earlier location (2026-07-04 to 2026-08-23) were excluded, since the pod was moved 【T2】.\n\nFor context, turbidity here is a relative, uncalibrated index (not NTU), described only by clarity bands — so it can't be judged in or out of range in the first place 【T1】. But a long run of identical readings points to a sensor problem rather than the water.\n\nRecommended next step: inspect the turbidity sensor for fouling or damage, and if it still looks wrong, contact Clean Earth Rovers support (sales@cleanearthrovers.com) to have the sensor repaired or replaced.",
+      "tool_calls": [
+       {
+        "name": "get_turbidity_info",
+        "arguments": {}
+       },
+       {
+        "name": "query_sensor_data",
+        "arguments": {
+         "aggregation": "latest",
+         "device": "dev:100000000000023",
+         "metric": "turbidity",
+         "time_range": "now"
+        }
+       }
+      ],
+      "report_retried": false,
+      "usage": {
+       "promptTokens": 49828,
+       "completionTokens": 319,
+       "totalTokens": 50147,
+       "cachedPromptTokens": 45056
+      },
+      "cost": 0.0022269799999999995,
+      "elapsed_s": 6.7
+     },
+     "check": {
+      "pass": true,
+      "detail": "stuck or failed turbidity stated: true"
+     }
+    }
+   ],
+   "unrequested_reports": [
+    "G3-silent"
+   ]
+  }
+ ],
+ "spend_usd": 0.04759
+}

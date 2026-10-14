@@ -1,19 +1,14 @@
 import {
-  probeAccuracy, temperatureAccuracyC,
+  probeAccuracy, temperatureAccuracyC, minimumDetectableChange, V2_FALLBACK_RANGES, fallbackWaterClass,
   clarityBandFor, TURBIDITY_BAND_EDGES, isAllZeroTurbidity, isOffScaleTurbidity, OFF_SCALE_INDEX,
 } from "../../src/report/referenceRanges";
 
 /**
- * referenceRanges.ts is what's left of a numeric transcription of the source-of-truth doc and
- * four probe spec sheets, after the project supervisor vetoed the doc's baseline ranges in full
- * (2026-09-13, docs/timeline.md) -- `BASELINE_RANGES`, `baselineFor`, `WATER_BODY_TO_TIER`,
- * `rangeForTier` and `DO_ABSOLUTE_THRESHOLDS` are gone, along with their tests below. What
- * remains is the four probe spec sheets' accuracy numbers and the turbidity clarity bands,
- * neither of which the veto touched. Every numeric baseline now comes from
- * `operatorThresholds.ts`'s `metricThreshold` instead -- see reportEvents.test.ts and
- * buildReportInput.test.ts for that path's own tests. The trap worth pinning here is the same one
- * as before: the temperature accuracy formula requires Celsius while the live device API reports
- * Fahrenheit (see buildReportInput.ts and querySensorData's metrics.ts).
+ * referenceRanges.ts holds the probe spec sheets' accuracy numbers, the turbidity clarity bands,
+ * and source-of-truth v2's fallback ranges and minimum detectable change. A metric's range is the
+ * pod's operator threshold first (`operatorThresholds.ts`); v2's ranges apply only when that is
+ * rejected (docs/timeline.md, 2026-10-10 and 2026-10-11). The trap worth pinning here: the
+ * temperature accuracy formula requires Celsius while the live device API reports Fahrenheit.
  */
 
 describe("clarityBandFor", () => {
@@ -123,5 +118,64 @@ describe("probeAccuracy", () => {
 
   it("returns 0 for a metric with no spec on file at all", () => {
     expect(probeAccuracy("salinity", 10)).toBe(0);
+  });
+});
+
+describe("V2_FALLBACK_RANGES (v2 §3)", () => {
+  it("transcribes v2's pH, dissolved oxygen and ORP ranges per water class", () => {
+    expect(V2_FALLBACK_RANGES.freshwater).toEqual({
+      ph: { min: 6.5, max: 8.5 }, dissolvedOxygen: { min: 6, max: 11 }, orp: { min: 100, max: 400 },
+    });
+    expect(V2_FALLBACK_RANGES.brackish).toEqual({
+      ph: { min: 7.0, max: 8.3 }, dissolvedOxygen: { min: 5, max: 9 }, orp: { min: 100, max: 350 },
+    });
+    expect(V2_FALLBACK_RANGES.coastal.ph).toMatchObject({ min: 7.8, max: 8.3 });
+    expect(V2_FALLBACK_RANGES.coastal.dissolvedOxygen).toMatchObject({ min: 6, max: 8.5 });
+  });
+
+  it("gives no conductivity fallback in any class until 25 °C correction is confirmed", () => {
+    // Marina Park reads 31,000-39,000 µS/cm; v2's coastal 50,000-52,000 would flag it every day.
+    Object.values(V2_FALLBACK_RANGES).forEach((ranges) => {
+      expect(ranges.conductivity).toBeUndefined();
+      expect(ranges.temperature).toBeUndefined();
+    });
+  });
+
+  it("gives no coastal ORP fallback: v2 judges coastal ORP by trend, not absolute value", () => {
+    expect(V2_FALLBACK_RANGES.coastal.orp).toBeUndefined();
+  });
+
+  it("notes upwelling beside the coastal dissolved oxygen and pH ranges", () => {
+    expect(V2_FALLBACK_RANGES.coastal.dissolvedOxygen?.note).toMatch(/upwelling/);
+    expect(V2_FALLBACK_RANGES.coastal.ph?.note).toMatch(/upwelling/);
+    expect(V2_FALLBACK_RANGES.freshwater.ph?.note).toBeUndefined();
+  });
+
+  it("maps water body types to v2 columns, estuarine reading the brackish column", () => {
+    expect(fallbackWaterClass("Marine")).toBe("coastal");
+    expect(fallbackWaterClass("Brackish")).toBe("brackish");
+    expect(fallbackWaterClass("Estuarine")).toBe("brackish");
+    expect(fallbackWaterClass("Freshwater")).toBe("freshwater");
+  });
+});
+
+describe("minimumDetectableChange (v2 §8.3)", () => {
+  it("uses v2's fixed amounts for pH, dissolved oxygen and ORP", () => {
+    expect(minimumDetectableChange("ph", 8.1)).toBe(0.2);
+    expect(minimumDetectableChange("dissolved_oxygen", 7)).toBe(1);
+    expect(minimumDetectableChange("orp", 250)).toBe(50);
+  });
+
+  it("scales conductivity at 2% of the reading", () => {
+    expect(minimumDetectableChange("conductivity", 40_000)).toBeCloseTo(800, 10);
+  });
+
+  it("doubles the PT-1000 accuracy for temperature, converting °F in and out", () => {
+    // 77 °F = 25 °C; accuracy 0.15 + 0.002 x 25 = 0.2 °C; x2 = 0.4 °C = 0.72 °F.
+    expect(minimumDetectableChange("temperature", 77)).toBeCloseTo(0.72, 10);
+  });
+
+  it("returns 0 for turbidity, which is never range-compared", () => {
+    expect(minimumDetectableChange("turbidity", 500)).toBe(0);
   });
 });

@@ -29,6 +29,8 @@ export interface CurrentSite {
   note?: string;
   /** The reader's version of `note`, one sentence per caveat (see `USER_NOTES_FIELD`). */
   userNotes?: string[];
+  /** The current site's first and last located reading; absent when no site was established. */
+  bounds?: { startMs: number; endMs: number };
 }
 
 export interface SiteVisit {
@@ -139,5 +141,68 @@ export const currentSite = (rows: DeviceReading[]): CurrentSite => {
       return { ...r, latitude: fix?.[0], longitude: fix?.[1] };
     }),
     ...(notes.length ? { note: notes.join(" "), userNotes } : {}),
+    bounds: { startMs: start, endMs: end },
+  };
+};
+
+export interface PeriodSiteNotes {
+  /** Readings inside the period that the current-site filter left out, for the model. */
+  note?: string;
+  /** The reader's version of `note`. */
+  userNotes?: string[];
+  /** Model only: the pod moved, but none of its earlier-site readings fall in the period. */
+  historyNote?: string;
+}
+
+/**
+ * The site's notes for one requested period. `currentSite` counts what it left out across the
+ * pod's whole history, so a week asked about 50 days after a move would otherwise be told that
+ * the earlier site's readings "were excluded" from it. Here only readings inside the period
+ * count; earlier-site history outside it becomes a model-only note that the pod moved. Readings
+ * without a timestamp cannot be placed in or out of the period, so they always count.
+ */
+export const siteNotesForPeriod = (
+  rows: DeviceReading[],
+  site: CurrentSite,
+  inPeriod: (row: DeviceReading) => boolean,
+): PeriodSiteNotes => {
+  if (!site.bounds) {
+    return {
+      ...(site.note ? { note: site.note } : {}),
+      ...(site.userNotes ? { userNotes: site.userNotes } : {}),
+    };
+  }
+  const { startMs, endMs } = site.bounds;
+  const timed = orderedReadings(rows);
+  const time = (row: DeviceReading): number => Date.parse(row.observedAt!);
+  const span = (from: DeviceReading[]): string => `(${new Date(time(from[0])).toISOString()} to `
+    + `${new Date(time(from[from.length - 1])).toISOString()})`;
+  const earlier = timed.filter((row) => time(row) < startMs);
+  const earlierInPeriod = earlier.filter(inPeriod);
+  const unlocated = rows.length - timed.length
+    + timed.filter((row) => time(row) > endMs && inPeriod(row)).length;
+  const notes: string[] = [];
+  const userNotes: string[] = [];
+  if (earlierInPeriod.length) {
+    const range = span(earlierInPeriod);
+    notes.push(`${earlierInPeriod.length} reading(s) from an earlier location inside the requested `
+      + `period were excluded ${range}.`);
+    userNotes.push(`${earlierInPeriod.length} reading(s) from an earlier location ${range} fall `
+      + "inside the requested period and were left out; only the pod's current site is covered.");
+  }
+  if (unlocated) {
+    notes.push(`${unlocated} reading(s) with missing timestamps or outside the current site's `
+      + "coordinate-supported time span were excluded.");
+    userNotes.push(`${unlocated} reading(s) without a timestamp, or from outside the time the `
+      + "pod's GPS places it at its current site, were left out.");
+  }
+  const historyNote = earlier.length && !earlierInPeriod.length
+    ? `The pod has been at its current site since ${new Date(startMs).toISOString()}; its `
+      + `${earlier.length} earlier-location reading(s) ${span(earlier)} fall outside the requested `
+      + "period, so none were left out of it."
+    : undefined;
+  return {
+    ...(notes.length ? { note: notes.join(" "), userNotes } : {}),
+    ...(historyNote ? { historyNote } : {}),
   };
 };

@@ -10,6 +10,10 @@ import {
 import type { DeviceChain } from "../devices/mergeChains";
 import { METRIC_BY_KEY, METRICS } from "../devices/metrics";
 import { implausibilityReason, isPlausible } from "../devices/plausibility";
+import {
+  allChannelFailureRuns, inTimeOrder, qcReadings, readingGaps, stuckSensorNote, stuckSensorUserNote,
+} from "../devices/readingQc";
+import type { ReadingRun } from "../devices/readingQc";
 import { isAllZeroTurbidity, TURBIDITY_ALL_ZERO_CAVEAT } from "../report/referenceRanges";
 import type {
   DeviceReading,
@@ -31,13 +35,14 @@ import {
 } from "./timeRange";
 import type { ResolvedRange } from "./timeRange";
 import { readingAge } from "./readingAge";
-import { provenSiteStart } from "./currentSite";
+import { provenSiteStart, siteNotesForPeriod } from "./currentSite";
+import { dailyCycle, solarOffsetHours, withLocalSolar } from "./dailyCycle";
 import {
   DAY_MS, SITE_CACHE_MAX_ENTRIES, SITE_CACHE_MAX_ROWS, SITE_CACHE_RETENTION_MS,
   SITE_CACHE_TTL_MS, SITE_RECENT_DAYS, snapshotSite,
 } from "./siteSnapshot";
 import type { SiteSnapshot } from "./siteSnapshot";
-import { stuckTurbidityReadings, STUCK_SENSOR_NOTE, STUCK_SENSOR_USER_NOTE } from "./stuckSensor";
+import { metricVerdict } from "./metricVerdict";
 
 const log = createLogger("SensorTool");
 
@@ -138,6 +143,18 @@ const failure = (message: string): SensorToolResult => ({ error: message });
 /** The reader's version of the withheld-predecessor note (see `USER_NOTES_FIELD`). */
 const WITHHELD_USER_NOTE = "Earlier readings from this site are not available to this account, "
   + "so the history shown may start later than the site's first reading.";
+
+/**
+ * Said when every channel failed at once on three or more consecutive readings (source-of-truth
+ * v2 §7.2 rule 1), in v2 §9.2's "data issue likely" wording; the count is provisional until CER
+ * confirms it (`docs/STAKEHOLDER_QUESTIONS.md` item 25).
+ */
+const TURBIDITY_CAVEAT = "Turbidity is derived from a raw voltage by a provisional, uncalibrated "
+  + "conversion. It is a relative index with no unit, not a calibrated measurement and not NTU.";
+
+const BOARD_FAULT_NOTE = "Every sensor on this pod failed at the same time on three or more "
+  + "consecutive readings. This pattern most likely reflects a sensor or data issue, such as the "
+  + "board not responding, rather than the water; those readings were left out.";
 
 /**
  * Initials of a device name — "Old Woman Creek 2026" → "owc".
@@ -792,25 +809,37 @@ export class QuerySensorData {
     const referenceMs = Date.parse(referenceIso);
     const range = resolveRange(parsed, referenceMs);
     const { readings } = site;
-    const stuck = stuckTurbidityReadings(readings);
+    // QC over the whole site history, so a flat line that began before the window is still
+    // recognised inside it (`devices/readingQc.ts`).
+    const ordered = inTimeOrder(readings);
+    const qc = qcReadings(ordered, metricKeys);
+    const isStuck = (key: MetricKey, row: DeviceReading): boolean => {
+      const result = qc.get(key)?.get(row);
+      return result?.flag === "fail"
+        && (result.reason === "flat-line" || result.reason === "stuck-turbidity");
+    };
     const inRequestedRange = (row: DeviceReading): boolean => {
       const time = Date.parse(row.observedAt!);
       return time >= range.startMs
         && (range.endInclusive ? time <= range.endMs : time < range.endMs);
     };
-    const excludedStuck = [...stuck].filter(inRequestedRange).length;
     const periodReadings = readings.filter(inRequestedRange);
+    const position = QuerySensorData.newestPosition(readings, range);
+    const siteNotes = siteNotesForPeriod(snapshot.rows, site, inRequestedRange);
+    const excludedStuck = new Map(metricKeys.map((key): [MetricKey, number] => [
+      key, periodReadings.filter((row) => isStuck(key, row)).length,
+    ]));
     // A partly usable row still contributes to the report. Count it once, without making a
     // fault in one probe discard the other probes or counting six values as six readings.
     const usedReadings = periodReadings.filter((row) => metricKeys.some((key) => {
       const metric = row.metrics[key];
       return metric?.valid && metric.value !== undefined && isPlausible(key, metric.value)
-        && !(key === "turbidity" && stuck.has(row));
+        && !isStuck(key, row);
     })).length;
 
     // One fetched window, read once per requested metric. The device API is not touched again.
     const computed = metricKeys.map((key) => {
-      const usable = key === "turbidity" ? readings.filter((row) => !stuck.has(row)) : readings;
+      const usable = readings.filter((row) => !isStuck(key, row));
       const samples = QuerySensorData.samplesInRange(usable, key, range);
       onSamples?.(NAME_BY_METRIC_KEY.get(key)!, samples);
       return {
@@ -831,8 +860,8 @@ export class QuerySensorData {
       samples: Sample[],
     ): Record<string, unknown> => ({
       unit: unitFor(key),
-      ...(key === "turbidity" && excludedStuck > 0
-        ? { excluded_stuck: excludedStuck, sensor_quality: "likely failed sensor" } : {}),
+      ...((excludedStuck.get(key) ?? 0) > 0
+        ? { excluded_stuck: excludedStuck.get(key), sensor_quality: "likely failed sensor" } : {}),
       value: result.value,
       n_samples: result.nSamples,
       excluded_faulted: result.excludedFaulted,
@@ -844,10 +873,18 @@ export class QuerySensorData {
         : {}),
       ...(result.observedAt ? { observed_at: result.observedAt } : {}),
       ...(result.samples ? { samples: result.samples } : {}),
-      ...(result.series ? { series: result.series, bucket_ms: result.bucketMs } : {}),
+      ...(result.series ? QuerySensorData.seriesFields(result, samples, position?.longitude) : {}),
       ...(result.truncated
         ? { truncated: true, truncated_to: this.rawLimit, truncated_kept: result.truncatedKept }
         : {}),
+      verdict: metricVerdict({
+        key,
+        wireName: NAME_BY_METRIC_KEY.get(key)!,
+        ordered,
+        flags: qc.get(key)!,
+        range,
+        device,
+      }),
     });
 
     // Site readings are chronological. When location filtering removes history, the dates
@@ -858,27 +895,37 @@ export class QuerySensorData {
       const time = Date.parse(row.observedAt ?? "");
       return time < siteStartMs || time > siteEndMs;
     });
+    // Incomplete only when the location filter dropped readings inside the request. A first
+    // reading that lands a reporting interval after the window opens is ordinary spacing, and
+    // earlier-site history that ends before the window costs this answer nothing.
+    const sitePartial = siteLimited && snapshot.rows.some((row) => {
+      if (!inRequestedRange(row)) return false;
+      const time = Date.parse(row.observedAt ?? "");
+      return readings.length === 0 || time < siteStartMs || time > siteEndMs;
+    });
     const firstAt = periodReadings[0]?.observedAt;
     const lastAt = periodReadings[periodReadings.length - 1]?.observedAt;
     let resolvedRange: { start: string; end: string; label: string } | null = {
       start: range.start, end: range.end, label: range.label,
     };
-    if (siteLimited) {
+    // Narrowed to the current-site readings only when the filter dropped some inside the request,
+    // so a week long after a move keeps the dates asked for.
+    if (sitePartial) {
       resolvedRange = firstAt && lastAt ? {
         start: firstAt, end: lastAt, label: `${firstAt} to ${lastAt} (current-site readings)`,
       } : null;
     }
-    const sitePartial = siteLimited && (!resolvedRange
-      || Date.parse(resolvedRange.start) > range.startMs
-      || Date.parse(resolvedRange.end) < range.endMs);
     const partial = snapshot.fromMs > range.startMs || sitePartial;
-
-    const position = QuerySensorData.newestPosition(readings, range);
+    // The snapshot may reach back to the epoch to establish the site; that read is plumbing.
+    // Report the part of the request it covered, so no reader takes the epoch for the window.
+    const searchedStartMs = Math.max(snapshot.fromMs, range.startMs);
+    const searchedEndMs = Math.min(snapshot.at, range.endMs);
 
     const common = {
       ...identity,
       current_site_last_reported: QuerySensorData.newestObservedAt(readings),
-      ...(site.note ? { site_note: site.note } : {}),
+      ...(siteNotes.note ? { site_note: siteNotes.note } : {}),
+      ...(siteNotes.historyNote ? { site_history_note: siteNotes.historyNote } : {}),
       time_range_requested: timeRangeInput,
       time_range_resolved: resolvedRange,
       reading_counts: { used: usedReadings, excluded: periodReadings.length - usedReadings },
@@ -886,8 +933,8 @@ export class QuerySensorData {
       // an absent GPS lock for coordinates of 0,0 — the same rule metrics.ts applies to `lat`.
       ...(position ? { position } : {}),
       window_actually_searched: {
-        start: new Date(snapshot.fromMs).toISOString(),
-        end: new Date(snapshot.at).toISOString(),
+        start: new Date(searchedStartMs).toISOString(),
+        end: new Date(searchedEndMs).toISOString(),
         ...(partial
           ? {
             complete: false,
@@ -923,20 +970,49 @@ export class QuerySensorData {
       allZeroTurbidity,
     );
 
-    const stuckExcluded = metricKeys.includes("turbidity") && excludedStuck > 0;
-    const extraNotes = [notes.note, site.note, stuckExcluded ? STUCK_SENSOR_NOTE : undefined]
+    const stuckLabels = metricKeys
+      .filter((key) => (excludedStuck.get(key) ?? 0) > 0)
+      .map((key) => METRIC_BY_KEY.get(key)?.label ?? key);
+    const overlaps = (run: ReadingRun): boolean => run.endMs >= range.startMs
+      && (range.endInclusive ? run.startMs <= range.endMs : run.startMs < range.endMs);
+    const boardFaults = metricKeys.length > 1
+      ? allChannelFailureRuns(ordered, metricKeys).filter(overlaps) : [];
+    const gaps = readingGaps(ordered).filter(overlaps);
+    const boardNote = boardFaults.length > 0 ? BOARD_FAULT_NOTE : undefined;
+    const extraNotes = [notes.note, siteNotes.note,
+      stuckLabels.length > 0 ? stuckSensorNote(stuckLabels) : undefined, boardNote]
       .filter(Boolean);
     if (extraNotes.length) notes.note = extraNotes.join(" ");
     Object.assign(notes, QuerySensorData.userNotes([
       ...(notes[USER_NOTES_FIELD] as string[] | undefined ?? []),
-      ...(site.userNotes ?? []),
-      stuckExcluded ? STUCK_SENSOR_USER_NOTE : undefined,
+      ...(siteNotes.userNotes ?? []),
+      stuckLabels.length > 0 ? stuckSensorUserNote(stuckLabels) : undefined,
+      boardNote,
     ]));
+    const quality = {
+      ...(boardFaults.length > 0 ? {
+        board_fault: boardFaults.map((run) => ({
+          from: new Date(run.startMs).toISOString(),
+          to: new Date(run.endMs).toISOString(),
+          readings: run.readings,
+        })),
+      } : {}),
+      ...(gaps.length > 0 ? {
+        missing_data: {
+          gaps_over_3_hours: gaps.length,
+          longest_gap_hours: Math.round(
+            Math.max(...gaps.map((gap) => gap.endMs - gap.startMs)) / 360_000,
+          ) / 10,
+        },
+      } : {}),
+    };
 
     if (single) {
       // Flat shape for a single metric — unchanged from before multi-metric existed, so nothing
       // reading `result.value` had to learn a new shape.
-      return { ...common, ...shape(single, computed[0].result, computed[0].samples), ...notes };
+      return {
+        ...common, ...quality, ...shape(single, computed[0].result, computed[0].samples), ...notes,
+      };
     }
 
     // Every metric comes off the same rows, so for `latest`/`earliest` they all share one
@@ -951,12 +1027,32 @@ export class QuerySensorData {
 
     return {
       ...common,
+      ...quality,
       ...(observedAts.size === 1 ? { observed_at: [...observedAts][0] } : {}),
       metrics: Object.fromEntries(computed.map((entry) => [
         NAME_BY_METRIC_KEY.get(entry.key) as string,
         shape(entry.key, entry.result, entry.samples),
       ])),
       ...notes,
+    };
+  }
+
+  /**
+   * A series with each bucket's start in local solar time beside UTC, and when in the day the
+   * metric peaks (`dailyCycle.ts`). Without a GPS fix there is no longitude, so UTC only.
+   */
+  private static seriesFields(
+    result: AggregateResult,
+    samples: Sample[],
+    longitude: number | undefined,
+  ): Record<string, unknown> {
+    if (longitude === undefined) return { series: result.series, bucket_ms: result.bucketMs };
+    const cycle = dailyCycle(samples, longitude);
+    return {
+      series: withLocalSolar(result.series ?? [], longitude),
+      bucket_ms: result.bucketMs,
+      local_solar_offset_hours: Math.round(solarOffsetHours(longitude) * 10) / 10,
+      ...(cycle ? { daily_cycle: cycle } : {}),
     };
   }
 
@@ -1123,7 +1219,7 @@ export class QuerySensorData {
 
     if (implausible.length > 0) {
       // Said out loud rather than silently dropped: a probe that rails without setting its
-      // error flag is a maintenance finding in its own right, and a reader comparing this
+      // error flag is worth knowing about, and a reader comparing this
       // answer against a raw export needs to know why the counts differ.
       const parts = implausible.map(([key, count]) => {
         const label = METRIC_BY_KEY.get(key)?.label ?? key;
@@ -1148,19 +1244,16 @@ export class QuerySensorData {
       );
     }
 
-    if (metricKeys.includes("turbidity")) {
-      notes.push(
-        "Turbidity is derived from a raw voltage by a provisional, uncalibrated conversion. "
-        + "It is a relative index with no unit, not a calibrated measurement and not NTU.",
-      );
-    }
-
     if (allZeroTurbidity) {
       notes.push(TURBIDITY_ALL_ZERO_CAVEAT);
       userNotes.push(TURBIDITY_ALL_ZERO_CAVEAT);
     }
 
     return {
+      // Its own field rather than part of "note", so the prompt can ask for it once per
+      // conversation instead of in every answer that mentions turbidity (POST_LAUNCH_BACKLOG.md
+      // §1, item D3).
+      ...(metricKeys.includes("turbidity") ? { turbidity_caveat: TURBIDITY_CAVEAT } : {}),
       ...(notes.length > 0 ? { note: notes.join(" ") } : {}),
       ...(userNotes.length > 0 ? { [USER_NOTES_FIELD]: userNotes } : {}),
     };
@@ -1183,7 +1276,9 @@ export const querySensorDataDefinition: ToolDefinition = {
       + "source of actual readings — the provided documents never contain them. Use it for any "
       + "question about current or past values, averages, minimums, maximums, or trends. "
       + "Returns value: null with n_samples: 0 when no reading exists in the window; that means "
-      + "no data, never a reading of zero.",
+      + "no data, never a reading of zero. Each metric also carries a verdict (in range, out of "
+      + "range, likely data issue, not assessed, not enough data) computed after quality checks; "
+      + "relay it rather than judging the readings yourself.",
     parameters: {
       type: "object",
       properties: {
