@@ -697,13 +697,17 @@ means nothing for the new set.
 **Capturing an arm** (measured 2026-09-23: about $0.07-0.08 per 90-turn arm, plus about $0.65-0.72 to judge it). Name every new capture with `--run=<id>` on `bakeoff`, `gate:check` and `judge`: it writes to `eval/transcripts/<id>/` and `data/results/judge/<id>/`, keeping the old transcripts verbatim and the judge from reusing verdicts keyed only by arm, fixture, turn and dimension; `bakeoff` refuses to overwrite an existing transcript. The user often runs a server on port 8000 with different env —
 **use another port, do not kill it.**
 
-```
-PORT=8010 SENSOR_TOOL=false REPORT_TOOL=false DEBUG_RETRIEVAL=true \
-  CORPUS_SOURCE=firestore DEFAULT_RETRIEVAL=firestore-direct LLM_MAX_TOKENS=16384 \
-  npx ts-node src/index.ts
+The full procedure, from the decision rule fixed before capture to the §9 entry, is the `eval-capture` skill (`.claude/skills/eval-capture/SKILL.md`); the commands below are its launch configuration (2026-09-27 onward: `local-vector` k=20, both rewrites, `glm-5p3-flash` at reasoning low, the catalogue block, the artifact corpus, tools off). With GLM and rewrites a capture costs about $0.25-0.35 and a `--final` correctness pass about $0.50-0.65.
+Set every value on the command line: the local `.env` turns the tools on.
 
-SENSOR_TOOL=false REPORT_TOOL=false DEBUG_RETRIEVAL=true CORPUS_SOURCE=firestore \
-  npm run bakeoff -- --arm=<arm> --pass=warm --base-url=http://localhost:8010/api/v1 --spot-check
+```
+PORT=8011 SENSOR_TOOL=false REPORT_TOOL=false DEBUG_RETRIEVAL=true \
+  LLM_MODEL=accounts/fireworks/models/glm-5p3-flash LLM_REASONING_EFFORT=low LLM_MAX_TOKENS=16384 \
+  DEFAULT_RETRIEVAL=local-vector QUERY_REWRITE=true QUERY_REWRITE_FIRST_TURN=true \
+  CATALOGUE_PROMPT=true CORPUS_SOURCE=artifact npx ts-node src/index.ts
+
+SENSOR_TOOL=false REPORT_TOOL=false npm run bakeoff -- --arm=local-vector --spot-check \
+  --base-url=http://localhost:8011/api/v1
 ```
 
 `--spot-check` first, always. An adapter returning empty context produces a clean-looking and
@@ -745,7 +749,7 @@ dated entries after it are the record. The launch corpus is now 16 documents and
 - Tags: `docs-archive-2026-08-30` (six archived docs), **`eval-archive-2026-09-01`** (the whole
   pre-rebuild eval set, 556 files), `wip-merge-chain-fanout-2026-08-31`,
   `wip-restore-pgvector-2026-08-31` (an arm the project has decided against — §1, do not pursue).
-- Full test suite: **46 suites / 949 tests, green, zero skipped** (2026-09-02).
+- Full test suite: **1584 tests, passing** at `303280d` (2026-09-29, the last full run); 87 suites (76 unit, 11 integration) as of 2026-10-14.
 
 ### Phase status
 
