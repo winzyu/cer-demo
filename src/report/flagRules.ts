@@ -339,6 +339,55 @@ export const assessFlags = (
   };
 };
 
+/**
+ * The window's readings preceded by the `FLAG_WINDOW_MS` of `lookback` before its first reading
+ * (or before `fromMs` when the window has none), so a flagged day straddling the window's start
+ * is judged on its full 24 hours.
+ */
+const withLookback = (
+  values: readonly TimedValue[],
+  lookback: readonly TimedValue[] | undefined,
+  fromMs: number,
+): TimedValue[] => {
+  const start = values[0]?.[0] ?? fromMs;
+  return [...(lookback ?? []).filter(([ms]) => start - ms < FLAG_WINDOW_MS), ...values];
+};
+
+/**
+ * The flags of a window starting at `fromMs`, judged with the day of `lookback` before it
+ * (docs/timeline.md, 2026-10-11): episodes ending before the window are dropped, and the edge
+ * rule counts the window's own days, not the lookback. The chat verdict (`judgeMetric`) and the
+ * report (`types.ts` `flagsFor`) both judge through it, so they agree on the same period.
+ */
+export const assessWindow = (input: {
+  values: readonly TimedValue[];
+  lookback?: readonly TimedValue[];
+  fromMs: number;
+  limit: Limit;
+  minimumDetectableChange: Margin;
+  exceedanceMargin?: number;
+}): FlagAssessment => {
+  const { limit, minimumDetectableChange, exceedanceMargin } = input;
+  const reaches = (s: { endMs: number }): boolean => s.endMs >= input.fromMs;
+  const all = assessFlags(
+    withLookback(input.values, input.lookback, input.fromMs),
+    limit,
+    minimumDetectableChange,
+    exceedanceMargin,
+  );
+  const episodes = all.episodes.filter(reaches);
+  const edge = episodes.length > 0 || input.values.length === 0 ? undefined
+    : assessFlags(input.values, limit, minimumDetectableChange, exceedanceMargin).edge;
+  return {
+    episodes,
+    exceedance: all.exceedance.filter(reaches),
+    current: all.current,
+    currentExceedance: all.currentExceedance,
+    persistent: all.persistent,
+    ...(edge ? { edge } : {}),
+  };
+};
+
 export type VerdictStatus =
   | "in range"
   | "out of range"
@@ -371,29 +420,18 @@ export const judgeMetric = (input: {
   minimumDetectableChange: Margin;
   faultedOnly?: boolean;
 }): MetricVerdict => {
-  const start = input.values[0]?.[0] ?? input.fromMs ?? Infinity;
-  const fromMs = input.fromMs ?? start;
-  const values = [
-    ...(input.lookback ?? []).filter(([ms]) => start - ms < FLAG_WINDOW_MS),
-    ...input.values,
-  ];
-  const reaches = (s: { endMs: number }): boolean => s.endMs >= fromMs;
-  const unusual = unusualStretches(values).filter(reaches);
+  const fromMs = input.fromMs ?? input.values[0]?.[0] ?? Infinity;
+  const values = withLookback(input.values, input.lookback, fromMs);
+  const unusual = unusualStretches(values).filter((s) => s.endMs >= fromMs);
   if (input.faultedOnly && input.values.length === 0) return { status: "likely data issue", unusual };
   if (!input.limit) return { status: "not assessed", unusual };
   if (values.length < MIN_FLAG_READINGS) return { status: "not enough data", unusual };
-  const all = assessFlags(values, input.limit, input.minimumDetectableChange);
-  const episodes = all.episodes.filter(reaches);
-  // The edge rule counts the window's own days, not the day of lookback before it.
-  const edge = episodes.length > 0 || input.values.length === 0 ? undefined
-    : assessFlags(input.values, input.limit, input.minimumDetectableChange).edge;
-  const flags: FlagAssessment = {
-    episodes,
-    exceedance: all.exceedance.filter(reaches),
-    current: all.current,
-    currentExceedance: all.currentExceedance,
-    persistent: all.persistent,
-    ...(edge ? { edge } : {}),
-  };
+  const flags = assessWindow({
+    values: input.values,
+    lookback: input.lookback,
+    fromMs,
+    limit: input.limit,
+    minimumDetectableChange: input.minimumDetectableChange,
+  });
   return { status: flags.episodes.length > 0 ? "out of range" : "in range", flags, unusual };
 };

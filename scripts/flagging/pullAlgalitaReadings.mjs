@@ -23,4 +23,4 @@ const device = devices.find((d) => d?.data?.label === label);
 const readings = await get(`/water/period/32/day?device=${encodeURIComponent(label)}`);
 fs.writeFileSync(out, JSON.stringify({ fetchedAt: new Date().toISOString(), device, readings }));
 console.log(`device found: ${Boolean(device)}; readings: ${readings.length}; `
-  + `first ${readings[0]?.date}; last ${readings.at(-1)?.date}`);
+  + `first ${readings[0]?.data?.date}; last ${readings.at(-1)?.data?.date}`);

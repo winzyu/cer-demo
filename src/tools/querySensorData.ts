@@ -15,7 +15,7 @@ import {
   unusualKind,
 } from "../devices/readingQc";
 import type { ReadingRun } from "../devices/readingQc";
-import type { UnusualKind } from "../report/flagRules";
+import { FLAG_WINDOW_MS, type UnusualKind } from "../report/flagRules";
 import {
   fallbackWaterClass, isAllZeroTurbidity, mapWaterType, TURBIDITY_ALL_ZERO_CAVEAT,
 } from "../report/referenceRanges";
@@ -244,8 +244,10 @@ export interface SensorQueryParams {
    */
   maxBuckets?: number;
   /** Programmatic only: inspect in-window samples before aggregation or raw truncation.
-   * Includes fault/plausibility flags so the caller can use the same filtering as aggregate. */
-  onSamples?: (metric: string, samples: readonly Sample[]) => void;
+   * Includes fault/plausibility flags so the caller can use the same filtering as aggregate.
+   * `lookback` holds the fetched samples of the `FLAG_WINDOW_MS` before the window, so a caller
+   * can judge the window's first day with them as the verdict does (`flagRules.ts`). */
+  onSamples?: (metric: string, samples: readonly Sample[], lookback: readonly Sample[]) => void;
 }
 
 export interface QuerySensorDataOptions {
@@ -849,11 +851,24 @@ export class QuerySensorData {
         const kind = unusualKind(qc.get(key)?.get(row));
         return kind && row.observedAt ? [[row.observedAt, kind]] : [];
       }));
-      const samples = QuerySensorData.samplesInRange(usable, key, range).map((sample) => {
+      const marked = (sample: Sample): Sample => {
         const unusual = unusualAt.get(sample.at);
         return unusual ? { ...sample, unusual } : sample;
-      });
-      onSamples?.(NAME_BY_METRIC_KEY.get(key)!, samples);
+      };
+      const samples = QuerySensorData.samplesInRange(usable, key, range).map(marked);
+      if (onSamples) {
+        const before = {
+          ...range,
+          startMs: range.startMs - FLAG_WINDOW_MS,
+          endMs: range.startMs,
+          endInclusive: false,
+        };
+        onSamples(
+          NAME_BY_METRIC_KEY.get(key)!,
+          samples,
+          QuerySensorData.samplesInRange(usable, key, before).map(marked),
+        );
+      }
       return {
         key,
         samples,

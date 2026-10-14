@@ -67,6 +67,7 @@
  */
 
 import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorData";
+import type { Sample } from "../tools/aggregate";
 import { SensorQueryError } from "../tools/querySensorData";
 import { mapWaterType } from "./referenceRanges";
 import { USER_NOTES_FIELD } from "../types/tool.types";
@@ -312,6 +313,12 @@ export const buildReportInput = async (
   let medianResult: Record<string, unknown>;
   let hourlyResult: Record<string, unknown>;
   const readingsByMetric = new Map<string, TimedValue[]>();
+  const lookbackByMetric = new Map<string, TimedValue[]>();
+  const kept = (samples: readonly Sample[]): TimedValue[] => samples
+    .filter((sample) => sample.valid && sample.plausible !== false)
+    .map((sample): TimedValue => (sample.unusual
+      ? [sample.atMs, sample.value, sample.unusual] : [sample.atMs, sample.value]))
+    .sort((a, b) => a[0] - b[0]);
   try {
     // Pin one authorized snapshot for series, exact median and hourly pattern classification.
     // These deterministic calculations never go through the model's tool-calling loop.
@@ -320,11 +327,10 @@ export const buildReportInput = async (
         ...baseArgs,
         aggregation: "series",
         bucket: "auto",
-        onSamples: (key, samples) => readingsByMetric.set(key, samples
-          .filter((sample) => sample.valid && sample.plausible !== false)
-          .map((sample): TimedValue => (sample.unusual
-            ? [sample.atMs, sample.value, sample.unusual] : [sample.atMs, sample.value]))
-          .sort((a, b) => a[0] - b[0])),
+        onSamples: (key, samples, lookback) => {
+          readingsByMetric.set(key, kept(samples));
+          lookbackByMetric.set(key, kept(lookback));
+        },
       },
       { ...baseArgs, aggregation: "median" },
       {
@@ -553,6 +559,7 @@ export const buildReportInput = async (
         mean,
         median,
         readings: readingsByMetric.get(meta.key) ?? [],
+        lookback: lookbackByMetric.get(meta.key) ?? [],
         ...(pastPeriod ? { pastPeriod } : {}),
         // See file docstring §1.
         pattern: classifyPattern(hourlySeries(hourlyMetrics[meta.key])),

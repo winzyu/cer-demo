@@ -7,7 +7,8 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 - **Gilligan is live (2026-10-07).** cer-gilligan `00004-r5q`, cer-api `00081-qon` (tag `rc2`) and cer-ui `00070-dax` (tag `rc1`) take all traffic; record in [`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md) §7 items 10-19.
 - **Flagging rework** (Michael's 2026-10-12 decisions, on top of v2 flagging, landed on `dev` 2026-10-12): built, tested and replayed on `task/flagging-share-window`, pushed, not merged or deployed; decisions in [`timeline.md`](timeline.md) 2026-10-13.
-  Next: start at [`migration/FLAGGING_REWORK_HANDOFF_2026-10-13.md`](migration/FLAGGING_REWORK_HANDOFF_2026-10-13.md) "Start here": the user sends Michael its summary, then revert what he rejects and check the edge rule on real readings.
+  Checked on Algalita's real month 2026-10-13 (the report now judges with the day before its period, as chat does; the fixture is reshaped on the real month).
+  Next: start at [`migration/FLAGGING_REWORK_HANDOFF_2026-10-13.md`](migration/FLAGGING_REWORK_HANDOFF_2026-10-13.md) "Start here": the user sends Michael its summary and addendum, then revert what he rejects.
 - **Post-launch backlog.** Order the remaining items in [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md) with the user, reconciled with the untracked `docs/migration/POST_RELEASE_ITEMS_EXPLAINED.html` (2026-10-02); the unguarded user-update routes (§2) are the obvious next candidate.
 - **Report editing (backlog §6).** Report options (`omit`) are built and unit-tested on cer-demo `task/report-omit` and server `task/gilligan-report-omit`; the Mirror tests (2026-10-10 and 11, [`migration/REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](migration/REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md)) pass the mechanism; the false-claim fix (`5390332`: server-written "New PDF in this reply" line, forced retry) made a report in 8 of 8 replays and all three turns of a cer-api chat, with the retry firing in 7 of 11 (results doc, "Fix test").
   Landed on `dev` (2026-10-12), with the report-claim check no longer reading reading-QC sentences as claims and `threshold_notes` covering every threshold footnote; not deployed. Next: the user sends Michael the samples in `migration/report-omit-samples/`; the server branch `task/gilligan-report-omit` waits for push consent.
@@ -23,7 +24,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - Flagging rework: decisions 1-10 taken with the user and recorded; implemented in `63fab5f` (reading labels, share rule, current-only Action Required, edge rule, device-only data issues, events from flags); behaviour in [`SPECS.md`](SPECS.md) "The flag rule", "Reading labels", "Verdicts".
 - Checks: 23 suites run singly, all passing, including a new Algalita end-to-end suite on recorded plus synthetic readings; typecheck and lint clean; full `npm test` not run.
 - Paid replay of the customer's two questions on a fake device API: $0.053 of the approved $0.30; `dev` calls Sep 26 a data issue and the report Action Required, the branch describes the drop and reports Watch with past flags.
-- The agent's read-only production pull of Algalita was blocked; the edge rule is unverified on real afternoons.
+- The user's read-only pull of Algalita's month (2026-10-13) confirmed the rules locally; it found the report missing a flag that straddles the period's start, now fixed, and the test fixture was reshaped on the real month without committing its readings (handoff, "Real-month check").
 - Earlier sessions' outcomes are in their durable docs; history is `git log -p docs/STATUS.md`.
 
 ## Working tree
@@ -47,8 +48,8 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 - User, report editing: send Michael the before-and-after PDFs and correct the earlier message that the model edits parts of the report (it never did; the variation came from data-driven templates).
 - Agent, report editing: optionally relay `report_retried` through cer-api (`CerRagService.ask`) so retries show without Gilligan's log; stop the Mirror stack when the user says (delete `mirror-env.sh` and `server-mirror/`).
 - Agent, behaviour: the mirror fixture, reproduction and prompt and catalogue changes in [`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md) §5-6.
-- User, flagging: send Michael the handoff's summary; run `! node scripts/flagging/pullAlgalitaReadings.mjs /tmp/algalita-month.json` from worktree `flagging-share-window`; say when to merge into `dev`.
-- Agent, flagging: Michael's answers into [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md) 27-29, revert rejected rules (the handoff's "Where each rule lives"), check the real readings.
+- User, flagging: send Michael the handoff's summary and addendum; say when to merge into `dev`; optionally approve a replay on the reshaped month (about $0.05).
+- Agent, flagging: Michael's answers into [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md) 27-29, revert rejected rules (the handoff's "Where each rule lives").
 - Agent, post-launch: the rest of [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md), once ordered.
 - Agent, upstream landing: build the `main` merges (server conflicts in `WaterAnalyticsService.ts`; take the release side); push on consent; tell Michael `62993fe` ships with server `main`.
 - Agent, release follow-through: logs and spend in the first days; cer-gilligan to 2 instances after the restart check; remove stale tags (backlog §4).

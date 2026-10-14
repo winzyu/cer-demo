@@ -5,7 +5,7 @@
  *   npx ts-node --transpile-only scripts/flagging/fakeAlgalitaApi.ts [--port 5198] [--log <file>]
  *
  * Point a server at it with `DEVICE_API_BASE_URL=http://localhost:5198/api/v1`. Any bearer token is
- * accepted. The month ends at a fixed instant (Oct 12 21:00 PDT), and the sensor tool anchors
+ * accepted. The month ends at its newest reading (Oct 13 11:30 PDT), and the sensor tool anchors
  * relative ranges to the newest reading, so "last 30 days" is the customer's period on any day.
  */
 import fs from "fs";

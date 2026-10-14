@@ -14,7 +14,7 @@ Rules carried over: STATUS.md is the coordinator's, so edit only this workstream
 Next steps, in order:
 1. The user sends "Summary for Michael" below to Michael; record his answers in `STAKEHOLDER_QUESTIONS.md` items 27-29 and a timeline row.
 2. Revert or adjust any rule he rejects, using "Where each rule lives" below; rerun the suites listed under "Tests run".
-3. Once the user has run the real-data pull (see "Still open"), check the edge rule and the Sep 27-29 and Oct 2-12 cases on the real readings, and replace the fixture's synthetic days if they differ materially.
+3. Done 2026-10-13: the real month is checked and the fixture is reshaped on it (see "Real-month check"); its findings for Michael are under "Addendum for Michael".
 4. Ask the user before merging into `dev`; deployment (F16) is a separate decision.
 
 ## Summary for Michael
@@ -66,13 +66,44 @@ For reverting one rule without the others; each has tests named in "Tests run".
 | 9. Events from flags | `outsideBaselineWindows` in `src/report/events.ts`. |
 | Wording | The verdict rules in `src/prompt/systemPrompt.ts`; `statusReason` and `flagDetail` in `src/tools/generateReport.ts`; the flag footnote in `renderPdf.ts`. |
 
+## Addendum for Michael (real month)
+
+Optional, to send with the summary or after it; written to be sent as is.
+
+**Checked on the pod's real readings (Sep 12 to Oct 13).** The rules hold: Sep 26 high and Sep 27-29 low are flagged and told as past, Oct 7 stays quiet, the 30-day report is Watch, and Oct 3-9's afternoons are "at the low edge, on 6 of 7 days".
+Three things the month added:
+- Sep 13 is flagged low on three readings within 24 hours (5.46, 5.16, 5.77), one of them the night before a "last 30 days" window; the chat and the report now both count that night, so they agree.
+- On 17 readings (Sep 15, then 2-4 most afternoons Oct 3-8) every probe reported an error at once, a whole-board read failure; three in a row on Oct 8 (15:22-16:37 PDT) make a data issue for every sensor.
+  They fall in the same afternoons as the dips to about 6.0: is anything known about the pod's power or wiring in the afternoon heat?
+- Conductivity fell to 1,387 µS/cm on Sep 24 around 16:30-17:30 PDT, with pH reading 0.00 just before: was the pod out of the water that afternoon?
+
+## Real-month check
+
+The user ran the read-only pull (two GETs, 2026-10-13); the agent checked it locally, with no further production reads and no model calls.
+Every case above held; the differences from the old fixture were material, so `test/fixtures/algalita/month.ts` is now synthetic data shaped on the real month: the recorded stretches as before, and elsewhere its own values and times drawn to each shape listed below.
+At the user's decision (2026-10-14) no other real reading is committed; the pull stays outside the repository.
+What the real month changed:
+- The report judged its period without the 24 hours before it, while the chat verdict included them, so the same 30 days gave a Sep 13 flag in chat and none in the report.
+  Fixed: both now judge through `assessWindow` in `src/report/flagRules.ts`; the sensor tool passes the report the day before its period through `onSamples`.
+- Sep 27 has three readings below pH 3 (2.22-2.47), now a third unusual stretch; the synthetic days bottomed at 3.4.
+- Sep 15 and Oct 3-8 hold whole-board read failures the synthetic days had none of; the report's likely data issues now name every sensor and "All sensors at once", besides turbidity at 0.
+- Conductivity is flagged low on Sep 24-25 (to 1,387 µS/cm), so the 30-day report flags pH and conductivity.
+- The real thresholds are 30-90 °F for temperature, not the 50-80 °F of the registry variant the replay used, so temperature is not flagged.
+- "Last 7 days" (Oct 6-13) has no edge mention: the dips stopped after Oct 9, so fewer than half the window's days qualify.
+- Sep 11-24 is sparse (1 to 19 readings a day, gaps up to 8 hours).
+  Asked about Sep 13 (UTC) alone, the chat lists a one-reading flagged stretch at 05:07 UTC: it counts toward a qualifying 24 hours but sits more than 12 hours from the others, so it is its own stretch.
+  This follows the rules as built; left as is for review.
+
+The paid replay above ran on the old synthetic month and was not rerun.
+
 ## Commits
 
 | Commit | What |
 |---|---|
 | `fe7feae`, `55b7ea3` | Decisions 1-10 recorded in the timeline. |
 | `63fab5f` | The rework: reading labels, the share rule, current against past, the edge rule, device-only data issues, events from flags, prompt and report wording, tests. |
-| (this commit) | SPECS, this handoff, the replay script and runs, the read-only pull script. |
+| `9c57aa9`, `f945ccb`, `1bacc19` | SPECS, this handoff, the replay script and runs, the read-only pull script, STATUS. |
+| (this commit) | The real-month check: the report judges with the day before its period, the fixture reshaped on the real month, the pull script's summary line. |
 
 ## Decisions and what they changed
 
@@ -105,13 +136,12 @@ Each follows from a decision but was not spelled out in it; each is easy to chan
 
 ## Tests run
 
-All single suites, all passing: `plausibility` 17, `readingQc` 31, `flagRules` 25, `algalitaFlagging` 7 (new), `querySensorData` 85, `buildReportInput` 43, `generateReport` 24, `reportEvents` 33, `reportNarrative` 56, `reportModel` 41, `reportRenderPdf` 37, `aggregate` 34, `prompt` 87, `dataSkepticism` 26, `q3Corrections` 8, `dailyCycle` 7, `gateCheck` 56, `getPodThresholds` 23, `listPods` 16, `mergeChains` 37, `postLaunchMerge` 42, `siteQuality` 12, `siteSnapshot` 17.
+All single suites, all passing after the real-month check: `plausibility` 17, `readingQc` 31, `flagRules` 27, `algalitaFlagging` 10, `querySensorData` 85, `buildReportInput` 43, `generateReport` 24, `reportEvents` 33, `reportNarrative` 56, `reportModel` 41, `reportRenderPdf` 37, `aggregate` 34, `prompt` 87, `dataSkepticism` 26, `q3Corrections` 8, `dailyCycle` 7, `gateCheck` 56, `getPodThresholds` 23, `listPods` 16, `mergeChains` 37, `postLaunchMerge` 42, `siteQuality` 12, `siteSnapshot` 17.
 `npm run typecheck` and `npm run lint` pass.
 The full suite was not run.
 
-The new `algalitaFlagging` suite runs the real sensor tool and report on a month shaped on the Algalita Pod (`test/fixtures/algalita/month.ts`).
-Its Sep 25-26, Sep 29-30 and Oct 7 readings are the recorded ones from the overview; the rest is synthetic, drawn to the overview's description.
-The production pull that would have replaced the synthetic parts was blocked for the agent; see "Still open".
+The `algalitaFlagging` suite runs the real sensor tool and report on a month shaped on the Algalita Pod's real one (`test/fixtures/algalita/month.ts`).
+Its test that the chat and the report name the same flags fails without the `assessWindow` fix.
 
 ## Paid replay
 
@@ -138,9 +168,9 @@ Run on the branch with the fake API (`npx ts-node --transpile-only scripts/flagg
 | Situation | Expected chat answer | Expected report text |
 |---|---|---|
 | "Why is there a big drop in pH on Sept 26?" (Algalita) | Describes the drops with times and values (7.19 to 2.73 at 17:56 PDT; 11.21 to 6.36 at 10:56 PDT), what the other channels did, that the data cannot show the cause, and that a calibration check would confirm; never "fault", "malfunction", "impossible", "inspect". | Not applicable. |
-| "Give me a report on the last 30 days" (Algalita) | Watch; pH flagged high Sep 26 and low Sep 27-29, both cleared; leads with what the water did, not data reliability; turbidity stuck at 0 named as the only sensor problem. | pH analysis ends "That has since cleared"; a sentence that some readings were very unusual for this water with a calibration check; summary bullet "each flag had cleared by the end of the period". |
+| "Give me a report on the last 30 days" (Algalita) | Watch; pH flagged low Sep 13, high Sep 26 and low Sep 27-29, conductivity low Sep 24-25, all cleared; leads with what the water did, not data reliability; sensor problems named are turbidity stuck at 0 and the Oct 8 whole-board read failures. | pH analysis ends "That has since cleared"; a sentence that some readings were very unusual for this water with a calibration check; summary bullet "each flag had cleared by the end of the period". |
 | "What happened to pH early on Oct 7?" | A brief, sudden rise to about 10.9 for an hour, unusual for seawater, back by 04:00; not flagged; no fault wording. | Oct 7 not mentioned in any report. |
-| "How was pH over the last 7 days?" (Oct 6-12) | In range; sat at the low edge of its range most afternoons (about 5.9-6.2 against a minimum of 6), worth watching; no fault theory. | Watch, rule `edge`; pH analysis "sat at the low edge of its healthy range for two hours or more on 7 of the period's 7 days". |
+| "How was pH from Oct 3 to Oct 9?" | In range; sat at the low edge of its range most afternoons (about 5.8-6.2 against a minimum of 6), worth watching; no fault theory. | Watch, rule `edge`; pH analysis "sat at the low edge of its healthy range for two hours or more on 6 of the period's 7 days". |
 | A marine pod whose pH rises gradually (under 0.9 per half hour) to 10.4 for three readings in the last day, limits 6-10 | Out of range now, with the stretch's times. | Watch: past the 0.2 cushion, not past 15% of the range (0.6). |
 | The same three readings at 10.7 | Out of range now. | Action Required, rule `exceedance`. |
 | The same, reaching 8.7 against a narrow 7.8-8.3 | Out of range now. | Action Required: 15% of 0.5 is under the 0.2 cushion, so on a narrow range every current flag is past the margin. |
@@ -151,9 +181,8 @@ Run on the branch with the fake API (`npx ts-node --transpile-only scripts/flagg
 
 ## Still open
 
-- **Real data.** Production reads were blocked for the agent, so the edge rule has not been checked on the real Algalita afternoons and the fixture's synthetic days stand in for Sep 27-29 and Oct 2-12.
-  To pull the month read-only (two GET requests to the device API): `! node scripts/flagging/pullAlgalitaReadings.mjs /tmp/algalita-month.json`, run from this worktree.
-- **Michael**: stakeholder questions 28 (was the probe serviced around Sep 29-30 or Oct 7; could pH reach 12.9 or 2.7) and 29 (the "very unusual; a calibration check would confirm" wording), the provisional 15% Action Required margin, and whether alert emails should follow the share rule (27).
+- **Michael**: stakeholder questions 28 (was the probe serviced around Sep 29-30 or Oct 7; could pH reach 12.9 or 2.7) and 29 (the "very unusual; a calibration check would confirm" wording), the provisional 15% Action Required margin, and whether alert emails should follow the share rule (27); the addendum's afternoon board failures and Sep 24 conductivity drop.
+- **Replay on the reshaped month**: optional, about $0.05, only with the user's approval; the fake API serves the fixture.
 - **Local setup left in place** (git-ignored, nothing staged): `.env` copied into `.claude/worktrees/dev`, and the main checkout's `data/corpus`, `data/e2e` and `data/embeddings` linked into both worktrees, so a local server and the replay run there. All servers are stopped.
 - **Not merged into `dev`, not deployed.**
   Customers keep the live behaviour until a new image is built and routed (F16).

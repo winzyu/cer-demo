@@ -1,7 +1,7 @@
 import { decodeReading } from "../../src/devices/metrics";
 import { qcMetric, unusualKind } from "../../src/devices/readingQc";
 import {
-  assessFlags, EXCEEDANCE_MARGIN, flagEpisodes, FLAG_SHARE, judgeMetric, MIN_FLAG_READINGS,
+  assessFlags, assessWindow, EXCEEDANCE_MARGIN, flagEpisodes, FLAG_SHARE, judgeMetric, MIN_FLAG_READINGS,
   PERSISTENT_SHARE, unusualStretches,
 } from "../../src/report/flagRules";
 import type { TimedValue } from "../../src/report/flagRules";
@@ -198,6 +198,31 @@ describe("judgeMetric", () => {
 
   it("reports not assessed without a limit", () => {
     expect(judgeMetric({ ...base, values: series([8.1, 8.1, 8.1]) }).status).toBe("not assessed");
+  });
+});
+
+describe("assessWindow", () => {
+  // One out-of-range reading the day before the window and two inside it: three in 24 hours.
+  const all = series([...quiet(10), 8.7, ...quiet(5), 8.7, 8.7, ...quiet(10)]);
+  const fromMs = all[12][0];
+  const values = all.filter(([ms]) => ms >= fromMs);
+  const lookback = all.filter(([ms]) => ms < fromMs);
+
+  it("flags a stretch straddling the window's start, as the chat verdict does", () => {
+    const flags = assessWindow({ values, lookback, fromMs, limit: LIMIT, minimumDetectableChange: ph });
+    expect(flags.episodes).toEqual([expect.objectContaining({ direction: "high", readings: 3 })]);
+    expect(judgeMetric({ values, lookback, fromMs, limit: LIMIT, minimumDetectableChange: ph }).flags)
+      .toEqual(flags);
+    // The window's own two readings are not enough without the day before it.
+    expect(assessWindow({ values, fromMs, limit: LIMIT, minimumDetectableChange: ph }).episodes)
+      .toEqual([]);
+  });
+
+  it("ignores lookback older than 24 hours before the window's first reading", () => {
+    const shifted = lookback.map(([ms, v]): TimedValue => [ms - 24 * 60 * MINUTE, v]);
+    expect(assessWindow({
+      values, lookback: shifted, fromMs, limit: LIMIT, minimumDetectableChange: ph,
+    }).episodes).toEqual([]);
   });
 });
 

@@ -296,7 +296,7 @@ describe("GenerateReport.run", () => {
           atMs: Date.parse(bucket.start),
           value: i === 0 ? bucket.min : i === 1 ? bucket.max : bucket.mean,
           valid: true,
-        }))));
+        }))), []);
         return {
           device: { name: "Old Woman Creek 2026", label: "dev:owc", operating_environment: "fresh-water" },
           time_range_resolved: { start: "2026-07-26T00:00:00.000Z", end: LAST_READING },

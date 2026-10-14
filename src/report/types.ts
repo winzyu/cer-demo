@@ -12,7 +12,7 @@
  */
 
 import {
-  assessFlags, FLAG_WINDOW_MS, unusualStretches,
+  assessWindow, FLAG_WINDOW_MS, unusualStretches,
   type FlagAssessment, type TimedValue, type UnusualStretch,
 } from "./flagRules";
 
@@ -211,6 +211,12 @@ export interface ParameterStats {
    */
   readings: TimedValue[];
   /**
+   * The kept readings of the 24 hours before the period, marked like `readings`: the flag rule
+   * judges the period's first day with them, as the chat verdict does (`flagRules.ts`
+   * `assessWindow`). Never shown or counted as the period's own readings.
+   */
+  lookback?: TimedValue[];
+  /**
    * True when the pod has readings after the period, so the period's last 24 hours are not the
    * pod's latest and no flag in it is current (Michael #4): a past period is told in the past
    * tense and never reaches Action Required on a flag.
@@ -336,17 +342,19 @@ export const outOfRangeShare = (p: ParameterStats): number | null => {
  * imported to keep this module free of the reference-data import cycle.
  */
 export const flagsFor = (
-  p: Pick<ParameterStats, "baseline" | "readings" | "pastPeriod">,
+  p: Pick<ParameterStats, "baseline" | "readings" | "lookback" | "pastPeriod">,
   noiseFloor: (key: string, reading: number) => number,
 ): FlagAssessment | undefined => {
   const b = p.baseline;
   if (isRelativeIndex(b) || !b.hasFixedBaseline) return undefined;
-  const flags = assessFlags(
-    p.readings,
-    { min: b.baselineMin, max: b.baselineMax },
-    (reading) => noiseFloor(b.key, reading),
-    b.exceedanceMargin,
-  );
+  const flags = assessWindow({
+    values: p.readings,
+    ...(p.lookback ? { lookback: p.lookback } : {}),
+    fromMs: p.readings[0]?.[0] ?? Infinity,
+    limit: { min: b.baselineMin, max: b.baselineMax },
+    minimumDetectableChange: (reading) => noiseFloor(b.key, reading),
+    exceedanceMargin: b.exceedanceMargin,
+  });
   return p.pastPeriod ? { ...flags, current: false, currentExceedance: false } : flags;
 };
 
@@ -362,7 +370,7 @@ export const unusualFor = (p: Pick<ParameterStats, "readings">): UnusualStretch[
  * One reading, however far out, never flags, and unusual readings never count.
  */
 export const flagFor = (
-  p: Pick<ParameterStats, "baseline" | "readings" | "pastPeriod">,
+  p: Pick<ParameterStats, "baseline" | "readings" | "lookback" | "pastPeriod">,
   noiseFloor: (key: string, reading: number) => number,
 ): Flag => {
   // Checked before anything else, and before `hasFixedBaseline`: a relative index has no
