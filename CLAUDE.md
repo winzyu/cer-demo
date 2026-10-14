@@ -1,8 +1,8 @@
 # CER Demo
 
 `../user-dashboard` and `../clean-earth-rovers-server` are writable for local development, on branch `local` or a branch cut from it, and only there.
-Their `main` and `develop` carry malware at HEAD: never check those branches out, never run `npm install`, `next dev`, `next build` or `npm test` while on them, and re-run `grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .` after any clone, fetch, pull or branch switch.
-Never push, force-push or merge in either repository; pushing needs explicit consent in chat.
+Their history carries malware (the `main` and `develop` tips scanned clean as of the 2026-09-30 fetch, but older commits run it on `npm install`, `next dev`, `next build` and `npm test`): never check out `main`, `develop` or an old commit, run those commands only on `local` or a branch cut from it, and re-run `grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .` after any clone, fetch, pull or branch switch.
+Editing and committing there needs no approval; every push needs the user's explicit consent in chat, and never force-push or merge.
 Do not read `~/.config/gcloud/` or `serviceAccountKey.json`, or print credentials.
 The device API is production with no QA mirror; announce live reads and obtain approval for live writes or paid evaluation runs.
 Migration planning artifacts belong in `docs/migration/`.
