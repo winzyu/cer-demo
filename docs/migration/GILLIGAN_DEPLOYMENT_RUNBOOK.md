@@ -2,7 +2,7 @@
 
 Rewritten 2026-09-26 for release task L1, for the user, who deploys the September 30 release themselves.
 It replaces the 2026-09-23 draft, which is in this file's git history.
-Nothing in it has been run against production; it is the procedure, not evidence that any step passed.
+L5-L9 ran from it between 2026-10-01 and 2026-10-07; what each step did is recorded in [`GILLIGAN_LANDING_2026-09-29.md`](GILLIGAN_LANDING_2026-09-29.md) §7, not here.
 Task IDs (L5, S5, F2 and so on) are those of [`GILLIGAN_RELEASE_PLAN.md`](GILLIGAN_RELEASE_PLAN.md).
 
 Every step follows one pattern, the deployment path the supervisor chose: deploy a Cloud Run revision that takes no traffic, test it from localhost, then switch traffic to it.
@@ -23,7 +23,7 @@ These facts hold on 2026-09-26 and shape the whole procedure.
   Until then cer-gilligan runs on the cer-demo Fireworks key, stored as a version of the secret `cer-gilligan-fireworks-api-key`.
   After the supervisor approves the demo (L7), CER's own key becomes a new version of that secret, a new revision pins it (§6.5), and only then are the credentials rotated.
 - **Deploy only the pushed feature and task branches, built from clean branches with no old build cache.**
-  The upstream `main` and `develop` carry malware at HEAD, and the malware ran on a build machine ([`SECURITY_INCIDENT_2026-09-19.md`](SECURITY_INCIDENT_2026-09-19.md)).
+  The upstream history carries malware (the `main` and `develop` tips scanned clean on 2026-09-30), and the malware ran on a build machine ([`SECURITY_INCIDENT_2026-09-19.md`](SECURITY_INCIDENT_2026-09-19.md)).
   Every image in this release is built from a fresh checkout of a reviewed commit, with no `node_modules`, `.next`, `dist` or cached image layers from before the cleanup (§3).
 - **Set every release environment variable explicitly, because the guards fail open.**
   A missing variable does not stop cer-gilligan; it turns a guard off, removes a limit, or points at the customer database (§4).
@@ -109,7 +109,7 @@ Worth raising with Michael, outside the release: the customer `(default)` databa
 
 The table and the note under it predate the release candidate.
 They record what each release commit had to contain when the plan was written, not the commits that ship.
-The release commits, their contents and their checksums go in [`RELEASE_CANDIDATE.md`](RELEASE_CANDIDATE.md), which is still to be written.
+The release commits, their contents and their checksums are in `RELEASE_CANDIDATE.md` on branch `release/rc2` (`ddd6292`), not on `dev`: `git show release/rc2:docs/migration/RELEASE_CANDIDATE.md`.
 Where the two differ, `RELEASE_CANDIDATE.md` wins, and its commits fill the `[FILL]` cells below and in §8.
 
 | service | repository | release commit must contain | release commit |
@@ -338,6 +338,8 @@ gcloud run deploy cer-gilligan \
 ```
 
 `--no-allow-unauthenticated` only means the deploy does not try the IAM grant itself; Michael then opens invocation (§2.1 item 6).
+This is the L5 command as run; since 2026-10-05 the service uses CER's Fireworks key `cer-gilligan-fireworks-api-key:3`, not the demo key `:2`, and the live revision runs one minimum instance (landing doc §7 items 10 and 18).
+A later revision attaches `:3` with `--update-secrets`, because `--set-secrets` replaces every secret reference.
 Every later cer-gilligan revision adds `--no-traffic` and a new tag (`rc2`, `rc3`, ...), and the command prints the tagged URL.
 
 Test from localhost, in this order:
