@@ -1638,9 +1638,9 @@ Consequences:
 
 ## 16. Testing
 
-Jest + `ts-jest` + `supertest`. **57 suites** (51 unit, 6 integration; counted 2026-09-23 from
-`test/`). The last recorded full run was 949 tests in 46 suites on 2026-09-02, so the test total
-is due a re-measure. The table below names the suites that carry a design decision worth reading;
+Jest + `ts-jest` + `supertest`. **87 suites** (76 unit, 11 integration; counted 2026-10-14 from
+`test/`). The last recorded full run was 1584 tests on `303280d` on 2026-09-29, before the
+v2 flagging and report-omit suites landed. The table below names the suites that carry a design decision worth reading;
 it is not the full list — `npx jest --listTests` is.
 
 No test touches the network, needs an API key or costs money, and new tests keep to that: mock

@@ -178,7 +178,7 @@ The same script on the mirror (fabricated data in the Firestore emulator, projec
 
 | service | port | code | settings that matter |
 |---|---|---|---|
-| emulator | 8080 | server `mirror/release-rc1` `8594338` seed, reseeded 2026-09-29T04:48:55Z with `--fixtures` | 22 devices, 13,680 readings; the silent, low-pH and dissolved-oxygen fixtures are in the server's `scripts/mirror/README.md` |
+| emulator | 8080 | server `mirror/release-rc1` `8594338` seed, reseeded 2026-09-29T04:48:55Z with `--fixtures` | 22 devices, 13,680 readings; the silent, low-pH and dissolved-oxygen fixtures are in the server repository's `scripts/mirror/README.md` on `mirror/release-rc1` (`8594338`), not in cer-demo |
 | relay server | 5101 | server `mirror/release-rc1` `8594338` (release `122136d` plus the mirror seed; local, not pushed) | `MIRROR_RUNBOOK.md` §4 settings file |
 | cer-demo (shared) | 8010 | `docs/release-demo` (`dev` `0de9059` plus doc-only commits), started by the release-demo chat | `GILLIGAN_DEPLOYMENT_RUNBOOK.md` §4.1 values, with the mirror's Firestore project and device API |
 | cer-demo (Q9) | 8011 | `task/q9-land` `93764b2`, stopped after C1 and D1 | the same values |
