@@ -220,8 +220,8 @@ Defect for the Gilligan behaviour chat: a single 0.00 dissolved-oxygen reading d
 
 ### Groups B, D, E, H and I in the browser
 
-Headless Chromium through the dashboard on `:3000`, driven by `scripts/e2e/mirrorChecklist.mjs` in the `gcp-test-env` worktree (untracked there). It reuses the bot's `cdp.mjs` and starts, stops and restarts nothing.
-12 questions and 1 report, about $0.03; transcript in [`e2e-mirror-2026-09-29/browser-transcript.json`](e2e-mirror-2026-09-29/browser-transcript.json), all screenshots in the worktree's `data/e2e/mirror-bdehi-2026-09-29/`.
+Headless Chromium through the dashboard on `:3000`, driven by `scripts/e2e/mirrorChecklist.mjs`, kept at tag `mirror-checklist-2026-09-29` (`git show mirror-checklist-2026-09-29:scripts/e2e/mirrorChecklist.mjs`); do not rerun it as is, because `:3000` now proxies to the live cer-api. It reuses the bot's `cdp.mjs` and starts, stops and restarts nothing.
+12 questions and 1 report, about $0.03; transcript in [`e2e-mirror-2026-09-29/browser-transcript.json`](e2e-mirror-2026-09-29/browser-transcript.json), all screenshots in the main checkout's git-ignored `data/e2e/mirror-bdehi-2026-09-29/`.
 Group B ran twice as the Harbor customer, once with no pod and once with Harbor Pier Buoy picked; D ran as the Seaview customer, E as the Lakeside customer, H as the Harbor customer at 390 x 844, and I as `user-super-5`.
 For I, the emulator's usage document for `user-super-5` was set to 19 questions first (free, local), instead of asking 19 questions.
 

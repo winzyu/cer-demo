@@ -14,6 +14,8 @@ in git history under the tag named in its section.
 | `advice-archive-2026-09-17` | 2026-09-23 | the advice drafts, re-tagged under the name the catalogue cites - same commit as `docs-archive-2026-09-23` |
 | `docs-tier2-archive-2026-09-23` | 2026-09-23 | the chat UX work plan, the pod-authorization design and the WSL checkout guide - 3 files, plus the untrimmed product-direction doc |
 | `old-machine-recovery-2026-09-19` | 2026-09-22 | work from 2026-09-17 to 2026-09-19 that was committed on the old machine but never pushed, rebuilt from session transcripts - 5 planning docs not restored to the tree |
+| `supervisor-brief-2026-09-29` | 2026-10-14 | `docs/migration/SUPERVISOR_BRIEF.html`, the pre-launch supervisor brief for the September 30 release, never reviewed or sent - 1 file |
+| `mirror-checklist-2026-09-29` | 2026-10-14 | `scripts/e2e/mirrorChecklist.mjs`, the browser driver for `E2E_CHECKLIST.md` groups B, D, E, H and I on the 2026-09-29 mirror stack - 1 file |
 
 Retrieve one by path:
 
