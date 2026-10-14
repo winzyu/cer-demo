@@ -355,7 +355,7 @@ Do not copy an Authorization header, a login response or a token into the test r
 
 These subsets reuse rows below in a fixed order; the full tables stay the reference for what to expect.
 Rehearse the demo path once on the mirror before the supervisor demo (release plan L7), then run it on the staged stack.
-Align it with the demo script in `SUPERVISOR_BRIEF.html` (release-candidate session, `docs/supervisor-brief`) once that is committed.
+The demo script once planned for `SUPERVISOR_BRIEF.html` was never reviewed or sent; the brief is kept only at tag `supervisor-brief-2026-09-29` (`docs/ARCHIVED.md`), so there is nothing to align with.
 
 Demo path (L7), about ten steps, then section L for Michael: K1 disclaimer, A1b picker scoped to one organization, K17 single pod pre-selected, B1 grounded answer with document titles (K13), K20 standing caveat, C1 weekly summary, K5 reading age, K3 stuck turbidity, D1 another organization refused, K6 current site only, F1-F2 report offer and PDF, I2 phone layout.
 
