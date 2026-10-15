@@ -198,3 +198,20 @@ Research still to do:
 7. Both entry points: the chat tool and `POST /api/v1/reports`; whether an edited regeneration counts against the 5-reports-a-day guard.
 8. How the over-flagging rules (§1) change the report first, so the report is not redesigned twice.
 9. Tests: the report's existing suites, and how to check an edited report keeps its numbers.
+
+## 7. Stakeholder request: learning the normal patterns, and outside data
+
+Michael, in a chat before 2026-10-15 (exact date not recorded):
+
+> I know that we don't currently have learning for Gilligan but can we unlock that? so the more data we keep feeding into firestore the better it gets at understanding the normalcies
+
+He added that most monitoring sets benchmarks from one weekly grab sample, so how much readings vary at the pods' frequency is not well known, and it likely varies more when nuanced events such as daily tide shifts can be seen.
+The user proposed giving Gilligan more context through tools first (season, live tides) and promised to look into learning (`STAKEHOLDER_QUESTIONS.md` items 33-34 ask what "learn the normalcies" meant and whether maintenance labels exist).
+Michael named the sources, in order:
+
+1. **NOAA tides**, already in CER's backend: "that would be the best first tool to integrate". The device API serves it as `GET /water/tides/:device/:start/:end` (`DEVICE_API.md`), a NOAA passthrough by station; the station comes from `noaaTidesId`, now auto-derived from coordinates, and one station id was found on two pods 2,300 miles apart (`BACKEND_FIELDS.md` §4).
+2. **Analysis of the pod's GPS-tagged location.**
+3. **NOAA weather**, if usable as a free API.
+
+The user placed this after the next release (2026-10-15); it may join that release only if it is finished and tested in time.
+Why it matters here: Gilligan may name only measured causes, so today it can never say a pattern follows the tide; a tide tool turns "the data cannot show the tides" into a check, and lets the daily-cycle timing be compared with real high and low tides.
