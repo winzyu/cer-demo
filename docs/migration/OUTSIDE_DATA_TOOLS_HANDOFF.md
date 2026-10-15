@@ -1,6 +1,6 @@
 # Outside-data tools (tides, swell, GPS, weather) - handoff
 
-Current as of 2026-10-15 at `task/tide-tool` `a2f7a33` (this file is the next commit).
+Current as of 2026-10-15 at `task/tide-tool`, after the replay-fixture commit that updates this file.
 A fresh session reads this file, then `docs/SPECS.md` §10.10 and `docs/migration/POST_LAUNCH_BACKLOG.md` §7, then follows "Next step".
 
 ## What this is
@@ -8,7 +8,7 @@ A fresh session reads this file, then `docs/SPECS.md` §10.10 and `docs/migratio
 Giving Gilligan outside data as tools, so it can check causes it now may only call "consistent with" (`SPECS.md` §10.9).
 Michael asked for it and named the order: NOAA tides first, then analysis of the pod's GPS-tagged location, then NOAA weather if it is free (backlog §7).
 Work lives on branch `task/tide-tool` in worktree `.claude/worktrees/tide-tool`, cut from `dev` `f7cc66c`; nothing is merged into `dev`.
-The first tool, `get_tides`, is built and unit-tested; it has had no model run yet.
+The first tool, `get_tides`, is built, unit-tested and checked on the replay fleet against live NOAA predictions; it has had no model run yet.
 
 ## Standing decisions
 
@@ -23,11 +23,11 @@ The first tool, `get_tides`, is built and unit-tested; it has had no model run y
 | Item | State |
 |---|---|
 | NOAA client `src/tides/noaaTides.ts` (stations, nearest station, high/low predictions, NOAA's error text) | done `a2f7a33`, checked live against NOAA 2026-10-15 |
-| Tide comparison `src/tides/tideComparison.ts` (peak lag behind high tide, circular scatter, 5-day minimum) | done `a2f7a33` |
+| Tide comparison `src/tides/tideComparison.ts` (peak lag behind high tide, circular scatter, 5-day minimum) | done `a2f7a33`; fixed after it: a 7-day window read every solar cycle as tidal, so the verdict now weighs lag scatter against clock-hour scatter (`SPECS.md` §10.10) |
 | Tool `src/tools/getTides.ts`, registry entry, `TIDE_TOOL` and `NOAA_TIDES_*` config | done `a2f7a33` |
 | Prompt `toolBlock(tides)` in `src/prompt/systemPrompt.ts` | done `a2f7a33` |
 | Docs: `SPECS.md` §10.10, `.env.example`, README config table, backlog §7 status | done `a2f7a33` |
-| A tidal pod with real coordinates in `scripts/skepticism/fakeDeviceApi.ts`, and replay scenarios for it | next (free) |
+| Replay fixtures: `fakeDeviceApi.ts --noaa-tides` drives Tidal Flat Pod from NOAA's predictions at its nearest station; Lake Inlet Pod (freshwater) added; `replay.ts --only tides` runs T1-solar (Bay Mouth), T2-tidal (Tidal Flat), T3-freshwater (Lake Inlet) | done; offline cases in `getTides.test.ts` "on the skepticism fleet" |
 | Paid replay with `TIDE_TOOL=true` | planned, needs approval (about $0.30-0.45) |
 | Swell source (NOAA NDBC wave buoys, Scripps CDIP) | research next (free) |
 | GPS location analysis; NOAA weather (api.weather.gov) | not started |
@@ -40,11 +40,10 @@ The first tool, `get_tides`, is built and unit-tested; it has had no model run y
 
 ## Next step
 
-1. In `scripts/skepticism/fakeDeviceApi.ts`, add a coastal pod whose readings carry real coordinates near a NOAA station (Bay Mouth's are 33.6, -118.1146 in `test/unit/getTides.test.ts`), with a pH or temperature cycle that follows real predicted tides for the replay dates, beside the existing solar Bay Mouth pod.
-2. Add replay scenarios to `scripts/skepticism/replay.ts`: "does the tide drive this pH cycle?" on the solar pod (expect "keeps to the time of day") and on the tidal pod (expect "follows the tide"), plus a freshwater pod (expect "no tides"); run only `test/unit/getTides.test.ts`, `prompt.test.ts` and `dailyCycle.test.ts`, plus typecheck and lint.
-3. Give the user a numbered plan for the paid replay (fake device API, live NOAA, `SENSOR_TOOL=true REPORT_TOOL=true TIDE_TOOL=true`, the 2026-10-12 settings from `DATA_SKEPTICISM_FIX_2026-10-12.md`, three runs, about $0.30-0.45) and wait for approval.
-4. Research swell for free: NDBC realtime files (wave height, swell height, period, direction; how many days back), CDIP for Southern California, distance from each pod to its nearest buoy; write the findings into backlog §7 and propose a `get_swell` plan.
-5. Commit and push `task/tide-tool` after each verified unit; report commit IDs to the coordinator chat.
+1. Ask the user the station-choice question above, and the paid replay below.
+2. Give the user a numbered plan for the paid replay (`fakeDeviceApi.ts --noaa-tides`, `replay.ts --only tides` plus the default set to check nothing regressed, live NOAA, `SENSOR_TOOL=true REPORT_TOOL=true TIDE_TOOL=true`, the 2026-10-12 settings from `DATA_SKEPTICISM_FIX_2026-10-12.md`, three runs, about $0.30-0.45) and wait for approval.
+3. Research swell for free: NDBC realtime files (wave height, swell height, period, direction; how many days back), CDIP for Southern California, distance from each pod to its nearest buoy; write the findings into backlog §7 and propose a `get_swell` plan.
+4. Commit and push `task/tide-tool` after each verified unit; report commit IDs to the coordinator chat.
 
 Resume with: `Read docs/migration/OUTSIDE_DATA_TOOLS_HANDOFF.md on branch task/tide-tool in worktree .claude/worktrees/tide-tool, then continue the outside-data tools work.`
 
@@ -54,7 +53,10 @@ Resume with: `Read docs/migration/OUTSIDE_DATA_TOOLS_HANDOFF.md on branch task/t
 - NOAA answers HTTP 400 "Great Lakes stations don't have Predictions data." for `9087057`, the registry `noaaTidesId` on two pods (`BACKEND_FIELDS.md` §4; rerun the datagetter call in `src/tides/noaaTides.ts` `highsAndLows`).
 - 3,502 tide-prediction stations (same `stations.json`, field `count`, 2026-10-15).
 - Bay Mouth's coordinates give "TWC0427 Los Patos (highway bridge)" at 14.3 km (`new NoaaTides().nearestStation(33.6, -118.1146)` via `npx ts-node --transpile-only -e`).
-- Tests: `npx jest --runInBand test/unit/getTides.test.ts` 17/17, `prompt.test.ts` 84/84, `dailyCycle.test.ts` 7/7 at `a2f7a33`; `npm run typecheck` and `npm run lint` clean.
+- Tests after the replay-fixture commit: `npx jest --runInBand test/unit/getTides.test.ts test/unit/prompt.test.ts test/unit/dailyCycle.test.ts test/unit/dataSkepticism.test.ts` 138/138; `npm run typecheck` and `npm run lint` clean.
+- Replay fleet against live NOAA on 2026-10-15 (`buildFleet` with `tidalFlatTides` from `highsAndLows`, real `GetTides`, metric pH): Bay Mouth "keep to the time of day" at 7 days (lag scatter 1.4 h, clock 0.4 h) and 14 days (2.1, 0.7); Tidal Flat, station 9410599 "Santa Ana River entrance (inside)" at 2.8 km, "follow the tide" at 7 days (0.2, 0.7) and 14 days (0.3, 3.2); Lake Inlet no tides. Before the fix Bay Mouth's 7-day answer was "follow the tide".
+- Tidal Flat's 7-day margin is thin (lag 0.2 h against clock 0.7 h, a ratio of 0.29 where 0.5 is the limit): over one week a mixed tide's higher high can hold its clock hour; 14 days separates them clearly.
+- Bay Mouth's fleet coordinates (33.7536, -118.1146) give Los Patos at 7.2 km; the 14.3 km figure below is for the test's 33.6.
 - The coverage line counts only `query_sensor_data` calls (`src/tools/dataCoverage.ts:14`), so an answer from `get_tides` alone gets no "Data covered" line.
 
 ## Do not touch

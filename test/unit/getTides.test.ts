@@ -6,6 +6,11 @@ import type { QuerySensorData, SensorQueryParams } from "../../src/tools/querySe
 import { NoaaTides, type TideEvent } from "../../src/tides/noaaTides";
 import { compareWithTides } from "../../src/tides/tideComparison";
 import { buildSystemPrompt, TOOL_BLOCK, toolBlock } from "../../src/prompt/systemPrompt";
+import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
+import { QuerySensorData as RealQuerySensorData } from "../../src/tools/querySensorData";
+import {
+  BAY_MOUTH, LAKE_INLET, TIDAL_FLAT, buildFleet, routeDeviceApi, type Fleet,
+} from "../fixtures/skepticism/fleet";
 
 /**
  * `get_tides` (`src/tools/getTides.ts`) and its parts, offline: NOAA is a stubbed `fetch`, and the
@@ -59,7 +64,7 @@ const solarPeak = (day: number): number => START - OFFSET + day * DAY + 14.5 * H
 describe("compareWithTides", () => {
   it("finds a steady lag behind high tide and calls the peaks tidal", () => {
     const rows = samples(10, tidalPeak);
-    const result = compareWithTides(dailyPeaks(rows, LON), tideSeries(10), LON, "about 50 minutes later each day");
+    const result = compareWithTides(dailyPeaks(rows, LON), tideSeries(10), LON);
     expect(result?.verdict).toBe("peaks follow the tide");
     expect(result?.mean_hours_after_high_tide).toBeCloseTo(2, 0);
     expect(result!.lag_scatter_hours).toBeLessThan(0.5);
@@ -67,27 +72,34 @@ describe("compareWithTides", () => {
 
   it("calls peaks that hold their hour while the tide drifts solar, not tidal", () => {
     const rows = samples(10, solarPeak);
-    const result = compareWithTides(dailyPeaks(rows, LON), tideSeries(10), LON, "same hour each day");
+    const result = compareWithTides(dailyPeaks(rows, LON), tideSeries(10), LON);
     expect(result?.verdict).toBe("peaks keep to the time of day, not the tide");
     expect(result!.lag_scatter_hours).toBeGreaterThan(1.5);
     expect(result!.daily[0].peak_local_solar.slice(11, 13)).toBe("14");
   });
 
+  it("does not read a week of solar peaks as tidal: over 6 days the tide drifts only 4 hours", () => {
+    const result = compareWithTides(dailyPeaks(samples(6, solarPeak), LON), tideSeries(6), LON);
+    expect(result?.lag_scatter_hours).toBeLessThan(1.5);
+    expect(result?.clock_hour_scatter_hours).toBe(0);
+    expect(result?.verdict).toBe("peaks keep to the time of day, not the tide");
+  });
+
   it("keeps a peak at low tide on one side of the cycle rather than splitting it", () => {
     const atLow = (day: number): number => tidalPeak(day) - 2 * HOUR + TIDE_PERIOD / 2;
-    const result = compareWithTides(dailyPeaks(samples(10, atLow), LON), tideSeries(10), LON, undefined);
+    const result = compareWithTides(dailyPeaks(samples(10, atLow), LON), tideSeries(10), LON);
     expect(result?.verdict).toBe("peaks follow the tide");
     expect(Math.abs(result!.mean_hours_after_high_tide)).toBeCloseTo(6.2, 0);
   });
 
   it("stays unclear when neither the hour nor the lag holds", () => {
     const wander = (day: number): number => solarPeak(day) + ((day * 7) % 5) * 2 * HOUR;
-    const result = compareWithTides(dailyPeaks(samples(10, wander), LON), tideSeries(10), LON, "unclear");
+    const result = compareWithTides(dailyPeaks(samples(10, wander), LON), tideSeries(10), LON);
     expect(result?.verdict).toBe("unclear");
   });
 
   it("gives nothing with fewer than five days to compare", () => {
-    expect(compareWithTides(dailyPeaks(samples(5, solarPeak), LON), tideSeries(5), LON, "same hour each day"))
+    expect(compareWithTides(dailyPeaks(samples(5, solarPeak), LON), tideSeries(5), LON))
       .toBeUndefined();
   });
 });
@@ -280,5 +292,41 @@ describe("get_tides behind TIDE_TOOL", () => {
     expect(on).toContain("Swell, waves, weather, rain, air");
     expect(on).not.toContain("Tides, swell, waves, weather");
     expect(on.slice(0, on.indexOf("TOOLS:"))).toBe(off.slice(0, off.indexOf("TOOLS:")));
+  });
+});
+
+/**
+ * What the paid tide replay (`scripts/skepticism/replay.ts --only tides`) asks, through the real
+ * device client and sensor query over the skepticism fleet: a mixed tide (higher and lower highs)
+ * drives Tidal Flat Pod, the sun drives Bay Mouth Pod, and Lake Inlet Pod is freshwater.
+ */
+describe("get_tides on the skepticism fleet", () => {
+  const mixed = tideSeries(10).map((tide, i) => (tide.type === "high" && i % 4 === 2 ? { ...tide, levelM: 1.1 } : tide));
+  const fleet: Fleet = buildFleet(START + 9 * DAY, { tidalFlatTides: mixed });
+  const fleetFetch = (async (url: string) => {
+    const body = routeDeviceApi(fleet, url.replace("https://example.invalid", ""));
+    if (body === undefined) throw new Error(`The fake device API does not serve ${url}`);
+    return { ok: true, status: 200, json: async () => body, text: async () => JSON.stringify(body) } as unknown as Response;
+  }) as unknown as typeof fetch;
+  const client = new DeviceApiClient({ baseUrl: "https://example.invalid/api/v1", token: "t", fetchImpl: fleetFetch });
+  const sensor = new RealQuerySensorData({ client, now: () => fleet.now });
+  const { fetchImpl } = noaaFetch(10);
+  const noaaClient = new NoaaTides({ dataUrl: "https://noaa.invalid/datagetter", stationsUrl: "https://noaa.invalid/stations.json", fetchImpl });
+  const ask = (device: string) => new GetTides({ sensor, noaa: noaaClient })
+    .run({ device, metric: "ph", time_range: "last 7 days" }, { token: "t" }) as Promise<Record<string, unknown>>;
+  const verdict = (result: Record<string, unknown>): unknown => (result.comparison as { verdict?: unknown })?.verdict;
+
+  it("finds Tidal Flat's pH peaks following the predicted tide", async () => {
+    const result = await ask(TIDAL_FLAT);
+    expect(verdict(result)).toBe("peaks follow the tide");
+    expect((result.station as { id: string }).id).toBe("9410580");
+  });
+
+  it("finds Bay Mouth's pH keeping to the time of day, not the tide", async () => {
+    expect(verdict(await ask(BAY_MOUTH))).toBe("peaks keep to the time of day, not the tide");
+  });
+
+  it("gives Lake Inlet no tides", async () => {
+    expect((await ask(LAKE_INLET)).tides).toBe("none");
   });
 });

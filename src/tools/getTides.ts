@@ -222,7 +222,7 @@ export class GetTides {
     if (metric) {
       const peaks = dailyPeaks([...samples], position.longitude);
       const timing = dailyCycle([...samples], position.longitude)?.timing;
-      const compared = compareWithTides(peaks, tides, position.longitude, timing);
+      const compared = compareWithTides(peaks, tides, position.longitude);
       comparison = compared
         ? { metric, daily_cycle_timing: timing ?? "unclear", ...compared }
         : {

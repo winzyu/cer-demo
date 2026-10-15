@@ -20,9 +20,14 @@
  *   conductivity with independent noise inside the detectable change), **Probe Fault Pod** (the
  *   device flagged its oxygen probe for the last 5 days) and **Marina Dock Pod** (out of the water
  *   for cleaning for 4 hours two days ago, which only the user knows).
+ * - **Lake Inlet Pod**, a freshwater pod for the tide tool's "no tides" case.
  *
- * Deterministic for a given `now`.
+ * Tidal Flat's tide is synthetic unless `FleetOptions.tidalFlatTides` hands it NOAA's predicted
+ * highs and lows (`fakeDeviceApi.ts --noaa-tides`), so `get_tides` can find its peaks following
+ * the real tide. Deterministic for a given `now` and options.
  */
+
+import type { TideEvent } from "../../../src/tides/noaaTides";
 
 export const ORGANIZATION = "org-bay-000000000001";
 
@@ -34,6 +39,7 @@ export const TIDAL_FLAT = "dev:100000000000027";
 export const STEADY_CHANNEL = "dev:100000000000028";
 export const PROBE_FAULT = "dev:100000000000029";
 export const MARINA_DOCK = "dev:100000000000030";
+export const LAKE_INLET = "dev:100000000000031";
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
@@ -135,17 +141,19 @@ const LIMITS = {
   minConductivity: "40000", maxConductivity: "75000",
 };
 
-const device = (id: string, label: string, name: string): FleetDevice => ({
+const FRESHWATER_LIMITS = { ...LIMITS, minConductivity: "100", maxConductivity: "1500" };
+
+const device = (id: string, label: string, name: string, operatingEnvironment = "salt-water"): FleetDevice => ({
   id,
   data: {
     label,
     name,
     organization: ORGANIZATION,
-    operatingEnvironment: "salt-water",
+    operatingEnvironment,
     nextCalibrationDate: "2026-12-15T00:00:00.000Z",
     notificationFrequency: "1x/day",
     displayed: true,
-    thresholds: { ...LIMITS },
+    thresholds: { ...(operatingEnvironment === "freshwater" ? FRESHWATER_LIMITS : LIMITS) },
   },
 });
 
@@ -304,19 +312,44 @@ const quietCove = (now: number): RawReading[] => {
     .map((at) => row(at, site, values(at)));
 };
 
+export const TIDAL_FLAT_SITE: Site = { lat: 33.62, lon: -117.93, place: "Tidal Flat CA" };
+
+/** The days of readings each guard and scenario pod carries, for fetching tides to cover them. */
+export const SCENARIO_DAYS = GUARD_DAYS;
+
+/**
+ * The water level between predicted highs and lows, scaled to -1 (lowest low) .. 1 (highest high),
+ * rising and falling as a half cosine between each pair; 0 outside the predictions.
+ */
+export const tideLevel = (events: readonly TideEvent[]): ((atMs: number) => number) => {
+  const sorted = [...events].sort((a, b) => a.atMs - b.atMs);
+  const levels = sorted.map((e) => e.levelM);
+  const mid = (Math.max(...levels) + Math.min(...levels)) / 2;
+  const half = (Math.max(...levels) - Math.min(...levels)) / 2 || 1;
+  return (atMs) => {
+    const next = sorted.findIndex((e) => e.atMs > atMs);
+    if (next <= 0) return 0;
+    const [a, b] = [sorted[next - 1], sorted[next]];
+    const f = (atMs - a.atMs) / (b.atMs - a.atMs);
+    return (a.levelM + ((b.levelM - a.levelM) * (1 - Math.cos(Math.PI * f))) / 2 - mid) / half;
+  };
+};
+
 /**
  * A mixed tide at the mouth of an estuary: ocean water at high tide is saltier, cooler and a little
  * more alkaline, river water at low tide the reverse. The diurnal term makes one high dominate each
  * lunar day, so the daily peak drifts about 50 minutes later per day; the sun adds only a little.
+ * With `tides`, NOAA's predictions replace the synthetic curve and the higher high leads instead.
  */
-const tidalFlat = (now: number): RawReading[] => {
+const tidalFlat = (now: number, tides?: readonly TideEvent[]): RawReading[] => {
   const { jitter, row } = podWriter(TIDAL_FLAT, createRandom(20261027));
-  const site: Site = { lat: 33.62, lon: -117.93, place: "Tidal Flat CA" };
+  const site = TIDAL_FLAT_SITE;
   const base = ordinary(jitter);
+  const predicted = tides && tides.length > 1 ? tideLevel(tides) : undefined;
   return steps(now - GUARD_DAYS * DAY, now, GUARD_STEP_MINUTES).map((at) => {
     const hours = at.getTime() / HOUR;
-    const tide = 0.45 * Math.cos((2 * Math.PI * hours) / M2_HOURS)
-      + 0.55 * Math.cos((2 * Math.PI * hours) / LUNAR_DAY_HOURS);
+    const tide = predicted ? predicted(at.getTime())
+      : 0.45 * Math.cos((2 * Math.PI * hours) / M2_HOURS) + 0.55 * Math.cos((2 * Math.PI * hours) / LUNAR_DAY_HOURS);
     const values = base(at);
     values.conductivity = Math.round(values.conductivity - 1_000 + tide * 6_000);
     values.temperature = +(values.temperature - tide * 1.6).toFixed(4);
@@ -377,6 +410,19 @@ const marinaDock = (now: number): RawReading[] => {
   });
 };
 
+/** Freshwater with a mild solar cycle: tides do not apply, whatever its readings do. */
+const lakeInlet = (now: number): RawReading[] => {
+  const { jitter, row } = podWriter(LAKE_INLET, createRandom(20261031));
+  const site: Site = { lat: 33.67, lon: -117.35, place: "Lake Inlet CA" };
+  const base = ordinary(jitter);
+  return steps(now - GUARD_DAYS * DAY, now, GUARD_STEP_MINUTES).map((at) => {
+    const values = base(at);
+    values.conductivity = Math.round(values.conductivity / 80);
+    values.ph = +(values.ph - 0.3 - solar(at) * 0.25).toFixed(3);
+    return row(at, site, values);
+  });
+};
+
 export interface FleetOptions {
   /**
    * How far Bay Mouth's pH falls from dawn to the afternoon peak. The default 1.35 matches the
@@ -384,6 +430,8 @@ export interface FleetOptions {
    * to about 5.45, well past it, for the "a daily dip is not a persistent offset" check.
    */
   bayMouthPhSwing?: number;
+  /** NOAA's predicted highs and lows at Tidal Flat's nearest station; synthetic tide when absent. */
+  tidalFlatTides?: readonly TideEvent[];
 }
 
 export const DEFAULT_PH_SWING = 1.35;
@@ -399,16 +447,18 @@ export const buildFleet = (now: number, options: FleetOptions = {}): Fleet => ({
     device("doc-fixture-steady", STEADY_CHANNEL, "Steady Channel Pod"),
     device("doc-fixture-probe", PROBE_FAULT, "Probe Fault Pod"),
     device("doc-fixture-dock", MARINA_DOCK, "Marina Dock Pod"),
+    device("doc-fixture-lake", LAKE_INLET, "Lake Inlet Pod", "freshwater"),
   ],
   readings: {
     [BAY_MOUTH]: bayMouth(now, options.bayMouthPhSwing ?? DEFAULT_PH_SWING),
     [HARBOR_ACID]: harborAcid(now),
     [ESTUARY_OXYGEN]: estuaryOxygen(now),
     [QUIET_COVE]: quietCove(now),
-    [TIDAL_FLAT]: tidalFlat(now),
+    [TIDAL_FLAT]: tidalFlat(now, options.tidalFlatTides),
     [STEADY_CHANNEL]: steadyChannel(now),
     [PROBE_FAULT]: probeFault(now),
     [MARINA_DOCK]: marinaDock(now),
+    [LAKE_INLET]: lakeInlet(now),
   },
 });
 

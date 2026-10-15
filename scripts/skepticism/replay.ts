@@ -3,13 +3,15 @@
  * §6 steps 2, 4 and 5) against a running server whose device API is `fakeDeviceApi.ts`.
  *
  *   npx ts-node --transpile-only scripts/skepticism/replay.ts \
- *     --base http://localhost:8013 --label <name> --runs 3 --out <dir> [--budget 1.00] [--only incident|guards|scenarios]
+ *     --base http://localhost:8013 --label <name> --runs 3 --out <dir> [--budget 1.00] [--only incident|guards|scenarios|tides]
  *     [--guard-range "this week"]
  *   npx ts-node --transpile-only scripts/skepticism/replay.ts --regrade <out>/<label>.json
  *
  * Each run replays Michael's seven turns as one conversation on Bay Mouth Pod, then each guard
  * question as a fresh chat, then each scenario (short conversations covering the incident's problem
- * more widely) as its own chat. Every answer, tool call and token count is written to
+ * more widely) as its own chat. `--only tides` runs the tide-tool scenarios instead, for a server
+ * with `TIDE_TOOL=true` and a fake API started with `--noaa-tides`; other runs leave them out.
+ * Every answer, tool call and token count is written to
  * `<out>/<label>.json`; the checks below are deterministic first-pass flags with the sentences that
  * tripped them, meant to be read alongside the answers, not instead of them.
  *
@@ -19,8 +21,8 @@
 import fs from "fs";
 import path from "path";
 import {
-  BAY_MOUTH, ESTUARY_OXYGEN, HARBOR_ACID, MARINA_DOCK, PROBE_FAULT, QUIET_COVE, STEADY_CHANNEL, TIDAL_FLAT,
-  dockCleaningWindow,
+  BAY_MOUTH, ESTUARY_OXYGEN, HARBOR_ACID, LAKE_INLET, MARINA_DOCK, PROBE_FAULT, QUIET_COVE, STEADY_CHANNEL,
+  TIDAL_FLAT, dockCleaningWindow,
 } from "../../test/fixtures/skepticism/fleet";
 
 const argument = (name: string, fallback?: string): string => {
@@ -92,6 +94,17 @@ const SCENARIOS: Scenario[] = [
   ] },
   { id: "S8-causal-guess", device: ESTUARY_OXYGEN, turns: ["Is the low oxygen at Estuary Oxygen Pod from the sewage spill upstream?"] },
   { id: "S9-steady", device: STEADY_CHANNEL, turns: ["Is the conductivity at Steady Channel Pod OK over the last 7 days?"] },
+];
+
+/**
+ * `get_tides` (`SPECS.md` §10.10): the same question on a pod whose pH follows the sun, one whose pH
+ * follows NOAA's predicted tide, and a freshwater pod. The model may say the tide drives the cycle,
+ * or does not, only from the tool's verdict.
+ */
+const TIDE_SCENARIOS: Scenario[] = [
+  { id: "T1-solar", device: BAY_MOUTH, turns: ["Does the tide drive the daily pH cycle at Bay Mouth Pod over the last 7 days?"] },
+  { id: "T2-tidal", device: TIDAL_FLAT, turns: ["Does the tide drive the daily pH cycle at Tidal Flat Pod over the last 7 days?"] },
+  { id: "T3-freshwater", device: LAKE_INLET, turns: ["Does the tide drive the daily pH cycle at Lake Inlet Pod over the last 7 days?"] },
 ];
 
 interface ToolCall { name: string; arguments: unknown }
@@ -304,9 +317,32 @@ const gradeScenario = (id: string, turns: Turn[]): Check => {
       const issue = sentences(last).filter((x) => /data issue|sensor (fault|problem|issue|failure)|spike|faulty|malfunction/i.test(x) && !NEGATED_BEFORE.test(x.slice(0, x.search(/data issue|sensor|spike|faulty|malfunction/i))));
       return { pass: issue.length === 0, detail: `fault or data-issue claims: ${issue.length}`, evidence: issue };
     }
+    case "T1-solar": case "T2-tidal": case "T3-freshwater":
+      return gradeTideScenario(id, turns);
     default:
       return { pass: false, detail: "unknown scenario" };
   }
+};
+
+const TIDE_DRIVES = /(follows?|following|tracks?|driven by|set by|keeps? to|in step with) (the )?tides?|tid(e|al)[- ]driven/i;
+const NOT_TIDE = /time of day|same (clock )?(hour|time)|\bsun\b|solar|not (driven by |following |follow )?the tide|doesn'?t follow the tide|does not follow the tide|rather than the tide|not tidal/i;
+
+/** `get_tides` must be called with pH, and the answer must carry its verdict. */
+const gradeTideScenario = (id: string, turns: Turn[]): Check => {
+  const last = turns[turns.length - 1]?.answer ?? "";
+  const calls = turns.flatMap((t) => t.tool_calls).filter((c) => c.name === "get_tides");
+  const withMetric = calls.some((c) => (c.arguments as Record<string, unknown>)?.metric === "ph");
+  const drives = sentences(last).filter((x) => TIDE_DRIVES.test(x) && !NEGATED_BEFORE.test(x.slice(0, x.search(TIDE_DRIVES))));
+  if (id === "T3-freshwater") {
+    const noTides = /freshwater|no tides?|not tidal|tides? (do(es)?n'?t|do(es)? not) apply/i.test(last);
+    return { pass: noTides && drives.length === 0, detail: `get_tides called: ${calls.length > 0}; no tides stated: ${noTides}; tide claims: ${drives.length}`, evidence: drives };
+  }
+  if (id === "T1-solar") {
+    const solarSaid = NOT_TIDE.test(last);
+    return { pass: withMetric && solarSaid && drives.length === 0, detail: `get_tides with ph: ${withMetric}; time of day or not the tide: ${solarSaid}; tide claims: ${drives.length}`, evidence: drives };
+  }
+  const station = /Santa Ana|station|predict/i.test(last);
+  return { pass: withMetric && drives.length > 0 && station, detail: `get_tides with ph: ${withMetric}; follows the tide: ${drives.length > 0}; station or prediction named: ${station}` };
 };
 
 // ---- Runner -------------------------------------------------------------------------------------
@@ -381,9 +417,9 @@ const main = async (): Promise<void> => {
       save();
     }
 
-    if (ONLY === "" || ONLY === "scenarios") {
+    if (ONLY === "" || ONLY === "scenarios" || ONLY === "tides") {
       entry.scenarios = [];
-      for (const scenario of SCENARIOS) {
+      for (const scenario of ONLY === "tides" ? TIDE_SCENARIOS : SCENARIOS) {
         const history: Array<{ role: string; content: string }> = [];
         const turns: Turn[] = [];
         for (const question of scenario.turns) {
