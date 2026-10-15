@@ -215,3 +215,4 @@ Michael named the sources, in order:
 
 The user placed this after the next release (2026-10-15); it may join that release only if it is finished and tested in time.
 Why it matters here: Gilligan may name only measured causes, so today it can never say a pattern follows the tide; a tide tool turns "the data cannot show the tides" into a check, and lets the daily-cycle timing be compared with real high and low tides.
+**Status 2026-10-15:** `get_tides` is built on `task/tide-tool` behind `TIDE_TOOL` (`SPECS.md` §10.10), unit-tested and checked against NOAA's live API; no model run yet. Swell has no source in CER's data; NOAA's NDBC wave buoys are the candidate to check next. GPS analysis and NOAA weather are not started.

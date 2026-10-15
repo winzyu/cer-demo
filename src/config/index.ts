@@ -135,6 +135,13 @@ export interface ToolsConfig {
    */
   reportTool: boolean;
   /**
+   * Master switch for `get_tides` -- the tide variants of `TOOL_BLOCK`'s three tide sentences,
+   * the tools array entry, and the registry. Needs `sensorTool`: the tool reads the pod's
+   * position and daily peaks through `QuerySensorData`, and its prompt text lives in
+   * `TOOL_BLOCK`. Defaults to **false** for the same prompt-comparability reason as the others.
+   */
+  tideTool: boolean;
+  /**
    * Tool-enabled rounds before the loop forces a text-only answer. Legacy was 5
    * (`MIGRATION_SPEC.md` §9, hard-coded); raised here because the six-parameter eval fixture
    * needs one call per metric plus room for follow-ups, which 5 cannot fit. This is N5's
@@ -151,6 +158,21 @@ export interface ToolsConfig {
    * question out of the model's attention and bill for the privilege.
    */
   rawLimit: number;
+}
+
+/**
+ * NOAA CO-OPS, read directly for `get_tides` (`src/tides/noaaTides.ts`). Public, keyless and
+ * outside CER: the CER backend's `/water/tides` route returns no station and an empty list for
+ * every failure, so the tool could not say which station it used or why there is no tide.
+ */
+export interface TidesConfig {
+  /** The data API's `datagetter` URL. Overridable so a replay can point at a fake. */
+  dataUrl: string;
+  /** The metadata API's tide-prediction station list. */
+  stationsUrl: string;
+  /** A station farther than this from the pod is not used; tide timing shifts along a coast. */
+  maxStationKm: number;
+  timeoutMs: number;
 }
 
 export interface ChatConfig {
@@ -310,6 +332,7 @@ export interface Config {
   serviceAuth: ServiceAuthConfig;
   deviceApi: DeviceApiConfig;
   tools: ToolsConfig;
+  tides: TidesConfig;
   chat: ChatConfig;
   quota: QuotaConfig;
   retrieval: RetrievalConfig;
@@ -500,8 +523,18 @@ const load = (): Config => {
       predecessorPeriodHandoff: readBool("PREDECESSOR_PERIOD_HANDOFF", false),
       sensorTool: readBool("SENSOR_TOOL", false),
       reportTool: readBool("REPORT_TOOL", false),
+      tideTool: readBool("TIDE_TOOL", false),
       maxToolRounds: readInt("MAX_TOOL_ROUNDS", 16),
       rawLimit: readInt("RAW_LIMIT", 200),
+    },
+    tides: {
+      dataUrl: readString("NOAA_TIDES_DATA_URL", "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter")!,
+      stationsUrl: readString(
+        "NOAA_TIDES_STATIONS_URL",
+        "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions",
+      )!,
+      maxStationKm: readFloat("NOAA_TIDES_MAX_STATION_KM", 50),
+      timeoutMs: readInt("NOAA_TIDES_TIMEOUT_MS", 15000),
     },
     chat: {
       maxHistoryMessages: readInt("MAX_HISTORY_MESSAGES", 20),

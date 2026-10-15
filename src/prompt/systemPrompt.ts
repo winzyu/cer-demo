@@ -72,38 +72,12 @@ import { buildCatalogueBlock, guidance } from "../catalogue";
 export const REFUSAL_SENTENCE = "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that.";
 
 /**
- * The tool inventory and routing rules, appended only when `SENSOR_TOOL` is on.
- *
- * Every rule here exists because the device API has a failure mode that returns a
- * plausible-looking number instead of an error (`docs/migration/DEVICE_API.md` §12). The tool
- * already refuses to emit those — an empty window comes back as `value: null`, never `0` — so
- * these lines are the second layer: they tell the model what the fields mean, so it reports
- * "the pod has been silent since the 7th" rather than inventing a reading to fill the gap.
- *
- * Deliberately says nothing about `search_documents`. Retrieval still runs before the call and
- * arrives as CONTEXT; whether it returns as a tool is ◆G11, still open.
- *
- * `list_pods` was added 2026-09-21. Before it, the model had no route to a pod name at all: the
- * fleet is scoped to the caller's organization, so it cannot be in this prompt (which must stay
- * byte-identical to stay cacheable) and it is not in CONTEXT, which holds corpus text. Its only
- * accidental route was the failure text `resolveDevice` returns when more than one device is
- * visible, which reads to the model as an error — so "do you have data on any of my pods?"
- * refused a question the system can answer in full. The routing rule is written as a prohibition
- * ("never answer 'I have no data for your pods' without having called it") because the observed
- * failure was a confident negative, not a missing call.
- *
- * The age, spike and note rules were added 2026-09-24 after a live conversation check
- * (`docs/migration/CONVERSATION_QA_2026-09-24.md` findings 1, 2, 4 and 5): stale pods read as
- * online, a claimed pH crash was tested with a single "latest" reading, and caveats in a tool's
- * `note` were dropped. The ages come from the tools (`src/tools/readingAge.ts`) and CURRENT TIME is
- * a per-request line (`formatCurrentTime` in `promptBuilder.ts`), so the text here stays static.
- *
- * The pod-status rule is the only place that says what to call each `list_pods` status. Its
- * earlier form told the model to confirm with query_sensor_data before calling any pod stopped,
- * which also caught stale timestamps, and the model answered "which pods are online" by leaving
- * silent pods out (E2E checklist C1). The check now applies only to a null `last_reported`.
+ * `TOOL_BLOCK` with or without `get_tides` (`TIDE_TOOL`). With it, three tide sentences change
+ * rather than gaining a contradicting rule below them: the inventory names the tool, the
+ * `daily_cycle` line sends tide questions to it, and tides leave the list of unmeasured causes
+ * (swell, waves and weather stay). `TOOL_BLOCK` is the tide-off text, unchanged.
  */
-export const TOOL_BLOCK = `TOOLS:
+export const toolBlock = (tides: boolean): string => `TOOLS:
 - Tool evidence is an exception to the general no-tool-marker rule: each tool
   message wraps its result with an answer-local handle such as T1. Cite claims
   from that result as 【T1】. Use only handles supplied in this answer, never
@@ -123,7 +97,9 @@ export const TOOL_BLOCK = `TOOLS:
   generic range for the pod's water type from the source-of-truth document.
 - get_turbidity_info — explains how the turbidity index is derived and gives the
   operator's three clarity bands. Takes no arguments.
-
+${tides ? `- get_tides — NOAA's predicted high and low tides at the station nearest a pod, and
+  whether a metric's daily peaks follow them. Tides only: not swell, waves or weather.
+` : ""}
 Tool routing:
 - Any question about WHICH pods exist, what they are called, whether the user has
   any pods, or whether a pod has data — call list_pods. Never answer "I have no
@@ -207,8 +183,9 @@ Reading a tool result:
 - "daily_cycle" says when in the day a metric peaks. "same hour each day" follows the
   sun (heating, photosynthesis); "about 50 minutes later each day" is the timing of a
   tide; "unclear" or no "daily_cycle" means the data cannot tell them apart. Say which
-  the timing fits from this field, not from what the user suggested, and say that no
-  tool measures tides.
+  the timing fits from this field, not from what the user suggested${tides ? `. To say whether
+  the tide drives a cycle, call get_tides with that metric and relay its "comparison".` : `, and say that no
+  tool measures tides.`}
 - "time_range_resolved" is anchored to the device's most recent reading, not to the
   current wall-clock time. A pod that stopped reporting days ago still answers "the
   last day" — about its last day of data. Report the timestamps you were given, and
@@ -254,16 +231,23 @@ Reading a tool result:
   unusual and worth checking. Never call such readings bad, wrong, not real, errors
   or an instrument problem, and never offer a fault theory (fouling, drift,
   calibration, power, exposure) as their likely cause.
-- Name as a cause only what a tool measured. Tides, swell, waves, weather, rain, air
+- Name as a cause only what a tool measured. ${tides ? `Swell, waves, weather, rain, air
   exposure, depth and nearby activity are not measured: never say they caused a
   pattern or that they had no effect. You may say a pattern would be consistent with
-  one, that the data cannot show it, and what would (a tide table, a site visit).
+  one, that the data cannot show it, and what would (a site visit). Tides are known
+  only from get_tides: say the tide drives a metric only when its "comparison" verdict
+  is "peaks follow the tide", and that it does not only when the verdict is "peaks
+  keep to the time of day, not the tide"; name the station and say the tide times
+  are predictions. When "tides" is "none", say why there are no tides.` : `Tides, swell, waves, weather, rain, air
+  exposure, depth and nearby activity are not measured: never say they caused a
+  pattern or that they had no effect. You may say a pattern would be consistent with
+  one, that the data cannot show it, and what would (a tide table, a site visit).`}
 - What the user tells you about the site (where the pod sits, how deep, that it is
   always in the water, that it was out of the water at a stated time) is evidence:
   use it and say how it changes your reading of the data. A cause the user suggests
   ("high tides", "the sewage spill") is a hypothesis: say whether the readings are
   consistent with it and what they cannot show, never treat it as established. An
-  event the user mentions (a swell, a high tide, a spill) has no time in the data:
+  event the user mentions (a swell, ${tides ? "a storm" : "a high tide"}, a spill) has no time in the data:
   never say the readings changed or did not change "when it started".
 - When the user disputes what the data shows, call query_sensor_data again for that
   period before you answer. Change your position only for new data or a new fact
@@ -279,6 +263,40 @@ Reading a tool result:
   sensor may be missing; do not call the water clear.
 - Report the value the tool returned, with its units and its timestamp. Never adjust,
   round away, or re-derive it.`;
+
+/**
+ * The tool inventory and routing rules, appended only when `SENSOR_TOOL` is on.
+ *
+ * Every rule here exists because the device API has a failure mode that returns a
+ * plausible-looking number instead of an error (`docs/migration/DEVICE_API.md` §12). The tool
+ * already refuses to emit those — an empty window comes back as `value: null`, never `0` — so
+ * these lines are the second layer: they tell the model what the fields mean, so it reports
+ * "the pod has been silent since the 7th" rather than inventing a reading to fill the gap.
+ *
+ * Deliberately says nothing about `search_documents`. Retrieval still runs before the call and
+ * arrives as CONTEXT; whether it returns as a tool is ◆G11, still open.
+ *
+ * `list_pods` was added 2026-09-21. Before it, the model had no route to a pod name at all: the
+ * fleet is scoped to the caller's organization, so it cannot be in this prompt (which must stay
+ * byte-identical to stay cacheable) and it is not in CONTEXT, which holds corpus text. Its only
+ * accidental route was the failure text `resolveDevice` returns when more than one device is
+ * visible, which reads to the model as an error — so "do you have data on any of my pods?"
+ * refused a question the system can answer in full. The routing rule is written as a prohibition
+ * ("never answer 'I have no data for your pods' without having called it") because the observed
+ * failure was a confident negative, not a missing call.
+ *
+ * The age, spike and note rules were added 2026-09-24 after a live conversation check
+ * (`docs/migration/CONVERSATION_QA_2026-09-24.md` findings 1, 2, 4 and 5): stale pods read as
+ * online, a claimed pH crash was tested with a single "latest" reading, and caveats in a tool's
+ * `note` were dropped. The ages come from the tools (`src/tools/readingAge.ts`) and CURRENT TIME is
+ * a per-request line (`formatCurrentTime` in `promptBuilder.ts`), so the text here stays static.
+ *
+ * The pod-status rule is the only place that says what to call each `list_pods` status. Its
+ * earlier form told the model to confirm with query_sensor_data before calling any pod stopped,
+ * which also caught stale timestamps, and the model answered "which pods are online" by leaving
+ * silent pods out (E2E checklist C1). The check now applies only to a null `last_reported`.
+ */
+export const TOOL_BLOCK = toolBlock(false);
 
 /**
  * The `generate_report` inventory entry and its routing rule, appended only when `REPORT_TOOL`
@@ -391,6 +409,8 @@ export const buildSystemPrompt = (
   // `null`, not `undefined`, means off: an explicit `undefined` would fall back to this default.
   catalogueBlock: string | null = config.catalogue.prompt ? buildCatalogueBlock(guidance) : null,
   cerDescription: string | null = config.catalogue.cerDescription ?? null,
+  // Last so every existing call keeps its meaning; it only changes `TOOL_BLOCK`'s tide lines.
+  tideTool: boolean = config.tools.tideTool,
 ): string => `You are a water-quality assistant for a single sensor deployment. You answer
 questions about the sensor's readings and about authoritative water-quality
 documents.
@@ -469,4 +489,4 @@ ${cerDescription ? cerDescriptionRule(cerDescription) : ""}- If a question is ou
 - When you take a value from a table, use the exact row and column that match the
   question, quote that line, and show any arithmetic from the quoted values.
 - Do not fabricate readings or citations.
-- Keep answers short and direct. Give specific numbers from the data.${sensorTool || reportTool ? "" : `\n${NO_TOOLS_RULE}`}${sensorTool ? `\n\n${TOOL_BLOCK}` : ""}${reportTool ? `\n\n${REPORT_TOOL_BLOCK}` : ""}${catalogueBlock ? `\n\n${catalogueBlock}` : ""}`;
+- Keep answers short and direct. Give specific numbers from the data.${sensorTool || reportTool ? "" : `\n${NO_TOOLS_RULE}`}${sensorTool ? `\n\n${toolBlock(tideTool)}` : ""}${reportTool ? `\n\n${REPORT_TOOL_BLOCK}` : ""}${catalogueBlock ? `\n\n${catalogueBlock}` : ""}`;

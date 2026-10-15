@@ -62,23 +62,31 @@ const fit = (ys: number[]): { slope: number; scatter: number } => {
 };
 
 /**
+ * Each full local solar day's highest usable reading, in order. A partial day at either edge of
+ * the window is left out: its peak would sit at the edge, not where the cycle puts it.
+ */
+export const dailyPeaks = (samples: Sample[], longitude: number): Sample[] => {
+  const offsetMs = solarOffsetHours(longitude) * HOUR_MS;
+  const usable = samples.filter((s) => s.valid && s.plausible !== false);
+  if (usable.length === 0) return [];
+  const dayOf = (s: Sample): number => Math.floor((s.atMs + offsetMs) / DAY_MS);
+  const days = new Map<number, Sample[]>();
+  usable.forEach((s) => days.set(dayOf(s), [...(days.get(dayOf(s)) ?? []), s]));
+  const first = dayOf(usable[0]);
+  const last = dayOf(usable[usable.length - 1]);
+  return [...days.entries()]
+    .filter(([day, rows]) => day > first && day < last && rows.length >= 8)
+    .sort(([a], [b]) => a - b)
+    .map(([, rows]) => rows.reduce((best, s) => (s.value > best.value ? s : best)));
+};
+
+/**
  * The peak hour of each full local solar day in `samples`, and whether it holds or drifts.
  * Undefined with fewer than `MIN_CYCLE_DAYS` full days of usable readings.
  */
 export const dailyCycle = (samples: Sample[], longitude: number): DailyCycle | undefined => {
   const offsetMs = solarOffsetHours(longitude) * HOUR_MS;
-  const usable = samples.filter((s) => s.valid && s.plausible !== false);
-  if (usable.length === 0) return undefined;
-  const dayOf = (s: Sample): number => Math.floor((s.atMs + offsetMs) / DAY_MS);
-  const days = new Map<number, Sample[]>();
-  usable.forEach((s) => days.set(dayOf(s), [...(days.get(dayOf(s)) ?? []), s]));
-  // Only days the window covers end to end: a partial day has a false peak at its edge.
-  const first = dayOf(usable[0]);
-  const last = dayOf(usable[usable.length - 1]);
-  const peaks = [...days.entries()]
-    .filter(([day, rows]) => day > first && day < last && rows.length >= 8)
-    .sort(([a], [b]) => a - b)
-    .map(([, rows]) => rows.reduce((best, s) => (s.value > best.value ? s : best)));
+  const peaks = dailyPeaks(samples, longitude);
   if (peaks.length < MIN_CYCLE_DAYS) return undefined;
 
   // Unwrap each peak's hour against the previous one, so a peak drifting past midnight keeps going.

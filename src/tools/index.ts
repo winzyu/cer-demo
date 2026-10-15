@@ -3,6 +3,7 @@ import type { ToolHandler } from "../types/tool.types";
 import { QuerySensorData, SensorQueryError, querySensorDataDefinition } from "./querySensorData";
 import { GenerateReport, generateReportDefinition } from "./generateReport";
 import { GetPodThresholds, getPodThresholdsDefinition } from "./getPodThresholds";
+import { GetTides, getTidesDefinition } from "./getTides";
 import { getTurbidityInfo, getTurbidityInfoDefinition } from "./getTurbidityInfo";
 import { ListPods, listPodsDefinition } from "./listPods";
 
@@ -35,6 +36,7 @@ import { ListPods, listPodsDefinition } from "./listPods";
 export const buildToolRegistry = (
   sensorTool: boolean = config.tools.sensorTool,
   reportTool: boolean = config.tools.reportTool,
+  tideTool: boolean = config.tools.tideTool,
 ): ToolHandler[] => {
   const handlers: ToolHandler[] = [];
 
@@ -72,6 +74,16 @@ export const buildToolRegistry = (
       definition: getTurbidityInfoDefinition,
       run: (args, context) => getTurbidityInfo(args, context),
     });
+
+    // Only with the sensor tool: its prompt text lives in `TOOL_BLOCK`, and it reads the pod's
+    // position and peaks through the shared `sensor`.
+    if (tideTool) {
+      const tides = new GetTides({ sensor });
+      handlers.push({
+        definition: getTidesDefinition,
+        run: (args, context) => tides.run(args, context),
+      });
+    }
   }
 
   if (reportTool) {
@@ -88,6 +100,7 @@ export const buildToolRegistry = (
 export { QuerySensorData, SensorQueryError, querySensorDataDefinition };
 export { GenerateReport, generateReportDefinition };
 export { GetPodThresholds, getPodThresholdsDefinition };
+export { GetTides, getTidesDefinition };
 export { getTurbidityInfo, getTurbidityInfoDefinition };
 export { ListPods, listPodsDefinition };
 export type { SensorQueryParams } from "./querySensorData";

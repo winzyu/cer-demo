@@ -1184,6 +1184,21 @@ The tools already judge readings (§19); these rules keep the model from overrul
   A pattern no entry explains is described as a real measurement, and a cause the user suggests is not evidence for an entry.
 - Natural-variation entries (`daily-solar-cycle`, `tidal-exchange`, `heat-wave`, `shallow-deployment`) are drafts, hidden in production (`CATALOGUE_DRAFTS=false`) until a supervisor approves them.
 
+### 10.10 Tides (`get_tides`, `src/tools/getTides.ts`, `src/tides/`)
+
+Michael named NOAA's tide data as the first outside source to give Gilligan (`migration/POST_LAUNCH_BACKLOG.md` §7); without it the model may say a cycle's timing fits a tide but never that the tide drove it (§10.9).
+The tool is behind `TIDE_TOOL` (default off) and registers only with `SENSOR_TOOL`.
+
+- Source: NOAA CO-OPS predicted high and low tides (`interval=hilo`, GMT, metres above MLLW), read directly, not through CER's `/water/tides`.
+  That route answers `[]` for every failure and names no station; on 2026-10-15 its nearest-station lookup read `stationList` while NOAA answers `stations`, and the registry's `noaaTidesId` `9087057` is a Great Lakes station NOAA has no predictions for.
+- Station: the registry's `noaaTidesId` when NOAA has predictions for it within `NOAA_TIDES_MAX_STATION_KM` (default 50) of the pod's newest in-window GPS fix; otherwise the nearest station within that distance, with a note on why the registry's was not used; otherwise no tides, naming the nearest station and its distance.
+  Freshwater pods have no tides; a pod with no GPS fix in the window cannot be placed.
+- With a `metric`, the tool compares each full local day's peak with the nearest predicted high tide (`tideComparison.ts`): a lag whose day-to-day circular scatter on the 12.42-hour cycle is at most 1.5 hours is "peaks follow the tide"; a larger scatter with a "same hour each day" `daily_cycle` is "peaks keep to the time of day, not the tide"; anything else is "unclear".
+  It needs 5 full days, since the tide moves only about 0.84 hours a day against the clock.
+- Prompt (`toolBlock(true)`): the tool joins the inventory, the `daily_cycle` rule sends tide questions to it, and tides leave the unmeasured causes; the model may say the tide drives a metric, or does not, only from the comparison's verdict, naming the station and that the times are predictions.
+  Swell, waves and weather stay unmeasured; predicted tides carry no storm surge or swell.
+  With `TIDE_TOOL` off, `TOOL_BLOCK` is unchanged byte for byte.
+
 ---
 
 ## 11. Ingestion (`src/ingestion/`, `scripts/ingest.ts`)

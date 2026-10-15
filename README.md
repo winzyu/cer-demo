@@ -384,6 +384,7 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | Variable | Default | Purpose |
 |---|---|---|
 | `REPORT_TOOL` | `false` | **The gate.** Enables `generate_report`, its entry in the tool registry, and the prompt's report-vs-stat routing rule. Separate from `SENSOR_TOOL` because `generate_report` calls `QuerySensorData.query()` directly rather than through the model's tool loop — but it needs `DEVICE_API_BASE_URL` all the same. Same pinned-prompt caveat as `SENSOR_TOOL`. |
+| `TIDE_TOOL` | `false` | Enables `get_tides` (NOAA predicted tides at the station nearest a pod, and whether a metric's daily peaks follow them) and rewrites the prompt's tide lines ([`docs/SPECS.md`](docs/SPECS.md) §10.10). Needs `SENSOR_TOOL`. `NOAA_TIDES_DATA_URL`, `NOAA_TIDES_STATIONS_URL`, `NOAA_TIDES_MAX_STATION_KM` (50) and `NOAA_TIDES_TIMEOUT_MS` (15000) override the NOAA endpoints and limits. |
 | `CATALOGUE_PROMPT` | `false` | Appends the approved-guidance block (`src/catalogue/`) to the system prompt. Same pinned-prompt caveat as `SENSOR_TOOL`. Reports use the catalogue regardless. |
 | `CATALOGUE_DRAFTS` | `false` | Also shows catalogue entries no supervisor has approved. For supervisor review only; never set it for customers. |
 | `CER_DESCRIPTION` | *(unset)* | The approved answer to "what does Clean Earth Rovers do". Unset, the question stays out of scope; the text lives in configuration so a placeholder cannot ship in code. |
