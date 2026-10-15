@@ -1173,7 +1173,11 @@ The tools already judge readings (§19); these rules keep the model from overrul
 - Readings are real measurements unless a tool says otherwise: device-flagged (`excluded_faulted`), implausible, a "likely data issue" verdict, a `board_fault` or a failed sensor.
   An out-of-range or unusual reading passed those checks; the model reports it as what the water did and may call it unusual and worth checking, never bad, an error or an instrument problem, and never offers a fault theory as its cause.
 - Only measured quantities may be named as causes; tides, swell, weather, rain, air exposure, depth and nearby activity may be offered only as "consistent with", with what would confirm them.
-- A user's statement about the site (depth, position, always submerged, out of the water at a stated time) is evidence; a cause the user suggests is a hypothesis, and an event the user mentions has no time in the data, so the model never says the readings did or did not change "when it started".
+- A user's statement about the site (depth, position, always submerged, out of the water at a stated time) is evidence; a cause the user suggests is a hypothesis.
+- An event the user mentions (a swell, a high tide, a spill) has no time in the data.
+  The model says the readings did or did not change during it, or that it left no trace, only when the user gave its time and that time lies inside the readings a tool returned, naming both; otherwise it says the data cannot show it, or asks when it happened.
+  A pattern that held for the whole record is not evidence on its own: after the first version of this rule ("never say the readings did or did not change when it started"), 4 of 9 incident conversations still said the swells left no trace, as in "identical since Aug 23, with no shift during any swell event", with no time for the swells (`migration/DATA_SKEPTICISM_FIX_2026-10-12.md`, Remaining item 1).
+  `daily_cycle` timing says what drives the daily cycle, not whether an event changed the readings.
 - When the user disputes the data, the model calls `query_sensor_data` again and changes position only for new data or a new site fact, saying which.
 - Series buckets carry `start_local_solar` beside the UTC `start` (UTC plus longitude / 15 hours; the API carries no time zone, and solar time is what decides whether a cycle follows the sun).
   Reading UTC bucket times as local inverted the incident pod's cycle in every pre-fix conversation ("nightly lows, midday peaks" for a pH that bottoms out mid-afternoon).

@@ -478,7 +478,13 @@ describe("data skepticism (GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §5)", () => {
   it("takes the user's site facts as evidence and their causes as hypotheses", () => {
     expect(TOOL_BLOCK).toContain("What the user tells you about the site");
     expect(TOOL_BLOCK).toContain("A cause the user suggests\n  (\"high tides\", \"the sewage spill\") is a hypothesis");
-    expect(TOOL_BLOCK).toContain("never say the readings changed or did not change \"when it started\".");
+  });
+
+  it("claims a user-reported event left no trace only when its time lies inside the readings", () => {
+    expect(TOOL_BLOCK).toContain("- An event the user mentions (a swell, a high tide, a spill, a storm) has no time in\n  the data.");
+    expect(TOOL_BLOCK).toContain("that it left no\n  trace, or that a pattern held through it only when the user has told you when it\n  happened and that time lies inside the readings a tool returned; then name both");
+    expect(TOOL_BLOCK).toContain("A pattern that held for the whole period does not show\n  that an event of unknown time left no trace");
+    expect(TOOL_BLOCK).toContain("Otherwise say the data\n  cannot show whether the readings changed during it, or ask when it happened.");
   });
 
   it("re-reads the data when challenged and moves only for new data or a new site fact", () => {
