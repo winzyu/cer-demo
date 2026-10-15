@@ -86,6 +86,9 @@ On the Mirror the guards passed 12 of 12 after (11 of 12 before: one oxygen answ
 1. **User-reported events said to have left no trace** (4 of 9 after): "the pattern has been identical since Aug 23, with no shift during any swell event".
    It is a fair inference only if the event fell inside the record, which nothing establishes; the rule added in `c303c2f` did not change it.
    Options: a firmer rule, or accept it as reasoning from the whole record.
+   Firmer rule tried 2026-10-15 on `task/swell-rule` (`fd7f008`: the claim only when the user gave the event's time and it lies inside the readings, otherwise say the data cannot show it or ask when): fake-API arms only, 3 runs each, $0.365 (`after-fd7f008.json`, `after-fd7f008-deepdip.json`).
+   The claim stayed in 2 of 6 conversations (1.35 run 2, which repeated "left no visible trace" under pushback; deep dip run 2) plus 1 borderline (deep dip run 1), against 2 clear and 2 borderline of the same 6 at `c303c2f`; 3 of 6 now ask when the swells happened or say the data cannot show it.
+   Guards 12/12, S2a/S2b 3/3 each, and the scenario first-pass flags match `c303c2f`'s on reading (S6 re-queried and held; G3's unrequested report is unchanged), so no regression, but no fix either: the rule is not landed.
 2. **One misread of `daily_cycle`** (Mirror, 1 of 9): the tool said "same hour each day" with peaks 8 minutes apart, and the answer called that "characteristic of a tide".
    A field naming what the timing fits ("fits: the sun") would leave less to interpret.
 3. **One inverted time of day** (deep dip, 1 of 9): "a low of about 5.4-5.5 in the early-to-mid morning local solar time".
