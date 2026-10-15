@@ -1,7 +1,8 @@
 # Report editing: is the HTML template worth building? (2026-10-15)
 
 Recommendation note for [`POST_LAUNCH_BACKLOG.md`](POST_LAUNCH_BACKLOG.md) §6, written from code and earlier results; nothing was run, and every cost below is an estimate unless it cites a measurement.
-Short answer: ship idea 1, do not build the HTML template now, and ask Michael one question with the sample PDFs.
+"HTML" here means Michael's own preference among the first two ideas offered to him; the `omit` options that were built have nothing to do with HTML, they are parameters on the report tool call.
+Short answer: ship idea 1, which Michael approved on 2026-10-12 with all four samples, and do not build the HTML template unless he asks for more.
 
 ## Where things stand
 
@@ -74,7 +75,7 @@ Should wait for the rework:
 
 - Any new `omit` group, such as one for the unusual-reading calibration notes, because their wording and conditions are not settled until Michael reviews the rework.
 - Any template or layout redesign, HTML or not, because the rework is still changing what the sections say.
-- The samples Michael approves: the ones in `report-omit-samples/` predate the rework, so regenerate the offline pair after it lands (free, offline) if they have not been sent yet.
+- Fresh samples: the four Michael approved in `report-omit-samples/` predate the rework, so regenerate them after it lands (free, offline) and show him the new calibration wording.
 
 Need not wait: deploying idea 1 itself, since the rework keeps the `omit` checks in `narrative.ts` and only adds text around them; whichever lands second resolves a small merge in `narrative.ts`.
 
@@ -82,12 +83,12 @@ Need not wait: deploying idea 1 itself, since the rework keeps the `omit` checks
 
 Ship idea 1 with the next deploy, and do not build the HTML template now.
 Its value over idea 1 is rewording and a dashboard preview, neither of which Michael has asked for; its costs are a browser in the image or a second service, a rewritten renderer, and, if it writes text, reversing the zero-AI-calls decision.
-Tell Michael plainly that the model chooses which notes to leave out but never writes report text, correcting the earlier impression that it edits areas of the report.
+Michael has already been told what each group removes (2026-10-12); still tell him plainly that the model chooses which notes to leave out but never writes report text.
 After the flagging rework lands, decide with him whether the new calibration notes need their own group.
 Revisit idea 2, or idea 4 (the dashboard with toggles), only if his answer shows a need for rewording or for removing whole sections beyond Data Quality.
 
-The one question for Michael, sent with the before-and-after PDFs:
+Michael approved all four samples ("yes these look good!", 2026-10-12), so the open question is narrower and can wait for real use after the release:
 
-> Does this copy, with the turbidity notes left out, give you the clean version you wanted to share, and if not, which other parts would you want to remove or reword?
+> Is there anything else in the report you would want to remove or reword before sharing it?
 
-His answer decides the path: "yes" closes §6 on idea 1; "remove more" means new groups; "reword" is the only answer that justifies HTML text slots and revisiting the zero-AI-calls decision.
+"Nothing" closes §6 on idea 1; "remove more" means new groups; "reword" is the only answer that justifies HTML text slots and revisiting the zero-AI-calls decision.
