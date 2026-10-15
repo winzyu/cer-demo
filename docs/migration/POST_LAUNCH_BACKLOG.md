@@ -169,6 +169,7 @@ The user offered two directions: the model writes the whole report as HTML, conv
 Michael: "I would say the HTML is the better idea".
 **Status 2026-10-09:** idea 1 (report options on the tool) is built on cer-demo `task/report-omit` and server `task/gilligan-report-omit`, tested on the Mirror 2026-10-10 and 11 ([`REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md); the false edit claim is fixed by a server-written PDF line and a forced retry) and awaiting Michael's approval of sample PDFs; the decision is in [`timeline.md`](../timeline.md).
 On 2026-10-12 the cer-demo half landed on `dev` with `land/post-launch`, not deployed; server `task/gilligan-report-omit` (`ddcddc5`) is pushed upstream with no pull request.
+Michael approved the four offline samples (`offline-S1-full.pdf` to `offline-S4-all-four.pdf`) on 2026-10-12 ([`../timeline.md`](../timeline.md)); the feature ships in the next release with the data-skepticism fix and the flagging rework.
 Research items 2, 3, 6 and 7 were settled by the user: removal is allowed on explicit request, notes are kept by default, a copy says what it omits, the zero-AI-calls decision stands, and omitted copies count against the quota as before.
 
 How the report works today:
