@@ -251,13 +251,66 @@ The honest position between them is: <i>report the readings, say plainly what ma
 </ol>
 
 <h2 id="michael">8. Questions for Michael</h2>
-<ol>
-<li>Was Algalita's pH probe recalibrated, cleaned or swapped around Sep 29-30, or touched on Oct 7 around 02:30 local?</li>
-<li>Could pH at the site really reach 12.9 or 2.7 (concrete or cleaning work, a discharge), given that ORP, oxygen and conductivity did not change?</li>
-<li>Is "very unusual for seawater; a calibration check would confirm" acceptable wording to customers?</li>
-<li>Should the customer alert emails follow the same rule as Gilligan?</li>
-<li>Do the pods report conductivity corrected to 25 °C? (stakeholder question 24)</li>
-</ol>
+<p>Updated 2026-10-14 with the real month (Sep 12 to Oct 13). Each question shows how the rules as built label the readings behind it, so Michael can mark each row "agree" or "I would label it X".
+Labels as in <a href="#solution">section 5</a>: <span class="pill good">Normal</span> <span class="pill warn">Out of range</span> (the only label that counts) <span class="pill info">Unusual</span> (kept, shown, never counted) <span class="pill bad">Device fault</span> (left out).
+A flag needs at least 3 out-of-range readings making up 5% of a rolling 24 hours; the Algalita pH limits are 6-10.</p>
+
+<h3>1. Was the probe serviced around Sep 29-30 or Oct 7, and could pH really reach 12.9 or 2.7?</h3>
+<p><b>Why we ask:</b> the odd days end around Sep 29-30, when the registry's next calibration date fell, and ORP, oxygen and conductivity barely moved while pH swung 4-5 units. If the probe was handled, these readings are artifacts, not water.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Readings</th><th>Our label</th><th>What Gilligan does</th></tr></thead>
+<tbody>
+<tr><td>Sep 25-26: 20 readings from 2.73 to 12.91</td><td><span class="pill info">Unusual</span> outside 3-12, or a jump</td><td>Kept and mentioned: "very unusual for this water; a calibration check would confirm". Never a fault, never counted.</td></tr>
+<tr><td>Sep 26: 12 readings at 11.2-11.9</td><td><span class="pill warn">Out of range</span> high</td><td>pH flagged high on Sep 26, told as past and cleared.</td></tr>
+<tr><td>Sep 27-29: readings of 3-5.8</td><td><span class="pill warn">Out of range</span> low</td><td>pH flagged low Sep 27-29, cleared.</td></tr>
+<tr><td>Sep 27 late morning: three readings at 2.22-2.47</td><td><span class="pill info">Unusual</span> below 3</td><td>A separate unusual stretch, mentioned.</td></tr>
+<tr><td>Oct 7 about 02:30: 10.94, 10.92, 10.32</td><td>10.94 <span class="pill info">Unusual</span> (faster than 0.3 per 10 minutes); the other two <span class="pill warn">Out of range</span></td><td>Two readings are under the minimum of 3: not flagged, mentioned only if asked.</td></tr>
+</tbody></table></div>
+<p><b>If he says yes:</b> those readings should become <span class="pill bad">Device fault</span> (a service window left out), and the Sep 26 and Sep 27-29 flags disappear. If pH cannot reach 12.9 or 2.7 in that bay, the 3-12 "unusual" band may belong in "device fault" instead.</p>
+
+<h3>2. Is "very unusual; a calibration check would confirm" acceptable wording for customers?</h3>
+<p><b>Why we ask:</b> it is the only sentence Gilligan uses for every unusual reading or stretch above; "sensor fault" and "inspect" are kept for device faults. It replaced "probe malfunction" and "likely data issue", which customers read as "your data is wrong".</p>
+<p><b>If he says no:</b> one sentence changes in the prompt and the report; no label moves.</p>
+
+<h3>3. Is 15% of the range the right margin for Action Required?</h3>
+<p><b>Why we ask:</b> the number is ours, not from a source. A flag reaches Action Required only if it is still active and beyond the limit by more than 15% of the range; on the 6-10 range that is above 10.6 or below 5.4. Anything less is Watch.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Case</th><th>Result today</th></tr></thead>
+<tbody>
+<tr><td>The customer's 30-day report</td><td>Watch: every flag had cleared (before the rework: Action Required).</td></tr>
+<tr><td>A current flag at 10.4 on a 6-10 pod</td><td>Watch: past the 0.2 cushion, not past 0.6.</td></tr>
+<tr><td>A current flag at 10.7</td><td>Action Required.</td></tr>
+</tbody></table></div>
+
+<h3>4. Should the customer alert emails follow the same 5% rule?</h3>
+<p><b>Why we ask:</b> chat and reports now use the share rule, but the alert emails still run on the server's old logic, so an email can fire on readings the report does not flag (Oct 7 is one). This would be a change to the upstream server, not to Gilligan.</p>
+
+<h3>5. Oct 3-8 afternoons: are the dips to about 6.0 real water, given the board failures at the same time?</h3>
+<p><b>Why we ask:</b> on the same afternoons, every probe reported an error at once (17 readings). If the dips are electrical too, telling the customer the pH "sat at the low edge" is misleading.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Readings</th><th>Our label</th><th>What Gilligan does</th></tr></thead>
+<tbody>
+<tr><td>Afternoon pH about 5.8-6.2 on 6 of 7 days</td><td><span class="pill good">Normal</span> (within the 0.2 cushion), but the edge rule applies</td><td>"At the low edge of its healthy range", Watch at most, no flag.</td></tr>
+<tr><td>17 readings with every channel failing (Sep 15, Oct 3-8)</td><td><span class="pill bad">Device fault</span></td><td>Left out. Three in a row on Oct 8 (15:22-16:37 PDT) give "likely data issue, inspect" for every sensor.</td></tr>
+</tbody></table></div>
+<p><b>If the dips are electrical:</b> the edge mention should be dropped for those afternoons, or the readings near a board failure treated as suspect.</p>
+
+<h3>6. Sep 24 afternoon: was the pod out of the water?</h3>
+<p><b>Why we ask:</b> pH read exactly 0 and conductivity fell from about 54,000 to 1,387 µS/cm (the limit is 40,000) within about two hours. That is what a pod lifted into the air looks like, but Gilligan reports it as low conductivity.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Time (PDT)</th><th>Readings</th><th>Our label</th></tr></thead>
+<tbody>
+<tr><td>15:46</td><td>pH 0</td><td><span class="pill bad">Device fault</span> (probe rail), left out</td></tr>
+<tr><td>15:46</td><td>Conductivity about 177,000</td><td>Most likely <span class="pill info">Unusual</span> (a spike between its neighbours); not run separately to confirm</td></tr>
+<tr><td>16:33 to about 17:30</td><td>Conductivity about 7,600, 5,000, then down to 1,387</td><td><span class="pill warn">Out of range</span> low</td></tr>
+<tr><td>Result</td><td colspan="2">Conductivity flagged low Sep 24-25, so the 30-day report flags pH and conductivity.</td></tr>
+</tbody></table></div>
+<p class="small">The dashboard CSV export gives times in UTC, so these readings appear there as 22:46-23:50 on 09/24 and just after midnight on 09/25. The export matched the device API's readings where checked (23:33 and 23:50 UTC) and is not cleaned: the pH 0 and the 177,000 are in it.</p>
+<p><b>If he says yes:</b> readings while the pod is out of the water should be <span class="pill bad">Device fault</span>, which needs a new detection rule (for example a pH rail next to a conductivity collapse) and removes the Sep 24-25 conductivity flag.</p>
+
+<div class="card"><b>Most likely to change.</b> Questions 1, 5 and 6 each ask whether something treated as water is really the device; a yes moves those readings to "device fault". Questions 2-4 are tuning: a sentence, a margin, and the emails.
+Each rule's code is listed in the handoff, <code>FLAGGING_REWORK_HANDOFF_2026-10-13.md</code>, "Where each rule lives".
+Not asked here: whether pods report conductivity corrected to 25 °C (stakeholder question 24, still open).</div>
 
 <h2 id="learn">9. "Learn normal": later, not now</h2>
 <p>Michael asked whether Gilligan could learn what is normal as data accumulates. It can, with plain statistics rather than model training: for each pod, the typical value and spread at each hour of the day over its own last 2-4 weeks (v2 §4 and §9.1).</p>
