@@ -85,7 +85,7 @@ On the Mirror the guards passed 12 of 12 after (11 of 12 before: one oxygen answ
 
 1. **User-reported events said to have left no trace** (4 of 9 after): "the pattern has been identical since Aug 23, with no shift during any swell event".
    It is a fair inference only if the event fell inside the record, which nothing establishes; the rule added in `c303c2f` did not change it.
-   Options: a firmer rule, or accept it as reasoning from the whole record.
+   Closed 2026-10-15: accepted as reasoning from the whole record after a firmer rule (`task/swell-rule` `fd7f008`) made no measurable change ([`timeline.md`](../timeline.md)).
 2. **One misread of `daily_cycle`** (Mirror, 1 of 9): the tool said "same hour each day" with peaks 8 minutes apart, and the answer called that "characteristic of a tide".
    A field naming what the timing fits ("fits: the sun") would leave less to interpret.
 3. **One inverted time of day** (deep dip, 1 of 9): "a low of about 5.4-5.5 in the early-to-mid morning local solar time".

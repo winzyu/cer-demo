@@ -41,7 +41,7 @@ This session (2026-10-15) explained the overlapping open items, ran five subagen
 Quoted as offered; recommendations as given in the session.
 
 1. **`WATER_TYPE` fallback**: "decide the `WATER_TYPE` fallback before the next release: live uses `freshwater`, now only the report's fallback for pods with no registered type, while most pods are salt-water (keep, or switch to `saltwater`)." No recommendation was given; most registered pods are salt-water.
-2. **Swell claim**: "accept it and close it (my recommendation), or try a tool-side change." Options: (a) accept as reasoning from the whole record; (b) a tool-side change, such as requiring event times, or a swell data tool (outside-data workstream). Recommended: (a).
+2. **Swell claim** (resolved 2026-10-15: accepted, `task/swell-rule` dropped): "accept it and close it (my recommendation), or try a tool-side change." Options: (a) accept as reasoning from the whole record; (b) a tool-side change, such as requiring event times, or a swell data tool (outside-data workstream). Recommended: (a).
 3. **Other data-skepticism items**: "The inverted time of day (item 3): I'd fix it while landing the flagging rework. The rework adds new UTC-only times to the tool output, which makes that mistake more likely." Also: "The misread daily-cycle timing (2) and the skipped conductivity zeros (5a): these can wait until after the release." Also open from the fix doc: the before-fix wave-1 comparison at `c514e0b` (about $0.80; recommended: drop), and whether to restart and reseed the Mirror or leave it down.
 4. **Server, report omission**: apply the retry patch, then approve pushing it and opening the report-omit PR, timed with the release:
    - `! git -C /home/winsy/code/work/clean-earth-rovers/worktrees/server-report-omit am /home/winsy/code/work/clean-earth-rovers/handoff/2026-10-15/report-retried.patch`
@@ -49,7 +49,7 @@ Quoted as offered; recommendations as given in the session.
    - The PR needs cer-gilligan deployed first or alongside, since the live one ignores `omit`. The push of the patched branch is a separate command that needs consent.
 5. **"Free prompt-rule inventory"**: "Tell me what the 'free prompt-rule inventory' meant." The phrase appears only in the 2026-10-14 coordinator commit `9c635f9`. If it means listing every rule bearing on data skepticism, the triage doc's "Contradictions" section starts it.
 6. **Post-launch order**: "the unguarded user-update routes are a live production security hole in the server, and I'd put them first."
-7. **Landing the docs-only branches**: `task/report-html-option` (`0311473`) and `task/skeptic-triage` (`9e27764`) are reviewed and wait for the user's go.
+7. **Landing the docs-only branches** (resolved 2026-10-15: both landed on `dev`): `task/report-html-option` (`0311473`) and `task/skeptic-triage` (`9e27764`) are reviewed and wait for the user's go.
 8. **Worktree cleanup**: remove `post-launch-land` (merged) and the detached `e2e-dev`, `skeptic-before`, `skeptic-evals-run` and `skeptic-repro`, after checking each is clean and reachable from a branch or tag. `report-html-option`, `skeptic-triage` and `swell-rule` follow once their branches land or are dropped. `swell-rule` holds a copied, ignored `.env` and four linked `data/` caches.
 9. **Dates to confirm**: the day the questions went to Michael (recorded as "sent by 2026-10-15"), and that Michael's sample approval was 2026-10-12 (taken from the earlier record).
 10. **Still open from before**:
