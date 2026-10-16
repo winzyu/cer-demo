@@ -37,7 +37,7 @@ browser -> dashboard :3100 -> cer-api :5101 -> Firestore emulator :8080 (project
 |---|---|---|---|
 | Firestore emulator and seed | `~/code/work/clean-earth-rovers/worktrees/mirror-report-omit` | server `mirror/release-rc1` `8594338` plus three patches (§3.1) | `8594338` is live cer-api's release `122136d` plus the Mirror fixtures |
 | cer-api | same directory | same | the release plus the report-omit relay `ddcddc5` and the `report_retried` relay patch, which is what the server PR will carry |
-| Gilligan (cer-gilligan) | `~/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/omit-mirror` | cer-demo `dev` `f0cb4d2`, detached | everything the next release ships from `dev`; detached so coordinator commits do not change it mid-test |
+| Gilligan (cer-gilligan) | `~/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/omit-mirror` | cer-demo `dev`, detached (`f0cb4d2` for the 2026-10-16 run, `acb9d7d` for its rerun) | everything the next release ships from `dev`; detached so coordinator commits do not change it mid-test |
 | Dashboard | `~/code/work/clean-earth-rovers/worktrees/dashboard-land` | dashboard `fc13d16`, detached | the live cer-ui build; it needs no change, since it posts back the request each answer offers |
 
 Ports: 3100 (dashboard), 5101 (cer-api), 8010 (Gilligan), 8080 (emulator), plus the emulator's 4400, 4500 and 9150.
@@ -238,10 +238,10 @@ Personas: `user-super-2` (chat A), `user-super-3` (chat C), `user-lake-cust-1` (
 | A1 | super-2, new chat | `Give me a water quality report for Demo Public Dock Buoy for the last 7 days.` | one call, no `omit` | `New PDF in this reply: Demo Public Dock Buoy, <period>, full report.` | `Download report - Demo Public Dock Buoy (PDF)`; no Omitted row; turbidity footnote present |
 | A2 | same chat | `Can you exclude the turbidity disclaimers so I can share a clean PDF copy online?` | one call with `omit` containing `turbidity_notes` (adding `sensor_fault_notes` is acceptable) | `New PDF in this reply: Demo Public Dock Buoy, <period>, leaving out the turbidity notes` (`and sensor fault notes` if added) | a new button; Omitted row names the same groups; turbidity band still "Turbid"; figures as A1 |
 | A3 | same chat | `Remove all the warnings and the data quality section.` | one call with all four groups; `report_retried` may be true (the retry is what makes this step pass) | `... leaving out the turbidity notes, sensor fault notes, threshold notes and Data Quality section.` | Omitted row names the same groups as the call; no section "Data Quality"; Recommendations is section 5 |
-| A4 | same chat | `Take the pH numbers out of the report.` | none, or a call that still keeps every number | `No new PDF was made in this reply.` when no call was made | the answer says numbers cannot be removed; no claim that pH was removed |
+| A4 | same chat | `Take the pH numbers out of the report.` | none; `report_retried` false (before `acb9d7d` a mention of the current copy forced an unrequested report) | `No new PDF was made in this reply.` | the answer says numbers cannot be removed; no claim that pH was removed; no new button |
 | A5 | same chat | (no question) reload the page, open chat A from the chat list, click A1's button, then A2's | none | none | A1's button downloads a copy with no Omitted row; A2's downloads its own omitted copy |
 | B1 | lake-cust-1, new chat | `Report for Lakeside Mobile Buoy, last 7 days, without the notes about where the thresholds come from.` | one call, `omit: ["threshold_notes"]` | `New PDF in this reply: Lakeside Mobile Buoy, <period>, leaving out the threshold notes.` | Omitted row `threshold notes (at the requester's request)`; no "Site Baseline for ..." footnote; turbidity notes still present |
-| C1 | super-3, new chat | `Make me a shorter report for Demo Public Dock Buoy.` | none with `omit`; offering the note groups instead of guessing is the expected behaviour | if it made a report: `... full report.` | if a button appears, its PDF has no Omitted row |
+| C1 | super-3, new chat | `Make me a shorter report for Demo Public Dock Buoy.` | one call with no `omit`, or none; the answer should list the note groups the user can ask to leave out | if it made a report: `... full report.` | if a button appears, its PDF has no Omitted row |
 | D1 | lake-cust-1, new chat | `How has the water been at Lakeside Mobile Buoy this week?` | none expected; if one is made, no `omit` | none if no report was made | no button, or a full report |
 | E1 | harbor-cust-1, new chat | `Give me a report for Harbor Pier Buoy for the last 7 days without the turbidity notes.` | one call, `omit: ["turbidity_notes"]` | `New PDF in this reply: Harbor Pier Buoy, <period>, leaving out the turbidity notes.` | Omitted row `turbidity notes (at the requester's request)`; the pod has no turbidity row, so nothing else differs; no error |
 | E2 | same chat | (no question) reload, reopen chat E, click E1's button | none | none | the same omitted copy as E1 |
@@ -250,12 +250,86 @@ Pass:
 
 - A1, A2, A3, B1 and E1 each make a report, and in each the delivery line, the helper's `omit` and the PDF's Omitted row name the same groups.
 - No answer's delivery line or text claims a copy that was not made, and the fallback `That copy was not regenerated; please ask again.` never appears (if it does, record it: the retry made no report).
-- A4, C1 and D1 pass no `omit` the user did not ask for, and A4 removes no numbers.
+- A4, C1 and D1 pass no `omit` the user did not ask for, A4 removes no numbers and makes no report, and A4's `report_retried` is false.
 - A5 and E2 download the copy each button's answer described.
 - Nothing in the Network tab or the `ss` line in §6.1 reaches anything but localhost and the model provider.
 
-Record, but do not fail on: A2 adding `sensor_fault_notes`; A3 leaving out `threshold_notes` when its delivery line and Omitted row both say so (the 2026-10-11 run saw this once); the wording of A4, C1 and D1.
+Record, but do not fail on: A2 adding `sensor_fault_notes`; C1 not listing the groups; A3 leaving out `threshold_notes` when its delivery line and Omitted row both say so (the 2026-10-11 run saw this once); the wording of A4, C1 and D1.
 A wrong pick or a delivery line that disagrees with the call is a cer-demo prompt or tool-description fix; rerun only the failed steps after a new budget approval.
+
+### 7.3 Without a browser
+
+The same steps can be run by a script that makes the dashboard's own calls through its proxy (`:3100/api/v1`): it logs in as the persona, sends the question as the Gilligan page does, and downloads every report the answer offers.
+Use it to reproduce a run exactly, or to rerun failed steps; the browser checks in §6.3 and the page's rendering still need a person.
+The pass rules are §7.2's; nothing else changes.
+
+**Before you start**
+
+| check | how | expected |
+|---|---|---|
+| the stack is up | the four lines in §6.1 | 401, `"status":"ok"`, 401, nothing printed |
+| the seed is less than 7 days old | `cat` the seed time you wrote down in §5 | otherwise every report says "no readings in that window" |
+| the personas have reports left | a persona has 5 a day; chat A downloads 6 copies (A1-A4 and two in A5) if A4 makes one, 5 otherwise | if a persona has used any today, reseed first |
+| the budget is approved | §7 | 8 questions |
+
+To reseed (free; it wipes every chat and allowance, so save anything you want from earlier runs first), in a terminal that has sourced the settings file (§4):
+
+```bash
+cd "$MIRROR_SERVER" && npm run mirror:seed -- --fixtures && date -u
+```
+
+Expected: `[Mirror] Seeded (default) on 127.0.0.1:8080: 9 organizations, 27 users, 22 devices, 52 chats, 13680 readings (30 days).`
+The running cer-api, Gilligan and dashboard need no restart.
+
+**Run the steps**
+
+In any terminal (no settings file needed), set the output folder once:
+
+```bash
+cd ~/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/dev
+O=~/report-omit-chat-$(date +%F); D="node scripts/mirror/reportOmitDrive.mjs $O"
+```
+
+Then run one step at a time, in this order, and check each against §7.2 before the next:
+
+| step | command | what costs |
+|---|---|---|
+| A1 | `$D A1 user-super-2 new "Give me a water quality report for Demo Public Dock Buoy for the last 7 days."` | 1 question, 1 report |
+| A2 | `$D A2 user-super-2 same "Can you exclude the turbidity disclaimers so I can share a clean PDF copy online?"` | 1 question, 1 report |
+| A3 | `$D A3 user-super-2 same "Remove all the warnings and the data quality section."` | 1 question, 1 report |
+| A4 | `$D A4 user-super-2 same "Take the pH numbers out of the report."` | 1 question; a report only if it fails |
+| A5 | `$D A5 user-super-2 reload 0,1` | 2 reports, no question |
+| B1 | `$D B1 user-lake-cust-1 new "Report for Lakeside Mobile Buoy, last 7 days, without the notes about where the thresholds come from."` | 1 question, 1 report |
+| C1 | `$D C1 user-super-3 new "Make me a shorter report for Demo Public Dock Buoy."` | 1 question, a report if made |
+| D1 | `$D D1 user-lake-cust-1 new "How has the water been at Lakeside Mobile Buoy this week?"` | 1 question, a report if made |
+| E1 | `$D E1 user-harbor-cust-1 new "Give me a report for Harbor Pier Buoy for the last 7 days without the turbidity notes."` | 1 question, 1 report |
+| E2 | `$D E2 user-harbor-cust-1 reload 0` | 1 report, no question |
+
+`new` opens a chat, as **New chat** does; `same` continues the chat the script last opened for that persona in `$O`; `reload` re-reads the chat list, as a page reload does, and downloads the offers it names, counted from 0 across the chat (A5's `0,1` are A1's and A2's buttons).
+A persona with exactly one pod gets it preselected, as on the page (Harbor's, in E1).
+
+**Read the output**
+
+| line | what it is | compare with |
+|---|---|---|
+| `A1 user-super-2 chat=new device=(none) status=200 8.0s` | the step, the pod preselected, the HTTP status | 200; anything else is a failure to record |
+| `answer:` and the indented text | the whole answer as the page shows it; its last paragraph is the delivery line | §7.2 "expected delivery line" |
+| `offer 0: ... {"time_range":...,"omit":[...]}` | each download button and the request it sends back | the call's `omit` |
+| `download A1: 200` | the PDF the button gives, saved as `$O/A1.pdf` with its text in `$O/A1.txt` | 429 means the persona's 5 reports are used |
+| `Omitted row:` | the PDF's Omitted row, or `none` | §7.2 "expected button and PDF" |
+| `sections:` | the PDF's numbered sections | "5. Data Quality" goes when `data_quality` is left out |
+| `turbidity footnote: ... Site Baseline: ...` | whether the turbidity caveat and threshold footnote text are present | `turbidity_notes` and `threshold_notes` remove them |
+
+After the last step, show what each answer did with reports (free):
+
+```bash
+for p in user-super-2 user-lake-cust-1 user-super-3 user-harbor-cust-1; do node scripts/mirror/reportOmitLastChat.mjs $p@mirror.example.invalid; done
+```
+
+It prints each persona's latest chat only, so for `user-lake-cust-1` it shows D1; run it right after B1 as well to see B1's call.
+`report_retried: true` means the server discarded an answer that claimed a copy it had not made and forced a report; the claiming sentence is in Gilligan's log as `Answer claims a report it did not make ("...")`.
+To check that a copy kept every figure, compare the numbers in two PDFs' text, for example `diff <(grep -oE '[0-9]+\.[0-9]+' $O/A1.txt) <(grep -oE '[0-9]+\.[0-9]+' $O/A2.txt)`; only figures inside a removed Data Quality section may differ.
+The model is not deterministic, so a step that failed once can pass on a rerun; record both.
 
 ## 8. Recording
 
