@@ -1,6 +1,6 @@
 # Post-launch merge results, 2026-10-11 (`land/post-launch`)
 
-Plan: `POST_LAUNCH_MERGE_TESTS.md`.
+The completed merge plan is available with `git show 650451c:docs/migration/POST_LAUNCH_MERGE_TESTS.md`.
 Tested commit: `247e0ad`.
 Result: tiers 1-3 all pass.
 Finding 1 is still open: the unit cases pin it, but no live answer triggered it.

@@ -3,7 +3,7 @@
 Current at `dev` `303280d` plus this edit (2026-09-29: `dev` declared final for rc2; Q9, Q10 including T12 and K21b, U7 and the aggregate-window fix landed; server candidate `8463545` and dashboard candidate `fc13d16` pushed; the server commit is pinned after Michael's answer at the demo, manual guide section L).
 Production fixes outside Gilligan (the CSV export, the user routes, the period query, invited-user login, the empty-organization filter) ship at launch only with Michael's go-ahead, needed before L6; otherwise they follow launch (`timeline.md`, 2026-09-28).
 Written 2026-09-24, after the supervisor's answers to the stakeholder questions and the marked-up catalogue review (`review-marked-up.html`, untracked at the repo root).
-The goal is unchanged from [`RELEASE_GOAL_AND_PLAN.md`](RELEASE_GOAL_AND_PLAN.md); this file replaces the dates in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4 for the last six days.
+The release goal was sent to the supervisor in [`SUPERVISOR_QUESTIONS_SEND.md`](SUPERVISOR_QUESTIONS_SEND.md) §A1; this plan replaced the dates in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4 for the last six days.
 Task IDs (P1, Q2, ...) are for this plan only.
 
 ## 1. What the answers decided
@@ -112,7 +112,7 @@ Worktree cut from `dev`; none of these files overlap Q1-Q7.
 
 | id | task | owner | priority | depends on | due |
 |---|---|---|---|---|---|
-| P1 | **done 2026-09-24:** server `b2074b8` and dashboard `da5412f` pushed to `feature/gilligan-rag-assistant`; PRs held back (`UPSTREAM_PR_BODIES.md`). Publish: fetch and scan, cherry-pick `local` onto dashboard `origin/main` and server `origin/develop`, secrets and passthrough audit, push feature branches and draft PRs with named commands; propose the malware-rule update (O8) | Claude, user approves pushes | must | none | Sep 25 |
+| P1 | **done 2026-09-24:** server `b2074b8` and dashboard `da5412f` pushed to `feature/gilligan-rag-assistant`; PRs were held back. Publish: fetch and scan, cherry-pick `local` onto dashboard `origin/main` and server `origin/develop`, secrets and passthrough audit, push feature branches and draft PRs with named commands; propose the malware-rule update (O8) | Claude, user approves pushes | must | none | Sep 25 |
 | P2 | The user merges the PRs after the demo (O2) | user | must | P1, L7 | Sep 29 |
 | P3 | **Pushed 2026-09-25** (reviewed 2026-09-24): server `ccc759e` on local branch `task/gilligan-release-p3-p4` (fetched from the temporary clone) adds the null-organization rule for an explicit `null`; an organization id that does not exist (CWA Old) is still withheld on this branch and becomes null under Q6. Task E (1): membership check in `findPeriodWaterData` with organization-isolation tests from `test/fixtures/pod-scope/` | Codex, Claude reviews | must | P1 | Sep 26 |
 | P4 | **Pushed 2026-09-25** (reviewed 2026-09-24): server `ccc759e` (`.eslintrc.js` reverted) and dashboard `9b1ed78` (charts and dial keep missing turbidity as a gap), same branch name. Task E (2) lazy `EmailService` and `PaymentService`; (3) ESLint parser if small; `turbVoltToNTU.ts` null; dashboard dial to 345/795 | Codex, Claude reviews | should | P1 | Sep 26 |
@@ -182,7 +182,7 @@ L2 answers so far (2026-09-24 and 2026-09-25):
 - Fireworks: the key is stored in Secret Manager as `cer-gilligan-fireworks-api-key`; `cer-gilligan-runtime` gets Secret Accessor on that one secret, and the service reads a pinned numeric version at startup.
 - Release owner and incident contact: the user runs the release and is first contact; Michael is escalation for IAM and the upstream services.
 - Capacity: the proposal above is accepted until L5 measures it.
-- Test identities: isolation testing moves to the Firestore mirror's personas (`GILLIGAN_E2E_TEST_TICKET.md` on `docs/gcp-test-env`), so no test organizations are created on production and T2 and T3 shrink to nothing; the production smoke (L8, L9) uses the superadmin and one real member account.
+- Test identities: isolation testing moves to the Firestore mirror's personas (see [`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_TEST_GUIDE.md)), so no test organizations are created on production and T2 and T3 shrink to nothing; the production smoke (L8, L9) uses the superadmin and one real member account.
   The identity and secret setup is rehearsed first in the user's project `cer-demo-2026`, then repeated in production.
 - Gilligan's data (decided 2026-09-25): all of it lives in a dedicated Firestore database; the corpus ships inside the image (`CORPUS_SOURCE=artifact`, `MIRROR_PRODUCTION_PARITY.md` §3), so today that is only the usage store, (for example `gilligan`, in `us-central1`), so `cer-gilligan-runtime` has no grant on the customer `(default)` database; it reads pod data only through the server with the caller's token.
   Firestore IAM stops at the database, so a grant on `(default)` would let the runtime write users and devices.

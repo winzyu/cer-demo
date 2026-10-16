@@ -1,5 +1,5 @@
 // The local stack the Gilligan end-to-end bot drives: the Firestore mirror, the CER server on
-// its mirror branch, and cer-demo. See docs/migration/GILLIGAN_E2E_TEST_TICKET.md.
+// its mirror branch, and cer-demo. See docs/migration/GILLIGAN_MANUAL_TEST_GUIDE.md.
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";

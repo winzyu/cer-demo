@@ -10,7 +10,7 @@ Mark it done with the date and where the evidence is.
 
 ## 1. The mirror scenarios, repeated with live test users
 
-The mirror ticket (`GILLIGAN_E2E_TEST_TICKET.md`, on branch `docs/gcp-test-env`) defines nine scenario groups.
+The mirror scenarios are maintained in [`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_TEST_GUIDE.md).
 Phase 1 ran on the mirror on 2026-09-25: 46 scenarios, 43 pass, 3 fail, after reruns that fixed bot defects (`GILLIGAN_E2E_RESULTS_2026-09-25.md` on `docs/gcp-test-env`).
 On live, run them as the T1 test users (release plan T2), with the release limits of 20 questions and 5 reports.
 The mirror rerun on 2026-09-27 used those limits and added the manual guide's G4, K, M and R checks, with fixtures for a moved pod, a pod with no GPS and predecessors with an absent or empty organization (`GILLIGAN_E2E_RESULTS_2026-09-27.md` on `docs/gcp-test-env`).
