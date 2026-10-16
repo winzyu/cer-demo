@@ -17,6 +17,7 @@ in git history under the tag named in its section.
 | `supervisor-brief-2026-09-29` | 2026-10-14 | `docs/migration/SUPERVISOR_BRIEF.html`, the pre-launch supervisor brief for the September 30 release, never reviewed or sent - 1 file |
 | `mirror-checklist-2026-09-29` | 2026-10-14 | `scripts/e2e/mirrorChecklist.mjs`, the browser driver for `E2E_CHECKLIST.md` groups B, D, E, H and I on the 2026-09-29 mirror stack - 1 file |
 | `docs-archive-2026-10-16` | 2026-10-16 | five superseded migration docs: the one-page release goal, the upstream PR drafts, the E2E test ticket, the Task C handoff and the post-launch merge test plan - 5 files |
+| `docs-archive-2026-10-16b` | 2026-10-16 | the corpus seeding runbook, the two Q9 cloud-session results and the turbidity exploration - 4 files |
 
 Retrieve one by path:
 
@@ -270,6 +271,27 @@ Retrieve:
 ```bash
 git show docs-archive-2026-10-16:docs/migration/GILLIGAN_E2E_TEST_TICKET.md
 git show docs-archive-2026-10-16:docs/migration/UPSTREAM_PR_BODIES.md
+```
+
+## `docs-archive-2026-10-16b` - finished cloud results, an unused runbook and interview input
+
+Removed on 2026-10-16, preserved under the tag `docs-archive-2026-10-16b`, which points at `21a60e8`, the last commit that contains them.
+Nothing in the tree referenced them.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/migration/CORPUS_SEEDING.md` | 169 | The 2026-09-17 runbook for an upstream owner to seed the corpus into their Firestore (target architecture R5) | On 2026-09-25 the corpus was decided to ship inside the image (`CORPUS_SOURCE=artifact`, `GILLIGAN_RELEASE_PLAN.md`), so no upstream seeding happens. The seed commands stay documented in `SPECS.md`. |
+| `docs/migration/Q9_CLOUD_RESULT.md` | 82 | The 2026-09-27 cloud-session result for `cloud/q9-logic`: pH bound, silent pods, report reading age, thin 1-day series | Q9 landed on `dev` on 2026-09-29 (`ec6454a`); the changes are in git and the landing in `GILLIGAN_RELEASE_PLAN.md`. |
+| `docs/migration/Q9_C1_D1_RESULT.md` | 103 | The 2026-09-27 cloud-session result for `cloud/q9-c1-d1`: the pod-status rule and excluded implausible readings | Same landing; the mirror rerun of C1 and D1 is recorded in `E2E_CHECKLIST.md`. |
+| `docs/migration/TURBIDITY_EXPLORATION.md` | 64 | The 2026-09-24 code exploration that fed the Task A turbidity interview | Input, not a record: the decisions are the 2026-09-24 turbidity row in `timeline.md` and `SPECS.md`, and its line references are stale. |
+
+**418 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-16b:docs/migration/CORPUS_SEEDING.md
+git show docs-archive-2026-10-16b:docs/migration/TURBIDITY_EXPLORATION.md
 ```
 
 ## Rules
