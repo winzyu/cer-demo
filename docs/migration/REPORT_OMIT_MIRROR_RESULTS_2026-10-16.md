@@ -2,7 +2,7 @@
 
 Results of [`REPORT_OMIT_MIRROR_RUNBOOK.md`](REPORT_OMIT_MIRROR_RUNBOOK.md) §6-§7, run by the coordinator on the Mirror with fabricated data on 2026-10-16 between 04:50 and 05:15 UTC (2026-10-15 evening, US Pacific); nothing touched production.
 Verdict: the server side (relay of `omit`, `report_retried`, download buttons) passes every check, so the server PR can go ahead.
-Two model-side findings need a cer-demo fix before the release: C1 guessed every group for "shorter", and the A4 retry fired on a refusal and forced a report nobody asked for.
+Two model-side findings, C1 guessing every group for "shorter" and the A4 retry forcing a report nobody asked for, reproduced on a rerun and are fixed on `dev` (`acb9d7d`); see "Reruns of A4 and C1".
 
 ## Stack
 
@@ -54,28 +54,20 @@ Every delivery line, helper `omit` and Omitted row agreed, and the fallback `Tha
 8 questions, 429,072 tokens (super-2 229,253; lake-cust-1 99,773; harbor-cust-1 52,547; super-3 47,499): about $0.06 at $0.15 per million input tokens, at most $0.22 at the output rate.
 Reports cost no model time.
 
+## Reruns of A4 and C1
+
+Approved by the user after the first run; the Mirror was reseeded at 2026-10-16 06:30:52 UTC before them, and A4 needs A1-A3 first in the same chat.
+
+| run | build | A4 | C1 |
+|---|---|---|---|
+| reproduction | `f0cb4d2` (unchanged) | `report_retried: true`; the forced round made a **full** report, every note restored after A3 had removed them all | all four groups left out again |
+| after the fix | `acb9d7d` | no call, `report_retried: false`, `No new PDF was made in this reply.`; the answer says "the current copy already omits all of those", the kind of sentence that triggered the retry | one call with no `omit`, `... full report.`; it did not list the groups the user could ask to leave out (recorded, not a failure) |
+
+The fix (`acb9d7d`, on `dev`): in a chat whose earlier reply made a report, a sentence pointing back at that copy ("already", "current", "earlier", ...) no longer counts as a delivery claim; the sentence that triggers a retry is logged; and the prompt answers a "shorter" or "cleaner" request that names no notes with the full report.
+`SPECS.md` §10.7 has the rule; `test/unit/reportDelivery.test.ts`, `chatOrchestrator.test.ts`, `prompt.test.ts`, `postLaunchMerge.test.ts` and `answerFormat.test.ts` pass (210 tests), as do `npm run typecheck` and `npm run lint`.
+Rerun spend: 274,359 tokens before the fix and 277,584 after (A1-A4 and C1 each time), about $0.08 together, at most about $0.28.
+
 ## Reproduce
 
-Needs the Mirror stack running (runbook §5) and a seed from the last 7 days with no reports used by these four personas; reseed first if in doubt (it erases chats and resets allowances).
-From the `dev` worktree, one command per step, in order (the eight questions cost about $0.06-0.22 in all):
-
-```bash
-cd ~/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/dev
-O=~/report-omit-chat-$(date +%F); D="node scripts/mirror/reportOmitDrive.mjs $O"
-$D A1 user-super-2 new "Give me a water quality report for Demo Public Dock Buoy for the last 7 days."
-$D A2 user-super-2 same "Can you exclude the turbidity disclaimers so I can share a clean PDF copy online?"
-$D A3 user-super-2 same "Remove all the warnings and the data quality section."
-$D A4 user-super-2 same "Take the pH numbers out of the report."
-$D A5 user-super-2 reload 0,1
-$D B1 user-lake-cust-1 new "Report for Lakeside Mobile Buoy, last 7 days, without the notes about where the thresholds come from."
-$D C1 user-super-3 new "Make me a shorter report for Demo Public Dock Buoy."
-$D D1 user-lake-cust-1 new "How has the water been at Lakeside Mobile Buoy this week?"
-$D E1 user-harbor-cust-1 new "Give me a report for Harbor Pier Buoy for the last 7 days without the turbidity notes."
-$D E2 user-harbor-cust-1 reload 0
-for p in user-super-2 user-lake-cust-1 user-super-3 user-harbor-cust-1; do node scripts/mirror/reportOmitLastChat.mjs $p@mirror.example.invalid; done
-```
-
-Each step prints the answer, the offers and, per downloaded PDF, its Omitted row and section list; compare with the table above and the §7 pass rules.
-The helper prints `omit` and `report_retried` per turn (it shows each persona's latest chat, so run it for `user-lake-cust-1` after B1 as well if B1 needs checking).
-`A5 ... reload 0,1` downloads A1's and A2's offers; if A4 made a report, A2's download is refused with 429, as here.
-The model is not deterministic: C1 and A4 may pass on a rerun, which does not clear the findings.
+Follow the runbook, §7.3 "Without a browser": it lists the checks before starting, the reseed, one command per step with what each costs, and how to read the output against §7.2.
+The outputs of these runs (answers, PDFs and their text) are in the coordinator's session scratch directory, `/tmp/claude-1000/-home-winsy-code-work-clean-earth-rovers-repo-cer-demo/bd2ce85b-a0d5-45c2-a3d0-0b0d9fb45a04/scratchpad/` (`omit7/out`, `rerun1`, `rerun2`), which is not kept.
