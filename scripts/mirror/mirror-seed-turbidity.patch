@@ -1,0 +1,20 @@
+--- a/scripts/mirror/mirrorData.ts
++++ b/scripts/mirror/mirrorData.ts
+@@ -1,3 +1,4 @@
++import { turbVoltToNTU } from "../../src/utils/turbVoltToNTU";
+ /**
+  * A fabricated copy of production's Firestore shape, for the local emulator.
+  *
+@@ -468,6 +469,12 @@
+         lon,
+       },
+     });
++    // Production rows carry the converted index in field 72, which /water/period returns as is.
++    // Converted after the row is built so the random sequence, and every other value, is unchanged.
++    const waterData = rows[rows.length - 1].water_data as Record<string, number>;
++    if (waterData[72] === 0 && waterData.turbVolt > 0) {
++      waterData[72] = turbVoltToNTU(waterData.turbVolt) ?? 0;
++    }
+   }
+   return rows;
+ };
