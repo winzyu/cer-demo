@@ -128,17 +128,36 @@ const NEGATION = /\b(?:cannot|can't|can not|not|never|won't|unable)\b/i;
 const READINGS = /\b(?:readings?|data points?|samples?|measurements?)\b/i;
 
 /**
- * True when an answer reads as delivering a report: it points at the download button, or says a
- * PDF, copy or report has notes left out, in one sentence that is not a refusal or about
- * readings. Only consulted
- * for an answer that made no report, where either reading is false. A wording this misses (the
- * model saying "done" without either) still gets the "No new PDF" line when the chat has had a
- * report.
+ * "Your current copy already leaves out the turbidity notes" points back at a copy an earlier reply
+ * made. In a chat whose earlier reply carried a delivery line that copy exists, so the sentence is
+ * true and must not force a fresh report (Mirror A4, 2026-10-16); in a chat with no earlier report
+ * it is still a false delivery and still counts.
  */
-export const claimsReport = (answer: string): boolean => (
-  BUTTON.test(answer)
-  || answer.split(/(?<=[.!?])\s+|\n+/).some((sentence) => (
-    LEFT_OUT.test(sentence) && REPORT_NOUN.test(sentence) && !NEGATION.test(sentence)
-    && !READINGS.test(sentence)
+const BACK_REFERENCE = /\b(?:already|still|current(?:ly)?|existing|earlier|previous(?:ly)?)\b/i;
+
+export interface ClaimContext {
+  /** An earlier reply in this chat carried a delivery line, so a copy it made exists. */
+  earlierReport?: boolean;
+}
+
+/**
+ * The first sentence that reads as delivering a report: it points at the download button, or
+ * says a PDF, copy or report has notes left out, and is not a refusal or about readings. Only
+ * consulted for an answer that made no report, where either reading is false. A wording this
+ * misses (the model saying "done" without either) still gets the "No new PDF" line when the chat
+ * has had a report.
+ */
+export const reportClaim = (answer: string, context: ClaimContext = {}): string | undefined => (
+  answer.split(/(?<=[.!?])\s+|\n+/).find((sentence) => (
+    (BUTTON.test(sentence) || (
+      LEFT_OUT.test(sentence) && REPORT_NOUN.test(sentence) && !NEGATION.test(sentence)
+      && !READINGS.test(sentence)
+    ))
+    && !(context.earlierReport && BACK_REFERENCE.test(sentence))
   ))
+);
+
+/** True when `reportClaim` finds a delivery claim. */
+export const claimsReport = (answer: string, context: ClaimContext = {}): boolean => (
+  reportClaim(answer, context) !== undefined
 );

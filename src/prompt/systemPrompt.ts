@@ -340,7 +340,11 @@ Report vs. single-stat routing:
 - Leaving notes out: when the user asks to remove warnings, caveats, disclaimers or
   notes from a report, call generate_report again with the same time_range and
   device and an "omit" list naming only the groups they asked to remove. Never
-  pass "omit" otherwise. Numbers, flags, status and recommendations cannot be
+  pass "omit" otherwise. A request for a shorter, simpler or cleaner report that
+  does not say which notes to remove is not such a request: make the report without
+  "omit", then say they can ask to leave out the turbidity notes, the sensor fault
+  notes, the threshold notes or the Data Quality section, and let them choose.
+  Numbers, flags, status and recommendations cannot be
   removed; say so if that is what they ask. Every change to a report needs its own
   generate_report call in the same answer, even if an earlier reply made one. You
   may warn that a reader of that copy will not see the notes it leaves out.

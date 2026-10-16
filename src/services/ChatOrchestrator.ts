@@ -1,6 +1,6 @@
 import { config } from "../config";
 import {
-  claimsReport, madeReports, NOT_REGENERATED_ANSWER, REPORT_TOOL_NAME,
+  madeReports, NOT_REGENERATED_ANSWER, REPORT_TOOL_NAME, reportClaim,
 } from "../report/delivery";
 import type { ChatMessage } from "../types/chat.types";
 import type {
@@ -77,6 +77,12 @@ export interface RunOptions {
    * flight completes and the transcript stays coherent.
    */
   signal?: AbortSignal;
+
+  /**
+   * An earlier reply in this chat carried a delivery line. A sentence pointing back at that
+   * copy ("your current copy already leaves out ...") is then true, not a claim to retry.
+   */
+  earlierReport?: boolean;
 }
 
 export interface OrchestratorResult {
@@ -215,8 +221,11 @@ export class ChatOrchestrator {
         // goes straight to the correction below. The claiming answer is dropped, not replayed:
         // keeping it in the conversation would show the model the claim it is meant to replace.
         const canRetry = !reportRetried && round < this.maxToolRounds;
-        if (canRetry && this.claimsUnmadeReport(content, invocations)) {
-          log.warn("Answer claims a report it did not make; rerunning the round with generate_report forced.");
+        const claim = canRetry ? this.unmadeReportClaim(content, invocations, options) : undefined;
+        if (claim !== undefined) {
+          // The claiming sentence is logged because the answer itself is dropped: without it a
+          // false trigger cannot be told from a real one afterwards.
+          log.warn(`Answer claims a report it did not make ("${claim.slice(0, 200)}"); rerunning the round with generate_report forced.`);
           reportRetried = true;
           forceReport = true;
           lastContent = previousContent;
@@ -226,7 +235,7 @@ export class ChatOrchestrator {
         // An answer that was entirely markers leaves here as `""` rather than as the marker's
         // contents dressed up as prose. Empty is reportable; invented is not.
         return {
-          content: this.withoutUnmadeReportClaim(content, invocations),
+          content: this.withoutUnmadeReportClaim(content, invocations, options),
           model,
           usage,
           invocations,
@@ -274,7 +283,7 @@ export class ChatOrchestrator {
     return {
       content: lastContent === ""
         ? ROUND_CAP_PLACEHOLDER
-        : this.withoutUnmadeReportClaim(lastContent, invocations),
+        : this.withoutUnmadeReportClaim(lastContent, invocations, options),
       model,
       usage,
       invocations,
@@ -285,14 +294,22 @@ export class ChatOrchestrator {
   }
 
   /** Only with the report tool registered: without it no answer can be about a new PDF. */
-  private claimsUnmadeReport(content: string, invocations: ToolInvocation[]): boolean {
-    return this.offersReports
-      && madeReports(invocations).length === 0
-      && claimsReport(content);
+  private unmadeReportClaim(
+    content: string,
+    invocations: ToolInvocation[],
+    options: RunOptions,
+  ): string | undefined {
+    return this.offersReports && madeReports(invocations).length === 0
+      ? reportClaim(content, { earlierReport: options.earlierReport })
+      : undefined;
   }
 
-  private withoutUnmadeReportClaim(content: string, invocations: ToolInvocation[]): string {
-    if (!this.claimsUnmadeReport(content, invocations)) {
+  private withoutUnmadeReportClaim(
+    content: string,
+    invocations: ToolInvocation[],
+    options: RunOptions,
+  ): string {
+    if (this.unmadeReportClaim(content, invocations, options) === undefined) {
       return content;
     }
     log.warn("Answer still claims a report it did not make; replacing it.");
