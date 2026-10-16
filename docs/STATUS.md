@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-10-15 by the coordinator at `dev` `f7cc66c` plus the handoff commit: every open item of the 2026-10-15 session is in [`migration/COORDINATOR_HANDOFF_2026-10-15.md`](migration/COORDINATOR_HANDOFF_2026-10-15.md), unresolved.
+Updated 2026-10-15 (evening) by the coordinator at `dev` `650451c` plus the handoff commit; the coordinator's open items are in [`migration/COORDINATOR_HANDOFF_2026-10-15.md`](migration/COORDINATOR_HANDOFF_2026-10-15.md).
 Current state and next steps only; history is `git log -p docs/STATUS.md`; never cite this file from code or other docs.
 
 ## Start here
@@ -18,9 +18,8 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 ## Last session
 
-- Coordinator, 2026-10-15: explained the overlapping open items; five subagents produced the server PR draft, the `report_retried` patch, the HTML recommendation (`0311473`), the data-skepticism triage (`9e27764`) and the swell rule (`fd7f008`); the swell retest cost $0.365 and was not a fix (`bc37b4a`).
-- Recorded on `dev`: the next release and Michael's sample approval (`7bc4eb4`), questions 28-35 sent to Michael (`97d16da`), his outside-data request (`f7cc66c`); built `get_tides` on `task/tide-tool`.
-- Every decision still open, quoted with options and recommendations, is in [`migration/COORDINATOR_HANDOFF_2026-10-15.md`](migration/COORDINATOR_HANDOFF_2026-10-15.md); the user has resolved none of them.
+- Coordinator, 2026-10-15 evening: landed the two docs branches (`a8e07b3`, `76a0892`); the user accepted the swell claim, kept `WATER_TYPE=freshwater` (a production `GET /devices` showed all five pods typed) and approved the server report-omit PR after a Mirror test.
+- Wrote and dry-ran [`migration/REPORT_OMIT_MIRROR_RUNBOOK.md`](migration/REPORT_OMIT_MIRROR_RUNBOOK.md) with its helpers (`650451c`): free checks 53/53; the paid chat steps wait for the user; the Mirror stack was left running (coordinator handoff, "State").
 
 ## Working tree
 
@@ -32,9 +31,9 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 ## Open work
 
-- User: the open decisions in [`migration/COORDINATOR_HANDOFF_2026-10-15.md`](migration/COORDINATOR_HANDOFF_2026-10-15.md) "Waiting on the user" (1, 2 and 7 resolved and 4 approved 2026-10-15): run the report-omit Mirror paid steps (runbook §7), data-skepticism items 2, 3, 5a and the `c514e0b` comparison, the "free prompt-rule inventory", post-launch order, worktree cleanup (now including `swell-rule`), two dates, and the older items (scratchpad secrets, the test user `winsyu475+certest@gmail.com`, the main checkout's uncommitted edits).
+- User: [`migration/COORDINATOR_HANDOFF_2026-10-15.md`](migration/COORDINATOR_HANDOFF_2026-10-15.md) "Waiting on the user": run the report-omit Mirror paid steps (runbook §7) and then the server PR commands (§10), data-skepticism items 2, 3, 5a and the `c514e0b` comparison, the "free prompt-rule inventory", post-launch order, worktree cleanup (including `swell-rule`), two dates, and the older items (scratchpad secrets, the test user `winsyu475+certest@gmail.com`, the main checkout's uncommitted edits).
 - Michael: answer stakeholder questions 27-35 (sent by 2026-10-15); send him nothing more until he does (user, 2026-10-15). Also: revoke the old Gemini key and Gmail app password; optionally grant the user Cloud Build bucket write and `roles/datastore.user` on the `gilligan` database; test before the `main` merges.
-- Agent, coordinator: on Michael's answers, record them and land `task/flagging-share-window` with the checklist in the coordinator handoff ("Next step" 3); then prepare the release; refresh this file.
+- Agent, coordinator: record the Mirror results and walk the user through the server PR; on Michael's answers, record them and land `task/flagging-share-window` with the checklist in the coordinator handoff ("Next step" 4); then prepare the release; refresh this file.
 - Agent, outside-data tools: `docs/migration/OUTSIDE_DATA_TOOLS_HANDOFF.md` on `task/tide-tool`.
 - Agent, upstream landing: build the `main` merges (server conflicts in `WaterAnalyticsService.ts`; take the release side); push on consent; tell Michael `62993fe` ships with server `main`.
 - Agent, release follow-through: cer-gilligan to 2 instances after the restart check; remove stale tags (backlog §4).
@@ -51,6 +50,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 | `task/flagging-share-window` `9c57aa9` | Deleted about 680 lines of `docs/SPECS.md` (§10.7-§19, including §10.9); restore dev's sections when landing. | medium |
 | server `src/utils/tideStations.ts:48` | Reads NOAA's `stationList`, but NOAA answers `stations`: CER's tide markers get no automatic station; registry `noaaTidesId` `9087057` is a Great Lakes station with no predictions. | low |
 | `scripts/skepticism/replay.ts:240-243`, `src/prompt/systemPrompt.ts` "persistent" verdict | G1 fails by design once the flagging rework lands; the "persistent" line still offers "sensor fouling or calibration" beside the no-fault-theory rule. | low |
+| `src/prompt/systemPrompt.ts:175` | The tool-note rule still names "the device's water type differing from the deployment's", a note no tool writes any more (removed with Q10 T12). | low |
 | server `.eslintrc.js` | No TypeScript parser, so `npm run lint` cannot parse `src/*.ts`. | low |
 | server `checkWaterDataAndSendAlerts` | Alert emails fire on the latest reading alone, so an email can alert while chat calls the metric in range (stakeholder question 27). | low |
 | server `assignOrganization` | A non-superadmin with an empty organization sees every pod; no production user has one; fixed on `8463545`, not shipped. | medium |
