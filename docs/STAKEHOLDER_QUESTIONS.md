@@ -55,7 +55,7 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   The email half was asked again ("should the alert emails use the same 5% rule?") in the message that carried items 28-35.
   *Answer:*
 
-Items 28-35 went to Michael in one chat message, sent by 2026-10-15, with a plain summary of the four reading labels and the 5% share rule; 28 and 29 are written up on `task/flagging-share-window` and join this file when it lands.
+Items 28-35 went to Michael in one chat message on 2026-10-15, with a plain summary of the four reading labels and the 5% share rule; 28 and 29 are written up on `task/flagging-share-window` and join this file when it lands.
 Nothing more goes to him until he answers (user, 2026-10-15).
 
 - [ ] **30. Is 15% past the limit the right bar for Action Required?**

@@ -1,6 +1,6 @@
 # Coordinator - handoff
 
-Current as of 2026-10-15 (evening, US Pacific) at `dev` `650451c` plus this file's commit.
+Current as of 2026-10-16 (early, UTC) after the report-omission Mirror run; first written 2026-10-15 at `650451c`.
 A fresh coordinator session reads `docs/STATUS.md`, then this file, then follows "Next step"; for the report-omission test it also reads `docs/migration/REPORT_OMIT_MIRROR_RUNBOOK.md`.
 
 ## What this is
@@ -24,26 +24,29 @@ The goal now is the next release: the data-skepticism fix, report omission and t
 | Docs branches `task/report-html-option`, `task/skeptic-triage` | landed `a8e07b3`, `76a0892`; worktrees and local branches removed; remote branches remain |
 | Report-omit Mirror runbook and helpers | done `650451c`: `REPORT_OMIT_MIRROR_RUNBOOK.md`, `scripts/mirror/reportOmit{Tree.sh,Env.mjs,Checks.mjs,LastChat.mjs}`, `scripts/mirror/mirror-seed-turbidity.patch` |
 | Mirror free checks (runbook §6.1-§6.2) | pass, 53/53, dry run 2026-10-15 |
-| Mirror browser checks (§6.3) and paid chat steps (§7) | next: the user runs them; paid steps need budget approval (8 questions, about $0.10-0.20, at most about $0.45) |
-| Mirror stack | running at handoff, seeded 2026-10-16 03:56 UTC: emulator :8080, cer-api :5101, Gilligan :8010, dashboard :3100; stop with `kill -- -2396408 -2382161 -2382158 -2378693 -2379082` (process groups; recheck with `ps -o pid,pgid,comm -p <pid>` first) |
+| Mirror paid chat steps (§7) | run 2026-10-16 by the coordinator with `scripts/mirror/reportOmitDrive.mjs` (no browser, so §6.3 not run): server side passes; findings C1 and A4; `docs/migration/REPORT_OMIT_MIRROR_RESULTS_2026-10-16.md`; outputs in `/tmp/claude-1000/-home-winsy-code-work-clean-earth-rovers-repo-cer-demo/bd2ce85b-a0d5-45c2-a3d0-0b0d9fb45a04/scratchpad/omit7/out` |
+| Mirror stack | still running 2026-10-16 (super-2 has used its 5 reports until 2026-10-17 00:00 UTC), seeded 2026-10-16 03:56 UTC: emulator :8080, cer-api :5101, Gilligan :8010, dashboard :3100; stop with `kill -- -2396408 -2382161 -2382158 -2378693 -2379082` (process groups; recheck with `ps -o pid,pgid,comm -p <pid>` first) |
 | Mirror settings file (secrets) | `/tmp/claude-1000/-home-winsy-code-work-clean-earth-rovers-repo-cer-demo/01b61cb2-b806-4480-812e-0a64be32db55/scratchpad/omit/env.sh`; delete after stopping the stack |
 | Server PR body | updated in place with the `report_retried` relay: `~/code/work/clean-earth-rovers/handoff/2026-10-15/report-omit-pr-body.md` |
-| Server retry patch, push, PR | waiting: after the paid steps pass, runbook §10 |
+| Server retry patch, push, PR | ready: runbook §10, one command at a time with the user |
+| `swell-rule` worktree | removed 2026-10-16 (user); local branch `task/swell-rule` kept |
+| Docs cleanup `docs/cleanup` `4d993ec` (Codex, worktree `docs-cleanup`, local only) | reviewed 2026-10-16, not landed: see "Docs cleanup review" |
 | Flagging rework `task/flagging-share-window` `c5d90df` | waiting on Michael's answers to questions 28-32 |
 
 ## Waiting on the user
 
-1. **Paid Mirror steps**: run runbook §6.3 and §7 (or approve the budget for the coordinator to run them). Then follow §10:
+1. **Server PR** (paid Mirror steps done 2026-10-16): follow runbook §10, one command at a time:
    - `! git -C /home/winsy/code/work/clean-earth-rovers/worktrees/server-report-omit am /home/winsy/code/work/clean-earth-rovers/handoff/2026-10-15/report-retried.patch`
    - the push of `task/gilligan-report-omit` (the coordinator supplies the exact command; separate consent);
    - `! gh pr create --repo Clean-Earth-Rovers-Technology/clean-earth-rovers-server --base develop --head task/gilligan-report-omit --title "Relay a report request's omit list to cer-gilligan" --body-file /home/winsy/code/work/clean-earth-rovers/handoff/2026-10-15/report-omit-pr-body.md`
    - cer-gilligan must deploy first or alongside: the live one ignores `omit`.
-2. **Other data-skepticism items**: "The inverted time of day (item 3): I'd fix it while landing the flagging rework. The rework adds new UTC-only times to the tool output, which makes that mistake more likely." Also: "The misread daily-cycle timing (2) and the skipped conductivity zeros (5a): these can wait until after the release." Also open: the before-fix wave-1 comparison at `c514e0b` (about $0.80; recommended: drop).
+2. **Other data-skepticism items**: "The inverted time of day (item 3): I'd fix it while landing the flagging rework. The rework adds new UTC-only times to the tool output, which makes that mistake more likely." Also: "The misread daily-cycle timing (2) and the skipped conductivity zeros (5a): these can wait until after the release." The before-fix comparison at `c514e0b` is dropped (user, 2026-10-16).
 3. **"Free prompt-rule inventory"**: "Tell me what the 'free prompt-rule inventory' meant." The phrase appears only in the 2026-10-14 coordinator commit `9c635f9`. If it means listing every rule bearing on data skepticism, the triage doc's "Contradictions" section starts it.
 4. **Post-launch order**: "the unguarded user-update routes are a live production security hole in the server, and I'd put them first."
-5. **Worktree cleanup**: remove `post-launch-land` (merged) and the detached `e2e-dev`, `skeptic-before`, `skeptic-evals-run` and `skeptic-repro`, after checking each is clean and reachable from a branch or tag. `swell-rule` needs explicit permission for `git worktree remove --force ../swell-rule` (deletes its ignored `.env` copy and linked caches) and `git branch -D task/swell-rule` (commits `fd7f008`, `bc37b4a` stay on `origin`).
-6. **Dates to confirm**: the day the questions went to Michael (recorded as "sent by 2026-10-15"), and that Michael's sample approval was 2026-10-12.
-7. **Still open from before**: delete the old scratchpad secrets (STATUS "Working tree"); delete the test user `winsyu475+certest@gmail.com`; decide the main checkout's uncommitted `.claude/settings.json` and `release/start-rc2-emulator.sh` edits.
+5. **Worktree cleanup**: remove `post-launch-land` (merged) and the detached `e2e-dev`, `skeptic-before`, `skeptic-evals-run` and `skeptic-repro`, after checking each is clean and reachable from a branch or tag. `swell-rule`'s worktree is gone; `git branch -D task/swell-rule` still needs explicit permission (commits `fd7f008`, `bc37b4a` stay on `origin`).
+6. **Report-omission findings**: approve fixing C1 and A4 (results doc, "Findings") on a branch before the release, and a rerun of those steps afterwards (about $0.02).
+7. **Docs cleanup**: the decisions in "Docs cleanup review".
+8. **Still open from before**: delete the old scratchpad secrets (STATUS "Working tree"); delete the test user `winsyu475+certest@gmail.com`; decide the main checkout's uncommitted `.claude/settings.json` and `release/start-rc2-emulator.sh` edits.
 
 ## Waiting on Michael
 
@@ -53,8 +56,8 @@ The goal now is the next release: the data-skepticism fix, report omission and t
 
 ## Next step
 
-1. Ask the user whether they have run the paid Mirror steps (runbook §7) or want the coordinator to run them on an approved budget; if the stack is no longer wanted, stop it with the `kill` line in "State" and delete the settings file.
-2. When the steps pass, record them in `docs/migration/REPORT_OMIT_MIRROR_RESULTS_<date>.md` (runbook §8), then walk the user through runbook §10 one command at a time.
+1. Walk the user through runbook §10 one command at a time; if the Mirror stack is no longer wanted, stop it with the `kill` line in "State" and delete the settings file.
+2. With the user's approval, fix the two report-omission findings on a branch and rerun Mirror steps A4 and C1 (results doc, "Reproduce").
 3. When Michael answers, record his answers in `STAKEHOLDER_QUESTIONS.md` and the timeline, and tell the flagging chat.
 4. Land `task/flagging-share-window` when its chat asks, after review. While landing:
    - restore the about 680 `SPECS.md` lines its commit `9c57aa9` deleted, keeping dev's §10.7-§19 and applying only the branch's flag-rule edits;
@@ -67,6 +70,15 @@ The goal now is the next release: the data-skepticism fix, report omission and t
 
 Resume with: `Read docs/STATUS.md on branch dev, then docs/migration/COORDINATOR_HANDOFF_2026-10-15.md, then continue as cer-demo coordinator from the dev worktree.`
 
+## Docs cleanup review
+
+Codex's `docs/cleanup` `4d993ec` (base `650451c`, merges cleanly onto `origin/dev`) removes `RELEASE_GOAL_AND_PLAN.md`, `UPSTREAM_PR_BODIES.md`, `GILLIGAN_E2E_TEST_TICKET.md`, `TASK_C_HANDOFF.md` and `POST_LAUNCH_MERGE_TESTS.md`, repoints their references, and adds `docs/README.md` and `docs/migration/DOCS_CLEANUP_REVIEW_2026-10-15.md`.
+Checked: no reference to the five remains outside `git show` lines; every replacement target exists (`SUPERVISOR_QUESTIONS_SEND.md`, `TASK_C_VERIFICATION.md`, `SPECS.md` §10.4a); the ticket's own opening names the manual guide as the checklist of record, and 38 of the bot's 40 scenario ids appear in the guide; README links resolve; `git diff --check` passes.
+Before landing:
+
+- Follow `docs/ARCHIVED.md`'s rule ("Anything archived later gets its own tag and a row in this table"): tag `650451c` (for example `docs-archive-2026-10-16`), add a section with the five reasons, point the `git show` lines at the tag, and drop `DOCS_CLEANUP_REVIEW_2026-10-15.md`, which duplicates that section.
+- `docs/README.md` is a second map beside STATUS "Where things live" and lists `MIRROR_RUNBOOK.md`, whose paths predate the 2026-10-04 move (STATUS "Active traps"); decide whether to keep it, and if kept, list `REPORT_OMIT_MIRROR_RUNBOOK.md` and say the old runbook's paths are stale.
+
 ## Facts, with their sources
 
 - Live pods' water types, five pods, all recognised (one read-only `GET /devices` on 2026-10-15; timeline row "`WATER_TYPE` stays `freshwater`").
@@ -76,6 +88,7 @@ Resume with: `Read docs/STATUS.md on branch dev, then docs/migration/COORDINATOR
 - `npm run typecheck` and `npm run lint` pass on `dev` `f0cb4d2`.
 - Report-omit branch merges cleanly into `develop` `5f04064` and into `mirror/release-rc1` (`git -C ../clean-earth-rovers-server merge-tree --write-tree <base> task/gilligan-report-omit`, exit 0).
 - Session spend 2026-10-15 evening: $0; one production read (above).
+- Session spend 2026-10-16: 429,072 tokens on the Mirror (about $0.06, at most $0.22), no production reads (`GET /gilligan/check-quota` per persona).
 
 ## Do not touch
 
