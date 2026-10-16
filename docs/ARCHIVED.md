@@ -16,6 +16,7 @@ in git history under the tag named in its section.
 | `old-machine-recovery-2026-09-19` | 2026-09-22 | work from 2026-09-17 to 2026-09-19 that was committed on the old machine but never pushed, rebuilt from session transcripts - 5 planning docs not restored to the tree |
 | `supervisor-brief-2026-09-29` | 2026-10-14 | `docs/migration/SUPERVISOR_BRIEF.html`, the pre-launch supervisor brief for the September 30 release, never reviewed or sent - 1 file |
 | `mirror-checklist-2026-09-29` | 2026-10-14 | `scripts/e2e/mirrorChecklist.mjs`, the browser driver for `E2E_CHECKLIST.md` groups B, D, E, H and I on the 2026-09-29 mirror stack - 1 file |
+| `docs-archive-2026-10-16` | 2026-10-16 | five superseded migration docs: the one-page release goal, the upstream PR drafts, the E2E test ticket, the Task C handoff and the post-launch merge test plan - 5 files |
 
 Retrieve one by path:
 
@@ -246,6 +247,29 @@ Retrieve:
 ```bash
 git show docs-tier2-archive-2026-09-23:docs/migration/POD_AUTHORIZATION.md
 git show docs-tier2-archive-2026-09-23:docs/migration/GILLIGAN_PRODUCT_DIRECTION.md
+```
+
+## `docs-archive-2026-10-16` - superseded migration plans, drafts and handoffs
+
+Removed on 2026-10-16, preserved under the tag `docs-archive-2026-10-16`, which points at `650451c`, the last commit that contains them.
+None is cited by code.
+References in the tree were repointed in the same change, and the two results docs that ran these plans name their `git show` line.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/migration/RELEASE_GOAL_AND_PLAN.md` | 21 | The 2026-09-18 one-page release goal for September 30 | Its goal was sent as the supervisor's question A1 and its target date has passed. The goal lives in `SUPERVISOR_QUESTIONS_SEND.md` §A1, the roadmap in `GILLIGAN_TARGET_ARCHITECTURE.md`, product rules in `SPECS.md`. |
+| `docs/migration/UPSTREAM_PR_BODIES.md` | 79 | Draft PR descriptions for the September 24 feature branches | They describe an earlier integration state and should not be reused for the next upstream landing. The landing record is `GILLIGAN_LANDING_2026-09-29.md`. |
+| `docs/migration/GILLIGAN_E2E_TEST_TICKET.md` | 242 | The September E2E test ticket | Its own opening named `GILLIGAN_MANUAL_TEST_GUIDE.md` as its replacement; keeping both left competing test instructions. Its run is recorded in `GILLIGAN_E2E_RESULTS_2026-09-25.md`. It has scenario detail beyond the guide, so compare it before treating the guide as complete for a future run. |
+| `docs/migration/TASK_C_HANDOFF.md` | 131 | The 2026-09-24 Task C handoff: uncommitted worktrees and next steps | Its instructions expired when the work landed. The behavior contract is in `SPECS.md` §10.4a and the observed checks in `TASK_C_VERIFICATION.md`. |
+| `docs/migration/POST_LAUNCH_MERGE_TESTS.md` | 81 | The test plan for the October 11 post-launch merge | The merge is done; what passed is in `POST_LAUNCH_MERGE_RESULTS_2026-10-11.md`. |
+
+**554 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-16:docs/migration/GILLIGAN_E2E_TEST_TICKET.md
+git show docs-archive-2026-10-16:docs/migration/UPSTREAM_PR_BODIES.md
 ```
 
 ## Rules
