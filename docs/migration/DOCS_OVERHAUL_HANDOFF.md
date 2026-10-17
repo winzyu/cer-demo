@@ -38,7 +38,7 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 | Batch 4, 10 pre-launch records to `docs/records/`, `catalogue.json` path (D4) | done `736d547`, landed; the regenerated `docs/catalogue/review.html` also picks up the 4 draft entries `16cec6e` added without regenerating |
 | D7 recorded | done `f2ef65f` |
 | Batch 5 with D7: 6 records moved to `docs/records/`, 3 archived (tag `docs-archive-2026-10-17` at `f2ef65f`) | done `14c89a6`; not yet landed |
-| Content pass over batches 1-4 (`runbooks/`, `reference/`, `people/`, `records/`), batches of at most 10 | C1 `runbooks/` done in the commit that records it here (5 updated, 5 kept; `E2E_CHECKLIST.md` and the two launch-issue pages wait for the merge proposal); C2 `reference/` next |
+| Content pass over batches 1-4 (`runbooks/`, `reference/`, `people/`, `records/`), batches of at most 10 | C1 `runbooks/` done `2296975` (5 updated, 5 kept; `E2E_CHECKLIST.md` and the two launch-issue pages wait for the merge proposal); C2 `reference/` and C3 `people/` done in the commit that records it here (3 openings updated, 7 kept); C4 `records/` next |
 | Batch 6 with D7 | after the content pass |
 | Test-doc merge proposal (section 3.2 docs) | a proposal section for the user to decide; no merge |
 | Batches 7-8 | wait until `task/flagging-share-window` lands on `dev` |
@@ -51,9 +51,9 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 ## Next step
 
 1. `git fetch origin` and merge `origin/dev` into `docs/cleanup` (no rebase) if `dev` moved.
-2. Content pass C2, `reference/` (D7): show the user a keep/update decision per reference doc with one line of reason.
-   Known: `GILLIGAN_TARGET_ARCHITECTURE.md` opens "Draft, 2026-09-17, for the September 30, 2026 dashboard release" though it is the current architecture and decisions reference; `BACKEND_FIELDS.md` is a 2026-08-21 census that needs a dated note, not new counts.
-   Then C3 `people/` (sent material is a record: keep or archive, never rewrite), C4 `records/` (the ten from batch 4, `TASK_C_VERIFICATION.md` and `GILLIGAN_PRODUCT_DIRECTION.md` first), then batch 6.
+2. Content pass C4, `records/` (D7): the ten batch-4 records, `TASK_C_VERIFICATION.md` and `GILLIGAN_PRODUCT_DIRECTION.md` first; archive each that is finished and has no living inbound link (records cited from `src/`, `test/`, `eval/` or the catalogue stay unless the repoint is clean); records are never rewritten, only given a one-line superseded-by pointer.
+   The six batch-5 records were already decided in batch 5.
+   Then batch 6.
    Batch 6: `MIRROR_RUNBOOK.md` now has current paths and carries `REPORT_OMIT_MIRROR_TEST.md`'s port 3000 and `node_modules` caveats, so that test plan can be archived instead of moved.
    The test-doc merge proposal (section 3.2 docs: manual test guide, `E2E_CHECKLIST.md`, the two launch-issue pages, the two Mirror runbooks) is a new proposal section for the user to decide; do not merge.
 3. Link rewrites (every batch): resolve each relative link against the old tree before `git mv`, and recompute it from the file's new folder to the target's new folder; also rewrite path-form text (`docs/migration/X`, `migration/X`, `../docs/migration/X`), including a name followed by a sentence-ending period (batch 3 missed one in `scripts/exploreFirestoreParity.sh` that way).
@@ -63,7 +63,7 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 4. Checks: `git grep` for each old path (allowed hits as above); a script that resolves every relative Markdown and HTML link in every tracked `docs/` file outside `captures/`; `git diff --check` (the generator leaves one whitespace-only line per entry in `docs/catalogue/review.html`; expected); `node --check` on edited `.mjs`, `bash -n` on edited `.sh`.
 5. Commit, push, report the commit ID and every STATUS/timeline/SPECS rewrite; then batch 6.
 
-For the coordinator (content fixes outside this chat's remit): STATUS line 78's `MIRROR_RUNBOOK.md` trap is resolved in the runbook (paths moved, port 3000 and `node_modules` caveats added) and can shrink to a pointer; `timeline.md` line 915 still names `migration/GILLIGAN_RESET_2026-09-28.md`, archived in batch 5 (`git show docs-archive-2026-10-17:...` would retrieve it).
+For the coordinator (content fixes outside this chat's remit): `STAKEHOLDER_QUESTIONS.md` item 23 is unchecked though `timeline.md` (2026-09-25) records the supervisor's approval of the Firestore table; STATUS line 78's `MIRROR_RUNBOOK.md` trap is resolved in the runbook (paths moved, port 3000 and `node_modules` caveats added) and can shrink to a pointer; `timeline.md` line 915 still names `migration/GILLIGAN_RESET_2026-09-28.md`, archived in batch 5 (`git show docs-archive-2026-10-17:...` would retrieve it).
 
 Batch 6 note: `ARCHIVED.md` (excluded from rewrites) links `migration/DOCS_OVERHAUL_PROPOSAL.md` from the sentence batch 1 added; rewrite that one link to `plans/` by hand when the proposal moves.
 

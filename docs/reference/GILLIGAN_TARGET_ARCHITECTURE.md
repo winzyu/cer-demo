@@ -1,9 +1,9 @@
 # Gilligan target architecture, gap analysis and roadmap
 
-Draft, 2026-09-17, for the September 30, 2026 dashboard release.
+Written 2026-09-17 as the plan for the September 30, 2026 dashboard release; Gilligan went live on 2026-10-07 (`../timeline.md`, "Gilligan is live").
 Built on the decisions in [`GILLIGAN_PRODUCT_DIRECTION.md`](../records/GILLIGAN_PRODUCT_DIRECTION.md); the integration background was `INTEGRATION_PLAN.md` (archived, tag `docs-archive-2026-09-23`).
-This is a plan for review, not an approved implementation specification.
-Built so far: R2's catalogue code (`docs/SPECS.md` §4b, flags off, supervisor approval pending), R3's relay and page (`GILLIGAN_R3_PORT.md`), the tool-access fix (`GILLIGAN_TOOL_ACCESS.md`) and R1's report half (`docs/SPECS.md` §10.7).
+What was built is described in [`SPECS.md`](../SPECS.md); this document stays the reference for the architecture's reasoning and decisions D1-D12, and its gap analysis and roadmap (§3-§4) are the September plan, not the current state.
+Built by 2026-09-24: R2's catalogue code (`docs/SPECS.md` §4b; the supervisor approved the catalogue that day as version `2026-09-24.1`), R3's relay and page ([`GILLIGAN_R3_PORT.md`](../records/GILLIGAN_R3_PORT.md)), the tool-access fix ([`GILLIGAN_TOOL_ACCESS.md`](../records/GILLIGAN_TOOL_ACCESS.md)) and R1's report half (`docs/SPECS.md` §10.7).
 The 2026-09-24 release decision ships S1-S6 as written, with `/gilligan/answer` and identity tokens after launch; CER supplies its own paid Fireworks key in Secret Manager.
 
 Code evidence was read at cer-demo `1a8c744`, `user-dashboard` `c55f65d` and `clean-earth-rovers-server` `origin/develop` `b221702`.

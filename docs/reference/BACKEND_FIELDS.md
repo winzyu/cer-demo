@@ -3,6 +3,8 @@
 What the device registry and water-data documents **actually carry right now**, read live from
 production, and what each field can and cannot support in the chat/report system.
 
+Every count and fleet figure below is that day's census and is not kept current; re-record with `npm run explore:fields` and `npm run explore:surface` (§9; read-only, but both read production, so announce the read first).
+
 Companion: [`DEVICE_API.md`](DEVICE_API.md) (how the API works, metric codes, unit traps).
 This document is the **field inventory**; that one is the **contract**.
 

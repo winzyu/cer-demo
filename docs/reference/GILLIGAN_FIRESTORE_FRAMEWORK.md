@@ -1,6 +1,6 @@
 # Gilligan data in Firestore
 
-For the supervisor's approval (stakeholder item 23), written 2026-09-24.
+Written 2026-09-24 for the supervisor's approval (stakeholder item 23), which came on 2026-09-25 together with the dedicated Gilligan database (`../timeline.md`, 2026-09-25, "Test on the local Firestore mirror until live access").
 It lists everything Gilligan keeps in the production Firestore database, what changes for the release, and what stays optional.
 Nothing here touches the existing users, organizations, devices or water-data collections.
 
