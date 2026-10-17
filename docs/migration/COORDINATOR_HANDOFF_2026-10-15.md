@@ -31,7 +31,7 @@ The goal now is the next release: the data-skepticism fix, report omission and t
 | Server retry patch, push, PR | ready: runbook §10, one command at a time with the user |
 | `swell-rule` worktree | removed 2026-10-16 (user); local branch `task/swell-rule` kept |
 | Docs cleanup `docs/cleanup` | landed 2026-10-16 by fast-forward to `6e019cf` (tags `docs-archive-2026-10-16`, `docs-archive-2026-10-16b`); worktree `docs-cleanup` and the branch remain until the docs chat is done: see "Docs cleanup review" |
-| Docs overhaul | proposal and its handoff landed 2026-10-17 (`5ffc311`; `DOCS_OVERHAUL_PROPOSAL.md`, `DOCS_OVERHAUL_HANDOFF.md`); the user approved D1-D6 with the coordinator's changes; batches 1-6 next, 7-8 after the flagging rework |
+| Docs overhaul | proposal and its handoff landed 2026-10-17 (`5ffc311`; `DOCS_OVERHAUL_PROPOSAL.md`, `DOCS_OVERHAUL_HANDOFF.md`); the user approved D1-D6 with the coordinator's changes; batches 1-4 landed 2026-10-17 (`736d547`, typecheck and lint pass, no old paths, no broken links); D7 added the same day (prompt `~/code/work/clean-earth-rovers/handoff/2026-10-17/3c-docs-content-pass.md`): each file gets keep, update, merge or archive, and a content pass covers batches 1-4 before batch 6; batch 5 next, 7-8 after the flagging rework |
 | Flagging rework `task/flagging-share-window` `c5d90df` | waiting on Michael's answers to questions 28-32 |
 
 ## Waiting on the user
