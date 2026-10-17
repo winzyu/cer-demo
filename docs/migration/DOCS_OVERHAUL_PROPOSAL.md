@@ -260,10 +260,8 @@ Per batch, counted on `eb9fe5c` (mentions in the four core docs include bare nam
 | 8 | 21 | STATUS 7, SPECS 4, timeline 9 | `README.md`, `eval/reviews/phase3-2026-09-23/HANDOFF.md` (2) and `R4_REPORT.md` |
 
 Code edits are comment-only and need `npm run typecheck` and `npm run lint`, no Jest run.
-Two exceptions stay on old paths, and the per-batch `git grep` check excludes them:
-
-- `archive/pgvector-rag/` (an archived code tree, never edited) cites `migration/MIGRATION_SPEC.md` once;
-- `src/catalogue/catalogue.json` cites records as evidence (`GILLIGAN_PRODUCT_DIRECTION.md`, `GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`); it is product data the model sees, so changing it is decision D4.
+One exception stays on an old path, and the per-batch `git grep` check excludes it: `archive/pgvector-rag/` (an archived code tree, never edited) cites `migration/MIGRATION_SPEC.md` once.
+`src/catalogue/catalogue.json` cites two records by path; D4 (section 9) rewrites them.
 
 Outside the repository (listed, not edited):
 
@@ -312,16 +310,26 @@ Batch 1 also adds the `ARCHIVED.md` sentence from section 4.3.
 
 Checks before each commit:
 
-- `git grep` finds no old path for a moved file, except `git show <tag>:` lines, `ARCHIVED.md`, `docs/captures/`, `archive/` and (unless D4 says otherwise) `src/catalogue/catalogue.json`;
+- `git grep` finds no old path for a moved file, except `git show <tag>:` lines, `ARCHIVED.md`, `docs/captures/` and `archive/`;
 - every relative link in a changed file resolves (a scratchpad script);
 - `git diff --check` passes; `node --check` for edited `.mjs`; `npm run typecheck` and `npm run lint` when `src/` or `test/` comments change;
 - mechanical rewrites in STATUS, `timeline.md`, SPECS, `CLAUDE.md` and `AGENTS.md` are listed in the batch report for the coordinator.
 
-## 9. Decisions for the user
+## 9. Decisions
 
-- **D1. Approve the structure** (section 4) and the batch order (section 8), or name changes.
-- **D2. Agent rules.** Reword `CLAUDE.md` and `AGENTS.md` lines 8 and 16 to point at `docs/plans/` and `docs/records/` in batch 8 (recommended), or keep `docs/migration/` as the home for new planning artifacts.
-- **D3. Renames.** Keep existing file names (recommended: code cites them by bare name), or also rename undated records to `TOPIC_YYYY-MM-DD.md` and drop `GILLIGAN_` (about 15 renames, each breaking its bare-name citations too).
-- **D4. `catalogue.json` evidence paths.** Leave them on old paths as evidence (recommended; it is product data and needs a test run to change), or rewrite them in batches 4 and 7.
-- **D5. Root `README.md` doc table.** Shrink it to a pointer at STATUS (recommended, a content edit), or only rewrite its paths in batches 3, 5 and 8.
-- **D6. Eval docs.** Keep the five at the root (recommended), or move them to `docs/eval/` in a ninth batch, accepting broken citations in `eval/` captures and `archive/`.
+Approved by the user on 2026-10-17, with the coordinator's three changes:
+
+- **D1. Structure and batch order: approved.**
+  Change: every batch skips links inside `SPECS.md` §10.7-§19 (dev lines 1099-1786 at `eb9fe5c`), which the flagging rework deletes; batch 7 or 8 picks them up after it lands.
+  At `eb9fe5c` none of batch 3's path-form SPECS links is in that range (lines 7, 8, 393, 405, 468, 1062); recheck when running each batch.
+- **D2. Agent rules: reword.** `CLAUDE.md` and `AGENTS.md` lines 8 and 16 move from `docs/migration/` to `docs/plans/` and `docs/records/`, in batch 8.
+- **D3. Renames: none.** Existing file names stay.
+- **D4. `catalogue.json` evidence paths: rewrite them**, in the batch that moves each cited file (batch 4 for `GILLIGAN_PRODUCT_DIRECTION.md`, line 7; batch 7 for `GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`, four `notes` fields).
+  Section 6 was wrong that the model sees them: per the coordinator, the paths sit only in `sources` labels and `notes`, which only the review page reads, not the prompt code.
+  After the rewrite, regenerate `docs/catalogue/review.html` with `scripts/renderCatalogueReview.ts` and run `test/unit/catalogue.test.ts` (and `catalogueReviewPage.test.ts`) singly; no paid run.
+  `catalogue.json` is therefore no longer a check exception.
+- **D5. Root `README.md` doc table: replace it** with one line per docs folder (root, `reference/`, `runbooks/`, `plans/`, `people/`, `records/`, `captures/`), in batch 3.
+  Do not point it at STATUS: `CLAUDE.md` forbids citing STATUS from durable docs, STATUS is short-lived, and the repository is public.
+- **D6. Eval docs: stay at the root.**
+
+The coordinator updates the two agent-memory files after batch 6 and leaves the dated handoff prompts as they are.
