@@ -334,7 +334,7 @@ The model is not deterministic, so a step that failed once can pass on a rerun; 
 ## 8. Recording
 
 Write results to `docs/migration/REPORT_OMIT_MIRROR_RESULTS_<date>.md` in the format of the 2026-10-10 file: the stack table with the seed time and commits, the §6 script output (PASS count), one row per §7 step (the helper's `omit`, `report_retried`, the delivery line, the PDF's Omitted row, pass or fail), and the spend.
-Mirror PDFs hold only fabricated data, so they may be kept in `docs/migration/report-omit-samples/` if wanted as evidence.
+Mirror PDFs hold only fabricated data, so they may be kept in `docs/captures/report-omit-samples/` if wanted as evidence.
 
 ## 9. Stop and reset
 

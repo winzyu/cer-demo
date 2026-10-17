@@ -1,6 +1,6 @@
 # Gilligan end-to-end results, 2026-09-25
 
-Run against the Firestore mirror. The original test ticket is available with `git show docs-archive-2026-10-16:docs/migration/GILLIGAN_E2E_TEST_TICKET.md`; the maintained checklist is [`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_TEST_GUIDE.md).
+Run against the Firestore mirror. The original test ticket is available with `git show docs-archive-2026-10-16:docs/migration/GILLIGAN_E2E_TEST_TICKET.md`; the maintained checklist is [`GILLIGAN_MANUAL_TEST_GUIDE.md`](../runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md).
 The preflight and phase 1 have run; phase 2 has not.
 Phase 1 ran on a fresh seed with the bot in `scripts/e2e/`, in three passes that spent 47 of the 80 approved questions.
 

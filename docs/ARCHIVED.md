@@ -20,6 +20,7 @@ Paths in sections written before 2026-10-17 predate the move of `docs/migration/
 | `mirror-checklist-2026-09-29` | 2026-10-14 | `scripts/e2e/mirrorChecklist.mjs`, the browser driver for `E2E_CHECKLIST.md` groups B, D, E, H and I on the 2026-09-29 mirror stack - 1 file |
 | `docs-archive-2026-10-16` | 2026-10-16 | five superseded migration docs: the one-page release goal, the upstream PR drafts, the E2E test ticket, the Task C handoff and the post-launch merge test plan - 5 files |
 | `docs-archive-2026-10-16b` | 2026-10-16 | the corpus seeding runbook, the two Q9 cloud-session results and the turbidity exploration - 4 files |
+| `docs-archive-2026-10-16c` | 2026-10-17 | `docs/gilligan_v0.png`, a screenshot of the original Gilligan chat page - 1 file |
 
 Retrieve one by path:
 
@@ -294,6 +295,21 @@ Retrieve:
 ```bash
 git show docs-archive-2026-10-16b:docs/migration/CORPUS_SEEDING.md
 git show docs-archive-2026-10-16b:docs/migration/TURBIDITY_EXPLORATION.md
+```
+
+## `docs-archive-2026-10-16c` - an unreferenced screenshot
+
+Removed on 2026-10-17, preserved under the tag `docs-archive-2026-10-16c`, which points at `cfda55a`, the last commit that contains it.
+Nothing in the tree referenced it.
+
+| file | size | what it was | why it went |
+|---|---:|---|---|
+| `docs/gilligan_v0.png` | 1680 x 855 PNG | A screenshot of the original Gilligan chat page in the CER dashboard (greeting, empty chat history, "Ask Gilligan" input), added 2026-08-19 in `991db02` | Nothing in the repository cited it. |
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-16c:docs/gilligan_v0.png > gilligan_v0.png
 ```
 
 ## Rules

@@ -74,7 +74,7 @@ The prompt change fixed the wording but not the missing call.
 
 ## Samples for Michael
 
-In [`report-omit-samples/`](report-omit-samples/), all from fabricated or synthetic data:
+In [`report-omit-samples/`](../captures/report-omit-samples/), all from fabricated or synthetic data:
 
 - Before and after for his request: `offline-S1-full.pdf` and `offline-S2-no-turbidity-notes.pdf` (turbidity values synthetic; the only pair that shows the turbidity caveats).
 - Through the deployed path, chat to PDF: `mirror-P2-chat-turbidity-disclaimers.pdf` and `mirror-P5-chat-threshold-notes.pdf`.
