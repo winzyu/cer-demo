@@ -1,6 +1,8 @@
 # Live test data and cleanup ledger
 
-The supervisor allowed test users and organizations on the live backend on 2026-09-24, provided they are deleted before launch.
+The supervisor allowed test users and organizations on the live backend on 2026-09-24, provided they were deleted before launch.
+None was created: on 2026-09-25 isolation testing moved to the mirror's personas (`../timeline.md`, "Isolation testing on the mirror; no test organizations on production"), so the ledger below is empty and the order below never ran.
+The ledger rules still apply to any future live write.
 This file is the plan (release plan T1) and the ledger: every record created on the live backend is listed here before the next one is created, and ticked when it is deleted.
 Each write batch is announced in chat and approved by the user first.
 

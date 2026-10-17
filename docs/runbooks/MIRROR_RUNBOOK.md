@@ -6,6 +6,8 @@ Everything uses fabricated data in a local Firestore emulator; nothing reads or 
 
 Written 2026-09-28 against the stack recorded in [`GILLIGAN_E2E_RESULTS_2026-09-27.md`](../records/GILLIGAN_E2E_RESULTS_2026-09-27.md).
 It replaces the setup half of [`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_TEST_GUIDE.md), whose settings predate the `demo-` project change.
+Paths were moved under `~/code/work/` on 2026-10-17; the stack, commits and steps are unverified since 2026-09-28.
+The Mirror setup last run as written is [`REPORT_OMIT_MIRROR_RUNBOOK.md`](REPORT_OMIT_MIRROR_RUNBOOK.md) §3-§5 (dry-run 2026-10-15).
 
 | document | use it for |
 |---|---|
@@ -17,6 +19,8 @@ It replaces the setup half of [`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_
 
 ## 0. Before anything
 
+- **Port 3000 may be live.** Docker container `cer-ui-l8-local`, when running, holds port 3000 with a dashboard that proxies to the **live** cer-api; never use it for a Mirror test.
+  If §3's port check shows it, serve the Mirror dashboard on 3100 instead (`-p 3100`, with `FRONTEND_URL` and `DEV_FRONTEND_URL` on 3100), as the report-omission runbook does.
 - **Ask first.** The Mirror ports (3000, 5101, 8010, 8080) are shared with the mirror end-to-end chat.
   Confirm with the person or chat that owns them before starting, stopping or reseeding anything; a reseed destroys their chats and allowance counts.
 - **Budget.** Gilligan questions cost about $0.02 each and reports about $0.05-0.07, from a $10 mirror budget of which about $2.56 was spent by 2026-09-27.
@@ -46,10 +50,10 @@ browser -> dashboard :3000 -> CER server :5101 -> Firestore emulator :8080 (proj
 
 | piece | checkout on this machine | commit | pushed? |
 |---|---|---|---|
-| Emulator and seed | `~/code/clean-earth-rovers/worktrees/server-release-mirror` | `8594338` (`mirror/release-rc1`: release `122136d` plus the silent, low-pH and dissolved-oxygen fixtures) | no, local until the user approves the push |
+| Emulator and seed | `~/code/work/clean-earth-rovers/worktrees/server-release-mirror` | `8594338` (`mirror/release-rc1`: release `122136d` plus the silent, low-pH and dissolved-oxygen fixtures) | no, local until the user approves the push |
 | CER server :5101 | same checkout | `8594338` | no, same branch |
-| Gilligan :8010 | `~/code/clean-earth-rovers/repo/cer-demo/.claude/worktrees/e2e-rc` | `77cd4c9` (`test/e2e-rc`, a merge of `dev` and `feat/service-release`) | yes, `origin/test/e2e-rc` |
-| Dashboard :3000 | `~/code/clean-earth-rovers/worktrees/dashboard-e2e` | `9e18555` (detached) | yes, CER dashboard `origin/release/gilligan-2026-09-30` |
+| Gilligan :8010 | `e2e-rc`, since removed; prepare a Gilligan worktree as in [`REPORT_OMIT_MIRROR_RUNBOOK.md`](REPORT_OMIT_MIRROR_RUNBOOK.md) §3.2 | `77cd4c9` (`test/e2e-rc`, a merge of `dev` and `feat/service-release`) | yes, `origin/test/e2e-rc` |
+| Dashboard :3000 | `~/code/work/clean-earth-rovers/worktrees/dashboard-e2e` | `9e18555` (detached) | yes, CER dashboard `origin/release/gilligan-2026-09-30` |
 
 The Mirror server has the A3 and A4 fixes but not the A2 or A5 fixes; test those two on the Release stack (:3300/:5301) instead.
 If the release coordinator names a newer candidate (for example server `mirror/release-rc1` and cer-demo `release/rc1`), use its checkouts and commits and record them.
@@ -60,7 +64,7 @@ Files git does not carry, all present on this machine as of 2026-09-28:
 |---|---|---|
 | `.env` | Gilligan checkout | the model provider key (`FIREWORKS_API_KEY`) and model settings; the settings file below overrides everything else in it |
 | `data/corpus/`, `data/embeddings/cache.json` | Gilligan checkout | the document library; never regenerate them for a test |
-| `node_modules` | all three checkouts | linked from the main checkouts |
+| `node_modules` | all three checkouts | linked from the main checkouts; since the 2026-10-04 move the links in `server-release-mirror` and `dashboard-e2e` point under `~/code/clean-earth-rovers/` and are broken (checked 2026-10-17): relink them to `~/code/work/clean-earth-rovers/repo/clean-earth-rovers-server/node_modules` and `~/code/work/clean-earth-rovers/repo/user-dashboard/node_modules` |
 | `.env.mirror.local` | server checkout | loaded by the server scripts; the settings file takes precedence |
 | Java 21 | `~/.local/opt/jdk-21.0.12.1+1` | the emulator needs Java 21 or newer |
 
@@ -69,10 +73,10 @@ Files git does not carry, all present on this machine as of 2026-09-28:
 In the setup terminal:
 
 ```bash
-export CER_REPOS=/home/winsy/code/clean-earth-rovers/repo
-export MIRROR_SERVER=/home/winsy/code/clean-earth-rovers/worktrees/server-release-mirror
-export GILLIGAN_DIR="$CER_REPOS/cer-demo/.claude/worktrees/e2e-rc"
-export DASHBOARD_DIR=/home/winsy/code/clean-earth-rovers/worktrees/dashboard-e2e
+export CER_REPOS=/home/winsy/code/work/clean-earth-rovers/repo
+export MIRROR_SERVER=/home/winsy/code/work/clean-earth-rovers/worktrees/server-release-mirror
+export GILLIGAN_DIR="$CER_REPOS/cer-demo/.claude/worktrees/e2e-rc"   # removed; see §2
+export DASHBOARD_DIR=/home/winsy/code/work/clean-earth-rovers/worktrees/dashboard-e2e
 
 git -C "$MIRROR_SERVER" rev-parse --short HEAD      # 8594338
 git -C "$GILLIGAN_DIR" rev-parse --short HEAD       # 77cd4c9
@@ -98,9 +102,9 @@ node - "$MIRROR_ENV" <<'NODE'
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const s = {
-  MIRROR_SERVER: '/home/winsy/code/clean-earth-rovers/repo/clean-earth-rovers-server/.worktrees/mirror',
-  GILLIGAN_DIR: '/home/winsy/code/clean-earth-rovers/repo/cer-demo/.claude/worktrees/e2e-rc',
-  DASHBOARD_DIR: '/home/winsy/code/clean-earth-rovers/worktrees/dashboard-e2e',
+  MIRROR_SERVER: '/home/winsy/code/work/clean-earth-rovers/repo/clean-earth-rovers-server/.worktrees/mirror',
+  GILLIGAN_DIR: '/home/winsy/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/e2e-rc', // removed; see §2
+  DASHBOARD_DIR: '/home/winsy/code/work/clean-earth-rovers/worktrees/dashboard-e2e',
   JAVA_HOME: '/home/winsy/.local/opt/jdk-21.0.12.1+1',
   MIRROR_PROJECT_ID: 'demo-cer-mirror',
   FIRESTORE_PROJECT_ID: 'demo-cer-mirror',

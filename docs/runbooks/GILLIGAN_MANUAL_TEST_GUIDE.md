@@ -21,16 +21,16 @@ Do not switch to upstream `main` or `develop`, install dependencies there, or ru
 Do not merge fixes or change upstream branches as part of this procedure.
 These older commits do not contain every later release fix, so record a known failure instead of assuming a newer requirement already works.
 
-**Setup below is the 2026-09-26 stack and is being updated.**
+**Setup below is the 2026-09-26 stack and is no longer maintained.**
 The 2026-09-27 stack differs: the mirror server (`mirror/e2e-p3` `1ef21a7` or the release candidate's `mirror/release-rc1`) runs under a `demo-` project (`demo-cer-mirror`) and refuses production project ids, `mirror:seed -- --fixtures` adds the moved pod, the no-GPS pod and the missing- and empty-organization predecessors, and the dashboard's `local` ancestry check no longer holds after the malware cleanup rewrote `local`.
 For the current stack, follow [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md) instead of the setup below.
 
 In the setup terminal, check branches, ancestry and malware before starting either upstream checkout:
 
 ```bash
-export CER_REPOS=/home/winsy/code/clean-earth-rovers/repo
+export CER_REPOS=/home/winsy/code/work/clean-earth-rovers/repo
 export MIRROR_SERVER="$CER_REPOS/clean-earth-rovers-server/.worktrees/mirror"
-export GILLIGAN_DIR="$CER_REPOS/cer-demo/.claude/worktrees/feat+service-release"
+export GILLIGAN_DIR="$CER_REPOS/cer-demo/.claude/worktrees/feat+service-release"   # removed; see REPORT_OMIT_MIRROR_RUNBOOK.md §3.2
 export DASHBOARD_DIR="$CER_REPOS/user-dashboard"
 
 git -C "$MIRROR_SERVER" branch --show-current
@@ -81,10 +81,10 @@ node - "$GILLIGAN_MANUAL_ENV" <<'NODE'
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const settings = {
-  CER_REPOS: '/home/winsy/code/clean-earth-rovers/repo',
-  MIRROR_SERVER: '/home/winsy/code/clean-earth-rovers/repo/clean-earth-rovers-server/.worktrees/mirror',
-  GILLIGAN_DIR: '/home/winsy/code/clean-earth-rovers/repo/cer-demo/.claude/worktrees/feat+service-release',
-  DASHBOARD_DIR: '/home/winsy/code/clean-earth-rovers/repo/user-dashboard',
+  CER_REPOS: '/home/winsy/code/work/clean-earth-rovers/repo',
+  MIRROR_SERVER: '/home/winsy/code/work/clean-earth-rovers/repo/clean-earth-rovers-server/.worktrees/mirror',
+  GILLIGAN_DIR: '/home/winsy/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/feat+service-release', // removed
+  DASHBOARD_DIR: '/home/winsy/code/work/clean-earth-rovers/repo/user-dashboard',
   JAVA_HOME: '/home/winsy/.local/opt/jdk-21.0.12.1+1',
   FIRESTORE_EMULATOR_HOST: '127.0.0.1:8080',
   FIRESTORE_PROJECT_ID: 'conductive-fold-343604',

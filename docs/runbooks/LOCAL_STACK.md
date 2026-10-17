@@ -1,7 +1,7 @@
 # Local stack
 
 The WSL2 checkout this service is developed in, what it needs beyond git, and how to run the CER dashboard and server beside it without the credentials this machine does not hold.
-Verified end to end on 2026-09-21.
+Verified end to end on 2026-09-21 at the old path `~/code/clean-earth-rovers/`; the paths below were moved under `~/code/work/` on 2026-10-17 and are unverified since the 2026-10-04 move.
 
 ## Checkout layout
 
@@ -9,7 +9,7 @@ The machine was rebuilt after the 2026-09-19 incident ([`SECURITY_INCIDENT_2026-
 The repository instructions refer to `../user-dashboard` and `../clean-earth-rovers-server`, so all three stay siblings:
 
 ```text
-/home/winsy/code/clean-earth-rovers/
+/home/winsy/code/work/clean-earth-rovers/
   repo/
     cer-demo/                    git@github.com:winzyu/cer-demo.git              (branch dev)
     user-dashboard/              git@github.com:Clean-Earth-Rovers-Technology/user-dashboard.git
@@ -45,7 +45,7 @@ State as of the 2026-09-21 rebuild.
 
 The 2026-09-19 backup drive was written by the compromised machine: copy individual files from it after looking at them, never in bulk.
 Its OneDrive copy of cer-demo is not a checkout: 15 top-level files and empty subdirectories, `.git/` included.
-**The recoverable project history is in the Claude state**, unpacked at `~/code/clean-earth-rovers/incident-logs/` (transcripts) and in `claude-codex-setup.tar.gz` (`file-history/` snapshots, `plans/`).
+**The recoverable project history is in the Claude state**, unpacked at `~/code/work/clean-earth-rovers/incident-logs/` (transcripts) and in `claude-codex-setup.tar.gz` (`file-history/` snapshots, `plans/`).
 Long tool results there are truncated, so check a recovered file for a truncation marker and for line numbers covering every line.
 
 ## Claude Code state
