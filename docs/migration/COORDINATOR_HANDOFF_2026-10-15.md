@@ -1,6 +1,6 @@
 # Coordinator - handoff
 
-Current as of 2026-10-16 after the docs-cleanup landing; first written 2026-10-15 at `650451c`.
+Current as of 2026-10-17 after landing the docs overhaul proposal; first written 2026-10-15 at `650451c`.
 A fresh coordinator session reads `docs/STATUS.md`, then this file, then follows "Next step"; for the report-omission test it also reads `docs/migration/REPORT_OMIT_MIRROR_RUNBOOK.md`.
 
 ## What this is
@@ -31,6 +31,7 @@ The goal now is the next release: the data-skepticism fix, report omission and t
 | Server retry patch, push, PR | ready: runbook §10, one command at a time with the user |
 | `swell-rule` worktree | removed 2026-10-16 (user); local branch `task/swell-rule` kept |
 | Docs cleanup `docs/cleanup` | landed 2026-10-16 by fast-forward to `6e019cf` (tags `docs-archive-2026-10-16`, `docs-archive-2026-10-16b`); worktree `docs-cleanup` and the branch remain until the docs chat is done: see "Docs cleanup review" |
+| Docs overhaul | proposal and its handoff landed 2026-10-17 (`5ffc311`; `DOCS_OVERHAUL_PROPOSAL.md`, `DOCS_OVERHAUL_HANDOFF.md`); the user approved D1-D6 with the coordinator's changes; batches 1-6 next, 7-8 after the flagging rework |
 | Flagging rework `task/flagging-share-window` `c5d90df` | waiting on Michael's answers to questions 28-32 |
 
 ## Waiting on the user
@@ -57,7 +58,7 @@ The goal now is the next release: the data-skepticism fix, report omission and t
 ## Next step
 
 1. Walk the user through runbook §10 one command at a time; if the Mirror stack is no longer wanted, stop it with the `kill` line in "State" and delete the settings file.
-2. Docs cleanup landed; land any further batch the docs chat reports the same way (tag, table row and section per batch).
+2. Land each docs-overhaul batch the docs chat reports: review the diff (only mechanical link rewrites in STATUS, `timeline.md`, SPECS, `CLAUDE.md`, `AGENTS.md`; an `ARCHIVED.md` tag, row and section for any archive), check `git grep` for old paths, fast-forward `dev`. After batch 6, repoint STATUS's docs-overhaul line to `docs/plans/` and update the memory files `launch-first.md` and `remaining-work-sources.md` (backlog path); after the moves, rewrite STATUS "Where things live" to one line per folder. When landing the flagging rework or another branch afterwards, run the landing sweep (proposal §7).
 3. When Michael answers, record his answers in `STAKEHOLDER_QUESTIONS.md` and the timeline, and tell the flagging chat.
 4. Land `task/flagging-share-window` when its chat asks, after review. While landing:
    - restore the about 680 `SPECS.md` lines its commit `9c57aa9` deleted, keeping dev's §10.7-§19 and applying only the branch's flag-rule edits;
