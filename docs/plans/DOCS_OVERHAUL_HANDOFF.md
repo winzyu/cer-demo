@@ -39,21 +39,21 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 | D7 recorded | done `f2ef65f` |
 | Batch 5 with D7: 6 records moved to `docs/records/`, 3 archived (tag `docs-archive-2026-10-17` at `f2ef65f`) | done `14c89a6`; not yet landed |
 | Content pass over batches 1-4 (`runbooks/`, `reference/`, `people/`, `records/`), batches of at most 10 | C1 `runbooks/` done `2296975` (5 updated, 5 kept; `E2E_CHECKLIST.md` and the two launch-issue pages wait for the merge proposal); C2 `reference/` and C3 `people/` done `2659b9d` (3 openings updated, 7 kept); C4 `records/` done `45b71db` (2 archived at tag `docs-archive-2026-10-17b`, 8 kept) |
-| Batch 6 with D7: 4 records to `docs/records/`, backlog, `Q10_TASKS.md` (status note added), this handoff and the proposal to `docs/plans/` | done in the commit that records it here; not yet landed |
-| Test-doc merge proposal (section 3.2 docs) | next: a proposal section for the user to decide; no merge |
+| Batch 6 with D7: 4 records to `docs/records/`, backlog, `Q10_TASKS.md` (status note added), this handoff and the proposal to `docs/plans/` | done `d9aba50`; not yet landed |
+| Test-doc merge proposal (section 3.2 docs) | written, proposal section 10, in the commit that records it here; waiting on the user's M1-M3 |
 | Batches 7-8 | wait until `task/flagging-share-window` lands on `dev` |
 | Landing sweeps for `reflection`, `task/tide-tool`, `docs/firestore-testing-plan`, `fix/window-note` | after each branch lands (proposal section 7) |
 
 ## Waiting on the user
 
 - The final reconciliation of all batches (user, 2026-10-17).
-- The test-doc merge decision, once the proposal section exists.
+- The test-doc merge decisions M1-M3 (proposal section 10).
 
 ## Next step
 
 1. `git fetch origin` and merge `origin/dev` into `docs/cleanup` (no rebase) if `dev` moved.
-2. Write the test-doc merge proposal as a new section of the proposal: what each of the manual test guide, `E2E_CHECKLIST.md`, the two launch-issue pages and the two Mirror runbooks covers, what overlaps, and a recommended target set; ask the user, and merge nothing until they decide.
-   Then batches 7-8, each with D7, once `task/flagging-share-window` lands on `dev`.
+2. Batches 7-8, each with D7, once `task/flagging-share-window` lands on `dev` (check with `git merge-base --is-ancestor origin/task/flagging-share-window origin/dev`; not landed at `c5d90df` on 2026-10-17).
+   The test-doc merge (proposal section 10) runs only after the user decides M1-M3.
    `REPORT_OMIT_MIRROR_TEST.md` moved to `records/` in batch 6 because `timeline.md` line 922 links it and STATUS line 78 cites it; archive it once the coordinator repoints both (its Mirror caveats now live in `MIRROR_RUNBOOK.md`).
    `Q10_TASKS.md` can be archived once T4, T5, T6, T9 and T11 are reconciled.
 3. Link rewrites (every batch): resolve each relative link against the old tree before `git mv`, and recompute it from the file's new folder to the target's new folder; also rewrite path-form text (`docs/migration/X`, `migration/X`, `../docs/migration/X`), including a name followed by a sentence-ending period (batch 3 missed one in `scripts/exploreFirestoreParity.sh` that way).

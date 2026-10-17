@@ -343,3 +343,45 @@ Approved by the user on 2026-10-17, with the coordinator's three changes:
   Sections 3.3 and 3.4 are therefore in scope; this supersedes their "listed, not fixed" and "later content pass" notes.
 
 The coordinator updates the two agent-memory files after batch 6 and leaves the dated handoff prompts as they are.
+
+## 10. Test-doc merge proposal (for the user to decide)
+
+Section 3.2 named six overlapping test docs; D7 asks for a merge proposal, not a merge.
+Nothing below has been done.
+
+### 10.1 What each covers today
+
+| doc | lines | what it holds | current? |
+|---|---:|---|---|
+| `runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md` | 740 | A setup section for the 2026-09-26 stack, marked no longer maintained; then the checklist of record: groups A-M with IDs (K6, M13 ...) that other docs, scripts and the end-to-end bot cite, a PDF audit, legacy and large-chat fixtures, known findings and what the mirror cannot prove | checklist yes, setup no |
+| `runbooks/E2E_CHECKLIST.md` | 263 | A 9-group question script (A page load to I limits) for one short local run, then the 2026-09-26 baseline results and the 2026-09-29 Mirror rerun | script partly; the results are records |
+| `runbooks/MIRROR_RUNBOOK.md` | 280 | Mirror setup from a stopped machine (2026-09-28 stack, paths fixed 2026-10-17, unverified since), smoke checks, logins, and the test order for the launch items (A3-A6, B1-B7, U5-U10) | setup partly; the test order is September's |
+| `runbooks/REPORT_OMIT_MIRROR_RUNBOOK.md` | 366 | Mirror setup dry-run on 2026-10-15 (§2-§5, §9, troubleshooting) and the report-omission checks (§1, §6-§8, §10) | yes |
+| `runbooks/LAUNCH_ISSUES_WALKTHROUGH.html` | 750 | Click-by-click steps for the September launch issues (Part 1), basic user flows on Current, Release and the Mirror (Part 2) and an API run (Part 3); results go to `records/LAUNCH_ISSUES_CHECKLIST.md` | Part 1 finished with the launch; Part 2 overlaps the manual guide |
+| `runbooks/LAUNCH_ISSUES_EXPLAINED.html` | 783 | A study guide: how the system fits together, account levels, the three stacks, how a test is judged, the fake data and its coverage, then the launch issues explained | foundations yes; the launch-issue half is September's |
+
+### 10.2 Overlaps
+
+- **Mirror setup is written three times:** the manual guide's setup (stale), `MIRROR_RUNBOOK.md` §2-§5 (2026-09-28) and `REPORT_OMIT_MIRROR_RUNBOOK.md` §2-§5 (the only one run as written recently).
+- **Three test scripts cover the same user flows:** manual guide groups A-I, `E2E_CHECKLIST.md` groups A-I (page load, documents, readings, claims, report, scope, history, phone layout, limits) and the walkthrough's Part 2.
+- **The launch items are described four ways:** the walkthrough's Part 1, the explainer's launch-issue half, `MIRROR_RUNBOOK.md` §8 and the results in `records/LAUNCH_ISSUES_CHECKLIST.md`.
+- **Results sit inside runbooks:** `E2E_CHECKLIST.md`'s two result sections are dated records.
+
+### 10.3 Recommended target set
+
+1. **One Mirror setup runbook.** Rewrite `MIRROR_RUNBOOK.md` (the name stays) from `REPORT_OMIT_MIRROR_RUNBOOK.md` §2-§5, §9 and its troubleshooting, generalized from the report-omission build to "the build under test", keeping `MIRROR_RUNBOOK.md`'s safety rules, smoke checks and logins.
+   `REPORT_OMIT_MIRROR_RUNBOOK.md` keeps only the feature checks and points at it for setup.
+   `MIRROR_RUNBOOK.md`'s §8 launch test order moves to the launch-issues record, where its results are.
+2. **One test checklist.** The manual guide drops its setup section for a pointer to the Mirror runbook and stays the checklist of record.
+   `E2E_CHECKLIST.md`'s script becomes a "short run" subsection of the manual guide, listing which guide IDs it covers; its two result sections move to a dated record (`records/E2E_CHECKLIST_RESULTS_2026-09-26.md`), and `E2E_CHECKLIST.md` is archived.
+3. **The launch-issue pages become records.** The walkthrough's Part 1 and the explainer's launch half are finished with the September launch; both pages move to `records/` beside the checklist they serve, unchanged.
+   The explainer's foundations (system, accounts, stacks, fake data) are the only study guide to the test setup; if they should stay a living doc, extract them into the manual guide's opening instead.
+
+Result: `runbooks/` goes from 10 files to 7 (deployment, manual test guide, Mirror runbook, report-omission checks, local stack, live test list, live test data), with one setup and one checklist.
+Cost: the two rewrites are content work of a few hours each and need a dry run of the merged setup on the Mirror (free checks only) before they replace what exists; the moves and archive are one batch.
+
+Decisions for the user:
+
+- **M1.** One Mirror setup runbook built from the report-omission runbook: yes or no.
+- **M2.** Fold `E2E_CHECKLIST.md`'s script into the manual guide and file its results as a record: yes or no.
+- **M3.** The launch-issue pages: move both to `records/` (recommended), or keep the explainer's foundations as a living doc.
