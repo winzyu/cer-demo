@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-10-16 by the coordinator after the report-omission Mirror run; the coordinator's open items are in [`migration/COORDINATOR_HANDOFF_2026-10-15.md`](migration/COORDINATOR_HANDOFF_2026-10-15.md).
+Updated 2026-10-16 by the coordinator after landing the docs cleanup; the coordinator's open items are in [`migration/COORDINATOR_HANDOFF_2026-10-15.md`](migration/COORDINATOR_HANDOFF_2026-10-15.md).
 Current state and next steps only; history is `git log -p docs/STATUS.md`; never cite this file from code or other docs.
 
 ## Start here
@@ -18,21 +18,21 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 ## Last session
 
-- Coordinator, 2026-10-16: ran the report-omission Mirror paid steps without a browser (`scripts/mirror/reportOmitDrive.mjs`; 429,072 tokens, about $0.06) and recorded them; reproduced A4 and C1, fixed both (`acb9d7d`) and reran them on the Mirror (551,943 tokens, about $0.08); added the browserless playbook as runbook §7.3; removed the `swell-rule` worktree; recorded the user's dates and the dropped `c514e0b` comparison; reviewed Codex's `docs/cleanup` `4d993ec` (local only, not landed; coordinator handoff, "Docs cleanup review"). The Mirror stack is still running.
+- Coordinator, 2026-10-16: ran the report-omission Mirror paid steps without a browser (`scripts/mirror/reportOmitDrive.mjs`; 429,072 tokens, about $0.06) and recorded them; reproduced A4 and C1, fixed both (`acb9d7d`) and reran them on the Mirror (551,943 tokens, about $0.08); added the browserless playbook as runbook §7.3; removed the `swell-rule` worktree; recorded the user's dates and the dropped `c514e0b` comparison; landed the docs cleanup (`6e019cf`; nine docs retired under tags `docs-archive-2026-10-16` and `-16b`, see `ARCHIVED.md`; the four docs it left are in the coordinator handoff, "Docs cleanup review"). The Mirror stack is still running; a report-omission chat (server PR, stopping the Mirror) and an upstream cleanup chat are working in parallel.
 
 ## Working tree
 
 - Code lives under `~/code/work/clean-earth-rovers/` since 2026-10-04; the release files once in `~/release/` are in `release/` on `dev` (`0921140`); `release/rc2-mirror.env.sh` (secrets) and `release/rc2-artifacts/` exist only in the main checkout, ignored.
 - Main checkout on `reflection` (`4c15796`): the user's uncommitted `.claude/settings.json` and `release/start-rc2-emulator.sh` edits are now redundant with `dev` (the user decides); untracked user files (`docs/migration/*_EXPLAINED.html`, `REPORT_EDITING_OPTIONS.html`, `_EXIT_CRITERIA.md`, `eval/grading/phase-1d-wave1-fixture-review.html`, `review-marked-up.html`, the root v2 PDF) stay untracked on purpose.
-- Worktrees (`git worktree list`): `dev` (coordinator), `omit-mirror` (detached `dev` for the report-omit Mirror; ignored `.env` copy and linked caches), `flagging-share-window`, `tide-tool`, `docs-cleanup` (Codex, `docs/cleanup` `4d993ec`, local only), `e7-corpus`, `firestore-plan`, `post-launch-land` (merged), `window-note`, and detached `e2e-dev`, `skeptic-before`, `skeptic-evals-run`, `skeptic-repro` (cleanup candidates; check each is clean and reachable from a branch or tag first).
-- Remote branches (`git ls-remote --heads origin`): `main` `fcf6343`, `dev`, `reflection`, `task/flagging-share-window`, `task/tide-tool`, `task/report-html-option`, `task/skeptic-triage`, `task/swell-rule`, `fix/window-note`, `land/post-launch`, `task/e7-corpus`, `docs/firestore-testing-plan`. The repository is public.
+- Worktrees (`git worktree list`): `dev` (coordinator), `omit-mirror` (detached `dev` for the report-omit Mirror; ignored `.env` copy and linked caches), `flagging-share-window`, `tide-tool`, `docs-cleanup` (`docs/cleanup` `6e019cf`, landed on `dev`, pushed), `e7-corpus`, `firestore-plan`, `post-launch-land` (merged), `window-note`, and detached `e2e-dev`, `skeptic-before`, `skeptic-evals-run`, `skeptic-repro` (cleanup candidates; check each is clean and reachable from a branch or tag first).
+- Remote branches (`git ls-remote --heads origin`): `main` `fcf6343`, `dev`, `reflection`, `task/flagging-share-window`, `task/tide-tool`, `task/report-html-option`, `task/skeptic-triage`, `task/swell-rule`, `fix/window-note`, `land/post-launch`, `task/e7-corpus`, `docs/firestore-testing-plan`, `docs/cleanup`. The repository is public.
 - The report-omit Mirror server tree is the export `~/code/work/clean-earth-rovers/worktrees/mirror-report-omit` (runbook §3.1; ignored `.env.mirror.local` copy). The older report-omit Mirror stack is down; delete the old scratchpad secrets under `/tmp/claude-1000*/46402f68-fd11-42b5-a864-1ea3b3e21aa9/scratchpad` (`mirror-env.sh`, `auth-*`, `server-mirror/`). No containers were running at handoff (`docker ps`).
 
 ## Open work
 
-- User: [`migration/COORDINATOR_HANDOFF_2026-10-15.md`](migration/COORDINATOR_HANDOFF_2026-10-15.md) "Waiting on the user": the server PR commands (runbook §10), the docs-cleanup decisions, data-skepticism items 2, 3 and 5a, the "free prompt-rule inventory", post-launch order, the remaining worktree cleanup, and the older items (scratchpad secrets, the test user `winsyu475+certest@gmail.com`, the main checkout's uncommitted edits).
+- User: [`migration/COORDINATOR_HANDOFF_2026-10-15.md`](migration/COORDINATOR_HANDOFF_2026-10-15.md) "Waiting on the user": the server PR commands (runbook §10), data-skepticism items 2, 3 and 5a, the "free prompt-rule inventory", post-launch order, the remaining worktree cleanup, and the older items (scratchpad secrets, the test user `winsyu475+certest@gmail.com`, the main checkout's uncommitted edits).
 - Michael: answer stakeholder questions 27-35 (28-35 sent 2026-10-15); send him nothing more until he does (user, 2026-10-15). Also: revoke the old Gemini key and Gmail app password; optionally grant the user Cloud Build bucket write and `roles/datastore.user` on the `gilligan` database; test before the `main` merges.
-- Agent, coordinator: walk the user through the server PR; land Codex's `docs/cleanup` after its fixes; on Michael's answers, record them and land `task/flagging-share-window` with the checklist in the coordinator handoff ("Next step" 4); then prepare the release; refresh this file.
+- Agent, coordinator: walk the user through the server PR; land further docs-cleanup batches; on Michael's answers, record them and land `task/flagging-share-window` with the checklist in the coordinator handoff ("Next step" 4); then prepare the release; refresh this file.
 - Agent, outside-data tools: `docs/migration/OUTSIDE_DATA_TOOLS_HANDOFF.md` on `task/tide-tool`.
 - Agent, upstream landing: build the `main` merges (server conflicts in `WaterAnalyticsService.ts`; take the release side); push on consent; tell Michael `62993fe` ships with server `main`.
 - Agent, release follow-through: cer-gilligan to 2 instances after the restart check; remove stale tags (backlog §4).

@@ -1,6 +1,6 @@
 # Coordinator - handoff
 
-Current as of 2026-10-16 (early, UTC) after the report-omission Mirror run; first written 2026-10-15 at `650451c`.
+Current as of 2026-10-16 after the docs-cleanup landing; first written 2026-10-15 at `650451c`.
 A fresh coordinator session reads `docs/STATUS.md`, then this file, then follows "Next step"; for the report-omission test it also reads `docs/migration/REPORT_OMIT_MIRROR_RUNBOOK.md`.
 
 ## What this is
@@ -30,7 +30,7 @@ The goal now is the next release: the data-skepticism fix, report omission and t
 | Server PR body | updated in place with the `report_retried` relay: `~/code/work/clean-earth-rovers/handoff/2026-10-15/report-omit-pr-body.md` |
 | Server retry patch, push, PR | ready: runbook §10, one command at a time with the user |
 | `swell-rule` worktree | removed 2026-10-16 (user); local branch `task/swell-rule` kept |
-| Docs cleanup `docs/cleanup` `4d993ec` (Codex, worktree `docs-cleanup`, local only) | reviewed 2026-10-16, not landed: see "Docs cleanup review" |
+| Docs cleanup `docs/cleanup` | landed 2026-10-16 by fast-forward to `6e019cf` (tags `docs-archive-2026-10-16`, `docs-archive-2026-10-16b`); worktree `docs-cleanup` and the branch remain until the docs chat is done: see "Docs cleanup review" |
 | Flagging rework `task/flagging-share-window` `c5d90df` | waiting on Michael's answers to questions 28-32 |
 
 ## Waiting on the user
@@ -45,7 +45,7 @@ The goal now is the next release: the data-skepticism fix, report omission and t
 4. **Post-launch order**: "the unguarded user-update routes are a live production security hole in the server, and I'd put them first."
 5. **Worktree cleanup**: remove `post-launch-land` (merged) and the detached `e2e-dev`, `skeptic-before`, `skeptic-evals-run` and `skeptic-repro`, after checking each is clean and reachable from a branch or tag. `swell-rule`'s worktree is gone; `git branch -D task/swell-rule` still needs explicit permission (commits `fd7f008`, `bc37b4a` stay on `origin`).
 6. **Report-omission findings**: done; reproduced, fixed on `dev` `acb9d7d`, Mirror rerun passes (results doc, "Reruns of A4 and C1").
-7. **Docs cleanup**: the decisions in "Docs cleanup review".
+7. **Docs cleanup**: landed; the four docs it left are in "Docs cleanup review".
 8. **Still open from before**: delete the old scratchpad secrets (STATUS "Working tree"); delete the test user `winsyu475+certest@gmail.com`; decide the main checkout's uncommitted `.claude/settings.json` and `release/start-rc2-emulator.sh` edits.
 
 ## Waiting on Michael
@@ -57,7 +57,7 @@ The goal now is the next release: the data-skepticism fix, report omission and t
 ## Next step
 
 1. Walk the user through runbook §10 one command at a time; if the Mirror stack is no longer wanted, stop it with the `kill` line in "State" and delete the settings file.
-2. When Codex reports its docs-cleanup fixes, review the diff against "Docs cleanup review" and land it.
+2. Docs cleanup landed; land any further batch the docs chat reports the same way (tag, table row and section per batch).
 3. When Michael answers, record his answers in `STAKEHOLDER_QUESTIONS.md` and the timeline, and tell the flagging chat.
 4. Land `task/flagging-share-window` when its chat asks, after review. While landing:
    - restore the about 680 `SPECS.md` lines its commit `9c57aa9` deleted, keeping dev's §10.7-§19 and applying only the branch's flag-rule edits;
@@ -72,12 +72,17 @@ Resume with: `Read docs/STATUS.md on branch dev, then docs/migration/COORDINATOR
 
 ## Docs cleanup review
 
-Codex's `docs/cleanup` `4d993ec` (base `650451c`, merges cleanly onto `origin/dev`) removes `RELEASE_GOAL_AND_PLAN.md`, `UPSTREAM_PR_BODIES.md`, `GILLIGAN_E2E_TEST_TICKET.md`, `TASK_C_HANDOFF.md` and `POST_LAUNCH_MERGE_TESTS.md`, repoints their references, and adds `docs/README.md` and `docs/migration/DOCS_CLEANUP_REVIEW_2026-10-15.md`.
-Checked: no reference to the five remains outside `git show` lines; every replacement target exists (`SUPERVISOR_QUESTIONS_SEND.md`, `TASK_C_VERIFICATION.md`, `SPECS.md` §10.4a); the ticket's own opening names the manual guide as the checklist of record, and 38 of the bot's 40 scenario ids appear in the guide; README links resolve; `git diff --check` passes.
-Before landing:
+Landed 2026-10-16: `dev` fast-forwarded to `docs/cleanup` `6e019cf` after review.
+Codex's five docs went under tag `docs-archive-2026-10-16` (`650451c`) and four more (`CORPUS_SEEDING.md`, `Q9_CLOUD_RESULT.md`, `Q9_C1_D1_RESULT.md`, `TURBIDITY_EXPLORATION.md`) under `docs-archive-2026-10-16b` (`21a60e8`); each batch has a row and a section in `ARCHIVED.md`, and both tags are on `origin`.
+`docs/README.md` and `DOCS_CLEANUP_REVIEW_2026-10-15.md` were deleted (user's choice).
+Checked: no reference to a removed path outside `git show` lines and `ARCHIVED.md`; `git diff --check` passes.
 
-- Follow `docs/ARCHIVED.md`'s rule ("Anything archived later gets its own tag and a row in this table"): tag `650451c` (for example `docs-archive-2026-10-16`), add a section with the five reasons, point the `git show` lines at the tag, and drop `DOCS_CLEANUP_REVIEW_2026-10-15.md`, which duplicates that section.
-- `docs/README.md` is a second map beside STATUS "Where things live" and lists `MIRROR_RUNBOOK.md`, whose paths predate the 2026-10-04 move (STATUS "Active traps"); decide whether to keep it, and if kept, list `REPORT_OMIT_MIRROR_RUNBOOK.md` and say the old runbook's paths are stale.
+The docs chat left four docs for the coordinator:
+
+- `GILLIGAN_RESET_2026-09-28.md`: a finished freeze-day roundup, linked from `timeline.md`; a later batch can retire it with that link repointed.
+- `REPORT_OMIT_MIRROR_TEST.md`: superseded as a plan by `REPORT_OMIT_MIRROR_RUNBOOK.md`, but STATUS "Active traps" cites its path substitutions; keep until those move.
+- `P3_CALIBRATION_REVIEW_2026-09-24.md`: unlinked, but holds the AI review's per-answer conclusions that `EVAL_REBUILD.md` 2c cites by SHA; keep.
+- `Q10_TASKS.md`: unlinked, still has open or blocked tasks (T3-T9, T11); retire once closed.
 
 ## Facts, with their sources
 
