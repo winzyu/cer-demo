@@ -1,6 +1,6 @@
 # Report editing: is the HTML template worth building? (2026-10-15)
 
-Recommendation note for [`POST_LAUNCH_BACKLOG.md`](../migration/POST_LAUNCH_BACKLOG.md) §6, written from code and earlier results; nothing was run, and every cost below is an estimate unless it cites a measurement.
+Recommendation note for [`POST_LAUNCH_BACKLOG.md`](../plans/POST_LAUNCH_BACKLOG.md) §6, written from code and earlier results; nothing was run, and every cost below is an estimate unless it cites a measurement.
 "HTML" here means Michael's own preference among the first two ideas offered to him; the `omit` options that were built have nothing to do with HTML, they are parameters on the report tool call.
 Short answer: ship idea 1, which Michael approved on 2026-10-12 with all four samples, and do not build the HTML template unless he asks for more.
 
@@ -9,7 +9,7 @@ Short answer: ship idea 1, which Michael approved on 2026-10-12 with all four sa
 Michael asked (2026-10-07) to leave the turbidity disclaimers out of a report he wanted to share online, and asked whether it "can omit areas of the report".
 He was offered two directions, both HTML: the model writes the whole report as HTML, or the model edits a fixed HTML template with named sections; he answered "I would say the HTML is the better idea", which does not say which of the two he meant.
 Idea 1, a closed `omit` list on `generate_report` and `POST /api/v1/reports` (`src/report/omit.ts`), is on `dev`, not deployed; the server half is pushed upstream with no pull request.
-It was tested on the Mirror ([`REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](../migration/REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md)): Michael's own wording picked `turbidity_notes` and `sensor_fault_notes`, every number stayed identical, and the false "new PDF is ready" claim is held by the server-written delivery line plus a forced retry.
+It was tested on the Mirror ([`REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md)): Michael's own wording picked `turbidity_notes` and `sensor_fault_notes`, every number stayed identical, and the false "new PDF is ready" claim is held by the server-written delivery line plus a forced retry.
 
 ## 1. Does idea 1 cover what Michael asked?
 

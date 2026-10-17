@@ -1,6 +1,6 @@
 # Post-launch backlog, 2026-10-07
 
-Gilligan went live on 2026-10-07 (L9, [`GILLIGAN_LANDING_2026-09-29.md`](GILLIGAN_LANDING_2026-09-29.md) §7 item 18).
+Gilligan went live on 2026-10-07 (L9, [`GILLIGAN_LANDING_2026-09-29.md`](../migration/GILLIGAN_LANDING_2026-09-29.md) §7 item 18).
 From 2026-10-06 until launch the user parked everything outside the launch path; this file collects those items and the first production feedback.
 Each item names its evidence; the order within a section is a suggestion, and the user sets priorities.
 
@@ -98,7 +98,7 @@ Items A1-D3 are built on `task/sot-v2-flagging` (pushed, `268eb1b`..`cc6db99`, n
 Each touched Jest suite passed singly with `--runInBand` (27 unit suites plus the `q3Corrections`, `sensorChat` and `reports` integration suites), and `npm run typecheck` and `npm run lint` are clean; the full `npm test` was not run.
 Behaviour is in [`SPECS.md`](../SPECS.md) §19 (reading QC, limits, the flag rule, verdicts) and §10.7; the details decided on 2026-10-11 are in [`timeline.md`](../timeline.md); open questions 24-27 are in [`STAKEHOLDER_QUESTIONS.md`](../STAKEHOLDER_QUESTIONS.md).
 
-The smoke check ran on 2026-10-11 with the user's approval of read-only production reads (about $0.07): every question passes, question 1 only with a 30-day window because Balboa had no dissolved-oxygen zeros this week; results and answers are in [`V2_FLAGGING_SMOKE_2026-10-11.md`](V2_FLAGGING_SMOKE_2026-10-11.md).
+The smoke check ran on 2026-10-11 with the user's approval of read-only production reads (about $0.07): every question passes, question 1 only with a 30-day window because Balboa had no dissolved-oxygen zeros this week; results and answers are in [`V2_FLAGGING_SMOKE_2026-10-11.md`](../records/V2_FLAGGING_SMOKE_2026-10-11.md).
 Next: the coordinator lands `task/sot-v2-flagging` on `dev`.
 Questions, with what a pass looks like:
 
@@ -115,7 +115,7 @@ Not changed by this work: report event detection still reads bucket means; the s
 | Item | Evidence | Note |
 |---|---|---|
 | Any logged-in user can change any user's role, organization and email (`POST /api/v1/users/account/:id`); admins can edit, promote, delete or create users in other organizations | Landing doc §7 item 14 | High; live in production, in CER's code and `122136d`; most urgent |
-| CSV export returns any pod's readings to any logged-in user (finding 11) | [`SECURITY_FINDINGS.md`](SECURITY_FINDINGS.md); fixed on server `8463545`, not shipped | High |
+| CSV export returns any pod's readings to any logged-in user (finding 11) | [`SECURITY_FINDINGS.md`](../migration/SECURITY_FINDINGS.md); fixed on server `8463545`, not shipped | High |
 | A non-superadmin with an empty organization sees every pod (A6) | Fixed on `8463545`, not shipped | Medium |
 | A previous account's pod list survives logout and login in the same tab | Landing doc §7 item 19; `user-dashboard` `src/app/services/device-data.js:341`, `src/app/components/header.js` | Medium; shows a superadmin's pods to the next account on a shared computer |
 | Revoke the old Gemini API key and the old Gmail app password | Landing doc §7 item 10 | Michael |
@@ -127,7 +127,7 @@ Not changed by this work: report event detection still reads bucket means; the s
 | Item | Evidence |
 |---|---|
 | Over-flagging and repeated turbidity caveat | §1 |
-| Gilligan called a week of real readings sensor faults on a tide link it never measured, then reversed under pushback without new data; the "Searched from 1970" note is fixed on `dev` `469e972`, not deployed; the skepticism fix is on `dev` (`16cec6e`, `c303c2f`), not deployed | [`GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](GILLIGAN_DATA_SKEPTICISM_2026-10-09.md) |
+| Gilligan called a week of real readings sensor faults on a tide link it never measured, then reversed under pushback without new data; the "Searched from 1970" note is fixed on `dev` `469e972`, not deployed; the skepticism fix is on `dev` (`16cec6e`, `c303c2f`), not deployed | [`GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](../migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md) |
 | Michael cannot ask for a report without its turbidity disclaimers, or with sections left out, to share a clean PDF | §6 |
 | "How is the water this week?" answers with readings, actions and next steps and offers a report, instead of a plain weekly summary | Landing doc §7 item 17 (L8 C1) |
 | After a reload, a repeated summary request returns nearly the same answer | Landing doc §7 item 17 |
@@ -143,7 +143,7 @@ Already live in the release (`ddd6292`), not backlog: Q9 (silent pods, pH 2.07, 
 2. Raise cer-gilligan's maximum instances to 2 once the usage store has counted correctly across a revision restart ([`LIVE_TEST_LIST.md`](../runbooks/LIVE_TEST_LIST.md) L8); note that any `services update` creates a revision that gets no traffic while traffic is pinned, so route it.
 3. Remove tags on revisions that no longer serve: cer-gilligan `rc1` (`00002-zoc`, the cer-demo Fireworks key), cer-api `rc1` (`00080-huy`, the revoked mail password), and the old `archive-v1` and `neumorphic` tags if Michael agrees.
 4. Decide whether to disable the cer-demo Fireworks key; development and evaluation runs still use it.
-5. The `main` merges of server and dashboard ([`GILLIGAN_LANDING_2026-09-29.md`](GILLIGAN_LANDING_2026-09-29.md) §5; the server's conflicts are in `WaterAnalyticsService.ts`, take the release side), Michael tests first, pushes on consent; tell Michael `62993fe` ships with server `main`.
+5. The `main` merges of server and dashboard ([`GILLIGAN_LANDING_2026-09-29.md`](../migration/GILLIGAN_LANDING_2026-09-29.md) §5; the server's conflicts are in `WaterAnalyticsService.ts`, take the release side), Michael tests first, pushes on consent; tell Michael `62993fe` ships with server `main`.
 6. Delete the customer test user `winsyu475+certest@gmail.com` (Algalita); stop the local test dashboard container `cer-ui-l8-local` (port 3000).
 7. Done in the handoff: runbook §3.4 now says the dashboard reads `API_PROXY_TARGET` at run time.
 8. Access the user may want from Michael: Cloud Build source-bucket write (skips local builds), and `roles/datastore.user` limited to the `gilligan` database to reset a user's daily usage (`gilligan_usage/<userId>_<UTC day>`; limits also reset at 00:00 UTC).
@@ -167,7 +167,7 @@ Michael, 2026-10-07, after using the live Gilligan:
 
 The user offered two directions: the model writes the whole report as HTML, converted to PDF (estimated 3-15 cents a report, not measured), or the model edits a fixed HTML template with named sections, such as a warning section it can remove on request.
 Michael: "I would say the HTML is the better idea".
-**Status 2026-10-09:** idea 1 (report options on the tool) is built on cer-demo `task/report-omit` and server `task/gilligan-report-omit`, tested on the Mirror 2026-10-10 and 11 ([`REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md); the false edit claim is fixed by a server-written PDF line and a forced retry) and awaiting Michael's approval of sample PDFs; the decision is in [`timeline.md`](../timeline.md).
+**Status 2026-10-09:** idea 1 (report options on the tool) is built on cer-demo `task/report-omit` and server `task/gilligan-report-omit`, tested on the Mirror 2026-10-10 and 11 ([`REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](../records/REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md); the false edit claim is fixed by a server-written PDF line and a forced retry) and awaiting Michael's approval of sample PDFs; the decision is in [`timeline.md`](../timeline.md).
 On 2026-10-12 the cer-demo half landed on `dev` with `land/post-launch`, not deployed; server `task/gilligan-report-omit` (`ddcddc5`) is pushed upstream with no pull request.
 Michael approved the four offline samples (`offline-S1-full.pdf` to `offline-S4-all-four.pdf`) on 2026-10-12 ([`../timeline.md`](../timeline.md)); the feature ships in the next release with the data-skepticism fix and the flagging rework.
 Research items 2, 3, 6 and 7 were settled by the user: removal is allowed on explicit request, notes are kept by default, a copy says what it omits, the zero-AI-calls decision stands, and omitted copies count against the quota as before.

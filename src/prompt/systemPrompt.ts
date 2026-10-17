@@ -33,7 +33,7 @@ import { buildCatalogueBlock, guidance } from "../catalogue";
  * `docs/timeline.md`). Fallback ranges reach the model only through tool results, labelled as
  * generic, so the prompt still carries no numbers; `TOOL_BLOCK` tells the model to relay
  * verdicts, to suggest maintenance only for a likely data issue, and to give the turbidity
- * caveat once per conversation (`docs/migration/POST_LAUNCH_BACKLOG.md` §1).
+ * caveat once per conversation (`docs/plans/POST_LAUNCH_BACKLOG.md` §1).
  *
  * **Citations carry a verbatim quote** (`EVAL_REBUILD.md` Phase 2a). The model is asked for
  * `【n†"quote"】`, where `n` is the excerpt number `formatContext` prints. A quote is checkable by

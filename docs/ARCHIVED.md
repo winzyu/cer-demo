@@ -3,7 +3,7 @@
 These files were removed from the working tree. They are **not lost** — every one is preserved
 in git history under the tag named in its section.
 
-Paths in sections written before 2026-10-17 predate the move of `docs/migration/` into folders by role; the file map in [`DOCS_OVERHAUL_PROPOSAL.md`](migration/DOCS_OVERHAUL_PROPOSAL.md) section 5 gives each file's current folder.
+Paths in sections written before 2026-10-17 predate the move of `docs/migration/` into folders by role; the file map in [`DOCS_OVERHAUL_PROPOSAL.md`](plans/DOCS_OVERHAUL_PROPOSAL.md) section 5 gives each file's current folder.
 
 | tag | date | what it holds |
 |---|---|---|

@@ -19,7 +19,7 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   *Answer:*
 
 - [ ] **25. Which field marks a board that is not responding, and how many in a row should flag it?**
-  The CER colleague who added the per-metric error flags asked that two or three consecutive "board not responding" errors flag the sensor at once (`docs/migration/POST_LAUNCH_BACKLOG.md` §1).
+  The CER colleague who added the per-metric error flags asked that two or three consecutive "board not responding" errors flag the sensor at once (`docs/plans/POST_LAUNCH_BACKLOG.md` §1).
   The 2026-10-09 production scan found the error flags only ever take the value 1, and that a reading with all six flags set reads `1000000000` on every metric.
   This project treats three consecutive all-channel failures as a likely data issue, provisionally.
   *Unblocks:* confirming or changing that provisional count.

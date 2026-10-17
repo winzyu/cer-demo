@@ -2,6 +2,10 @@
 
 Owner: the Gilligan behaviour chat. Started 2026-09-28 from `GILLIGAN_RESET_2026-09-28.md`, "Gilligan behaviour" (archived; `git show docs-archive-2026-10-17:docs/migration/GILLIGAN_RESET_2026-09-28.md`).
 
+The statuses below are as of 2026-09-28 (checked 2026-10-17).
+Since then T3 and T12 landed on `dev` with K21b (`4cb15c8`), T7's fallback ranges landed (`60e321b`), and findings 6, 7 and 10 and U7 (T8) are live in the release ([`POST_LAUNCH_BACKLOG.md`](POST_LAUNCH_BACKLOG.md), "Already live"); finding 8 is a backlog row.
+T4, T5, T6, T9 and T11 are not reconciled yet; archive this list once they are.
+
 ## User decisions, 2026-09-28
 
 1. Finding 10 is a launch must.
