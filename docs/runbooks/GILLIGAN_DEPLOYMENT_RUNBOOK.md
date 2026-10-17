@@ -2,8 +2,8 @@
 
 Rewritten 2026-09-26 for release task L1, for the user, who deploys the September 30 release themselves.
 It replaces the 2026-09-23 draft, which is in this file's git history.
-L5-L9 ran from it between 2026-10-01 and 2026-10-07; what each step did is recorded in [`GILLIGAN_LANDING_2026-09-29.md`](GILLIGAN_LANDING_2026-09-29.md) §7, not here.
-Task IDs (L5, S5, F2 and so on) are those of [`GILLIGAN_RELEASE_PLAN.md`](GILLIGAN_RELEASE_PLAN.md).
+L5-L9 ran from it between 2026-10-01 and 2026-10-07; what each step did is recorded in [`GILLIGAN_LANDING_2026-09-29.md`](../migration/GILLIGAN_LANDING_2026-09-29.md) §7, not here.
+Task IDs (L5, S5, F2 and so on) are those of [`GILLIGAN_RELEASE_PLAN.md`](../migration/GILLIGAN_RELEASE_PLAN.md).
 
 Every step follows one pattern, the deployment path the supervisor chose: deploy a Cloud Run revision that takes no traffic, test it from localhost, then switch traffic to it.
 Each service keeps its previous revision, so rolling back is a traffic switch back (§7).
@@ -23,7 +23,7 @@ These facts hold on 2026-09-26 and shape the whole procedure.
   Until then cer-gilligan runs on the cer-demo Fireworks key, stored as a version of the secret `cer-gilligan-fireworks-api-key`.
   After the supervisor approves the demo (L7), CER's own key becomes a new version of that secret, a new revision pins it (§6.5), and only then are the credentials rotated.
 - **Deploy only the pushed feature and task branches, built from clean branches with no old build cache.**
-  The upstream history carries malware (the `main` and `develop` tips scanned clean on 2026-09-30), and the malware ran on a build machine ([`SECURITY_INCIDENT_2026-09-19.md`](SECURITY_INCIDENT_2026-09-19.md)).
+  The upstream history carries malware (the `main` and `develop` tips scanned clean on 2026-09-30), and the malware ran on a build machine ([`SECURITY_INCIDENT_2026-09-19.md`](../migration/SECURITY_INCIDENT_2026-09-19.md)).
   Every image in this release is built from a fresh checkout of a reviewed commit, with no `node_modules`, `.next`, `dist` or cached image layers from before the cleanup (§3).
 - **Set every release environment variable explicitly, because the guards fail open.**
   A missing variable does not stop cer-gilligan; it turns a guard off, removes a limit, or points at the customer database (§4).
@@ -89,12 +89,12 @@ Michael does these, and each is checked off in §8 before L5:
    That is a server code change that has not been built, so it delays the release rather than unblocking it.
    The service-key check (§5) stays in place under every option.
 7. Disable the `cer-ui` Cloud Build trigger `8ad67b17-5439-4507-9718-5b2b5eb4abe9`, which builds on every push to the infected `main`.
-8. The release commit writes `expireAt` on usage documents (90 days after the last update); add a Firestore TTL policy on `gilligan_usage.expireAt` in the dedicated database, never on `updatedAt` ([`GILLIGAN_FIRESTORE_FRAMEWORK.md`](GILLIGAN_FIRESTORE_FRAMEWORK.md)).
+8. The release commit writes `expireAt` on usage documents (90 days after the last update); add a Firestore TTL policy on `gilligan_usage.expireAt` in the dedicated database, never on `updatedAt` ([`GILLIGAN_FIRESTORE_FRAMEWORK.md`](../migration/GILLIGAN_FIRESTORE_FRAMEWORK.md)).
 
 ### 2.2 What differs from the mirror run
 
 The local Firestore mirror is where release behaviour is verified; production must differ from the last mirror run only in the four ways below, and anything else that differs is a release risk.
-The full comparison, with evidence from production reads, is [`MIRROR_PRODUCTION_PARITY.md`](MIRROR_PRODUCTION_PARITY.md) §3 and §7.
+The full comparison, with evidence from production reads, is [`MIRROR_PRODUCTION_PARITY.md`](../migration/MIRROR_PRODUCTION_PARITY.md) §3 and §7.
 
 1. Cloud resources the emulator cannot have: the `gilligan` database, `cer-gilligan-runtime`, the two secrets, the IAM grants and the unauthenticated invocation (§2.1).
 2. Settings: the §4 values replace the mirror's local ones; the mirror run used the same names with a test service key, the emulator host and localhost URLs.

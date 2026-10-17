@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Shows what each answer in a persona's most recent Gilligan chat did with reports, for the paid
- * chat steps of docs/migration/REPORT_OMIT_MIRROR_RUNBOOK.md §7. Free: it reads the saved chat
+ * chat steps of docs/runbooks/REPORT_OMIT_MIRROR_RUNBOOK.md §7. Free: it reads the saved chat
  * through the Mirror's cer-api and calls no model.
  *
  *   node scripts/mirror/reportOmitLastChat.mjs <persona-email>

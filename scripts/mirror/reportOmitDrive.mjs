@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Runs the paid chat steps of docs/migration/REPORT_OMIT_MIRROR_RUNBOOK.md §7 without a browser,
+ * Runs the paid chat steps of docs/runbooks/REPORT_OMIT_MIRROR_RUNBOOK.md §7 without a browser,
  * making the calls the dashboard's Gilligan page makes through its proxy (:3100/api/v1):
  * GET /devices, GET /gilligan/question, POST /gilligan/report with each offer's request.
  *

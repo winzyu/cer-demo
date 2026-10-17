@@ -446,7 +446,7 @@ With `CER_RAG_SERVICE_KEY` set, every `/api/v1` route requires that shared secre
 Once the key matches, `X-CER-RAG-User-Id` is required (400 `service_identity_required` without it) and `X-CER-RAG-Organization-Id` is optional; together they become the verified identity the quota keys on.
 Identity headers are ignored whenever the key is unset or wrong.
 `/health` stays outside the check for probes, and `NODE_ENV=production` refuses to boot without a key of at least 32 characters.
-A shared secret was chosen over Cloud Run identity tokens because Cloud Run strips the signature from the forwarded service token, so this process cannot verify one (`migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` §5), and minting identity tokens in the CER server was deferred past launch.
+A shared secret was chosen over Cloud Run identity tokens because Cloud Run strips the signature from the forwarded service token, so this process cannot verify one (`runbooks/GILLIGAN_DEPLOYMENT_RUNBOOK.md` §5), and minting identity tokens in the CER server was deferred past launch.
 Data access is unchanged: device reads still use the caller's own forwarded JWT.
 
 **Model-call gate (`src/services/modelCallGate.ts`).**

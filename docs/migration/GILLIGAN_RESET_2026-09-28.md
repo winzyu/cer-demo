@@ -18,7 +18,7 @@ The user asked for the first four; the coordinator suggested the last two.
 ## Release plan (coordinator)
 
 - Build `task/q9-land` in a worktree from `dev`: merge `origin/cloud/q9-c1-d1` `ad7eec9`, which contains `cloud/q9-logic` `bc097e1`.
-  Resolve `src/tools/listPods.ts` by keeping Q9's single pod-status rule and `dev`'s reader notes, and resolve `docs/migration/E2E_CHECKLIST.md`.
+  Resolve `src/tools/listPods.ts` by keeping Q9's single pod-status rule and `dev`'s reader notes, and resolve `docs/runbooks/E2E_CHECKLIST.md`.
   Run checks and push; land only after the mirror's C1 and D1 rerun passes.
 - Land the Q10 branch and U7 when they are reported.
 - Refresh the plan: U1-U6 and P5 are done, E7 is done, Q9-Q11 are not landed, and production fixes outside Gilligan wait for Michael (`timeline.md`, 2026-09-28).
@@ -89,7 +89,7 @@ The fix round planned Q10 but wrote nothing; its findings, from code reading:
 
 ## Mirror testing
 
-- Stack: server `mirror/e2e-p3` `1ef21a7` and cer-demo `test/e2e-rc` `77cd4c9` (both pushed 2026-09-28), dashboard worktree `dashboard-e2e` at `9e18555`; setup in [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md).
+- Stack: server `mirror/e2e-p3` `1ef21a7` and cer-demo `test/e2e-rc` `77cd4c9` (both pushed 2026-09-28), dashboard worktree `dashboard-e2e` at `9e18555`; setup in [`MIRROR_RUNBOOK.md`](../runbooks/MIRROR_RUNBOOK.md).
 - C1 and D1 on `task/q9-land`, about $0.04, once the seed has a silent pod and a pH 2.07 reading.
 - K21 a, b and c, the finding 8 recheck and chat-condition entries (oil spill, dead fish, algal bloom, mixed sites on the moved pod, limits-not-healthy-range, calibration schedule), about $0.20; K21b needs a fixture with an 18-hour freshwater dissolved-oxygen drop.
 - Groups B, D, E, H and I and the finding 7 recheck, about $0.51, all with `CATALOGUE_PROMPT=true` and `CATALOGUE_DRAFTS=false`.

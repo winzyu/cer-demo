@@ -1,6 +1,6 @@
 # Michael's deploy blockers: checklist
 
-Every deploy (L5 onwards) waits on these; the setup steps are in [`GILLIGAN_DEPLOYMENT_RUNBOOK.md`](GILLIGAN_DEPLOYMENT_RUNBOOK.md) §2.1.
+Every deploy (L5 onwards) waits on these; the setup steps are in [`GILLIGAN_DEPLOYMENT_RUNBOOK.md`](../runbooks/GILLIGAN_DEPLOYMENT_RUNBOOK.md) §2.1.
 Each command is read-only and prints no secret values; run it in Claude Code with the `!` prefix.
 A permission error means your roles cannot see that resource: ask Michael to confirm instead.
 The L5 deploy proves items 1-3 in practice: it fails if the user cannot act as the runtime account or the runtime account cannot read either secret.

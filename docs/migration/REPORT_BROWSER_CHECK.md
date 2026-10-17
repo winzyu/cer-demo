@@ -24,7 +24,7 @@ Nothing here writes to production.
    ```
 
    If either check fails, stop: do not start the dashboard.
-2. Confirm `clean-earth-rovers-server/.env` still has the five lines under "Serving Gilligan locally" in [`LOCAL_STACK.md`](LOCAL_STACK.md).
+2. Confirm `clean-earth-rovers-server/.env` still has the five lines under "Serving Gilligan locally" in [`LOCAL_STACK.md`](../runbooks/LOCAL_STACK.md).
 3. Confirm cer-demo is on `dev` (the report work merged there on 2026-09-22) and that its `.env` sets `REPORT_TOOL=true`.
 
 ## 2. Start the three services

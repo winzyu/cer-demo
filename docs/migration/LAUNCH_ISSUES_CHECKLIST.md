@@ -2,7 +2,7 @@
 
 Manual testing of the Gilligan launch issues for the release coordinator.
 Release Sep 30, freeze Sep 28.
-Step-by-step instructions for every item are in [`LAUNCH_ISSUES_WALKTHROUGH.html`](LAUNCH_ISSUES_WALKTHROUGH.html); this file records state and results.
+Step-by-step instructions for every item are in [`LAUNCH_ISSUES_WALKTHROUGH.html`](../runbooks/LAUNCH_ISSUES_WALKTHROUGH.html); this file records state and results.
 All testing uses fabricated data; nothing here reads production except the one safety check under "Safety record".
 
 ## Stacks
@@ -260,5 +260,5 @@ Everyday flows from the walkthrough's part 2; a failure is a regression.
 
 1. Run A1, A2, A3, A5 and A6 on Current, then on Release ($0), and U1-U4 on both; the user has not yet approved this run.
 2. Before the Michael demo, compare the A1 and A3 functions on CER's `main` with `git show`, without checking it out.
-3. Ask the mirror chat before using :3000, :5101 or :8010; the B items and U5-U10 need its Gilligan ([`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md)).
+3. Ask the mirror chat before using :3000, :5101 or :8010; the B items and U5-U10 need its Gilligan ([`MIRROR_RUNBOOK.md`](../runbooks/MIRROR_RUNBOOK.md)).
 4. Optional: a Current and Release start-up section in `MIRROR_RUNBOOK.md`, which covers only the Mirror.

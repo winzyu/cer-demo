@@ -31,7 +31,8 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 | Codex's five retired docs, tag `docs-archive-2026-10-16` | done `21a60e8`, landed |
 | Batch b, tag `docs-archive-2026-10-16b` | done `6e019cf`, landed |
 | Proposal | `3044fa7`, decisions recorded with this handoff |
-| Batches 1-6 | next, in order |
+| Batch 1, 10 runbooks to `docs/runbooks/` | done in the commit that records it here; not yet landed |
+| Batches 2-6 | next, in order |
 | Batches 7-8 | wait until `task/flagging-share-window` lands on `dev` |
 | Landing sweeps for `reflection`, `task/tide-tool`, `docs/firestore-testing-plan`, `fix/window-note` | after each branch lands (proposal section 7) |
 
@@ -42,12 +43,15 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 ## Next step
 
 1. `git fetch origin` and merge `origin/dev` into `docs/cleanup` (no rebase) if `dev` moved.
-2. Batch 1: show the user the 10 runbooks (proposal section 5, batch column `1`) moving to `docs/runbooks/`; on a yes, `git mv` them.
-3. Rewrite every link to them: root docs `migration/X` to `runbooks/X`; former siblings in `docs/migration/` `X` to `../runbooks/X`; moved files' links to siblings left behind `Y` to `../migration/Y`; the outside files in proposal section 6, row 1 (scripts take `docs/runbooks/X`).
-   Skip any link in SPECS lines 1099-1786.
-   Add the `ARCHIVED.md` sentence from proposal section 4.3.
-4. Checks: `git grep` for each old path (allowed hits: `git show <tag>:` lines, `ARCHIVED.md`, `docs/captures/`, `archive/`, SPECS 1099-1786); a scratchpad script that resolves every relative Markdown link in changed files; `git diff --check`; `node --check` on edited `.mjs`.
-5. Commit, push, report the commit ID and every STATUS/timeline/SPECS rewrite; then batch 2.
+2. Batch 2: show the user the 4 capture folders (proposal section 5, batch column `2`) moving to `docs/captures/` and the `gilligan_v0.png` archive; on a yes, rewrite links, then `git mv`.
+   Archive the image with tag `docs-archive-2026-10-16c` and an `ARCHIVED.md` row and section in the existing style.
+3. Link rewrites (every batch): resolve each relative link against the old tree before `git mv`, and recompute it from the file's new folder to the target's new folder; also rewrite path-form text (`docs/migration/X`, `migration/X`, `../docs/migration/X`).
+   Process every moved file even if it names no moved file: its links to siblings left behind change too (batch 1 missed three in `LOCAL_STACK.md` this way).
+   Skip SPECS lines 1099-1786, `git show` lines, `ARCHIVED.md`, captured folders, `archive/` and the two `DOCS_OVERHAUL_*` files.
+4. Checks: `git grep` for each old path (allowed hits as above); a script that resolves every relative Markdown and HTML link in changed and moved files; `git diff --check`; `node --check` on edited `.mjs`, `bash -n` on edited `.sh`.
+5. Commit, push, report the commit ID and every STATUS/timeline/SPECS rewrite; then batch 3.
+
+Batch 6 note: `ARCHIVED.md` (excluded from rewrites) links `migration/DOCS_OVERHAUL_PROPOSAL.md` from the sentence batch 1 added; rewrite that one link to `plans/` by hand when the proposal moves.
 
 Resume with: `Read docs/migration/DOCS_OVERHAUL_HANDOFF.md on branch docs/cleanup (worktree .claude/worktrees/docs-cleanup), then continue the docs overhaul.`
 

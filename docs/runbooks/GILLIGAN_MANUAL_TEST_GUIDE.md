@@ -529,7 +529,7 @@ Isolation (never another organization's data) is already D1, D2 and M2; Gemini-e
 
 ### L. Production fixes for Michael's decision (demo)
 
-These are CER server defects outside Gilligan, reproduced on CER's own code with fabricated data ([`LAUNCH_ISSUES_CHECKLIST.md`](LAUNCH_ISSUES_CHECKLIST.md) A1 and A6).
+These are CER server defects outside Gilligan, reproduced on CER's own code with fabricated data ([`LAUNCH_ISSUES_CHECKLIST.md`](../migration/LAUNCH_ISSUES_CHECKLIST.md) A1 and A6).
 They ship at launch only if Michael agrees at the demo; until then the server release commit is not pinned.
 Show him each row on the launch-issues stacks, which read the fabricated emulator on :8180 and never production: "before" is the release commit `122136d` on :5301, "after" is `release/gilligan-2026-09-30-rc2` `8463545` on :5302, both started with `emulator-original/guard.env`.
 Each CSV request covers the last 7 days; row counts move with the window.
@@ -584,7 +584,7 @@ Reuse already-downloaded PDFs to avoid spending extra report allowance.
 A new PDF download is free of model cost but consumes a report; asking for a new offer is paid.
 Use 1-day, 7-day and 30-day reports where a supplied fixture makes the issue visible.
 If the required shape is missing, mark B rather than infer a pass from a tidy baseline report.
-Audit numbers refer to [REPORT_AUDIT_2026-09-25.md](REPORT_AUDIT_2026-09-25.md).
+Audit numbers refer to [REPORT_AUDIT_2026-09-25.md](../migration/REPORT_AUDIT_2026-09-25.md).
 
 ### PDF checks visible to a person
 

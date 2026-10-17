@@ -1,7 +1,7 @@
 # Gilligan R3: the upstream relay and the rebuilt page
 
 Built 2026-09-21, verified end to end locally the same day.
-Roadmap step R3 in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4; the local stack it runs on is [`LOCAL_STACK.md`](LOCAL_STACK.md).
+Roadmap step R3 in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4; the local stack it runs on is [`LOCAL_STACK.md`](../runbooks/LOCAL_STACK.md).
 Nothing is pushed and nothing is deployed.
 This is the record of 2026-09-21; the report relay and download button were added on 2026-09-22 (Task B, `docs/SPECS.md` §10.7), and both upstream changes are now committed on `local`.
 
@@ -89,7 +89,7 @@ yarn dev -p 3000
 ### The two local-only gates
 
 `DEV_UNVERIFIED_AUTH=true` accepts a token's claims without verifying its signature.
-Tokens are minted by the deployed API with a secret this machine does not hold, so a route moved into `DEV_LOCAL_PATHS` otherwise rejects every request, which is the authentication catch [`LOCAL_STACK.md`](LOCAL_STACK.md) describes.
+Tokens are minted by the deployed API with a secret this machine does not hold, so a route moved into `DEV_LOCAL_PATHS` otherwise rejects every request, which is the authentication catch [`LOCAL_STACK.md`](../runbooks/LOCAL_STACK.md) describes.
 It is gated on the flag being the literal `true`, on `NODE_ENV` not being `production`, and on the token still parsing as a JWT, and it warns on every request it serves.
 It must never be set in a deployed environment; R1's real answer is service-to-service identity.
 

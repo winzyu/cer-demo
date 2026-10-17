@@ -287,7 +287,7 @@ npm run seed:firestore         # re-upload corpus_documents
 npm run seed:firestore-chunks  # re-embed for firestore-vector (costs embedding tokens)
 ```
 
-`local-vector` is the launch arm (`../docs/migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` §4.1), so
+`local-vector` is the launch arm (`../docs/runbooks/GILLIGAN_DEPLOYMENT_RUNBOOK.md` §4.1), so
 `embed:cache` is the step a corpus change cannot skip; the release image then needs new checksums in
 `../release/artifacts.sha256`, and the two Firestore seeds are not on the launch path.
 

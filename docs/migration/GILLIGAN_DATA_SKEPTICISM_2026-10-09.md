@@ -83,7 +83,7 @@ Check against the flagging branch's "persistent" rule, which tells the model a m
 ## 6. Test plan (mirror)
 
 The user will supply the mirror details; the stacks were lost in the 2026-10-04 WSL rebuild.
-Seed and fixtures live in the server's `mirror/release-rc1` (`8594338`, cut from `local`, `scripts/mirror/README.md`); the bot is `scripts/e2e/gilliganE2E.mjs`; the runbook is [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md), with paths that predate the move to `~/code/work/`.
+Seed and fixtures live in the server's `mirror/release-rc1` (`8594338`, cut from `local`, `scripts/mirror/README.md`); the bot is `scripts/e2e/gilliganE2E.mjs`; the runbook is [`MIRROR_RUNBOOK.md`](../runbooks/MIRROR_RUNBOOK.md), with paths that predate the move to `~/code/work/`.
 
 1. Add a fixture pod shaped on §2 (salt-water, hourly or half-hourly, solar-locked temperature 67-90°F, pH and conductivity inverse to it, pH below a configured minimum of 6 each afternoon, turbidity stuck at 0, an earlier location ending before the last 7 days) on a new server branch from `mirror/release-rc1`.
 2. Reproduce on the deployed code: replay Michael's seven questions (about $0.15).

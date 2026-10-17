@@ -1,7 +1,7 @@
 # Gilligan end-to-end results, 2026-09-27
 
 Second run on the Firestore mirror, after Q3-Q6 landed on `dev`.
-It reran groups A, C, F and G at the release allowances and ran the manual guide's added checks G4, K, M and R ([`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_TEST_GUIDE.md)).
+It reran groups A, C, F and G at the release allowances and ran the manual guide's added checks G4, K, M and R ([`GILLIGAN_MANUAL_TEST_GUIDE.md`](../runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md)).
 Groups B, D, E, H and I were not rerun; their 2026-09-25 results stand ([`GILLIGAN_E2E_RESULTS_2026-09-25.md`](GILLIGAN_E2E_RESULTS_2026-09-25.md)).
 Phase 2 has not run.
 Failures are findings against the stack below, not against `dev` alone.
@@ -151,4 +151,4 @@ The downloaded PDFs are under each run's `downloads/`.
 
 - Groups B, D, E, H and I, and phase 2.
 - Every check blocked for a missing fixture.
-- The live follow-ups, listed in [`LIVE_TEST_LIST.md`](LIVE_TEST_LIST.md).
+- The live follow-ups, listed in [`LIVE_TEST_LIST.md`](../runbooks/LIVE_TEST_LIST.md).

@@ -114,7 +114,7 @@ The relay also ran with `FIRESTORE_EMULATOR_HOST=127.0.0.1:1`, so any unexpected
 
 Spend: 22 paid turns, none repeated (cer-demo logged exactly 22 `POST /api/v1/chat`), about $0.22 at the planned rate; the relay does not pass token usage through, so the figure is an estimate.
 Live reads: every tool call, two report builds, two refused report requests and the page's pod list; nothing was written.
-Raw responses stayed in the session scratchpad because tool results carry pod positions; screenshots of the failures are in [`e2e-baseline-2026-09-26/`](e2e-baseline-2026-09-26/).
+Raw responses stayed in the session scratchpad because tool results carry pod positions; screenshots of the failures are in [`e2e-baseline-2026-09-26/`](../migration/e2e-baseline-2026-09-26/).
 
 **Result: 31 checks, 25 pass, 5 fail, 1 N/A; plus two defects that cut across turns (X1, X2).**
 
@@ -124,17 +124,17 @@ Raw responses stayed in the session scratchpad because tool results carry pod po
 | A2 | pass | `22 questions left, resets 09/26 17:00`. |
 | B1 | pass | Two citation chips to USGS TM 9-A6.2; the sources list opens; no raw quote markers. The source shows as its address (known, plan U5). |
 | B2 | pass | ±0.002 accuracy and the yearly-then-six-monthly recalibration, both quoted from the pH datasheet. |
-| B3 | **fail** | Refused: "The documents don't include an explanation of how water temperature influences dissolved-oxygen levels". [screenshot](e2e-baseline-2026-09-26/B3.png) |
-| C1 | **fail** | Names the three online pods but not the three silent ones or their age. [screenshot](e2e-baseline-2026-09-26/C1.png) |
+| B3 | **fail** | Refused: "The documents don't include an explanation of how water temperature influences dissolved-oxygen levels". [screenshot](../migration/e2e-baseline-2026-09-26/B3.png) |
+| C1 | **fail** | Names the three online pods but not the three silent ones or their age. [screenshot](../migration/e2e-baseline-2026-09-26/C1.png) |
 | C2 | pass | Old Woman Creek 2026 marked stale, "13 days old" (12.2 days: `src/tools/readingAge.ts:36` rounds ages up by design); withheld earlier history relayed. |
 | C3 | pass | "Marina Park" resolved to the Marina Park pod, not the DataPod; reading 15 minutes old. |
 | C4 | pass | PCH Public Dock Buoy stale, "≈15 days" (14.0 days; same rounding). |
 | C5 | pass | Marina Park DataPod™: no readings, last report 2025-07-08, 446 days. |
 | C6 | pass | Balboa Yacht Basin Buoy; the 0 µS/cm conductivity reading explained as excluded. |
 | C7 | pass | Picked pod answered without asking which pod. |
-| D1 | **fail** | Misreads the tool: the counted minimum was 2.07 (48 readings) with one rail reading excluded separately, but the answer calls 2.07 the excluded rail and blames the water-type mismatch. [screenshot](e2e-baseline-2026-09-26/D1.png) |
+| D1 | **fail** | Misreads the tool: the counted minimum was 2.07 (48 readings) with one rail reading excluded separately, but the answer calls 2.07 the excluded rail and blames the water-type mismatch. [screenshot](../migration/e2e-baseline-2026-09-26/D1.png) |
 | D2 | pass | Stayed on Algalita Pod and yesterday; mean 9.59 mg/L with a range. See X2. |
-| D3 | **fail** | Says the week's series starts "9 Sept" (the window starts 2026-09-19) and reports hourly means above 20 mg/L in warm salt water, about three times saturation, as "supersaturation (or possible sensor-rail artifacts)" without saying the values are implausible (known, plan Q8). [screenshot](e2e-baseline-2026-09-26/D3.png) |
+| D3 | **fail** | Says the week's series starts "9 Sept" (the window starts 2026-09-19) and reports hourly means above 20 mg/L in warm salt water, about three times saturation, as "supersaturation (or possible sensor-rail artifacts)" without saying the values are implausible (known, plan Q8). [screenshot](../migration/e2e-baseline-2026-09-26/D3.png) |
 | E1 | pass | Status Action Required with its reason (DO, pH and conductivity outside thresholds), flags per parameter, 2026-09-19 to 2026-09-26, no link, button present. It also says "Events flagged: 0" beside three exceedances. |
 | E2 | pass | `POST /api/v1/gilligan/report` 200 `application/pdf`; saved as `cer-report-marina-park-2026-09-19-to-2026-09-26.pdf`, 3 pages, header period matches. `Preparing report...` was not caught 300 ms after the click; the build had finished. |
 | F1 | N/A | Superadmin answered with Old Woman Creek data, as expected; the cross-organization refusal needs level 2. |
@@ -142,7 +142,7 @@ Raw responses stayed in the session scratchpad because tool results carry pod po
 | F3 | pass | Sensor cannot answer; consult public-health authorities. |
 | F4 | pass | "I'm sorry, but I can't comply with that." |
 | F5 | pass | Answered in Spanish with reading and age; the qualifications under it stay in English (X1). |
-| G1 | **fail** | Reload keeps all five chats and `3 questions left`, but the list is oldest first with no dates. [screenshot](e2e-baseline-2026-09-26/G1.png) |
+| G1 | **fail** | Reload keeps all five chats and `3 questions left`, but the list is oldest first with no dates. [screenshot](../migration/e2e-baseline-2026-09-26/G1.png) |
 | G2 | pass | Chat 4 reopened with its answer, chips and button; the second download saved. |
 | G3 | pass | `Report limit reached - try again later`; 429 with `retry-after`. |
 | G4 | pass | Continued chat 1 (same chat id, no new history entry). The summary adds a probe-voltage claim that was not in the first answer. |
@@ -158,8 +158,8 @@ Nothing was changed; these are pointers for the owning sessions.
 
 | # | failure | likely location |
 |---|---|---|
-| X1 | Every data answer lists the tool's raw `note` under the answer, including text written for the model: "Confirm with query_sensor_data before telling the user a pod has stopped reporting", "Say that the history shown may start later than the site's first reading", "Your instructions carry no ranges; to judge this reading against limits, use this pod's configured thresholds from get_pod_thresholds". Seen in C1-C6, D1-D3, F1, F2 and F5. [screenshot](e2e-baseline-2026-09-26/C3-X1.png) | dashboard `src/app/shared/gilligan-provenance.js:25` adds every `result.note` verbatim; the notes are written in cer-demo `src/tools/listPods.ts:144` and `src/tools/querySensorData.ts:982,1030`. |
-| X2 | A tool call that failed and was retried still shows "Tool failed: ... Ask the user which one they mean" and "No readings in this window - no measurement is available." beside an answer that has readings (D2). [screenshot](e2e-baseline-2026-09-26/D2-X2.png) | dashboard `src/app/shared/gilligan-provenance.js:8,14`: notices are collected per call, not for the calls the answer used. |
+| X1 | Every data answer lists the tool's raw `note` under the answer, including text written for the model: "Confirm with query_sensor_data before telling the user a pod has stopped reporting", "Say that the history shown may start later than the site's first reading", "Your instructions carry no ranges; to judge this reading against limits, use this pod's configured thresholds from get_pod_thresholds". Seen in C1-C6, D1-D3, F1, F2 and F5. [screenshot](../migration/e2e-baseline-2026-09-26/C3-X1.png) | dashboard `src/app/shared/gilligan-provenance.js:25` adds every `result.note` verbatim; the notes are written in cer-demo `src/tools/listPods.ts:144` and `src/tools/querySensorData.ts:982,1030`. |
+| X2 | A tool call that failed and was retried still shows "Tool failed: ... Ask the user which one they mean" and "No readings in this window - no measurement is available." beside an answer that has readings (D2). [screenshot](../migration/e2e-baseline-2026-09-26/D2-X2.png) | dashboard `src/app/shared/gilligan-provenance.js:8,14`: notices are collected per call, not for the calls the answer used. |
 | B3 | Retrieval returned the four datasheets and TM 9-A6.2's salinity correction table (Table 6.2-4), not the solubility text, and the answer refused; on 2026-09-24 the same question at least answered from the table (QA finding 7). | cer-demo retrieval ranking, `src/retrieval/adapters/HybridSliceVectorAdapter.ts` and `RrfHybridAdapter.ts`. |
 | C1 | `list_pods` returned `last_reported_age` and `last_reported_stale` for all six pods; the model listed only the fresh ones. | cer-demo `src/prompt/systemPrompt.ts` (the stale-pod rule near line 148); the `list_pods` note (`src/tools/listPods.ts:144`) tells the model not to call a pod silent without a query, which may be why it stays quiet. |
 | D1 | The answer conflates the counted minimum with the excluded reading. A pH of 2.07 in sea water also passes the plausibility filter, which excludes only the scale-end rail. | Model reading of the tool result; `src/devices/plausibility.ts:61` for the pH rule. |
@@ -188,7 +188,7 @@ The same script on the mirror (fabricated data in the Firestore emulator, projec
 ### C1 and D1 on `task/q9-land`
 
 Asked through the relay's `/api/v1/chat` contract (the server's service key and verified-user headers), not the browser; about $0.04.
-Raw responses are in [`e2e-mirror-2026-09-29/`](e2e-mirror-2026-09-29/).
+Raw responses are in [`e2e-mirror-2026-09-29/`](../migration/e2e-mirror-2026-09-29/).
 
 | # | result | note |
 |---|---|---|
@@ -200,7 +200,7 @@ Both baseline failures (2026-09-26) are fixed on `task/q9-land`, which unblocks 
 ### K21, findings 7 and 8, and chat-condition entries on the shared `:8010`
 
 Asked through the relay's `/api/v1/chat` contract with the named pod picked, one new chat per question; 11 questions, about $0.05 at `glm-5p3-flash` rates (`src/eval/prices.ts`), including three unrequested report builds.
-Raw responses are in [`e2e-mirror-2026-09-29/`](e2e-mirror-2026-09-29/).
+Raw responses are in [`e2e-mirror-2026-09-29/`](../migration/e2e-mirror-2026-09-29/).
 
 | # | persona, pod | ask | result | note |
 |---|---|---|---|---|
@@ -221,7 +221,7 @@ Defect for the Gilligan behaviour chat: a single 0.00 dissolved-oxygen reading d
 ### Groups B, D, E, H and I in the browser
 
 Headless Chromium through the dashboard on `:3000`, driven by `scripts/e2e/mirrorChecklist.mjs`, kept at tag `mirror-checklist-2026-09-29` (`git show mirror-checklist-2026-09-29:scripts/e2e/mirrorChecklist.mjs`); do not rerun it as is, because `:3000` now proxies to the live cer-api. It reuses the bot's `cdp.mjs` and starts, stops and restarts nothing.
-12 questions and 1 report, about $0.03; transcript in [`e2e-mirror-2026-09-29/browser-transcript.json`](e2e-mirror-2026-09-29/browser-transcript.json), all screenshots in the main checkout's git-ignored `data/e2e/mirror-bdehi-2026-09-29/`.
+12 questions and 1 report, about $0.03; transcript in [`e2e-mirror-2026-09-29/browser-transcript.json`](../migration/e2e-mirror-2026-09-29/browser-transcript.json), all screenshots in the main checkout's git-ignored `data/e2e/mirror-bdehi-2026-09-29/`.
 Group B ran twice as the Harbor customer, once with no pod and once with Harbor Pier Buoy picked; D ran as the Seaview customer, E as the Lakeside customer, H as the Harbor customer at 390 x 844, and I as `user-super-5`.
 For I, the emulator's usage document for `user-super-5` was set to 19 questions first (free, local), instead of asking 19 questions.
 
@@ -235,10 +235,10 @@ For I, the emulator's usage document for `user-super-5` was set to 19 questions 
 | D3 | review | Carries the water-type note. Also: no comparison with the configured thresholds (only offered), and "the visible history starts on Sep 28" misparaphrases the withheld-history note, since the week's readings are all shown. |
 | E1 | **fail** | Shape as expected (no pod question, status with reason, "Events flagged: 0", period `2026-09-22 to 2026-09-29`, a **Download report - Lakeside Buoy 2026 (PDF)** button), but the status is "Action Required" because dissolved oxygen "ranged from 0.00 to 11.15 mg/L": a single 0.00 glitch, the K21b defect. |
 | E2 | pass | `Preparing report...`, then `cer-report-lakeside-buoy-2026-2026-09-22-to-2026-09-29.pdf`; 3 pages; header period matches E1. |
-| H1 | pass | No horizontal scroll (390 of 390 px); the chat panel comes before history and the picker; input and send fully visible. [screenshot](e2e-mirror-2026-09-29/H1.png) |
-| H2 | review | The answer fits and a tapped chip opens the sources list without horizontal scroll, but the source title is clipped at the panel edge ("USGS TM 9-A6.3 — Specific C"). [screenshot](e2e-mirror-2026-09-29/H2.png) |
+| H1 | pass | No horizontal scroll (390 of 390 px); the chat panel comes before history and the picker; input and send fully visible. [screenshot](../migration/e2e-mirror-2026-09-29/H1.png) |
+| H2 | review | The answer fits and a tapped chip opens the sources list without horizontal scroll, but the source title is clipped at the panel edge ("USGS TM 9-A6.3 — Specific C"). [screenshot](../migration/e2e-mirror-2026-09-29/H2.png) |
 | I1 | pass | "Almost out: 1 question left, resets 09/29 17:00." The "Almost out" prefix is new since the baseline (`QUERY_QUOTA_WARN_AT=0.2`), so the expectation above is out of date. |
-| I2 | pass | Answered; then "Message limit reached", "You have used this period’s questions. Resets 09/29 17:00.", a See plans link, and send and input disabled. [screenshot](e2e-mirror-2026-09-29/I2.png) |
+| I2 | pass | Answered; then "Message limit reached", "You have used this period’s questions. Resets 09/29 17:00.", a See plans link, and send and input disabled. [screenshot](../migration/e2e-mirror-2026-09-29/I2.png) |
 | I3 | pass | The limit state survives the reload. |
 
 The brief asked for B1-B6 with and without a pod; this checklist's group B has three turns, and the manual guide's B4-B6 were not run.

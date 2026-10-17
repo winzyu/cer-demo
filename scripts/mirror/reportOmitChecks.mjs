@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * The free report-omission checks on the Mirror (docs/migration/REPORT_OMIT_MIRROR_RUNBOOK.md §6):
+ * The free report-omission checks on the Mirror (docs/runbooks/REPORT_OMIT_MIRROR_RUNBOOK.md §6):
  * every `omit` group through cer-api's `POST /api/v1/gilligan/report`, the shape and group
  * validation, and the report allowance. No model is called; each valid request renders one PDF
  * and uses one of the persona's 5 reports a day.

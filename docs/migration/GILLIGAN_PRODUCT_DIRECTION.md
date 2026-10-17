@@ -9,7 +9,7 @@ This is the discovery record of 2026-09-16 and 2026-09-17; the user decisions be
 Its "continue discovery, do not implement" instruction was fulfilled by [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md), which is where current plans and decisions D1-D12 live.
 Superseded since:
 
-- **Workspace and D1.** The OneDrive checkout and the WSL2 sandbox are gone; upstream code is written in the two `local` checkouts (D1 revised 2026-09-21, [`LOCAL_STACK.md`](LOCAL_STACK.md)).
+- **Workspace and D1.** The OneDrive checkout and the WSL2 sandbox are gone; upstream code is written in the two `local` checkouts (D1 revised 2026-09-21, [`LOCAL_STACK.md`](../runbooks/LOCAL_STACK.md)).
 - **Reports.** PDFs are no longer written to disk or guarded by token-hash sidecars; `POST /api/v1/reports` returns the bytes (`docs/SPECS.md` §10.7).
 - **Pattern tags and the sewage rule.** Diel/tidal/trend classification landed on 2026-09-22, and the sewage rule follows water type since R2 (`docs/SPECS.md` §4b, §10.7).
 - **Tools.** `list_pods` was added on 2026-09-21 ([`GILLIGAN_TOOL_ACCESS.md`](GILLIGAN_TOOL_ACCESS.md)).

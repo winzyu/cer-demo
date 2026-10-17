@@ -1,7 +1,7 @@
 # Coordinator - handoff
 
 Current as of 2026-10-16 after the docs-cleanup landing; first written 2026-10-15 at `650451c`.
-A fresh coordinator session reads `docs/STATUS.md`, then this file, then follows "Next step"; for the report-omission test it also reads `docs/migration/REPORT_OMIT_MIRROR_RUNBOOK.md`.
+A fresh coordinator session reads `docs/STATUS.md`, then this file, then follows "Next step"; for the report-omission test it also reads `docs/runbooks/REPORT_OMIT_MIRROR_RUNBOOK.md`.
 
 ## What this is
 

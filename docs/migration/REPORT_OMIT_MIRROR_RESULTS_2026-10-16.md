@@ -1,6 +1,6 @@
 # Report omission: Mirror results, 2026-10-16
 
-Results of [`REPORT_OMIT_MIRROR_RUNBOOK.md`](REPORT_OMIT_MIRROR_RUNBOOK.md) §6-§7, run by the coordinator on the Mirror with fabricated data on 2026-10-16 between 04:50 and 05:15 UTC (2026-10-15 evening, US Pacific); nothing touched production.
+Results of [`REPORT_OMIT_MIRROR_RUNBOOK.md`](../runbooks/REPORT_OMIT_MIRROR_RUNBOOK.md) §6-§7, run by the coordinator on the Mirror with fabricated data on 2026-10-16 between 04:50 and 05:15 UTC (2026-10-15 evening, US Pacific); nothing touched production.
 Verdict: the server side (relay of `omit`, `report_retried`, download buttons) passes every check, so the server PR can go ahead.
 Two model-side findings, C1 guessing every group for "shorter" and the A4 retry forcing a report nobody asked for, reproduced on a rerun and are fixed on `dev` (`acb9d7d`); see "Reruns of A4 and C1".
 

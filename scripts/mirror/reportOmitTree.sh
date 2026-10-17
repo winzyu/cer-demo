@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds the CER server tree for the report-omission Mirror
-# (docs/migration/REPORT_OMIT_MIRROR_RUNBOOK.md §3).
+# (docs/runbooks/REPORT_OMIT_MIRROR_RUNBOOK.md §3).
 #
 #   bash scripts/mirror/reportOmitTree.sh [target-directory]
 #

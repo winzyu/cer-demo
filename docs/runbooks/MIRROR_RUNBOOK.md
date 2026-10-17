@@ -4,7 +4,7 @@ How to start the Mirror stack from a stopped machine and test every launch item 
 The Mirror is the only local stack with Gilligan, so every B item and U5-U10 run here.
 Everything uses fabricated data in a local Firestore emulator; nothing reads or writes production.
 
-Written 2026-09-28 against the stack recorded in [`GILLIGAN_E2E_RESULTS_2026-09-27.md`](GILLIGAN_E2E_RESULTS_2026-09-27.md).
+Written 2026-09-28 against the stack recorded in [`GILLIGAN_E2E_RESULTS_2026-09-27.md`](../migration/GILLIGAN_E2E_RESULTS_2026-09-27.md).
 It replaces the setup half of [`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_TEST_GUIDE.md), whose settings predate the `demo-` project change.
 
 | document | use it for |
@@ -12,7 +12,7 @@ It replaces the setup half of [`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_
 | this runbook | starting, checking and stopping the stack; order, cost and rules of the test session |
 | [`LAUNCH_ISSUES_WALKTHROUGH.html`](LAUNCH_ISSUES_WALKTHROUGH.html) | the exact clicks and questions for each item |
 | [`LAUNCH_ISSUES_EXPLAINED.html`](LAUNCH_ISSUES_EXPLAINED.html) | what each item means, the account levels, and which fake pod covers which item |
-| [`LAUNCH_ISSUES_CHECKLIST.md`](LAUNCH_ISSUES_CHECKLIST.md) | recording results, evidence and spend |
+| [`LAUNCH_ISSUES_CHECKLIST.md`](../migration/LAUNCH_ISSUES_CHECKLIST.md) | recording results, evidence and spend |
 | [`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_TEST_GUIDE.md) | the full check list whose IDs (K6, M13 ...) the items cite |
 
 ## 0. Before anything
@@ -271,6 +271,6 @@ This runbook uses this machine's paths and checkouts; all four commits are on Gi
 Before someone else can follow it elsewhere:
 
 - Fetch the commits from `mirror/e2e-p3` (server), `release/gilligan-2026-09-30` (dashboard) and `test/e2e-rc` (cer-demo), each into its own worktree.
-- The CER repositories must be cloned without a checkout and cleaned first, as [`SECURITY_INCIDENT_2026-09-19.md`](SECURITY_INCIDENT_2026-09-19.md) describes; a normal clone checks out malware.
+- The CER repositories must be cloned without a checkout and cleaned first, as [`SECURITY_INCIDENT_2026-09-19.md`](../migration/SECURITY_INCIDENT_2026-09-19.md) describes; a normal clone checks out malware.
 - They need their own model provider key in the Gilligan `.env`, the document library (`data/corpus/`, `data/embeddings/cache.json`), Java 21 and the Firebase CLI; see [`LOCAL_STACK.md`](LOCAL_STACK.md).
 - The ports and paths in steps 3-5 change to theirs.

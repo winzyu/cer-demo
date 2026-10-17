@@ -140,7 +140,7 @@ Already live in the release (`ddd6292`), not backlog: Q9 (silent pods, pH 2.07, 
 ## 4. Release follow-through
 
 1. Watch cer-gilligan and cer-api logs and Fireworks spend for the first days; Fireworks' dashboard can lag a day.
-2. Raise cer-gilligan's maximum instances to 2 once the usage store has counted correctly across a revision restart ([`LIVE_TEST_LIST.md`](LIVE_TEST_LIST.md) L8); note that any `services update` creates a revision that gets no traffic while traffic is pinned, so route it.
+2. Raise cer-gilligan's maximum instances to 2 once the usage store has counted correctly across a revision restart ([`LIVE_TEST_LIST.md`](../runbooks/LIVE_TEST_LIST.md) L8); note that any `services update` creates a revision that gets no traffic while traffic is pinned, so route it.
 3. Remove tags on revisions that no longer serve: cer-gilligan `rc1` (`00002-zoc`, the cer-demo Fireworks key), cer-api `rc1` (`00080-huy`, the revoked mail password), and the old `archive-v1` and `neumorphic` tags if Michael agrees.
 4. Decide whether to disable the cer-demo Fireworks key; development and evaluation runs still use it.
 5. The `main` merges of server and dashboard ([`GILLIGAN_LANDING_2026-09-29.md`](GILLIGAN_LANDING_2026-09-29.md) §5; the server's conflicts are in `WaterAnalyticsService.ts`, take the release side), Michael tests first, pushes on consent; tell Michael `62993fe` ships with server `main`.

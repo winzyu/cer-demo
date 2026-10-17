@@ -4,7 +4,7 @@ How to stand up the Mirror (a local copy of production with fabricated data) for
 Nothing here reads or writes production: Firestore is a local emulator, the CER server and dashboard are local, and the only outside call is the model provider during the paid steps.
 
 Written 2026-10-15 and dry-run the same night: the setup in §3-§5 and the free checks in §6.1-§6.2 ran as written (53 of 53 automated checks passed); the browser checks in §6.3 and the paid chat steps in §7 have not run on this build.
-Earlier results for the same feature: [`REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md); the design is [`SPECS.md`](../SPECS.md) §10.7.
+Earlier results for the same feature: [`REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](../migration/REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md); the design is [`SPECS.md`](../SPECS.md) §10.7.
 
 ## 1. What is tested
 

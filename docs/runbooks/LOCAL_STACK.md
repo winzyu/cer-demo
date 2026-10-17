@@ -5,7 +5,7 @@ Verified end to end on 2026-09-21.
 
 ## Checkout layout
 
-The machine was rebuilt after the 2026-09-19 incident ([`SECURITY_INCIDENT_2026-09-19.md`](SECURITY_INCIDENT_2026-09-19.md)), and this WSL checkout is the only copy; the old OneDrive checkout is gone.
+The machine was rebuilt after the 2026-09-19 incident ([`SECURITY_INCIDENT_2026-09-19.md`](../migration/SECURITY_INCIDENT_2026-09-19.md)), and this WSL checkout is the only copy; the old OneDrive checkout is gone.
 The repository instructions refer to `../user-dashboard` and `../clean-earth-rovers-server`, so all three stay siblings:
 
 ```text
@@ -19,7 +19,7 @@ The repository instructions refer to `../user-dashboard` and `../clean-earth-rov
 
 Clone cer-demo with `git clone -b dev git@github.com:winzyu/cer-demo.git`.
 Never clone the two upstream repositories with a checkout: every remote branch carries the malware, and the clean `local` branches exist only on this machine.
-Recreating them means `git clone --no-checkout` and the cleanup in [`SECURITY_INCIDENT_2026-09-19.md`](SECURITY_INCIDENT_2026-09-19.md) before any working tree exists.
+Recreating them means `git clone --no-checkout` and the cleanup in [`SECURITY_INCIDENT_2026-09-19.md`](../migration/SECURITY_INCIDENT_2026-09-19.md) before any working tree exists.
 Before running anything in either upstream checkout, and after every clone, fetch, pull or branch switch there, check that this prints nothing:
 
 ```bash
@@ -148,7 +148,7 @@ The dashboard calls, from `user-dashboard/src/app/services/gilligan.js` through 
 cer-demo answers on `POST /api/v1/chat` with `{ query, history?, device?, stream?, retrieval? }` and returns `{ answer, model, citations, usage, tool_calls?, tool_round_cap_reached? }`, plus `GET /api/v1/usage` for the remaining allowance.
 It reads the caller's bearer token for the sensor tool and applies its own quota guard.
 
-The shapes are mapped by the relay added in R3, so this no longer waits on R1: see [`GILLIGAN_R3_PORT.md`](GILLIGAN_R3_PORT.md) for the relay, the swap seam and what was verified.
+The shapes are mapped by the relay added in R3, so this no longer waits on R1: see [`GILLIGAN_R3_PORT.md`](../migration/GILLIGAN_R3_PORT.md) for the relay, the swap seam and what was verified.
 
 Both servers read these at boot only.
 `ts-node-dev` watches source files and not `.env`, so a change here needs a real restart, and a server left running from before an edit will silently keep proxying Gilligan to the live API.
