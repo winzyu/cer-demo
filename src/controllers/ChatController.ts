@@ -103,9 +103,9 @@ export class ChatController {
       const quotaKey = quotaSubjectFor(req);
       await this.quota.recordRequest(quotaKey);
 
-      // Caller identity for the audit record (`docs/RESPONSIBILITY.md` #6). Forced to "caller"
-      // scope regardless of `QUERY_QUOTA_SCOPE` — the audit trail must identify who asked even
-      // when the quota counter itself is bucketed globally.
+      // Caller identity for the audit record (`docs/records/RESPONSIBILITY.md` #6). Forced to
+      // "caller" scope regardless of `QUERY_QUOTA_SCOPE` — the audit trail must identify who asked
+      // even when the quota counter itself is bucketed globally.
       const callerId = quotaKeyFor(req, "caller");
 
       // Selection rules (including the DEBUG_RETRIEVAL override rule) live in the

@@ -1,6 +1,6 @@
 # Q10 Gilligan behaviour: decisions and task list
 
-Owner: the Gilligan behaviour chat. Started 2026-09-28 from `GILLIGAN_RESET_2026-09-28.md`, "Gilligan behaviour".
+Owner: the Gilligan behaviour chat. Started 2026-09-28 from `GILLIGAN_RESET_2026-09-28.md`, "Gilligan behaviour" (archived; `git show docs-archive-2026-10-17:docs/migration/GILLIGAN_RESET_2026-09-28.md`).
 
 ## User decisions, 2026-09-28
 

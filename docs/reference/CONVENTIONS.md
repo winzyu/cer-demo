@@ -27,7 +27,7 @@ match the server's real code. Therefore:
 > ⚠️ **Security note (carried from the server doc):** the server repo's `test/setup/jest.config.js` is
 > a single line of obfuscated JavaScript that overrides `require` and self-decodes a payload. Do **not**
 > copy it. Confirmed malware on 2026-09-19, present on every upstream branch:
-> [`SECURITY_INCIDENT_2026-09-19.md`](../migration/SECURITY_INCIDENT_2026-09-19.md).
+> [`SECURITY_INCIDENT_2026-09-19.md`](../records/SECURITY_INCIDENT_2026-09-19.md).
 
 ---
 

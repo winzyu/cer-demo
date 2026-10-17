@@ -132,7 +132,7 @@ Not changed by this work: report event detection still reads bucket means; the s
 | "How is the water this week?" answers with readings, actions and next steps and offers a report, instead of a plain weekly summary | Landing doc §7 item 17 (L8 C1) |
 | After a reload, a repeated summary request returns nearly the same answer | Landing doc §7 item 17 |
 | Asking about another organization's pod by name answers about the caller's own pod without saying the named pod is unavailable | Landing doc §7 item 17 (L8 D1) |
-| "My pod is broken" is declined instead of referred to sales@cleanearthrovers.com (finding 8); possibly an artifact of the catalogue being off, so recheck on production first | [`GILLIGAN_RESET_2026-09-28.md`](GILLIGAN_RESET_2026-09-28.md), "Gilligan behaviour" |
+| "My pod is broken" is declined instead of referred to sales@cleanearthrovers.com (finding 8); possibly an artifact of the catalogue being off, so recheck on production first | [`LAUNCH_ISSUES_CHECKLIST.md`](../records/LAUNCH_ISSUES_CHECKLIST.md) B3; [`Q10_TASKS.md`](Q10_TASKS.md) C1 |
 | Tools-on answers drop the withheld-history note, misparaphrase the water-type note, do not flag high dissolved oxygen (Q8), and called a pod silent for 30 hours active "in the last 24 hours" | Earlier mirror runs; recheck on production |
 
 Already live in the release (`ddd6292`), not backlog: Q9 (silent pods, pH 2.07, reading age, empty series), Q10 findings 6, 7 and 10, K21b, U7 and the stripping of earlier answers' citation markers.

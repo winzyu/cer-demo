@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Find and remove the whitespace-hidden JavaScript payload described in
-docs/migration/SECURITY_INCIDENT_2026-09-19.md, and check a machine for its traces.
+docs/records/SECURITY_INCIDENT_2026-09-19.md, and check a machine for its traces.
 
 Deliberately standard-library Python: running `npm`, `jest` or `next` inside an
 infected checkout executes the payload, so the checker must not depend on Node.

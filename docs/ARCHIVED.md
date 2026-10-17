@@ -21,6 +21,7 @@ Paths in sections written before 2026-10-17 predate the move of `docs/migration/
 | `docs-archive-2026-10-16` | 2026-10-16 | five superseded migration docs: the one-page release goal, the upstream PR drafts, the E2E test ticket, the Task C handoff and the post-launch merge test plan - 5 files |
 | `docs-archive-2026-10-16b` | 2026-10-16 | the corpus seeding runbook, the two Q9 cloud-session results and the turbidity exploration - 4 files |
 | `docs-archive-2026-10-16c` | 2026-10-17 | `docs/gilligan_v0.png`, a screenshot of the original Gilligan chat page - 1 file |
+| `docs-archive-2026-10-17` | 2026-10-17 | the corpus sourcing brief, the freeze-day chat reset roundup and the post-launch merge results - 3 files |
 
 Retrieve one by path:
 
@@ -310,6 +311,26 @@ Retrieve:
 
 ```bash
 git show docs-archive-2026-10-16c:docs/gilligan_v0.png > gilligan_v0.png
+```
+
+## `docs-archive-2026-10-17` - a brief never used, a finished roundup and overtaken merge results
+
+Removed on 2026-10-17 in the docs overhaul's content step, preserved under the tag `docs-archive-2026-10-17`, which points at `f2ef65f`, the last commit that contains them.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/CORPUS_SOURCING_BRIEF.md` | 248 | The 2026-08-21 self-contained brief for a research session to source missing corpus documents | The session was never needed: the 2026-09-21 timeline row records that the corpus was restored from `DOC_META` instead. Two records and that row still name it. |
+| `docs/migration/GILLIGAN_RESET_2026-09-28.md` | 104 | The release coordinator's freeze-day roundup of every chat and what each inherited | Finished, and it deferred to `GILLIGAN_RELEASE_PLAN.md` throughout. The backlog's finding 8 row now points at `LAUNCH_ISSUES_CHECKLIST.md` B3 and `Q10_TASKS.md` C1; `timeline.md` (2026-09-28, production fixes) still names its old path. |
+| `docs/migration/POST_LAUNCH_MERGE_RESULTS_2026-10-11.md` | 66 | Static, Jest and live-smoke results for `land/post-launch` at `247e0ad` | Nothing linked it, and its one open item, finding 1, was fixed on 2026-10-12 by `48e1f1f`; `test/unit/postLaunchMerge.test.ts` has no failing cases left. |
+
+**418 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-17:docs/CORPUS_SOURCING_BRIEF.md
+git show docs-archive-2026-10-17:docs/migration/GILLIGAN_RESET_2026-09-28.md
+git show docs-archive-2026-10-17:docs/migration/POST_LAUNCH_MERGE_RESULTS_2026-10-11.md
 ```
 
 ## Rules

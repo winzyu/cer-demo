@@ -36,9 +36,9 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 | Batch 2, 4 capture folders to `docs/captures/`, `gilligan_v0.png` archived (tag `docs-archive-2026-10-16c` at `cfda55a`) | done `4ba64fb`, landed; also fixes a link batch 1 missed in `GILLIGAN_E2E_RESULTS_2026-09-25.md` |
 | Batch 3, 7 docs to `docs/reference/`, 3 to `docs/people/`, root `README.md` docs table (D5) | done `498545e`, landed |
 | Batch 4, 10 pre-launch records to `docs/records/`, `catalogue.json` path (D4) | done `736d547`, landed; the regenerated `docs/catalogue/review.html` also picks up the 4 draft entries `16cec6e` added without regenerating |
-| D7 recorded | in the commit that records it here |
-| Batch 5 with D7 decisions | next |
-| Content pass over batches 1-4 (`runbooks/`, `reference/`, `people/`, `records/`), batches of at most 10 | after batch 5 |
+| D7 recorded | done `f2ef65f` |
+| Batch 5 with D7: 6 records moved to `docs/records/`, 3 archived (tag `docs-archive-2026-10-17` at `f2ef65f`) | done in the commit that records it here; not yet landed |
+| Content pass over batches 1-4 (`runbooks/`, `reference/`, `people/`, `records/`), batches of at most 10 | next; C1 is `runbooks/` |
 | Batch 6 with D7 | after the content pass |
 | Test-doc merge proposal (section 3.2 docs) | a proposal section for the user to decide; no merge |
 | Batches 7-8 | wait until `task/flagging-share-window` lands on `dev` |
@@ -51,15 +51,19 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 ## Next step
 
 1. `git fetch origin` and merge `origin/dev` into `docs/cleanup` (no rebase) if `dev` moved.
-2. Batch 5 (D7): show the user the 9 records (proposal section 5, batch column `5`, including the root `CORPUS_SOURCING_BRIEF.md` and `RESPONSIBILITY.md`) moving to `docs/records/`; with a keep, update, merge or archive decision and one line of reason per file; on a yes, archive what is archived and move the rest.
-   Recount citations first; check SPECS' hits against lines 1099-1786.
-   The two root docs move one level deeper, so their own links to root docs change too (the script handles that).
-   `src/` comments change, so run `npm run typecheck` and `npm run lint` (they resolve the main checkout's `node_modules`).
+2. Content pass C1, `runbooks/` (D7, prompt 3c "Order" step 2): recount stale paths with `grep -rn 'code/clean-earth-rovers\|~/release/' docs`, then show the user a keep/update/archive decision per runbook with one line of reason.
+   Fix pre-2026-10-04 paths and stale openings only after checking each new path exists; mark steps that only a run could verify "unverified since <date>".
+   Once `MIRROR_RUNBOOK.md`'s paths are fixed, `REPORT_OMIT_MIRROR_TEST.md` (batch 6) can be archived instead of moved.
+   Then C2 `reference/`, C3 `people/`, C4 `records/` (the ten from batch 4, `TASK_C_VERIFICATION.md` and `GILLIGAN_PRODUCT_DIRECTION.md` first), then batch 6.
+   The test-doc merge proposal (section 3.2 docs) is a new proposal section for the user to decide; do not merge.
 3. Link rewrites (every batch): resolve each relative link against the old tree before `git mv`, and recompute it from the file's new folder to the target's new folder; also rewrite path-form text (`docs/migration/X`, `migration/X`, `../docs/migration/X`), including a name followed by a sentence-ending period (batch 3 missed one in `scripts/exploreFirestoreParity.sh` that way).
    Process every moved file even if it names no moved file: its links to siblings left behind change too (batch 1 missed three in `LOCAL_STACK.md` this way).
+   Root docs moving to a folder are cited as `docs/NAME` from code; rewrite those too, and rewrap any comment that then passes the 100-column lint limit.
    Skip SPECS lines 1099-1786, `docs/catalogue/` (regenerate it with `npm run catalogue:review` instead), the `git show <tag>:path` text itself (not the rest of its line; batch 1 missed a link that way), `ARCHIVED.md`, captured folders, `archive/` and the two `DOCS_OVERHAUL_*` files.
 4. Checks: `git grep` for each old path (allowed hits as above); a script that resolves every relative Markdown and HTML link in every tracked `docs/` file outside `captures/`; `git diff --check` (the generator leaves one whitespace-only line per entry in `docs/catalogue/review.html`; expected); `node --check` on edited `.mjs`, `bash -n` on edited `.sh`.
 5. Commit, push, report the commit ID and every STATUS/timeline/SPECS rewrite; then batch 6.
+
+For the coordinator (content fixes outside this chat's remit): `timeline.md` line 915 still names `migration/GILLIGAN_RESET_2026-09-28.md`, archived in batch 5 (`git show docs-archive-2026-10-17:...` would retrieve it).
 
 Batch 6 note: `ARCHIVED.md` (excluded from rewrites) links `migration/DOCS_OVERHAUL_PROPOSAL.md` from the sentence batch 1 added; rewrite that one link to `plans/` by hand when the proposal moves.
 

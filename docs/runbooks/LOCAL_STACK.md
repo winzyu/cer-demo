@@ -5,7 +5,7 @@ Verified end to end on 2026-09-21.
 
 ## Checkout layout
 
-The machine was rebuilt after the 2026-09-19 incident ([`SECURITY_INCIDENT_2026-09-19.md`](../migration/SECURITY_INCIDENT_2026-09-19.md)), and this WSL checkout is the only copy; the old OneDrive checkout is gone.
+The machine was rebuilt after the 2026-09-19 incident ([`SECURITY_INCIDENT_2026-09-19.md`](../records/SECURITY_INCIDENT_2026-09-19.md)), and this WSL checkout is the only copy; the old OneDrive checkout is gone.
 The repository instructions refer to `../user-dashboard` and `../clean-earth-rovers-server`, so all three stay siblings:
 
 ```text
@@ -19,7 +19,7 @@ The repository instructions refer to `../user-dashboard` and `../clean-earth-rov
 
 Clone cer-demo with `git clone -b dev git@github.com:winzyu/cer-demo.git`.
 Never clone the two upstream repositories with a checkout: every remote branch carries the malware, and the clean `local` branches exist only on this machine.
-Recreating them means `git clone --no-checkout` and the cleanup in [`SECURITY_INCIDENT_2026-09-19.md`](../migration/SECURITY_INCIDENT_2026-09-19.md) before any working tree exists.
+Recreating them means `git clone --no-checkout` and the cleanup in [`SECURITY_INCIDENT_2026-09-19.md`](../records/SECURITY_INCIDENT_2026-09-19.md) before any working tree exists.
 Before running anything in either upstream checkout, and after every clone, fetch, pull or branch switch there, check that this prints nothing:
 
 ```bash

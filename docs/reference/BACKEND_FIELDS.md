@@ -200,7 +200,7 @@ rather than instrument.
 
 **The direct evidence, from `data/backend-surface/20260821T012515Z/` (read-only recordings).**
 Every claim below is re-derivable with the commands in
-[`POD_RELOCATION_EVIDENCE.md`](../migration/POD_RELOCATION_EVIDENCE.md).
+[`POD_RELOCATION_EVIDENCE.md`](../records/POD_RELOCATION_EVIDENCE.md).
 
 1. **One label reported from two states in one month.** `Marina Park` `dev:351077454591408`, a
    1-month `/water/period` window, 703 rows:

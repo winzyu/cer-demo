@@ -23,7 +23,7 @@ These facts hold on 2026-09-26 and shape the whole procedure.
   Until then cer-gilligan runs on the cer-demo Fireworks key, stored as a version of the secret `cer-gilligan-fireworks-api-key`.
   After the supervisor approves the demo (L7), CER's own key becomes a new version of that secret, a new revision pins it (§6.5), and only then are the credentials rotated.
 - **Deploy only the pushed feature and task branches, built from clean branches with no old build cache.**
-  The upstream history carries malware (the `main` and `develop` tips scanned clean on 2026-09-30), and the malware ran on a build machine ([`SECURITY_INCIDENT_2026-09-19.md`](../migration/SECURITY_INCIDENT_2026-09-19.md)).
+  The upstream history carries malware (the `main` and `develop` tips scanned clean on 2026-09-30), and the malware ran on a build machine ([`SECURITY_INCIDENT_2026-09-19.md`](../records/SECURITY_INCIDENT_2026-09-19.md)).
   Every image in this release is built from a fresh checkout of a reviewed commit, with no `node_modules`, `.next`, `dist` or cached image layers from before the cleanup (§3).
 - **Set every release environment variable explicitly, because the guards fail open.**
   A missing variable does not stop cer-gilligan; it turns a guard off, removes a limit, or points at the customer database (§4).

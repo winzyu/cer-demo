@@ -342,7 +342,7 @@ Requests above the transport limit receive JSON HTTP 413 before validation, so c
 |---|---|---|
 | `DEFAULT_RETRIEVAL` | `stub` | `stub` \| `firestore-direct` \| `firestore-vector` \| `local-vector` \| `local-hybrid` \| `hybrid-slice-vector` \| `hybrid-slice-lexvec` \| `gold-context` ([§6](#6-retrieval-arms)). `gold-context` is eval-only: it answers only fixture questions that have retrieval labels. **`pgvector-rag` is no longer a selectable value** — the arm was archived 2026-08-19 ([§6](#6-retrieval-arms)). A stale `.env` still naming it throws on the **first chat request**, not at startup — see [§11](#11-troubleshooting). |
 | `DEBUG_RETRIEVAL` | `false` | When `true`, a request's `"retrieval"` field is honoured. Required by the bake-off runner. |
-| `AUDIT_LOG` | `false` | When `true`, every chat response is persisted to Firestore for dispute reconstruction (`docs/RESPONSIBILITY.md` §6). Keep off until the retention and access policy is settled. |
+| `AUDIT_LOG` | `false` | When `true`, every chat response is persisted to Firestore for dispute reconstruction (`docs/records/RESPONSIBILITY.md` §6). Keep off until the retention and access policy is settled. |
 | `CORPUS_SOURCE` | `artifact` | Where `firestore-direct` reads text: `artifact` (local file, no credentials) or `firestore`. Explicit rather than auto-detected — a silent fallback would measure the wrong source. |
 | `QUERY_REWRITE` | `false` | Rewrite a follow-up into a standalone search query before retrieval (`src/retrieval/queryRewrite.ts`); one extra model call per follow-up. On in the release. |
 | `QUERY_REWRITE_FIRST_TURN` | `false` | With `QUERY_REWRITE` on, also rewrite first turns. On in the release; ignored while `QUERY_REWRITE` is off. |
@@ -746,7 +746,7 @@ eval/                   # fixtures-wave1/ (committed questions), claims/, retrie
 archive/                # retired code kept for the record, at its original paths.
   pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
 docs/                   # STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md,
-                        #   ARCHIVED.md, eval and corpus notes; reference/, runbooks/,
+                        #   ARCHIVED.md, the eval docs; reference/, runbooks/,
                         #   people/, records/, captures/; migration/ (not yet sorted);
                         #   catalogue/ (generated review page)
 ```
