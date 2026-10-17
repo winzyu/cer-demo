@@ -4,7 +4,7 @@ How to start the Mirror stack from a stopped machine and test every launch item 
 The Mirror is the only local stack with Gilligan, so every B item and U5-U10 run here.
 Everything uses fabricated data in a local Firestore emulator; nothing reads or writes production.
 
-Written 2026-09-28 against the stack recorded in [`GILLIGAN_E2E_RESULTS_2026-09-27.md`](../migration/GILLIGAN_E2E_RESULTS_2026-09-27.md).
+Written 2026-09-28 against the stack recorded in [`GILLIGAN_E2E_RESULTS_2026-09-27.md`](../records/GILLIGAN_E2E_RESULTS_2026-09-27.md).
 It replaces the setup half of [`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_TEST_GUIDE.md), whose settings predate the `demo-` project change.
 
 | document | use it for |

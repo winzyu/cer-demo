@@ -93,7 +93,7 @@ export const REFUSAL_SENTENCE = "I can only answer questions grounded in this se
  * failure was a confident negative, not a missing call.
  *
  * The age, spike and note rules were added 2026-09-24 after a live conversation check
- * (`docs/migration/CONVERSATION_QA_2026-09-24.md` findings 1, 2, 4 and 5): stale pods read as
+ * (`docs/records/CONVERSATION_QA_2026-09-24.md` findings 1, 2, 4 and 5): stale pods read as
  * online, a claimed pH crash was tested with a single "latest" reading, and caveats in a tool's
  * `note` were dropped. The ages come from the tools (`src/tools/readingAge.ts`) and CURRENT TIME is
  * a per-request line (`formatCurrentTime` in `promptBuilder.ts`), so the text here stays static.

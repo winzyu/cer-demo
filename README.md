@@ -38,6 +38,7 @@ and the traps that cost time.
 | [`docs/reference/`](docs/reference/) | Facts about the system to read before changing code: the sensor API contract [`DEVICE_API.md`](docs/reference/DEVICE_API.md) (**read §12 before trusting any reading**), the legacy behaviour in [`MIGRATION_SPEC.md`](docs/reference/MIGRATION_SPEC.md), [`CONVENTIONS.md`](docs/reference/CONVENTIONS.md), and the Gilligan architecture and decisions D1-D12 in [`GILLIGAN_TARGET_ARCHITECTURE.md`](docs/reference/GILLIGAN_TARGET_ARCHITECTURE.md). |
 | [`docs/runbooks/`](docs/runbooks/) | Step-by-step procedures: deployment, the manual test guide, the local stack and the Mirror. |
 | [`docs/people/`](docs/people/) | What was sent to or prepared for stakeholders. |
+| [`docs/records/`](docs/records/) | Dated, finished documents: test results, build records, incidents and decisions with their reasoning. |
 | [`docs/captures/`](docs/captures/) | Captured output folders, never edited. |
 | [`docs/migration/`](docs/migration/) | Documents not yet sorted into the folders above, including the device-authorization findings in [`SECURITY_FINDINGS.md`](docs/migration/SECURITY_FINDINGS.md). |
 | [`eval/README.md`](eval/README.md) | The committed question set and captured eval runs. |
@@ -746,7 +747,7 @@ archive/                # retired code kept for the record, at its original path
   pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
 docs/                   # STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md,
                         #   ARCHIVED.md, eval and corpus notes; reference/, runbooks/,
-                        #   people/, captures/; migration/ (not yet sorted);
+                        #   people/, records/, captures/; migration/ (not yet sorted);
                         #   catalogue/ (generated review page)
 ```
 

@@ -46,7 +46,7 @@ dd p { margin: 0; }
 <body>
 <main>
 <h1>Gilligan guidance review</h1>
-<p class="meta">Catalogue version 2026-09-24.1 · 38 entries: 38 approved, 0 draft, 0 rejected</p>
+<p class="meta">Catalogue version 2026-09-24.1 · 42 entries: 38 approved, 4 draft, 0 rejected</p>
 
 <p>The Gilligan assistant and its water-quality reports may only suggest possible causes, next steps and referrals that appear here with an approved status.
 Anything not approved stays hidden from customers: reports then show the threshold crossing without naming a cause, and chat describes what was measured and what the sensors cannot tell.</p>
@@ -68,6 +68,10 @@ An entry with a referral stays hidden until both the entry and the referral are 
 <tr><td><a href="#acidic-input-freshwater">Acid-like pattern in fresh water</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge approved">approved</span></td></tr>
 <tr><td><a href="#saltwater-intrusion">Saltier water reaching the pod</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge approved">approved</span></td></tr>
 <tr><td><a href="#industrial-unclear">Abrupt change with no clear pattern</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge approved">approved</span></td></tr>
+<tr><td><a href="#daily-solar-cycle">Daily cycle that follows the sun</a></td><td>Possible cause</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#tidal-exchange">Readings that follow the tide</a></td><td>Possible cause</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#heat-wave">Hot weather warms the water</a></td><td>Possible cause</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
+<tr><td><a href="#shallow-deployment">A pod near the surface sees bigger swings</a></td><td>Possible cause</td><td>Chat only</td><td><span class="badge draft">draft</span></td></tr>
 <tr><td><a href="#algal-bloom">Daily oxygen swings consistent with algae</a></td><td>Possible cause</td><td>Report and chat</td><td><span class="badge approved">approved</span></td></tr>
 <tr><td><a href="#sensor-limits">What the sensors cannot detect</a></td><td>Limitation</td><td>Report and chat</td><td><span class="badge approved">approved</span></td></tr>
 <tr><td><a href="#fault-first">Rule out the instrument first</a></td><td>Limitation</td><td>Report and chat</td><td><span class="badge approved">approved</span></td></tr>
@@ -264,6 +268,74 @@ An entry with a referral stays hidden until both the entry and the referral are 
     
     <dt>Sources</dt><dd>general<br>event-rules (industrial fallback rule, src/report/events.ts)</dd>
     <dt>Review</dt><dd><p><span class="badge approved">approved</span> by supervisor on 2026-09-24</p><p class="note">Approved with the edits proposed in the 2026-09-24 marked-up review.</p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="daily-solar-cycle">
+  <header>
+    <h3>Daily cycle that follows the sun</h3>
+    <p class="meta"><code>daily-solar-cycle</code> · Possible cause · Chat only</p>
+  </header>
+  <blockquote>Water warms through the day and cools overnight, and plants and algae add oxygen in daylight and use it at night, so temperature, dissolved oxygen, pH and conductivity can rise and fall every day. A cycle that peaks at the same hour every day is consistent with this natural daily pattern, and is real water behaviour rather than a fault.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A tool reports a daily cycle that peaks at the same hour each day, or the user asks why readings rise and fall every day.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>A &quot;daily_cycle&quot; of &quot;same hour each day&quot; for at least one parameter.</dd>
+    <dt>Limitation</dt><dd>The sensors cannot separate heating from biological activity. If pH swings much more than usual for the site, a calibration check is reasonable, but the swing is not evidence of a fault on its own.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §11 (temperature and DO coupling)<br>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p><p class="note">Drafted 2026-10-12 after a real daily cycle was written off as sensor faults (docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §3 cause 1, §5 item 4). Hidden until a supervisor approves it.</p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="tidal-exchange">
+  <header>
+    <h3>Readings that follow the tide</h3>
+    <p class="meta"><code>tidal-exchange</code> · Possible cause · Chat only</p>
+  </header>
+  <blockquote>At coastal and estuary sites the tide brings saltier, cooler ocean water in and carries fresher water out, so conductivity, temperature and pH can rise and fall with it. A cycle whose peak comes about 50 minutes later each day is consistent with tidal exchange.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>A tool reports a daily cycle whose peak comes about 50 minutes later each day at a coastal pod, or the user asks whether the tide moves the readings.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>A &quot;daily_cycle&quot; of &quot;about 50 minutes later each day&quot; at a marine, brackish or estuarine pod.</dd>
+    <dt>Limitation</dt><dd>No tool measures the tide. Comparing with a tide table for the nearest station would confirm it, and that station may differ from the pod's site.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p><p class="note">Drafted 2026-10-12 after a real daily cycle was written off as sensor faults (docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §3 cause 1, §5 item 4). Hidden until a supervisor approves it.</p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="heat-wave">
+  <header>
+    <h3>Hot weather warms the water</h3>
+    <p class="meta"><code>heat-wave</code> · Possible cause · Chat only</p>
+  </header>
+  <blockquote>A spell of hot weather warms the water, especially shallow water. Warm water holds less dissolved oxygen, and daily swings in temperature, oxygen and pH grow larger. Readings during a heat wave can be unusual and still be real.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>Water temperature ran higher than earlier in the window for several days, or the user reports hot weather at the site.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>Several days of higher water temperature in a tool result, or the user's report of hot weather at the site.</dd>
+    <dt>Limitation</dt><dd>No tool measures air temperature or weather; the user's report is the only evidence of a heat wave.</dd>
+    
+    <dt>Sources</dt><dd>sot-v2 §11 (temperature and DO coupling)<br>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p><p class="note">Drafted 2026-10-12 after a real daily cycle was written off as sensor faults (docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §3 cause 1, §5 item 4). Hidden until a supervisor approves it.</p></dd>
+  </dl>
+  <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
+</article>
+<article class="entry" id="shallow-deployment">
+  <header>
+    <h3>A pod near the surface sees bigger swings</h3>
+    <p class="meta"><code>shallow-deployment</code> · Possible cause · Chat only</p>
+  </header>
+  <blockquote>A pod sitting just under the surface, or in shallow water, warms and cools faster than deeper water and sees more of the sun's effect on oxygen and pH, so its daily swings can be large and still be real.</blockquote>
+  <dl>
+    <dt>Shown when</dt><dd>The user says the pod sits near the surface or in shallow water, and its readings swing widely each day.</dd>
+    <dt>Report selection</dt><dd>Chosen by the assistant from the conditions below</dd>
+    <dt>Evidence needed</dt><dd>The user's description of the pod's depth or position, and a daily swing in a tool result.</dd>
+    <dt>Limitation</dt><dd>The pod's depth is not recorded; this rests on what the user says about the site.</dd>
+    
+    <dt>Sources</dt><dd>general</dd>
+    <dt>Review</dt><dd><p><span class="badge draft">draft</span></p><p class="note">Drafted 2026-10-12 after a real daily cycle was written off as sensor faults (docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §3 cause 1, §5 item 4). Hidden until a supervisor approves it.</p></dd>
   </dl>
   <p class="decision">Decision: ☐ Approve as written &nbsp; ☐ Approve with edits &nbsp; ☐ Reject</p>
 </article>
@@ -766,7 +838,7 @@ An entry with a referral stays hidden until both the entry and the referral are 
 <li><code>sot-v2</code>: DataPod Water Quality Source of Truth, version 2.0, 2026-09-16 (water-quality-source-of-truth-v2.pdf)</li>
 <li><code>advice-drafts</code>: Draft advice candidates, 2026-09-10 (archived, tag advice-archive-2026-09-17)</li>
 <li><code>event-rules</code>: Report event rules and recommendation wording before the catalogue (src/report/events.ts, src/report/narrative.ts)</li>
-<li><code>product</code>: Product decisions (docs/migration/GILLIGAN_PRODUCT_DIRECTION.md)</li>
+<li><code>product</code>: Product decisions (docs/records/GILLIGAN_PRODUCT_DIRECTION.md)</li>
 <li><code>general</code>: General water-quality practice, drafted 2026-09-19 for supervisor review; not grounded in the corpus</li>
 </ul>
 </main>

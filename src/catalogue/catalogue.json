@@ -4,7 +4,7 @@
     "sot-v2": "DataPod Water Quality Source of Truth, version 2.0, 2026-09-16 (water-quality-source-of-truth-v2.pdf)",
     "advice-drafts": "Draft advice candidates, 2026-09-10 (archived, tag advice-archive-2026-09-17)",
     "event-rules": "Report event rules and recommendation wording before the catalogue (src/report/events.ts, src/report/narrative.ts)",
-    "product": "Product decisions (docs/migration/GILLIGAN_PRODUCT_DIRECTION.md)",
+    "product": "Product decisions (docs/records/GILLIGAN_PRODUCT_DIRECTION.md)",
     "general": "General water-quality practice, drafted 2026-09-19 for supervisor review; not grounded in the corpus"
   },
   "referrals": [

@@ -33,8 +33,9 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 | Proposal | `3044fa7`, decisions recorded with this handoff |
 | Batch 1, 10 runbooks to `docs/runbooks/` | done `24acdfd`; not yet landed |
 | Batch 2, 4 capture folders to `docs/captures/`, `gilligan_v0.png` archived (tag `docs-archive-2026-10-16c` at `cfda55a`) | done `4ba64fb`; also fixes a link batch 1 missed in `GILLIGAN_E2E_RESULTS_2026-09-25.md`; not yet landed |
-| Batch 3, 7 docs to `docs/reference/`, 3 to `docs/people/`, root `README.md` docs table (D5) | done in the commit that records it here; not yet landed |
-| Batches 4-6 | next, in order |
+| Batch 3, 7 docs to `docs/reference/`, 3 to `docs/people/`, root `README.md` docs table (D5) | done `498545e`; not yet landed |
+| Batch 4, 10 pre-launch records to `docs/records/`, `catalogue.json` path (D4) | done in the commit that records it here; the regenerated `docs/catalogue/review.html` also picks up the 4 draft entries `16cec6e` added without regenerating; not yet landed |
+| Batches 5-6 | next, in order |
 | Batches 7-8 | wait until `task/flagging-share-window` lands on `dev` |
 | Landing sweeps for `reflection`, `task/tide-tool`, `docs/firestore-testing-plan`, `fix/window-note` | after each branch lands (proposal section 7) |
 
@@ -45,16 +46,15 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 ## Next step
 
 1. `git fetch origin` and merge `origin/dev` into `docs/cleanup` (no rebase) if `dev` moved.
-2. Batch 4: show the user the 10 pre-launch records (proposal section 5, batch column `4`) moving to `docs/records/`; on a yes, rewrite links, then `git mv`.
+2. Batch 5: show the user the 9 records (proposal section 5, batch column `5`, including the root `CORPUS_SOURCING_BRIEF.md` and `RESPONSIBILITY.md`) moving to `docs/records/`; on a yes, rewrite links, then `git mv`.
    Recount citations first; check SPECS' hits against lines 1099-1786.
-   D4: rewrite the `GILLIGAN_PRODUCT_DIRECTION.md` path in `src/catalogue/catalogue.json`, regenerate `docs/catalogue/review.html` with `scripts/renderCatalogueReview.ts`, and run `test/unit/catalogue.test.ts` and `catalogueReviewPage.test.ts` singly with `--runInBand`.
-   Add a `docs/records/` row to the root `README.md` docs table (batch 3 added rows only for folders that exist; `plans/` gets its row in batch 6, and batch 8 removes the `docs/migration/` row).
+   The two root docs move one level deeper, so their own links to root docs change too (the script handles that).
    `src/` comments change, so run `npm run typecheck` and `npm run lint` (they resolve the main checkout's `node_modules`).
 3. Link rewrites (every batch): resolve each relative link against the old tree before `git mv`, and recompute it from the file's new folder to the target's new folder; also rewrite path-form text (`docs/migration/X`, `migration/X`, `../docs/migration/X`), including a name followed by a sentence-ending period (batch 3 missed one in `scripts/exploreFirestoreParity.sh` that way).
    Process every moved file even if it names no moved file: its links to siblings left behind change too (batch 1 missed three in `LOCAL_STACK.md` this way).
-   Skip SPECS lines 1099-1786, the `git show <tag>:path` text itself (not the rest of its line; batch 1 missed a link that way), `ARCHIVED.md`, captured folders, `archive/` and the two `DOCS_OVERHAUL_*` files.
-4. Checks: `git grep` for each old path (allowed hits as above); a script that resolves every relative Markdown and HTML link in every tracked `docs/` file outside `captures/`; `git diff --check`; `node --check` on edited `.mjs`, `bash -n` on edited `.sh`.
-5. Commit, push, report the commit ID and every STATUS/timeline/SPECS rewrite; then batch 5.
+   Skip SPECS lines 1099-1786, `docs/catalogue/` (regenerate it with `npm run catalogue:review` instead), the `git show <tag>:path` text itself (not the rest of its line; batch 1 missed a link that way), `ARCHIVED.md`, captured folders, `archive/` and the two `DOCS_OVERHAUL_*` files.
+4. Checks: `git grep` for each old path (allowed hits as above); a script that resolves every relative Markdown and HTML link in every tracked `docs/` file outside `captures/`; `git diff --check` (the generator leaves one whitespace-only line per entry in `docs/catalogue/review.html`; expected); `node --check` on edited `.mjs`, `bash -n` on edited `.sh`.
+5. Commit, push, report the commit ID and every STATUS/timeline/SPECS rewrite; then batch 6.
 
 Batch 6 note: `ARCHIVED.md` (excluded from rewrites) links `migration/DOCS_OVERHAUL_PROPOSAL.md` from the sentence batch 1 added; rewrite that one link to `plans/` by hand when the proposal moves.
 
