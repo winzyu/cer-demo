@@ -22,6 +22,7 @@ Paths in sections written before 2026-10-17 predate the move of `docs/migration/
 | `docs-archive-2026-10-16b` | 2026-10-16 | the corpus seeding runbook, the two Q9 cloud-session results and the turbidity exploration - 4 files |
 | `docs-archive-2026-10-16c` | 2026-10-17 | `docs/gilligan_v0.png`, a screenshot of the original Gilligan chat page - 1 file |
 | `docs-archive-2026-10-17` | 2026-10-17 | the corpus sourcing brief, the freeze-day chat reset roundup and the post-launch merge results - 3 files |
+| `docs-archive-2026-10-17b` | 2026-10-17 | the Task C verification record and the report download browser check - 2 files |
 
 Retrieve one by path:
 
@@ -331,6 +332,24 @@ Retrieve:
 git show docs-archive-2026-10-17:docs/CORPUS_SOURCING_BRIEF.md
 git show docs-archive-2026-10-17:docs/migration/GILLIGAN_RESET_2026-09-28.md
 git show docs-archive-2026-10-17:docs/migration/POST_LAUNCH_MERGE_RESULTS_2026-10-11.md
+```
+
+## `docs-archive-2026-10-17b` - two finished September checks
+
+Removed on 2026-10-17 in the docs overhaul's content step, preserved under the tag `docs-archive-2026-10-17b`, which points at `2659b9d`, the last commit that contains them.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/records/TASK_C_VERIFICATION.md` | 89 | The 2026-09-24 reproduction and browser verification of Task C (answer-local tool citations and citation audit) | Finished; the contract is `SPECS.md` §10.4a, and the 2026-09-24 Task C row in `timeline.md` still names it. |
+| `docs/records/REPORT_BROWSER_CHECK.md` | 88 | A manual check of the report button on the local dashboard, written 2026-09-22, with its 2026-09-23 headless run | Finished; only `GILLIGAN_R3_PORT.md` cited it, and its two mentions now name this tag. |
+
+**177 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-17b:docs/records/TASK_C_VERIFICATION.md
+git show docs-archive-2026-10-17b:docs/records/REPORT_BROWSER_CHECK.md
 ```
 
 ## Rules

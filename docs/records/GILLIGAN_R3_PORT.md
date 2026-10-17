@@ -121,7 +121,7 @@ Building a relay against a design already scheduled for replacement would be thr
 *Done 2026-09-22:* R1's report half landed and the relay gained `POST /gilligan/report`.
 
 **A browser pass over the rebuilt page.** The page compiles and serves, and the citation logic is verified against real answers in Node, which is the stronger check for the quote-leak risk.
-Seeing it rendered still needs a logged-in browser session; that check is now [`REPORT_BROWSER_CHECK.md`](REPORT_BROWSER_CHECK.md) step 10.
+Seeing it rendered still needs a logged-in browser session; that check is now `REPORT_BROWSER_CHECK.md` step 10 (archived; `git show docs-archive-2026-10-17b:docs/records/REPORT_BROWSER_CHECK.md`).
 *Done 2026-09-23:* see "Browser pass, 2026-09-23" below.
 
 **Anything upstream is uncommitted.** Both upstream repositories hold these changes in their working trees on branch `local`, matching how the dev passthrough was left.
@@ -129,7 +129,7 @@ Seeing it rendered still needs a logged-in browser session; that check is now [`
 
 ## Browser pass, 2026-09-23
 
-The page was driven in headless Chromium against the local stack, first as built and then after fixes; the results against the checklist are in [`REPORT_BROWSER_CHECK.md`](REPORT_BROWSER_CHECK.md).
+The page was driven in headless Chromium against the local stack, first as built and then after fixes; the results against the checklist are in `REPORT_BROWSER_CHECK.md` (archived at tag `docs-archive-2026-10-17b`).
 Rendering checks that need no model call (markdown, citations, races, load failures) ran against answers supplied by the browser itself, so they cost nothing and can be repeated.
 The dashboard fixes are on branch `local-gilligan-qa`, cut from `local`; the server fix is on `local`.
 
