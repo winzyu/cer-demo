@@ -1,7 +1,7 @@
 # Gilligan target architecture, gap analysis and roadmap
 
 Draft, 2026-09-17, for the September 30, 2026 dashboard release.
-Built on the decisions in [`GILLIGAN_PRODUCT_DIRECTION.md`](GILLIGAN_PRODUCT_DIRECTION.md); the integration background was `INTEGRATION_PLAN.md` (archived, tag `docs-archive-2026-09-23`).
+Built on the decisions in [`GILLIGAN_PRODUCT_DIRECTION.md`](../migration/GILLIGAN_PRODUCT_DIRECTION.md); the integration background was `INTEGRATION_PLAN.md` (archived, tag `docs-archive-2026-09-23`).
 This is a plan for review, not an approved implementation specification.
 Built so far: R2's catalogue code (`docs/SPECS.md` §4b, flags off, supervisor approval pending), R3's relay and page (`GILLIGAN_R3_PORT.md`), the tool-access fix (`GILLIGAN_TOOL_ACCESS.md`) and R1's report half (`docs/SPECS.md` §10.7).
 The 2026-09-24 release decision ships S1-S6 as written, with `/gilligan/answer` and identity tokens after launch; CER supplies its own paid Fireworks key in Secret Manager.
@@ -157,7 +157,7 @@ A referral is only offered when the observed evidence matches the entry's applic
 
 ## 4. Roadmap to September 30
 
-Superseded for September 24-30 by [`GILLIGAN_RELEASE_PLAN.md`](GILLIGAN_RELEASE_PLAN.md), written after the supervisor's answers; the table below is the original schedule.
+Superseded for September 24-30 by [`GILLIGAN_RELEASE_PLAN.md`](../migration/GILLIGAN_RELEASE_PLAN.md), written after the supervisor's answers; the table below is the original schedule.
 
 Working days are counted from Thursday, September 17.
 "Upstream" work needs a place to develop it before the supervisor approves the merge (open decision D1).
@@ -167,7 +167,7 @@ Working days are counted from Thursday, September 17.
 | R0 Setup | Sep 17-18 | user, Claude | user sets up the WSL sandbox ([`LOCAL_STACK.md`](../runbooks/LOCAL_STACK.md)); send the three v2 questions and the referral contacts to the supervisor; confirm a Fireworks payment method and read the rate-limit headers | the demo runs in the sandbox; supervisor has items 17-20 |
 | R1 Service contract | Sep 18-22 | Claude | `/gilligan/answer`, identity check, history mapping, report bytes, usage store and status endpoint, concurrency limiter; unit and supertest coverage | contract tests green; the demo still works. **Report half done 2026-09-22** (report bytes, report counter); the rest has not started |
 | R2 Catalogue | Sep 18-24 | Claude, then supervisor | structured catalogue from v2 and the advice drafts, generated review page, prompt and narrative wiring, sewage rule fix | supervisor has approved an entry set; reports and chat cite only approved entries. **Code done 2026-09-17** (recovered 2026-09-22, `SPECS.md` §4b); approval pending |
-| R3 Upstream relay and page | Sep 21-25 | Claude, in the `local` checkouts | controller relay and report route; React page; local run of dashboard + server + cer-rag together | **done 2026-09-21; report route added 2026-09-22** (D8). A question, history and the usage count work end to end locally: [`GILLIGAN_R3_PORT.md`](GILLIGAN_R3_PORT.md) |
+| R3 Upstream relay and page | Sep 21-25 | Claude, in the `local` checkouts | controller relay and report route; React page; local run of dashboard + server + cer-rag together | **done 2026-09-21; report route added 2026-09-22** (D8). A question, history and the usage count work end to end locally: [`GILLIGAN_R3_PORT.md`](../migration/GILLIGAN_R3_PORT.md) |
 | R4 Quality | Sep 23-28 | separate session, Claude | Phase 3 capture (approved spend); fix what it finds; where a class of question stays weak, add a caveat or a refusal (D3); organization-isolation tests with the pod-scope fixtures | every weak class is either fixed, caveated or refused; isolation tests pass |
 | R5 Demo and merge | Sep 28-29 | user, supervisor | supervisor demo; merge approval; upstream owners create the Fireworks key; corpus seeded into their Firestore; cer-rag deployed | cer-rag healthy in their project; relay switched on with `GILLIGAN_BACKEND=rag` |
 | R6 Release | Sep 30 | user, upstream owners | production smoke on one pod per test organization. **There is no working rollback**: `GILLIGAN_BACKEND=gemini` restores a backend that fails every question (D9), so the cutover is one-way and the gate is R4's quality bar | release |
@@ -203,7 +203,7 @@ Earlier estimates excluded integration and supervisor turnaround, so R3 and R5 c
 Settled 2026-09-17:
 
 - **D1. Where upstream code is written before the merge:** a native WSL2 sandbox the user creates, holding copies of both upstream repositories with this service's implementation moved in to test compatibility. The user works there; Claude keeps working in this repository (evaluation and the service itself), and the upstream repositories stay read-only to Claude. The user demos the result and the supervisor approves the transfer.
-  *Revised 2026-09-21.* The WSL sandbox was lost with the machine rebuild and is not coming back. Upstream code is now written directly in the two checkouts on branch `local`, cut from the cleanup branch that removed the malware, and Claude may write there; see [`LOCAL_STACK.md`](../runbooks/LOCAL_STACK.md) and [`SECURITY_INCIDENT_2026-09-19.md`](SECURITY_INCIDENT_2026-09-19.md). Nothing is pushed: the branches have no upstream and the merge still needs supervisor approval.
+  *Revised 2026-09-21.* The WSL sandbox was lost with the machine rebuild and is not coming back. Upstream code is now written directly in the two checkouts on branch `local`, cut from the cleanup branch that removed the malware, and Claude may write there; see [`LOCAL_STACK.md`](../runbooks/LOCAL_STACK.md) and [`SECURITY_INCIDENT_2026-09-19.md`](../migration/SECURITY_INCIDENT_2026-09-19.md). Nothing is pushed: the branches have no upstream and the merge still needs supervisor approval.
 - **D2. Gemini-era conversations:** ignored entirely.
 - **D3. Launch quality bar:** aim for all Phase 3 checks; on best effort, caveat or refuse weak question classes rather than delay.
 

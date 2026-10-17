@@ -91,7 +91,7 @@ Nothing more goes to him until he answers (user, 2026-10-15).
 
 - [ ] **23. Approve the Firestore data framework for Gilligan.**
   On 2026-09-24 the supervisor allowed new Firestore collections for Gilligan, once they have seen a table of what they hold.
-  The table is `docs/migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
+  The table is `docs/reference/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
   *Unblocks:* the persistent usage store, and any Firestore-backed corpus.
   *Answer:*
 

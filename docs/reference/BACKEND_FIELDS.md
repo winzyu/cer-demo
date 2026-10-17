@@ -200,7 +200,7 @@ rather than instrument.
 
 **The direct evidence, from `data/backend-surface/20260821T012515Z/` (read-only recordings).**
 Every claim below is re-derivable with the commands in
-[`POD_RELOCATION_EVIDENCE.md`](POD_RELOCATION_EVIDENCE.md).
+[`POD_RELOCATION_EVIDENCE.md`](../migration/POD_RELOCATION_EVIDENCE.md).
 
 1. **One label reported from two states in one month.** `Marina Park` `dev:351077454591408`, a
    1-month `/water/period` window, 703 rows:
@@ -297,7 +297,7 @@ deliberately: does inheriting a buoy inherit its data? This needs an answer from
 default from us.
 
 > ⚠️ **This is worse than it looks, and it is written up in full in
-> [`SECURITY_FINDINGS.md`](SECURITY_FINDINGS.md).** `/water/period` — the *only* endpoint
+> [`SECURITY_FINDINGS.md`](../migration/SECURITY_FINDINGS.md).** `/water/period` — the *only* endpoint
 > `query_sensor_data` reads — does not authorize its `device` parameter at all: the org filter sits
 > in an `else` branch, so supplying `?device=` replaces org scoping rather than narrowing it. Its
 > three sibling routes all perform the membership check it omits. A naive fan-out over `labels[]`

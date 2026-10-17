@@ -5,7 +5,7 @@ import type { DeviceSummary } from "../types/device.types";
  * Device continuity — reconstructing a site's history across Notecard replacements.
  *
  * When a buoy is damaged its Notecard is replaced, which mints a new device id. The registry
- * ties old to new with two fields (`docs/migration/BACKEND_FIELDS.md` §4):
+ * ties old to new with two fields (`docs/reference/BACKEND_FIELDS.md` §4):
  *
  * - `mergedInto: "dev:<label>"` on the **retired** device, pointing at its successor.
  * - `labels: ["dev:<self>", "dev:<older>", …]` on the **survivor**, self first.

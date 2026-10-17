@@ -2,7 +2,7 @@ import createError from "http-errors";
 
 /**
  * Stable, machine-readable failure codes. Added **alongside** the `{ error, message }`
- * body (docs/migration/CONVENTIONS.md §6), never replacing it: `error` and `message` stay
+ * body (docs/reference/CONVENTIONS.md §6), never replacing it: `error` and `message` stay
  * exactly as they were, and `status` still never appears in the body.
  *
  * The set is deliberately small and closed. A code is a promise to a client — the UI
@@ -135,7 +135,7 @@ export const resolveErrorCode = (err: unknown): ErrorCode | undefined => {
 
 /**
  * Thin domain error class over `http-errors`. It carries the correct `statusCode` and is
- * formatted by the central error handler (docs/migration/CONVENTIONS.md §6).
+ * formatted by the central error handler (docs/reference/CONVENTIONS.md §6).
  *
  * Only the 400 is kept. `NotFoundError`, `UnauthorizedError`, `ForbiddenError` and
  * `ConflictError` sat here unused for their whole life — the 404 path uses

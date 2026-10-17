@@ -6,7 +6,7 @@ This records user decisions and planning findings, not an approved implementatio
 ## Reading this now
 
 This is the discovery record of 2026-09-16 and 2026-09-17; the user decisions below still stand.
-Its "continue discovery, do not implement" instruction was fulfilled by [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md), which is where current plans and decisions D1-D12 live.
+Its "continue discovery, do not implement" instruction was fulfilled by [`GILLIGAN_TARGET_ARCHITECTURE.md`](../reference/GILLIGAN_TARGET_ARCHITECTURE.md), which is where current plans and decisions D1-D12 live.
 Superseded since:
 
 - **Workspace and D1.** The OneDrive checkout and the WSL2 sandbox are gone; upstream code is written in the two `local` checkouts (D1 revised 2026-09-21, [`LOCAL_STACK.md`](../runbooks/LOCAL_STACK.md)).
@@ -37,7 +37,7 @@ Superseded since:
 
 ### Decisions recorded 2026-09-17
 
-Target architecture, gap analysis and roadmap built on these: [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md).
+Target architecture, gap analysis and roadmap built on these: [`GILLIGAN_TARGET_ARCHITECTURE.md`](../reference/GILLIGAN_TARGET_ARCHITECTURE.md).
 
 - **Merge path:** build the complete, quality-checked product first, demo it to the supervisor, and the supervisor approves merging it into the upstream repositories. Where that code is written is D1 below.
 - **Integration shape:** the dashboard keeps calling the upstream Gilligan routes; the upstream server calls this service over HTTP (`INTEGRATION_PLAN.md` Shape C, archived under tag `docs-archive-2026-09-23`). Moving this code into the upstream server is an option if time allows.

@@ -75,7 +75,7 @@ dev-time estimate.
 
 > **Built since.** `src/services/auditLog.ts` writes one Firestore record per chat response behind
 > `AUDIT_LOG` (default off), and for Gilligan the relay saves an `audit` field on each chat message
-> instead (D4 in `migration/GILLIGAN_TARGET_ARCHITECTURE.md`), so `AUDIT_LOG` stays off. The
+> instead (D4 in `reference/GILLIGAN_TARGET_ARCHITECTURE.md`), so `AUDIT_LOG` stays off. The
 > assessment below is the one made before either existed.
 
 **Does not exist.** Logging today is `morgan` request logs plus a tagged console logger
@@ -196,7 +196,7 @@ so the same ground is not re-covered, and so the reasons a proposal was reshaped
 **"Pull ranges directly from the database via a tool call rather than from a document or the
 source-of-truth."** This is ◆G3 and the open half of Phase N4. The report path already does it:
 `src/report/operatorThresholds.ts` reads per-device `thresholds.min/maxTemperature` and
-`operatingEnvironment` from the backend device registry (`migration/BACKEND_FIELDS.md`). The chat
+`operatingEnvironment` from the backend device registry (`reference/BACKEND_FIELDS.md`). The chat
 path does not — it still reads one global `WATER_TYPE`, because per-device ranges mean editing the
 system prompt.
 

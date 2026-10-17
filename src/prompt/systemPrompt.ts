@@ -75,7 +75,7 @@ export const REFUSAL_SENTENCE = "I can only answer questions grounded in this se
  * The tool inventory and routing rules, appended only when `SENSOR_TOOL` is on.
  *
  * Every rule here exists because the device API has a failure mode that returns a
- * plausible-looking number instead of an error (`docs/migration/DEVICE_API.md` §12). The tool
+ * plausible-looking number instead of an error (`docs/reference/DEVICE_API.md` §12). The tool
  * already refuses to emit those — an empty window comes back as `value: null`, never `0` — so
  * these lines are the second layer: they tell the model what the fields mean, so it reports
  * "the pod has been silent since the 7th" rather than inventing a reading to fill the gap.

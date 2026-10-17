@@ -100,10 +100,10 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 ## Where things live
 
 - Gilligan behaviour: [`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md)
-- Launch record: [`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md); backlog: [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md); Michael's tasks: [`migration/MICHAEL_TASKS.html`](migration/MICHAEL_TASKS.html), [`migration/MICHAEL_DEPLOY_BLOCKERS.md`](migration/MICHAEL_DEPLOY_BLOCKERS.md)
+- Launch record: [`migration/GILLIGAN_LANDING_2026-09-29.md`](migration/GILLIGAN_LANDING_2026-09-29.md); backlog: [`migration/POST_LAUNCH_BACKLOG.md`](migration/POST_LAUNCH_BACKLOG.md); Michael's tasks: [`people/MICHAEL_TASKS.html`](people/MICHAEL_TASKS.html), [`people/MICHAEL_DEPLOY_BLOCKERS.md`](people/MICHAEL_DEPLOY_BLOCKERS.md)
 - Release: [`migration/GILLIGAN_RELEASE_PLAN.md`](migration/GILLIGAN_RELEASE_PLAN.md), [`runbooks/GILLIGAN_DEPLOYMENT_RUNBOOK.md`](runbooks/GILLIGAN_DEPLOYMENT_RUNBOOK.md), [`runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md`](runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md), [`runbooks/LIVE_TEST_LIST.md`](runbooks/LIVE_TEST_LIST.md), [`runbooks/MIRROR_RUNBOOK.md`](runbooks/MIRROR_RUNBOOK.md), [`migration/LAUNCH_ISSUES_CHECKLIST.md`](migration/LAUNCH_ISSUES_CHECKLIST.md)
-- Security and environment: [`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md), [`runbooks/LOCAL_STACK.md`](runbooks/LOCAL_STACK.md), [`migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`](migration/GILLIGAN_FIRESTORE_FRAMEWORK.md)
-- Behavior: [`SPECS.md`](SPECS.md); architecture: [`migration/GILLIGAN_TARGET_ARCHITECTURE.md`](migration/GILLIGAN_TARGET_ARCHITECTURE.md)
+- Security and environment: [`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md), [`runbooks/LOCAL_STACK.md`](runbooks/LOCAL_STACK.md), [`reference/GILLIGAN_FIRESTORE_FRAMEWORK.md`](reference/GILLIGAN_FIRESTORE_FRAMEWORK.md)
+- Behavior: [`SPECS.md`](SPECS.md); architecture: [`reference/GILLIGAN_TARGET_ARCHITECTURE.md`](reference/GILLIGAN_TARGET_ARCHITECTURE.md)
 - Decisions: [`timeline.md`](timeline.md)
 - Evaluation: [`EVAL_REBUILD.md`](EVAL_REBUILD.md), [`../eval/reviews/phase3-2026-09-23/R4_REPORT.md`](../eval/reviews/phase3-2026-09-23/R4_REPORT.md)
-- Conventions: [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md); people: [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md)
+- Conventions: [`reference/CONVENTIONS.md`](reference/CONVENTIONS.md); people: [`STAKEHOLDER_QUESTIONS.md`](STAKEHOLDER_QUESTIONS.md)

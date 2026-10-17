@@ -4,7 +4,7 @@ Read 2026-09-03 from the read-only recordings in `data/` (git-ignored) made by
 `npm run explore:fields` and `npm run explore:surface`. **Nothing was queried live for this
 document**; every command below reads a file already on disk.
 
-Analysis and consequences live in [`BACKEND_FIELDS.md`](BACKEND_FIELDS.md) §4d. This file is the
+Analysis and consequences live in [`BACKEND_FIELDS.md`](../reference/BACKEND_FIELDS.md) §4d. This file is the
 evidence and the commands, so a reader can check the claims rather than trust them.
 
 > Re-record with `npm run explore:fields` / `npm run explore:surface` (both read-only, both hit

@@ -7,7 +7,7 @@ import { createLogger } from "../utils/logger";
 const log = createLogger("Error");
 
 /**
- * Terminal error handler. Response shape follows docs/migration/CONVENTIONS.md §6:
+ * Terminal error handler. Response shape follows docs/reference/CONVENTIONS.md §6:
  * `error` is mandatory (the deployed client reads it), `message` mirrors it, and no
  * `status` field is placed in the body (the HTTP status line carries it). The stack is
  * only exposed outside production.

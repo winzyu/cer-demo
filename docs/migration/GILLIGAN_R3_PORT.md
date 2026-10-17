@@ -1,7 +1,7 @@
 # Gilligan R3: the upstream relay and the rebuilt page
 
 Built 2026-09-21, verified end to end locally the same day.
-Roadmap step R3 in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4; the local stack it runs on is [`LOCAL_STACK.md`](../runbooks/LOCAL_STACK.md).
+Roadmap step R3 in [`GILLIGAN_TARGET_ARCHITECTURE.md`](../reference/GILLIGAN_TARGET_ARCHITECTURE.md) §4; the local stack it runs on is [`LOCAL_STACK.md`](../runbooks/LOCAL_STACK.md).
 Nothing is pushed and nothing is deployed.
 This is the record of 2026-09-21; the report relay and download button were added on 2026-09-22 (Task B, `docs/SPECS.md` §10.7), and both upstream changes are now committed on `local`.
 

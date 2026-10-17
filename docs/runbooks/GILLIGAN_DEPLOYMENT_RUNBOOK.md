@@ -89,12 +89,12 @@ Michael does these, and each is checked off in §8 before L5:
    That is a server code change that has not been built, so it delays the release rather than unblocking it.
    The service-key check (§5) stays in place under every option.
 7. Disable the `cer-ui` Cloud Build trigger `8ad67b17-5439-4507-9718-5b2b5eb4abe9`, which builds on every push to the infected `main`.
-8. The release commit writes `expireAt` on usage documents (90 days after the last update); add a Firestore TTL policy on `gilligan_usage.expireAt` in the dedicated database, never on `updatedAt` ([`GILLIGAN_FIRESTORE_FRAMEWORK.md`](../migration/GILLIGAN_FIRESTORE_FRAMEWORK.md)).
+8. The release commit writes `expireAt` on usage documents (90 days after the last update); add a Firestore TTL policy on `gilligan_usage.expireAt` in the dedicated database, never on `updatedAt` ([`GILLIGAN_FIRESTORE_FRAMEWORK.md`](../reference/GILLIGAN_FIRESTORE_FRAMEWORK.md)).
 
 ### 2.2 What differs from the mirror run
 
 The local Firestore mirror is where release behaviour is verified; production must differ from the last mirror run only in the four ways below, and anything else that differs is a release risk.
-The full comparison, with evidence from production reads, is [`MIRROR_PRODUCTION_PARITY.md`](../migration/MIRROR_PRODUCTION_PARITY.md) §3 and §7.
+The full comparison, with evidence from production reads, is [`MIRROR_PRODUCTION_PARITY.md`](../reference/MIRROR_PRODUCTION_PARITY.md) §3 and §7.
 
 1. Cloud resources the emulator cannot have: the `gilligan` database, `cer-gilligan-runtime`, the two secrets, the IAM grants and the unauthenticated invocation (§2.1).
 2. Settings: the §4 values replace the mirror's local ones; the mirror run used the same names with a test service key, the emulator host and localhost URLs.

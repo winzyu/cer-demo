@@ -48,7 +48,7 @@ import type { MetricThresholdKey } from "./operatorThresholds";
  * min/max for temperature, pH, dissolved oxygen, ORP and conductivity. There is no turbidity
  * key on any device. Every other metric has an operator-owned numeric range; turbidity has
  * none, so there is nothing to compare a reading against even if the scale were trustworthy.
- * See docs/migration/BACKEND_FIELDS.md §3b and DEVICE_API.md §8.
+ * See docs/reference/BACKEND_FIELDS.md §3b and DEVICE_API.md §8.
  *
  * **The edges below are operator-authoritative.** The operator supplied his own three clarity
  * bands on 2026-09-10 (docs/timeline.md decision log), replacing this

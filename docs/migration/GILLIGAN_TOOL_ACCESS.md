@@ -2,7 +2,7 @@
 
 Why the assistant refused three consecutive questions in a real session, what was wrong, and what changed.
 Written 2026-09-21, after R3; verified live 2026-09-22.
-Decision: [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) D10.
+Decision: [`GILLIGAN_TARGET_ARCHITECTURE.md`](../reference/GILLIGAN_TARGET_ARCHITECTURE.md) D10.
 Behaviour: [`../SPECS.md`](../SPECS.md) §10.2 and §10.3a.
 
 ## The session that prompted this

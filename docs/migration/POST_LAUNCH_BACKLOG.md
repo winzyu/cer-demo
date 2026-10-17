@@ -119,7 +119,7 @@ Not changed by this work: report event detection still reads bucket means; the s
 | A non-superadmin with an empty organization sees every pod (A6) | Fixed on `8463545`, not shipped | Medium |
 | A previous account's pod list survives logout and login in the same tab | Landing doc §7 item 19; `user-dashboard` `src/app/services/device-data.js:341`, `src/app/components/header.js` | Medium; shows a superadmin's pods to the next account on a shared computer |
 | Revoke the old Gemini API key and the old Gmail app password | Landing doc §7 item 10 | Michael |
-| `DEVICE_API_TOKEN` is superadmin with no expiry | [`MICHAEL_DEPLOY_BLOCKERS.md`](MICHAEL_DEPLOY_BLOCKERS.md) §8 | The user chose not to raise it before launch |
+| `DEVICE_API_TOKEN` is superadmin with no expiry | [`MICHAEL_DEPLOY_BLOCKERS.md`](../people/MICHAEL_DEPLOY_BLOCKERS.md) §8 | The user chose not to raise it before launch |
 | Legacy unauthenticated `/water-data`, `/device`, `/duration/*` routes | Server `src/schemas/waterData.schema.ts` | Low; remove or authenticate |
 
 ## 3. Gilligan behaviour

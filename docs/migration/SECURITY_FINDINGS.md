@@ -4,7 +4,7 @@ What "check organization by auth" actually means once you look at how the upstre
 enforces it, and what it forces us to do differently.
 
 Sources: `../clean-earth-rovers-server` (read-only reference repo, read at commit `a3cc25d`) and a
-live read-only field census (`docs/migration/BACKEND_FIELDS.md`).
+live read-only field census (`docs/reference/BACKEND_FIELDS.md`).
 
 > **Nothing here was exploited.** The finding in §1 is read from source. Our token is
 > `superadmin`, which bypasses every org check by design, so it could not demonstrate the flaw

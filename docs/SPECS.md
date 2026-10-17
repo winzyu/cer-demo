@@ -4,8 +4,8 @@ What is built and how it works. This is the implementation reference for the cur
 status block below says which phase each piece belongs to.
 
 - The **legacy** FastAPI + Postgres/pgvector behavior being ported lives in
-  [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md).
-- The **conventions** this code follows are in [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md).
+  [`reference/MIGRATION_SPEC.md`](reference/MIGRATION_SPEC.md).
+- The **conventions** this code follows are in [`reference/CONVENTIONS.md`](reference/CONVENTIONS.md).
 - The **roadmap / next steps** are in [`timeline.md`](timeline.md).
 - The **direct-feed vs RAG experiment** that decides how document context is retrieved — on cost —
   is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). It was swept in 2026-08 and superseded by the
@@ -390,7 +390,7 @@ or two. Windows are **fixed and epoch-aligned**, not rolling — a caller can sp
 allowance on each side of a boundary, and a `7d` window rolls over on Thursday 00:00 UTC rather
 than on Sunday or on the caller's first request.
 
-`FirestoreQuotaStore` (`QUERY_QUOTA_STORE=firestore`, the release setting) keeps one `gilligan_usage` document per user per UTC day, id `<userId>_<YYYY-MM-DD>`, with the fields in `migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
+`FirestoreQuotaStore` (`QUERY_QUOTA_STORE=firestore`, the release setting) keeps one `gilligan_usage` document per user per UTC day, id `<userId>_<YYYY-MM-DD>`, with the fields in `reference/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
 Each write sets `expireAt` 90 days after `updatedAt`, and the Firestore TTL policy runs on `expireAt`: a document is deleted once its TTL field is in the past, so a policy on `updatedAt` would delete the current day's counter and reset the user's limits.
 A new day is a new document, so there is no rollover logic; that is why the store requires `QUERY_QUOTA_WINDOW=1d`.
 Each record reads and rewrites the day's document in one transaction, so simultaneous answers all count.
@@ -402,7 +402,7 @@ The store is async (`QuotaStore` returns promises) and every method takes `nowMs
 ## 4b. Guidance catalogue (`src/catalogue/`)
 
 Every possible cause, next step and referral a customer can see comes from one versioned file, `src/catalogue/catalogue.json`, reviewed by the supervisor.
-The decision and the content sources are in `migration/GILLIGAN_TARGET_ARCHITECTURE.md` §2d; the allowlist reasoning is in `RESPONSIBILITY.md`.
+The decision and the content sources are in `reference/GILLIGAN_TARGET_ARCHITECTURE.md` §2d; the allowlist reasoning is in `RESPONSIBILITY.md`.
 
 **Entries.**
 Each entry has an id, a kind (`explanation`, `limitation` or `next-step`), approved text, the conditions and evidence it needs, a limitation, sources, an optional referral and a review record.
@@ -465,7 +465,7 @@ the client connects on first read/write. Project id comes from `FIRESTORE_PROJEC
 otherwise Application Default Credentials infer it; database id defaults to `(default)`.
 
 This intentionally differs from the reference server, which created a new client per repository —
-flagged as wasteful in `migration/CONVENTIONS.md`. Its consumers are `FirestoreCorpusSource`,
+flagged as wasteful in `reference/CONVENTIONS.md`. Its consumers are `FirestoreCorpusSource`,
 `FirestoreVectorAdapter` and `auditLog`.
 
 ---
@@ -1059,7 +1059,7 @@ no pods", never "the service is not set up".
 - **`last_reported` costs one `/water/last` call per pod**, run concurrently. The registry row carries
   no recency at all, so there is no cheaper source — but on the live fleet that is ~15 upstream reads
   per picker load. **Do not poll this on a timer**; there is no QA mirror and every call reads
-  production (`migration/DEVICE_API.md` §3).
+  production (`reference/DEVICE_API.md` §3).
 - **A coded upstream failure is not flattened to `null`.** `device_auth_expired` / `device_timeout` /
   `device_unavailable` propagate, because reporting an outage as `last_reported: null` would assert
   that a pod has never reported. Only an *uncoded* per-device failure degrades to `null`, so one odd

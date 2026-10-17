@@ -32,19 +32,15 @@ and the traps that cost time.
 
 ### Companion docs
 
-| doc | what it covers |
+| folder | what it holds |
 |---|---|
-| [`docs/STATUS.md`](docs/STATUS.md) | **Start here.** Current state, open work, active traps. Rewritten every session. |
-| [`docs/SPECS.md`](docs/SPECS.md) | Architecture as built today, section by section. |
-| [`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`](docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md) | The Gilligan release: target architecture, roadmap and decisions D1-D12. |
-| [`docs/timeline.md`](docs/timeline.md) | Phased plan, and the **◆ decision gates** that block work. |
-| [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) | The direct-feed vs RAG cost experiment (◆G7). |
-| [`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) · [`docs/RETRIEVAL_LABELS.md`](docs/RETRIEVAL_LABELS.md) | The offline retrieval harness (`npm run retrieval:eval`) and its ground truth. **Read the 20.2% floor in §3 before reading any recall number.** |
-| [`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md) | The sensor API contract, verified live. **Read §12 before trusting any reading.** |
-| [`docs/migration/MIGRATION_SPEC.md`](docs/migration/MIGRATION_SPEC.md) | Behaviour of the legacy FastAPI system being ported. |
-| [`docs/migration/CONVENTIONS.md`](docs/migration/CONVENTIONS.md) | Coding conventions this repo follows. |
-| [`docs/migration/SECURITY_FINDINGS.md`](docs/migration/SECURITY_FINDINGS.md) | Device-authorization findings — upstream, and two in this service fixed 2026-08-21 (§6). |
-| [`docs/EVAL_REBUILD.md`](docs/EVAL_REBUILD.md) · [`eval/README.md`](eval/README.md) | The eval rebuild plan, the committed question set and captured runs. |
+| [`docs/`](docs/) | The behaviour spec [`SPECS.md`](docs/SPECS.md), the decision log [`timeline.md`](docs/timeline.md) (phases and ◆ gates), stakeholder questions, the index of retired docs [`ARCHIVED.md`](docs/ARCHIVED.md), and the eval docs: [`EVAL_REBUILD.md`](docs/EVAL_REBUILD.md), `GRADING_GUIDE.md`, [`RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) (◆G7) and the retrieval harness in [`RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) and `RETRIEVAL_LABELS.md` (**read the 20.2% floor in §3 before reading any recall number**). |
+| [`docs/reference/`](docs/reference/) | Facts about the system to read before changing code: the sensor API contract [`DEVICE_API.md`](docs/reference/DEVICE_API.md) (**read §12 before trusting any reading**), the legacy behaviour in [`MIGRATION_SPEC.md`](docs/reference/MIGRATION_SPEC.md), [`CONVENTIONS.md`](docs/reference/CONVENTIONS.md), and the Gilligan architecture and decisions D1-D12 in [`GILLIGAN_TARGET_ARCHITECTURE.md`](docs/reference/GILLIGAN_TARGET_ARCHITECTURE.md). |
+| [`docs/runbooks/`](docs/runbooks/) | Step-by-step procedures: deployment, the manual test guide, the local stack and the Mirror. |
+| [`docs/people/`](docs/people/) | What was sent to or prepared for stakeholders. |
+| [`docs/captures/`](docs/captures/) | Captured output folders, never edited. |
+| [`docs/migration/`](docs/migration/) | Documents not yet sorted into the folders above, including the device-authorization findings in [`SECURITY_FINDINGS.md`](docs/migration/SECURITY_FINDINGS.md). |
+| [`eval/README.md`](eval/README.md) | The committed question set and captured eval runs. |
 
 ---
 
@@ -179,7 +175,7 @@ Getting a token:
    ```
 
 > ⚠️ **There is no QA mirror.** Any live call reads **production** data — a real customer fleet.
-> Read-only, no bursts. See [`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md) §3.
+> Read-only, no bursts. See [`docs/reference/DEVICE_API.md`](docs/reference/DEVICE_API.md) §3.
 >
 > ⚠️ **Tokens never expire** and are **org-scoped**. A leaked one is valid forever; a wrong-org one
 > returns a short, plausible device list rather than an error.
@@ -377,7 +373,7 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | `MAX_TOOL_ROUNDS` | `16` | Tool-enabled rounds before a forced text-only round. Legacy was 5, which cannot fit a six-parameter question. |
 | `RAW_LIMIT` | `200` | Rows an `aggregation: "raw"` call returns. A cap, not a page size — raw output goes into the next prompt. |
 | `PREDECESSOR_PERIOD_HANDOFF` | `false` | Lets period reads include a merged pod's hidden predecessor history. Keep off until every period-route server in front of this service enforces the Q6 authorization check (`docs/SPECS.md`). |
-| `SENSOR_DEVICE_LABEL` | *(unset)* | Default pod when the model names none. **Leave unset unless the deployment truly has one pod** — the token sees a whole fleet (21 → 17 → **15** across three live counts; nothing may hard-code it — `docs/migration/BACKEND_FIELDS.md` §1) and the two cleared test pods are on opposite coasts. Unset means the tool asks. |
+| `SENSOR_DEVICE_LABEL` | *(unset)* | Default pod when the model names none. **Leave unset unless the deployment truly has one pod** — the token sees a whole fleet (21 → 17 → **15** across three live counts; nothing may hard-code it — `docs/reference/BACKEND_FIELDS.md` §1) and the two cleared test pods are on opposite coasts. Unset means the tool asks. |
 
 ### Report tool ([§10](#10-endpoints))
 
@@ -524,7 +520,7 @@ returning empty context still produces a clean-looking, completely meaningless d
 
 `query_sensor_data` reads the **real Clean Earth device API**. Implementation:
 [`docs/SPECS.md`](docs/SPECS.md) §10.3a; API contract and traps:
-[`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md).
+[`docs/reference/DEVICE_API.md`](docs/reference/DEVICE_API.md).
 
 ### 7a. Turn it on
 
@@ -675,7 +671,7 @@ reporting still answers "the last day" about its last day of data.
 | `npm run report:render` | render a report PDF offline — no server, no LLM (`--device=`, `--range=`, `--out=`); uses `DEVICE_API_TOKEN` like `verify:sensor` |
 | `npm run catalogue:review` | regenerate `docs/catalogue/review.html` from `src/catalogue/catalogue.json` (`docs/SPECS.md` §4b) |
 | `npm run explore:devices` | discover the fleet and record raw responses to `data/device-api/` |
-| `npm run explore:fields` / `explore:surface` | read-only backend census: per-device field coverage / route surface (`docs/migration/BACKEND_FIELDS.md`) |
+| `npm run explore:fields` / `explore:surface` | read-only backend census: per-device field coverage / route surface (`docs/reference/BACKEND_FIELDS.md`) |
 | `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a run; `--spot-check`, `--only`, `--dry-run` |
 | `npm run cost` | price the arms at `gpt-oss-120b` rates and compute break-even |
 | `npm run judge` | the paid Tier 2 LLM judge over captured transcripts; `--dry-run` first, `--calibrate` for judge-vs-human agreement |
@@ -749,8 +745,9 @@ eval/                   # fixtures-wave1/ (committed questions), claims/, retrie
 archive/                # retired code kept for the record, at its original paths.
   pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
 docs/                   # STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md,
-                        #   ARCHIVED.md, eval and corpus notes; migration/ (Gilligan
-                        #   release, device API, upstream); catalogue/ (generated review page)
+                        #   ARCHIVED.md, eval and corpus notes; reference/, runbooks/,
+                        #   people/, captures/; migration/ (not yet sorted);
+                        #   catalogue/ (generated review page)
 ```
 
 ---

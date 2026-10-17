@@ -3,7 +3,7 @@
 Current at `dev` `303280d` plus this edit (2026-09-29: `dev` declared final for rc2; Q9, Q10 including T12 and K21b, U7 and the aggregate-window fix landed; server candidate `8463545` and dashboard candidate `fc13d16` pushed; the server commit is pinned after Michael's answer at the demo, manual guide section L).
 Production fixes outside Gilligan (the CSV export, the user routes, the period query, invited-user login, the empty-organization filter) ship at launch only with Michael's go-ahead, needed before L6; otherwise they follow launch (`timeline.md`, 2026-09-28).
 Written 2026-09-24, after the supervisor's answers to the stakeholder questions and the marked-up catalogue review (`review-marked-up.html`, untracked at the repo root).
-The release goal was sent to the supervisor in [`SUPERVISOR_QUESTIONS_SEND.md`](SUPERVISOR_QUESTIONS_SEND.md) §A1; this plan replaced the dates in [`GILLIGAN_TARGET_ARCHITECTURE.md`](GILLIGAN_TARGET_ARCHITECTURE.md) §4 for the last six days.
+The release goal was sent to the supervisor in [`SUPERVISOR_QUESTIONS_SEND.md`](../people/SUPERVISOR_QUESTIONS_SEND.md) §A1; this plan replaced the dates in [`GILLIGAN_TARGET_ARCHITECTURE.md`](../reference/GILLIGAN_TARGET_ARCHITECTURE.md) §4 for the last six days.
 Task IDs (P1, Q2, ...) are for this plan only.
 
 ## 1. What the answers decided

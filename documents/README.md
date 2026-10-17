@@ -102,7 +102,7 @@ operator-supplied and vendor-unsupported.
 a per-pod record of which turbidity sensor is fitted (`../docs/STAKEHOLDER_QUESTIONS.md` items 3
 and 11). The fleet's NTU value is still derived from a
 raw voltage by a provisional, uncalibrated conversion
-([`../docs/migration/DEVICE_API.md`](../docs/migration/DEVICE_API.md) §8); the two files above
+([`../docs/reference/DEVICE_API.md`](../docs/reference/DEVICE_API.md) §8); the two files above
 describe the candidate sensors but neither vendor publishes the optics that would justify the unit.
 With the source-of-truth document gone, no document in the corpus describes a typical range for ORP,
 conductivity or temperature either.

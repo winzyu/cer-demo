@@ -386,7 +386,7 @@ doc), matching what the ingester would chunk. Tokens estimated as chars/4.
 > dense-only, which is a recorded finding rather than an omission (`../RETRIEVAL_BAKEOFF.md` §4b).
 > **Still open: "no auth + open CORS."** Both remain true of this service and are N9 hardening
 > (`../timeline.md`), with two of this service's own endpoints written up in
-> [`SECURITY_FINDINGS.md`](SECURITY_FINDINGS.md) §6.
+> [`SECURITY_FINDINGS.md`](../migration/SECURITY_FINDINGS.md) §6.
 
 - [ ] **Fix the document source path:** seeder reads `docs/` but corpus is in `documents/`. Reconcile before seeding.
 - [ ] **Preserve nomic task prefixes** (`search_query:` / `search_document:`) exactly, or retrieval quality drops.
