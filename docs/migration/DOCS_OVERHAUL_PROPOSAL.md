@@ -331,5 +331,15 @@ Approved by the user on 2026-10-17, with the coordinator's three changes:
 - **D5. Root `README.md` doc table: replace it** with one line per docs folder (root, `reference/`, `runbooks/`, `plans/`, `people/`, `records/`, `captures/`), in batch 3.
   Do not point it at STATUS: `CLAUDE.md` forbids citing STATUS from durable docs, STATUS is short-lived, and the repository is public.
 - **D6. Eval docs: stay at the root.**
+- **D7. Content step: each file in a batch is resolved, not only moved** (user, 2026-10-17).
+  Each file gets one decision, shown with the move list before the commit, with a one-line reason: **keep** (correct as it is); **update** (fix what would mislead a reader who follows it today: pre-2026-10-04 paths, stale "Draft", "provisional" or "verified on" openings, steps that no longer match the code); **merge** (fold its still-useful content into the doc that absorbed it, then archive it); **archive** (tag, `ARCHIVED.md` row and section, removed instead of moved).
+  Updates apply to living docs (`reference/`, `runbooks/`, `plans/`, and `people/` where still in use); every path an update writes must exist, and a step that can only be checked by running it is marked "unverified since <date>" rather than run.
+  Records are not rewritten: a finished record keeps its old paths and may gain a one-line pointer at the top to what superseded it.
+  A record is archived when it is finished and its inbound links are only `timeline.md`, `ARCHIVED.md`, other records, or links that repoint cleanly to a timeline row or the absorbing doc; records cited from `src/`, `test/`, `eval/` or the catalogue stay unless the repoint is clean.
+  Content fixes that belong in STATUS, `timeline.md`, SPECS, `STAKEHOLDER_QUESTIONS.md`, `CLAUDE.md` or `AGENTS.md` are listed for the coordinator, not made.
+  Batches stay at about 10 files, counting updated, merged and archived files.
+  Order: batch 5; then a content pass over what batches 1-4 moved (`runbooks/`, `reference/`, `people/`, `records/`), in batches of at most 10; then batch 6 and, after the flagging rework lands, batches 7-8.
+  The five overlapping test docs (section 3.2) are not merged: a merge proposal is added here for the user to decide.
+  Sections 3.3 and 3.4 are therefore in scope; this supersedes their "listed, not fixed" and "later content pass" notes.
 
 The coordinator updates the two agent-memory files after batch 6 and leaves the dated handoff prompts as they are.

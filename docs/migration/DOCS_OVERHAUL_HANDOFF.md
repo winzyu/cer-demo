@@ -18,9 +18,10 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
   - D4 rewrite the `src/catalogue/catalogue.json` doc paths in batches 4 and 7, regenerate `docs/catalogue/review.html` with `scripts/renderCatalogueReview.ts`, run `test/unit/catalogue.test.ts` and `catalogueReviewPage.test.ts` singly with `--runInBand`.
   - D5 replace the root `README.md` doc table (lines 39-46) with one line per docs folder in batch 3, never pointing at STATUS.
   - D6 eval docs stay at the root.
+- D7 added by the user on 2026-10-17 (prompt `~/code/work/clean-earth-rovers/handoff/2026-10-17/3c-docs-content-pass.md`, recorded in proposal section 9): every file in a batch gets keep, update, merge or archive, shown with one line of reason beside the move list; living docs are updated, records keep their content and are archived where nothing living depends on them; content fixes in STATUS, timeline, SPECS, SQ, `CLAUDE.md` and `AGENTS.md` go to the coordinator as a list.
 - `docs/README.md` was declined (2026-10-16): STATUS "Where things live" is the only map.
 - Each batch: show the user the file list first and get a yes, then one commit, push `docs/cleanup`, report the commit ID for the coordinator.
-- Only batch 2 archives (`gilligan_v0.png`, tag `docs-archive-2026-10-16c`, with an `ARCHIVED.md` row and section in the existing style).
+- Batch 2 archived `gilligan_v0.png` (tag `docs-archive-2026-10-16c`); under D7 any batch may archive, each with its own tag, `ARCHIVED.md` row and section in the existing style.
 - In STATUS, `timeline.md`, SPECS, `CLAUDE.md` and `AGENTS.md` only mechanical link-path rewrites are allowed (plus D2's wording); list each in the batch report.
 - One sentence per line in Markdown, plain hyphens, no attribution lines, stage explicit paths only.
 
@@ -31,11 +32,15 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 | Codex's five retired docs, tag `docs-archive-2026-10-16` | done `21a60e8`, landed |
 | Batch b, tag `docs-archive-2026-10-16b` | done `6e019cf`, landed |
 | Proposal | `3044fa7`, decisions recorded with this handoff |
-| Batch 1, 10 runbooks to `docs/runbooks/` | done `24acdfd`; not yet landed |
-| Batch 2, 4 capture folders to `docs/captures/`, `gilligan_v0.png` archived (tag `docs-archive-2026-10-16c` at `cfda55a`) | done `4ba64fb`; also fixes a link batch 1 missed in `GILLIGAN_E2E_RESULTS_2026-09-25.md`; not yet landed |
-| Batch 3, 7 docs to `docs/reference/`, 3 to `docs/people/`, root `README.md` docs table (D5) | done `498545e`; not yet landed |
-| Batch 4, 10 pre-launch records to `docs/records/`, `catalogue.json` path (D4) | done in the commit that records it here; the regenerated `docs/catalogue/review.html` also picks up the 4 draft entries `16cec6e` added without regenerating; not yet landed |
-| Batches 5-6 | next, in order |
+| Batch 1, 10 runbooks to `docs/runbooks/` | done `24acdfd`, landed |
+| Batch 2, 4 capture folders to `docs/captures/`, `gilligan_v0.png` archived (tag `docs-archive-2026-10-16c` at `cfda55a`) | done `4ba64fb`, landed; also fixes a link batch 1 missed in `GILLIGAN_E2E_RESULTS_2026-09-25.md` |
+| Batch 3, 7 docs to `docs/reference/`, 3 to `docs/people/`, root `README.md` docs table (D5) | done `498545e`, landed |
+| Batch 4, 10 pre-launch records to `docs/records/`, `catalogue.json` path (D4) | done `736d547`, landed; the regenerated `docs/catalogue/review.html` also picks up the 4 draft entries `16cec6e` added without regenerating |
+| D7 recorded | in the commit that records it here |
+| Batch 5 with D7 decisions | next |
+| Content pass over batches 1-4 (`runbooks/`, `reference/`, `people/`, `records/`), batches of at most 10 | after batch 5 |
+| Batch 6 with D7 | after the content pass |
+| Test-doc merge proposal (section 3.2 docs) | a proposal section for the user to decide; no merge |
 | Batches 7-8 | wait until `task/flagging-share-window` lands on `dev` |
 | Landing sweeps for `reflection`, `task/tide-tool`, `docs/firestore-testing-plan`, `fix/window-note` | after each branch lands (proposal section 7) |
 
@@ -46,7 +51,7 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 ## Next step
 
 1. `git fetch origin` and merge `origin/dev` into `docs/cleanup` (no rebase) if `dev` moved.
-2. Batch 5: show the user the 9 records (proposal section 5, batch column `5`, including the root `CORPUS_SOURCING_BRIEF.md` and `RESPONSIBILITY.md`) moving to `docs/records/`; on a yes, rewrite links, then `git mv`.
+2. Batch 5 (D7): show the user the 9 records (proposal section 5, batch column `5`, including the root `CORPUS_SOURCING_BRIEF.md` and `RESPONSIBILITY.md`) moving to `docs/records/`; with a keep, update, merge or archive decision and one line of reason per file; on a yes, archive what is archived and move the rest.
    Recount citations first; check SPECS' hits against lines 1099-1786.
    The two root docs move one level deeper, so their own links to root docs change too (the script handles that).
    `src/` comments change, so run `npm run typecheck` and `npm run lint` (they resolve the main checkout's `node_modules`).
