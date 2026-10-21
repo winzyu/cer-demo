@@ -1,4 +1,4 @@
-// Gilligan end-to-end bot, phase 1 of docs/migration/GILLIGAN_E2E_TEST_TICKET.md.
+// Gilligan end-to-end bot; scenarios are in docs/runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md.
 //
 // Drives the real dashboard in headless Chromium as the mirror's personas, against the Firestore
 // emulator, the CER server's mirror branch and cer-demo. The bot owns the server and cer-demo

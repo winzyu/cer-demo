@@ -59,7 +59,7 @@ Update the State column in `index.html` as modules land.
 
 ## Pending decision: post-launch material
 
-On 2026-10-11 the user asked what the post-launch changes mean for the course. Only `469e972` (searched-window fix) is on `dev`; the rest is on unmerged branches: `task/release-l6-images` and `docs/launch-handoff` (L6-L9, Gilligan live 2026-10-07, email outage, unguarded user-update routes, "launch with known issues" on 2026-10-06), `docs/behavior-handoff` (data-skepticism incident, `docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`), `task/sot-v2-flagging` (per-reading QC in `src/devices/readingQc.ts`, limit resolution, 3-in-a-row rule, tool-computed verdicts), `task/report-omit` (omit option; the model claimed unmade PDFs in about 3 of 8 runs, fixed in the server).
+On 2026-10-11 the user asked what the post-launch changes mean for the course. Only `469e972` (searched-window fix) is on `dev`; the rest is on unmerged branches: `task/release-l6-images` and `docs/launch-handoff` (L6-L9, Gilligan live 2026-10-07, email outage, unguarded user-update routes, "launch with known issues" on 2026-10-06), `docs/behavior-handoff` (data-skepticism incident, `docs/records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`), `task/sot-v2-flagging` (per-reading QC in `src/devices/readingQc.ts`, limit resolution, 3-in-a-row rule, tool-computed verdicts), `task/report-omit` (omit option; the model claimed unmade PDFs in about 3 of 8 runs, fixed in the server).
 Proposed changes: Era 8 "Live" on the timeline and fix Era 7's stale "waits on Michael for B1"; module 3 grows with QC and flagging; new module 8b "After launch: real users" on the two incidents; metric boxes for run rates (3 of 8), the 5-10% exceedance share and fixture coverage (1 of 49); module D uses the window fix as its debugging case; 9b covers the hotfix cherry-pick and stacked branches; 9a notes `dev` lagging the live state; module 10 and 11 gain "eval coverage must match production use" and "enforce invariants in code, not prompts".
 Options put to the user: (a) write now citing branch commits, (b) update only the plan now and write pages once the branches land. Recommended (b) plus the Era 7 fix now. **Not answered yet.**
 
@@ -82,11 +82,11 @@ Options put to the user: (a) write now citing branch commits, (b) update only th
 ## Source map for the modules
 
 - Current state and defects: `docs/STATUS.md` (read only; never cite it from course pages as authority, cite the durable doc instead).
-- Behaviour: `docs/SPECS.md`; architecture: `docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`; config: `src/config/index.ts`.
+- Behaviour: `docs/SPECS.md`; architecture: `docs/reference/GILLIGAN_TARGET_ARCHITECTURE.md`; config: `src/config/index.ts`.
 - Decisions with dates: `docs/timeline.md` (decision tables).
 - Eval: `docs/EVAL_REBUILD.md` (§0 why, §1 decisions, §2 sizing, §3 model roles, §6 traps, §9 phase table and the dated capture log), `eval/README.md`, `eval/reviews/phase3-2026-09-23/R4_REPORT.md`, `docs/GRADING_GUIDE.md`, `docs/RETRIEVAL_EVAL.md`, `docs/RETRIEVAL_LABELS.md`.
 - Bake-off (history only): `docs/RETRIEVAL_BAKEOFF.md`; the archived results report is `git show eval-docs-archive-2026-09-15:docs/RETRIEVAL_COMPARISON.md`.
-- Incident: `docs/migration/SECURITY_INCIDENT_2026-09-19.md`.
+- Incident: `docs/records/SECURITY_INCIDENT_2026-09-19.md`.
 - Corpus: `documents/README.md` (16 documents, 864,321 chars, 457 chunks).
 
 ## Facts already gathered (re-derive if in doubt)

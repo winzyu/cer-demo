@@ -14,7 +14,7 @@ Do not assume spawning a Codex subagent creates a worktree: it normally shares t
 Create an approved worktree first and use a verified worktree-scoped worker; if this client cannot scope it, use a separate Codex session rooted there or keep the task inline.
 Never fabricate Claude `isolation` or `EnterWorktree` parameters in Codex.
 
-Give the worker the goal, exact editable/off-limits paths, settled decisions, relevant conventions from `docs/migration/CONVENTIONS.md`, production traps, and required verification.
+Give the worker the goal, exact editable/off-limits paths, settled decisions, relevant conventions from `docs/reference/CONVENTIONS.md`, production traps, and required verification.
 For runtime setup, point to `../run-local/references/worktree.md`; do not load it for read-only research.
 Assign disjoint paths to parallel workers.
 Require: edits only in the assigned worktree, reference repositories read-only, no Git mutations, no full test suite, and no further delegation.

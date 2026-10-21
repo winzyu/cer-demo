@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 /**
- * Minimal tagged logger. Conventions (docs/migration/CONVENTIONS.md §9) call for
+ * Minimal tagged logger. Conventions (docs/reference/CONVENTIONS.md §9) call for
  * `morgan` HTTP logging plus bracketed-tag `console.*` diagnostics and no logging
  * library — this centralizes the tag formatting so those diagnostics stay consistent.
  */

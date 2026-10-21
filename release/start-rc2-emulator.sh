@@ -3,10 +3,10 @@ set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$here"
-export JAVA_HOME=/home/winsy/.local/opt/jdk-21.0.12.1+1
+export JAVA_HOME="$HOME/.local/opt/jdk-21.0.12.1+1"
 export PATH="$JAVA_HOME/bin:$PATH"
 export GOOGLE_APPLICATION_CREDENTIALS="$here/no-production-credentials.json"
-export CLOUDSDK_CONFIG=/home/winsy/code/clean-earth-rovers/emulator-original/no-gcloud
+export CLOUDSDK_CONFIG="$here/../../../emulator-original/no-gcloud"
 export HTTP_PROXY=http://127.0.0.1:9
 export HTTPS_PROXY=http://127.0.0.1:9
 export http_proxy="$HTTP_PROXY"

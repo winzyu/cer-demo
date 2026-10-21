@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Adds one fabricated pod to a running mirror emulator for the data-skepticism checks
- * (docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §2 and §6).
+ * (docs/records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §2 and §6).
  *
  *   FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 node scripts/mirror/addSkepticismPod.mjs
  *

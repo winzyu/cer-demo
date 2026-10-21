@@ -3,6 +3,8 @@
 These files were removed from the working tree. They are **not lost** — every one is preserved
 in git history under the tag named in its section.
 
+Paths in sections written before 2026-10-17 predate the move of `docs/migration/` into folders by role; the file map in [`DOCS_OVERHAUL_PROPOSAL.md`](plans/DOCS_OVERHAUL_PROPOSAL.md) section 5 gives each file's current folder.
+
 | tag | date | what it holds |
 |---|---|---|
 | `docs-archive-2026-08-30` | 2026-08-30 | six superseded documents |
@@ -14,6 +16,16 @@ in git history under the tag named in its section.
 | `advice-archive-2026-09-17` | 2026-09-23 | the advice drafts, re-tagged under the name the catalogue cites - same commit as `docs-archive-2026-09-23` |
 | `docs-tier2-archive-2026-09-23` | 2026-09-23 | the chat UX work plan, the pod-authorization design and the WSL checkout guide - 3 files, plus the untrimmed product-direction doc |
 | `old-machine-recovery-2026-09-19` | 2026-09-22 | work from 2026-09-17 to 2026-09-19 that was committed on the old machine but never pushed, rebuilt from session transcripts - 5 planning docs not restored to the tree |
+| `supervisor-brief-2026-09-29` | 2026-10-14 | `docs/migration/SUPERVISOR_BRIEF.html`, the pre-launch supervisor brief for the September 30 release, never reviewed or sent - 1 file |
+| `mirror-checklist-2026-09-29` | 2026-10-14 | `scripts/e2e/mirrorChecklist.mjs`, the browser driver for `E2E_CHECKLIST.md` groups B, D, E, H and I on the 2026-09-29 mirror stack - 1 file |
+| `docs-archive-2026-10-16` | 2026-10-16 | five superseded migration docs: the one-page release goal, the upstream PR drafts, the E2E test ticket, the Task C handoff and the post-launch merge test plan - 5 files |
+| `docs-archive-2026-10-16b` | 2026-10-16 | the corpus seeding runbook, the two Q9 cloud-session results and the turbidity exploration - 4 files |
+| `docs-archive-2026-10-16c` | 2026-10-17 | `docs/gilligan_v0.png`, a screenshot of the original Gilligan chat page - 1 file |
+| `docs-archive-2026-10-17` | 2026-10-17 | the corpus sourcing brief, the freeze-day chat reset roundup and the post-launch merge results - 3 files |
+| `docs-archive-2026-10-17b` | 2026-10-17 | the Task C verification record and the report download browser check - 2 files |
+| `docs-archive-2026-10-21` | 2026-10-21 | the report-omission Mirror test plan - 1 file |
+| `docs-archive-2026-10-21b` | 2026-10-21 | the Q10 Gilligan behaviour decisions and task list - 1 file |
+| `docs-archive-2026-10-21c` | 2026-10-21 | the end-to-end checklist, split into the manual guide's short run and a results record - 1 file |
 
 Retrieve one by path:
 
@@ -244,6 +256,151 @@ Retrieve:
 ```bash
 git show docs-tier2-archive-2026-09-23:docs/migration/POD_AUTHORIZATION.md
 git show docs-tier2-archive-2026-09-23:docs/migration/GILLIGAN_PRODUCT_DIRECTION.md
+```
+
+## `docs-archive-2026-10-16` - superseded migration plans, drafts and handoffs
+
+Removed on 2026-10-16, preserved under the tag `docs-archive-2026-10-16`, which points at `650451c`, the last commit that contains them.
+None is cited by code.
+References in the tree were repointed in the same change, and the two results docs that ran these plans name their `git show` line.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/migration/RELEASE_GOAL_AND_PLAN.md` | 21 | The 2026-09-18 one-page release goal for September 30 | Its goal was sent as the supervisor's question A1 and its target date has passed. The goal lives in `SUPERVISOR_QUESTIONS_SEND.md` §A1, the roadmap in `GILLIGAN_TARGET_ARCHITECTURE.md`, product rules in `SPECS.md`. |
+| `docs/migration/UPSTREAM_PR_BODIES.md` | 79 | Draft PR descriptions for the September 24 feature branches | They describe an earlier integration state and should not be reused for the next upstream landing. The landing record is `GILLIGAN_LANDING_2026-09-29.md`. |
+| `docs/migration/GILLIGAN_E2E_TEST_TICKET.md` | 242 | The September E2E test ticket | Its own opening named `GILLIGAN_MANUAL_TEST_GUIDE.md` as its replacement; keeping both left competing test instructions. Its run is recorded in `GILLIGAN_E2E_RESULTS_2026-09-25.md`. It has scenario detail beyond the guide, so compare it before treating the guide as complete for a future run. |
+| `docs/migration/TASK_C_HANDOFF.md` | 131 | The 2026-09-24 Task C handoff: uncommitted worktrees and next steps | Its instructions expired when the work landed. The behavior contract is in `SPECS.md` §10.4a and the observed checks in `TASK_C_VERIFICATION.md`. |
+| `docs/migration/POST_LAUNCH_MERGE_TESTS.md` | 81 | The test plan for the October 11 post-launch merge | The merge is done; what passed is in `POST_LAUNCH_MERGE_RESULTS_2026-10-11.md`. |
+
+**554 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-16:docs/migration/GILLIGAN_E2E_TEST_TICKET.md
+git show docs-archive-2026-10-16:docs/migration/UPSTREAM_PR_BODIES.md
+```
+
+## `docs-archive-2026-10-16b` - finished cloud results, an unused runbook and interview input
+
+Removed on 2026-10-16, preserved under the tag `docs-archive-2026-10-16b`, which points at `21a60e8`, the last commit that contains them.
+Nothing in the tree referenced them.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/migration/CORPUS_SEEDING.md` | 169 | The 2026-09-17 runbook for an upstream owner to seed the corpus into their Firestore (target architecture R5) | On 2026-09-25 the corpus was decided to ship inside the image (`CORPUS_SOURCE=artifact`, `GILLIGAN_RELEASE_PLAN.md`), so no upstream seeding happens. The seed commands stay documented in `SPECS.md`. |
+| `docs/migration/Q9_CLOUD_RESULT.md` | 82 | The 2026-09-27 cloud-session result for `cloud/q9-logic`: pH bound, silent pods, report reading age, thin 1-day series | Q9 landed on `dev` on 2026-09-29 (`ec6454a`); the changes are in git and the landing in `GILLIGAN_RELEASE_PLAN.md`. |
+| `docs/migration/Q9_C1_D1_RESULT.md` | 103 | The 2026-09-27 cloud-session result for `cloud/q9-c1-d1`: the pod-status rule and excluded implausible readings | Same landing; the mirror rerun of C1 and D1 is recorded in `E2E_CHECKLIST.md`. |
+| `docs/migration/TURBIDITY_EXPLORATION.md` | 64 | The 2026-09-24 code exploration that fed the Task A turbidity interview | Input, not a record: the decisions are the 2026-09-24 turbidity row in `timeline.md` and `SPECS.md`, and its line references are stale. |
+
+**418 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-16b:docs/migration/CORPUS_SEEDING.md
+git show docs-archive-2026-10-16b:docs/migration/TURBIDITY_EXPLORATION.md
+```
+
+## `docs-archive-2026-10-16c` - an unreferenced screenshot
+
+Removed on 2026-10-17, preserved under the tag `docs-archive-2026-10-16c`, which points at `cfda55a`, the last commit that contains it.
+Nothing in the tree referenced it.
+
+| file | size | what it was | why it went |
+|---|---:|---|---|
+| `docs/gilligan_v0.png` | 1680 x 855 PNG | A screenshot of the original Gilligan chat page in the CER dashboard (greeting, empty chat history, "Ask Gilligan" input), added 2026-08-19 in `991db02` | Nothing in the repository cited it. |
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-16c:docs/gilligan_v0.png > gilligan_v0.png
+```
+
+## `docs-archive-2026-10-17` - a brief never used, a finished roundup and overtaken merge results
+
+Removed on 2026-10-17 in the docs overhaul's content step, preserved under the tag `docs-archive-2026-10-17`, which points at `f2ef65f`, the last commit that contains them.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/CORPUS_SOURCING_BRIEF.md` | 248 | The 2026-08-21 self-contained brief for a research session to source missing corpus documents | The session was never needed: the 2026-09-21 timeline row records that the corpus was restored from `DOC_META` instead. Two records and that row still name it. |
+| `docs/migration/GILLIGAN_RESET_2026-09-28.md` | 104 | The release coordinator's freeze-day roundup of every chat and what each inherited | Finished, and it deferred to `GILLIGAN_RELEASE_PLAN.md` throughout. The backlog's finding 8 row now points at `LAUNCH_ISSUES_CHECKLIST.md` B3 and `Q10_TASKS.md` C1; `timeline.md` (2026-09-28, production fixes) still names its old path. |
+| `docs/migration/POST_LAUNCH_MERGE_RESULTS_2026-10-11.md` | 66 | Static, Jest and live-smoke results for `land/post-launch` at `247e0ad` | Nothing linked it, and its one open item, finding 1, was fixed on 2026-10-12 by `48e1f1f`; `test/unit/postLaunchMerge.test.ts` has no failing cases left. |
+
+**418 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-17:docs/CORPUS_SOURCING_BRIEF.md
+git show docs-archive-2026-10-17:docs/migration/GILLIGAN_RESET_2026-09-28.md
+git show docs-archive-2026-10-17:docs/migration/POST_LAUNCH_MERGE_RESULTS_2026-10-11.md
+```
+
+## `docs-archive-2026-10-17b` - two finished September checks
+
+Removed on 2026-10-17 in the docs overhaul's content step, preserved under the tag `docs-archive-2026-10-17b`, which points at `2659b9d`, the last commit that contains them.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/records/TASK_C_VERIFICATION.md` | 89 | The 2026-09-24 reproduction and browser verification of Task C (answer-local tool citations and citation audit) | Finished; the contract is `SPECS.md` §10.4a, and the 2026-09-24 Task C row in `timeline.md` still names it. |
+| `docs/records/REPORT_BROWSER_CHECK.md` | 88 | A manual check of the report button on the local dashboard, written 2026-09-22, with its 2026-09-23 headless run | Finished; only `GILLIGAN_R3_PORT.md` cited it, and its two mentions now name this tag. |
+
+**177 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-17b:docs/records/TASK_C_VERIFICATION.md
+git show docs-archive-2026-10-17b:docs/records/REPORT_BROWSER_CHECK.md
+```
+
+## `docs-archive-2026-10-21` - the report-omission Mirror test plan
+
+Removed on 2026-10-21 in the docs overhaul's content step, preserved under the tag `docs-archive-2026-10-21`, which points at `7e7630f`, the last commit that contains it.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/records/REPORT_OMIT_MIRROR_TEST.md` | 91 | The 2026-10-10 plan for testing the report `omit` option on the Mirror, with the path substitutions for the older Mirror runbook | Finished: its run is `REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`, its setup lives on in `REPORT_OMIT_MIRROR_RUNBOOK.md`, and `MIRROR_RUNBOOK.md` now carries the substitutions; `timeline.md` and STATUS no longer cite it. |
+
+**91 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-21:docs/records/REPORT_OMIT_MIRROR_TEST.md
+```
+
+## `docs-archive-2026-10-21b` - the Q10 task list
+
+Removed on 2026-10-21 in the docs overhaul's content step, preserved under the tag `docs-archive-2026-10-21b`, which points at `ff51594`, the last commit that contains it.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/plans/Q10_TASKS.md` | 79 | The 2026-09-28 Gilligan behaviour decisions, tasks T1-T12, the catalogue and fallback-range test plans, and the catalogue results | Every task was settled with the user on 2026-10-20: T1-T3, T5, T8, T10 (wired; the production text is Michael's) and T12 are in the release, and T7's fallback ranges are on `dev` (`60e321b`), not yet released; T6 was dropped (T2 strips earlier markers, so its prompt lines guard nothing); T4 and T11 are one backlog row gated on `PREDECESSOR_PERIOD_HANDOFF`; T9's remaining checks are a backlog row. The decisions are now a 2026-09-28 row in `timeline.md`. |
+
+**79 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-21b:docs/plans/Q10_TASKS.md
+```
+
+## `docs-archive-2026-10-21c` - the end-to-end checklist
+
+Removed on 2026-10-21 by the test-doc merge M2 (`plans/DOCS_OVERHAUL_PROPOSAL.md` section 10), preserved under the tag `docs-archive-2026-10-21c`, which points at `fcf2eca`, the last commit that contains it.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/runbooks/E2E_CHECKLIST.md` | 263 | A 22-turn question script for one short run, with the 2026-09-26 baseline and the 2026-09-29 Mirror rerun | Merged: the script is the "Short run" section of `runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md` (IDs prefixed `S`, the near-limit and member-login expectations updated), and both result sets are `records/E2E_CHECKLIST_RESULTS_2026-09-26.md`. |
+
+**263 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-21c:docs/runbooks/E2E_CHECKLIST.md
 ```
 
 ## Rules

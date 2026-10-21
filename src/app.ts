@@ -11,7 +11,7 @@ import { requireServiceKey } from "./middleware/requireServiceKey";
 
 const app: Express = express();
 
-// Middleware order is load-bearing (docs/migration/CONVENTIONS.md §3).
+// Middleware order is load-bearing (docs/reference/CONVENTIONS.md §3).
 app.use(morgan("dev"));
 app.use(
   helmet({
