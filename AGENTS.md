@@ -5,7 +5,7 @@ Their history carries malware (the `main` and `develop` tips scanned clean as of
 Editing and committing there needs no approval; every push needs the user's explicit consent in chat, and never force-push or merge.
 Do not read `~/.config/gcloud/` or `serviceAccountKey.json`, or print credentials.
 The device API is production with no QA mirror; announce live reads and obtain approval for live writes or paid evaluation runs.
-Migration planning artifacts belong in `docs/migration/`.
+Plans and handoffs belong in `docs/plans/`, dated results in `docs/records/`, procedures in `docs/runbooks/`, and facts about the system in `docs/reference/`.
 
 ## Documentation
 
@@ -13,7 +13,7 @@ Start at `docs/STATUS.md`; open other docs only as needed.
 Never cite STATUS from code or durable docs; put reasoning in `docs/SPECS.md`, `docs/EVAL_REBUILD.md`, or `docs/timeline.md`.
 Do not search, read, or cite archived docs without permission; `docs/ARCHIVED.md` indexes them.
 Retrieve approved archived content with `git show`, never restore it into the tree.
-For substantial design comparisons, create a reviewable local Markdown/HTML artifact under `docs/migration/`; publish externally only when authorized.
+For substantial design comparisons, create a reviewable local Markdown/HTML artifact under `docs/plans/`; publish externally only when authorized.
 
 ## Verification and artifacts
 

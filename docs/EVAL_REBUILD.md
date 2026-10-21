@@ -419,7 +419,7 @@ does mean there is no cost argument for keeping groundedness in the paid tier.
 1. **Settle the uncommitted work.** `src/eval/judge/{prompts,runner}.ts` and `src/eval/prices.ts`
    carry the `response_format: json_schema` enforcement plus two judge price entries. This is
    good work and should land — it is a prerequisite for a trustworthy judge. Also uncommitted and
-   of unknown authorship: `docs/migration/DEVICE_API.md`. `.env.example.tmp` is an empty stray;
+   of unknown authorship: `docs/reference/DEVICE_API.md`. `.env.example.tmp` is an empty stray;
    delete it.
 2. **Finish the judge-model comparison.** Four ledgers sit in `data/results/judge/` from
    2026-08-28 — `warm.schema-{120b,minimax,deepseek,nemotron}.jsonl` (83/83/82/50 rows).

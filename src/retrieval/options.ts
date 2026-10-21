@@ -4,7 +4,7 @@ import type { GetContextOptions } from "../types/retrieval.types";
  * Top-k bounds.
  *
  * `DEFAULT_TOP_K` sets prompt size and cost on every request. It was the legacy 5
- * (`docs/migration/MIGRATION_SPEC.md` §7) until the 2026-09-23 Phase 3 baseline measured it:
+ * (`docs/reference/MIGRATION_SPEC.md` §7) until the 2026-09-23 Phase 3 baseline measured it:
  * wave 1 labels average 5.4 chunks per turn, so k=5 capped recall on the default arm at 18%, and
  * the captured answers scored 0.52 against 1.01 on gold context. k=10 reached 29% offline for
  * about 4K more prompt tokens; the recall and correctness result is in `docs/EVAL_REBUILD.md`.

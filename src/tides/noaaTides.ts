@@ -3,7 +3,7 @@ import type { FetchLike } from "../devices/DeviceApiClient";
 
 /**
  * NOAA CO-OPS tide predictions for `get_tides`, read directly rather than through CER's
- * `GET /water/tides/:device/:start/:end` (`docs/migration/DEVICE_API.md`).
+ * `GET /water/tides/:device/:start/:end` (`docs/reference/DEVICE_API.md`).
  *
  * The CER route answers `[]` for an inland pod, a pod with no GPS fix, a station with no
  * predictions and any NOAA error alike, and never says which station it used. Verified

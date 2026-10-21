@@ -5,9 +5,9 @@ import type { UsableGuidance } from "./select";
  * The chat prompt's view of the catalogue: rules first, then one compact record per usable entry.
  *
  * Carried in the system prompt rather than retrieved, so every entry is grounded by construction
- * (`docs/RESPONSIBILITY.md`, "Decided 2026-09-09") and the text is identical on every request,
- * which keeps the cached prefix intact. With no usable entries the block still appears, because
- * "nothing is approved" is itself a rule the model has to follow.
+ * (`docs/records/RESPONSIBILITY.md`, "Decided 2026-09-09") and the text is identical on every
+ * request, which keeps the cached prefix intact. With no usable entries the block still appears,
+ * because "nothing is approved" is itself a rule the model has to follow.
  */
 
 const RULES = `- Possible causes, next steps, services and contacts may come ONLY from the

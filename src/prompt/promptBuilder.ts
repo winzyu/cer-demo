@@ -47,7 +47,7 @@ export const formatSelectedDevice = (device: string): string => {
  *
  * Without it the model had no way to tell a ten-day-old reading from a current one: it called two
  * pods that had been silent for 10 and 12 days "likely online" and presented a 10-day-old
- * reading as the current temperature (`docs/migration/CONVERSATION_QA_2026-09-24.md` findings 1
+ * reading as the current temperature (`docs/records/CONVERSATION_QA_2026-09-24.md` findings 1
  * and 2). The tools state each reading's age as well (`src/tools/readingAge.ts`); this line
  * anchors "today", "yesterday" and "right now" in the user's own question.
  *

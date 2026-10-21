@@ -2,7 +2,7 @@ import type { Sample, SeriesBucket } from "./aggregate";
 
 /**
  * When in the day a metric peaks, in the pod's local solar time (record §5 item 5,
- * `docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`).
+ * `docs/records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`).
  *
  * A cycle driven by the sun peaks at the same clock hour every day; a tidal one comes about 50
  * minutes later each day, because the lunar day is 24.84 hours. No tool measures tides, so this

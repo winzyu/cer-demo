@@ -7,7 +7,7 @@ import { getTurbidityInfo, getTurbidityInfoDefinition } from "../../src/tools/ge
 /**
  * `get_turbidity_info` is static and no-parameter -- these tests pin the numbers in its result to
  * `referenceRanges.ts`'s exports (`TURBIDITY_BAND_EDGES`, `OFF_SCALE_INDEX`) rather than to
- * re-typed literals, so a future edge change (`docs/migration/DEVICE_API.md` §8c is still open on
+ * re-typed literals, so a future edge change (`docs/reference/DEVICE_API.md` §8c is still open on
  * the conversion curve) fails this test instead of silently drifting from the report's bands.
  */
 describe("get_turbidity_info — tool definition", () => {

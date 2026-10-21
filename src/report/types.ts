@@ -394,7 +394,7 @@ export interface StatusAssessment {
  * The report's status together with the reason for it. The status alone reached the model through
  * `generate_report`, and an Exceedance-driven "Action Required" with no events read as a
  * contradiction the model then papered over ("Action Required ... no abnormal conditions were
- * reported", `docs/migration/CONVERSATION_QA_2026-09-24.md` finding 3). Computing the reason on
+ * reported", `docs/records/CONVERSATION_QA_2026-09-24.md` finding 3). Computing the reason on
  * the same ladder as the status, rather than beside it, keeps the two from ever disagreeing.
  *
  * Note which flags are and are not consulted: "N/A" and "Qualitative" match none of the branches

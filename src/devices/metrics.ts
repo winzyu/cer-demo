@@ -19,7 +19,7 @@ import type {
  * alert compared a metric against another metric's limits. **Fixed upstream** in `62993fe`
  * (2026-08-19), verified on `origin/develop` 2026-08-25: it now reads the same codes as this
  * table. The note stays because a deployment older than that fix is still out there, and a
- * disagreement with one is not ambiguity about the real codes. `docs/migration/DEVICE_API.md` §7.
+ * disagreement with one is not ambiguity about the real codes. `docs/reference/DEVICE_API.md` §7.
  */
 export const METRICS: readonly MetricDefinition[] = [
   {

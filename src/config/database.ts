@@ -12,7 +12,7 @@ let instance: Firestore | undefined;
  * credentials — the client connects on first read/write.
  *
  * A single shared instance is used deliberately: the reference server created a new
- * client per repository (docs/migration/CONVENTIONS.md flags this), which wastes
+ * client per repository (docs/reference/CONVENTIONS.md flags this), which wastes
  * connections. Repositories should call this instead of constructing their own.
  */
 export const getFirestore = (): Firestore => {

@@ -4,8 +4,8 @@ What is built and how it works. This is the implementation reference for the cur
 status block below says which phase each piece belongs to.
 
 - The **legacy** FastAPI + Postgres/pgvector behavior being ported lives in
-  [`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md).
-- The **conventions** this code follows are in [`migration/CONVENTIONS.md`](migration/CONVENTIONS.md).
+  [`reference/MIGRATION_SPEC.md`](reference/MIGRATION_SPEC.md).
+- The **conventions** this code follows are in [`reference/CONVENTIONS.md`](reference/CONVENTIONS.md).
 - The **roadmap / next steps** are in [`timeline.md`](timeline.md).
 - The **direct-feed vs RAG experiment** that decides how document context is retrieved — on cost —
   is in [`RETRIEVAL_BAKEOFF.md`](RETRIEVAL_BAKEOFF.md). It was swept in 2026-08 and superseded by the
@@ -221,7 +221,7 @@ clean-earth-rag/
 │                             files (the ◆G9 slice) are force-tracked; see documents/README.md
 ├── archive/pgvector-rag/     the archived bake-off arm at its original paths (§14) —
 │                             not compiled, not tested, not imported; excluded from the image
-└── docs/                     STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md, migration/
+└── docs/                     STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md, reference/, runbooks/, plans/, people/, records/, captures/
 ```
 
 ---
@@ -390,7 +390,7 @@ or two. Windows are **fixed and epoch-aligned**, not rolling — a caller can sp
 allowance on each side of a boundary, and a `7d` window rolls over on Thursday 00:00 UTC rather
 than on Sunday or on the caller's first request.
 
-`FirestoreQuotaStore` (`QUERY_QUOTA_STORE=firestore`, the release setting) keeps one `gilligan_usage` document per user per UTC day, id `<userId>_<YYYY-MM-DD>`, with the fields in `migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
+`FirestoreQuotaStore` (`QUERY_QUOTA_STORE=firestore`, the release setting) keeps one `gilligan_usage` document per user per UTC day, id `<userId>_<YYYY-MM-DD>`, with the fields in `reference/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
 Each write sets `expireAt` 90 days after `updatedAt`, and the Firestore TTL policy runs on `expireAt`: a document is deleted once its TTL field is in the past, so a policy on `updatedAt` would delete the current day's counter and reset the user's limits.
 A new day is a new document, so there is no rollover logic; that is why the store requires `QUERY_QUOTA_WINDOW=1d`.
 Each record reads and rewrites the day's document in one transaction, so simultaneous answers all count.
@@ -402,7 +402,7 @@ The store is async (`QuotaStore` returns promises) and every method takes `nowMs
 ## 4b. Guidance catalogue (`src/catalogue/`)
 
 Every possible cause, next step and referral a customer can see comes from one versioned file, `src/catalogue/catalogue.json`, reviewed by the supervisor.
-The decision and the content sources are in `migration/GILLIGAN_TARGET_ARCHITECTURE.md` §2d; the allowlist reasoning is in `RESPONSIBILITY.md`.
+The decision and the content sources are in `reference/GILLIGAN_TARGET_ARCHITECTURE.md` §2d; the allowlist reasoning is in `RESPONSIBILITY.md`.
 
 **Entries.**
 Each entry has an id, a kind (`explanation`, `limitation` or `next-step`), approved text, the conditions and evidence it needs, a limitation, sources, an optional referral and a review record.
@@ -446,7 +446,7 @@ With `CER_RAG_SERVICE_KEY` set, every `/api/v1` route requires that shared secre
 Once the key matches, `X-CER-RAG-User-Id` is required (400 `service_identity_required` without it) and `X-CER-RAG-Organization-Id` is optional; together they become the verified identity the quota keys on.
 Identity headers are ignored whenever the key is unset or wrong.
 `/health` stays outside the check for probes, and `NODE_ENV=production` refuses to boot without a key of at least 32 characters.
-A shared secret was chosen over Cloud Run identity tokens because Cloud Run strips the signature from the forwarded service token, so this process cannot verify one (`migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` §5), and minting identity tokens in the CER server was deferred past launch.
+A shared secret was chosen over Cloud Run identity tokens because Cloud Run strips the signature from the forwarded service token, so this process cannot verify one (`runbooks/GILLIGAN_DEPLOYMENT_RUNBOOK.md` §5), and minting identity tokens in the CER server was deferred past launch.
 Data access is unchanged: device reads still use the caller's own forwarded JWT.
 
 **Model-call gate (`src/services/modelCallGate.ts`).**
@@ -465,7 +465,7 @@ the client connects on first read/write. Project id comes from `FIRESTORE_PROJEC
 otherwise Application Default Credentials infer it; database id defaults to `(default)`.
 
 This intentionally differs from the reference server, which created a new client per repository —
-flagged as wasteful in `migration/CONVENTIONS.md`. Its consumers are `FirestoreCorpusSource`,
+flagged as wasteful in `reference/CONVENTIONS.md`. Its consumers are `FirestoreCorpusSource`,
 `FirestoreVectorAdapter` and `auditLog`.
 
 ---
@@ -751,7 +751,7 @@ prefixes. The context block is omitted entirely when there are no chunks, becaus
 corpus was consulted".
 
 **With tools on, each request carries the current time and each reading its age** (2026-09-24, Q1).
-In the 2026-09-24 conversation check the model called two pods silent for 10 and 12 days "likely online" and gave a 10-day-old temperature as current, because nothing told it the date (`migration/CONVERSATION_QA_2026-09-24.md` findings 1 and 2).
+In the 2026-09-24 conversation check the model called two pods silent for 10 and 12 days "likely online" and gave a 10-day-old temperature as current, because nothing told it the date (`records/CONVERSATION_QA_2026-09-24.md` findings 1 and 2).
 `buildMessages` now adds `CURRENT TIME: <UTC, to the minute>` as block 4 above; it cannot go in the system prompt, which must stay byte-identical to be cached.
 The tools state ages themselves, since date arithmetic by the model is unreliable: `list_pods` adds `last_reported_age` and `last_reported_stale`, and `query_sensor_data` and `generate_report` add `device_last_reported_age` and `device_last_reported_stale` (`src/tools/readingAge.ts`).
 Stale means more than six hours without a reading: the pods report about hourly, so six missed reports is well past jitter.
@@ -1059,7 +1059,7 @@ no pods", never "the service is not set up".
 - **`last_reported` costs one `/water/last` call per pod**, run concurrently. The registry row carries
   no recency at all, so there is no cheaper source — but on the live fleet that is ~15 upstream reads
   per picker load. **Do not poll this on a timer**; there is no QA mirror and every call reads
-  production (`migration/DEVICE_API.md` §3).
+  production (`reference/DEVICE_API.md` §3).
 - **A coded upstream failure is not flattened to `null`.** `device_auth_expired` / `device_timeout` /
   `device_unavailable` propagate, because reporting an outage as `last_reported: null` would assert
   that a pod has never reported. Only an *uncoded* per-device failure degrades to `null`, so one odd
@@ -1093,7 +1093,7 @@ It never returns a URL, and the prompt tells the model to point at the interface
 **The status comes with its reason** (2026-09-24, Q1).
 `assessStatus` (`src/report/types.ts`) returns the status, the rule that fired and the parameters behind it; `overallStatus` is its `.status`, and the PDF receives the same assessment through `produceReport`.
 The tool adds `status_reason`, one sentence naming that rule and, for a flag-driven status, each flagged parameter's observed range against its configured threshold in the PDF's number format, and `parameter_flags`, every measured parameter's flag.
-Before this, an ORP Exceedance on Old Woman Creek reached the model as "Action Required" with 0 events and no cause, and the model wrote "no abnormal conditions" beside it (`migration/CONVERSATION_QA_2026-09-24.md` finding 3).
+Before this, an ORP Exceedance on Old Woman Creek reached the model as "Action Required" with 0 events and no cause, and the model wrote "no abnormal conditions" beside it (`records/CONVERSATION_QA_2026-09-24.md` finding 3).
 The period ends on the device's newest reading, so the tool also returns `device_last_reported` with its age, and the prompt asks the model to say when a stale pod's period ended.
 
 A parameter's flag follows the 3-in-a-row rule (§19, `timeline.md` 2026-10-10): Elevated or Low needs 3 consecutive readings beyond the baseline by more than v2's minimum detectable change (Watch), and Exceedance needs 3 beyond it by the larger of 15% of the baseline's width and that change (Action Required).
@@ -1113,7 +1113,7 @@ That design lost every report on redeploy, bound access to one exact token strin
 **Notes left out on request** (2026-10-09, `POST_LAUNCH_BACKLOG.md` §6).
 A stakeholder asked for a copy without the turbidity disclaimers to share publicly; the report had no way to leave anything out, and the model could not edit it.
 `generate_report` and the route take an optional `omit`, a closed list from `report/omit.ts`: `turbidity_notes` (the uncalibrated-index caveats in the summary, table, footnote and turbidity card), `sensor_fault_notes` (off-scale and all-zero notes and Flag suffixes), `threshold_notes` (where each threshold comes from, including the operator, v2 fallback and "Not assessed" footnotes, rejection and blind-spot notes; each parameter's prose still calls a fallback generic) and `data_quality` (the whole section; later sections renumber).
-Every note is kept by default, and the prompt allows `omit` only when the user explicitly asks; the model can choose groups but never write report text, so the same request always renders the same PDF and no model call is added.
+Every note is kept by default, and the prompt allows `omit` only when the user explicitly asks; a request for a "shorter" or "cleaner" report that names no notes gets the full report and the list of groups to choose from, because the model otherwise left out all four (Mirror C1, 2 of 2 runs, 2026-10-16); the model can choose groups but never write report text, so the same request always renders the same PDF and no model call is added.
 Numbers, flags, status, events and recommendations are never removed, and a copy with notes left out lists them in an "Omitted" metadata row, so a shared PDF is not taken for the full assessment.
 `omit` travels in `report_request` (deduplicated, in canonical order) and the tool returns `omitted_from_pdf`.
 An omitted copy counts against the report quota like any other download.
@@ -1127,7 +1127,9 @@ The prompt tells the model not to announce a PDF, mention the download button or
 These lines are removed from history before the model reads it, because marking earlier replies as having produced a report made it skip the tool more often (5 of 6 runs against 1 of 6).
 A tool-free answer that points at the download button, or says in a sentence that is not a refusal and names no readings that a PDF, copy or report has notes left out, when no report was made in that answer, is discarded and its round rerun once with `tool_choice` forcing `generate_report` (Fireworks honours it for `glm-5p3-flash`); if the answer after that still makes the claim, or no tool round is left, it is replaced with "That copy was not regenerated; please ask again."
 A sentence that names readings ("two flat-line readings were excluded from the report period") explains reading QC, since `omit` leaves out notes and never readings.
-The forced call costs one more model round and a device read; a reply that only refers back to an earlier button triggers it too, and makes a fresh copy of what the model chooses.
+The forced call costs one more model round and a device read.
+In a chat where an earlier reply carried a delivery line, a sentence that points back at that copy ("already", "still", "current", "existing", "earlier", "previous") is not a claim: that copy exists, and forcing the tool on a refusal such as "take the pH numbers out" made an unrequested copy, once with every note restored (Mirror A4, 2 of 2 runs, 2026-10-16). In a chat with no earlier report the same sentence is still a false delivery and is retried.
+The sentence that triggered a retry is logged, since the dropped answer is otherwise lost.
 The response carries `report_retried: true` when the retry ran.
 Taking edits away from the model entirely (omit checkboxes beside the dashboard's download button) remains the fully deterministic alternative.
 The Section 2 footnote's explanation of the "(all zero)" and "(off-scale)" suffixes now prints only when a Flag cell shows one.
@@ -1167,7 +1169,7 @@ Michael reported (2026-10-11) that a summary or overview did not say what window
 
 ### 10.9 Reading the data (`src/prompt/systemPrompt.ts`, `src/tools/dailyCycle.ts`, `src/catalogue/`)
 
-Gilligan wrote off a real daily pH cycle as sensor faults, blamed tides no tool measures, and swapped in a new fault theory each time the user pushed back (`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`).
+Gilligan wrote off a real daily pH cycle as sensor faults, blamed tides no tool measures, and swapped in a new fault theory each time the user pushed back (`records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`).
 The tools already judge readings (§19); these rules keep the model from overruling them.
 
 - Readings are real measurements unless a tool says otherwise: device-flagged (`excluded_faulted`), implausible, a "likely data issue" verdict, a `board_fault` or a failed sensor.
@@ -1186,7 +1188,7 @@ The tools already judge readings (§19); these rules keep the model from overrul
 
 ### 10.10 Tides (`get_tides`, `src/tools/getTides.ts`, `src/tides/`)
 
-Michael named NOAA's tide data as the first outside source to give Gilligan (`migration/POST_LAUNCH_BACKLOG.md` §7); without it the model may say a cycle's timing fits a tide but never that the tide drove it (§10.9).
+Michael named NOAA's tide data as the first outside source to give Gilligan (`plans/POST_LAUNCH_BACKLOG.md` §7); without it the model may say a cycle's timing fits a tide but never that the tide drove it (§10.9).
 The tool is behind `TIDE_TOOL` (default off) and registers only with `SENSOR_TOOL`.
 
 - Source: NOAA CO-OPS predicted high and low tides (`interval=hilo`, GMT, metres above MLLW), read directly, not through CER's `/water/tides`.
@@ -1748,13 +1750,13 @@ rests on a contractual DPA with Fireworks, not on data residency. Reports make n
 Sensor data (`data/`) is git-ignored and treated as confidential per `CLAUDE.md`; `documents/` is
 git-ignored too, with the four Tier 1 corpus files force-tracked as the exception (§11).
 
-Two holes of this service's own were found and fixed on 2026-08-21, and are written up in [`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md) §6.
+Two holes of this service's own were found and fixed on 2026-08-21, and are written up in [`reference/SECURITY_FINDINGS.md`](reference/SECURITY_FINDINGS.md) §6.
 `GET /api/v1/devices` served unauthenticated callers out of the deployment's superadmin token; it now requires the caller's token (§10.5).
 `GET /api/v1/reports/:filename` served stored customer PDFs with no authentication; it was first gated by a token-hash ownership check and was removed on 2026-09-22, when reports moved to `POST /api/v1/reports` with nothing stored (§10.7).
 
 ## 19. Current-site readings, sensor quality and predecessor authorization
 
-Chat queries, comparisons and reports use only the visit containing the latest coordinate-bearing reading, following the September 24 and September 25 decisions in `timeline.md` and Q3-Q6 in `migration/GILLIGAN_RELEASE_PLAN.md`.
+Chat queries, comparisons and reports use only the visit containing the latest coordinate-bearing reading, following the September 24 and September 25 decisions in `timeline.md` and Q3-Q6 in `records/GILLIGAN_RELEASE_PLAN.md`.
 Coordinates come only from finite, in-range `best_lat` and `best_lon`, never `best_location`, fallback GPS fields or the registry.
 The pair 0,0 means no fix; other equator or prime-meridian coordinates remain valid.
 Chronologically, a positioned reading more than 1 km from the current visit's running spherical centroid starts a new visit.
@@ -1782,12 +1784,12 @@ When location filtering drops readings inside the requested range, `time_range_r
 A range the filter dropped nothing from keeps its requested dates, so a week long after a move is not relabelled "(current-site readings)" and narrowed to its first and last reading.
 The answer's report period, PDF title and Summary inherit those dates.
 The site notes (`site_note`, `user_notes`) count only readings inside the requested range that the location filter left out, plus readings with no timestamp, which no range can place (`siteNotesForPeriod` in `tools/currentSite.ts`).
-Counting the pod's whole history told a week 43 days after a move that 775 earlier-location readings "were excluded" from it (coverage check, 2026-10-12, `migration/data-skepticism-runs/coverage-check-prompt2/`).
+Counting the pod's whole history told a week 43 days after a move that 775 earlier-location readings "were excluded" from it (coverage check, 2026-10-12, `captures/data-skepticism-runs/coverage-check-prompt2/`).
 When the pod moved but none of its earlier-site readings fall inside the range, the model-only `site_history_note` says so, keeping the move known without telling the reader anything was left out.
 The PDF Summary prints `site_note`, or else `site_history_note`; Data Quality prints `site_note` only.
 `window_actually_searched.complete` is false when the fetched context does not reach the start of the requested range, or when the location filter dropped readings inside it.
 A first reading that lands one reporting interval after the window opens, and earlier-site history that ends before it, leave the window complete.
-`window_actually_searched` reports the part of the requested range the fetch covered, never the fetch's own start: the snapshot can reach back to the epoch only to establish the current site, and the dashboard printed that as "Searched from 1970" under a complete week (`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md` §4).
+`window_actually_searched` reports the part of the requested range the fetch covered, never the fetch's own start: the snapshot can reach back to the epoch only to establish the current site, and the dashboard printed that as "Searched from 1970" under a complete week (`records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md` §4).
 Report Data Quality counts rows once: a reading is used if at least one requested parameter survives fault, plausibility and flat-line filtering, and is left out if none survives.
 The completeness percentage compares those used rows with all current-site rows inside the requested range; earlier-location exclusions remain a separate row count in the site note.
 

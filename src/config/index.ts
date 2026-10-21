@@ -268,7 +268,7 @@ export interface QuotaConfig {
 export type QuotaStoreName = "memory" | "firestore";
 
 /**
- * Durable per-response record for dispute reconstruction (`docs/RESPONSIBILITY.md` #6).
+ * Durable per-response record for dispute reconstruction (`docs/records/RESPONSIBILITY.md` #6).
  *
  * Defaults to **off**, same reasoning as `SENSOR_TOOL`/`REPORT_TOOL`: a deployment with no
  * Firestore credentials configured must not start writing on every chat response.

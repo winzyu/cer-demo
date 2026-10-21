@@ -2,10 +2,10 @@
 
 A checklist of answers the project needs from people outside the codebase.
 When an item is answered, record the answer and any decision it settles in `docs/timeline.md` (or the document that owns it), then delete the item here.
-Only open questions stay in this file; answered items 1-4, 7-13 and 17-20 were removed on 2026-10-11 and remain in `git log -p docs/STAKEHOLDER_QUESTIONS.md`.
+Only open questions stay in this file; answered items 1-4, 7-13 and 17-20 were removed on 2026-10-11, and item 23 (approved 2026-09-25) on 2026-10-21; they remain in `git log -p docs/STAKEHOLDER_QUESTIONS.md`.
 Partly answered items keep only their open part.
 
-Items are ordered by what they unblock, most blocking first. Last updated 2026-10-15.
+Items are ordered by what they unblock, most blocking first. Last updated 2026-10-21.
 
 ---
 
@@ -19,7 +19,7 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   *Answer:*
 
 - [ ] **25. Which field marks a board that is not responding, and how many in a row should flag it?**
-  The CER colleague who added the per-metric error flags asked that two or three consecutive "board not responding" errors flag the sensor at once (`docs/migration/POST_LAUNCH_BACKLOG.md` §1).
+  The CER colleague who added the per-metric error flags asked that two or three consecutive "board not responding" errors flag the sensor at once (`docs/plans/POST_LAUNCH_BACKLOG.md` §1).
   The 2026-10-09 production scan found the error flags only ever take the value 1, and that a reading with all six flags set reads `1000000000` on every metric.
   This project treats three consecutive all-channel failures as a likely data issue, provisionally.
   *Unblocks:* confirming or changing that provisional count.
@@ -55,7 +55,7 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   The email half was asked again ("should the alert emails use the same 5% rule?") in the message that carried items 28-35.
   *Answer:*
 
-Items 28-35 went to Michael in one chat message, sent by 2026-10-15, with a plain summary of the four reading labels and the 5% share rule; 28 and 29 are written up on `task/flagging-share-window` and join this file when it lands.
+Items 28-35 went to Michael in one chat message on 2026-10-15, with a plain summary of the four reading labels and the 5% share rule; 28 and 29 are written up on `task/flagging-share-window` and join this file when it lands.
 Nothing more goes to him until he answers (user, 2026-10-15).
 
 - [ ] **30. Is 15% past the limit the right bar for Action Required?**
@@ -87,12 +87,6 @@ Nothing more goes to him until he answers (user, 2026-10-15).
 - [ ] **35. Should report omission go live before the flagging rework?**
   The user offered to release it early; the plan is one release with the data-skepticism fix and the flagging rework (`docs/timeline.md`, 2026-10-15).
   *Unblocks:* an earlier, separate deploy of `dev` if he wants one.
-  *Answer:*
-
-- [ ] **23. Approve the Firestore data framework for Gilligan.**
-  On 2026-09-24 the supervisor allowed new Firestore collections for Gilligan, once they have seen a table of what they hold.
-  The table is `docs/migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
-  *Unblocks:* the persistent usage store, and any Firestore-backed corpus.
   *Answer:*
 
 - [ ] **6. Is "configured thresholds" the right thing for users to hear?**

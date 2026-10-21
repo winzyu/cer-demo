@@ -102,7 +102,7 @@ operator-supplied and vendor-unsupported.
 a per-pod record of which turbidity sensor is fitted (`../docs/STAKEHOLDER_QUESTIONS.md` items 3
 and 11). The fleet's NTU value is still derived from a
 raw voltage by a provisional, uncalibrated conversion
-([`../docs/migration/DEVICE_API.md`](../docs/migration/DEVICE_API.md) §8); the two files above
+([`../docs/reference/DEVICE_API.md`](../docs/reference/DEVICE_API.md) §8); the two files above
 describe the candidate sensors but neither vendor publishes the optics that would justify the unit.
 With the source-of-truth document gone, no document in the corpus describes a typical range for ORP,
 conductivity or temperature either.
@@ -187,7 +187,7 @@ a refusal the service must make, and [`../docs/SPECS.md`](../docs/SPECS.md) §14
 | `cer-water-quality-guidance-v2-excerpt.md` | `water-quality-source-of-truth-v2.pdf` (version 2.0, 2026-09-16), kept untracked at the repository root and never in this directory | no |
 
 Sections 5-7 and 11 of the operator's source-of-truth v2, in its own words with tables written one row
-per line and §7.2 rule 1 left out (`../docs/migration/V2_CORPUS_DECISION.md`). Launched by user decision
+per line and §7.2 rule 1 left out (`../docs/records/V2_CORPUS_DECISION.md`). Launched by user decision
 on 2026-09-27 (plan E7). The ranges in §2-3 stay out under the supervisor's range veto.
 
 ## OCR
@@ -287,7 +287,7 @@ npm run seed:firestore         # re-upload corpus_documents
 npm run seed:firestore-chunks  # re-embed for firestore-vector (costs embedding tokens)
 ```
 
-`local-vector` is the launch arm (`../docs/migration/GILLIGAN_DEPLOYMENT_RUNBOOK.md` §4.1), so
+`local-vector` is the launch arm (`../docs/runbooks/GILLIGAN_DEPLOYMENT_RUNBOOK.md` §4.1), so
 `embed:cache` is the step a corpus change cannot skip; the release image then needs new checksums in
 `../release/artifacts.sha256`, and the two Firestore seeds are not on the launch path.
 
