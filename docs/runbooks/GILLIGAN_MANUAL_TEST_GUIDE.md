@@ -20,7 +20,7 @@ Getting a report offer by asking Gilligan does cost a model call.
 Start the stack with [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md) §0-§6 first; its settings file sets `$MIRROR_SERVER`, `$GILLIGAN_DIR` and `$DASHBOARD_DIR`, which the checks below use.
 The dashboard now runs on port 3100: read every `:3000` below as `:3100`.
 This guide's own setup, for the 2026-09-26 stack, was removed on 2026-10-21 (`git show 2dd024a:docs/runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md`).
-The named-database check, the legacy replay and the large-chat fixtures below were written for that stack, whose emulator used project `conductive-fold-343604`; the current Mirror uses `demo-cer-mirror`, so their scripts are unverified there.
+The named-database check, the legacy replay and the large-chat fixtures below were written for that stack, whose emulator used project `conductive-fold-343604`; on 2026-10-21 they were changed to read `MIRROR_PROJECT_ID` from the settings file (`demo-cer-mirror`), and they are verified at the Mirror's next real use, as the Mirror runbook is.
 
 ### Stop or restart
 
@@ -45,8 +45,10 @@ const { Firestore } = require('@google-cloud/firestore');
 const { createHash } = require('node:crypto');
 (async () => {
   if (process.env.FIRESTORE_EMULATOR_HOST !== '127.0.0.1:8080') throw Error('Local emulator required');
+  const projectId = process.env.MIRROR_PROJECT_ID;
+  if (!projectId?.startsWith('demo-')) throw Error('Source the Mirror settings file first');
   for (const databaseId of ['(default)', 'gilligan']) {
-    const db = new Firestore({ projectId: 'conductive-fold-343604', databaseId });
+    const db = new Firestore({ projectId, databaseId });
     try {
       const snapshot = await db.collection('gilligan_usage').get();
       const rows = snapshot.docs.map(d => [d.id, d.data()]).sort((a,b) => a[0].localeCompare(b[0]));
@@ -479,7 +481,9 @@ const { Firestore } = require('@google-cloud/firestore');
 const { createHash } = require('node:crypto');
 (async () => {
   if (process.env.FIRESTORE_EMULATOR_HOST !== '127.0.0.1:8080') throw Error('Local emulator required');
-  const db = new Firestore({ projectId: 'conductive-fold-343604', databaseId: '(default)' });
+  const projectId = process.env.MIRROR_PROJECT_ID;
+  if (!projectId?.startsWith('demo-')) throw Error('Source the Mirror settings file first');
+  const db = new Firestore({ projectId, databaseId: '(default)' });
   try {
     const all = await db.collection('chats').where('user', '==', 'user-harbor-admin-01').get();
     const doc = all.docs.filter(d => !d.data().assistant).sort((a,b) => a.id.localeCompare(b.id))[0];
@@ -512,7 +516,9 @@ node <<'NODE'
 const { Firestore } = require('@google-cloud/firestore');
 (async () => {
   if (process.env.FIRESTORE_EMULATOR_HOST !== '127.0.0.1:8080') throw Error('Local emulator required');
-  const db = new Firestore({ projectId: 'conductive-fold-343604', databaseId: '(default)' });
+  const projectId = process.env.MIRROR_PROJECT_ID;
+  if (!projectId?.startsWith('demo-')) throw Error('Source the Mirror settings file first');
+  const db = new Firestore({ projectId, databaseId: '(default)' });
   try {
     const now = new Date();
     const fixture = {

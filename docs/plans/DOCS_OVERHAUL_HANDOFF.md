@@ -29,8 +29,8 @@ Work happens only in the worktree `.claude/worktrees/docs-cleanup` on branch `do
 | Test-doc merges M3, M2, M1: launch pages to `records/`; `E2E_CHECKLIST.md` is the manual guide's "Short run" plus `records/E2E_CHECKLIST_RESULTS_2026-09-26.md`; `MIRROR_RUNBOOK.md` is the one Mirror setup (dashboard on 3100) | done `fcf2eca`, `2dd024a`, `4b8da98`, landed; `runbooks/` is 7 files (`ls docs/runbooks`) |
 | `release/` leftovers in the deployment runbook and backlog item 9 | done `3efe302`, landed |
 | Step 5, superseded-records archive list | done 2026-10-21, nothing archived: no file in `records/` is fully covered by a later record or a `timeline.md` row (see "Step 5 outcome") |
-| Step 6, re-run the local stack setup | approved 2026-10-21, next; the Mirror is verified at its next real use (report-omission or flagging), not by a separate run |
-| Step 7, git tidy of finished work | approved 2026-10-21, after step 6 |
+| Step 6, re-run the local stack setup | done 2026-10-21: `LOCAL_STACK.md` ran from this worktree on 8011 and was corrected; the manual guide's three emulator scripts read `MIRROR_PROJECT_ID` (syntax-checked, not run); the Mirror and those scripts are verified at the Mirror's next real use (report-omission or flagging) |
+| Step 7, git tidy of finished work | approved 2026-10-21, next |
 | Landing sweeps for `task/flagging-share-window`, `reflection`, `task/tide-tool`, `docs/firestore-testing-plan` | after each lands: their new `docs/migration/` files move to the right folder |
 
 ## Step 5 outcome
@@ -49,9 +49,7 @@ All 26 records were checked on 2026-10-21; none is superseded, so none was archi
 
 1. `git fetch origin` and merge `origin/dev` into `docs/cleanup` (no rebase) if `dev` moved.
 2. Step 5 is done (above).
-3. Step 6: follow `docs/runbooks/LOCAL_STACK.md` exactly with the `run-local` skill, fix every step that differs, and record what ran, announcing each read of the live API through its dev passthrough before it runs.
-   Also confirm or fix the manual guide's named-database check and legacy-fixture scripts, which still use the old emulator project `conductive-fold-343604` (`grep -n conductive-fold docs/runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md`).
-   Then remove LOCAL_STACK's "unverified" line.
+3. Step 6 is done (above).
 4. Step 7, finished work only, keeping the list under "Approved": list merged remote branches (`git branch -r --merged origin/dev`), finished worktrees (`git worktree list`) and `wip-*` tags (`git tag -l 'wip-*'`), then run each deletion only after the user's yes to that exact command, and send the coordinator the final `git worktree list` and branch list.
 5. Checks before every commit: the link resolver over every tracked `docs/` `.md` and `.html` outside `captures/` (0 unresolved), `git grep` for each old path, `git diff --check`, `node --check` and `bash -n` on edited scripts, and `npm run typecheck` and `npm run lint` when `src/`, `scripts/` or `test/` change.
 
