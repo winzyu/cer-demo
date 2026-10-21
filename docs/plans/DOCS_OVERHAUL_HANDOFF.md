@@ -1,6 +1,6 @@
 # Docs overhaul - handoff
 
-Current as of 2026-10-21 at `docs/cleanup` (the commit that adds this file; `git log -1 docs/cleanup`).
+Current as of 2026-10-21 (end of the session that ran steps 1-4) at `docs/cleanup` (the commit that adds this file; `git log -1 docs/cleanup`).
 A fresh session reads this file, then [`DOCS_OVERHAUL_PROPOSAL.md`](DOCS_OVERHAUL_PROPOSAL.md) sections 4-9, then follows "Next step".
 
 ## What this is
@@ -50,19 +50,21 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 | Content pass over batches 1-4 (`runbooks/`, `reference/`, `people/`, `records/`), batches of at most 10 | C1 `runbooks/` done `2296975` (5 updated, 5 kept; `E2E_CHECKLIST.md` and the two launch-issue pages wait for the merge proposal); C2 `reference/` and C3 `people/` done `2659b9d` (3 openings updated, 7 kept); C4 `records/` done `45b71db` (2 archived at tag `docs-archive-2026-10-17b`, 8 kept) |
 | Batch 6 with D7: 4 records to `docs/records/`, backlog, `Q10_TASKS.md` (status note added), this handoff and the proposal to `docs/plans/` | done `d9aba50`; not yet landed |
 | Test-doc merge proposal (section 3.2 docs) | written, proposal section 10, in the commit that records it here; waiting on the user's M1-M3 |
-| Step 1, core-doc fixes: timeline 877, 915, 922; STATUS 78; SQ item 23 removed as answered; README line 13; `REPORT_OMIT_MIRROR_TEST.md` archived (tag `docs-archive-2026-10-21` at `7e7630f`); memory backlog path | done in the commit that records it here |
-| Step 2, batches 7-8 with D7: 4 data-skepticism records and `GILLIGAN_RELEASE_PLAN.md`, `GILLIGAN_LANDING_2026-09-29.md` to `records/`; `data-skepticism-runs/` to `captures/`; `SECURITY_FINDINGS.md` to `reference/` (status note pointing at backlog §2); `COORDINATOR_HANDOFF_2026-10-15.md` to `plans/`; `catalogue.json` notes (D4, review page regenerated); `CLAUDE.md`/`AGENTS.md` wording (D2); README row, `.gitignore` exception and `docs/migration/` removed | done in the commit that records it here; SPECS lines in §10.7-§19 were rewritten too, so flagging's deletion of that range will conflict on landing (resolve deliberately: the deletion looks unintended) |
-| Step 3, Q10: decisions as a 2026-09-28 `timeline.md` row; backlog rows for T4+T11 (§2) and T9's remaining checks (§3; C2-C5 had passed 2026-09-28); `Q10_TASKS.md` archived (tag `docs-archive-2026-10-21b` at `ff51594`) | done in the commit that records it here; T11's stakeholder question waits for the Slack text |
-| Step 4 M3: both launch-issue pages to `records/`, unchanged | done in the commit that records it here |
-| Step 4 M2: `E2E_CHECKLIST.md`'s script is the manual guide's "Short run" (IDs prefixed `S`), its results are `records/E2E_CHECKLIST_RESULTS_2026-09-26.md`, the file is archived (tag `docs-archive-2026-10-21c` at `fcf2eca`) | done in the commit that records it here |
-| Step 4 M1: `MIRROR_RUNBOOK.md` rebuilt from the report-omission setup (same §2-§5 numbers, dashboard on 3100); the report-omission runbook and the manual guide point at it for setup; the September test order and known gaps moved to `records/LAUNCH_ISSUES_CHECKLIST.md` | done in the commit that records it here; not yet run (step 6) |
+| Step 1, core-doc fixes: timeline 877, 915, 922; STATUS 78; SQ item 23 removed as answered; README line 13; `REPORT_OMIT_MIRROR_TEST.md` archived (tag `docs-archive-2026-10-21` at `7e7630f`); memory backlog path | done `8cc2edc`, landed |
+| Step 2, batches 7-8 with D7: 4 data-skepticism records and `GILLIGAN_RELEASE_PLAN.md`, `GILLIGAN_LANDING_2026-09-29.md` to `records/`; `data-skepticism-runs/` to `captures/`; `SECURITY_FINDINGS.md` to `reference/` (status note pointing at backlog §2); `COORDINATOR_HANDOFF_2026-10-15.md` to `plans/`; `catalogue.json` notes (D4, review page regenerated); `CLAUDE.md`/`AGENTS.md` wording (D2); README row, `.gitignore` exception and `docs/migration/` removed | done `5b31581` and `ff51594`, landed; SPECS lines in §10.7-§19 were rewritten too, so flagging's deletion of that range will conflict on landing (resolve deliberately: the deletion looks unintended) |
+| Step 3, Q10: decisions as a 2026-09-28 `timeline.md` row; backlog rows for T4+T11 (§2) and T9's remaining checks (§3; C2-C5 had passed 2026-09-28); `Q10_TASKS.md` archived (tag `docs-archive-2026-10-21b` at `ff51594`) | done `e5596e3`, landed; T11's stakeholder question waits for the Slack text |
+| Step 4 M3: both launch-issue pages to `records/`, unchanged | done `fcf2eca`, landed |
+| Step 4 M2: `E2E_CHECKLIST.md`'s script is the manual guide's "Short run" (IDs prefixed `S`), its results are `records/E2E_CHECKLIST_RESULTS_2026-09-26.md`, the file is archived (tag `docs-archive-2026-10-21c` at `fcf2eca`) | done `2dd024a`, landed |
+| Step 4 M1: `MIRROR_RUNBOOK.md` rebuilt from the report-omission setup (same §2-§5 numbers, dashboard on 3100); the report-omission runbook and the manual guide point at it for setup; the September test order and known gaps moved to `records/LAUNCH_ISSUES_CHECKLIST.md` | done `4b8da98`, landed; not yet run (step 6) |
+| `release/` leftovers: deployment runbook lines 202 and 332, backlog item 9 | done `3efe302`, landed |
+| T11 as `STAKEHOLDER_QUESTIONS.md` item 36 (checked against the user's Slack message to Michael: not asked there) | done in the commit that records it here |
 | Steps 5-7 | each waits for the user's approval |
 | Landing sweeps for `reflection`, `task/tide-tool`, `docs/firestore-testing-plan`, `fix/window-note` | after each branch lands (proposal section 7) |
 
 ## Waiting on the user
 
-- The final reconciliation of all batches (user, 2026-10-17).
-- The text of the Slack message with Michael's questions, before T11's question is written.
+- Nothing for steps 1-4: the coordinator lands each pushed step on `dev` after its own checks; the user does not review them (2026-10-21).
+- The manual guide's named-database check and legacy fixtures still use the old emulator project `conductive-fold-343604` and are unverified on the current Mirror; step 6 can confirm or fix them.
 - Steps 5-7 need per-file, per-read or per-command approval.
 
 ## Next step
