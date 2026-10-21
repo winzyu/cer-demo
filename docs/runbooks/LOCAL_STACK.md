@@ -61,11 +61,12 @@ Long tool results there are truncated, so check a recovered file for a truncatio
 npm ci
 npm run typecheck && npm run lint
 npx jest test/unit/frontendAuth.test.ts --runInBand
-npm run ingest                 # 16 documents, 457 chunks, slice 26,096 chars
+npm run ingest                 # 16 documents, 457 chunks, slice 26,096 chars (see below)
 PORT=8010 npm run dev          # then: curl -s localhost:8010/health
 ```
 
 Trust the ingest output over its exit code, which is 0 even when files are missing.
+The main checkout's `data/corpus/` and `data/embeddings/` are the 14-document, 446-chunk artifacts pinned by `release/artifacts.sha256` (check with `sha256sum`), and the vector cache is not rebuilt by ingest; ingesting there writes 457 chunks the cache lacks, so do it only with an approved `npm run embed:cache` after it, or restore the pinned `corpus.json`.
 Compare each per-document char count with [`../../documents/README.md`](../../documents/README.md); a miss means the wrong edition or file.
 `direct-feed slice: 0 chars` means the four Atlas datasheets are absent.
 
@@ -116,7 +117,7 @@ Node 24.21 and npm 11.19 work for both; yarn 1.22 comes from `corepack enable`.
 The dashboard runs Next 13.5.11.
 Ports 8010 (cer-demo) and 8000 stay as they are; never kill 8000.
 If 8010 is taken (the report-omission Mirror's cer-demo uses it), run cer-demo on another port and start the server with `CER_RAG_BASE_URL=http://localhost:<port> npm run dev`: dotenv does not override a variable already set, so `.env` stays unchanged.
-From a worktree, link the main checkout's corpus PDFs, `.ocr_cache` and `data/embeddings`, copy `.env` with mode 600, and run `npm ci` and `npm run ingest` there; a linked `.ocr_cache` shows as untracked, because `.gitignore` matches only a directory of that name, so never stage it.
+From a worktree, link the main checkout's `data/corpus` and `data/embeddings` (do not ingest there, for the reason above), copy `.env` with mode 600, and run `npm ci`; to check ingest itself, also link the corpus PDFs and `.ocr_cache` and write to a scratch copy, never beside the linked cache; a linked `.ocr_cache` shows as untracked, because `.gitignore` matches only a directory of that name, so never stage it.
 
 Smoke test, which is a live read:
 
