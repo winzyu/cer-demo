@@ -30,8 +30,9 @@ Work happens only in the worktree `.claude/worktrees/docs-cleanup` on branch `do
 | `release/` leftovers in the deployment runbook and backlog item 9 | done `3efe302`, landed |
 | Step 5, superseded-records archive list | done 2026-10-21, nothing archived: no file in `records/` is fully covered by a later record or a `timeline.md` row (see "Step 5 outcome") |
 | Step 6, re-run the local stack setup | done 2026-10-21: `LOCAL_STACK.md` ran from this worktree on 8011 and was corrected; the manual guide's three emulator scripts read `MIRROR_PROJECT_ID` (syntax-checked, not run); the Mirror and those scripts are verified at the Mirror's next real use (report-omission or flagging) |
-| Step 7, git tidy of finished work | approved 2026-10-21, next |
-| Landing sweeps for `task/flagging-share-window`, `reflection`, `task/tide-tool`, `docs/firestore-testing-plan` | after each lands: their new `docs/migration/` files move to the right folder |
+| Step 7, git tidy of finished work | approved 2026-10-21; each deletion waits on the user's yes (the auto-mode check refuses `git worktree remove`); proposed list sent to the user and the coordinator |
+| Steps 5-6 landing | landed on `dev` as squash `2bf94a3` |
+| Landing sweeps for `task/flagging-share-window`, `reflection`, `docs/firestore-testing-plan` | after each lands, its new `docs/migration/` files move to the right folder; none ready on 2026-10-21 (flagging waits on Michael, reflection on the user's OK to merge, firestore-plan on the user's keep-or-archive call); `task/tide-tool` re-homed its own (`36ef4a9`) |
 
 ## Step 5 outcome
 
@@ -50,7 +51,11 @@ All 26 records were checked on 2026-10-21; none is superseded, so none was archi
 1. `git fetch origin` and merge `origin/dev` into `docs/cleanup` (no rebase) if `dev` moved.
 2. Step 5 is done (above).
 3. Step 6 is done (above).
-4. Step 7, finished work only, keeping the list under "Approved": list merged remote branches (`git branch -r --merged origin/dev`), finished worktrees (`git worktree list`) and `wip-*` tags (`git tag -l 'wip-*'`), then run each deletion only after the user's yes to that exact command, and send the coordinator the final `git worktree list` and branch list.
+4. Step 7, finished work only, keeping the list under "Approved".
+   Embedding cache: the copy plan is retracted (coordinator, 2026-10-21); copy nothing and keep `e7-corpus` and `e2e-dev` until the coordinator's release issue is settled.
+   The main checkout's corpus and cache are consistent at 446 chunks and match `release/artifacts.sha256`; this worktree's step-6 ingest had written a 457-chunk `corpus.json` beside the linked 446-chunk cache, so `data/corpus` is now a link to the main checkout's (the rebuilt file is in the session scratchpad, not kept).
+   The release mismatch and the adapter check are the `POST_LAUNCH_BACKLOG.md` §3 row.
+   Then: list merged remote branches (`git branch -r --merged origin/dev`), finished worktrees (`git worktree list`) and `wip-*` tags (`git tag -l 'wip-*'`), then run each deletion only after the user's yes to that exact command, and send the coordinator the final `git worktree list` and branch list.
 5. Checks before every commit: the link resolver over every tracked `docs/` `.md` and `.html` outside `captures/` (0 unresolved), `git grep` for each old path, `git diff --check`, `node --check` and `bash -n` on edited scripts, and `npm run typecheck` and `npm run lint` when `src/`, `scripts/` or `test/` change.
 
 Resume with: `Read docs/plans/DOCS_OVERHAUL_HANDOFF.md on branch docs/cleanup (worktree .claude/worktrees/docs-cleanup), then continue the docs overhaul.`
@@ -60,7 +65,7 @@ Resume with: `Read docs/plans/DOCS_OVERHAUL_HANDOFF.md on branch docs/cleanup (w
 - The flagging branch deletes SPECS §10.7-§19 and this branch rewrote links inside that range, so its landing conflicts there; the deletion looks unintended (`git diff -U0 origin/dev...origin/task/flagging-share-window -- docs/SPECS.md | grep '^@@'`).
 - `MIRROR_RUNBOOK.md` was rebuilt from `REPORT_OMIT_MIRROR_RUNBOOK.md`'s setup, which ran as written on 2026-10-15; the rebuilt version has not run (its opening lines).
 - `release/cer-gilligan.env.yaml` is on `dev` since `0921140`; whether it matches the live revision `00004-r5q` is unchecked (`docs/plans/POST_LAUNCH_BACKLOG.md` §4 item 9).
-- Link tools from this session were scratchpad scripts and are gone; a resolver is a short script that checks each relative `](...)`, `href=` and `src=` target exists.
+- Link tools from this session were scratchpad scripts and are gone; a resolver is a short script that checks that every relative Markdown link target and every `href=` and `src=` target exists.
 
 ## Do not touch
 
