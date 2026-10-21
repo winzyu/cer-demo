@@ -10,8 +10,8 @@ Firestore**.
 
 ## Where do I go?
 
-**If you read one thing first:** [`docs/STATUS.md`](docs/STATUS.md) - current state, open work,
-and the traps that cost time.
+**If you read one thing first:** [§1 Overview](#1-overview), then the table below; the companion
+docs are listed by folder after it.
 
 | I want to… | Go to |
 |---|---|
@@ -32,19 +32,16 @@ and the traps that cost time.
 
 ### Companion docs
 
-| doc | what it covers |
+| folder | what it holds |
 |---|---|
-| [`docs/STATUS.md`](docs/STATUS.md) | **Start here.** Current state, open work, active traps. Rewritten every session. |
-| [`docs/SPECS.md`](docs/SPECS.md) | Architecture as built today, section by section. |
-| [`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`](docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md) | The Gilligan release: target architecture, roadmap and decisions D1-D12. |
-| [`docs/timeline.md`](docs/timeline.md) | Phased plan, and the **◆ decision gates** that block work. |
-| [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) | The direct-feed vs RAG cost experiment (◆G7). |
-| [`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) · [`docs/RETRIEVAL_LABELS.md`](docs/RETRIEVAL_LABELS.md) | The offline retrieval harness (`npm run retrieval:eval`) and its ground truth. **Read the 20.2% floor in §3 before reading any recall number.** |
-| [`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md) | The sensor API contract, verified live. **Read §12 before trusting any reading.** |
-| [`docs/migration/MIGRATION_SPEC.md`](docs/migration/MIGRATION_SPEC.md) | Behaviour of the legacy FastAPI system being ported. |
-| [`docs/migration/CONVENTIONS.md`](docs/migration/CONVENTIONS.md) | Coding conventions this repo follows. |
-| [`docs/migration/SECURITY_FINDINGS.md`](docs/migration/SECURITY_FINDINGS.md) | Device-authorization findings — upstream, and two in this service fixed 2026-08-21 (§6). |
-| [`docs/EVAL_REBUILD.md`](docs/EVAL_REBUILD.md) · [`eval/README.md`](eval/README.md) | The eval rebuild plan, the committed question set and captured runs. |
+| [`docs/`](docs/) | The behaviour spec [`SPECS.md`](docs/SPECS.md), the decision log [`timeline.md`](docs/timeline.md) (phases and ◆ gates), stakeholder questions, the index of retired docs [`ARCHIVED.md`](docs/ARCHIVED.md), and the eval docs: [`EVAL_REBUILD.md`](docs/EVAL_REBUILD.md), `GRADING_GUIDE.md`, [`RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) (◆G7) and the retrieval harness in [`RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) and `RETRIEVAL_LABELS.md` (**read the 20.2% floor in §3 before reading any recall number**). |
+| [`docs/reference/`](docs/reference/) | Facts about the system to read before changing code: the sensor API contract [`DEVICE_API.md`](docs/reference/DEVICE_API.md) (**read §12 before trusting any reading**), the legacy behaviour in [`MIGRATION_SPEC.md`](docs/reference/MIGRATION_SPEC.md), [`CONVENTIONS.md`](docs/reference/CONVENTIONS.md), the device-authorization findings in [`SECURITY_FINDINGS.md`](docs/reference/SECURITY_FINDINGS.md), and the Gilligan architecture and decisions D1-D12 in [`GILLIGAN_TARGET_ARCHITECTURE.md`](docs/reference/GILLIGAN_TARGET_ARCHITECTURE.md). |
+| [`docs/runbooks/`](docs/runbooks/) | Step-by-step procedures: deployment, the manual test guide, the local stack and the Mirror. |
+| [`docs/plans/`](docs/plans/) | Work not yet done: the post-launch backlog, open task lists and live handoffs. |
+| [`docs/people/`](docs/people/) | What was sent to or prepared for stakeholders. |
+| [`docs/records/`](docs/records/) | Dated, finished documents: test results, build records, incidents and decisions with their reasoning. |
+| [`docs/captures/`](docs/captures/) | Captured output folders, never edited. |
+| [`eval/README.md`](eval/README.md) | The committed question set and captured eval runs. |
 
 ---
 
@@ -179,7 +176,7 @@ Getting a token:
    ```
 
 > ⚠️ **There is no QA mirror.** Any live call reads **production** data — a real customer fleet.
-> Read-only, no bursts. See [`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md) §3.
+> Read-only, no bursts. See [`docs/reference/DEVICE_API.md`](docs/reference/DEVICE_API.md) §3.
 >
 > ⚠️ **Tokens never expire** and are **org-scoped**. A leaked one is valid forever; a wrong-org one
 > returns a short, plausible device list rather than an error.
@@ -345,7 +342,7 @@ Requests above the transport limit receive JSON HTTP 413 before validation, so c
 |---|---|---|
 | `DEFAULT_RETRIEVAL` | `stub` | `stub` \| `firestore-direct` \| `firestore-vector` \| `local-vector` \| `local-hybrid` \| `hybrid-slice-vector` \| `hybrid-slice-lexvec` \| `gold-context` ([§6](#6-retrieval-arms)). `gold-context` is eval-only: it answers only fixture questions that have retrieval labels. **`pgvector-rag` is no longer a selectable value** — the arm was archived 2026-08-19 ([§6](#6-retrieval-arms)). A stale `.env` still naming it throws on the **first chat request**, not at startup — see [§11](#11-troubleshooting). |
 | `DEBUG_RETRIEVAL` | `false` | When `true`, a request's `"retrieval"` field is honoured. Required by the bake-off runner. |
-| `AUDIT_LOG` | `false` | When `true`, every chat response is persisted to Firestore for dispute reconstruction (`docs/RESPONSIBILITY.md` §6). Keep off until the retention and access policy is settled. |
+| `AUDIT_LOG` | `false` | When `true`, every chat response is persisted to Firestore for dispute reconstruction (`docs/records/RESPONSIBILITY.md` §6). Keep off until the retention and access policy is settled. |
 | `CORPUS_SOURCE` | `artifact` | Where `firestore-direct` reads text: `artifact` (local file, no credentials) or `firestore`. Explicit rather than auto-detected — a silent fallback would measure the wrong source. |
 | `QUERY_REWRITE` | `false` | Rewrite a follow-up into a standalone search query before retrieval (`src/retrieval/queryRewrite.ts`); one extra model call per follow-up. On in the release. |
 | `QUERY_REWRITE_FIRST_TURN` | `false` | With `QUERY_REWRITE` on, also rewrite first turns. On in the release; ignored while `QUERY_REWRITE` is off. |
@@ -377,7 +374,7 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | `MAX_TOOL_ROUNDS` | `16` | Tool-enabled rounds before a forced text-only round. Legacy was 5, which cannot fit a six-parameter question. |
 | `RAW_LIMIT` | `200` | Rows an `aggregation: "raw"` call returns. A cap, not a page size — raw output goes into the next prompt. |
 | `PREDECESSOR_PERIOD_HANDOFF` | `false` | Lets period reads include a merged pod's hidden predecessor history. Keep off until every period-route server in front of this service enforces the Q6 authorization check (`docs/SPECS.md`). |
-| `SENSOR_DEVICE_LABEL` | *(unset)* | Default pod when the model names none. **Leave unset unless the deployment truly has one pod** — the token sees a whole fleet (21 → 17 → **15** across three live counts; nothing may hard-code it — `docs/migration/BACKEND_FIELDS.md` §1) and the two cleared test pods are on opposite coasts. Unset means the tool asks. |
+| `SENSOR_DEVICE_LABEL` | *(unset)* | Default pod when the model names none. **Leave unset unless the deployment truly has one pod** — the token sees a whole fleet (21 → 17 → **15** across three live counts; nothing may hard-code it — `docs/reference/BACKEND_FIELDS.md` §1) and the two cleared test pods are on opposite coasts. Unset means the tool asks. |
 
 ### Report tool ([§10](#10-endpoints))
 
@@ -524,7 +521,7 @@ returning empty context still produces a clean-looking, completely meaningless d
 
 `query_sensor_data` reads the **real Clean Earth device API**. Implementation:
 [`docs/SPECS.md`](docs/SPECS.md) §10.3a; API contract and traps:
-[`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md).
+[`docs/reference/DEVICE_API.md`](docs/reference/DEVICE_API.md).
 
 ### 7a. Turn it on
 
@@ -662,7 +659,7 @@ reporting still answers "the last day" about its last day of data.
 |---|---|
 | `npm run dev` | live-reload dev server (`ts-node-dev`) |
 | `npm run build` / `npm start` | compile to `dist/` / run compiled |
-| `npm test` | full Jest suite (57 suites: 51 unit, 6 integration; none touching the network) |
+| `npm test` | full Jest suite (87 suites: 76 unit, 11 integration, counted 2026-10-14; none touching the network, and the Firestore emulator suite skips unless `FIRESTORE_EMULATOR_HOST` is set) |
 | `npm run test:coverage` / `test:watch` | coverage / watch mode |
 | `npm run lint` / `npm run typecheck` | ESLint (check-only) over `src` / `tsc --noEmit` |
 | `npm run lint:fix` | ESLint `--fix` over `src` `.ts` files, writes files |
@@ -675,7 +672,7 @@ reporting still answers "the last day" about its last day of data.
 | `npm run report:render` | render a report PDF offline — no server, no LLM (`--device=`, `--range=`, `--out=`); uses `DEVICE_API_TOKEN` like `verify:sensor` |
 | `npm run catalogue:review` | regenerate `docs/catalogue/review.html` from `src/catalogue/catalogue.json` (`docs/SPECS.md` §4b) |
 | `npm run explore:devices` | discover the fleet and record raw responses to `data/device-api/` |
-| `npm run explore:fields` / `explore:surface` | read-only backend census: per-device field coverage / route surface (`docs/migration/BACKEND_FIELDS.md`) |
+| `npm run explore:fields` / `explore:surface` | read-only backend census: per-device field coverage / route surface (`docs/reference/BACKEND_FIELDS.md`) |
 | `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a run; `--spot-check`, `--only`, `--dry-run` |
 | `npm run cost` | price the arms at `gpt-oss-120b` rates and compute break-even |
 | `npm run judge` | the paid Tier 2 LLM judge over captured transcripts; `--dry-run` first, `--calibrate` for judge-vs-human agreement |
@@ -703,17 +700,20 @@ src/
     lexical/            #   Bm25Index
     sources/            #   ArtifactCorpusSource | FirestoreCorpusSource
   devices/              # DeviceApiClient (read-only), metrics.ts (codes, flags, decoding),
-                        #   plausibility.ts (per-metric rails), mergeChains.ts
+                        #   plausibility.ts (per-metric rails), readingQc.ts (per-reading QC),
+                        #   mergeChains.ts
   tools/                # the model-facing tools — SPECS.md §10.3a
     querySensorData.ts  #   the sensor tool + typed query(); timeRange.ts; aggregate.ts
     listPods.ts         #   the caller's own fleet
     getPodThresholds.ts #   the pod's registry alert limits; getTurbidityInfo.ts
     generateReport.ts   #   the report tool, gated on REPORT_TOOL
+                        #   helpers: currentSite, siteSnapshot, dataCoverage, dailyCycle,
+                        #   metricVerdict, readingAge
   catalogue/            # catalogue.json (approved guidance) + validator, selection,
                         #   prompt block, review page - SPECS.md §4b
   report/               # the deterministic report pipeline: buildReportInput, events,
-                        #   patterns, referenceRanges, operatorThresholds, narrative,
-                        #   renderPdf, produceReport - SPECS.md §10.7
+                        #   patterns, referenceRanges, operatorThresholds, flagRules,
+                        #   narrative, omit, renderPdf, produceReport, delivery - SPECS.md §10.7
   quota/                # QuotaService + QuotaStore seam — SPECS.md §4a
   services/             # LlmService, ChatOrchestrator (tool loop), EmbeddingService, auditLog
   prompt/               # systemPrompt.ts (base prompt + TOOL_BLOCK / REPORT_TOOL_BLOCK),
@@ -725,11 +725,15 @@ scripts/                # ingest, seed*, embed cache, bakeoff, gateCheck, judge,
                         #   gradePacket, retrievalEval, resolveRetrievalLabels,
                         #   compareVectorArms, renderReport, exploreDeviceApi,
                         #   verifySensorTool, exploreDeviceFields.sh, exploreBackendSurface.sh
+                        #   folders: e2e/ (browser checks), mirror/, skepticism/ (replays),
+                        #   security/ (hidden-payload scan)
 test/
-  integration/          # health, chat, sensorChat, devices, quotaChat, reports
+  integration/          # health, chat, chatBodyLimit, sensorChat, devices, quotaChat, reports,
+                        #   reportClaim, provenance, q3Corrections, firestoreQuotaStore.emulator
   unit/                 # per-module suites
   fixtures/device-api/  # recorded production bodies + provenance README
   fixtures/pod-scope/   # synthetic fleet for pod-authorization work
+  fixtures/skepticism/  # fabricated fleet for the data-skepticism suite and replay
 frontend/               # chat UI (manual test surface, not the product). Served, not file://
   index.html            #   markup + mount points; app.css; js/ modules; vendor/ for third-party
 data/                   # corpus artifact + device recordings (git-ignored)
@@ -742,8 +746,9 @@ eval/                   # fixtures-wave1/ (committed questions), claims/, retrie
 archive/                # retired code kept for the record, at its original paths.
   pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
 docs/                   # STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md,
-                        #   ARCHIVED.md, eval and corpus notes; migration/ (Gilligan
-                        #   release, device API, upstream); catalogue/ (generated review page)
+                        #   ARCHIVED.md, the eval docs; reference/, runbooks/,
+                        #   plans/, people/, records/, captures/;
+                        #   catalogue/ (generated review page)
 ```
 
 ---
@@ -757,7 +762,7 @@ docs/                   # STATUS.md (start here), SPECS.md, timeline.md, EVAL_RE
 | `GET` | `/api/v1` | API v1 banner. **Every `/api/v1` route requires the `x-cer-rag-service-key` header when `CER_RAG_SERVICE_KEY` is set** ([§5](#core)); `/` and `/health` stay open for probes. |
 | `GET` | `/api/v1/devices` | pod list for the UI selector (read-only, forwards the caller's token). **Requires `Authorization: Bearer`** |
 | `GET` | `/api/v1/usage` | the caller's quota standing (questions, tokens, reports, window reset). Read-only and outside the quota gate (SPECS.md §4a). |
-| `POST` | `/api/v1/reports` | body `{ time_range, device? }` (a `generate_report` result's `report_request`); returns the report PDF as a download and stores nothing. **Requires `Authorization: Bearer`**; 404 while `REPORT_TOOL` is off; counted against `QUERY_QUOTA_REPORTS` (SPECS.md §10.7). |
+| `POST` | `/api/v1/reports` | body `{ time_range, device?, omit? }` (a `generate_report` result's `report_request`; `omit` names notes to leave out of a copy for sharing, `src/report/omit.ts`); returns the report PDF as a download and stores nothing. **Requires `Authorization: Bearer`**; 404 while `REPORT_TOOL` is off; counted against `QUERY_QUOTA_REPORTS` (SPECS.md §10.7). |
 | `POST` | `/api/v1/chat` | JSON, or SSE when `"stream": true`. Not itself gated, but the sensor and report tools require the caller's token |
 
 **Request:** `{ query, retrieval?, stream?, history?, device? }`. `query` required; `retrieval`

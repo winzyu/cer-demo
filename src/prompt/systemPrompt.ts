@@ -33,7 +33,7 @@ import { buildCatalogueBlock, guidance } from "../catalogue";
  * `docs/timeline.md`). Fallback ranges reach the model only through tool results, labelled as
  * generic, so the prompt still carries no numbers; `TOOL_BLOCK` tells the model to relay
  * verdicts, to suggest maintenance only for a likely data issue, and to give the turbidity
- * caveat once per conversation (`docs/migration/POST_LAUNCH_BACKLOG.md` §1).
+ * caveat once per conversation (`docs/plans/POST_LAUNCH_BACKLOG.md` §1).
  *
  * **Citations carry a verbatim quote** (`EVAL_REBUILD.md` Phase 2a). The model is asked for
  * `【n†"quote"】`, where `n` is the excerpt number `formatContext` prints. A quote is checkable by
@@ -75,7 +75,7 @@ export const REFUSAL_SENTENCE = "I can only answer questions grounded in this se
  * The tool inventory and routing rules, appended only when `SENSOR_TOOL` is on.
  *
  * Every rule here exists because the device API has a failure mode that returns a
- * plausible-looking number instead of an error (`docs/migration/DEVICE_API.md` §12). The tool
+ * plausible-looking number instead of an error (`docs/reference/DEVICE_API.md` §12). The tool
  * already refuses to emit those — an empty window comes back as `value: null`, never `0` — so
  * these lines are the second layer: they tell the model what the fields mean, so it reports
  * "the pod has been silent since the 7th" rather than inventing a reading to fill the gap.
@@ -93,7 +93,7 @@ export const REFUSAL_SENTENCE = "I can only answer questions grounded in this se
  * failure was a confident negative, not a missing call.
  *
  * The age, spike and note rules were added 2026-09-24 after a live conversation check
- * (`docs/migration/CONVERSATION_QA_2026-09-24.md` findings 1, 2, 4 and 5): stale pods read as
+ * (`docs/records/CONVERSATION_QA_2026-09-24.md` findings 1, 2, 4 and 5): stale pods read as
  * online, a claimed pH crash was tested with a single "latest" reading, and caveats in a tool's
  * `note` were dropped. The ages come from the tools (`src/tools/readingAge.ts`) and CURRENT TIME is
  * a per-request line (`formatCurrentTime` in `promptBuilder.ts`), so the text here stays static.
@@ -363,7 +363,11 @@ Report vs. single-stat routing:
 - Leaving notes out: when the user asks to remove warnings, caveats, disclaimers or
   notes from a report, call generate_report again with the same time_range and
   device and an "omit" list naming only the groups they asked to remove. Never
-  pass "omit" otherwise. Numbers, flags, status and recommendations cannot be
+  pass "omit" otherwise. A request for a shorter, simpler or cleaner report that
+  does not say which notes to remove is not such a request: make the report without
+  "omit", then say they can ask to leave out the turbidity notes, the sensor fault
+  notes, the threshold notes or the Data Quality section, and let them choose.
+  Numbers, flags, status and recommendations cannot be
   removed; say so if that is what they ask. Every change to a report needs its own
   generate_report call in the same answer, even if an earlier reply made one. You
   may warn that a reader of that copy will not see the notes it leaves out.

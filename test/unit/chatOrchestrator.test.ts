@@ -588,4 +588,38 @@ describe("ChatOrchestrator report claims", () => {
 
     expect(seen).toHaveLength(1);
   });
+  // Mirror A4, 2026-10-16: a refusal that pointed back at the copy an earlier reply made was
+  // retried, and the forced round made a report nobody asked for.
+  const backReference = answer({
+    content: "Numbers stay in every copy. Your current copy already leaves out the turbidity notes.",
+  });
+
+  it("leaves a sentence about an earlier reply's copy alone when that copy exists", async () => {
+    const run = jest.fn(madeReport);
+    const { llm, seen } = scriptedLlm([backReference]);
+
+    const result = await new ChatOrchestrator(llm, [reportTool(run)]).run(messages, { earlierReport: true });
+
+    expect(result.content).toBe(backReference.content);
+    expect(result.reportRetried).toBe(false);
+    expect(run).not.toHaveBeenCalled();
+    expect(seen).toHaveLength(1);
+  });
+
+  it("still retries that sentence in a chat with no earlier report", async () => {
+    const { llm, seen } = scriptedLlm([backReference, reportCall, answer({ content: "Status: Normal." })]);
+
+    const result = await new ChatOrchestrator(llm, [reportTool(madeReport)]).run(messages);
+
+    expect(result.reportRetried).toBe(true);
+    expect(seen.map((call) => call.forceTool)).toEqual([undefined, "generate_report", undefined]);
+  });
+
+  it("still retries a new delivery claim after an earlier report", async () => {
+    const { llm } = scriptedLlm([falseClaim, reportCall, answer({ content: "Status: Normal." })]);
+
+    const result = await new ChatOrchestrator(llm, [reportTool(madeReport)]).run(messages, { earlierReport: true });
+
+    expect(result.reportRetried).toBe(true);
+  });
 });

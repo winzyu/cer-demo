@@ -3,7 +3,7 @@
  * reading its controllers and services rather than its `API_ENDPOINTS.md` — that file is stale
  * and documents none of the `/water/*` analytics routes this service depends on.
  *
- * Contract and provenance: `docs/migration/DEVICE_API.md`.
+ * Contract and provenance: `docs/reference/DEVICE_API.md`.
  */
 
 /** Canonical name for each of the six parameters the DataPod reads. */

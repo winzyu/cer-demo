@@ -103,9 +103,9 @@ export class ChatController {
       const quotaKey = quotaSubjectFor(req);
       await this.quota.recordRequest(quotaKey);
 
-      // Caller identity for the audit record (`docs/RESPONSIBILITY.md` #6). Forced to "caller"
-      // scope regardless of `QUERY_QUOTA_SCOPE` — the audit trail must identify who asked even
-      // when the quota counter itself is bucketed globally.
+      // Caller identity for the audit record (`docs/records/RESPONSIBILITY.md` #6). Forced to
+      // "caller" scope regardless of `QUERY_QUOTA_SCOPE` — the audit trail must identify who asked
+      // even when the quota counter itself is bucketed globally.
       const callerId = quotaKeyFor(req, "caller");
 
       // Selection rules (including the DEBUG_RETRIEVAL override rule) live in the
@@ -172,7 +172,11 @@ export class ChatController {
       // both are constructed once at boot and shared by every request, so anything stored on
       // them would be visible to whatever request runs next. With SENSOR_TOOL off the
       // orchestrator has no tools and this is simply ignored — accepted, with no effect.
-      const answer = await this.orchestrator.run(messages, { device, token });
+      const answer = await this.orchestrator.run(messages, {
+        device,
+        token,
+        earlierReport: earlier.report,
+      });
 
       // Retrospective by necessity — a prompt's cost is not knowable before the call. The
       // request that crosses a token ceiling completes; the next one is refused.
@@ -265,6 +269,7 @@ export class ChatController {
           device,
           token,
           signal: controller.signal,
+          earlierReport: earlier.report,
         });
         await this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
         const checked = assessCitations(answer.content, chunks, answer.invocations);

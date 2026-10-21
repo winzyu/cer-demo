@@ -14,7 +14,7 @@ import { config } from "../src/config";
  * removed as a variable. Verify this before spending tokens on a chat round-trip; a wrong answer
  * in the chat is much harder to attribute when both halves are untested.
  *
- * These calls hit **production**. There is no QA mirror (`docs/migration/DEVICE_API.md` §3), so
+ * These calls hit **production**. There is no QA mirror (`docs/reference/DEVICE_API.md` §3), so
  * every request is a read against a live customer fleet: no writes, no bursts, one pod at a time.
  *
  * What to look for is printed as a checklist at the end. The interesting rows are the ones that
@@ -84,12 +84,12 @@ const run = async (): Promise<void> => {
   const args = parseArgs(process.argv.slice(2));
 
   if (!config.deviceApi.baseUrl) {
-    process.stdout.write("DEVICE_API_BASE_URL is not set. See docs/migration/DEVICE_API.md §5.\n");
+    process.stdout.write("DEVICE_API_BASE_URL is not set. See docs/reference/DEVICE_API.md §5.\n");
     process.exitCode = 1;
     return;
   }
   if (!config.deviceApi.devToken) {
-    process.stdout.write("DEVICE_API_TOKEN is not set. See docs/migration/DEVICE_API.md §5.\n");
+    process.stdout.write("DEVICE_API_TOKEN is not set. See docs/reference/DEVICE_API.md §5.\n");
     process.exitCode = 1;
     return;
   }

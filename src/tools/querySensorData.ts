@@ -60,7 +60,7 @@ const log = createLogger("SensorTool");
  *
  * - **Everything is computed from the raw period series.** `/water/average` is never called —
  *   it answers an empty window with zeros for all six metrics and drops whole rows when any one
- *   probe faults (`docs/migration/DEVICE_API.md` §12b, §6). See `aggregate.ts`.
+ *   probe faults (`docs/reference/DEVICE_API.md` §12b, §6). See `aggregate.ts`.
  * - **Recent windows expand when they cannot establish the current site.** Empty windows
  *   cannot establish the reference instant, and partial nonempty windows may lack the earlier
  *   centroid context needed to distinguish visits.
@@ -165,7 +165,7 @@ const BOARD_FAULT_NOTE = "Every sensor on this pod failed at the same time on th
  *
  * Exists because of a specific verified trap: the pod everyone calls "OWC" is registered as
  * "Old Woman Creek 2026", and the acronym appears nowhere in the registry
- * (`docs/migration/DEVICE_API.md` §2). Without this, asking about OWC matches nothing and the
+ * (`docs/reference/DEVICE_API.md` §2). Without this, asking about OWC matches nothing and the
  * tool reports "no such device" about a device that exists.
  */
 const initialsOf = (name: string): string => name

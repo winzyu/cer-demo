@@ -4,6 +4,7 @@ import path from "path";
 import {
   BUILD_COMMAND,
   LocalVectorAdapter,
+  checkCacheMatchesCorpus,
   cosineSimilarity,
   dotProduct,
   magnitude,
@@ -13,6 +14,7 @@ import type { CachedChunk, EmbeddingCache } from "../../src/retrieval/adapters/L
 import { EMBEDDING_DIMENSIONS, EmbeddingService } from "../../src/services/EmbeddingService";
 import { MAX_TOP_K } from "../../src/retrieval/options";
 import { config } from "../../src/config";
+import type { Corpus } from "../../src/ingestion/ingest";
 
 /**
  * The `local-vector` arm, offline.
@@ -50,8 +52,29 @@ afterAll(() => {
   fs.rmSync(directory, { recursive: true, force: true });
 });
 
-/** Writes a cache fixture and returns its path. Defaults are the *valid* values. */
-const writeCache = (overrides: Partial<EmbeddingCache> = {}): string => {
+/** The corpus fixture written beside each cache fixture. */
+const corpusPathFor = (cachePath: string): string => cachePath.replace(/\.json$/, ".corpus.json");
+
+/** A one-document corpus holding exactly these chunk ids, as `npm run ingest` would write it. */
+const corpusOf = (ids: string[]): Corpus => ({
+  generatedAt: "2026-08-24T00:00:00.000Z",
+  documents: [{
+    filename: "fixture.md",
+    title: "Fixture",
+    method: "text",
+    chars: 0,
+    text: "",
+    chunks: ids.map((id, index) => ({ id, contentHash: id, index, text: `content ${id}` })),
+    chunksBeforeFilter: ids.length,
+    inDirectFeedSlice: false,
+  }],
+});
+
+/**
+ * Writes a cache fixture, and beside it a corpus holding `corpusIds` (by default the cache's own
+ * ids, so the pair matches), and returns the cache's path. Defaults are the *valid* values.
+ */
+const writeCache = (overrides: Partial<EmbeddingCache> = {}, corpusIds?: string[]): string => {
   counter += 1;
   const cachePath = path.join(directory, `cache-${counter}.json`);
   const chunks = overrides.chunks ?? [chunk("a", vec([1]))];
@@ -66,8 +89,17 @@ const writeCache = (overrides: Partial<EmbeddingCache> = {}): string => {
   };
 
   fs.writeFileSync(cachePath, JSON.stringify(cache));
+  fs.writeFileSync(
+    corpusPathFor(cachePath),
+    JSON.stringify(corpusOf(corpusIds ?? chunks.map((entry) => entry.id))),
+  );
   return cachePath;
 };
+
+/** The adapter under test, reading the corpus fixture beside its cache. */
+const adapterFor = (cachePath: string, service?: EmbeddingService): LocalVectorAdapter => (
+  new LocalVectorAdapter(cachePath, service, corpusPathFor(cachePath))
+);
 
 const embeddingsReturning = (vector: number[]) => {
   const service = { embedQuery: jest.fn(async () => vector) };
@@ -105,7 +137,7 @@ describe("cosine arithmetic", () => {
 
 describe("LocalVectorAdapter", () => {
   it("registers under the mode the registry selects", () => {
-    expect(new LocalVectorAdapter(writeCache()).mode).toBe("local-vector");
+    expect(adapterFor(writeCache()).mode).toBe("local-vector");
   });
 
   it("ranks by cosine similarity, highest first", async () => {
@@ -115,7 +147,7 @@ describe("LocalVectorAdapter", () => {
     });
     const { service } = embeddingsReturning(vec([1]));
 
-    const chunks = await new LocalVectorAdapter(cachePath, service).getContext("q", { topK: 3 });
+    const chunks = await adapterFor(cachePath, service).getContext("q", { topK: 3 });
 
     expect(chunks.map((c) => c.id)).toEqual(["near", "mid", "far"]);
     expect(chunks[0].score).toBeCloseTo(1, 12);
@@ -129,7 +161,7 @@ describe("LocalVectorAdapter", () => {
     const cachePath = writeCache({ chunks: [chunk("a", vec([4, 3]))] });
     const { service } = embeddingsReturning(vec([3, 4]));
 
-    const [only] = await new LocalVectorAdapter(cachePath, service).getContext("q");
+    const [only] = await adapterFor(cachePath, service).getContext("q");
 
     expect(only.score).toBeCloseTo(0.96, 12);
   });
@@ -140,7 +172,7 @@ describe("LocalVectorAdapter", () => {
     });
     const { service } = embeddingsReturning(vec([1]));
 
-    const chunks = await new LocalVectorAdapter(cachePath, service).getContext("q", { topK: 2 });
+    const chunks = await adapterFor(cachePath, service).getContext("q", { topK: 2 });
 
     expect(chunks.map((c) => c.id)).toEqual(["a", "b"]);
   });
@@ -152,7 +184,7 @@ describe("LocalVectorAdapter", () => {
     const cachePath = writeCache({ chunks });
     const { service } = embeddingsReturning(vec([1]));
 
-    const result = await new LocalVectorAdapter(cachePath, service).getContext("q", { topK: 9999 });
+    const result = await adapterFor(cachePath, service).getContext("q", { topK: 9999 });
 
     expect(result).toHaveLength(MAX_TOP_K);
   });
@@ -163,7 +195,7 @@ describe("LocalVectorAdapter", () => {
     });
     const { service } = embeddingsReturning(vec([1]));
 
-    const chunks = await new LocalVectorAdapter(cachePath, service).getContext("q", { topK: 3 });
+    const chunks = await adapterFor(cachePath, service).getContext("q", { topK: 3 });
 
     // All three are collinear with the query, so every cosine is exactly 1.
     expect(chunks.map((c) => c.id)).toEqual(["a", "m", "z"]);
@@ -173,7 +205,7 @@ describe("LocalVectorAdapter", () => {
     const cachePath = writeCache({ chunks: [chunk("a", vec([1]))] });
     const { service } = embeddingsReturning(vec([1]));
 
-    const [only] = await new LocalVectorAdapter(cachePath, service).getContext("q");
+    const [only] = await adapterFor(cachePath, service).getContext("q");
 
     expect(only.source).toBe("https://example.test/a");
     expect(only.text).toBe("content a");
@@ -183,7 +215,7 @@ describe("LocalVectorAdapter", () => {
     const cachePath = writeCache();
     const { service, spy } = embeddingsReturning(vec([1]));
 
-    await new LocalVectorAdapter(cachePath, service).getContext("what is ORP?");
+    await adapterFor(cachePath, service).getContext("what is ORP?");
 
     // Dropping search_query: degrades retrieval with no error anywhere — MIGRATION_SPEC §4.4.
     expect(spy).toHaveBeenCalledWith("what is ORP?");
@@ -193,14 +225,14 @@ describe("LocalVectorAdapter", () => {
     it("returns nothing for an empty query, without paying for an embedding", async () => {
       const { service, spy } = embeddingsReturning(vec([1]));
 
-      expect(await new LocalVectorAdapter(writeCache(), service).getContext("   ")).toEqual([]);
+      expect(await adapterFor(writeCache(), service).getContext("   ")).toEqual([]);
       expect(spy).not.toHaveBeenCalled();
     });
 
     it("returns nothing for topK 0, without paying for an embedding", async () => {
       const { service, spy } = embeddingsReturning(vec([1]));
 
-      const chunks = await new LocalVectorAdapter(writeCache(), service)
+      const chunks = await adapterFor(writeCache(), service)
         .getContext("q", { topK: 0 });
 
       expect(chunks).toEqual([]);
@@ -213,7 +245,7 @@ describe("LocalVectorAdapter", () => {
       const { service } = embeddingsReturning(vec([1]));
       const missing = path.join(directory, "not-built.json");
 
-      await expect(new LocalVectorAdapter(missing, service).getContext("q"))
+      await expect(adapterFor(missing, service).getContext("q"))
         .rejects.toThrow(new RegExp(BUILD_COMMAND.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
     });
 
@@ -221,7 +253,7 @@ describe("LocalVectorAdapter", () => {
       const { service, spy } = embeddingsReturning(vec([1]));
       const missing = path.join(directory, "not-built.json");
 
-      await expect(new LocalVectorAdapter(missing, service).getContext("q")).rejects.toThrow();
+      await expect(adapterFor(missing, service).getContext("q")).rejects.toThrow();
       expect(spy).not.toHaveBeenCalled();
     });
 
@@ -229,7 +261,7 @@ describe("LocalVectorAdapter", () => {
       const cachePath = writeCache({ model: "some-other/embedding-model" });
       const { service } = embeddingsReturning(vec([1]));
 
-      await expect(new LocalVectorAdapter(cachePath, service).getContext("q"))
+      await expect(adapterFor(cachePath, service).getContext("q"))
         .rejects.toThrow(/some-other\/embedding-model/);
     });
 
@@ -237,7 +269,7 @@ describe("LocalVectorAdapter", () => {
       const cachePath = writeCache({ dimensions: 192 });
       const { service } = embeddingsReturning(vec([1]));
 
-      await expect(new LocalVectorAdapter(cachePath, service).getContext("q"))
+      await expect(adapterFor(cachePath, service).getContext("q"))
         .rejects.toThrow(/192 dimensions/);
     });
 
@@ -245,7 +277,7 @@ describe("LocalVectorAdapter", () => {
       const cachePath = writeCache({ chunks: [chunk("a", [0.1, 0.2, 0.3])] });
       const { service } = embeddingsReturning(vec([1]));
 
-      await expect(new LocalVectorAdapter(cachePath, service).getContext("q"))
+      await expect(adapterFor(cachePath, service).getContext("q"))
         .rejects.toThrow(/3-dimension vector for chunk "a"/);
     });
 
@@ -253,7 +285,7 @@ describe("LocalVectorAdapter", () => {
       const cachePath = writeCache({ chunks: [chunk("a", vec([]))] });
       const { service } = embeddingsReturning(vec([1]));
 
-      await expect(new LocalVectorAdapter(cachePath, service).getContext("q"))
+      await expect(adapterFor(cachePath, service).getContext("q"))
         .rejects.toThrow(/all-zero vector for chunk "a"/);
     });
 
@@ -261,7 +293,7 @@ describe("LocalVectorAdapter", () => {
       const cachePath = writeCache({ chunks: [] });
       const { service } = embeddingsReturning(vec([1]));
 
-      await expect(new LocalVectorAdapter(cachePath, service).getContext("q"))
+      await expect(adapterFor(cachePath, service).getContext("q"))
         .rejects.toThrow(/holds no chunks/);
     });
 
@@ -269,7 +301,7 @@ describe("LocalVectorAdapter", () => {
       const cachePath = writeCache({ chunks: [chunk("a", vec([1]))], chunkCount: 393 });
       const { service } = embeddingsReturning(vec([1]));
 
-      await expect(new LocalVectorAdapter(cachePath, service).getContext("q"))
+      await expect(adapterFor(cachePath, service).getContext("q"))
         .rejects.toThrow(/declares 393 chunks but holds 1/);
     });
 
@@ -277,15 +309,56 @@ describe("LocalVectorAdapter", () => {
       const cachePath = writeCache();
       const { service } = embeddingsReturning([0.1, 0.2, 0.3]);
 
-      await expect(new LocalVectorAdapter(cachePath, service).getContext("q"))
+      await expect(adapterFor(cachePath, service).getContext("q"))
         .rejects.toThrow(/the query embedded to 3/);
+    });
+
+    it("throws when the corpus has chunks the cache has no vector for", async () => {
+      // The 2026-10-21 shape: the corpus was re-ingested with new chunks, the cache was not
+      // rebuilt, and the arm searched without them while every other check passed.
+      const cachePath = writeCache({ chunks: [chunk("a", vec([1]))] }, ["a", "b", "c"]);
+      const { service, spy } = embeddingsReturning(vec([1]));
+
+      await expect(adapterFor(cachePath, service).getContext("q"))
+        .rejects.toThrow(/1 cached, 3 in the corpus[\s\S]*no vector for 2 chunk\(s\)/);
+      await expect(adapterFor(cachePath, service).getContext("q")).rejects.toThrow(/"b", "c"/);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it("throws when the cache holds chunks the corpus no longer has", async () => {
+      const cachePath = writeCache(
+        { chunks: [chunk("a", vec([1])), chunk("gone", vec([0, 1]))] },
+        ["a"],
+      );
+      const { service } = embeddingsReturning(vec([1]));
+
+      await expect(adapterFor(cachePath, service).getContext("q"))
+        .rejects.toThrow(/1 chunk\(s\) that .* no longer has: "gone"/);
+    });
+
+    it("throws when the corpus is missing, naming the command that builds it", async () => {
+      const cachePath = writeCache();
+      fs.rmSync(corpusPathFor(cachePath));
+      const { service } = embeddingsReturning(vec([1]));
+
+      await expect(adapterFor(cachePath, service).getContext("q"))
+        .rejects.toThrow(/npm run ingest/);
+    });
+
+    it("names a few mismatched ids and counts the rest", () => {
+      const cache = JSON.parse(fs.readFileSync(writeCache(), "utf8")) as EmbeddingCache;
+
+      const corpus = corpusOf(["a", "b", "c", "d", "e"]);
+
+      expect(() => checkCacheMatchesCorpus(cache, corpus, "cache.json", "corpus.json"))
+        .toThrow(/"b", "c", "d", and 1 more/);
     });
 
     it("reports every problem at once, like config validation does", async () => {
       const cachePath = writeCache({ model: "wrong/model", dimensions: 192 });
       const { service } = embeddingsReturning(vec([1]));
 
-      await expect(new LocalVectorAdapter(cachePath, service).getContext("q"))
+      await expect(adapterFor(cachePath, service).getContext("q"))
         .rejects.toThrow(/wrong\/model[\s\S]*192 dimensions/);
     });
   });
@@ -294,7 +367,7 @@ describe("LocalVectorAdapter", () => {
     it("reads the cache once per process, not once per query", async () => {
       const cachePath = writeCache();
       const { service } = embeddingsReturning(vec([1]));
-      const adapter = new LocalVectorAdapter(cachePath, service);
+      const adapter = adapterFor(cachePath, service);
 
       await adapter.getContext("first");
       fs.rmSync(cachePath);
@@ -308,11 +381,13 @@ describe("LocalVectorAdapter", () => {
       counter += 1;
       const cachePath = path.join(directory, `late-${counter}.json`);
       const { service } = embeddingsReturning(vec([1]));
-      const adapter = new LocalVectorAdapter(cachePath, service);
+      const adapter = adapterFor(cachePath, service);
 
       await expect(adapter.getContext("q")).rejects.toThrow();
 
-      fs.copyFileSync(writeCache(), cachePath);
+      const built = writeCache();
+      fs.copyFileSync(built, cachePath);
+      fs.copyFileSync(corpusPathFor(built), corpusPathFor(cachePath));
 
       await expect(adapter.getContext("q")).resolves.toHaveLength(1);
     });

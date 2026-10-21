@@ -26,7 +26,7 @@ import {
 } from "../fixtures/skepticism/fleet";
 
 /**
- * The data-skepticism incident (`docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`) at the
+ * The data-skepticism incident (`docs/records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`) at the
  * tool layer: what `query_sensor_data`, `generate_report` and `get_pod_thresholds` hand the model
  * for a week shaped on the conversation Gilligan wrote off as sensor faults, and for the four
  * over-correction guards in the record's §6 step 5.
