@@ -30,7 +30,7 @@ Work happens only in the worktree `.claude/worktrees/docs-cleanup` on branch `do
 | `release/` leftovers in the deployment runbook and backlog item 9 | done `3efe302`, landed |
 | Step 5, superseded-records archive list | done 2026-10-21, nothing archived: no file in `records/` is fully covered by a later record or a `timeline.md` row (see "Step 5 outcome") |
 | Step 6, re-run the local stack setup | done 2026-10-21: `LOCAL_STACK.md` ran from this worktree on 8011 and was corrected; the manual guide's three emulator scripts read `MIRROR_PROJECT_ID` (syntax-checked, not run); the Mirror and those scripts are verified at the Mirror's next real use (report-omission or flagging) |
-| Step 7, git tidy of finished work | approved 2026-10-21; each deletion waits on the user's yes (the auto-mode check refuses `git worktree remove`); proposed list sent to the user and the coordinator |
+| Step 7, git tidy of finished work | done 2026-10-21 with the user's yes: removed worktrees `post-launch-land`, `skeptic-before`, `skeptic-evals-run`, `skeptic-repro`, `e7-corpus`, `e2e-dev`; deleted `land/post-launch` and `task/e7-corpus` locally and `land/post-launch`, `task/e7-corpus`, `task/report-html-option`, `task/skeptic-triage`, `rules/upstream-branches` on `origin` (all merged into `dev`); kept both `wip-*` tags |
 | Steps 5-6 landing | landed on `dev` as squash `2bf94a3` |
 | Landing sweeps for `task/flagging-share-window`, `reflection`, `docs/firestore-testing-plan` | after each lands, its new `docs/migration/` files move to the right folder; none ready on 2026-10-21 (flagging waits on Michael, reflection on the user's OK to merge, firestore-plan on the user's keep-or-archive call); `task/tide-tool` re-homed its own (`36ef4a9`) |
 
@@ -51,11 +51,7 @@ All 26 records were checked on 2026-10-21; none is superseded, so none was archi
 1. `git fetch origin` and merge `origin/dev` into `docs/cleanup` (no rebase) if `dev` moved.
 2. Step 5 is done (above).
 3. Step 6 is done (above).
-4. Step 7, finished work only, keeping the list under "Approved".
-   Corpus, done 2026-10-21 with the user's approval: `release/artifacts.sha256` holds rc2's hashes (as `ddd6292`), the main checkout's `data/corpus/` and `data/embeddings/` are rc2's files from `release/rc2-artifacts/` (old 446-chunk pair in `data/pre-rc2-446/`), and every linked worktree matches; `timeline.md` has the row.
-   `e7-corpus` and `e2e-dev` hold the same 457 chunks and vectors under other build timestamps, so they can join the removals.
-   The adapter check is the `POST_LAUNCH_BACKLOG.md` §3 row, not done on this branch.
-   Then: list merged remote branches (`git branch -r --merged origin/dev`), finished worktrees (`git worktree list`) and `wip-*` tags (`git tag -l 'wip-*'`), then run each deletion only after the user's yes to that exact command, and send the coordinator the final `git worktree list` and branch list.
+4. Step 7 is done (above). What remains is the landing sweeps, when each branch lands.
 5. Checks before every commit: the link resolver over every tracked `docs/` `.md` and `.html` outside `captures/` (0 unresolved), `git grep` for each old path, `git diff --check`, `node --check` and `bash -n` on edited scripts, and `npm run typecheck` and `npm run lint` when `src/`, `scripts/` or `test/` change.
 
 Resume with: `Read docs/plans/DOCS_OVERHAUL_HANDOFF.md on branch docs/cleanup (worktree .claude/worktrees/docs-cleanup), then continue the docs overhaul.`
