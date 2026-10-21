@@ -69,7 +69,7 @@ The goal now is the next release: the data-skepticism fix, report omission and t
 5. Verify the combined `dev`: the affected Jest suites, a paid data-skepticism retest (quote the cost first), and the manual test guide cases the rework changes.
 6. Prepare the release: stage with `release/deploy-cer-gilligan.sh` (deployment runbook §6.1; `IMAGE` and `TAG` required), the user deploys and routes, then `main` moves to the deployed commit.
 
-Resume with: `Read docs/STATUS.md on branch dev, then docs/migration/COORDINATOR_HANDOFF_2026-10-15.md, then continue as cer-demo coordinator from the dev worktree.`
+Resume with: `Read docs/STATUS.md on branch dev, then docs/plans/COORDINATOR_HANDOFF_2026-10-15.md, then continue as cer-demo coordinator from the dev worktree.`
 
 ## Docs cleanup review
 

@@ -51,7 +51,8 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 | Batch 6 with D7: 4 records to `docs/records/`, backlog, `Q10_TASKS.md` (status note added), this handoff and the proposal to `docs/plans/` | done `d9aba50`; not yet landed |
 | Test-doc merge proposal (section 3.2 docs) | written, proposal section 10, in the commit that records it here; waiting on the user's M1-M3 |
 | Step 1, core-doc fixes: timeline 877, 915, 922; STATUS 78; SQ item 23 removed as answered; README line 13; `REPORT_OMIT_MIRROR_TEST.md` archived (tag `docs-archive-2026-10-21` at `7e7630f`); memory backlog path | done in the commit that records it here |
-| Batches 7-8 | next (step 2) |
+| Step 2, batches 7-8 with D7: 4 data-skepticism records and `GILLIGAN_RELEASE_PLAN.md`, `GILLIGAN_LANDING_2026-09-29.md` to `records/`; `data-skepticism-runs/` to `captures/`; `SECURITY_FINDINGS.md` to `reference/` (status note pointing at backlog §2); `COORDINATOR_HANDOFF_2026-10-15.md` to `plans/`; `catalogue.json` notes (D4, review page regenerated); `CLAUDE.md`/`AGENTS.md` wording (D2); README row, `.gitignore` exception and `docs/migration/` removed | done in the commit that records it here; SPECS lines in §10.7-§19 were rewritten too, so flagging's deletion of that range will conflict on landing (resolve deliberately: the deletion looks unintended) |
+| Step 3, Q10 | next |
 | Landing sweeps for `reflection`, `task/tide-tool`, `docs/firestore-testing-plan`, `fix/window-note` | after each branch lands (proposal section 7) |
 
 ## Waiting on the user

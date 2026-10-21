@@ -1,6 +1,6 @@
 # Post-launch backlog, 2026-10-07
 
-Gilligan went live on 2026-10-07 (L9, [`GILLIGAN_LANDING_2026-09-29.md`](../migration/GILLIGAN_LANDING_2026-09-29.md) §7 item 18).
+Gilligan went live on 2026-10-07 (L9, [`GILLIGAN_LANDING_2026-09-29.md`](../records/GILLIGAN_LANDING_2026-09-29.md) §7 item 18).
 From 2026-10-06 until launch the user parked everything outside the launch path; this file collects those items and the first production feedback.
 Each item names its evidence; the order within a section is a suggestion, and the user sets priorities.
 
@@ -115,7 +115,7 @@ Not changed by this work: report event detection still reads bucket means; the s
 | Item | Evidence | Note |
 |---|---|---|
 | Any logged-in user can change any user's role, organization and email (`POST /api/v1/users/account/:id`); admins can edit, promote, delete or create users in other organizations | Landing doc §7 item 14 | High; live in production, in CER's code and `122136d`; most urgent |
-| CSV export returns any pod's readings to any logged-in user (finding 11) | [`SECURITY_FINDINGS.md`](../migration/SECURITY_FINDINGS.md); fixed on server `8463545`, not shipped | High |
+| CSV export returns any pod's readings to any logged-in user (finding 11) | [`SECURITY_FINDINGS.md`](../reference/SECURITY_FINDINGS.md); fixed on server `8463545`, not shipped | High |
 | A non-superadmin with an empty organization sees every pod (A6) | Fixed on `8463545`, not shipped | Medium |
 | A previous account's pod list survives logout and login in the same tab | Landing doc §7 item 19; `user-dashboard` `src/app/services/device-data.js:341`, `src/app/components/header.js` | Medium; shows a superadmin's pods to the next account on a shared computer |
 | Revoke the old Gemini API key and the old Gmail app password | Landing doc §7 item 10 | Michael |
@@ -127,7 +127,7 @@ Not changed by this work: report event detection still reads bucket means; the s
 | Item | Evidence |
 |---|---|
 | Over-flagging and repeated turbidity caveat | §1 |
-| Gilligan called a week of real readings sensor faults on a tide link it never measured, then reversed under pushback without new data; the "Searched from 1970" note is fixed on `dev` `469e972`, not deployed; the skepticism fix is on `dev` (`16cec6e`, `c303c2f`), not deployed | [`GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](../migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md) |
+| Gilligan called a week of real readings sensor faults on a tide link it never measured, then reversed under pushback without new data; the "Searched from 1970" note is fixed on `dev` `469e972`, not deployed; the skepticism fix is on `dev` (`16cec6e`, `c303c2f`), not deployed | [`GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`](../records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md) |
 | Michael cannot ask for a report without its turbidity disclaimers, or with sections left out, to share a clean PDF | §6 |
 | "How is the water this week?" answers with readings, actions and next steps and offers a report, instead of a plain weekly summary | Landing doc §7 item 17 (L8 C1) |
 | After a reload, a repeated summary request returns nearly the same answer | Landing doc §7 item 17 |
@@ -143,7 +143,7 @@ Already live in the release (`ddd6292`), not backlog: Q9 (silent pods, pH 2.07, 
 2. Raise cer-gilligan's maximum instances to 2 once the usage store has counted correctly across a revision restart ([`LIVE_TEST_LIST.md`](../runbooks/LIVE_TEST_LIST.md) L8); note that any `services update` creates a revision that gets no traffic while traffic is pinned, so route it.
 3. Remove tags on revisions that no longer serve: cer-gilligan `rc1` (`00002-zoc`, the cer-demo Fireworks key), cer-api `rc1` (`00080-huy`, the revoked mail password), and the old `archive-v1` and `neumorphic` tags if Michael agrees.
 4. Decide whether to disable the cer-demo Fireworks key; development and evaluation runs still use it.
-5. The `main` merges of server and dashboard ([`GILLIGAN_LANDING_2026-09-29.md`](../migration/GILLIGAN_LANDING_2026-09-29.md) §5; the server's conflicts are in `WaterAnalyticsService.ts`, take the release side), Michael tests first, pushes on consent; tell Michael `62993fe` ships with server `main`.
+5. The `main` merges of server and dashboard ([`GILLIGAN_LANDING_2026-09-29.md`](../records/GILLIGAN_LANDING_2026-09-29.md) §5; the server's conflicts are in `WaterAnalyticsService.ts`, take the release side), Michael tests first, pushes on consent; tell Michael `62993fe` ships with server `main`.
 6. Delete the customer test user `winsyu475+certest@gmail.com` (Algalita); stop the local test dashboard container `cer-ui-l8-local` (port 3000).
 7. Done in the handoff: runbook §3.4 now says the dashboard reads `API_PROXY_TARGET` at run time.
 8. Access the user may want from Michael: Cloud Build source-bucket write (skips local builds), and `roles/datastore.user` limited to the `gilligan` database to reset a user's daily usage (`gilligan_usage/<userId>_<UTC day>`; limits also reset at 00:00 UTC).

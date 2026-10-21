@@ -1,6 +1,6 @@
 /**
  * A fabricated fleet for the data-skepticism checks
- * (`docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md` §2 and §6).
+ * (`docs/records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md` §2 and §6).
  *
  * Served by `fakeDeviceApi.ts` in the wire shapes the real device API returns, so the real
  * `DeviceApiClient`, decoder, QC and verdicts run unchanged. Shared by the Jest suite

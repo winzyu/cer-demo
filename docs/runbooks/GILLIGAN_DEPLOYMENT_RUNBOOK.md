@@ -2,8 +2,8 @@
 
 Rewritten 2026-09-26 for release task L1, for the user, who deploys the September 30 release themselves.
 It replaces the 2026-09-23 draft, which is in this file's git history.
-L5-L9 ran from it between 2026-10-01 and 2026-10-07; what each step did is recorded in [`GILLIGAN_LANDING_2026-09-29.md`](../migration/GILLIGAN_LANDING_2026-09-29.md) §7, not here.
-Task IDs (L5, S5, F2 and so on) are those of [`GILLIGAN_RELEASE_PLAN.md`](../migration/GILLIGAN_RELEASE_PLAN.md).
+L5-L9 ran from it between 2026-10-01 and 2026-10-07; what each step did is recorded in [`GILLIGAN_LANDING_2026-09-29.md`](../records/GILLIGAN_LANDING_2026-09-29.md) §7, not here.
+Task IDs (L5, S5, F2 and so on) are those of [`GILLIGAN_RELEASE_PLAN.md`](../records/GILLIGAN_RELEASE_PLAN.md).
 
 Every step follows one pattern, the deployment path the supervisor chose: deploy a Cloud Run revision that takes no traffic, test it from localhost, then switch traffic to it.
 Each service keeps its previous revision, so rolling back is a traffic switch back (§7).

@@ -157,7 +157,7 @@ A referral is only offered when the observed evidence matches the entry's applic
 
 ## 4. Roadmap to September 30
 
-Superseded for September 24-30 by [`GILLIGAN_RELEASE_PLAN.md`](../migration/GILLIGAN_RELEASE_PLAN.md), written after the supervisor's answers; the table below is the original schedule.
+Superseded for September 24-30 by [`GILLIGAN_RELEASE_PLAN.md`](../records/GILLIGAN_RELEASE_PLAN.md), written after the supervisor's answers; the table below is the original schedule.
 
 Working days are counted from Thursday, September 17.
 "Upstream" work needs a place to develop it before the supervisor approves the merge (open decision D1).

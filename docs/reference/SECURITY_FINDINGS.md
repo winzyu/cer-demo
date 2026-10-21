@@ -6,6 +6,10 @@ enforces it, and what it forces us to do differently.
 Sources: `../clean-earth-rovers-server` (read-only reference repo, read at commit `a3cc25d`) and a
 live read-only field census (`docs/reference/BACKEND_FIELDS.md`).
 
+Sections 1-8 were written between 2026-08-21 and 2026-09-25 and are not kept current.
+Which findings are fixed, shipped or still open is tracked in [`../plans/POST_LAUNCH_BACKLOG.md`](../plans/POST_LAUNCH_BACKLOG.md) §2 (checked 2026-10-21).
+That table also carries the 2026-10-06 finding that any logged-in user can rewrite any account's role and organization, which this file does not cover ([`../records/GILLIGAN_LANDING_2026-09-29.md`](../records/GILLIGAN_LANDING_2026-09-29.md) §7 item 14).
+
 > **Nothing here was exploited.** The finding in §1 is read from source. Our token is
 > `superadmin`, which bypasses every org check by design, so it could not demonstrate the flaw
 > even in principle — and probing production with a downgraded account is not ours to do. The code

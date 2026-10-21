@@ -221,7 +221,7 @@ clean-earth-rag/
 │                             files (the ◆G9 slice) are force-tracked; see documents/README.md
 ├── archive/pgvector-rag/     the archived bake-off arm at its original paths (§14) —
 │                             not compiled, not tested, not imported; excluded from the image
-└── docs/                     STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md, migration/
+└── docs/                     STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md, reference/, runbooks/, plans/, people/, records/, captures/
 ```
 
 ---
@@ -1169,7 +1169,7 @@ Michael reported (2026-10-11) that a summary or overview did not say what window
 
 ### 10.9 Reading the data (`src/prompt/systemPrompt.ts`, `src/tools/dailyCycle.ts`, `src/catalogue/`)
 
-Gilligan wrote off a real daily pH cycle as sensor faults, blamed tides no tool measures, and swapped in a new fault theory each time the user pushed back (`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`).
+Gilligan wrote off a real daily pH cycle as sensor faults, blamed tides no tool measures, and swapped in a new fault theory each time the user pushed back (`records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`).
 The tools already judge readings (§19); these rules keep the model from overruling them.
 
 - Readings are real measurements unless a tool says otherwise: device-flagged (`excluded_faulted`), implausible, a "likely data issue" verdict, a `board_fault` or a failed sensor.
@@ -1733,13 +1733,13 @@ rests on a contractual DPA with Fireworks, not on data residency. Reports make n
 Sensor data (`data/`) is git-ignored and treated as confidential per `CLAUDE.md`; `documents/` is
 git-ignored too, with the four Tier 1 corpus files force-tracked as the exception (§11).
 
-Two holes of this service's own were found and fixed on 2026-08-21, and are written up in [`migration/SECURITY_FINDINGS.md`](migration/SECURITY_FINDINGS.md) §6.
+Two holes of this service's own were found and fixed on 2026-08-21, and are written up in [`reference/SECURITY_FINDINGS.md`](reference/SECURITY_FINDINGS.md) §6.
 `GET /api/v1/devices` served unauthenticated callers out of the deployment's superadmin token; it now requires the caller's token (§10.5).
 `GET /api/v1/reports/:filename` served stored customer PDFs with no authentication; it was first gated by a token-hash ownership check and was removed on 2026-09-22, when reports moved to `POST /api/v1/reports` with nothing stored (§10.7).
 
 ## 19. Current-site readings, sensor quality and predecessor authorization
 
-Chat queries, comparisons and reports use only the visit containing the latest coordinate-bearing reading, following the September 24 and September 25 decisions in `timeline.md` and Q3-Q6 in `migration/GILLIGAN_RELEASE_PLAN.md`.
+Chat queries, comparisons and reports use only the visit containing the latest coordinate-bearing reading, following the September 24 and September 25 decisions in `timeline.md` and Q3-Q6 in `records/GILLIGAN_RELEASE_PLAN.md`.
 Coordinates come only from finite, in-range `best_lat` and `best_lon`, never `best_location`, fallback GPS fields or the registry.
 The pair 0,0 means no fix; other equator or prime-meridian coordinates remain valid.
 Chronologically, a positioned reading more than 1 km from the current visit's running spherical centroid starts a new visit.
@@ -1767,12 +1767,12 @@ When location filtering drops readings inside the requested range, `time_range_r
 A range the filter dropped nothing from keeps its requested dates, so a week long after a move is not relabelled "(current-site readings)" and narrowed to its first and last reading.
 The answer's report period, PDF title and Summary inherit those dates.
 The site notes (`site_note`, `user_notes`) count only readings inside the requested range that the location filter left out, plus readings with no timestamp, which no range can place (`siteNotesForPeriod` in `tools/currentSite.ts`).
-Counting the pod's whole history told a week 43 days after a move that 775 earlier-location readings "were excluded" from it (coverage check, 2026-10-12, `migration/data-skepticism-runs/coverage-check-prompt2/`).
+Counting the pod's whole history told a week 43 days after a move that 775 earlier-location readings "were excluded" from it (coverage check, 2026-10-12, `captures/data-skepticism-runs/coverage-check-prompt2/`).
 When the pod moved but none of its earlier-site readings fall inside the range, the model-only `site_history_note` says so, keeping the move known without telling the reader anything was left out.
 The PDF Summary prints `site_note`, or else `site_history_note`; Data Quality prints `site_note` only.
 `window_actually_searched.complete` is false when the fetched context does not reach the start of the requested range, or when the location filter dropped readings inside it.
 A first reading that lands one reporting interval after the window opens, and earlier-site history that ends before it, leave the window complete.
-`window_actually_searched` reports the part of the requested range the fetch covered, never the fetch's own start: the snapshot can reach back to the epoch only to establish the current site, and the dashboard printed that as "Searched from 1970" under a complete week (`migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md` §4).
+`window_actually_searched` reports the part of the requested range the fetch covered, never the fetch's own start: the snapshot can reach back to the epoch only to establish the current site, and the dashboard printed that as "Searched from 1970" under a complete week (`records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md` §4).
 Report Data Quality counts rows once: a reading is used if at least one requested parameter survives fault, plausibility and flat-line filtering, and is left out if none survives.
 The completeness percentage compares those used rows with all current-site rows inside the requested range; earlier-location exclusions remain a separate row count in the site note.
 

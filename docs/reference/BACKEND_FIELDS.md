@@ -299,7 +299,7 @@ deliberately: does inheriting a buoy inherit its data? This needs an answer from
 default from us.
 
 > ⚠️ **This is worse than it looks, and it is written up in full in
-> [`SECURITY_FINDINGS.md`](../migration/SECURITY_FINDINGS.md).** `/water/period` — the *only* endpoint
+> [`SECURITY_FINDINGS.md`](SECURITY_FINDINGS.md).** `/water/period` — the *only* endpoint
 > `query_sensor_data` reads — does not authorize its `device` parameter at all: the org filter sits
 > in an `else` branch, so supplying `?device=` replaces org scoping rather than narrowing it. Its
 > three sibling routes all perform the membership check it omits. A naive fan-out over `labels[]`
