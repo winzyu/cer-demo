@@ -4,6 +4,7 @@ How to stand up the Mirror, a local copy of production with fabricated data, che
 Nothing here reads or writes production: Firestore is a local emulator, the CER server (cer-api) and dashboard are local, and the only outside call is the model provider during paid steps.
 
 Rebuilt on 2026-10-21 from the setup in [`REPORT_OMIT_MIRROR_RUNBOOK.md`](REPORT_OMIT_MIRROR_RUNBOOK.md), which ran as written on 2026-10-15 (§3-§5 and the free checks); this combined version has not been run end to end yet.
+By the user's decision of 2026-10-21 it is verified at its next real use (a report-omission or flagging test), not by a separate run; fix any step that differs then.
 The September version, for the launch items on the 2026-09-28 stack, is `git show 2dd024a:docs/runbooks/MIRROR_RUNBOOK.md`; its test order is now in [`LAUNCH_ISSUES_CHECKLIST.md`](../records/LAUNCH_ISSUES_CHECKLIST.md).
 
 What to test once the stack is up lives in the feature's own document:

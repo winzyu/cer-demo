@@ -1,7 +1,7 @@
 # Local stack
 
 The WSL2 checkout this service is developed in, what it needs beyond git, and how to run the CER dashboard and server beside it without the credentials this machine does not hold.
-Verified end to end on 2026-09-21 at the old path `~/code/clean-earth-rovers/`; the paths below were moved under `~/code/work/` on 2026-10-17 and are unverified since the 2026-10-04 move.
+Verified end to end on 2026-09-21 at the old path `~/code/clean-earth-rovers/`, and again on 2026-10-21 at the paths below (cer-demo `docs/cleanup` `a12667b`, dashboard `local` `fd103a0`, server `local` `d12ad6d`), from a cer-demo worktree on port 8011 because the report-omission Mirror held 8010.
 
 ## Checkout layout
 
@@ -50,9 +50,9 @@ Long tool results there are truncated, so check a recovered file for a truncatio
 
 ## Claude Code state
 
-- Project memory is keyed by path: `~/.claude/projects/-home-winsy-code-clean-earth-rovers-repo-cer-demo/`.
+- Project memory is keyed by path: `~/.claude/projects/-home-winsy-code-work-clean-earth-rovers-repo-cer-demo/`.
 - `AGENTS.md`, `CLAUDE.md` and `.claude/skills/` are tracked on `dev`, not on `main`.
-- `.claude/settings.json` denies edits to the upstream repositories, but its deny paths still point at the old OneDrive locations and match nothing, so that guard is inert until they are updated to the layout above.
+- `.claude/settings.json` denies reading `~/.config/gcloud/` and `serviceAccountKey.json` and asks before paid or live-reading scripts; it holds no deny rule for the upstream repositories, so the repository instructions are their only guard.
 - `gcloud` is reinstalled and logged in as of 2026-09-25; see [Google Cloud and the Firestore emulator](#google-cloud-and-the-firestore-emulator).
 
 ## Verify the checkout
@@ -61,7 +61,7 @@ Long tool results there are truncated, so check a recovered file for a truncatio
 npm ci
 npm run typecheck && npm run lint
 npx jest test/unit/frontendAuth.test.ts --runInBand
-npm run ingest                 # 14 documents, 446 chunks, slice 26,096 chars
+npm run ingest                 # 16 documents, 457 chunks, slice 26,096 chars
 PORT=8010 npm run dev          # then: curl -s localhost:8010/health
 ```
 
@@ -115,6 +115,8 @@ cd user-dashboard && yarn dev -p 3000           # :3000
 Node 24.21 and npm 11.19 work for both; yarn 1.22 comes from `corepack enable`.
 The dashboard runs Next 13.5.11.
 Ports 8010 (cer-demo) and 8000 stay as they are; never kill 8000.
+If 8010 is taken (the report-omission Mirror's cer-demo uses it), run cer-demo on another port and start the server with `CER_RAG_BASE_URL=http://localhost:<port> npm run dev`: dotenv does not override a variable already set, so `.env` stays unchanged.
+From a worktree, link the main checkout's corpus PDFs, `.ocr_cache` and `data/embeddings`, copy `.env` with mode 600, and run `npm ci` and `npm run ingest` there; a linked `.ocr_cache` shows as untracked, because `.gitignore` matches only a directory of that name, so never stage it.
 
 Smoke test, which is a live read:
 
@@ -124,7 +126,8 @@ curl -s -H "Authorization: Bearer $TOKEN" http://localhost:5001/api/v1/devices  
 curl -s -L -H "Authorization: Bearer $TOKEN" http://localhost:3000/api/v1/devices  # same, through the dashboard
 ```
 
-Unauthenticated, `/api/v1/devices` returns 401 from the live API, and `/api/v1/` returns its placeholder message with 200.
+Unauthenticated, `/api/v1/devices` returns 401 from the live API, and `/api/v1/` returns its placeholder message with 200; both are proxied, so they also reach the live API.
+With `DEV_LOCAL_PATHS=/api/v1/gilligan` (below), `GET /api/v1/gilligan/check-quota` with the token checks the relay to cer-demo without a model call: cer-demo logs `GET /api/v1/usage 200`.
 
 ## Defect found while setting this up
 
