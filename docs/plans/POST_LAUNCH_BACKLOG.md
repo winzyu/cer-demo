@@ -149,8 +149,8 @@ Already live in the release (`ddd6292`), not backlog: Q9 (silent pods, pH 2.07, 
 6. Delete the customer test user `winsyu475+certest@gmail.com` (Algalita); stop the local test dashboard container `cer-ui-l8-local` (port 3000).
 7. Done in the handoff: runbook §3.4 now says the dashboard reads `API_PROXY_TARGET` at run time.
 8. Access the user may want from Michael: Cloud Build source-bucket write (skips local builds), and `roles/datastore.user` limited to the `gilligan` database to reset a user's daily usage (`gilligan_usage/<userId>_<UTC day>`; limits also reset at 00:00 UTC).
-9. Recover `~/release/` (deploy settings `cer-gilligan.env.yaml`, deploy scripts, mirror env files), lost in the 2026-10-04 WSL move; the next cer-gilligan redeploy needs the settings file.
-   Copies are in `release/` on `reflection` (`263edf3`); check `cer-gilligan.env.yaml` against the live revision `00004-r5q` before reusing it.
+9. Recovered on `dev` (`0921140`, 2026-10-14): the deploy settings, deploy scripts and emulator files once in `~/release/` are in `release/`.
+   Still open: check `release/cer-gilligan.env.yaml` against the live revision `00004-r5q` before the next cer-gilligan redeploy.
 10. Land the user's uncommitted WSL path fixes on `reflection` (`.claude/settings.json`, `release/start-rc2-emulator.sh`) and the 28 worktrees' stale `.claude/settings.json` deny paths.
 
 ## 5. Other pushes and branches waiting on the user
