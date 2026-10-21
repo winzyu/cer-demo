@@ -7,7 +7,7 @@
  *   node scripts/skepticism/mirrorReplay.mjs --label <name> --out <dir> [--runs 3]
  *   npx ts-node --transpile-only scripts/skepticism/replay.ts --regrade <dir>/<name>.json
  *
- * Start the Mirror first (`docs/migration/MIRROR_RUNBOOK.md`, then `scripts/mirror/addSkepticismPod.mjs`).
+ * Start the Mirror first (`docs/runbooks/MIRROR_RUNBOOK.md`, then `scripts/mirror/addSkepticismPod.mjs`).
  * The password is the Mirror fixture users' published one; nothing here reaches production.
  *
  * The access token stays in memory; nothing secret is printed or written.

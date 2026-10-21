@@ -1,6 +1,6 @@
 # R4 report - evaluation-driven improvement, 2026-09-23 to 2026-09-27
 
-Release task E6 of `docs/migration/GILLIGAN_RELEASE_PLAN.md`.
+Release task E6 of `docs/records/GILLIGAN_RELEASE_PLAN.md`.
 The full record of every run is `docs/EVAL_REBUILD.md`; the working log and traps are `HANDOFF.md` beside this file.
 
 ## Result

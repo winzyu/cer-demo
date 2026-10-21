@@ -28,7 +28,7 @@ export type RegistrySettings = Pick<RetrievalConfig, "defaultMode" | "debug">;
 /**
  * Maps a mode name to a retrieval implementation and applies the selection rules.
  *
- * A class with constructor DI (docs/migration/CONVENTIONS.md §12) rather than a module-level
+ * A class with constructor DI (docs/reference/CONVENTIONS.md §12) rather than a module-level
  * singleton map: tests get their own isolated registry instead of the suite depending on
  * import order, and `settings` can be varied without touching process env.
  */

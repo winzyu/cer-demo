@@ -2,10 +2,10 @@
 
 A checklist of answers the project needs from people outside the codebase.
 When an item is answered, record the answer and any decision it settles in `docs/timeline.md` (or the document that owns it), then delete the item here.
-Only open questions stay in this file; answered items 1-4, 7-13 and 17-20 were removed on 2026-10-11 and remain in `git log -p docs/STAKEHOLDER_QUESTIONS.md`.
+Only open questions stay in this file; answered items 1-4, 7-13 and 17-20 were removed on 2026-10-11, and item 23 (approved 2026-09-25) on 2026-10-21; they remain in `git log -p docs/STAKEHOLDER_QUESTIONS.md`.
 Partly answered items keep only their open part.
 
-Items are ordered by what they unblock, most blocking first. Last updated 2026-10-11.
+Items are ordered by what they unblock, most blocking first. Last updated 2026-10-21.
 
 ---
 
@@ -19,7 +19,7 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   *Answer:*
 
 - [ ] **25. Which field marks a board that is not responding, and how many in a row should flag it?**
-  The CER colleague who added the per-metric error flags asked that two or three consecutive "board not responding" errors flag the sensor at once (`docs/migration/POST_LAUNCH_BACKLOG.md` §1).
+  The CER colleague who added the per-metric error flags asked that two or three consecutive "board not responding" errors flag the sensor at once (`docs/plans/POST_LAUNCH_BACKLOG.md` §1).
   The 2026-10-09 production scan found the error flags only ever take the value 1, and that a reading with all six flags set reads `1000000000` on every metric.
   This project treats three consecutive all-channel failures as a likely data issue, provisionally.
   *Unblocks:* confirming or changing that provisional count.
@@ -33,6 +33,13 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
 - [ ] **22. Did the Marina Park and PCH Public Dock Buoy merges transfer the site, or only the hardware?**
   Not blocking. Each absorbed a pod that belonged to another organization in the August census, so those predecessors' readings are withheld from answers and reports (`SPECS.md` §10.3c).
   A "yes, the site transferred" for either chain would let its history be shown. Old Woman Creek 2026 was answered on 2026-09-24 (release plan Q3).
+  *Answer:*
+
+- [ ] **36. Were `CWA 2025 testbed` and `CWA Old` ever in salt water?**
+  Not blocking. Both pods merged into `Old Woman Creek 2026`, a fresh-water pod on Lake Erie, but the registry lists them as `salt-water` (`docs/records/POD_RELOCATION_EVIDENCE.md` §3).
+  The water type sets which normal ranges a reading is judged against, so their history is withheld from Old Woman Creek's for now (`docs/timeline.md`, 2026-09-28, Q10).
+  A "no, the registry is wrong" would let their history be shown once the predecessor hand-off is enabled (`docs/plans/POST_LAUNCH_BACKLOG.md` §2).
+  Not among the questions already sent to Michael (items 28-35 and the follow-ups on flagging and learning normal patterns).
   *Answer:*
 
 ---
@@ -52,12 +59,41 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   The 2026-10-09 scan found most persistent flags come from thresholds that do not fit the water, for example PCH's 68 °F maximum against 78-85 °F water (`POST_LAUNCH_BACKLOG.md` §1a).
   Gilligan now flags a metric only after 3 consecutive readings beyond its limit, but the server's alert emails still check only the latest reading, so an email can alert while chat says the metric is in range.
   *Unblocks:* fewer persistent flags, and chat and emails agreeing.
+  The email half was asked again ("should the alert emails use the same 5% rule?") in the message that carried items 28-35.
   *Answer:*
 
-- [ ] **23. Approve the Firestore data framework for Gilligan.**
-  On 2026-09-24 the supervisor allowed new Firestore collections for Gilligan, once they have seen a table of what they hold.
-  The table is `docs/migration/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
-  *Unblocks:* the persistent usage store, and any Firestore-backed corpus.
+Items 28-35 went to Michael in one chat message on 2026-10-15, with a plain summary of the four reading labels and the 5% share rule; 28 and 29 are written up on `task/flagging-share-window` and join this file when it lands.
+Nothing more goes to him until he answers (user, 2026-10-15).
+
+- [ ] **30. Is 15% past the limit the right bar for Action Required?**
+  Action Required is used only while a problem is still happening and is more than 15% past the limit (for pH 6-10, above 10.6 or below 5.4); "Watch" needs only 3 out-of-range readings, at least 5% of a rolling 24 hours, past the noise margin (pH 0.2).
+  The 15% is our own figure, not a source's (`FLAGGING_REWORK_HANDOFF_2026-10-13.md` on `task/flagging-share-window`).
+  *Unblocks:* the Action Required rung of the flagging rework.
+  *Answer:*
+
+- [ ] **31. Are Algalita's hot-afternoon pH dips real water chemistry, and does the board have trouble in the heat?**
+  pH dips on hot afternoons, following water temperature; on some of those afternoons every sensor fails at once, only when the board reads 37-50 °C, though it usually works at those temperatures.
+  *Unblocks:* whether the dips are described as water or as a possible probe response to heat, and whether whole-board failures should reach the model as a board fault (item 25).
+  *Answer:*
+
+- [ ] **32. Was Algalita calibrated on Sep 24 around 4-6 pm?**
+  Conductivity stepped down to about 1,400 and pH sat near 10, then 7, which looks like standard solutions.
+  *Unblocks:* leaving those readings out instead of reporting low conductivity.
+  *Answer:*
+
+- [ ] **33. What did "learn the normalcies" mean?**
+  Either Gilligan learns each pod's normal pattern (for example pH dipping on hot afternoons), likely as a separate model trained on the pods' data that hands Gilligan a conclusion, or Gilligan learns from people marking its answers wrong, which needs someone at CER to score answers.
+  *Unblocks:* the direction of any learning work after the release.
+  *Answer:*
+
+- [ ] **34. Are there labels or maintenance logs for the pods' data?**
+  Records of when a pod or sensor was serviced, cleaned or calibrated would let a model (item 33) and the flag rules tell maintenance from water.
+  *Unblocks:* item 33's first option, and items 28 and 32 without asking case by case.
+  *Answer:*
+
+- [ ] **35. Should report omission go live before the flagging rework?**
+  The user offered to release it early; the plan is one release with the data-skepticism fix and the flagging rework (`docs/timeline.md`, 2026-10-15).
+  *Unblocks:* an earlier, separate deploy of `dev` if he wants one.
   *Answer:*
 
 - [ ] **6. Is "configured thresholds" the right thing for users to hear?**

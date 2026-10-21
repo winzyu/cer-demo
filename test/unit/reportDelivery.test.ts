@@ -1,5 +1,5 @@
 import {
-  NO_NEW_PDF_LINE, claimsReport, deliveryLines, hasDeliveryLine, madeReports, stripDeliveryLines,
+  NO_NEW_PDF_LINE, claimsReport, deliveryLines, hasDeliveryLine, madeReports, reportClaim, stripDeliveryLines,
   withDeliveryLines,
 } from "../../src/report/delivery";
 import type { ToolInvocation } from "../../src/types/tool.types";
@@ -115,5 +115,21 @@ describe("claimsReport", () => {
     "Turbidity readings were removed by the sensor's own filter.",
   ])("does not read an ordinary answer or a refusal as one: %s", (text) => {
     expect(claimsReport(text)).toBe(false);
+  });
+  // Mirror A4, 2026-10-16: after an earlier reply made a copy, pointing back at it is true.
+  it.each([
+    "I've already omitted those in the latest copy.",
+    "Your current copy already leaves out the turbidity notes.",
+    "The earlier download button still gives you that copy.",
+  ])("reads a back-reference as a claim only when no earlier report exists: %s", (text) => {
+    expect(claimsReport(text)).toBe(true);
+    expect(claimsReport(text, { earlierReport: false })).toBe(true);
+    expect(claimsReport(text, { earlierReport: true })).toBe(false);
+  });
+
+  it("still reads a new delivery as a claim after an earlier report", () => {
+    const text = "This version of the PDF leaves out the turbidity notes.";
+    expect(claimsReport(text, { earlierReport: true })).toBe(true);
+    expect(reportClaim(`pH was normal. ${text}`)).toBe(text);
   });
 });

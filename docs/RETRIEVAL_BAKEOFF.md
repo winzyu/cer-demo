@@ -25,7 +25,7 @@ This resolves ◆G7 by **measurement instead of argument**. It is planned as
 retrieval seam existing first.
 
 Companion docs: [`timeline.md`](timeline.md) (phases + gates), [`SPECS.md`](SPECS.md) (what's built),
-[`migration/MIGRATION_SPEC.md`](migration/MIGRATION_SPEC.md) (legacy RAG behavior, the parity target).
+[`reference/MIGRATION_SPEC.md`](reference/MIGRATION_SPEC.md) (legacy RAG behavior, the parity target).
 
 ---
 

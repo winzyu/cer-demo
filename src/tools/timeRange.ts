@@ -8,7 +8,7 @@ import type { PeriodUnit } from "../types/device.types";
  * wall-clock ranges came back empty. That rule is *more* load-bearing here, not less: one of the
  * two cleared test pods (Old Woman Creek 2026) has been silent since 2026-08-07, so "the last
  * day" against a wall clock is an empty window on a pod that has a perfectly good last day of
- * data. See `docs/migration/DEVICE_API.md` §2.
+ * data. See `docs/reference/DEVICE_API.md` §2.
  *
  * Parsing is therefore split in two. `parseTimeRange` reads the phrase into a shape that knows
  * its *span* but not its *anchor*; `resolveRange` applies the anchor once the device has told us

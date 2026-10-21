@@ -7,7 +7,7 @@
  * closes with "Establish a site-specific baseline before treating deviations as events." That
  * site-specific baseline is not missing — it is in the backend's Firestore device registry, as
  * `thresholds.minTemperature` / `thresholds.maxTemperature`, set on 13 of the 15 live devices
- * (`docs/migration/BACKEND_FIELDS.md` §3, §3a). This module is the bridge, and it is kept
+ * (`docs/reference/BACKEND_FIELDS.md` §3, §3a). This module is the bridge, and it is kept
  * separate from `referenceRanges.ts` on purpose: that file is a transcription of two approved
  * documents and nothing operator-entered belongs in it.
  *

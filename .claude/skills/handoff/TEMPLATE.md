@@ -35,4 +35,4 @@ Updated YYYY-MM-DD at commit `<hash>`.
 - Behavior: `docs/SPECS.md`
 - Decisions: `docs/timeline.md`
 - Evaluation: `docs/EVAL_REBUILD.md`
-- Conventions: `docs/migration/CONVENTIONS.md`
+- Conventions: `docs/reference/CONVENTIONS.md`

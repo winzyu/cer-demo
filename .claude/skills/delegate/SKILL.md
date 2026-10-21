@@ -12,7 +12,7 @@ Worktrees start from committed HEAD; do not assume they contain the user's uncom
 Use `model: "sonnet"` and `isolation: "worktree"` on Claude Agent calls that edit files.
 Confirm routing from available session metadata; do not scan historical transcripts by default.
 
-Give the worker the goal, exact editable/off-limits paths, settled decisions, relevant conventions from `docs/migration/CONVENTIONS.md`, production traps, and required verification.
+Give the worker the goal, exact editable/off-limits paths, settled decisions, relevant conventions from `docs/reference/CONVENTIONS.md`, production traps, and required verification.
 For runtime setup, point to `../run-local/references/worktree.md`; do not load it for read-only research.
 Assign disjoint paths to parallel workers.
 Require: edits only in the assigned worktree, reference repositories read-only, no Git mutations, no full test suite, and no further delegation.

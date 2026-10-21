@@ -7,7 +7,7 @@ what make that possible.
 ## Where they came from
 
 All derived from `data/device-api/2026-08-11T20-02-31-384Z/`, the live exploration run recorded
-on 2026-08-11 (`npm run explore:devices`, documented in `docs/migration/DEVICE_API.md` §9).
+on 2026-08-11 (`npm run explore:devices`, documented in `docs/reference/DEVICE_API.md` §9).
 `data/` is git-ignored because sensor data is confidential per `CLAUDE.md`; these are the small,
 committed slice the test suite needs.
 

@@ -1,5 +1,5 @@
 /**
- * Paid replay of the data-skepticism incident (`docs/migration/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`
+ * Paid replay of the data-skepticism incident (`docs/records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`
  * §6 steps 2, 4 and 5) against a running server whose device API is `fakeDeviceApi.ts`.
  *
  *   npx ts-node --transpile-only scripts/skepticism/replay.ts \

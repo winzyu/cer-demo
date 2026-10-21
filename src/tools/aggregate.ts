@@ -3,7 +3,7 @@
  *
  * **Why this is computed locally rather than read from `/water/average`.** That endpoint looks
  * like it would save the work, and using it would import two failure modes documented in
- * `docs/migration/DEVICE_API.md` §12:
+ * `docs/reference/DEVICE_API.md` §12:
  *
  * 1. **An empty window returns literal zeros for all six metrics**, not an error and not an
  *    empty body — a set of readings that parse as anoxic water at pH 0. There is no count field

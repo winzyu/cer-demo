@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Read-only shape census of CER's production Firestore, for docs/migration/MIRROR_PRODUCTION_PARITY.md.
+# Read-only shape census of CER's production Firestore, for docs/reference/MIRROR_PRODUCTION_PARITY.md.
 #
 # Prints only aggregates: document counts, field names, value types, numeric ranges, reporting
 # intervals and document sizes. No document id, name, email, device label or free text is printed

@@ -20,7 +20,7 @@ import type { DeviceSummary } from "../../src/types/device.types";
  * serves a stubbed `fetch` into the **real** `DeviceApiClient` and decoder, so it exercises the
  * actual fan-out rather than a mock of it. No network, no token, no cost.
  *
- * The shapes are the live ones (`docs/migration/BACKEND_FIELDS.md` §4): `labels[]` on the
+ * The shapes are the live ones (`docs/reference/BACKEND_FIELDS.md` §4): `labels[]` on the
  * survivor with self first, `mergedInto` on the retired device, `organization` as an opaque id.
  */
 
